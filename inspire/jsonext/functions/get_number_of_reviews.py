@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-#
+##
 ## This file is part of Invenio.
-## Copyright (C) 2011, 2012, 2013 CERN.
+## Copyright (C) 2013 CERN.
 ##
 ## Invenio is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -15,10 +15,17 @@
 ##
 ## You should have received a copy of the GNU General Public License
 ## along with Invenio; if not, write to the Free Software Foundation, Inc.,
-## 59 Temple Place, Suite 330, Boston, MA 02D111-1307, USA.
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-from .receivers import post_handler_demosite_populate
-from invenio.base.scripts.demosite import populate as demosite_populate
-from invenio.base.signals import post_command
 
-post_command.connect(post_handler_demosite_populate, sender=demosite_populate)
+def get_number_of_reviews(recid):
+    """
+    Returns number of reviews for given record.
+
+    @param recid:
+
+    @return: Number of reviews
+    """
+    from invenio.legacy.webcomment.adminlib import get_nb_reviews
+    if recid:
+        return get_nb_reviews(recid)

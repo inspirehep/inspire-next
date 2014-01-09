@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-##
+#
 ## This file is part of Invenio.
-## Copyright (C) 2014 INSPIRE.
+## Copyright (C) 2013 CERN.
 ##
 ## Invenio is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -17,15 +17,29 @@
 ## along with Invenio; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-"""
-    inspire.views
-    -------------------------------
+import datetime
+from fixture import DataSet
 
-    This file is needed in order to be able to overrite files
-    from Invenio.
-"""
 
-from flask import Blueprint
+class JrnJOURNALData(DataSet):
 
-blueprint = Blueprint('inspire', __name__, url_prefix='/',
-                      template_folder='templates', static_folder='static')
+    class JrnJOURNAL_1:
+        id = 1
+        name = u'AtlantisTimes'
+
+
+class JrnISSUEData(DataSet):
+
+    class JrnISSUE_1_022009:
+        id_jrnJOURNAL = JrnJOURNALData.JrnJOURNAL_1.ref('id')
+        issue_number = u'02/2009'
+        date_announced = datetime.datetime(2009, 1, 9, 0, 0)
+        issue_display = u'02-03/2009'
+        date_released = datetime.datetime(2009, 1, 9, 0, 0)
+
+    class JrnISSUE_1_032009:
+        id_jrnJOURNAL = JrnJOURNALData.JrnJOURNAL_1.ref('id')
+        issue_number = u'03/2009'
+        date_announced = None
+        issue_display = u'02-03/2009'
+        date_released = datetime.datetime(2009, 1, 16, 0, 0)
