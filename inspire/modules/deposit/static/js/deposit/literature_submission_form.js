@@ -207,6 +207,10 @@ define(function(require, exports, module) {
         .done(function(response_kb) {
           that.subject_kb = response_kb;
         });
+
+      if(!this.isFormBlank()){
+        this.showForm();
+      }
     },
 
     /*
@@ -780,7 +784,36 @@ define(function(require, exports, module) {
         url: that.save_url,
         form_selector: that.$submissionForm
       });
-    }
+    },
+
+    isFormBlank: function isFormBlank() {
+      var $inputFields = $('input').not('[id$="__last_index__"]');
+      $inputFields = $inputFields.add($('textarea'));
+      var $selectFields = $('select[multiple="multiple"]');
+      var isBlank = true;
+
+      $.each($inputFields, function() {
+        var type = this.type;
+        if (type === 'text' || type === 'password' || type === 'hidden' || type === 'textarea') {
+          if (this.value !== '') {
+            isBlank = false;
+            return false;
+          }
+        } else if ((type === 'checkbox' || type === 'radio') && this.checked) {
+          isBlank = false;
+          return false;
+        }
+      });
+
+      $.each($selectFields, function() {
+        if ($(this).val() !== null) {
+          isBlank = false;
+          return false;
+        }
+      });
+
+      return isBlank;
+    },
   };
 
   /**
