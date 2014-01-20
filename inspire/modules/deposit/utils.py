@@ -35,11 +35,20 @@ def filter_empty_helper(keys=None):
     return _inner
 
 
-delete_keys = ['type_of_doc',
+DELETE_KEYS = ['type_of_doc',
                'fft',
                'acquisition_source',
                'collections',
                'ok_to_upload']
+
+HIDDEN_INPUTS = ['categories_arXiv',
+                 'title_source',
+                 'title_arXiv',
+                 'page_nr',
+                 'conference_id',
+                 'license_url',
+                 'note',
+                 'preprint_created']
 
 
 def clean_unicode_keys(data):
@@ -74,11 +83,14 @@ def amend_all_keys(all_keys, dicts):
         d['categories'], d['data'] = list(humanize_keys(categories)), list(data)
 
 
-def clean_unwanted_metadata(metadata_keys, metadata_values):
+def clean_unwanted_metadata(metadata_keys, metadata_values, include_hidden=False):
     """Remove keys that are not inputed by the user."""
     d = dict(zip(metadata_keys, metadata_values))
-    for key in delete_keys:
+    for key in DELETE_KEYS:
         d.pop(key, None)
+    if not include_hidden:
+        for key in HIDDEN_INPUTS:
+            d.pop(key, None)
 
     return d.keys(), d.values()
 
@@ -91,7 +103,7 @@ def humanize_keys(strings):
     return [string.replace('_', ' ').strip().title() for string in strings]
 
 
-def process_metadata_for_charts(submitted_depositions):
+def process_metadata_for_charts(submitted_depositions, include_hidden=False):
     """Process the depositions metadata for charts.
 
     Gets all the submitted depositions (submissions with a sealed sip).
@@ -115,7 +127,9 @@ def process_metadata_for_charts(submitted_depositions):
     for type_of_doc in metadata_by_types:
         for deposition in metadata_by_types[type_of_doc]:
             c.update(deposition.keys())
-        categories, data = clean_unwanted_metadata(clean_unicode_keys(c.keys()), c.values())
+        categories, data = clean_unwanted_metadata(clean_unicode_keys(c.keys()),
+                                                   c.values(),
+                                                   include_hidden)
         metadata_by_types[type_of_doc] = map(list, zip(humanize_keys(categories), data))
         metadata_for_column[type_of_doc] = {'categories': categories,
                                             'name': type_of_doc.title(),
@@ -131,7 +145,9 @@ def process_metadata_for_charts(submitted_depositions):
 
     for deposition in metadata:
         c.update(deposition.keys())
-    categories, data = clean_unwanted_metadata(clean_unicode_keys(c.keys()), c.values())
+    categories, data = clean_unwanted_metadata(clean_unicode_keys(c.keys()),
+                                               c.values(),
+                                               include_hidden)
     metadata = {'pie': map(list, zip(humanize_keys(categories), data)),
                 'column': {'categories': list(humanize_keys(categories)),
                            'name': "Submitted depositions",
