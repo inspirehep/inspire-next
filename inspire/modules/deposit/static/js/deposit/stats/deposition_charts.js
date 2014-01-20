@@ -142,11 +142,13 @@ define(function(require, exports, module) {
             ['empty'] : data.metadata_categories;
         }
 
+        $include_hidden.show();
         $deposition_charts.empty();
         $deposition_charts.highcharts(
           new DepositionChart(chart_options).generate()
         );
       } else {
+        $include_hidden.hide();
         $deposition_charts.html(tpl_flash_message({
           state: 'info',
           message: "There are no depositions for the given date."
@@ -163,6 +165,8 @@ define(function(require, exports, module) {
         params.since_date = since_date;
       if(until_date !== "")
         params.until_date = until_date;
+      if($include_hidden.hasClass("active"))
+        params.include_hidden = true;
 
       $.ajax({
         url: url,

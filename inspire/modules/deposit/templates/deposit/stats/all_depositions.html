@@ -46,6 +46,11 @@ require(['js/deposit/stats/deposition_charts', 'bootstrap-datetimepicker', 'high
     var api_url = "{{ url_for('webdeposit.stats_api') }}";
     $chart_type = $("#chart_types");
     $deposition_charts = $('#deposition-charts');
+    $include_hidden = $('#include-hidden');
+    $include_hidden.click(function() {
+      $include_hidden.button('toggle');
+      new chart({}).filter(api_url);
+    });
 
     $(function(){
       $('#since_date').datetimepicker(datepicker_options);
@@ -120,7 +125,10 @@ require(['js/deposit/stats/deposition_charts', 'bootstrap-datetimepicker', 'high
 
     {% if stats %}
 
-    <div class="well" id="deposition-charts"></div>
+    <div class="well">
+        <button type="button" id="include-hidden" class="btn btn-default pull-right">{{ _('include hidden fields') }}</button>
+        <div id="deposition-charts"></div>
+    </div>
 
     <div class="row">
     {% if stats|length > 1 %}
