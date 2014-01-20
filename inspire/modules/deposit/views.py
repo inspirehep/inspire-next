@@ -83,7 +83,8 @@ def stats_api():
                                        "%Y-%m-%d").replace(hour=23, minute=59)
         submitted_depositions = [d for d in submitted_depositions if d.created <= until_date]
 
-    result = process_metadata_for_charts(submitted_depositions)
+    result = process_metadata_for_charts(submitted_depositions,
+                                         bool(request.args.get('include_hidden', None)))
 
     resp = jsonify(result)
 
