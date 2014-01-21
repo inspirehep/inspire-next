@@ -83,5 +83,10 @@ setup(
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
-    test_suite='inspire.testsuite.suite'
+    test_suite='inspire.testsuite.suite',
+    entry_points={
+        'invenio.config': [
+            "site = inspire.config"
+        ]
+    },
 )

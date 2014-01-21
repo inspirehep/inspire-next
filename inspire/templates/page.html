@@ -18,3 +18,35 @@
 #}
 
 {% extends "page_base.html" %}
+
+{% set searchbar_enable = searchbar_enable and easy_search_form != None and collection != None %}
+
+{% if searchbar_enable %}
+  {% from "_formhelpers.html" import render_filter_form with context %}
+  {% from "search/helpers.html" import search_form, search_form_javascript with context %}
+{% endif %}
+
+{% block header %}
+  {{ super() }}
+  {% if searchbar_enable %}
+    {% js url_for('search.static', filename='js/search/typeahead.js') %}
+    {% js url_for('search.static', filename='js/search/facet.js') %}
+    {% js url_for('static', filename='js/bootstrap-select.js') %}
+    {% js "js/jquery.hotkeys.js" %}
+    {% js url_for('search.static', filename='js/search/hotkeys.js') %}
+  {% endif %}
+{% endblock %}
+
+{% block body %}
+  {{ super() }}
+  {% if searchbar_enable %}
+    {{ search_form(collection, easy_search_form) }}
+  {% endif %}
+{% endblock %}
+
+{% block javascript %}
+  {{ super() }}
+  {% if searchbar_enable %}
+    {{ search_form_javascript(collection) }}
+  {% endif %}
+{% endblock %}

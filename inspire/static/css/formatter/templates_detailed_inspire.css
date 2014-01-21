@@ -1,0 +1,17 @@
+.template-detailed .details-table {
+    text-align: left;
+}
+
+.template-detailed .details-table .field_name {
+    font-weight: bold;
+    display: block;
+}
+
+.template-detailed .details-table .field_value {
+    display: block;
+    padding-left: 20px;
+}
+
+.template-detailed .details-table table td {
+    vertical-align: top;
+}
