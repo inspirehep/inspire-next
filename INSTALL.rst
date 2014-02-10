@@ -1,15 +1,12 @@
 ==============================
-Invenio demo site installation
+INSPIRE installation
 ==============================
 
-*Note: before 2014, Invenio demo site was being developed inside the
-main Invenio source code package.  Please see the main Invenio source
-code repository for more information.*
+Install this package alongside Invenio and make sure to update your
+config file to include the package. E.g.
+PACKAGES = ['inspire', 'invenio.modules.*']
 
-Good luck and thanks for choosing Invenio.
-
-| Invenio Development Team
-|   Email: info@invenio-software.org
-|   IRC: #invenio on irc.freenode.net
-|   Twitter: @inveniosoftware
-|   URL: http://invenio-software.org
+| INSPIRE Development Team
+|   Email: admin@inspirehep.net
+|   Twitter: @inspirehep
+|   URL: http://inspirehep.net
