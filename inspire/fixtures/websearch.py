@@ -26,8 +26,8 @@ class CollectionData(DataSet):
 
     class hep:
         id = 1
-        name = 'HEP'
-        dbquery = '970__a:"SPIRES" or 980__a:"HEP"'
+        name = "HEP"
+        dbquery = '980__a:"HEP"'
         names = {
             ('en', 'ln'): u'HEP',
         }
