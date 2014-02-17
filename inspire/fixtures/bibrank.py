@@ -17,43 +17,71 @@
 # ## along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-# from fixture import DataSet
-# from .websearch import \
-#     CollectionData as CollectionDataDemosite
+from fixture import DataSet
+from .websearch import \
+    CollectionData as CollectionDataINSPIRE
 
 
-# class RnkMETHODData(DataSet):
+class RnkMETHODData(DataSet):
 
-#     class RnkMETHOD_2:
-#         last_updated = None
-#         id = 2
-#         name = u'demo_jif'
+    class RnkMETHOD_1:
+        last_updated = None
+        id = 1
+        name = u'wrd'
 
-#     class RnkMETHOD_3:
-#         last_updated = None
-#         id = 3
-#         name = u'citation'
+    class RnkMETHOD_2:
+        last_updated = None
+        id = 2
+        name = u'citation'
 
-#     class RnkMETHOD_4:
-#         last_updated = None
-#         id = 4
-#         name = u'citerank_citation_t'
+    class RnkMETHOD_3:
+        last_updated = None
+        id = 3
+        name = u'inst_papers'
 
-#     class RnkMETHOD_5:
-#         last_updated = None
-#         id = 5
-#         name = u'citerank_pagerank_c'
+    class RnkMETHOD_4:
+        last_updated = None
+        id = 4
+        name = u'selfcites'
 
-#     class RnkMETHOD_6:
-#         last_updated = None
-#         id = 6
-#         name = u'citerank_pagerank_t'
 
-#     class RnkMETHOD_7:
-#         last_updated = None
-#         id = 7
-#         name = u'selfcites'
+class CollectionRnkMETHODData(DataSet):
 
+    class Collection_rnkMETHOD_1:
+        id_collection = CollectionDataINSPIRE.Hep.ref("id")
+        id_rnkMETHOD = 1
+        score = 100
+
+    class Collection_rnkMETHOD_2:
+        id_collection = CollectionDataINSPIRE.Hep.ref("id")
+        id_rnkMETHOD = 2
+        score = 110
+
+    class Collection_rnkMETHOD_3:
+        id_collection = CollectionDataINSPIRE.Institutions.ref("id")
+        id_rnkMETHOD = 3
+        score = 100
+
+
+class RnkMETHODNAMEData(DataSet):
+
+	class Rnkmethodname_1:
+		id_rnkMETHOD = 1
+		ln = "en"
+		type = "ln"
+		value = "word similarity"
+
+	class Rnkmethodname_2:
+		id_rnkMETHOD = 2
+		ln = "en"
+		type = "ln"
+		value = "times cited"
+
+	class Rnkmethodname_3:
+		id_rnkMETHOD = 3
+		ln = "en"
+		type = "ln"
+		value = "papers in HEP"
 
 # class CollectionRnkMETHODData(DataSet):
 
