@@ -17,8 +17,10 @@
 ## along with Invenio; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02D111-1307, USA.
 
-from .receivers import post_handler_demosite_populate
-from invenio.base.scripts.demosite import populate as demosite_populate
-from invenio.base.signals import post_command
+__import__('pkg_resources').declare_namespace(__name__)
 
-post_command.connect(post_handler_demosite_populate, sender=demosite_populate)
+# from .receivers import post_handler_demosite_populate
+# from invenio.base.scripts.demosite import populate as demosite_populate
+# from invenio.base.signals import post_command
+
+# post_command.connect(post_handler_demosite_populate, sender=demosite_populate)

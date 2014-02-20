@@ -68,6 +68,7 @@ setup(
     long_description=__doc__,
     packages=packages,
     package_dir={'invenio_docs': 'docs'},
+    namespace_packages=["inspire"],
     include_package_data=True,
     zip_safe=False,
     platforms='any',
