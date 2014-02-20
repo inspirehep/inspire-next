@@ -17,10 +17,34 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
+"""
+INSPIRE configuration
+--------------------
+Instance independent configuration (e.g. which extensions to load) is defined
+in ``inspire.config'' while instance dependent configuration (e.g. database
+host etc.) is defined in an optional ``inspire.instance_config'' which
+can be installed by a separate package.
+
+This config module is loaded by the Flask application factory via an entry
+point specified in the setup.py::
+
+    entry_points={
+        'invenio.config': [
+            "inspire = inspire.config"
+        ]
+    },
+"""
+
 from invenio.base.config import EXTENSIONS as ORIG_EXTENSIONS
 
 EXTENSIONS = ORIG_EXTENSIONS + [
     'inspire.ext.search_bar',
     'inspire.ext.formatter_jinja_filters'
 ]
-SHOW_FACETS=False
+
+SHOW_FACETS = False
+
+try:
+    from inspire.instance_config import *
+except ImportError:
+    pass
