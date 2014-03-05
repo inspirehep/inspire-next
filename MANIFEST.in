@@ -1,2 +1,2 @@
 include requirements*.txt
-recursive-include invenio_demosite *.xml *.xsl *.xsd *.tpl *.html *.js *.kb *.css *.cfg *.bft *.rst *.ico *.sql
+recursive-include inspire *.xml *.xsl *.xsd *.tpl *.html *.js *.kb *.css *.cfg *.bft *.rst *.ico *.sql
