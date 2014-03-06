@@ -21,16 +21,30 @@ from datetime import datetime
 from fixture import DataSet
 
 
+class OaiHARVESTData(DataSet):
+
+    class OaiHARVEST_1:
+        from invenio.modules.oaiharvester.models import get_default_arguments
+        id = 1
+        name = "arXivb"
+        baseurl = "http://export.arxiv.org/oai2"
+        metadataprefix = "arXiv"
+        lastrun = datetime.now()
+        workflows = "generic_harvesting_workflow_with_bibsched"
+        setspecs = ["hep-lat"]
+        arguments = get_default_arguments()
+
+
 class OaiREPOSITORYData(DataSet):
 
-    class OaiREPOSITORY_2:
+    class OaiREPOSITORY_1:
         f1 = u'reportnumber'
         f2 = u'division'
         f3 = u''
         setRecList = None
         setDefinition = u'c=;p1=CERN;f1=reportnumber;m1=a;p2=(EP|PPE);f2=division;m2=r;p3=;f3=;m3=;'
         last_updated = datetime.now()
-        id = 2
+        id = 1
         setSpec = u'cern:experiment'
         setDescription = u''
         p3 = u''
@@ -42,14 +56,14 @@ class OaiREPOSITORYData(DataSet):
         m3 = u''
         m2 = u'r'
 
-    class OaiREPOSITORY_3:
+    class OaiREPOSITORY_2:
         f1 = u'reportnumber'
         f2 = u'division'
         f3 = u''
         setRecList = None
         setDefinition = u'c=;p1=CERN;f1=reportnumber;m1=a;p2=TH;f2=division;m2=e;p3=;f3=;m3=;'
         last_updated = datetime.now()
-        id = 3
+        id = 2
         setSpec = u'cern:theory'
         setDescription = u''
         p3 = u''
