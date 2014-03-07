@@ -36,6 +36,7 @@ point specified in the setup.py::
 """
 
 from invenio.base.config import EXTENSIONS as ORIG_EXTENSIONS
+from invenio.base.config import CFG_SITE_NAME_INTL as ORIG_CFG_SITE_NAME_INTL
 
 EXTENSIONS = ORIG_EXTENSIONS + [
     'inspire.ext.search_bar',
@@ -104,6 +105,10 @@ PACKAGES = [
 
 CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
 BROKER_URL = "amqp://guest:guest@localhost:5672//"
+
+# should update it with all the available languages not only English
+# see the invenio/base/config.py
+ORIG_CFG_SITE_NAME_INTL['en'] = "INSPIRE - High Energy Physics"
 
 SHOW_FACETS = False
 
