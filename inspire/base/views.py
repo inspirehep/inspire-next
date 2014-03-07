@@ -20,11 +20,9 @@
 """
     inspire.views
     -------------------------------
-
-    Demosite interface.
 """
 
 from flask import Blueprint
 
-blueprint = Blueprint('inspire', __name__, url_prefix='/',
+blueprint = Blueprint('inspire', __name__, url_prefix="",
                       template_folder='templates', static_folder='static')

@@ -18,9 +18,3 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02D111-1307, USA.
 
 __import__('pkg_resources').declare_namespace(__name__)
-
-# from .receivers import post_handler_demosite_populate
-# from invenio.base.scripts.demosite import populate as demosite_populate
-# from invenio.base.signals import post_command
-
-# post_command.connect(post_handler_demosite_populate, sender=demosite_populate)
