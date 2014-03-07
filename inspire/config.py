@@ -42,6 +42,9 @@ EXTENSIONS = ORIG_EXTENSIONS + [
     'inspire.ext.formatter_jinja_filters'
 ]
 
+CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
+BROKER_URL = "amqp://guest:guest@localhost:5672//"
+
 SHOW_FACETS = False
 
 try:
