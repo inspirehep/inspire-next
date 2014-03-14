@@ -28,6 +28,7 @@
 #}
 
 <footer>
+
 <div class="container">
   <div class="row">
     <div class="col-md-9">
@@ -42,11 +43,20 @@
         <tbody>
           <tr>
             <td>
-              <ul>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Blog</a></li>
-                <li><a href="#">FAQ</a></li>
-              </ul>
+              {%- for menu in ['footermenu_left', 'footermenu_right'] %}
+                {%- for item in current_menu.submenu(menu).children if item.visible recursive %}
+                {%- if loop.first %}<ul>{% endif %}
+                {%- if item.children -%}
+                  <li>
+                    <a href="{{ item.url }}">{{ item.text|safe }}</a>
+                    <ul>{{ loop(item.children.values()|sort(attribute='order')) }}</ul>
+                  </li>
+                {%- else -%}
+                  <li><a href="{{ item.url }}">{{ item.text|safe }}</a></li>
+                {%- endif -%}
+                {%- if loop.last %}</ul>{% endif %}
+                {%- endfor -%}
+              {%- endfor %}
             </td>
             <td>
               <ul>
