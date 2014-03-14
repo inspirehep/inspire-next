@@ -22,7 +22,19 @@
     -------------------------------
 """
 
-from flask import Blueprint
+from flask import Blueprint, render_template
+from flask.ext.menu import register_menu
+# from flask.ext.breadcrumbs import register_breadcrumb
 
 blueprint = Blueprint('inspire', __name__, url_prefix="",
                       template_folder='templates', static_folder='static')
+
+
+#
+# Static pages
+#
+@blueprint.route('/about', methods=['GET', ])
+# @register_menu(blueprint, 'footermenu_left.about', _('About'))
+# @register_breadcrumb(blueprint, 'breadcrumbs.about', _("About"))
+def about():
+    return render_template('inspire/about.html')
