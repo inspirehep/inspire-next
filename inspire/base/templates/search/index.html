@@ -24,17 +24,58 @@
 
 {%- block extra_style %}{% endblock extra_style -%}
 
-{%- block portalbox_rt -%}
-  <div class="col-md-4">
-      {{ portalbox_sidebar(portalboxes.rt, class="well") }}
-      <div class="well">
-          <p>News Feeds</p>
-          <div id="blog"></div>
-      </div>
 
-      <a class="twitter-timeline" href="https://twitter.com/inspirehep" data-widget-id="434352054106992641">Tweets by @inspirehep</a>
-  </div>
-{%- endblock portalbox_rt -%}
+{% block index %}
+
+  <style>
+    .panels {
+        margin-top: 100px;
+    }
+  </style>
+
+  <div class="row"> <!-- start of row -->
+    <div class="col-md-3 panels">
+      <div class="panel panel-default">
+        <div class="panel-heading">Literature
+        </div>
+        <div class="panel-body">Upcoming
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 panels">
+      <div class="panel panel-default">
+        <div class="panel-heading">People
+        </div>
+        <div class="panel-body">Upcoming
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 panels">
+      <div class="panel panel-default">
+        <div class="panel-heading">Jobs
+        </div>
+        <div class="panel-body">Upcoming
+        </div>
+      </div>
+    </div>
+
+  {%- block index_right -%}{%- endblock index_right -%}
+  {%- block index_left -%}{%- endblock index_left -%}
+
+  {%- block portalbox_rt -%}
+    <div class="col-md-3">
+        {{ portalbox_sidebar(portalboxes.rt, class="well") }}
+        <div class="well">
+            <p>News Feeds</p>
+            <div id="blog"></div>
+        </div>
+
+        <a class="twitter-timeline" href="https://twitter.com/inspirehep" data-widget-id="434352054106992641">Tweets by @inspirehep</a>
+    </div>
+  {%- endblock portalbox_rt -%}
+  </div> <!-- start of row -->
+
+{% endblock index %}
 
 
 {%- block header -%}
@@ -45,19 +86,31 @@
 {% block javascript %}
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 <script>
-$('#blog').feeds({
-    feeds: {
-       feed: 'http://blog.inspirehep.net/feeds/posts/default',
-    },
-    max: 3,
-    preprocess: function ( feed ) {
-        // Change the publishedDate format from UTC to dd-mm-yyyy
-        // Inside the callback 'this' corresponds to the entry being processed
-        var date = new Date(this.publishedDate);
-        var pieces = [date.getDate(), date.getMonth()+1, date.getFullYear()]
-        this.publishedDate = pieces.join('-');
-    }
-});
+  $('#blog').feeds({
+      feeds: {
+         feed: 'http://blog.inspirehep.net/feeds/posts/default',
+      },
+      max: 3,
+      preprocess: function ( feed ) {
+          // Change the publishedDate format from UTC to dd-mm-yyyy
+          // Inside the callback 'this' corresponds to the entry being processed
+          var date = new Date(this.publishedDate);
+          var pieces = [date.getDate(), date.getMonth()+1, date.getFullYear()]
+          this.publishedDate = pieces.join('-');
+      }
+  });
+
+  (function($) {
+    $('#myTab a').click(function (e) {
+        e.preventDefault();
+        if (!($(this).attr('id') == 'hep')) {
+            $('#drop').hide();
+        } else {
+            $('#drop').show();
+        }
+        $(this).tab('show');
+    })
+  })(jQuery);
 </script>
 {{ super() }}
 {% endblock javascript %}
