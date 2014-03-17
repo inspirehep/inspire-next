@@ -22,3 +22,91 @@
 
 {% extends "search/helpers_base.html" %}
 
+
+{%- block search_form_body scoped %}
+
+  <div id="newsearch" class="row"> <!-- start of row -->
+    <div class="row">
+        <div class="col-md-9">
+            {# TODO:
+                * add logic to existing li elements in order which li is selected to perform the right search in the corresponding collection
+            #}
+            <ul id="myTab" class="nav nav-tabs allign">
+                <li class="active"><a href="#" id="hep">Literature</a></li>
+                <li><a href="#">People</a></li>
+                <li><a href="#">Institutions</a></li>
+                <li><a href="#">Conferences</a></li>
+                <li><a href="#">Experiments</a></li>
+                <li><a href="#">Journals</a></li>
+            </ul>
+        </div>
+    </div>
+    {% block search_form_text scoped %}{% endblock search_form_text %}
+
+    {% block search_form_form scoped %}
+
+      <div class="col-md-9">
+        <form action="{{ url_for('search.search') }}"
+                  name="search"
+                  method="get"
+                  role="search"
+                  id="searchform">
+          {% block search_form_ctrls_box %}
+            <div class="input-group input-group-md">
+              <span class="input-group-btn">
+                <div class="btn-group">
+                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="#"><strong>Search Tips</strong></a></li>
+                    <li><a href="#"><strong>Search Guide</strong></a></li>
+                    <li class="divider"></li>
+                    <li class="dropdown-header">Search examples</li>
+                    <li><a href="#">author:"Ellis,J."<span class="pull-right glyphicon glyphicon-chevron-right"></span></a></li>
+                    <li><a href="#">quantum<span class="pull-right glyphicon glyphicon-chevron-right"></span></a></li>
+                  </ul>
+                </div>
+              </span>
+              <input type="text" class="form-control" placeholder="Search for ...">
+              <div id="drop" class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Brief format <span class="caret"></span></button>
+                <ul class="dropdown-menu pull-right">
+                  <li><a href="#">Brief format</a></li>
+                  <li><a href="#">Detailed format</a></li>
+                  <li><a href="#">Citesummary</a></li>
+                  <li><a href="#">LaTeX (EU)</a></li>
+                  <li><a href="#">LaTeX (US)</a></li>
+                  <li><a href="#">BibTeX</a></li>
+                  <li><a href="#">CV format (LaTeX)</a></li>
+                  <li><a href="#">CV format (html)</a></li>
+                  <li><a href="#">CV format (text)</a></li>
+                  <li><a href="#">Harvmac</a></li>
+                  <li><a href="#">RefWorks</a></li>
+                  <li><a href="#">EndNote</a></li>
+                </ul>
+              </div>
+              <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit">{{ _("Search") }}<span class="glyphicon glyphicon-search"></span></button>
+              </span>
+            </div>
+          {% endblock search_form_ctrls_box %}
+        </form>
+        <!-- /input-group -->
+      </div>
+
+    {% endblock search_form_form %}
+
+    </div> <!-- end of row -->
+
+  <style>
+    #myTab.nav-tabs {
+        border-bottom: none;
+    }
+    .allign {
+        margin-left: 15px;
+        /* because the container has padding: 15px; */
+    }
+  </style>
+
+{%- endblock search_form_body %}
