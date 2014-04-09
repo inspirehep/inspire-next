@@ -21,7 +21,23 @@
 */
 
 module.exports = function(grunt) {
+
+  var globalConfig = {
+    bower_path: 'bower_components',
+    installation_path: 'inspire/base/static'
+  };
+
+  // show elapsed time at the end
+  require('time-grunt')(grunt);
+  // load all grunt tasks
+  require('load-grunt-tasks')(grunt);
+
+  // Project configuration
   grunt.initConfig({
+
+    pkg: grunt.file.readJSON('package.json'),
+    globalConfig: globalConfig,
+
     less: {
       development: {
         options: {
@@ -31,7 +47,7 @@ module.exports = function(grunt) {
         },
         files: {
           // target.css file: source.less file
-          "inspire/base/static/css/main.css": "inspire/base/static/less/main.less"
+          "<%= globalConfig.installation_path %>/css/inspire.css": "<%= globalConfig.installation_path %>/less/inspire.less"
         }
       }
     },
@@ -44,11 +60,41 @@ module.exports = function(grunt) {
           nospawn: true
         }
       }
+    },
+    // copy bootstrap core to make it customizable later
+    copy:{
+      fonts: {
+        expand: true,
+        flatten: true,
+        cwd: '<%= globalConfig.bower_path %>/bootstrap/',
+        src: ['fonts/*'],
+        dest: '<%= globalConfig.installation_path %>/bootstrap/fonts/'
+      },
+      js: {
+        expand: true,
+        flatten: true,
+        cwd: '<%= globalConfig.bower_path %>/bootstrap/',
+        src: ['js/*'],
+        dest: '<%= globalConfig.installation_path %>/bootstrap/js/'
+      },
+      less: {
+        expand: true,
+        flatten: true,
+        cwd: '<%= globalConfig.bower_path %>/bootstrap/',
+        src: ['less/*'],
+        dest: '<%= globalConfig.installation_path %>/bootstrap/less/'
+      },
+      jquery: {
+        expand: true,
+        flatten: true,
+        cwd: '<%= globalConfig.bower_path %>/jquery/',
+        src: ['dist/jquery.min.js'],
+        dest: '<%= globalConfig.installation_path %>/js/'
+      }
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.registerTask('prod', ['copy', 'less']);
+  grunt.registerTask('dev', ['watch']);
 
-  grunt.registerTask('default', ['watch']);
 };

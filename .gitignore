@@ -5,3 +5,5 @@ build
 *.pyc
 .idea/
 node_modules/
+bower_components/
+inspire/base/static/bootstrap/

@@ -68,7 +68,24 @@
                   </ul>
                 </div>
               </span>
-              <input type="text" class="form-control" placeholder="Search for ...">
+              <input type="text" class="form-control" placeholder="Search for records">
+              <div id="drop" class="input-group-btn">
+                <select class="form-control">
+                  <option>Brief format</option>
+                  <option>Detailed format</option>
+                  <option>Citesummary</option>
+                  <option>LaTeX (EU)</option>
+                  <option>LaTeX (US)</option>
+                  <option>BibTeX</option>
+                  <option>CV format (LaTeX)</option>
+                  <option>CV format (html)</option>
+                  <option>CV format (text)</option>
+                  <option>Harvmac</option>
+                  <option>RefWorks</option>
+                  <option>EndNote</option>
+                </select>
+              </div>
+{#
               <div id="drop" class="input-group-btn">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Brief format <span class="caret"></span></button>
                 <ul class="dropdown-menu pull-right">
@@ -86,6 +103,7 @@
                   <li><a href="#">EndNote</a></li>
                 </ul>
               </div>
+#}
               <span class="input-group-btn">
                 <button class="btn btn-primary" type="submit">{{ _("Search") }}<span class="glyphicon glyphicon-search"></span></button>
               </span>

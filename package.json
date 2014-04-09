@@ -4,6 +4,11 @@
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-contrib-less": "*",
-    "grunt-contrib-watch": "*"
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-copy": "*",
+    "load-grunt-tasks": "~0.2.0"
+  },
+  "dependencies": {
+     "time-grunt": "*"
   }
 }
