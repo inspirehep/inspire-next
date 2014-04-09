@@ -24,6 +24,7 @@ from .websearch import \
 
 class RnkMETHODData(DataSet):
 
+    # Every rank method name should have its corresponding name.cfg
     class RnkMETHOD_1:
         last_updated = None
         id = 1
@@ -37,11 +38,6 @@ class RnkMETHODData(DataSet):
     class RnkMETHOD_3:
         last_updated = None
         id = 3
-        name = u'inst_papers'
-
-    class RnkMETHOD_4:
-        last_updated = None
-        id = 4
         name = u'selfcites'
 
 
@@ -81,7 +77,7 @@ class RnkMETHODNAMEData(DataSet):
 		id_rnkMETHOD = 3
 		ln = "en"
 		type = "ln"
-		value = "papers in HEP"
+		value = "self citations"
 
 # class CollectionRnkMETHODData(DataSet):
 
