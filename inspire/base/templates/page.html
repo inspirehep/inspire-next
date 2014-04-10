@@ -45,6 +45,9 @@
   {% if searchbar_enable %}
     {{ search_form(collection, easy_search_form) }}
   {% endif %}
+  {% block inner_content %}
+    <!-- Here goes the content visible below the search bar -->
+  {% endblock inner_content %}
 {% endblock %}
 
 {% block javascript %}
