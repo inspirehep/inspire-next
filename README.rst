@@ -5,27 +5,50 @@ INSPIRE overlay
 This is INSPIRE demo site source code overlay.  It installs on top of
 Invenio digital library platform source code.
 
+--------------------------
+INSPIRE workflow and tools
+--------------------------
 
-Installation
-------------
+INSPIRE uses `Grunt <http://gruntjs.com/>`_ and `Bower <http://bower.io/>`_ with convenient methods for compiling code, run tasks, install libraries and more. To use them, install the required dependencies as directed and then run some Grunt commands.
 
-``$ npm install``
+Install Grunt
+-------------
 
-``$ bower install``
+From the command line:
 
-``$ grunt prod`` *// copies the libraries and compiles LESS to CSS*
+1. Install ``grunt-cli`` globally with ``npm install -g grunt-cli``.
 
-(optional) ``$ grunt dev`` *// a watcher auto compiles on save when developing on LESS file*
+2. Navigate to the root directory, then run ``npm install``. ``npm`` will look at package.json and automatically install the necessary local dependencies listed there.
 
 
-``bower`` and ``grunt`` not found:
-----------------------------------
+| When completed, you'll be able to run the various Grunt commands provided from the command line.
 
-``$ npm install -g grunt-cli bower``
+| **Unfamiliar with npm? Don't have node installed?** That's a-okay. npm stands for `node packaged modules <https://www.npmjs.org/>`_ and is a way to manage development dependencies through node.js. `Download and install node.js <http://nodejs.org/download/>`_ before proceeding.
 
-``node`` not found:
--------------------
+Install Bower
+-------------
 
-Do ``$ which nodejs`` and create a softlink to it named node in the same directory where nodejs is located.
+From the command line:
 
-Note that some UNIX systems might have another utility called node already installed.
+1. Install ``bower`` globally with ``npm install -g bower``.
+
+2. Navigate to the root directory, then run ``bower install``. ``bower`` will look at bower.json and automatically install the necessary local dependencies listed there.
+
+
+| When completed, you'll have all the dependencies under ``bower_components/``.
+
+Available Grunt commands
+------------------------
+
+**Build** - ``grunt``
+
+| Run ``grunt`` to compile LESS to CSS into ``inspire.css``. Uses `Less <http://lesscss.org/>`_.
+
+| **Development** - ``grunt watch``
+
+| This is a convenience method for watching just Less files and automatically building them whenever you save.
+
+Troubleshooting dependencies
+----------------------------
+
+Should you encounter problems with installing dependencies or running Grunt commands, uninstall all previous dependency versions (global and local). Then, rerun ``npm install``.

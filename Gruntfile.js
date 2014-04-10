@@ -47,7 +47,8 @@ module.exports = function(grunt) {
         },
         files: {
           // target.css file: source.less file
-          "<%= globalConfig.installation_path %>/css/inspire.css": "<%= globalConfig.installation_path %>/less/inspire.less"
+          "<%= globalConfig.installation_path %>/css/inspire.css":
+          "<%= globalConfig.installation_path %>/less/inspire.less"
         }
       }
     },
@@ -60,41 +61,9 @@ module.exports = function(grunt) {
           nospawn: true
         }
       }
-    },
-    // copy bootstrap core to make it customizable later
-    copy:{
-      fonts: {
-        expand: true,
-        flatten: true,
-        cwd: '<%= globalConfig.bower_path %>/bootstrap/',
-        src: ['fonts/*'],
-        dest: '<%= globalConfig.installation_path %>/bootstrap/fonts/'
-      },
-      js: {
-        expand: true,
-        flatten: true,
-        cwd: '<%= globalConfig.bower_path %>/bootstrap/',
-        src: ['js/*'],
-        dest: '<%= globalConfig.installation_path %>/bootstrap/js/'
-      },
-      less: {
-        expand: true,
-        flatten: true,
-        cwd: '<%= globalConfig.bower_path %>/bootstrap/',
-        src: ['less/*'],
-        dest: '<%= globalConfig.installation_path %>/bootstrap/less/'
-      },
-      jquery: {
-        expand: true,
-        flatten: true,
-        cwd: '<%= globalConfig.bower_path %>/jquery/',
-        src: ['dist/jquery.min.js'],
-        dest: '<%= globalConfig.installation_path %>/js/'
-      }
     }
   });
 
-  grunt.registerTask('prod', ['copy', 'less']);
-  grunt.registerTask('dev', ['watch']);
+  grunt.registerTask('default', ['less']);
 
 };

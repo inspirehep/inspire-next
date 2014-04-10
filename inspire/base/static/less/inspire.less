@@ -1,80 +1,16 @@
-@import "custom-bootstrap.less";
+// Bootstrap framework
+@import "../../../../bower_components/bootstrap/less/bootstrap.less";
 
-/* Inspire custom theme */
+// Project specific stuff
+@import "variables.less";
+@import "footer.less";
 
-/*
-    some base colors (orange & blue) like the official
-    site and then apply to header and footer
-*/
 
-/*
- @orange: #FC9;
- @blue: #69C;
-
- .masthead-nav > li {
-     display: inline-block;
- }
- .masthead-nav > li + li {
-     margin-left: 20px;
- }
- .masthead-nav > li > a {
-     padding-right: 0;
-     padding-left: 0;
-     font-size: 16px;
-     font-weight: bold;
-     color: @blue;
-     border-bottom: 2px solid transparent;
- }
- .masthead-nav > li > a:hover,
- .masthead-nav > li > a:focus {
-     background-color: transparent;
-     border-bottom-color: @blue;
- }
- .masthead-nav > .active > a,
- .masthead-nav > .active > a:hover,
- .masthead-nav > .active > a:focus {
-     color: @blue;
-     background-image: none;
-     border-bottom-color: @blue;
-}
-*/
-
+// TODO:
+// break into pieces: eg. header.less, footer.less etc.
 #drop {
     border-left: none;
     width: 170px;
-}
-
-footer {
-    padding: 40px;
-    thead {
-        th {
-            font-size: 12px;
-            color: #999;
-            text-transform: uppercase;
-            text-align: left;
-            padding-bottom: 12px;
-        }
-    }
-    tbody {
-        td {
-            width: 200px;
-            vertical-align: top;
-        }
-        ul {
-            margin: 0;
-            padding: 0;
-        }
-        li {
-            font-size: 14px;
-            list-style: none;
-            line-height: 26px;
-            margin: 0;
-            padding: 0;
-            a {
-                color: #4a5c69;
-            }
-        }
-    }
 }
 section {
     text-align: center;
@@ -111,3 +47,32 @@ section {
     background-color: #f8f8f8;
     border-color: #e7e7e7;
 }
+
+/*
+ .masthead-nav > li {
+     display: inline-block;
+ }
+ .masthead-nav > li + li {
+     margin-left: 20px;
+ }
+ .masthead-nav > li > a {
+     padding-right: 0;
+     padding-left: 0;
+     font-size: 16px;
+     font-weight: bold;
+     color: @blue;
+     border-bottom: 2px solid transparent;
+ }
+ .masthead-nav > li > a:hover,
+ .masthead-nav > li > a:focus {
+     background-color: transparent;
+     border-bottom-color: @blue;
+ }
+ .masthead-nav > .active > a,
+ .masthead-nav > .active > a:hover,
+ .masthead-nav > .active > a:focus {
+     color: @blue;
+     background-image: none;
+     border-bottom-color: @blue;
+}
+*/
