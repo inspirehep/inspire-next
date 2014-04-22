@@ -1,0 +1,108 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2014 CERN.
+##
+## INSPIRE is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+##
+## In applying this licence, CERN does not waive the privileges and immunities
+## granted to it by virtue of its status as an Intergovernmental Organization
+## or submit itself to any jurisdiction.
+#}
+
+{#
+## This file contains footer part of main page template.
+##
+## Usage:
+## {% include 'footer.html' %}
+#}
+
+<hr>
+<footer>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-9">
+      <table width="100%">
+        <thead>
+          <tr>
+            <th>Info</th>
+            <th>Help</th>
+            <th>Resources</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              {%- for menu in ['footermenu_left', 'footermenu_right'] %}
+                {%- for item in current_menu.submenu(menu).children if item.visible recursive %}
+                {%- if loop.first %}<ul>{% endif %}
+                {%- if item.children -%}
+                  <li>
+                    <a href="{{ item.url }}">{{ item.text|safe }}</a>
+                    <ul>{{ loop(item.children.values()|sort(attribute='order')) }}</ul>
+                  </li>
+                {%- else -%}
+                  <li><a href="{{ item.url }}">{{ item.text|safe }}</a></li>
+                {%- endif -%}
+                {%- if loop.last %}</ul>{% endif %}
+                {%- endfor -%}
+              {%- endfor %}
+            </td>
+            <td>
+              <ul>
+                <li><a href="#">Easy Search</a></li>
+                <li><a href="#">Search Tips</a></li>
+                <li><a href="#">Search Guide</a></li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li><a href="#">ADS</a></li>
+                <li><a href="#">ArXiv</a></li>
+                <li><a href="#">HepData</a></li>
+                <li><a href="#">PDG</a></li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-3">
+      <span id="contact">Contact</span>
+      <section>
+        <p>Send email: <a href="mailto:feedback@inspirehep.net" target="_top">feedback@inspirehep.net</a></p>
+        <a href="#"><i class="fa fa-facebook fa-2x"></i></a><a href="#"><i class="fa fa-twitter fa-2x"></i></a>
+        <a href="#"><i class="fa fa-google-plus fa-2x"></i></a>
+      </section>
+    </div>
+  </div>
+</div>
+</footer>
+
+{# TODO: include it in footer? #}
+<div class="container">
+<hr>
+<div class="row">
+  <div class="col-md-2">
+    <span id="copyright">&copy; 2014 Inspire</span>
+  </div>
+  <div class="col-md-10">
+    <ul class="site-footer-links pull-right">
+      <li><a href="#">Terms of Use</a></li>
+      <li><a href="#">Privacy Police</a></li>
+      <li><a href="#">Send us feedback</a></li>
+    </ul>
+  </div>
+</div>
+</div>

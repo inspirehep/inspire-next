@@ -1,0 +1,157 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2014 CERN.
+##
+## INSPIRE is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+##
+## In applying this licence, CERN does not waive the privileges and immunities
+## granted to it by virtue of its status as an Intergovernmental Organization
+## or submit itself to any jurisdiction.
+#}
+
+{#
+## This file contains header part of main page template.
+##
+## Usage:
+## {% include 'header.html' %}
+#}
+
+{#
+<div class="navbar-inner">
+  <div class="container">
+    <a class="btn btn-navbar" data-taget=".nav-collapse" data-toggle"collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </a>
+    <nav class="nav-collapse in collapse" role="navigation" style="height: auto;">
+      <ul class="nav">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Submit</a></li>
+        <li><a href="#">Jobs</a></li>
+        <li><a href="#">Help</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+#}
+
+
+<div class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="{{ url_for('search.index') }}">
+        <img src="{{ url_for('static', filename='img/inspire_logo_hep.png') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}">
+      </a>
+    </div>
+
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav masthead-nav pull-right">
+        <li class="active"><a href="#"><i class="fa fa-home"></i>Home</a></li>
+        <li><a href="#"><i class="fa fa-upload"></i>Submit</a></li>
+        <li><a href="#"><i class="fa fa-question-circle"></i>Help</a></li>
+        <li><a href="#"><i class="fa fa-envelope"></i>Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+{#
+    {%- if current_user.is_guest %}
+<div class="modal fade" id="sign-in-modal" tabindex="-1" role="dialog" aria-labelledby="sign-in-label" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header" align="center" style="background-color: #eeeeee;">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="modal-title" id="sign-in-label">Sign In</h3>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <form class="form-signin" action="{{url_for('webaccount.login')}}" method="POST">
+            <input id="referer" name="referer" type="hidden" value="{{url_for('accounts_settings.profile')}}">
+            <input id="login_method" name="login_method" type="hidden" value="Local">
+            <div class="form-group">
+              <input class="form-control" id="nickname" name="nickname" placeholder="Username or email" type="text" value="">
+            </div>
+            <div class="form-group">
+              <input class="form-control" id="password" name="password" placeholder="Password" type="password" value="">
+
+              <label class="checkbox">
+                <input class="checkbox" id="remember" name="remember" type="checkbox" value="y"> Remember Me
+              </label>
+              <button class="btn btn-info btn-lg btn-block" id="submit" name="submit" type="submit"><i class="fa fa-sign-in"></i> Sign in</button>
+            </form>
+            <p class="text-center"><br><small>
+              <a href="{{ url_for('webaccount.lost') }}">
+                {{ _('Lost your password?') }}
+              </a>
+            </small></p>
+          </div>
+        </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="sign-up-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="modal-title" id="sign-in-label">Sign In</h3>
+      </div>
+      <div class="modal-body">
+        <p>One fine body&hellip;</p>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endif -%}
+
+  <header class="gradient">
+    <div class="container headerbg">
+
+      <div class="container" style="height:37px;">
+        <ul class="nav nav-tabs">
+
+          <li class="pull-right">
+            {%- if current_user.is_guest %}
+              <button class="btn btn-default" data-toggle="modal" data-target="#sign-in-modal"><i class="fa fa-sign-in"></i> Sign In</button>
+              <button class="btn btn-warning" onclick="window.location='{{config.CFG_SITE_URL}}{{url_for('webaccount.register')}}'"><i class="fa fa-edit"></i> Sign Up</button>
+            {%- else %}
+              <div class="btn-group">
+                <a class="btn btn-default" href="{{ url_for('accounts_settings.profile') }}"><i class="fa fa-user"></i> {{ current_user.email }}</a>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                  <span class="caret"></span>
+                </button>
+              </div>
+            {%- endif %}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+  </div>
+</div>
+#}

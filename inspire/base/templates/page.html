@@ -22,12 +22,53 @@
 
 {% extends "page_base.html" %}
 
+
+{%- block global_css -%}
+  {# inspire.css is the customized bootstrap.min.css #}
+  {%- css 'css/inspire.css', '00-invenio' -%}
+  {%- css 'css/font-awesome.min.css', '00-invenio' -%}
+{%- endblock global_css -%}
+
+{%- block global_javascript -%}
+  {%- js 'js/jquery.min.js', '00-invenio' -%}
+  {%- js 'js/bootstrap.min.js', '00-invenio' -%}
+{%- endblock global_javascript -%}
+
+
+{%- block head_links %}
+{{ super() }}
+  <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
+{%- endblock head_links %}
+
 {% set searchbar_enable = searchbar_enable and easy_search_form != None and collection != None %}
 
 {% if searchbar_enable %}
   {% from "_formhelpers.html" import render_filter_form with context %}
   {% from "search/helpers.html" import search_form, search_form_javascript with context %}
 {% endif %}
+
+
+{#
+{%- block headerbox %}
+  {% include 'header.html' %}
+{% endblock headerbox %}
+#}
+
+
+{%- block page_header -%}
+    <header>
+      <!-- replaced page header -->
+      {% block headerbox %}
+        {% include 'header.html' %}
+      {% endblock headerbox %}
+      <!-- end replaced page header -->
+      {% block breadcrumb %}
+      {%- include 'breadcrumbs.html' -%}
+      {% endblock breadcrumb %}
+      {% block pageheaderadd %}{{ pageheaderadd|safe }}{% endblock pageheaderadd %}
+    </header>
+{%- endblock page_header -%}
+
 
 {% block header %}
   {{ super() }}
@@ -63,3 +104,8 @@
     {{ search_form_javascript(collection) }}
   {% endif %}
 {% endblock %}
+
+
+{%- block page_footer %}
+  {%- include 'footer.html' -%}
+{%- endblock page_footer %}
