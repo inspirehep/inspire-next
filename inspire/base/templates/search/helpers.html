@@ -30,3 +30,90 @@
   });
 
 {% endblock searchfield_typeahead_configuration %}
+
+{%- block search_form_body scoped %}
+
+  <div id="newsearch" class="row"> <!-- start of row -->
+    <div class="row">
+        <div class="col-md-9">
+            {# TODO:
+                * add logic to existing li elements in order which li is selected to perform the right search in the corresponding collection
+            #}
+            <ul id="myTab" class="nav nav-tabs allign">
+                <li class="active"><a href="#" id="hep">Literature</a></li>
+                <li><a href="#">People</a></li>
+                <li><a href="#">Institutions</a></li>
+                <li><a href="#">Conferences</a></li>
+                <li><a href="#">Experiments</a></li>
+                <li><a href="#">Journals</a></li>
+            </ul>
+        </div>
+    </div>
+    {% block search_form_text scoped %}{% endblock search_form_text %}
+
+    {% block search_form_form scoped %}
+
+      <div class="col-md-9">
+        <form action="{{ url_for('search.search') }}"
+                  name="search"
+                  method="get"
+                  role="search"
+                  id="searchform">
+          {% block search_form_ctrls_box %}
+            <div class="input-group input-group-md">
+              <span class="input-group-btn">
+                <div class="btn-group">
+                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="#"><strong>Search Tips</strong></a></li>
+                    <li><a href="#"><strong>Search Guide</strong></a></li>
+                    <li class="divider"></li>
+                    <li class="dropdown-header">Search examples</li>
+                    <li><a href="#">author:"Ellis,J."<span class="pull-right glyphicon glyphicon-chevron-right"></span></a></li>
+                    <li><a href="#">quantum<span class="pull-right glyphicon glyphicon-chevron-right"></span></a></li>
+                  </ul>
+                </div>
+              </span>
+              <input type="text" class="form-control" placeholder="Search for records">
+              <div id="drop" class="input-group-btn">
+                <select class="form-control">
+                  <option>Brief format</option>
+                  <option>Detailed format</option>
+                  <option>Citesummary</option>
+                  <option>LaTeX (EU)</option>
+                  <option>LaTeX (US)</option>
+                  <option>BibTeX</option>
+                  <option>CV format (LaTeX)</option>
+                  <option>CV format (html)</option>
+                  <option>CV format (text)</option>
+                  <option>Harvmac</option>
+                  <option>RefWorks</option>
+                  <option>EndNote</option>
+                </select>
+              </div>
+              <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit">{{ _("Search") }}<span class="glyphicon glyphicon-search"></span></button>
+              </span>
+            </div>
+          {% endblock search_form_ctrls_box %}
+        </form>
+        <!-- /input-group -->
+      </div>
+
+    {% endblock search_form_form %}
+
+    </div> <!-- end of row -->
+
+  <style>
+    #myTab.nav-tabs {
+        border-bottom: none;
+    }
+    .allign {
+        margin-left: 15px;
+        /* because the container has padding: 15px; */
+    }
+  </style>
+
+{%- endblock search_form_body %}

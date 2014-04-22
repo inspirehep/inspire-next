@@ -29,3 +29,5 @@ docs/_build/
 bower.json
 **/static/vendors/**
 **/static/gen/**
+*~
+.idea/

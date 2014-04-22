@@ -22,6 +22,11 @@
 
 {% extends "page_base.html" %}
 
+{%- block head_links %}
+{{ super() }}
+  <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
+{%- endblock head_links %}
+
 {% set searchbar_enable = searchbar_enable and easy_search_form != None and collection != None %}
 
 {% if searchbar_enable %}
@@ -31,10 +36,31 @@
 
 {%- block global_bundles %}
   {{ super() }}
+  {% bundles "base.css" %}
   {% if searchbar_enable %}
     {% bundle "search.js", "search.css" %}
   {% endif %}
 {%- endblock %}
+
+{#
+{%- block headerbox %}
+  {% include 'header.html' %}
+{% endblock headerbox %}
+#}
+
+{%- block page_header -%}
+    <header>
+      <!-- replaced page header -->
+      {% block headerbox %}
+        {% include 'header.html' %}
+      {% endblock headerbox %}
+      <!-- end replaced page header -->
+      {% block breadcrumb %}
+      {%- include 'breadcrumbs.html' -%}
+      {% endblock breadcrumb %}
+      {% block pageheaderadd %}{{ pageheaderadd|safe }}{% endblock pageheaderadd %}
+    </header>
+{%- endblock page_header -%}
 
 {% block body %}
   {{ super() }}
@@ -52,3 +78,8 @@
     {{ search_form_javascript(collection) }}
   {% endif %}
 {% endblock %}
+
+
+{%- block page_footer %}
+  {%- include 'footer.html' -%}
+{%- endblock page_footer %}
