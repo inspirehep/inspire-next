@@ -22,7 +22,35 @@
     -------------------------------
 """
 
-from flask import Blueprint
+from flask import Blueprint, render_template
+from flask.ext.menu import register_menu
+from invenio.base.i18n import _
+# from flask.ext.breadcrumbs import register_breadcrumb
 
 blueprint = Blueprint('inspire', __name__, url_prefix="",
                       template_folder='templates', static_folder='static')
+
+
+#
+# Static pages
+#
+
+@blueprint.route('/about', methods=['GET', ])
+@register_menu(blueprint, 'footermenu_left.about', _('About'), order=1)
+# @register_breadcrumb(blueprint, 'breadcrumbs.about', _("About"))
+def about():
+    return render_template('inspire/about.html')
+
+
+@blueprint.route('/privacy', methods=['GET', ])
+@register_menu(blueprint, 'footermenu_left.privacy', _('Privacy'), order=2)
+# @register_breadcrumb(blueprint, 'breadcrumbs.about', _("About"))
+def privacy():
+    return render_template('inspire/privacy.html')
+
+
+@blueprint.route('/faq', methods=['GET', ])
+@register_menu(blueprint, 'footermenu_left.faq', _('FAQ'), order=3)
+# @register_breadcrumb(blueprint, 'breadcrumbs.about', _("About"))
+def faq():
+    return render_template('inspire/faq.html')
