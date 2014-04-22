@@ -1,0 +1,59 @@
+// Styles for header goes here
+
+.masthead-nav > li {
+     text-align: center;
+}
+
+/*
+     the breakpoint is set to 654px, where the form breaks into
+     separated components: form, select options and search box
+*/
+
+// @media(max-width:654px){
+//      #myTab {
+//           li {
+//                float:none;
+//           }
+//      }
+//      // #searchform {
+
+//      // }
+// }
+
+// @media(min-width: @screen-tablet){
+//      .masthead-nav {
+//           float: none;
+//      }
+// }
+
+// /*
+//      we will need different size images when resizing the viewport
+// */
+// @media screen and (max-width: 600px) {
+//   .logo {
+//     background: url(my-image.jpg);
+//   }
+// }
+
+
+/*
+     this mediaquery is set to stack the list elements 3x3 in mobile version
+*/
+
+@media screen and (max-width: @screen-tablet) {
+     .navbar-collapse > .masthead-nav {
+          float: none !important;       // TODO: find another way to do it not hacky one
+     }
+     #myTab {
+          > li {
+               width: 50%;
+               > a {
+                    text-align: center;
+               }
+          }
+     }
+     // takes the 3 first li elements
+     #myTab > li:nth-child(-n+3) {
+          float: left;
+     }
+}

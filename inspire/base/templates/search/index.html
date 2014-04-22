@@ -1,0 +1,116 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2014 CERN.
+##
+## INSPIRE is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+##
+## In applying this licence, CERN does not waive the privileges and immunities
+## granted to it by virtue of its status as an Intergovernmental Organization
+## or submit itself to any jurisdiction.
+#}
+
+{%- extends "search/index_base.html" -%}
+
+{%- block extra_style %}{% endblock extra_style -%}
+
+
+{% block index %}
+
+  <style>
+    .panels {
+        margin-top: 100px;
+    }
+  </style>
+
+  <div class="row"> <!-- start of row -->
+    <div class="col-md-3 panels">
+      <div class="panel panel-default">
+        <div class="panel-heading">Literature
+        </div>
+        <div class="panel-body">Upcoming
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 panels">
+      <div class="panel panel-default">
+        <div class="panel-heading">People
+        </div>
+        <div class="panel-body">Upcoming
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 panels">
+      <div class="panel panel-default">
+        <div class="panel-heading">Jobs
+        </div>
+        <div class="panel-body">Upcoming
+        </div>
+      </div>
+    </div>
+
+  {%- block index_right -%}{%- endblock index_right -%}
+  {%- block index_left -%}{%- endblock index_left -%}
+
+  {%- block portalbox_rt -%}
+    <div class="col-md-3">
+        {{ portalbox_sidebar(portalboxes.rt, class="well") }}
+        <div class="well">
+            <p>News Feeds</p>
+            <div id="blog"></div>
+        </div>
+
+        <a class="twitter-timeline" href="https://twitter.com/inspirehep" data-widget-id="434352054106992641">Tweets by @inspirehep</a>
+    </div>
+  {%- endblock portalbox_rt -%}
+  </div> <!-- start of row -->
+
+{% endblock index %}
+
+
+{%- block header -%}
+  {{ super() }}
+  {%- js url_for('search.static', filename='js/jquery.feeds.min.js') -%}
+{%- endblock -%}
+
+{% block javascript %}
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+<script>
+  $('#blog').feeds({
+      feeds: {
+         feed: 'http://blog.inspirehep.net/feeds/posts/default',
+      },
+      max: 3,
+      preprocess: function ( feed ) {
+          // Change the publishedDate format from UTC to dd-mm-yyyy
+          // Inside the callback 'this' corresponds to the entry being processed
+          var date = new Date(this.publishedDate);
+          var pieces = [date.getDate(), date.getMonth()+1, date.getFullYear()]
+          this.publishedDate = pieces.join('-');
+      }
+  });
+
+  (function($) {
+    $('#myTab a').click(function (e) {
+        e.preventDefault();
+        if (!($(this).attr('id') == 'hep')) {
+            $('#drop').hide();
+        } else {
+            $('#drop').show();
+        }
+        $(this).tab('show');
+    })
+  })(jQuery);
+</script>
+{{ super() }}
+{% endblock javascript %}
