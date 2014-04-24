@@ -45,6 +45,7 @@ from invenio.modules.search.bundles import js as _search_js
 
 _search_js.contents += (
     'js/search/invenio_with_spires_typeahead_configuration.js',
+    'js/search/search_box.js',
 )
 
 from invenio.modules.formatter.bundles import css as _formatter_css
