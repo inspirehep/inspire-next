@@ -98,18 +98,6 @@
           this.publishedDate = pieces.join('-');
       }
   });
-
-  (function($) {
-    $('#myTab a').click(function (e) {
-        e.preventDefault();
-        if (!($(this).attr('id') == 'hep')) {
-            $('#drop').hide();
-        } else {
-            $('#drop').show();
-        }
-        $(this).tab('show');
-    })
-  })(jQuery);
 </script>
 {{ super() }}
 {% endblock javascript %}
