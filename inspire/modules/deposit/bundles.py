@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 ## This file is part of INSPIRE.
 ## Copyright (C) 2014 CERN.
@@ -16,3 +17,12 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
+
+from invenio.modules.deposit.bundles import js as _deposit_js
+
+# '_' prefix indicates private variables, and prevents duplicated import by
+# auto-discovery service of invenio
+
+_deposit_js.contents += (
+    'js/deposit/fillform.js',
+)
