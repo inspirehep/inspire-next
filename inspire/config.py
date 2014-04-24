@@ -47,6 +47,7 @@ PACKAGES = [
     'inspire.base',
     'inspire.ext',
     'inspire.modules.workflows',
+    'inspire.modules.deposit',
     'invenio.modules.access',
     'invenio.modules.accounts',
     'invenio.modules.alerts',
@@ -104,6 +105,10 @@ PACKAGES = [
     'invenio.base',
 ]
 
+DEPOSIT_TYPES = [
+    'inspire.modules.deposit.workflows.literature.literature',
+]
+DEPOSIT_DEFAULT_TYPE = "inspire.modules.deposit.workflows.literature:literature"
 
 CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
 BROKER_URL = "amqp://guest:guest@localhost:5672//"
