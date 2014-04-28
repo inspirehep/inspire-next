@@ -28,13 +28,14 @@
 {% block index %}
 
   <style>
-    .panels {
-        margin-top: 100px;
+    #feed {
+      font-size: 17px;
+      text-align: center;
     }
   </style>
 
   <div class="row"> <!-- start of row -->
-    <div class="col-md-3 panels">
+    <div class="col-md-3">
       <div class="panel panel-default">
         <div class="panel-heading">Literature
         </div>
@@ -42,7 +43,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3 panels">
+    <div class="col-md-3">
       <div class="panel panel-default">
         <div class="panel-heading">People
         </div>
@@ -50,7 +51,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-3 panels">
+    <div class="col-md-3">
       <div class="panel panel-default">
         <div class="panel-heading">Jobs
         </div>
@@ -66,7 +67,8 @@
     <div class="col-md-3">
         {{ portalbox_sidebar(portalboxes.rt, class="well") }}
         <div class="well">
-            <p>News Feeds</p>
+            <p id="feed">News Feed</p>
+            <hr>
             <div id="blog"></div>
         </div>
 
