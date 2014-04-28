@@ -20,10 +20,6 @@
 ** or submit itself to any jurisdiction.
 */
 
-/**
-            TODO: Connect select options under the Literature Collection
-                        with the search results
-**/
 
 (function($) {
 
@@ -57,10 +53,11 @@
         }
     }
 
-    // $('#myTab a').on('click', function(e){
-    //     console.log($(this).attr('href'));
-    //    insertParam('cc', $(this).attr('href'))
-    // });
+
+    $('#myTab a').on('click', function(e){
+        console.log($(this).attr('href'));
+      // insertParam('cc', $(this).attr('href'))
+    });
 
     $('#myTab a').on('click', function (e) {
         e.preventDefault();
@@ -104,7 +101,9 @@ console.log(url.split("/").length);
 
     if (url.split("/").length<5 && url_has_vars()!==true) {
         console.log('clearing localStorage.....')
-        window.localStorage.clear("lastTab");
+       // window.localStorage.clear("lastTab");
+       console.log($('a[href="Literature"]'))
+        $('a[href="Literature"]').click();
     }
 
 
