@@ -7,14 +7,22 @@
 @import "footer.less";
 
 
+// fix the horizontal scroll in mobile version
+// see here a fix:
+// https://github.com/twbs/bootstrap/issues/10711#issuecomment-26223067
+body {
+    overflow-x: hidden;
+}
+.row {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
 // TODO:
 // break into pieces: eg. header.less, footer.less etc.
 #drop {
     border-left: none;
     width: 170px;
-}
-section {
-    text-align: center;
 }
 .fa {
     padding: 10px;

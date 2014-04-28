@@ -59,7 +59,9 @@
         <span class="icon-bar"></span>
       </button>
       <a href="{{ url_for('search.index') }}">
-        <img src="{{ url_for('static', filename='img/inspire_logo_hep.png') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}">
+        <img src="{{ url_for('static', filename='img/inspire_logo_hep.png') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}" height="64px"> {# 64px is the default bootsrap navbar height
+        see this as reference:
+        http://stackoverflow.com/questions/18474564/bootstrap-3-navbar-with-logo #}
       </a>
     </div>
 

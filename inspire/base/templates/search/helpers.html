@@ -37,24 +37,24 @@
 {%- block search_form_body scoped %}
   <div id="search-box-main" class="row">
     <div class="row">
-      <div class="col-md-9">
+      <div class="col-md-9 col-centered">
             <ul id="myTab" class="nav nav-tabs allign">
             {#
               TODO:
                 * add logic to existing li elements in order which li is selected to perform the right search in the corresponding collection
              #}
-                <li class="active"><a href="#" id="hep">Literature</a></li>
-                <li><a href="#">People</a></li>
-                <li><a href="#">Institutions</a></li>
-                <li><a href="#">Conferences</a></li>
-                <li><a href="#">Experiments</a></li>
-                <li><a href="#">Journals</a></li>
+                <li class="active"><a href="#Literature" data-toggle="tab" id="hep">Literature</a></li>
+                <li><a href="#People" data-toggle="tab">People</a></li>
+                <li><a href="#Institutions" data-toggle="tab">Institutions</a></li>
+                <li><a href="#Conferences" data-toggle="tab">Conferences</a></li>
+                <li><a href="#Experiments" data-toggle="tab">Experiments</a></li>
+                <li><a href="#Journals" data-toggle="tab">Journals</a></li>
             </ul>
         </div>
     </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         {% block search_form_form scoped %}
-        <div class="col-md-9">
+        <div class="col-md-9 col-centered">
           <form action="{{ url_for('search.search') }}"
               name="search"
               method="get"
@@ -154,10 +154,19 @@
     #myTab.nav-tabs {
         border-bottom: none;
     }
+    #search-box-main {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    /* see here for more details: http://stackoverflow.com/questions/18153234/center-a-div-using-bootstrap-3-markup-or-css */
+    .col-centered{
+      float: none;
+      margin: 0 auto;
+    }
+    /*
     .allign {
         margin-left: 15px;
-        /* because the container has padding: 15px; */
-    }
+    }*/
   </style>
 {% endblock search_form %}
 {% endmacro %}
