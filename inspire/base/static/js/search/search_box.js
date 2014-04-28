@@ -69,6 +69,80 @@
         } else {
             $('#drop').show();
         }
-        $(this).tab('show');
+     //   $(this).tab('show');
     });
+
+
+  $('#myTab a').on('click', function (e) {
+    console.log('hi')
+    //save the latest tab; use cookies if you like 'em better:
+    console.log($(e.target).attr('href'))
+    localStorage.setItem('lastTab', $(e.target).attr('href'));
+  });
+
+  //go to the latest tab, if it exists:
+  var lastTab = localStorage.getItem('lastTab');
+
+  if (lastTab) {
+      $('a[href="'+lastTab+'"]').click();
+  }
+
+var url= window.location.href;
+console.log(url);
+console.log(url.split("/"));
+console.log(url.split("/").length);
+// if(url.split("/").length==4) {
+//     window.localStorage.clear("lastTab");
+//     console.log('clearing localStorage.....')
+// //     if(url_has_vars()===true) {
+// //     window.localStorage.clear("lastTab");
+// //     console.log('clearing localStorage.....')
+
+// // }
+//     //alert('You are in the homepage');
+// }
+
+    if (url.split("/").length<5 && url_has_vars()!==true) {
+        console.log('clearing localStorage.....')
+        window.localStorage.clear("lastTab");
+    }
+
+
+function url_has_vars() {
+   return location.search != "";
+}
+console.log(url_has_vars())
+// if(url_has_vars()===true) {
+//     window.localStorage.clear("lastTab");
+// }
+
+
+    // var json, tabsState;
+    // $('a[data-toggle="pill"], a[data-toggle="tab"]').on('shown', function(e) {
+    //     var href, json, parentId, tabsState;
+
+    //     tabsState = localStorage.getItem("tabs-state");
+    //     json = JSON.parse(tabsState || "{}");
+    //     parentId = $(e.target).parents("ul.nav.nav-pills, ul.nav.nav-tabs").attr("id");
+    //     href = $(e.target).attr('href');
+    //     json[parentId] = href;
+
+    //     return localStorage.setItem("tabs-state", JSON.stringify(json));
+    // });
+
+    // tabsState = localStorage.getItem("tabs-state");
+    // json = JSON.parse(tabsState || "{}");
+
+    // $.each(json, function(containerId, href) {
+    //     return $("#" + containerId + " a[href=" + href + "]").tab('show');
+    // });
+
+    // $("ul.nav.nav-pills, ul.nav.nav-tabs").each(function() {
+    //     var $this = $(this);
+    //     if (!json[$this.attr("id")]) {
+    //       return $this.find("a[data-toggle=tab]:first, a[data-toggle=pill]:first").tab("show");
+    //     }
+    // });
+
+
 })(jQuery);
