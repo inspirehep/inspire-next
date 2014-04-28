@@ -27,37 +27,35 @@
         adding parameter to the URL, helpful function for
         defining the cc parameter for the collection names
     **/
-    function insertParam(key, value) {
-        key = escape(key); value = escape(value);
+    // function insertParam(key, value) {
+    //     key = escape(key); value = escape(value);
 
-        var kvp = document.location.search.substr(1).split('&');
-        if (kvp == '') {
-            document.location.search = '?' + key + '=' + value;
-        }
-        else {
+    //     var kvp = document.location.search.substr(1).split('&');
+    //     if (kvp == '') {
+    //         document.location.search = '?' + key + '=' + value;
+    //     }
+    //     else {
 
-            var i = kvp.length; var x; while (i--) {
-                x = kvp[i].split('=');
+    //         var i = kvp.length; var x; while (i--) {
+    //             x = kvp[i].split('=');
 
-                if (x[0] == key) {
-                    x[1] = value;
-                    kvp[i] = x.join('=');
-                    break;
-                }
-            }
+    //             if (x[0] == key) {
+    //                 x[1] = value;
+    //                 kvp[i] = x.join('=');
+    //                 break;
+    //             }
+    //         }
 
-            if (i < 0) { kvp[kvp.length] = [key, value].join('='); }
+    //         if (i < 0) { kvp[kvp.length] = [key, value].join('='); }
 
-            //this will reload the page, it's likely better to store this until finished
-            document.location.search = kvp.join('&');
-        }
-    }
+    //         //this will reload the page, it's likely better to store this until finished
+    //         document.location.search = kvp.join('&');
+    //     }
+    // }
 
-
-    $('#myTab a').on('click', function(e){
-        console.log($(this).attr('href'));
-      // insertParam('cc', $(this).attr('href'))
-    });
+    // $('#myTab a').on('click', function(e){
+    //   insertParam('cc', $(this).attr('href'))
+    // });
 
     $('#myTab a').on('click', function (e) {
         e.preventDefault();
@@ -66,55 +64,34 @@
         } else {
             $('#drop').show();
         }
-     //   $(this).tab('show');
+       $(this).tab('show');
     });
 
+    var url= window.location.href;
 
-  $('#myTab a').on('click', function (e) {
-    console.log('hi')
-    //save the latest tab; use cookies if you like 'em better:
-    console.log($(e.target).attr('href'))
-    localStorage.setItem('lastTab', $(e.target).attr('href'));
-  });
-
-  //go to the latest tab, if it exists:
-  var lastTab = localStorage.getItem('lastTab');
-
-  if (lastTab) {
-      $('a[href="'+lastTab+'"]').click();
-  }
-
-var url= window.location.href;
-console.log(url);
-console.log(url.split("/"));
-console.log(url.split("/").length);
-// if(url.split("/").length==4) {
-//     window.localStorage.clear("lastTab");
-//     console.log('clearing localStorage.....')
-// //     if(url_has_vars()===true) {
-// //     window.localStorage.clear("lastTab");
-// //     console.log('clearing localStorage.....')
-
-// // }
-//     //alert('You are in the homepage');
-// }
-
+    // when in homepage it resets the tab state to the "Literature"
     if (url.split("/").length<5 && url_has_vars()!==true) {
-        console.log('clearing localStorage.....')
-       // window.localStorage.clear("lastTab");
-       console.log($('a[href="Literature"]'))
+       window.localStorage.clear("lastTab");
+    }
+
+    $('#myTab a').on('click', function (e) {
+        localStorage.setItem('lastTab', $(e.target).attr('href'));
+    });
+
+    //go to the latest tab, if it exists:
+    var lastTab = localStorage.getItem('lastTab');
+
+    if (lastTab) {
+        $('a[href="'+lastTab+'"]').click();
+    }
+    else {
         $('a[href="Literature"]').click();
     }
 
 
-function url_has_vars() {
-   return location.search != "";
-}
-console.log(url_has_vars())
-// if(url_has_vars()===true) {
-//     window.localStorage.clear("lastTab");
-// }
-
+    function url_has_vars() {
+        return location.search != "";
+    }
 
     // var json, tabsState;
     // $('a[data-toggle="pill"], a[data-toggle="tab"]').on('shown', function(e) {
