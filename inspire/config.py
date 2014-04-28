@@ -105,6 +105,12 @@ PACKAGES = [
 CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
 BROKER_URL = "amqp://guest:guest@localhost:5672//"
 
+CFG_SITE_LANG = u"en"
+CFG_SITE_NAME = u"INSPIRE - High-Energy Physics Literature Database"
+CFG_SITE_NAME_INTL = dict(
+    en=u"INSPIRE - High-Energy Physics Literature Database",
+)
+
 SHOW_FACETS = False
 
 try:
