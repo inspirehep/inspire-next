@@ -39,16 +39,12 @@
     <div class="row">
       <div class="col-md-9 col-centered">
             <ul id="myTab" class="nav nav-tabs allign">
-            {#
-              TODO:
-                * add logic to existing li elements in order which li is selected to perform the right search in the corresponding collection
-             #}
-                <li class="active"><a href="#Literature" id="hep">Literature</a></li>
-                <li><a href="#People">People</a></li>
-                <li><a href="#Institutions">Institutions</a></li>
-                <li><a href="#Conferences">Conferences</a></li>
-                <li><a href="#Experiments">Experiments</a></li>
-                <li><a href="#Journals">Journals</a></li>
+                <li class="active"><a href="#Literature" id="hep" data-toggle="tab" data-cc="Literature">Literature</a></li>
+                <li><a href="#HepNames" data-toggle="tab" data-cc="HepNames">People</a></li>
+                <li><a href="#Institutions" data-toggle="tab" data-cc="Institutions">Institutions</a></li>
+                <li><a href="#Conferences" data-toggle="tab" data-cc="Conferences">Conferences</a></li>
+                <li><a href="#Experiments" data-toggle="tab" data-cc="Experiments">Experiments</a></li>
+                <li><a href="#Journals" data-toggle="tab" data-cc="Journals">Journals</a></li>
             </ul>
         </div>
     </div>
@@ -62,9 +58,13 @@
               id="searchform">
           {% block search_form_ctrls scoped %}
           <input type="hidden" name="ln" value="{{g.ln}}">
-          {% if collection.id > 1 %}
-          <input type="hidden" name="cc" value="{{collection.name}}">
-          {% endif %}
+
+          {#
+                the input which takes care of collection, see the search_box for
+                dynamically creation of collection name depending on which tab is selected
+          #}
+          <input id="collection" type="hidden" name="cc" value="">
+
               <div class="input-group" id="searchform-input-group">
                 {% block search_form_ctrls_help scoped %}
                 <span class="input-group-btn">
