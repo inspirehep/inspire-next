@@ -82,8 +82,12 @@
         $('input#collection').val($collection);
     });
 
-    // TODO:
-    // this fix removes the cc parameter when in default collection
-    // $("input#collection").prop('disabled', true);
+    // this fix removes the cc parameter when inside default collection
+    $( "form#searchform" ).submit(function( event ) {
+        if ( $( "input#collection" ).val() === "" ) {
+            $("input#collection").prop('disabled', true);
+            return;
+        }
+    });
 
 })(jQuery);
