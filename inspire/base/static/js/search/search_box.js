@@ -23,6 +23,8 @@
 
 (function($) {
 
+    /* TODO: refactor! */
+
     var json, tabsState;
     $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
         var href, json, parentId, tabsState;
@@ -31,6 +33,14 @@
         parentId = $(e.target).parents("ul.nav.nav-tabs").attr("id");
         href = $(e.target).attr('href');
         json[parentId] = href;
+
+        // display the options only for the default collection
+        if(href=="#Literature") {
+            $("input#collection").prop('disabled', true);
+            $('#drop').show();
+        } else {
+            $('#drop').hide();
+        }
 
         return localStorage.setItem("tabs-state", JSON.stringify(json));
     });
