@@ -36,7 +36,6 @@
 
         // display the options only for the default collection
         if(href=="#Literature") {
-            $("input#collection").prop('disabled', true);
             $('#drop').show();
         } else {
             $('#drop').hide();
