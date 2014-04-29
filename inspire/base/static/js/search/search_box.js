@@ -23,102 +23,58 @@
 
 (function($) {
 
-     /**
-        adding parameter to the URL, helpful function for
-        defining the cc parameter for the collection names
-    **/
-    // function insertParam(key, value) {
-    //     key = escape(key); value = escape(value);
+    var json, tabsState;
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+        var href, json, parentId, tabsState;
+        tabsState = localStorage.getItem("tabs-state");
+        json = JSON.parse(tabsState || "{}");
+        parentId = $(e.target).parents("ul.nav.nav-tabs").attr("id");
+        href = $(e.target).attr('href');
+        json[parentId] = href;
 
-    //     var kvp = document.location.search.substr(1).split('&');
-    //     if (kvp == '') {
-    //         document.location.search = '?' + key + '=' + value;
-    //     }
-    //     else {
+        return localStorage.setItem("tabs-state", JSON.stringify(json));
+    });
 
-    //         var i = kvp.length; var x; while (i--) {
-    //             x = kvp[i].split('=');
+    tabsState = localStorage.getItem("tabs-state");
+    json = JSON.parse(tabsState || "{}");
 
-    //             if (x[0] == key) {
-    //                 x[1] = value;
-    //                 kvp[i] = x.join('=');
-    //                 break;
-    //             }
-    //         }
+    $.each(json, function(containerId, href) {
+        return $("#" + containerId + " a[href=" + href + "]").tab('show');
+    });
 
-    //         if (i < 0) { kvp[kvp.length] = [key, value].join('='); }
+    var href = json.myTab
+        , el = $("a[href=" + href + "]")
+        , $collection = el.data('cc');
 
-    //         //this will reload the page, it's likely better to store this until finished
-    //         document.location.search = kvp.join('&');
-    //     }
-    // }
+    $('input#collection').val($collection);
 
-    // $('#myTab a').on('click', function(e){
-    //   insertParam('cc', $(this).attr('href'))
-    // });
+    $("ul.nav.nav-tabs").each(function() {
+        var $this = $(this);
 
-    $('#myTab a').on('click', function (e) {
+        // when in homepage go to the default tab
+        if (window.location.href.split("/").length < 5 && location.search == "") {
+            $('input#collection').val($this.find("a[data-toggle=tab]:first").data('cc'));
+            return $this.find("a[data-toggle=tab]:first").tab("show");
+        }
+    });
+
+    $('a[data-toggle="tab"]').on('click', function(e){
         e.preventDefault();
-        if (!($(this).attr('id') == 'hep')) {
+        var $this = $(this)
+            , $collection = $this.data('cc');
+
+        if ($this.attr('id') != 'hep') {
             $('#drop').hide();
         } else {
             $('#drop').show();
         }
-       $(this).tab('show');
+
+        // send the cc value to the hidden input
+        $('input#collection').val($collection);
     });
 
-    var url= window.location.href;
-
-    // when in homepage it resets the tab state to the "Literature"
-    if (url.split("/").length<5 && url_has_vars()!==true) {
-       window.localStorage.clear("lastTab");
-    }
-
-    $('#myTab a').on('click', function (e) {
-        localStorage.setItem('lastTab', $(e.target).attr('href'));
-    });
-
-    //go to the latest tab, if it exists:
-    var lastTab = localStorage.getItem('lastTab');
-
-    if (lastTab) {
-        $('a[href="'+lastTab+'"]').click();
-    }
-    else {
-        $('a[href="Literature"]').click();
-    }
-
-
-    function url_has_vars() {
-        return location.search != "";
-    }
-
-    // var json, tabsState;
-    // $('a[data-toggle="pill"], a[data-toggle="tab"]').on('shown', function(e) {
-    //     var href, json, parentId, tabsState;
-
-    //     tabsState = localStorage.getItem("tabs-state");
-    //     json = JSON.parse(tabsState || "{}");
-    //     parentId = $(e.target).parents("ul.nav.nav-pills, ul.nav.nav-tabs").attr("id");
-    //     href = $(e.target).attr('href');
-    //     json[parentId] = href;
-
-    //     return localStorage.setItem("tabs-state", JSON.stringify(json));
-    // });
-
-    // tabsState = localStorage.getItem("tabs-state");
-    // json = JSON.parse(tabsState || "{}");
-
-    // $.each(json, function(containerId, href) {
-    //     return $("#" + containerId + " a[href=" + href + "]").tab('show');
-    // });
-
-    // $("ul.nav.nav-pills, ul.nav.nav-tabs").each(function() {
-    //     var $this = $(this);
-    //     if (!json[$this.attr("id")]) {
-    //       return $this.find("a[data-toggle=tab]:first, a[data-toggle=pill]:first").tab("show");
-    //     }
-    // });
-
+    // TODO:
+    // this fix removes the cc parameter when in default collection
+    // $("input#collection").prop('disabled', true);
 
 })(jQuery);
