@@ -122,19 +122,19 @@
                 {% block search_form_ctrls_settings scoped %}
                 {# hide this part on mobile version #}
                 <div id="drop" class="input-group-btn hidden-xs">
-                  <select class="form-control">
-                    <option>Brief format</option>
-                    <option>Detailed format</option>
-                    <option>Citesummary</option>
-                    <option>LaTeX (EU)</option>
-                    <option>LaTeX (US)</option>
-                    <option>BibTeX</option>
-                    <option>CV format (LaTeX)</option>
-                    <option>CV format (html)</option>
-                    <option>CV format (text)</option>
-                    <option>Harvmac</option>
-                    <option>RefWorks</option>
-                    <option>EndNote</option>
+                  <select name="of" class="form-control">
+                    <option value="hb" selected="selected">Brief format</option>
+                    <option value="hd">Detailed format</option>
+                    <option value="hcs">Citesummary</option>
+                    <option value="hlxe">LaTeX (EU)</option>
+                    <option value="hlxu">LaTeX (US)</option>
+                    <option value="hx">BibTeX</option>
+                    <option value="tlcv">CV format (LaTeX)</option>
+                    <option value="hcv">CV format (html)</option>
+                    <option value="htcv">CV format (text)</option>
+                    <option value="hlxh">Harvmac</option>
+                    <option value="xw">RefWorks</option>
+                    <option value="xe">EndNote</option>
                   </select>
                 </div>
                 {% endblock search_form_ctrls_settings %}
