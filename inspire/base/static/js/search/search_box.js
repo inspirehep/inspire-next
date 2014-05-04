@@ -21,6 +21,21 @@
 */
 
 
+/* Extracted from http://stackoverflow.com/a/18006498 */
+function parseQueryString(url) {
+    var queryStringIdx = url.indexOf('?');
+    var pairs = url.substr(queryStringIdx + 1)
+                   .split('&')
+                   .map(function(p) { return p.split('='); });
+    var result = { };
+    for (var i = 0; i < pairs.length; i++) {
+        result[decodeURIComponent(pairs[i][0])] = decodeURIComponent(pairs[i][1]);
+    }
+
+    return result;
+}
+
+
 (function($) {
 
     /* TODO: refactor! */
@@ -89,5 +104,11 @@
             return;
         }
     });
+
+    // Keep the output format selected based on the URL
+    var url_components = parseQueryString(window.location.href);
+    if ( url_components.of ) {
+        $('select[name=of]>option[value=' + url_components.of + ']').prop('selected', true);
+    }
 
 })(jQuery);
