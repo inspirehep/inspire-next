@@ -3,7 +3,10 @@ from .bibclassify import *
 from .bibexport import *
 from .bibknowledge import *
 from .bibrank import *
+from .field import *
+from .field_tag import *
 from .oai_harvest import *
+from .tag import *
 from .websearch import *
 from .websession import *
 from .websubmit import *
