@@ -40,8 +40,27 @@ function parseQueryString(url) {
 
     /* TODO: refactor! */
 
+// function getQueryVariable(variable) {
+//     var query = window.location.search.substring(1);
+//     var vars = query.split('&');
+//     for (var i = 0; i < vars.length; i++) {
+//         var pair = vars[i].split('=');
+//         if (decodeURIComponent(pair[0]) == variable) {
+//             return decodeURIComponent(pair[1]);
+//         }
+//     }
+//     console.log('Query variable %s not found', variable);
+// }
+
+// // FIX ME
+// console.log(getQueryVariable('cc'));
+// console.log($('#myTab a[href="#'+getQueryVariable('cc')+'"]'))
+// $('#myTab a[href="#'+getQueryVariable('cc')+'"]').tab('show')
+// return;
+// until here
+
     var json, tabsState;
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+    $('#myTab a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
         var href, json, parentId, tabsState;
         tabsState = localStorage.getItem("tabs-state");
         json = JSON.parse(tabsState || "{}");
@@ -72,7 +91,7 @@ function parseQueryString(url) {
 
     $('input#collection').val($collection);
 
-    $("ul.nav.nav-tabs").each(function() {
+    $("ul#myTab").each(function() {
         var $this = $(this);
 
         // when in homepage go to the default tab
@@ -82,7 +101,7 @@ function parseQueryString(url) {
         }
     });
 
-    $('a[data-toggle="tab"]').on('click', function(e){
+    $('#myTab a[data-toggle="tab"]').on('click', function(e){
         e.preventDefault();
         var $this = $(this)
             , $collection = $this.data('cc');
