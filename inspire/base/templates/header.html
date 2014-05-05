@@ -29,6 +29,10 @@
 
 
 <style>
+  /*
+      TODO: move to LESS and refactor CSS
+                download images locally
+  */
   .masthead-nav > li:last-child {
     border-left: 1px solid #ccc;
   }
@@ -39,6 +43,29 @@
   .navbar-default .navbar-nav>.active>a,
   .navbar-default .navbar-nav>.active>a:hover {
     background-color: #fff;
+  }
+  .img-orcid {
+    display: inline;
+    background-repeat: no-repeat;
+    padding-right: 40px;
+    background-image: url('../static/img/orcid.png');
+    height: 32px;
+    width: 32px;
+    padding-bottom: 13px;
+    padding-top: 8px;
+  }
+  .img-arxiv {
+    display: inline;
+    background-repeat: no-repeat;
+    padding-right: 40px;
+    background-image: url('../static/img/arxiv.ico');
+    height: 32px;
+    width: 32px;
+    padding-bottom: 13px;
+    padding-top: 8px;
+  }
+  #sign-in-modal .btn-lg {
+    font-size: 15px;
   }
 </style>
 
@@ -52,7 +79,8 @@
         <span class="icon-bar"></span>
       </button>
       <a href="{{ url_for('search.index') }}">
-        <img src="{{ url_for('static', filename='img/inspire_logo_labs.png') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}" height="64px"> {# 64px is the default bootsrap navbar height
+        <img src="{{ url_for('static', filename='img/inspire_logo_hep.png') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}" height="64px">
+        {# 64px is the default bootsrap navbar height
         see this as reference:
         http://stackoverflow.com/questions/18474564/bootstrap-3-navbar-with-logo #}
       </a>
@@ -81,9 +109,7 @@
   </div>
 </div>
 
-
-
-    {%- if current_user.is_guest %}
+{%- if current_user.is_guest %}
 <div class="modal fade" id="sign-in-modal" tabindex="-1" role="dialog" aria-labelledby="sign-in-label" aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
@@ -94,73 +120,21 @@
       <div class="modal-body">
         <div class="row">
           <div class="col-md-12">
-            <form class="form-signin" action="{{url_for('webaccount.login')}}" method="POST">
-            <input id="referer" name="referer" type="hidden" value="{{url_for('accounts_settings.profile')}}">
-            <input id="login_method" name="login_method" type="hidden" value="Local">
-            <div class="form-group">
-              <input class="form-control" id="nickname" name="nickname" placeholder="Username or email" type="text" value="">
-            </div>
-            <div class="form-group">
-              <input class="form-control" id="password" name="password" placeholder="Password" type="password" value="">
-
-              <label class="checkbox">
-                <input class="checkbox" id="remember" name="remember" type="checkbox" value="y"> Remember Me
-              </label>
-              <button class="btn btn-info btn-lg btn-block" id="submit" name="submit" type="submit"><i class="fa fa-sign-in"></i> Sign in</button>
-            </form>
-            <p class="text-center"><br><small>
-              <a href="{{ url_for('webaccount.lost') }}">
-                {{ _('Lost your password?') }}
-              </a>
-            </small></p>
+            <a href="#" class="btn btn-default btn-lg btn-block"><div class="img-orcid"></div> Sign in with your ORCID</a>
           </div>
         </div>
-        </div>
-
       </div>
-    </div>
-  </div>
-
-
-{# signup
-<div class="modal fade" id="sign-up-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3 class="modal-title" id="sign-in-label">Sign In</h3>
+      <div class="modal-body" align="center">
+        <h4>&mdash; OR &mdash;</h4>
       </div>
       <div class="modal-body">
-        <p>One fine body&hellip;</p>
+        <div class="row">
+          <div class="col-md-12">
+            <a href="#" class="btn btn-default btn-lg btn-block"><div class="img-arxiv"></div> Sign in with your arXiv</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
-#}
 {%- endif -%}
-{#
-  <header class="gradient">
-    <div class="container headerbg">
-
-      <div class="container" style="height:37px;">
-        <ul class="nav nav-tabs">
-
-          <li class="pull-right">
-            {%- if current_user.is_guest %}
-              <button class="btn btn-default" data-toggle="modal" data-target="#sign-in-modal"><i class="fa fa-sign-in"></i> Sign In</button>
-              <button class="btn btn-warning" onclick="window.location='{{config.CFG_SITE_URL}}{{url_for('webaccount.register')}}'"><i class="fa fa-edit"></i> Sign Up</button>
-            {%- else %}
-              <div class="btn-group">
-                <a class="btn btn-default" href="{{ url_for('accounts_settings.profile') }}"><i class="fa fa-user"></i> {{ current_user.email }}</a>
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                  <span class="caret"></span>
-                </button>
-              </div>
-            {%- endif %}
-          </li>
-        </ul>
-      </div>
-    </div>
-  </header>
-  #}
-
