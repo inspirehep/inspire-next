@@ -28,39 +28,120 @@
 {% block index %}
 
   <style>
-    #feed {
-      font-size: 17px;
-      text-align: center;
-    }
-    /*this selector retains the space for the container in order for the*/
-    /*twitter widget to take the space it needs without pushing down the page*/
-    header+div.container{
-        min-height: 1140px;
-    }
+  /*
+      TODO: move everything to LESS and make mixins
+                 move also inline styles to LESS
+  */
+  .feed-entry-date, .author, .date {
+    color: #999999;
+    padding-bottom: 10px;
+    font-size: 1.2rem;
+    margin: 0.25em 0;
+    display: block;
+  }
+  .feed-entry-title {
+
+  }
+/*  .feed-entry-title:visited {
+    color: #915ec9;
+  }*/
+  .ext {
+    display: inline;
+    background-repeat: no-repeat;
+    padding-right: 10px;
+    margin-left: 2px;
+    background-image: url('../static/img/icon-link.png');
+    height:10px;
+    width: 10px;
+  }
+  #news {
+    min-height: 250px;
+  }
+  #blog{
+    min-height: 176px;
+  }
+  #blog-link {
+    text-align: right;
+    font-style: italic;
+    margin-top: 1em;
+  }
+  .box-size {
+    min-height: 465px;
+  }
+  #twitter {
+    min-height: 450px;
+  }
   </style>
 
   <div class="row"> <!-- start of row -->
     <div class="col-md-3">
-      <div class="panel panel-default">
-        <div class="panel-heading">Literature
-        </div>
-        <div class="panel-body">Upcoming
+      <div class="thumbnail box-size">
+        <div class="caption">
+          <h4>Literature</h4>
+          <hr>
+
+          <ul class="nav nav-pills" style="margin-bottom: 10px;">
+            <li class="active"><a href="#tab_a" data-toggle="tab">Most cited</a></li>
+            <li><a href="#tab_b" data-toggle="tab">Most viewed</a></li>
+          </ul>
+          <div class="tab-content">
+                  <div class="tab-pane active" id="tab_a">
+                      <p><a href="/record/331">Supermoduli Space Is Not Projected</a> <span class="badge">42</span></p>
+                      <p class="author">by <a href="/search?f=author&amp;p=Donagi%2C%20Ron&amp;ln=en">Donagi, Ron</a> &amp; <a href="/search?f=author&amp;p=Witten%2C%20Edward&apm;ln=en">Witten, Edward</a></p>
+                      <hr>
+                      <p><a href="/record/330">Transverse Shifts in Paraxial Spinoptics</a> <span class="badge">38</span></p>
+                      <p class="author">by <a href="/search?f=author&amp;p=Duval%2C%20C.&amp;ln=en">Duval, C</a></p>
+                      <hr>
+                      <p><a href="/record/328">A composite top: motivations and signals</a> <span class="badge">25</span></p>
+                      <p class="author">by <a href="/search?f=author&amp;p=Serra%2C%20Javi&amp;ln=en">Serra, Javi</a></p>
+                  </div>
+                  <div class="tab-pane" id="tab_b">
+                      <p><a href="/record/295">Perturbative Quantum Chromodynamics</a> <span class="badge">52</span></p>
+                      <p class="author">by <a href="/search?f=author&amp;p=Reya%2C%20E.&amp;ln=en">Reya, E.</a></p>
+                      <hr>
+                      <p><a href="/record/330">A Deep inelastic view of hadron structure</a> <span class="badge">36</span></p>
+                      <p class="author">by <a href="/search?f=author&amp;p=Thomas%2C%20Anthony%20William&amp;ln=en">Thomas, Anthony William</a></p>
+                      <hr>
+                      <p><a href="/record/220">Remarks on Charm Electroproduction in QCD</a> <span class="badge">18</span></p>
+                      <p class="author">by <a href="/search?f=author&amp;p=Shifman%2C%20Mikhail%20A.&amp;ln=en">Shifman, Mikhail A.</a> &amp; <a href="/search?f=author&amp;p=Vainshtein%2C%A.I.&apm;ln=en">Vainshtein, A.I.</a></p>
+                  </div>
+          </div><!-- tab content -->
+
         </div>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="panel panel-default">
-        <div class="panel-heading">People
-        </div>
-        <div class="panel-body">Upcoming
+      <div class="thumbnail box-size">
+        <div class="caption">
+          <h4>People</h4>
+          <hr>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Lorem ipsum dolor sit amet, consectetur</p>
+          <ul class="list-group">
+            <li class="list-group-item"><a href="/search?cc=HepNames&amp;p=678__a%3A%2Fnobel%20prize%2F&amp;sf=author&amp;so=a&amp;rg=100">Nobel Laureates</a></li>
+            <li class="list-group-item"><a href="/search?cc=HepNames&amp;p=8564_y%3Atwitter&amp;sf=author&amp;so=a&amp;rg=100">Tweeters</a></li>
+            <li class="list-group-item"><a href="/search?cc=HepNames&amp;p=8564_y%3Ablog&amp;sf=author&amp;so=a&amp;rg=100">Bloggers</a></li>
+          </ul>
+          <hr>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+          <a class="btn btn-info" href="http://orcid.org/" target="_blank">Connect with your ORCID</a>
         </div>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="panel panel-default">
-        <div class="panel-heading">Jobs
-        </div>
-        <div class="panel-body">Upcoming
+      <div class="thumbnail box-size">
+        <div class="caption">
+          <h4>Latest Jobs</h4>
+          <hr>
+          <p><span class="label label-info">Student</span> <a href="/record/102">Proton spin polarizabilites</a></p>
+          <p class="date">posted on 2nd May 2014</p>
+          <hr>
+          <p><span class="label label-default">Junior</span> <a href="/record/101">CMS Experiment at RWTH Aachen</a></p>
+          <p class="date">posted on 1st May 2014</p>
+          <hr>
+          <p><span class="label label-primary">Senior</span> <a href="/record/98">Lectureship in Astrophysics</a></p>
+          <p class="date">posted on 29th Apr 2014</p>
+          <hr>
+          <p style="text-align: right;"><a href="/search?ln=en&amp;cc=Jobs&amp;p=&amp;action_search=" class="btn btn-primary">View all</a></p>
         </div>
       </div>
     </div>
@@ -71,13 +152,17 @@
   {%- block portalbox_rt -%}
     <div class="col-md-3">
         {{ portalbox_sidebar(portalboxes.rt, class="well") }}
-        <div class="well">
-            <p id="feed">News Feed</p>
+
+        <div id="news" class="well well-sm">
+            <h4>INSPIRE News</h4>
             <hr>
             <div id="blog"></div>
+            <div id="blog-link">
+              <a class="feed-entry-blog" target="_blank" href="http://blog.inspirehep.net/">Blog updates<i class="fa fa-rss"></i></a>
+            </div>
         </div>
 
-        <a class="twitter-timeline" href="https://twitter.com/inspirehep" data-widget-id="434352054106992641">Tweets by @inspirehep</a>
+        <div id="twitter"><a class="twitter-timeline" href="https://twitter.com/inspirehep" data-widget-id="434352054106992641">Tweets by @inspirehep</a></div>
     </div>
   {%- endblock portalbox_rt -%}
   </div> <!-- start of row -->
@@ -88,6 +173,7 @@
 {%- block header -%}
   {{ super() }}
   {%- js url_for('search.static', filename='js/jquery.feeds.min.js') -%}
+  {%- js url_for('search.static', filename='js/moment.min.js') -%}
 {%- endblock -%}
 
 {% block javascript %}
@@ -101,10 +187,17 @@
       preprocess: function ( feed ) {
           // Change the publishedDate format from UTC to dd-mm-yyyy
           // Inside the callback 'this' corresponds to the entry being processed
-          var date = new Date(this.publishedDate);
-          var pieces = [date.getDate(), date.getMonth()+1, date.getFullYear()]
-          this.publishedDate = pieces.join('-');
-      }
+          this.publishedDate = moment(this.publishedDate).format("Do MMM YYYY");
+      },
+
+      loadingTemplate: '<i class="fa fa-spinner fa-spin"></i>',
+
+      // Template used to render each entry
+      entryTemplate:  '<div class="feeds-entry feeds-source-<!=source!>">' +
+                              '<a class="feed-entry-title" target="_blank" href="<!=link!>" title="<!=title!>"><!=title!></a>' +
+                              '<div class="ext"></div>' +
+                              '<div class="feed-entry-date"><!=publishedDate!></div>' +
+                              '</div>'
   });
 </script>
 {{ super() }}
