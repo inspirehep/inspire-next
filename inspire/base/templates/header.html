@@ -27,27 +27,20 @@
 ## {% include 'header.html' %}
 #}
 
-{#
-<div class="navbar-inner">
-  <div class="container">
-    <a class="btn btn-navbar" data-taget=".nav-collapse" data-toggle"collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-    </a>
-    <nav class="nav-collapse in collapse" role="navigation" style="height: auto;">
-      <ul class="nav">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Submit</a></li>
-        <li><a href="#">Jobs</a></li>
-        <li><a href="#">Help</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
-    </nav>
-  </div>
-</div>
-#}
 
+<style>
+  .masthead-nav > li:last-child {
+    border-left: 1px solid #ccc;
+  }
+  .masthead-nav > li.active,
+  .masthead-nav > li:hover {
+    border-bottom: 2px solid #FC9;
+  }
+  .navbar-default .navbar-nav>.active>a,
+  .navbar-default .navbar-nav>.active>a:hover {
+    background-color: #fff;
+  }
+</style>
 
 <div class="navbar navbar-default">
   <div class="container">
@@ -59,7 +52,7 @@
         <span class="icon-bar"></span>
       </button>
       <a href="{{ url_for('search.index') }}">
-        <img src="{{ url_for('static', filename='img/inspire_logo_hep.png') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}" height="64px"> {# 64px is the default bootsrap navbar height
+        <img src="{{ url_for('static', filename='img/inspire_logo_labs.png') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}" height="64px"> {# 64px is the default bootsrap navbar height
         see this as reference:
         http://stackoverflow.com/questions/18474564/bootstrap-3-navbar-with-logo #}
       </a>
@@ -67,17 +60,29 @@
 
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav masthead-nav pull-right">
-        <li><a href="{{ url_for('search.index') }}"><i class="fa fa-home"></i>Home</a></li>
+        <li class="active"><a href="{{ url_for('search.index') }}"><i class="fa fa-home"></i>Home</a></li>
         <li><a href="/deposit/"><i class="fa fa-upload"></i>Submit</a></li>
         <li><a href="/help/search-guide"><i class="fa fa-question-circle"></i>Help</a></li>
         <li><a href="mailto:feedback@inspirehep.net"><i class="fa fa-envelope"></i>Contact</a></li>
+        <li>
+            {%- if current_user.is_guest %}
+            <a href="#" data-toggle="modal"  data-target="#sign-in-modal" role="button"><i class="fa fa-sign-in"></i> Sign In</a>
+            {%- else %}
+              <div class="btn-group">
+                <a class="btn btn-default" href="{{ url_for('accounts_settings.profile') }}"><i class="fa fa-user"></i> {{ current_user.email }}</a>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                  <span class="caret"></span>
+                </button>
+              </div>
+            {%- endif %}
+          </li>
       </ul>
     </div>
   </div>
 </div>
 
 
-{#
+
     {%- if current_user.is_guest %}
 <div class="modal fade" id="sign-in-modal" tabindex="-1" role="dialog" aria-labelledby="sign-in-label" aria-hidden="true">
   <div class="modal-dialog modal-sm">
@@ -115,7 +120,9 @@
       </div>
     </div>
   </div>
-</div>
+
+
+{# signup
 <div class="modal fade" id="sign-up-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -129,8 +136,9 @@
     </div>
   </div>
 </div>
+#}
 {%- endif -%}
-
+{#
   <header class="gradient">
     <div class="container headerbg">
 
@@ -154,6 +162,5 @@
       </div>
     </div>
   </header>
-  </div>
-</div>
-#}
+  #}
+
