@@ -38,10 +38,21 @@
     {% js url_for('search.static', filename='js/search/typeahead.js') %}
     {% js url_for('search.static', filename='js/search/default_typeahead_configuration.js') %}
     {% js url_for('search.static', filename='js/search/invenio_with_spires_typeahead_configuration.js') %}
-    {% js url_for('search.static', filename='js/search/facet.js') %}
+    {% js url_for('search.static', filename='js/search/search_box.js') %}
+
     {% js url_for('static', filename='js/bootstrap-select.js') %}
+    
+    {% js url_for('search.static', filename='js/search/search_box.js') %}
     {%- css url_for('static', filename='css/typeahead.js-bootstrap.css'), '50-search' -%}
-    {%- css url_for('static', filename='css/search/searchbar.css'), '50-search' -%}
+
+    {%- js url_for('search.static', filename='js/search/facet/engine.js') -%}
+    {%- js url_for('search.static', filename='js/search/facet/filter.js') -%}
+    {%- js url_for('search.static', filename='js/search/facet/options_list.js') -%}
+    {%- js url_for('search.static', filename='js/search/facet/selectable_option.js') -%}
+    {%- js url_for('search.static', filename='js/search/facet/facet_tree_conf.js') -%}
+
+{# it breaks the Inspire search box #}
+{#    {%- css url_for('static', filename='css/search/searchbar.css'), '50-search' -%} #}
 {#    {% js "js/jquery.hotkeys.js" %}#}
 {#    {% js url_for('search.static', filename='js/search/hotkeys.js') %}#}
   {% endif %}
