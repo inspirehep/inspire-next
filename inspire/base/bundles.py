@@ -31,10 +31,12 @@ styles = Bundle(
 
 index_js = Bundle(
     'js/jquery.feeds.min.js',
+    'js/moment.min.js',
     output='index.js',
     weight=60,
     bower={
         "jquery-feeds": "git://github.com/camagu/jquery-feeds.git",
+        "moment": "2.7.0",
     },
 )
 
