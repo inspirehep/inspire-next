@@ -42,9 +42,9 @@
   .feed-entry-title {
 
   }
-/*  .feed-entry-title:visited {
+  a.feed-entry-title:visited, a.feed-entry-blog:visited{
     color: #915ec9;
-  }*/
+  }
   .ext {
     display: inline;
     background-repeat: no-repeat;
@@ -66,10 +66,17 @@
     margin-top: 1em;
   }
   .box-size {
-    min-height: 465px;
+    min-height: 574px;
   }
   #twitter {
-    min-height: 450px;
+    min-height: 350px;
+  }
+  .btn-orcid {
+    margin-top: 18px;
+  }
+  #btn-metric {
+    margin-bottom: 10px;
+    margin-top: -10px;
   }
   </style>
 
@@ -77,13 +84,13 @@
     <div class="col-md-3">
       <div class="thumbnail box-size">
         <div class="caption">
-          <h4>Literature</h4>
+          <h4>Featured in Literature</h4>
           <hr>
 
-          <ul class="nav nav-pills" style="margin-bottom: 10px;">
-            <li class="active"><a href="#tab_a" data-toggle="tab">Most cited</a></li>
-            <li><a href="#tab_b" data-toggle="tab">Most viewed</a></li>
-          </ul>
+          <div id="btn-metric" class="btn-group pull-right" data-toggle="buttons">
+            <a class="active btn btn-default btn-sm" href="#tab_a" data-toggle="tab">Most cited</a>
+            <a class="btn btn-default btn-sm" href="#tab_b" data-toggle="tab">Most viewed</a>
+          </div>
           <div class="tab-content">
                   <div class="tab-pane active" id="tab_a">
                       <p><a href="/record/331">Supermoduli Space Is Not Projected</a> <span class="badge">42</span></p>
@@ -94,6 +101,9 @@
                       <hr>
                       <p><a href="/record/328">A composite top: motivations and signals</a> <span class="badge">25</span></p>
                       <p class="author">by <a href="/search?f=author&amp;p=Serra%2C%20Javi&amp;ln=en">Serra, Javi</a></p>
+                      <hr>
+                      <p><a href="/record/150286">The Theory of gravity</a> <span class="badge">16</span></p>
+                      <p class="author">by <a href="/search?f=author&amp;p=Logunov%2C%%20A.A&amp;ln=en">Logunov, A.A.</a></p>
                   </div>
                   <div class="tab-pane" id="tab_b">
                       <p><a href="/record/295">Perturbative Quantum Chromodynamics</a> <span class="badge">52</span></p>
@@ -104,6 +114,9 @@
                       <hr>
                       <p><a href="/record/220">Remarks on Charm Electroproduction in QCD</a> <span class="badge">18</span></p>
                       <p class="author">by <a href="/search?f=author&amp;p=Shifman%2C%20Mikhail%20A.&amp;ln=en">Shifman, Mikhail A.</a> &amp; <a href="/search?f=author&amp;p=Vainshtein%2C%A.I.&apm;ln=en">Vainshtein, A.I.</a></p>
+                      <hr>
+                      <p><a href="/record/220">Is cosmology consistent?</a> <span class="badge">14</span></p>
+                      <p class="author">by <a href="/search?f=author&amp;p=Zaldarriaga%2C%20Matias%20A.&amp;ln=en">Zaldarriaga, Matias</a></p>
                   </div>
           </div><!-- tab content -->
 
@@ -115,15 +128,18 @@
         <div class="caption">
           <h4>People</h4>
           <hr>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Lorem ipsum dolor sit amet, consectetur</p>
-          <ul class="list-group">
-            <li class="list-group-item"><a href="/search?cc=HepNames&amp;p=678__a%3A%2Fnobel%20prize%2F&amp;sf=author&amp;so=a&amp;rg=100">Nobel Laureates</a></li>
-            <li class="list-group-item"><a href="/search?cc=HepNames&amp;p=8564_y%3Atwitter&amp;sf=author&amp;so=a&amp;rg=100">Tweeters</a></li>
-            <li class="list-group-item"><a href="/search?cc=HepNames&amp;p=8564_y%3Ablog&amp;sf=author&amp;so=a&amp;rg=100">Bloggers</a></li>
-          </ul>
+          <h5>Interested in finding your colleagues who tweet and blog?</h5>
+          <p>Check our directory for:</p>
+          <p><span class="glyphicon glyphicon-hand-right"></span> <a href="/search?cc=HepNames&amp;p=8564_y%3Atwitter&amp;sf=author&amp;so=a&amp;rg=100">Tweeters</a></p>
+          <p><span class="glyphicon glyphicon-hand-right"></span> <a href="/search?cc=HepNames&amp;p=8564_y%3Ablog&amp;sf=author&amp;so=a&amp;rg=100">Bloggers</a></p>
           <hr>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-          <a class="btn btn-info" href="http://orcid.org/" target="_blank">Connect with your ORCID</a>
+          <h5>Looking for HEP Nobel Laureates?</h5>
+          <p>Find them here:</p>
+          <p><span class="glyphicon glyphicon-hand-right"></span> <a href="/search?cc=HepNames&amp;p=678__a%3A%2Fnobel%20prize%2F&amp;sf=author&amp;so=a&amp;rg=100">Nobel Laureates</a></p>
+          <hr>
+          <h5>You want to make sure your publications do not get mixed up with your colleagues' anymore?</h5>
+          <p>You can connect your author profile on INSPIRE with a unqiue ORCID. This ensures unique attribution, globally.</p>
+          <a href="#" class="btn btn-default btn-block btn-orcid"><div class="img-orcid"></div> Sign in with your ORCID</a>
         </div>
       </div>
     </div>
@@ -132,16 +148,19 @@
         <div class="caption">
           <h4>Latest Jobs</h4>
           <hr>
-          <p><span class="label label-info">Student</span> <a href="/record/102">Proton spin polarizabilites</a></p>
+          <p><small>Student</small> <a href="/record/102">Proton spin polarizabilites</a></p>
           <p class="date">posted on 2nd May 2014</p>
           <hr>
-          <p><span class="label label-default">Junior</span> <a href="/record/101">CMS Experiment at RWTH Aachen</a></p>
+          <p><small>Junior</small> <a href="/record/101">CMS Experiment at RWTH Aachen</a></p>
           <p class="date">posted on 1st May 2014</p>
           <hr>
-          <p><span class="label label-primary">Senior</span> <a href="/record/98">Lectureship in Astrophysics</a></p>
+          <p><small>Senior</small> <a href="/record/98">Lectureship in Astrophysics</a></p>
           <p class="date">posted on 29th Apr 2014</p>
           <hr>
-          <p style="text-align: right;"><a href="/search?ln=en&amp;cc=Jobs&amp;p=&amp;action_search=" class="btn btn-primary">View all</a></p>
+          <p><small>Postdoc</small> <a href="/record/92">MicroBooNE Research Associate</a></p>
+          <p class="date">posted on 15th Feb 2014</p>
+          <hr>
+          <p style="text-align: right;"><a href="/search?ln=en&amp;cc=Jobs&amp;p=&amp;action_search=" class="btn btn-default">View all</a></p>
         </div>
       </div>
     </div>
