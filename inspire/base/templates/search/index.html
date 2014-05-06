@@ -87,7 +87,7 @@
           <h4>Featured in Literature</h4>
           <hr>
 
-          <div id="btn-metric" class="btn-group pull-right" data-toggle="buttons">
+          <div id="btn-metric" class="btn-group">
             <a class="active btn btn-default btn-sm" href="#tab_a" data-toggle="tab">Most cited</a>
             <a class="btn btn-default btn-sm" href="#tab_b" data-toggle="tab">Most viewed</a>
           </div>
@@ -217,6 +217,12 @@
                               '<div class="ext"></div>' +
                               '<div class="feed-entry-date"><!=publishedDate!></div>' +
                               '</div>'
+  });
+  // activate accordingly the buttons of citation/views
+  var btns = $('#btn-metric a');
+  btns.on('click', function(event) {
+    btns.removeClass('active');
+    $(this).addClass('active');
   });
 </script>
 {{ super() }}
