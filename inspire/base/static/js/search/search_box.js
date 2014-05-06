@@ -40,25 +40,6 @@ function parseQueryString(url) {
 
     /* TODO: refactor! */
 
-// function getQueryVariable(variable) {
-//     var query = window.location.search.substring(1);
-//     var vars = query.split('&');
-//     for (var i = 0; i < vars.length; i++) {
-//         var pair = vars[i].split('=');
-//         if (decodeURIComponent(pair[0]) == variable) {
-//             return decodeURIComponent(pair[1]);
-//         }
-//     }
-//     console.log('Query variable %s not found', variable);
-// }
-
-// // FIX ME
-// console.log(getQueryVariable('cc'));
-// console.log($('#myTab a[href="#'+getQueryVariable('cc')+'"]'))
-// $('#myTab a[href="#'+getQueryVariable('cc')+'"]').tab('show')
-// return;
-// until here
-
     var json, tabsState;
     $('#myTab a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
         var href, json, parentId, tabsState;
@@ -128,6 +109,10 @@ function parseQueryString(url) {
     var url_components = parseQueryString(window.location.href);
     if ( url_components.of ) {
         $('select[name=of]>option[value=' + url_components.of + ']').prop('selected', true);
+    }
+    // Keep the tab selected based on the URL
+    if (url_components.cc) {
+        $('#myTab a[href="#'+url_components.cc+'"]').tab('show');
     }
 
 })(jQuery);
