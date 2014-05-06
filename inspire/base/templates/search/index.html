@@ -63,7 +63,7 @@
   #blog-link {
     text-align: right;
     font-style: italic;
-    margin-top: 1em;
+    margin-top: -1em;
   }
   .box-size {
     min-height: 574px;
@@ -171,14 +171,16 @@
   {%- block portalbox_rt -%}
     <div class="col-md-3">
         {{ portalbox_sidebar(portalboxes.rt, class="well") }}
-
-        <div id="news" class="well well-sm">
-            <h4>INSPIRE News</h4>
-            <hr>
+        <div  id="news" class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">INSPIRE News</h3>
+          </div>
+          <div class="panel-body">
             <div id="blog"></div>
             <div id="blog-link">
               <a class="feed-entry-blog" target="_blank" href="http://blog.inspirehep.net/">Blog updates<i class="fa fa-rss"></i></a>
             </div>
+          </div>
         </div>
 
         <div id="twitter"><a class="twitter-timeline" href="https://twitter.com/inspirehep" data-widget-id="434352054106992641">Tweets by @inspirehep</a></div>
