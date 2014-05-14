@@ -22,12 +22,42 @@
 
 {% extends "page_base.html" %}
 
+
+{%- block global_css -%}
+  {# inspire.css is the customized bootstrap.min.css #}
+  {%- css 'css/inspire.css', '00-invenio' -%}
+  {%- css 'css/font-awesome.min.css', '00-invenio' -%}
+{%- endblock global_css -%}
+
+{%- block global_javascript -%}
+  {%- js 'js/jquery.min.js', '00-invenio' -%}
+  {%- js 'js/bootstrap.min.js', '00-invenio' -%}
+{%- endblock global_javascript -%}
+
+
+{%- block head_links %}
+{{ super() }}
+  <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
+{%- endblock head_links %}
+
 {% set searchbar_enable = searchbar_enable and easy_search_form != None and collection != None %}
 
 {% if searchbar_enable %}
   {% from "_formhelpers.html" import render_filter_form with context %}
   {% from "search/helpers.html" import search_form, search_form_javascript with context %}
 {% endif %}
+
+{%- block page_header -%}
+    <header>
+      <!-- replaced page header -->
+      {% block headerbox %}
+        {% include 'header.html' %}
+      {% endblock headerbox %}
+      <!-- end replaced page header -->
+      {% block pageheaderadd %}{{ pageheaderadd|safe }}{% endblock pageheaderadd %}
+    </header>
+{%- endblock page_header -%}
+
 
 {% block header %}
   {{ super() }}
@@ -38,10 +68,22 @@
     {% js url_for('search.static', filename='js/search/typeahead.js') %}
     {% js url_for('search.static', filename='js/search/default_typeahead_configuration.js') %}
     {% js url_for('search.static', filename='js/search/invenio_with_spires_typeahead_configuration.js') %}
-    {% js url_for('search.static', filename='js/search/facet.js') %}
+    {% js url_for('search.static', filename='js/search/search_box.js') %}
+
     {% js url_for('static', filename='js/bootstrap-select.js') %}
+    
+    {% js url_for('search.static', filename='js/search/search_box.js') %}
     {%- css url_for('static', filename='css/typeahead.js-bootstrap.css'), '50-search' -%}
-    {%- css url_for('static', filename='css/search/searchbar.css'), '50-search' -%}
+
+    {%- js url_for('search.static', filename='js/search/facet/facet_engine.js') -%}
+    {%- js url_for('search.static', filename='js/search/facet/facet_filter.js') -%}
+    {%- js url_for('search.static', filename='js/search/facet/facet_options_list.js') -%}
+    {%- js url_for('search.static', filename='js/search/facet/facet_option.js') -%}
+    {%- js url_for('search.static', filename='js/search/facet/configuration/facet_tree_conf.js') -%}
+
+{# it breaks the Inspire search box #}
+{#    {%- css url_for('static', filename='css/search/searchbar.css'), '50-search' -%} #}
+
 {#    {% js "js/jquery.hotkeys.js" %}#}
 {#    {% js url_for('search.static', filename='js/search/hotkeys.js') %}#}
   {% endif %}
@@ -52,6 +94,11 @@
   {% if searchbar_enable %}
     {{ search_form(collection, easy_search_form) }}
   {% endif %}
+
+  {# include breadcrumb after search box #}
+  {% block breadcrumb %}
+    {%- include 'breadcrumbs.html' -%}
+  {% endblock breadcrumb %}
   {% block inner_content %}
     <!-- Here goes the content visible below the search bar -->
   {% endblock inner_content %}
@@ -63,3 +110,8 @@
     {{ search_form_javascript(collection) }}
   {% endif %}
 {% endblock %}
+
+
+{%- block page_footer %}
+  {%- include 'footer.html' -%}
+{%- endblock page_footer %}
