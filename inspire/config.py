@@ -36,6 +36,7 @@ point specified in the setup.py::
 """
 
 from invenio.base.config import EXTENSIONS as ORIG_EXTENSIONS
+from invenio.base.config import CFG_SITE_LANGS
 
 EXTENSIONS = ORIG_EXTENSIONS + [
     'inspire.ext.search_bar',
@@ -110,9 +111,11 @@ CFG_SITE_LANG = u"en"
 # CFG_SITE_NAME and main collection name should be the same for empty search
 # to work
 CFG_SITE_NAME = u"HEP"
-CFG_SITE_NAME_INTL = dict(
-    en=u"INSPIRE - High-Energy Physics Literature Database",
-)
+
+langs = {}
+for lang in CFG_SITE_LANGS:
+    langs[lang] = u"INSPIRE - High-Energy Physics Literature Database"
+CFG_SITE_NAME_INTL = langs
 
 try:
     from inspire.instance_config import *
