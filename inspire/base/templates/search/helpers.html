@@ -38,162 +38,127 @@
   <div id="search-box-main" class="row">
     <div class="row">
       <div class="col-md-9 col-centered">
-            <ul id="myTab" class="nav nav-tabs allign">
-                <li class="active"><a href="#Literature" id="hep" data-toggle="tab">Literature</a></li>
-                <li><a href="#HepNames" data-toggle="tab" data-cc="HepNames">People</a></li>
-                <li><a href="#Data" data-toggle="tab" data-cc="Data">Data</a></li>
-                <li><a href="#Institutions" data-toggle="tab" data-cc="Institutions">Institutions</a></li>
-                <li><a href="#Conferences" data-toggle="tab" data-cc="Conferences">Conferences</a></li>
-                <li><a href="#Journals" data-toggle="tab" data-cc="Journals">Journals</a></li>
-            </ul>
-        </div>
+        <ul id="myTab" class="nav nav-tabs allign">
+          <li class="active">
+            <a href="#Literature" id="hep" data-toggle="tab">Literature</a>
+          </li>
+          <li>
+            <a href="#HepNames" data-toggle="tab" data-cc="HepNames">People</a>
+          </li>
+          <li>
+            <a href="#Data" data-toggle="tab" data-cc="Data">Data</a>
+          </li>
+          <li>
+            <a href="#Institutions" data-toggle="tab" data-cc="Institutions">Institutions</a>
+          </li>
+          <li>
+            <a href="#Conferences" data-toggle="tab" data-cc="Conferences">Conferences</a>
+          </li>
+          <li>
+            <a href="#Journals" data-toggle="tab" data-cc="Journals">Journals</a>
+          </li>
+        </ul>
+      </div>
     </div>
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        {% block search_form_form scoped %}
-        <div class="col-md-9 col-centered">
-          <form action="{{ url_for('search.search') }}"
-              name="search"
-              method="get"
-              role="search"
-              id="searchform">
-          {% block search_form_ctrls scoped %}
-          <input type="hidden" name="ln" value="{{g.ln}}">
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    {% block search_form_form scoped %}
+    <div class="col-md-9 col-centered">
+      <form action="{{ url_for('search.search') }}"
+        name="search"
+        method="get"
+        role="search"
+        id="searchform">
+        {% block search_form_ctrls scoped %}
+        <input type="hidden" name="ln" value="{{g.ln}}">
+        {#
+              the input which takes care of collection, see the search_box.js for
+              dynamically creation of collection name depending on which tab is selected
+        #}
+        <input id="collection" type="hidden" name="cc" value="">
 
-          {#
-                the input which takes care of collection, see the search_box.js for
-                dynamically creation of collection name depending on which tab is selected
-          #}
-          <input id="collection" type="hidden" name="cc" value="">
-
-              <div class="input-group" id="searchform-input-group">
-                {% block search_form_ctrls_help scoped %}
-                {# hide this part on mobile version #}
-                <span class="input-group-btn hidden-xs">
-                  <a class="dropdown-toggle btn btn-default"
-                         rel="tooltip" title="{{ _('Search Tips and Examples') }}"
-                         data-placement="bottom"
-                         data-delay="100"
-                         data-toggle="dropdown" role="button"
-                         href="#"><i class="glyphicon glyphicon-question-sign"></i>
-                  </a>
-                  <ul class="searchexamples dropdown-menu">
-                    <li>
-                      <a href="/help/search-tips">
-                        <strong>{{ _("Search Tips") }}</strong>
-                        <i class="pull-right glyphicon glyphicon-info-sign"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="/help/search-guide">
-                        <i class="pull-right glyphicon glyphicon-leaf"></i>
-                        <strong>{{ _("Search Guide") }}</strong>
-                      </a>
-                    </li>
-                    {% if collection.examples %}
-                    <li class="divider"></li>
-                    <li class="dropdown-header">
-                      {{ _('Search examples') }}
-                    </li>
-                  {%- for e in collection.examples if e.body -%}
-                    <li>
-                      <a href="{{ url_for('search.search', p=e.body) }}">
-                        <i class="pull-right glyphicon glyphicon-chevron-right"></i>
-                        <span class="after-fix">{{ e.body }}</span>
-                      </a>
-                    </li>
-                  {%- endfor -%}
-                  {% endif %}
-                  </ul>
-                </span>
-                {% endblock search_form_ctrls_help %}
-                {% block search_form_ctrls_input scoped %}
-                <input autocomplete="off"
-                        data-items="4"
-                        name="p"
-                        class="form-control"
-                        type="text"
-                        {# placeholder="{{ _('Example') }}: {{ search_placeholder }}" #}
-                        tabindex="1"
-                        value="{{ request.args.get('p', '') }}"
-                        {%- if request.endpoint == 'search.index' %}
-                        autofocus
-                        {%- endif -%}
-                />{% endblock search_form_ctrls_input %}{# No space! #}
-                {% block search_form_ctrls_settings scoped %}
-                {# hide this part on mobile version #}
-                <div id="drop" class="input-group-btn hidden-xs">
-                  <select name="of" class="form-control">
-                    <option value="hb" selected="selected">Brief format</option>
-                    <option value="hd">Detailed format</option>
-                    <option value="hcs">Citesummary</option>
-                    <option value="hlxe">LaTeX (EU)</option>
-                    <option value="hlxu">LaTeX (US)</option>
-                    <option value="hx">BibTeX</option>
-                    <option value="tlcv">CV format (LaTeX)</option>
-                    <option value="hcv">CV format (html)</option>
-                    <option value="htcv">CV format (text)</option>
-                    <option value="hlxh">Harvmac</option>
-                    <option value="xw">RefWorks</option>
-                    <option value="xe">EndNote</option>
-                  </select>
-                </div>
-                {% endblock search_form_ctrls_settings %}
-                {% block search_form_ctrls_button scoped %}
-                <span class="input-group-btn">
-                  <button name="action_search" type="submit" class="btn btn-primary btn-inline-icon-hide-sm">
-                    <i class="glyphicon glyphicon-search"></i><span>&nbsp;{{ _("Search") }}</span>
-                  </button>
-                </span>
-                {% endblock search_form_ctrls_button %}
-              </div>
-          {% endblock search_form_ctrls %}
-          </form>
+        <div class="input-group" id="searchform-input-group">
+          {% block search_form_ctrls_help scoped %}
+          {# hide this part on mobile version #}
+          <span class="input-group-btn hidden-xs">
+            <a class="dropdown-toggle btn btn-default"
+                 rel="tooltip" title="{{ _('Search Tips and Examples') }}"
+                 data-placement="bottom"
+                 data-delay="100"
+                 data-toggle="dropdown" role="button"
+                 href="#"> <i class="glyphicon glyphicon-question-sign"></i>
+            </a>
+            <ul class="searchexamples dropdown-menu">
+              <li>
+                <a href="/help/search-tips"> <strong>{{ _("Search Tips") }}</strong> <i class="pull-right glyphicon glyphicon-info-sign"></i>
+                </a>
+              </li>
+              <li>
+                <a href="/help/search-guide">
+                  <i class="pull-right glyphicon glyphicon-leaf"></i> <strong>{{ _("Search Guide") }}</strong>
+                </a>
+              </li>
+              {% if collection.examples %}
+              <li class="divider"></li>
+              <li class="dropdown-header">{{ _('Search examples') }}</li>
+              {%- for e in collection.examples if e.body -%}
+              <li>
+                <a href="{{ url_for('search.search', p=e.body) }}">
+                  <i class="pull-right glyphicon glyphicon-chevron-right"></i>
+                  <span class="after-fix">{{ e.body }}</span>
+                </a>
+              </li>
+              {%- endfor -%}
+          {% endif %}
+            </ul>
+          </span>
+          {% endblock search_form_ctrls_help %}
+        {% block search_form_ctrls_input scoped %}
+          <input autocomplete="off"
+            data-items="4"
+            name="p"
+            class="form-control"
+            type="text"
+            {# placeholder="{{ _('Example') }}: {{ search_placeholder }}" #}
+            tabindex="1"
+            value="{{ request.args.get('p', '') }}"
+            {%- if request.endpoint == 'search.index' %}
+            autofocus
+            {%- endif -%}
+            />
+          {% endblock search_form_ctrls_input %}{# No space! #}
+        {% block search_form_ctrls_settings scoped %}
+        {# hide this part on mobile version #}
+          <div id="drop" class="input-group-btn hidden-xs">
+            <select name="of" class="form-control">
+              <option value="hb" selected="selected">Brief format</option>
+              <option value="hd">Detailed format</option>
+              <option value="hcs">Citesummary</option>
+              <option value="hlxe">LaTeX (EU)</option>
+              <option value="hlxu">LaTeX (US)</option>
+              <option value="hx">BibTeX</option>
+              <option value="tlcv">CV format (LaTeX)</option>
+              <option value="hcv">CV format (html)</option>
+              <option value="htcv">CV format (text)</option>
+              <option value="hlxh">Harvmac</option>
+              <option value="xw">RefWorks</option>
+              <option value="xe">EndNote</option>
+            </select>
+          </div>
+          {% endblock search_form_ctrls_settings %}
+        {% block search_form_ctrls_button scoped %}
+          <span class="input-group-btn">
+            <button name="action_search" type="submit" class="btn btn-primary btn-inline-icon-hide-sm">
+              <i class="glyphicon glyphicon-search"></i>
+              <span>&nbsp;{{ _("Search") }}</span>
+            </button>
+          </span>
+          {% endblock search_form_ctrls_button %}
         </div>
-        {% endblock search_form_form %}
+        {% endblock search_form_ctrls %}
+      </form>
+    </div>
+    {% endblock search_form_form %}
   </div>
 {%- endblock search_form_body %}
-  <style>
-    #myTab.nav-tabs {
-        border-bottom: none;
-    }
-    #search-box-main {
-      margin-top: 20px;
-      margin-bottom: 45px;
-    }
-    #myTab li.active a {
-      background: #fff;
-      border: 1px solid #eee;
-      color: #333;
-      border-bottom: 1px solid white;
-      box-shadow: 0 -3px 0 #FC9;
-    }
-    #myTab li:not(.active) a:hover {
-      box-shadow: inset 0 -3px 0 #C7C7C7;
-      color: #333;
-    }
-    #myTab li a {
-      position:relative;
-      top:1px;
-      border: 1px solid #eee;
-      color: #777;
-      border-bottom: 1px solid white;
-    }
-    #myTab {
-      padding: 12px 0 0;
-      background-image: -webkit-linear-gradient(bottom, #f6f6f6 0%, #fff 8px);
-      background-image: -moz-linear-gradient(bottom, #f6f6f6 0%, #fff 8px);
-      background-image: linear-gradient(to top, #f6f6f6 0%, #fff 8px);
-      border-bottom: 1px solid #eee;
-    }
-    /* see here for more details: http://stackoverflow.com/questions/18153234/center-a-div-using-bootstrap-3-markup-or-css */
-    .col-centered{
-      float: none;
-      margin: 0 auto;
-    }
-    /*
-    .allign {
-        margin-left: 15px;
-    }*/
-  </style>
 {% endblock search_form %}
 {% endmacro %}
