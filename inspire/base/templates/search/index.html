@@ -20,67 +20,14 @@
 ## or submit itself to any jurisdiction.
 #}
 
+
 {%- extends "search/index_base.html" -%}
 
 {%- block extra_style %}{% endblock extra_style -%}
 
-
 {% block index %}
-
-  <style>
-  /*
-      TODO: move everything to LESS and make mixins
-                 move also inline styles to LESS
-  */
-  .feed-entry-date, .author, .date {
-    color: #999999;
-    padding-bottom: 10px;
-    font-size: 1.2rem;
-    margin: 0.25em 0;
-    display: block;
-  }
-  .feed-entry-title {
-
-  }
-  a.feed-entry-title:visited, a.feed-entry-blog:visited{
-    color: #915ec9;
-  }
-  .ext {
-    display: inline;
-    background-repeat: no-repeat;
-    padding-right: 10px;
-    margin-left: 2px;
-    background-image: url('../static/img/icon-link.png');
-    height:10px;
-    width: 10px;
-  }
-  #news {
-    min-height: 250px;
-  }
-  #blog{
-    min-height: 176px;
-  }
-  #blog-link {
-    text-align: right;
-    font-style: italic;
-    margin-top: -1em;
-  }
-  .box-size {
-    min-height: 574px;
-  }
-  #twitter {
-    min-height: 350px;
-  }
-  .btn-orcid {
-    margin-top: 18px;
-  }
-  #btn-metric {
-    margin-bottom: 10px;
-    margin-top: -10px;
-  }
-  </style>
-
-  <div class="row"> <!-- start of row -->
+  <div class="row">
+    <!-- start of row -->
     <div class="col-md-3">
       <div class="thumbnail box-size">
         <div class="caption">
@@ -92,34 +39,85 @@
             <a class="btn btn-default btn-xs" href="#tab_b" data-toggle="tab">Most viewed</a>
           </div>
           <div class="tab-content">
-                  <div class="tab-pane active" id="tab_a">
-                      <p><a href="/record/331">Supermoduli Space Is Not Projected</a> <span class="badge">+42 citations</span></p>
-                      <p class="author">by <a href="/search?f=author&amp;p=Donagi%2C%20Ron&amp;ln=en">Donagi, Ron</a> &amp; <a href="/search?f=author&amp;p=Witten%2C%20Edward&apm;ln=en">Witten, Edward</a></p>
-                      <hr>
-                      <p><a href="/record/330">Transverse Shifts in Paraxial Spinoptics</a> <span class="badge">+38 citations</span></p>
-                      <p class="author">by <a href="/search?f=author&amp;p=Duval%2C%20C.&amp;ln=en">Duval, C</a></p>
-                      <hr>
-                      <p><a href="/record/328">A composite top: motivations and signals</a> <span class="badge">+25 citations</span></p>
-                      <p class="author">by <a href="/search?f=author&amp;p=Serra%2C%20Javi&amp;ln=en">Serra, Javi</a></p>
-                      <hr>
-                      <p><a href="/record/150286">The Theory of gravity</a> <span class="badge">+16 citations</span></p>
-                      <p class="author">by <a href="/search?f=author&amp;p=Logunov%2C%%20A.A&amp;ln=en">Logunov, A.A.</a></p>
-                  </div>
-                  <div class="tab-pane" id="tab_b">
-                      <p><a href="/record/295">Perturbative Quantum Chromodynamics</a> <span class="badge">5200 views</span></p>
-                      <p class="author">by <a href="/search?f=author&amp;p=Reya%2C%20E.&amp;ln=en">Reya, E.</a></p>
-                      <hr>
-                      <p><a href="/record/330">A Deep inelastic view of hadron structure</a> <span class="badge">3600 views</span></p>
-                      <p class="author">by <a href="/search?f=author&amp;p=Thomas%2C%20Anthony%20William&amp;ln=en">Thomas, Anthony William</a></p>
-                      <hr>
-                      <p><a href="/record/220">Remarks on Charm Electroproduction in QCD</a> <span class="badge">1800 views</span></p>
-                      <p class="author">by <a href="/search?f=author&amp;p=Shifman%2C%20Mikhail%20A.&amp;ln=en">Shifman, Mikhail A.</a> &amp; <a href="/search?f=author&amp;p=Vainshtein%2C%A.I.&apm;ln=en">Vainshtein, A.I.</a></p>
-                      <hr>
-                      <p><a href="/record/220">Is cosmology consistent?</a> <span class="badge">1400 views</span></p>
-                      <p class="author">by <a href="/search?f=author&amp;p=Zaldarriaga%2C%20Matias%20A.&amp;ln=en">Zaldarriaga, Matias</a></p>
-                  </div>
-          </div><!-- tab content -->
-
+            <div class="tab-pane active" id="tab_a">
+              <p>
+                <a href="/record/331">Supermoduli Space Is Not Projected</a>
+                <span class="badge">+42 citations</span>
+              </p>
+              <p class="author">
+                by
+                <a href="/search?f=author&amp;p=Donagi%2C%20Ron&amp;ln=en">Donagi, Ron</a>
+                &amp;
+                <a href="/search?f=author&amp;p=Witten%2C%20Edward&apm;ln=en">Witten, Edward</a>
+              </p>
+              <hr>
+              <p>
+                <a href="/record/330">Transverse Shifts in Paraxial Spinoptics</a>
+                <span class="badge">+38 citations</span>
+              </p>
+              <p class="author">
+                by
+                <a href="/search?f=author&amp;p=Duval%2C%20C.&amp;ln=en">Duval, C</a>
+              </p>
+              <hr>
+              <p>
+                <a href="/record/328">A composite top: motivations and signals</a>
+                <span class="badge">+25 citations</span>
+              </p>
+              <p class="author">
+                by
+                <a href="/search?f=author&amp;p=Serra%2C%20Javi&amp;ln=en">Serra, Javi</a>
+              </p>
+              <hr>
+              <p>
+                <a href="/record/150286">The Theory of gravity</a>
+                <span class="badge">+16 citations</span>
+              </p>
+              <p class="author">
+                by
+                <a href="/search?f=author&amp;p=Logunov%2C%%20A.A&amp;ln=en">Logunov, A.A.</a>
+              </p>
+            </div>
+            <div class="tab-pane" id="tab_b">
+              <p>
+                <a href="/record/295">Perturbative Quantum Chromodynamics</a>
+                <span class="badge">5200 views</span>
+              </p>
+              <p class="author">
+                by
+                <a href="/search?f=author&amp;p=Reya%2C%20E.&amp;ln=en">Reya, E.</a>
+              </p>
+              <hr>
+              <p>
+                <a href="/record/330">A Deep inelastic view of hadron structure</a>
+                <span class="badge">3600 views</span>
+              </p>
+              <p class="author">
+                by
+                <a href="/search?f=author&amp;p=Thomas%2C%20Anthony%20William&amp;ln=en">Thomas, Anthony William</a>
+              </p>
+              <hr>
+              <p>
+                <a href="/record/220">Remarks on Charm Electroproduction in QCD</a>
+                <span class="badge">1800 views</span>
+              </p>
+              <p class="author">
+                by
+                <a href="/search?f=author&amp;p=Shifman%2C%20Mikhail%20A.&amp;ln=en">Shifman, Mikhail A.</a>
+                &amp;
+                <a href="/search?f=author&amp;p=Vainshtein%2C%A.I.&apm;ln=en">Vainshtein, A.I.</a>
+              </p>
+              <hr>
+              <p>
+                <a href="/record/220">Is cosmology consistent?</a>
+                <span class="badge">1400 views</span>
+              </p>
+              <p class="author">
+                by
+                <a href="/search?f=author&amp;p=Zaldarriaga%2C%20Matias%20A.&amp;ln=en">Zaldarriaga, Matias</a>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -130,16 +128,32 @@
           <hr>
           <h5>Interested in finding your colleagues who tweet and blog?</h5>
           <p>Check our directory for:</p>
-          <p><span class="glyphicon glyphicon-chevron-right"></span> <a href="/search?cc=HepNames&amp;p=8564_y%3Atwitter&amp;sf=author&amp;so=a&amp;rg=100">Tweeters</a></p>
-          <p><span class="glyphicon glyphicon-chevron-right"></span> <a href="/search?cc=HepNames&amp;p=8564_y%3Ablog&amp;sf=author&amp;so=a&amp;rg=100">Bloggers</a></p>
+          <p>
+            <span class="glyphicon glyphicon-chevron-right"></span>
+            <a href="/search?cc=HepNames&amp;p=8564_y%3Atwitter&amp;sf=author&amp;so=a&amp;rg=100">Tweeters</a>
+          </p>
+          <p>
+            <span class="glyphicon glyphicon-chevron-right"></span>
+            <a href="/search?cc=HepNames&amp;p=8564_y%3Ablog&amp;sf=author&amp;so=a&amp;rg=100">Bloggers</a>
+          </p>
           <hr>
           <h5>Looking for HEP Nobel Laureates?</h5>
           <p>Find them here:</p>
-          <p><span class="glyphicon glyphicon-chevron-right"></span> <a href="/search?cc=HepNames&amp;p=678__a%3A%2Fnobel%20prize%2F&amp;sf=author&amp;so=a&amp;rg=100">Nobel Laureates</a></p>
+          <p>
+            <span class="glyphicon glyphicon-chevron-right"></span>
+            <a href="/search?cc=HepNames&amp;p=678__a%3A%2Fnobel%20prize%2F&amp;sf=author&amp;so=a&amp;rg=100">Nobel Laureates</a>
+          </p>
           <hr>
-          <h5>You want to make sure your publications do not get mixed up with your colleagues' anymore?</h5>
-          <p>You can connect your author profile on INSPIRE with a unique ORCID. This ensures unique attribution, globally.</p>
-          <a href="http://inspirehep.net/img/bibauthorid-help.html#orcid" class="btn btn-default btn-block btn-orcid"><div class="img-orcid"></div> Connect your ORCID</a>
+          <h5>
+            You want to make sure your publications do not get mixed up with your colleagues' anymore?
+          </h5>
+          <p>
+            You can connect your author profile on INSPIRE with a unique ORCID. This ensures unique attribution, globally.
+          </p>
+          <a href="http://inspirehep.net/img/bibauthorid-help.html#orcid" class="btn btn-default btn-block btn-orcid">
+            <div class="img-orcid"></div>
+            Connect your ORCID
+          </a>
         </div>
       </div>
     </div>
@@ -148,19 +162,33 @@
         <div class="caption">
           <h4>Latest Jobs</h4>
           <hr>
-          <p><small>Student</small> <a href="/record/102">Proton spin polarizabilites</a></p>
+          <p>
+            <small>Student</small>
+            <a href="/record/102">Proton spin polarizabilites</a>
+          </p>
           <p class="date">posted on 2nd May 2014</p>
           <hr>
-          <p><small>Junior</small> <a href="/record/101">CMS Experiment at RWTH Aachen</a></p>
+          <p>
+            <small>Junior</small>
+            <a href="/record/101">CMS Experiment at RWTH Aachen</a>
+          </p>
           <p class="date">posted on 1st May 2014</p>
           <hr>
-          <p><small>Senior</small> <a href="/record/98">Lectureship in Astrophysics</a></p>
+          <p>
+            <small>Senior</small>
+            <a href="/record/98">Lectureship in Astrophysics</a>
+          </p>
           <p class="date">posted on 29th Apr 2014</p>
           <hr>
-          <p><small>Postdoc</small> <a href="/record/92">MicroBooNE Research Associate</a></p>
+          <p>
+            <small>Postdoc</small>
+            <a href="/record/92">MicroBooNE Research Associate</a>
+          </p>
           <p class="date">posted on 15th Feb 2014</p>
           <hr>
-          <p style="text-align: right;"><a href="/search?ln=en&amp;cc=Jobs&amp;p=&amp;action_search=" class="btn btn-default">View all</a></p>
+          <p class="btn-jobs">
+            <a href="/search?ln=en&amp;cc=Jobs&amp;p=&amp;action_search=" class="btn btn-default">View all</a>
+          </p>
         </div>
       </div>
     </div>
@@ -170,23 +198,28 @@
 
   {%- block portalbox_rt -%}
     <div class="col-md-3">
-        {{ portalbox_sidebar(portalboxes.rt, class="well") }}
-        <div  id="news" class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">INSPIRE News</h3>
-          </div>
-          <div class="panel-body">
-            <div id="blog"></div>
-            <div id="blog-link">
-              <a class="feed-entry-blog" target="_blank" href="http://blog.inspirehep.net/">Blog updates<i class="fa fa-rss"></i></a>
-            </div>
+      {{ portalbox_sidebar(portalboxes.rt, class="well") }}
+      <div  id="news" class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">INSPIRE News</h3>
+        </div>
+        <div class="panel-body">
+          <div id="blog"></div>
+          <div id="blog-link">
+            <a class="feed-entry-blog" target="_blank" href="http://blog.inspirehep.net/">
+              Blog updates <i class="fa fa-rss"></i>
+            </a>
           </div>
         </div>
+      </div>
 
-        <div id="twitter"><a class="twitter-timeline" href="https://twitter.com/inspirehep" data-widget-id="434352054106992641">Tweets by @inspirehep</a></div>
+      <div id="twitter">
+        <a class="twitter-timeline" href="https://twitter.com/inspirehep" data-widget-id="434352054106992641">Tweets by @inspirehep</a>
+      </div>
     </div>
   {%- endblock portalbox_rt -%}
-  </div> <!-- start of row -->
+  </div>
+  <!-- end of row -->
 
 {% endblock index %}
 
@@ -195,30 +228,28 @@
   {{ super() }}
   {%- js url_for('search.static', filename='js/jquery.feeds.min.js') -%}
   {%- js url_for('search.static', filename='js/moment.min.js') -%}
-{%- endblock -%}
+{%- endblock header -%}
 
 {% block javascript %}
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 <script>
   $('#blog').feeds({
-      feeds: {
-         feed: 'http://blog.inspirehep.net/feeds/posts/default',
-      },
-      max: 3,
-      preprocess: function ( feed ) {
-          // Change the publishedDate format from UTC to dd-mm-yyyy
-          // Inside the callback 'this' corresponds to the entry being processed
-          this.publishedDate = moment(this.publishedDate).format("Do MMM YYYY");
-      },
-
-      loadingTemplate: '<i class="fa fa-spinner fa-spin"></i>',
-
-      // Template used to render each entry
-      entryTemplate:  '<div class="feeds-entry feeds-source-<!=source!>">' +
-                              '<a class="feed-entry-title" target="_blank" href="<!=link!>" title="<!=title!>"><!=title!></a>' +
-                              '<div class="ext"></div>' +
-                              '<div class="feed-entry-date"><!=publishedDate!></div>' +
-                              '</div>'
+    feeds: {
+     feed: 'http://blog.inspirehep.net/feeds/posts/default',
+    },
+    max: 3,
+    preprocess: function ( feed ) {
+      // Change the publishedDate format from UTC to dd-mm-yyyy
+      // Inside the callback 'this' corresponds to the entry being processed
+      this.publishedDate = moment(this.publishedDate).format("Do MMM YYYY");
+    },
+    loadingTemplate: '<i class="fa fa-spinner fa-spin"></i>',
+    // Template used to render each entry
+    entryTemplate:  '<div class="feeds-entry feeds-source-<!=source!>">' +
+                            '<a class="feed-entry-title" target="_blank" href="<!=link!>" title="<!=title!>"><!=title!></a>' +
+                            '<div class="ext"></div>' +
+                            '<div class="feed-entry-date"><!=publishedDate!></div>' +
+                            '</div>'
   });
   // activate accordingly the buttons of citation/views
   var btns = $('#btn-metric a');
