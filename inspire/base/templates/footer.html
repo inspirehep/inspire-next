@@ -30,81 +30,104 @@
 <hr>
 <footer>
 
-<div class="container">
-  <div class="row">
-    <div class="col-sm-9">
-      <table width="100%">
-        <thead>
-          <tr>
-            <th>Info</th>
-            <th>Help</th>
-            <th>Resources</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              {%- for menu in ['footermenu_left', 'footermenu_right'] %}
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-9">
+        <table class="table-width">
+          <thead>
+            <tr>
+              <th>Info</th>
+              <th>Help</th>
+              <th>Resources</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                {%- for menu in ['footermenu_left', 'footermenu_right'] %}
                 {%- for item in current_menu.submenu(menu).children if item.visible recursive %}
-                {%- if loop.first %}<ul>{% endif %}
+                {%- if loop.first %}
+                <ul>
+                {% endif %}
                 {%- if item.children -%}
                   <li>
                     <a href="{{ item.url }}">{{ item.text|safe }}</a>
                     <ul>{{ loop(item.children.values()|sort(attribute='order')) }}</ul>
                   </li>
-                {%- else -%}
-                  <li><a href="{{ item.url }}">{{ item.text|safe }}</a></li>
-                {%- endif -%}
-                {%- if loop.last %}</ul>{% endif %}
+                  {%- else -%}
+                  <li>
+                    <a href="{{ item.url }}">{{ item.text|safe }}</a>
+                  </li>
+                  {%- endif -%}
+                {%- if loop.last %}
+                </ul>
+                {% endif %}
                 {%- endfor -%}
-              {%- endfor %}
-            </td>
-            <td>
-              <ul>
-                <li><a href="#">Easy Search</a></li>
-                <li><a href="#">Search Tips</a></li>
-                <li><a href="#">Search Guide</a></li>
-              </ul>
-            </td>
-            <td>
-              <ul>
-                <li><a href="#">ADS</a></li>
-                <li><a href="#">ArXiv</a></li>
-                <li><a href="#">HepData</a></li>
-                <li><a href="#">PDG</a></li>
-              </ul>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="col-sm-3">
-      <table width="100%">
-        <thead>
-          <tr>
-            <th>Contact</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <section>
-                <a href="mailto:feedback@inspirehep.net" target="_top">feedback@inspirehep.net</a>
-                <p>
-                  <a href="#"><i class="fa fa-facebook fa-2x"></i></a>
-                  <a href="#"><i class="fa fa-twitter fa-2x"></i></a>
-                  <a href="#"><i class="fa fa-google-plus fa-2x"></i></a>
-                </p>
-              </section>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                {%- endfor %}
+              </td>
+              <td>
+                <ul>
+                  <li>
+                    <a href="#">Easy Search</a>
+                  </li>
+                  <li>
+                    <a href="#">Search Tips</a>
+                  </li>
+                  <li>
+                    <a href="#">Search Guide</a>
+                  </li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>
+                    <a href="#">ADS</a>
+                  </li>
+                  <li>
+                    <a href="#">ArXiv</a>
+                  </li>
+                  <li>
+                    <a href="#">HepData</a>
+                  </li>
+                  <li>
+                    <a href="#">PDG</a>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-sm-3">
+        <table class="table-width">
+          <thead>
+            <tr>
+              <th>Contact</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div>
+                  <a href="mailto:feedback@inspirehep.net" target="_top">feedback@inspirehep.net</a>
+                  <p>
+                    <a href="#"> <i class="fa fa-facebook fa-2x"></i>
+                    </a>
+                    <a href="#"> <i class="fa fa-twitter fa-2x"></i>
+                    </a>
+                    <a href="#">
+                      <i class="fa fa-google-plus fa-2x"></i>
+                    </a>
+                  </p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>
 </footer>
-
 {# TODO: include it in footer? #}
 <div class="container">
   <hr>
@@ -114,9 +137,15 @@
     </div>
     <div class="col-md-10">
       <ul class="site-footer-links pull-right">
-        <li><a href="#">Terms of Use</a></li>
-        <li><a href="#">Privacy Policy</a></li>
-        <li><a href="#">Send us feedback</a></li>
+        <li>
+          <a href="#">Terms of Use</a>
+        </li>
+        <li>
+          <a href="#">Privacy Policy</a>
+        </li>
+        <li>
+          <a href="#">Send us feedback</a>
+        </li>
       </ul>
     </div>
   </div>
