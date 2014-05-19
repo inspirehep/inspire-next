@@ -26,12 +26,12 @@ class OaiHARVESTData(DataSet):
     class OaiHARVEST_1:
         from invenio.modules.oaiharvester.models import get_default_arguments
         id = 1
-        name = "arXivb"
+        name = "arxiv_math_daily"
         baseurl = "http://export.arxiv.org/oai2"
         metadataprefix = "arXiv"
         lastrun = datetime.now()
         workflows = "generic_harvesting_workflow_with_bibsched"
-        setspecs = ["hep-lat"]
+        setspecs = ["math"]
         arguments = get_default_arguments()
 
 
