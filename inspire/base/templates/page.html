@@ -23,7 +23,7 @@
 {% extends "page_base.html" %}
 
 {%- block head_links %}
-{{ super() }}
+  {{ super() }}
   <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
 {%- endblock head_links %}
 
@@ -43,20 +43,20 @@
 {%- endblock %}
 
 {%- block page_header -%}
-    <header>
-      <!-- replaced page header -->
-      {% block headerbox %}
-        {% include 'header.html' %}
-      {% endblock headerbox %}
-      <!-- end replaced page header -->
-      {% block pageheaderadd %}{{ pageheaderadd|safe }}{% endblock pageheaderadd %}
-    </header>
+  <header>
+    <!-- replaced page header -->
+    {% block headerbox %}
+    {% include 'header.html' %}
+    {% endblock headerbox %}
+    <!-- end replaced page header -->
+    {% block pageheaderadd %}{{ pageheaderadd|safe }}{% endblock pageheaderadd %}
+  </header>
 {%- endblock page_header -%}
 
 {% block body %}
   {{ super() }}
   {% if searchbar_enable %}
-    {% include "search/form/index.html" %}
+  {{ search_form(collection, easy_search_form) }}
   {% endif %}
 
   {# include breadcrumb after search box #}
@@ -64,7 +64,7 @@
     {%- include 'breadcrumbs.html' -%}
   {% endblock breadcrumb %}
   {% block inner_content %}
-    <!-- Here goes the content visible below the search bar -->
+  <!-- Here goes the content visible below the search bar -->
   {% endblock inner_content %}
 {% endblock %}
 
