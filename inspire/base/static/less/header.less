@@ -1,59 +1,68 @@
-// Styles for header goes here
+// Styles for the header go here
 
-.masthead-nav > li {
-     text-align: center;
+.masthead-nav {
+  & > li {
+    text-align: center;
+  }
+  & > li:last-child {
+    border-left: 1px solid #ccc;
+  }
 }
-
+.masthead-nav &>li.active,.masthead-nav &>li:hover {
+  border-bottom: 2px solid #69C;
+}
+.navbar-default .navbar-nav &>.active &>a,.navbar-default .navbar-nav &>.active &>a:hover {
+  background-color: #fff;
+}
+.img-orcid {
+  display: inline;
+  background-repeat: no-repeat;
+  padding-right: 40px;
+  background-image: url('../static/img/orcid.png');
+  height: 32px;
+  width: 32px;
+  padding-bottom: 13px;
+  padding-top: 8px;
+}
+.img-arxiv {
+  display: inline;
+  background-repeat: no-repeat;
+  padding-right: 40px;
+  background-image: url('../static/img/arxiv.ico');
+  height: 32px;
+  width: 32px;
+  padding-bottom: 13px;
+  padding-top: 8px;
+}
+#sign-in-modal {
+  .btn-lg {
+    font-size: 15px;
+  }
+  .modal-header {
+    text-align: center;
+    background-color: #eeeeee;
+  }
+  .modal-body {
+    text-align: center;
+  }
+}
 /*
-     the breakpoint is set to 654px, where the form breaks into
-     separated components: form, select options and search box
+   this mediaquery is set to stack the list elements 3x3 in mobile version
 */
-
-// @media(max-width:654px){
-//      #myTab {
-//           li {
-//                float:none;
-//           }
-//      }
-//      // #searchform {
-
-//      // }
-// }
-
-// @media(min-width: @screen-tablet){
-//      .masthead-nav {
-//           float: none;
-//      }
-// }
-
-// /*
-//      we will need different size images when resizing the viewport
-// */
-// @media screen and (max-width: 600px) {
-//   .logo {
-//     background: url(my-image.jpg);
-//   }
-// }
-
-
-/*
-     this mediaquery is set to stack the list elements 3x3 in mobile version
-*/
-
 @media screen and (max-width: @screen-tablet) {
-     .navbar-collapse > .masthead-nav {
-          float: none !important;       // TODO: find another way to do it not hacky one
-     }
-     #myTab {
-          > li {
-               width: 50%;
-               > a {
-                    text-align: center;
-               }
-          }
-     }
-     // takes the 3 first li elements
-     #myTab > li:nth-child(-n+3) {
-          float: left;
-     }
+  .navbar-collapse > .masthead-nav {
+  float: none !important;       // TODO: find another way to do it not hacky one
+  }
+  #myTab {
+  > li {
+    width: 50%;
+    > a {
+    text-align: center;
+    }
+  }
+  }
+  // takes the 3 first li elements
+  #myTab > li:nth-child(-n+3) {
+  float: left;
+  }
 }
