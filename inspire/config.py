@@ -139,6 +139,11 @@ DEPOSIT_TYPES = [
 ]
 DEPOSIT_DEFAULT_TYPE = "inspire.modules.deposit.workflows.literature:literature"
 
+# facets ignored by auto-discovery service, they are not accessible in inspire
+PACKAGES_FACETS_EXCLUDE = [
+    'invenio.modules.search.facets.collection',
+]
+
 # Task queue configuration
 
 CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
