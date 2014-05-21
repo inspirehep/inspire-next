@@ -24,8 +24,8 @@
 
 {%- block facets_configuration -%}
 
-  facet_list.facet($.extend({}, getFacetTreeConf(), {
-    facets: {{ facets|tojson|safe }},
+  $facet_list.facet($.extend({}, getFacetTreeConf(), {
+    facets: facets_content,
     activate_modifier_keys: true
   }));
 
