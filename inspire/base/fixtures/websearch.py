@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 ## This file is part of Invenio.
-## Copyright (C) 2012, 2013 CERN.
+## Copyright (C) 2012, 2013, 2014 CERN.
 ##
 ## Invenio is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -236,5 +236,30 @@ class Collectionname(DataSet):
             type = 'ln'
             value = 'Journals'
 
+
+class FacetCollectionData(DataSet):
+
+    """Default facets configuration."""
+
+    class FacetCollection_1:
+        id = 1
+        id_collection = CollectionData.Hep.ref('id')
+        order = 1
+        facet_name = 'collection'
+
+    class FacetCollection_2:
+        id = 2
+        id_collection = CollectionData.Hep.ref('id')
+        order = 2
+        facet_name = 'author'
+
+    class FacetCollection_3:
+        id = 3
+        id_collection = CollectionData.Hep.ref('id')
+        order = 3
+        facet_name = 'year'
+
+
 __all__ = ('CollectionData', 'CollectiondetailedrecordpagetabsData',
-           'Collectionname')
+           'FacetCollectionData', 'Collectionname')
+
