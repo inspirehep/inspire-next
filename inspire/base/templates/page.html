@@ -50,7 +50,7 @@
 {% block body %}
   {{ super() }}
   {% if searchbar_enable %}
-    {{ search_form(collection, easy_search_form) }}
+    {% include "search/form/index.html" %}
   {% endif %}
   {% block inner_content %}
     <!-- Here goes the content visible below the search bar -->
