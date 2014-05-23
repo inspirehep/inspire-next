@@ -25,13 +25,13 @@
 
 {%- block global_css -%}
   {# inspire.css is the customized bootstrap.min.css #}
-  {%- css 'css/inspire.css', '00-invenio' -%}
-  {%- css 'css/font-awesome.min.css', '00-invenio' -%}
+  {%- css url_for('static', filename='css/inspire.css'), '00-invenio' -%}
+  {%- css url_for('static', filename='css/font-awesome.min.css'), '00-invenio' -%}
 {%- endblock global_css -%}
 
 {%- block global_javascript -%}
-  {%- js 'js/jquery.min.js', '00-invenio' -%}
-  {%- js 'js/bootstrap.min.js', '00-invenio' -%}
+  {%- js url_for('static', filename='js/jquery.min.js'), '00-invenio' -%}
+  {%- js url_for('static', filename='js/bootstrap.min.js'), '10-invenio' -%}
 {%- endblock global_javascript -%}
 
 
@@ -62,8 +62,8 @@
 {% block header %}
   {{ super() }}
   {% if searchbar_enable %}
-    {% js 'js/jquery-caret.js' %}
-    {%- js 'js/typeahead.js', '10-invenio' -%}
+    {% js url_for('static', filename='js/jquery-caret.js') %}
+    {%- js url_for('static', filename='js/typeahead.js'), '10-invenio' -%}
     {% js url_for('search.static', filename='js/search/search_parser.js') %}
     {% js url_for('search.static', filename='js/search/typeahead.js') %}
     {% js url_for('search.static', filename='js/search/default_typeahead_configuration.js') %}
