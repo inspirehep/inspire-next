@@ -20,6 +20,7 @@
 from wtforms import validators
 from lxml.html import fromstring
 from wtforms.widgets import html_params, HTMLString
+from flask_wtf import RecaptchaField
 
 from invenio.modules.deposit.types import SimpleRecordDeposition
 from invenio.modules.deposit.form import WebDepositForm
@@ -83,14 +84,13 @@ def radiochoice_buttons(field, **dummy_kwargs):
 
 def importdata_button(field, **dummy_kwargs):
     """Import data button."""
-    html = u'<button %s data-loading-text="%s" %s>%s</button>' % \
+    html = u'<button %s data-loading-text="%s">%s</button>' % \
            (html_params(style="float:right; width: 160px;",
                         id="importData",
                         class_="btn btn-primary btn-large",
                         name="importData",
                         type="button"),
             _('Importing data...'),
-            'data-toggle="modal" data-target="#modal-message"',
             field.label.text)
     return HTMLString(html)
 
@@ -131,16 +131,49 @@ class AuthorInlineForm(WebDepositForm):
     )
 
 
-class SourceInlineForm(WebDepositForm):
+class DOIInlineForm(WebDepositForm):
 
-    """External source inline form."""
+    """DOI inline form."""
 
-    source = inspire_fields.ExternalSourceField(
-        label=_('Identifier'),
-        widget=ColumnInput(class_="col-xs-8"),
+    doi = fields.DOIField(
+        label=_('DOI'),
+        icon='fa fa-barcode fa-fw',
+        # processors=[missing_doi_warning],
+        widget=ColumnInput(class_="col-xs-9"),
+        export_key='doi'
     )
     import_source = fields.SubmitField(
-        label=_('Import data'),
+        label=_('Import from DOI'),
+        widget=importdata_button,
+    )
+
+
+class ArxivInlineForm(WebDepositForm):
+
+    """ArXiv ID inline form."""
+
+    arxiv_id = fields.TextField(
+        label=_('ArXiv ID'),
+        widget=ColumnInput(class_="col-xs-9"),
+        widget_classes='form-control',
+    )
+    import_source = fields.SubmitField(
+        label=_('Import from ArXiv ID'),
+        widget=importdata_button,
+    )
+
+
+class ISBNInlineForm(WebDepositForm):
+
+    """ISBN inline form."""
+
+    isbn = fields.TextField(
+        label=_('ISBN'),
+        widget=ColumnInput(class_="col-xs-9"),
+        widget_classes='form-control',
+    )
+    import_source = fields.SubmitField(
+        label=_('Import from ISBN'),
         widget=importdata_button,
     )
 
@@ -149,13 +182,27 @@ class LiteratureForm(WebDepositForm):
 
     """Literature form fields."""
 
-    identifier = fields.FormField(SourceInlineForm,
-                                  widget=ExtendedListWidget(
-                                      item_widget=ItemWidget(),
-                                      html_tag='div'),
-                                  )
+    # captcha = RecaptchaField()
 
-    types_of_doc = [("article", _("Article")),
+    doi = fields.FormField(DOIInlineForm,
+                           label='DOI',
+                           widget=ExtendedListWidget(
+                               item_widget=ItemWidget(),
+                               html_tag='div'))
+
+    arxiv_id = fields.FormField(ArxivInlineForm,
+                                label='ArXiv ID',
+                                widget=ExtendedListWidget(
+                                    item_widget=ItemWidget(),
+                                    html_tag='div'))
+
+    isbn = fields.FormField(ISBNInlineForm,
+                            label='ISBN',
+                            widget=ExtendedListWidget(
+                                item_widget=ItemWidget(),
+                                html_tag='div'))
+
+    types_of_doc = [("article", _("Article/Conference paper")),
                     ("thesis", _("Thesis")),
                     ("chapter", _("Book Chapter")),
                     ("book", _("Book")),
@@ -171,12 +218,6 @@ class LiteratureForm(WebDepositForm):
         widget_classes='form-control',
         validators=[validators.Required()],
         description='Required.',
-    )
-    doi = fields.DOIField(
-        label=_('DOI'),
-        icon='fa fa-barcode fa-fw',
-        processors=[missing_doi_warning],
-        export_key='doi'
     )
 
     title = fields.TitleField(
@@ -206,6 +247,17 @@ class LiteratureForm(WebDepositForm):
         validators=[validators.Required()],
     )
 
+    collaboration = fields.TextField(
+        label=_('Collaboration'),
+        widget_classes="form-control"
+    )
+
+    # experiment = fields.SelectField(
+    #     label=_('Experiment'),
+    #     choices=,
+    #     widget_classes="form-control"
+    # )
+
     # isto deve ser uma prefilled dropdown
     subject = fields.TextField(
         label=_('Subject'),
@@ -219,6 +271,28 @@ class LiteratureForm(WebDepositForm):
         icon='fa fa-pencil fa-fw',
         widget_classes="form-control",
         export_key='abstract',
+    )
+
+    languages = [("en", _("English")),
+                 ("fre", _("French")),
+                 ("ger", _("German")),
+                 ("dut", _("Dutch")),
+                 ("ita", _("Italian")),
+                 ("spa", _("Spanish")),
+                 ("por", _("Portuguese")),
+                 ("gre", _("Greek")),
+                 ("slo", _("Slovak")),
+                 ("cze", _("Czech")),
+                 ("hun", _("Hungarian")),
+                 ("pol", _("Polish")),
+                 ("nor", _("Norwegian")),
+                 ("swe", _("Swedish")),
+                 ("fin", _("Finnish")),
+                 ("rus", _("Russian"))]
+
+    language = fields.LanguageField(
+        label=_("Language"),
+        choices=languages
     )
 
     # ==============
@@ -256,21 +330,17 @@ class LiteratureForm(WebDepositForm):
         widget_classes="form-control" + thesis_class,
     )
 
-    # ================
-    # Publication Info
-    # ================
+    # ============
+    # Journal Info
+    # ============
     journal_title = fields.TextField(
         label=_('Journal Title'),
         widget_classes="form-control"
     )
 
-    isbn = fields.TextField(
-        label=_('ISBN'),
-        widget_classes="form-control"
-    )
-
-    pagination = fields.TextField(
-        label=_('Pagination'),
+    page_range = fields.TextField(
+        label=_('Page range'),
+        placeholder=_('1-100'),
         widget_classes="form-control"
     )
 
@@ -338,25 +408,25 @@ class LiteratureForm(WebDepositForm):
 
     groups = [
         ('Import from existing source',
-            ['identifier', ],
+            ['doi', 'arxiv_id', 'isbn', 'import_source'],
             {
                 'indication': 'Fill if you have a DOI, ArXiv id or ISBN',
             }),
         ('Document Type',
-            ['type_of_doc', ]),
+            ['captcha', 'type_of_doc', ]),
         ('Basic Information',
-            ['doi', 'title', 'authors', 'abstract',
-             'subject', 'supervisors', 'defense_date', 'degree_type',
-             'university']),
-        ('Publication Information',
-            ['journal_title', 'isbn', 'pagination', 'volume', 'year', 'issue']),
+            ['title', 'authors', 'collaboration', 'experiment', 'abstract',
+             'language', 'subject', 'supervisors', 'defense_date',
+             'degree_type', 'university']),
+        ('Journal Information',
+            ['journal_title', 'volume', 'issue', 'page_range', 'year']),
         ('Fulltext Information',
             ['file_field', 'url']),
     ]
 
     field_sizes = {
         'file_field': 'col-md-12',
-        'type_of_doc': 'col-xs-3',
+        'type_of_doc': 'col-xs-4',
     }
 
 
@@ -459,8 +529,8 @@ class literature(SimpleRecordDeposition):
         metadata['publication_info'] = {}
         if 'journal_title' in metadata:
             metadata['publication_info']['title'] = metadata['journal_title']
-        if 'pagination' in metadata:
-            metadata['publication_info']['page_artid'] = metadata['pagination']
+        if 'page_range' in metadata:
+            metadata['publication_info']['page_artid'] = metadata['page_range']
         if 'volume' in metadata:
             metadata['publication_info']['journal_volume'] = metadata['volume']
         if 'year' in metadata:
@@ -474,7 +544,7 @@ class literature(SimpleRecordDeposition):
                        'degree_type',
                        'university',
                        'journal_title',
-                       'pagination',
+                       'page_range',
                        'volume',
                        'year',
                        'issue', ]
