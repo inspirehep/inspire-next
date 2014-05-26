@@ -131,85 +131,40 @@ class AuthorInlineForm(WebDepositForm):
     )
 
 
-class DOIInlineForm(WebDepositForm):
-
-    """DOI inline form."""
-
-    doi = fields.DOIField(
-        label=_('DOI'),
-        icon='fa fa-barcode fa-fw',
-        # processors=[missing_doi_warning],
-        widget=ColumnInput(class_="col-xs-9"),
-        export_key='doi'
-    )
-    import_source = fields.SubmitField(
-        label=_('Import from DOI'),
-        widget=importdata_button,
-    )
-
-
-class ArxivInlineForm(WebDepositForm):
-
-    """ArXiv ID inline form."""
-
-    arxiv_id = fields.TextField(
-        label=_('ArXiv ID'),
-        widget=ColumnInput(class_="col-xs-9"),
-        widget_classes='form-control',
-    )
-    import_source = fields.SubmitField(
-        label=_('Import from ArXiv ID'),
-        widget=importdata_button,
-    )
-
-
-class ISBNInlineForm(WebDepositForm):
-
-    """ISBN inline form."""
-
-    isbn = fields.TextField(
-        label=_('ISBN'),
-        widget=ColumnInput(class_="col-xs-9"),
-        widget_classes='form-control',
-    )
-    import_source = fields.SubmitField(
-        label=_('Import from ISBN'),
-        widget=importdata_button,
-    )
-
-
 class LiteratureForm(WebDepositForm):
 
     """Literature form fields."""
 
     # captcha = RecaptchaField()
 
-    doi = fields.FormField(DOIInlineForm,
-                           label='DOI',
-                           widget=ExtendedListWidget(
-                               item_widget=ItemWidget(),
-                               html_tag='div'))
+    doi = fields.DOIField(
+        label=_('DOI'),
+        icon='fa fa-barcode fa-fw',
+        processors=[],
+        export_key='doi'
+    )
 
-    arxiv_id = fields.FormField(ArxivInlineForm,
-                                label='ArXiv ID',
-                                widget=ExtendedListWidget(
-                                    item_widget=ItemWidget(),
-                                    html_tag='div'))
+    arxiv_id = fields.TextField(
+        label=_('ArXiv ID'),
+        widget_classes='form-control',
+    )
 
-    isbn = fields.FormField(ISBNInlineForm,
-                            label='ISBN',
-                            widget=ExtendedListWidget(
-                                item_widget=ItemWidget(),
-                                html_tag='div'))
+    isbn = fields.TextField(
+        label=_('ISBN'),
+        widget_classes='form-control',
+    )
+
+    import_source = fields.SubmitField(
+        label=_('Import data'),
+        widget=importdata_button,
+    )
 
     types_of_doc = [("article", _("Article/Conference paper")),
                     ("thesis", _("Thesis")),
                     ("chapter", _("Book Chapter")),
                     ("book", _("Book")),
-                    ("proceedings", _("Proceedings")),
-                    ]
+                    ("proceedings", _("Proceedings"))]
 
-    # FIXME: change this to radiochoice_buttons widget
     type_of_doc = fields.SelectField(
         label='Type of document',
         choices=types_of_doc,
@@ -258,7 +213,7 @@ class LiteratureForm(WebDepositForm):
     #     widget_classes="form-control"
     # )
 
-    # isto deve ser uma prefilled dropdown
+    # this should be a prefilled dropdown
     subject = fields.TextField(
         label=_('Subject'),
         widget_classes="form-control",
@@ -401,8 +356,6 @@ class LiteratureForm(WebDepositForm):
     #             'already have an <strong>ArXiv</strong> id or a '\
     #             '<strong>DOI</strong>, fill the proper fields and the form '\
     #             'should be automatically completed.'\
-
-    # template = 'deposit/cenas.html'
 
     # Group fields in categories
 
