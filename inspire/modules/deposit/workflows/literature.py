@@ -38,7 +38,6 @@ from invenio.modules.deposit.tasks import render_form, \
     prefill_draft, \
     process_sip_metadata, \
     hold_for_approval
-from invenio.modules.deposit.fields.doi import missing_doi_warning
 from inspire.modules.deposit import fields as inspire_fields
 
 
@@ -207,11 +206,11 @@ class LiteratureForm(WebDepositForm):
         widget_classes="form-control"
     )
 
-    # experiment = fields.SelectField(
-    #     label=_('Experiment'),
-    #     choices=,
-    #     widget_classes="form-control"
-    # )
+    experiment = fields.TextField(
+        label=_('Experiment'),
+        #choices=,
+        widget_classes="form-control"
+    )
 
     # this should be a prefilled dropdown
     subject = fields.TextField(
@@ -226,6 +225,12 @@ class LiteratureForm(WebDepositForm):
         icon='fa fa-pencil fa-fw',
         widget_classes="form-control",
         export_key='abstract',
+    )
+
+    page_nr = fields.TextField(
+        label=_('Number of pages'),
+        widget_classes="form-control",
+        export_key='page_nr'
     )
 
     languages = [("en", _("English")),
@@ -248,6 +253,11 @@ class LiteratureForm(WebDepositForm):
     language = fields.LanguageField(
         label=_("Language"),
         choices=languages
+    )
+
+    conf_name = fields.TextField(
+        label=_('Conference name'),
+        widget_classes="form-control"
     )
 
     # ==============
@@ -296,6 +306,11 @@ class LiteratureForm(WebDepositForm):
     page_range = fields.TextField(
         label=_('Page range'),
         placeholder=_('1-100'),
+        widget_classes="form-control"
+    )
+
+    article_id = fields.TextField(
+        label=_('Article ID'),
         widget_classes="form-control"
     )
 
@@ -369,10 +384,15 @@ class LiteratureForm(WebDepositForm):
             ['captcha', 'type_of_doc', ]),
         ('Basic Information',
             ['title', 'authors', 'collaboration', 'experiment', 'abstract',
-             'language', 'subject', 'supervisors', 'defense_date',
+             'page_nr', 'language', 'subject', 'supervisors', 'defense_date',
              'degree_type', 'university']),
+        ('Conference Information',
+            ['conf_name']),
         ('Journal Information',
-            ['journal_title', 'volume', 'issue', 'page_range', 'year']),
+            ['journal_title', 'volume', 'issue', 'page_range', 'article_id',
+             'year']),
+        ('Proceedings information (not published in journal)',
+            []),
         ('Fulltext Information',
             ['file_field', 'url']),
     ]
@@ -474,7 +494,21 @@ class literature(SimpleRecordDeposition):
         # Category
         # ========
         metadata['collections'] = {}
-        metadata['collections']['primary'] = 'HEP'
+        metadata['collections']['primary'] = ['HEP']
+
+        # ==========
+        # Experiment
+        # ==========
+        if 'experiment' in metadata:
+            metadata['accelerator_experiment'] = {}
+            metadata['accelerator_experiment']['experiment'] = metadata['experiment']
+
+        # ===============
+        # Conference Info
+        # ===============
+        if 'conf_number' in metadata:
+            metadata['nonpublic_note'] = metadata['conf_name']
+            metadata['collections']['primary'] += ['ConferencePaper']
 
         # ================
         # Publication Info
@@ -482,8 +516,11 @@ class literature(SimpleRecordDeposition):
         metadata['publication_info'] = {}
         if 'journal_title' in metadata:
             metadata['publication_info']['title'] = metadata['journal_title']
+        # this should only allow the user to fill whether the page_range or the article_id
         if 'page_range' in metadata:
             metadata['publication_info']['page_artid'] = metadata['page_range']
+        elif 'article_id' in metadata:
+            metadata['publication_info']['page_artid'] = metadata['article_id']
         if 'volume' in metadata:
             metadata['publication_info']['journal_volume'] = metadata['volume']
         if 'year' in metadata:
@@ -498,9 +535,12 @@ class literature(SimpleRecordDeposition):
                        'university',
                        'journal_title',
                        'page_range',
+                       'article_id',
                        'volume',
                        'year',
-                       'issue', ]
+                       'issue',
+                       'conf_name',
+                       'experiment']
         for key in delete_keys:
             if key in metadata:
                 del metadata[key]
