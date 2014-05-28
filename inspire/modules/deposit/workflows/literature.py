@@ -259,10 +259,10 @@ class LiteratureForm(WebDepositForm):
     # )
 
     # isto deve ser uma prefilled dropdown
-    subject = fields.TextField(
+    subject = fields.SelectField(
         label=_('Subject'),
         widget_classes="form-control",
-        export_key='subject_term',
+        export_key='subject_term'
     )
 
     abstract = fields.TextAreaField(
@@ -428,6 +428,12 @@ class LiteratureForm(WebDepositForm):
         'file_field': 'col-md-12',
         'type_of_doc': 'col-xs-4',
     }
+
+    def __init__(self, *args, **kwargs):
+        super(LiteratureForm, self).__init__(*args, **kwargs)
+        from invenio.modules.knowledge.api import get_kb_mappings
+        self.subject.choices = [(x['value'], x['value'])
+                                for x in get_kb_mappings('Subjects')]
 
 
 #
