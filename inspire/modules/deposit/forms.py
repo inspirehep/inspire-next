@@ -371,6 +371,8 @@ class LiteratureForm(WebDepositForm):
             {
                 'indication': 'Fill if you have a DOI, ArXiv id or ISBN',
             }),
+        ('Fulltext Information',
+            ['file_field', 'url']),
         ('Document Type',
             ['captcha', 'type_of_doc', ]),
         ('Basic Information',
@@ -384,8 +386,6 @@ class LiteratureForm(WebDepositForm):
              'year']),
         ('Proceedings information (not published in journal)',
             []),
-        ('Fulltext Information',
-            ['file_field', 'url']),
     ]
 
     field_sizes = {
