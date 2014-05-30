@@ -111,6 +111,8 @@ CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
 BROKER_URL = "amqp://guest:guest@localhost:5672//"
 
 CFG_SITE_LANG = u"en"
+CFG_SITE_LANGS = ['en', ]
+
 
 # CFG_SITE_NAME and main collection name should be the same for empty search
 # to work
