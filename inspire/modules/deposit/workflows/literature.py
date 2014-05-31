@@ -89,6 +89,14 @@ class literature(SimpleRecordDeposition):
         metadata['title']['main'] = title
 
         # =======
+        # Subjects
+        # =======
+        if "subject_term" in metadata:
+            subject_term = metadata['subject_term']
+            metadata['subject_term'] = {}
+            metadata['subject_term']['term'] = subject_term
+
+        # =======
         # Authors
         # =======
         if 'authors' in metadata and metadata['authors']:
