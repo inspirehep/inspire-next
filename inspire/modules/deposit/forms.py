@@ -30,6 +30,7 @@ from wtforms.widgets import html_params, HTMLString
 from flask_wtf import RecaptchaField
 
 from invenio.base.i18n import _
+from invenio.base.globals import cfg
 from invenio.modules.deposit import fields
 from invenio.modules.deposit.form import WebDepositForm
 from invenio.modules.deposit.field_widgets import plupload_widget, \
@@ -384,4 +385,4 @@ class LiteratureForm(WebDepositForm):
         super(LiteratureForm, self).__init__(*args, **kwargs)
         from invenio.modules.knowledge.api import get_kb_mappings
         self.subject.choices = [(x['value'], x['value'])
-                                for x in get_kb_mappings('Subjects')]
+                                for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_SUBJECTS_KB"])]
