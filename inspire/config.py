@@ -46,6 +46,7 @@ EXTENSIONS = ORIG_EXTENSIONS + [
 PACKAGES = [
     'inspire.base',
     'inspire.ext',
+    'inspire.modules.workflows',
     'invenio.modules.access',
     'invenio.modules.accounts',
     'invenio.modules.alerts',
