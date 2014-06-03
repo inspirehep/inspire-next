@@ -186,57 +186,6 @@ class CollectiondetailedrecordpagetabsData(DataSet):
         id_collection = CollectionData.Journals.ref('id')
 
 
-class Collectionname(DataSet):
-
-    class Collectionname_1:
-        id_collection = 1
-        ln = 'en'
-        type = 'ln'
-        value = 'HEP'
-
-    class Collectionname_2:
-        id_collection = 2
-        ln = 'en'
-        type = 'ln'
-        value = 'Institutions'
-
-    class Collectionname_3:
-            id_collection = 3
-            ln = 'en'
-            type = 'ln'
-            value = 'Jobs'
-
-    class Collectionname_4:
-            id_collection = 4
-            ln = 'en'
-            type = 'ln'
-            value = 'Conferences'
-
-    class Collectionname_5:
-            id_collection = 5
-            ln = 'en'
-            type = 'ln'
-            value = 'HepNames'
-
-    class Collectionname_6:
-            id_collection = 6
-            ln = 'en'
-            type = 'ln'
-            value = 'Jobs Hidden'
-
-    class Collectionname_7:
-            id_collection = 7
-            ln = 'en'
-            type = 'ln'
-            value = 'Experiments'
-
-    class Collectionname_8:
-            id_collection = 8
-            ln = 'en'
-            type = 'ln'
-            value = 'Journals'
-
-
 class FacetCollectionData(DataSet):
 
     """Default facets configuration."""
@@ -261,5 +210,4 @@ class FacetCollectionData(DataSet):
 
 
 __all__ = ('CollectionData', 'CollectiondetailedrecordpagetabsData',
-           'FacetCollectionData', 'Collectionname')
-
+           'FacetCollectionData')
