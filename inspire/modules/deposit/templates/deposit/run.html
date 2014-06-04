@@ -49,3 +49,50 @@
 
 {% block sidebar %}
 {% endblock %}
+
+{% block javascript %}
+{%- block form_script_options %}
+<script type="text/javascript">
+  var date_options = {dateFormat: 'yy-mm-dd'}
+</script>
+{%- endblock form_script_options %}
+<script type="text/javascript">
+$(document).ready(function() {
+    {# Fix issue with typeahead.js drop-down partly cut-off due to overflow #}
+    $('#webdeposit_form_accordion').on('hide', function (e) {
+        $(e.target).css("overflow","hidden");
+    })
+    $('#webdeposit_form_accordion').on('shown', function (e) {
+        $(e.target).css("overflow", "visible");
+    })
+    $('#webdeposit_form_accordion .panel-collapse.in.collapse').css("overflow", "visible");
+});
+$(document).ready(function() {
+    var save_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id) }}';
+    var save_all_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, all='1') }}';
+    var complete_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, submit='1') }}';
+    var autocomplete_url = '{{ url_for(".autocomplete", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, field_name="__FIELDNAME__", limit=10) }}';
+
+    DEPOSIT_FORM.init_plupload(
+        '{{config.DEPOSIT_MAX_UPLOAD_SIZE|default('10mb')}}',
+        '.pluploader',
+        save_url,
+        '{{ url_for('.upload_file', deposition_type=deposition_type, uuid=uuid) }}',
+        '{{ url_for('.delete_file', deposition_type=deposition_type, uuid=uuid) }}',
+        '{{ url_for('.get_file', deposition_type=deposition_type, uuid=uuid) }}',
+        {{ form.files|safe }},
+        '{{ url_for('.upload_url', deposition_type=deposition_type, uuid=uuid) }}'
+    );
+    DEPOSIT_FORM.init_save(save_all_url, '.form-save', '#submitForm');
+    DEPOSIT_FORM.init_submit(complete_url, '.form-submit', '#submitForm', '#form-submit-dialog');
+    DEPOSIT_FORM.init_inputs('#submitForm input, #submitForm textarea, #submitForm select', save_url);
+    DEPOSIT_FORM.init_buttons('#submitForm .form-button', save_url);
+    DEPOSIT_FORM.init_autocomplete('[data-autocomplete="1"]', save_url, autocomplete_url);
+    DEPOSIT_FORM.init_field_lists('#submitForm .dynamic-field-list', save_url, '[data-autocomplete="1"]', autocomplete_url);
+    //DEPOSIT_FORM.init_ckeditor( '#submitForm textarea[data-ckeditor="1"]', save_url);
+
+    // Date picker
+    $(".datepicker").datepicker(date_options);
+});
+</script>
+{% endblock javascript %}
