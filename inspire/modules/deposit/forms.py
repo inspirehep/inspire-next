@@ -37,7 +37,7 @@ from invenio.modules.deposit.field_widgets import plupload_widget, \
     ColumnInput, \
     ExtendedListWidget, \
     ItemWidget
-
+from invenio.modules.deposit.autocomplete_utils import kb_dynamic_autocomplete
 
 #
 # Field class names
@@ -88,6 +88,16 @@ def defensedate_widget(field, **kwargs):
     return HTMLString(u''.join(html))
 
 
+def institutions_kb_mapper(val):
+    """Return object ready to autocomplete affiliations."""
+    return {
+        'value': "%s" % val,
+        'fields': {
+            "affiliation": val,
+        }
+    }
+
+
 class AuthorInlineForm(WebDepositForm):
 
     """Author inline form."""
@@ -103,6 +113,8 @@ class AuthorInlineForm(WebDepositForm):
     )
     affiliation = fields.TextField(
         placeholder=_("Affiliation"),
+        autocomplete=kb_dynamic_autocomplete("InstitutionsCollection",
+                                             mapper=institutions_kb_mapper),
         widget_classes='form-control',
         widget=ColumnInput(class_="col-xs-4 col-pad-0"),
         export_key='affiliation',
