@@ -135,6 +135,7 @@ class LiteratureForm(WebDepositForm):
     )
 
     arxiv_id = fields.TextField(
+        placeholder=_("1406.0000"),
         label=_('ArXiv ID'),
         widget_classes='form-control',
     )
