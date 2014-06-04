@@ -180,9 +180,100 @@ $(document).ready( function() {
 			});
 		}
 		else if($("#arxiv_id").val() != ''){
-		// if DOI field is empty and ArXiv has something
-			import_state = 'info';
-			import_message = 'The ArXiv ID importing is not available at the moment.';
+		   // if DOI field is empty and ArXiv has something
+              var arxiv = $("#arxiv_id").val();
+              var url = "/arxiv/search?arxiv=" + arxiv;
+              var import_state, import_message;
+              $.get(url, function( data ) {
+                if(data.query.status == "success"){
+                  import_state = 'success';
+                  if(data.source == 'arxiv'){
+                    import_message = 'The data was successfully imported from ArXiv.';
+                    var title, authors, contributors;
+
+                    if (selected_type.val() == 'article') {
+                      title = data.query.title;
+                      if(data.query.published)
+                        $("#year").val(data.query.published);
+                      if(data.query.summary)
+                        $("#abstract").val(data.query.summary);
+                      if(data.query.id)
+                        $("#article_id").val(data.query.id);
+                    }
+                    $("#title").val(title);
+                    authors = document.getElementById("field-authors");
+                    contributors = data.query.author;
+                      if(contributors && contributors.length>0){
+                        authors.innerHTML =
+        '<div class="authors dynamic-field-list ui-sortable" id="authors"> \
+        <input id="authors-__last_index__" name="authors-__last_index__" type="hidden" value="0">';
+                        for(i = 0; i<contributors.length; i++){
+                          var field = "#authors-" + i + "-name";
+                          authors.innerHTML +=
+        '<div class="field-list-element"> \
+          <div class="row"> \
+              <div id="authors-'+i+'"> \
+                  <div class="col-xs-6"> \
+                      <input class="form-control" id="authors-'+i+'-name" name="authors-'+i+'-name" type="text" value="'+ contributors[i].name +'"> \
+                  </div> \
+                  <div class="col-xs-4 col-pad-0"> \
+                      <input class="form-control" id="authors-'+i+'-affiliation" name="authors-'+i+'-affiliation" placeholder="Affiliation" type="text" value=""> \
+                  </div> \
+              </div> \
+              <div class="col-xs-2"> \
+                  <a class="sort-element text-muted sortlink iconlink" rel="tooltip" title="Drag to reorder"> \
+                      <i class="fa fa-sort fa-fw"></i> \
+                  </a> \
+                  <a class="remove-element text-muted iconlink" rel="tooltip" title="Click to remove"> \
+                      <i class="fa fa-times fa-fw"></i> \
+                  </a> \
+              </div> \
+          </div> \
+        </div>';
+                        }
+                        authors.innerHTML +=
+        '<div class="empty-element"> \
+        <div class="row"> \
+            <div id="authors-__index__"> \
+                <div class="col-xs-6"> \
+                    <input class="form-control" id="authors-__index__-name" name="authors-__index__-name" placeholder="Family name, First name" type="text" value=""> \
+                </div> \
+                <div class="col-xs-4 col-pad-0"> \
+                    <input class="form-control" id="authors-__index__-affiliation" name="authors-__index__-affiliation" placeholder="Affiliation" type="text" value=""> \
+                </div> \
+            </div> \
+            <div class="col-xs-2"> \
+                <a class="sort-element text-muted sortlink iconlink" rel="tooltip" title="Drag to reorder"></a><a class="remove-element text-muted iconlink" rel="tooltip" title="Click to remove"></a> \
+            </div> \
+        </div> \
+        </div> \
+        <div class="row"><div class="col-xs-12"> \
+        <span class="pull-right"> \
+            <a class="add-element"> \
+                <i class="fa fa-plus"></i> Add another author \
+            </a> \
+        </span> \
+        </div> \
+        <p class="text-muted field-desc"><small>Required.</small></p> \
+        \
+        <div class="alert help-block" id="state-authors" style="margin-top: 5px; display: none;"></div>';
+                      }
+                  } else if(data.source == 'database'){
+                    // if ArXiv and the source is the database
+                    import_state = 'info';
+                    import_message = 'This ArXiv already exists in Inspire database.';
+                  }
+                } else {
+                  // if ArXiv not found or malformed
+                  import_state = 'warning';
+                  if(data.query.status == 'notfound')
+                    import_message = 'The ArXiv ' + $("#arxiv_id").val() + ' was not found.';
+                  else if(data.query.status == 'malformed')
+                    import_message = 'The ArXiv ' + $("#arxiv_id").val() + ' is malformed.';
+                }
+                flash_import({state:import_state, message: import_message});
+              });
+
 		}
 		else if($("#isbn").val() != ''){
 			// if DOI and ArXiv fields are empty and ISBN has something
