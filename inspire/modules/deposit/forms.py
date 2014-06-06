@@ -123,7 +123,6 @@ class LiteratureForm(WebDepositForm):
 
     doi = fields.DOIField(
         label=_('DOI'),
-        icon='fa fa-barcode fa-fw',
         processors=[],
         export_key='doi'
     )
@@ -163,7 +162,6 @@ class LiteratureForm(WebDepositForm):
     title = fields.TitleField(
         label=_('Original Title'),
         description='Required.',
-        icon='fa fa-book fa-fw',
         widget_classes="form-control",
         validators=[validators.Required()],
         export_key='title',
@@ -180,7 +178,6 @@ class LiteratureForm(WebDepositForm):
         label='Authors',
         add_label='Add another author',
         description='Required.',
-        icon='fa fa-user fa-fw',
         min_entries=1,
         widget_classes='',
         export_key='authors',
@@ -208,7 +205,6 @@ class LiteratureForm(WebDepositForm):
     abstract = fields.TextAreaField(
         label=_('Abstract'),
         default='',
-        icon='fa fa-pencil fa-fw',
         widget_classes="form-control",
         export_key='abstract',
     )
@@ -259,7 +255,6 @@ class LiteratureForm(WebDepositForm):
         ),
         label=_('Supervisors'),
         add_label=_('Add another supervisor'),
-        icon='fa fa-user fa-fw',
         min_entries=1,
         export_key='supervisors',
         widget_classes=THESIS_CLASS,
