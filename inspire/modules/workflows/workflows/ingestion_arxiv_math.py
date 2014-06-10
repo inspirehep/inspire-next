@@ -79,7 +79,7 @@ class ingestion_arxiv_math(object):
                         [
                             write_something_generic(["Max Simultaneous Workflow, Wait for one to finish"],
                                                     [task_update_progress, write_message]),
-                            wait_for_a_workflow_to_complete(),
+                            wait_for_a_workflow_to_complete,
                             start_workflow("process_record_arxiv", None),
                             write_something_generic(["Workflow started : ", get_nb_workflow_created, " "],
                                                     [task_update_progress, write_message]),
@@ -95,7 +95,7 @@ class ingestion_arxiv_math(object):
                                 [task_update_progress, write_message]),
         simple_for(0, get_nb_workflow_created, 1),
         [
-            wait_for_a_workflow_to_complete(),
+            wait_for_a_workflow_to_complete,
             write_something_generic([get_workflows_progress, " % Complete"],
                                     [task_update_progress, write_message]),
         ],
