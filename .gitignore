@@ -30,4 +30,5 @@ bower.json
 **/static/vendors/**
 **/static/gen/**
 *~
+dump.rdb
 .idea/
