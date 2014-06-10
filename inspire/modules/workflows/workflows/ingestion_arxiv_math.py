@@ -1,21 +1,24 @@
 # -*- coding: utf-8 -*-
+#
+## This file is part of INSPIRE.
+## Copyright (C) 2014 CERN.
 ##
-## This file is part of Invenio.
-## Copyright (C) 2013, 2014 CERN.
+## INSPIRE is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
 ##
-## Invenio is free software; you can redistribute it and/or
-## modify it under the terms of the GNU General Public License as
-## published by the Free Software Foundation; either version 2 of the
-## License, or (at your option) any later version.
-##
-## Invenio is distributed in the hope that it will be useful, but
-## WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-## General Public License for more details.
+## INSPIRE is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
 ##
 ## You should have received a copy of the GNU General Public License
-## along with Invenio; if not, write to the Free Software Foundation, Inc.,
-## 59 Temple Place, Suite 330, Boston, MA 02111 1307, USA.
+## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+##
+## In applying this license, CERN does not waive the privileges and immunities
+## granted to it by virtue of its status as an Intergovernmental Organization
+## or submit itself to any jurisdiction.
 
 """Implements an example of a typical ingestion workflow for MARCXML records"""
 
@@ -79,7 +82,7 @@ class ingestion_arxiv_math(object):
                         [
                             write_something_generic(["Max Simultaneous Workflow, Wait for one to finish"],
                                                     [task_update_progress, write_message]),
-                            wait_for_a_workflow_to_complete,
+                            wait_for_a_workflow_to_complete(),
                             start_workflow("process_record_arxiv", None),
                             write_something_generic(["Workflow started : ", get_nb_workflow_created, " "],
                                                     [task_update_progress, write_message]),
@@ -95,7 +98,7 @@ class ingestion_arxiv_math(object):
                                 [task_update_progress, write_message]),
         simple_for(0, get_nb_workflow_created, 1),
         [
-            wait_for_a_workflow_to_complete,
+            wait_for_a_workflow_to_complete(),
             write_something_generic([get_workflows_progress, " % Complete"],
                                     [task_update_progress, write_message]),
         ],
