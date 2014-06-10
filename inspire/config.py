@@ -35,10 +35,33 @@ point specified in the setup.py::
     },
 """
 
-from invenio.base.config import EXTENSIONS as ORIG_EXTENSIONS
-from invenio.base.config import CFG_SITE_LANGS
-
-EXTENSIONS = ORIG_EXTENSIONS + [
+EXTENSIONS = [
+    'invenio.ext.arxiv:Arxiv',
+    'invenio.ext.confighacks',
+    'invenio.ext.jinja2hacks',
+    'invenio.ext.debug_toolbar',
+    'invenio.ext.babel',
+    'invenio.ext.sqlalchemy',
+    'invenio.ext.sslify',
+    'invenio.ext.cache',
+    'invenio.ext.session',
+    'invenio.ext.login',
+    'invenio.ext.principal',
+    'invenio.ext.email',
+    'invenio.ext.legacy',
+    'invenio.ext.assets',
+    'invenio.ext.template',
+    'invenio.ext.admin',
+    'invenio.ext.logging',
+    'invenio.ext.logging.backends.fs',
+    'invenio.ext.logging.backends.legacy',
+    'invenio.ext.logging.backends.sentry',
+    'invenio.ext.gravatar',
+    'invenio.ext.collect',
+    'invenio.ext.restful',
+    'flask.ext.menu:Menu',
+    'flask.ext.breadcrumbs:Breadcrumbs',
+    'invenio.modules.deposit.url_converters',
     'inspire.ext.search_bar',
     'inspire.ext.formatter_jinja_filters'
 ]
@@ -125,6 +148,8 @@ langs = {}
 for lang in CFG_SITE_LANGS:
     langs[lang] = u"INSPIRE - High-Energy Physics Literature Database"
 CFG_SITE_NAME_INTL = langs
+
+ARXIV_API_URL = "http://export.arxiv.org/api/query"
 
 try:
     from inspire.instance_config import *
