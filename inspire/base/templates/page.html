@@ -24,9 +24,7 @@
 
 
 {%- block global_css -%}
-  {# inspire.css is the customized bootstrap.min.css #}
-  {%- css url_for('static', filename='css/inspire.css'), '00-invenio' -%}
-  {%- css url_for('static', filename='css/font-awesome.min.css'), '00-invenio' -%}
+  {%- css url_for('static', filename='less/inspire.less'), '00-invenio', 'less' -%}
 {%- endblock global_css -%}
 
 {%- block global_javascript -%}
