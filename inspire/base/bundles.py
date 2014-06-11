@@ -23,9 +23,9 @@
 from invenio.ext.assets import Bundle
 
 styles = Bundle(
-    'css/inspire.css',
-    'css/font-awesome.min.css',
+    'less/inspire.less',
     output='base.css',
+    filters="less,cleancss",
     weight=20,
 )
 
