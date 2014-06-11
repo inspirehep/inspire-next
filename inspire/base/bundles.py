@@ -29,10 +29,10 @@ js = Bundle(
 )
 
 css = Bundle(
-    'css/inspire.css',
-    'css/font-awesome.min.css',
+    'less/inspire.less',
     output = 'base.css',
     weight = 00,
+    filters = 'less',
 )
 
 index_js = Bundle(
