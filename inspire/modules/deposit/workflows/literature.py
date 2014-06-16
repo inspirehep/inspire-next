@@ -121,9 +121,12 @@ class literature(SimpleRecordDeposition):
         # ==============
         if metadata['type_of_doc'] == 'thesis':
             metadata['thesis'] = {}
-            metadata['thesis']['date'] = metadata['defense_date']
-            metadata['thesis']['university'] = metadata['university']
-            metadata['thesis']['type'] = metadata['degree_type']
+            if 'defense_date' in metadata:
+                metadata['thesis']['date'] = metadata['defense_date']
+            if 'university' in metadata:
+                metadata['thesis']['university'] = metadata['university']
+            if 'degree_type' in metadata:
+                metadata['thesis']['type'] = metadata['degree_type']
 
         # ========
         # Category
