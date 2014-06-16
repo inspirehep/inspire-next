@@ -1,4 +1,5 @@
-#
+# -*- coding: utf-8 -*-
+##
 ## This file is part of INSPIRE.
 ## Copyright (C) 2014 CERN.
 ##
@@ -17,17 +18,10 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-"""
-    inspire.modules.deposit.forms
-    ----------------------------
-
-    Contains forms related to INSPIRE submission.
-"""
-
+"""Contains forms related to INSPIRE submission."""
 
 from wtforms import validators
 from wtforms.widgets import html_params, HTMLString
-from flask_wtf import RecaptchaField
 
 from invenio.base.i18n import _
 from invenio.base.globals import cfg
@@ -395,7 +389,10 @@ class LiteratureForm(WebDepositForm):
     }
 
     def __init__(self, *args, **kwargs):
+        """Constructor."""
         super(LiteratureForm, self).__init__(*args, **kwargs)
         from invenio.modules.knowledge.api import get_kb_mappings
-        self.subject.choices = [(x['value'], x['value'])
-                                for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_SUBJECTS_KB"])]
+        self.subject.choices = \
+            [('', '')] + \
+            [(x['value'], x['value'])
+             for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_SUBJECTS_KB"])]
