@@ -22,16 +22,9 @@
 
 {% extends "page_base.html" %}
 
-
 {%- block global_css -%}
   {%- css url_for('static', filename='less/inspire.less'), '00-invenio', 'less' -%}
 {%- endblock global_css -%}
-
-{%- block global_javascript -%}
-  {%- js url_for('static', filename='js/jquery.min.js'), '00-invenio' -%}
-  {%- js url_for('static', filename='js/bootstrap.min.js'), '10-invenio' -%}
-{%- endblock global_javascript -%}
-
 
 {%- block head_links %}
   {{ super() }}
