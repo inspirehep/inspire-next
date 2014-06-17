@@ -31,10 +31,10 @@
 	</style>
 {%- endblock css %}
 
-{%- block webdeposit_assets %}
+{%- block deposit_js -%}
 	{{ super() }}
 	{% js url_for('webdeposit.static', filename='js/deposit/fillform.js'), '50-webdeposit' %}
-{%- endblock webdeposit_assets %}
+{%- endblock deposit_js %}
 
 {% block file_container_colsize %}col-md-12{% endblock %}
 
