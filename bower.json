@@ -2,6 +2,8 @@
   "name": "inspire-grunt",
   "version": "0.1.0",
   "dependencies": {
-    "bootstrap": "3.1.1"
+    "buckets": "git@github.com:mauriciosantos/buckets.git",
+    "jquery-feeds": "git@github.com:camagu/jquery-feeds.git",
+    "moment": "2.7.0"
   }
 }
