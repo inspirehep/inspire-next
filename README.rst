@@ -42,11 +42,11 @@ Available Grunt commands
 
 **Build** - ``grunt``
 
-| Run ``grunt`` to compile LESS to CSS into ``inspire.css``. Uses `Less <http://lesscss.org/>`_.
+| Run ``grunt`` to copy external libraries. Extend the ``copy`` task and ``bower.json`` ton include future libraries.
 
-| **Development** - ``grunt watch``
+| **Development** - ``grunt jshint``
 
-| This is a convenience method for watching just Less files and automatically building them whenever you save.
+| This is a task to lint JavaScript according to `JSHint <http://www.jshint.com/>`_.
 
 Troubleshooting dependencies
 ----------------------------
