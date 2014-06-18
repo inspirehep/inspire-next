@@ -32,7 +32,9 @@
 {%- endblock css %}
 
 {%- block deposit_js -%}
+  {%- js url_for('static', filename='js/buckets.js') -%}
 	{{ super() }}
+  {%- js url_for('webdeposit.static', filename='js/deposit/fields_group.js'), '50-webdeposit' -%}
 	{% js url_for('webdeposit.static', filename='js/deposit/fillform.js'), '50-webdeposit' %}
 {%- endblock deposit_js %}
 
