@@ -6,9 +6,10 @@
     "grunt-contrib-less": "*",
     "grunt-contrib-watch": "*",
     "grunt-contrib-copy": "*",
-    "load-grunt-tasks": "~0.2.0"
+    "load-grunt-tasks": "~0.2.0",
+    "grunt-contrib-jshint": "~0.10.0"
   },
   "dependencies": {
-     "time-grunt": "*"
+    "time-grunt": "*"
   }
 }

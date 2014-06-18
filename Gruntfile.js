@@ -52,6 +52,18 @@ module.exports = function(grunt) {
         }
       }
     },
+    jshint: {
+      options: {
+        curly: true,
+        eqeqeq: true,
+        eqnull: true,
+        browser: true,
+        globals: {
+          jQuery: true
+        }
+      },
+      all: ['inspire/modules/**/static/js/**/*.js']
+    },
     watch: {
       styles: {
         // Which files to watch (all .less files recursively in the less directory)
