@@ -24,5 +24,11 @@ from invenio.modules.deposit.bundles import js as _deposit_js
 # auto-discovery service of invenio
 
 _deposit_js.contents += (
+    'js/buckets.js',
+    'js/deposit/fields_group.js',
     'js/deposit/fillform.js',
 )
+
+_deposit_js.bower.update({
+    'buckets': 'git://github.com/mauriciosantos/buckets.git',
+})
