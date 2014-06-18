@@ -70,6 +70,17 @@ $(document).ready( function() {
 		}
 	});
 
+    $("#journal_title, #volume, #issue, #page_range, #article_id, #year")
+      .fieldsGroup({
+        onEmpty: function enableProceedingsBox() {
+          $("#nonpublic_note").removeAttr('disabled');
+        },
+        onNotEmpty: function disableProceedingsBox() {
+          $("#nonpublic_note").attr('disabled', 'true');
+        }
+      });
+
+
   function Filter(options) {
 
     /**
