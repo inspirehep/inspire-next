@@ -310,6 +310,12 @@ class LiteratureForm(WebDepositForm):
         widget_classes="form-control"
     )
 
+    nonpublic_note = fields.TextAreaField(
+        label=_(' '),
+        placeholder='Editors, title of proceedings, publisher, year of publication, page range',
+        widget_classes="form-control"
+    )
+
     # ====================
     # Fulltext Information
     # ====================
@@ -373,7 +379,7 @@ class LiteratureForm(WebDepositForm):
             ['journal_title', 'volume', 'issue', 'page_range', 'article_id',
              'year']),
         ('Proceedings information (not published in journal)',
-            []),
+            ['nonpublic_note']),
         ('Fulltext Information',
             ['file_field', 'url']),
     ]
@@ -381,6 +387,7 @@ class LiteratureForm(WebDepositForm):
     field_sizes = {
         'file_field': 'col-md-12',
         'type_of_doc': 'col-xs-4',
+        'nonpublic_note': 'col-md-12',
     }
 
     def __init__(self, *args, **kwargs):
