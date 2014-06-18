@@ -22,10 +22,11 @@
 
 module.exports = function(grunt) {
 
-  var globalConfig = {
-    bower_path: 'bower_components',
-    installation_path: 'inspire/base/static'
-  };
+  var prefix = process.env.VIRTUAL_ENV || '../..',
+        globalConfig = {
+          bower_path: 'bower_components',
+          installation_path: prefix + '/var/invenio.base-instance/static'
+        };
 
   // show elapsed time at the end
   require('time-grunt')(grunt);
@@ -38,18 +39,15 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     globalConfig: globalConfig,
 
-    less: {
-      development: {
-        options: {
-          compress: true,
-          yuicompress: true,
-          optimization: 2
-        },
-        files: {
-          // target.css file: source.less file
-          "<%= globalConfig.installation_path %>/css/inspire.css":
-          "<%= globalConfig.installation_path %>/less/inspire.less"
-        }
+    copy: {
+      js: {
+          expand: true,
+          flatten: true,
+          cwd: '<%= globalConfig.bower_path %>/',
+          src: ['buckets/buckets.js',
+                  'jquery-feeds/dist/jquery.feeds.min.js',
+                  'moment/min/moment.min.js'],
+          dest: '<%= globalConfig.installation_path %>/js/'
       }
     },
     jshint: {
@@ -63,19 +61,9 @@ module.exports = function(grunt) {
         }
       },
       all: ['inspire/modules/**/static/js/**/*.js']
-    },
-    watch: {
-      styles: {
-        // Which files to watch (all .less files recursively in the less directory)
-        files: ['inspire/base/static/less/**/*.less'],
-        tasks: ['less'],
-        options: {
-          nospawn: true
-        }
-      }
     }
   });
 
-  grunt.registerTask('default', ['less']);
+  grunt.registerTask('default', ['copy']);
 
 };
