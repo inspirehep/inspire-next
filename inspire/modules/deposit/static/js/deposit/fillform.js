@@ -195,6 +195,42 @@ $(document).ready( function() {
     }
   });
 
+  /**
+   * Generates the import status message.
+   * @param queryStatus
+   * @param idType DOI/arXiv/ISBN etc.
+   * @param id
+   * @returns {{state: string, message: string}} as in the input of
+   *  tpl_flash_message template
+   */
+  function getImportMessage(queryStatus, idType, id) {
+    if (queryStatus == 'notfound')
+      return {
+        state: 'warning',
+        message: 'The ' + idType + ' ' + id + ' was not found.'
+      };
+    if(queryStatus == 'malformed')
+      return {
+        state: 'warning',
+        message: 'The ' + idType + ' ' + id + ' is malformed.'
+      };
+    if (queryStatus == 'success')
+      return {
+        state: 'success',
+        message: 'The data was successfully imported.'
+      };
+    if (queryStatus == 'duplicated')
+      return {
+        state: 'info',
+        message: 'This ' + idType + ' already exists in Inspire database.'
+      };
+
+    return {
+      state: 'warning',
+      message: 'Unknown import result.'
+    };
+  }
+
 
   /**
    * Imports data using given filter.
@@ -204,39 +240,28 @@ $(document).ready( function() {
   var importData = function(id, filter) {
     // if DOI field is not empty
     var url = filter.url + id;
-    var import_state, import_message;
 
     $.get(url, function( data ) {
 
       var query_status = data.query.status;
 
+      if (query_status != 'success' && data.source == 'database')
+        query_status = 'duplicated';
+
+      var queryMessage = getImportMessage(query_status, filter.name, id);
+
       if (query_status != 'success') {
-        import_state = 'warning';
-        if(data.query.status == 'notfound')
-          import_message = 'The ' + filter.name + ' ' + id + ' was not found.';
-        else if(data.query.status == 'malformed')
-          import_message = 'The ' + filter.name + ' ' + id + ' is malformed.';
-        return {
-          state: import_state,
-          message: import_message
-        };
+        flash_import(queryMessage);
+        return;
       }
 
-      if(data.source == 'database'){
-        return {
-          import_state: 'info',
-          import_message: 'This ' + filter.name + ' already exists in Inspire database.'
-        }
-      }
-
+      // do the import
       var deposition_type = $deposition_type.val();
 
       var common_mapping = filter.common_mapping(data.query);
       var special_mapping = filter.special_mapping[deposition_type](data.query);
 
       var mapping = $.extend({}, common_mapping, special_mapping);
-
-      import_message = 'The data was successfully imported.';
 
       $.map(mapping, function(value, field_id){
         var $field = $('#' + field_id);
@@ -257,35 +282,30 @@ $(document).ready( function() {
         if (parseInt(i) + 2 > authors_widget.get_next_index())
           authors_widget.append_element();
       }
-    });
 
-    return {
-      state: 'success',
-      message: 'The data was successfully imported from Crossref.'
-    }
+      flash_import(queryMessage);
+    });
   }
 
 	$("#importData").click(function(event) {
 
     var btn = $(this);
-    var import_result;
 		btn.button('loading');
 
 		if (!!$doi_field.val()) {
-			import_result = importData($doi_field.val(), doiFilter);
+			importData($doi_field.val(), doiFilter);
 		}
 		else if (!!$arxiv_id_field.val()) {
-		  import_result = importData($arxiv_id_field.val(), arxivFilter);
+		  importData($arxiv_id_field.val(), arxivFilter);
 		}
 		else if (!!$isbn_field.val()) {
 			// if DOI and ArXiv fields are empty and ISBN has something
-			import_result = {
-        import_state: 'info',
-			  import_message: 'The ISBN importing is not available at the moment.'
-      }
+			flash_import({
+        state: 'info',
+			  message: 'The ISBN importing is not available at the moment.'
+      });
 		}
 
-    flash_import(import_result);
 		btn.button('reset');
 	});
 
