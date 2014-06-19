@@ -259,7 +259,9 @@ $(document).ready( function() {
       var deposition_type = $deposition_type.val();
 
       var common_mapping = filter.common_mapping(data.query);
-      var special_mapping = filter.special_mapping[deposition_type](data.query);
+      var special_mapping = {};
+      if (filter.special_mapping[deposition_type])
+        special_mapping = filter.special_mapping[deposition_type](data.query);
 
       var mapping = $.extend({}, common_mapping, special_mapping);
 
