@@ -156,12 +156,10 @@ class LiteratureForm(WebDepositForm):
         #widget=radiochoice_buttons,
         widget_classes='form-control',
         validators=[validators.Required()],
-        description='Required.',
     )
 
     title = fields.TitleField(
         label=_('Original Title'),
-        description='Required.',
         widget_classes="form-control",
         validators=[validators.Required()],
         export_key='title',
@@ -177,7 +175,6 @@ class LiteratureForm(WebDepositForm):
         ),
         label='Authors',
         add_label='Add another author',
-        description='Required.',
         min_entries=1,
         widget_classes='',
         export_key='authors',
