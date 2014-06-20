@@ -165,6 +165,10 @@ class LiteratureForm(WebDepositForm):
         export_key='title',
     )
 
+    title_arXiv = fields.TitleField(
+        export_key='title_arXiv',
+    )
+
     title_translation = fields.TitleField(
         label=_('Translated Title'),
         description='Original title translated to english language.',
@@ -374,9 +378,9 @@ class LiteratureForm(WebDepositForm):
         ('Document Type',
             ['captcha', 'type_of_doc', ]),
         ('Basic Information',
-            ['title', 'language', 'title_translation', 'authors', 'collaboration',
-             'experiment', 'abstract', 'page_nr', 'subject', 'supervisors',
-             'defense_date', 'degree_type', 'university']),
+            ['title', 'title_arXiv', 'language', 'title_translation', 'authors',
+             'collaboration', 'experiment', 'abstract', 'page_nr', 'subject',
+             'supervisors', 'defense_date', 'degree_type', 'university']),
         ('Conference Information',
             ['conf_name']),
         ('Journal Information',
