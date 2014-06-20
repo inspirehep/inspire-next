@@ -115,6 +115,8 @@ $(document).ready( function() {
     handleTranslatedTitle();
   });
 
+  $("#state-group-title_arXiv").addClass("hidden");
+
   function Filter(options) {
 
     /**
@@ -215,6 +217,7 @@ $(document).ready( function() {
       article: function(data) {
         return {
           title: data.title,
+          title_arXiv: data.title,
           year: data.published,
           abstract: data.summary,
           article_id: data.id,
