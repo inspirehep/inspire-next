@@ -26,9 +26,13 @@
 	{%- css url_for('static', filename='css/deposit/form.css'), '51-webdeposit' -%}
            {%- css url_for('static', filename='css/bootstrap-multiselect.css'), '50-webdeposit' -%}
 	<style>
-		.container {
-			max-width: 960px;
-		}
+            @media (min-width: 1200px) {
+              #file_container {
+                width: 970px;
+                float: none;
+                margin: 0 auto;
+              }
+            }
 	</style>
 {%- endblock css %}
 
@@ -45,18 +49,11 @@
 
 {% block form_title scoped %}
 	{{ super() }}
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">Instructions</h3>
-        </div>
-        <div class="panel-body">
-            <ol>
-                <li>If you have an <strong>ArXiv id</strong>, a <strong>DOI</strong> or a <strong>ISBN</strong>, fill in the Identifier field and the data will be imported.</li>
-                <li>Upload or remove extra files in the bottom of the form.</li>
-                <li>When ready, press "Submit" to finalize your upload.</li>
-            </ol>
-        </div>
-    </div>
+    <p class="text-muted">
+        <small>Instructions: (i) If you have an <strong>ArXiv id</strong>, a <strong>DOI</strong> or a <strong>ISBN</strong>,
+        fill in the Identifier field and the data will be imported. (ii) Upload or remove extra files in the bottom of the form.
+        (iii) When ready, press "Submit" to finalize your upload.</small>
+    </p>
     <div id="import-message"></div>
     <div id="flash-import"></div>
 {% endblock form_title %}
@@ -71,16 +68,6 @@
 </script>
 {%- endblock form_script_options %}
 <script type="text/javascript">
-$(document).ready(function() {
-    {# Fix issue with typeahead.js drop-down partly cut-off due to overflow #}
-    $('#webdeposit_form_accordion').on('hide', function (e) {
-        $(e.target).css("overflow","hidden");
-    })
-    $('#webdeposit_form_accordion').on('shown', function (e) {
-        $(e.target).css("overflow", "visible");
-    })
-    $('#webdeposit_form_accordion .panel-collapse.in.collapse').css("overflow", "visible");
-});
 $(document).ready(function() {
     var save_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id) }}';
     var save_all_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, all='1') }}';
