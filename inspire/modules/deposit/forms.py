@@ -139,7 +139,7 @@ class LiteratureForm(WebDepositForm):
     )
 
     import_source = fields.SubmitField(
-        label=_(''),
+        label=_(' '),
         widget=importdata_button,
     )
 
@@ -382,7 +382,7 @@ class LiteratureForm(WebDepositForm):
 
     groups = [
         ('Import from existing source',
-            ['doi', 'arxiv_id', 'isbn', 'import_source'],
+            ['arxiv_id', 'doi', 'isbn', 'import_source'],
             {
                 'indication': 'Fill if you have a DOI, ArXiv id or ISBN',
             }),
