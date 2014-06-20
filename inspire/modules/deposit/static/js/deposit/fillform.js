@@ -71,7 +71,7 @@ $(document).ready( function() {
 		}
 	});
 
-    $("#journal_title, #volume, #issue, #page_range, #article_id, #year")
+    var fieldsGroup = $("#journal_title, #volume, #issue, #page_range, #article_id, #year")
       .fieldsGroup({
         onEmpty: function enableProceedingsBox() {
           $("#nonpublic_note").removeAttr('disabled');
@@ -175,7 +175,7 @@ $(document).ready( function() {
         page_range: page_range,
         volume: data.volume,
         year: data.year,
-        issue: data.issuess,
+        issue: data.issues,
         contributors: data.contributors
       };
     },
@@ -274,7 +274,7 @@ $(document).ready( function() {
     if (queryStatus === 'success') {
       return {
         state: 'success',
-        message: 'The data was successfully imported.'
+        message: 'The data was successfully imported from ' + idType + '.'
       };
     }
     if (queryStatus === 'duplicated') {
@@ -290,6 +290,20 @@ $(document).ready( function() {
     };
   }
 
+  /**
+   * Strips the prefix off the identifier.
+   * @param identifier DOI/arXiv/ISBN id
+   * @returns stripped identifier
+   */
+  function stripSourceTags(identifier) {
+    var doi_prefix = /^doi:/;
+    var arxiv_prefix = /^arxiv:/;
+
+    var strippedID = identifier.replace(doi_prefix, '');
+    strippedID = strippedID.replace(arxiv_prefix, '');
+
+    return strippedID;
+  }
 
   /**
    * Imports data using given filter.
@@ -348,38 +362,47 @@ $(document).ready( function() {
           authors_widget.append_element();
         }
       }
+      
+      fieldsGroup.resetState();
 
       flash_import(queryMessage);
     });
   };
 
-	$("#importData").click(function(event) {
+  $("#importData").click(function(event) {
 
     var btn = $(this);
-		btn.button('loading');
+    btn.button('loading');
 
-		if (!!$doi_field.val()) {
-			importData($doi_field.val(), doiFilter);
-		}
-		else if (!!$arxiv_id_field.val()) {
-		  importData($arxiv_id_field.val(), arxivFilter);
-		}
-		else if (!!$isbn_field.val()) {
-			// if DOI and ArXiv fields are empty and ISBN has something
-			flash_import({
+    var arxiv_id_value = stripSourceTags($arxiv_id_field.val());
+    var doi_value = stripSourceTags($doi_field.val());
+
+    if (!!arxiv_id_value && !!doi_value) {
+      importData(arxiv_id_value, arxivFilter);
+      importData(doi_value, doiFilter);
+    }
+    else if (!!doi_value) {
+        importData(doi_value, doiFilter);
+    }
+    else if (!!arxiv_id_value) {
+      importData(arxiv_id_value, arxivFilter);
+    }
+    else if (!!$isbn_field.val()) {
+      // if DOI and ArXiv fields are empty and ISBN has something
+      flash_import({
         state: 'info',
-			  message: 'The ISBN importing is not available at the moment.'
+        message: 'The ISBN importing is not available at the moment.'
       });
-		}
+    }
 
-		btn.button('reset');
-	});
+    btn.button('reset');
+  });
 
 	/**
 	* Flash a message in the top.
 	*/
 	function flash_import(ctx) {
-	  $('#flash-import').html(tpl_flash_message.render(ctx));
+	  $('#flash-import').append(tpl_flash_message.render(ctx));
 	  $('#flash-import').show('fast');
 	}
 });
