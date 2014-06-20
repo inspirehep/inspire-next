@@ -55,7 +55,7 @@ def importdata_button(field, **dummy_kwargs):
                         name="importData",
                         type="button"),
             _('Importing data...'),
-            field.label.text)
+            _('Import data'))
     return HTMLString(html)
 
 
@@ -139,7 +139,7 @@ class LiteratureForm(WebDepositForm):
     )
 
     import_source = fields.SubmitField(
-        label=_('Import data'),
+        label=_(''),
         widget=importdata_button,
     )
 
