@@ -28,6 +28,7 @@ $(document).ready( function() {
 	  chapter: $('*[class~="chapter-related"]'),
 	  book: $('*[class~="book-related"]'),
 	  proceedings: $('*[class~="proceedings-related"]'),
+    translated_title: $("#state-group-title_translation"),
   };
 
   var $doi_field = $("#doi");
@@ -89,6 +90,28 @@ $(document).ready( function() {
   $('#subject').attr('multiple', 'multiple').multiselect({
     maxHeight: 400,
     enableCaseInsensitiveFiltering: true
+
+  var $language = $("#language");
+  var $translated_title = $("#state-group-title_translation");
+  
+  /**
+   * Hide or show translated title field regarding selected language
+   */
+  function handleTranslatedTitle() {
+    var language_value = $language.val();
+
+    if(language_value !== 'en') {
+      $translated_title.slideDown();
+    }
+    else {
+      $translated_title.slideUp();
+    }
+  }
+
+  handleTranslatedTitle();
+
+  $language.change(function(event) {
+    handleTranslatedTitle();
   });
 
   function Filter(options) {
