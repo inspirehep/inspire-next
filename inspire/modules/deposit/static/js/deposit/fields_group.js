@@ -86,15 +86,16 @@
             }
           });
 
-          if (this.filledFields.isEmpty())
+          if (this.filledFields.isEmpty()) {
             this.onEmpty();
-          else
+          } else {
             this.onNotEmpty();
+          }
         },
 
         /**
-         * Updates the state after modifing one field and triggers appropriate
-         * functions.
+         * Updates the state after modifying one field and triggers functions
+         * appropriate to the state.
          *
          * @param $modified_field {jQuery object} the modified field
          */
@@ -103,24 +104,28 @@
           var wasFilled = this.filledFields.contains(fieldId);
           var isFilled = this.isFieldFilled($modified_field);
 
-          if (isFilled == wasFilled)
+          if (isFilled === wasFilled) {
             return;
+          }
 
           var fieldsWereEmpty = this.filledFields.isEmpty();
 
-          if (!isFilled && wasFilled)
+          if (!isFilled && wasFilled) {
             this.filledFields.remove(fieldId);
-          else if (isFilled && !wasFilled)
+          } else if (isFilled && !wasFilled) {
             this.filledFields.add(fieldId);
+          }
 
           var fieldsAreEmpty = this.filledFields.isEmpty();
 
-          if (fieldsWereEmpty && !fieldsAreEmpty)
+          if (fieldsWereEmpty && !fieldsAreEmpty) {
             this.onNotEmpty();
-          if (!fieldsWereEmpty && fieldsAreEmpty)
+          }
+          if (!fieldsWereEmpty && fieldsAreEmpty) {
             this.onEmpty();
+          }
         }
-      }
+      };
 
       return FieldsGroup;
 
@@ -129,13 +134,13 @@
     $.fn.fieldsGroup = function(options) {
 
       var $fields = this;
-      var data = new FieldsGroup($fields, options)
+      var data = new FieldsGroup($fields, options);
 
       this.each(function() {
-        var $this = $(this)
+        var $this = $(this);
         // attach jQuery plugin
         if (!$this.data('fields-group')) {
-          $this.data('fields-group', data)
+          $this.data('fields-group', data);
         }
       });
 
@@ -143,7 +148,7 @@
       data.connectEvents();
 
       return data;
-    }
+    };
 
     $.fn.fieldsGroup.defaults = {
 
