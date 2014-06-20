@@ -61,7 +61,7 @@ $(document).ready( function() {
       2500
     );
 		$deposition_type_panel.children('.alert').remove('.alert');
-		if(deposition_type == "proceedings"){
+		if (deposition_type === "proceedings") {
 			$deposition_type_panel.append(tpl_flash_message.render({
         state:'info',
         message: "<strong>Proceedings:</strong> only for complete " +
@@ -127,8 +127,9 @@ $(document).ready( function() {
 
       var page_range;
 
-      if (data.first_page && data.last_page)
-        page_range = data.first_page + "-" + data.last_page
+      if (data.first_page && data.last_page) {
+        page_range = data.first_page + "-" + data.last_page;
+      }
 
       return {
         journal_title: data.journal_title,
@@ -138,35 +139,37 @@ $(document).ready( function() {
         year: data.year,
         issue: data.issuess,
         contributors: data.contributors
-      }
+      };
     },
 
     special_mapping: {
       thesis: function(data) {
         return {
           title: data.volume_title
-        }
+        };
       },
       article: function(data) {
         return {
           title: data.article_title
-        }
+        };
       }
     },
 
     extract_contributor: function(contributor) {
       var name, surname;
 
-      if (contributor.contributor[0])
+      if (contributor.contributor[0]) {
         name = contributor.contributor[0].given_name;
+      }
 
-      if (contributor.contributor[1])
+      if (contributor.contributor[1]) {
         surname = contributor.contributor[1].surname;
+      }
 
       return {
         name: name + ', ' + surname,
         affiliation: ''
-      }
+      };
     }
   });
 
@@ -182,7 +185,7 @@ $(document).ready( function() {
           abstract: data.summary,
           article_id: data.id,
           contributors: data.author
-        }
+        };
       }
     },
 
@@ -191,7 +194,7 @@ $(document).ready( function() {
       return {
         name: contributor.name,
         affiliation: ''
-      }
+      };
     }
   });
 
@@ -204,26 +207,30 @@ $(document).ready( function() {
    *  tpl_flash_message template
    */
   function getImportMessage(queryStatus, idType, id) {
-    if (queryStatus == 'notfound')
+    if (queryStatus === 'notfound') {
       return {
         state: 'warning',
         message: 'The ' + idType + ' ' + id + ' was not found.'
       };
-    if(queryStatus == 'malformed')
+    }
+    if(queryStatus === 'malformed') {
       return {
         state: 'warning',
         message: 'The ' + idType + ' ' + id + ' is malformed.'
       };
-    if (queryStatus == 'success')
+    }
+    if (queryStatus === 'success') {
       return {
         state: 'success',
         message: 'The data was successfully imported.'
       };
-    if (queryStatus == 'duplicated')
+    }
+    if (queryStatus === 'duplicated') {
       return {
         state: 'info',
         message: 'This ' + idType + ' already exists in Inspire database.'
       };
+    }
 
     return {
       state: 'warning',
@@ -245,12 +252,13 @@ $(document).ready( function() {
 
       var query_status = data.query.status;
 
-      if (query_status != 'success' && data.source == 'database')
+      if (query_status !== 'success' && data.source === 'database') {
         query_status = 'duplicated';
+      }
 
       var queryMessage = getImportMessage(query_status, filter.name, id);
 
-      if (query_status != 'success') {
+      if (query_status !== 'success') {
         flash_import(queryMessage);
         return;
       }
@@ -260,34 +268,38 @@ $(document).ready( function() {
 
       var common_mapping = filter.common_mapping(data.query);
       var special_mapping = {};
-      if (filter.special_mapping[deposition_type])
+      if (filter.special_mapping[deposition_type]) {
         special_mapping = filter.special_mapping[deposition_type](data.query);
+      }
 
       var mapping = $.extend({}, common_mapping, special_mapping);
 
       $.map(mapping, function(value, field_id){
         var $field = $('#' + field_id);
-        if ($field)
+        if ($field) {
           $field.val(value);
+        }
       });
 
       var contributors = $.map(mapping.contributors, filter.extract_contributor);
-      var authors_widget = DEPOSIT_FORM.field_lists['authors'];
+      var authors_widget = DEPOSIT_FORM.field_lists.authors;
 
       // ensure there is a one empty field
-      if (authors_widget.get_next_index() == 0)
+      if (authors_widget.get_next_index() === 0) {
         authors_widget.append_element();
+      }
 
       for (var i in contributors) {
         authors_widget.set_element_values(i, contributors[i]);
         // next index is i+1 but there should stay one empty field
-        if (parseInt(i) + 2 > authors_widget.get_next_index())
+        if (parseInt(i) + 2 > authors_widget.get_next_index()) {
           authors_widget.append_element();
+        }
       }
 
       flash_import(queryMessage);
     });
-  }
+  };
 
 	$("#importData").click(function(event) {
 
