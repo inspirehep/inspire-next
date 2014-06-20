@@ -94,7 +94,7 @@ $(document).ready( function() {
 
   var $language = $("#language");
   var $translated_title = $("#state-group-title_translation");
-  
+
   /**
    * Hide or show translated title field regarding selected language
    */
