@@ -83,6 +83,6 @@ class inspire_approval(Form):
             flash('Record Rejected')
 
 inspire_approval.__title__ = 'Approve Record'
-inspire_approval.static = ["js/workflows/actions/approval.js"]
+inspire_approval.static = ["js/workflows/actions/inspire_approval.js"]
 
 action = inspire_approval()

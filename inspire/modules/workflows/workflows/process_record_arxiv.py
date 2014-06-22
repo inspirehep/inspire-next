@@ -51,7 +51,7 @@ class process_record_arxiv(object):
             fulltext_download,
             inspire_filter_custom(fields=["report_number", "arxiv_category"],
                                   custom_widgeted="*",
-                                  action="approval"),
+                                  action="inspire_approval"),
             bibclassify(taxonomy=CFG_PREFIX + "/etc/bibclassify/HEP.rdf",
                         output_mode="dict",
                         match_mode="partial"),
