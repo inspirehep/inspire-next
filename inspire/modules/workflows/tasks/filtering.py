@@ -71,10 +71,10 @@ def inspire_filter_custom(fields, custom_accepted=(), custom_refused=(),
                 custom_to_process_current = custom_to_process_next[:]
         if not custom_to_process_next:
             eng.log.error(
-                "%s not found in the record. Human intervention needed",
+                "%s not found in the record.",
                 fields_to_process)
             eng.halt(str(fields_to_process) +
-                     " not found in the record. Human intervention needed",
+                     " not found in the record.",
                      action=action)
 
         for i in custom_widgeted:
@@ -103,7 +103,7 @@ def inspire_filter_custom(fields, custom_accepted=(), custom_refused=(),
         if sum_action == 0:
             #We allow the * option which means at final case
             if '*' in custom_widgeted:
-                msg = ("Human intervention needed")
+                msg = ("Insert record?")
                 eng.halt(msg, action=action)
             elif '*' in custom_refused:
                 eng.stopProcessing()

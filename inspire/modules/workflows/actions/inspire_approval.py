@@ -19,15 +19,77 @@
 
 """Approval action."""
 
-from invenio.modules.workflows.hp_field_widgets import (
-    bootstrap_accept,
-    bootstrap_accept_mini,
-    bootstrap_reject,
-    bootstrap_reject_mini
-)
-
+from wtforms.widgets import html_params, HTMLString
 from wtforms import SubmitField, Form
 from invenio.base.i18n import _
+
+
+def bootstrap_accept(field):
+    """
+    Accept button for hp
+    """
+    html = u'<input %s >' \
+           % html_params(id="submitButton",
+                         class_="btn btn-success",
+                         name="submitButton",
+                         type="submit",
+                         value=field.label.text,)
+    return HTMLString(u''.join(html))
+
+
+def bootstrap_submit(field):
+    """
+    Submit button for edit record action
+    """
+    html = u'<input %s >' \
+           % html_params(id="submitButton",
+                         class_="btn btn-sm btn-primary",
+                         name="submitButton",
+                         type="submit",)
+    return HTMLString(u''.join(html))
+
+
+def bootstrap_accept_mini(field, **kwargs):
+    """
+    Mini Accept button for hp
+    """
+    objectid = kwargs.pop('objectid', '')
+    html = u'<input %s >' \
+           % html_params(id="submitButtonMini",
+                         class_="btn btn-success btn-xs",
+                         name="submitButton",
+                         type="submit",
+                         value=field.label.text,
+                         onclick="inspire_approval.mini_approval('Accept', event, %s);" % (objectid,),)
+    return HTMLString(u''.join(html))
+
+
+def bootstrap_reject(field):
+    """
+    Reject button for hp
+    """
+    html = u'<input %s >' \
+           % html_params(id="submitButton",
+                         class_="btn btn-danger",
+                         name="submitButton",
+                         type="submit",
+                         value=field.label.text,)
+    return HTMLString(u''.join(html))
+
+
+def bootstrap_reject_mini(field, **kwargs):
+    """
+    Mini Reject button for hp
+    """
+    objectid = kwargs.pop('objectid', '')
+    html = u'<input %s >' \
+           % html_params(id="submitButtonMini",
+                         class_="btn btn-danger btn-xs",
+                         name="submitButton",
+                         type="submit",
+                         value=field.label.text,
+                         onclick="inspire_approval.mini_approval('Reject', event, %s);" % (objectid,),)
+    return HTMLString(u''.join(html))
 
 
 __all__ = ['inspire_approval']
