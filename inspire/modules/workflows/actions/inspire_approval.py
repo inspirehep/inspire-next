@@ -64,6 +64,21 @@ def bootstrap_accept_mini(field, **kwargs):
     return HTMLString(u''.join(html))
 
 
+def bootstrap_accept_core_mini(field, **kwargs):
+    """
+    Mini Accept button for hp
+    """
+    objectid = kwargs.pop('objectid', '')
+    html = u'<input %s >' \
+           % html_params(id="submitButtonMini",
+                         class_="btn btn-success btn-xs",
+                         name="submitButton",
+                         type="submit",
+                         value=field.label.text,
+                         onclick="inspire_approval.mini_approval('Accept', event, %s);" % (objectid,),)
+    return HTMLString(u''.join(html))
+
+
 def bootstrap_reject(field):
     """
     Reject button for hp
@@ -98,15 +113,17 @@ __all__ = ['inspire_approval']
 class inspire_approval(Form):
     """Class representing the approval action."""
 
-    reject = SubmitField(label=_('Reject'), widget=bootstrap_reject)
     accept = SubmitField(label=_('Accept'), widget=bootstrap_accept)
+    accept_core = SubmitField(label=_('Accept & CORE'), widget=bootstrap_accept)
+    reject = SubmitField(label=_('Reject'), widget=bootstrap_reject)
 
     class mini_action(Form):
 
         """Class representing the minimal form of the approval action."""
 
-        reject = SubmitField(label=_('Reject'), widget=bootstrap_reject_mini)
         accept = SubmitField(label=_('Accept'), widget=bootstrap_accept_mini)
+        accept_core = SubmitField(label=_('Accept & CORE'), widget=bootstrap_accept_core_mini)
+        reject = SubmitField(label=_('Reject'), widget=bootstrap_reject_mini)
 
     def render(self, bwobject_list, bwparent_list, info_list, logtext_list,
                w_metadata_list, workflow_func_list, *args, **kwargs):
@@ -139,7 +156,10 @@ class inspire_approval(Form):
             bwobject.remove_action()
             continue_oid_delayed(objectid)
             flash('Record Accepted')
-
+        elif request.form['decision'] == 'AcceptCORE':
+            bwobject.remove_action()
+            continue_oid_delayed(objectid)
+            flash('Record Accepted')
         elif request.form['decision'] == 'Reject':
             BibWorkflowObject.delete(objectid)
             flash('Record Rejected')
