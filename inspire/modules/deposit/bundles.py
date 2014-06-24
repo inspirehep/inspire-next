@@ -18,17 +18,24 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from invenio.modules.deposit.bundles import js as _deposit_js
+from invenio.modules.deposit.bundles import js as _deposit_js, \
+    styles as _deposit_styles
 
 # '_' prefix indicates private variables, and prevents duplicated import by
 # auto-discovery service of invenio
 
 _deposit_js.contents += (
     'js/buckets.js',
+    'js/bootstrap-multiselect.js',
     'js/deposit/fields_group.js',
     'js/deposit/fillform.js',
 )
 
 _deposit_js.bower.update({
     'buckets': 'git://github.com/mauriciosantos/buckets.git',
+    'bootstrap-multiselect': '~0.9.4'
 })
+
+_deposit_styles.contents += (
+    'css/bootstrap-multiselect.css',
+)
