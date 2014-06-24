@@ -20,8 +20,8 @@
 
 {%- block css %}
 	{{ super() }}
-	{% css 'img/jquery-ui/themes/base/jquery.ui.theme.css', '01-jquery-ui' %}
-	{% css 'img/jquery-ui/themes/base/jquery.ui.datepicker.css', '01-jquery-ui' %}
+	{%- css url_for('static', filename='img/jquery-ui/themes/base/jquery.ui.theme.css'), '01-jquery-ui' -%}
+	{%- css url_for('static', filename='img/jquery-ui/themes/base/jquery.ui.datepicker.css'), '01-jquery-ui' -%}
 	{%- css url_for('static', filename='css/typeahead.js-bootstrap.css'), '50-webdeposit' -%}
 	{%- css url_for('static', filename='css/deposit/form.css'), '51-webdeposit' -%}
            {%- css url_for('static', filename='css/bootstrap-multiselect.css'), '50-webdeposit' -%}
