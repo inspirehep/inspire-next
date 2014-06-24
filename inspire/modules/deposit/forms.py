@@ -193,7 +193,7 @@ class LiteratureForm(WebDepositForm):
     )
 
     # this should be a prefilled dropdown
-    subject = fields.SelectField(
+    subject = fields.SelectMultipleField(
         label=_('Subject'),
         widget_classes="form-control",
         export_key='subject_term',
@@ -391,7 +391,5 @@ class LiteratureForm(WebDepositForm):
         """Constructor."""
         super(LiteratureForm, self).__init__(*args, **kwargs)
         from invenio.modules.knowledge.api import get_kb_mappings
-        self.subject.choices = \
-            [('', '')] + \
-            [(x['value'], x['value'])
-             for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_SUBJECTS_KB"])]
+        self.subject.choices = [(x['value'], x['value'])
+            for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_SUBJECTS_KB"])]
