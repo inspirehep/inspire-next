@@ -165,6 +165,13 @@ class LiteratureForm(WebDepositForm):
         export_key='title',
     )
 
+    title_translation = fields.TitleField(
+        label=_('Translated Title'),
+        description='Original title translated to english language.',
+        widget_classes="form-control",
+        export_key='title_translation',
+    )
+
     authors = fields.DynamicFieldList(
         fields.FormField(
             AuthorInlineForm,
@@ -367,9 +374,9 @@ class LiteratureForm(WebDepositForm):
         ('Document Type',
             ['captcha', 'type_of_doc', ]),
         ('Basic Information',
-            ['title', 'authors', 'collaboration', 'experiment', 'abstract',
-             'page_nr', 'language', 'subject', 'supervisors', 'defense_date',
-             'degree_type', 'university']),
+            ['title', 'language', 'title_translation', 'authors', 'collaboration',
+             'experiment', 'abstract', 'page_nr', 'subject', 'supervisors',
+             'defense_date', 'degree_type', 'university']),
         ('Conference Information',
             ['conf_name']),
         ('Journal Information',
