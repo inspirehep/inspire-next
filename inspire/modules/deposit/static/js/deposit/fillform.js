@@ -330,44 +330,71 @@ $(document).ready( function() {
       }
 
       // do the import
-      var deposition_type = $deposition_type.val();
+      var depositionType = $deposition_type.val();
+      var mapping = mapData(filter, data, depositionType);
 
-      var common_mapping = filter.common_mapping(data.query);
-      var special_mapping = {};
-      if (filter.special_mapping[deposition_type]) {
-        special_mapping = filter.special_mapping[deposition_type](data.query);
-      }
-
-      var mapping = $.extend({}, common_mapping, special_mapping);
-
-      $.map(mapping, function(value, field_id){
-        var $field = $('#' + field_id);
-        if ($field) {
-          $field.val(value);
-        }
-      });
-
-      var contributors = $.map(mapping.contributors, filter.extract_contributor);
       var authors_widget = DEPOSIT_FORM.field_lists.authors;
 
-      // ensure there is a one empty field
-      if (authors_widget.get_next_index() === 0) {
-        authors_widget.append_element();
-      }
-
-      for (var i in contributors) {
-        authors_widget.set_element_values(i, contributors[i]);
-        // next index is i+1 but there should stay one empty field
-        if (parseInt(i) + 2 > authors_widget.get_next_index()) {
-          authors_widget.append_element();
-        }
-      }
+      fillForm(mapping, authors_widget);
       
       fieldsGroup.resetState();
 
       flash_import(queryMessage);
     });
   };
+
+  /**
+   * Maps data to a common format in the way defined in filter.
+   *
+   * @param filter {Filter} defines the way of mapping data to field ids
+   * @param data {*} data to map
+   * @param depositionType {String} type of deposition
+   * @returns {*}
+   */
+  function mapData(filter, data, depositionType) {
+    var common_mapping = filter.common_mapping(data.query);
+    var special_mapping = {};
+    if (filter.special_mapping[depositionType]) {
+      special_mapping = filter.special_mapping[depositionType](data.query);
+    }
+
+    var mapping = $.extend({}, common_mapping, special_mapping);
+    mapping.contributors = $.map(mapping.contributors, filter.extract_contributor);
+
+    return mapping;
+  }
+
+  /**
+   * Fills the deposit form according to schema in dataMapping
+   *
+   * @param dataMapping {} dictionary with schema 'field_id: field_value', and
+   *  special 'contributors' key to extract them to authors field.
+   * @param authorsWidget interface to widget with authors fields returned by
+   *  fieldlist jQuery plugin from invenio deposit's form.js
+   */
+  function fillForm(dataMapping, authorsWidget) {
+
+    $.map(dataMapping, function(value, field_id){
+      var $field = $('#' + field_id);
+      if ($field) {
+        $field.val(value);
+      }
+    });
+
+    // ensure there is a one empty field
+    if (authorsWidget.get_next_index() === 0) {
+      authorsWidget.append_element();
+    }
+
+    for (var i in dataMapping.contributors) {
+      authorsWidget.set_element_values(i, dataMapping.contributors[i]);
+      // next index is i+1 but there should stay one empty field
+      if (parseInt(i) + 2 > authorsWidget.get_next_index()) {
+        authorsWidget.append_element();
+      }
+    }
+  }
+
 
   $("#importData").click(function(event) {
 
