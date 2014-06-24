@@ -46,8 +46,17 @@ module.exports = function(grunt) {
           cwd: '<%= globalConfig.bower_path %>/',
           src: ['buckets/buckets.js',
                   'jquery-feeds/dist/jquery.feeds.min.js',
-                  'moment/min/moment.min.js'],
+                  'moment/min/moment.min.js',
+                  'bootstrap-multiselect/js/bootstrap-multiselect.js',
+                  'spin.js/spin.js'],
           dest: '<%= globalConfig.installation_path %>/js/'
+      },
+      css: {
+          expand: true,
+          flatten: true,
+          cwd: '<%= globalConfig.bower_path %>/',
+          src: ['bootstrap-multiselect/css/bootstrap-multiselect.css'],
+          dest: '<%= globalConfig.installation_path %>/css/'
       }
     },
     jshint: {
