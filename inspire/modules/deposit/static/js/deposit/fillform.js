@@ -224,7 +224,6 @@ $(document).ready( function() {
           year: data.created,
           abstract: data.abstract,
           article_id: 'arxiv:' + data.id,
-          license: data.license,
           note: data.comments,
           contributors: data.authors
         };
