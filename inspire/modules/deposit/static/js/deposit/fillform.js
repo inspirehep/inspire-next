@@ -116,6 +116,7 @@ $(document).ready( function() {
   });
 
   $("#state-group-title_arXiv").addClass("hidden");
+  $("#state-group-note").addClass("hidden");
 
   function Filter(options) {
 
@@ -224,6 +225,7 @@ $(document).ready( function() {
           abstract: data.abstract,
           article_id: 'arxiv:' + data.id,
           license: data.license,
+          note: data.comments,
           contributors: data.authors
         };
       }
