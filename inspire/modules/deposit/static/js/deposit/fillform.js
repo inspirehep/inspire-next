@@ -117,6 +117,7 @@ $(document).ready( function() {
 
   $("#state-group-title_arXiv").addClass("hidden");
   $("#state-group-note").addClass("hidden");
+  $("#state-group-license_url").addClass("hidden");
 
   function Filter(options) {
 
@@ -224,6 +225,7 @@ $(document).ready( function() {
           year: data.created,
           abstract: data.abstract,
           article_id: 'arxiv:' + data.id,
+          license_url: data.license,
           note: data.comments,
           contributors: data.authors
         };
