@@ -148,6 +148,13 @@ class literature(SimpleRecordDeposition):
             metadata['nonpublic_note'] = metadata['conf_name']
             metadata['collections']['primary'] += ['ConferencePaper']
 
+        # =======
+        # License
+        # =======
+        if 'license_url' in metadata:
+            metadata['license'] = {}
+            metadata['license']['url'] = metadata['license_url']
+
         # ================
         # Publication Info
         # ================
