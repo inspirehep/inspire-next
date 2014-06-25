@@ -151,20 +151,28 @@ class literature(SimpleRecordDeposition):
         # ================
         # Publication Info
         # ================
-        metadata['publication_info'] = {}
-        if 'journal_title' in metadata:
-            metadata['publication_info']['title'] = metadata['journal_title']
-        # this should only allow the user to fill whether the page_range or the article_id
-        if 'page_range' in metadata:
-            metadata['publication_info']['page_artid'] = metadata['page_range']
-        elif 'article_id' in metadata:
-            metadata['publication_info']['page_artid'] = metadata['article_id']
-        if 'volume' in metadata:
-            metadata['publication_info']['journal_volume'] = metadata['volume']
-        if 'year' in metadata:
-            metadata['publication_info']['year'] = metadata['year']
-        if 'issue' in metadata:
-            metadata['publication_info']['journal_issue'] = metadata['issue']
+        publication_fields = ['journal_title',
+                              'page_range',
+                              'article_id',
+                              'volume',
+                              'year',
+                              'issue']
+
+        if all(k in metadata for k in publication_fields):
+            del metadata['nonpublic_note']
+            metadata['publication_info'] = {}
+            if 'journal_title' in metadata:
+                metadata['publication_info']['title'] = metadata['journal_title']
+            if 'page_range' in metadata:
+                metadata['publication_info']['page_artid'] = metadata['page_range']
+            elif 'article_id' in metadata:
+                metadata['publication_info']['page_artid'] = metadata['article_id']
+            if 'volume' in metadata:
+                metadata['publication_info']['journal_volume'] = metadata['volume']
+            if 'year' in metadata:
+                metadata['publication_info']['year'] = metadata['year']
+            if 'issue' in metadata:
+                metadata['publication_info']['journal_issue'] = metadata['issue']
 
         # Delete useless data
         delete_keys = ['supervisors',
