@@ -324,6 +324,11 @@ class LiteratureForm(WebDepositForm):
         widget_classes="form-control"
     )
 
+    note = fields.TextAreaField(
+        export_key='note',
+        widget_classes="form-control"
+    )
+
     # ====================
     # Fulltext Information
     # ====================
@@ -387,7 +392,7 @@ class LiteratureForm(WebDepositForm):
             ['journal_title', 'volume', 'issue', 'page_range', 'article_id',
              'year']),
         ('Proceedings information (not published in journal)',
-            ['nonpublic_note']),
+            ['nonpublic_note', 'note']),
         ('Fulltext Information',
             ['file_field', 'url']),
     ]
