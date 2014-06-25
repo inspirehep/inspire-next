@@ -250,6 +250,12 @@ class LiteratureForm(WebDepositForm):
         widget_classes="form-control"
     )
 
+    license_url = fields.TextField(
+        label=_('License URL'),
+        widget_classes="form-control",
+        export_key='license_url',
+    )
+
     # ==============
     # Thesis related
     # ==============
@@ -385,7 +391,8 @@ class LiteratureForm(WebDepositForm):
         ('Basic Information',
             ['title', 'title_arXiv', 'language', 'title_translation', 'authors',
              'collaboration', 'experiment', 'abstract', 'page_nr', 'subject',
-             'supervisors', 'defense_date', 'degree_type', 'university']),
+             'supervisors', 'defense_date', 'degree_type', 'university',
+             'license_url']),
         ('Conference Information',
             ['conf_name']),
         ('Journal Information',
