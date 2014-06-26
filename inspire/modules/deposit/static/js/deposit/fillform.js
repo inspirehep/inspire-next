@@ -90,6 +90,7 @@ $(document).ready( function() {
   $('#subject').attr('multiple', 'multiple').multiselect({
     maxHeight: 400,
     enableCaseInsensitiveFiltering: true
+  });
 
   var $language = $("#language");
   var $translated_title = $("#state-group-title_translation");
