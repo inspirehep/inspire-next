@@ -71,15 +71,15 @@ $(document).ready( function() {
 		}
 	});
 
-    var fieldsGroup = $("#journal_title, #volume, #issue, #page_range, #article_id, #year")
-      .fieldsGroup({
-        onEmpty: function enableProceedingsBox() {
-          $("#nonpublic_note").removeAttr('disabled');
-        },
-        onNotEmpty: function disableProceedingsBox() {
-          $("#nonpublic_note").attr('disabled', 'true');
-        }
-      });
+  var fieldsGroup = $("#journal_title, #volume, #issue, #page_range, #article_id, #year")
+    .fieldsGroup({
+      onEmpty: function enableProceedingsBox() {
+        $("#nonpublic_note").removeAttr('disabled');
+      },
+      onNotEmpty: function disableProceedingsBox() {
+        $("#nonpublic_note").attr('disabled', 'true');
+      }
+    });
 
   //FIXME: hackish way to put icons next to labels since WTForms
   //           don't allow to extend the label names with pure HTML
