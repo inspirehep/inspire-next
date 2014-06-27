@@ -135,52 +135,14 @@ $(document).ready( function() {
   }
 
   /**
-   * Imports data using given filter.
-   *
-   * @param filter {Filter}
-   */
-  var importData = function(id, filter) {
-    // if DOI field is not empty
-    var url = filter.url + id;
-
-    $.get(url, function( data ) {
-
-      var query_status = data.query.status;
-
-      if (query_status !== 'success' && data.source === 'database') {
-        query_status = 'duplicated';
-      }
-
-      var queryMessage = getImportMessage(query_status, filter.name, id);
-
-      if (query_status !== 'success') {
-        flash_import(queryMessage);
-        return;
-      }
-
-      // do the import
-      var depositionType = $deposition_type.val();
-      var mapping = filter.applyFilter(data, depositionType);
-
-      var authors_widget = DEPOSIT_FORM.field_lists.authors;
-
-      fillForm(mapping, authors_widget);
-
-      fieldsGroup.resetState();
-
-      flash_import(queryMessage);
-    });
-  };
-
-  /**
    * Fills the deposit form according to schema in dataMapping
    *
    * @param dataMapping {} dictionary with schema 'field_id: field_value', and
    *  special 'contributors' key to extract them to authors field.
-   * @param authorsWidget interface to widget with authors fields returned by
-   *  fieldlist jQuery plugin from invenio deposit's form.js
    */
-  function fillForm(dataMapping, authorsWidget) {
+  function fillForm(dataMapping) {
+
+    var authorsWidget = DEPOSIT_FORM.field_lists.authors;
 
     $.map(dataMapping, function(value, field_id){
       var $field = $('#' + field_id);
@@ -203,6 +165,8 @@ $(document).ready( function() {
     }
   }
 
+  var importer = new Importer($deposition_type);
+
 
   $("#importData").click(function(event) {
 
@@ -212,23 +176,20 @@ $(document).ready( function() {
     var arxiv_id_value = stripSourceTags($arxiv_id_field.val());
     var doi_value = stripSourceTags($doi_field.val());
 
-    if (!!arxiv_id_value && !!doi_value) {
-      importData(arxiv_id_value, arxivFilter);
-      importData(doi_value, doiFilter);
-    }
-    else if (!!doi_value) {
-        importData(doi_value, doiFilter);
-    }
-    else if (!!arxiv_id_value) {
-      importData(arxiv_id_value, arxivFilter);
-    }
-    else if (!!$isbn_field.val()) {
-      // if DOI and ArXiv fields are empty and ISBN has something
-      flash_import({
-        state: 'info',
-        message: 'The ISBN importing is not available at the moment.'
-      });
-    }
+    importer.importData(
+      // ids
+      arxiv_id_value,
+      doi_value,
+      $isbn_field.val(),
+      // callback
+      function(result) {
+        fillForm(result.mapping);
+        fieldsGroup.resetState();
+        $.each(result.statusMessage, function() {
+          appendImportMessage(this);
+        });
+      }
+    );
 
     btn.button('reset');
   });
@@ -236,7 +197,7 @@ $(document).ready( function() {
 	/**
 	* Flash a message in the top.
 	*/
-	function flash_import(ctx) {
+	function appendImportMessage(ctx) {
 	  $('#flash-import').append(tpl_flash_message.render(ctx));
 	  $('#flash-import').show('fast');
 	}
