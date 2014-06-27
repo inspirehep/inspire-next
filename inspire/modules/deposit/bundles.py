@@ -29,6 +29,7 @@ _deposit_js.contents += (
     'js/bootstrap-multiselect.js',
     'js/deposit/fields_group.js',
     'js/deposit/filters.js',
+    'js/deposit/importer.js',
     'js/deposit/fillform.js',
 )
 
