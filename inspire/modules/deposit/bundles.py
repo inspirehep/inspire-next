@@ -30,6 +30,7 @@ _deposit_js.contents += (
     'js/deposit/fields_group.js',
     'js/deposit/filters.js',
     'js/deposit/importer.js',
+    'js/deposit/message_box.js',
     'js/deposit/fillform.js',
 )
 
