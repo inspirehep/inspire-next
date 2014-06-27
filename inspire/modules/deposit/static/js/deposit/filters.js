@@ -41,7 +41,9 @@ function Filter(options) {
    * an item from
    */
   this.extract_contributor = options.extract_contributor ?
-    options.extract_contributor : function(contributor) {};
+    options.extract_contributor : function(contributor) {
+      return contributor;
+    };
 
   /**
    * Filter name. It will be displayed in info messages.
@@ -158,5 +160,44 @@ var arxivFilter = new Filter({
       name: contributor.name,
       affiliation: ''
     };
+  }
+});
+
+/**
+ * This filter assumes it receives standarized data format
+ * after treating with another filter.
+ *
+ * @type {Filter}
+ */
+var arxivDoiFilter = new Filter({
+
+  common_mapping: function(data) {
+
+    var priorities = {
+      title: ['doi', 'arxiv'],
+      title_arXiv: ['arxiv'],
+      journal_title: ['doi', 'arxiv'],
+      isbn: ['doi', 'arxiv'],
+      page_range: ['doi', 'arxiv'],
+      volume: ['arxiv', 'doi'],
+      year: ['arxiv', 'doi'],
+      issue: ['arxiv', 'doi'],
+      contributors: ['arxiv', 'doi'],
+      abstract: ['arxiv', 'doi'],
+      article_id: ['arxiv', 'doi'],
+    };
+
+    var result = {};
+
+    for (var field in priorities) {
+      for (var idx in priorities[field]) {
+        var source = priorities[field][idx];
+        if (data[source] && data[source][field]) {
+          result[field] = data[source][field];
+          break;
+        }
+      }
+    }
+    return result;
   }
 });
