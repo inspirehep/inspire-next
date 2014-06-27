@@ -166,6 +166,9 @@ $(document).ready( function() {
   }
 
   var importer = new Importer($deposition_type);
+  var messageBox = $('#flash-import').messageBox({
+    hoganTemplate: tpl_flash_message,
+  })[0];
 
 
   $("#importData").click(function(event) {
@@ -185,20 +188,11 @@ $(document).ready( function() {
       function(result) {
         fillForm(result.mapping);
         fieldsGroup.resetState();
-        $.each(result.statusMessage, function() {
-          appendImportMessage(this);
-        });
+        messageBox.clean();
+        messageBox.append(result.statusMessage);
       }
     );
 
     btn.button('reset');
   });
-
-	/**
-	* Flash a message in the top.
-	*/
-	function appendImportMessage(ctx) {
-	  $('#flash-import').append(tpl_flash_message.render(ctx));
-	  $('#flash-import').show('fast');
-	}
 });
