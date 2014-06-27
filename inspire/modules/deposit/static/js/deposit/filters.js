@@ -58,6 +58,29 @@ function Filter(options) {
   this.url = options.url ? options.url : '';
 }
 
+Filter.prototype = {
+
+  /**
+   * Maps data to a common format in the way defined in filter.
+   *
+   * @param data {*} data to map
+   * @param depositionType {String} type of deposition
+   * @returns {*}
+   */
+  applyFilter: function(data, depositionType) {
+    var common_mapping = this.common_mapping(data);
+    var special_mapping = {};
+    if (this.special_mapping[depositionType]) {
+      special_mapping = this.special_mapping[depositionType](data);
+    }
+
+    var mapping = $.extend({}, common_mapping, special_mapping);
+    mapping.contributors = $.map(mapping.contributors, this.extract_contributor);
+
+    return mapping;
+  }
+};
+
 var doiFilter = new Filter({
   name: 'DOI',
   url: '/deposit/search_doi?doi=',

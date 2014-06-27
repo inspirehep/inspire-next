@@ -160,7 +160,7 @@ $(document).ready( function() {
 
       // do the import
       var depositionType = $deposition_type.val();
-      var mapping = mapData(filter, data, depositionType);
+      var mapping = filter.applyFilter(data, depositionType);
 
       var authors_widget = DEPOSIT_FORM.field_lists.authors;
 
@@ -171,27 +171,6 @@ $(document).ready( function() {
       flash_import(queryMessage);
     });
   };
-
-  /**
-   * Maps data to a common format in the way defined in filter.
-   *
-   * @param filter {Filter} defines the way of mapping data to field ids
-   * @param data {*} data to map
-   * @param depositionType {String} type of deposition
-   * @returns {*}
-   */
-  function mapData(filter, data, depositionType) {
-    var common_mapping = filter.common_mapping(data.query);
-    var special_mapping = {};
-    if (filter.special_mapping[depositionType]) {
-      special_mapping = filter.special_mapping[depositionType](data.query);
-    }
-
-    var mapping = $.extend({}, common_mapping, special_mapping);
-    mapping.contributors = $.map(mapping.contributors, filter.extract_contributor);
-
-    return mapping;
-  }
 
   /**
    * Fills the deposit form according to schema in dataMapping
