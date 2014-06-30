@@ -27,13 +27,13 @@ function Importer($depositionType) {
 
 Importer.prototype = {
   /**
-   * Imports data using given filter.
+   * Imports data using given mapper.
    *
-   * @param filter {Filter}
+   * @param mapper {Mapper}
    * @returns {Deferred} an object needed for tasks synchronization
    */
-  singleImport: function(id, filter) {
-    var url = filter.url + id;
+  singleImport: function(id, mapper) {
+    var url = mapper.url + id;
     var that = this;
 
     function processQuery(data) {
@@ -45,7 +45,7 @@ Importer.prototype = {
         query_status = 'duplicated';
       }
 
-      var queryMessage = that.getImportMessage(query_status, filter.name, id);
+      var queryMessage = that.getImportMessage(query_status, mapper.name, id);
 
       if (query_status !== 'success') {
         return {
@@ -55,7 +55,7 @@ Importer.prototype = {
 
       // do the import
       var depositionType = that.$depositionType.val();
-      var mapping = filter.applyFilter(data.query, depositionType);
+      var mapping = mapper.map(data.query, depositionType);
 
       return {
         mapping: mapping,
@@ -69,7 +69,7 @@ Importer.prototype = {
       return {
         statusMessage: {
           state: 'danger',
-          message: 'Import from ' + filter.name + ': ' + data.status + ' ' + data.statusText
+          message: 'Import from ' + mapper.name + ': ' + data.status + ' ' + data.statusText
         }
       };
     });
@@ -101,13 +101,13 @@ Importer.prototype = {
     }
   },
 
-  getSingleImportTask: function(name, id, filter) {
+  getSingleImportTask: function(name, id, mapper) {
     return {
       name: name,
       fn: this.singleImport,
       args: [
         id,
-        filter
+        mapper
       ]
     };
   },
@@ -124,10 +124,10 @@ Importer.prototype = {
   importData: function(arxivId, doi, isbn, on_done) {
     var tasksList = [];
     if (arxivId) {
-      tasksList.push(this.getSingleImportTask('arxiv', arxivId, arxivFilter));
+      tasksList.push(this.getSingleImportTask('arxiv', arxivId, arxivMapper));
     }
     if (doi) {
-      tasksList.push(this.getSingleImportTask('doi', doi, doiFilter));
+      tasksList.push(this.getSingleImportTask('doi', doi, doiMapper));
     }
     if (isbn) {
       tasksList.push({
@@ -206,7 +206,7 @@ Importer.prototype = {
     });
 
     if (Object.keys(sources).length)
-      mergedMapping = arxivDoiFilter.applyFilter(
+      mergedMapping = literatureFormPriorityMapper.map(
         sources, this.$depositionType.val()
     );
 
