@@ -20,25 +20,40 @@
  * or submit itself to any jurisdiction.
  */
 
-function Filter(options) {
+function DataMapper(options) {
 
   /**
+   * Mapping format:
    *
-   * @type {{}}
+   * {
+   *   fieldId: String,
+   *   fieldId: String,
+   *   fieldId: String
+   * },
+   */
+
+  /**
+   * Mapping common to every type of deposition.
+   * @type {function} returns the 'Mapping format'
    */
   this.common_mapping = options.common_mapping ?
     options.common_mapping : function(data) {};
 
   /**
    *
-   * @type {function} The function should return:
+   * @type {{deposition_type: function}} The function should return
+   *   the 'Mapping format'
    */
   this.special_mapping = options.special_mapping ?
     options.special_mapping : {};
 
   /**
    * Function to extract author sub-form content having
-   * an item from
+   * an item from should return
+   * {
+   *   name: String,
+   *   affiliation: String
+   * }
    */
   this.extract_contributor = options.extract_contributor ?
     options.extract_contributor : function(contributor) {
@@ -46,7 +61,7 @@ function Filter(options) {
     };
 
   /**
-   * Filter name. It will be displayed in info messages.
+   * DataMapper name. It will be displayed in info messages.
    *
    * @type {string}
    */
@@ -60,7 +75,7 @@ function Filter(options) {
   this.url = options.url ? options.url : '';
 }
 
-Filter.prototype = {
+DataMapper.prototype = {
 
   /**
    * Maps data to a common format in the way defined in filter.
@@ -69,7 +84,7 @@ Filter.prototype = {
    * @param depositionType {String} type of deposition
    * @returns {*}
    */
-  applyFilter: function(data, depositionType) {
+  map: function(data, depositionType) {
     var common_mapping = this.common_mapping(data);
     var special_mapping = {};
     if (this.special_mapping[depositionType]) {
@@ -169,9 +184,9 @@ var arxivFilter = new Filter({
  * This filter assumes it receives standarized data format
  * after treating with another filter.
  *
- * @type {Filter}
+ * @type {DataMapper}
  */
-var arxivDoiFilter = new Filter({
+var literatureFormPriorityMapper = new DataMapper({
 
   common_mapping: function(data) {
 
