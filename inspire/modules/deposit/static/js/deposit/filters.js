@@ -77,7 +77,9 @@ Filter.prototype = {
     }
 
     var mapping = $.extend({}, common_mapping, special_mapping);
-    mapping.contributors = $.map(mapping.contributors, this.extract_contributor);
+    if (mapping.contributors) {
+      mapping.contributors = $.map(mapping.contributors, this.extract_contributor);
+    }
 
     return mapping;
   }
