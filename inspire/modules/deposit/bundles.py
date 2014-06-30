@@ -28,7 +28,7 @@ _deposit_js.contents += (
     'js/buckets.js',
     'js/bootstrap-multiselect.js',
     'js/deposit/fields_group.js',
-    'js/deposit/filters.js',
+    'js/deposit/mapper.js',
     'js/deposit/importer.js',
     'js/deposit/message_box.js',
     'js/deposit/fillform.js',
