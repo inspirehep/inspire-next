@@ -1,9 +1,28 @@
-
+/*
+ * This file is part of INSPIRE.
+ * Copyright (C) 2014 CERN.
+ *
+ * INSPIRE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * INSPIRE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In applying this licence, CERN does not waive the privileges and immunities
+ * granted to it by virtue of its status as an Intergovernmental Organization
+ * or submit itself to any jurisdiction.
+ */
 
 function Importer($depositionType) {
 
   this.$depositionType = $depositionType;
-
 }
 
 Importer.prototype = {
@@ -55,7 +74,7 @@ Importer.prototype = {
   labelTaskResult: function(label, deferredTask) {
 
     /**
-     * Takes an object and returns dictionary: { label: obj }
+     * Takes an object adds property 'label' to it
      * @param result
      * @returns {{}}
      */
@@ -83,6 +102,15 @@ Importer.prototype = {
     };
   },
 
+  /**
+   * Imports data from multiple sources.
+   *
+   * @param arxivId
+   * @param doi
+   * @param isbn
+   * @param on_done - callback on done, which receives imported and merged data
+   *  as an argument
+   */
   importData: function(arxivId, doi, isbn, on_done) {
     var tasksList = [];
     if (arxivId) {
