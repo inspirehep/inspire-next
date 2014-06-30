@@ -36,11 +36,10 @@ Importer.prototype = {
     var url = filter.url + id;
     var that = this;
 
-    return $.ajax({
-        url: url
-    }).then(function(data) {
+    function processQuery(data) {
 
-      var query_status = data.query.status;
+      var query_status = data.query ?
+        data.query.status : data.status + ' ' + data.statusText;
 
       if (query_status === 'success' && data.source === 'database') {
         query_status = 'duplicated';
@@ -61,6 +60,17 @@ Importer.prototype = {
       return {
         mapping: mapping,
         statusMessage: queryMessage
+      };
+    }
+
+    return $.ajax({
+      url: url
+    }).then(processQuery, function onError(data) {
+      return {
+        statusMessage: {
+          state: 'danger',
+          message: 'Import from ' + filter.name + ': ' + data.status + ' ' + data.statusText
+        }
       };
     });
   },
@@ -142,6 +152,8 @@ Importer.prototype = {
     }
     $.when.apply(this, deferredTasks).then(function() {
       callback(arguments);
+    }, function() {
+      callback(arguments);
     });
   },
 
@@ -181,7 +193,7 @@ Importer.prototype = {
    *  merged mapping and query messages in an array
    */
   mergeSources: function(results) {
-    var sources = {};
+    var sources = {}, mergedMapping = {};
     for (var i in results) {
       var taskResult = results[i];
       if (!taskResult.mapping) {
@@ -192,9 +204,12 @@ Importer.prototype = {
     var messages = $.map(results, function(val) {
       return val.statusMessage;
     });
-    var mergedMapping = arxivDoiFilter.applyFilter(
-      sources, this.$depositionType.val()
+
+    if (Object.keys(sources).length)
+      mergedMapping = arxivDoiFilter.applyFilter(
+        sources, this.$depositionType.val()
     );
+
     return {
       mapping: mergedMapping,
       statusMessage: messages
