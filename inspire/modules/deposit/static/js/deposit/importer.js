@@ -26,54 +26,6 @@ function Importer($depositionType) {
 }
 
 Importer.prototype = {
-  /**
-   * Imports data using given mapper.
-   *
-   * @param mapper {Mapper}
-   * @returns {Deferred} an object needed for tasks synchronization
-   */
-  singleImport: function(id, mapper) {
-    var url = mapper.url + id;
-    var that = this;
-
-    function processQuery(data) {
-
-      var query_status = data.query ?
-        data.query.status : data.status + ' ' + data.statusText;
-
-      if (query_status === 'success' && data.source === 'database') {
-        query_status = 'duplicated';
-      }
-
-      var queryMessage = that.getImportMessage(query_status, mapper.name, id);
-
-      if (query_status !== 'success') {
-        return {
-          statusMessage: queryMessage
-        };
-      }
-
-      // do the import
-      var depositionType = that.$depositionType.val();
-      var mapping = mapper.map(data.query, depositionType);
-
-      return {
-        mapping: mapping,
-        statusMessage: queryMessage
-      };
-    }
-
-    return $.ajax({
-      url: url
-    }).then(processQuery, function onError(data) {
-      return {
-        statusMessage: {
-          state: 'danger',
-          message: 'Import from ' + mapper.name + ': ' + data.status + ' ' + data.statusText
-        }
-      };
-    });
-  },
 
   /**
    * Labels result of a task, the result is following:
@@ -101,17 +53,6 @@ Importer.prototype = {
     }
   },
 
-  getSingleImportTask: function(name, id, mapper) {
-    return {
-      name: name,
-      fn: this.singleImport,
-      args: [
-        id,
-        mapper
-      ]
-    };
-  },
-
   /**
    * Imports data from multiple sources.
    *
@@ -121,24 +62,10 @@ Importer.prototype = {
    * @param on_done - callback on done, which receives imported and merged data
    *  as an argument
    */
-  importData: function(arxivId, doi, isbn, on_done) {
-    var tasksList = [];
-    if (arxivId) {
-      tasksList.push(this.getSingleImportTask('arxiv', arxivId, arxivMapper));
-    }
-    if (doi) {
-      tasksList.push(this.getSingleImportTask('doi', doi, doiMapper));
-    }
-    if (isbn) {
-      tasksList.push({
-        name: isbn,
-        fn: this.isbnImport,
-        args: []
-      });
-    }
+  importData: function(importTasks, mergeMapper, on_done) {
     var importer = this;
-    this.runMultipleTasks(tasksList, function(results) {
-      on_done(importer.mergeSources(results));
+    this.runMultipleTasks(importTasks, function(results) {
+      on_done(importer.mergeSources(results, mergeMapper));
     });
   },
 
@@ -146,8 +73,8 @@ Importer.prototype = {
     var deferredTasks = [];
     for (var i in tasks) {
       var taskInfo = tasks[i];
-      var task = tasks[i].fn.apply(this, tasks[i].args);
-      task = this.labelTaskResult(taskInfo.name, task);
+      var task = tasks[i].run();
+      task = this.labelTaskResult(taskInfo.dataSource.id, task);
       deferredTasks.push(task);
     }
     $.when.apply(this, deferredTasks).then(function() {
@@ -192,7 +119,7 @@ Importer.prototype = {
    *  }
    *  merged mapping and query messages in an array
    */
-  mergeSources: function(results) {
+  mergeSources: function(results, mergeMapper) {
     var sources = {}, mergedMapping = {};
     for (var i in results) {
       var taskResult = results[i];
@@ -206,7 +133,7 @@ Importer.prototype = {
     });
 
     if (Object.keys(sources).length)
-      mergedMapping = literatureFormPriorityMapper.map(
+      mergedMapping = mergeMapper.map(
         sources, this.$depositionType.val()
     );
 
@@ -215,53 +142,4 @@ Importer.prototype = {
       statusMessage: messages
     };
   },
-
-  isbnImport: function() {
-    return {
-      statusMessage: {
-        state: 'info',
-        message: 'The ISBN importing is not available at the moment.'
-      }
-    };
-  },
-
-  /**
-   * Generates the import status message.
-   * @param queryStatus
-   * @param idType DOI/arXiv/ISBN etc.
-   * @param id
-   * @returns {{state: string, message: string}} as in the input of
-   *  tpl_flash_message template
-   */
-  getImportMessage: function(queryStatus, idType, id) {
-    if (queryStatus === 'notfound') {
-      return {
-        state: 'warning',
-        message: 'The ' + idType + ' ' + id + ' was not found.'
-      };
-    }
-    if(queryStatus === 'malformed') {
-      return {
-        state: 'warning',
-        message: 'The ' + idType + ' ' + id + ' is malformed.'
-      };
-    }
-    if (queryStatus === 'success') {
-      return {
-        state: 'success',
-        message: 'The data was successfully imported from ' + idType + '.'
-      };
-    }
-    if (queryStatus === 'duplicated') {
-      return {
-        state: 'info',
-        message: 'This ' + idType + ' already exists in Inspire database.'
-      };
-    }
-
-    return {
-      state: 'warning',
-      message: 'Unknown import result.'
-    };
-  }
 };

@@ -20,6 +20,45 @@
  * or submit itself to any jurisdiction.
  */
 
+/**
+ * This filter assumes it receives standarized data format
+ * after treating with another filter.
+ *
+ * @type {DataMapper}
+ */
+var literatureFormPriorityMapper = new DataMapper({
+
+  common_mapping: function(data) {
+
+    var priorities = {
+      title: ['doi', 'arxiv'],
+      title_arXiv: ['arxiv'],
+      journal_title: ['doi', 'arxiv'],
+      isbn: ['doi', 'arxiv'],
+      page_range: ['doi', 'arxiv'],
+      volume: ['arxiv', 'doi'],
+      year: ['arxiv', 'doi'],
+      issue: ['arxiv', 'doi'],
+      contributors: ['arxiv', 'doi'],
+      abstract: ['arxiv', 'doi'],
+      article_id: ['arxiv', 'doi'],
+    };
+
+    var result = {};
+
+    for (var field in priorities) {
+      for (var idx in priorities[field]) {
+        var source = priorities[field][idx];
+        if (data[source] && data[source][field]) {
+          result[field] = data[source][field];
+          break;
+        }
+      }
+    }
+    return result;
+  }
+});
+
 $(document).ready( function() {
 
   var $field_list = {
@@ -176,14 +215,28 @@ $(document).ready( function() {
     var btn = $(this);
     btn.button('loading');
 
-    var arxiv_id_value = stripSourceTags($arxiv_id_field.val());
-    var doi_value = stripSourceTags($doi_field.val());
+    var arxivId = stripSourceTags($arxiv_id_field.val());
+    var doi = stripSourceTags($doi_field.val());
+    var isbn = $isbn_field.val();
+    var depositionType = $deposition_type.val();
+
+    var importTasks = [];
+
+    if (doi) {
+      importTasks.push(new ImportTask(doiSource, doi, depositionType));
+    }
+    if (arxivId) {
+      importTasks.push(new ImportTask(arxivSource, arxivId, depositionType));
+    }
+    if (isbn) {
+      importTasks.push(new ImportTask(isbnSource, isbn, depositionType));
+    }
 
     importer.importData(
-      // ids
-      arxiv_id_value,
-      doi_value,
-      $isbn_field.val(),
+      // tasks
+      importTasks,
+      // priority mapper for merging the results
+      literatureFormPriorityMapper,
       // callback
       function(result) {
         fillForm(result.mapping);
