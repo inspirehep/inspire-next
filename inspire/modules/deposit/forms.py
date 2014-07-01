@@ -268,7 +268,8 @@ class LiteratureForm(WebDepositForm):
     )
 
     conf_name = fields.TextField(
-        label=_('Conference name'),
+        label=_('Conference Information'),
+        placeholder=_('Conference name, acronym, place, date'),
         widget_classes="form-control"
     )
 
