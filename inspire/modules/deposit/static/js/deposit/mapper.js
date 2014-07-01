@@ -23,22 +23,37 @@
 function DataMapper(options) {
 
   /**
+   * Mapping format:
    *
-   * @type {{}}
+   * {
+   *   fieldId: String,
+   *   fieldId: String,
+   *   fieldId: String
+   * },
+   */
+
+  /**
+   * Mapping common to every type of deposition.
+   * @type {function} returns the 'Mapping format'
    */
   this.common_mapping = options.common_mapping ?
     options.common_mapping : function(data) {};
 
   /**
    *
-   * @type {function} The function should return:
+   * @type {{deposition_type: function}} The function should return
+   *   the 'Mapping format'
    */
   this.special_mapping = options.special_mapping ?
     options.special_mapping : {};
 
   /**
    * Function to extract author sub-form content having
-   * an item from
+   * an item from should return
+   * {
+   *   name: String,
+   *   affiliation: String
+   * }
    */
   this.extract_contributor = options.extract_contributor ?
     options.extract_contributor : function(contributor) {
