@@ -145,7 +145,11 @@ class literature(SimpleRecordDeposition):
         # Conference Info
         # ===============
         if 'conf_name' in metadata:
-            metadata['nonpublic_note'] = metadata['conf_name']
+            if 'nonpublic_note' in metadata:
+                field = [metadata['nonpublic_note'], metadata['conf_name']]
+                metadata['nonpublic_note'] = field
+            else:
+                metadata['nonpublic_note'] = metadata['conf_name']
             metadata['collections']['primary'] += ['ConferencePaper']
 
         # =======
@@ -166,7 +170,8 @@ class literature(SimpleRecordDeposition):
                               'issue']
 
         if all(k in metadata for k in publication_fields):
-            del metadata['nonpublic_note']
+            if len(metadata['nonpublic_note']) > 1:
+                del metadata['nonpublic_note'][0]
             metadata['publication_info'] = {}
             if 'journal_title' in metadata:
                 metadata['publication_info']['title'] = metadata['journal_title']
