@@ -126,7 +126,7 @@ $(document).ready( function() {
    */
   function stripSourceTags(identifier) {
     var doi_prefix = /^doi:/;
-    var arxiv_prefix = /^arxiv:/;
+    var arxiv_prefix = /^ar[xX]iv:/;
 
     var strippedID = identifier.replace(doi_prefix, '');
     strippedID = strippedID.replace(arxiv_prefix, '');
