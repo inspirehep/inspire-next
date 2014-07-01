@@ -50,7 +50,48 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 from invenio.legacy.bibsched.bibtask import task_update_progress, write_message
 
 
-class ingestion_arxiv_math(object):
+class ingestion_arxiv_math(WorkflowBase):
+
+    object_type = "Supervising Workflow"
+
+    @staticmethod
+    def get_description(bwo):
+
+        from flask import render_template
+
+        identifiers = None
+
+        extra_data = bwo.get_extra_data()
+        if 'options' in extra_data and 'identifiers' in extra_data["options"]:
+            identifiers = extra_data["options"]["identifiers"]
+
+        if '_tasks_results' in extra_data and '_workflows_reviews' in extra_data['_tasks_results']:
+            result_temp = extra_data["_tasks_results"]["_workflows_reviews"][0].to_dict()['result']
+            result_progress = {
+                'success': (result_temp['total'] - result_temp['failed']),
+                'failed': result_temp['failed'],
+                'success_per': (result_temp['total'] - result_temp['failed'])*100 /
+                          result_temp['total'],
+                'failed_per': result_temp['failed']*100 / result_temp['total'],
+                'total': result_temp['total']}
+        else:
+            result_progress = {'success_per': 0,  'failed_per': 0, 'success': 0, 'failed': 0, 'total': 0}
+
+        current_task = extra_data['_last_task_name']
+
+        return render_template("workflows/styles/harvesting_description.html",
+                               identifiers=identifiers,
+                               result_progress=result_progress,
+                               current_task=current_task)
+    @staticmethod
+    def get_title(bwo):
+        return "Supervising harvesting of {0}".format(
+            bwo.get_extra_data()["_repository"]["name"])
+
+    @staticmethod
+    def formatter(bwo, **kwargs):
+        return None
+
     repository = 'arxiv_math_daily'
     workflow = [
         write_something_generic("Initialisation", [task_update_progress, write_message]),
