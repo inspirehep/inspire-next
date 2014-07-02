@@ -159,7 +159,7 @@ class LiteratureForm(WebDepositForm):
     )
 
     title = fields.TitleField(
-        label=_('Original Title'),
+        label=_('Title'),
         widget_classes="form-control",
         validators=[validators.Required()],
         export_key='title',
