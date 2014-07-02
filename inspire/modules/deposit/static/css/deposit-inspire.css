@@ -31,3 +31,7 @@
 .add-element {
     cursor: pointer;
 }
+
+#abstract {
+    height: 120px;
+}
