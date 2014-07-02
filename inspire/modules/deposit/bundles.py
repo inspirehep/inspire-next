@@ -41,4 +41,5 @@ _deposit_js.bower.update({
 
 _deposit_styles.contents += (
     'css/bootstrap-multiselect.css',
+    'css/deposit-inspire.css',
 )
