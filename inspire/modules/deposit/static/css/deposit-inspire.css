@@ -28,10 +28,14 @@
     }
 }
 
-.add-element {
+.add-element, .remove-element {
     cursor: pointer;
 }
 
 #abstract {
     height: 120px;
+}
+
+#webdeposit_form_accordion textarea {
+    resize: vertical;
 }
