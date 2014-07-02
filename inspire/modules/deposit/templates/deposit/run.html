@@ -18,19 +18,6 @@
 #}
 {% extends "deposit/run_base.html" %}
 
-{%- block css %}
-	{{ super() }}
-	<style>
-            @media (min-width: 1200px) {
-              #file_container {
-                width: 970px;
-                float: none;
-                margin: 0 auto;
-              }
-            }
-	</style>
-{%- endblock css %}
-
 {% block file_container_colsize %}col-md-12{% endblock %}
 
 {% block form_title scoped %}
