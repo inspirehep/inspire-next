@@ -18,15 +18,11 @@
 #}
 {% extends "deposit/run_base.html" %}
 
-{%- block css %}
+{%- block deposit_css %}
 	{{ super() }}
-	{%- css url_for('static', filename='img/jquery-ui/themes/base/jquery.ui.theme.css'), '01-jquery-ui' -%}
-	{%- css url_for('static', filename='img/jquery-ui/themes/base/jquery.ui.datepicker.css'), '01-jquery-ui' -%}
-	{%- css url_for('static', filename='css/typeahead.js-bootstrap.css'), '50-webdeposit' -%}
-	{%- css url_for('static', filename='css/deposit/form.css'), '51-webdeposit' -%}
   {%- css url_for('static', filename='css/bootstrap-multiselect.css'), '50-webdeposit' -%}
-  {%- css url_for('static', filename='css/deposit-inspire.css'), '50-webdeposit' -%}
-{%- endblock css %}
+  {%- css url_for('static', filename='css/deposit-inspire.css') -%}
+{%- endblock deposit_css %}
 
 {% block deposit_js %}
   {%- js url_for('static', filename='js/jqueryui/jquery.ui.core.js'), '50-jquery-ui' -%}
