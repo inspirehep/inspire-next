@@ -143,10 +143,11 @@ TaskManager.prototype = {
       return val.statusMessage;
     });
 
-    if (Object.keys(sources).length)
+    if (Object.keys(sources).length) {
       mergedMapping = mergeMapper.map(
         sources, this.$depositionType.val()
       );
+    }
 
     return {
       mapping: mergedMapping,

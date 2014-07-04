@@ -40,4 +40,4 @@ ImportTask.prototype = {
     return this.dataSource.importData(this.dataId, this.depositionType);
   }
 
-}
+};
