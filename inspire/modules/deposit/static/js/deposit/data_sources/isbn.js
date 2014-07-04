@@ -34,4 +34,4 @@ isbnSource.importData = function(id) {
       message: 'The ISBN import is not available at the moment.'
     }
   };
-}
+};
