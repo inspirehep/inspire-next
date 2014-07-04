@@ -22,56 +22,81 @@
 
 module.exports = function(grunt) {
 
-  var prefix = process.env.VIRTUAL_ENV || '../..',
+    var prefix = process.env.VIRTUAL_ENV || '../..',
         globalConfig = {
-          bower_path: 'bower_components',
-          installation_path: prefix + '/var/invenio.base-instance/static'
+            bower_path: 'bower_components',
+            installation_path: prefix + '/var/invenio.base-instance/static'
         };
 
-  // show elapsed time at the end
-  require('time-grunt')(grunt);
-  // load all grunt tasks
-  require('load-grunt-tasks')(grunt);
+    // show elapsed time at the end
+    require('time-grunt')(grunt);
+    // load all grunt tasks
+    require('load-grunt-tasks')(grunt);
 
-  // Project configuration
-  grunt.initConfig({
+    // Project configuration
+    grunt.initConfig({
 
-    pkg: grunt.file.readJSON('package.json'),
-    globalConfig: globalConfig,
+        pkg: grunt.file.readJSON('package.json'),
+        globalConfig: globalConfig,
 
-    copy: {
-      js: {
-          expand: true,
-          flatten: true,
-          cwd: '<%= globalConfig.bower_path %>/',
-          src: ['buckets/buckets.js',
-                  'jquery-feeds/dist/jquery.feeds.min.js',
-                  'moment/min/moment.min.js',
-                  'bootstrap-multiselect/js/bootstrap-multiselect.js'],
-          dest: '<%= globalConfig.installation_path %>/js/'
-      },
-      css: {
-          expand: true,
-          flatten: true,
-          cwd: '<%= globalConfig.bower_path %>/',
-          src: ['bootstrap-multiselect/css/bootstrap-multiselect.css'],
-          dest: '<%= globalConfig.installation_path %>/css/'
-      }
-    },
-    jshint: {
-      options: {
-        curly: true,
-        eqeqeq: true,
-        eqnull: true,
-        browser: true,
-        globals: {
-          jQuery: true
+        copy: {
+            js: {
+                expand: true,
+                flatten: true,
+                cwd: '<%= globalConfig.bower_path %>/',
+                src: ['buckets/buckets.js',
+                    'jquery-feeds/dist/jquery.feeds.min.js',
+                    'moment/min/moment.min.js',
+                    'bootstrap-multiselect/js/bootstrap-multiselect.js'
+                ],
+                dest: '<%= globalConfig.installation_path %>/js/'
+            },
+            css: {
+                expand: true,
+                flatten: true,
+                cwd: '<%= globalConfig.bower_path %>/',
+                src: ['bootstrap-multiselect/css/bootstrap-multiselect.css'],
+                dest: '<%= globalConfig.installation_path %>/css/'
+            }
+        },
+        jshint: {
+            options: {
+                curly: true,
+                eqeqeq: true,
+                eqnull: true,
+                browser: true,
+                globals: {
+                    jQuery: true
+                }
+            },
+            all: ['inspire/modules/**/static/js/**/*.js']
+        },
+        jsbeautifier: {
+            files: ["inspire/modules/**/static/js/**/*.js"],
+            options: {
+                js: {
+                    braceStyle: "collapse",
+                    breakChainedMethods: false,
+                    e4x: false,
+                    evalCode: false,
+                    indentChar: " ",
+                    indentLevel: 0,
+                    indentSize: 4,
+                    indentWithTabs: false,
+                    jslintHappy: false,
+                    keepArrayIndentation: false,
+                    keepFunctionIndentation: false,
+                    maxPreserveNewlines: 10,
+                    preserveNewlines: true,
+                    spaceBeforeConditional: true,
+                    spaceInParen: false,
+                    unescapeStrings: false,
+                    wrapLineLength: 0
+                }
+            }
         }
-      },
-      all: ['inspire/modules/**/static/js/**/*.js']
-    }
-  });
+    });
 
-  grunt.registerTask('default', ['copy']);
+    grunt.registerTask('default', ['copy']);
 
 };

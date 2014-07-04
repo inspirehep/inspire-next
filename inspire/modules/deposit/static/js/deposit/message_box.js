@@ -88,7 +88,7 @@
       $elements.each(function() {
         var $element = $(this);
         var object = $element.data(dataLabel);
-        var options = typeof option == 'object' && option;
+        var options = typeof option === 'object' && option;
         // attach jQuery plugin
         if (!object) {
           object = new MessageBox($element, options);
