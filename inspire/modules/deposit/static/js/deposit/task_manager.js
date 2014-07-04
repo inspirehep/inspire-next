@@ -20,12 +20,12 @@
  * or submit itself to any jurisdiction.
  */
 
-function Importer($depositionType) {
+function TaskManager($depositionType) {
 
   this.$depositionType = $depositionType;
 }
 
-Importer.prototype = {
+TaskManager.prototype = {
 
   /**
    * Labels result of a task, the result is following:
@@ -54,32 +54,42 @@ Importer.prototype = {
   },
 
   /**
-   * Imports data from multiple sources.
+   * Runs multiple tasks and merges the results
    *
-   * @param arxivId
-   * @param doi
-   * @param isbn
+   * @param tasks - list of tasks to be run
+   * @param mergeMapper - mapper (see mapper.js)
    * @param on_done - callback on done, which receives imported and merged data
    *  as an argument
    */
-  importData: function(importTasks, mergeMapper, on_done) {
-    var importer = this;
-    this.runMultipleTasks(importTasks, function(results) {
-      on_done(importer.mergeSources(results, mergeMapper));
+  runMultipleTasksMerge: function(tasks, mergeMapper, on_done) {
+    var taskmanager = this;
+    this.runMultipleTasks(tasks, function(results) {
+      on_done(taskmanager.mergeSources(results, mergeMapper));
     });
   },
 
+  /**
+   * Runs multiple tasks asynchronously and executes a callback when they are
+   * resolved/rejected
+   *
+   * @param tasks - list of tasks (see import_task.js for an example)
+   * @param callback - callback on done
+   */
   runMultipleTasks: function(tasks, callback) {
     var deferredTasks = [];
+
     for (var i in tasks) {
-      var taskInfo = tasks[i];
-      var task = tasks[i].run();
-      task = this.labelTaskResult(taskInfo.dataSource.id, task);
+      var task = tasks[i];
+      task.run();
+      task = this.labelTaskResult(task.dataSource.id, task);
       deferredTasks.push(task);
     }
+
     $.when.apply(this, deferredTasks).then(function() {
+      /* Deferred object was resolved */
       callback(arguments);
     }, function() {
+      /* Deferred object was rejected */
       callback(arguments);
     });
   },
@@ -120,7 +130,8 @@ Importer.prototype = {
    *  merged mapping and query messages in an array
    */
   mergeSources: function(results, mergeMapper) {
-    var sources = {}, mergedMapping = {};
+    var sources = {},
+        mergedMapping = {};
     for (var i in results) {
       var taskResult = results[i];
       if (!taskResult.mapping) {

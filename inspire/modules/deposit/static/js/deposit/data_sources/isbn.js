@@ -27,7 +27,7 @@ var isbnSource = new DataSource({
 
 });
 
-isbnSource.runGetData = function(id) {
+isbnSource.importData = function(id) {
   return {
     statusMessage: {
       state: 'info',
