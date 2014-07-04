@@ -21,8 +21,8 @@
  */
 
 /**
- * This filter assumes it receives standarized data format
- * after treating with another filter.
+ * This mapper assumes it receives standarized data format
+ * after treating with another mapper.
  *
  * @type {DataMapper}
  */
@@ -204,7 +204,7 @@ $(document).ready( function() {
     }
   }
 
-  var importer = new Importer($deposition_type);
+  var taskmanager = new TaskManager($deposition_type);
   var messageBox = $('#flash-import').messageBox({
     hoganTemplate: tpl_flash_message,
   })[0];
@@ -232,7 +232,7 @@ $(document).ready( function() {
       importTasks.push(new ImportTask(isbnSource, isbn, depositionType));
     }
 
-    importer.importData(
+    taskmanager.runMultipleTasksMerge(
       // tasks
       importTasks,
       // priority mapper for merging the results
