@@ -61,7 +61,7 @@ DataSource.prototype = {
    *
    * @returns {Deferred} an object needed for tasks synchronization
    */
-  runGetData: function(id, depositionType) {
+  importData: function(id, depositionType) {
     var that = this;
 
     function processQuery(data) {
@@ -81,7 +81,7 @@ DataSource.prototype = {
         };
       }
 
-      // do the import
+      // Map form elements with query result
       var mapping = that.mapper.map(data.query, depositionType);
 
       return {
