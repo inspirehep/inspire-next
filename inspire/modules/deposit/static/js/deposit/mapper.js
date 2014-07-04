@@ -58,7 +58,7 @@ function DataMapper(options) {
   this.extract_contributor = options.extract_contributor ?
     options.extract_contributor : function(contributor) {
       return contributor;
-    };
+  };
 
   /**
    * DataMapper name. It will be displayed in info messages.
