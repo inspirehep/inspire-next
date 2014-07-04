@@ -6,7 +6,8 @@
     "grunt-contrib-watch": "*",
     "grunt-contrib-copy": "*",
     "load-grunt-tasks": "~0.2.0",
-    "grunt-contrib-jshint": "~0.10.0"
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-jsbeautifier": "~0.2.7"
   },
   "dependencies": {
     "time-grunt": "*"
