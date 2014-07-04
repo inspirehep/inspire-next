@@ -118,7 +118,7 @@ DataSource.prototype = {
         message: 'The ' + this.name + ' ' + id + ' was not found.'
       };
     }
-    if(queryStatus === 'malformed') {
+    if (queryStatus === 'malformed') {
       return {
         state: 'warning',
         message: 'The ' + this.name + ' ' + id + ' is malformed.'

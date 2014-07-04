@@ -59,14 +59,14 @@ var literatureFormPriorityMapper = new DataMapper({
   }
 });
 
-$(document).ready( function() {
+$(document).ready(function() {
 
   var $field_list = {
     article: $('*[class~="article-related"]'),
-	  thesis: $('*[class~="thesis-related"]'),
-	  chapter: $('*[class~="chapter-related"]'),
-	  book: $('*[class~="book-related"]'),
-	  proceedings: $('*[class~="proceedings-related"]'),
+    thesis: $('*[class~="thesis-related"]'),
+    chapter: $('*[class~="chapter-related"]'),
+    book: $('*[class~="book-related"]'),
+    proceedings: $('*[class~="proceedings-related"]'),
     translated_title: $("#state-group-title_translation"),
   };
 
@@ -74,41 +74,42 @@ $(document).ready( function() {
   var $arxiv_id_field = $("#arxiv_id");
   var $isbn_field = $("#isbn");
 
-	/**
-	 * Hide form fields individually related to each document type
-	 */
-	function hideFields(){
-		$.map($field_list, function($field, field_name){
-			$field.parents('.form-group').slideUp();
-		});
-	}
+  /**
+   * Hide form fields individually related to each document type
+   */
+  function hideFields() {
+    $.map($field_list, function($field, field_name) {
+      $field.parents('.form-group').slideUp();
+    });
+  }
 
-	hideFields();
+  hideFields();
 
-	var $deposition_type = $("#type_of_doc");
+  var $deposition_type = $("#type_of_doc");
   var $deposition_type_panel = $deposition_type.parents('.panel-body');
 
-	$deposition_type.change(function(event) {
-		hideFields();
+  $deposition_type.change(function(event) {
+    hideFields();
     var deposition_type = $deposition_type.val();
     var $type_related_fields = $field_list[deposition_type];
     var $type_related_groups = $type_related_fields.parents('.form-group');
-		$type_related_groups.slideDown();
+    $type_related_groups.slideDown();
     var $type_related_panel = $type_related_fields.parents('.panel-body');
-		$type_related_panel.effect(
-      "highlight",
-			{color: "#e1efbb"},
+    $type_related_panel.effect(
+      "highlight", {
+        color: "#e1efbb"
+      },
       2500
     );
-		$deposition_type_panel.children('.alert').remove('.alert');
-		if (deposition_type === "proceedings") {
-			$deposition_type_panel.append(tpl_flash_message.render({
-        state:'info',
+    $deposition_type_panel.children('.alert').remove('.alert');
+    if (deposition_type === "proceedings") {
+      $deposition_type_panel.append(tpl_flash_message.render({
+        state: 'info',
         message: "<strong>Proceedings:</strong> only for complete " +
           "proceedings. For contributions use Article/Conference paper."
       }));
-		}
-	});
+    }
+  });
 
   var fieldsGroup = $("#journal_title, #volume, #issue, #page_range, #article_id, #year")
     .fieldsGroup({
@@ -140,10 +141,9 @@ $(document).ready( function() {
   function handleTranslatedTitle() {
     var language_value = $language.val();
 
-    if(language_value !== 'en') {
+    if (language_value !== 'en') {
       $translated_title.slideDown();
-    }
-    else {
+    } else {
       $translated_title.slideUp();
     }
   }
@@ -183,7 +183,7 @@ $(document).ready( function() {
 
     var authorsWidget = DEPOSIT_FORM.field_lists.authors;
 
-    $.map(dataMapping, function(value, field_id){
+    $.map(dataMapping, function(value, field_id) {
       var $field = $('#' + field_id);
       if ($field) {
         $field.val(value);

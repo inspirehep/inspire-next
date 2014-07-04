@@ -20,94 +20,94 @@
  * or submit itself to any jurisdiction.
  */
 
-(function($){
+(function($) {
 
-    var MessageBox = (function() {
+  var MessageBox = (function() {
+
+    /**
+     * Constructor.
+     *
+     * @param element html element on which the plugin
+     * @param options dictionary
+     * @constructor
+     */
+    function MessageBox(element, options) {
+
+      // ensure that there is jQuery selector available 
+      this.$element = $(element);
+      this.options = $.extend({}, $.fn.messageBox.defaults, options);
+
+      this.template = this.options.hoganTemplate;
+
+    }
+
+    MessageBox.prototype = {
 
       /**
-       * Constructor.
-       *
-       * @param element html element on which the plugin
-       * @param options dictionary
-       * @constructor
+       * Appends one message. Use append which is more universal.
+       * @param ctx
+       * @private
        */
-      function MessageBox(element, options) {
+      _appendOne: function(ctx) {
+        this.$element.append(this.template.render(ctx));
+        this.$element.show('fast');
+      },
 
-        // ensure that there is jQuery selector available 
-        this.$element = $(element);
-        this.options = $.extend({}, $.fn.messageBox.defaults, options);
+      /**
+       * Cleans the message box.
+       */
+      clean: function() {
+        this.$element.empty();
+      },
 
-        this.template = this.options.hoganTemplate;
-
+      /**
+       * Appends one or more messages to the array box.
+       * @param messages can be a single message context or an array of them.
+       */
+      append: function(messages) {
+        if (!Array.isArray(messages)) {
+          this._appendOne(messages);
+        }
+        var that = this;
+        $.each(messages, function() {
+          that._appendOne(this);
+        });
       }
-
-      MessageBox.prototype = {
-
-        /**
-         * Appends one message. Use append which is more universal.
-         * @param ctx
-         * @private
-         */
-        _appendOne: function(ctx) {
-          this.$element.append(this.template.render(ctx));
-	        this.$element.show('fast');
-        },
-
-        /**
-         * Cleans the message box.
-         */
-        clean: function() {
-          this.$element.empty();
-        },
-
-        /**
-         * Appends one or more messages to the array box.
-         * @param messages can be a single message context or an array of them.
-         */
-        append: function(messages) {
-          if (!Array.isArray(messages)) {
-            this._appendOne(messages);
-          }
-          var that = this;
-          $.each(messages, function() {
-            that._appendOne(this);
-          });
-        }
-      };
-
-      return MessageBox;
-
-    })();
-
-    $.fn.messageBox = function(option) {
-
-      var $elements = this;
-      var objects = [];
-      var dataLabel = 'message-box';
-
-      $elements.each(function() {
-        var $element = $(this);
-        var object = $element.data(dataLabel);
-        var options = typeof option == 'object' && option;
-        // attach jQuery plugin
-        if (!object) {
-          object = new MessageBox($element, options);
-          $element.data(dataLabel, object);
-        }
-        objects.push(object);
-      });
-
-      // return all objects attached to the elements
-      return objects;
     };
 
-    $.fn.messageBox.defaults = {
-      /**
-       * @param the template used to render a message. Should have parameters
-       *  'state' and 'message'.
-       */
-      hoganTemplate: {},
-    };
-    $.fn.messageBox.Constructor = MessageBox;
+    return MessageBox;
+
+  })();
+
+  $.fn.messageBox = function(option) {
+
+    var $elements = this;
+    var objects = [];
+    var dataLabel = 'message-box';
+
+    $elements.each(function() {
+      var $element = $(this);
+      var object = $element.data(dataLabel);
+      var options = typeof option == 'object' && option;
+      // attach jQuery plugin
+      if (!object) {
+        object = new MessageBox($element, options);
+        $element.data(dataLabel, object);
+      }
+      objects.push(object);
+    });
+
+    // return all objects attached to the elements
+    return objects;
+  };
+
+  $.fn.messageBox.defaults = {
+    /**
+     * @param the template used to render a message. Should have parameters
+     *  'state' and 'message'.
+     */
+    hoganTemplate: {},
+  };
+  $.fn.messageBox.Constructor = MessageBox;
 
 })(jQuery);
