@@ -65,6 +65,8 @@ module.exports = function(grunt) {
         eqeqeq: true,
         eqnull: true,
         browser: true,
+        newcap: true,
+        indent: 2,
         globals: {
           jQuery: true
         }
