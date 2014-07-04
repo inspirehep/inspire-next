@@ -37,7 +37,7 @@ function ImportTask(dataSource, dataId, depositionType) {
 ImportTask.prototype = {
 
   run: function() {
-    return this.dataSource.runGetData(this.dataId, this.depositionType);
+    return this.dataSource.importData(this.dataId, this.depositionType);
   }
 
 }

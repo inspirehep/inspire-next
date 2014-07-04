@@ -34,7 +34,7 @@ _deposit_js.contents += (
     'js/deposit/data_sources/doi.js',
     'js/deposit/data_sources/isbn.js',
     'js/deposit/import_task.js',
-    'js/deposit/importer.js',
+    'js/deposit/task_manager.js',
     'js/deposit/message_box.js',
     'js/deposit/fillform.js',
 )
