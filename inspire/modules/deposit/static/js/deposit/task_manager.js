@@ -48,7 +48,7 @@ TaskManager.prototype = {
     // if deferredTask is not a Deferred object returns just the labeled object
     try {
       return deferredTask.then(labelObj);
-    } catch(err) {
+    } catch (err) {
       return labelObj(deferredTask);
     }
   },
@@ -80,7 +80,7 @@ TaskManager.prototype = {
 
     for (var i in tasks) {
       var task = tasks[i];
-      var defeferred_task =  task.run();
+      var defeferred_task = task.run();
       defeferred_task = this.labelTaskResult(task.dataSource.id, defeferred_task);
       deferredTasks.push(defeferred_task);
     }
@@ -131,7 +131,7 @@ TaskManager.prototype = {
    */
   mergeSources: function(results, mergeMapper) {
     var sources = {},
-        mergedMapping = {};
+      mergedMapping = {};
     for (var i in results) {
       var taskResult = results[i];
       if (!taskResult.mapping) {
@@ -146,7 +146,7 @@ TaskManager.prototype = {
     if (Object.keys(sources).length)
       mergedMapping = mergeMapper.map(
         sources, this.$depositionType.val()
-    );
+      );
 
     return {
       mapping: mergedMapping,
