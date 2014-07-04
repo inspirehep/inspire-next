@@ -23,7 +23,7 @@
 function DataSource(options) {
 
   if (!options.name || !options.id) {
-    throw "ImportSource: improper initialization"
+    throw "ImportSource: improper initialization";
   }
 
   /**
@@ -142,4 +142,4 @@ DataSource.prototype = {
       message: 'Unknown import result.'
     };
   }
-}
+};
