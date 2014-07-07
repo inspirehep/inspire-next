@@ -131,8 +131,7 @@ class literature(SimpleRecordDeposition):
         # ========
         # Category
         # ========
-        metadata['collections'] = {}
-        metadata['collections']['primary'] = ['HEP']
+        metadata['collections'] = [{'primary': "HEP"}]
 
         # ==========
         # Experiment
@@ -149,9 +148,8 @@ class literature(SimpleRecordDeposition):
                 field = [metadata['nonpublic_note'], metadata['conf_name']]
                 metadata['nonpublic_note'] = field
             else:
-                metadata['nonpublic_note'] = metadata['conf_name']
-            metadata['collections']['primary'] += ['ConferencePaper']
-
+                metadata['nonpublic_note'] = [metadata['conf_name']]
+            metadata['collections'] += [{'primary': "ConferencePaper"}]
         # =======
         # License
         # =======
@@ -169,8 +167,8 @@ class literature(SimpleRecordDeposition):
                               'year',
                               'issue']
 
-        if all(k in metadata for k in publication_fields):
-            if len(metadata['nonpublic_note']) > 1:
+        if any(k in metadata for k in publication_fields):
+            if 'nonpublic_note' in metadata and len(metadata['nonpublic_note']) > 1:
                 del metadata['nonpublic_note'][0]
             metadata['publication_info'] = {}
             if 'journal_title' in metadata:
@@ -185,6 +183,9 @@ class literature(SimpleRecordDeposition):
                 metadata['publication_info']['year'] = metadata['year']
             if 'issue' in metadata:
                 metadata['publication_info']['journal_issue'] = metadata['issue']
+            if {'primary': "ConferencePaper"} in metadata['collections']:
+                metadata['collections'].remove({'primary': "ConferencePaper"})
+            metadata['collections'] += [{'primary': "Published"}]
 
         # Delete useless data
         delete_keys = ['supervisors',
