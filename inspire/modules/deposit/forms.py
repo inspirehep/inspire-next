@@ -102,6 +102,16 @@ def journal_title_kb_mapper(val):
     }
 
 
+def experiment_kb_mapper(val):
+    """Return object ready to autocomplete experiments."""
+    return {
+        'value': "%s" % val,
+        'fields': {
+            "experiment": val,
+        }
+    }
+
+
 class AuthorInlineForm(WebDepositForm):
 
     """Author inline form."""
@@ -210,7 +220,9 @@ class LiteratureForm(WebDepositForm):
     experiment = fields.TextField(
         label=_('Experiment'),
         #choices=,
-        widget_classes="form-control"
+        widget_classes="form-control",
+        autocomplete=kb_dynamic_autocomplete("dynamic_experiments",
+                                             mapper=experiment_kb_mapper)
     )
 
     # this should be a prefilled dropdown
