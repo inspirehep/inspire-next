@@ -92,6 +92,16 @@ def institutions_kb_mapper(val):
     }
 
 
+def journal_title_kb_mapper(val):
+    """Return object ready to autocomplete journal titles."""
+    return {
+        'value': "%s" % val,
+        'fields': {
+            "journal_title": val,
+        }
+    }
+
+
 class AuthorInlineForm(WebDepositForm):
 
     """Author inline form."""
@@ -295,7 +305,9 @@ class LiteratureForm(WebDepositForm):
     # ============
     journal_title = fields.TextField(
         label=_('Journal Title'),
-        widget_classes="form-control"
+        widget_classes="form-control",
+        autocomplete=kb_dynamic_autocomplete("dynamic_journal_titles",
+                                             mapper=journal_title_kb_mapper)
     )
 
     page_range = fields.TextField(
