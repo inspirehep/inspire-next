@@ -31,22 +31,37 @@ var arxivSource = new DataSource({
     special_mapping: {
       article: function(data) {
         return {
+          doi: data.doi,
           title: data.title,
           title_arXiv: data.title,
           year: data.published,
-          abstract: data.summary,
+          abstract: data.abstract,
           article_id: 'arxiv:' + data.id,
-          contributors: data.author
+          contributors: data.authors,
+          journal_title: data["journal-ref"],
+          year: data.created.substring(0,4),
+          license_url: data.license,
+          note: data.comments,
         };
       }
     },
 
-    extract_contributor: function(contributor) {
+    extract_contributor: function(authors) {
+      var name, surname;
+
+      if (authors.author[0]) {
+        name = authors.author[0].keyname;
+      }
+
+      if (authors.author[1]) {
+        surname = authors.author[1].forenames;
+      }
 
       return {
-        name: contributor.name,
+        name: name + ', ' + surname,
         affiliation: ''
       };
     }
   })
+
 });

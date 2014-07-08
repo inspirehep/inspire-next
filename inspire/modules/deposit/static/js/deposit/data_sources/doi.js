@@ -41,7 +41,7 @@ var doiSource = new DataSource({
         isbn: data.isbn,
         page_range: page_range,
         volume: data.volume,
-        year: data.year,
+        year: data.year.substring(0,4),
         issue: data.issues,
         contributors: data.contributors
       };
