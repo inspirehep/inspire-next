@@ -51,6 +51,7 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 )
 
 from invenio.legacy.bibsched.bibtask import task_update_progress, write_message
+from invenio.modules.workflows.utils import WorkflowBase
 
 
 class ingestion_arxiv_math(WorkflowBase):
@@ -73,8 +74,7 @@ class ingestion_arxiv_math(WorkflowBase):
             result_progress = {
                 'success': (result_temp['total'] - result_temp['failed']),
                 'failed': result_temp['failed'],
-                'success_per': (result_temp['total'] - result_temp['failed'])*100 /
-                          result_temp['total'],
+                'success_per': (result_temp['total'] - result_temp['failed'])*100 / result_temp['total'],
                 'failed_per': result_temp['failed']*100 / result_temp['total'],
                 'total': result_temp['total']}
         else:
@@ -86,6 +86,7 @@ class ingestion_arxiv_math(WorkflowBase):
                                identifiers=identifiers,
                                result_progress=result_progress,
                                current_task=current_task)
+
     @staticmethod
     def get_title(bwo):
         return "Supervising harvesting of {0}".format(
