@@ -39,6 +39,7 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 from ..tasks.filtering import inspire_filter_custom
 
 from invenio.config import CFG_PREFIX
+from invenio.modules.workflows.utils import WorkflowBase
 
 
 class process_record_arxiv(WorkflowBase):
