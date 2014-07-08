@@ -218,8 +218,8 @@ class LiteratureForm(WebDepositForm):
     )
 
     experiment = fields.TextField(
+        placeholder=_("Start typing for suggestions"),
         label=_('Experiment'),
-        #choices=,
         widget_classes="form-control",
         autocomplete=kb_dynamic_autocomplete("dynamic_experiments",
                                              mapper=experiment_kb_mapper)
@@ -316,6 +316,7 @@ class LiteratureForm(WebDepositForm):
     # Journal Info
     # ============
     journal_title = fields.TextField(
+        placeholder=_("Start typing for suggestions"),
         label=_('Journal Title'),
         widget_classes="form-control",
         autocomplete=kb_dynamic_autocomplete("dynamic_journal_titles",
