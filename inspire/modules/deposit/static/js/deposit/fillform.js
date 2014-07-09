@@ -123,10 +123,6 @@ $(document).ready(function() {
       }
     });
 
-  //FIXME: hackish way to put icons next to labels since WTForms
-  //           don't allow to extend the label names with pure HTML
-  $("a.panel-toggle").append('<span class="caret"></span>');
-
   // subject field supports multiple selections
   // using the library bootstrap-multiselect
   $('#subject').attr('multiple', 'multiple').multiselect({
