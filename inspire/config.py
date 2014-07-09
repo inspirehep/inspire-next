@@ -149,8 +149,6 @@ for lang in CFG_SITE_LANGS:
     langs[lang] = u"INSPIRE - High-Energy Physics Literature Database"
 CFG_SITE_NAME_INTL = langs
 
-ARXIV_API_URL = "http://export.arxiv.org/api/query"
-
 try:
     from inspire.instance_config import *
 except ImportError:
