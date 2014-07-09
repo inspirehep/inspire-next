@@ -18,8 +18,6 @@
 #
 
 
-from lxml.html import fromstring
-
 from invenio.modules.deposit.types import SimpleRecordDeposition
 from invenio.modules.deposit.tasks import render_form, \
     create_recid, \
@@ -73,28 +71,31 @@ class literature(SimpleRecordDeposition):
     @classmethod
     def process_sip_metadata(cls, deposition, metadata):
         """Map fields to match jsonalchemy configuration."""
-        # ========
-        # Abstract
-        # ========
-        if 'abstract' in metadata:
-            abstract = metadata['abstract']
-            metadata['abstract'] = {}
-            metadata['abstract']['abstract'] = abstract
+        delete_keys = []
+        field_list = ['abstract', 'title', 'subject_term']
 
-        # =======
-        # Title
-        # =======
-        title = metadata['title']
-        metadata['title'] = {}
-        metadata['title']['main'] = title
+        # maps from a form field to the corresponding MarcXML field
+        field_map = {'abstract': "abstract",
+                     'title': "main",
+                     'subject_term': "term",
+                     'defense_date': "date",
+                     'university': "university",
+                     'degree_type': "degree_type",
+                     'journal_title': "title",
+                     'page_range': "page_artid",
+                     'article_id': "page_artid",
+                     'volume': "journal_volume",
+                     'year': "year",
+                     'issue': "journal_issue"}
 
-        # =======
-        # Subjects
-        # =======
-        if "subject_term" in metadata:
-            subject_term = metadata['subject_term']
-            metadata['subject_term'] = {}
-            metadata['subject_term']['term'] = subject_term
+        # ============================
+        # Abstract, Title and Subjects
+        # ============================
+        for field in field_list:
+            if field in metadata:
+                tmp_field = metadata[field]
+                metadata[field] = {}
+                metadata[field][field_map[field]] = tmp_field
 
         # =======
         # Authors
@@ -115,18 +116,21 @@ class literature(SimpleRecordDeposition):
             metadata['thesis_supervisor'] = metadata['supervisors'][0]
             metadata['thesis_supervisor']['email'] = ''
             #metadata['_additional_authors'] = metadata['authors'][1:]
+            delete_keys.append('supervisors')
 
         # ==============
         # Thesis related
         # ==============
-        if metadata['type_of_doc'] == 'thesis':
+        thesis_fields = filter(lambda field: field in metadata, ['defense_date',
+                                                                 'university',
+                                                                 'degree_type'])
+        if thesis_fields:
             metadata['thesis'] = {}
-            if 'defense_date' in metadata:
-                metadata['thesis']['date'] = metadata['defense_date']
-            if 'university' in metadata:
-                metadata['thesis']['university'] = metadata['university']
-            if 'degree_type' in metadata:
-                metadata['thesis']['type'] = metadata['degree_type']
+
+            for field in thesis_fields:
+                metadata['thesis'][field_map[field]] = metadata[field]
+
+            delete_keys.extend(thesis_fields)
 
         # ========
         # Category
@@ -139,6 +143,7 @@ class literature(SimpleRecordDeposition):
         if 'experiment' in metadata:
             metadata['accelerator_experiment'] = {}
             metadata['accelerator_experiment']['experiment'] = metadata['experiment']
+            delete_keys.append('experiment')
 
         # ===============
         # Conference Info
@@ -149,57 +154,43 @@ class literature(SimpleRecordDeposition):
                 metadata['nonpublic_note'] = field
             else:
                 metadata['nonpublic_note'] = [metadata['conf_name']]
-            metadata['collections'] += [{'primary': "ConferencePaper"}]
+            metadata['collections'].extend([{'primary': "ConferencePaper"}])
+            delete_keys.append('conf_name')
+
         # =======
         # License
         # =======
         if 'license_url' in metadata:
             metadata['license'] = {}
             metadata['license']['url'] = metadata['license_url']
+            delete_keys.append('license_url')
 
         # ================
         # Publication Info
         # ================
-        publication_fields = ['journal_title',
-                              'page_range',
-                              'article_id',
-                              'volume',
-                              'year',
-                              'issue']
+        publication_fields = filter(lambda field: field in metadata, ['journal_title',
+                                                                      'page_range',
+                                                                      'article_id',
+                                                                      'volume',
+                                                                      'year',
+                                                                      'issue'])
+        if publication_fields:
+            metadata['publication_info'] = {}
 
-        if any(k in metadata for k in publication_fields):
+            for field in publication_fields:
+                metadata['publication_info'][field_map[field]] = metadata[field]
+
+            delete_keys.extend(publication_fields)
+
             if 'nonpublic_note' in metadata and len(metadata['nonpublic_note']) > 1:
                 del metadata['nonpublic_note'][0]
-            metadata['publication_info'] = {}
-            if 'journal_title' in metadata:
-                metadata['publication_info']['title'] = metadata['journal_title']
-            if 'page_range' in metadata:
-                metadata['publication_info']['page_artid'] = metadata['page_range']
-            elif 'article_id' in metadata:
-                metadata['publication_info']['page_artid'] = metadata['article_id']
-            if 'volume' in metadata:
-                metadata['publication_info']['journal_volume'] = metadata['volume']
-            if 'year' in metadata:
-                metadata['publication_info']['year'] = metadata['year']
-            if 'issue' in metadata:
-                metadata['publication_info']['journal_issue'] = metadata['issue']
+
             if {'primary': "ConferencePaper"} in metadata['collections']:
                 metadata['collections'].remove({'primary': "ConferencePaper"})
-            metadata['collections'] += [{'primary': "Published"}]
+            metadata['collections'].append({'primary': "Published"})
 
+        # ===================
         # Delete useless data
-        delete_keys = ['supervisors',
-                       'defense_date',
-                       'degree_type',
-                       'university',
-                       'journal_title',
-                       'page_range',
-                       'article_id',
-                       'volume',
-                       'year',
-                       'issue',
-                       'conf_name',
-                       'experiment']
+        # ===================
         for key in delete_keys:
-            if key in metadata:
-                del metadata[key]
+            del metadata[key]
