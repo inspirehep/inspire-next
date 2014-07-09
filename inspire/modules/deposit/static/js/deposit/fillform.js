@@ -113,12 +113,8 @@ LiteratureSubmissionForm.prototype = {
       enableCaseInsensitiveFiltering: true
     });
 
+    this.hideHiddenFields();
     this.handleTranslatedTitle();
-
-    $("#state-group-title_arXiv").addClass("hidden");
-    $("#state-group-note").addClass("hidden");
-    $("#state-group-license_url").addClass("hidden");
-
     this.taskmanager = new TaskManager(this.$deposition_type);
     this.messageBox = $('#flash-import').messageBox({
       hoganTemplate: tpl_flash_message,
@@ -145,6 +141,20 @@ LiteratureSubmissionForm.prototype = {
       that.importData();
     });
 
+  },
+
+  /**
+   * Hide form-group container of hidden fields
+   *
+   */
+  hideHiddenFields: function hideHiddenFields() {
+    // "not" part excludes field list elements e.g. authors
+    // FIXME: move hidden html template element of DynamiFieldList 
+    //   to a Hogan template to get rid of 'not' part
+    $('input[type="hidden"]')
+      .not('[id$="__last_index__"]')
+      .parents('.form-group')
+      .hide();
   },
 
   onDepositionTypeChanged: function onDepositionTypeChanged() {
@@ -229,7 +239,7 @@ LiteratureSubmissionForm.prototype = {
     }
   },
 
-    /**
+  /**
    * Strips the prefix off the identifier.
    * @param identifier DOI/arXiv/ISBN id
    * @returns stripped identifier
