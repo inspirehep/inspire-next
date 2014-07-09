@@ -61,7 +61,9 @@ var literatureFormPriorityMapper = new DataMapper({
   }
 });
 
-function LiteratureSubmissionForm() {
+function LiteratureSubmissionForm(save_url) {
+
+  this.save_url = save_url;
 
   // here just global form variables initialization
   this.$field_list = {
@@ -249,8 +251,12 @@ LiteratureSubmissionForm.prototype = {
    *
    * @param dataMapping {} dictionary with schema 'field_id: field_value', and
    *  special 'contributors' key to extract them to authors field.
+   * @param save_url url containing the path to save the form fields content,
+   *  see DEPOSIT_FORM.save_field().
    */
   fillForm: function fillForm(dataMapping) {
+
+    var that = this;
 
     if ($.isEmptyObject(dataMapping)) {
       return;
@@ -262,6 +268,7 @@ LiteratureSubmissionForm.prototype = {
       var $field = $('#' + field_id);
       if ($field) {
         $field.val(value);
+        DEPOSIT_FORM.save_field(that.save_url, field_id, value);
       }
     });
 
@@ -278,4 +285,4 @@ LiteratureSubmissionForm.prototype = {
       }
     }
   }
-}
+};

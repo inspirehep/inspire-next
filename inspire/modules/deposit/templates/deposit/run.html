@@ -100,7 +100,7 @@ $(document).ready(function() {
     // Date picker
     $(".datepicker").datepicker(date_options);
 
-    var form = new LiteratureSubmissionForm();
+    var form = new LiteratureSubmissionForm(save_url);
 });
 </script>
 {% endblock javascript %}
