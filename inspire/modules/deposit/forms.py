@@ -21,7 +21,7 @@
 """Contains forms related to INSPIRE submission."""
 
 from wtforms import validators
-from wtforms.widgets import html_params, HTMLString
+from wtforms.widgets import html_params, HTMLString, HiddenInput
 
 from invenio.base.i18n import _
 from invenio.base.globals import cfg
@@ -186,6 +186,7 @@ class LiteratureForm(WebDepositForm):
 
     title_arXiv = fields.TitleField(
         export_key='title_arXiv',
+        widget=HiddenInput(),
     )
 
     title_translation = fields.TitleField(
@@ -275,8 +276,8 @@ class LiteratureForm(WebDepositForm):
 
     license_url = fields.TextField(
         label=_('License URL'),
-        widget_classes="form-control",
         export_key='license_url',
+        widget=HiddenInput(),
     )
 
     # ==============
@@ -358,7 +359,7 @@ class LiteratureForm(WebDepositForm):
 
     note = fields.TextAreaField(
         export_key='note',
-        widget_classes="form-control"
+        widget=HiddenInput(),
     )
 
     # ====================
