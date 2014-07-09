@@ -183,6 +183,10 @@ $(document).ready(function() {
    */
   function fillForm(dataMapping) {
 
+    if ($.isEmptyObject(dataMapping)) {
+      return;
+    }
+
     var authorsWidget = DEPOSIT_FORM.field_lists.authors;
 
     $.map(dataMapping, function(value, field_id) {
