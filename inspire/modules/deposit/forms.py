@@ -149,7 +149,7 @@ class LiteratureForm(WebDepositForm):
 
     arxiv_id = fields.TextField(
         placeholder=_("1406.0000"),
-        label=_('ArXiv ID'),
+        label=_('arXiv ID'),
         widget_classes='form-control',
     )
 
@@ -409,7 +409,7 @@ class LiteratureForm(WebDepositForm):
         ('Import from existing source',
             ['arxiv_id', 'doi', 'isbn', 'import_source'],
             {
-                'indication': 'Fill if you have a DOI, ArXiv id or ISBN',
+                'indication': 'Fill if you have a DOI, arXiv ID or ISBN',
             }),
         ('Document Type',
             ['captcha', 'type_of_doc', ]),
