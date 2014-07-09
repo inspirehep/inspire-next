@@ -28,32 +28,6 @@ function TaskManager($depositionType) {
 TaskManager.prototype = {
 
   /**
-   * Labels result of a task, the result is following:
-   *  { label: formerResult }
-   * @param result
-   * @returns {{}}
-   */
-  labelTaskResult: function(label, deferredTask) {
-
-    /**
-     * Takes an object adds property 'label' to it
-     * @param result
-     * @returns {{}}
-     */
-    function labelObj(obj) {
-      obj.label = label;
-      return obj;
-    }
-
-    // if deferredTask is not a Deferred object returns just the labeled object
-    try {
-      return deferredTask.then(labelObj);
-    } catch (err) {
-      return labelObj(deferredTask);
-    }
-  },
-
-  /**
    * Runs multiple tasks and merges the results
    *
    * @param tasks - list of tasks to be run
@@ -78,12 +52,10 @@ TaskManager.prototype = {
   runMultipleTasks: function(tasks, callback) {
     var deferredTasks = [];
 
-    for (var i in tasks) {
-      var task = tasks[i];
-      var defeferred_task = task.run();
-      defeferred_task = this.labelTaskResult(task.dataSource.id, defeferred_task);
-      deferredTasks.push(defeferred_task);
-    }
+    $.each(tasks, function(i, task) {
+      var deferred_task = task.run();
+      deferredTasks.push(deferred_task);
+    });
 
     $.when.apply(this, deferredTasks).then(function() {
       /* Deferred object was resolved */
