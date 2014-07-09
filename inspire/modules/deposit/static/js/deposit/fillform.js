@@ -36,14 +36,14 @@ var literatureFormPriorityMapper = new DataMapper({
       journal_title: ['doi', 'arxiv'],
       isbn: ['doi', 'arxiv'],
       page_range: ['doi', 'arxiv'],
-      volume: ['arxiv', 'doi'],
-      year: ['arxiv', 'doi'],
-      issue: ['arxiv', 'doi'],
-      contributors: ['arxiv', 'doi'],
-      abstract: ['arxiv', 'doi'],
-      article_id: ['arxiv', 'doi'],
+      volume: ['doi', 'arxiv'],
+      year: ['doi', 'arxiv'],
+      issue: ['doi', 'arxiv'],
+      contributors: ['doi', 'arxiv'],
+      abstract: ['doi', 'arxiv'],
+      article_id: ['doi', 'arxiv'],
       license_url: ['arxiv'],
-      note: ['arxiv'],
+      note: ['arxiv']
     };
 
     var result = {};
