@@ -245,9 +245,9 @@ $(document).ready(function() {
         fieldsGroup.resetState();
         messageBox.clean();
         messageBox.append(result.statusMessage);
+        btn.button('reset');
       }
     );
 
-    btn.button('reset');
   });
 });
