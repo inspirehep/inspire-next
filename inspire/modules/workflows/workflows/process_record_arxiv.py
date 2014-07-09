@@ -41,6 +41,8 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 
 from ..tasks.filtering import inspire_filter_custom
 
+import collections
+from six import string_types
 from invenio.config import CFG_PREFIX
 from invenio.modules.workflows.utils import WorkflowBase
 
@@ -113,9 +115,63 @@ class process_record_arxiv(WorkflowBase):
         return render_template('workflows/styles/harvesting_record.html',
                                categories=categories,
                                identifiers=final_identifiers)
+
     @staticmethod
     def formatter(bwo, **kwargs):
-        return None
+
+        from invenio.modules.formatter.engine import format_record
+
+        data = bwo.get_data()
+        if not data:
+            return ''
+        print kwargs
+        formatter = kwargs.get("formatter", None)
+        format = kwargs.get("format", None)
+        if formatter:
+            # A seperate formatter is supplied
+            return formatter(data)
+        from invenio.modules.records.api import Record
+        if isinstance(data, collections.Mapping):
+            # Dicts are cool on its own, but maybe its SmartJson (record)
+            try:
+                data = Record(data.dumps()).legacy_export_as_marc()
+            except (TypeError, KeyError):
+                # Maybe not, submission?
+                return data
+
+        if isinstance(data, string_types):
+            # Its a string type, lets try to convert
+            if format:
+                # We can try formatter!
+                # If already XML, format_record does not like it.
+                if format != 'xm':
+                    try:
+                        return format_record(recID=None,
+                                             of=format,
+                                             xml_record=data)
+                    except TypeError:
+                        # Wrong kind of type
+                        pass
+                else:
+                    # So, XML then
+                    from xml.dom.minidom import parseString
+
+                    try:
+                        pretty_data = parseString(data)
+                        return pretty_data.toprettyxml()
+                    except TypeError:
+                        # Probably not proper XML string then
+                        return "Data cannot be parsed: %s" % (data,)
+                    except Exception:
+                        # Some other parsing error
+                        pass
+
+            # Just return raw string
+            return data
+        if isinstance(data, set):
+            return list(data)
+        # Not any of the above types. How juicy!
+        return data
 
     object_type = "record"
     workflow = [
