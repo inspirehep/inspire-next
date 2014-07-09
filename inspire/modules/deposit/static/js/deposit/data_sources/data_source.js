@@ -85,22 +85,23 @@ DataSource.prototype = {
       var mapping = that.mapper.map(data.query, depositionType);
 
       return {
+        label: that.id,
         mapping: mapping,
         statusMessage: queryMessage
       };
     }
 
-    return $.ajax({
+    var importDataPromise = new $.Deferred();
+
+    $.ajax({
       url: this.url + id
-    }).then(processQuery, function onError(data) {
-      return {
-        statusMessage: {
-          state: 'danger',
-          message: 'Import from ' + that.name + ': ' +
-            data.status + ' ' + data.statusText
-        }
-      };
+    })
+    .always(function (data) {
+      var result = processQuery(data);
+      importDataPromise.resolve(result);
     });
+
+    return importDataPromise;
   },
 
   /**
@@ -133,7 +134,7 @@ DataSource.prototype = {
     if (queryStatus === 'duplicated') {
       return {
         state: 'info',
-        message: 'This ' + this.name + ' already exists in Inspire database.'
+        message: 'This ' + this.name + ' already exists on the INSPIRE database.'
       };
     }
 

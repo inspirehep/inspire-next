@@ -59,20 +59,6 @@ function DataMapper(options) {
     options.extract_contributor : function(contributor) {
       return contributor;
   };
-
-  /**
-   * DataMapper name. It will be displayed in info messages.
-   *
-   * @type {string}
-   */
-  this.name = options.name ? options.name : '';
-
-  /**
-   * Query url.
-   *
-   * @type {string}
-   */
-  this.url = options.url ? options.url : '';
 }
 
 DataMapper.prototype = {
