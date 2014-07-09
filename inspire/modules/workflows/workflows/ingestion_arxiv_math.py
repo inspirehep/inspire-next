@@ -37,7 +37,7 @@ from invenio.modules.workflows.tasks.workflows_tasks import (
     get_workflows_progress,
     write_something_generic,
     num_workflow_running_greater
-    )
+)
 
 from invenio.modules.workflows.tasks.logic_tasks import (
     foreach,
@@ -52,12 +52,10 @@ from invenio.modules.workflows.utils import WorkflowBase
 
 
 class ingestion_arxiv_math(WorkflowBase):
-
     object_type = "Supervising Workflow"
 
     @staticmethod
     def get_description(bwo):
-
         from flask import render_template
 
         identifiers = None

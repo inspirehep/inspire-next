@@ -1,4 +1,4 @@
-{#
+# -*- coding: utf-8 -*-
 ## This file is part of INSPIRE.
 ## Copyright (C) 2014 CERN.
 ##
@@ -18,37 +18,26 @@
 ## In applying this licence, CERN does not waive the privileges and immunities
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
-#}
+"""Inspire bundles."""
+from invenio.ext.assets import Bundle
 
-{% extends "page_base.html" %}
+search = Bundle('js/search/invenio_with_spires_typeahead_configuration.js',
+                'js/search/search_parser.js',
+                'js/search/typeahead.js',
+                'js/search/default_typeahead_configuration.js',
+                'js/search/facet.js',
+                output="search.js",
+                filters="uglifyjs",
+                weight=50)
 
-{% set searchbar_enable = searchbar_enable and easy_search_form != None and collection != None %}
+search_css = Bundle('css/typeahead.js-bootstrap.css',
+                    'css/search/search.css',
+                    'css/search/searchbar.css',
+                    output="search.css",
+                    filters="cleancss",
+                    weight=50)
 
-{% if searchbar_enable %}
-  {% from "_formhelpers.html" import render_filter_form with context %}
-  {% from "search/helpers.html" import search_form, search_form_javascript with context %}
-{% endif %}
-
-{% block header %}
-  {{ super() }}
-  {% if searchbar_enable %}
-    {% bundle "search.js", "search.css", "jquery.js" %}
-  {% endif %}
-{% endblock %}
-
-{% block body %}
-  {{ super() }}
-  {% if searchbar_enable %}
-    {% include "search/form/index.html" %}
-  {% endif %}
-  {% block inner_content %}
-    <!-- Here goes the content visible below the search bar -->
-  {% endblock inner_content %}
-{% endblock %}
-
-{% block javascript %}
-  {{ super() }}
-  {% if searchbar_enable %}
-    {{ search_form_javascript(collection) }}
-  {% endif %}
-{% endblock %}
+formatter = Bundle('css/formatter/templates_detailed_inspire.css',
+                   output="formatter.css",
+                   filters="cleancss",
+                   weight=0)
