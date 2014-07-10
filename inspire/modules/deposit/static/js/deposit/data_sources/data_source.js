@@ -67,7 +67,7 @@ DataSource.prototype = {
     function processQuery(data) {
 
       var queryStatus = data.query ?
-        data.query.status : data.status + ' ' + data.statusText;
+        data.query.status : data.status;
 
       if (queryStatus === 'success' && data.source === 'database') {
         queryStatus = 'duplicated';
@@ -137,10 +137,22 @@ DataSource.prototype = {
         message: 'This ' + this.name + ' already exists on the INSPIRE database.'
       };
     }
+    if (queryStatus === 300) {
+      return {
+        state: 'warning',
+        message: 'The ' + this.name + ' ' + id + ' is not unique.'
+      };
+    }
+    if (queryStatus === 422) {
+      return {
+        state: 'warning',
+        message: 'The ' + this.name + ' ' + id + ' is malformed.'
+      };
+    }
 
     return {
       state: 'warning',
-      message: 'Unknown import result.'
+      message: 'The ' + this.name + ' ' + id + ' cannot be imported.'
     };
   }
 };

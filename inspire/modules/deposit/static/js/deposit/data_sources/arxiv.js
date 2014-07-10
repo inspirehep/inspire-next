@@ -23,7 +23,7 @@
 var arxivSource = new DataSource({
 
   id: 'arxiv',
-  name: 'arXiv',
+  name: 'arXiv ID',
   url: '/arxiv/search?arxiv=',
 
   mapper: new DataMapper({
