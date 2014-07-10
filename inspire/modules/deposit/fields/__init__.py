@@ -18,3 +18,4 @@
 #
 
 from .arxiv_id import *
+from .isbn import *
