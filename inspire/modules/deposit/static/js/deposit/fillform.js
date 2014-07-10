@@ -61,9 +61,10 @@ var literatureFormPriorityMapper = new DataMapper({
   }
 });
 
-$(document).ready(function() {
+function LiteratureSubmissionForm() {
 
-  var $field_list = {
+  // here just global form variables initialization
+  this.$field_list = {
     article: $('*[class~="article-related"]'),
     thesis: $('*[class~="thesis-related"]'),
     chapter: $('*[class~="chapter-related"]'),
@@ -72,28 +73,84 @@ $(document).ready(function() {
     translated_title: $("#state-group-title_translation"),
   };
 
-  var $doi_field = $("#doi");
-  var $arxiv_id_field = $("#arxiv_id");
-  var $isbn_field = $("#isbn");
+  this.$doi_field = $("#doi");
+  this.$arxiv_id_field = $("#arxiv_id");
+  this.$isbn_field = $("#isbn");
 
-  /**
-   * Hide form fields individually related to each document type
+  this.$deposition_type = $("#type_of_doc");
+  this.$deposition_type_panel = this.$deposition_type.parents('.panel-body');
+  this.$language = $("#language");
+  this.$translated_title = $("#state-group-title_translation");
+  this.$importButton = $("#importData");
+
+  this.init();
+  this.connectEvents();
+}
+
+LiteratureSubmissionForm.prototype = {
+
+  /*
+   * here proper initialization
    */
-  function hideFields() {
-    $.map($field_list, function($field, field_name) {
-      $field.parents('.form-group').slideUp();
+  init: function init() {
+
+    this.slideUpFields(this.$field_list);
+
+    this.fieldsGroup = $("#journal_title, #volume, #issue, #page_range, #article_id, #year")
+      .fieldsGroup({
+        onEmpty: function enableProceedingsBox() {
+          $("#nonpublic_note").removeAttr('disabled');
+        },
+        onNotEmpty: function disableProceedingsBox() {
+          $("#nonpublic_note").attr('disabled', 'true');
+        }
+      });
+
+    // subject field supports multiple selections
+    // using the library bootstrap-multiselect
+    $('#subject').attr('multiple', 'multiple').multiselect({
+      maxHeight: 400,
+      enableCaseInsensitiveFiltering: true
     });
-  }
 
-  hideFields();
+    this.handleTranslatedTitle();
 
-  var $deposition_type = $("#type_of_doc");
-  var $deposition_type_panel = $deposition_type.parents('.panel-body');
+    $("#state-group-title_arXiv").addClass("hidden");
+    $("#state-group-note").addClass("hidden");
+    $("#state-group-license_url").addClass("hidden");
 
-  $deposition_type.change(function(event) {
-    hideFields();
-    var deposition_type = $deposition_type.val();
-    var $type_related_fields = $field_list[deposition_type];
+    this.taskmanager = new TaskManager(this.$deposition_type);
+    this.messageBox = $('#flash-import').messageBox({
+      hoganTemplate: tpl_flash_message,
+    })[0];
+  },
+
+  /*
+   * here binding functions to events
+   */
+  connectEvents: function connectEvents() {
+
+    var that = this;
+
+    this.$deposition_type.change(function(event) {
+      that.onDepositionTypeChanged();
+    });
+
+    this.$language.change(function(event) {
+      that.handleTranslatedTitle();
+    });
+
+    this.$importButton.click(function(event) {
+      that.$importButton.button('loading');
+      that.importData();
+    });
+
+  },
+
+  onDepositionTypeChanged: function onDepositionTypeChanged() {
+    this.slideUpFields(this.$field_list);
+    var deposition_type = this.$deposition_type.val();
+    var $type_related_fields = this.$field_list[deposition_type];
     var $type_related_groups = $type_related_fields.parents('.form-group');
     $type_related_groups.slideDown();
     var $type_related_panel = $type_related_fields.parents('.panel-body');
@@ -103,65 +160,81 @@ $(document).ready(function() {
       },
       2500
     );
-    $deposition_type_panel.children('.alert').remove('.alert');
+    this.$deposition_type_panel.children('.alert').remove('.alert');
     if (deposition_type === "proceedings") {
-      $deposition_type_panel.append(tpl_flash_message.render({
+      this.$deposition_type_panel.append(tpl_flash_message.render({
         state: 'info',
         message: "<strong>Proceedings:</strong> only for complete " +
           "proceedings. For contributions use Article/Conference paper."
       }));
     }
-  });
+  },
 
-  var fieldsGroup = $("#journal_title, #volume, #issue, #page_range, #article_id, #year")
-    .fieldsGroup({
-      onEmpty: function enableProceedingsBox() {
-        $("#nonpublic_note").removeAttr('disabled');
-      },
-      onNotEmpty: function disableProceedingsBox() {
-        $("#nonpublic_note").attr('disabled', 'true');
+  importData: function importData() {
+
+    var arxivId = this.stripSourceTags(this.$arxiv_id_field.val());
+    var doi = this.stripSourceTags(this.$doi_field.val());
+    var isbn = this.$isbn_field.val();
+    var depositionType = this.$deposition_type.val();
+
+    var importTasks = [];
+
+    if (doi) {
+      importTasks.push(new ImportTask(doiSource, doi, depositionType));
+    }
+    if (arxivId) {
+      importTasks.push(new ImportTask(arxivSource, arxivId, depositionType));
+    }
+    if (isbn) {
+      importTasks.push(new ImportTask(isbnSource, isbn, depositionType));
+    }
+
+    var that = this;
+
+    this.taskmanager.runMultipleTasksMerge(
+      // tasks
+      importTasks,
+      // priority mapper for merging the results
+      literatureFormPriorityMapper,
+      // callback
+      function(result) {
+        that.fillForm(result.mapping);
+        that.fieldsGroup.resetState();
+        that.messageBox.clean();
+        that.messageBox.append(result.statusMessage);
+        that.$importButton.button('reset');
       }
+    );
+  },
+
+  /**
+   * Hide form fields individually related to each document type
+   */
+  slideUpFields: function slideUpFields($fields) {
+    $.map($fields, function($field, field_name) {
+      $field.parents('.form-group').slideUp();
     });
-
-  // subject field supports multiple selections
-  // using the library bootstrap-multiselect
-  $('#subject').attr('multiple', 'multiple').multiselect({
-    maxHeight: 400,
-    enableCaseInsensitiveFiltering: true
-  });
-
-  var $language = $("#language");
-  var $translated_title = $("#state-group-title_translation");
+  },
 
   /**
    * Hide or show translated title field regarding selected language
    */
-  function handleTranslatedTitle() {
-    var language_value = $language.val();
+  handleTranslatedTitle: function handleTranslatedTitle() {
+    var language_value = this.$language.val();
 
     if (language_value !== 'en') {
-      $translated_title.slideDown();
+      this.$translated_title.slideDown();
     } else {
-      $translated_title.slideUp();
+      this.$translated_title.slideUp();
     }
-  }
+  },
 
-  handleTranslatedTitle();
-
-  $language.change(function(event) {
-    handleTranslatedTitle();
-  });
-
-  $("#state-group-title_arXiv").addClass("hidden");
-  $("#state-group-note").addClass("hidden");
-  $("#state-group-license_url").addClass("hidden");
-
-  /**
+    /**
    * Strips the prefix off the identifier.
    * @param identifier DOI/arXiv/ISBN id
    * @returns stripped identifier
    */
-  function stripSourceTags(identifier) {
+  stripSourceTags: function stripSourceTags(identifier) {
     var doi_prefix = /^doi:/;
     var arxiv_prefix = /^ar[xX]iv:/;
 
@@ -169,7 +242,7 @@ $(document).ready(function() {
     strippedID = strippedID.replace(arxiv_prefix, '');
 
     return strippedID;
-  }
+  },
 
   /**
    * Fills the deposit form according to schema in dataMapping
@@ -177,7 +250,7 @@ $(document).ready(function() {
    * @param dataMapping {} dictionary with schema 'field_id: field_value', and
    *  special 'contributors' key to extract them to authors field.
    */
-  function fillForm(dataMapping) {
+  fillForm: function fillForm(dataMapping) {
 
     if ($.isEmptyObject(dataMapping)) {
       return;
@@ -205,49 +278,4 @@ $(document).ready(function() {
       }
     }
   }
-
-  var taskmanager = new TaskManager($deposition_type);
-  var messageBox = $('#flash-import').messageBox({
-    hoganTemplate: tpl_flash_message,
-  })[0];
-
-
-  $("#importData").click(function(event) {
-
-    var btn = $(this);
-    btn.button('loading');
-
-    var arxivId = stripSourceTags($arxiv_id_field.val());
-    var doi = stripSourceTags($doi_field.val());
-    var isbn = $isbn_field.val();
-    var depositionType = $deposition_type.val();
-
-    var importTasks = [];
-
-    if (doi) {
-      importTasks.push(new ImportTask(doiSource, doi, depositionType));
-    }
-    if (arxivId) {
-      importTasks.push(new ImportTask(arxivSource, arxivId, depositionType));
-    }
-    if (isbn) {
-      importTasks.push(new ImportTask(isbnSource, isbn, depositionType));
-    }
-
-    taskmanager.runMultipleTasksMerge(
-      // tasks
-      importTasks,
-      // priority mapper for merging the results
-      literatureFormPriorityMapper,
-      // callback
-      function(result) {
-        fillForm(result.mapping);
-        fieldsGroup.resetState();
-        messageBox.clean();
-        messageBox.append(result.statusMessage);
-        btn.button('reset');
-      }
-    );
-
-  });
-});
+}
