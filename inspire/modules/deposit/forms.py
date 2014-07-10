@@ -32,7 +32,7 @@ from invenio.modules.deposit.field_widgets import plupload_widget, \
     ExtendedListWidget, \
     ItemWidget
 from invenio.modules.deposit.autocomplete_utils import kb_dynamic_autocomplete
-from .fields import ArXivField
+from .fields import ArXivField, ISBNField
 
 #
 # Field class names
@@ -152,7 +152,7 @@ class LiteratureForm(WebDepositForm):
         label=_('ArXiv ID'),
     )
 
-    isbn = fields.TextField(
+    isbn = ISBNField(
         label=_('ISBN'),
         widget_classes='form-control',
     )
