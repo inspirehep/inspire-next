@@ -256,7 +256,8 @@ LiteratureSubmissionForm.prototype = {
    */
   fillForm: function fillForm(dataMapping) {
 
-    var authorsWidget = DEPOSIT_FORM.field_lists.authors;
+    var authorsWidget = $('#submitForm .dynamic-field-list.authors')
+      .dynamicFieldList()[0];
 
     $.map(dataMapping, function(value, field_id) {
       var $field = $('#' + field_id);
