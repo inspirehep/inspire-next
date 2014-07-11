@@ -169,7 +169,7 @@ class LiteratureForm(WebDepositForm):
                     ("proceedings", _("Proceedings"))]
 
     type_of_doc = fields.SelectField(
-        label='Type of document',
+        label='Type of Document',
         choices=types_of_doc,
         default="article",
         #widget=radiochoice_buttons,
@@ -239,7 +239,7 @@ class LiteratureForm(WebDepositForm):
     )
 
     page_nr = fields.TextField(
-        label=_('Number of pages'),
+        label=_('Number of Pages'),
         widget_classes="form-control",
         export_key='page_nr'
     )
@@ -259,7 +259,8 @@ class LiteratureForm(WebDepositForm):
                  ("nor", _("Norwegian")),
                  ("swe", _("Swedish")),
                  ("fin", _("Finnish")),
-                 ("rus", _("Russian"))]
+                 ("rus", _("Russian")),
+                 ("oth", _("Other"))]
 
     language = fields.LanguageField(
         label=_("Language"),
@@ -324,7 +325,7 @@ class LiteratureForm(WebDepositForm):
     )
 
     page_range = fields.TextField(
-        label=_('Page range'),
+        label=_('Page Range'),
         placeholder=_('1-100'),
         widget_classes="form-control"
     )
@@ -425,7 +426,7 @@ class LiteratureForm(WebDepositForm):
              'year']),
         ('Proceedings information (not published in journal)',
             ['nonpublic_note', 'note']),
-        ('Fulltext Information',
+        ('Upload/link files',
             ['file_field', 'url']),
     ]
 
