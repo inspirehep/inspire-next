@@ -45,7 +45,7 @@ class ISBNField(WebDepositField, TextField):
                 strip_string,
                 strip_prefixes("isbn:", "ISBN:"),
             ],
-            placeholder="e.g. 1413304540, 1-4133-0454-0, 978-1413304541 or 978-1-4133-0454-1...",
+            description="e.g. 1413304540, 1-4133-0454-0, 978-1413304541 or 978-1-4133-0454-1...",
             widget_classes="form-control"
         )
         defaults.update(kwargs)
