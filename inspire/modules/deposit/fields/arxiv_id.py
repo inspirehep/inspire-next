@@ -44,7 +44,7 @@ class ArXivField(WebDepositField, TextField):
                 strip_string,
                 strip_prefixes("arxiv:", "arXiv:"),
             ],
-            placeholder="e.g. hep-th/1234567 or 1234.5678...",
+            description="e.g. hep-th/1234567 or 1234.5678...",
             widget_classes="form-control"
         )
         defaults.update(kwargs)
