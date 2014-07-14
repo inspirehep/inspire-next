@@ -145,7 +145,9 @@ class LiteratureForm(WebDepositForm):
     doi = fields.DOIField(
         label=_('DOI'),
         processors=[],
-        export_key='doi'
+        export_key='doi',
+        description='e.g. 10.1234/foo.bar...',
+        placeholder=''
     )
 
     arxiv_id = ArXivField(
@@ -270,7 +272,7 @@ class LiteratureForm(WebDepositForm):
 
     conf_name = fields.TextField(
         label=_('Conference Information'),
-        placeholder=_('Conference name, acronym, place, date'),
+        description=_('Conference name, acronym, place, date'),
         widget_classes="form-control"
     )
 
@@ -327,7 +329,7 @@ class LiteratureForm(WebDepositForm):
 
     page_range = fields.TextField(
         label=_('Page Range'),
-        placeholder=_('1-100'),
+        description=_('1-100'),
         widget_classes="form-control"
     )
 
@@ -353,7 +355,7 @@ class LiteratureForm(WebDepositForm):
 
     nonpublic_note = fields.TextAreaField(
         label=_(' '),
-        placeholder='Editors, title of proceedings, publisher, year of publication, page range',
+        description='Editors, title of proceedings, publisher, year of publication, page range',
         widget_classes="form-control"
     )
 
