@@ -19,23 +19,19 @@
 
 from invenio.ext.template.context_processor import \
     register_template_context_processor
+from invenio.modules.search.forms import EasySearchForm
+from invenio.modules.search.models import Collection
 
 from flask import session, request
 
 
 def setup_app(app):
     from invenio.modules.records.views import blueprint as records_blueprint
-    from invenio.modules.search.forms import EasySearchForm
+    from invenio.modules.deposit.views.deposit import blueprint \
+        as deposit_blueprint
 
-    @records_blueprint.before_request
-    def register_add_searchform():
-
-        @register_template_context_processor
-        def add_searchform():
-            return {
-                'easy_search_form': EasySearchForm(csrf_enabled=False),
-                'searchbar_enable': True
-            }
+    records_blueprint.before_request(register_add_searchform)
+    deposit_blueprint.before_request(register_add_searchform)
 
     from invenio.modules.search.views.search import blueprint as search_blueprint
 
@@ -49,3 +45,13 @@ def setup_app(app):
             if collection:
                 session['inspire-current-collection'] = collection
             return {}
+
+def register_add_searchform():
+
+    @register_template_context_processor
+    def add_searchform():
+        return {
+            'easy_search_form': EasySearchForm(csrf_enabled=False),
+            'searchbar_enable': True,
+            'collection': Collection.query.get_or_404(1)
+        }
