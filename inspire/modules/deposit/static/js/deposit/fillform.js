@@ -149,7 +149,7 @@ LiteratureSubmissionForm.prototype = {
    */
   hideHiddenFields: function hideHiddenFields() {
     // "not" part excludes field list elements e.g. authors
-    // FIXME: move hidden html template element of DynamiFieldList 
+    // FIXME: move hidden html template element of DynamiFieldList
     //   to a Hogan template to get rid of 'not' part
     $('input[type="hidden"]')
       .not('[id$="__last_index__"]')
@@ -272,6 +272,8 @@ LiteratureSubmissionForm.prototype = {
       var $field = $('#' + field_id);
       if ($field) {
         $field.val(value);
+        // Clean up pending messages on the field
+        DEPOSIT_FORM.handle_field_msg(field_id, value);
       }
     });
 
