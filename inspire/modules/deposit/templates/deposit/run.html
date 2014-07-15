@@ -72,6 +72,13 @@
 {% block sidebar %}
 {% endblock %}
 
+{% block body %}
+  {{ super() }}
+  {% block modal_window %}
+    {% include "deposit/preview.html" %}
+  {% endblock modal_window %}
+{% endblock body %}
+
 {% block javascript %}
 {%- block form_script_options %}
 <script type="text/javascript">

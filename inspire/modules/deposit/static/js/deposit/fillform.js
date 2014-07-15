@@ -249,6 +249,7 @@ LiteratureSubmissionForm.prototype = {
       literatureFormPriorityMapper,
       // callback
       function(result) {
+        that.showModal(result.mapping);
         that.fillForm(result.mapping);
         that.fieldsGroup.resetState();
         that.messageBox.clean();
@@ -337,5 +338,39 @@ LiteratureSubmissionForm.prototype = {
         authorsWidget.append_element();
       }
     }
+  },
+
+  showModal: function showModal(dataMapping) {
+
+    console.log(dataMapping);
+
+    var myModal = $('#myModal');
+    var json_data = JSON.stringify(dataMapping);
+
+    modalBody = myModal.find('.modal-body');
+
+    $('#myModal').on('shown.bs.modal', function (e) {
+        modalBody.text(json_data);
+    });
+
+    this.renderRow(dataMapping);
+
+  },
+
+  renderRow: function renderRow(jsonData) {
+
+    var table = '<table><tr><th>Labels</th><th>Values</th></tr><tbody>';
+
+    $.each( jsonData, function( index, user){
+      table += '<tr>';
+      table += '<td>'+index+'</td>';
+      table += '<td>'+user+'</td>';
+      table += '</tr>';
+    });
+
+    table += '</tbody></table>';
+
+    $('#myModal .modal-body').html(table);
+
   }
 };
