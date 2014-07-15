@@ -272,6 +272,7 @@ LiteratureSubmissionForm.prototype = {
       var $field = $('#' + field_id);
       if ($field) {
         $field.val(value);
+        DEPOSIT_FORM.handle_field_msg(field_id, value);
       }
     });
 
