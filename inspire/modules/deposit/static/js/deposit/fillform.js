@@ -290,4 +290,4 @@ LiteratureSubmissionForm.prototype = {
       }
     }
   }
-}
+};
