@@ -36,6 +36,8 @@ _deposit_js.contents += (
     'js/deposit/import_task.js',
     'js/deposit/task_manager.js',
     'js/deposit/message_box.js',
+    'js/deposit/conferences_mock.js',
+    'js/deposit/conferences_typeahead.js',
     'js/deposit/fillform.js',
 )
 

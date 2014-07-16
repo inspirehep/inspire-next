@@ -22,6 +22,12 @@
 
 from invenio.ext.assets import Bundle
 
+js = Bundle(
+    'js/jquery_plugin.js',
+    output='base.js',
+    weight=20,
+)
+
 styles = Bundle(
     'less/inspire.less',
     output='base.css',
