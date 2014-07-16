@@ -34,7 +34,6 @@ var arxivSource = new DataSource({
           doi: data.doi,
           title: data.title,
           title_arXiv: data.title,
-          year: data.published,
           abstract: data.abstract,
           contributors: data.authors,
           journal_title: data["journal-ref"],
