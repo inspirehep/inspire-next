@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- antiHEP ontology v.0.1 - Oct 2013 -->
+
+<rdf:RDF xmlns="http://www.w3.org/2004/02/skos/core#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"> 
+
+<rdf:Property rdf:about="http://cern.ch/thesauri/HEPontology.rdf#compositeOf">
+  <rdfs:comment>Expresses a composite keyword relationship to broader concepts.</rdfs:comment>
+  <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2004/02/skos/core#broader"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://cern.ch/thesauri/HEPontology.rdf#composite">
+  <rdfs:comment>Expresses the relationship to a composite keyword</rdfs:comment>
+  <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2004/02/skos/core#narrower"/>
+</rdf:Property>
+
+<ConceptScheme rdf:about="http://cern.ch/thesauri/HEPontology.rdf">
+        <dc:creator rdf:resource="http://ceres.ca.gov/"/>
+        <dc:description>This is an ontology or rather just a list of anti keywords 
+                        indicating non-relevance for High Energy Physics.</dc:description>
+        <dc:title>anti-HEP ontology</dc:title>
+</ConceptScheme>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#abdominal">
+  <prefLabel xml:lang="en">abdominal</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#ablation">
+  <prefLabel xml:lang="en">ablation</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#acid">
+  <prefLabel xml:lang="en">acid</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#alcohol">
+  <prefLabel xml:lang="en">alcohol</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#anatomic">
+  <prefLabel xml:lang="en">anatomic</prefLabel>
+  <altLabel xml:lang="en">anatomical</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#angiography">
+  <prefLabel xml:lang="en">angiography</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#animal">
+  <prefLabel xml:lang="en">animal</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#biology">
+  <prefLabel xml:lang="en">biology</prefLabel>
+  <altLabel xml:lang="en">biological</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#biomedical">
+  <prefLabel xml:lang="en">biomedical</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#biopsy">
+  <prefLabel xml:lang="en">biopsy</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#blood">
+  <prefLabel xml:lang="en">blood</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#bone">
+  <prefLabel xml:lang="en">bone</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#bragg">
+  <prefLabel xml:lang="en">bragg</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#brain">
+  <prefLabel xml:lang="en">brain</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#breast">
+  <prefLabel xml:lang="en">breast</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#breathing">
+  <prefLabel xml:lang="en">breathing</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Bridgman">
+  <prefLabel xml:lang="en">Bridgman</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Brillouin">
+  <prefLabel xml:lang="en">Brillouin</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#cancer">
+  <prefLabel xml:lang="en">cancer</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#capillary">
+  <prefLabel xml:lang="en">capillary</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#cardiac">
+  <prefLabel xml:lang="en">cardiac</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#ceramic">
+  <prefLabel xml:lang="en">ceramic</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#cerebral">
+  <prefLabel xml:lang="en">cerebral</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Cerebralcreatinedeficiencysyndromes">
+  <prefLabel xml:lang="en">Cerebral creatine deficiency syndromes</prefLabel>
+  <altLabel xml:lang="en">CCDS</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Chandra">
+  <prefLabel xml:lang="en">Chandra</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#chemistry">
+  <prefLabel xml:lang="en">chemistry</prefLabel>
+  <altLabel xml:lang="en">chemical</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#chromosome">
+  <prefLabel xml:lang="en">chromosome</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#circumstellar">
+  <prefLabel xml:lang="en">circumstellar</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#clinical">
+  <prefLabel xml:lang="en">clinical</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#clouds">
+  <prefLabel xml:lang="en">clouds</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#computedtomography">
+  <prefLabel xml:lang="en">computed tomography</prefLabel>
+  <altLabel xml:lang="en">CBCT</altLabel>
+  <altLabel xml:lang="en">CT imaging</altLabel>
+  <altLabel xml:lang="en">CT scan</altLabel>
+  <altLabel xml:lang="en">CT systems</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#corona">
+  <prefLabel xml:lang="en">corona</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#crack">
+  <prefLabel xml:lang="en">crack</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#crystallization">
+  <prefLabel xml:lang="en">crystallization</prefLabel>
+  <altLabel xml:lang="en">crystalline</altLabel>
+  <altLabel xml:lang="en">crystallographic</altLabel>
+  <altLabel xml:lang="en">inter-crystal</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#dioxide">
+  <prefLabel xml:lang="en">dioxide</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#disease">
+  <prefLabel xml:lang="en">disease</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#DNA">
+  <prefLabel xml:lang="en">DNA</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#doped">
+  <prefLabel xml:lang="en">doped</prefLabel>
+  <altLabel xml:lang="en">dopant</altLabel>
+  <altLabel xml:lang="en">doping</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#dwarfs">
+  <prefLabel xml:lang="en">dwarfs</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#editorial">
+  <prefLabel xml:lang="en">editorial</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#electrochemical">
+  <prefLabel xml:lang="en">electrochemical</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#electronmicroscopy">
+  <prefLabel xml:lang="en">electron microscopy</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#epitaxial">
+  <prefLabel xml:lang="en">epitaxial</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#epoxy">
+  <prefLabel xml:lang="en">epoxy</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#extrasolar">
+  <prefLabel xml:lang="en">extrasolar</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Fibonacci">
+  <prefLabel xml:lang="en">Fibonacci</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#film">
+  <prefLabel xml:lang="en">film</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#finiteelement">
+  <prefLabel xml:lang="en">finite element</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#fission">
+  <prefLabel xml:lang="en">fission</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#flood">
+  <prefLabel xml:lang="en">flood</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#gantry">
+  <prefLabel xml:lang="en">gantry</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#geomagnetic">
+  <prefLabel xml:lang="en">geomagnetic</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#head">
+  <prefLabel xml:lang="en">head</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#health">
+  <prefLabel xml:lang="en">health</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#heart">
+  <prefLabel xml:lang="en">heart</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#heliosphere">
+  <prefLabel xml:lang="en">heliosphere</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Herschel">
+  <prefLabel xml:lang="en">Herschel</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#heterostructures">
+  <prefLabel xml:lang="en">heterostructures</prefLabel>
+  <altLabel xml:lang="en">heterostructured</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#homelandsecurity">
+  <prefLabel xml:lang="en">homeland security</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#imagequality">
+  <prefLabel xml:lang="en">image quality</prefLabel>
+  <altLabel xml:lang="en">imaging techniques</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#insitu">
+  <prefLabel xml:lang="en">in situ</prefLabel>
+  <altLabel xml:lang="en">in-situ</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#invivo">
+  <prefLabel xml:lang="en">in vivo</prefLabel>
+  <altLabel xml:lang="en">in-vivo</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#indiumarsenide">
+  <prefLabel xml:lang="en">indium arsenide</prefLabel>
+  <altLabel xml:lang="en">InAs</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#interplanetary">
+  <prefLabel xml:lang="en">interplanetary</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#interstellar">
+  <prefLabel xml:lang="en">interstellar</prefLabel>
+  <altLabel xml:lang="en">ISM molecules</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#iron">
+  <prefLabel xml:lang="en">iron</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Kepler">
+  <prefLabel xml:lang="en">Kepler</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#labpet">
+  <prefLabel xml:lang="en">labpet</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#lesions">
+  <prefLabel xml:lang="en">lesions</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#lettertotheeditor">
+  <prefLabel xml:lang="en">letter to the editor</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#luminescence">
+  <prefLabel xml:lang="en">luminescence</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#lyso">
+  <prefLabel xml:lang="en">lyso</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#magnetron">
+  <prefLabel xml:lang="en">magnetron</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#mammography">
+  <prefLabel xml:lang="en">mammography</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#market">
+  <prefLabel xml:lang="en">market</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#medical">
+  <prefLabel xml:lang="en">medical</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#medicine">
+  <prefLabel xml:lang="en">medicine</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#metabolism">
+  <prefLabel xml:lang="en">metabolism</prefLabel>
+  <altLabel xml:lang="en">metabolic</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#metallic">
+  <prefLabel xml:lang="en">metallic</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#mice">
+  <prefLabel xml:lang="en">mice</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#microscope">
+  <prefLabel xml:lang="en">microscope</prefLabel>
+  <altLabel xml:lang="en">microscopy</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#mouse">
+  <prefLabel xml:lang="en">mouse</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#multipinhole">
+  <prefLabel xml:lang="en">multipinhole</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#myocardial">
+  <prefLabel xml:lang="en">myocardial</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#myocardium">
+  <prefLabel xml:lang="en">myocardium</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#nanoparticle">
+  <prefLabel xml:lang="en">nanoparticle</prefLabel>
+  <altLabel xml:lang="en">nanoribbon</altLabel>
+  <altLabel xml:lang="en">nanostructure</altLabel>
+  <altLabel xml:lang="en">nanotube</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Navier-Stokes">
+  <prefLabel xml:lang="en">Navier-Stokes</prefLabel>
+  <altLabel xml:lang="en">Navier Stokes</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#near-infrared">
+  <prefLabel xml:lang="en">near-infrared</prefLabel>
+  <altLabel xml:lang="en">infrared spectroscopy</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#networks">
+  <prefLabel xml:lang="en">networks</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#neuronal">
+  <prefLabel xml:lang="en">neuronal</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#nonarticle">
+  <prefLabel xml:lang="en">nonarticle</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#nuclearmedicine">
+  <prefLabel xml:lang="en">nuclear medicine</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#oncology">
+  <prefLabel xml:lang="en">oncology</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#organ">
+  <prefLabel xml:lang="en">organ</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#OSEM">
+  <prefLabel xml:lang="en">OSEM</prefLabel>
+  <altLabel xml:lang="en">ordered subset expectation maximization</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#oxide">
+  <prefLabel xml:lang="en">oxide</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#oxyorthosilicate">
+  <prefLabel xml:lang="en">oxyorthosilicate</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#para-Methoxymethamphetamine">
+  <prefLabel xml:lang="en">para-Methoxymethamphetamine</prefLabel>
+  <altLabel xml:lang="en">PMMA</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#patient">
+  <prefLabel xml:lang="en">patient</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#peltier">
+  <prefLabel xml:lang="en">peltier</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#photoemission">
+  <prefLabel xml:lang="en">photoemission</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#photonic">
+  <prefLabel xml:lang="en">photonic</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#photovoltaic">
+  <prefLabel xml:lang="en">photovoltaic</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#physiological">
+  <prefLabel xml:lang="en">physiological</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#piezoelectric">
+  <prefLabel xml:lang="en">piezoelectric</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#pinhole">
+  <prefLabel xml:lang="en">pinhole</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#planetary">
+  <prefLabel xml:lang="en">planetary</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#plastic">
+  <prefLabel xml:lang="en">plastic</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#population">
+  <prefLabel xml:lang="en">population</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#positioning">
+  <prefLabel xml:lang="en">positioning</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#positronemissiontomography">
+  <prefLabel xml:lang="en">positron emission tomography</prefLabel>
+  <altLabel xml:lang="en">511keV</altLabel>
+  <altLabel xml:lang="en">ECAT</altLabel>
+  <altLabel xml:lang="en">HRRT</altLabel>
+  <altLabel xml:lang="en">high-resolution research tomograph</altLabel>
+  <altLabel xml:lang="en">pet data</altLabel>
+  <altLabel xml:lang="en">pet scanner</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#powder">
+  <prefLabel xml:lang="en">powder</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#preclinical">
+  <prefLabel xml:lang="en">preclinical</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#price-change">
+  <prefLabel xml:lang="en">price-change</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#protein">
+  <prefLabel xml:lang="en">protein</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#protoplanetary">
+  <prefLabel xml:lang="en">protoplanetary</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#pyriolysis">
+  <prefLabel xml:lang="en">pyriolysis</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#radiography">
+  <prefLabel xml:lang="en">radiography</prefLabel>
+  <altLabel xml:lang="en">low dose</altLabel>
+  <altLabel xml:lang="en">radioisotopes</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Raman">
+  <prefLabel xml:lang="en">Raman</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#randomwalk">
+  <prefLabel xml:lang="en">random walk</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#rat">
+  <prefLabel xml:lang="en">rat</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Rayleigh">
+  <prefLabel xml:lang="en">Rayleigh</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#respiration">
+  <prefLabel xml:lang="en">respiration</prefLabel>
+  <altLabel xml:lang="en">respiratory</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Riemann-Liouville">
+  <prefLabel xml:lang="en">Riemann-Liouville</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#roughness">
+  <prefLabel xml:lang="en">roughness</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Schottky">
+  <prefLabel xml:lang="en">Schottky</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#sinogram">
+  <prefLabel xml:lang="en">sinogram</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#socioeconomic">
+  <prefLabel xml:lang="en">socioeconomic</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#solid-state">
+  <prefLabel xml:lang="en">solid-state</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#specimen">
+  <prefLabel xml:lang="en">specimen</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#SPECT">
+  <prefLabel xml:lang="en">SPECT</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#starformation">
+  <prefLabel xml:lang="en">star formation</prefLabel>
+  <altLabel xml:lang="en">star-forming</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#starburst">
+  <prefLabel xml:lang="en">starburst</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#stellarmass">
+  <prefLabel xml:lang="en">stellar mass</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#stockexchange">
+  <prefLabel xml:lang="en">stock exchange</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#substrates">
+  <prefLabel xml:lang="en">substrates</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#surgery">
+  <prefLabel xml:lang="en">surgery</prefLabel>
+  <altLabel xml:lang="en">surgical</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#tandemaccelerator">
+  <prefLabel xml:lang="en">tandem accelerator</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#temperaturerange">
+  <prefLabel xml:lang="en">temperature range</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#terahertz">
+  <prefLabel xml:lang="en">terahertz</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#terrestrial">
+  <prefLabel xml:lang="en">terrestrial</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#therapy">
+  <prefLabel xml:lang="en">therapy</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#thermalneutron">
+  <prefLabel xml:lang="en">thermal neutron</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#thermoluminescence">
+  <prefLabel xml:lang="en">thermoluminescence</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#thinfilms">
+  <prefLabel xml:lang="en">thin films</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#tokamak">
+  <prefLabel xml:lang="en">tokamak</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#tomography">
+  <prefLabel xml:lang="en">tomography</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#traffic">
+  <prefLabel xml:lang="en">traffic</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#train">
+  <prefLabel xml:lang="en">train</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#tumor">
+  <prefLabel xml:lang="en">tumor</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#ultrasonic">
+  <prefLabel xml:lang="en">ultrasonic</prefLabel>
+  <altLabel xml:lang="en">ultrasound</altLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#vascular">
+  <prefLabel xml:lang="en">vascular</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#vessels">
+  <prefLabel xml:lang="en">vessels</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#visual">
+  <prefLabel xml:lang="en">visual</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#voxel">
+  <prefLabel xml:lang="en">voxel</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#water">
+  <prefLabel xml:lang="en">water</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#wind">
+  <prefLabel xml:lang="en">wind</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#Zeeman">
+  <prefLabel xml:lang="en">Zeeman</prefLabel>
+</Concept>
+
+</rdf:RDF>
