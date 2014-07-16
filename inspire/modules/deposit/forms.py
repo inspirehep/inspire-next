@@ -276,6 +276,12 @@ class LiteratureForm(WebDepositForm):
         widget_classes="form-control"
     )
 
+    conference_id = fields.TextField(
+        export_key='conference_id',
+        widget_classes="hidden",
+        widget=HiddenInput(),
+    )
+
     license_url = fields.TextField(
         label=_('License URL'),
         export_key='license_url',
@@ -423,7 +429,7 @@ class LiteratureForm(WebDepositForm):
              'supervisors', 'defense_date', 'degree_type', 'university',
              'license_url']),
         ('Conference Information',
-            ['conf_name']),
+            ['conf_name', 'conference_id']),
         ('Journal Information',
             ['journal_title', 'volume', 'issue', 'page_range', 'article_id',
              'year']),
