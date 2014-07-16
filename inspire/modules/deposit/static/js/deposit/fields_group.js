@@ -164,6 +164,4 @@
     onNotEmpty: function() {},
   };
 
-  $.fn.fieldsGroup.Constructor = FieldsGroup;
-
 })(jQuery);
