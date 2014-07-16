@@ -48,6 +48,7 @@ from invenio.modules.workflows.utils import WorkflowBase
 
 
 class process_record_arxiv(WorkflowBase):
+
     @staticmethod
     def get_title(bwo):
         """Get the title."""
@@ -71,13 +72,12 @@ class process_record_arxiv(WorkflowBase):
         """Get the description column part."""
         record = bwo.get_data()
         from invenio.modules.records.api import Record
-
         try:
             identifiers = Record(record.dumps()).persistent_identifiers
             final_identifiers = []
             for i in identifiers:
                 final_identifiers.append(i['value'])
-        except Exception as e:
+        except Exception:
             if hasattr(record, "get"):
                 final_identifiers = [record.get("system_number_external", {}).get("value", 'No ids')]
             else:
