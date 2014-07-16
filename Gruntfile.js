@@ -47,7 +47,8 @@ module.exports = function(grunt) {
         src: ['buckets/buckets.js',
           'jquery-feeds/dist/jquery.feeds.min.js',
           'moment/min/moment.min.js',
-          'bootstrap-multiselect/js/bootstrap-multiselect.js'
+          'bootstrap-multiselect/js/bootstrap-multiselect.js',
+          'readmore/readmore.min.js'
         ],
         dest: '<%= globalConfig.installation_path %>/js/'
       },

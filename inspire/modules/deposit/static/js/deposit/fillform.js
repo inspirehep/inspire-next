@@ -350,27 +350,77 @@ LiteratureSubmissionForm.prototype = {
     modalBody = myModal.find('.modal-body');
 
     $('#myModal').on('shown.bs.modal', function (e) {
-        modalBody.text(json_data);
+      // modalBody.text(json_data);
     });
 
     this.renderRow(dataMapping);
-
   },
 
   renderRow: function renderRow(jsonData) {
 
-    var table = '<table><tr><th>Labels</th><th>Values</th></tr><tbody>';
+    var table = '<table class="table table-stripped"><tr><th>Labels</th><th>Values</th></tr><tbody>';
 
-    $.each( jsonData, function( index, user){
+    $.each(jsonData, function(index, user){
       table += '<tr>';
       table += '<td>'+index+'</td>';
-      table += '<td>'+user+'</td>';
+      if (typeof user !== 'object') {
+        // console.log(user)
+        // read more/less only in abstract field
+        if (index === 'abstract') {
+          table += '<td class="readmore">'+user+'</td>';
+        }
+        else {
+          table += '<td>'+user+'</td>';
+        }
+      }
+      else {
+        table += '<td class="readmore">';
+        for (var i in jsonData.contributors) {
+          table += jsonData.contributors[i].name+'<br>';
+          // console.log(jsonData.contributors[i].name)
+        }
+        table += '</td>';
+      }
       table += '</tr>';
+
     });
+
+    var keysRevamp = Object.keys(jsonData);
+
+    console.log(keysRevamp);
+
+    $.map(keysRevamp, function(val, i) {
+      if (val === 'title') {
+        val = 'Title';
+      }
+      if (val === 'title_arXiv') {
+        val = 'Title arXiv';
+      }
+      return keysRevamp;
+    })
+
+    console.log(keysRevamp);
 
     table += '</tbody></table>';
 
     $('#myModal .modal-body').html(table);
+
+    $('.readmore').readmore({
+      speed: 200,
+      maxHeight: 90,
+      moreLink: '<a href="#">Read more</a>',
+      lessLink: '<a href="#">Less</a>'
+      // afterToggle: function (trigger, element, expanded) {
+      //   if (expanded) {
+      //     console.log('expanded');
+      //     console.log(element);
+      //     console.log(element.offset().top);
+      //     //var height = element.height() - element.offset().top
+      //     console.log(height)
+      //     element.css('height', 'auto');
+      //   }
+      // }
+    });
 
   }
 };

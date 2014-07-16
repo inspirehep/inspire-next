@@ -5,6 +5,7 @@
     "buckets": "git://github.com/mauriciosantos/buckets.git",
     "jquery-feeds": "git://github.com/camagu/jquery-feeds.git",
     "moment": "2.7.0",
-    "bootstrap-multiselect": "~0.9.4"
+    "bootstrap-multiselect": "~0.9.4",
+    "readmore": "*"
   }
 }
