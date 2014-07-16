@@ -286,6 +286,7 @@ LiteratureSubmissionForm.prototype = {
    * @returns stripped identifier
    */
   stripSourceTags: function stripSourceTags(identifier) {
+    identifier = $.trim(identifier);
     var doi_prefix = /^doi:/;
     var arxiv_prefix = /^ar[xX]iv:/;
 
