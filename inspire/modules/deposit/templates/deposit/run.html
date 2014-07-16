@@ -36,6 +36,9 @@
   {%- js url_for('static', filename='js/typeahead.js') -%}
   {%- js url_for('static', filename='js/buckets.js') -%}
   {%- js url_for('static', filename='js/bootstrap-multiselect.js') -%}
+  {%- js url_for('static', filename='js/jquery_plugin.js'),'50-webdeposit' -%}
+  {%- js url_for('webdeposit.static', filename='js/deposit/conferences_mock.js'), '50-webdeposit' -%}
+  {%- js url_for('webdeposit.static', filename='js/deposit/conferences_typeahead.js'), '50-webdeposit' -%}
   {%- js url_for('webdeposit.static', filename='js/deposit/form.js'), '50-webdeposit' -%}
   {%- js url_for('webdeposit.static', filename='js/deposit/templates.js'), '50-webdeposit' -%}
   {%- js url_for('webdeposit.static', filename='js/deposit/fields_group.js'), '50-webdeposit' -%}
