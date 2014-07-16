@@ -84,6 +84,15 @@ function LiteratureSubmissionForm(save_url) {
   this.$language = $("#language");
   this.$translated_title = $("#state-group-title_translation");
   this.$importButton = $("#importData");
+  this.$submissionForm = $('#submitForm');
+  this.$conference = $('#conf_name');
+  this.$conferenceId = $('#conference_id');
+
+  // these fields' values will be deleted before submission so that they will not be
+  // sent to the sever
+  this.$fieldsExcludedFromSubmision = [
+    this.$conference
+  ];
 
   this.init();
   this.connectEvents();
@@ -121,6 +130,22 @@ LiteratureSubmissionForm.prototype = {
     this.messageBox = $('#flash-import').messageBox({
       hoganTemplate: tpl_flash_message,
     })[0];
+    this.$conference.conferencesTypeahead({
+      suggestionTemplate: Hogan.compile(
+        '<b>{{ meeting }}</b>' +
+        '<small>' +
+          '<br>{{ date }}, {{ location }}' +
+          '<br>' +
+          '{{ coference_code }}' +
+        '</small>'
+      ),
+
+      selectedValueTemplate: Hogan.compile(
+        '{{ coference_code }}, {{ meeting }}, {{ date }}, {{ location }}'
+      ),
+
+      cannotFindMessage: 'Cannot find this conference in our database.'
+    });
   },
 
   /*
@@ -143,6 +168,20 @@ LiteratureSubmissionForm.prototype = {
       that.importData();
     });
 
+    this.$submissionForm.on('submit', function(event) {
+      that.$conferenceId.val(conferencesTypeahead.getRawValue());
+      that.deleteIgnoredValues();
+    });
+  },
+
+  /**
+   * Deletes fields from $fieldsExcludedFromSubmision property,
+   * usually done before submission
+   */
+  deleteIgnoredValues: function deleteIgnoredValues() {
+    $.each(this.$fieldsExcludedFromSubmision, function(i, $field) {
+      $field.val('');
+    });
   },
 
   /**
