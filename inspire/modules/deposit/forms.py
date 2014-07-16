@@ -271,9 +271,16 @@ class LiteratureForm(WebDepositForm):
     )
 
     conf_name = fields.TextField(
+        placeholder=_("Start typing for suggestions"),
         label=_('Conference Information'),
         description=_('Conference name, acronym, place, date'),
         widget_classes="form-control"
+    )
+
+    conference_id = fields.TextField(
+        export_key='conference_id',
+        widget_classes="hidden",
+        widget=HiddenInput(),
     )
 
     license_url = fields.TextField(
@@ -423,7 +430,7 @@ class LiteratureForm(WebDepositForm):
              'supervisors', 'defense_date', 'degree_type', 'university',
              'license_url']),
         ('Conference Information',
-            ['conf_name']),
+            ['conf_name', 'conference_id']),
         ('Journal Information',
             ['journal_title', 'volume', 'issue', 'page_range', 'article_id',
              'year']),
