@@ -271,7 +271,7 @@ LiteratureSubmissionForm.prototype = {
     }
 
     for (var i in dataMapping.contributors) {
-      authorsWidget.set_element_values(i, dataMapping.contributors[i]);
+      authorsWidget.update_element(dataMapping.contributors[i], i);
       // next index is i+1 but there should stay one empty field
       if (parseInt(i) + 2 > authorsWidget.get_next_index()) {
         authorsWidget.append_element();
