@@ -22,10 +22,6 @@
 
 {% extends "page_base.html" %}
 
-{%- block global_css -%}
-  {%- css url_for('static', filename='less/inspire.less'), '00-invenio', 'less' -%}
-{%- endblock global_css -%}
-
 {%- block head_links %}
   {{ super() }}
   <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
@@ -51,6 +47,7 @@
 
 {%- block global_bundles %}
   {{ super() }}
+  {% bundles "base.css" %}
   {% if searchbar_enable %}
     {% bundle "search.js", "search.css" %}
   {% endif %}
