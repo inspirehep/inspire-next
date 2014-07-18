@@ -49,13 +49,12 @@
   </header>
 {%- endblock page_header -%}
 
-
-{% block header %}
+{%- block global_bundles %}
   {{ super() }}
   {% if searchbar_enable %}
     {% bundle "search.js", "search.css" %}
   {% endif %}
-{% endblock %}
+{%- endblock %}
 
 {% block body %}
   {{ super() }}
