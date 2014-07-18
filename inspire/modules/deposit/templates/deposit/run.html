@@ -18,41 +18,6 @@
 #}
 {% extends "deposit/run_base.html" %}
 
-{%- block deposit_css %}
-	{{ super() }}
-  {%- css url_for('static', filename='css/bootstrap-multiselect.css'), '50-webdeposit' -%}
-  {%- css url_for('static', filename='css/deposit-inspire.css') -%}
-{%- endblock deposit_css %}
-
-{% block deposit_js %}
-  {%- js url_for('static', filename='js/jqueryui/jquery.ui.core.js'), '50-jquery-ui' -%}
-  {%- js url_for('static', filename='js/jqueryui/jquery.ui.widget.js'), '50-jquery-ui' -%}
-  {%- js url_for('static', filename='js/jqueryui/jquery.ui.mouse.js'), '50-jquery-ui' -%}
-  {%- js url_for('static', filename='js/jqueryui/jquery.ui.sortable.js'), '50-jquery-ui' -%}
-  {%- js url_for('static', filename='js/jqueryui/jquery.ui.datepicker.js'), '50-jquery-ui' -%}
-  {%- js url_for('static', filename='js/jqueryui/jquery.ui.effect.js'), '50-jquery-ui' -%}
-  {%- js url_for('static', filename='js/jqueryui/jquery.ui.effect-highlight.js'), '50-jquery-ui' -%}
-  {%- js url_for('static', filename='plupload/plupload.full.min.js') -%}
-  {%- js url_for('static', filename='js/typeahead.js') -%}
-  {%- js url_for('static', filename='js/buckets.js') -%}
-  {%- js url_for('static', filename='js/bootstrap-multiselect.js') -%}
-  {%- js url_for('static', filename='js/jquery_plugin.js'),'50-webdeposit' -%}
-  {%- js url_for('webdeposit.static', filename='js/deposit/conferences_mock.js'), '50-webdeposit' -%}
-  {%- js url_for('webdeposit.static', filename='js/deposit/conferences_typeahead.js'), '50-webdeposit' -%}
-  {%- js url_for('webdeposit.static', filename='js/deposit/form.js'), '50-webdeposit' -%}
-  {%- js url_for('webdeposit.static', filename='js/deposit/templates.js'), '50-webdeposit' -%}
-  {%- js url_for('webdeposit.static', filename='js/deposit/fields_group.js'), '50-webdeposit' -%}
-  {%- js url_for('webdeposit.static', filename='js/deposit/mapper.js'), '50-webdeposit' -%}
-  {%- js url_for('webdeposit.static', filename='js/deposit/data_sources/data_source.js'), '50-webdeposit' -%}
-  {%- js url_for('webdeposit.static', filename='js/deposit/data_sources/arxiv.js'), '50-webdeposit' -%}
-  {%- js url_for('webdeposit.static', filename='js/deposit/data_sources/doi.js'), '50-webdeposit' -%}
-  {%- js url_for('webdeposit.static', filename='js/deposit/data_sources/isbn.js'), '50-webdeposit' -%}
-  {%- js url_for('webdeposit.static', filename='js/deposit/task_manager.js'), '50-webdeposit' -%}
-  {%- js url_for('webdeposit.static', filename='js/deposit/import_task.js'), '50-webdeposit' -%}
-  {%- js url_for('webdeposit.static', filename='js/deposit/message_box.js'), '50-webdeposit' -%}
-  {%- js url_for('webdeposit.static', filename='js/deposit/fillform.js'), '50-webdeposit' -%}
-{% endblock deposit_js %}
-
 {% block file_container_colsize %}col-md-12{% endblock %}
 
 {% block form_header scoped %}
