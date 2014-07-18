@@ -57,14 +57,15 @@
 
     this.$element.typeahead({
       minLength: 1
-    },
-    {
+    }, {
       source: engine.ttAdapter(),
       // the key of a value which is rather passed to typeahead than displayed
       // the display values are selected by templates.
       displayKey: 'meeting_name',
       templates: {
-        empty: function(data) { return that.options.cannotFindMessage; },
+        empty: function(data) {
+          return that.options.cannotFindMessage;
+        },
         suggestion: function(data) {
           return that.suggestionTemplate.render.call(that.suggestionTemplate, data.meeting_name[0]);
         }
@@ -102,7 +103,7 @@
     /**
      * A function which overwrites typeahead's setInputFieldValue(), shows a description
      * of a autocompleted value.
-     * 
+     *
      * @param value value to set - from typeahead
      */
     setInputFieldValue: function setInputFieldValue(value, silent) {
@@ -113,12 +114,12 @@
       }
       var renderedValue = this.getUserFriendlyValue();
       this.orgTypeahead.setInputValue.call(
-          this.ttTypeahead.input, renderedValue, silent);
+        this.ttTypeahead.input, renderedValue, silent);
     },
 
     /**
      * Removes non alpha-numeric characters from beginning and end of a string.
-     * 
+     *
      * @param str {String} input string
      * @returns {String} trimmed string
      * @private
@@ -129,9 +130,9 @@
 
     /**
      * Tokenizer used by the bloodhound engine
-     * 
+     *
      * @param datum {Object} an item returned by query
-     * @returns {Array} array of tokens; the result query is a one consisting of queries 
+     * @returns {Array} array of tokens; the result query is a one consisting of queries
      *   for every token connected with OR operator
      */
     datumTokenizer: function datumTokenizer(datum) {
@@ -158,7 +159,7 @@
     },
 
     /**
-     * Returns value of the field which identifies the chosen suggestion, 
+     * Returns value of the field which identifies the chosen suggestion,
      * not the description shown to a user.
      *
      * @returns {String}
@@ -183,7 +184,7 @@
     },
 
     /**
-     * Checks if the field is value is the autocompletition result or just 
+     * Checks if the field is value is the autocompletition result or just
      * a string typed by a user
      *
      * @returns {bool}
