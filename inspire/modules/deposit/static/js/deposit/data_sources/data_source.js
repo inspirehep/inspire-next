@@ -96,10 +96,10 @@ DataSource.prototype = {
     $.ajax({
       url: this.url + id
     })
-    .always(function (data) {
-      var result = processQuery(data);
-      importDataPromise.resolve(result);
-    });
+      .always(function(data) {
+        var result = processQuery(data);
+        importDataPromise.resolve(result);
+      });
 
     return importDataPromise;
   },

@@ -134,9 +134,9 @@ LiteratureSubmissionForm.prototype = {
       suggestionTemplate: Hogan.compile(
         '<b>{{ meeting }}</b>' +
         '<small>' +
-          '<br>{{ date }}, {{ location }}' +
-          '<br>' +
-          '{{ coference_code }}' +
+        '<br>{{ date }}, {{ location }}' +
+        '<br>' +
+        '{{ coference_code }}' +
         '</small>'
       ),
 
