@@ -24,6 +24,7 @@ from invenio.ext.assets import Bundle
 
 js = Bundle(
     'js/bootstrap.min.js',
+    'js/jquery_plugin.js',
     output = 'base.js',
     weight = 00,
 )
