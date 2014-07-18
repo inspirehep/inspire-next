@@ -19,25 +19,18 @@
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
 """Inspire bundles."""
-from invenio.ext.assets import Bundle
 
-search = Bundle('js/search/invenio_with_spires_typeahead_configuration.js',
-                'js/search/search_parser.js',
-                'js/search/typeahead.js',
-                'js/search/default_typeahead_configuration.js',
-                'js/search/facet.js',
-                output="search.js",
-                filters="uglifyjs",
-                weight=50)
+# '_' prefix indicates private variables, and prevents duplicated import by
+# auto-discovery service of invenio
 
-search_css = Bundle('css/typeahead.js-bootstrap.css',
-                    'css/search/search.css',
-                    'css/search/searchbar.css',
-                    output="search.css",
-                    filters="cleancss",
-                    weight=50)
+from invenio.modules.search.bundles import js as _search_js
 
-formatter_css = Bundle('css/formatter/templates_detailed_inspire.css',
-                       output="inspire-formatter.css",
-                       filters="cleancss",
-                       weight=0)
+_search_js.contents += (
+    'js/search/invenio_with_spires_typeahead_configuration.js',
+)
+
+from invenio.modules.formatter.bundles import css as _formatter_css
+
+_formatter_css.contents += (
+    'css/formatter/templates_detailed_inspire.css',
+)
