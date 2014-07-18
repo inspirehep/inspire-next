@@ -79,27 +79,7 @@
 
   })();
 
-  $.fn.messageBox = function(option) {
-
-    var $elements = this;
-    var objects = [];
-    var dataLabel = 'message-box';
-
-    $elements.each(function() {
-      var $element = $(this);
-      var object = $element.data(dataLabel);
-      var options = typeof option === 'object' && option;
-      // attach jQuery plugin
-      if (!object) {
-        object = new MessageBox($element, options);
-        $element.data(dataLabel, object);
-      }
-      objects.push(object);
-    });
-
-    // return all objects attached to the elements
-    return objects;
-  };
+  $.fn.messageBox = jQueryPlugin(MessageBox, 'message-box');
 
   $.fn.messageBox.defaults = {
     /**
@@ -108,6 +88,5 @@
      */
     hoganTemplate: {},
   };
-  $.fn.messageBox.Constructor = MessageBox;
 
 })(jQuery);
