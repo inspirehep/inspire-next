@@ -101,6 +101,7 @@ PACKAGES = [
     'invenio.modules.uploader',
     'invenio.modules.webhooks',
     'invenio.modules.workflows',
+    'invenio.base',
 ]
 
 
