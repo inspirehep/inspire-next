@@ -25,8 +25,8 @@ from invenio.modules.deposit.bundles import js as _deposit_js, \
 # auto-discovery service of invenio
 
 _deposit_js.contents += (
-    'js/buckets.js',
-    'js/bootstrap-multiselect.js',
+    'vendors/buckets/buckets.js',
+    'vendors/bootstrap-multiselect/js/bootstrap-multiselect.js',
     'js/deposit/fields_group.js',
     'js/deposit/mapper.js',
     'js/deposit/data_sources/data_source.js',
@@ -47,6 +47,6 @@ _deposit_js.bower.update({
 })
 
 _deposit_styles.contents += (
-    'css/bootstrap-multiselect.css',
+    'vendors/bootstrap-multiselect/css/bootstrap-multiselect.css',
     'css/deposit-inspire.css',
 )
