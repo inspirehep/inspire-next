@@ -1,1 +1,18 @@
-git+https://github.com/jirikuncar/invenio@pu
+# from invenio/requirements.txt
+
+-e git+git://github.com/lnielsen-cern/dictdiffer.git#egg=dictdiffer
+-e git+https://github.com/david-e/flask-admin.git@bootstrap3#egg=Flask-Admin
+-e git+https://github.com/mitsuhiko/flask-sqlalchemy#egg=Flask-SQLAlchemy-dev
+https://www.reportlab.com/ftp/pyRXP-1.16-daily-unix.tar.gz#egg=pyRXP
+-e git+git://github.com/romanchyla/workflow.git@e41299579501704b1486c72cc2509a9f82e63ea6#egg=workflow
+
+WTForms>=1.0.5,<2.0
+SQLAlchemy==0.8.3
+
+qrcode
+Pillow
+
+
+-e git+https://github.com/inveniosoftware/invenio@pu#egg=Invenio-dev
+
+-e .
