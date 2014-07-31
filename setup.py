@@ -26,26 +26,8 @@ INSPIRE overlay
 
 INSPIRE overlay repository for Invenio.
 """
-import re
-import glob
 
 from setuptools import setup, find_packages
-
-
-def read_requirements(filename='requirements.txt'):
-    req = []
-    dep = []
-    with open(filename, 'r') as f:
-        for line in f.readlines():
-            if line.startswith('#'):
-                continue
-            if '://' in line:
-                dep.append(str(line[:-1]))
-            else:
-                req.append(str(line))
-    return req, dep
-
-install_requires, dependency_links = read_requirements()
 
 packages = find_packages(exclude=['docs'])
 
@@ -53,22 +35,35 @@ setup(
     name='Inspire',
     version='dev',
     url='https://github.com/inspirehep/inspire-next',
-    license='GPLv3',
+    license='GPLv2',
     author='CERN',
     author_email='admin@inspirehep.net',
-    description='Digital library software',
-    long_description=__doc__,
+    description=__doc__,
+    long_description=open('README.rst', 'rt').read(),
     packages=packages,
     namespace_packages=["inspire", "inspire.ext", ],
     include_package_data=True,
     zip_safe=False,
     platforms='any',
-    install_requires=install_requires,
-    dependency_links=dependency_links,
-    test_suite='inspire.testsuite.suite',
+    extras_require={
+        'development': [
+            'Flask-DebugToolbar>=0.9',
+            'setuptools-bower>=0.2'
+        ],
+    },
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Web Environment',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GPLv2 License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
+    ],
     entry_points={
         'invenio.config': [
             "inspire = inspire.config"
         ]
     },
+    test_suite='inspire.testsuite.suite',
 )
