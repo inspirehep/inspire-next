@@ -17,6 +17,7 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
+import re
 
 from invenio.modules.deposit.types import SimpleRecordDeposition
 from invenio.modules.deposit.tasks import render_form, \
@@ -47,8 +48,6 @@ class literature(SimpleRecordDeposition):
         # Create the submission information package by merging form data
         # from all drafts (in this case only one draft exists).
         prepare_sip(),
-        # Fills sip with existing ArXiv source
-        #harvest_arxiv(),
         # Process metadata to match your JSONAlchemy record model. This will
         # call process_sip_metadata() on your subclass.
         process_sip_metadata(),
@@ -68,6 +67,12 @@ class literature(SimpleRecordDeposition):
     }
 
     @classmethod
+    #TODO: ensure that this regex is correct
+    def match_authors_initials(self, author_name):
+        """Check if author's name contains only its initials."""
+        return not bool(re.compile(r'[^A-Z. ]').search(author_name))
+
+    @classmethod
     def process_sip_metadata(cls, deposition, metadata):
         """Map fields to match jsonalchemy configuration."""
         delete_keys = []
@@ -80,7 +85,7 @@ class literature(SimpleRecordDeposition):
                      'defense_date': "date",
                      'university': "university",
                      'degree_type': "degree_type",
-                     'journal_title': "title",
+                     'journal_title': "journal_title",
                      'page_range': "page_artid",
                      'article_id': "page_artid",
                      'volume': "journal_volume",
@@ -100,13 +105,26 @@ class literature(SimpleRecordDeposition):
         # Authors
         # =======
         if 'authors' in metadata and metadata['authors']:
+            first_author = metadata['authors'][0].get('full_name').split(',')
+            if len(first_author) > 1 and \
+                    literature.match_authors_initials(first_author[1]):
+                first_author[1] = first_author[1].replace(' ', '')
+                metadata['authors'][0]['full_name'] = ",".join(first_author)
             metadata['_first_author'] = metadata['authors'][0]
             metadata['_first_author']['email'] = ''
             if metadata['authors'][1:]:
                 metadata['_additional_authors'] = metadata['authors'][1:]
                 for k in metadata['_additional_authors']:
-                    k['email'] = ''
-            del metadata['authors']
+                    try:
+                        additional_author = k.get('full_name').split(',')
+                        if len(additional_author) > 1 and \
+                                literature.match_authors_initials(additional_author[1]):
+                            additional_author[1] = additional_author[1].replace(' ', '')
+                            k['full_name'] = ",".join(additional_author)
+                        k['email'] = ''
+                    except AttributeError:
+                        pass
+            delete_keys.append('authors')
 
         # ===========
         # Supervisors
@@ -135,6 +153,23 @@ class literature(SimpleRecordDeposition):
         # Category
         # ========
         metadata['collections'] = [{'primary': "HEP"}]
+
+        # ===============
+        # Abstract source
+        # ===============
+        if 'title_arXiv' in metadata:
+            metadata['abstract']['source'] = 'arXiv'
+
+        # ========
+        # arXiv ID
+        # ========
+        if 'arxiv_id' in metadata:
+            metadata['report_number'] = metadata['arxiv_id']
+
+        # ========
+        # Language
+        # ========
+        metadata['language'] = dict(LiteratureForm.languages).get(metadata['language'])
 
         # ==========
         # Experiment
@@ -178,6 +213,14 @@ class literature(SimpleRecordDeposition):
 
             for field in publication_fields:
                 metadata['publication_info'][field_map[field]] = metadata[field]
+
+            if 'page_nr' not in metadata and 'page_range' in publication_fields:
+                pages = metadata['page_range'].split('-')
+                if len(pages) == 2:
+                    try:
+                        metadata['page_nr'] = int(pages[1])-int(pages[0])
+                    except ValueError:
+                        pass
 
             delete_keys.extend(publication_fields)
 
