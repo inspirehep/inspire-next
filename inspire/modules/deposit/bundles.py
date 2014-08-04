@@ -38,7 +38,7 @@ _deposit_js.contents += (
     'js/deposit/message_box.js',
     'js/deposit/conferences_mock.js',
     'js/deposit/conferences_typeahead.js',
-    'js/deposit/fillform.js',
+    'js/deposit/literature_submission_form.js',
 )
 
 _deposit_js.bower.update({
