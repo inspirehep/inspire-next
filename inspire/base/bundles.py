@@ -28,13 +28,6 @@ js = Bundle(
     weight=20,
 )
 
-styles = Bundle(
-    'less/inspire.less',
-    output='base.css',
-    filters="less,cleancss",
-    weight=20,
-)
-
 index_js = Bundle(
     'vendors/jquery-feeds/dist/jquery.feeds.js',
     'vendors/moment/moment.js',
@@ -48,6 +41,14 @@ index_js = Bundle(
 
 # '_' prefix indicates private variables, and prevents duplicated import by
 # auto-discovery service of invenio
+
+from invenio.base.bundles import styles as _base_styles
+
+_base_styles.contents += (
+    'less/inspire.less',
+)
+
+_base_styles.contents.remove("less/base.less")
 
 from invenio.modules.search.bundles import js as _search_js
 
