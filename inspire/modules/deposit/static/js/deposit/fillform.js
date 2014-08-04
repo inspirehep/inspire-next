@@ -20,6 +20,16 @@
  * or submit itself to any jurisdiction.
  */
 
+// FIXME: duplicate of
+// FIXME: invenio/modules/deposit/static/templates/flash_message.mustache
+// FIXME: to get rid of this make template precompilation with 'hulk' or 'requirejs'
+var tpl_flash_message = Hogan.compile(
+  '<div class="alert alert-{{state}}">' +
+    '<a class="close" data-dismiss="alert" href="#"">&times;</a>' +
+    '{{{message}}}' +
+  '</div>'
+);
+
 /**
  * This mapper assumes it receives standarized data format
  * after treating with another mapper.
