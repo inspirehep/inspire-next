@@ -44,7 +44,7 @@
 </script>
 {%- endblock form_script_options %}
 <script type="text/javascript">
-$(document).ready(function() {
+require(["jquery", "js/deposit/form"], function($, form, bootstrap) {
     var save_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id) }}';
     var save_all_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, all='1') }}';
     var complete_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, submit='1') }}';
