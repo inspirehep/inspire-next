@@ -18,18 +18,17 @@
  * In applying this licence, CERN does not waive the privileges and immunities
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
- */
 
+ */
 
 function jQueryPlugin(constructor, dataLabel) {
 
   return function(options) {
 
     var $elements = this;
-    var objects = [];
 
-    $elements.each(function() {
-      var $element = $(this);
+    return $elements.map(function (idx, element) {
+      var $element = $(element);
       var object = $element.data(dataLabel);
       var _options = (typeof options === 'object' && options);
       // attach jQuery plugin
@@ -43,10 +42,7 @@ function jQueryPlugin(constructor, dataLabel) {
           object.connectEvents();
         }
       }
-      objects.push(object);
+      return object;
     });
-
-    // return all objects attached to the elements
-    return objects;
   }
 }
