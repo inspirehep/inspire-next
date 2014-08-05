@@ -174,7 +174,11 @@ LiteratureSubmissionForm.prototype = {
     });
 
     this.$importButton.click(function(event) {
-      that.$importButton.button('loading');
+      // FIXME: a workaround for button() conflict between jQuery-UI
+      //  and bootstrap.js. Here should be button() from bootstrap.js
+      //  called
+      that.toggleImportButton(that.$importButton, 'loading');
+//      that.$importButton.button('loading');
       that.importData();
     });
 
@@ -182,6 +186,20 @@ LiteratureSubmissionForm.prototype = {
       that.$conferenceId.val(conferencesTypeahead.getRawValue());
       that.deleteIgnoredValues();
     });
+  },
+
+  toggleImportButton: function toggleImportButton($button, state) {
+
+    importButtonStates = {
+      'loading': 'Importing data...',
+      'reset': 'Import data'
+    };
+
+    var newState = importButtonStates[state];
+    if (!newState) {
+      return;
+    }
+    this.$importButton.text(newState);
   },
 
   /**
@@ -263,7 +281,11 @@ LiteratureSubmissionForm.prototype = {
         that.fieldsGroup.resetState();
         that.messageBox.clean();
         that.messageBox.append(result.statusMessage);
-        that.$importButton.button('reset');
+        // FIXME: a workaround for button() conflict between jQuery-UI
+        //  and bootstrap.js. Here should be button() from bootstrap.js
+        //  called
+        that.toggleImportButton(that.$importButton, 'reset')
+//        that.$importButton.button('reset');
       }
     );
   },
