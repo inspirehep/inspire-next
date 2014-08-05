@@ -18,24 +18,17 @@
 #}
 {% extends "deposit/run_base.html" %}
 
-{% block file_container_colsize %}col-md-12{% endblock %}
-
-{% block form_header scoped %}
-{% endblock %}
-
-{% block form_title scoped %}
-	{{ super() }}
-    <p class="text-muted">
-        <small>Instructions: (i) If you have an <strong>arXiv ID</strong>, a <strong>DOI</strong> or a <strong>ISBN</strong>,
-        fill in the Identifier field and the data will be imported. (ii) Upload or remove extra files in the bottom of the form.
-        (iii) When ready, press "Submit" to finalize your upload.</small>
-    </p>
-    <div id="import-message"></div>
-    <div id="flash-import"></div>
-{% endblock form_title %}
-
-{% block sidebar %}
-{% endblock %}
+{% block deposit_page %}
+<div class="row">
+  {% block file_container %}
+    <div id="file_container" class="col-md-12 form-feedback-warning">
+      <div id="flash-message"></div>
+      {% include "deposit/form.html" %}
+    </div>
+  {% endblock %}
+  </div>
+</div>
+{% endblock deposit_page %}
 
 {% block javascript %}
 {%- block form_script_options %}
@@ -45,33 +38,33 @@
 {%- endblock form_script_options %}
 <script type="text/javascript">
 require(["jquery", "js/deposit/form"], function($, form, bootstrap) {
-    var save_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id) }}';
-    var save_all_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, all='1') }}';
-    var complete_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, submit='1') }}';
-    var autocomplete_url = '{{ url_for(".autocomplete", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, field_name="__FIELDNAME__", limit=10) }}';
+  var save_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id) }}';
+  var save_all_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, all='1') }}';
+  var complete_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, submit='1') }}';
+  var autocomplete_url = '{{ url_for(".autocomplete", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, field_name="__FIELDNAME__", limit=10) }}';
 
-    DEPOSIT_FORM.init_plupload(
-        '{{config.DEPOSIT_MAX_UPLOAD_SIZE|default('10mb')}}',
-        '.pluploader',
-        save_url,
-        '{{ url_for('.upload_file', deposition_type=deposition_type, uuid=uuid) }}',
-        '{{ url_for('.delete_file', deposition_type=deposition_type, uuid=uuid) }}',
-        '{{ url_for('.get_file', deposition_type=deposition_type, uuid=uuid) }}',
-        {{ form.files|safe }},
-        '{{ url_for('.upload_url', deposition_type=deposition_type, uuid=uuid) }}'
-    );
-    DEPOSIT_FORM.init_save(save_all_url, '.form-save', '#submitForm');
-    DEPOSIT_FORM.init_submit(complete_url, '.form-submit', '#submitForm', '#form-submit-dialog');
-    DEPOSIT_FORM.init_inputs('#submitForm input, #submitForm textarea, #submitForm select', save_url);
-    DEPOSIT_FORM.init_buttons('#submitForm .form-button', save_url);
-    DEPOSIT_FORM.init_autocomplete('[data-autocomplete="1"]', save_url, autocomplete_url);
-    DEPOSIT_FORM.init_field_lists('#submitForm .dynamic-field-list', save_url, '[data-autocomplete="1"]', autocomplete_url);
-    //DEPOSIT_FORM.init_ckeditor( '#submitForm textarea[data-ckeditor="1"]', save_url);
+  DEPOSIT_FORM.init_plupload(
+      '{{config.DEPOSIT_MAX_UPLOAD_SIZE|default('10mb')}}',
+      '.pluploader',
+      save_url,
+      '{{ url_for('.upload_file', deposition_type=deposition_type, uuid=uuid) }}',
+      '{{ url_for('.delete_file', deposition_type=deposition_type, uuid=uuid) }}',
+      '{{ url_for('.get_file', deposition_type=deposition_type, uuid=uuid) }}',
+      {{ form.files|safe }},
+      '{{ url_for('.upload_url', deposition_type=deposition_type, uuid=uuid) }}'
+  );
+  DEPOSIT_FORM.init_save(save_all_url, '.form-save', '#submitForm');
+  DEPOSIT_FORM.init_submit(complete_url, '.form-submit', '#submitForm', '#form-submit-dialog');
+  DEPOSIT_FORM.init_inputs('#submitForm input, #submitForm textarea, #submitForm select', save_url);
+  DEPOSIT_FORM.init_buttons('#submitForm .form-button', save_url);
+  DEPOSIT_FORM.init_autocomplete('[data-autocomplete="1"]', save_url, autocomplete_url);
+  DEPOSIT_FORM.init_field_lists('#submitForm .dynamic-field-list', save_url, '[data-autocomplete="1"]', autocomplete_url);
+  //DEPOSIT_FORM.init_ckeditor( '#submitForm textarea[data-ckeditor="1"]', save_url);
 
-    // Date picker
-    $(".datepicker").datepicker(date_options);
+  // Date picker
+  $(".datepicker").datepicker(date_options);
 
-    var form = new LiteratureSubmissionForm(save_url);
+  var form = new LiteratureSubmissionForm(save_url);
 });
 </script>
 {% endblock javascript %}

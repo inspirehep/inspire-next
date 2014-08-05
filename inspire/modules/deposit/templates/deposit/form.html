@@ -1,0 +1,37 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2014 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+{%- extends "deposit/form_base.html" -%}
+
+{% block form_header scoped %}{% endblock %}
+
+{% block form_title scoped %}
+  <h1>{{ form._title }}</h1>
+  {% if form._subtitle %}
+    <p class="text-muted"><small>{{ form._subtitle|safe }}</small></p>
+  {% endif %}
+  <p class="text-muted">
+    <small>Instructions: (i) If you have an <strong>arXiv ID</strong>, a <strong>DOI</strong> or a <strong>ISBN</strong>,
+    fill in the Identifier field and the data will be imported. (ii) Upload or remove extra files in the bottom of the form.
+    (iii) When ready, press "Submit" to finalize your upload.</small>
+  </p>
+  <div id="import-message"></div>
+  <div id="flash-import"></div>
+{% endblock form_title %}
+
+{% block form_footer scoped %}{{ form_action_bar() }}{% endblock form_footer %}
