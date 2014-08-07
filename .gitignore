@@ -33,3 +33,4 @@ bower.json
 dump.rdb
 .idea/
 *.mo
+node_modules/
