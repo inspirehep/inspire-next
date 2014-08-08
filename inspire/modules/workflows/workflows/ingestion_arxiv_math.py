@@ -68,11 +68,8 @@ class ingestion_arxiv_math(WorkflowBase):
             identifiers = extra_data["options"]["identifiers"]
 
         if '_tasks_results' in extra_data and '_workflows_reviews' in extra_data['_tasks_results']:
-            result_temp = extra_data["_tasks_results"]["_workflows_reviews"][0]
-            if isinstance(result_temp, dict):
-                result_temp = result_temp['result']
-            else:
-                result_temp = result_temp.to_dict()['result']
+            result_temp = bwo.get_tasks_results()
+            result_temp = result_temp['_workflows_reviews'][0]['result']
             result_progress = {
                 'success': (result_temp['total'] - result_temp['failed']),
                 'failed': result_temp['failed'],
