@@ -165,7 +165,7 @@ class literature(SimpleRecordDeposition):
         # arXiv ID
         # ========
         if 'arxiv_id' in metadata:
-            metadata['report_number'] = metadata['arxiv_id']
+            metadata['report_number'] = "$$9arXiv$$aoai:arXiv.org:" + metadata['arxiv_id']
 
         # ========
         # Language
