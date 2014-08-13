@@ -27,26 +27,42 @@ define(function(require, exports, module) {
 
     id: 'doi',
     name: 'DOI',
-    url: '/deposit/search_doi?doi=',
+    url: '/doi/search?doi=',
 
     mapper: new DataMapper({
 
       common_mapping: function(data) {
 
-        var page_range;
+        var journal = "";
 
-        if (data.first_page && data.last_page) {
-          page_range = data.first_page + "-" + data.last_page;
+        if ("container-title" in data) {
+          for(var i = 0; i < data['container-title'].length; i++) {
+            if(i == data['container-title'].length-1){
+              journal += data['container-title'][i];
+            }
+            else{
+              journal += data['container-title'][i] + ', ';
+            }
+          }
+        }
+
+        var pages = data.page.split('-');
+        var page_number = "";
+        if (pages.length == 2) {
+          page_number = pages[1]-pages[0];
         }
 
         return {
-          journal_title: data.journal_title,
+          conf_name: data.publisher,
+          journal_title: journal,
           isbn: data.isbn,
-          page_range: page_range,
+          page_nr: page_number,
+          page_range: data.page,
+          year: data.issued['date-parts'][0][0],
+          issue: data.issue,
+          contributors: data.author,
           volume: data.volume,
-          year: data.year.substring(0, 4),
-          issue: data.issues,
-          contributors: data.contributors
+          url: data.URL
         };
       },
 
@@ -58,24 +74,15 @@ define(function(require, exports, module) {
         },
         article: function(data) {
           return {
-            title: data.article_title
+            title: data.title
           };
         }
       },
 
-      extract_contributor: function(contributor) {
-        var name, surname;
-
-        if (contributor.contributor[0]) {
-          name = contributor.contributor[0].given_name;
-        }
-
-        if (contributor.contributor[1]) {
-          surname = contributor.contributor[1].surname;
-        }
+      extract_contributor: function(author) {
 
         return {
-          name: name + ', ' + surname,
+          name: author.family + ', ' + author.given,
           affiliation: ''
         };
       }

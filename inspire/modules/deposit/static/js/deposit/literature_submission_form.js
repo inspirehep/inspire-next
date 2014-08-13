@@ -64,7 +64,8 @@ define(function(require, exports, module) {
         abstract: ['doi', 'arxiv'],
         article_id: ['doi', 'arxiv'],
         license_url: ['arxiv'],
-        note: ['arxiv']
+        note: ['arxiv'],
+        page_nr: ['doi', 'arxiv']
       };
 
       var result = {};
