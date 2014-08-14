@@ -44,11 +44,22 @@ index_js = Bundle(
 
 from invenio.base.bundles import styles as _base_styles
 
+#FIXME variables.less is already imported in inspire.less so there should be
+#no need to add it here to the contents. If it is not added, the depends=
+#parameter takes no effect and modifications to the file don't trigger
+#bundle refresh.
 _base_styles.contents += (
     'less/inspire.less',
+    'less/base/variables.less',
 )
 
-_base_styles.contents.remove("less/base.less")
+to_remove = ["less/base.less",
+             "less/user-menu.less",
+             "less/sticky-footer.less",
+             "less/footer.less"]
+
+for elem in to_remove:
+    _base_styles.contents.remove(elem)
 
 from invenio.modules.search.bundles import js as _search_js
 
