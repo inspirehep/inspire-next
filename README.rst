@@ -46,12 +46,6 @@ Now you can follow the standard invenio installation and development procedures,
 Demosite installation
 ---------------------
 
-Create and fill database tables from fixtures:
-
-.. code-block:: bash
-
-    (inspire)$ inveniomanage demosite create -p inspire.base
-
 Populate demo records and enable demo-site:
 
 .. code-block:: bash
