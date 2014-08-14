@@ -23,17 +23,20 @@
 """Contains INSPIRE specific filtering tasks"""
 
 import re
+from invenio.modules.workflows.utils import pass_properties_to_closure
 
 
+@pass_properties_to_closure
 def inspire_filter_custom(fields, custom_accepted=(), custom_refused=(),
                           custom_widgeted=(), action=None):
     """Allow you to filter for any type of key.
 
-    This function allow you to filter for any type of key in a dictionary stored
-    in object data.
+    This function allow you to filter for any type of key in a dictionary
+    stored in object data.
 
-    :param fields: list representing field to go into for filtering ['a', 'b'] means that we
-    will first look into 'a' key in the dict then from 'a' key the 'b' key inside.
+    :param fields: list representing field to go into for filtering
+                   ['a', 'b'] means that we will first look into 'a'
+                   key in the dict then from 'a' key the 'b' key inside.
     :type fields: list
 
     :param custom_accepted: list of values that can be accepted
@@ -141,12 +144,14 @@ def inspire_filter_custom(fields, custom_accepted=(), custom_refused=(),
                 obj.set_extra_data(extra_data)
                 obj.save()
             else:
-                eng.halt("Category filtering needs human intervention, rules are incoherent !!!",
+                eng.halt("Category filtering needs human intervention, "
+                         "rules are incoherent !!!",
                          action=action)
 
     return _inspire_filter_custom
 
 
+@pass_properties_to_closure
 def inspire_filter_category(category_accepted_param=(),
                             category_refused_param=(),
                             category_widgeted_param=(), action_param=None):
@@ -171,7 +176,8 @@ def inspire_filter_category(category_accepted_param=(),
         except KeyError:
             category_widgeted = category_widgeted_param
         try:
-            action = obj.extra_data["_repository"]["arguments"]["filtering"]['action']
+            action = obj.extra_data["_repository"]["arguments"]
+            action = action["filtering"]['action']
         except KeyError:
             action = action_param
 
@@ -249,6 +255,7 @@ def inspire_filter_category(category_accepted_param=(),
                 obj.save()
             else:
                 eng.halt(
-                    "Category filtering needs human intervention, rules are incoherent !!!",
+                    "Category filtering needs human intervention, "
+                    "rules are incoherent !!!",
                     action=action)
     return _inspire_filter_category
