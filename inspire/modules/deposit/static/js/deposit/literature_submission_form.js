@@ -138,6 +138,8 @@ define(function(require, exports, module) {
           }
         });
 
+      this.importFieldsGroup = $("#field-doi, #field-arxiv_id, #field-isbn").fieldsGroup();
+
       // subject field supports multiple selections
       // using the library bootstrap-multiselect
       $('#subject').attr('multiple', 'multiple').multiselect({
@@ -190,7 +192,12 @@ define(function(require, exports, module) {
         //  called
         that.toggleImportButton(that.$importButton, 'loading');
         //      that.$importButton.button('loading');
-        that.importData();
+        if (!that.importFieldsGroup.fieldValidation(that.save_url)) {
+          that.importData();
+        }
+        else {
+          that.raiseImportError();
+        }
       });
 
       this.$submissionForm.on('submit', function(event) {
@@ -199,7 +206,7 @@ define(function(require, exports, module) {
       });
     },
 
-    toggleImportButton: function toggleImportButton($button, state) {
+    toggleImportButton: function toggleImportButton($button, state, tooltip) {
 
       var importButtonStates = {
         'loading': 'Importing data...',
@@ -211,6 +218,10 @@ define(function(require, exports, module) {
         return;
       }
       this.$importButton.text(newState);
+
+      if (tooltip) {
+        this.$importButton.tooltip(tooltip);
+      }
     },
 
     /**
@@ -271,6 +282,8 @@ define(function(require, exports, module) {
       var isbn = this.$isbn_field.val();
       var depositionType = this.$deposition_type.val();
 
+      var that = this;
+
       var importTasks = [];
 
       var ImportTask = require("./import_task.js");
@@ -284,8 +297,6 @@ define(function(require, exports, module) {
       if (isbn) {
         importTasks.push(new ImportTask(isbnSource, isbn, depositionType));
       }
-
-      var that = this;
 
       this.taskmanager.runMultipleTasksMerge(
         // tasks
@@ -301,10 +312,27 @@ define(function(require, exports, module) {
           // FIXME: a workaround for button() conflict between jQuery-UI
           //  and bootstrap.js. Here should be button() from bootstrap.js
           //  called
-          that.toggleImportButton(that.$importButton, 'reset')
+          that.toggleImportButton(that.$importButton, 'reset', 'destroy');
           //        that.$importButton.button('reset');
         }
       );
+    },
+
+    /**
+     * Display import error
+     */
+    raiseImportError: function raiseImportError() {
+
+      var that = this;
+
+      var msg = {
+          state: 'warning',
+          message: 'Cannot import due to validation errors.'
+        };
+        that.messageBox.clean();
+        that.messageBox.append(msg);
+        that.toggleImportButton(that.$importButton, 'reset',
+          {'title': 'Fix validation errors to import'});
     },
 
     /**
