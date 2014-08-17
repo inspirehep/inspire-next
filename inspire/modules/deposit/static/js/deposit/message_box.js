@@ -67,13 +67,15 @@ define(function(require, exports, module) {
          * @param messages can be a single message context or an array of them.
          */
         append: function(messages) {
+          var that = this;
           if (!Array.isArray(messages)) {
             this._appendOne(messages);
           }
-          var that = this;
-          $.each(messages, function() {
-            that._appendOne(this);
-          });
+          else {
+            $.each(messages, function() {
+              that._appendOne(this);
+            });
+          }
         }
       };
 
