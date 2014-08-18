@@ -20,6 +20,8 @@
  * or submit itself to any jurisdiction.
  */
 
+define(function(require, exports, module) {
+
 function TaskManager($depositionType) {
 
   this.$depositionType = $depositionType;
@@ -127,3 +129,5 @@ TaskManager.prototype = {
     };
   },
 };
+module.exports = TaskManager;
+});

@@ -27,18 +27,7 @@ from invenio.modules.deposit.bundles import js as _deposit_js, \
 _deposit_js.contents += (
     'vendors/buckets/buckets.js',
     'vendors/bootstrap-multiselect/js/bootstrap-multiselect.js',
-    'js/deposit/fields_group.js',
-    'js/deposit/mapper.js',
-    'js/deposit/data_sources/data_source.js',
-    'js/deposit/data_sources/arxiv.js',
-    'js/deposit/data_sources/doi.js',
-    'js/deposit/data_sources/isbn.js',
-    'js/deposit/import_task.js',
-    'js/deposit/task_manager.js',
-    'js/deposit/message_box.js',
-    'js/deposit/conferences_mock.js',
-    'js/deposit/conferences_typeahead.js',
-    'js/deposit/literature_submission_form.js',
+    'js/deposit/inspire_init.js'
 )
 
 _deposit_js.bower.update({

@@ -20,6 +20,8 @@
  * or submit itself to any jurisdiction.
  */
 
+define(function(require, exports, module) {
+
 /**
  * A task to import given id from given source
  * @param dataSource {DataSource}
@@ -41,3 +43,5 @@ ImportTask.prototype = {
   }
 
 };
+module.exports = ImportTask;
+});

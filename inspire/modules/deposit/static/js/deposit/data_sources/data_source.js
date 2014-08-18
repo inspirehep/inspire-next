@@ -20,6 +20,7 @@
  * or submit itself to any jurisdiction.
  */
 
+define(function(require, exports, module) {
 function DataSource(options) {
 
   if (!options.name || !options.id) {
@@ -156,3 +157,5 @@ DataSource.prototype = {
     };
   }
 };
+  module.exports = DataSource;
+});
