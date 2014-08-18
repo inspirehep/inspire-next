@@ -23,71 +23,71 @@
 
 define(function(require, exports, module) {
 
-function DataMapper(options) {
+  function DataMapper(options) {
 
-  /**
-   * Mapping format:
-   *
-   * {
-   *   fieldId: String,
-   *   fieldId: String,
-   *   fieldId: String
-   * },
-   */
+    /**
+     * Mapping format:
+     *
+     * {
+     *   fieldId: String,
+     *   fieldId: String,
+     *   fieldId: String
+     * },
+     */
 
-  /**
-   * Mapping common to every type of deposition.
-   * @type {function} returns the 'Mapping format'
-   */
-  this.common_mapping = options.common_mapping ?
-    options.common_mapping : function(data) {};
+    /**
+     * Mapping common to every type of deposition.
+     * @type {function} returns the 'Mapping format'
+     */
+    this.common_mapping = options.common_mapping ?
+      options.common_mapping : function(data) {};
 
-  /**
-   *
-   * @type {{deposition_type: function}} The function should return
-   *   the 'Mapping format'
-   */
-  this.special_mapping = options.special_mapping ?
-    options.special_mapping : {};
+    /**
+     *
+     * @type {{deposition_type: function}} The function should return
+     *   the 'Mapping format'
+     */
+    this.special_mapping = options.special_mapping ?
+      options.special_mapping : {};
 
-  /**
-   * Function to extract author sub-form content having
-   * an item from should return
-   * {
-   *   name: String,
-   *   affiliation: String
-   * }
-   */
-  this.extract_contributor = options.extract_contributor ?
-    options.extract_contributor : function(contributor) {
-      return contributor;
-  };
-}
-
-DataMapper.prototype = {
-
-  /**
-   * Maps data to a common format in the way defined in filter.
-   *
-   * @param data {*} data to map
-   * @param depositionType {String} type of deposition
-   * @returns {*}
-   */
-  map: function(data, depositionType) {
-    var common_mapping = this.common_mapping(data);
-    var special_mapping = {};
-    if (this.special_mapping[depositionType]) {
-      special_mapping = this.special_mapping[depositionType](data);
-    }
-
-    var mapping = $.extend({}, common_mapping, special_mapping);
-    if (mapping.contributors) {
-      mapping.contributors = $.map(mapping.contributors, this.extract_contributor);
-    }
-
-    return mapping;
+    /**
+     * Function to extract author sub-form content having
+     * an item from should return
+     * {
+     *   name: String,
+     *   affiliation: String
+     * }
+     */
+    this.extract_contributor = options.extract_contributor ?
+      options.extract_contributor : function(contributor) {
+        return contributor;
+    };
   }
-};
 
-module.exports = DataMapper;
+  DataMapper.prototype = {
+
+    /**
+     * Maps data to a common format in the way defined in filter.
+     *
+     * @param data {*} data to map
+     * @param depositionType {String} type of deposition
+     * @returns {*}
+     */
+    map: function(data, depositionType) {
+      var common_mapping = this.common_mapping(data);
+      var special_mapping = {};
+      if (this.special_mapping[depositionType]) {
+        special_mapping = this.special_mapping[depositionType](data);
+      }
+
+      var mapping = $.extend({}, common_mapping, special_mapping);
+      if (mapping.contributors) {
+        mapping.contributors = $.map(mapping.contributors, this.extract_contributor);
+      }
+
+      return mapping;
+    }
+  };
+
+  module.exports = DataMapper;
 });

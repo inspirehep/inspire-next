@@ -28,8 +28,8 @@ define(function(require, exports, module) {
   // FIXME: to get rid of this make template precompilation with 'hulk' or 'requirejs'
   var tpl_flash_message = Hogan.compile(
     '<div class="alert alert-{{state}}">' +
-      '<a class="close" data-dismiss="alert" href="#"">&times;</a>' +
-      '{{{message}}}' +
+    '<a class="close" data-dismiss="alert" href="#"">&times;</a>' +
+    '{{{message}}}' +
     '</div>'
   );
 
@@ -189,7 +189,7 @@ define(function(require, exports, module) {
         //  and bootstrap.js. Here should be button() from bootstrap.js
         //  called
         that.toggleImportButton(that.$importButton, 'loading');
-  //      that.$importButton.button('loading');
+        //      that.$importButton.button('loading');
         that.importData();
       });
 
@@ -302,7 +302,7 @@ define(function(require, exports, module) {
           //  and bootstrap.js. Here should be button() from bootstrap.js
           //  called
           that.toggleImportButton(that.$importButton, 'reset')
-  //        that.$importButton.button('reset');
+          //        that.$importButton.button('reset');
         }
       );
     },

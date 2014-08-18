@@ -21,21 +21,21 @@
  */
 
 define(function(require, exports, module) {
-    var DataSource = require("./data_source.js");
-var isbnSource = new DataSource({
+  var DataSource = require("./data_source.js");
+  var isbnSource = new DataSource({
 
-  id: 'isbn',
-  name: 'ISBN',
+    id: 'isbn',
+    name: 'ISBN',
 
-});
+  });
 
-isbnSource.importData = function(id) {
-  return {
-    statusMessage: {
-      state: 'info',
-      message: 'The ISBN import is not available at the moment.'
-    }
+  isbnSource.importData = function(id) {
+    return {
+      statusMessage: {
+        state: 'info',
+        message: 'The ISBN import is not available at the moment.'
+      }
+    };
   };
-};
-module.exports = isbnSource;
+  module.exports = isbnSource;
 });
