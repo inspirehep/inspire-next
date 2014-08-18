@@ -20,6 +20,9 @@
  * or submit itself to any jurisdiction.
  */
 
+define(function(require, exports, module) {
+  var DataSource = require("./data_source.js");
+  var DataMapper = require("../mapper.js");
 var doiSource = new DataSource({
 
   id: 'doi',
@@ -77,4 +80,6 @@ var doiSource = new DataSource({
       };
     }
   })
+});
+module.exports = doiSource;
 });

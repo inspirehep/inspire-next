@@ -20,6 +20,9 @@
  * or submit itself to any jurisdiction.
  */
 
+
+define(function(require, exports, module) {
+
 function DataMapper(options) {
 
   /**
@@ -85,3 +88,6 @@ DataMapper.prototype = {
     return mapping;
   }
 };
+
+module.exports = DataMapper;
+});

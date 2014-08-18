@@ -20,6 +20,7 @@
  * or submit itself to any jurisdiction.
  */
 
+define(function(require, exports, module) {
 (function($) {
 
   /**
@@ -43,7 +44,7 @@
     var that = this;
 
     // TODO: Move to local search after json output will be ported
-
+    conferencesMock = require("./conferences_mock.js");
     var engine = new Bloodhound({
       name: 'conferences',
       local: conferencesMock,
@@ -237,3 +238,4 @@
   };
 
 })(jQuery);
+});

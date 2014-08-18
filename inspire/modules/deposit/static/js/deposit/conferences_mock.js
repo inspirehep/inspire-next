@@ -1,3 +1,4 @@
+define(function(require, exports, module) {
 var conferencesMock = [{
   "meeting_name": [{
     "date": "9-16 Oct 1968",
@@ -18179,3 +18180,5 @@ var conferencesMock = [{
     "meeting": "Selected Topics in Quantum Field Theory and Mathematical Physics"
   }]
 }];
+module.exports = conferencesMock;
+});

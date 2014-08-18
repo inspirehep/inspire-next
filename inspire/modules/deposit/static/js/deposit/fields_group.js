@@ -20,6 +20,8 @@
  * or submit itself to any jurisdiction.
  */
 
+
+define(function(require, exports, module) {
 /**
  * Allows to trigger actions when all the fields from
  * the selector are empty, and when at least one of them is filled
@@ -37,7 +39,7 @@
      */
     function FieldsGroup(fields, options) {
 
-      // ensure that there is jQuery selector available 
+      // ensure that there is jQuery selector available
       this.$fields = $(fields);
       this.options = $.extend({}, $.fn.fieldsGroup.defaults, options);
 
@@ -165,3 +167,4 @@
   };
 
 })(jQuery);
+});

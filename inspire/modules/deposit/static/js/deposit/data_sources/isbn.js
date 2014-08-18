@@ -20,6 +20,8 @@
  * or submit itself to any jurisdiction.
  */
 
+define(function(require, exports, module) {
+    var DataSource = require("./data_source.js");
 var isbnSource = new DataSource({
 
   id: 'isbn',
@@ -35,3 +37,5 @@ isbnSource.importData = function(id) {
     }
   };
 };
+module.exports = isbnSource;
+});
