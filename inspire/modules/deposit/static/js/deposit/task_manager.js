@@ -22,112 +22,112 @@
 
 define(function(require, exports, module) {
 
-function TaskManager($depositionType) {
+  function TaskManager($depositionType) {
 
-  this.$depositionType = $depositionType;
-}
+    this.$depositionType = $depositionType;
+  }
 
-TaskManager.prototype = {
+  TaskManager.prototype = {
 
-  /**
-   * Runs multiple tasks and merges the results
-   *
-   * @param tasks - list of tasks to be run
-   * @param mergeMapper - mapper (see mapper.js)
-   * @param on_done - callback on done, which receives imported and merged data
-   *  as an argument
-   */
-  runMultipleTasksMerge: function(tasks, mergeMapper, on_done) {
-    var taskmanager = this;
-    this.runMultipleTasks(tasks, function(results) {
-      on_done(taskmanager.mergeSources(results, mergeMapper));
-    });
-  },
+    /**
+     * Runs multiple tasks and merges the results
+     *
+     * @param tasks - list of tasks to be run
+     * @param mergeMapper - mapper (see mapper.js)
+     * @param on_done - callback on done, which receives imported and merged data
+     *  as an argument
+     */
+    runMultipleTasksMerge: function(tasks, mergeMapper, on_done) {
+      var taskmanager = this;
+      this.runMultipleTasks(tasks, function(results) {
+        on_done(taskmanager.mergeSources(results, mergeMapper));
+      });
+    },
 
-  /**
-   * Runs multiple tasks asynchronously and executes a callback when they are
-   * resolved/rejected
-   *
-   * @param tasks - list of tasks (see import_task.js for an example)
-   * @param callback - callback on done
-   */
-  runMultipleTasks: function(tasks, callback) {
-    var deferredTasks = [];
+    /**
+     * Runs multiple tasks asynchronously and executes a callback when they are
+     * resolved/rejected
+     *
+     * @param tasks - list of tasks (see import_task.js for an example)
+     * @param callback - callback on done
+     */
+    runMultipleTasks: function(tasks, callback) {
+      var deferredTasks = [];
 
-    $.each(tasks, function(i, task) {
-      var deferred_task = task.run();
-      deferredTasks.push(deferred_task);
-    });
+      $.each(tasks, function(i, task) {
+        var deferred_task = task.run();
+        deferredTasks.push(deferred_task);
+      });
 
-    $.when.apply(this, deferredTasks).then(function() {
-      /* Deferred object was resolved */
-      callback(arguments);
-    }, function() {
-      /* Deferred object was rejected */
-      callback(arguments);
-    });
-  },
+      $.when.apply(this, deferredTasks).then(function() {
+        /* Deferred object was resolved */
+        callback(arguments);
+      }, function() {
+        /* Deferred object was rejected */
+        callback(arguments);
+      });
+    },
 
-  /**
-   *
-   * @param results an array with all the sources to merge; every item in
-   * the array is in the following format:
-   *  {
-   *    label: String,
-   *    mapping: {
-   *      fieldId: String,
-   *      fieldId: String,
-   *      fieldId: String
-   *    },
-   *    queryStatus: {
-   *      state: String,
-   *      message: String
-   *    }
-   *  }
-   * @returns {
-   *    mapping: {
-   *      fieldId: String,
-   *      fieldId: String,
-   *      fieldId: String
-   *    },
-   *    statusMessage: [
-   *      {
-   *        state: String,
-   *        message: String
-   *      },
-   *      {
-   *        state: String,
-   *        message: String
-   *      }
-   *    ]
-   *  }
-   *  merged mapping and query messages in an array
-   */
-  mergeSources: function(results, mergeMapper) {
-    var sources = {},
-      mergedMapping = {};
-    for (var i in results) {
-      var taskResult = results[i];
-      if (!taskResult.mapping) {
-        continue;
+    /**
+     *
+     * @param results an array with all the sources to merge; every item in
+     * the array is in the following format:
+     *  {
+     *    label: String,
+     *    mapping: {
+     *      fieldId: String,
+     *      fieldId: String,
+     *      fieldId: String
+     *    },
+     *    queryStatus: {
+     *      state: String,
+     *      message: String
+     *    }
+     *  }
+     * @returns {
+     *    mapping: {
+     *      fieldId: String,
+     *      fieldId: String,
+     *      fieldId: String
+     *    },
+     *    statusMessage: [
+     *      {
+     *        state: String,
+     *        message: String
+     *      },
+     *      {
+     *        state: String,
+     *        message: String
+     *      }
+     *    ]
+     *  }
+     *  merged mapping and query messages in an array
+     */
+    mergeSources: function(results, mergeMapper) {
+      var sources = {},
+        mergedMapping = {};
+      for (var i in results) {
+        var taskResult = results[i];
+        if (!taskResult.mapping) {
+          continue;
+        }
+        sources[taskResult.label] = taskResult.mapping;
       }
-      sources[taskResult.label] = taskResult.mapping;
-    }
-    var messages = $.map(results, function(val) {
-      return val.statusMessage;
-    });
+      var messages = $.map(results, function(val) {
+        return val.statusMessage;
+      });
 
-    if (Object.keys(sources).length) {
-      mergedMapping = mergeMapper.map(
-        sources, this.$depositionType.val()
-      );
-    }
+      if (Object.keys(sources).length) {
+        mergedMapping = mergeMapper.map(
+          sources, this.$depositionType.val()
+        );
+      }
 
-    return {
-      mapping: mergedMapping,
-      statusMessage: messages
-    };
-  },
-};
-module.exports = TaskManager;
+      return {
+        mapping: mergedMapping,
+        statusMessage: messages
+      };
+    },
+  };
+  module.exports = TaskManager;
 });

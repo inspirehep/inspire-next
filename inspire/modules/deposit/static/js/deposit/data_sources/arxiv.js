@@ -23,49 +23,49 @@
 define(function(require, exports, module) {
   var DataSource = require("./data_source.js");
   var DataMapper = require("../mapper.js");
-var arxivSource = new DataSource({
+  var arxivSource = new DataSource({
 
-  id: 'arxiv',
-  name: 'arXiv ID',
-  url: '/arxiv/search?arxiv=',
+    id: 'arxiv',
+    name: 'arXiv ID',
+    url: '/arxiv/search?arxiv=',
 
-  mapper: new DataMapper({
+    mapper: new DataMapper({
 
-    special_mapping: {
-      article: function(data) {
+      special_mapping: {
+        article: function(data) {
+          return {
+            doi: data.doi,
+            title: data.title,
+            title_arXiv: data.title,
+            abstract: data.abstract,
+            contributors: data.authors,
+            journal_title: data["journal-ref"],
+            year: data.created.substring(0, 4),
+            license_url: data.license,
+            note: data.comments,
+          };
+        }
+      },
+
+      extract_contributor: function(authors) {
+        var name, surname;
+
+        if (authors.author[0]) {
+          name = authors.author[0].keyname;
+        }
+
+        if (authors.author[1]) {
+          surname = authors.author[1].forenames;
+        }
+
         return {
-          doi: data.doi,
-          title: data.title,
-          title_arXiv: data.title,
-          abstract: data.abstract,
-          contributors: data.authors,
-          journal_title: data["journal-ref"],
-          year: data.created.substring(0, 4),
-          license_url: data.license,
-          note: data.comments,
+          name: name + ', ' + surname,
+          affiliation: ''
         };
       }
-    },
+    })
 
-    extract_contributor: function(authors) {
-      var name, surname;
+  });
 
-      if (authors.author[0]) {
-        name = authors.author[0].keyname;
-      }
-
-      if (authors.author[1]) {
-        surname = authors.author[1].forenames;
-      }
-
-      return {
-        name: name + ', ' + surname,
-        affiliation: ''
-      };
-    }
-  })
-
-});
-
-module.exports = arxivSource;
+  module.exports = arxivSource;
 });

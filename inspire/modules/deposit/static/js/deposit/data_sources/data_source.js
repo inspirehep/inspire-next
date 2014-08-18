@@ -21,141 +21,141 @@
  */
 
 define(function(require, exports, module) {
-function DataSource(options) {
+  function DataSource(options) {
 
-  if (!options.name || !options.id) {
-    throw "ImportSource: improper initialization";
+    if (!options.name || !options.id) {
+      throw "ImportSource: improper initialization";
+    }
+
+    /**
+     * Source name used as an internal identifier.
+     *
+     * @type {String}
+     */
+    this.id = options.id;
+
+    /**
+     * User-friendly source name used to put inside status messages.
+     *
+     * @type {String}
+     */
+    this.name = options.name;
+
+    /**
+     * Query url.
+     *
+     * @type {String}
+     */
+    this.url = options.url;
+
+    /**
+     * DataMapper to map the query result to field ids of the form.
+     *
+     * @type {DataMapper}
+     */
+    this.mapper = options.mapper;
   }
 
-  /**
-   * Source name used as an internal identifier.
-   *
-   * @type {String}
-   */
-  this.id = options.id;
+  DataSource.prototype = {
+    /**
+     * Imports data using given mapper.
+     *
+     * @returns {Deferred} an object needed for tasks synchronization
+     */
+    importData: function(id, depositionType) {
+      var that = this;
 
-  /**
-   * User-friendly source name used to put inside status messages.
-   *
-   * @type {String}
-   */
-  this.name = options.name;
+      function processQuery(data) {
 
-  /**
-   * Query url.
-   *
-   * @type {String}
-   */
-  this.url = options.url;
+        var queryStatus = data.query ?
+          data.query.status : data.status;
 
-  /**
-   * DataMapper to map the query result to field ids of the form.
-   *
-   * @type {DataMapper}
-   */
-  this.mapper = options.mapper;
-}
+        if (queryStatus === 'success' && data.source === 'database') {
+          queryStatus = 'duplicated';
+        }
 
-DataSource.prototype = {
-  /**
-   * Imports data using given mapper.
-   *
-   * @returns {Deferred} an object needed for tasks synchronization
-   */
-  importData: function(id, depositionType) {
-    var that = this;
+        var queryMessage = that.getImportMessage(queryStatus, id);
 
-    function processQuery(data) {
+        if (queryStatus !== 'success') {
+          return {
+            statusMessage: queryMessage
+          };
+        }
 
-      var queryStatus = data.query ?
-        data.query.status : data.status;
+        // Map form elements with query result
+        var mapping = that.mapper.map(data.query, depositionType);
 
-      if (queryStatus === 'success' && data.source === 'database') {
-        queryStatus = 'duplicated';
-      }
-
-      var queryMessage = that.getImportMessage(queryStatus, id);
-
-      if (queryStatus !== 'success') {
         return {
+          label: that.id,
+          mapping: mapping,
           statusMessage: queryMessage
         };
       }
 
-      // Map form elements with query result
-      var mapping = that.mapper.map(data.query, depositionType);
+      var importDataPromise = new $.Deferred();
 
-      return {
-        label: that.id,
-        mapping: mapping,
-        statusMessage: queryMessage
-      };
-    }
+      $.ajax({
+        url: this.url + id
+      })
+        .always(function(data) {
+          var result = processQuery(data);
+          importDataPromise.resolve(result);
+        });
 
-    var importDataPromise = new $.Deferred();
+      return importDataPromise;
+    },
 
-    $.ajax({
-      url: this.url + id
-    })
-      .always(function(data) {
-        var result = processQuery(data);
-        importDataPromise.resolve(result);
-      });
+    /**
+     * Generates the import status message.
+     * @param queryStatus
+     * @param idType DOI/arXiv/ISBN etc.
+     * @param id
+     * @returns {{state: string, message: string}} as in the input of
+     *  tpl_flash_message template
+     */
+    getImportMessage: function(queryStatus, id) {
+      if (queryStatus === 'notfound') {
+        return {
+          state: 'warning',
+          message: 'The ' + this.name + ' ' + id + ' was not found.'
+        };
+      }
+      if (queryStatus === 'malformed') {
+        return {
+          state: 'warning',
+          message: 'The ' + this.name + ' ' + id + ' is malformed.'
+        };
+      }
+      if (queryStatus === 'success') {
+        return {
+          state: 'success',
+          message: 'The data was successfully imported from ' + this.name + '.'
+        };
+      }
+      if (queryStatus === 'duplicated') {
+        return {
+          state: 'info',
+          message: 'This ' + this.name + ' already exists on the INSPIRE database.'
+        };
+      }
+      if (queryStatus === 300) {
+        return {
+          state: 'warning',
+          message: 'The ' + this.name + ' ' + id + ' is not unique.'
+        };
+      }
+      if (queryStatus === 422) {
+        return {
+          state: 'warning',
+          message: 'The ' + this.name + ' ' + id + ' is malformed.'
+        };
+      }
 
-    return importDataPromise;
-  },
-
-  /**
-   * Generates the import status message.
-   * @param queryStatus
-   * @param idType DOI/arXiv/ISBN etc.
-   * @param id
-   * @returns {{state: string, message: string}} as in the input of
-   *  tpl_flash_message template
-   */
-  getImportMessage: function(queryStatus, id) {
-    if (queryStatus === 'notfound') {
       return {
         state: 'warning',
-        message: 'The ' + this.name + ' ' + id + ' was not found.'
+        message: 'The ' + this.name + ' ' + id + ' cannot be imported.'
       };
     }
-    if (queryStatus === 'malformed') {
-      return {
-        state: 'warning',
-        message: 'The ' + this.name + ' ' + id + ' is malformed.'
-      };
-    }
-    if (queryStatus === 'success') {
-      return {
-        state: 'success',
-        message: 'The data was successfully imported from ' + this.name + '.'
-      };
-    }
-    if (queryStatus === 'duplicated') {
-      return {
-        state: 'info',
-        message: 'This ' + this.name + ' already exists on the INSPIRE database.'
-      };
-    }
-    if (queryStatus === 300) {
-      return {
-        state: 'warning',
-        message: 'The ' + this.name + ' ' + id + ' is not unique.'
-      };
-    }
-    if (queryStatus === 422) {
-      return {
-        state: 'warning',
-        message: 'The ' + this.name + ' ' + id + ' is malformed.'
-      };
-    }
-
-    return {
-      state: 'warning',
-      message: 'The ' + this.name + ' ' + id + ' cannot be imported.'
-    };
-  }
-};
+  };
   module.exports = DataSource;
 });

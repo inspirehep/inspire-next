@@ -22,26 +22,26 @@
 
 define(function(require, exports, module) {
 
-/**
- * A task to import given id from given source
- * @param dataSource {DataSource}
- * @param dataId {String}
- * @param depositionType {String}
- * @constructor
- */
-function ImportTask(dataSource, dataId, depositionType) {
+  /**
+   * A task to import given id from given source
+   * @param dataSource {DataSource}
+   * @param dataId {String}
+   * @param depositionType {String}
+   * @constructor
+   */
+  function ImportTask(dataSource, dataId, depositionType) {
 
-  this.dataSource = dataSource;
-  this.dataId = dataId;
-  this.depositionType = depositionType;
-}
-
-ImportTask.prototype = {
-
-  run: function() {
-    return this.dataSource.importData(this.dataId, this.depositionType);
+    this.dataSource = dataSource;
+    this.dataId = dataId;
+    this.depositionType = depositionType;
   }
 
-};
-module.exports = ImportTask;
+  ImportTask.prototype = {
+
+    run: function() {
+      return this.dataSource.importData(this.dataId, this.depositionType);
+    }
+
+  };
+  module.exports = ImportTask;
 });

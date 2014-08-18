@@ -23,63 +23,63 @@
 define(function(require, exports, module) {
   var DataSource = require("./data_source.js");
   var DataMapper = require("../mapper.js");
-var doiSource = new DataSource({
+  var doiSource = new DataSource({
 
-  id: 'doi',
-  name: 'DOI',
-  url: '/deposit/search_doi?doi=',
+    id: 'doi',
+    name: 'DOI',
+    url: '/deposit/search_doi?doi=',
 
-  mapper: new DataMapper({
+    mapper: new DataMapper({
 
-    common_mapping: function(data) {
+      common_mapping: function(data) {
 
-      var page_range;
+        var page_range;
 
-      if (data.first_page && data.last_page) {
-        page_range = data.first_page + "-" + data.last_page;
-      }
+        if (data.first_page && data.last_page) {
+          page_range = data.first_page + "-" + data.last_page;
+        }
 
-      return {
-        journal_title: data.journal_title,
-        isbn: data.isbn,
-        page_range: page_range,
-        volume: data.volume,
-        year: data.year.substring(0, 4),
-        issue: data.issues,
-        contributors: data.contributors
-      };
-    },
-
-    special_mapping: {
-      thesis: function(data) {
         return {
-          title: data.volume_title
+          journal_title: data.journal_title,
+          isbn: data.isbn,
+          page_range: page_range,
+          volume: data.volume,
+          year: data.year.substring(0, 4),
+          issue: data.issues,
+          contributors: data.contributors
         };
       },
-      article: function(data) {
+
+      special_mapping: {
+        thesis: function(data) {
+          return {
+            title: data.volume_title
+          };
+        },
+        article: function(data) {
+          return {
+            title: data.article_title
+          };
+        }
+      },
+
+      extract_contributor: function(contributor) {
+        var name, surname;
+
+        if (contributor.contributor[0]) {
+          name = contributor.contributor[0].given_name;
+        }
+
+        if (contributor.contributor[1]) {
+          surname = contributor.contributor[1].surname;
+        }
+
         return {
-          title: data.article_title
+          name: name + ', ' + surname,
+          affiliation: ''
         };
       }
-    },
-
-    extract_contributor: function(contributor) {
-      var name, surname;
-
-      if (contributor.contributor[0]) {
-        name = contributor.contributor[0].given_name;
-      }
-
-      if (contributor.contributor[1]) {
-        surname = contributor.contributor[1].surname;
-      }
-
-      return {
-        name: name + ', ' + surname,
-        affiliation: ''
-      };
-    }
-  })
-});
-module.exports = doiSource;
+    })
+  });
+  module.exports = doiSource;
 });
