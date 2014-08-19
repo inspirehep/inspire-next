@@ -81,28 +81,18 @@ From the command line:
 
 | **Unfamiliar with npm? Don't have node installed?** That's a-okay. npm stands for `node packaged modules <https://www.npmjs.org/>`_ and is a way to manage development dependencies through node.js. `Download and install node.js <http://nodejs.org/download/>`_ before proceeding.
 
-Install Bower
--------------
-
-From the command line:
-
-1. Install ``bower`` globally with ``npm install -g bower``.
-
-2. Navigate to the root directory, then run ``bower install``. ``bower`` will look at bower.json and automatically install the necessary local dependencies listed there.
-
-
-| When completed, you'll have all the dependencies under ``bower_components/``.
-
 Available Grunt commands
 ------------------------
 
-**Build** - ``grunt``
+| **Development**
 
-| Run ``grunt`` to copy external libraries. Extend the ``copy`` task and ``bower.json`` ton include future libraries.
-
-| **Development** - ``grunt jshint``
+``grunt jshint``
 
 | This is a task to lint JavaScript according to `JSHint <http://www.jshint.com/>`_.
+
+``grunt jsbeautifier``
+
+| This is a task to prettifiy JavaScript according to `JSbeautifier <https://www.npmjs.org/package/grunt-jsbeautifier/>`_.
 
 Troubleshooting dependencies
 ----------------------------
