@@ -27,7 +27,6 @@ from invenio.modules.deposit.bundles import js as _deposit_js, \
 _deposit_js.contents += (
     'vendors/buckets/buckets.js',
     'vendors/bootstrap-multiselect/js/bootstrap-multiselect.js',
-    'js/deposit/inspire_init.js'
 )
 
 _deposit_js.bower.update({
