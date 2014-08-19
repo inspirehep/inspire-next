@@ -208,8 +208,4 @@ class KnwKBDDEFData(DataSet):
         output_tag = u'110__u'
         search_expression = u'371__a:"*%*"'
 
-    class KnwKBDDEFData_1:
-        id_knwKB = 7
-        id_collection = 2
-        output_tag = u'110__u'
-        search_expression = u'371__a:"*%*"'
+__all__ = ('KnwKBData', 'KnwKBRVALData', 'KnwKBDDEFData')

@@ -56,3 +56,5 @@ class AidPERSONIDDATAData(DataSet):
         tag = u'uid'
         personid = 7L
         data = u'8'
+
+__all__ = ('AidPERSONIDDATAData', )

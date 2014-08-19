@@ -170,14 +170,14 @@ class OaiREPOSITORYData(DataSet):
         m3 = u''
         m2 = u''
 
-    class OaiREPOSITORY_8:
+    class OaiREPOSITORY_9:
         f1 = u''
         f2 = u''
         f3 = u''
         setRecList = None
         setDefinition = u'c=Journals;p1=;f1=;m1=;op1=a;p2=;f2=;m2=;op2=a;p3=;f3=;m3=;'
         last_updated = datetime.now()
-        id = 8
+        id = 9
         setSpec = u'INSPIRE:Journals'
         setDescription = u''
         p3 = u''
@@ -189,14 +189,14 @@ class OaiREPOSITORYData(DataSet):
         m3 = u''
         m2 = u''
 
-    class OaiREPOSITORY_8:
+    class OaiREPOSITORY_10:
         f1 = u''
         f2 = u''
         f3 = u''
         setRecList = None
         setDefinition = u'c=HepNames;p1=;f1=;m1=;op1=a;p2=;f2=;m2=;op2=a;p3=;f3=;m3=;'
         last_updated = datetime.now()
-        id = 8
+        id = 10
         setSpec = u'INSPIRE:HepNames'
         setDescription = u''
         p3 = u''
@@ -207,3 +207,5 @@ class OaiREPOSITORYData(DataSet):
         m1 = u''
         m3 = u''
         m2 = u''
+
+__all__ = ('OaiHARVESTData', 'OaiREPOSITORYData')

@@ -33,3 +33,5 @@ class ExpJOBData(DataSet):
     class ExpJOB_3:
         id = 3L
         jobname = u'marcxml'
+
+__all__ = ('ExpJOBData', )

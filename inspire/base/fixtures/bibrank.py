@@ -61,62 +61,22 @@ class CollectionRnkMETHODData(DataSet):
 
 class RnkMETHODNAMEData(DataSet):
 
-	class Rnkmethodname_1:
-		id_rnkMETHOD = 1
-		ln = "en"
-		type = "ln"
-		value = "word similarity"
+    class Rnkmethodname_1:
+        id_rnkMETHOD = 1
+        ln = "en"
+        type = "ln"
+        value = "word similarity"
 
-	class Rnkmethodname_2:
-		id_rnkMETHOD = 2
-		ln = "en"
-		type = "ln"
-		value = "times cited"
+    class Rnkmethodname_2:
+        id_rnkMETHOD = 2
+        ln = "en"
+        type = "ln"
+        value = "times cited"
 
-	class Rnkmethodname_3:
-		id_rnkMETHOD = 3
-		ln = "en"
-		type = "ln"
-		value = "self citations"
+    class Rnkmethodname_3:
+        id_rnkMETHOD = 3
+        ln = "en"
+        type = "ln"
+        value = "self citations"
 
-# class CollectionRnkMETHODData(DataSet):
-
-#     class CollectionRnkMETHOD_15_2:
-#         score = 90
-#         id_rnkMETHOD = RnkMETHODData.RnkMETHOD_2.ref('id')
-#         id_collection = CollectionDataDemosite.articlesPreprints.ref('id')
-
-#     class CollectionRnkMETHOD_15_3:
-#         score = 80
-#         id_rnkMETHOD = RnkMETHODData.RnkMETHOD_3.ref('id')
-#         id_collection = CollectionDataDemosite.articlesPreprints.ref('id')
-
-#     class CollectionRnkMETHOD_15_4:
-#         score = 70
-#         id_rnkMETHOD = RnkMETHODData.RnkMETHOD_4.ref('id')
-#         id_collection = CollectionDataDemosite.articlesPreprints.ref('id')
-
-#     class CollectionRnkMETHOD_15_5:
-#         score = 60
-#         id_rnkMETHOD = RnkMETHODData.RnkMETHOD_5.ref('id')
-#         id_collection = CollectionDataDemosite.articlesPreprints.ref('id')
-
-#     class CollectionRnkMETHOD_15_6:
-#         score = 50
-#         id_rnkMETHOD = RnkMETHODData.RnkMETHOD_6.ref('id')
-#         id_collection = CollectionDataDemosite.articlesPreprints.ref('id')
-
-#     class CollectionRnkMETHOD_15_7:
-#         score = 80
-#         id_rnkMETHOD = RnkMETHODData.RnkMETHOD_7.ref('id')
-#         id_collection = CollectionDataDemosite.articlesPreprints.ref('id')
-
-#     class CollectionRnkMETHOD_1_3:
-#         score = 10
-#         id_rnkMETHOD = RnkMETHODData.RnkMETHOD_3.ref('id')
-#         id_collection = CollectionDataDemosite.siteCollection.ref('id')
-
-#     class CollectionRnkMETHOD_1_7:
-#         score = 10
-#         id_rnkMETHOD = RnkMETHODData.RnkMETHOD_7.ref('id')
-#         id_collection = CollectionDataDemosite.siteCollection.ref('id')
+__all__ = ('RnkMETHODData', 'CollectionRnkMETHODData', 'RnkMETHODNAMEData')

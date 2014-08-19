@@ -63,7 +63,8 @@ EXTENSIONS = [
     'flask.ext.breadcrumbs:Breadcrumbs',
     'invenio.modules.deposit.url_converters',
     'inspire.ext.search_bar',
-    'inspire.ext.formatter_jinja_filters'
+    'inspire.ext.formatter_jinja_filters',
+    'invenio.ext.fixtures',
 ]
 
 PACKAGES = [
@@ -139,6 +140,7 @@ BROKER_URL = "amqp://guest:guest@localhost:5672//"
 CFG_SITE_LANG = u"en"
 CFG_SITE_LANGS = ['en', ]
 
+CFG_SITE_ADMIN_EMAIL = "admin@inspirehep.net"
 
 # CFG_SITE_NAME and main collection name should be the same for empty search
 # to work
