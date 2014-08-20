@@ -29,6 +29,7 @@ define(function(require, exports, module) {
   var DataMapper = require("js/deposit/mapper");
   var TaskManager = require("js/deposit/task_manager");
   var ConferencesTypeahead = require("js/deposit/conferences_typeahead");
+  var ModalPreview = require("js/deposit/modal_preview");
   require("js/deposit/message_box");
   require("js/deposit/fields_group");
   require('ui/effect-highlight');
@@ -102,9 +103,11 @@ define(function(require, exports, module) {
     this.$language = $("#language");
     this.$translated_title = $("#state-group-title_translation");
     this.$importButton = $("#importData");
+    this.$skipButton = $("#skipImportData");
     this.$submissionForm = $('#submitForm');
     this.$conference = $('#conf_name');
     this.$conferenceId = $('#conference_id');
+    this.$previewModal = $('#myModal');
 
     // these fields' values will be deleted before submission so that they will not be
     // sent to the sever
@@ -163,6 +166,12 @@ define(function(require, exports, module) {
 
         cannotFindMessage: 'Cannot find this conference in our database.'
       });
+
+      // starts the modal preview
+      this.previewModal = new ModalPreview(this.$previewModal, {
+        labels: this.getLabels(),
+        hiddenFields: this.getHiddenFields()
+      });
     },
 
     /*
@@ -185,10 +194,46 @@ define(function(require, exports, module) {
         that.importData();
       });
 
+      this.$skipButton.click(function(event) {
+        event.preventDefault();
+        that.showRestForm(this);
+      });
+
+      this.$previewModal.on("accepted", function(event, data, el) {
+        var mapping = data;
+        that.fillForm(mapping);
+        that.fieldsGroup.resetState();
+        that.messageBox.showMessages();
+        that.showRestForm(el);
+      });
+
       this.$submissionForm.on('submit', function(event) {
         that.$conferenceId.val(ConferencesTypeahead.getRawValue());
         that.deleteIgnoredValues();
       });
+    },
+
+    /**
+     * Show the rest of the form except for the first panel
+     */
+    showRestForm: function showRestForm(el) {
+      var $root = $('body');
+
+      // traverse the DOM starting from the parent form
+      var $hiddenElements = $('#submitForm').find('#webdeposit_form_accordion');
+
+      // shows the hidden elements of the form
+      $hiddenElements
+        .children('.panel:not(:first-child)') // all the panels except for the first
+      .removeClass('hide');
+      $hiddenElements
+        .siblings('.well') // the action bar
+      .removeClass('hide');
+
+      var href = $.attr(el, 'href');
+      $root.animate({
+        scrollTop: $(href).offset().top
+      }, 'slow');
     },
 
     /**
@@ -272,13 +317,43 @@ define(function(require, exports, module) {
         literatureFormPriorityMapper,
         // callback
         function(result) {
-          that.fillForm(result.mapping);
-          that.fieldsGroup.resetState();
           that.messageBox.clean();
           that.messageBox.append(result.statusMessage);
           that.$importButton.button('reset');
+          // check for empty object {}
+          if (result.mapping) {
+            that.previewModal.show(result.mapping);
+          } else {
+            that.messageBox.showMessages();
+          }
         }
       );
+    },
+
+    /**
+     * Removes hidden fields from the object
+     */
+    getHiddenFields: function getHiddenFields(dataMapping) {
+      return $.map($('input.hidden'), function(value, index) {
+        return value.id;
+      });
+    },
+
+    /**
+     * Maps to the labels extracted from the form
+     */
+    getLabels: function getLabels() {
+      var newObject = {};
+      var $rows = $("div[id^='state-group-']");
+      $.map($rows, function(row, index) {
+        var $label = $(row).find('label');
+        var label = $.trim($label.text());
+        var $field = $(row).find("div[id^='field-']").children().first();
+        if ($label && label) {
+          newObject[$field[0].id] = label;
+        }
+      });
+      return newObject;
     },
 
     /**

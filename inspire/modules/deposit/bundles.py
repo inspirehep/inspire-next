@@ -27,13 +27,15 @@ from invenio.base.bundles import jquery as _base_js
 
 _deposit_js.contents.remove("js/deposit/init.js")
 _deposit_js.contents += [
-    'vendors/buckets/buckets.js'
+    'vendors/buckets/buckets.js',
+    'vendors/readmore/readmore.min.js'
 ]
 _deposit_js.contents = ['js/deposit/inspire_init.js'] + _deposit_js.contents
 
 _deposit_js.bower.update({
     'buckets': 'git://github.com/mauriciosantos/buckets.git',
-    'bootstrap-multiselect': '~0.9.4'
+    'bootstrap-multiselect': '~0.9.4',
+    "readmore": "*",
 })
 
 _deposit_styles.contents += (
