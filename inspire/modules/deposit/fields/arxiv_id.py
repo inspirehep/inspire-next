@@ -28,7 +28,7 @@ __all__ = ['ArXivField']
 
 
 def arxiv_syntax_validation(form, field):
-    message = "The provided ArXiv ID is invalid - it should look \
+    message = "The provided arXiv ID is invalid - it should look \
                 similar to 'hep-th/1234567' or '1234.5678'."
 
     if field.data and not is_arxiv(field.data):
