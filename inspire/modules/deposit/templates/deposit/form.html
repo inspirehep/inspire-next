@@ -18,6 +18,15 @@
 #}
 {%- extends "deposit/form_base.html" -%}
 
+{# include custom templates for the panels and the action bar by adding new classes to the markup #}
+{% macro form_action_bar(margin="") -%}{% block form_action_bar scoped %}
+    {% include "deposit/run_action_bar.html" %}
+{% endblock %}{%- endmacro %}
+
+{%- macro form_group_accordion_start(group, idx) -%}
+    {% include "deposit/run_group_start.html" %}
+{%- endmacro -%}
+
 {% block form_header scoped %}{% endblock %}
 
 {% block form_title scoped %}
