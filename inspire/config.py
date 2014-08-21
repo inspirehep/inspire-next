@@ -70,6 +70,7 @@ EXTENSIONS = [
 PACKAGES = [
     'inspire.base',
     'inspire.ext',
+    'inspire.utils',
     'inspire.modules.workflows',
     'inspire.modules.deposit',
     'invenio.modules.access',

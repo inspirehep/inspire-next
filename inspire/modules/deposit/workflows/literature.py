@@ -30,6 +30,10 @@ from invenio.modules.deposit.tasks import render_form, \
 
 from inspire.modules.deposit.forms import LiteratureForm
 
+from inspire.modules.workflows.tasks.submission import (
+    finalize_and_post_process,
+)
+
 
 class literature(SimpleRecordDeposition):
 
@@ -48,18 +52,13 @@ class literature(SimpleRecordDeposition):
         # Process metadata to match your JSONAlchemy record model. This will
         # call process_sip_metadata() on your subclass.
         process_sip_metadata(),
-        # Reserve a new record id, so that we can provide proper feedback to
-        # user before the record has been uploaded.
-        create_recid(),
         # Generate MARC based on metadata dictionary.
         finalize_record_sip(is_dump=False),
-        # Hold the deposition for admin approval
-        hold_for_approval(),
-        # Seal the SIP and write MARCXML file and call bibupload on it
-        upload_record_sip(),
+        # Seal the SIP and start a new workflow for post-processing
+        finalize_and_post_process("process_record_submission"),
     ]
 
-    hold_for_upload = False
+    hold_for_upload = True
 
     name = "Literature"
     name_plural = "Literature depositions"
