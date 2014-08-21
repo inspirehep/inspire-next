@@ -32,43 +32,37 @@
 
 {% block javascript %}
 <script type="text/javascript">
-require(["jquery", "js/deposit/form", "/js/deposit/literature_submission_form.js"], function($, deposit_form, LiteratureSubmissionForm) {
+require(["jquery", "js/deposit/form", "/js/deposit/literature_submission_form.js", "js/deposit/plupload"], function($, deposit_form, LiteratureSubmissionForm) {
   $(function() {
-  var save_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id) }}';
-  var save_all_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, all='1') }}';
-  var complete_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, submit='1') }}';
-  var autocomplete_url = '{{ url_for(".autocomplete", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, field_name="__FIELDNAME__", limit=10) }}';
+    var save_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id) }}';
+    var save_all_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, all='1') }}';
+    var complete_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, submit='1') }}';
+    var autocomplete_url = '{{ url_for(".autocomplete", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, field_name="__FIELDNAME__") }}';
 
-  var configuration = {
-    plupload: {
-      max_size: '{{config.DEPOSIT_MAX_UPLOAD_SIZE|default('10mb')}}',
-      selector:'.pluploader',
-      save_url: save_url,
-      url: '{{ url_for('.upload_file', deposition_type=deposition_type, uuid=uuid) }}',
-      delete_url: '{{ url_for('.delete_file', deposition_type=deposition_type, uuid=uuid) }}',
-      get_file_url: '{{ url_for('.get_file', deposition_type=deposition_type, uuid=uuid) }}',
-      db_files: {{ form.files|safe }},
-      dropbox_url: '{{ url_for('.upload_url', deposition_type=deposition_type, uuid=uuid) }}'
-      // Those are missing
-      // uuid:,
-      // newdep_url:,
-      // continue_url
-    },
-    urls: {
+    // Initialize form
+    deposit_form.attachTo("#submitForm", {
       save_url: save_url,
       save_all_url: save_all_url,
       complete_url: complete_url,
       autocomplete_url: autocomplete_url,
-    },
-    datepicker: {
-      element: '.datepicker',
-      format: 'yy-mm-dd'
-    }
-  }
-  // Initialize Invenio's deposit form
-  deposit_form.init(configuration);
+      datepicker_element: '.datepicker',
+      datepicker_format: 'yy-mm-dd'
+    });
 
-  var form = new LiteratureSubmissionForm(save_url);
+    $('.pluploader').pluploadWidget({
+      max_file_size: '{{config.DEPOSIT_MAX_UPLOAD_SIZE|default('10mb')}}',
+      save_url: save_url,
+      url: '{{ url_for('.upload_file', deposition_type=deposition_type, uuid=uuid) }}',
+      delete_url: '{{ url_for('.delete_file', deposition_type=deposition_type, uuid=uuid) }}',
+      get_file_url: '{{ url_for('.get_file', deposition_type=deposition_type, uuid=uuid) }}',
+      dropbox_url: '{{ url_for('.upload_url', deposition_type=deposition_type, uuid=uuid) }}',
+      files: {{ form.files|safe }},
+      // Those are missing
+      // uuid:,
+      // newdep_url:,
+      // continue_url
+    });
+    var form = new LiteratureSubmissionForm(save_url);
   });
 });
 </script>

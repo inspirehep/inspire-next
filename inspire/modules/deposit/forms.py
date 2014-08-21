@@ -130,6 +130,7 @@ class AuthorInlineForm(WebDepositForm):
         placeholder=_("Affiliation"),
         autocomplete=kb_dynamic_autocomplete("InstitutionsCollection",
                                              mapper=institutions_kb_mapper),
+        autocomplete_limit=5,
         widget_classes='form-control',
         widget=ColumnInput(class_="col-xs-4 col-pad-0"),
         export_key='affiliation',

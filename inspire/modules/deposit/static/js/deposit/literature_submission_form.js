@@ -35,8 +35,8 @@ define(function(require, exports, module) {
 
   var DataMapper = require("./mapper.js");
   var TaskManager = require("./task_manager.js");
+  var ConferencesTypeahead = require("./conferences_typeahead.js");
   require("./message_box.js");
-  require("./conferences_typeahead.js");
   require("./fields_group.js");
 
   require('ui/effect-highlight');
@@ -194,7 +194,7 @@ define(function(require, exports, module) {
       });
 
       this.$submissionForm.on('submit', function(event) {
-        that.$conferenceId.val(conferencesTypeahead.getRawValue());
+        that.$conferenceId.val(ConferencesTypeahead.getRawValue());
         that.deleteIgnoredValues();
       });
     },
@@ -350,8 +350,6 @@ define(function(require, exports, module) {
      *
      * @param dataMapping {} dictionary with schema 'field_id: field_value', and
      *  special 'contributors' key to extract them to authors field.
-     * @param save_url url containing the path to save the form fields content,
-     *  see DEPOSIT_FORM.save_field().
      */
     fillForm: function fillForm(dataMapping) {
 
@@ -364,15 +362,17 @@ define(function(require, exports, module) {
       var authorsWidget = $('#submitForm .dynamic-field-list.authors')
         .dynamicFieldList()[0];
 
-      var deposit_form = require("js/deposit/form");
       $.map(dataMapping, function(value, field_id) {
         var $field = $('#' + field_id);
         if ($field) {
           $field.val(value);
-          // Clean up pending messages on the field
-          deposit_form.handle_field_msg(field_id, value);
-          // Save field content to server
-          deposit_form.save_field(that.save_url, field_id, value);
+          $("#submitForm").trigger("dataFormSave", {
+            url: that.save_url,
+            field_id: field_id,
+            value:value,
+            show:false,
+            form_selector: "#submitForm"
+          });
         }
       });
 
