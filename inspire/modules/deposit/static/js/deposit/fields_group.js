@@ -126,7 +126,20 @@ define(function(require, exports, module) {
           if (!fieldsWereEmpty && fieldsAreEmpty) {
             this.onEmpty();
           }
-        }
+        },
+
+        fieldValidation: function(save_url) {
+          var errors = false;
+
+          $.each(this.$fields, function() {
+            var $field = $(this);
+            //FIXME: it doesn't work on page refresh, see inspire-next/pull/60
+            if ($field.find(".alert-danger").css('display') == "block") {
+              errors = true;
+            }
+          });
+          return errors;
+        },
       };
 
       return FieldsGroup;
