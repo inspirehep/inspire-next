@@ -67,8 +67,7 @@ define(function(require, exports, module) {
 
       function processQuery(data) {
 
-        var queryStatus = data.query ?
-          data.query.status : data.status;
+        var queryStatus = data.status;
 
         if (queryStatus === 'success' && data.source === 'database') {
           queryStatus = 'duplicated';
