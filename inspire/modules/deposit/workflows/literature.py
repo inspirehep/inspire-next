@@ -200,6 +200,14 @@ class literature(SimpleRecordDeposition):
             metadata['license']['url'] = metadata['license_url']
             delete_keys.append('license_url')
 
+        # ===========
+        # Files (FFT)
+        # ===========
+        if 'fft' in metadata and metadata['fft']:
+            fft = metadata['fft']
+            metadata['fft'] = {}
+            metadata['fft']['url'] = fft[0]['path']
+
         # ================
         # Publication Info
         # ================
