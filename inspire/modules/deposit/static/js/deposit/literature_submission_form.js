@@ -33,6 +33,7 @@ define(function(require, exports, module) {
     '</div>'
   );
 
+  var ModalPreview = require("./modal_preview.js");
   var DataMapper = require("./mapper.js");
   var TaskManager = require("./task_manager.js");
   require("./message_box.js");
@@ -294,8 +295,8 @@ define(function(require, exports, module) {
         literatureFormPriorityMapper,
         // callback
         function(result) {
-          that.showModal(result.mapping);
-          // that.fillForm(result.mapping);
+          ModalPreview.init(result.mapping);
+          that.fillForm(result.mapping);
           that.fieldsGroup.resetState();
           that.messageBox.clean();
           that.messageBox.append(result.statusMessage);
@@ -389,73 +390,7 @@ define(function(require, exports, module) {
           authorsWidget.append_element();
         }
       }
-    },
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  showModal: function showModal(dataMapping) {
-
-    //console.log(dataMapping);
-
-    var myModal = $('#myModal'),
-          modalBody;
-    var json_data = JSON.stringify(dataMapping);
-
-    modalBody = myModal.find('.modal-body');
-
-    this.renderRow(dataMapping);
-  },
-
-  renderRow: function renderRow(jsonData) {
-
-    var table = '<table class="table table-stripped"><tr><th>Labels</th><th>Values</th></tr><tbody>';
-
-    $.each(jsonData, function(index, user){
-      table += '<tr>';
-      table += '<td>'+index+'</td>';
-      if (typeof user !== 'object') {
-        // console.log(user)
-        // read more/less only in abstract field
-        if (index === 'abstract') {
-          table += '<td class="readmore">'+user+'</td>';
-        }
-        else {
-          table += '<td>'+user+'</td>';
-        }
-      }
-      else {
-        table += '<td class="readmore">';
-        for (var i in jsonData.contributors) {
-          table += jsonData.contributors[i].name+'<br>';
-          // console.log(jsonData.contributors[i].name)
-        }
-        table += '</td>';
-      }
-      table += '</tr>';
-
-    });
-
-    table += '</tbody></table>';
-
-    $('#myModal .modal-body').html(table);
-
-    $('.readmore').readmore({
-      speed: 200,
-      maxHeight: 90,
-      moreLink: '<a href="#">Read more</a>',
-      lessLink: '<a href="#">Less</a>'
-    });
-
-    //FIXME: fill the form only when the user accepts the data
-    var that = this;
-    $('#success').on('click', function(){
-      that.fillForm(jsonData);
-    });
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  }
-
+    }
   };
   module.exports = LiteratureSubmissionForm;
 });

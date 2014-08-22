@@ -74,40 +74,6 @@ require(["jquery", "js/deposit/form", "/js/deposit/literature_submission_form.js
   deposit_form.init(configuration);
 
   var form = new LiteratureSubmissionForm(save_url);
-
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  //FIXME: make it more modular and plug it to the LiteratureSubmissionForm.js
-
-  var $root = $('html, body');
-  $('#skipImportData').on('click', function(e){
-
-    $('#webdeposit_form_accordion > .panel:not(:first-child), #webdeposit_form_accordion + .well').removeClass('hide');
-
-    var href = $.attr(this, 'href');
-    $root.animate({
-        scrollTop: $(href).offset().top
-    }, 500, function () {
-        window.location.hash = '';
-    });
-
-  })
-
-  $('#importData').on('click', function(e){
-
-    $('#webdeposit_form_accordion > .panel:not(:first-child), #webdeposit_form_accordion + .well').removeClass('hide');
-
-    var href = $.attr(this, 'href');
-    $root.animate({
-        scrollTop: $(href).offset().top
-    }, 500, function () {
-        window.location.hash = '';
-    });
-
-  })
-
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   });
 });
 </script>

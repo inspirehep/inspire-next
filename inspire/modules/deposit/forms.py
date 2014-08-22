@@ -49,13 +49,12 @@ PROCEEDINGS_CLASS = " proceedings-related"
 #
 def importdata_button(field, **dummy_kwargs):
     """Import data button."""
-    html = u'<a %s href="%s" data-toggle="%s" data-target="%s">%s</a>' % \
+    html = u'<a %s href="%s" data-target="%s">%s</a>' % \
            (html_params(id="importData",
                         class_="btn btn-success btn-large",
                         name="importData",
                         type="button"),
             '#collapse-2',
-            'modal',
             '#myModal',
             _('Auto import'))
     return HTMLString(html)
