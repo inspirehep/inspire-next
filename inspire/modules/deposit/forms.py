@@ -33,6 +33,7 @@ from invenio.modules.deposit.field_widgets import plupload_widget, \
     ItemWidget
 from invenio.modules.deposit.autocomplete_utils import kb_dynamic_autocomplete
 from .fields import ArXivField, ISBNField
+from .validators.dynamic_fields import AuthorsValidation
 
 #
 # Field class names
@@ -212,7 +213,7 @@ class LiteratureForm(WebDepositForm):
         min_entries=1,
         widget_classes='',
         export_key='authors',
-        validators=[validators.Required()],
+        validators=[AuthorsValidation],
     )
 
     collaboration = fields.TextField(

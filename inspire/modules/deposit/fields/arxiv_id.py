@@ -21,18 +21,11 @@ from wtforms import TextField
 from wtforms.validators import ValidationError
 
 from invenio.modules.deposit.field_base import WebDepositField
-from invenio.utils.persistentid import is_arxiv
 from invenio.modules.deposit.filter_utils import strip_prefixes, strip_string
 
+from ..validators import arxiv_syntax_validation
+
 __all__ = ['ArXivField']
-
-
-def arxiv_syntax_validation(form, field):
-    message = "The provided ArXiv ID is invalid - it should look \
-                similar to 'hep-th/1234567' or '1234.5678'."
-
-    if field.data and not is_arxiv(field.data):
-        raise ValidationError(message)
 
 
 class ArXivField(WebDepositField, TextField):

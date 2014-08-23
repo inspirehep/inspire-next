@@ -17,28 +17,25 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from wtforms import TextField
 from wtforms.validators import ValidationError
 
-from invenio.modules.deposit.field_base import WebDepositField
-from invenio.modules.deposit.filter_utils import strip_prefixes, strip_string
-
-from ..validators import isbn_syntax_validation
-
-__all__ = ['ISBNField']
+from invenio.utils.persistentid import is_arxiv, is_isbn
 
 
-class ISBNField(WebDepositField, TextField):
-    def __init__(self, **kwargs):
-        defaults = dict(
-            icon='barcode',
-            validators=[isbn_syntax_validation],
-            filters=[
-                strip_string,
-                strip_prefixes("isbn:", "ISBN:"),
-            ],
-            description="e.g. 1413304540, 1-4133-0454-0, 978-1413304541 or 978-1-4133-0454-1...",
-            widget_classes="form-control"
-        )
-        defaults.update(kwargs)
-        super(ISBNField, self).__init__(**defaults)
+def arxiv_syntax_validation(form, field):
+    """Validate ArXiv ID syntax."""
+    message = "The provided ArXiv ID is invalid - it should look \
+                similar to 'hep-th/1234567' or '1234.5678'."
+
+    if field.data and not is_arxiv(field.data):
+        raise ValidationError(message)
+
+
+def isbn_syntax_validation(form, field):
+    """Validate ISBN syntax."""
+    message = "The provided ISBN is invalid - it should look \
+                similar to '1413304540', '1-4133-0454-0', '978-1413304541' or \
+                '978-1-4133-0454-1'."
+
+    if field.data and not is_isbn(field.data):
+        raise ValidationError(message)
