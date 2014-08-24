@@ -118,21 +118,20 @@ class AuthorInlineForm(WebDepositForm):
     """Author inline form."""
 
     name = fields.TextField(
-        placeholder=_("Family name, First name"),
         widget_classes='form-control',
-        widget=ColumnInput(class_="col-xs-6"),
+        widget=ColumnInput(class_="col-xs-6", description="Family name, First name"),
         # validators=[
         #     validators.Required(),
         # ],
         export_key='full_name',
     )
     affiliation = fields.TextField(
-        placeholder=_("Affiliation"),
         autocomplete=kb_dynamic_autocomplete("InstitutionsCollection",
                                              mapper=institutions_kb_mapper),
+        placeholder='Start typing for suggestions',
         autocomplete_limit=5,
         widget_classes='form-control',
-        widget=ColumnInput(class_="col-xs-4 col-pad-0"),
+        widget=ColumnInput(class_="col-xs-4 col-pad-0", description="Affiliation"),
         export_key='affiliation',
     )
 
