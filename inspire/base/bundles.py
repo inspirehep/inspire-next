@@ -51,6 +51,11 @@ from invenio.base.bundles import styles as _base_styles
 _base_styles.contents += (
     'less/inspire.less',
     'less/base/variables.less',
+    'less/base/header.less',
+    'less/base/footer.less',
+    'less/base/index.less',
+    'less/base/helpers.less',
+    'less/base/sticky-footer.less',
 )
 
 to_remove = ["less/base.less",
