@@ -76,15 +76,10 @@
             Sign In
           </a>
           {%- else %}
-          <div class="btn-group">
-            <a class="btn btn-default" href="{{ url_for('accounts_settings.profile') }}">
+            <a href="{{ url_for('accounts_settings.profile') }}">
               <i class="fa fa-user"></i>
               {{ current_user.email }}
             </a>
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-              <span class="caret"></span>
-            </button>
-          </div>
           {%- endif %}
         </li>
       </ul>
