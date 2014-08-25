@@ -19,7 +19,10 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
-// Styles for the header go here
+@import (reference) "../inspire.less";
+
+ /* Header styles
+-------------------------------------------------- */
 
 .masthead-nav {
   & > li {
@@ -29,7 +32,7 @@
     border-left: 1px solid #ccc;
   }
   .fa {
-    padding: 10px
+    padding: 10px;
   }
 }
 .masthead-nav &>li.active,.masthead-nav &>li:hover {
@@ -76,18 +79,18 @@
 */
 @media screen and (max-width: @screen-tablet) {
   .navbar-collapse > .masthead-nav {
-  float: none !important;       // TODO: find another way to do it not hacky one
+    float: none !important;       // TODO: find another way to do it not hacky one
   }
   #myTab {
   > li {
-    width: 50%;
+      width: 50%;
     > a {
-    text-align: center;
+      text-align: center;
     }
   }
   }
   // takes the 3 first li elements
   #myTab > li:nth-child(-n+3) {
-  float: left;
+    float: left;
   }
 }
