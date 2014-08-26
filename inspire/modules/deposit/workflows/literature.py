@@ -169,7 +169,7 @@ class literature(SimpleRecordDeposition):
         # ========
         # Language
         # ========
-        metadata['language'] = dict(LiteratureForm.languages).get(metadata['language'])
+        metadata['language'] = unicode(dict(LiteratureForm.languages).get(metadata['language']))
 
         # ==========
         # Experiment
