@@ -22,6 +22,22 @@
 
 """Contains INSPIRE specific submission tasks"""
 
+from invenio.modules.workflows.models import BibWorkflowObject
+from invenio.modules.workflows.signals import workflow_halted
+
+
+def continue_workflow(sender, **extra):
+    task = sender.get_current_task()
+    print task
+    if task == 'halt_to_render':
+        sender.continue_workflow(delayed=True)
+
+workflow_halted.connect(continue_workflow)
+
+
+def halt_to_render(obj, eng):
+    eng.halt("User submission complete.")
+
 
 def approve_record(obj, eng):
     """Halt the workflow for approval."""
