@@ -37,6 +37,7 @@ point specified in the setup.py::
 
 EXTENSIONS = [
     'invenio.ext.arxiv:Arxiv',
+    'invenio.ext.crossref:CrossRef',
     'invenio.ext.confighacks',
     'invenio.ext.jinja2hacks',
     'invenio.ext.debug_toolbar',
