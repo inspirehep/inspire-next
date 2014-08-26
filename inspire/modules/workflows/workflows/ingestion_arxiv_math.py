@@ -55,7 +55,8 @@ from invenio.modules.workflows.utils import WorkflowBase
 
 
 class ingestion_arxiv_math(WorkflowBase):
-    object_type = "Supervising Workflow"
+
+    object_type = "workflow"
 
     @staticmethod
     def get_description(bwo):
@@ -67,20 +68,12 @@ class ingestion_arxiv_math(WorkflowBase):
         if 'options' in extra_data and 'identifiers' in extra_data["options"]:
             identifiers = extra_data["options"]["identifiers"]
 
-        if '_tasks_results' in extra_data and '_workflows_reviews' in extra_data['_tasks_results']:
-            result_temp = extra_data["_tasks_results"]["_workflows_reviews"][0]
-            if isinstance(result_temp, dict):
-                result_temp = result_temp['result']
-            else:
-                result_temp = result_temp.to_dict()['result']
-            result_progress = {
-                'success': (result_temp['total'] - result_temp['failed']),
-                'failed': result_temp['failed'],
-                'success_per': (result_temp['total'] - result_temp['failed']) * 100 / result_temp['total'],
-                'failed_per': result_temp['failed']*100 / result_temp['total'],
-                'total': result_temp['total']}
+        results = bwo.get_tasks_results()
+
+        if 'review_workflow' in results:
+            result_progress = results['review_workflow'][0]['result']
         else:
-            result_progress = {'success_per': 0,  'failed_per': 0, 'success': 0, 'failed': 0, 'total': 0}
+            result_progress = {}
 
         current_task = extra_data['_last_task_name']
 
@@ -96,11 +89,11 @@ class ingestion_arxiv_math(WorkflowBase):
 
     @staticmethod
     def formatter(bwo, **kwargs):
-        return None
+        return ingestion_arxiv_math.get_description(bwo)
 
     repository = 'arxiv_math_daily'
     workflow = [
-        write_something_generic("Initialisation", [task_update_progress, write_message]),
+        write_something_generic("Initialization", [task_update_progress, write_message]),
         init_harvesting,
         write_something_generic("Starting", [task_update_progress, write_message]),
         foreach(get_repositories_list([repository]), "_repository"),
@@ -117,19 +110,28 @@ class ingestion_arxiv_math(WorkflowBase):
                     [
                         workflow_if(num_workflow_running_greater(10), neg=True),
                         [
-                            start_workflow("process_record_arxiv", None),
+                            start_workflow("full_doc_process", copy=True),
 
-                            write_something_generic(["Workflow started : ", get_nb_workflow_created, " "],
-                                                    [task_update_progress, write_message]),
+                            write_something_generic(
+                                ["Workflow started: ",
+                                 get_nb_workflow_created],
+                                [task_update_progress,
+                                 write_message]),
                         ],
                         workflow_else,
                         [
-                            write_something_generic(["Max Simultaneous Workflow, Wait for one to finish"],
-                                                    [task_update_progress, write_message]),
-                            wait_for_a_workflow_to_complete(),
-                            start_workflow("process_record_arxiv", None),
-                            write_something_generic(["Workflow started : ", get_nb_workflow_created, " "],
-                                                    [task_update_progress, write_message]),
+                            write_something_generic(
+                                ["Max simultaneous workflows reached: ",
+                                 "Waiting for one to finish"],
+                                [task_update_progress,
+                                 write_message]),
+                            wait_for_a_workflow_to_complete(0.05),
+                            start_workflow("full_doc_process", copy=True),
+                            write_something_generic(["Workflow started :",
+                                                     get_nb_workflow_created,
+                                                     " "],
+                                                    [task_update_progress,
+                                                     write_message]),
                         ],
                     ],
                 ],
