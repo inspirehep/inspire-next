@@ -154,16 +154,15 @@ define(function(require, exports, module) {
       })[0];
       this.$conference.conferencesTypeahead({
         suggestionTemplate: Hogan.compile(
-          '<b>{{ meeting }}</b>' +
+          '<b>{{ title }}</b><br>' +
           '<small>' +
-          '<br>{{ date }}, {{ location }}' +
-          '<br>' +
-          '{{ coference_code }}' +
+            '{{ date }}, {{ place }}<br>' +
+            '{{ conference_id }}' +
           '</small>'
         ),
 
         selectedValueTemplate: Hogan.compile(
-          '{{ coference_code }}, {{ meeting }}, {{ date }}, {{ location }}'
+          '{{ conference_id }}, {{ title }}, {{ date }}, {{ place }}'
         ),
 
         cannotFindMessage: 'Cannot find this conference in our database.'
