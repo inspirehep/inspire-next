@@ -104,6 +104,7 @@ class literature(SimpleRecordDeposition):
         # =======
         # Authors
         # =======
+        metadata['authors'] = filter(None, metadata['authors'])
         if 'authors' in metadata and metadata['authors']:
             first_author = metadata['authors'][0].get('full_name').split(',')
             if len(first_author) > 1 and \
