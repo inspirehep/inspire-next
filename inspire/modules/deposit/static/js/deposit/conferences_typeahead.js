@@ -43,11 +43,9 @@ define(function(require, exports, module) {
 
       var that = this;
 
-      // TODO: Move to local search after json output will be ported
-      conferencesMock = require("./conferences_mock.js");
       var engine = new Bloodhound({
         name: 'conferences',
-        local: conferencesMock,
+        remote: '/search?cc=Conferences&p=/^%QUERY/&of=recjson',
         datumTokenizer: function(datum) {
           return that.datumTokenizer.call(that, datum);
         },
@@ -62,13 +60,13 @@ define(function(require, exports, module) {
         source: engine.ttAdapter(),
         // the key of a value which is rather passed to typeahead than displayed
         // the display values are selected by templates.
-        displayKey: 'meeting_name',
+        displayKey: 'conference',
         templates: {
           empty: function(data) {
             return that.options.cannotFindMessage;
           },
           suggestion: function(data) {
-            return that.suggestionTemplate.render.call(that.suggestionTemplate, data.meeting_name[0]);
+            return that.suggestionTemplate.render.call(that.suggestionTemplate, data.conference);
           }
         }
       });
@@ -137,24 +135,24 @@ define(function(require, exports, module) {
        *   for every token connected with OR operator
        */
       datumTokenizer: function datumTokenizer(datum) {
-        if ((typeof datum) === 'string' || !datum.meeting_name || !datum.meeting_name[0]) {
+        if ((typeof datum) === 'string' || !datum.conference) {
           return [datum];
         }
         var tokens = [];
-        datum = datum.meeting_name[0];
+        datum = datum.conference;
         if (datum.date && (typeof datum.date) === 'string') {
           tokens = tokens.concat(datum.date.split(/\.?\s+-?\s*/));
         }
-        if (datum.meeting && (typeof datum.meeting) === 'string') {
-          var meetingNameTokens = datum.meeting.split(/\s+/);
-          meetingNameTokens = $.map(meetingNameTokens, this._trimNonAlphaNumericChar);
-          tokens = tokens.concat(meetingNameTokens);
+        if (datum.title && (typeof datum.title) === 'string') {
+          var titleNameTokens = datum.title.split(/\s+/);
+          titleNameTokens = $.map(titleNameTokens, this._trimNonAlphaNumericChar);
+          tokens = tokens.concat(titleNameTokens);
         }
-        if (datum.location && (typeof datum.location) === 'string') {
-          tokens = tokens.concat(datum.location.split(/,?\s+/));
+        if (datum.place && (typeof datum.place) === 'string') {
+          tokens = tokens.concat(datum.place.split(/,?\s+/));
         }
-        if (datum.coference_code && (typeof datum.coference_code) === 'string') {
-          tokens.push(datum.coference_code);
+        if (datum.conference_id && (typeof datum.conference_id) === 'string') {
+          tokens.push(datum.conference_id);
         }
         return tokens;
       },
@@ -166,8 +164,8 @@ define(function(require, exports, module) {
        * @returns {String}
        */
       getRawValue: function getRawValue() {
-        if (this.isFieldValueAutocompleted() && this.value.coference_code) {
-          return this.value.coference_code;
+        if (this.isFieldValueAutocompleted() && this.value.conference_id) {
+          return this.value.conference_id;
         }
         return this.value;
       },
