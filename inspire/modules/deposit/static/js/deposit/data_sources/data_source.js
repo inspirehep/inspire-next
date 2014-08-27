@@ -69,11 +69,13 @@ define(function(require, exports, module) {
 
         var queryStatus = data.status;
 
-        if (queryStatus === 'success' && data.source === 'database') {
+        var querySource = data.source;
+
+        if (queryStatus === 'success' && querySource === 'database') {
           queryStatus = 'duplicated';
         }
 
-        var queryMessage = that.getImportMessage(queryStatus, id);
+        var queryMessage = that.getImportMessage(queryStatus, querySource, id);
 
         if (queryStatus !== 'success') {
           return {
@@ -112,7 +114,7 @@ define(function(require, exports, module) {
      * @returns {{state: string, message: string}} as in the input of
      *  tpl_flash_message template
      */
-    getImportMessage: function(queryStatus, id) {
+    getImportMessage: function(queryStatus, querySource, id) {
       if (queryStatus === 'notfound') {
         return {
           state: 'warning',
@@ -128,7 +130,7 @@ define(function(require, exports, module) {
       if (queryStatus === 'success') {
         return {
           state: 'success',
-          message: 'The data was successfully imported from ' + this.name + '.'
+          message: 'The data was successfully imported from ' + querySource + '.'
         };
       }
       if (queryStatus === 'duplicated') {
