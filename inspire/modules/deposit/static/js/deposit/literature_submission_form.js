@@ -295,6 +295,7 @@ define(function(require, exports, module) {
         literatureFormPriorityMapper,
         // callback
         function(result) {
+          //FIXME: subscribe to the event that ModalPreview publishes when the user press Accept
           ModalPreview.init(result.mapping);
           that.fillForm(result.mapping);
           that.fieldsGroup.resetState();

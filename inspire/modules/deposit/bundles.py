@@ -34,7 +34,7 @@ _deposit_js.contents += (
 _deposit_js.bower.update({
     'buckets': 'git://github.com/mauriciosantos/buckets.git',
     'bootstrap-multiselect': '~0.9.4',
-    "readmore": "*"
+    "readmore": "*",
 })
 
 _deposit_styles.contents += (

@@ -210,6 +210,7 @@ class LiteratureForm(WebDepositForm):
 
     title_arXiv = fields.TitleField(
         export_key='title_arXiv',
+        widget_classes="hidden",
         widget=HiddenInput(),
     )
 
@@ -308,6 +309,7 @@ class LiteratureForm(WebDepositForm):
     license_url = fields.TextField(
         label=_('License URL'),
         export_key='license_url',
+        widget_classes="hidden",
         widget=HiddenInput(),
     )
 
@@ -390,6 +392,7 @@ class LiteratureForm(WebDepositForm):
 
     note = fields.TextAreaField(
         export_key='note',
+        widget_classes="hidden",
         widget=HiddenInput(),
     )
 
