@@ -43,7 +43,6 @@ from ..tasks.filtering import inspire_filter_custom
 
 import collections
 from six import string_types
-from invenio.config import CFG_PREFIX
 from invenio.modules.workflows.utils import WorkflowBase
 
 
@@ -51,19 +50,21 @@ class process_record_arxiv(WorkflowBase):
 
     object_type = "record"
     workflow = [
-        convert_record_with_repository("oaiarXiv2inspire_nofilter.xsl"), convert_record_to_bibfield,
+        convert_record_with_repository("oaiarXiv2inspire_nofilter.xsl"),
+        convert_record_to_bibfield,
         workflow_if(quick_match_record, True),
         [
             plot_extract(["latex"]),
             fulltext_download,
+            bibclassify(taxonomy="HEPont",
+                        output_mode="dict",
+                        match_mode="partial",
+                        fast_mode=True),
+            refextract, author_list,
             inspire_filter_custom(fields=["report_number", "arxiv_category"],
                                   custom_widgeted="*",
                                   custom_accepted="gr",
                                   action="inspire_approval"),
-            bibclassify(taxonomy=CFG_PREFIX + "/etc/bibclassify/HEP.rdf",
-                        output_mode="dict",
-                        match_mode="partial"),
-            refextract, author_list,
             upload_step,
         ],
         workflow_else,
@@ -102,11 +103,32 @@ class process_record_arxiv(WorkflowBase):
                 final_identifiers.append(i['value'])
         except Exception:
             if hasattr(record, "get"):
-                final_identifiers = [record.get("system_number_external", {}).get("value", 'No ids')]
+                final_identifiers = [record.get("system_number_external", {})
+                                     .get("value", 'No ids')]
             else:
                 final_identifiers = [' No ids']
 
         categories = [" No categories"]
+        task_results = bwo.get_tasks_results()
+        results = []
+        if 'bibclassify' in task_results:
+            try:
+                result = task_results['bibclassify'][0]['result']
+                fast_mode = result.get('fast_mode', False)
+                result = result['dict']['complete_output']
+                result_string = "<strong></br>Bibclassify result:"\
+                                "</br></strong>"\
+                                "Number of Core keywords: \t%s</br>"\
+                                "PACS: \t%s</br>"\
+                                % (len(result['Core keywords']),
+                                   len(result['Field codes']))
+                if fast_mode:
+                    result_string += "(This task run at fast mode"\
+                                     " taking into consideration"\
+                                     " only the title and the abstract)"
+                results.append(result_string)
+            except (KeyError, IndexError):
+                pass
         if hasattr(record, "get"):
             if 'subject' in record:
                 lookup = ["subject", "term"]
@@ -137,7 +159,8 @@ class process_record_arxiv(WorkflowBase):
         from flask import render_template
         return render_template('workflows/styles/harvesting_record.html',
                                categories=categories,
-                               identifiers=final_identifiers)
+                               identifiers=final_identifiers,
+                               results=results)
 
     @staticmethod
     def formatter(bwo, **kwargs):
