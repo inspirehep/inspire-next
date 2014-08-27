@@ -17,11 +17,35 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from flask import Blueprint
+from flask import Blueprint, jsonify, request
+from invenio.modules.workflows.models import BibWorkflowObject
 
 blueprint = Blueprint(
     'inspire_workflows',
     __name__,
+    url_prefix="/callback",
     template_folder='templates',
     static_folder="static",
 )
+
+
+@blueprint.route('/workflows/continue', methods=['POST'])
+def continue_workflow_callback():
+    """Handle callback from robotuploads to continue a workflow.
+
+    Expects the request data to contain a object ID in the
+    nonce field.
+    """
+    request_data = request.get_json()
+    id_object = request_data.get("nonce", "")
+    if id_object:
+        callback_results = request_data.get("results", {})
+        workflow_object = BibWorkflowObject.query.get(id_object)
+        if workflow_object:
+            # Will add the results to the engine extra_data column.
+            workflow_object.continue_workflow(
+                delayed=True,
+                callback_results=callback_results
+            )
+            return jsonify({"result": "success"})
+    return jsonify({"result": "failed"})
