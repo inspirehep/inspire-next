@@ -21,13 +21,11 @@ import re
 
 from invenio.modules.deposit.types import SimpleRecordDeposition
 from invenio.modules.deposit.tasks import render_form, \
-    create_recid, \
     prepare_sip, \
     finalize_record_sip, \
     upload_record_sip, \
     prefill_draft, \
-    process_sip_metadata, \
-    hold_for_approval
+    process_sip_metadata
 
 from inspire.modules.deposit.forms import LiteratureForm
 
@@ -53,11 +51,11 @@ class literature(SimpleRecordDeposition):
         process_sip_metadata(),
         # Generate MARC based on metadata dictionary.
         finalize_record_sip(is_dump=False),
+        # Upload the marcxml locally (good for debugging)
+        # upload_record_sip(),
         # Seal the SIP and start a new workflow for post-processing
         finalize_and_post_process("process_record_submission"),
     ]
-
-    hold_for_upload = True
 
     name = "Literature"
     name_plural = "Literature depositions"
