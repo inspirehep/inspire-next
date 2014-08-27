@@ -49,6 +49,29 @@ from invenio.modules.workflows.utils import WorkflowBase
 
 class process_record_arxiv(WorkflowBase):
 
+    object_type = "record"
+    workflow = [
+        convert_record_with_repository("oaiarXiv2inspire_nofilter.xsl"), convert_record_to_bibfield,
+        workflow_if(quick_match_record, True),
+        [
+            plot_extract(["latex"]),
+            fulltext_download,
+            inspire_filter_custom(fields=["report_number", "arxiv_category"],
+                                  custom_widgeted="*",
+                                  custom_accepted="gr",
+                                  action="inspire_approval"),
+            bibclassify(taxonomy=CFG_PREFIX + "/etc/bibclassify/HEP.rdf",
+                        output_mode="dict",
+                        match_mode="partial"),
+            refextract, author_list,
+            upload_step,
+        ],
+        workflow_else,
+        [
+            log_info("Record already into database"),
+        ],
+    ]
+
     @staticmethod
     def get_title(bwo):
         """Get the title."""
@@ -172,26 +195,3 @@ class process_record_arxiv(WorkflowBase):
             return list(data)
         # Not any of the above types. How juicy!
         return data
-
-    object_type = "record"
-    workflow = [
-        convert_record_with_repository("oaiarXiv2inspire_nofilter.xsl"), convert_record_to_bibfield,
-        workflow_if(quick_match_record, True),
-        [
-            plot_extract(["latex"]),
-            fulltext_download,
-            inspire_filter_custom(fields=["report_number", "arxiv_category"],
-                                  custom_widgeted="*",
-                                  custom_accepted="gr",
-                                  action="inspire_approval"),
-            bibclassify(taxonomy=CFG_PREFIX + "/etc/bibclassify/HEP.rdf",
-                        output_mode="dict",
-                        match_mode="partial"),
-            refextract, author_list,
-            upload_step,
-        ],
-        workflow_else,
-        [
-            log_info("Record already into database"),
-        ],
-    ]

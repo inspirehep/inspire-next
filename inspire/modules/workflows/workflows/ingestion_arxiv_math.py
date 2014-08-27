@@ -110,7 +110,7 @@ class ingestion_arxiv_math(WorkflowBase):
                     [
                         workflow_if(num_workflow_running_greater(10), neg=True),
                         [
-                            start_workflow("full_doc_process", copy=True),
+                            start_workflow("process_record_arxiv", copy=True),
 
                             write_something_generic(
                                 ["Workflow started: ",
@@ -126,7 +126,7 @@ class ingestion_arxiv_math(WorkflowBase):
                                 [task_update_progress,
                                  write_message]),
                             wait_for_a_workflow_to_complete(0.05),
-                            start_workflow("full_doc_process", copy=True),
+                            start_workflow("process_record_arxiv", copy=True),
                             write_something_generic(["Workflow started :",
                                                      get_nb_workflow_created,
                                                      " "],
