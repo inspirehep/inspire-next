@@ -46,7 +46,8 @@
   <header>
     <!-- replaced page header -->
     {% block headerbox %}
-    {% include 'header.html' %}
+      {% set active_page = active_page|default('index') -%}
+      {% include 'header.html' %}
     {% endblock headerbox %}
     <!-- end replaced page header -->
     {% block pageheaderadd %}{{ pageheaderadd|safe }}{% endblock pageheaderadd %}

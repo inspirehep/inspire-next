@@ -17,14 +17,6 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% extends "search/searchbar_frame.html" %}
+{% extends "deposit/deposition_type_base.html" %}
 
 {% set active_page = "deposit" %}
-
-{% block inner_content %}
-<div class="alert alert-success">
-  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-  <strong>Thank you for your suggestion!<br></strong><br>Your request will be reviewed by a member of the INSPIRE staff.
-  <br><br>You will receive an email once the request has been processed. &nbsp; &nbsp;&nbsp;</div>
-<p>If you would like to make a new suggestion, please go to <a href="{{url_for('webdeposit.index')}}">{{url_for('webdeposit.index', _external=True)}}</a></p>
-{% endblock inner_content %}
