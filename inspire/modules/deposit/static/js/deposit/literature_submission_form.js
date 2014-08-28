@@ -61,7 +61,7 @@ define(function(require, exports, module) {
         volume: ['doi', 'arxiv'],
         year: ['doi', 'arxiv'],
         issue: ['doi', 'arxiv'],
-        contributors: ['doi', 'arxiv'],
+        authors: ['doi', 'arxiv'],
         abstract: ['doi', 'arxiv'],
         article_id: ['doi', 'arxiv'],
         license_url: ['arxiv'],
@@ -85,6 +85,10 @@ define(function(require, exports, module) {
 
   function LiteratureSubmissionForm(save_url) {
 
+    var o = $({});
+    $.subscribe = o.on.bind(o);
+    $.publish = o.trigger.bind(o);
+
     this.save_url = save_url;
 
     // here just global form variables initialization
@@ -106,6 +110,9 @@ define(function(require, exports, module) {
     this.$language = $("#language");
     this.$translated_title = $("#state-group-title_translation");
     this.$importButton = $("#importData");
+
+    this.$skipButton = $("#skipImportData");
+
     this.$submissionForm = $('#submitForm');
     this.$conference = $('#conf_name');
     this.$conferenceId = $('#conference_id');
@@ -192,6 +199,13 @@ define(function(require, exports, module) {
         that.toggleImportButton(that.$importButton, 'loading');
         //      that.$importButton.button('loading');
         that.importData();
+      });
+
+      // publish event and then wait for the modal to listen to this event
+      this.$skipButton.on('click', function(event) {
+        console.log('publishing the "show.modal.form" event.....')
+        $.publish('show.modal.form');
+        ModalPreview.scrollSmooth(this);
       });
 
       this.$submissionForm.on('submit', function(event) {
@@ -288,6 +302,8 @@ define(function(require, exports, module) {
 
       var that = this;
 
+      var newObject;
+
       this.taskmanager.runMultipleTasksMerge(
         // tasks
         importTasks,
@@ -296,7 +312,10 @@ define(function(require, exports, module) {
         // callback
         function(result) {
           //FIXME: subscribe to the event that ModalPreview publishes when the user press Accept
-          ModalPreview.init(result.mapping);
+          newObject = jQuery.extend(true, {}, result.mapping);
+          that.removeHiddenFields(newObject);
+          //that.renameLabels(newObject);
+          ModalPreview.init(that.renameLabels(newObject));
           that.fillForm(result.mapping);
           that.fieldsGroup.resetState();
           that.messageBox.clean();
@@ -308,6 +327,50 @@ define(function(require, exports, module) {
           //        that.$importButton.button('reset');
         }
       );
+    },
+
+    // remove hidden fields
+    // do the mapping to the label fields
+    removeHiddenFields: function removeHiddenFields (dataMapping) {
+      $.map(dataMapping, function(value, field_id) {
+        var $field = $('#' + field_id);
+        if ($field.hasClass('hidden')) {
+          delete dataMapping[field_id];
+        }
+      });
+    },
+
+    // rename the contributors -> to authors for consistency
+    renameLabels: function renameLabels(dataMapping) {
+      var newObject = jQuery.extend(true, {}, dataMapping);
+      $.map(newObject, function(value, field_id) {
+        var $field = $('#' + field_id);
+        var query =$field.parents('#state-group-' + field_id).find('label');
+        // if (field_id == 'contributors') {
+        //   newObject[field_id] = 'Authors'
+        // }
+        if (query) {
+          //console.log(query.text());
+          newObject[field_id] = $.trim(query.text());
+        }
+      });
+      console.log(newObject);
+
+      var fObj = {};
+
+      $.each(newObject, function(i){
+          fObj[this] = dataMapping[i];
+      });
+
+      console.log('fObj: ')
+      console.log(fObj)
+
+      dataMapping = fObj;
+
+      return dataMapping;
+
+      console.log('dataMapping: ')
+      console.log(dataMapping)
     },
 
     /**
@@ -384,8 +447,8 @@ define(function(require, exports, module) {
         authorsWidget.append_element();
       }
 
-      for (var i in dataMapping.contributors) {
-        authorsWidget.update_element(dataMapping.contributors[i], i);
+      for (var i in dataMapping.authors) {
+        authorsWidget.update_element(dataMapping.authors[i], i);
         // next index is i+1 but there should stay one empty field
         if (parseInt(i) + 2 > authorsWidget.get_next_index()) {
           authorsWidget.append_element();

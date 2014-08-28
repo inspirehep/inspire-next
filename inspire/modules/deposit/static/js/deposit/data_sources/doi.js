@@ -46,7 +46,7 @@ define(function(require, exports, module) {
           volume: data.volume,
           year: data.year.substring(0, 4),
           issue: data.issues,
-          contributors: data.contributors
+          authors: data.authors
         };
       },
 
