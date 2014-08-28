@@ -70,6 +70,7 @@ EXTENSIONS = [
 
 PACKAGES = [
     'inspire.base',
+    'inspire.demosite',
     'inspire.ext',
     'inspire.utils',
     'inspire.modules.workflows',
