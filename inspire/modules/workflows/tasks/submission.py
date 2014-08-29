@@ -21,14 +21,16 @@
 ## or submit itself to any jurisdiction.
 
 """Contains INSPIRE specific submission tasks"""
-
-from invenio.modules.workflows.models import BibWorkflowObject
+from invenio.modules.deposit.models import Deposition
 from invenio.modules.workflows.signals import workflow_halted
+from invenio.modules.formatter import format_record
+from flask.ext.login import current_user
+from invenio.config import CFG_SITE_SUPPORT_EMAIL
+from .actions import was_approved
 
 
 def continue_workflow(sender, **extra):
-    task = sender.get_current_task()
-    print task
+    task = sender.last_task
     if task == 'halt_to_render':
         sender.continue_workflow(delayed=True)
 
@@ -36,7 +38,36 @@ workflow_halted.connect(continue_workflow)
 
 
 def halt_to_render(obj, eng):
+    d = Deposition(obj)
+    sip = d.get_latest_sip(sealed=False)
+    d.set_render_context(dict(
+        template_name_or_list="deposit/pending.html",
+        deposition=d,
+        deposition_type=(
+            None if d.type.is_default() else
+            d.type.get_identifier()
+        ),
+        uuid=d.id,
+        sip=sip,
+        my_depositions=Deposition.get_depositions(
+            current_user, type=d.type
+        ),
+        format_record=format_record,
+    ))
     eng.halt("User submission complete.")
+
+
+def inform_submitter(obj, eng):
+    from invenio.modules.access.control import acc_get_user_email
+    from invenio.ext.email import send_email
+    d = Deposition(obj)
+    id_user = d.workflow_object.id_user
+    email = acc_get_user_email(id_user)
+    if was_approved(obj, eng):
+        body = 'Accepted'
+    else:
+        body = 'Rejected'
+    send_email(CFG_SITE_SUPPORT_EMAIL, email, 'Subject', body, header='header')
 
 
 def approve_record(obj, eng):
