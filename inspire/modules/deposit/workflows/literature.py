@@ -19,22 +19,36 @@
 
 import re
 
+from flask import render_template
+
 from invenio.modules.deposit.types import SimpleRecordDeposition
 from invenio.modules.deposit.tasks import render_form, \
     prepare_sip, \
     finalize_record_sip, \
-    upload_record_sip, \
     prefill_draft, \
     process_sip_metadata
 
 from inspire.modules.deposit.forms import LiteratureForm
+from invenio.modules.deposit.models import Deposition
+
 
 from inspire.modules.workflows.tasks.submission import (
-    finalize_and_post_process,
+    approve_record,
+    send_robotupload,
+    halt_to_render,
+    inform_submitter
 )
 
+from inspire.modules.workflows.tasks.actions import was_approved
+from invenio.modules.workflows.tasks.logic_tasks import (
+    workflow_if,
+    workflow_else
+)
+from invenio.modules.workflows.utils import WorkflowBase
+from ...workflows.config import CFG_ROBOTUPLOAD_SUBMISSION_BASEURL
 
-class literature(SimpleRecordDeposition):
+
+class literature(SimpleRecordDeposition, WorkflowBase):
 
     """Literature deposit submission."""
 
@@ -51,10 +65,19 @@ class literature(SimpleRecordDeposition):
         process_sip_metadata(),
         # Generate MARC based on metadata dictionary.
         finalize_record_sip(is_dump=False),
+        halt_to_render,
+        approve_record,
+        workflow_if(was_approved),
+        [
+            send_robotupload(CFG_ROBOTUPLOAD_SUBMISSION_BASEURL)
+        ],
+        workflow_else,
+        [
+            approve_record  # second chance :P
+        ],
+        inform_submitter
         # Upload the marcxml locally (good for debugging)
         # upload_record_sip(),
-        # Seal the SIP and start a new workflow for post-processing
-        finalize_and_post_process("process_record_submission"),
     ]
 
     name = "Literature"
@@ -63,6 +86,51 @@ class literature(SimpleRecordDeposition):
     draft_definitions = {
         'default': LiteratureForm,
     }
+
+    @staticmethod
+    def get_title(bwo):
+        deposit_object = Deposition(bwo)
+        sip = deposit_object.get_latest_sip(sealed=False)
+        if sip:
+            submission_data = deposit_object.get_latest_sip()
+            # Get the SmartJSON object
+            record = submission_data.metadata
+            return record.get("title", "No title").get("main")
+        else:
+            return "User submission in progress!!"
+
+    @staticmethod
+    def get_description(bwo):
+        deposit_object = Deposition(bwo)
+        sip = deposit_object.get_latest_sip(sealed=False)
+        if sip:
+            record = deposit_object.get_latest_sip().metadata
+            identifiers = [record.get("arxiv_id", "")]
+            categories = [record.get("type_of_doc", "")]
+            return render_template('workflows/styles/submission_record.html',
+                                   categories=categories,
+                                   identifiers=identifiers)
+        else:
+            from invenio.modules.access.control import acc_get_user_email
+            id_user = deposit_object.workflow_object.id_user
+            return "submited by: %s" % str(acc_get_user_email(id_user))
+
+    @staticmethod
+    def formatter(bwo, **kwargs):
+        from invenio.modules.formatter.engine import format_record
+        deposit_object = Deposition(bwo)
+        submission_data = deposit_object.get_latest_sip()
+        marcxml = submission_data.package
+
+        of = kwargs.get("format", "hd")
+        if of == "xm":
+            return marcxml
+        else:
+            return format_record(
+                recID=None,
+                of=kwargs.get("format", "hd"),
+                xml_record=marcxml
+            )
 
     @classmethod
     #TODO: ensure that this regex is correct
