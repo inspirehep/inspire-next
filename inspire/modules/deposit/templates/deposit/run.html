@@ -28,6 +28,11 @@
   {% endblock %}
   </div>
 </div>
+
+  {% block modal_window %}
+    {% include "deposit/preview.html" %}
+  {% endblock modal_window %}
+
 {% endblock deposit_page %}
 
 {% block javascript %}

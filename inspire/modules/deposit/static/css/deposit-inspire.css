@@ -50,3 +50,15 @@
 .panel-heading .panel-toggle.collapsed:after {
     content: "\e080"; /* extracted from bootstrap.css */
 }
+
+#importData {
+    width: 160px;
+    font-weight: bold;
+    float:right;
+}
+
+#skipImportData {
+    text-decoration: underline;
+    padding: 15px 15px;
+    display: inline-block;
+}
