@@ -27,7 +27,6 @@ from invenio.modules.deposit.tasks import (
     upload_record_sip
 )
 
-
 from .literature import literature
 
 
