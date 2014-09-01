@@ -22,16 +22,16 @@
 
 {% if identifiers %}
 <p><b>identifiers</b>:
-{% for i in identifiers %}
-    {{i}}
+{% for identifier in identifiers %}
+    <br/><a href="http://arxiv.org/abs/{{identifier}}">{{identifier}}</a>
 {% endfor %}
 </p>
 {% endif %}
 
 {% if categories %}
 <p><b>categories</b>:
-{% for i in categories %}
-    {{i}}
+{% for category in categories %}
+    <br/>{{category}}
 {% endfor %}
 </p>
 {% endif %}

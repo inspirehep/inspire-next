@@ -27,6 +27,10 @@ from invenio.modules.deposit.tasks import (
     upload_record_sip
 )
 
+from inspire.modules.workflows.tasks.submission import (
+    halt_to_render
+)
+
 
 from .literature import literature
 
@@ -50,6 +54,9 @@ class literature_simple(literature):
         finalize_record_sip(is_dump=False),
         # Upload the marcxml locally (good for debugging)
         upload_record_sip(),
+        # Needed to update the title and description
+        # columns in holdingpen
+        halt_to_render
     ]
 
     name = "Literature (No approval)"

@@ -59,7 +59,7 @@ from invenio.modules.workflows.definitions import WorkflowBase
 
 class ingestion_arxiv_math(WorkflowBase):
 
-    object_type = "workflow"
+    object_type = "Workflow"
 
     @staticmethod
     def get_description(bwo):

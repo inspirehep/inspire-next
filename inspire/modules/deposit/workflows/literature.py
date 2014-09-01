@@ -53,6 +53,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
     """Literature deposit submission."""
 
+    object_type = "Submitted record"
+
     workflow = [
         # Pre-fill draft with values passed in from request
         prefill_draft(draft_id='default'),
