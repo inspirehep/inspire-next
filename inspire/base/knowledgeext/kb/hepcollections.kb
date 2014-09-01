@@ -1,0 +1,15 @@
+A---arXiv
+B---Book
+K---BookChapter
+C---Citeable
+F---ConferencePaper
+E---CORE
+H---HEP
+I---Introductory
+L---Lectures
+N---NONCORE
+O---Note
+P---Proceedings
+S---Published
+R---Review
+T---Thesis

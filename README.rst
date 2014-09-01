@@ -51,7 +51,7 @@ Populate demo records and enable demo-site:
 .. code-block:: bash
 
     (inspire)$ cdvirtualenv src/inspire-next
-    (inspire)$ inveniomanage demosite populate -p inspire.base -f inspire/testsuite/data/demo-records.xml
+    (inspire)$ inveniomanage demosite populate -p inspire.base -f inspire/demosite/data/demo-records.xml
 
 Start the server:
 

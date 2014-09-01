@@ -18,9 +18,13 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 from fixture import DataSet
+import pkg_resources
+import os
 
 
 class KnwKBData(DataSet):
+
+    """ Definition of KBs available in INSPIRE."""
 
     class KnwKBData_1:
         id = 1
@@ -113,94 +117,9 @@ class KnwKBData(DataSet):
         kbtype = u'w'
 
 
-class KnwKBRVALData(DataSet):
-
-    class KnwKBRVALData_1:
-        id = 29575
-        m_key = u'b'
-        m_value = u'Accelerators'
-        id_knwKB = 8
-
-    class KnwKBRVALData_2:
-        id = 29576
-        m_key = u'a'
-        m_value = u'Astrophysics'
-        id_knwKB = 8
-
-    class KnwKBRVALData_3:
-        id = 29577
-        m_key = u'c'
-        m_value = u'Computing'
-        id_knwKB = 8
-
-    class KnwKBRVALData_4:
-        id = 29578
-        m_key = u'e'
-        m_value = u'Experiment-HEP'
-        id_knwKB = 8
-
-    class KnwKBRVALData_5:
-        id = 29579
-        m_key = u'x'
-        m_value = u'Experiment-Nucl'
-        id_knwKB = 8
-
-    class KnwKBRVALData_6:
-        id = 29580
-        m_key = u'q'
-        m_value = u'General Physics'
-        id_knwKB = 8
-
-    class KnwKBRVALData_7:
-        id = 29581
-        m_key = u'g'
-        m_value = u'Gravitation and Cosmology'
-        id_knwKB = 8
-
-    class KnwKBRVALData_8:
-        id = 29582
-        m_key = u'i'
-        m_value = u'Instrumentation'
-        id_knwKB = 8
-
-    class KnwKBRVALData_9:
-        id = 29583
-        m_key = u'l'
-        m_value = u'Lattice'
-        id_knwKB = 8
-
-    class KnwKBRVALData_10:
-        id = 29584
-        m_key = u'm'
-        m_value = u'Math and Math Physics'
-        id_knwKB = 8
-
-    class KnwKBRVALData_11:
-        id = 29585
-        m_key = u'o'
-        m_value = u'Other'
-        id_knwKB = 8
-
-    class KnwKBRVALData_12:
-        id = 29586
-        m_key = u'p'
-        m_value = u'Phenomenology-HEP'
-        id_knwKB = 8
-
-    class KnwKBRVALData_13:
-        id = 29587
-        m_key = u't'
-        m_value = u'Theory-HEP'
-        id_knwKB = 8
-
-    class KnwKBRVALData_14:
-        id = 29588
-        m_key = u'n'
-        m_value = u'Theory-Nucl'
-        id_knwKB = 8
-
-
 class KnwKBDDEFData(DataSet):
+
+    """Definition of dynamic KB parameters."""
 
     class KnwKBDDEFData_1:
         id_knwKB = 7
@@ -208,4 +127,72 @@ class KnwKBDDEFData(DataSet):
         output_tag = u'110__u'
         search_expression = u'371__a:"*%*"'
 
-__all__ = ('KnwKBData', 'KnwKBRVALData', 'KnwKBDDEFData')
+    class KnwKBDDEFData_2:
+        id_knwKB = 11
+        id_collection = 7
+        output_tag = u'119__a'
+        search_expression = u'119__a:"*%*" | 119__u:"*%*" | 419__a:"*%*" | 245__a:"*%*"'
+
+
+class KnwKBRVALData(DataSet):
+    pass
+    """ Install INSPIRE KBs """
+
+
+def add_kb_values(kbfile, kb_id, idx):
+    """Generate fixtures for KB values.
+
+    Given a KB file and a KB id, this function will insert all.
+    entries in the file into to the corresponding KB table in the database.
+    """
+    for line in kbfile:
+        splitted_line = line.split('---')
+        pair = []
+        for part in splitted_line:
+            if not part.strip():
+                # We can ignore this one
+                continue
+            pair.append(part.strip())
+        if len(pair) != 2:
+            print "Error: %s" % (str(pair),)
+
+        class obj:
+            try:
+                m_key = pair[0]
+            except IndexError:
+                print line
+                print kb_id
+
+            m_value = pair[1]
+            id_knwKB = kb_id
+        obj.__name__ = "kbval{0}".format(idx)
+        setattr(KnwKBRVALData, obj.__name__, obj)
+        idx += 1
+    return idx
+
+
+# Get all KB files available under knowledgeext/kb
+kb_paths = [(file,
+            pkg_resources.resource_filename('inspire.base.knowledgeext',
+                                            'kb/' + file))
+            for file in pkg_resources.resource_listdir('inspire.base.knowledgeext',
+                                                       'kb')]
+
+# Normalize the names of available KBs and create a dict:
+# {lowercasename: kb_id}
+kb_names = dict([(getattr(KnwKBData, x).name.lower(), getattr(KnwKBData, x).id)
+                for x in dir(KnwKBData) if x.startswith("KnwKBData")])
+
+idx = 0
+for filename, path in kb_paths:
+    kb_name = os.path.splitext(filename)[0]
+    kb_id = None
+    try:
+        kb_id = kb_names[kb_name]
+    except KeyError:
+        pass
+    if kb_id:
+        with open(path, 'r') as f:
+            idx = add_kb_values(f, kb_id, idx)
+
+__all__ = ('KnwKBData', 'KnwKBDDEFData', 'KnwKBRVALData')
