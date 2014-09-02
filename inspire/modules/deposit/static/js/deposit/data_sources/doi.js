@@ -33,26 +33,28 @@ define(function(require, exports, module) {
 
       common_mapping: function(data) {
 
-        var journal = "";
+        var journal;
 
         if ("container-title" in data) {
-          for(var i = 0; i < data['container-title'].length; i++) {
-            if(i == data['container-title'].length-1){
-              journal += data['container-title'][i];
-            }
-            else{
-              journal += data['container-title'][i] + ', ';
+          for (var i = 0; i < data['container-title'].length; i++) {
+            if (i === data['container-title'].length - 1) {
+              journal = data['container-title'][i];
+            } else {
+              journal = data['container-title'][i] + ', ';
             }
           }
         }
 
-        var pages = data.page.split('-');
-        var page_number = "";
-        if (pages.length == 2) {
-          page_number = pages[1]-pages[0];
+        var pages, page_number;
+
+        if (data.page) {
+          pages = data.page.split('-');
+          if (pages.length === 2) {
+            page_number = pages[1] - pages[0];
+          }
         }
 
-        return {
+        var doi_obj = {
           conf_name: data.publisher,
           journal_title: journal,
           isbn: data.isbn,
@@ -64,6 +66,15 @@ define(function(require, exports, module) {
           volume: data.volume,
           url: data.URL
         };
+
+        // filtering the object out of undefined values
+        for (var idx in doi_obj) {
+          if (doi_obj[idx] === null || doi_obj[idx] === undefined) {
+            delete doi_obj[idx];
+          }
+        }
+
+        return doi_obj;
       },
 
       special_mapping: {
