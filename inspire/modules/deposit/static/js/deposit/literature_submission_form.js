@@ -23,16 +23,8 @@
 
 define(function(require, exports, module) {
   "use strict";
-  // FIXME: duplicate of
-  // FIXME: invenio/modules/deposit/static/templates/flash_message.mustache
-  // FIXME: to get rid of this make template precompilation with 'hulk' or 'requirejs'
-  var tpl_flash_message = Hogan.compile(
-    '<div class="alert alert-{{state}}">' +
-    '<a class="close" data-dismiss="alert" href="#"">&times;</a>' +
-    '{{{message}}}' +
-    '</div>'
-  );
 
+  var tpl_flash_message = require('hgn!/js/deposit/templates/flash_message');
   var DataMapper = require("./mapper.js");
   var TaskManager = require("./task_manager.js");
   var ConferencesTypeahead = require("./conferences_typeahead.js");
@@ -186,11 +178,7 @@ define(function(require, exports, module) {
       });
 
       this.$importButton.click(function(event) {
-        // FIXME: a workaround for button() conflict between jQuery-UI
-        //  and bootstrap.js. Here should be button() from bootstrap.js
-        //  called
-        that.toggleImportButton(that.$importButton, 'loading');
-        //      that.$importButton.button('loading');
+        that.$importButton.button('loading');
         that.importData();
       });
 
@@ -198,20 +186,6 @@ define(function(require, exports, module) {
         that.$conferenceId.val(ConferencesTypeahead.getRawValue());
         that.deleteIgnoredValues();
       });
-    },
-
-    toggleImportButton: function toggleImportButton($button, state) {
-
-      var importButtonStates = {
-        'loading': 'Importing data...',
-        'reset': 'Import data'
-      };
-
-      var newState = importButtonStates[state];
-      if (!newState) {
-        return;
-      }
-      this.$importButton.text(newState);
     },
 
     /**
@@ -253,7 +227,7 @@ define(function(require, exports, module) {
       );
       this.$deposition_type_panel.children('.alert').remove('.alert');
       if (deposition_type === "proceedings") {
-        this.$deposition_type_panel.append(tpl_flash_message.render({
+        this.$deposition_type_panel.append(tpl_flash_message({
           state: 'info',
           message: "<strong>Proceedings:</strong> only for complete " +
             "proceedings. For contributions use Article/Conference paper."
@@ -299,11 +273,7 @@ define(function(require, exports, module) {
           that.fieldsGroup.resetState();
           that.messageBox.clean();
           that.messageBox.append(result.statusMessage);
-          // FIXME: a workaround for button() conflict between jQuery-UI
-          //  and bootstrap.js. Here should be button() from bootstrap.js
-          //  called
-          that.toggleImportButton(that.$importButton, 'reset')
-          //        that.$importButton.button('reset');
+          that.$importButton.button('reset');
         }
       );
     },

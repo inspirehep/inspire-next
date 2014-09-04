@@ -51,7 +51,7 @@ define(function(require, exports, module) {
          * @private
          */
         _appendOne: function(ctx) {
-          this.$element.append(this.template.render(ctx));
+          this.$element.append(this.template(ctx));
           this.$element.show('fast');
         },
 

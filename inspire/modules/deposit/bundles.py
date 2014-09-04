@@ -20,6 +20,7 @@
 
 from invenio.modules.deposit.bundles import js as _deposit_js, \
     styles as _deposit_styles
+from invenio.base.bundles import jquery as _base_js
 
 # '_' prefix indicates private variables, and prevents duplicated import by
 # auto-discovery service of invenio
@@ -29,6 +30,10 @@ _deposit_js.contents += (
     'vendors/bootstrap-multiselect/js/bootstrap-multiselect.js',
     'js/deposit/inspire_init.js'
 )
+
+#FIXME remove init.js to avoid loading jquery-ui JS. jquery-ui button
+# conflicts with Bootstrap button which is used in the deposit forms
+_base_js.contents.remove("js/init.js")
 
 _deposit_js.bower.update({
     'buckets': 'git://github.com/mauriciosantos/buckets.git',
