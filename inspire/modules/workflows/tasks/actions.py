@@ -22,6 +22,6 @@
 
 
 def was_approved(obj, eng):
-    """ Checks if the record was approved."""
+    """Check if the record was approved."""
     extra_data = obj.get_extra_data()
     return extra_data["approved"]

@@ -26,21 +26,10 @@
 import os
 
 from invenio.modules.deposit.models import Deposition
-from invenio.modules.workflows.signals import workflow_halted
 from invenio.modules.formatter import format_record
 from flask.ext.login import current_user
 from invenio.config import CFG_SITE_SUPPORT_EMAIL
 from .actions import was_approved
-
-
-def continue_workflow(sender, **extra):
-    """Activated when workflow is halted."""
-    if hasattr(sender, "last_task"):
-        task = sender.last_task
-        if task == 'halt_to_render':
-            sender.continue_workflow(delayed=True)
-
-workflow_halted.connect(continue_workflow)
 
 
 def halt_to_render(obj, eng):

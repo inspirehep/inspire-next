@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-##
+{#
 ## This file is part of INSPIRE.
 ## Copyright (C) 2014 CERN.
 ##
@@ -16,7 +15,14 @@
 ## You should have received a copy of the GNU General Public License
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-#
+#}
 
-DEPOSIT_INSPIRE_SUBJECTS_KB = "Subjects"
-""" KB used for Subjects """
+{% extends "search/searchbar_frame.html" %}
+
+{% block inner_content %}
+<div class="alert alert-success">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+  <strong>Thank you for your suggestion!<br></strong><br>Your submission has been completed.
+  <br><br>You can see your submission here XXX</div>
+<p>If you would like to make a new suggestion, please go to <a href="{{url_for('webdeposit.index')}}">{{url_for('webdeposit.index', _external=True)}}</a></p>
+{% endblock inner_content %}

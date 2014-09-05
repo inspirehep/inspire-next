@@ -1,4 +1,5 @@
-#
+# -*- coding: utf-8 -*-
+##
 ## This file is part of INSPIRE.
 ## Copyright (C) 2014 CERN.
 ##
@@ -113,7 +114,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         else:
             from invenio.modules.access.control import acc_get_user_email
             id_user = deposit_object.workflow_object.id_user
-            return "submited by: %s" % str(acc_get_user_email(id_user))
+            return "Submitted by: %s" % str(acc_get_user_email(id_user))
 
     @staticmethod
     def formatter(bwo, **kwargs):
