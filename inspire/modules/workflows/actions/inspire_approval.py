@@ -59,8 +59,12 @@ class inspire_approval(object):
         from flask import request
         value = request.form.get("value", None)
 
+        bwo.remove_action()
+        extra_data = bwo.get_extra_data()
+
         if value == 'accept':
-            bwo.remove_action()
+            extra_data["approved"] = True
+            bwo.set_extra_data(extra_data)
             bwo.save()
             bwo.continue_workflow(delayed=True)
             return {
@@ -68,8 +72,10 @@ class inspire_approval(object):
                 "category": "success",
             }
         elif value == 'reject':
-            from invenio.modules.workflows.models import BibWorkflowObject
-            BibWorkflowObject.delete(bwo.id)
+            extra_data["approved"] = False
+            bwo.set_extra_data(extra_data)
+            bwo.save()
+            bwo.continue_workflow(delayed=True)
             return {
                 "message": "Record has been rejected (deleted)",
                 "category": "warning",

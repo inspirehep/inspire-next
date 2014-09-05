@@ -19,6 +19,8 @@
 ## In applying this license, CERN does not waive the privileges and immunities
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
+import collections
+from six import string_types
 
 from invenio.modules.workflows.tasks.marcxml_tasks import (
     convert_record_with_repository,
@@ -33,17 +35,14 @@ from invenio.modules.workflows.tasks.marcxml_tasks import (
 )
 
 from invenio.modules.workflows.tasks.workflows_tasks import log_info
+from inspire.modules.workflows.tasks.actions_tasks import was_approved
 
 from invenio.modules.workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else,
 )
-
-from ..tasks.filtering import inspire_filter_custom
-
-import collections
-from six import string_types
 from invenio.modules.workflows.utils import WorkflowBase
+from ..tasks.filtering import inspire_filter_custom
 
 
 class process_record_arxiv(WorkflowBase):
@@ -58,14 +57,22 @@ class process_record_arxiv(WorkflowBase):
             fulltext_download,
             bibclassify(taxonomy="HEPont",
                         output_mode="dict",
-                        match_mode="partial",
                         fast_mode=True),
             refextract, author_list,
+            refextract,
+            author_list,
             inspire_filter_custom(fields=["report_number", "arxiv_category"],
                                   custom_widgeted="*",
                                   custom_accepted="gr",
                                   action="inspire_approval"),
-            upload_step,
+            workflow_if(was_approved),
+            [
+                upload_step,
+            ],
+            workflow_else,
+            [
+                log_info("Record rejected")
+            ]
         ],
         workflow_else,
         [
@@ -103,8 +110,11 @@ class process_record_arxiv(WorkflowBase):
                 final_identifiers.append(i['value'])
         except Exception:
             if hasattr(record, "get"):
-                final_identifiers = [record.get("system_number_external", {})
-                                     .get("value", 'No ids')]
+                final_identifiers = [
+                    record.get(
+                        "system_number_external", {}
+                    ).get("value", 'No ids')
+                ]
             else:
                 final_identifiers = [' No ids']
 

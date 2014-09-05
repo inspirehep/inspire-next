@@ -29,10 +29,10 @@ def inspire_filter_custom(fields, custom_accepted=(), custom_refused=(),
                           custom_widgeted=(), action=None):
     """Allow you to filter for any type of key.
 
-    This function allow you to filter for any type of key in a dictionnary stored
+    This function allow you to filter for any type of key in a dictionary stored
     in object data.
 
-    :param fields: list representing field to go into for filtering ['a','b'] means that we
+    :param fields: list representing field to go into for filtering ['a', 'b'] means that we
     will first look into 'a' key in the dict then from 'a' key the 'b' key inside.
     :type fields: list
 
@@ -109,9 +109,14 @@ def inspire_filter_custom(fields, custom_accepted=(), custom_refused=(),
                 msg = ("Insert record?")
                 eng.halt(msg, action=action)
             elif '*' in custom_refused:
-                eng.stopProcessing()
+                extra_data = obj.get_extra_data()
+                extra_data["approved"] = False
+                obj.set_extra_data(extra_data)
             elif '*' in custom_accepted:
-                return None
+                extra_data = obj.get_extra_data()
+                extra_data["approved"] = True
+                obj.set_extra_data(extra_data)
+                obj.save()
             else:
                 # We don't know what we should do, in doubt query human...
                 # they are nice!
@@ -126,9 +131,15 @@ def inspire_filter_custom(fields, custom_accepted=(), custom_refused=(),
                          % (fields[len(fields)-1], custom_to_process_next),
                          action=action)
             elif sum_action == action_to_take[1]:
-                return None
+                extra_data = obj.get_extra_data()
+                extra_data["approved"] = False
+                obj.set_extra_data(extra_data)
+                obj.save()
             elif sum_action == action_to_take[2]:
-                eng.stopProcessing()
+                extra_data = obj.get_extra_data()
+                extra_data["approved"] = True
+                obj.set_extra_data(extra_data)
+                obj.save()
             else:
                 eng.halt("Category filtering needs human intervention, rules are incoherent !!!",
                          action=action)
@@ -205,9 +216,15 @@ def inspire_filter_category(category_accepted_param=(),
         if sum_action == 0:
             #We allow the * option which means at final case
             if '*' in category_accepted:
-                return None
+                extra_data = obj.get_extra_data()
+                extra_data["approved"] = True
+                obj.set_extra_data(extra_data)
+                obj.save()
             elif '*' in category_refused:
-                eng.stopProcessing()
+                extra_data = obj.get_extra_data()
+                extra_data["approved"] = False
+                obj.set_extra_data(extra_data)
+                obj.save()
             else:
                 # We don't know what we should do, in doubt query human...
                 # they are nice!
@@ -221,9 +238,15 @@ def inspire_filter_category(category_accepted_param=(),
                          "Should we accept this record ?" % category,
                          action=action)
             elif sum_action == action_to_take[1]:
-                return None
+                extra_data = obj.get_extra_data()
+                extra_data["approved"] = True
+                obj.set_extra_data(extra_data)
+                obj.save()
             elif sum_action == action_to_take[2]:
-                eng.stopProcessing()
+                extra_data = obj.get_extra_data()
+                extra_data["approved"] = False
+                obj.set_extra_data(extra_data)
+                obj.save()
             else:
                 eng.halt(
                     "Category filtering needs human intervention, rules are incoherent !!!",
