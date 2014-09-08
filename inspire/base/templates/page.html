@@ -42,27 +42,12 @@
   {% endif %}
 {%- endblock %}
 
-{%- block page_header -%}
-  <header>
-    <!-- replaced page header -->
-    {% block headerbox %}
-    {% include 'header.html' %}
-    {% endblock headerbox %}
-    <!-- end replaced page header -->
-    {% block pageheaderadd %}{{ pageheaderadd|safe }}{% endblock pageheaderadd %}
-  </header>
-{%- endblock page_header -%}
-
 {% block body %}
   {{ super() }}
   {% if searchbar_enable %}
   {{ search_form(collection, easy_search_form) }}
   {% endif %}
 
-  {# include breadcrumb after search box #}
-  {% block breadcrumb %}
-    {%- include 'breadcrumbs.html' -%}
-  {% endblock breadcrumb %}
   {% block inner_content %}
   <!-- Here goes the content visible below the search bar -->
   {% endblock inner_content %}
