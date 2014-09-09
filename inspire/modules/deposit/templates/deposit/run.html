@@ -57,6 +57,13 @@ require(["jquery", "js/deposit/form", "/js/deposit/literature_submission_form.js
       get_file_url: '{{ url_for('.get_file', deposition_type=deposition_type, uuid=uuid) }}',
       dropbox_url: '{{ url_for('.upload_url', deposition_type=deposition_type, uuid=uuid) }}',
       files: {{ form.files|safe }},
+      filters: {
+        mime_types : [
+          { title : "PDF files", extensions : "pdf" },
+        ],
+        max_file_size: "100mb",
+        prevent_duplicates: true
+      }
       // Those are missing
       // uuid:,
       // newdep_url:,
