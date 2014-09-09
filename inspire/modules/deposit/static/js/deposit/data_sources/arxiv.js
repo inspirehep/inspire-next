@@ -38,7 +38,7 @@ define(function(require, exports, module) {
             title: data.title,
             title_arXiv: data.title,
             abstract: data.abstract,
-            contributors: data.authors,
+            authors: data.authors,
             journal_title: data["journal-ref"],
             year: data.created.substring(0, 4),
             license_url: data.license,

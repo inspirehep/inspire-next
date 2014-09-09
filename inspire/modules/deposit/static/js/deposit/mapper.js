@@ -81,8 +81,8 @@ define(function(require, exports, module) {
       }
 
       var mapping = $.extend({}, common_mapping, special_mapping);
-      if (mapping.contributors) {
-        mapping.contributors = $.map(mapping.contributors, this.extract_contributor);
+      if (mapping.authors) {
+        mapping.authors = $.map(mapping.authors, this.extract_contributor);
       }
 
       return mapping;

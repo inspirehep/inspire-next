@@ -62,7 +62,7 @@ define(function(require, exports, module) {
           page_range: data.page,
           year: data.issued['date-parts'][0][0],
           issue: data.issue,
-          contributors: data.author,
+          authors: data.author,
           volume: data.volume,
           url: data.URL
         };

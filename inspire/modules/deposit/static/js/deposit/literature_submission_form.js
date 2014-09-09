@@ -52,7 +52,7 @@ define(function(require, exports, module) {
         volume: ['doi', 'arxiv'],
         year: ['doi', 'arxiv'],
         issue: ['doi', 'arxiv'],
-        contributors: ['doi', 'arxiv'],
+        authors: ['doi', 'arxiv'],
         abstract: ['doi', 'arxiv'],
         article_id: ['doi', 'arxiv'],
         license_url: ['arxiv'],
@@ -319,7 +319,7 @@ define(function(require, exports, module) {
      * Fills the deposit form according to schema in dataMapping
      *
      * @param dataMapping {} dictionary with schema 'field_id: field_value', and
-     *  special 'contributors' key to extract them to authors field.
+     *  special 'authors' key to extract them to authors field.
      */
     fillForm: function fillForm(dataMapping) {
 
@@ -349,8 +349,8 @@ define(function(require, exports, module) {
         authorsWidget.append_element();
       }
 
-      for (var i in dataMapping.contributors) {
-        authorsWidget.update_element(dataMapping.contributors[i], i);
+      for (var i in dataMapping.authors) {
+        authorsWidget.update_element(dataMapping.authors[i], i);
         // next index is i+1 but there should stay one empty field
         if (parseInt(i) + 2 > authorsWidget.get_next_index()) {
           authorsWidget.append_element();
