@@ -1,0 +1,37 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2014 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+<div id="{{field_id}}" class="well pluploader">
+<span class="pull-right">
+  <small class="muted upload-speed"></small>&nbsp;
+  <a class="btn btn-default btn-xs" id="pickfiles">{{ _('Choose files...') }}</a>&nbsp;
+  <a class="btn btn-primary btn-xs disabled upload-start"><i class="icon-upload icon-white"></i>{{ _('Start upload') }}</a>&nbsp;
+  <a class="btn btn-danger btn-mini upload-stop"><i class="icon-stop icon-white"></i>{{ _('Stop upload') }}</a>
+</span>
+<h4>{{ _('Files') }}</h4>
+<table class="table table-striped upload-filetable">
+<thead>
+    <tr><th>{{ _('Filename') }}</th><th>Size</th><td></td><td></td></tr>
+</thead>
+<tbody class="upload-filelist">
+</tbody>
+</table>
+<p class="text-muted" align="center"><small>{{ _('Drag and drop files to upload') }}</small></p>
+<div class="upload-errors"></div>
+</div>
