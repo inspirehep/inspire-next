@@ -131,19 +131,23 @@ PACKAGES = [
     'invenio.base',
 ]
 
+# Configuration related to Deposit module
+
 DEPOSIT_TYPES = [
     'inspire.modules.deposit.workflows.literature.literature',
     'inspire.modules.deposit.workflows.literature_simple.literature_simple',
 ]
 DEPOSIT_DEFAULT_TYPE = "inspire.modules.deposit.workflows.literature:literature"
 
+# Task queue configuration
+
 CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
 BROKER_URL = "amqp://guest:guest@localhost:5672//"
 
+# Site name configuration
+
 CFG_SITE_LANG = u"en"
 CFG_SITE_LANGS = ['en', ]
-
-CFG_SITE_ADMIN_EMAIL = "admin@inspirehep.net"
 
 # CFG_SITE_NAME and main collection name should be the same for empty search
 # to work
@@ -154,6 +158,16 @@ for lang in CFG_SITE_LANGS:
     langs[lang] = u"INSPIRE - High-Energy Physics Literature Database"
 CFG_SITE_NAME_INTL = langs
 
+# Site emails
+
+CFG_SITE_ADMIN_EMAIL = "admin@inspirehep.net"
+
+# Rename blueprint prefixes
+
+BLUEPRINTS_URL_PREFIXES = {'webdeposit': '/submit'}
+
+# For production only, instance_config contains configuration of
+# database credentials and other instance specific configuration
 try:
     from inspire.instance_config import *
 except ImportError:

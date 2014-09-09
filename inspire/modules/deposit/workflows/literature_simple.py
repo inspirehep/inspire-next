@@ -53,4 +53,4 @@ class literature_simple(literature):
     ]
 
     name = "Literature (No approval)"
-    name_plural = "Literature (No approval) depositions"
+    name_plural = "Literature (No approval) submissions"

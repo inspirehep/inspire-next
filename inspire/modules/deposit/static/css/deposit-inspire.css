@@ -50,3 +50,9 @@
 .panel-heading .panel-toggle.collapsed:after {
     content: "\e080"; /* extracted from bootstrap.css */
 }
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
