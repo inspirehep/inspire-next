@@ -406,7 +406,7 @@ class LiteratureForm(WebDepositForm):
     #
     # Form Configuration
     #
-    _title = _("Literature suggestion")
+    _title = _("Literature submission")
     # _subtitle = 'Instructions: (i) Press "Save" to save your upload for '\
     #             'editing later, as many times you like. (ii) Upload or remove'\
     #             ' extra files in the bottom of the form. (iii) When ready, '\
