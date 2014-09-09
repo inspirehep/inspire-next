@@ -335,13 +335,11 @@ define(function(require, exports, module) {
       $.map(dataMapping, function(value, field_id) {
         var $field = $('#' + field_id);
         if ($field) {
-          $field.val(value);
-          $("#submitForm").trigger("dataFormSave", {
-            url: that.save_url,
-            field_id: field_id,
-            value:value,
-            show:false,
-            form_selector: "#submitForm"
+          var field_value = $field.val(value);
+          $("#submitForm").trigger("dataSaveField", {
+            save_url: that.save_url,
+            name: field_id,
+            value: value
           });
         }
       });
