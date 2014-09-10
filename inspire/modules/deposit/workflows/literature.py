@@ -193,8 +193,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         for field in field_list:
             if field in metadata:
                 tmp_field = metadata[field]
-                metadata[field] = {}
-                metadata[field][field_map[field]] = tmp_field
+                metadata[field] = {field_map[field]: tmp_field}
 
         if "subject_term" in metadata:
             tmp_field = metadata["subject_term"]
@@ -210,7 +209,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             if len(first_author) > 1 and \
                     literature.match_authors_initials(first_author[1]):
                 first_author[1] = first_author[1].replace(' ', '')
-                metadata['authors'][0]['full_name'] = ",".join(first_author)
+                metadata['authors'][0]['full_name'] = ", ".join(first_author)
             metadata['_first_author'] = metadata['authors'][0]
             metadata['_first_author']['email'] = ''
             if metadata['authors'][1:]:
@@ -221,7 +220,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                         if len(additional_author) > 1 and \
                                 literature.match_authors_initials(additional_author[1]):
                             additional_author[1] = additional_author[1].replace(' ', '')
-                            k['full_name'] = ",".join(additional_author)
+                            k['full_name'] = ", ".join(additional_author)
                         k['email'] = ''
                     except AttributeError:
                         pass
@@ -255,29 +254,44 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ========
         metadata['collections'] = [{'primary': "HEP"}]
 
-        # ===============
-        # Abstract source
-        # ===============
-        if 'title_arXiv' in metadata:
-            metadata['abstract']['source'] = 'arXiv'
-
         # ========
         # arXiv ID
         # ========
-        if 'arxiv_id' in metadata:
-            metadata['report_number'] = "$$9arXiv$$aoai:arXiv.org:" + metadata['arxiv_id']
+        imported_from_arXiv = filter(lambda field: field in metadata,
+                                     ['arxiv_id',
+                                      'categories_arXiv'])
+
+        if imported_from_arXiv or metadata.get('title_source') == 'arXiv':
+            metadata['report_number'] = {'primary': 'oai:arXiv.org:' + metadata['arxiv_id']}
+            if 'title_arXiv' in metadata:
+                metadata['report_number']['source'] = 'arXiv'
+                metadata['abstract']['source'] = 'arXiv'
+                if 'categories' in metadata and metadata['categories']:
+                    metadata['report_number']['arxiv_category'] = metadata['categories']
+                    # Subject term
+                    subject_list = [{"term": c, "scheme": "arXiv"}
+                                    for c in metadata['categories']]
+                    if 'subject_term' in metadata and metadata['subject_term']:
+                        metadata['subject_term'].extend(subject_list)
+                    else:
+                        metadata['subject_term'] = subject_list
+                metadata['system_number_external'] = {'external_key': 'oai:arXiv.org:' + metadata['arxiv_id'],
+                                                      'institute': 'arXiv'}
+                metadata['collections'].extend([{'primary': "arXiv"}, {'primary': "Citeable"}])
 
         # ========
         # Language
         # ========
-        metadata['language'] = unicode(dict(LiteratureForm.languages).get(metadata['language']))
+        if metadata['language'] != 'en':
+            metadata['language'] = unicode(dict(LiteratureForm.languages).get(metadata['language']))
+        else:
+            delete_keys.append('language')
 
         # ==========
         # Experiment
         # ==========
         if 'experiment' in metadata:
-            metadata['accelerator_experiment'] = {}
-            metadata['accelerator_experiment']['experiment'] = metadata['experiment']
+            metadata['accelerator_experiment'] = {'experiment': metadata['experiment']}
             delete_keys.append('experiment')
 
         # ===============
@@ -296,8 +310,9 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # License
         # =======
         if 'license_url' in metadata:
-            metadata['license'] = {}
-            metadata['license']['url'] = metadata['license_url']
+            metadata['license'] = {'url': metadata['license_url']}
+            if imported_from_arXiv or metadata.get('title_source') == 'arXiv':
+                metadata['license']['imposing'] = 'arXiv'
             delete_keys.append('license_url')
 
         # ===========
@@ -305,8 +320,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ===========
         if 'fft' in metadata and metadata['fft']:
             fft = metadata['fft']
-            metadata['fft'] = {}
-            metadata['fft']['url'] = fft[0]['path']
+            metadata['fft'] = {'url': fft[0]['path']}
 
         # ================
         # Publication Info
@@ -340,6 +354,13 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             if {'primary': "ConferencePaper"} in metadata['collections']:
                 metadata['collections'].remove({'primary': "ConferencePaper"})
             metadata['collections'].append({'primary': "Published"})
+
+        # =============
+        # Preprint Info
+        # =============
+        if 'created' in metadata and metadata['created']:
+            metadata['preprint_info'] = {'date': metadata['created']}
+            delete_keys.append('created')
 
         # ===================
         # Delete useless data
