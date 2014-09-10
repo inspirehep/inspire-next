@@ -33,14 +33,25 @@ define(function(require, exports, module) {
 
       special_mapping: {
         article: function(data) {
+
+          var category_list = "";
+
+          if (typeof data.categories === "string") {
+            category_list = data.categories;
+          } else if (typeof data.categories == "object") {
+            category_list = data.categories.join(', ');
+          }
+
           return {
             doi: data.doi,
             title: data.title,
             title_arXiv: data.title,
+            categories_arXiv: category_list,
             abstract: data.abstract,
             authors: data.authors,
             journal_title: data["journal-ref"],
             year: data.created.substring(0, 4),
+            preprint_created: data.created,
             license_url: data.license,
             note: data.comments,
           };

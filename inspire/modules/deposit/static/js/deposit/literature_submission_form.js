@@ -53,6 +53,7 @@ define(function(require, exports, module) {
       var priorities = {
         title: ['doi', 'arxiv'],
         title_arXiv: ['arxiv'],
+        categories_arXiv: ['arxiv'],
         journal_title: ['doi', 'arxiv'],
         isbn: ['doi', 'arxiv'],
         page_range: ['doi', 'arxiv'],
@@ -63,6 +64,7 @@ define(function(require, exports, module) {
         abstract: ['doi', 'arxiv'],
         article_id: ['doi', 'arxiv'],
         license_url: ['arxiv'],
+        preprint_created: ['arxiv'],
         note: ['arxiv'],
         page_nr: ['doi', 'arxiv']
       };
