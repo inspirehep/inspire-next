@@ -37,7 +37,8 @@ require.config({
         bootstrap: 'vendors/bootstrap/dist/js/bootstrap',
         'typeahead': 'vendors/typeahead.js/dist/typeahead.bundle',
         // INSPIRE
-        'bootstrap-multiselect': 'vendors/bootstrap-multiselect/js/bootstrap-multiselect'
+        'bootstrap-multiselect': 'vendors/bootstrap-multiselect/js/bootstrap-multiselect',
+        'readmore': 'vendors/readmore/readmore'
     },
     shim: {
         // Invenio
@@ -48,6 +49,8 @@ require.config({
         'typeahead': { deps :['jquery'] },
         // INSPIRE
         "bootstrap-multiselect" : { deps :['jquery'],
-                                    exports: '$.fn.multiselect' }
+                                    exports: '$.fn.multiselect' },
+        "readmore" : { deps :['jquery'],
+                                    exports: '$.fn.readmore' }
     }
 })

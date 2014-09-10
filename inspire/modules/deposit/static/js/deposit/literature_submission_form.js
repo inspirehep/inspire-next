@@ -29,7 +29,7 @@ define(function(require, exports, module) {
   var DataMapper = require("js/deposit/mapper");
   var TaskManager = require("js/deposit/task_manager");
   var ConferencesTypeahead = require("js/deposit/conferences_typeahead");
-  var ModalPreview = require("js/deposit/modal_preview");
+  var PreviewModal = require("js/deposit/modal_preview");
   require("js/deposit/message_box");
   require("js/deposit/fields_group");
   require('ui/effect-highlight');
@@ -155,8 +155,8 @@ define(function(require, exports, module) {
         suggestionTemplate: Hogan.compile(
           '<b>{{ title }}</b><br>' +
           '<small>' +
-            '{{ date }}, {{ place }}<br>' +
-            '{{ conference_id }}' +
+          '{{ date }}, {{ place }}<br>' +
+          '{{ conference_id }}' +
           '</small>'
         ),
 
@@ -167,10 +167,9 @@ define(function(require, exports, module) {
         cannotFindMessage: 'Cannot find this conference in our database.'
       });
 
-      // starts the modal preview
-      this.previewModal = new ModalPreview(this.$previewModal, {
+      this.previewModal = new PreviewModal(this.$previewModal, {
         labels: this.getLabels(),
-        hiddenFields: this.getHiddenFields()
+        ignoredFields: this.getHiddenFields()
       });
     },
 
@@ -190,6 +189,7 @@ define(function(require, exports, module) {
       });
 
       this.$importButton.click(function(event) {
+        event.preventDefault();
         that.$importButton.button('loading');
         that.importData();
       });
@@ -197,14 +197,6 @@ define(function(require, exports, module) {
       this.$skipButton.click(function(event) {
         event.preventDefault();
         that.showRestForm(this);
-      });
-
-      this.$previewModal.on("accepted", function(event, data, el) {
-        var mapping = data;
-        that.fillForm(mapping);
-        that.fieldsGroup.resetState();
-        that.messageBox.showMessages();
-        that.showRestForm(el);
       });
 
       this.$submissionForm.on('submit', function(event) {
@@ -317,21 +309,32 @@ define(function(require, exports, module) {
         literatureFormPriorityMapper,
         // callback
         function(result) {
-          that.messageBox.clean();
+
+          that.fieldsGroup.resetState();
           that.messageBox.append(result.statusMessage);
           that.$importButton.button('reset');
-          // check for empty object {}
+
+          // clear the messages when user cancel to import data
+          that.$previewModal.one("rejected", function(event, el) {
+            that.messageBox.clean();
+          });
+
+          // only fill the form if the user accepts the data
+          that.$previewModal.one("accepted", function(event, el) {
+            that.fillForm(result.mapping);
+            that.showRestForm(el);
+          });
+
+          // check if there are any data
           if (result.mapping) {
             that.previewModal.show(result.mapping);
-          } else {
-            that.messageBox.showMessages();
           }
         }
       );
     },
 
     /**
-     * Removes hidden fields from the object
+     * Returns ids of hidden elements
      */
     getHiddenFields: function getHiddenFields(dataMapping) {
       return $.map($('input.hidden'), function(value, index) {
@@ -340,7 +343,7 @@ define(function(require, exports, module) {
     },
 
     /**
-     * Maps to the labels extracted from the form
+     * Returns object with keys named after the labels extracted from the form
      */
     getLabels: function getLabels() {
       var newObject = {};
@@ -348,9 +351,9 @@ define(function(require, exports, module) {
       $.map($rows, function(row, index) {
         var $label = $(row).find('label');
         var label = $.trim($label.text());
-        var $field = $(row).find("div[id^='field-']").children().first();
+        var $field = $label.attr('for');
         if ($label && label) {
-          newObject[$field[0].id] = label;
+          newObject[$field] = label;
         }
       });
       return newObject;
