@@ -32,7 +32,7 @@
 
 {% block javascript %}
 <script type="text/javascript">
-require(["jquery", "js/deposit/form", "/js/deposit/literature_submission_form.js", "js/deposit/plupload"], function($, deposit_form, LiteratureSubmissionForm) {
+require(["jquery", "js/deposit/form", "js/deposit/literature_submission_form", "js/deposit/plupload"], function($, deposit_form, LiteratureSubmissionForm) {
   $(function() {
     var save_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id) }}';
     var save_all_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, all='1') }}';

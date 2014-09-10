@@ -21,8 +21,8 @@
  */
 
 define(function(require, exports, module) {
-  var DataSource = require("./data_source.js");
-  var DataMapper = require("../mapper.js");
+  var DataSource = require("js/deposit/data_sources/data_source");
+  var DataMapper = require("js/deposit/mapper");
   var doiSource = new DataSource({
 
     id: 'doi',

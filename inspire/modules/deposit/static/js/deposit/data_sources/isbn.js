@@ -21,7 +21,7 @@
  */
 
 define(function(require, exports, module) {
-  var DataSource = require("./data_source.js");
+  var DataSource = require("js/deposit/data_sources/data_source");
   var isbnSource = new DataSource({
 
     id: 'isbn',
