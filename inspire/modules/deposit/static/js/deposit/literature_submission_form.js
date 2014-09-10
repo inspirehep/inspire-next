@@ -24,12 +24,12 @@
 define(function(require, exports, module) {
   "use strict";
 
-  var tpl_flash_message = require('hgn!/js/deposit/templates/flash_message');
-  var DataMapper = require("./mapper.js");
-  var TaskManager = require("./task_manager.js");
-  var ConferencesTypeahead = require("./conferences_typeahead.js");
-  require("./message_box.js");
-  require("./fields_group.js");
+  var tpl_flash_message = require('hgn!js/deposit/templates/flash_message');
+  var DataMapper = require("js/deposit/mapper");
+  var TaskManager = require("js/deposit/task_manager");
+  var ConferencesTypeahead = require("js/deposit/conferences_typeahead");
+  require("js/deposit/message_box");
+  require("js/deposit/fields_group");
 
   require('ui/effect-highlight');
 
@@ -236,9 +236,9 @@ define(function(require, exports, module) {
 
     importData: function importData() {
 
-      var arxivSource = require("./data_sources/arxiv.js");
-      var doiSource = require("./data_sources/doi.js");
-      var isbnSource = require("./data_sources/isbn.js");
+      var arxivSource = require("js/deposit/data_sources/arxiv");
+      var doiSource = require("js/deposit/data_sources/doi");
+      var isbnSource = require("js/deposit/data_sources/isbn");
 
       var arxivId = this.stripSourceTags(this.$arxiv_id_field.val());
       var doi = this.stripSourceTags(this.$doi_field.val());
@@ -247,7 +247,7 @@ define(function(require, exports, module) {
 
       var importTasks = [];
 
-      var ImportTask = require("./import_task.js");
+      var ImportTask = require("js/deposit/import_task");
 
       if (doi) {
         importTasks.push(new ImportTask(doiSource, doi, depositionType));
