@@ -20,15 +20,13 @@
 
 from invenio.modules.deposit.bundles import js as _deposit_js, \
     styles as _deposit_styles
-from invenio.base.bundles import jquery as _base_js
 
 # '_' prefix indicates private variables, and prevents duplicated import by
 # auto-discovery service of invenio
 
 _deposit_js.contents.remove("js/deposit/init.js")
 _deposit_js.contents += [
-    'vendors/buckets/buckets.js',
-    'vendors/readmore/readmore.min.js'
+    'vendors/buckets/buckets.js'
 ]
 _deposit_js.contents = ['js/deposit/inspire_init.js'] + _deposit_js.contents
 

@@ -24,92 +24,73 @@
 define(function(require, exports, module) {
   "use strict";
 
-  // require the Readmore library
-  require("/vendors/readmore/readmore.min.js");
+  var $ = require('jquery');
+  require("readmore");
 
-  function ModalPreview($element, options) {
+  function PreviewModal($element, options) {
     this.$element = $element;
     this.$acceptButton = this.$element.find('#acceptData');
     this.$rejectButton = this.$element.find('#rejectData');
     this.data = {};
     this.labels = options.labels;
-    this.hiddenFields = options.hiddenFields;
+    this.ignoredFields = options.ignoredFields;
     this.init();
   }
 
-  ModalPreview.prototype = {
+  PreviewModal.prototype = {
 
     init: function() {
-      this.bindUIActions();
-    },
-
-    deleteHiddenFields: function(data) {
-      var newObj = $.extend(true, {}, data);
-      $.each(this.hiddenFields, function(index, id) {
-        delete newObj[id];
-      });
-      return newObj;
-    },
-
-    setLabels: function(data) {
-      var newObj = {};
-
-      $.each(this.labels, function(id, label) {
-        if (data[id]) {
-          newObj[label] = data[id];
-        }
-      });
-
-      if (data.authors) {
-        newObj.Authors = data.authors;
-      }
-
-      return newObj;
+      this.connectEvents();
     },
 
     show: function(data) {
       this.data = data;
-      var renderData = this.deleteHiddenFields(data);
-      renderData = this.setLabels(renderData);
-      this.renderModal(renderData);
+      var cloneData = jQuery.extend(true, {}, data);
+      this.renderModal(cloneData);
     },
 
-    renderModal: function(jsonData) {
+    renderModal: function(dataModal) {
 
-      if ($.isEmptyObject(jsonData)) {
+      if ($.isEmptyObject(dataModal)) {
         return;
       }
+
+      var that = this;
 
       var tableTemplate = Hogan.compile('<table class="table table-hover"><tbody>{{{content}}}</tbody></table>');
       var rowTemplate = Hogan.compile('<tr>{{{content}}}</tr>\n');
       var cellTemplate = Hogan.compile('<td><p class="{{class}}">{{{content}}}</p></td>\n');
 
+      // apply the Read/Less only to Abstract and Authors fields
       var valueClasses = {
-        Abstract: 'readmore',
-        Authors: 'readmore',
+        abstract: 'readmore',
+        authors: 'readmore',
       };
 
       var authorTemplate = Hogan.compile('{{author}}<br>');
 
       var authorsValue = '';
-      $.each(jsonData.Authors, function(index, author) {
+      $.each(dataModal.authors, function(id, author) {
         authorsValue += authorTemplate.render({
           author: author.name
         });
       });
 
-      jsonData.Authors = authorsValue;
+      dataModal.authors = authorsValue;
 
       var tableContent = '';
 
-      $.each(jsonData, function(index, user) {
+      $.each(dataModal, function(id, value) {
+        if ($.inArray(id, that.ignoredFields) !== -1) {
+          return;
+        }
         var labelCell = cellTemplate.render({
           class: 'cell-width',
-          content: index,
+          content: that.labels[id],
         });
         var valueCell = cellTemplate.render({
-          class: valueClasses[index],
-          content: user,
+          class: valueClasses[id],
+          content: value,
         });
 
         var row = rowTemplate.render({
@@ -123,16 +104,22 @@ define(function(require, exports, module) {
         content: tableContent
       });
 
+      // populate the body of the modal
       $('#myModal .modal-body').html(table);
-      this.$element.modal();
+
+      // show the modal
+      this.$element.modal({
+        backdrop: 'static',
+        keyboard: false
+      });
     },
 
-    bindUIActions: function() {
+    connectEvents: function() {
 
       var that = this;
 
       this.$acceptButton.on('click', function(event) {
-        that.$element.trigger('accepted', [that.data, this]);
+        that.$element.trigger('accepted', this);
       });
 
       this.$rejectButton.on('click', function(event) {
@@ -152,5 +139,5 @@ define(function(require, exports, module) {
       });
     }
   };
-  module.exports = ModalPreview;
+  module.exports = PreviewModal;
 });
