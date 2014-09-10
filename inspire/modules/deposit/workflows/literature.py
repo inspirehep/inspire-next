@@ -45,7 +45,7 @@ from invenio.modules.workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else
 )
-from invenio.modules.workflows.utils import WorkflowBase
+from invenio.modules.workflows.definitions import WorkflowBase
 from ...workflows.config import CFG_ROBOTUPLOAD_SUBMISSION_BASEURL
 
 
