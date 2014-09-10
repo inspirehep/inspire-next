@@ -23,17 +23,18 @@ import collections
 from six import string_types
 
 from invenio.modules.workflows.tasks.marcxml_tasks import (
-    convert_record_with_repository,
     convert_record_to_bibfield,
-    plot_extract,
-    fulltext_download,
-    refextract,
-    author_list,
-    upload_step,
     quick_match_record,
     bibclassify,
 )
-
+from invenio.modules.oaiharvester.tasks.postprocess import (
+    convert_record_with_repository,
+    plot_extract,
+    arxiv_fulltext_download,
+    refextract,
+    author_list,
+    upload_step,
+)
 from invenio.modules.workflows.tasks.workflows_tasks import log_info
 from inspire.modules.workflows.tasks.actions import was_approved
 
@@ -41,7 +42,7 @@ from invenio.modules.workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else,
 )
-from invenio.modules.workflows.utils import WorkflowBase
+from invenio.modules.workflows.definitions import WorkflowBase
 from ..tasks.filtering import inspire_filter_custom
 
 
@@ -54,7 +55,7 @@ class process_record_arxiv(WorkflowBase):
         workflow_if(quick_match_record, True),
         [
             plot_extract(["latex"]),
-            fulltext_download,
+            arxiv_fulltext_download,
             bibclassify(taxonomy="HEPont",
                         output_mode="dict",
                         fast_mode=True),

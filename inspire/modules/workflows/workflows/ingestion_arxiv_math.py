@@ -23,12 +23,15 @@
 """Implements an example of a typical ingestion workflow for MARCXML records"""
 
 from invenio.modules.workflows.tasks.marcxml_tasks import (
+    get_obj_extra_data_key,
+    update_last_update
+)
+
+from invenio.modules.oaiharvester.tasks.harvesting import (
     get_repositories_list,
     init_harvesting,
     harvest_records,
-    get_obj_extra_data_key,
     get_records_from_file,
-    update_last_update,
     filtering_oai_pmh_identifier
 )
 
@@ -51,7 +54,7 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 )
 
 from invenio.legacy.bibsched.bibtask import task_update_progress, write_message
-from invenio.modules.workflows.utils import WorkflowBase
+from invenio.modules.workflows.definitions import WorkflowBase
 
 
 class ingestion_arxiv_math(WorkflowBase):
