@@ -50,7 +50,9 @@ define(function(require, exports, module) {
         if (data.page) {
           pages = data.page.split('-');
           if (pages.length === 2) {
-            page_number = pages[1] - pages[0];
+            page_number = pages[1] - pages[0] + 1;
+          } else if (pages.length === 1) {
+            page_number = 1;
           }
         }
 
