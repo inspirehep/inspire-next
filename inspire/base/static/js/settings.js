@@ -47,6 +47,7 @@ require.config({
         "bootstrap" : { deps :['jquery'] },
         'typeahead': { deps :['jquery'] },
         // INSPIRE
-        "bootstrap-multiselect" : { deps :['jquery'] },
+        "bootstrap-multiselect" : { deps :['jquery'],
+                                    exports: '$.fn.multiselect' }
     }
 })
