@@ -57,7 +57,6 @@ define(function(require, exports, module) {
         }
 
         var doi_obj = {
-          conf_name: data.publisher,
           journal_title: journal,
           isbn: data.isbn,
           page_nr: page_number,
