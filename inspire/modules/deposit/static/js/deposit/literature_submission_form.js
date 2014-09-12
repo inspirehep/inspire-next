@@ -24,14 +24,18 @@
 define(function(require, exports, module) {
   "use strict";
 
+  var $ = require("jquery")
   var tpl_flash_message = require('hgn!js/deposit/templates/flash_message');
   var DataMapper = require("js/deposit/mapper");
   var TaskManager = require("js/deposit/task_manager");
   var ConferencesTypeahead = require("js/deposit/conferences_typeahead");
   require("js/deposit/message_box");
   require("js/deposit/fields_group");
-
   require('ui/effect-highlight');
+  require("bootstrap-multiselect");
+  require("bootstrap");
+  require('js/deposit/dynamic_field_list');
+
 
   /**
    * This mapper assumes it receives standarized data format

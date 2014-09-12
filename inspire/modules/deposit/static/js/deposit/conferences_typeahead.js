@@ -21,7 +21,10 @@
  */
 
 define(function(require, exports, module) {
-  (function($) {
+
+  require('typeahead');
+
+  var $ = require('jquery');
 
     /**
      * Constructor.
@@ -236,5 +239,4 @@ define(function(require, exports, module) {
     };
 
   module.exports = ConferencesTypeahead;
-  })(jQuery);
 });

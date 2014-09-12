@@ -22,74 +22,72 @@
 
 
 define(function(require, exports, module) {
-  (function($) {
+  var $ = require("jquery")
+  var MessageBox = (function() {
 
-    var MessageBox = (function() {
+    /**
+     * Constructor.
+     *
+     * @param element html element on which the plugin
+     * @param options dictionary
+     * @constructor
+     */
+    function MessageBox(element, options) {
+
+      // ensure that there is jQuery selector available
+      this.$element = $(element);
+      this.options = $.extend({}, $.fn.messageBox.defaults, options);
+
+      this.template = this.options.hoganTemplate;
+
+    }
+
+    MessageBox.prototype = {
 
       /**
-       * Constructor.
-       *
-       * @param element html element on which the plugin
-       * @param options dictionary
-       * @constructor
+       * Appends one message. Use append which is more universal.
+       * @param ctx
+       * @private
        */
-      function MessageBox(element, options) {
+      _appendOne: function(ctx) {
+        this.$element.append(this.template(ctx));
+        this.$element.show('fast');
+      },
 
-        // ensure that there is jQuery selector available
-        this.$element = $(element);
-        this.options = $.extend({}, $.fn.messageBox.defaults, options);
+      /**
+       * Cleans the message box.
+       */
+      clean: function() {
+        this.$element.empty();
+      },
 
-        this.template = this.options.hoganTemplate;
-
-      }
-
-      MessageBox.prototype = {
-
-        /**
-         * Appends one message. Use append which is more universal.
-         * @param ctx
-         * @private
-         */
-        _appendOne: function(ctx) {
-          this.$element.append(this.template(ctx));
-          this.$element.show('fast');
-        },
-
-        /**
-         * Cleans the message box.
-         */
-        clean: function() {
-          this.$element.empty();
-        },
-
-        /**
-         * Appends one or more messages to the array box.
-         * @param messages can be a single message context or an array of them.
-         */
-        append: function(messages) {
-          if (!Array.isArray(messages)) {
-            this._appendOne(messages);
-          }
-          var that = this;
-          $.each(messages, function() {
-            that._appendOne(this);
-          });
+      /**
+       * Appends one or more messages to the array box.
+       * @param messages can be a single message context or an array of them.
+       */
+      append: function(messages) {
+        if (!Array.isArray(messages)) {
+          this._appendOne(messages);
         }
-      };
-
-      return MessageBox;
-
-    })();
-
-    $.fn.messageBox = jQueryPlugin(MessageBox, 'message-box');
-
-    $.fn.messageBox.defaults = {
-      /**
-       * @param the template used to render a message. Should have parameters
-       *  'state' and 'message'.
-       */
-      hoganTemplate: {},
+        var that = this;
+        $.each(messages, function() {
+          that._appendOne(this);
+        });
+      }
     };
 
-  })(jQuery);
+    return MessageBox;
+
+  })();
+
+  $.fn.messageBox = jQueryPlugin(MessageBox, 'message-box');
+
+  $.fn.messageBox.defaults = {
+    /**
+     * @param the template used to render a message. Should have parameters
+     *  'state' and 'message'.
+     */
+    hoganTemplate: {},
+  };
+
 });

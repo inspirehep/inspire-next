@@ -36,10 +36,12 @@
 
 {%- block global_bundles %}
   {{ super() }}
-  {% bundles "invenio.css", "base.js" %}
-  {% if searchbar_enable %}
-    {% bundle "search.js", "search.css" %}
-  {% endif %}
+  {%- block bundles %}
+    {% bundles "jquery.js", "invenio.css", "base.js" %}
+    {% if searchbar_enable %}
+      {% bundle "search.js", "search.css" %}
+    {% endif %}
+  {%- endblock %}
 {%- endblock %}
 
 {% block body %}
