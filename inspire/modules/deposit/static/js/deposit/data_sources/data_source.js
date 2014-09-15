@@ -150,6 +150,13 @@ define(function(require, exports, module) {
         };
       }
 
+      if (queryStatus === 404) {
+        return {
+          state: 'warning',
+          message: 'The ' + this.name + ' ' + id + ' was not found.'
+        };
+      }
+
       return {
         state: 'warning',
         message: 'The ' + this.name + ' ' + id + ' cannot be imported.'
