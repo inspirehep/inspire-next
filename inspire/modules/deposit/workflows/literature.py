@@ -28,6 +28,8 @@ from invenio.modules.deposit.tasks import render_form, \
     finalize_record_sip, \
     prefill_draft, \
     process_sip_metadata
+from invenio.ext.login import UserInfo
+from invenio.modules.oauthclient.models import RemoteAccount
 
 from ..tasks import arxiv_fft_get, add_submission_extra_data
 
@@ -437,6 +439,20 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         if 'created' in metadata and metadata['created']:
             metadata['preprint_info'] = {'date': metadata['created']}
             delete_keys.append('created')
+
+        # ==========
+        # Owner Info
+        # ==========
+        userid = deposition.user_id
+        user = UserInfo(userid)
+        email = user.info.get('email', '')
+        sources = ["{0}:{1}".format('inspire:uid:', userid)]
+        metadata['acquisition_source'] = dict(
+            source=sources,
+            email=email,
+            method="submission",
+            submission_number=deposition.id,
+        )
 
         # ===================
         # Delete useless data
