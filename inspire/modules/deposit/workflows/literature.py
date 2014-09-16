@@ -28,6 +28,8 @@ from invenio.modules.deposit.tasks import render_form, \
     finalize_record_sip, \
     prefill_draft, \
     process_sip_metadata
+from invenio.ext.login import UserInfo
+from invenio.modules.oauthclient.models import RemoteAccount
 
 from inspire.modules.deposit.forms import LiteratureForm
 from invenio.modules.deposit.models import Deposition
@@ -317,6 +319,25 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             if {'primary': "ConferencePaper"} in metadata['collections']:
                 metadata['collections'].remove({'primary': "ConferencePaper"})
             metadata['collections'].append({'primary': "Published"})
+
+        # ==========
+        # Owner Info
+        # ==========
+        userid = deposition.user_id
+        user = UserInfo(userid)
+        email = user.info.get('email', '')
+        external_accounts = RemoteAccount.query.filter_by(user_id=userid).all()
+        external_ids = {}
+        for e_id in external_accounts:
+            external_ids[e_id.client_id] = e_id.extra_data
+        sources = ["{0}:{1}".format('invenio', userid)]
+        sources.extend(["{0}:{1}".format(e_id.extra_data.keys()[0],
+                                         e_id.extra_data.values()[0]) for e_id in external_ids])
+        metadata['acquisition_source'] = dict(
+            source=sources,
+            email=email,
+            submission_number=deposition.id,
+        )
 
         # ===================
         # Delete useless data
