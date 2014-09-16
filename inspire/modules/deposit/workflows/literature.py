@@ -91,21 +91,20 @@ class literature(SimpleRecordDeposition, WorkflowBase):
     @staticmethod
     def get_title(bwo):
         deposit_object = Deposition(bwo)
-        sip = deposit_object.get_latest_sip(sealed=False)
+        sip = deposit_object.get_latest_sip()
         if sip:
-            submission_data = deposit_object.get_latest_sip()
             # Get the SmartJSON object
-            record = submission_data.metadata
-            return record.get("title", "No title").get("main")
+            record = sip.metadata
+            return record.get("title", {"main": "No title"}).get("main")
         else:
             return "User submission in progress!!"
 
     @staticmethod
     def get_description(bwo):
         deposit_object = Deposition(bwo)
-        sip = deposit_object.get_latest_sip(sealed=False)
+        sip = deposit_object.get_latest_sip()
         if sip:
-            record = deposit_object.get_latest_sip().metadata
+            record = sip.metadata
             identifiers = [record.get("arxiv_id", "")]
             categories = [record.get("type_of_doc", "")]
             return render_template('workflows/styles/submission_record.html',
