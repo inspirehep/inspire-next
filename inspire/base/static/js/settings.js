@@ -46,7 +46,8 @@ require.config({
         'jqueryui-timepicker/jquery-ui-timepicker-addon': {deps: ['jquery', 'ui/slider']},
         'jqueryui-timepicker/i18n/jquery-ui-timepicker-addon-i18n': {deps: ['jqueryui-timepicker/jquery-ui-timepicker-addon']},
         "bootstrap" : { deps :['jquery'] },
-        'typeahead': { deps :['jquery'] },
+        'typeahead': { deps :['jquery'],
+                       exports: "Bloodhound" },
         // INSPIRE
         "bootstrap-multiselect" : { deps :['jquery'],
                                     exports: '$.fn.multiselect' },

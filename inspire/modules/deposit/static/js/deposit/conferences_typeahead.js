@@ -22,9 +22,8 @@
 
 define(function(require, exports, module) {
 
-  require('typeahead');
-
   var $ = require('jquery');
+  var Bloodhound = require('typeahead');
 
     /**
      * Constructor.
