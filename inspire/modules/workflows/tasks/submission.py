@@ -63,7 +63,9 @@ def inform_submitter(obj, eng):
     id_user = d.workflow_object.id_user
     email = acc_get_user_email(id_user)
     if was_approved(obj, eng):
-        body = 'Accepted'
+        body = 'Accepted: '
+        extra_data = d.workflow_object.get_extra_data()
+        body += extra_data.get('url', '')
     else:
         body = 'Rejected'
     send_email(CFG_SITE_SUPPORT_EMAIL, email, 'Subject', body, header='header')
@@ -110,7 +112,7 @@ def send_robotupload(url):
             d.update()
 
         callback_url = os.path.join(cfg["CFG_SITE_URL"],
-                                    "callback/workflows/continue")
+                                    "callback/workflows/robotupload")
 
         result = make_robotupload_marcxml(
             url=url,
