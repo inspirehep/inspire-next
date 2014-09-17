@@ -30,6 +30,7 @@ from invenio.modules.formatter import format_record
 from flask.ext.login import current_user
 from invenio.config import CFG_SITE_SUPPORT_EMAIL
 from .actions import was_approved
+from invenio.modules.workflows.utils import pass_properties_to_closure
 
 
 def halt_to_render(obj, eng):
@@ -74,6 +75,7 @@ def approve_record(obj, eng):
              msg='Accept submission?')
 
 
+@pass_properties_to_closure
 def finalize_and_post_process(workflow_name, **kwargs):
     """Finalize the submission and starts post-processing."""
     def _finalize_and_post_process(obj, eng):
@@ -89,6 +91,7 @@ def finalize_and_post_process(workflow_name, **kwargs):
     return _finalize_and_post_process
 
 
+@pass_properties_to_closure
 def send_robotupload(url):
     """Get the MARCXML from the deposit object and ships it."""
     def _send_robotupload(obj, eng):
@@ -118,7 +121,9 @@ def send_robotupload(url):
         if "[INFO]" not in result.text:
             if "cannot use the service" in result.text:
                 # IP not in the list
-                obj.log.error("Your IP is not in CFG_BATCHUPLOADER_WEB_ROBOT_RIGHTS on host")
+                obj.log.error("Your IP is not in "
+                              "CFG_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
+                              "on host")
                 obj.log.error(result.text)
             from invenio.modules.workflows.errors import WorkflowError
             txt = "Error while submitting robotupload: {0}".format(result.text)
