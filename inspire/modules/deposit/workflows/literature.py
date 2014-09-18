@@ -42,8 +42,7 @@ from inspire.modules.workflows.tasks.submission import (
 
 from inspire.modules.workflows.tasks.actions import was_approved
 from invenio.modules.workflows.tasks.logic_tasks import (
-    workflow_if,
-    workflow_else
+    workflow_if
 )
 from invenio.modules.workflows.definitions import WorkflowBase
 from ...workflows.config import CFG_ROBOTUPLOAD_SUBMISSION_BASEURL
@@ -72,13 +71,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         [
             send_robotupload(CFG_ROBOTUPLOAD_SUBMISSION_BASEURL)
         ],
-        workflow_else,
-        [
-            approve_record  # second chance :P
-        ],
         inform_submitter
-        # Upload the marcxml locally (good for debugging)
-        # upload_record_sip(),
     ]
 
     name = "Literature"
