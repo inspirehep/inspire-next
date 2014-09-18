@@ -72,3 +72,8 @@
 .cell-width {
     width: 100px;
 }
+
+.box-instructions {
+    padding-left: 10px;
+    padding-top: 10px;
+}

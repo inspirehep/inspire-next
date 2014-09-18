@@ -27,4 +27,7 @@
 
     </div>
     <div id="collapse-{{ idx }}" class="panel-collapse collapse {{ 'in' if group.meta.classes is none else group.meta.classes }}">
+    {% if idx == 1 %}
+        <p class="text-muted box-instructions">Enter all available IDs and click <strong>Auto Import</strong>. If you don't have any, skip this step.</p>
+    {% endif %}
     <div class="panel-body">

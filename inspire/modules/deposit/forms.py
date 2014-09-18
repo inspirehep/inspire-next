@@ -168,7 +168,7 @@ class LiteratureForm(WebDepositForm):
         label=_('DOI'),
         processors=[],
         export_key='doi',
-        description='e.g. 10.1234/foo.bar...',
+        description='e.g. 10.1234/foo.bar or doi:10.1234/foo.bar',
         placeholder=''
     )
 
