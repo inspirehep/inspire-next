@@ -21,21 +21,21 @@
 {% endif %}
 
 {% if identifiers %}
-<h5>identifiers</h5>:
-{% for identifier in identifiers %}
-    <ul class="list-unstyled">
-    {% if 'arxiv' in identifier.lower() %}
-        {% set identifier = identifier.split(':')[-1] %}
-        <li><a href="http://arxiv.org/abs/{{identifier}}">{{identifier}}</a></li>
-    {% else %}
-        <li>{{ identifier }}</li>
-    {% endif %}
-    </ul>
-{% endfor %}
+<h5>{{ _('Identifiers') }}:</h5>
+<ul class="list-unstyled">
+    {% for identifier in identifiers %}
+        {% if 'arxiv' in identifier.lower() %}
+            {% set identifier = identifier.split(':')[-1] %}
+            <li><a href="http://arxiv.org/abs/{{identifier}}">{{identifier}}</a></li>
+        {% else %}
+            <li>{{ identifier }}</li>
+        {% endif %}
+    {% endfor %}
+</ul>
 {% endif %}
 
 {% if categories %}
-<h5>categories</h5>:
+<h5>{{ _('Categories') }}:</h5>
 <ul class="list-unstyled">
 {% for category in categories %}
     <li>{{category}}</li>
