@@ -24,12 +24,12 @@
 
 {% block record_header %}
   <a href="{{ url_for('record.metadata', recid=record['recid']) }}">
-    {{ record.get('title.main', '') }}
+    {{ record.get('title.title', '') }}
     {{- record.get('book_series.volume', '')|prefix(', ') }}
     {{- record.get('title.subtitle', '')|prefix(': ') }}
   </a>
 {% endblock %}
 
 {% block record_content %}
-  {{ record.get('abstract.abstract', '')|sentences(3) }}
+  {{ record.get('abstract.summary', '')|sentences(3) }}
 {% endblock %}
