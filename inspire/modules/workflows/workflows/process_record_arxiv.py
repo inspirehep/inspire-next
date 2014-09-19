@@ -48,7 +48,7 @@ from ..tasks.filtering import inspire_filter_custom
 
 class process_record_arxiv(WorkflowBase):
 
-    object_type = "record"
+    object_type = "Harvested record"
     workflow = [
         convert_record_with_repository("oaiarXiv2inspire_nofilter.xsl"),
         convert_record_to_bibfield,
@@ -119,7 +119,6 @@ class process_record_arxiv(WorkflowBase):
             else:
                 final_identifiers = [' No ids']
 
-        categories = [" No categories"]
         task_results = bwo.get_tasks_results()
         results = []
         if 'bibclassify' in task_results:
@@ -165,7 +164,8 @@ class process_record_arxiv(WorkflowBase):
                             source_list = subject['source']
                         except KeyError:
                             source_list = ""
-                    categories.append(category + "(" + source_list + ")")
+                    if source_list.lower() == 'inspire':
+                        categories.append(category)
 
         from flask import render_template
         return render_template('workflows/styles/harvesting_record.html',
@@ -181,7 +181,6 @@ class process_record_arxiv(WorkflowBase):
         data = bwo.get_data()
         if not data:
             return ''
-        print kwargs
         formatter = kwargs.get("formatter", None)
         format = kwargs.get("format", None)
         if formatter:

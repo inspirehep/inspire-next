@@ -22,16 +22,21 @@
 
 {% if identifiers %}
 <p><b>identifiers</b>:
-{% for i in identifiers %}
-    {{i}}
+{% for identifier in identifiers %}
+        {% if 'arxiv' in identifier.lower() %}
+            {% set identifier = identifier.split(':')[-1] %}
+            <br/><a href="http://arxiv.org/abs/{{identifier}}">{{identifier}}</a>
+        {% else %}
+            <br/>{{ identifier }}
+        {% endif %}
 {% endfor %}
 </p>
 {% endif %}
 
 {% if categories %}
 <p><b>categories</b>:
-{% for i in categories %}
-    {{i}}
+{% for category in categories %}
+    <br/>{{category}}
 {% endfor %}
 {% for result in results %}
 	{{result|safe}}
