@@ -19,6 +19,9 @@
 ## In applying this license, CERN does not waive the privileges and immunities
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
+
+"""Workflow for processing single arXiv records harvested."""
+
 import collections
 from six import string_types
 
@@ -48,7 +51,13 @@ from ..tasks.filtering import inspire_filter_custom
 
 class process_record_arxiv(WorkflowBase):
 
-    object_type = "Harvested record"
+    """Processing workflow for a single arXiv record.
+
+    The records have been harvested via oaiharvester.
+    """
+
+    object_type = "arXiv"
+
     workflow = [
         convert_record_with_repository("oaiarXiv2inspire_nofilter.xsl"),
         convert_record_to_bibfield,
@@ -175,7 +184,7 @@ class process_record_arxiv(WorkflowBase):
 
     @staticmethod
     def formatter(bwo, **kwargs):
-
+        """Return a formatted version of the data."""
         from invenio.modules.formatter.engine import format_record
 
         data = bwo.get_data()

@@ -21,25 +21,30 @@
 {% endif %}
 
 {% if identifiers %}
-<p><b>identifiers</b>:
+<h5>identifiers</h5>:
 {% for identifier in identifiers %}
-        {% if 'arxiv' in identifier.lower() %}
-            {% set identifier = identifier.split(':')[-1] %}
-            <br/><a href="http://arxiv.org/abs/{{identifier}}">{{identifier}}</a>
-        {% else %}
-            <br/>{{ identifier }}
-        {% endif %}
+    <ul class="list-unstyled">
+    {% if 'arxiv' in identifier.lower() %}
+        {% set identifier = identifier.split(':')[-1] %}
+        <li><a href="http://arxiv.org/abs/{{identifier}}">{{identifier}}</a></li>
+    {% else %}
+        <li>{{ identifier }}</li>
+    {% endif %}
+    </ul>
 {% endfor %}
-</p>
 {% endif %}
 
 {% if categories %}
-<p><b>categories</b>:
+<h5>categories</h5>:
+<ul class="list-unstyled">
 {% for category in categories %}
-    <br/>{{category}}
+    <li>{{category}}</li>
 {% endfor %}
+</ul>
+
+<ul class="list-unstyled">
 {% for result in results %}
-	{{result|safe}}
+	<li>{{result|safe}}</li>
 {% endfor %}
-</p>
+</ul>
 {% endif %}
