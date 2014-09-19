@@ -24,7 +24,7 @@
 define(function(require, exports, module) {
   "use strict";
 
-  var $ = require("jquery")
+  var $ = require("jquery");
   var tpl_flash_message = require('hgn!js/deposit/templates/flash_message');
   var DataMapper = require("js/deposit/mapper");
   var TaskManager = require("js/deposit/task_manager");
@@ -107,7 +107,10 @@ define(function(require, exports, module) {
     this.$submissionForm = $('#submitForm');
     this.$conference = $('#conf_name');
     this.$conferenceId = $('#conference_id');
-    this.$previewModal = $('#myModal');
+    this.$previewModal = $('#modalData');
+    this.$nonpublic_note = $("#nonpublic_note");
+    this.$form = $("#webdeposit_form_accordion");
+    this.$formWrapper = $('.form-wrapper');
 
     // these fields' values will be deleted before submission so that they will not be
     // sent to the sever
@@ -128,6 +131,8 @@ define(function(require, exports, module) {
      */
     init: function init() {
 
+      var that = this;
+
       this.preventFormSubmit();
 
       // focus on the first element of the form
@@ -138,10 +143,12 @@ define(function(require, exports, module) {
       this.fieldsGroup = $("#journal_title, #volume, #issue, #page_range, #article_id, #year")
         .fieldsGroup({
           onEmpty: function enableProceedingsBox() {
-            $("#nonpublic_note").removeAttr('disabled');
+            that.$nonpublic_note.removeAttr('disabled');
+            $('.tooltip-wrapper').tooltip('destroy'); // destroy the tooltip
           },
           onNotEmpty: function disableProceedingsBox() {
-            $("#nonpublic_note").attr('disabled', 'true');
+            that.$nonpublic_note.attr('disabled', 'true');
+            $('.tooltip-wrapper').tooltip(); // trigger the tooltip
           }
         });
 
@@ -196,20 +203,18 @@ define(function(require, exports, module) {
       });
 
       this.$importButton.click(function(event) {
-        event.preventDefault();
         that.$importButton.button('loading');
         that.validate(that.$importIdsFields)
-          // trigger like this because importData returns a Deferred object
-          // and importData needs to have set 'this' to the form object
-          .then(that.importData.bind(that))
+        // trigger like this because importData returns a Deferred object
+        // and importData needs to have set 'this' to the form object
+        .then(that.importData.bind(that))
           .always(function() {
             that.$importButton.button('reset');
           });
       });
 
       this.$skipButton.click(function(event) {
-        event.preventDefault();
-        that.showRestForm(this);
+        that.showForm();
       });
 
       this.$submissionForm.on('submit', function(event) {
@@ -219,12 +224,12 @@ define(function(require, exports, module) {
     },
 
     /**
-    * Disable form submit on ENTER
-    */
+     * Disable form submit on ENTER
+     */
     preventFormSubmit: function preventFormSubmit() {
       this.$submissionForm.find("input").bind("keyup keypress", function(e) {
         var code = e.keyCode || e.which;
-        if (code  === 13) {
+        if (code === 13) {
           e.preventDefault();
           return false;
         }
@@ -287,24 +292,16 @@ define(function(require, exports, module) {
     /**
      * Show the rest of the form except for the first panel
      */
-    showRestForm: function showRestForm(el) {
-      var $root = $('body');
+    showForm: function showForm() {
 
-      // traverse the DOM starting from the parent form
-      var $hiddenElements = $('#submitForm').find('#webdeposit_form_accordion');
+      // mandatory indicator for required fields
+      var $mandatoryIndicator = $('#mandatory-indicator');
+      // action bar
+      var $actionBar = $('.action-bar');
 
-      // shows the hidden elements of the form
-      $hiddenElements
-        .children('.panel:not(:first-child)') // all the panels except for the first
-      .removeClass('hide');
-      $hiddenElements
-        .siblings('.well') // the action bar
-      .removeClass('hide');
-
-      var href = $.attr(el, 'href');
-      $root.animate({
-        scrollTop: $(href).offset().top
-      }, 'slow');
+      $mandatoryIndicator.show('slow');
+      this.$formWrapper.show('slow');
+      $actionBar.show('slow');
     },
 
     /**
@@ -387,18 +384,21 @@ define(function(require, exports, module) {
         // priority mapper for merging the results
         literatureFormPriorityMapper
       ).done(function(result) {
-        that.fieldsGroup.resetState();
+        that.messageBox.clean();
+        //FIXME: modal will handle the messages
         that.messageBox.append(result.statusMessage);
 
         // clear the messages when user cancel to import data
-        that.$previewModal.one("rejected", function(event, el) {
+        that.$previewModal.one("rejected", function(event) {
           that.messageBox.clean();
         });
 
         // only fill the form if the user accepts the data
-        that.$previewModal.one("accepted", function(event, el) {
+        that.$previewModal.one("accepted", function(event) {
+          that.fieldsGroup.resetState();
+          that.$formWrapper.find(':input').clearForm();
           that.fillForm(result.mapping);
-          that.showRestForm(el);
+          that.showForm();
         });
 
         // check if there are any data
@@ -479,7 +479,6 @@ define(function(require, exports, module) {
      *  special 'authors' key to extract them to authors field.
      */
     fillForm: function fillForm(dataMapping) {
-
       var that = this;
 
       if ($.isEmptyObject(dataMapping)) {
@@ -492,12 +491,11 @@ define(function(require, exports, module) {
       $.map(dataMapping, function(value, field_id) {
         var $field = $('#' + field_id);
         if ($field) {
+          // highlight the imported fields except for the authors with the Bootstrap's success alert box
+          if (field_id !== 'authors') {
+            $field.css('background-color', '#dff0d8');
+          }
           var field_value = $field.val(value);
-          that.$submissionForm.trigger("dataSaveField", {
-            save_url: that.save_url,
-            name: field_id,
-            value: value
-          });
         }
       });
 
@@ -508,12 +506,44 @@ define(function(require, exports, module) {
 
       for (var i in dataMapping.authors) {
         authorsWidget.update_element(dataMapping.authors[i], i);
+        // highlight the authors fields with the Bootstrap's success alert box
+        $('#authors-' + i + '-name').css('background-color', '#dff0d8');
         // next index is i+1 but there should stay one empty field
         if (parseInt(i) + 2 > authorsWidget.get_next_index()) {
           authorsWidget.append_element();
         }
       }
+
+      // trigger the "dataFormSave" so the empty input values can be saved
+      that.$submissionForm.trigger("dataFormSave", {
+        url: that.save_url,
+        form_selector: that.$submissionForm
+      });
     }
   };
   module.exports = LiteratureSubmissionForm;
 });
+
+/**
+ * Clears the form data.  Takes the following actions on the form's input fields:
+ *  - input text fields will have their 'value' property set to the empty string
+ *  - input hidden fields will have their 'value' property set to the empty string
+ *  - select elements will have their 'selectedIndex' property set to -1
+ *  - checkbox and radio inputs will have their 'checked' property set to false
+ *  - inputs of type submit, button, reset will *not* be effected
+ *  - button elements will *not* be effected
+ */
+$.fn.clearForm = function() {
+  return this.each(function() {
+    var type = this.type,
+      tag = this.tagName.toLowerCase();
+    if (tag === 'form') {
+      return $(':input', this).clearForm();
+    }
+    if (type === 'text' || type === 'password' || type === 'hidden' || tag === 'textarea') {
+      this.value = '';
+    } else if (type === 'checkbox' || type === 'radio') {
+      this.checked = false;
+    }
+  });
+};
