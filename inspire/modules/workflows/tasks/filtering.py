@@ -112,14 +112,9 @@ def inspire_filter_custom(fields, custom_accepted=(), custom_refused=(),
                 msg = ("Insert record?")
                 eng.halt(msg, action=action)
             elif '*' in custom_refused:
-                extra_data = obj.get_extra_data()
-                extra_data["approved"] = False
-                obj.set_extra_data(extra_data)
+                obj.extra_data["approved"] = False
             elif '*' in custom_accepted:
-                extra_data = obj.get_extra_data()
-                extra_data["approved"] = True
-                obj.set_extra_data(extra_data)
-                obj.save()
+                obj.extra_data["approved"] = True
             else:
                 # We don't know what we should do, in doubt query human...
                 # they are nice!
@@ -131,18 +126,12 @@ def inspire_filter_custom(fields, custom_accepted=(), custom_refused=(),
                 eng.halt("The %s of this record is %s, "
                          "this field is under filtering. "
                          "Should we accept this record ? "
-                         % (fields[len(fields)-1], custom_to_process_next),
+                         % (fields[len(fields) - 1], custom_to_process_next),
                          action=action)
             elif sum_action == action_to_take[1]:
-                extra_data = obj.get_extra_data()
-                extra_data["approved"] = False
-                obj.set_extra_data(extra_data)
-                obj.save()
+                obj.extra_data["approved"] = False
             elif sum_action == action_to_take[2]:
-                extra_data = obj.get_extra_data()
-                extra_data["approved"] = True
-                obj.set_extra_data(extra_data)
-                obj.save()
+                obj.extra_data["approved"] = True
             else:
                 eng.halt("Category filtering needs human intervention, "
                          "rules are incoherent !!!",
@@ -222,15 +211,9 @@ def inspire_filter_category(category_accepted_param=(),
         if sum_action == 0:
             #We allow the * option which means at final case
             if '*' in category_accepted:
-                extra_data = obj.get_extra_data()
-                extra_data["approved"] = True
-                obj.set_extra_data(extra_data)
-                obj.save()
+                obj.extra_data["approved"] = True
             elif '*' in category_refused:
-                extra_data = obj.get_extra_data()
-                extra_data["approved"] = False
-                obj.set_extra_data(extra_data)
-                obj.save()
+                obj.extra_data["approved"] = False
             else:
                 # We don't know what we should do, in doubt query human...
                 # they are nice!
@@ -244,15 +227,9 @@ def inspire_filter_category(category_accepted_param=(),
                          "Should we accept this record ?" % category,
                          action=action)
             elif sum_action == action_to_take[1]:
-                extra_data = obj.get_extra_data()
-                extra_data["approved"] = True
-                obj.set_extra_data(extra_data)
-                obj.save()
+                obj.extra_data["approved"] = True
             elif sum_action == action_to_take[2]:
-                extra_data = obj.get_extra_data()
-                extra_data["approved"] = False
-                obj.set_extra_data(extra_data)
-                obj.save()
+                obj.extra_data["approved"] = False
             else:
                 eng.halt(
                     "Category filtering needs human intervention, "
