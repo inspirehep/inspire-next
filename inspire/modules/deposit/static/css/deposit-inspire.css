@@ -65,15 +65,22 @@
 
 #skipImportData {
     text-decoration: underline;
-    padding: 15px 15px;
-    display: inline-block;
 }
 
 .cell-width {
     width: 100px;
+    font-weight: bold;
+}
+
+.cell-width:after {
+    content: ":";
 }
 
 .box-instructions {
     padding-left: 10px;
     padding-top: 10px;
+}
+
+.hide-element {
+    display: none;
 }

@@ -105,7 +105,7 @@ define(function(require, exports, module) {
       });
 
       // populate the body of the modal
-      $('#myModal .modal-body').html(table);
+      $('#modalData .modal-body').html(table);
 
       // show the modal
       this.$element.modal({
@@ -119,7 +119,7 @@ define(function(require, exports, module) {
       var that = this;
 
       this.$acceptButton.on('click', function(event) {
-        that.$element.trigger('accepted', this);
+        that.$element.trigger('accepted');
       });
 
       this.$rejectButton.on('click', function(event) {

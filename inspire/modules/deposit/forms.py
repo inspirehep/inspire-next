@@ -51,7 +51,7 @@ PROCEEDINGS_CLASS = " proceedings-related"
 #
 def importdata_button(field, **dummy_kwargs):
     """Import data button."""
-    html = u'<a %s data-target="%s">%s</a>' % \
+    html = u'<button %s data-target="%s">%s</button>' % \
            (html_params(id="importData",
                         class_="btn btn-success btn-large",
                         name="importData",
@@ -63,11 +63,11 @@ def importdata_button(field, **dummy_kwargs):
 
 def skip_importdata(field, **dummy_kwargs):
     """Skip Import data button."""
-    html = u'<a %s href="%s">%s</a>' % \
+    html = u'<button %s>%s</button>' % \
            (html_params(id="skipImportData",
+                        class_="btn btn-link",
                         name="skipImportData",
                         type="button"),
-            '#collapse-2',  # target for the next scrollable panel
             _('Skip, and fill the form manually'))
     return HTMLString(html)
 
@@ -81,6 +81,20 @@ def import_buttons_widget(field, **dummy_kwargs):
     html_import = importdata_button(field)
     html = [u'<div class="pull-right">' + html_skip + html_import + u'</div>']
     return HTMLString(u''.join(html))
+
+
+#
+# Tooltips on disabled elements require wrapper elements
+#
+def wrap_nonpublic_note(field, **dummy_kwargs):
+    """Proceedings box with tooltip."""
+    html = u'<div class="tooltip-wrapper" data-toggle="tooltip"' \
+        'title="%s"><textarea %s></textarea></div>' % \
+        (_('Journal Information already exists'),
+        html_params(id="nonpublic_note",
+                    class_="form-control nonpublic_note",
+                    name="nonpublic_note"))
+    return HTMLString(html)
 
 
 def radiochoice_buttons(field, **dummy_kwargs):
@@ -386,9 +400,9 @@ class LiteratureForm(WebDepositForm):
     )
 
     nonpublic_note = fields.TextAreaField(
-        label=_(' '),
+        label=_('Proceedings'),
         description='Editors, title of proceedings, publisher, year of publication, page range',
-        widget_classes="form-control"
+        widget=wrap_nonpublic_note
     )
 
     note = fields.TextAreaField(
@@ -450,7 +464,7 @@ class LiteratureForm(WebDepositForm):
         ('Journal Information',
             ['journal_title', 'volume', 'issue', 'page_range', 'article_id',
              'year']),
-        ('Proceedings information (not published in journal)',
+        ('Proceedings Information (not published in journal)',
             ['nonpublic_note', 'note']),
         ('Upload/link files',
             ['file_field', 'url']),
