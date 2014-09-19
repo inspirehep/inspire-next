@@ -68,7 +68,6 @@ class process_record_arxiv(WorkflowBase):
             bibclassify(taxonomy="HEPont",
                         output_mode="dict",
                         fast_mode=True),
-            refextract, author_list,
             refextract,
             author_list,
             inspire_filter_custom(fields=["report_number", "arxiv_category"],
@@ -148,6 +147,7 @@ class process_record_arxiv(WorkflowBase):
                 results.append(result_string)
             except (KeyError, IndexError):
                 pass
+        categories = []
         if hasattr(record, "get"):
             if 'subject' in record:
                 lookup = ["subject", "term"]
@@ -155,7 +155,6 @@ class process_record_arxiv(WorkflowBase):
                 lookup = ["subject_term", "term"]
             else:
                 lookup = None
-            categories = []
             if lookup:
                 primary, secondary = lookup
                 category_list = record.get(primary, [])
