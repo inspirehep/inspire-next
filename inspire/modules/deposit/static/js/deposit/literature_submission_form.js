@@ -93,6 +93,7 @@ define(function(require, exports, module) {
       book: $('*[class~="book-related"]'),
       proceedings: $('*[class~="proceedings-related"]'),
       translated_title: $("#state-group-title_translation"),
+      hide_parent_box: $(".hide-parent-box"),
     };
 
     this.$doi_field = $("#doi");
@@ -341,7 +342,7 @@ define(function(require, exports, module) {
       var deposition_type = this.$deposition_type.val();
       var $type_related_fields = this.$field_list[deposition_type];
       var $type_related_groups = $type_related_fields.parents('.form-group');
-      $type_related_groups.slideDown();
+      this.slideDownFields($type_related_groups);
       var $type_related_panel = $type_related_fields.parents('.panel-body');
       $type_related_panel.effect(
         "highlight", {
@@ -460,8 +461,29 @@ define(function(require, exports, module) {
      */
     slideUpFields: function slideUpFields($fields) {
       $.map($fields, function($field, field_name) {
-        $field.parents('.form-group').slideUp();
+        if (that.deposition_type != field_name) {
+          $.each($field, function(i, f){
+            if ($.inArray(f, that.$field_list["hide_parent_box"]) >= 0) {
+              $(f).parents('.panel').slideUp();
+            } else {
+              $(f).parents('.form-group').slideUp();
+            } 
+          });
+        }
       });
+    },
+
+    /**
+     * Show form fields individually related to each document type
+     */
+    slideDownFields: function slideDownFields($fields) {
+      if ($.inArray($fields.find('input.tt-input')[0],
+                    this.$field_list["hide_parent_box"]) >= 0) {
+        $fields.parents('.panel').slideDown();
+        $fields.slideDown();
+      } else {
+        $fields.slideDown();
+      }
     },
 
     /**
