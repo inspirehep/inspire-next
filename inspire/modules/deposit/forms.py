@@ -387,7 +387,7 @@ class LiteratureForm(WebDepositForm):
         widget=defensedate_widget,
     )
 
-    degree_type = fields.TextField(
+    degree_type = fields.SelectField(
         label=_('Degree type'),
         widget_classes="form-control" + THESIS_CLASS,
     )
@@ -525,6 +525,8 @@ class LiteratureForm(WebDepositForm):
         'file_field': 'col-md-12',
         'type_of_doc': 'col-xs-4',
         'wrap_nonpublic_note': 'col-md-9',
+        'degree_type': 'col-xs-3',
+        'nonpublic_note': 'col-md-12',
     }
 
     def __init__(self, *args, **kwargs):
@@ -533,3 +535,5 @@ class LiteratureForm(WebDepositForm):
         from invenio.modules.knowledge.api import get_kb_mappings
         self.subject.choices = [(x['value'], x['value'])
             for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_SUBJECTS_KB"])]
+        self.degree_type.choices = [(x['value'], x['value'])
+            for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_DEGREE_KB"])]
