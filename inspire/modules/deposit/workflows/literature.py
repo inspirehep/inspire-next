@@ -85,6 +85,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
     @staticmethod
     def get_title(bwo):
+        """Return title of object."""
         deposit_object = Deposition(bwo)
         sip = deposit_object.get_latest_sip()
         if sip:
@@ -96,6 +97,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
     @staticmethod
     def get_description(bwo):
+        """Return description of object."""
         deposit_object = Deposition(bwo)
         sip = deposit_object.get_latest_sip()
         if sip:
@@ -112,6 +114,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
     @staticmethod
     def formatter(bwo, **kwargs):
+        """Return formatted data of object."""
         from invenio.modules.formatter.engine import format_record
         deposit_object = Deposition(bwo)
         submission_data = deposit_object.get_latest_sip()
@@ -140,8 +143,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         field_list = ['abstract', 'title', 'subject_term']
 
         # maps from a form field to the corresponding MarcXML field
-        field_map = {'abstract': "abstract",
-                     'title': "main",
+        field_map = {'abstract': "summary",
+                     'title': "title",
                      'subject_term': "term",
                      'defense_date': "date",
                      'university': "university",
