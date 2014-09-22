@@ -75,6 +75,7 @@ PACKAGES = [
     'inspire.utils',
     'inspire.modules.workflows',
     'inspire.modules.deposit',
+    'inspire.modules.access',
     'invenio.modules.access',
     'invenio.modules.accounts',
     'invenio.modules.alerts',
