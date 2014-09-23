@@ -43,17 +43,32 @@
 {%- endif -%}
 {%- endblock body -%}
 
+{%- block form_header_message -%}
+<div class="col-md-8 col-md-offset-2">
+<p class="lead text-center">
+Please, sign in with one of the following services
+</p>
+</div>
+{%- endblock form_header_message -%}
 
 {%- block form_auth_internal -%}
-  <div class="col-md-4 col-md-offset-4">
+  <div class="col-md-4 col-xs-10 col-centered">
     {%- block form_auth_internal_form -%}
       <div class="well">
       <h3>Sign In</h3>
+      <br/>
 
       {% set next = request.script_root + request.path if request.endpoint != 'webaccount.logout' and request.endpoint != 'webaccount.login' else config.CFG_SITE_SECURE_URL %}
-      <br /><a href="{{url_for('oauthclient.login', remote_app='orcid', next=next)}}" class="btn btn-default btn-lg btn-block"><img src="{{ url_for('static', filename='img/orcid.png') }}"></i> Sign in with ORCID</a>
-      <h3 align="center">&mdash; OR &mdash;</h3>
-      {{super()}}
+      <div class="row">
+        <div class="col-xs-12 col-centered">
+        <a href="{{url_for('oauthclient.login', remote_app='orcid', next=next)}}" class="btn btn-default btn-lg btn-block">
+        <img src="{{ url_for('static', filename='img/orcid.png') }}"></i> Sign in with ORCID</a>
+        </div>
+        {% if config.DEBUG or request.args.get('admin') %}
+          <h3 align="center">&mdash; OR &mdash;</h3>
+          {{ super() }}
+        {% endif %}
+      </div>
       </div>
     {%- endblock -%}
     {%- block form_auth_internal_title scoped -%}{% endblock %}

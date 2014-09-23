@@ -96,15 +96,18 @@
       </div>
       <div class="modal-body">
         <div class="row">
+        <p>You can log in using the services below</p><br/>
+        </div>
+        <div class="row">
           <div class="col-md-12">
-            <a href="#" class="btn btn-default btn-lg btn-block">
+            <a href="{{url_for('oauthclient.login', remote_app='orcid')}}" class="btn btn-default btn-lg btn-block">
               <div class="img-orcid"></div>
               Sign in with your ORCID
             </a>
           </div>
         </div>
       </div>
-      <div class="modal-body">
+    <!--   <div class="modal-body">
         <h4>&mdash; OR &mdash;</h4>
       </div>
       <div class="modal-body">
@@ -116,7 +119,7 @@
             </a>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>
