@@ -36,7 +36,7 @@ from invenio.modules.oaiharvester.tasks.harvesting import (
 )
 
 from invenio.modules.workflows.tasks.workflows_tasks import (
-    start_workflow,
+    start_async_workflow,
     wait_for_a_workflow_to_complete,
     workflows_reviews,
     get_nb_workflow_created,
@@ -62,12 +62,11 @@ class ingestion_arxiv_math(WorkflowBase):
     """Main workflow for harvesting arXiv via OAI-PMH (oaiharvester)."""
 
     object_type = "workflow"
-    repository = 'arxiv_math_daily'
     workflow = [
         write_something_generic("Initialization", [task_update_progress, write_message]),
         init_harvesting,
         write_something_generic("Starting", [task_update_progress, write_message]),
-        foreach(get_repositories_list([repository]), "_repository"),
+        foreach(get_repositories_list(), "repository"),
         [
             write_something_generic("Harvesting", [task_update_progress, write_message]),
             harvest_records,
@@ -81,7 +80,9 @@ class ingestion_arxiv_math(WorkflowBase):
                     [
                         workflow_if(num_workflow_running_greater(10), neg=True),
                         [
-                            start_workflow("process_record_arxiv", copy=True),
+                            start_async_workflow("process_record_arxiv",
+                                                 preserve_data=True,
+                                                 preserve_extra_data_keys=["repository"]),
 
                             write_something_generic(
                                 ["Workflow started: ",
@@ -97,7 +98,9 @@ class ingestion_arxiv_math(WorkflowBase):
                                 [task_update_progress,
                                  write_message]),
                             wait_for_a_workflow_to_complete(0.05),
-                            start_workflow("process_record_arxiv", copy=True),
+                            start_async_workflow("process_record_arxiv",
+                                                 preserve_data=True,
+                                                 preserve_extra_data_keys=["repository"]),
                             write_something_generic(["Workflow started :",
                                                      get_nb_workflow_created,
                                                      " "],
@@ -122,7 +125,7 @@ class ingestion_arxiv_math(WorkflowBase):
         end_for,
         write_something_generic("Finishing", [task_update_progress, write_message]),
         workflows_reviews(stop_if_error=True),
-        update_last_update(get_repositories_list([repository]))
+        update_last_update(get_repositories_list())
     ]
 
     @staticmethod
@@ -154,7 +157,7 @@ class ingestion_arxiv_math(WorkflowBase):
     def get_title(bwo):
         """Return title of object."""
         return "Supervising harvesting of {0}".format(
-            bwo.get_extra_data()["_repository"]["name"])
+            bwo.get_extra_data()["repository"]["name"])
 
     @staticmethod
     def formatter(bwo, **kwargs):
