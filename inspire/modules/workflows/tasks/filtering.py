@@ -23,10 +23,8 @@
 """Contains INSPIRE specific filtering tasks"""
 
 import re
-from invenio.modules.workflows.utils import pass_properties_to_closure
 
 
-@pass_properties_to_closure
 def inspire_filter_custom(fields, custom_accepted=(), custom_refused=(),
                           custom_widgeted=(), action=None):
     """Allow you to filter for any type of key.
@@ -140,7 +138,6 @@ def inspire_filter_custom(fields, custom_accepted=(), custom_refused=(),
     return _inspire_filter_custom
 
 
-@pass_properties_to_closure
 def inspire_filter_category(category_accepted_param=(),
                             category_refused_param=(),
                             category_widgeted_param=(), action_param=None):

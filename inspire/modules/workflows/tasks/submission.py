@@ -30,7 +30,6 @@ from invenio.modules.formatter import format_record
 from flask.ext.login import current_user
 from invenio.config import CFG_SITE_SUPPORT_EMAIL
 from .actions import was_approved
-from invenio.modules.workflows.utils import pass_properties_to_closure
 
 
 def halt_to_render(obj, eng):
@@ -51,7 +50,7 @@ def halt_to_render(obj, eng):
         ),
         format_record=format_record,
     ))
-    obj.last_task = eng.get_current_taskname()
+    obj.last_task = "halt_to_render"
     eng.halt("User submission complete.")
 
 
@@ -77,7 +76,6 @@ def approve_record(obj, eng):
              msg='Accept submission?')
 
 
-@pass_properties_to_closure
 def finalize_and_post_process(workflow_name, **kwargs):
     """Finalize the submission and starts post-processing."""
     def _finalize_and_post_process(obj, eng):
@@ -93,7 +91,6 @@ def finalize_and_post_process(workflow_name, **kwargs):
     return _finalize_and_post_process
 
 
-@pass_properties_to_closure
 def send_robotupload(url):
     """Get the MARCXML from the deposit object and ships it."""
     def _send_robotupload(obj, eng):
