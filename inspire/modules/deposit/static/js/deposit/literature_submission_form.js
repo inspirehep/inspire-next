@@ -126,6 +126,11 @@ define(function(require, exports, module) {
      */
     init: function init() {
 
+      this.preventFormSubmit();
+
+      // focus on the first element of the form
+      $('form:first *:input[type!=hidden]:first').focus();
+
       this.slideUpFields(this.$field_list);
 
       this.fieldsGroup = $("#journal_title, #volume, #issue, #page_range, #article_id, #year")
@@ -202,6 +207,19 @@ define(function(require, exports, module) {
       this.$submissionForm.on('submit', function(event) {
         that.$conferenceId.val(ConferencesTypeahead.getRawValue());
         that.deleteIgnoredValues();
+      });
+    },
+
+    /**
+    * Disable form submit on ENTER
+    */
+    preventFormSubmit: function preventFormSubmit() {
+      this.$submissionForm.find("input").bind("keyup keypress", function(e) {
+        var code = e.keyCode || e.which;
+        if (code  === 13) {
+          e.preventDefault();
+          return false;
+        }
       });
     },
 
