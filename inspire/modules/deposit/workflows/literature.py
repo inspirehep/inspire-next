@@ -91,7 +91,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         if sip:
             # Get the SmartJSON object
             record = sip.metadata
-            return record.get("title", {"main": "No title"}).get("main")
+            return record.get("title", {"title": "No title"}).get("title")
         else:
             return "User submission in progress!!"
 
