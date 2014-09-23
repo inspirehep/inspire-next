@@ -32,6 +32,9 @@ from invenio.modules.deposit.tasks import render_form, \
 from inspire.modules.deposit.forms import LiteratureForm
 from invenio.modules.deposit.models import Deposition
 
+from invenio.modules.classifier.tasks.classification import (
+    classify_paper_with_deposit,
+)
 
 from inspire.modules.workflows.tasks.submission import (
     approve_record,
@@ -68,6 +71,10 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Generate MARC based on metadata dictionary.
         finalize_record_sip(is_dump=False),
         halt_to_render,
+        classify_paper_with_deposit(
+            taxonomy="HEPont.rdf",
+            output_mode="dict",
+        ),
         approve_record,
         workflow_if(was_approved),
         [

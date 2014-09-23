@@ -28,8 +28,12 @@ from six import string_types
 from invenio.modules.workflows.tasks.marcxml_tasks import (
     convert_record_to_bibfield,
     quick_match_record,
-    bibclassify,
 )
+
+from invenio.modules.classifier.tasks.classification import (
+    classify_paper_with_oaiharvester,
+)
+
 from invenio.modules.oaiharvester.tasks.postprocess import (
     convert_record_with_repository,
     plot_extract,
@@ -65,9 +69,10 @@ class process_record_arxiv(WorkflowBase):
         [
             plot_extract(["latex"]),
             arxiv_fulltext_download,
-            bibclassify(taxonomy="HEPont",
-                        output_mode="dict",
-                        fast_mode=True),
+            classify_paper_with_oaiharvester(
+                taxonomy="HEPont",
+                output_mode="dict",
+            ),
             refextract,
             author_list,
             inspire_filter_custom(fields=["report_number", "arxiv_category"],
