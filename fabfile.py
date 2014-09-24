@@ -28,14 +28,14 @@ def pack():
 def create_virtualenv():
     """Create the virtualenv."""
     package = local("python setup.py --fullname", capture=True).strip()
-
+    pythonpath = "/opt/rh/python27/root/usr/bin/python"
     with cd(env.directory):
         if exists(package):
             return error("This version {0} is already installed."
                          .format(package))
 
         with settings(sudo_user="invenio"):
-            return sudo("virtualenv {0}".format(package)).succeeded
+            return sudo("virtualenv {0} --python={1}".format(package, pythonpath)).succeeded
 
 
 @task
@@ -57,6 +57,7 @@ def install():
 
         # Jump into the virtualenv and install stuff
         with cd("{0}/src/{1}".format(venv, package)):
+            sudo("{0}/bin/pip install Babel".format(venv))
             success = sudo("{0}/bin/python setup.py install".format(venv))
 
             if success:
