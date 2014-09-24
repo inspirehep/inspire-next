@@ -254,6 +254,13 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ========
         metadata['collections'] = [{'primary': "HEP"}]
 
+        # ============
+        # Title source
+        # ============
+        if 'title_source' in metadata and metadata['title_source']:
+            metadata['title']['source'] = metadata['title_source']
+            delete_keys.append('title_source')
+
         # ========
         # arXiv ID
         # ========

@@ -247,6 +247,11 @@ class LiteratureForm(WebDepositForm):
         export_key='title',
     )
 
+    title_source = fields.TitleField(
+        export_key='title_source',
+        widget=HiddenInput(),
+    )
+
     title_arXiv = fields.TitleField(
         export_key='title_arXiv',
         widget_classes="hidden",
