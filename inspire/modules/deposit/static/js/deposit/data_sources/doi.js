@@ -57,6 +57,7 @@ define(function(require, exports, module) {
         }
 
         var doi_obj = {
+          title_source: 'CrossRef',
           journal_title: journal,
           isbn: data.isbn,
           page_nr: page_number,
