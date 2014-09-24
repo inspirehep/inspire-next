@@ -27,13 +27,22 @@ INSPIRE overlay
 INSPIRE overlay repository for Invenio.
 """
 
+import os
 from setuptools import setup, find_packages
 
 packages = find_packages(exclude=['docs'])
 
+# Load __version__, should not be done using import.
+# http://python-packaging-user-guide.readthedocs.org/en/latest/tutorial.html
+g = {}
+with open(os.path.join('inspire', 'version.py'), 'rt') as fp:
+    exec(fp.read(), g)
+version = g['__version__']
+
+
 setup(
     name='Inspire',
-    version='dev',
+    version=version,
     url='https://github.com/inspirehep/inspire-next',
     license='GPLv2',
     author='CERN',
@@ -45,6 +54,13 @@ setup(
     include_package_data=True,
     zip_safe=False,
     platforms='any',
+    install_requires=[
+        "Babel>=1.3",
+        "Invenio",
+    ],
+    dependency_links=[
+        "git+https://github.com/inspirehep/invenio@labs#egg=Invenio"
+    ],
     extras_require={
         'development': [
             'Flask-DebugToolbar>=0.9',
