@@ -18,7 +18,7 @@ def pack():
     with open(".bowerrc") as fp:
         bower = json.load(fp)
 
-    local("inveniomanage assets build --directory {directory}/gen"
+    local("inveniomanage assets build --directory {directory}/../gen"
           .format(**bower))
     return local("python setup.py sdist --formats=gztar", capture=False) \
         .succeeded
@@ -57,10 +57,21 @@ def install():
 
         # Jump into the virtualenv and install stuff
         with cd("{0}/src/{1}".format(venv, package)):
-            sudo("{0}/bin/pip install Babel".format(venv))
-            success = sudo("{0}/bin/python setup.py install".format(venv))
+            with prefix('source {0}/bin/activate'.format(venv)):
+                sudo("pip install Babel")
+                sudo("pip install numpy")
+                sudo("pip install git+git://github.com/mrjoes/flask-admin.git#egg=Flask-Admin-1.0.9.dev0")
+                success = sudo("python setup.py install")
 
-            if success:
-                # post install
-                sudo("{0}/bin/inveniomanage collect".format(venv))
-            return success
+                if success:
+                    # INSPIRE specific configuration
+                    sudo("pip install /afs/cern.ch/project/inspire/repo/inspireconf-dev.tar.gz --upgrade")
+                    # post install
+                    sudo("inveniomanage collect")
+                    # Set Flask Host configuration
+                    sudo("inveniomanage config set CFG_SITE_URL {0}".format(env.host_string))
+                    sudo("inveniomanage config set CFG_SITE_SECURE_URL {0}".format(env.host_string))
+                    # Create Apache configuration
+                    sudo("inveniomanage apache create-config")
+                    sudo("ln -s {0} /opt/invenio".format(venv))
+                return success

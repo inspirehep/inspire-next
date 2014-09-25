@@ -171,6 +171,11 @@ CFG_SITE_ADMIN_EMAIL = "admin@inspirehep.net"
 
 BLUEPRINTS_URL_PREFIXES = {'webdeposit': '/submit'}
 
+# Flask specific configuration - This prevents from getting "MySQL server
+# has gone away" error
+
+SQLALCHEMY_POOL_RECYCLE = 700
+
 # For production only, instance_config contains configuration of
 # database credentials and other instance specific configuration
 try:
