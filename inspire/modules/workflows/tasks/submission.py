@@ -132,3 +132,18 @@ def send_robotupload(url):
             obj.log.info(result.text)
             eng.halt("Waiting for robotupload: {0}".format(result.text))
     return _send_robotupload
+
+
+def add_files_to_task_results(obj, eng):
+    """Add Deposition attached files to task results."""
+    from invenio.modules.deposit.models import Deposition
+    d = Deposition(obj)
+    for file_obj in d.files:
+        fileinfo = {
+            "type": "file",
+            "filename": file_obj.name,
+            "full_path": file_obj.get_syspath(),
+        }
+        obj.add_task_result(file_obj.name,
+                            fileinfo,
+                            "workflows/results/files.html")

@@ -40,7 +40,8 @@ from inspire.modules.workflows.tasks.submission import (
     approve_record,
     send_robotupload,
     halt_to_render,
-    inform_submitter
+    inform_submitter,
+    add_files_to_task_results,
 )
 
 from inspire.modules.workflows.tasks.actions import was_approved
@@ -62,6 +63,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         prefill_draft(draft_id='default'),
         # Render form and wait for user to submit
         render_form(draft_id='default'),
+        add_files_to_task_results,
         # Create the submission information package by merging form data
         # from all drafts (in this case only one draft exists).
         prepare_sip(),
