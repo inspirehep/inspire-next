@@ -279,9 +279,23 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # =======
         # License
         # =======
-        if 'license_url' in metadata:
-            metadata['license'] = {}
-            metadata['license']['url'] = metadata['license_url']
+        from invenio.base.globals import cfg
+        from invenio.modules.knowledge.api import get_kb_mappings
+        licenses_kb = dict([(x['key'], x['value'])
+            for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_LICENSE_KB"])])
+        if 'license' in metadata and metadata['license']:
+            metadata['license'] = {'license': metadata['license']}
+            if 'license_url' in metadata:
+                metadata['license']['url'] = metadata['license_url']
+            else:
+                metadata['license']['url'] = licenses_kb.get(
+                    metadata['license']['license'])
+        elif 'license_url' in metadata:
+            metadata['license'] = {'url': metadata['license_url']}
+            license_key = {v: k for k, v in licenses_kb.items()}.get(
+                metadata['license_url'])
+            if license_key:
+                metadata['license']['license'] = license_key
             delete_keys.append('license_url')
 
         # ===========
