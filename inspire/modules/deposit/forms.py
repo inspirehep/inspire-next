@@ -381,6 +381,12 @@ class LiteratureForm(WebDepositForm):
         widget_classes="form-control" + THESIS_CLASS,
     )
 
+    license = fields.SelectField(
+        label=_('License'),
+        default='',
+        widget_classes="form-control" + THESIS_CLASS
+    )
+
     # ============
     # Journal Info
     # ============
@@ -485,7 +491,9 @@ class LiteratureForm(WebDepositForm):
             ['title', 'title_arXiv', 'language', 'title_translation', 'authors',
              'collaboration', 'experiment', 'abstract', 'page_nr', 'subject',
              'supervisors', 'thesis_date', 'defense_date', 'degree_type',
-             'university', 'license_url']),
+             'university']),
+        ('Licenses and copyright',
+            ['license', 'license_url']),
         ('Conference Information',
             ['conf_name', 'conference_id']),
         ('Journal Information',
@@ -513,3 +521,5 @@ class LiteratureForm(WebDepositForm):
             for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_SUBJECTS_KB"])]
         self.degree_type.choices = [(x['value'], x['value'])
             for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_DEGREE_KB"])]
+        self.license.choices = [('', '')] + [(x['key'], x['key'])
+            for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_LICENSE_KB"])]
