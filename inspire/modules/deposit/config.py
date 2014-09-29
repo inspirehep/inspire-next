@@ -26,3 +26,6 @@ DEPOSIT_INSPIRE_JOURNALS_KB = "docextract-journals"
 
 DEPOSIT_INSPIRE_DEGREE_KB = "DEGREE"
 """ KB used for Degrees """
+
+DEPOSIT_INSPIRE_LICENSE_KB = "LICENSE"
+""" KB used for Licenses """

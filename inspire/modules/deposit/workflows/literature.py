@@ -326,10 +326,21 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # =======
         # License
         # =======
-        if 'license_url' in metadata:
+        licenses_kb = dict([(x['key'], x['value'])
+            for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_LICENSE_KB"])])
+        if 'license' in metadata and metadata['license']:
+            metadata['license'] = {'license': metadata['license']}
+            if 'license_url' in metadata:
+                metadata['license']['url'] = metadata['license_url']
+            else:
+                metadata['license']['url'] = licenses_kb.get(
+                    metadata['license']['license'])
+        elif 'license_url' in metadata:
             metadata['license'] = {'url': metadata['license_url']}
-            if imported_from_arXiv or metadata.get('title_source') == 'arXiv':
-                metadata['license']['imposing'] = 'arXiv'
+            license_key = {v: k for k, v in licenses_kb.items()}.get(
+                metadata['license_url'])
+            if license_key:
+                metadata['license']['license'] = license_key
             delete_keys.append('license_url')
 
         # ===========
