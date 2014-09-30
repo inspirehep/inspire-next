@@ -110,7 +110,10 @@ def send_robotupload(url):
 
         callback_url = os.path.join(cfg["CFG_SITE_URL"],
                                     "callback/workflows/robotupload")
-
+        obj.log.info("Sending Robotupload to {0} with callback {1}".format(
+            url,
+            callback_url
+        ))
         result = make_robotupload_marcxml(
             url=url,
             marcxml=sip.package,
