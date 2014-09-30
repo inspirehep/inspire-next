@@ -37,10 +37,12 @@ define(function(require, exports, module) {
      * @param on_done - callback on done, which receives imported and merged data
      *  as an argument
      */
-    runMultipleTasksMerge: function(tasks, mergeMapper, on_done) {
-      var taskmanager = this;
-      this.runMultipleTasks(tasks, function(results) {
-        on_done(taskmanager.mergeSources(results, mergeMapper));
+    runMultipleTasksMerge: function(tasks, mergeMapper) {
+      var taskManager = this;
+      return this.runMultipleTasks(tasks).then(function() {
+        return taskManager.mergeSources(arguments, mergeMapper);
+      }, function() {
+        return taskManager.mergeSources(arguments, mergeMapper);
       });
     },
 
@@ -51,7 +53,7 @@ define(function(require, exports, module) {
      * @param tasks - list of tasks (see import_task.js for an example)
      * @param callback - callback on done
      */
-    runMultipleTasks: function(tasks, callback) {
+    runMultipleTasks: function(tasks) {
       var deferredTasks = [];
 
       $.each(tasks, function(i, task) {
@@ -59,13 +61,7 @@ define(function(require, exports, module) {
         deferredTasks.push(deferred_task);
       });
 
-      $.when.apply(this, deferredTasks).then(function() {
-        /* Deferred object was resolved */
-        callback(arguments);
-      }, function() {
-        /* Deferred object was rejected */
-        callback(arguments);
-      });
+      return $.when.apply(this, deferredTasks);
     },
 
     /**
