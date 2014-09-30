@@ -174,6 +174,18 @@ class AuthorInlineForm(WebDepositForm):
     )
 
 
+class UrlInlineForm(WebDepositForm):
+
+    """Url inline form."""
+
+    url = fields.TextField(
+        widget_classes='form-control',
+        widget=ColumnInput(class_="col-xs-10"),
+        export_key='full_url',
+        placeholder='http://www.example.com',
+    )
+
+
 class LiteratureForm(WebDepositForm):
 
     """Literature form fields."""
@@ -422,12 +434,20 @@ class LiteratureForm(WebDepositForm):
         export_key=False
     )
 
-    url = fields.TextField(
-        label=_('External URL'),
+    url = fields.DynamicFieldList(
+        fields.FormField(
+            UrlInlineForm,
+            widget=ExtendedListWidget(
+                item_widget=ItemWidget(),
+                html_tag='div',
+            ),
+        ),
         #validators=[validators.URL(), validators.Optional, ],
-        placeholder=_("http://www.example.com"),
-        widget_classes="form-control",
+        label=_('External URL'),
+        add_label=_('Add another url'),
+        min_entries=1,
         export_key='url',
+        widget_classes='',
     )
 
     # ok_to_upload = fields.BooleanField(
@@ -475,7 +495,7 @@ class LiteratureForm(WebDepositForm):
     field_sizes = {
         'file_field': 'col-md-12',
         'type_of_doc': 'col-xs-4',
-        'nonpublic_note': 'col-md-12',
+        'nonpublic_note': 'col-md-9',
     }
 
     def __init__(self, *args, **kwargs):
