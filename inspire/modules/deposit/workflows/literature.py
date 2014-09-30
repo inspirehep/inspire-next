@@ -326,8 +326,12 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Files (FFT)
         # ===========
         if 'fft' in metadata and metadata['fft']:
-            fft = metadata['fft']
-            metadata['fft'] = {'url': fft[0]['path']}
+            def restructure_ffts(fft):
+                fft['url'] = fft['path']
+                fft['description'] = fft['name']
+                del fft['path'], fft['name']
+
+            map(restructure_ffts, metadata['fft'])
 
         # ================
         # Publication Info
@@ -355,8 +359,12 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
             delete_keys.extend(publication_fields)
 
-            if 'nonpublic_note' in metadata and len(metadata['nonpublic_note']) > 1:
-                del metadata['nonpublic_note'][0]
+            if 'nonpublic_note' in metadata:
+                if (isinstance(metadata['nonpublic_note'], list)
+                        and len(metadata['nonpublic_note']) > 1):
+                    del metadata['nonpublic_note'][0]
+                else:
+                    delete_keys.append('nonpublic_note')
 
             if {'primary': "ConferencePaper"} in metadata['collections']:
                 metadata['collections'].remove({'primary': "ConferencePaper"})
