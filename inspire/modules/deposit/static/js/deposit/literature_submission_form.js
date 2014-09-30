@@ -115,6 +115,8 @@ define(function(require, exports, module) {
       this.$conference
     ];
 
+    this.$importIdsFields = $('form:first .panel:eq(0) *:input[type!=hidden]');
+
     this.init();
     this.connectEvents();
   }
@@ -196,7 +198,13 @@ define(function(require, exports, module) {
       this.$importButton.click(function(event) {
         event.preventDefault();
         that.$importButton.button('loading');
-        that.importData();
+        that.validate(that.$importIdsFields)
+          // trigger like this because importData returns a Deferred object
+          // and importData needs to have set 'this' to the form object
+          .then(that.importData.bind(that))
+          .always(function() {
+            that.$importButton.button('reset');
+          });
       });
 
       this.$skipButton.click(function(event) {
@@ -221,6 +229,59 @@ define(function(require, exports, module) {
           return false;
         }
       });
+    },
+
+    /**
+     * Validate fields, and show the errors.
+     *
+     * @param $fields {jQuery object} validated fields
+     * @returns {jQuery.Deferred} the object is resolved when validation passes
+     *  and rejected on errors
+     */
+    validate: function($fields) {
+
+      var that = this;
+
+      var deferredValidation = new $.Deferred();
+
+      $.ajax({
+        cache: false,
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(getRequestData($fields)),
+        dataType: 'json',
+        type: 'POST',
+        url: that.save_url,
+      }).done(function(data) {
+        var hasError = false;
+        if (!data.messages) {
+          deferredValidation.reject();
+          return;
+        }
+        $.each(data.messages, function(fieldName, field) {
+          if (field.state === 'error') {
+            hasError = true;
+            that.$submissionForm.trigger("handleFieldMessage", {
+              name: fieldName,
+              data: field,
+            });
+          }
+        });
+        if (hasError) {
+          deferredValidation.reject();
+          return;
+        }
+        deferredValidation.resolve();
+      });
+
+      return deferredValidation;
+
+      function getRequestData($fields) {
+        var requestData = {};
+        $.each($fields, function(idx, field) {
+          requestData[field.id] = $(field).val();
+        });
+        return requestData;
+      }
     },
 
     /**
@@ -320,35 +381,31 @@ define(function(require, exports, module) {
 
       var that = this;
 
-      this.taskmanager.runMultipleTasksMerge(
+      return this.taskmanager.runMultipleTasksMerge(
         // tasks
         importTasks,
         // priority mapper for merging the results
-        literatureFormPriorityMapper,
-        // callback
-        function(result) {
+        literatureFormPriorityMapper
+      ).done(function(result) {
+        that.fieldsGroup.resetState();
+        that.messageBox.append(result.statusMessage);
 
-          that.fieldsGroup.resetState();
-          that.messageBox.append(result.statusMessage);
-          that.$importButton.button('reset');
+        // clear the messages when user cancel to import data
+        that.$previewModal.one("rejected", function(event, el) {
+          that.messageBox.clean();
+        });
 
-          // clear the messages when user cancel to import data
-          that.$previewModal.one("rejected", function(event, el) {
-            that.messageBox.clean();
-          });
+        // only fill the form if the user accepts the data
+        that.$previewModal.one("accepted", function(event, el) {
+          that.fillForm(result.mapping);
+          that.showRestForm(el);
+        });
 
-          // only fill the form if the user accepts the data
-          that.$previewModal.one("accepted", function(event, el) {
-            that.fillForm(result.mapping);
-            that.showRestForm(el);
-          });
-
-          // check if there are any data
-          if (result.mapping) {
-            that.previewModal.show(result.mapping);
-          }
+        // check if there are any data
+        if (result.mapping) {
+          that.previewModal.show(result.mapping);
         }
-      );
+      });
     },
 
     /**
@@ -436,7 +493,7 @@ define(function(require, exports, module) {
         var $field = $('#' + field_id);
         if ($field) {
           var field_value = $field.val(value);
-          $("#submitForm").trigger("dataSaveField", {
+          that.$submissionForm.trigger("dataSaveField", {
             save_url: that.save_url,
             name: field_id,
             value: value
