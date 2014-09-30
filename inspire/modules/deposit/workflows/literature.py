@@ -49,7 +49,7 @@ from invenio.modules.workflows.tasks.logic_tasks import (
     workflow_if
 )
 from invenio.modules.workflows.definitions import WorkflowBase
-from ...workflows.config import CFG_ROBOTUPLOAD_SUBMISSION_BASEURL
+from invenio.base.globals import cfg
 
 
 class literature(SimpleRecordDeposition, WorkflowBase):
@@ -80,7 +80,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         approve_record,
         workflow_if(was_approved),
         [
-            send_robotupload(CFG_ROBOTUPLOAD_SUBMISSION_BASEURL)
+            send_robotupload(cfg.get("CFG_ROBOTUPLOAD_SUBMISSION_BASEURL", ""))
         ],
         inform_submitter
     ]
