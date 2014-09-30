@@ -1,4 +1,5 @@
-#
+# -*- coding: utf-8 -*-
+##
 ## This file is part of INSPIRE.
 ## Copyright (C) 2014 CERN.
 ##
@@ -15,14 +16,12 @@
 ## You should have received a copy of the GNU General Public License
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-#
 
-import msgpack
 from invenio.ext.cache import cache
 from flask import Blueprint, jsonify, request
 from os.path import join
 from invenio.modules.workflows.models import BibWorkflowObject
-from invenio.config import CFG_SITE_URL
+from invenio.config import CFG_SITE_URL, CFG_ROBOTUPLOAD_SUBMISSION_BASEURL
 
 blueprint = Blueprint(
     'inspire_workflows',
@@ -63,22 +62,17 @@ def webcoll_callback():
     recids field.
     """
     recids = dict(request.form).get('recids', [])
-    try:
-        pending_records = msgpack.loads(cache.get("pending_records"))
-    except TypeError:
-        pending_records = {}
-    if pending_records:
-        pending_records = msgpack.loads(pending_records)
-        for rid in recids:
-            if rid in pending_records:
-                objectid = pending_records[rid]
-                workflow_object = BibWorkflowObject.query.get(objectid)
-                extra_data = workflow_object.get_extra_data()
-                extra_data['url'] = join(CFG_SITE_URL, 'record', str(rid))
-                workflow_object.set_extra_data(extra_data)
-                workflow_object.continue_workflow(delayed=True)
-                del pending_records[rid]
-                cache.set("pending_records", msgpack.dumps(pending_records))
+    pending_records = cache.get("pending_records") or dict()
+    for rid in recids:
+        if rid in pending_records:
+            objectid = pending_records[rid]
+            workflow_object = BibWorkflowObject.query.get(objectid)
+            extra_data = workflow_object.get_extra_data()
+            extra_data['url'] = join(CFG_ROBOTUPLOAD_SUBMISSION_BASEURL, 'record', str(rid))
+            workflow_object.set_extra_data(extra_data)
+            workflow_object.continue_workflow(delayed=True)
+            del pending_records[rid]
+            cache.set("pending_records", pending_records)
     return jsonify({"result": "success"})
 
 
@@ -99,15 +93,9 @@ def robotupload_callback():
         status = result.get('success', False)
         if status:
             recid = result.get('recid')
-            pending_records = cache.get("pending_records")
-            if pending_records:
-                pending_records = msgpack.loads(pending_records)
-                pending_records[str(recid)] = id_object
-                cache.set("pending_records", msgpack.dumps(pending_records))
-            else:
-                cache.set("pending_records", msgpack.dumps({
-                    str(recid): id_object
-                }))
+            pending_records = cache.get("pending_records") or dict()
+            pending_records[str(recid)] = str(id_object)
+            cache.set("pending_records", pending_records)
         else:
             from invenio.config import CFG_SITE_ADMIN_EMAIL
             from invenio.ext.email import send_email
