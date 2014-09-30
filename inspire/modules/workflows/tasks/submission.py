@@ -109,7 +109,7 @@ def send_robotupload(url):
             d.update()
 
         callback_url = os.path.join(cfg["CFG_SITE_URL"],
-                                    "callback/workflows/continue")
+                                    "callback/workflows/robotupload")
 
         result = make_robotupload_marcxml(
             url=url,
