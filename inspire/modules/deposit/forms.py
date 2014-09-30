@@ -32,7 +32,8 @@ from invenio.modules.deposit.field_widgets import plupload_widget, \
     ExtendedListWidget, \
     ItemWidget
 from invenio.modules.deposit.autocomplete_utils import kb_dynamic_autocomplete
-from .fields import ArXivField, ISBNField
+from .fields import ArXivField
+# from .fields import ISBNField
 from .validators.dynamic_fields import AuthorsValidation
 
 #
@@ -176,10 +177,10 @@ class LiteratureForm(WebDepositForm):
         label=_('arXiv ID'),
     )
 
-    isbn = ISBNField(
-        label=_('ISBN'),
-        widget_classes='form-control',
-    )
+    # isbn = ISBNField(
+    #     label=_('ISBN'),
+    #     widget_classes='form-control',
+    # )
 
     import_buttons = fields.SubmitField(
         label=_(' '),
@@ -187,10 +188,10 @@ class LiteratureForm(WebDepositForm):
     )
 
     types_of_doc = [("article", _("Article/Conference paper")),
-                    ("thesis", _("Thesis")),
-                    ("chapter", _("Book Chapter")),
-                    ("book", _("Book")),
-                    ("proceedings", _("Proceedings"))]
+                    ("thesis", _("Thesis"))]
+                    # ("chapter", _("Book Chapter")),
+                    # ("book", _("Book")),
+                    # ("proceedings", _("Proceedings"))]
 
     type_of_doc = fields.SelectField(
         label='Type of Document',
@@ -431,19 +432,12 @@ class LiteratureForm(WebDepositForm):
     # Form Configuration
     #
     _title = _("Literature submission")
-    # _subtitle = 'Instructions: (i) Press "Save" to save your upload for '\
-    #             'editing later, as many times you like. (ii) Upload or remove'\
-    #             ' extra files in the bottom of the form. (iii) When ready, '\
-    #             'press "Submit" to finalize your upload. <br><br> If you '\
-    #             'already have an <strong>ArXiv</strong> id or a '\
-    #             '<strong>DOI</strong>, fill the proper fields and the form '\
-    #             'should be automatically completed.'\
 
     # Group fields in categories
 
     groups = [
         ('Import from existing source',
-            ['arxiv_id', 'doi', 'isbn', 'import_buttons']),
+            ['arxiv_id', 'doi', 'import_buttons']),
         ('Document Type',
             ['captcha', 'type_of_doc', ]),
         ('Basic Information',
