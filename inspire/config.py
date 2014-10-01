@@ -161,6 +161,9 @@ CFG_SITE_LANGS = ['en', ]
 # to work
 CFG_SITE_NAME = u"HEP"
 
+# a working mode when the server cooperates with inspirehep.net database
+PRODUCTION_MODE = False
+
 langs = {}
 for lang in CFG_SITE_LANGS:
     langs[lang] = u"INSPIRE - High-Energy Physics Literature Database"
