@@ -18,7 +18,6 @@
 #
 
 from wtforms import TextField
-from wtforms.validators import ValidationError
 
 from invenio.modules.deposit.field_base import WebDepositField
 from invenio.modules.deposit.filter_utils import strip_prefixes, strip_string
@@ -33,6 +32,8 @@ class ArXivField(WebDepositField, TextField):
         defaults = dict(
             icon='barcode',
             validators=[arxiv_syntax_validation],
+            # Should have the same logic as stripSourceTags()
+            # in literature_submission_form.js
             filters=[
                 strip_string,
                 strip_prefixes("arxiv:", "arXiv:"),

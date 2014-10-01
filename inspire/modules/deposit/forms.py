@@ -32,10 +32,14 @@ from invenio.modules.deposit.field_widgets import plupload_widget, \
     ExtendedListWidget, \
     ItemWidget
 from invenio.modules.deposit.autocomplete_utils import kb_dynamic_autocomplete
+from invenio.modules.deposit.validation_utils import DOISyntaxValidator
+
 from .fields import ArXivField
 # from .fields import ISBNField
 from .validators.dynamic_fields import AuthorsValidation
 from .filters import clean_empty_list
+from .validators.simple_fields import duplicated_doi_validator, \
+    duplicated_arxiv_id_validator, arxiv_syntax_validation
 
 #
 # Field class names
@@ -197,11 +201,13 @@ class LiteratureForm(WebDepositForm):
         processors=[],
         export_key='doi',
         description='e.g. 10.1234/foo.bar or doi:10.1234/foo.bar',
-        placeholder=''
+        placeholder='',
+        validators=[DOISyntaxValidator(), duplicated_doi_validator],
     )
 
     arxiv_id = ArXivField(
         label=_('arXiv ID'),
+        validators=[arxiv_syntax_validation, duplicated_arxiv_id_validator],
     )
 
     # isbn = ISBNField(
