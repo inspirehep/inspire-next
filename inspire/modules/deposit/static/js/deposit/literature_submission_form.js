@@ -354,7 +354,7 @@ define(function(require, exports, module) {
     /**
      * Returns ids of hidden elements
      */
-    getHiddenFields: function getHiddenFields(dataMapping) {
+    getHiddenFields: function getHiddenFields() {
       return $.map($('input.hidden'), function(value, index) {
         return value.id;
       });
