@@ -176,6 +176,11 @@ BLUEPRINTS_URL_PREFIXES = {'webdeposit': '/submit'}
 
 SQLALCHEMY_POOL_RECYCLE = 700
 
+# OAUTH configuration
+
+from invenio.modules.oauthclient.contrib import orcid
+orcid.REMOTE_SANDBOX_APP['params']['authorize_url'] = "https://sandbox.orcid.org/oauth/authorize#show_login"
+
 # For production only, instance_config contains configuration of
 # database credentials and other instance specific configuration
 try:
