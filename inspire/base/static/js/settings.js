@@ -36,10 +36,12 @@ require.config({
         flight: 'vendors/flight/lib',
         bootstrap: 'vendors/bootstrap/dist/js/bootstrap',
         'typeahead': 'vendors/typeahead.js/dist/typeahead.bundle',
+        'moment': 'vendors/moment/moment',
+        'bootstrap-datetimepicker': 'vendors/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
         // INSPIRE
         'bootstrap-multiselect': 'vendors/bootstrap-multiselect/js/bootstrap-multiselect',
         'readmore': 'vendors/readmore/readmore',
-        'buckets': 'vendors/buckets/buckets'
+        'buckets': 'vendors/buckets/buckets',
     },
     shim: {
         // Invenio
@@ -49,10 +51,12 @@ require.config({
         "bootstrap" : { deps :['jquery'] },
         'typeahead': { deps :['jquery'],
                        exports: "Bloodhound" },
+        "bootstrap-datetimepicker": { deps: ['jquery', 'bootstrap', 'moment'],
+                                    exports: '$.fn.datetimepicker' },
         // INSPIRE
         "bootstrap-multiselect" : { deps :['jquery'],
                                     exports: '$.fn.multiselect' },
         "readmore" : { deps :['jquery'],
-                                    exports: '$.fn.readmore' }
+                                    exports: '$.fn.readmore' },
     }
 })
