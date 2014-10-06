@@ -57,7 +57,11 @@ require(["jquery", "js/deposit/form", "js/deposit/literature_submission_form", "
       complete_url: complete_url,
       autocomplete_url: autocomplete_url,
       datepicker_element: '.datepicker',
-      datepicker_format: 'yy-mm-dd'
+      datepicker_options: {
+        format: 'YYYY-MM-DD',
+        pickTime: false,
+        maxDate: new Date(),
+      }
     });
 
     $('.pluploader').pluploadWidget({
