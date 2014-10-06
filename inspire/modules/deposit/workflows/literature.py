@@ -149,7 +149,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
     def process_sip_metadata(cls, deposition, metadata):
         """Map fields to match jsonalchemy configuration."""
         delete_keys = []
-        field_list = ['abstract', 'title', 'subject_term']
+        field_list = ['abstract', 'title']
 
         # maps from a form field to the corresponding MarcXML field
         field_map = {'abstract': "summary",
@@ -173,6 +173,11 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 tmp_field = metadata[field]
                 metadata[field] = {}
                 metadata[field][field_map[field]] = tmp_field
+
+        if "subject_term" in metadata:
+            tmp_field = metadata["subject_term"]
+            metadata["subject_term"] = [{"term": t, "scheme": "INSPIRE"}
+                                        for t in tmp_field]
 
         # =======
         # Authors
