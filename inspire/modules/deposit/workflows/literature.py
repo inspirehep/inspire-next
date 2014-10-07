@@ -96,7 +96,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             taxonomy="HEPont.rdf",
             output_mode="dict",
         ),
-        halt_record_with_action(action="inspire_approval",
+        halt_record_with_action(action="core_approval",
                                 message="Accept submission?"),
         workflow_if(was_approved),
         [
