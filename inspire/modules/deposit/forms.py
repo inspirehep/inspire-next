@@ -495,7 +495,7 @@ class LiteratureForm(WebDepositForm):
     field_sizes = {
         'file_field': 'col-md-12',
         'type_of_doc': 'col-xs-4',
-        'nonpublic_note': 'col-md-9',
+        'wrap_nonpublic_note': 'col-md-9',
     }
 
     def __init__(self, *args, **kwargs):
