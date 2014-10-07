@@ -35,6 +35,7 @@ from invenio.modules.deposit.autocomplete_utils import kb_dynamic_autocomplete
 from .fields import ArXivField
 # from .fields import ISBNField
 from .validators.dynamic_fields import AuthorsValidation
+from .filters import clean_empty_list
 
 #
 # Field class names
@@ -256,6 +257,7 @@ class LiteratureForm(WebDepositForm):
         label=_('Subject'),
         widget_classes="form-control",
         export_key='subject_term',
+        filters=[clean_empty_list]
     )
 
     abstract = fields.TextAreaField(
