@@ -105,7 +105,7 @@ define(function(require, exports, module) {
       });
 
       // populate the body of the modal
-      $('#modalData .modal-body').html(table);
+      $('#modalData #data-table').html(table);
 
       // show the modal
       this.$element.modal({

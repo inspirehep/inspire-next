@@ -33,6 +33,7 @@ define(function(require, exports, module) {
   require("js/deposit/message_box");
   require("js/deposit/fields_group");
   require('ui/effect-highlight');
+  require('ui/effect-blind');
   require("bootstrap-multiselect");
   require("bootstrap");
   require('js/deposit/dynamic_field_list');
@@ -111,6 +112,7 @@ define(function(require, exports, module) {
     this.$nonpublic_note = $("#nonpublic_note");
     this.$form = $("#webdeposit_form_accordion");
     this.$formWrapper = $('.form-wrapper');
+    this.$inputs = this.$formWrapper.find(':input');
 
     // these fields' values will be deleted before submission so that they will not be
     // sent to the sever
@@ -299,9 +301,9 @@ define(function(require, exports, module) {
       // action bar
       var $actionBar = $('.action-bar');
 
-      $mandatoryIndicator.show('slow');
-      this.$formWrapper.show('slow');
-      $actionBar.show('slow');
+      $mandatoryIndicator.show('blind'); // default duration 400
+      this.$formWrapper.show('blind', 1000);
+      $actionBar.show('blind', 1000);
     },
 
     /**
@@ -385,7 +387,7 @@ define(function(require, exports, module) {
         literatureFormPriorityMapper
       ).done(function(result) {
         that.messageBox.clean();
-        //FIXME: modal will handle the messages
+        // FIXME: prevent the `warning` case
         that.messageBox.append(result.statusMessage);
 
         // clear the messages when user cancel to import data
@@ -395,9 +397,10 @@ define(function(require, exports, module) {
 
         // only fill the form if the user accepts the data
         that.$previewModal.one("accepted", function(event) {
-          that.fieldsGroup.resetState();
-          that.$formWrapper.find(':input').clearForm();
+          that.$inputs.resetColor();
+          that.$inputs.clearForm();
           that.fillForm(result.mapping);
+          that.fieldsGroup.resetState();
           that.showForm();
         });
 
@@ -492,6 +495,7 @@ define(function(require, exports, module) {
         var $field = $('#' + field_id);
         if ($field) {
           // highlight the imported fields except for the authors with the Bootstrap's success alert box
+          // FIXME: remove the colors on the second import, they stay there if the field is empty
           if (field_id !== 'authors') {
             $field.css('background-color', '#dff0d8');
           }
@@ -504,6 +508,15 @@ define(function(require, exports, module) {
         authorsWidget.append_element();
       }
 
+      // recreation of authors fields
+      if (authorsWidget.$element.children('.field-list-element').length > 1) {
+        authorsWidget.$element.children('.field-list-element').not(':first').each(function() {
+          var $this = $(this);
+          $this.remove();
+          authorsWidget.update_elements_indexes();
+        });
+      }
+
       for (var i in dataMapping.authors) {
         authorsWidget.update_element(dataMapping.authors[i], i);
         // highlight the authors fields with the Bootstrap's success alert box
@@ -514,36 +527,65 @@ define(function(require, exports, module) {
         }
       }
 
-      // trigger the "dataFormSave" so the empty input values can be saved
+      // triggers the "dataFormSave" in order the empty fields can be saved as well
       that.$submissionForm.trigger("dataFormSave", {
         url: that.save_url,
         form_selector: that.$submissionForm
       });
     }
   };
+
+  /**
+   * Clears the form data.  Takes the following actions on the form's input fields:
+   *  - input text fields will have their 'value' property set to the empty string
+   *  - input hidden fields will have their 'value' property set to the empty string
+   *  - select elements will have their 'selectedIndex' property set to -1
+   *  - checkbox and radio inputs will have their 'checked' property set to false
+   *  - inputs of type submit, button, reset will *not* be effected
+   *  - button elements will *not* be effected
+   */
+  $.fn.clearForm = function() {
+    return this.each(function() {
+      var type = this.type,
+        tag = this.tagName.toLowerCase();
+      if (tag === 'form') {
+        return $(':input', this).clearForm();
+      }
+      if (type === 'text' || type === 'password' || type === 'hidden' || tag === 'textarea') {
+        // avoid to clear the authors fields since they are already recreated
+        if ($(this).parents('#field-authors').length === 0) {
+          this.value = '';
+        }
+      } else if (type === 'checkbox' || type === 'radio') {
+        this.checked = false;
+      } else if (type === 'select-multiple') { // for the multi-select field
+        if (this.selectedIndex !== -1) {
+          $('#subject option').each(function() {
+            $(this).prop('selected', false);
+          });
+          $('#subject').multiselect('refresh');
+        }
+      }
+    });
+  };
+
+  /**
+   * Resets the color of the imported fields
+   */
+  $.fn.resetColor = function() {
+    return this.each(function() {
+      var type = this.type,
+        tag = this.tagName.toLowerCase();
+      if (tag === 'form') {
+        return $(':input', this).resetColor();
+      }
+      if (type === 'text' || tag === 'textarea') {
+        if (this.id !== 'nonpublic_note') {
+          $(this).css('background-color', '#fff');
+        }
+      }
+    });
+  };
+
   module.exports = LiteratureSubmissionForm;
 });
-
-/**
- * Clears the form data.  Takes the following actions on the form's input fields:
- *  - input text fields will have their 'value' property set to the empty string
- *  - input hidden fields will have their 'value' property set to the empty string
- *  - select elements will have their 'selectedIndex' property set to -1
- *  - checkbox and radio inputs will have their 'checked' property set to false
- *  - inputs of type submit, button, reset will *not* be effected
- *  - button elements will *not* be effected
- */
-$.fn.clearForm = function() {
-  return this.each(function() {
-    var type = this.type,
-      tag = this.tagName.toLowerCase();
-    if (tag === 'form') {
-      return $(':input', this).clearForm();
-    }
-    if (type === 'text' || type === 'password' || type === 'hidden' || tag === 'textarea') {
-      this.value = '';
-    } else if (type === 'checkbox' || type === 'radio') {
-      this.checked = false;
-    }
-  });
-};
