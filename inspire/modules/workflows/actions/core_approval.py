@@ -27,15 +27,17 @@ from invenio.base.i18n import _
 from flask import render_template, url_for
 
 
-class inspire_approval(object):
+class core_approval(object):
+
     """Class representing the approval action."""
-    name = _("Approve (INSPIRE)")
+
+    name = _("Approve record")
     url = url_for("holdingpen.resolve_action")
 
     def render_mini(self, obj):
         """Method to render the minified action."""
         return render_template(
-            'workflows/actions/approval_mini.html',
+            'workflows/actions/core_approval_mini.html',
             message=obj.get_action_message(),
             object=obj,
             resolve_url=self.url,
@@ -44,11 +46,11 @@ class inspire_approval(object):
     def render(self, obj):
         """Method to render the action."""
         return {
-            "side": render_template('workflows/actions/approval_side.html',
+            "side": render_template('workflows/actions/core_approval_side.html',
                                     message=obj.get_action_message(),
                                     object=obj,
                                     resolve_url=self.url,),
-            "main": render_template('workflows/actions/approval_main.html',
+            "main": render_template('workflows/actions/core_approval_main.html',
                                     message=obj.get_action_message(),
                                     object=obj,
                                     resolve_url=self.url,)
