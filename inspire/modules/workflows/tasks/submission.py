@@ -70,10 +70,13 @@ def inform_submitter(obj, eng):
     send_email(CFG_SITE_SUPPORT_EMAIL, email, 'Subject', body, header='header')
 
 
-def approve_record(obj, eng):
-    """Halt the workflow for approval."""
-    eng.halt(action="inspire_approval",
-             msg='Accept submission?')
+def halt_record_with_action(action, message):
+    """Halt the record and set an action (with message)."""
+    def _halt_record(obj, eng):
+        """Halt the workflow for approval."""
+        eng.halt(action=action,
+                 msg=message)
+    return _halt_record
 
 
 def finalize_and_post_process(workflow_name, **kwargs):

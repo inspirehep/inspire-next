@@ -37,7 +37,7 @@ from invenio.modules.classifier.tasks.classification import (
 )
 
 from inspire.modules.workflows.tasks.submission import (
-    approve_record,
+    halt_record_with_action,
     send_robotupload,
     halt_to_render,
     inform_submitter,
@@ -77,7 +77,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             taxonomy="HEPont.rdf",
             output_mode="dict",
         ),
-        approve_record,
+        halt_record_with_action(action="inspire_approval",
+                                message="Accept submission?"),
         workflow_if(was_approved),
         [
             send_robotupload(cfg.get("CFG_ROBOTUPLOAD_SUBMISSION_BASEURL", ""))
