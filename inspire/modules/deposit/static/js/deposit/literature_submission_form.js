@@ -120,7 +120,7 @@ define(function(require, exports, module) {
       this.$conference
     ];
 
-    this.$importIdsFields = $('form:first .panel:eq(0) *:input[type!=hidden]');
+    this.$importIdsFields = $('form:first .panel:eq(0) *:input[type=text]');
 
     this.init();
     this.connectEvents();
