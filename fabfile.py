@@ -22,6 +22,8 @@ def vm08():
     Activate configuration for INSPIRE DEV server.
     """
     env.roles = ['dev01']
+    env.site_url = "http://inspirelabstest.cern.ch"
+    env.site_secure_url = "https://inspirelabstest.cern.ch"
 
 
 @task
@@ -30,6 +32,8 @@ def vm11():
     Activate configuration for INSPIRE DEV server.
     """
     env.roles = ['dev02']
+    env.site_url = "http://inspirevm11.cern.ch"
+    env.site_secure_url = "https://inspirevm11.cern.ch"
 
 
 @task
@@ -85,10 +89,11 @@ def install():
                     sudo("pip install /afs/cern.ch/project/inspire/repo/inspireconf-dev.tar.gz --upgrade")
                     # post install
                     sudo("inveniomanage collect")
-                    # Set Flask Host configuration
-                    sudo("inveniomanage config set CFG_SITE_URL {0}".format(env.host_string))
-                    sudo("inveniomanage config set CFG_SITE_SECURE_URL {0}".format(env.host_string))
-                    # Create Apache configuration
-                    sudo("inveniomanage apache create-config")
-                    sudo("ln -s {0} /opt/invenio".format(venv))
+                    with(settings(warn_only=True)):
+                        # Set Flask Host configuration
+                        sudo("inveniomanage config set CFG_SITE_URL {0}".format(env.site_url))
+                        sudo("inveniomanage config set CFG_SITE_SECURE_URL {0}".format(env.site_secure_url))
+                        # Create Apache configuration
+                        sudo("inveniomanage apache create-config")
+                        sudo("ln -s {0} /opt/invenio".format(venv))
                 return success
