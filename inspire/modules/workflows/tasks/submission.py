@@ -94,7 +94,7 @@ def finalize_and_post_process(workflow_name, **kwargs):
     return _finalize_and_post_process
 
 
-def send_robotupload(url):
+def send_robotupload(url=None):
     """Get the MARCXML from the deposit object and ships it."""
     def _send_robotupload(obj, eng):
         from invenio.modules.deposit.models import Deposition
@@ -111,14 +111,17 @@ def send_robotupload(url):
             sip.seal()
             d.update()
 
+        if url is None:
+            base_url = cfg.get("CFG_ROBOTUPLOAD_SUBMISSION_BASEURL")
+
         callback_url = os.path.join(cfg["CFG_SITE_URL"],
                                     "callback/workflows/robotupload")
         obj.log.info("Sending Robotupload to {0} with callback {1}".format(
-            url,
+            base_url,
             callback_url
         ))
         result = make_robotupload_marcxml(
-            url=url,
+            url=base_url,
             marcxml=sip.package,
             callback_url=callback_url,
             nonce=obj.id
