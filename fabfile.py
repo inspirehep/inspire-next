@@ -9,17 +9,34 @@ from fabric.utils import error
 from fabric.contrib.files import exists
 
 env.directory = '/opt'  # remote directory
-env.hosts = ['inspirevm11']  # list of servers
+
+env.roledefs = {
+    'dev01': ['inspirevm08.cern.ch'],
+    'dev02': ['inspirevm11.cern.ch'],
+}
+
+
+@task
+def vm08():
+    """
+    Activate configuration for INSPIRE DEV server.
+    """
+    env.roles = ['dev01']
+
+
+@task
+def vm11():
+    """
+    Activate configuration for INSPIRE DEV server.
+    """
+    env.roles = ['dev02']
 
 
 @task
 def pack():
     """Create a new source distribution as tarball."""
-    with open(".bowerrc") as fp:
-        bower = json.load(fp)
-
-    local("inveniomanage assets build --directory {directory}/../gen"
-          .format(**bower))
+    local("inveniomanage assets build --directory {0}"
+          .format("inspire/base/static/gen"))
     return local("python setup.py sdist --formats=gztar", capture=False) \
         .succeeded
 
