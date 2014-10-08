@@ -164,9 +164,15 @@ define(function(require, exports, module) {
       this.hideHiddenFields();
       this.handleTranslatedTitle();
       this.taskmanager = new TaskManager(this.$deposition_type);
-      this.messageBox = $('#flash-import').messageBox({
+      // flash messages on the Modal
+      this.messageBoxModal = $('#flash-import').messageBox({
         hoganTemplate: tpl_flash_message,
       })[0];
+      // flash messages on the Form
+      this.messageBoxForm = $('#flash-message').messageBox({
+        hoganTemplate: tpl_flash_message,
+      })[0];
+
       this.$conference.conferencesTypeahead({
         suggestionTemplate: Hogan.compile(
           '<b>{{ title }}</b><br>' +
@@ -386,13 +392,25 @@ define(function(require, exports, module) {
         // priority mapper for merging the results
         literatureFormPriorityMapper
       ).done(function(result) {
-        that.messageBox.clean();
-        // FIXME: prevent the `warning` case
-        that.messageBox.append(result.statusMessage);
+        that.messageBoxModal.clean();
+        that.messageBoxForm.clean();
+
+        // flash messages on the Form or Modal depending on the state of the message
+        for (var i in result.statusMessage) {
+          if (result.statusMessage[i].state === 'warning') {
+            that.messageBoxForm.append(result.statusMessage);
+          }
+          if (result.statusMessage[i].state === 'success') {
+            that.messageBoxModal.clean();
+            that.messageBoxForm.clean();
+            that.messageBoxModal.append(result.statusMessage);
+          }
+        }
 
         // clear the messages when user cancel to import data
         that.$previewModal.one("rejected", function(event) {
-          that.messageBox.clean();
+          that.messageBoxModal.clean();
+          that.messageBoxForm.clean();
         });
 
         // only fill the form if the user accepts the data
@@ -495,7 +513,6 @@ define(function(require, exports, module) {
         var $field = $('#' + field_id);
         if ($field) {
           // highlight the imported fields except for the authors with the Bootstrap's success alert box
-          // FIXME: remove the colors on the second import, they stay there if the field is empty
           if (field_id !== 'authors') {
             $field.css('background-color', '#dff0d8');
           }
