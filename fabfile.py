@@ -39,8 +39,11 @@ def vm11():
 @task
 def pack():
     """Create a new source distribution as tarball."""
-    local("inveniomanage assets build --directory {0}"
-          .format("inspire/base/static/gen"))
+    with open(".bowerrc") as fp:
+        bower = json.load(fp)
+
+    local("inveniomanage assets build --directory {directory}/../gen"
+          .format(**bower))
     return local("python setup.py sdist --formats=gztar", capture=False) \
         .succeeded
 
