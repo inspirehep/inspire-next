@@ -26,7 +26,8 @@ define(function(require, exports, module) {
    * Allows to trigger actions when all the fields from
    * the selector are empty, and when at least one of them is filled
    */
-  var $ = require("jquery")
+  var $ = require("jquery"),
+      buckets = require("buckets");
 
   /**
    * Constructor.

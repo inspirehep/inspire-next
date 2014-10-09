@@ -38,7 +38,8 @@ require.config({
         'typeahead': 'vendors/typeahead.js/dist/typeahead.bundle',
         // INSPIRE
         'bootstrap-multiselect': 'vendors/bootstrap-multiselect/js/bootstrap-multiselect',
-        'readmore': 'vendors/readmore/readmore'
+        'readmore': 'vendors/readmore/readmore',
+        'buckets': 'vendors/buckets/buckets'
     },
     shim: {
         // Invenio
