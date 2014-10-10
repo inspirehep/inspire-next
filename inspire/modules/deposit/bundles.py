@@ -25,9 +25,7 @@ from invenio.modules.deposit.bundles import js as _deposit_js, \
 # auto-discovery service of invenio
 
 _deposit_js.contents.remove("js/deposit/init.js")
-_deposit_js.contents += [
-    'vendors/buckets/buckets.js'
-]
+
 _deposit_js.contents = ['js/deposit/inspire_init.js'] + _deposit_js.contents
 
 _deposit_js.bower.update({
