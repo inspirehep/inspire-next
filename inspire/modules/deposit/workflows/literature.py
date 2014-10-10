@@ -38,6 +38,10 @@ from invenio.modules.classifier.tasks.classification import (
     classify_paper_with_deposit,
 )
 
+from inspire.modules.workflows.tasks.matching import(
+    match_record_remote_deposit,
+)
+
 from inspire.modules.workflows.tasks.submission import (
     halt_record_with_action,
     send_robotupload,
@@ -46,10 +50,15 @@ from inspire.modules.workflows.tasks.submission import (
     add_files_to_task_results,
 )
 
-from inspire.modules.workflows.tasks.actions import was_approved
-from invenio.modules.workflows.tasks.logic_tasks import (
-    workflow_if
+from inspire.modules.workflows.tasks.actions import (
+    was_approved,
+    reject_record
 )
+from invenio.modules.workflows.tasks.logic_tasks import (
+    workflow_if,
+    workflow_else,
+)
+from invenio.modules.workflows.tasks.workflows_tasks import log_info
 from invenio.modules.workflows.definitions import WorkflowBase
 
 
@@ -84,9 +93,17 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                                 message="Accept submission?"),
         workflow_if(was_approved),
         [
-            send_robotupload()
+            workflow_if(match_record_remote_deposit, True),
+            [
+                send_robotupload(),
+            ],
+            workflow_else,
+            [
+                log_info('Record already in database!'),
+                reject_record,
+            ],
         ],
-        inform_submitter
+        inform_submitter,
     ]
 
     name = "Literature"
