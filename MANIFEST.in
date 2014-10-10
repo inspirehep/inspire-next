@@ -1,5 +1,6 @@
 include requirements*.txt *.rst COPYING
-recursive-include inspire *.xml *.xsl *.xsd *.tpl *.html *.js *.kb *.css *.cfg *.bft *.rst *.ico *.sql *.bfo *.png *.woff *.less
+recursive-include inspire *
+
 recursive-include docs *
 recursive-exclude docs/_build *
 recursive-exclude * *.pyc *.pyo
