@@ -25,3 +25,7 @@ def was_approved(obj, eng):
     """Check if the record was approved."""
     extra_data = obj.get_extra_data()
     return extra_data.get("approved", False)
+
+
+def reject_record(obj, eng):
+    obj.extra_data["approved"] = False

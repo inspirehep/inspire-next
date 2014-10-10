@@ -27,7 +27,10 @@ from six import string_types
 
 from invenio.modules.workflows.tasks.marcxml_tasks import (
     convert_record_to_bibfield,
-    quick_match_record,
+)
+
+from inspire.modules.workflows.tasks.matching import(
+    match_record_arxiv_remote_oaiharvest,
 )
 
 from invenio.modules.classifier.tasks.classification import (
@@ -65,7 +68,7 @@ class process_record_arxiv(WorkflowBase):
     workflow = [
         convert_record_with_repository("oaiarXiv2inspire_nofilter.xsl"),
         convert_record_to_bibfield,
-        workflow_if(quick_match_record, True),
+        workflow_if(match_record_arxiv_remote_oaiharvest, True),
         [
             plot_extract(["latex"]),
             arxiv_fulltext_download,
