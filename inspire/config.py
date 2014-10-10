@@ -163,10 +163,6 @@ for lang in CFG_SITE_LANGS:
     langs[lang] = u"INSPIRE - High-Energy Physics Literature Database"
 CFG_SITE_NAME_INTL = langs
 
-# Site emails
-
-CFG_SITE_ADMIN_EMAIL = "admin@inspirehep.net"
-
 # Rename blueprint prefixes
 
 BLUEPRINTS_URL_PREFIXES = {'webdeposit': '/submit'}
