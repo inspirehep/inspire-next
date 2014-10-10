@@ -333,6 +333,20 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
             map(restructure_ffts, metadata['fft'])
 
+        # ====
+        # URLs
+        # ====
+        metadata['url'] = filter(None, metadata['url'])
+        if 'url' in metadata and metadata['url']:
+            def restructure_urls(url):
+                url['url'] = url['full_url']
+                del url['full_url']
+
+            map(restructure_urls, metadata['url'])
+            if not isinstance(metadata['fft'], list):
+                metadata['fft'] = list(metadata['fft'])
+            metadata['fft'].extend(metadata['url'])
+
         # ================
         # Publication Info
         # ================
