@@ -20,3 +20,6 @@
 
 DEPOSIT_INSPIRE_SUBJECTS_KB = "Subjects"
 """ KB used for Subjects """
+
+DEPOSIT_INSPIRE_JOURNALS_KB = "docextract-journals"
+""" KB used for Journals """
