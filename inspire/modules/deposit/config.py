@@ -29,3 +29,6 @@ DEPOSIT_INSPIRE_DEGREE_KB = "DEGREE"
 
 DEPOSIT_INSPIRE_LICENSE_KB = "LICENSE"
 """ KB used for Licenses """
+
+DEPOSIT_ARXIV_TO_INSPIRE_CATEGORIES_KB = "arxiv-to-inspire-categories"
+""" KB used for arXiv to INSPIRE categories """
