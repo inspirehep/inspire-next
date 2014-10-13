@@ -38,6 +38,8 @@ from invenio.modules.classifier.tasks.classification import (
     classify_paper_with_deposit,
 )
 
+from invenio.modules.knowledge.api import get_kb_mappings
+
 from inspire.modules.workflows.tasks.matching import(
     match_record_remote_deposit,
 )
@@ -350,6 +352,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ================
         # Publication Info
         # ================
+
         publication_fields = filter(lambda field: field in metadata, ['journal_title',
                                                                       'page_range',
                                                                       'article_id',
@@ -372,6 +375,13 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                         pass
 
             delete_keys.extend(publication_fields)
+
+        if 'journal_title' in metadata:
+            journals_kb = dict([(x['key'].lower(), x['value'])
+                                for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_JOURNALS_KB"])])
+
+            metadata['publication_info']['journal_title'] = journals_kb.get(metadata['journal_title'].lower(),
+                                                                            metadata['journal_title'])
 
             if 'nonpublic_note' in metadata:
                 if (isinstance(metadata['nonpublic_note'], list)
