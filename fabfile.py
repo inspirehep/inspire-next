@@ -101,6 +101,10 @@ def install():
                     # post install
                     sudo("inveniomanage collect")
                     with(settings(warn_only=True)):
+                        # Compile base Invenio translatation to avoid translation error
+                        prefix_folder = sudo('python -c "import invenio; print(invenio.__path__[0])"')
+                        prefix_folder = prefix_folder.split("\n")
+                        sudo("pybabel compile -fd {0}/base/translations".format(prefix_folder[-1]))
                         # Set Flask Host configuration
                         sudo("inveniomanage config set CFG_SITE_URL {0}".format(env.site_url))
                         sudo("inveniomanage config set CFG_SITE_SECURE_URL {0}".format(env.site_secure_url))
@@ -134,3 +138,18 @@ def clean_assets():
     local("inveniomanage bower -i bower-base.json > bower.json")
     local("bower install")
     local("inveniomanage collect")
+
+
+@task
+def compile_translations():
+    """Compile the Invenio translations."""
+    package = local("python setup.py --fullname", capture=True).strip()
+    venv = "{0}/{1}".format(env.directory, package)
+    if not exists(venv):
+        return error("Meh? I need a virtualenv first.")
+    with settings(sudo_user="invenio"):
+        with cd("{0}/src/{1}".format(venv, package)):
+            with prefix('source {0}/bin/activate'.format(venv)):
+                prefix_folder = sudo('python -c "import invenio; print(invenio.__path__[0])"')
+                prefix_folder = prefix_folder.split("\n")
+                sudo("pybabel compile -fd {0}/base/translations".format(prefix_folder[-1]))
