@@ -29,10 +29,13 @@ _deposit_js.contents.append('js/deposit/inspire_init.js')
 _deposit_js.bower.update({
     'buckets': 'git://github.com/mauriciosantos/buckets.git',
     'bootstrap-multiselect': '~0.9.4',
-    "readmore": "*",
+    'readmore': '*',
+    'feedback': 'git://github.com/giokokos/feedback.js.git',
+    'html2canvas': '*',
 })
 
 _deposit_styles.contents += (
     'vendors/bootstrap-multiselect/css/bootstrap-multiselect.css',
     'css/deposit-inspire.css',
+    'vendors/feedback/examples/css/feedback.css',
 )
