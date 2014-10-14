@@ -43,7 +43,9 @@ require.config({
     // INSPIRE
     "bootstrap-multiselect": "vendors/bootstrap-multiselect/js/bootstrap-multiselect",
     "readmore": "vendors/readmore/readmore",
-    "buckets": "vendors/buckets/buckets"
+    "buckets": "vendors/buckets/buckets",
+    "feedback": "vendors/feedback/examples/js/feedback",
+    "html2canvas": "vendors/html2canvas/build/html2canvas",
   },
   shim: {
     "jqueryui-timepicker/jquery-ui-sliderAccess": {
@@ -85,13 +87,20 @@ require.config({
       exports: "$.fn.datetimepicker"
     },
     // INSPIRE
-    "bootstrap-multiselect" : {
-      deps :["jquery"],
+    "bootstrap-multiselect": {
+      deps: ["jquery"],
       exports: "$.fn.multiselect"
     },
-    "readmore" : {
-      deps :["jquery"],
+    "readmore": {
+      deps: ["jquery"],
       exports: "$.fn.readmore"
-    }
+    },
+    "html2canvas" : {
+      deps: ["jquery"]
+    },
+    "feedback" : {
+      deps: ["jquery", "html2canvas"],
+       exports: "Feedback"
+    },
   }
-})
+});
