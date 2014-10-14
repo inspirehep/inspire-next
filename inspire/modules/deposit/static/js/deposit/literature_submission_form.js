@@ -30,6 +30,7 @@ define(function(require, exports, module) {
   var TaskManager = require("js/deposit/task_manager");
   var ConferencesTypeahead = require("js/deposit/conferences_typeahead");
   var PreviewModal = require("js/deposit/modal_preview");
+  var Feedback = require("feedback");
   require("js/deposit/message_box");
   require("js/deposit/fields_group");
   require('ui/effect-highlight');
@@ -159,6 +160,11 @@ define(function(require, exports, module) {
       $('#subject').attr('multiple', 'multiple').multiselect({
         maxHeight: 400,
         enableCaseInsensitiveFiltering: true
+      });
+
+      // trigger Feedaback
+      var api = new Feedback({
+        h2cPath:'js/html2canvas.js'
       });
 
       this.hideHiddenFields();
