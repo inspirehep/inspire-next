@@ -148,6 +148,7 @@ PACKAGES_FACETS_EXCLUDE = [
 # Task queue configuration
 
 CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
+CELERY_ACCEPT_CONTENT = ["msgpack"]
 BROKER_URL = "amqp://guest:guest@localhost:5672//"
 
 # Site name configuration
