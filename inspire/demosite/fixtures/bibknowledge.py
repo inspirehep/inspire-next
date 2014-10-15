@@ -183,9 +183,11 @@ kb_paths = [(file,
 kb_names = dict([(getattr(KnwKBData, x).name.lower(), getattr(KnwKBData, x).id)
                 for x in dir(KnwKBData) if x.startswith("KnwKBData")])
 
+print(">>> {0} KBs found to be loaded.".format(len(kb_names)))
+
 idx = 0
 for filename, path in kb_paths:
-    kb_name = os.path.splitext(filename)[0]
+    kb_name = os.path.splitext(filename)[0].lower()
     kb_id = None
     try:
         kb_id = kb_names[kb_name]
