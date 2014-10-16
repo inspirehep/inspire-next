@@ -71,6 +71,8 @@ def install():
     if not exists(venv):
         return error("Meh? I need a virtualenv first.")
 
+    success = 1
+
     # Upload the package and put it into our virtualenv.
     put("dist/{0}.tar.gz".format(package), "/tmp/app.tgz")
     with settings(sudo_user="invenio"):
@@ -98,5 +100,13 @@ def install():
                         sudo("inveniomanage config set CFG_SITE_SECURE_URL {0}".format(env.site_secure_url))
                         # Create Apache configuration
                         sudo("inveniomanage apache create-config")
-                        sudo("ln -s {0} /opt/invenio".format(venv))
-                return success
+                        sudo("ln -sf {0} /opt/invenio".format(venv))
+    if success:
+        sudo("supervisorctl restart celeryd")
+    return success
+
+
+@task
+def restart_celery():
+    """Restart celery workers."""
+    return sudo("supervisorctl restart celeryd")
