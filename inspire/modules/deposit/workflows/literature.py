@@ -132,6 +132,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
     @staticmethod
     def get_description(bwo):
         """Return description of object."""
+        results = bwo.get_tasks_results()
         deposit_object = Deposition(bwo)
         sip = deposit_object.get_latest_sip()
         if sip:
@@ -140,7 +141,9 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             categories = [record.get("type_of_doc", "")]
             return render_template('workflows/styles/submission_record.html',
                                    categories=categories,
-                                   identifiers=identifiers)
+                                   identifiers=identifiers,
+                                   results=results,
+                                   )
         else:
             from invenio.modules.access.control import acc_get_user_email
             id_user = deposit_object.workflow_object.id_user
