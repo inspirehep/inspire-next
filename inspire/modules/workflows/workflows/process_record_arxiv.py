@@ -117,26 +117,7 @@ class process_record_arxiv(RecordWorkflow):
             else:
                 final_identifiers = [' No ids']
 
-        task_results = bwo.get_tasks_results()
-        results = []
-        if 'bibclassify' in task_results:
-            try:
-                result = task_results['bibclassify'][0]['result']
-                fast_mode = result.get('fast_mode', False)
-                result = result['dict']['complete_output']
-                result_string = "<strong></br>Bibclassify result:"\
-                                "</br></strong>"\
-                                "Number of Core keywords: \t%s</br>"\
-                                "PACS: \t%s</br>"\
-                                % (len(result['Core keywords']),
-                                   len(result['Field codes']))
-                if fast_mode:
-                    result_string += "(This task run at fast mode"\
-                                     " taking into consideration"\
-                                     " only the title and the abstract)"
-                results.append(result_string)
-            except (KeyError, IndexError):
-                pass
+        results = bwo.get_tasks_results()
         categories = []
         if hasattr(record, "get"):
             if 'subject' in record:
