@@ -88,8 +88,10 @@ def install():
                 sudo("pip install numpy")
                 sudo("pip install git+git://github.com/mrjoes/flask-admin.git#egg=Flask-Admin-1.0.9.dev0")
                 success = sudo("python setup.py install")
-
                 if success:
+                    path_to_invenio = sudo("python -c 'import invenio; print invenio.__path__[0]'")
+                    if path_to_invenio:
+                        sudo("pybabel compile -d {0}/base/translations".format(path_to_invenio.strip()))
                     # INSPIRE specific configuration
                     sudo("pip install /afs/cern.ch/project/inspire/repo/inspireconf-dev.tar.gz --upgrade")
                     # post install
@@ -100,7 +102,8 @@ def install():
                         sudo("inveniomanage config set CFG_SITE_SECURE_URL {0}".format(env.site_secure_url))
                         # Create Apache configuration
                         sudo("inveniomanage apache create-config")
-                        sudo("ln -sf {0} /opt/invenio".format(venv))
+                        sudo("rm /opt/invenio")
+                        sudo("ln -s {0} /opt/invenio".format(venv))
     if success:
         sudo("supervisorctl restart celeryd")
     return success
@@ -110,3 +113,9 @@ def install():
 def restart_celery():
     """Restart celery workers."""
     return sudo("supervisorctl restart celeryd")
+
+
+@task
+def restart_apache():
+    """Restart celery workers."""
+    return sudo("service httpd restart")
