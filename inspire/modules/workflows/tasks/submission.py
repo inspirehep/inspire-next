@@ -94,53 +94,26 @@ def finalize_and_post_process(workflow_name, **kwargs):
     return _finalize_and_post_process
 
 
-def send_robotupload(url=None):
+def send_robotupload_deposit(url=None):
     """Get the MARCXML from the deposit object and ships it."""
-    def _send_robotupload(obj, eng):
+    def _send_robotupload_deposit(obj, eng):
         from invenio.modules.deposit.models import Deposition
         from invenio.modules.workflows.errors import WorkflowError
-        from inspire.utils.robotupload import make_robotupload_marcxml
-        from invenio.base.globals import cfg
-
+        from inspire.modules.workflows.tasks.upload import send_robotupload
         d = Deposition(obj)
 
         sip = d.get_latest_sip(d.submitted)
+
         if not sip:
             raise WorkflowError("No sip found", eng.uuid, obj.id)
         if not d.submitted:
             sip.seal()
             d.update()
 
-        if url is None:
-            base_url = cfg.get("CFG_ROBOTUPLOAD_SUBMISSION_BASEURL")
+        marcxml = sip.package
+        send_robotupload(url, marcxml, obj, eng)
 
-        callback_url = os.path.join(cfg["CFG_SITE_URL"],
-                                    "callback/workflows/robotupload")
-        obj.log.info("Sending Robotupload to {0} with callback {1}".format(
-            base_url,
-            callback_url
-        ))
-        result = make_robotupload_marcxml(
-            url=base_url,
-            marcxml=sip.package,
-            callback_url=callback_url,
-            nonce=obj.id
-        )
-        if "[INFO]" not in result.text:
-            if "cannot use the service" in result.text:
-                # IP not in the list
-                obj.log.error("Your IP is not in "
-                              "CFG_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
-                              "on host")
-                obj.log.error(result.text)
-            from invenio.modules.workflows.errors import WorkflowError
-            txt = "Error while submitting robotupload: {0}".format(result.text)
-            raise WorkflowError(txt, eng.uuid, obj.id)
-        else:
-            obj.log.info("Robotupload sent!")
-            obj.log.info(result.text)
-            eng.halt("Waiting for robotupload: {0}".format(result.text))
-    return _send_robotupload
+    return _send_robotupload_deposit
 
 
 def add_files_to_task_results(obj, eng):

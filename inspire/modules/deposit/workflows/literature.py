@@ -44,7 +44,7 @@ from inspire.modules.workflows.tasks.matching import(
 
 from inspire.modules.workflows.tasks.submission import (
     halt_record_with_action,
-    send_robotupload,
+    send_robotupload_deposit,
     halt_to_render,
     inform_submitter,
     add_files_to_task_results,
@@ -95,7 +95,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         [
             workflow_if(match_record_remote_deposit, True),
             [
-                send_robotupload(),
+                send_robotupload_deposit(),
             ],
             workflow_else,
             [
