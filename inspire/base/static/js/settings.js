@@ -22,37 +22,79 @@
  */
 
 require.config({
-    baseUrl: '/',
-    paths: {
-        // Invenio
-        jquery: 'vendors/jquery/dist/jquery',
-        'ui': 'vendors/jquery-ui/ui',
-        'jqueryui-timepicker': 'vendors/jqueryui-timepicker-addon/dist',
-        'jquery-form': 'vendors/jquery-form/jquery.form',
-        'jquery-ui': 'vendors/jquery-ui/jquery-ui.min',
-        hgn: 'vendors/requirejs-hogan-plugin/hgn',
-        hogan: 'vendors/hogan/web/builds/3.0.2/hogan-3.0.2.amd',
-        text: 'vendors/requirejs-hogan-plugin/text',
-        flight: 'vendors/flight/lib',
-        bootstrap: 'vendors/bootstrap/dist/js/bootstrap',
-        'typeahead': 'vendors/typeahead.js/dist/typeahead.bundle',
-        // INSPIRE
-        'bootstrap-multiselect': 'vendors/bootstrap-multiselect/js/bootstrap-multiselect',
-        'readmore': 'vendors/readmore/readmore',
-        'buckets': 'vendors/buckets/buckets'
+  baseUrl: "/",
+  paths: {
+    jquery: "vendors/jquery/dist/jquery",
+    ui: "vendors/jquery-ui/ui",
+    "jqueryui-timepicker": "vendors/jqueryui-timepicker-addon/dist",
+    "jquery-form": "vendors/jquery-form/jquery.form",
+    hgn: "vendors/requirejs-hogan-plugin/hgn",
+    hogan: "vendors/hogan/web/builds/3.0.2/hogan-3.0.2.amd",
+    text: "vendors/requirejs-hogan-plugin/text",
+    flight: "vendors/flight/lib",
+    typeahead: "vendors/typeahead.js/dist/typeahead.bundle",
+    "bootstrap-select": "js/bootstrap-select",
+    "jquery-caret": "vendors/jquery.caret/dist/jquery.caret-1.5.2",
+    "jquery-tokeninput": "vendors/jquery-tokeninput/src/jquery.tokeninput",
+    "jquery-jeditable": "vendors/jquery.jeditable/index",
+    "moment": "vendors/moment/moment",
+    "bootstrap-datetimepicker": "vendors/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker",
+    bootstrap: "vendors/bootstrap/dist/js/bootstrap",
+    // INSPIRE
+    "bootstrap-multiselect": "vendors/bootstrap-multiselect/js/bootstrap-multiselect",
+    "readmore": "vendors/readmore/readmore",
+    "buckets": "vendors/buckets/buckets"
+  },
+  shim: {
+    jquery: {
+      exports: "$"
     },
-    shim: {
-        // Invenio
-        'jqueryui-timepicker/jquery-ui-sliderAccess': {deps: ['jquery']},
-        'jqueryui-timepicker/jquery-ui-timepicker-addon': {deps: ['jquery', 'ui/slider']},
-        'jqueryui-timepicker/i18n/jquery-ui-timepicker-addon-i18n': {deps: ['jqueryui-timepicker/jquery-ui-timepicker-addon']},
-        "bootstrap" : { deps :['jquery'] },
-        'typeahead': { deps :['jquery'],
-                       exports: "Bloodhound" },
-        // INSPIRE
-        "bootstrap-multiselect" : { deps :['jquery'],
-                                    exports: '$.fn.multiselect' },
-        "readmore" : { deps :['jquery'],
-                                    exports: '$.fn.readmore' }
+    "jqueryui-timepicker/jquery-ui-sliderAccess": {
+      deps: ["jquery"]
+    },
+    "jqueryui-timepicker/jquery-ui-timepicker-addon": {
+      deps: ["jquery",
+        "ui/slider"
+      ]
+    },
+    "jqueryui-timepicker/i18n/jquery-ui-timepicker-addon-i18n": {
+      deps: ["jqueryui-timepicker/jquery-ui-timepicker-addon"]
+    },
+    typeahead: {
+      deps: ["jquery"],
+      exports: "Bloodhound"
+    },
+    "bootstrap-select": {
+      deps: ["jquery"],
+      exports: "$.fn.buttonSelect"
+    },
+    "jquery-caret": {
+      deps: ["jquery"],
+      exports: "$.fn.caret"
+    },
+    "jquery-tokeninput": {
+      deps: ["jquery"],
+      exports: "$.fn.tokenInput"
+    },
+    "jquery-jeditable": {
+      deps: ["jquery"],
+      exports: "$.fn.editable"
+    },
+    bootstrap: {
+      deps: ["jquery"]
+    },
+    "bootstrap-datetimepicker": {
+      deps: ["jquery", "bootstrap", "moment"],
+      exports: "$.fn.datetimepicker"
+    },
+    // INSPIRE
+    "bootstrap-multiselect" : {
+      deps :["jquery"],
+      exports: "$.fn.multiselect"
+    },
+    "readmore" : {
+      deps :["jquery"],
+      exports: "$.fn.readmore"
     }
+  }
 })
