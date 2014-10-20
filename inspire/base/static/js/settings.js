@@ -46,9 +46,6 @@ require.config({
     "buckets": "vendors/buckets/buckets"
   },
   shim: {
-    jquery: {
-      exports: "$"
-    },
     "jqueryui-timepicker/jquery-ui-sliderAccess": {
       deps: ["jquery"]
     },
