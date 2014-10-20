@@ -36,10 +36,16 @@ require.config({
         flight: 'vendors/flight/lib',
         bootstrap: 'vendors/bootstrap/dist/js/bootstrap',
         'typeahead': 'vendors/typeahead.js/dist/typeahead.bundle',
+        "bootstrap-select": "js/bootstrap-select",
+        "jquery-caret": "vendors/jquery.caret/dist/jquery.caret-1.5.2",
+        "jquery-tokeninput": "vendors/jquery-tokeninput/src/jquery.tokeninput",
+        "jquery-jeditable": "vendors/jquery.jeditable/index",
+        "moment": "vendors/moment/moment",
+        "bootstrap-datetimepicker": "vendors/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker",
         // INSPIRE
         'bootstrap-multiselect': 'vendors/bootstrap-multiselect/js/bootstrap-multiselect',
         'readmore': 'vendors/readmore/readmore',
-        'buckets': 'vendors/buckets/buckets'
+        'buckets': 'vendors/buckets/buckets',
     },
     shim: {
         // Invenio
@@ -49,10 +55,30 @@ require.config({
         "bootstrap" : { deps :['jquery'] },
         'typeahead': { deps :['jquery'],
                        exports: "Bloodhound" },
+        "jquery-caret": {
+            deps: ["jquery"],
+            exports: "$.fn.caret"
+        },
+        "jquery-tokeninput": {
+            deps: ["jquery"],
+            exports: "$.fn.tokenInput"
+        },
+            "jquery-jeditable": {
+            deps: ["jquery"],
+            exports: "$.fn.editable"
+        },
+        "bootstrap-datetimepicker": {
+            deps: ["jquery", "bootstrap", "moment"],
+            exports: "$.fn.datetimepicker"
+        },
+        "bootstrap-select": {
+          deps: ["jquery"],
+          exports: "$.fn.buttonSelect"
+        },
         // INSPIRE
         "bootstrap-multiselect" : { deps :['jquery'],
                                     exports: '$.fn.multiselect' },
         "readmore" : { deps :['jquery'],
-                                    exports: '$.fn.readmore' }
+                                    exports: '$.fn.readmore' },
     }
 })
