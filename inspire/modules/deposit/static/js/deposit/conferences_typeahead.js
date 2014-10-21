@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 
       var that = this;
 
-      var engine = new Bloodhound({
+      this.engine = new Bloodhound({
         name: 'conferences',
         remote: '/search?cc=Conferences&p=%QUERY*&of=recjson&f=conferences',
         datumTokenizer: function(datum) {
@@ -58,12 +58,22 @@ define(function(require, exports, module) {
         limit: 100,
       });
 
-      engine.initialize();
+      this.engine.initialize();
 
       this.$element.typeahead({
         minLength: this.options.minLength
       }, {
-        source: engine.ttAdapter(),
+        // after typeahead upgrade to 0.11 can be substituted with:
+        // source: this.engine.ttAdapter(),
+        // https://github.com/twitter/typeahead.js/issues/166
+        source: function(query, callback) {
+          // trigger can be deleted after typeahead upgrade to 0.11
+          this.$element.trigger('typeahead:asyncrequest');
+          this.engine.get(query, function(suggestions) {
+            this.$element.trigger('typeahead:asyncreceive');
+            callback(suggestions);
+          }.bind(this));
+        }.bind(this),
         // the key of a value which is rather passed to typeahead than displayed
         // the display values are selected by templates.
         displayKey: 'conference',
@@ -174,7 +184,30 @@ define(function(require, exports, module) {
         if (this.isFieldValueAutocompleted() && this.value.conference_id) {
           return this.value.conference_id;
         }
-        return this.value;
+        return '';
+      },
+
+      /**
+       * Initialize value from rawValue which is compared to conference id.
+       * @param rawValue {String}
+       *  more than one dataset set for twitter typeahead, otherwise should be
+       *  set to 0 to use the only one.
+       */
+      initFromRawValue: function(rawValue) {
+        this.engine.get(rawValue, function(suggestions) {
+          var suggestion;
+          $.each(suggestions, function(idx, item) {
+            if (item.conference.conference_id === rawValue) {
+              suggestion = item.conference;
+              return false;
+            }
+          });
+          if (!suggestion) {
+            return;
+          }
+          this.cachedQuery = rawValue;
+          this.setInputFieldValue(suggestion, true);
+        }.bind(this));
       },
 
       /**
