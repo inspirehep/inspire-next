@@ -24,9 +24,7 @@ from invenio.modules.deposit.bundles import js as _deposit_js, \
 # '_' prefix indicates private variables, and prevents duplicated import by
 # auto-discovery service of invenio
 
-_deposit_js.contents.remove("js/deposit/init.js")
-
-_deposit_js.contents = ['js/deposit/inspire_init.js'] + _deposit_js.contents
+_deposit_js.contents.append('js/deposit/inspire_init.js')
 
 _deposit_js.bower.update({
     'buckets': 'git://github.com/mauriciosantos/buckets.git',

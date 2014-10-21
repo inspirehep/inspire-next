@@ -20,9 +20,7 @@
  * or submit itself to any jurisdiction.
  */
 
-require(['jquery',
-         'js/deposit/form',
-         'js/deposit/plupload',
+require(['js/deposit/init',
          'js/deposit/literature_submission_form'], function() {
   // Loads the required module into a bundle that can be used in the html
   // pages.
