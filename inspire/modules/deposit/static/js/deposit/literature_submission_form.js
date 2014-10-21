@@ -120,6 +120,12 @@ define(function(require, exports, module) {
       this.$conference
     ];
 
+    /**
+     * Dict with custom setter functions - a workaround for twitter typeahead
+     * @type {{fieldId: function }}
+     */
+    this.setters = {};
+
     this.$importIdsFields = $('form:first .panel:eq(0) *:input[type=text]');
 
     this.init();
@@ -193,6 +199,8 @@ define(function(require, exports, module) {
         labels: this.getLabels(),
         ignoredFields: this.getHiddenFields()
       });
+
+      this.setSettersForTypeaheadFields();
     },
 
     /*
@@ -242,6 +250,24 @@ define(function(require, exports, module) {
           return false;
         }
       });
+    },
+
+    /**
+     * Sets special setter functions for typeahead fields, workaround for
+     * https://github.com/twitter/typeahead.js/issues/1015
+     *
+     * @returns {*}
+     */
+    setSettersForTypeaheadFields: function() {
+      return $.each($('input'), function(index, field) {
+        var $field = $(field);
+        var typeahead = $field.data('ttTypeahead');
+        if (typeahead !== undefined) {
+          this.setters[field.id] = function(value) {
+            $field.typeahead('val', value);
+          }
+        }
+      }.bind(this));
     },
 
     /**
@@ -433,6 +459,7 @@ define(function(require, exports, module) {
      * Returns ids of hidden elements
      */
     getHiddenFields: function getHiddenFields() {
+      // FIXME: it does not include fields different than ones of input type
       return $.map($('input.hidden'), function(value, index) {
         return value.id;
       });
@@ -516,9 +543,16 @@ define(function(require, exports, module) {
           if (field_id !== 'authors') {
             $field.css('background-color', '#dff0d8');
           }
-          var field_value = $field.val(value);
+          var setter = this.setters[$field.attr('id')];
+          // FIXME: workaround for
+          // https://github.com/twitter/typeahead.js/issues/1015
+          if (setter) {
+            setter(value);
+          } else {
+            $field.val(value);
+          }
         }
-      });
+      }.bind(this));
 
       // ensure there is a one empty field
       if (authorsWidget.get_next_index() === 0) {
