@@ -42,6 +42,10 @@ def pack():
     with open(".bowerrc") as fp:
         bower = json.load(fp)
 
+    choice = prompt("Clean and reinstall local assets? (y/N)", default="no")
+    if choice.lower() in ["y", "ye", "yes"]:
+        clean_assets()
+
     local("inveniomanage assets build --directory {directory}/../gen"
           .format(**bower))
     return local("python setup.py sdist --formats=gztar", capture=False) \
@@ -119,3 +123,14 @@ def restart_celery():
 def restart_apache():
     """Restart celery workers."""
     return sudo("service httpd restart")
+
+
+@task
+def clean_assets():
+    """Helper to ensure all assets are up to date."""
+    local("rm -rf $VIRTUAL_ENV/var/invenio.base-instance/static/")
+    local("rm -rf inspire/base/static/gen/")
+    local("rm -rf inspire/base/static/vendors/")
+    local("inveniomanage bower -i bower-base.json > bower.json")
+    local("bower install")
+    local("inveniomanage collect")
