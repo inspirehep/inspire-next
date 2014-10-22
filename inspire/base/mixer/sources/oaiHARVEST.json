@@ -1,0 +1,200 @@
+[
+    {
+        "arguments": {
+            "a_rt-queue": "Authors",
+            "a_stylesheet": "authorlist2marcxml.xsl",
+            "c_stylesheet": "oaiarXiv2inspire.xsl",
+            "f_filter-file": "/opt/cds-invenio/bin/bibfilter_oaiarXiv2inspire.py",
+            "p_extraction-source": [
+                "latex"
+            ],
+            "r_format": "",
+            "r_kb-journal-file": "",
+            "r_kb-rep-no-file": "",
+            "t_doctype": "arXiv",
+            "u_name": "",
+            "u_priority": "4"
+        },
+        "baseurl": "http://export.arxiv.org/oai2",
+        "comment": "Plotextraction currently disabled.",
+        "id": 2,
+        "lastrun": "2014-10-23 04:00:07",
+        "metadataprefix": "arXiv",
+        "name": "arxiv",
+        "postprocess": "c-p-a-f-u",
+        "setspecs": "physics:astro-ph physics:gr-qc physics:hep-ex physics:hep-lat physics:hep-ph physics:hep-th physics:nucl-ex physics:nucl-th physics:physics",
+        "workflows": "oaiharvest_harvest_repositories"
+    },
+    {
+        "arguments": {
+            "a_rt-queue": "Authors",
+            "a_stylesheet": "authorlist2marcxml.xsl",
+            "c_stylesheet": "oaiarXiv2inspire_nofilter.xsl",
+            "f_filter-file": "/opt/cds-invenio/bin/bibfilter_oaiarXiv2inspire.py",
+            "p_extraction-source": [
+                "latex"
+            ],
+            "r_format": "",
+            "r_kb-journal-file": "",
+            "r_kb-rep-no-file": "",
+            "t_doctype": "arXiv",
+            "u_name": "",
+            "u_priority": "5"
+        },
+        "baseurl": "http://export.arxiv.org/oai2",
+        "comment": "This is for harvesting arXiv records manually without any category filter.",
+        "id": 3,
+        "lastrun": "2013-02-11 10:24:42",
+        "metadataprefix": "arXiv",
+        "name": "arxiv insert record",
+        "postprocess": "c-p-a-t-f-u",
+        "setspecs": "",
+        "workflows": "oaiharvest_harvest_repositories"
+    },
+    {
+        "arguments": {
+            "a_rt-queue": "",
+            "a_stylesheet": "",
+            "c_stylesheet": "cds2inspire.xsl",
+            "f_filter-file": "/opt/cds-invenio/bin/bibfilter_oaicds2inspire.py",
+            "p_extraction-source": [],
+            "r_format": "",
+            "r_kb-journal-file": "",
+            "r_kb-rep-no-file": "",
+            "t_doctype": "",
+            "u_name": "oai",
+            "u_priority": "3"
+        },
+        "baseurl": "http://cds.cern.ch/oai2d",
+        "comment": "For LHCb Conference Contributions",
+        "id": 4,
+        "lastrun": "2014-10-17 13:36:00",
+        "metadataprefix": "marcxml",
+        "name": "cds-lhcb-conf",
+        "postprocess": "f-u",
+        "setspecs": "cerncds:lhcb-conf",
+        "workflows": "oaiharvest_harvest_repositories"
+    },
+    {
+        "arguments": {
+            "a_rt-queue": "Authors",
+            "a_stylesheet": "authorlist2marcxml.xsl",
+            "c_stylesheet": "oaiarXiv2inspire_nofilter.xsl",
+            "f_filter-file": "/opt/cds-invenio/bin/bibfilter_oaiarXiv2inspire.py",
+            "p_extraction-source": [
+                "latex"
+            ],
+            "r_format": "",
+            "r_kb-journal-file": "",
+            "r_kb-rep-no-file": "",
+            "t_doctype": "arXiv",
+            "u_name": "",
+            "u_priority": "4"
+        },
+        "baseurl": "http://export.arxiv.org/oai2",
+        "comment": "For catch up jobs",
+        "id": 5,
+        "lastrun": "2013-10-01 18:04:27",
+        "metadataprefix": "arXiv",
+        "name": "arxiv_instant",
+        "postprocess": "c-p-a-t-f-u",
+        "setspecs": "physics:astro-ph",
+        "workflows": "oaiharvest_harvest_repositories"
+    },
+    {
+        "arguments": {
+            "a_rt-queue": "",
+            "a_stylesheet": "",
+            "c_stylesheet": "",
+            "f_filter-file": "/opt/cds-invenio/bin/bibfilter_oaicds2inspire.py",
+            "p_extraction-source": [],
+            "r_format": "",
+            "r_kb-journal-file": "",
+            "r_kb-rep-no-file": "",
+            "t_doctype": "",
+            "u_name": "oai",
+            "u_priority": "3"
+        },
+        "baseurl": "http://cds.cern.ch/oai2d",
+        "comment": "CMS-PAS",
+        "id": 6,
+        "lastrun": "2014-10-22 12:01:44",
+        "metadataprefix": "marcxml",
+        "name": "cds-cms-pas",
+        "postprocess": "f-u",
+        "setspecs": "cerncds:cms-pas",
+        "workflows": "oaiharvest_harvest_repositories"
+    },
+    {
+        "arguments": {
+            "a_rt-queue": "",
+            "a_stylesheet": "",
+            "c_stylesheet": "",
+            "f_filter-file": "/opt/cds-invenio/bin/bibfilter_oaicds2inspire.py",
+            "p_extraction-source": [],
+            "r_format": "",
+            "r_kb-journal-file": "",
+            "r_kb-rep-no-file": "",
+            "t_doctype": "",
+            "u_name": "oai",
+            "u_priority": "3"
+        },
+        "baseurl": "http://cds.cern.ch/oai2d",
+        "comment": "For ATLAS Conference Notes",
+        "id": 7,
+        "lastrun": "2014-10-14 12:02:41",
+        "metadataprefix": "marcxml",
+        "name": "cds-atlas-conf",
+        "postprocess": "f-u",
+        "setspecs": "cerncds:atlas-conf",
+        "workflows": "oaiharvest_harvest_repositories"
+    },
+    {
+        "arguments": {
+            "a_rt-queue": "",
+            "a_stylesheet": "",
+            "c_stylesheet": "",
+            "f_filter-file": "/opt/cds-invenio/bin/bibfilter_oaizenodo2inspire.py",
+            "p_extraction-source": [],
+            "r_format": "",
+            "r_kb-journal-file": "",
+            "r_kb-rep-no-file": "",
+            "t_doctype": "",
+            "u_name": "zenodo",
+            "u_priority": "3"
+        },
+        "baseurl": "https://zenodo.org/oai2d",
+        "comment": "Harvest data from Zenodo",
+        "id": 8,
+        "lastrun": "2014-05-16 10:27:59",
+        "metadataprefix": "marcxml",
+        "name": "zenodo",
+        "postprocess": "f-u",
+        "setspecs": "user-inspire",
+        "workflows": "oaiharvest_harvest_repositories"
+    },
+    {
+        "arguments": {
+            "a_rt-queue": "",
+            "a_stylesheet": "",
+            "c_stylesheet": "",
+            "f_filter-file": "/opt/cds-invenio/bin/bibfilter_oaipos2inspire.py",
+            "p_extraction-source": [],
+            "r_format": "",
+            "r_kb-journal-file": "",
+            "r_kb-rep-no-file": "",
+            "t_doctype": "",
+            "u_name": "",
+            "u_priority": ""
+        },
+        "baseurl": "http://pos.sissa.it/cgi-bin/oai/oai-script.cgi",
+        "comment": "",
+        "id": 9,
+        "lastrun": "2014-10-16 17:21:09",
+        "metadataprefix": "oai_dc",
+        "name": "pos",
+        "postprocess": "f",
+        "setspecs": "",
+        "workflows": "oaiharvest_harvest_repositories"
+    }
+]

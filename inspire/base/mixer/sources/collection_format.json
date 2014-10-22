@@ -1,0 +1,82 @@
+[
+    {
+        "id_collection": 2,
+        "id_format": 1,
+        "score": 130
+    },
+    {
+        "id_collection": 2,
+        "id_format": 2,
+        "score": 120
+    },
+    {
+        "id_collection": 1,
+        "id_format": 18,
+        "score": 110
+    },
+    {
+        "id_collection": 1,
+        "id_format": 8,
+        "score": 100
+    },
+    {
+        "id_collection": 1,
+        "id_format": 21,
+        "score": 90
+    },
+    {
+        "id_collection": 1,
+        "id_format": 22,
+        "score": 80
+    },
+    {
+        "id_collection": 1,
+        "id_format": 9,
+        "score": 50
+    },
+    {
+        "id_collection": 1,
+        "id_format": 19,
+        "score": 10
+    },
+    {
+        "id_collection": 1,
+        "id_format": 1,
+        "score": 130
+    },
+    {
+        "id_collection": 1,
+        "id_format": 2,
+        "score": 120
+    },
+    {
+        "id_collection": 3,
+        "id_format": 1,
+        "score": 130
+    },
+    {
+        "id_collection": 3,
+        "id_format": 2,
+        "score": 120
+    },
+    {
+        "id_collection": 4,
+        "id_format": 1,
+        "score": 130
+    },
+    {
+        "id_collection": 4,
+        "id_format": 2,
+        "score": 120
+    },
+    {
+        "id_collection": 5,
+        "id_format": 1,
+        "score": 130
+    },
+    {
+        "id_collection": 5,
+        "id_format": 2,
+        "score": 120
+    }
+]

@@ -1,0 +1,86 @@
+[
+    {
+        "description": "Mapping of SPIRES abbreviations for URLs to Displayable names",
+        "id": 1,
+        "kbtype": "w",
+        "name": "WEBLINKS"
+    },
+    {
+        "description": "A dynamic KB which searches all 119a fields in the experiments collection, and returns those records' corresponding 119a fields.",
+        "id": 11,
+        "kbtype": "d",
+        "name": "ExperimentsCollection"
+    },
+    {
+        "description": "Contains translation of PACS to a readable form",
+        "id": 15,
+        "kbtype": "w",
+        "name": "PACS"
+    },
+    {
+        "description": "A list of 088 report-number prefixes for which the 980-collection 'NOTE' should be appended.",
+        "id": 18,
+        "kbtype": "w",
+        "name": "NOTE_COLLECTIONS"
+    },
+    {
+        "description": "List of possible HEP Collections",
+        "id": 22,
+        "kbtype": "w",
+        "name": "HEPCOLLECTIONS"
+    },
+    {
+        "description": "List of type of Degrees",
+        "id": 23,
+        "kbtype": "w",
+        "name": "DEGREE"
+    },
+    {
+        "description": "Mapping of journal abbreviations to full names",
+        "id": 2,
+        "kbtype": "w",
+        "name": "JOURNALS"
+    },
+    {
+        "description": "690C aliases",
+        "id": 3,
+        "kbtype": "w",
+        "name": "COLLECTION"
+    },
+    {
+        "description": "65017 aliases",
+        "id": 4,
+        "kbtype": "w",
+        "name": "SUBJECT"
+    },
+    {
+        "description": "PDG codes",
+        "id": 5,
+        "kbtype": "w",
+        "name": "PDG"
+    },
+    {
+        "description": "Coden to short title mappings",
+        "id": 6,
+        "kbtype": "w",
+        "name": "CODENS"
+    },
+    {
+        "description": "A dynamic KB which searches all 371a and 110u fields in the institutions collection, and returns those records' corresponding 110u fields.",
+        "id": 7,
+        "kbtype": "d",
+        "name": "InstitutionsCollection"
+    },
+    {
+        "description": "Subjects KB (created for BibEdit)",
+        "id": 8,
+        "kbtype": "w",
+        "name": "Subjects"
+    },
+    {
+        "description": "Journals Abbreviations used by docextract",
+        "id": 9,
+        "kbtype": "w",
+        "name": "docextract-journals"
+    }
+]

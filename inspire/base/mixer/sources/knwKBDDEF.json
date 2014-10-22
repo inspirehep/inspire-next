@@ -1,0 +1,14 @@
+[
+    {
+        "id_collection": 2,
+        "id_knwKB": 7,
+        "output_tag": "110__u",
+        "search_expression": "371__a:\"*%*\""
+    },
+    {
+        "id_collection": 7,
+        "id_knwKB": 11,
+        "output_tag": "119__a",
+        "search_expression": "119__a:\"*%*\" | 119__u:\"*%*\" | 419__a:\"*%*\" | 245__a:\"*%*\""
+    }
+]

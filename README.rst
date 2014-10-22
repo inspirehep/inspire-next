@@ -45,6 +45,17 @@ Now you can follow the standard invenio installation and development procedures,
 ---------------------
 Demosite installation
 ---------------------
+As INSPIRE uses `Mixer <https://github.com/klen/mixer>`_ to load database fixtures, you should install the library:
+
+.. code-block:: bash
+
+     $ pip install -e .[mixer]
+
+Before running:
+
+.. code-block:: bash
+
+     $ inveniomanage database create
 
 Populate demo records and enable demo-site:
 

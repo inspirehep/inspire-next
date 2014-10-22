@@ -1,0 +1,74 @@
+[
+    {
+        "id_collection": 1,
+        "tabs": "metadata;references;citations;files;plots"
+    },
+    {
+        "id_collection": 2,
+        "tabs": "metadata"
+    },
+    {
+        "id_collection": 10,
+        "tabs": "files;citations;references;plots;metadata"
+    },
+    {
+        "id_collection": 11,
+        "tabs": "files;citations;references;plots;metadata"
+    },
+    {
+        "id_collection": 12,
+        "tabs": "files;citations;references;plots;metadata"
+    },
+    {
+        "id_collection": 3,
+        "tabs": "metadata"
+    },
+    {
+        "id_collection": 6,
+        "tabs": "metadata"
+    },
+    {
+        "id_collection": 4,
+        "tabs": "metadata"
+    },
+    {
+        "id_collection": 5,
+        "tabs": "metadata"
+    },
+    {
+        "id_collection": 13,
+        "tabs": "files;citations;references;plots;metadata"
+    },
+    {
+        "id_collection": 7,
+        "tabs": "metadata"
+    },
+    {
+        "id_collection": 14,
+        "tabs": "files;citations;metadata"
+    },
+    {
+        "id_collection": 15,
+        "tabs": "files;citations;references;plots;metadata"
+    },
+    {
+        "id_collection": 16,
+        "tabs": "metadata"
+    },
+    {
+        "id_collection": 8,
+        "tabs": "metadata"
+    },
+    {
+        "id_collection": 21,
+        "tabs": "files;references;plots;citations;metadata"
+    },
+    {
+        "id_collection": 18,
+        "tabs": "files;references;plots;hepdata;citations;metadata"
+    },
+    {
+        "id_collection": 23,
+        "tabs": "files;references;plots;citations;metadata"
+    }
+]

@@ -60,12 +60,12 @@ EXTENSIONS = [
     'invenio.ext.gravatar',
     'invenio.ext.collect',
     'invenio.ext.restful',
+    'invenio.ext.mixer',
     'flask.ext.menu:Menu',
     'flask.ext.breadcrumbs:Breadcrumbs',
     'invenio.modules.deposit.url_converters',
     'inspire.ext.search_bar',
     'inspire.ext.formatter_jinja_filters',
-    'invenio.ext.fixtures',
 ]
 
 PACKAGES = [
