@@ -350,6 +350,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             def restructure_ffts(fft):
                 fft['url'] = fft['path']
                 fft['description'] = fft['name']
+                fft['flag'] = "HIDDEN"
                 del fft['path'], fft['name']
 
             map(restructure_ffts, metadata['fft'])
