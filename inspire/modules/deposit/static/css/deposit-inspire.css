@@ -84,3 +84,9 @@
 .hide-element {
     display: none;
 }
+
+/* show scrollbar at long suggestion dropdowns of typeahead */
+.twitter-typeahead .tt-dropdown-menu [class^="tt-dataset"] {
+    max-height: 300px;
+    overflow-y: auto;
+}
