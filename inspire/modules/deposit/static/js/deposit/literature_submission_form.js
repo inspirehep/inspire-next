@@ -128,6 +128,22 @@ define(function(require, exports, module) {
 
   LiteratureSubmissionForm.prototype = {
 
+    installTypeaheadValHook: function() {
+
+      var typeaheadValHook = {
+        set: function(element, value) {
+          var $element = $(element);
+          if ($element.data('ttTypeahead') !== undefined) {
+            $element.typeahead('val', value);
+            return;
+          }
+          element.value = value;
+        },
+      };
+
+      $.valHooks.text = typeaheadValHook;
+    },
+
     /*
      * here proper initialization
      */
@@ -136,6 +152,8 @@ define(function(require, exports, module) {
       var that = this;
 
       this.preventFormSubmit();
+
+      this.installTypeaheadValHook();
 
       // focus on the first element of the form
       $('form:first *:input[type!=hidden]:first').focus();
