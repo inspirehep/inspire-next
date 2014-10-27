@@ -164,7 +164,8 @@ define(function(require, exports, module) {
 
       // trigger Feedaback
       var api = new Feedback({
-        h2cPath:'js/html2canvas.js'
+        h2cPath:'js/html2canvas.js',
+        url: '/postfeedback'
       });
 
       this.hideHiddenFields();

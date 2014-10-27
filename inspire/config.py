@@ -180,6 +180,11 @@ SQLALCHEMY_POOL_RECYCLE = 700
 from invenio.modules.oauthclient.contrib import orcid
 orcid.REMOTE_SANDBOX_APP['params']['authorize_url'] = "https://sandbox.orcid.org/oauth/authorize#show_login"
 
+
+#FIXME move to instance_config
+INSPIRELABS_FEEDBACK_EMAIL = "feedback@inspirehep.net"
+
+
 # For production only, instance_config contains configuration of
 # database credentials and other instance specific configuration
 try:
