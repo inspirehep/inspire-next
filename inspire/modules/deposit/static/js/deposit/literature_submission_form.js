@@ -180,7 +180,7 @@ define(function(require, exports, module) {
           '</small>'
         ),
         selectedValueTemplate: Hogan.compile(
-          '{{ conference_id }}, {{ title }}, {{ date }}, {{ place }}'
+          '{{ title }}, {{ date }}, {{ place }}'
         ),
         cannotFindMessage: 'Cannot find this conference in our database.'
       });

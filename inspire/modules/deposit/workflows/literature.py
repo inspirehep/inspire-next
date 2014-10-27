@@ -184,7 +184,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                      'article_id': "page_artid",
                      'volume': "journal_volume",
                      'year': "year",
-                     'issue': "journal_issue"}
+                     'issue': "journal_issue",
+                     'conference_id': "cnum"}
 
         # ============================
         # Abstract, Title and Subjects
@@ -315,7 +316,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                                                                       'article_id',
                                                                       'volume',
                                                                       'year',
-                                                                      'issue'])
+                                                                      'issue',
+                                                                      'conference_id'])
         if publication_fields:
             metadata['publication_info'] = {}
 
