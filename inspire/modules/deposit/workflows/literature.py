@@ -268,6 +268,10 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Category
         # ========
         metadata['collections'] = [{'primary': "HEP"}]
+        if metadata['type_of_doc'] == 'article':
+            metadata['collections'].append({'primary': "Published"})
+        elif metadata['type_of_doc'] == 'thesis':
+            metadata['collections'].append({'primary': "THESIS"})
 
         # ============
         # Title source
@@ -431,7 +435,6 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
             if {'primary': "ConferencePaper"} in metadata['collections']:
                 metadata['collections'].remove({'primary': "ConferencePaper"})
-            metadata['collections'].append({'primary': "Published"})
 
         # =============
         # Preprint Info
