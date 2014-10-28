@@ -38,14 +38,22 @@ require.config({
     "jquery-tokeninput": "vendors/jquery-tokeninput/src/jquery.tokeninput",
     "jquery-jeditable": "vendors/jquery.jeditable/index",
     "moment": "vendors/moment/moment",
+    "datatables": "vendors/datatables/media/js/jquery.dataTables",
+    "datatables-plugins": "vendors/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap",
+    "datatables-tabletools": "vendors/datatables-tabletools/js/dataTables.tableTools",
     "bootstrap-datetimepicker": "vendors/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker",
+    "bootstrap-tagsinput": "vendors/bootstrap-tagsinput/src/bootstrap-tagsinput",
     bootstrap: "vendors/bootstrap/dist/js/bootstrap",
+    prism: "vendors/prism/prism",
     // INSPIRE
     "bootstrap-multiselect": "vendors/bootstrap-multiselect/js/bootstrap-multiselect",
     "readmore": "vendors/readmore/readmore",
     "buckets": "vendors/buckets/buckets"
   },
   shim: {
+    jquery: {
+      exports: "$"
+    },
     "jqueryui-timepicker/jquery-ui-sliderAccess": {
       deps: ["jquery"]
     },
@@ -77,12 +85,30 @@ require.config({
       deps: ["jquery"],
       exports: "$.fn.editable"
     },
+    "bootstrap-tagsinput": {
+      deps: ["jquery"],
+      exports: "$.fn.tagsinput"
+    },
+    "datatables": {
+      deps: ["jquery"],
+      exports: "$.fn.dataTable"
+    },
     bootstrap: {
       deps: ["jquery"]
+    },
+    "datatables-plugins": {
+      deps: ["jquery", "bootstrap", "datatables"]
+    },
+    "datatables-tabletools": {
+      deps: ["jquery", "datatables"],
+      exports: "$.fn.dataTable.TableTools"
     },
     "bootstrap-datetimepicker": {
       deps: ["jquery", "bootstrap", "moment"],
       exports: "$.fn.datetimepicker"
+    },
+    prism: {
+      exports: "Prism"
     },
     // INSPIRE
     "bootstrap-multiselect" : {
