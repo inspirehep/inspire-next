@@ -52,11 +52,11 @@ from invenio.modules.workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else,
 )
-from invenio.modules.workflows.definitions import WorkflowBase
+from invenio.modules.workflows.definitions import RecordWorkflow
 from ..tasks.filtering import inspire_filter_custom
 
 
-class process_record_arxiv(WorkflowBase):
+class process_record_arxiv(RecordWorkflow):
 
     """Processing workflow for a single arXiv record.
 
@@ -96,24 +96,6 @@ class process_record_arxiv(WorkflowBase):
             log_info("Record already into database"),
         ],
     ]
-
-    @staticmethod
-    def get_title(bwo):
-        """Get the title."""
-        extracted_title = []
-        record = bwo.get_data()
-        if hasattr(record, "get") and "title" in record:
-            if isinstance(record["title"], str):
-                extracted_title = [record["title"]]
-            else:
-                for a_title in record["title"]:
-                    extracted_title.append(record["title"][a_title])
-        else:
-            extracted_title = [" No title"]
-        title_final = ""
-        for i in extracted_title:
-            title_final += "{0} ".format(i)
-        return title_final
 
     @staticmethod
     def get_description(bwo):
@@ -188,59 +170,3 @@ class process_record_arxiv(WorkflowBase):
                                categories=categories,
                                identifiers=final_identifiers,
                                results=results)
-
-    @staticmethod
-    def formatter(bwo, **kwargs):
-        """Return a formatted version of the data."""
-        from invenio.modules.formatter.engine import format_record
-
-        data = bwo.get_data()
-        if not data:
-            return ''
-        formatter = kwargs.get("formatter", None)
-        format = kwargs.get("format", None)
-        if formatter:
-            # A seperate formatter is supplied
-            return formatter(data)
-        from invenio.modules.records.api import Record
-        if isinstance(data, collections.Mapping):
-            # Dicts are cool on its own, but maybe its SmartJson (record)
-            try:
-                data = Record(data.dumps()).legacy_export_as_marc()
-            except (TypeError, KeyError):
-                # Maybe not, submission?
-                return data
-
-        if isinstance(data, string_types):
-            # Its a string type, lets try to convert
-            if format:
-                # We can try formatter!
-                # If already XML, format_record does not like it.
-                if format != 'xm':
-                    try:
-                        return format_record(recID=None,
-                                             of=format,
-                                             xml_record=data)
-                    except TypeError:
-                        # Wrong kind of type
-                        pass
-                else:
-                    # So, XML then
-                    from xml.dom.minidom import parseString
-
-                    try:
-                        pretty_data = parseString(data)
-                        return pretty_data.toprettyxml()
-                    except TypeError:
-                        # Probably not proper XML string then
-                        return "Data cannot be parsed: %s" % (data,)
-                    except Exception:
-                        # Some other parsing error
-                        pass
-
-            # Just return raw string
-            return data
-        if isinstance(data, set):
-            return list(data)
-        # Not any of the above types. How juicy!
-        return data

@@ -123,7 +123,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             record = sip.metadata
             return record.get("title", {"title": "No title"}).get("title")
         else:
-            return "User submission in progress!!"
+            return "User submission in progress"
 
     @staticmethod
     def get_description(bwo):
@@ -140,23 +140,23 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         else:
             from invenio.modules.access.control import acc_get_user_email
             id_user = deposit_object.workflow_object.id_user
-            return "Submitted by: %s" % str(acc_get_user_email(id_user))
+            return "Submitted by: {0}".format(acc_get_user_email(id_user))
 
     @staticmethod
     def formatter(bwo, **kwargs):
         """Return formatted data of object."""
-        from invenio.modules.formatter.engine import format_record
+        from invenio.modules.formatter import format_record
         deposit_object = Deposition(bwo)
         submission_data = deposit_object.get_latest_sip()
         marcxml = submission_data.package
 
-        of = kwargs.get("format", "hd")
+        of = kwargs.get("of", "hd")
         if of == "xm":
             return marcxml
         else:
             return format_record(
                 recID=None,
-                of=kwargs.get("format", "hd"),
+                of=of,
                 xml_record=marcxml
             )
 

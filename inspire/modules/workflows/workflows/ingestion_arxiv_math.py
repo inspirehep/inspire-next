@@ -156,7 +156,7 @@ class ingestion_arxiv_math(WorkflowBase):
     @staticmethod
     def get_title(bwo):
         """Return title of object."""
-        return "Supervising harvesting of {0}".format(
+        return "Summary of OAI harvesting from: {0}".format(
             bwo.get_extra_data()["repository"]["name"])
 
     @staticmethod
