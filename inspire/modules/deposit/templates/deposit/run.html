@@ -99,11 +99,15 @@ require(
           max_file_size: "100mb",
           prevent_duplicates: true
         }
+      },
+      inspire: {
+        arxiv_to_inspire_categories_kb: "{{ config.get('DEPOSIT_ARXIV_TO_INSPIRE_CATEGORIES_KB') }}",
+        save_url: '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id) }}',
       }
     };
 
     // Initialize INSPIRE form - should be the first thing
-    var form = new LiteratureSubmissionForm(config.form.save_url);
+    var form = new LiteratureSubmissionForm(config.inspire);
 
     // Initialize form
     deposit_form.attachTo("#submitForm", config.form);
@@ -112,6 +116,7 @@ require(
     PlUploader.attachTo("#pluploader", config.pluploader);
     FileList.attachTo("#uploader-filelist");
     ErrorList.attachTo("#uploader-errorlist");
+
   });
 });
 </script>
