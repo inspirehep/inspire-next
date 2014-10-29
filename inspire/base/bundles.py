@@ -23,15 +23,21 @@
 from invenio.ext.assets import Bundle
 
 js = Bundle(
-    # temporaly empty
+    'js/inspire_base_init.js',
     output='base.js',
+    filters="requirejs",
     weight=20,
+    bower={
+        'feedback': 'git://github.com/inspirehep/feedback.js.git',
+        'html2canvas': '*',
+    },
 )
 
 index_js = Bundle(
     'vendors/jquery-feeds/dist/jquery.feeds.js',
     'vendors/moment/moment.js',
     output='index.js',
+    filters="requirejs",
     weight=60,
     bower={
         "jquery-feeds": "git://github.com/camagu/jquery-feeds.git",
@@ -55,6 +61,7 @@ _base_styles.contents += (
     'less/base/index.less',
     'less/base/helpers.less',
     'less/base/sticky-footer.less',
+    'vendors/feedback/examples/css/feedback.css',
 )
 
 to_remove = ["less/base.less",
