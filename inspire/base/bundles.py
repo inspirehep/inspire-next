@@ -23,7 +23,7 @@
 from invenio.ext.assets import Bundle
 
 js = Bundle(
-    'js/jquery_plugin.js',
+    # temporaly empty
     output='base.js',
     weight=20,
 )

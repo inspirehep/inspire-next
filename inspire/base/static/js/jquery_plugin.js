@@ -21,28 +21,35 @@
 
  */
 
-function jQueryPlugin(constructor, dataLabel) {
+define([
+  'jquery'
+], function($) {
 
-  return function(options) {
+  function jQueryPlugin(constructor, dataLabel) {
 
-    var $elements = this;
+    return function(options) {
 
-    return $elements.map(function (idx, element) {
-      var $element = $(element);
-      var object = $element.data(dataLabel);
-      var _options = (typeof options === 'object' && options);
-      // attach jQuery plugin
-      if (_options && !object) {
-        object = new constructor($element, _options);
-        $element.data(dataLabel, object);
-        if (object.init) {
-          object.init();
+      var $elements = this;
+
+      return $elements.map(function (idx, element) {
+        var $element = $(element);
+        var object = $element.data(dataLabel);
+        var _options = (typeof options === 'object' && options);
+        // attach jQuery plugin
+        if (_options && !object) {
+          object = new constructor($element, _options);
+          $element.data(dataLabel, object);
+          if (object.init) {
+            object.init();
+          }
+          if (object.connectEvents) {
+            object.connectEvents();
+          }
         }
-        if (object.connectEvents) {
-          object.connectEvents();
-        }
-      }
-      return object;
-    });
+        return object;
+      });
+    }
   }
-}
+
+  return jQueryPlugin;
+});
