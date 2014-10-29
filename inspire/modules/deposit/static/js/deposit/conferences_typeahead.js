@@ -38,7 +38,9 @@ define(function(require, exports, module) {
       this.$element = $(element);
       this.options = $.extend({}, $.fn.conferencesTypeahead.defaults, options);
 
+      // often an object, a value chosen from suggestions
       this.value = this.$element.val();
+      // lastly typed string
       this.cachedQuery = this.$element.val();
 
       this.suggestionTemplate = this.options.suggestionTemplate;
@@ -115,6 +117,7 @@ define(function(require, exports, module) {
         } else {
           this.value = value;
         }
+        this.ttTypeahead.input.setQuery(this.value);
         var renderedValue = this.getUserFriendlyValue();
         this.orgTypeahead.setInputValue.call(
           this.ttTypeahead.input, renderedValue, silent);
@@ -197,20 +200,35 @@ define(function(require, exports, module) {
       },
 
       /**
-       * Handles keydown event.
+       * Handles keydown event. Should block changing the field value
+       * as long as there is an autocompleted value. This prevents a crash
+       * on typeahead's normalizeQuery() which accepts a string only.
        *
        * @param event {Event} keydown event
        */
       onKeydown: function onKeydown(event) {
-        var keyCode = event.which || event.keyCode;
-        // backspace or delete
-        if ((keyCode === 8 || keyCode === 46) && this.isFieldValueAutocompleted()) {
-          // if the field stores autocompletition result reset it to query
-          this.resetToCachedQuery();
-          // show the dropdown as if query value was changed
-          this.ttTypeahead._onQueryChanged('queryChanged', this.ttTypeahead.input.query);
-          return false;
+        if (this.isFieldValueAutocompleted()) {
+          var keyCode = event.which || event.keyCode;
+          var isAlphaNumericKey = (
+            (keyCode >= 48 && keyCode <= 57) || // numbers
+            (keyCode >= 96 && keyCode <= 105) || // numpad
+            (keyCode >= 65 && keyCode <= 90) || // letters
+            (keyCode >= 186 && keyCode <= 192) || // symbols
+            (keyCode >= 219 && keyCode <= 222) // symbols
+          );
+          // backspace or delete
+          var doesDeleteAChar = (keyCode === 8 || keyCode === 46);
+          if (doesDeleteAChar ||
+              // adding a char when the dropdown is closed and value is
+              // autocompleted
+              (isAlphaNumericKey && !this.ttTypeahead.dropdown.isVisible())) {
+            // if the field stores autocompletition result reset it to query
+            this.resetToCachedQuery();
+            this.ttTypeahead._onQueryChanged('queryChanged', this.ttTypeahead.input.query);
+            return isAlphaNumericKey;
+          }
         }
+        return true;
       },
 
       /**
