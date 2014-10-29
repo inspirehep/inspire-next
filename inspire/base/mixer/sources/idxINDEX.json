@@ -323,5 +323,18 @@
         "stemming_language": "",
         "synonym_kbrs": "",
         "tokenizer": "BibIndexDefaultTokenizer"
+    },
+    {
+        "description": "",
+        "id": 26,
+        "indexer": "native",
+        "last_updated": "2014-10-17 17:20:22",
+        "name": "conferences",
+        "remove_html_markup": "No",
+        "remove_latex_markup": "No",
+        "remove_stopwords": "No",
+        "stemming_language": "",
+        "synonym_kbrs": "",
+        "tokenizer": "BibIndexDefaultTokenizer"
     }
 ]
