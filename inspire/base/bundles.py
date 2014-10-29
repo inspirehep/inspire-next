@@ -26,6 +26,10 @@ js = Bundle(
     # temporaly empty
     output='base.js',
     weight=20,
+    bower={
+        'feedback': 'git://github.com/inspirehep/feedback.js.git',
+        'html2canvas': '*',
+    },
 )
 
 index_js = Bundle(
@@ -55,6 +59,7 @@ _base_styles.contents += (
     'less/base/index.less',
     'less/base/helpers.less',
     'less/base/sticky-footer.less',
+    'vendors/feedback/examples/css/feedback.css',
 )
 
 to_remove = ["less/base.less",
