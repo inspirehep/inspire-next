@@ -55,6 +55,7 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[
+        "mixer",
         "Babel>=1.3",
         "Invenio",
     ],
