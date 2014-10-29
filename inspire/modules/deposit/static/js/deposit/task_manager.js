@@ -119,10 +119,14 @@ define(function(require, exports, module) {
         );
       }
 
-      return {
-        mapping: mergedMapping,
-        statusMessage: messages
-      };
+      var result = {
+        statusMessages: messages
+      }
+      if (Object.keys(mergedMapping).length) {
+        result.mapping = mergedMapping
+      }
+
+      return result;
     },
   };
   module.exports = TaskManager;

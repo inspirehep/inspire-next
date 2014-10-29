@@ -164,12 +164,8 @@ define(function(require, exports, module) {
       this.hideHiddenFields();
       this.handleTranslatedTitle();
       this.taskmanager = new TaskManager(this.$deposition_type);
-      // flash messages on the Modal
-      this.messageBoxModal = $('#flash-import').messageBox({
-        hoganTemplate: tpl_flash_message,
-      })[0];
       // flash messages on the Form
-      this.messageBoxForm = $('#flash-message').messageBox({
+      this.messageBox = $('#flash-message').messageBox({
         hoganTemplate: tpl_flash_message,
       })[0];
 
@@ -392,39 +388,21 @@ define(function(require, exports, module) {
         // priority mapper for merging the results
         literatureFormPriorityMapper
       ).done(function(result) {
-        that.messageBoxModal.clean();
-        that.messageBoxForm.clean();
-
-        // flash messages on the Form or Modal depending on the state of the message
-        for (var i in result.statusMessage) {
-          if (result.statusMessage[i].state === 'warning') {
-            that.messageBoxForm.append(result.statusMessage);
-          }
-          if (result.statusMessage[i].state === 'success') {
-            that.messageBoxModal.clean();
-            that.messageBoxForm.clean();
-            that.messageBoxModal.append(result.statusMessage);
-          }
-        }
-
-        // clear the messages when user cancel to import data
-        that.$previewModal.one("rejected", function(event) {
-          that.messageBoxModal.clean();
-          that.messageBoxForm.clean();
-        });
-
-        // only fill the form if the user accepts the data
-        that.$previewModal.one("accepted", function(event) {
-          that.$inputs.resetColor();
-          that.$inputs.clearForm();
-          that.fillForm(result.mapping);
-          that.fieldsGroup.resetState();
-          that.showForm();
-        });
-
+        that.messageBox.clean();
         // check if there are any data
         if (result.mapping) {
-          that.previewModal.show(result.mapping);
+          // only fill the form if the user accepts the data
+          that.$previewModal.one("accepted", function(event) {
+            that.$inputs.resetColor();
+            that.$inputs.clearForm();
+            that.fillForm(result.mapping);
+            that.fieldsGroup.resetState();
+            that.showForm();
+          });
+          // show the modal with result
+          that.previewModal.show(result);
+        } else { // show the error messages
+          that.messageBox.append(result.statusMessages);
         }
       });
     },

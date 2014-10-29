@@ -25,12 +25,15 @@ define(function(require, exports, module) {
   "use strict";
 
   var $ = require('jquery');
+  var tpl_flash_message = require('hgn!js/deposit/templates/flash_message');
+  require("js/deposit/message_box");
   require("readmore");
 
   function PreviewModal($element, options) {
     this.$element = $element;
     this.$acceptButton = this.$element.find('#acceptData');
     this.$rejectButton = this.$element.find('#rejectData');
+    this.$table = this.$element.find('#data-table')
     this.data = {};
     this.labels = options.labels;
     this.ignoredFields = options.ignoredFields;
@@ -40,12 +43,19 @@ define(function(require, exports, module) {
   PreviewModal.prototype = {
 
     init: function() {
+      this.messageBox = this.$element.find('#flash-import').messageBox({
+        hoganTemplate: tpl_flash_message,
+      })[0];
       this.connectEvents();
     },
 
     show: function(data) {
-      this.data = data;
-      var cloneData = jQuery.extend(true, {}, data);
+      this.data = data.mapping;
+      this.messageBox.clean();
+      if (data.statusMessages) {
+        this.messageBox.append(data.statusMessages);
+      }
+      var cloneData = jQuery.extend(true, {}, this.data);
       this.renderModal(cloneData);
     },
 
@@ -105,7 +115,7 @@ define(function(require, exports, module) {
       });
 
       // populate the body of the modal
-      $('#modalData #data-table').html(table);
+      this.$table.html(table);
 
       // show the modal
       this.$element.modal({
