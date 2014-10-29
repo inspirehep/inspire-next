@@ -84,9 +84,10 @@ define(function(require, exports, module) {
     }
   });
 
-  function LiteratureSubmissionForm(save_url) {
+  function LiteratureSubmissionForm(options) {
 
-    this.save_url = save_url;
+    this.options = options;
+    this.save_url = options.save_url;
 
     // here just global form variables initialization
     this.$field_list = {
@@ -118,6 +119,7 @@ define(function(require, exports, module) {
     this.$form = $("#webdeposit_form_accordion");
     this.$formWrapper = $('.form-wrapper');
     this.$inputs = this.$formWrapper.find(':input');
+    this.subject_kb = {};
 
     /**
      * Dict with custom setter functions - a workaround for twitter typeahead
@@ -198,6 +200,11 @@ define(function(require, exports, module) {
       });
 
       this.addConferenceInfoField();
+
+      that.getKB(that.options.arxiv_to_inspire_categories_kb)
+        .done(function(response_kb) {
+          that.subject_kb = response_kb;
+        });
     },
 
     /*
@@ -235,7 +242,7 @@ define(function(require, exports, module) {
       });
 
       this.$submissionForm.on("form:init-autocomplete", function(ev, data) {
-        if (data.item.id.indexOf("affiliation") != -1) {
+        if (data.item.id.indexOf("affiliation") !== -1) {
           $(data.item).affiliationsTypeahead();
         }
       }.bind(this));
@@ -298,7 +305,7 @@ define(function(require, exports, module) {
         if (typeahead !== undefined) {
           this.setters[field.id] = function(value) {
             $field.typeahead('val', value);
-          }
+          };
         }
       }.bind(this));
     },
@@ -611,9 +618,9 @@ define(function(require, exports, module) {
      */
     handleSubjectRelevance: function handleSubjectRelevance() {
       var subjects = this.$subject.val();
-      if (subjects === null) subjects = [];
+      if (subjects === null) { subjects = []; }
       var HEP_subjects = $.grep(subjects, function(element) {
-        return element.indexOf("HEP") > -1
+        return element.indexOf("HEP") > -1;
       });
       if (typeof HEP_subjects === "undefined" || HEP_subjects.length === 0) {
         this.$subject_relevance.slideDown();
@@ -637,6 +644,31 @@ define(function(require, exports, module) {
       strippedID = strippedID.replace(arxiv_prefix, '');
 
       return strippedID;
+    },
+
+    /**
+      * Gets knowledge base dictionary.
+      * @param kbname knowledge base name
+      * @returns dictionary with the knowledge base
+      */
+    getKB: function getKB(kbname) {
+      var url = "/kb/export";
+      var deferred = new $.Deferred(); 
+      $.ajax({
+        url: url,
+        data: {
+          kbname: kbname,
+          format: 'json'
+        },
+        dataType: "json"
+      }).done(function(data) {
+        var kb = {};
+        $.each(data, function(key, object) {
+          kb[object.value] = object.label;
+        });
+        deferred.resolve(kb);
+      });
+      return deferred;
     },
 
     /**
@@ -696,6 +728,20 @@ define(function(require, exports, module) {
           authorsWidget.append_element();
         }
       }
+
+      // selects subjects imported from arXiv
+      var categories_arXiv = dataMapping.categories_arXiv.split(' ');
+      $.each(categories_arXiv, function(i, category){
+        if (!that.subject_kb[category]) {
+          for(var subject_key in that.subject_kb) {
+            if (category.indexOf(subject_key) === 0) {
+              $('#subject').multiselect('select', that.subject_kb[subject_key]);
+            }
+          }
+        } else {
+          $('#subject').multiselect('select', that.subject_kb[category]);
+        }
+      });
 
       // triggers the "dataFormSave" in order the empty fields can be saved as well
       that.$submissionForm.trigger("dataFormSave", {

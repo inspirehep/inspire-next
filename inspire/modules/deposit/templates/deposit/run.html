@@ -112,6 +112,13 @@ require(
     PlUploader.attachTo("#pluploader", config.pluploader);
     FileList.attachTo("#uploader-filelist");
     ErrorList.attachTo("#uploader-errorlist");
+    
+    var literatureform_options = {
+      save_url: save_url,
+      arxiv_to_inspire_categories_kb: "{{ config.get('DEPOSIT_ARXIV_TO_INSPIRE_CATEGORIES_KB') }}",
+    };
+
+    var form = new LiteratureSubmissionForm(literatureform_options);
   });
 });
 </script>
