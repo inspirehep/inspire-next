@@ -22,42 +22,20 @@ import re
 
 from flask import render_template
 
+from invenio.base.globals import cfg
+from invenio.ext.login import UserInfo
+
 from invenio.modules.deposit.types import SimpleRecordDeposition
 from invenio.modules.deposit.tasks import render_form, \
     prepare_sip, \
     finalize_record_sip, \
     prefill_draft, \
     process_sip_metadata
-from invenio.ext.login import UserInfo
-from invenio.modules.oauthclient.models import RemoteAccount
-
-from ..tasks import arxiv_fft_get, add_submission_extra_data
-
-from inspire.modules.deposit.forms import LiteratureForm
 from invenio.modules.deposit.models import Deposition
-
 from invenio.modules.classifier.tasks.classification import (
     classify_paper_with_deposit,
 )
-
 from invenio.modules.knowledge.api import get_kb_mappings
-
-from inspire.modules.workflows.tasks.matching import(
-    match_record_remote_deposit,
-)
-
-from inspire.modules.workflows.tasks.submission import (
-    halt_record_with_action,
-    send_robotupload_deposit,
-    halt_to_render,
-    inform_submitter,
-    add_files_to_task_results,
-)
-
-from inspire.modules.workflows.tasks.actions import (
-    was_approved,
-    reject_record
-)
 from invenio.modules.workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else,
@@ -65,7 +43,24 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 from invenio.modules.workflows.tasks.workflows_tasks import log_info
 from invenio.modules.workflows.definitions import WorkflowBase
 
-from invenio.base.globals import cfg
+from inspire.modules.workflows.tasks.matching import(
+    match_record_remote_deposit,
+)
+from inspire.modules.workflows.tasks.submission import (
+    halt_record_with_action,
+    send_robotupload_deposit,
+    halt_to_render,
+    add_files_to_task_results,
+    create_ticket,
+    reply_ticket
+)
+from inspire.modules.workflows.tasks.actions import (
+    was_approved,
+    reject_record
+)
+from inspire.modules.deposit.forms import LiteratureForm
+
+from ..tasks import arxiv_fft_get, add_submission_extra_data
 
 
 class literature(SimpleRecordDeposition, WorkflowBase):
@@ -89,6 +84,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Generate MARC based on metadata dictionary.
         finalize_record_sip(is_dump=False),
         halt_to_render,
+        create_ticket(template="deposit/tickets/curator_submitted.html"),
+        reply_ticket(template="deposit/tickets/user_submitted.html"),
         # Get FFT from arXiv, if arXiv ID is provided
         arxiv_fft_get,
         add_files_to_task_results,
@@ -103,14 +100,15 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             workflow_if(match_record_remote_deposit, True),
             [
                 send_robotupload_deposit(),
+                reply_ticket(template="deposit/tickets/user_accepted.html")
             ],
             workflow_else,
             [
                 log_info('Record already in database!'),
                 reject_record,
+                reply_ticket(template="deposit/tickets/user_rejected.html")
             ],
         ],
-        inform_submitter,
     ]
 
     name = "Literature"

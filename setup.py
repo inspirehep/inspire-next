@@ -55,6 +55,7 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[
+        "rt==1.0.8",
         "mixer",
         "ipython",
         "Babel>=1.3",

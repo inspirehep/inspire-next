@@ -23,7 +23,7 @@
 """Contains INSPIRE specific submission tasks"""
 
 
-import os
+from functools import wraps
 
 from invenio.modules.deposit.models import Deposition
 from invenio.modules.formatter import format_record
@@ -68,6 +68,88 @@ def inform_submitter(obj, eng):
     else:
         body = 'Rejected'
     send_email(CFG_SITE_SUPPORT_EMAIL, email, 'Subject', body, header='header')
+
+
+def create_ticket(template, queue="Test"):
+    """Create a ticket for the submission."""
+    @wraps(create_ticket)
+    def _create_ticket(obj, eng):
+        from invenio.modules.access.control import acc_get_user_email
+        from inspire.utils.tickets import get_instance
+        from flask import render_template
+
+        d = Deposition(obj)
+        id_user = d.workflow_object.id_user
+        email = acc_get_user_email(id_user)
+        sip = d.get_latest_sip(sealed=False)
+        subject = "Literature submission: {0}".format(d.title)
+        body = render_template(
+            template,
+            email=email,
+            title=d.title,
+            identifier=sip.metadata.get("system_number_external", {}).get("value", ""),
+            object=obj,
+        ).strip()
+
+        # Trick to prepare ticket body
+        body = "\n ".join([line.strip() for line in body.split("\n")])
+        rt = get_instance()
+        if not rt:
+            obj.log.error("No RT instance available. Skipping!")
+        else:
+            ticket_id = rt.create_ticket(
+                Queue=queue,
+                Subject=subject,
+                Text=body,
+                Requestors=email
+            )
+            obj.extra_data["ticket_id"] = ticket_id
+            obj.log.info("Ticket {0} created:\n{1}".format(ticket_id, body))
+    return _create_ticket
+
+
+def reply_ticket(template):
+    """Reply to a ticket for the submission."""
+    @wraps(create_ticket)
+    def _reply_ticket(obj, eng):
+        from invenio.modules.access.control import acc_get_user_email
+        from inspire.utils.tickets import get_instance
+        from flask import render_template
+
+        d = Deposition(obj)
+        id_user = d.workflow_object.id_user
+        email = acc_get_user_email(id_user)
+        ticket_id = obj.extra_data.get("ticket_id", "")
+        if not ticket_id:
+            obj.log.error("No ticket ID found!")
+            return
+
+        context = {
+            "object": obj,
+            "email": email,
+            "title": d.title,
+            "reason": obj.extra_data.get("rejection_reason", ""),
+            "record_url": obj.extra_data.get("url", ""),
+        }
+
+        body = render_template(
+            template,
+            **context
+        ).strip()
+
+        # Trick to prepare ticket body
+        body = "\n ".join([line.strip() for line in body.split("\n")])
+
+        rt = get_instance()
+        if not rt:
+            obj.log.error("No RT instance available. Skipping!")
+        else:
+            ticket_id = rt.reply(
+                ticket_id=ticket_id,
+                text=body,
+            )
+            obj.log.info("Reply created:\n{0}".format(body))
+    return _reply_ticket
 
 
 def halt_record_with_action(action, message):
