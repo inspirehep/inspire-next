@@ -97,7 +97,7 @@ def wrap_nonpublic_note(field, **dummy_kwargs):
         'title="%s"><textarea %s></textarea></div>' % \
         (_('Journal Information already exists'),
         html_params(id="nonpublic_note",
-                    class_="form-control nonpublic_note",
+                    class_="form-control nonpublic_note" + ARTICLE_CLASS,
                     name="nonpublic_note"))
     return HTMLString(html)
 
@@ -283,7 +283,7 @@ class LiteratureForm(WebDepositForm):
 
     collaboration = fields.TextField(
         label=_('Collaboration'),
-        widget_classes="form-control"
+        widget_classes="form-control" + ARTICLE_CLASS
     )
 
     experiment = fields.TextField(
@@ -342,7 +342,7 @@ class LiteratureForm(WebDepositForm):
         placeholder=_("Start typing for suggestions"),
         label=_('Conference Information'),
         description=_('Conference name, acronym, place, date'),
-        widget_classes="form-control"
+        widget_classes="form-control" + ARTICLE_CLASS,
     )
 
     conference_id = fields.TextField(
@@ -398,7 +398,7 @@ class LiteratureForm(WebDepositForm):
     journal_title = fields.TextField(
         placeholder=_("Start typing for suggestions"),
         label=_('Journal Title'),
-        widget_classes="form-control",
+        widget_classes="form-control" + ARTICLE_CLASS,
         autocomplete=kb_dynamic_autocomplete("dynamic_journal_titles",
                                              mapper=journal_title_kb_mapper)
     )
@@ -406,27 +406,27 @@ class LiteratureForm(WebDepositForm):
     page_range = fields.TextField(
         label=_('Page Range'),
         description=_('e.g. 1-100'),
-        widget_classes="form-control"
+        widget_classes="form-control" + ARTICLE_CLASS
     )
 
     article_id = fields.TextField(
         label=_('Article ID'),
-        widget_classes="form-control"
+        widget_classes="form-control" + ARTICLE_CLASS
     )
 
     volume = fields.TextField(
         label=_('Volume'),
-        widget_classes="form-control"
+        widget_classes="form-control" + ARTICLE_CLASS
     )
 
     year = fields.TextField(
         label=_('Year'),
-        widget_classes="form-control"
+        widget_classes="form-control" + ARTICLE_CLASS
     )
 
     issue = fields.TextField(
         label=_('Issue'),
-        widget_classes="form-control"
+        widget_classes="form-control" + ARTICLE_CLASS
     )
 
     nonpublic_note = fields.TextAreaField(
@@ -437,7 +437,7 @@ class LiteratureForm(WebDepositForm):
 
     note = fields.TextAreaField(
         export_key='note',
-        widget_classes="hidden",
+        widget_classes="hidden" + ARTICLE_CLASS,
         widget=HiddenInput(),
     )
 
