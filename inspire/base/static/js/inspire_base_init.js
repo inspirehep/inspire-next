@@ -1,4 +1,4 @@
- /*
+/*
  * This file is part of INSPIRE.
  * Copyright (C) 2014 CERN.
  *
@@ -20,35 +20,10 @@
  * or submit itself to any jurisdiction.
  */
 
-define([
-  'jquery'
-], function($) {
-
-  function jQueryPlugin(constructor, dataLabel) {
-
-    return function(options) {
-
-      var $elements = this;
-
-      return $elements.map(function (idx, element) {
-        var $element = $(element);
-        var object = $element.data(dataLabel);
-        var _options = (typeof options === 'object' && options);
-        // attach jQuery plugin
-        if (_options && !object) {
-          object = new constructor($element, _options);
-          $element.data(dataLabel, object);
-          if (object.init) {
-            object.init();
-          }
-          if (object.connectEvents) {
-            object.connectEvents();
-          }
-        }
-        return object;
-      });
-    }
-  }
-
-  return jQueryPlugin;
+ require([
+    "js/jquery_plugin",
+    "js/feedback_inspire",
+    ], function() {
+    // loading all the libraries everywhere.
+    console.info("js/inspire_base_init is loaded");
 });
