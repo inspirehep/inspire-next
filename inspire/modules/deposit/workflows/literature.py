@@ -155,9 +155,9 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         field_map = {'abstract': "summary",
                      'title': "title",
                      'subject_term': "term",
-                     'defense_date': "date",
                      'university': "university",
-                     'degree_type': "degree_type",
+                     'degree_type': "type",
+                     'thesis_date': "date",
                      'journal_title': "journal_title",
                      'page_range': "page_artid",
                      'article_id': "page_artid",
@@ -217,9 +217,9 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ==============
         # Thesis related
         # ==============
-        thesis_fields = filter(lambda field: field in metadata, ['defense_date',
-                                                                 'university',
-                                                                 'degree_type'])
+        thesis_fields = filter(lambda field: field in metadata, ['university',
+                                                                 'degree_type',
+                                                                 'thesis_date'])
         if thesis_fields:
             metadata['thesis'] = {}
 
@@ -227,6 +227,12 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 metadata['thesis'][field_map[field]] = metadata[field]
 
             delete_keys.extend(thesis_fields)
+
+        if 'defense_date' in metadata and metadata['defense_date']:
+            if 'note' in metadata and metadata['note']:
+                metadata['note'] += ', presented on ' + metadata['defense_date']
+            else:
+                metadata['note'] = 'Presented on ' + metadata['defense_date']
 
         # ========
         # Category
