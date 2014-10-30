@@ -20,12 +20,13 @@
 ## or submit itself to any jurisdiction.
 """Inspire bundles."""
 
-from invenio.ext.assets import Bundle
+from invenio.ext.assets import Bundle, RequireJSFilter
+from invenio.base.bundles import jquery as _j, invenio as _i
 
 js = Bundle(
     'js/inspire_base_init.js',
     output='base.js',
-    filters="requirejs",
+    filters=RequireJSFilter(exclude=[_j, _i]),
     weight=20,
     bower={
         'feedback': 'git://github.com/inspirehep/feedback.js.git',
