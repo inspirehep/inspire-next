@@ -218,6 +218,10 @@ CFG_WEBSEARCH_SYNONYM_KBRS = {
     'subject': ['SUBJECT', 'exact'],
 }
 
+# DOI and arXiv id database search prefixes
+CROSSREF_SEARCH_PREFIX = u"doi:"
+ARXIV_SEARCH_PREFIX = u"035__a:oai:arXiv.org:"
+
 # For production only, instance_config contains configuration of
 # database credentials and other instance specific configuration
 try:
