@@ -140,8 +140,6 @@ define(function(require, exports, module) {
       // focus on the first element of the form
       $('form:first *:input[type!=hidden]:first').focus();
 
-      this.slideUpFields(this.$field_list);
-
       this.fieldsGroup = $("#journal_title, #volume, #issue, #page_range, #article_id, #year")
         .fieldsGroup({
           onEmpty: function enableProceedingsBox() {
@@ -310,6 +308,9 @@ define(function(require, exports, module) {
       $mandatoryIndicator.show('blind'); // default duration 400
       this.$formWrapper.show('blind', 1000);
       $actionBar.show('blind', 1000);
+
+      // run checkDepositionType() only when showing the rest of the form
+      this.checkDepositionType();
     },
 
     /**
@@ -337,11 +338,10 @@ define(function(require, exports, module) {
     },
 
     onDepositionTypeChanged: function onDepositionTypeChanged() {
-      this.slideUpFields(this.$field_list);
-      var deposition_type = this.$deposition_type.val();
-      var $type_related_fields = this.$field_list[deposition_type];
+      this.checkDepositionType();
+      this.deposition_type = this.$deposition_type.val();
+      var $type_related_fields = this.$field_list[this.deposition_type];
       var $type_related_groups = $type_related_fields.parents('.form-group');
-      this.slideDownFields($type_related_groups);
       var $type_related_panel = $type_related_fields.parents('.panel-body');
       $type_related_panel.effect(
         "highlight", {
@@ -350,13 +350,105 @@ define(function(require, exports, module) {
         2500
       );
       this.$deposition_type_panel.children('.alert').remove('.alert');
-      if (deposition_type === "proceedings") {
+      if (this.deposition_type === "proceedings") {
         this.$deposition_type_panel.append(tpl_flash_message({
           state: 'info',
           message: "<strong>Proceedings:</strong> only for complete " +
             "proceedings. For contributions use Article/Conference paper."
         }));
       }
+    },
+
+    /**
+     * Checks the deposition type and slideUp/slideDown the fields and panels
+     * depending on it
+     */
+    checkDepositionType: function checkDepositionType() {
+      var that = this;
+      this.deposition_type = this.$deposition_type.val();
+
+      var $not_type_related_fields = {};
+      var $type_related_fields = {};
+      for (var name in this.$field_list) {
+        if (name !== this.deposition_type && this.$field_list.hasOwnProperty(name)) {
+          $not_type_related_fields[name] = this.$field_list[name];
+        }
+        if (name === this.deposition_type && this.$field_list.hasOwnProperty(name)) {
+          $type_related_fields[name] = this.$field_list[name];
+        }
+      }
+
+      // Slide Up
+      $.when.apply(this, $.map($not_type_related_fields, function(value, key) {
+        return that.slideUpFields(value.not('.hidden'));
+      })).done(function() {
+        that.slideUpPanel();
+      });
+
+      // Slide Down
+      $.when.apply(this, $.map($type_related_fields, function(value, key) {
+        return that.slideDownFields(value.not('.hidden'));
+      })).done(function() {
+        that.slideDownPanel();
+      });
+    },
+
+    /**
+     * Slide Up empty Panels
+     */
+    slideUpPanel: function slideUpPanel() {
+      var $allPanels = $('.form-wrapper')
+        .children('.panel:gt(0)');
+
+      $.each($allPanels, function($field, field_name) {
+        // all elements hidden
+        if ($(field_name)
+          .children('.panel-collapse')
+          .children('.panel-body')
+          .children('.form-group:visible')
+          .length === 0) {
+          $(field_name).slideUp();
+        }
+      });
+    },
+
+    /**
+     * Slide Down empty Panels
+     */
+    slideDownPanel: function slideUpPanel() {
+      var $allPanels = $('.form-wrapper')
+        .children('.panel:gt(0)');
+
+      $.each($allPanels, function($field, field_name) {
+        // not all elements hidden
+        if ($(field_name)
+          .children('.panel-collapse')
+          .children('.panel-body')
+          .children('.form-group')
+          .css('display') === 'block') {
+          $(field_name).slideDown();
+        }
+      });
+    },
+
+    /**
+     * Hide form fields individually related to each document type
+     */
+    slideUpFields: function slideUpFields($fields) {
+      var deferred = $.map($fields, function(field_name, $field) {
+        return $(field_name).parents('.form-group').slideUp().promise();
+      });
+      return $.when.apply(this, deferred);
+    },
+
+    /**
+     * Show form fields individually related to each document type
+     */
+    slideDownFields: function slideDownFields($fields) {
+      var deferred = $.map($fields, function(field_name, $field) {
+        return $(field_name).parents('.form-group').slideDown().promise();
+      });
+      return $.when.apply(this, deferred);
     },
 
     importData: function importData() {
@@ -453,26 +545,6 @@ define(function(require, exports, module) {
         }
       });
       return newObject;
-    },
-
-    /**
-     * Hide form fields individually related to each document type
-     */
-    slideUpFields: function slideUpFields($fields) {
-      $.map($fields, function($field, field_name) {
-        if (that.deposition_type != field_name) {
-          $.each($field, function(i, f){
-              $(f).parents('.form-group').slideUp();
-          });
-        }
-      });
-    },
-
-    /**
-     * Show form fields individually related to each document type
-     */
-    slideDownFields: function slideDownFields($fields) {
-        $fields.slideDown();
     },
 
     /**
