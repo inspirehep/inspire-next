@@ -402,7 +402,7 @@ define(function(require, exports, module) {
       var deposition_type = this.$deposition_type.val();
       var $type_related_fields = this.$field_list[deposition_type];
       var $type_related_groups = $type_related_fields.parents('.form-group');
-      $type_related_groups.slideDown();
+      this.slideDownFields($type_related_groups);
       var $type_related_panel = $type_related_fields.parents('.panel-body');
       $type_related_panel.effect(
         "highlight", {
@@ -504,8 +504,19 @@ define(function(require, exports, module) {
      */
     slideUpFields: function slideUpFields($fields) {
       $.map($fields, function($field, field_name) {
-        $field.parents('.form-group').slideUp();
+        if (that.deposition_type != field_name) {
+          $.each($field, function(i, f){
+              $(f).parents('.form-group').slideUp();
+          });
+        }
       });
+    },
+
+    /**
+     * Show form fields individually related to each document type
+     */
+    slideDownFields: function slideDownFields($fields) {
+        $fields.slideDown();
     },
 
     /**

@@ -81,7 +81,7 @@ def skip_importdata(field, **dummy_kwargs):
 # Group buttons of import and skip
 #
 def import_buttons_widget(field, **dummy_kwargs):
-    """Buttons for import data and skip"""
+    """Button for import data and skip."""
     html_skip = skip_importdata(field)
     html_import = importdata_button(field)
     html = [u'<div class="pull-right">' + html_skip + html_import + u'</div>']
@@ -118,7 +118,7 @@ def defensedate_widget(field, **kwargs):
     field_id = kwargs.pop('id', field.id)
     html = [u'<div class="row %s"><div class="col-xs-5 col-sm-3">\
             <input class="datepicker form-control" %s type="text">\
-            </div></div'
+            </div></div>'
             % (THESIS_CLASS, html_params(id=field_id,
                                          name=field_id,
                                          value=field.data or ''))]
@@ -294,7 +294,6 @@ class LiteratureForm(WebDepositForm):
                                              mapper=experiment_kb_mapper)
     )
 
-    # this should be a prefilled dropdown
     subject = fields.SelectMultipleField(
         label=_('Subject'),
         widget_classes="form-control",
@@ -374,6 +373,12 @@ class LiteratureForm(WebDepositForm):
         min_entries=1,
         export_key='supervisors',
         widget_classes=THESIS_CLASS,
+    )
+
+    thesis_date = fields.Date(
+        label=_('Thesis date'),
+        description='Format: YYYY-MM-DD.',
+        widget=defensedate_widget,
     )
 
     defense_date = fields.Date(
@@ -504,7 +509,7 @@ class LiteratureForm(WebDepositForm):
             ['title', 'title_arXiv', 'categories_arXiv', 'language',
              'title_translation', 'authors', 'collaboration', 'experiment',
              'abstract', 'page_nr', 'subject', 'supervisors', 'defense_date',
-             'degree_type', 'university', 'license_url']),
+             'thesis_date', 'degree_type', 'university', 'license_url']),
         ('Conference Information',
             ['conf_name', 'conference_id']),
         ('Journal Information',
