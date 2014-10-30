@@ -22,10 +22,16 @@
     -------------------------------
 """
 
-from flask import Blueprint, render_template
+import json
+import os
+from tempfile import mkstemp
+from flask import request, Blueprint, render_template
 from flask.ext.menu import register_menu
+from flask.ext.login import current_user
 from invenio.base.i18n import _
-# from flask.ext.breadcrumbs import register_breadcrumb
+from invenio.ext.email import send_email
+from invenio.base.globals import cfg
+
 
 blueprint = Blueprint('inspire', __name__, url_prefix="",
                       template_folder='templates', static_folder='static')
@@ -54,3 +60,42 @@ def privacy():
 # @register_breadcrumb(blueprint, 'breadcrumbs.about', _("About"))
 def faq():
     return render_template('inspire/faq.html')
+
+
+#
+# Feedback handler
+#
+
+@blueprint.route('/postfeedback', methods=['POST', ])
+def postfeedback():
+    """Handler to create a ticket for user feedback."""
+    subject = "INSPIRE Labs feedback"
+
+    feedback_data = json.loads(request.form.get("data"))
+
+    content = """
+Issue:
+
+{issue}
+    """.format(issue=feedback_data[0]["Issue"])
+
+    fd, temp_path = mkstemp(suffix=".png")
+    fh = os.fdopen(fd, "wb")
+    fh.write("".join(feedback_data[1].split(",")[1:]).decode('base64'))
+    fh.close()
+
+    attachments = [temp_path]
+
+    if send_email(fromaddr=cfg['CFG_SITE_SUPPORT_EMAIL'],
+                  toaddr=cfg['INSPIRELABS_FEEDBACK_EMAIL'],
+                  subject=subject,
+                  content=content,
+                  replytoaddr=current_user.get("email"),
+                  attachments=attachments):
+        return json.dumps(
+            {'success': True}
+            ), 200, {'ContentType': 'application/json'}
+    else:
+        return json.dumps(
+            {'success': False}
+            ), 500, {'ContentType': 'application/json'}

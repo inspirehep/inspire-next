@@ -209,6 +209,11 @@ ORCID_APP_CREDENTIALS = dict(
     consumer_secret="changeme",
 )
 
+
+#FIXME move to instance_config
+INSPIRELABS_FEEDBACK_EMAIL = "feedback@inspirehep.net"
+
+
 # For production only, instance_config contains configuration of
 # database credentials and other instance specific configuration
 try:
