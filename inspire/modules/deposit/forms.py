@@ -384,7 +384,7 @@ class LiteratureForm(WebDepositForm):
     license = fields.SelectField(
         label=_('License'),
         default='',
-        widget_classes="form-control" + THESIS_CLASS
+        widget_classes="form-control" + THESIS_CLASS,
     )
 
     # ============
@@ -510,7 +510,6 @@ class LiteratureForm(WebDepositForm):
         'type_of_doc': 'col-xs-4',
         'wrap_nonpublic_note': 'col-md-9',
         'degree_type': 'col-xs-3',
-        'nonpublic_note': 'col-md-12',
     }
 
     def __init__(self, *args, **kwargs):
