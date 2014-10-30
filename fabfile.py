@@ -11,9 +11,20 @@ from fabric.contrib.files import exists
 env.directory = '/opt'  # remote directory
 
 env.roledefs = {
+    'prod': ['inspirelabsvm01'],
     'dev01': ['inspirevm08.cern.ch'],
     'dev02': ['inspirevm11.cern.ch'],
 }
+
+
+@task
+def prod():
+    """
+    Activate configuration for INSPIRE DEV server.
+    """
+    env.roles = ['prod']
+    env.site_url = "http://inspirevmlabs01.cern.ch"
+    env.site_secure_url = "https://inspirevmlabs01.cern.ch"
 
 
 @task
@@ -100,7 +111,7 @@ def install():
                     sudo("pip install /afs/cern.ch/project/inspire/repo/inspire-configuration-dist/dist/inspireconf-dev.tar.gz --upgrade")
                     # post install
                     sudo("inveniomanage collect")
-                    with(settings(warn_only=True)):
+                    with warn_only():
                         # Compile base Invenio translatation to avoid translation error
                         prefix_folder = sudo('python -c "import invenio; print(invenio.__path__[0])"')
                         prefix_folder = prefix_folder.split("\n")
