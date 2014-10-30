@@ -177,8 +177,37 @@ SQLALCHEMY_POOL_RECYCLE = 700
 
 # OAUTH configuration
 
-from invenio.modules.oauthclient.contrib import orcid
-orcid.REMOTE_SANDBOX_APP['params']['authorize_url'] = "https://sandbox.orcid.org/oauth/authorize#show_login"
+OAUTHCLIENT_REMOTE_APPS = dict(
+    orcid=dict(
+        title='ORCID',
+        description='Connecting Research and Researchers.',
+        icon='',
+        authorized_handler="invenio.modules.oauthclient.handlers"
+                           ":authorized_signup_handler",
+        disconnect_handler="invenio.modules.oauthclient.handlers"
+                           ":disconnect_handler",
+        signup_handler=dict(
+            info="invenio.modules.oauthclient.contrib.orcid:account_info",
+            setup="invenio.modules.oauthclient.contrib.orcid:account_setup",
+            view="invenio.modules.oauthclient.handlers:signup_handler",
+        ),
+        params=dict(
+            request_token_params={'scope': '/authenticate'},
+            base_url='https://pub.orcid.com/',
+            request_token_url=None,
+            access_token_url="https://pub.orcid.org/oauth/token",
+            access_token_method='POST',
+            authorize_url="https://orcid.org/oauth/authorize#show_login",
+            app_key="ORCID_APP_CREDENTIALS",
+            content_type="application/json",
+        )
+    ),
+)
+
+ORCID_APP_CREDENTIALS = dict(
+    consumer_key="changeme",
+    consumer_secret="changeme",
+)
 
 # For production only, instance_config contains configuration of
 # database credentials and other instance specific configuration
