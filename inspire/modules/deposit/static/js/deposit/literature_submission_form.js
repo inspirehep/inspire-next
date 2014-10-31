@@ -109,6 +109,7 @@ define(function(require, exports, module) {
     this.$submissionForm = $('#submitForm');
     this.$conference = $('#conf_name');
     this.$conferenceId = $('#conference_id');
+    this.$conferenceValidatorField = $('#state-conf_name');
     this.$previewModal = $('#modalData');
     this.$nonpublic_note = $("#nonpublic_note");
     this.$form = $("#webdeposit_form_accordion");
@@ -205,6 +206,8 @@ define(function(require, exports, module) {
             .initFromRawValue($originalField.val(), 0);
         },
       });
+
+      this.addConferenceInfoField();
     },
 
     /*
@@ -246,6 +249,27 @@ define(function(require, exports, module) {
           $(this).removeClass('ui-autocomplete-loading');
         }
       );
+
+      // reminder about using the typeahead to get the conference.
+      this.$conference.on('change blur typeahead:selected', function() {
+        if (!this.$conferenceId.val()) {
+          this.$conferenceInfoField.show();
+        } else {
+          this.$conferenceInfoField.hide();
+        }
+      }.bind(this));
+    },
+
+    addConferenceInfoField: function() {
+      var $clone = this.$conferenceValidatorField.clone();
+      $clone
+        .attr('id', 'conferences-message')
+        .removeClass('alert-danger')
+        .addClass('alert-warning')
+        .html('Please use suggestions to select a conference from our ' +
+          'database.');
+      this.$conferenceValidatorField.after($clone);
+      this.$conferenceInfoField = $clone;
     },
 
     /**
