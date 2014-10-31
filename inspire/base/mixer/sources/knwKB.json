@@ -100,5 +100,11 @@
         "id": 13,
         "kbtype": "w",
         "name": "HP_IDENTIFIERS"
+    },
+    {
+        "description": "arXiv to Inspire categories mapping",
+        "id": 14,
+        "kbtype": "w",
+        "name": "arxiv-to-inspire-categories"
     }
 ]
