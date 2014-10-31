@@ -164068,5 +164068,90 @@
         "id_knwKB": 10,
         "m_key": "Other",
         "m_value": "Other"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "astro-ph",
+        "m_value": "Astrophysics"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "cond-mat",
+        "m_value": "General Physics"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "cs",
+        "m_value": "Computing"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "gr-qc",
+        "m_value": "Gravitation and Cosmology"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "hep-ex",
+        "m_value": "Experiment-HEP"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "hep-lat",
+        "m_value": "Lattice"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "hep-ph",
+        "m_value": "Phenomenology-HEP"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "hep-th",
+        "m_value": "Theory-HEP"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "math",
+        "m_value": "Math and Math Physics"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "nlin",
+        "m_value": "General Physics"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "nucl-ex",
+        "m_value": "Experiment-Nucl"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "nucl-th",
+        "m_value": "Theory-Nucl"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "physics.acc-phys",
+        "m_value": "Accelerators"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "physics.data-an",
+        "m_value": "Instrumentation"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "physics.ins-det",
+        "m_value": "Instrumentation"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "physics",
+        "m_value": "General Physics"
+    },
+    {
+        "id_knwKB": 14,
+        "m_key": "quant-ph",
+        "m_value": "General Physics"
     }
 ]
