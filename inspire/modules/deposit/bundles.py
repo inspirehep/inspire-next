@@ -33,6 +33,6 @@ _deposit_js.bower.update({
 })
 
 _deposit_styles.contents += (
-    'vendors/bootstrap-multiselect/css/bootstrap-multiselect.css',
+    'vendors/bootstrap-multiselect/dist/css/bootstrap-multiselect.css',
     'css/deposit-inspire.css',
 )

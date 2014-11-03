@@ -46,7 +46,7 @@ require.config({
     bootstrap: "vendors/bootstrap/dist/js/bootstrap",
     prism: "vendors/prism/prism",
     // INSPIRE
-    "bootstrap-multiselect": "vendors/bootstrap-multiselect/js/bootstrap-multiselect",
+    "bootstrap-multiselect": "vendors/bootstrap-multiselect/dist/js/bootstrap-multiselect",
     "readmore": "vendors/readmore/readmore",
     "buckets": "vendors/buckets/buckets",
     "feedback": "vendors/feedback/examples/js/feedback",
