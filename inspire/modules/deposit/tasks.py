@@ -23,7 +23,6 @@
 import os
 import requests
 from tempfile import mkstemp
-from werkzeug.utils import secure_filename
 
 from invenio.base.globals import cfg
 from invenio.modules.deposit.models import Deposition, DepositionFile
@@ -56,22 +55,30 @@ def arxiv_fft_get(obj, eng):
         os.write(arxiv_file, arxiv_pdf.content)
         os.close(arxiv_file)
 
-        f = open(arxiv_file_path)
-        filename = secure_filename(arxiv_file_path)
-        df = DepositionFile(backend=DepositionStorage(deposition.id))
+        with open(arxiv_file_path) as fd:
+            # To get 1111.2222.pdf as filename.
+            filename = "{0}.pdf".format(metadata['arxiv_id'])
 
-        if df.save(f, filename=filename):
-            if 'fft' in metadata and metadata['fft'] and \
-                    arxiv_pdf.status_code == 200:
-                from hashlib import md5
-                arxiv_md5 = md5(arxiv_pdf.content).hexdigest()
+            df = DepositionFile(backend=DepositionStorage(deposition.id))
+            if df.save(fd, filename=filename):
+                # Do we already have the file attached?
+                if 'fft' in metadata and metadata['fft'] and \
+                        arxiv_pdf.status_code == 200:
+                    from hashlib import md5
+                    arxiv_md5 = md5(arxiv_pdf.content).hexdigest()
 
-                fft_exists = filter(lambda fft: arxiv_md5 == md5(
-                    open(fft['url']).read()).hexdigest(), metadata['fft'])
+                    # Its not a list if only one item. Urk.
+                    if not isinstance(metadata['fft'], list):
+                        ffts = [metadata["fft"]]
+                    else:
+                        ffts = metadata["fft"]
 
-                if not fft_exists:
+                    fft_exists = filter(lambda fft: arxiv_md5 == md5(
+                        open(fft['url']).read()).hexdigest(), ffts)
+
+                    if not fft_exists:
+                        deposition.add_file(df)
+                else:
                     deposition.add_file(df)
-            else:
-                deposition.add_file(df)
 
     deposition.save()

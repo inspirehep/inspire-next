@@ -79,12 +79,12 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Process metadata to match your JSONAlchemy record model. This will
         # call process_sip_metadata() on your subclass.
         process_sip_metadata(),
-        # Get FFT from arXiv, if arXiv ID is provided
-        arxiv_fft_get,
-        add_files_to_task_results,
         # Generate MARC based on metadata dictionary.
         finalize_record_sip(is_dump=False),
         halt_to_render,
+        # Get FFT from arXiv, if arXiv ID is provided
+        arxiv_fft_get,
+        add_files_to_task_results,
         classify_paper_with_deposit(
             taxonomy="HEPont.rdf",
             output_mode="dict",
