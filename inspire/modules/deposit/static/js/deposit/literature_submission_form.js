@@ -30,6 +30,7 @@ define(function(require, exports, module) {
   var TaskManager = require("js/deposit/task_manager");
   var ConferencesTypeahead = require("js/deposit/conferences_typeahead");
   var PreviewModal = require("js/deposit/modal_preview");
+  var SynchronizedField = require("js/deposit/synchronized_field");
   require("js/deposit/message_box");
   require("js/deposit/fields_group");
   require('ui/effect-highlight');
@@ -108,17 +109,12 @@ define(function(require, exports, module) {
     this.$submissionForm = $('#submitForm');
     this.$conference = $('#conf_name');
     this.$conferenceId = $('#conference_id');
+    this.$conferenceValidatorField = $('#state-conf_name');
     this.$previewModal = $('#modalData');
     this.$nonpublic_note = $("#nonpublic_note");
     this.$form = $("#webdeposit_form_accordion");
     this.$formWrapper = $('.form-wrapper');
     this.$inputs = this.$formWrapper.find(':input');
-
-    // these fields' values will be deleted before submission so that they will not be
-    // sent to the sever
-    this.$fieldsExcludedFromSubmision = [
-      this.$conference
-    ];
 
     /**
      * Dict with custom setter functions - a workaround for twitter typeahead
@@ -183,11 +179,9 @@ define(function(require, exports, module) {
           '{{ conference_id }}' +
           '</small>'
         ),
-
         selectedValueTemplate: Hogan.compile(
-          '{{ conference_id }}, {{ title }}, {{ date }}, {{ place }}'
+          '{{ title }}, {{ date }}, {{ place }}'
         ),
-
         cannotFindMessage: 'Cannot find this conference in our database.'
       });
 
@@ -197,6 +191,23 @@ define(function(require, exports, module) {
       });
 
       this.setSettersForTypeaheadFields();
+
+      this.$conferenceId.synchronizedField({
+        $frontendField: this.$conference,
+        synchronizationEvents: 'typeahead:selected change blur',
+        propagatedEvents: 'typeahead:selected change blur',
+        synchronizationFn: function($originalField, $frontendField) {
+          $originalField.val(
+            $frontendField.data('conferences-typeahead').getRawValue());
+          $originalField.trigger('change');
+        },
+        reverseSynchronizationFn: function($originalField, $frontendField) {
+          $frontendField.data('conferences-typeahead')
+            .initFromRawValue($originalField.val(), 0);
+        },
+      });
+
+      this.addConferenceInfoField();
     },
 
     /*
@@ -229,10 +240,36 @@ define(function(require, exports, module) {
         that.showForm();
       });
 
-      this.$submissionForm.on('submit', function(event) {
-        that.$conferenceId.val(ConferencesTypeahead.getRawValue());
-        that.deleteIgnoredValues();
+      // for spinner at conferences typeahead
+      this.$conference.on('typeahead:asyncrequest', function() {
+        $(this).addClass('ui-autocomplete-loading');
       });
+      this.$conference.on('typeahead:asynccancel typeahead:asyncreceive',
+        function() {
+          $(this).removeClass('ui-autocomplete-loading');
+        }
+      );
+
+      // reminder about using the typeahead to get the conference.
+      this.$conference.on('change blur typeahead:selected', function() {
+        if (!this.$conferenceId.val()) {
+          this.$conferenceInfoField.show();
+        } else {
+          this.$conferenceInfoField.hide();
+        }
+      }.bind(this));
+    },
+
+    addConferenceInfoField: function() {
+      var $clone = this.$conferenceValidatorField.clone();
+      $clone
+        .attr('id', 'conferences-message')
+        .removeClass('alert-danger')
+        .addClass('alert-warning')
+        .html('Please use suggestions to select a conference from our ' +
+          'database.');
+      this.$conferenceValidatorField.after($clone);
+      this.$conferenceInfoField = $clone;
     },
 
     /**

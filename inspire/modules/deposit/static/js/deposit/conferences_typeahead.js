@@ -38,7 +38,9 @@ define(function(require, exports, module) {
       this.$element = $(element);
       this.options = $.extend({}, $.fn.conferencesTypeahead.defaults, options);
 
+      // often an object, a value chosen from suggestions
       this.value = this.$element.val();
+      // lastly typed string
       this.cachedQuery = this.$element.val();
 
       this.suggestionTemplate = this.options.suggestionTemplate;
@@ -46,21 +48,32 @@ define(function(require, exports, module) {
 
       var that = this;
 
-      var engine = new Bloodhound({
+      this.engine = new Bloodhound({
         name: 'conferences',
         remote: '/search?cc=Conferences&p=%QUERY*&of=recjson&f=conferences',
         datumTokenizer: function(datum) {
           return that.datumTokenizer.call(that, datum);
         },
-        queryTokenizer: Bloodhound.tokenizers.whitespace
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        limit: 100,
       });
 
-      engine.initialize();
+      this.engine.initialize();
 
       this.$element.typeahead({
-        minLength: 1
+        minLength: this.options.minLength
       }, {
-        source: engine.ttAdapter(),
+        // after typeahead upgrade to 0.11 can be substituted with:
+        // source: this.engine.ttAdapter(),
+        // https://github.com/twitter/typeahead.js/issues/166
+        source: function(query, callback) {
+          // trigger can be deleted after typeahead upgrade to 0.11
+          this.$element.trigger('typeahead:asyncrequest');
+          this.engine.get(query, function(suggestions) {
+            this.$element.trigger('typeahead:asyncreceive');
+            callback(suggestions);
+          }.bind(this));
+        }.bind(this),
         // the key of a value which is rather passed to typeahead than displayed
         // the display values are selected by templates.
         displayKey: 'conference',
@@ -114,6 +127,7 @@ define(function(require, exports, module) {
         } else {
           this.value = value;
         }
+        this.ttTypeahead.input.setQuery(this.value);
         var renderedValue = this.getUserFriendlyValue();
         this.orgTypeahead.setInputValue.call(
           this.ttTypeahead.input, renderedValue, silent);
@@ -170,7 +184,30 @@ define(function(require, exports, module) {
         if (this.isFieldValueAutocompleted() && this.value.conference_id) {
           return this.value.conference_id;
         }
-        return this.value;
+        return '';
+      },
+
+      /**
+       * Initialize value from rawValue which is compared to conference id.
+       * @param rawValue {String}
+       *  more than one dataset set for twitter typeahead, otherwise should be
+       *  set to 0 to use the only one.
+       */
+      initFromRawValue: function(rawValue) {
+        this.engine.get(rawValue, function(suggestions) {
+          var suggestion;
+          $.each(suggestions, function(idx, item) {
+            if (item.conference.conference_id === rawValue) {
+              suggestion = item.conference;
+              return false;
+            }
+          });
+          if (!suggestion) {
+            return;
+          }
+          this.cachedQuery = rawValue;
+          this.setInputFieldValue(suggestion, true);
+        }.bind(this));
       },
 
       /**
@@ -196,20 +233,35 @@ define(function(require, exports, module) {
       },
 
       /**
-       * Handles keydown event.
+       * Handles keydown event. Should block changing the field value
+       * as long as there is an autocompleted value. This prevents a crash
+       * on typeahead's normalizeQuery() which accepts a string only.
        *
        * @param event {Event} keydown event
        */
       onKeydown: function onKeydown(event) {
-        var keyCode = event.which || event.keyCode;
-        // backspace or delete
-        if ((keyCode === 8 || keyCode === 46) && this.isFieldValueAutocompleted()) {
-          // if the field stores autocompletition result reset it to query
-          this.resetToCachedQuery();
-          // show the dropdown as if query value was changed
-          this.ttTypeahead._onQueryChanged('queryChanged', this.ttTypeahead.input.query);
-          return false;
+        if (this.isFieldValueAutocompleted()) {
+          var keyCode = event.which || event.keyCode;
+          var isAlphaNumericKey = (
+            (keyCode >= 48 && keyCode <= 57) || // numbers
+            (keyCode >= 96 && keyCode <= 105) || // numpad
+            (keyCode >= 65 && keyCode <= 90) || // letters
+            (keyCode >= 186 && keyCode <= 192) || // symbols
+            (keyCode >= 219 && keyCode <= 222) // symbols
+          );
+          // backspace or delete
+          var doesDeleteAChar = (keyCode === 8 || keyCode === 46);
+          if (doesDeleteAChar ||
+              // adding a char when the dropdown is closed and value is
+              // autocompleted
+              (isAlphaNumericKey && !this.ttTypeahead.dropdown.isVisible())) {
+            // if the field stores autocompletition result reset it to query
+            this.resetToCachedQuery();
+            this.ttTypeahead._onQueryChanged('queryChanged', this.ttTypeahead.input.query);
+            return isAlphaNumericKey;
+          }
         }
+        return true;
       },
 
       /**
@@ -236,6 +288,11 @@ define(function(require, exports, module) {
        * @param {String} a message shown when no suggestion is available
        */
       cannotFindMessage: undefined,
+      /**
+       * @type Integer number of characters after which suggestions start to
+       *  be fetched
+       */
+      minLength: 3,
     };
 
   module.exports = ConferencesTypeahead;

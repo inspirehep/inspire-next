@@ -17,9 +17,12 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from wtforms.validators import ValidationError
+from wtforms.validators import ValidationError, StopValidation
 
+from invenio.base.globals import cfg
 from invenio.utils.persistentid import is_arxiv, is_isbn
+
+from urllib import urlencode
 
 
 def arxiv_syntax_validation(form, field):
@@ -28,7 +31,7 @@ def arxiv_syntax_validation(form, field):
                 similar to 'hep-th/1234567' or '1234.5678'."
 
     if field.data and not is_arxiv(field.data):
-        raise ValidationError(message)
+        raise StopValidation(message)
 
 
 def isbn_syntax_validation(form, field):
@@ -38,4 +41,68 @@ def isbn_syntax_validation(form, field):
                 '978-1-4133-0454-1'."
 
     if field.data and not is_isbn(field.data):
-        raise ValidationError(message)
+        raise StopValidation(message)
+
+
+def does_exist_in_inspirehep(query):
+    """Check if there exist an item in the db which satisfies query.
+
+    :param query: http query to check
+    """
+    import requests
+    from json import loads
+
+    json_reply = requests.get("http://inspirehep.net/search?", params={
+        'p': query,
+        'of': 'id'
+    }).text
+
+    # empty answer means that the item does not exist in the db.
+    if not len(json_reply):
+        return False
+
+    reply = loads(json_reply)
+    # not an array -> invalid answer
+    if not isinstance(reply, list):
+        raise ValueError('Invalid server answer.')
+
+    # non-empty answer -> duplicate
+    if len(reply):
+        return True
+
+    return False
+
+
+def inspirehep_duplicated_validator(inspire_query, property_name):
+    """Check if a record with the same doi already exists.
+
+    Needs to be wrapped in a function with proper validator signature.
+    """
+    if does_exist_in_inspirehep(inspire_query):
+        url = "http://inspirehep.net/search?" + urlencode({'p': inspire_query})
+        raise ValidationError(
+            'There exists already an item with the same %s. '
+            '<a target="_blank" href="%s">See the record.</a>'
+            % (property_name, url)
+        )
+
+
+def duplicated_doi_validator(form, field):
+    """Check if a record with the same doi already exists."""
+    doi = field.data
+    # TODO: local check for duplicates
+    if not doi:
+        return
+    if cfg.get('PRODUCTION_MODE'):
+        inspirehep_duplicated_validator('doi:' + doi, 'DOI')
+
+
+def duplicated_arxiv_id_validator(form, field):
+    """Check if a record with the same arXiv ID already exists."""
+    arxiv_id = field.data
+    # TODO: local check for duplicates
+    if not arxiv_id:
+        return
+    if cfg.get('PRODUCTION_MODE'):
+        inspirehep_duplicated_validator(
+            '035__a:oai:arXiv.org:' + arxiv_id, 'arXiv ID')
