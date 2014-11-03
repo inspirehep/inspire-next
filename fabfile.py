@@ -97,7 +97,7 @@ def install():
                     if path_to_invenio:
                         sudo("pybabel compile -d {0}/base/translations".format(path_to_invenio.strip()))
                     # INSPIRE specific configuration
-                    sudo("pip install /afs/cern.ch/project/inspire/repo/inspireconf-dev.tar.gz --upgrade")
+                    sudo("pip install /afs/cern.ch/project/inspire/repo/inspire-configuration-dist/dist/inspireconf-dev.tar.gz --upgrade")
                     # post install
                     sudo("inveniomanage collect")
                     with(settings(warn_only=True)):
