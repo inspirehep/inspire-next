@@ -296,22 +296,22 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                                       'categories_arXiv'])
 
         if imported_from_arXiv or metadata.get('title_source') == 'arXiv':
-            metadata['report_number'] = {'primary': 'oai:arXiv.org:' + metadata['arxiv_id']}
-            if 'title_arXiv' in metadata:
-                metadata['report_number']['source'] = 'arXiv'
-                metadata['abstract']['source'] = 'arXiv'
-                if 'categories' in metadata and metadata['categories']:
-                    metadata['report_number']['arxiv_category'] = metadata['categories']
-                    # Subject term
-                    subject_list = [{"term": c, "scheme": "arXiv"}
-                                    for c in metadata['categories']]
-                    if 'subject_term' in metadata and metadata['subject_term']:
-                        metadata['subject_term'].extend(subject_list)
-                    else:
-                        metadata['subject_term'] = subject_list
-                metadata['system_number_external'] = {'value': 'oai:arXiv.org:' + metadata['arxiv_id'],
-                                                      'institute': 'arXiv'}
-                metadata['collections'].extend([{'primary': "arXiv"}, {'primary': "Citeable"}])
+            metadata['report_number'] = {'primary': metadata['arxiv_id'],
+                                         'source': 'arXiv'}
+            if len(metadata['arxiv_id'].split('/')) == 2:
+                metadata['report_number']['arxiv_category'] = metadata['arxiv_id'].split('/')[0]
+            metadata['abstract']['source'] = 'arXiv'
+            if 'categories' in metadata and metadata['categories']:
+                # Subject term
+                subject_list = [{"term": c, "scheme": "arXiv"}
+                                for c in metadata['categories']]
+                if 'subject_term' in metadata and metadata['subject_term']:
+                    metadata['subject_term'].extend(subject_list)
+                else:
+                    metadata['subject_term'] = subject_list
+            metadata['system_number_external'] = {'external_key': 'oai:arXiv.org:' + metadata['arxiv_id'],
+                                                  'institute': 'arXiv'}
+            metadata['collections'].extend([{'primary': "arXiv"}, {'primary': "Citeable"}])
 
         if user_report_number:
             if 'report_number' in metadata and metadata['report_number']:
