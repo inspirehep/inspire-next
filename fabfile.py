@@ -9,6 +9,7 @@ from fabric.utils import error
 from fabric.contrib.files import exists
 
 env.directory = '/opt'  # remote directory
+env.conf_directory = "/afs/cern.ch/project/inspire/repo/inspire-configuration.git"
 
 env.roledefs = {
     'prod': ['inspirelabsvm01'],
@@ -19,19 +20,16 @@ env.roledefs = {
 
 @task
 def prod():
-    """
-    Activate configuration for INSPIRE DEV server.
-    """
+    """Activate configuration for INSPIRE PROD server."""
     env.roles = ['prod']
     env.site_url = "http://inspirevmlabs01.cern.ch"
     env.site_secure_url = "https://inspirevmlabs01.cern.ch"
+    env.conf_branch = "prod"
 
 
 @task
 def vm08():
-    """
-    Activate configuration for INSPIRE DEV server.
-    """
+    """Activate configuration for INSPIRE DEV server."""
     env.roles = ['dev01']
     env.site_url = "http://inspirelabstest.cern.ch"
     env.site_secure_url = "https://inspirelabstest.cern.ch"
@@ -39,9 +37,7 @@ def vm08():
 
 @task
 def vm11():
-    """
-    Activate configuration for INSPIRE DEV server.
-    """
+    """Activate configuration for INSPIRE DEV server."""
     env.roles = ['dev02']
     env.site_url = "http://inspirevm11.cern.ch"
     env.site_secure_url = "https://inspirevm11.cern.ch"
@@ -108,7 +104,11 @@ def install():
                     if path_to_invenio:
                         sudo("pybabel compile -d {0}/base/translations".format(path_to_invenio.strip()))
                     # INSPIRE specific configuration
-                    sudo("pip install /afs/cern.ch/project/inspire/repo/inspire-configuration-dist/dist/inspireconf-dev.tar.gz --upgrade")
+                    with cd(env.conf_directory):
+                        config_location = "/tmp/inspire-configuration"
+                        sudo("mkdir -p {0}".format(config_location))
+                        sudo("GIT_WORK_TREE={0} git checkout -f {1}".format(config_location, env.conf_branch))
+                        sudo("pip install {0} --upgrade".format(config_location))
                     # post install
                     sudo("inveniomanage collect")
                     with warn_only():
