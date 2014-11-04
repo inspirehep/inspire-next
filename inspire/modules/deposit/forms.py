@@ -81,7 +81,7 @@ def skip_importdata(field, **dummy_kwargs):
 # Group buttons of import and skip
 #
 def import_buttons_widget(field, **dummy_kwargs):
-    """Buttons for import data and skip"""
+    """Button for import data and skip."""
     html_skip = skip_importdata(field)
     html_import = importdata_button(field)
     html = [u'<div class="pull-right">' + html_skip + html_import + u'</div>']
@@ -97,7 +97,7 @@ def wrap_nonpublic_note(field, **dummy_kwargs):
         'title="%s"><textarea %s></textarea></div>' % \
         (_('Journal Information already exists'),
         html_params(id="nonpublic_note",
-                    class_="form-control nonpublic_note",
+                    class_="form-control nonpublic_note" + ARTICLE_CLASS,
                     name="nonpublic_note"))
     return HTMLString(html)
 
@@ -118,7 +118,7 @@ def defensedate_widget(field, **kwargs):
     field_id = kwargs.pop('id', field.id)
     html = [u'<div class="row %s"><div class="col-xs-5 col-sm-3">\
             <input class="datepicker form-control" %s type="text">\
-            </div></div'
+            </div></div>'
             % (THESIS_CLASS, html_params(id=field_id,
                                          name=field_id,
                                          value=field.data or ''))]
@@ -273,7 +273,7 @@ class LiteratureForm(WebDepositForm):
 
     collaboration = fields.TextField(
         label=_('Collaboration'),
-        widget_classes="form-control"
+        widget_classes="form-control" + ARTICLE_CLASS
     )
 
     experiment = fields.TextField(
@@ -284,7 +284,6 @@ class LiteratureForm(WebDepositForm):
                                              mapper=experiment_kb_mapper)
     )
 
-    # this should be a prefilled dropdown
     subject = fields.SelectMultipleField(
         label=_('Subject'),
         widget_classes="form-control",
@@ -332,7 +331,7 @@ class LiteratureForm(WebDepositForm):
         placeholder=_("Start typing for suggestions"),
         label=_('Conference Information'),
         description=_('Conference name, acronym, place, date'),
-        widget_classes="form-control"
+        widget_classes="form-control" + ARTICLE_CLASS,
     )
 
     conference_id = fields.TextField(
@@ -366,13 +365,19 @@ class LiteratureForm(WebDepositForm):
         widget_classes=THESIS_CLASS,
     )
 
+    thesis_date = fields.Date(
+        label=_('Thesis date'),
+        description='Format: YYYY-MM-DD.',
+        widget=defensedate_widget,
+    )
+
     defense_date = fields.Date(
         label=_('Date of Defense'),
         description='Format: YYYY-MM-DD.',
         widget=defensedate_widget,
     )
 
-    degree_type = fields.TextField(
+    degree_type = fields.SelectField(
         label=_('Degree type'),
         widget_classes="form-control" + THESIS_CLASS,
     )
@@ -382,13 +387,19 @@ class LiteratureForm(WebDepositForm):
         widget_classes="form-control" + THESIS_CLASS,
     )
 
+    license = fields.SelectField(
+        label=_('License'),
+        default='',
+        widget_classes="form-control" + THESIS_CLASS,
+    )
+
     # ============
     # Journal Info
     # ============
     journal_title = fields.TextField(
         placeholder=_("Start typing for suggestions"),
         label=_('Journal Title'),
-        widget_classes="form-control",
+        widget_classes="form-control" + ARTICLE_CLASS,
         autocomplete=kb_dynamic_autocomplete("dynamic_journal_titles",
                                              mapper=journal_title_kb_mapper)
     )
@@ -396,27 +407,27 @@ class LiteratureForm(WebDepositForm):
     page_range = fields.TextField(
         label=_('Page Range'),
         description=_('e.g. 1-100'),
-        widget_classes="form-control"
+        widget_classes="form-control" + ARTICLE_CLASS
     )
 
     article_id = fields.TextField(
         label=_('Article ID'),
-        widget_classes="form-control"
+        widget_classes="form-control" + ARTICLE_CLASS
     )
 
     volume = fields.TextField(
         label=_('Volume'),
-        widget_classes="form-control"
+        widget_classes="form-control" + ARTICLE_CLASS
     )
 
     year = fields.TextField(
         label=_('Year'),
-        widget_classes="form-control"
+        widget_classes="form-control" + ARTICLE_CLASS
     )
 
     issue = fields.TextField(
         label=_('Issue'),
-        widget_classes="form-control"
+        widget_classes="form-control" + ARTICLE_CLASS
     )
 
     nonpublic_note = fields.TextAreaField(
@@ -427,7 +438,7 @@ class LiteratureForm(WebDepositForm):
 
     note = fields.TextAreaField(
         export_key='note',
-        widget_classes="hidden",
+        widget_classes="hidden" + ARTICLE_CLASS,
         widget=HiddenInput(),
     )
 
@@ -485,8 +496,10 @@ class LiteratureForm(WebDepositForm):
         ('Basic Information',
             ['title', 'title_arXiv', 'language', 'title_translation', 'authors',
              'collaboration', 'experiment', 'abstract', 'page_nr', 'subject',
-             'supervisors', 'defense_date', 'degree_type', 'university',
-             'license_url']),
+             'supervisors', 'thesis_date', 'defense_date', 'degree_type',
+             'university']),
+        ('Licenses and copyright',
+            ['license', 'license_url']),
         ('Conference Information',
             ['conf_name', 'conference_id']),
         ('Journal Information',
@@ -502,6 +515,7 @@ class LiteratureForm(WebDepositForm):
         'file_field': 'col-md-12',
         'type_of_doc': 'col-xs-4',
         'wrap_nonpublic_note': 'col-md-9',
+        'degree_type': 'col-xs-3',
     }
 
     def __init__(self, *args, **kwargs):
@@ -510,3 +524,7 @@ class LiteratureForm(WebDepositForm):
         from invenio.modules.knowledge.api import get_kb_mappings
         self.subject.choices = [(x['value'], x['value'])
             for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_SUBJECTS_KB"])]
+        self.degree_type.choices = [(x['value'], x['value'])
+            for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_DEGREE_KB"])]
+        self.license.choices = [('', '')] + [(x['key'], x['key'])
+            for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_LICENSE_KB"])]
