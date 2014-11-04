@@ -63,6 +63,8 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 from invenio.modules.workflows.tasks.workflows_tasks import log_info
 from invenio.modules.workflows.definitions import WorkflowBase
 
+from invenio.base.globals import cfg
+
 
 class literature(SimpleRecordDeposition, WorkflowBase):
 
@@ -378,7 +380,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
         if 'journal_title' in metadata:
             journals_kb = dict([(x['key'].lower(), x['value'])
-                                for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_JOURNALS_KB"])])
+                                for x in get_kb_mappings(cfg.get("DEPOSIT_INSPIRE_JOURNALS_KB"))])
 
             metadata['publication_info']['journal_title'] = journals_kb.get(metadata['journal_title'].lower(),
                                                                             metadata['journal_title'])
