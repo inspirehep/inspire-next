@@ -210,6 +210,11 @@ class LiteratureForm(WebDepositForm):
         validators=[arxiv_syntax_validation, duplicated_arxiv_id_validator],
     )
 
+    categories_arXiv = fields.TextField(
+        export_key='categories',
+        widget=HiddenInput(),
+    )
+
     # isbn = ISBNField(
     #     label=_('ISBN'),
     #     widget_classes='form-control',
@@ -240,6 +245,11 @@ class LiteratureForm(WebDepositForm):
         widget_classes="form-control",
         validators=[validators.Required()],
         export_key='title',
+    )
+
+    title_source = fields.TitleField(
+        export_key='title_source',
+        widget=HiddenInput(),
     )
 
     title_arXiv = fields.TitleField(
@@ -432,6 +442,14 @@ class LiteratureForm(WebDepositForm):
     )
 
     # ====================
+    # Preprint Information
+    # ====================
+    preprint_created = fields.TextField(
+        export_key='created',
+        widget=HiddenInput(),
+    )
+
+    # ====================
     # Fulltext Information
     # ====================
     file_field = fields.FileUploadField(
@@ -483,10 +501,10 @@ class LiteratureForm(WebDepositForm):
         ('Document Type',
             ['captcha', 'type_of_doc', ]),
         ('Basic Information',
-            ['title', 'title_arXiv', 'language', 'title_translation', 'authors',
-             'collaboration', 'experiment', 'abstract', 'page_nr', 'subject',
-             'supervisors', 'defense_date', 'degree_type', 'university',
-             'license_url']),
+            ['title', 'title_arXiv', 'categories_arXiv', 'language',
+             'title_translation', 'authors', 'collaboration', 'experiment',
+             'abstract', 'page_nr', 'subject', 'supervisors', 'defense_date',
+             'degree_type', 'university', 'license_url']),
         ('Conference Information',
             ['conf_name', 'conference_id']),
         ('Journal Information',
