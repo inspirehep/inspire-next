@@ -164033,5 +164033,35 @@
         "id_knwKB": 5,
         "m_key": "B132:Desig=7",
         "m_value": "N(2100) --> N (pipi)**I = 0(S-wave)"
+    },
+    {
+        "id_knwKB": 10,
+        "m_key": "CC-BY",
+        "m_value": "CC-BY"
+    },
+    {
+        "id_knwKB": 10,
+        "m_key": "CC-BY-NC",
+        "m_value": "CC-BY-NC"
+    },
+    {
+        "id_knwKB": 10,
+        "m_key": "CC-BY-NC-ND",
+        "m_value": "CC-BY-NC-ND"
+    },
+    {
+        "id_knwKB": 10,
+        "m_key": "CC-BY-NC-SA",
+        "m_value": "CC-BY-NC-SA"
+    },
+    {
+        "id_knwKB": 10,
+        "m_key": "CC-BY-ND",
+        "m_value": "CC-BY-ND"
+    },
+    {
+        "id_knwKB": 10,
+        "m_key": "CC-BY-SA",
+        "m_value": "CC-BY-SA"
     }
 ]

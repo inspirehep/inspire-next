@@ -82,5 +82,11 @@
         "id": 9,
         "kbtype": "w",
         "name": "docextract-journals"
+    },
+    {
+        "description": "Available licenses",
+        "id": 10,
+        "kbtype": "w",
+        "name": "LICENSE"
     }
 ]
