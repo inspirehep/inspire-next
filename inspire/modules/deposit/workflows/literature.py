@@ -176,9 +176,9 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         field_map = {'abstract': "summary",
                      'title': "title",
                      'subject_term': "term",
-                     'defense_date': "date",
                      'university': "university",
-                     'degree_type': "degree_type",
+                     'degree_type': "type",
+                     'thesis_date': "date",
                      'journal_title': "journal_title",
                      'page_range': "page_artid",
                      'article_id': "page_artid",
@@ -239,9 +239,9 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ==============
         # Thesis related
         # ==============
-        thesis_fields = filter(lambda field: field in metadata, ['defense_date',
-                                                                 'university',
-                                                                 'degree_type'])
+        thesis_fields = filter(lambda field: field in metadata, ['university',
+                                                                 'degree_type',
+                                                                 'thesis_date'])
         if thesis_fields:
             metadata['thesis'] = {}
 
@@ -249,6 +249,12 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 metadata['thesis'][field_map[field]] = metadata[field]
 
             delete_keys.extend(thesis_fields)
+
+        if 'defense_date' in metadata and metadata['defense_date']:
+            if 'note' in metadata and metadata['note']:
+                metadata['note'] += ', presented on ' + metadata['defense_date']
+            else:
+                metadata['note'] = 'Presented on ' + metadata['defense_date']
 
         # ========
         # Category
@@ -295,9 +301,23 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # =======
         # License
         # =======
-        if 'license_url' in metadata:
-            metadata['license'] = {}
-            metadata['license']['url'] = metadata['license_url']
+        from invenio.base.globals import cfg
+        from invenio.modules.knowledge.api import get_kb_mappings
+        licenses_kb = dict([(x['key'], x['value'])
+            for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_LICENSE_KB"])])
+        if 'license' in metadata and metadata['license']:
+            metadata['license'] = {'license': metadata['license']}
+            if 'license_url' in metadata:
+                metadata['license']['url'] = metadata['license_url']
+            else:
+                metadata['license']['url'] = licenses_kb.get(
+                    metadata['license']['license'])
+        elif 'license_url' in metadata:
+            metadata['license'] = {'url': metadata['license_url']}
+            license_key = {v: k for k, v in licenses_kb.items()}.get(
+                metadata['license_url'])
+            if license_key:
+                metadata['license']['license'] = license_key
             delete_keys.append('license_url')
 
         # ===========
