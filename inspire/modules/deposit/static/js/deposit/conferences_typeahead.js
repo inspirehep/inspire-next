@@ -251,13 +251,24 @@ define(function(require, exports, module) {
           );
           // backspace or delete
           var doesDeleteAChar = (keyCode === 8 || keyCode === 46);
-          if (doesDeleteAChar ||
-              // adding a char when the dropdown is closed and value is
-              // autocompleted
-              (isAlphaNumericKey && !this.ttTypeahead.dropdown.isVisible())) {
-            // if the field stores autocompletition result reset it to query
-            this.resetToCachedQuery();
-            this.ttTypeahead._onQueryChanged('queryChanged', this.ttTypeahead.input.query);
+          // reset to empty
+          if(this.ttTypeahead.dropdown.isVisible()) {
+            if (doesDeleteAChar) {
+              // if the field stores autocompletion result reset it to query
+              this.resetToCachedQuery();
+              // update dropdown
+              this.ttTypeahead
+                ._onQueryChanged('queryChanged', this.ttTypeahead.input.query);
+            }
+            // for both alfanumeric/symbol keys and delete/backspace
+            // block passing the key to the field
+            return false;
+          } else if (doesDeleteAChar || isAlphaNumericKey) { // not visible
+            this.ttTypeahead.input.query = '';
+            this.ttTypeahead.input.resetInputValue();
+            this.ttTypeahead
+              ._onQueryChanged('queryChanged', this.ttTypeahead.input.query);
+            // pass only characters, the code for delete is above
             return isAlphaNumericKey;
           }
         }
