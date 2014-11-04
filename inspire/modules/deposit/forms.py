@@ -598,7 +598,7 @@ class LiteratureForm(WebDepositForm):
         from invenio.modules.knowledge.api import get_kb_mappings
         self.subject.choices = [(x['value'], x['value'])
             for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_SUBJECTS_KB"])]
-        self.degree_type.choices = [(x['value'], x['value'])
+        self.degree_type.choices = [('', '')] + [(x['value'], x['value'])
             for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_DEGREE_KB"])]
         self.license.choices = [('', '')] + [(x['key'], x['key'])
             for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_LICENSE_KB"])]
