@@ -164063,5 +164063,10 @@
         "id_knwKB": 10,
         "m_key": "CC-BY-SA",
         "m_value": "CC-BY-SA"
+    },
+    {
+        "id_knwKB": 10,
+        "m_key": "Other",
+        "m_value": "Other"
     }
 ]
