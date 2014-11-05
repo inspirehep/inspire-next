@@ -23,17 +23,18 @@
 """Contains task to check if incoming record already exist."""
 
 import requests
+import traceback
 
+from invenio.base.globals import cfg
 from invenio.modules.deposit.models import Deposition
-from ..config import WORKFLOWS_MATCH_REMOTE_SERVER_URL
 
 
 def match_record_arxiv_remote(arxiv_id):
-    """Look on the remote server if the record existss using arXiv id."""
+    """Look on the remote server if the record exists using arXiv id."""
     if arxiv_id:
-        arxiv_id = arxiv_id.replace('arXiv:', '')
+        arxiv_id = arxiv_id.lower().replace('arxiv:', '')
         params = dict(p="035:oai:arXiv.org:%s" % arxiv_id, of="id")
-        r = requests.get(WORKFLOWS_MATCH_REMOTE_SERVER_URL, params=params)
+        r = requests.get(cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"], params=params)
         response = r.json()
         if response:
             return True
@@ -41,24 +42,44 @@ def match_record_arxiv_remote(arxiv_id):
 
 
 def match_record_arxiv_remote_oaiharvest(obj, eng):
-    """Look on the remote server if the record existss using arXiv id."""
-    arxiv_id = obj.get_data().get('report_number', {}).get('value')
-    return match_record_arxiv_remote(arxiv_id)
+    """Look on the remote server if the record exists using arXiv id."""
+    report_numbers = obj.get_data().get('report_number', {})
+    if isinstance(report_numbers, dict):
+        arxiv_id = report_numbers.get('value')
+    else:
+        arxiv_id = None
+        for number in report_numbers:
+            if number.get("source", "").lower() == "arxiv":
+                arxiv_id = number.get("value")
+                break
+    try:
+        return match_record_arxiv_remote(arxiv_id)
+    except requests.ConnectionError:
+        obj.log.error("Error connecting to remote server:\n {0}".format(
+            traceback.format_exc()
+        ))
+        return False
 
 
 def match_record_arxiv_remote_deposit(obj, eng):
-    """Look on the remote server if the record existss using arXiv id."""
+    """Look on the remote server if the record exists using arXiv id."""
     d = Deposition(obj)
     sip = d.get_latest_sip(sealed=False)
     arxiv_id = sip.metadata.get('arxiv_id')
-    return match_record_arxiv_remote(arxiv_id)
+    try:
+        return match_record_arxiv_remote(arxiv_id)
+    except requests.ConnectionError:
+        obj.log.error("Error connecting to remote server:\n {0}".format(
+            traceback.format_exc()
+        ))
+        return False
 
 
 def match_record_doi_remote(doi):
     """Look on the remote server if the record exists using doi."""
     if doi:
         params = dict(p="0247:%s" % doi, of="id")
-        r = requests.get(WORKFLOWS_MATCH_REMOTE_SERVER_URL, params=params)
+        r = requests.get(cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"], params=params)
         response = r.json()
         if response:
             return True
@@ -74,14 +95,12 @@ def match_record_doi_remote_deposit(obj, eng):
 
 
 def match_record_remote_deposit(obj, eng):
-    """Look on the remote server if the record exists
-    using doi and arxiv_id."""
+    """Look on the remote server if the record exists using doi and arxiv_id."""
     return match_record_arxiv_remote_deposit(obj, eng) or\
         match_record_doi_remote_deposit(obj, eng)
 
 
 def match_record_remote_oaiharvest(obj, eng):
-    """Look on the remote server if the record exists
-    using doi and arxiv_id."""
+    """Look on the remote server if the record exists using doi and arxiv_id."""
     return match_record_arxiv_remote_deposit(obj, eng) or\
         match_record_doi_remote_deposit(obj, eng)
