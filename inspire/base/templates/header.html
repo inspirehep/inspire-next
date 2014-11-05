@@ -64,19 +64,13 @@
           </a>
         </li>
         <li>
-          <a href="mailto:feedback@inspirehep.net">
-            <i class="fa fa-envelope"></i>
-            Contact
-          </a>
-        </li>
-        <li>
           {%- if current_user.is_guest %}
           <a href="#" data-toggle="modal"  data-target="#sign-in-modal" role="button">
             <i class="fa fa-sign-in"></i>
             Sign In
           </a>
           {%- else %}
-            <a href="{{ url_for('accounts_settings.profile') }}">
+            <a href="#">
               <i class="fa fa-user"></i>
               {{ current_user.email }}
             </a>
