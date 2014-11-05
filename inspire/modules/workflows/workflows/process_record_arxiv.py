@@ -43,7 +43,6 @@ from invenio.modules.oaiharvester.tasks.postprocess import (
     arxiv_fulltext_download,
     refextract,
     author_list,
-    upload_step,
 )
 from invenio.modules.workflows.tasks.workflows_tasks import log_info
 from inspire.modules.workflows.tasks.actions import was_approved
@@ -53,6 +52,9 @@ from invenio.modules.workflows.tasks.logic_tasks import (
     workflow_else,
 )
 from invenio.modules.workflows.definitions import RecordWorkflow
+from inspire.modules.oaiharvester.tasks.upload import (
+    send_robotupload_oaiharvest,
+)
 from ..tasks.filtering import inspire_filter_custom
 
 
@@ -84,7 +86,7 @@ class process_record_arxiv(RecordWorkflow):
                                   action="inspire_approval"),
             workflow_if(was_approved),
             [
-                upload_step,
+                send_robotupload_oaiharvest(),
             ],
             workflow_else,
             [

@@ -25,7 +25,7 @@ import requests
 
 
 def make_robotupload_marcxml(url, marcxml, **kwargs):
-    """Make a robotupload request and return it."""
+    """Make a robotupload request."""
     from invenio.utils.url import make_user_agent_string
     headers = {
         "User-agent": make_user_agent_string("inspire"),
@@ -34,7 +34,7 @@ def make_robotupload_marcxml(url, marcxml, **kwargs):
     }
     url = os.path.join(url, "batchuploader/robotupload/insert")
     return requests.post(
-        url,
+        url=url,
         data=marcxml,
         headers=headers,
         params=kwargs,
