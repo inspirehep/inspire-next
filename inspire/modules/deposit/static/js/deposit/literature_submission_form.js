@@ -252,7 +252,7 @@ define(function(require, exports, module) {
 
       // reminder about using the typeahead to get the conference.
       this.$conference.on('change blur typeahead:selected', function() {
-        if (!this.$conferenceId.val()) {
+        if (!this.$conferenceId.val() && $.trim(this.$conference.val())) {
           this.$conferenceInfoField.show();
         } else {
           this.$conferenceInfoField.hide();
