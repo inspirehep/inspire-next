@@ -212,6 +212,11 @@ ORCID_APP_CREDENTIALS = dict(
     consumer_secret="changeme",
 )
 
+CFG_WEBSEARCH_SYNONYM_KBRS = {
+    'journal': ['JOURNALS', 'leading_to_comma'],
+    'collection': ['COLLECTION', 'exact'],
+    'subject': ['SUBJECT', 'exact'],
+}
 
 # For production only, instance_config contains configuration of
 # database credentials and other instance specific configuration
