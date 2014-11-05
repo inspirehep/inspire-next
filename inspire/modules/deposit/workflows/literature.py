@@ -196,6 +196,30 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                      'issue': "journal_issue",
                      'conference_id': "cnum"}
 
+        # exclusive fields for each type of document
+        doc_exclusive_fields = {'article': ['journal_title',
+                                            'page_range',
+                                            'article_id',
+                                            'volume',
+                                            'year',
+                                            'issue',
+                                            'conference_id'],
+                                'thesis': ['supervisors',
+                                           'university',
+                                           'degree_type',
+                                           'thesis_date',
+                                           'defense_date'],
+                                }
+
+        del doc_exclusive_fields[metadata['type_of_doc']]
+
+        def remove_exclusive_fields(fieldlist):
+            for field in fieldlist:
+                if field in metadata and metadata[field]:
+                    del metadata[field]
+
+        map(remove_exclusive_fields, doc_exclusive_fields.values())
+
         # ============================
         # Abstract, Title and Subjects
         # ============================
