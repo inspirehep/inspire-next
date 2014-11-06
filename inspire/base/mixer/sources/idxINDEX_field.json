@@ -168,9 +168,9 @@
         "regexp_punctuation": "[.,:;?!\"]"
     },
     {
-        "id_field": 54,
+        "id_field": 60,
         "id_idxINDEX": 27,
-        "regexp_alphanumeric_separators": "[!\"#$\\%&'()*+,-./:;<=>?@[\\]^\\_`{|}~]",
+        "regexp_alphanumeric_separators": "",
         "regexp_punctuation": "[.,:;?!\"]"
     }
 ]

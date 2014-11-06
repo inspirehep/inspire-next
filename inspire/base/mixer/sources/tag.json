@@ -1047,5 +1047,17 @@
         "name": "conference",
         "recjson_value": "",
         "value": "111__%"
+    },
+    {
+        "id": 177,
+        "name": "institution address",
+        "recjson_value": "",
+        "value": "371__a"
+    },
+    {
+        "id": 178,
+        "name": "institution info",
+        "recjson_value": "",
+        "value": "110__%"
     }
 ]

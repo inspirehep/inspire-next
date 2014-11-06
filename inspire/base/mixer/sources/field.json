@@ -288,5 +288,10 @@
         "code": "conference",
         "id": 59,
         "name": "conference info"
+    },
+    {
+        "code": "affinfo",
+        "id": 60,
+        "name": "affiliation info"
     }
 ]

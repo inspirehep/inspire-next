@@ -943,5 +943,15 @@
         "id_field": 59,
         "id_tag": 176,
         "score": 0
+    },
+    {
+        "id_field": 60,
+        "id_tag": 177,
+        "score": 0
+    },
+    {
+        "id_field": 60,
+        "id_tag": 178,
+        "score": 1
     }
 ]
