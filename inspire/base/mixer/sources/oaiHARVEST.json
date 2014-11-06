@@ -196,5 +196,53 @@
         "postprocess": "f",
         "setspecs": "",
         "workflows": "oaiharvest_harvest_repositories"
+    },
+    {
+        "arguments": {
+            "a_rt-queue": "",
+            "a_stylesheet": "",
+            "c_stylesheet": "",
+            "f_filter-file": "",
+            "p_extraction-source": [],
+            "r_format": "",
+            "r_kb-journal-file": "",
+            "r_kb-rep-no-file": "",
+            "t_doctype": "",
+            "u_name": "",
+            "u_priority": ""
+        },
+        "baseurl": "http://export.arxiv.org/oai2",
+        "comment": "",
+        "id": 10,
+        "lastrun": "2014-11-06 11:53:28",
+        "metadataprefix": "arXiv",
+        "name": "arxiv_math_daily",
+        "postprocess": "",
+        "setspecs": "physics:math-ph",
+        "workflows": "ingestion_arxiv_math"
+    },
+    {
+        "arguments": {
+            "a_rt-queue": "",
+            "a_stylesheet": "",
+            "c_stylesheet": "",
+            "f_filter-file": "",
+            "p_extraction-source": [],
+            "r_format": "",
+            "r_kb-journal-file": "",
+            "r_kb-rep-no-file": "",
+            "t_doctype": "",
+            "u_name": "",
+            "u_priority": ""
+        },
+        "baseurl": "http://inspirehep.net/oai2d",
+        "comment": "",
+        "id": 11,
+        "lastrun": "2014-11-06 17:09:14",
+        "metadataprefix": "marcxml",
+        "name": "inspire_prod_sync",
+        "postprocess": "",
+        "setspecs": "INSPIRE:Conferences INSPIRE:Experiments INSPIRE:HepNames INSPIRE:Institutions INSPIRE:Jobs INSPIRE:Journals",
+        "workflows": "oaiharvest_production_sync"
     }
 ]

@@ -21,10 +21,11 @@
 ## or submit itself to any jurisdiction.
 
 import os
+import random
 
 
 def send_robotupload(url, marcxml, obj, eng):
-    """Ships the marcxml to url."""
+    """Ship the marcxml to url."""
     from invenio.base.globals import cfg
     from inspire.utils.robotupload import make_robotupload_marcxml
 
@@ -63,3 +64,73 @@ def send_robotupload(url, marcxml, obj, eng):
         obj.log.info(result.text)
         eng.halt("Waiting for robotupload: {0}".format(result.text))
     obj.log.info("end of upload")
+
+
+def upload_step_marcxml(obj, eng):
+    """Perform the upload step with MARCXML in obj.data().
+
+    :param obj: BibWorkflowObject to process
+    :param eng: BibWorkflowEngine processing the object
+    """
+    from invenio.base.globals import cfg
+    from invenio.legacy.oaiharvest.dblayer import create_oaiharvest_log_str
+    from invenio.legacy.bibsched.bibtask import task_low_level_submission
+
+    sequence_id = random.randrange(1, 60000)
+
+    arguments = obj.extra_data["repository"]["arguments"]
+
+    default_args = []
+    default_args.extend(['-I', str(sequence_id)])
+    if arguments.get('u_name', ""):
+        default_args.extend(['-N', arguments.get('u_name', "")])
+    if arguments.get('u_priority', 5):
+        default_args.extend(['-P', str(arguments.get('u_priority', 5))])
+    arguments = obj.extra_data["repository"]["arguments"]
+
+    extract_path = os.path.join(
+        cfg['CFG_TMPSHAREDDIR'],
+        str(eng.uuid)
+    )
+    if not os.path.exists(extract_path):
+        os.makedirs(extract_path)
+
+    filepath = extract_path + os.sep + str(obj.id)
+    if "f" in obj.extra_data["repository"]["postprocess"]:
+        # We have a filter.
+        file_uploads = [
+            ("{0}.insert.xml".format(filepath), ["-i"]),
+            ("{0}.append.xml".format(filepath), ["-a"]),
+            ("{0}.correct.xml".format(filepath), ["-c"]),
+            ("{0}.holdingpen.xml".format(filepath), ["-o"]),
+        ]
+    else:
+        # We do not, so we get the data from the record
+        file_fd = open(filepath, 'w')
+        file_fd.write(obj.get_data())
+        file_fd.close()
+        file_uploads = [(filepath, ["-r", "-i"])]
+
+    task_id = None
+    for location, mode in file_uploads:
+        if os.path.exists(location):
+            try:
+                args = mode + [filepath] + default_args
+                task_id = task_low_level_submission("bibupload",
+                                                    "oaiharvest",
+                                                    *tuple(args))
+                create_oaiharvest_log_str(task_id,
+                                          obj.extra_data["repository"]["id"],
+                                          obj.get_data())
+            except Exception as msg:
+                eng.log.error(
+                    "An exception during submitting oaiharvest task occured : %s " % (
+                        str(msg)))
+    if task_id is None:
+        eng.log.error("an error occurred while uploading %s from %s" %
+                      (filepath, obj.extra_data["repository"]["name"]))
+    else:
+        eng.log.info(
+            "material harvested from source %s was successfully uploaded" %
+            (obj.extra_data["repository"]["name"],))
+    eng.log.info("end of upload")
