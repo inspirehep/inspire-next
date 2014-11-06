@@ -274,6 +274,14 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             metadata['title']['source'] = metadata['title_source']
             delete_keys.append('title_source')
 
+        # =============
+        # Report number
+        # =============
+        user_report_number = None
+        if 'report_number' in metadata and metadata['report_number']:
+            user_report_number = metadata['report_number']
+            del metadata['report_number']
+
         # ========
         # arXiv ID
         # ========
@@ -298,6 +306,13 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 metadata['system_number_external'] = {'value': 'oai:arXiv.org:' + metadata['arxiv_id'],
                                                       'institute': 'arXiv'}
                 metadata['collections'].extend([{'primary': "arXiv"}, {'primary': "Citeable"}])
+
+        if user_report_number:
+            if 'report_number' in metadata and metadata['report_number']:
+                metadata['report_number'] = [metadata['report_number'],
+                                             {'primary': user_report_number}]
+            else:
+                metadata['report_number'] = {'primary': user_report_number}
 
         # ========
         # Language

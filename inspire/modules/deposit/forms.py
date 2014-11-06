@@ -363,6 +363,11 @@ class LiteratureForm(WebDepositForm):
         widget=HiddenInput(),
     )
 
+    report_number = fields.TextField(
+        label=_('Report Number'),
+        widget_classes="form-control"
+    )
+
     # ==============
     # Thesis related
     # ==============
@@ -537,7 +542,7 @@ class LiteratureForm(WebDepositForm):
              'title_translation', 'authors', 'collaboration', 'experiment',
              'abstract', 'page_nr', 'subject', 'subject_relevance',
              'supervisors', 'defense_date', 'thesis_date', 'degree_type',
-             'university', 'license_url']),
+             'university', 'license_url', 'report_number']),
         ('Licenses and copyright',
             ['license', 'license_url']),
         ('Conference Information',
