@@ -46,6 +46,8 @@ require(["jquery", "js/deposit/form", "js/deposit/literature_submission_form", "
     var complete_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, submit='1') }}';
     var autocomplete_url = '{{ url_for(".autocomplete", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, field_name="__FIELDNAME__") }}';
 
+    var form = new LiteratureSubmissionForm(save_url);
+
     // Initialize form
     deposit_form.attachTo("#submitForm", {
       save_url: save_url,
@@ -84,7 +86,6 @@ require(["jquery", "js/deposit/form", "js/deposit/literature_submission_form", "
       // newdep_url:,
       // continue_url
     });
-    var form = new LiteratureSubmissionForm(save_url);
   });
 });
 </script>
