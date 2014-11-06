@@ -190,8 +190,7 @@ class AuthorInlineForm(WebDepositForm):
         export_key='full_name',
     )
     affiliation = fields.TextField(
-        autocomplete=kb_dynamic_autocomplete("InstitutionsCollection",
-                                             mapper=institutions_kb_mapper),
+        autocomplete='affiliation',
         placeholder='Start typing for suggestions',
         autocomplete_limit=5,
         widget_classes='form-control',
@@ -370,6 +369,7 @@ class LiteratureForm(WebDepositForm):
         label=_('Conference Information'),
         description=_('Conference name, acronym, place, date'),
         widget_classes="form-control" + ARTICLE_CLASS,
+        autocomplete='conference'
     )
 
     conference_id = fields.TextField(
