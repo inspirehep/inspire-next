@@ -184,8 +184,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                      'degree_type': "type",
                      'thesis_date': "date",
                      'journal_title': "journal_title",
-                     'page_range': "page_artid",
-                     'article_id': "page_artid",
+                     'page_range_article_id': "page_artid",
                      'volume': "journal_volume",
                      'year': "year",
                      'issue': "journal_issue",
@@ -373,8 +372,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ================
 
         publication_fields = filter(lambda field: field in metadata, ['journal_title',
-                                                                      'page_range',
-                                                                      'article_id',
+                                                                      'page_range_article_id',
                                                                       'volume',
                                                                       'year',
                                                                       'issue',
@@ -385,8 +383,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             for field in publication_fields:
                 metadata['publication_info'][field_map[field]] = metadata[field]
 
-            if 'page_nr' not in metadata and 'page_range' in publication_fields:
-                pages = metadata['page_range'].split('-')
+            if 'page_nr' not in metadata and 'page_range_article_id' in publication_fields:
+                pages = metadata['page_range_article_id'].split('-')
                 if len(pages) == 2:
                     try:
                         metadata['page_nr'] = int(pages[1])-int(pages[0])
