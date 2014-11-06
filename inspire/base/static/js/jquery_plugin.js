@@ -35,7 +35,7 @@ define([
         var object = $element.data(dataLabel);
         var _options = (typeof options === 'object' && options);
         // attach jQuery plugin
-        if (_options && !object) {
+        if (!object) {
           object = new constructor($element, _options);
           $element.data(dataLabel, object);
           if (object.init) {

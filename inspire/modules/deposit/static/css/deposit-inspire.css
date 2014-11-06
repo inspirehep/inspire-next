@@ -103,3 +103,7 @@
     margin-right: 5px!important;
     vertical-align: top;
 }
+
+#field-authors .tt-dropdown-menu{
+    width: 165%;
+}
