@@ -295,7 +295,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                         metadata['subject_term'].extend(subject_list)
                     else:
                         metadata['subject_term'] = subject_list
-                metadata['system_number_external'] = {'external_key': 'oai:arXiv.org:' + metadata['arxiv_id'],
+                metadata['system_number_external'] = {'value': 'oai:arXiv.org:' + metadata['arxiv_id'],
                                                       'institute': 'arXiv'}
                 metadata['collections'].extend([{'primary': "arXiv"}, {'primary': "Citeable"}])
 
