@@ -161,7 +161,7 @@ define(function(require, exports, module) {
           if (!suggestion) {
             return;
           }
-          this.cachedQuery = rawValue;
+          this.cachedQuery = '';
           this.setInputFieldValue(suggestion, true);
         }.bind(this));
       },
