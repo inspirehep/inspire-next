@@ -28,7 +28,7 @@ define(function(require, exports, module) {
   var tpl_flash_message = require('hgn!js/deposit/templates/flash_message');
   var DataMapper = require("js/deposit/mapper");
   var TaskManager = require("js/deposit/task_manager");
-  var ExtendedTypeahead = require("js/deposit/extended_typeahead");
+  var conferencesTypeahead = require("js/deposit/conferences_typeahead");
   var PreviewModal = require("js/deposit/modal_preview");
   var SynchronizedField = require("js/deposit/synchronized_field");
   require("js/deposit/message_box");
@@ -172,19 +172,7 @@ define(function(require, exports, module) {
         hoganTemplate: tpl_flash_message,
       })[0];
 
-      this.$conference.extendedTypeahead({
-        suggestionTemplate: Hogan.compile(
-          '<b>{{ title }}</b><br>' +
-          '<small>' +
-          '{{ date }}, {{ place }}<br>' +
-          '{{ conference_id }}' +
-          '</small>'
-        ),
-        selectedValueTemplate: Hogan.compile(
-          '{{ title }}, {{ date }}, {{ place }}'
-        ),
-        cannotFindMessage: 'Cannot find this conference in our database.'
-      });
+      conferencesTypeahead(this.$conference);
 
       this.previewModal = new PreviewModal(this.$previewModal, {
         labels: this.getLabels(),

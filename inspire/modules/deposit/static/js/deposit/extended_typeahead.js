@@ -46,17 +46,12 @@ define(function(require, exports, module) {
       this.suggestionTemplate = this.options.suggestionTemplate;
       this.selectedValueTemplate = this.options.selectedValueTemplate;
 
+      this.dataKey = this.options.dataKey;
+      this.extractRawValue = this.options.extractRawValue;
+
       var that = this;
 
-      this.engine = new Bloodhound({
-        name: 'conferences',
-        remote: '/search?cc=Conferences&p=%QUERY*&of=recjson&f=conferences',
-        datumTokenizer: function(datum) {
-          return that.datumTokenizer.call(that, datum);
-        },
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        limit: 100,
-      });
+      this.engine = this.options.dataEngine;
 
       this.engine.initialize();
 
@@ -76,14 +71,15 @@ define(function(require, exports, module) {
         }.bind(this),
         // the key of a value which is rather passed to typeahead than displayed
         // the display values are selected by templates.
-        displayKey: 'conference',
+        displayKey: this.dataKey,
         templates: {
           empty: function(data) {
             return that.options.cannotFindMessage;
           },
           suggestion: function(data) {
-            return that.suggestionTemplate.render.call(that.suggestionTemplate, data.conference);
-          }
+            return this.suggestionTemplate.render.call(
+              this.suggestionTemplate, data[this.dataKey]);
+          }.bind(this)
         }
       });
 
@@ -134,61 +130,20 @@ define(function(require, exports, module) {
       },
 
       /**
-       * Removes non alpha-numeric characters from beginning and end of a string.
-       *
-       * @param str {String} input string
-       * @returns {String} trimmed string
-       * @private
-       */
-      _trimNonAlphaNumericChar: function _trimNonAlphaNumericChar(str) {
-        return str.replace(/^[^A-Z0-9]+|[^A-Z0-9]+$/ig, '');
-      },
-
-      /**
-       * Tokenizer used by the bloodhound engine
-       *
-       * @param datum {Object} an item returned by query
-       * @returns {Array} array of tokens; the result query is a one consisting of queries
-       *   for every token connected with OR operator
-       */
-      datumTokenizer: function datumTokenizer(datum) {
-        if ((typeof datum) === 'string' || !datum.conference) {
-          return [datum];
-        }
-        var tokens = [];
-        datum = datum.conference;
-        if (datum.date && (typeof datum.date) === 'string') {
-          tokens = tokens.concat(datum.date.split(/\.?\s+-?\s*/));
-        }
-        if (datum.title && (typeof datum.title) === 'string') {
-          var titleNameTokens = datum.title.split(/\s+/);
-          titleNameTokens = $.map(titleNameTokens, this._trimNonAlphaNumericChar);
-          tokens = tokens.concat(titleNameTokens);
-        }
-        if (datum.place && (typeof datum.place) === 'string') {
-          tokens = tokens.concat(datum.place.split(/,?\s+/));
-        }
-        if (datum.conference_id && (typeof datum.conference_id) === 'string') {
-          tokens.push(datum.conference_id);
-        }
-        return tokens;
-      },
-
-      /**
        * Returns value of the field which identifies the chosen suggestion,
        * not the description shown to a user.
        *
        * @returns {String}
        */
       getRawValue: function getRawValue() {
-        if (this.isFieldValueAutocompleted() && this.value.conference_id) {
-          return this.value.conference_id;
+        if (this.isFieldValueAutocompleted()) {
+          return this.extractRawValue(this.value);
         }
         return '';
       },
 
       /**
-       * Initialize value from rawValue which is compared to conference id.
+       * Initialize value from rawValue which is compared to the rawValue.
        * @param rawValue {String}
        *  more than one dataset set for twitter typeahead, otherwise should be
        *  set to 0 to use the only one.
@@ -197,11 +152,12 @@ define(function(require, exports, module) {
         this.engine.get(rawValue, function(suggestions) {
           var suggestion;
           $.each(suggestions, function(idx, item) {
-            if (item.conference.conference_id === rawValue) {
-              suggestion = item.conference;
+            var data = item[this.dataKey];
+            if (this.extractRawValue(data) === rawValue) {
+              suggestion = item[this.dataKey];
               return false;
             }
-          });
+          }.bind(this));
           if (!suggestion) {
             return;
           }
@@ -288,6 +244,15 @@ define(function(require, exports, module) {
 
     $.fn.extendedTypeahead.defaults = {
       /**
+       * @type {Bloodhound}
+       */
+      dataEngine: {},
+      /**
+       * @type {String} key of a suggestion item which will be passed to
+       *  typeahead.
+       */
+      dataKey: 'value',
+      /**
        * @param {Hogan template} a template used to render a suggestion
        */
       suggestionTemplate: {},
@@ -304,6 +269,16 @@ define(function(require, exports, module) {
        *  be fetched
        */
       minLength: 3,
+      /**
+       * A function to extract the raw value (often it's an id) from chosen
+       *  suggestion object.
+       * @type {function}
+       * @param suggestionDataKey {*}
+       * @returns {String}
+       */
+      extractRawValue: function(suggestionDataKey) {
+        return suggestionDataKey;
+      },
     };
 
   module.exports = ExtendedTypeahead;
