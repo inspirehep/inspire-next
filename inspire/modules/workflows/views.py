@@ -17,11 +17,12 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-from invenio.ext.cache import cache
-from flask import Blueprint, jsonify, request
 from os.path import join
+from flask import Blueprint, jsonify, request
+
+from invenio.ext.cache import cache
+from invenio.base.globals import cfg
 from invenio.modules.workflows.models import BibWorkflowObject
-from invenio.config import CFG_SITE_URL, CFG_ROBOTUPLOAD_SUBMISSION_BASEURL
 
 blueprint = Blueprint(
     'inspire_workflows',
@@ -68,7 +69,7 @@ def webcoll_callback():
             objectid = pending_records[rid]
             workflow_object = BibWorkflowObject.query.get(objectid)
             extra_data = workflow_object.get_extra_data()
-            extra_data['url'] = join(CFG_ROBOTUPLOAD_SUBMISSION_BASEURL, 'record', str(rid))
+            extra_data['url'] = join(cfg["CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"], 'record', str(rid))
             workflow_object.set_extra_data(extra_data)
             workflow_object.continue_workflow(delayed=True)
             del pending_records[rid]
@@ -97,17 +98,15 @@ def robotupload_callback():
             pending_records[str(recid)] = str(id_object)
             cache.set("pending_records", pending_records)
         else:
-            from invenio.config import CFG_SITE_ADMIN_EMAIL
             from invenio.ext.email import send_email
-            from invenio.config import CFG_SITE_SUPPORT_EMAIL
 
             body = ("There was an error when uploading the "
                     "submission with id: %s.\n" % id_object)
             body += "Error message:\n"
             body += result.get('error_message', '')
             send_email(
-                CFG_SITE_SUPPORT_EMAIL,
-                CFG_SITE_ADMIN_EMAIL,
+                cfg["CFG_SITE_SUPPORT_EMAIL"],
+                cfg["CFG_SITE_ADMIN_EMAIL"],
                 'BATCHUPLOAD ERROR',
                 body
             )
