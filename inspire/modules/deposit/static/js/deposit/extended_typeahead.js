@@ -33,10 +33,10 @@ define(function(require, exports, module) {
      * @param options dictionary
      * @constructor
      */
-    function ConferencesTypeahead(element, options) {
+    function ExtendedTypeahead(element, options) {
 
       this.$element = $(element);
-      this.options = $.extend({}, $.fn.conferencesTypeahead.defaults, options);
+      this.options = $.extend({}, $.fn.extendedTypeahead.defaults, options);
 
       // often an object, a value chosen from suggestions
       this.value = this.$element.val();
@@ -99,7 +99,7 @@ define(function(require, exports, module) {
       };
     }
 
-    ConferencesTypeahead.prototype = {
+    ExtendedTypeahead.prototype = {
 
       /**
        * Connects events to functions.
@@ -284,9 +284,9 @@ define(function(require, exports, module) {
       },
     };
 
-    $.fn.conferencesTypeahead = jQueryPlugin(ConferencesTypeahead, 'conferences-typeahead');
+    $.fn.extendedTypeahead = jQueryPlugin(ExtendedTypeahead, 'extended-typeahead');
 
-    $.fn.conferencesTypeahead.defaults = {
+    $.fn.extendedTypeahead.defaults = {
       /**
        * @param {Hogan template} a template used to render a suggestion
        */
@@ -306,5 +306,5 @@ define(function(require, exports, module) {
       minLength: 3,
     };
 
-  module.exports = ConferencesTypeahead;
+  module.exports = ExtendedTypeahead;
 });

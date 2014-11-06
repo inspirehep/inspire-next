@@ -28,7 +28,7 @@ define(function(require, exports, module) {
   var tpl_flash_message = require('hgn!js/deposit/templates/flash_message');
   var DataMapper = require("js/deposit/mapper");
   var TaskManager = require("js/deposit/task_manager");
-  var ConferencesTypeahead = require("js/deposit/conferences_typeahead");
+  var ExtendedTypeahead = require("js/deposit/extended_typeahead");
   var PreviewModal = require("js/deposit/modal_preview");
   var SynchronizedField = require("js/deposit/synchronized_field");
   require("js/deposit/message_box");
@@ -172,7 +172,7 @@ define(function(require, exports, module) {
         hoganTemplate: tpl_flash_message,
       })[0];
 
-      this.$conference.conferencesTypeahead({
+      this.$conference.extendedTypeahead({
         suggestionTemplate: Hogan.compile(
           '<b>{{ title }}</b><br>' +
           '<small>' +
@@ -199,11 +199,11 @@ define(function(require, exports, module) {
         propagatedEvents: 'typeahead:selected change blur',
         synchronizationFn: function($originalField, $frontendField) {
           $originalField.val(
-            $frontendField.data('conferences-typeahead').getRawValue());
+            $frontendField.data('extended-typeahead').getRawValue());
           $originalField.trigger('change');
         },
         reverseSynchronizationFn: function($originalField, $frontendField) {
-          $frontendField.data('conferences-typeahead')
+          $frontendField.data('extended-typeahead')
             .initFromRawValue($originalField.val(), 0);
         },
       });
