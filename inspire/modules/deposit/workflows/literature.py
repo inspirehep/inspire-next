@@ -327,6 +327,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             metadata['abstract']['source'] = 'arXiv'
             if 'categories' in metadata and metadata['categories']:
                 # Subject term
+                if not isinstance(metadata['categories'], list):
+                    metadata['categories'] = [metadata['categories']]
                 subject_list = [{"term": c, "scheme": "arXiv"}
                                 for c in metadata['categories']]
                 if 'subject_term' in metadata and metadata['subject_term']:
