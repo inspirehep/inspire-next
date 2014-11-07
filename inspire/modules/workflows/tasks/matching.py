@@ -45,12 +45,12 @@ def match_record_arxiv_remote_oaiharvest(obj, eng):
     """Look on the remote server if the record exists using arXiv id."""
     report_numbers = obj.get_data().get('report_number', {})
     if isinstance(report_numbers, dict):
-        arxiv_id = report_numbers.get('value')
+        arxiv_id = report_numbers.get('primary')
     else:
         arxiv_id = None
         for number in report_numbers:
             if number.get("source", "").lower() == "arxiv":
-                arxiv_id = number.get("value")
+                arxiv_id = number.get("primary")
                 break
     try:
         return match_record_arxiv_remote(arxiv_id)
