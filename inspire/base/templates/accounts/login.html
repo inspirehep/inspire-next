@@ -60,10 +60,7 @@ Please, sign in with one of the following services
 
       {% set next = request.script_root + request.path if request.endpoint != 'webaccount.logout' and request.endpoint != 'webaccount.login' else config.CFG_SITE_SECURE_URL %}
       <div class="row">
-        <div class="col-xs-12 col-centered">
-        <a href="{{url_for('oauthclient.login', remote_app='orcid', next=next)}}" class="btn btn-default btn-lg btn-block">
-        <img src="{{ url_for('static', filename='img/orcid.png') }}"></i> Sign in with ORCID</a>
-        </div>
+          <a href="{{url_for('oauthclient.login', remote_app='orcid', next=next)}}" tabindex="0" id="orcid_login" class="btn btn-lg btn-default btn-block" role="button" data-toggle="popover"><img src="{{ url_for('static', filename='img/orcid.png') }}"> Sign in with ORCID</a>
         {% if config.DEBUG or request.args.get('admin') %}
           <h3 align="center">&mdash; OR &mdash;</h3>
           {{ super() }}
@@ -75,3 +72,20 @@ Please, sign in with one of the following services
   </div>
   </div>
 {%- endblock -%}
+
+{% block javascript %}
+{{ super() }}
+<script type="text/javascript">
+require(["jquery", "bootstrap"], function($) {
+  (function($) {
+    $('#orcid_login').popover({
+      title: '<strong>{{ _('ORCID') }}</strong>',
+      content: '{{ _('ORCID provides persistent digital identifiers for researchers. It supports automated linkages between you and your publications. <br> If you do not have an ORCID account, you can create it during the sign in process.') }}',
+      trigger: 'hover',
+      html: true,
+      container: 'body',
+    });
+  })(jQuery);
+});
+</script>
+{% endblock %}

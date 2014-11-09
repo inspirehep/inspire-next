@@ -27,7 +27,35 @@
 ## {% include 'header.html' %}
 #}
 
+<section>
+    <nav id="topnav" class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-ex1-collapse"> <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button> <a class="navbar-brand" href="#"><img src="{{ url_for('static', filename='img/inspire_logo_hep.png') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}"></a>
+        </div>
 
+        <div class="navbar-collapse navbar-ex1-collapse collapse" style="height: 1px;">
+          <ul class="nav navbar-nav">
+            <li class="active">
+              <a href="index.html">Home</a>
+            </li>
+            <li>
+              <a class="" href="#">Submit</a>
+            </li>
+            <li>
+              <a class="" href="#">Help</a>
+            </li>
+
+          </ul>
+          <div class="nav navbar-nav navbar-right">
+             <a class="btn btn-success navbar-btn">Sign in</a>
+          </div>
+        </div>
+
+      </div>
+    </nav>
+  </section>
+{#
 <div class="navbar navbar-default">
   <div class="container">
     <div class="navbar-header">
@@ -42,7 +70,7 @@
         {# 64px is the default bootsrap navbar height
         see this as reference:
         http://stackoverflow.com/questions/18474564/bootstrap-3-navbar-with-logo #}
-      </a>
+      {#</a>
     </div>
 
     <div class="collapse navbar-collapse">
@@ -79,7 +107,7 @@
       </ul>
     </div>
   </div>
-</div>
+</div>#}
 {%- if current_user.is_guest %}
 <div class="modal fade" id="sign-in-modal" tabindex="-1" role="dialog" aria-labelledby="sign-in-label" aria-hidden="true">
   <div class="modal-dialog modal-sm">

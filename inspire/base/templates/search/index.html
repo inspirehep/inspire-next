@@ -28,10 +28,110 @@
   {% bundles "index.js" %}
 {%- endblock %}
 
-{%- block extra_style %}{% endblock extra_style -%}
+{%- block extra_style %}
+<style>
+body{
+    padding-top:50px;
+}
+
+.jumbotron{
+    margin:0px;
+}
+
+.jumbotron h1{
+    font-size:36px;
+    }
+.jumbotron h2{
+    font-size:24px;
+}
+.jumbotron .btn{
+    margin:30px 0px;
+}
+    .jumbotron, .container .jumbotron{
+        padding-top:20px;
+        color:#fff;
+        background:#34495e;
+        border-radius:0px;
+    }
+ .navbar-inverse{
+     /*background-color: #34495e;*/
+     background-color: #fff;
+     border-bottom:1px solid rgba(0,0,0, .3);
+     margin-bottom:0px;
+ }
+ .navbar-brand img {
+    height: 64px;
+    opacity: 1;
+ }
+/* .btn.btn-primary {
+background-color: #1abc9c;
+border:none;
+}
+.btn.btn-primary:hover, .btn.btn-primary:focus, .btn-group:focus .btn.btn-primary.dropdown-toggle {
+background-color: #48c9b0;
+}*/
+section.footer-section{
+    background:#236c9c;
+    color:#fff;
+}
+
+section.content-box{
+
+}
+section.content-box .container{
+    padding-top:30px;
+    padding-bottom:30px;
+    -webkit-box-shadow: 0px 0px 19px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow:    0px 0px 19px rgba(50, 50, 50, 0.75);
+    box-shadow:         0px 0px 19px rgba(50, 50, 50, 0.75);
+    margin-top:-40px;
+    z-index:1020;
+    background:#fff;
+    -moz-border-radius-topleft: 5px;
+    -webkit-border-top-left-radius: 5px;
+     border-top-left-radius: 5px;
+    -moz-border-radius-topright: 5px;
+    -webkit-border-top-right-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+section.custom-footer{
+    background:#333;
+    padding-top:40px;
+    padding-bottom:40px;
+    color:#f6f6f6;
+}
+section.custom-footer a,
+section.custom-footer address{
+    color:#f8f8f8;
+}
+.thumbnail{
+  margin-bottom:30px;
+}
+
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+
+    }
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+
+    }
+
+/* Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+/*    .container{
+        max-width:1000px;
+    }*/
+    }
+</style>
+
+{% endblock extra_style -%}
 
 {% block index %}
-<div class="row col-lg-12">
+{#<div class="row col-lg-12">
   <div class="panel panel-default" style="margin-top: 20%;">
     <div class="panel-heading">
       <h3 class="panel-title">What is INSPIRE labs?</h3>
@@ -42,5 +142,54 @@
       INSPIRE. Please, feel free to use the feedback if you have any suggestion!
     </div>
   </div>
+</div>#}
+
+<div class="wrap">
+
+  <section>
+    <div class="jumbotron">
+      <div class="container">
+        <div class="row">
+          <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+            <h1>
+              WELCOME TO INSPIRE!
+            </h1>
+            <h2>
+              High-Energy Physics Literature Database
+            </h2>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="content-box">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div class="page-header text-center">
+            <h2>
+              Try our new deposition forms!
+            </h2>
+            <a class="btn btn-primary btn-lg" href="#">SUBMIT NOW!</a>
+ <!--            <h3>
+              On INSPIRE labs we deploy all our new features, so you can take advantage of them
+              since the beginning.
+            </h3> -->
+            <h4>
+              All the submissions received here are transferred automatically to
+              INSPIRE.
+            </h4>
+            <h4>
+              Please, feel free to use the feedback if you have any suggestion!
+            </h4>
+          </div>
+        </div>
+      </div>
+  </div>
+</section>
+
 </div>
+
+
 {% endblock index %}

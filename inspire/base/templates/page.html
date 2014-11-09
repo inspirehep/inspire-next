@@ -44,17 +44,6 @@
   {%- endblock %}
 {%- endblock %}
 
-{% block body %}
-  {{ super() }}
-  {% if searchbar_enable %}
-  {{ search_form(collection, easy_search_form) }}
-  {% endif %}
-
-  {% block inner_content %}
-  <!-- Here goes the content visible below the search bar -->
-  {% endblock inner_content %}
-{% endblock %}
-
 {% block javascript %}
   {{ super() }}
   {% if searchbar_enable %}
@@ -76,6 +65,41 @@
   <noscript><p><img src="//cds-piwik.cern.ch/piwik.php?idsite=11" style="border:0;" alt="" /></p></noscript>
   <!-- End Piwik Code -->
 {% endblock %}
+
+{%- block page_header -%}
+      <!-- replaced page header -->
+      {% block headerbox %}
+        {% include 'header.html' %}
+      {% endblock headerbox %}
+      <!-- end replaced page header -->
+      {% block breadcrumb %}
+      {%- include 'breadcrumbs.html' -%}
+      {% endblock breadcrumb %}
+      {% block pageheaderadd %}{{ pageheaderadd|safe }}{% endblock pageheaderadd %}
+{%- endblock page_header -%}
+
+{%- if not no_pagebody -%}
+{%- block page_body -%}
+      {% block title %}
+        {% if title %}
+          <div class="page-header">
+            <h1>{{ title }}</h1>
+          </div>
+        {% endif %}
+      {% endblock title %}
+      {{ flashed_messages() }}
+      {% block body %}
+        {{ super() }}
+        {% if searchbar_enable %}
+        {{ search_form(collection, easy_search_form) }}
+        {% endif %}
+
+        {% block inner_content %}
+        <!-- Here goes the content visible below the search bar -->
+        {% endblock inner_content %}
+      {% endblock body %}
+{%- endblock page_body %}
+{%- endif %}
 
 {%- block page_footer %}
   {%- include 'footer.html' -%}
