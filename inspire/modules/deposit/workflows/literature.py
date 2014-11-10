@@ -187,8 +187,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                      'degree_type': "type",
                      'thesis_date': "date",
                      'journal_title': "journal_title",
-                     'page_range': "page_artid",
-                     'article_id': "page_artid",
+                     'page_range_article_id': "page_artid",
                      'volume': "journal_volume",
                      'year': "year",
                      'issue': "journal_issue",
@@ -274,6 +273,14 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             metadata['title']['source'] = metadata['title_source']
             delete_keys.append('title_source')
 
+        # =============
+        # Report number
+        # =============
+        user_report_number = None
+        if 'report_number' in metadata and metadata['report_number']:
+            user_report_number = metadata['report_number']
+            del metadata['report_number']
+
         # ========
         # arXiv ID
         # ========
@@ -298,6 +305,13 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 metadata['system_number_external'] = {'value': 'oai:arXiv.org:' + metadata['arxiv_id'],
                                                       'institute': 'arXiv'}
                 metadata['collections'].extend([{'primary': "arXiv"}, {'primary': "Citeable"}])
+
+        if user_report_number:
+            if 'report_number' in metadata and metadata['report_number']:
+                metadata['report_number'] = [metadata['report_number'],
+                                             {'primary': user_report_number}]
+            else:
+                metadata['report_number'] = {'primary': user_report_number}
 
         # ========
         # Language
@@ -377,8 +391,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ================
 
         publication_fields = filter(lambda field: field in metadata, ['journal_title',
-                                                                      'page_range',
-                                                                      'article_id',
+                                                                      'page_range_article_id',
                                                                       'volume',
                                                                       'year',
                                                                       'issue',
@@ -389,8 +402,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             for field in publication_fields:
                 metadata['publication_info'][field_map[field]] = metadata[field]
 
-            if 'page_nr' not in metadata and 'page_range' in publication_fields:
-                pages = metadata['page_range'].split('-')
+            if 'page_nr' not in metadata and 'page_range_article_id' in publication_fields:
+                pages = metadata['page_range_article_id'].split('-')
                 if len(pages) == 2:
                     try:
                         metadata['page_nr'] = int(pages[1])-int(pages[0])

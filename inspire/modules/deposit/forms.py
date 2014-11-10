@@ -298,7 +298,8 @@ class LiteratureForm(WebDepositForm):
         label=_('Subject'),
         widget_classes="form-control",
         export_key='subject_term',
-        filters=[clean_empty_list]
+        filters=[clean_empty_list],
+        validators=[validators.Required()],
     )
 
     abstract = fields.TextAreaField(
@@ -355,6 +356,11 @@ class LiteratureForm(WebDepositForm):
         export_key='license_url',
         widget_classes="hidden",
         widget=HiddenInput(),
+    )
+
+    report_number = fields.TextField(
+        label=_('Report Number'),
+        widget_classes="form-control"
     )
 
     # ==============
@@ -414,14 +420,9 @@ class LiteratureForm(WebDepositForm):
                                              mapper=journal_title_kb_mapper)
     )
 
-    page_range = fields.TextField(
-        label=_('Page Range'),
+    page_range_article_id = fields.TextField(
+        label=_('Page Range/Article ID'),
         description=_('e.g. 1-100'),
-        widget_classes="form-control" + ARTICLE_CLASS
-    )
-
-    article_id = fields.TextField(
-        label=_('Article ID'),
         widget_classes="form-control" + ARTICLE_CLASS
     )
 
@@ -514,15 +515,17 @@ class LiteratureForm(WebDepositForm):
         ('Basic Information',
             ['title', 'title_arXiv', 'categories_arXiv', 'language',
              'title_translation', 'authors', 'collaboration', 'experiment',
-             'abstract', 'page_nr', 'subject', 'supervisors', 'defense_date',
-             'thesis_date', 'degree_type', 'university', 'license_url']),
+             'abstract', 'subject', 'page_nr', 'report_number']),
+        ('Thesis Information',
+            ['supervisors', 'defense_date', 'thesis_date', 'degree_type',
+             'university']),
         ('Licenses and copyright',
             ['license', 'license_url']),
         ('Conference Information',
             ['conf_name', 'conference_id']),
         ('Journal Information',
-            ['journal_title', 'volume', 'issue', 'page_range', 'article_id',
-             'year']),
+            ['journal_title', 'volume', 'issue', 'year',
+             'page_range_article_id']),
         ('Proceedings Information (not published in journal)',
             ['nonpublic_note', 'note']),
         ('Upload/link files',
@@ -533,6 +536,10 @@ class LiteratureForm(WebDepositForm):
         'file_field': 'col-md-12',
         'type_of_doc': 'col-xs-4',
         'wrap_nonpublic_note': 'col-md-9',
+        'page_nr': 'col-xs-3',
+        'report_number': 'col-xs-3',
+        'page_range_article_id': 'col-xs-2',
+        'year': 'col-xs-2',
         'degree_type': 'col-xs-3',
     }
 
