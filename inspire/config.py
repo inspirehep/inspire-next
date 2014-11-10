@@ -166,6 +166,7 @@ CFG_APACHE_LOGDIR = "/var/log/httpd"
 
 # a working mode when the server cooperates with inspirehep.net database
 PRODUCTION_MODE = False
+CFG_INSPIRE_SITE = 1
 
 langs = {}
 for lang in CFG_SITE_LANGS:
