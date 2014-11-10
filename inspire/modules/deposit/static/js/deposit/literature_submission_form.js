@@ -95,7 +95,6 @@ define(function(require, exports, module) {
       chapter: $('*[class~="chapter-related"]'),
       book: $('*[class~="book-related"]'),
       proceedings: $('*[class~="proceedings-related"]'),
-      translated_title: $("#state-group-title_translation"),
     };
 
     this.$doi_field = $("#doi");
@@ -105,7 +104,9 @@ define(function(require, exports, module) {
     this.$deposition_type = $("#type_of_doc");
     this.$deposition_type_panel = this.$deposition_type.parents('.panel-body');
     this.$language = $("#language");
+    this.$subject = $("#subject");
     this.$translated_title = $("#state-group-title_translation");
+    this.$subject_relevance = $("#state-group-subject_relevance");
     this.$importButton = $("#importData");
     this.$skipButton = $("#skipImportData");
     this.$submissionForm = $('#submitForm');
@@ -165,6 +166,7 @@ define(function(require, exports, module) {
 
       this.hideHiddenFields();
       this.handleTranslatedTitle();
+      this.handleSubjectRelevance();
       this.taskmanager = new TaskManager(this.$deposition_type);
       // flash messages on the Form
       this.messageBox = $('#flash-message').messageBox({
@@ -223,6 +225,10 @@ define(function(require, exports, module) {
 
       this.$language.change(function(event) {
         that.handleTranslatedTitle();
+      });
+
+      this.$subject.change(function(event) {
+        that.handleSubjectRelevance();
       });
 
       this.$importButton.click(function(event) {
@@ -601,6 +607,23 @@ define(function(require, exports, module) {
         this.$translated_title.slideDown();
       } else {
         this.$translated_title.slideUp();
+      }
+    },
+
+    /**
+     * Hide or show relevance to subject box depending on selected subject
+     */
+    handleSubjectRelevance: function handleSubjectRelevance() {
+      var subjects = this.$subject.val();
+      if (subjects === null) subjects = [];
+      var HEP_subjects = $.grep(subjects, function(element) {
+        return element.indexOf("HEP") > -1
+      });
+      if (typeof HEP_subjects === "undefined" || HEP_subjects.length === 0) {
+        this.$subject_relevance.slideDown();
+      }
+      else {
+        this.$subject_relevance.slideUp();
       }
     },
 

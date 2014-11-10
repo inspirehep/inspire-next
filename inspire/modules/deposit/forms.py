@@ -301,6 +301,12 @@ class LiteratureForm(WebDepositForm):
         filters=[clean_empty_list]
     )
 
+    subject_relevance = fields.TextAreaField(
+        label=_('Relevance to HEP'),
+        description=_("No CORE subject selected. Briefly describe why this submission is relevant to HEP"),
+        widget_classes="form-control",
+    )
+
     abstract = fields.TextAreaField(
         label=_('Abstract'),
         default='',
@@ -452,6 +458,16 @@ class LiteratureForm(WebDepositForm):
         widget=HiddenInput(),
     )
 
+    # ============
+    # References
+    # ============
+
+    references = fields.TextAreaField(
+        label=_('References'),
+        description='Copy the references from the original PDF',
+        widget_classes="form-control"
+    )
+
     # ====================
     # Preprint Information
     # ====================
@@ -485,6 +501,16 @@ class LiteratureForm(WebDepositForm):
         widget_classes='',
     )
 
+    # ====================
+    # Extra comments
+    # ====================
+
+    extra_comments = fields.TextAreaField(
+        label=_('Comments'),
+        description='Any extra comments related to your submission',
+        widget_classes="form-control"
+    )
+
     # ok_to_upload = fields.BooleanField(
     #     label=_('I ensure the file is free to be uploaded.'),
     #     default=False,
@@ -514,8 +540,9 @@ class LiteratureForm(WebDepositForm):
         ('Basic Information',
             ['title', 'title_arXiv', 'categories_arXiv', 'language',
              'title_translation', 'authors', 'collaboration', 'experiment',
-             'abstract', 'page_nr', 'subject', 'supervisors', 'defense_date',
-             'thesis_date', 'degree_type', 'university', 'license_url']),
+             'abstract', 'page_nr', 'subject', 'subject_relevance',
+             'supervisors', 'defense_date', 'thesis_date', 'degree_type',
+             'university', 'license_url']),
         ('Licenses and copyright',
             ['license', 'license_url']),
         ('Conference Information',
@@ -525,8 +552,12 @@ class LiteratureForm(WebDepositForm):
              'year']),
         ('Proceedings Information (not published in journal)',
             ['nonpublic_note', 'note']),
+        ('References',
+            ['references']),
         ('Upload/link files',
             ['file_field', 'url']),
+        ('Add some extra comments',
+            ['extra_comments']),
     ]
 
     field_sizes = {

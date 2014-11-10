@@ -29,7 +29,7 @@ from invenio.modules.deposit.tasks import render_form, \
     prefill_draft, \
     process_sip_metadata
 
-from ..tasks import arxiv_fft_get
+from ..tasks import arxiv_fft_get, add_submission_extra_data
 
 from inspire.modules.deposit.forms import LiteratureForm
 from invenio.modules.deposit.models import Deposition
@@ -80,6 +80,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Create the submission information package by merging form data
         # from all drafts (in this case only one draft exists).
         prepare_sip(),
+        add_submission_extra_data,
         # Process metadata to match your JSONAlchemy record model. This will
         # call process_sip_metadata() on your subclass.
         process_sip_metadata(),

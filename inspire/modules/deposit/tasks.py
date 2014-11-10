@@ -82,3 +82,22 @@ def arxiv_fft_get(obj, eng):
                     deposition.add_file(df)
 
     deposition.save()
+
+
+def add_submission_extra_data(obj, eng):
+    """ Add extra data to workflow object. """
+    deposition = Deposition(obj)
+    sip = deposition.get_latest_sip(sealed=False)
+    metadata = sip.metadata
+    submission_data = {}
+    if "references" in metadata:
+        submission_data["references"] = metadata["references"]
+        del metadata["references"]
+    if "extra_comments" in metadata:
+        submission_data["extra_comments"] = metadata["extra_comments"]
+        del metadata["extra_comments"]
+    if "subject_relevance" in metadata:
+        submission_data["subject_relevance"] = metadata["subject_relevance"]
+        del metadata["subject_relevance"]
+    obj.extra_data["submission_data"] = submission_data
+    deposition.save()
