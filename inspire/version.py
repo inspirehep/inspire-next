@@ -31,7 +31,7 @@ See the doctest below.
 (This is taken from Invenio repository)
 """
 
-version = (2, 0, 1, 'dev')
+version = (2, 0, 1, 'dev', 20141107094016)
 
 
 def build_version(*args):
