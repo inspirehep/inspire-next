@@ -298,7 +298,8 @@ class LiteratureForm(WebDepositForm):
         label=_('Subject'),
         widget_classes="form-control",
         export_key='subject_term',
-        filters=[clean_empty_list]
+        filters=[clean_empty_list],
+        validators=[validators.Required()],
     )
 
     abstract = fields.TextAreaField(
