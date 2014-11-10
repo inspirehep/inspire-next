@@ -161,6 +161,9 @@ CFG_SITE_LANGS = ['en', ]
 # to work
 CFG_SITE_NAME = u"HEP"
 
+# Logs
+CFG_APACHE_LOGDIR = "/var/log/httpd"
+
 # a working mode when the server cooperates with inspirehep.net database
 PRODUCTION_MODE = False
 
