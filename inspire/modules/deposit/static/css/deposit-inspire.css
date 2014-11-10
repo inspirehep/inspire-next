@@ -36,6 +36,14 @@
     height: 120px;
 }
 
+#references {
+    height: 250px;
+}
+
+#extra_comments {
+    height: 120px;
+}
+
 #webdeposit_form_accordion textarea {
     resize: vertical;
 }
