@@ -100,9 +100,6 @@ def install():
                 sudo("pip install git+git://github.com/mrjoes/flask-admin.git#egg=Flask-Admin-1.0.9.dev0")
                 success = sudo("python setup.py install")
                 if success:
-                    path_to_invenio = sudo("python -c 'import invenio; print invenio.__path__[0]'")
-                    if path_to_invenio:
-                        sudo("pybabel compile -d {0}/base/translations".format(path_to_invenio.strip()))
                     # INSPIRE specific configuration
                     with cd(env.conf_directory):
                         config_location = "/tmp/inspire-configuration"
