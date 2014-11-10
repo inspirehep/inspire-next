@@ -98,3 +98,8 @@
     max-height: 300px;
     overflow-y: auto;
 }
+
+.checkbox-ok-upload {
+    margin-right: 5px!important;
+    vertical-align: top;
+}
