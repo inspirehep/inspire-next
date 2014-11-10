@@ -22,8 +22,8 @@ env.roledefs = {
 def prod():
     """Activate configuration for INSPIRE PROD server."""
     env.roles = ['prod']
-    env.site_url = "http://inspirevmlabs01.cern.ch"
-    env.site_secure_url = "https://inspirevmlabs01.cern.ch"
+    env.site_url = "http://inspirelabsvm01.cern.ch"
+    env.site_secure_url = "https://inspirelabsvm01.cern.ch"
     env.conf_branch = "prod"
 
 
@@ -123,6 +123,11 @@ def install():
                         sudo("inveniomanage apache create-config")
                         sudo("rm /opt/invenio")
                         sudo("ln -s {0} /opt/invenio".format(venv))
+
+        with cd("{0}/var".format(venv)):
+            sudo("mkdir -p log/bibsched")
+            sudo("chown -R invenio.invenio log/bibsched")
+
     if success:
         sudo("supervisorctl restart celeryd")
     return success

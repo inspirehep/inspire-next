@@ -56,6 +56,7 @@ setup(
     platforms='any',
     install_requires=[
         "mixer",
+        "ipython",
         "Babel>=1.3",
         "Invenio",
     ],
