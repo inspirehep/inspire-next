@@ -27,122 +27,60 @@
 ## {% include 'header.html' %}
 #}
 
-<section>
-    <nav id="topnav" class="navbar navbar-fixed-top navbar-inverse" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-ex1-collapse"> <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button> <a class="navbar-brand" href="#"><img src="{{ url_for('static', filename='img/inspire_logo_hep.png') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}"></a>
-        </div>
-
-        <div class="navbar-collapse navbar-ex1-collapse collapse" style="height: 1px;">
-          <ul class="nav navbar-nav">
-            <li class="active">
-              <a href="index.html">Home</a>
-            </li>
-            <li>
-              <a class="" href="#">Submit</a>
-            </li>
-            <li>
-              <a class="" href="#">Help</a>
-            </li>
-
-          </ul>
-          <div class="nav navbar-nav navbar-right">
-             <a class="btn btn-success navbar-btn">Sign in</a>
-          </div>
-        </div>
-
-      </div>
-    </nav>
-  </section>
 {#
-<div class="navbar navbar-default">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a href="{{ url_for('search.index') }}">
-        <img src="{{ url_for('static', filename='img/inspire_logo_hep.png') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}" height="64px">
-        {# 64px is the default bootsrap navbar height
-        see this as reference:
-        http://stackoverflow.com/questions/18474564/bootstrap-3-navbar-with-logo #}
-      {#</a>
-    </div>
+## structure: (href, blueprint, caption)
+#}
+{% set navigation_bar = [
+  ('search.index', 'search', 'Home'),
+  ('webdeposit.index', 'webdeposit', 'Submit'),
+  ('documentation.index', 'documentation', 'Help'),
+] -%}
 
-    <div class="collapse navbar-collapse">
-      <ul class="nav navbar-nav masthead-nav pull-right">
-        <li class="active">
-          <a href="{{ url_for('search.index') }}"> <i class="fa fa-home"></i>
-            Home
-          </a>
-        </li>
-        <li>
-          <a href="{{ url_for('webdeposit.index') }}"> <i class="fa fa-upload"></i>
-            Submit
-          </a>
-        </li>
-        <li>
-          <a href="/help/search-guide">
-            <i class="fa fa-question-circle"></i>
-            Help
-          </a>
-        </li>
-        <li>
+<section>
+  <nav id="topnav" class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <span class="sr-only">{{ _("Toggle navigation") }}</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{{ url_for('search.index') }}">
+          <img src="{{ url_for('static', filename='img/inspire_logo_hep.png') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}">
+        </a>
+      </div>
+
+      <div class="navbar-collapse navbar-ex1-collapse collapse" style="height: 1px;">
+        <ul class="nav navbar-nav">
+          {% for href, blueprint, caption in navigation_bar %}
+          <li {% if request.blueprint == blueprint|e %} class="active" {% endif %}>
+            <a href="{{ url_for( href|e ) }}">{{- _(caption|e) -}}</a>
+          </li>
+          {% endfor %}
+        </ul>
+
+        <div class="nav navbar-nav navbar-right">
           {%- if current_user.is_guest %}
-          <a href="#" data-toggle="modal"  data-target="#sign-in-modal" role="button">
-            <i class="fa fa-sign-in"></i>
-            Sign In
-          </a>
+          <a class="btn btn-success navbar-btn" href="{{ url_for('webaccount.login')}}">{{- _("Sign in") -}}</a>
           {%- else %}
-            <a href="#">
-              <i class="fa fa-user"></i>
-              {{ current_user.email }}
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="glyphicon glyphicon-user"></i> {{ current_user.nickname|default(current_user.email) }}
+              <span class="caret"></span>
             </a>
+            <ul class="dropdown-menu" role="menu">
+              <li>
+                <a role="menuitem" tabindex="-1" href="{{ url_for('webaccount.logout') }}">
+                  <i class="glyphicon glyphicon-log-out"></i> {{ _('Logout') }}
+                </a>
+              </li>
+            </ul>
+          </li>
           {%- endif %}
-        </li>
-      </ul>
+        </div>
+      </div>
+
     </div>
-  </div>
-</div>#}
-{%- if current_user.is_guest %}
-<div class="modal fade" id="sign-in-modal" tabindex="-1" role="dialog" aria-labelledby="sign-in-label" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3 class="modal-title" id="sign-in-label">Sign In</h3>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-        <p>You can log in using the services below</p><br/>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <a href="{{url_for('oauthclient.login', remote_app='orcid')}}" class="btn btn-default btn-lg btn-block">
-              <div class="img-orcid"></div>
-              Sign in with your ORCID
-            </a>
-          </div>
-        </div>
-      </div>
-    <!--   <div class="modal-body">
-        <h4>&mdash; OR &mdash;</h4>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-12">
-            <a href="#" class="btn btn-default btn-lg btn-block">
-              <div class="img-arxiv"></div>
-              Sign in with your arXiv
-            </a>
-          </div>
-        </div>
-      </div> -->
-    </div>
-  </div>
-</div>
-{%- endif -%}
+  </nav>
+</section>
