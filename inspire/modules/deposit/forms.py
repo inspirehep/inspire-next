@@ -32,7 +32,8 @@ from invenio.modules.deposit.field_widgets import plupload_widget, \
     ExtendedListWidget, \
     ItemWidget
 from invenio.modules.deposit.autocomplete_utils import kb_dynamic_autocomplete
-from invenio.modules.deposit.validation_utils import DOISyntaxValidator
+from invenio.modules.deposit.validation_utils import DOISyntaxValidator, \
+    required_if
 
 from .fields import ArXivField
 # from .fields import ISBNField
@@ -123,6 +124,27 @@ def defensedate_widget(field, **kwargs):
                                          name=field_id,
                                          value=field.data or ''))]
     return HTMLString(u''.join(html))
+
+
+class CheckboxButton(object):
+
+    """Checkbox button."""
+
+    def __init__(self, l=""):
+        """Initialize widget with custom template."""
+        self.l = l
+
+    def __call__(self, field, **kwargs):
+        """Render PLUpload widget."""
+        html = '<div id="field-{0}">' \
+               '<label for="{0}">' \
+               '<input class="checkbox-ok-upload" name="{0}" type="checkbox" value="{2}">' \
+               '<strong>{1}</strong>' \
+               '</label>' \
+               '</div>'.format(field.id,
+                               self.l,
+                               field.default)
+        return HTMLString(html)
 
 
 def institutions_kb_mapper(val):
@@ -511,19 +533,20 @@ class LiteratureForm(WebDepositForm):
         widget_classes="form-control"
     )
 
-    # ok_to_upload = fields.BooleanField(
-    #     label=_('I ensure the file is free to be uploaded.'),
-    #     default=False,
-    #     validators=[required_if('file_field',
-    #                             [lambda x: bool(x.strip()), ],  # non-empty
-    #                             message="It's required to check this box."
-    #                             ),
-    #                 required_if('url',
-    #                             [lambda x: bool(x.strip()), ],  # non-empty
-    #                             message="It's required to check this box."
-    #                             ),
-    #                 ]
-    #     )
+    ok_to_upload = fields.BooleanField(
+        label="",
+        default=False,
+        widget=CheckboxButton(l=_('I ensure any file is free to be uploaded.')),
+        validators=[required_if('file_field',
+                                [lambda x: bool(len(x)), ],  # non-empty
+                                message="It's required to check this box."
+                                ),
+                    required_if('url',
+                                [lambda x: bool(len(x)), ],  # non-empty
+                                message="It's required to check this box."
+                                ),
+                    ]
+        )
 
     #
     # Form Configuration
@@ -557,13 +580,14 @@ class LiteratureForm(WebDepositForm):
         ('References',
             ['references']),
         ('Upload/link files',
-            ['file_field', 'url']),
+            ['file_field', 'url', 'ok_to_upload']),
         ('Add some extra comments',
             ['extra_comments']),
     ]
 
     field_sizes = {
         'file_field': 'col-md-12',
+        'ok_to_upload': 'col-md-9 col-md-offset-3',
         'type_of_doc': 'col-xs-4',
         'wrap_nonpublic_note': 'col-md-9',
         'page_nr': 'col-xs-3',
