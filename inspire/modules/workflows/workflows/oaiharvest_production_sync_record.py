@@ -29,7 +29,7 @@ from ..tasks.upload import upload_step_marcxml
 
 class oaiharvest_production_sync_record(RecordWorkflow):
 
-    """Workflow run for each record OAI harvested."""
+    """Workflow run for each file containing OAI records harvested."""
 
     object_type = "OAI harvest"
 
@@ -37,3 +37,22 @@ class oaiharvest_production_sync_record(RecordWorkflow):
         convert_record_with_repository("oaimarc2marcxml.xsl"),
         upload_step_marcxml,
     ]
+
+    @staticmethod
+    def get_title(bwo):
+        """Get the title."""
+        data = bwo.get_data()
+        count = 0
+        if data and hasattr(data, "count"):
+            count = data.count("<record>")
+
+        repository = bwo.get_extra_data().get("repository")
+        name = "Unknown"
+        if repository:
+            name = repository.get("name", "")
+        return "{0} harvested records from {1}".format(count, name)
+
+    @staticmethod
+    def get_description(bwo):
+        """Get the title."""
+        return "Bundle of harvested records in MARCXML."

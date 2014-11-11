@@ -56,6 +56,8 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 from invenio.legacy.bibsched.bibtask import task_update_progress, write_message
 from invenio.modules.workflows.definitions import WorkflowBase
 
+from inspire.modules.oaiharvester.tasks.filtering import get_content_from_files
+
 
 class oaiharvest_production_sync(WorkflowBase):
 
@@ -71,45 +73,38 @@ class oaiharvest_production_sync(WorkflowBase):
             write_something_generic("Harvesting", [task_update_progress, write_message]),
             harvest_records,
             write_something_generic("Reading Files", [task_update_progress, write_message]),
-            foreach(get_obj_extra_data_key("harvested_files_list")),
+            foreach(get_content_from_files("harvested_files_list")),
             [
                 write_something_generic("Creating Workflows", [task_update_progress, write_message]),
-                foreach(get_records_from_file()),
+                workflow_if(num_workflow_running_greater(10), neg=True),
                 [
-                    workflow_if(filtering_oai_pmh_identifier),
-                    [
-                        workflow_if(num_workflow_running_greater(10), neg=True),
-                        [
-                            start_async_workflow("oaiharvest_production_sync_record",
-                                                 preserve_data=True,
-                                                 preserve_extra_data_keys=["repository"]),
+                    start_async_workflow("oaiharvest_production_sync_record",
+                                         preserve_data=True,
+                                         preserve_extra_data_keys=["repository"]),
 
-                            write_something_generic(
-                                ["Workflow started: ",
-                                 get_nb_workflow_created],
-                                [task_update_progress,
-                                 write_message]),
-                        ],
-                        workflow_else,
-                        [
-                            write_something_generic(
-                                ["Max simultaneous workflows reached: ",
-                                 "Waiting for one to finish"],
-                                [task_update_progress,
-                                 write_message]),
-                            wait_for_a_workflow_to_complete(0.05),
-                            start_async_workflow("oaiharvest_production_sync_record",
-                                                 preserve_data=True,
-                                                 preserve_extra_data_keys=["repository"]),
-                            write_something_generic(["Workflow started :",
-                                                     get_nb_workflow_created,
-                                                     " "],
-                                                    [task_update_progress,
-                                                     write_message]),
-                        ],
-                    ],
+                    write_something_generic(
+                        ["Workflow started: ",
+                         get_nb_workflow_created],
+                        [task_update_progress,
+                         write_message]),
                 ],
-                end_for
+                workflow_else,
+                [
+                    write_something_generic(
+                        ["Max simultaneous workflows reached: ",
+                         "Waiting for one to finish"],
+                        [task_update_progress,
+                         write_message]),
+                    wait_for_a_workflow_to_complete(0.05),
+                    start_async_workflow("oaiharvest_production_sync_record",
+                                         preserve_data=True,
+                                         preserve_extra_data_keys=["repository"]),
+                    write_something_generic(["Workflow started :",
+                                             get_nb_workflow_created,
+                                             " "],
+                                            [task_update_progress,
+                                             write_message]),
+                ],
             ],
             end_for
         ],
