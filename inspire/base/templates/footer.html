@@ -27,25 +27,49 @@
 ## {% include 'footer.html' %}
 #}
 
-<footer id="footer">
-<hr>
-
-<div class="container">
-  <div class="row">
-    <div class="col-md-2">
-      <a href="#"><i class="fa fa-twitter fa-2x"></i></a>
-    </div>
-    <div class="col-md-10">
-      <ul class="site-footer-links pull-right">
-        <li>
-          <a href="#">Terms of Use</a>
-        </li>
-        <li>
-          <a href="#">Privacy Policy</a>
-        </li>
-      </ul>
+<section class="custom-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-6 col-sm-6 col-md-8 col-lg-8">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+            <ul class="list-unstyled">
+              <li>
+                <a class="footer" href="{{ url_for('search.index') }}">{{- _("Home") -}}</a>
+              </li>
+              <li>
+                <a class="footer" href="{{ url_for('webdeposit.index') }}">{{- _("Submit") -}}</a>
+              </li>
+              <li>
+                <a class="footer" href="{{ url_for('documentation.index') }}">{{- _("Help") -}}</a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+            <ul class="list-unstyled">
+              <li>
+                <a class="footer" href="#">{{- _("Terms of use") -}}</a>
+              </li>
+              <li>
+                <a class="footer" href="#">{{- _("Privacy policy") -}}</a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+            <ul class="list-unstyled">
+              <li>
+                <a class="footer" href="#">@inspirehep <i class="fa fa-twitter fa-2x" style="vertical-align: middle;"></i></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4 text-right">
+        <address>
+          <strong>{{ config["CFG_SITE_NAME_INTL"][g.ln] }}</strong>
+          <br />{{ _("Powered by") }} <a class="footer" href="http://invenio-software.org/">Invenio</a>
+        </address>
+      </div>
     </div>
   </div>
-</div>
-
-</footer>
+</section>
