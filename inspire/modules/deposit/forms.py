@@ -312,7 +312,7 @@ class LiteratureForm(WebDepositForm):
         placeholder=_("Start typing for suggestions"),
         label=_('Experiment'),
         widget_classes="form-control",
-        autocomplete=kb_dynamic_autocomplete("dynamic_experiments",
+        autocomplete=kb_dynamic_autocomplete("ExperimentsCollection",
                                              mapper=experiment_kb_mapper)
     )
 
