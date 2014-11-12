@@ -56,17 +56,16 @@ define(function(require, exports, module) {
         categories_arXiv: ['arxiv'],
         journal_title: ['doi', 'arxiv'],
         isbn: ['doi', 'arxiv'],
-        page_range: ['doi', 'arxiv'],
         volume: ['doi', 'arxiv'],
         year: ['doi', 'arxiv'],
         issue: ['doi', 'arxiv'],
         authors: ['doi', 'arxiv'],
         abstract: ['doi', 'arxiv'],
-        article_id: ['doi', 'arxiv'],
         license_url: ['arxiv'],
         preprint_created: ['arxiv'],
         note: ['arxiv'],
-        page_nr: ['doi', 'arxiv']
+        page_nr: ['doi', 'arxiv'],
+        page_range_article_id: ['doi', 'arxiv']
       };
 
       var result = {};
@@ -145,7 +144,7 @@ define(function(require, exports, module) {
       // focus on the first element of the form
       $('form:first *:input[type!=hidden]:first').focus();
 
-      this.fieldsGroup = $("#journal_title, #volume, #issue, #page_range, #article_id, #year")
+      this.fieldsGroup = $("#journal_title, #volume, #issue, #page_range_article_id, #year")
         .fieldsGroup({
           onEmpty: function enableProceedingsBox() {
             that.$nonpublic_note.removeAttr('disabled');
