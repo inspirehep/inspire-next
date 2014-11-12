@@ -33,6 +33,7 @@ def vm08():
     env.roles = ['dev01']
     env.site_url = "http://inspirelabstest.cern.ch"
     env.site_secure_url = "https://inspirelabstest.cern.ch"
+    env.conf_branch = "dev"
 
 
 @task
