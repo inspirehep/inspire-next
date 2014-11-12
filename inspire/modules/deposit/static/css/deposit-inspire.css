@@ -103,3 +103,7 @@
     margin-right: 5px!important;
     vertical-align: top;
 }
+
+.clearfix-padding {
+    padding: 5px;
+}

@@ -19,10 +19,21 @@
 
 {% extends "search/searchbar_frame.html" %}
 
+{%- block global_bundles %}
+    {{ super() }}
+    {% bundles "deposit.css" %}
+{%- endblock %}
+
 {% block inner_content %}
+<div class="pull-right">
+  <a class="btn btn-primary pull-right"
+      href="{{ url_for('webdeposit.create', deposition_type=deposition_type) }}">
+      <i class="glyphicon glyphicon-plus"></i> {{ _('New Submission') }}
+  </a>
+</div>
+<div class="clearfix clearfix-padding"></div>
 <div class="alert alert-success">
   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
   <strong>Thank you for your suggestion!<br></strong><br>Your submission has been completed.
-  <br><br>You can see your submission here XXX</div>
-<p>If you would like to make a new suggestion, please go to <a href="{{url_for('webdeposit.index')}}">{{url_for('webdeposit.index', _external=True)}}</a></p>
+</div>
 {% endblock inner_content %}
