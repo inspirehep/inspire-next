@@ -76,9 +76,10 @@ def upload_step_marcxml(obj, eng):
     from invenio.legacy.oaiharvest.dblayer import create_oaiharvest_log_str
     from invenio.legacy.bibsched.bibtask import task_low_level_submission
 
+    repository = obj.extra_data.get("repository", {})
     sequence_id = random.randrange(1, 60000)
 
-    arguments = obj.extra_data["repository"]["arguments"]
+    arguments = repository.get("arguments", {})
 
     default_args = []
     default_args.extend(['-I', str(sequence_id)])
@@ -86,7 +87,6 @@ def upload_step_marcxml(obj, eng):
         default_args.extend(['-N', arguments.get('u_name', "")])
     if arguments.get('u_priority', 5):
         default_args.extend(['-P', str(arguments.get('u_priority', 5))])
-    arguments = obj.extra_data["repository"]["arguments"]
 
     extract_path = os.path.join(
         cfg['CFG_TMPSHAREDDIR'],
@@ -96,7 +96,7 @@ def upload_step_marcxml(obj, eng):
         os.makedirs(extract_path)
 
     filepath = extract_path + os.sep + str(obj.id)
-    if "f" in obj.extra_data["repository"]["postprocess"]:
+    if "f" in repository.get("postprocess", []):
         # We have a filter.
         file_uploads = [
             ("{0}.insert.xml".format(filepath), ["-i"]),
@@ -119,18 +119,22 @@ def upload_step_marcxml(obj, eng):
                 task_id = task_low_level_submission("bibupload",
                                                     "oaiharvest",
                                                     *tuple(args))
-                create_oaiharvest_log_str(task_id,
-                                          obj.extra_data["repository"]["id"],
-                                          obj.get_data())
+                repo_id = repository.get("id")
+                if repo_id:
+                    create_oaiharvest_log_str(
+                        task_id,
+                        repo_id,
+                        obj.get_data()
+                    )
             except Exception as msg:
                 eng.log.error(
-                    "An exception during submitting oaiharvest task occured : %s " % (
+                    "An exception during submitting OAI harvester task occurred: %s " % (
                         str(msg)))
     if task_id is None:
         eng.log.error("an error occurred while uploading %s from %s" %
-                      (filepath, obj.extra_data["repository"]["name"]))
+                      (filepath, repository.get("name", "Unknown")))
     else:
         eng.log.info(
             "material harvested from source %s was successfully uploaded" %
-            (obj.extra_data["repository"]["name"],))
+            (repository.get("name", "Unknown"),))
     eng.log.info("end of upload")

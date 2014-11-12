@@ -36,7 +36,7 @@ def send_robotupload_oaiharvest(url=None):
 
         sequence_id = random.randrange(1, 60000)
 
-        arguments = obj.extra_data["repository"]["arguments"]
+        arguments = obj.extra_data.get("repository", {}).get("arguments", {})
 
         default_args = []
         default_args.extend(['-I', str(sequence_id)])
@@ -44,7 +44,6 @@ def send_robotupload_oaiharvest(url=None):
             default_args.extend(['-N', arguments.get('u_name', "")])
         if arguments.get('u_priority', 5):
             default_args.extend(['-P', str(arguments.get('u_priority', 5))])
-        arguments = obj.extra_data["repository"]["arguments"]
 
         extract_path = os.path.join(
             cfg['CFG_TMPSHAREDDIR'],
