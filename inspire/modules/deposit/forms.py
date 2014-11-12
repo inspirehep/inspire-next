@@ -139,7 +139,7 @@ class CheckboxButton(object):
         html = '<div id="field-{0}">' \
                '<label for="{0}">' \
                '<input class="checkbox-ok-upload" name="{0}" type="checkbox" value="{2}">' \
-               '<strong><em>{1}</em></strong>' \
+               '<strong><em>{1}</em></strong><small>&nbsp;(temporary text)</small>' \
                '</label>' \
                '</div>'.format(field.id,
                                self.msg,
@@ -536,10 +536,10 @@ class LiteratureForm(WebDepositForm):
     ok_to_upload = fields.BooleanField(
         label="",
         default=False,
-        widget=CheckboxButton(msg=_('I ensure all uploaded material can be made freely available.')),
+        widget=CheckboxButton(msg=_('I confirm I have read the <a href="#">License Agreement</a>')),
         validators=[required_if('file_field',
                                 [lambda x: bool(len(x)), ],  # non-empty
-                                message="Please, check this box to upload material."
+                                message=_("Please, check this box to upload material.")
                                 ),
                     ]
         )
