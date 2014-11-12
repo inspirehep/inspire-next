@@ -409,7 +409,7 @@ class LiteratureForm(WebDepositForm):
     )
 
     thesis_date = fields.Date(
-        label=_('Thesis date'),
+        label=_('Thesis Date'),
         description='Format: YYYY-MM-DD.',
         widget=defensedate_widget,
     )
@@ -421,7 +421,7 @@ class LiteratureForm(WebDepositForm):
     )
 
     degree_type = fields.SelectField(
-        label=_('Degree type'),
+        label=_('Degree Type'),
         widget_classes="form-control" + THESIS_CLASS,
     )
 
@@ -584,13 +584,15 @@ class LiteratureForm(WebDepositForm):
     field_sizes = {
         'file_field': 'col-md-12',
         'ok_to_upload': 'col-md-9 col-md-offset-3',
-        'type_of_doc': 'col-xs-4',
+        'type_of_doc': 'col-xs-12 col-md-3',
         'wrap_nonpublic_note': 'col-md-9',
-        'page_nr': 'col-xs-3',
-        'report_number': 'col-xs-3',
-        'page_range_article_id': 'col-xs-2',
-        'year': 'col-xs-2',
-        'degree_type': 'col-xs-3',
+        'page_nr': 'col-xs-12 col-md-3',
+        'report_number': 'col-xs-12 col-md-3',
+        'page_range_article_id': 'col-xs-12 col-md-3',
+        'year': 'col-xs-12 col-md-3',
+        'degree_type': 'col-xs-12 col-md-3',
+        'license': 'col-xs-12 col-md-3',
+
     }
 
     def __init__(self, *args, **kwargs):

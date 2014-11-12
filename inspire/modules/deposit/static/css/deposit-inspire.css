@@ -111,3 +111,28 @@
 .clearfix-padding {
     padding: 5px;
 }
+
+.alert-padding {
+    margin: 10px 10px 0px 10px;
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+/* Margin for the new submission button */
+
+.btn-new-submission {
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+
+    .btn-new-submission {
+        margin-top: 15px;
+        margin-bottom: 20px;
+    }
+
+}
