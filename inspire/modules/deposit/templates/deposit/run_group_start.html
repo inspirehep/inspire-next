@@ -20,7 +20,7 @@
 {# Adss mandatory indicator for required fields and wraps the rest of the form to hide it #}
 {% if idx == 2 %}
   <div class="hide-element" id="mandatory-indicator" style="color: red;">&#42; Mandatory</div><br>
-  <div class="form-wrapper hide-element">
+  <div class="form-wrapper {% if config["DEBUG"] != True %}hide-element{% endif %}">
 {% endif %}
 
 <div class="panel panel-default">
