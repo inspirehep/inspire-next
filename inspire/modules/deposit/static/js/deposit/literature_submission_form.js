@@ -573,8 +573,10 @@ define(function(require, exports, module) {
      * Returns ids of hidden elements
      */
     getHiddenFields: function getHiddenFields() {
-      // FIXME: it does not include fields different than ones of input type
-      return $.map($('input.hidden'), function(value, index) {
+      var $hidden_fields = $('*:input[type=hidden]')
+        .not('[id*="last_index"]'); // filters out the helper hidden inputs used for authors and supervisor fields
+
+      return $.map($hidden_fields, function(value, index) {
         return value.id;
       });
     },
