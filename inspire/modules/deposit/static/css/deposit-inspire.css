@@ -103,3 +103,34 @@
     margin-right: 5px!important;
     vertical-align: top;
 }
+
+.clearfix-padding {
+    padding: 5px;
+}
+
+.alert-padding {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+/* Margin for the new submission button */
+
+.btn-new-submission {
+      margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+
+  .btn-new-submission{
+      margin-top: 15px;
+      margin-bottom: 20px;
+  }
+
+}
