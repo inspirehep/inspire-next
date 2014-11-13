@@ -31,8 +31,6 @@ from invenio.modules.oaiharvester.tasks.harvesting import (
     get_repositories_list,
     init_harvesting,
     harvest_records,
-    get_records_from_file,
-    filtering_oai_pmh_identifier
 )
 
 from invenio.modules.workflows.tasks.workflows_tasks import (
@@ -56,8 +54,6 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 from invenio.legacy.bibsched.bibtask import task_update_progress, write_message
 from invenio.modules.workflows.definitions import WorkflowBase
 
-from inspire.modules.oaiharvester.tasks.filtering import get_content_from_files
-
 
 class oaiharvest_production_sync(WorkflowBase):
 
@@ -73,7 +69,7 @@ class oaiharvest_production_sync(WorkflowBase):
             write_something_generic("Harvesting", [task_update_progress, write_message]),
             harvest_records,
             write_something_generic("Reading Files", [task_update_progress, write_message]),
-            foreach(get_content_from_files("harvested_files_list")),
+            foreach(get_obj_extra_data_key("harvested_files_list")),
             [
                 write_something_generic("Creating Workflows", [task_update_progress, write_message]),
                 workflow_if(num_workflow_running_greater(10), neg=True),
@@ -157,4 +153,4 @@ class oaiharvest_production_sync(WorkflowBase):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Return formatted data of object."""
-        return ingestion_arxiv_math.get_description(bwo)
+        return oaiharvest_production_sync.get_description(bwo)

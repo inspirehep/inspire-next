@@ -24,6 +24,8 @@ from invenio.modules.oaiharvester.tasks.postprocess import (
     convert_record_with_repository,
 )
 
+from inspire.modules.oaiharvester.tasks.filtering import get_content_from_file
+
 from ..tasks.upload import upload_step_marcxml
 
 
@@ -34,6 +36,7 @@ class oaiharvest_production_sync_record(RecordWorkflow):
     object_type = "OAI harvest"
 
     workflow = [
+        get_content_from_file,
         convert_record_with_repository("oaimarc2marcxml.xsl"),
         upload_step_marcxml,
     ]

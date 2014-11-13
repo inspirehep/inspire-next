@@ -20,19 +20,38 @@
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
 
-from functools import wraps
+import os
+import traceback
 
 
-def get_content_from_files(name):
-    """Task returning a list of all contents from a list of paths."""
-    @wraps(get_content_from_files)
-    def _get_content_from_files(obj, eng):
-        list_of_filepaths = obj.extra_data[name]
-        content_list = []
-        for filepath in list_of_filepaths:
-            with open(filepath) as fd:
-                content_list.append(fd.read())
-        obj.log.info("Read {0} files".format(len(list_of_filepaths)))
-        return content_list
+def get_content_from_file(obj, eng):
+    """Replace object data with content from filepath in object data."""
+    from invenio.modules.workflows.errors import WorkflowError
 
-    return _get_content_from_files
+    filepath = obj.data
+    try:
+        assert filepath
+        is_found = os.path.exists(filepath)
+        assert is_found
+    except (AssertionError, TypeError):
+        err_msg = "Not a valid file found in {0}:\n{1}".format(
+            filepath,
+            traceback.format_exc()[:-1]
+        )
+        obj.log.error(err_msg)
+        payload = {"filepath": filepath}
+        raise WorkflowError(err_msg, eng.uuid, obj.id, payload)
+
+    obj.log.info("Found file at {0}".format(filepath))
+    content = ""
+    with open(filepath) as fd:
+        content = fd.read()
+
+    if not content:
+        err_msg = "No content found in {0}".format(filepath)
+        obj.log.error(err_msg)
+        payload = {"filepath": filepath}
+        raise WorkflowError(err_msg, eng.uuid, obj.id, payload)
+
+    obj.data = content
+    obj.log.info("Read {0} characters from {1}".format(len(content), filepath))
