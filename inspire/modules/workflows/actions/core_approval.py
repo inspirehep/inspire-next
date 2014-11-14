@@ -63,21 +63,19 @@ class core_approval(object):
 
         bwo.remove_action()
         extra_data = bwo.get_extra_data()
+        extra_data["approved"] = value in ('accept', 'accept_core')
+        extra_data["core"] = value == "accept_core"
+        extra_data["reason"] = request.form.get("text", "")
+        bwo.set_extra_data(extra_data)
+        bwo.save()
+        bwo.continue_workflow(delayed=True)
 
-        if value == 'accept':
-            extra_data["approved"] = True
-            bwo.set_extra_data(extra_data)
-            bwo.save()
-            bwo.continue_workflow(delayed=True)
+        if extra_data["approved"]:
             return {
                 "message": "Record has been accepted!",
                 "category": "success",
             }
-        elif value == 'reject':
-            extra_data["approved"] = False
-            bwo.set_extra_data(extra_data)
-            bwo.save()
-            bwo.continue_workflow(delayed=True)
+        else:
             return {
                 "message": "Record has been rejected (deleted)",
                 "category": "warning",

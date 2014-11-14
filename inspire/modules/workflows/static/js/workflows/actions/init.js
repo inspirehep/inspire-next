@@ -25,11 +25,13 @@
 define(
   [
     "js/workflows/actions/approval",
-    "js/workflows/actions/core_approval"
+    "js/workflows/actions/core_approval",
+    "js/workflows/actions/core_approval_modal"
   ],
   function(
     ApprovalAction,
-    CoreApprovalAction) {
+    CoreApprovalAction,
+    CoreApprovalModal) {
 
     function initialize(context) {
       ApprovalAction.attachTo(context.attach_action_to, {
@@ -40,6 +42,7 @@ define(
         action_url: context.action_url
       });
 
+      CoreApprovalModal.attachTo(context.attach_action_to);
       console.log("I ran this actions/init.")
     }
 

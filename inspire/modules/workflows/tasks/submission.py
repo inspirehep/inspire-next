@@ -128,7 +128,7 @@ def reply_ticket(template):
             "object": obj,
             "email": email,
             "title": d.title,
-            "reason": obj.extra_data.get("rejection_reason", ""),
+            "reason": obj.extra_data.get("reason", ""),
             "record_url": obj.extra_data.get("url", ""),
         }
 

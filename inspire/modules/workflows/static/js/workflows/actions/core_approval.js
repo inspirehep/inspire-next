@@ -23,10 +23,12 @@ define(
   [
     'jquery',
     'flight/component',
+    'hgn!js/workflows/templates/action_alert'
   ],
   function(
     $,
-    defineComponent) {
+    defineComponent,
+    tpl_action_alert) {
 
     return defineComponent(CoreApprovalAction);
 
@@ -48,7 +50,8 @@ define(
     function CoreApprovalAction() {
 
       this.attributes({
-        actionResolveSelector: ".core-approval-action-resolve",
+        actionAcceptSelector: ".core-approval-action-accept",
+        actionRejectSelector: ".core-approval-action-reject",
         actionGroupSelector: ".core-approval-action",
         action_url: ""
       });
@@ -62,7 +65,10 @@ define(
 
       this.post_request = function(data, element) {
         console.log(data.message);
-        console.log("This is CORE!");
+        $("#alert-message").append(tpl_action_alert({
+          category: data.category,
+          message: data.message
+        }));
         var parent = element.parents(this.attr.actionGroupSelector);
         if (typeof parent !== 'undefined') {
           parent.fadeOut();
@@ -70,7 +76,7 @@ define(
         //$(document).trigger("");
       };
 
-      this.onActionClick = function (ev, data) {
+      this.onAccept = function (ev, data) {
         var element = $(data.el);
         var payload = this.get_action_values(element);
         var $this = this;
@@ -85,11 +91,33 @@ define(
         });
       };
 
+      this.preRejection = function (ev, data) {
+        var element = $(data.el);
+        var payload = this.get_action_values(element);
+        this.trigger("loadRejectionModal", payload);
+      }
+
+      this.doRejection = function (ev, data) {
+        data["value"] = "reject";
+        var element = $("a.core-approval-action-reject[data-objectid=" + data.objectid + "]");
+        var $this = this;
+        jQuery.ajax({
+          type: "POST",
+          url: $this.attr.action_url,
+          data: data,
+          success: function(data) {
+            $this.post_request(data, element);
+          }
+        });
+      }
+
       this.after('initialize', function() {
         // Custom handlers
         this.on("click", {
-          actionResolveSelector: this.onActionClick
+          actionAcceptSelector: this.onAccept,
+          actionRejectSelector: this.preRejection
         });
+        this.on("rejectConfirmed", this.doRejection)
         console.log("Core approval init");
       });
     }

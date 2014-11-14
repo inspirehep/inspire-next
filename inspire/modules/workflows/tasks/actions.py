@@ -20,12 +20,36 @@
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
 
+from functools import wraps
+
 
 def was_approved(obj, eng):
     """Check if the record was approved."""
-    extra_data = obj.get_extra_data()
-    return extra_data.get("approved", False)
+    return obj.extra_data.get("approved", False)
 
 
-def reject_record(obj, eng):
-    obj.extra_data["approved"] = False
+def add_core(obj, eng):
+    """Check if the record was approved as CORE."""
+    from invenio.modules.deposit.models import Deposition
+    if obj.extra_data.get("core"):
+        d = Deposition(obj)
+        sip = d.get_latest_sip(d.submitted)
+        collections = sip.metadata.get("collections", [])
+        # Do not add it again if already there
+        has_core = [v for c in collections
+                    for v in c.values()
+                    if v.lower() == "core"]
+        if not has_core:
+            collections.append({"primary": "CORE"})
+            sip.metadata["collections"] = collections
+            d.update()
+
+
+def reject_record(message):
+    """Reject record with message."""
+    @wraps(reject_record)
+    def _reject_record(obj, eng):
+        obj.extra_data["approved"] = False
+        obj.extra_data["reason"] = message
+        obj.log.info(message)
+    return _reject_record

@@ -18,24 +18,46 @@
 #}
 
 {% block approval_action %}
-<div class="approval-action">
-  <p><a class="btn btn-success core-approval-action-resolve"
+<div class="core-approval-action">
+  <p>{{message}}</p>
+  <p><a class="btn btn-primary core-approval-action-accept"
         role="button"
         data-objectid="{{object.id}}"
-        data-value="accept"
-        data-url="{{resolve_url}}">{{_("Accept")}}</a></p>
+        data-value="accept">{{_("Accept")}}</a></p>
 
-  <p><a class="btn btn-success btn-lg core-approval-action-resolve"
+  <p><a class="btn btn-success core-approval-action-accept"
         role="button"
         data-objectid="{{object.id}}"
-        data-value="accept_core"
-        data-url="{{resolve_url}}">{{_("Accept as CORE")}}</a></p>
+        data-value="accept_core">{{_("Accept (CORE)")}}</a></p>
 
-  <p><a href="#"
-        class="core-approval-action-resolve"
-        data-url="{{resolve_url}}"
+  <p><a class="btn btn-danger core-approval-action-reject"
         data-objectid="{{object.id}}"
         data-value="reject"
         role="button">{{_("Reject")}}</a></p>
+
 </div>
+
+<div class="modal fade" id="rejection-modal-{{object.id}}" tabindex="-1" role="dialog" aria-labelledby="rejectionModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{_("Cancel")}}</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">{{_("Reason for rejection")}}</h4>
+      </div>
+      <div class="modal-body">
+        <form role="form">
+          <div class="form-group">
+            <label for="message-text" class="control-label">Explain why this was rejected (is sent directly to user):</label>
+            <textarea class="form-control" id="message-text-{{object.id}}"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{_("Close")}}</button>
+        <button type="button" class="btn btn-primary reject-action" data-objectid="{{object.id}}">{{_("Reject")}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

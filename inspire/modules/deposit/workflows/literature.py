@@ -40,7 +40,6 @@ from invenio.modules.workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else,
 )
-from invenio.modules.workflows.tasks.workflows_tasks import log_info
 from invenio.modules.workflows.definitions import WorkflowBase
 
 from inspire.modules.workflows.tasks.matching import(
@@ -56,7 +55,8 @@ from inspire.modules.workflows.tasks.submission import (
 )
 from inspire.modules.workflows.tasks.actions import (
     was_approved,
-    reject_record
+    reject_record,
+    add_core
 )
 from inspire.modules.deposit.forms import LiteratureForm
 
@@ -99,15 +99,19 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         [
             workflow_if(match_record_remote_deposit, True),
             [
+                add_core,
                 send_robotupload_deposit(),
                 reply_ticket(template="deposit/tickets/user_accepted.html")
             ],
             workflow_else,
             [
-                log_info('Record already in database!'),
-                reject_record,
+                reject_record('Record was already found on INSPIRE'),
                 reply_ticket(template="deposit/tickets/user_rejected.html")
             ],
+        ],
+        workflow_else,
+        [
+            reply_ticket(template="deposit/tickets/user_rejected.html")
         ],
     ]
 

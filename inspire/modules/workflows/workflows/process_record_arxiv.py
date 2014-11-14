@@ -98,7 +98,7 @@ class process_record_arxiv(RecordWorkflow):
                 inspire_filter_custom(fields=["report_number", "arxiv_category"],
                                       custom_widgeted="*",
                                       custom_accepted="gr",
-                                      action="inspire_approval"),
+                                      action="core_approval"),
                 workflow_if(was_approved),
                 [
                     send_robotupload_oaiharvest(),
