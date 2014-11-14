@@ -25,7 +25,11 @@ import requests
 from tempfile import mkstemp
 
 from invenio.base.globals import cfg
-from invenio.modules.deposit.models import Deposition, DepositionFile
+from invenio.modules.deposit.models import (
+    Deposition,
+    DepositionFile,
+    FilenameAlreadyExists
+)
 from invenio.modules.deposit.storage import DepositionStorage
 
 
@@ -61,9 +65,9 @@ def arxiv_fft_get(obj, eng):
 
             df = DepositionFile(backend=DepositionStorage(deposition.id))
             if df.save(fd, filename=filename):
+                fft_exists = False
                 # Do we already have the file attached?
-                if 'fft' in metadata and metadata['fft'] and \
-                        arxiv_pdf.status_code == 200:
+                if metadata.get('fft') and arxiv_pdf.status_code == 200:
                     from hashlib import md5
                     arxiv_md5 = md5(arxiv_pdf.content).hexdigest()
 
@@ -79,9 +83,14 @@ def arxiv_fft_get(obj, eng):
                     if not fft_exists:
                         deposition.add_file(df)
                 else:
-                    deposition.add_file(df)
-
-    deposition.save()
+                    return
+                if not fft_exists:
+                    try:
+                        deposition.add_file(df)
+                        deposition.save()
+                    except FilenameAlreadyExists as e:
+                        df.delete()
+                        obj.log.error(str(e))
 
 
 def add_submission_extra_data(obj, eng):
