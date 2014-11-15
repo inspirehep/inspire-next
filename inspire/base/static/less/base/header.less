@@ -25,7 +25,19 @@
 -------------------------------------------------- */
 
 body{
-    padding-top:50px;
+    padding-top:64px;
+}
+
+.navbar-fixed-top .nav {
+    padding: 7px 0;
+}
+
+.navbar-fixed-top .navbar-brand {
+    padding: 0 15px;
+}
+
+.navbar-brand img {
+  height: 64px;
 }
 
 .jumbotron{
@@ -47,12 +59,54 @@ body{
         background:#34495e;
         border-radius:0px;
     }
- .navbar-inverse{
-     /*background-color: #34495e;*/
-     background-color: #fff;
-     border-bottom:1px solid rgba(0,0,0, .3);
-     margin-bottom:0px;
+ // .navbar-inverse{
+ //     /*background-color: #34495e;*/
+ //     background-color: #fff;
+ //     border-bottom:1px solid rgba(0,0,0, .3);
+ //     margin-bottom:0px;
+ // }
+
+
+
+// .navbar-custom .nav li a {
+//   text-shadow: none;
+//   background: none;
+//   -webkit-box-shadow: none;
+//   -moz-box-shadow: none;
+//   box-shadow: none;
+//   -webkit-transition: background 0.1s linear,opacity 0.1s linear;
+//   -moz-transition: background 0.1s linear,opacity 0.1s linear;
+//   -ms-transition: background 0.1s linear,opacity 0.1s linear;
+//   -o-transition: background 0.1s linear,opacity 0.1s linear;
+//   transition: background 0.1s linear,opacity 0.1s linear;
+//   -webkit-font-smoothing: antialiased;
+//   opacity: .9;
+// }
+// .navbar-custom .nav li.active, .navbar-custom .nav li a:hover {
+//   background: #f67d0f;
+//   -webkit-box-shadow: none;
+//   -moz-box-shadow: none;
+//   box-shadow: none;
+//   opacity: 1;
+// }
+
+
+
+ .navbar-default {
+    background-color: #fff;
  }
+
+// change the variable to bootstrap mobile specific and not raw pixels value
+// resize logo to fit the navbar
+@media(max-width:768px) {
+    .navbar-brand img {
+      height: 50px;
+    }
+    body{
+      padding-top:51px;
+    }
+}
+
 /* .navbar-brand img {
     height: 64px;
     opacity: 1;

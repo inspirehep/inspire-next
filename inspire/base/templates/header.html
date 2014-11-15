@@ -37,7 +37,7 @@
 ] -%}
 
 <section>
-  <nav id="topnav" class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+  <nav id="topnav" class="navbar navbar-fixed-top navbar-default navbar-custom" role="navigation">
     <div class="container">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -47,11 +47,11 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="{{ url_for('search.index') }}">
-          <img src="http://placehold.it/300x80" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}">
+          <img src="{{ url_for('static', filename='img/inspire_logo_hep.png') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}">
         </a>
       </div>
 
-      <div class="navbar-collapse navbar-ex1-collapse collapse" style="height: 1px;">
+      <div class="navbar-collapse navbar-ex1-collapse collapse">
         <ul class="nav navbar-nav">
           {% for href, blueprint, caption in navigation_bar %}
           <li {% if request.blueprint == blueprint|e %} class="active" {% endif %}>
