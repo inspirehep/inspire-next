@@ -10,5 +10,11 @@
         "id_knwKB": 11,
         "output_tag": "119__a",
         "search_expression": "119__a:\"*%*\" | 119__u:\"*%*\" | 419__a:\"*%*\" | 245__a:\"*%*\""
+    },
+    {
+        "id_collection": 8,
+        "id_knwKB": 12,
+        "output_tag": "130__a",
+        "search_expression": "130__a:\"*%*\""
     }
 ]
