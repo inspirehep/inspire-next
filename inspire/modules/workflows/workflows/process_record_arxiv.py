@@ -22,15 +22,16 @@
 
 """Workflow for processing single arXiv records harvested."""
 
-import collections
-from six import string_types
-
 from invenio.modules.workflows.tasks.marcxml_tasks import (
     convert_record_to_bibfield,
 )
 
 from inspire.modules.workflows.tasks.matching import(
     match_record_arxiv_remote_oaiharvest,
+    match_record_HP_oaiharvest,
+    save_identifiers_oaiharvest,
+    update_old_object,
+    delete_self_and_stop_processing,
 )
 
 from invenio.modules.classifier.tasks.classification import (
@@ -70,32 +71,44 @@ class process_record_arxiv(RecordWorkflow):
     workflow = [
         convert_record_with_repository("oaiarXiv2inspire_nofilter.xsl"),
         convert_record_to_bibfield,
-        workflow_if(match_record_arxiv_remote_oaiharvest, True),
+        workflow_if(match_record_arxiv_remote_oaiharvest),
         [
-            plot_extract(["latex"]),
-            arxiv_fulltext_download,
-            classify_paper_with_oaiharvester(
-                taxonomy="HEPont",
-                output_mode="dict",
-            ),
-            refextract,
-            author_list,
-            inspire_filter_custom(fields=["report_number", "arxiv_category"],
-                                  custom_widgeted="*",
-                                  custom_accepted="gr",
-                                  action="inspire_approval"),
-            workflow_if(was_approved),
-            [
-                send_robotupload_oaiharvest(),
-            ],
-            workflow_else,
-            [
-                log_info("Record rejected")
-            ]
+            log_info("Record already into database"),
         ],
         workflow_else,
         [
-            log_info("Record already into database"),
+            workflow_if(match_record_HP_oaiharvest("HP_IDENTIFIERS")),
+            [
+                log_info("Record already into Holding Pen"),
+                save_identifiers_oaiharvest("HP_IDENTIFIERS"),
+                update_old_object("HP_IDENTIFIERS"),
+                delete_self_and_stop_processing,
+            ],
+            workflow_else,
+            [
+                save_identifiers_oaiharvest("HP_IDENTIFIERS"),
+                plot_extract(["latex"]),
+                arxiv_fulltext_download,
+                classify_paper_with_oaiharvester(
+                    taxonomy="HEPont",
+                    output_mode="dict",
+                ),
+                refextract,
+                author_list,
+                inspire_filter_custom(fields=["report_number", "arxiv_category"],
+                                      custom_widgeted="*",
+                                      custom_accepted="gr",
+                                      action="inspire_approval"),
+                workflow_if(was_approved),
+                [
+                    send_robotupload_oaiharvest(),
+                ],
+                workflow_else,
+                [
+                    log_info("Record rejected"),
+                    delete_self_and_stop_processing,
+                ],
+            ],
         ],
     ]
 

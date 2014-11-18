@@ -94,5 +94,11 @@
         "id": 23,
         "kbtype": "w",
         "name": "DEGREE"
+    },
+    {
+        "description": "Contains identifiers of records in Holding Pen",
+        "id": 13,
+        "kbtype": "w",
+        "name": "HP_IDENTIFIERS"
     }
 ]
