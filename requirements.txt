@@ -1,4 +1,5 @@
 # from invenio/requirements.txt
 
+git+https://github.com/inspirehep/python-rt#egg=rt
 -e git+https://github.com/inspirehep/invenio@labs#egg=Invenio
 -e .
