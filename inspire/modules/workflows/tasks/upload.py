@@ -24,46 +24,6 @@ import os
 import random
 
 
-def send_robotupload(url, marcxml, obj, eng):
-    """Ship the marcxml to url."""
-    from invenio.base.globals import cfg
-    from inspire.utils.robotupload import make_robotupload_marcxml
-
-    if url is None:
-        base_url = cfg.get("CFG_ROBOTUPLOAD_SUBMISSION_BASEURL")
-    else:
-        base_url = url
-
-    callback_url = os.path.join(cfg["CFG_SITE_URL"],
-                                "callback/workflows/robotupload")
-    obj.log.info("Sending Robotupload to {0} with callback {1}".format(
-        base_url,
-        callback_url
-    ))
-
-    result = make_robotupload_marcxml(
-        url=base_url,
-        marcxml=marcxml,
-        callback_url=callback_url,
-        nonce=obj.id
-    )
-    if "[INFO]" not in result.text:
-        if "cannot use the service" in result.text:
-            # IP not in the list
-            obj.log.error("Your IP is not in "
-                          "CFG_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
-                          "on host")
-            obj.log.error(result.text)
-        from invenio.modules.workflows.errors import WorkflowError
-        txt = "Error while submitting robotupload: {0}".format(result.text)
-        raise WorkflowError(txt, eng.uuid, obj.id)
-    else:
-        obj.log.info("Robotupload sent!")
-        obj.log.info(result.text)
-        eng.halt("Waiting for robotupload: {0}".format(result.text))
-    obj.log.info("end of upload")
-
-
 def upload_step_marcxml(obj, eng):
     """Perform the upload step with MARCXML in obj.data().
 

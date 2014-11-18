@@ -43,10 +43,23 @@ def continue_workflow_callback():
     """
     request_data = request.get_json()
     id_object = request_data.get("nonce", "")
+
     if id_object:
         callback_results = request_data.get("results", {})
         workflow_object = BibWorkflowObject.query.get(id_object)
         if workflow_object:
+            results = request_data.get("results", [])
+            for result in results:
+                status = result.get('success', False)
+                if status:
+                    recid = result.get('recid')
+                    extra_data = workflow_object.get_extra_data()
+                    extra_data['url'] = join(
+                        cfg["CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"],
+                        'record',
+                        str(recid)
+                    )
+                    workflow_object.set_extra_data(extra_data)
             # Will add the results to the engine extra_data column.
             workflow_object.continue_workflow(
                 delayed=True,

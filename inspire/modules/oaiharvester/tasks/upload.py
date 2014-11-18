@@ -32,7 +32,7 @@ def send_robotupload_oaiharvest(url=None):
     @wraps(send_robotupload_oaiharvest)
     def _send_robotupload_oaiharvest(obj, eng):
         from invenio.modules.records.api import Record
-        from inspire.modules.workflows.tasks.upload import send_robotupload
+        from inspire.utils.robotupload import make_robotupload_marcxml
 
         sequence_id = random.randrange(1, 60000)
 
@@ -52,7 +52,107 @@ def send_robotupload_oaiharvest(url=None):
         if not os.path.exists(extract_path):
             os.makedirs(extract_path)
 
+        callback_url = os.path.join(cfg["CFG_SITE_URL"],
+                                    "callback/workflows/continue")
+
         marcxml = Record(obj.data.dumps()).legacy_export_as_marc()
-        send_robotupload(url, marcxml, obj, eng)
+        result = make_robotupload_marcxml(
+            url=url,
+            marcxml=marcxml,
+            callback_url=callback_url,
+            mode='insert',
+            nonce=obj.id
+        )
+        if "[INFO]" not in result.text:
+            if "cannot use the service" in result.text:
+                # IP not in the list
+                obj.log.error("Your IP is not in "
+                              "CFG_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
+                              "on host")
+                obj.log.error(result.text)
+            from invenio.modules.workflows.errors import WorkflowError
+            txt = "Error while submitting robotupload: {0}".format(result.text)
+            raise WorkflowError(txt, eng.uuid, obj.id)
+        else:
+            obj.log.info("Robotupload sent!")
+            obj.log.info(result.text)
+            eng.halt("Waiting for robotupload: {0}".format(result.text))
+        obj.log.info("end of upload")
 
     return _send_robotupload_oaiharvest
+
+
+def update_existing_record_oaiharvest(url=None):
+    """Update the existing record on the remote site."""
+
+    @wraps(update_existing_record_oaiharvest)
+    def _update(obj, eng):
+        import dictdiffer
+
+        from lxml import objectify, etree
+
+        from invenio.base.globals import cfg
+        from invenio.modules.workflows.utils import convert_marcxml_to_bibfield
+        from invenio.modules.records.api import Record
+
+        from inspire.utils.robotupload import make_robotupload_marcxml
+
+        try:
+            recid = obj.extra_data["recid"]
+        except KeyError:
+            obj.log.error("Cannot locate record ID")
+            return
+
+        callback_url = os.path.join(cfg["CFG_SITE_URL"],
+                                    "callback/workflows/continue")
+
+        search_url = "%s?p=recid:%s&of=xm" % (cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"], recid)
+
+        prod_data = objectify.parse(search_url)
+        # remove controlfields
+        root = prod_data.getroot()
+        record = root['record']
+        while True:
+            try:
+                record.remove(record['controlfield'])
+            except AttributeError:
+                break
+        prod_data = etree.tostring(record)
+        prod_data = convert_marcxml_to_bibfield(prod_data)
+        new_data = obj.data
+        prod_data = dict(prod_data)
+        new_data = dict(new_data)
+        diffs = dictdiffer.diff(prod_data, new_data)
+        updates = {}
+        for diff in diffs:
+            if diff[0] == 'add':
+                for addition in diff[2]:
+                    updates[str(addition[0])] = addition[1]
+
+        if updates:
+            updates['recid'] = recid
+            marcxml = Record(updates).legacy_export_as_marc()
+            result = make_robotupload_marcxml(
+                url=url,
+                marcxml=marcxml,
+                callback_url=callback_url,
+                mode='append',
+                nonce=obj.id
+            )
+            if "[INFO]" not in result.text:
+                if "cannot use the service" in result.text:
+                    # IP not in the list
+                    obj.log.error("Your IP is not in "
+                                  "CFG_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
+                                  "on host")
+                    obj.log.error(result.text)
+                from invenio.modules.workflows.errors import WorkflowError
+                txt = "Error while submitting robotupload: {0}".format(result.text)
+                raise WorkflowError(txt, eng.uuid, obj.id)
+            else:
+                obj.log.info("Robotupload sent!")
+                obj.log.info(result.text)
+                eng.halt("Waiting for robotupload: {0}".format(result.text))
+            obj.log.info("end of upload")
+
+    return _update
