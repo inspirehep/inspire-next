@@ -12,7 +12,7 @@ env.directory = '/opt'  # remote directory
 env.conf_directory = "/afs/cern.ch/project/inspire/repo/inspire-configuration.git"
 
 env.roledefs = {
-    'prod': ['inspirelabsvm01'],
+    'prod': ['inspirelabsvm01', 'inspirelabsvm02'],
     'dev01': ['inspirevm08.cern.ch'],
     'dev02': ['inspirevm11.cern.ch'],
 }
@@ -22,8 +22,8 @@ env.roledefs = {
 def prod():
     """Activate configuration for INSPIRE PROD server."""
     env.roles = ['prod']
-    env.site_url = "http://inspirelabsvm01.cern.ch"
-    env.site_secure_url = "https://inspirelabsvm01.cern.ch"
+    env.site_url = "http://{0}.cern.ch"
+    env.site_secure_url = "https://{0}.cern.ch"
     env.conf_branch = "prod"
 
 
@@ -115,8 +115,14 @@ def install():
                         prefix_folder = prefix_folder.split("\n")
                         sudo("pybabel compile -fd {0}/base/translations".format(prefix_folder[-1]))
                         # Set Flask Host configuration
-                        sudo("inveniomanage config set CFG_SITE_URL {0}".format(env.site_url))
-                        sudo("inveniomanage config set CFG_SITE_SECURE_URL {0}".format(env.site_secure_url))
+                        if "{0}" in env.site_url:
+                            url = env.site_url.format(env.host)
+                            secure_url = env.site_secure_url.format(env.host)
+                        else:
+                            url = env.site_url
+                            secure_url = env.site_secure_url
+                        sudo("inveniomanage config set CFG_SITE_URL {0}".format(url))
+                        sudo("inveniomanage config set CFG_SITE_SECURE_URL {0}".format(secure_url))
                         # Create Apache configuration
                         sudo("inveniomanage apache create-config")
                         sudo("rm /opt/invenio")
