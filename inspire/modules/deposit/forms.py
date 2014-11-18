@@ -406,7 +406,7 @@ class LiteratureForm(WebDepositForm):
     )
 
     thesis_date = fields.Date(
-        label=_('Thesis Date'),
+        label=_('Date of Submission'),
         description='Format: YYYY-MM-DD.',
         widget=defensedate_widget,
     )
