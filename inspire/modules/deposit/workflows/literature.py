@@ -328,11 +328,10 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 metadata['report_number']['arxiv_category'] = metadata['arxiv_id'].split('/')[0]
             metadata['abstract']['source'] = 'arXiv'
             if 'categories' in metadata and metadata['categories']:
-                # Subject term
-                if not isinstance(metadata['categories'], list):
-                    metadata['categories'] = [metadata['categories']]
+                # arXiv subject categories
                 subject_list = [{"term": c, "scheme": "arXiv"}
-                                for c in metadata['categories']]
+                                for c in metadata['categories'].split()]
+                # INSPIRE subject categories
                 if 'subject_term' in metadata and metadata['subject_term']:
                     metadata['subject_term'].extend(subject_list)
                 else:

@@ -34,20 +34,12 @@ define(function(require, exports, module) {
       special_mapping: {
         article: function(data) {
 
-          var category_list = "";
-
-          if (typeof data.categories === "string") {
-            category_list = data.categories;
-          } else if (typeof data.categories == "object") {
-            category_list = data.categories.join(', ');
-          }
-
           return {
             doi: data.doi,
             title: data.title,
             title_source: 'arXiv',
             title_arXiv: data.title,
-            categories_arXiv: category_list,
+            categories_arXiv: data.categories,
             abstract: data.abstract,
             authors: data.authors,
             journal_title: data["journal-ref"],
