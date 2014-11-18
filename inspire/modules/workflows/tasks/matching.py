@@ -38,9 +38,8 @@ def match_record_arxiv_remote(arxiv_id):
         params = dict(p="035:oai:arXiv.org:%s" % arxiv_id, of="id")
         r = requests.get(cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"], params=params)
         response = r.json()
-        if response:
-            return True
-    return False
+        return response
+    return {}
 
 
 def match_record_arxiv_remote_oaiharvest(obj, eng):
@@ -50,12 +49,15 @@ def match_record_arxiv_remote_oaiharvest(obj, eng):
         if number.get("source", "").lower() == "arxiv":
             arxiv_id = number.get("primary")
             try:
-                return match_record_arxiv_remote(arxiv_id)
+                response = match_record_arxiv_remote(arxiv_id)
+                if response:
+                    obj.extra_data['recid'] = response[0]
+                    return True
             except requests.ConnectionError:
                 obj.log.error("Error connecting to remote server:\n {0}".format(
                     traceback.format_exc()
                 ))
-                return False
+    return False
 
 
 def match_record_arxiv_remote_deposit(obj, eng):
@@ -64,12 +66,14 @@ def match_record_arxiv_remote_deposit(obj, eng):
     sip = d.get_latest_sip(sealed=False)
     arxiv_id = sip.metadata.get('arxiv_id')
     try:
-        return match_record_arxiv_remote(arxiv_id)
+        response = match_record_arxiv_remote(arxiv_id)
+        if response:
+            return True
     except requests.ConnectionError:
         obj.log.error("Error connecting to remote server:\n {0}".format(
             traceback.format_exc()
         ))
-        return False
+    return False
 
 
 def match_record_doi_remote(doi):
