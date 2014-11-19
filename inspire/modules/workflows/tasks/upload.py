@@ -42,8 +42,6 @@ def send_robotupload(url, marcxml, obj, eng):
     ))
 
     result = make_robotupload_marcxml(
-        obj=obj,
-        eng=eng,
         url=base_url,
         marcxml=marcxml,
         callback_url=callback_url,
