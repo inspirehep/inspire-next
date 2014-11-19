@@ -114,7 +114,6 @@ for elem in to_remove:
     _base_styles.contents.remove(elem)
 
 _search_js.contents += (
-    'js/search/invenio_with_spires_typeahead_configuration.js',
     'js/search/search_results.js',
 )
 

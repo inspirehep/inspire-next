@@ -20,98 +20,103 @@
  * or submit itself to any jurisdiction.
  */
 
+define([
+  'js/search/default_typeahead_configuration'
+], function(getDefaultParserConf) {
 
-function getInvenioSpiresParserConf(area_keywords) {
+  return function getInvenioSpiresParserConf(area_keywords) {
 
-  var invenio_parser_options = getDefaultParserConf(area_keywords);
+    var invenio_parser_options = getDefaultParserConf(area_keywords).invenio;
 
-  var invenio_get_next_word = invenio_parser_options.get_next_word_type;
+    var invenio_get_next_word = invenio_parser_options.get_next_word_type;
 
-  invenio_parser_options.get_next_word_type = function(previous_word_type, word_types) {
+    invenio_parser_options.get_next_word_type = function(previous_word_type, word_types) {
 
-    if (previous_word_type == undefined)
-      return [].concat(invenio_get_next_word(previous_word_type, word_types))
-        .concat(word_types.SPIRES_SWITCH);
-    if (previous_word_type == word_types.SPIRES_SWITCH)
-      return invenio_get_next_word(undefined, word_types);
+      if (previous_word_type == undefined)
+        return [].concat(invenio_get_next_word(previous_word_type, word_types))
+          .concat(word_types.SPIRES_SWITCH);
+      if (previous_word_type == word_types.SPIRES_SWITCH)
+        return invenio_get_next_word(undefined, word_types);
 
-    return invenio_get_next_word(previous_word_type, word_types);
-  }
+      return invenio_get_next_word(previous_word_type, word_types);
+    }
 
-  function notEndsWithColon(str, char_roles, end_idx) {
-    return str[end_idx] != ':';
-  }
+    function notEndsWithColon(str, char_roles, end_idx) {
+      return str[end_idx] != ':';
+    }
 
-  function endsWithColon(str, char_roles, end_idx) {
-    return str[end_idx] == ':';
-  }
+    function endsWithColon(str, char_roles, end_idx) {
+      return str[end_idx] == ':';
+    }
 
-  function notStartsNorEndsWithColon(str, char_roles, start_idx, keyword) {
-    return notEndsWithColon(str, char_roles, start_idx + keyword.length) && !(start_idx > 0 && str[start_idx - 1] == ':');
-  }
+    function notStartsNorEndsWithColon(str, char_roles, start_idx, keyword) {
+      return notEndsWithColon(str, char_roles, start_idx + keyword.length)
+        && !(start_idx > 0 && str[start_idx - 1] == ':');
+    }
 
-  function isFirstWord(str, char_roles, start_idx, keyword) {
+    function isFirstWord(str, char_roles, start_idx, keyword) {
+      if (start_idx == 0)
+        return true;
+      do {
+        start_idx--;
+      } while (char_roles[start_idx] == 'SEPARATOR' && start_idx >= 0);
+      return start_idx == 0;
+    }
 
-    if (start_idx == 0)
-      return true;
-    do {
-      start_idx--;
-    } while (char_roles[start_idx] == 'SEPARATOR' && start_idx >= 0);
-    return start_idx == 0;
-  }
+    function setSpireSyntax(search_typeahead) {
+      search_typeahead.setOptions('spires');
+    }
 
-  function setSpireSyntax(search_typeahead) {
-    search_typeahead.setOptions('spires');
-  }
+    var spires_switch_conf = {
+      min_length: 1,
+      keyword_function: setSpireSyntax,
+      detection_condition: function(str, char_roles, start_idx, keyword) {
+        return isFirstWord(str, char_roles, start_idx, keyword)
+          && notStartsNorEndsWithColon(str, char_roles, start_idx, keyword)
+      },
+      values: ['find'],
+      autocomplete_suffix: ' '
+    }
 
-  var spires_switch_conf = {
-    min_length: 1,
-    keyword_function: setSpireSyntax,
-    detection_condition: function(str, char_roles, start_idx, keyword) {
-      return isFirstWord(str, char_roles, start_idx, keyword) && notStartsNorEndsWithColon(str, char_roles, start_idx, keyword)
-    },
-    values: ['find'],
-    autocomplete_suffix: ' '
-  }
+    invenio_parser_options.keywords.SEARCH['SPIRES_SWITCH'] = spires_switch_conf;
 
-  invenio_parser_options.keywords.SEARCH['SPIRES_SWITCH'] = spires_switch_conf;
-
-  var spires_parser_options = {
-    keywords: {
-      SEARCH: {
-        SPIRES_SWITCH: spires_switch_conf,
-        LOGICAL_EXP: {
-          min_length: 1,
-          values: ['and', 'or'],
-          autocomplete_suffix: ' '
+    var spires_parser_options = {
+      keywords: {
+        SEARCH: {
+          SPIRES_SWITCH: spires_switch_conf,
+          LOGICAL_EXP: {
+            min_length: 1,
+            values: ['and', 'or'],
+            autocomplete_suffix: ' '
+          },
+          NOT: {
+            min_length: 1,
+            values: ['not'],
+            autocomplete_suffix: ' '
+          }
         },
-        NOT: {
-          min_length: 1,
-          values: ['not'],
-          autocomplete_suffix: ' '
+        ORDER: {
+          QUERY_TYPE: {
+            min_length: 1,
+            values: ['a', 'aff', 'j', 'c', 'refersto'],
+            autocomplete_suffix: ' '
+          },
+          QUERY_VALUE: {
+            min_length: 3
+          }
         }
       },
-      ORDER: {
-        QUERY_TYPE: {
-          min_length: 1,
-          values: ['a', 'aff', 'j', 'c', 'refersto'],
-          autocomplete_suffix: ' '
-        },
-        QUERY_VALUE: {
-          min_length: 3
-        }
-      }
-    },
-    separators: [' ', '(', ')'],
-    value_type_interpretation: {
-      a: 'exactauthor'
-    },
-    get_next_word_type: invenio_parser_options.get_next_word_type
-  };
+      separators: [' ', '(', ')'],
+      value_type_interpretation: {
+        a: 'exactauthor'
+      },
+      get_next_word_type: invenio_parser_options.get_next_word_type
+    };
 
-  return {
-    invenio: invenio_parser_options,
-    spires: spires_parser_options
+    return {
+      invenio: invenio_parser_options,
+      spires: spires_parser_options
+    }
+
   }
-
-}
+});
