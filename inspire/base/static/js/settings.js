@@ -51,6 +51,7 @@ require.config({
     "buckets": "vendors/buckets/buckets",
     "feedback": "vendors/feedback/examples/js/feedback",
     "html2canvas": "vendors/html2canvas/build/html2canvas",
+    "searchtypeahead-configuration": "js/search/invenio_with_spires_typeahead_configuration",
   },
   shim: {
     jquery: {

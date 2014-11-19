@@ -17,21 +17,6 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{%- extends "search/helpers_base.html" -%}
-
-{% block searchfield_typeahead_configuration %}
-
-  var parser_options = getInvenioSpiresParserConf(area_keywords);
-
-  searchField.searchTypeahead({
-    value_hints_url: '/list/%TYPE?q=%QUERY',
-    options_sets: parser_options,
-    default_set: 'invenio'
-  });
-
-{% endblock searchfield_typeahead_configuration %}
-
-
 {% macro search_form(collection, easy_search_form) %}
 {% block search_form scoped %}
 {%- block search_form_body scoped %}
