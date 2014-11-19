@@ -30,7 +30,6 @@ def make_robotupload_marcxml(url, marcxml, **kwargs):
     headers = {
         "User-agent": make_user_agent_string("inspire"),
         "Content-Type": "application/marcxml+xml",
-        "Content-Length": len(marcxml),
     }
     url = os.path.join(url, "batchuploader/robotupload/insert")
     return requests.post(
