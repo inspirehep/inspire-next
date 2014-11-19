@@ -22,8 +22,8 @@ env.roledefs = {
 def prod():
     """Activate configuration for INSPIRE PROD server."""
     env.roles = ['prod']
-    env.site_url = "http://{0}.cern.ch"
-    env.site_secure_url = "https://{0}.cern.ch"
+    env.site_url = "http://labs.inspirehep.net"
+    env.site_secure_url = "https://labs.inspirehep.net"
     env.conf_branch = "prod"
 
 
@@ -100,6 +100,7 @@ def install():
                 sudo("pip install numpy")
                 sudo("pip install git+git://github.com/mrjoes/flask-admin.git#egg=Flask-Admin-1.0.9.dev0")
                 sudo("pip install git+https://github.com/inspirehep/python-rt#egg=rt --upgrade")
+                sudo("pip install git+https://github.com/inspirehep/invenio@labs#egg=Invenio --upgrade")
                 success = sudo("python setup.py install")
                 if success:
                     # INSPIRE specific configuration
@@ -147,7 +148,44 @@ def restart_celery():
 @task
 def restart_apache():
     """Restart celery workers."""
-    return sudo("service httpd restart")
+    return sudo("service httpd graceful")
+
+
+@task
+def refresh_config():
+    """Re-install the inspire-configuration."""
+    package = local("python setup.py --fullname", capture=True).strip()
+    venv = "{0}/{1}".format(env.directory, package)
+
+    if not exists(venv):
+        return error("Meh? I need a virtualenv first.")
+    with settings(sudo_user="invenio"):
+        with cd("{0}/src/{1}".format(venv, package)):
+            with prefix('source {0}/bin/activate'.format(venv)):
+                # INSPIRE specific configuration
+                with cd(env.conf_directory):
+                    config_location = "/tmp/inspire-configuration"
+                    sudo("mkdir -p {0}".format(config_location))
+                    sudo("GIT_WORK_TREE={0} git checkout -f {1}".format(config_location, env.conf_branch))
+                    sudo("pip install {0} --upgrade".format(config_location))
+    restart_celery()
+    restart_apache()
+
+
+@task
+def refresh_invenio():
+    """Re-install the Invenio package from inspirehep/labs."""
+    package = local("python setup.py --fullname", capture=True).strip()
+    venv = "{0}/{1}".format(env.directory, package)
+
+    if not exists(venv):
+        return error("Meh? I need a virtualenv first.")
+    with settings(sudo_user="invenio"):
+        with cd("{0}/src/{1}".format(venv, package)):
+            with prefix('source {0}/bin/activate'.format(venv)):
+                sudo("pip install git+https://github.com/inspirehep/invenio@labs#egg=Invenio --upgrade")
+    restart_celery()
+    restart_apache()
 
 
 @task
