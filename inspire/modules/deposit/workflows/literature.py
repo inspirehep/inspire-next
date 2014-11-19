@@ -31,7 +31,7 @@ from invenio.modules.deposit.tasks import render_form, \
     finalize_record_sip, \
     prefill_draft, \
     process_sip_metadata
-from invenio.modules.deposit.models import Deposition
+from invenio.modules.deposit.models import Deposition, InvalidDepositionType
 from invenio.modules.classifier.tasks.classification import (
     classify_paper_with_deposit,
 )
@@ -138,7 +138,11 @@ class literature(SimpleRecordDeposition, WorkflowBase):
     def get_description(bwo):
         """Return description of object."""
         results = bwo.get_tasks_results()
-        deposit_object = Deposition(bwo)
+        try:
+            deposit_object = Deposition(bwo)
+        except InvalidDepositionType:
+            return "This submission is disabled: {0}.".format(bwo.workflow.name)
+
         sip = deposit_object.get_latest_sip()
         if sip:
             record = sip.metadata
