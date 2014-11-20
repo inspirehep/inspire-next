@@ -99,8 +99,7 @@ def install():
                 sudo("pip install Babel")
                 sudo("pip install numpy")
                 sudo("pip install git+git://github.com/mrjoes/flask-admin.git#egg=Flask-Admin-1.0.9.dev0")
-                sudo("pip install git+https://github.com/inspirehep/python-rt#egg=rt --upgrade")
-                sudo("pip install git+https://github.com/inspirehep/invenio@labs#egg=Invenio --upgrade")
+                sudo("pip install git+https://github.com/inspirehep/python-rt#egg=rt")
                 success = sudo("python setup.py install")
                 if success:
                     # INSPIRE specific configuration
