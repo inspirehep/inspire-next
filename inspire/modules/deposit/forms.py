@@ -147,16 +147,6 @@ class CheckboxButton(object):
         return HTMLString(html)
 
 
-def institutions_kb_mapper(val):
-    """Return object ready to autocomplete affiliations."""
-    return {
-        'value': "%s" % val,
-        'fields': {
-            "affiliation": val,
-        }
-    }
-
-
 def journal_title_kb_mapper(val):
     """Return object ready to autocomplete journal titles."""
     return {
@@ -310,7 +300,7 @@ class LiteratureForm(WebDepositForm):
         placeholder=_("Start typing for suggestions"),
         label=_('Experiment'),
         widget_classes="form-control",
-        autocomplete=kb_dynamic_autocomplete("ExperimentsCollection",
+        autocomplete_fn=kb_dynamic_autocomplete("ExperimentsCollection",
                                              mapper=experiment_kb_mapper)
     )
 
@@ -440,7 +430,7 @@ class LiteratureForm(WebDepositForm):
         placeholder=_("Start typing for suggestions"),
         label=_('Journal Title'),
         widget_classes="form-control" + ARTICLE_CLASS,
-        autocomplete=kb_dynamic_autocomplete("dynamic_journal_titles",
+        autocomplete_fn=kb_dynamic_autocomplete("dynamic_journal_titles",
                                              mapper=journal_title_kb_mapper)
     )
 
