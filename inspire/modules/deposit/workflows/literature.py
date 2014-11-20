@@ -84,7 +84,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Generate MARC based on metadata dictionary.
         finalize_record_sip(is_dump=False),
         halt_to_render,
-        create_ticket(template="deposit/tickets/curator_submitted.html"),
+        create_ticket(template="deposit/tickets/curator_submitted.html",
+                      queue="HEP_add_user"),
         reply_ticket(template="deposit/tickets/user_submitted.html"),
         # Get FFT from arXiv, if arXiv ID is provided
         arxiv_fft_get,
@@ -109,10 +110,10 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 reply_ticket(template="deposit/tickets/user_rejected.html")
             ],
         ],
-        workflow_else,
-        [
-            reply_ticket(template="deposit/tickets/user_rejected.html")
-        ],
+        #workflow_else,
+        #[
+        #    reply_ticket(template="deposit/tickets/user_rejected.html")
+        #],
     ]
 
     name = "Literature"
