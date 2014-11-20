@@ -24,6 +24,7 @@ from invenio.ext.cache import cache
 from invenio.base.globals import cfg
 from invenio.modules.workflows.models import BibWorkflowObject
 
+
 blueprint = Blueprint(
     'inspire_workflows',
     __name__,
@@ -73,7 +74,8 @@ def webcoll_callback():
             workflow_object.set_extra_data(extra_data)
             workflow_object.continue_workflow(delayed=True)
             del pending_records[rid]
-            cache.set("pending_records", pending_records)
+            cache.set("pending_records", pending_records,
+                      timeout=cfg["PENDING_RECORDS_CACHE_TIMEOUT"])
     return jsonify({"result": "success"})
 
 
@@ -96,7 +98,8 @@ def robotupload_callback():
             recid = result.get('recid')
             pending_records = cache.get("pending_records") or dict()
             pending_records[str(recid)] = str(id_object)
-            cache.set("pending_records", pending_records)
+            cache.set("pending_records", pending_records,
+                      timeout=cfg["PENDING_RECORDS_CACHE_TIMEOUT"])
         else:
             from invenio.ext.email import send_email
 
