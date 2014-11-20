@@ -32,15 +32,15 @@ from invenio.modules.deposit.field_widgets import plupload_widget, \
     ExtendedListWidget, \
     ItemWidget
 from invenio.modules.deposit.autocomplete_utils import kb_dynamic_autocomplete
-from invenio.modules.deposit.validation_utils import DOISyntaxValidator, \
-    required_if
+from invenio.modules.deposit.validation_utils import DOISyntaxValidator
 
 from .fields import ArXivField
 # from .fields import ISBNField
 from .validators.dynamic_fields import AuthorsValidation
 from .filters import clean_empty_list
 from .validators.simple_fields import duplicated_doi_validator, \
-    duplicated_arxiv_id_validator, arxiv_syntax_validation
+    duplicated_arxiv_id_validator, arxiv_syntax_validation, \
+    required_if_files
 
 #
 # Field class names
@@ -524,10 +524,9 @@ class LiteratureForm(WebDepositForm):
         label="",
         default=False,
         widget=CheckboxButton(msg=_('I confirm I have read the License Agreement')),
-        validators=[required_if('file_field',
-                                [lambda x: bool(len(x)), ],  # non-empty
-                                message=_("Please, check this box to upload material.")
-                                ),
+        validators=[required_if_files('file_field',
+                                      message=_("Please, check this box to upload material.")
+                                      ),
                     ]
         )
 
