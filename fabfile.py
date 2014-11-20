@@ -226,6 +226,7 @@ def install():
 
     if success:
         sudo("supervisorctl restart celeryd")
+        graceful_apache()
     return success
 
 
@@ -239,6 +240,17 @@ def restart_celery():
 def restart_apache():
     """Restart celery workers."""
     return sudo("service httpd graceful")
+
+
+@task
+def graceful_apache():
+    """Restart apache gracefully."""
+    target = env.host
+    execute(disable, target, False)
+    execute(restart_apache)
+    choice = prompt("{0} restarted. Enable host? (Y/n)".format(target), default="yes")
+    if choice.lower() in ["y", "ye", "yes"]:
+        execute(enable, target, False)
 
 
 @task
@@ -312,7 +324,7 @@ def do_compilation():
 
 @roles(['proxy'])
 @task
-def disable(host):
+def disable(host, interactive=True):
     """Disable a server in the haproxy configuration. Use with proxy."""
     if isinstance(host, basestring):
         host = [host]
@@ -334,16 +346,16 @@ def disable(host):
         return
 
     servername, backends = backends[server]
-
-    choice = prompt("Disable the following server? %s (Y/n)" % (servername, ), default="yes")
-    if choice.lower() not in ["y", "ye", "yes"]:
-        return
+    if interactive:
+        choice = prompt("Disable the following server? %s (Y/n)" % (servername, ), default="yes")
+        if choice.lower() not in ["y", "ye", "yes"]:
+            return
     proxy_action(servername, backends, action="disable")
 
 
 @roles(['proxy'])
 @task
-def enable(host):
+def enable(host, interactive=True):
     """Enable a server in the haproxy configuration. Use with proxy."""
     if isinstance(host, basestring):
         host = [host]
@@ -365,10 +377,10 @@ def enable(host):
         return
 
     servername, backends = backends[server]
-
-    choice = prompt("Enable the following server? %s (Y/n)" % (servername, ), default="yes")
-    if choice.lower() not in ["y", "ye", "yes"]:
-        return
+    if interactive:
+        choice = prompt("Enable the following server? %s (Y/n)" % (servername, ), default="yes")
+        if choice.lower() not in ["y", "ye", "yes"]:
+            return
     proxy_action(servername, backends, action="enable")
 
 
