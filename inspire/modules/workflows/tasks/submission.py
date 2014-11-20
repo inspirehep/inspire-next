@@ -37,7 +37,7 @@ def halt_to_render(obj, eng):
     d = Deposition(obj)
     sip = d.get_latest_sip(sealed=False)
     d.set_render_context(dict(
-        template_name_or_list="deposit/pending.html",
+        template_name_or_list="deposit/completed.html",
         deposition=d,
         deposition_type=(
             None if d.type.is_default() else
