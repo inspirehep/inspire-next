@@ -214,11 +214,11 @@ def install():
                         sudo("inveniomanage apache create-config")
                         create_symlink("/opt/invenio", venv)
                         if env.tmp_shared:
-                            create_symlink(os.path.join(venv, "var/tmp-shared", env.tmp_shared))
+                            create_symlink(os.path.join(venv, "var/tmp-shared"), env.tmp_shared)
                         if env.data:
-                            create_symlink(os.path.join(venv, "var/data", env.data))
+                            create_symlink(os.path.join(venv, "var/data"), env.data)
                         if env.log_bibsched:
-                            create_symlink(os.path.join(venv, "var/log/bibsched", env.log_bibsched))
+                            create_symlink(os.path.join(venv, "var/log/bibsched"), env.log_bibsched)
 
         with cd("{0}/var".format(venv)):
             sudo("mkdir -p log/bibsched")
@@ -400,7 +400,7 @@ def proxy_action(server, backends, action="enable"):
 
 def create_symlink(link, target):
     """Create a symlink if required."""
-    existing_link = sudo("readlink {0}".format(link), capture=True)
+    existing_link = sudo("readlink {0}".format(link))
     if existing_link and existing_link != target:
         sudo("rm {0}".format(link))
         sudo("ln -s {0} {1}".format(target, venv))
