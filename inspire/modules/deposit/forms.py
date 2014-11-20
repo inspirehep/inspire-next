@@ -463,7 +463,6 @@ class LiteratureForm(WebDepositForm):
 
     note = fields.TextAreaField(
         export_key='note',
-        widget_classes=ARTICLE_CLASS,
         widget=HiddenInput(),
     )
 
