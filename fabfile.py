@@ -184,13 +184,13 @@ def install():
                 sudo("pip install Babel")
                 sudo("pip install numpy")
                 sudo("pip install git+git://github.com/mrjoes/flask-admin.git#egg=Flask-Admin-1.0.9.dev0")
-                sudo("python setup.py install")
+                sudo("pip install . --upgrade")
 
         # Inspire installation
         with cd("{0}/src/{1}".format(venv, package)):
             with prefix('source {0}/bin/activate'.format(venv)):
                 sudo("pip install git+https://github.com/inspirehep/python-rt#egg=rt")
-                success = sudo("python setup.py install")
+                success = sudo("pip install . --upgrade")
                 if success:
                     # INSPIRE specific configuration
                     with cd(env.conf_directory):
