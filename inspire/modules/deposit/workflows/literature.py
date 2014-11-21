@@ -302,7 +302,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         if metadata['type_of_doc'] == 'article':
             metadata['collections'].append({'primary': "Published"})
         elif metadata['type_of_doc'] == 'thesis':
-            metadata['collections'].append({'primary': "THESIS"})
+            metadata['collections'].append({'primary': "Thesis"})
 
         # ============
         # Title source
@@ -417,7 +417,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         metadata['url'] = filter(None, metadata['url'])
         if 'url' in metadata and metadata['url']:
             def restructure_urls(url):
-                url[''] = url['full_url']
+                url['url'] = url['full_url']
                 del url['full_url']
 
             map(restructure_urls, metadata['url'])
