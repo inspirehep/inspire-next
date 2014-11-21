@@ -406,7 +406,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             def restructure_ffts(fft):
                 fft['url'] = fft['path']
                 fft['description'] = fft['name']
-                fft['flag'] = "HIDDEN"
+                fft['docfile_type'] = "INSPIRE-PUBLIC"
                 del fft['path'], fft['name']
 
             map(restructure_ffts, metadata['fft'])
