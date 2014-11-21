@@ -46,8 +46,9 @@ define([
     this.$element = $element;
 
     var suggestionTemplate = Hogan.compile(
-      '<b>{{ affiliation }}</b><br>' +
+      '<strong>{{ affiliation }}</strong><br>' +
       '<small>' +
+      '{{#new_name}}{{#show_future_name}}Alternative name: {{new_name}}<br>{{/show_future_name}}{{/new_name}}' +
       '{{#department}}{{ department }}<br>{{/department}}' +
       '{{#name}}{{ name }}{{/name}}' +
       '</small>'
@@ -73,6 +74,9 @@ define([
           return 'Cannot find this affiliation in our database.';
         },
         suggestion: function(data) {
+          if (data.new_name != data.affiliation) {
+            data.show_future_name = true;
+          }
           return suggestionTemplate.render.call(suggestionTemplate, data);
         }.bind(this)
       }
