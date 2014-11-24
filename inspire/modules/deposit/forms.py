@@ -561,8 +561,10 @@ class LiteratureForm(WebDepositForm):
             ['nonpublic_note']),
         ('References',
             ['references']),
-        ('Upload/link files',
-            ['file_field', 'url', 'ok_to_upload']),
+        ('Upload files',
+            ['file_field', 'ok_to_upload']),
+        ('External links',
+            ['url']),
         ('Add some extra comments',
             ['extra_comments']),
     ]
