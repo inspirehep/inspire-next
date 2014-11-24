@@ -524,7 +524,7 @@ class LiteratureForm(WebDepositForm):
         default=False,
         widget=CheckboxButton(msg=_('I confirm I have read the License Agreement')),
         validators=[required_if('file_field',
-                                [lambda x: bool(len(x)), ],  # non-empty
+                                [lambda x: x and len(x), ],  # non-empty
                                 message=_("Please, check this box to upload material.")
                                 ),
                     ]
