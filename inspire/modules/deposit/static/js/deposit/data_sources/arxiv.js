@@ -31,10 +31,8 @@ define(function(require, exports, module) {
 
     mapper: new DataMapper({
 
-      special_mapping: {
-        article: function(data) {
-
-          return {
+      common_mapping: function(data) {
+        return {
             doi: data.doi,
             title: data.title,
             title_source: 'arXiv',
@@ -48,7 +46,6 @@ define(function(require, exports, module) {
             license_url: data.license,
             note: data.comments,
           };
-        }
       },
 
       extract_contributor: function(authors) {
