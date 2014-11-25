@@ -21,6 +21,6 @@
 
 def clean_empty_list(value):
     """ Created to clean a list produced by Bootstrap multi-select."""
-    if value == [u"None"]:
+    if value in ([u"None"], [u""]):
         return []
     return value

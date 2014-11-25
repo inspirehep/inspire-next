@@ -248,13 +248,13 @@ class LiteratureForm(WebDepositForm):
         default="article",
         #widget=radiochoice_buttons,
         widget_classes='form-control',
-        validators=[validators.Required()],
+        validators=[validators.DataRequired()],
     )
 
     title = fields.TitleField(
         label=_('Title'),
         widget_classes="form-control",
-        validators=[validators.Required()],
+        validators=[validators.DataRequired()],
         export_key='title',
     )
 
@@ -308,7 +308,8 @@ class LiteratureForm(WebDepositForm):
         label=_('Subject'),
         widget_classes="form-control",
         export_key='subject_term',
-        filters=[clean_empty_list]
+        filters=[clean_empty_list],
+        validators=[validators.DataRequired()]
     )
 
     subject_relevance = fields.TextAreaField(
@@ -544,9 +545,9 @@ class LiteratureForm(WebDepositForm):
             ['captcha', 'type_of_doc', ]),
         ('Basic Information',
             ['title', 'title_arXiv', 'categories_arXiv', 'language',
-             'title_translation', 'authors', 'collaboration', 'experiment',
-             'abstract', 'subject', 'subject_relevance',
-             'page_nr', 'report_number']),
+             'title_translation', 'authors', 'subject', 'subject_relevance',
+             'collaboration', 'experiment', 'abstract', 'page_nr',
+             'report_number']),
         ('Thesis Information',
             ['supervisors', 'defense_date', 'thesis_date', 'degree_type',
              'university']),
