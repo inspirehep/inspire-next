@@ -29,12 +29,10 @@ _deposit_js.contents.append('js/deposit/inspire_init.js')
 _deposit_js.bower.update({
     'buckets': 'git://github.com/mauriciosantos/buckets.git',
     'bootstrap-multiselect': '~0.9.4',
-    'awesome-bootstrap-checkbox': 'latest',
     'readmore': '*',
 })
 
 _deposit_styles.contents += (
     'vendors/bootstrap-multiselect/dist/css/bootstrap-multiselect.css',
-    'vendors/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css',
     'css/deposit-inspire.css',
 )
