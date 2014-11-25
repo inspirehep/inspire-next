@@ -523,12 +523,16 @@ class LiteratureForm(WebDepositForm):
         label="",
         default=False,
         widget=CheckboxButton(msg=_('I confirm I have read the License Agreement')),
-        validators=[required_if('file_field',
-                                [lambda x: bool(len(x)), ],  # non-empty
-                                message=_("Please, check this box to upload material.")
-                                ),
-                    ]
-        )
+        validators=[
+            required_if(
+                'file_field',
+                lambda x: bool(len(x)),  # non-empty
+                # FIXME speaklater._LazyString is not serializable
+                # solution http://stackoverflow.com/questions/26124581/flask-json-serializable-error-because-of-flask-babel
+                # message=_("Please, check this box to upload material.")
+            ),
+        ]
+    )
 
     #
     # Form Configuration
