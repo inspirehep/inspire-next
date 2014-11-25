@@ -39,53 +39,79 @@
 
 {% block javascript %}
 <script type="text/javascript">
-require(["jquery", "js/deposit/form", "js/deposit/literature_submission_form", "js/deposit/plupload"], function($, deposit_form, LiteratureSubmissionForm) {
-  $(function() {
-    var save_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id) }}';
-    var save_all_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, all='1') }}';
-    var complete_url = '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, submit='1') }}';
-    var autocomplete_url = '{{ url_for(".autocomplete", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, field_name="__FIELDNAME__") }}';
+require(
+  [
+    "jquery",
+    "js/deposit/form",
+    "js/deposit/literature_submission_form",
+    "js/deposit/uploader/uploader",
+    "js/deposit/uploader/uploaders/pluploader",
+    "js/deposit/uploader/ui/filelist",
+    "js/deposit/uploader/ui/errorlist"
+  ],
 
-    var form = new LiteratureSubmissionForm(save_url);
+  function(
+    $,
+    deposit_form,
+    LiteratureSubmissionForm,
+    Uploader,
+    PlUploader,
+    FileList,
+    ErrorList
+  ) {
+
+    $(function() {
+
+    var config = {
+      form: {
+        save_url: '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id) }}',
+        save_all_url: '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, all='1') }}',
+        complete_url: '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, submit='1') }}',
+        autocomplete_url: '{{ url_for(".autocomplete", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, field_name="__FIELDNAME__") }}',
+        datepicker_element: '.datepicker',
+        datepicker_options: {
+            format: "YYYY-MM-DD",
+            pickTime: false
+        }
+      },
+
+      uploader: {
+        get_file_url: '{{ url_for('.get_file', deposition_type=deposition_type, uuid=uuid) }}',
+        delete_url: '{{ url_for('.delete_file', deposition_type=deposition_type, uuid=uuid) }}',
+        form_selector: "#submitForm",
+        form_files: {{ form.files|safe }},
+        resolve_uuid_url: '{{ url_for(".create", deposition_type=deposition_type) }}',
+        resolve_uuid: false,
+        continue_url: '{{ url_for('.run', deposition_type=deposition_type, uuid='-1') }}',
+        autoupload: true,
+        fileListSelector: '#uploader-filelist',
+        errorListSelector: '#uploader-errorlist'
+      },
+
+      pluploader: {
+        url: '{{ url_for('.upload_file', deposition_type=deposition_type, uuid=uuid) }}',
+        max_file_size: '{{config.DEPOSIT_MAX_UPLOAD_SIZE|default('10mb')}}',
+        drop_element: $('#field-file_field')[0],
+        filters: {
+          mime_types : [
+            { title : "PDF files", extensions : "pdf" },
+          ],
+          max_file_size: "100mb",
+          prevent_duplicates: true
+        }
+      }
+    };
+
+    // Initialize INSPIRE form - should be the first thing
+    var form = new LiteratureSubmissionForm(config.form.save_url);
 
     // Initialize form
-    deposit_form.attachTo("#submitForm", {
-      save_url: save_url,
-      save_all_url: save_all_url,
-      complete_url: complete_url,
-      autocomplete_url: autocomplete_url,
-      datepicker_element: '.datepicker',
-      datepicker_options: {
-        format: 'YYYY-MM-DD',
-        pickTime: false,
-        maxDate: new Date(),
-      }
-    });
+    deposit_form.attachTo("#submitForm", config.form);
 
-    $('.pluploader').pluploadWidget({
-      max_file_size: '{{config.DEPOSIT_MAX_UPLOAD_SIZE|default('10mb')}}',
-      save_url: save_url,
-      url: '{{ url_for('.upload_file', deposition_type=deposition_type, uuid=uuid) }}',
-      delete_url: '{{ url_for('.delete_file', deposition_type=deposition_type, uuid=uuid) }}',
-      get_file_url: '{{ url_for('.get_file', deposition_type=deposition_type, uuid=uuid) }}',
-      dropbox_url: '{{ url_for('.upload_url', deposition_type=deposition_type, uuid=uuid) }}',
-      files: {{ form.files|safe }},
-      filters: {
-        mime_types : [
-          { title : "PDF files", extensions : "pdf" },
-        ],
-        max_file_size: "100mb",
-        prevent_duplicates: true
-      },
-      drop_element: "field-file_field",
-      unique_names : false,
-      autoupload: true,
-      sortable: false,
-      // Those are missing
-      // uuid:,
-      // newdep_url:,
-      // continue_url
-    });
+    Uploader.attachTo("#uploader", config.uploader);
+    PlUploader.attachTo("#pluploader", config.pluploader);
+    FileList.attachTo("#uploader-filelist");
+    ErrorList.attachTo("#uploader-errorlist");
   });
 });
 </script>
