@@ -51,7 +51,7 @@ def arxiv_fft_get(obj, eng):
 
         from invenio.config import CFG_TMPSHAREDDIR
         arxiv_file, arxiv_file_path = mkstemp(
-            prefix="%s_" % (metadata['arxiv_id']),
+            prefix="%s_" % (metadata['arxiv_id'].replace("/", "_")),
             suffix='.pdf',
             dir=CFG_TMPSHAREDDIR,
         )
@@ -61,7 +61,7 @@ def arxiv_fft_get(obj, eng):
 
         with open(arxiv_file_path) as fd:
             # To get 1111.2222.pdf as filename.
-            filename = "{0}.pdf".format(metadata['arxiv_id'])
+            filename = "{0}.pdf".format(metadata['arxiv_id'].replace("/", "_"))
 
             df = DepositionFile(backend=DepositionStorage(deposition.id))
             if df.save(fd, filename=filename):
