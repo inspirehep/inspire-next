@@ -159,6 +159,9 @@ def install():
     if not exists(venv):
         return error("Meh? I need a virtualenv first.")
 
+    execute(disable, env.host, False)
+    stop_celery()
+
     success = 1
     invenio_package = ""
 
@@ -190,7 +193,7 @@ def install():
         with cd("{0}/src/{1}".format(venv, package)):
             with prefix('source {0}/bin/activate'.format(venv)):
                 sudo("pip install git+https://github.com/inspirehep/python-rt#egg=rt")
-                success = sudo("pip install . --upgrade")
+                success = sudo("python setup.py install")
                 if success:
                     # INSPIRE specific configuration
                     with cd(env.conf_directory):
@@ -225,8 +228,11 @@ def install():
             create_symlink("/opt/invenio", venv)
 
     if success:
-        sudo("supervisorctl restart celeryd")
-        graceful_apache()
+        restart_apache()
+        execute(enable, env.host, True)
+        choice = prompt("Start Celery? (Y/n)", default="yes")
+        if choice.lower() not in ["y", "ye", "yes"]:
+            start_celery()
     return success
 
 
@@ -234,6 +240,18 @@ def install():
 def restart_celery():
     """Restart celery workers."""
     return sudo("supervisorctl restart celeryd")
+
+
+@task
+def stop_celery():
+    """Restart celery workers."""
+    return sudo("supervisorctl stop celeryd")
+
+
+@task
+def start_celery():
+    """Restart celery workers."""
+    return sudo("supervisorctl start celeryd")
 
 
 @task
@@ -248,9 +266,7 @@ def graceful_apache():
     target = env.host
     execute(disable, target, False)
     execute(restart_apache)
-    choice = prompt("{0} restarted. Enable host? (Y/n)".format(target), default="yes")
-    if choice.lower() in ["y", "ye", "yes"]:
-        execute(enable, target, False)
+    execute(enable, target, True)
 
 
 @task
