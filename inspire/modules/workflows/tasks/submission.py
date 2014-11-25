@@ -82,7 +82,7 @@ def create_ticket(template, queue="Test"):
         id_user = d.workflow_object.id_user
         email = acc_get_user_email(id_user)
         sip = d.get_latest_sip(sealed=False)
-        subject = u"Literature submission: {0}".format(d.title).encode("utf-8")
+        subject = u"Literature submission: {0}".format(d.title)
         body = render_template(
             template,
             email=email,
