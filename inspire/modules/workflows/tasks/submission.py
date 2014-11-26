@@ -105,7 +105,10 @@ def create_ticket(template, queue="Test"):
                 Requestors=email
             )
             obj.extra_data["ticket_id"] = ticket_id
-            obj.log.info("Ticket {0} created:\n{1}".format(ticket_id, body))
+            obj.log.info("Ticket {0} created:\n{1}".format(
+                ticket_id,
+                body.encode("utf-8", "ignore")
+            ))
     return _create_ticket
 
 
@@ -149,7 +152,9 @@ def reply_ticket(template):
                 ticket_id=ticket_id,
                 text=body,
             )
-            obj.log.info("Reply created:\n{0}".format(body))
+            obj.log.info("Reply created:\n{0}".format(
+                body.encode("utf-8", "ignore")
+            ))
     return _reply_ticket
 
 
