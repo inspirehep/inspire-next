@@ -67,37 +67,40 @@
 {% endblock %}
 
 {%- block page_header -%}
-      <!-- replaced page header -->
-      {% block headerbox %}
-        {% include 'header.html' %}
-      {% endblock headerbox %}
-      <!-- end replaced page header -->
-      {% block breadcrumb %}
-      {%- include 'breadcrumbs.html' -%}
-      {% endblock breadcrumb %}
-      {% block pageheaderadd %}{{ pageheaderadd|safe }}{% endblock pageheaderadd %}
+  <!-- replaced page header -->
+  {% block headerbox %}
+    {% include 'header.html' %}
+  {% endblock headerbox %}
+  <!-- end replaced page header -->
+  {% block breadcrumb %}
+    {%- include 'breadcrumbs.html' -%}
+  {% endblock breadcrumb %}
+  {% block pageheaderadd %}{{ pageheaderadd|safe }}{% endblock pageheaderadd %}
 {%- endblock page_header -%}
 
 {%- if not no_pagebody -%}
 {%- block page_body -%}
-      {% block title %}
-        {% if title %}
-          <div class="page-header">
-            <h1>{{ title }}</h1>
-          </div>
-        {% endif %}
-      {% endblock title %}
-      {{ flashed_messages() }}
-      {% block body %}
-        {{ super() }}
-        {% if searchbar_enable %}
-        {{ search_form(collection, easy_search_form) }}
-        {% endif %}
+{# adds .container to all pages except for the landing one #}
+<div {% if request.endpoint != "search.index" %} class="container" {% endif %}>
+  {% block title %}
+    {% if title %}
+    <div class="page-header">
+      <h1>{{ title }}</h1>
+    </div>
+    {% endif %}
+  {% endblock title %}
+  {{ flashed_messages() }}
+  {% block body %}
+    {{ super() }}
+    {% if searchbar_enable %}
+    {{ search_form(collection, easy_search_form) }}
+    {% endif %}
 
-        {% block inner_content %}
-        <!-- Here goes the content visible below the search bar -->
-        {% endblock inner_content %}
-      {% endblock body %}
+    {% block inner_content %}
+    <!-- Here goes the content visible below the search bar -->
+    {% endblock inner_content %}
+  {% endblock body %}
+</div>
 {%- endblock page_body %}
 {%- endif %}
 
