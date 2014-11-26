@@ -173,8 +173,13 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             deposit_object = Deposition(bwo)
         except InvalidDepositionType:
             return "This submission is disabled: {0}.".format(bwo.workflow.name)
-        submission_data = deposit_object.get_latest_sip()
-        marcxml = submission_data.package
+
+        submission_data = deposit_object.get_latest_sip(deposit_object.submitted)
+
+        if hasattr(submission_data, "package"):
+            marcxml = submission_data.package
+        else:
+            return "No data found in submission (no package)."
 
         of = kwargs.get("of", "hd")
         if of == "xm":
