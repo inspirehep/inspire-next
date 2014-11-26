@@ -22,17 +22,16 @@
 {% endif %}
 
 {% if identifiers %}
-	<h5>{{ _('Identifiers') }}:</h5>
-	<ul class="list-unstyled">
+	<ul class="list-inline">
 		{% for identifier in identifiers %}
-		    <a href="http://arxiv.org/abs/{{identifier}}">{{identifier}}</a>
+		    <li><a href="http://arxiv.org/abs/{{identifier}}">{{identifier}}</a></li>
 		{% endfor %}
 	</ul>
 {% endif %}
 
 {% if categories %}
-	<h5>{{ _('Categories') }}:</h5>
-	<ul class="list-unstyled">
+	<ul class="list-inline">
+		<li><span class="h5">{{ _('Categories') }}:</span></li>
 		{% for category in categories %}
 		    <li>{{category}}</li>
 		{% endfor %}
@@ -40,3 +39,5 @@
 {% endif %}
 
 {{ macros.display_classification_brief(results) }}
+
+<span class="h5">{{ _('Submitter') }}:</span> {{ user_email }}

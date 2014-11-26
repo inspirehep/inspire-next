@@ -126,7 +126,10 @@ class literature(SimpleRecordDeposition, WorkflowBase):
     @staticmethod
     def get_title(bwo):
         """Return title of object."""
-        deposit_object = Deposition(bwo)
+        try:
+            deposit_object = Deposition(bwo)
+        except InvalidDepositionType:
+            return "This submission is disabled: {0}.".format(bwo.workflow.name)
         sip = deposit_object.get_latest_sip()
         if sip:
             # Get the SmartJSON object
@@ -138,11 +141,15 @@ class literature(SimpleRecordDeposition, WorkflowBase):
     @staticmethod
     def get_description(bwo):
         """Return description of object."""
+        from invenio.modules.access.control import acc_get_user_email
         results = bwo.get_tasks_results()
         try:
             deposit_object = Deposition(bwo)
         except InvalidDepositionType:
             return "This submission is disabled: {0}.".format(bwo.workflow.name)
+
+        id_user = deposit_object.workflow_object.id_user
+        user_email = acc_get_user_email(id_user)
 
         sip = deposit_object.get_latest_sip()
         if sip:
@@ -153,17 +160,19 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                                    categories=categories,
                                    identifiers=identifiers,
                                    results=results,
+                                   user_email=user_email,
                                    )
         else:
-            from invenio.modules.access.control import acc_get_user_email
-            id_user = deposit_object.workflow_object.id_user
-            return "Submitted by: {0}".format(acc_get_user_email(id_user))
+            return "Submitter: {0}".format(user_email)
 
     @staticmethod
     def formatter(bwo, **kwargs):
         """Return formatted data of object."""
         from invenio.modules.formatter import format_record
-        deposit_object = Deposition(bwo)
+        try:
+            deposit_object = Deposition(bwo)
+        except InvalidDepositionType:
+            return "This submission is disabled: {0}.".format(bwo.workflow.name)
         submission_data = deposit_object.get_latest_sip()
         marcxml = submission_data.package
 

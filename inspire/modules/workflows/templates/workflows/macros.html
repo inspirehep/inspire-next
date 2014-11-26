@@ -19,7 +19,7 @@
 
 {% macro display_classification_brief(results) -%}
     {% if results %}
-    <ul class="list-unstyled">
+    <ul class="list-inline">
         {% set result_full = results.get('classification_full') %}
         {% set result_fast = results.get('classification_fast') %}
         {% set result = [] %}
