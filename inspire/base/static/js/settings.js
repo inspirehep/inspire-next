@@ -45,6 +45,16 @@ require.config({
     "bootstrap-tagsinput": "vendors/bootstrap-tagsinput/src/bootstrap-tagsinput",
     bootstrap: "vendors/bootstrap/dist/js/bootstrap",
     prism: "vendors/prism/prism",
+    d3: "vendors/d3/d3.js",
+    "jasmine-jquery": "vendors/jasmine-jquery/lib/jasmine-jquery",
+    "jasmine-core": "vendors/jasmine/lib/jasmine-core/jasmine",
+    "jasmine-html": "vendors/jasmine/lib/jasmine-core/jasmine-html",
+    "jasmine-ajax": "vendors/jasmine-ajax/lib/mock-ajax",
+    "jasmine-flight": "vendors/jasmine-flight/lib/jasmine-flight",
+    "jasmine-boot": "js/jasmine/boot",
+    "searchtypeahead-configuration": "js/search/default_typeahead_configuration",
+    "jasmine-events": "js/jasmine/events_checker",
+    "jasmine-initialization": "js/jasmine/initialization_checker",
     // INSPIRE
     "bootstrap-multiselect": "vendors/bootstrap-multiselect/dist/js/bootstrap-multiselect",
     "readmore": "vendors/readmore/readmore",
@@ -55,6 +65,9 @@ require.config({
   shim: {
     jquery: {
       exports: "$"
+    },
+    d3: {
+      exports: "d3"
     },
     "jqueryui-timepicker/jquery-ui-sliderAccess": {
       deps: ["jquery"]
@@ -111,6 +124,39 @@ require.config({
     },
     prism: {
       exports: "Prism"
+    },
+    "jasmine-core": {
+      exports: "jasmineRequire"
+    },
+    "jasmine-boot": {
+      exports: "jasmine",
+    },
+    "jasmine-jquery": {
+      deps: ["jquery", "jasmine-boot"],
+      exports: "jasmine",
+    },
+    "jasmine-ajax": {
+      deps: ["jasmine-boot"],
+      exports: "jasmine",
+    },
+    "jasmine-html": {
+      deps: ["jasmine-core"],
+      exports: "jasmineRequire"
+    },
+    "jasmine-flight": {
+      deps: ["jasmine-boot", "jasmine-jquery"],
+      exports: "jasmine",
+    },
+    "vendors/jasmine/lib/jasmine-core/boot": {
+      deps: ["jasmine-html"],
+      exports: "window.onload",
+    },
+    "jasmine-events": {
+      deps: ["jasmine-jquery"],
+      exports: "jasmine.EventsChecker",
+    },
+    "jasmine-initialization": {
+      deps: ["jasmine-boot"],
     },
     // INSPIRE
     "bootstrap-multiselect": {
