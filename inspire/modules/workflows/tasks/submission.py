@@ -28,7 +28,7 @@ from functools import wraps
 from invenio.modules.deposit.models import Deposition
 from invenio.modules.formatter import format_record
 from flask.ext.login import current_user
-from invenio.config import CFG_SITE_SUPPORT_EMAIL
+from invenio.base.globals import cfg
 from .actions import was_approved
 
 
@@ -67,7 +67,7 @@ def inform_submitter(obj, eng):
         body += extra_data.get('url', '')
     else:
         body = 'Rejected'
-    send_email(CFG_SITE_SUPPORT_EMAIL, email, 'Subject', body, header='header')
+    send_email(cfg.get("CFG_SITE_SUPPORT_EMAIL"), email, 'Subject', body, header='header')
 
 
 def create_ticket(template, queue="Test"):
@@ -81,6 +81,7 @@ def create_ticket(template, queue="Test"):
         d = Deposition(obj)
         id_user = d.workflow_object.id_user
         email = acc_get_user_email(id_user)
+        rt_queue = cfg.get("CFG_BIBCATALOG_QUEUES") or queue
         sip = d.get_latest_sip(sealed=False)
         subject = u"Literature submission: {0}".format(d.title)
         body = render_template(
@@ -98,7 +99,7 @@ def create_ticket(template, queue="Test"):
             obj.log.error("No RT instance available. Skipping!")
         else:
             ticket_id = rt.create_ticket(
-                Queue=queue,
+                Queue=rt_queue,
                 Subject=subject,
                 Text=body,
                 Requestors=email
