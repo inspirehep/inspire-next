@@ -30,3 +30,51 @@
     </div>
   {% endif %}
 {%- endblock -%}
+
+
+{%- block hp_details_main -%}
+
+  {{ self.hp_action_main() }}
+  {{ self.action_alert() }}
+  {{ self.workflow_completed() }}
+  {{ self.hp_preview() }}
+
+  {% set submission_data = bwobject.get_extra_data().get("submission_data") %}
+  {% if workflow_class.object_type == "submission" and submission_data.extra_comments %}
+    <h5>Comments from user</h5>
+    <pre>{{ submission_data.extra_comments }}</pre>
+  {% endif %}
+  {% if workflow_class.object_type == "submission" and submission_data.subject_relevance %}
+    <h5>Subject relevance</h5>
+    <pre>{{ submission_data.subject_relevance }}</pre>
+  {% endif %}
+
+  <div role="tabpanel">
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active"><a href="#task-results" aria-controls="task-results" role="tab" data-toggle="tab">Results</a></li>
+      {% if workflow_class.object_type == "submission" and submission_data %}
+        <li role="presentation"><a href="#references" aria-controls="references" role="tab" data-toggle="tab">References</a></li>
+      {% endif  %}
+      <li role="presentation"><a href="#task-logs" aria-controls="task-logs" role="tab" data-toggle="tab">Logs</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="task-results">
+        {{ self.hp_task_results() }}
+      </div>
+      {% if workflow_class.object_type == "submission" and submission_data %}
+        <div role="tabpanel" class="tab-pane" id="references">
+          <pre>{{ submission_data.references }}</pre>
+        </div>
+      {% endif %}
+      <div role="tabpanel" class="tab-pane" id="task-logs">
+        {{ self.hp_task_logs() }}
+      </div>
+    </div>
+
+  </div>
+
+{%- endblock -%}
