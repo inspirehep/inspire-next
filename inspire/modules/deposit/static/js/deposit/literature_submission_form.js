@@ -518,8 +518,8 @@ define(function(require, exports, module) {
       var doiSource = require("js/deposit/data_sources/doi");
       var isbnSource = require("js/deposit/data_sources/isbn");
 
-      var arxivId = this.stripSourceTags(this.$arxiv_id_field.val());
-      var doi = this.stripSourceTags(this.$doi_field.val());
+      var arxivId = this.stripSourceTags(this.$arxiv_id_field.val()).toLowerCase();
+      var doi = this.stripSourceTags(this.$doi_field.val()).toLowerCase();
       var isbn = this.$isbn_field.val();
       var depositionType = this.$deposition_type.val();
 
