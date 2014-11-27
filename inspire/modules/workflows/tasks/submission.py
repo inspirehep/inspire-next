@@ -114,7 +114,7 @@ def create_ticket(template, queue="Test"):
 
 def reply_ticket(template):
     """Reply to a ticket for the submission."""
-    @wraps(create_ticket)
+    @wraps(reply_ticket)
     def _reply_ticket(obj, eng):
         from invenio.modules.access.control import acc_get_user_email
         from inspire.utils.tickets import get_instance
@@ -160,6 +160,7 @@ def reply_ticket(template):
 
 def halt_record_with_action(action, message):
     """Halt the record and set an action (with message)."""
+    @wraps(halt_record_with_action)
     def _halt_record(obj, eng):
         """Halt the workflow for approval."""
         eng.halt(action=action,
@@ -169,6 +170,7 @@ def halt_record_with_action(action, message):
 
 def finalize_and_post_process(workflow_name, **kwargs):
     """Finalize the submission and starts post-processing."""
+    @wraps(finalize_and_post_process)
     def _finalize_and_post_process(obj, eng):
         from invenio.modules.workflows.api import start_delayed
         from invenio.modules.workflows.models import ObjectVersion
@@ -184,6 +186,7 @@ def finalize_and_post_process(workflow_name, **kwargs):
 
 def send_robotupload_deposit(url=None):
     """Get the MARCXML from the deposit object and ships it."""
+    @wraps(send_robotupload_deposit)
     def _send_robotupload_deposit(obj, eng):
         from invenio.modules.deposit.models import Deposition
         from invenio.modules.workflows.errors import WorkflowError

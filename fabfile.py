@@ -231,7 +231,7 @@ def install():
         restart_apache()
         execute(enable, env.host, True)
         choice = prompt("Start Celery? (Y/n)", default="yes")
-        if choice.lower() not in ["y", "ye", "yes"]:
+        if choice.lower() in ["y", "ye", "yes"]:
             start_celery()
     return success
 
