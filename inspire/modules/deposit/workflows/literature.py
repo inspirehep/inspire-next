@@ -467,6 +467,9 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                     except ValueError:
                         pass
 
+            if {'primary': "ConferencePaper"} not in metadata['collections']:
+                metadata['collections'].append({'primary': "Published"})
+
             delete_keys.extend(publication_fields)
 
         if 'journal_title' in metadata:
@@ -482,9 +485,6 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                     del metadata['nonpublic_note'][0]
                 else:
                     delete_keys.append('nonpublic_note')
-
-            if {'primary': "ConferencePaper"} in metadata['collections']:
-                metadata['collections'].remove({'primary': "ConferencePaper"})
 
         # =============
         # Preprint Info
