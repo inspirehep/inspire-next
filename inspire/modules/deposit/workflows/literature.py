@@ -207,7 +207,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         field_map = {'abstract': "summary",
                      'title': "title",
                      'subject_term': "term",
-                     'university': "university",
+                     'institution': "university",
                      'degree_type': "type",
                      'thesis_date': "date",
                      'journal_title': "journal_title",
@@ -226,7 +226,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                                             'issue',
                                             'conference_id'],
                                 'thesis': ['supervisors',
-                                           'university',
+                                           'institution',
                                            'degree_type',
                                            'thesis_date',
                                            'defense_date'],
@@ -292,7 +292,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ==============
         # Thesis related
         # ==============
-        thesis_fields = filter(lambda field: field in metadata, ['university',
+        thesis_fields = filter(lambda field: field in metadata, ['institution',
                                                                  'degree_type',
                                                                  'thesis_date'])
         if thesis_fields:

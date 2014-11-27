@@ -413,8 +413,8 @@ class LiteratureForm(WebDepositForm):
         widget_classes="form-control" + THESIS_CLASS,
     )
 
-    university = fields.TextField(
-        label=_('University'),
+    institution = fields.TextField(
+        label=_('Institution'),
         widget_classes="form-control" + THESIS_CLASS,
     )
 
@@ -549,7 +549,7 @@ class LiteratureForm(WebDepositForm):
              'report_number']),
         ('Thesis Information',
             ['supervisors', 'defense_date', 'thesis_date', 'degree_type',
-             'university']),
+             'institution']),
         ('Licenses and copyright',
             ['license', 'license_url']),
         ('Conference Information',
