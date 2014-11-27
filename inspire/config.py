@@ -78,12 +78,13 @@ PACKAGES = [
     'inspire.modules.deposit',
     'inspire.modules.access',
     'inspire.modules.harvester',
+    'inspire.modules.authors',
     'invenio.modules.access',
     'invenio.modules.accounts',
     'invenio.modules.alerts',
     'invenio.modules.apikeys',
-    'invenio.modules.authorids',
     'invenio.modules.authorprofiles',
+    'invenio.modules.authors',
     'invenio.modules.baskets',
     'invenio.modules.bulletin',
     'invenio.modules.circulation',
@@ -242,6 +243,27 @@ ARXIV_SEARCH_PREFIX = u"035__a:oai:arXiv.org:"
 # or Invenio will crash when using http
 
 REMEMBER_COOKIE_SECURE = True
+
+# Inspire specific config
+
+INSPIRE_EMAIL_REGEX = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+INSPIRE_URL_REGEX = "^(?:http(?:s)?:\/\/)?(?:www\.)?(?:[\w-]*)\.\w{2,}$"
+
+# year - month (2 digits) -day (2 digits)
+INSPIRE_DATE_REGEX = "^[1|2][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0|1])$"
+
+INSPIRE_YEAR_MIN = 1000
+INSPIRE_YEAR_MAX = 2050
+
+INSPIRE_ARXIV_CATEGORIES = ['acc-phys', 'astro-ph', 'atom-ph', 'chao-dyn',
+                            'climate', 'comp', 'cond-mat', 'genl-th', 'gr-qc',
+                            'hep-ex', 'hep-lat', 'hep-ph', 'hep-th', 'instr',
+                            'librarian', 'math', 'math-ph', 'med-phys', 'nlin',
+                            'nucl-ex', 'nucl-th', 'physics', 'plasma-phys',
+                            'q-bio', 'quant-ph', 'ssrl', 'other']
+
+INSPIRE_CATEGORIES_SOURCES = ['arxiv']
+
 
 # For production only, instance_config contains configuration of
 # database credentials and other instance specific configuration
