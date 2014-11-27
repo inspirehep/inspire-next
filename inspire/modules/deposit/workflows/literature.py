@@ -24,6 +24,7 @@ from flask import render_template
 
 from invenio.base.globals import cfg
 from invenio.ext.login import UserInfo
+from invenio.modules.oauthclient.models import RemoteAccount
 
 from invenio.modules.deposit.types import SimpleRecordDeposition
 from invenio.modules.deposit.tasks import render_form, \
@@ -492,7 +493,13 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         userid = deposition.user_id
         user = UserInfo(userid)
         email = user.info.get('email', '')
+        external_accounts = RemoteAccount.query.filter_by(user_id=userid).all()
+        external_ids = {}
+        for e_id in external_accounts:
+            external_ids[e_id.client_id] = e_id.extra_data
         sources = ["{0}:{1}".format('inspire:uid:', userid)]
+        sources.extend(["{0}:{1}".format(e_id.extra_data.keys()[0],
+                                         e_id.extra_data.values()[0]) for e_id in external_ids])
         metadata['acquisition_source'] = dict(
             source=sources,
             email=email,
