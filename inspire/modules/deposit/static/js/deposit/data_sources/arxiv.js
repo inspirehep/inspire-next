@@ -41,7 +41,6 @@ define(function(require, exports, module) {
             abstract: data.abstract,
             authors: data.authors,
             journal_title: data["journal-ref"],
-            year: data.created.substring(0, 4),
             preprint_created: data.created,
             license_url: data.license,
             note: data.comments,
