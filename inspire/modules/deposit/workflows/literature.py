@@ -42,6 +42,8 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 )
 from invenio.modules.workflows.definitions import WorkflowBase
 
+from invenio.utils.persistentid import is_arxiv_post_2007
+
 from inspire.modules.workflows.tasks.matching import(
     match_record_remote_deposit,
 )
@@ -336,8 +338,12 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                                       'categories_arXiv'])
 
         if imported_from_arXiv or metadata.get('title_source') == 'arXiv':
-            metadata['report_number'] = {'primary': metadata['arxiv_id'],
-                                         'source': 'arXiv'}
+            if is_arxiv_post_2007(metadata['arxiv_id']):
+                metadata['report_number'] = {'primary': 'arXiv:' + metadata['arxiv_id'],
+                                             'source': 'arXiv'}
+            else:
+                metadata['report_number'] = {'primary': metadata['arxiv_id'],
+                                             'source': 'arXiv'}
             if len(metadata['arxiv_id'].split('/')) == 2:
                 metadata['report_number']['arxiv_category'] = metadata['arxiv_id'].split('/')[0]
             metadata['abstract']['source'] = 'arXiv'
