@@ -137,6 +137,7 @@ PACKAGES = [
 
 DEPOSIT_TYPES = [
     'inspire.modules.deposit.workflows.literature.literature',
+    'inspire.modules.deposit.workflows.literature_simple.literature_simple',
 ]
 DEPOSIT_DEFAULT_TYPE = "inspire.modules.deposit.workflows.literature:literature"
 
