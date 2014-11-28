@@ -287,7 +287,7 @@ def refresh_config():
                     sudo("GIT_WORK_TREE={0} git checkout -f {1}".format(config_location, env.conf_branch))
                     sudo("pip install {0} --upgrade".format(config_location))
     restart_celery()
-    restart_apache()
+    graceful_apache()
 
 
 @task
@@ -302,9 +302,12 @@ def refresh_invenio():
 
     with settings(sudo_user="invenio"):
         # Invenio installation
-        with cd("{0}/src/{1}".format(venv, package)):
+        with cd("{0}/src/{1}".format(venv, invenio_package)):
             with prefix('source {0}/bin/activate'.format(venv)):
-                sudo("python setup.py install")
+                sudo("pip install Babel")
+                sudo("pip install numpy")
+                sudo("pip install git+git://github.com/mrjoes/flask-admin.git#egg=Flask-Admin-1.0.9.dev0")
+                sudo("pip install . --upgrade")
 
 
 @task
