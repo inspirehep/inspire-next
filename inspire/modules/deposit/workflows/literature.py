@@ -398,6 +398,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             else:
                 metadata['nonpublic_note'] = [metadata['conf_name']]
             metadata['collections'].extend([{'primary': "ConferencePaper"}])
+            metadata['collections'].remove([{'primary': "Published"}])
             delete_keys.append('conf_name')
 
         # =======
