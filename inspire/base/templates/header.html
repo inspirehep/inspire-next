@@ -36,6 +36,26 @@
   ('documentation.index', 'documentation', 'Help'),
 ] -%}
 
+<style>
+  .navbar .divider-vertical {
+height: 50px;
+margin: 0 9px;
+border-right: 1px solid #ffffff;
+border-left: 1px solid #f2f2f2;
+}
+
+.navbar-inverse .divider-vertical {
+border-right-color: #222222;
+border-left-color: #111111;
+}
+
+@media (max-width: 767px) {
+  .navbar-collapse .nav > .divider-vertical {
+  display: none;
+  }
+}
+</style>
+
 <section>
   <nav id="topnav" class="navbar navbar-fixed-top navbar-default navbar-custom" role="navigation">
     <div class="container">
@@ -52,17 +72,19 @@
       </div>
 
       <div class="navbar-collapse navbar-ex1-collapse collapse">
-        <ul class="nav navbar-nav">
+        <ul class="nav navbar-nav navbar-right">
           {% for href, blueprint, caption in navigation_bar %}
           <li {% if request.blueprint == blueprint|e %} class="active" {% endif %}>
             <a href="{{ url_for( href|e ) }}">{{- _(caption|e) -}}</a>
           </li>
           {% endfor %}
-        </ul>
-
-        <div class="nav navbar-nav navbar-right">
+          <li class="divider-vertical"></li>
           {%- if current_user.is_guest %}
-          <a class="btn btn-success navbar-btn" href="{{ url_for('webaccount.login')}}">{{- _("Sign in") -}}</a>
+          <li>
+            <a class="" href="{{ url_for('webaccount.login')}}">
+              <i class="glyphicon glyphicon-log-in"></i> {{ _("Sign in") }}
+            </a>
+          </li>
           {%- else %}
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -78,7 +100,7 @@
             </ul>
           </li>
           {%- endif %}
-        </div>
+        </ul>
       </div>
 
     </div>

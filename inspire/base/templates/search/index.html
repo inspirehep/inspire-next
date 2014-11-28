@@ -30,6 +30,15 @@
 
 {%- block extra_style %}
 <style>
+
+#landing-title {
+  background: -webkit-gradient(linear,left bottom,right top,color-stop(0%,#5889c2),color-stop(100%,#3fa0c9));
+  background: -webkit-linear-gradient(45deg,#5889c2 0,#3fa0c9 100%);
+  background: -o-linear-gradient(45deg,#5889c2 0,#3fa0c9 100%);
+  background: linear-gradient(45deg,#5889c2 0,#3fa0c9 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#5889c2', endColorstr='#3fa0c9', GradientType=1);
+}
+
   .home-intro h2.tagline {
     font-weight: 400;
     font-size: 35px;
@@ -54,7 +63,7 @@
 <div class="wrap">
 
   <section>
-    <div class="jumbotron">
+    <div id="landing-title" class="jumbotron">
       <div class="container">
         <div class="row">
           <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
@@ -70,7 +79,7 @@
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
           <div class="page-header text-center">
-            <h2>Try our new deposition forms!</h2>
+            <h2>Try our new submission forms!</h2>
             <a class="btn btn-primary btn-lg" href="#">SUBMIT NOW!</a>
           </div>
         </div>
