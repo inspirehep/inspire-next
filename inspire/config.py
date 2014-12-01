@@ -130,7 +130,16 @@ PACKAGES = [
     'invenio.modules.uploader',
     'invenio.modules.webhooks',
     'invenio.modules.workflows',
+    'invenio.modules.pages',
     'invenio.base',
+]
+
+PACKAGES_EXCLUDE = [
+    'invenio.modules.archiver',
+    'invenio.modules.annotations',
+    'invenio.modules.communities',
+    'invenio.modules.linkbacks',
+    'invenio.modules.multimedia',
 ]
 
 # Configuration related to Deposit module
@@ -170,7 +179,7 @@ CFG_INSPIRE_SITE = 1
 
 langs = {}
 for lang in CFG_SITE_LANGS:
-    langs[lang] = u"INSPIRE - High-Energy Physics Literature Database"
+    langs[lang] = u"INSPIRE - High-Energy Physics Information Platform"
 CFG_SITE_NAME_INTL = langs
 
 # Rename blueprint prefixes
