@@ -35,19 +35,6 @@
           <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
             <ul class="list-unstyled">
               <li>
-                <a class="footer" href="{{ url_for('search.index') }}">{{- _("Home") -}}</a>
-              </li>
-              <li>
-                <a class="footer" href="{{ url_for('webdeposit.index') }}">{{- _("Submit") -}}</a>
-              </li>
-              <li>
-                <a class="footer" href="{{ url_for('documentation.index') }}">{{- _("Help") -}}</a>
-              </li>
-            </ul>
-          </div>
-          <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-            <ul class="list-unstyled">
-              <li>
                 <a class="footer" href="#">{{- _("Terms of use") -}}</a>
               </li>
               <li>
@@ -55,10 +42,11 @@
               </li>
             </ul>
           </div>
-          <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+          <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-md-offset-3">
             <ul class="list-unstyled">
               <li>
-                <a class="footer" href="#">@inspirehep <i class="fa fa-twitter fa-2x" style="vertical-align: middle;"></i></a>
+                <a class="footer" href="https://twitter.com/inspirehep" target="_blank"><i class="fa fa-twitter fa-2x"></i></a>
+                <a class="footer" href="http://blog.inspirehep.net/" target="_blank"><i class="fa fa-wordpress fa-2x"></i></a>
               </li>
             </ul>
           </div>
@@ -67,7 +55,7 @@
       <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4 text-right">
         <address>
           <strong>{{ config["CFG_SITE_NAME_INTL"][g.ln] }}</strong>
-          <br />{{ _("Powered by") }} <a class="footer" href="http://invenio-software.org/">Invenio</a>
+          <br />{{ _("Powered by") }} <a class="footer" href="http://invenio-software.org/" target="_blank">Invenio</a>
         </address>
       </div>
     </div>

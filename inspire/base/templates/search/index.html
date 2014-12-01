@@ -42,12 +42,16 @@
   .home-intro h2.tagline {
     font-weight: 400;
     font-size: 35px;
-    margin-top: 50px;
+    margin-top: 30px;
 }
 
 .home-intro p.lead {
     max-width: 100%;
     margin: 0 auto;
+}
+
+#submit-btn {
+  margin-bottom: 20px;
 }
 
 @media (min-width:768px) {
@@ -61,14 +65,13 @@
 {% block index %}
 
 <div class="wrap">
-
   <section>
     <div id="landing-title" class="jumbotron">
       <div class="container">
         <div class="row">
           <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
-            <h1>WELCOME TO INSPIRE!</h1>
-            <h2>High-Energy Physics Literature Database</h2>
+            <h1>{{- _("Welcome to INSPIRE Labs!") -}}</h1>
+            <h2>{{- _("High-Energy Physics Information Platform") -}}</h2>
           </div>
         </div>
       </div>
@@ -79,18 +82,18 @@
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
           <div class="page-header text-center">
-            <h2>Try our new submission forms!</h2>
-            <a class="btn btn-primary btn-lg" href="#">SUBMIT NOW!</a>
+            <h2>{{- _("Try our new submission forms!") -}}</h2>
+            <a class="btn btn-primary btn-lg" id="submit-btn" href="#">{{- _("SUBMIT NOW!") -}}</a>
           </div>
         </div>
       </div>
       <div class="row home-intro text-center">
         <div class="col-lg-12">
-          <h2 class="tagline">What is INSPIRE Labs?</h2>
+          <h2 class="tagline">{{- _("What is INSPIRE Labs?") -}}</h2>
           <p class="lead">
-            On INSPIRE labs we deploy all our new features, so you can take advantage of them since the beginning.
-            <strong>All the submissions received here are transferred automatically to INSPIRE.</strong>
-            Please, feel free to use the feedback if you have any suggestion!</p>
+            {{ _("On INSPIRE Labs we deploy all our new features, so you can take advantage of them since the beginning.") }}
+            <strong>{{ _("All the accepted submissions are transferred automatically to INSPIRE.") }}</strong>
+            {{ _("Please, feel free to use the feedback if you have any suggestion!") }}</p>
           <hr class="small">
         </div>
       </div>

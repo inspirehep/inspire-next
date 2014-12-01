@@ -20,72 +20,126 @@
 {% extends "accounts/login_base.html" %}
 
 {%- block form_auth_external scoped -%}{% endblock %}
-{% block nickname_popover_placement %}left{% endblock%}
+{% block nickname_popover_placement %}{% endblock%}
 
 {% block body %}
 {%- if current_user.is_guest %}
   {{super()}}
 {%- else -%}
-    <div class="col-lg-offset-2 col-sm-8 col-md-8">
-        <div class="jumbotron">
-        <h1>Hi {{current_user.nickname}}!</h1>
-        <p style="margin-top: 10px;">Where do you go from here?</p>
-        <p style="margin-top: 30px;">
-          </p><div class="row">
-            <div width="100%" align="center">
-                <a href="/" class="btn btn-default btn-lg">Search</a>
-                <a href="{{ url_for('webaccount.logout') }}" class="btn btn-default btn-lg">Sign out</a>
-            </div>
-          </div>
-        <p></p>
-        </div>
+<div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered">
+  <div class="well">
+    <h1>{{ _('Hi') }} {{current_user.nickname}}!</h1>
+    <p style="margin-top: 10px;">{{ _('Where do you go from here?') }}</p>
+    <p style="margin-top: 30px;">
+    </p>
+    <div class="row">
+      <div width="100%" align="center">
+        <a href="/" class="btn btn-default">{{ _('Search') }}</a>
+        <a href="{{ url_for('webaccount.logout') }}" class="btn btn-default">{{ _('Sign out') }}</a>
+      </div>
     </div>
+  </div>
+</div>
 {%- endif -%}
 {%- endblock body -%}
 
 {%- block form_header_message -%}
-<div class="col-md-8 col-md-offset-2">
-<p class="lead text-center">
-Please, sign in with one of the following services
-</p>
+<div class="col-centered">
+  <p class="lead text-center">
+    {{ _('Please, sign in with one of the following services') }}
+  </p>
 </div>
 {%- endblock form_header_message -%}
 
 {%- block form_auth_internal -%}
-  <div class="col-md-4 col-xs-10 col-centered">
-    {%- block form_auth_internal_form -%}
-      <div class="well">
-      <h3>Sign In</h3>
-      <br/>
+<div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered">
+  {%- block form_auth_internal_form -%}
+  <div class="well">
+    <br/>
 
-      {% set next = request.script_root + request.path if request.endpoint != 'webaccount.logout' and request.endpoint != 'webaccount.login' else config.CFG_SITE_SECURE_URL %}
-      <div class="row">
-          <a href="{{url_for('oauthclient.login', remote_app='orcid', next=next)}}" tabindex="0" id="orcid_login" class="btn btn-lg btn-default btn-block" role="button" data-toggle="popover"><img src="{{ url_for('static', filename='img/orcid.png') }}"> Sign in with ORCID</a>
-        {% if config.DEBUG or request.args.get('admin') %}
-          <h3 align="center">&mdash; OR &mdash;</h3>
-          {{ super() }}
-        {% endif %}
-      </div>
-      </div>
-    {%- endblock -%}
-    {%- block form_auth_internal_title scoped -%}{% endblock %}
+    {% set next = request.script_root + request.path if request.endpoint != 'webaccount.logout' and request.endpoint != 'webaccount.login' else config.CFG_SITE_SECURE_URL %}
+    <div class="row text-center">
+      <a href="{{url_for('oauthclient.login', remote_app='orcid', next=next)}}" tabindex="0" id="orcid_login" class="btn btn-success" role="button" style="width: 300px; margin-bottom: 15px;"><img src="{{ url_for('static', filename='img/orcid.png') }}"> {{ _('Sign in with ORCID') }}</a>
+      <p class="text-center">
+        <small>
+          <a href="/orcid.html">
+            {{ _('What is ORCID?') }}
+          </a>
+        </small>
+      </p>
+      {% if config.DEBUG or request.args.get('admin') %}
+        <h3 align="center">&mdash; OR &mdash;</h3>
+        <form class="form-signin" action="{{ url_for('webaccount.login', _external=True, _scheme='https') }}" method="POST">
+        {{ form.referer }}
+        {{ form.login_method }}
+        <div class="form-group{% if form.nickname.errors%} has-error{% endif %}">
+        {{ form.nickname(placeholder=_('Username or email'), class_="form-control", type="text") }}
+        {%- if form.nickname.errors %}{% for error in form.nickname.errors %}
+            <span class="help-block">{{ error }}</span>
+        {%- endfor %}{% endif %}
+        </div>
+        <div class="form-group{% if form.password.errors%} has-error{% endif %}">
+        {{ form.password(placeholder=_('Password'), class_="form-control", type="password") }}
+        {%- if form.password.errors %}{% for error in form.password.errors %}
+            <span class="help-block">{{ error }}</span>
+        {%- endfor %}{% endif %}
+        </div>
+        <div class="checkbox" style="text-align: left;">
+        {{ form.remember(class_="character-checkbox") }}
+        <span class="label">{{ form.remember.label.text }}</span>
+        </div>
+        {{ form.submit(class_="btn btn-info btn-block") }}
+        </form>
+        <p class="text-center"><small>
+          <a href="{{ url_for('webaccount.lost') }}">
+            {{ _('Lost your password?') }}
+          </a>
+        </small></p>
+      {% endif %}
+    </div>
   </div>
-  </div>
-{%- endblock -%}
+  {%- endblock form_auth_internal_form -%}
+  {%- block form_auth_internal_title scoped -%}{% endblock %}
+</div>
+</div>
 
+<style>
+.checkbox {
+    margin-bottom: 20px;
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+.checkbox:before {
+    content: '\e013';
+    color: #1fa67b;
+    font-size: 17px;
+    margin: 1px 0 0 3px;
+    position: absolute;
+    pointer-events: none;
+    font-family: 'Glyphicons Halflings';
+}
+.checkbox .character-checkbox {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    vertical-align: middle;
+    display: inline-block;
+}
+.checkbox .label {
+    color: #6d6d6d;
+    font-size: 13px;
+    font-weight: normal;
+}
+</style>
+
+{%- endblock form_auth_internal -%}
+
+{# disables popover on the username fields #}
 {% block javascript %}
-{{ super() }}
-<script type="text/javascript">
-require(["jquery", "bootstrap"], function($) {
-  (function($) {
-    $('#orcid_login').popover({
-      title: '<strong>{{ _('ORCID') }}</strong>',
-      content: '{{ _('ORCID provides persistent digital identifiers for researchers. It supports automated linkages between you and your publications. <br> If you do not have an ORCID account, you can create it during the sign in process.') }}',
-      trigger: 'hover',
-      html: true,
-      container: 'body',
-    });
-  })(jQuery);
-});
-</script>
 {% endblock %}
