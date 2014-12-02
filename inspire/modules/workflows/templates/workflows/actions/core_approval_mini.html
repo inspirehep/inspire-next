@@ -24,12 +24,12 @@
         role="button"
         data-objectid="{{object.id}}"
         data-value="accept">{{_("Accept")}}</a></p>
-
+{% if not "CORE" in object.get_data().get("collections", [{}])[0].keys() %}
   <p><a class="btn btn-success core-approval-action-accept"
         role="button"
         data-objectid="{{object.id}}"
         data-value="accept_core">{{_("Accept (CORE)")}}</a></p>
-
+{% endif %}
   <p><a class="btn btn-danger core-approval-action-reject"
         data-objectid="{{object.id}}"
         data-value="reject"
