@@ -22,6 +22,7 @@
 
 """Workflow for processing single arXiv records harvested."""
 
+
 from invenio.modules.workflows.tasks.marcxml_tasks import (
     convert_record_to_bibfield,
 )
@@ -46,7 +47,10 @@ from invenio.modules.oaiharvester.tasks.postprocess import (
     author_list,
 )
 from invenio.modules.workflows.tasks.workflows_tasks import log_info
-from inspire.modules.workflows.tasks.actions import was_approved
+from inspire.modules.workflows.tasks.actions import (
+    was_approved,
+    add_core_oaiharvest
+)
 
 from invenio.modules.workflows.tasks.logic_tasks import (
     workflow_if,
@@ -56,7 +60,7 @@ from invenio.modules.workflows.definitions import RecordWorkflow
 from inspire.modules.oaiharvester.tasks.upload import (
     send_robotupload_oaiharvest,
 )
-from ..tasks.filtering import inspire_filter_custom
+from inspire.modules.workflows.tasks.submission import halt_record_with_action
 
 
 class process_record_arxiv(RecordWorkflow):
@@ -95,12 +99,11 @@ class process_record_arxiv(RecordWorkflow):
                 ),
                 refextract,
                 author_list,
-                inspire_filter_custom(fields=["report_number", "arxiv_category"],
-                                      custom_widgeted="*",
-                                      custom_accepted="gr",
-                                      action="core_approval"),
+                halt_record_with_action(action="core_approval",
+                                        message="Accept article?"),
                 workflow_if(was_approved),
                 [
+                    add_core_oaiharvest,
                     send_robotupload_oaiharvest(),
                 ],
                 workflow_else,
@@ -115,22 +118,23 @@ class process_record_arxiv(RecordWorkflow):
     @staticmethod
     def get_description(bwo):
         """Get the description column part."""
-        record = bwo.get_data()
         from invenio.modules.records.api import Record
+        from flask import render_template, current_app
+
+        record = bwo.get_data()
+        final_identifiers = {}
         try:
             identifiers = Record(record.dumps()).persistent_identifiers
-            final_identifiers = []
-            for i in identifiers:
-                final_identifiers.append(i['value'])
+            for values in identifiers.values():
+                final_identifiers.extend([i.get("value") for i in values])
         except Exception:
+            current_app.logger.exception("Could not get identifiers")
             if hasattr(record, "get"):
                 final_identifiers = [
-                    record.get(
-                        "system_number_external", {}
-                    ).get("value", 'No ids')
+                    record.get("system_number_external", {}).get("value", 'No ids')
                 ]
             else:
-                final_identifiers = [' No ids']
+                final_identifiers = []
 
         results = bwo.get_tasks_results()
         categories = []
@@ -161,7 +165,6 @@ class process_record_arxiv(RecordWorkflow):
                     if source_list.lower() == 'inspire':
                         categories.append(category)
 
-        from flask import render_template
         return render_template('workflows/styles/harvesting_record.html',
                                categories=categories,
                                identifiers=final_identifiers,
