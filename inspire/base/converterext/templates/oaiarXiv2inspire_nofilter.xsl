@@ -107,41 +107,6 @@ along with Invenio; if not, write to the Free Software Foundation, Inc.,
     </xsl:choose>
   </xsl:template>
 
-  <!-- FUNCTION  matchPR773p -->
-  <xsl:template name="matchPR773p">
-    <xsl:param name="detectPR"/>
-    <xsl:param name="commentsf"/>
-    <xsl:choose>
-      <xsl:when test="contains(normalize-space($detectPR), '@')">
-        <xsl:variable name="after" select="substring-after( normalize-space($detectPR), '@') "/>
-        <xsl:variable name="todetect" select="substring-before( normalize-space($detectPR), '@') "/>
-        <xsl:call-template name="matchPR773pSUB">
-          <xsl:with-param name="todetect" select="$todetect"/>
-    <xsl:with-param name="commentsf" select="$commentsf"/>
-        </xsl:call-template>
-        <xsl:call-template name="matchPR773p">
-          <xsl:with-param name="detectPR" select="$after"/>
-          <xsl:with-param name="commentsf" select="$commentsf"/>
-        </xsl:call-template>
-      </xsl:when>
-    </xsl:choose>
-  </xsl:template>
-
-
-  <!-- FUNCTION  matchPR773pSUB called by mathPR773p  -->
-  <xsl:template name="matchPR773pSUB">
-    <xsl:param name="todetect"/>
-    <xsl:param name="commentsf"/>
-    <xsl:if test="contains($commentsf, $todetect)">
-      <xsl:variable name="disp773t" select="normalize-space(substring-after($commentsf, $todetect))"/>
-      <xsl:if test="string-length($disp773t)>0">
-        <datafield tag="773" ind1=" " ind2=" ">
-          <subfield code="p"><xsl:value-of select="normalize-space(substring-after($commentsf, $todetect))"/></subfield>
-        </datafield>
-      </xsl:if>
-    </xsl:if>
-  </xsl:template>
-
 
   <!-- FUNCTION  rn-extract : returns a subfield for each reportnumber in a string (comma separted)  -->
   <xsl:template name="rn-extract">
@@ -210,7 +175,7 @@ along with Invenio; if not, write to the Free Software Foundation, Inc.,
     <xsl:for-each select="$node/arXiv:affiliation">
       <xsl:variable name="knlow"><xsl:value-of select="normalize-space(translate(., $ucletters, $lcletters))"/></xsl:variable>
       <xsl:if test="not (contains($knlow,'collab') or contains($knlow,'team') or contains($knlow,'group') or contains($knlow, 'for the'))">
-        <subfield code="u"><xsl:value-of select="."/></subfield>
+        <subfield code="v"><xsl:value-of select="."/></subfield>
       </xsl:if>
     </xsl:for-each>
   </xsl:template>
@@ -233,7 +198,7 @@ along with Invenio; if not, write to the Free Software Foundation, Inc.,
         <xsl:when test="contains($knlowfn, 'collab') or contains($knlowfn, 'team') or contains($knlowfn,'group') or contains($knlowfn, 'for the')">
     <xsl:value-of select="concat($node/arXiv:keyname , ' ', $node/arXiv:forenames)"/>
         </xsl:when>
-        <xsl:when test="contains($knlowkn, 'collab') or contains($knlowkn, 'team') or contains($knlowkn,'group') or contains($knlowkn, 'for the')">
+        <xsl:when test="contains($knlowkn, 'collab') or contains($knlowkn, 'team') or contains($knlowkn, 'for the')">
     <xsl:value-of select="concat($node/arXiv:forenames, ' ', $node/arXiv:keyname)"/>
         </xsl:when>
         <xsl:otherwise>
@@ -450,7 +415,6 @@ along with Invenio; if not, write to the Free Software Foundation, Inc.,
                                                                      or contains(translate(./arXiv:keyname, $lcletters, $ucletters) , 'TEAM')
                                                                      or contains(translate(./arXiv:affiliation, $lcletters, $ucletters) , 'TEAM')
                                                                      or contains(translate(./arXiv:forenames, $lcletters, $ucletters), 'GROUP')
-                                                                     or contains(translate(./arXiv:keyname, $lcletters, $ucletters) , 'GROUP')
                                                                      or contains(translate(./arXiv:affiliation, $lcletters, $ucletters) , 'GROUP')
                                                                      or contains(translate(./arXiv:forenames, $lcletters, $ucletters), 'FOR THE')
                                                                      or contains(translate(./arXiv:keyname, $lcletters, $ucletters) , 'FOR THE')
@@ -464,10 +428,8 @@ along with Invenio; if not, write to the Free Software Foundation, Inc.,
                                                               or contains(translate(./arXiv:forenames, $lcletters, $ucletters), 'TEAM')
                                                               or contains(translate(./arXiv:keyname, $lcletters, $ucletters) , 'TEAM')
                                                               or contains(translate(./arXiv:forenames, $lcletters, $ucletters), 'GROUP')
-                                                              or contains(translate(./arXiv:keyname, $lcletters, $ucletters) , 'GROUP')
                                                               or contains(translate(./arXiv:forenames, $lcletters, $ucletters), 'FOR THE')
                                                               or contains(translate(./arXiv:keyname, $lcletters, $ucletters) , 'FOR THE')
-                                                              or contains(translate(./arXiv:affiliation, $lcletters, $ucletters) , 'FOR THE')
                                                               )
                                                               or contains(./arXiv:forenames, 'Collaboration:')
                                                               or contains(./arXiv:forenames, 'Consortium:')]"/>
@@ -489,7 +451,6 @@ along with Invenio; if not, write to the Free Software Foundation, Inc.,
               <xsl:call-template name="collaboration">
                 <xsl:with-param name="node" select="."/>
               </xsl:call-template>
-              <collaboration></collaboration>
             </xsl:for-each>
                 </xsl:if>
 
@@ -565,10 +526,18 @@ along with Invenio; if not, write to the Free Software Foundation, Inc.,
               <!-- MARC FIELD 540$$a  License info = metadata/arXiv/license -->
               <xsl:if test="./OAI-PMH:metadata/arXiv:arXiv/arXiv:license">
                 <datafield tag="540" ind1=" " ind2=" ">
-                  <subfield code="a">
+                  <subfield code="u">
                     <xsl:value-of select="normalize-space(./OAI-PMH:metadata/arXiv:arXiv/arXiv:license)"/>
                   </subfield>
                   <subfield code="b">arXiv</subfield>
+                  <xsl:choose>
+                    <xsl:when test="contains(./OAI-PMH:metadata/arXiv:arXiv/arXiv:license, 'creativecommons.org/licenses/by/3.0')">
+                      <subfield code="a">CC-BY-3.0</subfield>
+                    </xsl:when>
+                    <xsl:when test="contains(./OAI-PMH:metadata/arXiv:arXiv/arXiv:license, 'creativecommons.org/licenses/by-nc-sa/3.0')">
+                      <subfield code="a">CC-BY-NC-SA-3.0</subfield>
+                    </xsl:when>
+                  </xsl:choose>
                 </datafield>
               </xsl:if>
 
@@ -579,176 +548,13 @@ along with Invenio; if not, write to the Free Software Foundation, Inc.,
                 </xsl:call-template>
               </xsl:if>
 
-              <!-- MARC FIELD 773 - using journal-ref field TODO: CHECK VALIDITY OF FORMATS-->
+              <!-- MARC FIELD 773 - using journal-ref field, journal extraction done in the filter now-->
               <xsl:if test="./OAI-PMH:metadata/arXiv:arXiv/arXiv:journal-ref">
-                <xsl:variable name="jref">
-                  <xsl:value-of select="./OAI-PMH:metadata/arXiv:arXiv/arXiv:journal-ref"/>
-                </xsl:variable>
-                <xsl:variable name="num-commas">
-                  <xsl:value-of select="string-length($jref) - string-length(translate($jref,',',''))"/>
-                </xsl:variable>
-                <xsl:choose>
-                  <!-- Format: e.g Commun. Theor. Phys. 50(2008) 1307-1311 -->
-                  <xsl:when test="contains($jref, '(') and contains($jref, ')')">
-                    <xsl:variable name="jref-beforedate">
-                      <xsl:value-of select="normalize-space(substring-before($jref,'('))"/>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-volume">
-                      <xsl:call-template name="last-word"><xsl:with-param name="text" select="$jref-beforedate"/></xsl:call-template>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-title">
-                      <xsl:value-of select="normalize-space(substring-before($jref-beforedate,$jref-volume))"/>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-title2">
-                      <xsl:call-template name="replace-string"><xsl:with-param name="text" select="$jref-title"/><xsl:with-param name="from" select="'.'"/><xsl:with-param name="to" select="'. '"/></xsl:call-template>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-pages">
-                      <xsl:value-of select="normalize-space(substring-after($jref,')'))"/>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-year">
-                      <xsl:value-of select="substring-after( substring-before($jref,')') , '(' )"/>
-                    </xsl:variable>
-
-                    <datafield tag="773" ind1=" " ind2=" ">
-                      <xsl:if test="string-length($jref-title2)>0">
-                        <subfield code="p"><xsl:value-of select="normalize-space($jref-title2)"/></subfield>
-                      </xsl:if>
-                      <xsl:if test="string-length($jref-volume)>0">
-                        <subfield code="v"><xsl:value-of select="$jref-volume"/></subfield>
-                      </xsl:if>
-                      <xsl:if test="string-length($jref-year)>0">
-                        <subfield code="y"><xsl:value-of select="$jref-year"/></subfield>
-                      </xsl:if>
-                      <xsl:if test="string-length($jref-pages)>0">
-                        <subfield code="c"><xsl:value-of select="$jref-pages"/></subfield>
-                      </xsl:if>
-                    </datafield>
-
-                    <!-- Check if peer-reviewed TODO: needs more work
-                    <xsl:if test="string-length($jref-title)&gt;0 and string-length($jref-volume)&gt;0">
-                      <datafield tag="980" indl="C" ind2="">
-                        <subfield code="a">Peer-reviewed</subfield>
-                      </datafield>
-                    </xsl:if>-->
-
-                  </xsl:when>
-                  <!-- Format: e.g. JINST 4:P06009,2009 -->
-                  <xsl:when test="$num-commas = 1 and contains($jref, ':')">
-                    <xsl:variable name="jref-beforecoma">
-                      <xsl:value-of select="normalize-space(substring-before($jref,','))"/>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-volume">
-                      <xsl:call-template name="last-word"><xsl:with-param name="text" select="substring-before($jref, ':')"/></xsl:call-template>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-title">
-                      <xsl:value-of select="normalize-space(substring-before($jref-beforecoma,$jref-volume))"/>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-title2">
-                      <xsl:call-template name="replace-string"><xsl:with-param name="text" select="$jref-title"/><xsl:with-param name="from" select="'.'"/><xsl:with-param name="to" select="'. '"/></xsl:call-template>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-pagnation">
-                      <xsl:value-of select="normalize-space(substring-before(substring-after($jref,':'), ','))"/>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-year">
-                      <xsl:value-of select="normalize-space(substring-after($jref,','))"/>
-                    </xsl:variable>
-
-                    <datafield tag="773" ind1=" " ind2=" ">
-                        <xsl:if test="string-length($jref-title2)>0">
-                          <subfield code="p"><xsl:value-of select="normalize-space($jref-title2)"/></subfield>
-                        </xsl:if>
-                        <xsl:if test="string-length($jref-volume)>0">
-                          <subfield code="v"><xsl:value-of select="$jref-volume"/></subfield>
-                        </xsl:if>
-                        <xsl:if test="string-length($jref-year)>0">
-                          <subfield code="y"><xsl:value-of select="$jref-year"/></subfield>
-                        </xsl:if>
-                        <xsl:if test="string-length($jref-pagnation)>0">
-                          <subfield code="c"><xsl:value-of select="$jref-pagnation"/></subfield>
-                        </xsl:if>
-                    </datafield>
-
-                    <!-- Check if peer-reviewed TODO: needs more work
-                    <xsl:if test="string-length($jref-title)&gt;0 and string-length($jref-volume)&gt;0">
-                      <datafield tag="980" indl="C" ind2="">
-                        <subfield code="a">Peer-reviewed</subfield>
-                      </datafield>
-                    </xsl:if>-->
-
-                  </xsl:when>
-                  <!-- Format: e.g. Astronomy Letters, 2010, Vol. 36, No. 1, pp. 27-43 -->
-                  <xsl:when test="$num-commas &gt; 1">
-                    <xsl:variable name="jref-title">
-                      <xsl:value-of select="normalize-space(substring-before($jref,','))"/>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-aftertitle">
-                      <xsl:value-of select="normalize-space(substring-after($jref,','))"/>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-year">
-                      <xsl:call-template name="last-word"><xsl:with-param name="text" select="normalize-space(substring-before($jref-aftertitle, ','))"/></xsl:call-template>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-afteryear">
-                      <xsl:value-of select="normalize-space(substring-after($jref-aftertitle,','))"/>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-volume">
-                      <xsl:call-template name="last-word"><xsl:with-param name="text" select="normalize-space(substring-before($jref-afteryear, ','))"/></xsl:call-template>
-                    </xsl:variable>
-
-                    <xsl:variable name="jref-pages">
-                      <xsl:call-template name="last-word"><xsl:with-param name="text" select="$jref"/></xsl:call-template>
-                    </xsl:variable>
-
-                    <datafield tag="773" ind1=" " ind2=" ">
-                      <xsl:if test="string-length($jref-title)>0">
-                        <subfield code="p"><xsl:value-of select="$jref-title"/></subfield>
-                      </xsl:if>
-                      <xsl:if test="string-length($jref-volume)>0">
-                        <subfield code="v"><xsl:value-of select="$jref-volume"/></subfield>
-                      </xsl:if>
-                      <xsl:if test="string-length($jref-year)>0">
-                        <subfield code="y"><xsl:value-of select="$jref-year"/></subfield>
-                      </xsl:if>
-                      <xsl:if test="string-length($jref-pages)>0">
-                        <subfield code="c"><xsl:value-of select="$jref-pages"/></subfield>
-                      </xsl:if>
-                    </datafield>
-
-                    <!-- Check if peer-reviewed TODO: needs more work
-                    <xsl:if test="string-length($jref-title)&gt;0 and string-length($jref-volume)&gt;0">
-                      <datafield tag="980" indl="C" ind2="">
-                        <subfield code="a">Peer-reviewed</subfield>
-                      </datafield>
-                    </xsl:if>-->
-
-                  </xsl:when>
-                  <!-- Cant find format - dump all -->
-                  <xsl:otherwise>
-                    <datafield tag="773" ind1=" " ind2=" ">
-                      <subfield code="x"><xsl:value-of select="$jref" /></subfield>
-                    </datafield>
-                  </xsl:otherwise>
-                </xsl:choose>
-
-                <datafield tag="980" ind1=" " ind2=" ">
-                  <subfield code="a">Published</subfield>
+                <datafield tag="773" ind1=" " ind2=" ">
+                  <subfield code="x"><xsl:value-of select="./OAI-PMH:metadata/arXiv:arXiv/arXiv:journal-ref"/></subfield>
                 </datafield>
 
               </xsl:if>
-
 
               <xsl:choose>
                 <!-- Is this a thesis?  -->
