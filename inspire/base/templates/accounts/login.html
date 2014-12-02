@@ -84,9 +84,16 @@
             <span class="help-block">{{ error }}</span>
         {%- endfor %}{% endif %}
         </div>
+        {#
         <div class="checkbox" style="text-align: left;">
         {{ form.remember(class_="character-checkbox") }}
         <span class="label">{{ form.remember.label.text }}</span>
+        </div>
+        #}
+        <div class="checkbox" style="text-align: left;">
+          <label>
+            {{ form.remember(class_="character-checkbox") }} {{ form.remember.label.text }}
+          </label>
         </div>
         {{ form.submit(class_="btn btn-info btn-block") }}
         </form>
@@ -104,7 +111,7 @@
 </div>
 
 <style>
-.checkbox {
+/*.checkbox {
     margin-bottom: 20px;
     position: relative;
     -webkit-user-select: none;
@@ -135,7 +142,7 @@
     color: #6d6d6d;
     font-size: 13px;
     font-weight: normal;
-}
+}*/
 </style>
 
 {%- endblock form_auth_internal -%}
