@@ -28,21 +28,33 @@ def was_approved(obj, eng):
     return obj.extra_data.get("approved", False)
 
 
-def add_core(obj, eng):
+def add_core(metadata):
+    """Check if the record was approved as CORE."""
+    collections = metadata.get("collections", [])
+    # Do not add it again if already there
+    has_core = [v for c in collections
+                for v in c.values()
+                if v.lower() == "core"]
+    if not has_core:
+        collections.append({"primary": "CORE"})
+        metadata["collections"] = collections
+    return metadata
+
+
+def add_core_deposit(obj, eng):
     """Check if the record was approved as CORE."""
     from invenio.modules.deposit.models import Deposition
     if obj.extra_data.get("core"):
         d = Deposition(obj)
         sip = d.get_latest_sip(d.submitted)
-        collections = sip.metadata.get("collections", [])
-        # Do not add it again if already there
-        has_core = [v for c in collections
-                    for v in c.values()
-                    if v.lower() == "core"]
-        if not has_core:
-            collections.append({"primary": "CORE"})
-            sip.metadata["collections"] = collections
-            d.update()
+        sip.metadata = add_core(sip.metadata)
+        d.update()
+
+
+def add_core_oaiharvest(obj, eng):
+    """Check if the record was approved as CORE."""
+    if obj.extra_data.get("core"):
+        obj.data = add_core(obj.data)
 
 
 def reject_record(message):

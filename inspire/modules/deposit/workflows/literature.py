@@ -59,7 +59,7 @@ from inspire.modules.workflows.tasks.submission import (
 from inspire.modules.workflows.tasks.actions import (
     was_approved,
     reject_record,
-    add_core
+    add_core_deposit
 )
 from inspire.modules.deposit.forms import LiteratureForm
 
@@ -103,7 +103,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         [
             workflow_if(match_record_remote_deposit, True),
             [
-                add_core,
+                add_core_deposit,
+                finalize_record_sip(is_dump=False),
                 send_robotupload_deposit(),
                 reply_ticket(template="deposit/tickets/user_accepted.html")
             ],
