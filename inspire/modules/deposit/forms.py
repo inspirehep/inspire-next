@@ -22,6 +22,8 @@
 
 from wtforms import validators
 from wtforms.widgets import html_params, HTMLString, HiddenInput
+from wtforms.fields import DateTimeField, SubmitField
+from flask.ext.wtf import Form
 
 from invenio.base.i18n import _
 from invenio.base.globals import cfg
@@ -632,3 +634,16 @@ class LiteratureForm(WebDepositForm):
             for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_DEGREE_KB"])]
         # self.license.choices = [('', '')] + [(x['key'], x['key'])
         #     for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_LICENSE_KB"])]
+
+
+class FilterDateForm(Form):
+
+    """Stats filter date form."""
+
+    since_date = DateTimeField(
+        label=_('From'),
+        description='Format: YYYY-MM-DD.')
+    until_date = DateTimeField(
+        label=_('To'),
+        description='Format: YYYY-MM-DD.')
+    submit = SubmitField(_("Filter depositions"))
