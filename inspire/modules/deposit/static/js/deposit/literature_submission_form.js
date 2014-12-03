@@ -653,7 +653,7 @@ define(function(require, exports, module) {
       */
     getKB: function getKB(kbname) {
       var url = "/kb/export";
-      var deferred = new $.Deferred(); 
+      var deferred = new $.Deferred();
       $.ajax({
         url: url,
         data: {
@@ -730,8 +730,10 @@ define(function(require, exports, module) {
       }
 
       // selects subjects imported from arXiv
-      var categories_arXiv = dataMapping.categories_arXiv.split(' ');
-      $.each(categories_arXiv, function(i, category){
+      var categories_arXiv;
+      if (dataMapping.categories_arXiv) {
+        categories_arXiv = dataMapping.categories_arXiv.split(' ');
+        $.each(categories_arXiv, function(i, category){
         if (!that.subject_kb[category]) {
           for(var subject_key in that.subject_kb) {
             if (category.indexOf(subject_key) === 0) {
@@ -742,6 +744,7 @@ define(function(require, exports, module) {
           $('#subject').multiselect('select', that.subject_kb[category]);
         }
       });
+      }
 
       // triggers the "dataFormSave" in order the empty fields can be saved as well
       that.$submissionForm.trigger("dataFormSave", {

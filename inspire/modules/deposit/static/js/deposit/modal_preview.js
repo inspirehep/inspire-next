@@ -80,11 +80,13 @@ define(function(require, exports, module) {
       var authorTemplate = Hogan.compile('{{author}}<br>');
 
       var authorsValue = '';
-      $.each(dataModal.authors, function(id, author) {
-        authorsValue += authorTemplate.render({
-          author: author.name
+      if (dataModal.authors) {
+        $.each(dataModal.authors, function(id, author) {
+          authorsValue += authorTemplate.render({
+            author: author.name
+          });
         });
-      });
+      }
 
       dataModal.authors = authorsValue;
 
