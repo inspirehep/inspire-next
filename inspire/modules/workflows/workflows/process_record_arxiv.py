@@ -55,6 +55,7 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 from invenio.modules.workflows.definitions import RecordWorkflow
 from inspire.modules.oaiharvester.tasks.upload import (
     send_robotupload_oaiharvest,
+    update_existing_record_oaiharvest
 )
 from ..tasks.filtering import inspire_filter_custom
 
@@ -74,6 +75,7 @@ class process_record_arxiv(RecordWorkflow):
         workflow_if(match_record_arxiv_remote_oaiharvest),
         [
             log_info("Record already into database"),
+            update_existing_record_oaiharvest(),
         ],
         workflow_else,
         [

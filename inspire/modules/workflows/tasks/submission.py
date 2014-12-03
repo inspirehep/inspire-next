@@ -188,9 +188,16 @@ def send_robotupload_deposit(url=None):
     """Get the MARCXML from the deposit object and ships it."""
     @wraps(send_robotupload_deposit)
     def _send_robotupload_deposit(obj, eng):
+        import os
+
+        from invenio.base.globals import cfg
         from invenio.modules.deposit.models import Deposition
         from invenio.modules.workflows.errors import WorkflowError
-        from inspire.modules.workflows.tasks.upload import send_robotupload
+        from inspire.utils.robotupload import make_robotupload_marcxml
+
+        callback_url = os.path.join(cfg["CFG_SITE_URL"],
+                                    "callback/workflows/robotupload")
+
         d = Deposition(obj)
 
         sip = d.get_latest_sip(d.submitted)
@@ -202,7 +209,29 @@ def send_robotupload_deposit(url=None):
             d.update()
 
         marcxml = sip.package
-        send_robotupload(url, marcxml, obj, eng)
+
+        result = make_robotupload_marcxml(
+            url=url,
+            marcxml=marcxml,
+            callback_url=callback_url,
+            mode='insert',
+            nonce=obj.id
+        )
+        if "[INFO]" not in result.text:
+            if "cannot use the service" in result.text:
+                # IP not in the list
+                obj.log.error("Your IP is not in "
+                              "CFG_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
+                              "on host")
+                obj.log.error(result.text)
+            from invenio.modules.workflows.errors import WorkflowError
+            txt = "Error while submitting robotupload: {0}".format(result.text)
+            raise WorkflowError(txt, eng.uuid, obj.id)
+        else:
+            obj.log.info("Robotupload sent!")
+            obj.log.info(result.text)
+            eng.halt("Waiting for robotupload: {0}".format(result.text))
+        obj.log.info("end of upload")
 
     return _send_robotupload_deposit
 

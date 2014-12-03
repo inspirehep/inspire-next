@@ -24,14 +24,20 @@ import os
 import requests
 
 
-def make_robotupload_marcxml(url, marcxml, **kwargs):
+def make_robotupload_marcxml(url, marcxml, mode, **kwargs):
     """Make a robotupload request."""
     from invenio.utils.url import make_user_agent_string
+    from invenio.base.globals import cfg
     headers = {
         "User-agent": make_user_agent_string("inspire"),
         "Content-Type": "application/marcxml+xml",
     }
-    url = os.path.join(url, "batchuploader/robotupload/insert")
+    if url is None:
+        base_url = cfg.get("CFG_ROBOTUPLOAD_SUBMISSION_BASEURL")
+    else:
+        base_url = url
+
+    url = os.path.join(base_url, "batchuploader/robotupload", mode)
     return requests.post(
         url=url,
         data=marcxml,
