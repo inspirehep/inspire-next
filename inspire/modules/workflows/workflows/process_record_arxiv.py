@@ -75,7 +75,7 @@ class process_record_arxiv(RecordWorkflow):
 
     workflow = [
         convert_record_with_repository("oaiarXiv2inspire_nofilter.xsl"),
-        convert_record_to_bibfield,
+        convert_record_to_bibfield(model=["hep"]),
         workflow_if(match_record_arxiv_remote_oaiharvest),
         [
             log_info("Record already into database"),
