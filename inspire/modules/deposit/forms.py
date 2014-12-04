@@ -482,11 +482,12 @@ class LiteratureForm(WebDepositForm):
     # ====================
     # Fulltext Information
     # ====================
-    file_field = fields.FileUploadField(
-        label="",
-        widget=plupload_widget,
-        export_key=False
-    )
+    # file_field = fields.FileUploadField(
+    #     label="",
+    #     widget=plupload_widget,
+    #     widget_classes="form-control" + THESIS_CLASS,
+    #     export_key=False
+    # )
 
     url = fields.DynamicFieldList(
         fields.FormField(
@@ -514,15 +515,15 @@ class LiteratureForm(WebDepositForm):
         widget_classes="form-control"
     )
 
-    ok_to_upload = fields.BooleanField(
-        label="",
-        default=False,
-        widget=CheckboxButton(msg=_('I confirm I have read the License Agreement')),
-        validators=[required_if_files('file_field',
-                                      message=_("Please, check this box to upload material.")
-                                      ),
-                    ]
-        )
+    # ok_to_upload = fields.BooleanField(
+    #     label="",
+    #     default=False,
+    #     widget=CheckboxButton(msg=_('I confirm I have read the License Agreement')),
+    #     validators=[required_if_files('file_field',
+    #                                   message=_("Please, check this box to upload material.")
+    #                                   ),
+    #                 ]
+    #     )
 
     #
     # Form Configuration
@@ -555,8 +556,8 @@ class LiteratureForm(WebDepositForm):
             ['nonpublic_note']),
         ('References',
             ['references']),
-        ('Upload files',
-            ['file_field', 'ok_to_upload']),
+        # ('Upload files',
+        #     ['file_field', 'ok_to_upload']),
         ('External links',
             ['url']),
         ('Add some extra comments',
