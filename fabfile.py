@@ -172,6 +172,7 @@ def install():
         invenio_package = local("python setup.py --fullname", capture=True).strip()
         put("dist/{0}.tar.gz".format(invenio_package), "/tmp/invenio.tgz")
 
+    remove_build()
     with settings(sudo_user="invenio"):
         sudo("mkdir -p {0}/src".format(venv))
         with cd("{0}/src".format(venv)):
@@ -234,6 +235,19 @@ def install():
         if choice.lower() in ["y", "ye", "yes"]:
             start_celery()
     return success
+
+
+@task
+def remove_build():
+    """Remove the leftover build directory."""
+    package = local("python setup.py --fullname", capture=True).strip()
+    venv = "{0}/{1}".format(env.directory, package)
+    with settings(sudo_user="invenio"):
+        with prefix('source {0}/bin/activate'.format(venv)):
+            build_dir = os.path.join(venv, "build")
+            src_dir = os.path.join(venv, "src")
+            sudo("rm -rf {0}".format(src_dir))
+            sudo("rm -rf {0}".format(build_dir))
 
 
 @task
