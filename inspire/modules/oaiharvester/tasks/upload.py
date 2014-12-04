@@ -28,7 +28,6 @@ from invenio.base.globals import cfg
 
 def send_robotupload_oaiharvest(url=None):
     """Perform the upload step."""
-
     @wraps(send_robotupload_oaiharvest)
     def _send_robotupload_oaiharvest(obj, eng):
         from invenio.modules.records.api import Record
@@ -120,13 +119,26 @@ def update_existing_record_oaiharvest(url=None):
         prod_data = convert_marcxml_to_bibfield(prod_data, model=["hep"])
         new_data = dict(obj.data.dumps(clean=True))
         prod_data = dict(prod_data.dumps(clean=True))
-        diffs = dictdiffer.diff(prod_data, new_data)
-        updates = {}
-        for diff in diffs:
-            if diff[0] == 'add':
-                for addition in diff[2]:
-                    updates[str(addition[0])] = addition[1]
+        updated_keys = []
+        diff = dictdiffer.diff(prod_data, new_data)
+        for diff_type, new_key, content in diff:
+            if diff_type == 'add':
+                if new_key:
+                    if isinstance(new_key, list):
+                        # ['subject_term', 0]
+                        updated_keys.append(new_key[0])
+                    else:
+                        # 'subject_term'
+                        updated_keys.append(new_key)
+                else:
+                    # content must be list of new adds
+                    for key in content:
+                        updated_keys.append(key)
 
+        updates = dictdiffer.patch(diff, new_data)
+        for key in updates.keys():
+            if key not in updated_keys:
+                del updates[key]
         if updates:
             updates['recid'] = recid
             marcxml = Record(updates).legacy_export_as_marc()
@@ -134,7 +146,7 @@ def update_existing_record_oaiharvest(url=None):
                 url=url,
                 marcxml=marcxml,
                 callback_url=callback_url,
-                mode='append',
+                mode='correct',
                 nonce=obj.id
             )
             if "[INFO]" not in result.text:
@@ -152,5 +164,7 @@ def update_existing_record_oaiharvest(url=None):
                 obj.log.info(result.text)
                 eng.halt("Waiting for robotupload: {0}".format(result.text))
             obj.log.info("end of upload")
+        else:
+            obj.log.info("No updates to do.")
 
     return _update
