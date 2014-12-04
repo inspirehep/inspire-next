@@ -27,7 +27,7 @@ def get_value(kb_name, list_of_keys):
     """Get the value registered with at least one of the keys."""
     for key in list_of_keys:
         if kb_mapping_exists(kb_name, key):
-            return get_kbr_values(kb_name, key).first()[0]
+            return get_kbr_values(kb_name, key)[0][0]
 
 
 def check_keys(kb_name, list_of_keys):
