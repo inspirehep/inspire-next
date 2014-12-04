@@ -453,7 +453,8 @@ class LiteratureForm(WebDepositForm):
     nonpublic_note = fields.TextAreaField(
         label=_('Proceedings'),
         description='Editors, title of proceedings, publisher, year of publication, page range, URL',
-        widget=wrap_nonpublic_note
+        widget=wrap_nonpublic_note,
+        widget_classes="form-control" + ARTICLE_CLASS
     )
 
     note = fields.TextAreaField(
@@ -560,15 +561,15 @@ class LiteratureForm(WebDepositForm):
             ['journal_title', 'volume', 'issue', 'year',
              'page_range_article_id']),
         ('Conference Information',
-            ['conf_name', 'conference_id']),
+            ['conf_name', 'conference_id'], {'classes': 'collapse'}),
         ('Proceedings Information (not published in journal)',
-            ['nonpublic_note']),
-        ('References',
-            ['references']),
+            ['nonpublic_note'], {'classes': 'collapse'}),
+        ('Add References',
+            ['references'], {'classes': 'collapse'}),
         # ('Upload files',
         #     ['file_field', 'ok_to_upload']),
         ('Add some extra comments',
-            ['extra_comments']),
+            ['extra_comments'], {'classes': 'collapse'}),
     ]
 
     field_sizes = {

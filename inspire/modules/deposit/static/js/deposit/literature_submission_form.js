@@ -265,6 +265,17 @@ define(function(require, exports, module) {
           this.$conferenceInfoField.hide();
         }
       }.bind(this));
+
+      $(document).on('click', '.panel div.clickable', function (e) {
+        var $this = $(this);
+        var $toggle_element = $this.find('.panel-toggle');
+        if ( $(e.target).is($toggle_element) ) {
+          return;
+        }
+        else {
+          $toggle_element.click();
+        }
+      });
     },
 
     addConferenceInfoField: function() {
@@ -469,13 +480,22 @@ define(function(require, exports, module) {
         .children('.panel:gt(0)');
 
       $.each($allPanels, function($field, field_name) {
-        // all elements hidden
+        // To deal properly with collapsed panels
+        var to_hide = false;
+        if (!$(field_name).children('.panel-collapse').hasClass("in")) {
+          $(field_name).children('.panel-collapse').addClass("in");
+          to_hide = true;
+        }
+        // Hide panel if all the fields are hidden inside
         if ($(field_name)
           .children('.panel-collapse')
           .children('.panel-body')
           .children('.form-group:visible')
           .length === 0) {
-          $(field_name).slideUp();
+            $(field_name).slideUp();
+        }
+        if ( to_hide ) {
+          $(field_name).children('.panel-collapse').removeClass("in")
         }
       });
     },
