@@ -84,7 +84,6 @@ def send_robotupload_oaiharvest(url=None):
 
 def update_existing_record_oaiharvest(url=None):
     """Update the existing record on the remote site."""
-
     @wraps(update_existing_record_oaiharvest)
     def _update(obj, eng):
         import dictdiffer
@@ -118,10 +117,9 @@ def update_existing_record_oaiharvest(url=None):
             except AttributeError:
                 break
         prod_data = etree.tostring(record)
-        prod_data = convert_marcxml_to_bibfield(prod_data)
-        new_data = obj.data
-        prod_data = dict(prod_data)
-        new_data = dict(new_data)
+        prod_data = convert_marcxml_to_bibfield(prod_data, model=["hep"])
+        new_data = dict(obj.data.dumps(clean=True))
+        prod_data = dict(prod_data.dumps(clean=True))
         diffs = dictdiffer.diff(prod_data, new_data)
         updates = {}
         for diff in diffs:
