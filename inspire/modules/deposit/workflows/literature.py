@@ -436,13 +436,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ====
         # URLs
         # ====
-        metadata['url'] = filter(None, metadata['url'])
         if 'url' in metadata and metadata['url']:
-            def restructure_urls(url):
-                url['url'] = url['full_url']
-                del url['full_url']
-
-            map(restructure_urls, metadata['url'])
+            metadata['url'] = {"url": metadata["url"]}
 
         # ================
         # Publication Info

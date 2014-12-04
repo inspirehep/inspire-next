@@ -489,20 +489,27 @@ class LiteratureForm(WebDepositForm):
     #     export_key=False
     # )
 
-    url = fields.DynamicFieldList(
-        fields.FormField(
-            UrlInlineForm,
-            widget=ExtendedListWidget(
-                item_widget=ItemWidget(),
-                html_tag='div',
-            ),
-        ),
-        #validators=[validators.URL(), validators.Optional, ],
-        label=_('External URL'),
-        add_label=_('Add another url'),
-        min_entries=1,
-        export_key='url',
-        widget_classes='',
+    # url = fields.DynamicFieldList(
+    #     fields.FormField(
+    #         UrlInlineForm,
+    #         widget=ExtendedListWidget(
+    #             item_widget=ItemWidget(),
+    #             html_tag='div',
+    #         ),
+    #     ),
+    #     #validators=[validators.URL(), validators.Optional, ],
+    #     label=_('If available, please provide us with an accessible URL for the pdf'),
+    #     add_label=_('Add another url'),
+    #     min_entries=1,
+    #     export_key='url',
+    #     widget_classes='',
+    # )
+
+    url = fields.TextField(
+        label=_('Link to Source'),
+        description = _('If available, please provide us with an accessible URL for the pdf'),
+        placeholder='http://www.example.com/document.pdf',
+        widget_classes="form-control",
     )
 
     # ====================
@@ -536,7 +543,9 @@ class LiteratureForm(WebDepositForm):
         ('Import from existing source',
             ['arxiv_id', 'doi', 'import_buttons']),
         ('Document Type',
-            ['captcha', 'type_of_doc', ]),
+            ['type_of_doc', ]),
+        ('Source',
+            ['url']),
         ('Basic Information',
             ['title', 'title_arXiv', 'categories_arXiv', 'language',
              'title_translation', 'authors', 'subject',
@@ -558,8 +567,6 @@ class LiteratureForm(WebDepositForm):
             ['references']),
         # ('Upload files',
         #     ['file_field', 'ok_to_upload']),
-        ('External links',
-            ['url']),
         ('Add some extra comments',
             ['extra_comments']),
     ]
