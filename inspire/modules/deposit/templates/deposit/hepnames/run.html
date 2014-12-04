@@ -1,0 +1,104 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2014 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+{% extends "deposit/run_base.html" %}
+
+{% set searchbar_enable=False %}
+
+{% block deposit_page %}
+<div class="row">
+  {% block file_container %}
+    <div id="file_container" class="col-md-12 form-feedback-warning">
+      <div id="flash-message"></div>
+      {% include "deposit/form.html" %}
+    </div>
+  {% endblock %}
+  </div>
+</div>
+
+{% endblock deposit_page %}
+
+{% block javascript %}
+<script type="text/javascript">
+require(
+  [
+    "jquery",
+    "js/deposit/form",
+    "js/deposit/hepnames_submission_form",
+    "js/deposit/uploader/uploader",
+    "js/deposit/uploader/ui/filelist",
+    "js/deposit/uploader/ui/errorlist"
+  ],
+
+  function(
+    $,
+    deposit_form,
+    HEPNamesSubmissionForm,
+    Uploader,
+    FileList,
+    ErrorList
+  ) {
+
+    $(function() {
+
+    var config = {
+      form: {
+        save_url: '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id) }}',
+        save_all_url: '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, all='1') }}',
+        complete_url: '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, submit='1') }}',
+        autocomplete_url: '{{ url_for(".autocomplete", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id, field_name="__FIELDNAME__") }}',
+        datepicker_element: '.datepicker',
+        datepicker_options: {
+            format: "YYYY",
+            pickTime: false
+        }
+      },
+
+      uploader: {
+        get_file_url: '{{ url_for('.get_file', deposition_type=deposition_type, uuid=uuid) }}',
+        delete_url: '{{ url_for('.delete_file', deposition_type=deposition_type, uuid=uuid) }}',
+        form_selector: "#submitForm",
+        form_files: {{ form.files|safe }},
+        resolve_uuid_url: '{{ url_for(".create", deposition_type=deposition_type) }}',
+        resolve_uuid: false,
+        continue_url: '{{ url_for('.run', deposition_type=deposition_type, uuid='-1') }}',
+        autoupload: true,
+        fileListSelector: '#uploader-filelist',
+        errorListSelector: '#uploader-errorlist'
+      }
+    };
+
+    // Initialize INSPIRE form - should be the first thing
+    var hepnamesform_options = {
+      save_url: config.form.save_url,
+      arxiv_to_inspire_categories_kb: "{{ config.get('DEPOSIT_ARXIV_TO_INSPIRE_CATEGORIES_KB') }}",
+    };
+
+    var form = new HEPNamesSubmissionForm(hepnamesform_options);
+
+    // Initialize form
+    deposit_form.attachTo("#submitForm", config.form);
+
+    Uploader.attachTo("#uploader", config.uploader);
+    FileList.attachTo("#uploader-filelist");
+    ErrorList.attachTo("#uploader-errorlist");
+    
+  });
+});
+</script>
+{% endblock javascript %}
