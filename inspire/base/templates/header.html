@@ -28,12 +28,12 @@
 #}
 
 {#
-## structure: (href, blueprint, caption)
+## structure: (endpoint, values, blueprint, caption)
 #}
 {% set navigation_bar = [
-  ('search.index', 'search', 'Home'),
-  ('webdeposit.index', 'webdeposit', 'Submit'),
-  ('documentation.index', 'documentation', 'Help'),
+  ('search.index', {}, 'search', 'Home'),
+  ('webdeposit.create', {"deposition_type": "literature"}, 'webdeposit', 'Submit'),
+  ('documentation.index', {}, 'documentation', 'Help'),
 ] -%}
 
 <style>
@@ -109,9 +109,9 @@ border-left-color: #111111;*/
 
       <div class="navbar-collapse navbar-ex1-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
-          {% for href, blueprint, caption in navigation_bar %}
+          {% for endpoint, values, blueprint, caption in navigation_bar %}
           <li {% if request.blueprint == blueprint|e %} class="active" {% endif %}>
-            <a href="{{ url_for( href|e ) }}">{{- _(caption|e) -}}</a>
+            <a href="{{ url_for( endpoint|e, **values ) }}">{{- _(caption|e) -}}</a>
           </li>
           {% endfor %}
           <li class="divider-vertical"></li>
