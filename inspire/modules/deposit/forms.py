@@ -321,7 +321,7 @@ class LiteratureForm(WebDepositForm):
 
     page_nr = fields.TextField(
         label=_('Number of Pages'),
-        widget_classes="form-control",
+        widget=HiddenInput(),
         export_key='page_nr'
     )
 
