@@ -59,7 +59,7 @@
 
     {% set next = request.script_root + request.path if request.endpoint != 'webaccount.logout' and request.endpoint != 'webaccount.login' else config.CFG_SITE_SECURE_URL %}
     <div class="row text-center">
-      <a href="{{url_for('oauthclient.login', remote_app='orcid', next=next)}}" tabindex="0" id="orcid_login" class="btn btn-success" role="button" style="width: 300px; margin-bottom: 15px;"><img src="{{ url_for('static', filename='img/orcid.png') }}"> {{ _('Sign in with ORCID') }}</a>
+      <a href="{{url_for('oauthclient.login', remote_app='orcid', next=next)}}" tabindex="0" id="orcid_login" class="btn" role="button" style="width: 300px; margin-bottom: 15px;"><img id="orcid-id-logo" src="{{ url_for('static', filename='img/orcid.png') }}" width="24" height="24" alt="ORCID logo"> {{ _('Sign in with ORCID') }}</a>
       <p class="text-center">
         <small>
           <a href="/orcid.html">
@@ -111,6 +111,30 @@
 </div>
 
 <style>
+#orcid_login{
+  border: 1px solid #D3D3D3;
+  background-color: #fff;
+  color: #818181;
+  border-radius: 4px;
+  box-shadow: 1px 1px 3px #999;
+  cursor: pointer;
+  font-weight: bold;
+  line-height: 24px;
+  vertical-align: middle;
+}
+
+#orcid_login:hover{
+  border: 1px solid #3fa0c9;
+  color: #3fa0c9;
+}
+
+#orcid-id-logo{
+  display: block;
+  margin: 0 .5em 0 0;
+  padding: 0;
+  float: left;
+}
+
 /*.checkbox {
     margin-bottom: 20px;
     position: relative;

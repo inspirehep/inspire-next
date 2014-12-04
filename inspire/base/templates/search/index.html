@@ -71,7 +71,7 @@
         <div class="row">
           <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
             <h1>{{- _("Welcome to INSPIRE Labs!") -}}</h1>
-            <h2>{{- _("High-Energy Physics Information Platform") -}}</h2>
+            <h2>{{ config["CFG_SITE_NAME_INTL"][g.ln] }}</h2>
           </div>
         </div>
       </div>
@@ -82,7 +82,9 @@
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
           <div class="page-header text-center">
-            <h2>{{- _("Try our new submission forms!") -}}</h2>
+            <h2 class="tagline">{{- _("Do you have a paper you'd like to see added to INSPIRE?") -}}</h2>
+            <h3>{{- _("Try our new submission forms!") -}}</h3>
+            <p><strong>{{ _("All accepted submissions are automatically transferred to INSPIRE.") }}</strong></p>
             <a class="btn btn-primary btn-lg" id="submit-btn" href="{{ url_for('webdeposit.create', deposition_type='literature') }}">{{- _("SUBMIT NOW!") -}}</a>
           </div>
         </div>
@@ -91,9 +93,8 @@
         <div class="col-lg-12">
           <h2 class="tagline">{{- _("What is INSPIRE Labs?") -}}</h2>
           <p class="lead">
-            {{ _("On INSPIRE Labs we deploy all our new features, so you can take advantage of them since the beginning.") }}
-            <strong>{{ _("All the accepted submissions are transferred automatically to INSPIRE.") }}</strong>
-            {{ _("Please, feel free to use the feedback if you have any suggestion!") }}</p>
+            {{ _("INSPIRE Labs provides a sneak preview of new features and designs currently under development.") }}
+            {{ _("Try it out, and please use the feedback icon to let us know what you think!") }}</p>
           <hr class="small">
         </div>
       </div>

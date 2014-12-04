@@ -37,6 +37,47 @@
 ] -%}
 
 <style>
+
+/*customize breadcrumb*/
+.breadcrumb {
+     background-color: transparent;
+     border-radius: 0;
+     -moz-border-radius: 0;
+     -webkit-border-radius: 0;
+     -o-border-radius: 0;
+}
+
+/*change breadcrumb links color*/
+.breadcrumb a {
+     color: #666;
+}
+
+.breadcrumb a:hover {
+     text-decoration: underline;
+}
+
+/*change active color*/
+.breadcrumb > .active {
+     color: #f58632;
+}
+
+/*change breadcrumb separator to raquo symbol*/
+.breadcrumb > li + li:before {
+     content: "\00BB";
+     color: #aaa;
+}
+
+/*change breadcrumb separator to raquo symbol*/
+.breadcrumb > li:first-child{
+  margin-left: -15px;
+}
+
+
+
+#topnav {
+  box-shadow: 0px 2px 5px #999;
+}
+
   .navbar .divider-vertical {
 height: 50px;
 margin: 0 9px;
@@ -67,7 +108,7 @@ border-left-color: #111111;
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="{{ url_for('search.index') }}">
-          <img src="{{ url_for('static', filename='img/labs_white.svg') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}">
+          <img src="{{ url_for('static', filename='img/labs_colour.svg') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}">
         </a>
       </div>
 
