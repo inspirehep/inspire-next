@@ -312,12 +312,6 @@ class LiteratureForm(WebDepositForm):
         validators=[validators.DataRequired()]
     )
 
-    subject_relevance = fields.TextAreaField(
-        label=_('Relevance to HEP'),
-        description=_("No CORE subject selected. Briefly describe why this submission is relevant to HEP"),
-        widget_classes="form-control",
-    )
-
     abstract = fields.TextAreaField(
         label=_('Abstract'),
         default='',
@@ -544,7 +538,7 @@ class LiteratureForm(WebDepositForm):
             ['captcha', 'type_of_doc', ]),
         ('Basic Information',
             ['title', 'title_arXiv', 'categories_arXiv', 'language',
-             'title_translation', 'authors', 'subject', 'subject_relevance',
+             'title_translation', 'authors', 'subject',
              'collaboration', 'experiment', 'abstract', 'page_nr',
              'report_number']),
         ('Thesis Information',

@@ -107,7 +107,7 @@ define(function(require, exports, module) {
     this.$language = $("#language");
     this.$subject = $("#subject");
     this.$translated_title = $("#state-group-title_translation");
-    this.$subject_relevance = $("#state-group-subject_relevance");
+    this.$comments = $("#state-group-extra_comments");
     this.$importButton = $("#importData");
     this.$skipButton = $("#skipImportData");
     this.$submissionForm = $('#submitForm');
@@ -623,10 +623,11 @@ define(function(require, exports, module) {
         return element.indexOf("HEP") > -1;
       });
       if (typeof HEP_subjects === "undefined" || HEP_subjects.length === 0) {
-        this.$subject_relevance.slideDown();
+        $("#hep-relevance-alert").remove();
+        this.$comments.before("<div class='alert alert-info' id='hep-relevance-alert' role='alert'><strong>TIP:</strong> For faster approval, briefly explain the relevance of the suggestion to HEP.</div>");
       }
       else {
-        this.$subject_relevance.slideUp();
+        $("#hep-relevance-alert").remove();
       }
     },
 

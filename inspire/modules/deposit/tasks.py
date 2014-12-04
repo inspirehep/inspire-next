@@ -105,8 +105,5 @@ def add_submission_extra_data(obj, eng):
     if "extra_comments" in metadata:
         submission_data["extra_comments"] = metadata["extra_comments"]
         del metadata["extra_comments"]
-    if "subject_relevance" in metadata:
-        submission_data["subject_relevance"] = metadata["subject_relevance"]
-        del metadata["subject_relevance"]
     obj.extra_data["submission_data"] = submission_data
     deposition.save()
