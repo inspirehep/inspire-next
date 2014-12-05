@@ -121,7 +121,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
     ]
 
     name = "Literature"
-    name_plural = "Literature submissions"
+    name_plural = "Suggest content"
     group = "Articles & Preprints"
     draft_definitions = {
         'default': LiteratureForm,

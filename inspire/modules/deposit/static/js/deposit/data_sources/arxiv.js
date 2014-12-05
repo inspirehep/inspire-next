@@ -26,7 +26,7 @@ define(function(require, exports, module) {
   var arxivSource = new DataSource({
 
     id: 'arxiv',
-    name: 'arXiv ID',
+    name: 'arXiv',
     url: '/arxiv/search?arxiv=',
 
     mapper: new DataMapper({

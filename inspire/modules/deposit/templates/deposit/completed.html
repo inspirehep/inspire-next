@@ -28,13 +28,12 @@
 <div class="pull-right">
   <a class="btn btn-primary pull-right"
       href="{{ url_for('webdeposit.create', deposition_type=deposition_type) }}">
-      <i class="glyphicon glyphicon-plus"></i> {{ _('New Submission') }}
+      <i class="glyphicon glyphicon-plus"></i> {{ _('New Suggestion') }}
   </a>
 </div>
 <div class="clearfix clearfix-padding"></div>
 <div class="alert alert-success">
   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-  <strong>Thank you for your suggestion!<br></strong><br>Your request will be reviewed by a member of the INSPIRE staff.
-  <br><br>You will receive an email once the request has been processed.
+  <strong>Thank you for your suggestion!<br></strong><br>The INSPIRE staff will review it and we will let you know.
 </div>
 {% endblock inner_content %}

@@ -63,7 +63,7 @@ def importdata_button(field, **dummy_kwargs):
                         name="importData",
                         type="button"),
             '#myModal',
-            _('Auto import'))
+            _('Import'))
     return HTMLString(html)
 
 
@@ -211,7 +211,7 @@ class LiteratureForm(WebDepositForm):
         label=_('DOI'),
         processors=[],
         export_key='doi',
-        description='e.g. 10.1234/foo.bar or doi:10.1234/foo.bar',
+        description='e.g. 10.1086/305772 or doi:10.1086/305772',
         placeholder='',
         validators=[DOISyntaxValidator(), duplicated_doi_validator],
     )
@@ -412,11 +412,11 @@ class LiteratureForm(WebDepositForm):
         widget_classes="form-control" + THESIS_CLASS,
     )
 
-    license = fields.SelectField(
-        label=_('License'),
-        default='',
-        widget_classes="form-control" + THESIS_CLASS,
-    )
+    # license = fields.SelectField(
+    #     label=_('License'),
+    #     default='',
+    #     widget_classes="form-control" + THESIS_CLASS,
+    # )
 
     # ============
     # Journal Info
@@ -468,7 +468,7 @@ class LiteratureForm(WebDepositForm):
 
     references = fields.TextAreaField(
         label=_('References'),
-        description='Copy the references from the original PDF',
+        description='Please paste the references in plain text',
         widget_classes="form-control"
     )
 
@@ -507,9 +507,17 @@ class LiteratureForm(WebDepositForm):
     # )
 
     url = fields.TextField(
-        label=_('Link to Source'),
-        description = _('If available, please provide us with an accessible URL for the pdf'),
+        label=_('Link to PDF'),
+        description = _('Please, provide us a link to the PDF: we will use it to check the references'),
         placeholder='http://www.example.com/document.pdf',
+        widget_classes="form-control",
+    )
+
+    additional_url = fields.TextField(
+        label=_('Link to additional information (e.g. abstract)'),
+        description = _('This is the web page which we will link to from INSPIRE'),
+        placeholder='http://www.example.com/splash-page.html',
+        # validators=[pdf_validator],
         widget_classes="form-control",
     )
 
@@ -536,17 +544,17 @@ class LiteratureForm(WebDepositForm):
     #
     # Form Configuration
     #
-    _title = _("Literature submission")
+    _title = _("Suggest content")
 
     # Group fields in categories
 
     groups = [
-        ('Import from existing source',
+        ('Import information',
             ['arxiv_id', 'doi', 'import_buttons']),
         ('Document Type',
             ['type_of_doc', ]),
-        ('Source',
-            ['url']),
+        ('Links',
+            ['url', 'additional_url']),
         ('Basic Information',
             ['title', 'title_arXiv', 'categories_arXiv', 'language',
              'title_translation', 'authors', 'subject',
@@ -554,9 +562,9 @@ class LiteratureForm(WebDepositForm):
              'report_number']),
         ('Thesis Information',
             ['supervisors', 'defense_date', 'thesis_date', 'degree_type',
-             'institution']),
-        ('Licenses and copyright',
-            ['license', 'license_url']),
+             'institution', 'license_url']),
+        # ('Licenses and copyright',
+        #     ['license', 'license_url'], {'classes': 'collapse'}),
         ('Journal Information',
             ['journal_title', 'volume', 'issue', 'year',
              'page_range_article_id']),
@@ -564,11 +572,11 @@ class LiteratureForm(WebDepositForm):
             ['conf_name', 'conference_id'], {'classes': 'collapse'}),
         ('Proceedings Information (not published in journal)',
             ['nonpublic_note'], {'classes': 'collapse'}),
-        ('Add References',
+        ('References',
             ['references'], {'classes': 'collapse'}),
         # ('Upload files',
         #     ['file_field', 'ok_to_upload']),
-        ('Add some extra comments',
+        ('Additional comments',
             ['extra_comments'], {'classes': 'collapse'}),
     ]
 
@@ -594,5 +602,5 @@ class LiteratureForm(WebDepositForm):
             for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_SUBJECTS_KB"])]
         self.degree_type.choices = [('', '')] + [(x['value'], x['value'])
             for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_DEGREE_KB"])]
-        self.license.choices = [('', '')] + [(x['key'], x['key'])
-            for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_LICENSE_KB"])]
+        # self.license.choices = [('', '')] + [(x['key'], x['key'])
+        #     for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_LICENSE_KB"])]

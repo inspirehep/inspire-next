@@ -257,3 +257,13 @@ msgstr ""
 #: Allows to rename Deposit to Submit
 msgid "Deposit"
 msgstr ""
+
+
+#: Custom message for signup form
+#: invenio/modules/oauthclient/forms.py:53
+#, python-format
+msgid ""
+"Email address %(addr)s already exists in the database. If this is your "
+"address, please sign-in and go to Profile > Linked Accounts to link your "
+"account."
+msgstr ""

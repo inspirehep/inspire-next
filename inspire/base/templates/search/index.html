@@ -38,7 +38,6 @@
         <div class="row">
           <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
             <h1>{{- _("Welcome to INSPIRE Labs!") -}}</h1>
-            <h2>{{ config["CFG_SITE_NAME_INTL"][g.ln] }}</h2>
           </div>
         </div>
       </div>
@@ -49,7 +48,7 @@
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
           <div class="page-header text-center">
-            <h3>{{- _("Do you have a publication you'd like to see added to INSPIRE?") -}}</h3>
+            <h3>{{- _("Is there a publication you'd like to see added to INSPIRE?") -}}</h3>
             <a class="btn btn-primary btn-lg" id="submit-btn" href="{{ url_for('webdeposit.create', deposition_type='literature') }}">{{- _("Send a suggestion!") -}}</a>
           </div>
         </div>

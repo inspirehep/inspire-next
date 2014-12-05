@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Inspire dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-09-09 14:22+0200\n"
+"POT-Creation-Date: 2014-10-13 10:36+0200\n"
 "PO-Revision-Date: 2014-09-09 14:25+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
@@ -29,225 +29,217 @@ msgstr ""
 msgid "FAQ"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:59
-msgid "Importing data..."
+#: inspire/modules/deposit/forms.py:61
+msgid "Auto import"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:60
-msgid "Import data"
+#: inspire/modules/deposit/forms.py:72
+msgid "Skip, and fill the form manually"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:147
-msgid "DOI"
-msgstr ""
-
-#: inspire/modules/deposit/forms.py:155
-msgid "ArXiv ID"
-msgstr ""
-
-#: inspire/modules/deposit/forms.py:159
-msgid "ISBN"
-msgstr ""
-
-#: inspire/modules/deposit/forms.py:164 inspire/modules/deposit/forms.py:365
-msgid " "
-msgstr ""
-
-#: inspire/modules/deposit/forms.py:168
-msgid "Article/Conference paper"
-msgstr ""
-
-#: inspire/modules/deposit/forms.py:169
-msgid "Thesis"
-msgstr ""
-
-#: inspire/modules/deposit/forms.py:170
-msgid "Book Chapter"
-msgstr ""
-
-#: inspire/modules/deposit/forms.py:171
-msgid "Book"
-msgstr ""
-
-#: inspire/modules/deposit/forms.py:172
-msgid "Proceedings"
-msgstr ""
-
-#: inspire/modules/deposit/forms.py:184
-msgid "Title"
+#: inspire/modules/deposit/forms.py:94
+msgid "Journal Information already exists"
 msgstr ""
 
 #: inspire/modules/deposit/forms.py:196
-msgid "Translated Title"
+msgid "DOI"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:219
-msgid "Collaboration"
+#: inspire/modules/deposit/forms.py:204
+msgid "arXiv ID"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:224 inspire/modules/deposit/forms.py:275
-#: inspire/modules/deposit/forms.py:331
-msgid "Start typing for suggestions"
+#: inspire/modules/deposit/forms.py:213
+msgid " "
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:225
-msgid "Experiment"
+#: inspire/modules/deposit/forms.py:217
+msgid "Article/Conference paper"
+msgstr ""
+
+#: inspire/modules/deposit/forms.py:218
+msgid "Thesis"
 msgstr ""
 
 #: inspire/modules/deposit/forms.py:233
-msgid "Subject"
-msgstr ""
-
-#: inspire/modules/deposit/forms.py:239
-msgid "Abstract"
+msgid "Title"
 msgstr ""
 
 #: inspire/modules/deposit/forms.py:246
+msgid "Translated Title"
+msgstr ""
+
+#: inspire/modules/deposit/forms.py:269
+msgid "Collaboration"
+msgstr ""
+
+#: inspire/modules/deposit/forms.py:274 inspire/modules/deposit/forms.py:326
+#: inspire/modules/deposit/forms.py:383
+msgid "Start typing for suggestions"
+msgstr ""
+
+#: inspire/modules/deposit/forms.py:275
+msgid "Experiment"
+msgstr ""
+
+#: inspire/modules/deposit/forms.py:283
+msgid "Subject"
+msgstr ""
+
+#: inspire/modules/deposit/forms.py:290
+msgid "Abstract"
+msgstr ""
+
+#: inspire/modules/deposit/forms.py:297
 msgid "Number of Pages"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:251
+#: inspire/modules/deposit/forms.py:302
 msgid "English"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:252
+#: inspire/modules/deposit/forms.py:303
 msgid "French"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:253
+#: inspire/modules/deposit/forms.py:304
 msgid "German"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:254
+#: inspire/modules/deposit/forms.py:305
 msgid "Dutch"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:255
+#: inspire/modules/deposit/forms.py:306
 msgid "Italian"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:256
+#: inspire/modules/deposit/forms.py:307
 msgid "Spanish"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:257
+#: inspire/modules/deposit/forms.py:308
 msgid "Portuguese"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:258
+#: inspire/modules/deposit/forms.py:309
 msgid "Greek"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:259
+#: inspire/modules/deposit/forms.py:310
 msgid "Slovak"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:260
+#: inspire/modules/deposit/forms.py:311
 msgid "Czech"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:261
+#: inspire/modules/deposit/forms.py:312
 msgid "Hungarian"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:262
+#: inspire/modules/deposit/forms.py:313
 msgid "Polish"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:263
+#: inspire/modules/deposit/forms.py:314
 msgid "Norwegian"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:264
+#: inspire/modules/deposit/forms.py:315
 msgid "Swedish"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:265
+#: inspire/modules/deposit/forms.py:316
 msgid "Finnish"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:266
+#: inspire/modules/deposit/forms.py:317
 msgid "Russian"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:267
+#: inspire/modules/deposit/forms.py:318
 msgid "Other"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:270
+#: inspire/modules/deposit/forms.py:321
 msgid "Language"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:276
+#: inspire/modules/deposit/forms.py:327
 msgid "Conference Information"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:277
+#: inspire/modules/deposit/forms.py:328
 msgid "Conference name, acronym, place, date"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:288
+#: inspire/modules/deposit/forms.py:339
 msgid "License URL"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:304
+#: inspire/modules/deposit/forms.py:356
 msgid "Supervisors"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:305
+#: inspire/modules/deposit/forms.py:357
 msgid "Add another supervisor"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:312
+#: inspire/modules/deposit/forms.py:364
 msgid "Date of Defense"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:318
+#: inspire/modules/deposit/forms.py:370
 msgid "Degree type"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:323
+#: inspire/modules/deposit/forms.py:375
 msgid "University"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:332
+#: inspire/modules/deposit/forms.py:384
 msgid "Journal Title"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:339
+#: inspire/modules/deposit/forms.py:391
 msgid "Page Range"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:340
+#: inspire/modules/deposit/forms.py:392
 msgid "e.g. 1-100"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:345
+#: inspire/modules/deposit/forms.py:397
 msgid "Article ID"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:350
+#: inspire/modules/deposit/forms.py:402
 msgid "Volume"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:355
+#: inspire/modules/deposit/forms.py:407
 msgid "Year"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:360
+#: inspire/modules/deposit/forms.py:412
 msgid "Issue"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:385
+#: inspire/modules/deposit/forms.py:417
+msgid "Proceedings"
+msgstr ""
+
+#: inspire/modules/deposit/forms.py:446
 msgid "External URL"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:387
-msgid "http://www.example.com"
+#: inspire/modules/deposit/forms.py:447
+msgid "Add another url"
 msgstr ""
 
-#: inspire/modules/deposit/forms.py:409
-msgid "Literature suggestion"
+#: inspire/modules/deposit/forms.py:470
+msgid "Literature submission"
 msgstr ""
 
 #: inspire/modules/deposit/validators/dynamic_fields.py:40
@@ -264,4 +256,37 @@ msgstr ""
 
 msgid "Deposit"
 msgstr "Submit"
+
+#: invenio/modules/oauthclient/forms.py:53
+#, python-format
+msgid ""
+"Email address %(addr)s already exists in the database. If this is your "
+"address, please sign-in and go to Profile > Linked Accounts to link your "
+"account."
+msgstr ""
+"Email address %(addr)s already exists in the database."
+
+#~ msgid "Importing data..."
+#~ msgstr ""
+
+#~ msgid "Import data"
+#~ msgstr ""
+
+#~ msgid "ArXiv ID"
+#~ msgstr ""
+
+#~ msgid "ISBN"
+#~ msgstr ""
+
+#~ msgid "Book Chapter"
+#~ msgstr ""
+
+#~ msgid "Book"
+#~ msgstr ""
+
+#~ msgid "http://www.example.com"
+#~ msgstr ""
+
+#~ msgid "Literature suggestion"
+#~ msgstr ""
 

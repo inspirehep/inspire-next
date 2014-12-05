@@ -128,7 +128,7 @@ define(function(require, exports, module) {
       if (queryStatus === 'success') {
         return {
           state: 'success',
-          message: 'The data was successfully imported from ' + this.name + '.'
+          message: 'The data was successfully imported via ' + this.name + '.'
         };
       }
       if (queryStatus === 'duplicated') {

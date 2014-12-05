@@ -30,7 +30,7 @@ from urllib import urlencode
 def arxiv_syntax_validation(form, field):
     """Validate ArXiv ID syntax."""
     message = "The provided ArXiv ID is invalid - it should look \
-                similar to 'hep-th/1234567' or '1234.5678'."
+                similar to 'hep-th/9711200' or '1207.7235'."
 
     if field.data and not is_arxiv(field.data):
         raise StopValidation(message)
