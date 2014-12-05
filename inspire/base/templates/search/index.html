@@ -51,7 +51,8 @@
 }
 
 #submit-btn {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 @media (min-width:768px) {
@@ -82,8 +83,8 @@
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
           <div class="page-header text-center">
-            <h3>{{- _("Do you have a publication to suggest?") -}}</h3>
-            <a class="btn btn-primary btn-lg" id="submit-btn" href="{{ url_for('webdeposit.create', deposition_type='literature') }}">{{- _("SUBMIT NOW!") -}}</a>
+            <h3>{{- _("Do you have a publication you'd like to see added to INSPIRE?") -}}</h3>
+            <a class="btn btn-primary btn-lg" id="submit-btn" href="{{ url_for('webdeposit.create', deposition_type='literature') }}">{{- _("Send a suggestion!") -}}</a>
           </div>
         </div>
       </div>
