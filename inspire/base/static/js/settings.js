@@ -61,6 +61,7 @@ require.config({
     "buckets": "vendors/buckets/buckets",
     "feedback": "vendors/feedback/examples/js/feedback",
     "html2canvas": "vendors/html2canvas/build/html2canvas",
+    "highcharts": "vendors/highcharts-release/highcharts"
   },
   shim: {
     jquery: {
@@ -173,6 +174,10 @@ require.config({
     "feedback" : {
       deps: ["jquery", "html2canvas"],
        exports: "Feedback"
+    },
+    "highcharts" : {
+      deps: ["jquery"],
+      exports: "Highcharts"
     },
   }
 });
