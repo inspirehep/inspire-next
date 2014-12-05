@@ -124,13 +124,21 @@ class process_record_arxiv(RecordWorkflow):
         from flask import render_template, current_app
 
         record = bwo.get_data()
-        final_identifiers = {}
+        final_identifiers = []
+        identifiers = None
         try:
             identifiers = Record(record.dumps()).persistent_identifiers
-            for values in identifiers.values():
-                final_identifiers.extend([i.get("value") for i in values])
+            if identifiers:
+                if isinstance(identifiers, list):
+                    identifiers = identifiers[0]
+                if isinstance(identifiers, tuple):
+                    new_identifiers = {}
+                    new_identifiers[identifiers[0]] = identifiers[1]
+                    identifiers = new_identifiers
+                for values in identifiers.values():
+                    final_identifiers.extend([i.get("value") for i in values])
         except Exception:
-            current_app.logger.exception("Could not get identifiers")
+            current_app.logger.exception("Could not get identifiers: {0}".format(identifiers))
             if hasattr(record, "get"):
                 final_identifiers = [
                     record.get("system_number_external", {}).get("value", 'No ids')
