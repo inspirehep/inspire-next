@@ -59,7 +59,7 @@
 
     {% set next = request.script_root + request.path if request.endpoint != 'webaccount.logout' and request.endpoint != 'webaccount.login' else config.CFG_SITE_SECURE_URL %}
     <div class="row text-center">
-      <a href="{{url_for('oauthclient.login', remote_app='orcid', next=next)}}" tabindex="0" id="orcid_login" class="btn" role="button" style="width: 300px; margin-bottom: 15px;"><img id="orcid-id-logo" src="{{ url_for('static', filename='img/orcid.png') }}" width="24" height="24" alt="ORCID logo"> {{ _('Sign in with ORCID') }}</a>
+      <a href="{{url_for('oauthclient.login', remote_app='orcid', next=next)}}" tabindex="0" id="orcid_login" class="btn btn-lg" role="button" style="width: 300px; margin-bottom: 15px;"><img id="orcid-id-logo" src="{{ url_for('static', filename='img/orcid.png') }}" width="24" height="24" alt="ORCID logo"> {{ _('Sign in with ORCID') }}</a>
       <p class="text-center">
         <small>
           <a href="/orcid.html">

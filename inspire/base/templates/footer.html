@@ -26,6 +26,11 @@
 ## Usage:
 ## {% include 'footer.html' %}
 #}
+<style>
+  .list-unstyled > li {
+    color: #ccc;
+  }
+</style>
 
 <section class="custom-footer">
   <div class="container">
@@ -55,10 +60,14 @@
         </div>
       </div>
       <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4 text-right">
-        <address>
-          <strong>{{ config["CFG_SITE_NAME_INTL"][g.ln] }}</strong>
-          <br />{{ _("Powered by") }} <a class="footer" href="http://invenio-software.org/" target="_blank">Invenio</a>
-        </address>
+        <ul class="list-unstyled">
+          <li>
+            <a class="footer" href="{{ url_for('search.index') }}">{{ config["CFG_SITE_NAME_INTL"][g.ln] }}</a>
+          </li>
+          <li>
+            {{ _("Powered by") }} <a class="footer" href="http://invenio-software.org/" target="_blank">Invenio</a>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
