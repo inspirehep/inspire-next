@@ -30,6 +30,7 @@ _deposit_js.bower.update({
     'buckets': 'git://github.com/mauriciosantos/buckets.git',
     'bootstrap-multiselect': '~0.9.4',
     'readmore': '*',
+    'highcharts-release': 'latest',
 })
 
 _deposit_styles.contents += (
