@@ -1,0 +1,144 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2014 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{% extends "page.html" %}
+
+{% block global_bundles %}
+  {{ super() }}
+  {% bundles "deposit.css" %}
+{% endblock %}
+
+{% if stats %}
+{% block javascript %}
+<script type="text/javascript">
+require(['js/deposit/stats/deposition_charts', 'bootstrap-datetimepicker', 'highcharts'], function(chart) {
+
+    var charts_data = {
+      deposition_data: {{"{"}}{% for type_of_doc in stats %}'{{ type_of_doc }}': {{ stats[type_of_doc]|safe }}{% if not loop.last %}, {% endif %}
+                         {% endfor %}{{"}"}},
+      overall_depositions: {{ overall_metadata|safe }},
+      columns_deposition_data: {{ metadata_for_column|safe }},
+      metadata_categories: {{ metadata_categories|safe }},
+    }
+
+    var datepicker_options = {
+        format: "YYYY-MM-DD",
+        pickTime: false,
+        maxDate: new Date(),
+    }
+
+    $chart_type = $("#chart_types");
+    $deposition_charts = $('#deposition-charts');
+
+    $(function(){
+      $('#since_date').datetimepicker(datepicker_options);
+      $('#until_date').datetimepicker(datepicker_options);
+
+      // Radialize the colors
+      Highcharts.getOptions().colors = new chart({}).radial_colors();
+
+      new chart({}).init(charts_data);
+      $chart_type.change(function(){new chart({}).update(charts_data)});
+
+      // Build individual charts
+      new chart({}).generate_individual(charts_data);
+  });
+});
+</script>
+{% endblock %}
+{% endif %}
+
+{% block body %}
+
+  <div class="page-header">
+    <div class="row">
+        <div class="col-md-8 vcenter">
+          <h3>{{ _('Submission statistics') }}</h3>
+        </div>
+        <div class="col-md-2-offset-3 vcenter">
+          <i class="glyphicon glyphicon-th"></i> {{ _('Chart type') }}
+        </div>
+        <div class="col-md-2 vcenter">
+          <select id="chart_types" name="chart_types" class="form-control">
+            {% for type in chart_types %}
+              <option  value="{{ type }}">{{ chart_types[type] }}</option>
+            {% endfor %}
+          </select>
+        </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="well row">
+      <form method="POST" action="{{ url_for('webdeposit.show_stats') }}">
+      <div class="col-md-2 vcenter">
+        <h4>{{ _('Filter by date') }}</h4>
+      </div>
+      <div class="col-md-1-offset-3 vcenter">
+        {{ form.since_date.label }}
+      </div>
+      <div class="col-md-2 vcenter">
+        {{ form.since_date(class='form-control') }}
+      </div>
+      <div class="col-md-1-offset-3 vcenter">
+        {{ form.until_date.label }}
+      </div>
+      <div class="col-md-2 vcenter">
+        {{ form.until_date(class='form-control') }}
+      </div>
+      <div class="col-md-2 vcenter">
+        <a class="btn btn-default" href="{{ url_for('webdeposit.show_stats') }}"><i class="glyphicon glyphicon-refresh"></i> {{ _('reset dates') }} </a>
+      </div>
+      <div class="col-md-2 vcenter pull-right">
+        {{ form.submit(class='btn btn-primary pull-right') }}
+      </div>
+      </form>
+    </div>
+
+    {% if stats %}
+
+    <div class="well" id="deposition-charts"></div>
+
+    <div class="row">
+    {% if stats|length > 1 %}
+      {% for type_of_doc in stats | batch(2, '&nbsp;') %}
+          {% for doc in type_of_doc %}
+          <div class="well col-md-6" id="chart-{{ doc }}"></div>
+          {% endfor %}
+      </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="row" style="margin-top: 22px;">
+      <ul class="nav nav-list">
+        <li class="divider" style="overflow: visible;"></li>
+      </ul>
+
+       <ul class="nav nav-tabs nav-stacked col-md-offset-3 col-md-6">
+        <li>{{ _('Depositions analyzed') }}: {{ depositions|length }}</li>
+      </ul>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="col-md-12">
+    <strong>{{ _('There are no depositions.') }}</strong>
+  </div>
+  {% endif %}
+{% endblock %}
