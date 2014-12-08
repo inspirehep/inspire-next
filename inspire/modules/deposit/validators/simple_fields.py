@@ -114,6 +114,15 @@ def duplicated_arxiv_id_validator(form, field):
             '035__a:oai:arXiv.org:' + arxiv_id, 'arXiv ID')
 
 
+def pdf_validator(form, field):
+    """Validate that url points to PDF."""
+    from invenio.legacy.bibdocfile.api import guess_format_from_url
+    message = "Please, provide a direct link to a PDF document."
+
+    if field.data and guess_format_from_url(field.data) != ".pdf":
+        raise StopValidation(message)
+
+
 class RequiredIfFiles(object):
 
     """Require field if files."""

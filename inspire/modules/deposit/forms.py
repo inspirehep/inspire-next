@@ -40,7 +40,7 @@ from .validators.dynamic_fields import AuthorsValidation
 from .filters import clean_empty_list
 from .validators.simple_fields import duplicated_doi_validator, \
     duplicated_arxiv_id_validator, arxiv_syntax_validation, \
-    required_if_files
+    required_if_files, pdf_validator
 
 #
 # Field class names
@@ -510,6 +510,7 @@ class LiteratureForm(WebDepositForm):
         label=_('Link to PDF'),
         description = _('Please, provide us a link to the PDF: we will use it to check the references'),
         placeholder='http://www.example.com/document.pdf',
+        validators=[pdf_validator],
         widget_classes="form-control",
     )
 
