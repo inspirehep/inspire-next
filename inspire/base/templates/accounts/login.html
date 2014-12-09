@@ -62,7 +62,7 @@
       <a href="{{url_for('oauthclient.login', remote_app='orcid', next=next)}}" tabindex="0" id="orcid_login" class="btn btn-lg" role="button" style="width: 300px; margin-bottom: 15px;"><img id="orcid-id-logo" src="{{ url_for('static', filename='img/orcid.png') }}" width="24" height="24" alt="ORCID logo"> {{ _('Sign in with ORCID') }}</a>
       <p class="text-center">
         <small>
-          <a href="{{ url_for('orcid') }}">
+          <a href="/inspire/orcid">
             {{ _('What is ORCID?') }}
           </a>
         </small>
