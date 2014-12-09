@@ -1,0 +1,87 @@
+/**
+ * -*- mode: text; coding: utf-8; -*-
+ *
+ * This file is part of INSPIRE.
+ * Copyright (C) 2014 CERN.
+
+ * INSPIRE is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * Invenio is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Invenio; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+@import (reference) "../inspire.less";
+
+ /* Index styles
+-------------------------------------------------- */
+
+section.content-box .container {
+    padding-top: 30px;
+    padding-bottom: 30px;
+    -webkit-box-shadow: 0px 0px 19px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow: 0px 0px 19px rgba(50, 50, 50, 0.75);
+    box-shadow: 0px 0px 19px rgba(50, 50, 50, 0.75);
+    margin-top: -40px;
+    z-index: 1020;
+    background: #fff;
+    -moz-border-radius-topleft: 5px;
+    -webkit-border-top-left-radius: 5px;
+    border-top-left-radius: 5px;
+    -moz-border-radius-topright: 5px;
+    -webkit-border-top-right-radius: 5px;
+    border-top-right-radius: 5px;
+}
+#landing-title {
+    background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, @blue-dark), color-stop(100%, @blue-light));
+    background: -webkit-linear-gradient(45deg, @blue-dark 0, @blue-light 100%);
+    background: -moz-linear-gradient(45deg, @blue-dark 0, @blue-light 100%);
+    background: -o-linear-gradient(45deg, @blue-dark 0, @blue-light 100%);
+    background: linear-gradient(45deg, @blue-dark 0, @blue-light 100%);
+
+    /* fallback for IE breaks LESS compiler */
+    /* filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#5889c2', endColorstr='#3fa0c9', GradientType=1); */
+}
+.jumbotron {
+    margin: 0px;
+    padding-top: 20px;
+    color: #fff;
+    border-radius: 0px;
+    h1 {
+        font-size: 36px;
+    }
+    h2 {
+        font-size: 24px;
+    }
+    .btn {
+        margin: 30px 0px;
+    }
+}
+.home-intro {
+    h2.tagline {
+        font-weight: 400;
+        font-size: 35px;
+        margin-top: 30px;
+    }
+    p.lead {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+}
+#submit-btn {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+@media (min-width: @screen-sm-min) {
+    .home-intro p.lead {
+        max-width: 75%;
+    }
+}

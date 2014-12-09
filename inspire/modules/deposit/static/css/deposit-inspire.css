@@ -52,7 +52,7 @@
     font-family: 'Glyphicons Halflings';
     content: "\e114"; /* extracted from bootstrap.css */
     float: right;
-    color: grey;
+    color: #fff;
 }
 
 .panel-heading .panel-toggle.collapsed:after {

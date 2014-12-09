@@ -34,16 +34,16 @@ js = Bundle(
     },
 )
 
-index_js = Bundle(
-    'vendors/jquery-feeds/dist/jquery.feeds.js',
-    'vendors/moment/moment.js',
-    output='index.js',
-    filters="requirejs",
-    weight=60,
-    bower={
-        "jquery-feeds": "git://github.com/camagu/jquery-feeds.git",
-    },
-)
+# index_js = Bundle(
+#     'vendors/jquery-feeds/dist/jquery.feeds.js',
+#     'vendors/moment/moment.js',
+#     output='index.js',
+#     filters="requirejs",
+#     weight=60,
+#     bower={
+#         "jquery-feeds": "git://github.com/camagu/jquery-feeds.git",
+#     },
+# )
 
 # '_' prefix indicates private variables, and prevents duplicated import by
 # auto-discovery service of invenio
@@ -59,9 +59,11 @@ _base_styles.contents += (
     'less/base/variables.less',
     'less/base/header.less',
     'less/base/footer.less',
-    'less/base/index.less',
     'less/base/helpers.less',
     'less/base/sticky-footer.less',
+    'less/base/core.less',
+    'less/accounts/login.less',
+    'less/search/index.less',
     'vendors/feedback/examples/css/feedback.css',
 )
 
@@ -77,7 +79,7 @@ from invenio.modules.search.bundles import js as _search_js
 
 _search_js.contents += (
     'js/search/invenio_with_spires_typeahead_configuration.js',
-    'js/search/search_box.js',
+    # 'js/search/search_box.js',
 )
 
 from invenio.modules.formatter.bundles import css as _formatter_css

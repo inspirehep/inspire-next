@@ -1,77 +1,111 @@
 {#
-## This file is part of Invenio.
+## This file is part of INSPIRE.
 ## Copyright (C) 2014 CERN.
 ##
-## Invenio is free software; you can redistribute it and/or
+## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
 ## published by the Free Software Foundation; either version 2 of the
 ## License, or (at your option) any later version.
 ##
-## Invenio is distributed in the hope that it will be useful, but
+## INSPIRE is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 ## General Public License for more details.
 ##
 ## You should have received a copy of the GNU General Public License
-## along with Invenio; if not, write to the Free Software Foundation, Inc.,
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
 {% extends "accounts/login_base.html" %}
 
 {%- block form_auth_external scoped -%}{% endblock %}
-{% block nickname_popover_placement %}left{% endblock%}
+{% block nickname_popover_placement %}{% endblock%}
 
 {% block body %}
 {%- if current_user.is_guest %}
   {{super()}}
 {%- else -%}
-    <div class="col-lg-offset-2 col-sm-8 col-md-8">
-        <div class="jumbotron">
-        <h1>Hi {{current_user.nickname}}!</h1>
-        <p style="margin-top: 10px;">Where do you go from here?</p>
-        <p style="margin-top: 30px;">
-          </p><div class="row">
-            <div width="100%" align="center">
-                <a href="/" class="btn btn-default btn-lg">Search</a>
-                <a href="{{ url_for('webaccount.logout') }}" class="btn btn-default btn-lg">Sign out</a>
-            </div>
-          </div>
-        <p></p>
-        </div>
+<div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered">
+  <div class="well">
+    <h1>{{ _('Hi') }} {{current_user.nickname}}!</h1>
+    <p style="margin-top: 10px;">{{ _('Where do you go from here?') }}</p>
+    <p style="margin-top: 30px;">
+    </p>
+    <div class="row">
+      <div width="100%" align="center">
+        <a href="/" class="btn btn-default">{{ _('Search') }}</a>
+        <a href="{{ url_for('webaccount.logout') }}" class="btn btn-default">{{ _('Sign out') }}</a>
+      </div>
     </div>
+  </div>
+</div>
 {%- endif -%}
 {%- endblock body -%}
 
 {%- block form_header_message -%}
-<div class="col-md-8 col-md-offset-2">
-<p class="lead text-center">
-Please, sign in with one of the following services
-</p>
+<div class="col-centered">
+  <p class="lead text-center">
+    {{ _('Please, sign in with one of the following services') }}
+  </p>
 </div>
 {%- endblock form_header_message -%}
 
 {%- block form_auth_internal -%}
-  <div class="col-md-4 col-xs-10 col-centered">
-    {%- block form_auth_internal_form -%}
-      <div class="well">
-      <h3>Sign In</h3>
-      <br/>
+<div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered">
+  {%- block form_auth_internal_form -%}
+  <div class="well">
+    <br/>
 
-      {% set next = request.script_root + request.path if request.endpoint != 'webaccount.logout' and request.endpoint != 'webaccount.login' else config.CFG_SITE_SECURE_URL %}
-      <div class="row">
-        <div class="col-xs-12 col-centered">
-        <a href="{{url_for('oauthclient.login', remote_app='orcid', next=next)}}" class="btn btn-default btn-lg btn-block">
-        <img src="{{ url_for('static', filename='img/orcid.png') }}"></i> Sign in with ORCID</a>
+    {% set next = request.script_root + request.path if request.endpoint != 'webaccount.logout' and request.endpoint != 'webaccount.login' else config.CFG_SITE_SECURE_URL %}
+    <div class="row text-center">
+      <a href="{{url_for('oauthclient.login', remote_app='orcid', next=next)}}" tabindex="0" id="orcid_login" class="btn btn-lg" role="button" style="width: 300px; margin-bottom: 15px;"><img id="orcid-id-logo" src="{{ url_for('static', filename='img/orcid.png') }}" width="24" height="24" alt="ORCID logo"> {{ _('Sign in with ORCID') }}</a>
+      <p class="text-center">
+        <small>
+          <a href="{{ url_for('orcid') }}">
+            {{ _('What is ORCID?') }}
+          </a>
+        </small>
+      </p>
+      {% if config.DEBUG or request.args.get('admin') %}
+        <h3 align="center">&mdash; OR &mdash;</h3>
+        <form class="form-signin" action="{{ url_for('webaccount.login', _external=True, _scheme='https') }}" method="POST">
+        {{ form.referer }}
+        {{ form.login_method }}
+        <div class="form-group{% if form.nickname.errors%} has-error{% endif %}">
+        {{ form.nickname(placeholder=_('Username or email'), class_="form-control", type="text") }}
+        {%- if form.nickname.errors %}{% for error in form.nickname.errors %}
+            <span class="help-block">{{ error }}</span>
+        {%- endfor %}{% endif %}
         </div>
-        {% if config.DEBUG or request.args.get('admin') %}
-          <h3 align="center">&mdash; OR &mdash;</h3>
-          {{ super() }}
-        {% endif %}
-      </div>
-      </div>
-    {%- endblock -%}
-    {%- block form_auth_internal_title scoped -%}{% endblock %}
+        <div class="form-group{% if form.password.errors%} has-error{% endif %}">
+        {{ form.password(placeholder=_('Password'), class_="form-control", type="password") }}
+        {%- if form.password.errors %}{% for error in form.password.errors %}
+            <span class="help-block">{{ error }}</span>
+        {%- endfor %}{% endif %}
+        </div>
+        <div class="checkbox" style="text-align: left;">
+          <label>
+            {{ form.remember(class_="character-checkbox") }} {{ form.remember.label.text }}
+          </label>
+        </div>
+        {{ form.submit(class_="btn btn-info btn-block") }}
+        </form>
+        <p class="text-center"><small>
+          <a href="{{ url_for('webaccount.lost') }}">
+            {{ _('Lost your password?') }}
+          </a>
+        </small></p>
+      {% endif %}
+    </div>
   </div>
-  </div>
-{%- endblock -%}
+  {%- endblock form_auth_internal_form -%}
+  {%- block form_auth_internal_title scoped -%}{% endblock %}
+</div>
+</div>
+
+{%- endblock form_auth_internal -%}
+
+{# disables popover on the username field #}
+{% block javascript %}
+{% endblock %}

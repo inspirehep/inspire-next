@@ -77,3 +77,21 @@
 #search_box {
   margin: 40px 0px 40px 0px;
 }
+
+/*
+   this mediaquery is set to stack the list elements 3x3 in mobile version
+*/
+@media screen and (max-width: @screen-tablet) {
+  #myTab {
+  > li {
+      width: 50%;
+    > a {
+      text-align: center;
+    }
+  }
+  }
+  // takes the 3 first li elements
+  #myTab > li:nth-child(-n+3) {
+    float: left;
+  }
+}
