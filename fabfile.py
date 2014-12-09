@@ -14,11 +14,15 @@ env.conf_directory = "/afs/cern.ch/project/inspire/repo/inspire-configuration.gi
 
 env.roledefs = {
     'prod': ['inspirelabsvm01', 'inspirelabsvm02'],
+    'workers': ['inspirevm24', 'inspirevm25'],
     'prod1': ['inspirelabsvm01'],
     'prod2': ['inspirelabsvm02'],
+    'worker1': ['inspirevm24'],
+    'worker2': ['inspirevm25'],
     'dev01': ['inspirevm08.cern.ch'],
     'dev02': ['inspirevm11.cern.ch'],
     'proxy': ['inspirelb1.cern.ch'],
+    'builder': ["inspirevm24"]
 }
 
 
@@ -76,6 +80,42 @@ def prod2():
 
 
 @task
+def workers():
+    """Activate connection to labs production servers."""
+    env.roles = ['workers']
+    env.site_url = "http://labs.inspirehep.net"
+    env.site_secure_url = "https://labs.inspirehep.net"
+    env.conf_branch = "dev"
+    env.tmp_shared = "/afs/cern.ch/project/inspire/LABS/var/tmp-shared"
+    env.data = "/afs/cern.ch/project/inspire/LABS/var/data"
+    env.log_bibsched = "/afs/cern.ch/project/inspire/LABS/var/log/bibsched"
+
+
+@task
+def worker1():
+    """Activate connection to labs production servers."""
+    env.roles = ['worker1']
+    env.site_url = "http://labs.inspirehep.net"
+    env.site_secure_url = "https://labs.inspirehep.net"
+    env.conf_branch = "prod"
+    env.tmp_shared = "/afs/cern.ch/project/inspire/LABS/var/tmp-shared"
+    env.data = "/afs/cern.ch/project/inspire/LABS/var/data"
+    env.log_bibsched = "/afs/cern.ch/project/inspire/LABS/var/log/bibsched"
+
+
+@task
+def worker2():
+    """Activate connection to labs production servers."""
+    env.roles = ['worker2']
+    env.site_url = "http://labs.inspirehep.net"
+    env.site_secure_url = "https://labs.inspirehep.net"
+    env.conf_branch = "prod"
+    env.tmp_shared = "/afs/cern.ch/project/inspire/LABS/var/tmp-shared"
+    env.data = "/afs/cern.ch/project/inspire/LABS/var/data"
+    env.log_bibsched = "/afs/cern.ch/project/inspire/LABS/var/log/bibsched"
+
+
+@task
 def vm08():
     """Activate connection to labs dev server 1."""
     env.roles = ['dev01']
@@ -96,6 +136,12 @@ def vm11():
     env.tmp_shared = ""
     env.data = ""
     env.log_bibsched = ""
+
+
+@task
+def dry():
+    """Activate dry run."""
+    env.dry = True
 
 
 @task
@@ -226,7 +272,6 @@ def install():
 
         with cd("{0}/var".format(venv)):
             sudo("mkdir -p log/bibsched")
-            create_symlink("/opt/invenio", venv)
 
     if success:
         restart_apache()
@@ -235,6 +280,27 @@ def install():
         if choice.lower() in ["y", "ye", "yes"]:
             start_celery()
     return success
+
+
+@roles(['builder'])
+@task
+def sync(host=None):
+    """Sync Invenio to given host (or all)."""
+    package = local("python setup.py --fullname", capture=True).strip()
+    venv = "{0}/{1}".format(env.directory, package)
+
+    if not exists(venv):
+        return error("Meh? I need a virtualenv first.")
+
+    #execute(disable, host, False)
+    sudo(
+        'rsync --dry-run -az --force --delete --progress -e "ssh -p22" {venv} {server}:/opt/invenio'.format(
+            {
+                "venv": venv,
+                "server": host
+            }
+        )
+    )
 
 
 @task
@@ -436,4 +502,4 @@ def create_symlink(link, target):
     existing_link = sudo("readlink {0}".format(link))
     if existing_link and existing_link != target:
         sudo("rm {0}".format(link))
-        sudo("ln -s {0} {1}".format(target, venv))
+    sudo("ln -s {0} {1}".format(target, link))
