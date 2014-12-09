@@ -79,7 +79,8 @@ class process_record_arxiv(RecordWorkflow):
         workflow_if(match_record_arxiv_remote_oaiharvest),
         [
             log_info("Record already into database"),
-            update_existing_record_oaiharvest(),
+            delete_self_and_stop_processing,
+            #update_existing_record_oaiharvest(),
         ],
         workflow_else,
         [
