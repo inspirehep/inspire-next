@@ -179,7 +179,7 @@ CFG_INSPIRE_SITE = 1
 
 langs = {}
 for lang in CFG_SITE_LANGS:
-    langs[lang] = u"INSPIRE - High-Energy Physics Information Platform"
+    langs[lang] = u"INSPIRE - High-Energy Physics Information System"
 CFG_SITE_NAME_INTL = langs
 
 # Rename blueprint prefixes
