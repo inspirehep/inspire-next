@@ -317,9 +317,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Category
         # ========
         metadata['collections'] = [{'primary': "HEP"}]
-        if metadata['type_of_doc'] == 'article':
-            metadata['collections'].append({'primary': "Published"})
-        elif metadata['type_of_doc'] == 'thesis':
+        if metadata['type_of_doc'] == 'thesis':
             metadata['collections'].append({'primary': "Thesis"})
 
         # ============
