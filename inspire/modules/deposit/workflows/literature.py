@@ -436,8 +436,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ====
         # URLs
         # ====
-        if 'url' in metadata and metadata['url']:
-            metadata['url'] = {"url": metadata["url"]}
+        if 'additional_url' in metadata and metadata['additional_url']:
+            metadata['url'] = {"url": metadata["additional_url"]}
 
         # ================
         # Publication Info
