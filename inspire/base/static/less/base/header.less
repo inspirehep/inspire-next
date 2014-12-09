@@ -24,73 +24,50 @@
  /* Header styles
 -------------------------------------------------- */
 
-.masthead-nav {
-  & > li {
-    text-align: center;
-  }
-  & > li:last-child {
-    border-left: 1px solid #ccc;
-  }
-  .fa {
-    padding: 10px;
-  }
+body {
+    padding-top: 64px;
 }
-.masthead-nav &>li.active,.masthead-nav &>li:hover {
-  border-bottom: 2px solid #69C;
-}
-.navbar-default .navbar-nav &>.active &>a,.navbar-default .navbar-nav &>.active &>a:hover {
-  background-color: #fff;
-}
-.img-orcid {
-  display: inline;
-  background-repeat: no-repeat;
-  padding-right: 40px;
-  background-image: url('../static/img/orcid.png');
-  height: 32px;
-  width: 32px;
-  padding-bottom: 13px;
-  padding-top: 8px;
-}
-.img-arxiv {
-  display: inline;
-  background-repeat: no-repeat;
-  padding-right: 40px;
-  background-image: url('../static/img/arxiv.ico');
-  height: 32px;
-  width: 32px;
-  padding-bottom: 13px;
-  padding-top: 8px;
-}
-#sign-in-modal {
-  .btn-lg {
-    font-size: 15px;
-  }
-  .modal-header {
-    text-align: center;
-    background-color: #eeeeee;
-  }
-  .modal-body {
-    text-align: center;
-  }
-}
-
-/*
-   this mediaquery is set to stack the list elements 3x3 in mobile version
-*/
-@media screen and (max-width: @screen-tablet) {
-  .navbar-collapse > .masthead-nav {
-    float: none !important;       // TODO: find another way to do it not hacky one
-  }
-  #myTab {
-  > li {
-      width: 50%;
-    > a {
-      text-align: center;
+.navbar-fixed-top {
+    .nav {
+        padding: 7px 0;
     }
-  }
-  }
-  // takes the 3 first li elements
-  #myTab > li:nth-child(-n+3) {
-    float: left;
-  }
+    .navbar-brand {
+        padding: 0 15px;
+    }
+}
+.navbar-brand {
+    img {
+        height: 64px;
+    }
+}
+#topnav {
+    li.active {
+        border-bottom: 2px solid @btn-primary-bg;
+    }
+}
+.navbar {
+    .divider-vertical {
+        height: 50px;
+        margin: 0 9px;
+        border-right: 1px solid #ffffff;
+        border-left: 1px solid #f2f2f2;
+    }
+}
+@media (max-width: @screen-sm-min) {
+    .navbar-collapse {
+        .nav {
+            & > .divider-vertical {
+                display: none;
+            }
+        }
+    }
+    .navbar-brand {
+        /* resize logo to fit the navbar */
+        img {
+            height: 50px;
+        }
+    }
+    body {
+        padding-top: 51px;
+    }
 }
