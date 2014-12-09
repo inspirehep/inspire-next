@@ -26,5 +26,53 @@
 
 // override the default bootstrap color of navbar
 
-@navbar-default-bg: #fff;
-@footer-height: 325px;
+@footer-height: 160px;
+
+//== Scaffolding
+//
+//## Settings for some of the most global styles.
+
+//** Background color for `<body>`.
+
+@body-bg: #f5f5f5;
+
+
+//== Buttons
+//
+//## For each of Bootstrap's buttons, define text, background and border color.
+
+@btn-primary-bg: #f58632;
+@btn-primary-border: darken(@btn-primary-bg, 5%);
+
+@btn-success-bg: #43926a;
+ @btn-success-border: darken(@btn-success-bg, 5%);
+
+//== Wells
+//
+//##
+
+@well-bg: #fff;
+
+
+//== Navbar
+//
+//##
+
+// Basics of a navbar
+
+@navbar-inverse-bg: #333;
+@navbar-inverse-border: darken(@navbar-inverse-bg, 6.5%);
+
+
+// Navbar links
+
+@navbar-inverse-link-active-bg: transparent;
+@navbar-inverse-link-active-color: @navbar-inverse-link-hover-color;
+
+@navbar-inverse-link-color:                #ccc;
+
+//== Panels
+//
+//##
+
+@panel-default-heading-bg: #3fa0c9;
