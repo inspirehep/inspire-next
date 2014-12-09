@@ -48,11 +48,15 @@
     resize: vertical;
 }
 
+#webdeposit_form_accordion .panel-heading > a {
+    color: #fff;
+}
+
 .panel-heading .panel-toggle:after {
     font-family: 'Glyphicons Halflings';
     content: "\e114"; /* extracted from bootstrap.css */
     float: right;
-    color: grey;
+    color: #fff;
 }
 
 .panel-heading .panel-toggle.collapsed:after {
