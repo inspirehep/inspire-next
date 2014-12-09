@@ -27,24 +27,43 @@
 ## {% include 'footer.html' %}
 #}
 
-<footer id="footer">
-<hr>
-
-<div class="container">
-  <div class="row">
-    <div class="col-md-2">
-    </div>
-    <div class="col-md-10">
-      <ul class="site-footer-links pull-right">
-        <li>
-          <a href="#">Terms of Use</a>
-        </li>
-        <li>
-          <a href="#">Privacy Policy</a>
-        </li>
-      </ul>
+<section class="custom-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-6 col-sm-6 col-md-8 col-lg-8">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+            <ul class="list-unstyled">
+              <li>
+                <a class="footer" href="#">{{- _("Terms of use") -}}</a>
+              </li>
+              <li>
+                <a class="footer" href="#">{{- _("Privacy policy") -}}</a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-md-offset-2">
+            <ul class="list-unstyled">
+              <li>
+                <a class="footer" href="https://twitter.com/inspirehep" target="_blank">Twitter</a>
+              </li>
+              <li>
+                <a class="footer" href="http://blog.inspirehep.net/" target="_blank">Blog</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4 text-right">
+        <ul class="list-unstyled">
+          <li>
+            <a class="footer" href="{{ url_for('search.index') }}">{{ config["CFG_SITE_NAME_INTL"][g.ln] }}</a>
+          </li>
+          <li>
+            {{ _("Powered by") }} <a class="footer" href="http://invenio-software.org/" target="_blank">Invenio</a>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
-</div>
-
-</footer>
+</section>

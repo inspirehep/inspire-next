@@ -25,22 +25,47 @@
 
 {%- block global_bundles %}
   {{ super() }}
-  {% bundles "index.js" %}
 {%- endblock %}
 
 {%- block extra_style %}{% endblock extra_style -%}
 
 {% block index %}
-<div class="row col-lg-12">
-  <div class="panel panel-default" style="margin-top: 20%;">
-    <div class="panel-heading">
-      <h3 class="panel-title">What is INSPIRE labs?</h3>
+
+<div class="wrap">
+  <section>
+    <div id="landing-title" class="jumbotron">
+      <div class="container">
+        <div class="row">
+          <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+            <h1>{{- _("Welcome to INSPIRE Labs!") -}}</h1>
+            <h2>{{ config["CFG_SITE_NAME_INTL"][g.ln] }}</h2>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="panel-body">
-      On INSPIRE labs we deploy all our new features, so you can take advantage of them
-      since the beginning. All the submissions received here are transferred automatically to
-      INSPIRE. Please, feel free to use the feedback if you have any suggestion!
+  </section>
+  <section class="content-box">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div class="page-header text-center">
+            <h3>{{- _("Do you have a publication you'd like to see added to INSPIRE?") -}}</h3>
+            <a class="btn btn-primary btn-lg" id="submit-btn" href="{{ url_for('webdeposit.create', deposition_type='literature') }}">{{- _("Send a suggestion!") -}}</a>
+          </div>
+        </div>
+      </div>
+      <div class="row home-intro text-center">
+        <div class="col-lg-12">
+          <h3>{{- _("What is INSPIRE Labs?") -}}</h3>
+          <p class="lead">
+            {{ _("INSPIRE Labs provides a sneak preview of new features and designs currently under development.") }}
+            {{ _("Try it out, and please use the feedback icon to let us know what you think!") }}</p>
+          <hr class="small">
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
+
 </div>
+
 {% endblock index %}

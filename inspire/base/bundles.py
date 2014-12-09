@@ -59,10 +59,11 @@ _base_styles.contents += (
     'less/base/variables.less',
     'less/base/header.less',
     'less/base/footer.less',
-    'less/base/index.less',
     'less/base/helpers.less',
     'less/base/sticky-footer.less',
+    'less/base/core.less',
     'less/accounts/login.less',
+    'less/search/index.less',
     'vendors/feedback/examples/css/feedback.css',
 )
 
