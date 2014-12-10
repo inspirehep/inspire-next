@@ -11,6 +11,7 @@ from fabric.contrib.files import exists
 
 env.directory = '/opt'  # remote directory
 env.conf_directory = "/afs/cern.ch/project/inspire/repo/inspire-configuration.git"
+env.backend_node = False
 
 env.roledefs = {
     'prod': ['inspirelabsvm01', 'inspirelabsvm02'],
@@ -89,6 +90,7 @@ def workers():
     env.tmp_shared = "/afs/cern.ch/project/inspire/LABS/var/tmp-shared"
     env.data = "/afs/cern.ch/project/inspire/LABS/var/data"
     env.log_bibsched = "/afs/cern.ch/project/inspire/LABS/var/log/bibsched"
+    env.backend_node = True
 
 
 @task
@@ -101,6 +103,7 @@ def worker1():
     env.tmp_shared = "/afs/cern.ch/project/inspire/LABS/var/tmp-shared"
     env.data = "/afs/cern.ch/project/inspire/LABS/var/data"
     env.log_bibsched = "/afs/cern.ch/project/inspire/LABS/var/log/bibsched"
+    env.backend_node = True
 
 
 @task
@@ -113,6 +116,7 @@ def worker2():
     env.tmp_shared = "/afs/cern.ch/project/inspire/LABS/var/tmp-shared"
     env.data = "/afs/cern.ch/project/inspire/LABS/var/data"
     env.log_bibsched = "/afs/cern.ch/project/inspire/LABS/var/log/bibsched"
+    env.backend_node = True
 
 
 @task
@@ -125,6 +129,7 @@ def vm08():
     env.tmp_shared = ""
     env.data = ""
     env.log_bibsched = ""
+    env.backend_node = True
 
 
 @task
@@ -136,6 +141,7 @@ def vm11():
     env.tmp_shared = ""
     env.data = ""
     env.log_bibsched = ""
+    env.backend_node = True
 
 
 @task
@@ -205,8 +211,11 @@ def install():
     if not exists(venv):
         return error("Meh? I need a virtualenv first.")
 
-    execute(disable, env.host, False)
-    stop_celery()
+    if not env.backend_node:
+        execute(disable, env.host, False)
+    else:
+        stop_celery()
+        stop_bibsched()
 
     success = 1
     invenio_package = ""
@@ -275,10 +284,13 @@ def install():
 
     if success:
         restart_apache()
-        execute(enable, env.host, True)
-        choice = prompt("Start Celery? (Y/n)", default="yes")
-        if choice.lower() in ["y", "ye", "yes"]:
-            start_celery()
+        if not env.backend_node:
+            execute(enable, env.host, True)
+        else:
+            choice = prompt("Enable backend (Celery, BibSched)? (Y/n)", default="yes")
+            if choice.lower() in ["y", "ye", "yes"]:
+                start_celery()
+                stop_bibsched()
     return success
 
 
@@ -332,6 +344,26 @@ def stop_celery():
 def start_celery():
     """Restart celery workers."""
     return sudo("supervisorctl start celeryd")
+
+
+@task
+def stop_bibsched():
+    """Restart celery workers."""
+    package = local("python setup.py --fullname", capture=True).strip()
+    venv = "{0}/{1}".format(env.directory, package)
+    with settings(sudo_user="invenio"):
+        with prefix('source {0}/bin/activate'.format(venv)):
+            return sudo("bibsched stop")
+
+
+@task
+def start_bibsched():
+    """Restart celery workers."""
+    package = local("python setup.py --fullname", capture=True).strip()
+    venv = "{0}/{1}".format(env.directory, package)
+    with settings(sudo_user="invenio"):
+        with prefix('source {0}/bin/activate'.format(venv)):
+            return sudo("bibsched start")
 
 
 @task
