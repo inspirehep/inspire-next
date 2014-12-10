@@ -339,8 +339,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # arXiv ID
         # ========
         imported_from_arXiv = filter(lambda field: field in metadata,
-                                     ['arxiv_id',
-                                      'categories_arXiv'])
+                                     ['categories_arXiv'])
 
         if imported_from_arXiv or metadata.get('title_source') == 'arXiv':
             if is_arxiv_post_2007(metadata['arxiv_id']):
@@ -351,7 +350,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                                              'source': 'arXiv'}
             if len(metadata['arxiv_id'].split('/')) == 2:
                 metadata['report_number']['arxiv_category'] = metadata['arxiv_id'].split('/')[0]
-            metadata['abstract']['source'] = 'arXiv'
+            if 'abstract' in metadata:
+                metadata['abstract']['source'] = 'arXiv'
             if 'categories' in metadata and metadata['categories']:
                 # arXiv subject categories
                 subject_list = [{"term": c, "scheme": "arXiv"}
