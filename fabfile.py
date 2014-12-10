@@ -290,7 +290,7 @@ def install():
             choice = prompt("Enable backend (Celery, BibSched)? (Y/n)", default="yes")
             if choice.lower() in ["y", "ye", "yes"]:
                 start_celery()
-                stop_bibsched()
+                start_bibsched()
     return success
 
 
@@ -304,14 +304,15 @@ def sync(host=None):
     if not exists(venv):
         return error("Meh? I need a virtualenv first.")
 
-    #execute(disable, host, False)
+    execute(disable, host, False)
     sudo(
-        'rsync --dry-run -az --force --delete --progress -e "ssh -p22" {venv} {server}:/opt/invenio'.format(
-            {
-                "venv": venv,
-                "server": host
-            }
-        )
+        'rsync -az --force --delete --progress '
+        '--exclude "var/tmp-shared" --exclude "src" '
+        '--exclude "var/log" --exclude "var/data" '
+        '--exclude "var/tmp" --exclude "var/run" '
+        '--exclude "var/cache" --exclude "var/batchupload" '
+        '--exclude "etc" --exclude "includes" '
+        '-e "ssh -p22" {venv}/ {server}:/opt/invenio'.format(venv=venv, server=env.roledefs[host])
     )
 
 
