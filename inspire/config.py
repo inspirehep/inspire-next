@@ -235,6 +235,11 @@ CFG_WEBSEARCH_SYNONYM_KBRS = {
 CROSSREF_SEARCH_PREFIX = u"doi:"
 ARXIV_SEARCH_PREFIX = u"035__a:oai:arXiv.org:"
 
+# remember_me cookie set by Flask-Login should be marked as secure
+# or Invenio will crash when using http
+
+REMEMBER_COOKIE_SECURE = True
+
 # For production only, instance_config contains configuration of
 # database credentials and other instance specific configuration
 try:
