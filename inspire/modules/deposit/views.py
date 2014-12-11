@@ -83,3 +83,27 @@ def show_stats():
     )
 
     return render_template('deposit/stats/all_depositions.html', **ctx)
+
+
+@deposit_blueprint.route('/stats/api',
+                         methods=['GET'])
+@login_required
+def stats_api():
+    """Get stats JSON."""
+    submitted_depositions = [d for d in Deposition.get_depositions() if d.has_sip(sealed=True)]
+
+    if request.args.get('since_date') is not None:
+        since_date = datetime.strptime(request.args['since_date'],
+                                       "%Y-%m-%d").replace(hour=0, minute=0)
+        submitted_depositions = [d for d in submitted_depositions if d.created >= since_date]
+
+    if request.args.get('until_date') is not None:
+        until_date = datetime.strptime(request.args['until_date'],
+                                       "%Y-%m-%d").replace(hour=23, minute=59)
+        submitted_depositions = [d for d in submitted_depositions if d.created <= until_date]
+
+    result = process_metadata_for_charts(submitted_depositions)
+
+    resp = jsonify(result)
+
+    return resp
