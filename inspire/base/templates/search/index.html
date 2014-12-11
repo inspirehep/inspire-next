@@ -48,8 +48,11 @@
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
           <div class="page-header text-center">
-            <h3>{{- _("Is there a publication you'd like to see added to INSPIRE?") -}}</h3>
+            <h3>{{- _("Is there an article, preprint, conference paper or thesis you'd like to see added to INSPIRE?") -}}</h3>
             <a class="btn btn-primary btn-lg" id="submit-btn" href="{{ url_for('webdeposit.create', deposition_type='literature') }}">{{- _("Send a suggestion!") -}}</a>
+            <p>
+            <strong><em>All accepted suggestions are automatically transferred to INSPIRE</em></strong>
+            </p>
           </div>
         </div>
       </div>
@@ -58,7 +61,7 @@
           <h3>{{- _("What is INSPIRE Labs?") -}}</h3>
           <p class="lead">
             {{ _("INSPIRE Labs provides a sneak preview of new features and designs currently under development.") }}
-            {{ _("Try it out, and please use the feedback icon to let us know what you think!") }}</p>
+            {{ _("Try it out, and please use the feedback button to let us know what you think!") }}</p>
           <hr class="small">
         </div>
       </div>

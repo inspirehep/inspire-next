@@ -508,7 +508,7 @@ class LiteratureForm(WebDepositForm):
 
     url = fields.TextField(
         label=_('Link to PDF'),
-        description = _('Please, provide us a link to the PDF: we will use it to check the references'),
+        description = _('Where can we find a PDF to check the references?'),
         placeholder='http://www.example.com/document.pdf',
         validators=[pdf_validator],
         widget_classes="form-control",
@@ -516,7 +516,7 @@ class LiteratureForm(WebDepositForm):
 
     additional_url = fields.TextField(
         label=_('Link to additional information (e.g. abstract)'),
-        description = _('This is the web page which we will link to from INSPIRE'),
+        description = _('Which page should we link from INSPIRE?'),
         placeholder='http://www.example.com/splash-page.html',
         # validators=[pdf_validator],
         widget_classes="form-control",
@@ -571,7 +571,7 @@ class LiteratureForm(WebDepositForm):
              'page_range_article_id']),
         ('Conference Information',
             ['conf_name', 'conference_id'], {'classes': 'collapse'}),
-        ('Proceedings Information (not published in journal)',
+        ('Proceedings Information (if not published in a journal)',
             ['nonpublic_note'], {'classes': 'collapse'}),
         ('References',
             ['references'], {'classes': 'collapse'}),

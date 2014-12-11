@@ -644,7 +644,7 @@ define(function(require, exports, module) {
       });
       if (typeof HEP_subjects === "undefined" || HEP_subjects.length === 0) {
         $("#hep-relevance-alert").remove();
-        this.$comments.before("<div class='alert alert-info' id='hep-relevance-alert' role='alert'><strong>TIP:</strong> For faster approval, briefly explain the relevance of the suggestion to HEP.</div>");
+        this.$comments.before("<div class='alert alert-info' id='hep-relevance-alert' role='alert'><strong>TIP:</strong> Why is this content relevant to INSPIRE?</div>");
       }
       else {
         $("#hep-relevance-alert").remove();
