@@ -26,6 +26,10 @@ define(['feedback', 'html2canvas'], function(Feedback) {
   // trigger Feedback
   var feedback = new Feedback({
     h2cPath:'js/html2canvas.js',
-    url: '/postfeedback'
+    url: '/postfeedback',
+    nextLabel: 'Send',
+    pages: [
+        new window.Feedback.Form(),
+    ],
   });
 });

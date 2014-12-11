@@ -74,17 +74,18 @@ def postfeedback():
     feedback_data = json.loads(request.form.get("data"))
 
     content = """
-Issue:
+Feedback:
 
 {issue}
     """.format(issue=feedback_data[0]["Issue"])
 
-    fd, temp_path = mkstemp(suffix=".png")
-    fh = os.fdopen(fd, "wb")
-    fh.write("".join(feedback_data[1].split(",")[1:]).decode('base64'))
-    fh.close()
+    # fd, temp_path = mkstemp(suffix=".png")
+    # fh = os.fdopen(fd, "wb")
+    # fh.write("".join(feedback_data[1].split(",")[1:]).decode('base64'))
+    # fh.close()
 
-    attachments = [temp_path]
+    # attachments = [temp_path]
+    attachments = []
 
     if send_email(fromaddr=cfg['CFG_SITE_SUPPORT_EMAIL'],
                   toaddr=cfg['INSPIRELABS_FEEDBACK_EMAIL'],
