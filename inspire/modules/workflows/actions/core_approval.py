@@ -78,11 +78,11 @@ class core_approval(object):
 
         if extra_data["approved"]:
             return {
-                "message": "Record has been accepted!",
+                "message": "Suggestion has been accepted!",
                 "category": "success",
             }
         else:
             return {
-                "message": "Record has been rejected (deleted)",
+                "message": "Suggestion has been rejected",
                 "category": "warning",
             }

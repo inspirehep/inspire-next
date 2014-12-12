@@ -22,6 +22,7 @@
 
 """Contains task to check if incoming record already exist."""
 
+import os
 import requests
 import traceback
 
@@ -52,6 +53,11 @@ def match_record_arxiv_remote_oaiharvest(obj, eng):
                 response = match_record_arxiv_remote(arxiv_id)
                 if response:
                     obj.extra_data['recid'] = response[0]
+                    obj.extra_data['url'] = os.path.join(
+                        cfg["CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"],
+                        'record',
+                        str(response[0])
+                    )
                     return True
             except requests.ConnectionError:
                 obj.log.error("Error connecting to remote server:\n {0}".format(
@@ -68,6 +74,12 @@ def match_record_arxiv_remote_deposit(obj, eng):
     try:
         response = match_record_arxiv_remote(arxiv_id)
         if response:
+            obj.extra_data['recid'] = response[0]
+            obj.extra_data['url'] = os.path.join(
+                cfg["CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"],
+                'record',
+                str(response[0])
+            )
             return True
     except requests.ConnectionError:
         obj.log.error("Error connecting to remote server:\n {0}".format(
@@ -83,7 +95,7 @@ def match_record_doi_remote(doi):
         r = requests.get(cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"], params=params)
         response = r.json()
         if response:
-            return True
+            return response
     return False
 
 
@@ -92,7 +104,17 @@ def match_record_doi_remote_deposit(obj, eng):
     d = Deposition(obj)
     sip = d.get_latest_sip(sealed=False)
     doi = sip.metadata.get('doi')
-    return match_record_doi_remote(doi)
+    response = match_record_doi_remote(doi)
+    if not response:
+        return False
+    else:
+        obj.extra_data['recid'] = response[0]
+        obj.extra_data['url'] = os.path.join(
+            cfg["CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"],
+            'record',
+            str(response[0])
+        )
+        return True
 
 
 def match_record_remote_deposit(obj, eng):

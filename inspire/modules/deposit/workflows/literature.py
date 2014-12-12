@@ -111,7 +111,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             workflow_else,
             [
                 reject_record('Record was already found on INSPIRE'),
-                reply_ticket(template="deposit/tickets/user_rejected.html")
+                reply_ticket(template="deposit/tickets/user_rejected_exists.html")
             ],
         ],
         workflow_else,
