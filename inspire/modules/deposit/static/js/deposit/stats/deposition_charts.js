@@ -154,6 +154,45 @@ define(function(require, exports, module) {
       }
     },
 
+    filter: function(url){
+      var since_date = $('#since_date').val();
+      var until_date = $('#until_date').val();
+      var params = {};
+
+      if(since_date !== "")
+        params.since_date = since_date;
+      if(until_date !== "")
+        params.until_date = until_date;
+
+      $.ajax({
+        url: url,
+        data: params
+      })
+        .done(function(data) {
+          var charts_data = {
+            deposition_data: data.stats,
+            overall_depositions: data.overall_metadata,
+            columns_deposition_data: data.metadata_for_column,
+            metadata_categories: data.metadata_categories,
+          }
+          $deposition_charts.empty();
+          new DepositionChart({}).update(charts_data);
+          if(Object.keys(charts_data.deposition_data).length > 1){
+            $('div[id^="chart-"]').parents('.row').show();
+            new DepositionChart({}).generate_individual(charts_data);
+          } else {
+            $('div[id^="chart-"]').parents('.row').hide();
+          }
+        });
+    },
+
+    reset_filter: function(url){
+      $('#since_date').val('');
+      $('#until_date').val('');
+
+      this.filter(url);
+    },
+
     generate: function(){
       if(this.type === "pie")
         return this.pie_options;
