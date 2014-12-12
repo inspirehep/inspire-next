@@ -89,6 +89,11 @@
     </div>
     {% endif %}
   {% endblock title %}
+  {#
+     FIXME: we just pop the flashed messages here to ignore them
+     due to redundancy.
+  #}
+  {% set flash = flashed_messages() %}
   {% block body %}
     {{ super() }}
     {% if searchbar_enable %}
