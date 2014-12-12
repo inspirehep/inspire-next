@@ -114,10 +114,10 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 reply_ticket(template="deposit/tickets/user_rejected.html")
             ],
         ],
-        #workflow_else,
-        #[
-        #    reply_ticket(template="deposit/tickets/user_rejected.html")
-        #],
+        workflow_else,
+        [
+            reply_ticket()  # setting template=None as text come from Holding Pen
+        ],
     ]
 
     name = "Literature"

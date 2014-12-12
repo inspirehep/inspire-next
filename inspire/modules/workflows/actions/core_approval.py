@@ -20,11 +20,12 @@
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
 
-
 """Approval action for INSPIRE."""
 
-from invenio.base.i18n import _
 from flask import render_template, url_for
+
+from invenio.base.i18n import _
+from invenio.modules.access.control import acc_get_user_email
 
 
 class core_approval(object):
@@ -45,15 +46,20 @@ class core_approval(object):
 
     def render(self, obj):
         """Method to render the action."""
+        email = acc_get_user_email(obj.id_user)
+        rejection_text = render_template('deposit/tickets/user_rejected.html',
+                                         email=email)
         return {
             "side": render_template('workflows/actions/core_approval_side.html',
                                     message=obj.get_action_message(),
                                     object=obj,
-                                    resolve_url=self.url,),
+                                    resolve_url=self.url,
+                                    rejection_text=rejection_text),
             "main": render_template('workflows/actions/core_approval_main.html',
                                     message=obj.get_action_message(),
                                     object=obj,
-                                    resolve_url=self.url,)
+                                    resolve_url=self.url,
+                                    rejection_text=rejection_text)
         }
 
     def resolve(self, bwo):

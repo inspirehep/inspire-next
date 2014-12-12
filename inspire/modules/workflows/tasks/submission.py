@@ -79,8 +79,7 @@ def create_ticket(template, queue="Test"):
         from flask import render_template
 
         d = Deposition(obj)
-        id_user = d.workflow_object.id_user
-        email = acc_get_user_email(id_user)
+        email = acc_get_user_email(obj.id_user)
         rt_queue = cfg.get("CFG_BIBCATALOG_QUEUES") or queue
         sip = d.get_latest_sip(sealed=False)
         subject = u"Your suggestion to INSPIRE: {0}".format(d.title)
@@ -112,37 +111,44 @@ def create_ticket(template, queue="Test"):
     return _create_ticket
 
 
-def reply_ticket(template):
+def reply_ticket(template=None):
     """Reply to a ticket for the submission."""
     @wraps(reply_ticket)
     def _reply_ticket(obj, eng):
         from invenio.modules.access.control import acc_get_user_email
+        from invenio.modules.workflows.errors import WorkflowError
         from inspire.utils.tickets import get_instance
         from flask import render_template
 
-        d = Deposition(obj)
-        id_user = d.workflow_object.id_user
-        email = acc_get_user_email(id_user)
         ticket_id = obj.extra_data.get("ticket_id", "")
         if not ticket_id:
             obj.log.error("No ticket ID found!")
             return
 
-        context = {
-            "object": obj,
-            "email": email,
-            "title": d.title,
-            "reason": obj.extra_data.get("reason", ""),
-            "record_url": obj.extra_data.get("url", ""),
-        }
+        if template:
+            # Body rendered by template.
+            d = Deposition(obj)
+            email = acc_get_user_email(obj.id_user)
 
-        body = render_template(
-            template,
-            **context
-        ).strip()
+            context = {
+                "object": obj,
+                "email": email,
+                "title": d.title,
+                "reason": obj.extra_data.get("reason", ""),
+                "record_url": obj.extra_data.get("url", ""),
+            }
 
+            body = render_template(
+                template,
+                **context
+            )
+        else:
+            # Body already rendered in reason.
+            body = obj.extra_data.get("reason")
+        if not body:
+            raise WorkflowError("No body for ticket reply")
         # Trick to prepare ticket body
-        body = "\n ".join([line.strip() for line in body.split("\n")])
+        body = "\n ".join([line.strip() for line in body.strip().split("\n")])
 
         rt = get_instance()
         if not rt:

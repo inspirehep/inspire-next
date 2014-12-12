@@ -48,7 +48,9 @@
         <form role="form">
           <div class="form-group">
             <label for="message-text" class="control-label">Explain why this was rejected (is sent directly to user):</label>
-            <textarea class="form-control" id="message-text-{{object.id}}"></textarea>
+            <textarea class="form-control" id="message-text-{{object.id}}">
+              {{ rejection_text }}
+            </textarea>
           </div>
         </form>
       </div>
