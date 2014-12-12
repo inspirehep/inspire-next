@@ -43,6 +43,7 @@ require(['js/deposit/stats/deposition_charts', 'bootstrap-datetimepicker', 'high
         maxDate: new Date(),
     }
 
+    var api_url = "{{ url_for('webdeposit.stats_api') }}";
     $chart_type = $("#chart_types");
     $deposition_charts = $('#deposition-charts');
 
@@ -58,6 +59,14 @@ require(['js/deposit/stats/deposition_charts', 'bootstrap-datetimepicker', 'high
 
       // Build individual charts
       new chart({}).generate_individual(charts_data);
+
+      $('#submit').on("click", function(){
+        new chart({}).filter(api_url);
+      });
+
+      $('#reset-filter').on("click", function(){
+        new chart({}).reset_filter(api_url);
+      });
   });
 });
 </script>
@@ -86,7 +95,6 @@ require(['js/deposit/stats/deposition_charts', 'bootstrap-datetimepicker', 'high
 
   <div class="container-fluid">
     <div class="well row">
-      <form method="POST" action="{{ url_for('webdeposit.show_stats') }}">
       <div class="col-md-2 vcenter">
         <h4>{{ _('Filter by date') }}</h4>
       </div>
@@ -103,12 +111,11 @@ require(['js/deposit/stats/deposition_charts', 'bootstrap-datetimepicker', 'high
         {{ form.until_date(class='form-control') }}
       </div>
       <div class="col-md-2 vcenter">
-        <a class="btn btn-default" href="{{ url_for('webdeposit.show_stats') }}"><i class="glyphicon glyphicon-refresh"></i> {{ _('reset dates') }} </a>
+        <a id="reset-filter" class="btn btn-default"><i class="glyphicon glyphicon-refresh"></i> {{ _('reset dates') }} </a>
       </div>
       <div class="col-md-2 vcenter pull-right">
         {{ form.submit(class='btn btn-primary pull-right') }}
       </div>
-      </form>
     </div>
 
     {% if stats %}
