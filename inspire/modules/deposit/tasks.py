@@ -65,32 +65,12 @@ def arxiv_fft_get(obj, eng):
 
             df = DepositionFile(backend=DepositionStorage(deposition.id))
             if df.save(fd, filename=filename):
-                fft_exists = False
-                # Do we already have the file attached?
-                if metadata.get('fft') and arxiv_pdf.status_code == 200:
-                    from hashlib import md5
-                    arxiv_md5 = md5(arxiv_pdf.content).hexdigest()
-
-                    # Its not a list if only one item. Urk.
-                    if not isinstance(metadata['fft'], list):
-                        ffts = [metadata["fft"]]
-                    else:
-                        ffts = metadata["fft"]
-
-                    fft_exists = filter(lambda fft: arxiv_md5 == md5(
-                        open(fft['url']).read()).hexdigest(), ffts)
-
-                    if not fft_exists:
-                        deposition.add_file(df)
-                else:
-                    return
-                if not fft_exists:
-                    try:
-                        deposition.add_file(df)
-                        deposition.save()
-                    except FilenameAlreadyExists as e:
-                        df.delete()
-                        obj.log.error(str(e))
+                try:
+                    deposition.add_file(df)
+                    deposition.save()
+                except FilenameAlreadyExists as e:
+                    df.delete()
+                    obj.log.error(str(e))
 
 
 def add_submission_extra_data(obj, eng):
