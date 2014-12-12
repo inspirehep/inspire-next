@@ -83,7 +83,7 @@ def create_ticket(template, queue="Test"):
         email = acc_get_user_email(id_user)
         rt_queue = cfg.get("CFG_BIBCATALOG_QUEUES") or queue
         sip = d.get_latest_sip(sealed=False)
-        subject = u"Literature submission: {0}".format(d.title)
+        subject = u"Your suggestion to INSPIRE: {0}".format(d.title)
         body = render_template(
             template,
             email=email,
