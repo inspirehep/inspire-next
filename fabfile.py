@@ -86,7 +86,7 @@ def workers():
     env.roles = ['workers']
     env.site_url = "http://labs.inspirehep.net"
     env.site_secure_url = "https://labs.inspirehep.net"
-    env.conf_branch = "dev"
+    env.conf_branch = "prod"
     env.tmp_shared = "/afs/cern.ch/project/inspire/LABS/var/tmp-shared"
     env.data = "/afs/cern.ch/project/inspire/LABS/var/data"
     env.log_bibsched = "/afs/cern.ch/project/inspire/LABS/var/log/bibsched"
@@ -535,4 +535,4 @@ def create_symlink(link, target):
     existing_link = sudo("readlink {0}".format(link))
     if existing_link and existing_link != target:
         sudo("rm {0}".format(link))
-    sudo("ln -s {0} {1}".format(target, link))
+    sudo("ln -sf {0} {1}".format(target, link))
