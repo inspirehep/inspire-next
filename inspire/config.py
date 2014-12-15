@@ -73,6 +73,7 @@ PACKAGES = [
     'inspire.demosite',
     'inspire.ext',
     'inspire.utils',
+    'inspire.modules.styleguide',
     'inspire.modules.workflows',
     'inspire.modules.deposit',
     'inspire.modules.access',
