@@ -1,0 +1,389 @@
+/* -------------------------------------------------------------------------
+
+ Style Guide Boilerplate Bootstrap Edition v2.0.1
+ Repo: https://github.com/kemie/Style-Guide-Boilerplate-Bootstrap-Edition
+ Author: Brett Jankord (modified by Kemie Guaida)
+ License: MIT
+
+---------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+ Layout
+---------------------------------------------------------------------------- */
+body {
+  margin: 0;
+  padding-top: 50px;
+}
+/* -------------------------------------------------------------------------
+ Utility Classes
+---------------------------------------------------------------------------- */
+.sg-container {
+  overflow: hidden;
+  padding: 16px 24px;
+  /* For older browsers */
+  padding: 1rem 1.5rem;
+}
+.sg-animated {
+  -webkit-transition: all 0.6s ease-out;
+  -moz-transition: all 0.6s ease-out;
+  -ms-transition: all 0.6s ease-out;
+  -o-transition: all 0.6s ease-out;
+  transition: all 0.6s ease-out;
+}
+/* -------------------------------------------------------------------------
+ Modules
+---------------------------------------------------------------------------- */
+/* Headings
+---------------------------------------------------------------------------- */
+.sg-h1,
+.sg-h2,
+.sg-h3 {
+  border-bottom: 1px solid #ddd;
+  font-weight: normal;
+  margin-bottom: 1em;
+  margin-top: 0;
+}
+.sg-h1 {
+  font-weight: bold;
+  padding-bottom: .2em;
+  margin-top: 1.5em;
+}
+.sg-h2 {
+  margin-bottom: .5em;
+  padding-bottom: .5em;
+  text-transform: capitalize;
+  margin-top: 1.5em;
+}
+.sg-about {
+  margin-top: 2em;
+}
+/* Buttons
+---------------------------------------------------------------------------- */
+.sg-btn {
+  float: left;
+  text-shadow: none!important;
+}
+.sg-btn--top {
+  float: right;
+}
+ul.scroll-menu {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  -moz-overflow-scrolling: touch;
+  -ms-overflow-scrolling: touch;
+  -o-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+  width: 100%;
+  max-height: 500px;
+}
+.dropdown-header {
+  text-transform: uppercase;
+}
+.sg-btn--select {
+  border-radius: 0 0.3em;
+  position: absolute;
+  right: 5px;
+  top: 14px;
+}
+.sg-btn--select.is-active:hover:after {
+  background: #111;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 5px;
+  top: 45px;
+  color: #fff;
+  content: "Selected code ready to be copied";
+  font-size: .8em;
+  display: block;
+  right: 5px;
+  padding: 5px 15px;
+  position: absolute;
+  white-space: nowrap;
+  z-index: 98;
+}
+.sg-btn--select.is-active:hover:before {
+  border: solid;
+  border-color: #111 transparent;
+  border-width: 0 6px 6px 6px;
+  top: 40px;
+  content: "";
+  display: block;
+  left: 75%;
+  position: absolute;
+  z-index: 99;
+}
+/* Hide specific buttons for use with JS */
+.sg-btn--source {
+  clear: both;
+}
+.sg-btn--source,
+.sg-btn--select {
+  display: none;
+}
+/* Show specific buttons if JS enabled */
+.js .sg-btn--source,
+.js .sg-btn--select {
+  display: block;
+}
+/* Hide specific buttons conditionally */
+.operamini .sg-btn--source,
+.legacy .sg-btn--source {
+  display: none;
+}
+/* Sections
+---------------------------------------------------------------------------- */
+.sg-section {
+  margin-bottom: 32px;
+  /* For older browsers */
+  margin-bottom: 3rem;
+  overflow: hidden;
+}
+.sg-anchor {
+  display: block;
+  padding-top: 1em;
+}
+/* Colors
+---------------------------------------------------------------------------- */
+.sg-color {
+  background: #fff;
+  border: 1px solid #b3b3b3;
+  display: inline-block;
+  height: 80px;
+  margin: 0 .5em .5em 0;
+  padding: 5px;
+  position: relative;
+  width: 100px;
+}
+.sg-lg {
+  width: 140px;
+  height: 100px;
+}
+.sg-color-swatch {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+.sg-color-swatch span {
+  background: #000;
+  background: rgba(0, 0, 0, 0.7);
+  bottom: 5px;
+  color: #fff;
+  font-size: .8em;
+  margin: 0;
+  opacity: 0;
+  padding: 5px 0;
+  position: absolute;
+  text-align: center;
+  text-transform: uppercase;
+  width: 88px;
+}
+.sg-lg .sg-color-swatch span {
+  width: 128px;
+}
+.sg-color-swatch:hover span {
+  opacity: 1;
+}
+/* -------------------------------------------------------------------------
+ Colors
+---------------------------------------------------------------------------- */
+.sg-brand-primary .sg-color-swatch {
+  background: #bbbbbb;
+}
+.sg-gray-lighter .sg-color-swatch {
+  background: #dddddd;
+}
+.sg-gray-light .sg-color-swatch {
+  background: #808080;
+}
+.sg-gray .sg-color-swatch {
+  background: #555555;
+}
+.sg-gray-dark .sg-color-swatch {
+  background: #333333;
+}
+.sg-gray-darker .sg-color-swatch {
+  background: #222222;
+}
+.sg-brand-success .sg-color-swatch {
+  background: #469408;
+}
+.sg-brand-info .sg-color-swatch {
+  background: #029acf;
+}
+.sg-brand-warning .sg-color-swatch {
+  background: #9b479f;
+}
+.sg-brand-danger .sg-color-swatch {
+  background: #d9831f;
+}
+/* Fonts
+---------------------------------------------------------------------------- */
+.sg-font {
+  font-size: 1.8em;
+  padding: 0 0 .2em 0;
+}
+.sg-font-primary {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.sg-font-secondary {
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+/* Grid
+---------------------------------------------------------------------------- */
+.show-grid {
+  padding: .5em 0;
+}
+.show-grid div {
+  background-color: #dddddd;
+  border: 1px solid #808080;
+  padding: 0.5em;
+}
+/* Markup
+---------------------------------------------------------------------------- */
+.sg-markup-controls {
+  overflow: hidden;
+  padding-top: 1.5em;
+  clear: both;
+}
+.sg-source {
+  position: relative;
+}
+.sg-source pre {
+  background: #333;
+  border-radius: .5em;
+  border: 1px solid #ddd;
+  color: #fff;
+  overflow-x: scroll;
+  padding: .5em .3em;
+}
+.sg-source pre code {
+  background: transparent;
+}
+.js .sg-source {
+  max-height: 0;
+  overflow: hidden;
+}
+.js .sg-source.is-active,
+.operamini .sg-source,
+.legacy .sg-source {
+  max-height: 2400px;
+}
+/* -------------------------------------------------------------------------
+ Prettyprint
+---------------------------------------------------------------------------- */
+.pln {
+  color: #ffffff;
+}
+/* plain text */
+@media screen {
+  .str,
+  .string {
+    color: #E6DB74;
+  }
+  /* string content */
+  .kwd,
+  .keyword {
+    color: #66D9EF;
+  }
+  /* a keyword */
+  .com,
+  .comment {
+    color: #75715E;
+  }
+  /* a comment */
+  .typ {
+    color: #A6E22E;
+  }
+  /* a type name */
+  .lit,
+  .number {
+    color: #AE81FF;
+  }
+  /* a literal value */
+  /* punctuation, lisp open bracket, lisp close bracket */
+  /* .pun, .opn, .clo { color: #660 } */
+  .tag {
+    color: #F92672;
+  }
+  /* a markup tag name */
+  .atn {
+    color: #A6E22E;
+  }
+  /* a markup attribute name */
+  .atv {
+    color: #E6DB74;
+  }
+  /* a markup attribute value */
+  /*.dec, .var { color: #606 }*/
+  /* a declaration; a variable name */
+  .fun {
+    color: #FF0000;
+  }
+  /* a function name */
+}
+/* Use higher contrast and text-weight for printable form. */
+@media print, projection {
+  .str {
+    color: #006600;
+  }
+  .kwd {
+    color: #006;
+    font-weight: bold;
+  }
+  .com {
+    color: #600;
+    font-style: italic;
+  }
+  .typ {
+    color: #404;
+    font-weight: bold;
+  }
+  .lit {
+    color: #004444;
+  }
+  .pun,
+  .opn,
+  .clo {
+    color: #444400;
+  }
+  .tag {
+    color: #006;
+    font-weight: bold;
+  }
+  .atn {
+    color: #440044;
+  }
+  .atv {
+    color: #006600;
+  }
+}
+/* Specify class=linenums on a pre to get line numbering */
+ol.linenums {
+  border-left: 1px solid #444;
+  margin: 0 0 0 3.3em;
+  /* IE indents via margin-left */
+  padding: 0;
+}
+ol.linenums li {
+  color: #bebec5;
+  line-height: 1.5;
+  padding-left: .8em;
+}
+/* -------------------------------------------------------------------------
+ Legacy IE
+---------------------------------------------------------------------------- */
+/**
+ * IE 7 Fixes
+ */
+.sg-color {
+  *display: inline;
+  zoom: 1;
+}
+/* End IE 7 Fixes */
+/**
+ * IE 6 Fixes
+ */
+pre {
+  _white-space: pre;
+  _white-space: pre-wrap;
+  _word-wrap: break-word;
+}
+/* End IE 6 Fixes */
