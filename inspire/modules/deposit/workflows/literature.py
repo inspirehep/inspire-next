@@ -255,7 +255,9 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
         if "subject_term" in metadata:
             tmp_field = metadata["subject_term"]
-            metadata["subject_term"] = [{"term": t, "scheme": "INSPIRE"}
+            metadata["subject_term"] = [{"term": t,
+                                        "scheme": "INSPIRE",
+                                        "source": "submitter"}
                                         for t in tmp_field]
 
         # =======
@@ -375,8 +377,11 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ========
         # Language
         # ========
-        if metadata['language'] != 'en':
+        if metadata['language'] not in ('en', 'oth'):
             metadata['language'] = unicode(dict(LiteratureForm.languages).get(metadata['language']))
+        elif metadata['language'] == 'oth':
+            if metadata['other_language']:
+                metadata['language'] = metadata['other_language']
         else:
             delete_keys.append('language')
 

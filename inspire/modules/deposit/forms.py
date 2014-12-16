@@ -326,26 +326,24 @@ class LiteratureForm(WebDepositForm):
     )
 
     languages = [("en", _("English")),
-                 ("fre", _("French")),
+                 ("rus", _("Russian")),
                  ("ger", _("German")),
-                 ("dut", _("Dutch")),
+                 ("fre", _("French")),
                  ("ita", _("Italian")),
                  ("spa", _("Spanish")),
+                 ("chi", _("Chinese")),
                  ("por", _("Portuguese")),
-                 ("gre", _("Greek")),
-                 ("slo", _("Slovak")),
-                 ("cze", _("Czech")),
-                 ("hun", _("Hungarian")),
-                 ("pol", _("Polish")),
-                 ("nor", _("Norwegian")),
-                 ("swe", _("Swedish")),
-                 ("fin", _("Finnish")),
-                 ("rus", _("Russian")),
                  ("oth", _("Other"))]
 
     language = fields.LanguageField(
         label=_("Language"),
         choices=languages
+    )
+
+    other_language = fields.TextField(
+        label=_("Other Language"),
+        widget_classes="form-control",
+        description="What is the language of the publication?"
     )
 
     conf_name = fields.TextField(
@@ -558,7 +556,7 @@ class LiteratureForm(WebDepositForm):
             ['url', 'additional_url']),
         ('Basic Information',
             ['title', 'title_arXiv', 'categories_arXiv', 'language',
-             'title_translation', 'authors', 'subject',
+             'other_language', 'title_translation', 'subject', 'authors',
              'collaboration', 'experiment', 'abstract', 'page_nr',
              'report_number']),
         ('Thesis Information',

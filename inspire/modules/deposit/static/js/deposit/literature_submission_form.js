@@ -107,6 +107,7 @@ define(function(require, exports, module) {
     this.$language = $("#language");
     this.$subject = $("#subject");
     this.$translated_title = $("#state-group-title_translation");
+    this.$other_language = $("#state-group-other_language");
     this.$comments = $("#state-group-extra_comments");
     this.$importButton = $("#importData");
     this.$skipButton = $("#skipImportData");
@@ -167,7 +168,7 @@ define(function(require, exports, module) {
       });
 
       this.hideHiddenFields();
-      this.handleTranslatedTitle();
+      this.onLanguageChange();
       this.handleSubjectRelevance();
       this.taskmanager = new TaskManager(this.$deposition_type);
       // flash messages on the Form
@@ -219,7 +220,7 @@ define(function(require, exports, module) {
       });
 
       this.$language.change(function(event) {
-        that.handleTranslatedTitle();
+        that.onLanguageChange();
       });
 
       this.$subject.change(function(event) {
@@ -623,13 +624,19 @@ define(function(require, exports, module) {
     /**
      * Hide or show translated title field regarding selected language
      */
-    handleTranslatedTitle: function handleTranslatedTitle() {
+    onLanguageChange: function onLanguageChange() {
       var language_value = this.$language.val();
 
       if (language_value !== 'en') {
         this.$translated_title.slideDown();
       } else {
         this.$translated_title.slideUp();
+      }
+
+      if (language_value === 'oth') {
+        this.$other_language.slideDown();
+      } else {
+        this.$other_language.slideUp();
       }
     },
 
