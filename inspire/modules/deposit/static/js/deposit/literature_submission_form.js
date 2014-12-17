@@ -54,6 +54,7 @@ define(function(require, exports, module) {
       var priorities = {
         title: ['doi', 'arxiv'],
         title_arXiv: ['arxiv'],
+        title_source: ['doi', 'arxiv'],
         categories_arXiv: ['arxiv'],
         journal_title: ['doi', 'arxiv'],
         isbn: ['doi', 'arxiv'],
