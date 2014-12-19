@@ -31,7 +31,7 @@
 </div>
 {%- endmacro %}
 
-{# macros to render sections of templates #}
+{# macros to render markup sections of templates #}
 {% macro render_markup(type, title) -%}
 <div class="col-lg-12 sg-section" id="sg-{{ title }}">
   <div class="sg-display">
@@ -41,21 +41,23 @@
 </div>
 {%- endmacro %}
 
-<!DOCTYPE html>
+{% extends "page.html" %}
 
-<head>
-  <meta charset="utf-8">
-  <title>INSPIRE Labs Style Guide</title>
-  <meta name="viewport" content="width=device-width">
-  <!-- Style Guide Boilerplate Styles -->
-  <link rel="stylesheet" href="css/styleguide.css">
-  <link rel="stylesheet" href="css/bootstrap.css">
 
-  <!-- Replace below stylesheet with your own stylesheet -->
-  <link rel="stylesheet" href="css/theme.css">
-</head>
+{%- block global_bundles %}
+  {{ super() }}
+  {%- block bundles %}
+    {% bundles "jquery.js", "invenio.css", "base.js", "custom.css" %}
+  {%- endblock %}
+{%- endblock %}
 
-<body data-spy="scroll" data-target=".navbar-default" data-offset="60">
+{% block headerbox %}
+{% endblock headerbox %}
+
+{%- block page_footer %}
+{%- endblock page_footer %}
+
+{% block body %}
   <!-- Fixed navbar -->
   <div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
@@ -72,10 +74,37 @@
             <li><a href="#sg-typography">Typography</a></li>
             <li role="presentation" class="divider"></li>
             <li role="presentation" class="dropdown-header">Base Styles</li>
-            <?php listMarkupAsOptions( 'base'); ?>
+            <li><a href="#sg-address">Address</a></li>
+            <li><a href="#sg-badges">Badges</a></li>
+            <li><a href="#sg-blockquote">Blockquote</a></li>
+            <li><a href="#sg-buttons">Buttons</a></li>
+            <li><a href="#sg-code">Code</a></li>
+            <li><a href="#sg-definition-lists">Definition-Lists</a></li>
+            <li><a href="#sg-form-controls">Form-controls</a></li>
+            <li><a href="#sg-images">Images</a></li>
+            <li><a href="#sg-labels">Labels</a></li>
+            <li><a href="#sg-lists">Lists</a></li>
+            <li><a href="#sg-progress-bars">Progress-Bars</a></li>
+            <li><a href="#sg-tables">Tables</a></li>
+            <li><a href="#sg-text-elements">Text-Elements</a></li>
+            <li><a href="#sg-well">Well</a></li>
             <li role="presentation" class="divider"></li>
             <li role="presentation" class="dropdown-header">Patterns</li>
-            <?php listMarkupAsOptions( 'patterns'); ?>
+            <li><a href="#sg-alerts">Alerts</a></li>
+            <li><a href="#sg-breadcrums">Breadcrums</a></li>
+            <li><a href="#sg-buttons-advanced">Buttons-Advanced</a></li>
+            <li><a href="#sg-dropdowns">Dropdowns</a></li>
+            <li><a href="#sg-forms">Forms</a></li>
+            <li><a href="#sg-hero">Hero</a></li>
+            <li><a href="#sg-list-groups">List-Groups</a></li>
+            <li><a href="#sg-media-object">Media-Object</a></li>
+            <li><a href="#sg-navbar">Navbar</a></li>
+            <li><a href="#sg-navs">Navs</a></li>
+            <li><a href="#sg-page-header">Page-Header</a></li>
+            <li><a href="#sg-pager">Pager</a></li>
+            <li><a href="#sg-pagination">Pagination</a></li>
+            <li><a href="#sg-panels">Panels</a></li>
+            <li><a href="#sg-thumbnails">Thumbnails</a></li>
           </ul>
         </li>
       </ul>
@@ -156,11 +185,7 @@
     </div><!--/.sg-pattern-styles-->
 
   </div><!--/.sg-body-->
-  <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-  <script src="js/scrollspy.js"></script>
-  <script src="js/dropdown.js"></script>
   <script src="js/sg-plugins.js"></script>
   <script src="js/sg-scripts.js"></script>
-</body>
 
-</html>
+{% endblock %}
