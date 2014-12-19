@@ -1,4 +1,4 @@
-{#
+# -*- coding: utf-8 -*-
 ## This file is part of INSPIRE.
 ## Copyright (C) 2014 CERN.
 ##
@@ -18,21 +18,21 @@
 ## In applying this licence, CERN does not waive the privileges and immunities
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
-#}
 
-<!-- Sample pattern, your site's patterns will be different -->
-<div class="alert alert-warning">
-  <strong>Warning Message!</strong> Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-</div>
+"""Styleguide bundles."""
 
-<div class="alert alert-danger">
-  <strong>Error Message!</strong> Numquam quos fuga quam suscipit sapiente perferendis magnam.
-</div>
+from invenio.ext.assets import Bundle
 
-<div class="alert alert-success">
-  <strong>Success Message!</strong> Totam officiis dolorum voluptatibus maxime molestiae iste.
-</div>
+# js = Bundle(
+#     "js/communities/custom.js",
+#     filters="uglifyjs",
+#     output="communities.js",
+#     weight=91
+# )
 
-<div class="alert alert-info">
-  <strong>Info Message!</strong> Consequatur facere deleniti cumque ducimus maiores nemo.
-</div>
+styles = Bundle(
+    "less/styleguide.less",
+    filters="less",
+    output="custom.css",
+    weight=91
+)
