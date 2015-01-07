@@ -23,7 +23,8 @@ env.roledefs = {
     'dev01': ['inspirevm08.cern.ch'],
     'dev02': ['inspirevm11.cern.ch'],
     'proxy': ['inspirelb1.cern.ch'],
-    'builder': ["inspirevm24"]
+    'builder': ["inspirevm24"],
+    'targets': ["inspirevm25", "inspirelabsvm01", "inspirelabsvm02"]  # hosts the builder syncs to
 }
 
 
@@ -120,6 +121,19 @@ def worker2():
 
 
 @task
+def builder():
+    """Activate connection to labs production servers."""
+    env.roles = ['builder']
+    env.site_url = "http://labs.inspirehep.net"
+    env.site_secure_url = "https://labs.inspirehep.net"
+    env.conf_branch = "prod"
+    env.tmp_shared = "/afs/cern.ch/project/inspire/LABS/var/tmp-shared"
+    env.data = "/afs/cern.ch/project/inspire/LABS/var/data"
+    env.log_bibsched = "/afs/cern.ch/project/inspire/LABS/var/log/bibsched"
+    env.backend_node = True
+
+
+@task
 def vm08():
     """Activate connection to labs dev server 1."""
     env.roles = ['dev01']
@@ -156,9 +170,13 @@ def pack():
     with open(".bowerrc") as fp:
         bower = json.load(fp)
 
-    choice = prompt("Clean and reinstall local assets? (y/N)", default="no")
-    if choice.lower() in ["y", "ye", "yes"]:
-        clean_assets()
+    if "True" in local("inveniomanage config get ASSETS_DEBUG", capture=True):
+        print("You need to set ASSETS_DEBUG to False!")
+        return 1
+
+    if "flask.ext.collect.storage.link" in local("inveniomanage config get COLLECT_STORAGE", capture=True):
+        print("COLLECT_STORAGE cannot be set to 'flask.ext.collect.storage.link'")
+        return 1
 
     choice = prompt("Build assets to gen? (Y/n)", default="yes")
     if choice.lower() not in ["n", "no"]:
@@ -222,9 +240,11 @@ def install():
 
     # Upload the packages and put it into our virtualenv.
     virtualenv = os.environ["VIRTUAL_ENV"]
+    run("rm -rf /tmp/app.tgz")
     put("dist/{0}.tar.gz".format(package), "/tmp/app.tgz")
     with lcd(os.path.join(virtualenv, "src/invenio")):
         invenio_package = local("python setup.py --fullname", capture=True).strip()
+        run("rm -rf /tmp/invenio.tgz")
         put("dist/{0}.tar.gz".format(invenio_package), "/tmp/invenio.tgz")
 
     remove_build()
@@ -296,7 +316,7 @@ def install():
 
 @roles(['builder'])
 @task
-def sync(host=None):
+def sync(host="targets"):
     """Sync Invenio to given host (or all)."""
     package = local("python setup.py --fullname", capture=True).strip()
     venv = "{0}/{1}".format(env.directory, package)
@@ -304,16 +324,22 @@ def sync(host=None):
     if not exists(venv):
         return error("Meh? I need a virtualenv first.")
 
-    execute(disable, host, False)
-    sudo(
-        'rsync -az --force --delete --progress '
-        '--exclude "var/tmp-shared" --exclude "src" '
-        '--exclude "var/log" --exclude "var/data" '
-        '--exclude "var/tmp" --exclude "var/run" '
-        '--exclude "var/cache" --exclude "var/batchupload" '
-        '--exclude "etc" --exclude "includes" '
-        '-e "ssh -p22" {venv}/ {server}:/opt/invenio'.format(venv=venv, server=env.roledefs[host])
-    )
+    for current_host in env.roledefs[host]:
+        execute(disable, current_host, False)
+        sudo(
+            'rsync -az --force --delete --progress -h '
+            '--exclude "var/tmp-shared" --exclude "src" '
+            '--exclude "var/log" --exclude "var/data" '
+            '--exclude "var/tmp" --exclude "var/run" '
+            '--exclude "var/cache" --exclude "var/batchupload" '
+            '--exclude "etc" --exclude "includes" '
+            '--exclude "var/invenio.base-instance/apache '
+            '--exclude "var/invenio.base-instance/run '
+            '-e "ssh -p22" {venv}/ {server}:/opt/invenio'.format(venv=venv, server=current_host)
+        )
+        with settings(host_string=current_host):
+            restart_apache()
+        execute(enable, current_host, False)
 
 
 @task
@@ -355,6 +381,20 @@ def stop_bibsched():
     with settings(sudo_user="invenio"):
         with prefix('source {0}/bin/activate'.format(venv)):
             return sudo("bibsched stop")
+
+
+@task
+def stop():
+    """Restart celery workers."""
+    stop_bibsched()
+    stop_celery()
+
+
+@task
+def start():
+    """Restart celery workers."""
+    start_bibsched()
+    start_celery()
 
 
 @task
