@@ -180,6 +180,9 @@ def pack():
 
     choice = prompt("Build assets to gen? (Y/n)", default="yes")
     if choice.lower() not in ["n", "no"]:
+        choice = prompt("Clean and reinstall local assets? (Y/n)", default="yes")
+        if choice.lower() not in ["n", "no"]:
+            clean_assets()
         local("inveniomanage assets build --directory {directory}/../gen".format(**bower))
     pack_invenio()
     return pack_inspire()
@@ -262,7 +265,6 @@ def install():
             with prefix('source {0}/bin/activate'.format(venv)):
                 sudo("pip install Babel")
                 sudo("pip install numpy")
-                sudo("pip install git+git://github.com/mrjoes/flask-admin.git#egg=Flask-Admin-1.0.9.dev0")
                 sudo("pip install . --upgrade")
 
         # Inspire installation
@@ -459,7 +461,6 @@ def refresh_invenio():
             with prefix('source {0}/bin/activate'.format(venv)):
                 sudo("pip install Babel")
                 sudo("pip install numpy")
-                sudo("pip install git+git://github.com/mrjoes/flask-admin.git#egg=Flask-Admin-1.0.9.dev0")
                 sudo("pip install . --upgrade")
 
 
