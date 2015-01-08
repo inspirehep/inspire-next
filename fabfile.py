@@ -179,6 +179,10 @@ def pack():
             print("COLLECT_STORAGE cannot be set to 'flask.ext.collect.storage.link'")
             return 1
 
+    choice = prompt("Clean and reinstall local assets? (y/N)", default="no")
+    if choice.lower() in ["y", "ye", "yes"]:
+        clean_assets()
+
     choice = prompt("Build assets to gen? (Y/n)", default="yes")
     if choice.lower() not in ["n", "no"]:
         choice = prompt("Clean and reinstall local assets? (Y/n)", default="yes")
