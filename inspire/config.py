@@ -216,7 +216,8 @@ OAUTHCLIENT_REMOTE_APPS = dict(
             authorize_url="https://orcid.org/oauth/authorize#show_login",
             app_key="ORCID_APP_CREDENTIALS",
             content_type="application/json",
-        )
+        ),
+        remember=True
     ),
 )
 
