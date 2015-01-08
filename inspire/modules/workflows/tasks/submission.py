@@ -144,7 +144,7 @@ def reply_ticket(template=None):
             )
         else:
             # Body already rendered in reason.
-            body = obj.extra_data.get("reason")
+            body = obj.extra_data.get("reason").strip()
         if not body:
             raise WorkflowError("No body for ticket reply")
         # Trick to prepare ticket body

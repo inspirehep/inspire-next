@@ -37,18 +37,26 @@ class core_approval(object):
 
     def render_mini(self, obj):
         """Method to render the minified action."""
+        email = acc_get_user_email(obj.id_user)
+        rejection_text = "\n".join([line.strip() for line in render_template(
+            'deposit/tickets/user_rejected.html',
+            email=email
+        ).split("\n")])
         return render_template(
             'workflows/actions/core_approval_mini.html',
             message=obj.get_action_message(),
             object=obj,
             resolve_url=self.url,
+            rejection_text=rejection_text
         )
 
     def render(self, obj):
         """Method to render the action."""
         email = acc_get_user_email(obj.id_user)
-        rejection_text = render_template('deposit/tickets/user_rejected.html',
-                                         email=email)
+        rejection_text = "\n".join([line.strip() for line in render_template(
+            'deposit/tickets/user_rejected.html',
+            email=email
+        ).split("\n")])
         return {
             "side": render_template('workflows/actions/core_approval_side.html',
                                     message=obj.get_action_message(),
