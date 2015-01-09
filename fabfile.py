@@ -170,13 +170,14 @@ def pack():
     with open(".bowerrc") as fp:
         bower = json.load(fp)
 
-    if "True" in local("inveniomanage config get ASSETS_DEBUG", capture=True):
-        print("You need to set ASSETS_DEBUG to False!")
-        return 1
+    with warn_only():
+        if "True" in local("inveniomanage config get ASSETS_DEBUG", capture=True):
+            print("You need to set ASSETS_DEBUG to False!")
+            return 1
 
-    if "flask.ext.collect.storage.link" in local("inveniomanage config get COLLECT_STORAGE", capture=True):
-        print("COLLECT_STORAGE cannot be set to 'flask.ext.collect.storage.link'")
-        return 1
+        if "flask.ext.collect.storage.link" in local("inveniomanage config get COLLECT_STORAGE", capture=True):
+            print("COLLECT_STORAGE cannot be set to 'flask.ext.collect.storage.link'")
+            return 1
 
     choice = prompt("Build assets to gen? (Y/n)", default="yes")
     if choice.lower() not in ["n", "no"]:
@@ -335,8 +336,8 @@ def sync(host="targets"):
             '--exclude "var/tmp" --exclude "var/run" '
             '--exclude "var/cache" --exclude "var/batchupload" '
             '--exclude "etc" --exclude "includes" '
-            '--exclude "var/invenio.base-instance/apache '
-            '--exclude "var/invenio.base-instance/run '
+            '--exclude "var/invenio.base-instance/apache" '
+            '--exclude "var/invenio.base-instance/run" '
             '-e "ssh -p22" {venv}/ {server}:/opt/invenio'.format(venv=venv, server=current_host)
         )
         with settings(host_string=current_host):
@@ -385,6 +386,7 @@ def stop_bibsched():
             return sudo("bibsched stop")
 
 
+@roles(['workers'])
 @task
 def stop():
     """Restart celery workers."""
@@ -392,6 +394,7 @@ def stop():
     stop_celery()
 
 
+@roles(['workers'])
 @task
 def start():
     """Restart celery workers."""
