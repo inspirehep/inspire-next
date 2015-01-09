@@ -577,6 +577,11 @@ def proxy_action(server, backends, action="enable"):
 def create_symlink(link, target):
     """Create a symlink if required."""
     existing_link = sudo("readlink {0}".format(link))
-    if existing_link and existing_link != target:
-        sudo("rm {0}".format(link))
-    sudo("ln -sf {0} {1}".format(target, link))
+    if existing_link:
+        if existing_link != target:
+            sudo("rm {0}".format(link))
+            sudo("ln -s {0} {1}".format(target, link))
+        else:
+            return
+    else:
+        sudo("ln -s {0} {1}".format(target, link))
