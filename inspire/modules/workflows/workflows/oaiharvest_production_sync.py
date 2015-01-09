@@ -52,14 +52,17 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 )
 
 from invenio.legacy.bibsched.bibtask import task_update_progress, write_message
-from invenio.modules.workflows.definitions import WorkflowBase
+from invenio.modules.oaiharvester.workflows.oaiharvest_harvest_repositories import (
+    oaiharvest_harvest_repositories,
+)
 
 
-class oaiharvest_production_sync(WorkflowBase):
+class oaiharvest_production_sync(oaiharvest_harvest_repositories):
 
     """Main workflow for harvesting arXiv via OAI-PMH (oaiharvester)."""
 
     object_type = "workflow"
+    record_workflow = "oaiharvest_production_sync_record"
     workflow = [
         write_something_generic("Initialization", [task_update_progress, write_message]),
         init_harvesting,
@@ -118,39 +121,3 @@ class oaiharvest_production_sync(WorkflowBase):
         workflows_reviews(stop_if_error=True),
         update_last_update(get_repositories_list())
     ]
-
-    @staticmethod
-    def get_description(bwo):
-        """Return description of object."""
-        from flask import render_template
-
-        identifiers = None
-
-        extra_data = bwo.get_extra_data()
-        if 'options' in extra_data and 'identifiers' in extra_data["options"]:
-            identifiers = extra_data["options"]["identifiers"]
-
-        results = bwo.get_tasks_results()
-
-        if 'review_workflow' in results:
-            result_progress = results['review_workflow'][0]['result']
-        else:
-            result_progress = {}
-
-        current_task = extra_data['_last_task_name']
-
-        return render_template("workflows/styles/harvesting_description.html",
-                               identifiers=identifiers,
-                               result_progress=result_progress,
-                               current_task=current_task)
-
-    @staticmethod
-    def get_title(bwo):
-        """Return title of object."""
-        return "Summary of OAI harvesting from: {0}".format(
-            bwo.get_extra_data()["repository"]["name"])
-
-    @staticmethod
-    def formatter(bwo, **kwargs):
-        """Return formatted data of object."""
-        return oaiharvest_production_sync.get_description(bwo)
