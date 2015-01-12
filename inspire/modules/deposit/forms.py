@@ -213,7 +213,8 @@ class LiteratureForm(WebDepositForm):
         export_key='doi',
         description='e.g. 10.1086/305772 or doi:10.1086/305772',
         placeholder='',
-        validators=[DOISyntaxValidator(), duplicated_doi_validator],
+        validators=[DOISyntaxValidator("The provided DOI is invalid - it should look similar to '10.1086/305772'."),
+                    duplicated_doi_validator],
     )
 
     arxiv_id = ArXivField(
