@@ -320,7 +320,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ========
         metadata['collections'] = [{'primary': "HEP"}]
         if metadata['type_of_doc'] == 'thesis':
-            metadata['collections'].append({'primary': "Thesis"})
+            metadata['collections'].append({'primary': "THESIS"})
 
         # ============
         # Title source
