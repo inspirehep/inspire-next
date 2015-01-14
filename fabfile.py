@@ -330,7 +330,7 @@ def sync(host="targets"):
     for current_host in env.roledefs[host]:
         execute(disable, current_host, False)
         sudo(
-            'rsync -az --force --delete --progress -h '
+            'rsync -azh --force --delete '
             '--exclude "var/tmp-shared" --exclude "src" '
             '--exclude "var/log" --exclude "var/data" '
             '--exclude "var/tmp" --exclude "var/run" '
