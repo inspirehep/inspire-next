@@ -272,6 +272,7 @@ def install():
         with cd("{0}/src/{1}".format(venv, package)):
             with prefix('source {0}/bin/activate'.format(venv)):
                 sudo("pip install git+https://github.com/inspirehep/python-rt#egg=rt")
+                sudo("pip install git+https://github.com/inspirehep/harvesting-kit#egg=HarvestingKit")
                 success = sudo("python setup.py install")
                 if success:
                     # INSPIRE specific configuration
