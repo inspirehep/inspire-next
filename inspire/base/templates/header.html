@@ -68,7 +68,12 @@
           {%- else %}
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-              <i class="glyphicon glyphicon-user"></i> {{ current_user.email }}
+              <i class="glyphicon glyphicon-user"></i>
+              {%- if current_user.given_names or current_user.family_name %}
+                {{ current_user.given_names ~ " " ~ current_user.family_name}}
+              {%- else %}
+                {{ current_user.email }}
+              {%- endif %}
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" role="menu">
