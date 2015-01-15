@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## INSPIRE is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -22,31 +22,29 @@
 
 """Manage harvester module."""
 
+from __future__ import print_function
+
+import sys
+
+from invenio.base.globals import cfg
 
 from invenio.modules.workflows.registry import workflows
 from invenio.ext.script import Manager
-from invenio.modules.workflows.api import start_delayed
-from invenio.modules.workflows.models import BibWorkflowObject
+
+from .utils import validate_date
+from .tasks import run_harvest
+
 
 manager = Manager(usage=__doc__)
 
 
 def get_harvesting_workflows():
-    """Return the workflows defined in the harvester module."""
-    result = workflows.items()
-    #filter out the workflows defined as dictionaries
-    #only workflows defined as classes should remain
-    result = filter(lambda a: not isinstance(a[1], dict), result)
-    #get from each class the module it belongs
-    result = map(lambda a: (a[0], a[1].__module__), result)
-    #filter out all modules except those in harvester
-    result = filter(
-        lambda a: a[1].startswith('inspire.modules.harvester.workflows.'),
-        result
-    )
-    #keep only the class name
-    result = map(lambda a: a[0], result)
-    return result
+    """Return the workflows enabled in the harvester module."""
+    enabled_workflows = []
+    for name in cfg.get("HARVESTER_WORKFLOWS", list()):
+        if workflows.get(name):
+            enabled_workflows.append(name)
+    return enabled_workflows
 
 
 @manager.option('--workflow', '-w', dest='workflow')
@@ -55,25 +53,39 @@ def get_harvesting_workflows():
 @manager.option('--to', '-t', dest='to_date',
                 help='Get records until this date.')
 def run(workflow, from_date, to_date):
-    """Run a harvesting workflow.
+    """Run a harvesting workflow from the command line.
 
     Usage: inveniomanage harvester run -w workflow_name -f 2014-01-01 -t 2014-12-31
     """
     if not workflow:
+        print("Missing workflow!", file=sys.stderr)
         print("Usage: inveniomanage harvester run -w workflow_name -f 2014-01-01 -t 2014-12-31")
         list_workflows()
         return
     if workflow not in get_harvesting_workflows():
-        print('Invalid workflow name')
+        print("* Invalid workflow name",
+              file=sys.stderr)
         list_workflows()
         return
-    data = BibWorkflowObject.create_object()
-    start_delayed(workflow, data, from_date=from_date, to_date=to_date)
+
+    if from_date:
+        validate_date(from_date)
+    if to_date:
+        validate_date(to_date)
+
+    args = {
+        "workflow": workflow,
+        "from_date": from_date,
+        "to_date": to_date
+    }
+
+    job = run_harvest.delay(**args)
+    print("Scheduled job {0} with args: {1}".format(job.id, args))
 
 
 @manager.command
 def list_workflows():
     """List available workflows."""
     print("Available workflows:")
-    for workflow in get_harvesting_workflows():
-        print(workflow)
+    for name in get_harvesting_workflows():
+        print(name)

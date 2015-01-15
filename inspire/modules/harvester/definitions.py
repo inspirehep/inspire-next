@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 ## This file is part of INSPIRE.
-## Copyright (C) 2014, 2015 CERN.
+## Copyright (C) 2015 CERN.
 ##
 ## INSPIRE is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -20,9 +20,29 @@
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
 
-HARVESTER_WORKFLOWS = {
-    "world_scientific": "inspire.modules.harvester.workflows.world_scientific:world_scientific"
-}
+from invenio.modules.workflows.definitions import WorkflowBase
 
-HARVESTER_FTP_NETRC_FILE = 'var/invenio.base-instance/netrc'
-HARVESTER_STORAGE_PREFIX = 'var/tmp-shared'
+
+class HarvestingWorkflowBase(WorkflowBase):
+
+    """Base harvesting definition."""
+
+    @staticmethod
+    def get_title(bwo, **kwargs):
+        """Return the value to put in the title column of HoldingPen."""
+        args = bwo.get_extra_data().get("args", {})
+        return "Summary of {0} harvesting from {1} to {2}".format(
+            args.get("workflow", "unknown"),
+            args.get("from_date", "unknown"),
+            args.get("to_date", "unknown"),
+        )
+
+    @staticmethod
+    def get_description(bwo, **kwargs):
+        """Return the value to put in the title  column of HoldingPen."""
+        return "No description. See log for details."
+
+    @staticmethod
+    def formatter(obj, **kwargs):
+        """Format the object."""
+        return "No data. See log for details."

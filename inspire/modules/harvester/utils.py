@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## INSPIRE is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -20,58 +20,74 @@
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
 
-from os.path import (
-    join,
-    exists
-)
+import os
+import datetime
+import time
 
 from zipfile import ZipFile
+
 from harvestingkit.ftp_utils import FtpHandler
 
 
+def get_storage_path(suffix=""):
+    """Return a path ready to store files."""
+    from invenio.base.globals import cfg
+
+    storage_path = os.path.join(
+        cfg.get("CFG_PREFIX"),
+        cfg.get("HARVESTER_STORAGE_PREFIX"),
+        suffix
+    )
+    if not os.path.exists(storage_path):
+        os.makedirs(storage_path)
+    return storage_path
+
+
+def get_netrc():
+    """Return a path ready to store files."""
+    from invenio.base.globals import cfg
+    return os.path.join(cfg.get("CFG_PREFIX"),
+                        cfg.get("HARVESTER_FTP_NETRC_FILE"))
+
+
 def unzip(filename, target_folder):
+    """Unzip files (XML only) into target folder."""
     z = ZipFile(filename)
     xml_files_extracted = []
     for filename in z.namelist():
         if filename.endswith(".xml"):
-            absolute_path = join(target_folder, filename)
+            absolute_path = os.path.join(target_folder, filename)
             xml_files_extracted.append(absolute_path)
-            if not exists(absolute_path):
+            if not os.path.exists(absolute_path):
                 z.extract(filename, target_folder)
     return xml_files_extracted
 
 
-def make_collection(filelist, location, logger=None):
-    with open(location, 'w') as outfile:
-        outfile.write('<collection>\n')
-        for filename in filelist:
-            try:
-                infile = open(filename)
-                outfile.write(infile.read())
-            except IOError:
-                if logger:
-                    logger.error('Unable to locate the file %s' % filename)
-            finally:
-                infile.close()
-        outfile.write('\n</collection>')
-
-
 def ftp_download_files(server_folder, target_folder, **serverinfo):
+    """Download files from given FTP's server folder to target folder."""
     ftp = FtpHandler(**serverinfo)
     ftp.cd(server_folder)
     downloaded_files = []
+    all_files = []
     for filename in ftp.ls()[0]:
-        destination = join(target_folder, filename)
-        if not exists(destination):
+        destination = os.path.join(target_folder, filename)
+        if not os.path.exists(destination):
             ftp.download(filename, target_folder)
             downloaded_files.append(destination)
-    return downloaded_files
+        all_files.append(destination)
+    return all_files, downloaded_files
 
 
 def ftp_upload(filename, target_location=None, **serverinfo):
+    """Upload files to given FTP's folder."""
     ftp = FtpHandler(**serverinfo)
     params = (filename,)
     if target_location:
         params += target_location
     ftp.upload(*params)
     ftp.close()
+
+
+def validate_date(date_given, date_format="%Y-%m-%d"):
+    """Return True if the date given if valid date format otherwise raise ValueError."""
+    return datetime.datetime(*(time.strptime(date_given, date_format)[0:6]))

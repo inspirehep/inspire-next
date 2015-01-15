@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## INSPIRE is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -20,32 +20,46 @@
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
 
-"""Implements an example of a typical ingestion workflow for MARCXML records"""
-from invenio.modules.workflows.definitions import WorkflowBase
+"""World Scientific harvesting workflow."""
+
+from ..definitions import HarvestingWorkflowBase
 
 from ..tasks.world_scientific import (
-    get_files,
-    unzip_file,
+    get_files_from_ftp,
+    unzip_files,
     convert_files,
     create_collection,
-    upload_to_desy,
+    put_files_to_ftp,
+    report_via_email
 )
 
 
-class world_scientific_harvesting(WorkflowBase):
+class world_scientific(HarvestingWorkflowBase):
 
-    """Main workflow for harvesting arXiv via OAI-PMH (oaiharvester)."""
+    """Harvest and convert World Scientific articles from FTP."""
 
     object_type = "workflow"
-    workflow = [
-        get_files,
-        unzip_file,
-        convert_files,
-        create_collection,
-        upload_to_desy,
+    ftp_server = "ftp.desy.de"
+    report_recipients = [
+        "kirsten.sachs@desy.de",
+        "florian.schwennsen@desy.de",
+        "jan.age.lavik@cern.ch"
     ]
 
-    @staticmethod
-    def formatter(bwo, **kwargs):
-        """Return formatted data of object."""
-        return world_scientific_harvesting.get_description(bwo)
+    workflow = [
+        get_files_from_ftp(
+            server=ftp_server,
+            source_folder='WSP',
+            target_folder='worldscientific/ws_download'
+        ),
+        unzip_files('worldscientific/ws_extracted'),
+        convert_files('worldscientific/ws_marc'),
+        create_collection,
+        put_files_to_ftp(
+            server=ftp_server,
+        ),
+        report_via_email(
+            recipients=report_recipients,
+            template="harvester/ftp_upload_notification.html"
+        ),
+    ]
