@@ -93,9 +93,10 @@ def create_ticket(template, queue="Test"):
 
         # Trick to prepare ticket body
         body = "\n ".join([line.strip() for line in body.split("\n")])
-        rt = get_instance()
+        rt = get_instance() if cfg.get("PRODUCTION_MODE") else None
         if not rt:
             obj.log.error("No RT instance available. Skipping!")
+            obj.log.info("Ticket ignored.")
         else:
             ticket_id = rt.create_ticket(
                 Queue=rt_queue,
