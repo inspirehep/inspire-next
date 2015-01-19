@@ -108,8 +108,8 @@ def convert_files(target_folder):
         target_folder_full = get_storage_path(suffix=target_folder)
 
         args = obj.extra_data['args']
-        to_date = args.get("to_date", datetime.now().strftime('%Y-%m-%d'))
-        from_date = args.get("from_date", '1900-01-01')
+        to_date = args.get("to_date") or datetime.now().strftime('%Y-%m-%d')
+        from_date = args.get("from_date") or '1900-01-01'
 
         append_files = []
         insert_files = []
@@ -152,7 +152,7 @@ def convert_files(target_folder):
 def create_collection(obj, eng):
     """Squash all the insert/append records into batch collections."""
     args = obj.extra_data['args']
-    to_date = args.get("to_date", datetime.now().strftime('%Y-%m-%d'))
+    to_date = args.get("to_date") or datetime.now().strftime('%Y-%m-%d')
     from_date = args.get("from_date")
     date = "_".join([d for d in [from_date, to_date] if d])
     obj.data['collections'] = {}
