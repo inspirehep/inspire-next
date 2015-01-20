@@ -55,6 +55,7 @@ define(function(require, exports, module) {
         title: ['doi', 'arxiv'],
         title_arXiv: ['arxiv'],
         title_source: ['doi', 'arxiv'],
+        doi: ['arxiv'],
         categories_arXiv: ['arxiv'],
         journal_title: ['doi', 'arxiv'],
         isbn: ['doi', 'arxiv'],
