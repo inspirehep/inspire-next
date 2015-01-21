@@ -27,6 +27,7 @@ define(function(require, exports, module) {
 
     id: 'arxiv',
     name: 'arXiv',
+    service: 'arXiv',
     url: '/arxiv/search?arxiv=',
 
     mapper: new DataMapper({

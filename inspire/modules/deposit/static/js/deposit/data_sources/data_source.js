@@ -42,6 +42,13 @@ define(function(require, exports, module) {
     this.name = options.name;
 
     /**
+     * User-friendly service name used to put inside status messages.
+     *
+     * @type {String}
+     */
+    this.service = options.service;
+
+    /**
      * Query url.
      *
      * @type {String}
@@ -128,7 +135,7 @@ define(function(require, exports, module) {
       if (queryStatus === 'success') {
         return {
           state: 'success',
-          message: 'The data was successfully imported via ' + this.name + '.'
+          message: 'The data was successfully imported via ' + this.service + '.'
         };
       }
       if (queryStatus === 'duplicated') {
