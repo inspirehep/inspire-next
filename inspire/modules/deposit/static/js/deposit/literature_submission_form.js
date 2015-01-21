@@ -147,7 +147,8 @@ define(function(require, exports, module) {
       this.preventFormSubmit();
 
       // focus on the first element of the form
-      $('form:first *:input[type!=hidden]:first').focus();
+      this.$first_input_field = $('form:first *:input[type!=hidden]:first');
+      this.$first_input_field.focus();
 
       this.fieldsGroup = $("#journal_title, #volume, #issue, #page_range_article_id, #year")
         .fieldsGroup({
@@ -173,7 +174,9 @@ define(function(require, exports, module) {
       this.handleSubjectRelevance();
       this.taskmanager = new TaskManager(this.$deposition_type);
       // flash messages on the Form
-      this.messageBox = $('#flash-message').messageBox({
+      this.$first_input_field.parents('.form-group').before(
+        '<div id="import_messages"></div>');
+      this.messageBox = $('#import_messages').messageBox({
         hoganTemplate: tpl_flash_message,
       })[0];
 

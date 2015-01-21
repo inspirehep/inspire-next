@@ -26,6 +26,7 @@ define(function(require, exports, module) {
 
     id: 'isbn',
     name: 'ISBN',
+    service: 'ISBN',
 
   });
 

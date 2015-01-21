@@ -26,7 +26,8 @@ define(function(require, exports, module) {
   var doiSource = new DataSource({
 
     id: 'doi',
-    name: 'the DOI',
+    name: 'DOI',
+    service: 'the DOI',
     url: '/doi/search?doi=',
 
     mapper: new DataMapper({
