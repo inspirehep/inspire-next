@@ -201,6 +201,17 @@ class UrlInlineForm(WebDepositForm):
     )
 
 
+class ReportNumberInlineForm(WebDepositForm):
+
+    """Repor number inline form."""
+
+    report_number = fields.TextField(
+        label=_('Report Number'),
+        widget=ColumnInput(class_="col-xs-4 col-pad-0"),
+        widget_classes="form-control"
+    )
+
+
 class LiteratureForm(WebDepositForm):
 
     """Literature form fields."""
@@ -366,9 +377,18 @@ class LiteratureForm(WebDepositForm):
         widget=HiddenInput(),
     )
 
-    report_number = fields.TextField(
-        label=_('Report Number'),
-        widget_classes="form-control"
+    report_number = fields.DynamicFieldList(
+        fields.FormField(
+            ReportNumberInlineForm,
+            widget=ExtendedListWidget(
+                item_widget=ItemWidget(),
+                html_tag='div',
+            ),
+        ),
+        add_label=_('Add another report number'),
+        min_entries=1,
+        export_key='report_numbers',
+        widget_classes='',
     )
 
     # ==============
@@ -586,7 +606,6 @@ class LiteratureForm(WebDepositForm):
         'type_of_doc': 'col-xs-12 col-md-3',
         'wrap_nonpublic_note': 'col-md-9',
         'page_nr': 'col-xs-12 col-md-3',
-        'report_number': 'col-xs-12 col-md-3',
         'page_range_article_id': 'col-xs-12 col-md-3',
         'year': 'col-xs-12 col-md-3',
         'degree_type': 'col-xs-12 col-md-3',
