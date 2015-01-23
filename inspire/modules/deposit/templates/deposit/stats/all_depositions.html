@@ -43,7 +43,7 @@ require(['js/deposit/stats/deposition_charts', 'bootstrap-datetimepicker', 'high
         maxDate: new Date(),
     }
 
-    var api_url = "{{ url_for('webdeposit.stats_api') }}";
+    var api_url = "{{ url_for('webdeposit.stats_api', deposition_type=deposition_type.get_identifier()) }}";
     $chart_type = $("#chart_types");
     $deposition_charts = $('#deposition-charts');
     $include_hidden = $('#include-hidden');
