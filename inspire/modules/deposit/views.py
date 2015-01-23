@@ -22,13 +22,11 @@ from datetime import datetime
 from flask import Blueprint, \
     render_template, \
     request, \
-    jsonify
+    jsonify, \
+    abort
 from flask.ext.login import login_required
-from flask.ext.wtf import Form
-from wtforms.fields import DateTimeField, SubmitField
 
-from invenio.base.i18n import _
-from invenio.modules.deposit.models import Deposition
+from invenio.modules.deposit.models import Deposition, DepositionType
 from invenio.modules.deposit.views.deposit import blueprint as deposit_blueprint
 
 from utils import process_metadata_for_charts
@@ -47,17 +45,23 @@ CHART_TYPES = {'column': 'Column',
                'pie': 'Pie'}
 
 
-@deposit_blueprint.route('/stats',
-                         methods=['GET', 'POST'])
+@deposit_blueprint.route('/<depositions:deposition_type>/stats',
+                         methods=['GET'])
 @login_required
-def show_stats():
+def show_stats(deposition_type):
     """Render the stats for all the depositions."""
+    if len(DepositionType.keys()) <= 1 and \
+       DepositionType.get_default() is not None:
+        abort(404)
+
     form = FilterDateForm()
 
-    submitted_depositions = [d for d in Deposition.get_depositions() if d.has_sip(sealed=True)]
+    deptype = DepositionType.get(deposition_type)
+    submitted_depositions = [d for d in Deposition.get_depositions(type=deptype) if d.has_sip(sealed=True)]
 
     ctx = process_metadata_for_charts(submitted_depositions)
     ctx.update(dict(
+        deposition_type=deptype,
         depositions=submitted_depositions,
         form=form,
         chart_types=CHART_TYPES
@@ -66,12 +70,13 @@ def show_stats():
     return render_template('deposit/stats/all_depositions.html', **ctx)
 
 
-@deposit_blueprint.route('/stats/api',
+@deposit_blueprint.route('/<depositions:deposition_type>/stats/api',
                          methods=['GET'])
 @login_required
-def stats_api():
+def stats_api(deposition_type):
     """Get stats JSON."""
-    submitted_depositions = [d for d in Deposition.get_depositions() if d.has_sip(sealed=True)]
+    deptype = DepositionType.get(deposition_type)
+    submitted_depositions = [d for d in Deposition.get_depositions(type=deptype) if d.has_sip(sealed=True)]
 
     if request.args.get('since_date') is not None:
         since_date = datetime.strptime(request.args['since_date'],
