@@ -103,7 +103,7 @@ def humanize_keys(strings):
     return [string.replace('_', ' ').strip().title() for string in strings]
 
 
-def process_metadata_for_charts(submitted_depositions, include_hidden=False):
+def process_metadata_for_charts(submitted_depositions, group_by=None, include_hidden=False):
     """Process the depositions metadata for charts.
 
     Gets all the submitted depositions (submissions with a sealed sip).
@@ -115,33 +115,34 @@ def process_metadata_for_charts(submitted_depositions, include_hidden=False):
     metadata = [d.get_latest_sip(sealed=True).metadata for d in submitted_depositions]
     metadata_by_types = {}
     metadata_for_column = {}
-
-    for key, group in groupby(metadata, lambda x: x['type_of_doc']):
-        if str(key.encode('utf-8')).title() in metadata_by_types:
-            metadata_by_types[str(key.encode('utf-8')).title()].extend(list(group))
-        else:
-            metadata_by_types[str(key.encode('utf-8')).title()] = list(group)
-
+    metadata_categories = ['']
     c = collections.Counter()
 
-    for type_of_doc in metadata_by_types:
-        for deposition in metadata_by_types[type_of_doc]:
-            c.update(deposition.keys())
-        categories, data = clean_unwanted_metadata(clean_unicode_keys(c.keys()),
-                                                   c.values(),
-                                                   include_hidden)
-        metadata_by_types[type_of_doc] = map(list, zip(humanize_keys(categories), data))
-        metadata_for_column[type_of_doc] = {'categories': categories,
-                                            'name': type_of_doc.title(),
-                                            'data': data}
-        c = collections.Counter()
+    if group_by and metadata and group_by in metadata[0] and metadata[0][group_by]:
+        for key, group in groupby(metadata, lambda x: x[group_by]):
+            if str(key.encode('utf-8')).title() in metadata_by_types:
+                metadata_by_types[str(key.encode('utf-8')).title()].extend(list(group))
+            else:
+                metadata_by_types[str(key.encode('utf-8')).title()] = list(group)
 
-    all_keys = get_all_keys(metadata_for_column)
-    amend_all_keys(all_keys, metadata_for_column)
-    try:
-        metadata_categories = next(iter(metadata_for_column.values())).get('categories')
-    except StopIteration:
-        metadata_categories = ['']
+        for group_by in metadata_by_types:
+            for deposition in metadata_by_types[group_by]:
+                c.update(deposition.keys())
+            categories, data = clean_unwanted_metadata(clean_unicode_keys(c.keys()),
+                                                       c.values(),
+                                                       include_hidden)
+            metadata_by_types[group_by] = map(list, zip(humanize_keys(categories), data))
+            metadata_for_column[group_by] = {'categories': categories,
+                                             'name': group_by.title(),
+                                             'data': data}
+            c = collections.Counter()
+
+        all_keys = get_all_keys(metadata_for_column)
+        amend_all_keys(all_keys, metadata_for_column)
+        try:
+            metadata_categories = next(iter(metadata_for_column.values())).get('categories')
+        except StopIteration:
+            metadata_categories = ['']
 
     for deposition in metadata:
         c.update(deposition.keys())
