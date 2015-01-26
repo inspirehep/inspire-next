@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -63,7 +63,7 @@ from inspire.modules.workflows.tasks.actions import (
 )
 from inspire.modules.deposit.forms import LiteratureForm
 
-from ..tasks import arxiv_fft_get, add_submission_extra_data
+from ..tasks import add_submission_extra_data
 
 
 class literature(SimpleRecordDeposition, WorkflowBase):
@@ -90,8 +90,6 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         create_ticket(template="deposit/tickets/curator_submitted.html",
                       queue="HEP_add_user"),
         reply_ticket(template="deposit/tickets/user_submitted.html"),
-        # Get FFT from arXiv, if arXiv ID is provided
-        arxiv_fft_get,
         add_files_to_task_results,
         classify_paper_with_deposit(
             taxonomy="HEPont.rdf",
