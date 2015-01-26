@@ -112,6 +112,8 @@ require(
     // Initialize form
     deposit_form.attachTo("#submitForm", config.form);
 
+    form.postInvenioHook();
+
     Uploader.attachTo("#uploader", config.uploader);
     PlUploader.attachTo("#pluploader", config.pluploader);
     FileList.attachTo("#uploader-filelist");

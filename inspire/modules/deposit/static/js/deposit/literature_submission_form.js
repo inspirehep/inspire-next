@@ -107,6 +107,7 @@ define(function(require, exports, module) {
     this.$deposition_type_panel = this.$deposition_type.parents('.panel-body');
     this.$language = $("#language");
     this.$subject = $("#subject");
+    this.$report_number = $("#report_number");
     this.$translated_title = $("#state-group-title_translation");
     this.$other_language = $("#state-group-other_language");
     this.$comments = $("#state-group-extra_comments");
@@ -285,6 +286,12 @@ define(function(require, exports, module) {
           $toggle_element.click();
         }
       });
+    },
+
+    /* Allows to run code after Invenio initialization */
+    postInvenioHook: function() {
+      // Disable sorting in report_number field
+      this.$report_number.sortable("disable");
     },
 
     addConferenceInfoField: function() {

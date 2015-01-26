@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -27,10 +27,11 @@ from invenio.base.i18n import _
 from invenio.base.globals import cfg
 from invenio.modules.deposit import fields
 from invenio.modules.deposit.form import WebDepositForm
-from invenio.modules.deposit.field_widgets import plupload_widget, \
-    ColumnInput, \
+from invenio.modules.deposit.field_widgets import ColumnInput, \
     ExtendedListWidget, \
-    ItemWidget
+    ItemWidget, \
+    DynamicListWidget, \
+    DynamicItemWidget
 from invenio.modules.deposit.autocomplete_utils import kb_dynamic_autocomplete
 from invenio.modules.deposit.validation_utils import DOISyntaxValidator
 
@@ -40,7 +41,7 @@ from .validators.dynamic_fields import AuthorsValidation
 from .filters import clean_empty_list
 from .validators.simple_fields import duplicated_doi_validator, \
     duplicated_arxiv_id_validator, arxiv_syntax_validation, \
-    required_if_files, pdf_validator
+    pdf_validator
 
 #
 # Field class names
@@ -210,6 +211,17 @@ class ReportNumberInlineForm(WebDepositForm):
         widget=ColumnInput(class_="col-xs-4 col-pad-0"),
         widget_classes="form-control"
     )
+
+
+class UnsortedDynamicListWidget(DynamicListWidget):
+    def __init__(self, **kwargs):
+        self.item_widget = UnorderedDynamicItemWidget()
+        super(UnsortedDynamicListWidget, self).__init__(**kwargs)
+
+
+class UnorderedDynamicItemWidget(DynamicItemWidget):
+    def _sort_button(self):
+        return ""
 
 
 class LiteratureForm(WebDepositForm):
@@ -389,6 +401,7 @@ class LiteratureForm(WebDepositForm):
         min_entries=1,
         export_key='report_numbers',
         widget_classes='',
+        widget=UnsortedDynamicListWidget(),
     )
 
     # ==============
