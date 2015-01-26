@@ -62,7 +62,7 @@ class FilterDateForm(Form):
 
 
 @deposit_blueprint.route('/<depositions:deposition_type>/stats',
-                         methods=['GET', 'POST'])
+                         methods=['GET'])
 @login_required
 def show_stats(deposition_type):
     """Render the stats for all the depositions."""
@@ -75,7 +75,8 @@ def show_stats(deposition_type):
     deptype = DepositionType.get(deposition_type)
     submitted_depositions = [d for d in Deposition.get_depositions(type=deptype) if d.has_sip(sealed=True)]
 
-    ctx = process_metadata_for_charts(submitted_depositions)
+    ctx = process_metadata_for_charts(submitted_depositions,
+                                      group_by=request.args.get('group_by', 'type_of_doc'))
     ctx.update(dict(
         deposition_type=deptype,
         depositions=submitted_depositions,
@@ -111,6 +112,7 @@ def stats_api(deposition_type):
         submitted_depositions = [d for d in submitted_depositions if d.created <= until_date]
 
     result = process_metadata_for_charts(submitted_depositions,
+                                         request.args.get('group_by', 'type_of_doc'),
                                          bool(request.args.get('include_hidden', None)))
 
     resp = jsonify(result)
