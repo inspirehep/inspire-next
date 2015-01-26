@@ -67,7 +67,7 @@
           </a>
         </small>
       </p>
-      {% if config.DEBUG or request.args.get('admin') %}
+      {% if config.DEBUG or request.args.get('local') %}
         <h3 align="center">&mdash; OR &mdash;</h3>
         <form class="form-signin" action="{{ url_for('webaccount.login', _external=True, _scheme='https') }}" method="POST">
         {{ form.referer }}
