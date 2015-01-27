@@ -17,7 +17,24 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from flask import Blueprint
+from datetime import datetime
+
+from flask import Blueprint, \
+    render_template, \
+    request, \
+    jsonify, \
+    abort
+from flask.ext.login import login_required
+from flask.ext.wtf import Form
+from wtforms.fields import DateTimeField, SubmitField
+
+from invenio.base.i18n import _
+from invenio.modules.deposit.signals import template_context_created
+from invenio.modules.deposit.models import Deposition, DepositionType
+from invenio.modules.deposit.views.deposit import blueprint as deposit_blueprint
+
+from utils import process_metadata_for_charts
+
 
 blueprint = Blueprint(
     'inspire_deposit',
@@ -25,3 +42,79 @@ blueprint = Blueprint(
     template_folder='templates',
     static_folder="static",
 )
+
+
+CHART_TYPES = {'column': 'Column',
+               'pie': 'Pie'}
+
+
+class FilterDateForm(Form):
+
+    """Date form."""
+
+    since_date = DateTimeField(
+        label=_('From'),
+        description='Format: YYYY-MM-DD.')
+    until_date = DateTimeField(
+        label=_('To'),
+        description='Format: YYYY-MM-DD.')
+    submit = SubmitField(_("Filter depositions"))
+
+
+@deposit_blueprint.route('/<depositions:deposition_type>/stats',
+                         methods=['GET'])
+@login_required
+def show_stats(deposition_type):
+    """Render the stats for all the depositions."""
+    if len(DepositionType.keys()) <= 1 and \
+       DepositionType.get_default() is not None:
+        abort(404)
+
+    form = FilterDateForm()
+
+    deptype = DepositionType.get(deposition_type)
+    submitted_depositions = [d for d in Deposition.get_depositions(type=deptype) if d.has_sip(sealed=True)]
+
+    ctx = process_metadata_for_charts(submitted_depositions,
+                                      group_by=request.args.get('group_by', 'type_of_doc'))
+    ctx.update(dict(
+        deposition_type=deptype,
+        depositions=submitted_depositions,
+        form=form,
+        chart_types=CHART_TYPES
+    ))
+
+    # Send signal to allow modifications to the template context
+    template_context_created.send(
+        '%s.%s' % (deposit_blueprint.name, show_stats.__name__),
+        context=ctx
+    )
+
+    return render_template('deposit/stats/all_depositions.html', **ctx)
+
+
+@deposit_blueprint.route('/<depositions:deposition_type>/stats/api',
+                         methods=['GET'])
+@login_required
+def stats_api(deposition_type):
+    """Get stats JSON."""
+    deptype = DepositionType.get(deposition_type)
+    submitted_depositions = [d for d in Deposition.get_depositions(type=deptype) if d.has_sip(sealed=True)]
+
+    if request.args.get('since_date') is not None:
+        since_date = datetime.strptime(request.args['since_date'],
+                                       "%Y-%m-%d").replace(hour=0, minute=0)
+        submitted_depositions = [d for d in submitted_depositions if d.created >= since_date]
+
+    if request.args.get('until_date') is not None:
+        until_date = datetime.strptime(request.args['until_date'],
+                                       "%Y-%m-%d").replace(hour=23, minute=59)
+        submitted_depositions = [d for d in submitted_depositions if d.created <= until_date]
+
+    result = process_metadata_for_charts(submitted_depositions,
+                                         request.args.get('group_by', 'type_of_doc'),
+                                         bool(request.args.get('include_hidden', None)))
+
+    resp = jsonify(result)
+
+    return resp

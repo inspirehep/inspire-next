@@ -20,6 +20,8 @@
 
 from invenio.modules.deposit.bundles import js as _deposit_js, \
     styles as _deposit_styles
+from invenio.ext.assets import Bundle, RequireJSFilter
+from invenio.base.bundles import jquery as _j, invenio as _i
 
 # '_' prefix indicates private variables, and prevents duplicated import by
 # auto-discovery service of invenio
@@ -31,6 +33,19 @@ _deposit_js.bower.update({
     'bootstrap-multiselect': '~0.9.4',
     'readmore': '*',
 })
+
+
+# Bundle for deposit stats page
+
+js_stats = Bundle(
+    "js/deposit/stats/init.js",
+    output="deposit_stats.js",
+    filters=RequireJSFilter(exclude=[_j, _i]),
+    weight=51,
+    bower={
+        'highcharts-release': 'latest',
+    }
+)
 
 _deposit_styles.contents += (
     'vendors/bootstrap-multiselect/dist/css/bootstrap-multiselect.css',
