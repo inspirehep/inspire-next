@@ -252,7 +252,7 @@ define(function(require, exports, module) {
       });
 
       this.$submissionForm.on("form:init-autocomplete", function(ev, data) {
-        if (data.item.id.indexOf("affiliation") !== -1) {
+        if ($(data.item).data("autocomplete") === "affiliation") {
           $(data.item).affiliationsTypeahead();
         }
       }.bind(this));

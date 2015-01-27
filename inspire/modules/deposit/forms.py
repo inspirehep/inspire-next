@@ -440,6 +440,8 @@ class LiteratureForm(WebDepositForm):
     )
 
     institution = fields.TextField(
+        autocomplete='affiliation',
+        placeholder='Start typing for suggestions',
         label=_('Institution'),
         widget_classes="form-control" + THESIS_CLASS,
     )
