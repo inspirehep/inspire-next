@@ -118,7 +118,7 @@ def radiochoice_buttons(field, **dummy_kwargs):
 def defensedate_widget(field, **kwargs):
     """Date widget fot thesis."""
     field_id = kwargs.pop('id', field.id)
-    html = [u'<div class="row %s"><div class="col-xs-5 col-sm-3">\
+    html = [u'<div class="row %s"><div class="col-xs-12">\
             <input class="datepicker form-control" %s type="text">\
             </div></div>'
             % (THESIS_CLASS, html_params(id=field_id,
@@ -208,7 +208,7 @@ class ReportNumberInlineForm(WebDepositForm):
 
     report_number = fields.TextField(
         label=_('Report Number'),
-        widget=ColumnInput(class_="col-xs-4 col-pad-0"),
+        widget=ColumnInput(class_="col-xs-10"),
         widget_classes="form-control"
     )
 
@@ -540,7 +540,7 @@ class LiteratureForm(WebDepositForm):
 
     url = fields.TextField(
         label=_('Link to PDF'),
-        description = _('Where can we find a PDF to check the references?'),
+        description=_('Where can we find a PDF to check the references?'),
         placeholder='http://www.example.com/document.pdf',
         validators=[pdf_validator],
         widget_classes="form-control",
@@ -548,7 +548,7 @@ class LiteratureForm(WebDepositForm):
 
     additional_url = fields.TextField(
         label=_('Link to additional information (e.g. abstract)'),
-        description = _('Which page should we link from INSPIRE?'),
+        description=_('Which page should we link from INSPIRE?'),
         placeholder='http://www.example.com/splash-page.html',
         # validators=[pdf_validator],
         widget_classes="form-control",
@@ -614,17 +614,11 @@ class LiteratureForm(WebDepositForm):
     ]
 
     field_sizes = {
-        'file_field': 'col-md-12',
-        'ok_to_upload': 'col-md-9 col-md-offset-3',
         'type_of_doc': 'col-xs-12 col-md-3',
         'wrap_nonpublic_note': 'col-md-9',
-        'page_nr': 'col-xs-12 col-md-3',
-        'page_range_article_id': 'col-xs-12 col-md-3',
-        'year': 'col-xs-12 col-md-3',
         'degree_type': 'col-xs-12 col-md-3',
-        'license': 'col-xs-12 col-md-3',
-
     }
+
 
     def __init__(self, *args, **kwargs):
         """Constructor."""
