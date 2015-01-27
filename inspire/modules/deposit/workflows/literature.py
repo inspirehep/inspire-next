@@ -64,6 +64,20 @@ from inspire.modules.workflows.tasks.actions import (
 from inspire.modules.deposit.forms import LiteratureForm
 
 from ..tasks import add_submission_extra_data
+from ..utils import filter_empty_helper
+
+
+def filter_empty_elements(recjson):
+    """Filter empty fields."""
+    list_fields = [
+        'authors', 'supervisors', 'report_numbers'
+    ]
+    for key in list_fields:
+        recjson[key] = filter(
+            filter_empty_helper(), recjson.get(key, [])
+        )
+
+    return recjson
 
 
 class literature(SimpleRecordDeposition, WorkflowBase):
@@ -213,7 +227,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                      'title': "title",
                      'subject_term': "term",
                      'institution': "university",
-                     'degree_type': "type",
+                     'degree_type': 'degree_type',
                      'thesis_date': "date",
                      'journal_title': "journal_title",
                      'page_range_article_id': "page_artid",
@@ -246,6 +260,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
         map(remove_exclusive_fields, doc_exclusive_fields.values())
 
+        filter_empty_elements(metadata)
+
         # ============================
         # Abstract, Title and Subjects
         # ============================
@@ -272,7 +288,6 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 first_author[1] = first_author[1].replace(' ', '')
                 metadata['authors'][0]['full_name'] = ", ".join(first_author)
             metadata['_first_author'] = metadata['authors'][0]
-            metadata['_first_author']['email'] = ''
             if metadata['authors'][1:]:
                 metadata['_additional_authors'] = metadata['authors'][1:]
                 for k in metadata['_additional_authors']:
@@ -282,7 +297,6 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                                 literature.match_authors_initials(additional_author[1]):
                             additional_author[1] = additional_author[1].replace(' ', '')
                             k['full_name'] = ", ".join(additional_author)
-                        k['email'] = ''
                     except AttributeError:
                         pass
             delete_keys.append('authors')
@@ -291,9 +305,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Supervisors
         # ===========
         if 'supervisors' in metadata and metadata['supervisors']:
-            metadata['thesis_supervisor'] = metadata['supervisors'][0]
-            metadata['thesis_supervisor']['email'] = ''
-            #metadata['_additional_authors'] = metadata['authors'][1:]
+            metadata['thesis_supervisor'] = metadata['supervisors']
             delete_keys.append('supervisors')
 
         # ==============
