@@ -480,7 +480,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 pages = metadata['page_range_article_id'].split('-')
                 if len(pages) == 2:
                     try:
-                        metadata['page_nr'] = int(pages[1])-int(pages[0])
+                        metadata['page_nr'] = int(pages[1]) - int(pages[0]) + 1
                     except ValueError:
                         pass
 
