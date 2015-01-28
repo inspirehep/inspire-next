@@ -556,30 +556,72 @@ define(function(require, exports, module) {
       return $.when.apply(this, deferred);
     },
 
-    importData: function importData() {
+    getImportFields: function getImportFields() {
+      return {
+        arxivId: this.stripSourceTags(this.$arxiv_id_field.val()).toLowerCase(),
+        doi: this.stripSourceTags(this.$doi_field.val()).toLowerCase(),
+        isbn: this.$isbn_field.val()
+      }
+    },
 
+    pushImportTasks: function pushImportTasks() {
       var arxivSource = require("js/deposit/data_sources/arxiv");
       var doiSource = require("js/deposit/data_sources/doi");
       var isbnSource = require("js/deposit/data_sources/isbn");
-
-      var arxivId = this.stripSourceTags(this.$arxiv_id_field.val()).toLowerCase();
-      var doi = this.stripSourceTags(this.$doi_field.val()).toLowerCase();
-      var isbn = this.$isbn_field.val();
+      var ImportTask = require("js/deposit/import_task");
+      var importTasks = [];
+      var importFields = this.getImportFields();
       var depositionType = this.$deposition_type.val();
 
-      var importTasks = [];
+      if (importFields.doi) {
+        importTasks.push(new ImportTask(doiSource, importFields.doi, depositionType));
+      }
+      if (importFields.arxivId) {
+        importTasks.push(new ImportTask(arxivSource, importFields.arxivId, depositionType));
+      }
+      if (importFields.isbn) {
+        importTasks.push(new ImportTask(isbnSource, importFields.isbn, depositionType));
+      }
 
-      var ImportTask = require("js/deposit/import_task");
+      return importTasks;
+    },
 
-      if (doi) {
-        importTasks.push(new ImportTask(doiSource, doi, depositionType));
+    fireModal: function fireModal(result) {
+      var that = this;
+
+      // only fill the form if the user accepts the data
+      this.$previewModal.one("accepted", function(event) {
+        that.$inputs.resetColor();
+        that.$inputs.clearForm();
+        that.fillForm(result.mapping);
+        that.fieldsGroup.resetState();
+        that.showForm();
+      });
+      // show the modal with result
+      this.previewModal.show(result);
+    },
+
+    repeatImportTasks: function repeatImportTasks(importedFields) {
+      var importFields = this.getImportFields();
+      var repeats = false;
+      if (importFields.doi === "" && importedFields.doi !== undefined) {
+        this.$doi_field.val(importedFields.doi);
+        repeats = true;
       }
-      if (arxivId) {
-        importTasks.push(new ImportTask(arxivSource, arxivId, depositionType));
+      if (importFields.arxiv === "" && importedFields.arxiv !== undefined){
+        this.$arxiv_id_field.val(importedFields.arxiv);
+        repeats = true;
       }
-      if (isbn) {
-        importTasks.push(new ImportTask(isbnSource, isbn, depositionType));
+      if (importFields.arxiv === "" && importedFields.isbn !== undefined){
+        this.$isbn_field.val(importedFields.isbn);
+        repeats = true;
       }
+
+      return repeats;
+    },
+
+    importData: function importData() {
+      var importTasks = this.pushImportTasks();
 
       var that = this;
 
@@ -589,19 +631,27 @@ define(function(require, exports, module) {
         // priority mapper for merging the results
         literatureFormPriorityMapper
       ).done(function(result) {
-        that.messageBox.clean();
         // check if there are any data
         if (result.mapping) {
-          // only fill the form if the user accepts the data
-          that.$previewModal.one("accepted", function(event) {
-            that.$inputs.resetColor();
-            that.$inputs.clearForm();
-            that.fillForm(result.mapping);
-            that.fieldsGroup.resetState();
-            that.showForm();
-          });
-          // show the modal with result
-          that.previewModal.show(result);
+          if (that.repeatImportTasks(result.mapping)) {
+            importTasks = that.pushImportTasks();
+            return that.taskmanager.runMultipleTasksMerge(
+              // tasks
+              importTasks,
+              // priority mapper for merging the results
+              literatureFormPriorityMapper
+            ).done(function(result) {
+              that.messageBox.clean();
+              // check if there are any data
+              if (result.mapping) {
+                that.fireModal(result);
+              } else { // show the error messages
+                that.messageBox.append(result.statusMessages);
+              }
+            });
+          } else {
+            that.fireModal(result);
+          }
         } else { // show the error messages
           that.messageBox.append(result.statusMessages);
         }
