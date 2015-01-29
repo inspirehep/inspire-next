@@ -518,7 +518,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         email = user.info.get('email', '')
         external_ids = UserEXT.query.filter_by(id_user=userid).all()
         sources = ["{0}{1}".format('inspire:uid:', userid)]
-        sources.extend(["{0}".format(e_id.id) for e_id in external_ids])
+        sources.extend(["{0}:{1}".format(e_id.method,
+                                         e_id.id) for e_id in external_ids])
         metadata['acquisition_source'] = dict(
             source=sources,
             email=email,
