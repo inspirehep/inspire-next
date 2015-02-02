@@ -1,6 +1,6 @@
 /*
  * This file is part of INSPIRE.
- * Copyright (C) 2014 CERN.
+ * Copyright (C) 2014, 2015 CERN.
  *
  * INSPIRE is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +89,7 @@ define(function(require, exports, module) {
 
     this.options = options;
     this.save_url = options.save_url;
+    this.base_static_url = options.base_static_url;
 
     // here just global form variables initialization
     this.$field_list = {
@@ -593,6 +594,14 @@ define(function(require, exports, module) {
         if (result.mapping) {
           // only fill the form if the user accepts the data
           that.$previewModal.one("accepted", function(event) {
+            if (result.mapping["journal_title"]) {
+              that.fillFormExtra({
+                url: "split_publication/",
+                message: "Filling Journal data...",
+                blockFields: $("input[name^='journal_']"),
+                params: {"journal-ref": result.mapping["journal_title"]}
+              });
+            }
             that.$inputs.resetColor();
             that.$inputs.clearForm();
             that.fillForm(result.mapping);
@@ -793,6 +802,48 @@ define(function(require, exports, module) {
       that.$submissionForm.trigger("dataFormSave", {
         url: that.save_url,
         form_selector: that.$submissionForm
+      });
+    },
+
+    /**
+     * Enable or disable fields
+     */
+    toggleDisableFields: function toggleDisableFields(fields, toggle) {
+      $.each(fields, function(index, field) {
+        $(field).attr('disabled', toggle);
+      });
+    },
+
+    /**
+     * Adds or removes temporary message on top of parent box
+     */
+    toggleTemporaryMessage: function toggleTemporaryMessage(parentBox, temp_message) {
+      if (temp_message === undefined) {
+        $(parentBox).parents('.panel-body').children('.alert').remove();
+      } else {
+        var tpl_loading_message = require('hgn!js/deposit/templates/loading_message');
+        $(parentBox).parents('.form-group').before(tpl_loading_message({ message: temp_message }));
+      }
+    },
+
+    /**
+     * Imports fields from given API and fills the deposit form using fillForm()
+     *
+     * @param options {} dictionary with 'url' for ajax call and its 'params'
+     */
+    fillFormExtra: function fillFormExtra(options) {
+      this.toggleTemporaryMessage(options.blockFields[0], options.message);
+      this.toggleDisableFields(options.blockFields, true);
+
+      var that = this;
+
+      $.ajax({
+        url: options.url,
+        data: options.params
+      }).done(function(result) {
+        that.fillForm(result);
+        that.toggleTemporaryMessage(options.blockFields[0]);
+        that.toggleDisableFields(options.blockFields, false);
       });
     },
 
