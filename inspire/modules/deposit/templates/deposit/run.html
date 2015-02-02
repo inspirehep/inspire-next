@@ -103,6 +103,7 @@ require(
       inspire: {
         arxiv_to_inspire_categories_kb: "{{ config.get('DEPOSIT_ARXIV_TO_INSPIRE_CATEGORIES_KB') }}",
         save_url: '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id) }}',
+        base_static_url: '{{ url_for('static') }}',
       }
     };
 

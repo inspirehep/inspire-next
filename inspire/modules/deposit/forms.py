@@ -463,24 +463,28 @@ class LiteratureForm(WebDepositForm):
                                              mapper=journal_title_kb_mapper)
     )
 
-    page_range_article_id = fields.TextField(
+    journal_page = fields.TextField(
         label=_('Page Range/Article ID'),
         description=_('e.g. 1-100'),
+        export_key='page_artid',
         widget_classes="form-control" + ARTICLE_CLASS
     )
 
-    volume = fields.TextField(
+    journal_volume = fields.TextField(
         label=_('Volume'),
+        export_key='volume',
         widget_classes="form-control" + ARTICLE_CLASS
     )
 
-    year = fields.TextField(
+    journal_year = fields.TextField(
         label=_('Year'),
+        export_key='year',
         widget_classes="form-control" + ARTICLE_CLASS
     )
 
-    issue = fields.TextField(
+    journal_issue = fields.TextField(
         label=_('Issue'),
+        export_key='issue',
         widget_classes="form-control" + ARTICLE_CLASS
     )
 
@@ -601,8 +605,8 @@ class LiteratureForm(WebDepositForm):
         # ('Licenses and copyright',
         #     ['license', 'license_url'], {'classes': 'collapse'}),
         ('Journal Information',
-            ['journal_title', 'volume', 'issue', 'year',
-             'page_range_article_id']),
+            ['journal_title', 'journal_volume', 'journal_issue', 'journal_year',
+             'journal_page']),
         ('Conference Information',
             ['conf_name', 'conference_id'], {'classes': 'collapse'}),
         ('Proceedings Information (if not published in a journal)',

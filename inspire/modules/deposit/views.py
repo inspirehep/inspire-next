@@ -1,6 +1,6 @@
 #
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -17,7 +17,12 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from flask import Blueprint
+from flask import Blueprint, \
+    request, \
+    jsonify
+from flask.ext.login import login_required
+
+from invenio.modules.deposit.views.deposit import blueprint as deposit_blueprint
 
 blueprint = Blueprint(
     'inspire_deposit',
@@ -25,3 +30,21 @@ blueprint = Blueprint(
     template_folder='templates',
     static_folder="static",
 )
+
+
+@deposit_blueprint.route('/<depositions:deposition_type>/split_publication/',
+                         methods=['GET'])
+@login_required
+def split_publication_note(deposition_type):
+    """Journal reference extraction JSON API."""
+    result = {}
+    journal_ref = request.args.get('journal-ref', None)
+
+    if journal_ref:
+        from invenio.legacy.refextract.api import extract_journal_reference
+        references = extract_journal_reference(journal_ref)
+        if references:
+            for r in references:
+                result['journal_{0}'.format(r)] = references[r]
+
+    return jsonify(result)

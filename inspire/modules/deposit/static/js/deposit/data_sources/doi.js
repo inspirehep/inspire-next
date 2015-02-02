@@ -59,14 +59,14 @@ define(function(require, exports, module) {
 
         var doi_obj = {
           title_source: 'CrossRef',
-          journal_title: journal,
-          isbn: data.isbn,
-          page_nr: page_number,
-          page_range_article_id: data.page,
-          year: data.issued['date-parts'][0][0],
-          issue: data.issue,
           authors: data.author,
-          volume: data.volume,
+          journal_title: journal,
+          journal_page: data.page,
+          journal_volume: data.volume,
+          journal_year: data.issued['date-parts'][0][0],
+          journal_issue: data.issue,
+          page_nr: page_number,
+          isbn: data.isbn,
           url: data.URL
         };
 
