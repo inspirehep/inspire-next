@@ -54,7 +54,8 @@ from inspire.modules.workflows.tasks.submission import (
     halt_to_render,
     add_files_to_task_results,
     create_ticket,
-    reply_ticket
+    reply_ticket,
+    close_ticket
 )
 from inspire.modules.workflows.tasks.actions import (
     was_approved,
@@ -102,8 +103,10 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         finalize_record_sip(is_dump=False),
         halt_to_render,
         create_ticket(template="deposit/tickets/curator_submitted.html",
-                      queue="HEP_add_user"),
-        reply_ticket(template="deposit/tickets/user_submitted.html"),
+                      queue="HEP_add_user",
+                      ticket_id_key="ticket_id"),
+        reply_ticket(template="deposit/tickets/user_submitted.html",
+                     keep_new=True),
         add_files_to_task_results,
         classify_paper_with_deposit(
             taxonomy="HEPont.rdf",
@@ -118,18 +121,19 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 add_core_deposit,
                 finalize_record_sip(is_dump=False),
                 send_robotupload_deposit(),
-                reply_ticket(template="deposit/tickets/user_accepted.html")
+                reply_ticket(template="deposit/tickets/user_accepted.html"),
             ],
             workflow_else,
             [
                 reject_record('Record was already found on INSPIRE'),
-                reply_ticket(template="deposit/tickets/user_rejected_exists.html")
+                reply_ticket(template="deposit/tickets/user_rejected_exists.html"),
             ],
         ],
         workflow_else,
         [
             reply_ticket()  # setting template=None as text come from Holding Pen
         ],
+        close_ticket(ticket_id_key="ticket_id")
     ]
 
     name = "Literature"

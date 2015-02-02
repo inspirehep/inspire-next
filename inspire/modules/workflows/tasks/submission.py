@@ -70,8 +70,11 @@ def inform_submitter(obj, eng):
     send_email(cfg.get("CFG_SITE_SUPPORT_EMAIL"), email, 'Subject', body, header='header')
 
 
-def create_ticket(template, queue="Test"):
-    """Create a ticket for the submission."""
+def create_ticket(template, queue="Test", ticket_id_key="ticket_id"):
+    """Create a ticket for the submission.
+
+    Creates the ticket in the given queue and stores the ticket ID
+    in the extra_data key specified in ticket_id_key."""
     @wraps(create_ticket)
     def _create_ticket(obj, eng):
         from invenio.modules.access.control import acc_get_user_email
@@ -104,7 +107,7 @@ def create_ticket(template, queue="Test"):
                 Text=body,
                 Requestors=email
             )
-            obj.extra_data["ticket_id"] = ticket_id
+            obj.extra_data[ticket_id_key] = ticket_id
             obj.log.info("Ticket {0} created:\n{1}".format(
                 ticket_id,
                 body.encode("utf-8", "ignore")
@@ -112,7 +115,7 @@ def create_ticket(template, queue="Test"):
     return _create_ticket
 
 
-def reply_ticket(template=None):
+def reply_ticket(template=None, keep_new=False):
     """Reply to a ticket for the submission."""
     @wraps(reply_ticket)
     def _reply_ticket(obj, eng):
@@ -155,14 +158,42 @@ def reply_ticket(template=None):
         if not rt:
             obj.log.error("No RT instance available. Skipping!")
         else:
-            ticket_id = rt.reply(
+            rt.reply(
                 ticket_id=ticket_id,
                 text=body,
             )
             obj.log.info("Reply created:\n{0}".format(
                 body.encode("utf-8", "ignore")
             ))
+            if keep_new:
+                # We keep the state as new
+                rt.edit_ticket(
+                    ticket_id=ticket_id,
+                    Status="new"
+                )
     return _reply_ticket
+
+
+def close_ticket(ticket_id_key="ticket_id"):
+    """Close the ticket associated with this record found in given key."""
+    @wraps(close_ticket)
+    def _close_ticket(obj, eng):
+        from inspire.utils.tickets import get_instance
+
+        ticket_id = obj.extra_data.get(ticket_id_key, "")
+        if not ticket_id:
+            obj.log.error("No ticket ID found!")
+            return
+
+        rt = get_instance()
+        if not rt:
+            obj.log.error("No RT instance available. Skipping!")
+        else:
+            rt.edit_ticket(
+                ticket_id=ticket_id,
+                Status="resolved"
+            )
+    return _close_ticket
 
 
 def halt_record_with_action(action, message):
