@@ -27,7 +27,7 @@ define(function(require, exports, module) {
 
     id: 'arxiv',
     name: 'arXiv',
-    url: '/arxiv/search?arxiv=',
+    url: 'arxiv/search?arxiv=',
 
     mapper: new DataMapper({
 
@@ -40,7 +40,10 @@ define(function(require, exports, module) {
             categories_arXiv: data.categories,
             abstract: data.abstract,
             authors: data.authors,
-            journal_title: data["journal-ref"],
+            journal_title: data.journal_title,
+            page_range_article_id: data.journal_page,
+            volume: data.journal_volume,
+            year: data.journal_year,
             preprint_created: data.created,
             license_url: data.license,
             note: data.comments,
