@@ -95,10 +95,10 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Create the submission information package by merging form data
         # from all drafts (in this case only one draft exists).
         prepare_sip(),
-        add_submission_extra_data,
         # Process metadata to match your JSONAlchemy record model. This will
         # call process_sip_metadata() on your subclass.
         process_sip_metadata(),
+        add_submission_extra_data,
         # Generate MARC based on metadata dictionary.
         finalize_record_sip(is_dump=False),
         halt_to_render,
@@ -530,6 +530,13 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             method="submission",
             submission_number=deposition.id,
         )
+
+        # ==============
+        # Extra comments
+        # ==============
+        if 'extra_comments' in metadata and metadata['extra_comments']:
+            metadata['hidden_note'] = {'value': metadata['extra_comments'],
+                                       'source': 'submitter'}
 
         # ===================
         # Delete useless data
