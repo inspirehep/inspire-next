@@ -22,6 +22,8 @@ import re
 
 from flask import render_template
 
+from six import string_types
+
 from invenio.base.globals import cfg
 from invenio.ext.login import UserInfo
 from invenio.modules.accounts.models import UserEXT
@@ -458,8 +460,16 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ====
         # URLs
         # ====
+        if metadata.get('url'):
+            metadata['pdf'] = metadata['url']
+            if isinstance(metadata['url'], string_types):
+                metadata['url'] = [{'url': metadata['url']}]
         if 'additional_url' in metadata and metadata['additional_url']:
-            metadata['url'] = {"url": metadata["additional_url"]}
+            if metadata.get('url'):
+                metadata['url'].append({'url': metadata['additional_url']})
+            else:
+                metadata['url'] = [{'url': metadata['additional_url']}]
+            delete_keys.append('additional_url')
 
         # ================
         # Publication Info

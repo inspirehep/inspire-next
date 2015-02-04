@@ -44,8 +44,8 @@
     <h5>Comments from user</h5>
     <pre>{{ submission_data.extra_comments }}</pre>
   {% endif %}
-  {% if workflow_class.object_type == "submission" and submission_data.url %}
-    <p>PDF from user: <a href="{{ submission_data.url }}">{{ submission_data.url }}</a> <i class="fa fa-file-pdf-o"></i></p>
+  {% if workflow_class.object_type == "submission" and submission_data.pdf %}
+    <p>PDF from user: <a href="{{ submission_data.pdf }}">{{ submission_data.pdf }}</a> <i class="fa fa-file-pdf-o"></i></p>
   {% endif %}
 
   <div role="tabpanel">
