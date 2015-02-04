@@ -85,5 +85,9 @@ setup(
             "inspire = inspire.config"
         ]
     },
-    test_suite='inspire.testsuite.suite',
+    test_suite='inspire.testsuite',
+    tests_require=[
+        'nose',
+        'Flask-Testing'
+    ]
 )
