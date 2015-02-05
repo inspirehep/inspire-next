@@ -535,8 +535,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Extra comments
         # ==============
         if 'extra_comments' in metadata and metadata['extra_comments']:
-            metadata['hidden_note'] = {'value': metadata['extra_comments'],
-                                       'source': 'submitter'}
+            metadata['hidden_note'] = [{'value': metadata['extra_comments'],
+                                        'source': 'submitter'}]
 
         # ===================
         # Delete useless data

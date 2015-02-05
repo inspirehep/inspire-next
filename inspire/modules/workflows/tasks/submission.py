@@ -86,11 +86,17 @@ def create_ticket(template, queue="Test", ticket_id_key="ticket_id"):
         rt_queue = cfg.get("CFG_BIBCATALOG_QUEUES") or queue
         sip = d.get_latest_sip(sealed=False)
         subject = u"Your suggestion to INSPIRE: {0}".format(d.title)
+        try:
+            user_comment = filter(lambda k: 'submitter' == k.get('source', ''),
+                                  sip.metadata.get("hidden_note", []))[0].get('value', None)
+        except IndexError:
+            user_comment = None
         body = render_template(
             template,
             email=email,
             title=d.title,
             identifier=sip.metadata.get("system_number_external", {}).get("value", ""),
+            user_comment=user_comment,
             object=obj,
         ).strip()
 
