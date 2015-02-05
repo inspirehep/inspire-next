@@ -18,3 +18,7 @@
 #}
  New submission from {{ email }}
  Approve/reject it here: {{ url_for('holdingpen.details', objectid=object.id, _external=True) }}
+
+{% if user_comment %}
+ User comment: {{ user_comment|safe }}
+{% endif %}
