@@ -55,6 +55,7 @@ from inspire.modules.workflows.tasks.submission import (
     add_files_to_task_results,
     create_ticket,
     reply_ticket,
+    add_note_entry,
     close_ticket
 )
 from inspire.modules.workflows.tasks.actions import (
@@ -119,6 +120,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             workflow_if(match_record_remote_deposit, True),
             [
                 add_core_deposit,
+                add_note_entry,
                 finalize_record_sip(is_dump=False),
                 send_robotupload_deposit(),
                 reply_ticket(template="deposit/tickets/user_accepted.html"),
@@ -312,6 +314,12 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             metadata['thesis_supervisor'] = metadata['supervisors']
             delete_keys.append('supervisors')
 
+        # ====
+        # Note
+        # ====
+        if metadata.get('note', None):
+            metadata['note'] = [{'value': metadata['note']}]
+
         # ==============
         # Thesis related
         # ==============
@@ -327,10 +335,13 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             delete_keys.extend(thesis_fields)
 
         if 'defense_date' in metadata and metadata['defense_date']:
-            if 'note' in metadata and metadata['note']:
-                metadata['note'] += ', presented on ' + metadata['defense_date']
+            defense_note = {'value': 'Presented on ' + metadata['defense_date']}
+            if metadata.get('note', None):
+                if isinstance(metadata['note'], str):
+                    metadata['note'] = [{'value': metadata['note']}]
+                metadata['note'].append(defense_note)
             else:
-                metadata['note'] = 'Presented on ' + metadata['defense_date']
+                metadata['note'] = [defense_note]
 
         # ========
         # Category
