@@ -287,3 +287,16 @@ def add_files_to_task_results(obj, eng):
         obj.add_task_result(file_obj.name,
                             fileinfo,
                             "workflows/results/files.html")
+
+
+def add_note_entry(obj, eng):
+    """Add note entry to sip metadata on approval."""
+    entry = {'value': '*Temporary entry*'} if obj.extra_data.get("core") \
+        else {'value': '*Brief entry*'}
+    deposition = Deposition(obj)
+    metadata = deposition.get_latest_sip(sealed=False).metadata
+    if metadata.get('note', None):
+        metadata['note'].append(entry)
+    else:
+        metadata['note'] = [entry]
+    deposition.update()
