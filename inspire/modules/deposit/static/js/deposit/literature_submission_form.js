@@ -1,6 +1,6 @@
 /*
  * This file is part of INSPIRE.
- * Copyright (C) 2014 CERN.
+ * Copyright (C) 2014, 2015 CERN.
  *
  * INSPIRE is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -238,14 +238,10 @@ define(function(require, exports, module) {
       });
 
       this.$importButton.click(function(event) {
-        that.$importButton.button('loading');
         that.validate(that.$importIdsFields)
         // trigger like this because importData returns a Deferred object
         // and importData needs to have set 'this' to the form object
         .then(that.importData.bind(that))
-          .always(function() {
-            that.$importButton.button('reset');
-          });
       });
 
       this.$skipButton.click(function(event) {
@@ -625,6 +621,7 @@ define(function(require, exports, module) {
 
       var that = this;
 
+      that.$importButton.button('loading');
       return this.taskmanager.runMultipleTasksMerge(
         // tasks
         importTasks,
@@ -632,15 +629,18 @@ define(function(require, exports, module) {
         literatureFormPriorityMapper
       ).done(function(result) {
         // check if there are any data
+        that.$importButton.button('reset');
         if (result.mapping) {
           if (that.repeatImportTasks(result.mapping)) {
             importTasks = that.pushImportTasks();
+            that.$importButton.button('loading');
             return that.taskmanager.runMultipleTasksMerge(
               // tasks
               importTasks,
               // priority mapper for merging the results
               literatureFormPriorityMapper
             ).done(function(result) {
+              that.$importButton.button('reset');
               that.messageBox.clean();
               // check if there are any data
               if (result.mapping) {
