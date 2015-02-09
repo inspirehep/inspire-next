@@ -82,6 +82,7 @@ PACKAGES = [
     'inspire.modules.formatter',
     'inspire.modules.harvester',
     'inspire.modules.oaiharvester',
+    'inspire.modules.forms',
     'inspire.modules.ranker',
     'inspire.modules.refextract',
     'inspire.modules.styleguide',
