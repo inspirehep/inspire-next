@@ -124,7 +124,12 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 add_core_deposit,
                 add_note_entry,
                 finalize_record_sip(is_dump=False),
+                # Send robotupload and halt until webcoll callback
                 send_robotupload_deposit(),
+                create_ticket(template="deposit/tickets/curation_core.html",
+                              queue="HEP_curation",
+                              ticket_id_key="curation_ticket_id",
+                              curation=True),
                 reply_ticket(template="deposit/tickets/user_accepted.html"),
             ],
             workflow_else,
