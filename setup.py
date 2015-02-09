@@ -56,7 +56,7 @@ setup(
     platforms='any',
     install_requires=[
         "rt",
-        "HarvestingKit",
+        "HarvestingKit>=0.3",
         "mixer",
         "ipython",
         "Babel>=1.3",

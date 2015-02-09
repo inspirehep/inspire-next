@@ -44,6 +44,7 @@ install:
   - "travis_retry pip install nose"
   - "travis_retry pip install requests==2.3.0"
   - "travis_retry pip install Unidecode==0.04.14"
+  - "travis_retry pip install git+git://github.com/inspirehep/harvesting-kit.git@master"
   - "travis_retry pip install -r requirements.txt"
   - "python setup.py compile_catalog"
   - "inveniomanage config create secret-key"
