@@ -78,6 +78,7 @@ PACKAGES = [
     'inspire.modules.deposit',
     'inspire.modules.access',
     'inspire.modules.harvester',
+    'inspire.modules.forms',
     'invenio.modules.access',
     'invenio.modules.accounts',
     'invenio.modules.alerts',
