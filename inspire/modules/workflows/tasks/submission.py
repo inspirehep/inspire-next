@@ -70,7 +70,70 @@ def inform_submitter(obj, eng):
     send_email(cfg.get("CFG_SITE_SUPPORT_EMAIL"), email, 'Subject', body, header='header')
 
 
-def create_ticket(template, queue="Test", ticket_id_key="ticket_id"):
+def get_ticket_body(template, deposition, metadata, email, obj):
+    """Get template for ticket email."""
+    from flask import render_template
+
+    subject = ''.join(["Your suggestion to INSPIRE: ", deposition.title])
+    try:
+        user_comment = filter(lambda k: 'submitter' == k.get('source', ''),
+                              metadata.get("hidden_note", []))[0].get('value', None)
+    except IndexError:
+        user_comment = None
+    body = render_template(
+        template,
+        email=email,
+        title=deposition.title,
+        identifier=metadata.get("system_number_external", {}).get("value", ""),
+        user_comment=user_comment,
+        references=obj.extra_data.get("submission_data", {}).get("references"),
+        object=obj,
+    ).strip()
+
+    return subject, body
+
+
+def get_curation_body(template, metadata, email, extra_data):
+    """Get template for curation email."""
+    from flask import render_template
+    from invenio.utils.persistentid import is_arxiv_post_2007
+
+    recid = extra_data.get('recid')
+    record_url = extra_data.get('url')
+
+    arxiv_id = metadata.get('arxiv_id')
+    if arxiv_id and is_arxiv_post_2007(arxiv_id):
+        arxiv_id = ''.join(['arXiv:', arxiv_id])
+
+    report_number = metadata.get('report_number')
+    if report_number:
+        report_number = report_number[0].get('primary')
+
+    link_to_pdf = extra_data.get('submission_data').get('pdf')
+
+    subject = ' '.join(filter(lambda x: x is not None,
+                       [arxiv_id,
+                        metadata.get('doi'),
+                        report_number,
+                        '(#{})'.format(recid)]))
+
+    references = extra_data.get('submission_data').get('references')
+    extra_comments = extra_data.get('submission_data').get('extra_comments')
+
+    body = render_template(
+        template,
+        recid=recid,
+        record_url=record_url,
+        link_to_pdf=link_to_pdf,
+        email=email,
+        references=references,
+        extra_comments=extra_comments,
+    ).strip()
+
+    return subject, body
+
+
+def create_ticket(template, queue="Test", ticket_id_key="ticket_id", curation=False):
     """Create a ticket for the submission.
 
     Creates the ticket in the given queue and stores the ticket ID
@@ -79,20 +142,22 @@ def create_ticket(template, queue="Test", ticket_id_key="ticket_id"):
     def _create_ticket(obj, eng):
         from invenio.modules.access.control import acc_get_user_email
         from inspire.utils.tickets import get_instance
-        from flask import render_template
 
         d = Deposition(obj)
         email = acc_get_user_email(obj.id_user)
         rt_queue = cfg.get("CFG_BIBCATALOG_QUEUES") or queue
-        sip = d.get_latest_sip(sealed=False)
-        subject = u"Your suggestion to INSPIRE: {0}".format(d.title)
-        body = render_template(
-            template,
-            email=email,
-            title=d.title,
-            identifier=sip.metadata.get("system_number_external", {}).get("value", ""),
-            object=obj,
-        ).strip()
+
+        if curation and obj.extra_data.get("core"):
+            subject, body = get_curation_body(template,
+                                              d.get_latest_sip(sealed=True).metadata,
+                                              email,
+                                              obj.extra_data)
+        else:
+            subject, body = get_ticket_body(template,
+                                            d,
+                                            d.get_latest_sip(sealed=False).metadata,
+                                            email,
+                                            obj)
 
         # Trick to prepare ticket body
         body = "\n ".join([line.strip() for line in body.split("\n")])

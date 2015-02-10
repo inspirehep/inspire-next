@@ -1,6 +1,6 @@
 {#
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2015 CERN.
 ##
 ## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -17,12 +17,13 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
  New submission from {{ email }}
- Approve/reject it here: {{ url_for('holdingpen.details', objectid=object.id, _external=True) }}
 
-{% if user_comment %}
- User comment: {{ user_comment|safe }}
-{% endif %}
-{% if references %}
+ Curate record here: https://inspirehep.net/record/edit/#state=edit&amp;recid={{ recid }}.
+ {% if link_to_pdf %}Link to pdf: {{ link_to_pdf|safe }}{% endif %}
+ {% if record_url %}Record url: {{ record_url|safe }}{% endif %}
+ {% if user_comments %}User comments: {{ user_comments|safe }}{% endif %}
+
+ {% if references %}
  References:
  {{ references|safe }}
-{% endif %}
+ {% endif %}

@@ -121,6 +121,10 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 add_core_deposit,
                 finalize_record_sip(is_dump=False),
                 send_robotupload_deposit(),
+                create_ticket(template="deposit/tickets/curation_core.html",
+                              queue="HEP_curation",
+                              ticket_id_key="curation_ticket_id",
+                              curation=True),
                 reply_ticket(template="deposit/tickets/user_accepted.html"),
             ],
             workflow_else,
@@ -458,6 +462,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ====
         # URLs
         # ====
+        if metadata.get('url'):
+            metadata['pdf'] = metadata['url']
         if 'additional_url' in metadata and metadata['additional_url']:
             metadata['url'] = {"url": metadata["additional_url"]}
 
@@ -532,8 +538,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Extra comments
         # ==============
         if 'extra_comments' in metadata and metadata['extra_comments']:
-            metadata['hidden_note'] = {'value': metadata['extra_comments'],
-                                       'source': 'submitter'}
+            metadata['hidden_note'] = [{'value': metadata['extra_comments'],
+                                        'source': 'submitter'}]
 
         # ===================
         # Delete useless data

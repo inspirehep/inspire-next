@@ -88,5 +88,8 @@ def add_submission_extra_data(obj, eng):
     if "url" in metadata:
         submission_data["url"] = metadata["url"]
         del metadata["url"]
+    if "pdf" in metadata:
+        submission_data["pdf"] = metadata["pdf"]
+        del metadata["pdf"]
     obj.extra_data["submission_data"] = submission_data
     deposition.save()
