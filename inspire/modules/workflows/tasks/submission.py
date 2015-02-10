@@ -97,6 +97,7 @@ def create_ticket(template, queue="Test", ticket_id_key="ticket_id"):
             title=d.title,
             identifier=sip.metadata.get("system_number_external", {}).get("value", ""),
             user_comment=user_comment,
+            references = obj.extra_data.get("submission_data", {}).get("references"),
             object=obj,
         ).strip()
 
