@@ -458,6 +458,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ====
         # URLs
         # ====
+        if metadata.get('url'):
+            metadata['pdf'] = metadata['url']
         if 'additional_url' in metadata and metadata['additional_url']:
             metadata['url'] = {"url": metadata["additional_url"]}
 
