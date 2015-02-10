@@ -390,11 +390,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             metadata['collections'].extend([{'primary': "arXiv"}, {'primary': "Citeable"}])
 
         if user_report_number:
-            report_numbers = [{'primary': v['report_number']} for v in user_report_number]
-            if 'report_number' in metadata and metadata['report_number']:
-                metadata['report_number'].extend(report_numbers)
-            else:
-                metadata['report_number'] = report_numbers
+            metadata['report_number'] = [{'primary': v['report_number']}
+                                         for v in user_report_number]
 
         # ========
         # Language
