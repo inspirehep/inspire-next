@@ -59,6 +59,7 @@ def continue_workflow_callback():
                         'record',
                         str(recid)
                     )
+                    extra_data['recid'] = recid
                     workflow_object.set_extra_data(extra_data)
             # Will add the results to the engine extra_data column.
             workflow_object.continue_workflow(
@@ -84,6 +85,7 @@ def webcoll_callback():
             workflow_object = BibWorkflowObject.query.get(objectid)
             extra_data = workflow_object.get_extra_data()
             extra_data['url'] = join(cfg["CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"], 'record', str(rid))
+            extra_data['recid'] = rid
             workflow_object.set_extra_data(extra_data)
             workflow_object.continue_workflow(delayed=True)
             del pending_records[rid]
