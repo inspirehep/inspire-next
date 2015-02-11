@@ -37,7 +37,7 @@ def bst_webcoll_postprocess(recids=[]):
     cached_ids = cache.get("webcoll_pending_recids") or []
     recids += cached_ids
 
-    if not cfg["CFG_WEBCOLL_POST_REQUEST_URL"]:
+    if not cfg.get("CFG_WEBCOLL_POST_REQUEST_URL"):
         write_message("CFG_WEBCOLL_POST_REQUEST_URL is not set.")
         task_update_status('ERROR')
         return 1
