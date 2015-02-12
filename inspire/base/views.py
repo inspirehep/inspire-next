@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -71,13 +71,13 @@ def postfeedback():
     """Handler to create a ticket for user feedback."""
     subject = "INSPIRE Labs feedback"
 
-    feedback_data = json.loads(request.form.get("data"))
+    feedback = json.loads(request.form.get("data"))
 
     content = """
 Feedback:
 
-{issue}
-    """.format(issue=feedback_data[0]["Issue"])
+{feedback}
+    """.format(feedback=feedback)
 
     # fd, temp_path = mkstemp(suffix=".png")
     # fh = os.fdopen(fd, "wb")

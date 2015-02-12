@@ -1,6 +1,6 @@
  /*
  * This file is part of INSPIRE.
- * Copyright (C) 2014 CERN.
+ * Copyright (C) 2014, 2015 CERN.
  *
  * INSPIRE is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,16 +20,10 @@
  * or submit itself to any jurisdiction.
  */
 
-define(['feedback', 'html2canvas'], function(Feedback) {
-  "use strict";
+define([
+  'feedback',
+], function(Feedback) {
+  'use strict';
 
-  // trigger Feedback
-  var feedback = new Feedback({
-    h2cPath:'js/html2canvas.js',
-    url: '/postfeedback',
-    nextLabel: 'Send',
-    pages: [
-        new window.Feedback.Form(),
-    ],
-  });
+  var feedback = new Feedback.Feedback({});
 });
