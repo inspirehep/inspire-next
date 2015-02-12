@@ -56,7 +56,7 @@ setup(
     platforms='any',
     install_requires=[
         "rt",
-        "HarvestingKit",
+        "HarvestingKit>=0.3",
         "mixer",
         "ipython",
         "Babel>=1.3",
@@ -85,5 +85,9 @@ setup(
             "inspire = inspire.config"
         ]
     },
-    test_suite='inspire.testsuite.suite',
+    test_suite='inspire.testsuite',
+    tests_require=[
+        'nose',
+        'Flask-Testing'
+    ]
 )
