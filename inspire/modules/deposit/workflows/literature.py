@@ -56,6 +56,7 @@ from inspire.modules.workflows.tasks.submission import (
     halt_to_render,
     add_files_to_task_results,
     create_ticket,
+    create_curation_ticket,
     reply_ticket,
     add_note_entry,
     close_ticket
@@ -126,10 +127,9 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 finalize_record_sip(is_dump=False),
                 # Send robotupload and halt until webcoll callback
                 send_robotupload_deposit(),
-                create_ticket(template="deposit/tickets/curation_core.html",
+                create_curation_ticket(template="deposit/tickets/curation_core.html",
                               queue="HEP_curation",
-                              ticket_id_key="curation_ticket_id",
-                              curation=True),
+                              ticket_id_key="curation_ticket_id"),
                 reply_ticket(template="deposit/tickets/user_accepted.html"),
             ],
             workflow_else,
@@ -367,9 +367,10 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # =============
         # Report number
         # =============
-        user_report_number = None
         if 'report_numbers' in metadata and metadata['report_numbers']:
             user_report_number = metadata['report_numbers']
+            metadata['report_number'] = [{'primary': v['report_number']}
+                                         for v in user_report_number]
             delete_keys.append('report_numbers')
 
         # ========
@@ -380,13 +381,17 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
         if imported_from_arXiv or metadata.get('title_source') == 'arXiv':
             if is_arxiv_post_2007(metadata['arxiv_id']):
-                metadata['report_number'] = {'primary': 'arXiv:' + metadata['arxiv_id'],
-                                             'source': 'arXiv'}
+                arxiv_rep_number = {'primary': 'arXiv:' + metadata['arxiv_id'],
+                                    'source': 'arXiv'}
             else:
-                metadata['report_number'] = {'primary': metadata['arxiv_id'],
-                                             'source': 'arXiv'}
+                arxiv_rep_number = {'primary': metadata['arxiv_id'],
+                                    'source': 'arXiv'}
             if len(metadata['arxiv_id'].split('/')) == 2:
-                metadata['report_number']['arxiv_category'] = metadata['arxiv_id'].split('/')[0]
+                arxiv_rep_number['arxiv_category'] = metadata['arxiv_id'].split('/')[0]
+            if metadata.get('report_numbers'):
+                metadata['report_number'].append(arxiv_rep_number)
+            else:
+                metadata['report_number'] = [arxiv_rep_number]
             if 'abstract' in metadata:
                 metadata['abstract']['source'] = 'arXiv'
             if 'title_arXiv' in metadata:
@@ -407,9 +412,6 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                                                   'institute': 'arXiv'}
             metadata['collections'].extend([{'primary': "arXiv"}, {'primary': "Citeable"}])
 
-        if user_report_number:
-            metadata['report_number'] = [{'primary': v['report_number']}
-                                         for v in user_report_number]
 
         # ========
         # Language

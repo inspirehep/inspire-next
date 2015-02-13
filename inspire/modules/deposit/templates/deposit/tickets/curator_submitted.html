@@ -19,10 +19,11 @@
  New submission from {{ email }}
  Approve/reject it here: {{ url_for('holdingpen.details', objectid=object.id, _external=True) }}
 
-{% if user_comment %}
- User comment: {{ user_comment|safe }}
+{%- if user_comment %}
+  User comments:
+  {{ user_comment|safe }}
 {% endif %}
-{% if references %}
- References:
- {{ references|safe }}
+{%- if references %}
+  References:
+  {{ references|safe }}
 {% endif %}

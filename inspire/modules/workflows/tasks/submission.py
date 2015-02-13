@@ -137,8 +137,58 @@ def get_curation_body(template, metadata, email, extra_data):
     return subject, body
 
 
-def create_ticket(template, queue="Test", ticket_id_key="ticket_id",
-                  curation=False):
+def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
+    """Submit ticket to RT with the given parameters."""
+    from inspire.utils.tickets import get_instance
+
+    # Trick to prepare ticket body
+    body = "\n ".join([line.strip() for line in body.split("\n")])
+    rt = get_instance() if cfg.get("PRODUCTION_MODE") else None
+    rt_queue = cfg.get("CFG_BIBCATALOG_QUEUES") or queue
+    if not rt:
+        obj.log.error("No RT instance available. Skipping!")
+        obj.log.info("Ticket ignored.")
+    else:
+        ticket_id = rt.create_ticket(
+            Queue=rt_queue,
+            Subject=subject,
+            Text=body,
+            Requestors=requestors
+        )
+        obj.extra_data[ticket_id_key] = ticket_id
+        obj.log.info("Ticket {0} created:\n{1}".format(
+            ticket_id,
+            body.encode("utf-8", "ignore")
+        ))
+
+
+def create_curation_ticket(template, queue="Test", ticket_id_key="ticket_id"):
+    """Create a ticket for the submission.
+
+    Creates the ticket in the given queue and stores the ticket ID
+    in the extra_data key specified in ticket_id_key."""
+    @wraps(create_ticket)
+    def _create_curation_ticket(obj, eng):
+        from invenio.modules.access.control import acc_get_user_email
+
+        d = Deposition(obj)
+        requestors = acc_get_user_email(obj.id_user)
+
+        if obj.extra_data.get("core"):
+            subject, body = get_curation_body(template,
+                                              d.get_latest_sip(sealed=True).metadata,
+                                              requestors,
+                                              obj.extra_data)
+            submit_rt_ticket(obj,
+                             queue,
+                             subject,
+                             body,
+                             requestors,
+                             ticket_id_key)
+    return _create_curation_ticket
+
+
+def create_ticket(template, queue="Test", ticket_id_key="ticket_id"):
     """Create a ticket for the submission.
 
     Creates the ticket in the given queue and stores the ticket ID
@@ -146,42 +196,21 @@ def create_ticket(template, queue="Test", ticket_id_key="ticket_id",
     @wraps(create_ticket)
     def _create_ticket(obj, eng):
         from invenio.modules.access.control import acc_get_user_email
-        from inspire.utils.tickets import get_instance
 
         d = Deposition(obj)
-        email = acc_get_user_email(obj.id_user)
-        rt_queue = cfg.get("CFG_BIBCATALOG_QUEUES") or queue
+        requestors = acc_get_user_email(obj.id_user)
 
-        if curation and obj.extra_data.get("core"):
-            subject, body = get_curation_body(template,
-                                              d.get_latest_sip(sealed=True).metadata,
-                                              email,
-                                              obj.extra_data)
-        else:
-            subject, body = get_ticket_body(template,
-                                            d,
-                                            d.get_latest_sip(sealed=False).metadata,
-                                            email,
-                                            obj)
-
-        # Trick to prepare ticket body
-        body = "\n ".join([line.strip() for line in body.split("\n")])
-        rt = get_instance() if cfg.get("PRODUCTION_MODE") else None
-        if not rt:
-            obj.log.error("No RT instance available. Skipping!")
-            obj.log.info("Ticket ignored.")
-        else:
-            ticket_id = rt.create_ticket(
-                Queue=rt_queue,
-                Subject=subject,
-                Text=body,
-                Requestors=email
-            )
-            obj.extra_data[ticket_id_key] = ticket_id
-            obj.log.info("Ticket {0} created:\n{1}".format(
-                ticket_id,
-                body.encode("utf-8", "ignore")
-            ))
+        subject, body = get_ticket_body(template,
+                                        d,
+                                        d.get_latest_sip(sealed=False).metadata,
+                                        requestors,
+                                        obj)
+        submit_rt_ticket(obj,
+                         queue,
+                         subject,
+                         body,
+                         requestors,
+                         ticket_id_key)
     return _create_ticket
 
 

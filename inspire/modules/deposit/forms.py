@@ -391,7 +391,7 @@ class LiteratureForm(WebDepositForm):
         widget=HiddenInput(),
     )
 
-    report_number = fields.DynamicFieldList(
+    report_numbers = fields.DynamicFieldList(
         fields.FormField(
             ReportNumberInlineForm,
             widget=ExtendedListWidget(
@@ -401,7 +401,6 @@ class LiteratureForm(WebDepositForm):
         ),
         add_label=_('Add another report number'),
         min_entries=1,
-        export_key='report_numbers',
         widget_classes='',
         widget=UnsortedDynamicListWidget(),
     )
@@ -420,7 +419,6 @@ class LiteratureForm(WebDepositForm):
         label=_('Supervisors'),
         add_label=_('Add another supervisor'),
         min_entries=1,
-        export_key='supervisors',
         widget_classes=THESIS_CLASS,
     )
 
@@ -596,7 +594,7 @@ class LiteratureForm(WebDepositForm):
             ['title', 'title_arXiv', 'categories_arXiv', 'language',
              'other_language', 'title_translation', 'subject', 'authors',
              'collaboration', 'experiment', 'abstract', 'page_nr',
-             'report_number']),
+             'report_numbers']),
         ('Thesis Information',
             ['supervisors', 'defense_date', 'thesis_date', 'degree_type',
              'institution', 'license_url']),

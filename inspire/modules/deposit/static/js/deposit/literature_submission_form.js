@@ -108,7 +108,7 @@ define(function(require, exports, module) {
     this.$deposition_type_panel = this.$deposition_type.parents('.panel-body');
     this.$language = $("#language");
     this.$subject = $("#subject");
-    this.$report_number = $("#report_number");
+    this.$report_number = $("#report_numbers");
     this.$translated_title = $("#state-group-title_translation");
     this.$other_language = $("#state-group-other_language");
     this.$comments = $("#state-group-extra_comments");
@@ -894,8 +894,9 @@ define(function(require, exports, module) {
         return $(':input', this).clearForm();
       }
       if (type === 'text' || type === 'password' || type === 'hidden' || tag === 'textarea') {
-        // avoid to clear the authors fields since they are already recreated
-        if ($(this).parents('#field-authors').length === 0) {
+        // avoid clearing dynamic field lists as their hidden values are used
+        // to keep track of the next index to use
+        if ($(this).parents('.dynamic-field-list').length === 0) {
           this.value = '';
         }
       } else if (type === 'checkbox' || type === 'radio') {
