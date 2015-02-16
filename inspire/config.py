@@ -82,7 +82,6 @@ PACKAGES = [
     'invenio.modules.accounts',
     'invenio.modules.alerts',
     'invenio.modules.apikeys',
-    'invenio.modules.authorids',
     'invenio.modules.authorprofiles',
     'invenio.modules.baskets',
     'invenio.modules.bulletin',
