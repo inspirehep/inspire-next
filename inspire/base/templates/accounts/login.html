@@ -1,6 +1,6 @@
 {#
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -18,6 +18,7 @@
 #}
 
 {% extends "accounts/login_base.html" %}
+{% set title = "Sign in" %}
 
 {%- block form_auth_external scoped -%}{% endblock %}
 {% block nickname_popover_placement %}{% endblock%}
@@ -107,5 +108,36 @@
 {%- endblock form_auth_internal -%}
 
 {# disables popover on the username field #}
-{% block javascript %}
-{% endblock %}
+{%- block javascript %}{% endblock %}
+{% block trackingcode %}
+  <!-- Piwik -->
+  <script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['setDocumentTitle', "Login page"]);
+  _paq.push(['setCustomVariable',
+    // Index, the number from 1 to 5 where this custom variable name is stored
+    1,
+    // Name, the name of the variable, for example: Gender, VisitorType
+    "LoginReferer",
+    // Value, for example: "Male", "Female" or "new", "engaged", "customer"
+    window.location.pathname,
+    // Scope of the custom variable, "visit" means the custom variable applies to the current visit
+    "page"
+  ]);
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//piwik.inspirehep.net/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', 11]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+  document.getElementById("orcid_login").addEventListener("click", function() {
+    // logs a conversion for goal 1 (ORCID login)
+    _paq.push(['trackGoal', 1]);
+  });
+  </script>
+  <noscript><p><img src="//piwik.inspirehep.net/piwik.php?idsite=11" style="border:0;" alt="" /></p></noscript>
+  <!-- End Piwik Code -->
+{% endblock trackingcode %}
