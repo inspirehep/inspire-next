@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2015 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,31 +20,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Function for sending robotuploads to other Invenio instances."""
+"""Utilities for text handling."""
 
-import os
-import requests
+from bs4 import BeautifulSoup
 
 
-def make_robotupload_marcxml(url, marcxml, mode, **kwargs):
-    """Make a robotupload request."""
-    from invenio.utils.url import make_user_agent_string
-    from inspire.utils.text import clean_xml
-
-    from invenio.base.globals import cfg
-    headers = {
-        "User-agent": make_user_agent_string("inspire"),
-        "Content-Type": "application/marcxml+xml",
-    }
-    if url is None:
-        base_url = cfg.get("CFG_ROBOTUPLOAD_SUBMISSION_BASEURL")
-    else:
-        base_url = url
-
-    url = os.path.join(base_url, "batchuploader/robotupload", mode)
-    return requests.post(
-        url=url,
-        data=str(clean_xml(marcxml)),
-        headers=headers,
-        params=kwargs,
-    )
+def clean_xml(xml):
+    """Using the capabilities of BeautifulSoup, return nice XML as unicode."""
+    return unicode(BeautifulSoup(xml, "xml"))
