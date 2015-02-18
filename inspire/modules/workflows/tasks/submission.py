@@ -145,6 +145,7 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     body = "\n ".join([line.strip() for line in body.split("\n")])
     rt = get_instance() if cfg.get("PRODUCTION_MODE") else None
     rt_queue = cfg.get("CFG_BIBCATALOG_QUEUES") or queue
+    recid = obj.extra_data.get("recid", "")
     if not rt:
         obj.log.error("No RT instance available. Skipping!")
         obj.log.info("Ticket ignored.")
@@ -153,7 +154,8 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
             Queue=rt_queue,
             Subject=subject,
             Text=body,
-            Requestors=requestors
+            Requestors=requestors,
+            CF_RecordID=recid
         )
         obj.extra_data[ticket_id_key] = ticket_id
         obj.log.info("Ticket {0} created:\n{1}".format(
@@ -163,7 +165,7 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
 
 
 def create_curation_ticket(template, queue="Test", ticket_id_key="ticket_id"):
-    """Create a ticket for the submission.
+    """Create a ticket for curation.
 
     Creates the ticket in the given queue and stores the ticket ID
     in the extra_data key specified in ticket_id_key."""
