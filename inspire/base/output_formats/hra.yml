@@ -1,0 +1,6 @@
+content_type: text/xml
+default: reference_empty_add.bft
+description: reference_empty_add
+name: reference_empty_add
+rules: []
+visibility: 0

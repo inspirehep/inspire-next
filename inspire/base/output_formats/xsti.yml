@@ -1,0 +1,6 @@
+content_type: text/xml
+default: OSTIXML.bft
+description: OSTIXML
+name: OSTIXML
+rules: []
+visibility: 0

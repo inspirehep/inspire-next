@@ -1,0 +1,6 @@
+content_type: text/html
+default: HTML_Latex_US.bft
+description: LaTeX formatted reference (US Style)
+name: LaTeX (US)
+rules: []
+visibility: 0

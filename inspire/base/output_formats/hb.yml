@@ -1,0 +1,7 @@
+content_type: text/html
+default: Inspire_Default_HTML_brief.tpl
+description: HTML brief output format, used for search results pages.
+name: HTML brief
+rules:
+- {field: 980.a, template: HepNames_HTML_brief.tpl, value: 'HEPNAMES '}
+visibility: 0

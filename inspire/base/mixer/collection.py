@@ -20,7 +20,7 @@
 from six import with_metaclass as meta
 
 from invenio.ext.mixer import MixerMeta
-from invenio.modules.search.models import Collection, CollectionCollection, \
+from invenio.modules.collections.models import Collection, CollectionCollection, \
     CollectionFieldFieldvalue, CollectionFormat, \
     Collectionboxname, Collectiondetailedrecordpagetabs, Collectionname, \
     Externalcollection, FacetCollection

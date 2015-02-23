@@ -1,0 +1,7 @@
+content_type: text/html
+default: Inspire_Default_HTML_detailed.tpl
+description: HTML detailed output format, used for Detailed record pages.
+name: HTML detailed
+rules:
+- {field: 980.a, template: HepNames_HTML_detailed.tpl, value: 'HEPNAMES '}
+visibility: 0

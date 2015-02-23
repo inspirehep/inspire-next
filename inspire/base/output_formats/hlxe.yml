@@ -1,0 +1,6 @@
+content_type: text/html
+default: HTML_Latex_EU.bft
+description: LaTeX formatted reference (EU style)
+name: LaTeX (EU)
+rules: []
+visibility: 0
