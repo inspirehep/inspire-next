@@ -1,0 +1,6 @@
+content_type: text/xml
+default: harvmac.bft
+description: harvmac
+name: harvmac
+rules: []
+visibility: 0

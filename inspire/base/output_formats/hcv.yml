@@ -1,0 +1,6 @@
+content_type: text/html
+default: text_link_CV.bft
+description: A CV with hyperlinks
+name: HTML CV
+rules: []
+visibility: 0

@@ -1,0 +1,11 @@
+content_type: text/html
+default: Default_HTML_files.bft
+description: Used to show fulltext files in mini-panel of detailed record pages.
+name: File mini-panel
+rules:
+- {field: 980__a, template: Inst_HTML_files.bft, value: 'INSTITUTION '}
+- {field: 980__a, template: Jobs_HTML_files.bft, value: 'JOB '}
+- {field: 980__a, template: Jobs_HTML_files.bft, value: 'JOBHIDDEN '}
+- {field: 980__a, template: Hepnames_HTML_files.bft, value: 'HEPNAMES '}
+- {field: 980__a, template: Conf_HTML_files.bft, value: 'CONFERENCES  '}
+visibility: 0

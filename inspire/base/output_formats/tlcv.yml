@@ -1,0 +1,6 @@
+content_type: text/plain
+default: text_Latex_CV.bft
+description: A LaTeX CV
+name: LaTeX CV
+rules: []
+visibility: 0

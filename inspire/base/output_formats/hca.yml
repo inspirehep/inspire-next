@@ -1,0 +1,6 @@
+content_type: text/html
+default: cite_as.bft
+description: Very brief cite-as format used by reference submission form.
+name: INSPIRE Citation Format
+rules: []
+visibility: 0

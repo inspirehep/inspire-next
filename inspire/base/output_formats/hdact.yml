@@ -1,0 +1,11 @@
+content_type: text/html
+default: Default_HTML_actions.bft
+description: Used to display actions in mini-panel of detailed record pages.
+name: Actions mini-panel
+rules:
+- {field: 980__a, template: Inst_HTML_actions.bft, value: 'INSTITUTION '}
+- {field: 980__a, template: Jobs_HTML_actions.bft, value: 'JOB '}
+- {field: 980__a, template: Jobs_HTML_actions.bft, value: 'JOBHIDDEN '}
+- {field: 980__a, template: Hepnames_HTML_actions.bft, value: 'HEPNAMES '}
+- {field: 980__a, template: Conf_HTML_actions.bft, value: 'CONFERENCES  '}
+visibility: 0

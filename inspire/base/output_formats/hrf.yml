@@ -1,0 +1,6 @@
+content_type: text/html
+default: reference_update.bft
+description: Reference submission form, used for user updates to reference lists.
+name: INSPIRE Reference Submission Form
+rules: []
+visibility: 0

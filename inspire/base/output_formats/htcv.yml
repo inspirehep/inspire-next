@@ -1,0 +1,6 @@
+content_type: text/html
+default: text_CV.bft
+description: A plaintext CV
+name: text CV
+rules: []
+visibility: 0

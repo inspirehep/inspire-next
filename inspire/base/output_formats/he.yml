@@ -1,0 +1,8 @@
+content_type: text/html
+default: Inspire_Default_HTML_brief.tpl
+description: HE
+name: HE
+rules:
+- {field: 980.a, template: Jobs_text_brief.bft, value: 'JOB '}
+- {field: 980.a, template: Jobs_text_brief.bft, value: 'JOBHIDDEN '}
+visibility: 0

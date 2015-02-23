@@ -96,6 +96,7 @@ PACKAGES = [
     'invenio.modules.circulation',
     'invenio.modules.classifier',
     'invenio.modules.cloudconnector',
+    'invenio.modules.collections',
     'invenio.modules.comments',
     'invenio.modules.communities',
     'invenio.modules.converter',

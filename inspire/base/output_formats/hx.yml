@@ -1,0 +1,6 @@
+content_type: text/html
+default: INSPIRE_BibTeX.bft
+description: BibTeX.
+name: BibTeX
+rules: []
+visibility: 0
