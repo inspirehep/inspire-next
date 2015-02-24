@@ -40,31 +40,27 @@ Next step is to install assets (js, css etc.):
     plupload
     ...
 
-Now you can follow the standard invenio installation and development procedures, such as running `inveniomanage collect`.
+Now you can follow the standard Invenio installation and development procedures, such as running `inveniomanage collect`.
 
 ---------------------
 Demosite installation
 ---------------------
-As INSPIRE uses `Mixer <https://github.com/klen/mixer>`_ to load database fixtures, you should install the library:
+Since the database was already initialized while installing Invenio, you run:
 
 .. code-block:: bash
 
-     $ pip install -e .[mixer]
+     $ inveniomanage database recreate
 
-Before running:
+to drop the previous database structure and create a new one.
 
-.. code-block:: bash
-
-     $ inveniomanage database create
-
-Populate demo records and enable demo-site:
+You can then populate it with demo records and enable the demo site:
 
 .. code-block:: bash
 
     (inspire)$ cdvirtualenv src/inspire-next
     (inspire)$ inveniomanage demosite populate -p inspire.base -f inspire/demosite/data/demo-records.xml
 
-Start the server:
+Finally, start the server:
 
 .. code-block:: bash
 
