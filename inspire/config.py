@@ -78,6 +78,7 @@ PACKAGES = [
     'inspire.modules.workflows',
     'inspire.modules.deposit',
     'inspire.modules.access',
+    'inspire.modules.formatter',
     'inspire.modules.harvester',
     'invenio.modules.access',
     'invenio.modules.accounts',
