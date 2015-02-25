@@ -39,26 +39,6 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     globalConfig: globalConfig,
 
-    copy: {
-      js: {
-        expand: true,
-        flatten: true,
-        cwd: '<%= globalConfig.bower_path %>/',
-        src: ['buckets/buckets.js',
-          'jquery-feeds/dist/jquery.feeds.min.js',
-          'moment/min/moment.min.js',
-          'bootstrap-multiselect/js/bootstrap-multiselect.js'
-        ],
-        dest: '<%= globalConfig.installation_path %>/js/'
-      },
-      css: {
-        expand: true,
-        flatten: true,
-        cwd: '<%= globalConfig.bower_path %>/',
-        src: ['bootstrap-multiselect/css/bootstrap-multiselect.css'],
-        dest: '<%= globalConfig.installation_path %>/css/'
-      }
-    },
     jshint: {
       options: {
         curly: true,
@@ -99,6 +79,6 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('default', ['copy']);
+  grunt.registerTask('default', ['jshint']);
 
 };
