@@ -1,3 +1,3 @@
 tag 980.a:
 HEPNAMES --- HepNames_HTML_detailed.tpl
-default: Inspire_Default_HTML_detailed.tpl
+default: Default_HTML_detailed.bft

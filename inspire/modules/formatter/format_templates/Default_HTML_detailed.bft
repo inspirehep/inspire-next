@@ -1,0 +1,73 @@
+<name>Default HTML detailed</name>
+<description>This is the default HTML detailed format.</description>
+<div class="detailed_record_info">
+
+<div style="text-align:center; margin-bottom: 10px">
+<BFE_INSPIRE_TITLE_BRIEF prefix="<big><big><strong>"
+suffix="</strong></big></big>" force_title_case="yes"
+highlight="yes" brief="no" />
+<BFE_FIELD tag="041a" prefix="<big>(In " suffix=")</big>" />
+</div>
+
+<div style="text-align:center">
+<BFE_FIELD tag="242__a" suffix="<br />" />
+<BFE_INSPIRE_AUTHORS suffix="<br />" limit=25 interactive="yes"
+print_affiliations="yes" affiliations_separator=' & ' separator=', '
+limit="10" extension="<i> et al.</i>" name_last_first="no"
+affiliation_prefix="<small> (" affiliation_suffix=") </small>" />
+
+<p style="font-size: 90%">
+<BFE_INSPIRE_DATEPAGE prefix="" suffix=""/>
+</p>
+
+<ul style="list-style:none;text-align:center;margin:15px;padding:0;">
+<BFE_INSPIRE_HEP_ERRATUM prefix="<li>" suffix="</li>"/>
+<BFE_INSPIRE_SERIES prefix="<li>" suffix="</li>"/>
+<BFE_INSPIRE_HEP_PUBLISHER prefix="<li>" suffix="</li>" separator="<br/>"/>
+<BFE_INSPIRE_DOI prefix="<li>DOI: " suffix="</li>"/>
+<BFE_INSPIRE_HDL prefix="<li>HDL: " suffix="</li>"/>
+<BFE_INSPIRE_ISBN prefix="<li>ISBN: " suffix="</li>" />
+<BFE_INSPIRE_CONFERENCE prefix="<li>" suffix="</li>" />
+<BFE_INSPIRE_PROCEEDINGS prefix="<li>" suffix="</li>" newline="True" />
+<BFE_REPORT_NUMBERS prefix="<li>" suffix="</li>" />
+<BFE_INSPIRE_ARXIV_LINK prefix="<li>e-Print: " suffix="</li>" />
+<BFE_INSPIRE_NTIS_LINK prefix="<li>NTIS: " suffix="</li>" />
+<BFE_INSPIRE_EXP_LINK prefix="<li>Experiment: " suffix="</li>"/>
+<BFE_INSPIRE_CONTRIBUTIONS prefix="<li>" suffix="</li>" newline="True" />
+<BFE_INSPIRE_SUBJECT_TERM prefix="<li>Subject: " suffix="</li>" newline="True" />
+</ul>
+
+<div style="text-align:left; width: 70%; margin: 10px auto;">
+<p style="font-size: 85%; line-height: 135%;">
+<BFE_INSPIRE_ABSTRACT
+prefix_en="<strong>Abstract </strong>"
+suffix_en=""
+/>
+</p>
+<BFE_INSPIRE_PDG prefix="<br /><small><strong>PDG: </strong>" suffix="</small>" />
+
+<BFE_INSPIRE_PACS prefix="<br /><small><strong>PACS: </strong>" suffix="</small>" />
+
+<BFE_NOTES
+note_prefix="<br /><small><strong>Note: </strong>"
+note_suffix=" </small>" />
+<BFE_INSPIRE_HEP_THESIS prefix="<br /><small><strong>Thesis: </strong>" suffix="</small>" />
+<BFE_INSPIRE_HEP_SUPERVISOR
+prefix="<br /><small><strong>Supervisor: </strong>"
+suffix=" </small>"/>
+<BFE_KEYWORDS
+prefix="<br /><small><strong>Keyword(s): </strong></small>"
+keyword_prefix="<small>"
+keyword_suffix="</small>" />
+
+</div>
+
+<div style="text-align:left; width: 70%; margin: 10px auto;">
+<BFE_INSPIRE_URL prefix="<br /><small><strong>URL(s):</strong></small> " suffix="<br />" newline="True" />
+
+</div>
+
+<BFE_INSPIRE_PLOTS width="200px" caption="no" prefix="<br />" suffix="<br />"/>
+
+</div>
+</div>
