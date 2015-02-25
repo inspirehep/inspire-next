@@ -27,4 +27,4 @@ from bs4 import BeautifulSoup
 
 def clean_xml(xml):
     """Using the capabilities of BeautifulSoup, return nice XML as unicode."""
-    return unicode(BeautifulSoup(xml, "xml"))
+    return unicode(BeautifulSoup(unicode(xml, "utf-8"), "xml"))

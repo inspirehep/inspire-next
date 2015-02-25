@@ -28,11 +28,8 @@ class TextTests(InvenioTestCase):
 
     """Test the text functions."""
 
-    def test_clean_xml(self):
-        """Test proper handling when bad MARCXML is sent."""
-        from inspire.utils.text import clean_xml
-
-        bad_xml = (
+    def setUp(self):
+        self.bad_xml = (
             '<record><datafield tag="245" ind1="" ind2="">'
             '<subfield code="a">\xc3\x81xions, m\xc3\xa1jorons e neutrinos'
             ' em extens\xc3\xb5es do modelo padr\xc3\xa3o</subfield></datafield>'
@@ -43,7 +40,8 @@ class TextTests(InvenioTestCase):
             'Finally, a N = 1 supersymmetric extension of the a B \xe2\x88\x92 L model with three'
             '</subfield></datafield></record>'
         )
-        good_xml = (
+
+        self.good_xml = (
             u'<?xml version="1.0" encoding="utf-8"?>\n<record>'
             u'<datafield ind1="" ind2="" tag="245"><subfield code="a">'
             u'\xc1xions, m\xe1jorons e neutrinos em extens\xf5es do modelo'
@@ -55,7 +53,21 @@ class TextTests(InvenioTestCase):
             u'Finally, a N = 1 supersymmetric extension of the a B \u2212 L model'
             u' with three</subfield></datafield></record>'
         )
-        self.assertEqual(clean_xml(bad_xml), good_xml)
+
+        self.unicode_xml = "<record>Über</record>"
+        self.good_unicode_xml = u'<?xml version="1.0" encoding="utf-8"?>\n<record>\xdcber</record>'
+
+    def test_clean_xml(self):
+        """Test proper handling when bad MARCXML is sent."""
+        from inspire.utils.text import clean_xml
+
+        self.assertEqual(clean_xml(self.bad_xml), self.good_xml)
+
+    def test_unicode_clean_xml(self):
+        """Test proper handling when bad MARCXML is sent."""
+        from inspire.utils.text import clean_xml
+
+        self.assertEqual(clean_xml(self.unicode_xml), self.good_unicode_xml)
 
 
 TEST_SUITE = make_test_suite(TextTests)
