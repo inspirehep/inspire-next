@@ -61,6 +61,7 @@ EXTENSIONS = [
     'invenio.ext.collect',
     'invenio.ext.restful',
     'invenio.ext.mixer',
+    'invenio.ext.jasmine',
     'flask.ext.menu:Menu',
     'flask.ext.breadcrumbs:Breadcrumbs',
     'invenio.modules.deposit.url_converters',

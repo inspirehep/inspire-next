@@ -1,6 +1,6 @@
 /*
  * This file is part of INSPIRE.
- * Copyright (C) 2014 CERN.
+ * Copyright (C) 2014, 2015 CERN.
  *
  * INSPIRE is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ require.config({
     "bootstrap-multiselect": "vendors/bootstrap-multiselect/dist/js/bootstrap-multiselect",
     "readmore": "vendors/readmore/readmore",
     "buckets": "vendors/buckets/buckets",
-    "feedback": "vendors/feedback/examples/js/feedback",
+    "feedback": "js/feedback/feedback",
     "html2canvas": "vendors/html2canvas/build/html2canvas",
     "highcharts": "vendors/highcharts-release/highcharts"
   },
@@ -170,10 +170,6 @@ require.config({
     },
     "html2canvas" : {
       deps: ["jquery"]
-    },
-    "feedback" : {
-      deps: ["jquery", "html2canvas"],
-       exports: "Feedback"
     },
     "highcharts" : {
       deps: ["jquery"],

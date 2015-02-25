@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## INSPIRE is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -28,10 +28,6 @@ js = Bundle(
     output='base.js',
     filters=RequireJSFilter(exclude=[_j, _i]),
     weight=20,
-    bower={
-        'feedback': 'git://github.com/inspirehep/feedback.js.git',
-        'html2canvas': '*',
-    },
 )
 
 # index_js = Bundle(
@@ -64,7 +60,8 @@ _base_styles.contents += (
     'less/base/core.less',
     'less/accounts/login.less',
     'less/search/index.less',
-    'vendors/feedback/examples/css/feedback.css',
+    'less/feedback/button.less',
+    'less/feedback/modal.less',
 )
 
 to_remove = ["less/base.less",
