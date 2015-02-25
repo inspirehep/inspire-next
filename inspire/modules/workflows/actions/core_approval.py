@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## INSPIRE is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ from flask import render_template, url_for
 
 from invenio.base.i18n import _
 from invenio.modules.access.control import acc_get_user_email
+from invenio.modules.deposit.models import Deposition
 
 
 class core_approval(object):
@@ -38,9 +39,11 @@ class core_approval(object):
     def render_mini(self, obj):
         """Method to render the minified action."""
         email = acc_get_user_email(obj.id_user)
+        d = Deposition(obj)
         rejection_text = "\n".join([line.strip() for line in render_template(
             'deposit/tickets/user_rejected.html',
-            email=email
+            email=email,
+            title=d.title
         ).split("\n")])
         return render_template(
             'workflows/actions/core_approval_mini.html',
@@ -53,9 +56,11 @@ class core_approval(object):
     def render(self, obj):
         """Method to render the action."""
         email = acc_get_user_email(obj.id_user)
+        d = Deposition(obj)
         rejection_text = "\n".join([line.strip() for line in render_template(
             'deposit/tickets/user_rejected.html',
-            email=email
+            email=email,
+            title=d.title
         ).split("\n")])
         return {
             "side": render_template('workflows/actions/core_approval_side.html',
