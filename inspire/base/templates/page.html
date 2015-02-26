@@ -48,21 +48,23 @@
 {% endblock %}
 
 {% block trackingcode %}
-  <!-- Piwik -->
-  <script type="text/javascript">
-  var _paq = _paq || [];
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="//piwik.inspirehep.net/";
-    _paq.push(['setTrackerUrl', u+'piwik.php']);
-    _paq.push(['setSiteId', 11]);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-  })();
-  </script>
-  <noscript><p><img src="//piwik.inspirehep.net/piwik.php?idsite=11" style="border:0;" alt="" /></p></noscript>
-  <!-- End Piwik Code -->
+  {% if config.PRODUCTION_MODE %}
+    <!-- Piwik -->
+    <script type="text/javascript">
+    var _paq = _paq || [];
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+      var u="//piwik.inspirehep.net/";
+      _paq.push(['setTrackerUrl', u+'piwik.php']);
+      _paq.push(['setSiteId', 11]);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+    })();
+    </script>
+    <noscript><p><img src="//piwik.inspirehep.net/piwik.php?idsite=11" style="border:0;" alt="" /></p></noscript>
+    <!-- End Piwik Code -->
+  {% endif %}
 {% endblock trackingcode %}
 
 {%- block page_header -%}
