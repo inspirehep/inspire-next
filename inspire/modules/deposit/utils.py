@@ -21,6 +21,8 @@
 from itertools import groupby
 import collections
 
+from invenio.modules.workflows.models import BibWorkflowObject
+
 
 def filter_empty_helper(keys=None):
     """ Remove empty elements from a list."""
@@ -95,6 +97,17 @@ def clean_unwanted_metadata(metadata_keys, metadata_values, include_hidden=False
     return d.keys(), d.values()
 
 
+def add_extra_data(d_id):
+    """Get depositions extra data."""
+    submission_data = BibWorkflowObject.query.get(d_id).get_extra_data().get('submission_data')
+    extra_data = {}
+    if submission_data:
+        extra_data = {'comments': submission_data.get('extra_comments'),
+                      'references': submission_data.get('references')}
+
+    return dict((k, v) for k, v in extra_data.iteritems() if v is not None)
+
+
 def humanize_keys(strings):
     """Humanize metadata keys.
 
@@ -112,6 +125,10 @@ def process_metadata_for_charts(submitted_depositions, group_by=None, include_hi
     metadata grouped by types, a dict with the metadata grouped and prepared for
     column charts and a list with all the metadata fields.
     """
+    metadata = []
+    for d in submitted_depositions:
+        metadata.append(d.get_latest_sip(sealed=True).metadata.update(add_extra_data(d.id)))
+
     metadata = [d.get_latest_sip(sealed=True).metadata for d in submitted_depositions]
     metadata_by_types = {}
     metadata_for_column = {}
