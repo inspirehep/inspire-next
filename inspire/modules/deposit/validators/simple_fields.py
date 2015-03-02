@@ -18,6 +18,7 @@
 #
 
 import six
+from datetime import datetime
 from wtforms.validators import ValidationError, StopValidation
 
 from invenio.base.globals import cfg
@@ -121,6 +122,21 @@ def pdf_validator(form, field):
 
     if field.data and guess_format_from_url(field.data) != ".pdf":
         raise StopValidation(message)
+
+
+def date_validator(form, field):
+    message = ("Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM"
+               " or YYYY.")
+    if field.data:
+        for date_format in ["%Y-%m-%d", "%Y-%m", "%Y"]:
+            try:
+                datetime.strptime(field.data, date_format).date()
+            except ValueError:
+                pass
+            else:
+                break
+        else:
+            raise StopValidation(message)
 
 
 class RequiredIfFiles(object):
