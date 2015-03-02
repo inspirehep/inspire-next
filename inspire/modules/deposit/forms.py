@@ -45,7 +45,7 @@ from .validators.dynamic_fields import AuthorsValidation
 from .filters import clean_empty_list
 from .validators.simple_fields import duplicated_doi_validator, \
     duplicated_arxiv_id_validator, arxiv_syntax_validation, \
-    pdf_validator
+    pdf_validator, date_validator
 
 #
 # Field class names
@@ -411,15 +411,17 @@ class LiteratureForm(WebDepositForm):
         widget_classes=THESIS_CLASS,
     )
 
-    thesis_date = fields.Date(
+    thesis_date = fields.TextField(
         label=_('Date of Submission'),
-        description='Format: YYYY-MM-DD.',
+        description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
+        validators=[date_validator],
         widget=defensedate_widget,
     )
 
-    defense_date = fields.Date(
+    defense_date = fields.TextField(
         label=_('Date of Defense'),
-        description='Format: YYYY-MM-DD.',
+        description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
+        validators=[date_validator],
         widget=defensedate_widget,
     )
 
@@ -606,6 +608,8 @@ class LiteratureForm(WebDepositForm):
     field_sizes = {
         'type_of_doc': 'col-xs-12 col-md-3',
         'wrap_nonpublic_note': 'col-md-9',
+        'defense_date': 'col-xs-12 col-md-4',
+        'thesis_date': 'col-xs-12 col-md-4',
         'degree_type': 'col-xs-12 col-md-3',
     }
 
