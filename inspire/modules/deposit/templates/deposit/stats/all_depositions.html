@@ -32,6 +32,7 @@ require(['js/deposit/stats/deposition_charts', 'bootstrap-datetimepicker', 'high
     var charts_data = {
       deposition_data: {{"{"}}{% for type_of_doc in stats %}'{{ type_of_doc }}': {{ stats[type_of_doc]|safe }}{% if not loop.last %}, {% endif %}
                          {% endfor %}{{"}"}},
+      dict_by_types: {{ dict_by_types|safe }},
       overall_depositions: {{ overall_metadata|safe }},
       columns_deposition_data: {{ metadata_for_column|safe }},
       metadata_categories: {{ metadata_categories|safe }},
@@ -66,9 +67,6 @@ require(['js/deposit/stats/deposition_charts', 'bootstrap-datetimepicker', 'high
 
       new chart({}).init(charts_data);
       $chart_type.change(function(){new chart({}).update(charts_data)});
-
-      // Build individual charts
-      new chart({}).generate_individual(charts_data);
 
       $('#submit').on("click", function(){
         new chart({}).filter(api_url);
@@ -133,16 +131,6 @@ require(['js/deposit/stats/deposition_charts', 'bootstrap-datetimepicker', 'high
     <div class="well">
         <button type="button" id="include-hidden" class="btn btn-default pull-right">{{ _('include hidden fields') }}</button>
         <div id="deposition-charts"></div>
-    </div>
-
-    <div class="row">
-    {% if stats|length > 1 %}
-      {% for type_of_doc in stats | batch(2, '&nbsp;') %}
-          {% for doc in type_of_doc %}
-          <div class="well col-md-6" id="chart-{{ doc }}"></div>
-          {% endfor %}
-      {% endfor %}
-    {% endif %}
     </div>
 
     <div class="row" style="margin-top: 22px;">
