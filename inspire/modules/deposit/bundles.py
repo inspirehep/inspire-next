@@ -30,7 +30,7 @@ _deposit_js.contents.append('js/deposit/inspire_init.js')
 
 _deposit_js.bower.update({
     'buckets': 'git://github.com/mauriciosantos/buckets.git',
-    'bootstrap-multiselect': '~0.9.4',
+    'bootstrap-multiselect': '0.9.10',
     'readmore': '*',
 })
 
