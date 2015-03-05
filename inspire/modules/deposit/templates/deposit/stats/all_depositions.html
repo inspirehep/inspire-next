@@ -54,6 +54,12 @@ require(['js/deposit/stats/deposition_charts', 'bootstrap-datetimepicker', 'high
     $(function(){
       $('#since_date').datetimepicker(datepicker_options);
       $('#until_date').datetimepicker(datepicker_options);
+      $("#since_date").on("dp.change",function (e) {
+        $('#until_date').data("DateTimePicker").minDate(e.date);
+      });
+      $("#until_date").on("dp.change",function (e) {
+        $('#since_date').data("DateTimePicker").maxDate(e.date);
+      });
 
       // Radialize the colors
       Highcharts.getOptions().colors = new chart({}).radial_colors();
