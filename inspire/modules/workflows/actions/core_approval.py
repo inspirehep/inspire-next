@@ -87,12 +87,14 @@ class core_approval(object):
         """Resolve the action taken in the approval action."""
         from flask import request
         value = request.form.get("value", None)
+        upload_pdf = request.form.get("pdf_submission", False)
 
         bwo.remove_action()
         extra_data = bwo.get_extra_data()
         extra_data["approved"] = value in ('accept', 'accept_core')
         extra_data["core"] = value == "accept_core"
         extra_data["reason"] = request.form.get("text", "")
+        extra_data["pdf_upload"] = True if upload_pdf == "true" else False
         bwo.set_extra_data(extra_data)
         bwo.save()
         bwo.continue_workflow(delayed=True)

@@ -384,3 +384,18 @@ def add_note_entry(obj, eng):
     else:
         metadata['note'] = [entry]
     deposition.update()
+
+
+def user_pdf_get(obj, eng):
+    """Upload user PDF file, if requested."""
+    if obj.extra_data.get('pdf_upload', False):
+        fft = {'url': obj.extra_data.get('submission_data').get('pdf'),
+               'docfile_type': 'INSPIRE-PUBLIC'}
+        deposition = Deposition(obj)
+        metadata = deposition.get_latest_sip(sealed=False).metadata
+        if metadata.get('fft'):
+            metadata['fft'].append(fft)
+        else:
+            metadata['fft'] = [fft]
+        deposition.update()
+        obj.log.info("PDF file added to FFT.")
