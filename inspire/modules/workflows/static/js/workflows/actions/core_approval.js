@@ -23,7 +23,8 @@ define(
   [
     'jquery',
     'flight/lib/component',
-    'hgn!js/workflows/templates/action_alert'
+    'hgn!js/workflows/templates/action_alert',
+    'bootstrap-switch'
   ],
   function(
     $,
@@ -53,7 +54,8 @@ define(
         actionAcceptSelector: ".core-approval-action-accept",
         actionRejectSelector: ".core-approval-action-reject",
         actionGroupSelector: ".core-approval-action",
-        action_url: ""
+        action_url: "",
+        pdfCheckboxSelector: "[name='submission-data-pdf']",
       });
 
       this.get_action_values = function (elem) {
@@ -61,6 +63,10 @@ define(
           "value": elem.data("value"),
           "objectid": elem.data("objectid"),
         }
+      };
+
+      this.get_pdf_submission_value = function () {
+        return $(this.attr.pdfCheckboxSelector).prop("checked");
       };
 
       this.post_request = function(data, element) {
@@ -79,6 +85,11 @@ define(
       this.onAccept = function (ev, data) {
         var element = $(data.el);
         var payload = this.get_action_values(element);
+        var pdf_submission = this.get_pdf_submission_value();
+        if (pdf_submission) {
+          payload["pdf_submission"] = pdf_submission;
+        }
+
         var $this = this;
 
         jQuery.ajax({
@@ -89,6 +100,7 @@ define(
             $this.post_request(data, element);
           }
         });
+        this.pdf_submission_readonly();
       };
 
       this.preRejection = function (ev, data) {
@@ -109,6 +121,11 @@ define(
             $this.post_request(data, element);
           }
         });
+        this.pdf_submission_readonly();
+      }
+
+      this.pdf_submission_readonly = function () {
+        $(this.attr.pdfCheckboxSelector).bootstrapSwitch("toggleReadonly");
       }
 
       this.after('initialize', function() {
@@ -118,6 +135,15 @@ define(
           actionRejectSelector: this.preRejection
         });
         this.on("rejectConfirmed", this.doRejection)
+        $(this.attr.pdfCheckboxSelector).bootstrapSwitch({
+          "onText": "PUBLIC",
+          "offText": "PRIVATE",
+          "size": "mini",
+        });
+
+        if ($(this.attr.pdfCheckboxSelector).prop('disabled')) {
+          this.pdf_submission_readonly();
+        }
         console.log("Core approval init");
       });
     }

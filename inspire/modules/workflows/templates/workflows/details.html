@@ -45,7 +45,16 @@
     <pre>{{ submission_data.extra_comments }}</pre>
   {% endif %}
   {% if workflow_class.object_type == "submission" and submission_data.pdf %}
+  <div class="col-md-10">
     <p>PDF from user: <a href="{{ submission_data.pdf }}">{{ submission_data.pdf }}</a> <i class="fa fa-file-pdf-o"></i></p>
+  </div>
+  <div class="col-md-2 pull-right">
+  {% if bwobject.get_extra_data().get('pdf_upload') != None %}
+    <input type="checkbox" name="submission-data-pdf" {% if bwobject.get_extra_data().get('pdf_upload') == True %}checked{% endif %} disabled>
+  {% else %}
+    <input type="checkbox" name="submission-data-pdf" checked>
+  {% endif %}
+  </div>
   {% endif %}
 
   <div role="tabpanel">
