@@ -1,0 +1,109 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{% macro print_highlited(name, field) %}
+  {% if field[0] == "<" %}
+    {{ field|safe }}
+  {% elif name in profile_config.url_names %}
+    <a href="{{ field }}">{{ field }}</a>
+  {% elif name in profile_config.email_names %}
+    <a href="mailto:{{ field }}">{{ field }}</a>
+  {% else %}
+    {{ field }}
+  {% endif %}
+{% endmacro %}
+
+{% macro personal_details_sequence(name, record, field, is_last) %}
+  {% if field|count == 0 %}
+    {{ print_highlited(name, record) }}
+    {% if not is_last %}
+      <br/>
+    {% endif %}
+{% else %}
+    {{ personal_details_sequence(name, record[field[0]], field[1:], is_last) }}
+  {% endif %}
+{% endmacro %}
+
+{% macro personal_details_row(name, plural_name, record, field) %}
+  {% if record[field[0]] %}
+    {% if record[field[0]] is sequence %}
+      {% if record[field[0]]|count %}
+      <tr>
+        <th>{{ name if record[field[0]]|count < 2 else plural_name }}</th>
+        <td>
+          {% for key in record[field[0]] %}
+            {{ personal_details_sequence(name, key, field[1:], loop.last) }}
+          {% endfor %}
+        </td>
+      </tr>
+      {% endif %}
+    {% elif field|count == 1 %}
+      <tr>
+        <th>{{name}}</th>
+        <td>{{record[field[0]]}}</td>
+      </tr>
+    {% else %}
+      {{ personal_details_row(name, plural_name, record[field[0]], field[1:])}}
+    {% endif %}
+  {% endif %}
+{% endmacro %}
+
+<div class="row">
+  <div class="col-lg-9 left-col">
+    <table class="table no-first-border table-condensed table-hover table-responsive"> 
+      {{ personal_details_row( _('Email'), _('Emails'), record, ('emails',)) }}
+      {{ personal_details_row( _('Field'), _('Fields'), record, ('field_categories', 'name')) }}
+      {{ personal_details_row( _('Affiliation'), _('Affiliations'), record, ('positions_list',)) }}
+      {% for id in record.ids %}
+        {% if id.type == 'orcid' %}
+        <tr>
+          <th>{{ _('Identifiers') }}</th>
+          <td>ORCID: <a href='http://www.orcid.org/{{ id.value }}'>{{ id.value }}</a></td>
+        </tr>
+        {% endif %}
+      {% endfor %}
+      {% if record.urls|count > 0 %}
+        <tr>
+          <th>{{ _('Links') }}</th>
+          <td>
+            {% for url in record.urls %}
+              {% if not url.description %}
+                <a href='{{ url.value }}' class='fa fa-lg fa-home'></a>
+              {% endif %}
+            {% endfor %}
+          </td>
+        </tr>
+      {% endif %}
+    </table>
+  </div>
+  <div class="col-lg-3 right-col">
+    <a href="">
+    {% if record.image %}
+      <img class="pull-right img-responsive img-rounded avatar" src="{{ record.image }}"/>
+    {% elif owner %}
+      <img class="pull-right img-responsive img-rounded avatar" src="/img/avatar.png"/>
+    {% endif %}
+    </a>
+    <div class="update-details pull-right">
+      {% if owner %}
+      <a class="btn btn-primary" href="">{{ _('Update details') }}</a>
+      {% endif %}
+    </div>
+  </div>
+</div>

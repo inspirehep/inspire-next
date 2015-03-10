@@ -18,7 +18,6 @@
  * In applying this licence, CERN does not waive the privileges and immunities
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
-
  */
 
 require.config({
@@ -57,6 +56,16 @@ require.config({
     "jasmine-initialization": "js/jasmine/initialization_checker",
     // INSPIRE
     "bootstrap-multiselect": "vendors/bootstrap-multiselect/dist/js/bootstrap-multiselect",
+    "bootstrap-switch": "vendors/bootstrap-switch/dist/js/bootstrap-switch",
+    "datatables-bootstrap3": "vendors/datatables-bootstrap3/BS3/assets/js/datatables",
+    "datatables-responsive": "vendors/datatables-responsive/js/dataTables.responsive",
+    "jquery.flot": "vendors/flot/jquery.flot",
+    "jquery.flot.axislabels": "vendors/flot-axislabels/jquery.flot.axislabels",
+    "jquery.flot.tooltip": "vendors/flot.tooltip/js/jquery.flot.tooltip",
+    "jquery.flot.orderbars": "vendors/flot.orderbars/js/jquery.flot.orderBars",
+    "jquery.flot.resize": "vendors/flot/jquery.flot.resize",
+    "jquery.flot.navigate": "vendors/flot/jquery.flot.navigate",
+    "growraf": "vendors/growraf/jquery.flot.growraf",
     "readmore": "vendors/readmore/readmore",
     "buckets": "vendors/buckets/buckets",
     "feedback": "js/feedback/feedback",
@@ -164,16 +173,47 @@ require.config({
       deps: ["jquery"],
       exports: "$.fn.multiselect"
     },
+    "bootstrap-switch": {
+      deps: ["jquery", "bootstrap"],
+    },
+    "datatables-bootstrap3": {
+      deps: ["datatables"]
+    },
+    "datatables-responsive": {
+      deps: ["datatables"]
+    },
     "readmore": {
       deps: ["jquery"],
       exports: "$.fn.readmore"
     },
-    "html2canvas" : {
+    "html2canvas": {
       deps: ["jquery"]
     },
-    "highcharts" : {
+    "highcharts": {
       deps: ["jquery"],
       exports: "Highcharts"
+    },
+    "jquery.flot": {
+      deps: ["jquery"],
+      exports: '$.plot'
+    },
+    "jquery.flot.axislabels": {
+      deps: ["jquery.flot"]
+    },
+    "jquery.flot.navigate": {
+      deps: ["jquery.flot"]
+    },
+    "jquery.flot.tooltip": {
+      deps: ["jquery.flot", "jquery.flot.axislabels"]
+    },
+    "jquery.flot.resize": {
+      deps: ["jquery.flot"]
+    },
+    "jquery.flot.orderbars": {
+      deps: ["jquery.flot"]
+    },
+    "growraf": {
+      deps: ["jquery.flot"]
     },
   }
 });
