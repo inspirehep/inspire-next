@@ -57,7 +57,7 @@ setup(
     install_requires=[
         "rt",
         "HarvestingKit>=0.3",
-        "mixer",
+        "mixer==4.9.5",
         "ipython",
         "Babel>=1.3",
         "Invenio",
