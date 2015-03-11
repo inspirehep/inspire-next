@@ -21,7 +21,6 @@
 """Inspire deposit workflow tasks."""
 
 import os
-import requests
 from tempfile import mkstemp
 
 from invenio.base.globals import cfg
@@ -31,6 +30,19 @@ from invenio.modules.deposit.models import (
     FilenameAlreadyExists
 )
 from invenio.modules.deposit.storage import DepositionStorage
+from invenio.utils.filedownload import download_url
+
+
+#
+# Helper functions
+#
+def save_deposition_file(deposition, filename, file_path):
+    """Save files in Deposition."""
+    with open(file_path) as fd:
+        df = DepositionFile(backend=DepositionStorage(deposition.id))
+        if df.save(fd, filename=filename):
+            deposition.add_file(df)
+            deposition.save()
 
 
 #
@@ -46,31 +58,31 @@ def arxiv_fft_get(obj, eng):
         arxiv_pdf_url = cfg.get("ARXIV_PDF_URL", "http://arxiv.org/pdf/") + \
             "{0}.{1}"
 
-        arxiv_pdf = requests.get(arxiv_pdf_url.format(
-                                 metadata['arxiv_id'], "pdf"))
-
         from invenio.config import CFG_TMPSHAREDDIR
         arxiv_file, arxiv_file_path = mkstemp(
             prefix="%s_" % (metadata['arxiv_id'].replace("/", "_")),
             suffix='.pdf',
             dir=CFG_TMPSHAREDDIR,
         )
-
-        os.write(arxiv_file, arxiv_pdf.content)
         os.close(arxiv_file)
 
-        with open(arxiv_file_path) as fd:
-            # To get 1111.2222.pdf as filename.
-            filename = "{0}.pdf".format(metadata['arxiv_id'].replace("/", "_"))
+        download_url(url=arxiv_pdf_url.format(
+                       metadata['arxiv_id'], "pdf"),
+                     content_type="pdf",
+                     download_to_file=arxiv_file_path)
 
-            df = DepositionFile(backend=DepositionStorage(deposition.id))
-            if df.save(fd, filename=filename):
-                try:
-                    deposition.add_file(df)
-                    deposition.save()
-                except FilenameAlreadyExists as e:
-                    df.delete()
-                    obj.log.error(str(e))
+        # To get 1111.2222.pdf as filename.
+        filename = "{0}.pdf".format(metadata['arxiv_id'].replace("/", "_"))
+
+        try:
+            try:
+                save_deposition_file(deposition,
+                                     filename,
+                                     arxiv_file_path)
+            except FilenameAlreadyExists:
+                obj.log.error("PDF file not saved: filename already exists.")
+        except Exception as e:
+            obj.log.error("PDF file not saved: {}.".format(e.message))
 
 
 def add_submission_extra_data(obj, eng):
