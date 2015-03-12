@@ -19,7 +19,6 @@
 
 {% macro display_classification_brief(results) -%}
     {% if results %}
-    <ul class="list-inline">
         {% set result_full = results.get('classification_full') %}
         {% set result_fast = results.get('classification_fast') %}
         {% set result = [] %}
@@ -29,11 +28,18 @@
             {% do result.append(result_fast[0].get('result', {}).get('dict', {}).get('complete_output')) %}
         {% endif %}
         {% if result %}
-            <li><strong>{{ _('Core keywords') }}:</strong> {{ result[0]['Core keywords']|length }}</li>
+            {% set core_keywords = result[0]['Core keywords'].keys() %}
+            <ul class="list-inline">
+                <li><strong>{{ _('Core keywords') }} ({{ result[0]['Core keywords']|length }}):</strong></li>
+                {% for keyword in core_keywords %}
+                {%- if loop.index < 10 %}
+                    <li>{{keyword}}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
         {% endif %}
         {% if result_fast %}
-            <li>{{ _("(This task run at fast mode taking into consideration only the title and the abstract)") }}</li>
+            <em>{{ _("(This task run at fast mode taking into consideration only the title and the abstract)") }}</em>
         {% endif %}
-    </ul>
     {% endif %}
 {%- endmacro %}
