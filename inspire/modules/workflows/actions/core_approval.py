@@ -22,7 +22,7 @@
 
 """Approval action for INSPIRE."""
 
-from flask import render_template, url_for
+from flask import render_template, url_for, current_app
 
 from invenio.base.i18n import _
 from invenio.modules.accounts.models import User
@@ -38,13 +38,17 @@ class core_approval(object):
 
     def render_mini(self, obj):
         """Method to render the minified action."""
-        user = User.query.get(obj.id_user)
-        d = Deposition(obj)
-        rejection_text = "\n".join([line.strip() for line in render_template(
-            'deposit/tickets/user_rejected.html',
-            user=user,
-            title=d.title
-        ).split("\n")])
+        try:
+            user = User.query.get(obj.id_user)
+            d = Deposition(obj)
+            rejection_text = "\n".join([line.strip() for line in render_template(
+                'deposit/tickets/user_rejected.html',
+                user=user,
+                title=d.title
+            ).split("\n")])
+        except:
+            current_app.logger.exception("Failed to load rejection_text")
+            rejection_text = ""
         return render_template(
             'workflows/actions/core_approval_mini.html',
             message=obj.get_action_message(),
@@ -55,13 +59,17 @@ class core_approval(object):
 
     def render(self, obj):
         """Method to render the action."""
-        user = User.query.get(obj.id_user)
-        d = Deposition(obj)
-        rejection_text = "\n".join([line.strip() for line in render_template(
-            'deposit/tickets/user_rejected.html',
-            user=user,
-            title=d.title
-        ).split("\n")])
+        try:
+            user = User.query.get(obj.id_user)
+            d = Deposition(obj)
+            rejection_text = "\n".join([line.strip() for line in render_template(
+                'deposit/tickets/user_rejected.html',
+                user=user,
+                title=d.title
+            ).split("\n")])
+        except:
+            current_app.logger.exception("Failed to load rejection_text")
+            rejection_text = ""
         return {
             "side": render_template('workflows/actions/core_approval_side.html',
                                     message=obj.get_action_message(),
