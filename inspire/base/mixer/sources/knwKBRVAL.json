@@ -164153,5 +164153,3840 @@
         "id_knwKB": 14,
         "m_key": "quant-ph",
         "m_value": "General Physics"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "ATLAS",
+        "m_value": "ATLAS\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "STAR",
+        "m_value": "STAR\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "dark matter",
+        "m_value": "dark matter\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "dark energy",
+        "m_value": "dark energy\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "a0(1320)",
+        "m_value": "a0(1320)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "a0(1450)",
+        "m_value": "a0(1450)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "a0(980)",
+        "m_value": "a0(980)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "a1(1260)",
+        "m_value": "a1(1260)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "a1(1640)",
+        "m_value": "a1(1640)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "a2(1320)",
+        "m_value": "a2(1320)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "a2(1700)",
+        "m_value": "a2(1700)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "a3(2050)",
+        "m_value": "a3(2050)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "a4(2040)",
+        "m_value": "a4(2040)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "a6(2450)",
+        "m_value": "a6(2450)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "actinium",
+        "m_value": "actinium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "aluminum",
+        "m_value": "aluminum\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "americium",
+        "m_value": "americium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-B",
+        "m_value": "anti-B\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-B/s0",
+        "m_value": "anti-B/s0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-B0",
+        "m_value": "anti-B0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-bottom",
+        "m_value": "anti-bottom\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-charm",
+        "m_value": "anti-charm\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-D",
+        "m_value": "anti-D\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-D0",
+        "m_value": "anti-D0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-down",
+        "m_value": "anti-down\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-K",
+        "m_value": "anti-K\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-K0",
+        "m_value": "anti-K0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-n",
+        "m_value": "anti-n\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-p",
+        "m_value": "anti-p\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-strangeness",
+        "m_value": "anti-strangeness\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-top",
+        "m_value": "anti-top\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anti-up",
+        "m_value": "anti-up\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "antibaryon",
+        "m_value": "antibaryon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "antifermion",
+        "m_value": "antifermion\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "antihydrogen",
+        "m_value": "antihydrogen\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "antihyperon",
+        "m_value": "antihyperon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Antilambda",
+        "m_value": "Antilambda\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Antilambda/b0",
+        "m_value": "Antilambda/b0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Antilambda/c+",
+        "m_value": "Antilambda/c+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "antilepton",
+        "m_value": "antilepton\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "antimony",
+        "m_value": "antimony\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "antineutrino",
+        "m_value": "antineutrino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "antineutrino/e",
+        "m_value": "antineutrino/e\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "antineutrino/L",
+        "m_value": "antineutrino/L\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "antineutrino/mu",
+        "m_value": "antineutrino/mu\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "antineutrino/tau",
+        "m_value": "antineutrino/tau\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "antinucleon",
+        "m_value": "antinucleon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Antiomega",
+        "m_value": "-Antiomega-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "antiparticle",
+        "m_value": "antiparticle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "antiquark",
+        "m_value": "antiquark\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Antisigma",
+        "m_value": "-Antisigma-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Antisigma+",
+        "m_value": "Antisigma+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Antisigma0",
+        "m_value": "Antisigma0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Antixi",
+        "m_value": "-Antixi-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Antixi0",
+        "m_value": "Antixi0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anything",
+        "m_value": "-anything-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anything+",
+        "m_value": "anything+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "anything0",
+        "m_value": "anything0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "argon",
+        "m_value": "argon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "arsenic",
+        "m_value": "arsenic\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "astatine",
+        "m_value": "astatine\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "atom",
+        "m_value": "atom\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "axial-vector meson",
+        "m_value": "axial-vector meson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "axigluon",
+        "m_value": "axigluon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "axino",
+        "m_value": "axino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "axion",
+        "m_value": "axion\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "axion-like particles",
+        "m_value": "axion-like particles\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B",
+        "m_value": "-B-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B*(5320)",
+        "m_value": "B*(5320)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B*2(5732)",
+        "m_value": "B*2(5732)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B+",
+        "m_value": "B+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B/c",
+        "m_value": "-B/c-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B/c*",
+        "m_value": "B/c*\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B/c+",
+        "m_value": "B/c+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B/s",
+        "m_value": "B/s\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B/s*(5430)",
+        "m_value": "B/s*(5430)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B/s*2(5880)",
+        "m_value": "B/s*2(5880)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B/s0",
+        "m_value": "B/s0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B/s1(5890)",
+        "m_value": "B/s1(5890)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B/s2*(5840)",
+        "m_value": "B/s2*(5840)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B/s2*(5910)",
+        "m_value": "B/s2*(5910)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B/sJ*(5850)",
+        "m_value": "B/sJ*(5850)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B0",
+        "m_value": "B0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "b1(1235)",
+        "m_value": "b1(1235)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "B1(5721)",
+        "m_value": "B1(5721)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "barium",
+        "m_value": "barium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "baryon",
+        "m_value": "baryon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "baryon resonance",
+        "m_value": "baryon resonance\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "baryonium",
+        "m_value": "baryonium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "berkelium",
+        "m_value": "berkelium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "beryllium",
+        "m_value": "beryllium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "bilepton",
+        "m_value": "bilepton\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "bino",
+        "m_value": "bino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "bismuth",
+        "m_value": "bismuth\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "boron",
+        "m_value": "boron\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "boson",
+        "m_value": "boson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "bottom",
+        "m_value": "bottom\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "bottom baryon",
+        "m_value": "bottom baryon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "bottom meson",
+        "m_value": "bottom meson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "bottom particle",
+        "m_value": "bottom particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "bottom'",
+        "m_value": "bottom'\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "bottomonium",
+        "m_value": "bottomonium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "bound state",
+        "m_value": "bound state\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "bromine",
+        "m_value": "bromine\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "cadmium",
+        "m_value": "cadmium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "calcium",
+        "m_value": "calcium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "californium",
+        "m_value": "californium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "carbon",
+        "m_value": "carbon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "cerium",
+        "m_value": "cerium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "cesium",
+        "m_value": "cesium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "charged particle",
+        "m_value": "charged particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chargino",
+        "m_value": "chargino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "charm",
+        "m_value": "charm\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "charmed baryon",
+        "m_value": "charmed baryon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "charmed meson",
+        "m_value": "charmed meson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "charmed particle",
+        "m_value": "charmed particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "charmonium",
+        "m_value": "charmonium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi mesons",
+        "m_value": "chi mesons\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/b(10539)",
+        "m_value": "chi/b(10539)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/b0(10235)",
+        "m_value": "chi/b0(10235)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/b0(9860)",
+        "m_value": "chi/b0(9860)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/b1(10255)",
+        "m_value": "chi/b1(10255)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/b1(10608)",
+        "m_value": "chi/b1(10608)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/b1(10650)",
+        "m_value": "chi/b1(10650)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/b1(9890)",
+        "m_value": "chi/b1(9890)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/b2(10270)",
+        "m_value": "chi/b2(10270)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/b2(9915)",
+        "m_value": "chi/b2(9915)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/c0(3415)",
+        "m_value": "chi/c0(3415)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/c1(3510)",
+        "m_value": "chi/c1(3510)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/c2(3555)",
+        "m_value": "chi/c2(3555)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/c2(3930)",
+        "m_value": "chi/c2(3930)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/d",
+        "m_value": "chi/d\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chi/s",
+        "m_value": "chi/s\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chlorine",
+        "m_value": "chlorine\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "chromium",
+        "m_value": "chromium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "cobalt",
+        "m_value": "cobalt\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "colored particle",
+        "m_value": "colored particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "copper",
+        "m_value": "copper\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "curium",
+        "m_value": "curium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D",
+        "m_value": "-D-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D(2440)",
+        "m_value": "D(2440)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D*(2010)",
+        "m_value": "-D*(2010)-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D*(2010)+",
+        "m_value": "D*(2010)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D*(2010)0",
+        "m_value": "D*(2010)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D*(2640)",
+        "m_value": "D*(2640)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D*0(2400)",
+        "m_value": "D*0(2400)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D*0(2400)+",
+        "m_value": "D*0(2400)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D*0(2400)0",
+        "m_value": "D*0(2400)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D*2(2460)",
+        "m_value": "D*2(2460)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D*2(2460)+",
+        "m_value": "D*2(2460)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D*2(2460)0",
+        "m_value": "D*2(2460)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D+",
+        "m_value": "D+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D-particle",
+        "m_value": "D-particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/s",
+        "m_value": "-D/s-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/s(2564)",
+        "m_value": "D/s(2564)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/s*(2110)",
+        "m_value": "-D/s*(2110)-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/s*(2110)+",
+        "m_value": "D/s*(2110)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/s*(2790)",
+        "m_value": "D/s*(2790)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/s*2(2536)",
+        "m_value": "D/s*2(2536)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/s*2(2573)",
+        "m_value": "D/s*2(2573)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/s+",
+        "m_value": "D/s+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/s0*(2317)",
+        "m_value": "D/s0*(2317)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/s1(2460)",
+        "m_value": "D/s1(2460)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/s1(2536)",
+        "m_value": "-D/s1(2536)-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/s1(2536)+",
+        "m_value": "D/s1(2536)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/s1(2700)",
+        "m_value": "D/s1(2700)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/s1(2700)+",
+        "m_value": "D/s1(2700)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/sJ*(2632)",
+        "m_value": "D/sJ*(2632)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/sJ*(2860)",
+        "m_value": "D/sJ*(2860)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D/sJ*(3040)",
+        "m_value": "D/sJ*(3040)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D0",
+        "m_value": "D0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D1(2420)",
+        "m_value": "D1(2420)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D1(2420)0",
+        "m_value": "D1(2420)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "D1(2430)0",
+        "m_value": "D1(2430)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta",
+        "m_value": "Delta\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1232)",
+        "m_value": "-Delta(1232)-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1232)+",
+        "m_value": "Delta(1232)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1232)++",
+        "m_value": "Delta(1232)++\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1232)0",
+        "m_value": "Delta(1232)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1600)",
+        "m_value": "Delta(1600)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1620)",
+        "m_value": "Delta(1620)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1700)",
+        "m_value": "Delta(1700)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1750)",
+        "m_value": "Delta(1750)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1900)",
+        "m_value": "Delta(1900)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1905)",
+        "m_value": "Delta(1905)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1910)",
+        "m_value": "Delta(1910)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1920)",
+        "m_value": "Delta(1920)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1930)",
+        "m_value": "Delta(1930)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1940)",
+        "m_value": "Delta(1940)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(1950)",
+        "m_value": "Delta(1950)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(2000)",
+        "m_value": "Delta(2000)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(2150)",
+        "m_value": "Delta(2150)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(2200)",
+        "m_value": "Delta(2200)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(2300)",
+        "m_value": "Delta(2300)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(2350)",
+        "m_value": "Delta(2350)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(2390)",
+        "m_value": "Delta(2390)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(2400)",
+        "m_value": "Delta(2400)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(2420)",
+        "m_value": "Delta(2420)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(2750)",
+        "m_value": "Delta(2750)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Delta(2950)",
+        "m_value": "Delta(2950)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "deuterium",
+        "m_value": "deuterium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "deuteron",
+        "m_value": "deuteron\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "dibaryon",
+        "m_value": "dibaryon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "dilepton",
+        "m_value": "dilepton\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "dimuon",
+        "m_value": "dimuon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "diquark",
+        "m_value": "diquark\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "down",
+        "m_value": "down\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "e*",
+        "m_value": "e*\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "einsteinium",
+        "m_value": "einsteinium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "electromagnetic field",
+        "m_value": "electromagnetic field\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "electron",
+        "m_value": "electron\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "elements",
+        "m_value": "elements\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "erbium",
+        "m_value": "erbium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta",
+        "m_value": "eta\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta(1295)",
+        "m_value": "eta(1295)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta(1405)",
+        "m_value": "eta(1405)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta(1440)",
+        "m_value": "eta(1440)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta(1475)",
+        "m_value": "eta(1475)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta(1760)",
+        "m_value": "eta(1760)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta(2100)",
+        "m_value": "eta(2100)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta(2225)",
+        "m_value": "eta(2225)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta(958)",
+        "m_value": "eta(958)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta/b",
+        "m_value": "eta/b\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta/c(2980)",
+        "m_value": "eta/c(2980)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta/c(3590)",
+        "m_value": "eta/c(3590)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta/s",
+        "m_value": "eta/s\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta/t",
+        "m_value": "eta/t\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta2(1645)",
+        "m_value": "eta2(1645)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "eta2(1870)",
+        "m_value": "eta2(1870)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "europium",
+        "m_value": "europium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "excited nucleus",
+        "m_value": "excited nucleus\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "extended particle",
+        "m_value": "extended particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(1240)",
+        "m_value": "f0(1240)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(1300)",
+        "m_value": "f0(1300)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(1370)",
+        "m_value": "f0(1370)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(1400)",
+        "m_value": "f0(1400)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(1500)",
+        "m_value": "f0(1500)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(1525)",
+        "m_value": "f0(1525)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(1590)",
+        "m_value": "f0(1590)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(1710)",
+        "m_value": "f0(1710)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(1750)",
+        "m_value": "f0(1750)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(1790)",
+        "m_value": "f0(1790)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(2020)",
+        "m_value": "f0(2020)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(2100)",
+        "m_value": "f0(2100)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(2200)",
+        "m_value": "f0(2200)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(2330)",
+        "m_value": "f0(2330)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(600)",
+        "m_value": "f0(600)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f0(980)",
+        "m_value": "f0(980)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f1(1285)",
+        "m_value": "f1(1285)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f1(1420)",
+        "m_value": "f1(1420)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f1(1510)",
+        "m_value": "f1(1510)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f2(1270)",
+        "m_value": "f2(1270)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f2(1430)",
+        "m_value": "f2(1430)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f2(1520)",
+        "m_value": "f2(1520)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f2(1525)",
+        "m_value": "f2(1525)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f2(1565)",
+        "m_value": "f2(1565)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f2(1640)",
+        "m_value": "f2(1640)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f2(1810)",
+        "m_value": "f2(1810)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f2(1910)",
+        "m_value": "f2(1910)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f2(1950)",
+        "m_value": "f2(1950)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f2(2010)",
+        "m_value": "f2(2010)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f2(2150)",
+        "m_value": "f2(2150)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f2(2175)",
+        "m_value": "f2(2175)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f2(2300)",
+        "m_value": "f2(2300)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f2(2340)",
+        "m_value": "f2(2340)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f4(2050)",
+        "m_value": "f4(2050)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f4(2300)",
+        "m_value": "f4(2300)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "f6(2510)",
+        "m_value": "f6(2510)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "fermion",
+        "m_value": "fermion\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "fJ(2220)",
+        "m_value": "fJ(2220)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "flavon",
+        "m_value": "flavon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "flavor",
+        "m_value": "flavor\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "francium",
+        "m_value": "francium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "gadolinium",
+        "m_value": "gadolinium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Galileon",
+        "m_value": "Galileon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "gallium",
+        "m_value": "gallium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "gauge boson",
+        "m_value": "gauge boson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "gaugino",
+        "m_value": "gaugino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "germanium",
+        "m_value": "germanium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "glueball",
+        "m_value": "glueball\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "gluino",
+        "m_value": "gluino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "gluon",
+        "m_value": "gluon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "gold",
+        "m_value": "gold\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Goldstino",
+        "m_value": "Goldstino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Goldstone particle",
+        "m_value": "Goldstone particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "graviphoton",
+        "m_value": "graviphoton\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "gravitino",
+        "m_value": "gravitino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "graviton",
+        "m_value": "graviton\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "H baryon",
+        "m_value": "H baryon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "h/b(9899)",
+        "m_value": "h/b(9899)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "h/c(3526)",
+        "m_value": "h/c(3526)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "h1(1170)",
+        "m_value": "h1(1170)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "h1(1380)",
+        "m_value": "h1(1380)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "h1(1595)",
+        "m_value": "h1(1595)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "hadron",
+        "m_value": "-hadron-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "hadron+",
+        "m_value": "hadron+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "hadronium",
+        "m_value": "hadronium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "hafnium",
+        "m_value": "hafnium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "heavy ion",
+        "m_value": "heavy ion\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "heavy lepton",
+        "m_value": "heavy lepton\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "heavy quark",
+        "m_value": "heavy quark\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "helium",
+        "m_value": "helium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Higgs particle",
+        "m_value": "Higgs particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Higgsino",
+        "m_value": "Higgsino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "holmium",
+        "m_value": "holmium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "hydrogen",
+        "m_value": "hydrogen\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "hypernucleus",
+        "m_value": "hypernucleus\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "hyperon",
+        "m_value": "hyperon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "hyperonic atom",
+        "m_value": "hyperonic atom\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "hyperphoton",
+        "m_value": "hyperphoton\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "indium",
+        "m_value": "indium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "intermediate boson",
+        "m_value": "intermediate boson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "iodine",
+        "m_value": "iodine\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "ion",
+        "m_value": "ion\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "iridium",
+        "m_value": "iridium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "iron",
+        "m_value": "iron\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "J/psi(3100)",
+        "m_value": "J/psi(3100)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "jet",
+        "m_value": "jet\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K",
+        "m_value": "-K-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K(1460)",
+        "m_value": "K(1460)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K(1630)",
+        "m_value": "K(1630)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K(1830)",
+        "m_value": "K(1830)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K(3100)",
+        "m_value": "K(3100)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K*(1410)",
+        "m_value": "K*(1410)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K*(1680)",
+        "m_value": "-K*(1680)-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K*(892)",
+        "m_value": "-K*(892)-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K*(892)+",
+        "m_value": "K*(892)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K*(892)0",
+        "m_value": "K*(892)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K*0(1430)",
+        "m_value": "K*0(1430)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K*0(1950)",
+        "m_value": "K*0(1950)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K*0(800)",
+        "m_value": "K*0(800)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K*2(1430)",
+        "m_value": "K*2(1430)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K*2(1980)",
+        "m_value": "K*2(1980)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K*3(1780)",
+        "m_value": "K*3(1780)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K*4(2045)",
+        "m_value": "K*4(2045)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K*5(2380)",
+        "m_value": "K*5(2380)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K+",
+        "m_value": "K+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K0",
+        "m_value": "K0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K0(L)",
+        "m_value": "K0(L)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K0(S)",
+        "m_value": "K0(S)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K1(1270)",
+        "m_value": "K1(1270)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K1(1400)",
+        "m_value": "K1(1400)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K1(1430)",
+        "m_value": "K1(1430)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K1(1650)",
+        "m_value": "K1(1650)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K2(1580)",
+        "m_value": "K2(1580)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K2(1770)",
+        "m_value": "K2(1770)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K2(1820)",
+        "m_value": "K2(1820)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K2(2250)",
+        "m_value": "K2(2250)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K3(2320)",
+        "m_value": "K3(2320)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "K4(2500)",
+        "m_value": "K4(2500)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "kaium",
+        "m_value": "kaium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "kappa meson",
+        "m_value": "kappa meson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "krypton",
+        "m_value": "krypton\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda",
+        "m_value": "Lambda\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(1405)",
+        "m_value": "Lambda(1405)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(1520)",
+        "m_value": "Lambda(1520)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(1600)",
+        "m_value": "Lambda(1600)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(1670)",
+        "m_value": "Lambda(1670)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(1690)",
+        "m_value": "Lambda(1690)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(1800)",
+        "m_value": "Lambda(1800)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(1810)",
+        "m_value": "Lambda(1810)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(1820)",
+        "m_value": "Lambda(1820)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(1830)",
+        "m_value": "Lambda(1830)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(1890)",
+        "m_value": "Lambda(1890)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(2000)",
+        "m_value": "Lambda(2000)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(2020)",
+        "m_value": "Lambda(2020)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(2100)",
+        "m_value": "Lambda(2100)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(2110)",
+        "m_value": "Lambda(2110)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(2325)",
+        "m_value": "Lambda(2325)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(2350)",
+        "m_value": "Lambda(2350)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda(2585)",
+        "m_value": "Lambda(2585)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda/b0",
+        "m_value": "Lambda/b0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda/b0(5912)",
+        "m_value": "Lambda/b0(5912)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda/b0(5920)",
+        "m_value": "Lambda/b0(5920)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda/c(2593)",
+        "m_value": "Lambda/c(2593)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda/c(2625)",
+        "m_value": "Lambda/c(2625)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda/c(2765)",
+        "m_value": "Lambda/c(2765)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda/c(2880)",
+        "m_value": "Lambda/c(2880)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda/c(2940)",
+        "m_value": "Lambda/c(2940)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Lambda/c+",
+        "m_value": "Lambda/c+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "lanthanum",
+        "m_value": "lanthanum\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "lawrencium",
+        "m_value": "lawrencium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "lead",
+        "m_value": "lead\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "lepton",
+        "m_value": "-lepton-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "lepton+",
+        "m_value": "lepton+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "leptoquark",
+        "m_value": "leptoquark\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "light nucleus",
+        "m_value": "light nucleus\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "lithium",
+        "m_value": "lithium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "LSP",
+        "m_value": "LSP\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "lutetium",
+        "m_value": "lutetium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "magnesium",
+        "m_value": "magnesium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "magnetic monopole",
+        "m_value": "magnetic monopole\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Majoron",
+        "m_value": "Majoron\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "mendelevium",
+        "m_value": "mendelevium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "mercury",
+        "m_value": "mercury\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "mesic atom",
+        "m_value": "mesic atom\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "meson",
+        "m_value": "meson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "meson resonance",
+        "m_value": "meson resonance\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "mirror particle",
+        "m_value": "mirror particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "missing-energy",
+        "m_value": "missing-energy\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "molecule",
+        "m_value": "molecule\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "molybdenum",
+        "m_value": "molybdenum\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "monopole",
+        "m_value": "monopole\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "multibaryon",
+        "m_value": "multibaryon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "multigluon",
+        "m_value": "multigluon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "multiquark",
+        "m_value": "multiquark\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "muon",
+        "m_value": "-muon-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "muon+",
+        "m_value": "muon+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "muonic atom",
+        "m_value": "muonic atom\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "muonium",
+        "m_value": "muonium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "n",
+        "m_value": "n\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(1440)",
+        "m_value": "N(1440)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(1520)",
+        "m_value": "N(1520)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(1535)",
+        "m_value": "N(1535)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(1650)",
+        "m_value": "N(1650)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(1675)",
+        "m_value": "N(1675)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(1680)",
+        "m_value": "N(1680)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(1700)",
+        "m_value": "N(1700)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(1710)",
+        "m_value": "N(1710)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(1720)",
+        "m_value": "N(1720)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(1900)",
+        "m_value": "N(1900)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(1990)",
+        "m_value": "N(1990)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(2000)",
+        "m_value": "N(2000)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(2070)",
+        "m_value": "N(2070)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(2080)",
+        "m_value": "N(2080)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(2090)",
+        "m_value": "N(2090)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(2100)",
+        "m_value": "N(2100)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(2190)",
+        "m_value": "N(2190)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(2200)",
+        "m_value": "N(2200)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(2220)",
+        "m_value": "N(2220)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(2250)",
+        "m_value": "N(2250)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(2600)",
+        "m_value": "N(2600)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "N(2700)",
+        "m_value": "N(2700)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "negative particle",
+        "m_value": "negative particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "neodymium",
+        "m_value": "neodymium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "neon",
+        "m_value": "neon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "neptunium",
+        "m_value": "neptunium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "neutral particle",
+        "m_value": "neutral particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "neutralino",
+        "m_value": "neutralino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "neutrino",
+        "m_value": "neutrino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "neutrino/e",
+        "m_value": "neutrino/e\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "neutrino/L",
+        "m_value": "neutrino/L\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "neutrino/mu",
+        "m_value": "neutrino/mu\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "neutrino/tau",
+        "m_value": "neutrino/tau\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "new particle",
+        "m_value": "new particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "nickel",
+        "m_value": "nickel\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "niobium",
+        "m_value": "niobium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "nitrogen",
+        "m_value": "nitrogen\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "nobelium",
+        "m_value": "nobelium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "nucleon",
+        "m_value": "nucleon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "nucleon resonance",
+        "m_value": "nucleon resonance\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "nucleus",
+        "m_value": "nucleus\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "nuclide",
+        "m_value": "nuclide\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "odderon",
+        "m_value": "odderon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "omega(1390)",
+        "m_value": "omega(1390)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "omega(1420)",
+        "m_value": "omega(1420)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "omega(1600)",
+        "m_value": "omega(1600)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "omega(1650)",
+        "m_value": "omega(1650)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Omega(2250)",
+        "m_value": "Omega(2250)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Omega(2380)",
+        "m_value": "Omega(2380)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Omega(2470)",
+        "m_value": "Omega(2470)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "omega(783)",
+        "m_value": "omega(783)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Omega",
+        "m_value": "-Omega-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Omega/b",
+        "m_value": "Omega/b\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Omega/c(2770)0",
+        "m_value": "Omega/c(2770)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Omega/c0",
+        "m_value": "Omega/c0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "omega3(1670)",
+        "m_value": "omega3(1670)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "one-boson",
+        "m_value": "one-boson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "one-meson",
+        "m_value": "one-meson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "one-particle",
+        "m_value": "one-particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "one-photon",
+        "m_value": "one-photon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "one-pion",
+        "m_value": "one-pion\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "osmium",
+        "m_value": "osmium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "oxygen",
+        "m_value": "oxygen\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "p",
+        "m_value": "p\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "palladium",
+        "m_value": "palladium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "particle",
+        "m_value": "particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "parton",
+        "m_value": "parton\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pentaquark",
+        "m_value": "pentaquark\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Phi(1020)",
+        "m_value": "Phi(1020)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Phi(1680)",
+        "m_value": "Phi(1680)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Phi(1860)",
+        "m_value": "Phi(1860)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Phi(2170)",
+        "m_value": "Phi(2170)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Phi3(1850)",
+        "m_value": "Phi3(1850)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "photino",
+        "m_value": "photino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "photon",
+        "m_value": "photon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pi",
+        "m_value": "-pi-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pi(1300)",
+        "m_value": "pi(1300)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pi(1770)",
+        "m_value": "pi(1770)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pi(1775)",
+        "m_value": "pi(1775)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pi(1800)",
+        "m_value": "pi(1800)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pi(749)",
+        "m_value": "pi(749)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pi+",
+        "m_value": "pi+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pi0",
+        "m_value": "pi0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pi1(1400)",
+        "m_value": "pi1(1400)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pi1(1600)",
+        "m_value": "pi1(1600)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pi2(1670)",
+        "m_value": "pi2(1670)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pi2(1835)",
+        "m_value": "pi2(1835)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pi2(1880)",
+        "m_value": "pi2(1880)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pi2(2100)",
+        "m_value": "pi2(2100)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "platinum",
+        "m_value": "platinum\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "plutonium",
+        "m_value": "plutonium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "polonium",
+        "m_value": "polonium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pomeron",
+        "m_value": "pomeron\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "positive particle",
+        "m_value": "positive particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "positron",
+        "m_value": "positron\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "positronium",
+        "m_value": "positronium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "potassium",
+        "m_value": "potassium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "praseodymium",
+        "m_value": "praseodymium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "promethium",
+        "m_value": "promethium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "protactinium",
+        "m_value": "protactinium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pseudoparticle",
+        "m_value": "pseudoparticle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pseudoscalar meson",
+        "m_value": "pseudoscalar meson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pseudoscalar particle",
+        "m_value": "pseudoscalar particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "pseudovector particle",
+        "m_value": "pseudovector particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "psi mesons",
+        "m_value": "psi mesons\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "psi(3685)",
+        "m_value": "psi(3685)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "psi(3770)",
+        "m_value": "psi(3770)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "psi(3836)",
+        "m_value": "psi(3836)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "psi(4040)",
+        "m_value": "psi(4040)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "psi(4160)",
+        "m_value": "psi(4160)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "psi(4415)",
+        "m_value": "psi(4415)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "quark",
+        "m_value": "quark\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "quark parton",
+        "m_value": "quark parton\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "quarkonium",
+        "m_value": "quarkonium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "quasiparticle",
+        "m_value": "quasiparticle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "radium",
+        "m_value": "radium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "radon",
+        "m_value": "radon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rhenium",
+        "m_value": "rhenium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho(1405)",
+        "m_value": "rho(1405)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho(1450)",
+        "m_value": "-rho(1450)-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho(1450)+",
+        "m_value": "rho(1450)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho(1450)0",
+        "m_value": "rho(1450)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho(1570)",
+        "m_value": "rho(1570)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho(1700)",
+        "m_value": "rho(1700)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho(1900)",
+        "m_value": "rho(1900)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho(2110)",
+        "m_value": "rho(2110)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho(2150)",
+        "m_value": "rho(2150)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho(2210)",
+        "m_value": "rho(2210)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho(770)",
+        "m_value": "-rho(770)-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho(770)+",
+        "m_value": "rho(770)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho(770)0",
+        "m_value": "rho(770)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho3(1690)",
+        "m_value": "rho3(1690)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho3(1990)",
+        "m_value": "rho3(1990)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho3(2250)",
+        "m_value": "rho3(2250)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rho5(2350)",
+        "m_value": "rho5(2350)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rhodium",
+        "m_value": "rhodium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "rubidium",
+        "m_value": "rubidium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "ruthenium",
+        "m_value": "ruthenium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "samarium",
+        "m_value": "samarium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "sbottom",
+        "m_value": "sbottom\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "scalar meson",
+        "m_value": "scalar meson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "scalar particle",
+        "m_value": "scalar particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "scalaron",
+        "m_value": "scalaron\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "scandium",
+        "m_value": "scandium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "selectron",
+        "m_value": "selectron\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "selenium",
+        "m_value": "selenium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "sfermion",
+        "m_value": "sfermion\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "sgoldstino",
+        "m_value": "sgoldstino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma",
+        "m_value": "-Sigma-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1385)",
+        "m_value": "-Sigma(1385)-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1385)+",
+        "m_value": "Sigma(1385)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1385)0",
+        "m_value": "Sigma(1385)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1480)",
+        "m_value": "Sigma(1480)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1560)",
+        "m_value": "Sigma(1560)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1580)",
+        "m_value": "Sigma(1580)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1620)",
+        "m_value": "Sigma(1620)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1660)",
+        "m_value": "Sigma(1660)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1670)",
+        "m_value": "Sigma(1670)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1690)",
+        "m_value": "Sigma(1690)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1750)",
+        "m_value": "Sigma(1750)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1770)",
+        "m_value": "Sigma(1770)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1775)",
+        "m_value": "Sigma(1775)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1840)",
+        "m_value": "Sigma(1840)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1880)",
+        "m_value": "Sigma(1880)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1915)",
+        "m_value": "Sigma(1915)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(1940)",
+        "m_value": "Sigma(1940)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(2000)",
+        "m_value": "Sigma(2000)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(2030)",
+        "m_value": "Sigma(2030)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(2070)",
+        "m_value": "Sigma(2070)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(2080)",
+        "m_value": "Sigma(2080)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(2100)",
+        "m_value": "Sigma(2100)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(2250)",
+        "m_value": "Sigma(2250)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(2455)",
+        "m_value": "Sigma(2455)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(2620)",
+        "m_value": "Sigma(2620)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(3000)",
+        "m_value": "Sigma(3000)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma(3170)",
+        "m_value": "Sigma(3170)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma+",
+        "m_value": "Sigma+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/b",
+        "m_value": "-Sigma/b-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/b*",
+        "m_value": "-Sigma/b*-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/b*+",
+        "m_value": "Sigma/b*+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/b+",
+        "m_value": "Sigma/b+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/bc",
+        "m_value": "Sigma/bc\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/c(2455)",
+        "m_value": "Sigma/c(2455)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/c(2455)+",
+        "m_value": "Sigma/c(2455)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/c(2455)++",
+        "m_value": "Sigma/c(2455)++\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/c(2455)0",
+        "m_value": "Sigma/c(2455)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/c(2520)",
+        "m_value": "Sigma/c(2520)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/c(2520)+",
+        "m_value": "Sigma/c(2520)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/c(2520)++",
+        "m_value": "Sigma/c(2520)++\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/c(2520)0",
+        "m_value": "Sigma/c(2520)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/c(2800)",
+        "m_value": "Sigma/c(2800)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/c(2800)+",
+        "m_value": "Sigma/c(2800)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/c(2800)++",
+        "m_value": "Sigma/c(2800)++\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma/c(2800)0",
+        "m_value": "Sigma/c(2800)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Sigma0",
+        "m_value": "Sigma0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "silicon",
+        "m_value": "silicon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "silver",
+        "m_value": "silver\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Skyrmion",
+        "m_value": "Skyrmion\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "slepton",
+        "m_value": "slepton\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "smuon",
+        "m_value": "smuon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "sneutrino",
+        "m_value": "sneutrino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "sneutrino/e",
+        "m_value": "sneutrino/e\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "sneutrino/mu",
+        "m_value": "sneutrino/mu\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "sneutrino/tau",
+        "m_value": "sneutrino/tau\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "sodium",
+        "m_value": "sodium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "sparticle",
+        "m_value": "sparticle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "squark",
+        "m_value": "squark\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "stau",
+        "m_value": "stau\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "stop",
+        "m_value": "stop\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "strange meson",
+        "m_value": "strange meson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "strange particle",
+        "m_value": "strange particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "strangelet",
+        "m_value": "strangelet\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "strangeness",
+        "m_value": "strangeness\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "strontium",
+        "m_value": "strontium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "sulfur",
+        "m_value": "sulfur\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "superfragment",
+        "m_value": "superfragment\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "tantalum",
+        "m_value": "tantalum\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "tau",
+        "m_value": "-tau-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "tau+",
+        "m_value": "tau+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "technetium",
+        "m_value": "technetium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "technipion",
+        "m_value": "technipion\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "technirho",
+        "m_value": "technirho\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "tellurium",
+        "m_value": "tellurium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "tensor boson",
+        "m_value": "tensor boson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "tensor meson",
+        "m_value": "tensor meson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "terbium",
+        "m_value": "terbium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "tetraquark",
+        "m_value": "tetraquark\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "thallium",
+        "m_value": "thallium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Theta(1540)",
+        "m_value": "Theta(1540)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "thorium",
+        "m_value": "thorium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "thulium",
+        "m_value": "thulium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "tin",
+        "m_value": "tin\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "titanium",
+        "m_value": "titanium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "top",
+        "m_value": "top\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "top'",
+        "m_value": "top'\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "toponium",
+        "m_value": "toponium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "transuranium",
+        "m_value": "transuranium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "tritium",
+        "m_value": "tritium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "tungsten",
+        "m_value": "tungsten\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "two-gluon",
+        "m_value": "two-gluon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "two-particle",
+        "m_value": "two-particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "two-photon",
+        "m_value": "two-photon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "two-pion",
+        "m_value": "two-pion\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "U boson",
+        "m_value": "U boson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "unparticle",
+        "m_value": "unparticle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "up",
+        "m_value": "up\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "upsilon mesons",
+        "m_value": "upsilon mesons\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Upsilon(10020)",
+        "m_value": "Upsilon(10020)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Upsilon(10160)",
+        "m_value": "Upsilon(10160)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Upsilon(10355)",
+        "m_value": "Upsilon(10355)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Upsilon(10570)",
+        "m_value": "Upsilon(10570)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Upsilon(10870)",
+        "m_value": "Upsilon(10870)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Upsilon(11020)",
+        "m_value": "Upsilon(11020)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Upsilon(9460)",
+        "m_value": "Upsilon(9460)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "uranium",
+        "m_value": "uranium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "vanadium",
+        "m_value": "vanadium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "vector boson",
+        "m_value": "vector boson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "vector meson",
+        "m_value": "vector meson\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "vector particle",
+        "m_value": "vector particle\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "W",
+        "m_value": "-W-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "W'",
+        "m_value": "W'\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "W+",
+        "m_value": "W+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "WIMP",
+        "m_value": "WIMP\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Wino",
+        "m_value": "Wino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(1600)",
+        "m_value": "X(1600)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(1740)",
+        "m_value": "X(1740)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(1775)",
+        "m_value": "X(1775)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(1830)",
+        "m_value": "X(1830)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(1870)",
+        "m_value": "X(1870)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(1920)",
+        "m_value": "X(1920)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(1950)",
+        "m_value": "X(1950)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(2000)",
+        "m_value": "X(2000)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(2200)",
+        "m_value": "X(2200)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(2350)",
+        "m_value": "X(2350)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(3250)",
+        "m_value": "X(3250)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(3872)",
+        "m_value": "X(3872)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(3900)",
+        "m_value": "X(3900)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(3915)",
+        "m_value": "X(3915)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(3940)",
+        "m_value": "X(3940)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(4160)",
+        "m_value": "X(4160)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(4260)",
+        "m_value": "X(4260)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(4350)",
+        "m_value": "X(4350)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "X(4660)",
+        "m_value": "X(4660)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "xenon",
+        "m_value": "xenon\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi",
+        "m_value": "-Xi-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi(1530)",
+        "m_value": "-Xi(1530)-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi(1530)0",
+        "m_value": "Xi(1530)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi(1630)",
+        "m_value": "Xi(1630)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi(1690)",
+        "m_value": "-Xi(1690)-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi(1690)0",
+        "m_value": "Xi(1690)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi(1820)",
+        "m_value": "Xi(1820)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi(1835)",
+        "m_value": "Xi(1835)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi(1860)",
+        "m_value": "Xi(1860)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi(1950)",
+        "m_value": "Xi(1950)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi(2030)",
+        "m_value": "Xi(2030)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi(2120)",
+        "m_value": "Xi(2120)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi(2250)",
+        "m_value": "Xi(2250)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi(2370)",
+        "m_value": "Xi(2370)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi(2500)",
+        "m_value": "Xi(2500)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/b",
+        "m_value": "-Xi/b-\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/b0",
+        "m_value": "Xi/b0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/bc",
+        "m_value": "Xi/bc\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c",
+        "m_value": "Xi/c\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2575)",
+        "m_value": "Xi/c(2575)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2575)+",
+        "m_value": "Xi/c(2575)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2575)0",
+        "m_value": "Xi/c(2575)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2645)",
+        "m_value": "Xi/c(2645)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2645)+",
+        "m_value": "Xi/c(2645)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2645)0",
+        "m_value": "Xi/c(2645)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2790)",
+        "m_value": "Xi/c(2790)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2790)+",
+        "m_value": "Xi/c(2790)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2790)0",
+        "m_value": "Xi/c(2790)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2815)",
+        "m_value": "Xi/c(2815)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2815)+",
+        "m_value": "Xi/c(2815)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2815)0",
+        "m_value": "Xi/c(2815)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2930)",
+        "m_value": "Xi/c(2930)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2980)",
+        "m_value": "Xi/c(2980)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2980)+",
+        "m_value": "Xi/c(2980)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(2980)0",
+        "m_value": "Xi/c(2980)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(3055)",
+        "m_value": "Xi/c(3055)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(3055)+",
+        "m_value": "Xi/c(3055)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(3080)",
+        "m_value": "Xi/c(3080)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(3080)+",
+        "m_value": "Xi/c(3080)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(3080)0",
+        "m_value": "Xi/c(3080)0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(3123)",
+        "m_value": "Xi/c(3123)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c(3123)+",
+        "m_value": "Xi/c(3123)+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c+",
+        "m_value": "Xi/c+\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/c0",
+        "m_value": "Xi/c0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi/cc",
+        "m_value": "Xi/cc\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Xi0",
+        "m_value": "Xi0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Y(3940)",
+        "m_value": "Y(3940)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Y(4008)",
+        "m_value": "Y(4008)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Y(4140)",
+        "m_value": "Y(4140)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Y(4260)",
+        "m_value": "Y(4260)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Y(4280)",
+        "m_value": "Y(4280)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Y(4660)",
+        "m_value": "Y(4660)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Y/b(10890)",
+        "m_value": "Y/b(10890)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "ytterbium",
+        "m_value": "ytterbium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "yttrium",
+        "m_value": "yttrium\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Z'",
+        "m_value": "Z'\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Z(3930)",
+        "m_value": "Z(3930)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Z(4050)",
+        "m_value": "Z(4050)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Z(4430)",
+        "m_value": "Z(4430)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Z/b(10610)",
+        "m_value": "Z/b(10610)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Z/b(10650)",
+        "m_value": "Z/b(10650)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Z0",
+        "m_value": "Z0\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Z0(1780)",
+        "m_value": "Z0(1780)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Z0(1865)",
+        "m_value": "Z0(1865)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Z1(1725)",
+        "m_value": "Z1(1725)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Z1(1900)",
+        "m_value": "Z1(1900)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Z1(2150)",
+        "m_value": "Z1(2150)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Z1(2500)",
+        "m_value": "Z1(2500)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Z2(4250)",
+        "m_value": "Z2(4250)\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "zinc",
+        "m_value": "zinc\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "Zino",
+        "m_value": "Zino\r\n"
+    },
+    {
+        "id_knwKB": 26,
+        "m_key": "zirconium",
+        "m_value": "zirconium\r\n"
     }
 ]
