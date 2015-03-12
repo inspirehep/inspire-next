@@ -25,7 +25,7 @@
 from flask import render_template, url_for
 
 from invenio.base.i18n import _
-from invenio.modules.access.control import acc_get_user_email
+from invenio.modules.accounts.models import User
 from invenio.modules.deposit.models import Deposition
 
 
@@ -38,11 +38,11 @@ class core_approval(object):
 
     def render_mini(self, obj):
         """Method to render the minified action."""
-        email = acc_get_user_email(obj.id_user)
+        user = User.query.get(obj.id_user)
         d = Deposition(obj)
         rejection_text = "\n".join([line.strip() for line in render_template(
             'deposit/tickets/user_rejected.html',
-            email=email,
+            user=user,
             title=d.title
         ).split("\n")])
         return render_template(
@@ -55,11 +55,11 @@ class core_approval(object):
 
     def render(self, obj):
         """Method to render the action."""
-        email = acc_get_user_email(obj.id_user)
+        user = User.query.get(obj.id_user)
         d = Deposition(obj)
         rejection_text = "\n".join([line.strip() for line in render_template(
             'deposit/tickets/user_rejected.html',
-            email=email,
+            user=user,
             title=d.title
         ).split("\n")])
         return {

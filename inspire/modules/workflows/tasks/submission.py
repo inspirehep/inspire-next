@@ -29,7 +29,6 @@ from invenio.modules.deposit.models import Deposition
 from invenio.modules.formatter import format_record
 from flask.ext.login import current_user
 from invenio.base.globals import cfg
-from .actions import was_approved
 
 
 def halt_to_render(obj, eng):
@@ -52,22 +51,6 @@ def halt_to_render(obj, eng):
     ))
     obj.last_task = "halt_to_render"
     eng.halt("User submission complete.")
-
-
-def inform_submitter(obj, eng):
-    """Send a mail to submitter with the outcome of the submission."""
-    from invenio.modules.access.control import acc_get_user_email
-    from invenio.ext.email import send_email
-    d = Deposition(obj)
-    id_user = d.workflow_object.id_user
-    email = acc_get_user_email(id_user)
-    if was_approved(obj, eng):
-        body = 'Accepted: '
-        extra_data = d.workflow_object.get_extra_data()
-        body += extra_data.get('url', '')
-    else:
-        body = 'Rejected'
-    send_email(cfg.get("CFG_SITE_SUPPORT_EMAIL"), email, 'Subject', body, header='header')
 
 
 def get_ticket_body(template, deposition, metadata, email, obj):
@@ -220,7 +203,7 @@ def reply_ticket(template=None, keep_new=False):
     """Reply to a ticket for the submission."""
     @wraps(reply_ticket)
     def _reply_ticket(obj, eng):
-        from invenio.modules.access.control import acc_get_user_email
+        from invenio.modules.accounts.models import User
         from invenio.modules.workflows.errors import WorkflowError
         from inspire.utils.tickets import get_instance
         from flask import render_template
@@ -233,11 +216,11 @@ def reply_ticket(template=None, keep_new=False):
         if template:
             # Body rendered by template.
             d = Deposition(obj)
-            email = acc_get_user_email(obj.id_user)
+            user = User.query.get(obj.id_user)
 
             context = {
                 "object": obj,
-                "email": email,
+                "user": user,
                 "title": d.title,
                 "reason": obj.extra_data.get("reason", ""),
                 "record_url": obj.extra_data.get("url", ""),

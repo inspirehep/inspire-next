@@ -1,6 +1,6 @@
 {#
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -16,11 +16,13 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
- Dear {{email}},
+{%- from 'deposit/tickets/ticket_macros.html' import get_user_name -%}
 
- Thanks for suggesting "{{title}}”. We noticed that this suggestion is already
- available in INSPIRE, {{record_url}}
+Dear {{ get_user_name(user) }},
 
- Please contact us if this is not what you suggested or if you have any questions.
+Thanks for suggesting "{{title}}”. We noticed that this suggestion is already
+available in INSPIRE, {{record_url}}
 
- Thanks again for collaborating with INSPIRE! We are looking forward to further suggestions you might have.
+Please contact us if this is not what you suggested or if you have any questions.
+
+Thanks again for collaborating with INSPIRE! We are looking forward to further suggestions you might have.
