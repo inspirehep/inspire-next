@@ -179,6 +179,6 @@ class process_record_arxiv(RecordWorkflow):
                         categories.append(category)
 
         return render_template('workflows/styles/harvesting_record.html',
-                               categories=categories,
+                               categories=set(categories),
                                identifiers=final_identifiers,
                                results=results)
