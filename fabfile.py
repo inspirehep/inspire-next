@@ -332,13 +332,13 @@ def sync(host="targets"):
         execute(disable, current_host, False)
         sudo(
             'rsync -azh --force --delete '
-            '--exclude "var/tmp-shared" --exclude "src" '
-            '--exclude "var/log" --exclude "var/data" '
-            '--exclude "var/tmp" --exclude "var/run" '
-            '--exclude "var/cache" --exclude "var/batchupload" '
-            '--exclude "etc" --exclude "includes" '
-            '--exclude "var/invenio.base-instance/apache" '
-            '--exclude "var/invenio.base-instance/run" '
+            '--exclude "/opt/invenio/var/tmp-shared" --exclude "/opt/invenio/src" '
+            '--exclude "/opt/invenio/var/log" --exclude "/opt/invenio/var/data" '
+            '--exclude "/opt/invenio/var/tmp" --exclude "/opt/invenio/var/run" '
+            '--exclude "/opt/invenio/var/cache" --exclude "/opt/invenio/var/batchupload" '
+            '--exclude "/opt/invenio/etc" --exclude "/opt/invenio/includes" '
+            '--exclude "/opt/invenio/var/invenio.base-instance/apache" '
+            '--exclude "/opt/invenio/var/invenio.base-instance/run" '
             '-e "ssh -p22" {venv}/ {server}:/opt/invenio'.format(venv=venv, server=current_host)
         )
         with settings(host_string=current_host):
