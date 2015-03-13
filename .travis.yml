@@ -31,11 +31,11 @@ python:
   - "2.7"
 
 before_install:
-  - "curl -sL https://deb.nodesource.com/setup | sudo bash -"
+  - "sudo add-apt-repository -y ppa:chris-lea/node.js"
   - "sudo apt-get update"
 
 install:
-  - "sudo apt-get -qy install apache2 libapache2-mod-wsgi ssl-cert poppler-utils git subversion nodejs --fix-missing"
+  - "sudo apt-get -qy install apache2 libapache2-mod-wsgi libapache2-mod-xsendfile ssl-cert poppler-utils git subversion nodejs --fix-missing"
   - "sudo a2enmod actions"
   - "sudo a2enmod version || echo ':('"
   - "sudo a2enmod rewrite"
@@ -85,4 +85,5 @@ before_script:
   - "inveniomanage demosite populate -p inspire.base -f inspire/demosite/data/demo-records.xml --yes-i-know"
 
 script:
+#  - "sphinx-build -qnNW docs docs/_build/html"
   - "python setup.py test"
