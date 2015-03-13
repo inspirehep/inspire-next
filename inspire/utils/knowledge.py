@@ -18,7 +18,7 @@
 
 from invenio.modules.knowledge.api import (
     add_kb_mapping,
-    get_kbr_values,
+    get_kb_mappings,
     kb_mapping_exists,
 )
 
@@ -27,7 +27,7 @@ def get_value(kb_name, list_of_keys):
     """Get the value registered with at least one of the keys."""
     for key in list_of_keys:
         if kb_mapping_exists(kb_name, key):
-            return get_kbr_values(kb_name, key)[0][0]
+            return get_kb_mappings(kb_name=kb_name, key=key)[0].get("value")
 
 
 def check_keys(kb_name, list_of_keys):
