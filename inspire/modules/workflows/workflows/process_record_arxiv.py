@@ -99,6 +99,8 @@ class process_record_arxiv(RecordWorkflow):
                 classify_paper_with_oaiharvester(
                     taxonomy="HEPont",
                     output_mode="dict",
+                    only_core_tags=True,
+                    spires=True,
                 ),
                 refextract,
                 author_list,
