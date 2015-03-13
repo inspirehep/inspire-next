@@ -59,6 +59,7 @@ from inspire.modules.workflows.tasks.submission import (
     create_curation_ticket,
     reply_ticket,
     add_note_entry,
+    user_pdf_get,
     close_ticket
 )
 from inspire.modules.workflows.tasks.actions import (
@@ -124,6 +125,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             [
                 add_core_deposit,
                 add_note_entry,
+                user_pdf_get,
                 finalize_record_sip(is_dump=False),
                 # Send robotupload and halt until webcoll callback
                 send_robotupload_deposit(),
