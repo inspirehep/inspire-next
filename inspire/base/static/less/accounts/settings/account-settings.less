@@ -2,7 +2,7 @@
  * -*- mode: text; coding: utf-8; -*-
  *
  * This file is part of INSPIRE.
- * Copyright (C) 2014 CERN.
+ * Copyright (C) 2015 CERN.
 
  * INSPIRE is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -19,26 +19,33 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
-//
-// Panels
-// --------------------------------------------------
+ @import (reference) "../../inspire.less";
 
-@import (reference) "../inspire.less";
+/* Account settings page style */
 
-.panel {
-    margin-bottom: @line-height-computed;
-    background-color: @panel-bg;
-    border: 1px solid transparent;
-    border-radius: @panel-border-radius;
-    .box-shadow(0 1px 1px rgba(0,0,0,.15));
+.link-display {
+	display: block;
 }
 
-.panel-heading a {
-    color: #fff;
-    font-weight: bold;
+.list-group-item.active.custom-active {
+    background-color: #EBEBEB;
+    border-color: #EBEBEB;
 }
 
-.panel > .panel-heading {
-    color:#ffffff;
+.list-group-item.active.custom-active:hover {
+    background-color: #E3E3E3;
 }
 
+#top-row {
+    margin: 10px 0px 30px 0px;
+}
+
+#user-icon {
+    float:left;
+}
+
+@media only screen and (min-width : 480px) {
+    #settings-form {
+        margin-left: 25px;
+    }
+}

@@ -1,6 +1,6 @@
-/*
+ /*
  * This file is part of INSPIRE.
- * Copyright (C) 2014 CERN.
+ * Copyright (C) 2015 CERN.
  *
  * INSPIRE is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,26 @@
  * or submit itself to any jurisdiction.
  */
 
- require([
-    "js/jquery_plugin",
-    "js/feedback_inspire",
-    "js/header/header",
-    ], function() {
-    // loading all the libraries everywhere.
-    console.info("js/inspire_base_init is loaded");
+define([
+  'jquery',
+  'bootstrap',
+  ], function ($) {
+  $(window).ready(function() {
+    $(window).resize(function() {
+      var wi = $(window).width();
+      if (wi>768) {
+        $('#user-info').unbind("click");
+      }
+      else {
+        $('#user-info').click(function() {
+          if($("#arrow-handler").hasClass("right-arrow-small-screen")) {
+            $("#arrow-handler").removeClass("right-arrow-small-screen");
+          }
+          else{
+            $("#arrow-handler").addClass("right-arrow-small-screen");
+          }
+        });
+      }
+    });
+  });
 });

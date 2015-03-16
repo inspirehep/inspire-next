@@ -1,23 +1,20 @@
 {#
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
-## INSPIRE is free software: you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, either version 3 of the License, or
-## (at your option) any later version.
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
 ##
-## INSPIRE is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-## GNU General Public License for more details.
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
 ##
 ## You should have received a copy of the GNU General Public License
-## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-##
-## In applying this licence, CERN does not waive the privileges and immunities
-## granted to it by virtue of its status as an Intergovernmental Organization
-## or submit itself to any jurisdiction.
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
 {#
@@ -36,6 +33,7 @@
   ('/inspire/help', {}, '', 'Help'),
 ] -%}
 
+
 <section>
   <nav id="topnav" class="navbar navbar-fixed-top navbar-inverse navbar-custom" role="navigation">
     <div class="container">
@@ -50,14 +48,14 @@
           <img src="{{ url_for('static', filename='img/labs_white.svg') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}">
         </a>
       </div>
-
-      <div class="navbar-collapse navbar-ex1-collapse collapse">
+      <div class="navbar-collapse navbar-ex1-collapse collapse overflow">
         <ul class="nav navbar-nav navbar-right">
-          {% for endpoint, values, blueprint, caption in navigation_bar %}
-          <li {% if request.blueprint == blueprint|e %} class="active" {% endif %}>
-            <a href={% if blueprint %}"{{ url_for( endpoint|e, **values ) }}"{% else %}{{endpoint}}{% endif %}>{{- _(caption|e) -}}</a>
-          </li>
-          {% endfor %}
+          <li class="move-down">
+            {% for endpoint, values, blueprint, caption in navigation_bar %}
+            <li {% if request.blueprint == blueprint|e %} class="active" {% endif %}>
+              <a href={% if blueprint %}"{{ url_for( endpoint|e, **values ) }}"{% else %}{{endpoint}}{% endif %}>{{- _(caption|e) -}}</a>
+            </li>
+            {% endfor %}
           <li class="divider-vertical"></li>
           {%- if current_user.is_guest %}
           <li>
@@ -66,28 +64,43 @@
             </a>
           </li>
           {%- else %}
-          <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+          <li class="dropdown" >
+            <a id="user-info" class="dropdown-toggle" data-toggle="dropdown" href="#">
               <i class="glyphicon glyphicon-user"></i>
               {%- if current_user.given_names or current_user.family_name %}
                 {{ current_user.given_names ~ " " ~ current_user.family_name}}
               {%- else %}
                 {{ current_user.email }}
               {%- endif %}
-              <span class="caret"></span>
+              <!-- <span class="caret"></span> -->
+              <span id="arrow-handler" class="down-arrow right-arrow-small-screen"></span>
             </a>
-            <ul class="dropdown-menu" role="menu">
+            <ul class="dropdown-menu dropdown-menu-arrow" role="menu">
               <li>
-                <a role="menuitem" tabindex="-1" href="{{ url_for('webaccount.logout') }}">
-                  <i class="glyphicon glyphicon-log-out"></i> {{ _('Logout') }}
+                <a href="{{ url_for( 'accounts_settings.profile' ) }}" class="list-group-item list-item">
+                  <div class="dropdown-element-body">
+                    <span class="custom-dropdown-header">{{ _('Settings') }}</span>
+                    <span class="text-muted small-text">{{ _('Manage your personal settings') }}</span>
+                  </div>
                 </a>
+              </li>
+              <li class="divider custom-divider-dropdown"></li>
+              <div class="row"><div class="col-md-12"><p></p></div></div>
+              <div class="row"><div class="col-md-12"><p></p></div></div>
+              <li >
+                <div class="text-center">
+                  <a  role="menuitem" tabindex="-1" href="{{ url_for('webaccount.logout') }}">
+                    <button type="button" class="btn btn-info btn-sign-out">{{ _('Sign out') }}</button>
+                  </a>
+                </div>
               </li>
             </ul>
           </li>
           {%- endif %}
+          </li>
         </ul>
       </div>
-
     </div>
   </nav>
 </section>
+
