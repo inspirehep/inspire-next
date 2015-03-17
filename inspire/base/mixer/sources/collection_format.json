@@ -1,27 +1,27 @@
 [
     {
         "id_collection": 1,
-        "_format": "hb",
+        "format_code": "hb",
         "score": 110
     },
     {
         "id_collection": 2,
-        "_format": "hb",
+        "format_code": "hb",
         "score": 130
     },
     {
         "id_collection": 3,
-        "_format": "hb",
+        "format_code": "hb",
         "score": 120
     },
     {
         "id_collection": 4,
-        "_format": "hb",
+        "format_code": "hb",
         "score": 130
     },
     {
         "id_collection": 5,
-        "_format": "hb",
+        "format_code": "hb",
         "score": 120
     }
 ]
