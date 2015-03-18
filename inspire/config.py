@@ -165,6 +165,17 @@ PACKAGES_FACETS_EXCLUDE = [
     'invenio.modules.search.facets.collection',
 ]
 
+
+SEARCH_QUERY_PARSER = 'invenio_query_parser.contrib.spires.parser:Main'
+
+from invenio_query_parser.contrib.spires.walkers.pypeg_to_ast import PypegConverter
+from invenio_query_parser.contrib.spires.walkers.spires_to_invenio import SpiresToInvenio
+
+SEARCH_QUERY_WALKERS = [
+    PypegConverter,
+    SpiresToInvenio,
+]
+
 # Task queue configuration
 
 CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
