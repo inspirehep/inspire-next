@@ -26,12 +26,14 @@ define(
   [
     "js/workflows/actions/approval",
     "js/workflows/actions/core_approval",
-    "js/workflows/actions/core_approval_modal"
+    "js/workflows/actions/core_approval_modal",
+    "js/workflows/actions/arxiv_approval"
   ],
   function(
     ApprovalAction,
     CoreApprovalAction,
-    CoreApprovalModal) {
+    CoreApprovalModal,
+    ArxivApprovalAction) {
 
     function initialize(context) {
       ApprovalAction.attachTo(context.attach_action_to, {
@@ -39,6 +41,10 @@ define(
       });
 
       CoreApprovalAction.attachTo(context.attach_action_to, {
+        action_url: context.action_url
+      });
+
+      ArxivApprovalAction.attachTo(context.attach_action_to, {
         action_url: context.action_url
       });
 
