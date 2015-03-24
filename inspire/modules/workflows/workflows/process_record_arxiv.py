@@ -105,7 +105,7 @@ class process_record_arxiv(RecordWorkflow):
                     spires=True,
                 ),
                 filter_core_keywords(filter_kb="antihep"),
-                halt_record_with_action(action="core_approval",
+                halt_record_with_action(action="arxiv_approval",
                                         message="Accept article?"),
                 workflow_if(was_approved),
                 [
