@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
 #
-## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
-##
-## INSPIRE is free software: you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, either version 3 of the License, or
-## (at your option) any later version.
-##
-## INSPIRE is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-##
-## In applying this license, CERN does not waive the privileges and immunities
-## granted to it by virtue of its status as an Intergovernmental Organization
-## or submit itself to any jurisdiction.
+# This file is part of INSPIRE.
+# Copyright (C) 2014, 2015 CERN.
+#
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this license, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 """Workflow for processing single arXiv records harvested."""
 
@@ -59,9 +59,9 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 from invenio.modules.workflows.definitions import RecordWorkflow
 from inspire.modules.oaiharvester.tasks.upload import (
     send_robotupload_oaiharvest,
-    update_existing_record_oaiharvest
 )
 from inspire.modules.workflows.tasks.submission import halt_record_with_action
+from inspire.modules.classifier.tasks import filter_core_keywords
 
 
 class process_record_arxiv(RecordWorkflow):
@@ -80,7 +80,7 @@ class process_record_arxiv(RecordWorkflow):
         [
             log_info("Record already into database"),
             delete_self_and_stop_processing,
-            #update_existing_record_oaiharvest(),
+            # update_existing_record_oaiharvest(),
         ],
         workflow_else,
         [
@@ -104,6 +104,7 @@ class process_record_arxiv(RecordWorkflow):
                     only_core_tags=True,
                     spires=True,
                 ),
+                filter_core_keywords(filter_kb="antihep"),
                 halt_record_with_action(action="core_approval",
                                         message="Accept article?"),
                 workflow_if(was_approved),

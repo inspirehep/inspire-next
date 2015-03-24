@@ -1,20 +1,20 @@
 {#
-## This file is part of Invenio.
-## Copyright (C) 2014 CERN.
-##
-## Invenio is free software; you can redistribute it and/or
-## modify it under the terms of the GNU General Public License as
-## published by the Free Software Foundation; either version 2 of the
-## License, or (at your option) any later version.
-##
-## Invenio is distributed in the hope that it will be useful, but
-## WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-## General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with Invenio; if not, write to the Free Software Foundation, Inc.,
-## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# This file is part of INSPIRE.
+# Copyright (C) 2014, 2015 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 {% extends "workflows/results/results_base.html" %}
 
@@ -59,12 +59,13 @@
 {% block results_body %}
   <div class="panel panel-primary">
     <div class="panel-heading">
-      {{ results["name"] }}
+      {{ _("Keyword extraction") }}
     </div>
     <div class="panel-body">
       <div class="row">
         {% set result = results["result"]["dict"]["complete_output"] %}
         {% set categories = results["result"]["dict"]["categories"] %}
+        {{ display_keyword("Filtered Core keywords", result["Filtered Core keywords"], categories) }}
         {{ display_keyword("Core keywords", result["Core keywords"], categories) }}
         {{ display_keyword("Author keywords", result["Author keywords"], categories) }}
         {{ display_keyword("Single keywords", result["Single keywords"], categories) }}
