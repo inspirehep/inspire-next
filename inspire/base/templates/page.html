@@ -19,15 +19,10 @@
 
 {% extends "page_base.html" %}
 
-{%- block head_links %}
-  {{ super() }}
-{%- endblock head_links %}
-
 {% set searchbar_enable = searchbar_enable and easy_search_form != None and collection != None %}
 
 {% if searchbar_enable %}
-  {% from "_formhelpers.html" import render_filter_form with context %}
-  {% from "search/helpers.html" import search_form, search_form_javascript with context %}
+  {% from "search/helpers.html" import search_form_javascript with context %}
 {% endif %}
 
 {%- block global_bundles %}
@@ -35,10 +30,23 @@
   {%- block bundles %}
     {% bundles "jquery.js", "invenio.css", "base.js" %}
     {% if searchbar_enable %}
-      {% bundle "search.js", "search.css" %}
+      {% bundles "search.js", "search.css" %}
     {% endif %}
   {%- endblock %}
 {%- endblock %}
+
+{%- block page_body -%}
+  <div class="container">
+    {% if searchbar_enable %}
+      {%- include "search/form/index.html" -%}
+      {% block inner_content %}
+      {% endblock inner_content %}
+    {% endif %}
+    {%- block body %}
+      {{ body }}
+    {%- endblock body %}
+  </div>
+{%- endblock page_body %}
 
 {% block javascript %}
   {{ super() }}
@@ -66,44 +74,3 @@
     <!-- End Piwik Code -->
   {% endif %}
 {% endblock trackingcode %}
-
-{%- block page_header -%}
-  <!-- replaced page header -->
-  {% block headerbox %}
-    {% include 'header.html' %}
-  {% endblock headerbox %}
-  <!-- end replaced page header -->
-  {% block breadcrumb %}
-    {%- include 'breadcrumbs.html' -%}
-  {% endblock breadcrumb %}
-  {% block pageheaderadd %}{{ pageheaderadd|safe }}{% endblock pageheaderadd %}
-{%- endblock page_header -%}
-
-{%- if not no_pagebody -%}
-{%- block page_body -%}
-{# adds .container to all pages except for the landing one #}
-<div {% if request.endpoint != "search.index" %} class="container" {% endif %}>
-  {% block title %}
-  {% endblock title %}
-  {#
-     FIXME: we just pop the flashed messages here to ignore them
-     due to redundancy.
-  #}
-  {% set flash = flashed_messages() %}
-  {% block body %}
-    {{ super() }}
-    {% if searchbar_enable %}
-    {{ search_form(collection, easy_search_form) }}
-    {% endif %}
-
-    {% block inner_content %}
-    <!-- Here goes the content visible below the search bar -->
-    {% endblock inner_content %}
-  {% endblock body %}
-</div>
-{%- endblock page_body %}
-{%- endif %}
-
-{%- block page_footer %}
-  {%- include 'footer.html' -%}
-{%- endblock page_footer %}

@@ -23,12 +23,12 @@ from invenio.ext.template.context_processor import \
 
 
 def setup_app(app):
-    from invenio.modules.records.views import blueprint as records_blueprint
-    from invenio.modules.deposit.views.deposit import blueprint \
-        as deposit_blueprint
+    # from invenio.modules.records.views import blueprint as records_blueprint
+    # from invenio.modules.deposit.views.deposit import blueprint \
+    #     as deposit_blueprint
 
-    records_blueprint.before_request(register_add_searchform)
-    deposit_blueprint.before_request(register_add_searchform)
+    # records_blueprint.before_request(register_add_searchform)
+    # deposit_blueprint.before_request(register_add_searchform)
 
     from invenio.modules.search.views.search import blueprint as search_blueprint
 
