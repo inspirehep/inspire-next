@@ -20,99 +20,100 @@
 ** or submit itself to any jurisdiction.
 */
 
+require(['jquery', 'bootstrap'], function($) {
 
-/* Extracted from http://stackoverflow.com/a/18006498 */
-function parseQueryString(url) {
-    var queryStringIdx = url.indexOf('?');
-    var pairs = url.substr(queryStringIdx + 1)
-                   .split('&')
-                   .map(function(p) { return p.split('='); });
-    var result = { };
-    for (var i = 0; i < pairs.length; i++) {
-        result[decodeURIComponent(pairs[i][0])] = decodeURIComponent(pairs[i][1]);
-    }
+  /* Extracted from http://stackoverflow.com/a/18006498 */
+  function parseQueryString(url) {
+      var queryStringIdx = url.indexOf('?');
+      var pairs = url.substr(queryStringIdx + 1)
+                     .split('&')
+                     .map(function(p) { return p.split('='); });
+      var result = { };
+      for (var i = 0; i < pairs.length; i++) {
+          result[decodeURIComponent(pairs[i][0])] = decodeURIComponent(pairs[i][1]);
+      }
 
-    return result;
-}
+      return result;
+  }
 
 
-(function($) {
+  var $ = require("jquery");
 
-    /* TODO: refactor! */
+  /* TODO: refactor! */
 
-    var json, tabsState;
-    $('#myTab a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-        var href, json, parentId, tabsState;
-        tabsState = localStorage.getItem("tabs-state");
-        json = JSON.parse(tabsState || "{}");
-        parentId = $(e.target).parents("ul.nav.nav-tabs").attr("id");
-        href = $(e.target).attr('href');
-        json[parentId] = href;
+  var json, tabsState;
+  $('#myTab a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+      var href, json, parentId, tabsState;
+      tabsState = localStorage.getItem("tabs-state");
+      json = JSON.parse(tabsState || "{}");
+      parentId = $(e.target).parents("ul.nav.nav-tabs").attr("id");
+      href = $(e.target).attr('href');
+      json[parentId] = href;
 
-        // display the options only for the default collection
-        if(href=="#Literature") {
-            $('#drop').show();
-        } else {
-            $('#drop').hide();
-        }
+      // display the options only for the default collection
+      if(href=="#Literature") {
+          $('#drop').show();
+      } else {
+          $('#drop').hide();
+      }
 
-        return localStorage.setItem("tabs-state", JSON.stringify(json));
-    });
+      return localStorage.setItem("tabs-state", JSON.stringify(json));
+  });
 
-    tabsState = localStorage.getItem("tabs-state");
-    json = JSON.parse(tabsState || "{}");
+  tabsState = localStorage.getItem("tabs-state");
+  json = JSON.parse(tabsState || "{}");
 
-    $.each(json, function(containerId, href) {
-        return $("#" + containerId + " a[href=" + href + "]").tab('show');
-    });
+  $.each(json, function(containerId, href) {
+      return $("#" + containerId + " a[href=" + href + "]").tab('show');
+  });
 
-    var href = json.myTab
-        , el = $("a[href=" + href + "]")
-        , $collection = el.data('cc');
+  var href = json.myTab
+      , el = $("a[href=" + href + "]")
+      , $collection = el.data('cc');
 
-    $('input#collection').val($collection);
+  $('input#collection').val($collection);
 
-    $("ul#myTab").each(function() {
-        var $this = $(this);
+  $("ul#myTab").each(function() {
+      var $this = $(this);
 
-        // when in homepage go to the default tab
-        if (window.location.href.split("/").length < 5 && location.search == "") {
-            $('input#collection').val($this.find("a[data-toggle=tab]:first").data('cc'));
-            return $this.find("a[data-toggle=tab]:first").tab("show");
-        }
-    });
+      // when in homepage go to the default tab
+      if (window.location.href.split("/").length < 5 && location.search == "") {
+          $('input#collection').val($this.find("a[data-toggle=tab]:first").data('cc'));
+          return $this.find("a[data-toggle=tab]:first").tab("show");
+      }
+  });
 
-    $('#myTab a[data-toggle="tab"]').on('click', function(e){
-        e.preventDefault();
-        var $this = $(this)
-            , $collection = $this.data('cc');
+  $('#myTab a[data-toggle="tab"]').on('click', function(e){
+      e.preventDefault();
+      var $this = $(this)
+          , $collection = $this.data('cc');
 
-        if ($this.attr('id') != 'hep') {
-            $('#drop').hide();
-        } else {
-            $('#drop').show();
-        }
+      if ($this.attr('id') != 'hep') {
+          $('#drop').hide();
+      } else {
+          $('#drop').show();
+      }
 
-        // send the cc value to the hidden input
-        $('input#collection').val($collection);
-    });
+      // send the cc value to the hidden input
+      $('input#collection').val($collection);
+  });
 
-    // this fix removes the cc parameter when inside default collection
-    $( "form#searchform" ).submit(function( event ) {
-        if ( $( "input#collection" ).val() === "" ) {
-            $("input#collection").prop('disabled', true);
-            return;
-        }
-    });
+  // this fix removes the cc parameter when inside default collection
+  $( "form#searchform" ).submit(function( event ) {
+      if ( $( "input#collection" ).val() === "" ) {
+          $("input#collection").prop('disabled', true);
+          return;
+      }
+  });
 
-    // Keep the output format selected based on the URL
-    var url_components = parseQueryString(window.location.href);
-    if ( url_components.of ) {
-        $('select[name=of]>option[value=' + url_components.of + ']').prop('selected', true);
-    }
-    // Keep the tab selected based on the URL
-    if (url_components.cc) {
-        $('#myTab a[href="#'+url_components.cc+'"]').tab('show');
-    }
+  // Keep the output format selected based on the URL
+  var url_components = parseQueryString(window.location.href);
+  if ( url_components.of ) {
+      $('select[name=of]>option[value=' + url_components.of + ']').prop('selected', true);
+  }
+  // Keep the tab selected based on the URL
+  if (url_components.cc) {
+      $('#myTab a[href="#'+url_components.cc+'"]').tab('show');
+  }
 
-})(jQuery);
+});
