@@ -43,7 +43,7 @@ define([
       dataKey: 'conference',
       dataEngine: new Bloodhound({
         name: 'conferences',
-        remote: '/search?cc=Conferences&p=%QUERY*&of=recjson&f=conferences',
+        remote: '/search?cc=Conferences&p=conferences:%QUERY*&of=recjson',
         datumTokenizer: function() {},
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         limit: 100,
