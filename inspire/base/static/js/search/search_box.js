@@ -51,7 +51,7 @@ require(['jquery', 'bootstrap'], function($) {
       json[parentId] = href;
 
       // display the options only for the default collection
-      if(href=="#Literature") {
+      if(href=="#Papers") {
           $('#drop').show();
       } else {
           $('#drop').hide();
@@ -71,14 +71,14 @@ require(['jquery', 'bootstrap'], function($) {
       , el = $("a[href=" + href + "]")
       , $collection = el.data('cc');
 
-  $('input#collection').val($collection);
+  $('input[name=cc]').val($collection);
 
   $("ul#myTab").each(function() {
       var $this = $(this);
 
       // when in homepage go to the default tab
       if (window.location.href.split("/").length < 5 && location.search == "") {
-          $('input#collection').val($this.find("a[data-toggle=tab]:first").data('cc'));
+          $('input[name=cc]').val($this.find("a[data-toggle=tab]:first").data('cc'));
           return $this.find("a[data-toggle=tab]:first").tab("show");
       }
   });
@@ -95,13 +95,13 @@ require(['jquery', 'bootstrap'], function($) {
       }
 
       // send the cc value to the hidden input
-      $('input#collection').val($collection);
+      $('input[name=cc]').val($collection);
   });
 
   // this fix removes the cc parameter when inside default collection
   $( "form#searchform" ).submit(function( event ) {
-      if ( $( "input#collection" ).val() === "" ) {
-          $("input#collection").prop('disabled', true);
+      if ( $('input[name=cc]').val() === "" ) {
+          $('input[name=cc]').prop('disabled', true);
           return;
       }
   });

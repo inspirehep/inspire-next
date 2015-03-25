@@ -1,0 +1,45 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+<div id="search-box-main" class="row">
+  <div class="col-md-9 col-centered">
+    <ul id="myTab" class="nav nav-tabs">
+      <li class="active">
+        <a href="#Papers" id="hep" data-toggle="tab">Papers</a>
+      </li>
+      <li>
+        <a href="#Authors" data-toggle="tab" data-cc="Author">Authors</a>
+      </li>
+      <li>
+        <a href="#Data" data-toggle="tab" data-cc="Data">Data</a>
+      </li>
+    </ul>
+  </div>
+  <div class="col-md-9 col-centered">
+    <form name="search" action="{{ url_for('search.search') }}" method="get" role="search" id="searchform">
+      <input type="hidden" name="ln" value="{{g.ln}}">
+      <input type="hidden" name="cc" value="{{collection.name}}">
+      <div class="nav navbar-nav navbar-left navbar-form">
+        <div class="input-group" id="searchform-input-group">
+          {% include "search/form/tips.html" %}
+          {% include "search/form/controls.html" %}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

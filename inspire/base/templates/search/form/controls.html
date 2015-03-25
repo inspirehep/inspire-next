@@ -1,0 +1,43 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+{% extends "search/form/controls_base.html" %}
+
+{%- block search_form_ctrls_input -%}
+  {{ super() }}
+  {# hide this part on mobile version #}
+  <div id="drop" class="input-group-btn hidden-xs">
+    <select name="of" class="form-control">
+      <option value="hb" selected="selected">Brief format</option>
+      <option value="hd">Detailed format</option>
+      <option value="hcs">Citesummary</option>
+      <option value="hlxe">LaTeX (EU)</option>
+      <option value="hlxu">LaTeX (US)</option>
+      <option value="hx">BibTeX</option>
+      <option value="tlcv">CV format (LaTeX)</option>
+      <option value="hcv">CV format (html)</option>
+      <option value="htcv">CV format (text)</option>
+      <option value="hlxh">Harvmac</option>
+      <option value="xw">RefWorks</option>
+      <option value="xe">EndNote</option>
+    </select>
+  </div>
+{%- endblock -%}
+
+{%- block search_form_ctrls_settings -%}
+{%- endblock -%}
