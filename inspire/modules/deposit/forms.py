@@ -345,12 +345,6 @@ class LiteratureForm(WebDepositForm):
         export_key='abstract',
     )
 
-    page_nr = fields.TextField(
-        label=_('Number of Pages'),
-        widget=HiddenInput(),
-        export_key='page_nr'
-    )
-
     languages = [("en", _("English")),
                  ("rus", _("Russian")),
                  ("ger", _("German")),
