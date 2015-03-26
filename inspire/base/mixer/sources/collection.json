@@ -40,9 +40,9 @@
         "name": "Conferences"
     },
     {
-        "dbquery": "980__a:\"HEPNAMES\"",
+        "dbquery": "980__a:\"AUTHOR\"",
         "id": 5,
-        "name": "HepNames"
+        "name": "Author"
     },
     {
         "dbquery": "collection:D0-INTERNAL-NOTE",
