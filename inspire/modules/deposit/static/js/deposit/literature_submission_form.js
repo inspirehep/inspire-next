@@ -67,7 +67,6 @@ define(function(require, exports, module) {
         license_url: ['arxiv'],
         preprint_created: ['arxiv'],
         note: ['arxiv'],
-        page_nr: ['doi', 'arxiv'],
         page_range_article_id: ['doi', 'arxiv']
       };
 

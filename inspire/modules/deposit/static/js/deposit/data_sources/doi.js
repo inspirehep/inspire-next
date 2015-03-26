@@ -46,22 +46,10 @@ define(function(require, exports, module) {
           }
         }
 
-        var pages, page_number;
-
-        if (data.page) {
-          pages = data.page.split('-');
-          if (pages.length === 2) {
-            page_number = pages[1] - pages[0] + 1;
-          } else if (pages.length === 1) {
-            page_number = 1;
-          }
-        }
-
         var doi_obj = {
           title_source: 'CrossRef',
           journal_title: journal,
           isbn: data.isbn,
-          page_nr: page_number,
           page_range_article_id: data.page,
           year: data.issued['date-parts'][0][0],
           issue: data.issue,
