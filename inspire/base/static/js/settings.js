@@ -25,6 +25,7 @@ require.config({
   baseUrl: "/",
   paths: {
     jquery: "vendors/jquery/dist/jquery",
+    "jquery.ui": "vendors/jquery-ui/jquery-ui",
     ui: "vendors/jquery-ui/ui",
     "jqueryui-timepicker": "vendors/jqueryui-timepicker-addon/dist",
     "jquery-form": "vendors/jquery-form/jquery.form",
@@ -55,6 +56,7 @@ require.config({
     "searchtypeahead-configuration": "js/search/default_typeahead_configuration",
     "jasmine-events": "js/jasmine/events_checker",
     "jasmine-initialization": "js/jasmine/initialization_checker",
+    "select2": "vendor/select2/select2.min",
     // INSPIRE
     "bootstrap-multiselect": "vendors/bootstrap-multiselect/dist/js/bootstrap-multiselect",
     "readmore": "vendors/readmore/readmore",
@@ -158,6 +160,10 @@ require.config({
     },
     "jasmine-initialization": {
       deps: ["jasmine-boot"],
+    },
+    select2: {
+      deps: ["jquery"],
+      exports: "select2"
     },
     // INSPIRE
     "bootstrap-multiselect": {
