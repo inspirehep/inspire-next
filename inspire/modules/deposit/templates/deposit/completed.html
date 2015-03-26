@@ -1,6 +1,6 @@
 {#
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -16,15 +16,14 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
-
-{% extends "search/searchbar_frame.html" %}
+{% extends "page.html" %}
 
 {%- block global_bundles %}
     {{ super() }}
     {% bundles "deposit.css" %}
 {%- endblock %}
 
-{% block inner_content %}
+{% block body %}
 <div class="pull-right">
   <a class="btn btn-primary pull-right"
       href="{{ url_for('webdeposit.create', deposition_type=deposition_type) }}">
@@ -36,4 +35,4 @@
   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
   <strong>Thank you for your suggestion!<br></strong><br>The INSPIRE staff will review it and we will let you know.
 </div>
-{% endblock inner_content %}
+{% endblock body %}
