@@ -14,7 +14,7 @@ env.conf_directory = "/afs/cern.ch/project/inspire/repo/inspire-configuration.gi
 env.backend_node = False
 
 env.roledefs = {
-    'prod': ['inspirelabsvm01', 'inspirelabsvm02'],
+    'prod': ['inspirelabsvm01'],
     'workers': ['inspirevm24', 'inspirevm25'],
     'prod1': ['inspirelabsvm01'],
     'prod2': ['inspirelabsvm02'],
@@ -24,7 +24,7 @@ env.roledefs = {
     'dev02': ['inspirevm11.cern.ch'],
     'proxy': ['inspirelb1.cern.ch'],
     'builder': ["inspirevm24"],
-    'targets': ["inspirevm25", "inspirelabsvm01", "inspirelabsvm02"]  # hosts the builder syncs to
+    'targets': ["inspirevm25", "inspirelabsvm01"]  # hosts the builder syncs to
 }
 
 
