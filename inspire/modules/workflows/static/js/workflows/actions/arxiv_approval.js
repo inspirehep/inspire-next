@@ -17,18 +17,16 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
-'use strict';
-
 define(
   [
     'jquery',
     'flight/lib/component',
-    'hgn!js/workflows/templates/action_alert'
   ],
   function(
     $,
-    defineComponent,
-    tpl_action_alert) {
+    defineComponent) {
+
+    "use strict";
 
     return defineComponent(ArxivApprovalAction);
 
@@ -61,7 +59,7 @@ define(
         return {
           "value": elem.data("value"),
           "objectid": elem.data("objectid"),
-        }
+        };
       };
 
       this.get_pdf_submission_value = function () {
@@ -70,10 +68,10 @@ define(
 
       this.post_request = function(data, element) {
         console.log(data.message);
-        $("#alert-message").append(tpl_action_alert({
+        this.trigger(document, "updateAlertMessage", {
           category: data.category,
           message: data.message
-        }));
+        });
         var parent = element.parents(this.attr.actionGroupSelector);
         if (typeof parent !== 'undefined') {
           parent.fadeOut();
@@ -85,7 +83,7 @@ define(
         var payload = this.get_action_values(element);
         var pdf_submission = this.get_pdf_submission_value();
         if (pdf_submission) {
-          payload["pdf_submission"] = pdf_submission;
+          payload.pdf_submission = pdf_submission;
         }
 
         var $this = this;
@@ -114,11 +112,11 @@ define(
           }
         });
         this.pdf_submission_readonly();
-      }
+      };
 
       this.pdf_submission_readonly = function () {
         $(this.attr.pdfCheckboxSelector).prop("disabled", true);
-      }
+      };
 
       this.after('initialize', function() {
         // Custom handlers
