@@ -17,19 +17,4 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% extends "format/record/Default_HTML_brief_base.tpl" %}
-
-{% block above_record_header %}
-{% endblock %}
-
-{% block record_header %}
-  <a href="{{ url_for('record.metadata', recid=record['recid']) }}">
-    {{ record.get('authors[0].full_name', '') }}
-  </a>
-{% endblock %}
-
-{% block record_info %}
-  {{ record|email_links|join_array(", ")|new_line_after }}
-  {{ record|institute_links|join_array(", ")|new_line_after }}
-  {{ record.get('field', [])|join_array(' ')|new_line_after }}
-{% endblock %}
+<a href="{{ content }}">{{ content }}</a>
