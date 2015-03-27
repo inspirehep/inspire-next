@@ -24,8 +24,18 @@ def email_links(record):
     """
         returns array of links to record emails
     """
-    return apply_template_on_array(record.get('email', []),
+    return apply_template_on_array([email["value"] for email in
+                                    record.get('_public_emails', [])],
                                    'format/record/field_templates/email.tpl')
+
+
+def url_links(record):
+    """
+        returns array of links to record emails
+    """
+    return apply_template_on_array([url["value"] for url in
+                                    record.get('urls', [])],
+                                   'format/record/field_templates/link.tpl')
 
 
 def institutes_links(record):
@@ -49,4 +59,5 @@ def get_filters():
         'email_links': email_links,
         'institute_links': institutes_links,
         'author_profile': author_profile,
+        'url_links': url_links,
     }
