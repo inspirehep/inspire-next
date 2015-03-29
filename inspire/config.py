@@ -80,6 +80,7 @@ PACKAGES = [
     'inspire.modules.access',
     'inspire.modules.formatter',
     'inspire.modules.harvester',
+    'inspire.modules.authors',
     'invenio.modules.access',
     'invenio.modules.accounts',
     'invenio.modules.alerts',

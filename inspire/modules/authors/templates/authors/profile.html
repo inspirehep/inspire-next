@@ -1,0 +1,204 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+{%- extends "page.html" -%}
+
+<!-- TO DO: move toggles to another template/js file -->
+{%- macro render_toggle(name, text) -%}
+<li>
+  <input class="profile-toggle" type="checkbox" name="{{ name }}-checkbox"
+  checked data-size="mini">&emsp;{{ text }}
+</li>
+{%- endmacro -%}
+
+{%- block global_bundles -%}
+  {{ super() }}
+  {%- bundles "authors.css", "authors.js" -%}
+{%- endblock -%}
+
+{%- block body -%}
+
+<div class="wrap top">
+
+  <div class="page-header">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1>{{ record.title_name }} <small> ({{ record.current_institution }})</small></h1>
+        <p class="lead">{{ record.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <!-- LEFT COLUMN -->
+    <div class="col-lg-8">
+
+      <!-- PERSONAL DETAILS -->
+      <div class="panel panel-default">
+        <div class="panel-heading">{{ _('Personal details') }}</div>
+        <div class="panel-body">
+          {%- include 'authors/personal_details.html' -%}
+        </div>
+      </div>
+
+      <!-- PUBLICATIONS -->
+      <div class="panel panel-default">
+        <div class="panel-heading pubs-list-switch">
+          <ul class="nav nav-tabs nav-condensed">
+            <li id="papers" class="active"><a><i class="fa fa-book"></i> {{ _('Publications') }}</a></li>
+            <li id="datasets"><a><i class="fa fa-code"></i> {{ _('Datasets') }}</a></li>
+            <li id="externals"><a><i class="fa fa-external-link"></i> {{ _('External') }}</a></li>
+          </ul>
+        </div>
+        <div id="pubs_list" class="mathjax panel-body">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="left-inner-addon">
+                <i class="fa fa-search"></i>
+                <input type="search" id="dataTables-filter"
+                class="form-control" placeholder="Filter these publications">
+              </div>
+              <table id="pubs_list_table" class="table dataTable responsive">
+                <!-- Filled by dataTables -->
+                <thead>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <div class="row">
+              <div class="pull-right claim-button">
+              {%- if owner -%}
+                  <a class="btn btn-primary">{{ _('Claim papers') }}</a>
+              {%- endif -%}
+              </div>
+              <div class="pub-list-disclaimer">
+                <small>{{ _('This list is generated automatically. Help us maintaining it correct by claiming your publications.') }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- STATS -->
+    <div class="col-lg-4">
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            {{ _('Display options') }}<p>
+            <div class="row">
+              <div class="col-lg-11 col-lg-offset-1">
+                <ul class="list-unstyled" id="toggles-list">
+                  {{ render_toggle( "collaboration", _('Collaboration papers') )}}
+                  {{ render_toggle( "arxiv", _('Preprints from arXiv') )}}
+                  {{ render_toggle( "selfcited", _('Self-citations') )}}
+                  {{ render_toggle( "singleauthored", _('Single-authored papers') )}} 
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">{{ _('Statistics') }}</div>
+          <div class="panel-body">
+            <div class="container-fluid" id="profile-stats">
+            
+              <div class="row">
+                <div id="citation-chart"></div>
+                <br/>
+              </div>
+
+              <div class="row text-stats">
+                <table class="table no-first-border table-condensed table-hover table-responsive">
+                  <tbody>
+                    {%- include 'authors/stats_table.html' -%}
+                  </tbody>
+                </table>
+
+                <small><b>{{ _('Warning') }}</b>: {{ _('The citations count should be
+                interpreted with great care') }}.
+                <a href="TODO">{{ _('Read the fine print') }}</a></small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- OTHER BOXES -->
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                {{ _('Keywords') }}
+              </div>
+              <div class="panel-body">
+              <div id="keywords-box"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-12">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                {{ _('Co-authors') }}
+              </div>
+              <div class="panel-body">
+              <div id="coauthors-box">
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+  </div>
+</div>
+
+{%- endblock -%}
+
+{%- block body_end -%}
+  {{ super() }}
+
+  <div class="modal fade" id="graphModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+        <button type="button" class="btn btn-primary pull-right" data-dismiss="modal" aria-hidden="true">{{ _('Close') }}</button>
+        <h4 class="modal-title" id="myModalLabel">{{ _('Citations and papers graph') }}</h4>
+        </div>
+        <div class="modal-body">
+          <div id="big-graph"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="bootstrapped" hidden>{{ record.detailed_pubs }}</div>
+
+  <!-- Uses CDN after considering the number of files and size of MathJax. Also, 
+       in the case of storing everything inside vendors directory, the
+       configuration is complicated and needs to be implemented in two
+       different ways depending on the value of ASSETS_DEBUG configuration
+       variable-->
+ 
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+{%- endblock -%}
