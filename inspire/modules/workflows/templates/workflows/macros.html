@@ -1,47 +1,53 @@
 {#
-## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
-##
-## INSPIRE is free software; you can redistribute it and/or
-## modify it under the terms of the GNU General Public License as
-## published by the Free Software Foundation; either version 2 of the
-## License, or (at your option) any later version.
-##
-## INSPIRE is distributed in the hope that it will be useful, but
-## WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-## General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# This file is part of INSPIRE.
+# Copyright (C) 2014 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
 {% macro display_classification_brief(results) -%}
-    {% if results %}
-        {% set result_full = results.get('classification_full') %}
-        {% set result_fast = results.get('classification_fast') %}
-        {% set result = [] %}
-        {% if result_full %}
-            {% do result.append(result_full[0].get('result', {}).get('dict', {}).get('complete_output')) %}
-        {% elif result_fast %}
-            {% do result.append(result_fast[0].get('result', {}).get('dict', {}).get('complete_output')) %}
-        {% endif %}
-        {% if result %}
-            {% set core_keywords = result[0]['Filtered Core keywords'] %}
-            <ul class="list-inline">
-                <li><strong>{{ _('Core') }} ({{ result[0]['Core keywords']|length }}):</strong></li>
-                {% for keyword in core_keywords %}
-                    {%- if loop.index < 10 %}
-                        <li>{{keyword}}</li>
-                    {% endif %}
-                {% else %}
-                    <li>None</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-        {% if result_fast %}
-            <em>{{ _("(This task run at fast mode taking into consideration only the title and the abstract)") }}</em>
-        {% endif %}
+  {% if results %}
+    {% set name = "" %}
+    {% if 'classification' in results %}
+        {% set name = "classification" %}
+    {% elif 'classification_full' in results %}
+        {% set name = "classification_full" %}
+    {% elif 'classification_fast' in results %}
+        {% set name = "classification_fast" %}
     {% endif %}
+
+    {% set result = [] %}
+    {% set results_extracted = results.get(name, []) %}
+    {% if results_extracted %}
+        {% do result.append(results_extracted[0].get('result', {}).get('dict', {}).get('complete_output')) %}
+    {% endif %}
+    {% if result %}
+        {% set core_keywords = result[0]['Filtered Core keywords'] %}
+        <ul class="list-inline">
+            <li><strong>{{ _('Core') }} ({{ result[0]['Core keywords']|length }}):</strong></li>
+            {% for keyword in core_keywords %}
+                {%- if loop.index < 10 %}
+                    <li>{{keyword}}</li>
+                {% endif %}
+            {% else %}
+                <li>None</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if result_fast %}
+        <em>{{ _("(This task run at fast mode taking into consideration only the title and the abstract)") }}</em>
+    {% endif %}
+  {% endif %}
 {%- endmacro %}
