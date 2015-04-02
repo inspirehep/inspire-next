@@ -1,6 +1,4 @@
-# from invenio/requirements.txt
+git+https://github.com/inspirehep/invenio@labs#egg=Invenio
+git+https://github.com/inveniosoftware/invenio-query-parser@master#egg=invenio-query-parser
 
-git+https://github.com/inspirehep/python-rt#egg=rt
-git+https://github.com/inveniosoftware/invenio-query-parser#egg=master
--e git+https://github.com/inspirehep/invenio@labs#egg=Invenio
--e .
+-e .[development]

@@ -58,17 +58,13 @@ setup(
         "rt",
         "HarvestingKit>=0.3",
         "mixer==4.9.5",
-        "ipython",
-        "Babel>=1.3",
-        "Invenio",
-    ],
-    dependency_links=[
-        "git+https://github.com/inspirehep/invenio@labs#egg=Invenio"
     ],
     extras_require={
         'development': [
             'Flask-DebugToolbar>=0.9',
-            'setuptools-bower>=0.2'
+            'ipython',
+            'ipdb',
+            'Invenio-Kwalitee'
         ],
     },
     classifiers=[
