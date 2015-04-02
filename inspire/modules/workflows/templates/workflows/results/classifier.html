@@ -35,7 +35,7 @@
   {% endif %}
 {%- endmacro %}
 
-{% macro display_keyword(title, result, categories) -%}
+{% macro display_keyword(title, result) -%}
   {% if result %}
     <div class="col-sm-6 col-md-4">
       <div class="thumbnail">
@@ -43,11 +43,7 @@
           <h5>{{ _(title) }}:</h5>
           <ul class="list-unstyled">
             {% for keyword, times in result.items() %}
-              <li>{{keyword}}: {{times}}
-                {% if keyword in categories %}
-                  ({{categories[keyword]}})
-                {% endif %}
-              </li>
+              <li>{{keyword}}: {{times}}</li>
             {% endfor %}
           </ul>
         </div>
@@ -57,22 +53,28 @@
 {%- endmacro %}
 
 {% block results_body %}
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      {{ _("Keyword extraction") }}
-    </div>
-    <div class="panel-body">
-      <div class="row">
-        {% set result = results["result"]["dict"]["complete_output"] %}
-        {% set categories = results["result"]["dict"]["categories"] %}
-        {{ display_keyword("Filtered Core keywords", result["Filtered Core keywords"], categories) }}
-        {{ display_keyword("Core keywords", result["Core keywords"], categories) }}
-        {{ display_keyword("Author keywords", result["Author keywords"], categories) }}
-        {{ display_keyword("Single keywords", result["Single keywords"], categories) }}
+{% set result = results["result"]["dict"].get("complete_output", {}) %}
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    {{ _("Keyword extraction") }}
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      {% if result.get("Core keywords") %}
+        {{ display_keyword("Filtered Core keywords", result["Filtered Core keywords"]) }}
+        {{ display_keyword("Core keywords", result["Core keywords"]) }}
+        {{ display_keyword("Author keywords", result["Author keywords"]) }}
+        {{ display_keyword("Single keywords", result["Single keywords"]) }}
         {{ display_composite_keyword("Composite keywords", result["Composite keywords"]) }}
-        {{ display_keyword("Acronyms", result["Acronyms"], categories) }}
-        {{ display_keyword("Field codes", result["Field codes"], categories) }}
-      </div>
+        {{ display_keyword("Acronyms", result["Acronyms"]) }}
+        {{ display_keyword("Field codes", result["Field codes"]) }}
+      {% else %}
+        <div class="col-md-12">
+          <p>No keywords found.</p>
+        </div>
+      {% endif %}
     </div>
   </div>
+</div>
+
 {% endblock %}
