@@ -80,6 +80,7 @@ PACKAGES = [
     'inspire.modules.deposit',
     'inspire.modules.formatter',
     'inspire.modules.harvester',
+    'inspire.modules.oaiharvester',
     'inspire.modules.styleguide',
     'inspire.modules.workflows',
     'invenio.modules.access',
