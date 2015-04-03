@@ -28,6 +28,11 @@
       {% endif %}
       <a class="close" data-dismiss="alert">&times;</a>
     </div>
+  {% elif bwobject.version == 3 %}
+      <div class="alert alert-warning">
+        {{ _('Object is currently processing') }}
+        <a class="close" data-dismiss="alert">&times;</a>
+      </div>
   {% endif %}
 {%- endblock -%}
 
