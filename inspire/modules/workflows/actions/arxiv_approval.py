@@ -22,11 +22,9 @@
 
 """Approval action for INSPIRE arXiv harvesting."""
 
-from flask import render_template, url_for, current_app
+from flask import render_template, url_for
 
 from invenio.base.i18n import _
-from invenio.modules.accounts.models import User
-from invenio.modules.deposit.models import Deposition
 
 
 class arxiv_approval(object):
