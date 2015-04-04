@@ -26,7 +26,7 @@
         <h5>{{ _(title) }}:</h5>
         <ul class="list-unstyled">
           {% for keyword, data in result.items() %}
-            <li>{{keyword}}: {{data["numbers"]}}, {{data["details"]}}</li>
+            <li>{{keyword|u}}: {{data["numbers"]|u}}, {{data["details"]|u}}</li>
           {% endfor %}
         </ul>
       </div>
@@ -43,7 +43,7 @@
           <h5>{{ _(title) }}:</h5>
           <ul class="list-unstyled">
             {% for keyword, times in result.items() %}
-              <li>{{keyword}}: {{times}}</li>
+              <li>{{keyword|u}} ({{times|u}})</li>
             {% endfor %}
           </ul>
         </div>
