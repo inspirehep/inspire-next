@@ -19,20 +19,22 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
-@charset "utf-8";
+//
+// Panels
+// --------------------------------------------------
 
-@import "../vendors/bootstrap/less/bootstrap.less";
-@import "../vendors/font-awesome/less/font-awesome.less";
+@import (reference) "../inspire.less";
 
-// Setting the path to fonts files.
-@icon-font-path: "/vendors/bootstrap/fonts/";
-@fa-font-path: "/vendors/font-awesome/fonts";
+.panel {
+  margin-bottom: @line-height-computed;
+  background-color: @panel-bg;
+  border: 1px solid transparent;
+  border-radius: @panel-border-radius;
+  .box-shadow(0 1px 1px rgba(0,0,0,.15));
+}
 
+.panel-heading a {
+    color: #fff;
+    font-weight: bold;
+}
 
-// LESS files according to the templates
-@import "base/variables.less";
-@import "base/header.less";
-@import "base/footer.less";
-@import "base/helpers.less";
-@import "base/panels.less";
-@import "base/sticky-footer.less";

@@ -55,6 +55,7 @@ _base_styles.contents += (
     'less/base/variables.less',
     'less/base/header.less',
     'less/base/footer.less',
+    'less/base/panels.less',
     'less/base/helpers.less',
     'less/base/sticky-footer.less',
     'less/base/core.less',
