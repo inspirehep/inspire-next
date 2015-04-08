@@ -19,24 +19,22 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
- /* Generic core styles
--------------------------------------------------- */
-
-//== Breadcrumbs
 //
+// Panels
+// --------------------------------------------------
 
-.breadcrumb {
-    background-color: transparent;
-    border-radius: 0;
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
-    -o-border-radius: 0;
+@import (reference) "../inspire.less";
+
+.panel {
+  margin-bottom: @line-height-computed;
+  background-color: @panel-bg;
+  border: 1px solid transparent;
+  border-radius: @panel-border-radius;
+  .box-shadow(0 1px 1px rgba(0,0,0,.15));
 }
-/* change breadcrumb separator to >> symbol */
-.breadcrumb > li + li:before {
-    content: "\00BB";
-    color: #aaa;
+
+.panel-heading a {
+    color: #fff;
+    font-weight: bold;
 }
-.breadcrumb > li:first-child {
-    margin-left: -15px;
-}
+
