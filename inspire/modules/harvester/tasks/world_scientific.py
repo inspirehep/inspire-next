@@ -111,7 +111,6 @@ def convert_files(target_folder):
         to_date = args.get("to_date") or datetime.now().strftime('%Y-%m-%d')
         from_date = args.get("from_date") or '1900-01-01'
 
-        append_files = []
         insert_files = []
         filenames = obj.data['extracted_files']
         for filename in filenames:
@@ -121,61 +120,53 @@ def convert_files(target_folder):
                 if marc:
                     filename = basename(filename)
                     filename = join(target_folder_full, filename)
-                    if ws._get_article_type() in ['research-article',
-                                                  'introduction',
-                                                  'letter']:
-                        insert_files.append(filename)
-                    elif ws._get_article_type() in ['correction',
-                                                    'addendum']:
-                        append_files.append(filename)
+                    insert_files.append(filename)
                     with open(filename, 'w') as outfile:
                         outfile.write(marc)
 
-        obj.log.info("Converted {0} articles between {0} to {1}".format(
-            len(append_files) + len(insert_files),
+        obj.log.info("Converted {0} articles between {1} to {2}".format(
+            len(insert_files),
             from_date,
             to_date
         ))
 
-        obj.data['append'] = append_files
         obj.data['insert'] = insert_files
         obj.data["result_path"] = target_folder_full
 
         obj.log.debug("Saved converted files to {0}".format(target_folder_full))
-        obj.log.debug("{0} files to append, {1} files to add".format(
-            len(obj.data["append"]),
+        obj.log.debug("{0} files to add".format(
             len(obj.data["insert"]),
         ))
     return _convert_files
 
 
 def create_collection(obj, eng):
-    """Squash all the insert/append records into batch collections."""
+    """Squash all the insert records into batch collections."""
     args = obj.extra_data['args']
     to_date = args.get("to_date") or datetime.now().strftime('%Y-%m-%d')
     from_date = args.get("from_date")
     date = "_".join([d for d in [from_date, to_date] if d])
     obj.data['collections'] = {}
-    for update_type in ["append", "insert"]:
-        final_filename = join(
-            obj.data.get("result_path", cfg.get("HARVESTER_STORAGE_PREFIX")),
-            "world_scientific-{0}.{1}.xml".format(date, update_type)
-        )
 
-        files = obj.data.get(update_type, list())
-        if files:
-            with open(final_filename, 'w') as outfile:
-                outfile.write('<collection>\n')
-                for filename in files:
-                    try:
-                        infile = open(filename)
-                        outfile.write(infile.read())
-                    except IOError:
-                        obj.log.error('Unable to locate the file {0}'.format(filename))
-                    finally:
-                        infile.close()
-                outfile.write('\n</collection>')
-            obj.data['collections'].update({update_type: final_filename})
+    final_filename = join(
+        obj.data.get("result_path", cfg.get("HARVESTER_STORAGE_PREFIX")),
+        "world_scientific-{0}.{1}.xml".format(date, "insert")
+    )
+
+    files = obj.data.get("insert", list())
+    if files:
+        with open(final_filename, 'w') as outfile:
+            outfile.write('<collection>\n')
+            for filename in files:
+                try:
+                    infile = open(filename)
+                    outfile.write(infile.read())
+                except IOError:
+                    obj.log.error('Unable to locate the file {0}'.format(filename))
+                finally:
+                    infile.close()
+            outfile.write('\n</collection>')
+        obj.data['collections'].update({"insert": final_filename})
     obj.log.debug("{0} files ready for upload:\n{1}".format(
         len(obj.data["collections"]),
         "\n".join([f for f in obj.data["collections"].values()])
