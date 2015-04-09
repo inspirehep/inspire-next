@@ -42,7 +42,7 @@
         <div class="caption">
           <h5>{{ _(title) }}:</h5>
           <ul class="list-unstyled">
-            {% for keyword, times in result.items() %}
+            {% for keyword, times in result|dictsort(false, 'value')|reverse %}
               <li>{{keyword|u}} ({{times|u}})</li>
             {% endfor %}
           </ul>
