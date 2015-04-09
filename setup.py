@@ -64,7 +64,7 @@ setup(
             'Flask-DebugToolbar>=0.9',
             'ipython',
             'ipdb',
-            'Invenio-Kwalitee'
+            'kwalitee'
         ],
     },
     classifiers=[
