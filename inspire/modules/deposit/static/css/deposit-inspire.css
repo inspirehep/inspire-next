@@ -48,6 +48,10 @@
     resize: vertical;
 }
 
+.panel.panel-default {
+    -webkit-box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.24);
+}
+
 .panel-heading .panel-toggle:after {
     font-family: 'Glyphicons Halflings';
     content: "\e114"; /* extracted from bootstrap.css */
