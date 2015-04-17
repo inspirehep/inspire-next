@@ -53,13 +53,13 @@ define(
         actionRejectSelector: ".core-approval-action-reject",
         actionGroupSelector: ".core-approval-action",
         action_url: "",
-        pdfCheckboxSelector: "[name='submission-data-pdf']",
+        pdfCheckboxSelector: "[name='submission-data-pdf']"
       });
 
       this.get_action_values = function (elem) {
         return {
           "value": elem.data("value"),
-          "objectid": elem.data("objectid"),
+          "objectid": elem.data("objectid")
         };
       };
 
