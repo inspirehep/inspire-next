@@ -19,21 +19,20 @@
 
 {% block approval_action %}
 <div class="arxiv-approval-action">
-  <p>{{message}}</p>
-  <p><a class="btn btn-primary arxiv-approval-action-accept"
-        role="button"
-        data-objectid="{{object.id}}"
-        data-value="accept">{{_("Accept")}}</a></p>
 {% if not "CORE" in object.get_data().get("collections", [{}])[0].keys() %}
-  <p><a class="btn btn-success arxiv-approval-action-accept"
+  <button class="btn btn-success arxiv-approval-action-accept"
         role="button"
         data-objectid="{{object.id}}"
-        data-value="accept_core">{{_("Accept (CORE)")}}</a></p>
+        data-value="accept_core">{{_("CORE")}}</button>
 {% endif %}
-  <p><a class="btn btn-danger arxiv-approval-action-reject"
+  <button class="btn btn-warning arxiv-approval-action-accept"
+        role="button"
+        data-objectid="{{object.id}}"
+        data-value="accept">{{_("Accept")}}</button>
+  <button class="btn btn-danger arxiv-approval-action-reject"
         data-objectid="{{object.id}}"
         data-value="reject"
-        role="button">{{_("Reject")}}</a></p>
+        role="button">{{_("Reject")}}</button>
 
 </div>
 
