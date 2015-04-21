@@ -216,7 +216,7 @@ OAUTHCLIENT_REMOTE_APPS = dict(
         ),
         params=dict(
             request_token_params={'scope': '/authenticate'},
-            base_url='https://pub.orcid.com/',
+            base_url='https://pub.orcid.org/',
             request_token_url=None,
             access_token_url="https://pub.orcid.org/oauth/token",
             access_token_method='POST',
