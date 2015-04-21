@@ -27,13 +27,15 @@ define(
     "js/workflows/actions/approval",
     "js/workflows/actions/core_approval",
     "js/workflows/actions/core_approval_modal",
-    "js/workflows/actions/arxiv_approval"
+    "js/workflows/actions/arxiv_approval",
+    "js/workflows/actions/batch_action_hotkeys"
   ],
   function(
     ApprovalAction,
     CoreApprovalAction,
     CoreApprovalModal,
-    ArxivApprovalAction) {
+    ArxivApprovalAction,
+    BatchActionHotkeys) {
 
     function initialize(context) {
       ApprovalAction.attachTo(context.attach_action_to, {
@@ -45,6 +47,10 @@ define(
       });
 
       ArxivApprovalAction.attachTo(context.attach_action_to, {
+        action_url: context.action_url
+      });
+
+      BatchActionHotkeys.attachTo(context.attach_action_to, {
         action_url: context.action_url
       });
 
