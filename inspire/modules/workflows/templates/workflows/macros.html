@@ -35,16 +35,18 @@
     {% endif %}
     {% if result %}
         {% set core_keywords = result[0]['Filtered Core keywords'] %}
+        {% if result[0]['Core keywords']|length %}
         <ul class="list-inline">
             <li><strong>{{ _('Core') }} ({{ result[0]['Core keywords']|length }}):</strong></li>
             {% for keyword in core_keywords %}
                 {%- if loop.index < 10 %}
-                    <li>{{keyword}}</li>
+                    <li><label class="label label-default">{{keyword}}</label></li>
                 {% endif %}
             {% else %}
                 <li>None</li>
             {% endfor %}
         </ul>
+        {% endif %}
     {% endif %}
     {% if result_fast %}
         <em>{{ _("(This task run at fast mode taking into consideration only the title and the abstract)") }}</em>
