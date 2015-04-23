@@ -22,7 +22,7 @@
 
 """Approval action for INSPIRE arXiv harvesting."""
 
-from flask import render_template, url_for
+from flask import render_template, url_for, request
 
 from invenio.base.i18n import _
 
@@ -58,7 +58,7 @@ class arxiv_approval(object):
 
     def resolve(self, bwo):
         """Resolve the action taken in the approval action."""
-        from flask import request
+        from invenio.modules.workflows.models import ObjectVersion
 
         value = request.form.get("value", None)
         upload_pdf = request.form.get("pdf_submission", False)
@@ -70,7 +70,7 @@ class arxiv_approval(object):
         extra_data["reason"] = request.form.get("text", "")
         extra_data["pdf_upload"] = True if upload_pdf == "true" else False
         bwo.set_extra_data(extra_data)
-        bwo.save()
+        bwo.save(version=ObjectVersion.WAITING)
         bwo.continue_workflow(delayed=True)
 
         if extra_data["approved"]:

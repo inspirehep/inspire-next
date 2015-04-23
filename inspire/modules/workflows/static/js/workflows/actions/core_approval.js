@@ -77,6 +77,8 @@ define(
         if (typeof parent !== 'undefined') {
           parent.fadeOut();
         }
+        this.trigger(document, "reloadHoldingPenTable");
+        // FIXME: on the details page we should move to next record instead
       };
 
       this.onAccept = function (ev, data) {
