@@ -53,13 +53,13 @@ define(
         actionRejectSelector: ".core-approval-action-reject",
         actionGroupSelector: ".core-approval-action",
         action_url: "",
-        pdfCheckboxSelector: "[name='submission-data-pdf']",
+        pdfCheckboxSelector: "[name='submission-data-pdf']"
       });
 
       this.get_action_values = function (elem) {
         return {
           "value": elem.data("value"),
-          "objectid": elem.data("objectid"),
+          "objectid": elem.data("objectid")
         };
       };
 
@@ -77,6 +77,8 @@ define(
         if (typeof parent !== 'undefined') {
           parent.fadeOut();
         }
+        this.trigger(document, "reloadHoldingPenTable");
+        // FIXME: on the details page we should move to next record instead
       };
 
       this.onAccept = function (ev, data) {

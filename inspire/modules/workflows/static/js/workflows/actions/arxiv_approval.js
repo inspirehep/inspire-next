@@ -20,7 +20,7 @@
 define(
   [
     'jquery',
-    'flight/lib/component',
+    'flight/lib/component'
   ],
   function(
     $,
@@ -52,14 +52,25 @@ define(
         actionRejectSelector: ".arxiv-approval-action-reject",
         actionGroupSelector: ".arxiv-approval-action",
         action_url: "",
-        pdfCheckboxSelector: "[name='submission-data-pdf']",
+        pdfCheckboxSelector: "[name='submission-data-pdf']"
       });
 
       this.get_action_values = function (elem) {
         return {
           "value": elem.data("value"),
-          "objectid": elem.data("objectid"),
+          "objectid": elem.data("objectid")
         };
+      };
+
+      this.doBatchAction = function(ev, data) {
+        if (data.command == "reject") {
+          //this.doRejection(ev, data);
+        } else {
+          //this.onAccept(ev, data);
+        }
+        console.log(data.command);
+        for (var i = 0; i < data.selectedIDs.length; i++)
+          console.log(data.selectedIDs[i]);
       };
 
       this.get_pdf_submission_value = function () {
@@ -76,6 +87,8 @@ define(
         if (typeof parent !== 'undefined') {
           parent.fadeOut();
         }
+        this.trigger(document, "reloadHoldingPenTable");
+        // FIXME: on the details page we should move to next record instead
       };
 
       this.onAccept = function (ev, data) {
@@ -124,6 +137,8 @@ define(
           actionAcceptSelector: this.onAccept,
           actionRejectSelector: this.doRejection
         });
+
+        this.on(document, "return_data_for_exec", this.doBatchAction);
 
         if ($(this.attr.pdfCheckboxSelector).prop('disabled')) {
           this.pdf_submission_readonly();

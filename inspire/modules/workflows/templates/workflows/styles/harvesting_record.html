@@ -18,32 +18,40 @@
 #}
 {% import 'workflows/macros.html' as macros %}
 
-{% if message %}
-{{message}}
-{% endif %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      {% if message %}
+      <p class="lead">{{message}}</p>
+      {% endif %}
 
-{% if identifiers %}
-<ul class="list-inline">
-  {% for identifier in identifiers %}
-  <li>
-    {% if 'arxiv' in identifier.lower() %}
-      {% set identifier_part = identifier.split(':')[-1] %}
-      <a href="http://arxiv.org/abs/{{identifier_part}}">{{identifier}}</a>
-    {% else %}
-      {{identifier}}
-    {% endif %}
-  </li>
-  {% endfor %}
-</ul>
-{% endif %}
+      {% if identifiers %}
+      <ul class="list-inline">
+        {% for identifier in identifiers %}
+        <li>
+          {% if 'arxiv' in identifier.lower() %}
+            {% set identifier_part = identifier.split(':')[-1] %}
+            <a href="http://arxiv.org/abs/{{identifier_part}}">{{identifier}}</a>
+          {% else %}
+            {{identifier}}
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
 
-{% if categories %}
-<ul class="list-inline">
-  {% for category in categories %}
-    <li>{{category}}</li>
-  {% endfor %}
-</ul>
-{% endif %}
+      {% if categories %}
+      <ul class="list-inline">
+        {% for category in categories %}
+          <li><em>{{category}}</em></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    <div class="col-md-6">
+      {{ macros.display_classification_brief(results) }}
+    </div>
+  </div>
+</div>
 
-{{ macros.display_classification_brief(results) }}
 
