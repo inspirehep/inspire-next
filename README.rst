@@ -36,11 +36,21 @@ Finally, start the server:
 
 Now you should have a running INSPIRE demo site running at `http://localhost:4000 <http://localhost:4000>`_!
 
+-----------------------
+Developing with INSPIRE
+-----------------------
+
+When developing on top of INSPIRE and Invenio, we recommend setting the
+following Invenio config variables:
+
+.. code-block:: bash
+
+    (inspire)$ inveniomanage config set DEBUG True
+    (inspire)$ inveniomanage config set ASSETS_DEBUG True
+
 --------------------------
 INSPIRE workflow and tools
 --------------------------
-
-
 
 Available Fabric commands
 -------------------------
