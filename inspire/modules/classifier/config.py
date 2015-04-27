@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of INSPIRE.
 # Copyright (C) 2015 CERN.
 #
@@ -14,18 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this licence, CERN does not waive the privileges and immunities
+# In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-################
-## Production ##
-################
+"""Config for classifier INSPIRE module."""
 
-## Requirements
--r base.requirements.txt
--r requirements-harvesting.txt
+import os
 
-## Invenio and INSPIRE
--e git+https://github.com/inspirehep/invenio.git@production#egg=Invenio
--e .
+from invenio.config import CFG_PREFIX
+
+CLASSIFIER_MODEL_PATH = os.path.join(CFG_PREFIX, "var/data/classifier/models")
+"""
+The base path for classifier models used for predictions.
+"""

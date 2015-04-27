@@ -52,6 +52,32 @@
       {{ macros.display_classification_brief(results) }}
     </div>
   </div>
+  {% if overall_score is not none %}
+    <div class="row">
+      <div class="col-md-12">
+      {% if overall_score > 0%}
+        <span class="label label-success">CORE: {{ overall_score|round(2) }}</span>
+      {% else %}
+        <span class="label label-warning">Non-CORE: {{ overall_score|round(2) }}</span>
+      {% endif %}
+      <ul class="list-inline">
+      {% for type, term, score in top_words %}
+        <li>
+        {% if score > 0 %}
+          <span class="text-success">
+            {{ type }}:{{ term }}({{ score|round(2) }})
+          </span>
+        {% else %}
+          <span class="text-danger">
+            {{ type }}:{{ term }}({{ score|round(2) }})
+          </span>
+        {% endif %}
+        </li>
+      {% endfor %}
+      </ul>
+      </div>
+    </div>
+  {% endif %}
 </div>
 
 

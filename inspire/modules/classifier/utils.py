@@ -17,8 +17,9 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-
 """Utilities for classifier."""
+
+from cPickle import load
 
 
 def get_classification_from_task_results(obj):
@@ -66,3 +67,25 @@ def update_classification_in_task_results(obj, output):
             classification
         ))
         return
+
+
+def prepare_prediction_record(obj):
+    """Given a workflow object, return compatible prediction record."""
+    prepared_record = {}
+    field_map = {'abstract': ["abstract", "summary"],
+                 'title': ["title", "title"],
+                 'journal': ["publication_info", "journal_title"]}
+    for key, (first, second) in field_map.items():
+        try:
+            prepared_record[key] = obj.data.get(first, {}).get(second, "")
+        except KeyError:
+            pass
+    prepared_record["collaborations"] = obj.data.get("collaboration") or []
+    keywords = get_classification_from_task_results(obj)
+    prepared_record["keywords"] = keywords.get("Core keywords", {}).keys()
+    return prepared_record
+
+
+def load_model(path_to_object):
+    """Load a pickled prediction model."""
+    return load(open(path_to_object))

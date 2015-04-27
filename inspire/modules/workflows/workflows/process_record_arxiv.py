@@ -61,7 +61,10 @@ from inspire.modules.oaiharvester.tasks.upload import (
     send_robotupload_oaiharvest,
 )
 from inspire.modules.workflows.tasks.submission import halt_record_with_action
-from inspire.modules.classifier.tasks import filter_core_keywords
+from inspire.modules.classifier.tasks import (
+    filter_core_keywords,
+    guess_coreness
+)
 
 
 class process_record_arxiv(RecordWorkflow):
@@ -99,12 +102,13 @@ class process_record_arxiv(RecordWorkflow):
                 refextract,
                 author_list,
                 classify_paper_with_oaiharvester(
-                    taxonomy="HEPontCore",
+                    taxonomy="HEPont",
                     output_mode="dict",
-                    only_core_tags=True,
+                    only_core_tags=False,
                     spires=True,
                 ),
                 filter_core_keywords(filter_kb="antihep"),
+                guess_coreness(),
                 halt_record_with_action(action="arxiv_approval",
                                         message="Accept article?"),
                 workflow_if(was_approved),
@@ -128,6 +132,8 @@ class process_record_arxiv(RecordWorkflow):
         from flask import render_template, current_app
 
         record = bwo.get_data()
+
+        # Get identifiers
         final_identifiers = []
         identifiers = None
         try:
@@ -150,7 +156,7 @@ class process_record_arxiv(RecordWorkflow):
             else:
                 final_identifiers = []
 
-        results = bwo.get_tasks_results()
+        # Get subject categories
         categories = []
         if hasattr(record, "get"):
             if 'subject' in record:
@@ -179,7 +185,14 @@ class process_record_arxiv(RecordWorkflow):
                     if source_list.lower() == 'inspire':
                         categories.append(category)
 
+        results = bwo.get_tasks_results()
+        core_guessing = results.get("core_guessing", {})
+        if core_guessing:
+            core_guessing = core_guessing[0].get("result")
         return render_template('workflows/styles/harvesting_record.html',
                                categories=set(categories),
                                identifiers=final_identifiers,
-                               results=results)
+                               results=results,
+                               top_words=core_guessing.get("top_words"),
+                               core=core_guessing.get("core"),
+                               overall_score=core_guessing.get("overall_score"))
