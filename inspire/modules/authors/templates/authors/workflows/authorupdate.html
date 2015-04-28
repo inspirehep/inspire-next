@@ -16,13 +16,17 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
-
-{% if thisfield.label.text %}
-  <label class="control-label col-md-3 {{' required' if thisfield.flags.required}}{{ ' error' if thisfield.errors }}" for="{{thisfield.label.field_id}}">
-    {%- if thisfield.icon %}
-      <span class=""><i class="{{ thisfield.icon }}"></i></span>
-    {%- endif %}
-    {{ thisfield.label.text|safe }}
-  </label>
+<br>
+Data submitted by the user:
+<pre>
+{{marcxml}}
+</pre>
+<br>
+{% if comments %}
+	User comments:
+	<pre>{{comments}}</pre>
+	<br>
 {% endif %}
-
+{% if form_url %}
+  <p>To edit it go <a href={{form_url}}>Back to user form</a></p>
+{% endif %}

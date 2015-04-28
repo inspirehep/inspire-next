@@ -20,7 +20,7 @@
 
 {% block global_bundles %}
   {{ super() }}
-  {% bundles "form.css" %}
+  {% bundles "form.css", "inspire-form.js" %}
 {% endblock %}
 
 {% macro form_action_bar(margin="") -%}
@@ -37,7 +37,7 @@
     {% include "forms/field_label.html" %}
 {%- endmacro -%}
 
-{%- macro field_display(thisfield, field_size=None, field_class="form-control", container_class="form-group") -%}
+{%- macro field_display(thisfield, field_size=None, field_class="", container_class="form-group") -%}
   {%- set field_size = field_size if field_size else (form.field_sizes.get(thisfield.name) if form.field_sizes else none) -%}
   {%- set field_kwargs = kwargs -%}
   {% include "forms/field.html" %}
@@ -70,7 +70,6 @@
       {% endblock form_title %}
 
       {% block form_body scoped %}
-        {{ form.hidden_tag() }}
         {% for group, fields in form.get_groups() %}
           {% set grouploop = loop %}
           {% block form_group scoped %}
@@ -89,7 +88,7 @@
               {% endif %}
 
               {% block fieldset scoped %}
-              {% for field in fields if field.widget.input_type != 'hidden' %}
+              {% for field in fields %}
                 {% block field_body scoped %}
                     {{ field_display(field) }}
                 {% endblock field_body %}

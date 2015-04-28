@@ -31,7 +31,7 @@
     <div id="field-{{ thisfield.name }}" class="{{field_size}}">
       {{ thisfield(class_= field_class + " " + thisfield.short_name, **field_kwargs) }}
       {%- if thisfield.description %}
-        <p class="text-muted field-desc"><small>{{thisfield.description|urlize}}</small></p>
+        <p class="text-muted field-desc"><small>{{ thisfield.description|safe }}</small></p>
       {%- endif %}
       <div class="alert help-block alert-danger" id="state-{{ thisfield.name }}" style="margin-top: 5px;{% if thisfield.errors %} display:block;{% else%} display: none;{% endif %}">
         {%- for error in thisfield.errors %}

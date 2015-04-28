@@ -1,4 +1,4 @@
-{#
+#
 ## This file is part of INSPIRE.
 ## Copyright (C) 2015 CERN.
 ##
@@ -15,14 +15,15 @@
 ## You should have received a copy of the GNU General Public License
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-#}
+#
 
-{% if thisfield.label.text %}
-  <label class="control-label col-md-3 {{' required' if thisfield.flags.required}}{{ ' error' if thisfield.errors }}" for="{{thisfield.label.field_id}}">
-    {%- if thisfield.icon %}
-      <span class=""><i class="{{ thisfield.icon }}"></i></span>
-    {%- endif %}
-    {{ thisfield.label.text|safe }}
-  </label>
-{% endif %}
+"""INSPIRE Author bundles."""
 
+from invenio.ext.assets import Bundle
+
+styles = Bundle(
+    "less/authors/authors-update-form.less",
+    output="author-update-form.css",
+    filters="less,cleancss",
+    weight=51
+)

@@ -1,6 +1,6 @@
 {#
 ## This file is part of INSPIRE.
-## Copyright (C) 2015 CERN.
+## Copyright (C) 2014 CERN.
 ##
 ## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -16,13 +16,11 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
+ New author from {{ email }}
+ Approve/reject it here: {{ url_for('holdingpen.details', objectid=object.id, _external=True) }}
 
-{% if thisfield.label.text %}
-  <label class="control-label col-md-3 {{' required' if thisfield.flags.required}}{{ ' error' if thisfield.errors }}" for="{{thisfield.label.field_id}}">
-    {%- if thisfield.icon %}
-      <span class=""><i class="{{ thisfield.icon }}"></i></span>
-    {%- endif %}
-    {{ thisfield.label.text|safe }}
-  </label>
+{%- if user_comment %}
+  User comments:
+  {{ user_comment|safe }}
 {% endif %}
 

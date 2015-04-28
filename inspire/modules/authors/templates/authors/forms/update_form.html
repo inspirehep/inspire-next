@@ -1,0 +1,83 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+{%- extends "forms/form.html" -%}
+
+{% block global_bundles %}
+  {{ super() }}
+  {% bundles "deposit.css", "author-update-form.css" %}
+{% endblock %}
+
+{% block form_title scoped %}
+  <div class="row">
+    <div class="col-xs-12 col-sm-8 col-md-6 vcenter">
+      <h1>{{ form._title }}</h1>
+    </div>
+  </div>
+  <div class="well">
+  This form allows you to update author information. All modifications are transferred to <a href="http://inspirehep.net">http://inspirehep.net</a> upon approval.
+  </div>
+{% endblock form_title %}
+
+{% block javascript %}
+<script type="text/javascript">
+require(
+  [
+    "jquery",
+    "js/forms/inspire-form",
+  ],
+
+  function(
+    $,
+    InspireForm
+  ) {
+
+    $(function() {
+
+    var config = {
+      form: {
+        save_url: '{{ url_for("inspire_authors.validate") }}',
+        save_all_url: '{{ url_for("inspire_authors.validate", all='1') }}',
+        complete_url: '{{ url_for("inspire_authors.validate", submit='1') }}',
+        autocomplete_url: '{{ url_for("inspire_authors.autocomplete", field_name="__FIELDNAME__") }}',
+        datepicker_element: '.datepicker',
+        datepicker_options: {
+            format: "YYYY",
+            viewMode: 'years',
+            minViewMode: 'years',
+            pickTime: false
+        },
+        // Selectors
+        datepickerSelector: '.datepicker',
+        formSelector: '#authorUpdateForm',
+        formDialogSelector: '#form-submit-dialog',
+
+        // Classes
+        formSaveClass: '.form-save',
+        formSubmitClass: '.form-submit',
+        dynamicFieldListClass : ".dynamic-field-list",
+        uploaderSelector: "#uploader"
+      }
+    };
+
+    // Initialize form
+    InspireForm.attachTo("#authorUpdateForm", config.form);
+  });
+});
+</script>
+{% endblock javascript %}

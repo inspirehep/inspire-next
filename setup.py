@@ -59,6 +59,7 @@ setup(
         "HarvestingKit>=0.3",
         "mixer==4.9.5",
         "requests==2.3",
+        "orcid"
     ],
     extras_require={
         'development': [

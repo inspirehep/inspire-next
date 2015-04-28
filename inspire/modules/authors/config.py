@@ -18,6 +18,8 @@
 
 """ Configuration of authors module."""
 
+from invenio.config import CFG_SITE_URL
+
 # Record definition variables
 
 AUTHORS_IDENTIFIERS_TYPES = ['authorid', 'orcid', 'arxiv']
@@ -32,3 +34,8 @@ AUTHORS_NAME_TITLES = ['Sir']
 
 AUTHORS_AFFILIATION_RANKS = ['senior', 'junior', 'staff', 'visitor', 'postdoc',
                              'phd', 'masters', 'undergrad']
+
+# Author new/update form
+
+AUTHORS_UPDATE_BASE_URL = CFG_SITE_URL
+""" URL used to prefill author update form """

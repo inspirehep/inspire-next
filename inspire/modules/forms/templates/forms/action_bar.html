@@ -17,8 +17,7 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-<div class="well action-bar hide-element"{% if margin %}style="margin-top: {{margin}}"{% endif %}>
-  <a class="btn btn-danger pull-left" href="#"><i class="fa fa-trash-o fa-lg"></i> {{ _('Delete') }}</a>
+<div class="well action-bar"{% if margin %}style="margin-top: {{margin}}"{% endif %}>
   <span class="pull-right">
     <span class="loader hide"><img src="{{ url_for('static', filename='img/loading.gif' ) }}" /></span>
     <span class="status-indicator text-muted"></span>&nbsp;

@@ -107,6 +107,7 @@ def robotupload_callback():
     request_data = request.get_json()
     id_object = request_data.get("nonce", "")
     results = request_data.get("results", [])
+    status = False
     for result in results:
         status = result.get('success', False)
         if status:

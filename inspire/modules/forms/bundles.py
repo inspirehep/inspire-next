@@ -17,7 +17,16 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from invenio.ext.assets import Bundle
+from invenio.base.bundles import invenio as _i, jquery as _j
+from invenio.ext.assets import Bundle, RequireJSFilter
+
+
+js = Bundle(
+    "js/forms/inspire-form-init.js",
+    output="inspire-form.js",
+    filters=RequireJSFilter(exclude=[_j, _i]),
+    weight=51
+)
 
 styles = Bundle(
     "less/forms/form.less",

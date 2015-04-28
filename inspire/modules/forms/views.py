@@ -17,7 +17,8 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from flask import Blueprint, render_template, url_for
+from flask import Blueprint, render_template, url_for, request, abort
+from werkzeug.datastructures import MultiDict
 
 from inspire.modules.forms import fields
 

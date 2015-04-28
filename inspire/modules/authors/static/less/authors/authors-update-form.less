@@ -18,18 +18,18 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
-@media (min-width: 1200px) {
-  #form_container {
-    width: 970px;
-    float: none;
-    margin: 0 auto;
-  }
+div[id^="institution_history-"]:nth-child(odd) {
+  padding-left: 0;
 }
 
-.col-margin-top {
-  margin-top: 5px;
+div[id^="experiments-"]:nth-child(odd) {
+  padding-left: 0;
 }
 
-.ui-autocomplete-loading {
-     background: white url('/img/loading.gif') right top no-repeat;
+.fa-times {
+  font-size: 1.3em;
+}
+
+#field-institution_history .fa-times {
+  margin-top: 30%;
 }
