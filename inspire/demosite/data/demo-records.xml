@@ -5590,6 +5590,10 @@
   <datafield tag="980" ind1=" " ind2=" ">
     <subfield code="a">AUTHOR</subfield>
   </datafield>
+  <datafield tag="035" ind1="" ind2="">
+    <subfield code="9">orcid</subfield>
+    <subfield code="a">0000-0000-0000-0001</subfield>
+  </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">1997-03-11</subfield>
   </datafield>
@@ -5641,6 +5645,10 @@
   <datafield tag="980" ind1=" " ind2=" ">
     <subfield code="a">AUTHOR</subfield>
   </datafield>
+  <datafield tag="035" ind1="" ind2="">
+    <subfield code="9">orcid</subfield>
+    <subfield code="a">0000-0000-0000-0002</subfield>
+  </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">2010-09-30</subfield>
   </datafield>
@@ -5672,6 +5680,10 @@
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
     <subfield code="a">AUTHOR</subfield>
+  </datafield>
+  <datafield tag="035" ind1="" ind2="">
+    <subfield code="9">orcid</subfield>
+    <subfield code="a">0000-0000-0000-0003</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">2006-12-08</subfield>
@@ -5733,6 +5745,10 @@
   <datafield tag="980" ind1=" " ind2=" ">
     <subfield code="a">AUTHOR</subfield>
   </datafield>
+  <datafield tag="035" ind1="" ind2="">
+    <subfield code="9">orcid</subfield>
+    <subfield code="a">0000-0000-0000-0004</subfield>
+  </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">1995-09-11</subfield>
   </datafield>
@@ -5785,6 +5801,10 @@
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
     <subfield code="a">AUTHOR</subfield>
+  </datafield>
+  <datafield tag="035" ind1="" ind2="">
+    <subfield code="9">orcid</subfield>
+    <subfield code="a">0000-0000-0000-0005</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">1996-08-31</subfield>
