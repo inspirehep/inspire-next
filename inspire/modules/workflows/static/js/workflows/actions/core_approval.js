@@ -56,11 +56,15 @@ define(
         pdfCheckboxSelector: "[name='submission-data-pdf']"
       });
 
+      // POST object init
       this.get_action_values = function (elem) {
-        return {
+        var actionValues = {
           "value": elem.data("value"),
-          "objectid": elem.data("objectid")
+          "objectids": []
         };
+
+        actionValues.objectids.push(elem.data("objectid"));
+        return actionValues;
       };
 
       this.get_pdf_submission_value = function () {
@@ -88,7 +92,11 @@ define(
         if (pdf_submission) {
           payload.pdf_submission = pdf_submission;
         }
+        this.requestToServer(payload, element);
+      };
 
+      // Request to sever
+      this.requestToServer = function(payload, element) {
         var $this = this;
 
         jQuery.ajax({
@@ -105,22 +113,14 @@ define(
       this.preRejection = function (ev, data) {
         var element = $(data.el);
         var payload = this.get_action_values(element);
-        this.trigger("loadRejectionModal", payload);
+        console.log("GOT HERE");
+        this.trigger(document, "loadRejectionModal", payload);
       };
 
       this.doRejection = function (ev, data) {
-        data["value"] = "reject";
-        var element = $("a.core-approval-action-reject[data-objectid=" + data.objectid + "]");
-        var $this = this;
-        jQuery.ajax({
-          type: "POST",
-          url: $this.attr.action_url,
-          data: data,
-          success: function(data) {
-            $this.post_request(data, element);
-          }
-        });
-        this.pdf_submission_readonly();
+        data.value = "reject";
+        var element = $("button.core-approval-action-reject[data-objectid=" + data.objectid + "]");
+        this.requestToServer(data, element);
       };
 
       this.pdf_submission_readonly = function () {

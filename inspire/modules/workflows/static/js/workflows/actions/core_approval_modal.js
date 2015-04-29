@@ -46,25 +46,31 @@ define(
       });
 
       this.loadModal = function(ev, data) {
-        $(this.attr.modalPrefixSelector + data.objectid).modal('show');
-      }
+        var element = $(this.attr.modalPrefixSelector + data.objectids[0]);
+        element.modal('show');
+      };
 
 
       this.buttonPressed = function(ev, data) {
         var button = $(ev.target); // Button that triggered the modal
         var objectid = button.data('objectid');
+        console.log("Button: " + objectid);
         var $text = $(this.attr.modalContentPrefixSelector + objectid);
         var payload = {
           text: $text.val(),
-          objectid: objectid
+          objectids: []
         };
+        payload.objectids.push(objectid);
         var $modal = $(this.attr.modalPrefixSelector + objectid);
+        console.log($modal);
         $modal.modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
         this.trigger("rejectConfirmed", payload);
-      }
+      };
 
       this.after('initialize', function() {
-        this.on("loadRejectionModal", this.loadModal);
+        this.on(document, "loadRejectionModal", this.loadModal);
         this.on("click", {
           modalButtonSelector: this.buttonPressed
         });

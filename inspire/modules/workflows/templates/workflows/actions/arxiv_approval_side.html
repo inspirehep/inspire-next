@@ -17,26 +17,3 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% block approval_action %}
-
-<div class="arxiv-approval-action well">
-  <p>{{message}}</p>
-  <p><a class="btn btn-primary btn-lg arxiv-approval-action-accept"
-        role="button"
-        data-objectid="{{object.id}}"
-        data-value="accept">{{_("Accept")}}</a></p>
-{% if not "CORE" in object.get_data().get("collections", [{}])[0].keys() %}
-  <p><a class="btn btn-success btn-lg arxiv-approval-action-accept"
-        role="button"
-        data-objectid="{{object.id}}"
-        data-value="accept_core">{{_("Accept as CORE")}}</a></p>
-{% endif %}
-  <p><a class="btn btn-danger arxiv-approval-action-reject"
-        data-objectid="{{object.id}}"
-        data-value="reject"
-        role="button">{{_("Reject")}}</a></p>
-
-</div>
-
-{% endblock %}
-
