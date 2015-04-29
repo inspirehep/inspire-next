@@ -40,7 +40,7 @@
             <li><strong>{{ _('Core') }} ({{ result[0]['Core keywords']|length }}):</strong></li>
             {% for keyword in core_keywords %}
                 {%- if loop.index < 10 %}
-                    <li><big><span class="label label-danger">{{keyword}}</span></big></li>
+                    <li><span class="text-danger">{{keyword}}</span></li>
                 {% endif %}
             {% else %}
                 <li>None</li>
