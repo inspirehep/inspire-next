@@ -42,15 +42,15 @@ define(
         // Alt + A: Accept All
         // Alt + C: Accept CORE
         // Alt + R: Reject All
-        if (event.altKey && event.keyCode == keyCodes.aKey) {
+        if (event.altKey && event.keyCode === keyCodes.aKey) {
           this.trigger(document, "execute", {"value": "accept"});
           event.preventDefault();
         }
-        if (event.altKey && event.keyCode == keyCodes.cKey) {
+        if (event.altKey && event.keyCode === keyCodes.cKey) {
           this.trigger(document, "execute", {"value": "accept_core"});
           event.preventDefault();
         }
-        if (event.altKey && event.keyCode == keyCodes.rKey) {
+        if (event.altKey && event.keyCode === keyCodes.rKey) {
           this.trigger(document, "execute", {"value": "reject"});
           event.preventDefault();
         }
