@@ -81,8 +81,16 @@ def prepare_prediction_record(obj):
         except KeyError:
             pass
     prepared_record["collaborations"] = obj.data.get("collaboration") or []
-    keywords = get_classification_from_task_results(obj)
-    prepared_record["keywords"] = keywords.get("Core keywords", {}).keys()
+    keywords = {}
+    result = get_classification_from_task_results(obj)
+    if result:
+        keywords.update(result.get("Core keywords", {}))
+        # FIXME: Add all keywords when model is ready
+        # keywords.update(result.get("Composite keywords", {}))
+        # keywords.update(result.get("Author keywords", {}))
+        # keywords.update(result.get("Single keywords", {}))
+        # keywords.update(result.get("Acronyms", {}))
+    prepared_record["keywords"] = [str(w) for w in keywords]
     return prepared_record
 
 

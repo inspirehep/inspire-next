@@ -106,6 +106,7 @@ class process_record_arxiv(RecordWorkflow):
                     output_mode="dict",
                     only_core_tags=False,
                     spires=True,
+                    with_author_keywords=True,
                 ),
                 filter_core_keywords(filter_kb="antihep"),
                 guess_coreness(),
