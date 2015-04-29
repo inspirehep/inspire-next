@@ -55,90 +55,86 @@ define(
         pdfCheckboxSelector: "[name='submission-data-pdf']"
       });
 
-      this.get_action_values = function (elem) {
-        return {
-          "value": elem.data("value"),
-          "objectid": elem.data("objectid")
-        };
-      };
 
-      this.doBatchAction = function(ev, data) {
-        if (data.command == "reject") {
-          //this.doRejection(ev, data);
-        } else {
-          //this.onAccept(ev, data);
-        }
-        console.log(data.command);
-        for (var i = 0; i < data.selectedIDs.length; i++)
-          console.log(data.selectedIDs[i]);
-      };
-
+      // PDF-related functions
       this.get_pdf_submission_value = function () {
         return $(this.attr.pdfCheckboxSelector).prop("checked");
-      };
-
-      this.post_request = function(data, element) {
-        console.log(data.message);
-        this.trigger(document, "updateAlertMessage", {
-          category: data.category,
-          message: data.message
-        });
-        var parent = element.parents(this.attr.actionGroupSelector);
-        if (typeof parent !== 'undefined') {
-          parent.fadeOut();
-        }
-        this.trigger(document, "reloadHoldingPenTable");
-        // FIXME: on the details page we should move to next record instead
-      };
-
-      this.onAccept = function (ev, data) {
-        var element = $(data.el);
-        var payload = this.get_action_values(element);
-        var pdf_submission = this.get_pdf_submission_value();
-        if (pdf_submission) {
-          payload.pdf_submission = pdf_submission;
-        }
-
-        var $this = this;
-
-        jQuery.ajax({
-          type: "POST",
-          url: $this.attr.action_url,
-          data: payload,
-          success: function(data) {
-            $this.post_request(data, element);
-          }
-        });
-        this.pdf_submission_readonly();
-      };
-
-      this.doRejection = function (ev, data) {
-        var element = $(data.el);
-        var payload = this.get_action_values(element);
-        var $this = this;
-        jQuery.ajax({
-          type: "POST",
-          url: $this.attr.action_url,
-          data: payload,
-          success: function(data) {
-            $this.post_request(data, element);
-          }
-        });
-        this.pdf_submission_readonly();
       };
 
       this.pdf_submission_readonly = function () {
         $(this.attr.pdfCheckboxSelector).prop("disabled", true);
       };
 
-      this.after('initialize', function() {
-        // Custom handlers
-        this.on("click", {
-          actionAcceptSelector: this.onAccept,
-          actionRejectSelector: this.doRejection
+
+      // POST object init
+      this.get_action_values = function (elem) {
+        var actionValues = {
+          "value": elem.data("value"),
+          "objectids": []
+        };
+
+        actionValues.objectids.push(elem.data("objectid"));
+        return actionValues;
+      };
+
+
+      // Action functions (batch + standard)
+      this.onBatchAction = function(ev, data) {
+        var payload = {
+          "value":data.value,
+          "objectids": data.selectedIDs
+        };
+
+        this.requestToServer(payload);
+      };
+
+      this.onAction = function (ev, data) {
+        var element = $(data.el);
+        var payload = this.get_action_values(element);
+
+        payload.pdf_submission = this.get_pdf_submission_value();
+        this.requestToServer(payload, element);
+      };
+
+
+      // Request to sever
+      this.requestToServer = function(payload, element) {
+        var $this = this;
+
+        jQuery.ajax({
+          type: "POST",
+          url: $this.attr.action_url,
+          data: payload,
+          success: function(data) {
+            $this.post_request(data);
+          },
+          error: function(request, status, error) {
+            console.log(error);
+          }
         });
 
-        this.on(document, "return_data_for_exec", this.doBatchAction);
+        this.pdf_submission_readonly();
+      };
+
+      this.post_request = function(data) {
+        this.trigger(document, "updateAlertMessage", {
+          category: data.category,
+          message: data.message
+        });
+
+        this.trigger(document, "reloadHoldingPenTable");
+        // FIXME: on the details page we should move to next record instead
+      };
+
+
+      this.after('initialize', function() {
+        // Custom handlers for buttons
+        this.on("click", {
+          actionAcceptSelector: this.onAction,
+          actionRejectSelector: this.onAction
+        });
+        // Batch action handler
+        this.on(document, "return_data_for_exec", this.onBatchAction);
 
         if ($(this.attr.pdfCheckboxSelector).prop('disabled')) {
           this.pdf_submission_readonly();

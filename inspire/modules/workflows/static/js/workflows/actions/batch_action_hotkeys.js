@@ -38,19 +38,20 @@ define(
           cKey: 67
         };
 
+        // Hotkey events for batch actions
+        // Alt + A: Accept All
+        // Alt + C: Accept CORE
+        // Alt + R: Reject All
         if (event.altKey && event.keyCode == keyCodes.aKey) {
-          $.event.trigger("execute", {"command": "accept"});
-          console.log("Alt A");
+          this.trigger(document, "execute", {"value": "accept"});
           event.preventDefault();
         }
         if (event.altKey && event.keyCode == keyCodes.cKey) {
-          $.event.trigger("execute", {"command": "accept_core"});
-          console.log("Alt C");
+          this.trigger(document, "execute", {"value": "accept_core"});
           event.preventDefault();
         }
         if (event.altKey && event.keyCode == keyCodes.rKey) {
-          $.event.trigger("execute", {"command": "reject"});
-          console.log("Alt R");
+          this.trigger(document, "execute", {"value": "reject"});
           event.preventDefault();
         }
       };
