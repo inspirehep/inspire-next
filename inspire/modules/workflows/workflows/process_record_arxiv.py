@@ -22,6 +22,7 @@
 
 """Workflow for processing single arXiv records harvested."""
 
+from flask import render_template
 
 from invenio.modules.workflows.tasks.marcxml_tasks import (
     convert_record_to_bibfield,
@@ -130,7 +131,7 @@ class process_record_arxiv(RecordWorkflow):
     def get_description(bwo):
         """Get the description column part."""
         from invenio.modules.records.api import Record
-        from flask import render_template, current_app
+        from flask import current_app
 
         record = bwo.get_data()
 
@@ -157,9 +158,11 @@ class process_record_arxiv(RecordWorkflow):
             else:
                 final_identifiers = []
 
-        # Get subject categories
+        abstract = ""
+        authors = []
         categories = []
         if hasattr(record, "get"):
+            # Get subject categories
             if 'subject' in record:
                 lookup = ["subject", "term"]
             elif "subject_term":
@@ -185,15 +188,26 @@ class process_record_arxiv(RecordWorkflow):
                             source_list = ""
                     if source_list.lower() == 'inspire':
                         categories.append(category)
+            abstract = record.get("abstract", {}).get("summary", "")
+            authors = record.get("authors")
+        return render_template('workflows/styles/harvesting_record.html',
+                               object=bwo,
+                               authors=authors,
+                               categories=set(categories),
+                               abstract=abstract,
+                               identifiers=final_identifiers)
 
+    @staticmethod
+    def get_additional(bwo):
+        from inspire.modules.classifier.utils import get_classification_from_task_results
+        keywords = get_classification_from_task_results(bwo)
         results = bwo.get_tasks_results()
         core_guessing = results.get("core_guessing", {})
         if core_guessing:
             core_guessing = core_guessing[0].get("result")
-        return render_template('workflows/styles/harvesting_record.html',
-                               categories=set(categories),
-                               identifiers=final_identifiers,
-                               results=results,
+        return render_template('workflows/styles/harvesting_record_additional.html',
+                               object=bwo,
+                               keywords=keywords,
                                top_words=core_guessing.get("top_words"),
                                core=core_guessing.get("core"),
                                overall_score=core_guessing.get("overall_score"))

@@ -18,7 +18,7 @@
 #}
 
 {% block approval_action %}
-<div class="core-approval-action">
+<div class="action arxiv-approval-action btn-group-vertical" role="group">
 {% if not "CORE" in object.get_data().get("collections", [{}])[0].keys() %}
   <button class="btn btn-success core-approval-action-accept"
         role="button"

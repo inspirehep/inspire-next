@@ -18,66 +18,49 @@
 #}
 {% import 'workflows/macros.html' as macros %}
 
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-6">
-      {% if message %}
-      <p class="lead">{{message}}</p>
-      {% endif %}
+{% for author in authors %}
+  <a class="greyfaded" href="https://inspirehep.net/search?p=find a {{author.full_name}}">
+    {{author.full_name}}
+  {%- if author != authors[-1] -%}
+  ;
+  {%- endif -%}
+  </a>
+{% endfor %}
 
-      {% if identifiers %}
-      <ul class="list-inline">
-        {% for identifier in identifiers %}
-        <li>
-          {% if 'arxiv' in identifier.lower() %}
-            {% set identifier_part = identifier.split(':')[-1] %}
-            <a href="http://arxiv.org/abs/{{identifier_part}}">{{identifier}}</a>
-          {% else %}
-            {{identifier}}
-          {% endif %}
-        </li>
-        {% endfor %}
-      </ul>
-      {% endif %}
 
-      {% if categories %}
-      <ul class="list-inline">
-        {% for category in categories %}
-          <li><em>{{category}}</em></li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-    </div>
-    <div class="col-md-6">
-      {{ macros.display_classification_brief(results) }}
-    </div>
-  </div>
-  {% if overall_score is not none %}
-    <div class="row">
-      <div class="col-md-12">
-      {% if overall_score > 0%}
-        <span class="label label-success">CORE: {{ overall_score|round(2) }}</span>
-      {% else %}
-        <span class="label label-warning">Non-CORE: {{ overall_score|round(2) }}</span>
-      {% endif %}
-      <ul class="list-inline">
-      {% for type, term, score in top_words %}
-        <li>
-        {% if score > 0 %}
-          <span class="text-success">
-            {{ type }}:{{ term }}({{ score|round(2) }})
-          </span>
-        {% else %}
-          <span class="text-danger">
-            {{ type }}:{{ term }}({{ score|round(2) }})
-          </span>
-        {% endif %}
-        </li>
-      {% endfor %}
-      </ul>
-      </div>
-    </div>
-  {% endif %}
+
+{% if message %}
+<p class="lead">{{message}}</p>
+{% endif %}
+
+
+{% if categories %}
+<ul class="list-inline">
+  {% for category in categories %}
+    <li><h5><span class="label label-default">{{category}}</span></h5></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if identifiers %}
+<ul class="list-inline">
+  {% for identifier in identifiers %}
+  <li>
+    {% if 'arxiv' in identifier.lower() %}
+      {% set identifier_part = identifier.split(':')[-1] %}
+      <a href="http://arxiv.org/abs/{{identifier_part}}">{{identifier_part}}</a>
+      <a href="http://arxiv.org/pdf/{{identifier_part}}"><i class="fa fa-file-pdf-o"></i> PDF</a>
+    {% else %}
+      {{identifier}}
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if abstract %}
+<div class="collapse" id="collapsed-abstract-{{object.id}}">
+{{ abstract }}
 </div>
-
-
+<a class="faded toggle" data-toggle="collapse" href="#collapsed-abstract-{{object.id}}" aria-expanded="false" aria-controls="collapsed-abstract-{{object.id}}">Abstract </a>
+{% endif %}
