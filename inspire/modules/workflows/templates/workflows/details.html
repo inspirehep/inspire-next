@@ -83,16 +83,27 @@
         {% block hp_task_results %}
           {% if task_results %}
 
-            {# Ensure keywords extraction results are first. #}
+            {# Ensure core extraction results are first. #}
+            {% if "core_guessing" in task_results %}
+              {{ task_results.get("core_guessing")|safe }}
+            {% endif %}
+
+            {# Ensure keywords extraction results are second. #}
             {% if "classification" in task_results %}
               {{ task_results.get("classification")|safe }}
             {% endif %}
 
+
             {% for name, template in task_results.items() %}
-              {% if name != "classification" %}
+              {% if name not in ["classification", "core_guessing", "References"] %}
                 {{ template|safe }}
               {% endif %}
             {% endfor %}
+
+            {# Ensure references are last. #}
+            {% if "References" in task_results %}
+              {{ task_results.get("References")|safe }}
+            {% endif %}
           {% endif %}
         {% endblock %}
       </div>

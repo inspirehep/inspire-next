@@ -20,11 +20,22 @@
 
 """Tasks for classifier."""
 
+from __future__ import print_function
+
+import json
+import os
+
+import cPickle as pickle
+
 from functools import wraps
+
+from invenio.celery import celery
 
 from .utils import (
     update_classification_in_task_results,
     get_classification_from_task_results,
+    prepare_prediction_record,
+    load_model
 )
 
 
@@ -44,3 +55,53 @@ def filter_core_keywords(filter_kb):
         result["Filtered Core keywords"] = filtered_core_keywords
         update_classification_in_task_results(obj, result)
     return _filter_core_keywords
+
+
+def guess_coreness(model_path="core_guessing.pickle"):
+    """Using a prediction model, predict if record is CORE."""
+    @wraps(guess_coreness)
+    def _guess_coreness(obj, eng):
+        from invenio.base.globals import cfg
+        from inspire.modules.classifier.core import predict
+
+        if os.path.basename(model_path) == model_path:
+            # Just the name is given, so we fill in the rest
+            full_model_path = os.path.join(
+                cfg.get("CLASSIFIER_MODEL_PATH"),
+                model_path
+            )
+        else:
+            # The new variable is needed due to how parameters in closures work
+            full_model_path = model_path
+
+        prepared_record = prepare_prediction_record(obj)
+        pipeline = load_model(full_model_path)
+        core, overall_score, top_words = predict(pipeline, prepared_record)
+
+        result = {}
+        result["core"] = core
+        result["overall_score"] = overall_score
+        result["top_words"] = top_words
+        task_result = {
+            "name": "core_guessing",
+            "result": result,
+            "template": "workflows/results/core_guessing.html"
+        }
+        obj.update_task_results(
+            task_result.get("name"),
+            [task_result]
+        )
+    return _guess_coreness
+
+
+@celery.task()
+def train(records, output):
+    """Train a set of records and save model to file."""
+    from .core import train as core_train
+
+    records = json.load(open(records, "r"))
+    if isinstance(records, dict):
+        records = records.values()
+    pipeline = core_train(records)
+    pickle.dump(pipeline, open(output, "w"))
+    print("Dumped trained model to {0}".format(output))

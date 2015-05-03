@@ -24,6 +24,7 @@
 
 ## Requirements
 -r base.requirements.txt
+-r requirements-harvesting.txt
 
 ## Invenio and INSPIRE
 -e git+https://github.com/inspirehep/invenio.git@qa#egg=Invenio

@@ -48,6 +48,46 @@ following Invenio config variables:
     (inspire)$ inveniomanage config set DEBUG True
     (inspire)$ inveniomanage config set ASSETS_DEBUG True
 
+----------------
+Harvesting setup
+----------------
+
+CORE prediction
+---------------
+
+If you need to setup prediction models such as the CORE guessing it is required to install some extra packages such as beard which requires scipy, numpy and scikit-learn. This means that you need to make sure you have the required libraries installed.
+
+For example, on Ubuntu/Debian you could execute:
+
+.. code-block:: bash
+
+    (inspire)$ sudo aptitude install -y libblas-dev liblapack-dev gfortran
+
+Then to install beard:
+
+.. code-block:: bash
+
+    (inspire)$ cdvirtualenv src/inspire-next
+    (inspire)$ pip install -r requirements-harvesting.txt --exists-action i
+
+
+Now you can train a prediction model or use an existing pickled model file:
+
+.. code-block:: bash
+
+    (inspire)$ cdvirtualenv var/data/classifier/models/
+    (inspire)$ cp /path/to/core_guessing.pickle .
+
+Here is how to train the model from scratch:
+
+.. code-block:: bash
+
+    (inspire)$ inveniomanage classifier train -r /path/to/trainingset.json -o core_guessing.pickle
+
+
+TODO: Add link to training set.
+TODO: Add link sample model.
+
 --------------------------
 INSPIRE workflow and tools
 --------------------------
