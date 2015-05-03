@@ -19,20 +19,19 @@
 {% import 'workflows/macros.html' as macros %}
 
 {% for author in authors %}
-  <a class="greyfaded" href="https://inspirehep.net/search?p=find a {{author.full_name}}">
-    {{author.full_name}}
-  {%- if author != authors[-1] -%}
-  ;
+  {% if author %}
+    <a class="greyfaded" href="https://inspirehep.net/search?p=find a {{author.full_name}}">
+      {{author.full_name}}
+    {%- if author != authors[-1] -%}
+    ;
+    {%- endif -%}
   {%- endif -%}
   </a>
 {% endfor %}
 
-
-
 {% if message %}
 <p class="lead">{{message}}</p>
 {% endif %}
-
 
 {% if categories %}
 <ul class="list-inline">

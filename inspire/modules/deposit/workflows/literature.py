@@ -188,16 +188,55 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         sip = deposit_object.get_latest_sip()
         if sip:
             record = sip.metadata
-            identifiers = [record.get("arxiv_id", "")]
-            categories = [record.get("type_of_doc", "")]
-            return render_template('workflows/styles/submission_record.html',
-                                   categories=categories,
-                                   identifiers=identifiers,
-                                   results=results,
-                                   user_email=user_email,
-                                   )
+            identifiers = []
+            report_numbers = record.get("report_number", []) \
+                + record.get("report_numbers", [])
+            doi = record.get("doi", "")
+            if report_numbers:
+                for report_number in report_numbers:
+                    number = report_number.get("primary", "")
+                    if number:
+                        identifiers.append(number)
+            if doi:
+                identifiers.append("doi:{0}".format(doi))
+
+            categories = []
+            subjects = record.get("subject_term", [])
+            if subjects:
+                categories += [subject.get("term") for subject in subjects]
+            categories = [record.get("type_of_doc", "")] + categories
+
+            authors = []
+            authors += [record.get("_first_author", {})]
+            authors += record.get("_additional_authors", [])
+            return render_template(
+                'workflows/styles/submission_record.html',
+                categories=categories,
+                authors=authors,
+                identifiers=identifiers,
+                results=results,
+                user_email=user_email,
+                object=bwo,
+                record=record
+            )
         else:
             return "Submitter: {0}".format(user_email)
+
+    @staticmethod
+    def get_additional(bwo, **kwargs):
+        """Return formatted data of object."""
+        from inspire.modules.classifier.utils import get_classification_from_task_results
+        keywords = get_classification_from_task_results(bwo)
+        results = bwo.get_tasks_results()
+        core_guessing = results.get("core_guessing", {})
+        if core_guessing:
+            core_guessing = core_guessing[0].get("result")
+        return render_template('workflows/styles/harvesting_record_additional.html',
+                               object=bwo,
+                               keywords=keywords,
+                               top_words=core_guessing.get("top_words"),
+                               core=core_guessing.get("core"),
+                               overall_score=core_guessing.get("overall_score"))
 
     @staticmethod
     def formatter(bwo, **kwargs):
@@ -224,6 +263,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 of=of,
                 xml_record=marcxml
             )
+
 
     @classmethod
     #TODO: ensure that this regex is correct
