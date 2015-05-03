@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
-##
-## This file is part of INSPIRE.
-## Copyright (C) 2014, 2015 CERN.
-##
-## INSPIRE is free software; you can redistribute it and/or
-## modify it under the terms of the GNU General Public License as
-## published by the Free Software Foundation; either version 2 of the
-## License, or (at your option) any later version.
-##
-## INSPIRE is distributed in the hope that it will be useful, but
-## WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-## General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
+# This file is part of INSPIRE.
+# Copyright (C) 2014, 2015 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 import re
 
@@ -29,11 +28,13 @@ from invenio.ext.login import UserInfo
 from invenio.modules.accounts.models import UserEXT
 
 from invenio.modules.deposit.types import SimpleRecordDeposition
-from invenio.modules.deposit.tasks import render_form, \
-    prepare_sip, \
-    finalize_record_sip, \
-    prefill_draft, \
+from invenio.modules.deposit.tasks import (
+    render_form,
+    prepare_sip,
+    finalize_record_sip,
+    prefill_draft,
     process_sip_metadata
+)
 from invenio.modules.deposit.models import Deposition, InvalidDepositionType
 from invenio.modules.classifier.tasks.classification import (
     classify_paper_with_deposit,
@@ -129,9 +130,11 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 finalize_record_sip(is_dump=False),
                 # Send robotupload and halt until webcoll callback
                 send_robotupload_deposit(),
-                create_curation_ticket(template="deposit/tickets/curation_core.html",
-                              queue="HEP_curation",
-                              ticket_id_key="curation_ticket_id"),
+                create_curation_ticket(
+                    template="deposit/tickets/curation_core.html",
+                    queue="HEP_curation",
+                    ticket_id_key="curation_ticket_id"
+                ),
                 reply_ticket(template="deposit/tickets/user_accepted.html"),
             ],
             workflow_else,
@@ -188,16 +191,58 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         sip = deposit_object.get_latest_sip()
         if sip:
             record = sip.metadata
-            identifiers = [record.get("arxiv_id", "")]
-            categories = [record.get("type_of_doc", "")]
-            return render_template('workflows/styles/submission_record.html',
-                                   categories=categories,
-                                   identifiers=identifiers,
-                                   results=results,
-                                   user_email=user_email,
-                                   )
+            identifiers = []
+            report_numbers = record.get("report_number", {})
+            if not isinstance(report_numbers, list):
+                report_numbers = [report_numbers]
+
+            report_numbers += record.get("report_numbers", [])
+            doi = record.get("doi", "")
+            if report_numbers:
+                for report_number in report_numbers:
+                    number = report_number.get("primary", "")
+                    if number:
+                        identifiers.append(number)
+            if doi:
+                identifiers.append("doi:{0}".format(doi))
+
+            categories = []
+            subjects = record.get("subject_term", [])
+            if subjects:
+                categories += [subject.get("term") for subject in subjects]
+            categories = [record.get("type_of_doc", "")] + categories
+
+            authors = []
+            authors += [record.get("_first_author", {})]
+            authors += record.get("_additional_authors", [])
+            return render_template(
+                'workflows/styles/submission_record.html',
+                categories=categories,
+                authors=authors,
+                identifiers=identifiers,
+                results=results,
+                user_email=user_email,
+                object=bwo,
+                record=record
+            )
         else:
             return "Submitter: {0}".format(user_email)
+
+    @staticmethod
+    def get_additional(bwo, **kwargs):
+        """Return formatted data of object."""
+        from inspire.modules.classifier.utils import get_classification_from_task_results
+        keywords = get_classification_from_task_results(bwo)
+        results = bwo.get_tasks_results()
+        core_guessing = results.get("core_guessing", {})
+        if core_guessing:
+            core_guessing = core_guessing[0].get("result")
+        return render_template('workflows/styles/harvesting_record_additional.html',
+                               object=bwo,
+                               keywords=keywords,
+                               top_words=core_guessing.get("top_words"),
+                               core=core_guessing.get("core"),
+                               overall_score=core_guessing.get("overall_score"))
 
     @staticmethod
     def formatter(bwo, **kwargs):
@@ -224,6 +269,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 of=of,
                 xml_record=marcxml
             )
+
 
     @classmethod
     #TODO: ensure that this regex is correct
