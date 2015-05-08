@@ -83,6 +83,11 @@
         {% block hp_task_results %}
           {% if task_results %}
 
+            {# Ensure PDF link is first. #}
+            {% if "PDF" in task_results %}
+              {{ task_results.get("PDF")|safe }}
+            {% endif %}
+
             {# Ensure core extraction results are first. #}
             {% if "core_guessing" in task_results %}
               {{ task_results.get("core_guessing")|safe }}
@@ -95,7 +100,7 @@
 
 
             {% for name, template in task_results.items() %}
-              {% if name not in ["classification", "core_guessing", "References"] %}
+              {% if name not in ["classification", "core_guessing", "References", "PDF"] %}
                 {{ template|safe }}
               {% endif %}
             {% endfor %}
