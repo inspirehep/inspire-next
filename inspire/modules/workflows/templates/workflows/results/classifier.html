@@ -69,7 +69,7 @@
     <em>{{ _(title) }}:</em>
     <ul class="list-group">
       {% for keyword, times in result|dictsort(false, 'value')|reverse %}
-        {% if keyword not in filtered %}
+        {% if filtered and keyword not in filtered %}
         <li class="list-group-item">
           <span class="badge">{{times|u}}</span>
           <strong>{{keyword|u}}</strong>
@@ -82,7 +82,7 @@
 {%- endmacro %}
 
 {% block results_body %}
-{% set result = results["result"]["dict"].get("complete_output", {}) %}
+{% set result = results["result"].get("dict", {}).get("complete_output", {}) %}
 <div class="panel panel-primary">
   <div class="panel-heading">
     {{ _("Keyword extraction") }}
@@ -98,25 +98,25 @@
         </div>
         <div class="col-md-4">
         {% if result.get("Core keywords", {})|count != result.get("Filtered Core keywords", {})|count %}
-          {{ display_core_keyword("Other CORE keywords", result.get("Core keywords"), result.get("Filtered Core keywords")) }}
+          {{ display_core_keyword("Other CORE keywords", result.get("Core keywords", {}), result.get("Filtered Core keywords", {})) }}
         {% endif %}
         </div>
         <div class="clearfix"></div>
         <div class="collapse" id="collapsed-keywords">
           <div class="col-md-4">
-            {{ display_keyword("Single keywords", result["Single keywords"]) }}
+            {{ display_keyword("Single keywords", result.get("Single keywords")) }}
           </div>
           <div class="col-md-4">
-            {{ display_composite_keyword("Composite keywords", result["Composite keywords"]) }}
+            {{ display_composite_keyword("Composite keywords", result.get("Composite keywords")) }}
           </div>
           <div class="col-md-4">
-            {{ display_keyword("Author keywords", result["Author keywords"]) }}
+            {{ display_keyword("Author keywords", result.get("Author keywords")) }}
           </div>
           <div class="col-md-4">
-          {{ display_keyword("Acronyms", result["Acronyms"]) }}
+          {{ display_keyword("Acronyms", result.get("Acronyms")) }}
           </div>
           <div class="col-md-12">
-          {{ display_field_codes("Field codes", result["Field codes"]) }}
+          {{ display_field_codes("Field codes", result.get("Field codes")) }}
           </div>
         </div>
       {% else %}
