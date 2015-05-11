@@ -97,7 +97,7 @@
           </a>
         </div>
         <div class="col-md-4">
-        {% if result.get("Core keywords")|count != result.get("Filtered Core keywords")|count %}
+        {% if result.get("Core keywords", {})|count != result.get("Filtered Core keywords", {})|count %}
           {{ display_core_keyword("Other CORE keywords", result.get("Core keywords"), result.get("Filtered Core keywords")) }}
         {% endif %}
         </div>
