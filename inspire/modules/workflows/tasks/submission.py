@@ -1,51 +1,53 @@
 # -*- coding: utf-8 -*-
 #
-## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
-##
-## INSPIRE is free software: you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, either version 3 of the License, or
-## (at your option) any later version.
-##
-## INSPIRE is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-##
-## In applying this license, CERN does not waive the privileges and immunities
-## granted to it by virtue of its status as an Intergovernmental Organization
-## or submit itself to any jurisdiction.
+# This file is part of INSPIRE.
+# Copyright (C) 2014, 2015 CERN.
+#
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this license, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 """Contains INSPIRE specific submission tasks"""
 
+import os
 
 from functools import wraps
+from flask import render_template
+from flask_login import current_user
 
+from invenio.base.globals import cfg
 from invenio.modules.deposit.models import Deposition
 from invenio.modules.formatter import format_record
-from flask.ext.login import current_user
-from invenio.base.globals import cfg
 
 
 def halt_to_render(obj, eng):
     """Halt the workflow - waiting to be resumed."""
-    d = Deposition(obj)
-    sip = d.get_latest_sip(sealed=False)
-    d.set_render_context(dict(
+    deposition = Deposition(obj)
+    sip = deposition.get_latest_sip(sealed=False)
+    deposition.set_render_context(dict(
         template_name_or_list="deposit/completed.html",
-        deposition=d,
+        deposition=deposition,
         deposition_type=(
-            None if d.type.is_default() else
-            d.type.get_identifier()
+            None if deposition.type.is_default() else
+            deposition.type.get_identifier()
         ),
-        uuid=d.id,
+        uuid=deposition.id,
         sip=sip,
         my_depositions=Deposition.get_depositions(
-            current_user, type=d.type
+            current_user, type=deposition.type
         ),
         format_record=format_record,
     ))
@@ -59,8 +61,6 @@ def get_ticket_body(template, deposition, metadata, email, obj):
 
     Ticket used by the curator to get notified about the new submission.
     """
-    from flask import render_template
-
     subject = ''.join(["Your suggestion to INSPIRE: ", deposition.title])
     user_comment = obj.extra_data.get('submission_data').get('extra_comments')
     body = render_template(
@@ -82,7 +82,6 @@ def get_curation_body(template, metadata, email, extra_data):
 
     Ticket used by curators to curate the given record.
     """
-    from flask import render_template
     from invenio.utils.persistentid import is_arxiv_post_2007
 
     recid = extra_data.get('recid')
@@ -102,7 +101,7 @@ def get_curation_body(template, metadata, email, extra_data):
                        [arxiv_id,
                         metadata.get('doi'),
                         report_number,
-                        '(#{})'.format(recid)]))
+                        '(#{0})'.format(recid)]))
 
     references = extra_data.get('submission_data').get('references')
     user_comment = extra_data.get('submission_data').get('extra_comments')
@@ -156,12 +155,13 @@ def create_curation_ticket(template, queue="Test", ticket_id_key="ticket_id"):
     def _create_curation_ticket(obj, eng):
         from invenio.modules.access.control import acc_get_user_email
 
-        d = Deposition(obj)
+        deposition = Deposition(obj)
         requestors = acc_get_user_email(obj.id_user)
+        metadata = deposition.get_latest_sip(sealed=True).metadata
 
         if obj.extra_data.get("core"):
             subject, body = get_curation_body(template,
-                                              d.get_latest_sip(sealed=True).metadata,
+                                              metadata,
                                               requestors,
                                               obj.extra_data)
             submit_rt_ticket(obj,
@@ -182,12 +182,12 @@ def create_ticket(template, queue="Test", ticket_id_key="ticket_id"):
     def _create_ticket(obj, eng):
         from invenio.modules.access.control import acc_get_user_email
 
-        d = Deposition(obj)
+        deposition = Deposition(obj)
         requestors = acc_get_user_email(obj.id_user)
 
         subject, body = get_ticket_body(template,
-                                        d,
-                                        d.get_latest_sip(sealed=False).metadata,
+                                        deposition,
+                                        deposition.get_latest_sip(sealed=False).metadata,
                                         requestors,
                                         obj)
         submit_rt_ticket(obj,
@@ -206,7 +206,6 @@ def reply_ticket(template=None, keep_new=False):
         from invenio.modules.accounts.models import User
         from invenio.modules.workflows.errors import WorkflowError
         from inspire.utils.tickets import get_instance
-        from flask import render_template
 
         ticket_id = obj.extra_data.get("ticket_id", "")
         if not ticket_id:
@@ -215,13 +214,13 @@ def reply_ticket(template=None, keep_new=False):
 
         if template:
             # Body rendered by template.
-            d = Deposition(obj)
+            deposition = Deposition(obj)
             user = User.query.get(obj.id_user)
 
             context = {
                 "object": obj,
                 "user": user,
-                "title": d.title,
+                "title": deposition.title,
                 "reason": obj.extra_data.get("reason", ""),
                 "record_url": obj.extra_data.get("url", ""),
             }
@@ -310,25 +309,21 @@ def send_robotupload_deposit(url=None):
     """Get the MARCXML from the deposit object and ships it."""
     @wraps(send_robotupload_deposit)
     def _send_robotupload_deposit(obj, eng):
-        import os
-
-        from invenio.base.globals import cfg
-        from invenio.modules.deposit.models import Deposition
         from invenio.modules.workflows.errors import WorkflowError
         from inspire.utils.robotupload import make_robotupload_marcxml
 
         callback_url = os.path.join(cfg["CFG_SITE_URL"],
                                     "callback/workflows/robotupload")
 
-        d = Deposition(obj)
+        deposition = Deposition(obj)
 
-        sip = d.get_latest_sip(d.submitted)
+        sip = deposition.get_latest_sip(deposition.submitted)
 
         if not sip:
             raise WorkflowError("No sip found", eng.uuid, obj.id)
-        if not d.submitted:
+        if not deposition.submitted:
             sip.seal()
-            d.update()
+            deposition.update()
 
         marcxml = sip.package
 
@@ -346,7 +341,6 @@ def send_robotupload_deposit(url=None):
                               "CFG_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
                               "on host")
                 obj.log.error(result.text)
-            from invenio.modules.workflows.errors import WorkflowError
             txt = "Error while submitting robotupload: {0}".format(result.text)
             raise WorkflowError(txt, eng.uuid, obj.id)
         else:
@@ -360,9 +354,8 @@ def send_robotupload_deposit(url=None):
 
 def add_files_to_task_results(obj, eng):
     """Add Deposition attached files to task results."""
-    from invenio.modules.deposit.models import Deposition
-    d = Deposition(obj)
-    for file_obj in d.files:
+    deposition = Deposition(obj)
+    for file_obj in deposition.files:
         fileinfo = {
             "type": "file",
             "filename": file_obj.name,
@@ -379,10 +372,10 @@ def add_note_entry(obj, eng):
         else {'value': '*Brief entry*'}
     deposition = Deposition(obj)
     metadata = deposition.get_latest_sip(sealed=False).metadata
-    if metadata.get('note', None):
-        metadata['note'].append(entry)
-    else:
+    if metadata.get('note') is None or not isinstance(metadata.get("note"), list):
         metadata['note'] = [entry]
+    else:
+        metadata['note'].append(entry)
     deposition.update()
 
 
