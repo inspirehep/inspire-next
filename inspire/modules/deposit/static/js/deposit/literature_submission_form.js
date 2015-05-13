@@ -96,7 +96,7 @@ define(function(require, exports, module) {
       thesis: $('*[class~="thesis-related"]'),
       chapter: $('*[class~="chapter-related"]'),
       book: $('*[class~="book-related"]'),
-      proceedings: $('*[class~="proceedings-related"]'),
+      proceedings: $('*[class~="proceedings-related"]')
     };
 
     this.$doi_field = $("#doi");
@@ -178,7 +178,7 @@ define(function(require, exports, module) {
       this.$first_input_field.parents('.form-group').before(
         '<div id="import_messages"></div>');
       this.messageBox = $('#import_messages').messageBox({
-        hoganTemplate: tpl_flash_message,
+        hoganTemplate: tpl_flash_message
       })[0];
 
       conferencesTypeahead(this.$conference);
@@ -202,7 +202,7 @@ define(function(require, exports, module) {
         reverseSynchronizationFn: function($originalField, $frontendField) {
           $frontendField.data('extended-typeahead')
             .initFromRawValue($originalField.val(), 0);
-        },
+        }
       });
 
       this.addConferenceInfoField();
@@ -352,7 +352,7 @@ define(function(require, exports, module) {
         data: JSON.stringify(getRequestData($fields)),
         dataType: 'json',
         type: 'POST',
-        url: that.save_url,
+        url: that.save_url
       }).done(function(data) {
         var hasError = false;
         if (!data.messages) {
@@ -364,7 +364,7 @@ define(function(require, exports, module) {
             hasError = true;
             that.$submissionForm.trigger("handleFieldMessage", {
               name: fieldName,
-              data: field,
+              data: field
             });
           }
         });
@@ -869,7 +869,7 @@ define(function(require, exports, module) {
       });
 
       return isBlank;
-    },
+    }
   };
 
   /**
