@@ -22,3 +22,6 @@
 {% block header %}
   {{ bfe_inspire_title(bfo) }}
 {% endblock %}
+
+{% block footer %}
+{% endblock %}
