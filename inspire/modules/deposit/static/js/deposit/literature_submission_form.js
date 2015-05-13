@@ -745,19 +745,15 @@ define(function(require, exports, module) {
       * @returns dictionary with the knowledge base
       */
     getKB: function getKB(kbname) {
-      var url = "/kb/export";
+      var url = "/api/knowledge/" + kbname + "/mappings";
       var deferred = new $.Deferred();
       $.ajax({
         url: url,
-        data: {
-          kbname: kbname,
-          format: 'json'
-        },
         dataType: "json"
       }).done(function(data) {
         var kb = {};
         $.each(data, function(key, object) {
-          kb[object.value] = object.label;
+          kb[object.from] = object.to;
         });
         deferred.resolve(kb);
       });
