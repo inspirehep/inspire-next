@@ -118,15 +118,15 @@ require.config({
       exports: "jasmineRequire"
     },
     "jasmine-boot": {
-      exports: "jasmine",
+      exports: "jasmine"
     },
     "jasmine-jquery": {
       deps: ["jquery", "jasmine-boot"],
-      exports: "jasmine",
+      exports: "jasmine"
     },
     "jasmine-ajax": {
       deps: ["jasmine-boot"],
-      exports: "jasmine",
+      exports: "jasmine"
     },
     "jasmine-html": {
       deps: ["jasmine-core"],
@@ -134,18 +134,18 @@ require.config({
     },
     "jasmine-flight": {
       deps: ["jasmine-boot", "jasmine-jquery"],
-      exports: "jasmine",
+      exports: "jasmine"
     },
     "vendors/jasmine/lib/jasmine-core/boot": {
       deps: ["jasmine-html"],
-      exports: "window.onload",
+      exports: "window.onload"
     },
     "jasmine-events": {
       deps: ["jasmine-jquery"],
-      exports: "jasmine.EventsChecker",
+      exports: "jasmine.EventsChecker"
     },
     "jasmine-initialization": {
-      deps: ["jasmine-boot"],
+      deps: ["jasmine-boot"]
     },
     select2: {
       deps: ["jquery"],
@@ -166,6 +166,6 @@ require.config({
     "highcharts" : {
       deps: ["jquery"],
       exports: "Highcharts"
-    },
+    }
   }
 });

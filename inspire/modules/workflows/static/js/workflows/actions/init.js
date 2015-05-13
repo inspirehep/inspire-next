@@ -41,6 +41,7 @@ define(
     EditableSubjects,
     EditableTitle) {
 
+
     function initialize(context) {
       ApprovalAction.attachTo(context.attach_action_to, {
         action_url: context.action_url
