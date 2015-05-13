@@ -89,7 +89,7 @@ def edit_record_subject(objectid):
 
     # Remove subjects
     subject_objects = [subj for subj in subject_objects
-                       if subj[TERM] not in to_remove ]
+                       if subj[TERM] not in to_remove]
 
     # Add the new subjects
     for subj in to_add:
