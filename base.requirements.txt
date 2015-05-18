@@ -1,7 +1,4 @@
 ## Base requirements
 
-requests==2.3
-
-git+https://github.com/inspirehep/python-rt#egg=rt
 git+https://github.com/inveniosoftware/invenio-query-parser@master#egg=invenio-query-parser
 

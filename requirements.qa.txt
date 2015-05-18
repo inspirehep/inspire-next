@@ -19,7 +19,7 @@
 # or submit itself to any jurisdiction.
 
 ################
-## Production ##
+## QA ##
 ################
 
 ## Requirements

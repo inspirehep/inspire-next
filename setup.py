@@ -58,6 +58,7 @@ setup(
         "rt",
         "HarvestingKit>=0.3",
         "mixer==4.9.5",
+        "requests==2.3",
     ],
     extras_require={
         'development': [
