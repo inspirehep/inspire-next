@@ -74,6 +74,10 @@ def guess_coreness(model_path="core_guessing.pickle"):
             # The new variable is needed due to how parameters in closures work
             full_model_path = model_path
 
+        if not os.path.isfile(full_model_path):
+            obj.log.error("Model file {0} not found! Skipping prediction...")
+            return
+
         prepared_record = prepare_prediction_record(obj)
         pipeline = load_model(full_model_path)
         core, overall_score, top_words = predict(pipeline, prepared_record)
