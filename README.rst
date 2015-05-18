@@ -61,7 +61,7 @@ For example, on Ubuntu/Debian you could execute:
 
 .. code-block:: bash
 
-    (inspire)$ sudo aptitude install -y libblas-dev liblapack-dev gfortran
+    (inspire)$ sudo aptitude install -y libblas-dev liblapack-dev gfortran imagemagick
 
 Then to install beard:
 
