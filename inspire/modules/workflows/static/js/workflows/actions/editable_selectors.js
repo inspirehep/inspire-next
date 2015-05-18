@@ -21,13 +21,11 @@
 define(
   [
     'jquery',
-    'flight/lib/component',
-    'hgn!js/workflows/templates/alert_editable'
+    'flight/lib/component'
   ],
   function(
     $,
-    defineComponent,
-    tpl_alert_editable) {
+    defineComponent) {
 
     'use strict';
 
@@ -36,13 +34,11 @@ define(
     function EditableSelectors() {
 
       this.attributes({
-        previousText: "",
         edit_url: "",
         objectid: "",
 
         // Selectors
-        confirmUpdateSelector: "#confirm-update",
-        titleSelector: ".editable"
+        editableClassSelector: ".editable"
       });
 
 
@@ -55,6 +51,10 @@ define(
         return ev.target.innerHTML;
       };
 
+      this.getEventSelector = function(ev) {
+        return ".editable[field-value='"+ this.getEventField(ev) +"']"
+      };
+
       this.createPayloadForEdit = function(ev) {
         return {
           "field": this.getEventField(ev),
@@ -63,30 +63,32 @@ define(
         }
       };
 
-
-      this.becomeEditable = function(ev) {
-        if(window.getSelection) {
-          var sel = window.getSelection();
-          sel.removeAllRanges();
-        }
-
-        this.attr.previousText = this.getEventInnerHTML(ev);
-
-        console.log("Selected text: " + this.attr.previousText);
-
-        $(".editable[field-value='"+ this.getEventField(ev) +"']")
+      this.makeElementEditable = function(ev) {
+        $(this.getEventSelector(ev))
           .addClass('active-editable')
           .attr('contenteditable','true')
           .focus();
       };
 
+      this.makeElementUnEditable = function(ev) {
+        $(this.getEventSelector(ev))
+          .attr('contenteditable','false')
+          .removeClass('active-editable');
+      };
+
+
+      this.becomeEditable = function(ev) {
+        if (!$(this.getEventSelector(ev)).hasClass("active-editable")) {
+          if (window.getSelection) {
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+          }
+
+          this.makeElementEditable(ev);
+        }
+      };
+
       this.makePostRequest = function(ev) {
-
-        /*$(this.attr.confirmUpdateSelector).html(tpl_alert_editable({
-          previousText: this.attr.previousText,
-          newText: this.getEventInnerHTML(ev)
-        }));*/
-
         var payload = this.createPayloadForEdit(ev);
 
         var that = this;
@@ -95,19 +97,20 @@ define(
           url: that.attr.edit_url,
           data: payload,
 
-          success: function() {
-            $(".editable[field-value='"+ that.getEventField(ev) +"']")
-              .attr('contenteditable','false')
-              .removeClass('active-editable');
+          success: function(data) {
+            that.trigger(document, "updateAlertMessage", {
+              category: data.category,
+              message: data.message
+            });
           },
 
           error: function(request, status, error) {
             console.log(error);
             console.log(status);
+          },
 
-            $(".editable[field-value='"+ that.getEventField(ev) +"']")
-              .attr('contenteditable','false')
-              .removeClass('active-editable');
+          complete: function() {
+            that.makeElementUnEditable(ev)
           }
         });
 
@@ -118,10 +121,10 @@ define(
 
       this.after('initialize', function() {
         this.on('dblclick', {
-          titleSelector: this.becomeEditable
+          editableClassSelector: this.becomeEditable
         });
         this.on('focusout', {
-          titleSelector: this.makePostRequest
+          editableClassSelector: this.makePostRequest
         });
 
         console.log("Editable selections init");
