@@ -192,7 +192,7 @@ class process_record_arxiv(RecordWorkflow):
                     if source_list.lower() == 'inspire':
                         categories.append(category)
             abstract = record.get("abstract", {}).get("summary", "")
-            authors = record.get("authors")
+            authors = record.get("authors", [])
         return render_template('workflows/styles/harvesting_record.html',
                                object=bwo,
                                authors=authors,
