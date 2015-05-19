@@ -28,54 +28,15 @@ import traceback
 
 from functools import wraps
 
-from simplejson import JSONDecodeError
-
 from invenio.base.globals import cfg
 from invenio.modules.deposit.models import Deposition
 
 
-def match_record_arxiv_remote(arxiv_id):
-    """Look on the remote server if the record exists using arXiv id."""
-    if arxiv_id:
-        arxiv_id = arxiv_id.lower().replace('arxiv:', '')
-        params = dict(p='035:"oai:arXiv.org:{0}"'.format(arxiv_id), of="id")
-        r = requests.get(cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"], params=params)
-        response = r.json()
-        return response
-    return {}
-
-
-def match_record_arxiv_remote_oaiharvest(obj, eng):
-    """Look on the remote server if the record exists using arXiv id."""
-    report_numbers = obj.get_data().get('report_number', [])
-    for number in report_numbers:
-        if number.get("source", "").lower() == "arxiv":
-            arxiv_id = number.get("primary")
-            try:
-                response = match_record_arxiv_remote(arxiv_id)
-                if response:
-                    obj.extra_data['recid'] = response[0]
-                    obj.extra_data['url'] = os.path.join(
-                        cfg["CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"],
-                        'record',
-                        str(response[0])
-                    )
-                    return True
-            except requests.ConnectionError:
-                obj.log.error("Error connecting to remote server:\n {0}".format(
-                    traceback.format_exc()
-                ))
-                raise
-    return False
-
-
-def match_record_arxiv_remote_deposit(obj, eng):
-    """Look on the remote server if the record exists using arXiv id."""
-    d = Deposition(obj)
-    sip = d.get_latest_sip(sealed=False)
-    arxiv_id = sip.metadata.get('arxiv_id')
+def perform_request(obj, params):
+    """Performs a matching request and if match found populates extra_data."""
     try:
-        response = match_record_arxiv_remote(arxiv_id)
+        res = requests.get(cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"], params=params)
+        response = res.json()
         if response:
             obj.extra_data['recid'] = response[0]
             obj.extra_data['url'] = os.path.join(
@@ -89,17 +50,44 @@ def match_record_arxiv_remote_deposit(obj, eng):
             traceback.format_exc()
         ))
         raise
+    except ValueError:
+        obj.log.error("Error decoding results from remote server:\n {0}".format(
+            traceback.format_exc()
+        ))
+        raise
+
+def match_record_arxiv_remote(obj, arxiv_id):
+    """Look on the remote server if the record exists using arXiv id."""
+    if arxiv_id:
+        arxiv_id = arxiv_id.lower().replace('arxiv:', '')
+        params = dict(p='035:"oai:arXiv.org:{0}"'.format(arxiv_id), of="id")
+        return perform_request(obj, params)
+    return {}
+
+
+def match_record_arxiv_remote_oaiharvest(obj, eng):
+    """Look on the remote server if the record exists using arXiv id."""
+    report_numbers = obj.get_data().get('report_number', [])
+    for number in report_numbers:
+        if number.get("source", "").lower() == "arxiv":
+            res = match_record_arxiv_remote(obj, number.get("primary"))
+            if res:
+                return True
     return False
 
 
-def match_record_doi_remote(doi):
+def match_record_arxiv_remote_deposit(obj, eng):
+    """Look on the remote server if the record exists using arXiv id."""
+    d = Deposition(obj)
+    sip = d.get_latest_sip(sealed=False)
+    return bool(match_record_arxiv_remote(obj, sip.metadata.get('arxiv_id')))
+
+
+def match_record_doi_remote(obj, doi):
     """Look on the remote server if the record exists using doi."""
     if doi:
-        params = dict(p="0247:%s" % doi, of="id")
-        r = requests.get(cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"], params=params)
-        response = r.json()
-        if response:
-            return response
+        params = dict(p='0247:"{0}"'.format(doi), of="id")
+        return perform_request(obj, params)
     return False
 
 
@@ -108,17 +96,7 @@ def match_record_doi_remote_deposit(obj, eng):
     d = Deposition(obj)
     sip = d.get_latest_sip(sealed=False)
     doi = sip.metadata.get('doi')
-    response = match_record_doi_remote(doi)
-    if not response:
-        return False
-    else:
-        obj.extra_data['recid'] = response[0]
-        obj.extra_data['url'] = os.path.join(
-            cfg["CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"],
-            'record',
-            str(response[0])
-        )
-        return True
+    return match_record_doi_remote(obj, doi)
 
 
 def match_record_remote_deposit(obj, eng):
