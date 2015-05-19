@@ -28,6 +28,8 @@ import traceback
 
 from functools import wraps
 
+from simplejson import JSONDecodeError
+
 from invenio.base.globals import cfg
 from invenio.modules.deposit.models import Deposition
 
@@ -36,7 +38,7 @@ def match_record_arxiv_remote(arxiv_id):
     """Look on the remote server if the record exists using arXiv id."""
     if arxiv_id:
         arxiv_id = arxiv_id.lower().replace('arxiv:', '')
-        params = dict(p="035:oai:arXiv.org:%s" % arxiv_id, of="id")
+        params = dict(p='035:"oai:arXiv.org:{0}"'.format(arxiv_id), of="id")
         r = requests.get(cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"], params=params)
         response = r.json()
         return response
@@ -63,6 +65,7 @@ def match_record_arxiv_remote_oaiharvest(obj, eng):
                 obj.log.error("Error connecting to remote server:\n {0}".format(
                     traceback.format_exc()
                 ))
+                raise
     return False
 
 
@@ -85,6 +88,7 @@ def match_record_arxiv_remote_deposit(obj, eng):
         obj.log.error("Error connecting to remote server:\n {0}".format(
             traceback.format_exc()
         ))
+        raise
     return False
 
 
