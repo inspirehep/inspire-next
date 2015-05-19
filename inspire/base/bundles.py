@@ -63,6 +63,7 @@ _base_styles.contents += (
     'less/search/index.less',
     'less/feedback/button.less',
     'less/feedback/modal.less',
+    'less/workflows/workflows.less',
 )
 
 to_remove = ["less/base.less",
