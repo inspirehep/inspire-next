@@ -31,7 +31,7 @@
 ## structure: (endpoint, values, blueprint, caption)
 #}
 {% set navigation_bar = [
-  ('search.index', {}, 'search', 'Home'),
+  ('collections.index', {}, 'search', 'Home'),
   ('webdeposit.create', {"deposition_type": "literature"}, 'webdeposit', 'Submit'),
   ('/inspire/help', {}, '', 'Help'),
 ] -%}
@@ -46,7 +46,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="{{ url_for('search.index') }}">
+        <a class="navbar-brand" href="{{ url_for('collections.index') }}">
           <img src="{{ url_for('static', filename='img/labs_white.svg') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}">
         </a>
       </div>
