@@ -82,6 +82,7 @@ PACKAGES = [
     'inspire.modules.harvester',
     'inspire.modules.oaiharvester',
     'inspire.modules.ranker',
+    'inspire.modules.refextract',
     'inspire.modules.styleguide',
     'inspire.modules.workflows',
     'invenio.modules.access',
