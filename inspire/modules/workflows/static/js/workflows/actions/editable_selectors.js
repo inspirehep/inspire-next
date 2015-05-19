@@ -44,7 +44,7 @@ define(
 
       // Get record information
       this.getEventField = function(ev) {
-        return ev.target.getAttribute('field-value');
+        return ev.target.getAttribute('data-field');
       };
 
       this.getEventInnerHTML = function(ev) {
@@ -52,7 +52,8 @@ define(
       };
 
       this.getEventSelector = function(ev) {
-        return ".editable[field-value='"+ this.getEventField(ev) +"']"
+        return this.attr.editableClassSelector +
+          "[data-field='"+ this.getEventField(ev) +"']";
       };
 
       this.createPayloadForEdit = function(ev) {

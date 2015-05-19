@@ -3,7 +3,7 @@
 <div class="detailed_record_info">
 
 <div style="text-align:center; margin-bottom: 10px">
-<BFE_INSPIRE_TITLE_BRIEF prefix="<big><big><strong><div class='editable' field-value='title.title'>"
+<BFE_INSPIRE_TITLE_BRIEF prefix="<big><big><strong><div class='editable' data-field='title.title'>"
 suffix="</div></strong></big></big>" force_title_case="yes"
 highlight="yes" brief="no" />
 <BFE_FIELD tag="041a" prefix="<big>(In " suffix=")</big>" />
