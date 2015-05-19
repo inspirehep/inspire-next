@@ -36,6 +36,8 @@ from inspire.modules.workflows.tasks.matching import(
     delete_self_and_stop_processing,
 )
 
+from inspire.modules.refextract.tasks import extract_journal_info
+
 from invenio.modules.classifier.tasks.classification import (
     classify_paper_with_oaiharvester,
 )
@@ -102,6 +104,7 @@ class process_record_arxiv(RecordWorkflow):
                 arxiv_fulltext_download,
                 refextract,
                 author_list,
+                extract_journal_info,
                 classify_paper_with_oaiharvester(
                     taxonomy="HEPont",
                     output_mode="dict",
