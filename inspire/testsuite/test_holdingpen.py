@@ -57,14 +57,10 @@ class HoldingPenTests(InvenioTestCase):
         beauty = BeautifulSoup(output)
 
         expected_output = [
-            u'membrane model (46)',
-            u'gauge field theory (5)',
-            u'Born-Infeld model (4)',
-            u'Yang-Mills (2)',
-            u'membrane model (46)',
-            u'gauge field theory (5)',
-            u'Born-Infeld model (4)',
-            u'Yang-Mills (2)'
+            u'\n46\nmembrane model\n',
+            u'\n5\ngauge field theory\n',
+            u'\n4\nBorn-Infeld model\n',
+            u'\n2\nYang-Mills\n'
         ]
         result = [b.text for b in beauty.find_all("li")]
         self.assertEqual(result, expected_output)
