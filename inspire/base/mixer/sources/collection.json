@@ -103,5 +103,10 @@
         "dbquery": "980__a:CDF-NOTE",
         "id": 23,
         "name": "CDF Notes"
+    },
+    {
+        "dbquery": "980__a:\"HEPNAMES\"",
+        "id": 24,
+        "name": "HepNames"
     }
 ]
