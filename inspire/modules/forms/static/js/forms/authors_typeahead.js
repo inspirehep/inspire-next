@@ -30,7 +30,7 @@ define([
     this.dataEngine = new Bloodhound({
       name: 'authors',
       remote: {
-        url: '/search?cc=HepNames&p=author:%QUERY*&of=recjson&rg=50',
+        url: '/search?cc=HepNames&p=author:%QUERY*&of=recjson&rg=100',
         filter: function(response) {
           return $.map(response, function(item, idx) {
             return item.authors;
