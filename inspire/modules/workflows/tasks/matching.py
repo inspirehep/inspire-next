@@ -1,39 +1,42 @@
 # -*- coding: utf-8 -*-
 #
-## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
-##
-## INSPIRE is free software: you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, either version 3 of the License, or
-## (at your option) any later version.
-##
-## INSPIRE is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-##
-## In applying this license, CERN does not waive the privileges and immunities
-## granted to it by virtue of its status as an Intergovernmental Organization
-## or submit itself to any jurisdiction.
+# This file is part of INSPIRE.
+# Copyright (C) 2014, 2015 CERN.
+#
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this license, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 """Contains task to check if incoming record already exist."""
 
 import os
 import requests
 import traceback
+import datetime
 
 from functools import wraps
 
 from invenio.base.globals import cfg
 from invenio.modules.deposit.models import Deposition
 
+from inspire.utils.datefilter import date_older_than
+
 
 def perform_request(obj, params):
-    """Performs a matching request and if match found populates extra_data."""
+    """Perform a matching request and if match found populates extra_data."""
     try:
         res = requests.get(cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"], params=params)
         response = res.json()
@@ -56,6 +59,7 @@ def perform_request(obj, params):
         ))
         raise
 
+
 def match_record_arxiv_remote(obj, arxiv_id):
     """Look on the remote server if the record exists using arXiv id."""
     if arxiv_id:
@@ -74,6 +78,32 @@ def match_record_arxiv_remote_oaiharvest(obj, eng):
             if res:
                 return True
     return False
+
+
+def exists_in_inspire_or_rejected(obj, eng):
+    """Check if record exist on INSPIRE or already rejected."""
+    # Does record exist on production yet?
+    if match_record_arxiv_remote_oaiharvest(obj, eng):
+        obj.log.info("Record already exists in INSPIRE.")
+        return True
+
+    # FIXME: Let's filter away CORE categories for now.
+    # Later all harvesting will happen here.
+    categories = obj.data.get("subject_term.term", [])
+    for category in categories:
+        if category.lower() in cfg.get("INSPIRE_CORE_CATEGORIES", []):
+            obj.log.info("Record is a CORE record and already being harvested.")
+            return True
+
+    # Check if this record should already have been rejected
+    # (only on non-debug mode) E.g. if it is older than 2 days.
+    if not cfg.get("DEBUG"):
+        preprint_date = obj.data.get("preprint_info.date", "")
+        if preprint_date:
+            parsed_date = datetime.datetime.strptime(preprint_date, "%Y-%m-%d")
+            if date_older_than(parsed_date, datetime.datetime.now(), days=2):
+                obj.log.info("Record is likely rejected previously.")
+                return True
 
 
 def match_record_arxiv_remote_deposit(obj, eng):
@@ -128,11 +158,11 @@ def save_identifiers_oaiharvest(kb_name):
     return _save_identifiers_oaiharvest
 
 
-def match_record_HP_oaiharvest(kb_name):
+def exists_in_holding_pen(kb_name):
     """Check if a oaiharvest record exists in HP."""
-    @wraps(match_record_HP_oaiharvest)
-    def _match_record_HP_oaiharvest(obj, eng):
-        from inspire.utils.knowledge import check_keys
+    @wraps(exists_in_holding_pen)
+    def _exists_in_holding_pen(obj, eng):
+        from inspire.utils.knowledge import get_value
 
         identifiers = []
         report_numbers = obj.get_data().get('report_number', [])
@@ -140,9 +170,12 @@ def match_record_HP_oaiharvest(kb_name):
             if number.get("source", "").lower() == "arxiv":
                 arxiv_id = number.get("primary")
                 identifiers.append(arxiv_id)
-        return check_keys(kb_name, identifiers)
+        result = get_value(kb_name, identifiers)
+        if result:
+            obj.log.info("Record already found in Holding Pen ({0})".format(result))
+        return result
 
-    return _match_record_HP_oaiharvest
+    return _exists_in_holding_pen
 
 
 def delete_self_and_stop_processing(obj, eng):

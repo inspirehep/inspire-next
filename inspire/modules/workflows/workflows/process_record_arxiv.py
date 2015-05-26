@@ -29,8 +29,8 @@ from invenio.modules.workflows.tasks.marcxml_tasks import (
 )
 
 from inspire.modules.workflows.tasks.matching import(
-    match_record_arxiv_remote_oaiharvest,
-    match_record_HP_oaiharvest,
+    exists_in_inspire_or_rejected,
+    exists_in_holding_pen,
     save_identifiers_oaiharvest,
     update_old_object,
     delete_self_and_stop_processing,
@@ -80,20 +80,19 @@ class process_record_arxiv(RecordWorkflow):
     object_type = "arXiv"
 
     workflow = [
+        # First we perform conversion from OAI-PMH XML to MARCXML
         convert_record_with_repository("oaiarXiv2inspire_nofilter.xsl"),
+        # Then we convert from MARCXML to SmartJSON object
         convert_record_to_bibfield(model=["hep"]),
-        workflow_if(match_record_arxiv_remote_oaiharvest),
+        workflow_if(exists_in_inspire_or_rejected),
         [
-            log_info("Record already into database"),
             delete_self_and_stop_processing,
             # update_existing_record_oaiharvest(),
         ],
         workflow_else,
         [
-            workflow_if(match_record_HP_oaiharvest("HP_IDENTIFIERS")),
+            workflow_if(exists_in_holding_pen("HP_IDENTIFIERS")),
             [
-                log_info("Record already into Holding Pen"),
-                save_identifiers_oaiharvest("HP_IDENTIFIERS"),
                 update_old_object("HP_IDENTIFIERS"),
                 delete_self_and_stop_processing,
             ],
@@ -149,31 +148,7 @@ class process_record_arxiv(RecordWorkflow):
                 final_identifiers.append(system_no)
 
             # Get subject categories
-            if 'subject' in record:
-                lookup = ["subject", "term"]
-            elif "subject_term":
-                lookup = ["subject_term", "term"]
-            else:
-                lookup = None
-            if lookup:
-                primary, secondary = lookup
-                category_list = record.get(primary, [])
-                if isinstance(category_list, dict):
-                    category_list = [category_list]
-                for subject in category_list:
-                    category = subject[secondary]
-                    if len(subject) == 2:
-                        if subject.keys()[1] == secondary:
-                            source_list = subject[subject.keys()[0]]
-                        else:
-                            source_list = subject[subject.keys()[1]]
-                    else:
-                        try:
-                            source_list = subject['source']
-                        except KeyError:
-                            source_list = ""
-                    if source_list.lower() == 'inspire':
-                        categories.append(category)
+            categories = record.get("subject_term.term", [])
             abstract = record.get("abstract", {}).get("summary", "")
             authors = record.get("authors", [])
         return render_template('workflows/styles/harvesting_record.html',
