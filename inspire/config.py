@@ -288,7 +288,7 @@ INSPIRE_ARXIV_CATEGORIES = ['acc-phys', 'astro-ph', 'atom-ph', 'chao-dyn',
 INSPIRE_CATEGORIES_SOURCES = ['arxiv']
 
 OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP = "system_number_external.value"
-
+WORKFLOWS_HOLDING_PEN_DEFAULT_OUTPUT_FORMAT = "hp"
 
 # For production only, instance_config contains configuration of
 # database credentials and other instance specific configuration

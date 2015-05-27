@@ -53,7 +53,6 @@ from invenio.modules.workflows.tasks.workflows_tasks import log_info
 from inspire.modules.workflows.tasks.actions import (
     was_approved,
     add_core_oaiharvest,
-    cache_for_holding_pen
 )
 
 from invenio.modules.workflows.tasks.logic_tasks import (
@@ -115,7 +114,6 @@ class process_record_arxiv(RecordWorkflow):
                 ),
                 filter_core_keywords(filter_kb="antihep"),
                 guess_coreness(),
-                # cache_for_holding_pen,
                 halt_record_with_action(action="arxiv_approval",
                                         message="Accept article?"),
                 workflow_if(was_approved),

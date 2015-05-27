@@ -65,10 +65,3 @@ def reject_record(message):
         obj.extra_data["reason"] = message
         obj.log.info(message)
     return _reject_record
-
-
-def cache_for_holding_pen(obj, eng):
-    """Pre-cache the object for display in Holding Pen."""
-    from invenio.modules.workflows.utils import get_formatted_holdingpen_object
-    # Call it to cache it
-    get_formatted_holdingpen_object(obj)
