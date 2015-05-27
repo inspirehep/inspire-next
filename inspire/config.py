@@ -213,6 +213,7 @@ BLUEPRINTS_URL_PREFIXES = {'webdeposit': '/submit'}
 # has gone away" error
 
 SQLALCHEMY_POOL_RECYCLE = 700
+CFG_MISCUTIL_SQL_USE_SQLALCHEMY = True
 
 # OAUTH configuration
 
