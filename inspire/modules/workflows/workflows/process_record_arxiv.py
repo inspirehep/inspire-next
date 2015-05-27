@@ -52,7 +52,8 @@ from invenio.modules.oaiharvester.tasks.postprocess import (
 from invenio.modules.workflows.tasks.workflows_tasks import log_info
 from inspire.modules.workflows.tasks.actions import (
     was_approved,
-    add_core_oaiharvest
+    add_core_oaiharvest,
+    cache_for_holding_pen
 )
 
 from invenio.modules.workflows.tasks.logic_tasks import (
@@ -114,6 +115,7 @@ class process_record_arxiv(RecordWorkflow):
                 ),
                 filter_core_keywords(filter_kb="antihep"),
                 guess_coreness(),
+                # cache_for_holding_pen,
                 halt_record_with_action(action="arxiv_approval",
                                         message="Accept article?"),
                 workflow_if(was_approved),
@@ -133,38 +135,21 @@ class process_record_arxiv(RecordWorkflow):
     @staticmethod
     def get_description(bwo):
         """Get the description column part."""
-        from invenio.modules.records.api import Record
-        from flask import current_app
-
-        record = bwo.get_data()
-
-        # Get identifiers
-        final_identifiers = []
-        identifiers = None
-        try:
-            identifiers = Record(record.dumps()).persistent_identifiers
-            if identifiers:
-                if isinstance(identifiers, list):
-                    identifiers = identifiers[0]
-                if isinstance(identifiers, tuple):
-                    new_identifiers = {}
-                    new_identifiers[identifiers[0]] = identifiers[1]
-                    identifiers = new_identifiers
-                for values in identifiers.values():
-                    final_identifiers.extend([i.get("value") for i in values])
-        except Exception:
-            current_app.logger.exception("Could not get identifiers: {0}".format(identifiers))
-            if hasattr(record, "get"):
-                final_identifiers = [
-                    record.get("system_number_external", {}).get("value", 'No ids')
-                ]
-            else:
-                final_identifiers = []
-
+        record = bwo.data
         abstract = ""
         authors = []
         categories = []
+        final_identifiers = []
         if hasattr(record, "get"):
+            # Get identifiers
+            doi = record.get("doi")
+            if doi:
+                final_identifiers.append(doi)
+
+            system_no = record.get("system_number_external", {}).get("value")
+            if system_no:
+                final_identifiers.append(system_no)
+
             # Get subject categories
             if 'subject' in record:
                 lookup = ["subject", "term"]
