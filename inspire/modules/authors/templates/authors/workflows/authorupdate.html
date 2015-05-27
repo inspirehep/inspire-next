@@ -17,16 +17,11 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 <br>
-Data submitted by the user:
-<pre>
-{{marcxml}}
-</pre>
-<br>
+<p>Submission from: <a href="mailto:{{user_email}}">{{user_email}}</a></p>
+<p>Corresponding RT ticket: <a href="{{ticket_url}}" target="_blank">{{ticket_url}}</a></p>
 {% if comments %}
-	User comments:
-	<pre>{{comments}}</pre>
-	<br>
-{% endif %}
-{% if form_url %}
-  <p>To edit it go <a href={{form_url}}>Back to user form</a></p>
+  <p>User left the following comments in the form:
+  <pre>{{comments}}</pre>
+  </p>
+  <br>
 {% endif %}

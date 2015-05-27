@@ -1,5 +1,4 @@
-/**
- * -*- mode: text; coding: utf-8; -*-
+/*
  *
  * This file is part of INSPIRE.
  * Copyright (C) 2014 CERN.
@@ -19,18 +18,23 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
- /* Generic core styles
--------------------------------------------------- */
+/*
+Generic core styles that are included in all INSPIRE pages.
+*/
 
-//== Breadcrumbs
-//
+/* ===========================================================
+    Document Setup (body, common classes, structure etc)
+============================================================ */
 
 .main-container {
 	padding-bottom: 50px;
 }
+.alert-form-success {
+	margin-top: 30px;
+}
 
-//== Breadcrumbs
-//
+/* Breadcrums
+================================================== */
 
 .breadcrumb {
     background-color: transparent;
@@ -39,8 +43,8 @@
     -webkit-border-radius: 0;
     -o-border-radius: 0;
 }
-/* change breadcrumb separator to >> symbol */
 .breadcrumb > li + li:before {
+	/* change breadcrumb separator to >> symbol */
     content: "\00BB";
     color: #aaa;
 }

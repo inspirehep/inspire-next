@@ -19,6 +19,7 @@
 
 from flask import render_template
 
+from invenio.modules.access.control import acc_get_user_email
 from invenio.modules.workflows.definitions import WorkflowBase
 
 from ..tasks import (create_marcxml_record, send_robotupload,
@@ -43,7 +44,6 @@ class authorupdate(WorkflowBase):
     @staticmethod
     def get_title(bwo):
         """Return title of object."""
-        from invenio.modules.access.control import acc_get_user_email
         id_user = bwo.id_user
         user_email = acc_get_user_email(id_user)
 
@@ -59,8 +59,26 @@ class authorupdate(WorkflowBase):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Return formatted data of object."""
+        from lxml import etree
+
+        of = kwargs.get("of", "hd")
+
         extra_data = bwo.get_extra_data()
-        return render_template("authors/workflows/authorupdate.html",
-                               data=bwo.get_data(),
-                               marcxml=extra_data.get("marcxml"),
-                               comments=extra_data.get("comments"))
+        parser = etree.XMLParser(remove_blank_text=True)
+        tree = etree.fromstring(extra_data.get("marcxml"), parser)
+        xml = etree.tostring(tree, pretty_print=True)
+
+        id_user = bwo.id_user
+        user_email = acc_get_user_email(id_user)
+        ticket_id = extra_data.get("ticket_id")
+        ticket_url = "https://rt.inspirehep.net/Ticket/Display.html?id={}".format(
+            ticket_id
+            )
+
+        if of == "xm":
+            return xml
+        else:
+            return render_template("authors/workflows/authorupdate.html",
+                                   user_email=user_email,
+                                   ticket_url=ticket_url,
+                                   comments=extra_data.get("comments"))

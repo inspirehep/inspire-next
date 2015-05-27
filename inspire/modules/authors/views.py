@@ -189,27 +189,30 @@ def newreview(objectid):
         "action": url_for('.reviewaccepted', objectid=objectid),
         "name": "authorUpdateForm",
         "id": "authorUpdateForm",
+        "objectid": objectid
     }
 
-    return render_template('authors/forms/new_form.html', form=form, **ctx)
+    return render_template('authors/forms/review_form.html', form=form, **ctx)
 
 
-@blueprint.route('/reviewaccepted', methods=['POST'])
+@blueprint.route('/reviewaccepted', methods=['GET', 'POST'])
 @login_required
 @permission_required("authorreview")
-@wash_arguments({'objectid': (int, 0)})
-def reviewaccepted(objectid):
+@wash_arguments({'objectid': (int, 0),
+                 'approved': (bool, False)})
+def reviewaccepted(objectid, approved):
     """Form handler when a cataloger accepts a new author update"""
     if not objectid:
         abort(400)
     workflow_object = BibWorkflowObject.query.get(objectid)
     extra_data = workflow_object.get_extra_data()
-    extra_data["approved"] = True
+    extra_data["approved"] = approved
     workflow_object.set_extra_data(extra_data)
     workflow_object.save()
     workflow_object.continue_workflow(delayed=True)
 
-    return render_template('authors/forms/new_review_accepted.html')
+    return render_template('authors/forms/new_review_accepted.html',
+                           approved=approved)
 
 
 @blueprint.route('/submitupdate', methods=['POST'])

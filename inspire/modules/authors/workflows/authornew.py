@@ -17,18 +17,20 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from flask import render_template, url_for
+from flask import render_template
 
+from invenio.modules.access.control import acc_get_user_email
 from invenio.modules.workflows.definitions import WorkflowBase
 from invenio.modules.workflows.tasks.logic_tasks import (
     workflow_else,
     workflow_if,
 )
 from invenio.modules.workflows.tasks.marcxml_tasks import (
-    approve_record,
     was_approved
 )
 from invenio.modules.workflows.tasks.workflows_tasks import log_info
+
+from inspire.modules.workflows.tasks.submission import halt_record_with_action
 
 from ..tasks import send_robotupload, \
     create_marcxml_record, \
@@ -51,7 +53,8 @@ class authornew(WorkflowBase):
             queue="Authors_add_user"),
         reply_ticket(template="authors/tickets/user_new.html",
                      keep_new=True),
-        approve_record,
+        halt_record_with_action(action="author_approval",
+                                message="Accept submission?"),
         workflow_if(was_approved),
         [
             send_robotupload(mode="insert"),
@@ -67,7 +70,6 @@ class authornew(WorkflowBase):
     @staticmethod
     def get_title(bwo):
         """Return title of object."""
-        from invenio.modules.access.control import acc_get_user_email
         id_user = bwo.id_user
         user_email = acc_get_user_email(id_user)
 
@@ -81,10 +83,29 @@ class authornew(WorkflowBase):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Return formatted data of object."""
-        form_url = url_for("inspire_authors.newreview", objectid=bwo.id)
+        from lxml import etree
+
+        of = kwargs.get("of", "hd")
+
         extra_data = bwo.get_extra_data()
-        return render_template("authors/workflows/authorupdate.html",
-                               data=bwo.get_data(),
-                               marcxml=extra_data.get("marcxml"),
-                               form_url=form_url,
-                               comments=extra_data.get("comments"))
+        parser = etree.XMLParser(remove_blank_text=True)
+        try:
+            tree = etree.fromstring(extra_data.get("marcxml"), parser)
+            xml = etree.tostring(tree, pretty_print=True)
+        except ValueError:
+            xml = ""
+
+        id_user = bwo.id_user
+        user_email = acc_get_user_email(id_user)
+        ticket_id = extra_data.get("ticket_id")
+        ticket_url = "https://rt.inspirehep.net/Ticket/Display.html?id={}".format(
+            ticket_id
+            )
+
+        if of == "xm":
+            return xml
+        else:
+            return render_template("authors/workflows/authorupdate.html",
+                                   user_email=user_email,
+                                   ticket_url=ticket_url,
+                                   comments=extra_data.get("comments"))
