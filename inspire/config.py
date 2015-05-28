@@ -212,7 +212,7 @@ BLUEPRINTS_URL_PREFIXES = {'webdeposit': '/submit'}
 # Flask specific configuration - This prevents from getting "MySQL server
 # has gone away" error
 
-SQLALCHEMY_POOL_RECYCLE = 700
+# SQLALCHEMY_POOL_RECYCLE = 30
 CFG_MISCUTIL_SQL_USE_SQLALCHEMY = True
 
 # OAUTH configuration
