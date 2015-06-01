@@ -68,6 +68,7 @@ EXTENSIONS = [
     'invenio.modules.deposit.url_converters',
     'inspire.ext.search_bar',
     'inspire.ext.formatter_jinja_filters',
+    'inspire.ext.deprecation_warnings:disable_deprecation_warnings',
 ]
 
 PACKAGES = [
@@ -214,6 +215,8 @@ BLUEPRINTS_URL_PREFIXES = {'webdeposit': '/submit'}
 
 # SQLALCHEMY_POOL_RECYCLE = 30
 CFG_MISCUTIL_SQL_USE_SQLALCHEMY = True
+
+DEPRECATION_WARNINGS_PRODUCTION_ENABLED = False
 
 # OAUTH configuration
 
