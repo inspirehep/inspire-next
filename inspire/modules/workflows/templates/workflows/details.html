@@ -42,9 +42,37 @@
   {{ self.hp_action_main() }}
   {{ self.action_alert() }}
   {{ self.workflow_completed() }}
-  {{ self.hp_preview() }}
 
   {% set submission_data = bwobject.get_extra_data().get("submission_data") %}
+
+  {% block hp_preview %}
+  <div class="row">
+    <div class="col-md-12">
+      <div id="object-preview"
+           class="btn-group btn-group-xs pull-right"
+           name="object_preview_btn"
+           data-toggle="buttons-radio">
+        <button class="btn btn-primary preview"
+                type="button"
+                data-id="{{ bwobject.id }}"
+                name="hp">Detailed format</button>
+        <button class="btn btn-primary preview"
+                type="button"
+                data-id="{{ bwobject.id }}"
+                name="xm">MARCXML</button>
+      </div>
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col-md-12">
+      <div id="object_preview_container{{bwobject.id}}" class="object_preview_container">
+        {{ data_preview|safe }}
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+
   {% if workflow_class.object_type == "submission" and submission_data.extra_comments %}
     <h5>Comments from user</h5>
     <pre>{{ submission_data.extra_comments }}</pre>
