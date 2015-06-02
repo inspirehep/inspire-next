@@ -100,6 +100,7 @@ define(
       // Request to sever
       this.requestToServer = function(payload, element) {
         var $this = this;
+        var objectids = payload.objectids;
 
         jQuery.ajax({
           type: "POST",
@@ -107,6 +108,7 @@ define(
           data: payload,
           success: function(data) {
             $this.post_request(data);
+            $this.trigger(document, "removeSentElements", {"ids":objectids});
           },
           error: function(request, status, error) {
             console.log(error);
