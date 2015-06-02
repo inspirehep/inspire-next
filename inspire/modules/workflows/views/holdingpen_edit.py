@@ -19,9 +19,9 @@
 
 from six import text_type
 from flask import Blueprint, jsonify, request
-from flask.ext.login import login_required
+from flask_login import login_required
+from harvestingkit.html_utils import MathMLParser
 from invenio.base.decorators import wash_arguments
-
 from invenio.ext.principal import permission_required
 from invenio.modules.workflows.acl import viewholdingpen
 from invenio.modules.workflows.models import BibWorkflowObject
@@ -56,7 +56,7 @@ def edit_record_title(value, objectid):
     editable_obj = BibWorkflowObject.query.get(objectid)
     data = editable_obj.get_data()
 
-    data[TITLE_FIELD] = value
+    data[TITLE_FIELD] = MathMLParser.html_to_text(value)
     editable_obj.set_data(data)
     editable_obj.save()
 
