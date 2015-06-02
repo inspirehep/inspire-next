@@ -29,7 +29,8 @@ define(
     "js/workflows/actions/core_approval_modal",
     "js/workflows/actions/arxiv_approval",
     "js/workflows/actions/batch_action_hotkeys",
-    "js/workflows/actions/editable_selectors"
+    "js/workflows/actions/editable_subjects",
+    "js/workflows/actions/editable_title"
   ],
   function(
     ApprovalAction,
@@ -37,7 +38,8 @@ define(
     CoreApprovalModal,
     ArxivApprovalAction,
     BatchActionHotkeys,
-    EditableSelectors) {
+    EditableSubjects,
+    EditableTitle) {
 
     function initialize(context) {
       ApprovalAction.attachTo(context.attach_action_to, {
@@ -56,8 +58,13 @@ define(
         action_url: context.action_url
       });
 
-      EditableSelectors.attachTo(document, {
-        edit_url: context.edit_url,
+      EditableSubjects.attachTo(document, {
+        edit_url: context.edit_subj_url,
+        objectid: context.id_object
+      });
+
+      EditableTitle.attachTo(document, {
+        edit_url: context.edit_title_url,
         objectid: context.id_object
       });
 

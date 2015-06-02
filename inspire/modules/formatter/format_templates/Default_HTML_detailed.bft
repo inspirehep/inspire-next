@@ -3,7 +3,7 @@
 <div class="detailed_record_info">
 
 <div style="text-align:center; margin-bottom: 10px">
-<BFE_INSPIRE_TITLE_BRIEF prefix="<big><big><strong><div class='editable' data-field='title.title'>"
+<BFE_INSPIRE_TITLE_BRIEF prefix="<big><big><strong><div id='editable-title'>"
 suffix="</div></strong></big></big>" force_title_case="yes"
 highlight="yes" brief="no" />
 <BFE_FIELD tag="041a" prefix="<big>(In " suffix=")</big>" />
@@ -34,7 +34,7 @@ affiliation_prefix="<small> (" affiliation_suffix=") </small>" />
 <BFE_INSPIRE_NTIS_LINK prefix="<li>NTIS: " suffix="</li>" />
 <BFE_INSPIRE_EXP_LINK prefix="<li>Experiment: " suffix="</li>"/>
 <BFE_INSPIRE_CONTRIBUTIONS prefix="<li>" suffix="</li>" newline="True" />
-<BFE_INSPIRE_SUBJECT_TERM prefix="<li>Subject: " suffix="</li>" newline="True" />
+<BFE_INSPIRE_SUBJECT_TERM prefix="<li><div id='editable-subjects'><strong>Subject: </strong>" suffix="</div></li>" newline="True" />
 </ul>
 
 <div style="text-align:left; width: 70%; margin: 10px auto;">

@@ -29,8 +29,8 @@ blueprint = Blueprint(
     'inspire_workflows',
     __name__,
     url_prefix="/callback",
-    template_folder='templates',
-    static_folder="static",
+    template_folder='../templates',
+    static_folder="../static",
 )
 
 

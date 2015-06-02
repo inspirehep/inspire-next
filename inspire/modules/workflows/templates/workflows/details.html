@@ -19,6 +19,31 @@
 
 {% extends "workflows/details_base.html" %}
 
+{% block javascript %}
+
+  <script type="text/javascript">
+    require(["jquery",
+             "js/workflows/details",
+             "js/workflows/actions/init"],
+            function($,
+                     initialize,
+                     initialize_actions) {
+      var context = {
+        preview_url: "{{ url_for('holdingpen.entry_data_preview')|safe }}",
+        restart_url: "{{ url_for('holdingpen.restart_record_prev')|safe }}",
+        delete_url: "{{ url_for('holdingpen.delete_from_db')|safe }}",
+        action_url: "{{ url_for('holdingpen.resolve_action')|safe }}",
+        edit_subj_url: "{{ url_for('inspire_holdingpen.edit_record_subject')|safe }}",
+        edit_title_url: "{{ url_for('inspire_holdingpen.edit_record_title')|safe }}",
+        id_object: "{{ bwobject.id }}",
+        attach_action_to: document
+      };
+      initialize(context);
+      initialize_actions(context);
+    });
+  </script>
+{%- endblock javascript %}
+
 {%- block workflow_completed -%}
   {% if bwobject.version == 1 %}
     <div id="successmessage" class="alert alert-success">
