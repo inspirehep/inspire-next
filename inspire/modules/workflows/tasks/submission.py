@@ -32,6 +32,8 @@ from invenio.base.globals import cfg
 from invenio.modules.deposit.models import Deposition
 from invenio.modules.formatter import format_record
 
+from retrying import retry
+
 
 def halt_to_render(obj, eng):
     """Halt the workflow - waiting to be resumed."""
@@ -119,20 +121,21 @@ def get_curation_body(template, metadata, email, extra_data):
     return subject, body
 
 
+@retry(stop_max_attempt_number=5, wait_fixed=10000)
 def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     """Submit ticket to RT with the given parameters."""
     from inspire.utils.tickets import get_instance
 
     # Trick to prepare ticket body
     body = "\n ".join([line.strip() for line in body.split("\n")])
-    rt = get_instance() if cfg.get("PRODUCTION_MODE") else None
+    rt_instance = get_instance() if cfg.get("PRODUCTION_MODE") else None
     rt_queue = cfg.get("CFG_BIBCATALOG_QUEUES") or queue
     recid = obj.extra_data.get("recid", "")
-    if not rt:
+    if not rt_instance:
         obj.log.error("No RT instance available. Skipping!")
-        obj.log.info("Ticket ignored.")
+        obj.log.info("Ticket submission ignored.")
     else:
-        ticket_id = rt.create_ticket(
+        ticket_id = rt_instance.create_ticket(
             Queue=rt_queue,
             Subject=subject,
             Text=body,
@@ -144,6 +147,7 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
             ticket_id,
             body.encode("utf-8", "ignore")
         ))
+    return True
 
 
 def create_curation_ticket(template, queue="Test", ticket_id_key="ticket_id"):

@@ -60,7 +60,8 @@ setup(
         "mixer==4.9.5",
         "requests==2.3",
         "raven==5.0.0",
-        "orcid"
+        "orcid",
+        "retrying"
     ],
     extras_require={
         'development': [
