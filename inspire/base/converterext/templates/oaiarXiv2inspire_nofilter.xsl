@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id$
+<!--
+This file is part of INSPIRE.
+Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014
 
-This file is part of Invenio.
-Copyright (C) 2009, 2010, 2011 CERN.
-
-Invenio is free software; you can redistribute it and/or
+INSPIRE is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of the
 License, or (at your option) any later version.
 
-Invenio is distributed in the hope that it will be useful, but
+INSPIRE is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Invenio; if not, write to the Free Software Foundation, Inc.,
+along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
 -->
-
-
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:OAI-PMH="http://www.openarchives.org/OAI/2.0/"
                 xmlns:arXiv="http://arxiv.org/OAI/arXiv/"
@@ -442,7 +438,6 @@ along with Invenio; if not, write to the Free Software Foundation, Inc.,
               <xsl:call-template name="furtherAuthor">
                 <xsl:with-param name="node" select="."/>
               </xsl:call-template>
-              <author></author>
             </xsl:for-each>
                 </xsl:if>
 
