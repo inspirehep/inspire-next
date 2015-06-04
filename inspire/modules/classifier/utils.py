@@ -72,25 +72,13 @@ def update_classification_in_task_results(obj, output):
 def prepare_prediction_record(obj):
     """Given a workflow object, return compatible prediction record."""
     prepared_record = {}
-    field_map = {'abstract': ["abstract", "summary"],
-                 'title': ["title", "title"],
-                 'journal': ["publication_info", "journal_title"]}
-    for key, (first, second) in field_map.items():
-        try:
-            prepared_record[key] = obj.data.get(first, {}).get(second, "")
-        except KeyError:
-            pass
-    prepared_record["collaborations"] = obj.data.get("collaboration") or []
-    keywords = {}
-    result = get_classification_from_task_results(obj)
-    if result:
-        keywords.update(result.get("Core keywords", {}))
-        # FIXME: Add all keywords when model is ready
-        # keywords.update(result.get("Composite keywords", {}))
-        # keywords.update(result.get("Author keywords", {}))
-        # keywords.update(result.get("Single keywords", {}))
-        # keywords.update(result.get("Acronyms", {}))
-    prepared_record["keywords"] = [str(w) for w in keywords]
+    prepared_record["title"] = obj.data.get("title.title")
+    prepared_record["abstract"] = obj.data.get("abstract.summary")
+    categories = []
+    for category in obj.data.get("subject_term"):
+        if category.get("scheme").lower() == "arxiv":
+            categories.append(category.get("term", ""))
+    prepared_record["categories"] = categories
     return prepared_record
 
 

@@ -57,12 +57,12 @@ def filter_core_keywords(filter_kb):
     return _filter_core_keywords
 
 
-def guess_coreness(model_path="core_guessing.pickle"):
+def guess_coreness(model_path="arxiv_guessing.pickle"):
     """Using a prediction model, predict if record is CORE."""
     @wraps(guess_coreness)
     def _guess_coreness(obj, eng):
         from invenio.base.globals import cfg
-        from inspire.modules.classifier.core import predict
+        from inspire.modules.classifier.arxiv import predict
 
         if os.path.basename(model_path) == model_path:
             # Just the name is given, so we fill in the rest
@@ -75,21 +75,24 @@ def guess_coreness(model_path="core_guessing.pickle"):
             full_model_path = model_path
 
         if not os.path.isfile(full_model_path):
-            obj.log.error("Model file {0} not found! Skipping prediction...")
+            obj.log.error(
+                "Model file {0} not found! Skipping prediction...".format(full_model_path)
+            )
             return
 
         prepared_record = prepare_prediction_record(obj)
         pipeline = load_model(full_model_path)
-        core, overall_score, top_words = predict(pipeline, prepared_record)
+        decision, scores = predict(pipeline, prepared_record)
+        obj.log.info("Successfully predicted as {0} with {1}".format(decision, max(scores)))
 
         result = {}
-        result["core"] = core
-        result["overall_score"] = overall_score
-        result["top_words"] = top_words
+        result["decision"] = decision
+        result["max_score"] = max(scores)
+        result["all_scores"] = scores
         task_result = {
-            "name": "core_guessing",
+            "name": "arxiv_guessing",
             "result": result,
-            "template": "workflows/results/core_guessing.html"
+            "template": "workflows/results/arxiv_guessing.html"
         }
         obj.update_task_results(
             task_result.get("name"),
@@ -101,7 +104,7 @@ def guess_coreness(model_path="core_guessing.pickle"):
 @celery.task()
 def train(records, output):
     """Train a set of records and save model to file."""
-    from .core import train as core_train
+    from .arxiv import train as core_train
 
     records = json.load(open(records, "r"))
     if isinstance(records, dict):

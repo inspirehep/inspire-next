@@ -1,31 +1,41 @@
 {#
-## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
-##
-## INSPIRE is free software; you can redistribute it and/or
-## modify it under the terms of the GNU General Public License as
-## published by the Free Software Foundation; either version 2 of the
-## License, or (at your option) any later version.
-##
-## INSPIRE is distributed in the hope that it will be useful, but
-## WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-## General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# This file is part of INSPIRE.
+# Copyright (C) 2015 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 {% import 'workflows/macros.html' as macros %}
 
 <div class="row">
   <div class="col-md-12">
-    {% if overall_score is not none %}
-      {% if overall_score > 0%}
-       <h4><span class="label label-success">CORE ({{ overall_score|round(2) }})</span></h4>
-      {% else %}
-        <h4><span class="label label-warning">Non-CORE: {{ overall_score|round(2) }}</span></h4>
-      {% endif %}
+    {% if decision is not none %}
+      <h4>
+        {% if decision == "CORE" %}
+          <span class="label label-success">
+            {{decision}} ({{ score|round(2) }})
+          </span>
+        {% elif decision == "Non-CORE" %}
+          <span class="label label-warning">
+            {{decision}} ({{ score|round(2) }})
+          </span>
+        {% else %}
+          <span class="label label-danger">
+            {{decision}} ({{ score|round(2) }})
+          </span>
+        {% endif %}
+      </h4>
     {% endif %}
     {% if keywords %}
       <ul class="list-unstyled">
