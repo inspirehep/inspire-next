@@ -286,9 +286,9 @@ INSPIRE_ARXIV_CATEGORIES = ['acc-phys', 'astro-ph', 'atom-ph', 'chao-dyn',
                             'q-bio', 'quant-ph', 'ssrl', 'other']
 
 INSPIRE_CATEGORIES_SOURCES = ['arxiv']
-INSPIRE_CORE_CATEGORIES = ["hep-th", "hep-ph", "hep-lat", "hep-ex", "nucl-th",
-                           "nucl-ex", "physics.acc-ph", "gr-qc", "physics.ins-det",
-                           "astro-ph.co", "astro-ph.he"]
+INSPIRE_ACCEPTED_CATEGORIES = ["hep-th", "hep-ph", "hep-lat", "hep-ex", "nucl-th",
+                               "nucl-ex", "physics.acc-ph", "gr-qc", "physics.ins-det",
+                               "astro-ph.co", "astro-ph.he"]
 
 OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP = "system_number_external.value"
 WORKFLOWS_HOLDING_PEN_DEFAULT_OUTPUT_FORMAT = "hp"

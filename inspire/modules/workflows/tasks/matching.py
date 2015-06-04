@@ -91,8 +91,8 @@ def exists_in_inspire_or_rejected(obj, eng):
     # Later all harvesting will happen here.
     categories = obj.data.get("subject_term.term", [])
     for category in categories:
-        if category.lower() in cfg.get("INSPIRE_CORE_CATEGORIES", []):
-            obj.log.info("Record is a CORE record and already being harvested.")
+        if category.lower() in cfg.get("INSPIRE_ACCEPTED_CATEGORIES", []):
+            obj.log.info("Record is already being harvested on INSPIRE.")
             return True
 
     # Check if this record should already have been rejected
