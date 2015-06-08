@@ -157,7 +157,7 @@ class ExperimentsInlineForm(WebDepositForm):
 
     """Experiments inline form."""
 
-    experiment = fields.StringField(
+    name = fields.StringField(
         placeholder=_("Experiment. Type for suggestions"),
         label=_('Experiment'),
         widget=ColumnInput(class_="col-md-6"),
