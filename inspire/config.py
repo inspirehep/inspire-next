@@ -292,10 +292,3 @@ INSPIRE_ACCEPTED_CATEGORIES = ["hep-th", "hep-ph", "hep-lat", "hep-ex", "nucl-th
 
 OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP = "system_number_external.value"
 WORKFLOWS_HOLDING_PEN_DEFAULT_OUTPUT_FORMAT = "hp"
-
-# For production only, instance_config contains configuration of
-# database credentials and other instance specific configuration
-try:
-    from inspire.instance_config import *
-except ImportError:
-    pass
