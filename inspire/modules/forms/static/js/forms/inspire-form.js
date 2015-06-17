@@ -454,20 +454,17 @@ define(function(require, exports, module) {
    * Save field value value
    */
   function save_data(url, request_data, flash_message, success_callback, failure_callback) {
-      var loader_selector = '#' + name + '-loader';
 
       if(flash_message === undefined){
           flash_message = false;
       }
 
       set_status(tpl_status_saving());
-      set_loader(loader_selector, tpl_loader());
 
       $.ajax(
           json_options({url: url, data: request_data})
       ).done(function(data) {
           var errors = handle_response(data);
-          set_loader(loader_selector, tpl_loader_success());
           if(errors) {
               set_status(tpl_status_saved_with_error());
               // if(flash_message) {
@@ -488,7 +485,6 @@ define(function(require, exports, module) {
 
       }).fail(function() {
           set_status(tpl_status_error());
-          set_loader(loader_selector, tpl_loader_failed());
       });
   }
 
@@ -596,6 +592,24 @@ define(function(require, exports, module) {
 
     $(selector).dynamicFieldList(opts).each(function(index, fieldList){
       field_lists[fieldList.element.id] = fieldList;
+    });
+
+    $(selector).each(function(i, elem) {
+      // First remove the global alert div
+      $(elem).siblings(".alert").remove();
+
+      var prefix = $(elem).attr("id");
+
+      $(elem).find("div[id^='" + prefix + "']").each(function(i, elem) {
+        var main_div = $(elem);
+        $(elem).find("[id^='" + prefix + "']").each(function(i, elem) {
+          // For each individual element create an alert box
+          var id = $(elem).attr("id");
+          var alert_id = "state-" + id;
+          main_div.closest(".row").after('<div id=' + alert_id +
+            ' class="alert help-block alert-danger" role="alert" style="display:none"></div>');
+        });
+      });
     });
   }
 
