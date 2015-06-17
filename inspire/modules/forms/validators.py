@@ -67,7 +67,7 @@ class RegexpStopValidator(object):
                 if self.message is None:
                     message = field.gettext('Invalid input.')
                 else:
-                    message = self.message
+                    message = self.message.format(field.data)
 
             raise StopValidation(message)
         return match

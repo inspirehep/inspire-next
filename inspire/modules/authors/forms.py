@@ -126,6 +126,8 @@ class InstitutionInlineForm(WebDepositForm):
         widget=WrappedInput(wrapped_widget=TextInput(),
                             wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
                             ),
+        validators=[RegexpStopValidator("^(\d{4})?$",
+                                      message="{} is not a valid year. Please use <i>yyyy</i> format.")],
         widget_classes="datepicker form-control"
     )
 
@@ -135,6 +137,8 @@ class InstitutionInlineForm(WebDepositForm):
         widget=WrappedInput(wrapped_widget=TextInput(),
                             wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
                             ),
+        validators=[RegexpStopValidator("^(\d{4})?$",
+                                      message="{} is not a valid year. Please use <i>yyyy</i> format.")],
         widget_classes="datepicker form-control"
     )
 
@@ -172,6 +176,8 @@ class ExperimentsInlineForm(WebDepositForm):
         widget=WrappedInput(wrapped_widget=TextInput(),
                             wrapper='<div class="col-md-6">%(field)s</div>'
                             ),
+        validators=[RegexpStopValidator("^(\d{4})?$",
+                                      message="{} is not a valid year. Please use <i>yyyy</i> format.")],
         widget_classes="datepicker form-control"
     )
 
@@ -181,6 +187,8 @@ class ExperimentsInlineForm(WebDepositForm):
         widget=WrappedInput(wrapped_widget=TextInput(),
                             wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
                             ),
+        validators=[RegexpStopValidator("^(\d{4})?$",
+                                      message="{} is not a valid year. Please use <i>yyyy</i> format.")],
         widget_classes="datepicker form-control"
     )
 
