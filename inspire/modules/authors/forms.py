@@ -27,7 +27,6 @@ from wtforms.widgets import html_params, \
 
 from invenio.base.globals import cfg
 from invenio.base.i18n import _
-from invenio.modules.deposit.autocomplete_utils import kb_dynamic_autocomplete
 from invenio.modules.deposit.field_widgets import ColumnInput, \
     ExtendedListWidget, \
     ItemWidget, \
@@ -147,16 +146,6 @@ class InstitutionInlineForm(WebDepositForm):
     )
 
 
-def experiment_kb_mapper(val):
-    """Return object ready to autocomplete experiments."""
-    return {
-        'value': "%s" % val,
-        'fields': {
-            "experiment": val,
-        }
-    }
-
-
 class ExperimentsInlineForm(WebDepositForm):
 
     """Experiments inline form."""
@@ -166,8 +155,7 @@ class ExperimentsInlineForm(WebDepositForm):
         label=_('Experiment'),
         widget=ColumnInput(class_="col-md-6"),
         widget_classes="form-control",
-        autocomplete_fn=kb_dynamic_autocomplete("ExperimentsCollection",
-                                             mapper=experiment_kb_mapper)
+        autocomplete="experiment"
     )
 
     start_year = fields.StringField(

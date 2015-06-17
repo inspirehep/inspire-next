@@ -349,5 +349,18 @@
         "stemming_language": "",
         "synonym_kbrs": "",
         "tokenizer": "BibIndexDefaultTokenizer"
+    },
+    {
+        "description": "",
+        "id": 28,
+        "indexer": "native",
+        "last_updated": "2014-11-06 14:52:18",
+        "name": "experiment",
+        "remove_html_markup": "",
+        "remove_latex_markup": "",
+        "remove_stopwords": "",
+        "stemming_language": "",
+        "synonym_kbrs": "",
+        "tokenizer": "BibIndexDefaultTokenizer"
     }
 ]

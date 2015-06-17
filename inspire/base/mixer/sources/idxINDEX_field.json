@@ -172,5 +172,11 @@
         "id_idxINDEX": 27,
         "regexp_alphanumeric_separators": "",
         "regexp_punctuation": "[.,:;?!\"]"
+    },
+    {
+        "id_field": 58,
+        "id_idxINDEX": 28,
+        "regexp_alphanumeric_separators": "",
+        "regexp_punctuation": "[.,:;?!\"]"
     }
 ]

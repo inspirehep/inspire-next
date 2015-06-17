@@ -36,7 +36,8 @@ define(function(require, exports, module) {
       tpl_loader_success = require('hgn!js/deposit/templates/loader_success'),
       tpl_loader_failed = require('hgn!js/deposit/templates/loader_failed'),
       AffiliationsTypeahead = require("js/deposit/affiliations_typeahead"),
-      AuthorsTypeahead = require("js/forms/authors_typeahead");
+      AuthorsTypeahead = require("js/forms/authors_typeahead"),
+      ExperimentsTypeahead = require("js/forms/experiments_typeahead");
 
 
   // provides $.fn.dynamicFieldList
@@ -693,6 +694,9 @@ define(function(require, exports, module) {
       }
       else if ($(data.item).data("autocomplete") === "author") {
         $(data.item).authorsTypeahead();
+      }
+      else if ($(data.item).data("autocomplete") === "experiment") {
+        $(data.item).experimentsTypeahead();
       }
     });
   }
