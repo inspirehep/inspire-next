@@ -234,15 +234,16 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         from inspire.modules.classifier.utils import get_classification_from_task_results
         keywords = get_classification_from_task_results(bwo)
         results = bwo.get_tasks_results()
-        core_guessing = results.get("core_guessing", {})
-        if core_guessing:
-            core_guessing = core_guessing[0].get("result")
-        return render_template('workflows/styles/harvesting_record_additional.html',
-                               object=bwo,
-                               keywords=keywords,
-                               top_words=core_guessing.get("top_words"),
-                               core=core_guessing.get("core"),
-                               overall_score=core_guessing.get("overall_score"))
+        prediction_results = results.get("arxiv_guessing", {})
+        if prediction_results:
+            prediction_results = prediction_results[0].get("result")
+        return render_template(
+            'workflows/styles/harvesting_record_additional.html',
+            object=bwo,
+            keywords=keywords,
+            score=prediction_results.get("max_score"),
+            decision=prediction_results.get("decision")
+        )
 
     @staticmethod
     def formatter(bwo, **kwargs):
