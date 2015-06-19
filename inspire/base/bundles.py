@@ -52,12 +52,14 @@ from invenio.base.bundles import styles as _base_styles
 #bundle refresh.
 _base_styles.contents += (
     'less/inspire.less',
+    'less/accounts/settings/account-settings.less',
     'less/base/variables.less',
     'less/base/header.less',
     'less/base/footer.less',
     'less/base/panels.less',
     'less/base/helpers.less',
     'less/base/sticky-footer.less',
+    'less/base/list-group.less',
     'less/base/core.less',
     'less/accounts/login.less',
     'less/search/index.less',

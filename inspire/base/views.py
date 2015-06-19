@@ -25,8 +25,8 @@
 import json
 import os
 from tempfile import mkstemp
-from flask import request, Blueprint, render_template
-from flask.ext.menu import register_menu
+from flask import request, Blueprint, render_template, current_app
+from flask.ext.menu import register_menu, current_menu
 from flask.ext.login import current_user
 from invenio.base.i18n import _
 from invenio.ext.email import send_email
@@ -40,6 +40,20 @@ blueprint = Blueprint('inspire', __name__, url_prefix="",
 #
 # Static pages
 #
+
+
+@blueprint.before_app_first_request
+def register_menu_items():
+    """Hack to remove children of Settings menu"""
+    def menu_fixup():
+        item = current_menu.submenu("settings.groups")
+        item.hide()
+        item = current_menu.submenu("settings.workflows")
+        item.hide()
+        item = current_menu.submenu("settings.applications")
+        item.hide()
+    current_app.before_first_request_funcs.append(menu_fixup)
+
 
 @blueprint.route('/about', methods=['GET', ])
 @register_menu(blueprint, 'footermenu_left.about', _('About'), order=1)

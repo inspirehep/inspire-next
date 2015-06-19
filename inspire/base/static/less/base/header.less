@@ -71,3 +71,128 @@ body {
         padding-top: 51px;
     }
 }
+
+/* Dropdown menu in Header styles
+-------------------------------------------------- */
+.dropdown-menu-arrow:before {
+    position: absolute;
+    top: -7px;
+    left: 159px;
+    display: inline-block;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #ccc;
+    border-left: 7px solid transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+    content: '';
+}
+
+.dropdown-menu-arrow:after {
+    position: absolute;
+    top: -6px;
+    left: 160px;
+    display: inline-block;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #ffffff;
+    border-left: 6px solid transparent;
+    content: '';
+}
+
+.custom-dropdown-header{
+    color:#428bca;
+    display:block;
+}
+
+@media only screen and (max-width : @screen-sm-min){
+    .dropdown-menu:before {
+        display: none;
+    }
+
+    .dropdown-menu:after {
+        display: none;
+    }
+
+    .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover {
+        background-color: #f5f5f5;
+        color:#000000;
+    }
+
+    .caret {
+        border-top: 4px solid transparent;
+        border-bottom: 4px solid transparent;
+        border-left: 4px  solid;
+    }
+
+    .dropdown .open .caret {
+        border-top: 4px solid;
+        border-right: 4px solid transparent;
+        border-left: 4px solid transparent;
+    }
+
+    .down-arrow.right-arrow-small-screen {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        margin-left: 2px;
+        vertical-align: middle;
+        border-top: 4px solid transparent;
+        border-bottom: 4px solid transparent;
+        border-left: 4px solid ;
+    }
+}
+
+.btn-sign-out {
+    padding: 6px 22px;
+}
+
+.custom-list:last-child {
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+.custom-list:first-child {
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+}
+
+.down-arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid ;
+}
+
+.right-arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 4px solid ;
+}
+
+.overflow {
+    overflow-x: hidden;
+}
+
+.small-text {
+    font-size:small;
+}
+
+.list-group-item.list-item {
+    border: 0;
+}
+
+.dropdown-menu .divider.custom-divider-dropdown {
+    margin:0;
+}
+
+.dropdown-element-body {
+    margin-top: 5px;
+    margin-bottom: 8px;
+}
