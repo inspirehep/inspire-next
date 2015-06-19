@@ -125,7 +125,10 @@ define(
         });
 
         this.trigger(document, "reloadHoldingPenTable");
-        // FIXME: on the details page we should move to next record instead
+
+        // Check if we are in the details page or
+        // the main list, to trigger the right event
+        if (document.URL.indexOf('/details/')) this.trigger(document, "changePage");
       };
 
 
