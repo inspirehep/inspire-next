@@ -77,6 +77,7 @@ PACKAGES = [
     'inspire.ext',
     'inspire.utils',
     'inspire.modules.access',
+    'inspire.modules.audit',
     'inspire.modules.authors',
     'inspire.modules.classifier',
     'inspire.modules.deposit',
