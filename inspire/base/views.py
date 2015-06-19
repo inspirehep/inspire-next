@@ -23,8 +23,6 @@
 """
 
 import json
-import os
-from tempfile import mkstemp
 from flask import request, Blueprint, render_template, current_app
 from flask.ext.menu import register_menu, current_menu
 from flask.ext.login import current_user
@@ -37,11 +35,6 @@ blueprint = Blueprint('inspire', __name__, url_prefix="",
                       template_folder='templates', static_folder='static')
 
 
-#
-# Static pages
-#
-
-
 @blueprint.before_app_first_request
 def register_menu_items():
     """Hack to remove children of Settings menu"""
@@ -52,8 +45,14 @@ def register_menu_items():
         item.hide()
         item = current_menu.submenu("settings.applications")
         item.hide()
+        item = current_menu.submenu("settings.oauthclient")
+        item.hide()
     current_app.before_first_request_funcs.append(menu_fixup)
 
+
+#
+# Static pages
+#
 
 @blueprint.route('/about', methods=['GET', ])
 @register_menu(blueprint, 'footermenu_left.about', _('About'), order=1)
