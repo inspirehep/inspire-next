@@ -40,3 +40,17 @@
   </div>
 </div>
 {% endblock %}
+
+{% block navigation_sort_selection %}
+  <li class="dropdown">
+    <a class="dropdown-toggle dropdown-headline" data-toggle="dropdown" href="#">{{ _('Sort') }}<b class="caret"></b></a>
+    <ul id="sort-menu" class="dropdown-menu" role="menu">
+        <li><a class="task-btn" name="newest">{{ _("Newest")}}</a></li>
+        <li><a class="task-btn" name="oldest">{{ _("Oldest")}}</a></li>
+        <li><a class="task-btn" name="updated">{{ _("Recently updated")}}</a></li>
+        <li><a class="task-btn" name="least_updated">{{ _("Least recently updated")}}</a></li>
+        <li><a class="task-btn" name="relevance_score_desc">{{ _("Most relevant")}}</a></li>
+        <li><a class="task-btn" name="relevance_score">{{ _("Least relevant")}}</a></li>
+    </ul>
+  </li>
+{% endblock %}
