@@ -180,6 +180,10 @@ class ExperimentsInlineForm(WebDepositForm):
         widget_classes="datepicker form-control"
     )
 
+    status = fields.BooleanField(
+        widget=currentCheckboxWidget
+    )
+
 
 class AdvisorsInlineForm(WebDepositForm):
 
@@ -316,7 +320,7 @@ class AuthorUpdateForm(WebDepositForm):
     status = fields.SelectField(
         label='Status',
         choices=status_options,
-        default="",
+        default="active",
         validators=[validators.Required()],
         widget_classes='form-control',
     )

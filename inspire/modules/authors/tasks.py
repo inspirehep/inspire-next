@@ -19,8 +19,9 @@
 
 import os
 
-from functools import wraps
 
+from datetime import date
+from functools import wraps
 from flask import render_template
 
 from invenio.modules.access.control import acc_get_user_email
@@ -152,7 +153,12 @@ def convert_data_to_model():
                     "name": advisor["full_name"],
                     "degree_type": advisor["degree_type"]
                 })
-
+        if "experiments" in data and data["experiments"]:
+            for experiment in data["experiments"]:
+                if experiment["status"]:
+                    experiment["status"] = "current"
+                else:
+                    experiment["status"] = ""
 
         # Add comments to extra data
         if "comments" in data and data["comments"]:
@@ -171,6 +177,7 @@ def convert_data_to_model():
         data['acquisition_source'] = dict(
             source=sources,
             email=user_email,
+            date=date.today().isoformat(),
             method="submission",
             submission_number=obj.id,
         )
