@@ -30,7 +30,8 @@ from invenio.modules.workflows.tasks.marcxml_tasks import (
 )
 from invenio.modules.workflows.tasks.workflows_tasks import log_info
 
-from inspire.modules.workflows.tasks.submission import halt_record_with_action
+from inspire.modules.workflows.tasks.submission import halt_record_with_action, \
+                                                       close_ticket
 
 from ..tasks import send_robotupload, \
     create_marcxml_record, \
@@ -60,10 +61,12 @@ class authornew(WorkflowBase):
             send_robotupload(mode="insert"),
             reply_ticket(template="authors/tickets/user_accepted.html"),
             log_info("New author info has been approved"),
+            close_ticket(ticket_id_key="ticket_id"),
         ],
         workflow_else,
         [
-            log_info("New author info has been rejected")
+            log_info("New author info has been rejected"),
+            close_ticket(ticket_id_key="ticket_id"),
         ]
     ]
 
