@@ -1,0 +1,40 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2014 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{% extends "search/searchbar_frame.html" %}
+
+{%- block global_bundles %}
+    {{ super() }}
+    {% bundles "deposit.css" %}
+{%- endblock %}
+
+{% block inner_content %}
+<div class="pull-right">
+  <a class="btn btn-primary pull-right"
+      href="{{ url_for('webdeposit.create', deposition_type=deposition_type) }}">
+      <i class="glyphicon glyphicon-plus"></i> {{ _('New Submission') }}
+  </a>
+</div>
+<div class="clearfix clearfix-padding"></div>
+<div class="alert alert-success">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+  <strong>Thank you for your suggestion!<br></strong><br>Your request will be reviewed by a member of the INSPIRE staff.
+  <br><br>You will receive an email once the request has been processed.
+</div>
+{% endblock inner_content %}
