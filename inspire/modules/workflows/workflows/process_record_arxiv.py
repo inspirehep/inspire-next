@@ -34,6 +34,7 @@ from inspire.modules.workflows.tasks.matching import(
     save_identifiers_oaiharvest,
     update_old_object,
     delete_self_and_stop_processing,
+    arxiv_set_category_field
 )
 
 from inspire.modules.refextract.tasks import extract_journal_info
@@ -98,6 +99,7 @@ class process_record_arxiv(RecordWorkflow):
             ],
             workflow_else,
             [
+                arxiv_set_category_field,  # FIXME: Remove this when elasticsearch filtering is ready
                 save_identifiers_oaiharvest("HP_IDENTIFIERS"),
                 plot_extract(["latex"]),
                 arxiv_fulltext_download,
