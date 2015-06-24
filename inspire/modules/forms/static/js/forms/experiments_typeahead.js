@@ -50,7 +50,7 @@ define([
     );
 
     this.$element.typeahead({
-      minLength: 3
+      minLength: 2
     }, {
       // after typeahead upgrade to 0.11 can be substituted with:
       // source: this.engine.ttAdapter(),

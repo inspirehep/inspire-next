@@ -120,11 +120,6 @@ def convert_data_to_model():
                 "value": data["public_email"],
                 "current": "Current"
             })
-        data["_private_current_emails"] = []
-        if "email" in data and data["email"]:
-            data["_private_current_emails"].append({
-                "value": data["email"]
-            })
         data["field_categories"] = []
         if "research_field" in data and data["research_field"]:
             for field in data["research_field"]:

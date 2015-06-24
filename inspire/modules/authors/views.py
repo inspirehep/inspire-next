@@ -79,7 +79,6 @@ def convert_for_form(data):
             pos["current"] = True if position.get("status") else False
             data["institution_history"].append(pos)
             if position.get("email"):
-                data["email"] = position.get("email")
                 data["public_email"] = position.get("email")
         data["institution_history"].reverse()
     if "phd_advisors" in data:
