@@ -32,9 +32,14 @@ define([
       remote: {
         url: '/search?cc=HepNames&p=author:%QUERY*&of=recjson&rg=100',
         filter: function(response) {
-          return $.map(response, function(item, idx) {
+          var authors = $.map(response, function(item, idx) {
             return item.authors;
           });
+          return authors.sort(function(a, b){
+            if(a.full_name < b.full_name) return -1;
+            if(a.full_name > b.full_name) return 1;
+            return 0;
+          })
         }
       },
       datumTokenizer: function() {},
