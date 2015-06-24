@@ -32,9 +32,14 @@ define([
       remote: {
         url: '/search?cc=Experiments&p=experiment:%QUERY*&of=recjson&rg=100',
         filter: function(response) {
-          return $.map(response, function(item, idx) {
+          var experiments = $.map(response, function(item, idx) {
             return item.experiment;
           });
+          return experiments.sort(function(a, b){
+            if(a.name < b.name) return -1;
+            if(a.name > b.name) return 1;
+            return 0;
+          })
         }
       },
       datumTokenizer: function() {},
