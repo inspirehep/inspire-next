@@ -158,6 +158,7 @@ def convert_data_to_model():
         # Add comments to extra data
         if "comments" in data and data["comments"]:
             obj.extra_data["comments"] = data["comments"]
+            data["_curators_note"] = data["comments"]
 
         # Add HEPNAMES collection
         data["collections"] = {
