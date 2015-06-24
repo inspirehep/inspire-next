@@ -278,13 +278,6 @@ class AuthorUpdateForm(WebDepositForm):
         widget_classes="form-control"
     )
 
-    email = fields.StringField(
-        label=_('Email'),
-        description="This email will not be displayed. Contact only.",
-        widget_classes="form-control",
-        validators=[validators.Required(), validators.Email()],
-    )
-
     public_email = fields.StringField(
         label=_('Public Email'),
         description="This email will be displayed online in your INSPIRE Author Profile.",
@@ -311,8 +304,7 @@ class AuthorUpdateForm(WebDepositForm):
                     ORCIDValidator]
     )
 
-    status_options = [("", ""),
-                      ("active", _("Active")),
+    status_options = [("active", _("Active")),
                       ("retired", _("Retired")),
                       ("departed", _("Departed")),
                       ("deceased", _("Deceased"))]
