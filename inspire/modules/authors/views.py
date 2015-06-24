@@ -40,6 +40,7 @@ from invenio.ext.principal import permission_required
 from invenio.modules.records.api import Record
 from invenio.modules.workflows.models import BibWorkflowObject
 
+from .acl import viewauthorreview
 from .forms import AuthorUpdateForm
 
 
@@ -174,7 +175,7 @@ def new(aid):
 
 @blueprint.route('/newreview', methods=['GET', 'POST'])
 @login_required
-@permission_required("authorreview")
+@permission_required(viewauthorreview.name)
 @wash_arguments({'objectid': (int, 0)})
 def newreview(objectid):
     """View for INSPIRE author new form review by a cataloger."""
@@ -196,7 +197,7 @@ def newreview(objectid):
 
 @blueprint.route('/reviewaccepted', methods=['GET', 'POST'])
 @login_required
-@permission_required("authorreview")
+@permission_required(viewauthorreview.name)
 @wash_arguments({'objectid': (int, 0),
                  'approved': (bool, False)})
 def reviewaccepted(objectid, approved):
