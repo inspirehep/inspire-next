@@ -41,6 +41,18 @@ def add_core(metadata):
     return metadata
 
 
+def update_note(metadata):
+    """Check if the record was approved as CORE."""
+    new_notes = []
+    for note in metadata.get("note", []):
+        if note.get("value", "") == "*Brief entry*":
+            note = {"value": "*Temporary entry*"}
+        new_notes.append(note)
+    if new_notes:
+        metadata["note"] = new_notes
+    return metadata
+
+
 def add_core_deposit(obj, eng):
     """Check if the record was approved as CORE."""
     from invenio.modules.deposit.models import Deposition
@@ -55,6 +67,7 @@ def add_core_oaiharvest(obj, eng):
     """Check if the record was approved as CORE."""
     if obj.extra_data.get("core"):
         obj.data = add_core(obj.data)
+        obj.data = update_note(obj.data)
 
 
 def reject_record(message):
