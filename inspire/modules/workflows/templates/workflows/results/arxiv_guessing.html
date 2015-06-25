@@ -24,23 +24,23 @@
   {% set score = result.get("max_score") %}
   {% set decision = result.get("decision") %}
 
-      {% if decision is not none %}
-        <h4 class="pull-right">
-          {% if decision == "CORE" %}
-            <span class="label label-success">
-              {{decision}} ({{ score|round(2) }})
-            </span>
-          {% elif decision == "Non-CORE" %}
-            <span class="label label-warning">
-              {{decision}} ({{ score|round(2) }})
-            </span>
-          {% else %}
-            <span class="label label-danger">
-              {{decision}} ({{ score|round(2) }})
-            </span>
-          {% endif %}
-        </h4>
+  {% if decision is not none %}
+    <h4 class="text-right">
+      {% if decision == "CORE" %}
+        <span class="label label-success">
+          {{decision}} ({{ score|round(2) }})
+        </span>
+      {% elif decision == "Non-CORE" %}
+        <span class="label label-warning">
+          {{decision}} ({{ score|round(2) }})
+        </span>
+      {% else %}
+        <span class="label label-danger">
+          {{decision}} ({{ score|round(2) }})
+        </span>
       {% endif %}
+    </h4>
+  {% endif %}
 
 
 {% endblock %}
