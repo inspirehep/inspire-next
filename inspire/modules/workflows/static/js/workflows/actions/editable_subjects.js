@@ -58,20 +58,35 @@ define(
         return {
           "objectid": this.attr.objectid,
           "subjects": this.attr.tagInput.tagsinput('items').map(function(x) {return x.trim();})
-        }
+        };
       };
 
 
       // Init Tags with proper events
       this.initTagInput = function() {
+        var that = this;
+
         this.attr.tagInput = $("input");
-        this.attr.tagInput.tagsinput();
+        this.attr.tagInput.tagsinput({
+          tagClass: function (item) {
+              var subject_codes = that.attr.shortcodes.map(
+                function(shortcode) {
+                  return shortcode.to;
+                }
+              );
+              var subject = $.trim(item);
+              if ($.inArray(subject, subject_codes) !== -1) {
+                return 'label label-success';
+              } else {
+                return 'label label-info';
+              }
+          }}
+        );
         this.attr.tagInput.tagsinput('add', this.attr.subjText);
         this.attr.tagInput.tagsinput('focus');
 
         // Filter the input and add the right one according to
         // the shortcodes. E.g. a-> Astrophysics
-        var that = this;
         this.attr.tagInput.on('beforeItemAdd', function(ev) {
           var originalValue = ev.item;
           var newValue = that.attr.shortcodes
