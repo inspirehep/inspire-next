@@ -28,16 +28,13 @@ body {
     padding-top: 64px;
 }
 .navbar-fixed-top {
-    .nav {
-        padding: 7px 0;
-    }
     .navbar-brand {
-        padding: 0 15px;
+        padding: 2px 15px;
     }
 }
 .navbar-brand {
     img {
-        height: 64px;
+        height: 50px;
     }
 }
 #topnav {
@@ -47,12 +44,20 @@ body {
 }
 .navbar {
     .divider-vertical {
-        height: 50px;
-        margin: 0 9px;
+        height: 30px;
+        margin: 10px 9px;
         border-right: 1px solid #ffffff;
         border-left: 1px solid #f2f2f2;
     }
 }
+
+@media (min-width: @screen-sm-min) {
+    .navbar-nav > li > a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+}
+
 @media (max-width: @screen-sm-min) {
     .navbar-collapse {
         .nav {
@@ -61,15 +66,14 @@ body {
             }
         }
     }
-    .navbar-brand {
-        /* resize logo to fit the navbar */
-        img {
-            height: 50px;
-        }
-    }
+
     body {
         padding-top: 51px;
     }
+}
+
+.navbar-nav > li > a {
+    line-height: 30px;
 }
 
 /* Dropdown menu in Header styles

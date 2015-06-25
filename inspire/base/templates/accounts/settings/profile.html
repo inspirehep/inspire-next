@@ -37,8 +37,10 @@
 {% endif %}
 <div class="row"><div class="col-md-12"><p></p></div></div>
 <div class="row" id="top-row">
-  <div class="col-sm-2 col-md-2 text-center" id="user-icon"><i class="fa fa-user fa-5x"></i></div>
-  <div class="col-sm-4 col-md-4">
+  <div class="col-lg-2" id="user-icon">
+    <img id="profile-picture" class="img-round" src="{{ current_user.email | gravatar(size=90, default='identicon') }}" data-toggle='tooltip' data-placement='left' title='Your profile picture can be set at gravatar.com'>
+  </div>
+  <div class="col-lg-10 profile-summary">
     {%- if current_user.given_names or current_user.family_name %}
       <h4 class="media-heading">{{ current_user.given_names ~ " " ~ current_user.family_name }}</h4>
     {%- else %}
