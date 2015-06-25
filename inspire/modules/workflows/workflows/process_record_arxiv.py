@@ -125,7 +125,6 @@ class process_record_arxiv(RecordWorkflow):
                 workflow_else,
                 [
                     log_info("Record rejected"),
-                    delete_self_and_stop_processing,
                 ],
             ],
         ],
