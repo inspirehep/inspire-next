@@ -25,6 +25,23 @@ from invenio.ext.assets import Bundle
 
 styles = Bundle(
     "less/styleguide.less",
+    depends=[
+        'less/inspire.less',
+        'less/accounts/settings/account-settings.less',
+        'less/base/variables.less',
+        'less/base/header.less',
+        'less/base/footer.less',
+        'less/base/panels.less',
+        'less/base/helpers.less',
+        'less/base/sticky-footer.less',
+        'less/base/list-group.less',
+        'less/base/core.less',
+        'less/accounts/login.less',
+        'less/search/index.less',
+        'less/feedback/button.less',
+        'less/feedback/modal.less',
+        'less/workflows/workflows.less',
+    ],
     filters="less",
     output="custom.css",
     weight=91
