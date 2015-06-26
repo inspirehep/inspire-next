@@ -53,6 +53,7 @@ TITLE_FIELD = "title.title"
 @wash_arguments({'value': (text_type, ""),
                  'objectid': (int, 0)})
 def edit_record_title(value, objectid):
+    """Entrypoint for editing title from detailed pages."""
     editable_obj = BibWorkflowObject.query.get(objectid)
     data = editable_obj.get_data()
 
@@ -71,10 +72,11 @@ def edit_record_title(value, objectid):
 @permission_required(viewholdingpen.name)
 @wash_arguments({'objectid': (text_type, "")})
 def edit_record_subject(objectid):
+    """Entrypoint for editing subjects from detailed pages."""
     editable_obj = BibWorkflowObject.query.get(objectid)
     data = editable_obj.get_data()
 
-    old_subjects_list = data[SUBJECT_FIELD]
+    old_subjects_list = data.get(SUBJECT_FIELD, [])
     new_subjects_list = request.values.getlist('subjects[]') or []
 
     # We will use a diff method to find which
@@ -85,7 +87,7 @@ def edit_record_subject(objectid):
 
     # Make a copy of the original list
     subject_objects = []
-    subject_objects.extend(data[SUBJECT_TERM])
+    subject_objects.extend(data.get(SUBJECT_TERM, []))
 
     # Remove subjects
     subject_objects = [subj for subj in subject_objects
