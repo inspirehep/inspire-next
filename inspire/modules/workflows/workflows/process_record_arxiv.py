@@ -22,6 +22,7 @@
 
 """Workflow for processing single arXiv records harvested."""
 
+from collections import OrderedDict
 from flask import render_template
 
 from invenio.modules.workflows.tasks.marcxml_tasks import (
@@ -148,14 +149,16 @@ class process_record_arxiv(RecordWorkflow):
             if system_no:
                 final_identifiers.append(system_no)
 
-            # Get subject categories
-            categories = record.get("subject_term.term", [])
+            # Get subject categories, adding main one first.
+            categories = record.get("report_number.arxiv_category", [])
+            categories.extend(record.get("subject_term.term", []))
+            categories = list(OrderedDict.fromkeys(categories))  # Unique only
             abstract = record.get("abstract", {}).get("summary", "")
             authors = record.get("authors", [])
         return render_template('workflows/styles/harvesting_record.html',
                                object=bwo,
                                authors=authors,
-                               categories=set(categories),
+                               categories=categories,
                                abstract=abstract,
                                identifiers=final_identifiers)
 
