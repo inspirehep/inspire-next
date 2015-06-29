@@ -130,6 +130,8 @@ def convert_data_to_model():
             del data["research_field"]
         data["positions"] = []
         if "institution_history" in data and data["institution_history"]:
+            data["institution_history"] = sorted(data["institution_history"],
+                                                 key=lambda k: k["start_year"])
             for position in data["institution_history"]:
                 data["positions"].append({
                     "institution": position["name"],
@@ -150,6 +152,8 @@ def convert_data_to_model():
                 })
         if "experiments" in data and data["experiments"]:
             for experiment in data["experiments"]:
+                data["experiments"] = sorted(data["experiments"],
+                                             key=lambda k: k["start_year"])
                 if experiment["status"]:
                     experiment["status"] = "current"
                 else:
