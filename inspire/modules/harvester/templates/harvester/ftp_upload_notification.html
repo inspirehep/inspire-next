@@ -16,7 +16,12 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
-Harvested new {{ args.workflow }} records on {{ harvesting_date }}.
+Harvested new records on {{ harvesting_date }}.
+
+Arguments:
+{% for key, value in args.items() %}
+    {{ key }}: {{ value }}
+{% endfor %}
 
 Files uploaded to Server:
 {% for filename, count in files_uploaded %}{{filename}} ({{count}} records)

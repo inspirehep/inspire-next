@@ -1,29 +1,26 @@
+# -*- coding: utf-8 -*-
 #
-## This file is part of INSPIRE.
-## Copyright (C) 2014, 2015 CERN.
-##
-## INSPIRE is free software; you can redistribute it and/or
-## modify it under the terms of the GNU General Public License as
-## published by the Free Software Foundation; either version 2 of the
-## License, or (at your option) any later version.
-##
-## INSPIRE is distributed in the hope that it will be useful, but
-## WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-## General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# This file is part of INSPIRE.
+# Copyright (C) 2014, 2015 CERN.
 #
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
 
 """
 INSPIRE configuration
---------------------
-Instance independent configuration (e.g. which extensions to load) is defined
-in ``inspire.config'' while instance dependent configuration (e.g. database
-host etc.) is defined in an optional ``inspire.instance_config'' which
-can be installed by a separate package.
+---------------------
 
 This config module is loaded by the Flask application factory via an entry
 point specified in the setup.py::
@@ -34,6 +31,11 @@ point specified in the setup.py::
         ]
     },
 """
+
+from celery.schedules import crontab
+from invenio_query_parser.contrib.spires.walkers.pypeg_to_ast import PypegConverter
+from invenio_query_parser.contrib.spires.walkers.spires_to_invenio import SpiresToInvenio
+
 
 EXTENSIONS = [
     'invenio.ext.arxiv:Arxiv',
@@ -172,9 +174,6 @@ PACKAGES_FACETS_EXCLUDE = [
 
 SEARCH_QUERY_PARSER = 'invenio_query_parser.contrib.spires.parser:Main'
 
-from invenio_query_parser.contrib.spires.walkers.pypeg_to_ast import PypegConverter
-from invenio_query_parser.contrib.spires.walkers.spires_to_invenio import SpiresToInvenio
-
 SEARCH_QUERY_WALKERS = [
     PypegConverter,
     SpiresToInvenio,
@@ -182,8 +181,10 @@ SEARCH_QUERY_WALKERS = [
 
 # Task queue configuration
 
+
 CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
 CELERY_ACCEPT_CONTENT = ["msgpack"]
+
 BROKER_URL = "amqp://guest:guest@localhost:5672//"
 
 # Site name configuration
@@ -293,3 +294,14 @@ INSPIRE_ACCEPTED_CATEGORIES = ["hep-th", "hep-ph", "hep-lat", "hep-ex", "nucl-th
 
 OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP = "system_number_external.value"
 WORKFLOWS_HOLDING_PEN_DEFAULT_OUTPUT_FORMAT = "hp"
+
+# Harvester config
+
+HARVESTER_WORKFLOWS = {
+    "world_scientific": "inspire.modules.harvester.workflows.world_scientific:world_scientific"
+}
+HARVESTER_WORKFLOWS_CONFIG = {
+    "world_scientific": {}
+    # Specify special config locally.
+    # Expected params: ftp_server, ftp_netrc_file and recipients
+}

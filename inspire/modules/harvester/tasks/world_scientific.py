@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
 #
-## This file is part of INSPIRE.
-## Copyright (C) 2014, 2015 CERN.
-##
-## INSPIRE is free software: you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, either version 3 of the License, or
-## (at your option) any later version.
-##
-## INSPIRE is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-##
-## In applying this license, CERN does not waive the privileges and immunities
-## granted to it by virtue of its status as an Intergovernmental Organization
-## or submit itself to any jurisdiction.
+# This file is part of INSPIRE.
+# Copyright (C) 2014, 2015 CERN.
+#
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this license, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 from os.path import (
     join,
@@ -26,8 +26,9 @@ from os.path import (
 )
 
 from functools import wraps
-from datetime import datetime
+from datetime import datetime, timedelta
 from zipfile import BadZipfile
+from shutil import move
 from flask import render_template
 
 from harvestingkit.world_scientific_package import WorldScientific
@@ -40,23 +41,28 @@ from inspire.modules.harvester.utils import (
     ftp_upload,
     ftp_download_files,
     get_storage_path,
-    get_netrc
 )
 
 
-def get_files_from_ftp(server, source_folder, target_folder):
+def get_files_from_ftp(source_folder, target_folder):
     """Get all files in given folder on FTP server to target folder.
 
     The paths to the retrieved files are put in data["downloaded_files"].
     """
     @wraps(get_files_from_ftp)
     def _get_files_from_ftp(obj, eng):
+        netrc_file = obj.extra_data["config"].get("ftp_netrc_file")
+        if netrc_file:
+            netrc_path = join(cfg.get("CFG_PREFIX"),
+                              netrc_file)
+        else:
+            netrc_path = None
         target_folder_full = get_storage_path(suffix=target_folder)
         obj.data['all_files'], obj.data['new_files'] = ftp_download_files(
             source_folder,
             target_folder_full,
-            server=server,
-            netrc_file=get_netrc()
+            server=obj.extra_data["config"]["ftp_server"],
+            netrc_file=netrc_path
         )
         obj.log.info("{0} new files downloaded, in total {1} files".format(
             len(obj.data["new_files"]),
@@ -66,7 +72,7 @@ def get_files_from_ftp(server, source_folder, target_folder):
 
 
 def unzip_files(target_folder):
-    """Unzip new files in data["new_files"] to target location.
+    """Unzip new files to target location.
 
     All extracted files are stored in data["extracted_files"].
     """
@@ -108,8 +114,14 @@ def convert_files(target_folder):
         target_folder_full = get_storage_path(suffix=target_folder)
 
         args = obj.extra_data['args']
+        # By default, we set the from date as today
         to_date = args.get("to_date") or datetime.now().strftime('%Y-%m-%d')
-        from_date = args.get("from_date") or '1900-01-01'
+
+        # By default, we set the from date as yesterday
+        from_date = args.get("from_date") or (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+
+        obj.extra_data['args']["to_date"] = to_date
+        obj.extra_data['args']["from_date"] = from_date
 
         insert_files = []
         filenames = obj.data['extracted_files']
@@ -148,8 +160,17 @@ def create_collection(obj, eng):
     date = "_".join([d for d in [from_date, to_date] if d])
     obj.data['collections'] = {}
 
+    prefix_path = ""
+    if not obj.data.get("result_path"):
+        prefix_path = join(
+            cfg.get("HARVESTER_STORAGE_PREFIX"),
+            "worldscientific"
+        )
+    else:
+        prefix_path = obj.data.get("result_path")
+
     final_filename = join(
-        obj.data.get("result_path", cfg.get("HARVESTER_STORAGE_PREFIX")),
+        prefix_path,
         "world_scientific-{0}.{1}.xml".format(date, "insert")
     )
 
@@ -162,7 +183,9 @@ def create_collection(obj, eng):
                     infile = open(filename)
                     outfile.write(infile.read())
                 except IOError:
-                    obj.log.error('Unable to locate the file {0}'.format(filename))
+                    obj.log.error('Unable to locate the file {0}'.format(
+                        filename
+                    ))
                 finally:
                     infile.close()
             outfile.write('\n</collection>')
@@ -173,28 +196,55 @@ def create_collection(obj, eng):
     ))
 
 
-def put_files_to_ftp(server):
+def put_files_to_ftp(obj, eng):
+    """Upload files in data["collections"] to given FTP server."""
+    collections = obj.data.get('collections', dict())
+    server = obj.extra_data["config"]["ftp_server"]
+    netrc_file = obj.extra_data["config"].get("ftp_netrc_file")
+    if netrc_file:
+        netrc_path = join(cfg.get("CFG_PREFIX"),
+                          netrc_file)
+    else:
+        netrc_path = None
+    for filename in collections.values():
+        if cfg.get("PRODUCTION_MODE"):
+            ftp_upload(
+                filename,
+                server=server,
+                netrc_file=netrc_path,
+            )
+            obj.log.info("Uploaded {0} to {1}".format(filename, server))
+        else:
+            obj.log.info("(pretend) Uploaded to {0} to {1}".format(
+                filename,
+                server)
+            )
+
+
+def move_to_done(target_folder):
     """Upload files in data["collections"] to given FTP server."""
     @wraps(put_files_to_ftp)
-    def _put_files_to_ftp(obj, eng):
+    def _move_to_done(obj, eng):
+        target_folder_full = get_storage_path(suffix=target_folder)
         collections = obj.data.get('collections', dict())
         for filename in collections.values():
-            if cfg.get("PRODUCTION_MODE"):
-                ftp_upload(
-                    filename,
-                    server=server,
-                    netrc_file=get_netrc(),
-                )
-                obj.log.info("Uploaded {0} to {1}".format(filename, server))
-            else:
-                obj.log.info("(pretend) Uploaded to {0} to {1}".format(filename, server))
-    return _put_files_to_ftp
+            move(filename, join(target_folder_full, basename(filename)))
+            obj.log.info("Moved {0} to {1}".format(
+                filename,
+                target_folder_full)
+            )
+    return _move_to_done
 
 
-def report_via_email(recipients, template):
+def report_via_email(template=None):
     """Report about completed uploads to recipients."""
     @wraps(report_via_email)
     def _report_via_email(obj, eng):
+        recipients = obj.extra_data["config"].get("recipients")
+        if not recipients:
+            obj.log.warning("No recipients")
+            return
+
         collections = obj.data.get('collections', dict())
         files_uploaded = []
         for update_type, filename in collections.items():
