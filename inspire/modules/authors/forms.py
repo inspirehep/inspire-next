@@ -95,14 +95,14 @@ class InstitutionInlineForm(WebDepositForm):
     """Institution inline form."""
 
     rank_options = [("rank", _("Rank")),
-                    ("senior", _("Senior (permanent)")),
-                    ("junior", _("Junior (leads to Senior)")),
-                    ("staff", _("Staff (non-research)")),
-                    ("visitor", _("Visitor")),
-                    ("postdoc", _("PostDoc")),
-                    ("phd", _("PhD")),
-                    ("masters", _("Master")),
-                    ("undergrad", _("Undergrad"))]
+                    ("SENIOR", _("Senior (permanent)")),
+                    ("JUNIOR", _("Junior (leads to Senior)")),
+                    ("STAFF", _("Staff (non-research)")),
+                    ("VISITOR", _("Visitor")),
+                    ("PD", _("PostDoc")),
+                    ("PHD", _("PhD")),
+                    ("MAS", _("Master")),
+                    ("UG", _("Undergrad"))]
 
     name = fields.StringField(
         widget_classes='form-control',
