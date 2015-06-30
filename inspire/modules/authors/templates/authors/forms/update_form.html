@@ -30,7 +30,7 @@
     </div>
   </div>
   <div class="well">
-  This form allows you to update author information. All modifications are transferred to <a href="http://inspirehep.net">http://inspirehep.net</a> upon approval.
+  This form allows you to update author information. All modifications are transferred to <a href="http://inspirehep.net/hepnames" target="_blank">http://inspirehep.net/hepnames</a> after our staff has checked them.
   </div>
 {% endblock form_title %}
 
@@ -57,10 +57,9 @@ require(
         autocomplete_url: '{{ url_for("inspire_authors.autocomplete", field_name="__FIELDNAME__") }}',
         datepicker_element: '.datepicker',
         datepicker_options: {
+            useCurrent: false,
             format: "YYYY",
             viewMode: 'years',
-            minViewMode: 'years',
-            pickTime: false
         },
         // Selectors
         datepickerSelector: '.datepicker',

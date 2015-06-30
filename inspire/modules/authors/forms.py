@@ -95,14 +95,14 @@ class InstitutionInlineForm(WebDepositForm):
     """Institution inline form."""
 
     rank_options = [("rank", _("Rank")),
-                    ("senior", _("Senior (permanent)")),
-                    ("junior", _("Junior (leads to Senior)")),
-                    ("staff", _("Staff (non-research)")),
-                    ("visitor", _("Visitor")),
-                    ("postdoc", _("PostDoc")),
-                    ("phd", _("PhD")),
-                    ("masters", _("Master")),
-                    ("undergrad", _("Undergrad"))]
+                    ("SENIOR", _("Senior (permanent)")),
+                    ("JUNIOR", _("Junior (leads to Senior)")),
+                    ("STAFF", _("Staff (non-research)")),
+                    ("VISITOR", _("Visitor")),
+                    ("PD", _("PostDoc")),
+                    ("PHD", _("PhD")),
+                    ("MAS", _("Master")),
+                    ("UG", _("Undergrad"))]
 
     name = fields.StringField(
         widget_classes='form-control',
@@ -178,6 +178,10 @@ class ExperimentsInlineForm(WebDepositForm):
         validators=[RegexpStopValidator("^(\d{4})?$",
                                       message="{} is not a valid year. Please use <i>yyyy</i> format.")],
         widget_classes="datepicker form-control"
+    )
+
+    status = fields.BooleanField(
+        widget=currentCheckboxWidget
     )
 
 
@@ -274,13 +278,6 @@ class AuthorUpdateForm(WebDepositForm):
         widget_classes="form-control"
     )
 
-    email = fields.StringField(
-        label=_('Email'),
-        description="This email will not be displayed. Contact only.",
-        widget_classes="form-control",
-        validators=[validators.Required(), validators.Email()],
-    )
-
     public_email = fields.StringField(
         label=_('Public Email'),
         description="This email will be displayed online in your INSPIRE Author Profile.",
@@ -307,8 +304,7 @@ class AuthorUpdateForm(WebDepositForm):
                     ORCIDValidator]
     )
 
-    status_options = [("", ""),
-                      ("active", _("Active")),
+    status_options = [("active", _("Active")),
                       ("retired", _("Retired")),
                       ("departed", _("Departed")),
                       ("deceased", _("Deceased"))]
@@ -316,7 +312,7 @@ class AuthorUpdateForm(WebDepositForm):
     status = fields.SelectField(
         label='Status',
         choices=status_options,
-        default="",
+        default="active",
         validators=[validators.Required()],
         widget_classes='form-control',
     )

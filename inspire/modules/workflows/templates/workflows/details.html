@@ -75,6 +75,12 @@
 {%- block hp_details_main -%}
 
   {{ self.hp_action_main() }}
+
+  {# Ensure prediction results are first. #}
+  {% if task_results and "arxiv_guessing" in task_results %}
+    {{ task_results.get("arxiv_guessing")|safe }}
+  {% endif %}
+
   {{ self.action_alert() }}
   {{ self.workflow_completed() }}
 
@@ -151,19 +157,13 @@
               {{ task_results.get("PDF")|safe }}
             {% endif %}
 
-            {# Ensure core extraction results are first. #}
-            {% if "core_guessing" in task_results %}
-              {{ task_results.get("core_guessing")|safe }}
-            {% endif %}
-
             {# Ensure keywords extraction results are second. #}
             {% if "classification" in task_results %}
               {{ task_results.get("classification")|safe }}
             {% endif %}
 
-
             {% for name, template in task_results.items() %}
-              {% if name not in ["classification", "core_guessing", "References", "PDF"] %}
+              {% if name not in ["classification", "arxiv_guessing", "References", "PDF"] %}
                 {{ template|safe }}
               {% endif %}
             {% endfor %}

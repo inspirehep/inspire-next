@@ -19,8 +19,9 @@
 
 import os
 
-from functools import wraps
 
+from datetime import date
+from functools import wraps
 from flask import render_template
 
 from invenio.modules.access.control import acc_get_user_email
@@ -119,11 +120,6 @@ def convert_data_to_model():
                 "value": data["public_email"],
                 "current": "Current"
             })
-        data["_private_current_emails"] = []
-        if "email" in data and data["email"]:
-            data["_private_current_emails"].append({
-                "value": data["email"]
-            })
         data["field_categories"] = []
         if "research_field" in data and data["research_field"]:
             for field in data["research_field"]:
@@ -134,6 +130,8 @@ def convert_data_to_model():
             del data["research_field"]
         data["positions"] = []
         if "institution_history" in data and data["institution_history"]:
+            data["institution_history"] = sorted(data["institution_history"],
+                                                 key=lambda k: k["start_year"])
             for position in data["institution_history"]:
                 data["positions"].append({
                     "institution": position["name"],
@@ -152,11 +150,19 @@ def convert_data_to_model():
                     "name": advisor["full_name"],
                     "degree_type": advisor["degree_type"]
                 })
-
+        if "experiments" in data and data["experiments"]:
+            for experiment in data["experiments"]:
+                data["experiments"] = sorted(data["experiments"],
+                                             key=lambda k: k["start_year"])
+                if experiment["status"]:
+                    experiment["status"] = "current"
+                else:
+                    experiment["status"] = ""
 
         # Add comments to extra data
         if "comments" in data and data["comments"]:
             obj.extra_data["comments"] = data["comments"]
+            data["_curators_note"] = data["comments"]
 
         # Add HEPNAMES collection
         data["collections"] = {
@@ -171,6 +177,7 @@ def convert_data_to_model():
         data['acquisition_source'] = dict(
             source=sources,
             email=user_email,
+            date=date.today().isoformat(),
             method="submission",
             submission_number=obj.id,
         )

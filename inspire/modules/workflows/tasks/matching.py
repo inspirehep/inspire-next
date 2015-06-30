@@ -101,7 +101,7 @@ def exists_in_inspire_or_rejected(obj, eng):
         preprint_date = obj.data.get("preprint_info.date", "")
         if preprint_date:
             parsed_date = datetime.datetime.strptime(preprint_date, "%Y-%m-%d")
-            if date_older_than(parsed_date, datetime.datetime.now(), days=2):
+            if date_older_than(parsed_date, datetime.datetime.now(), days=5):
                 obj.log.info("Record is likely rejected previously.")
                 return True
 
@@ -214,3 +214,8 @@ def update_old_object(kb_name):
                 old_object.save()
 
     return _update_old_object
+
+
+def arxiv_set_category_field(obj, eng):
+    """Temporary measure to enable sorting by primary category."""
+    obj.uri = obj.data.get("report_number.arxiv_category", [""])[0]

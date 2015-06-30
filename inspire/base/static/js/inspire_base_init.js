@@ -23,6 +23,7 @@
  require([
     "js/jquery_plugin",
     "js/feedback_inspire",
+    "js/header/header",
     ], function() {
     // loading all the libraries everywhere.
     console.info("js/inspire_base_init is loaded");

@@ -145,3 +145,26 @@
 {
     cursor: pointer;
 }
+
+/* Typeahead CSS Rules */
+
+.tt-dropdown-menu .tt-suggestion {
+  border-bottom: 1px solid #eee
+}
+
+/* Placeholder CSS Rules */
+
+::-webkit-input-placeholder {
+    color:    #C2C2C2!important;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    #C2C2C2!important;
+   opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    #C2C2C2!important;
+   opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+   color:    #C2C2C2!important;
+}

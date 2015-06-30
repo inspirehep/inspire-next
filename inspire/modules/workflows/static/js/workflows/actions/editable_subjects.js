@@ -48,25 +48,66 @@ define(
         subjText: "",
         splitter: "Subject: ",
 
-        tagInput: {}
+        knowledgeBaseUrl: "/api/knowledge/Subjects/mappings",
+
+        tagInput: {},
+        shortcodes: []
       });
 
       this.createPayloadForEdit = function() {
         return {
           "objectid": this.attr.objectid,
           "subjects": this.attr.tagInput.tagsinput('items').map(function(x) {return x.trim();})
-        }
+        };
       };
 
+
+      // Init Tags with proper events
       this.initTagInput = function() {
+        var that = this;
+
         this.attr.tagInput = $("input");
-        this.attr.tagInput.tagsinput();
+        this.attr.tagInput.tagsinput({
+          tagClass: function (item) {
+              var subject_codes = that.attr.shortcodes.map(
+                function(shortcode) {
+                  return shortcode.to;
+                }
+              );
+              var subject = $.trim(item);
+              if ($.inArray(subject, subject_codes) !== -1) {
+                return 'label label-success';
+              } else {
+                return 'label label-info';
+              }
+          }}
+        );
         this.attr.tagInput.tagsinput('add', this.attr.subjText);
         this.attr.tagInput.tagsinput('focus');
+
+        // Filter the input and add the right one according to
+        // the shortcodes. E.g. a-> Astrophysics
+        this.attr.tagInput.on('beforeItemAdd', function(ev) {
+          var originalValue = ev.item;
+          var newValue = that.attr.shortcodes
+            .filter(function(shortcode) {
+              return shortcode.from === originalValue;
+            })
+            .map(function(shortcode) {
+              return shortcode.to;
+            })
+            .toString();
+
+          // Check if a new value was returned;
+          // if not, add the original value to the tag
+          ev.item = newValue ? newValue : originalValue;
+        });
 
         this.on(this.attr.tagsContainerSelector, 'focusout', this.makePostRequest);
       };
 
+
+      // Editable - Uneditable Input
       this.makeEditable = function(ev) {
         this.attr.subjText = $(this.attr.editSelector)
           .text()
@@ -104,8 +145,22 @@ define(
         });
       };
 
+
+      this.getSubjectShortcodes = function() {
+        var that = this;
+        $.ajax({
+          type: "GET",
+          dataType: "json",
+          url: that.attr.knowledgeBaseUrl,
+          success: function(data) {
+            that.attr.shortcodes = data;
+          }
+        });
+      };
+
       this.after('initialize', function() {
         this.on(this.attr.editSelector, 'dblclick', this.makeEditable);
+        this.getSubjectShortcodes();
 
         console.log("Editable Subjects OK");
       });

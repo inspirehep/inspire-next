@@ -63,7 +63,6 @@ define(function(require, exports, module) {
         autocomplete_url: "",
         datepicker_options: {
           format: "YYYY-MM-DD",
-          pickTime: false,
         },
 
         // Selectors
@@ -970,6 +969,14 @@ define(function(require, exports, module) {
     });
     // Initialize jquery_plugins
     $(this.attr.datepickerSelector).datetimepicker(this.attr.datepicker_options);
+    // Close datetimepicker on Enter pressed
+    $(this.attr.datepickerSelector).each(function(index, element) {
+      $(element).keypress(function(e) {
+        if(e.which == 13) {
+          $(element).hide();
+        }
+      });
+    });
   });
 
   }

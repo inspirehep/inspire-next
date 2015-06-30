@@ -46,4 +46,5 @@ DEF_DEMO_AUTHS = (
     ('cataloger', 'runbibeditmulti', {}),
     ('cataloger', 'runbibmerge', {}),
     ('cataloger', 'viewholdingpen', {}),
+    ('cataloger', 'viewauthorreview', {}),
 )

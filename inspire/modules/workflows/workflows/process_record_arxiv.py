@@ -22,6 +22,7 @@
 
 """Workflow for processing single arXiv records harvested."""
 
+from collections import OrderedDict
 from flask import render_template
 
 from invenio.modules.workflows.tasks.marcxml_tasks import (
@@ -34,6 +35,7 @@ from inspire.modules.workflows.tasks.matching import(
     save_identifiers_oaiharvest,
     update_old_object,
     delete_self_and_stop_processing,
+    arxiv_set_category_field
 )
 
 from inspire.modules.refextract.tasks import extract_journal_info
@@ -98,6 +100,7 @@ class process_record_arxiv(RecordWorkflow):
             ],
             workflow_else,
             [
+                arxiv_set_category_field,  # FIXME: Remove this when elasticsearch filtering is ready
                 save_identifiers_oaiharvest("HP_IDENTIFIERS"),
                 plot_extract(["latex"]),
                 arxiv_fulltext_download,
@@ -123,7 +126,6 @@ class process_record_arxiv(RecordWorkflow):
                 workflow_else,
                 [
                     log_info("Record rejected"),
-                    delete_self_and_stop_processing,
                 ],
             ],
         ],
@@ -147,14 +149,16 @@ class process_record_arxiv(RecordWorkflow):
             if system_no:
                 final_identifiers.append(system_no)
 
-            # Get subject categories
-            categories = record.get("subject_term.term", [])
+            # Get subject categories, adding main one first.
+            categories = record.get("report_number.arxiv_category", [])
+            categories.extend(record.get("subject_term.term", []))
+            categories = list(OrderedDict.fromkeys(categories))  # Unique only
             abstract = record.get("abstract", {}).get("summary", "")
             authors = record.get("authors", [])
         return render_template('workflows/styles/harvesting_record.html',
                                object=bwo,
                                authors=authors,
-                               categories=set(categories),
+                               categories=categories,
                                abstract=abstract,
                                identifiers=final_identifiers)
 
@@ -175,3 +179,25 @@ class process_record_arxiv(RecordWorkflow):
             score=prediction_results.get("max_score"),
             decision=prediction_results.get("decision")
         )
+
+    @staticmethod
+    def get_sort_data(bwo, **kwargs):
+        """Return a dictionary of key values useful for sorting in Holding Pen."""
+        results = bwo.get_tasks_results()
+        prediction_results = results.get("arxiv_guessing", {})
+        if prediction_results:
+            prediction_results = prediction_results[0].get("result")
+            max_score = prediction_results.get("max_score")
+            decision = prediction_results.get("decision")
+            relevance_score = max_score
+            if decision == "CORE":
+                relevance_score += 10
+            elif decision == "Rejected":
+                relevance_score -= 10
+            return {
+                "max_score": prediction_results.get("max_score"),
+                "decision": prediction_results.get("decision"),
+                "relevance_score": relevance_score
+            }
+        else:
+            return {}

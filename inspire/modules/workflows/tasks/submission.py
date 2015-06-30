@@ -131,6 +131,8 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     rt_instance = get_instance() if cfg.get("PRODUCTION_MODE") else None
     rt_queue = cfg.get("CFG_BIBCATALOG_QUEUES") or queue
     recid = obj.extra_data.get("recid", "")
+    if not recid:
+        recid = obj.data.get("recid", "")
     if not rt_instance:
         obj.log.error("No RT instance available. Skipping!")
         obj.log.info("Ticket submission ignored.")
