@@ -376,9 +376,8 @@ def create_curation_ticket(template, queue="Test", ticket_id_key="ticket_id"):
     def _create_curation_ticket(obj, eng):
         from invenio.modules.access.control import acc_get_user_email
 
-        extra_data = obj.get_extra_data()
-        recid = extra_data.get('recid')
-        record_url = extra_data.get('url')
+        recid = obj.extra_data.get('recid')
+        record_url = obj.extra_data.get('url')
 
         user_email = acc_get_user_email(obj.id_user)
 

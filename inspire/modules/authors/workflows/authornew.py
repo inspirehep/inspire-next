@@ -68,7 +68,7 @@ class authornew(WorkflowBase):
             [
                 create_curation_ticket(
                     template="authors/tickets/curation_needed.html",
-                    queue="AUTHORS_cor_user",
+                    queue="AUTHORS_curation",
                     ticket_id_key="curation_ticket_id"
                 ),
             ],
