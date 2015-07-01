@@ -102,7 +102,7 @@ define(
         var $this = this;
         var objectids = payload.objectids;
 
-        if (objectids) {
+        if (objectids.length > 0) {
           jQuery.ajax({
             type: "POST",
             url: $this.attr.action_url,
