@@ -1,6 +1,6 @@
 {#
 ## This file is part of INSPIRE.
-## Copyright (C) 2015 CERN.
+## Copyright (C) 2014 CERN.
 ##
 ## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -16,14 +16,15 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
-{{record_preview|safe}}
-<br>
-<hr>
-<p>Submission from: <a href="mailto:{{user_email}}">{{user_email}}</a></p>
-<p>Corresponding RT ticket: <a href="{{ticket_url}}" target="_blank">{{ticket_url}}</a></p>
-{% if comments %}
-  <p>User left the following comments in the form:
-  <pre>{{comments}}</pre>
-  </p>
-  <br>
+Author request by {{ email }}
+
+Curate record here: https://inspirehep.net/record/edit/#state=edit&recid={{ recid }}.
+{%- if record_url %}
+  Record url: {{ record_url|safe }}
 {% endif %}
+
+{%- if user_comment %}
+  User comments:
+  {{ user_comment|safe }}
+{% endif %}
+

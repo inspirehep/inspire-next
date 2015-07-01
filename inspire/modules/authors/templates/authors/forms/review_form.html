@@ -33,7 +33,8 @@
   <div class="well action-bar">
   <a class="btn btn-danger pull-left" href="{{url_for('inspire_authors.reviewaccepted', approved=False, objectid=objectid)}}"><i class="fa fa-trash-o fa-lg"></i> {{ _('Reject') }}</a>
   <span class="pull-right">
-    <a href="{{url_for('inspire_authors.reviewaccepted', approved='True', objectid=objectid)}}" title="{{_('Press Approve to finalize your review.')}}" class="btn btn-success form-submit"><i class="fa fa-check-circle fa-lg"></i> {{ _('Approve') }}</a>
+    <a href="{{url_for('inspire_authors.reviewaccepted', approved='True', ticket='False', objectid=objectid)}}" title="{{_('Press Approve to finalize your review.')}}" class="btn btn-success form-submit"><i class="fa fa-check-circle fa-lg"></i> {{ _('Approve') }}</a>
+    <a href="{{url_for('inspire_authors.reviewaccepted', approved='True', ticket='True', objectid=objectid)}}" title="{{_('Press to approve and create a curation ticket.')}}" class="btn btn-warning form-submit"><i class="fa fa-plus-circle fa-lg"></i> {{ _('Approve + curate') }}</a>
   </span>
   <span class="clearfix"></span>
 </div>

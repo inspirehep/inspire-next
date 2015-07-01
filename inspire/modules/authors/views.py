@@ -184,7 +184,7 @@ def newreview(objectid):
     workflow_object = BibWorkflowObject.query.get(objectid)
     extra_data = workflow_object.get_extra_data()
 
-    form = AuthorUpdateForm(data=extra_data["formdata"])
+    form = AuthorUpdateForm(data=extra_data["formdata"], is_review=True)
     ctx = {
         "action": url_for('.reviewaccepted', objectid=objectid),
         "name": "authorUpdateForm",
@@ -199,14 +199,16 @@ def newreview(objectid):
 @login_required
 @permission_required(viewauthorreview.name)
 @wash_arguments({'objectid': (int, 0),
-                 'approved': (bool, False)})
-def reviewaccepted(objectid, approved):
+                 'approved': (bool, False),
+                 'ticket': (bool, False)})
+def reviewaccepted(objectid, approved, ticket):
     """Form handler when a cataloger accepts a new author update"""
     if not objectid:
         abort(400)
     workflow_object = BibWorkflowObject.query.get(objectid)
     extra_data = workflow_object.get_extra_data()
     extra_data["approved"] = approved
+    extra_data["ticket"] = ticket
     workflow_object.set_extra_data(extra_data)
     workflow_object.save()
     workflow_object.continue_workflow(delayed=True)

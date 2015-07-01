@@ -59,14 +59,12 @@ class authorupdate(WorkflowBase):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Return formatted data of object."""
-        from lxml import etree
+        from invenio.modules.formatter import format_record
 
-        of = kwargs.get("of", "hd")
+        of = kwargs.get("of", "hp")
 
         extra_data = bwo.get_extra_data()
-        parser = etree.XMLParser(remove_blank_text=True)
-        tree = etree.fromstring(extra_data.get("marcxml"), parser)
-        xml = etree.tostring(tree, pretty_print=True)
+        xml = extra_data.get("marcxml")
 
         id_user = bwo.id_user
         user_email = acc_get_user_email(id_user)
@@ -78,7 +76,13 @@ class authorupdate(WorkflowBase):
         if of == "xm":
             return xml
         else:
+            record_preview = format_record(
+                    recID=None,
+                    of=of,
+                    xml_record=xml
+                    )
             return render_template("authors/workflows/authorupdate.html",
+                                   record_preview=record_preview,
                                    user_email=user_email,
                                    ticket_url=ticket_url,
                                    comments=extra_data.get("comments"))

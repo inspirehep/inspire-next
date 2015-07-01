@@ -3,3 +3,5 @@ default: Default_HTML_detailed.bft
 description: HTML for Holding Pen
 name: HTML for Holding Pen
 visibility: 0
+rules:
+- {field: 980.a, template: Hepnames_HTML_detailed.bft, value: 'HEPNAMES'}

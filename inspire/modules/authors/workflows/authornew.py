@@ -31,13 +31,15 @@ from invenio.modules.workflows.tasks.marcxml_tasks import (
 from invenio.modules.workflows.tasks.workflows_tasks import log_info
 
 from inspire.modules.workflows.tasks.submission import halt_record_with_action, \
-                                                       close_ticket
+    close_ticket
 
 from ..tasks import send_robotupload, \
     create_marcxml_record, \
     convert_data_to_model, \
     create_curator_ticket_new, \
-    reply_ticket
+    reply_ticket, \
+    curation_ticket_needed, \
+    create_curation_ticket
 
 
 class authornew(WorkflowBase):
@@ -62,6 +64,15 @@ class authornew(WorkflowBase):
             reply_ticket(template="authors/tickets/user_accepted.html"),
             log_info("New author info has been approved"),
             close_ticket(ticket_id_key="ticket_id"),
+            workflow_if(curation_ticket_needed),
+            [
+                create_curation_ticket(
+                    template="authors/tickets/curation_needed.html",
+                    queue="AUTHORS_cor_user",
+                    ticket_id_key="curation_ticket_id"
+                ),
+            ],
+
         ],
         workflow_else,
         [
@@ -86,17 +97,12 @@ class authornew(WorkflowBase):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Return formatted data of object."""
-        from lxml import etree
+        from invenio.modules.formatter import format_record
 
-        of = kwargs.get("of", "hd")
+        of = kwargs.get("of", "hp")
 
         extra_data = bwo.get_extra_data()
-        parser = etree.XMLParser(remove_blank_text=True)
-        try:
-            tree = etree.fromstring(extra_data.get("marcxml"), parser)
-            xml = etree.tostring(tree, pretty_print=True)
-        except ValueError:
-            xml = ""
+        xml = extra_data.get("marcxml")
 
         id_user = bwo.id_user
         user_email = acc_get_user_email(id_user)
@@ -108,7 +114,13 @@ class authornew(WorkflowBase):
         if of == "xm":
             return xml
         else:
+            record_preview = format_record(
+                    recID=None,
+                    of=of,
+                    xml_record=xml
+                    )
             return render_template("authors/workflows/authorupdate.html",
+                                   record_preview=record_preview,
                                    user_email=user_email,
                                    ticket_url=ticket_url,
                                    comments=extra_data.get("comments"))

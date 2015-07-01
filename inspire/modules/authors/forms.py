@@ -452,7 +452,7 @@ class AuthorUpdateForm(WebDepositForm):
     groups = [
         ('Personal Information',
             ['given_names', 'family_name', 'display_name', 'native_name', 'email',
-             'public_email', 'status', 'orcid'],
+             'public_email', 'status', 'orcid', 'author_id'],
             {"icon": "fa fa-user"}
         ),
         ('Personal Websites',
@@ -469,3 +469,10 @@ class AuthorUpdateForm(WebDepositForm):
             {"icon": "fa fa-comments"}
         )
     ]
+
+    def __init__(self, is_review=False, *args, **kwargs):
+        """Constructor."""
+        super(AuthorUpdateForm, self).__init__(*args, **kwargs)
+        if is_review:
+            self.author_id.widget = TextInput()
+            self.author_id.widget_classes = "form-control"
