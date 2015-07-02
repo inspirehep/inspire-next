@@ -66,7 +66,7 @@ define(
       this.initTagInput = function() {
         var that = this;
 
-        this.attr.tagInput = $("input");
+        this.attr.tagInput = $("input#edit-subj:text");
         this.attr.tagInput.tagsinput({
           tagClass: function (item) {
               var subject_codes = that.attr.shortcodes.map(
