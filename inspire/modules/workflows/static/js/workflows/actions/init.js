@@ -30,7 +30,8 @@ define(
     "js/workflows/actions/arxiv_approval",
     "js/workflows/actions/batch_action_hotkeys",
     "js/workflows/actions/editable_subjects",
-    "js/workflows/actions/editable_title"
+    "js/workflows/actions/editable_title",
+    "js/workflows/actions/editable_urls"
   ],
   function(
     ApprovalAction,
@@ -39,7 +40,8 @@ define(
     ArxivApprovalAction,
     BatchActionHotkeys,
     EditableSubjects,
-    EditableTitle) {
+    EditableTitle,
+    EditableURLs) {
 
 
     function initialize(context) {
@@ -68,6 +70,8 @@ define(
         edit_url: context.edit_title_url,
         objectid: context.id_object
       });
+
+      EditableURLs.attachTo(document);
 
       CoreApprovalModal.attachTo(context.attach_action_to);
       console.log("I ran this actions/init.")

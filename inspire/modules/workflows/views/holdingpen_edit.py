@@ -16,6 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Tseemple Place, Suite 330, Boston, MA 02111-1307, USA.
+from invenio.modules.deposit.helpers import make_record
+from invenio.modules.deposit.models import Deposition
+from invenio.modules.deposit.tasks import process_sip_metadata
 
 from six import text_type
 from flask import Blueprint, jsonify, request
@@ -76,21 +79,59 @@ def edit_record_subject(objectid):
     editable_obj = BibWorkflowObject.query.get(objectid)
     data = editable_obj.get_data()
 
-    old_subjects_list = data.get(SUBJECT_FIELD, [])
     new_subjects_list = request.values.getlist('subjects[]') or []
+    subject_dict = []
 
-    # We will use a diff method to find which
-    # subjects to remove and which to add.
-    # PLUS removes unicode
-    to_remove = [str(x) for x in list(set(old_subjects_list) - set(new_subjects_list))]
-    to_add = [str(x) for x in list(set(new_subjects_list) - set(old_subjects_list))]
+    # We need to check the type of the object due to differences
+    # Submission: dict /  Harvest: SmartJson
+    if type(data) is dict:
+        deposition = Deposition(editable_obj)
+        sip = deposition.get_latest_sip(sealed=False)
+        metadata = sip.metadata
 
-    # Make a copy of the original list
-    subject_objects = []
-    subject_objects.extend(data.get(SUBJECT_TERM, []))
+        subject_dict.extend(metadata.get(SUBJECT_TERM))
+        edit_submission(deposition, metadata, sip, new_subjects_list, subject_dict)
+    else:
+        subject_dict.extend(data.get(SUBJECT_TERM))
+        edit_harvest(editable_obj, data, new_subjects_list, subject_dict)
+
+    return jsonify({
+        "category": "success",
+        "message": "Edit on subjects was successful"
+    })
+
+
+def edit_harvest(editable_obj, data, new_subjects_list, subject_dict):
+    """Subject editing for harvested records."""
+    old_subjects_list = data.get(SUBJECT_FIELD, [])
+
+    data[SUBJECT_TERM] = revised_subjects_list(old_subjects_list,new_subjects_list, subject_dict)
+    editable_obj.set_data(data)
+    editable_obj.save()
+
+
+def edit_submission(deposition, metadata, sip, new_subjects_list, subject_dict):
+    """Subject editing for submissions."""
+    old_subjects_list = []
+    for subj in subject_dict:
+        old_subjects_list.append(subj[TERM])
+
+    metadata[SUBJECT_TERM] = revised_subjects_list(old_subjects_list, new_subjects_list, subject_dict)
+
+    # hacky thing to update package as well, needed to show changes
+    sip.package = make_record(sip.metadata).legacy_export_as_marc()
+    deposition.save()
+
+
+def revised_subjects_list(old, new, subject_dict):
+    """Using sets, it determines which elements to remove
+    and which to add when editing the subjects.
+    """
+    to_remove = [str(x) for x in list(set(old) - set(new))]
+    to_add = [str(x) for x in list(set(new) - set(old))]
 
     # Remove subjects
-    subject_objects = [subj for subj in subject_objects
+    subject_objects = [subj for subj in subject_dict
                        if subj[TERM] not in to_remove]
 
     # Add the new subjects
@@ -100,11 +141,4 @@ def edit_record_subject(objectid):
             SCHEME: INSPIRE_SCHEME
         })
 
-    data[SUBJECT_TERM] = subject_objects
-    editable_obj.set_data(data)
-    editable_obj.save()
-
-    return jsonify({
-        "category": "success",
-        "message": "Edit on subjects was successful"
-    })
+    return subject_objects
