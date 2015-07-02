@@ -30,12 +30,14 @@ from flask import abort, \
     session, \
     url_for, \
     redirect
+from flask_breadcrumbs import default_breadcrumb_root, register_breadcrumb
 from werkzeug.datastructures import MultiDict
 
 from flask_login import login_required
 
 from invenio.base.decorators import wash_arguments
 from invenio.base.globals import cfg
+from invenio.base.i18n import _
 from invenio.ext.principal import permission_required
 from invenio.modules.records.api import Record
 from invenio.modules.workflows.models import BibWorkflowObject
@@ -51,6 +53,8 @@ blueprint = Blueprint(
     template_folder='templates',
     static_folder="static",
 )
+
+default_breadcrumb_root(blueprint, '.')
 
 
 def convert_for_form(data):
@@ -120,6 +124,7 @@ def validate():
 
 
 @blueprint.route('/update', methods=['GET', 'POST'])
+@register_breadcrumb(blueprint, '.update', _('Update author information'))
 @login_required
 @wash_arguments({'recid': (int, 0)})
 def update(recid):
@@ -151,6 +156,7 @@ def update(recid):
 
 
 @blueprint.route('/new', methods=['GET', 'POST'])
+@register_breadcrumb(blueprint, '.new', _('New author information'))
 @login_required
 @wash_arguments({'aid': (unicode, u"")})
 def new(aid):
