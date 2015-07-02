@@ -243,6 +243,7 @@ class AuthorUpdateForm(WebDepositForm):
 
     # Hidden field to hold author id information
     author_id = fields.StringField(
+        label=_('BAI'),
         widget=HiddenInput()
     )
 
@@ -267,7 +268,7 @@ class AuthorUpdateForm(WebDepositForm):
 
     display_name = fields.StringField(
         label=_('Display Name'),
-        description='How would you like to be addressed throughout the site? e.g. Diego Martínez',
+        description='How should the author be addressed throughout the site? e.g. Diego Martínez',
         validators=[validators.DataRequired()],
         widget_classes="form-control"
     )
@@ -280,7 +281,7 @@ class AuthorUpdateForm(WebDepositForm):
 
     public_email = fields.StringField(
         label=_('Public Email'),
-        description="This email will be displayed online in your INSPIRE Author Profile.",
+        description="This email will be displayed online in the INSPIRE Author Profile.",
         widget_classes="form-control",
         validators=[validators.Optional(), validators.Email()],
     )
