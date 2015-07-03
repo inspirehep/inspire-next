@@ -131,8 +131,7 @@ def convert_data_to_model():
         data["positions"] = []
         if "institution_history" in data and data["institution_history"]:
             data["institution_history"] = sorted(data["institution_history"],
-                                                 key=lambda k: k["start_year"],
-                                                 reverse=True)
+                                                 key=lambda k: k["start_year"])
             for position in data["institution_history"]:
                 data["positions"].append({
                     "institution": position["name"],
@@ -154,8 +153,7 @@ def convert_data_to_model():
         if "experiments" in data and data["experiments"]:
             for experiment in data["experiments"]:
                 data["experiments"] = sorted(data["experiments"],
-                                             key=lambda k: k["start_year"],
-                                             reverse=True)
+                                             key=lambda k: k["start_year"])
                 if experiment["status"]:
                     experiment["status"] = "current"
                 else:
@@ -164,7 +162,7 @@ def convert_data_to_model():
         # Add comments to extra data
         if "comments" in data and data["comments"]:
             obj.extra_data["comments"] = data["comments"]
-            data["_private_note"] = data["comments"]
+            data["_curators_note"] = data["comments"]
 
         # Add HEPNAMES collection
         data["collections"] = {
@@ -359,51 +357,3 @@ def reply_ticket(template=None, keep_new=False):
                     Status="new"
                 )
     return _reply_ticket
-
-
-def curation_ticket_needed(obj, eng):
-    """Check if the a curation ticket is needed."""
-    extra_data = obj.get_extra_data()
-    return extra_data.get("ticket", False)
-
-
-def create_curation_ticket(template, queue="Test", ticket_id_key="ticket_id"):
-    """Create a ticket for author curation.
-
-    Creates the ticket in the given queue and stores the ticket ID
-    in the extra_data key specified in ticket_id_key."""
-    @wraps(create_curation_ticket)
-    def _create_curation_ticket(obj, eng):
-        from invenio.modules.access.control import acc_get_user_email
-
-        recid = obj.extra_data.get('recid')
-        record_url = obj.extra_data.get('url')
-
-        user_email = acc_get_user_email(obj.id_user)
-
-        author_id = ""
-        if obj.data.get("author_id"):
-            author_id = "[{}]".format(obj.data.get("author_id"))
-        subject = "Curation needed for author {} {}".format(
-            obj.data.get("name").get("preferred_name"),
-            author_id
-        )
-        body = render_template(
-            template,
-            email=user_email,
-            object=obj,
-            recid=recid,
-            record_url=record_url,
-            user_comment=obj.extra_data.get("comments", ""),
-        ).strip()
-
-        submit_rt_ticket(
-            obj=obj,
-            queue=queue,
-            subject=subject,
-            body=body,
-            requestors=user_email,
-            ticket_id_key=ticket_id_key
-        )
-
-    return _create_curation_ticket
