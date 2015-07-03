@@ -242,8 +242,7 @@ class AuthorUpdateForm(WebDepositForm):
     """Author update form."""
 
     # Hidden field to hold author id information
-    author_id = fields.StringField(
-        label=_('BAI'),
+    bai = fields.StringField(
         widget=HiddenInput()
     )
 
@@ -453,7 +452,7 @@ class AuthorUpdateForm(WebDepositForm):
     groups = [
         ('Personal Information',
             ['given_names', 'family_name', 'display_name', 'native_name', 'email',
-             'public_email', 'status', 'orcid', 'author_id'],
+             'public_email', 'status', 'orcid', 'bai'],
             {"icon": "fa fa-user"}
         ),
         ('Personal Websites',
@@ -475,5 +474,5 @@ class AuthorUpdateForm(WebDepositForm):
         """Constructor."""
         super(AuthorUpdateForm, self).__init__(*args, **kwargs)
         if is_review:
-            self.author_id.widget = TextInput()
-            self.author_id.widget_classes = "form-control"
+            self.bai.widget = TextInput()
+            self.bai.widget_classes = "form-control"

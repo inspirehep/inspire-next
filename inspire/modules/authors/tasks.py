@@ -109,10 +109,10 @@ def convert_data_to_model():
                 "type": "ORCID",
                 "value": data["orcid"]
             })
-        if "author_id" in data and data["author_id"]:
+        if "bai" in data and data["bai"]:
             data["ids"].append({
                 "type": "BAI",
-                "value": data["author_id"]
+                "value": data["bai"]
             })
         data["_public_emails"] = []
         if "public_email" in data and data["public_email"]:
@@ -381,12 +381,12 @@ def create_curation_ticket(template, queue="Test", ticket_id_key="ticket_id"):
 
         user_email = acc_get_user_email(obj.id_user)
 
-        author_id = ""
-        if obj.data.get("author_id"):
-            author_id = "[{}]".format(obj.data.get("author_id"))
+        bai = ""
+        if obj.data.get("bai"):
+            bai = "[{}]".format(obj.data.get("bai"))
         subject = "Curation needed for author {} {}".format(
             obj.data.get("name").get("preferred_name"),
-            author_id
+            bai
         )
         body = render_template(
             template,

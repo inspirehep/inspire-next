@@ -27,7 +27,6 @@ from flask import abort, \
     make_response, \
     render_template, \
     request, \
-    session, \
     url_for, \
     redirect
 from flask_breadcrumbs import default_breadcrumb_root, register_breadcrumb
@@ -98,7 +97,7 @@ def convert_for_form(data):
             if id["type"] == "ORCID":
                 data["orcid"] = id["value"]
             elif id["type"] == "BAI":
-                data["author_id"] = id["value"]
+                data["bai"] = id["value"]
 
 
 @blueprint.route('/validate', methods=['POST'])
@@ -129,8 +128,6 @@ def validate():
 @wash_arguments({'recid': (int, 0)})
 def update(recid):
     """View for INSPIRE author update form."""
-    # Store referrer in session for later redirection to original page
-    session["author_update_referrer"] = request.referrer
     data = {}
     if recid:
         try:
@@ -158,16 +155,14 @@ def update(recid):
 @blueprint.route('/new', methods=['GET', 'POST'])
 @register_breadcrumb(blueprint, '.new', _('New author information'))
 @login_required
-@wash_arguments({'aid': (unicode, u"")})
-def new(aid):
+@wash_arguments({'bai': (unicode, u"")})
+def new(bai):
     """View for INSPIRE author new form."""
-    # Store referrer in session for later redirection to original page
-    session["author_new_referrer"] = request.referrer
     data = {}
-    if aid:
+    if bai:
         # Add BAI information to form in order to keep connection between
         # a HEPName and an author profile.
-        data["author_id"] = aid
+        data["bai"] = bai
 
     form = AuthorUpdateForm(data=data)
     ctx = {
@@ -240,7 +235,11 @@ def submitupdate():
     # background using, for example, Celery.
     myobj.start_workflow("authorupdate", delayed=True)
 
-    return render_template('authors/forms/update_success.html')
+    ctx = {
+        "inspire_url": get_inspire_url(visitor.data)
+    }
+
+    return render_template('authors/forms/update_success.html', **ctx)
 
 
 @blueprint.route('/submitnew', methods=['POST'])
@@ -260,7 +259,11 @@ def submitnew():
     # background using, for example, Celery.
     myobj.start_workflow("authornew", delayed=True)
 
-    return render_template('authors/forms/new_success.html')
+    ctx = {
+        "inspire_url": get_inspire_url(visitor.data)
+    }
+
+    return render_template('authors/forms/new_success.html', **ctx)
 
 
 @blueprint.route(
@@ -283,3 +286,15 @@ def autocomplete(field_name=None):
     )
     resp.mimetype = "application/json"
     return resp
+
+
+def get_inspire_url(data):
+    """ Generate url for the user to go back to INSPIRE. """
+    url = ""
+    if "bai" in data and data["bai"]:
+        url = "http://inspirehep.net/author/profile/" + data["bai"]
+    elif "recid" in data and data["recid"]:
+        url = "http://inspirehep.net/record/" + str(data["recid"])
+    else:
+        url = "http://inspirehep.net/hepnames"
+    return url

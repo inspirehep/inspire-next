@@ -22,8 +22,8 @@
 <div class="alert alert-success alert-form-success">
   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
   <strong>Thank you for your update!<br></strong><br>The INSPIRE staff will review it and your changes will be added to INSPIRE.<br>
-  {% if session.author_update_referrer %}
-    <br><a href="{{session.author_update_referrer}}">Go back to INSPIRE</a>
+  {% if inspire_url %}
+    <br><a href="{{inspire_url}}">Go back to INSPIRE</a>
   {% endif %}
 </div>
 {% endblock body %}
