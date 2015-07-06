@@ -48,7 +48,7 @@
 {% endblock %}
 
 {% block trackingcode %}
-  {% if config.PRODUCTION_MODE %}
+  {% if "labs.inspirehep.net" in request.url %}
     <!-- Piwik -->
     <script type="text/javascript">
     var _paq = _paq || [];
