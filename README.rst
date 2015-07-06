@@ -26,15 +26,30 @@ Since the database was already initialized while installing Invenio, you can loa
 .. code-block:: bash
 
     (inspire)$ cdvirtualenv src/inspire-next
-    (inspire)$ inveniomanage demosite populate -p inspire.base -f inspire/demosite/data/demo-records.xml
+    (inspire)$ inveniomanage records create inspire/demosite/data/demo-records.xml -t marcxml
 
-Finally, start the server:
+Finally, start the services:
 
 .. code-block:: bash
 
-    (inspire)$ inveniomanage runserver
+    (inspire)$ cdvirtualenv src/inspire-next
+    (inspire)$ pip install honcho flower
+    (inspire)$ honcho start
 
 Now you should have a running INSPIRE demo site running at `http://localhost:4000 <http://localhost:4000>`_!
+
+*************************************
+Known issue with invenio-query-parser
+*************************************
+
+On a fresh install in a new virtual environment you may experience that search
+queries are failing due to query parser issues. It means that an older version
+of invenio-query-parser is installed. You can fix it by installing the lastest
+sources:
+
+.. code-block:: bash
+
+    (inspire)$ pip install --upgrade git+https://github.com/inveniosoftware/invenio-query-parser@master#egg=invenio-query-parser
 
 -----------------------
 Developing with INSPIRE
