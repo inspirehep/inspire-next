@@ -20,8 +20,8 @@
 from six import with_metaclass as meta
 
 from invenio.ext.mixer import MixerMeta
-from invenio.modules.oaiharvester.models import OaiHARVEST, \
-    OaiREPOSITORY
+from invenio.modules.oaiharvester.models import OaiHARVEST
+from invenio.modules.oairepository.models import OaiREPOSITORY
 
 
 class OaiHARVESTMixer(meta(MixerMeta)):

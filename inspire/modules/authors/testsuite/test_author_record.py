@@ -34,7 +34,7 @@ class AuthorRecordTestCase(InvenioTestCase):
 
         Makes sure the testing context is valid.
         """
-        from invenio.modules.records.api import Record
+        from invenio_records.api import Record
         self.Record = Record
 
     def create_record_from_json(self, json_dict):
