@@ -30,7 +30,7 @@ def send_robotupload_oaiharvest(url=None):
     """Perform the upload step."""
     @wraps(send_robotupload_oaiharvest)
     def _send_robotupload_oaiharvest(obj, eng):
-        from invenio.modules.records.api import Record
+        from invenio_records.api import Record
         from inspire.utils.robotupload import make_robotupload_marcxml
 
         sequence_id = random.randrange(1, 60000)
@@ -91,7 +91,7 @@ def update_existing_record_oaiharvest(url=None):
 
         from invenio.base.globals import cfg
         from invenio.modules.workflows.utils import convert_marcxml_to_bibfield
-        from invenio.modules.records.api import Record
+        from invenio_records.api import Record
 
         from inspire.utils.robotupload import make_robotupload_marcxml
 

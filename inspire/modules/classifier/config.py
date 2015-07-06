@@ -24,9 +24,10 @@
 
 import os
 
-from invenio.config import CFG_PREFIX
+from invenio.base.config import CFG_DATADIR
 
-CLASSIFIER_MODEL_PATH = os.path.join(CFG_PREFIX, "var/data/classifier/models")
+
+CLASSIFIER_MODEL_PATH = os.path.join(CFG_DATADIR, "classifier/models")
 """
 The base path for classifier models used for predictions.
 """

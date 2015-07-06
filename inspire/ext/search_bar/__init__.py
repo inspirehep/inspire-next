@@ -23,7 +23,7 @@ from invenio.ext.template.context_processor import \
 
 
 def setup_app(app):
-    from invenio.modules.records.views import blueprint as records_blueprint
+    from invenio_records.views import blueprint as records_blueprint
     from invenio.modules.deposit.views.deposit import blueprint \
         as deposit_blueprint
 
