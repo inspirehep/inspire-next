@@ -77,7 +77,7 @@ def convert_for_form(data):
         for position in data["positions"]:
             pos = {}
             pos["name"] = position.get("institution", "")
-            pos["rank"] = position.get("rank", "").lower()
+            pos["rank"] = position.get("rank", "")
             pos["start_year"] = position.get("start_date", "")
             pos["end_year"] = position.get("end_date", "")
             pos["current"] = True if position.get("status") else False
@@ -87,11 +87,11 @@ def convert_for_form(data):
         data["institution_history"].reverse()
     if "phd_advisors" in data:
         phd_advisors = data["phd_advisors"]
-        data["phd_advisors"] = []
+        data["advisors"] = []
         for advisor in phd_advisors:
             adv = {}
             adv["name"] = advisor.get("name", "")
-            data["phd_advisors"].append(adv)
+            data["advisors"].append(adv)
     if "ids" in data:
         for id in data["ids"]:
             if id["type"] == "ORCID":
