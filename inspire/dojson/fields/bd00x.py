@@ -18,8 +18,8 @@ def control_number(self, key, value):
     return value[0]
 
 
-@inspiremarc.over('control_number_identifier', '^003')
-def control_number_identifier(self, key, value):
+@inspiremarc.over('agency_code', '^003')
+def agency_code(self, key, value):
     """Control Number Identifier."""
     return value[0]
 
