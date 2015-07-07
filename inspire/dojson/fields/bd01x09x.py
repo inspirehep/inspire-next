@@ -14,6 +14,17 @@ from dojson import utils
 from ..model import inspiremarc
 
 
+@inspiremarc.over('collections', '^980..')
+@utils.for_each_value
+@utils.filter_values
+def collections(record, key, value):
+    return {
+        'primary': value.get('a'),
+        'secondary': value.get('b'),
+        'deleted': value.get('c'),
+    }
+
+
 @inspiremarc.over('library_of_congress_control_number', '^010..')
 @utils.filter_values
 def library_of_congress_control_number(self, key, value):

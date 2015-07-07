@@ -21,7 +21,9 @@ from .fields import (
     bd76x78x,
     bd80x83x,
     bd84188x,
+    bd90x99x,
 )
+
 
 from .model import inspiremarc
 
