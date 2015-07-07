@@ -1,0 +1,2268 @@
+{
+    "type": "object",
+    "properties": {
+        "general_note": {
+            "description": "General Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "general_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "with_note": {
+            "description": "With Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "with_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "dissertation_note": {
+            "description": "Dissertation Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "dissertation_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "name_of_granting_institution": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "degree_type": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "year_degree_granted": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "miscellaneous_information": {
+                        "type": "string"
+                    },
+                    "dissertation_identifier": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "bibliography_note": {
+            "description": "Bibliography, Etc. Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "bibliography_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "number_of_references": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "formatted_contents_note": {
+            "description": "Formatted Contents Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "display_constant_controller": {
+                        "enum": ["Incomplete contents", "Contents", "Partial contents", "No display constant generated"]
+                    },
+                    "level_of_content_designation": {
+                        "enum": ["Enhanced", "Basic"]
+                    },
+                    "formatted_contents_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "miscellaneous_information": {
+                        "type": "string"
+                    },
+                    "statement_of_responsibility": {
+                        "type": "string"
+                    },
+                    "uniform_resource_identifier": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "restrictions_on_access_note": {
+            "description": "Restrictions on Access Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "restriction": {
+                        "enum": ["Restrictions apply", "No restrictions", "No information provided"]
+                    },
+                    "terms_governing_access": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "physical_access_provisions": {
+                        "type": "string"
+                    },
+                    "jurisdiction": {
+                        "type": "string"
+                    },
+                    "authorization": {
+                        "type": "string"
+                    },
+                    "authorized_users": {
+                        "type": "string"
+                    },
+                    "standardized_terminology_for_access_restriction": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "uniform_resource_identifier": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "scale_note_for_graphic_material": {
+            "description": "Scale Note for Graphic Material",
+            "properties": {
+                "representative_fraction_of_scale_note": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "field_link_and_sequence_number": {
+                    "type": "string"
+                },
+                "remainder_of_scale_note": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "linkage": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "creation_production_credits_note": {
+            "description": "Creation/Production Credits Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "creation_production_credits_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "citation_references_note": {
+            "description": "Citation/References Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "coverage_location_in_source": {
+                        "enum": ["Coverage complete", "Coverage unknown", "Location in source not given", "Coverage is selective", "Location in source given"]
+                    },
+                    "name_of_source": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "international_standard_serial_number": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "location_within_source": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "coverage_of_source": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "uniform_resource_identifier": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "participant_or_performer_note": {
+            "description": "Participant or Performer Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "display_constant_controller": {
+                        "enum": ["Cast", "No display constant generated"]
+                    },
+                    "participant_or_performer_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "type_of_report_and_period_covered_note": {
+            "description": "Type of Report and Period Covered Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "type_of_report": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "period_covered": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "data_quality_note": {
+            "description": "Data Quality Note",
+            "properties": {
+                "attribute_accuracy_report": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "attribute_accuracy_explanation": {
+                    "type": "string"
+                },
+                "attribute_accuracy_value": {
+                    "type": "string"
+                },
+                "completeness_report": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "logical_consistency_report": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "horizontal_position_accuracy_value": {
+                    "type": "string"
+                },
+                "horizontal_position_accuracy_report": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "vertical_positional_accuracy_report": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "horizontal_position_accuracy_explanation": {
+                    "type": "string"
+                },
+                "vertical_positional_accuracy_explanation": {
+                    "type": "string"
+                },
+                "vertical_positional_accuracy_value": {
+                    "type": "string"
+                },
+                "cloud_cover": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "uniform_resource_identifier": {
+                    "type": "string"
+                },
+                "linkage": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "field_link_and_sequence_number": {
+                    "type": "string"
+                },
+                "display_note": {
+                    "type": "string"
+                }
+            }
+        },
+        "numbering_peculiarities_note": {
+            "description": "Numbering Peculiarities Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "numbering_peculiarities_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "type_of_computer_file_or_data_note": {
+            "description": "Type of Computer File or Data Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "display_constant_controller": {
+                        "enum": ["No display constant generated", "Type of file"]
+                    },
+                    "type_of_computer_file_or_data_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "date_time_and_place_of_an_event_note": {
+            "description": "Date/Time and Place of an Event Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "date_time_and_place_of_an_event_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "date_of_event": {
+                        "type": "string"
+                    },
+                    "place_of_event": {
+                        "type": "string"
+                    },
+                    "other_event_information": {
+                        "type": "string"
+                    },
+                    "record_control_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_term": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "summary": {
+            "description": "Summary, Etc.",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "display_constant_controller": {
+                        "enum": ["Summary", "Review", "Subject", "Abstract", "Scope and content", "Content advice", "No display constant generated"]
+                    },
+                    "summary": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "assigning_source": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "expansion_of_summary_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "uniform_resource_identifier": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "target_audience_note": {
+            "description": "Target Audience Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "display_constant_controller": {
+                        "enum": ["Audience", "Interest age level", "Reading grade level", "Special audience characteristics", "Interest grade level", "Motivation/interest level", "No display constant generated"]
+                    },
+                    "target_audience_note": {
+                        "type": "string"
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "geographic_coverage_note": {
+            "description": "Geographic Coverage Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "display_constant_controller": {
+                        "enum": ["No display constant generated", "Geographic coverage"]
+                    },
+                    "geographic_coverage_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "preferred_citation_of_described_materials_note": {
+            "description": "Preferred Citation of Described Materials Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "display_constant_controller": {
+                        "enum": ["No display constant generated", "Cite as"]
+                    },
+                    "preferred_citation_of_described_materials_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_schema_used": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "supplement_note": {
+            "description": "Supplement Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "supplement_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "study_program_information_note": {
+            "description": "Study Program Information Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "display_constant_controller": {
+                        "enum": ["Reading program", "No display constant generated"]
+                    },
+                    "program_name": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "nonpublic_note": {
+                        "type": "string"
+                    },
+                    "reading_level": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "interest_level": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "title_point_value": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "display_text": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "public_note": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "additional_physical_form_available_note": {
+            "description": "Additional Physical Form Available Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "additional_physical_form_available_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "availability_conditions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "availability_source": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "order_number": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "uniform_resource_identifier": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "reproduction_note": {
+            "description": "Reproduction Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "type_of_reproduction": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "agency_responsible_for_reproduction": {
+                        "type": "string"
+                    },
+                    "place_of_reproduction": {
+                        "type": "string"
+                    },
+                    "physical_description_of_reproduction": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "date_of_reproduction": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "series_statement_of_reproduction": {
+                        "type": "string"
+                    },
+                    "dates_and_or_sequential_designation_of_issues_reproduced": {
+                        "type": "string"
+                    },
+                    "note_about_reproduction": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "fixed_length_data_elements_of_reproduction": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "original_version_note": {
+            "description": "Original Version Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "main_entry_of_original": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "international_standard_serial_number": {
+                        "type": "string"
+                    },
+                    "publication_distribution_of_original": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "edition_statement_of_original": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "physical_description_of_original": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "series_statement_of_original": {
+                        "type": "string"
+                    },
+                    "key_title_of_original": {
+                        "type": "string"
+                    },
+                    "material_specific_details": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "location_of_original": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "other_resource_identifier": {
+                        "type": "string"
+                    },
+                    "note_about_original": {
+                        "type": "string"
+                    },
+                    "introductory_phrase": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "title_statement_of_original": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "international_standard_book_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "location_of_originals_duplicates_note": {
+            "description": "Location of Originals/Duplicates Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "custodial_role": {
+                        "enum": ["Holder of originals", "Holder of duplicates"]
+                    },
+                    "custodian": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "country": {
+                        "type": "string"
+                    },
+                    "postal_address": {
+                        "type": "string"
+                    },
+                    "telecommunications_address": {
+                        "type": "string"
+                    },
+                    "repository_location_code": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "funding_information_note": {
+            "description": "Funding Information Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "text_of_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "grant_number": {
+                        "type": "string"
+                    },
+                    "contract_number": {
+                        "type": "string"
+                    },
+                    "program_element_number": {
+                        "type": "string"
+                    },
+                    "undifferentiated_number": {
+                        "type": "string"
+                    },
+                    "task_number": {
+                        "type": "string"
+                    },
+                    "project_number": {
+                        "type": "string"
+                    },
+                    "work_unit_number": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "system_details_note": {
+            "description": "System Details Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "system_details_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "display_text": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "uniform_resource_identifier": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "terms_governing_use_and_reproduction_note": {
+            "description": "Terms Governing Use and Reproduction Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "terms_governing_use_and_reproduction": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "authorization": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "jurisdiction": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "authorized_users": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "uniform_resource_identifier": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "immediate_source_of_acquisition_note": {
+            "description": "Immediate Source of Acquisition Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "privacy": {
+                        "enum": ["Not private", "Private", "No information provided"]
+                    },
+                    "source_of_acquisition": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "method_of_acquisition": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "address": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "accession_number": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "date_of_acquisition": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "owner": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "purchase_price": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "type_of_unit": {
+                        "type": "string"
+                    },
+                    "extent": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "information_relating_to_copyright_status": {
+            "description": "Information Relating to Copyright Status",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "privacy": {
+                        "enum": ["Not private", "Private", "No information provided"]
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "personal_creator": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "corporate_creator": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "personal_creator_death_date": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "copyright_holder_contact_information": {
+                        "type": "string"
+                    },
+                    "copyright_holder": {
+                        "type": "string"
+                    },
+                    "copyright_date": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "copyright_statement": {
+                        "type": "string"
+                    },
+                    "publication_date": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "copyright_renewal_date": {
+                        "type": "string"
+                    },
+                    "publisher": {
+                        "type": "string"
+                    },
+                    "creation_date": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "publication_status": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "copyright_status": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "research_date": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "note": {
+                        "type": "string"
+                    },
+                    "supplying_agency": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "country_of_publication_or_creation": {
+                        "type": "string"
+                    },
+                    "source_of_information": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "jurisdiction_of_copyright_assessment": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "uniform_resource_identifier": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "location_of_other_archival_materials_note": {
+            "description": "Location of Other Archival Materials Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "relationship": {
+                        "enum": ["Related materials", "Associated materials", "No information provided"]
+                    },
+                    "custodian": {
+                        "type": "string"
+                    },
+                    "country": {
+                        "type": "string"
+                    },
+                    "address": {
+                        "type": "string"
+                    },
+                    "provenance": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "note": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "biographical_or_historical_data": {
+            "description": "Biographical or Historical Data",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "type_of_data": {
+                        "enum": ["Administrative history", "Biographical sketch", "No information provided"]
+                    },
+                    "biographical_or_historical_data": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "expansion": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "uniform_resource_identifier": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "language_note": {
+            "description": "Language Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "language_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "information_code_or_alphabet": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "former_title_complexity_note": {
+            "description": "Former Title Complexity Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "former_title_complexity_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "issuing_body_note": {
+            "description": "Issuing Body Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "issuing_body_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "entity_and_attribute_information_note": {
+            "description": "Entity and Attribute Information Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "entity_type_label": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "attribute_label": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "entity_type_definition_and_source": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "enumerated_domain_value": {
+                        "type": "string"
+                    },
+                    "attribute_definition_and_source": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "range_domain_minimum_and_maximum": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "enumerated_domain_value_definition_and_source": {
+                        "type": "string"
+                    },
+                    "unrepresentable_domain": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "codeset_name_and_source": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "beginning_and_ending_date_of_attribute_values": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "attribute_units_of_measurement_and_resolution": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "attribute_value_accuracy_explanation": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "attribute_value_accuracy": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "entity_and_attribute_overview": {
+                        "type": "string"
+                    },
+                    "attribute_measurement_frequency": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "entity_and_attribute_detail_citation": {
+                        "type": "string"
+                    },
+                    "uniform_resource_identifier": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "display_note": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "cumulative_index_finding_aids_note": {
+            "description": "Cumulative Index/Finding Aids Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "display_constant_controller": {
+                        "enum": ["Finding aids", "Indexes", "No display constant generated"]
+                    },
+                    "cumulative_index_finding_aids_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "degree_of_control": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "availability_source": {
+                        "type": "string"
+                    },
+                    "bibliographic_reference": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "uniform_resource_identifier": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "information_about_documentation_note": {
+            "description": "Information About Documentation Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "display_constant_controller": {
+                        "enum": ["No display constant generated", "Documentation"]
+                    },
+                    "information_about_documentation_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "international_standard_book_number": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "ownership_and_custodial_history": {
+            "description": "Ownership and Custodial History",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "privacy": {
+                        "enum": ["Not private", "Private", "No information provided"]
+                    },
+                    "history": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "uniform_resource_identifier": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "copy_and_version_identification_note": {
+            "description": "Copy and Version Identification Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "identifying_markings": {
+                        "type": "string"
+                    },
+                    "version_identification": {
+                        "type": "string"
+                    },
+                    "copy_identification": {
+                        "type": "string"
+                    },
+                    "number_of_copies": {
+                        "type": "string"
+                    },
+                    "presentation_format": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "binding_information": {
+            "description": "Binding Information",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "binding_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "uniform_resource_identifier": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "case_file_characteristics_note": {
+            "description": "Case File Characteristics Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "display_constant_controller": {
+                        "enum": ["Case file characteristics", "File size", "No display constant generated"]
+                    },
+                    "number_of_cases_variables": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "unit_of_analysis": {
+                        "type": "string"
+                    },
+                    "name_of_variable": {
+                        "type": "string"
+                    },
+                    "filing_scheme_or_code": {
+                        "type": "string"
+                    },
+                    "universe_of_data": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "methodology_note": {
+            "description": "Methodology Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "display_constant_controller": {
+                        "enum": ["No display constant generated", "Methodology"]
+                    },
+                    "methodology_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "linking_entry_complexity_note": {
+            "description": "Linking Entry Complexity Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "linking_entry_complexity_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "publications_about_described_materials_note": {
+            "description": "Publications About Described Materials Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "display_constant_controller": {
+                        "enum": ["No display constant generated", "Publications"]
+                    },
+                    "publications_about_described_materials_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "international_standard_book_number": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "action_note": {
+            "description": "Action Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "privacy": {
+                        "enum": ["Not private", "Private", "No information provided"]
+                    },
+                    "action": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "nonpublic_note": {
+                        "type": "string"
+                    },
+                    "time_date_of_action": {
+                        "type": "string"
+                    },
+                    "action_identification": {
+                        "type": "string"
+                    },
+                    "contingency_for_action": {
+                        "type": "string"
+                    },
+                    "action_interval": {
+                        "type": "string"
+                    },
+                    "authorization": {
+                        "type": "string"
+                    },
+                    "method_of_action": {
+                        "type": "string"
+                    },
+                    "jurisdiction": {
+                        "type": "string"
+                    },
+                    "action_agent": {
+                        "type": "string"
+                    },
+                    "site_of_action": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "type_of_unit": {
+                        "type": "string"
+                    },
+                    "extent": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "public_note": {
+                        "type": "string"
+                    },
+                    "uniform_resource_identifier": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "accumulation_and_frequency_of_use_note": {
+            "description": "Accumulation and Frequency of Use Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "accumulation": {
+                        "type": "string"
+                    },
+                    "frequency_of_use": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "exhibitions_note": {
+            "description": "Exhibitions Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "exhibitions_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "awards_note": {
+            "description": "Awards Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "display_constant_controller": {
+                        "enum": ["No display constant generated", "Awards"]
+                    },
+                    "awards_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "source_of_description_note": {
+            "description": "Source of Description Note",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "source_of_description_note": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

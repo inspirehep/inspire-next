@@ -75,6 +75,7 @@ EXTENSIONS = [
 PACKAGES = [
     'inspire.base',
     'inspire.demosite',
+    'inspire.dojson',
     'inspire.ext',
     'inspire.utils',
     'inspire.modules.access',
@@ -241,3 +242,9 @@ INSPIRE_ACCEPTED_CATEGORIES = ["hep-th", "hep-ph", "hep-lat", "hep-ex", "nucl-th
 
 OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP = "system_number_external.value"
 WORKFLOWS_HOLDING_PEN_DEFAULT_OUTPUT_FORMAT = "hp"
+
+# DoJSON configuration
+RECORD_PROCESSORS = {
+    'json': 'json.load',
+    'marcxml': 'inspire.dojson.processors:convert_marcxml',
+}

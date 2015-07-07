@@ -1,0 +1,509 @@
+{
+    "type": "object",
+    "properties": {
+        "abbreviated_title": {
+            "description": "Abbreviated Title",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "title_added_entry": {
+                        "enum": ["Added entry", "No added entry"]
+                    },
+                    "type": {
+                        "enum": ["Other abbreviated title", "Abbreviated key title"]
+                    },
+                    "abbreviated_title": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "source": {
+                        "type": "string"
+                    },
+                    "qualifying_information": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "key_title": {
+            "description": "Key Title",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "nonfiling_characters": {
+                        "enum": ["No nonfiling characters"]
+                    },
+                    "key_title": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "qualifying_information": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "uniform_title": {
+            "description": "Uniform Title",
+            "properties": {
+                "uniform_title_printed_or_displayed": {
+                    "enum": ["Printed or displayed", "Not printed or displayed"]
+                },
+                "uniform_title": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name_of_part_section_of_a_work": {
+                    "type": "string"
+                },
+                "date_of_treaty_signing": {
+                    "type": "string"
+                },
+                "miscellaneous_information": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "date_of_a_work": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "medium": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "form_subheading": {
+                    "type": "string"
+                },
+                "medium_of_performance_for_music": {
+                    "type": "string"
+                },
+                "language_of_a_work": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "arranged_statement_for_music": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "number_of_part_section_of_a_work": {
+                    "type": "string"
+                },
+                "authority_record_control_number": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "key_for_music": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "linkage": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "field_link_and_sequence_number": {
+                    "type": "string"
+                }
+            }
+        },
+        "translation_of_title_by_cataloging_agency": {
+            "description": "Translation of Title by Cataloging Agency",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "title_added_entry": {
+                        "enum": ["Added entry", "No added entry"]
+                    },
+                    "nonfiling_characters": {
+                        "enum": ["No nonfiling characters"]
+                    },
+                    "title": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "statement_of_responsibility": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "remainder_of_title": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "medium": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "number_of_part_section_of_a_work": {
+                        "type": "string"
+                    },
+                    "name_of_part_section_of_a_work": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "language_code_of_translated_title": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "collective_uniform_title": {
+            "description": "Collective Uniform Title",
+            "properties": {
+                "uniform_title_printed_or_displayed": {
+                    "enum": ["Printed or displayed", "Not printed or displayed"]
+                },
+                "uniform_title": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "date_of_treaty_signing": {
+                    "type": "string"
+                },
+                "miscellaneous_information": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "date_of_a_work": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "medium": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "form_subheading": {
+                    "type": "string"
+                },
+                "medium_of_performance_for_music": {
+                    "type": "string"
+                },
+                "language_of_a_work": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "arranged_statement_for_music": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "number_of_part_section_of_a_work": {
+                    "type": "string"
+                },
+                "name_of_part_section_of_a_work": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "key_for_music": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "linkage": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "field_link_and_sequence_number": {
+                    "type": "string"
+                }
+            }
+        },
+        "title_statement": {
+            "description": "Title Statement",
+            "properties": {
+                "title_added_entry": {
+                    "enum": ["Added entry", "No added entry"]
+                },
+                "nonfiling_characters": {
+                    "enum": ["No nonfiling characters"]
+                },
+                "title": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "statement_of_responsibility": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "remainder_of_title": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "bulk_dates": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "inclusive_dates": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "medium": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "form": {
+                    "type": "string"
+                },
+                "number_of_part_section_of_a_work": {
+                    "type": "string"
+                },
+                "name_of_part_section_of_a_work": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "linkage": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "field_link_and_sequence_number": {
+                    "type": "string"
+                }
+            }
+        },
+        "varying_form_of_title": {
+            "description": "Varying Form of Title",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "note_added_entry_controller": {
+                        "enum": ["Note, added entry", "Note, no added entry", "No note, added entry", "No note, no added entry"]
+                    },
+                    "type_of_title": {
+                        "enum": ["No type specified", "Parallel title", "Portion of title", "Other title", "Distinctive title", "Added title page title", "Cover title", "Running title", "Caption title", "Spine title"]
+                    },
+                    "title_proper_short_title": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "remainder_of_title": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "miscellaneous_information": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "date_or_sequential_designation": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "display_text": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "medium": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "number_of_part_section_of_a_work": {
+                        "type": "string"
+                    },
+                    "name_of_part_section_of_a_work": {
+                        "type": "string"
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "former_title": {
+            "description": "Former Title",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "title_added_entry": {
+                        "enum": ["Added entry", "No added entry"]
+                    },
+                    "note_controller": {
+                        "enum": ["Do not display note", "Display note"]
+                    },
+                    "title": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "international_standard_serial_number": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "remainder_of_title": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "miscellaneous_information": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "date_or_sequential_designation": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "medium": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "number_of_part_section_of_a_work": {
+                        "type": "string"
+                    },
+                    "name_of_part_section_of_a_work": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
