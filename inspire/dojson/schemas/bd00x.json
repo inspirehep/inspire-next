@@ -5,8 +5,8 @@
             "description": "Control Number",
             "type": "string"
         },
-        "control_number_identifier": {
-            "description": "Control Number Identifier",
+        "agency_code": {
+            "description": "Code for the agency whose system control number is present in field recid",
             "type": "string"
         },
         "date_and_time_of_latest_transaction": {
