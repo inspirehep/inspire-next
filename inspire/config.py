@@ -253,9 +253,9 @@ RECORD_PROCESSORS = {
 # invenio keywords to elasticsearch fields
 SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "author": {
-        'a': ["authors.personal_name"],
-        'p': ["authors.personal_name"],
-        'e': ['authors.raw'],
+        'a': ["authors.full_name"],
+        'p': ["authors.full_name"],
+        'e': ['authors.full_name'],
     },
     "collection": ["_collections"],
     "title": ["title_statement.title"],

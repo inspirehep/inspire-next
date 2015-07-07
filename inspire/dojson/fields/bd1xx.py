@@ -23,15 +23,15 @@ def authors(self, key, value):
     def get_value(value):
             return {
                 'full_name': utils.force_list(
-                    value.get('a', "")
+                    value.get('a')
                 ),
-                'relator_term': value.get('e', ""),
-                'alternative_name': value.get('q', ""),
-                'INSPIRE_id': value.get('i', ""),
-                'external_id': value.get('j', ""),
-                'e_mail': value.get('m', ""),
+                'relator_term': value.get('e'),
+                'alternative_name': value.get('q'),
+                'INSPIRE_id': value.get('i'),
+                'external_id': value.get('j'),
+                'e_mail': value.get('m'),
                 'affiliation': utils.force_list(
-                    value.get('u', "")
+                    value.get('u')
                 ),
             }
 
