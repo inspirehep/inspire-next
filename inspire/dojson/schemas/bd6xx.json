@@ -1,0 +1,1124 @@
+{
+    "type": "object",
+    "properties": {
+        "subject_added_entry_personal_name": {
+            "description": "Subject Added Entry-Personal Name",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "type_of_personal_name_entry_element": {
+                        "enum": ["Surname", "Forename", "Family name"]
+                    },
+                    "thesaurus": {
+                        "enum": ["LC subject headings for children\u0027s literature", "Library of Congress Subject Headings", "National Agricultural Library subject authority file", "Medical Subject Headings", "Canadian Subject Headings", "Source not specified", "Source specified in subfield $2", "R\u00e9pertoire de vedettes-mati\u00e8re"]
+                    },
+                    "authority_record_control_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_heading_or_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "relator_code": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "personal_name": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "titles_and_other_words_associated_with_a_name": {
+                        "type": "string"
+                    },
+                    "numeration": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "relator_term": {
+                        "type": "string"
+                    },
+                    "dates_associated_with_a_name": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "miscellaneous_information": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "date_of_a_work": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "medium": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "form_subheading": {
+                        "type": "string"
+                    },
+                    "attribution_qualifier": {
+                        "type": "string"
+                    },
+                    "medium_of_performance_for_music": {
+                        "type": "string"
+                    },
+                    "language_of_a_work": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "arranged_statement_for_music": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "number_of_part_section_of_a_work": {
+                        "type": "string"
+                    },
+                    "fuller_form_of_name": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "name_of_part_section_of_a_work": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "key_for_music": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "affiliation": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "title_of_a_work": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "form_subdivision": {
+                        "type": "string"
+                    },
+                    "chronological_subdivision": {
+                        "type": "string"
+                    },
+                    "general_subdivision": {
+                        "type": "string"
+                    },
+                    "geographic_subdivision": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "subject_added_entry_corporate_name": {
+            "description": "Subject Added Entry-Corporate Name",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "type_of_corporate_name_entry_element": {
+                        "enum": ["Jurisdiction name", "Inverted name", "Name in direct order"]
+                    },
+                    "thesaurus": {
+                        "enum": ["LC subject headings for children\u0027s literature", "Library of Congress Subject Headings", "National Agricultural Library subject authority file", "Medical Subject Headings", "Canadian Subject Headings", "Source not specified", "Source specified in subfield $2", "R\u00e9pertoire de vedettes-mati\u00e8re"]
+                    },
+                    "authority_record_control_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_heading_or_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "relator_code": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "corporate_name_or_jurisdiction_name_as_entry_element": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "location_of_meeting": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "subordinate_unit": {
+                        "type": "string"
+                    },
+                    "relator_term": {
+                        "type": "string"
+                    },
+                    "date_of_meeting_or_treaty_signing": {
+                        "type": "string"
+                    },
+                    "miscellaneous_information": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "date_of_a_work": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "medium": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "form_subheading": {
+                        "type": "string"
+                    },
+                    "medium_of_performance_for_music": {
+                        "type": "string"
+                    },
+                    "language_of_a_work": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "arranged_statement_for_music": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "number_of_part_section_meeting": {
+                        "type": "string"
+                    },
+                    "name_of_part_section_of_a_work": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "key_for_music": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "affiliation": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "title_of_a_work": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "form_subdivision": {
+                        "type": "string"
+                    },
+                    "chronological_subdivision": {
+                        "type": "string"
+                    },
+                    "general_subdivision": {
+                        "type": "string"
+                    },
+                    "geographic_subdivision": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "subject_added_entry_meeting_name": {
+            "description": "Subject Added Entry-Meeting Name",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "type_of_meeting_name_entry_element": {
+                        "enum": ["Jurisdiction name", "Inverted name", "Name in direct order"]
+                    },
+                    "thesaurus": {
+                        "enum": ["LC subject headings for children\u0027s literature", "Library of Congress Subject Headings", "National Agricultural Library subject authority file", "Medical Subject Headings", "Canadian Subject Headings", "Source not specified", "Source specified in subfield $2", "R\u00e9pertoire de vedettes-mati\u00e8re"]
+                    },
+                    "authority_record_control_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_heading_or_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "relator_code": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "meeting_name_or_jurisdiction_name_as_entry_element": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "location_of_meeting": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "subordinate_unit": {
+                        "type": "string"
+                    },
+                    "date_of_meeting": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "miscellaneous_information": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "date_of_a_work": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "medium": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "form_subheading": {
+                        "type": "string"
+                    },
+                    "relator_term": {
+                        "type": "string"
+                    },
+                    "language_of_a_work": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "number_of_part_section_meeting": {
+                        "type": "string"
+                    },
+                    "name_of_meeting_following_jurisdiction_name_entry_element": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "name_of_part_section_of_a_work": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "affiliation": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "title_of_a_work": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "form_subdivision": {
+                        "type": "string"
+                    },
+                    "chronological_subdivision": {
+                        "type": "string"
+                    },
+                    "general_subdivision": {
+                        "type": "string"
+                    },
+                    "geographic_subdivision": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "subject_added_entry_uniform_title": {
+            "description": "Subject Added Entry-Uniform Title",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "thesaurus": {
+                        "enum": ["LC subject headings for children\u0027s literature", "Library of Congress Subject Headings", "National Agricultural Library subject authority file", "Medical Subject Headings", "Canadian Subject Headings", "Source not specified", "Source specified in subfield $2", "R\u00e9pertoire de vedettes-mati\u00e8re"]
+                    },
+                    "authority_record_control_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_heading_or_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "relator_code": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "uniform_title": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "relator_term": {
+                        "type": "string"
+                    },
+                    "date_of_treaty_signing": {
+                        "type": "string"
+                    },
+                    "miscellaneous_information": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "date_of_a_work": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "medium": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "form_subheading": {
+                        "type": "string"
+                    },
+                    "medium_of_performance_for_music": {
+                        "type": "string"
+                    },
+                    "language_of_a_work": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "arranged_statement_for_music": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "number_of_part_section_of_a_work": {
+                        "type": "string"
+                    },
+                    "name_of_part_section_of_a_work": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "key_for_music": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "title_of_a_work": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "form_subdivision": {
+                        "type": "string"
+                    },
+                    "chronological_subdivision": {
+                        "type": "string"
+                    },
+                    "general_subdivision": {
+                        "type": "string"
+                    },
+                    "geographic_subdivision": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "subject_added_entry_chronological_term": {
+            "description": "Subject Added Entry-Chronological Term",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "type_of_date_or_time_period": {
+                        "enum": ["Date or time period of creation or origin", "Date or time period covered or depicted", "No information provided"]
+                    },
+                    "thesaurus": {
+                        "enum": ["LC subject headings for children\u0027s literature", "Library of Congress Subject Headings", "National Agricultural Library subject authority file", "Medical Subject Headings", "Canadian Subject Headings", "Source not specified", "Source specified in subfield $2", "R\u00c3\u00a9pertoire de vedettes-mati\u00c3\u00a8re"]
+                    },
+                    "chronological_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "general_subdivision": {
+                        "type": "string"
+                    },
+                    "form_subdivision": {
+                        "type": "string"
+                    },
+                    "authority_record_control_number_or_standard_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_heading_or_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chronological_subdivision": {
+                        "type": "string"
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "geographic_subdivision": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "subject_added_entry_topical_term": {
+            "description": "Subject Added Entry-Topical Term",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "level_of_subject": {
+                        "enum": ["Primary", "No level specified", "No information provided", "Secondary"]
+                    },
+                    "thesaurus": {
+                        "enum": ["LC subject headings for children\u0027s literature", "Library of Congress Subject Headings", "National Agricultural Library subject authority file", "Medical Subject Headings", "Canadian Subject Headings", "Source not specified", "Source specified in subfield $2", "R\u00e9pertoire de vedettes-mati\u00e8re"]
+                    },
+                    "topical_term_or_geographic_name_entry_element": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "general_subdivision": {
+                        "type": "string"
+                    },
+                    "location_of_event": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "topical_term_following_geographic_name_entry_element": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "relator_term": {
+                        "type": "string"
+                    },
+                    "active_dates": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "form_subdivision": {
+                        "type": "string"
+                    },
+                    "authority_record_control_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_heading_or_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "relator_code": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chronological_subdivision": {
+                        "type": "string"
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "geographic_subdivision": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "subject_added_entry_geographic_name": {
+            "description": "Subject Added Entry-Geographic Name",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "thesaurus": {
+                        "enum": ["LC subject headings for children\u0027s literature", "Library of Congress Subject Headings", "National Agricultural Library subject authority file", "Medical Subject Headings", "Canadian Subject Headings", "Source not specified", "Source specified in subfield $2", "R\u00e9pertoire de vedettes-mati\u00e8re"]
+                    },
+                    "geographic_name": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "general_subdivision": {
+                        "type": "string"
+                    },
+                    "relator_term": {
+                        "type": "string"
+                    },
+                    "form_subdivision": {
+                        "type": "string"
+                    },
+                    "authority_record_control_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_heading_or_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "relator_code": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chronological_subdivision": {
+                        "type": "string"
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "geographic_subdivision": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "index_term_uncontrolled": {
+            "description": "Index Term-Uncontrolled",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "level_of_index_term": {
+                        "enum": ["Primary", "No level specified", "No information provided", "Secondary"]
+                    },
+                    "type_of_term_or_name": {
+                        "enum": ["No information provided", "Personal name", "Topical term", "Meeting name", "Corporate name", "Geographic name", "Chronological term", "Genre/form term"]
+                    },
+                    "uncontrolled_term": {
+                        "type": "string"
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "subject_added_entry_faceted_topical_terms": {
+            "description": "Subject Added Entry-Faceted Topical Terms",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "level_of_subject": {
+                        "enum": ["Primary", "No level specified", "No information provided", "Secondary"]
+                    },
+                    "focus_term": {
+                        "type": "string"
+                    },
+                    "facet_hierarchy_designation": {
+                        "type": "string"
+                    },
+                    "non_focus_term": {
+                        "type": "string"
+                    },
+                    "relator_term": {
+                        "type": "string"
+                    },
+                    "form_subdivision": {
+                        "type": "string"
+                    },
+                    "authority_record_control_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_heading_or_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "relator_code": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chronological_subdivision": {
+                        "type": "string"
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "geographic_subdivision": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "index_term_genre_form": {
+            "description": "Index Term-Genre/Form",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "type_of_heading": {
+                        "enum": ["Faceted", "Basic"]
+                    },
+                    "thesaurus": {
+                        "enum": ["LC subject headings for children\u0027s literature", "Library of Congress Subject Headings", "National Agricultural Library subject authority file", "Medical Subject Headings", "Canadian Subject Headings", "Source not specified", "Source specified in subfield $2", "R\u00e9pertoire de vedettes-mati\u00e8re"]
+                    },
+                    "genre_form_data_or_focus_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "general_subdivision": {
+                        "type": "string"
+                    },
+                    "facet_hierarchy_designation": {
+                        "type": "string"
+                    },
+                    "non_focus_term": {
+                        "type": "string"
+                    },
+                    "form_subdivision": {
+                        "type": "string"
+                    },
+                    "authority_record_control_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "institution_to_which_field_applies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chronological_subdivision": {
+                        "type": "string"
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "geographic_subdivision": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "index_term_occupation": {
+            "description": "Index Term-Occupation",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "occupation": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "general_subdivision": {
+                        "type": "string"
+                    },
+                    "form": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "form_subdivision": {
+                        "type": "string"
+                    },
+                    "authority_record_control_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chronological_subdivision": {
+                        "type": "string"
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "geographic_subdivision": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "index_term_function": {
+            "description": "Index Term-Function",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "function": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "general_subdivision": {
+                        "type": "string"
+                    },
+                    "form_subdivision": {
+                        "type": "string"
+                    },
+                    "authority_record_control_number": {
+                        "type": "string"
+                    },
+                    "materials_specified": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chronological_subdivision": {
+                        "type": "string"
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    },
+                    "geographic_subdivision": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "index_term_curriculum_objective": {
+            "description": "Index Term-Curriculum Objective",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "main_curriculum_objective": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "curriculum_code": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "subordinate_curriculum_objective": {
+                        "type": "string"
+                    },
+                    "correlation_factor": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "source_of_term_or_code": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "subject_added_entry_hierarchical_place_name": {
+            "description": "Subject Added Entry-Hierarchical Place Name",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "country_or_larger_entity": {
+                        "type": "string"
+                    },
+                    "intermediate_political_jurisdiction": {
+                        "type": "string"
+                    },
+                    "first_order_political_jurisdiction": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "relator_term": {
+                        "type": "string"
+                    },
+                    "city": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "other_nonjurisdictional_geographic_region_and_feature": {
+                        "type": "string"
+                    },
+                    "city_subsection": {
+                        "type": "string"
+                    },
+                    "extraterrestrial_area": {
+                        "type": "string"
+                    },
+                    "authority_record_control_number": {
+                        "type": "string"
+                    },
+                    "source_of_heading_or_term": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "relator_code": {
+                        "type": "string"
+                    },
+                    "linkage": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "field_link_and_sequence_number": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

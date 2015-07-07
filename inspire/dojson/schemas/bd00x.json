@@ -1,0 +1,25 @@
+{
+    "type": "object",
+    "properties": {
+        "control_number": {
+            "description": "Control Number",
+            "type": "string"
+        },
+        "control_number_identifier": {
+            "description": "Control Number Identifier",
+            "type": "string"
+        },
+        "date_and_time_of_latest_transaction": {
+            "description": "Date and Time of Latest Transaction",
+            "type": "string"
+        },
+        "fixed_length_data_elements_additional_material_characteristics": {
+            "description": "Fixed-Length Data Elements-Additional Material Characteristics",
+            "type": "string"
+        },
+        "fixed_length_data_elements": {
+            "description": "Fixed-Length Data Elements",
+            "type": "string"
+        }
+    }
+}
