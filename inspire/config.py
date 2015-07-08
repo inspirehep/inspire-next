@@ -261,6 +261,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "collection": ["_collections"],
     "collaboration": ["collaboration.collaboration"],
     "affiliation": ["authors.affiliation"],
+    "affautocomplete": ["affautocomplete.affiliation"],
     "reportnumber": ["report_number.primary"],
     "experiment": ["accelerator_experiment.experiment"],
     "title": ["title.title"],
