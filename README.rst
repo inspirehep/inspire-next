@@ -38,9 +38,9 @@ Finally, start the services:
 
 Now you should have a running INSPIRE demo site running at `http://localhost:4000 <http://localhost:4000>`_!
 
-*************************************
+-------------------------------------
 Known issue with invenio-query-parser
-*************************************
+-------------------------------------
 
 On a fresh install in a new virtual environment you may experience that search
 queries are failing due to query parser issues. It means that an older version
