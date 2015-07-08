@@ -17,9 +17,49 @@ from ..model import inspiremarc
 @inspiremarc.over('collections', '^980..')
 @utils.for_each_value
 @utils.filter_values
-def collections(record, key, value):
+def collections(self, key, value):
+    """Collection this record belongs to."""
     return {
         'primary': value.get('a'),
         'secondary': value.get('b'),
         'deleted': value.get('c'),
+    }
+
+
+@inspiremarc.over('references', '^999C5')
+@utils.for_each_value
+@utils.filter_values
+def references(self, key, value):
+    """Produce list of references."""
+    return {
+        'recid': value.get('0'),
+        'texkey': value.get('1'),
+        'doi': value.get('a'),
+        'collaboration': value.get('c'),
+        'editors': value.get('e'),
+        'authors': value.get('h'),
+        'misc': value.get('m'),
+        'number': value.get('o'),
+        'isbn': value.get('i'),
+        'publisher': value.get('p'),
+        'maintitle': value.get('q'),
+        'report_number': value.get('r'),
+        'title': value.get('t'),
+        'url': value.get('u'),
+        'journal_pubnote': value.get('s'),
+        'raw_reference': value.get('x'),
+        'year': value.get('y'),
+    }
+
+
+@inspiremarc.over('refextract', '^999C6')
+@utils.for_each_value
+@utils.filter_values
+def refextract(self, key, value):
+    """Contains info from refextract."""
+    return {
+        'comment': value.get('c'),
+        'time': value.get('t'),
+        'version': value.get('v'),
+        'source': value.get('s'),
     }
