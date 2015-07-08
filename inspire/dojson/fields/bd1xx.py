@@ -51,3 +51,16 @@ def corporate_author(self, key, value):
     return {
         'corporate_author': value.get('a'),
     }
+
+
+@inspiremarc.over('institution', '^110..')
+@utils.filter_values
+def institution(self, key, value):
+    """Institution info."""
+    return {
+        'name': value.get('a'),
+        'department': value.get('b'),
+        'new_name': value.get('t'),
+        'affiliation': value.get('u'),
+        'obsolete_icn': value.get('x'),
+    }

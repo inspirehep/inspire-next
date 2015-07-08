@@ -31,5 +31,5 @@
 {% endblock %}
 
 {% block record_content %}
-  {{ record.get('abstract.summary', '')|sentences(3) }}
+  {{ record.get('abstract[0].summary', '')|sentences(3) }}
 {% endblock %}
