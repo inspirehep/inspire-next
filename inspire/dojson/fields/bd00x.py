@@ -28,17 +28,3 @@ def agency_code(self, key, value):
 def date_and_time_of_latest_transaction(self, key, value):
     """Date and Time of Latest Transaction."""
     return value[0]
-
-
-@inspiremarc.over(
-    'fixed_length_data_elements_additional_material_characteristics', '^006')
-def fixed_length_data_elements_additional_material_characteristics(
-        self, key, value):
-    """Fixed-Length Data Elements-Additional Material Characteristics."""
-    return value[0]
-
-
-@inspiremarc.over('fixed_length_data_elements', '^008')
-def fixed_length_data_elements(self, key, value):
-    """Fixed-Length Data Elements."""
-    return value[0]
