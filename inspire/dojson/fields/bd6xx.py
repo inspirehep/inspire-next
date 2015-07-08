@@ -20,10 +20,8 @@ from ..model import inspiremarc
 def subject_term(self, key, value):
     """Subject Added Entry-Topical Term."""
     return {
-        'value': utils.force_list(
-            value.get('a')),
-        'scheme': utils.force_list(
-            value.get('2')),
+        'value': value.get('a'),
+        'scheme': value.get('2'),
         'source': value.get('9'),
     }
 

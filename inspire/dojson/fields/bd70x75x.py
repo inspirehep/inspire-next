@@ -20,7 +20,5 @@ from ..model import inspiremarc
 def collaboration(self, key, value):
     """Added Entry-Corporate Name."""
     return {
-        'value': utils.force_list(
-            value.get('g')
-        )
+        'collaboration': value.get('g')
     }

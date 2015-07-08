@@ -49,6 +49,5 @@ def authors(self, key, value):
 def corporate_author(self, key, value):
     """Main Entry-Corporate Name."""
     return {
-        'value': utils.force_list(
-            value.get('a')),
+        'corporate_author': value.get('a'),
     }

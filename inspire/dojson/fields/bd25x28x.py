@@ -20,9 +20,7 @@ from ..model import inspiremarc
 def edition(self, key, value):
     """Edition Statement."""
     return {
-        'value': utils.force_list(
-            value.get('a')
-        )
+        'edition': value.get('a')
     }
 
 

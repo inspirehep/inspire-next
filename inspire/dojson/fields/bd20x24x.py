@@ -20,9 +20,7 @@ from ..model import inspiremarc
 def title_variation(self, key, value):
     """Title variation."""
     return {
-        'value': utils.force_list(
-            value.get('a')
-        )
+        'title_variation': value.get('a')
     }
 
 
@@ -32,12 +30,8 @@ def title_variation(self, key, value):
 def title_translation(self, key, value):
     """Translation of Title by Cataloging Agency."""
     return {
-        'value': utils.force_list(
-            value.get('a')
-        ),
-        'subtitle': utils.force_list(
-            value.get('b')
-        )
+        'title_translation': value.get('a'),
+        'subtitle': value.get('b')
     }
 
 
@@ -46,12 +40,8 @@ def title_translation(self, key, value):
 def title(self, key, value):
     """Title Statement."""
     return {
-        'title': utils.force_list(
-            value.get('a')
-        ),
-        'subtitle': utils.force_list(
-            value.get('b')
-        ),
+        'title': value.get('a'),
+        'subtitle': value.get('b'),
         'source': value.get('9'),
     }
 
@@ -62,12 +52,8 @@ def title(self, key, value):
 def title_arxiv(self, key, value):
     """Varying Form of Title."""
     return {
-        'title': utils.force_list(
-            value.get('a')
-        ),
-        'subtitle': utils.force_list(
-            value.get('b')
-        ),
+        'title': value.get('a'),
+        'subtitle': value.get('b'),
         'source': value.get('9'),
     }
 
@@ -78,11 +64,7 @@ def title_arxiv(self, key, value):
 def title_old(self, key, value):
     """Former Title."""
     return {
-        'title': utils.force_list(
-            value.get('a')
-        ),
-        'subtitle': utils.force_list(
-            value.get('b')
-        ),
+        'title': value.get('a'),
+        'subtitle': value.get('b'),
         'source': value.get('9'),
     }

@@ -20,9 +20,7 @@ from ..model import inspiremarc
 def note(self, key, value):
     """General Note."""
     return {
-        'value': utils.force_list(
-            value.get('a')
-        ),
+        'value': value.get('a'),
         'source': value.get('9'),
     }
 
@@ -33,15 +31,9 @@ def note(self, key, value):
 def thesis(self, key, value):
     """Thesis Information."""
     return {
-        'degree_type': utils.force_list(
-            value.get('b')
-        ),
-        'university': utils.force_list(
-            value.get('c')
-        ),
-        'date': utils.force_list(
-            value.get('d')
-        )
+        'degree_type': value.get('b'),
+        'university': value.get('c'),
+        'date': value.get('d')
     }
 
 
@@ -51,9 +43,7 @@ def thesis(self, key, value):
 def abstract(self, key, value):
     """Summary, Etc.."""
     return {
-        'summary': utils.force_list(
-            value.get('a')
-        ),
+        'summary': value.get('a'),
         'hepdata_summary': value.get('9'),
         'source': value.get('9'),
     }
@@ -65,9 +55,7 @@ def abstract(self, key, value):
 def funding_info(self, key, value):
     """Funding Information Note."""
     return {
-        'agency': utils.force_list(
-            value.get('a')
-        ),
+        'agency': value.get('a'),
         'grant_number': value.get('c'),
         'project_number': value.get('f'),
     }
@@ -79,18 +67,10 @@ def funding_info(self, key, value):
 def license(self, key, value):
     """Terms Governing Use and Reproduction Note."""
     return {
-        'license': utils.force_list(
-            value.get('a')
-        ),
-        'imposing': utils.force_list(
-            value.get('b')
-        ),
-        'url': utils.force_list(
-            value.get('u')
-        ),
-        'material': utils.force_list(
-            value.get('3')
-        )
+        'license': value.get('a'),
+        'imposing': value.get('b'),
+        'url': value.get('u'),
+        'material': value.get('3')
     }
 
 
@@ -100,21 +80,11 @@ def license(self, key, value):
 def acquisition_source(self, key, value):
     """Immediate Source of Acquisition Note."""
     return {
-        'source': utils.force_list(
-            value.get('a')
-        ),
-        'email': utils.force_list(
-            value.get('b')
-        ),
-        'method': utils.force_list(
-            value.get('c')
-        ),
-        'date': utils.force_list(
-            value.get('d')
-        ),
-        'submission_number': utils.force_list(
-            value.get('e')
-        )
+        'source': value.get('a'),
+        'email': value.get('b'),
+        'method': value.get('c'),
+        'date': value.get('d'),
+        'submission_number': value.get('e')
     }
 
 
@@ -124,9 +94,7 @@ def acquisition_source(self, key, value):
 def copyright(self, key, value):
     """Information Relating to Copyright Status."""
     return {
-        'material': utils.force_list(
-            value.get('3')
-        ),
+        'material': value.get('3'),
         'holder': value.get('d'),
         'statement': value.get('f'),
         'url': value.get('u'),
