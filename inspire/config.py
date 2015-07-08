@@ -257,8 +257,9 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
         'p': ["authors.full_name"],
         'e': ['exactauthor.raw'],
     },
+    "abstract": ["abstract.summary"],
     "collection": ["_collections"],
-    "title": ["title_statement.title"],
+    "title": ["title.title"],
     "980": [
         "collections.primary",
         "collections.secondary",
