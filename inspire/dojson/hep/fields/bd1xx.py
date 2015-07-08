@@ -11,10 +11,10 @@
 
 from dojson import utils
 
-from ..model import inspiremarc
+from ..model import hep
 
 
-@inspiremarc.over('authors', '^[17]00[103_].')
+@hep.over('authors', '^[17]00[103_].')
 # @utils.filter_values
 def authors(self, key, value):
     """Main Entry-Personal Name."""
@@ -44,7 +44,7 @@ def authors(self, key, value):
     return authors
 
 
-@inspiremarc.over('corporate_author', '^110[10_2].')
+@hep.over('corporate_author', '^110[10_2].')
 @utils.filter_values
 def corporate_author(self, key, value):
     """Main Entry-Corporate Name."""
@@ -53,7 +53,7 @@ def corporate_author(self, key, value):
     }
 
 
-@inspiremarc.over('institution', '^110..')
+@hep.over('institution', '^110..')
 @utils.filter_values
 def institution(self, key, value):
     """Institution info."""

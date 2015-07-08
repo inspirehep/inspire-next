@@ -7,6 +7,10 @@
 # modify it under the terms of the Revised BSD License; see LICENSE
 # file for more details.
 
-from .fields import base
+from .fields import (
+    bd1xx,
+)
 
-__all__ = ('base',)
+from .model import institutions
+
+__all__ = ('institutions',)

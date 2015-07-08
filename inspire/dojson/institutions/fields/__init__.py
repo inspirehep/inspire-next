@@ -7,6 +7,6 @@
 # modify it under the terms of the Revised BSD License; see LICENSE
 # file for more details.
 
-from .fields import base
+"""MARC 21 model definition."""
 
-__all__ = ('base',)
+from __future__ import unicode_literals

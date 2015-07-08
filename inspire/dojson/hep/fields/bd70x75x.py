@@ -11,10 +11,10 @@
 
 from dojson import utils
 
-from ..model import inspiremarc
+from ..model import hep
 
 
-@inspiremarc.over('thesis_supervisor', '^701..')
+@hep.over('thesis_supervisor', '^701..')
 @utils.for_each_value
 @utils.filter_values
 def thesis_supervisor(self, key, value):
@@ -27,7 +27,7 @@ def thesis_supervisor(self, key, value):
     }
 
 
-@inspiremarc.over('collaboration', '^710[10_2][_2]')
+@hep.over('collaboration', '^710[10_2][_2]')
 @utils.for_each_value
 @utils.filter_values
 def collaboration(self, key, value):

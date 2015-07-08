@@ -33,4 +33,5 @@ bower.json
 dump.rdb
 .idea/
 *.mo
+.DS_Store
 node_modules/
