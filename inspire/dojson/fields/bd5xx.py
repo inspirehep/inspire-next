@@ -25,6 +25,19 @@ def note(self, key, value):
     }
 
 
+@inspiremarc.over('hidden_note', '^595..')
+@utils.for_each_value
+@utils.filter_values
+def hidden_note(self, key, value):
+    """Hidden note."""
+    return {
+        'value': value.get('a'),
+        'cern_reference': value.get('b'),
+        'cds': value.get('c'),
+        'source': value.get('9'),
+    }
+
+
 @inspiremarc.over('thesis', '^502..')
 @utils.for_each_value
 @utils.filter_values

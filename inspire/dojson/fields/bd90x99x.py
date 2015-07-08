@@ -14,6 +14,39 @@ from dojson import utils
 from ..model import inspiremarc
 
 
+@inspiremarc.over('oai_pmh', '^909C0')
+@utils.for_each_value
+@utils.filter_values
+def oai_pmh(self, key, value):
+    """Local OAI-PMH record information."""
+    return {
+        'id': value.get('o'),
+        'set': value.get('p'),
+        'previous_set': value.get('q'),
+    }
+
+
+@inspiremarc.over('creation_modification_date', '^961..')
+@utils.for_each_value
+@utils.filter_values
+def creation_modification_date(self, key, value):
+    """Original creation and modification date."""
+    return {
+        'modification_date': value.get('c'),
+        'creation_date': value.get('x'),
+    }
+
+
+@inspiremarc.over('spires_sysno', '^909C0')
+@utils.for_each_value
+@utils.filter_values
+def spires_sysno(self, key, value):
+    """Old SPIRES number."""
+    return {
+        'spires_sysno': value.get('a')
+    }
+
+
 @inspiremarc.over('collections', '^980..')
 @utils.for_each_value
 @utils.filter_values
@@ -23,6 +56,16 @@ def collections(self, key, value):
         'primary': value.get('a'),
         'secondary': value.get('b'),
         'deleted': value.get('c'),
+    }
+
+
+@inspiremarc.over('deleted_recid', '^981..')
+@utils.for_each_value
+@utils.filter_values
+def deleted_recid(self, key, value):
+    """Collection this record belongs to."""
+    return {
+        'deleted_recid': value.get('a'),
     }
 
 
