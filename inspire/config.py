@@ -255,7 +255,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "author": {
         'a': ["authors.full_name"],
         'p': ["authors.full_name"],
-        'e': ['authors.full_name'],
+        'e': ['exactauthor.raw'],
     },
     "collection": ["_collections"],
     "title": ["title_statement.title"],

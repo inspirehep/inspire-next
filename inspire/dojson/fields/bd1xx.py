@@ -22,9 +22,7 @@ def authors(self, key, value):
 
     def get_value(value):
             return {
-                'full_name': utils.force_list(
-                    value.get('a')
-                ),
+                'full_name': value.get('a'),
                 'relator_term': value.get('e'),
                 'alternative_name': value.get('q'),
                 'INSPIRE_id': value.get('i'),
