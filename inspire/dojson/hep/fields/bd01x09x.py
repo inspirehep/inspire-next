@@ -11,10 +11,10 @@
 
 from dojson import utils
 
-from ..model import inspiremarc
+from ..model import hep
 
 
-@inspiremarc.over('isbn', '^020..')
+@hep.over('isbn', '^020..')
 @utils.for_each_value
 @utils.filter_values
 def isbn(self, key, value):
@@ -25,7 +25,7 @@ def isbn(self, key, value):
     }
 
 
-@inspiremarc.over('doi', '^024[1032478_][10_]')
+@hep.over('doi', '^024[1032478_][10_]')
 @utils.for_each_value
 @utils.filter_values
 def doi(self, key, value):
@@ -35,7 +35,7 @@ def doi(self, key, value):
     }
 
 
-@inspiremarc.over('system_control_number', '^035..')
+@hep.over('system_control_number', '^035..')
 @utils.for_each_value
 @utils.filter_values
 def system_control_number(self, key, value):
@@ -47,7 +47,7 @@ def system_control_number(self, key, value):
     }
 
 
-@inspiremarc.over('report_number', '^037..')
+@hep.over('report_number', '^037..')
 @utils.for_each_value
 @utils.filter_values
 def report_number(self, key, value):
@@ -59,7 +59,7 @@ def report_number(self, key, value):
     }
 
 
-@inspiremarc.over('language', '^041[10_].')
+@hep.over('language', '^041[10_].')
 @utils.for_each_value
 @utils.filter_values
 def language(self, key, value):
@@ -69,7 +69,7 @@ def language(self, key, value):
     }
 
 
-@inspiremarc.over('classification_number', '^084..')
+@hep.over('classification_number', '^084..')
 @utils.for_each_value
 @utils.filter_values
 def classification_number(self, key, value):

@@ -11,10 +11,10 @@
 
 from dojson import utils
 
-from ..model import inspiremarc
+from ..model import hep
 
 
-@inspiremarc.over('note', '^500..')
+@hep.over('note', '^500..')
 @utils.for_each_value
 @utils.filter_values
 def note(self, key, value):
@@ -25,7 +25,7 @@ def note(self, key, value):
     }
 
 
-@inspiremarc.over('hidden_note', '^595..')
+@hep.over('hidden_note', '^595..')
 @utils.for_each_value
 @utils.filter_values
 def hidden_note(self, key, value):
@@ -38,7 +38,7 @@ def hidden_note(self, key, value):
     }
 
 
-@inspiremarc.over('thesis', '^502..')
+@hep.over('thesis', '^502..')
 @utils.for_each_value
 @utils.filter_values
 def thesis(self, key, value):
@@ -50,7 +50,7 @@ def thesis(self, key, value):
     }
 
 
-@inspiremarc.over('abstract', '^520[10_2483].')
+@hep.over('abstract', '^520[10_2483].')
 @utils.for_each_value
 @utils.filter_values
 def abstract(self, key, value):
@@ -62,7 +62,7 @@ def abstract(self, key, value):
     }
 
 
-@inspiremarc.over('funding_info', '^536..')
+@hep.over('funding_info', '^536..')
 @utils.for_each_value
 @utils.filter_values
 def funding_info(self, key, value):
@@ -74,7 +74,7 @@ def funding_info(self, key, value):
     }
 
 
-@inspiremarc.over('license', '^540..')
+@hep.over('license', '^540..')
 @utils.for_each_value
 @utils.filter_values
 def license(self, key, value):
@@ -87,7 +87,7 @@ def license(self, key, value):
     }
 
 
-@inspiremarc.over('acquisition_source', '^541[10_].')
+@hep.over('acquisition_source', '^541[10_].')
 @utils.for_each_value
 @utils.filter_values
 def acquisition_source(self, key, value):
@@ -101,7 +101,7 @@ def acquisition_source(self, key, value):
     }
 
 
-@inspiremarc.over('copyright', '^542[10_].')
+@hep.over('copyright', '^542[10_].')
 @utils.for_each_value
 @utils.filter_values
 def copyright(self, key, value):

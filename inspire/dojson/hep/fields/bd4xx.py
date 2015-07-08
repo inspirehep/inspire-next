@@ -11,10 +11,10 @@
 
 from dojson import utils
 
-from ..model import inspiremarc
+from ..model import hep
 
 
-@inspiremarc.over('book_series', '^490[10_].')
+@hep.over('book_series', '^490[10_].')
 @utils.for_each_value
 @utils.filter_values
 def book_series(self, key, value):

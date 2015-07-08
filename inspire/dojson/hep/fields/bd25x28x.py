@@ -11,10 +11,10 @@
 
 from dojson import utils
 
-from ..model import inspiremarc
+from ..model import hep
 
 
-@inspiremarc.over('edition', '^250..')
+@hep.over('edition', '^250..')
 @utils.for_each_value
 @utils.filter_values
 def edition(self, key, value):
@@ -24,7 +24,7 @@ def edition(self, key, value):
     }
 
 
-@inspiremarc.over('imprint', '^260[_23].')
+@hep.over('imprint', '^260[_23].')
 @utils.for_each_value
 @utils.filter_values
 def imprint(self, key, value):

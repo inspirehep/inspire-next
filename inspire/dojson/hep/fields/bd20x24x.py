@@ -11,10 +11,10 @@
 
 from dojson import utils
 
-from ..model import inspiremarc
+from ..model import hep
 
 
-@inspiremarc.over('title_variation', '^210[10_][0_]')
+@hep.over('title_variation', '^210[10_][0_]')
 @utils.for_each_value
 @utils.filter_values
 def title_variation(self, key, value):
@@ -24,7 +24,7 @@ def title_variation(self, key, value):
     }
 
 
-@inspiremarc.over('title_translation', '^242[10_][0_]')
+@hep.over('title_translation', '^242[10_][0_]')
 @utils.for_each_value
 @utils.filter_values
 def title_translation(self, key, value):
@@ -35,7 +35,7 @@ def title_translation(self, key, value):
     }
 
 
-@inspiremarc.over('title', '^245[10_][0_]')
+@hep.over('title', '^245[10_][0_]')
 @utils.filter_values
 def title(self, key, value):
     """Title Statement."""
@@ -46,7 +46,7 @@ def title(self, key, value):
     }
 
 
-@inspiremarc.over('title_arxiv', '^246[1032_][_103254768]')
+@hep.over('title_arxiv', '^246[1032_][_103254768]')
 @utils.for_each_value
 @utils.filter_values
 def title_arxiv(self, key, value):
@@ -58,7 +58,7 @@ def title_arxiv(self, key, value):
     }
 
 
-@inspiremarc.over('title_old', '^247[10_][10_]')
+@hep.over('title_old', '^247[10_][10_]')
 @utils.for_each_value
 @utils.filter_values
 def title_old(self, key, value):

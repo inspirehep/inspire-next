@@ -11,10 +11,10 @@
 
 from dojson import utils
 
-from ..model import inspiremarc
+from ..model import hep
 
 
-@inspiremarc.over('publication_info', '^773..')
+@hep.over('publication_info', '^773..')
 @utils.for_each_value
 @utils.filter_values
 def publication_info(self, key, value):
@@ -35,7 +35,7 @@ def publication_info(self, key, value):
     }
 
 
-@inspiremarc.over('succeeding_entry', '^785..')
+@hep.over('succeeding_entry', '^785..')
 @utils.for_each_value
 @utils.filter_values
 def succeeding_entry(self, key, value):

@@ -11,10 +11,10 @@
 
 from dojson import utils
 
-from ..model import inspiremarc
+from ..model import hep
 
 
-@inspiremarc.over('url', '^856.[10_28]')
+@hep.over('url', '^856.[10_28]')
 @utils.for_each_value
 @utils.filter_values
 def url(self, key, value):

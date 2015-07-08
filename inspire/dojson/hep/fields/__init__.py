@@ -9,16 +9,4 @@
 
 """MARC 21 model definition."""
 
-from dojson import utils
-
-from ..model import inspiremarc
-
-
-@inspiremarc.over('page_nr', '^300..')
-@utils.for_each_value
-@utils.filter_values
-def page_nr(self, key, value):
-    """Page number."""
-    return {
-        'value': value.get('a')
-    }
+from __future__ import unicode_literals

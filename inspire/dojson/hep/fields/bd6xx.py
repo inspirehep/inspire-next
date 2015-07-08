@@ -11,10 +11,10 @@
 
 from dojson import utils
 
-from ..model import inspiremarc
+from ..model import hep
 
 
-@inspiremarc.over('subject_term', '^650[1_][_7]')
+@hep.over('subject_term', '^650[1_][_7]')
 @utils.for_each_value
 @utils.filter_values
 def subject_term(self, key, value):
@@ -26,7 +26,7 @@ def subject_term(self, key, value):
     }
 
 
-@inspiremarc.over('free_keyword', '^653[10_2][_1032546]')
+@hep.over('free_keyword', '^653[10_2][_1032546]')
 @utils.for_each_value
 @utils.filter_values
 def free_keyword(self, key, value):
@@ -37,7 +37,7 @@ def free_keyword(self, key, value):
     }
 
 
-@inspiremarc.over('accelerator_experiment', '^693..')
+@hep.over('accelerator_experiment', '^693..')
 @utils.for_each_value
 @utils.filter_values
 def accelerator_experiment(self, key, value):
@@ -48,7 +48,7 @@ def accelerator_experiment(self, key, value):
     }
 
 
-@inspiremarc.over('thesaurus_terms', '^695..')
+@hep.over('thesaurus_terms', '^695..')
 @utils.for_each_value
 @utils.filter_values
 def thesaurus_terms(self, key, value):

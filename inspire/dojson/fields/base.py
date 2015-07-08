@@ -11,10 +11,33 @@
 
 from dojson import utils
 
-from ..model import inspiremarc
+from ..hep.model import hep
+from ..institutions.model import institutions
 
 
-@inspiremarc.over('oai_pmh', '^909C0')
+@institutions.over('control_number', '^001')
+@hep.over('control_number', '^001')
+def control_number(self, key, value):
+    """Record Identifier."""
+    return value[0]
+
+
+@institutions.over('agency_code', '^003')
+@hep.over('agency_code', '^003')
+def agency_code(self, key, value):
+    """Control Number Identifier."""
+    return value[0]
+
+
+@institutions.over('date_and_time_of_latest_transaction', '^005')
+@hep.over('date_and_time_of_latest_transaction', '^005')
+def date_and_time_of_latest_transaction(self, key, value):
+    """Date and Time of Latest Transaction."""
+    return value[0]
+
+
+@hep.over('oai_pmh', '^909C0')
+@institutions.over('oai_pmh', '^909C0')
 @utils.for_each_value
 @utils.filter_values
 def oai_pmh(self, key, value):
@@ -26,7 +49,8 @@ def oai_pmh(self, key, value):
     }
 
 
-@inspiremarc.over('creation_modification_date', '^961..')
+@hep.over('creation_modification_date', '^961..')
+@institutions.over('creation_modification_date', '^961..')
 @utils.for_each_value
 @utils.filter_values
 def creation_modification_date(self, key, value):
@@ -37,7 +61,8 @@ def creation_modification_date(self, key, value):
     }
 
 
-@inspiremarc.over('spires_sysno', '^909C0')
+@hep.over('spires_sysno', '^909C0')
+@institutions.over('spires_sysno', '^909C0')
 @utils.for_each_value
 @utils.filter_values
 def spires_sysno(self, key, value):
@@ -47,7 +72,8 @@ def spires_sysno(self, key, value):
     }
 
 
-@inspiremarc.over('collections', '^980..')
+@hep.over('collections', '^980..')
+@institutions.over('collections', '^980..')
 @utils.for_each_value
 @utils.filter_values
 def collections(self, key, value):
@@ -59,50 +85,12 @@ def collections(self, key, value):
     }
 
 
-@inspiremarc.over('deleted_recid', '^981..')
+@hep.over('deleted_recid', '^981..')
+@institutions.over('deleted_recid', '^981..')
 @utils.for_each_value
 @utils.filter_values
 def deleted_recid(self, key, value):
     """Collection this record belongs to."""
     return {
         'deleted_recid': value.get('a'),
-    }
-
-
-@inspiremarc.over('references', '^999C5')
-@utils.for_each_value
-@utils.filter_values
-def references(self, key, value):
-    """Produce list of references."""
-    return {
-        'recid': value.get('0'),
-        'texkey': value.get('1'),
-        'doi': value.get('a'),
-        'collaboration': value.get('c'),
-        'editors': value.get('e'),
-        'authors': value.get('h'),
-        'misc': value.get('m'),
-        'number': value.get('o'),
-        'isbn': value.get('i'),
-        'publisher': value.get('p'),
-        'maintitle': value.get('q'),
-        'report_number': value.get('r'),
-        'title': value.get('t'),
-        'url': value.get('u'),
-        'journal_pubnote': value.get('s'),
-        'raw_reference': value.get('x'),
-        'year': value.get('y'),
-    }
-
-
-@inspiremarc.over('refextract', '^999C6')
-@utils.for_each_value
-@utils.filter_values
-def refextract(self, key, value):
-    """Contains info from refextract."""
-    return {
-        'comment': value.get('c'),
-        'time': value.get('t'),
-        'version': value.get('v'),
-        'source': value.get('s'),
     }

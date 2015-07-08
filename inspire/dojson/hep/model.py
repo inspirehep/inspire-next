@@ -7,9 +7,9 @@
 # modify it under the terms of the Revised BSD License; see LICENSE
 # file for more details.
 
-"""MARC 21 model definition."""
+"""HEP model definition."""
 
 from dojson import Overdo
 from dojson import utils
 
-inspiremarc = Overdo()
+hep = Overdo()
