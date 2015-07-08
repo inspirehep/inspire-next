@@ -80,7 +80,7 @@
         "name": "D0 Preliminary Notes"
     },
     {
-        "dbquery": "595__c:CDS or r:cern-* or aff:cern or cn:atlas or cn:cms or cn:lhcb or cn:alice or exp:cern* and 980__a:\"HEP\"",
+        "dbquery": "595__c:CDS or reportnumber:cern-* or affiliation:cern or collaboration:atlas or collaboration:cms or collaboration:lhcb or collaboration:alice or experiment:cern* and 980__a:\"HEP\"",
         "id": 19,
         "name": "CERN"
     },
