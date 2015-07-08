@@ -30,8 +30,31 @@ def subject_term(self, key, value):
 @utils.for_each_value
 @utils.filter_values
 def free_keyword(self, key, value):
-    """Index Term-Uncontrolled."""
+    """Free keywords."""
     return {
         'value': value.get('a'),
         'source': value.get('9'),
+    }
+
+
+@inspiremarc.over('accelerator_experiment', '^693..')
+@utils.for_each_value
+@utils.filter_values
+def accelerator_experiment(self, key, value):
+    """The accelerator/experiment related to this record."""
+    return {
+        'accelerator': value.get('a'),
+        'experiment': value.get('e'),
+    }
+
+
+@inspiremarc.over('thesaurus_terms', '^695..')
+@utils.for_each_value
+@utils.filter_values
+def thesaurus_terms(self, key, value):
+    """Controlled keywords."""
+    return {
+        'keyword': value.get('a'),
+        'energy_range': value.get('e'),
+        'classification_scheme': value.get('2'),
     }

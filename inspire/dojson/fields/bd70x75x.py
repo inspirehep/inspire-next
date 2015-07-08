@@ -14,6 +14,19 @@ from dojson import utils
 from ..model import inspiremarc
 
 
+@inspiremarc.over('thesis_supervisor', '^701..')
+@utils.for_each_value
+@utils.filter_values
+def thesis_supervisor(self, key, value):
+    """The thesis supervisor."""
+    return {
+        'full_name': value.get('a'),
+        'INSPIRE_id': value.get('g'),
+        'external_id': value.get('j'),
+        'affiliation': value.get('u')
+    }
+
+
 @inspiremarc.over('collaboration', '^710[10_2][_2]')
 @utils.for_each_value
 @utils.filter_values
