@@ -25,13 +25,20 @@ from dojson.utils import force_list
 def convert_marcxml(source):
     """Convert MARC XML to JSON."""
     from dojson.contrib.marc21.utils import create_record, split_blob
+
     from inspire.dojson.hep import hep
     from inspire.dojson.institutions import institutions
+    from inspire.dojson.journals import journals
+    from inspire.dojson.experiments import experiments
 
     for data in split_blob(source.read()):
         record = create_record(data)
         if _collection_in_record(record, 'institution'):
             yield institutions.do(record)
+        elif _collection_in_record(record, 'experiment'):
+            yield experiments.do(record)
+        elif _collection_in_record(record, 'journals'):
+            yield journals.do(record)
         else:
             yield hep.do(record)
 

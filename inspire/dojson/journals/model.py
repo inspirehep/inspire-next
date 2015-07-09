@@ -7,6 +7,9 @@
 # modify it under the terms of the Revised BSD License; see LICENSE
 # file for more details.
 
-from .common import base
+"""journals model definition."""
 
-__all__ = ('base',)
+from dojson import Overdo
+from dojson import utils
+
+journals = Overdo()

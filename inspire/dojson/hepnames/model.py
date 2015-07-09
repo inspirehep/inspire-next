@@ -7,6 +7,9 @@
 # modify it under the terms of the Revised BSD License; see LICENSE
 # file for more details.
 
-from .common import base
+"""institutions model definition."""
 
-__all__ = ('base',)
+from dojson import Overdo
+from dojson import utils
+
+hepnames = Overdo()

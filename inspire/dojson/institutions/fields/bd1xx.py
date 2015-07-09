@@ -14,13 +14,29 @@ from dojson import utils
 from ..model import institutions
 
 
-@institutions.over('corporate_author', '^110[10_2].')
+@institutions.over('location', '^034..')
 @utils.filter_values
-def corporate_author(self, key, value):
-    """Main Entry-Corporate Name."""
+def location(self, key, value):
+    """GPS location info."""
     return {
-        'corporate_author': value.get('a'),
+        'longitude': value.get('d'),
+        'latitude': value.get('f')
     }
+
+
+@institutions.over('timezone', '^043..')
+def timezone(self, key, value):
+    """Timezone."""
+    return value.get('t')
+
+
+@institutions.over('name', '^110..')
+def name(self, key, value):
+    """List of names."""
+    names = utils.force_list(value.get('a')) or []
+    names.extend(utils.force_list(value.get('u')) or [])
+    names.extend(utils.force_list(value.get('t')) or [])
+    return names
 
 
 @institutions.over('institution', '^110..')
@@ -34,3 +50,37 @@ def institution(self, key, value):
         'affiliation': value.get('u'),
         'obsolete_icn': value.get('x'),
     }
+
+
+@institutions.over('address', '^371..')
+@utils.for_each_value
+@utils.filter_values
+def address(self, key, value):
+    """Address info."""
+    return {
+        'address': value.get('a'),
+        'city': value.get('b'),
+        'state': value.get('c'),
+        'country': value.get('d'),
+        'postal_code': value.get('e'),
+        'country_code': value.get('g'),
+    }
+
+
+@institutions.over('activity', '^372..')
+def activity(self, key, value):
+    """Field of activity."""
+    return value.get('a')
+
+
+@institutions.over('name_variants', '^410..')
+@utils.for_each_value
+def name_variants(self, key, value):
+    """Variants of the name."""
+    return value.get('a')
+
+
+@institutions.over('core', '^690C.')
+def core(self, key, value):
+    """Check if it is a CORE institution."""
+    return value.get('a', "").upper() == "CORE"

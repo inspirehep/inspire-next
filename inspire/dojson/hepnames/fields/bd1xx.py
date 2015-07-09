@@ -7,6 +7,9 @@
 # modify it under the terms of the Revised BSD License; see LICENSE
 # file for more details.
 
-from .common import base
+"""MARC 21 model definition."""
 
-__all__ = ('base',)
+from dojson import utils
+
+from ..model import hepnames
+
