@@ -30,15 +30,15 @@
  		  <div class="col-md-9"  id="left-column">
 		    <h4 class="custom-h"><b>
 				  <a class="title" href="{{ url_for('record.metadata', recid=record['recid']) }}">
-				  {{ record.get('title.title', '') }}
+				  {{ record.get('title.title', '')|capitalize }}
 				  </a>
 				  {% if record.get('title.title', '')|count_words() > 5 %}
 				  <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['recid']) }}">
-				  {{ record.get('title.title', '') | words(5) + "..."}} 
+				  {{ record.get('title.title', '')|capitalize | words(5) + "..."}}
 				  </a>
 				  {% else %}
 				   <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['recid']) }}">
-				  {{ record.get('title.title', '') }}
+				  {{ record.get('title.title', '')|capitalize }}
 				  {% endif %}
 				  </a>
 				  </b> 
