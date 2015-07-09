@@ -35,7 +35,7 @@ def format_element(bfo, style, separator='; '):
     urls = ['<a ' + style +
             'href="' + url + '">' + url + '</a>'
             for url in urls_u]
-    return separator.join(urls)
+    return '<span id="url-links">' + separator.join(urls) + '</span>'
 
 
 def escape_values(bfo):

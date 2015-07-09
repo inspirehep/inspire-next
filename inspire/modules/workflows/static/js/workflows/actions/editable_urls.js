@@ -21,13 +21,17 @@
 define(
   [
     'jquery',
-    'bootstrap-tagsinput',
-    'flight/lib/component'
+    'flight/lib/component',
+    'hgn!js/workflows/templates/editable_urls',
+    'hgn!js/workflows/templates/editable_urls_input',
+    'hgn!js/workflows/templates/editable_urls_after_edit'
   ],
   function(
     $,
-    tagsinput,
-    defineComponent) {
+    defineComponent,
+    tpl_edit_urls,
+    tpl_edit_urls_input,
+    tpl_after_edit_urls) {
 
     'use strict';
 
@@ -35,9 +39,122 @@ define(
 
     function EditableURLs() {
 
-      this.attributes({});
+      this.attributes({
+        // On init
+        editSelector: "#editable-urls",
+        modalSelector: "#edit-urls-modal",
+        urlContainerSelector: "#url-container",
+        urlLinksSelector: "#url-links",
+
+        // After modal appears
+        inputsSelector: ".edit-url-input",
+        deleteUrlSelector: ".delete-url",
+        addNewUrlSelector: "#add-new-url",
+        urlInputsSelector: "#urls",
+        saveChangesSelector: "#save-changes",
+
+        // URLS
+        urls: [],
+        edit_url: "",
+        objectid: ""
+      });
+
+      this.getURLs = function() {
+        var urls = [];
+        $(this.attr.urlContainerSelector + " a").each(function() {
+          urls.push($(this).text());
+        });
+
+        this.attr.urls = urls;
+        return urls;
+      };
+
+      this.processUrls = function() {
+        // We need to check if the urls start with http,
+        // or else the links will not work.
+        var that = this;
+        $(this.attr.urls).each(function(index, url) {
+          if (url.indexOf('https://') == -1 && url.indexOf('http://') == -1) {
+            that.attr.urls[index] = 'http://' + url;
+          }
+        });
+
+        return this.attr.urls;
+      };
+
+      this.createPayloadForEdit = function() {
+        return {
+          "objectid": this.attr.objectid,
+          "urls": this.processUrls()
+        };
+      };
+
+      this.addUrlsToPage = function() {
+        var that = this;
+        $(this.attr.urlLinksSelector).replaceWith(
+          tpl_after_edit_urls({urls: that.attr.urls})
+        );
+      };
+
+
+
+
+      this.makeEditable = function() {
+        // Create the modal
+        $(this.attr.modalSelector).replaceWith(tpl_edit_urls({
+          urls: this.getURLs()
+        }));
+
+        var that = this;
+        var newUrlList = [];
+        $(this.attr.modalSelector)
+          .modal('show')
+
+          // Delete the url
+          .on('click', this.attr.deleteUrlSelector, function(ev) {
+            var urls = that.attr.urls;
+
+            // Remove from url array
+            urls.splice(urls.indexOf($(ev.target).prev().val()), 1);
+            // Remove div from modal
+            $(ev.target).parent().remove();
+          })
+
+          // Create new url input
+          .on('click', this.attr.addNewUrlSelector, function(ev) {
+            $(that.attr.urlInputsSelector).append(tpl_edit_urls_input());
+            $(that.attr.urlInputsSelector + " input:last").focus();
+          })
+
+          // Save urls in list
+          .on('click', this.attr.saveChangesSelector, function(ev) {
+            $(that.attr.inputsSelector).each(function(index, element) {
+              newUrlList.push(element.value);
+            });
+
+            that.attr.urls = newUrlList;
+            that.makePostRequest();
+            that.addUrlsToPage();
+          });
+      };
+
+      this.makePostRequest = function() {
+        var that = this;
+        $.ajax({
+          type: "POST",
+          url: that.attr.edit_url,
+          data: that.createPayloadForEdit(),
+          success: function(data) {
+            that.trigger(document, "updateAlertMessage", {
+              category: data.category,
+              message: data.message
+            });
+          }
+        });
+      };
 
       this.after('initialize', function() {
+        this.on(this.attr.editSelector, 'dblclick', this.makeEditable);
         console.log("Editable URLs OK");
       });
     }

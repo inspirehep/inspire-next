@@ -69,17 +69,17 @@ define(
         this.attr.tagInput = $("input#edit-subj:text");
         this.attr.tagInput.tagsinput({
           tagClass: function (item) {
-              var subject_codes = that.attr.shortcodes.map(
-                function(shortcode) {
-                  return shortcode.to;
-                }
-              );
-              var subject = $.trim(item);
-              if ($.inArray(subject, subject_codes) !== -1) {
-                return 'label label-success';
-              } else {
-                return 'label label-info';
+            var subject_codes = that.attr.shortcodes.map(
+              function(shortcode) {
+                return shortcode.to;
               }
+            );
+            var subject = $.trim(item);
+            if ($.inArray(subject, subject_codes) !== -1) {
+              return 'label label-success';
+            } else {
+              return 'label label-info';
+            }
           }}
         );
         this.attr.tagInput.tagsinput('add', this.attr.subjText);

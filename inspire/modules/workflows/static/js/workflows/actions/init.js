@@ -71,7 +71,10 @@ define(
         objectid: context.id_object
       });
 
-      EditableURLs.attachTo(document);
+      EditableURLs.attachTo(document, {
+        edit_url: context.edit_urls_url,
+        objectid: context.id_object
+      });
 
       CoreApprovalModal.attachTo(context.attach_action_to);
       console.log("I ran this actions/init.")

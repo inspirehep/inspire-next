@@ -18,7 +18,6 @@
 # 59 Tseemple Place, Suite 330, Boston, MA 02111-1307, USA.
 from invenio.modules.deposit.helpers import make_record
 from invenio.modules.deposit.models import Deposition
-from invenio.modules.deposit.tasks import process_sip_metadata
 
 from six import text_type
 from flask import Blueprint, jsonify, request
@@ -48,6 +47,8 @@ INSPIRE_SCHEME = "INSPIRE"
 # Fields
 SUBJECT_FIELD = "subject_term.term"
 TITLE_FIELD = "title.title"
+TITLE = "title"
+URL = 'url'
 
 
 @blueprint.route('/edit_record_title', methods=['POST'])
@@ -60,13 +61,52 @@ def edit_record_title(value, objectid):
     editable_obj = BibWorkflowObject.query.get(objectid)
     data = editable_obj.get_data()
 
-    data[TITLE_FIELD] = MathMLParser.html_to_text(value)
-    editable_obj.set_data(data)
-    editable_obj.save()
+    if type(data) is dict:
+        deposition = Deposition(editable_obj)
+        sip = deposition.get_latest_sip(sealed=False)
+        metadata = sip.metadata
+
+        metadata[TITLE][TITLE] = MathMLParser.html_to_text(value)
+        sip.package = make_record(sip.metadata).legacy_export_as_marc()
+        deposition.save()
+    else:
+        data[TITLE_FIELD] = MathMLParser.html_to_text(value)
+        editable_obj.set_data(data)
+        editable_obj.save()
 
     return jsonify({
         "category": "success",
-        "message": "Edit on title was successful"
+        "message": "Edit on title was successful."
+    })
+
+
+@blueprint.route('/edit_record_urls', methods=['POST'])
+@login_required
+@permission_required(viewholdingpen.name)
+@wash_arguments({'objectid': (text_type, "")})
+def edit_record_urls(objectid):
+    """Entrypoint for editing urls from detailed pages."""
+    editable_obj = BibWorkflowObject.query.get(objectid)
+    data = editable_obj.get_data()
+
+    new_urls = request.values.getlist('urls[]') or []
+
+    deposition = Deposition(editable_obj)
+    sip = deposition.get_latest_sip(sealed=False)
+    metadata = sip.metadata
+
+    # Get the new urls and format them, the way the object does
+    new_urls_array = []
+    for url in new_urls:
+        new_urls_array.append({'url': url})
+
+    metadata[URL] = new_urls_array
+    sip.package = make_record(sip.metadata).legacy_export_as_marc()
+    deposition.save()
+
+    return jsonify({
+        "category": "success",
+        "message": "Edit on urls was successful."
     })
 
 
@@ -97,7 +137,7 @@ def edit_record_subject(objectid):
 
     return jsonify({
         "category": "success",
-        "message": "Edit on subjects was successful"
+        "message": "Edit on subjects was successful."
     })
 
 
@@ -105,7 +145,7 @@ def edit_harvest(editable_obj, data, new_subjects_list, subject_dict):
     """Subject editing for harvested records."""
     old_subjects_list = data.get(SUBJECT_FIELD, [])
 
-    data[SUBJECT_TERM] = revised_subjects_list(old_subjects_list,new_subjects_list, subject_dict)
+    data[SUBJECT_TERM] = revised_subjects_list(old_subjects_list, new_subjects_list, subject_dict)
     editable_obj.set_data(data)
     editable_obj.save()
 

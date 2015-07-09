@@ -35,6 +35,7 @@
         action_url: "{{ url_for('holdingpen.resolve_action')|safe }}",
         edit_subj_url: "{{ url_for('inspire_holdingpen.edit_record_subject')|safe }}",
         edit_title_url: "{{ url_for('inspire_holdingpen.edit_record_title')|safe }}",
+        edit_urls_url: "{{ url_for('inspire_holdingpen.edit_record_urls')|safe }}",
 
         {% if next_object %}
           next_page_url: "{{ url_for('holdingpen.details', objectid=next_object) }}",
@@ -202,5 +203,5 @@
     </div>
 
   </div>
-
+  <div id="edit-urls-modal"></div>
 {%- endblock -%}
