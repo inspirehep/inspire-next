@@ -62,8 +62,8 @@ keyword_suffix="</small>" />
 
 </div>
 
-<div style="text-align:left; width: 70%; margin: 10px auto;">
-<BFE_INSPIRE_URL prefix="<br /><small><strong>URL(s):</strong></small> " suffix="<br />" newline="True" />
+<div id='url-container' style="text-align:left; width: 70%; margin: 10px auto;">
+<BFE_INSPIRE_URL prefix="<br /><span id='editable-urls'><small><strong>URL(s):</strong></small></span> " suffix="<br />" newline="True" />
 
 </div>
 
