@@ -13,10 +13,14 @@ from dojson import utils
 
 from ..hep.model import hep
 from ..institutions.model import institutions
+from ..experiments.model import experiments
+from ..journals.model import journals
 
 
 @institutions.over('control_number', '^001')
 @hep.over('control_number', '^001')
+@experiments.over('control_number', '^001')
+@journals.over('control_number', '^001')
 def control_number(self, key, value):
     """Record Identifier."""
     return value[0]
@@ -24,6 +28,8 @@ def control_number(self, key, value):
 
 @institutions.over('agency_code', '^003')
 @hep.over('agency_code', '^003')
+@experiments.over('agency_code', '^003')
+@journals.over('agency_code', '^003')
 def agency_code(self, key, value):
     """Control Number Identifier."""
     return value[0]
@@ -31,13 +37,36 @@ def agency_code(self, key, value):
 
 @institutions.over('date_and_time_of_latest_transaction', '^005')
 @hep.over('date_and_time_of_latest_transaction', '^005')
+@experiments.over('date_and_time_of_latest_transaction', '^005')
+@journals.over('date_and_time_of_latest_transaction', '^005')
 def date_and_time_of_latest_transaction(self, key, value):
     """Date and Time of Latest Transaction."""
     return value[0]
 
 
+@institutions.over('url', '^856.[10_28]')
+@experiments.over('url', '^856.[10_28]')
+@journals.over('url', '^856.[10_28]')
+@hep.over('url', '^856.[10_28]')
+@utils.for_each_value
+@utils.filter_values
+def url(self, key, value):
+    """URL to external resource."""
+    return {
+        'url': value.get('u'),
+        'doc_string': value.get('w'),
+        'description': value.get('y'),
+        'material_type': value.get('3'),
+        'comment': value.get('z'),
+        'name': value.get('f'),
+        'size': value.get('s'),
+    }
+
+
 @hep.over('oai_pmh', '^909C0')
 @institutions.over('oai_pmh', '^909C0')
+@experiments.over('oai_pmh', '^909C0')
+@journals.over('oai_pmh', '^909C0')
 @utils.for_each_value
 @utils.filter_values
 def oai_pmh(self, key, value):
@@ -51,6 +80,8 @@ def oai_pmh(self, key, value):
 
 @hep.over('creation_modification_date', '^961..')
 @institutions.over('creation_modification_date', '^961..')
+@experiments.over('creation_modification_date', '^961..')
+@journals.over('creation_modification_date', '^961..')
 @utils.for_each_value
 @utils.filter_values
 def creation_modification_date(self, key, value):
@@ -61,8 +92,10 @@ def creation_modification_date(self, key, value):
     }
 
 
-@hep.over('spires_sysno', '^909C0')
-@institutions.over('spires_sysno', '^909C0')
+@hep.over('spires_sysno', '^970..')
+@institutions.over('spires_sysno', '^970..')
+@experiments.over('spires_sysno', '^970..')
+@journals.over('spires_sysno', '^970..')
 @utils.for_each_value
 @utils.filter_values
 def spires_sysno(self, key, value):
@@ -74,6 +107,8 @@ def spires_sysno(self, key, value):
 
 @hep.over('collections', '^980..')
 @institutions.over('collections', '^980..')
+@experiments.over('collections', '^980..')
+@journals.over('collections', '^980..')
 @utils.for_each_value
 @utils.filter_values
 def collections(self, key, value):
@@ -87,6 +122,8 @@ def collections(self, key, value):
 
 @hep.over('deleted_recid', '^981..')
 @institutions.over('deleted_recid', '^981..')
+@experiments.over('deleted_recid', '^981..')
+@journals.over('deleted_recid', '^981..')
 @utils.for_each_value
 @utils.filter_values
 def deleted_recid(self, key, value):
