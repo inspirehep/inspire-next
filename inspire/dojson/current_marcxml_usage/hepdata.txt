@@ -1,0 +1,1790 @@
+
+005__ (), (111882 HepNames records with values) (471564 distinct values in general)
+intbitset([981872, 981873, 981874, 981875, 981876, ..., 1381905, 1381966, 1381967, 1381968, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('20130528212324.0',)
+('20130528204418.0',)
+('20130528204033.0',)
+('20130528203903.0',)
+('20121023232241.0',)
+('20150331093641.0',)
+('20141031110838.0',)
+('20121023232240.0',)
+('20140211115013.0',)
+('20121023235612.0',)
+
+035__8 (ext system ID), (1 HepNames records with values) (1 distinct values in general)
+intbitset([984867])
+---------------------------------------------------------------------------------------
+---- Good values ----
+         1 BAI 
+---- Outliers ----
+BAI (1 HepNames records): intbitset([984867])
+
+035__9 (ext system source), (49522 HepNames records with values) (48 distinct values in general)
+intbitset([981872, 981873, 981875, 981878, 981880, ..., 1381905, 1381966, 1381967, 1381968, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+       776 DESY 
+      1911 arXiv 
+     47726 INSPIRE 
+     34105 BAI 
+      8466 CERN 
+      1484 ORCID 
+       903 SLAC 
+       276 ARXIV 
+       255  
+        33 JACOW 
+        40 GoogleScholar 
+         2 ORCI 
+         2 RESEARCHERID 
+         1 E.Giro.1 
+         1 SCOPUS 
+         1 SPIRES 
+         1 R.Mohayaee.1 
+---- Outliers ----
+E.Giro.1 (1 HepNames records): intbitset([1031883])
+SCOPUS (1 HepNames records): intbitset([1017182])
+SPIRES (1 HepNames records): intbitset([1259760])
+R.Mohayaee.1 (1 HepNames records): intbitset([997086])
+
+035__a (ext system ID), (49353 HepNames records with values) (2107317 distinct values in general)
+intbitset([981872, 981873, 981875, 981878, 981880, ..., 1381905, 1381966, 1381967, 1381968, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('oai:arXiv.org:1405.4863',)
+('oai:arXiv.org:1405.4861',)
+('oai:arXiv.org:1405.4858',)
+('oai:arXiv.org:1405.4856',)
+('oai:arXiv.org:1405.4855',)
+('oai:arXiv.org:1203.4443',)
+('oai:arXiv.org:1207.7200',)
+('oai:arXiv.org:1207.7194',)
+('INSPIRE-00051971',)
+('Zhang:2013nja',)
+
+035__e (ext system ID), (1 HepNames records with values) (1 distinct values in general)
+intbitset([1332667])
+---------------------------------------------------------------------------------------
+---- Good values ----
+         1 Brondolin.1 
+---- Outliers ----
+Brondolin.1 (1 HepNames records): intbitset([1332667])
+
+035__o (ext system ID), (1 HepNames records with values) (1 distinct values in general)
+intbitset([1184539])
+---------------------------------------------------------------------------------------
+---- Good values ----
+         1 INSPIRE-00184454 
+---- Outliers ----
+INSPIRE-00184454 (1 HepNames records): intbitset([1184539])
+
+035__z (ext system ID deprecated), (55 HepNames records with values) (1921236 distinct values in general)
+intbitset([984158, 987287, 987743, 989868, 990510, ..., 1278527, 1307198, 1307200, 1307864, 1319589])
+---------------------------------------------------------------------------------------------------------
+---- Example of values ----
+('Jurow:1962az',)
+(':1900bbf',)
+(':1900beg',)
+(':1900bgd',)
+(':1900bne',)
+(':1900brd',)
+(':1900btj',)
+('D96-19424',)
+('D96-19425',)
+('D96-19464',)
+
+037__o (report number), (1 HepNames records with values) (1 distinct values in general)
+intbitset([1358587])
+---------------------------------------------------------------------------------------
+---- Good values ----
+         1 xtwang@ihep.ac.cn 
+---- Outliers ----
+xtwang@ihep.ac.cn (1 HepNames records): intbitset([1358587])
+
+100__a (first author name), (111881 HepNames records with values) (303993 distinct values in general)
+intbitset([981872, 981873, 981874, 981875, 981876, ..., 1381905, 1381966, 1381967, 1381968, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('Wong, Yung-Chow',)
+('Brodsky, Stanley J.',)
+('Lisin, A.V.',)
+('Panofsky, W.K.H.',)
+('Cole, J.L.',)
+('Bondi, H.',)
+('Woods, Hugh A.',)
+('Jurow, Joe',)
+('Breymayer, K.E.',)
+('Muray, J.J.',)
+
+100__b (first author name), (26 HepNames records with values) (11 distinct values in general)
+intbitset([986148, 988473, 997968, 1000286, 1012052, ..., 1330249, 1336024, 1340890, 1361825, 1381850])
+-------------------------------------------------------------------------------------------------------
+---- Good values ----
+        12 Jr. 
+         3 numeration (e.g. III or Jr.) 
+         4 III 
+         2 Sr. 
+         1 IV 
+         1 II 
+         1 Wisconsin U., Madison 
+         1 VIII 
+         1 VII 
+---- Outliers ----
+IV (1 HepNames records): intbitset([1038663])
+II (1 HepNames records): intbitset([997968])
+Wisconsin U., Madison (1 HepNames records): intbitset([1330249])
+VIII (1 HepNames records): intbitset([988473])
+VII (1 HepNames records): intbitset([1381850])
+Sr. (2 HepNames records): intbitset([1053761, 1361825])
+numeration (e.g. III or Jr.) (3 HepNames records): intbitset([1048168, 1336024, 1340890])
+III (4 HepNames records): intbitset([986148, 1039005, 1077535, 1249493])
+Jr. (12 HepNames records): intbitset([1000286, 1012052, 1018591, 1021287, 1023965, ..., 1042458, 1052716, 1062438, 1067775, 1238703])
+
+100__c (person title), (14 HepNames records with values) (3 distinct values in general)
+intbitset([999676, 1020054, 1028370, 1029196, 1035563, ..., 1239896, 1259758, 1261085, 1323583, 1330364])
+---------------------------------------------------------------------------------------------------------
+---- Good values ----
+         9 title (e.g. Sir) 
+         4 Sir 
+         1 Mrs. 
+---- Outliers ----
+Mrs. (1 HepNames records): intbitset([1069472])
+Sir (4 HepNames records): intbitset([1020054, 1029196, 1035563, 1261085])
+title (e.g. Sir) (9 HepNames records): intbitset([999676, 1028370, 1041266, 1061603, 1078958, 1239896, 1259758, 1323583, 1330364])
+
+100__d (person dates), (80 HepNames records with values) (29 distinct values in general)
+intbitset([982050, 982052, 982056, 982057, 982066, ..., 1323678, 1327682, 1330246, 1340424, 1345401])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+        10 2002 
+         9 2004 
+         7 dates 
+         5 2000 
+         5 1999 
+         4 2005 
+         3 1996 
+         3 2012 
+         3 2006 
+         3 2003 
+         3 1997 
+         3 1998 
+         3 2008 
+         2 2010 
+         2 1995 
+         2 2007 
+         1 1923-2015 
+         1 1948-2014 
+         1 -2013 
+         1 1943 - 2011 
+         1 -2014-03-14 
+         1 2001 
+         1 20 October 1891 – 24 July 1974 
+         1 2009 
+         1 1992 
+         1 1968-2011 
+         1 -2007 
+         1 -2013-03-20 
+         1 1908-05-23 - 1991-01-30 
+---- Outliers ----
+1923-2015 (1 HepNames records): intbitset([983266])
+1948-2014 (1 HepNames records): intbitset([992393])
+-2013 (1 HepNames records): intbitset([1015441])
+1943 - 2011 (1 HepNames records): intbitset([1000483])
+-2014-03-14 (1 HepNames records): intbitset([1001399])
+2001 (1 HepNames records): intbitset([1025594])
+20 October 1891 – 24 July 1974 (1 HepNames records): intbitset([1035563])
+2009 (1 HepNames records): intbitset([982066])
+1992 (1 HepNames records): intbitset([1323678])
+1968-2011 (1 HepNames records): intbitset([1093289])
+-2007 (1 HepNames records): intbitset([1019153])
+-2013-03-20 (1 HepNames records): intbitset([1046337])
+1908-05-23 - 1991-01-30 (1 HepNames records): intbitset([1017374])
+2010 (2 HepNames records): intbitset([983003, 1076779])
+1995 (2 HepNames records): intbitset([989071, 1074025])
+2007 (2 HepNames records): intbitset([1035204, 1323582])
+1996 (3 HepNames records): intbitset([1007375, 1043023, 1113371])
+2012 (3 HepNames records): intbitset([982050, 1029228, 1256754])
+2006 (3 HepNames records): intbitset([999676, 1075770, 1273262])
+2003 (3 HepNames records): intbitset([982056, 1032330, 1327682])
+1997 (3 HepNames records): intbitset([984123, 999440, 1000312])
+1998 (3 HepNames records): intbitset([982155, 998897, 1340424])
+2008 (3 HepNames records): intbitset([1035207, 1273278, 1298913])
+2005 (4 HepNames records): intbitset([982057, 1011359, 1029295, 1246941])
+2000 (5 HepNames records): intbitset([984101, 989069, 1013899, 1029210, 1051646])
+1999 (5 HepNames records): intbitset([1000315, 1005398, 1011754, 1113369, 1291096])
+dates (7 HepNames records): intbitset([1026563, 1032211, 1234158, 1237017, 1279401, 1330246, 1345401])
+2004 (9 HepNames records): intbitset([983042, 1007223, 1029226, 1029259, 1029275, 1029293, 1042611, 1064669, 1078689])
+2002 (10 HepNames records): intbitset([982052, 982073, 982220, 982992, 1029211, 1029300, 1076288, 1076352, 1078760, 1261651])
+
+100__g (person status), (102455 HepNames records with values) (16 distinct values in general)
+intbitset([981874, 981875, 981876, 981877, 981878, ..., 1381905, 1381966, 1381967, 1381968, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+     69699 ACTIVE 
+     28409  
+      2009 DEPARTED 
+      1079 RETIRED 
+       909 DECEASED 
+       308 active 
+        25 Active 
+         9 Current 
+         5 departed 
+         3 retired 
+         2 Departed 
+         1 RETIREd 
+         1 ACTIE 
+         1 avtive 
+         1 ACTUVE 
+---- Outliers ----
+RETIREd (1 HepNames records): intbitset([1007211])
+ACTIE (1 HepNames records): intbitset([1332674])
+avtive (1 HepNames records): intbitset([982098])
+ACTUVE (1 HepNames records): intbitset([1375453])
+Departed (2 HepNames records): intbitset([1238352, 1326092])
+retired (3 HepNames records): intbitset([1125772, 1327681, 1375357])
+departed (5 HepNames records): intbitset([995893, 1021998, 1055144, 1055341, 1236273])
+Current (9 HepNames records): intbitset([982186, 982398, 985807, 988487, 1068427, 1244454, 1247742, 1280622, 1291176])
+Active (25 HepNames records): intbitset([1005437, 1048968, 1191622, 1233818, 1233822, ..., 1328262, 1328263, 1328266, 1358675, 1381968])
+active (308 HepNames records): intbitset([997968, 1000127, 1000720, 1012440, 1029199, ..., 1381899, 1381900, 1381903, 1381905, 1381967])
+DECEASED (909 HepNames records): intbitset([981906, 982014, 982027, 982111, 982305, ..., 1339207, 1339208, 1339209, 1340765, 1373456])
+RETIRED (1079 HepNames records): intbitset([982050, 982052, 982056, 982057, 982066, ..., 1327682, 1336576, 1340424, 1361825, 1381850])
+DEPARTED (2009 HepNames records): intbitset([981903, 981983, 981987, 982021, 982065, ..., 1362429, 1373644, 1375889, 1375903, 1380381])
+ (28409 HepNames records): intbitset([981874, 981876, 981877, 981883, 981885, ..., 1233797, 1233799, 1233800, 1233801, 1233804])
+ACTIVE (69699 HepNames records): intbitset([981875, 981878, 981879, 981880, 981881, ..., 1381901, 1381902, 1381904, 1381966, 1381970])
+
+100__m (first author name), (1 HepNames records with values) (6564 distinct values in general)
+intbitset([1061171])
+----------------------------------------------------------------------------------------------
+---- Example of values ----
+('domenicodifilippo@gmail.com',)
+('carlo.giocoli@lam.fr',)
+('lbieri@umich.edu',)
+('albert.puig@epfl.ch',)
+('guoxing.xia@cockcroft.ac.uk',)
+('rkillick@connect.carleton.ca',)
+('surovcev@theor.jinr.ru',)
+('auvinen@fias.uni-frankfurt.de',)
+('simone.speziale@cpt.univ-mrs.fr',)
+('yamazaki.dai@nao.ac.jp',)
+
+100__q (first author alternative name), (111881 HepNames records with values) (114250 distinct values in general)
+intbitset([981872, 981873, 981874, 981875, 981876, ..., 1381905, 1381966, 1381967, 1381968, 1381970])
+-----------------------------------------------------------------------------------------------------------------
+---- Example of values ----
+('FERMILAB-00253V',)
+('Alexander Barnyakov',)
+('Bert Masschaele',)
+('Satoru Iwaki',)
+('Vuopionperae, R.',)
+('Haeckl, R.',)
+('Guerich, W., (ed.)',)
+('Jung-min Kim',)
+('Faig Nizami Ahmadov',)
+('Bruening, Oliver',)
+
+371__$ (address, inst), (1 HepNames records with values) (1 distinct values in general)
+intbitset([1024124])
+---------------------------------------------------------------------------------------
+---- Good values ----
+         1 t2001 
+---- Outliers ----
+t2001 (1 HepNames records): intbitset([1024124])
+
+371__2 (address, inst), (1 HepNames records with values) (1 distinct values in general)
+intbitset([984136])
+---------------------------------------------------------------------------------------
+---- Good values ----
+         1 1994 
+---- Outliers ----
+1994 (1 HepNames records): intbitset([984136])
+
+371__5 (address, inst), (1 HepNames records with values) (1 distinct values in general)
+intbitset([1298912])
+---------------------------------------------------------------------------------------
+---- Good values ----
+         1 2005 
+---- Outliers ----
+2005 (1 HepNames records): intbitset([1298912])
+
+371__9 (address, inst), (2 HepNames records with values) (2 distinct values in general)
+intbitset([1024913, 1122093])
+---------------------------------------------------------------------------------------
+---- Good values ----
+         1 Sao Paulo U. 
+         1 East China Normal U. 
+---- Outliers ----
+Sao Paulo U. (1 HepNames records): intbitset([1122093])
+East China Normal U. (1 HepNames records): intbitset([1024913])
+
+371__a (address, inst), (103937 HepNames records with values) (34633 distinct values in general)
+intbitset([981872, 981873, 981874, 981875, 981876, ..., 1381904, 1381905, 1381966, 1381967, 1381968])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('SUNY, Albany',)
+('Moscow, MIPT',)
+('Physikzentrum',)
+('Chicago U.',)
+('European Southern Observ.',)
+('Cracow, INP',)
+('Aarhus Universitet',)
+('E-28049 Madrid',)
+('E-50009 Zaragoza',)
+('DK-8000 Aarhus C, DENMARK',)
+
+371__d (country name), (1 HepNames records with values) (153 distinct values in general)
+intbitset([992213])
+----------------------------------------------------------------------------------------
+---- Good values ----
+---- Outliers ----
+
+371__e (postal code), (1 HepNames records with values) (3190 distinct values in general)
+intbitset([1338535])
+----------------------------------------------------------------------------------------
+---- Example of values ----
+('08028',)
+('08193',)
+('80210',)
+('826004',)
+('24044',)
+('36100',)
+('305-333',)
+('24100',)
+('85100',)
+('8010',)
+
+371__i (address, inst), (1 HepNames records with values) (1 distinct values in general)
+intbitset([1055066])
+---------------------------------------------------------------------------------------
+---- Good values ----
+         1 j.linacre1@physics.ox.ac.uk 
+---- Outliers ----
+j.linacre1@physics.ox.ac.uk (1 HepNames records): intbitset([1055066])
+
+371__m (hepnames email), (46305 HepNames records with values) (50020 distinct values in general)
+intbitset([981875, 981876, 981878, 981879, 981880, ..., 1381902, 1381904, 1381966, 1381968, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('abbasg91@yahoo.com',)
+('dayzenberg@physics.montana.edu',)
+('Cristian.barrerah@usach.cl',)
+('stulin@yorku.ca',)
+('canelli@physik.uzh.ch',)
+('l.corpe13@imperial.ac.uk',)
+('thomas.adams@astro.cf.ac.uk',)
+('reverberi@fe.infn.it',)
+('jkn@physics.wm.edu',)
+('rwmurphy@indiana.edu',)
+
+371__n (address, inst), (1 HepNames records with values) (1 distinct values in general)
+intbitset([1024604])
+---------------------------------------------------------------------------------------
+---- Good values ----
+         1 amerle@mpp.mpg.de 
+---- Outliers ----
+amerle@mpp.mpg.de (1 HepNames records): intbitset([1024604])
+
+371__o (address, inst), (2431 HepNames records with values) (2861 distinct values in general)
+intbitset([981906, 981926, 981943, 982032, 982046, ..., 1375694, 1375695, 1377526, 1377884, 1377894])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('rajarshi@bosemain.boseinst.ac.in',)
+('garcia@to.infn.it',)
+('kgt@fizika.ttk.pte.hu',)
+('wscho@muon.kaist.ac.kr',)
+('cho@phys.ufl.edu',)
+('yuezhang@ictp.it',)
+('yzhang@physics.umd.edu',)
+('mzaldarr@cfa.harvard.edu',)
+('jiro@tap.scphys.kyoto-u.ac.jp',)
+('seshadri@physik.uni-bielefeld.de',)
+
+371__r (rank), (88787 HepNames records with values) (69 distinct values in general)
+intbitset([981872, 981874, 981875, 981876, 981877, ..., 1381905, 1381966, 1381967, 1381968, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+     62426  
+     29013 PHD 
+      8356 PD 
+     12074 UG 
+      6420 SENIOR 
+      3133 MAS 
+      2834 JUNIOR 
+      2414 STAFF 
+       828 VISITOR 
+       862 PhD 
+        79 Thesis 
+        48 Diploma 
+        35 MS 
+        22 Bachelor 
+        12 Laurea 
+         6 Master 
+         7 Ph.D. 
+         7 Senior 
+         8 Junior 
+         4 MSc 
+         3 Visitor 
+         2 Postdoc 
+         3 Staff 
+         2 rank 
+         2 Habilitation 
+         2 current 
+         2 phd 
+         2 UG. 
+         2 Master's 
+         2 DIPLOMA 
+         2 visitor 
+         1 MASTER 
+         1 Student 
+         1 Masters 
+         1 MA 
+         1 BS 
+         1 PPHD 
+         1 Internship report 
+         1 thesis 
+         1 Bachelor of Science 
+         1 Diplomarbeit 
+         1 Licenciate 
+         1 Phd 
+         1 Diploma Thesis 
+         1 arsenev@theor.jinr.ru 
+         1 galkin@physik.hu-berlin.de 
+         1 OD 
+         1 LD 
+         1 Scott.Wolin@gmail.com 
+         1 d.strozik-kotlorz@po.opole.pl 
+         1 2004 
+         1 POSTDOC 
+         1 SENOR 
+         1 2010 
+         1 Project Manager 
+         1 2008 
+         1 CERN 
+         1 gago@vaxlip.lip.pt 
+         1 JENIOR 
+         1 <AS 
+         1 PHDphd 
+---- Outliers ----
+Student (1 HepNames records): intbitset([1238344])
+Masters (1 HepNames records): intbitset([1270378])
+MA (1 HepNames records): intbitset([1036996])
+BS (1 HepNames records): intbitset([1238721])
+PPHD (1 HepNames records): intbitset([1048822])
+Internship report (1 HepNames records): intbitset([1269932])
+thesis (1 HepNames records): intbitset([1270046])
+
+371__s (address, inst), (83880 HepNames records with values) (131 distinct values in general)
+intbitset([981874, 981875, 981876, 981877, 981878, ..., 1381900, 1381902, 1381903, 1381905, 1381968])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+     71282  
+      2064 2008 
+      2003 2007 
+      1971 2009 
+      1941 2006 
+      1837 2010 
+      1801 2005 
+      1649 2011 
+      1651 2004 
+      1468 2012 
+      1478 2003 
+      1397 2002 
+      1381 2013 
+      1346 2001 
+      1273 2000 
+      1089 2014 
+      1077 1999 
+      1010 1998 
+       924 1997 
+       883 1996 
+       829 1995 
+       736 1994 
+       722 1993 
+       684 1991 
+       684 1992 
+       600 1989 
+       594 1990 
+       551 1988 
+       476 1987 
+       470 1986 
+       449 1984 
+       438 1985 
+       378 1982 
+       373 1983 
+       349 1981 
+       346 1980 
+       326 1978 
+       295 1979 
+       289 1977 
+       262 1976 
+       258 1975 
+       254 1974 
+       245 1973 
+       239 1972 
+       236 1971 
+       217 2015 
+       223 1970 
+       202 1968 
+       198 1969 
+       186 1967 
+       166 1966 
+       161 1964 
+       157 1965 
+       142 1963 
+       135 1962 
+       116 1959 
+       108 1960 
+        93 1961 
+        70 1957 
+        63 1956 
+        62 1958 
+        62 1955 
+        34 1951 
+        33 1954 
+        27 1952 
+        25 1953 
+        19 1950 
+        19 1949 
+        19 1946 
+        16 1947 
+        15 1948 
+        10 1945 
+         8 1942 
+         5 1943 
+         5 1936 
+         4 1941 
+         4 1932 
+         3 start year 
+         3 1938 
+         3 1937 
+         3 1934 
+         3 1944 
+         2 1940 
+         2 1871 
+         2 10/02/07 
+         2 1930 
+         1 1926 
+         1 1929 
+         1 1886 
+         1 1881 
+         1 1875 
+         1 1885 
+         1 1663 
+         1 1939 
+         1 1773 
+         1 0191 
+         1 1664 
+         1 1007 
+         1 04/01/01 
+         1 2966 
+---- Outliers ----
+1926 (1 HepNames records): intbitset([1050485])
+1929 (1 HepNames records): intbitset([1050485])
+1886 (1 HepNames records): intbitset([989187])
+1881 (1 HepNames records): intbitset([997672])
+1875 (1 HepNames records): intbitset([998345])
+1885 (1 HepNames records): intbitset([1003217])
+1663 (1 HepNames records): intbitset([1005500])
+1939 (1 HepNames records): intbitset([1010336])
+1773 (1 HepNames records): intbitset([1012952])
+0191 (1 HepNames records): intbitset([1016634])
+
+371__t (address, inst), (86611 HepNames records with values) (250 distinct values in general)
+intbitset([981872, 981874, 981875, 981876, 981877, ..., 1381900, 1381902, 1381903, 1381905, 1381968])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+     68429  
+      1987 2008 
+      1924 2009 
+      1925 2010 
+      1900 2007 
+      1901 2005 
+      1838 2006 
+      1781 2011 
+      1634 2012 
+      1643 2004 
+      1595 2001 
+      1547 2003 
+      1524 2000 
+      1474 2013 
+      1437 2002 
+      1230 2014 
+      1285 1999 
+      1255 1998 
+      1180 1996 
+      1174 1997 
+      1117 1995 
+      1046 1993 
+      1017 1994 
+       930 1991 
+       918 1992 
+       878 1990 
+       828 1989 
+       763 1987 
+       746 1988 
+       685 1986 
+       675 1985 
+       632 1984 
+       581 1983 
+       584 1982 
+       570 1981 
+       524 1978 
+       493 2015 
+       501 1980 
+       502 1979 
+       459 1977 
+       413 1976 
+       381 1975 
+       372 1974 
+       351 1972 
+       345 1973 
+       317 1971 
+       299 1970 
+       283 1969 
+       281 1967 
+       269 1968 
+       260 1964 
+       261 1965 
+       256 1966 
+       233 1963 
+       195 1962 
+       170 1960 
+       167 2016 
+       159 1961 
+       130 1959 
+       109 1958 
+        91 1955 
+        87 1956 
+        85 1957 
+        74 2017 
+        73 1951 
+        71 1952 
+        69 1954 
+        64 1953 
+        62 1950 
+        55 1948 
+        45 1949 
+        30 2018 
+        25 1940 
+        24 1947 
+        24 1942 
+        20 1939 
+        20 1946 
+        20 1943 
+        18 1941 
+        17 1936 
+        16 1938 
+        15 1944 
+        14 1945 
+        14 1935 
+        11 2019 
+        12 1937 
+        11 1932 
+         9 1929 
+        10 1928 
+         9 1934 
+         8 2020 
+         8 1921 
+         8 1927 
+         7 1926 
+         7 1931 
+         7 1930 
+         7 1922 
+         7 1920 
+         6 1925 
+         6 1923 
+---- Outliers ----
+2024 (1 HepNames records): intbitset([991183])
+2021 (1 HepNames records): intbitset([1002203])
+1896 (1 HepNames records): intbitset([1024340])
+2022 (1 HepNames records): intbitset([1033256])
+1859 (1 HepNames records): intbitset([1033332])
+1842 (1 HepNames records): intbitset([1033338])
+1809 (1 HepNames records): intbitset([1035568])
+1799 (1 HepNames records): intbitset([1035599])
+1812 (1 HepNames records): intbitset([1035602])
+1853 (1 HepNames records): intbitset([1035603])
+
+371__u (address, inst), (33 HepNames records with values) (34 distinct values in general)
+intbitset([1269874, 1269885, 1269891, 1270003, 1272099, ..., 1274758, 1274759, 1274769, 1274770, 1274785])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+         1 Edinburgh U. 
+         1 Beijing, Inst. High Energy Phys. 
+         1 Tsinghua U., Beijing 
+         1 Taiwan, Natl. Tsing Hua U. 
+         2 Concepcion U. 
+         2 Towson U. 
+         1 Hebei U. 
+         1 Kaman Sciences, Alexandria 
+         1 Bucknell U. 
+         1 Yerevan State U. 
+         1 Yerevan Phys. Inst. 
+         1 Silesia U. 
+         1 Warsaw U. 
+         1 Shijiazhuang Railway Coll. 
+         1 Academy of Armored Forces Engineering of PLA, Beijing 
+         1 Louvain U., CP3 
+         1 Munich, Tech. U. 
+         1 Anhui U. 
+         1 Bucharest, IFIN-HH 
+         1 Tel Aviv U. 
+         1 Bielefeld U. 
+         1 IIT, Roorkee 
+         1 Moscow, ITEP 
+         1 Shandong U. 
+         1 Jyvaskyla U. 
+         1 Tokyo Inst. Tech. 
+         1 Hua-Zhong Normal U. 
+         1 Rovaniemi Polytech. 
+         1 Birmingham U. 
+         1 Gent U. 
+         1 Hochschule, Eng. Econ., Karlsruhe 
+---- Outliers ----
+Hebei U. (1 HepNames records): intbitset([1274785])
+Kaman Sciences, Alexandria (1 HepNames records): intbitset([1274770])
+Bucknell U. (1 HepNames records): intbitset([1274769])
+Yerevan State U. (1 HepNames records): intbitset([1274759])
+Yerevan Phys. Inst. (1 HepNames records): intbitset([1274758])
+Silesia U. (1 HepNames records): intbitset([1274756])
+Warsaw U. (1 HepNames records): intbitset([1274755])
+
+371__z (hepnames email status), (101275 HepNames records with values) (15 distinct values in general)
+intbitset([981872, 981873, 981874, 981875, 981876, ..., 1381901, 1381902, 1381904, 1381966, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+     86826 Current 
+     22076  
+      9394 current 
+         6 CURRENT 
+         3 Currenet 
+         1 harmark@nordita.org 
+         1 Curent 
+         1 current$rPHD 
+         1 jim.drachenberg@valpo.edu 
+         1 currrent 
+         1 Currrent 
+         1 2014 
+         1 Curremt 
+         1 Currenrt 
+---- Outliers ----
+harmark@nordita.org (1 HepNames records): intbitset([1006676])
+Curent (1 HepNames records): intbitset([1001770])
+current$rPHD (1 HepNames records): intbitset([1335204])
+jim.drachenberg@valpo.edu (1 HepNames records): intbitset([1057786])
+currrent (1 HepNames records): intbitset([1040138])
+Currrent (1 HepNames records): intbitset([1274237])
+2014 (1 HepNames records): intbitset([1062861])
+Curremt (1 HepNames records): intbitset([1074113])
+Currenrt (1 HepNames records): intbitset([1377289])
+Currenet (3 HepNames records): intbitset([1078488, 1270117, 1347342])
+CURRENT (6 HepNames records): intbitset([992722, 996770, 1029097, 1067747, 1071691, 1308691])
+current (9394 HepNames records): intbitset([981926, 981928, 981973, 981980, 982168, ..., 1381901, 1381902, 1381904, 1381966, 1381970])
+ (22076 HepNames records): intbitset([981875, 981878, 981879, 981881, 981882, ..., 1233804, 1233806, 1380572, 1380839, 1380842])
+Current (86826 HepNames records): intbitset([981872, 981873, 981874, 981875, 981876, ..., 1380841, 1380842, 1380843, 1381475, 1381714])
+
+400__a (author name variants), (8521 HepNames records with values) (10429 distinct values in general)
+intbitset([981879, 981891, 981893, 981912, 981939, ..., 1381904, 1381905, 1381966, 1381967, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('Zhang, Zhi-qing',)
+('Li, Zhaoyu',)
+('He, Feng',)
+('Zheng, Yang-heng',)
+('Zhokin, Alexander S.',)
+('Zhokine, Alexander S.',)
+('Zhu, ChuanJie',)
+('Zhu, Guo-huai',)
+('Zhu, Renyuan',)
+('Zhao, Pingping',)
+
+400__o (author name variants), (1 HepNames records with values) (1 distinct values in general)
+intbitset([1054557])
+----------------------------------------------------------------------------------------------
+---- Good values ----
+         1 ken.clark@case.edu 
+---- Outliers ----
+ken.clark@case.edu (1 HepNames records): intbitset([1054557])
+
+541__a (), (16 HepNames records with values) (231 distinct values in general)
+intbitset([1046284, 1069270, 1070133, 1205346, 1283486, ..., 1380808, 1380839, 1380841, 1380842, 1380843])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+        16 inspire:uid:50204 
+---- Outliers ----
+
+541__b (), (16 HepNames records with values) (110 distinct values in general)
+intbitset([1046284, 1069270, 1070133, 1205346, 1283486, ..., 1380808, 1380839, 1380841, 1380842, 1380843])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+        16 mgmiller@fnal.gov 
+---- Outliers ----
+
+541__c (), (16 HepNames records with values) (3 distinct values in general)
+intbitset([1046284, 1069270, 1070133, 1205346, 1283486, ..., 1380808, 1380839, 1380841, 1380842, 1380843])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+        16 submission 
+---- Outliers ----
+submission (16 HepNames records): intbitset([1046284, 1069270, 1070133, 1205346, 1283486, ..., 1380808, 1380839, 1380841, 1380842, 1380843])
+
+541__d (), (16 HepNames records with values) (4 distinct values in general)
+intbitset([1046284, 1069270, 1070133, 1205346, 1283486, ..., 1380808, 1380839, 1380841, 1380842, 1380843])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+         6 2015-06-23 
+         7 2015-07-01 
+         2 2015-06-25 
+         1 2015-06-24 
+---- Outliers ----
+2015-06-24 (1 HepNames records): intbitset([1377718])
+2015-06-25 (2 HepNames records): intbitset([1377894, 1377895])
+2015-06-23 (6 HepNames records): intbitset([1046284, 1069270, 1070133, 1205346, 1283486, 1377715])
+2015-07-01 (7 HepNames records): intbitset([1380572, 1380807, 1380808, 1380839, 1380841, 1380842, 1380843])
+
+541__e (), (16 HepNames records with values) (785 distinct values in general)
+intbitset([1046284, 1069270, 1070133, 1205346, 1283486, ..., 1380808, 1380839, 1380841, 1380842, 1380843])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+---- Outliers ----
+
+595__9 (internal note source), (130 HepNames records with values) (5 distinct values in general)
+intbitset([982295, 983343, 983593, 983683, 983928, ..., 1211412, 1218058, 1219720, 1224575, 1228553])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+       130 SPIRES-HIDDEN 
+---- Outliers ----
+SPIRES-HIDDEN (130 HepNames records): intbitset([982295, 983343, 983593, 983683, 983928, ..., 1211412, 1218058, 1219720, 1224575, 1228553])
+
+595__a (internal note), (217 HepNames records with values) (456965 distinct values in general)
+intbitset([982141, 982295, 983266, 983343, 983593, ..., 1345320, 1347215, 1367255, 1373456, 1380572])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('(second edition:1-114,1971)',)
+('From author to hoc (Official use only)',)
+('References from user',)
+('Title changed from ALLCAPS',)
+('DOI from CrossRef',)
+('Reported to OSTI for FY 2004',)
+('Reported to OSTI 9/24/04',)
+('doi from CrossRef',)
+('Title standardized on 6/28/2007',)
+('References from APS OAI Backfile Harvest',)
+
+595__m (hepnames contact email), (12781 HepNames records with values) (12856 distinct values in general)
+intbitset([981873, 981875, 981878, 981881, 981887, ..., 1381474, 1381709, 1381712, 1381716, 1381726])
+--------------------------------------------------------------------------------------------------------
+---- Example of values ----
+('hugo.marrochio@gmail.com',)
+('mlherbert22@gmail.com',)
+('eahuerta@syr.edu',)
+('ddamiani@ucsc.edu',)
+('andres.anabalon@uai.cl',)
+('sami.kama@cern.ch',)
+('sbelomestnykh@bnl.gov.',)
+('graham.jones@cern.ch',)
+('jpedraza@physics.utexas.edu',)
+('fabio.zwirner@pd.infn.it',)
+
+595__o (hepnames old email), (21687 HepNames records with values) (22622 distinct values in general)
+intbitset([981873, 981875, 981876, 981878, 981879, ..., 1356907, 1365605, 1366112, 1377539, 1381713])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('mariam.tortola@desy.de',)
+('ksemenov@ulg.ac.be',)
+('zwiebach@lns.mit.edu',)
+('sean.nowling@helsinki.fi',)
+('xiong@purdue.edu',)
+('kirill.semenov@cpht.polytechnique.fr',)
+('dgwalker@berkeley.edu',)
+('a-masuda@suou.waseda.jp',)
+('hoc@slac.stanford.edu',)
+('skim@fnal.gov',)
+
+650172 (subject authority), (78541 HepNames records with values) (12 distinct values in general)
+intbitset([981873, 981875, 981878, 981879, 981880, ..., 1380842, 1380843, 1380859, 1380860, 1380861])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+     78445 INSPIRE 
+         1 arXiv 
+       123 demo 
+         9 HEP-EX 
+---- Outliers ----
+HEP-EX (9 HepNames records): intbitset([1342140, 1375455, 1375456, 1375457, 1375458, 1380404, 1380859, 1380860, 1380861])
+demo (123 HepNames records): intbitset([982595, 983581, 984368, 984622, 986161, ..., 1352744, 1352745, 1353345, 1362429, 1375889])
+arXiv (1 HepNames records): intbitset([1020048])
+INSPIRE (78445 HepNames records): intbitset([981873, 981875, 981878, 981879, 981880, ..., 1380808, 1380839, 1380841, 1380842, 1380843])
+
+650179 (), (1 HepNames records with values) (6 distinct values in general)
+intbitset([984622])
+--------------------------------------------------------------------------
+---- Good values ----
+         1 DEMO 
+---- Outliers ----
+DEMO (1 HepNames records): intbitset([984622])
+
+65017a (subject), (80837 HepNames records with values) (575 distinct values in general)
+intbitset([981873, 981875, 981878, 981879, 981880, ..., 1381904, 1381905, 1381966, 1381967, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+        44 Astrophysics 
+         1 Phenomenology-HEP 
+         2 Gravitation and Cosmology 
+       132 General Physics 
+         3 Math and Math Physics 
+         2 Lattice 
+     20282 ASTRO-PH 
+      1201 hep-ph 
+     19468 HEP-EX 
+       635 hep-th 
+       828 gr-qc 
+       158 astro-ph.CO 
+        10 hep-ex 
+      8803 HEP-PH 
+      8586 HEP-TH 
+       444 astro-ph.HE 
+        61 Computing 
+       274 nucl-th 
+      5421 GR-QC 
+        16 Other 
+        87 math-ph 
+      4869 NUCL-EX 
+      4673 ACC-PHYS 
+       302 nucl-ex 
+        18 astro-ph.GA 
+       436 astro-ph 
+        37 astro-ph.SR 
+       336 physics.ins-det 
+       193 hep-lat 
+      2919 NUCL-TH 
+        44 quant-ph 
+      2518 E 
+      2415 INSTR 
+        29 astro-ph.IM 
+      1870 PHYSICS 
+        28 cond-mat.str-el 
+      1701 COND-MAT 
+      1625 MATH-PH 
+        68 physics.acc-ph 
+         2 physics 
+      1273 QUANT-PH 
+        20 cond-mat.stat-mech 
+         2 astro-ph.EP 
+        63 Nuclear Physics 
+      1081 HEP-LAT 
+         8 cond-mat.mes-hall 
+       985 MATH 
+        23 math.DG 
+       119 Nuclear Structure 
+       826 T 
+       128 math 
+        19 cond-mat.quant-gas 
+        14 math.AG 
+         2 cs 
+         7 physics.data-an 
+         7 math.QA 
+        25 physics.atom-ph 
+         9 cond-mat.supr-con 
+       529 OTHER 
+         5 physics.optics 
+        86 Nuclear Reactions 
+        18 physics.gen-ph 
+       484 COMP 
+         3 physics.plasm-ph 
+         5 nlin.SI 
+        12 math.RT 
+        14 math.AP 
+       371 ATOM-PH 
+         1 xx 
+       294 MED-PHYS 
+         8 physics.comp-ph 
+         3 physics.hist-ph 
+         6 physics.space-ph 
+         4 math.GT 
+         3 Electronic structure and strongly correlated systems 
+         5 math.SG 
+         1 cond-mat.other 
+       192 PLASMA-PHYS 
+       190 NLIN 
+         6 math.CO 
+---- Outliers ----
+
+65017e (), (2 HepNames records with values) (5 distinct values in general)
+intbitset([987336, 1035698])
+--------------------------------------------------------------------------
+---- Good values ----
+         1 HEP-EX 
+         1 NUCL-EX 
+---- Outliers ----
+HEP-EX (1 HepNames records): intbitset([1035698])
+NUCL-EX (1 HepNames records): intbitset([987336])
+
+65017s (), (1 HepNames records with values) (1 distinct values in general)
+intbitset([1056588])
+--------------------------------------------------------------------------
+---- Good values ----
+         1 HEP-PH 
+---- Outliers ----
+HEP-PH (1 HepNames records): intbitset([1056588])
+
+667__a (nonpublic note), (800 HepNames records with values) (1902 distinct values in general)
+intbitset([981906, 981937, 981938, 982098, 982206, ..., 1356914, 1360008, 1369260, 1377135, 1377141])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('corrected per roep@physik.rwth-aachen.de, lxa, 5/98 the Inst.Theor. Phys. is part of above.',)
+('Includes ISA, Inst. for Storage Ring Facilities',)
+('Laboratory Deputy Director',)
+('Formerly Adelphi College',)
+('Includes HEP Exp & Theory--See Argonne, Phys. for Physics Div.',)
+('jerene@physics.arizona.edu',)
+('Asia Univ. Jr. College  at same loation',)
+('Also listed with Zip of 370148',)
+('Former ICN = Negev U.',)
+('(B) in MacCallum',)
+
+670__a (hepnames source), (83320 HepNames records with values) (58 distinct values in general)
+intbitset([981873, 981875, 981876, 981878, 981880, ..., 1336659, 1336666, 1361964, 1366349, 1380949])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+     50373 eprint 
+     16435 webform 
+      7464 Rachel.Lumpkin@durham.ac.uk(96) 
+      2734 Fermilab 
+      2369 C09-05-04 
+      1683 KYOTOU 
+       737 PDG1998 
+       724 fermilab 
+       596 PDG1996 
+       622 MacCallum 
+       593 cern-lhc-alice 
+       332 PDG1995 
+       351 wakate@ftp.yukawa.kyoto-u.ac.jp(2001) 
+       311 Godang 
+       213 PDG 
+       156 cern-lhc-atlas 
+       153 jacow 
+       123 DESY 
+        96 C11-06-09 
+        51 ihep 
+        39 FERMILAB 
+        37 ALCPG07 list 
+        22 C10-08-16 
+        22 conf 
+        19 SLAC 
+        10 liurr 
+         5 Don Summers 
+         4 C05-08-14.1 
+         4 godang 
+         4 slac 
+         3 webfrom 
+         2 email 
+         2 EPRINT 
+         2 webpage 
+         2 M.R.Whalley@durham.ac.uk(2001) 
+         2 Shantanu Desai 
+         2 i.bertram@lancaster.ac.uk 
+         2 CERN-LHC-ATLAS 
+         2 source 
+         1 mccallum 
+         1 WEBFORM 
+         1 M.R.Whalley@durham.ac.uk 
+         1 DEPARTED 
+         1 phonecall 
+         1 webform AFFKEY = 011000 
+         1 webform, does not want email and institution info listed 
+         1 Benjamin Svetitsky 
+         1 sul@slac.stanford.edu 
+         1 2013-09-19 
+         1 CERN-LHC-ALICE 
+         1 2014-03-24 
+         1 2014-03-31 
+         1 2014-07-01 
+         1 2014-09-04 
+         1 IHEP 
+---- Outliers ----
+mccallum (1 HepNames records): intbitset([986404])
+WEBFORM (1 HepNames records): intbitset([992490])
+M.R.Whalley@durham.ac.uk (1 HepNames records): intbitset([1009640])
+DEPARTED (1 HepNames records): intbitset([1009829])
+phonecall (1 HepNames records): intbitset([1012888])
+webform AFFKEY = 011000 (1 HepNames records): intbitset([1015120])
+webform, does not want email and institution info listed (1 HepNames records): intbitset([1032151])
+Benjamin Svetitsky (1 HepNames records): intbitset([1033347])
+sul@slac.stanford.edu (1 HepNames records): intbitset([1049483])
+
+670__d (hepnames date verified), (19042 HepNames records with values) (1633 distinct values in general)
+intbitset([981875, 981878, 981881, 981884, 981887, ..., 1373786, 1374967, 1377526, 1377715, 1377884])
+-------------------------------------------------------------------------------------------------------
+---- Example of values ----
+('today',)
+('2013-08-28',)
+('08-29-13',)
+('2013-05-06',)
+('2013-04-03',)
+('2012-08-21',)
+('2011-11-18',)
+('2012-12-05',)
+('2011-07-06',)
+('2013-05-13',)
+
+670__e (hepnames source), (1 HepNames records with values) (1 distinct values in general)
+intbitset([1064912])
+-----------------------------------------------------------------------------------------
+---- Good values ----
+         1 2013-10-03 
+---- Outliers ----
+2013-10-03 (1 HepNames records): intbitset([1064912])
+
+670__g (hepnames source), (1 HepNames records with values) (20 distinct values in general)
+intbitset([1064912])
+------------------------------------------------------------------------------------------
+---- Good values ----
+         1 2013-01-08 
+---- Outliers ----
+2013-01-08 (1 HepNames records): intbitset([1064912])
+
+678__a (hepnames award), (179 HepNames records with values) (160 distinct values in general)
+intbitset([982493, 982820, 983435, 983443, 983566, ..., 1190035, 1190036, 1304231, 1336558, 1352756])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+         4 Nobel Prize Physics 1977 
+         3 Nobel Prize Physics 2011 
+         3 Shaw Prize 2006 
+         3 Nobel Prize Physics 2008 
+         3 Nobel Prize Physics 2005 
+         3 Nobel Prize Physics 2004 
+         3 Sakurai Prize 1986 
+         3 Nobel Prize Physics 2003 
+         3 Nobel Prize Physics 2002 
+         3 Nobel Prize Physics 2001 
+         3 Nobel Prize Physics 1990 
+         3 Nobel Prize Physics 1988 
+         3 Nobel Prize Physics 1979 
+         3 Nobel Prize Physics 1965 
+         3 Nobel Prize Physics 1963 
+         3 Kavli Prize 2014 
+         2 award 
+         3 Alvin Tollestrup Award 2006 
+         2 Nobel Prize Physics 2013 
+         2 Nobel Prize Physics 2012 
+         2 EPS HEPP Prize 2007 
+         2 Sakurai Prize 1985 
+         2 Lorentz Medal 1998 
+         2 Nobel Prize Physics 1999 
+         2 Nobel Prize Physics 1997 
+         2 Nobel Prize Physics 1996 
+         2 Nobel Prize Physics 1995 
+         2 Nobel Prize Physics 1993 
+         2 Nobel Prize Physics 1989 
+         2 Nobel Prize Physics 1984 
+         2 Nobel Prize Physics 1983 
+         2 Nobel Prize Physics 1980 
+         2 Nobel Prize Physics 1978 
+         2 Nobel Prize Physics 1976 
+         2 Nobel Prize Physics 1975 
+         2 Nobel Prize Physics 1972 
+         2 Nobel Prize Physics 1961 
+         2 Nobel Prize Physics 1959 
+         2 Nobel Prize Physics 1957 
+         2 Nobel Prize Physics 1955 
+         2 Nobel Prize Physics 1954 
+         2 Nobel Prize Physics 1933 
+         2 Nobel Prize Physics 1915 
+         2 Nobel Prize Chemistry 1951 
+         2 Enrico Fermi Award 2014 
+         1 IEEE Nuclear and Plasma Sciences Society Particle Accelerator Science and Technology Doctoral Student Award 2013 
+         1 MacArthur Fellowship 2013 
+         1 Dirac Medal 1997 
+         1 Nobel Prize Physiology 1922 
+         1 Gruber Cosmology Prize 2007 
+         1 Sakurai Prize 1994 
+         1 Dirac Medal 1986 
+         1 Nobel Prize Physics 2006 
+         1 Heineman Astrophysics Prize 1993 
+         1 Heineman Prize 1996 
+         1 Gottfried Wilhelm Leibniz Prize 1989 
+         1 Dirac Medal 1994 
+         1 Dirac Medal 1988 
+         1 Heineman Astrophysics Prize 1981 
+         1 Dirac Medal 1996 
+         1 Nobel Prize Physics 1998 
+         1 Nobel Prize Physics 1994 
+         1 Heineman Astrophysics Prize 1980 
+         1 Nobel Prize Physics 1992 
+         1 Nobel Prize Physics 1982 
+         1 Nobel Prize Physics 1981 
+         1 EPS High Energy/Particle Physics Prize 2011 
+         1 Nobel Prize Physics 1969 
+         1 Nobel Prize Physics 1968 
+         1 Nobel Prize Physics 1967 
+         1 Nobel Prize Physics 1966 
+         1 Nobel Prize Physics 1964 
+         1 Nobel Prize Physics 1962 
+         1 Nobel Prize Physics 1960 
+         1 Nobel Prize Physics 1958 
+         1 Nobel Prize Physics 1956 
+         1 Nobel Prize Physics 1952 
+         1 Nobel Prize Physics 1949 
+         1 Nobel Prize Physics 1948 
+         1 Nobel Prize Physics 1946 
+         1 Nobel Prize Physics 1945 
+         1 Nobel Prize Physics 1944 
+         1 Nobel Prize Physics 1939 
+         1 Nobel Prize Physics 1938 
+         1 Nobel Prize Physics 1937 
+         1 Nobel Prize Physics 1936 
+         1 Nobel Prize Physics 1935 
+         1 Nobel Prize Physics 1932 
+         1 Nobel Prize Physics 1930 
+         1 Nobel Prize Physics 1929 
+         1 Nobel Prize Physics 1928 
+         1 Nobel Prize Physics 1927 
+         1 Nobel Prize Physics 1926. 
+         1 Nobel Prize Physics 1925 
+         1 Nobel Prize Physics 1923 
+         1 Nobel Prize Physics 1922 
+         1 Nobel Prize Physics 1921 
+         1 Nobel Prize Physics 1918 
+         1 Nobel Prize Physics 1914 
+         1 Max Planck Medal 1932 
+---- Outliers ----
+IEEE Nuclear and Plasma Sciences Society Particle Accelerator Science and Technology Doctoral Student Award 2013 (1 HepNames records): intbitset([1075570])
+MacArthur Fellowship 2013 (1 HepNames records): intbitset([1007093])
+Dirac Medal 1997 (1 HepNames records): intbitset([1019617])
+Nobel Prize Physiology 1922 (1 HepNames records): intbitset([1048279])
+Gruber Cosmology Prize 2007 (1 HepNames records): intbitset([989842])
+Sakurai Prize 1994 (1 HepNames records): intbitset([996114])
+Dirac Medal 1986 (1 HepNames records): intbitset([996114])
+Nobel Prize Physics 2006 (1 HepNames records): intbitset([1033455])
+Heineman Astrophysics Prize 1993 (1 HepNames records): intbitset([1033455])
+Heineman Prize 1996 (1 HepNames records): intbitset([1008226])
+
+680__i (public note), (49 HepNames records with values) (102 distinct values in general)
+intbitset([983489, 984106, 986404, 987063, 989048, ..., 1301159, 1318412, 1325247, 1338119, 1338627])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+         7 Laboratory Director 
+         4 public note 
+         1 Do not confuse with Michael Duerr, Heidelberg, Max Planck Inst. 
+         1 Do not confuse with Heng-Yu Chen, Natl. Taiwan U. 
+         1 Do not confuse with Iannis Kominis, Crete U. 
+         1 NOTE: Do not confuse with P.J. Veitch, Adelaide U. 
+         1 NOTE: Formerly Elena Leon Florian 
+         1 Do not confuse with Peter M. Kalmus, Caltech 
+         1 Do not confuse with Peter I.P. Kalmus, Queen Mary U. 
+         1 NOTE: Formerly Barannikova, Olga Y. 
+         1 NOTE: Formerly Jacqueline S. Gonzales 
+         1 NOTE: Do not confuse with Elizabeth Kennedy, UC Riverside 
+         1 NOTE: Do not confuse with Elizabeth Sexton-Kennedy, Fermilab 
+         1 NOTE: Do not confuse with Michael Bender, Munich U. 
+         1 NOTE: Do not confuse with Michael Bender, CENBG, Gradignan 
+         1 Formerly Kathryn Kelly Miknaitis 
+         1 John Doyle's research centers on trapping neutral particles, study of fundamental collisional processes in atoms and molecules, and lab and underground-observatory-based searches for physics beyond the Standard Model. He is also currently working to realize new techniques to trap molecules and atoms and produce intense beams of the same. 
+         1 TRIUMF Director 2014- 
+         1 Do not confuse with Matthias Schröder, CERN 
+         1 Do not confuse with Matthias Schröder, DESY 
+         1 Formerly  Claudio Teitelboim. 
+         1 Do not confuse with Asier Eiguren 
+         1 Do not confuse with Asier Lopez-Eiguren 
+         1 Fomerly Jennifer Sibille 
+         1 Now Jenny C. Clarke 
+         1 Formerly Marc Alan Sher 
+         1 Do not confuse with Abhishek Chowdhury, Harish-Chandra Res. Inst. 
+         1 Do not confuse with Abhishek Chowdhury, Saha Inst. 
+         1 NOTE: Do not confuse with Carlo Pagani, SISSA, Trieste 
+         1 NOTE: Do not confuse with Carlo Pagani, Milan U. 
+         1 Laboratory Deputy Director 
+         1 NOTE: Do not confuse with Mark Edward Mattson, Wayne State U. 
+         1 NOTE: Do not confuse with Mark Edward Mattson, James Madison U. 
+         1 Do not confuse with Marc Weber, Karlsruhe, Inst. Technol. 
+         1 Do not confuse with Marc Weber, Max Planck Inst., Heidelberg 
+         1 Do not confuse with Sourav Sarkar, IISER, Pune 
+         1 Do not confuse with Sourav Sarkar, Calcutta, VECC 
+         1 Do not confuse with Jungmin Kim, Seoul Natl. U. 
+         1 Formerly Konstadinos Siampos 
+         1 Formerly Christian Schmidt 
+---- Outliers ----
+
+693__3 (accelerator), (1 HepNames records with values) (2 distinct values in general)
+intbitset([1063583])
+-------------------------------------------------------------------------------------
+---- Good values ----
+         1 AGATA 
+---- Outliers ----
+AGATA (1 HepNames records): intbitset([1063583])
+
+693__a (accelerator), (32 HepNames records with values) (114 distinct values in general)
+intbitset([982276, 986480, 988507, 989819, 994967, ..., 1338292, 1375862, 1380859, 1380860, 1380861])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+         1 CERN-HL-LHC 
+         1 CERN-LHC-CMS 
+         1 BNL-RHIC-STAR 
+         3 LAHHSO 
+         1 CERN-LHC-LHCB 
+         2 BEPC-BES-III 
+         2 LBNE 
+         1 AMS 
+         2 DAYA-BAY 
+         2 TIBET-ASG 
+         1 BEPC-BES 
+         1 MULAN 
+         1 SLAC-PEP2-BABAR 
+         1 POLARBEAR 
+         1 LIGO 
+         1 BOOTES 
+         1 KamLAND 
+         1 KamLAND-Zen 
+         1 CRYSTAL BALL/TAPS 
+         1 FNAL-E-0791 
+         1 WASA-COSY 
+         1 LISA 
+         1 VIRGO 
+         1 FNAL-E-0944 
+         1 ANKE 
+         1 CERN-LEP-OPAL 
+---- Outliers ----
+
+693__d (hepnames end date), (167 HepNames records with values) (32 distinct values in general)
+intbitset([982276, 990299, 998923, 999547, 1000363, ..., 1358590, 1359762, 1360241, 1360242, 1381475])
+------------------------------------------------------------------------------------------------------
+---- Good values ----
+        26 2013 
+        23 2012 
+        20 2011 
+        14 2009 
+        13 2014 
+        12 2010 
+        11 2015 
+         7 2016 
+         6 end date 
+         6 2007 
+         6 2008 
+         5 2005 
+         3 2003 
+         3 2001 
+         3 1988 
+         2 1996 
+         2 2000 
+         2 1998 
+         2 2002 
+         2 2006 
+         2 2017 
+         2 2019 
+         1 1979 
+         1 1997 
+         1 1982 
+         1 1994 
+         1 2015-7-1 
+         1 1992 
+         1 2018 
+         1 20115 
+---- Outliers ----
+1979 (1 HepNames records): intbitset([1029268])
+1997 (1 HepNames records): intbitset([1029268])
+1982 (1 HepNames records): intbitset([1006379])
+1994 (1 HepNames records): intbitset([1013857])
+2015-7-1 (1 HepNames records): intbitset([1325247])
+1992 (1 HepNames records): intbitset([998923])
+2018 (1 HepNames records): intbitset([1340510])
+20115 (1 HepNames records): intbitset([1074298])
+2000 (2 HepNames records): intbitset([1029242, 1035202])
+
+693__e (experiment), (25366 HepNames records with values) (4251 distinct values in general)
+intbitset([981873, 981875, 981881, 981891, 981893, ..., 1381902, 1381904, 1381966, 1381967, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('SLAC-E-007',)
+('BNL-E-0530',)
+('Superseded by 67202',)
+('FNAL-E-0141',)
+('BNL-E-0500',)
+('Robert Snihur',)
+('Michael B. Green',)
+('SLAC-BC-008',)
+('SLAC-BC-020',)
+('SLAC-BC-028',)
+
+693__i (accelerator), (1 HepNames records with values) (1 distinct values in general)
+intbitset([1046260])
+-------------------------------------------------------------------------------------
+---- Good values ----
+         1 INSPIRE-00123779 
+---- Outliers ----
+INSPIRE-00123779 (1 HepNames records): intbitset([1046260])
+
+693__r (accelerator), (1 HepNames records with values) (1 distinct values in general)
+intbitset([1074605])
+-------------------------------------------------------------------------------------
+---- Good values ----
+         1 2014 
+---- Outliers ----
+2014 (1 HepNames records): intbitset([1074605])
+
+693__s (hepnames start date), (754 HepNames records with values) (75 distinct values in general)
+intbitset([981943, 982050, 982057, 982164, 982220, ..., 1381901, 1381902, 1381904, 1381966, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+       129 2014 
+       107 2006 
+       100 2012 
+        90 2004 
+        66 2013 
+        55 2008 
+        54 2009 
+        44 2011 
+        37 2010 
+        21 2007 
+        21 2015 
+         8 2001 
+         7 2005 
+         8 2000 
+         7 2011-09-01 
+         5 1999 
+         4 2003 
+         3 1997 
+         4 2013-01-01 
+         4 2012-09-01 
+         4 2013-08-01 
+         4 2006-01-01 
+         3 2002 
+         3 1996 
+         3 1986 
+         3 1980 
+         3 1984 
+         3 1990 
+         3 2013-04-01 
+         2 start date 
+         2 1989 
+         2 1983 
+         2 1991 
+         2 1992 
+         2 2013-09-01 
+         2 1994 
+         2 2011-12-06 
+         2 2010-09-01 
+         2 2012-04-01 
+         2 2009-07-01 
+         2 2010-06-06 
+         2 2013-06-01 
+         1 1995 
+         1 1998 
+         1 1978 
+         1 1993 
+         1 2010-05-01 
+         1 2013-05-06 
+         1 2009-10-01 
+         1 2010-11-01 
+         1 2009-08-01 
+         1 2009-09-01 
+         1 2012-10-18 
+         1 2012-01-01 
+         1 2011-04-01 
+         1 2011-10-01 
+         1 2009-01-01 
+         1 2011-08-31 
+         1 2008-06-30 
+         1 2011-09-06 
+         1 2012-06-01 
+         1 2012-07-01 
+         1 2013-02-01 
+         1 2013-05-01 
+         1 2011-06-30 
+         1 201102-28 
+         1 2007-01-01 
+         1 2014-07-01 
+         1 2011-0701 
+         1 2014-01-03 
+         1 start date2014 
+         1 20111 
+         1 start date2009 
+---- Outliers ----
+1995 (1 HepNames records): intbitset([1066924])
+1998 (1 HepNames records): intbitset([1035202])
+1978 (1 HepNames records): intbitset([1029268])
+1993 (1 HepNames records): intbitset([1006379])
+2010-05-01 (1 HepNames records): intbitset([1256718])
+2013-05-06 (1 HepNames records): intbitset([1325219])
+2009-10-01 (1 HepNames records): intbitset([1325223])
+2010-11-01 (1 HepNames records): intbitset([1325225])
+2009-08-01 (1 HepNames records): intbitset([1325227])
+2009-09-01 (1 HepNames records): intbitset([1325228])
+
+693__t (accelerator), (13 HepNames records with values) (13 distinct values in general)
+intbitset([1000363, 1004340, 1020838, 1024873, 1028427, ..., 1029215, 1029216, 1029230, 1029257, 1029283])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+         2 2007 
+         2 1997 
+         1 2006 
+         1 1990 
+         1 2009 
+         1 2004 
+         1 2002 
+         1 2010 
+         1 2003 
+         1 2013 
+         1 1982 
+         1 1984 
+         1 2005 
+---- Outliers ----
+1990 (1 HepNames records): intbitset([1029199])
+2009 (1 HepNames records): intbitset([1029257])
+2004 (1 HepNames records): intbitset([1029097])
+2002 (1 HepNames records): intbitset([1029215])
+2010 (1 HepNames records): intbitset([1024873])
+2003 (1 HepNames records): intbitset([1029230])
+2013 (1 HepNames records): intbitset([1029195])
+1982 (1 HepNames records): intbitset([1029195])
+1984 (1 HepNames records): intbitset([1004340])
+2005 (1 HepNames records): intbitset([1028427])
+2007 (2 HepNames records): intbitset([1000363, 1029283])
+1997 (2 HepNames records): intbitset([1029216, 1029230])
+2006 (1 HepNames records): intbitset([1020838])
+
+693__z (accelerator), (1730 HepNames records with values) (3 distinct values in general)
+intbitset([981943, 982050, 982164, 982220, 982222, ..., 1373120, 1373121, 1374176, 1377302, 1381470])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+      1117 current 
+       642 Current 
+---- Outliers ----
+Current (642 HepNames records): intbitset([981943, 982164, 982220, 982222, 982514, ..., 1361951, 1361956, 1361962, 1361964, 1361967])
+current (1117 HepNames records): intbitset([982050, 982164, 982242, 982276, 982514, ..., 1373120, 1373121, 1374176, 1377302, 1381470])
+
+701__a (thesis supervisor), (21250 HepNames records with values) (15209 distinct values in general)
+intbitset([981875, 981878, 981879, 981880, 981881, ..., 1380807, 1380808, 1380839, 1381900, 1381905])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('Brun, Pierre',)
+('Pavel, K.',)
+('Lu, Xiu Chun',)
+('Osterhoff, Jens',)
+('Lutz, Pierre',)
+('Loll, R',)
+('Doering, Andreas',)
+('Fabozzi, Francesco',)
+('Sgobba, Stefano',)
+('Theisen, Werner',)
+
+701__g (thesis degree), (1407 HepNames records with values) (12 distinct values in general)
+intbitset([982057, 982072, 982214, 982217, 982514, ..., 1380572, 1380807, 1380808, 1380839, 1381905])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+       949 PhD 
+       348 PHD 
+        40 MAS 
+        31 Master 
+        25 MASTER 
+        19 master 
+         6 UG 
+         1 degree (PhD, master, diploma...) 
+         1 MAs 
+         1 INSPIRE-00325208 
+         1 Mas 
+         1 Bachelor 
+---- Outliers ----
+MAs (1 HepNames records): intbitset([1029222])
+INSPIRE-00325208 (1 HepNames records): intbitset([1366349])
+Mas (1 HepNames records): intbitset([1021394])
+Bachelor (1 HepNames records): intbitset([1376238])
+degree (PhD, master, diploma...) (1 HepNames records): intbitset([1325247])
+UG (6 HepNames records): intbitset([1042600, 1061771, 1251351, 1326863, 1326864, 1373645])
+master (19 HepNames records): intbitset([1056069, 1066441, 1066798, 1066997, 1067322, ..., 1352756, 1353498, 1353580, 1353581, 1355160])
+MASTER (25 HepNames records): intbitset([982057, 1019737, 1029247, 1029290, 1030271, ..., 1273058, 1273279, 1273284, 1327998, 1328264])
+Master (31 HepNames records): intbitset([983016, 988620, 999545, 1020541, 1029230, ..., 1314938, 1325931, 1327438, 1331158, 1377539])
+MAS (40 HepNames records): intbitset([982214, 1029222, 1043022, 1066961, 1074519, ..., 1372794, 1372801, 1372802, 1373120, 1373787])
+PHD (348 HepNames records): intbitset([982072, 982217, 982514, 982535, 982802, ..., 1372803, 1373118, 1373121, 1373342, 1374885])
+PhD (949 HepNames records): intbitset([982786, 982999, 983120, 983290, 986473, ..., 1380572, 1380807, 1380808, 1380839, 1381905])
+
+701__i (thesis supervisor ID), (19719 HepNames records with values) (7582 distinct values in general)
+intbitset([981875, 981878, 981879, 981880, 981881, ..., 1380403, 1380404, 1380807, 1381899, 1381905])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('INSPIRE-00157947',)
+('INSPIRE-00067782',)
+('INSPIRE-00319342',)
+('INSPIRE-00351098',)
+('INSPIRE-00300234',)
+('INSPIRE-00345171',)
+('INSPIRE-00317740',)
+('INSPIRE-00315898',)
+('INSPIRE-00305273',)
+('INSPIRE-00007033',)
+
+711__a (), (4705 HepNames records with values) (8011 distinct values in general)
+intbitset([981878, 981893, 981974, 981980, 981984, ..., 1252484, 1256765, 1298440, 1325247, 1328922])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('Workshop on Calculations for Modern and Future Colliders, 23 -30 Jul 2015',)
+('C85-07-29.2',)
+('C86-06-02.5',)
+('C78-08-24.5',)
+('C85-06-23',)
+('C85-04-18',)
+('C85-03-28',)
+('C84-06-02',)
+('C83-06-01.1',)
+('RAQIS RAQIS 2010 RAQIS2010',)
+
+711__g (), (1 HepNames records with values) (1 distinct values in general)
+intbitset([1029233])
+--------------------------------------------------------------------------
+---- Good values ----
+         1 MAS 
+---- Outliers ----
+MAS (1 HepNames records): intbitset([1029233])
+
+8564_g (), (50 HepNames records with values) (2 distinct values in general)
+intbitset([983566, 983805, 983867, 984092, 984490, ..., 1064628, 1064719, 1067609, 1073331, 1075506])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+        49 active 
+         1 ACTIVE 
+---- Outliers ----
+ACTIVE (1 HepNames records): intbitset([1021008])
+active (49 HepNames records): intbitset([983566, 983805, 983867, 984092, 984490, ..., 1064628, 1064719, 1067609, 1073331, 1075506])
+
+8564_u (url), (17162 HepNames records with values) (2698022 distinct values in general)
+intbitset([981878, 981879, 981880, 981882, 981884, ..., 1381477, 1381716, 1381717, 1381728, 1381892])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('http://inspirehep.net/record/1297195/files/Future3.png',)
+('http://www.slac.stanford.edu/cgi-wrap/pubpage?slac-tn-62-026',)
+('http://www.slac.stanford.edu/cgi-wrap/pubpage?slac-r-023',)
+('http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0416',)
+('http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0483',)
+('http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0551',)
+('http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0484',)
+('http://www.slac.stanford.edu/cgi-wrap/pubpage?slac-tn-63-023',)
+('http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0341',)
+('http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0553',)
+
+8564_y (url label), (149 HepNames records with values) (1353181 distinct values in general)
+intbitset([983261, 983295, 983566, 983805, 983867, ..., 1246494, 1267719, 1268916, 1283792, 1346461])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('SLACPUB',)
+('SLACTN',)
+('ADSABS',)
+('SLACREPT',)
+('SLAC',)
+('DOI',)
+('RSINA',)
+('RMPHA',)
+('PHRVA',)
+('AJPIA',)
+
+880__a (native name), (1830 HepNames records with values) (1811 distinct values in general)
+intbitset([981943, 982050, 982051, 982056, 982057, ..., 1381905, 1381966, 1381967, 1381968, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('\xed\x99\xa9\xec\xb9\x98\xec\x9b\x85',)
+('\xe7\x8f\xad\xe5\x8b\x87',)
+('\xe6\x9d\x8e\xe6\x94\xbf\xe9\x81\x93',)
+('\xe6\x9d\xa8\xe6\x8c\xaf\xe5\xae\x81',)
+('\xe6\xa5\x8a\xe6\x8c\xaf\xe5\xaf\xa7',)
+('\xd0\x9b\xd0\xb5\xcc\x81\xd0\xb2 \xd0\x94\xd0\xb0\xd0\xb2\xd0\xb8\xcc\x81\xd0\xb4\xd0\xbe\xd0\xb2\xd0\xb8\xd1\x87 \xd0\x9b\xd0\xb0\xd0\xbd\xd0\xb4\xd0\xb0\xcc\x81\xd1\x83',)
+('\xe9\x83\x91\xe9\x98\xb3\xe6\x81\x92',)
+('Zapfe-D\xc3\xbcren, Kirsten',)
+('Yl\xc3\xb6stalo, Jyri',)
+('\xe7\x9f\xa2\xe5\xb4\x8e \xe7\xb4\x98\xe4\xb8\x80',)
+
+909COa (), (1 HepNames records with values) (1 distinct values in general)
+intbitset([1340974])
+--------------------------------------------------------------------------
+---- Good values ----
+         1 oai:inspirehep.net:1066160 
+---- Outliers ----
+oai:inspirehep.net:1066160 (1 HepNames records): intbitset([1340974])
+
+909COo (), (111882 HepNames records with values) (1263544 distinct values in general)
+intbitset([981872, 981873, 981874, 981875, 981876, ..., 1381905, 1381966, 1381967, 1381968, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('oai:inspirehep.net:1333355',)
+('oai:inspirehep.net:1276252',)
+('oai:inspirehep.net:1265189',)
+('oai:inspirehep.net:1347216',)
+('oai:inspirehep.net:1274799',)
+('oai:inspirehep.net:1278431',)
+('oai:inspirehep.net:1278449',)
+('oai:atlantis.cern.ch:1077',)
+('oai:atlantis.cern.ch:10849',)
+('oai:atlantis.cern.ch:21550',)
+
+909COp (), (111882 HepNames records with values) (12 distinct values in general)
+intbitset([981872, 981873, 981874, 981875, 981876, ..., 1381905, 1381966, 1381967, 1381968, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+    111882 INSPIRE:HepNames 
+---- Outliers ----
+INSPIRE:HepNames (111882 HepNames records): intbitset([981872, 981873, 981874, 981875, 981876, ..., 1381905, 1381966, 1381967, 1381968, 1381970])
+
+961__c (cataloging date update), (98332 HepNames records with values) (7535 distinct values in general)
+intbitset([981872, 981873, 981874, 981875, 981876, ..., 1328587, 1329863, 1336666, 1340974, 1366349])
+-------------------------------------------------------------------------------------------------------
+---- Example of values ----
+('2001-02-23',)
+('2001-07-30',)
+('2009-09-10',)
+('2005-02-23',)
+('2002-02-05',)
+('1999-08-30',)
+('2009-07-07',)
+('2002-01-24',)
+('1999-08-19',)
+('1999-08-26',)
+
+961__x (cataloging date creation), (98334 HepNames records with values) (9491 distinct values in general)
+intbitset([981872, 981873, 981874, 981875, 981876, ..., 1329863, 1336659, 1336666, 1340974, 1366349])
+---------------------------------------------------------------------------------------------------------
+---- Example of values ----
+('2001-02-23',)
+('1977',)
+('1972-01',)
+('1962-04',)
+('1963-06',)
+('1963-01',)
+('2002-07-23',)
+('1963-08',)
+('1962-05',)
+('1963-10',)
+
+970__a (SPIRES IRN), (98342 HepNames records with values) (1122867 distinct values in general)
+intbitset([981872, 981873, 981874, 981875, 981876, ..., 1336659, 1336666, 1340974, 1361964, 1366349])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('SPIRES-60',)
+('SPIRES-10325093',)
+('SPIRES-10325107',)
+('SPIRES-10325115',)
+('SPIRES-10325123',)
+('SPIRES-248',)
+('SPIRES-256',)
+('SPIRES-264',)
+('SPIRES-299',)
+('SPIRES-302',)
+
+980__a (collection), (111882 HepNames records with values) (81 distinct values in general)
+intbitset([981872, 981873, 981874, 981875, 981876, ..., 1381905, 1381966, 1381967, 1381968, 1381970])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+    111882 HEPNAMES 
+---- Outliers ----
+
+981__a (), (351 HepNames records with values) (3200 distinct values in general)
+intbitset([982050, 982066, 982182, 982514, 982535, ..., 1336660, 1336666, 1346435, 1346463, 1361964])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+('674175',)
+('640540',)
+('487440',)
+('487442',)
+('459597',)
+('196523',)
+('167913',)
+('776487',)
+('895309',)
+('159338',)
