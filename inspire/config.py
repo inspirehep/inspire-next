@@ -81,7 +81,7 @@ PACKAGES = [
     'inspire.modules.access',
     'inspire.modules.audit',
     'inspire.modules.authors',
-    'inspire.modules.classifier',
+    'inspire.modules.predicter',
     'inspire.modules.deposit',
     'inspire.modules.formatter',
     'inspire.modules.harvester',

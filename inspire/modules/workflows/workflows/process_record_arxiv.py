@@ -66,7 +66,7 @@ from inspire.modules.oaiharvester.tasks.upload import (
     send_robotupload_oaiharvest,
 )
 from inspire.modules.workflows.tasks.submission import halt_record_with_action
-from inspire.modules.classifier.tasks import (
+from inspire.modules.predicter.tasks import (
     filter_core_keywords,
     guess_coreness
 )
@@ -165,7 +165,7 @@ class process_record_arxiv(RecordWorkflow):
     @staticmethod
     def get_additional(bwo):
         """Returns rendered view for additional information."""
-        from inspire.modules.classifier.utils import get_classification_from_task_results
+        from inspire.modules.predicter.utils import get_classification_from_task_results
 
         keywords = get_classification_from_task_results(bwo)
         results = bwo.get_tasks_results()

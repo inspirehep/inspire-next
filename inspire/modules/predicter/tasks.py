@@ -62,7 +62,7 @@ def guess_coreness(model_path="arxiv_guessing.pickle"):
     @wraps(guess_coreness)
     def _guess_coreness(obj, eng):
         from invenio.base.globals import cfg
-        from inspire.modules.classifier.arxiv import predict
+        from .arxiv import predict
 
         if os.path.basename(model_path) == model_path:
             # Just the name is given, so we fill in the rest
