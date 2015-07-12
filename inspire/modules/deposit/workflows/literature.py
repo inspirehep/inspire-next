@@ -231,7 +231,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
     @staticmethod
     def get_additional(bwo, **kwargs):
         """Return formatted data of object."""
-        from inspire.modules.classifier.utils import get_classification_from_task_results
+        from inspire.modules.predicter.utils import get_classification_from_task_results
         keywords = get_classification_from_task_results(bwo)
         results = bwo.get_tasks_results()
         prediction_results = results.get("arxiv_guessing", {})

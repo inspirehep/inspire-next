@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Manage classifier INSPIRE module."""
+"""Manage predicter INSPIRE module."""
 
 from __future__ import print_function
 
@@ -44,7 +44,7 @@ manager = Manager(usage=__doc__)
 def train(records, output):
     """Train a set of records from the command line.
 
-    Usage: inveniomanage classifier train -r /path/to/json -o model.pickle
+    Usage: inveniomanage predicter train -r /path/to/json -o model.pickle
     """
     if not records:
         print("Missing records!", file=sys.stderr)
