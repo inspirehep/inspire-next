@@ -14,7 +14,7 @@
     {
         "id_collection": 8,
         "id_knwKB": 12,
-        "output_tag": "title",
-        "search_expression": "title:\"%\""
+        "output_tag": "title.title",
+        "search_expression": "name_variants:'%'"
     }
 ]
