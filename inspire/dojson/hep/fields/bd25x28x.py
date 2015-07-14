@@ -24,7 +24,7 @@
 
 from dojson import utils
 
-from ..model import hep
+from ..model import hep, hep2marc
 
 
 @hep.over('edition', '^250..')
@@ -37,6 +37,16 @@ def edition(self, key, value):
     }
 
 
+@hep2marc.over('250', 'edition')
+@utils.for_each_value
+@utils.filter_values
+def edition2marc(self, key, value):
+    """Edition Statement."""
+    return {
+        'a': value.get('edition'),
+    }
+
+
 @hep.over('imprint', '^260[_23].')
 @utils.for_each_value
 @utils.filter_values
@@ -46,4 +56,16 @@ def imprint(self, key, value):
         'place': value.get('a'),
         'publisher': value.get('b'),
         'date': value.get('c'),
+    }
+
+
+@hep2marc.over('260', 'imprint')
+@utils.for_each_value
+@utils.filter_values
+def imprint2marc(self, key, value):
+    """Publication, Distribution, etc. (Imprint)."""
+    return {
+        'a': value.get('place'),
+        'b': value.get('publisher'),
+        'c': value.get('date'),
     }

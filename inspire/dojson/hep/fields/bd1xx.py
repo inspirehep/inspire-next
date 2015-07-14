@@ -24,7 +24,7 @@
 
 from dojson import utils
 
-from ..model import hep
+from ..model import hep, hep2marc
 
 
 @hep.over('authors', '^[17]00[103_].')
@@ -57,12 +57,48 @@ def authors(self, key, value):
     return authors
 
 
+@hep2marc.over('100', 'authors')
+# @utils.filter_values
+def authors2marc(self, key, value):
+    """Main Entry-Personal Name."""
+    value = utils.force_list(value)
+
+    def get_value(value):
+            return {
+                'a': value.get('full_name'),
+                'e': value.get('relator_term'),
+                'q': value.get('alternative_name'),
+                'i': value.get('INSPIRE_id'),
+                'j': value.get('external_id'),
+                'm': value.get('e_mail'),
+                'u': utils.force_list(
+                    value.get('affiliation')
+                ),
+            }
+
+    if len(value) > 1:
+        self["700"] = []
+    for author in value[1:]:
+        self["700"].append(get_value(author))
+
+    return get_value(value[0])
+
+
 @hep.over('corporate_author', '^110[10_2].')
 @utils.filter_values
 def corporate_author(self, key, value):
     """Main Entry-Corporate Name."""
     return {
-        'corporate_author': value.get('a'),
+            'corporate_author': value.get('a'),
+        }
+
+
+@hep2marc.over('110', 'corporate_author')
+@utils.filter_values
+def corporate_author2marc(self, key, value):
+    """Main Entry-Corporate Name."""
+    return {
+        'a': value.get('corporate_author'),
     }
 
 
@@ -76,4 +112,17 @@ def institution(self, key, value):
         'new_name': value.get('t'),
         'affiliation': value.get('u'),
         'obsolete_icn': value.get('x'),
+    }
+
+
+@hep2marc.over('110', 'institution')
+@utils.filter_values
+def institution2marc(self, key, value):
+    """Institution info."""
+    return {
+        'a': value.get('name'),
+        'b': value.get('department'),
+        't': value.get('new_name'),
+        'u': value.get('affiliation'),
+        'x': value.get('obsolete_icn'),
     }

@@ -3,5 +3,5 @@ default: Inspire_Default_HTML_detailed.tpl
 description: HTML detailed output format, used for Detailed record pages.
 name: HTML detailed
 rules:
-- {field: 980.a, template: Author_HTML_detailed.tpl, value: 'AUTHOR '}
+- {field: collections.primary, template: Author_HTML_detailed.tpl, value: 'AUTHOR'}
 visibility: 0

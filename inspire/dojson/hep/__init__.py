@@ -35,6 +35,6 @@ from .fields import (
     bd90x99x,
 )
 
-from .model import hep
+from .model import hep, hep2marc
 
-__all__ = ('hep',)
+__all__ = ('hep', 'hep2marc')
