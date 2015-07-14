@@ -113,3 +113,17 @@ Feedback:
         return json.dumps(
             {'success': False}
             ), 500, {'ContentType': 'application/json'}
+
+#
+# Jinja2 filters
+#
+
+
+@blueprint.app_template_filter('marcxml')
+def marcxml_filter(record):
+    # FIXME Add undo models for each doc type and use them based on
+    # collection value
+    from inspire.dojson.hep import hep2marc
+    from inspire.dojson.utils import legacy_export_as_marc
+
+    return legacy_export_as_marc(hep2marc.do(record))

@@ -24,7 +24,7 @@
 
 from dojson import utils
 
-from ..model import hep
+from ..model import hep, hep2marc
 
 
 @hep.over('publication_info', '^773..')
@@ -48,6 +48,27 @@ def publication_info(self, key, value):
     }
 
 
+@hep2marc.over('773', 'publication_info')
+@utils.for_each_value
+@utils.filter_values
+def publication_info2marc(self, key, value):
+    """Publication info about record."""
+    return {
+        '0': value.get('recid'),
+        'c': value.get('page_artid'),
+        'n': value.get('journal_issue'),
+        'o': value.get('conf_acronym'),
+        'p': value.get('journal_title'),
+        'r': value.get('reportnumber'),
+        't': value.get('confpaper_info'),
+        'v': value.get('journal_volume'),
+        'w': value.get('cnum'),
+        'x': value.get('pubinfo_freetext'),
+        'y': value.get('year'),
+        'z': value.get('isbn'),
+    }
+
+
 @hep.over('succeeding_entry', '^785..')
 @utils.for_each_value
 @utils.filter_values
@@ -57,4 +78,16 @@ def succeeding_entry(self, key, value):
         'relationship_code': value.get('r'),
         'recid': value.get('w'),
         'isbn': value.get('z'),
+    }
+
+
+@hep2marc.over('785', 'succeeding_entry')
+@utils.for_each_value
+@utils.filter_values
+def succeeding_entry2marc(self, key, value):
+    """Succeeding Entry."""
+    return {
+        'r': value.get('relationship_code'),
+        'w': value.get('recid'),
+        'z': value.get('isbn'),
     }

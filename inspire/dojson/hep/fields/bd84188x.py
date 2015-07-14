@@ -24,7 +24,7 @@
 
 from dojson import utils
 
-from ..model import hep
+from ..model import hep, hep2marc
 
 
 @hep.over('url', '^856.[10_28]')
@@ -40,4 +40,20 @@ def url(self, key, value):
         'comment': value.get('z'),
         'name': value.get('f'),
         'size': value.get('s'),
+    }
+
+
+@hep2marc.over('8564', 'url')
+@utils.for_each_value
+@utils.filter_values
+def url2marc(self, key, value):
+    """URL to external resource."""
+    return {
+        'u': value.get('url'),
+        'w': value.get('doc_string'),
+        'y': value.get('description'),
+        '3': value.get('material_type'),
+        'z': value.get('comment'),
+        'f': value.get('name'),
+        's': value.get('size'),
     }
