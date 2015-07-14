@@ -1,289 +1,344 @@
 {
     "$schema": "http://json-schema.org/schema#",
-    "id": "http://labs.inspirehep.net/schemas/hepnames-0.0.1.json",
+    "required": [
+        "name"
+    ],
+    "type": "object",
     "properties": {
-        "acquisition_source": {
-            "$ref": "http://labs.inspirehep.net/schemas/acquisition_source-0.0.1.json#/acquisition_source"
+        "phd_advisors": {
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "recid": {
+                        "type": "integer"
+                    },
+                    "degree_type": {
+                        "enum": [
+                            "PhD",
+                            "Master"
+                        ],
+                        "type": "string",
+                        "description": "FIXME: better enum"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "curated_relation": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "type": "array",
+            "description": "Contains a links to the advisors in form of record ids."
+        },
+        "status": {
+            "enum": [
+                "active",
+                "deceased",
+                "departed",
+                "retired"
+            ],
+            "type": "string",
+            "description": "The person's status"
         },
         "author_note": {
-            "description": "Contains public note.",
-            "type": "string"
+            "type": "string",
+            "description": "Contains public note."
+        },
+        "past_emails_addresses": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "format": "email"
+            },
+            "type": "array",
+            "description": "Contains past email addresses"
+        },
+        "native_name": {
+            "type": "string",
+            "description": "Stores name in native form."
         },
         "conferences": {
-            "description": "Contains information about attended conferences. (their recids)",
+            "uniqueItems": true,
             "items": {
                 "type": "integer"
             },
             "type": "array",
-            "uniqueItems": true
-        },
-        "birth_date": {
-            "description": "Stores birth date",
-            "type": "string",
-            "format": "date"
-        },
-        "death_date": {
-            "description": "Stores death date (if any)",
-            "type": "string",
-            "format": "date"
-        },
-        "email_addresses": {
-            "description": "Contains current email addresses",
-            "items": {
-                "type": "string",
-                "format": "email"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
-        "past_emails_addresses": {
-            "description": "Contains past email addresses",
-            "items": {
-                "type": "string",
-                "format": "email"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
-        "experiments": {
-            "description": "Contains information about experiments.",
-            "items": {
-                "properties": {
-                    "end_year": {
-                        "type": "integer",
-                    },
-                    "recid": {
-                        "description": "Record ID of the experiment record",
-                        "type": "integer"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "start_year": {
-                        "type": "integer"
-                    },
-                    "current": {
-                        "type": "bool"
-                    }
-                },
-                "type": "object"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
-        "field_categories": {
-            "description": "Contains field category.",
-            "items": {
-                "properties": {
-                    "name": {
-                        "type": "string"
-                    },
-                    "type": {
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "other": "{'producer': {'json_for_form': [((), {'fields': '[value]'})], 'json_for_marc': [((), {'65017a': 'name', '650172': 'type'})]}, 'extend': False, 'rules': {'json': [{'function': <code object <module> at 0x7ff6ab1cc1b0, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'json', 'type': 'creator', 'source_tags': ['field_categories']}], 'marc': [{'function': <code object <module> at 0x7ff6ab1c83b0, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'marc', 'type': 'creator', 'source_tags': ['65017']}]}, 'pid': None, 'override': False, 'hidden': False, 'schema': {'field_categories': {'force': True, 'type': 'list', 'items': {'type': {'type': 'string', 'allowed': [u'arxiv']}, 'name': {'type': 'string', 'allowed': [u'acc-phys', u'astro-ph', u'atom-ph', u'chao-dyn', u'climate', u'comp', u'cond-mat', u'genl-th', u'gr-qc', u'hep-ex', u'hep-lat', u'hep-ph', u'hep-th', u'instr', u'librarian', u'math', u'math-ph', u'med-phys', u'nlin', u'nucl-ex', u'nucl-th', u'physics', u'plasma-phys', u'q-bio', u'quant-ph', u'ssrl', u'other']}}}}, 'aliases': []}",
-            "type": "array",
-            "uniqueItems": true
-        },
-        "ids": {
-            "description": "Contains all identifiers, both internal and external.\n\n    Required field for every installation.\n\n    Example:\n    +---------+---------------------+\n    | 035__a  | orcid               |\n    +---------+---------------------+\n    | 035__9  | 0000-0001-1234-5678 |\n    +---------+---------------------+\n\n    In JSON it is represented as list of dictionaries.",
-            "items": {
-                "properties": {
-                    "type": {
-                        "type": "string"
-                    },
-                    "value": {
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "other": "{'producer': {'json_for_form': [((), {'ids': '[value]'})], 'json_for_marc': [((), {'035__9': 'type', '035__a': 'value'})]}, 'extend': True, 'rules': {'json': [{'function': <code object <module> at 0x7ff6ab1ea030, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'json', 'type': 'creator', 'source_tags': ['ids']}], 'marc': [{'function': <code object <module> at 0x7ff6ab1cce30, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'marc', 'type': 'creator', 'source_tags': ['035..']}]}, 'pid': None, 'override': False, 'hidden': False, 'schema': {'ids': {'force': True, 'required': True, 'type': 'list', 'items': {'type': {'required': True, 'type': 'string', 'allowed': [u'authorid']}, 'value': {'required': True, 'type': 'string'}}}}, 'aliases': []}",
-            "type": "array",
-            "uniqueItems": true
-        },
-        "name": {
-            "description": "Contains name information.\n\n    Please note that MARC field for an author's name is splitted into two\n    fields, `last_name` and `first_name`. The same situation occurs for\n    the date fields, in JSON it is splitted into `birth_year` and `death_year`.\n\n    Admissible string values for `100__g`:\n    + active\n    + departed\n    + retired\n    + deceased\n\n    The only accepted value in `100__c` field is:\n    + Sir\n\n    Values accepted for `100__b:\n    + Jr.\n    + Sr.\n    + roman numbers (like VII)\n\n    Example:\n    +---------+---------------------+\n    | 100__a  | Smith, John         |\n    +---------+---------------------+\n    | 100__b  | Jr.                 |\n    +---------+---------------------+\n    | 100__c  | Sir                 |\n    +---------+---------------------+\n    | 100__g  | active              |\n    +---------+---------------------+\n    | 100__q  | Johnny Smith        |\n    +---------+---------------------+",
-            "other": "{'producer': {'json_for_form': [((), {'full_name': \"value['last'] + ', ' + value['first']\"}), ((), {'given_names': \"value['first']\"}), ((), {'family_name': \"value['last']\"}), ((), {'status': \"value['status'].lower()\", 'display_name': \"value['preferred_name']\"})], 'json_for_marc': [((), {'100__g': 'status', '100__q': 'preferred_name', '100__c': 'title', '100__b': 'numeration', '100__a': \"value['last'] + ', ' + value['first']\"})]}, 'extend': False, 'rules': {'json': [{'function': <code object <module> at 0x7ff6ab1ea7b0, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'json', 'type': 'creator', 'source_tags': ['name']}], 'marc': [{'function': <code object <module> at 0x7ff6ab20aeb0, file \"\", line 1>, 'decorators': {'on': {'only_if_master_value': <code object <module> at 0x7ff6ab1ea730, file \"\", line 1>}, 'after': {}, 'before': {}}, 'source_format': 'marc', 'type': 'creator', 'source_tags': ['100__']}]}, 'pid': None, 'override': True, 'hidden': False, 'schema': {'name': {'required': True, 'type': 'dict', 'schema': {'status': {'allowed': [u'active', u'deceased', u'departed', u'retired'], 'type': 'string', 'nullable': True}, 'last': {'type': 'string', 'empty': False}, 'title': {'allowed': [u'Sir'], 'type': 'string', 'nullable': True}, 'preferred_name': {'type': 'string', 'empty': False, 'nullable': True}, 'numeration': {'regex': u'^Jr\\\\.|Sr\\\\.|I{1,3}|IV|VI{0,3}$', 'type': 'string', 'nullable': True}, 'first': {'type': 'string', 'empty': False}}}}, 'aliases': []}",
-            "properties": {
-                "numeration": {
-                    "type": "string"
-                },
-                "preferred_name": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "value['last'] + ', ' + value['first']": {
-                    "type": "string"
-                }
-            },
-            "type": "object"
-        },
-        "native_name": {
-            "description": "Stores name in native form.",
-            "other": "{'producer': {'json_for_form': [((), {'native_name': ''})], 'json_for_marc': [((), {'880__a': ''})]}, 'extend': False, 'rules': {'json': [{'function': <code object <module> at 0x7ff6ab1c8ab0, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'json', 'type': 'creator', 'source_tags': ['native_name']}], 'marc': [{'function': <code object <module> at 0x7ff6ab1c8030, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'marc', 'type': 'creator', 'source_tags': ['880__']}]}, 'pid': None, 'override': False, 'hidden': False, 'schema': {'native_name': {'type': 'string'}}, 'aliases': []}",
-            "properties": {
-                "": {
-                    "type": "string"
-                }
-            },
-            "type": "object"
-        },
-        "other_names": {
-            "description": "Contains other variation of names.\n\n    Usually a different form of writing the primary name.\n\n    TO DO: define a type inside list",
-            "items": {
-                "properties": {
-                    "": {
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "other": "{'producer': {'json_for_marc': [((), {'400__a': ''})]}, 'extend': False, 'rules': {'json': [{'function': <code object <module> at 0x7ff6ab1c89b0, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'json', 'type': 'creator', 'source_tags': ['other_names']}], 'marc': [{'function': <code object <module> at 0x7ff6ab20af30, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'marc', 'type': 'creator', 'source_tags': ['400__']}]}, 'pid': None, 'override': False, 'hidden': False, 'schema': {'other_names': {'force': True, 'type': 'list'}}, 'aliases': []}",
-            "type": "array",
-            "uniqueItems": true
-        },
-        "phd_advisors": {
-            "description": "Contains a links to the advisors in form of record ids.\n\n    FIX ME: add a way to produce from link",
-            "items": {
-                "properties": {
-                    "degree_type": {
-                        "type": "string"
-                    },
-                    "id": {
-                        "type": "string"
-                    },
-                    "name": {
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "other": "{'producer': {'json_for_form': [((), {'phd_advisors': '[value]'})], 'json_for_marc': [((), {'701__g': 'degree_type', '701__i': 'id', '701__a': 'name'})]}, 'extend': False, 'rules': {'json': [{'function': <code object <module> at 0x7ff6ab1cc6b0, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'json', 'type': 'creator', 'source_tags': ['phd_advisors']}], 'marc': [{'function': <code object <module> at 0x7ff6ab1c87b0, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'marc', 'type': 'creator', 'source_tags': ['701__']}]}, 'pid': None, 'override': False, 'hidden': False, 'schema': {'phd_advisors': {'force': True, 'type': 'list', 'items': {'degree_type': {'type': 'string', 'nullable': True}, 'link': {'type': 'string', 'nullable': True}, 'name': {'type': 'string', 'nullable': True}, 'id': {'type': 'string', 'nullable': True}}}}, 'aliases': []}",
-            "type": "array",
-            "uniqueItems": true
+            "description": "Contains information about attended conferences. (their recids)"
         },
         "positions": {
-            "description": "Contains position information.\n\n    Accepted values for 371__r:\n    + senior\n    + junior\n    + staff\n    + visitor\n    + postdoc\n    + phd\n    + masters\n    + undergrad\n\n    In dates field you can put months in addition to years. In this case you\n    have to follow the convention `month-year`. For example: `10-2012`.\n\n    Example of whole field:\n\n    +---------+---------------------+\n    | 371__a  | CERN                |\n    +---------+---------------------+\n    | 371__m  | pony@cern.ch        |\n    +---------+---------------------+\n    | 371__o  | seriouse@mail.com   |\n    +---------+---------------------+\n    | 371__r  | senior              |\n    +---------+---------------------+\n    | 371__s  | 12-1943             |\n    +---------+---------------------+\n    | 371__t  | 1966                |\n    +---------+---------------------+\n\n    In JSON stored as a list of dictionaries.\n\n    TO DO: switch to link to the record.",
+            "uniqueItems": true,
             "items": {
+                "type": "object",
                 "properties": {
-                    "email": {
-                        "type": "string"
-                    },
                     "end_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "old_email": {
+                        "type": "string",
+                        "description": "FIXME: this is redundant?",
+                        "format": "email"
+                    },
+                    "rank": {
+                        "enum": [
+                            "SENIOR",
+                            "JUNIOR",
+                            "STAFF",
+                            "VISITOR",
+                            "PD",
+                            "PHD",
+                            "MAS",
+                            "UG"
+                        ],
                         "type": "string"
                     },
                     "institution": {
-                        "type": "string"
+                        "type": "object",
+                        "properties": {
+                            "curated_relation": {
+                                "type": "boolean"
+                            },
+                            "recid": {
+                                "type": "integer",
+                                "description": "Corresponding record ID in the institution database"
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "The raw institution name"
+                            }
+                        }
                     },
-                    "old_email": {
-                        "type": "string"
-                    },
-                    "rank": {
-                        "type": "string"
+                    "current": {
+                        "type": "boolean",
+                        "description": "FIXME: do we need other states?"
                     },
                     "start_date": {
-                        "type": "string"
+                        "type": "string",
+                        "format": "date"
                     },
-                    "status": {
-                        "type": "string"
+                    "email": {
+                        "type": "string",
+                        "description": "FIXME: this is redundant?",
+                        "format": "email"
                     }
-                },
-                "type": "object"
-            },
-            "other": "{'producer': {'json_for_form': [((), {'positions': '[value]'})], 'json_for_marc': [((), {'371__z': 'status', '371__s': 'start_date', '371__r': 'rank', '371__t': 'end_date', '371__m': 'email', '371__o': 'old_email', '371__a': 'institution'})]}, 'extend': False, 'rules': {'json': [{'function': <code object <module> at 0x7ff6ab1cc130, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'json', 'type': 'creator', 'source_tags': ['positions']}], 'marc': [{'function': <code object <module> at 0x7ff6ab1c8330, file \"\", line 1>, 'decorators': {'on': {'only_if_master_value': <code object <module> at 0x7ff6ab1cc0b0, file \"\", line 1>}, 'after': {}, 'before': {}}, 'source_format': 'marc', 'type': 'creator', 'source_tags': ['371__']}]}, 'pid': None, 'override': False, 'hidden': False, 'schema': {'positions': {'force': True, 'type': 'list', 'items': {'type': 'dict', 'schema': {'status': {'allowed': [u'current'], 'type': 'string', 'nullable': True}, 'end_date': {'regex': u'^[1|2][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0|1])$', 'type': 'string', 'nullable': True}, 'old_email': {'regex': u'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\\\.[a-zA-Z0-9-.]+$', 'type': 'string', 'nullable': True}, 'rank': {'allowed': [u'senior', u'junior', u'staff', u'visitor', u'postdoc', u'phd', u'masters', u'undergrad'], 'type': 'string', 'nullable': True}, 'institution': {'type': 'string'}, 'start_date': {'regex': u'^[1|2][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0|1])$', 'type': 'string', 'nullable': True}, 'email': {'regex': u'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\\\.[a-zA-Z0-9-.]+$', 'type': 'string', 'nullable': True}}}}}, 'aliases': []}",
-            "type": "array",
-            "uniqueItems": true
-        },
-        "previous_names": {
-            "description": "Contains a previous name.\n\n    For example, it can be a maiden's name.\n\n    TO DO: define a type inside list",
-            "items": {
-                "properties": {
-                    "": {
-                        "type": "string"
-                    },
-                    "a": {
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "other": "{'producer': {'json_for_marc': [((), {'400__w': 'a', '400__a': ''})]}, 'extend': False, 'rules': {'json': [{'function': <code object <module> at 0x7ff6ab1c8a30, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'json', 'type': 'creator', 'source_tags': ['previous_names']}]}, 'pid': None, 'override': False, 'hidden': False, 'schema': {'previous_name': {'force': True, 'type': 'list'}}, 'aliases': []}",
-            "type": "array",
-            "uniqueItems": true
-        },
-        "prizes": {
-            "description": "Contains prize name.\n\n    In JSON stored as a list of strings.\n\n    TO DO: define a type inside list",
-            "items": {
-                "properties": {
-                    "": {
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "other": "{'producer': {'json_for_marc': [((), {'678__a': ''})]}, 'extend': False, 'rules': {'json': [{'function': <code object <module> at 0x7ff6ab1cc2b0, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'json', 'type': 'creator', 'source_tags': ['prizes']}], 'marc': [{'function': <code object <module> at 0x7ff6ab1c84b0, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'marc', 'type': 'creator', 'source_tags': ['678__']}]}, 'pid': None, 'override': False, 'hidden': False, 'schema': {'prizes': {'force': True, 'type': 'list'}}, 'aliases': []}",
-            "type": "array",
-            "uniqueItems": true
-        },
-        "publications_list": {
-            "description": "Contains list of ids of authors publications.\n\n    TO DO: add schema for values inside list.",
-            "other": "{'producer': {'json_for_marc': [((), {'900__a': ''})]}, 'extend': False, 'rules': {'json': [{'function': <code object <module> at 0x7ff6ab1ea130, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'json', 'type': 'creator', 'source_tags': ['publications_list']}], 'marc': [{'function': <code object <module> at 0x7ff6ab1ccf30, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'marc', 'type': 'creator', 'source_tags': ['900..']}]}, 'pid': None, 'override': False, 'hidden': False, 'schema': {'publications_list': {'force': True, 'required': True, 'type': 'list'}}, 'aliases': []}",
-            "properties": {
-                "": {
-                    "type": "string"
                 }
             },
-            "type": "object"
+            "type": "array",
+            "description": "Contains position information."
         },
-        "recid": {
-            "other": "{'producer': {'json_for_form': [((), {'recid': ''})], 'json_for_marc': [((), {'001': ''})]}, 'extend': True, 'rules': {'json': [{'function': <code object <module> at 0x7ff6ab1cccb0, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'json', 'type': 'creator', 'source_tags': ['recid']}], 'marc': [{'function': <code object <module> at 0x7ff6ab1cca30, file \"\", line 1>, 'decorators': {'on': {'legacy': None}, 'after': {'connect': ({'connected_field': '_id', 'update_function': None},)}, 'before': {}}, 'source_format': 'marc', 'type': 'creator', 'source_tags': ['001']}]}, 'pid': 0, 'override': False, 'hidden': False, 'schema': {'recid': {'required': True, 'type': 'integer', 'min': 1}}, 'aliases': []}",
-            "properties": {
-                "": {
-                    "type": "string"
-                }
-            },
-            "type": "object"
+        "death_date": {
+            "type": "string",
+            "description": "Stores death date (if any)",
+            "format": "date"
         },
-        "source": {
-            "description": "Contains information about source of the record.\n\n    Example:\n\n    +---------+---------------------+\n    | 670__a  | webform             |\n    +---------+---------------------+\n\n    In JSON stored as a dictionary.",
-            "other": "{'producer': {'json_for_marc': [((), {'670__d': 'date_verified', '670__a': 'name'})]}, 'extend': False, 'rules': {'json': [{'function': <code object <module> at 0x7ff6ab1cc230, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'json', 'type': 'creator', 'source_tags': ['source']}], 'marc': [{'function': <code object <module> at 0x7ff6ab1c8430, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'marc', 'type': 'creator', 'source_tags': ['670__']}]}, 'pid': None, 'override': False, 'hidden': False, 'schema': {'source': {'type': 'dict', 'schema': {'name': {'type': 'string', 'empty': False, 'nullable': True}, 'date_verified': {'regex': u'^[1|2][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0|1])$', 'type': 'string', 'nullable': True}}}}, 'aliases': []}",
-            "properties": {
-                "date_verified": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            },
-            "type": "object"
-        },
-        "urls": {
-            "description": "Contains a link to author's website.\n\n    In JSON stored as a list of strings.\n\n    TO DO: define a type and add regex for the elements of the array.",
+        "other_names": {
+            "uniqueItems": true,
             "items": {
+                "type": "string"
+            },
+            "type": "array",
+            "description": "Contains other variation of names. Usually a different form of writing the primary name."
+        },
+        "ids": {
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
                 "properties": {
-                    "description": {
+                    "type": {
+                        "enum": [
+                            "DESY",
+                            "arXiv",
+                            "INSPIRE",
+                            "BAI",
+                            "CERN",
+                            "ORCID",
+                            "SLAC",
+                            "JACOW",
+                            "GoogleScholar",
+                            "RESEARCHERID",
+                            "SCOPUS"
+                        ],
                         "type": "string"
                     },
                     "value": {
                         "type": "string"
                     }
-                },
-                "type": "object"
+                }
             },
-            "other": "{'producer': {'json_for_form': [((), {'urls': '[value]'})], 'json_for_marc': [((), {'8564_y': 'description', '8564_u': 'value'})]}, 'extend': False, 'rules': {'json': [{'function': <code object <module> at 0x7ff6ab1cc7b0, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'json', 'type': 'creator', 'source_tags': ['urls']}], 'marc': [{'function': <code object <module> at 0x7ff6ab1c8830, file \"\", line 1>, 'decorators': {'on': {}, 'after': {}, 'before': {}}, 'source_format': 'marc', 'type': 'creator', 'source_tags': ['8564_']}]}, 'pid': None, 'override': False, 'hidden': False, 'schema': {'urls': {'force': True, 'type': 'list', 'items': {'description': {'type': 'string', 'nullable': True}, 'value': {'required': True, 'type': 'string', 'allowed': u'^(?:http(?:s)?:\\\\/\\\\/)?(?:www\\\\.)?(?:[\\\\w-]*)\\\\.\\\\w{2,}$'}}}}, 'aliases': []}",
             "type": "array",
-            "uniqueItems": true
+            "description": "Contains all identifiers, both internal and external. FIXME: guess we should privilege nowadays, BAI, INSPIRE and ORCID"
+        },
+        "previous_names": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            },
+            "type": "array",
+            "description": "Contains a previous name. For example, it can be a maiden's name."
+        },
+        "source": {
+            "type": "object",
+            "description": "This is the source of informatio. It is currently a mixed bags of user IDs or provenance information, e.g. arXiv etc. FIXME: we should really discuss about it. E.g. eprint, webform, Rachel.Lumpkin@durham.ac.uk(96), Fermilab, C09-05-04, KYOTOU...",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "date_verified": {
+                    "type": "string",
+                    "format": "date"
+                }
+            }
+        },
+        "field_categories": {
+            "uniqueItems": true,
+            "items": {
+                "enum": [
+                    "acc-phys",
+                    "astro-ph",
+                    "atom-ph",
+                    "chao-dyn",
+                    "climate",
+                    "comp",
+                    "cond-mat",
+                    "genl-th",
+                    "gr-qc",
+                    "hep-ex",
+                    "hep-lat",
+                    "hep-ph",
+                    "hep-th",
+                    "instr",
+                    "librarian",
+                    "math",
+                    "math-ph",
+                    "med-phys",
+                    "nlin",
+                    "nucl-ex",
+                    "nucl-th",
+                    "physics",
+                    "plasma-phys",
+                    "q-bio",
+                    "quant-ph",
+                    "ssrl",
+                    "other"
+                ],
+                "type": "string",
+                "description": "FIXME: Time to revise this list?"
+            },
+            "type": "array",
+            "description": "Contains field category."
+        },
+        "prizes": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "description": "E.g. Nobel Prize Physics 1977, Shaw Prize 2006, Sakurai Prize 1985 FIXME: shall we separate the year?"
+            },
+            "type": "array",
+            "description": "Contains prize name.t"
+        },
+        "urls": {
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "description": "FIXME: actually, Twitter and linkedin URLs should be better recognized and set as IDs",
+                "properties": {
+                    "description": {
+                        "enum": [
+                            "TWITTER",
+                            "BLOG",
+                            "LINKEDIN",
+                            ""
+                        ],
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string",
+                        "format": "url"
+                    }
+                }
+            },
+            "type": "array",
+            "description": "Contains a link to author's website."
+        },
+        "birth_date": {
+            "type": "string",
+            "description": "Stores birth date",
+            "format": "date"
+        },
+        "experiments": {
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "start_year": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "end_year": {
+                        "type": "integer"
+                    },
+                    "current": {
+                        "type": "boolean"
+                    },
+                    "curated_relation": {
+                        "type": "boolean"
+                    },
+                    "recid": {
+                        "type": "integer",
+                        "description": "Record ID of the experiment record"
+                    }
+                }
+            },
+            "type": "array",
+            "description": "Contains information about experiments."
+        },
+        "email_addresses": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "format": "email"
+            },
+            "type": "array",
+            "description": "Contains current email addresses"
+        },
+        "name": {
+            "type": "object",
+            "description": "Contains name information.",
+            "properties": {
+                "preferred_name": {
+                    "type": "string"
+                },
+                "numeration": {
+                    "enum": [
+                        "",
+                        "Jr.",
+                        "Sr.",
+                        "I",
+                        "II",
+                        "III",
+                        "IV",
+                        "VI",
+                        "VII",
+                        "VIII"
+                    ],
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string",
+                    "format": ".+, .+"
+                },
+                "title": {
+                    "enum": [
+                        "",
+                        "Sir"
+                    ],
+                    "type": "string"
+                }
+            }
         }
-    },
-    "required": [],
-    "type": "object"
+    }
 }
