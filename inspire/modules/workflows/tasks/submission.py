@@ -278,10 +278,17 @@ def close_ticket(ticket_id_key="ticket_id"):
         if not rt:
             obj.log.error("No RT instance available. Skipping!")
         else:
-            rt.edit_ticket(
-                ticket_id=ticket_id,
-                Status="resolved"
-            )
+            try:
+                rt.edit_ticket(
+                    ticket_id=ticket_id,
+                    Status="resolved"
+                )
+            except IndexError:
+                # Probably already resolved, lets check
+                ticket = rt.get_ticket(ticket_id)
+                if ticket["Status"] != "resolved":
+                    raise
+                obj.log.warning("Ticket is already resolved.")
     return _close_ticket
 
 
