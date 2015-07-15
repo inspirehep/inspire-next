@@ -24,7 +24,7 @@
 
 from dojson import utils
 
-from ..model import hep
+from ..model import hep, hep2marc
 
 
 @hep.over('subject_term', '^650[1_][_7]')
@@ -39,6 +39,18 @@ def subject_term(self, key, value):
     }
 
 
+@hep2marc.over('65017', 'subject_term')
+@utils.for_each_value
+@utils.filter_values
+def subject_term2marc(self, key, value):
+    """Subject Added Entry-Topical Term."""
+    return {
+        'a': value.get('value'),
+        '2': value.get('scheme'),
+        '9': value.get('source'),
+    }
+
+
 @hep.over('free_keyword', '^653[10_2][_1032546]')
 @utils.for_each_value
 @utils.filter_values
@@ -47,6 +59,17 @@ def free_keyword(self, key, value):
     return {
         'value': value.get('a'),
         'source': value.get('9'),
+    }
+
+
+@hep2marc.over('653', 'free_keyword')
+@utils.for_each_value
+@utils.filter_values
+def free_keyword2marc(self, key, value):
+    """Free keywords."""
+    return {
+        'a': value.get('value'),
+        '9': value.get('source'),
     }
 
 
@@ -61,6 +84,17 @@ def accelerator_experiment(self, key, value):
     }
 
 
+@hep2marc.over('693', 'accelerator_experiment')
+@utils.for_each_value
+@utils.filter_values
+def accelerator_experiment2marc(self, key, value):
+    """The accelerator/experiment related to this record."""
+    return {
+        'a': value.get('accelerator'),
+        'e': value.get('experiment'),
+    }
+
+
 @hep.over('thesaurus_terms', '^695..')
 @utils.for_each_value
 @utils.filter_values
@@ -70,4 +104,16 @@ def thesaurus_terms(self, key, value):
         'keyword': value.get('a'),
         'energy_range': value.get('e'),
         'classification_scheme': value.get('2'),
+    }
+
+
+@hep2marc.over('695', 'thesaurus_terms')
+@utils.for_each_value
+@utils.filter_values
+def thesaurus_terms2marc(self, key, value):
+    """Controlled keywords."""
+    return {
+        'a': value.get('keyword'),
+        'e': value.get('energy_range'),
+        '2': value.get('classification_scheme'),
     }

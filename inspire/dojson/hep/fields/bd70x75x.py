@@ -24,7 +24,7 @@
 
 from dojson import utils
 
-from ..model import hep
+from ..model import hep, hep2marc
 
 
 @hep.over('thesis_supervisor', '^701..')
@@ -40,6 +40,19 @@ def thesis_supervisor(self, key, value):
     }
 
 
+@hep2marc.over('701', 'thesis_supervisor')
+@utils.for_each_value
+@utils.filter_values
+def thesis_supervisor2marc(self, key, value):
+    """The thesis supervisor."""
+    return {
+        'a': value.get('full_name'),
+        'g': value.get('INSPIRE_id'),
+        'j': value.get('external_id'),
+        'u': value.get('affiliation'),
+    }
+
+
 @hep.over('collaboration', '^710[10_2][_2]')
 @utils.for_each_value
 @utils.filter_values
@@ -47,4 +60,14 @@ def collaboration(self, key, value):
     """Added Entry-Corporate Name."""
     return {
         'collaboration': value.get('g')
+    }
+
+
+@hep2marc.over('710', 'collaboration')
+@utils.for_each_value
+@utils.filter_values
+def collaboration2marc(self, key, value):
+    """Added Entry-Corporate Name."""
+    return {
+        'g': value.get('collaboration'),
     }

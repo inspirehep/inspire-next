@@ -109,7 +109,7 @@ def exists_in_inspire_or_rejected(obj, eng):
 def match_record_arxiv_remote_deposit(obj, eng):
     """Look on the remote server if the record exists using arXiv id."""
     d = Deposition(obj)
-    sip = d.get_latest_sip(sealed=False)
+    sip = d.get_latest_sip(sealed=True)
     return bool(match_record_arxiv_remote(obj, sip.metadata.get('arxiv_id')))
 
 
@@ -124,7 +124,7 @@ def match_record_doi_remote(obj, doi):
 def match_record_doi_remote_deposit(obj, eng):
     """Look on the remote server if the record exists using doi."""
     d = Deposition(obj)
-    sip = d.get_latest_sip(sealed=False)
+    sip = d.get_latest_sip(sealed=True)
     doi = sip.metadata.get('doi')
     return match_record_doi_remote(obj, doi)
 
