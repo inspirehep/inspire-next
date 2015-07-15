@@ -1,0 +1,1593 @@
+
+005__ (), (20589 Conferences records with values) (474671 distinct values in general)
+intbitset([963517, 963518, 963519, 963520, 963521, ..., 1382054, 1382055, 1382062, 1382198, 1382213])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+20130528212324.0
+20130528204418.0
+20130528204033.0
+20130528203903.0
+20121023232241.0
+20150331093641.0
+20141031110838.0
+20121023232240.0
+20140211115013.0
+20121023235612.0
+
+035__9 (ext system source), (32 Conferences records with values) (48 distinct values in general)
+intbitset([964040, 964055, 964089, 964507, 964646, ..., 1190731, 1320615, 1320679, 1345921, 1365029])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+         1 SPIRESTeX 
+         2 DESY 
+        29 CDS 
+---- Outliers ----
+
+035__a (ext system ID), (30 Conferences records with values) (2107912 distinct values in general)
+intbitset([964040, 964055, 964089, 964507, 964646, ..., 1181806, 1187855, 1190731, 1345921, 1365029])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+oai:arXiv.org:1405.4863
+oai:arXiv.org:1405.4861
+oai:arXiv.org:1405.4858
+oai:arXiv.org:1405.4856
+oai:arXiv.org:1405.4855
+oai:arXiv.org:1203.4443
+oai:arXiv.org:1207.7200
+oai:arXiv.org:1207.7194
+INSPIRE-00051971
+Zhang:2013nja
+
+035__z (ext system ID deprecated), (2 Conferences records with values) (1921261 distinct values in general)
+intbitset([1320615, 1320679])
+-----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+Jurow:1962az
+:1900bbf
+:1900beg
+:1900bgd
+:1900bne
+:1900brd
+:1900btj
+D96-19424
+D96-19425
+D96-19464
+
+041__a (language), (3 Conferences records with values) (143 distinct values in general)
+intbitset([1292032, 1346446, 1347301])
+---------------------------------------------------------------------------------------
+---- Good values ----
+         1 french 
+         1 eng 
+         1 fre 
+---- Outliers ----
+
+111__6 (conference title), (1 Conferences records with values) (1 distinct values in general)
+intbitset([1357488])
+---------------------------------------------------------------------------------------------
+---- Good values ----
+         1 2015-05-20 
+---- Outliers ----
+2015-05-20 (1 Conferences records): intbitset([1357488])
+
+111__a (conference title), (20587 Conferences records with values) (20148 distinct values in general)
+intbitset([963517, 963518, 963519, 963520, 963521, ..., 1382054, 1382055, 1382062, 1382198, 1382213])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+6th Nuclear Physics in Astrophysics and 26th International Nuclear Physics Divisional Conference of the European Physical Society
+Exploring the X-ray Universe: Suzaku and Beyond
+3rd SIAM Physics Congress 2008
+9th Conference on the Intersections of Particle and Nuclear Physics
+6th Symposium on Large TPCs for Low Energy Rare Event Detection
+2nd Alexander Friedmann International Seminar on Gravitation and Cosmology
+3rd Linear Collider Forum
+13th Conference on Theoretical nuclear physics in Italy
+15th International Conference on Particles and Nuclei
+15th Conference on High Energy Physics
+
+111__b (conference sub title), (569 Conferences records with values) (508 distinct values in general)
+intbitset([963731, 963872, 964040, 964371, 964571, ..., 1381072, 1381075, 1382017, 1382035, 1382213])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+        15 Relativistic Nuclear Physics and Quantum Chromodynamics 
+        10 Fundamental Interactions and Neutrons, Nuclear Structure, Ultracold Neutrons, Related Topics 
+         5 subtitle 
+         6 Workshop for Young Scientists on the Physics of Ultrarelativistic Nucleus-Nucleus Collisions 
+         6 Summer School on Theoretical Physics 
+         6 Frontier Detectors for Frontier Physics 
+         5 Neutron Spectroscopy, Nuclear Structure, Related Topics 
+         3 Accelerator Engineering and Technology 
+         3 Photon detection, DIRC design and DAQ 
+         2 Quark Dynamics 
+         2 Extremes of the Nuclear Landscape 
+         2 Matter to the Deepest: Recent Developments in Physics of Fundamental Interactions 
+         2 Base Technologies, Data Technologies, Physics Computing 
+         1 Un altro modo di guardare il cielo 
+         2 Fundamentals and Applications 
+         1 Windows on the Universe 
+         1 New Horizons for Observational Cosmology 
+         2 dedicated to Alexander Nikolaevich Vassiliev 
+         1 Snowmass on the Mississippi 
+         2 Session of CETUP* 2013 
+         2 Between Astrophysics and Astroparticle Physics 
+         2 Summer School and Workshop on the Standard Model and Beyond 
+         2 Neutrino Physics and Astrophysics 
+         2 Many manifestations of nonperturbative QCD 
+         2 International Industrial Symposium on the Super Collider and Exhibition 
+         2 Frontiers in Nuclear Physics 
+         1 From Basic Research to Applications 
+         1 Dressing Hadrons 
+         1 Hadron Structure and Lattice QCD 
+         1 Exciting Hadrons 
+         1 Quarks and Hadrons 
+         1 Quarks in hadrons, nuclei, and hadronic matter 
+         1 Quarks in Hadrons, Nuclei, and Matter 
+         1 Achievements of the past two decades 
+         1 Accelerator Science and Technology 
+         1 The Theory of the Quantum World 
+         1 The Physics of the Higgs Boson 
+         1 Multi-Messenger Approach to Astroparticle Physics 
+         1 Early Universe and Gravitational Waves 
+         1 Toward a new cosmological paradigm 
+         1 Course on Superconductivity for Accelerators 
+         1 Workshop on radiative corrections for the LHC and lepton colliders 
+         1 From Universe to String's Scale 
+         1 Theory for Observers, Observations for Theorists 
+         1 Particle Physics and the LHC 
+         1 Complex Stochastic Dynamics 
+         1 Effective Field Theories 
+         1 Highlights in Computational Quantum Field Theory 
+         1 Commutative and Noncommutative Quantum Fields 
+         1 Challenges in Particle Phenomenology 
+         1 Frontiers in Astroparticle Physics 
+         1 Advances in Quantum Field Theory 
+         1 Dark matter, dark energy, black holes and quantum aspects of the universe 
+         1 Consisting of 2 parallel conferences: Astrophysics Meeting: From the Sun and Beyond / Particle Physics Meeting: Physics at the Frontiers of the Standard Model 
+         1 Physics at Extreme Energies (Particle Physics and Astrophysics) 
+         1 New Views in Particle Physics (Particle Physics and Astrophysics) 
+         1 Frontier Topics in the Standard Model 
+         1 Light at Extreme Intensities 
+         1 Challenges in Particle Astrophysics 
+         1 A special day in honour of Raymond Stora 
+         1 Gamma-ray Astrophysics in the Multimessenger context 
+         1 The Early Universe and Observational Cosmology 
+         1 Unification and String Theory 
+         1 Theoretical Aspects of Small to Large Scale World 
+         1 Neutrino, Dark Matter and the Age of Universe 
+         1 Symmetry, Geometry, and Physics 
+         1 Gravitational Lenses, their impact in the study of galaxies and Cosmology 
+         1 The CMB Radiation at High Angular Resolution 
+         1 Algebraic Structures, their Representations, Realizations and Physical Applications 
+         1 Advances and Challenges at Interfaces 
+         1 Basic Concepts in Nuclear Physics: Theory, Experiments and Applications 
+         1 From Rotation Group to Quantum Algebras 
+         1 5th International Heinz von Foerster Conference 
+         1 The Electroweak Scale: Unraveling the Mysteries at the LHC 
+         1 Fundamental Questions in Cosmology 
+         1 25th Anniversary of the Cosmic Background Radiation Discovery 
+         1 On the Threshhold of Discovery 
+         1 from the Planck scale to emergent phenomena 
+         1 A Conference Involving Statistical Issues in Astrophysics, Particle Physics and Photon Science 
+         1 International Spring School of the GDR PH-QCD 
+         1 Introduction to Accelerator Physics Course 
+         1 European's Largest General Science Conference 
+         1 Astroparticle Physics in the LHC Era 
+         1 Quantum Theory of Condensed Matter 
+         1 Beyond the Standard Models 
+         1 In Honor of Juan Carlos D’Olivo 
+         1 30th Anniversary Symposium 
+         1 From Low to High Energies 
+         1 One Solution for Three Mysteries 
+         1 New Trends 
+         1 Dedicated to the memory of Augusto Garcia 
+         1 Algebraic, Analytic and Geometric Aspects 
+         1 dedicated to the memory of Academician Promarz Tamrazov 
+         1 Beyond the Standard Model: Extended Fermion and Scalar Sectors, Experiment and Phenomenology 
+         1 International conference in honor of Ya. B. Zeldovich 100th Anniversary 
+         1 Cosmology and non-equilibrium statistical mechanics 
+         1 The Victor Rothschild Memorial Symposium 
+         1 CEC 1981 
+         1 Soft side of the LHC 
+---- Outliers ----
+From Basic Research to Applications (1 Conferences records): intbitset([1242350])
+Dressing Hadrons (1 Conferences records): intbitset([981422])
+Hadron Structure and Lattice QCD (1 Conferences records): intbitset([981164])
+Exciting Hadrons (1 Conferences records): intbitset([977464])
+Quarks and Hadrons (1 Conferences records): intbitset([974959])
+Quarks in hadrons, nuclei, and hadronic matter (1 Conferences records): intbitset([981626])
+Quarks in Hadrons, Nuclei, and Matter (1 Conferences records): intbitset([978791])
+Achievements of the past two decades (1 Conferences records): intbitset([1344247])
+Accelerator Science and Technology (1 Conferences records): intbitset([966766])
+The Theory of the Quantum World (1 Conferences records): intbitset([1204634])
+
+111__c (place), (20582 Conferences records with values) (3955 distinct values in general)
+intbitset([963517, 963518, 963519, 963520, 963521, ..., 1382054, 1382055, 1382062, 1382198, 1382213])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+Waltham, Mass.
+Moscow, USSR
+Erice, Italy
+Dubna, USSR
+Coral Gables, Florida
+Washington, D.C.
+Austin, Tex.
+Bologna, Italy
+Madrid, Spain
+Amsterdam, Netherlands
+
+111__d (conference title), (19969 Conferences records with values) (15654 distinct values in general)
+intbitset([963517, 963518, 963519, 963520, 963521, ..., 1373183, 1373673, 1374159, 1375389, 1380253])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+2-7 Sep 2013
+16 Jun - 25 Jul 1969
+13-18 Oct 2014
+9-14 Sep 2012
+19-21 Jun 1978
+22 Dec 2010
+9-16 Oct 1968
+27 Aug - 2 Sep 2012
+3-19 July 1969
+23-26 Sep 1969
+
+111__e (conference acronym), (2404 Conferences records with values) (2427 distinct values in general)
+intbitset([963532, 963533, 963564, 963566, 963646, ..., 1381652, 1381680, 1382017, 1382054, 1382062])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+HEACC 2001
+NIBS 2008
+NIBS 2010
+Strings 2013
+IWARA 2005
+SYMPHYS-16
+RAQIS 10
+SUSYQM2010
+Physun 2012
+Hadron 1997
+
+111__f (conference title), (1 Conferences records with values) (1 distinct values in general)
+intbitset([1103096])
+---------------------------------------------------------------------------------------------
+---- Good values ----
+         1 2012 
+---- Outliers ----
+2012 (1 Conferences records): intbitset([1103096])
+
+111__g (conference number), (20588 Conferences records with values) (20656 distinct values in general)
+intbitset([963517, 963518, 963519, 963520, 963521, ..., 1382054, 1382055, 1382062, 1382198, 1382213])
+------------------------------------------------------------------------------------------------------
+---- Example of values ----
+C14-03-01
+C14-07-21
+C97-08-04.8
+C98-08-24.6
+C14-10-13.1
+C14-10-13.2
+C13-09-25.5
+C11-09-29.1
+C12-06-13
+C10-12-22
+
+111__n (conference title), (1 Conferences records with values) (2 distinct values in general)
+intbitset([1080215])
+---------------------------------------------------------------------------------------------
+---- Good values ----
+         1 5th 
+---- Outliers ----
+5th (1 Conferences records): intbitset([1080215])
+
+111__x (date), (20576 Conferences records with values) (8823 distinct values in general)
+intbitset([963517, 963518, 963519, 963520, 963521, ..., 1382054, 1382055, 1382062, 1382198, 1382213])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+1969-06-16
+2013-02-17
+2010-12-22
+1968-10-09
+1969-07-03
+1969-09-23
+1970-01-21
+1970-03-11
+1970-04-14
+1970-09-08
+
+111__y (conference title), (769 Conferences records with values) (463 distinct values in general)
+intbitset([964303, 964580, 967521, 972353, 975064, ..., 1382054, 1382055, 1382062, 1382198, 1382213])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+         9 2015-06-26 
+         8 2014-09-19 
+         8 2014-09-12 
+         7 2014-07-18 
+         7 2014-08-29 
+         7 2014-09-05 
+         7 2015-07-03 
+         6 2013-09-13 
+         6 2013-09-27 
+         6 2014-06-27 
+         5 2014-10-10 
+         6 2015-09-18 
+         6 2015-06-19 
+         5 2015-05-29 
+         5 2015-09-11 
+         5 2013-05-24 
+         4 2013-09-06 
+         5 2014-08-22 
+         5 2014-09-20 
+         5 2015-05-30 
+         5 2015-11-06 
+         4 2015-07-10 
+         4 2014-10-31 
+         4 2014-06-13 
+         4 2014-11-14 
+         4 2013-06-07 
+         4 2013-11-08 
+         3 2013-08-06 
+         4 2013-11-15 
+         4 2015-08-22 
+         4 2014-05-30 
+         3 2014-05-16 
+         4 2014-07-25 
+         4 2014-07-04 
+         4 2015-02-20 
+         4 2014-09-26 
+         4 2015-04-10 
+         3 2016-07-08 
+         4 2010-09-10 
+         3 2014-07-26 
+         3 2014-06-07 
+         3 2015-03-06 
+         3 2013-07-12 
+         3 2014-09-07 
+         3 2013-10-04 
+         3 2014-06-06 
+         3 2013-07-05 
+         3 2013-08-23 
+         3 2014-12-17 
+         3 2014-10-24 
+         2 2013-07-19 
+         3 2014-01-17 
+         3 2013-12-20 
+         3 2012-09-07 
+         3 2014-05-23 
+         3 2014-04-18 
+         3 2014-07-11 
+         3 2014-06-12 
+         3 2015-06-12 
+         3 2015-06-13 
+         3 2014-12-05 
+         3 2014-09-27 
+         3 2015-01-17 
+         3 2015-04-30 
+         3 2015-09-19 
+         3 2015-06-05 
+         3 2015-07-17 
+         3 2015-03-27 
+         3 2015-02-06 
+         3 2016-06-24 
+         3 2015-03-28 
+         3 2015-07-31 
+         3 2015-08-28 
+         2 2014-06-28 
+         2 2013-09-29 
+         2 2014-06-14 
+         2 2015-09-13 
+         2 2015-09-12 
+         2 2013-09-20 
+         2 2013-11-26 
+         2 2014-04-25 
+         2 2015-07-24 
+         2 2012-09-22 
+         2 2015-10-16 
+         2 2013-12-08 
+         2 2015-05-01 
+         2 2013-07-26 
+         2 2013-12-15 
+         2 2013-08-16 
+         2 2013-06-15 
+         2 2013-09-12 
+         2 2011-09-09 
+         2 2013-04-12 
+         2 2013-09-19 
+         2 2013-07-17 
+         2 2013-06-14 
+         2 2013-09-05 
+         2 2013-06-21 
+         2 2013-10-24 
+         2 2014-02-15 
+---- Outliers ----
+2012-09-02 (1 Conferences records): intbitset([1236402])
+2016-09-02 (1 Conferences records): intbitset([1351321])
+2015-05-20 (1 Conferences records): intbitset([1351315])
+2013-08-09 (1 Conferences records): intbitset([1235913])
+2013-12-06 (1 Conferences records): intbitset([1243955])
+2013-07-11 (1 Conferences records): intbitset([1219245])
+2013-03-14 (1 Conferences records): intbitset([1235912])
+2013-10-05 (1 Conferences records): intbitset([1242524])
+2010-05-29 (1 Conferences records): intbitset([1306825])
+2014-07-13 (1 Conferences records): intbitset([1258539])
+
+210__a (title abbreviated), (1 Conferences records with values) (8411 distinct values in general)
+intbitset([1348613])
+-------------------------------------------------------------------------------------------------
+---- Example of values ----
+NEUTRON PROTON
+neutron
+proton
+PION
+N DIMENSIONAL
+ELECTRON POSITRON
+ELECTRON
+SELF-CONSISTENT
+THREE NUCLEON
+HIGH-POWER
+
+242__a (translated title), (1 Conferences records with values) (2985 distinct values in general)
+intbitset([1086162])
+------------------------------------------------------------------------------------------------
+---- Example of values ----
+Investigations to the Messgenauigket of a monitor systems $e^+$ $e^-$ memory ring
+Study of the channel $e^{+}e^{-} \to \mu^{+}\mu^{-} (\gamma)$ in the framework of the DELPHI
+Gravitational waves and stationary states of quantum and classical systems
+Coincidence Measurement $ep \rightarrow  ep\ pi^{0}$ at $q^{2}\approx 1 GeV^{2}$ and mass range between 1.1236-GeV and 1.316-GeV
+Running and unification of the standard model gauge couplings up to 3-loop order
+Simulation and Measurement of the High-Frequency Properties of a Superconducting Photoelectron Source
+Measurement of the branching ratio of the rare decay $K^{0}_{S} \rightarrow \gamma\gamma$ with the NA48 detector
+21eme Conference Internationale de Physique des Hautes Energies
+Ionisation measurement in dependence of the electric field in tetramethylsilane (TMS)
+Recherche du Boson de Higgs Chargé $H^\pm$ dans les Désintégrations $t \to H^{+} b$ par la Mesure Directe d'un Excès dans le Mode Hadronique du Lepton $\tau$
+
+260__b (publisher), (1 Conferences records with values) (414 distinct values in general)
+intbitset([1359393])
+----------------------------------------------------------------------------------------
+---- Good values ----
+---- Outliers ----
+
+270__a (), (3 Conferences records with values) (3 distinct values in general)
+intbitset([970258, 1112313, 1346446])
+-----------------------------------------------------------------------------
+---- Good values ----
+         1 CIPANP 
+         1 Barbara Strasser 
+         1 thibaut.jonckheere@cpt.univ-mrs.fr 
+---- Outliers ----
+CIPANP (1 Conferences records): intbitset([970258])
+Barbara Strasser (1 Conferences records): intbitset([1112313])
+thibaut.jonckheere@cpt.univ-mrs.fr (1 Conferences records): intbitset([1346446])
+
+270__b (xplace), (406 Conferences records with values) (314 distinct values in general)
+intbitset([964499, 964580, 964909, 969474, 972285, ..., 1375351, 1376979, 1376980, 1380252, 1382017])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+        27 CERN 
+        19 Fermilab 
+         9 Fermilab Illinois 
+         6 California 
+         4 KEK 
+         4 IHEP 
+         3 SLAC 
+         3 DESY 
+         3 TX 
+         3 Thomas Jefferson National Accelerator Facility 
+         3 Fermi National Accelerator Laboratory 
+         3 CA 
+         3 Illinois 
+         3 ICTP 
+         1 Largo Enrico Fermi 
+         2 Villa Olmo 
+         1 INFN 
+         2 Washington 
+         2 Miramare 
+         2 extra place info 
+         1 Yerevan State University 
+         1 University of Nova Gorica 
+         2 Aspen Center for Physics 
+         1 Yukawa Inst. 
+         1 Edinburgh U., The Higgs Centre for Theoretical Physics 
+         2 ECT* 
+         2 North Carolina 
+         2 Colorado 
+         2 Massachusetts 
+         2 Maryland 
+         2 Jagiellonian University 
+         2 Maresias Beach Hotel 
+         2 Kloster Mehrau 
+         2 Kloster Mehrerau 
+         2 Castle Rauischholzhausen 
+         2 Nanyang Executive Centre 
+         1 Sebelas Maret University 
+         1 München 
+         2 Colorado U. 
+         2 BARC/TIFR 
+         1 ETH, PSI 
+         1 Institute for Scientific Studies 
+         1 VA US 
+         1 costa brava 
+         1 Nanyang Executive Center, Nanyang Technological University 
+         1 Instituto de Física Fundamental y Matemáticas de la Universidad de Salamanca (IUFFYM) 
+         1 Torre Faro (Messina) 
+         1 Scuola Normale Superiore 
+         1 University of Granada 
+         1 APC 
+         1 Brasil 
+         1 Marrakesh 
+         1 Penn State University 
+         1 Castello Pasquini 
+         1 Center for Quantum Spacetime Sogang University 
+         1 Cheju 
+         1 NYC 
+         1 St. John's College 
+         1 Castiglion Fiorentino 
+         1 Marseille 
+         1 Paris Diderot University 
+         1 MPI für Physik komplexer Systeme 
+         1 LNGS - Assergi 
+         1 Yachthafenresidenz Hohe Düne 
+         1 Peterhof 
+         1 ICMAT 
+         1 VA 
+         1 Department of Theoretical Physics, University of Vienna 
+         1 20008 
+         1 IHEP, 19B YuquanLu, Shijingshan District Beijing, 100049 
+         1 Instituto Superior Tëcnico 
+         1 LNGS 
+         1 ICTP South American Institute for Fundamental Research IFT-UNESP (1º andar) Rua Dr. Bento Teobaldo Ferraz 271, Bloco 2 - Barra Funda 01140-070 São Paulo, SP Brazil +55 (11)3393 7839 
+         1 University of Bristol, Department of Mathematics 
+         1 Institute for High Energy Physics 
+         1 Ettore Majorana Foundation 
+         1 Institute of Advanced Studies, Nanyang Executive Centre 
+         1 Moscow State University 
+         1 Sungkyunkwan University, Seoul 
+         1 Hotel San Francisco 
+         1 ESA/ESTEC 
+         1 Institute of High Energy Physics, Chinese Academy of Sciences, 19B Yuquan Road, Shijingshan District, BEIJING 100049, P. R. CHINA 
+         1 China Three Gorges University 
+         1 University of Udine 
+         1 Yukawa Institute for Theoretical Physics 
+         1 Jlab 
+         1 Michigan State University 
+         1 IPPP 
+         1 CP3-Origins 
+         1 Leung Center for Cosmology and Particle Astrophysics, National Taiwan University 
+         1 Wayne State Univ. 
+         1 Institute of High Energy Physics 
+         1 University of Tirana 
+         1 Perimeter Institute 
+         1 Tel Aviv Univ. 
+         1 KIAS 
+         1 IPhT, CEA 
+         1 LAL 
+         1 Entretiens Jacques Cartier, Campus de la Doua in Villeurbanne 
+         1 Alfréd Rényi Institute of Mathematics 
+---- Outliers ----
+ETH, PSI (1 Conferences records): intbitset([1083470])
+Institute for Scientific Studies (1 Conferences records): intbitset([1084037])
+VA US (1 Conferences records): intbitset([1084501])
+costa brava (1 Conferences records): intbitset([1086621])
+Nanyang Executive Center, Nanyang Technological University (1 Conferences records): intbitset([1089478])
+Instituto de Física Fundamental y Matemáticas de la Universidad de Salamanca (IUFFYM) (1 Conferences records): intbitset([1089682])
+Torre Faro (Messina) (1 Conferences records): intbitset([1093489])
+Scuola Normale Superiore (1 Conferences records): intbitset([1095550])
+University of Granada (1 Conferences records): intbitset([1112313])
+APC (1 Conferences records): intbitset([1113637])
+
+270__m (contact email), (10625 Conferences records with values) (14695 distinct values in general)
+intbitset([966954, 967219, 967637, 967648, 967721, ..., 1382017, 1382035, 1382054, 1382055, 1382198])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+Recruitment.Service@CERN.CH
+employ@fnal.gov
+pasquin@fnal.gov
+rush@math.ucr.edu
+didupree@indiana.edu
+sobrito@bnl.gov
+khewitt@mit.edu
+mkowalczyk@anl.gov
+Doug.Wright@llnl.gov
+jobs@slac.stanford.edu
+
+270__p (contact person), (442 Conferences records with values) (6564 distinct values in general)
+intbitset([1119451, 1207934, 1210795, 1210936, 1210937, ..., 1380954, 1380957, 1381122, 1382055, 1382198])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+Hou, George W.S.
+Bertrand, Daniel
+Bianchi, Luciana
+Kim, Yoon Hee
+Huchra, John
+van der Bij, J.J.
+Dooley, John W.
+Choi, Young
+Padamsee, Hasan
+Kipperman, M.
+
+410__a (institution name variants), (4 Conferences records with values) (11319 distinct values in general)
+intbitset([978979, 980638, 981274, 981829])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+Aachen Tech. Hochsch.
+AARHUS UNIV
+Aarhus U.
+ADELAIDE UNIV
+Adelaide U.
+ADELPHI UNIV GARDEN CITY
+Adelphi U. Garden City
+TOYOHASHI AICHI UNIV
+AICHI UNIV
+MIYOSHI AICHI UNIV
+
+411__a (series), (4151 Conferences records with values) (907 distinct values in general)
+intbitset([963518, 963532, 963533, 963554, 963555, ..., 1381122, 1381652, 1382017, 1382054, 1382198])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+        63 Les Houches Summer School 
+        44 SSI 
+        44 Cracow School of Theoretical Physics 
+        40 ABDW 
+        40 Karpacz Winter School 
+        38 ICHEP 
+        37 Moriond EW 
+        36 JOHNS HOPKINS 
+        35 PIC 
+        33 ICRC 
+        32 WE Heraeus Seminar 
+        32 Moriond Astro 
+        30 SUSSP 
+        29 TASI 
+        28 Rencontres Aoste 
+        28 Gordon 
+        27 Moriond QCD 
+        26 WIN 
+        26 WWND 
+        26 Neutrino 
+        24 Rencontres de Blois 
+        25 Bormio 
+        24 SUSY 
+        23 QM 
+        21 DIS 
+        22 JGRG 
+        22 Vertex 
+        21 PASCOS 
+        21 CHEP 
+        21 Strings 
+        21 Herbstschule Maria Laach 
+        21 Texas 
+        20 Cracow Epiphany 
+        20 LINAC 
+        20 OMGTP 
+        20 ISAPP 
+        18 WGMP 
+        20 ERE 
+        19 PHENO 
+        18 HEACC 
+        19 COSMO 
+        17 ISCRA 
+        18 PLANCK 
+        18 CTEQ School 
+        18 LTP 
+        17 QCD-Montpellier 
+        16 ESHEP 
+        16 BSM 
+        16 Schladming Winter School 
+        16 ISHEPP 
+        16 Beauty 
+        16 ACAT 
+        16 ISINN 
+        16 MaxEnt 
+        16 EDS 
+        14 MG 
+        15 NuFact 
+        14 FEL 
+        14 ISMD 
+        15 lattice 
+        15 Hadron 
+        15 ITEP-WS 
+        15 CYCLOTRONS 
+        13 Rencontres du Vietnam 
+        13 Geometry, Integrability and Quantization 
+        14 SQM 
+        14 AAC 
+        14 LCWS 
+        14 GR 
+        14 Bled Mini 
+        14 ICALEPCS 
+        13 Wilga 
+        13 IWAA 
+        13 FPCP 
+        13 FB 
+        12 IFAE 
+        13 DAE-SNP 
+        13 ISVHECRI 
+        12 ERL 
+        13 BLOIS 
+        13 IWNT 
+        11 CORFU 
+        12 RuPAC 
+        11 Neutrino Telescopes 
+        12 INPC 
+        12 COSPA 
+        12 RADCOR 
+        12 European Conference on Few-Body Problems in Physics 
+        12 Fermilab Industrial Affiliates 
+        12 Symmetries in Science 
+        12 NATO ASI on Techniques and Concepts of High-Energy Physics 
+        12 saas 
+        11 LoopFest 
+        11 CSC 
+        11 ICIS 
+        11 Confinement 
+        11 Lomonosov Conferences on Elementary Particle Physics 
+        11 PANIC 
+        11 Light Cone 
+        11 SEWM 
+---- Outliers ----
+CVI (1 Conferences records): intbitset([978030])
+WE-Heraeus-Summerschool (1 Conferences records): intbitset([1276442])
+Biennial (1 Conferences records): intbitset([966890])
+biennial (1 Conferences records): intbitset([969863])
+PPHMF (1 Conferences records): intbitset([1089212])
+Enrico Fermi School (1 Conferences records): intbitset([964127])
+eurowd (1 Conferences records): intbitset([1189057])
+QGQGS (1 Conferences records): intbitset([1189238])
+Real Time (1 Conferences records): intbitset([1276882])
+yes - regular summer institute (1 Conferences records): intbitset([964121])
+
+411__b (series), (8 Conferences records with values) (8 distinct values in general)
+intbitset([971889, 975183, 978060, 978633, 979977, 980050, 981576, 1113664])
+-----------------------------------------------------------------------------------
+---- Good values ----
+         1 24 
+         1 2 
+         1 29 
+         1 25 
+         1 19 
+         1 15 
+         1 14 
+         1 3 
+---- Outliers ----
+24 (1 Conferences records): intbitset([971889])
+2 (1 Conferences records): intbitset([1113664])
+29 (1 Conferences records): intbitset([981576])
+25 (1 Conferences records): intbitset([978633])
+19 (1 Conferences records): intbitset([979977])
+15 (1 Conferences records): intbitset([978060])
+14 (1 Conferences records): intbitset([975183])
+3 (1 Conferences records): intbitset([980050])
+
+411__e (series), (1 Conferences records with values) (1 distinct values in general)
+intbitset([1194432])
+-----------------------------------------------------------------------------------
+---- Good values ----
+         1 10 
+---- Outliers ----
+10 (1 Conferences records): intbitset([1194432])
+
+411__n (series), (6880 Conferences records with values) (140 distinct values in general)
+intbitset([963518, 963519, 963522, 963526, 963528, ..., 1380539, 1381122, 1381652, 1382017, 1382054])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+       822 2 
+       717 3 
+       616 4 
+       537 5 
+       491 6 
+       394 8 
+       392 7 
+       356 9 
+       342 10 
+       300 11 
+       265 12 
+       226 13 
+       193 1 
+       190 x 
+        80 14 
+        79 15 
+        74 16 
+        55 18 
+        55  
+        52 17 
+        52 20 
+        51 21 
+        49 19 
+        37 22 
+        35 23 
+        31 24 
+        29 25 
+        24 26 
+        24 27 
+        22 30 
+        21 29 
+        20 28 
+        20 31 
+        20 33 
+        18 32 
+        14 34 
+        12 35 
+        12 38 
+        11 37 
+        11 45 
+        10 36 
+        10 49 
+         8 52 
+         9 46 
+         9 42 
+         9 39 
+         8 50 
+         8 41 
+         8 48 
+         6 51 
+         7 44 
+         7 43 
+         6 40 
+         6 47 
+         4 53 
+         3 nr in series 
+         3 56 
+         3 55 
+         3 54 
+         3 61 
+         2 69 
+         2 59 
+         2 58 
+         2 63 
+         2 64 
+         2 4th 
+         1 474 
+         1 524 
+         1 497 
+         1 574 
+         1 182 
+         1 5th 
+         1 2011 
+         1 103 
+         1 521 
+         1 65 
+         1 152 
+         1 221 
+         1 13th 
+         1 7th 
+         1 25th 
+         1 49th 
+         1 3rd 
+         1 136 
+         1 XIX 
+         1 1947 
+         1 1776 
+         1 100 
+         1 93 
+         1 89 
+         1 81 
+         1 87 
+         1 86 
+         1 84 
+         1 74 
+         1 79 
+---- Outliers ----
+474 (1 Conferences records): intbitset([981697])
+524 (1 Conferences records): intbitset([1330016])
+497 (1 Conferences records): intbitset([1085466])
+574 (1 Conferences records): intbitset([1276771])
+182 (1 Conferences records): intbitset([1327161])
+5th (1 Conferences records): intbitset([1326508])
+2011 (1 Conferences records): intbitset([1117067])
+103 (1 Conferences records): intbitset([1185148])
+521 (1 Conferences records): intbitset([1187868])
+65 (1 Conferences records): intbitset([979916])
+
+500__a (note), (2103 Conferences records with values) (186316 distinct values in general)
+intbitset([963519, 963527, 963541, 963542, 963543, ..., 1375351, 1375894, 1376223, 1382035, 1382055])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+Not Published
+A&A in press; 15 pages, 7 figures. Fixed several typos
+22nd Richtmyer Memorial Lecture of the American Assoc. of Physics Teachers, Jan 1963
+Published in Dielectrics 1, 221-228, 1964
+Published in Proceedings of Congress International de Physique Nucleaire, Paris, Jul 1964. Paris, Editions du CNRS, 1964
+Eleven papers (lettered A-K) from the 1962 SLAC Summer Study Group
+Another translation is available in Kapitza, P.L. and Wainstein, L.A., eds. High Power Electronics, vol.2. Pergamon Press, 1966. p. 74-81
+Another translation available in Kapitza, P.L. and Wainstein,L.A., eds. High Power Electronics, vol.2. N.Y., Pergamon Press, 1966. p. 82-3
+Another translation available in Kapitza, P.L. and Wainstein, L.A., eds. High Power Electronics, vol.2. N.Y., Pergamon Press, 1966. p. 84-91
+Another translation available in Kapitza, P.L. and Wainstein, L.A., eds. High Power Electronics, vol.2. N.Y., Pergamon Press, 1966. p. 91-101
+
+500__o (note), (133 Conferences records with values) (110 distinct values in general)
+intbitset([964653, 965135, 965153, 966702, 966961, ..., 1365214, 1365352, 1365354, 1370516, 1371842])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+         6 No complete proceedings 
+         5 Inter-University Centre for Astronomy and Astrophysics 
+         4 no proceedings 
+         4 No proceedings published for this series 
+         3 By Invitation only 
+         3 in German 
+         3 public note 
+         3 No proceedings to be published 
+         3 No proceedings will be published 
+         1 PROCEEDINGS. Edited by Mauro Mezzetto. Padova, Papergraf, 2011. 481p.; 
+         2 Number of students is limited 
+         2 We are happy to inform you that the 15th Russian Gravitational Conference – International Conference on Gravitation, Cosmology and Astrophysics (RUSGRAV-15) and the International School on Gravitation and Cosmology (GRACOS-2014) will be held in the city of Kazan, in one of the oldest Russian universities, Kazan Federal University, on June 30 – July 5, 2014. The conference program will include plenary and sectional talks, lectures, posters and informal discussions on the latest developments in gravitation and cosmology. Young scientists taking part in the conference will have a unique opportunity to present their talks at a large international meeting and to hear the lectures of leading specialists. The working languages are Russian and English. 
+         2 will be published in Proceedings of Science 
+         1 The purpose of this meeting is to introduce the ASTA facility, its status and plans, and provide a forum to discuss experiments in the near (~2 year) future and beyond.  Parties interested in discussing possible experiments in the areas of accelerator R&D for particle physics at the Intensity and Energy Frontiers, stewardship and applications, including novel radiation sources and SRF accelerators are welcome to contact Philippe Piot (piot@fnal.gov). 
+         1 J. Phys.: Conf. Ser. 336 011001 
+         1 Edited by Olof Engstrom, Singapore: World Scientific, 2 volumes, 1987 
+         1 will be published by Acta Physica Polonica B 
+         1 http://pos.sissa.it/cgi-bin/reader/conf.cgi?confid=141 
+         1 Hosted by Institute of High Energy Physics, China 
+         1 please register before Nov 24 
+         1 The next edition of the Mathematica Summer School on Theoretical Physics will be held in Italy, in ICTP-Trieste from the 11th to the 15th of March of 2013. More information here. The school will be devoted to Conformal Field Theories in higher dimensions and the Conformal Bootstrap program.  The Aim of the School is to bring together theoretical physicists of all levels who want to learn both Mathematica and a selected advanced research topic on Theoretical Physics. The courses on Mathematica will be given focusing on examples borrowed from the topic related to conformal symmetry in field theory. Previous editions of the school took place in Porto (2009 and 2010), Waterloo (2011) and São Paulo (2012). See http://www2.fc.up.pt/mathschool/ for more information about the previous schools. 
+         1 Organisers: Chiara Camere and Susha Parameswaran. Deadline for registration: 10 February 2013 
+         1 Conference By Invitation - May Be Requested - Participants Limited 
+         1 Organizers: Francois Gelis (IPhT, CEA/Saclay, France); Edmond Iancu (IPhT, CEA/Saclay, France); Cyrille Marquet (Santiago de Compostela, Spain); Dionysis Triantafyllopoulos (ECT*/FBK, Italy) 
+         1 Limited to 80 participants 
+         1 SLAC-PUB-14497 
+         1 The VCI conference series is organized by  Institute of High Energy Physics (HEPHY) of the Austrian Academy of Sciences, Nikolsdorfer Gasse 18, A-1050 Wien (Vienna), Austria 
+         1 Student day will take place on Sunday, August 12, 2012 
+         1 "Higgs Coupling 2012" (HC2012) is a satellite workshop of "Hadron Collider Physics Symposium 2012" (HCP2012) 
+         1 The program will combine keynote lectures, plenary lectures, symposia and workshops by leading practitioners. Includes: Cosmology & Astroparticle Physics, Advances in Nanoscience, Quantum Uncertainty, Information, Unifying Natural Law: Advances and New Approaches 
+         1 Organizers: Nicolas Boulanger, Diego Chialva, Nicolo Colombo, Dmitrij Ponomarev, Philippe Spindel, Per Sundell, Mauricio Valenzuela 
+         1 Co-hosted by New Hadron Working groups in Japan & Korea 
+         1 141980 Russia, Dubna Moscow region, 6 Joliot Curie, Joint Institute for Nuclear Research, BLTP, Anatoly Efremov 
+         1 RIKEN, Nishina Center, Nishina hall 
+         1 PHONE:+913323182414. FAX:+913323346871. Dr. Jan-e Alam (Director), Variable Energy Cyclotron Centre, 1/AF Bidhannagar, Kolkata-700091, INDIA. 
+         1 The symposium is the second in a series of meetings gathering scientists working on astroparticle physics, cosmology, gravitation, nuclear physics, and related fields. Main topics: new phenomena and new states of matter in the Universe, general relativity, gravitation, cosmology, heavy ion collisions and the formation of the quark-gluon plasma, white dwarfs, neutron stars and pulsars, black holes, gamma-ray emission in the Universe, high energy cosmic rays, gravitational waves, dark energy and dark matter, strange matter and strange stars, antimatter in the Universe. 
+         1 Organizing committee: Bertin, Vincent (CPPM, Marseille); de los Heros, Carlos (Uppsala); Helbing, Klaus (Wuppertal); Popa, Vlad (ISS, Romania) 
+         1 RICAP'13 will be the fourth edition of the RICAP Conference. The acronym stands for Roma International Conference on Astro-Particle physics, the Conference is entirely dedicated to high energy cosmic rays study and it is organized by the three public Universities of Roma (University “Roma Tre”, University “La Sapienza” and University “Tor Vergata”). These Institutions provide both theoretical and experimental contributions, and participate to major experimental projects in the field (AGILE, AMS, ANTARES, ARGO, Auger, Fermi, KM3NeT, NEMO, PAMELA, ...). 
+         1 This school preceeds the second thematic workshop organized in the context of the FP7 funded INVISIBLES ITN (FP7-PEOPLE-2011-ITN, PITN-GA-2011-289442-INVISIBLES), which focuses on Neutrino and Dark Matter phenomenology and their connection, and more in general on physics beyond the Standard Model of Particle Physics.  The workshop will take place in beautiful Lumley Castle in County Durham, UK.  The school will take place in IPPP, Durham University. 
+         1 This is the second thematic workshop organized in the context of the FP7 funded INVISIBLES ITN (FP7-PEOPLE-2011-ITN, PITN-GA-2011-289442-INVISIBLES), which focuses on Neutrino and Dark Matter phenomenology and their connection, and more generally on physics beyond the Standard Model of Particle Physics. It will take place in the beautiful surroundings of Lumley Castle in County Durham UK 
+         1 Organizing Committee: K.S. Babu, M. Diwan, A. Friedland, M. Goodman, J. Pati, K. Scholberg, R. Svoboda, R. Wilson 
+         1 Deadline for applications 15 February 2013 
+         1 The conference "Scalars 2013", being a continuation of "Scalars 2011", is supposed to be a forum to discuss various aspects of physics of scalar particles and scalar fields. 
+         1 *Change of place - To be held in conjunction with Workshop on Strategies of the Detection of Dark Matter Particles, 20-23 Feb 1994, Berkeley 
+         1 No registration fee 
+         1 1 
+         1 Part of CETUP 2013 
+         1 Mid Term Meeting at GGI 
+         1 A Satellite Meeting of STATPHYS 20 
+         1 Perhaps this Conference is the 1st of a new Conf-Series 
+         1 The Conference Proceedings will be published in EPJ Web of Conferences 
+         1 will be published as a regular issue of Acta Physica Polonica B 
+         1 The proceedings of the symposium will be published on-line by Proceedings of Science. 
+         1 will be published in Journal of Physics Conference Series 
+         1 will be published in the Ukrainian Journal of Physics 
+         1 to be published in IJMPC 
+         1 will  be published by the Institute of Physics (IOP) in the Journal of Conference Series 
+         1 This is an exploratory workshop which aims at studying in detail the opportunity and feasibility of a fixed-target experiment using the LHC beams extracted by a bent crystal.  Complementarity with existing experiments at the LHC, at SPS, at CEBAF, at Fermilab will also be the cornerstone of the discussions. The contribution of everyone is therefore welcome.  The workshop will consist of morning sessions with invited speakers and afternoon sessions devoted to work in groups on the following themes:  nucleon and nucleus pdf extraction in hadronic processes, spin physics, QGP physics, nuclear matter studies in pA, diffractive physics and ultra-peripheral collisions, beam extraction and secondary beams, target polarization, modern detector technologies, event generator and detector simulation, etc... 
+         1 To appear in Lect. Notes Phys. 
+         1 The first International Conference on Advancements in Nuclear Instrumentation, Measurement Methods and their Applications ANIMMA is organized by CEA in closed partnership with INSTN, Université de Provence and Belgium's nuclear research center SCK-CEN in association with IEEE and ENS organizations.  The conference topics include instrumentation and measurements for :      Fundamental Physics -      Nuclear Research Reactors  -     Nuclear Power Reactors  -     Nuclear Fuel Cycle   -    Safeguards, Homeland Security   -    Environmental and Medical Sciences   -    Education and Training Activities 
+         1 Proceedings are published in the Journal of Instrumentation 
+         1 The refereed proceedings articles will be published as a regular issue of the Astronomische Nachrichten / Astronomical Notes (AN) 
+         1 Pontif.Acad.Sci.Scr.Varia 119 
+         1 proceedings to be published in Astrophysics and Space Science 
+         1 We kindly ask you to register as soon as possible, the deadline for registration will be April 4, 2014. The registration fees have been fixed at £50 and will cover coffee breaks and a pub evening. 
+         1 This conference follows the conference on “Flavor Physics in the LHC Era”, held in Singapore on November 2010 
+         1 will be published in a special issue of Journal of Physics of Elementary Particles and Atomic Nuclei 
+         1 Topics of the workshop:      * Observational Cosmology. Planck results.     * Dark Energy: origin, evolution and observational properties.     * Observational properties of Galaxies.     * Dark Matter in Galaxies, Groups and Clusters.     * Old and New Dark Matter candidates.     * Direct and Indirect Dark Matter searches.     * Simulations in Galaxy/Cluster Formation.     * Abandoning the LCDM Universe paradigm?     * Ultra high energy cosmic rays.     * Modifying Newton-Einstein Theory of Gravity? 
+         1 will be published in Journal of Instrumentation (JINST) 
+         1 will published in EPJ Web of Conferences 
+         1 SLAC-PUB-0894 
+         1 SLAC-PUB-0986 
+         1 SLAC-PUB-0984 
+         1 Proceedings will be published in Brazilian Journal of Physics 
+         1 To be published in the conference proceedings, in Nucl. Phys. B 
+         1 a satellite event to the International Conference on Neutron Scattering in Edinburgh (ICNS-2013, 8-12th July 2013) 
+         1 will be published by the Journal of Physics: Conference Series 
+         1 Proceedings will be published as a regular issue of Physica Scripta 
+         1 will be publishedby EDP Sciences on a dedicated issue of EPJ Web of Conferences 
+         1 link to online proceedings broken 
+         1 proceedings to be published in Gravitation and Cosmology 
+         1 We expect to publlished  in (1) Nuclear Science and Techniques (http://www.j.sinap.ac.cn/nst/EN/volumn/home.shtml ), and  (2) Nuclear Physics Review (http://www.npr.ac.cn/en/dqml.asp). The LOC and referees will make decision to which journal. 
+         1 will be  published in EPJ Web Conf. 
+         1 will be published in Nucl.Phys.B - Proc.Suppl. 
+         1 The proceedings of Top2014 will be published online on eCONF and HAL. 
+         1 will be published in a special issue of the  Canadian Journal of Physics. 
+         1 proceedings to be published as DESY-PROC-2014-03 
+         1 will be published in J.Phys.Conf.Ser. 
+         1 The Proceedings should be published 6 months after the conference by Cambridge University Press (CUP) 
+         1 Proceedings will be published by the IAU publisher, Cambridge University Press (CUP), both in print and electronically 
+         1 The José Plínio Baptista School of Cosmology biyearly reviews relevant topics in Theoretical Physics. Advanced courses and review seminars focus on the state-of-the-art of the chosen topic. Main topic:  Cosmic Microwave Background Radiation 
+         1 will be published in Journal of Physics: Conference Series 
+         1 The Annual Meeting of the EPS-SNP (European Physical Society - Statistical and Nonlinear Physics Division) will be held during the Conference 
+         1 will be published PoS CPOD2014 
+         1 The Second International Meeting for Large Neutrino Infrastructures organised by Fermilab, the Astroparticle Physics European Consortium (APPEC), the ICFA Neutrino Panel, the IUPAP Astroparticle Physics International Commitee (ApPIC) and several worldwide funding agencies will take place at Fermilab on the 20th and 21st of April 2015.  The meeting will be preceded by the meetings of the ICFA Neutrino Panel and ApPIC both of which will report in the Second International Meeting. 
+         1 will be published in Nucl. Phys. (Proc. Suppl.) 
+         1 see related School June 19-30 
+         1 in honor of Aldo Covello 
+---- Outliers ----
+The purpose of this meeting is to introduce the ASTA facility, its status and plans, and provide a forum to discuss experiments in the near (~2 year) future and beyond.  Parties interested in discussing possible experiments in the areas of accelerator R&D for particle physics at the Intensity and Energy Frontiers, stewardship and applications, including novel radiation sources and SRF accelerators are welcome to contact Philippe Piot (piot@fnal.gov). (1 Conferences records): intbitset([1296977])
+J. Phys.: Conf. Ser. 336 011001 (1 Conferences records): intbitset([1083213])
+Edited by Olof Engstrom, Singapore: World Scientific, 2 volumes, 1987 (1 Conferences records): intbitset([1084744])
+will be published by Acta Physica Polonica B (1 Conferences records): intbitset([1370516])
+http://pos.sissa.it/cgi-bin/reader/conf.cgi?confid=141 (1 Conferences records): intbitset([1089356])
+Hosted by Institute of High Energy Physics, China (1 Conferences records): intbitset([1108068])
+please register before Nov 24 (1 Conferences records): intbitset([1203208])
+The next edition of the Mathematica Summer School on Theoretical Physics will be held in Italy, in ICTP-Trieste from the 11th to the 15th of March of 2013. More information here. The school will be devoted to Conformal Field Theories in higher dimensions and the Conformal Bootstrap program.  The Aim of the School is to bring together theoretical physicists of all levels who want to learn both Mathematica and a selected advanced research topic on Theoretical Physics. The courses on Mathematica will be given focusing on examples borrowed from the topic related to conformal symmetry in field theory. Previous editions of the school took place in Porto (2009 and 2010), Waterloo (2011) and São Paulo (2012). See http://www2.fc.up.pt/mathschool/ for more information about the previous schools. (1 Conferences records): intbitset([1203205])
+Organisers: Chiara Camere and Susha Parameswaran. Deadline for registration: 10 February 2013 (1 Conferences records): intbitset([1203203])
+Conference By Invitation - May Be Requested - Participants Limited (1 Conferences records): intbitset([1203201])
+
+505__t (toc title), (5 Conferences records with values) (406 distinct values in general)
+intbitset([1081246, 1198487, 1211445, 1235067, 1244702])
+----------------------------------------------------------------------------------------
+---- Good values ----
+         1 Neutrino cosmology 
+         1 Electron cooling,     Stochastic cooling,     Laser cooling,     Muon cooling,     Storage and cooling of particles in antiproton and ion traps,     Other methods of phase space manipulation,     Cooled beam dynamics 
+         1 operational availability; the operational cycle; system performance and outlook; performance limitations and outlook; scenarios for 2014/2015. 
+         1 Experimental detector systems 
+         1 Gaseous detectors 
+         1 Semiconductor detectors 
+         1 Calorimeters 
+         1 Particle identification 
+         1 Photon detectors 
+         1 Dark Matter Detectors 
+         1 Neutrino Detectors 
+         1 Astrophysics and space instrumentation 
+         1 Front-end electronics 
+         1 Trigger and data acquisition systems 
+         1 Machine Detector Interface and beam instrumentation 
+         1 Instrumentation for medical, biological and materials research 
+         1 Beyond standard model signatures - P. Langacker, Princeton, University and IAS; Higher-spin theory: problems and perspectives - D. Francia, Scuola Normale Superiore, Pisa; Effective field theory and its application to quantum gravity - J. Donoghue, Univ. of Massachusetts at Amherst; Geometry and topology in physics - T. Weigand, Universität Heidelberg; Dynamics of the string theory landscape - B. Freivogel, Universiteit van Amsterdam 
+---- Outliers ----
+Electron cooling,     Stochastic cooling,     Laser cooling,     Muon cooling,     Storage and cooling of particles in antiproton and ion traps,     Other methods of phase space manipulation,     Cooled beam dynamics (1 Conferences records): intbitset([1081246])
+
+520__a (abstract), (1002 Conferences records with values) (593113 distinct values in general)
+intbitset([974072, 977020, 978168, 979272, 979596, ..., 1382017, 1382035, 1382055, 1382198, 1382213])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+The original Schrodinger's paper is translated and annotated in honour of the 70-th anniversary of his Uncertainty Relation [published also in: Bulg. Journal of Physics,vol.26,no.5/6 (1999) pp.193-203]. In the annotation it is shown that the Uncertainty Relation can be written in a complete compact canonical form.
+(Foreword by translator.) The aim of present translation is to clarify the historically important question who was the pioneer in obtaining of exact static solutions of Einstein equations minimally coupled with scalar field. Usually, people cite the works by Janis, Newman, Winicour (Phys. Rev. Lett. 20 (1968) 878) and others authors whereas it is clear that JNW rediscovered (in other coordinates) the Fisher's solution which was obtained 20 years before, in 1947. Regrettably, up to now I continue to meet many papers (even very fresh ones) whose authors evidently do not know about the Fisher's work, so I try to remove this gap by virtue of present translation and putting it into the LANL e-print archive. (Original Abstract.) It is considered the scalar mesostatic field of a point source with the regard for spacetime curvature caused by this field. For the field with $\mass = 0$ the exact solution of Einstein equations was obtained. It was demonstrated that at small distance from a source the gravitational effects are so large that they cause the significant changes in behavior of meson field. In particular, the total energy of static field diverges logarithmically.
+According to Dirac's theory of the positron, an electromagnetic field tends to create pairs of particles which leads to a change of Maxwell's equations in the vacuum. These changes are calculated in the special case that no real electrons or positrons are present and the field varies little over a Compton wavelength.
+We discuss an exotic class of Kaluza-Klein models in which the internal space is neither compact nor even of finite volume. Rather than using the usual compact internal space we consider the case where particles are gravitationally trapped near a four-dimensional submanifold of the higher dimensional spacetime. A specific model exhibiting this phenomenon is constructed in five dimensions. Physics Letters B159, 22-25 (1985). Note: This rather old paper has recently been subject of renewed interest due to the explosion of activity in the ``non-compact extra dimensions'' variant of the Kaluza-Klein model. It is not available elsewhere on the Internet, and in the interests of easy access I am placing it on hep-th. The body of the paper is identical to the published version. A small separate note has been added at the end of the paper.
+We prove that in the Hartle-Hawking approach to quantum cosmology the existence of an inflationary phase is a general property of minisuperspace models given by a closed Friedmann-Robertson-Walker universe containing a massless scalar field with a $\lambda\phi~{n}$ self-interaction. The evolution in time of the cosmic scale factor and of the scalar field in the very early universe is derived, together with the conditions to be satisfied in order to solve the horizon and flatness problems.
+The decay rate for a black hole to decay nonperturbatively via tunneling is shown to be related to the Bekenstein-Hawking black hole entropy $S_{bh}$. This new physical interpretation of the black hole entropy was presented first in 1988 in this paper. I quote here the relevant statement: ``It should be noticed that the decay rate of a black hole due to nonperturbative instability is proportional to $\exp(-S_{bh}$, where $S_{bh}$ is the Bekenstein-Hawking entropy. This seems to indicate that the Bekenstein-Hawking entropy is the measure of the ability of a black hole to disappear from our Universe in the one quantum jump, with the simultaneous production of particles carrying away its total energy.''
+We summarize the standard factorization theorems for hard processes in QCD, and describe their proofs.
+The simple physics of a free particle reveals important features of the path-integral formulation of relativistic quantum theories. The exact quantum-mechanical propagator is calculated here for a particle described by the simple relativistic action proportional to its proper time. This propagator is nonvanishing outside the light cone, implying that spacelike trajectories must be included in the path integral. The propagator matches the WKB approximation to the corresponding configuration-space path integral far from the light cone; outside the light cone that approximation consists of the contribution from a single spacelike geodesic. This propagator also has the unusual property that its short-time limit does not coincide with the WKB approximation, making the construction of a concrete skeletonized version of the path integral more complicated than in nonrelativistic theory.
+We show that the quantum-algebra-invariant open spin chains associated with the affine Lie algebras $A~{(1)}_n$ for $n>1$ are integrable. The argument, which applies to a large class of other quantum-algebra-invariant chains, does not require that the corresponding $R$ matrix have crossing symmetry.
+The gravitational measure on an arbitrary topological three-manifold is constructed. The nontrivial dependence of the measure on the conformal factor is discussed. We show that only in the case of a compact manifold with boundary the measure acquires a nontrivial dependence on the conformal factor which is given by the Liouville action. A nontrivial Jacobian (the divergent part of it) generates the Einstein-Hilbert action. The Hartle-Hawking wave function of Universe is given in terms of the Liouville action. In the gaussian approximation to the Wheeler-DeWitt equation this result was earlier derived by Banks et al. Possible connection with the Chern-Simons gravity is also discussed.
+
+595_Da (internal note), (10 Conferences records with values) (37 distinct values in general)
+intbitset([1211302, 1214903, 1215372, 1220433, 1221577, 1221799, 1223207, 1223906, 1320615, 1320679])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+         8 C 
+         2 Y 
+---- Outliers ----
+
+595_Dd (internal note), (10 Conferences records with values) (1495 distinct values in general)
+intbitset([1211302, 1214903, 1215372, 1220433, 1221577, 1221799, 1223207, 1223906, 1320615, 1320679])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+DRN=D12-04269
+2011-08-09
+2011-08-02
+2012-06-12
+2013-07-07
+2013-05-16
+2014-11-17
+2014-09-23
+2014-10-23
+2013-07-23
+
+595_Ds (internal note), (10 Conferences records with values) (2458 distinct values in general)
+intbitset([1211302, 1214903, 1215372, 1220433, 1221577, 1221799, 1223207, 1223906, 1320615, 1320679])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+e27
+e20
+p29
+dZ2013-03211
+dZ2013-sj92
+hZ2013-sj88
+hZ2013-01793
+dZ2013-sj91
+hZ2013-03209
+dZ2013-sj88
+
+595__9 (internal note source), (11 Conferences records with values) (5 distinct values in general)
+intbitset([967754, 971496, 973697, 1094818, 1313637, ..., 1315729, 1321589, 1321592, 1321593, 1373183])
+-------------------------------------------------------------------------------------------------------
+---- Good values ----
+        11 CERN 
+---- Outliers ----
+CERN (11 Conferences records): intbitset([967754, 971496, 973697, 1094818, 1313637, ..., 1315729, 1321589, 1321592, 1321593, 1373183])
+
+595__a (internal note), (23 Conferences records with values) (456969 distinct values in general)
+intbitset([967754, 971496, 973697, 1080153, 1094818, ..., 1321589, 1321592, 1321593, 1373183, 1375894])
+-------------------------------------------------------------------------------------------------------
+---- Example of values ----
+(second edition:1-114,1971)
+From author to hoc (Official use only)
+References from user
+Title changed from ALLCAPS
+DOI from CrossRef
+Reported to OSTI for FY 2004
+Reported to OSTI 9/24/04
+doi from CrossRef
+Title standardized on 6/28/2007
+References from APS OAI Backfile Harvest
+
+595__c (internal note), (1 Conferences records with values) (3 distinct values in general)
+intbitset([1298869])
+------------------------------------------------------------------------------------------
+---- Good values ----
+         1 CDS 
+---- Outliers ----
+CDS (1 Conferences records): intbitset([1298869])
+
+650172 (subject authority), (299 Conferences records with values) (12 distinct values in general)
+intbitset([968084, 969081, 969568, 970920, 970931, ..., 1381680, 1382055, 1382062, 1382198, 1382213])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+       299 INSPIRE 
+---- Outliers ----
+INSPIRE (299 Conferences records): intbitset([968084, 969081, 969568, 970920, 970931, ..., 1381680, 1382055, 1382062, 1382198, 1382213])
+
+650179 (), (1 Conferences records with values) (6 distinct values in general)
+intbitset([1123032])
+-----------------------------------------------------------------------------
+---- Good values ----
+         1 INSPIRE 
+---- Outliers ----
+INSPIRE (1 Conferences records): intbitset([1123032])
+
+65017a (subject), (1589 Conferences records with values) (575 distinct values in general)
+intbitset([963564, 963688, 963843, 963996, 964040, ..., 1381680, 1382055, 1382062, 1382198, 1382213])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+       408 Astrophysics 
+       597 Phenomenology-HEP 
+       430 Theory-HEP 
+       454 Experiment-HEP 
+       265 Gravitation and Cosmology 
+       218 Accelerators 
+       132 Instrumentation 
+       179 Theory-Nucl 
+        46 General Physics 
+       165 Experiment-Nucl 
+       128 Math and Math Physics 
+        98 Lattice 
+        37 hep-ph 
+         1 ASTRO-PH 
+        30 hep-th 
+        15 gr-qc 
+         1 astro-ph.CO 
+        35 hep-ex 
+        68 Computing 
+         7 nucl-th 
+         1 GR-QC 
+        40 Other 
+         2 math-ph 
+        10 nucl-ex 
+        37 astro-ph 
+         3 physics.ins-det 
+        12 hep-lat 
+         1 quant-ph 
+         1 physics.acc-ph 
+         3 physics.acc-phys 
+         3 math 
+         4 cs 
+         2 physics-other 
+         1 physics.hist-ph 
+---- Outliers ----
+
+6531_9 (uncontrolled keyword source), (320 Conferences records with values) (47 distinct values in general)
+intbitset([968016, 1119451, 1123032, 1207934, 1210937, ..., 1378045, 1380573, 1381122, 1382055, 1382198])
+-----------------------------------------------------------------------------------------------------------
+---- Good values ----
+       319 submitter 
+         1 INSPIRE 
+---- Outliers ----
+
+6531_a (uncontrolled keyword), (5584 Conferences records with values) (135274 distinct values in general)
+intbitset([963517, 963518, 963519, 963520, 963521, ..., 1378045, 1380573, 1381122, 1382055, 1382198])
+---------------------------------------------------------------------------------------------------------
+---- Example of values ----
+D0
+two- and three-body scattering
+CDF
+Dibaryon resonances
+Scattering observables
+Higher-dimensional theory
+ssc
+particle beam bunching
+electron beams
+transition radiation
+
+6531_b (), (1 Conferences records with values) (6 distinct values in general)
+intbitset([965691])
+-----------------------------------------------------------------------------
+---- Good values ----
+         1 Eleventh Particle Accelerator Conference 
+         1 PAC 85 
+---- Outliers ----
+Eleventh Particle Accelerator Conference (1 Conferences records): intbitset([965691])
+PAC 85 (1 Conferences records): intbitset([965691])
+
+667__a (nonpublic note), (429 Conferences records with values) (1902 distinct values in general)
+intbitset([963684, 964071, 964078, 964112, 964113, ..., 971118, 971478, 971675, 972943, 980593])
+------------------------------------------------------------------------------------------------
+---- Example of values ----
+corrected per roep@physik.rwth-aachen.de, lxa, 5/98 the Inst.Theor. Phys. is part of above.
+Includes ISA, Inst. for Storage Ring Facilities
+Laboratory Deputy Director
+Formerly Adelphi College
+Includes HEP Exp & Theory--See Argonne, Phys. for Physics Div.
+jerene@physics.arizona.edu
+Asia Univ. Jr. College  at same loation
+Also listed with Zip of 370148
+Former ICN = Negev U.
+(B) in MacCallum
+
+695__2 (controlled keyword authority), (8 Conferences records with values) (7 distinct values in general)
+intbitset([1211302, 1214903, 1220433, 1221577, 1221799, 1223906, 1320615, 1320679])
+---------------------------------------------------------------------------------------------------------
+---- Good values ----
+         8 INSPIRE 
+---- Outliers ----
+INSPIRE (8 Conferences records): intbitset([1211302, 1214903, 1220433, 1221577, 1221799, 1223906, 1320615, 1320679])
+
+695__a (controlled keyword), (8 Conferences records with values) (242297 distinct values in general)
+intbitset([1211302, 1214903, 1220433, 1221577, 1221799, 1223906, 1320615, 1320679])
+----------------------------------------------------------------------------------------------------
+---- Example of values ----
+neutrino nucleus: interaction
+interaction: neutrino nucleus
+pi: exchange
+exchange: pi
+pi nucleus: interaction
+interaction: pi nucleus
+potential: optical
+K0: hadronic decay
+hadronic decay: K0
+pi: pair production
+
+711__a (), (6199 Conferences records with values) (8012 distinct values in general)
+intbitset([963521, 963524, 963531, 963537, 963539, ..., 1376428, 1376980, 1376981, 1381652, 1382017])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+Workshop on Calculations for Modern and Future Colliders, 23 -30 Jul 2015
+C85-07-29.2
+C86-06-02.5
+C78-08-24.5
+C85-06-23
+C85-04-18
+C85-03-28
+C84-06-02
+C83-06-01.1
+RAQIS RAQIS 2010 RAQIS2010
+
+711__b (), (367 Conferences records with values) (448 distinct values in general)
+intbitset([963566, 963900, 964007, 964372, 964481, ..., 1346885, 1381075, 1381076, 1381077, 1381226])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+         5 SSC 
+         5 Cosmology on the Beach 
+         3 EPSHEP 
+         3 EPSHEP High-Energy 
+         2 second 
+         1 TAM 2013 
+         2 XVII 
+         2 XIII 
+         2 XII 
+         2 Matter Antimatter 
+         2 high energy 
+         2 NuFact2005 
+         2 Escuela Mexicana de Cuerdas y Supersimetría 
+         2 AIHENP 
+         2 CTPNP 2010 10 
+         1 Primera Reunión Argentino-Brasileña de Gravitación, Astrofísica y Cosmología 
+         1 Primeira Reunião Argentino-Brasileira de Gravitação, Astrofísica e Cosmologia 
+         1 Iguazu 
+         1 Iguazú 
+         1 Brasil 
+         1 graco 
+         1 first 
+         2 8th Annual Meeting 
+         2 10th International Conference on Low Temperature Physics 
+         2 Tenth International Conference on Low Temperature Physics 
+         2 JENAM 2010 
+         1 CAARI2006 
+         1 Sci Coder 
+         1 ISSCSMB2012 
+         1 3RD 3th International Workshop 
+         1 third 
+         1 XL 40 forty 
+         1 linear collider colliders 
+         1 Proton-Antiproton 
+         1 Victor Rothschild Memorial Symposium 
+         1 SRI2012 
+         1 USPAS11 
+         1 PXANE 2012 
+         1 CRF2010 
+         1 XII DSPIN 07 
+         1 YRMR 
+         1 2nd Annual Meetng of the Fermilab Industrial Affiliates 
+         1 Second Annual Meetng of the Fermilab Industrial Affiliates 
+         1 FWNP 
+         1 CPM 2012 
+         1 high-energy DSPIN 09 XIII 
+         1 NPA EPS V 
+         1 COOL11 
+         1 MEDEX  2011 
+         1 CORFU 2012 Corfu Summer Institute on EPP 
+         1 LAPD15 15thLAPD 
+         1 ESHEP12 
+         1 ESHEP2012 
+         1 Fourth 4th International Workshop 
+         1 high-energy DSPIN11 DSPIN 2011 XIV 14 
+         1 2nd second 
+         1 Third International Conference on Mathematical Physics and Its Applications 
+         1 5th International Workshop on Space Based Research in Fundamental Physics and Astronomy 
+         1 Entretiens Jacques Cartier 
+         1 Philosophy and Foundations of Science 2012 
+         1 Physics in Collision 
+         1 Frontiers of Fundamental Physics 
+         1 loopfestvii 7 7th 
+         1 Loopfest 5 loopfest5 multiloops multilegs 
+         1 6 6th 
+         1 loopfestix 7 9th 
+         1 VIIIth VIII eighth 
+         1 ACAT2011 
+         1 QCD at LHC 2012 
+         1 SIS SIS2010 
+         1 tenth NNN09 
+         1 NNN 2000 00 
+         1 NNN 99 
+         1 LC 
+         1 FERMI/SWIFT 
+         1 Aventures en Physique Mathematique 
+         1 BW2011 
+         1 BSS2011 
+         1 BS2011 
+         1 JW2011 
+         1 LCForum2012 
+         1 LCForum 2010 
+         1 First LeCosPA Symposium 
+         1 UHECR 2012 
+         1 XVI 
+         1 III Oporto Meeting 
+         1 Ist Oporto Meeting 
+         1 LOOPS2012 
+         1 PPC 2012 
+         1 spacepart'03 space part second 
+         1 ILC 2008 
+         1 LCWS/ILC 2008 
+         1 LCWS 2008 
+         1 1st International Conference on Logic and Relativity 
+         1 1st Conference on Logic and Relativity 
+         1 EUCAS 2005 
+         1 EUCAS 2007 
+         1 EUCAS 2009 
+---- Outliers ----
+CAARI2006 (1 Conferences records): intbitset([978330])
+Sci Coder (1 Conferences records): intbitset([1119268])
+ISSCSMB2012 (1 Conferences records): intbitset([1119266])
+3RD 3th International Workshop (1 Conferences records): intbitset([980855])
+third (1 Conferences records): intbitset([976105])
+XL 40 forty (1 Conferences records): intbitset([1086087])
+linear collider colliders (1 Conferences records): intbitset([1119455])
+Proton-Antiproton (1 Conferences records): intbitset([968726])
+Victor Rothschild Memorial Symposium (1 Conferences records): intbitset([1185013])
+
+773__c (journal publication page), (2 Conferences records with values) (136908 distinct values in general)
+intbitset([965905, 968579])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+1-112
+860-867
+1421-1428
+429-442
+1281-1285
+2025-2033
+409-416
+171-181
+1329-1337
+73-74
+
+773__p (journal publication title), (5 Conferences records with values) (5070 distinct values in general)
+intbitset([965233, 965905, 968170, 968579, 1128401])
+---------------------------------------------------------------------------------------------------------
+---- Example of values ----
+Mem.Am.Math.Soc.
+Mon.Not.Roy.Astron.Soc.
+Nuovo Cim.
+Rev.Sci.Instrum.
+Rev.Mod.Phys.
+Phys.Rev.
+Am.J.Phys.
+Usp.Fiz.Nauk
+Phys.Lett.
+Phys.Rev.Lett.
+
+773__v (journal publication volume), (3 Conferences records with values) (7595 distinct values in general)
+intbitset([965233, 965905, 968579])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+41
+107
+27
+33
+34
+130
+31
+83
+29
+4
+
+773__w (conference publication conference code), (1 Conferences records with values) (15666 distinct values in general)
+intbitset([967218])
+-----------------------------------------------------------------------------------------------------------------------
+---- Example of values ----
+C90-03-05.1
+C90-03-01
+C90-03-05
+C89-11-22
+C90-01-20
+C90-01-03.1
+C90-01-08.2
+C90-02-17
+C90-03-14
+C90-02-05
+
+773__x (journal publication legacy freetext), (6687 Conferences records with values) (284987 distinct values in general)
+intbitset([963517, 963518, 963519, 963520, 963521, ..., 1083988, 1085460, 1222715, 1291410, 1303723])
+------------------------------------------------------------------------------------------------------------------------
+---- Example of values ----
+In *Milton, K.A. (ed.): A quantum legacy: Seminal papers of Julian Schwinger* 116-131
+IEEE Trans. Nucl. Sci. 20 (1973) 125-134 (No. 1)
+Lepton-Photon Symp.1975:317
+In *Tokyo 1975, Electron and photon interactions at resonance region and related topics* 421-456
+In *Jackiw, R.: Diverse topics in theoretical and mathematical physics* 21-34.
+Erice Subnucl.Phys.1973:139
+Australian J.Phys.28 (1975) 7-13 and Preprint - O'BRIEN D M (REC.NOV 74) 13p
+*In Bratislava 1973, Proceedings, Triangle Meeting On Hadron Interactions At Low Energies*, Bratislava 1975, 145-206 and Preprint - DALITZ R H (73,REC.FEB 74) 55p
+In *Tokyo 1973, Symposium On High Energy Physics*, Tokyo 1973, 200-209 and Tokyo Univ Of Education - TUEP-73-16 (73,REC.JAN 74) 20p
+In *Frascati 1973, Proceedings, High Energy Instrumentation Conference*, Frascati 1973, 442-444
+
+773__y (journal publication year), (1 Conferences records with values) (263 distinct values in general)
+intbitset([968579])
+-------------------------------------------------------------------------------------------------------
+---- Good values ----
+         1 1994 
+---- Outliers ----
+
+8564_a (), (1 Conferences records with values) (54 distinct values in general)
+intbitset([981608])
+------------------------------------------------------------------------------
+---- Good values ----
+         1 https://www.jlab.org/conferences/sstin/ 
+---- Outliers ----
+
+8564_u (url), (11449 Conferences records with values) (2699907 distinct values in general)
+intbitset([963561, 963564, 963570, 963577, 963594, ..., 1382054, 1382055, 1382062, 1382198, 1382213])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+http://inspirehep.net/record/1297195/files/Future3.png
+http://www.slac.stanford.edu/cgi-wrap/pubpage?slac-tn-62-026
+http://www.slac.stanford.edu/cgi-wrap/pubpage?slac-r-023
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0416
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0483
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0551
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0484
+http://www.slac.stanford.edu/cgi-wrap/pubpage?slac-tn-63-023
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0341
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0553
+
+8564_y (url label), (736 Conferences records with values) (1354638 distinct values in general)
+intbitset([963905, 964007, 965472, 965567, 967954, ..., 1381680, 1382035, 1382054, 1382062, 1382213])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+SLACPUB
+SLACTN
+ADSABS
+SLACREPT
+SLAC
+DOI
+RSINA
+RMPHA
+PHRVA
+AJPIA
+
+909COo (), (20589 Conferences records with values) (1263762 distinct values in general)
+intbitset([963517, 963518, 963519, 963520, 963521, ..., 1382054, 1382055, 1382062, 1382198, 1382213])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+oai:inspirehep.net:1333355
+oai:inspirehep.net:1276252
+oai:inspirehep.net:1265189
+oai:inspirehep.net:1347216
+oai:inspirehep.net:1274799
+oai:inspirehep.net:1278431
+oai:inspirehep.net:1278449
+oai:atlantis.cern.ch:1077
+oai:atlantis.cern.ch:10849
+oai:atlantis.cern.ch:21550
+
+909COp (), (20589 Conferences records with values) (12 distinct values in general)
+intbitset([963517, 963518, 963519, 963520, 963521, ..., 1382054, 1382055, 1382062, 1382198, 1382213])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+     20589 INSPIRE:Conferences 
+---- Outliers ----
+INSPIRE:Conferences (20589 Conferences records): intbitset([963517, 963518, 963519, 963520, 963521, ..., 1382054, 1382055, 1382062, 1382198, 1382213])
+
+970__a (SPIRES IRN), (18435 Conferences records with values) (1122867 distinct values in general)
+intbitset([963517, 963518, 963519, 963520, 963521, ..., 1209975, 1229441, 1303721, 1303722, 1303723])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+SPIRES-60
+SPIRES-10325093
+SPIRES-10325107
+SPIRES-10325115
+SPIRES-10325123
+SPIRES-248
+SPIRES-256
+SPIRES-264
+SPIRES-299
+SPIRES-302
+
+980__a (collection), (20589 Conferences records with values) (81 distinct values in general)
+intbitset([963517, 963518, 963519, 963520, 963521, ..., 1382054, 1382055, 1382062, 1382198, 1382213])
+-----------------------------------------------------------------------------------------------------
+---- Good values ----
+       784 CORE 
+     20589 CONFERENCES 
+         1 NONCORE 
+---- Outliers ----
+
+981__a (), (43 Conferences records with values) (3238 distinct values in general)
+intbitset([965678, 966074, 966648, 968016, 970615, ..., 1315730, 1324845, 1339765, 1357523, 1372175])
+-----------------------------------------------------------------------------------------------------
+---- Example of values ----
+674175
+640540
+487440
+487442
+459597
+196523
+167913
+776487
+895309
+159338
+
+999C6a (refextract info), (1 Conferences records with values) (17651 distinct values in general)
+intbitset([964571])
+------------------------------------------------------------------------------------------------
+---- Example of values ----
+Invenio|1.0.0-rc0.1039-ff249 refextract|1.2 1334725383-0-1-0-0-0-0-0
+Invenio|1.0.0-rc0.1039-ff249 refextract|1.2 1334725354-0-1-0-1-0-0-0
+Invenio|1.0.0-rc0.1039-ff249 refextract|1.2 1334725333-0-1-1-1-0-0-1
+Invenio|1.0.0-rc0.1039-ff249 refextract|1.2 1334724953-0-0-1-1-0-0-0
+Invenio|1.0.0.1200-3a901 refextract|1.3 1344021844-0-1-1-1-0-0-1
+Invenio|1.0.0.1200-3a901 refextract|1.3 1343951539-0-0-0-0-0-0-1
+Invenio|1.0.0-rc0.1039-ff249 refextract|1.2 1334745528-0-1-0-1-0-0-0
+Invenio|1.0.0.983-20f7d refextract|1.3 1337186550-0-0-0-1-0-0-1
+Invenio|1.0.0-rc0.1039-ff249 refextract|1.3 1342050340-0-0-2-2-0-0-0
+Invenio|1.0.0.983-20f7d refextract|1.3 1336085974-0-0-1-1-0-0-0
+
+999C6t (), (1 Conferences records with values) (162901 distinct values in general)
+intbitset([964571])
+----------------------------------------------------------------------------------
+---- Example of values ----
+2013-02-17 13:56:44
+2015-04-20 07:06:46
+2013-02-17 13:56:00
+2014-09-04 09:49:48
+2014-11-18 16:21:52
+2012-09-27 10:24:22
+2013-02-17 13:55:54
+2014-10-27 07:27:06
+2015-02-04 23:01:20
+2015-02-04 21:22:51
+
+999C6v (), (1 Conferences records with values) (4109 distinct values in general)
+intbitset([964571])
+--------------------------------------------------------------------------------
+---- Example of values ----
+arXiv:hep-ph_0508274.pdf;1
+tmpBSoYkE.126002
+tmpXng5Pk.pdf
+arXiv:1309.2859.pdf;3
+arXiv:1308.3010.pdf;2
+arXiv:1210.4258.pdf;3
+arXiv:1304.7950.pdf;2
+tmp4O6fjN.send_file
+tmpyZ4o0L.pdf
+tmpCqVZYd.pdf
