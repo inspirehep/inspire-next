@@ -21,10 +21,9 @@
 from invenio.modules.deposit.tasks import (
     render_form,
     prepare_sip,
-    finalize_record_sip,
     prefill_draft,
     process_sip_metadata,
-    upload_record_sip
+    # upload_record_sip
 )
 
 from .literature import literature
@@ -46,9 +45,9 @@ class literature_simple(literature):
         # call process_sip_metadata() on your subclass.
         process_sip_metadata(),
         # Generate MARC based on metadata dictionary.
-        finalize_record_sip(is_dump=False),
+        # finalize_record_sip(is_dump=False),
         # Upload the marcxml locally (good for debugging)
-        upload_record_sip(),
+        # upload_record_sip(),
     ]
 
     name = "Literature (No approval)"
