@@ -552,7 +552,7 @@
                 "properties": {
                     "value": {
                         "type": "string",
-                        "format": "\\d{4}.\\d{4}{5}|\\w+-\\+/\\d+"
+                        "pattern": "\\d{4}.\\d{4}{5}|\\w+-\\+/\\d+"
                     },
                     "categories": {
                         "items": {
