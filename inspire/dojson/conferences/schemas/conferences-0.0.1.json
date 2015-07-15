@@ -1,0 +1,118 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "id": "http://labs.inspirehep.net/schemas/conferences-0.0.1.json",
+    "properties": {
+        "alternative_titles": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "title": "Alternative title"
+            },
+            "type": "array",
+            "title": "Alternative titles"
+        },
+        "subtitle": {
+            "type": "string",
+            "title": "Conference subtitle"
+        },
+        "contact person": {
+            "type": "string",
+            "title": "Contact person"
+        },
+        "title": {
+            "type": "string",
+            "title": "Conference title"
+        },
+        "acronym": {
+            "type": "string",
+            "title": "Conference acronym"
+        },
+        "cnum": {
+            "pattern": "C\\d\\d-\\d\\d(-\\d\\d)?(\\.\\d+)",
+            "type": "string",
+            "title": "Conference ID (CNUM)"
+        },
+        "field_code": {
+            "uniqueItems": true,
+            "items": {
+                "enum": [
+                    "Astrophysics",
+                    "Phenomenology-HEP",
+                    "..."
+                ],
+                "type": "string",
+                "description": "FIXME: shall we normalize this to the usual arXiv?",
+                "title": "Field code"
+            },
+            "type": "array",
+            "title": "Field codes"
+        },
+        "transparencies": {
+            "format": "url",
+            "type": "string",
+            "title": "Conference transparencies URL"
+        },
+        "note": {
+            "type": "string",
+            "title": "Note"
+        },
+        "closing_date": {
+            "title": "Conference closing date",
+            "type": "string",
+            "format": "date"
+        },
+        "proceedings": {
+            "format": "url",
+            "type": "string",
+            "description": "FIXME: Shall we rather have a nice link towards the proceedings record? Can we simply derive it?",
+            "title": "Conference proceedings URL"
+        },
+        "short_description": {
+            "type": "string",
+            "title": "Short description"
+        },
+        "place": {
+            "pattern": "\\.+, \\.+",
+            "type": "string",
+            "title": "Conference place"
+        },
+        "series": {
+            "type": "string",
+            "title": "Conference series"
+        },
+        "keywords": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "title": "Free keyword"
+            },
+            "type": "array",
+            "title": "Free keywords"
+        },
+        "opening_date": {
+            "title": "Conference opening date",
+            "type": "string",
+            "format": "date"
+        },
+        "url": {
+            "format": "url",
+            "type": "string",
+            "title": "Conference URL"
+        },
+        "contact_email": {
+            "title": "Contact email",
+            "type": "string",
+            "format": "email"
+        },
+        "series_number": {
+            "type": "integer",
+            "title": "Conference series number"
+        },
+        "nonpublic_note": {
+            "type": "string",
+            "title": "Non public note"
+        }
+    },
+    "title": "Conference"
+}
