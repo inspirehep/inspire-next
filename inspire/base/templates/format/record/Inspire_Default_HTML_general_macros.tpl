@@ -18,16 +18,16 @@
 #}
 
 {% macro render_record_authors(number_of_displayed_authors) %}
-  {% if record.get('authors')|length > 0 %}
+  {% if record.authors %}
   {% set sep = joiner("; ") %}
-  {% set authors =  record.get('authors') %}
-  {% for author in authors[0:number_of_displayed_authors] %} 
-  <small>{{ sep() }}</small> 
+  {% set authors = record.authors %}
+  {% for author in authors[0:number_of_displayed_authors] %}
+  <small>{{ sep() }}</small>
   <small class="text-left" ><a {% if author.get('affiliation') %} data-toggle="tooltip" data-placement="bottom" title={% if author.get('affiliation')|is_list() %} "{{ author.get('affiliation')[0] }}" {% else %} "{{ author.get('affiliation') }}" {% endif %} {% endif %} href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
       {{ author.get('full_name') }}
     </a></small>
   {% endfor %}
-  {% if record.get('authors')|length > number_of_displayed_authors %}
+  {% if record.authors|length > number_of_displayed_authors %}
   {{ sep() }}
   <a href="#authors_{{ record['recid'] }}" class="text-muted" data-toggle="modal" data-target="#authors">
       <em>{{ _(' Show all') }}</em>
@@ -40,11 +40,11 @@
         <h4 class="modal-title" id="myModalLabel">Authors</h4>
       </div>
       <div class="modal-body">
-        {% for author in record.get('authors') %}
+        {% for author in record.authors %}
         <small class="text-left" ><a {% if author.get('affiliation') %} data-toggle="tooltip" data-placement="bottom" title={% if author.get('affiliation')|is_list() %} "{{ author.get('affiliation')[0] }}" {% else %} "{{ author.get('affiliation') }}" {% endif %} {% endif %} href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
          {{ author.get('full_name') }}
         </a></small>
-        <small>{{ sep() }}</small> 
+        <small>{{ sep() }}</small>
         {% endfor %}
       </div>
       <div class="modal-footer">
