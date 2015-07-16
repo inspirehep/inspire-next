@@ -16,6 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Tseemple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+"""Blueprint for handling editing from Holding Pen."""
+
 from invenio.modules.deposit.helpers import make_record
 from invenio.modules.deposit.models import Deposition
 
@@ -63,7 +66,7 @@ def edit_record_title(value, objectid):
 
     if type(data) is dict:
         deposition = Deposition(editable_obj)
-        sip = deposition.get_latest_sip(sealed=False)
+        sip = deposition.get_latest_sip()
         metadata = sip.metadata
 
         metadata[TITLE][TITLE] = MathMLParser.html_to_text(value)
@@ -87,12 +90,10 @@ def edit_record_title(value, objectid):
 def edit_record_urls(objectid):
     """Entrypoint for editing urls from detailed pages."""
     editable_obj = BibWorkflowObject.query.get(objectid)
-    data = editable_obj.get_data()
-
     new_urls = request.values.getlist('urls[]') or []
 
     deposition = Deposition(editable_obj)
-    sip = deposition.get_latest_sip(sealed=False)
+    sip = deposition.get_latest_sip()
     metadata = sip.metadata
 
     # Get the new urls and format them, the way the object does
@@ -126,11 +127,12 @@ def edit_record_subject(objectid):
     # Submission: dict /  Harvest: SmartJson
     if type(data) is dict:
         deposition = Deposition(editable_obj)
-        sip = deposition.get_latest_sip(sealed=False)
+        sip = deposition.get_latest_sip()
         metadata = sip.metadata
 
         subject_dict.extend(metadata.get(SUBJECT_TERM))
-        edit_submission(deposition, metadata, sip, new_subjects_list, subject_dict)
+        edit_submission(deposition, metadata, sip,
+                        new_subjects_list, subject_dict)
     else:
         subject_dict.extend(data.get(SUBJECT_TERM))
         edit_harvest(editable_obj, data, new_subjects_list, subject_dict)
@@ -145,7 +147,9 @@ def edit_harvest(editable_obj, data, new_subjects_list, subject_dict):
     """Subject editing for harvested records."""
     old_subjects_list = data.get(SUBJECT_FIELD, [])
 
-    data[SUBJECT_TERM] = revised_subjects_list(old_subjects_list, new_subjects_list, subject_dict)
+    data[SUBJECT_TERM] = revised_subjects_list(old_subjects_list,
+                                               new_subjects_list,
+                                               subject_dict)
     editable_obj.set_data(data)
     editable_obj.save()
 
@@ -156,7 +160,9 @@ def edit_submission(deposition, metadata, sip, new_subjects_list, subject_dict):
     for subj in subject_dict:
         old_subjects_list.append(subj[TERM])
 
-    metadata[SUBJECT_TERM] = revised_subjects_list(old_subjects_list, new_subjects_list, subject_dict)
+    metadata[SUBJECT_TERM] = revised_subjects_list(old_subjects_list,
+                                                   new_subjects_list,
+                                                   subject_dict)
 
     # hacky thing to update package as well, needed to show changes
     sip.package = make_record(sip.metadata).legacy_export_as_marc()
