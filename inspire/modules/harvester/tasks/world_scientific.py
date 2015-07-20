@@ -33,6 +33,7 @@ from flask import render_template
 
 from harvestingkit.world_scientific_package import WorldScientific
 
+from invenio.ext.cache import cache
 from invenio.ext.email import send_email
 from invenio.base.globals import cfg
 
@@ -42,6 +43,15 @@ from inspire.modules.harvester.utils import (
     ftp_download_files,
     get_storage_path,
 )
+
+
+def update_lastrun(key):
+    """Update the lastrun entry of a workflow with now."""
+    @wraps(update_lastrun)
+    def _update_lastrun(obj, eng):
+        cache.set(key, datetime.now().strftime('%Y-%m-%d'),
+                  timeout=999999999999)
+    return _update_lastrun
 
 
 def get_files_from_ftp(source_folder, target_folder):
@@ -98,7 +108,7 @@ def unzip_files(target_folder):
     return _unzip_files
 
 
-def convert_files(target_folder):
+def convert_files(target_folder, date_key):
     """Convert files in data["extracted_files"] to MARCXML."""
     @wraps(convert_files)
     def _convert_files(obj, eng):
@@ -117,8 +127,9 @@ def convert_files(target_folder):
         # By default, we set the from date as today
         to_date = args.get("to_date") or datetime.now().strftime('%Y-%m-%d')
 
-        # By default, we set the from date as yesterday
-        from_date = args.get("from_date") or (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+        # By last resort, we set the from date a week before
+        from_date = args.get("from_date") or cache.get(date_key) \
+            or (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
 
         obj.extra_data['args']["to_date"] = to_date
         obj.extra_data['args']["from_date"] = from_date
