@@ -1,0 +1,1361 @@
+
+005__ (), (2766 Experiments records with values) (480670 distinct values in general)
+intbitset([1108188, 1108189, 1108190, 1108191, 1108192, ..., 1372170, 1373184, 1373185, 1374162, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+20130528212324.0
+20130528204418.0
+20130528204033.0
+20130528203903.0
+20121023232241.0
+20150331093641.0
+20141031110838.0
+20121023232240.0
+20140211115013.0
+20121023235612.0
+
+046__c (), (6 Experiments records with values) (6 distinct values in general)
+intbitset([1108231, 1108251, 1110624, 1318045, 1318047, 1339492])
+-----------------------------------------------------------------------------
+---- Good values ----
+         1 2000
+         1 1978-10-01
+         1 1984-04-01
+         1 2004
+         1 2014
+         1 2015-01
+---- Outliers ----
+2000 (1 Experiments records): intbitset([1110624])
+1978-10-01 (1 Experiments records): intbitset([1318045])
+1984-04-01 (1 Experiments records): intbitset([1318047])
+2004 (1 Experiments records): intbitset([1108231])
+2014 (1 Experiments records): intbitset([1339492])
+2015-01 (1 Experiments records): intbitset([1108251])
+
+046__q (), (2001 Experiments records with values) (1117 distinct values in general)
+intbitset([1108188, 1108189, 1108190, 1108191, 1108193, ..., 1346343, 1355147, 1358349, 1373184, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+2010
+2009
+2012
+09/--/11
+2004
+2011
+1998
+12/15/08
+02/05/09
+12/--/05
+
+046__r (), (2018 Experiments records with values) (863 distinct values in general)
+intbitset([1108188, 1108189, 1108190, 1108191, 1108193, ..., 1339482, 1339486, 1355147, 1373184, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+        24 1989
+        22 1993-06-18
+        15 1987
+        14 1994
+        13 1985
+        13 1975-07-07
+        12 2004
+        12 1991
+        12 1997
+        11 1995
+        11 1990
+        11 1995-01
+        11 1985-11
+        10 1992
+        10 1992-11
+        10 1983-01-15
+        10 1978-06-29
+        10 1970-08-01
+         9 1994-06-17
+         9 1992-01
+         9 1985-03
+         9 1982
+         9 1975
+         9 1976-05
+         9 1974-11-22
+         9 1973-08-06
+         8 2000
+         8 1992-12
+         8 1991-12
+         8 1984-11-15
+         8 1984
+         8 1980-12-11
+         8 1978-03-16
+         8 1977-01-29
+         8 1977-01
+         8 1976-08-26
+         8 1974-06-26
+         8 1971-08-26
+         7 2001
+         7 1996
+         7 1993-12
+         7 1991-06
+         7 1987-06
+         7 1985-12
+         7 1984-10-26
+         7 1980
+         7 1981-10-22
+         7 1981-07-01
+         7 1979-02-28
+         7 1978-11-16
+         7 1978-02-02
+         7 1974-03-12
+         7 1971-12
+         6 2002
+         6 1993-11-25
+         6 1990-04
+         6 1991-01
+         6 1989-03
+         6 1986-04-03
+         6 1986
+         6 1985-08
+         6 1984-12
+         6 1984-08
+         6 1982-11-18
+         6 1980-05-22
+         6 1980-02
+         6 1978-12-14
+         6 1977-07
+         6 1977-06-24
+         6 1977-05-12
+         6 1976
+         6 1975-08-01
+         6 1974-03-21
+         5 9999
+         5 1998
+         5 2003
+         5 1988
+         5 1994-11
+         5 1993
+         5 1990-12
+         5 1989-01
+         5 1988-10
+         5 1988-06
+         5 1988-04
+         5 1986-03
+         5 1984-01-10
+         5 1983-12-15
+         5 1983-02
+         5 1982-03-16
+         5 1980-11-27
+         5 1979
+         5 1977-01-27
+         5 1976-09-23
+         5 1976-09-15
+         5 1976-10-19
+         5 1976-10-21
+         5 1976-06-03
+         5 1976-07-08
+         5 1975-11-25
+         5 1975-06-10
+---- Outliers ----
+2011-03-18 (1 Experiments records): intbitset([1108188])
+2011 (1 Experiments records): intbitset([1108189])
+2012-01-17 (1 Experiments records): intbitset([1108191])
+2004-01-16 (1 Experiments records): intbitset([1108197])
+2009-12-01 (1 Experiments records): intbitset([1108199])
+2009-11-24 (1 Experiments records): intbitset([1108209])
+2011-04-19 (1 Experiments records): intbitset([1108210])
+2008-04 (1 Experiments records): intbitset([1108233])
+2006 (1 Experiments records): intbitset([1108243])
+2002-09-01 (1 Experiments records): intbitset([1108244])
+
+046__s (), (1335 Experiments records with values) (485 distinct values in general)
+intbitset([1108189, 1108190, 1108191, 1108193, 1108198, ..., 1355147, 1357660, 1357671, 1373184, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+        53 1975
+        26 1987
+        21 1990
+        21 1976
+        20 1991
+        19 1996
+        18 2000
+        18 1995
+        18 1992
+        18 1989
+        15 1986
+        15 1998
+        14 9999
+        14 1997
+        14 1982
+        13 1999
+        12 2004
+        12 1993
+        12 2003
+        11 2002
+        11 1980
+        11 1988
+        11 1985
+        11 1981
+        10 2001
+         9 1994
+         8 2006
+         7 2005
+         8 1984
+         8 1977
+         7 1989-08
+         7 1979
+         7 1979-01
+         7 1978
+         7 1974
+         7 1972
+         7 2014
+         5 2008
+         6 1992-04
+         6 1991-07
+         6 1989-05
+         6 1988-05
+         6 1987-06
+         6 1986-06
+         6 1986-11
+         6 1983
+         6 1981-02-26
+         5 2009
+         4 2010
+         5 1993-03
+         5 1992-05
+         5 1993-07
+         5 1991-08
+         5 1984-04
+         5 1985-04
+         5 1982-03
+         5 1978-06
+         5 1977-05
+         5 1977-02
+         5 1975-02
+         4 2007
+         4 1994-06
+         4 1993-09
+         4 1992-06
+         4 1996-01
+         4 1988-06
+         4 1988-12
+         4 1986-05
+         4 1986-01
+         4 1986-02
+         4 1985-04-22
+         4 1983-07
+         4 1982-11
+         4 1982-06
+         4 1984-11-15
+         4 1982-04
+         4 1983-02
+         4 1983-05
+         4 1980-04
+         4 1980-06-26
+         4 1979-05-17
+         4 1974-06-26
+         4 1974-04
+         4 1973
+         4 2020
+         3 2013
+         3 2012
+         3 0000
+         3 1995-12
+         3 1995-04
+         3 1996-03
+         3 1994-11
+         3 1992-09
+         3 1992-01
+         3 1991-09
+         3 1995-03
+         3 1991-03
+         3 1991-06
+         3 1990-07
+         3 1989-04
+---- Outliers ----
+2008-10-09 (1 Experiments records): intbitset([1108219])
+2009-04 (1 Experiments records): intbitset([1108226])
+2003-09-01 (1 Experiments records): intbitset([1108244])
+2008-08-08 (1 Experiments records): intbitset([1108255])
+2007-07-13 (1 Experiments records): intbitset([1108260])
+2002-05 (1 Experiments records): intbitset([1108275])
+2007-03 (1 Experiments records): intbitset([1108276])
+1997-12-01 (1 Experiments records): intbitset([1108394])
+2010-03 (1 Experiments records): intbitset([1108452])
+2002-06-19 (1 Experiments records): intbitset([1108486])
+
+046__t (), (2127 Experiments records with values) (772 distinct values in general)
+intbitset([1108190, 1108191, 1108193, 1108198, 1108199, ..., 1337712, 1337736, 1337943, 1337945, 1357671])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+       283 9999
+        30 1987
+        26 1992
+        26 1988
+        24 2000
+        24 1990
+        23 1986
+        22 1996
+        21 1992-01-08
+        19 1984
+        18 1989
+        18 1982
+        17 1999
+        17 1994
+        17 1991
+        17 1983
+        17 1975-12-09
+        15 1995
+        14 1976-12
+        14 1975
+        13 1977
+        12 1993
+        11 2002
+        11 2003
+        11 1988-02-15
+        11 1985
+        11 1983-12
+        11 1978
+        10 1998
+        10 2001
+        10 1976-04
+        10 2010-02-08
+         9 1997
+         9 1986-03
+         9 1981
+         9 1972-09-20
+         8 1984-04
+         8 1982-12
+         8 1979-04
+         8 1977-12
+         7 1990-08-31
+         7 1987-10-14
+         7 1986-07
+         7 1985-04-26
+         7 1978-01-15
+         7 1975-04
+         7 1975-12
+         6 1993-10
+         6 1985-07-11
+         6 1985-08-29
+         6 1983-12-23
+         6 1981-06
+         6 1980
+         6 1978-03
+         6 1978-07-10
+         6 1976-08
+         6 1975-06-10
+         6 1976
+         6 1973-10-20
+         6 1973
+         5 1991-09
+         5 1991-10
+         5 1992-02
+         5 1986-11-08
+         5 1984-07
+         5 1982-06-14
+         5 1982-09-13
+         5 1981-06-01
+         5 1977-08-13
+         5 1977-10
+         5 1977-06
+         5 1976-02
+         4 1993-12
+         4 2009
+         4 1993-08
+         4 1993-11
+         4 1990-12
+         4 1991-06
+         4 1988-10
+         4 1988-12
+         4 1988-09
+         4 1990-08-27
+         4 1988-02-01
+         4 1984-06
+         4 1985-06
+         4 1985-12
+         4 1981-04-25
+         4 1982-06
+         4 1981-03-09
+         4 1986-07-15
+         4 1980-06-16
+         4 1980-03-28
+         4 1979-05-28
+         4 1980-04-01
+         4 1978-12
+         4 1979
+         4 1982-06-01
+         4 1979-06
+         4 1977-09
+         4 1978-06
+---- Outliers ----
+2013 (1 Experiments records): intbitset([1108193])
+2011-11 (1 Experiments records): intbitset([1108259])
+2007-11-01 (1 Experiments records): intbitset([1108260])
+2008-08 (1 Experiments records): intbitset([1108276])
+2002-01 (1 Experiments records): intbitset([1108290])
+2002-09-18 (1 Experiments records): intbitset([1108486])
+2006 (1 Experiments records): intbitset([1108505])
+2005 (1 Experiments records): intbitset([1108513])
+2001-07 (1 Experiments records): intbitset([1108517])
+2002-05 (1 Experiments records): intbitset([1108522])
+
+046__x (), (1579 Experiments records with values) (10 distinct values in general)
+intbitset([1108188, 1108189, 1108190, 1108191, 1108192, ..., 1357660, 1357671, 1373184, 1373185, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+      1505 yes
+        40 Yes
+        18 yes ASTR
+         9 no
+         2 CHECK
+         1 - yes
+         1 yes WWW-CATEGORY = Structure of Protons, Neutrons, and Mesons
+         1 yes WWW-CATEGORY = QCD at fixed target energies
+         1 yes CONTACT
+         1 yes WWW-CATEGORY = Hyperons and Neutrinos
+---- Outliers ----
+- yes (1 Experiments records): intbitset([1108471])
+yes WWW-CATEGORY = Structure of Protons, Neutrons, and Mesons (1 Experiments records): intbitset([1108956])
+yes WWW-CATEGORY = QCD at fixed target energies (1 Experiments records): intbitset([1109006])
+yes CONTACT (1 Experiments records): intbitset([1109084])
+yes WWW-CATEGORY = Hyperons and Neutrinos (1 Experiments records): intbitset([1109088])
+CHECK (2 Experiments records): intbitset([1108275, 1108553])
+no (9 Experiments records): intbitset([1109339, 1109349, 1109387, 1109639, 1110038, 1110218, 1110489, 1110618, 1110624])
+yes ASTR (18 Experiments records): intbitset([1108472, 1108473, 1108841, 1108887, 1108894, ..., 1109083, 1109085, 1110333, 1110335, 1110351])
+Yes (40 Experiments records): intbitset([1108389, 1108428, 1108429, 1108430, 1108431, ..., 1110509, 1110600, 1110649, 1110665, 1110668])
+yes (1505 Experiments records): intbitset([1108188, 1108189, 1108190, 1108191, 1108192, ..., 1357660, 1357671, 1373184, 1373185, 1381461])
+
+119__a (experiment name), (2766 Experiments records with values) (2775 distinct values in general)
+intbitset([1108188, 1108189, 1108190, 1108191, 1108192, ..., 1372170, 1373184, 1373185, 1374162, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+KECK-ARRAY
+HYPER-KAMIOKANDE
+BBO
+FNAL-TEV-D0
+DLS
+FNAL-E-0022
+FNAL-E-0026
+FNAL-E-0002
+FNAL-E-0014
+FNAL-E-1027
+
+119__u (experiment name), (2128 Experiments records with values) (82 distinct values in general)
+intbitset([1108188, 1108189, 1108190, 1108191, 1108194, ..., 1357660, 1357671, 1358349, 1373184, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+       377 CERN
+       216 Brookhaven
+       152 Fermilab
+       134 Astro
+       130 Jefferson Lab
+       115 Los Alamos
+       107 Serpukhov, IHEP
+        96 KEK
+        95 SLAC
+        82 Saclay
+        71 PSI, Villigen
+        66 Non-Accelerator Experiments
+        65 TRIUMF
+        56 Tokyo U., INS
+        35 Moscow, ITEP
+        33 DESY
+        32 Argonne
+        29 Dubna, JINR
+        24 St. Petersburg, INP
+        23 Indiana U.
+        23 Rutherford
+        21 J-PARC
+        16 Osaka U., Res. Ctr. Nucl. Phys.
+        13 Darmstadt, GSI
+        10 Julich, Forschungszentrum
+         9 Frascati
+         9 INFN, LNS
+         7 Mainz U., Inst. Kernphys.
+         5 Astro  Supernova
+         5 Siegen U.
+         5 Novosibirsk
+         4 Cornell
+         4 LBL, Berkeley
+         4 Gran Sasso
+         4 Beijing, Inst. High Energy Phys.
+         3 MIT, Bates Linear Accelerator
+         3 Bonn U.
+         3 SNOLAB, Lively
+         2 Orsay
+         2 CERN wc LEP
+         2 Superconducting Super Collider
+         2 KEK, Tsukuba
+         2 Novosibirsk, IYF
+         2 Soudan Mine
+         1 Astro  Weak Lensing
+         1 Caltech
+         1 Groningen, KVI
+         1 Illinois U., Urbana
+         1 Texas A-M
+         1 Uppsala U., Inst. Theor. Phys., Svedberg Laboratory
+         1 Birmingham U.
+         1 Strasbourg, IReS
+         1 Maryland U.
+         1 Tohoku U.
+         1 http://www.psi.ch
+         1 other
+         1 LLNL
+         1 Pittsburgh U.
+         1 ASTRO
+         1 Karlsruhe, Forschungszentrum
+         1 ASTRON
+         1 cern
+         1 Oak Ridge
+         1 Michigan State U., NSCL
+         1 Zurich U.
+         1 Harvard U.
+         1 Shanghai Jiaotong U.
+         1 Cambridge U.
+         1 Edinburgh U.
+         1 Glasgow U.
+         1 Liverpool U.
+         1 Oxford U.
+         1 Plymouth U.
+         1 Southampton U.
+         1 Swansea U.
+         1 Karlsruhe, Inst. Technol.
+         1 U. Zaragoza
+         1 Astro (Low-Medium Energy Cosmic Rays)
+         1 Non-Accelerator Experiments; Astro
+         1 Inst. Astron., Honolulu
+         1 SCK-CEN, Mol
+         1 Jagiellonian U.
+---- Outliers ----
+Astro  Weak Lensing (1 Experiments records): intbitset([1299227])
+Caltech (1 Experiments records): intbitset([1118472])
+Groningen, KVI (1 Experiments records): intbitset([1110525])
+Illinois U., Urbana (1 Experiments records): intbitset([1108496])
+Texas A-M (1 Experiments records): intbitset([1108491])
+Uppsala U., Inst. Theor. Phys., Svedberg Laboratory (1 Experiments records): intbitset([1108490])
+Birmingham U. (1 Experiments records): intbitset([1108489])
+Strasbourg, IReS (1 Experiments records): intbitset([1108488])
+Maryland U. (1 Experiments records): intbitset([1108382])
+Tohoku U. (1 Experiments records): intbitset([1108336])
+
+245__a (title), (2721 Experiments records with values) (1130440 distinct values in general)
+intbitset([1108188, 1108189, 1108190, 1108191, 1108192, ..., 1372170, 1373184, 1373185, 1374162, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+Isoclinic N planes in Euclidean 2N space, Clifford parallels in elliptic (2N-1) space, and the Hurwitz matrix equations
+Aspects of wimp dark matter
+Oblique parameters in gauged baryon and lepton numbers with a 125 GeV Higgs
+An Electroweak-like Theory from Four Fermion Interactions
+WAVEGUIDE TEMPERATURE CONTROL
+2-MILE ACCELERATOR PROJECT: QUARTERLY STATUS REPORT, 1 JUL - 30 SEP 1963
+SYSTEM INTERCONNECTION AND PROTECTION OF THE MODULATOR
+IRRADIATION OF A CERIUM - CONTAINING SILICATE GLASS
+PROPOSAL FOR A LARGE SOLID ANGLE PHOTON AND ELECTRON INTERACTION DETECTOR
+Study of electron Induced Desorption from the Surface of Metals
+
+270__m (contact email), (783 Experiments records with values) (14708 distinct values in general)
+intbitset([1108189, 1108191, 1108192, 1108193, 1108194, ..., 1110670, 1239433, 1239434, 1239436, 1299227])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+Recruitment.Service@CERN.CH
+employ@fnal.gov
+pasquin@fnal.gov
+rush@math.ucr.edu
+didupree@indiana.edu
+sobrito@bnl.gov
+khewitt@mit.edu
+mkowalczyk@anl.gov
+Doug.Wright@llnl.gov
+jobs@slac.stanford.edu
+
+372__a (institution type), (881 Experiments records with values) (110 distinct values in general)
+intbitset([1108188, 1108189, 1108190, 1108195, 1108199, ..., 1239433, 1239434, 1239436, 1298909, 1357671])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+       204 AGS experiments
+        44 Neutrino
+        40 SPS experiments
+        35 N* and Meson Properties
+        27 Cosmic ray
+        24 Gamma-ray
+        22 PS experiments
+        20 Astronomy
+        21 LHC experiments
+        21 Nucleon and Meson Form Factors and Sum Rules
+        20 Properties of Nuclei
+        20 EMU experiments
+        19 Few Body Nuclear Properties
+        18 Strange Quarks
+        16 Tevatron experiments
+        16 Dark matter
+        14 Cosmic Frontier
+        14 Intensity Frontier
+        13 ATLAS
+        12 CMB
+        12 Gravity
+        12 Particle Physics
+        12 Fixed Target Experiments
+        12 LEAR experiments
+        11 Cyclotron Laboratory
+        10 Accelerator RD
+        10 X-ray
+         9 Charm and Beauty
+         8 Radio
+         8 ISOLDE
+         7 RHIC experiments
+         7 LEP experiments
+         6 MAMI
+         6 RMC experiments
+         6 QCD at fixed target energies
+         6 PETRA experiments
+         5 Balloon Experiments
+         5 Nonlinear beam dynamics experiments
+         4 Collider Experiments
+         4 DAFNE experiments
+         4 HERA experiments
+         4 Structure of Protons,Neutrons,and Mesons
+         4 Ring Cyclotron experiments
+         4 Hyperons and Neutrinos
+         4 Collider experiments
+         4 CESR experiments
+         4 BEPC
+         3 Neutrinos
+         3 Infrared
+         3 ELSA
+         3 Heavy Ion Physics at Intermediate Energies
+         3 Laser-Electron Photon Facility
+         3 Particle physics experiments
+         3 Series E experiments
+         3 Symmetry Tests
+         3 TRISTAN experiments
+         3 DORIS experiments
+         3 AD experiments
+         3 Accelerator Test
+         2 Extrasolar planets
+         2 Solar system
+         2 Ultraviolet
+         2 Accelerator Experiments
+         2 Dark energy
+         2 Meson area - fixed target
+         2 Accumulator - fixed target
+         2 ISIS experiments
+         2 VEPP-2M experiments
+         2 Energy Frontier
+         2 Bevalac
+         1 gamma-ray
+         1 Theoretical
+         1 ATOM
+         1 Cosmic Rays
+         1 B physics
+         1 Gamma rays
+         1 SNOLAB
+         1 Neutrons
+         1 Optical
+         1 FAIR
+         1 Physics with Laser
+         1 Micro-Beam Diagnostics
+         1 In-Flight Radioactive Beam Production
+         1 Heavy Ion Physics at Low Energies
+         1 R&D
+         1 Photoreactions
+         1 International Cooling Experiment
+         1 Particle Astrophysics/Cosmology
+         1 SPring-8
+         1 B-FACTORY experiments
+         1 Main Injector
+         1 Strage Quarks
+---- Outliers ----
+gamma-ray (1 Experiments records): intbitset([1108250])
+Theoretical (1 Experiments records): intbitset([1108249])
+ATOM (1 Experiments records): intbitset([1108247])
+Cosmic Rays (1 Experiments records): intbitset([1108245])
+B physics (1 Experiments records): intbitset([1108235])
+Gamma rays (1 Experiments records): intbitset([1108207])
+SNOLAB (1 Experiments records): intbitset([1108195])
+Neutrons (1 Experiments records): intbitset([1108190])
+
+419__a (experiment), (731 Experiments records with values) (985 distinct values in general)
+intbitset([1108195, 1108199, 1108206, 1108222, 1108226, ..., 1339488, 1340257, 1346343, 1357671, 1358349])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+        14
+         2 Cosmic Frontier
+         3 G0
+         3 CRYSTAL
+         3 APEX
+         3 HELIOS
+         3 astro-ph
+         2 BooNE
+         2 MiniBooNE
+         2 E917
+         2 NEMO-3
+         2 MAMI
+         2 HEP-EX
+         2 NUCL-EX
+         2 BTeV/C0
+         2 BALL
+         2 CRYSTAL-BALL
+         2 CERES
+         2 HOMESTAKE
+         2 E864
+         2 E864/E941
+         2 CERN-EMC
+         2 D0
+         2 DZERO
+         2 SACLAY-052
+         2 CLEO
+         1 ALPHA
+         2 FNAL-E-0947
+         1 KASCADE
+         1 The W Project
+         1 CALICE
+         1 PiENu
+         1 SHINE
+         1 SuperKEKB
+         1 KEK-PS E549
+         1 coupp
+         1 WASA-at-COSY
+         1 E167
+         1 E391a
+         1 KEK-PS E391a
+         1 TEV-EWWG
+         1 CAPRICE2
+         1 GC5
+         1 E03-004
+         1 E02-013
+         1 E99-114
+         1 E99007
+         1 E98-108
+         1 PR-97-111
+         1 E97-111
+         1 E00-102
+         1 E03-016
+         1 E00-110
+         1 E01-004
+         1 E01-011
+         1 ATLAS Exp 590x
+         1 ATLAS Exp 603
+         1 ATLAS Exp 613
+         1 ATLAS Exp 636
+         1 ATLAS Exp 714x
+         1 ATLAS Exp 855x
+         1 ATLAS Exp 866
+         1 ATLAS Exp 872
+         1 ATLAS Exp 874
+         1 LEPPEX
+         1 E838
+         1 PR-02-103
+         1 PrimEx
+         1 CEBAF-E-97-006
+         1 CEBAF-E-97-001
+         1 CEBAF-E-94-110
+         1 JLAB-E-94-110E
+         1 PR-94-110E
+         1 E94110
+         1 E924
+         1 BNL-E-924
+         1 E952
+         1 RD18
+         1 Crystal Clear
+         1 RD50
+         1 RD49
+         1 RADTOL
+         1 RD48
+         1 ROSE
+         1 RD46
+         1 RD45
+         1 RD44
+         1 Geant 4
+         1 Geant4
+         1 RD42
+         1 RD39
+         1 SMSD
+         1 RD27
+         1 RD13
+         1 LHCTB
+         1 RD11
+         1 EAST
+         1 EAST-RD11
+         1 RD8
+---- Outliers ----
+KASCADE (1 Experiments records): intbitset([1249670])
+The W Project (1 Experiments records): intbitset([1299095])
+CALICE (1 Experiments records): intbitset([1235349])
+PiENu (1 Experiments records): intbitset([1108226])
+SHINE (1 Experiments records): intbitset([1108234])
+SuperKEKB (1 Experiments records): intbitset([1108235])
+KEK-PS E549 (1 Experiments records): intbitset([1108258])
+coupp (1 Experiments records): intbitset([1108259])
+WASA-at-COSY (1 Experiments records): intbitset([1108281])
+E167 (1 Experiments records): intbitset([1108282])
+
+510__0 (related record sysnr), (38 Experiments records with values) (711 distinct values in general)
+intbitset([1108192, 1108195, 1108251, 1108259, 1108485, ..., 1340261, 1346343, 1355147, 1357660, 1357671])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+---- Outliers ----
+
+510__a (related record name), (537 Experiments records with values) (1273 distinct values in general)
+intbitset([1108192, 1108195, 1108251, 1108252, 1108258, ..., 1340261, 1346343, 1355147, 1357660, 1357671])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+Bielefeld U.
+U. Basel, Astro. Inst.
+Basel U., Dept. Phys.
+Cambridge U.
+King's Coll., London
+U. Surrey
+U. Geneva
+U. Cambridge
+U. Tech. Natl., Argentina
+U. Bern
+
+510__s (related record name), (1 Experiments records with values) (1 distinct values in general)
+intbitset([1239434])
+------------------------------------------------------------------------------------------------
+---- Good values ----
+         1 BEPC-BES-I
+---- Outliers ----
+BEPC-BES-I (1 Experiments records): intbitset([1239434])
+
+510__w (relation type), (42 Experiments records with values) (13 distinct values in general)
+intbitset([1108192, 1108251, 1108259, 1108485, 1108500, ..., 1340261, 1346343, 1355147, 1357660, 1357671])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+         3 t
+        18 b
+        18 a
+         5 successor
+         2 Run II
+         2 Run I
+         1 predecessor
+         1 Predecessor
+---- Outliers ----
+predecessor (1 Experiments records): intbitset([1339334])
+Predecessor (1 Experiments records): intbitset([1339492])
+Run II (2 Experiments records): intbitset([1114800, 1116453])
+Run I (2 Experiments records): intbitset([1114800, 1116453])
+successor (5 Experiments records): intbitset([1337702, 1337706, 1337709, 1337713, 1337948])
+a (18 Experiments records): intbitset([1108485, 1108506, 1110315, 1239434, 1239436, ..., 1340261, 1346343, 1355147, 1357660, 1357671])
+b (18 Experiments records): intbitset([1108192, 1108251, 1108259, 1108500, 1108506, ..., 1110623, 1239433, 1239434, 1247521, 1298909])
+t (3 Experiments records): intbitset([1239433, 1239434, 1239436])
+
+520__a (abstract), (2335 Experiments records with values) (594234 distinct values in general)
+intbitset([1108188, 1108189, 1108190, 1108191, 1108192, ..., 1372170, 1373184, 1373185, 1374162, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+The original Schrodinger's paper is translated and annotated in honour of the 70-th anniversary of his Uncertainty Relation [published also in: Bulg. Journal of Physics,vol.26,no.5/6 (1999) pp.193-203]. In the annotation it is shown that the Uncertainty Relation can be written in a complete compact canonical form.
+(Foreword by translator.) The aim of present translation is to clarify the historically important question who was the pioneer in obtaining of exact static solutions of Einstein equations minimally coupled with scalar field. Usually, people cite the works by Janis, Newman, Winicour (Phys. Rev. Lett. 20 (1968) 878) and others authors whereas it is clear that JNW rediscovered (in other coordinates) the Fisher's solution which was obtained 20 years before, in 1947. Regrettably, up to now I continue to meet many papers (even very fresh ones) whose authors evidently do not know about the Fisher's work, so I try to remove this gap by virtue of present translation and putting it into the LANL e-print archive. (Original Abstract.) It is considered the scalar mesostatic field of a point source with the regard for spacetime curvature caused by this field. For the field with $\mass = 0$ the exact solution of Einstein equations was obtained. It was demonstrated that at small distance from a source the gravitational effects are so large that they cause the significant changes in behavior of meson field. In particular, the total energy of static field diverges logarithmically.
+According to Dirac's theory of the positron, an electromagnetic field tends to create pairs of particles which leads to a change of Maxwell's equations in the vacuum. These changes are calculated in the special case that no real electrons or positrons are present and the field varies little over a Compton wavelength.
+We discuss an exotic class of Kaluza-Klein models in which the internal space is neither compact nor even of finite volume. Rather than using the usual compact internal space we consider the case where particles are gravitationally trapped near a four-dimensional submanifold of the higher dimensional spacetime. A specific model exhibiting this phenomenon is constructed in five dimensions. Physics Letters B159, 22-25 (1985). Note: This rather old paper has recently been subject of renewed interest due to the explosion of activity in the ``non-compact extra dimensions'' variant of the Kaluza-Klein model. It is not available elsewhere on the Internet, and in the interests of easy access I am placing it on hep-th. The body of the paper is identical to the published version. A small separate note has been added at the end of the paper.
+We prove that in the Hartle-Hawking approach to quantum cosmology the existence of an inflationary phase is a general property of minisuperspace models given by a closed Friedmann-Robertson-Walker universe containing a massless scalar field with a $\lambda\phi~{n}$ self-interaction. The evolution in time of the cosmic scale factor and of the scalar field in the very early universe is derived, together with the conditions to be satisfied in order to solve the horizon and flatness problems.
+The decay rate for a black hole to decay nonperturbatively via tunneling is shown to be related to the Bekenstein-Hawking black hole entropy $S_{bh}$. This new physical interpretation of the black hole entropy was presented first in 1988 in this paper. I quote here the relevant statement: ``It should be noticed that the decay rate of a black hole due to nonperturbative instability is proportional to $\exp(-S_{bh}$, where $S_{bh}$ is the Bekenstein-Hawking entropy. This seems to indicate that the Bekenstein-Hawking entropy is the measure of the ability of a black hole to disappear from our Universe in the one quantum jump, with the simultaneous production of particles carrying away its total energy.''
+We summarize the standard factorization theorems for hard processes in QCD, and describe their proofs.
+The simple physics of a free particle reveals important features of the path-integral formulation of relativistic quantum theories. The exact quantum-mechanical propagator is calculated here for a particle described by the simple relativistic action proportional to its proper time. This propagator is nonvanishing outside the light cone, implying that spacelike trajectories must be included in the path integral. The propagator matches the WKB approximation to the corresponding configuration-space path integral far from the light cone; outside the light cone that approximation consists of the contribution from a single spacelike geodesic. This propagator also has the unusual property that its short-time limit does not coincide with the WKB approximation, making the construction of a concrete skeletonized version of the path integral more complicated than in nonrelativistic theory.
+We show that the quantum-algebra-invariant open spin chains associated with the affine Lie algebras $A~{(1)}_n$ for $n>1$ are integrable. The argument, which applies to a large class of other quantum-algebra-invariant chains, does not require that the corresponding $R$ matrix have crossing symmetry.
+The gravitational measure on an arbitrary topological three-manifold is constructed. The nontrivial dependence of the measure on the conformal factor is discussed. We show that only in the case of a compact manifold with boundary the measure acquires a nontrivial dependence on the conformal factor which is given by the Liouville action. A nontrivial Jacobian (the divergent part of it) generates the Einstein-Hilbert action. The Hartle-Hawking wave function of Universe is given in terms of the Liouville action. In the gaussian approximation to the Wheeler-DeWitt equation this result was earlier derived by Banks et al. Possible connection with the Chern-Simons gravity is also discussed.
+
+650172 (subject authority), (11 Experiments records with values) (12 distinct values in general)
+intbitset([1108206, 1126263, 1127540, 1228416, 1228417, ..., 1228420, 1232315, 1232316, 1239746, 1247521])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+        11 INSPIRE
+---- Outliers ----
+INSPIRE (11 Experiments records): intbitset([1108206, 1126263, 1127540, 1228416, 1228417, ..., 1228420, 1232315, 1232316, 1239746, 1247521])
+
+650179 (), (1 Experiments records with values) (6 distinct values in general)
+intbitset([1232314])
+-----------------------------------------------------------------------------
+---- Good values ----
+         1 INSPIRE
+---- Outliers ----
+INSPIRE (1 Experiments records): intbitset([1232314])
+
+65017a (subject), (92 Experiments records with values) (575 distinct values in general)
+intbitset([1108206, 1108212, 1108381, 1110581, 1114536, ..., 1357671, 1372170, 1373184, 1373185, 1374162])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+        25 Astrophysics
+        19 Experiment-HEP
+         6 Gravitation and Cosmology
+         1 Instrumentation
+        11 Experiment-Nucl
+         7 Lattice
+        35 ASTRO-PH
+         4 GR-QC
+---- Outliers ----
+
+6531_a (uncontrolled keyword), (756 Experiments records with values) (135394 distinct values in general)
+intbitset([1108188, 1108189, 1108191, 1108192, 1108195, ..., 1339492, 1339493, 1340260, 1340261, 1340262])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+D0
+two- and three-body scattering
+CDF
+Dibaryon resonances
+Scattering observables
+Higher-dimensional theory
+ssc
+particle beam bunching
+electron beams
+transition radiation
+
+667__i (nonpublic note), (2 Experiments records with values) (2 distinct values in general)
+intbitset([1126911, 1221671])
+-------------------------------------------------------------------------------------------
+---- Good values ----
+         1 https://inspirert.cern.ch/Ticket/Display.html?id=228659
+         1 web
+---- Outliers ----
+https://inspirert.cern.ch/Ticket/Display.html?id=228659 (1 Experiments records): intbitset([1126911])
+web (1 Experiments records): intbitset([1221671])
+
+670__a (hepnames source), (2 Experiments records with values) (58 distinct values in general)
+intbitset([1108223, 1108228])
+---------------------------------------------------------------------------------------------
+---- Good values ----
+         1 OKA is the successor of experiment ISTRA-M
+         1 Approved as nToF11
+---- Outliers ----
+
+680__a (), (1 Experiments records with values) (2 distinct values in general)
+intbitset([1337948])
+-----------------------------------------------------------------------------
+---- Good values ----
+         1 The Con-X mission concept for an x-ray space observatory was merged in 2008 with similar proposals from ESA and JAXA to produce the International X-Ray Observatory (IXO).
+---- Outliers ----
+The Con-X mission concept for an x-ray space observatory was merged in 2008 with similar proposals from ESA and JAXA to produce the International X-Ray Observatory (IXO). (1 Experiments records): intbitset([1337948])
+
+680__i (public note), (1 Experiments records with values) (102 distinct values in general)
+intbitset([1340257])
+------------------------------------------------------------------------------------------
+---- Good values ----
+         1 Formerly known as LUCIFER
+---- Outliers ----
+
+693__a (accelerator), (4 Experiments records with values) (114 distinct values in general)
+intbitset([1108206, 1121609, 1126263, 1235349])
+------------------------------------------------------------------------------------------
+---- Good values ----
+         1 Tevatron
+         1 LHC
+         1 AD
+         1 ILC
+---- Outliers ----
+
+700__a (additional author name), (2249 Experiments records with values) (449894 distinct values in general)
+intbitset([1108189, 1108190, 1108191, 1108192, 1108193, ..., 1110668, 1110669, 1110670, 1110671, 1110672])
+-----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+Hedin, B.
+Muray, J.J.
+Mallory, Kenneth B.
+Ryabov, V.V.
+Scholl, Richard A.
+Dedrick, Kent G.
+DeWire, John W.
+Oakes, Robert J.
+Drell, S.D.
+Ballam, Joseph
+
+700__u (additional author affiliation), (2295 Experiments records with values) (15697 distinct values in general)
+intbitset([1108189, 1108190, 1108191, 1108192, 1108193, ..., 1110669, 1110670, 1110671, 1110672, 1317971])
+-----------------------------------------------------------------------------------------------------------------
+---- Example of values ----
+SLAC
+NIIEFA, St. Petersburg
+Cornell U., LNS
+Stanford U., ITP
+Orsay, LAL
+Caltech
+Chicago U., EFI
+Michigan U.
+Wisconsin U., Madison
+LBL, Berkeley
+
+702__a (), (2439 Experiments records with values) (2281 distinct values in general)
+intbitset([1108189, 1108191, 1108192, 1108193, 1108196, ..., 1355147, 1373184, 1373185, 1374162, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+Nagle, James Lawrence
+Morrison, David P.
+Lindner, A.
+Hogan, Craig J.
+Perez, Patrice
+Shutt, Thomas
+Arrington, J.
+Gramolin, A.V.
+Nikolenko, D.M.
+Rachek, I.A.
+
+702__d (), (17 Experiments records with values) (36 distinct values in general)
+intbitset([1108209, 1108251, 1108381, 1108441, 1108536, ..., 1114800, 1116453, 1121962, 1297172, 1346343])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+         3 2012
+         2 2003
+         3 2014
+         1 2010-03-15
+         1 2010
+         1 2013
+         1 2015-03
+         2 1999-11
+         2 1996-11
+         1 2006
+         1 2009-08-01
+         1 2012-06-01
+         1 2002
+         1 2010-06-01
+         1 2006-06-01
+         1 2005-06-01
+         1 2012-07-01
+         1 2013-01
+         1 2011-06-01
+         1 1998
+         1 2007
+         1 1992
+         1 2014-01
+         1 2005
+         1 1999
+         1 2015-02
+         1 2006-08
+         1 2014-09
+         1 2011-08
+         1 2009-08
+         1 2007-08
+         1 2004-11
+         1 2002-09
+         1 1993-11
+         1 1983-07
+         1 2015
+---- Outliers ----
+2006 (1 Experiments records): intbitset([1114800])
+2009-08-01 (1 Experiments records): intbitset([1114800])
+2012-06-01 (1 Experiments records): intbitset([1116453])
+2002 (1 Experiments records): intbitset([1116453])
+2010-06-01 (1 Experiments records): intbitset([1116453])
+2006-06-01 (1 Experiments records): intbitset([1116453])
+2005-06-01 (1 Experiments records): intbitset([1116453])
+2012-07-01 (1 Experiments records): intbitset([1116453])
+2013-01 (1 Experiments records): intbitset([1108251])
+2011-06-01 (1 Experiments records): intbitset([1110643])
+
+702__e (), (15 Experiments records with values) (29 distinct values in general)
+intbitset([1108209, 1108251, 1108381, 1108441, 1108536, ..., 1110316, 1110643, 1114800, 1116453, 1297172])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+         1 2010-03-15
+         2 2013
+         2 2012
+         2 2014
+         2 2004-11
+         2 2002-09
+         1 2009-08-01
+         1 2011-08-01
+         1 2004
+         1 2012-06-01
+         1 2010-06-01
+         1 2006-05-31
+         1 2012-07-01
+         1 2012-12
+         1 2011-05-31
+         1 2014-05-31
+         1 2006
+         1 1998
+         1 2005
+         1 2010
+         1 2015-02
+         1 2014-08
+         1 2011-08
+         1 2009-07
+         1 2007-08
+         1 2006-08
+         1 1999-11
+         1 1996-11
+         1 2015
+---- Outliers ----
+2009-08-01 (1 Experiments records): intbitset([1114800])
+2011-08-01 (1 Experiments records): intbitset([1114800])
+2004 (1 Experiments records): intbitset([1116453])
+2012-06-01 (1 Experiments records): intbitset([1116453])
+2010-06-01 (1 Experiments records): intbitset([1116453])
+2006-05-31 (1 Experiments records): intbitset([1116453])
+2012-07-01 (1 Experiments records): intbitset([1116453])
+2012-12 (1 Experiments records): intbitset([1108251])
+2011-05-31 (1 Experiments records): intbitset([1110643])
+2014-05-31 (1 Experiments records): intbitset([1110643])
+2006 (1 Experiments records): intbitset([1108852])
+1998 (1 Experiments records): intbitset([1108852])
+2005 (1 Experiments records): intbitset([1110316])
+2010 (1 Experiments records): intbitset([1108536])
+2015-02 (1 Experiments records): intbitset([1108441])
+2014-08 (1 Experiments records): intbitset([1110315])
+2011-08 (1 Experiments records): intbitset([1110315])
+2009-07 (1 Experiments records): intbitset([1110315])
+2007-08 (1 Experiments records): intbitset([1110315])
+2006-08 (1 Experiments records): intbitset([1110315])
+1999-11 (1 Experiments records): intbitset([1109214])
+1996-11 (1 Experiments records): intbitset([1109214])
+2015 (1 Experiments records): intbitset([1110316])
+2010-03-15 (1 Experiments records): intbitset([1108381])
+2013 (2 Experiments records): intbitset([1108642, 1108781])
+2012 (2 Experiments records): intbitset([1108852, 1110316])
+2014 (2 Experiments records): intbitset([1108209, 1297172])
+2004-11 (2 Experiments records): intbitset([1109214, 1110315])
+2002-09 (2 Experiments records): intbitset([1109214, 1110315])
+
+702__i (), (80 Experiments records with values) (132 distinct values in general)
+intbitset([1108189, 1108192, 1108199, 1108205, 1108206, ..., 1355147, 1373184, 1373185, 1374162, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+         1 INSPIRE-00115514
+         1 INSPIRE-00082579
+         2 INSPIRE-00076696
+         2 INSPIRE-00300234
+         2 INSPIRE-00127655
+         2 INSPIRE-00136898
+         2 INSPIRE-00066505
+         2 INSPIRE-00040831
+         2 INSPIRE-00097609
+         2 INSPIRE-00096350
+         2 INSPIRE-00121249
+         2 INSPIRE-00116910
+         2 INSPIRE-00306728
+         2 INSPIRE-00074384
+         2 INSPIRE-00265356
+         2 INSPIRE-00022018
+         2 INSPIRE-00162695
+         1 INSPIRE-00375350
+         2 INSPIRE-00119554
+         2 INSPIRE-00068476
+         2 INSPIRE-00086404
+         2 INSPIRE-00141129
+         2 INSPIRE-00136533
+         2 INSPIRE-00135230
+         1 INSPIRE-00065821
+         1 INSPIRE-00346667
+         1 INSPIRE-00110072
+         1 INSPIRE-00242558
+         1 INSPIRE-00265216
+         1 INSPIRE-00185763
+         1 INSPIRE-00131723
+         1 INSPIRE-00102394
+         1 INSPIRE-00118078
+         1 INSPIRE-00147008
+         1 INSPIRE-00265332
+         1 INSPIRE-00265344
+         1 INSPIRE-00265370
+         1 INSPIRE-00265405
+         1 INSPIRE-00201092
+         1 INSPIRE-00155696
+         1 INSPIRE-00297590
+         1 INSPIRE-00265447
+         1 INSPIRE-00265575
+         1 INSPIRE-00141579
+         1 INSPIRE-00136171
+         1 INSPIRE-00120486
+         1 INSPIRE-00066550
+         1 INSPIRE-00107711
+         1 INSPIRE-00147365
+         1 INSPIRE-00277891
+         1 INSPIRE-00089964
+         1 INSPIRE-00096570
+         1 INSPIRE-00301850
+         1 INSPIRE-00162389
+         1 INSPIRE-00124312
+         1 INSPIRE-00266636
+         1 INSPIRE-00137976
+         1 INSPIRE-00242590
+         1 INSPIRE-00095946
+         1 INSPIRE-00144357
+         1 INSPIRE-00276120
+         1 INSPIRE-00266820
+         1 INSPIRE-00138380
+         1 INSPIRE-00132466
+         1 INSPIRE-00069746
+         1 INSPIRE-00102668
+         1 INSPIRE-00023042
+         1 INSPIRE-00021900
+         1 INSPIRE-00029986
+         1 INSPIRE-00029998
+         1 INSPIRE-00056436
+         1 INSPIRE-00271046
+         1 INSPIRE-00271062
+         1 INSPIRE-00083213
+         1 INSPIRE-00106385
+         1 INSPIRE-00343453
+         1 INSPIRE-00131524
+         1 INSPIRE-00261399
+         1 INSPIRE-00316870
+         1 INSPIRE-00318884
+         1 INSPIRE-00318819
+         1 INSPIRE-00092167
+         1 INSPIRE-00098619
+         1 INSPIRE-00069480
+         1 INSPIRE-00293435
+         1 INSPIRE-00267773
+         1 INSPIRE-00070824
+         1 INSPIRE-00022266
+         1 INSPIRE-00085211
+         1 INSPIRE-00130608
+         1 INSPIRE-00325119
+         1 INSPIRE-00178729
+         1 INSPIRE-00083075
+         1 INSPIRE-00268007
+         1 INSPIRE-00268036
+         1 INSPIRE-00268049
+         1 INSPIRE-00090662
+         1 INSPIRE-00131642
+         1 INSPIRE-00081398
+         1 INSPIRE-00268168
+---- Outliers ----
+INSPIRE-00346667 (1 Experiments records): intbitset([1189880])
+INSPIRE-00110072 (1 Experiments records): intbitset([1108852])
+INSPIRE-00242558 (1 Experiments records): intbitset([1108852])
+INSPIRE-00265216 (1 Experiments records): intbitset([1114536])
+INSPIRE-00185763 (1 Experiments records): intbitset([1114537])
+INSPIRE-00131723 (1 Experiments records): intbitset([1116453])
+INSPIRE-00102394 (1 Experiments records): intbitset([1116453])
+INSPIRE-00118078 (1 Experiments records): intbitset([1116453])
+INSPIRE-00147008 (1 Experiments records): intbitset([1108495])
+INSPIRE-00265332 (1 Experiments records): intbitset([1118472])
+
+702__s (), (2 Experiments records with values) (2 distinct values in general)
+intbitset([1108536, 1108852])
+-----------------------------------------------------------------------------
+---- Good values ----
+         1 2012
+         1 Michael, Douglas Grant
+---- Outliers ----
+2012 (1 Experiments records): intbitset([1108852])
+Michael, Douglas Grant (1 Experiments records): intbitset([1108536])
+
+702__z (), (2414 Experiments records with values) (3 distinct values in general)
+intbitset([1108189, 1108191, 1108192, 1108193, 1108196, ..., 1355147, 1373184, 1373185, 1374162, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+      2222 Current
+       120
+        73 current
+---- Outliers ----
+current (73 Experiments records): intbitset([1108206, 1108235, 1108252, 1108254, 1108343, ..., 1355147, 1373184, 1373185, 1374162, 1381461])
+ (120 Experiments records): intbitset([1317987, 1317988, 1317989, 1317990, 1317991, ..., 1318104, 1318105, 1318106, 1318107, 1318108])
+Current (2222 Experiments records): intbitset([1108189, 1108191, 1108192, 1108193, 1108196, ..., 1110671, 1110672, 1239433, 1239434, 1239436])
+
+710__9 (corporate name), (1 Experiments records with values) (1 distinct values in general)
+intbitset([1108510])
+-------------------------------------------------------------------------------------------
+---- Good values ----
+         1 CURATOR
+---- Outliers ----
+CURATOR (1 Experiments records): intbitset([1108510])
+
+710__g (collaboration), (485 Experiments records with values) (6346 distinct values in general)
+intbitset([1108199, 1108205, 1108206, 1108207, 1108209, ..., 1358349, 1372170, 1373184, 1373185, 1374162])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+RF Group
+Storage Ring Group
+CHLM Collaboration
+French-Soviet Collaboration
+CERN-Soviet Collaboration
+CERN-Trieste Collaboration
+British-Scandinavian Collaboration
+Aachen-Berlin-CERN-London-Vienna Collaboration
+Scandinavian Bubble Chamber Collaboration
+DASP Collaboration
+
+8564_g (), (6 Experiments records with values) (2 distinct values in general)
+intbitset([1108441, 1108541, 1108642, 1110577, 1110642, 1110643])
+-----------------------------------------------------------------------------
+---- Good values ----
+         6 active
+---- Outliers ----
+active (6 Experiments records): intbitset([1108441, 1108541, 1108642, 1110577, 1110642, 1110643])
+
+8564_u (url), (881 Experiments records with values) (2703986 distinct values in general)
+intbitset([1108188, 1108189, 1108190, 1108191, 1108192, ..., 1372170, 1373184, 1373185, 1374162, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+http://inspirehep.net/record/1297195/files/Future3.png
+http://www.slac.stanford.edu/cgi-wrap/pubpage?slac-tn-62-026
+http://www.slac.stanford.edu/cgi-wrap/pubpage?slac-r-023
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0416
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0483
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0551
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0484
+http://www.slac.stanford.edu/cgi-wrap/pubpage?slac-tn-63-023
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0341
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0553
+
+8564_y (url label), (54 Experiments records with values) (1357787 distinct values in general)
+intbitset([1108189, 1108192, 1108235, 1108381, 1108441, ..., 1372170, 1373184, 1373185, 1374162, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+SLACPUB
+SLACTN
+ADSABS
+SLACREPT
+SLAC
+DOI
+RSINA
+RMPHA
+PHRVA
+AJPIA
+
+909COo (), (2766 Experiments records with values) (1264607 distinct values in general)
+intbitset([1108188, 1108189, 1108190, 1108191, 1108192, ..., 1372170, 1373184, 1373185, 1374162, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+oai:inspirehep.net:1333355
+oai:inspirehep.net:1276252
+oai:inspirehep.net:1265189
+oai:inspirehep.net:1347216
+oai:inspirehep.net:1274799
+oai:inspirehep.net:1278431
+oai:inspirehep.net:1278449
+oai:atlantis.cern.ch:1077
+oai:atlantis.cern.ch:10849
+oai:atlantis.cern.ch:21550
+
+909COp (), (2766 Experiments records with values) (12 distinct values in general)
+intbitset([1108188, 1108189, 1108190, 1108191, 1108192, ..., 1372170, 1373184, 1373185, 1374162, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+      2766 INSPIRE:Experiments
+---- Outliers ----
+INSPIRE:Experiments (2766 Experiments records): intbitset([1108188, 1108189, 1108190, 1108191, 1108192, ..., 1372170, 1373184, 1373185, 1374162, 1381461])
+
+970__a (SPIRES IRN), (2485 Experiments records with values) (1122868 distinct values in general)
+intbitset([1108188, 1108189, 1108190, 1108191, 1108192, ..., 1110673, 1126263, 1239433, 1239434, 1239436])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+SPIRES-60
+SPIRES-10325093
+SPIRES-10325107
+SPIRES-10325115
+SPIRES-10325123
+SPIRES-248
+SPIRES-256
+SPIRES-264
+SPIRES-299
+SPIRES-302
+
+980__a (collection), (2766 Experiments records with values) (81 distinct values in general)
+intbitset([1108188, 1108189, 1108190, 1108191, 1108192, ..., 1372170, 1373184, 1373185, 1374162, 1381461])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+        34 CORE
+      2766 EXPERIMENT
+---- Outliers ----
+
+981__a (), (8 Experiments records with values) (3370 distinct values in general)
+intbitset([1108203, 1108206, 1108227, 1108237, 1108506, 1126263, 1298909, 1357671])
+-----------------------------------------------------------------------------------
+---- Example of values ----
+674175
+640540
+487440
+487442
+459597
+196523
+167913
+776487
+895309
+159338

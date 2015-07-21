@@ -1,0 +1,864 @@
+
+005__ (), (3453 Journals records with values) (481405 distinct values in general)
+intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1370555, 1371050, 1373566, 1381587, 1381724])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+20130528212324.0
+20130528204418.0
+20130528204033.0
+20130528203903.0
+20121023232241.0
+20150331093641.0
+20141031110838.0
+20121023232240.0
+20140211115013.0
+20121023235612.0
+
+020__a (ISBN), (1 Journals records with values) (1691 distinct values in general)
+intbitset([1371050])
+---------------------------------------------------------------------------------
+---- Example of values ----
+9783642199509
+9789174730609
+9783642140693
+9781109491289
+9783642199493
+9781124238494
+9789054878445
+3838130510
+3642163904
+9781124953519
+
+022__9 (), (1 Journals records with values) (1 distinct values in general)
+intbitset([1214785])
+--------------------------------------------------------------------------
+---- Good values ----
+         1 CODEN 
+---- Outliers ----
+CODEN (1 Journals records): intbitset([1214785])
+
+022__a (), (32 Journals records with values) (38 distinct values in general)
+intbitset([1211996, 1212310, 1212465, 1212522, 1212635, ..., 1340755, 1352910, 1359988, 1373566, 1381587])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+         1 2214-4048 
+         1 1464-4266 
+         1 2304-487X 
+         1 2075-4434 
+         1 1367-2630 
+         1 2158-3226 
+         1 2296-987X 
+         1 2309-852X 
+         1 2282-8079 
+         1 0490-6756 
+         1 0169-8095 
+         1 0258-1221 
+         1 1389-2185 
+         1 0258-1248 
+         1 1568-2609 
+         1 1990-4665 
+         1 2185-4823 
+         1 0868-3166 
+         1 1948-9935 
+         1 1001-8042 
+         1 1004-4523 
+         1 1883-5813 
+         1 0265-931X 
+         1 2067-0451 
+         1 1609–624X 
+         1 2277–7431 
+         1 2227-1481 
+         1 0524-8353 
+         1 COPHD 
+         1 0770-0458 
+         1 0429-8373 
+         1 2331-1940 
+         1 2356-718X 
+         1 2314-6192 
+---- Outliers ----
+1464-4266 (1 Journals records): intbitset([1212669])
+2304-487X (1 Journals records): intbitset([1276055])
+2075-4434 (1 Journals records): intbitset([1249658])
+1367-2630 (1 Journals records): intbitset([1212465])
+2158-3226 (1 Journals records): intbitset([1267572])
+2296-987X (1 Journals records): intbitset([1325193])
+2309-852X (1 Journals records): intbitset([1283403])
+2282-8079 (1 Journals records): intbitset([1289097])
+0490-6756 (1 Journals records): intbitset([1295749])
+
+022__b (), (2 Journals records with values) (2 distinct values in general)
+intbitset([1212465, 1381587])
+--------------------------------------------------------------------------
+---- Good values ----
+         2 electronic 
+         1 print 
+---- Outliers ----
+print (1 Journals records): intbitset([1381587])
+electronic (2 Journals records): intbitset([1212465, 1381587])
+
+022__m (), (28 Journals records with values) (33 distinct values in general)
+intbitset([1211576, 1211577, 1211597, 1211601, 1211607, ..., 1211904, 1213620, 1214599, 1214719, 1245675])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+         1 2164-7623 
+         1 2164-7615 
+         1 1508-2806 
+         1 p: 2167-6844, e: 2167-6852 
+         1 0033-8451, 1769-700X 
+         1 2212-6864 
+         1 1513-489X 
+         1 0985-3111 
+         1 1029-029X 
+         1 0862-7959 
+         1 1937-5093 
+         1 1937-5077 
+         1 1557-1939 
+         1 1557-1947 
+         1 1450-5444 
+         1 Print: 0219-5259, Online: 1793-6802 
+         1 1992-1950 
+         1 1641-876X 
+         1 0204-6989 
+         1 0854-5154 
+         1 1224-2780 
+         1 1970-223X 
+         1 1561-8889 
+         1 1793-9623 
+         1 1005-2615 
+         1 0971-3093 
+         1 0140-3664 
+         1 1793-6268 (print) 
+         1 1793-8058 (online) 
+         1 0027-1349 
+         1 0254-3052 
+         1 0018-9499 
+         1 2314-6907 
+---- Outliers ----
+2164-7623 (1 Journals records): intbitset([1211576])
+2164-7615 (1 Journals records): intbitset([1211576])
+1508-2806 (1 Journals records): intbitset([1211577])
+p: 2167-6844, e: 2167-6852 (1 Journals records): intbitset([1211597])
+0033-8451, 1769-700X (1 Journals records): intbitset([1211601])
+2212-6864 (1 Journals records): intbitset([1211607])
+1513-489X (1 Journals records): intbitset([1211624])
+0985-3111 (1 Journals records): intbitset([1211640])
+1029-029X (1 Journals records): intbitset([1211657])
+0862-7959 (1 Journals records): intbitset([1211658])
+
+030__2 (CODEN), (3399 Journals records with values) (1 distinct values in general)
+intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1352910, 1352912, 1361744, 1365972, 1371050])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+      3399 CODEN 
+---- Outliers ----
+CODEN (3399 Journals records): intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1352910, 1352912, 1361744, 1365972, 1371050])
+
+030__a (CODEN), (3400 Journals records with values) (3404 distinct values in general)
+intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1352912, 1359988, 1361744, 1365972, 1371050])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+SCEMA
+ASBAM
+HERAS
+AUAMI
+IJEVE
+00952
+00951
+00950
+00949
+00948
+
+111__a (conference title), (3246 Journals records with values) (20161 distinct values in general)
+intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1342171, 1342172, 1342173, 1342174, 1342177])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+6th Nuclear Physics in Astrophysics and 26th International Nuclear Physics Divisional Conference of the European Physical Society
+Exploring the X-ray Universe: Suzaku and Beyond
+3rd SIAM Physics Congress 2008
+9th Conference on the Intersections of Particle and Nuclear Physics
+6th Symposium on Large TPCs for Low Energy Rare Event Detection
+2nd Alexander Friedmann International Seminar on Gravitation and Cosmology
+3rd Linear Collider Forum
+13th Conference on Theoretical nuclear physics in Italy
+15th International Conference on Particles and Nuclei
+15th Conference on High Energy Physics
+
+111__c (place), (3246 Journals records with values) (3956 distinct values in general)
+intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1342171, 1342172, 1342173, 1342174, 1342177])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+Waltham, Mass.
+Moscow, USSR
+Erice, Italy
+Dubna, USSR
+Coral Gables, Florida
+Washington, D.C.
+Austin, Tex.
+Bologna, Italy
+Madrid, Spain
+Amsterdam, Netherlands
+
+111__d (conference title), (3246 Journals records with values) (15654 distinct values in general)
+intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1342171, 1342172, 1342173, 1342174, 1342177])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+2-7 Sep 2013
+16 Jun - 25 Jul 1969
+13-18 Oct 2014
+9-14 Sep 2012
+19-21 Jun 1978
+22 Dec 2010
+9-16 Oct 1968
+27 Aug - 2 Sep 2012
+3-19 July 1969
+23-26 Sep 1969
+
+111__g (conference number), (3246 Journals records with values) (20669 distinct values in general)
+intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1342171, 1342172, 1342173, 1342174, 1342177])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+C14-03-01
+C14-07-21
+C97-08-04.8
+C98-08-24.6
+C14-10-13.1
+C14-10-13.2
+C13-09-25.5
+C11-09-29.1
+C12-06-13
+C10-12-22
+
+111__x (date), (3246 Journals records with values) (8828 distinct values in general)
+intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1342171, 1342172, 1342173, 1342174, 1342177])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+1969-06-16
+2013-02-17
+2010-12-22
+1968-10-09
+1969-07-03
+1969-09-23
+1970-01-21
+1970-03-11
+1970-04-14
+1970-09-08
+
+130__a (journal title), (3451 Journals records with values) (3450 distinct values in general)
+intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1370555, 1371050, 1373566, 1381587, 1381724])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+Herald of the Russian Academy of Sciences
+Acta Universitatis Apulensis, Mathematics - Informatics
+International Jour. Evolution Equations
+Fundamental Journal of Modern Physics
+Journal of Astronomical Instrumentation
+Bulletin of the Indian Association of Physics Teachers
+Journal of Pure and Applied Algegra
+ACS Nano
+Quantum Matter
+Computer Science
+
+130__b (journal title), (1 Journals records with values) (2 distinct values in general)
+intbitset([1325601])
+---------------------------------------------------------------------------------------
+---- Good values ----
+         1 Journal of Philosophical Studies 
+---- Outliers ----
+Journal of Philosophical Studies (1 Journals records): intbitset([1325601])
+
+260__b (publisher), (2 Journals records with values) (416 distinct values in general)
+intbitset([1212224, 1213044])
+-------------------------------------------------------------------------------------
+---- Good values ----
+         1 IOP 
+---- Outliers ----
+
+500__a (note), (1 Journals records with values) (186671 distinct values in general)
+intbitset([1213044])
+-----------------------------------------------------------------------------------
+---- Example of values ----
+Not Published
+A&A in press; 15 pages, 7 figures. Fixed several typos
+22nd Richtmyer Memorial Lecture of the American Assoc. of Physics Teachers, Jan 1963
+Published in Dielectrics 1, 221-228, 1964
+Published in Proceedings of Congress International de Physique Nucleaire, Paris, Jul 1964. Paris, Editions du CNRS, 1964
+Eleven papers (lettered A-K) from the 1962 SLAC Summer Study Group
+Another translation is available in Kapitza, P.L. and Wainstein, L.A., eds. High Power Electronics, vol.2. Pergamon Press, 1966. p. 74-81
+Another translation available in Kapitza, P.L. and Wainstein,L.A., eds. High Power Electronics, vol.2. N.Y., Pergamon Press, 1966. p. 82-3
+Another translation available in Kapitza, P.L. and Wainstein, L.A., eds. High Power Electronics, vol.2. N.Y., Pergamon Press, 1966. p. 84-91
+Another translation available in Kapitza, P.L. and Wainstein, L.A., eds. High Power Electronics, vol.2. N.Y., Pergamon Press, 1966. p. 91-101
+
+540__a (terms of use statement), (4 Journals records with values) (61 distinct values in general)
+intbitset([1214825, 1267572, 1289097, 1381587])
+-------------------------------------------------------------------------------------------------
+---- Good values ----
+         2 CC-BY 
+         2 OA 
+         1 CC-BY-SA 
+---- Outliers ----
+
+595__a (internal note), (3 Journals records with values) (456987 distinct values in general)
+intbitset([1211581, 1305561, 1325601])
+--------------------------------------------------------------------------------------------
+---- Example of values ----
+(second edition:1-114,1971)
+From author to hoc (Official use only)
+References from user
+Title changed from ALLCAPS
+DOI from CrossRef
+Reported to OSTI for FY 2004
+Reported to OSTI 9/24/04
+doi from CrossRef
+Title standardized on 6/28/2007
+References from APS OAI Backfile Harvest
+
+640__a (), (243 Journals records with values) (236 distinct values in general)
+intbitset([1211648, 1211841, 1211879, 1211916, 1211917, ..., 1214830, 1214856, 1214859, 1214875, 1340774])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+        13 Electronic journal 
+         3 Started v.1, 1998 
+         2 v.1-36, 1956-1994 
+         2 Started v.1, 1980 
+         2 Started v.1, 2005 
+         1 French title: Revue Francaise de Geotechnique 
+         1 Chinese journal. This is NOT the Indian journal Recent Res.Dev.Astron.Astrophys. (v.1-2 only) 
+         1 Electronic journal. Started v.1, 2005 
+         1 Trudy Tallinnskyogo tekhnicheskogo universiteta. 1989-1994 
+         1 Started v.1, 2008 
+         1 Internet journal 
+         1 Online journal. Started 2006 
+         1 Started v.1, 2007 
+         1 Started v.1, 2004 
+         1 Started v.1, 2001. Electronic journal 
+         1 v.1, 1993 
+         1 v. 1, 2006 
+         1 Started March 16, 2007. No voume. Identified by date 
+         1 Indian journal started v.1, 2003. Annual, v.2, 2004 latest volume 
+         1 v.1, June 2005 
+         1 Electronic journal. Started v.1, 2007 
+         1 Started n.1, 2005 
+         1 Chinese publication: Yan shi kuang wu xue tas zhi 
+         1 v.1, 2004 
+         1 v.1, 1980 
+         1 Formerly Journal de Physique IV. Started Nov 2006 
+         1 Started 1985, v.1. French title: Intelligence Informatique 
+         1 v.1, 1992. Chinese name: Zhongguo ke xue yuan 
+         1 Started 1, 1986 
+         1 Unable to verify this coden from Scharnhorst 
+         1 Started v.1, 1922 
+         1 Started v.1, 2003. Electronic journal 
+         1 Luba translates this as Science and Education 
+         1 v. 26, 2004, Wash., D.C., IOS Press (International Society for Cellular Oncology) 
+         1 Subtitled: An International Journal on Numerical Methods, Analysis and Applications 
+         1 Started v.1, 2005. Electronic journal. Electrochemical Society journal 
+         1 Started v.1, 2003 
+         1 Section A. Began 1964 
+         1 Began v.1, 2001 
+         1 Chinese Journal of Nature. Started 1978 
+         1 v.1, 1991 
+         1 Electronic Data Processing. 1959-1970 
+         1 Cannot verify this journal but Fermilab added a lot of these 
+         1 Journal of Xinjiang University, Natural Science Edition 
+         1 1993- 
+         1 1971-1989 
+         1 v.1, 2002. Often abbreviated SIADS 
+         1 v.1, 2004. Online journal 
+         1 Formerly Resultate der Mathematik 
+         1 Started v.1, 1973 
+         1 Electronic journal. Started v.1, 1995 
+         1 Started v.1, 2001. Often abbreviated JAM 
+         1 v.1, 1999 
+         1 v.1, 1930 - v.18, 1963 
+         1 Osijek, Croatia journal. v.1, 1996 
+         1 Started v.1, 1947 
+         1 Started v.1, 1992 
+         1 World Scientific Electronic journal started v.1, 2001 
+         1 Elsevier electronic journal. Started v.1, 2007 
+         1 Online journal 
+         1 Existed 1921-1970 
+         1 Started 1986. Chinese name Di Qiu Wu Li Xue Jin Zhan 
+         1 v.1, 1949 
+         1 Electronic journal started Spring 2006 
+         1 Formerley Journal of Immunology, Virus Research and Experimental Chemotherapy 
+         1 Started v.1, 1965. Ended v.7, 1971. Incorpated in New Scientist 
+         1 1969-1995 then became HGF Jahresheft 
+         1 Started 1946. Ended 1994 
+         1 v.1, 2001 
+         1 no. 133, 2005 
+         1 Started 1985. Chinese title: Hebei shi fan da xue xue bao 
+         1 Chinese name: Dalian li gong da xue xue bao. Started 1980 
+         1 1968-1974 
+         1 Abreviated HEDP 
+         1 Existed 1989-1995. Succeeded by HGF Jahresheft 
+         1 Series A: History, Frontiers, and Applications: Series B: Systems Information and Control 
+         1 v.1, 1922 - v.22, 1943. Japanese name: Rikagaku Kenkyusho Iho 
+         1 Started v.1, January 2006. Publisher Springer-Verlag 
+         1 Started v.1, 2001. Abbreviated JCMSE 
+         1 Published in Korea: Information Center for Mathematical Sciences. v.4, no1, June 2001 
+         1 Started with v.1, 1995 
+         1 Monograph 
+         1 Available online through Socrates 
+         1 Available at http://www.math.msu.su/~fpm/eng/efpmosn.htm 
+         1 Started 1986 
+         1 Electronic journal started in 2003 
+         1 Electronic journal. Started v.1, 1994 
+         1 Started v.1, 2000. Indian journal 
+         1 Abbreviated EJTP. Started v.1, June 2004 
+         1 Started 1988 
+         1 v. 1, 1935 - v.261, 1965. Divided into C.R. Seances Acad.Sci.Ser.A, B, C, D 
+         1 v. 70 = 2001. Indian journal 
+         1 Online journal. Started v.1, 2001. Often abbreviated ATG 
+         1 Online journal started v.1, 2005 
+         1 Started v.1, 1976 
+         1 Translation of Astronomicheskii Vestnik 
+         1 Electronic journal started v.1, 2003 
+         1 Started v.1, Jan 1992 
+         1 Preceded by The Old and New and followed by An Open-Dialogue Journal 
+---- Outliers ----
+French title: Revue Francaise de Geotechnique (1 Journals records): intbitset([1211648])
+Chinese journal. This is NOT the Indian journal Recent Res.Dev.Astron.Astrophys. (v.1-2 only) (1 Journals records): intbitset([1211841])
+Electronic journal. Started v.1, 2005 (1 Journals records): intbitset([1211879])
+Trudy Tallinnskyogo tekhnicheskogo universiteta. 1989-1994 (1 Journals records): intbitset([1211916])
+Started v.1, 2008 (1 Journals records): intbitset([1211917])
+Internet journal (1 Journals records): intbitset([1211921])
+Online journal. Started 2006 (1 Journals records): intbitset([1211923])
+Started v.1, 2007 (1 Journals records): intbitset([1211926])
+Started v.1, 2004 (1 Journals records): intbitset([1211934])
+Started v.1, 2001. Electronic journal (1 Journals records): intbitset([1211936])
+
+643__b (publisher), (71 Journals records with values) (25 distinct values in general)
+intbitset([1211574, 1211595, 1211677, 1211811, 1211876, ..., 1311535, 1325651, 1370555, 1373566, 1381587])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+        28 ELSEVIER 
+        10 IOP 
+         6 APS 
+         5 EDP SCIENCES 
+         2 IEEE 
+         2 SPRINGER 
+         1 ANITA PUBLICATIONS, INDIA 
+         1 WORLD SCIENTIFIC 
+         1 THE JAPAN SOCIETY OF PLASMA SCIENCE AND NUCLEAR FUSION RESEARCH 
+         1 KONKOLY OBSERVATORY 
+         1 C. ROY KEYS INC. 
+         1 INDIAN ACADEMY OF SCIENCES 
+         1 AIP 
+         1 MAIK 
+         1 MWJ 
+         1 MDPI 
+         1 APCosPA 
+         1 ESE 
+         1 Atomic Energy Society of Japan (AESJ) 
+         1 Elsevier 
+         1 Science Press 
+         1 Chinese Electronic Periodical Services 
+         1 MIT Press 
+         1 Taylor & Francis 
+         1 Hindawi 
+---- Outliers ----
+ANITA PUBLICATIONS, INDIA (1 Journals records): intbitset([1211888])
+WORLD SCIENTIFIC (1 Journals records): intbitset([1211904])
+THE JAPAN SOCIETY OF PLASMA SCIENCE AND NUCLEAR FUSION RESEARCH (1 Journals records): intbitset([1212246])
+KONKOLY OBSERVATORY (1 Journals records): intbitset([1212344])
+C. ROY KEYS INC. (1 Journals records): intbitset([1212878])
+INDIAN ACADEMY OF SCIENCES (1 Journals records): intbitset([1213860])
+AIP (1 Journals records): intbitset([1267572])
+MAIK (1 Journals records): intbitset([1276055])
+MWJ (1 Journals records): intbitset([1277986])
+MDPI (1 Journals records): intbitset([1249658])
+APCosPA (1 Journals records): intbitset([1283403])
+ESE (1 Journals records): intbitset([1289097])
+Atomic Energy Society of Japan (AESJ) (1 Journals records): intbitset([1311535])
+Elsevier (1 Journals records): intbitset([1212635])
+Science Press (1 Journals records): intbitset([1212635])
+Chinese Electronic Periodical Services (1 Journals records): intbitset([1325651])
+MIT Press (1 Journals records): intbitset([1370555])
+Taylor & Francis (1 Journals records): intbitset([1373566])
+Hindawi (1 Journals records): intbitset([1381587])
+IEEE (2 Journals records): intbitset([1211811, 1211889])
+SPRINGER (2 Journals records): intbitset([1212068, 1212474])
+EDP SCIENCES (5 Journals records): intbitset([1211677, 1211986, 1212107, 1212818, 1212905])
+APS (6 Journals records): intbitset([1211876, 1212820, 1214422, 1214495, 1214516, 1258560])
+IOP (10 Journals records): intbitset([1211595, 1212495, 1214062, 1214246, 1214629, 1214630, 1214634, 1214635, 1214636, 1214689])
+ELSEVIER (28 Journals records): intbitset([1211574, 1211902, 1211912, 1212151, 1212383, ..., 1214551, 1214727, 1214758, 1214837, 1214882])
+
+65017a (subject), (1 Journals records with values) (575 distinct values in general)
+intbitset([1214146])
+-----------------------------------------------------------------------------------
+---- Good values ----
+         1 Astrophysics 
+---- Outliers ----
+
+667__a (nonpublic note), (2 Journals records with values) (1906 distinct values in general)
+intbitset([1249658, 1275972])
+-------------------------------------------------------------------------------------------
+---- Example of values ----
+corrected per roep@physik.rwth-aachen.de, lxa, 5/98 the Inst.Theor. Phys. is part of above.
+Includes ISA, Inst. for Storage Ring Facilities
+Laboratory Deputy Director
+Formerly Adelphi College
+Includes HEP Exp & Theory--See Argonne, Phys. for Physics Div.
+jerene@physics.arizona.edu
+Asia Univ. Jr. College  at same loation
+Also listed with Zip of 370148
+Former ICN = Negev U.
+(B) in MacCallum
+
+667__s (nonpublic note), (1 Journals records with values) (1 distinct values in general)
+intbitset([1213104])
+----------------------------------------------------------------------------------------
+---- Good values ----
+         1 ISSN  1819-0723 
+---- Outliers ----
+ISSN  1819-0723 (1 Journals records): intbitset([1213104])
+
+667__x (nonpublic note), (414 Journals records with values) (415 distinct values in general)
+intbitset([1211572, 1211575, 1211577, 1211578, 1211579, ..., 1361744, 1365226, 1365972, 1369935, 1381724])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+        11 Electronic journal 
+         9 Open Access 
+         4 Coden from WorldCat 
+         2 European Space Agency 
+         2 Translation of Pis'ma v Astronomicheskie Zhurnal 
+         2 Continues (in part) Indian J.Phys. and Proc. Indian Assoc. Cult. Sci. (IJPYA) 
+         1 DO NOT ADD TO THIS CODEN. Monograph series. If the volume is 1,2,3, or 4, it is probably Progress in Physics, published by New Mexico U., coden 00466, ST Prog.Phys. 
+         1 Translation of Ukrainskii Fichichnii Zhurnal 
+         1 No coden in INSPEC or WorldCat as of 9/03 
+         2 Online journal 
+         1 ISSN 1609-624X 
+         1 Since 1958, Microwave Journal has been the leading source for information about RF and Microwave technology, design techniques, news, events and educational information.  Microwave Journal reaches 50,000 qualified readers monthly with the print magazine that has a global reach.  In 2012, Microwave Journal China started as a 6X publication with more than 10,000 readers.  Microwave Journal is the only trade journal to peer review technical features before publication to ensure that they are accurate, timely and useful to the reader. 
+         1 The series has been discontinued in 2006. Presently also named: The Springer International Series in Engineering and Computer Science. 
+         1 ISSN 1674-0874 
+         1 American Chemical Society, v.5 in 2011 
+         1 Started in 1999 by AGH University of Science and Technology, Krakow, Poland 
+         1 Use number as volume: ALMA Newslett. 9:8-16,2012 
+         1 Atacama Large Millimeter/submillimeter Array (ALMA) 
+         1 (Zhongguo Chuanmei Daxue Xuebao, Ziran Kexue Ban); 
+         1 English and Russian versions 
+         1 1936(V.1) - 1937-1940(V.2), then continued in 1951 as J.Chin.Math.Soc. (New Series) V.1, then in 1952 as Acta Mathematica Sinica V.2. Treat 1951 volume as Acta Mathematica Sinica V.1 
+         1 1985(V.1) - 2012(V.28 Continuing) 
+         1 (ISSN 0304-0208) 
+         1 First year 1996, cannot find any Internet access 
+         1 Use volume and no.: 2N2,5-9,2012 
+         1 ISSN: 1875-3892 
+         1 Seems to be a continuation of Sci.Acta.Quad.Dott. 
+         1 A series of bulletin published from RIMS in Kyoto U. 
+         1 There are volume numbers, but no way to connect with year, so use year, no and article no: 1020N25:5,1020 
+         1 Take the '-' out of East-West in the SHORT-TITLE, otherwise spicite bombs, adr,6/12 
+         1 ISSN: 2037-4631 (print version). Springer 
+         1 Bulletin Mathematique de la Societe des Sciences Mathematiques et Physiques de la Republique Populaire Roumaine 
+         1 DAE is the Indian Dept. of Atomic Energy 
+         1 Proceedings of conferences held at RIMS 
+         1 v.1-27 published by Springer, v.28- by Cambridge Univ.Press 
+         1 IFIP = International Federation for Information Processing 
+         1 ISRN = International Scholarly Research Network 
+         1 English translations of papers published in Doklady Akademii Nauk (Proceedings of the Russian Academy of Sciences) 
+         1 Not the Int.J.Alg.Comput. 
+         1 v.1-6, 1994-2005. Superseded by Sao Paulo J. Math. Sci. 
+         1 Cannot find this journal anywhere, but it is listed in INSPEC, 6/11 ADR 
+         1 Include issue no.: 10N10:18-21,2010 
+         1 ISSN: 2222-4254 
+         1 Do not confuse this with Computer Physics Communications 
+         1 1985-1992 
+         1 The Indian journal ceased publication with volume 6 in 1997, published by the Allahabad Mathematical Society 
+         1 Published by Canadian Center of Science and Education 
+         1 Used to be 'Annual Review of Biophysics and Bioengineering' and 'Annual Review of Biophysics and Biomolecular Structure' 
+         1 http://www.prespacetime.com/ 
+         1 ISSN 1530-7638 
+         1 Italian version of Scientific American 
+         1 Asian Network for Scientific Information 
+         1 v.1 in 2010 
+         1 v.2 in 2010 
+         1 v.2 in 1999 
+         1 English edition of Izvestiya Rossiiskoi Akademii Nauk, Seriya Matematicheskaya. This is not Russian Math.(Izv.Vuz.) 
+         1 v.74 in 2010 
+         1 v.1 in 2008 
+         1 Web site displays only up to 2005 
+         1 Peer-reviewed conference papers 
+         1 Translated as Cosmic Research 
+         1 Use Issue # as vol., 1 issue every other year or so 
+         1 In Spanish 
+         1 No page numbers, use volNo:,2008 
+         1 ISSN 0975-2595 
+         1 Use issue no.: Fermi News 21N5:8-9,1998 
+         1 A semi-annual publication of Akamai University 
+         1 Between 5 and 13 issues published each year, use year and number: Quad.Geofis.2010:79,2010 
+         1 Astronomical Society of the Pacific 
+         1 No volume number, use year and Issue 
+         1 Nan Jing Hang Kong Hang Tian Da Xue Xue Bao 
+         1 Full text articles not currently available online, 4/2010 
+         1 test 
+         1 Published by CSIRO 
+         1 Published by Springer 
+         1 Pushpa Publishing House, India 
+         1 This is an online journal, started in 2009, not the Fermilab-SLAC journal 
+         1 per Scharnhorst 
+         1 continuation of the Hvar Observatory Bulletin (founded in 1977, ISSN 0351-2657) 
+         1 To start in 2009, New Delhi, India 
+         1 Published by Praise Worthy Prize 
+         1 Published by the Invertis Institute of Science & Technology 
+         1 Philo is the publication of the Society of Humanist Philosophers 
+         1 Elsevier ceased publication in 2008 
+         1 New web commentary journal started in 2008 
+         1 Sponsored by the History of Science Society 
+         1 Published by the Georgia Academy of Science 
+         1 Part of the content of Siberian Advances in Mathematics contains translations of the Russian journal Mathematicheskie Trudy published by the Sobolev Institute of Mathematics, Proceedings of the Institute of Mathematics of Siberian Branch of Russian Academy of Sciences. It also features original papers. 
+         1 International journal on the science and technology of friction, lubrication and wear 
+         1 Do not use issue number, use year:page,year 
+         1 PBN example: Dalton Trans.2008:2302,2008 
+         1 Coden from CASSI 
+         1 Do not use vol, use year and page: 2006:2154,2006 
+         1 Include issue no.: 8N25:65-82,2011 
+         1 Vol 1 in 2006 
+         1 Russian version of Physics of Particles and Nuclei Letters 
+         1 Continuation of Cambridge Tracts Math.Math.Phys. 
+         1 Monographic series. Coden from WorldCat 
+         1 Started v.1, 1934 
+         1 Russian journal Nadezhnye Vychisleniia now in English 
+---- Outliers ----
+Since 1958, Microwave Journal has been the leading source for information about RF and Microwave technology, design techniques, news, events and educational information.  Microwave Journal reaches 50,000 qualified readers monthly with the print magazine that has a global reach.  In 2012, Microwave Journal China started as a 6X publication with more than 10,000 readers.  Microwave Journal is the only trade journal to peer review technical features before publication to ensure that they are accurate, timely and useful to the reader. (1 Journals records): intbitset([1277986])
+The series has been discontinued in 2006. Presently also named: The Springer International Series in Engineering and Computer Science. (1 Journals records): intbitset([1342165])
+ISSN 1674-0874 (1 Journals records): intbitset([1365226])
+American Chemical Society, v.5 in 2011 (1 Journals records): intbitset([1211575])
+Started in 1999 by AGH University of Science and Technology, Krakow, Poland (1 Journals records): intbitset([1211577])
+Use number as volume: ALMA Newslett. 9:8-16,2012 (1 Journals records): intbitset([1211578])
+Atacama Large Millimeter/submillimeter Array (ALMA) (1 Journals records): intbitset([1211578])
+(Zhongguo Chuanmei Daxue Xuebao, Ziran Kexue Ban); (1 Journals records): intbitset([1211580])
+English and Russian versions (1 Journals records): intbitset([1211581])
+1936(V.1) - 1937-1940(V.2), then continued in 1951 as J.Chin.Math.Soc. (New Series) V.1, then in 1952 as Acta Mathematica Sinica V.2. Treat 1951 volume as Acta Mathematica Sinica V.1 (1 Journals records): intbitset([1211582])
+
+677__x (), (187 Journals records with values) (26 distinct values in general)
+intbitset([1211901, 1212258, 1212404, 1212471, 1212495, ..., 1214875, 1214881, 1214882, 1214883, 1334184])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+        69 DESY checks only relevant articles per AH, 5/02 
+        51 DESY checks completely per AH, 5/02 
+        21 DESY weeds entire from elect. TOC, adds unmatched relevant papers 
+        20 BADPAGE. Ambiguous page numbers 
+        14 DESY weeds only relevant papers 
+         8 SLAC no longer subscribes 
+         6 DESY weeds entire TOC and adds unmatched relevant papers 
+         3 DESY weeds 
+         1 unknown 
+         1 First issue is Feb 2003. Volume number is constructed artificially from year and issue number, i.e., JCAPA,0302,001 in order to make JVP unique, same as JHEP, see code in filedef for cites2 
+         1 DESY weeds entire from elect. TOC, Adds unmatched relevant papers Direct is required for electronic only version since page numbers differ from printed version, lxa, 11/2/98 
+         1 BADPAGE, This is the German popular science magazine. DESY weeds selectively 
+         1 DESY weeds entire from elect. TOC, adds unmatched relevant papers. Volume number is constructed artificially from year and issue number, i.e. 9901 in order to make JVP unique, lxa, 1/99. see also JCAP and code in filedef for cites2 
+         1 DESY weeds entire from elect. TOC, adds unmatched relevant papers, Double volumes, like 83-84, are treated as single, i.e. 83 so that citation search will be handled correctly., hoc, 8/00 
+         1 Changed to Eur.Phys.J. in 1998 
+         1 DESY weeds entire from electr. TOC, adds unmatched relevent papers. Irregular subscription. 
+         1 SLAC gets all D and C electronically from AIP/APS. DESY looks at A&B TOC, adds unmatch relevant papers??? The R on page numbers of rapid communications for Phys.Rev.C MUST be omitted. Otherwise the linkage and the citation search is corrupted. The page numbers are unique without the 'R' 
+         1 DESY weeds only relevant papers. BADPAGE. Ambiguous page numbers, Put issue number in PBNX! 
+         1 Desy weeds completely 
+         1 DESY weeds entire from elect. TOC, Adds unmatched relevant papers 
+         1 SLAC no longer subscibes 
+         1 Superseded by Few Body Systems 
+         1 DESY checks completely, per AH, 5/02 
+         1 DESY checks completely pre AH, 5/02 
+         1 This journal changed to Journal of Physics B. Atomic, Molecular and Optical Physics in 1988,  should all be J.Phys., journals with B prefix in volume 
+         1 Journal reference for this for all years should be J.Phys. with B as volume prefix. 
+---- Outliers ----
+unknown (1 Journals records): intbitset([1211901])
+First issue is Feb 2003. Volume number is constructed artificially from year and issue number, i.e., JCAPA,0302,001 in order to make JVP unique, same as JHEP, see code in filedef for cites2 (1 Journals records): intbitset([1212538])
+DESY weeds entire from elect. TOC, Adds unmatched relevant papers Direct is required for electronic only version since page numbers differ from printed version, lxa, 11/2/98 (1 Journals records): intbitset([1212818])
+BADPAGE, This is the German popular science magazine. DESY weeds selectively (1 Journals records): intbitset([1213045])
+DESY weeds entire from elect. TOC, adds unmatched relevant papers. Volume number is constructed artificially from year and issue number, i.e. 9901 in order to make JVP unique, lxa, 1/99. see also JCAP and code in filedef for cites2 (1 Journals records): intbitset([1213103])
+DESY weeds entire from elect. TOC, adds unmatched relevant papers, Double volumes, like 83-84, are treated as single, i.e. 83 so that citation search will be handled correctly., hoc, 8/00 (1 Journals records): intbitset([1213378])
+Changed to Eur.Phys.J. in 1998 (1 Journals records): intbitset([1214340])
+DESY weeds entire from electr. TOC, adds unmatched relevent papers. Irregular subscription. (1 Journals records): intbitset([1214456])
+SLAC gets all D and C electronically from AIP/APS. DESY looks at A&B TOC, adds unmatch relevant papers??? The R on page numbers of rapid communications for Phys.Rev.C MUST be omitted. Otherwise the linkage and the citation search is corrupted. The page numbers are unique without the 'R' (1 Journals records): intbitset([1214516])
+DESY weeds only relevant papers. BADPAGE. Ambiguous page numbers, Put issue number in PBNX! (1 Journals records): intbitset([1214530])
+Desy weeds completely (1 Journals records): intbitset([1214737])
+DESY weeds entire from elect. TOC, Adds unmatched relevant papers (1 Journals records): intbitset([1214764])
+SLAC no longer subscibes (1 Journals records): intbitset([1214849])
+Superseded by Few Body Systems (1 Journals records): intbitset([1214858])
+DESY checks completely, per AH, 5/02 (1 Journals records): intbitset([1214872])
+DESY checks completely pre AH, 5/02 (1 Journals records): intbitset([1214881])
+This journal changed to Journal of Physics B. Atomic, Molecular and Optical Physics in 1988,  should all be J.Phys., journals with B prefix in volume (1 Journals records): intbitset([1214635])
+Journal reference for this for all years should be J.Phys. with B as volume prefix. (1 Journals records): intbitset([1212495])
+DESY weeds (3 Journals records): intbitset([1213027, 1214745, 1214774])
+DESY weeds entire TOC and adds unmatched relevant papers (6 Journals records): intbitset([1213880, 1214446, 1214707, 1214746, 1214788, 1214855])
+SLAC no longer subscribes (8 Journals records): intbitset([1212924, 1213672, 1214077, 1214402, 1214424, 1214484, 1214747, 1214774])
+DESY weeds only relevant papers (14 Journals records): intbitset([1213524, 1213879, 1214222, 1214361, 1214422, ..., 1214735, 1214797, 1214852, 1214862, 1214875])
+BADPAGE. Ambiguous page numbers (20 Journals records): intbitset([1212258, 1212725, 1212826, 1212835, 1212851, ..., 1214408, 1214546, 1214701, 1214801, 1214806])
+DESY weeds entire from elect. TOC, adds unmatched relevant papers (21 Journals records): intbitset([1212905, 1212914, 1214382, 1214414, 1214416, ..., 1214658, 1214779, 1214781, 1214791, 1334184])
+DESY checks completely per AH, 5/02 (51 Journals records): intbitset([1212471, 1212708, 1212738, 1212747, 1212812, ..., 1214778, 1214796, 1214825, 1214843, 1214846])
+DESY checks only relevant articles per AH, 5/02 (69 Journals records): intbitset([1212258, 1212404, 1212714, 1212720, 1212798, ..., 1214854, 1214859, 1214881, 1214882, 1214883])
+
+678__a (hepnames award), (4 Journals records with values) (160 distinct values in general)
+intbitset([1212635, 1325651, 1325652, 1325654])
+------------------------------------------------------------------------------------------
+---- Good values ----
+---- Outliers ----
+
+680__a (), (1 Journals records with values) (2 distinct values in general)
+intbitset([1260987])
+--------------------------------------------------------------------------
+---- Good values ----
+         1 The journal welcomes manuscripts on theoretical models, simulations, and observations of highly energetic astrophysical objects both in our Galaxy and beyond. Among those, black holes at all scales, neutron stars, pulsars and their nebula, binaries, novae and supernovae, their remnants, active galaxies, and clusters are just a few examples. The journal will consider research across the whole electromagnetic spectrum, as well as research using various messengers, such as gravitational waves or neutrinos. Effects of high-energy phenomena on cosmology and star-formation, results from dedicated surveys expanding the knowledge of extreme environments, and astroASTROPHYSical implications of dark matter are also welcomed topics. 
+---- Outliers ----
+The journal welcomes manuscripts on theoretical models, simulations, and observations of highly energetic astrophysical objects both in our Galaxy and beyond. Among those, black holes at all scales, neutron stars, pulsars and their nebula, binaries, novae and supernovae, their remnants, active galaxies, and clusters are just a few examples. The journal will consider research across the whole electromagnetic spectrum, as well as research using various messengers, such as gravitational waves or neutrinos. Effects of high-energy phenomena on cosmology and star-formation, results from dedicated surveys expanding the knowledge of extreme environments, and astroASTROPHYSical implications of dark matter are also welcomed topics. (1 Journals records): intbitset([1260987])
+
+680__i (public note), (4 Journals records with values) (102 distinct values in general)
+intbitset([1213948, 1214825, 1283403, 1325654])
+---------------------------------------------------------------------------------------
+---- Good values ----
+         1 last issue 53,6 published in Apr 2001 
+         1 Newsletter / Journal of APCosPA Org 
+         1 Bulletin of the Lebedev Physics Institute has been issued since 1970. It promptly publishes results of new original experimental and theoretical investigations carried out at the Lebedev Physics Institute, the Prokhorov General Physics Institute, and the Institute for Nuclear Research of the Russian Academy of Sciences. All papers undergo careful examination by leading experts in the corresponding field. Articles cover all topics of physics. The following are the main subject headings: Theoretical Physics; Atomic and Molecular Physics; Nuclear Physics; Optics; Lasers; Condensed Matter Physics; Physics of Solids; Biophysics. 
+         1 supported by the the "Alexandru Ioan Cuza" University 
+---- Outliers ----
+
+690__a (), (105 Journals records with values) (4 distinct values in general)
+intbitset([1211595, 1212189, 1212279, 1212280, 1212333, ..., 1357927, 1357928, 1357929, 1357930, 1358085])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+        82 Peer Review 
+        23 NON-PUBLISHED 
+---- Outliers ----
+NON-PUBLISHED (23 Journals records): intbitset([1212189, 1212279, 1212280, 1212333, 1212641, ..., 1214390, 1214831, 1214860, 1287687, 1357923])
+Peer Review (82 Journals records): intbitset([1211595, 1212538, 1212571, 1212587, 1212603, ..., 1357927, 1357928, 1357929, 1357930, 1358085])
+
+711__a (), (3451 Journals records with values) (8014 distinct values in general)
+intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1370555, 1371050, 1373566, 1381587, 1381724])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+Workshop on Calculations for Modern and Future Colliders, 23 -30 Jul 2015
+C85-07-29.2
+C86-06-02.5
+C78-08-24.5
+C85-06-23
+C85-04-18
+C85-03-28
+C84-06-02
+C83-06-01.1
+RAQIS RAQIS 2010 RAQIS2010
+
+720__a (), (1 Journals records with values) (1 distinct values in general)
+intbitset([1212224])
+--------------------------------------------------------------------------
+---- Good values ----
+         1 Lectures in physical sciences 
+---- Outliers ----
+Lectures in physical sciences (1 Journals records): intbitset([1212224])
+
+730__a (DESYABBREV), (2106 Journals records with values) (11393 distinct values in general)
+intbitset([1211572, 1211573, 1211577, 1211579, 1211587, ..., 1358085, 1359988, 1365226, 1369935, 1381724])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+jai
+IAPT Bulletin
+Computer Science Journal
+Prog.Theor.Exp.Phys.
+KJSE
+J.Physics
+Jour.ofPhys.
+Journ.Phys.
+JOUR. PHYS.
+JOURNAL OF PHYSICS
+
+78502w (), (1 Journals records with values) (216 distinct values in general)
+intbitset([1361744])
+----------------------------------------------------------------------------
+---- Good values ----
+---- Outliers ----
+
+8564_a (), (1 Journals records with values) (54 distinct values in general)
+intbitset([1311189])
+---------------------------------------------------------------------------
+---- Good values ----
+         1 http://sj.kubsau.ru/ 
+---- Outliers ----
+
+8564_u (url), (796 Journals records with values) (2704098 distinct values in general)
+intbitset([1211571, 1211572, 1211573, 1211574, 1211576, ..., 1369935, 1370555, 1373566, 1381587, 1381724])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+http://inspirehep.net/record/1297195/files/Future3.png
+http://www.slac.stanford.edu/cgi-wrap/pubpage?slac-tn-62-026
+http://www.slac.stanford.edu/cgi-wrap/pubpage?slac-r-023
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0416
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0483
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0551
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0484
+http://www.slac.stanford.edu/cgi-wrap/pubpage?slac-tn-63-023
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0341
+http://www-public.slac.stanford.edu/sciDoc/docMeta.aspx?slacPubNumber=SLAC-PUB-0553
+
+8564_w (url record control number), (5 Journals records with values) (716350 distinct values in general)
+intbitset([1212820, 1214516, 1214551, 1214745, 1258560])
+--------------------------------------------------------------------------------------------------------
+---- Example of values ----
+0523
+1010
+0198
+0267
+62-026
+023
+0416
+0483
+0551
+0484
+
+8564_y (url label), (2 Journals records with values) (1357869 distinct values in general)
+intbitset([1212635, 1342675])
+-----------------------------------------------------------------------------------------
+---- Example of values ----
+SLACPUB
+SLACTN
+ADSABS
+SLACREPT
+SLAC
+DOI
+RSINA
+RMPHA
+PHRVA
+AJPIA
+
+909COo (), (3453 Journals records with values) (1264619 distinct values in general)
+intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1370555, 1371050, 1373566, 1381587, 1381724])
+----------------------------------------------------------------------------------------------------------
+---- Example of values ----
+oai:inspirehep.net:1333355
+oai:inspirehep.net:1276252
+oai:inspirehep.net:1265189
+oai:inspirehep.net:1347216
+oai:inspirehep.net:1274799
+oai:inspirehep.net:1278431
+oai:inspirehep.net:1278449
+oai:atlantis.cern.ch:1077
+oai:atlantis.cern.ch:10849
+oai:atlantis.cern.ch:21550
+
+909COp (), (3453 Journals records with values) (12 distinct values in general)
+intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1370555, 1371050, 1373566, 1381587, 1381724])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+      3453 INSPIRE:Journals 
+---- Outliers ----
+INSPIRE:Journals (3453 Journals records): intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1370555, 1371050, 1373566, 1381587, 1381724])
+
+980__a (collection), (3453 Journals records with values) (81 distinct values in general)
+intbitset([1211568, 1211569, 1211570, 1211571, 1211572, ..., 1370555, 1371050, 1373566, 1381587, 1381724])
+----------------------------------------------------------------------------------------------------------
+---- Good values ----
+      3453 JOURNALS 
+         1 BookSeries 
+---- Outliers ----
+
+981__a (), (4 Journals records with values) (3386 distinct values in general)
+intbitset([1212224, 1212268, 1213074, 1214577])
+-----------------------------------------------------------------------------
+---- Example of values ----
+674175
+640540
+487440
+487442
+459597
+196523
+167913
+776487
+895309
+159338
