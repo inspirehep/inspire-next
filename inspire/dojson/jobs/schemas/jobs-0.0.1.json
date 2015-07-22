@@ -110,7 +110,7 @@
     "required": [
         "continent",
         "position",
-        "institution",
+        "institution", 
         "contact_email",
         "contact_person",
         "job_description",
