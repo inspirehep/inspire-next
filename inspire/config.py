@@ -93,6 +93,8 @@ PACKAGES = [
     'inspire.modules.styleguide',
     'inspire.modules.workflows',
     'invenio_records',
+    'invenio_oaiharvester',
+    'invenio_pidstore',
     'invenio.modules.*',
     'invenio.base',
 ]
@@ -104,6 +106,8 @@ PACKAGES_EXCLUDE = [
     'invenio.modules.multimedia',
     'invenio.modules.records',
     'invenio.modules.tags',
+    'invenio.modules.oaiharvester',
+    'invenio.modules.pidstore',
 ]
 
 # Configuration related to Deposit module

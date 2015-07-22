@@ -58,7 +58,7 @@ setup(
         "rt",
         "HarvestingKit>=0.3",
         "mixer==4.9.5",
-        "requests==2.3",
+        "requests>=2.4",
         "raven==5.0.0",
         "orcid",
         "retrying"

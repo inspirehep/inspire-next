@@ -44,12 +44,11 @@ from invenio.modules.classifier.tasks.classification import (
     classify_paper_with_oaiharvester,
 )
 
-from invenio.modules.oaiharvester.tasks.postprocess import (
-    convert_record_with_repository,
-    plot_extract,
+from invenio_oaiharvester.tasks.arxiv import (
+    arxiv_plot_extract,
     arxiv_fulltext_download,
-    refextract,
-    author_list,
+    arxiv_refextract,
+    arxiv_author_list,
 )
 from invenio.modules.workflows.tasks.workflows_tasks import log_info
 from inspire.modules.workflows.tasks.actions import (
@@ -61,6 +60,7 @@ from invenio.modules.workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else,
 )
+from invenio.modules.workflows.tasks.marcxml_tasks import convert_record
 from invenio.modules.workflows.definitions import RecordWorkflow
 from inspire.modules.oaiharvester.tasks.upload import (
     send_robotupload_oaiharvest,
@@ -83,8 +83,9 @@ class process_record_arxiv(RecordWorkflow):
 
     workflow = [
         # First we perform conversion from OAI-PMH XML to MARCXML
-        convert_record_with_repository("oaiarXiv2inspire_nofilter.xsl"),
+        convert_record("oaiarXiv2inspire_nofilter.xsl"),
         # Then we convert from MARCXML to SmartJSON object
+        # TODO: Use DOJSON when we are ready to switch from bibfield
         convert_record_to_bibfield(model=["hep"]),
         workflow_if(exists_in_inspire_or_rejected),
         [
@@ -102,10 +103,10 @@ class process_record_arxiv(RecordWorkflow):
             [
                 arxiv_set_category_field,  # FIXME: Remove this when elasticsearch filtering is ready
                 save_identifiers_oaiharvest("HP_IDENTIFIERS"),
-                plot_extract(["latex"]),
-                arxiv_fulltext_download,
-                refextract,
-                author_list,
+                arxiv_plot_extract,
+                arxiv_fulltext_download(),
+                arxiv_refextract,
+                arxiv_author_list("authorlist2marcxml.xsl"),
                 extract_journal_info,
                 classify_paper_with_oaiharvester(
                     taxonomy="HEPont",
