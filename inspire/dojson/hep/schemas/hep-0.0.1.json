@@ -55,7 +55,7 @@
                     "value": {
                         "title": "code",
                         "type": "string",
-                        "format": "isbn"
+                        "description": "This should be normalized using Lars' idutils library hence no dashes"
                     }
                 },
                 "title": "ISBN code"
