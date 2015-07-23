@@ -102,3 +102,53 @@ def add_submission_extra_data(obj, eng):
         del metadata["pdf"]
     obj.extra_data["submission_data"] = submission_data
     deposition.save()
+
+
+def extract_references(obj, eng):
+    """If any, extract references from pdf or references box."""
+    from invenio.legacy.refextract.api import (
+        extract_references_from_url_xml,
+        extract_references_from_string
+    )
+
+    references = None
+    user_pdf = obj.extra_data.get("submission_data").get("pdf")
+    user_references = obj.extra_data.get("submission_data").get("references")
+
+    if user_pdf:
+        pdf_file_request = requests.get(user_pdf)
+
+        if pdf_file_request.headers.get('content-type') != 'application/pdf' or \
+                pdf_file_request.status_code != 200:
+            obj.log.error("No PDF file. Skipping!")
+        else:
+            try:
+                references = extract_references_from_url_xml(user_pdf)
+            except:
+                obj.log.error("Not a file. Skipping!")
+    elif user_references:
+        references = extract_references_from_string(user_references)
+
+    if references:
+        from invenio.modules.workflows.utils import convert_marcxml_to_bibfield
+        obj.log.info("Found references.")
+        deposition = Deposition(obj)
+        sip = deposition.get_latest_sip(sealed=False)
+        if user_pdf:
+            references_xml = '<?xml version="1.0" encoding="UTF-8"?>\n' \
+                             '<collection>\n' + references + \
+                             '\n</collection>'
+
+            dict_representation = convert_marcxml_to_bibfield(references_xml)
+        else:
+            dict_representation = references
+        if 'reference' in sip.metadata:
+            sip.metadata['reference'].append(dict_representation["reference"])
+        elif isinstance(dict_representation['reference'], list):
+            sip.metadata['reference'] = dict_representation['reference']
+        else:
+            sip.metadata['reference'] = [dict_representation['reference']]
+        obj.log.info("Added references to sip metadata.")
+        obj.add_task_result("References",
+                            dict_representation['reference'],
+                            "workflows/results/refextract.html")

@@ -70,7 +70,10 @@ from inspire.modules.workflows.tasks.actions import (
 )
 from inspire.modules.deposit.forms import LiteratureForm
 
-from ..tasks import add_submission_extra_data
+from ..tasks import (
+    add_submission_extra_data,
+    extract_references
+)
 from ..utils import filter_empty_helper
 
 
@@ -118,6 +121,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             taxonomy="HEPont.rdf",
             output_mode="dict",
         ),
+        extract_references,
         halt_record_with_action(action="core_approval",
                                 message="Accept submission?"),
         workflow_if(was_approved),
