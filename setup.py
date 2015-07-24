@@ -56,10 +56,9 @@ setup(
     platforms='any',
     install_requires=[
         "rt",
-        "HarvestingKit>=0.3",
-        "mixer==4.9.5",
-        "requests>=2.4",
-        "raven==5.0.0",
+        "HarvestingKit>=0.6",
+        "mixer==4.9.5",  # FIXME: Due to incompatibility with our mixer usage
+        "raven==5.0.0",  # FIXME: To be compatible with our sentry version
         "orcid",
         "retrying"
     ],

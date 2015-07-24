@@ -1,4 +1,4 @@
-git+https://github.com/inspirehep/invenio@labs#egg=Invenio
+git+https://github.com/inspirehep/invenio@labs-master-elasticsearch#egg=Invenio
 git+https://github.com/inveniosoftware/invenio-query-parser@master#egg=invenio-query-parser
 git+https://github.com/inspirehep/invenio-oaiharvester@master#egg=invenio-oaiharvester
 
