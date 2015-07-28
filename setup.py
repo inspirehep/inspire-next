@@ -60,7 +60,10 @@ setup(
         "mixer==4.9.5",  # FIXME: Due to incompatibility with our mixer usage
         "raven==5.0.0",  # FIXME: To be compatible with our sentry version
         "orcid",
-        "retrying"
+        "retrying",
+        "invenio-records==0.1.1.dev20150721",
+        "invenio-query-parser==0.2.1.dev20141210",
+        "invenio-oaiharvester==0.1.0.dev20150000",
     ],
     extras_require={
         'development': [
@@ -70,6 +73,11 @@ setup(
             'kwalitee'
         ],
     },
+    dependency_links=[
+        'https://github.com/inveniosoftware/invenio-records/archive/master.zip#egg=invenio-records-0.1.1.dev20150721',
+        'https://github.com/inveniosoftware/invenio-query-parser/archive/master.zip#egg=invenio-query-parser-0.2.1.dev20141210',
+        'https://github.com/inspirehep/invenio-oaiharvester/archive/master.zip#egg=invenio-oaiharvester==0.1.0.dev20150000'
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
