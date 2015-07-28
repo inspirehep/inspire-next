@@ -105,7 +105,7 @@ class process_record_arxiv(RecordWorkflow):
                 save_identifiers_oaiharvest("HP_IDENTIFIERS"),
                 arxiv_plot_extract,
                 arxiv_fulltext_download(),
-                arxiv_refextract,
+                # arxiv_refextract,
                 arxiv_author_list("authorlist2marcxml.xsl"),
                 extract_journal_info,
                 classify_paper_with_oaiharvester(
@@ -121,7 +121,7 @@ class process_record_arxiv(RecordWorkflow):
                 workflow_if(was_approved),
                 [
                     add_core_oaiharvest,
-                    send_robotupload_oaiharvest(),
+                    # send_robotupload_oaiharvest(),
                 ],
                 workflow_else,
                 [

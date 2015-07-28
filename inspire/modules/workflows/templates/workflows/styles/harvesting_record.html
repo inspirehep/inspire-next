@@ -17,20 +17,21 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 {% import 'workflows/macros.html' as macros %}
+{% if authors %}
+    {% for author in authors[0:10] %}
+      {% if author %}
+        <a class="greyfaded" href="https://inspirehep.net/search?p=find a {{author.full_name}}">
+          {{author.full_name}}
+        {%- if author != authors[-1] -%}
+        ;
+        {%- endif -%}
+      {%- endif -%}
+      </a>
+    {% endfor %}
 
-{% for author in authors[0:10] %}
-  {% if author %}
-    <a class="greyfaded" href="https://inspirehep.net/search?p=find a {{author.full_name}}">
-      {{author.full_name}}
-    {%- if author != authors[-1] -%}
-    ;
-    {%- endif -%}
-  {%- endif -%}
-  </a>
-{% endfor %}
-
-{% if authors|count > 10 %}
-  et al.
+    {% if authors|count > 10 %}
+      et al.
+    {% endif %}
 {% endif %}
 
 {% if message %}
