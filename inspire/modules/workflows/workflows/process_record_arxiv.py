@@ -110,7 +110,6 @@ class process_record_arxiv(RecordWorkflow):
                 extract_journal_info,
                 classify_paper_with_oaiharvester(
                     taxonomy="HEPont",
-                    output_mode="dict",
                     only_core_tags=False,
                     spires=True,
                     with_author_keywords=True,

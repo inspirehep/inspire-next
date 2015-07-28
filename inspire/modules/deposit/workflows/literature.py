@@ -36,9 +36,6 @@ from invenio.modules.deposit.tasks import (
     process_sip_metadata
 )
 from invenio.modules.deposit.models import Deposition, InvalidDepositionType
-from invenio.modules.classifier.tasks.classification import (
-    classify_paper_with_deposit,
-)
 from invenio.modules.knowledge.api import get_kb_mappings
 from invenio.modules.workflows.tasks.logic_tasks import (
     workflow_if,
@@ -116,10 +113,6 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         reply_ticket(template="deposit/tickets/user_submitted.html",
                      keep_new=True),
         add_files_to_task_results,
-        classify_paper_with_deposit(
-            taxonomy="HEPont.rdf",
-            output_mode="dict",
-        ),
         halt_record_with_action(action="core_approval",
                                 message="Accept submission?"),
         workflow_if(was_approved),
