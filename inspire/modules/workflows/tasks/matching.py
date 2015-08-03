@@ -89,11 +89,12 @@ def exists_in_inspire_or_rejected(obj, eng):
 
     # FIXME: Let's filter away CORE categories for now.
     # Later all harvesting will happen here.
-    categories = obj.data.get("subject_term.term", [])
-    for category in categories:
-        if category.lower() in cfg.get("INSPIRE_ACCEPTED_CATEGORIES", []):
-            obj.log.info("Record is already being harvested on INSPIRE.")
-            return True
+    if not cfg.get("DEBUG"):
+        categories = obj.data.get("subject_term.term", [])
+        for category in categories:
+            if category.lower() in cfg.get("INSPIRE_ACCEPTED_CATEGORIES", []):
+                obj.log.info("Record is already being harvested on INSPIRE.")
+                return True
 
     # Check if this record should already have been rejected
     # (only on non-debug mode) E.g. if it is older than 2 days.
