@@ -246,6 +246,10 @@ class AuthorUpdateForm(WebDepositForm):
         widget=HiddenInput()
     )
 
+    inspireid = fields.StringField(
+        widget=HiddenInput()
+    )
+
     # Hidden field to hold record id information
     recid = fields.IntegerField(
         widget=HiddenInput(),
@@ -452,7 +456,7 @@ class AuthorUpdateForm(WebDepositForm):
     groups = [
         ('Personal Information',
             ['given_names', 'family_name', 'display_name', 'native_name', 'email',
-             'public_email', 'status', 'orcid', 'bai'],
+             'public_email', 'status', 'orcid', 'bai', 'inspireid'],
             {"icon": "fa fa-user"}
         ),
         ('Personal Websites',
@@ -476,3 +480,5 @@ class AuthorUpdateForm(WebDepositForm):
         if is_review:
             self.bai.widget = TextInput()
             self.bai.widget_classes = "form-control"
+            self.inspireid.widget = TextInput()
+            self.inspireid.widget_classes = "form-control"
