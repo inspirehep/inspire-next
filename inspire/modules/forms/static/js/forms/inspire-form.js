@@ -512,6 +512,7 @@ define(function(require, exports, module) {
    */
   this.onSubmitClick = function (event) {
       event.preventDefault();
+      $(event.toElement).button("loading");
       this.trigger('dataFormSubmit', {
         url: this.attr.complete_url,
         form_selector: this.attr.formSelector,
@@ -545,6 +546,7 @@ define(function(require, exports, module) {
               $(_this.attr.formSelector).submit();
            },
            function failure_callback() {
+              $(_this.attr.formSubmitClass).button("reset");
               if(dialog !== undefined){
                   $(dialog).modal('hide');
               }
