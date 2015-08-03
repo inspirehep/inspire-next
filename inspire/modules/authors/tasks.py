@@ -114,6 +114,11 @@ def convert_data_to_model():
                 "type": "BAI",
                 "value": data["bai"]
             })
+        if "inspireid" in data and data["inspireid"]:
+            data["ids"].append({
+                "type": "INSPIRE",
+                "value": data["inspireid"]
+            })
         data["_public_emails"] = []
         if "public_email" in data and data["public_email"]:
             data["_public_emails"].append({

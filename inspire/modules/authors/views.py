@@ -98,6 +98,8 @@ def convert_for_form(data):
                 data["orcid"] = id["value"]
             elif id["type"] == "BAI":
                 data["bai"] = id["value"]
+            elif id["type"] == "INSPIRE":
+                data["inspireid"] = id["value"]
 
 
 @blueprint.route('/validate', methods=['POST'])
