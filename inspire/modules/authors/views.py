@@ -134,7 +134,7 @@ def update(recid):
             url = os.path.join(cfg["AUTHORS_UPDATE_BASE_URL"], "record",
                                str(recid), "export", "xm")
             xml = requests.get(url)
-            data = Record.create(xml.text.encode("utf-8"), 'marc',
+            data = Record.create(xml.content.encode("utf-8"), 'marc',
                                  model='author').produce("json_for_form")
             convert_for_form(data)
         except requests.exceptions.RequestException:
@@ -228,7 +228,6 @@ def submitupdate():
     form = AuthorUpdateForm(formdata=request.form)
     visitor = DataExporter()
     visitor.visit(form)
-
     myobj = BibWorkflowObject.create_object(id_user=current_user.get_id())
     myobj.set_data(visitor.data)
     # Start workflow. delayed=True will execute the workflow in the
