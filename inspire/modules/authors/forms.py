@@ -302,7 +302,7 @@ class AuthorUpdateForm(WebDepositForm):
         placeholder="0000-0000-0000-0000",
         validators=[validators.Optional(),
                     RegexpStopValidator(
-                        "\d{4}-\d{4}-\d{4}-\d{4}",
+                        "\d{4}-\d{4}-\d{4}-\d{3}[\dX]",
                         message="A valid ORCID iD consists of 16 digits separated by dashes.",
                     ),
                     ORCIDValidator]
