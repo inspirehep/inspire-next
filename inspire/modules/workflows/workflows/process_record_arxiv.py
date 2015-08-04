@@ -193,7 +193,7 @@ class process_record_arxiv(RecordWorkflow):
             if decision == "CORE":
                 relevance_score += 10
             elif decision == "Rejected":
-                relevance_score -= 10
+                relevance_score = (max_score * -1) - 10
             return {
                 "max_score": prediction_results.get("max_score"),
                 "decision": prediction_results.get("decision"),
