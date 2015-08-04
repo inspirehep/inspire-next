@@ -22,11 +22,10 @@
 
 """Config for predicter INSPIRE module."""
 
-import os
+import pkg_resources
 
-from invenio.config import CFG_PREFIX
 
-CLASSIFIER_MODEL_PATH = os.path.join(CFG_PREFIX, "var/data/classifier/models")
-"""
-The base path for classifier models used for predictions.
-"""
+CLASSIFIER_MODEL_PATH = pkg_resources.resource_filename(
+    'inspire.modules.predicter', 'classifiers'
+)
+"""The base path for prediction models."""
