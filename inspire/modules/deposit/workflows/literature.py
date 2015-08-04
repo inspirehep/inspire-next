@@ -472,8 +472,10 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         if metadata['language'] not in ('en', 'oth'):
             metadata['language'] = unicode(dict(LiteratureForm.languages).get(metadata['language']))
         elif metadata['language'] == 'oth':
-            if metadata['other_language']:
+            if 'other_language' in metadata:
                 metadata['language'] = metadata['other_language']
+            else:
+                metadata['language'] = ""
         else:
             delete_keys.append('language')
 
