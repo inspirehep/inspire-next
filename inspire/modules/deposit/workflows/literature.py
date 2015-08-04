@@ -209,7 +209,11 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             categories = []
             subjects = record.get("subject_term", [])
             if subjects:
-                categories += [subject.get("term") for subject in subjects]
+                for subject in subjects:
+                    if not isinstance(subject, string_types):
+                        categories += subject
+                    else:
+                        categories += [subject.get("term") for subject in subjects]
             categories = [record.get("type_of_doc", "")] + categories
 
             authors = []
