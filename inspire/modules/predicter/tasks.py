@@ -102,13 +102,26 @@ def guess_coreness(model_path="arxiv_guessing.pickle"):
 
 
 @celery.task()
-def train(records, output):
+def train(records, output, skip_astro=True):
     """Train a set of records and save model to file."""
     from .arxiv import train as core_train
 
     records = json.load(open(records, "r"))
     if isinstance(records, dict):
         records = records.values()
+    print("Records found: {0}".format(len(records)))
+    if skip_astro:
+        astro_categories = {
+            'astro-ph.SR',
+            'astro-ph',
+            'astro-ph.EP',
+            'astro-ph.IM',
+            'astro-ph.GA'
+        }
+        records = [r for r in records
+                   if not (astro_categories & set(r["categories"]) and not
+                           (r["id"].startswith("14") or r["id"].startswith("15")))]
+        print("Records after filtering: {0}".format(len(records)))
     pipeline = core_train(records)
     pickle.dump(pipeline, open(output, "w"))
     print("Dumped trained model to {0}".format(output))
