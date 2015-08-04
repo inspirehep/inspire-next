@@ -115,7 +115,7 @@ class process_record_arxiv(RecordWorkflow):
                     with_author_keywords=True,
                 ),
                 filter_core_keywords(filter_kb="antihep"),
-                guess_coreness("arxiv_guessing.pickle"),
+                guess_coreness("new_astro_model.pickle"),
                 halt_record_with_action(action="arxiv_approval",
                                         message="Accept article?"),
                 workflow_if(was_approved),
