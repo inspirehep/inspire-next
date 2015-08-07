@@ -152,7 +152,7 @@
           {% endmacro %}
 
           {% macro get_ticket() -%}
-            <a href="https://rt.inspirehep.net/Ticket/Display.html?id= {{ bwobject.extra_data['ticket_id'] }}">
+            <a href="https://rt.inspirehep.net/Ticket/Display.html?id={{ bwobject.extra_data['ticket_id'] }}">
               <i class="fa fa-comments-o"> RT-Ticket</i>
             </a>
           {% endmacro %}
