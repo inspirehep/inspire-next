@@ -145,14 +145,48 @@
       {% endif  %}
       <li role="presentation"><a href="#task-logs" aria-controls="task-logs" role="tab" data-toggle="tab">Logs</a></li>
 
-      <!-- Add submitter email if it exists in the object information -->
-      {% if 'sips' in bwobject.get_data() %}
-          <li class="pull-right disabled">
-            <div class="email-in-panel">
-              <i class="fa fa-user"> {{ bwobject.get_data()['sips'][0]['metadata']['acquisition_source']['email'] }}</i>
-            </div>
+      <!-- Block for the extra information that appear on the tabpanel (ticket, submitter email) -->
+      {% block extra_info %}
+          {% macro get_email() -%}
+            <i class="fa fa-user"> {{ bwobject.get_data()['sips'][0]['metadata']['acquisition_source']['email'] }}</i>
+          {% endmacro %}
+
+          {% macro get_ticket() -%}
+            <a href="https://rt.inspirehep.net/Ticket/Display.html?id={{ bwobject.extra_data['ticket_id'] }}">
+              <i class="fa fa-comments-o"> RT-Ticket</i>
+            </a>
+          {% endmacro %}
+
+          <!-- Return a list element of the right size and content -->
+          {% macro list_element(size) -%}
+            <div class="col-lg-{{ size }}"> {{ caller() }}</div>
+          {% endmacro %}
+
+
+          <!-- We check what exists, in order to give the right amount of
+          Bootstrap columns to the 2 extra elements  -->
+          <li role="presentation" class="info-in-panel pull-right col-lg-8">
+            <!-- If both exist, 6 columns each -->
+            {% if 'ticket_id' in bwobject.extra_data and 'sips' in bwobject.get_data() %}
+              {% call list_element(6) %}
+                {{ get_ticket() }}
+              {% endcall %}
+              {% call list_element(6) %}
+                {{ get_email() }}
+              {% endcall %}
+
+            <!-- Else, 12 for a single element -->
+            {% elif 'ticket_id' in bwobject.extra_data %}
+              {% call list_element(12) %}
+                {{ get_ticket() }}
+              {% endcall %}
+            {% elif 'sips' in bwobject.get_data() %}
+              {% call list_element(12) %}
+                {{ get_email() }}
+              {% endcall %}
+            {% endif %}
           </li>
-      {% endif %}
+      {% endblock %}
     </ul>
 
     <!-- Tab panes -->
