@@ -24,14 +24,16 @@ define(
     'bootstrap-tagsinput',
     'flight/lib/component',
     'hgn!js/workflows/templates/editable_subjects',
-    'hgn!js/workflows/templates/editable_subjects_tags'
+    'hgn!js/workflows/templates/editable_subjects_tags',
+    'hgn!js/workflows/templates/editable_subjects_tags_on_save'
   ],
   function(
     $,
     tagsinput,
     defineComponent,
     tpl_editable_subj,
-    tpl_tags) {
+    tpl_tags,
+    tpl_spinner) {
 
     'use strict';
 
@@ -80,7 +82,9 @@ define(
 
             if ($.inArray(subject, subjectCodes) !== -1) return 'label label-success';
             else return 'label label-info';
-          }
+          },
+          // trim tags to avoid duplicates
+          trimValue: true
         });
 
 
@@ -130,6 +134,7 @@ define(
         var payload = this.createPayloadForEdit();
         var that = this;
 
+        $(this.attr.saveChangesSelector).replaceWith(tpl_spinner());
         $.ajax({
           type: "POST",
           url: that.attr.edit_url,
@@ -142,7 +147,6 @@ define(
           },
           complete: function() {
             that.makeUneditable();
-            that.on(that.attr.editSelector, 'dblclick', that.makeEditable);
           }
         });
       };
