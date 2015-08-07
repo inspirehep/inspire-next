@@ -90,20 +90,28 @@ def edit_record_title(value, objectid):
 def edit_record_urls(objectid):
     """Entrypoint for editing urls from detailed pages."""
     editable_obj = BibWorkflowObject.query.get(objectid)
+    data = editable_obj.get_data()
+
     new_urls = request.values.getlist('urls[]') or []
 
-    deposition = Deposition(editable_obj)
-    sip = deposition.get_latest_sip()
-    metadata = sip.metadata
+    # We need to check the type of the object due to differences
+    # Submission: dict /  Harvest: SmartJson
+    if type(data) is dict:
+        deposition = Deposition(editable_obj)
+        sip = deposition.get_latest_sip()
+        metadata = sip.metadata
 
-    # Get the new urls and format them, the way the object does
-    new_urls_array = []
-    for url in new_urls:
-        new_urls_array.append({'url': url})
+        # Get the new urls and format them, the way the object does
+        new_urls_array = []
+        for url in new_urls:
+            new_urls_array.append({'url': url})
 
-    metadata[URL] = new_urls_array
-    sip.package = make_record(sip.metadata).legacy_export_as_marc()
-    deposition.save()
+        metadata[URL] = new_urls_array
+        sip.package = make_record(sip.metadata).legacy_export_as_marc()
+        deposition.save()
+    else:
+        # TODO: Does nothing, need to find how urls are structured
+        pass
 
     return jsonify({
         "category": "success",
