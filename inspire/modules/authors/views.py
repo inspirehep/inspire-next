@@ -94,12 +94,16 @@ def convert_for_form(data):
             data["advisors"].append(adv)
     if "ids" in data:
         for id in data["ids"]:
-            if id["type"] == "ORCID":
-                data["orcid"] = id["value"]
-            elif id["type"] == "BAI":
-                data["bai"] = id["value"]
-            elif id["type"] == "INSPIRE":
-                data["inspireid"] = id["value"]
+            try:
+                if id["type"] == "ORCID":
+                    data["orcid"] = id["value"]
+                elif id["type"] == "BAI":
+                    data["bai"] = id["value"]
+                elif id["type"] == "INSPIRE":
+                    data["inspireid"] = id["value"]
+            except KeyError:
+                # Protect against cases when there is no value in metadata
+                pass
 
 
 @blueprint.route('/validate', methods=['POST'])
