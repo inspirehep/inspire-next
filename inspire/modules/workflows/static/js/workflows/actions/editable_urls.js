@@ -132,7 +132,7 @@ define(
           // Save urls in list
           .on('click', this.attr.saveChangesSelector, function(ev) {
             $(that.attr.inputsSelector).each(function(index, element) {
-              newUrlList.push(element.value);
+              if (element.value.length) newUrlList.push(element.value);
             });
 
             that.attr.urls = newUrlList;
