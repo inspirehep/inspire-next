@@ -230,8 +230,6 @@ class LiteratureForm(WebDepositForm):
 
     """Literature form fields."""
 
-    # captcha = RecaptchaField()
-
     doi = fields.DOIField(
         label=_('DOI'),
         processors=[],
@@ -244,6 +242,7 @@ class LiteratureForm(WebDepositForm):
 
     arxiv_id = ArXivField(
         label=_('arXiv ID'),
+        export_key="arxiv_id",
         validators=[arxiv_syntax_validation, duplicated_arxiv_id_validator],
     )
 
@@ -319,11 +318,13 @@ class LiteratureForm(WebDepositForm):
 
     collaboration = fields.TextField(
         label=_('Collaboration'),
+        export_key="collaboration",
         widget_classes="form-control" + ARTICLE_CLASS
     )
 
     experiment = fields.TextField(
         placeholder=_("Start typing for suggestions"),
+        export_key="experiment",
         label=_('Experiment'),
         widget_classes="form-control",
         autocomplete_fn=kb_dynamic_autocomplete("ExperimentsCollection",
@@ -357,11 +358,13 @@ class LiteratureForm(WebDepositForm):
 
     language = fields.LanguageField(
         label=_("Language"),
+        export_key="language",
         choices=languages
     )
 
     other_language = fields.TextField(
         label=_("Other Language"),
+        export_key="other_language",
         widget_classes="form-control",
         description="What is the language of the publication?"
     )
@@ -486,8 +489,8 @@ class LiteratureForm(WebDepositForm):
     )
 
     note = fields.TextAreaField(
-        export_key='note',
         widget=HiddenInput(),
+        export_key='note',
     )
 
     # ============
@@ -504,8 +507,8 @@ class LiteratureForm(WebDepositForm):
     # Preprint Information
     # ====================
     preprint_created = fields.TextField(
-        export_key='created',
         widget=HiddenInput(),
+        export_key='preprint_created',
     )
 
     # ====================
