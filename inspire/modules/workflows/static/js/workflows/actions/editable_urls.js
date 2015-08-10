@@ -41,7 +41,7 @@ define(
 
       this.attributes({
         // On init
-        editSelector: "#editable-urls",
+        editSelector: "#edit-urls",
         modalSelector: "#edit-urls-modal",
         urlContainerSelector: "#url-container",
         urlLinksSelector: "#url-links",
@@ -62,7 +62,9 @@ define(
       this.getURLs = function() {
         var urls = [];
         $(this.attr.urlContainerSelector + " a").each(function() {
-          urls.push($(this).text());
+          // check for the edit button 'a' tagand potential empty inputs
+          if ($(this).text())
+            urls.push($(this).text());
         });
 
         this.attr.urls = urls;
@@ -154,7 +156,7 @@ define(
       };
 
       this.after('initialize', function() {
-        this.on(this.attr.editSelector, 'dblclick', this.makeEditable);
+        this.on(this.attr.editSelector, 'click', this.makeEditable);
         console.log("Editable URLs OK");
       });
     }

@@ -24,14 +24,16 @@ define(
     'bootstrap-tagsinput',
     'flight/lib/component',
     'hgn!js/workflows/templates/editable_subjects',
-    'hgn!js/workflows/templates/editable_subjects_tags'
+    'hgn!js/workflows/templates/editable_subjects_tags',
+    'hgn!js/workflows/templates/editable_subjects_tags_on_save'
   ],
   function(
     $,
     tagsinput,
     defineComponent,
     tpl_editable_subj,
-    tpl_tags) {
+    tpl_tags,
+    tpl_spinner) {
 
     'use strict';
 
@@ -41,7 +43,9 @@ define(
 
       this.attributes({
         editSelector: "#editable-subjects",
+        editButtonSelector: "#edit-subjects",
         tagsContainerSelector: "#tags-container",
+        saveChangesSelector: "#save-changes",
 
         edit_url: "",
         objectid: "",
@@ -65,45 +69,43 @@ define(
       // Init Tags with proper events
       this.initTagInput = function() {
         var that = this;
-
         this.attr.tagInput = $("input#edit-subj:text");
+
+
+        // Differentiate the colors between the existing and the new tags
         this.attr.tagInput.tagsinput({
           tagClass: function (item) {
-            var subject_codes = that.attr.shortcodes.map(
-              function(shortcode) {
-                return shortcode.to;
-              }
-            );
+            var subjectCodes = that.attr.shortcodes
+              .map(function(shortcode) { return shortcode.to; });
+
             var subject = $.trim(item);
-            if ($.inArray(subject, subject_codes) !== -1) {
-              return 'label label-success';
-            } else {
-              return 'label label-info';
-            }
-          }}
-        );
+
+            if ($.inArray(subject, subjectCodes) !== -1) return 'label label-success';
+            else return 'label label-info';
+          },
+          // trim tags to avoid duplicates
+          trimValue: true
+        });
+
+
+        // Add the existing subjects, and focus inside the input box
         this.attr.tagInput.tagsinput('add', this.attr.subjText);
         this.attr.tagInput.tagsinput('focus');
 
+
         // Filter the input and add the right one according to
-        // the shortcodes. E.g. a-> Astrophysics
+        // the shortcodes. E.g. a -> Astrophysics
         this.attr.tagInput.on('beforeItemAdd', function(ev) {
           var originalValue = ev.item;
           var newValue = that.attr.shortcodes
-            .filter(function(shortcode) {
-              return shortcode.from === originalValue;
-            })
-            .map(function(shortcode) {
-              return shortcode.to;
-            })
+            .filter(function(shortcode) { return shortcode.from === originalValue; })
+            .map(function(shortcode) { return shortcode.to; })
             .toString();
 
           // Check if a new value was returned;
           // if not, add the original value to the tag
           ev.item = newValue ? newValue : originalValue;
         });
-
-        this.on(this.attr.tagsContainerSelector, 'focusout', this.makePostRequest);
       };
 
 
@@ -113,21 +115,26 @@ define(
           .text()
           .split(this.attr.splitter)[1];
 
-        // Add the tags container
+        // Replace the subjects div with the editable subjects input
         $(this.attr.editSelector).replaceWith(tpl_tags());
+
         this.initTagInput();
+        this.on(this.attr.saveChangesSelector, 'click', this.makePostRequest);
       };
 
       this.makeUneditable = function() {
-        $(this.attr.tagsContainerSelector).html(tpl_editable_subj({
+        // Replace the tags input with the non-editable subjects template
+        $(this.attr.tagsContainerSelector).replaceWith(tpl_editable_subj({
           subjects: this.attr.tagInput.val()
         }));
       };
+
 
       this.makePostRequest = function(ev) {
         var payload = this.createPayloadForEdit();
         var that = this;
 
+        $(this.attr.saveChangesSelector).replaceWith(tpl_spinner());
         $.ajax({
           type: "POST",
           url: that.attr.edit_url,
@@ -140,7 +147,6 @@ define(
           },
           complete: function() {
             that.makeUneditable();
-            that.on(that.attr.editSelector, 'dblclick', that.makeEditable);
           }
         });
       };
@@ -159,7 +165,7 @@ define(
       };
 
       this.after('initialize', function() {
-        this.on(this.attr.editSelector, 'dblclick', this.makeEditable);
+        this.on(this.attr.editButtonSelector, 'click', this.makeEditable);
         this.getSubjectShortcodes();
 
         console.log("Editable Subjects OK");
