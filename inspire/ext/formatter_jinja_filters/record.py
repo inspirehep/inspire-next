@@ -54,10 +54,65 @@ def author_profile(record):
                                    'format/record/field_templates/author_profile.tpl')
 
 
+def words(value, limit, separator=' '):
+    """Return first `limit` number of words ending by `separator`' '"""
+    return separator.join(value.split(separator)[:limit])
+
+
+def words_to_end(value, limit, separator=' '):
+    """Return last `limit` number of words ending by `separator`' '"""
+    return separator.join(value.split(separator)[limit:])
+
+
+def is_list(value):
+    """Checks if an object is a list"""
+    if isinstance(value, list):
+        return True
+
+def remove_duplicates(value):
+    """Removes duplicate objects from a list and returns the list"""
+    seen = set()
+    uniq = []
+    for x in value:
+        if x not in seen:
+            uniq.append(x)
+            seen.add(x)
+    return uniq
+
+def has_space(value):
+    """Checks if a string contains space"""
+    if ' ' in value:
+        return True
+
+def count_words(value):
+    """Counts the amount of words in a string"""
+    import re
+    from string import punctuation
+    r = re.compile(r'[{}]'.format(punctuation))
+    new_strs = r.sub(' ', value)
+    return len(new_strs.split())
+
+def is_intbit_set(value):
+    from intbitset import intbitset
+    if isinstance(value, intbitset):
+        value = value.tolist()
+    return value
+
+def remove_duplicates_from_dict(value):
+    return [dict(t) for t in set([tuple(d.items()) for d in value])]
+
 def get_filters():
     return {
         'email_links': email_links,
         'institute_links': institutes_links,
         'author_profile': author_profile,
         'url_links': url_links,
+        'words': words,
+        'words_to_end': words_to_end,
+        'is_list': is_list,
+        'remove_duplicates': remove_duplicates,
+        'has_space': has_space,
+        'count_words': count_words,
+        'is_intbit_set': is_intbit_set,
+        'remove_duplicates_from_dict': remove_duplicates_from_dict,
     }

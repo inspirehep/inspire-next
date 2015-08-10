@@ -262,7 +262,8 @@ You can now load the INSPIRE demo records:
 .. code-block:: console
 
     (inspire)$ cdvirtualenv src/inspire-next
-    (inspire)$ inveniomanage demosite populate -p inspire.base -f inspire/demosite/data/demo-records.xml
+    (inspire)$ inveniomanage records create inspire/demosite/data/demo-records.xml -t marcxml
+
 
 Now you should have a running INSPIRE demo site running at `http://localhost:4000 <http://localhost:4000>`_!
 
@@ -283,7 +284,6 @@ You can go to a shell instance with database initialized using the `shell` comma
     (inspire)$ inveniomanage shell
     In [1]: app
     Out[1]: <Flask 'invenio.base'>
-
 
 
 4. Harvesting workflows
@@ -325,4 +325,18 @@ Here is how to train the model from scratch:
 TODO: Add link to training set.
 TODO: Add link sample model.
 
+5. Known issues
+---------------
+
+5.1 Problem with invenio-query-parser
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On a fresh install in a new virtual environment you may experience that search
+queries are failing due to query parser issues. It means that an older version
+of invenio-query-parser is installed. You can fix it by installing the lastest
+sources:
+
+.. code-block:: bash
+
+    (inspire)$ pip install --upgrade git+https://github.com/inveniosoftware/invenio-query-parser@master#egg=invenio-query-parser
 

@@ -193,7 +193,7 @@ def create_ticket(template, queue="Test", ticket_id_key="ticket_id"):
 
         subject, body = get_ticket_body(template,
                                         deposition,
-                                        deposition.get_latest_sip(sealed=False).metadata,
+                                        deposition.get_latest_sip(sealed=True).metadata,
                                         requestors,
                                         obj)
         submit_rt_ticket(obj,
@@ -330,7 +330,7 @@ def send_robotupload_deposit(url=None):
 
         deposition = Deposition(obj)
 
-        sip = deposition.get_latest_sip(deposition.submitted)
+        sip = deposition.get_latest_sip(sealed=True)
 
         if not sip:
             raise WorkflowError("No sip found", eng.uuid, obj.id)
@@ -384,7 +384,7 @@ def add_note_entry(obj, eng):
     entry = {'value': '*Temporary entry*'} if obj.extra_data.get("core") \
         else {'value': '*Brief entry*'}
     deposition = Deposition(obj)
-    metadata = deposition.get_latest_sip(sealed=False).metadata
+    metadata = deposition.get_latest_sip(sealed=True).metadata
     if metadata.get('note') is None or not isinstance(metadata.get("note"), list):
         metadata['note'] = [entry]
     else:
@@ -398,10 +398,23 @@ def user_pdf_get(obj, eng):
         fft = {'url': obj.extra_data.get('submission_data').get('pdf'),
                'docfile_type': 'INSPIRE-PUBLIC'}
         deposition = Deposition(obj)
-        metadata = deposition.get_latest_sip(sealed=False).metadata
+        metadata = deposition.get_latest_sip(sealed=True).metadata
         if metadata.get('fft'):
             metadata['fft'].append(fft)
         else:
             metadata['fft'] = [fft]
         deposition.update()
         obj.log.info("PDF file added to FFT.")
+
+
+def finalize_record_sip(is_dump=True):
+    """Finalize the SIP by generating the MARC and storing it in the SIP."""
+    @wraps(finalize_record_sip)
+    def _finalize_sip(obj, dummy_eng):
+        from inspire.dojson.hep import hep2marc
+        from inspire.dojson.utils import legacy_export_as_marc
+        d = Deposition(obj)
+        sip = d.get_latest_sip(sealed=True)
+        sip.package = legacy_export_as_marc(hep2marc.do(sip.metadata))
+        d.update()
+    return _finalize_sip

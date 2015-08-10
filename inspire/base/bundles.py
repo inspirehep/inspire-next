@@ -65,6 +65,7 @@ _base_styles.contents += (
     'less/search/index.less',
     'less/feedback/button.less',
     'less/feedback/modal.less',
+    'less/format/brief-results.less',
     'less/workflows/workflows.less',
 )
 
@@ -80,6 +81,7 @@ from invenio.modules.search.bundles import js as _search_js
 
 _search_js.contents += (
     'js/search/invenio_with_spires_typeahead_configuration.js',
+    'js/search/search_results.js',
     # 'js/search/search_box.js',
 )
 

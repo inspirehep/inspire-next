@@ -219,7 +219,7 @@
         "name": "arxiv_math_daily",
         "postprocess": "",
         "setspecs": "physics:math-ph",
-        "workflows": "ingestion_arxiv_math"
+        "workflows": "process_record_arxiv"
     },
     {
         "arguments": {

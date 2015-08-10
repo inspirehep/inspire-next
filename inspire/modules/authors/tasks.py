@@ -51,7 +51,7 @@ def create_marcxml_record():
     """Create MarcXML from JSON using author model."""
     @wraps(create_marcxml_record)
     def _create_marcxml_record(obj, eng):
-        from invenio.modules.records.api import Record
+        from invenio_records.api import Record
         obj.log.info("Creating marcxml record")
         x = Record.create(obj.data, 'json', model='author')
         obj.extra_data["marcxml"] = x.legacy_export_as_marc()

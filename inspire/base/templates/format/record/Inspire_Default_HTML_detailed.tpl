@@ -18,10 +18,3 @@
 #}
 
 {% extends "format/record/Default_HTML_detailed.tpl" %}
-
-{% block header %}
-  {{ bfe_inspire_title(bfo) }}
-{% endblock %}
-
-{% block footer %}
-{% endblock %}

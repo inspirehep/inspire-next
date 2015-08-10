@@ -1,0 +1,344 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "required": [
+        "name"
+    ],
+    "type": "object",
+    "properties": {
+        "phd_advisors": {
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "recid": {
+                        "type": "integer"
+                    },
+                    "degree_type": {
+                        "enum": [
+                            "PhD",
+                            "Master"
+                        ],
+                        "type": "string",
+                        "description": "FIXME: better enum"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "curated_relation": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "type": "array",
+            "description": "Contains a links to the advisors in form of record ids."
+        },
+        "status": {
+            "enum": [
+                "active",
+                "deceased",
+                "departed",
+                "retired"
+            ],
+            "type": "string",
+            "description": "The person's status"
+        },
+        "author_note": {
+            "type": "string",
+            "description": "Contains public note."
+        },
+        "past_emails_addresses": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "format": "email"
+            },
+            "type": "array",
+            "description": "Contains past email addresses"
+        },
+        "native_name": {
+            "type": "string",
+            "description": "Stores name in native form."
+        },
+        "conferences": {
+            "uniqueItems": true,
+            "items": {
+                "type": "integer"
+            },
+            "type": "array",
+            "description": "Contains information about attended conferences. (their recids)"
+        },
+        "positions": {
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "end_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "old_email": {
+                        "type": "string",
+                        "description": "FIXME: this is redundant?",
+                        "format": "email"
+                    },
+                    "rank": {
+                        "enum": [
+                            "SENIOR",
+                            "JUNIOR",
+                            "STAFF",
+                            "VISITOR",
+                            "PD",
+                            "PHD",
+                            "MAS",
+                            "UG"
+                        ],
+                        "type": "string"
+                    },
+                    "institution": {
+                        "type": "object",
+                        "properties": {
+                            "curated_relation": {
+                                "type": "boolean"
+                            },
+                            "recid": {
+                                "type": "integer",
+                                "description": "Corresponding record ID in the institution database"
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "The raw institution name"
+                            }
+                        }
+                    },
+                    "current": {
+                        "type": "boolean",
+                        "description": "FIXME: do we need other states?"
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "FIXME: this is redundant?",
+                        "format": "email"
+                    }
+                }
+            },
+            "type": "array",
+            "description": "Contains position information."
+        },
+        "death_date": {
+            "type": "string",
+            "description": "Stores death date (if any)",
+            "format": "date"
+        },
+        "other_names": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            },
+            "type": "array",
+            "description": "Contains other variation of names. Usually a different form of writing the primary name."
+        },
+        "ids": {
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "enum": [
+                            "DESY",
+                            "arXiv",
+                            "INSPIRE",
+                            "BAI",
+                            "CERN",
+                            "ORCID",
+                            "SLAC",
+                            "JACOW",
+                            "GoogleScholar",
+                            "RESEARCHERID",
+                            "SCOPUS"
+                        ],
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "type": "array",
+            "description": "Contains all identifiers, both internal and external. FIXME: guess we should privilege nowadays, BAI, INSPIRE and ORCID"
+        },
+        "previous_names": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            },
+            "type": "array",
+            "description": "Contains a previous name. For example, it can be a maiden's name."
+        },
+        "source": {
+            "type": "object",
+            "description": "This is the source of informatio. It is currently a mixed bags of user IDs or provenance information, e.g. arXiv etc. FIXME: we should really discuss about it. E.g. eprint, webform, Rachel.Lumpkin@durham.ac.uk(96), Fermilab, C09-05-04, KYOTOU...",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "date_verified": {
+                    "type": "string",
+                    "format": "date"
+                }
+            }
+        },
+        "field_categories": {
+            "uniqueItems": true,
+            "items": {
+                "enum": [
+                    "acc-phys",
+                    "astro-ph",
+                    "atom-ph",
+                    "chao-dyn",
+                    "climate",
+                    "comp",
+                    "cond-mat",
+                    "genl-th",
+                    "gr-qc",
+                    "hep-ex",
+                    "hep-lat",
+                    "hep-ph",
+                    "hep-th",
+                    "instr",
+                    "librarian",
+                    "math",
+                    "math-ph",
+                    "med-phys",
+                    "nlin",
+                    "nucl-ex",
+                    "nucl-th",
+                    "physics",
+                    "plasma-phys",
+                    "q-bio",
+                    "quant-ph",
+                    "ssrl",
+                    "other"
+                ],
+                "type": "string",
+                "description": "FIXME: Time to revise this list?"
+            },
+            "type": "array",
+            "description": "Contains field category."
+        },
+        "prizes": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "description": "E.g. Nobel Prize Physics 1977, Shaw Prize 2006, Sakurai Prize 1985 FIXME: shall we separate the year?"
+            },
+            "type": "array",
+            "description": "Contains prize name.t"
+        },
+        "urls": {
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "description": "FIXME: actually, Twitter and linkedin URLs should be better recognized and set as IDs",
+                "properties": {
+                    "description": {
+                        "enum": [
+                            "TWITTER",
+                            "BLOG",
+                            "LINKEDIN",
+                            ""
+                        ],
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string",
+                        "format": "url"
+                    }
+                }
+            },
+            "type": "array",
+            "description": "Contains a link to author's website."
+        },
+        "birth_date": {
+            "type": "string",
+            "description": "Stores birth date",
+            "format": "date"
+        },
+        "experiments": {
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "start_year": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "end_year": {
+                        "type": "integer"
+                    },
+                    "current": {
+                        "type": "boolean"
+                    },
+                    "curated_relation": {
+                        "type": "boolean"
+                    },
+                    "recid": {
+                        "type": "integer",
+                        "description": "Record ID of the experiment record"
+                    }
+                }
+            },
+            "type": "array",
+            "description": "Contains information about experiments."
+        },
+        "email_addresses": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "format": "email"
+            },
+            "type": "array",
+            "description": "Contains current email addresses"
+        },
+        "name": {
+            "type": "object",
+            "description": "Contains name information.",
+            "properties": {
+                "preferred_name": {
+                    "type": "string"
+                },
+                "numeration": {
+                    "enum": [
+                        "",
+                        "Jr.",
+                        "Sr.",
+                        "I",
+                        "II",
+                        "III",
+                        "IV",
+                        "VI",
+                        "VII",
+                        "VIII"
+                    ],
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string",
+                    "format": ".+, .+"
+                },
+                "title": {
+                    "enum": [
+                        "",
+                        "Sir"
+                    ],
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

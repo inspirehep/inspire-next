@@ -89,11 +89,12 @@ def exists_in_inspire_or_rejected(obj, eng):
 
     # FIXME: Let's filter away CORE categories for now.
     # Later all harvesting will happen here.
-    categories = obj.data.get("subject_term.term", [])
-    for category in categories:
-        if category.lower() in cfg.get("INSPIRE_ACCEPTED_CATEGORIES", []):
-            obj.log.info("Record is already being harvested on INSPIRE.")
-            return True
+    if not cfg.get("DEBUG"):
+        categories = obj.data.get("subject_term.term", [])
+        for category in categories:
+            if category.lower() in cfg.get("INSPIRE_ACCEPTED_CATEGORIES", []):
+                obj.log.info("Record is already being harvested on INSPIRE.")
+                return True
 
     # Check if this record should already have been rejected
     # (only on non-debug mode) E.g. if it is older than 2 days.
@@ -109,7 +110,7 @@ def exists_in_inspire_or_rejected(obj, eng):
 def match_record_arxiv_remote_deposit(obj, eng):
     """Look on the remote server if the record exists using arXiv id."""
     d = Deposition(obj)
-    sip = d.get_latest_sip(sealed=False)
+    sip = d.get_latest_sip(sealed=True)
     return bool(match_record_arxiv_remote(obj, sip.metadata.get('arxiv_id')))
 
 
@@ -124,7 +125,7 @@ def match_record_doi_remote(obj, doi):
 def match_record_doi_remote_deposit(obj, eng):
     """Look on the remote server if the record exists using doi."""
     d = Deposition(obj)
-    sip = d.get_latest_sip(sealed=False)
+    sip = d.get_latest_sip(sealed=True)
     doi = sip.metadata.get('doi')
     return match_record_doi_remote(obj, doi)
 

@@ -41,7 +41,6 @@ EXTENSIONS = [
     'invenio.ext.arxiv:Arxiv',
     'invenio.ext.crossref:CrossRef',
     'invenio.ext.confighacks',
-    'invenio.ext.jinja2hacks',
     'invenio.ext.passlib:Passlib',
     'invenio.ext.debug_toolbar',
     'invenio.ext.babel',
@@ -52,6 +51,7 @@ EXTENSIONS = [
     'invenio.ext.login',
     'invenio.ext.principal',
     'invenio.ext.email',
+    'invenio.ext.fixtures',  # before legacy
     'invenio.ext.legacy',
     'invenio.ext.assets',
     'invenio.ext.template',
@@ -65,6 +65,7 @@ EXTENSIONS = [
     'invenio.ext.restful',
     'invenio.ext.mixer',
     'invenio.ext.jasmine',
+    'invenio.ext.es',
     'flask.ext.menu:Menu',
     'flask.ext.breadcrumbs:Breadcrumbs',
     'invenio.modules.deposit.url_converters',
@@ -76,6 +77,7 @@ EXTENSIONS = [
 PACKAGES = [
     'inspire.base',
     'inspire.demosite',
+    'inspire.dojson',
     'inspire.ext',
     'inspire.utils',
     'inspire.modules.access',
@@ -91,71 +93,22 @@ PACKAGES = [
     'inspire.modules.refextract',
     'inspire.modules.styleguide',
     'inspire.modules.workflows',
-    'invenio.modules.access',
-    'invenio.modules.accounts',
-    'invenio.modules.alerts',
-    'invenio.modules.apikeys',
-    'invenio.modules.authorprofiles',
-    'invenio.modules.authors',
-    'invenio.modules.baskets',
-    'invenio.modules.bulletin',
-    'invenio.modules.circulation',
-    'invenio.modules.classifier',
-    'invenio.modules.cloudconnector',
-    'invenio.modules.collections',
-    'invenio.modules.comments',
-    'invenio.modules.communities',
-    'invenio.modules.converter',
-    'invenio.modules.dashboard',
-    'invenio.modules.deposit',
-    'invenio.modules.documentation',
-    'invenio.modules.documents',
-    'invenio.modules.editor',
-    'invenio.modules.encoder',
-    'invenio.modules.exporter',
-    'invenio.modules.formatter',
-    'invenio.modules.groups',
-    'invenio.modules.indexer',
-    'invenio.modules.jsonalchemy',
-    'invenio.modules.knowledge',
-    'invenio.modules.linkbacks',
-    'invenio.modules.matcher',
-    'invenio.modules.merger',
-    'invenio.modules.messages',
-    'invenio.modules.oaiharvester',
-    'invenio.modules.oairepository',
-    'invenio.modules.oauth2server',
-    'invenio.modules.oauthclient',
-    'invenio.modules.pidstore',
-    'invenio.modules.previewer',
-    'invenio.modules.ranker',
-    'invenio.modules.records',
-    'invenio.modules.redirector',
-    'invenio.modules.refextract',
-    'invenio.modules.scheduler',
-    'invenio.modules.search',
-    'invenio.modules.sequencegenerator',
-    'invenio.modules.sorter',
-    'invenio.modules.statistics',
-    'invenio.modules.submit',
-    'invenio.modules.sword',
-    'invenio.modules.tags',
-    'invenio.modules.textminer',
-    'invenio.modules.tickets',
-    'invenio.modules.upgrader',
-    'invenio.modules.uploader',
-    'invenio.modules.webhooks',
-    'invenio.modules.workflows',
-    'invenio.modules.pages',
+    'invenio_records',
+    'invenio_oaiharvester',
+    'invenio_pidstore',
+    'invenio.modules.*',
     'invenio.base',
 ]
 
 PACKAGES_EXCLUDE = [
-    'invenio.modules.archiver',
     'invenio.modules.annotations',
-    'invenio.modules.communities',
-    'invenio.modules.linkbacks',
+    'invenio.modules.archiver',
+    'invenio.modules.communities',  # remove with invenio/modules/communities
     'invenio.modules.multimedia',
+    'invenio.modules.records',
+    'invenio.modules.tags',
+    'invenio.modules.oaiharvester',
+    'invenio.modules.pidstore',
 ]
 
 # Configuration related to Deposit module
@@ -296,7 +249,6 @@ OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP = "system_number_external.value"
 WORKFLOWS_HOLDING_PEN_DEFAULT_OUTPUT_FORMAT = "hp"
 
 # Harvester config
-
 HARVESTER_WORKFLOWS = {
     "world_scientific": "inspire.modules.harvester.workflows.world_scientific:world_scientific"
 }
@@ -304,4 +256,37 @@ HARVESTER_WORKFLOWS_CONFIG = {
     "world_scientific": {}
     # Specify special config locally.
     # Expected params: ftp_server, ftp_netrc_file and recipients
+}
+
+# DoJSON configuration
+RECORD_PROCESSORS = {
+    'json': 'json.load',
+    'marcxml': 'inspire.dojson.processors:convert_marcxml',
+}
+
+# SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
+# invenio keywords to elasticsearch fields
+SEARCH_ELASTIC_KEYWORD_MAPPING = {
+    "author": {
+        'a': ["authors.full_name"],
+        'p': ["authors.full_name"],
+        'e': ['exactauthor.raw'],
+    },
+    "abstract": ["abstract.summary"],
+    "collection": ["_collections"],
+    "collaboration": ["collaboration.collaboration"],
+    "affiliation": ["authors.affiliation"],
+    "affautocomplete": ["affautocomplete.affiliation"],
+    "reportnumber": ["report_number.primary"],
+    "experiment": ["accelerator_experiment.experiment"],
+    "title": ["title.title"],
+    "980": [
+        "collections.primary",
+        "collections.secondary",
+        "collections.deleted",
+    ],
+    "595__c": ["hidden_note.cds"],
+    "980__a": ["collections.primary"],
+    "980__b": ["collections.secondary"],
+    "542__l": ["information_relating_to_copyright_status.copyright_status"],
 }

@@ -38,7 +38,7 @@ from invenio.base.decorators import wash_arguments
 from invenio.base.globals import cfg
 from invenio.base.i18n import _
 from invenio.ext.principal import permission_required
-from invenio.modules.records.api import Record
+from invenio_records.api import Record
 from invenio.modules.workflows.models import BibWorkflowObject
 
 from .acl import viewauthorreview

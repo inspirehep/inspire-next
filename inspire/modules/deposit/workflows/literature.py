@@ -29,16 +29,13 @@ from invenio.modules.accounts.models import UserEXT
 
 from invenio.modules.deposit.types import SimpleRecordDeposition
 from invenio.modules.deposit.tasks import (
+    dump_record_sip,
     render_form,
     prepare_sip,
-    finalize_record_sip,
     prefill_draft,
     process_sip_metadata
 )
 from invenio.modules.deposit.models import Deposition, InvalidDepositionType
-from invenio.modules.classifier.tasks.classification import (
-    classify_paper_with_deposit,
-)
 from invenio.modules.knowledge.api import get_kb_mappings
 from invenio.modules.workflows.tasks.logic_tasks import (
     workflow_if,
@@ -61,7 +58,8 @@ from inspire.modules.workflows.tasks.submission import (
     reply_ticket,
     add_note_entry,
     user_pdf_get,
-    close_ticket
+    close_ticket,
+    finalize_record_sip
 )
 from inspire.modules.workflows.tasks.actions import (
     was_approved,
@@ -101,6 +99,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Create the submission information package by merging form data
         # from all drafts (in this case only one draft exists).
         prepare_sip(),
+        dump_record_sip(),
         # Process metadata to match your JSONAlchemy record model. This will
         # call process_sip_metadata() on your subclass.
         process_sip_metadata(),
@@ -114,10 +113,6 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         reply_ticket(template="deposit/tickets/user_submitted.html",
                      keep_new=True),
         add_files_to_task_results,
-        classify_paper_with_deposit(
-            taxonomy="HEPont.rdf",
-            output_mode="dict",
-        ),
         halt_record_with_action(action="core_approval",
                                 message="Accept submission?"),
         workflow_if(was_approved),
@@ -270,7 +265,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             return marcxml
         else:
             return format_record(
-                recID=None,
+                record=submission_data.metadata,
                 of=of,
                 xml_record=marcxml
             )
