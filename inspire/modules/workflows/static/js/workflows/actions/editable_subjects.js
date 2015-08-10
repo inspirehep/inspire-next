@@ -25,7 +25,7 @@ define(
     'flight/lib/component',
     'hgn!js/workflows/templates/editable_subjects',
     'hgn!js/workflows/templates/editable_subjects_tags',
-    'hgn!js/workflows/templates/editable_subjects_tags_on_save'
+    'hgn!js/workflows/templates/saving_spinner'
   ],
   function(
     $,
@@ -134,6 +134,7 @@ define(
         var payload = this.createPayloadForEdit();
         var that = this;
 
+        // Add spinner on save button
         $(this.attr.saveChangesSelector).replaceWith(tpl_spinner());
         $.ajax({
           type: "POST",

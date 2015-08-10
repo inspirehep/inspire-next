@@ -24,14 +24,16 @@ define(
     'flight/lib/component',
     'hgn!js/workflows/templates/editable_urls',
     'hgn!js/workflows/templates/editable_urls_input',
-    'hgn!js/workflows/templates/editable_urls_after_edit'
+    'hgn!js/workflows/templates/editable_urls_after_edit',
+    'hgn!js/workflows/templates/saving_spinner'
   ],
   function(
     $,
     defineComponent,
     tpl_edit_urls,
     tpl_edit_urls_input,
-    tpl_after_edit_urls) {
+    tpl_after_edit_urls,
+    tpl_spinner) {
 
     'use strict';
 
@@ -62,9 +64,9 @@ define(
       this.getURLs = function() {
         var urls = [];
         $(this.attr.urlContainerSelector + " a").each(function() {
-          // check for the edit button 'a' tagand potential empty inputs
-          if ($(this).text())
-            urls.push($(this).text());
+          // check for the edit button 'a' tag and potential empty inputs
+          var url = $(this).text();
+          if (url.length) urls.push(url);
         });
 
         this.attr.urls = urls;
@@ -80,7 +82,6 @@ define(
             that.attr.urls[index] = 'http://' + url;
           }
         });
-
         return this.attr.urls;
       };
 
@@ -142,6 +143,9 @@ define(
 
       this.makePostRequest = function() {
         var that = this;
+
+        // Add spinner on save button
+        $(this.attr.saveChangesSelector).replaceWith(tpl_spinner());
         $.ajax({
           type: "POST",
           url: that.attr.edit_url,
@@ -151,6 +155,9 @@ define(
               category: data.category,
               message: data.message
             });
+          },
+          complete: function() {
+            $(that.attr.modalSelector).modal("hide");
           }
         });
       };
