@@ -17,7 +17,7 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-import re
+import copy
 
 from flask import render_template
 
@@ -42,8 +42,6 @@ from invenio.modules.workflows.tasks.logic_tasks import (
     workflow_else,
 )
 from invenio.modules.workflows.definitions import WorkflowBase
-
-from invenio.utils.persistentid import is_arxiv_post_2007
 
 from inspire.modules.workflows.tasks.matching import(
     match_record_remote_deposit,
@@ -187,12 +185,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         if sip:
             record = sip.metadata
             identifiers = []
-            report_numbers = record.get("report_number", {})
-            if not isinstance(report_numbers, list):
-                report_numbers = [report_numbers]
-
-            report_numbers += record.get("report_numbers", [])
-            doi = record.get("doi", "")
+            report_numbers = record.get("report_number", [])
+            doi = record.get("doi", "").get("doi")
             if report_numbers:
                 for report_number in report_numbers:
                     number = report_number.get("primary", "")
@@ -270,325 +264,80 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 xml_record=marcxml
             )
 
-
-    @classmethod
-    #TODO: ensure that this regex is correct
-    def match_authors_initials(self, author_name):
-        """Check if author's name contains only its initials."""
-        return not bool(re.compile(r'[^A-Z. ]').search(author_name))
-
     @classmethod
     def process_sip_metadata(cls, deposition, metadata):
-        """Map fields to match jsonalchemy configuration."""
-        delete_keys = []
-        field_list = ['abstract', 'title']
+        from ..dojson.model import literature
 
-        # maps from a form field to the corresponding MarcXML field
-        field_map = {'abstract': "summary",
-                     'title': "title",
-                     'subject_term': "term",
-                     'institution': "university",
-                     'degree_type': 'degree_type',
-                     'thesis_date': "date",
-                     'journal_title': "journal_title",
-                     'page_range_article_id': "page_artid",
-                     'volume': "journal_volume",
-                     'year': "year",
-                     'issue': "journal_issue",
-                     'conference_id': "cnum"}
-
-        # exclusive fields for each type of document
-        doc_exclusive_fields = {'article': ['journal_title',
-                                            'page_range',
-                                            'article_id',
-                                            'volume',
-                                            'year',
-                                            'issue',
-                                            'conference_id'],
-                                'thesis': ['supervisors',
-                                           'institution',
-                                           'degree_type',
-                                           'thesis_date',
-                                           'defense_date'],
-                                }
-
-        del doc_exclusive_fields[metadata['type_of_doc']]
-
-        def remove_exclusive_fields(fieldlist):
-            for field in fieldlist:
-                if field in metadata and metadata[field]:
-                    del metadata[field]
-
-        map(remove_exclusive_fields, doc_exclusive_fields.values())
+        form_fields = copy.deepcopy(metadata)
 
         filter_empty_elements(metadata)
+        converted = literature.do(metadata)
+        metadata.clear()
+        metadata.update(converted)
 
+        # Add extra fields that need to be computed or depend on other
+        # fields.
+        #
         # ============================
-        # Abstract, Title and Subjects
+        # Collection
         # ============================
-        for field in field_list:
-            if field in metadata:
-                tmp_field = metadata[field]
-                metadata[field] = {field_map[field]: tmp_field}
-
-        if "subject_term" in metadata:
-            tmp_field = metadata["subject_term"]
-            metadata["subject_term"] = [{"term": t,
-                                        "scheme": "INSPIRE",
-                                        "source": "submitter"}
-                                        for t in tmp_field]
-
-        # =======
-        # Authors
-        # =======
-        metadata['authors'] = filter(None, metadata['authors'])
-        if 'authors' in metadata and metadata['authors']:
-            first_author = metadata['authors'][0].get('full_name').split(',')
-            if len(first_author) > 1 and \
-                    literature.match_authors_initials(first_author[1]):
-                first_author[1] = first_author[1].replace(' ', '')
-                metadata['authors'][0]['full_name'] = ", ".join(first_author)
-            metadata['_first_author'] = metadata['authors'][0]
-            if metadata['authors'][1:]:
-                metadata['_additional_authors'] = metadata['authors'][1:]
-                for k in metadata['_additional_authors']:
-                    try:
-                        additional_author = k.get('full_name').split(',')
-                        if len(additional_author) > 1 and \
-                                literature.match_authors_initials(additional_author[1]):
-                            additional_author[1] = additional_author[1].replace(' ', '')
-                            k['full_name'] = ", ".join(additional_author)
-                    except AttributeError:
-                        pass
-            delete_keys.append('authors')
-
-        # ===========
-        # Supervisors
-        # ===========
-        if 'supervisors' in metadata and metadata['supervisors']:
-            metadata['thesis_supervisor'] = metadata['supervisors']
-            delete_keys.append('supervisors')
-
-        # ====
-        # Note
-        # ====
-        if metadata.get('note', None):
-            metadata['note'] = [{'value': metadata['note']}]
-
-        # ==============
-        # Thesis related
-        # ==============
-        thesis_fields = filter(lambda field: field in metadata, ['institution',
-                                                                 'degree_type',
-                                                                 'thesis_date'])
-        if thesis_fields:
-            metadata['thesis'] = {}
-
-            for field in thesis_fields:
-                metadata['thesis'][field_map[field]] = metadata[field]
-
-            delete_keys.extend(thesis_fields)
-
-        if 'defense_date' in metadata and metadata['defense_date']:
-            defense_note = {
-                'value': 'Presented on ' + metadata['defense_date']
-            }
-            if metadata.get('note', None):
-                metadata['note'].append(defense_note)
-            else:
-                metadata['note'] = [defense_note]
-
-        # ========
-        # Category
-        # ========
         metadata['collections'] = [{'primary': "HEP"}]
-        if metadata['type_of_doc'] == 'thesis':
+        if form_fields['type_of_doc'] == 'thesis':
             metadata['collections'].append({'primary': "THESIS"})
-
-        # ============
+        if "subject_term" in metadata:
+            # Check if it was imported from arXiv
+            if any([x["scheme"] == "arXiv" for x in metadata["subject_term"]]):
+                metadata['collections'].extend([{'primary': "arXiv"},
+                                                {'primary': "Citeable"}])
+                # Add arXiv as source
+                if metadata.get("abstract"):
+                    metadata['abstract']['source'] = 'arXiv'
+                if form_fields.get("arxiv_id"):
+                    metadata['system_number_external'] = {
+                        'system_number_external': 'oai:arXiv.org:' + form_fields['arxiv_id'],
+                        'institute': 'arXiv'
+                    }
+        if metadata["publication_info"]:
+            metadata['collections'].append({'primary': "Published"})
+        # ============================
         # Title source
-        # ============
-        if 'title_source' in metadata and metadata['title_source']:
-            metadata['title']['source'] = metadata['title_source']
-            delete_keys.append('title_source')
-
-        # =============
-        # Report number
-        # =============
-        if 'report_numbers' in metadata and metadata['report_numbers']:
-            user_report_number = metadata['report_numbers']
-            metadata['report_number'] = [{'primary': v['report_number']}
-                                         for v in user_report_number]
-            delete_keys.append('report_numbers')
-
-        # ========
-        # arXiv ID
-        # ========
-        imported_from_arXiv = filter(lambda field: field in metadata,
-                                     ['categories', 'title_arXiv'])
-
-        if imported_from_arXiv or metadata.get('title_source') == 'arXiv':
-            if is_arxiv_post_2007(metadata['arxiv_id']):
-                arxiv_rep_number = {'primary': 'arXiv:' + metadata['arxiv_id'],
-                                    'source': 'arXiv'}
-            else:
-                arxiv_rep_number = {'primary': metadata['arxiv_id'],
-                                    'source': 'arXiv'}
-            if len(metadata['arxiv_id'].split('/')) == 2:
-                arxiv_rep_number['arxiv_category'] = metadata['arxiv_id'].split('/')[0]
-            if metadata.get('report_numbers'):
-                metadata['report_number'].append(arxiv_rep_number)
-            else:
-                metadata['report_number'] = [arxiv_rep_number]
-            if 'abstract' in metadata:
-                metadata['abstract']['source'] = 'arXiv'
-            if 'title_arXiv' in metadata:
-                title_arXiv = metadata['title_arXiv']
-                metadata['title_arXiv'] = {}
-                metadata['title_arXiv']['value'] = title_arXiv
-                metadata['title_arXiv']['source'] = 'arXiv'
-            if 'categories' in metadata and metadata['categories']:
-                # arXiv subject categories
-                subject_list = [{"term": c, "scheme": "arXiv"}
-                                for c in metadata['categories'].split()]
-                # INSPIRE subject categories
-                if 'subject_term' in metadata and metadata['subject_term']:
-                    metadata['subject_term'].extend(subject_list)
-                else:
-                    metadata['subject_term'] = subject_list
-            metadata['system_number_external'] = {'value': 'oai:arXiv.org:' + metadata['arxiv_id'],
-                                                  'institute': 'arXiv'}
-            metadata['collections'].extend([{'primary': "arXiv"}, {'primary': "Citeable"}])
-
-
-        # ========
-        # Language
-        # ========
-        if metadata['language'] not in ('en', 'oth'):
-            metadata['language'] = unicode(dict(LiteratureForm.languages).get(metadata['language']))
-        elif metadata['language'] == 'oth':
-            if 'other_language' in metadata:
-                metadata['language'] = metadata['other_language']
-            else:
-                metadata['language'] = ""
-        else:
-            delete_keys.append('language')
-
-        # ==========
-        # Experiment
-        # ==========
-        if 'experiment' in metadata:
-            metadata['accelerator_experiment'] = {'experiment': metadata['experiment']}
-            delete_keys.append('experiment')
-
-        # ===============
-        # Conference Info
-        # ===============
-        if 'conf_name' in metadata:
-            if 'nonpublic_note' in metadata:
-                field = [metadata['nonpublic_note'], metadata['conf_name']]
-                metadata['nonpublic_note'] = field
-            else:
-                metadata['nonpublic_note'] = [metadata['conf_name']]
-            metadata['collections'].extend([{'primary': "ConferencePaper"}])
-            delete_keys.append('conf_name')
-
-        # =======
-        # License
-        # =======
-        licenses_kb = dict([(x['key'], x['value'])
-            for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_LICENSE_KB"])])
-        if 'license' in metadata and metadata['license']:
-            metadata['license'] = {'license': metadata['license']}
-            if 'license_url' in metadata:
-                metadata['license']['url'] = metadata['license_url']
-            else:
-                metadata['license']['url'] = licenses_kb.get(
-                    metadata['license']['license'])
-        elif 'license_url' in metadata:
-            metadata['license'] = {'url': metadata['license_url']}
-            license_key = {v: k for k, v in licenses_kb.items()}.get(
-                metadata['license_url'])
-            if license_key:
-                metadata['license']['license'] = license_key
-            delete_keys.append('license_url')
-
-        # ===========
-        # Files (FFT)
-        # ===========
-        if 'fft' in metadata and metadata['fft']:
-            def restructure_ffts(fft):
-                fft['url'] = fft['path']
-                fft['description'] = fft['name']
-                fft['docfile_type'] = "INSPIRE-PUBLIC"
-                del fft['path'], fft['name']
-
-            map(restructure_ffts, metadata['fft'])
-
-        # ====
-        # URLs
-        # ====
-        if metadata.get('url'):
-            metadata['pdf'] = metadata['url']
-            if isinstance(metadata['url'], string_types):
-                metadata['url'] = [{'url': metadata['url']}]
-        if 'additional_url' in metadata and metadata['additional_url']:
-            if metadata.get('url'):
-                metadata['url'].append({'url': metadata['additional_url']})
-            else:
-                metadata['url'] = [{'url': metadata['additional_url']}]
-            delete_keys.append('additional_url')
-
-        # ================
-        # Publication Info
-        # ================
-
-        publication_fields = filter(lambda field: field in metadata, ['journal_title',
-                                                                      'page_range_article_id',
-                                                                      'volume',
-                                                                      'year',
-                                                                      'issue',
-                                                                      'conference_id'])
-        if publication_fields:
-            metadata['publication_info'] = {}
-
-            for field in publication_fields:
-                metadata['publication_info'][field_map[field]] = metadata[field]
-
-            if 'page_nr' not in metadata and 'page_range_article_id' in publication_fields:
-                pages = metadata['page_range_article_id'].split('-')
+        # ============================
+        if 'title_source' in form_fields and form_fields['title_source']:
+            metadata['title']['source'] = form_fields['title_source']
+        # ============================
+        # Conference name
+        # ============================
+        if 'conf_name' in form_fields:
+            metadata.setdefault("hidden_note", []).append({
+                "value": form_fields['conf_name']
+            })
+        # ============================
+        # Page range
+        # ============================
+        if 'page_nr' not in metadata:
+            if metadata.get("publication_info", {}).get("page_artid"):
+                pages = metadata['publication_info']['page_artid'].split('-')
                 if len(pages) == 2:
                     try:
-                        metadata['page_nr'] = int(pages[1]) - int(pages[0]) + 1
+                        metadata['page_nr'] = {
+                            "value": int(pages[1]) - int(pages[0]) + 1
+                        }
                     except ValueError:
                         pass
-
-            if {'primary': "ConferencePaper"} not in metadata['collections']:
-                metadata['collections'].append({'primary': "Published"})
-
-            delete_keys.extend(publication_fields)
-
-        if 'journal_title' in metadata:
-            journals_kb = dict([(x['key'].lower(), x['value'])
-                                for x in get_kb_mappings(cfg.get("DEPOSIT_INSPIRE_JOURNALS_KB"))])
-
-            metadata['publication_info']['journal_title'] = journals_kb.get(metadata['journal_title'].lower(),
-                                                                            metadata['journal_title'])
-
-            if 'nonpublic_note' in metadata:
-                if (isinstance(metadata['nonpublic_note'], list)
-                        and len(metadata['nonpublic_note']) > 1):
-                    del metadata['nonpublic_note'][0]
-                else:
-                    delete_keys.append('nonpublic_note')
-
-        # =============
-        # Preprint Info
-        # =============
-        if 'created' in metadata and metadata['created']:
-            metadata['preprint_info'] = {'date': metadata['created']}
-            delete_keys.append('created')
-
+        # ============================
+        # Language
+        # ============================
+        if metadata.get("language") == "oth":
+            if form_fields.get("other_language"):
+                metadata["language"] = form_fields["other_language"]
+        # ============================
+        # Date of defense
+        # ============================
+        if form_fields.get('defense_date'):
+            defense_note = {
+                'value': 'Presented on ' + form_fields['defense_date']
+            }
+            metadata.setdefault("note", []).append(defense_note)
         # ==========
         # Owner Info
         # ==========
@@ -605,16 +354,27 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             method="submission",
             submission_number=deposition.id,
         )
-
+        # ==============
+        # References
+        # ==============
+        if form_fields.get('references'):
+            metadata['references'] = form_fields.get('references')
         # ==============
         # Extra comments
         # ==============
-        if 'extra_comments' in metadata and metadata['extra_comments']:
-            metadata['hidden_note'] = [{'value': metadata['extra_comments'],
-                                        'source': 'submitter'}]
+        if form_fields.get('extra_comments'):
+            metadata.setdefault('hidden_note', []).append(
+                {
+                    'value': form_fields['extra_comments'],
+                    'source': 'submitter'
+                }
+            )
+        # ======================================
+        # Journal name Knowledge Base conversion
+        # ======================================
+        if metadata.get("publication_info", {}).get("journal_title"):
+            journals_kb = dict([(x['key'].lower(), x['value'])
+                                for x in get_kb_mappings(cfg.get("DEPOSIT_INSPIRE_JOURNALS_KB"))])
 
-        # ===================
-        # Delete useless data
-        # ===================
-        for key in delete_keys:
-            del metadata[key]
+            metadata['publication_info']['journal_title'] = journals_kb.get(metadata['publication_info']['journal_title'].lower(),
+                                                                            metadata['publication_info']['journal_title'])

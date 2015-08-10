@@ -69,3 +69,23 @@ def imprint2marc(self, key, value):
         'b': value.get('publisher'),
         'c': value.get('date'),
     }
+
+
+@hep.over('defense_date', '^269..')
+@utils.for_each_value
+@utils.filter_values
+def defense_date(self, key, value):
+    """Date of defense of a thesis"""
+    return {
+        'date': value.get('c'),
+    }
+
+
+@hep2marc.over('269', 'defense_date')
+@utils.for_each_value
+@utils.filter_values
+def defense_date2marc(self, key, value):
+    """Date of defense of a thesis"""
+    return {
+        'c': value.get('date'),
+    }

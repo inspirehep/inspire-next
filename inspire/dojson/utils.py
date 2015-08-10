@@ -34,6 +34,8 @@ def legacy_export_as_marc(json, tabsize=4):
     export = ['<record>\n']
 
     for key, value in sorted(six.iteritems(json)):
+        if not value:
+            continue
         if key.startswith('00') and len(key) == 3:
             # Controlfield
             if isinstance(value, list):

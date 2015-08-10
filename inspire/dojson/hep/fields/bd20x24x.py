@@ -80,7 +80,7 @@ def title(self, key, value):
     }
 
 
-@hep2marc.over('245', 'title')
+@hep2marc.over('245', '^title$')
 @utils.for_each_value
 @utils.filter_values
 def title2marc(self, key, value):

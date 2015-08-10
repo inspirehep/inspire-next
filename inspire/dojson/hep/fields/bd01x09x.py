@@ -66,6 +66,7 @@ def doi2marc(self, key, value):
     """Other Standard Identifier."""
     return {
         'a': value.get('doi'),
+        '2': "DOI"
     }
 
 
