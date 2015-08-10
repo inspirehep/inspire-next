@@ -22,12 +22,14 @@ define(
   [
     'jquery',
     'flight/lib/component',
-    'hgn!js/workflows/templates/editable_title'
+    'hgn!js/workflows/templates/editable_title',
+    'hgn!js/workflows/templates/saving_spinner'
   ],
   function(
     $,
     defineComponent,
-    title_modal_tpl) {
+    title_modal_tpl,
+    tpl_spinner) {
 
     'use strict';
 
@@ -80,6 +82,8 @@ define(
         var payload = this.createPayloadForEdit();
         var that = this;
 
+        // Add spinner on save button
+        $(this.attr.saveChangesSelector).replaceWith(tpl_spinner());
         $.ajax({
           type: "POST",
           url: that.attr.edit_url,
@@ -89,6 +93,9 @@ define(
               category: data.category,
               message: data.message
             });
+          },
+          complete: function() {
+            $(that.attr.modalSelector).modal("hide");
           }
         });
       };
