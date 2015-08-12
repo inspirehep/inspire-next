@@ -21,7 +21,7 @@
 
 {% block javascript %}
 
-  <script type="text/javascript">
+<script type="text/javascript" xmlns="http://www.w3.org/1999/html">
     require(["jquery",
              "js/workflows/details",
              "js/workflows/actions/init"],
@@ -103,6 +103,12 @@
                 data-id="{{ bwobject.id }}"
                 name="xm">MARCXML</button>
       </div>
+      <big><div>
+        {% block status_badges %}
+          {% from 'workflows/macros.html' import check_status %}
+          {{ check_status(bwobject) }}
+        {% endblock %}
+      </div></big>
     </div>
   </div>
   <br />
