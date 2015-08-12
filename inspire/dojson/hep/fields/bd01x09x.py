@@ -102,7 +102,7 @@ def report_number(self, key, value):
     return {
         'primary': value.get('a'),
         'arxiv_category': value.get('c'),
-        'source': value.get('g')
+        'source': value.get('9')
     }
 
 
