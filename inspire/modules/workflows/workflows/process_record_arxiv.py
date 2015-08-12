@@ -25,6 +25,9 @@
 from collections import OrderedDict
 from flask import render_template
 
+from invenio_oaiharvester.tasks.records import convert_record_to_json
+from invenio_records.api import Record
+
 from invenio.modules.workflows.tasks.marcxml_tasks import (
     convert_record_to_bibfield,
 )
@@ -71,6 +74,11 @@ from inspire.modules.predicter.tasks import (
     guess_coreness
 )
 
+def create_payload(obj, eng):
+    from inspire.modules.workflows.models import Payload
+    p = Payload.create(workflow_object=obj, type=eng.name)
+    p.save()
+
 
 class process_record_arxiv(RecordWorkflow):
 
@@ -86,7 +94,8 @@ class process_record_arxiv(RecordWorkflow):
         convert_record("oaiarXiv2inspire_nofilter.xsl"),
         # Then we convert from MARCXML to SmartJSON object
         # TODO: Use DOJSON when we are ready to switch from bibfield
-        convert_record_to_bibfield(model=["hep"]),
+        convert_record_to_json,
+        create_payload,
         workflow_if(exists_in_inspire_or_rejected),
         [
             delete_self_and_stop_processing,
@@ -103,19 +112,19 @@ class process_record_arxiv(RecordWorkflow):
             [
                 arxiv_set_category_field,  # FIXME: Remove this when elasticsearch filtering is ready
                 save_identifiers_oaiharvest("HP_IDENTIFIERS"),
-                arxiv_plot_extract,
-                arxiv_fulltext_download(),
+                # arxiv_plot_extract,
+                # arxiv_fulltext_download(),
                 # arxiv_refextract,
-                arxiv_author_list("authorlist2marcxml.xsl"),
+                # arxiv_author_list("authorlist2marcxml.xsl"),
                 extract_journal_info,
-                classify_paper_with_oaiharvester(
-                    taxonomy="HEPont",
-                    only_core_tags=False,
-                    spires=True,
-                    with_author_keywords=True,
-                ),
-                filter_core_keywords(filter_kb="antihep"),
-                guess_coreness("new_astro_model.pickle"),
+                # classify_paper_with_oaiharvester(
+                #     taxonomy="HEPont",
+                #     only_core_tags=False,
+                #     spires=True,
+                #     with_author_keywords=True,
+                # ),
+                # filter_core_keywords(filter_kb="antihep"),
+                # guess_coreness("new_astro_model.pickle"),
                 halt_record_with_action(action="arxiv_approval",
                                         message="Accept article?"),
                 workflow_if(was_approved),
@@ -132,28 +141,37 @@ class process_record_arxiv(RecordWorkflow):
     ]
 
     @staticmethod
+    def get_title(bwo):
+        if not isinstance(bwo.data, dict):
+            return "No title found."
+        record = Record(bwo.data)
+        return record.get("title.title", "No title found")
+
+    @staticmethod
     def get_description(bwo):
         """Get the description column part."""
-        record = bwo.data
+        if not isinstance(bwo.data, dict):
+            return "No description found."
+        record = Record(bwo.data)
         abstract = ""
         authors = []
         categories = []
         final_identifiers = []
         if hasattr(record, "get"):
             # Get identifiers
-            doi = record.get("doi")
+            doi = record.get("doi.doi")
             if doi:
                 final_identifiers.append(doi)
 
-            system_no = record.get("system_number_external", {}).get("value")
+            system_no = record.get("system_control_number.system_control_number", [])
             if system_no:
-                final_identifiers.append(system_no)
+                final_identifiers.extend(system_no)
 
             # Get subject categories, adding main one first.
             categories = record.get("report_number.arxiv_category", [])
-            categories.extend(record.get("subject_term.term", []))
+            categories.extend(record.get("subject_term.value", []))
             categories = list(OrderedDict.fromkeys(categories))  # Unique only
-            abstract = record.get("abstract", {}).get("summary", "")
+            abstract = record.get("abstract.summary", [""])[0]
             authors = record.get("authors", [])
         return render_template('workflows/styles/harvesting_record.html',
                                object=bwo,
