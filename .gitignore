@@ -35,3 +35,6 @@ dump.rdb
 *.mo
 .DS_Store
 node_modules/
+.kdev4/
+*.kdev4
+
