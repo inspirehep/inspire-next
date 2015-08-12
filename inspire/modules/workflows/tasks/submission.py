@@ -239,7 +239,7 @@ def reply_ticket(template=None, keep_new=False):
             # Body already rendered in reason.
             body = obj.extra_data.get("reason").strip()
         if not body:
-            raise WorkflowError("No body for ticket reply")
+            raise WorkflowError("No body for ticket reply", eng.uuid, obj.id)
         # Trick to prepare ticket body
         body = "\n ".join([line.strip() for line in body.strip().split("\n")])
 
