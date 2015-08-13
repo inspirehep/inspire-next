@@ -19,8 +19,27 @@
 """Implements a workflow for testing."""
 
 
-class test_foo(object):
+from invenio_oaiharvester.tasks.records import convert_record_to_json
 
-    """A test workflow for the testsuite."""
+from invenio.modules.workflows.tasks.marcxml_tasks import convert_record
 
-    workflow = []
+
+def create_payload(obj, eng):
+    from inspire.modules.workflows.models import Payload
+    p = Payload.create(workflow_object=obj, type=eng.name)
+    p.save()
+
+
+class payload_fixture(object):
+
+    """A test workflow for the Payload class."""
+
+    workflow = [
+        # First we perform conversion from OAI-PMH XML to MARCXML
+        convert_record("oaiarXiv2inspire_nofilter.xsl"),
+
+        # Then we convert from MARCXML to SmartJSON object
+        # TODO: Use DOJSON when we are ready to switch from bibfield
+        convert_record_to_json,
+        create_payload
+    ]

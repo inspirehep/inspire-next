@@ -21,6 +21,9 @@
 
 from __future__ import print_function, absolute_import
 
+import os
+import pkg_resources
+
 from flask_registry import ImportPathRegistry
 
 from invenio.celery import celery
@@ -65,6 +68,14 @@ class WorkflowTest(WorkflowTasksTestCase):
     def setUp(self):
         """ Setup tests."""
         self.create_registries()
+        self.some_record = pkg_resources.resource_string(
+            'inspire.testsuite',
+            os.path.join(
+                'workflows',
+                'fixtures',
+                'some_record.xml'
+            )
+        )
         celery.conf['CELERY_ALWAYS_EAGER'] = True
 
     def tearDown(self):
@@ -74,10 +85,13 @@ class WorkflowTest(WorkflowTasksTestCase):
             Workflow.get(Workflow.module_name == "unit_tests").all())
         self.cleanup_registries()
 
-    def test_foo(self):
-        b = "foo"
-        import ipdb; ipdb.set_trace()
-        print(b)
+    def test_payload_creation(self):
+        from invenio.modules.workflows.api import start
+        from invenio.modules.workflows.engine import WorkflowStatus
+
+        workflow = start('payload_fixture', data=[self.some_record])
+
+        self.assertEqual(WorkflowStatus.COMPLETED, workflow.status)
 
 
 TEST_SUITE = make_test_suite(WorkflowTest)
