@@ -160,16 +160,6 @@ def journal_title_kb_mapper(val):
     }
 
 
-def experiment_kb_mapper(val):
-    """Return object ready to autocomplete experiments."""
-    return {
-        'value': "%s" % val,
-        'fields': {
-            "experiment": val,
-        }
-    }
-
-
 class AuthorInlineForm(WebDepositForm):
 
     """Author inline form."""
@@ -327,8 +317,7 @@ class LiteratureForm(WebDepositForm):
         export_key="experiment",
         label=_('Experiment'),
         widget_classes="form-control",
-        autocomplete_fn=kb_dynamic_autocomplete("ExperimentsCollection",
-                                             mapper=experiment_kb_mapper)
+        autocomplete="experiment"
     )
 
     subject = fields.SelectMultipleField(

@@ -30,14 +30,26 @@ define([
     this.dataEngine = new Bloodhound({
       name: 'experiments',
       remote: {
-        url: '/search?cc=Experiments&p=experiment:%QUERY*&of=recjson&rg=100',
+        url: '/search?cc=Experiments&p=experimentautocomplete:/.*%QUERY.*/&of=recjson&rg=100',
+        replace: function(url, query) {
+          // Names of Experiments are separated by dashes
+          // Break into components so that we match the indexed values (where
+          // dashes are removed)
+          var query_components = query.toLowerCase().split("-");
+          var pattern = "";
+          $.each(query_components, function(index) {
+            if (index != 0) {
+              pattern = pattern + " AND ";
+            }
+            pattern = pattern + "experimentautocomplete:" + "/" + this + ".*/";
+          })
+
+          return '/search?cc=Experiments&p=' + pattern + '&of=recjson&rg=100'
+        },
         filter: function(response) {
-          var experiments = $.map(response, function(item, idx) {
-            return item.experiment;
-          });
-          return experiments.sort(function(a, b){
-            if(a.name < b.name) return -1;
-            if(a.name > b.name) return 1;
+          return response.sort(function(a, b){
+            if(a.experiment_name < b.experiment_name) return -1;
+            if(a.experiment_name > b.experiment_name) return 1;
             return 0;
           })
         }
@@ -51,7 +63,7 @@ define([
     this.$element = $element;
 
     var suggestionTemplate = Hogan.compile(
-      '<strong>{{ name }}</strong><br>'
+      '<strong>{{ experiment_name }}</strong><br>'
     );
 
     this.$element.typeahead({
@@ -68,7 +80,7 @@ define([
           callback(suggestions);
         }.bind(this));
       }.bind(this),
-      displayKey: 'name',
+      displayKey: 'experiment_name',
       templates: {
         empty: function(data) {
           return 'Cannot find this experiment in our database.';

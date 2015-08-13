@@ -30,7 +30,19 @@ define([
     this.dataEngine = new Bloodhound({
       name: 'affiliations',
       remote: {
-        url: '/search?cc=Institutions&p=affautocomplete:%QUERY*&of=recjson&rg=100',
+        url: '/search?cc=Institutions&p=affautocomplete:/%QUERY.*/&of=recjson&rg=100',
+        replace: function(url, query) {
+          var query_components = query.toLowerCase().split(" ");
+          var pattern = "";
+          $.each(query_components, function(index) {
+            if (index != 0) {
+              pattern = pattern + " AND ";
+            }
+            pattern = pattern + "affautocomplete:" + "/" + this + ".*/";
+          })
+
+          return '/search?cc=Institutions&p=' + pattern + '&of=recjson&rg=100'
+        },
         filter: function(response) {
           var affiliations = $.map(response, function(item, idx) {
             return item.institution;

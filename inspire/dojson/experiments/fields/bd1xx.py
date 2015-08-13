@@ -27,8 +27,8 @@ from dojson import utils
 from ..model import experiments
 
 
-@experiments.over('name', '^119..')
-def name(self, key, value):
+@experiments.over('experiment_name', '^119..')
+def experiment_name(self, key, value):
     """Name of experiment."""
     return value.get("a")
 
