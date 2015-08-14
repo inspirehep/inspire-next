@@ -23,42 +23,12 @@ from __future__ import print_function, absolute_import
 
 import os
 import pkg_resources
-
-from flask_registry import ImportPathRegistry
+import tempfile
 
 from invenio.celery import celery
-from invenio.testsuite import InvenioTestCase, make_test_suite, run_test_suite
+from invenio.testsuite import make_test_suite, run_test_suite
 
-from invenio.modules.workflows.registry import WorkflowsRegistry
-
-TEST_PACKAGES = [
-    'inspire.modules.*',
-    'inspire.testsuite',
-]
-
-
-class WorkflowTasksTestCase(InvenioTestCase):
-
-    """ Workflow class for testing."""
-
-    def create_registries(self):
-        """Create registries for testing."""
-        self.app.extensions['registry']['workflows.tests'] = \
-            ImportPathRegistry(initial=TEST_PACKAGES)
-        self.app.extensions['registry']['workflows'] = \
-            WorkflowsRegistry(
-                'workflows', app=self.app, registry_namespace='workflows.tests'
-            )
-        self.app.extensions['registry']['workflows.actions'] = \
-            WorkflowsRegistry(
-                'actions', app=self.app, registry_namespace='workflows.tests'
-            )
-
-    def cleanup_registries(self):
-        """Clean registries for testing."""
-        del self.app.extensions['registry']['workflows.tests']
-        del self.app.extensions['registry']['workflows']
-        del self.app.extensions['registry']['workflows.actions']
+from .helpers import WorkflowTasksTestCase
 
 
 class WorkflowTest(WorkflowTasksTestCase):
@@ -67,32 +37,101 @@ class WorkflowTest(WorkflowTasksTestCase):
 
     def setUp(self):
         """ Setup tests."""
+        from invenio.modules.knowledge.api import add_kb
+
         self.create_registries()
+        self.xml_path = os.path.join(
+            'workflows',
+            'fixtures',
+            'some_record.xml'
+        )
         self.some_record = pkg_resources.resource_string(
             'inspire.testsuite',
-            os.path.join(
-                'workflows',
-                'fixtures',
-                'some_record.xml'
-            )
+            self.xml_path
         )
         celery.conf['CELERY_ALWAYS_EAGER'] = True
+
+        # Add temp KB
+        add_kb("harvesting_fixture_kb")
 
     def tearDown(self):
         """ Clean up created objects."""
         from invenio.modules.workflows.models import Workflow
+        from invenio.modules.knowledge.api import delete_kb
+
         self.delete_objects(
             Workflow.get(Workflow.module_name == "unit_tests").all())
         self.cleanup_registries()
+        delete_kb("harvesting_fixture_kb")
 
     def test_payload_creation(self):
         from invenio.modules.workflows.api import start
         from invenio.modules.workflows.engine import WorkflowStatus
 
-        workflow = start('payload_fixture', data=[self.some_record])
+        workflow = start('payload_fixture',
+                         data=[self.some_record],
+                         module_name="unit_tests")
 
         self.assertEqual(WorkflowStatus.COMPLETED, workflow.status)
+        self.assertTrue(len(workflow.completed_objects) == 1)
+        modified_object = workflow.completed_objects[0]
 
+        for l in ['files', 'sips', 'type', 'drafts', 'title']:
+            self.assertIn(l, modified_object.data)
+
+    def test_payload_sip_creation(self):
+        from invenio.modules.workflows.api import start
+        from inspire.modules.workflows.models import Payload
+
+        workflow = start('payload_fixture',
+                         data=[self.some_record],
+                         module_name="unit_tests")
+        modified_object = workflow.completed_objects[0]
+
+        p = Payload(modified_object)
+        sip = p.get_latest_sip()
+        self.assertTrue(sip.metadata)
+        # self.assertTrue(sip.package)
+
+    def test_payload_model_creation(self):
+        from invenio.modules.workflows.api import start
+
+        workflow = start('payload_model_fixture',
+                         data=[self.some_record],
+                         module_name="unit_tests")
+        modified_object = workflow.completed_objects[0]
+
+        p = workflow.workflow_definition.model(modified_object)
+        sip = p.get_latest_sip()
+        self.assertTrue(sip.metadata)
+        # self.assertTrue(sip.package)
+
+    def test_payload_file_creation(self):
+        from invenio.modules.workflows.models import BibWorkflowObject
+        from inspire.modules.workflows.models import Payload
+
+        obj = BibWorkflowObject.create_object()
+        obj.save()
+        obj.data = obj.get_data()  # FIXME hack until workflow 2.0
+
+        payload = Payload.create(workflow_object=obj, type="payload_fixture")
+        payload.save()
+
+        fd, filename = tempfile.mkstemp()
+        os.close(fd)
+
+        newpath = payload.add_file(filename)
+        self.assertTrue(newpath)
+        BibWorkflowObject.delete(obj)
+
+    def test_harvesting_workflow(self):
+        from invenio.modules.workflows.api import start
+        workflow = start('harvesting_fixture',
+                         data=[self.some_record],
+                         module_name="unit_tests")
+
+        # This workflow should have halted
+        self.assertTrue(workflow.halted_objects)
 
 TEST_SUITE = make_test_suite(WorkflowTest)
 

@@ -16,7 +16,7 @@
 # along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-"""Implements a workflow for testing."""
+"""Implements a workflow for testing common data model."""
 
 
 from invenio_oaiharvester.tasks.records import convert_record_to_json
@@ -24,12 +24,20 @@ from invenio_oaiharvester.tasks.records import convert_record_to_json
 from invenio.modules.deposit.models import DepositionType
 from invenio.modules.workflows.tasks.marcxml_tasks import convert_record
 
-from inspire.modules.workflows.models import create_payload
+from inspire.modules.workflows.models import Payload, create_payload
 
 
-class payload_fixture(DepositionType):
+def agnostic_task(obj, eng):
+    data_model = eng.workflow_definition.model(obj)
+    sip = data_model.get_latest_sip()
+    print sip.metadata
 
-    """A test workflow for the Payload class."""
+
+class payload_model_fixture(DepositionType):
+
+    """A test workflow for the model."""
+
+    model = Payload
 
     workflow = [
         # First we perform conversion from OAI-PMH XML to MARCXML
@@ -39,4 +47,5 @@ class payload_fixture(DepositionType):
         # TODO: Use DOJSON when we are ready to switch from bibfield
         convert_record_to_json,
         create_payload,
+        agnostic_task,
     ]

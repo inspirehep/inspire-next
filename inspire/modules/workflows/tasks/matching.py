@@ -33,6 +33,7 @@ from invenio.base.globals import cfg
 from invenio_deposit.models import Deposition
 
 from inspire.utils.datefilter import date_older_than
+from inspire.utils.helpers import get_record_from_obj
 
 
 def perform_request(obj, params):
@@ -82,6 +83,7 @@ def match_record_arxiv_remote_oaiharvest(obj, eng):
 
 def exists_in_inspire_or_rejected(obj, eng):
     """Check if record exist on INSPIRE or already rejected."""
+    return False
     # Does record exist on production yet?
     if match_record_arxiv_remote_oaiharvest(obj, eng):
         obj.log.info("Record already exists in INSPIRE.")
@@ -90,7 +92,7 @@ def exists_in_inspire_or_rejected(obj, eng):
     # FIXME: Let's filter away CORE categories for now.
     # Later all harvesting will happen here.
     if not cfg.get("DEBUG"):
-        categories = obj.data.get("subject_term.term", [])
+        categories = sip.metadata.get("subject_term.term", [])
         for category in categories:
             if category.lower() in cfg.get("INSPIRE_ACCEPTED_CATEGORIES", []):
                 obj.log.info("Record is already being harvested on INSPIRE.")
@@ -99,7 +101,7 @@ def exists_in_inspire_or_rejected(obj, eng):
     # Check if this record should already have been rejected
     # (only on non-debug mode) E.g. if it is older than 2 days.
     if not cfg.get("DEBUG"):
-        preprint_date = obj.data.get("preprint_info.date", "")
+        preprint_date = sip.metadata.get("preprint_info.date", "")
         if preprint_date:
             parsed_date = datetime.datetime.strptime(preprint_date, "%Y-%m-%d")
             if date_older_than(parsed_date, datetime.datetime.now(), days=5):
@@ -142,38 +144,34 @@ def match_record_remote_oaiharvest(obj, eng):
         match_record_doi_remote_deposit(obj, eng)
 
 
-def save_identifiers_oaiharvest(kb_name):
+def save_identifiers_to_kb(kb_name,
+                           identifier_key="report_number.primary"):
     """Save the record identifiers into a KB."""
-    @wraps(save_identifiers_oaiharvest)
-    def _save_identifiers_oaiharvest(obj, eng):
+    @wraps(save_identifiers_to_kb)
+    def _save_identifiers_to_kb(obj, eng):
         from inspire.utils.knowledge import save_keys_to_kb
+        record = get_record_from_obj(obj, eng)
 
-        identifiers = []
-        report_numbers = obj.get_data().get('report_number', [])
-        for number in report_numbers:
-            if number.get("source", "").lower() == "arxiv":
-                arxiv_id = number.get("primary")
-                identifiers.append(arxiv_id)
+        identifiers = record.get(identifier_key, [])
         save_keys_to_kb(kb_name, identifiers, obj.id)
 
-    return _save_identifiers_oaiharvest
+    return _save_identifiers_to_kb
 
 
-def exists_in_holding_pen(kb_name):
-    """Check if a oaiharvest record exists in HP."""
+def exists_in_holding_pen(kb_name,
+                          identifier_key="report_number.primary"):
+    """Check if a record exists in HP by looking in given KB."""
     @wraps(exists_in_holding_pen)
     def _exists_in_holding_pen(obj, eng):
         from inspire.utils.knowledge import get_value
 
-        identifiers = []
-        report_numbers = obj.get_data().get('report_number', [])
-        for number in report_numbers:
-            if number.get("source", "").lower() == "arxiv":
-                arxiv_id = number.get("primary")
-                identifiers.append(arxiv_id)
+        record = get_record_from_obj(obj, eng)
+        identifiers = record.get(identifier_key, [])
         result = get_value(kb_name, identifiers)
         if result:
-            obj.log.info("Record already found in Holding Pen ({0})".format(result))
+            obj.log.info("Record already found in Holding Pen ({0})".format(
+                result
+            ))
         return result
 
     return _exists_in_holding_pen
@@ -219,4 +217,5 @@ def update_old_object(kb_name):
 
 def arxiv_set_category_field(obj, eng):
     """Temporary measure to enable sorting by primary category."""
-    obj.uri = obj.data.get("report_number.arxiv_category", [""])[0]
+    record = get_record_from_obj(obj, eng)
+    obj.uri = record.get("report_number.arxiv_category", [""])[0]

@@ -17,8 +17,11 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-from invenio.config import CFG_SITE_URL
+import os
+
+from invenio.base.config import CFG_DATADIR, CFG_SITE_URL
 
 CFG_ROBOTUPLOAD_SUBMISSION_BASEURL = CFG_SITE_URL
 WORKFLOWS_MATCH_REMOTE_SERVER_URL = "{0}/search".format(CFG_SITE_URL)
 PENDING_RECORDS_CACHE_TIMEOUT = 2629743  # one month
+WORKFLOWS_STORAGEDIR = os.path.join(CFG_DATADIR, "workflows", "storage")
