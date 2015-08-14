@@ -28,14 +28,16 @@ from flask import render_template
 from invenio_oaiharvester.tasks.records import convert_record_to_json
 from invenio_records.api import Record
 
-from invenio_workflows.tasks.marcxml_tasks import (
+from invenio.modules.deposit.models import DepositionType
+
+from invenio.modules.workflows.tasks.marcxml_tasks import (
     convert_record_to_bibfield,
 )
 
 from inspire.modules.workflows.tasks.matching import(
     exists_in_inspire_or_rejected,
     exists_in_holding_pen,
-    save_identifiers_oaiharvest,
+    save_identifiers_to_kb,
     update_old_object,
     delete_self_and_stop_processing,
     arxiv_set_category_field
@@ -73,28 +75,25 @@ from inspire.modules.predicter.tasks import (
     filter_core_keywords,
     guess_coreness
 )
-
-def create_payload(obj, eng):
-    from inspire.modules.workflows.models import Payload
-    p = Payload.create(workflow_object=obj, type=eng.name)
-    p.save()
+from inspire.modules.workflows.models import Payload, create_payload
 
 
-class process_record_arxiv(RecordWorkflow):
+class process_record_arxiv(RecordWorkflow, DepositionType):
 
     """Processing workflow for a single arXiv record.
 
     The records have been harvested via oaiharvester.
     """
 
-    object_type = "arXiv"
+    model = Payload
 
+    object_type = "arXiv"
     workflow = [
         # First we perform conversion from OAI-PMH XML to MARCXML
         convert_record("oaiarXiv2inspire_nofilter.xsl"),
-        # Then we convert from MARCXML to SmartJSON object
-        # TODO: Use DOJSON when we are ready to switch from bibfield
+        # Then we convert from MARCXML to JSON object with doJSON
         convert_record_to_json,
+        # Create payload object to align with Deposition object
         create_payload,
         workflow_if(exists_in_inspire_or_rejected),
         [
@@ -111,7 +110,7 @@ class process_record_arxiv(RecordWorkflow):
             workflow_else,
             [
                 arxiv_set_category_field,  # FIXME: Remove this when elasticsearch filtering is ready
-                save_identifiers_oaiharvest("HP_IDENTIFIERS"),
+                save_identifiers_to_kb("HP_IDENTIFIERS"),
                 # arxiv_plot_extract,
                 # arxiv_fulltext_download(),
                 # arxiv_refextract,
