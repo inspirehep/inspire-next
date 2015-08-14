@@ -19,6 +19,10 @@
 
 """Unified data model in workflow, based on Deposition model."""
 
+import os
+
+from invenio.base.globals import cfg
+
 from invenio.modules.deposit.models import (
     Deposition,
     Agent,
@@ -26,13 +30,35 @@ from invenio.modules.deposit.models import (
     SubmissionInformationPackage,
     DepositionStorage,
     DepositionFile,
+    FilenameAlreadyExists,
 )
-from invenio.modules.workflows.registry import workflows
+from invenio.modules.deposit.storage import Storage
+
+
+def create_payload(obj, eng):
+    """Create a proper data model inside obj.data."""
+    p = Payload.create(workflow_object=obj, type=eng.name)
+    p.save()
+
+
+class PayloadStorage(Storage):
+
+    """Payload storage backend.
+
+    Saves files to a folder (<WORKFLOWS_STORAGEDIR>/<payload_id>/).
+    """
+
+    def __init__(self, payload_id):
+        """Initialize storage."""
+        self.fs_path = os.path.join(
+            cfg['WORKFLOWS_STORAGEDIR'],
+            str(payload_id)
+        )
 
 
 class Payload(Deposition):
 
-    """Wrap a Deposition."""
+    """Wrap a BibWorkflowObject."""
 
     def __init__(self, workflow_object, type=None, user_id=None):
         self.files = []
@@ -45,6 +71,7 @@ class Payload(Deposition):
     @classmethod
     def get_type(self, type_or_id):
         """Get type."""
+        from invenio.modules.workflows.registry import workflows
         return workflows.get(type_or_id)
 
     @classmethod
@@ -77,9 +104,26 @@ class Payload(Deposition):
         obj = cls(workflow_object=workflow_object, type=type, user_id=user)
         return obj
 
+    def add_file(self, file_path, filename=None):
+        """Save given file to storage and attach to object, return new path."""
+        filename = filename or os.path.basename(file_path)
+        try:
+            with open(file_path) as fd:
+                payload_file = DepositionFile(backend=PayloadStorage(self.id))
+                if payload_file.save(fd, filename=filename):
+                    super(Payload, self).add_file(payload_file)
+                    self.save()
+        except FilenameAlreadyExists as e:
+            payload_file.delete()
+            raise e
+        if payload_file.is_local():
+            return payload_file.get_syspath()
+        else:
+            return payload_file.get_url()
+
     def __setstate__(self, state):
         """Deserialize deposition from state stored in BibWorkflowObject."""
-        self.type = self.get_type(state['type'])
+        self.type = self.get_type(state['type'])  # FIXME only difference
         self.title = state['title']
         self.files = [
             DepositionFile.factory(
@@ -98,21 +142,6 @@ class Payload(Deposition):
             SubmissionInformationPackage.factory(s_state, uuid=s_state['id'])
             for s_state in state.get('sips', [])
         ]
-
-    def __getstate__(self):
-        """Serialize deposition state for storing in the BibWorkflowObject."""
-        # The bibworkflow object id and owner is implicit, as the Deposition
-        # object only wraps the data attribute of a BibWorkflowObject.
-
-        return dict(
-            type=self.type.__name__,
-            title=self.title,
-            files=[f.__getstate__() for f in self.files],
-            drafts=dict(
-                [(d_id, d.__getstate__()) for d_id, d in self.drafts.items()]
-            ),
-            sips=[f.__getstate__() for f in self.sips],
-        )
 
     def prepare_sip(self, from_request_context=False):
         sip = self.get_latest_sip()
