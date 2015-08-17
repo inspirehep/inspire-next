@@ -226,65 +226,21 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Nicely format the record."""
-        from pprint import pformat
+        from invenio.modules.formatter import format_record
         from invenio_records.api import Record
-        from six import string_types
         import collections
 
         data = bwo.get_data().dumps()
         if not data:
             return ''
 
-        of = kwargs.get("of", None)
+        # Monkeypatch recid in the object
         data['recid'] = bwo.id
+        of = kwargs.get("of", None)
         if isinstance(data, collections.Mapping):
-            # Dicts are cool on its own, but maybe its SmartJson (record)
             try:
                 data = Record(data)
             except (TypeError, KeyError):
                 pass
-        try:
-            from invenio.modules.formatter import format_record
 
-            formatted_data = format_record(data, of)
-        except TypeError:
-            # Wrong kind of type
-            pass
-
-
-        return formatted_data
-
-        # if isinstance(data, string_types):
-        #     # We can try formatter!
-        #     # If already XML, format_record does not like it.
-        #     if of and of != 'xm':
-        #         try:
-        #             from invenio.modules.formatter import format_record
-        #             formatted_data = format_record(
-        #                 recID=None,
-        #                 of=of,
-        #                 xml_record=data
-        #             )
-        #         except TypeError:
-        #             # Wrong kind of type
-        #             pass
-        #     else:
-        #         # So, XML then
-        #         from xml.dom.minidom import parseString
-        #
-        #         try:
-        #             unpretty_data = parseString(data)
-        #             formatted_data = unpretty_data.toprettyxml()
-        #         except TypeError:
-        #             # Probably not proper XML string then
-        #             return "Data cannot be parsed: %s" % (data,)
-        #         except Exception:
-        #             # Just return raw string
-        #             pass
-        #
-        # if not formatted_data:
-        #     formatted_data = data
-
-        # if isinstance(formatted_data, dict):
-        #     formatted_data = pformat(formatted_data)
-        # return formatted_data
+        return format_record(data, of)
