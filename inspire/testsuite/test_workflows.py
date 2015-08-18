@@ -143,14 +143,28 @@ class WorkflowTest(WorkflowTasksTestCase):
         BibWorkflowObject.delete(obj)
 
     def test_harvesting_workflow(self):
-        """TODO."""
+        """Test a full harvesting workflow."""
         from invenio.modules.workflows.api import start
+        from inspire.utils.helpers import (
+            get_record_from_obj,
+        )
+
         workflow = start('harvesting_fixture',
                          data=[self.record_oai_arxiv_plots],
                          module_name='unit_tests')
 
         # This workflow should have halted
         self.assertTrue(workflow.halted_objects)
+
+        # Let's get the record metadata and check contents
+        obj = workflow.halted_objects[0]
+        record = get_record_from_obj(obj)
+
+        # Some plots/files should have been added to FFTs
+        self.assertTrue(record.get('fft'))
+
+        # A publication note should have been extracted
+        self.assertTrue(record.get('publication_info'))
 
 
 class AgnosticTest(WorkflowTasksTestCase):

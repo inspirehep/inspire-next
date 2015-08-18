@@ -46,6 +46,8 @@ from inspire.modules.workflows.tasks.actions import (
 )
 from inspire.modules.oaiharvester.tasks.arxiv import (
     arxiv_plot_extract,
+    arxiv_fulltext_download,
+    arxiv_refextract,
 )
 from inspire.modules.refextract.tasks import extract_journal_info
 
@@ -73,7 +75,7 @@ class harvesting_fixture(RecordWorkflow, DepositionType):
         [
             workflow_if(exists_in_holding_pen("harvesting_fixture_kb")),
             [
-                update_old_object("harvesting_fixture_kb"),
+                # update_old_object("harvesting_fixture_kb"),
                 delete_self_and_stop_processing,
             ],
             workflow_else,
@@ -81,8 +83,8 @@ class harvesting_fixture(RecordWorkflow, DepositionType):
                 arxiv_set_category_field,  # FIXME: Remove this when elasticsearch filtering is ready
                 save_identifiers_to_kb("harvesting_fixture_kb"),
                 arxiv_plot_extract,
-                # arxiv_fulltext_download(),
-                # arxiv_refextract,
+                arxiv_fulltext_download(),
+                # arxiv_refextract, FIXME Need to fix extractutils + new linker
                 # arxiv_author_list("authorlist2marcxml.xsl"),
                 extract_journal_info,
                 # classify_paper_with_oaiharvester(

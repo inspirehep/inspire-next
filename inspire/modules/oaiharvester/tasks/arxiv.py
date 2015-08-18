@@ -50,22 +50,21 @@ REGEXP_REFS = re.compile(
     re.DOTALL)
 
 
-def _attach_files_to_obj(obj, new_ffts):
-    """Given a SmartJSON representation, add any missing fft entries to obj."""
-    if not new_ffts or new_ffts.get("fft") is None:
-        obj.log.error("No files to add")
-        return
-    if "fft" not in obj.data:
-        obj.data['fft'] = new_ffts["fft"]
-        return
-    if not isinstance(new_ffts["fft"], list):
-        new_ffts["fft"] = [new_ffts["fft"]]
-    if not isinstance(obj.data["fft"], list):
-        obj.data["fft"] = [obj.data["fft"]]
-    for element in new_ffts["fft"]:
-        if element.get("url", "") in obj.data.get("fft.url", []):
-            continue
-        obj.data['fft'].append(element)
+def get_arxiv_id_from_record(record):
+    """Return the arXiv identifier from given record.
+
+    This function works with Deposition and Payload data models.
+    """
+    arxiv_id = record.get("arxiv_id")
+    if not arxiv_id:
+        report_numbers = record.get('report_number', [])
+        for number in report_numbers:
+            if number.get("source", "").lower() == "arxiv":
+                arxiv_id = number.get("primary")
+
+    if not arxiv_id.startswith("arXiv"):
+        arxiv_id = "arXiv:{0}".format(arxiv_id)
+    return arxiv_id
 
 
 def arxiv_fulltext_download(doctype='arXiv'):
@@ -76,21 +75,10 @@ def arxiv_fulltext_download(doctype='arXiv'):
         :param obj: Bibworkflow Object to process
         :param eng: BibWorkflowEngine processing the object
         """
-        from invenio.utils.shell import Timeout
         model = eng.workflow_definition.model(obj)
         record = get_record_from_model(model)
-
-        arxiv_id = record.get("arxiv_id")
-        if not arxiv_id:
-            report_numbers = record.get('report_number', [])
-            for number in report_numbers:
-                if number.get("source", "").lower() == "arxiv":
-                    arxiv_id = number.get("primary")
-
-        if not arxiv_id.startswith("arXiv"):
-            arxiv_id = "arXiv:{0}".format(arxiv_id)
-
-        existing_file = get_file_by_name(model, arxiv_id)
+        arxiv_id = get_arxiv_id_from_record(record)
+        existing_file = get_file_by_name(model, "{0}.pdf".format(arxiv_id))
 
         if not existing_file:
             # We download it
@@ -99,33 +87,25 @@ def arxiv_fulltext_download(doctype='arXiv'):
                 str(eng.uuid)
             )
 
-            tarball = get_tarball_from_arxiv(
+            pdf = get_pdf_from_arxiv(
                 arxiv_id,
                 extract_path
             )
 
-            if tarball is None:
-                obj.log.error("No tarball found")
+            if pdf is None:
+                obj.log.error("No pdf found")
                 return
-            add_file_by_name(model, tarball)
+            add_file_by_name(model, pdf)
         else:
-            tarball = existing_file.get_syspath()
+            pdf = existing_file.get_syspath()
 
-        if "result" not in obj.extra_data:
-            obj.extra_data["_result"] = {}
-
-        if "pdf" not in obj.extra_data["_result"]:
-            extract_path = os.path.join(
-                cfg.get('OAIHARVESTER_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
-                str(eng.uuid)
-            )
-            pdf = get_pdf_from_arxiv(
-                obj.data.get(cfg.get('OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP')),
-                extract_path
-            )
-
-            if pdf:
-                obj.extra_data["_result"]["pdf"] = pdf
+        if pdf:
+            if "fft" in record:
+                record["fft"].append({
+                    "url": pdf,
+                    "docfile_type": doctype
+                })
+            else:
                 new_dict_representation = {
                     "fft": [
                         {
@@ -134,25 +114,25 @@ def arxiv_fulltext_download(doctype='arXiv'):
                         }
                     ]
                 }
-                _attach_files_to_obj(obj, new_dict_representation)
-                fileinfo = {
-                    "type": "fulltext",
-                    "filename": os.path.basename(pdf),
-                    "full_path": pdf,
-                }
-                obj.update_task_results(
-                    os.path.basename(pdf),
-                    [{
-                        "name": "PDF",
-                        "result": fileinfo,
-                        "template": "workflows/results/files.html"
-                    }]
-                )
-            else:
-                obj.log.info("No PDF found.")
+                record.update(new_dict_representation)
+
+            fileinfo = {
+                "type": "fulltext",
+                "filename": os.path.basename(pdf),
+                "full_path": pdf,
+            }
+            obj.update_task_results(
+                os.path.basename(pdf),
+                [{
+                    "name": "PDF",
+                    "result": fileinfo,
+                    "template": "workflows/results/files.html"
+                }]
+            )
+            model.update()
         else:
-            eng.log.info("There was already a pdf register for this record,"
-                         "perhaps a duplicate task in you workflow.")
+            obj.log.info("No PDF found.")
+
     return _arxiv_fulltext_download
 
 
@@ -160,17 +140,7 @@ def arxiv_plot_extract(obj, eng):
     """Extract plots from an arXiv archive."""
     model = eng.workflow_definition.model(obj)
     record = get_record_from_model(model)
-
-    arxiv_id = record.get("arxiv_id")
-    if not arxiv_id:
-        report_numbers = record.get('report_number', [])
-        for number in report_numbers:
-            if number.get("source", "").lower() == "arxiv":
-                arxiv_id = number.get("primary")
-
-    if not arxiv_id.startswith("arXiv"):
-        arxiv_id = "arXiv:{0}".format(arxiv_id)
-
+    arxiv_id = get_arxiv_id_from_record(record)
     existing_file = get_file_by_name(model, arxiv_id)
 
     if not existing_file:
@@ -222,47 +192,49 @@ def arxiv_refextract(obj, eng):
     :param eng: BibWorkflowEngine processing the object
     """
     from invenio.legacy.refextract.api import extract_references_from_file_xml
-    from invenio.utils.plotextractor.api import get_pdf_from_arxiv
-    from invenio.modules.workflows.utils import convert_marcxml_to_bibfield
 
-    if "_result" not in obj.extra_data:
-        obj.extra_data["_result"] = {}
-
-    try:
-        pdf = obj.extra_data["_result"]["pdf"]
-    except KeyError:
-        pdf = None
-
-    if not pdf:
+    model = eng.workflow_definition.model(obj)
+    record = get_record_from_model(model)
+    arxiv_id = get_arxiv_id_from_record(record)
+    existing_file = get_file_by_name(model, "{0}.pdf".format(arxiv_id))
+    import ipdb; ipdb.set_trace()
+    if not existing_file:
+        # We download it
         extract_path = os.path.join(
             cfg.get('OAIHARVESTER_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
             str(eng.uuid)
         )
+
         pdf = get_pdf_from_arxiv(
-            obj.data.get(cfg.get('OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP')),
+            arxiv_id,
             extract_path
         )
-        obj.extra_data["_result"]["pdf"] = pdf
+
+        if pdf is None:
+            obj.log.error("No pdf found")
+            return
+        add_file_by_name(model, pdf)
+    else:
+        pdf = existing_file.get_syspath()
 
     if pdf and os.path.isfile(pdf):
-        references_xml = extract_references_from_file_xml(
-            obj.extra_data["_result"]["pdf"]
-        )
+        references_xml = extract_references_from_file_xml(pdf)
         if references_xml:
             updated_xml = '<?xml version="1.0" encoding="UTF-8"?>\n' \
                           '<collection>\n' + references_xml + \
                           "\n</collection>"
-            new_dict_representation = convert_marcxml_to_bibfield(updated_xml)
-            if "reference" in new_dict_representation:
-                obj.data["reference"] = new_dict_representation["reference"]
-                obj.log.info("Extracted {0} references".format(len(obj.data["reference"])))
+            new_dict = get_json_from_marcxml(updated_xml)[0]
+            if "references" in new_dict:
+                record["references"] = new_dict["references"]
+                obj.log.info("Extracted {0} references".format(
+                    len(obj.data["references"])
+                ))
                 obj.update_task_results(
                     "References",
                     [{"name": "References",
-                      "result": new_dict_representation['reference'],
+                      "result": new_dict['references'],
                       "template": "workflows/results/refextract.html"}]
                 )
-                return
         else:
             obj.log.info("No references extracted")
     else:
