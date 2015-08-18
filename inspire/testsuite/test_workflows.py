@@ -33,25 +33,11 @@ from .helpers import WorkflowTasksTestCase
 
 class WorkflowTest(WorkflowTasksTestCase):
 
-    """Class to test the delayed workflows."""
+    """TODO."""
 
     def setUp(self):
-        """ Setup tests."""
+        """Setup tests."""
         from invenio.modules.knowledge.api import add_kb
-
-        from invenio.modules.deposit.models import Deposition, DepositionType
-
-        from invenio.modules.deposit.registry import deposit_types, \
-            deposit_default_type
-        from invenio.modules.deposit.form import WebDepositForm
-        from invenio.modules.deposit.tasks import render_form, \
-            create_recid, \
-            prepare_sip, \
-            dump_record_sip, \
-            store_record, \
-            prefill_draft, \
-            process_sip_metadata, \
-            hold_for_approval
 
         self.create_registries()
         self.record_oai_arxiv_plots = pkg_resources.resource_string(
@@ -73,54 +59,20 @@ class WorkflowTest(WorkflowTasksTestCase):
         celery.conf['CELERY_ALWAYS_EAGER'] = True
 
         # Add temp KB
-        add_kb("harvesting_fixture_kb")
-
-        def agnostic_task(obj, eng):
-            data_model = eng.workflow_definition.model(obj)
-            sip = data_model.get_latest_sip()
-            print(sip.metadata)
-
-        class DefaultType(DepositionType):
-            pass
-
-        class SimpleRecordTestForm(WebDepositForm):
-            pass
-
-        class DepositModelTest(DepositionType):
-
-            """A test workflow for the model."""
-
-            model = Deposition
-
-            draft_definitions = {
-                'default': SimpleRecordTestForm,
-            }
-
-            workflow = [
-                # Pre-fill draft with values passed in from request
-                prefill_draft(draft_id='default'),
-                # Create the submission information package by merging form data
-                # from all drafts (in this case only one draft exists).
-                prepare_sip(),
-                agnostic_task,
-            ]
-
-        self.DefaultType = DefaultType
-        deposit_types.register(DefaultType)
-        deposit_types.register(DepositModelTest)
-        deposit_default_type.register(DefaultType)
+        add_kb('harvesting_fixture_kb')
 
     def tearDown(self):
-        """ Clean up created objects."""
+        """Clean up created objects."""
         from invenio.modules.workflows.models import Workflow
         from invenio.modules.knowledge.api import delete_kb
 
         self.delete_objects(
-            Workflow.get(Workflow.module_name == "unit_tests").all())
+            Workflow.get(Workflow.module_name == 'unit_tests').all())
         self.cleanup_registries()
-        delete_kb("harvesting_fixture_kb")
+        delete_kb('harvesting_fixture_kb')
 
     def test_payload_creation(self):
+        """TODO."""
         from invenio.modules.workflows.api import start
         from invenio.modules.workflows.engine import WorkflowStatus
 
@@ -136,6 +88,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             self.assertIn(l, modified_object.data)
 
     def test_payload_sip_creation(self):
+        """TODO."""
         from invenio.modules.workflows.api import start
         from inspire.modules.workflows.models import Payload
 
@@ -150,6 +103,7 @@ class WorkflowTest(WorkflowTasksTestCase):
         # self.assertTrue(sip.package)
 
     def test_payload_model_creation(self):
+        """TODO."""
         from invenio.modules.workflows.api import start
 
         workflow = start('payload_model_fixture',
@@ -163,6 +117,7 @@ class WorkflowTest(WorkflowTasksTestCase):
         # self.assertTrue(sip.package)
 
     def test_payload_file_creation(self):
+        """TODO."""
         from invenio.modules.workflows.models import BibWorkflowObject
         from inspire.modules.workflows.models import Payload
         from inspire.utils.helpers import (
@@ -188,28 +143,86 @@ class WorkflowTest(WorkflowTasksTestCase):
         BibWorkflowObject.delete(obj)
 
     def test_harvesting_workflow(self):
+        """TODO."""
         from invenio.modules.workflows.api import start
         workflow = start('harvesting_fixture',
                          data=[self.record_oai_arxiv_plots],
-                         module_name="unit_tests")
+                         module_name='unit_tests')
 
         # This workflow should have halted
         self.assertTrue(workflow.halted_objects)
 
+
+class AgnosticTest(WorkflowTasksTestCase):
+
+    """TODO."""
+
+    def setUp(self):
+        """Setup tests."""
+        from invenio.modules.deposit.models import Deposition, DepositionType
+        from invenio.modules.deposit.registry import deposit_types, \
+            deposit_default_type
+        from invenio.modules.deposit.form import WebDepositForm
+        from invenio.modules.deposit.tasks import prefill_draft, \
+            prepare_sip
+
+        celery.conf['CELERY_ALWAYS_EAGER'] = True
+
+        def agnostic_task(obj, eng):
+            data_model = eng.workflow_definition.model(obj)
+            sip = data_model.get_latest_sip()
+            print(sip.metadata)
+
+        class DefaultType(DepositionType):
+            pass
+
+        class SimpleRecordTestForm(WebDepositForm):
+            pass
+
+        class DepositModelTest(DepositionType):
+
+            """A test workflow for the model."""
+
+            model = Deposition
+
+            draft_definitions = {
+                'default': SimpleRecordTestForm,
+            }
+
+            workflow = [
+                prefill_draft(draft_id='default'),
+                prepare_sip(),
+                agnostic_task,
+            ]
+
+        deposit_types.register(DefaultType)
+        deposit_types.register(DepositModelTest)
+        deposit_default_type.register(DefaultType)
+
+    def teardown(self):
+        """Clean up created objects."""
+        from invenio.modules.workflows.models import Workflow
+        from invenio.modules.knowledge.api import delete_kb
+
+        self.cleanup_registries()
+
     def test_agnostic_deposit(self):
+        """TODO."""
         from invenio.modules.workflows.api import start
         from invenio.modules.deposit.models import Deposition
         from invenio.ext.login.legacy_user import UserInfo
 
         u = UserInfo(uid=1)
-        d = Deposition.create(u, type="DepositModelTest")
+        d = Deposition.create(u, type='DepositModelTest')
         d.save()
         d.run_workflow()
-        import ipdb; ipdb.set_trace()
-        d.workflow_object.workflow
-        d.engine.completed_objects[0]
 
-TEST_SUITE = make_test_suite(WorkflowTest)
+        completed_object = d.engine.completed_objects[0]
+        for l in ['files', 'sips', 'type', 'drafts', 'title']:
+            self.assertIn(l, completed_object.data)
+
+
+TEST_SUITE = make_test_suite(AgnosticTest, WorkflowTest)
 
 
 if __name__ == "__main__":
