@@ -17,7 +17,7 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 from invenio_records.api import get_record
-from invenio.legacy.search_engine import search_pattern
+from invenio_search.api import Query
 
 
 def traverse(o, tree_types=(list, tuple)):
@@ -43,8 +43,8 @@ def generate_booktitle(record):
                         if acronym:
                             booktitle = "%s: %s" % (rn, acronym, )
                         else:
-                            recids = search_pattern(p="reportnumber:%s"
-                                                    % (rn,))
+                            recids = Query(p="reportnumber:%s" % (rn,))\
+                                           .search()
                             if recids:
                                 rec = get_record(recids[0])
                                 title = rec['title']['title']
@@ -62,7 +62,7 @@ def generate_booktitle(record):
                     if acronym:
                         booktitle = "%s: %s" % (rn, acronym, )
                     else:
-                        recids = search_pattern(p="reportnumber:%s" % (rn,))
+                        recids = Query(p="reportnumber:%s" % (rn,)).search()
                         if recids:
                             rec = get_record(recids[0])
                             title = rec['title']['title']
