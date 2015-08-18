@@ -58,7 +58,6 @@ def imprint(self, key, value):
         'date': value.get('c'),
     }
 
-
 @hep2marc.over('260', 'imprint')
 @utils.for_each_value
 @utils.filter_values
@@ -86,6 +85,26 @@ def defense_date(self, key, value):
 @utils.filter_values
 def defense_date2marc(self, key, value):
     """Date of defense of a thesis"""
+    return {
+        'c': value.get('date'),
+    }
+
+
+@hep.over('preprint_info', '^269..')
+@utils.for_each_value
+@utils.filter_values
+def preprint_info(self, key, value):
+    """Preprint info."""
+    return {
+        'date': value.get('c'),
+    }
+
+
+@hep2marc.over('269', 'preprint_info')
+@utils.for_each_value
+@utils.filter_values
+def preprint_info2marc(self, key, value):
+    """Preprint info."""
     return {
         'c': value.get('date'),
     }
