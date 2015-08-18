@@ -69,6 +69,7 @@ from inspire.modules.workflows.tasks.actions import (
     add_core_deposit
 )
 from inspire.modules.deposit.forms import LiteratureForm
+from inspire.modules.predicter.tasks import guess_coreness
 
 from ..tasks import add_submission_extra_data
 from ..utils import filter_empty_helper
@@ -113,7 +114,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                       ticket_id_key="ticket_id"),
         reply_ticket(template="deposit/tickets/user_submitted.html",
                      keep_new=True),
-        add_files_to_task_results,
+        # add_files_to_task_results,  Not needed as no files are added..
+        guess_coreness("new_astro_model.pickle", deposit=True),
         classify_paper_with_deposit(
             taxonomy="HEPont.rdf",
             output_mode="dict",
