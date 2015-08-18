@@ -55,23 +55,33 @@ define(
         urlInputsSelector: "#urls",
         saveChangesSelector: "#save-changes",
 
-        // URLS
+        // URL-related
+        idCounter: 0,
         urls: [],
         edit_url: "",
         objectid: ""
       });
 
-      this.getURLs = function() {
-        var urls = [];
+
+      this.getURLsAndIDs = function() {
+        var modalUrlAttrs = [];
+        var that = this;
+
         $(this.attr.urlContainerSelector + " a").each(function() {
           // check for the edit button 'a' tag and potential empty inputs
           var url = $(this).text();
-          if (url.length) urls.push(url);
+          if (url.length) {
+            // Get the attributes that will populate the
+            // input modal with urls and respective ids
+            modalUrlAttrs.push({
+              url: url,
+              id: that.attr.idCounter++
+            })
+          }
         });
-
-        this.attr.urls = urls;
-        return urls;
+        return modalUrlAttrs;
       };
+
 
       this.processUrls = function() {
         // We need to check if the urls start with http,
@@ -85,12 +95,14 @@ define(
         return this.attr.urls;
       };
 
+
       this.createPayloadForEdit = function() {
         return {
           "objectid": this.attr.objectid,
           "urls": this.processUrls()
         };
       };
+
 
       this.addUrlsToPage = function() {
         var that = this;
@@ -100,12 +112,10 @@ define(
       };
 
 
-
-
       this.makeEditable = function() {
         // Create the modal
         $(this.attr.modalSelector).replaceWith(tpl_edit_urls({
-          urls: this.getURLs()
+          attributes: this.getURLsAndIDs()
         }));
 
         var that = this;
@@ -113,26 +123,26 @@ define(
         $(this.attr.modalSelector)
           .modal('show')
 
-          // Delete the url
+          // Delete the url using 'data-id' from the delete button
           .on('click', this.attr.deleteUrlSelector, function(ev) {
-            var urls = that.attr.urls;
-
-            // Remove from url array
-            urls.splice(urls.indexOf($(ev.target).prev().val()), 1);
-            // Remove div from modal
-            $(ev.target).parent().remove();
+            var url_container = "#" + $(this).data('id');
+            $(url_container).remove();
           })
 
-          // Create new url input
+          // Create new url input and add id attr for it
           .on('click', this.attr.addNewUrlSelector, function(ev) {
-            $(that.attr.urlInputsSelector).append(tpl_edit_urls_input());
+            $(that.attr.urlInputsSelector).append(tpl_edit_urls_input({
+              id: that.attr.idCounter++
+            }));
             $(that.attr.urlInputsSelector + " input:last").focus();
           })
 
-          // Save urls in list
+          // Save urls in list getting the value from the modal inputs
           .on('click', this.attr.saveChangesSelector, function(ev) {
             $(that.attr.inputsSelector).each(function(index, element) {
-              if (element.value.length) newUrlList.push(element.value);
+              if (element.value.length) {
+                newUrlList.push(element.value);
+              }
             });
 
             that.attr.urls = newUrlList;
@@ -140,6 +150,7 @@ define(
             that.addUrlsToPage();
           });
       };
+
 
       this.makePostRequest = function() {
         var that = this;

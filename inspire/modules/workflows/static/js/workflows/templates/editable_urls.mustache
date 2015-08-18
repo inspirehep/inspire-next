@@ -27,14 +27,14 @@
 
         <div class="modal-body">
           <div id="urls">
-              {{#urls}}
-                <div class="edited-url">
-                  <input class="edit-url-input" type="text" style="width: 70%" value="{{.}}">
-                  <button type="button" class="delete-url btn btn-default btn-sm">
+              {{#attributes}}
+                <div class="edited-url" id="url-{{id}}">
+                  <input class="edit-url-input" type="text" style="width: 70%" value="{{url}}">
+                  <button type="button" class="delete-url btn btn-default btn-sm" data-id="url-{{id}}">
                     <i class="fa fa-trash-o"></i>
                   </button> <br>
                 </div>
-              {{/urls}}
+              {{/attributes}}
           </div>
           <button id="add-new-url" type="button" class="btn btn-info">Add new</button>
         </div>
