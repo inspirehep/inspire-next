@@ -57,7 +57,7 @@ def filter_core_keywords(filter_kb):
     return _filter_core_keywords
 
 
-def guess_coreness(model_path="arxiv_guessing.pickle"):
+def guess_coreness(model_path="arxiv_guessing.pickle", deposit=False):
     """Using a prediction model, predict if record is CORE."""
     @wraps(guess_coreness)
     def _guess_coreness(obj, eng):
@@ -79,8 +79,13 @@ def guess_coreness(model_path="arxiv_guessing.pickle"):
                 "Model file {0} not found! Skipping prediction...".format(full_model_path)
             )
             return
-
-        prepared_record = prepare_prediction_record(obj)
+        if deposit:
+            from invenio.modules.deposit.models import Deposition
+            deposition = Deposition(obj)
+            sip = deposition.get_latest_sip()
+            prepared_record = prepare_prediction_record(sip.metadata)
+        else:
+            prepared_record = prepare_prediction_record(obj.data)
         pipeline = load_model(full_model_path)
         decision, scores = predict(pipeline, prepared_record)
         obj.log.info("Successfully predicted as {0} with {1}".format(decision, max(scores)))
