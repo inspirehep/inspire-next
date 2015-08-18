@@ -21,6 +21,7 @@
 
 from __future__ import print_function, absolute_import
 
+import httpretty
 import os
 import pkg_resources
 import tempfile
@@ -56,8 +57,22 @@ class WorkflowTest(WorkflowTasksTestCase):
                 'some_record.xml'
             )
         )
-        celery.conf['CELERY_ALWAYS_EAGER'] = True
-
+        self.arxiv_tarball = pkg_resources.resource_stream(
+            'inspire.testsuite',
+            os.path.join(
+                'workflows',
+                'fixtures',
+                'arXiv:1504.01170'
+            )
+        )
+        self.arxiv_pdf = pkg_resources.resource_stream(
+            'inspire.testsuite',
+            os.path.join(
+                'workflows',
+                'fixtures',
+                '1504.01170.pdf'
+            )
+        )
         # Add temp KB
         add_kb('harvesting_fixture_kb')
 
@@ -142,6 +157,7 @@ class WorkflowTest(WorkflowTasksTestCase):
                                          os.path.basename(filename)))
         BibWorkflowObject.delete(obj)
 
+    @httpretty.activate
     def test_harvesting_workflow(self):
         """Test a full harvesting workflow."""
         from invenio.modules.workflows.api import start
@@ -149,22 +165,67 @@ class WorkflowTest(WorkflowTasksTestCase):
             get_record_from_obj,
         )
 
+        # XXX(jacquerie): apparently we never perform_request.
+        # httpretty.register_uri(
+        #     httpretty.GET,
+        #     cfg['WORKFLOWS_MATCH_REMOTE_SERVER_URL'],
+        #     body='',
+        #     status=200
+        # )
+
+        httpretty.register_uri(
+            httpretty.GET,
+            'http://arxiv.org/e-print/1504.01170',
+            content_type="application/x-eprint-tar",
+            body=self.arxiv_tarball.read(),
+            status=200,
+            adding_headers={
+                "Content-Encoding": 'x-gzip',
+            }
+        )
+
+        httpretty.register_uri(
+            httpretty.GET,
+            'http://arxiv.org/pdf/1504.01170.pdf',
+            content_type="application/pdf",
+            body=self.arxiv_pdf.read(),
+            status=200,
+        )
+
         workflow = start('harvesting_fixture',
                          data=[self.record_oai_arxiv_plots],
                          module_name='unit_tests')
 
-        # This workflow should have halted
-        self.assertTrue(workflow.halted_objects)
-
         # Let's get the record metadata and check contents
         obj = workflow.halted_objects[0]
-        record = get_record_from_obj(obj)
+        record = get_record_from_obj(obj, workflow)
 
         # Some plots/files should have been added to FFTs
         self.assertTrue(record.get('fft'))
 
         # A publication note should have been extracted
         self.assertTrue(record.get('publication_info'))
+
+    @httpretty.activate
+    def test_sss_harvesting_workflow_sad(self):
+        """TODO."""
+        from invenio.modules.workflows.api import start
+
+        httpretty.HTTPretty.allow_net_connect = False
+
+        # XXX(jacquerie): apparently we never perform_request.
+        # httpretty.register_uri(
+        #     httpretty.GET,
+        #     cfg['WORKFLOWS_MATCH_REMOTE_SERVER_URL'],
+        #     body='[1212]',
+        #     status=200
+        # )
+
+        workflow = start('harvesting_fixture',
+                         data=[self.record_oai_arxiv_plots],
+                         module_name='unit_tests')
+        # XXX(jacquerie): find a better check
+        self.assertEqual(workflow.objects, [])
 
 
 class AgnosticTest(WorkflowTasksTestCase):
