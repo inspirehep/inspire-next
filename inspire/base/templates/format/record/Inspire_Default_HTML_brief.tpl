@@ -103,17 +103,19 @@
         </span>
         <!-- MODAL -->
        <div class="modal fade" id="myModal{{record['recid']}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog brief-results-modal">
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
               <h4 class="modal-title" id="myModalLabel">Export Article</h4>
               <div class="btn-group">
               <button type="button" class="btn btn-primary dropdown-toggle" id="btn-drop" data-toggle="dropdown" aria-expanded="false">
-                Format: BibTex <span class="caret"></span>
+                Format: <span id="format{{record['recid']}}"></span> <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
-                <li><a class="pointer" id="bibtex">BibTex</a></li>
+                <li><a class="pointer bibtex" id="bibtex{{record['recid']}}" data-recid="{{record['recid']}}">BibTex</a></li>
+                <li><a class="pointer latex_eu" id="latex_eu{{record['recid']}}" data-recid="{{record['recid']}}">LaTex(EU)</a></li>
+                <li><a class="pointer latex_us" id="latex_us{{record['recid']}}" data-recid="{{record['recid']}}">LaTex(US)</a></li>
               </ul>
             </div>
                 <button type="button" class="btn  btn-primary">Download</button>
@@ -121,7 +123,7 @@
             <div class="modal-body">
               <div class="row">
                 <div class="col-md-12">
-                  <div class="editable" contenteditable="true" onclick="document.execCommand('selectAll',false,null)"><pre id="bibtex_text{{record['recid']}}"></pre></div>
+                  <div class="editable" contenteditable="true" onclick="document.execCommand('selectAll',false,null)"><pre id="text{{record['recid']}}"></pre></div>
                 </div>
               </div> 
             </div>
