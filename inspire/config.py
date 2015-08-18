@@ -289,3 +289,15 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "980__b": ["collections.secondary"],
     "542__l": ["information_relating_to_copyright_status.copyright_status"],
 }
+
+SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
+    "HEP": "hep",
+    "Conferences": "conferences",
+    "Institutions": "institutions",
+    "Experiments": "experiments",
+    "Jobs": "jobs",
+    "Journals": "journals",
+    "Authors": "authors"
+}
+
+SEARCH_ELASTIC_DEFAULT_INDEX = 'hep'
