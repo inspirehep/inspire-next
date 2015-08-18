@@ -44,6 +44,10 @@ from inspire.modules.workflows.tasks.actions import (
     was_approved,
     add_core_oaiharvest,
 )
+from inspire.modules.oaiharvester.tasks.arxiv import (
+    arxiv_plot_extract,
+)
+from inspire.modules.refextract.tasks import extract_journal_info
 
 
 class harvesting_fixture(RecordWorkflow, DepositionType):
@@ -76,11 +80,11 @@ class harvesting_fixture(RecordWorkflow, DepositionType):
             [
                 arxiv_set_category_field,  # FIXME: Remove this when elasticsearch filtering is ready
                 save_identifiers_to_kb("harvesting_fixture_kb"),
-                # arxiv_plot_extract,
+                arxiv_plot_extract,
                 # arxiv_fulltext_download(),
                 # arxiv_refextract,
                 # arxiv_author_list("authorlist2marcxml.xsl"),
-                # extract_journal_info,
+                extract_journal_info,
                 # classify_paper_with_oaiharvester(
                 #     taxonomy="HEPont",
                 #     only_core_tags=False,
