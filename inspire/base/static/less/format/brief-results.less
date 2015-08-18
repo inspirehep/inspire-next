@@ -23,65 +23,76 @@
 @import (reference) "../inspire.less";
 
 .custom-panel {
-	margin-bottom: 0px;
-	border: 0px;
+    margin-bottom: 0px;
+    border: 0px;
 }
 
 .blue-btn {
-	color: #fff;
-	background-color: #337ab7;
-	border-color: #2e6da4;
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
 }
 
 .custom-h {
-	margin-top:0px;
+    margin-top:0px;
 }
 
 #link-to-pdf {
-	 text-decoration:none; 
-	 color:white;
+     text-decoration:none; 
+     color:white;
 }
 
 hr {
-	margin-top:0px;
+    margin-top:0px;
 }
 
 .mobile-title {
-	display:none;
+    display:none;
 }
 
 .custom-dropdown {
-	top: inherit;
+    top: inherit;
 }
 
 #left-column {
-	border-right: 1px solid #D3D3D3;
-	min-height: 114px;
+    border-right: 1px solid #D3D3D3;
+    min-height: 114px;
 }
 
 .pointer {
-	cursor:pointer;
+    cursor:pointer;
 }
 
 @media only screen and (max-width : 992px){
-	#right-column {
-		display:none;
-	}
+    #right-column {
+        display:none;
+    }
 
-	.abstract {
-		display:none;
-	}
+    .abstract {
+        display:none;
+    }
 
-	.title {
-		display:none;
-	}	
+    .title {
+        display:none;
+    }   
 
-	.mobile-title {
-		display:block;
-	}
+    .mobile-title {
+        display:block;
+    }
 
-	#left-column {
-		border-right: 0px;
-	}
+    #left-column {
+        border-right: 0px;
+    }
 
 }
+
+@media screen and (min-width: 768px) {
+    .brief-results-modal {
+        width:900px;
+    }
+
+}
+
+.brief-results-modal {
+    width:75%;
+}   

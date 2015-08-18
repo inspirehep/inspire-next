@@ -19,6 +19,8 @@
 
 from inspire.ext.formatter_jinja_filters.general import apply_template_on_array
 from inspire.utils.bibtex import Bibtex
+from inspire.utils.latex import Latex
+
 
 def email_links(record):
     """
@@ -69,6 +71,7 @@ def is_list(value):
     if isinstance(value, list):
         return True
 
+
 def remove_duplicates(value):
     """Removes duplicate objects from a list and returns the list"""
     seen = set()
@@ -79,10 +82,12 @@ def remove_duplicates(value):
             seen.add(x)
     return uniq
 
+
 def has_space(value):
     """Checks if a string contains space"""
     if ' ' in value:
         return True
+
 
 def count_words(value):
     """Counts the amount of words in a string"""
@@ -92,11 +97,13 @@ def count_words(value):
     new_strs = r.sub(' ', value)
     return len(new_strs.split())
 
+
 def is_intbit_set(value):
     from intbitset import intbitset
     if isinstance(value, intbitset):
         value = value.tolist()
     return value
+
 
 def remove_duplicates_from_dict(value):
     return [dict(t) for t in set([tuple(d.items()) for d in value])]
@@ -104,6 +111,10 @@ def remove_duplicates_from_dict(value):
 
 def bibtex(record):
     return Bibtex(record).format()
+
+
+def latex(record, latex_format):
+    return Latex(record, latex_format).format()
 
 
 def get_filters():
@@ -120,5 +131,6 @@ def get_filters():
         'count_words': count_words,
         'is_intbit_set': is_intbit_set,
         'remove_duplicates_from_dict': remove_duplicates_from_dict,
-        'bibtex' : bibtex,
+        'bibtex': bibtex,
+        'latex': latex,
     }
