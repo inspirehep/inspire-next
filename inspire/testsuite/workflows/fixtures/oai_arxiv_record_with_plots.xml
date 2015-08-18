@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2015-08-18T14:28:24Z</responseDate>
+  <request identifier="oai:arXiv.org:1504.01170" metadataPrefix="arXiv" verb="GetRecord">http://export.arxiv.org/oai2</request>
+  <GetRecord>
+    <record>
+      <header>
+        <identifier>oai:arXiv.org:1504.01170</identifier>
+        <datestamp>2015-07-01</datestamp>
+        <setSpec>physics:hep-lat</setSpec>
+      </header>
+      <metadata>
+        <arXiv xmlns="http://arxiv.org/OAI/arXiv/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://arxiv.org/OAI/arXiv/ http://arxiv.org/OAI/arXiv.xsd">
+          <id>1504.01170</id>
+          <created>2015-04-05</created>
+          <authors>
+            <author>
+              <keyname>Christ</keyname>
+              <forenames>Norman H.</forenames>
+            </author>
+            <author>
+              <keyname>Feng</keyname>
+              <forenames>Xu</forenames>
+            </author>
+            <author>
+              <keyname>Martinelli</keyname>
+              <forenames>Guido</forenames>
+            </author>
+            <author>
+              <keyname>Sachrajda</keyname>
+              <forenames>Christopher T.</forenames>
+            </author>
+          </authors>
+          <title>Effects of finite volume on the KL-KS mass difference</title>
+          <categories>hep-lat</categories>
+          <comments>19 pages, 2 figures</comments>
+          <journal-ref>Phys. Rev. D 91, 114510 (2015)</journal-ref>
+          <doi>10.1103/PhysRevD.91.114510</doi>
+          <license>http://arxiv.org/licenses/nonexclusive-distrib/1.0/</license>
+          <abstract>Phenomena that involve two or more on-shell particles are particularly
+sensitive to the effects of finite volume and require special treatment when
+computed using lattice QCD. In this paper we generalize the results of
+Luescher, and Lellouch and Luescher, which determine the leading order effects
+of finite volume on the two-particle spectrum and two-particle decay amplitudes
+to determine the finite-volume effects in the second order mixing of the K0 and
+anti-K0 states. We extend the methods of Kim, Sachrajda and Sharpe to provide a
+direct, uniform treatment of these three, related, finite-volume corrections.
+In particular, the leading, finite-volume corrections to the KL-KS mass
+difference Delta M_K and the CP violating parameter epsilon_K are determined,
+including the potentially large effects which can arise from the near
+degeneracy of the kaon mass and the energy of a finite-volume, two-pion state.
+</abstract>
+        </arXiv>
+      </metadata>
+    </record>
+  </GetRecord>
+</OAI-PMH>

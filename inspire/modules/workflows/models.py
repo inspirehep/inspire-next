@@ -104,23 +104,6 @@ class Payload(Deposition):
         obj = cls(workflow_object=workflow_object, type=type, user_id=user)
         return obj
 
-    def add_file(self, file_path, filename=None):
-        """Save given file to storage and attach to object, return new path."""
-        filename = filename or os.path.basename(file_path)
-        try:
-            with open(file_path) as fd:
-                payload_file = DepositionFile(backend=PayloadStorage(self.id))
-                if payload_file.save(fd, filename=filename):
-                    super(Payload, self).add_file(payload_file)
-                    self.save()
-        except FilenameAlreadyExists as e:
-            payload_file.delete()
-            raise e
-        if payload_file.is_local():
-            return payload_file.get_syspath()
-        else:
-            return payload_file.get_url()
-
     def __setstate__(self, state):
         """Deserialize deposition from state stored in BibWorkflowObject."""
         self.type = self.get_type(state['type'])  # FIXME only difference
