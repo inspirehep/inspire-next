@@ -37,7 +37,11 @@ class WorkflowTest(WorkflowTasksTestCase):
 
     def setUp(self):
         """ Setup tests."""
+
         from invenio.modules.knowledge.api import add_kb
+        from invenio.modules.deposit.models import DepositionType
+        from invenio.modules.deposit.registry import deposit_types, \
+            deposit_default_type
 
         self.create_registries()
         self.xml_path = os.path.join(
@@ -53,6 +57,13 @@ class WorkflowTest(WorkflowTasksTestCase):
 
         # Add temp KB
         add_kb("harvesting_fixture_kb")
+
+        class DefaultType(DepositionType):
+            pass
+
+        self.DefaultType = DefaultType
+        deposit_types.register(DefaultType)
+        deposit_default_type.register(DefaultType)
 
     def tearDown(self):
         """ Clean up created objects."""
@@ -133,7 +144,16 @@ class WorkflowTest(WorkflowTasksTestCase):
         # This workflow should have halted
         self.assertTrue(workflow.halted_objects)
 
+    def test_agnostic_deposit(self):
+        from invenio.modules.workflows.api import start
+
+        workflow = start('deposit_model_fixture', data=[self.some_record])
+
+        import pdb; pdb.set_trace()
+
+
 TEST_SUITE = make_test_suite(WorkflowTest)
+
 
 if __name__ == "__main__":
     run_test_suite(TEST_SUITE)
