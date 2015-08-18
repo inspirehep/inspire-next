@@ -16,8 +16,19 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
+{% block details_page %}
 
-<h1>Holding Pen Details Page</h1>
-<h3>Record ID: {{ recid }}</h3>
-<h3>Record Info:</h3>
-{{ record }}
+<!-- Title -->
+<h4 id='editable-title'>
+  <a href='#' id='edit-title'><i class='fa fa-pencil-square-o'></i></a>
+  <strong>
+    <span id='title-text'>{{ record['title']['title'] }}</span>
+  </strong>
+</h4>
+
+<!-- Authors -->
+{% for author in record['authors'] %}
+  <span>{{ author['full_name'] }}</span>
+{% endfor %}
+
+{% endblock %}
