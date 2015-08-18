@@ -85,6 +85,7 @@ def authors2marc(self, key, value):
 
 
 @hep.over('corporate_author', '^110[10_2].')
+@utils.for_each_value
 @utils.filter_values
 def corporate_author(self, key, value):
     """Main Entry-Corporate Name."""
@@ -94,6 +95,7 @@ def corporate_author(self, key, value):
 
 
 @hep2marc.over('110', 'corporate_author')
+@utils.for_each_value
 @utils.filter_values
 def corporate_author2marc(self, key, value):
     """Main Entry-Corporate Name."""
@@ -101,28 +103,3 @@ def corporate_author2marc(self, key, value):
         'a': value.get('corporate_author'),
     }
 
-
-@hep.over('institution', '^110..')
-@utils.filter_values
-def institution(self, key, value):
-    """Institution info."""
-    return {
-        'name': value.get('a'),
-        'department': value.get('b'),
-        'new_name': value.get('t'),
-        'affiliation': value.get('u'),
-        'obsolete_icn': value.get('x'),
-    }
-
-
-@hep2marc.over('110', 'institution')
-@utils.filter_values
-def institution2marc(self, key, value):
-    """Institution info."""
-    return {
-        'a': value.get('name'),
-        'b': value.get('department'),
-        't': value.get('new_name'),
-        'u': value.get('affiliation'),
-        'x': value.get('obsolete_icn'),
-    }
