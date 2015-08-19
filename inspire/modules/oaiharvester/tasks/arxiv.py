@@ -235,6 +235,7 @@ def arxiv_refextract(obj, eng):
                       "result": new_dict['references'],
                       "template": "workflows/results/refextract.html"}]
                 )
+                model.update()
         else:
             obj.log.info("No references extracted")
     else:
@@ -312,4 +313,5 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
                     }]
                 )
                 break
+        model.update()
     return _author_list

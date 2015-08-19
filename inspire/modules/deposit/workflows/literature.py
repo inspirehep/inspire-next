@@ -43,12 +43,14 @@ from invenio_workflows.tasks.logic_tasks import (
 )
 from invenio_workflows.definitions import WorkflowBase
 
+from inspire.dojson.hep import hep2marc
+
 from inspire.modules.workflows.tasks.matching import(
     match_record_remote_deposit,
 )
 from inspire.modules.workflows.tasks.submission import (
     halt_record_with_action,
-    send_robotupload_deposit,
+    send_robotupload,
     halt_to_render,
     add_files_to_task_results,
     create_ticket,
@@ -62,7 +64,7 @@ from inspire.modules.workflows.tasks.submission import (
 from inspire.modules.workflows.tasks.actions import (
     was_approved,
     reject_record,
-    add_core_deposit
+    add_core,
 )
 from inspire.modules.deposit.forms import LiteratureForm
 from inspire.modules.predicter.tasks import guess_coreness
@@ -106,7 +108,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         process_sip_metadata(),
         add_submission_extra_data,
         # Generate MARC based on metadata dictionary.
-        finalize_record_sip(is_dump=False),
+        finalize_record_sip(processor=hep2marc),
         halt_to_render,
         create_ticket(template="deposit/tickets/curator_submitted.html",
                       queue="HEP_add_user",
@@ -125,12 +127,12 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         [
             workflow_if(match_record_remote_deposit, True),
             [
-                add_core_deposit,
+                add_core,
                 add_note_entry,
                 user_pdf_get,
-                finalize_record_sip(is_dump=False),
+                finalize_record_sip(processor=hep2marc),
                 # Send robotupload and halt until webcoll callback
-                send_robotupload_deposit(),
+                send_robotupload(),
                 create_curation_ticket(
                     template="deposit/tickets/curation_core.html",
                     queue="HEP_curation",
