@@ -71,14 +71,11 @@ def update_classification_in_task_results(obj, output):
 
 def prepare_prediction_record(metadata):
     """Given a workflow object, return compatible prediction record."""
-    from invenio.utils.datastructures import SmartDict
-    smart_metadata = SmartDict(metadata)
-
     prepared_record = {}
-    prepared_record["title"] = smart_metadata.get("title.title")
-    prepared_record["abstract"] = smart_metadata.get("abstract.summary")
+    prepared_record["title"] = metadata.get("title.title")
+    prepared_record["abstract"] = metadata.get("abstract.summary")
     categories = []
-    for category in smart_metadata.get("subject_term"):
+    for category in metadata.get("subject_term"):
         if category.get("scheme").lower() == "arxiv":
             categories.append(category.get("term", ""))
     prepared_record["categories"] = categories

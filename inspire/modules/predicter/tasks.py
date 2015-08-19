@@ -31,6 +31,10 @@ from functools import wraps
 
 from invenio.celery import celery
 
+from inspire.utils.helpers import (
+    get_record_from_model,
+)
+
 from .utils import (
     update_classification_in_task_results,
     get_classification_from_task_results,
@@ -57,7 +61,7 @@ def filter_core_keywords(filter_kb):
     return _filter_core_keywords
 
 
-def guess_coreness(model_path="arxiv_guessing.pickle", deposit=False):
+def guess_coreness(model_path="arxiv_guessing.pickle"):
     """Using a prediction model, predict if record is CORE."""
     @wraps(guess_coreness)
     def _guess_coreness(obj, eng):
@@ -76,19 +80,21 @@ def guess_coreness(model_path="arxiv_guessing.pickle", deposit=False):
 
         if not os.path.isfile(full_model_path):
             obj.log.error(
-                "Model file {0} not found! Skipping prediction...".format(full_model_path)
+                "Model file {0} not found! Skipping prediction...".format(
+                    full_model_path
+                )
             )
             return
-        if deposit:
-            from invenio.modules.deposit.models import Deposition
-            deposition = Deposition(obj)
-            sip = deposition.get_latest_sip()
-            prepared_record = prepare_prediction_record(sip.metadata)
-        else:
-            prepared_record = prepare_prediction_record(obj.data)
+        model = eng.workflow_definition.model(obj)
+        record = get_record_from_model(model)
+
+        prepared_record = prepare_prediction_record(record)
+
         pipeline = load_model(full_model_path)
         decision, scores = predict(pipeline, prepared_record)
-        obj.log.info("Successfully predicted as {0} with {1}".format(decision, max(scores)))
+        obj.log.info("Successfully predicted as {0} with {1}".format(
+            decision, max(scores)
+        ))
 
         result = {}
         result["decision"] = decision
