@@ -77,7 +77,7 @@ class harvesting_fixture(RecordWorkflow, DepositionType):
         # TODO: Use DOJSON when we are ready to switch from bibfield
         convert_record_to_json,
         create_payload,
-        workflow_if(exists_in_inspire_or_rejected),
+        workflow_if(exists_in_inspire_or_rejected()),
         [
             delete_self_and_stop_processing,
             # update_existing_record_oaiharvest(),
