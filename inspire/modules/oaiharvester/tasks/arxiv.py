@@ -67,6 +67,30 @@ def get_arxiv_id_from_record(record):
     return arxiv_id
 
 
+def get_pdf_for_model(eng, arxiv_id):
+    """We download it."""
+    extract_path = os.path.join(
+        cfg.get('OAIHARVESTER_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
+        str(eng.uuid)
+    )
+    return get_pdf_from_arxiv(
+        arxiv_id,
+        extract_path
+    )
+
+
+def get_tarball_for_model(eng, arxiv_id):
+    """We download it."""
+    extract_path = os.path.join(
+        cfg.get('OAIHARVESTER_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
+        str(eng.uuid)
+    )
+    return get_tarball_from_arxiv(
+        arxiv_id,
+        extract_path
+    )
+
+
 def arxiv_fulltext_download(doctype='arXiv'):
     @wraps(arxiv_fulltext_download)
     def _arxiv_fulltext_download(obj, eng):
@@ -82,15 +106,7 @@ def arxiv_fulltext_download(doctype='arXiv'):
 
         if not existing_file:
             # We download it
-            extract_path = os.path.join(
-                cfg.get('OAIHARVESTER_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
-                str(eng.uuid)
-            )
-
-            pdf = get_pdf_from_arxiv(
-                arxiv_id,
-                extract_path
-            )
+            pdf = get_pdf_for_model(eng, arxiv_id)
 
             if pdf is None:
                 obj.log.error("No pdf found")
@@ -145,15 +161,7 @@ def arxiv_plot_extract(obj, eng):
 
     if not existing_file:
         # We download it
-        extract_path = os.path.join(
-            cfg.get('OAIHARVESTER_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
-            str(eng.uuid)
-        )
-
-        tarball = get_tarball_from_arxiv(
-            arxiv_id,
-            extract_path
-        )
+        tarball = get_tarball_for_model(eng, arxiv_id)
 
         if tarball is None:
             obj.log.error("No tarball found")
@@ -197,18 +205,10 @@ def arxiv_refextract(obj, eng):
     record = get_record_from_model(model)
     arxiv_id = get_arxiv_id_from_record(record)
     existing_file = get_file_by_name(model, "{0}.pdf".format(arxiv_id))
-    import ipdb; ipdb.set_trace()
+
     if not existing_file:
         # We download it
-        extract_path = os.path.join(
-            cfg.get('OAIHARVESTER_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
-            str(eng.uuid)
-        )
-
-        pdf = get_pdf_from_arxiv(
-            arxiv_id,
-            extract_path
-        )
+        pdf = get_pdf_for_model(eng, arxiv_id)
 
         if pdf is None:
             obj.log.error("No pdf found")
@@ -249,51 +249,42 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
     """
     @wraps(arxiv_author_list)
     def _author_list(obj, eng):
-        from invenio.legacy.bibrecord import create_records, record_xml_output
+        from invenio_oaiharvester.utils import find_matching_files
+
         from invenio.legacy.bibconvert.xslt_engine import convert
-        from invenio.utils.plotextractor.api import get_tarball_from_arxiv
         from invenio.utils.plotextractor.cli import get_defaults
-        from invenio.modules.workflows.utils import convert_marcxml_to_bibfield
         from invenio.utils.plotextractor.converter import untar
         from invenio.utils.shell import Timeout
 
-        from ..utils import find_matching_files
+        model = eng.workflow_definition.model(obj)
+        record = get_record_from_model(model)
+        arxiv_id = get_arxiv_id_from_record(record)
+        existing_file = get_file_by_name(model, arxiv_id)
 
-        identifiers = obj.data.get(cfg.get('OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP'), "")
-        if "_result" not in obj.extra_data:
-            obj.extra_data["_result"] = {}
-        if "tarball" not in obj.extra_data["_result"]:
-            extract_path = os.path.join(
-                cfg.get('OAIHARVESTER_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
-                str(eng.uuid)
-            )
-            tarball = get_tarball_from_arxiv(
-                obj.data.get(cfg.get('OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP')),
-                extract_path
-            )
+        if not existing_file:
+            # We download it
+            tarball = get_tarball_for_model(eng, arxiv_id)
+
             if tarball is None:
                 obj.log.error("No tarball found")
                 return
+            add_file_by_name(model, tarball)
         else:
-            tarball = obj.extra_data["_result"]["tarball"]
+            tarball = existing_file.get_syspath()
 
-        # FIXME
-        tarball = str(tarball)
-        sub_dir, dummy = get_defaults(tarball,
+        sub_dir, dummy = get_defaults(str(tarball),
                                       cfg['CFG_TMPDIR'], "")
 
         try:
-            untar(tarball, sub_dir)
+            untar(str(tarball), sub_dir)
             obj.log.info("Extracted tarball to: {0}".format(sub_dir))
         except Timeout:
-            eng.log.error('Timeout during tarball extraction on %s' % (
-                obj.extra_data["_result"]["tarball"]))
+            eng.log.error('Timeout during tarball extraction on {0}'.format(
+                tarball
+            ))
 
         xml_files_list = find_matching_files(sub_dir, ["xml"])
-
         obj.log.info("Found xmlfiles: {0}".format(xml_files_list))
-
-        authors = ""
 
         for xml_file in xml_files_list:
             xml_file_fd = open(xml_file, "r")
@@ -303,33 +294,22 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
             match = REGEXP_AUTHLIST.findall(xml_content)
             if match:
                 obj.log.info("Found a match for author extraction")
-                authors = convert(xml_content, stylesheet)
-                authorlist_record = create_records(authors)
-                if len(authorlist_record) == 1:
-                    if authorlist_record[0][0] is None:
-                        eng.log.error("Error parsing authorlist record for id: %s" % (
-                            identifiers,))
-                    authorlist_record = authorlist_record[0][0]
-
-                author_xml = record_xml_output(authorlist_record)
-                if author_xml:
-                    updated_xml = '<?xml version="1.0" encoding="UTF-8"?>\n<collection>\n' \
-                                  + record_xml_output(authorlist_record) + '</collection>'
-                    new_dict_representation = convert_marcxml_to_bibfield(updated_xml)
-                    obj.data["authors"] = new_dict_representation["authors"]
-                    obj.update_task_results(
-                        "authors",
-                        [{
-                            "name": "authors",
-                            "results": new_dict_representation["authors"]
-                        }]
-                    )
-                    obj.update_task_results(
-                        "number_of_authors",
-                        [{
-                            "name": "number_of_authors",
-                            "results": new_dict_representation["number_of_authors"]
-                        }]
-                    )
-                    break
+                authors_xml = convert(xml_content, stylesheet)
+                authorlist_record = get_json_from_marcxml(authors_xml)[0]
+                record.update(authorlist_record)
+                obj.update_task_results(
+                    "authors",
+                    [{
+                        "name": "authors",
+                        "results": authorlist_record["authors"]
+                    }]
+                )
+                obj.update_task_results(
+                    "number_of_authors",
+                    [{
+                        "name": "number_of_authors",
+                        "results": authorlist_record["number_of_authors"]
+                    }]
+                )
+                break
     return _author_list
