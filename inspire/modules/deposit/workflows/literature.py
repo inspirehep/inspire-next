@@ -45,9 +45,8 @@ from invenio.modules.workflows.definitions import WorkflowBase
 
 from inspire.dojson.hep import hep2marc
 
-from inspire.modules.workflows.tasks.matching import(
-    match_record_remote_deposit,
-)
+from inspire.modules.workflows.tasks.matching import match
+
 from inspire.modules.workflows.tasks.submission import (
     halt_record_with_action,
     send_robotupload,
@@ -125,7 +124,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                                 message="Accept submission?"),
         workflow_if(was_approved),
         [
-            workflow_if(match_record_remote_deposit, True),
+            workflow_if(match, True),
             [
                 add_core,
                 add_note_entry,

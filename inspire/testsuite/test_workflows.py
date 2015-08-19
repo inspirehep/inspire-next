@@ -158,7 +158,27 @@ class WorkflowTest(WorkflowTasksTestCase):
         BibWorkflowObject.delete(obj)
 
     @httpretty.activate
-    def test_harvesting_workflow(self):
+    def test_harvesting_workflow_with_match(self):
+        """Test an harvesting workflow when the record already exists."""
+        from invenio.base.globals import cfg
+        from invenio.modules.workflows.api import start
+
+        httpretty.register_uri(
+            httpretty.GET,
+            cfg['WORKFLOWS_MATCH_REMOTE_SERVER_URL'],
+            body='[1212]',
+            status=200
+        )
+
+        workflow = start('harvesting_fixture',
+                         data=[self.record_oai_arxiv_plots],
+                         module_name='unit_tests')
+
+        # XXX(jacquerie): find a better check
+        self.assertEqual(workflow.objects, [])
+
+    @httpretty.activate
+    def test_harvesting_workflow_without_match(self):
         """Test a full harvesting workflow."""
         from invenio.base.globals import cfg
         from invenio.modules.workflows.api import start
@@ -166,13 +186,12 @@ class WorkflowTest(WorkflowTasksTestCase):
             get_record_from_obj,
         )
 
-        # XXX(jacquerie): apparently we never perform_request.
-        # httpretty.register_uri(
-        #     httpretty.GET,
-        #     cfg['WORKFLOWS_MATCH_REMOTE_SERVER_URL'],
-        #     body='',
-        #     status=200
-        # )
+        httpretty.register_uri(
+            httpretty.GET,
+            cfg['WORKFLOWS_MATCH_REMOTE_SERVER_URL'],
+            body='[]',
+            status=200
+        )
 
         httpretty.register_uri(
             httpretty.GET,
@@ -229,27 +248,6 @@ class WorkflowTest(WorkflowTasksTestCase):
 
         record = get_record_from_obj(obj, workflow)
         self.assertTrue("CORE" in record.get("collections.primary"))
-
-    @httpretty.activate
-    def test_sss_harvesting_workflow_sad(self):
-        """TODO."""
-        from invenio.modules.workflows.api import start
-
-        httpretty.HTTPretty.allow_net_connect = False
-
-        # XXX(jacquerie): apparently we never perform_request.
-        # httpretty.register_uri(
-        #     httpretty.GET,
-        #     cfg['WORKFLOWS_MATCH_REMOTE_SERVER_URL'],
-        #     body='[1212]',
-        #     status=200
-        # )
-
-        workflow = start('harvesting_fixture',
-                         data=[self.record_oai_arxiv_plots],
-                         module_name='unit_tests')
-        # XXX(jacquerie): find a better check
-        self.assertEqual(workflow.objects, [])
 
 
 class AgnosticTest(WorkflowTasksTestCase):
