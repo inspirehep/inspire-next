@@ -29,6 +29,9 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 )
 from invenio.modules.workflows.tasks.marcxml_tasks import convert_record
 from invenio.modules.workflows.tasks.workflows_tasks import log_info
+
+from inspire.dojson.hep import hep2marc
+
 from inspire.modules.workflows.tasks.matching import(
     exists_in_inspire_or_rejected,
     exists_in_holding_pen,
@@ -42,7 +45,7 @@ from inspire.modules.workflows.tasks.submission import halt_record_with_action
 from inspire.modules.workflows.models import Payload, create_payload
 from inspire.modules.workflows.tasks.actions import (
     was_approved,
-    add_core_oaiharvest,
+    add_core,
 )
 from inspire.modules.oaiharvester.tasks.arxiv import (
     arxiv_plot_extract,
@@ -53,6 +56,10 @@ from inspire.modules.refextract.tasks import extract_journal_info
 from inspire.modules.predicter.tasks import (
     filter_core_keywords,
     guess_coreness
+)
+from inspire.modules.workflows.tasks.submission import (
+    send_robotupload,
+    finalize_record_sip,
 )
 
 
@@ -104,8 +111,9 @@ class harvesting_fixture(RecordWorkflow, DepositionType):
                                         message="Accept article?"),
                 workflow_if(was_approved),
                 [
-                    add_core_oaiharvest,
-                    # send_robotupload_oaiharvest(),
+                    add_core,
+                    finalize_record_sip(processor=hep2marc),
+                    send_robotupload(),
                 ],
                 workflow_else,
                 [
