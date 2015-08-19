@@ -43,22 +43,25 @@ from inspire.modules.workflows.tasks.matching import(
     arxiv_set_category_field
 )
 
+from inspire.dojson.hep import hep2marc
+
 from inspire.modules.refextract.tasks import extract_journal_info
 
 from invenio.modules.classifier.tasks.classification import (
     classify_paper_with_oaiharvester,
 )
 
-from invenio_oaiharvester.tasks.arxiv import (
+from invenio.modules.workflows.tasks.workflows_tasks import log_info
+
+from inspire.modules.oaiharvester.tasks.arxiv import (
     arxiv_plot_extract,
     arxiv_fulltext_download,
-    arxiv_refextract,
     arxiv_author_list,
 )
-from invenio.modules.workflows.tasks.workflows_tasks import log_info
+
 from inspire.modules.workflows.tasks.actions import (
     was_approved,
-    add_core_oaiharvest,
+    add_core,
 )
 
 from invenio.modules.workflows.tasks.logic_tasks import (
@@ -67,10 +70,11 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 )
 from invenio.modules.workflows.tasks.marcxml_tasks import convert_record
 from invenio.modules.workflows.definitions import RecordWorkflow
-from inspire.modules.oaiharvester.tasks.upload import (
-    send_robotupload_oaiharvest,
+from inspire.modules.workflows.tasks.submission import (
+    halt_record_with_action,
+    send_robotupload,
+    finalize_record_sip,
 )
-from inspire.modules.workflows.tasks.submission import halt_record_with_action
 from inspire.modules.predicter.tasks import (
     filter_core_keywords,
     guess_coreness
@@ -111,10 +115,10 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
             [
                 arxiv_set_category_field,  # FIXME: Remove this when elasticsearch filtering is ready
                 save_identifiers_to_kb("HP_IDENTIFIERS"),
-                # arxiv_plot_extract,
-                # arxiv_fulltext_download(),
+                arxiv_plot_extract,
+                arxiv_fulltext_download(),
                 # arxiv_refextract,
-                # arxiv_author_list("authorlist2marcxml.xsl"),
+                arxiv_author_list("authorlist2marcxml.xsl"),
                 extract_journal_info,
                 # classify_paper_with_oaiharvester(
                 #     taxonomy="HEPont",
@@ -123,13 +127,14 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
                 #     with_author_keywords=True,
                 # ),
                 # filter_core_keywords(filter_kb="antihep"),
-                # guess_coreness("new_astro_model.pickle"),
+                guess_coreness("new_astro_model.pickle"),
                 halt_record_with_action(action="arxiv_approval",
                                         message="Accept article?"),
                 workflow_if(was_approved),
                 [
-                    add_core_oaiharvest,
-                    # send_robotupload_oaiharvest(),
+                    add_core,
+                    finalize_record_sip(processor=hep2marc),
+                    send_robotupload(),
                 ],
                 workflow_else,
                 [

@@ -62,7 +62,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             os.path.join(
                 'workflows',
                 'fixtures',
-                'arXiv:1504.01170'
+                '1407.7587v1'
             )
         )
         self.arxiv_pdf = pkg_resources.resource_stream(
@@ -70,7 +70,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             os.path.join(
                 'workflows',
                 'fixtures',
-                '1504.01170.pdf'
+                '1407.7587v1.pdf'
             )
         )
         # Add temp KB
@@ -160,6 +160,7 @@ class WorkflowTest(WorkflowTasksTestCase):
     @httpretty.activate
     def test_harvesting_workflow(self):
         """Test a full harvesting workflow."""
+        from invenio.base.globals import cfg
         from invenio.modules.workflows.api import start
         from inspire.utils.helpers import (
             get_record_from_obj,
@@ -175,7 +176,7 @@ class WorkflowTest(WorkflowTasksTestCase):
 
         httpretty.register_uri(
             httpretty.GET,
-            'http://arxiv.org/e-print/1504.01170',
+            'http://arxiv.org/e-print/1407.7587',
             content_type="application/x-eprint-tar",
             body=self.arxiv_tarball.read(),
             status=200,
@@ -186,12 +187,18 @@ class WorkflowTest(WorkflowTasksTestCase):
 
         httpretty.register_uri(
             httpretty.GET,
-            'http://arxiv.org/pdf/1504.01170.pdf',
+            'http://arxiv.org/pdf/1407.7587.pdf',
             content_type="application/pdf",
             body=self.arxiv_pdf.read(),
             status=200,
         )
 
+        httpretty.register_uri(
+            httpretty.POST,
+            cfg.get("CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"),
+            body="[INFO] bibupload batchupload --insert /dummy/file/path\n",
+            status=200,
+        )
         workflow = start('harvesting_fixture',
                          data=[self.record_oai_arxiv_plots],
                          module_name='unit_tests')
@@ -200,11 +207,28 @@ class WorkflowTest(WorkflowTasksTestCase):
         obj = workflow.halted_objects[0]
         record = get_record_from_obj(obj, workflow)
 
+        # Files should have been attached (tarball + pdf)
+        self.assertTrue(len(obj.data["files"]) == 2)
+
         # Some plots/files should have been added to FFTs
         self.assertTrue(record.get('fft'))
 
         # A publication note should have been extracted
         self.assertTrue(record.get('publication_info'))
+
+        # A prediction should have been made
+        self.assertTrue(obj.get_tasks_results().get("arxiv_guessing"))
+
+        # Now let's resolve it as accepted and continue
+        obj.remove_action()
+        obj.extra_data["approved"] = True
+        obj.extra_data["core"] = True
+        obj.set_extra_data(obj.extra_data)
+        obj.save()
+        workflow = obj.continue_workflow()
+
+        record = get_record_from_obj(obj, workflow)
+        self.assertTrue("CORE" in record.get("collections.primary"))
 
     @httpretty.activate
     def test_sss_harvesting_workflow_sad(self):

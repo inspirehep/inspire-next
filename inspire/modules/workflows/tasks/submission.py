@@ -318,33 +318,24 @@ def finalize_and_post_process(workflow_name, **kwargs):
     return _finalize_and_post_process
 
 
-def send_robotupload_deposit(url=None):
-    """Get the MARCXML from the deposit object and ships it."""
-    @wraps(send_robotupload_deposit)
-    def _send_robotupload_deposit(obj, eng):
+def send_robotupload(url=None,
+                     callback_url="callback/workflows/continue",
+                     mode="insert"):
+    """Get the MARCXML from the model and ship it."""
+    @wraps(send_robotupload)
+    def _send_robotupload(obj, eng):
         from invenio.modules.workflows.errors import WorkflowError
         from inspire.utils.robotupload import make_robotupload_marcxml
 
-        callback_url = os.path.join(cfg["CFG_SITE_URL"],
-                                    "callback/workflows/robotupload")
-
-        deposition = Deposition(obj)
-
-        sip = deposition.get_latest_sip(sealed=True)
-
-        if not sip:
-            raise WorkflowError("No sip found", eng.uuid, obj.id)
-        if not deposition.submitted:
-            sip.seal()
-            deposition.update()
-
+        combined_callback_url = os.path.join(cfg["CFG_SITE_URL"], callback_url)
+        model = eng.workflow_definition.model(obj)
+        sip = model.get_latest_sip()
         marcxml = sip.package
-
         result = make_robotupload_marcxml(
             url=url,
             marcxml=marcxml,
-            callback_url=callback_url,
-            mode='insert',
+            callback_url=combined_callback_url,
+            mode=mode,
             nonce=obj.id
         )
         if "[INFO]" not in result.text:
@@ -361,8 +352,6 @@ def send_robotupload_deposit(url=None):
             obj.log.info(result.text)
             eng.halt("Waiting for robotupload: {0}".format(result.text))
         obj.log.info("end of upload")
-
-    return _send_robotupload_deposit
 
 
 def add_files_to_task_results(obj, eng):
@@ -407,14 +396,13 @@ def user_pdf_get(obj, eng):
         obj.log.info("PDF file added to FFT.")
 
 
-def finalize_record_sip(is_dump=True):
+def finalize_record_sip(processor):
     """Finalize the SIP by generating the MARC and storing it in the SIP."""
     @wraps(finalize_record_sip)
-    def _finalize_sip(obj, dummy_eng):
-        from inspire.dojson.hep import hep2marc
+    def _finalize_sip(obj, eng):
         from inspire.dojson.utils import legacy_export_as_marc
-        d = Deposition(obj)
-        sip = d.get_latest_sip(sealed=True)
-        sip.package = legacy_export_as_marc(hep2marc.do(sip.metadata))
-        d.update()
+        model = eng.workflow_definition.model(obj)
+        sip = model.get_latest_sip()
+        sip.package = legacy_export_as_marc(processor.do(sip.metadata))
+        model.update()
     return _finalize_sip
