@@ -111,7 +111,8 @@ def arxiv_fulltext_download(doctype='arXiv'):
             if pdf is None:
                 obj.log.error("No pdf found")
                 return
-            add_file_by_name(model, pdf)
+            pdf = add_file_by_name(model, pdf)
+            obj.extra_data["pdf"] = pdf
         else:
             pdf = existing_file.get_syspath()
 

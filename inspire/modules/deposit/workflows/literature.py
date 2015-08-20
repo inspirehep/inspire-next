@@ -51,7 +51,6 @@ from inspire.modules.workflows.tasks.submission import (
     halt_record_with_action,
     send_robotupload,
     halt_to_render,
-    add_files_to_task_results,
     create_ticket,
     create_curation_ticket,
     reply_ticket,
