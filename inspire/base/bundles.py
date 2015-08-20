@@ -77,7 +77,7 @@ to_remove = ["less/base.less",
 for elem in to_remove:
     _base_styles.contents.remove(elem)
 
-from invenio.modules.search.bundles import js as _search_js
+from invenio_search.bundles import js as _search_js
 
 _search_js.contents += (
     'js/search/invenio_with_spires_typeahead_configuration.js',
@@ -85,7 +85,7 @@ _search_js.contents += (
     # 'js/search/search_box.js',
 )
 
-from invenio.modules.formatter.bundles import css as _formatter_css
+from invenio_formatter.bundles import css as _formatter_css
 
 _formatter_css.contents += (
     'css/formatter/templates_detailed_inspire.css',

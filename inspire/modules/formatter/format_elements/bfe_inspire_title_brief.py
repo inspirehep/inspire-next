@@ -52,7 +52,7 @@ def format_element(bfo, highlight="no", force_title_case="no", brief="no", escti
 
     # Hilight matching words if requested
     if highlight == 'yes':
-        from invenio.modules.formatter import utils
+        from invenio_formatter import utils
         out = utils.highlight(out, bfo.search_pattern,
                               prefix_tag="<span style='font-weight: bolder'>",
                               suffix_tag='</span>')

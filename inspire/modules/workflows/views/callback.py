@@ -22,7 +22,7 @@ from flask import Blueprint, jsonify, request
 
 from invenio.ext.cache import cache
 from invenio.base.globals import cfg
-from invenio.modules.workflows.models import BibWorkflowObject
+from invenio_workflows.models import BibWorkflowObject
 
 
 blueprint = Blueprint(

@@ -17,5 +17,5 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from invenio.modules.deposit.fields.date import *
-from invenio.modules.deposit.fields.wtformsext import *
+from invenio_deposit.fields.date import *
+from invenio_deposit.fields.wtformsext import *

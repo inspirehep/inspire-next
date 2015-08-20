@@ -60,7 +60,8 @@ setup(
         "mixer==4.9.5",  # FIXME: Due to incompatibility with our mixer usage
         "raven==5.0.0",  # FIXME: To be compatible with our sentry version
         "orcid",
-        "retrying"
+        "retrying",
+        "invenio_classifier",
     ],
     extras_require={
         'development': [

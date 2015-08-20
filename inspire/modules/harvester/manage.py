@@ -28,7 +28,7 @@ import sys
 
 from invenio.base.globals import cfg
 
-from invenio.modules.workflows.registry import workflows
+from invenio_workflows.registry import workflows
 from invenio.ext.script import Manager
 
 from .utils import validate_date

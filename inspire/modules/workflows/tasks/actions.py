@@ -55,7 +55,7 @@ def update_note(metadata):
 
 def add_core_deposit(obj, eng):
     """Check if the record was approved as CORE."""
-    from invenio.modules.deposit.models import Deposition
+    from invenio_deposit.models import Deposition
     if obj.extra_data.get("core"):
         d = Deposition(obj)
         sip = d.get_latest_sip(d.submitted)

@@ -32,7 +32,6 @@ point specified in the setup.py::
     },
 """
 
-from celery.schedules import crontab
 from invenio_query_parser.contrib.spires.walkers.pypeg_to_ast import PypegConverter
 from invenio_query_parser.contrib.spires.walkers.spires_to_invenio import SpiresToInvenio
 
@@ -68,7 +67,7 @@ EXTENSIONS = [
     'invenio.ext.es',
     'flask.ext.menu:Menu',
     'flask.ext.breadcrumbs:Breadcrumbs',
-    'invenio.modules.deposit.url_converters',
+    'invenio_deposit.url_converters',
     'inspire.ext.search_bar',
     'inspire.ext.formatter_jinja_filters',
     'inspire.ext.deprecation_warnings:disable_deprecation_warnings',
@@ -94,9 +93,21 @@ PACKAGES = [
     'inspire.modules.styleguide',
     'inspire.modules.workflows',
     'invenio_records',
-    'invenio_oaiharvester',
+    'invenio_search',
+    'invenio_comments',
+    'invenio_collections',
+    'invenio_documents',
     'invenio_pidstore',
     'invenio.modules.*',
+    'invenio_classifier',
+    'invenio_formatter',
+    'invenio_deposit',
+    'invenio_groups',
+    'invenio_workflows',
+    'invenio_oauthclient',
+    'invenio_oauth2server',
+    # TODO 'invenio_messages',
+    'invenio_accounts',
     'invenio.base',
 ]
 
@@ -121,7 +132,7 @@ DEPOSIT_DEFAULT_TYPE = "inspire.modules.deposit.workflows.literature:literature"
 
 # facets ignored by auto-discovery service, they are not accessible in inspire
 PACKAGES_FACETS_EXCLUDE = [
-    'invenio.modules.search.facets.collection',
+    'invenio_search.facets.collection',
 ]
 
 
@@ -179,14 +190,14 @@ OAUTHCLIENT_REMOTE_APPS = dict(
         title='ORCID',
         description='Connecting Research and Researchers.',
         icon='',
-        authorized_handler="invenio.modules.oauthclient.handlers"
+        authorized_handler="invenio_oauthclient.handlers"
                            ":authorized_signup_handler",
-        disconnect_handler="invenio.modules.oauthclient.handlers"
+        disconnect_handler="invenio_oauthclient.handlers"
                            ":disconnect_handler",
         signup_handler=dict(
-            info="invenio.modules.oauthclient.contrib.orcid:account_info",
-            setup="invenio.modules.oauthclient.contrib.orcid:account_setup",
-            view="invenio.modules.oauthclient.handlers:signup_handler",
+            info="invenio_oauthclient.contrib.orcid:account_info",
+            setup="invenio_oauthclient.contrib.orcid:account_setup",
+            view="invenio_oauthclient.handlers:signup_handler",
         ),
         params=dict(
             request_token_params={'scope': '/authenticate'},

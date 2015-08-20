@@ -25,7 +25,7 @@
 from collections import OrderedDict
 from flask import render_template
 
-from invenio.modules.workflows.tasks.marcxml_tasks import (
+from invenio_workflows.tasks.marcxml_tasks import (
     convert_record_to_bibfield,
 )
 
@@ -38,9 +38,9 @@ from inspire.modules.workflows.tasks.matching import(
     arxiv_set_category_field
 )
 
-from inspire.modules.refextract.tasks import extract_journal_info
+# from inspire.modules.refextract.tasks import extract_journal_info
 
-from invenio.modules.classifier.tasks.classification import (
+from invenio_classifier.tasks.classification import (
     classify_paper_with_oaiharvester,
 )
 
@@ -50,18 +50,18 @@ from invenio_oaiharvester.tasks.arxiv import (
     arxiv_refextract,
     arxiv_author_list,
 )
-from invenio.modules.workflows.tasks.workflows_tasks import log_info
+from invenio_workflows.tasks.workflows_tasks import log_info
 from inspire.modules.workflows.tasks.actions import (
     was_approved,
     add_core_oaiharvest,
 )
 
-from invenio.modules.workflows.tasks.logic_tasks import (
+from invenio_workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else,
 )
-from invenio.modules.workflows.tasks.marcxml_tasks import convert_record
-from invenio.modules.workflows.definitions import RecordWorkflow
+from invenio_workflows.tasks.marcxml_tasks import convert_record
+from invenio_workflows.definitions import RecordWorkflow
 from inspire.modules.oaiharvester.tasks.upload import (
     send_robotupload_oaiharvest,
 )
@@ -107,7 +107,7 @@ class process_record_arxiv(RecordWorkflow):
                 arxiv_fulltext_download(),
                 # arxiv_refextract,
                 arxiv_author_list("authorlist2marcxml.xsl"),
-                extract_journal_info,
+                # extract_journal_info,
                 classify_paper_with_oaiharvester(
                     taxonomy="HEPont",
                     only_core_tags=False,

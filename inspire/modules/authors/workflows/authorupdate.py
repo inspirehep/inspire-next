@@ -20,7 +20,7 @@
 from flask import render_template
 
 from invenio.modules.access.control import acc_get_user_email
-from invenio.modules.workflows.definitions import WorkflowBase
+from invenio_workflows.definitions import WorkflowBase
 
 from ..tasks import (create_marcxml_record, send_robotupload,
                      convert_data_to_model, create_curator_ticket_update)
@@ -59,7 +59,7 @@ class authorupdate(WorkflowBase):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Return formatted data of object."""
-        from invenio.modules.formatter import format_record
+        from invenio_formatter import format_record
 
         of = kwargs.get("of", "hp")
 

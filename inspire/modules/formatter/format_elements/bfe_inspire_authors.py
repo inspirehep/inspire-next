@@ -119,7 +119,7 @@ def format_element(bfo, limit, separator='; ',
             # There should not be repeatable subfields here.
             author['a'] = author['a'][0]
             if highlight == 'yes':
-                from invenio.modules.formatter import utils
+                from invenio_formatter import utils
                 author['a'] = utils.highlight(author['a'],
                                               bfo.search_pattern)
 

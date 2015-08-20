@@ -28,7 +28,7 @@ def info():
 def do_upgrade():
     """Implement your upgrades here."""
     from flask import current_app
-    from invenio.modules.workflows.models import BibWorkflowObject
+    from invenio_workflows.models import BibWorkflowObject
     all_objects = BibWorkflowObject.query.all()
     count = 0
     current_app.logger.info("Starting conversion of actions ({0} records)".format(

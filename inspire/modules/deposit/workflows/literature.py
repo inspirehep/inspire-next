@@ -25,23 +25,23 @@ from six import string_types
 
 from invenio.base.globals import cfg
 from invenio.ext.login import UserInfo
-from invenio.modules.accounts.models import UserEXT
+from invenio_accounts.models import UserEXT
 
-from invenio.modules.deposit.types import SimpleRecordDeposition
-from invenio.modules.deposit.tasks import (
+from invenio_deposit.types import SimpleRecordDeposition
+from invenio_deposit.tasks import (
     dump_record_sip,
     render_form,
     prepare_sip,
     prefill_draft,
     process_sip_metadata
 )
-from invenio.modules.deposit.models import Deposition, InvalidDepositionType
+from invenio_deposit.models import Deposition, InvalidDepositionType
 from invenio.modules.knowledge.api import get_kb_mappings
-from invenio.modules.workflows.tasks.logic_tasks import (
+from invenio_workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else,
 )
-from invenio.modules.workflows.definitions import WorkflowBase
+from invenio_workflows.definitions import WorkflowBase
 
 from inspire.modules.workflows.tasks.matching import(
     match_record_remote_deposit,
@@ -241,7 +241,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Return formatted data of object."""
-        from invenio.modules.formatter import format_record
+        from invenio_formatter import format_record
         try:
             deposit_object = Deposition(bwo)
         except InvalidDepositionType:

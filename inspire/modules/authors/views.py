@@ -39,7 +39,7 @@ from invenio.base.globals import cfg
 from invenio.base.i18n import _
 from invenio.ext.principal import permission_required
 from invenio_records.api import Record
-from invenio.modules.workflows.models import BibWorkflowObject
+from invenio_workflows.models import BibWorkflowObject
 
 from .acl import viewauthorreview
 from .forms import AuthorUpdateForm
@@ -229,7 +229,7 @@ def reviewaccepted(objectid, approved, ticket):
 def submitupdate():
     """Form action handler for INSPIRE author update form."""
     from inspire.modules.forms.utils import DataExporter
-    from invenio.modules.workflows.models import BibWorkflowObject
+    from invenio_workflows.models import BibWorkflowObject
     from flask.ext.login import current_user
     form = AuthorUpdateForm(formdata=request.form)
     visitor = DataExporter()
@@ -252,7 +252,7 @@ def submitupdate():
 def submitnew():
     """Form action handler for INSPIRE author new form."""
     from inspire.modules.forms.utils import DataExporter
-    from invenio.modules.workflows.models import BibWorkflowObject
+    from invenio_workflows.models import BibWorkflowObject
     from flask.ext.login import current_user
     form = AuthorUpdateForm(formdata=request.form)
     visitor = DataExporter()

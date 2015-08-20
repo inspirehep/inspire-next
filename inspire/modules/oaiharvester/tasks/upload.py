@@ -69,7 +69,7 @@ def send_robotupload_oaiharvest(url=None):
                               "CFG_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
                               "on host")
                 obj.log.error(result.text)
-            from invenio.modules.workflows.errors import WorkflowError
+            from invenio_workflows.errors import WorkflowError
             txt = "Error while submitting robotupload: {0}".format(result.text)
             raise WorkflowError(txt, eng.uuid, obj.id)
         else:
@@ -90,7 +90,7 @@ def update_existing_record_oaiharvest(url=None):
         from lxml import objectify, etree
 
         from invenio.base.globals import cfg
-        from invenio.modules.workflows.utils import convert_marcxml_to_bibfield
+        from invenio_workflows.utils import convert_marcxml_to_bibfield
         from invenio_records.api import Record
 
         from inspire.utils.robotupload import make_robotupload_marcxml
@@ -156,7 +156,7 @@ def update_existing_record_oaiharvest(url=None):
                                   "CFG_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
                                   "on host")
                     obj.log.error(result.text)
-                from invenio.modules.workflows.errors import WorkflowError
+                from invenio_workflows.errors import WorkflowError
                 txt = "Error while submitting robotupload: {0}".format(result.text)
                 raise WorkflowError(txt, eng.uuid, obj.id)
             else:

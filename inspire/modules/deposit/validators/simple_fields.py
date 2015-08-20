@@ -22,7 +22,7 @@ from wtforms.validators import ValidationError, StopValidation
 
 from invenio.base.globals import cfg
 from invenio.utils.persistentid import is_arxiv, is_isbn
-from invenio.modules.deposit.validation_utils import RequiredIf
+from invenio_deposit.validation_utils import RequiredIf
 
 from urllib import urlencode
 

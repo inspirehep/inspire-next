@@ -29,8 +29,8 @@ from flask import render_template
 from flask_login import current_user
 
 from invenio.base.globals import cfg
-from invenio.modules.deposit.models import Deposition
-from invenio.modules.formatter import format_record
+from invenio_deposit.models import Deposition
+from invenio_formatter import format_record
 
 from retrying import retry
 
@@ -209,8 +209,8 @@ def reply_ticket(template=None, keep_new=False):
     """Reply to a ticket for the submission."""
     @wraps(reply_ticket)
     def _reply_ticket(obj, eng):
-        from invenio.modules.accounts.models import User
-        from invenio.modules.workflows.errors import WorkflowError
+        from invenio_accounts.models import User
+        from invenio_workflows.errors import WorkflowError
         from inspire.utils.tickets import get_instance
 
         ticket_id = obj.extra_data.get("ticket_id", "")
@@ -306,8 +306,8 @@ def finalize_and_post_process(workflow_name, **kwargs):
     """Finalize the submission and starts post-processing."""
     @wraps(finalize_and_post_process)
     def _finalize_and_post_process(obj, eng):
-        from invenio.modules.workflows.api import start_delayed
-        from invenio.modules.workflows.models import ObjectVersion
+        from invenio_workflows.api import start_delayed
+        from invenio_workflows.models import ObjectVersion
 
         obj.version = ObjectVersion.FINAL
         workflow_id = start_delayed(workflow_name,
@@ -322,7 +322,7 @@ def send_robotupload_deposit(url=None):
     """Get the MARCXML from the deposit object and ships it."""
     @wraps(send_robotupload_deposit)
     def _send_robotupload_deposit(obj, eng):
-        from invenio.modules.workflows.errors import WorkflowError
+        from invenio_workflows.errors import WorkflowError
         from inspire.utils.robotupload import make_robotupload_marcxml
 
         callback_url = os.path.join(cfg["CFG_SITE_URL"],

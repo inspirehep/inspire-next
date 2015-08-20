@@ -28,7 +28,7 @@ def info():
 def do_upgrade():
     """Implement your upgrades here."""
     from flask import current_app
-    from invenio.modules.workflows.models import BibWorkflowObject
+    from invenio_workflows.models import BibWorkflowObject
     from inspire.modules.workflows.tasks.matching import arxiv_set_category_field
 
     all_objects = BibWorkflowObject.query.filter(

@@ -26,7 +26,7 @@ class UserData(DataSet):
     class admin:
         id = 1
         email = cfg["CFG_SITE_ADMIN_EMAIL"]
-        password = ''
+        password = 'admin'
         note = '1'
         nickname = 'admin'
 

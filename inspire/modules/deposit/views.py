@@ -26,8 +26,8 @@ from flask import Blueprint, \
     abort
 from flask.ext.login import login_required
 
-from invenio.modules.deposit.models import Deposition, DepositionType
-from invenio.modules.deposit.views.deposit import blueprint as deposit_blueprint
+from invenio_deposit.models import Deposition, DepositionType
+from invenio_deposit.views.deposit import blueprint as deposit_blueprint
 
 from utils import process_metadata_for_charts
 from forms import FilterDateForm

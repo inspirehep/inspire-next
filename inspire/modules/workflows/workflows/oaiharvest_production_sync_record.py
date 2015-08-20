@@ -19,7 +19,7 @@
 
 """Generic record process in harvesting with backwards compatibility."""
 
-from invenio.modules.workflows.definitions import RecordWorkflow
+from invenio_workflows.definitions import RecordWorkflow
 
 from inspire.modules.oaiharvester.tasks.filtering import get_content_from_file
 

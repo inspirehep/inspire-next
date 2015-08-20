@@ -19,8 +19,8 @@
 
 """Blueprint for handling editing from Holding Pen."""
 
-from invenio.modules.deposit.helpers import make_record
-from invenio.modules.deposit.models import Deposition
+from invenio_deposit.helpers import make_record
+from invenio_deposit.models import Deposition
 
 from six import text_type
 from flask import Blueprint, jsonify, request
@@ -28,8 +28,8 @@ from flask_login import login_required
 from harvestingkit.html_utils import MathMLParser
 from invenio.base.decorators import wash_arguments
 from invenio.ext.principal import permission_required
-from invenio.modules.workflows.acl import viewholdingpen
-from invenio.modules.workflows.models import BibWorkflowObject
+from invenio_workflows.acl import viewholdingpen
+from invenio_workflows.models import BibWorkflowObject
 
 
 blueprint = Blueprint(

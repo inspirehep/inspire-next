@@ -20,15 +20,15 @@
 from flask import render_template
 
 from invenio.modules.access.control import acc_get_user_email
-from invenio.modules.workflows.definitions import WorkflowBase
-from invenio.modules.workflows.tasks.logic_tasks import (
+from invenio_workflows.definitions import WorkflowBase
+from invenio_workflows.tasks.logic_tasks import (
     workflow_else,
     workflow_if,
 )
-from invenio.modules.workflows.tasks.marcxml_tasks import (
+from invenio_workflows.tasks.marcxml_tasks import (
     was_approved
 )
-from invenio.modules.workflows.tasks.workflows_tasks import log_info
+from invenio_workflows.tasks.workflows_tasks import log_info
 
 from inspire.modules.workflows.tasks.submission import halt_record_with_action, \
     close_ticket
@@ -97,7 +97,7 @@ class authornew(WorkflowBase):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Return formatted data of object."""
-        from invenio.modules.formatter import format_record
+        from invenio_formatter import format_record
 
         of = kwargs.get("of", "hp")
 

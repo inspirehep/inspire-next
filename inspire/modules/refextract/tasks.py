@@ -23,7 +23,7 @@
 """Workflow tasks using refextract API."""
 
 
-from invenio.legacy.refextract.api import extract_journal_reference
+# from invenio.legacy.refextract.api import extract_journal_reference
 
 
 def extract_journal_info(obj, eng):

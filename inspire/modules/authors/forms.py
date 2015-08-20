@@ -27,14 +27,14 @@ from wtforms.widgets import html_params, \
 
 from invenio.base.globals import cfg
 from invenio.base.i18n import _
-from invenio.modules.deposit.field_widgets import ColumnInput, \
+from invenio_deposit.field_widgets import ColumnInput, \
     ExtendedListWidget, \
     ItemWidget, \
     DynamicListWidget, \
     DynamicItemWidget, \
     WrappedInput
-from invenio.modules.deposit.form import WebDepositForm
-from invenio.modules.deposit import fields
+from invenio_deposit.form import WebDepositForm
+from invenio_deposit import fields
 from inspire.modules.deposit.filters import clean_empty_list
 
 from inspire.modules.forms.validators import ORCIDValidator, \

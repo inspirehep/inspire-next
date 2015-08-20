@@ -22,6 +22,6 @@
 Reads collection information from MARC metadata.
 """
 
-from invenio.modules.search.facet_builders import FacetBuilder
+from invenio_search.facet_builders import FacetBuilder
 
 facet = FacetBuilder('collection')

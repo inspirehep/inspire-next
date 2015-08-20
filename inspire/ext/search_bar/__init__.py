@@ -24,13 +24,13 @@ from invenio.ext.template.context_processor import \
 
 def setup_app(app):
     from invenio_records.views import blueprint as records_blueprint
-    from invenio.modules.deposit.views.deposit import blueprint \
+    from invenio_deposit.views.deposit import blueprint \
         as deposit_blueprint
 
     records_blueprint.before_request(register_add_searchform)
     deposit_blueprint.before_request(register_add_searchform)
 
-    from invenio.modules.search.views.search import blueprint as search_blueprint
+    from invenio_search.views.search import blueprint as search_blueprint
 
     @search_blueprint.before_request
     def register_capture_search_params():
@@ -47,8 +47,8 @@ def register_add_searchform():
 
     @register_template_context_processor
     def add_searchform():
-        from invenio.modules.search.forms import EasySearchForm
-        from invenio.modules.collections.models import Collection
+        from invenio_search.forms import EasySearchForm
+        from invenio_collections.models import Collection
         return {
             'easy_search_form': EasySearchForm(csrf_enabled=False),
             'searchbar_enable': True,

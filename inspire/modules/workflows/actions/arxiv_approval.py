@@ -59,7 +59,7 @@ class arxiv_approval(object):
 
     def resolve(self, bwo):
         """Resolve the action taken in the approval action."""
-        from invenio.modules.workflows.models import ObjectVersion
+        from invenio_workflows.models import ObjectVersion
         from inspire.modules.audit.signals import audit_action_taken
 
         # Audit logging

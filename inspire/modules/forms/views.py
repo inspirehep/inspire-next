@@ -79,7 +79,7 @@ def demoform():
         # visitor = DataExporter()
         # visitor.visit(form)
         # visitor.data
-        from invenio.modules.workflows.models import BibWorkflowObject
+        from invenio_workflows.models import BibWorkflowObject
         from flask.ext.login import current_user
         myobj = BibWorkflowObject.create_object(id_user=current_user.get_id())
         myobj.set_data(form.data)

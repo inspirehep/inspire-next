@@ -20,7 +20,7 @@
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
 
-from invenio.modules.workflows.definitions import WorkflowBase
+from invenio_workflows.definitions import WorkflowBase
 
 
 class HarvestingWorkflowBase(WorkflowBase):
