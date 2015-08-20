@@ -238,6 +238,11 @@ class WorkflowTest(WorkflowTasksTestCase):
         # A prediction should have been made
         self.assertTrue(obj.get_tasks_results().get("arxiv_guessing"))
 
+        record = get_record_from_obj(obj, workflow)
+
+        # This one is not yet CORE
+        self.assertFalse("CORE" in record.get("collections.primary"))
+
         # Now let's resolve it as accepted and continue
         obj.remove_action()
         obj.extra_data["approved"] = True
@@ -247,6 +252,8 @@ class WorkflowTest(WorkflowTasksTestCase):
         workflow = obj.continue_workflow()
 
         record = get_record_from_obj(obj, workflow)
+
+        # Now it is CORE
         self.assertTrue("CORE" in record.get("collections.primary"))
 
 

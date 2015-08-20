@@ -32,6 +32,10 @@ from invenio.modules.workflows.tasks.workflows_tasks import log_info
 
 from inspire.dojson.hep import hep2marc
 
+from inspire.modules.workflows.tasks.classifier import (
+    filter_core_keywords,
+    classify_paper,
+)
 from inspire.modules.workflows.tasks.matching import(
     exists_in_inspire_or_rejected,
     exists_in_holding_pen,
@@ -54,7 +58,6 @@ from inspire.modules.oaiharvester.tasks.arxiv import (
 )
 from inspire.modules.refextract.tasks import extract_journal_info
 from inspire.modules.predicter.tasks import (
-    filter_core_keywords,
     guess_coreness
 )
 from inspire.modules.workflows.tasks.submission import (
@@ -99,13 +102,13 @@ class harvesting_fixture(RecordWorkflow, DepositionType):
                 # arxiv_refextract, FIXME Need to fix extractutils + new linker
                 arxiv_author_list("authorlist2marcxml.xsl"),
                 extract_journal_info,
-                # classify_paper_with_oaiharvester(
-                #     taxonomy="HEPont",
-                #     only_core_tags=False,
-                #     spires=True,
-                #     with_author_keywords=True,
-                # ),
-                # filter_core_keywords(filter_kb="antihep"),
+                classify_paper(
+                    taxonomy="HEPont",
+                    only_core_tags=False,
+                    spires=True,
+                    with_author_keywords=True,
+                ),
+                filter_core_keywords(filter_kb="antihep"),
                 guess_coreness("new_astro_model.pickle"),
                 halt_record_with_action(action="arxiv_approval",
                                         message="Accept article?"),

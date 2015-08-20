@@ -47,8 +47,9 @@ from inspire.dojson.hep import hep2marc
 
 from inspire.modules.refextract.tasks import extract_journal_info
 
-from invenio.modules.classifier.tasks.classification import (
-    classify_paper_with_oaiharvester,
+from inspire.modules.workflows.tasks.classifier import (
+    classify_paper,
+    filter_core_keywords,
 )
 
 from invenio.modules.workflows.tasks.workflows_tasks import log_info
@@ -76,7 +77,6 @@ from inspire.modules.workflows.tasks.submission import (
     finalize_record_sip,
 )
 from inspire.modules.predicter.tasks import (
-    filter_core_keywords,
     guess_coreness
 )
 from inspire.modules.workflows.models import Payload, create_payload
