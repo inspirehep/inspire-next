@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Contains task to check if incoming record already exist."""
+"""Tasks to check if the incoming record already exist."""
 
 import os
 import requests
@@ -32,7 +32,6 @@ from flask import current_app
 from functools import wraps
 
 from invenio.base.globals import cfg
-from invenio_deposit.models import Deposition
 
 from inspire.modules.oaiharvester.tasks.arxiv import get_arxiv_id_from_record
 
@@ -41,52 +40,65 @@ from inspire.utils.helpers import get_record_from_model, \
     get_record_from_obj
 
 
-# TODO(jacquerie): fix test for perform_request.
 def search(query):
-    """TODO."""
+    """Perform a search and returns the matching ids."""
     params = dict(p=query, of='id')
 
     try:
-        return requests.get(cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"], params=params).json()
+        return requests.get(
+            cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"],
+            params=params
+        ).json()
     except requests.ConnectionError:
-        current_app.logger.error("Error connecting to remote server:\n {0}".format(
-            traceback.format_exc()
-        ))
+        current_app.logger.error(
+            "Error connecting to remote server:\n {0}".format(
+                traceback.format_exc()
+            )
+        )
         raise
     except ValueError:
-        current_app.logger.error("Error decoding results from remote server:\n {0}".format(
-            traceback.format_exc()
-        ))
+        current_app.logger.error(
+            "Error decoding results from remote server:\n {0}".format(
+                traceback.format_exc()
+            )
+        )
         raise
 
 
 def match_by_arxiv_id(record):
     """Match by arXiv identifier."""
     arxiv_id = get_arxiv_id_from_record(record)
+
     if arxiv_id:
         query = '035:"{0}"'.format(arxiv_id)
         return search(query)
+
     return list()
 
 
 def match_by_doi(record):
     """Match by DOIs."""
-    # FIXME(jacquerie): handle multiple DOIs.
-    doi = record.get('doi.doi', '')
+    dois = record.get('doi.doi', [])
 
-    if doi:
+    result = set()
+    for doi in dois:
         query = '0247:"{0}"'.format(doi)
-        return search(query)
-    return list()
+        result.update(search(query))
+
+    return list(result)
 
 
 def match(obj, eng):
-    """TODO."""
+    """Return True if the record already exists in INSPIRE.
+
+    Searches by arXiv identifier and DOI, updates extra_data with the
+    first id returned by the search.
+    """
     model = eng.workflow_definition.model(obj)
     record = get_record_from_model(model)
 
     response = list(
-        set(match_by_arxiv_id(record)) | set( match_by_doi(record))
+        set(match_by_arxiv_id(record)) | set(match_by_doi(record))
     )
 
     if response:
@@ -104,12 +116,11 @@ def match(obj, eng):
 
 
 def was_already_harvested(record):
-    """TODO."""
-    # XXX(jacquerie): comment copied from original location.
-    #                 Maybe no longer relevant?
+    """Return True if the record was already harvested.
 
-    # FIXME: Let's filter away CORE categories for now.
-    # Later all harvesting will happen here.
+    We use the following heuristic: if the record belongs to one of the
+    CORE categories then it was probably ingested in some other way.
+    """
     categories = record.get('subject_term.value', [])
     for category in categories:
         if category.lower() in cfg.get('INSPIRE_ACCEPTED_CATEGORIES', []):
@@ -117,16 +128,17 @@ def was_already_harvested(record):
 
 
 def is_too_old(record, days_ago=5):
-    """TODO."""
-    # XXX(jacquerie): comment copied from original location.
-    #                 Maybe no longer relevant?
+    """Return True if the record is more than days_ago days old.
 
-    # Check if this record should already have been rejected
-    # (only on non-debug mode) E.g. if it is older than 2 days.
+    If the record is older then it's probably an update of an earlier
+    record, and we don't want those.
+    """
     defense_dates = record.get('defense_date.date', '')
     for defense_date in defense_dates:
         parsed_date = datetime.datetime.strptime(defense_date, "%Y-%m-%d")
-        if date_older_than(parsed_date, datetime.datetime.now(), days=days_ago):
+        if date_older_than(parsed_date,
+                           datetime.datetime.now(),
+                           days=days_ago):
             return True
 
 
