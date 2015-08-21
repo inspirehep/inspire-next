@@ -34,7 +34,14 @@ from .helpers import WorkflowTasksTestCase
 
 class WorkflowTest(WorkflowTasksTestCase):
 
-    """TODO."""
+    """Test the Payload class.
+
+    The Payload class, derived from the Deposition class representing a user
+    submission, can be used to represent the result of harvesting a record in
+    a workflow.
+
+    These two classes share their data model and have similar APIs.
+    """
 
     def setUp(self):
         """Setup tests."""
@@ -42,7 +49,7 @@ class WorkflowTest(WorkflowTasksTestCase):
         from inspire.modules.workflows.receivers import precache_holdingpen_row
         from invenio.modules.workflows.signals import workflow_halted
 
-        # Disable the holdingpen caching receiver
+        # Disable the holdingpen caching receiver.
         workflow_halted.disconnect(precache_holdingpen_row)
 
         self.create_registries()
@@ -95,7 +102,7 @@ class WorkflowTest(WorkflowTasksTestCase):
         delete_kb('harvesting_fixture_kb')
 
     def test_payload_creation(self):
-        """TODO."""
+        """A Payload can be created."""
         from invenio.modules.workflows.api import start
         from invenio.modules.workflows.engine import WorkflowStatus
 
@@ -111,7 +118,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             self.assertIn(l, modified_object.data)
 
     def test_payload_sip_creation(self):
-        """TODO."""
+        """A Payload has a sip."""
         from invenio.modules.workflows.api import start
         from inspire.modules.workflows.models import Payload
 
@@ -126,7 +133,7 @@ class WorkflowTest(WorkflowTasksTestCase):
         # self.assertTrue(sip.package)
 
     def test_payload_model_creation(self):
-        """TODO."""
+        """A workflow can specify a model to encapsulate behaviour."""
         from invenio.modules.workflows.api import start
 
         workflow = start('payload_model_fixture',
@@ -140,7 +147,7 @@ class WorkflowTest(WorkflowTasksTestCase):
         # self.assertTrue(sip.package)
 
     def test_payload_file_creation(self):
-        """TODO."""
+        """Can add a file to a Payload."""
         from invenio.modules.workflows.models import BibWorkflowObject
         from inspire.modules.workflows.models import Payload
         from inspire.utils.helpers import (
@@ -271,7 +278,7 @@ class WorkflowTest(WorkflowTasksTestCase):
 
 class AgnosticTest(WorkflowTasksTestCase):
 
-    """TODO."""
+    """Test that the data model can still accept a deposition."""
 
     def setUp(self):
         """Setup tests."""
@@ -317,14 +324,10 @@ class AgnosticTest(WorkflowTasksTestCase):
 
     def teardown(self):
         """Clean up created objects."""
-        from invenio.modules.workflows.models import Workflow
-        from invenio.modules.knowledge.api import delete_kb
-
         self.cleanup_registries()
 
     def test_agnostic_deposit(self):
-        """TODO."""
-        from invenio.modules.workflows.api import start
+        """A deposition still has the same data model."""
         from invenio.modules.deposit.models import Deposition
         from invenio.ext.login.legacy_user import UserInfo
 
