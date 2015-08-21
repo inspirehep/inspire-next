@@ -45,6 +45,7 @@ def publication_info(self, key, value):
         'pubinfo_freetext': value.get('x'),
         'year': value.get('y'),
         'isbn': value.get('z'),
+        'note': value.get('m'),
     }
 
 
