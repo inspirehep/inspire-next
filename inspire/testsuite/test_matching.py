@@ -25,6 +25,7 @@ from invenio.testsuite import make_test_suite, run_test_suite, InvenioTestCase
 import httpretty
 import logging
 
+
 class DummyObj(object):
     """Dummy workflow object"""
     def __init__(self):
@@ -41,80 +42,98 @@ class MatchingTests(InvenioTestCase):
     def test_matching_result(self):
         """Test that good matching results are handled correctly."""
         from invenio.base.globals import cfg
-        from inspire.modules.workflows.tasks.matching import perform_request
+        from inspire.modules.workflows.tasks.matching import search
+
         httpretty.register_uri(
             httpretty.GET,
             cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"],
             body="[1234]",
             content_type="application/json"
         )
-        params = dict(p='035:"oai:arXiv.org:1505.12345"', of="id")
-        obj = DummyObj()
-        res = perform_request(obj, params)
+
+        res = search('035:"oai:arXiv.org:1505.12345"')
+
         self.assertTrue(res)
-        self.assertTrue("recid" in obj.extra_data)
-        self.assertTrue(1234 == obj.extra_data["recid"])
+        self.assertTrue(res[0] == 1234)
 
     @httpretty.activate
     def test_empty_matching_result(self):
         """Test that empty matching results are handled correctly."""
         from invenio.base.globals import cfg
-        from inspire.modules.workflows.tasks.matching import perform_request
+        from inspire.modules.workflows.tasks.matching import search
+
         httpretty.register_uri(
             httpretty.GET,
             cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"],
             body="[]",
             content_type="application/json"
         )
-        params = dict(p='035:"oai:arXiv.org:1505.12345"', of="id")
-        obj = DummyObj()
-        res = perform_request(obj, params)
+
+        res = search('035:"oai:arXiv.org:1505.12345"')
+
         self.assertFalse(res)
-        self.assertFalse("recid" in obj.extra_data)
+        self.assertTrue(len(res) == 0)
 
     @httpretty.activate
     def test_bad_matching_result(self):
         """Test that bad matching results are handled correctly."""
         from invenio.base.globals import cfg
-        from inspire.modules.workflows.tasks.matching import perform_request
+        from inspire.modules.workflows.tasks.matching import search
+
         httpretty.register_uri(
             httpretty.GET,
             cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"],
             body="<html></html>",
         )
-        params = dict(p='035:"oai:arXiv.org:1505.12345"', of="id")
-        obj = DummyObj()
-        self.assertRaises(ValueError, perform_request, obj, params)
+
+        self.assertRaises(ValueError, search, '035:"oai:arXiv.org:1505.12345"')
 
     @httpretty.activate
     def test_arxiv_results(self):
         """Test that bad matching results are handled correctly."""
+        from invenio_records.api import Record
         from invenio.base.globals import cfg
-        from inspire.modules.workflows.tasks.matching import match_record_arxiv_remote
+        from inspire.modules.workflows.tasks.matching import match_by_arxiv_id
+
         httpretty.register_uri(
             httpretty.GET,
             cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"],
             body="[1234]",
             content_type="application/json"
         )
-        obj = DummyObj()
-        res = match_record_arxiv_remote(obj, "arXiv:1505.12345")
+
+        record = Record({"arxiv_id": "arXiv:1505.12345"})
+        res = match_by_arxiv_id(record)
+        self.assertTrue(res)
+
+        record = Record({"report_number": [
+            {
+                "primary": "arXiv:1505.12345",
+                "source": "arXiv",
+            }
+        ]})
+        res = match_by_arxiv_id(record)
         self.assertTrue(res)
 
     @httpretty.activate
     def test_doi_results(self):
         """Test that bad matching results are handled correctly."""
+        from invenio_records.api import Record
         from invenio.base.globals import cfg
-        from inspire.modules.workflows.tasks.matching import match_record_arxiv_remote
+        from inspire.modules.workflows.tasks.matching import match_by_doi
+
         httpretty.register_uri(
             httpretty.GET,
             cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"],
             body="[1234]",
             content_type="application/json"
         )
-        obj = DummyObj()
-        res = match_record_arxiv_remote(obj, "10.1086/305772")
+
+        record = Record({"doi": {"doi": "10.1086/305772"}})
+        res = match_by_doi(record)
         self.assertTrue(res)
+
+        # FIXME Also test for multiple DOIs
 
 TEST_SUITE = make_test_suite(MatchingTests)
 

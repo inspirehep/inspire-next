@@ -39,6 +39,11 @@ class WorkflowTest(WorkflowTasksTestCase):
     def setUp(self):
         """Setup tests."""
         from invenio.modules.knowledge.api import add_kb
+        from inspire.modules.workflows.receivers import precache_holdingpen_row
+        from invenio.modules.workflows.signals import workflow_halted
+
+        # Disable the holdingpen caching receiver
+        workflow_halted.disconnect(precache_holdingpen_row)
 
         self.create_registries()
         self.record_oai_arxiv_plots = pkg_resources.resource_string(
@@ -80,7 +85,10 @@ class WorkflowTest(WorkflowTasksTestCase):
         """Clean up created objects."""
         from invenio.modules.workflows.models import Workflow
         from invenio.modules.knowledge.api import delete_kb
+        from inspire.modules.workflows.receivers import precache_holdingpen_row
+        from invenio.modules.workflows.signals import workflow_halted
 
+        workflow_halted.connect(precache_holdingpen_row)
         self.delete_objects(
             Workflow.get(Workflow.module_name == 'unit_tests').all())
         self.cleanup_registries()
@@ -163,6 +171,8 @@ class WorkflowTest(WorkflowTasksTestCase):
         from invenio.base.globals import cfg
         from invenio.modules.workflows.api import start
 
+        httpretty.HTTPretty.allow_net_connect = False
+
         httpretty.register_uri(
             httpretty.GET,
             cfg['WORKFLOWS_MATCH_REMOTE_SERVER_URL'],
@@ -185,6 +195,8 @@ class WorkflowTest(WorkflowTasksTestCase):
         from inspire.utils.helpers import (
             get_record_from_obj,
         )
+
+        httpretty.HTTPretty.allow_net_connect = False
 
         httpretty.register_uri(
             httpretty.GET,
