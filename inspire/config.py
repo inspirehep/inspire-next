@@ -35,39 +35,14 @@ point specified in the setup.py::
 from invenio_query_parser.contrib.spires.walkers.pypeg_to_ast import PypegConverter
 from invenio_query_parser.contrib.spires.walkers.spires_to_invenio import SpiresToInvenio
 
+from invenio.base.config import PACKAGES as _PACKAGES, \
+                                EXTENSIONS as _EXTENSIONS
 
-EXTENSIONS = [
+
+EXTENSIONS = _EXTENSIONS + [
     'invenio.ext.arxiv:Arxiv',
     'invenio.ext.crossref:CrossRef',
-    'invenio.ext.confighacks',
-    'invenio.ext.passlib:Passlib',
-    'invenio.ext.debug_toolbar',
-    'invenio.ext.babel',
-    'invenio.ext.sqlalchemy',
-    'invenio.ext.sslify',
-    'invenio.ext.cache',
-    'invenio.ext.session',
-    'invenio.ext.login',
-    'invenio.ext.principal',
-    'invenio.ext.email',
-    'invenio.ext.fixtures',  # before legacy
-    'invenio.ext.legacy',
-    'invenio.ext.assets',
-    'invenio.ext.template',
-    'invenio.ext.admin',
-    'invenio.ext.logging',
-    'invenio.ext.logging.backends.fs',
-    'invenio.ext.logging.backends.legacy',
-    'invenio.ext.logging.backends.sentry',
-    'invenio.ext.gravatar',
-    'invenio.ext.collect',
-    'invenio.ext.restful',
     'invenio.ext.mixer',
-    'invenio.ext.jasmine',
-    'invenio.ext.es',
-    'flask.ext.menu:Menu',
-    'flask.ext.breadcrumbs:Breadcrumbs',
-    'invenio_deposit.url_converters',
     'inspire.ext.search_bar',
     'inspire.ext.formatter_jinja_filters',
     'inspire.ext.deprecation_warnings:disable_deprecation_warnings',
@@ -79,48 +54,9 @@ PACKAGES = [
     'inspire.dojson',
     'inspire.ext',
     'inspire.utils',
-    'inspire.modules.access',
-    'inspire.modules.audit',
-    'inspire.modules.authors',
-    'inspire.modules.predicter',
-    'inspire.modules.deposit',
-    'inspire.modules.formatter',
-    'inspire.modules.harvester',
-    'inspire.modules.oaiharvester',
-    'inspire.modules.forms',
-    'inspire.modules.ranker',
-    'inspire.modules.refextract',
-    'inspire.modules.styleguide',
-    'inspire.modules.workflows',
-    'invenio_records',
-    'invenio_search',
-    'invenio_comments',
-    'invenio_collections',
-    'invenio_documents',
-    'invenio_pidstore',
-    'invenio.modules.*',
+    'inspire.modules.*',
     'invenio_classifier',
-    'invenio_formatter',
-    'invenio_deposit',
-    'invenio_groups',
-    'invenio_workflows',
-    'invenio_oauthclient',
-    'invenio_oauth2server',
-    # TODO 'invenio_messages',
-    'invenio_accounts',
-    'invenio.base',
-]
-
-PACKAGES_EXCLUDE = [
-    'invenio.modules.annotations',
-    'invenio.modules.archiver',
-    'invenio.modules.communities',  # remove with invenio/modules/communities
-    'invenio.modules.multimedia',
-    'invenio.modules.records',
-    'invenio.modules.tags',
-    'invenio.modules.oaiharvester',
-    'invenio.modules.pidstore',
-]
+] + _PACKAGES
 
 # Configuration related to Deposit module
 
