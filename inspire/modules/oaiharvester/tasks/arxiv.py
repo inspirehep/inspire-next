@@ -62,7 +62,9 @@ def get_arxiv_id_from_record(record):
             if number.get("source", "").lower() == "arxiv":
                 arxiv_id = number.get("primary")
 
-    if not arxiv_id.startswith("arXiv"):
+    if not arxiv_id.lower().startswith("oai:arxiv") and not \
+       arxiv_id.lower().startswith("arxiv") and \
+       "/" not in arxiv_id:
         arxiv_id = "arXiv:{0}".format(arxiv_id)
     return arxiv_id
 

@@ -61,23 +61,23 @@ def search(query):
 
 
 def match_by_arxiv_id(record):
-    """TODO."""
+    """Match by arXiv identifier."""
     arxiv_id = get_arxiv_id_from_record(record)
-
     if arxiv_id:
-        arxiv_id = arxiv_id.lower().replace('arxiv:', '')
-        query = '035:"arXiv.org:{0}"'.format(arxiv_id)
+        query = '035:"{0}"'.format(arxiv_id)
         return search(query)
+    return list()
 
 
 def match_by_doi(record):
-    """TODO."""
+    """Match by DOIs."""
     # FIXME(jacquerie): handle multiple DOIs.
     doi = record.get('doi.doi', '')
 
     if doi:
         query = '0247:"{0}"'.format(doi)
         return search(query)
+    return list()
 
 
 def match(obj, eng):
@@ -85,9 +85,9 @@ def match(obj, eng):
     model = eng.workflow_definition.model(obj)
     record = get_record_from_model(model)
 
-    arxiv_id_response = match_by_arxiv_id(record)
-    doi_response = match_by_doi(record)
-    response = arxiv_id_response.extend(doi_response)
+    response = list(
+        set(match_by_arxiv_id(record)) | set( match_by_doi(record))
+    )
 
     if response:
         # FIXME(jacquerie): use more than just the first id.
@@ -134,7 +134,6 @@ def exists_in_inspire_or_rejected(days_ago=None):
     """Check if record exist on INSPIRE or already rejected."""
     @wraps(exists_in_inspire_or_rejected)
     def _exists_in_inspire_or_rejected(obj, eng):
-
         if match(obj, eng):
             obj.log.info("Record already exists in INSPIRE.")
             return True
@@ -155,6 +154,7 @@ def exists_in_inspire_or_rejected(days_ago=None):
             if is_too_old(record, days_ago=_days_ago):
                 obj.log.info("Record is likely rejected previously.")
                 return True
+        return False
 
     return _exists_in_inspire_or_rejected
 
