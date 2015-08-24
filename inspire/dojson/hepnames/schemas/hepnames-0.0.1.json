@@ -179,11 +179,15 @@
             "description": "Contains a previous name. For example, it can be a maiden's name."
         },
         "source": {
-            "type": "object",
+            "uniqueItems": true,
+            "type": "array",
             "description": "This is the source of informatio. It is currently a mixed bags of user IDs or provenance information, e.g. arXiv etc. FIXME: we should really discuss about it. E.g. eprint, webform, Rachel.Lumpkin@durham.ac.uk(96), Fermilab, C09-05-04, KYOTOU...",
-            "properties": {
-                "name": {
-                    "type": "string"
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    }
                 },
                 "date_verified": {
                     "type": "string",
@@ -194,37 +198,45 @@
         "field_categories": {
             "uniqueItems": true,
             "items": {
-                "enum": [
-                    "acc-phys",
-                    "astro-ph",
-                    "atom-ph",
-                    "chao-dyn",
-                    "climate",
-                    "comp",
-                    "cond-mat",
-                    "genl-th",
-                    "gr-qc",
-                    "hep-ex",
-                    "hep-lat",
-                    "hep-ph",
-                    "hep-th",
-                    "instr",
-                    "librarian",
-                    "math",
-                    "math-ph",
-                    "med-phys",
-                    "nlin",
-                    "nucl-ex",
-                    "nucl-th",
-                    "physics",
-                    "plasma-phys",
-                    "q-bio",
-                    "quant-ph",
-                    "ssrl",
-                    "other"
-                ],
-                "type": "string",
-                "description": "FIXME: Time to revise this list?"
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "enum": [
+                            "acc-phys",
+                            "astro-ph",
+                            "atom-ph",
+                            "chao-dyn",
+                            "climate",
+                            "comp",
+                            "cond-mat",
+                            "genl-th",
+                            "gr-qc",
+                            "hep-ex",
+                            "hep-lat",
+                            "hep-ph",
+                            "hep-th",
+                            "instr",
+                            "librarian",
+                            "math",
+                            "math-ph",
+                            "med-phys",
+                            "nlin",
+                            "nucl-ex",
+                            "nucl-th",
+                            "physics",
+                            "plasma-phys",
+                            "q-bio",
+                            "quant-ph",
+                            "ssrl",
+                            "other"
+                        ],
+                        "type": "string",
+                        "description": "FIXME: Time to revise this list?"
+                    },
+                    "type": {
+                        "type": "string"
+                    }
+                }
             },
             "type": "array",
             "description": "Contains field category."

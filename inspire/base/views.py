@@ -121,9 +121,17 @@ Feedback:
 
 @blueprint.app_template_filter('marcxml')
 def marcxml_filter(record):
-    # FIXME Add undo models for each doc type and use them based on
-    # collection value
     from inspire.dojson.hep import hep2marc
+    from inspire.dojson.hepnames import hepnames2marc
     from inspire.dojson.utils import legacy_export_as_marc
 
-    return legacy_export_as_marc(hep2marc.do(record))
+    collections = [
+        collection['primary'] for collection in record["collections"]
+    ]
+
+    if "HEP" in collections:
+        return legacy_export_as_marc(hep2marc.do(record))
+    elif "AUTHOR" in collections:
+        return legacy_export_as_marc(hepnames2marc.do(record))
+    elif "HEPNAMES" in collections:
+        return legacy_export_as_marc(hepnames2marc.do(record))

@@ -26,3 +26,4 @@ from dojson import Overdo
 from dojson import utils
 
 hepnames = Overdo()
+hepnames2marc = Overdo()
