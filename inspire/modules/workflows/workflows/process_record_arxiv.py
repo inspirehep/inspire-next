@@ -69,7 +69,7 @@ from invenio_workflows.tasks.logic_tasks import (
     workflow_else,
 )
 
-from invenio_workflows.tasks.marcxml_tasks import convert_record
+from inspire.modules.converter.tasks import convert_record
 from invenio_workflows.definitions import RecordWorkflow
 
 from inspire.modules.workflows.tasks.submission import (
@@ -100,7 +100,7 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
         convert_record_to_json,
         # Create payload object to align with Deposition object
         create_payload,
-        workflow_if(exists_in_inspire_or_rejected),
+        workflow_if(exists_in_inspire_or_rejected()),
         [
             delete_self_and_stop_processing,
             # update_existing_record_oaiharvest(),
