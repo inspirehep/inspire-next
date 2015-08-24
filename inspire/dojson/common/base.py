@@ -28,18 +28,21 @@ from ..hep.model import hep, hep2marc
 from ..institutions.model import institutions
 from ..experiments.model import experiments
 from ..journals.model import journals
+from ..hepnames.model import hepnames, hepnames2marc
 
 
 @institutions.over('control_number', '^001')
 @hep.over('control_number', '^001')
 @experiments.over('control_number', '^001')
 @journals.over('control_number', '^001')
+@hepnames.over('control_number', '^001')
 def control_number(self, key, value):
     """Record Identifier."""
     return value[0]
 
 
 @hep2marc.over('001', 'control_number')
+@hepnames2marc.over('001', 'control_number')
 def control_number2marc(self, key, value):
     """Record Identifier."""
     return value
@@ -49,12 +52,14 @@ def control_number2marc(self, key, value):
 @hep.over('agency_code', '^003')
 @experiments.over('agency_code', '^003')
 @journals.over('agency_code', '^003')
+@hepnames.over('agency_code', '^003')
 def agency_code(self, key, value):
     """Control Number Identifier."""
     return value[0]
 
 
 @hep2marc.over('003', 'agency_code')
+@hepnames2marc.over('003', 'agency_code')
 def agency_code2marc(self, key, value):
     """Control Number Identifier."""
     return value
@@ -64,12 +69,14 @@ def agency_code2marc(self, key, value):
 @hep.over('date_and_time_of_latest_transaction', '^005')
 @experiments.over('date_and_time_of_latest_transaction', '^005')
 @journals.over('date_and_time_of_latest_transaction', '^005')
+@hepnames.over('date_and_time_of_latest_transaction', '^005')
 def date_and_time_of_latest_transaction(self, key, value):
     """Date and Time of Latest Transaction."""
     return value[0]
 
 
 @hep2marc.over('005', 'date_and_time_of_latest_transaction')
+@hepnames2marc.over('005', 'date_and_time_of_latest_transaction')
 def date_and_time_of_latest_transaction2marc(self, key, value):
     """Date and Time of Latest Transaction."""
     return value
@@ -79,6 +86,7 @@ def date_and_time_of_latest_transaction2marc(self, key, value):
 @experiments.over('url', '^856.[10_28]')
 @journals.over('url', '^856.[10_28]')
 @hep.over('url', '^856.[10_28]')
+@hepnames.over('url', '^856.[10_28]')
 @utils.for_each_value
 @utils.filter_values
 def url(self, key, value):
@@ -95,6 +103,7 @@ def url(self, key, value):
 
 
 @hep2marc.over('8564', 'url')
+@hepnames2marc.over('8564', 'url')
 @utils.for_each_value
 @utils.filter_values
 def url2marc(self, key, value):
@@ -110,10 +119,11 @@ def url2marc(self, key, value):
     }
 
 
-@hep.over('oai_pmh', '^909C0')
-@institutions.over('oai_pmh', '^909C0')
-@experiments.over('oai_pmh', '^909C0')
-@journals.over('oai_pmh', '^909C0')
+@hep.over('oai_pmh', '^909CO')
+@institutions.over('oai_pmh', '^909CO')
+@experiments.over('oai_pmh', '^909CO')
+@journals.over('oai_pmh', '^909CO')
+@hepnames.over('oai_pmh', '^909CO')
 @utils.for_each_value
 @utils.filter_values
 def oai_pmh(self, key, value):
@@ -125,7 +135,8 @@ def oai_pmh(self, key, value):
     }
 
 
-@hep2marc.over('909C0', 'oai_pmh')
+@hep2marc.over('909CO', 'oai_pmh')
+@hepnames2marc.over('909CO', 'oai_pmh')
 @utils.for_each_value
 @utils.filter_values
 def oai_pmh2marc(self, key, value):
@@ -141,6 +152,7 @@ def oai_pmh2marc(self, key, value):
 @institutions.over('creation_modification_date', '^961..')
 @experiments.over('creation_modification_date', '^961..')
 @journals.over('creation_modification_date', '^961..')
+@hepnames.over('creation_modification_date', '^961..')
 @utils.for_each_value
 @utils.filter_values
 def creation_modification_date(self, key, value):
@@ -152,6 +164,7 @@ def creation_modification_date(self, key, value):
 
 
 @hep2marc.over('961', 'creation_modification_date')
+@hepnames2marc.over('961', 'creation_modification_date')
 @utils.for_each_value
 @utils.filter_values
 def creation_modification_date2marc(self, key, value):
@@ -166,6 +179,7 @@ def creation_modification_date2marc(self, key, value):
 @institutions.over('spires_sysno', '^970..')
 @experiments.over('spires_sysno', '^970..')
 @journals.over('spires_sysno', '^970..')
+@hepnames.over('spires_sysno', '^970..')
 @utils.for_each_value
 @utils.filter_values
 def spires_sysno(self, key, value):
@@ -176,6 +190,7 @@ def spires_sysno(self, key, value):
 
 
 @hep2marc.over('970', 'spires_sysno')
+@hepnames2marc.over('970', 'spires_sysno')
 @utils.for_each_value
 @utils.filter_values
 def spires_sysno2marc(self, key, value):
@@ -189,6 +204,7 @@ def spires_sysno2marc(self, key, value):
 @institutions.over('collections', '^980..')
 @experiments.over('collections', '^980..')
 @journals.over('collections', '^980..')
+@hepnames.over('collections', '^980..')
 @utils.for_each_value
 @utils.filter_values
 def collections(self, key, value):
@@ -201,6 +217,7 @@ def collections(self, key, value):
 
 
 @hep2marc.over('980', 'collections')
+@hepnames2marc.over('980', 'collections')
 @utils.for_each_value
 @utils.filter_values
 def collections2marc(self, key, value):
@@ -216,6 +233,7 @@ def collections2marc(self, key, value):
 @institutions.over('deleted_recid', '^981..')
 @experiments.over('deleted_recid', '^981..')
 @journals.over('deleted_recid', '^981..')
+@hepnames.over('deleted_recid', '^981..')
 @utils.for_each_value
 @utils.filter_values
 def deleted_recid(self, key, value):
@@ -226,6 +244,7 @@ def deleted_recid(self, key, value):
 
 
 @hep2marc.over('981', 'deleted_recid')
+@hepnames2marc.over('981', 'deleted_recid')
 @utils.for_each_value
 @utils.filter_values
 def deleted_recid2marc(self, key, value):
