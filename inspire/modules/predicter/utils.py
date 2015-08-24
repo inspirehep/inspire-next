@@ -69,13 +69,17 @@ def update_classification_in_task_results(obj, output):
         return
 
 
-def prepare_prediction_record(obj):
+def prepare_prediction_record(metadata):
     """Given a workflow object, return compatible prediction record."""
     prepared_record = {}
-    prepared_record["title"] = obj.data.get("title.title")
-    prepared_record["abstract"] = obj.data.get("abstract.summary")
+    prepared_record["title"] = metadata.get("title.title", "")
+    abstract = metadata.get("abstract.summary")
+    if abstract:
+        prepared_record["abstract"] = abstract[0]
+    else:
+        prepared_record["abstract"] = ""
     categories = []
-    for category in obj.data.get("subject_term"):
+    for category in metadata.get("subject_term"):
         if category.get("scheme").lower() == "arxiv":
             categories.append(category.get("term", ""))
     prepared_record["categories"] = categories

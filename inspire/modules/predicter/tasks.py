@@ -31,30 +31,16 @@ from functools import wraps
 
 from invenio.celery import celery
 
+from inspire.utils.helpers import (
+    get_record_from_model,
+)
+
 from .utils import (
     update_classification_in_task_results,
     get_classification_from_task_results,
     prepare_prediction_record,
     load_model
 )
-
-
-def filter_core_keywords(filter_kb):
-    """Filter core keywords."""
-    @wraps(filter_core_keywords)
-    def _filter_core_keywords(obj, eng):
-        from inspire.utils.knowledge import check_keys
-
-        result = get_classification_from_task_results(obj)
-        if result is None:
-            return
-        filtered_core_keywords = {}
-        for core_keyword, times_counted in result.get("Core keywords").items():
-            if not check_keys(filter_kb, [core_keyword]):
-                filtered_core_keywords[core_keyword] = times_counted
-        result["Filtered Core keywords"] = filtered_core_keywords
-        update_classification_in_task_results(obj, result)
-    return _filter_core_keywords
 
 
 def guess_coreness(model_path="arxiv_guessing.pickle"):
@@ -76,14 +62,21 @@ def guess_coreness(model_path="arxiv_guessing.pickle"):
 
         if not os.path.isfile(full_model_path):
             obj.log.error(
-                "Model file {0} not found! Skipping prediction...".format(full_model_path)
+                "Model file {0} not found! Skipping prediction...".format(
+                    full_model_path
+                )
             )
             return
+        model = eng.workflow_definition.model(obj)
+        record = get_record_from_model(model)
 
-        prepared_record = prepare_prediction_record(obj)
+        prepared_record = prepare_prediction_record(record)
+
         pipeline = load_model(full_model_path)
         decision, scores = predict(pipeline, prepared_record)
-        obj.log.info("Successfully predicted as {0} with {1}".format(decision, max(scores)))
+        obj.log.info("Successfully predicted as {0} with {1}".format(
+            decision, max(scores)
+        ))
 
         result = {}
         result["decision"] = decision

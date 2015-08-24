@@ -225,6 +225,40 @@ def deleted_recid(self, key, value):
     }
 
 
+@hep.over('fft', '^FFT..')
+@institutions.over('fft', '^FFT..')
+@experiments.over('fft', '^FFT..')
+@journals.over('fft', '^FFT..')
+@utils.for_each_value
+@utils.filter_values
+def fft(self, key, value):
+    """Collection this record belongs to."""
+    return {
+        'url': value.get('a'),
+        'docfile_type': value.get('t'),
+        'flag': value.get('o'),
+        'description': value.get('d'),
+        'filename': value.get('n'),
+    }
+
+
+@hep.over('FFT', 'fft')
+@institutions.over('FFT', 'fft')
+@experiments.over('FFT', 'fft')
+@journals.over('FFT', 'fft')
+@utils.for_each_value
+@utils.filter_values
+def fft2marc(self, key, value):
+    """Collection this record belongs to."""
+    return {
+        'a': value.get('url'),
+        't': value.get('docfile_type'),
+        'o': value.get('flag'),
+        'd': value.get('description'),
+        'n': value.get('filename'),
+    }
+
+
 @hep2marc.over('981', 'deleted_recid')
 @utils.for_each_value
 @utils.filter_values

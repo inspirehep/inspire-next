@@ -43,14 +43,14 @@ from invenio.modules.workflows.tasks.logic_tasks import (
 )
 from invenio.modules.workflows.definitions import WorkflowBase
 
-from inspire.modules.workflows.tasks.matching import(
-    match_record_remote_deposit,
-)
+from inspire.dojson.hep import hep2marc
+
+from inspire.modules.workflows.tasks.matching import match
+
 from inspire.modules.workflows.tasks.submission import (
     halt_record_with_action,
-    send_robotupload_deposit,
+    send_robotupload,
     halt_to_render,
-    add_files_to_task_results,
     create_ticket,
     create_curation_ticket,
     reply_ticket,
@@ -62,9 +62,10 @@ from inspire.modules.workflows.tasks.submission import (
 from inspire.modules.workflows.tasks.actions import (
     was_approved,
     reject_record,
-    add_core_deposit
+    add_core,
 )
 from inspire.modules.deposit.forms import LiteratureForm
+from inspire.modules.predicter.tasks import guess_coreness
 
 from ..tasks import add_submission_extra_data
 from ..utils import filter_empty_helper
@@ -89,6 +90,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
     object_type = "submission"
 
+    model = Deposition
+
     workflow = [
         # Pre-fill draft with values passed in from request
         prefill_draft(draft_id='default'),
@@ -103,26 +106,31 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         process_sip_metadata(),
         add_submission_extra_data,
         # Generate MARC based on metadata dictionary.
-        finalize_record_sip(is_dump=False),
+        finalize_record_sip(processor=hep2marc),
         halt_to_render,
         create_ticket(template="deposit/tickets/curator_submitted.html",
                       queue="HEP_add_user",
                       ticket_id_key="ticket_id"),
         reply_ticket(template="deposit/tickets/user_submitted.html",
                      keep_new=True),
-        add_files_to_task_results,
+        # add_files_to_task_results,  Not needed as no files are added..
+        guess_coreness("new_astro_model.pickle"),
+        # classify_paper_with_deposit(
+        #    taxonomy="HEPont.rdf",
+        #    output_mode="dict",
+        # ),
         halt_record_with_action(action="core_approval",
                                 message="Accept submission?"),
         workflow_if(was_approved),
         [
-            workflow_if(match_record_remote_deposit, True),
+            workflow_if(match, True),
             [
-                add_core_deposit,
+                add_core,
                 add_note_entry,
                 user_pdf_get,
-                finalize_record_sip(is_dump=False),
+                finalize_record_sip(processor=hep2marc),
                 # Send robotupload and halt until webcoll callback
-                send_robotupload_deposit(),
+                send_robotupload(),
                 create_curation_ticket(
                     template="deposit/tickets/curation_core.html",
                     queue="HEP_curation",

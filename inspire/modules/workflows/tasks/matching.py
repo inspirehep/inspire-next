@@ -20,160 +20,185 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Contains task to check if incoming record already exist."""
+"""Tasks to check if the incoming record already exist."""
 
 import os
 import requests
 import traceback
 import datetime
 
+from flask import current_app
+
 from functools import wraps
 
 from invenio.base.globals import cfg
-from invenio.modules.deposit.models import Deposition
+
+from inspire.modules.oaiharvester.tasks.arxiv import get_arxiv_id_from_record
 
 from inspire.utils.datefilter import date_older_than
+from inspire.utils.helpers import get_record_from_model, \
+    get_record_from_obj
 
 
-def perform_request(obj, params):
-    """Perform a matching request and if match found populates extra_data."""
+def search(query):
+    """Perform a search and returns the matching ids."""
+    params = dict(p=query, of='id')
+
     try:
-        res = requests.get(cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"], params=params)
-        response = res.json()
-        if response:
-            obj.extra_data['recid'] = response[0]
-            obj.extra_data['url'] = os.path.join(
-                cfg["CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"],
-                'record',
-                str(response[0])
-            )
-            return True
+        return requests.get(
+            cfg["WORKFLOWS_MATCH_REMOTE_SERVER_URL"],
+            params=params
+        ).json()
     except requests.ConnectionError:
-        obj.log.error("Error connecting to remote server:\n {0}".format(
-            traceback.format_exc()
-        ))
+        current_app.logger.error(
+            "Error connecting to remote server:\n {0}".format(
+                traceback.format_exc()
+            )
+        )
         raise
     except ValueError:
-        obj.log.error("Error decoding results from remote server:\n {0}".format(
-            traceback.format_exc()
-        ))
+        current_app.logger.error(
+            "Error decoding results from remote server:\n {0}".format(
+                traceback.format_exc()
+            )
+        )
         raise
 
 
-def match_record_arxiv_remote(obj, arxiv_id):
-    """Look on the remote server if the record exists using arXiv id."""
+def match_by_arxiv_id(record):
+    """Match by arXiv identifier."""
+    arxiv_id = get_arxiv_id_from_record(record)
+
     if arxiv_id:
-        arxiv_id = arxiv_id.lower().replace('arxiv:', '')
-        params = dict(p='035:"oai:arXiv.org:{0}"'.format(arxiv_id), of="id")
-        return perform_request(obj, params)
-    return {}
+        query = '035:"{0}"'.format(arxiv_id)
+        return search(query)
+
+    return list()
 
 
-def match_record_arxiv_remote_oaiharvest(obj, eng):
-    """Look on the remote server if the record exists using arXiv id."""
-    report_numbers = obj.get_data().get('report_number', [])
-    for number in report_numbers:
-        if number.get("source", "").lower() == "arxiv":
-            res = match_record_arxiv_remote(obj, number.get("primary"))
-            if res:
-                return True
-    return False
+def match_by_doi(record):
+    """Match by DOIs."""
+    dois = record.get('doi.doi', [])
+
+    result = set()
+    for doi in dois:
+        query = '0247:"{0}"'.format(doi)
+        result.update(search(query))
+
+    return list(result)
 
 
-def exists_in_inspire_or_rejected(obj, eng):
-    """Check if record exist on INSPIRE or already rejected."""
-    # Does record exist on production yet?
-    if match_record_arxiv_remote_oaiharvest(obj, eng):
-        obj.log.info("Record already exists in INSPIRE.")
+def match(obj, eng):
+    """Return True if the record already exists in INSPIRE.
+
+    Searches by arXiv identifier and DOI, updates extra_data with the
+    first id returned by the search.
+    """
+    model = eng.workflow_definition.model(obj)
+    record = get_record_from_model(model)
+
+    response = list(
+        set(match_by_arxiv_id(record)) | set(match_by_doi(record))
+    )
+
+    if response:
+        # FIXME(jacquerie): use more than just the first id.
+        obj.extra_data['recid'] = response[0]
+        obj.extra_data['url'] = os.path.join(
+            cfg["CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"],
+            'record',
+            str(response[0])
+        )
+
         return True
 
-    # FIXME: Let's filter away CORE categories for now.
-    # Later all harvesting will happen here.
-    if not cfg.get("DEBUG"):
-        categories = obj.data.get("subject_term.term", [])
-        for category in categories:
-            if category.lower() in cfg.get("INSPIRE_ACCEPTED_CATEGORIES", []):
-                obj.log.info("Record is already being harvested on INSPIRE.")
-                return True
-
-    # Check if this record should already have been rejected
-    # (only on non-debug mode) E.g. if it is older than 2 days.
-    if not cfg.get("DEBUG"):
-        preprint_date = obj.data.get("preprint_info.date", "")
-        if preprint_date:
-            parsed_date = datetime.datetime.strptime(preprint_date, "%Y-%m-%d")
-            if date_older_than(parsed_date, datetime.datetime.now(), days=5):
-                obj.log.info("Record is likely rejected previously.")
-                return True
-
-
-def match_record_arxiv_remote_deposit(obj, eng):
-    """Look on the remote server if the record exists using arXiv id."""
-    d = Deposition(obj)
-    sip = d.get_latest_sip(sealed=True)
-    return bool(match_record_arxiv_remote(obj, sip.metadata.get('arxiv_id')))
-
-
-def match_record_doi_remote(obj, doi):
-    """Look on the remote server if the record exists using doi."""
-    if doi:
-        params = dict(p='0247:"{0}"'.format(doi), of="id")
-        return perform_request(obj, params)
     return False
 
 
-def match_record_doi_remote_deposit(obj, eng):
-    """Look on the remote server if the record exists using doi."""
-    d = Deposition(obj)
-    sip = d.get_latest_sip(sealed=True)
-    doi = sip.metadata.get('doi')
-    return match_record_doi_remote(obj, doi)
+def was_already_harvested(record):
+    """Return True if the record was already harvested.
+
+    We use the following heuristic: if the record belongs to one of the
+    CORE categories then it was probably ingested in some other way.
+    """
+    categories = record.get('subject_term.value', [])
+    for category in categories:
+        if category.lower() in cfg.get('INSPIRE_ACCEPTED_CATEGORIES', []):
+            return True
 
 
-def match_record_remote_deposit(obj, eng):
-    """Look on the remote server if the record exists using doi and arxiv_id."""
-    return match_record_arxiv_remote_deposit(obj, eng) or\
-        match_record_doi_remote_deposit(obj, eng)
+def is_too_old(record, days_ago=5):
+    """Return True if the record is more than days_ago days old.
+
+    If the record is older then it's probably an update of an earlier
+    record, and we don't want those.
+    """
+    defense_dates = record.get('defense_date.date', '')
+    for defense_date in defense_dates:
+        parsed_date = datetime.datetime.strptime(defense_date, "%Y-%m-%d")
+        if date_older_than(parsed_date,
+                           datetime.datetime.now(),
+                           days=days_ago):
+            return True
 
 
-def match_record_remote_oaiharvest(obj, eng):
-    """Look on the remote server if the record exists using doi and arxiv_id."""
-    return match_record_arxiv_remote_deposit(obj, eng) or\
-        match_record_doi_remote_deposit(obj, eng)
+def exists_in_inspire_or_rejected(days_ago=None):
+    """Check if record exist on INSPIRE or already rejected."""
+    @wraps(exists_in_inspire_or_rejected)
+    def _exists_in_inspire_or_rejected(obj, eng):
+        if match(obj, eng):
+            obj.log.info("Record already exists in INSPIRE.")
+            return True
+
+        if not cfg.get('DEBUG'):
+            model = eng.workflow_definition.model(obj)
+            record = get_record_from_model(model)
+
+            if was_already_harvested(record):
+                obj.log.info('Record is already being harvested on INSPIRE.')
+                return True
+
+            if days_ago is None:
+                _days_ago = cfg.get('INSPIRE_ACCEPTANCE_TIMEOUT', 5)
+            else:
+                _days_ago = days_ago
+
+            if is_too_old(record, days_ago=_days_ago):
+                obj.log.info("Record is likely rejected previously.")
+                return True
+        return False
+
+    return _exists_in_inspire_or_rejected
 
 
-def save_identifiers_oaiharvest(kb_name):
+def save_identifiers_to_kb(kb_name,
+                           identifier_key="report_number.primary"):
     """Save the record identifiers into a KB."""
-    @wraps(save_identifiers_oaiharvest)
-    def _save_identifiers_oaiharvest(obj, eng):
+    @wraps(save_identifiers_to_kb)
+    def _save_identifiers_to_kb(obj, eng):
         from inspire.utils.knowledge import save_keys_to_kb
+        record = get_record_from_obj(obj, eng)
 
-        identifiers = []
-        report_numbers = obj.get_data().get('report_number', [])
-        for number in report_numbers:
-            if number.get("source", "").lower() == "arxiv":
-                arxiv_id = number.get("primary")
-                identifiers.append(arxiv_id)
+        identifiers = record.get(identifier_key, [])
         save_keys_to_kb(kb_name, identifiers, obj.id)
 
-    return _save_identifiers_oaiharvest
+    return _save_identifiers_to_kb
 
 
-def exists_in_holding_pen(kb_name):
-    """Check if a oaiharvest record exists in HP."""
+def exists_in_holding_pen(kb_name,
+                          identifier_key="report_number.primary"):
+    """Check if a record exists in HP by looking in given KB."""
     @wraps(exists_in_holding_pen)
     def _exists_in_holding_pen(obj, eng):
         from inspire.utils.knowledge import get_value
 
-        identifiers = []
-        report_numbers = obj.get_data().get('report_number', [])
-        for number in report_numbers:
-            if number.get("source", "").lower() == "arxiv":
-                arxiv_id = number.get("primary")
-                identifiers.append(arxiv_id)
+        record = get_record_from_obj(obj, eng)
+        identifiers = record.get(identifier_key, [])
         result = get_value(kb_name, identifiers)
         if result:
-            obj.log.info("Record already found in Holding Pen ({0})".format(result))
+            obj.log.info("Record already found in Holding Pen ({0})".format(
+                result
+            ))
         return result
 
     return _exists_in_holding_pen
@@ -219,4 +244,5 @@ def update_old_object(kb_name):
 
 def arxiv_set_category_field(obj, eng):
     """Temporary measure to enable sorting by primary category."""
-    obj.uri = obj.data.get("report_number.arxiv_category", [""])[0]
+    record = get_record_from_obj(obj, eng)
+    obj.uri = record.get("report_number.arxiv_category", [""])[0]

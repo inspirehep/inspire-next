@@ -1,26 +1,32 @@
 # -*- coding: utf-8 -*-
 #
-## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
-##
-## INSPIRE is free software: you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, either version 3 of the License, or
-## (at your option) any later version.
-##
-## INSPIRE is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-##
-## In applying this license, CERN does not waive the privileges and immunities
-## granted to it by virtue of its status as an Intergovernmental Organization
-## or submit itself to any jurisdiction.
+# This file is part of INSPIRE.
+# Copyright (C) 2014, 2015 CERN.
+#
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this license, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
+
+"""Tasks related to user actions."""
 
 from functools import wraps
+
+from inspire.utils.helpers import (
+    get_record_from_model,
+)
 
 
 def was_approved(obj, eng):
@@ -28,17 +34,19 @@ def was_approved(obj, eng):
     return obj.extra_data.get("approved", False)
 
 
-def add_core(metadata):
-    """Check if the record was approved as CORE."""
-    collections = metadata.get("collections", [])
+def add_core(obj, eng):
+    """Add CORE collection tag to collections."""
+    model = eng.workflow_definition.model(obj)
+    record = get_record_from_model(model)
+    collections = record.get("collections", [])
     # Do not add it again if already there
     has_core = [v for c in collections
                 for v in c.values()
                 if v.lower() == "core"]
     if not has_core:
         collections.append({"primary": "CORE"})
-        metadata["collections"] = collections
-    return metadata
+        record["collections"] = collections
+    model.update()
 
 
 def update_note(metadata):
@@ -51,23 +59,6 @@ def update_note(metadata):
     if new_notes:
         metadata["note"] = new_notes
     return metadata
-
-
-def add_core_deposit(obj, eng):
-    """Check if the record was approved as CORE."""
-    from invenio.modules.deposit.models import Deposition
-    if obj.extra_data.get("core"):
-        d = Deposition(obj)
-        sip = d.get_latest_sip(d.submitted)
-        sip.metadata = add_core(sip.metadata)
-        d.update()
-
-
-def add_core_oaiharvest(obj, eng):
-    """Check if the record was approved as CORE."""
-    if obj.extra_data.get("core"):
-        obj.data = add_core(obj.data)
-        obj.data = update_note(obj.data)
 
 
 def reject_record(message):
