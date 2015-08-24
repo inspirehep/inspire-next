@@ -28,9 +28,9 @@ from flask import render_template
 from invenio_oaiharvester.tasks.records import convert_record_to_json
 from invenio_records.api import Record
 
-from invenio.modules.deposit.models import DepositionType
+from invenio_deposit.models import DepositionType
 
-from invenio.modules.workflows.tasks.marcxml_tasks import (
+from invenio_workflows.tasks.marcxml_tasks import (
     convert_record_to_bibfield,
 )
 

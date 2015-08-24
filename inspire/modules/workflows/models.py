@@ -23,7 +23,7 @@ import os
 
 from invenio.base.globals import cfg
 
-from invenio.modules.deposit.models import (
+from invenio_deposit.models import (
     Deposition,
     Agent,
     DepositionDraft,
@@ -32,7 +32,7 @@ from invenio.modules.deposit.models import (
     DepositionFile,
     FilenameAlreadyExists,
 )
-from invenio.modules.deposit.storage import Storage
+from invenio_deposit.storage import Storage
 
 
 def create_payload(obj, eng):
@@ -71,7 +71,7 @@ class Payload(Deposition):
     @classmethod
     def get_type(self, type_or_id):
         """Get type."""
-        from invenio.modules.workflows.registry import workflows
+        from invenio_workflows.registry import workflows
         return workflows.get(type_or_id)
 
     @classmethod
