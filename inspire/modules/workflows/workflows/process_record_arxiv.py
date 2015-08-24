@@ -30,10 +30,6 @@ from invenio_records.api import Record
 
 from invenio_deposit.models import DepositionType
 
-from invenio_workflows.tasks.marcxml_tasks import (
-    convert_record_to_bibfield,
-)
-
 from inspire.modules.workflows.tasks.matching import(
     exists_in_inspire_or_rejected,
     exists_in_holding_pen,
@@ -48,8 +44,8 @@ from inspire.modules.workflows.tasks.matching import(
 from inspire.dojson.hep import hep2marc
 
 from inspire.modules.workflows.tasks.classifier import (
-    classify_paper,
     filter_core_keywords,
+    classify_paper,
 )
 
 from inspire.modules.oaiharvester.tasks.arxiv import (
@@ -81,7 +77,7 @@ from inspire.modules.predicter.tasks import (
     guess_coreness
 )
 from inspire.modules.workflows.models import Payload, create_payload
-
+from inspire.utils.helpers import get_record_from_model
 
 class process_record_arxiv(RecordWorkflow, DepositionType):
 
@@ -121,13 +117,13 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
                 # arxiv_refextract,
                 arxiv_author_list("authorlist2marcxml.xsl"),
                 # extract_journal_info,
-                # classify_paper_with_oaiharvester(
-                #     taxonomy="HEPont",
-                #     only_core_tags=False,
-                #     spires=True,
-                #     with_author_keywords=True,
-                # ),
-                # filter_core_keywords(filter_kb="antihep"),
+                classify_paper(
+                    taxonomy="HEPont",
+                    only_core_tags=False,
+                    spires=True,
+                    with_author_keywords=True,
+                ),
+                filter_core_keywords(filter_kb="antihep"),
                 guess_coreness("new_astro_model.pickle"),
                 halt_record_with_action(action="arxiv_approval",
                                         message="Accept article?"),
@@ -149,7 +145,8 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
     def get_title(bwo):
         if not isinstance(bwo.data, dict):
             return "No title found."
-        record = Record(bwo.data)
+        model = process_record_arxiv.model(bwo)
+        record = get_record_from_model(model)
         return record.get("title.title", "No title found")
 
     @staticmethod
@@ -157,22 +154,23 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
         """Get the description column part."""
         if not isinstance(bwo.data, dict):
             return "No description found."
-        record = Record(bwo.data)
+        model = process_record_arxiv.model(bwo)
+        record = get_record_from_model(model)
         abstract = ""
         authors = []
         categories = []
         final_identifiers = []
         if hasattr(record, "get"):
             # Get identifiers
-            doi = record.get("doi.doi")
+            doi = record.get("doi.doi", [])
             if doi:
-                final_identifiers.append(doi)
+                final_identifiers.extend(doi)
 
             system_no = record.get("system_control_number.system_control_number", [])
             if system_no:
                 final_identifiers.extend(system_no)
 
-            # Get subject categories, adding main one first.
+            # Get subject categories, adding main one first. Order matters here.
             categories = record.get("report_number.arxiv_category", [])
             categories.extend(record.get("subject_term.value", []))
             categories = list(OrderedDict.fromkeys(categories))  # Unique only
