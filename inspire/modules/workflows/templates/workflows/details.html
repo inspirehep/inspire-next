@@ -154,7 +154,7 @@
       <!-- Block for the extra information that appear on the tabpanel (ticket, submitter email) -->
       {% block extra_info %}
           {% macro get_email() -%}
-            <i class="fa fa-user"> {{ bwobject.get_data()['sips'][0]['metadata']['acquisition_source']['email'] }}</i>
+            <i class="fa fa-user"> {{ bwobject.get_data()['sips'][0]['agents'][0]['email_address'] }}</i>
           {% endmacro %}
 
           {% macro get_ticket() -%}

@@ -273,109 +273,106 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         metadata.clear()
         metadata.update(converted)
 
-        try:
-            # Add extra fields that need to be computed or depend on other
-            # fields.
-            #
-            # ============================
-            # Collection
-            # ============================
-            metadata['collections'] = [{'primary': "HEP"}]
-            if form_fields['type_of_doc'] == 'thesis':
-                metadata['collections'].append({'primary': "THESIS"})
-            if "subject_term" in metadata:
-                # Check if it was imported from arXiv
-                if any([x["scheme"] == "arXiv" for x in metadata["subject_term"]]):
-                    metadata['collections'].extend([{'primary': "arXiv"},
-                                                    {'primary': "Citeable"}])
-                    # Add arXiv as source
-                    if metadata.get("abstract"):
-                        metadata['abstract']['source'] = 'arXiv'
-                    if form_fields.get("arxiv_id"):
-                        metadata['system_number_external'] = {
-                            'system_number_external': 'oai:arXiv.org:' + form_fields['arxiv_id'],
-                            'institute': 'arXiv'
-                        }
-            if metadata["publication_info"]:
-                metadata['collections'].append({'primary': "Published"})
-            # ============================
-            # Title source
-            # ============================
-            if 'title_source' in form_fields and form_fields['title_source']:
-                metadata['title']['source'] = form_fields['title_source']
-            # ============================
-            # Conference name
-            # ============================
-            if 'conf_name' in form_fields:
-                metadata.setdefault("hidden_note", []).append({
-                    "value": form_fields['conf_name']
-                })
-            # ============================
-            # Page range
-            # ============================
-            if 'page_nr' not in metadata:
-                if metadata.get("publication_info", {}).get("page_artid"):
-                    pages = metadata['publication_info']['page_artid'].split('-')
-                    if len(pages) == 2:
-                        try:
-                            metadata['page_nr'] = {
-                                "value": int(pages[1]) - int(pages[0]) + 1
-                            }
-                        except ValueError:
-                            pass
-            # ============================
-            # Language
-            # ============================
-            if metadata.get("language") == "oth":
-                if form_fields.get("other_language"):
-                    metadata["language"] = form_fields["other_language"]
-            # ============================
-            # Date of defense
-            # ============================
-            if form_fields.get('defense_date'):
-                defense_note = {
-                    'value': 'Presented on ' + form_fields['defense_date']
-                }
-                metadata.setdefault("note", []).append(defense_note)
-            # ==========
-            # Owner Info
-            # ==========
-            userid = deposition.user_id
-            user = UserInfo(userid)
-            email = user.info.get('email', '')
-            external_ids = UserEXT.query.filter_by(id_user=userid).all()
-            sources = ["{0}{1}".format('inspire:uid:', userid)]
-            sources.extend(["{0}:{1}".format(e_id.method,
-                                             e_id.id) for e_id in external_ids])
-            metadata['acquisition_source'] = dict(
-                source=sources,
-                email=email,
-                method="submission",
-                submission_number=deposition.id,
-            )
-            # ==============
-            # References
-            # ==============
-            if form_fields.get('references'):
-                metadata['references'] = form_fields.get('references')
-            # ==============
-            # Extra comments
-            # ==============
-            if form_fields.get('extra_comments'):
-                metadata.setdefault('hidden_note', []).append(
-                    {
-                        'value': form_fields['extra_comments'],
-                        'source': 'submitter'
+        # Add extra fields that need to be computed or depend on other
+        # fields.
+        #
+        # ============================
+        # Collection
+        # ============================
+        metadata['collections'] = [{'primary': "HEP"}]
+        if form_fields['type_of_doc'] == 'thesis':
+            metadata['collections'].append({'primary': "THESIS"})
+        if "subject_term" in metadata:
+            # Check if it was imported from arXiv
+            if any([x["scheme"] == "arXiv" for x in metadata["subject_term"]]):
+                metadata['collections'].extend([{'primary': "arXiv"},
+                                                {'primary': "Citeable"}])
+                # Add arXiv as source
+                if metadata.get("abstract"):
+                    metadata['abstract']['source'] = 'arXiv'
+                if form_fields.get("arxiv_id"):
+                    metadata['system_number_external'] = {
+                        'system_number_external': 'oai:arXiv.org:' + form_fields['arxiv_id'],
+                        'institute': 'arXiv'
                     }
-                )
-            # ======================================
-            # Journal name Knowledge Base conversion
-            # ======================================
-            if metadata.get("publication_info", {}).get("journal_title"):
-                journals_kb = dict([(x['key'].lower(), x['value'])
-                                    for x in get_kb_mappings(cfg.get("DEPOSIT_INSPIRE_JOURNALS_KB"))])
+        if metadata["publication_info"]:
+            metadata['collections'].append({'primary': "Published"})
+        # ============================
+        # Title source
+        # ============================
+        if 'title_source' in form_fields and form_fields['title_source']:
+            metadata['title']['source'] = form_fields['title_source']
+        # ============================
+        # Conference name
+        # ============================
+        if 'conf_name' in form_fields:
+            metadata.setdefault("hidden_note", []).append({
+                "value": form_fields['conf_name']
+            })
+        # ============================
+        # Page range
+        # ============================
+        if 'page_nr' not in metadata:
+            if metadata.get("publication_info", {}).get("page_artid"):
+                pages = metadata['publication_info']['page_artid'].split('-')
+                if len(pages) == 2:
+                    try:
+                        metadata['page_nr'] = {
+                            "value": int(pages[1]) - int(pages[0]) + 1
+                        }
+                    except ValueError:
+                        pass
+        # ============================
+        # Language
+        # ============================
+        if metadata.get("language") == "oth":
+            if form_fields.get("other_language"):
+                metadata["language"] = form_fields["other_language"]
+        # ============================
+        # Date of defense
+        # ============================
+        if form_fields.get('defense_date'):
+            defense_note = {
+                'value': 'Presented on ' + form_fields['defense_date']
+            }
+            metadata.setdefault("note", []).append(defense_note)
+        # ==========
+        # Owner Info
+        # ==========
+        userid = deposition.user_id
+        user = UserInfo(userid)
+        email = user.info.get('email', '')
+        external_ids = UserEXT.query.filter_by(id_user=userid).all()
+        sources = ["{0}{1}".format('inspire:uid:', userid)]
+        sources.extend(["{0}:{1}".format(e_id.method,
+                                         e_id.id) for e_id in external_ids])
+        metadata['acquisition_source'] = dict(
+            source=sources,
+            email=email,
+            method="submission",
+            submission_number=deposition.id,
+        )
+        # ==============
+        # References
+        # ==============
+        if form_fields.get('references'):
+            metadata['references'] = form_fields.get('references')
+        # ==============
+        # Extra comments
+        # ==============
+        if form_fields.get('extra_comments'):
+            metadata.setdefault('hidden_note', []).append(
+                {
+                    'value': form_fields['extra_comments'],
+                    'source': 'submitter'
+                }
+            )
+        # ======================================
+        # Journal name Knowledge Base conversion
+        # ======================================
+        if metadata.get("publication_info", {}).get("journal_title"):
+            journals_kb = dict([(x['key'].lower(), x['value'])
+                                for x in get_kb_mappings(cfg.get("DEPOSIT_INSPIRE_JOURNALS_KB"))])
 
-                metadata['publication_info']['journal_title'] = journals_kb.get(metadata['publication_info']['journal_title'].lower(),
-                                                                                metadata['publication_info']['journal_title'])
-        except KeyError:
-            pass
+            metadata['publication_info']['journal_title'] = journals_kb.get(metadata['publication_info']['journal_title'].lower(),
+                                                                            metadata['publication_info']['journal_title'])

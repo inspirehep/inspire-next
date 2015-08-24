@@ -50,7 +50,7 @@ define(
         edit_url: "",
         objectid: "",
         subjText: "",
-        splitter: "Subject: ",
+        splitter: "Subjects:",
 
         knowledgeBaseUrl: "/api/knowledge/Subjects/mappings",
 

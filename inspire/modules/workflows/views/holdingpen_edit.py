@@ -43,7 +43,7 @@ blueprint = Blueprint(
 
 # Constants
 SUBJECT_TERM = "subject_term"
-TERM = "term"
+VALUE = "value"
 SCHEME = "scheme"
 INSPIRE_SCHEME = "INSPIRE"
 
@@ -70,7 +70,7 @@ def edit_record_title(value, objectid):
         metadata = sip.metadata
 
         metadata[TITLE][TITLE] = MathMLParser.html_to_text(value)
-        sip.package = make_record(sip.metadata).legacy_export_as_marc()
+        sip.package = make_record(sip.metadata)
         deposition.save()
     else:
         data[TITLE_FIELD] = MathMLParser.html_to_text(value)
@@ -107,7 +107,7 @@ def edit_record_urls(objectid):
             new_urls_array.append({'url': url})
 
         metadata[URL] = new_urls_array
-        sip.package = make_record(sip.metadata).legacy_export_as_marc()
+        sip.package = make_record(sip.metadata)
         deposition.save()
     else:
         # TODO: Does nothing, need to find how urls are structured
@@ -166,14 +166,14 @@ def edit_submission(deposition, metadata, sip, new_subjects_list, subject_dict):
     """Subject editing for submissions."""
     old_subjects_list = []
     for subj in subject_dict:
-        old_subjects_list.append(subj[TERM])
+        old_subjects_list.append(subj[VALUE])
 
     metadata[SUBJECT_TERM] = revised_subjects_list(old_subjects_list,
                                                    new_subjects_list,
                                                    subject_dict)
 
     # hacky thing to update package as well, needed to show changes
-    sip.package = make_record(sip.metadata).legacy_export_as_marc()
+    sip.package = make_record(sip.metadata)
     deposition.save()
 
 
@@ -186,12 +186,12 @@ def revised_subjects_list(old, new, subject_dict):
 
     # Remove subjects
     subject_objects = [subj for subj in subject_dict
-                       if subj[TERM] not in to_remove]
+                       if subj[VALUE] not in to_remove]
 
     # Add the new subjects
     for subj in to_add:
         subject_objects.append({
-            TERM: subj,
+            VALUE: subj,
             SCHEME: INSPIRE_SCHEME
         })
 

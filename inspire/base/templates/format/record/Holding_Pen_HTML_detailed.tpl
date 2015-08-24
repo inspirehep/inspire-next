@@ -63,7 +63,7 @@
     <div class="row">
       <div class="col-md-11">
         <b>e-Print:</b> <a href="http://arxiv.org/abs/arXiv:{{ get_arxiv_id(record)|trim }}">{{ get_arxiv_id(record) }}</a>
-        [{{ get_arxiv_category(record) }}]<b>|</b>
+        [{{ get_arxiv_category(record) }}]<b> | </b>
         <b><a href="http://arXiv.org/pdf/{{ get_arxiv_id(record) }}.pdf">PDF</a></b>
       </div>
     </div><br>
@@ -94,10 +94,12 @@
             <a href='#' id='edit-urls'><i class='fa fa-pencil-square-o'></i></a>
             <!-- URLs -->
             <span id='editable-urls'><small><strong>URL(s): </strong></small></span>
+            <span id="url-links">
             {% for url_obj in record['url'] %}
-              <span id="url-links"><a href="{{ url_obj['url'] }}">{{ url_obj['url'] }}</a></span>
+              <a href="{{ url_obj['url'] }}">{{ url_obj['url'] }}</a>
               {{ add_delimiter(loop, '|') }}
             {% endfor %}
+            </span>
           </div>
         </div>
       </div><br>

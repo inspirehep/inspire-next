@@ -226,7 +226,6 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Nicely format the record."""
-        from invenio.modules.formatter import format_record
         from invenio_records.api import Record
         import collections
 
@@ -234,13 +233,13 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
         if not data:
             return ''
 
-        # Monkeypatch recid in the object
-        data['recid'] = bwo.id
-        of = kwargs.get("of", None)
         if isinstance(data, collections.Mapping):
             try:
-                data = Record(data)
+                record = Record(data)
             except (TypeError, KeyError):
                 pass
 
-        return format_record(data, of)
+        return render_template(
+            'format/record/Holding_Pen_HTML_detailed.tpl',
+            record=record
+        )
