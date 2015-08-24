@@ -47,7 +47,7 @@ class WorkflowTest(WorkflowTasksTestCase):
         """Setup tests."""
         from invenio.modules.knowledge.api import add_kb
         from inspire.modules.workflows.receivers import precache_holdingpen_row
-        from invenio.modules.workflows.signals import workflow_halted
+        from invenio_workflows.signals import workflow_halted
 
         # Disable the holdingpen caching receiver.
         workflow_halted.disconnect(precache_holdingpen_row)
@@ -90,10 +90,10 @@ class WorkflowTest(WorkflowTasksTestCase):
 
     def tearDown(self):
         """Clean up created objects."""
-        from invenio.modules.workflows.models import Workflow
+        from invenio_workflows.models import Workflow
         from invenio.modules.knowledge.api import delete_kb
         from inspire.modules.workflows.receivers import precache_holdingpen_row
-        from invenio.modules.workflows.signals import workflow_halted
+        from invenio_workflows.signals import workflow_halted
 
         workflow_halted.connect(precache_holdingpen_row)
         self.delete_objects(
@@ -103,8 +103,8 @@ class WorkflowTest(WorkflowTasksTestCase):
 
     def test_payload_creation(self):
         """A Payload can be created."""
-        from invenio.modules.workflows.api import start
-        from invenio.modules.workflows.engine import WorkflowStatus
+        from invenio_workflows.api import start
+        from invenio_workflows.engine import WorkflowStatus
 
         workflow = start('payload_fixture',
                          data=[self.some_record],
@@ -119,7 +119,7 @@ class WorkflowTest(WorkflowTasksTestCase):
 
     def test_payload_sip_creation(self):
         """A Payload has a sip."""
-        from invenio.modules.workflows.api import start
+        from invenio_workflows.api import start
         from inspire.modules.workflows.models import Payload
 
         workflow = start('payload_fixture',
@@ -134,7 +134,7 @@ class WorkflowTest(WorkflowTasksTestCase):
 
     def test_payload_model_creation(self):
         """A workflow can specify a model to encapsulate behaviour."""
-        from invenio.modules.workflows.api import start
+        from invenio_workflows.api import start
 
         workflow = start('payload_model_fixture',
                          data=[self.some_record],
@@ -148,7 +148,7 @@ class WorkflowTest(WorkflowTasksTestCase):
 
     def test_payload_file_creation(self):
         """Can add a file to a Payload."""
-        from invenio.modules.workflows.models import BibWorkflowObject
+        from invenio_workflows.models import BibWorkflowObject
         from inspire.modules.workflows.models import Payload
         from inspire.utils.helpers import (
             get_file_by_name,
@@ -176,7 +176,7 @@ class WorkflowTest(WorkflowTasksTestCase):
     def test_harvesting_workflow_with_match(self):
         """Test an harvesting workflow when the record already exists."""
         from invenio.base.globals import cfg
-        from invenio.modules.workflows.api import start
+        from invenio_workflows.api import start
 
         httpretty.HTTPretty.allow_net_connect = False
 
@@ -198,7 +198,7 @@ class WorkflowTest(WorkflowTasksTestCase):
     def test_harvesting_workflow_without_match(self):
         """Test a full harvesting workflow."""
         from invenio.base.globals import cfg
-        from invenio.modules.workflows.api import start
+        from invenio_workflows.api import start
         from inspire.utils.helpers import (
             get_record_from_obj,
         )
@@ -282,11 +282,11 @@ class AgnosticTest(WorkflowTasksTestCase):
 
     def setUp(self):
         """Setup tests."""
-        from invenio.modules.deposit.models import Deposition, DepositionType
-        from invenio.modules.deposit.registry import deposit_types, \
+        from invenio_deposit.models import Deposition, DepositionType
+        from invenio_deposit.registry import deposit_types, \
             deposit_default_type
-        from invenio.modules.deposit.form import WebDepositForm
-        from invenio.modules.deposit.tasks import prefill_draft, \
+        from invenio_deposit.form import WebDepositForm
+        from invenio_deposit.tasks import prefill_draft, \
             prepare_sip
 
         celery.conf['CELERY_ALWAYS_EAGER'] = True
@@ -328,7 +328,7 @@ class AgnosticTest(WorkflowTasksTestCase):
 
     def test_agnostic_deposit(self):
         """A deposition still has the same data model."""
-        from invenio.modules.deposit.models import Deposition
+        from invenio_deposit.models import Deposition
         from invenio.ext.login.legacy_user import UserInfo
 
         u = UserInfo(uid=1)

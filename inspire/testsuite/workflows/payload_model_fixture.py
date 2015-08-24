@@ -21,8 +21,9 @@
 
 from invenio_oaiharvester.tasks.records import convert_record_to_json
 
-from invenio.modules.deposit.models import DepositionType
-from invenio.modules.workflows.tasks.marcxml_tasks import convert_record
+from invenio_deposit.models import DepositionType
+
+from inspire.modules.converter.tasks import convert_record
 
 from inspire.modules.workflows.models import Payload, create_payload
 

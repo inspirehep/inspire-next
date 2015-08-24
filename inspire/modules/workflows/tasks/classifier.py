@@ -52,14 +52,14 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
                    extract_acronyms=False, only_core_tags=False,
                    fast_mode=False):
     """Extract keywords from a pdf file or metadata in a OAI harvest."""
-    from invenio.modules.classifier.api import (
+    from invenio_classifier.api import (
         get_keywords_from_text,
         get_keywords_from_local_file,
     )
 
     @wraps(classify_paper)
     def _classify_paper(obj, eng):
-        from invenio.modules.classifier.errors import TaxonomyError
+        from invenio_classifier.errors import TaxonomyError
 
         model = eng.workflow_definition.model(obj)
         record = get_record_from_model(model)
@@ -126,7 +126,7 @@ def classify_paper_with_deposit(taxonomy, rebuild_cache=False, no_cache=False,
     )
 
     def _classify_paper_with_deposit(obj, eng):
-        from invenio.modules.deposit.models import Deposition
+        from invenio_deposit.models import Deposition
         deposition = Deposition(obj)
         data = None
         if not fast_mode:

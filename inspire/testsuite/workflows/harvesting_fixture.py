@@ -21,16 +21,19 @@
 
 from invenio_oaiharvester.tasks.records import convert_record_to_json
 
-from invenio.modules.deposit.models import DepositionType
-from invenio.modules.workflows.definitions import RecordWorkflow
-from invenio.modules.workflows.tasks.logic_tasks import (
+from invenio_deposit.models import DepositionType
+from invenio_workflows.definitions import RecordWorkflow
+from invenio_workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else,
 )
-from invenio.modules.workflows.tasks.marcxml_tasks import convert_record
-from invenio.modules.workflows.tasks.workflows_tasks import log_info
+
+
+from invenio_workflows.tasks.workflows_tasks import log_info
 
 from inspire.dojson.hep import hep2marc
+
+from inspire.modules.converter.tasks import convert_record
 
 from inspire.modules.workflows.tasks.classifier import (
     filter_core_keywords,
@@ -40,7 +43,6 @@ from inspire.modules.workflows.tasks.matching import(
     exists_in_inspire_or_rejected,
     exists_in_holding_pen,
     save_identifiers_to_kb,
-    update_old_object,
     delete_self_and_stop_processing,
     arxiv_set_category_field
 )
@@ -56,7 +58,7 @@ from inspire.modules.oaiharvester.tasks.arxiv import (
     arxiv_fulltext_download,
     arxiv_author_list,
 )
-from inspire.modules.refextract.tasks import extract_journal_info
+# from inspire.modules.refextract.tasks import extract_journal_info
 from inspire.modules.predicter.tasks import (
     guess_coreness
 )
@@ -101,7 +103,7 @@ class harvesting_fixture(RecordWorkflow, DepositionType):
                 arxiv_fulltext_download(),
                 # arxiv_refextract, FIXME Need to fix extractutils + new linker
                 arxiv_author_list("authorlist2marcxml.xsl"),
-                extract_journal_info,
+                # extract_journal_info, FIXME Need to fix extractutils
                 classify_paper(
                     taxonomy="HEPont",
                     only_core_tags=False,

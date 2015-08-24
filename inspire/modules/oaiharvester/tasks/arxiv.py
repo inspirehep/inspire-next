@@ -255,10 +255,11 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
     def _author_list(obj, eng):
         from invenio_oaiharvester.utils import find_matching_files
 
-        from invenio.legacy.bibconvert.xslt_engine import convert
         from invenio.utils.plotextractor.cli import get_defaults
         from invenio.utils.plotextractor.converter import untar
         from invenio.utils.shell import Timeout
+
+        from inspire.modules.converter.xslt import convert
 
         model = eng.workflow_definition.model(obj)
         record = get_record_from_model(model)

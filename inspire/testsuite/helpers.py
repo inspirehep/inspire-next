@@ -25,7 +25,7 @@ from flask_registry import ImportPathRegistry
 
 from invenio.testsuite import InvenioTestCase
 
-from invenio.modules.workflows.registry import WorkflowsRegistry
+from invenio_workflows.registry import WorkflowsRegistry
 
 TEST_PACKAGES = [
     'inspire.modules.*',
