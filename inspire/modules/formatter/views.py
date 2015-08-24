@@ -18,6 +18,7 @@
 
 from flask import Blueprint, jsonify
 from inspire.utils.bibtex import Bibtex
+from inspire.utils.latex_eu import Latex_eu
 from invenio_records.api import get_record
 from invenio.base.decorators import wash_arguments
 
@@ -36,3 +37,11 @@ def get_bibtex(recid):
     record = get_record(recid)
     bibtex = Bibtex(record).format()
     return jsonify({"result": bibtex, "recid": recid})
+
+
+@blueprint.route('/latex_eu', methods=['GET', ])
+@wash_arguments({'recid': (int, 0)})
+def get_latex_eu(recid):
+    record = get_record(recid)
+    latex_eu = Latex_eu(record).format()
+    return jsonify({"result": latex_eu, "recid": recid})

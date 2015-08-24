@@ -19,6 +19,7 @@
 
 from inspire.ext.formatter_jinja_filters.general import apply_template_on_array
 from inspire.utils.bibtex import Bibtex
+from inspire.utils.latex_eu import Latex_eu
 
 def email_links(record):
     """
@@ -105,6 +106,8 @@ def remove_duplicates_from_dict(value):
 def bibtex(record):
     return Bibtex(record).format()
 
+def latex_eu(record):
+    return Latex_eu(record).format()
 
 def get_filters():
     return {
@@ -120,5 +123,6 @@ def get_filters():
         'count_words': count_words,
         'is_intbit_set': is_intbit_set,
         'remove_duplicates_from_dict': remove_duplicates_from_dict,
-        'bibtex' : bibtex,
+        'bibtex': bibtex,
+        'latex_eu': latex_eu,
     }
