@@ -7,7 +7,37 @@ require(['jquery', 'bootstrap'], function($) {
        $.getJSON('/formatter/bibtex', {
         recid: $(this).data("recid")
       }, function(data) {
-        $("#bibtex_text" + data.recid).text(data.result);
+        $("#text" + data.recid).text(data.result);
+        $("#format" + data.recid).text('BibTex')
+      });
+    });
+  
+    $(".bibtex").on('click', function() {       
+       $.getJSON('/formatter/bibtex', {
+        recid: $(this).data("recid")
+      }, function(data) {
+        $("#text" + data.recid).text(data.result);
+        $("#format" + data.recid).text('Bibtex')
+      });
+    });
+  
+    $(".latex_eu").on('click', function() {       
+       $.getJSON('/formatter/latex', {
+        recid: $(this).data("recid"),
+        latex_format: 'latex_eu'
+      }, function(data) {
+        $("#text" + data.recid).text(data.result);
+        $("#format" + data.recid).text('LaTex(EU)')
+      });
+    });
+  
+    $(".latex_us").on('click', function() {       
+       $.getJSON('/formatter/latex', {
+        recid: $(this).data("recid"),
+        latex_format: 'latex_us'
+      }, function(data) {
+        $("#text" + data.recid).text(data.result);
+        $("#format" + data.recid).text('LaTex(US)')
       });
     });
   })
@@ -30,9 +60,9 @@ require(['jquery', 'bootstrap'], function($) {
       $('.plots').addClass('active');
     }
   
-  if(is_root) {
-    $('#search-box-main').addClass('search-box-centered');
-  }
+    if(is_root) {
+      $('#search-box-main').addClass('search-box-centered');
+    }
   
   });
 
@@ -56,4 +86,3 @@ require(['jquery', 'bootstrap'], function($) {
   }
 
 });
-

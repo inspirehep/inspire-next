@@ -18,8 +18,10 @@
 
 from flask import Blueprint, jsonify
 from inspire.utils.bibtex import Bibtex
+from inspire.utils.latex import Latex
 from invenio_records.api import get_record
 from invenio.base.decorators import wash_arguments
+from six import text_type
 
 blueprint = Blueprint(
     'inspire_formatter',
@@ -36,3 +38,12 @@ def get_bibtex(recid):
     record = get_record(recid)
     bibtex = Bibtex(record).format()
     return jsonify({"result": bibtex, "recid": recid})
+
+
+@blueprint.route('/latex', methods=['GET', ])
+@wash_arguments({'recid': (int, 0),
+                 'latex_format': (text_type, "")})
+def get_latex(recid, latex_format):
+    record = get_record(recid)
+    latex = Latex(record, latex_format).format()
+    return jsonify({"result": latex, "recid": recid})
