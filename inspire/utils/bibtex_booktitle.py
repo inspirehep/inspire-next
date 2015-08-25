@@ -43,8 +43,8 @@ def generate_booktitle(record):
                         if acronym:
                             booktitle = "%s: %s" % (rn, acronym, )
                         else:
-                            recids = Query(p="reportnumber:%s" % (rn,))\
-                                           .search()
+                            recids = Query("reportnumber:%s" % (rn,))\
+                                           .search().recids
                             if recids:
                                 rec = get_record(recids[0])
                                 title = rec['title']['title']
@@ -62,7 +62,7 @@ def generate_booktitle(record):
                     if acronym:
                         booktitle = "%s: %s" % (rn, acronym, )
                     else:
-                        recids = Query(p="reportnumber:%s" % (rn,)).search()
+                        recids = Query("reportnumber:%s" % (rn,)).search().recids
                         if recids:
                             rec = get_record(recids[0])
                             title = rec['title']['title']
