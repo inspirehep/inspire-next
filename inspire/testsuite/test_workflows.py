@@ -231,9 +231,14 @@ class WorkflowTest(WorkflowTasksTestCase):
             status=200,
         )
 
+        robotupload_url = os.path.join(
+            cfg.get("CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"),
+            "batchuploader/robotupload/insert"
+        )
+
         httpretty.register_uri(
             httpretty.POST,
-            cfg.get("CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"),
+            robotupload_url,
             body="[INFO] bibupload batchupload --insert /dummy/file/path\n",
             status=200,
         )

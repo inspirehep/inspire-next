@@ -352,6 +352,7 @@ def send_robotupload(url=None,
             obj.log.info(result.text)
             eng.halt("Waiting for robotupload: {0}".format(result.text))
         obj.log.info("end of upload")
+    return _send_robotupload
 
 
 def add_files_to_task_results(obj, eng):
