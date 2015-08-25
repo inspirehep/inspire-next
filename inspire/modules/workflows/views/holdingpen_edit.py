@@ -30,6 +30,7 @@ from invenio.base.decorators import wash_arguments
 from invenio.ext.principal import permission_required
 from invenio_workflows.acl import viewholdingpen
 from invenio_workflows.models import BibWorkflowObject
+from inspire.utils.helpers import get_model_from_obj
 
 
 blueprint = Blueprint(
@@ -62,20 +63,14 @@ URL = 'url'
 def edit_record_title(value, objectid):
     """Entrypoint for editing title from detailed pages."""
     editable_obj = BibWorkflowObject.query.get(objectid)
-    data = editable_obj.get_data()
+    model = get_model_from_obj(editable_obj)
 
-    if type(data) is dict:
-        deposition = Deposition(editable_obj)
-        sip = deposition.get_latest_sip()
-        metadata = sip.metadata
+    sip = model.get_latest_sip()
+    metadata = sip.metadata
 
-        metadata[TITLE][TITLE] = MathMLParser.html_to_text(value)
-        sip.package = make_record(sip.metadata)
-        deposition.save()
-    else:
-        data[TITLE_FIELD] = MathMLParser.html_to_text(value)
-        editable_obj.set_data(data)
-        editable_obj.save()
+    metadata[TITLE][TITLE] = MathMLParser.html_to_text(value)
+    sip.package = make_record(sip.metadata)
+    model.save()
 
     return jsonify({
         "category": "success",

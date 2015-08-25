@@ -23,6 +23,17 @@
 import os
 
 
+def get_model_from_obj(obj):
+    """Returns an instance of the model from the workflow."""
+    from invenio_workflows import registry
+    workflow = registry.get(obj.workflow.name)
+
+    if workflow is not None:
+        return workflow.model(obj)
+    else:
+        return None
+
+
 def get_record_from_obj(obj, eng):
     """Returns a Record instance of a BibWorkflowObject."""
     from invenio_records.api import Record
