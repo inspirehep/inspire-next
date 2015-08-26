@@ -1,22 +1,21 @@
 {#
-## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
-##
-## INSPIRE is free software; you can redistribute it and/or
-## modify it under the terms of the GNU General Public License as
-## published by the Free Software Foundation; either version 2 of the
-## License, or (at your option) any later version.
-##
-## INSPIRE is distributed in the hope that it will be useful, but
-## WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-## General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# This file is part of INSPIRE.
+# Copyright (C) 2015 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
- 
 
 {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors, record_arxiv with context %}
 
@@ -133,21 +132,22 @@
           </div>
         </div>
           <!-- END MODAL -->
-        <div class="row"><div class="col-md-12"><p></p></div></div>
-        <div class="row"><div class="col-md-12"><p></p></div></div>
-        {% if record.get('date_updated') %}
-        <i class="glyphicon glyphicon-calendar"></i> {{ record.get('date_updated').split('-')[0] }}<br/>
-        {% endif %}               
-        {% if  record.get('_cited_by_count') > 0  %}
-        <i class="fa fa-quote-left"></i><span><a href="/record/{{ record.get('_id') }}/citations"  target="_blank"> Cited {{ record.get('_cited_by_count') }} times</a></span><br/>
-        {% else %}
-        <i class="fa fa-quote-left"></i><span> Cited {{ record.get('_cited_by_count') }} times</span><br/>
-        {% endif %}
-        {% if record.get('reference') %}
-        <i class="fa fa-link"></i><span><a href="/record/{{ record.get('_id') }}/references" target="_blank">  {{ (record.get('reference', '')) | count }} References</a></span>
-        {% else %}
-        <i class="fa fa-link"></i><span> References ({{ (record.get('reference', '')) | count }})</span>
-        {% endif %}
+
+        <div class="citations-references">
+          {% if record.get('date_updated') %}
+            <i class="glyphicon glyphicon-calendar"></i> {{ record.get('date_updated').split('-')[0] }}<br/>
+          {% endif %}               
+          {% if  record.get('_cited_by_count') > 0  %}
+            <i class="fa fa-quote-left"></i><span><a href="/record/{{ record.get('recid') }}/citations"  target="_blank"> Cited {{ record.get('_cited_by_count') }} times</a></span><br/>
+          {% else %}
+            <i class="fa fa-quote-left"></i><span> Cited 0 times</span><br/>
+          {% endif %}
+          {% if record.get('references') %}
+            <i class="fa fa-link"></i><span><a href="/record/{{ record.get('recid') }}/references" target="_blank">  {{ (record.get('references', '')) | count }} References</a></span>
+          {% else %}
+            <i class="fa fa-link"></i><span> 0 References</span>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
