@@ -29,7 +29,7 @@ def legacy_export_as_marc(json, tabsize=4):
         from invenio.utils.text import encode_for_xml
         if isinstance(value, unicode):
             value = value.encode('utf8')
-        return encode_for_xml(str(value))
+        return encode_for_xml(str(value), wash=True)
 
     export = ['<record>\n']
 
