@@ -1,20 +1,21 @@
+# -*- coding: utf-8 -*-
 #
-## This file is part of INSPIRE.
-## Copyright (C) 2015 CERN.
-##
-## INSPIRE is free software; you can redistribute it and/or
-## modify it under the terms of the GNU General Public License as
-## published by the Free Software Foundation; either version 2 of the
-## License, or (at your option) any later version.
-##
-## INSPIRE is distributed in the hope that it will be useful, but
-## WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-## General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# This file is part of INSPIRE.
+# Copyright (C) 2015 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
 from flask import render_template
@@ -53,13 +54,12 @@ class authorupdate(WorkflowBase):
     def get_description(bwo):
         """Return description of object."""
         return "Updating author {}".format(
-            bwo.get_data().get("name").get("preferred_name")
+            bwo.get_data().get("name", {}).get("display_name")
         )
 
     @staticmethod
     def formatter(bwo, **kwargs):
         """Return formatted data of object."""
-        from invenio_formatter import format_record
 
         of = kwargs.get("of", "hp")
 
@@ -76,13 +76,9 @@ class authorupdate(WorkflowBase):
         if of == "xm":
             return xml
         else:
-            record_preview = format_record(
-                    recID=None,
-                    of=of,
-                    xml_record=xml
-                    )
+            # FIXME add a template for the author display in the HP
             return render_template("authors/workflows/authorupdate.html",
-                                   record_preview=record_preview,
+                                   record_preview="",
                                    user_email=user_email,
                                    ticket_url=ticket_url,
                                    comments=extra_data.get("comments"))

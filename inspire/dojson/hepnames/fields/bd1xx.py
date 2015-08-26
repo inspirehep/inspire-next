@@ -424,7 +424,7 @@ def phd_advisors(self, key, value):
     return {
         'id': value.get("i"),
         'name': value.get("a"),
-        'degree_type': degree_type_map.get(value.get("g").lower(),
+        'degree_type': degree_type_map.get(value.get("g", "").lower(),
                                            value.get("g"))
     }
 

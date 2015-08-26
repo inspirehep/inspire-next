@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 ## This file is part of INSPIRE.
 ## Copyright (C) 2015 CERN.
@@ -51,10 +52,11 @@ def create_marcxml_record():
     """Create MarcXML from JSON using author model."""
     @wraps(create_marcxml_record)
     def _create_marcxml_record(obj, eng):
-        from invenio_records.api import Record
-        obj.log.info("Creating marcxml record")
-        x = Record.create(obj.data, 'json', model='author')
-        obj.extra_data["marcxml"] = x.legacy_export_as_marc()
+        from inspire.dojson.hepnames import hepnames2marc
+        from inspire.dojson.utils import legacy_export_as_marc
+        obj.extra_data["marcxml"] = legacy_export_as_marc(
+            hepnames2marc.do(obj.data)
+        )
         obj.log.info("Produced MarcXML: \n {}".format(
             obj.extra_data["marcxml"])
         )
@@ -66,110 +68,34 @@ def convert_data_to_model():
     @wraps(create_marcxml_record)
     def _convert_data_to_model(obj, eng):
         import copy
+
+        from .dojson.model import updateform
+
         # Save original form data for later access
-        obj.extra_data["formdata"] = copy.deepcopy(obj.data)
+        form_fields = copy.deepcopy(obj.data)
+        obj.extra_data["formdata"] = copy.deepcopy(form_fields)
 
         data = obj.data
-        filter_empty_elements(data)
 
-        data["name"] = {}
-        if "status" in data and data["status"]:
-            data["name"]["status"] = data["status"]
-        if "given_names" in data and data["given_names"]:
-            data["name"]["first"] = data["given_names"].strip()
-        if "family_name" in data and data["family_name"]:
-            data["name"]["last"] = data["family_name"].strip()
-        if "display_name" in data and data["display_name"]:
-            data["name"]["preferred_name"] = data["display_name"]
-        data["urls"] = []
-        if "websites" in data and data["websites"]:
-            for website in data["websites"]:
-                data["urls"].append({
-                    "value": website["webpage"],
-                    "description": ""
-                })
-        if "twitter_url" in data and data["twitter_url"]:
-            data["urls"].append({
-                "value": data["twitter_url"],
-                "description": "TWITTER"
-            })
-        if "blog_url" in data and data["blog_url"]:
-            data["urls"].append({
-                "value": data["blog_url"],
-                "description": "BLOG"
-            })
-        if "linkedin_url" in data and data["linkedin_url"]:
-            data["urls"].append({
-                "value": data["linkedin_url"],
-                "description": "LINKEDIN"
-            })
-        data["ids"] = []
-        if "orcid" in data and data["orcid"]:
-            data["ids"].append({
-                "type": "ORCID",
-                "value": data["orcid"]
-            })
-        if "bai" in data and data["bai"]:
-            data["ids"].append({
-                "type": "BAI",
-                "value": data["bai"]
-            })
-        if "inspireid" in data and data["inspireid"]:
-            data["ids"].append({
-                "type": "INSPIRE",
-                "value": data["inspireid"]
-            })
-        data["_public_emails"] = []
-        if "public_email" in data and data["public_email"]:
-            data["_public_emails"].append({
-                "value": data["public_email"],
-                "current": "Current"
-            })
-        data["field_categories"] = []
-        if "research_field" in data and data["research_field"]:
-            for field in data["research_field"]:
-                data["field_categories"].append({
-                    "name": field,
-                    "type": "INSPIRE"
-                })
-            del data["research_field"]
-        data["positions"] = []
-        if "institution_history" in data and data["institution_history"]:
-            data["institution_history"] = sorted(data["institution_history"],
-                                                 key=lambda k: k["start_year"],
-                                                 reverse=True)
-            for position in data["institution_history"]:
-                data["positions"].append({
-                    "institution": position["name"],
-                    "status": "current" if position["current"] else "",
-                    "start_date": position["start_year"],
-                    "end_date": position["end_year"],
-                    "rank": position["rank"] if position["rank"] != "rank" else ""
-                })
-            del data["institution_history"]
-        data["phd_advisors"] = []
-        if "advisors" in data and data["advisors"]:
-            for advisor in data["advisors"]:
-                if advisor["degree_type"] == "PhD" and not advisor["full_name"]:
-                    continue
-                data["phd_advisors"].append({
-                    "name": advisor["full_name"],
-                    "degree_type": advisor["degree_type"]
-                })
-        if "experiments" in data and data["experiments"]:
-            for experiment in data["experiments"]:
-                data["experiments"] = sorted(data["experiments"],
-                                             key=lambda k: k["start_year"],
-                                             reverse=True)
-                if experiment["status"]:
-                    experiment["status"] = "current"
-                else:
-                    experiment["status"] = ""
+        filter_empty_elements(data)
+        converted = updateform.do(data)
+        data.clear()
+        data.update(converted)
+
+        author_name = ''
+
+        if 'family_name' in form_fields and form_fields['family_name']:
+            author_name = form_fields['family_name'].strip() + ', '
+        if 'given_names' in form_fields and form_fields['given_names']:
+            author_name += form_fields['given_names']
+
+        if author_name:
+            data.get('name', {})['value'] = author_name
 
         # Add comments to extra data
-        if "comments" in data and data["comments"]:
-            obj.extra_data["comments"] = data["comments"]
-            data["_private_note"] = data["comments"]
+        if "comments" in form_fields and form_fields["comments"]:
+            obj.extra_data["comments"] = form_fields["comments"]
+            data["_private_note"] = form_fields["comments"]
 
         # Add HEPNAMES collection
         data["collections"] = {

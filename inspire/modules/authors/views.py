@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 ## This file is part of INSPIRE.
 ## Copyright (C) 2015 CERN.
@@ -16,6 +17,8 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
+
+from __future__ import absolute_import
 
 import json
 import os
@@ -38,7 +41,6 @@ from invenio.base.decorators import wash_arguments
 from invenio.base.globals import cfg
 from invenio.base.i18n import _
 from invenio.ext.principal import permission_required
-from invenio_records.api import Record
 from invenio_workflows.models import BibWorkflowObject
 
 from .acl import viewauthorreview
@@ -58,25 +60,43 @@ default_breadcrumb_root(blueprint, '.')
 
 def convert_for_form(data):
     """Convert jsonalchemy keys to form field names."""
-    if "urls" in data:
+    if "name" in data:
+        data["full_name"] = data["name"].get("value")
+        try:
+            data["given_names"] = data["name"].get("value").split(",")[1].strip()
+        except IndexError:
+            data["given_names"] = ""
+        data["family_name"] = data["name"].get("value").split(",")[0].strip()
+        data["display_name"] = data["name"].get("preferred_name")
+        data["status"] = data["name"].get("status").lower()
+    if "url" in data:
         data["websites"] = []
-        for url in data["urls"]:
+        for url in data["url"]:
             if "description" not in url:
-                data["websites"].append({"webpage": url["value"]})
+                data["websites"].append({"webpage": url["url"]})
             else:
                 if url["description"].lower() == "twitter":
-                    data["twitter_username"] = url["value"]
+                    data["twitter_url"] = url["url"]
                 elif url["description"].lower() == "blog":
-                    data["blog_url"] = url["value"]
-        del data["urls"]
-    if "fields" in data:
+                    data["blog_url"] = url["url"]
+                elif url["description"].lower() == "linkedin":
+                    data["linkedin_url"] = url["url"]
+        del data["url"]
+    if "field_categories" in data:
         data["research_field"] = [field["name"].lower() for
-                                  field in data["fields"]]
+                                  field in data["field_categories"]]
     if "positions" in data:
         data["institution_history"] = []
         for position in data["positions"]:
+            if not any(
+                [
+                    key in position for key in ('name', 'rank',
+                                                'start_year', 'end_year')
+                ]
+            ):
+                continue
             pos = {}
-            pos["name"] = position.get("institution", "")
+            pos["name"] = position.get("institution", {}).get("name")
             pos["rank"] = position.get("rank", "")
             pos["start_year"] = position.get("start_date", "")
             pos["end_year"] = position.get("end_date", "")
@@ -91,6 +111,7 @@ def convert_for_form(data):
         for advisor in phd_advisors:
             adv = {}
             adv["name"] = advisor.get("name", "")
+            adv["degree_type"] = advisor.get("degree_type", "")
             data["advisors"].append(adv)
     if "ids" in data:
         for id in data["ids"]:
@@ -134,14 +155,16 @@ def validate():
 @wash_arguments({'recid': (int, 0)})
 def update(recid):
     """View for INSPIRE author update form."""
+    from dojson.contrib.marc21.utils import create_record
+    from inspire.dojson.hepnames import hepnames
+
     data = {}
     if recid:
         try:
             url = os.path.join(cfg["AUTHORS_UPDATE_BASE_URL"], "record",
                                str(recid), "export", "xm")
             xml = requests.get(url)
-            data = Record.create(xml.content.encode("utf-8"), 'marc',
-                                 model='author').produce("json_for_form")
+            data = hepnames.do(create_record(xml.content.encode("utf-8")))
             convert_for_form(data)
         except requests.exceptions.RequestException:
             pass

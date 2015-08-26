@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 ## This file is part of INSPIRE.
 ## Copyright (C) 2015 CERN.
