@@ -43,6 +43,7 @@ from beard.utils import Shaper
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.grid_search import GridSearchCV
+from sklearn.metrics import euclidean_distances
 from sklearn.pipeline import FeatureUnion
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import Normalizer
@@ -65,7 +66,7 @@ def _get_categories(r):
     return " ".join(r["categories"])
 
 
-def train(records):
+def train(records, use_categories=True):
     """Train a classifier on the given arXiv records.
 
     :param records:
@@ -82,29 +83,46 @@ def train(records):
                                         u'cond-mat.mtrl-sci']},
                         {...}, ...]
 
+    :param use_categories:
+        Whether the "categories" is used to build the classifier.
+
     :return: the trained pipeline
     """
     records = np.array(records, dtype=np.object).reshape((-1, 1))
 
-    transformer = Pipeline([
-        ("features", FeatureUnion([
-            ("title_abstract", Pipeline([
-                ("getter", FuncTransformer(func=_get_title_abstract)),
-                ("shape", Shaper(newshape=(-1,))),
-                ("tfidf", TfidfVectorizer(min_df=3, max_df=0.1, norm="l2",
-                                          ngram_range=(1, 1),
-                                          stop_words="english",
-                                          strip_accents="unicode",
-                                          dtype=np.float32,
-                                          decode_error="replace"))])),
-            ("categories", Pipeline([
-                ("getter", FuncTransformer(func=_get_categories)),
-                ("shape", Shaper(newshape=(-1,))),
-                ("tfidf", TfidfVectorizer(norm="l2", dtype=np.float32,
-                                          decode_error="replace"))])),
-        ])),
-        ("scaling", Normalizer())
-    ])
+    if use_categories:
+        transformer = Pipeline([
+            ("features", FeatureUnion([
+                ("title_abstract", Pipeline([
+                    ("getter", FuncTransformer(func=_get_title_abstract)),
+                    ("shape", Shaper(newshape=(-1,))),
+                    ("tfidf", TfidfVectorizer(min_df=3, max_df=0.1, norm="l2",
+                                              ngram_range=(1, 1),
+                                              stop_words="english",
+                                              strip_accents="unicode",
+                                              dtype=np.float32,
+                                              decode_error="replace"))])),
+                ("categories", Pipeline([
+                    ("getter", FuncTransformer(func=_get_categories)),
+                    ("shape", Shaper(newshape=(-1,))),
+                    ("tfidf", TfidfVectorizer(norm="l2", dtype=np.float32,
+                                              decode_error="replace"))])),
+            ])),
+            ("scaling", Normalizer())
+        ])
+
+    else:
+        transformer = Pipeline([
+            ("getter", FuncTransformer(func=_get_title_abstract)),
+            ("shape", Shaper(newshape=(-1,))),
+            ("tfidf", TfidfVectorizer(min_df=3, max_df=0.1, norm="l2",
+                                      ngram_range=(1, 1),
+                                      stop_words="english",
+                                      strip_accents="unicode",
+                                      dtype=np.float32,
+                                      decode_error="replace")),
+            ("scaling", Normalizer())
+        ])
 
     X = transformer.fit_transform(records)
     y = np.array([r[0]["decision"] for r in records])
@@ -119,8 +137,11 @@ def train(records):
                      ("classifier", grid.best_estimator_)])
 
 
-def predict(pipeline, record):
+def predict(pipeline, record, top_words=0):
     """Predict whether the given record is CORE/Non-CORE/Rejected.
+
+    :param pipeline:
+        A classification pipeline, as returned by ``train``.
 
     :param record:
         Record is expected as a dictionary with
@@ -132,9 +153,17 @@ def predict(pipeline, record):
                       u'categories': [u'cond-mat.mes-hall',
                                       u'cond-mat.mtrl-sci']}
 
+    :param top_words:
+        The top words explaining the classifier decision.
+
     :return decision, scores:
         decision: CORE, Non-CORE or Rejected, as the argmax of scores
         scores: the decision scores
+
+        if ``top_words > 0``, then ``top_core``, ``top_noncore`` and
+        ``top_rejected`` are additionally returned. Each is a list
+        of ``top_words`` (word, weight) pairs corresponding to the
+        words explaining the classifier decision.
 
         Example:
             (u'Rejected', array([-1.25554232, -1.2591557, 1.17074973]))
@@ -147,7 +176,65 @@ def predict(pipeline, record):
     decision = classifier.predict(X)[0]
     scores = classifier.decision_function(X)[0]
 
-    return decision, scores
+    if top_words == 0:
+        return decision, scores
+
+    else:
+        top_core, top_noncore, top_rejected = [], [], []
+
+        if len(transformer.steps) == 2:
+            tf1 = transformer.steps[0][1].transformer_list[0][1].steps[2][1]
+            tf2 = transformer.steps[0][1].transformer_list[1][1].steps[2][1]
+            inv_vocabulary = {v: k for k, v in tf1.vocabulary_.items()}
+            inv_vocabulary.update({v: k for k, v in tf2.vocabulary_.items()})
+
+        else:
+            tf1 = transformer.steps[2][1]
+            inv_vocabulary = {v: k for k, v in tf1.vocabulary_.items()}
+
+        for i, j in zip(*X.nonzero()):
+            top_core.append((inv_vocabulary[j],
+                             classifier.coef_[0][j] * X[0, j]))
+            top_noncore.append((inv_vocabulary[j],
+                                classifier.coef_[1][j] * X[0, j]))
+            top_rejected.append((inv_vocabulary[j],
+                                 classifier.coef_[2][j] * X[0, j]))
+
+        top_core = sorted(top_core,
+                          reverse=True, key=lambda x: x[1])[:top_words]
+        top_noncore = sorted(top_noncore,
+                             reverse=True, key=lambda x: x[1])[:top_words]
+        top_rejected = sorted(top_rejected,
+                              reverse=True, key=lambda x: x[1])[:top_words]
+
+        return decision, scores, top_core, top_noncore, top_rejected
+
+
+def closest(pipeline, records, record, n=10):
+    """Find the closest records from the given record.
+
+    :param pipeline:
+        A classification pipeline, as returned by ``train``.
+
+    :param records:
+        Records are expected as a list of dictionaries.
+
+    :param record:
+        Record is expected as a dictionary.
+
+    :param n:
+        The number of closest records to return.
+
+    :return list:
+        The ``n`` closest records.
+    """
+    transformer = pipeline.steps[0][1]
+
+    X = transformer.transform(np.array(records, dtype=np.object))
+    X_record = transformer.transform(np.array([record], dtype=np.object))
+    top = np.argsort(euclidean_distances(X, X_record), axis=0)
+
+    return [records[i] for i in top[:n]]
 
 
 if __name__ == "__main__":
