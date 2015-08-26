@@ -211,6 +211,7 @@ RECORD_PROCESSORS = {
     'json': 'json.load',
     'marcxml': 'inspire.dojson.processors:convert_marcxml',
 }
+RECORDS_BREADCRUMB_TITLE_KEY = 'title.title[0]'
 
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
 # invenio keywords to elasticsearch fields
