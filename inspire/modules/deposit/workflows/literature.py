@@ -326,6 +326,16 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         if metadata.get("language") == "oth":
             if form_fields.get("other_language"):
                 metadata["language"] = form_fields["other_language"]
+
+        # ===============================
+        # arXiv category in report number
+        # ===============================
+        if metadata.get("_categories"):
+            for repnum in metadata["report_number"]:
+                if repnum.get("source") == "arXiv":
+                    repnum["arxiv_category"] = metadata.get("_categories").split(' ')[0]
+            del metadata["_categories"]
+
         # ============================
         # Date of defense
         # ============================

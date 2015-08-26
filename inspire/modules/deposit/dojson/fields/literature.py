@@ -94,6 +94,7 @@ def categories(self, key, value):
         self['subject_term'].extend(subject_list)
     else:
         self['subject_term'] = subject_list
+    return value
 
 
 @literature.over('collaboration', '^collaboration$')
