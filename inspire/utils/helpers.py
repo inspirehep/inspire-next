@@ -25,8 +25,8 @@ import os
 
 def get_model_from_obj(obj):
     """Returns an instance of the model from the workflow."""
-    from invenio_workflows import registry
-    workflow = registry.get(obj.workflow.name)
+    from invenio_workflows.registry import workflows
+    workflow = workflows.get(obj.workflow.name)
 
     if workflow is not None:
         return workflow.model(obj)

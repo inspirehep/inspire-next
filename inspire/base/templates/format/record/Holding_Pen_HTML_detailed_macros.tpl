@@ -22,24 +22,11 @@
 {% endmacro %}
 
 
-{% macro get_title(record) %}
-    {% if record['title'] is mapping %}
-        <strong><span id='title-text'>{{ record['title']['title'] }}</span></strong>
-    {% else %}
-        <strong><span id='title-text'>{{ record['title'] }}</span></strong>
-    {% endif %}
-{% endmacro %}
-
-
 {% macro get_subject(term) %}
-    {% if term is mapping %}
-        {% if term.term %}
-            <span> {{ term['term'] }}</span>
-        {% else %}
-            <span> {{ term['value'] }}</span>
-        {% endif %}
+    {% if term.term %}
+        <span> {{ term['term'] }}</span>
     {% else %}
-        <span> {{ term }}</span>
+        <span> {{ term['value'] }}</span>
     {% endif %}
 {% endmacro %}
 
@@ -53,6 +40,10 @@
 {% endmacro %}
 
 
-{% macro get_arxiv_category(record) %}
-    {{ record['report_number'][0]['arxiv_category'] }}
+{% macro get_abstract(record) %}
+    {% if record['abstract'] is mapping %}
+       {{ record['abstract']['summary'] }}
+    {% else %}
+       {{ record['abstract'][0]['summary'] }}
+    {% endif %}
 {% endmacro %}

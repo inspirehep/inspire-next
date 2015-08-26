@@ -26,6 +26,7 @@ from six import string_types
 from invenio.base.globals import cfg
 from invenio.ext.login import UserInfo
 from invenio_accounts.models import UserEXT
+from invenio_records.api import Record
 
 from invenio_deposit.types import SimpleRecordDeposition
 from invenio_deposit.tasks import (
@@ -168,11 +169,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         sip = deposit_object.get_latest_sip()
         if sip:
             # Get the SmartJSON object
-            record = sip.metadata
-            try:
-                return record.get("title", {"title": "No title"}).get("title")
-            except AttributeError:
-                return record.get("title")
+            record = Record(sip.metadata)
+            return record.get("title.title", ["No title"])[0]
         else:
             return "User submission in progress"
 
@@ -191,7 +189,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
         sip = deposit_object.get_latest_sip()
         if sip:
-            record = sip.metadata
+            record = Record(sip.metadata)
             identifiers = []
             report_numbers = record.get("report_number", [])
             doi = record.get("doi", {}).get("doi")
@@ -259,7 +257,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
         return render_template(
             'format/record/Holding_Pen_HTML_detailed.tpl',
-            record=record
+            record=Record(record)
         )
 
     @classmethod
@@ -295,13 +293,13 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                         'system_number_external': 'oai:arXiv.org:' + form_fields['arxiv_id'],
                         'institute': 'arXiv'
                     }
-        if metadata["publication_info"]:
+        if "publication_info" in metadata:
             metadata['collections'].append({'primary': "Published"})
         # ============================
         # Title source
         # ============================
         if 'title_source' in form_fields and form_fields['title_source']:
-            metadata['title']['source'] = form_fields['title_source']
+            metadata['title'][0]['source'] = form_fields['title_source']
         # ============================
         # Conference name
         # ============================

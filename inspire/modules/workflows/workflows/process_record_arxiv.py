@@ -26,7 +26,6 @@ from collections import OrderedDict
 from flask import render_template
 
 from invenio_oaiharvester.tasks.records import convert_record_to_json
-from invenio_records.api import Record
 
 from invenio_deposit.models import DepositionType
 
@@ -147,7 +146,7 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
             return "No title found."
         model = process_record_arxiv.model(bwo)
         record = get_record_from_model(model)
-        return record.get("title.title", "No title found")
+        return "; ".join(record.get("title.title", ["No title found"]))
 
     @staticmethod
     def get_description(bwo):
@@ -226,19 +225,8 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Nicely format the record."""
-        from invenio_records.api import Record
-        import collections
-
-        data = bwo.get_data().dumps()
-        if not data:
-            return ''
-
-        if isinstance(data, collections.Mapping):
-            try:
-                record = Record(data)
-            except (TypeError, KeyError):
-                pass
-
+        model = process_record_arxiv.model(bwo)
+        record = get_record_from_model(model)
         return render_template(
             'format/record/Holding_Pen_HTML_detailed.tpl',
             record=record

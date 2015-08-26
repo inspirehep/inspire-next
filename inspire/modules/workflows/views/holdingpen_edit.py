@@ -20,7 +20,6 @@
 """Blueprint for handling editing from Holding Pen."""
 
 from invenio_deposit.helpers import make_record
-from invenio_deposit.models import Deposition
 
 from six import text_type
 from flask import Blueprint, jsonify, request
@@ -55,6 +54,30 @@ TITLE = "title"
 URL = 'url'
 
 
+# Helper methods for editing
+def get_attributes(objectid):
+    """Returns the required attributes for record editing."""
+    editable_obj = BibWorkflowObject.query.get(objectid)
+    model = get_model_from_obj(editable_obj)
+    sip = model.get_latest_sip()
+    metadata = sip.metadata
+
+    return model, sip, metadata
+
+
+def save_changes(sip, model):
+    """Saves the changes in the record."""
+    sip.package = make_record(sip.metadata)
+    model.save()
+
+
+def json_success_message(attribute):
+    return jsonify({
+        "category": "success",
+        "message": "Edit on {0} was successful.".format(attribute)
+    })
+
+
 @blueprint.route('/edit_record_title', methods=['POST'])
 @login_required
 @permission_required(viewholdingpen.name)
@@ -62,20 +85,11 @@ URL = 'url'
                  'objectid': (int, 0)})
 def edit_record_title(value, objectid):
     """Entrypoint for editing title from detailed pages."""
-    editable_obj = BibWorkflowObject.query.get(objectid)
-    model = get_model_from_obj(editable_obj)
-
-    sip = model.get_latest_sip()
-    metadata = sip.metadata
+    model, sip, metadata = get_attributes(objectid)
 
     metadata[TITLE][TITLE] = MathMLParser.html_to_text(value)
-    sip.package = make_record(sip.metadata)
-    model.save()
-
-    return jsonify({
-        "category": "success",
-        "message": "Edit on title was successful."
-    })
+    save_changes(sip, model)
+    return json_success_message('title')
 
 
 @blueprint.route('/edit_record_urls', methods=['POST'])
@@ -84,34 +98,17 @@ def edit_record_title(value, objectid):
 @wash_arguments({'objectid': (text_type, "")})
 def edit_record_urls(objectid):
     """Entrypoint for editing urls from detailed pages."""
-    editable_obj = BibWorkflowObject.query.get(objectid)
-    data = editable_obj.get_data()
-
+    model, sip, metadata = get_attributes(objectid)
     new_urls = request.values.getlist('urls[]') or []
 
-    # We need to check the type of the object due to differences
-    # Submission: dict /  Harvest: SmartJson
-    if type(data) is dict:
-        deposition = Deposition(editable_obj)
-        sip = deposition.get_latest_sip()
-        metadata = sip.metadata
+    # Get the new urls and format them, the way the object does
+    new_urls_array = []
+    for url in new_urls:
+        new_urls_array.append({'url': url})
 
-        # Get the new urls and format them, the way the object does
-        new_urls_array = []
-        for url in new_urls:
-            new_urls_array.append({'url': url})
-
-        metadata[URL] = new_urls_array
-        sip.package = make_record(sip.metadata)
-        deposition.save()
-    else:
-        # TODO: Does nothing, need to find how urls are structured
-        pass
-
-    return jsonify({
-        "category": "success",
-        "message": "Edit on urls was successful."
-    })
+    metadata[URL] = new_urls_array
+    save_changes(sip, model)
+    return json_success_message('urls')
 
 
 @blueprint.route('/edit_record_subject', methods=['POST'])
@@ -120,45 +117,12 @@ def edit_record_urls(objectid):
 @wash_arguments({'objectid': (text_type, "")})
 def edit_record_subject(objectid):
     """Entrypoint for editing subjects from detailed pages."""
-    editable_obj = BibWorkflowObject.query.get(objectid)
-    data = editable_obj.get_data()
-
+    model, sip, metadata = get_attributes(objectid)
     new_subjects_list = request.values.getlist('subjects[]') or []
+
     subject_dict = []
+    subject_dict.extend(metadata.get(SUBJECT_TERM))
 
-    # We need to check the type of the object due to differences
-    # Submission: dict /  Harvest: SmartJson
-    if type(data) is dict:
-        deposition = Deposition(editable_obj)
-        sip = deposition.get_latest_sip()
-        metadata = sip.metadata
-
-        subject_dict.extend(metadata.get(SUBJECT_TERM))
-        edit_submission(deposition, metadata, sip,
-                        new_subjects_list, subject_dict)
-    else:
-        subject_dict.extend(data.get(SUBJECT_TERM))
-        edit_harvest(editable_obj, data, new_subjects_list, subject_dict)
-
-    return jsonify({
-        "category": "success",
-        "message": "Edit on subjects was successful."
-    })
-
-
-def edit_harvest(editable_obj, data, new_subjects_list, subject_dict):
-    """Subject editing for harvested records."""
-    old_subjects_list = data.get(SUBJECT_FIELD, [])
-
-    data[SUBJECT_TERM] = revised_subjects_list(old_subjects_list,
-                                               new_subjects_list,
-                                               subject_dict)
-    editable_obj.set_data(data)
-    editable_obj.save()
-
-
-def edit_submission(deposition, metadata, sip, new_subjects_list, subject_dict):
-    """Subject editing for submissions."""
     old_subjects_list = []
     for subj in subject_dict:
         old_subjects_list.append(subj[VALUE])
@@ -166,10 +130,8 @@ def edit_submission(deposition, metadata, sip, new_subjects_list, subject_dict):
     metadata[SUBJECT_TERM] = revised_subjects_list(old_subjects_list,
                                                    new_subjects_list,
                                                    subject_dict)
-
-    # hacky thing to update package as well, needed to show changes
-    sip.package = make_record(sip.metadata)
-    deposition.save()
+    save_changes(sip, model)
+    return json_success_message('subjects')
 
 
 def revised_subjects_list(old, new, subject_dict):
