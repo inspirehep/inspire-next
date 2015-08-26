@@ -22,6 +22,8 @@
 
 """Workflow for processing single arXiv records harvested."""
 
+import six
+
 from collections import OrderedDict
 from flask import render_template
 
@@ -78,6 +80,7 @@ from inspire.modules.predicter.tasks import (
 from inspire.modules.workflows.models import Payload, create_payload
 from inspire.utils.helpers import get_record_from_model
 
+
 class process_record_arxiv(RecordWorkflow, DepositionType):
 
     """Processing workflow for a single arXiv record.
@@ -109,7 +112,8 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
             ],
             workflow_else,
             [
-                arxiv_set_category_field,  # FIXME: Remove this when elasticsearch filtering is ready
+                # FIXME: Remove this when elasticsearch filtering is ready
+                arxiv_set_category_field,
                 save_identifiers_to_kb("HP_IDENTIFIERS"),
                 arxiv_plot_extract,
                 arxiv_fulltext_download(),
@@ -225,9 +229,24 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Nicely format the record."""
-        model = process_record_arxiv.model(bwo)
-        record = get_record_from_model(model)
+        try:
+            model = process_record_arxiv.model(bwo)
+            record = get_record_from_model(model)
+        except TypeError as err:
+            return "Error: {0}".format(err)
         return render_template(
             'format/record/Holding_Pen_HTML_detailed.tpl',
             record=record
         )
+
+    @classmethod
+    def get_record(cls, obj, **kwargs):
+        """Return a dictionary-like object representing the current object.
+
+        This object will be used for indexing and be the basis for display
+        in Holding Pen.
+        """
+        if isinstance(obj.data, six.text_type):
+            return {}
+        model = cls.model(obj)
+        return get_record_from_model(model).dumps()  # Turn into pure dict
