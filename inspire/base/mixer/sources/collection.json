@@ -40,11 +40,6 @@
         "name": "Conferences"
     },
     {
-        "dbquery": "980__a:\"AUTHOR\"",
-        "id": 5,
-        "name": "Author"
-    },
-    {
         "dbquery": "collection:D0-INTERNAL-NOTE",
         "id": 13,
         "name": "D0 Internal Notes"

@@ -317,7 +317,7 @@ class AuthorUpdateForm(WebDepositForm):
         label='Status',
         choices=status_options,
         default="active",
-        validators=[validators.Required()],
+        validators=[validators.DataRequired()],
         widget_classes='form-control',
     )
 

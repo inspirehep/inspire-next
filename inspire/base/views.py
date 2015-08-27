@@ -131,7 +131,5 @@ def marcxml_filter(record):
 
     if "HEP" in collections:
         return legacy_export_as_marc(hep2marc.do(record))
-    elif "AUTHOR" in collections:
-        return legacy_export_as_marc(hepnames2marc.do(record))
     elif "HEPNAMES" in collections:
         return legacy_export_as_marc(hepnames2marc.do(record))

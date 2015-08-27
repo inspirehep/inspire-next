@@ -64,49 +64,6 @@
                     "type": "string",
                     "index": "not_analyzed"
                 },
-                "hidden_note": {
-                    "type": "object",
-                    "properties": {
-                        "cds": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "accelerator_experiment": {
-                    "type": "object",
-                    "properties": {
-                        "experiment": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "experimentautocomplete": {
-                    "type": "string"
-                },
-                "experiment_name": {
-                    "type": "string",
-                    "copy_to": ["experimentautocomplete"]
-                },
-                "report_number": {
-                    "type": "object",
-                    "properties": {
-                        "primary": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "collaboration": {
-                    "type": "object",
-                    "properties": {
-                        "collaboration": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
                 "collections": {
                     "properties": {
                         "primary": {
@@ -128,24 +85,17 @@
                         }
                     }
                 },
-                "affautocomplete": {
+                "authorautocomplete": {
                     "type": "string"
                 },
-                "authors": {
+                "name": {
                     "type": "object",
                     "properties": {
-                        "full_name": {
+                        "value": {
                             "type": "string",
-                            "copy_to": ["exactauthor"],
-                            "analyzer": "natural_text"
-                        },
-                        "affiliation": {
-                            "type": "string"
+                            "copy_to": ["authorautocomplete"]
                         }
                     }
-                },
-                "division": {
-                    "type": "string"
                 },
                 "date_and_time_of_latest_transaction": {
                     "type": "date",
@@ -154,28 +104,6 @@
                 "date": {
                     "type": "date",
                     "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S||dd MM yyyy||dd MMM yyyy||MMM yyyy||MMM yyyy?||yyyy ('repr'.1964.)"
-                },
-                "institution": {
-                    "type": "object",
-                    "properties": {
-                        "affiliation": {
-                            "type": "string",
-                            "copy_to": ["affautocomplete"]
-                        }
-                    }
-                },
-                "publication_info": {
-                    "type": "object",
-                    "properties": {
-                        "journal_volume": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        },
-                        "year": {
-                            "type": "date",
-                            "format": "yyyy"
-                        }
-                    }
                 }
             }
         }

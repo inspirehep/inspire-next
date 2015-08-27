@@ -246,8 +246,7 @@ SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
     "Experiments": "experiments",
     "Jobs": "jobs",
     "Journals": "journals",
-    "HepNames": "authors",
-    "Author": "authors",
+    "HepNames": "authors"
 }
 
 SEARCH_ELASTIC_DEFAULT_INDEX = 'hep'

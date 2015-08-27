@@ -5588,7 +5588,7 @@
     <subfield code="g"></subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="035" ind1="" ind2="">
     <subfield code="9">orcid</subfield>
@@ -5643,7 +5643,7 @@
     <subfield code="2">INSPIRE</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="035" ind1="" ind2="">
     <subfield code="9">orcid</subfield>
@@ -5679,7 +5679,7 @@
     <subfield code="2">INSPIRE</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="035" ind1="" ind2="">
     <subfield code="9">orcid</subfield>
@@ -5743,7 +5743,7 @@
     <subfield code="2">INSPIRE</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="035" ind1="" ind2="">
     <subfield code="9">orcid</subfield>
@@ -5800,7 +5800,7 @@
     <subfield code="g"></subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="035" ind1="" ind2="">
     <subfield code="9">orcid</subfield>
@@ -5837,7 +5837,7 @@
     <subfield code="g"></subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">1998-12-02</subfield>
@@ -5862,7 +5862,7 @@
     <subfield code="g">ACTIVE</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">2007-11-16</subfield>
@@ -5911,7 +5911,7 @@
     <subfield code="2">INSPIRE</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">1992-07-28</subfield>
@@ -5954,7 +5954,7 @@
     <subfield code="g"></subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">1992-01-31</subfield>
@@ -6029,7 +6029,7 @@
     <subfield code="2">INSPIRE</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">2000-01-31</subfield>
@@ -6131,7 +6131,7 @@
     <subfield code="2">INSPIRE</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">2001-07-27</subfield>
@@ -6210,7 +6210,7 @@
     <subfield code="2">INSPIRE</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">1996-06-21</subfield>
@@ -6268,7 +6268,7 @@
     <subfield code="g"></subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">2010-12-02</subfield>
@@ -6303,7 +6303,7 @@
     <subfield code="2">INSPIRE</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">2011-08-30</subfield>
@@ -6367,7 +6367,7 @@
     <subfield code="2">INSPIRE</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">2004-11-19</subfield>
@@ -6445,7 +6445,7 @@
     <subfield code="2">INSPIRE</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">2006-06-12</subfield>
@@ -6492,7 +6492,7 @@
     <subfield code="2">INSPIRE</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">1998-12-02</subfield>
@@ -6582,7 +6582,7 @@
     <subfield code="g"></subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">2000-08-16</subfield>
@@ -6621,7 +6621,7 @@
     <subfield code="g">DEPARTED</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">2001-07-27</subfield>
@@ -6681,7 +6681,7 @@
     <subfield code="2">INSPIRE</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">AUTHOR</subfield>
+    <subfield code="a">HEPNAMES</subfield>
   </datafield>
   <datafield tag="961" ind1=" " ind2=" ">
     <subfield code="x">1999-07-22</subfield>
