@@ -25,5 +25,7 @@ define([
 ], function(Feedback) {
   'use strict';
 
-  var feedback = new Feedback.Feedback({});
+  if ( $(window).width() > 768 ) {
+    var feedback = new Feedback.Feedback({});
+  }
 });
