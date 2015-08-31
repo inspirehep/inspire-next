@@ -28,6 +28,9 @@ js = Bundle(
     output='base.js',
     filters=RequireJSFilter(exclude=[_j, _i]),
     weight=20,
+    bower={
+        "toastr": "latest"
+    }
 )
 
 landing_page_styles = Bundle(
@@ -66,6 +69,7 @@ _base_styles.contents += (
     'less/feedback/modal.less',
     'less/format/brief-results.less',
     'less/workflows/workflows.less',
+    'vendors/toastr/toastr.css'
 )
 
 to_remove = ["less/base.less",

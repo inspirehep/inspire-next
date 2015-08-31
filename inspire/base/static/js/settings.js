@@ -59,6 +59,7 @@ require.config({
     "readmore": "vendors/readmore/readmore",
     "buckets": "vendors/buckets/buckets",
     "feedback": "js/feedback/feedback",
+    "toastr": "vendors/toastr/toastr",
     "html2canvas": "vendors/html2canvas/build/html2canvas",
     "highcharts": "vendors/highcharts-release/highcharts"
   },

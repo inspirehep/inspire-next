@@ -1,6 +1,6 @@
-/*
+ /*
  * This file is part of INSPIRE.
- * Copyright (C) 2014 CERN.
+ * Copyright (C) 2015 CERN.
  *
  * INSPIRE is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,20 @@
  * or submit itself to any jurisdiction.
  */
 
- require([
-    "js/jquery_plugin",
-    "js/feedback_inspire",
-    "js/header/header",
-    "js/notification",
-    ], function() {
-    // loading all the libraries everywhere.
-    console.info("js/inspire_base_init is loaded");
+define([
+  'toastr',
+], function(toastr) {
+  'use strict';
+  toastr.options.closeButton = true;
+  toastr.options.timeOut = 0;
+  toastr.options.extendedTimeOut = 0;
+  toastr.options.positionClass = "toast-top-right";
+  toastr.options.onHidden = function() {
+    sessionStorage.setItem('notificationdismissed', true);
+  };
+  var dismissed = sessionStorage.getItem('notificationdismissed');
+  if ( !dismissed ) {
+    toastr.info('You can go back to INSPIRE HEP any time - just <a href="http://inspirehep.net">click here</a>', 'Welcome to INSPIRE Labs!')  
+  }
+
 });
