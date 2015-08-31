@@ -53,7 +53,7 @@ exclude-result-prefixes="OAI-PMH marc OAI-provenance fn">
                   <subfield code="a"><xsl:value-of select="./OAI-PMH:header/OAI-PMH:identifier" /></subfield>
                   <subfield code="u"><xsl:value-of select="//OAI-PMH:request" /></subfield>
                   <!-- Set this to a more semantic string if you prefer... -->
-                  <subfield code="9"><xsl:value-of select="//OAI-PMH:request" /></subfield>
+                  <subfield code="9">OAI-PMH</subfield>
                   <subfield code="d"><xsl:value-of select="./OAI-PMH:header/OAI-PMH:datestamp" /></subfield>
                   <subfield code="h"><xsl:value-of select="//OAI-PMH:responseDate" /></subfield>
                   <subfield code="m"><xsl:value-of select="//OAI-PMH:request/@metadataPrefix" /></subfield>
@@ -71,6 +71,14 @@ exclude-result-prefixes="OAI-PMH marc OAI-provenance fn">
           </xsl:when>
           <xsl:otherwise>
             <record>
+              <xsl:for-each select="./OAI-PMH:metadata/marc:record/marc:controlfield">
+                <xsl:if test="@tag='001'">
+                  <xsl:element name="{local-name(.)}">
+                    <xsl:copy-of select="@*" />
+                    <xsl:value-of select="." />
+                  </xsl:element>
+                </xsl:if>
+              </xsl:for-each>
               <xsl:for-each select="./OAI-PMH:metadata/marc:record/marc:datafield">
                 <!-- CUSTOMIZEME: Modify below in order to choose which
                                              datafield/subfield will be kept
@@ -116,7 +124,7 @@ exclude-result-prefixes="OAI-PMH marc OAI-provenance fn">
                   <subfield code="a"><xsl:value-of select="./OAI-PMH:header/OAI-PMH:identifier" /></subfield>
                   <subfield code="u"><xsl:value-of select="//OAI-PMH:request" /></subfield>
                   <!-- Set this to a more semantic string if you prefer... -->
-                  <subfield code="9"><xsl:value-of select="//OAI-PMH:request" /></subfield>
+                  <subfield code="9">OAI</subfield>
                   <subfield code="d"><xsl:value-of select="./OAI-PMH:header/OAI-PMH:datestamp" /></subfield>
                   <subfield code="h"><xsl:value-of select="//OAI-PMH:responseDate" /></subfield>
                   <subfield code="m"><xsl:value-of select="//OAI-PMH:request/@metadataPrefix" /></subfield>
