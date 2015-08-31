@@ -30,16 +30,15 @@ js = Bundle(
     weight=20,
 )
 
-# index_js = Bundle(
-#     'vendors/jquery-feeds/dist/jquery.feeds.js',
-#     'vendors/moment/moment.js',
-#     output='index.js',
-#     filters="requirejs",
-#     weight=60,
-#     bower={
-#         "jquery-feeds": "git://github.com/camagu/jquery-feeds.git",
-#     },
-# )
+landing_page_styles = Bundle(
+    "less/landing_page.less",
+    output="landing_page.css",
+    depends=[
+        "less/landing_page.less"
+    ],
+    filters="less,cleancss",
+    weight=60,
+)
 
 # '_' prefix indicates private variables, and prevents duplicated import by
 # auto-discovery service of invenio
