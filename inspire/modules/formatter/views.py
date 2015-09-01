@@ -24,12 +24,17 @@ from flask import Blueprint, jsonify, Response
 
 from inspire.utils.bibtex import Bibtex
 from inspire.utils.latex import Latex
+from inspire.utils.cv_latex import Cv_latex
+from inspire.utils.cv_latex_html_text import Cv_latex_html_text
 
 from invenio_records.api import get_record
+from invenio_search.api import Query
 
 from invenio.base.decorators import wash_arguments
 
 from six import text_type
+
+import itertools
 
 blueprint = Blueprint(
     'inspire_formatter',
@@ -83,4 +88,46 @@ def get_latex_file(recid, latex_format):
                 latex_format, recid
             )
         }
+    )
+
+
+@blueprint.route("/export-as/<path:export_format>/<path:ids>",
+                 methods=['GET', 'POST'])
+def download_all_latex(ids, export_format):
+    """
+    Export file according to format
+    :param ids: the ids of the records.
+    :param export_format: the type of the file the user needs to download.
+    :return: the downloaded file.
+    """
+    out = []
+    ids_list = ids.split(',')
+    suffix = ''
+    for element in ids_list:
+        record = get_record(element)
+        if export_format == 'bibtex':
+            results = Bibtex(record).format() + '\n'
+            suffix = 'bibtex'
+        elif export_format in ('latex_eu', 'latex_us'):
+            results = Latex(record, export_format).format() + '\n'
+            suffix = 'tex'
+        elif export_format == 'cv_latex':
+            results = Cv_latex(record).format() + '\n'
+        elif export_format in ('cv_latex_html', 'cv_latex_text'):
+            results = Cv_latex_html_text(record, export_format).format() + '\n'
+
+        generator = (cell for row in results
+                     for cell in row)
+        out.append(generator)
+    output = itertools.chain()
+    for gen in out:
+        output = itertools.chain(output, gen)
+
+    return Response(
+        output,
+        mimetype="text/plain",
+        headers={
+            "Content-Disposition": "attachment;filename=export_as_{0}.{1}".format(
+                export_format, suffix
+            )}
     )
