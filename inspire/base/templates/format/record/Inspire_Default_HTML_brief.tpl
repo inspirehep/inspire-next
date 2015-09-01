@@ -106,18 +106,19 @@
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="myModalLabel">Export Article</h4>
+              <h4 class="modal-title" id="myModalLabel">Cite Article</h4>
+              <div class="row"><div class="col-md-12"><p></p></div></div>
               <div class="btn-group">
-              <button type="button" class="btn btn-primary dropdown-toggle" id="btn-drop" data-toggle="dropdown" aria-expanded="false">
-                Format: <span id="format{{record['control_number']}}"></span> <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                <li><a class="pointer bibtex" id="bibtex{{record['control_number']}}" data-recid="{{record['control_number']}}">BibTex</a></li>
-                <li><a class="pointer latex_eu" id="latex_eu{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(EU)</a></li>
-                <li><a class="pointer latex_us" id="latex_us{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(US)</a></li>
-              </ul>
-            </div>
-                <button type="button" class="btn  btn-primary">Download</button>
+                <button type="button" class="btn btn-primary dropdown-toggle" id="btn-drop" data-toggle="dropdown" aria-expanded="false">
+                  Format: <span id="format{{record['control_number']}}"></span> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a class="pointer bibtex" id="bibtex{{record['control_number']}}" data-recid="{{record['control_number']}}">BibTex</a></li>
+                  <li><a class="pointer latex_eu" id="latex_eu{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(EU)</a></li>
+                  <li><a class="pointer latex_us" id="latex_us{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(US)</a></li>
+                </ul>
+              </div>
+              <a type="button" id="download{{record['control_number']}}" class="btn btn-primary">Download</a>
             </div>
             <div class="modal-body">
               <div class="row">
@@ -132,7 +133,6 @@
           </div>
         </div>
           <!-- END MODAL -->
-
         <div class="citations-references">
           {% if record.get('date_updated') %}
             <i class="glyphicon glyphicon-calendar"></i> {{ record.get('date_updated').split('-')[0] }}<br/>
