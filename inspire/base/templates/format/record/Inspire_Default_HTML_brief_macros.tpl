@@ -65,7 +65,7 @@
         <i class="fa fa-arrow-up" id="arrow_up{{ record.get('recid') }}"></i>
         </a>
       </div>
-      <div id="more{{ record.get('recid') }}" class="collapse">{{ source.get('summary')|words(50)|e }}</div>
+      <div id="more{{ record.get('recid') }}" class="collapse">{{ source.get('summary')|words_to_end(50)|e }}</div>
     {% endif %}
   {% endfor %}
   {% endif %}
