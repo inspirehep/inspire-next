@@ -16,7 +16,7 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, Response
 from inspire.utils.bibtex import Bibtex
 from inspire.utils.latex import Latex
 from invenio_records.api import get_record
@@ -47,3 +47,28 @@ def get_latex(recid, latex_format):
     record = get_record(recid)
     latex = Latex(record, latex_format).format()
     return jsonify({"result": latex, "recid": recid})
+
+
+@blueprint.route("/download-bibtex/<int:recid>")
+def get_bibtex_file(recid):
+    record = get_record(recid)
+    results = Bibtex(record).format()
+    generator = (cell for row in results
+                 for cell in row)
+    return Response(generator,
+                    mimetype="text/plain",
+                    headers={"Content-Disposition":
+                             "attachment;filename=Bibtex%d.bibtex" % recid})
+
+
+@blueprint.route("/download-latex/<path:latex_format>/<int:recid>")
+def get_latex_file(recid, latex_format):
+    record = get_record(recid)
+    results = Latex(record, latex_format).format()
+    generator = (cell for row in results
+                 for cell in row)
+    return Response(generator,
+                    mimetype="text/plain",
+                    headers={"Content-Disposition":
+                             "attachment;filename=Latex_%s%d.tex" % (
+                                latex_format, recid)})

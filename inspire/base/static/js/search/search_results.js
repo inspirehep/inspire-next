@@ -9,6 +9,7 @@ require(['jquery', 'bootstrap'], function($) {
       }, function(data) {
         $("#text" + data.recid).text(data.result);
         $("#format" + data.recid).text('BibTex')
+        $("#download" + data.recid).attr("href", "/formatter/download-bibtex/" + data.recid)
       });
     });
   
@@ -17,7 +18,8 @@ require(['jquery', 'bootstrap'], function($) {
         recid: $(this).data("recid")
       }, function(data) {
         $("#text" + data.recid).text(data.result);
-        $("#format" + data.recid).text('Bibtex')
+        $("#format" + data.recid).text('BibTex')
+        $("#download" + data.recid).attr("href", "/formatter/download-bibtex/" + data.recid)
       });
     });
   
@@ -28,6 +30,7 @@ require(['jquery', 'bootstrap'], function($) {
       }, function(data) {
         $("#text" + data.recid).text(data.result);
         $("#format" + data.recid).text('LaTex(EU)')
+        $("#download" + data.recid).attr("href", "/formatter/download-latex/latex_eu/" + data.recid)
       });
     });
   
@@ -38,6 +41,7 @@ require(['jquery', 'bootstrap'], function($) {
       }, function(data) {
         $("#text" + data.recid).text(data.result);
         $("#format" + data.recid).text('LaTex(US)')
+        $("#download" + data.recid).attr("href", "/formatter/download-latex/latex_us/" + data.recid)
       });
     });
   })
