@@ -66,3 +66,4 @@ def convert_encoding(from_encoding="ISO-8859-1", to_encoding="UTF-8"):
             obj.data = obj.data.encode(from_encoding).decode(to_encoding)
         except (UnicodeEncodeError, UnicodeDecodeError) as err:
             obj.log.error(err)
+    return _convert_encoding
