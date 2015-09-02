@@ -45,21 +45,25 @@
 {% endmacro %}
 
 {% macro record_abstract() %}
-  {% set exists = [] %}
-  {% if record.get('report_number') %}
-    {% if record.get('report_number') | is_list() %}
-      {% for i in record.get('report_number') %}
-        {% if i.get('source') == 'arXiv' %}
-          {% do exists.append(1) %}
-        {% endif %}
-      {% endfor %}
-    {% endif %}
-  {% endif %}
+  {% set abstract = [] %}
   {% if record.get('abstract') and record.get('abstract')|is_list() %}
     {% if record.get('abstract')|count > 1%}
       {% for source in record.get('abstract') %}
-        {% if exists and source.get('source') == 'arXiv'%}
-          {% if source.get('summary') %}
+        {% if source.get('summary') and source.get('source') != 'arXiv' %}
+          {% do abstract.append(source.get('summary')) %}
+        {% endif %}
+      {% endfor %}
+      {% if abstract %} 
+        <div class="abstract" id="main{{ record.get('recid') }}">{{ abstract[0]|words(50)|e }}<span id="dots{{ record.get('recid') }}">...</span>
+          <a class="expand" id="{{ record.get('recid') }}"  data-toggle="collapse" href="#more{{ record.get('recid') }}" aria-expanded="false" onclick="functions.changeArrow('{{ record.get('recid') }}','arrow_down{{ record.get('recid') }}','arrow_up{{ record.get('recid') }}')"> 
+          <i class="fa fa-arrow-down" id="arrow_down{{ record.get('recid') }}"></i>
+          <i class="fa fa-arrow-up" id="arrow_up{{ record.get('recid') }}"></i>
+          </a>
+          </div>
+          <div id="more{{ record.get('recid') }}" class="collapse">{{ abstract[0]|words_to_end(50)|e }}</div>
+      {% else %}
+        {% for source in record.get('abstract') %}
+          {% if source.get('summary') and source.get('source') == 'arXiv' %}
           <div class="abstract" id="main{{ record.get('recid') }}">{{ source.get('summary')|words(50)|e }}<span id="dots{{ record.get('recid') }}">...</span>
           <a class="expand" id="{{ record.get('recid') }}"  data-toggle="collapse" href="#more{{ record.get('recid') }}" aria-expanded="false" onclick="functions.changeArrow('{{ record.get('recid') }}','arrow_down{{ record.get('recid') }}','arrow_up{{ record.get('recid') }}')"> 
           <i class="fa fa-arrow-down" id="arrow_down{{ record.get('recid') }}"></i>
@@ -68,18 +72,18 @@
           </div>
           <div id="more{{ record.get('recid') }}" class="collapse">{{ source.get('summary')|words_to_end(50)|e }}</div>
           {% endif %}
-        {%endif%}
-      {% endfor %}
+        {% endfor %}
+      {% endif %}
     {% else %}
     {% for source in record.get('abstract') %}
       {% if source.get('summary') %}
-      <div class="abstract" id="main{{ record.get('recid') }}">{{ source.get('summary')|words(50)|e }}<span id="dots{{ record.get('recid') }}">...</span>
-      <a class="expand" id="{{ record.get('recid') }}"  data-toggle="collapse" href="#more{{ record.get('recid') }}" aria-expanded="false" onclick="functions.changeArrow('{{ record.get('recid') }}','arrow_down{{ record.get('recid') }}','arrow_up{{ record.get('recid') }}')"> 
-      <i class="fa fa-arrow-down" id="arrow_down{{ record.get('recid') }}"></i>
-      <i class="fa fa-arrow-up" id="arrow_up{{ record.get('recid') }}"></i>
-      </a>
-      </div>
-      <div id="more{{ record.get('recid') }}" class="collapse">{{ source.get('summary')|words_to_end(50)|e }}</div>
+        <div class="abstract" id="main{{ record.get('recid') }}">{{ source.get('summary')|words(50)|e }}<span id="dots{{ record.get('recid') }}">...</span>
+        <a class="expand" id="{{ record.get('recid') }}"  data-toggle="collapse" href="#more{{ record.get('recid') }}" aria-expanded="false" onclick="functions.changeArrow('{{ record.get('recid') }}','arrow_down{{ record.get('recid') }}','arrow_up{{ record.get('recid') }}')"> 
+        <i class="fa fa-arrow-down" id="arrow_down{{ record.get('recid') }}"></i>
+        <i class="fa fa-arrow-up" id="arrow_up{{ record.get('recid') }}"></i>
+        </a>
+        </div>
+        <div id="more{{ record.get('recid') }}" class="collapse">{{ source.get('summary')|words_to_end(50)|e }}</div>
       {% endif %}
     {% endfor %}
   {% endif %}
