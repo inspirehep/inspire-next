@@ -19,5 +19,6 @@ Contents
    :maxdepth: 2
 
    installation
+   harvesting
    tools
 
