@@ -62,6 +62,7 @@ setup(
         "orcid",
         "retrying",
         "invenio_classifier",
+        "invenio_oaiharvester>=0.1.1",
     ],
     extras_require={
         'development': [
