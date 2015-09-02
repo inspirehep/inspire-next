@@ -22,6 +22,8 @@
 
 from invenio.ext.assets import Bundle, RequireJSFilter
 from invenio.base.bundles import jquery as _j, invenio as _i
+from invenio_search.bundles import js as _search_js
+from invenio_formatter.bundles import css as _formatter_css
 
 js = Bundle(
     'js/inspire_base_init.js',
@@ -32,6 +34,15 @@ js = Bundle(
         "toastr": "latest"
     }
 )
+
+dependencies_to_remove = ["MathJax"]
+
+for elem in dependencies_to_remove:
+    try:
+        del _j.bower[elem]
+    except KeyError:
+        pass
+
 
 landing_page_styles = Bundle(
     "less/landing_page.less",
@@ -80,15 +91,10 @@ to_remove = ["less/base.less",
 for elem in to_remove:
     _base_styles.contents.remove(elem)
 
-from invenio_search.bundles import js as _search_js
-
 _search_js.contents += (
     'js/search/invenio_with_spires_typeahead_configuration.js',
     'js/search/search_results.js',
-    # 'js/search/search_box.js',
 )
-
-from invenio_formatter.bundles import css as _formatter_css
 
 _formatter_css.contents += (
     'css/formatter/templates_detailed_inspire.css',
