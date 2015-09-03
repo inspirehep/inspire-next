@@ -43,7 +43,8 @@ def convert_marcxml(source):
             yield journals.do(record)
         elif _collection_in_record(record, 'hepnames'):
             yield hepnames.do(record)
-        elif _collection_in_record(record, 'job'):
+        elif _collection_in_record(record, 'job') or \
+                _collection_in_record(record, 'jobhidden'):
             yield jobs.do(record)
         else:
             yield hep.do(record)

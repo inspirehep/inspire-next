@@ -245,6 +245,7 @@ SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
     "Institutions": "institutions",
     "Experiments": "experiments",
     "Jobs": "jobs",
+    "Jobs Hidden": "jobshidden",
     "Journals": "journals",
     "HepNames": "authors"
 }
