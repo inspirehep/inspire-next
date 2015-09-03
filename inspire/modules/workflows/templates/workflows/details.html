@@ -1,6 +1,6 @@
 {#
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -59,8 +59,8 @@
   {% if bwobject.version == 1 %}
     <div id="successmessage" class="alert alert-success">
       {{ _('Workflow completed with success') }}
-      {% if 'url' in bwobject.get_extra_data() %}
-        <a href="{{ bwobject.get_extra_data().get('url') }}">{{ _('click here ') }}</a> {{ _('to visit the record.') }}
+      {% if 'url' in bwobject.extra_data %}
+        <a href="{{ bwobject.extra_data.get('url') }}">{{ _('click here ') }}</a> {{ _('to visit the record.') }}
       {% endif %}
       <a class="close" data-dismiss="alert">&times;</a>
     </div>
@@ -85,7 +85,7 @@
   {{ self.action_alert() }}
   {{ self.workflow_completed() }}
 
-  {% set submission_data = bwobject.get_extra_data().get("submission_data") %}
+  {% set submission_data = bwobject.extra_data.get("submission_data") %}
 
   {% block hp_preview %}
   <div class="row">
@@ -130,8 +130,8 @@
       <div class="col-md-12">
         <p>
           PDF from user: <a href="{{ submission_data.pdf }}">{{ submission_data.pdf }}</a> <i class="fa fa-file-pdf-o"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-          {% if bwobject.get_extra_data().get('pdf_upload') != None %}
-            <input type="checkbox" name="submission-data-pdf" id="submission-data-pdf" {% if bwobject.get_extra_data().get('pdf_upload') == True %}checked{% endif %} disabled>
+          {% if bwobject.extra_data.get('pdf_upload') != None %}
+            <input type="checkbox" name="submission-data-pdf" id="submission-data-pdf" {% if bwobject.extra_data.get('pdf_upload') == True %}checked{% endif %} disabled>
           {% else %}
             <input type="checkbox" name="submission-data-pdf" id="submission-data-pdf" checked>
           {% endif %}
@@ -154,8 +154,8 @@
       <!-- Block for the extra information that appear on the tabpanel (ticket, submitter email) -->
       {% block extra_info %}
           {% macro get_email() -%}
-            {% if 'sips' in bwobject.get_data() and bwobject.get_data()['sips'][0]['agents']|length > 0 %}
-                <i class="fa fa-user"> {{ bwobject.get_data()['sips'][0]['agents'][0]['email_address'] }}</i>
+            {% if 'sips' in bwobject.data and bwobject.data['sips'][0]['agents']|length > 0 %}
+                <i class="fa fa-user"> {{ bwobject.data['sips'][0]['agents'][0]['email_address'] }}</i>
             {% endif %}
           {% endmacro %}
 
@@ -175,7 +175,7 @@
           Bootstrap columns to the 2 extra elements  -->
           <li role="presentation" class="info-in-panel pull-right col-lg-8">
             <!-- If both exist, 6 columns each -->
-            {% if 'ticket_id' in bwobject.extra_data and 'sips' in bwobject.get_data() %}
+            {% if 'ticket_id' in bwobject.extra_data and 'sips' in bwobject.data %}
               {% call list_element(6) %}
                 {{ get_ticket() }}
               {% endcall %}
@@ -188,7 +188,7 @@
               {% call list_element(12) %}
                 {{ get_ticket() }}
               {% endcall %}
-            {% elif 'sips' in bwobject.get_data() %}
+            {% elif 'sips' in bwobject.data %}
               {% call list_element(12) %}
                 {{ get_email() }}
               {% endcall %}
