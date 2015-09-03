@@ -1,6 +1,7 @@
 git+https://github.com/inspirehep/invenio@labs#egg=Invenio
 git+https://github.com/inspirehep/invenio-search@master-es-indices#egg=invenio-search==0.1.1.dev20150819
 git+https://github.com/inspirehep/invenio-records@master#egg=invenio-records==0.3.2.dev20150825
+git+https://github.com/inspirehep/invenio-workflows@master#egg=invenio-workflows==0.1.2.dev20150825
 git+https://github.com/inveniosoftware/invenio-collections@master#egg=invenio-collections==0.1.2.dev20150825
 git+https://github.com/mloesch/sickle@master#egg=Sickle
 
