@@ -133,15 +133,22 @@ def core(self, key, value):
     return value.get('a', "").upper() == "CORE"
 
 
-@institutions.over('hidden_note', '^667..')
+@institutions.over('non_public_notes', '^667..')
 @utils.for_each_value
-def hidden_note(self, key, value):
+def non_public_notes(self, key, value):
     """Hidden note."""
     return value.get('a')
 
 
-@institutions.over('public_note', '^680..')
+@institutions.over('hidden_notes', '^595..')
 @utils.for_each_value
-def public_note(self, key, value):
+def hidden_notes(self, key, value):
+    """Hidden note."""
+    return value.get('a')
+
+
+@institutions.over('public_notes', '^680..')
+@utils.for_each_value
+def public_notes(self, key, value):
     """Hidden note."""
     return value.get('i')
