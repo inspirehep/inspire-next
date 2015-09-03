@@ -29,26 +29,28 @@ from ..model import hep, hep2marc
 
 
 @hep.over('authors', '^[17]00[103_].')
-# @utils.filter_values
 def authors(self, key, value):
     """Main Entry-Personal Name."""
     value = utils.force_list(value)
 
     def get_value(value):
-            return {
-                'full_name': value.get('a'),
-                'relator_term': value.get('e'),
-                'alternative_name': value.get('q'),
-                'INSPIRE_id': value.get('i'),
-                'external_id': value.get('j'),
-                'e_mail': value.get('m'),
-                'affiliation': utils.force_list(
-                    value.get('u')
-                ),
-                'profile': inspire_dojson_utils.create_profile_url(
-                    value.get('x')),
-                'claimed': value.get('y')
-            }
+        affiliation = None
+        if value.get('u'):
+            affiliation = list(set(utils.force_list(
+                value.get('u'))))
+        return {
+            'full_name': value.get('a'),
+            'relator_term': value.get('e'),
+            'alternative_name': value.get('q'),
+            'INSPIRE_id': value.get('i'),
+            'external_id': value.get('j'),
+            'e_mail': value.get('m'),
+            'affiliation': affiliation,
+            'profile': inspire_dojson_utils.create_profile_url(
+                value.get('x')
+            ),
+            'claimed': value.get('y')
+        }
 
     authors = self.get('authors', [])
 
@@ -57,36 +59,37 @@ def authors(self, key, value):
     else:
         for single_value in value:
             authors.append(get_value(single_value))
-
-    return authors
+    filtered_authors = []
+    for element in authors:
+        if element not in filtered_authors:
+            filtered_authors.append(element)
+    return filtered_authors
 
 
 @hep2marc.over('100', 'authors')
-# @utils.filter_values
 def authors2marc(self, key, value):
     """Main Entry-Personal Name."""
     value = utils.force_list(value)
 
     def get_value(value):
-            return {
-                'a': value.get('full_name'),
-                'e': value.get('relator_term'),
-                'q': value.get('alternative_name'),
-                'i': value.get('INSPIRE_id'),
-                'j': value.get('external_id'),
-                'm': value.get('e_mail'),
-                'u': utils.force_list(
-                    value.get('affiliation')
-                ),
-                'x': value.get('profile'),
-                'y': value.get('claimed')
-            }
+        return {
+            'a': value.get('full_name'),
+            'e': value.get('relator_term'),
+            'q': value.get('alternative_name'),
+            'i': value.get('INSPIRE_id'),
+            'j': value.get('external_id'),
+            'm': value.get('e_mail'),
+            'u': utils.force_list(
+                value.get('affiliation')
+            ),
+            'x': value.get('profile'),
+            'y': value.get('claimed')
+        }
 
     if len(value) > 1:
         self["700"] = []
     for author in value[1:]:
         self["700"].append(get_value(author))
-
     return get_value(value[0])
 
 

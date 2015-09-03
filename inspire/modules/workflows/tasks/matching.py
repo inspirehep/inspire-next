@@ -175,7 +175,7 @@ def exists_in_inspire_or_rejected(days_ago=None):
 
 
 def save_identifiers_to_kb(kb_name,
-                           identifier_key="report_number.primary"):
+                           identifier_key="report_number.value"):
     """Save the record identifiers into a KB."""
     @wraps(save_identifiers_to_kb)
     def _save_identifiers_to_kb(obj, eng):
@@ -189,7 +189,7 @@ def save_identifiers_to_kb(kb_name,
 
 
 def exists_in_holding_pen(kb_name,
-                          identifier_key="report_number.primary"):
+                          identifier_key="report_number.value"):
     """Check if a record exists in HP by looking in given KB."""
     @wraps(exists_in_holding_pen)
     def _exists_in_holding_pen(obj, eng):
@@ -248,4 +248,4 @@ def update_old_object(kb_name):
 def arxiv_set_category_field(obj, eng):
     """Temporary measure to enable sorting by primary category."""
     record = get_record_from_obj(obj, eng)
-    obj.uri = record.get("report_number.arxiv_category", [""])[0]
+    obj.uri = record.get("arxiv_eprints.categories", [""])[0]

@@ -23,7 +23,7 @@
 """Helper functions for authors."""
 
 import re
-from beard.utils import asciify
+from beard.utils.strings import asciify
 
 _bai_parentheses_cleaner = \
     re.compile(r"(\([^)]*\))|(\[[^\]]*\])|(\{[^\}]*\})", re.UNICODE)

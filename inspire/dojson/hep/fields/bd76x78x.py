@@ -32,8 +32,14 @@ from ..model import hep, hep2marc
 @utils.filter_values
 def publication_info(self, key, value):
     """Publication info about record."""
+    year = ''
+    recid = ''
+    if 'y' in value:
+        year = int(value.get('y'))
+    if '0' in value:
+        recid = int(value.get('0'))
     return {
-        'recid': value.get('0'),
+        'recid': recid,
         'page_artid': value.get('c'),
         'journal_issue': value.get('n'),
         'conf_acronym': value.get('o'),
@@ -43,7 +49,7 @@ def publication_info(self, key, value):
         'journal_volume': value.get('v'),
         'cnum': value.get('w'),
         'pubinfo_freetext': value.get('x'),
-        'year': value.get('y'),
+        'year': year,
         'isbn': value.get('z'),
         'note': value.get('m'),
     }

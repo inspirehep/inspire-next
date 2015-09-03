@@ -95,37 +95,85 @@ def system_control_number2marc(self, key, value):
 
 
 @hep.over('report_number', '^037..')
-@utils.for_each_value
-@utils.filter_values
 def report_number(self, key, value):
     """Source of Acquisition."""
-    return {
-        'primary': value.get('a', value.get('z')),
-        'arxiv_category': value.get('c'),
-        'source': value.get('9')
-    }
+    def get_value(value):
+        return {
+            'primary': bool(value.get('a')),
+            'source': value.get('9'),
+            'value': value.get('a', value.get('z')),
+        }
+
+    report_number = self.get('report_number', [])
+
+    if isinstance(value, list):
+        for element in value:
+            if '9' in element and element['9'] != 'arXiv':
+                report_number.append(get_value(element))
+    else:
+        if '9' in value and value['9'] != 'arXiv':
+                report_number.append(get_value(value))
+    return [dict(t) for t in set([tuple(d.items()) for d in report_number])]
 
 
 @hep2marc.over('037', 'report_number')
-@utils.for_each_value
-@utils.filter_values
 def report_number2marc(self, key, value):
     """Source of Acquisition."""
-    return {
-        'a': value.get('primary'),
-        'c': value.get('arxiv_category'),
-        'g': value.get('source'),
-    }
+    value = utils.force_list(value)
+
+    def get_value(value):
+        return {
+            'a': value.get('value'),
+            '9': value.get('source'),
+        }
+
+    self['037'] = self.get('037', [])
+    for rn in value:
+        self['037'].append(get_value(rn))
+    return self['037']
+
+
+@hep.over('arxiv_eprints', '^037..')
+def arxiv_eprints(self, key, value):
+
+    def get_value(value):
+        return {
+            'value': value.get('a'),
+            'categories': utils.force_list(value.get('c')),
+        }
+
+    arxiv_eprints = self.get('arxiv_eprints', [])
+
+    if isinstance(value, list):
+        for element in value:
+            if element['9'] == 'arXiv' and 'c' in element:
+                arxiv_eprints.append(get_value(element))
+    else:
+        if value['9'] == 'arXiv' and 'c' in value:
+            arxiv_eprints.append(get_value(value))
+    return arxiv_eprints
+
+
+@hep2marc.over('037', 'arxiv_eprints')
+def arxiv_eprints2marc(self, key, value):
+    value = utils.force_list(value)
+
+    def get_value(value):
+        return {
+            'a': value.get('value'),
+            'c': value.get('categories'),
+        }
+
+    self['037'] = self.get('037', [])
+    for arxiv in value:
+        self['037'].append(get_value(arxiv))
+    return self['037']
 
 
 @hep.over('language', '^041[10_].')
-@utils.for_each_value
-@utils.filter_values
 def language(self, key, value):
     """Language Code."""
-    return {
-        'language': value.get('a')
-    }
+    return value.get('a')
 
 
 @hep2marc.over('041', 'language')

@@ -94,7 +94,7 @@ def create_profile_url(profile_id):
 def create_valid_date(date):
     """ Add '01' as a value of missing month and/or day values."""
     try:
-        valid_date = parse(date, default=datetime.datetime(
+        valid_date = parse(six.text_type(date), default=datetime.datetime(
             year=1990,
             month=1,
             day=1)).strftime("%Y-%m-%d")
