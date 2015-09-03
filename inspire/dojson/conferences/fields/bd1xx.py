@@ -112,6 +112,7 @@ def short_description(self, key, value):
 
 
 @conferences.over('transparencies', '^8564')
+@utils.for_each_value
 def transparencies(self, key, value):
     """Conference transparencies."""
     if value.get('y', '').lower() == 'transparencies':

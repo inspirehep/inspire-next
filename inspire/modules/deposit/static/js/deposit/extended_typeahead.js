@@ -47,6 +47,7 @@ define(function(require, exports, module) {
       this.selectedValueTemplate = this.options.selectedValueTemplate;
 
       this.dataKey = this.options.dataKey;
+      this.displayfn = this.options.displayfn;
       this.extractRawValue = this.options.extractRawValue;
 
       var that = this;
@@ -69,16 +70,16 @@ define(function(require, exports, module) {
             callback(suggestions);
           }.bind(this));
         }.bind(this),
-        // the key of a value which is rather passed to typeahead than displayed
-        // the display values are selected by templates.
         displayKey: this.dataKey,
+        display: that.options.displayfn,
+
         templates: {
           empty: function(data) {
             return that.options.cannotFindMessage;
           },
           suggestion: function(data) {
             return this.suggestionTemplate.render.call(
-              this.suggestionTemplate, data[this.dataKey]);
+              this.suggestionTemplate, data);
           }.bind(this)
         }
       });
@@ -152,9 +153,8 @@ define(function(require, exports, module) {
         this.engine.get(rawValue, function(suggestions) {
           var suggestion;
           $.each(suggestions, function(idx, item) {
-            var data = item[this.dataKey];
-            if (this.extractRawValue(data) === rawValue) {
-              suggestion = item[this.dataKey];
+            if (this.extractRawValue(item) === rawValue) {
+              suggestion = item;
               return false;
             }
           }.bind(this));
@@ -252,6 +252,11 @@ define(function(require, exports, module) {
        *  typeahead.
        */
       dataKey: 'value',
+      /**
+       * @type {Function} display function which will be passed to
+       *  typeahead.
+       */
+      displayfn: function(obj) { return obj['value']; },
       /**
        * @param {Hogan template} a template used to render a suggestion
        */
