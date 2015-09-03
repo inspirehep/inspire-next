@@ -11,6 +11,10 @@
                     "synonyms": [
                         "production => creation"
                     ]
+                },
+                "word_delimiter_orig" : {
+                    "type" : "word_delimiter",
+                    "preserve_original": true
                 }
             },
             "analyzer": {
@@ -21,6 +25,14 @@
                         "asciifold_with_orig",
                         "lowercase",
                         "synonyms_kbr"
+                    ]
+                },
+                "autocomplete_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "whitespace",
+                    "filter": [
+                        "lowercase",
+                        "word_delimiter_orig"
                     ]
                 },
                 "basic_analyzer": {
@@ -64,118 +76,30 @@
                     "type": "string",
                     "index": "not_analyzed"
                 },
-                "hidden_note": {
-                    "type": "object",
-                    "properties": {
-                        "cds": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "accelerator_experiment": {
-                    "type": "object",
-                    "properties": {
-                        "experiment": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "experimentautocomplete": {
-                    "type": "string"
-                },
-                "experiment_name": {
+                "conferenceautocomplete": {
                     "type": "string",
-                    "copy_to": ["experimentautocomplete"]
+                    "analyzer": "autocomplete_analyzer"
                 },
-                "report_number": {
-                    "type": "object",
-                    "properties": {
-                        "primary": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "collaboration": {
-                    "type": "object",
-                    "properties": {
-                        "collaboration": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "collections": {
-                    "properties": {
-                        "primary": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        },
-                        "secondary": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "exactauthor": {
+                "title": {
                     "type": "string",
-                    "fields": {
-                        "raw": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
+                    "copy_to": ["conferenceautocomplete"]
                 },
-                "affautocomplete": {
-                    "type": "string"
+                "acronym": {
+                    "type": "string",
+                    "copy_to": ["conferenceautocomplete"]
                 },
-                "authors": {
-                    "type": "object",
-                    "properties": {
-                        "full_name": {
-                            "type": "string",
-                            "copy_to": ["exactauthor"],
-                            "analyzer": "natural_text"
-                        },
-                        "affiliation": {
-                            "type": "string"
-                        }
-                    }
+                "place": {
+                    "type": "string",
+                    "copy_to": ["conferenceautocomplete"]
                 },
-                "division": {
-                    "type": "string"
+                "opening_date": {
+                    "type": "string",
+                    "copy_to": ["conferenceautocomplete"]
                 },
-                "date_and_time_of_latest_transaction": {
-                    "type": "date",
-                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S"
-                },
-                "date": {
-                    "type": "date",
-                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S||dd MM yyyy||dd MMM yyyy||MMM yyyy||MMM yyyy?||yyyy ('repr'.1964.)"
-                },
-                "institution": {
-                    "type": "object",
-                    "properties": {
-                        "affiliation": {
-                            "type": "string",
-                            "copy_to": ["affautocomplete"]
-                        }
-                    }
-                },
-                "publication_info": {
-                    "type": "object",
-                    "properties": {
-                        "journal_volume": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        },
-                        "year": {
-                            "type": "date",
-                            "format": "yyyy"
-                        }
-                    }
+                "cnum": {
+                    "type": "string",
+                    "index": "not_analyzed",
+                    "copy_to": ["conferenceautocomplete"]
                 }
             }
         }

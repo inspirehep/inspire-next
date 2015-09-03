@@ -29,24 +29,49 @@ define([
       suggestionTemplate: Hogan.compile(
         '<b>{{ title }}</b><br>' +
         '<small>' +
-        '{{ date }}, {{ place }}<br>' +
-        '{{ conference_id }}' +
+        '{{ opening_date }}, {{ place }}<br>' +
+        '{{ cnum }}' +
         '</small>'
       ),
       selectedValueTemplate: Hogan.compile(
-        '{{ title }}, {{ date }}, {{ place }}'
+        '{{ title }}, {{ opening_date }}, {{ place }}'
       ),
       cannotFindMessage: 'Cannot find this conference in our database.',
-      extractRawValue: function(suggestionDataKey) {
-        return suggestionDataKey.conference_id;
+      extractRawValue: function(data) {
+        return data.cnum;
       },
-      dataKey: 'conference',
+      displayKey: null,
+      displayfn: function(obj) {
+        return obj;
+      },
       dataEngine: new Bloodhound({
         name: 'conferences',
-        remote: '/search?cc=Conferences&p=conferences:%QUERY*&of=recjson',
-        datumTokenizer: function() {},
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        limit: 100,
+        remote: {
+          url: '/search?cc=Conferences&p=conferenceautocomplete:%QUERY*&of=recjson',
+          replace: function(url, query) {
+            var query_components = query.toLowerCase().split(" ");
+            var pattern = "";
+            $.each(query_components, function(index) {
+              if (index != 0) {
+                pattern = pattern + " AND ";
+              }
+              pattern = pattern + "conferenceautocomplete:" + "/" + this + ".*/";
+            })
+
+            return '/search?cc=Conferences&p=' + pattern + '&of=recjson&rg=100'
+        },
+        filter: function(response) {
+          response = response.sort(function(a, b) {
+            if(a.title < b.title) return -1;
+            if(a.title > b.title) return 1;
+            return 0;
+          });
+          return response;
+        }
+      },
+      datumTokenizer: function() {},
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      limit: 100,
       })
     });
 
