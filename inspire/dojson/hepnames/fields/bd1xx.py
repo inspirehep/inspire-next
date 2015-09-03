@@ -27,6 +27,34 @@ from dojson import utils
 from ..model import hepnames, hepnames2marc
 
 
+@hepnames.over('acquisition_source', '^541[10_].')
+@utils.for_each_value
+@utils.filter_values
+def acquisition_source(self, key, value):
+    """Immediate Source of Acquisition Note."""
+    return {
+        'source': value.get('a'),
+        'email': value.get('b'),
+        'method': value.get('c'),
+        'date': value.get('d'),
+        'submission_number': value.get('e')
+    }
+
+
+@hepnames2marc.over('541', 'acquisition_source')
+@utils.for_each_value
+@utils.filter_values
+def acquisition_source2marc(self, key, value):
+    """Immediate Source of Acquisition Note."""
+    return {
+        'a': value.get('source'),
+        'b': value.get('email'),
+        'c': value.get('method'),
+        'd': value.get('date'),
+        'e': value.get('submission_number'),
+    }
+
+
 @hepnames.over('name', '^100..')
 @utils.filter_values
 def name(self, key, value):
