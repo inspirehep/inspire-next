@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/schema#",
     "id": "http://labs.inspirehep.net/schemas/jobs-0.0.1.json",
     "properties": {
-        "closed": {
+        "closed_date": {
             "format": "date",
             "title": "Date when the job was closed",
             "type": "string"
@@ -33,15 +33,19 @@
             "type": "array",
             "uniqueItems": true
         },
-        "deadline": {
+        "deadline_date": {
             "format": "date",
             "title": "Application deadline",
             "type": "string"
         },
-        "experiment": {
-            "description": "FIXME: we can simply store here the ID of the experiment.",
-            "title": "Experiment recid",
-            "type": "integer"
+        "experiments": {
+            "items": {
+                "description": "FIXME: we can simply store here the ID of the experiment.",
+                "title": "Experiment associated with Job",
+                "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "institution": {
             "properties": {
@@ -60,7 +64,7 @@
             "title": "Institution",
             "type": "object"
         },
-        "job_description": {
+        "description": {
             "title": "Job description",
             "type": "string"
         },
@@ -69,18 +73,22 @@
             "type": "string"
         },
         "rank": {
-            "description": "FIXME: should this be identical to hepnames rank? I would say so",
-            "enum": [
-                "Postdc",
-                "Junior",
-                "Student",
-                "Senior",
-                "Staff",
-                "Visitor",
-                "Visiting Scientist"
-            ],
-            "title": "Rank",
-            "type": "string"
+            "items": {
+                "description": "FIXME: should this be identical to hepnames rank? I would say so",
+                "enum": [
+                    "Postdc",
+                    "Junior",
+                    "Student",
+                    "Senior",
+                    "Staff",
+                    "Visitor",
+                    "Visiting Scientist"
+                ],
+                "title": "Rank",
+                "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "reference_email": {
             "description": "FIXME: what is the difference from contact_email!?",
@@ -102,18 +110,46 @@
             "uniqueItems": true
         },
         "url": {
-            "format": "url",
-            "title": "Link to job description",
-            "type": "string"
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "doc_string": {
+                        "type": "string",
+                        "description": "FIXME: What is this!?",
+                        "title": "Doc String"
+                    },
+                    "url": {
+                        "title": "URL",
+                        "type": "string",
+                        "format": "url"
+                    },
+                    "material_type": {
+                        "type": "string",
+                        "title": "Type of material"
+                    },
+                    "description": {
+                        "type": "string",
+                        "title": "Description"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "title": "Size"
+                    }
+                },
+                "title": "URL"
+            },
+            "type": "array",
+            "title": "URLs"
         }
     },
     "required": [
         "continent",
         "position",
-        "institution", 
+        "institution",
         "contact_email",
         "contact_person",
-        "job_description",
+        "description",
         "url",
         "rank",
         "research_area"
