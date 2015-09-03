@@ -86,44 +86,6 @@ def date_and_time_of_latest_transaction2marc(self, key, value):
     return value
 
 
-@institutions.over('url', '^856.[10_28]')
-@experiments.over('url', '^856.[10_28]')
-@journals.over('url', '^856.[10_28]')
-@hep.over('url', '^856.[10_28]')
-@hepnames.over('url', '^856.[10_28]')
-@jobs.over('url', '^856.[10_28]')
-@utils.for_each_value
-@utils.filter_values
-def url(self, key, value):
-    """URL to external resource."""
-    return {
-        'url': value.get('u'),
-        'doc_string': value.get('w'),
-        'description': value.get('y'),
-        'material_type': value.get('3'),
-        'comment': value.get('z'),
-        'name': value.get('f'),
-        'size': value.get('s'),
-    }
-
-
-@hep2marc.over('8564', 'url')
-@hepnames2marc.over('8564', 'url')
-@utils.for_each_value
-@utils.filter_values
-def url2marc(self, key, value):
-    """URL to external resource."""
-    return {
-        'u': value.get('url'),
-        'w': value.get('doc_string'),
-        'y': value.get('description'),
-        '3': value.get('material_type'),
-        'z': value.get('comment'),
-        'f': value.get('name'),
-        's': value.get('size'),
-    }
-
-
 @hep.over('oai_pmh', '^909CO')
 @institutions.over('oai_pmh', '^909CO')
 @experiments.over('oai_pmh', '^909CO')

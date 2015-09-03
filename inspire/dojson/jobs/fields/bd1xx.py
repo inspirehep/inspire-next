@@ -125,3 +125,10 @@ def research_area(self, key, value):
 def rank(self, key, value):
     """Contact person."""
     return value.get('a')
+
+
+@jobs.over('urls', '^856.[10_28]')
+@utils.for_each_value
+def urls(self, key, value):
+    """Contact person."""
+    return value.get('u')

@@ -246,39 +246,15 @@
             "title": "Time zone",
             "type": "string"
         },
-        "url": {
+        "urls": {
             "uniqueItems": true,
             "items": {
-                "type": "object",
-                "properties": {
-                    "doc_string": {
-                        "type": "string",
-                        "description": "FIXME: What is this!?",
-                        "title": "Doc String"
-                    },
-                    "url": {
-                        "title": "URL",
-                        "type": "string",
-                        "format": "url"
-                    },
-                    "material_type": {
-                        "type": "string",
-                        "title": "Type of material"
-                    },
-                    "description": {
-                        "type": "string",
-                        "title": "Description"
-                    },
-                    "size": {
-                        "type": "integer",
-                        "title": "Size"
-                    }
-                },
-                "title": "URL"
+                "type": "string",
+                "format": "url"
             },
             "type": "array",
-            "title": "URLs"
-        },
+            "description": "Contains links."
+        }
     },
     "required": ["url", "country", "ICN", "institution"],
     "title": "Institution",
