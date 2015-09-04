@@ -8,13 +8,21 @@
             "type": "string"
         },
         "contact_email": {
-            "format": "email",
-            "title": "Contact email",
-            "type": "string"
+            "items": {
+                "format": "email",
+                "title": "Contact email",
+                "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "contact_person": {
-            "title": "Contact person",
-            "type": "string"
+            "items": {
+                "title": "Contact person",
+                "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "continent": {
             "items": {
@@ -48,21 +56,25 @@
             "uniqueItems": true
         },
         "institution": {
-            "properties": {
-                "curated_relation": {
-                    "type": "boolean"
+            "items": {
+                "properties": {
+                    "curated_relation": {
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "title": "Institution name",
+                        "type": "string"
+                    },
+                    "recid": {
+                        "title": "Institution Record ID",
+                        "type": "integer"
+                    }
                 },
-                "name": {
-                    "title": "Institution name",
-                    "type": "string"
-                },
-                "recid": {
-                    "title": "Institution Record ID",
-                    "type": "integer"
-                }
+                "title": "Institution",
+                "type": "object"
             },
-            "title": "Institution",
-            "type": "object"
+            "type": "array",
+            "uniqueItems": true
         },
         "description": {
             "title": "Job description",
@@ -91,10 +103,14 @@
             "uniqueItems": true
         },
         "reference_email": {
-            "description": "FIXME: what is the difference from contact_email!?",
-            "format": "email",
-            "title": "Reference email",
-            "type": "string"
+            "items": {
+                "description": "FIXME: what is the difference from contact_email!?",
+                "format": "email",
+                "title": "Reference email",
+                "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "research_area": {
             "items": {
