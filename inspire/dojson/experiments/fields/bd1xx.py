@@ -28,18 +28,21 @@ from ..model import experiments
 
 
 @experiments.over('experiment_name', '^119..')
+@utils.for_each_value
 def experiment_name(self, key, value):
     """Name of experiment."""
     return value.get("a")
 
 
 @experiments.over('affiliation', '^119..')
+@utils.for_each_value
 def affiliation(self, key, value):
     """Affiliation of experiment."""
     return value.get("u")
 
 
 @experiments.over('title', '^245[10_][0_]')
+@utils.for_each_value
 @utils.filter_values
 def title(self, key, value):
     """Title Statement."""
@@ -58,6 +61,7 @@ def name_variants(self, key, value):
 
 
 @experiments.over('description', '^520..')
+@utils.for_each_value
 def description(self, key, value):
     """Description of experiment."""
     return value.get("a")
