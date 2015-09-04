@@ -17,27 +17,19 @@
 # along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-"""
-bibconvert_xslt_engine - Wrapper for an XSLT engine.
+"""Wrapper for an XSLT engine (originated from Invenio BibConvert module).
 
 Customized to support BibConvert functions through the
 use of XPath 'format' function.
-
-Used by: bibconvert.in
-
-FIXME: - Find better namespace for functions
-       - Find less bogus URI (given as param to processor)
-         for source and template
-       - Implement command-line options
-       - Think about better handling of 'value' parameter
-         in bibconvert_function_*
 """
 
 from __future__ import print_function
 
 import os
+import re
 import sys
 import string
+
 from StringIO import StringIO
 
 from lxml import etree
@@ -50,27 +42,26 @@ CFG_BIBCONVERT_FUNCTION_NS = "http://cdsweb.cern.ch/bibconvert/fn"
 
 
 def crawl_KB(filename, value, mode):
-    """
-    bibconvert look-up value in KB_file in one of following modes:
-    ===========================================================
-    1                           - case sensitive     / match  (default)
-    2                           - not case sensitive / search
-    3                           - case sensitive     / search
-    4                           - not case sensitive / match
-    5                           - case sensitive     / search (in KB)
-    6                           - not case sensitive / search (in KB)
-    7                           - case sensitive     / search (reciprocal)
-    8                           - not case sensitive / search (reciprocal)
-    9                           - replace by _DEFAULT_ only
-    R                           - not case sensitive / search (reciprocal) (8) replace
+    """Look-up value in KB_file in one of following modes.
+
+    1 - case sensitive     / match  (default)
+    2 - not case sensitive / search
+    3 - case sensitive     / search
+    4 - not case sensitive / match
+    5 - case sensitive     / search (in KB)
+    6 - not case sensitive / search (in KB)
+    7 - case sensitive     / search (reciprocal)
+    8 - not case sensitive / search (reciprocal)
+    9 - replace by _DEFAULT_ only
+    R - not case sensitive / search (reciprocal) (8) replace
     """
 
     if (os.path.isfile(filename) != 1):
         # Look for KB in same folder as extract_tpl, if exists
         try:
-            pathtmp = string.split(extract_tpl,"/")
+            pathtmp = string.split(extract_tpl, "/")
             pathtmp.pop()
-            path = string.join(pathtmp,"/")
+            path = string.join(pathtmp, "/")
             filename = path + "/" + filename
         except NameError:
             # File was not found. Try to look inside default KB
@@ -80,80 +71,80 @@ def crawl_KB(filename, value, mode):
     # FIXME: Remove \n from returned value?
     if (os.path.isfile(filename)):
 
-        file_to_read = open(filename,"r")
+        file_to_read = open(filename, "r")
 
         file_read = file_to_read.readlines()
         for line in file_read:
             code = string.split(line, "---")
 
             if (mode == "2"):
-                value_to_cmp   = string.lower(value)
-                code[0]        = string.lower(code[0])
+                value_to_cmp = string.lower(value)
+                code[0] = string.lower(code[0])
 
-                if ((len(string.split(value_to_cmp, code[0])) > 1) \
-                    or (code[0]=="_DEFAULT_")):
+                if ((len(string.split(value_to_cmp, code[0])) > 1) or
+                        (code[0] == "_DEFAULT_")):
                     value = code[1]
                     return value
 
             elif ((mode == "3") or (mode == "0")):
-                if ((len(string.split(value, code[0])) > 1) or \
-                    (code[0] == "_DEFAULT_")):
+                if ((len(string.split(value, code[0])) > 1) or
+                        (code[0] == "_DEFAULT_")):
                     value = code[1]
                     return value
 
             elif (mode == "4"):
-                value_to_cmp   = string.lower(value)
-                code[0]        = string.lower(code[0])
-                if ((code[0] == value_to_cmp) or \
-                    (code[0] == "_DEFAULT_")):
+                value_to_cmp = string.lower(value)
+                code[0] = string.lower(code[0])
+                if ((code[0] == value_to_cmp) or
+                        (code[0] == "_DEFAULT_")):
                     value = code[1]
                     return value
 
             elif (mode == "5"):
-                if ((len(string.split(code[0], value)) > 1) or \
-                    (code[0] == "_DEFAULT_")):
+                if ((len(string.split(code[0], value)) > 1) or
+                        (code[0] == "_DEFAULT_")):
                     value = code[1]
                     return value
 
             elif (mode == "6"):
-                value_to_cmp   = string.lower(value)
-                code[0]        = string.lower(code[0])
-                if ((len(string.split(code[0], value_to_cmp)) > 1) or \
-                    (code[0] == "_DEFAULT_")):
+                value_to_cmp = string.lower(value)
+                code[0] = string.lower(code[0])
+                if ((len(string.split(code[0], value_to_cmp)) > 1) or
+                        (code[0] == "_DEFAULT_")):
                     value = code[1]
                     return value
 
             elif (mode == "7"):
-                if ((len(string.split(code[0], value)) > 1) or \
-                    (len(string.split(value,code[0])) > 1) or \
-                    (code[0] == "_DEFAULT_")):
+                if ((len(string.split(code[0], value)) > 1) or
+                        (len(string.split(value, code[0])) > 1) or
+                        (code[0] == "_DEFAULT_")):
                     value = code[1]
                     return value
 
             elif (mode == "8"):
-                value_to_cmp   = string.lower(value)
-                code[0]        = string.lower(code[0])
-                if ((len(string.split(code[0], value_to_cmp)) > 1) or \
-                    (len(string.split(value_to_cmp, code[0])) > 1) or \
-                    (code[0] == "_DEFAULT_")):
+                value_to_cmp = string.lower(value)
+                code[0] = string.lower(code[0])
+                if ((len(string.split(code[0], value_to_cmp)) > 1) or
+                        (len(string.split(value_to_cmp, code[0])) > 1) or
+                        (code[0] == "_DEFAULT_")):
                     value = code[1]
                     return value
 
             elif (mode == "9"):
-                if (code[0]=="_DEFAULT_"):
+                if (code[0] == "_DEFAULT_"):
                     value = code[1]
                     return value
 
             elif (mode == "R"):
-                value_to_cmp   = string.lower(value)
-                code[0]        = string.lower(code[0])
-                if ((len(string.split(code[0], value_to_cmp)) > 1) or \
-                    (len(string.split(value_to_cmp, code[0])) > 1) or \
-                    (code[0] == "_DEFAULT_")):
+                value_to_cmp = string.lower(value)
+                code[0] = string.lower(code[0])
+                if ((len(string.split(code[0], value_to_cmp)) > 1) or
+                        (len(string.split(value_to_cmp, code[0])) > 1) or
+                        (code[0] == "_DEFAULT_")):
                     value = value.replace(code[0], code[1])
 
             else:
-                if ((code[0] == value) or (code[0]=="_DEFAULT_")):
+                if ((code[0] == value) or (code[0] == "_DEFAULT_")):
                     value = code[1]
                     return value
     else:
@@ -172,9 +163,9 @@ def get_pars(fn):
 
     return out
 
+
 def sub_keywd(out):
     "bibconvert keywords literal substitution"
-
 
     out = string.replace(out, "EOL", "\n")
     out = string.replace(out, "_CR_", "\r")
@@ -216,13 +207,12 @@ def FormatField(value, fn):
 
     global data_parsed
 
-    out     = value
-    fn      = fn + "()"
-    par     = get_pars(fn)[1]
-    fn      = get_pars(fn)[0]
-    regexp  = "//"
-    NRE     = len(regexp)
-    value   = sub_keywd(value)
+    out = value
+    fn = fn + "()"
+    par = get_pars(fn)[1]
+    fn = get_pars(fn)[0]
+
+    value = sub_keywd(value)
     par_tmp = []
 
     for item in par:
@@ -318,8 +308,7 @@ def _bibconvert_function(dummy_ctx, value, func):
 
 
 def convert(xmltext, template_filename=None, template_source=None):
-    """
-    Process an XML text according to a template, and returns the result.
+    """Process an XML text according to a template, and returns the result.
 
     The template can be given either by name (or by path) or by source.
     If source is given, name is ignored.
@@ -329,9 +318,9 @@ def convert(xmltext, template_filename=None, template_source=None):
     to be a path to a template. If none can be found, return None.
 
     :param xmltext: The string representation of the XML to process
-    :param template_filename: The name of the template to use for the processing
+    :param template_filename: The name of the template to use for processing
     :param template_source: The configuration describing the processing.
-    :return: the transformed XML text, or None if an error occured
+    :return: the transformed XML text, or None if an error occurred
 
     """
     # Retrieve template and read it
