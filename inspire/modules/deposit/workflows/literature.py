@@ -37,7 +37,7 @@ from invenio_deposit.tasks import (
     process_sip_metadata
 )
 from invenio_deposit.models import Deposition, InvalidDepositionType
-from invenio.modules.knowledge.api import get_kb_mappings
+from invenio_knowledge.api import get_kb_mappings
 from invenio_workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else,
@@ -177,7 +177,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
     @staticmethod
     def get_description(bwo):
         """Return description of object."""
-        from invenio.modules.access.control import acc_get_user_email
+        from invenio_access.control import acc_get_user_email
         results = bwo.get_tasks_results()
         try:
             deposit_object = Deposition(bwo)

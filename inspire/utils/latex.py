@@ -19,7 +19,7 @@
 #
 
 import re
-from invenio.modules.knowledge.api import get_kbr_keys
+from invenio_knowledge.api import get_kbr_keys
 
 
 class MissingRequiredFieldError(LookupError):

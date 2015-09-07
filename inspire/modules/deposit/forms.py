@@ -611,7 +611,7 @@ class LiteratureForm(WebDepositForm):
     def __init__(self, *args, **kwargs):
         """Constructor."""
         super(LiteratureForm, self).__init__(*args, **kwargs)
-        from invenio.modules.knowledge.api import get_kb_mappings
+        from invenio_knowledge.api import get_kb_mappings
         self.subject.choices = [(x['value'], x['value'])
             for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_SUBJECTS_KB"])]
         self.degree_type.choices = [('', '')] + [(x['value'], x['value'])

@@ -16,7 +16,7 @@
 ## along with Invenio; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-from invenio.modules.knowledge.api import (
+from invenio_knowledge.api import (
     add_kb_mapping,
     get_kb_mappings,
     kb_mapping_exists,

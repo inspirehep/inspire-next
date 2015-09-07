@@ -21,7 +21,7 @@
 """
 
 from urllib import urlencode
-from invenio.modules.knowledge.api import get_kb_mappings
+from invenio_knowledge.api import get_kb_mappings
 
 
 def format_element(bfo, separator=' | ', link="yes"):

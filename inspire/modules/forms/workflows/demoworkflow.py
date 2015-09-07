@@ -52,7 +52,7 @@ class demoworkflow(WorkflowBase):
     @staticmethod
     def get_title(bwo):
         """Return title of object."""
-        from invenio.modules.access.control import acc_get_user_email
+        from invenio_access.control import acc_get_user_email
         id_user = bwo.id_user
         user_email = acc_get_user_email(id_user)
 

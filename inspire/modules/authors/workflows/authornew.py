@@ -20,7 +20,7 @@
 
 from flask import render_template
 
-from invenio.modules.access.control import acc_get_user_email
+from invenio_access.control import acc_get_user_email
 from invenio_workflows.definitions import WorkflowBase
 from invenio_workflows.tasks.logic_tasks import (
     workflow_else,

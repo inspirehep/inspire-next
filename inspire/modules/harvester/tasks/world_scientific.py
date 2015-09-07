@@ -112,7 +112,7 @@ def convert_files(target_folder, date_key):
     """Convert files in data["extracted_files"] to MARCXML."""
     @wraps(convert_files)
     def _convert_files(obj, eng):
-        from invenio.modules.knowledge.api import get_kb_mappings
+        from invenio_knowledge.api import get_kb_mappings
         mappings = dict(
             map(
                 lambda item: (item['key'], item['value']),

@@ -19,7 +19,7 @@
 
 import warnings
 
-from invenio.modules.upgrader.api import op
+from invenio_upgrader.api import op
 from invenio.ext.sqlalchemy import db
 from invenio.utils.text import wait_for_user
 

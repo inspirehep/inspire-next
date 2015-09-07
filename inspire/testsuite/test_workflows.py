@@ -45,7 +45,7 @@ class WorkflowTest(WorkflowTasksTestCase):
 
     def setUp(self):
         """Setup tests."""
-        from invenio.modules.knowledge.api import add_kb
+        from invenio_knowledge.api import add_kb
         from inspire.modules.workflows.receivers import precache_holdingpen_row
         from invenio_workflows.signals import workflow_halted
 
@@ -91,7 +91,7 @@ class WorkflowTest(WorkflowTasksTestCase):
     def tearDown(self):
         """Clean up created objects."""
         from invenio_workflows.models import Workflow
-        from invenio.modules.knowledge.api import delete_kb
+        from invenio_knowledge.api import delete_kb
         from inspire.modules.workflows.receivers import precache_holdingpen_row
         from invenio_workflows.signals import workflow_halted
 

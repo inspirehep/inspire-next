@@ -20,7 +20,7 @@
 from six import with_metaclass as meta
 
 from invenio.ext.mixer import MixerMeta
-from invenio.modules.knowledge.models import KnwKB, KnwKBDDEF, KnwKBRVAL
+from invenio_knowledge.models import KnwKB, KnwKBDDEF, KnwKBRVAL
 
 
 class KnwKBMixer(meta(MixerMeta)):

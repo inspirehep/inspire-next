@@ -20,7 +20,7 @@
 """BibFormat element - Prints HTML link to pdg
 """
 
-from invenio.modules.knowledge.api import get_kb_mappings
+from invenio_knowledge.api import get_kb_mappings
 
 
 __revision__ = "$Id$"
