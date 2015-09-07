@@ -20,8 +20,8 @@
 from wtforms import TextField
 from wtforms.validators import ValidationError
 
-from invenio.modules.deposit.field_base import WebDepositField
-from invenio.modules.deposit.filter_utils import strip_prefixes, strip_string
+from invenio_deposit.field_base import WebDepositField
+from invenio_deposit.filter_utils import strip_prefixes, strip_string
 
 from ..validators import isbn_syntax_validation
 

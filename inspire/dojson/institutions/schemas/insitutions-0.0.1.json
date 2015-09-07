@@ -8,13 +8,53 @@
             "type": "string"
         },
         "address": {
-            "description": "Street etc, city with postal code + additions (native language) FIXME: isn't postal code redundant?",
-            "title": "Address",
-            "type": "string"
-        },
-        "city": {
-            "title": "City",
-            "type": "string"
+            "items": {
+                "properties": {
+                    "address": {
+                        "description": "Street etc, city with postal code + additions (native language) FIXME: isn't postal code redundant?",
+                        "title": "Address",
+                        "type": "string"
+                    },
+                    "city": {
+                        "title": "City",
+                        "type": "string"
+                    },
+                    "state_province": {
+                        "title": "State or Province",
+                        "type": "string"
+                    },
+                    "country": {
+                        "description": "FIXME can't we derive this from country_code?",
+                        "enum": [
+                            "does",
+                            "it",
+                            "exist?"
+                        ],
+                        "string": "Country name",
+                        "type": "string"
+                    },
+                    "postal_code": {
+                        "title": "Postal code",
+                        "type": "string"
+                    },
+                    "country_code": {
+                        "enum": [
+                            "let's",
+                            "take",
+                            "the",
+                            "enum",
+                            "from",
+                            "iso"
+                        ],
+                        "title": "Country code",
+                        "type": "string"
+                    },
+                },
+                "title": "Address",
+                "type": "object"
+            },
+            "title": "Addresses",
+            "type": "array",
         },
         "content_classification": {
             "items": {
@@ -31,32 +71,15 @@
             "type": "array",
             "uniqueItems": true
         },
-        "country": {
-            "description": "FIXME can't we derive this from country_code?",
-            "enum": [
-                "does",
-                "it",
-                "exist?"
-            ],
-            "string": "Country name",
-            "type": "string"
-        },
-        "country_code": {
-            "enum": [
-                "let's",
-                "take",
-                "the",
-                "enum",
-                "from",
-                "iso"
-            ],
-            "title": "Country code",
-            "type": "string"
-        },
         "department": {
             "description": "Subordinate unit in native language",
             "title": "Department",
             "type": "string"
+        },
+        "core": {
+            "description": "Is this a CORE institution?",
+            "title": "CORE",
+            "type": "boolean"
         },
         "department_acronym": {
             "description": "Subordinate unit well-known acronym",
@@ -64,8 +87,13 @@
             "type": "string"
         },
         "extra_words": {
+            "items": {
+                "title": "Extra word",
+                "type": "string"
+            },
             "title": "Extra words",
-            "type": "string"
+            "type": "array",
+            "uniqueItems": true
         },
         "field_activity": {
             "enum": [
@@ -77,8 +105,13 @@
             "type": "string"
         },
         "hidden_note": {
-            "title": "Hidden note",
-            "type": "string"
+            "items": {
+                "title": "Hidden note",
+                "type": "string"
+            },
+            "title": "Hidden notes",
+            "type": "array",
+            "uniqueItems": true
         },
         "historical_data": {
             "title": "Historical data",
@@ -89,20 +122,26 @@
             "title": "Institution acronym",
             "type": "string"
         },
-        "intitution": {
+        "institution": {
             "description": "Corporate name in native language",
             "title": "Institution name",
             "type": "string"
         },
-        "latitude": {
-            "description": "FIXME: we can populate this programmatically with Google APIs",
-            "title": "latitude",
-            "type": "number"
-        },
-        "longitude": {
-            "description": "FIXME: we can populate this programmatically with Google APIs",
-            "title": "Longitude",
-            "type": "number"
+        "location": {
+            "properties": {
+                "latitude": {
+                    "description": "FIXME: we can populate this programmatically with Google APIs",
+                    "title": "latitude",
+                    "type": "number"
+                },
+                "longitude": {
+                    "description": "FIXME: we can populate this programmatically with Google APIs",
+                    "title": "longitude",
+                    "type": "number"
+                },
+            },
+            "title": "GPS location",
+            "type": "object"
         },
         "name_variants": {
             "items": {
@@ -129,11 +168,6 @@
             "type": "array",
             "uniqueItems": true
         },
-        "non_public_note": {
-            "description": "FIXME: what is the difference with hidden_note!?",
-            "title": "Non public note",
-            "type": "string"
-        },
         "obsolete_ICN": {
             "description": "ICN of obsolete inst for which this inst should be used instead",
             "title": "Obsolete ICN",
@@ -149,13 +183,14 @@
             "title": "Old SPIRES control number",
             "type": "string"
         },
-        "postal_code": {
-            "title": "Postal code",
-            "type": "string"
-        },
-        "public_note": {
-            "title": "Public note",
-            "type": "string"
+        "public_notes": {
+            "items": {
+                "title": "Public note",
+                "type": "string"
+            },
+            "title": "Public notes",
+            "type": "array",
+            "uniqueItems": true
         },
         "related_institutes": {
             "items": {
@@ -191,10 +226,6 @@
             "type": "array",
             "uniqueItems": true
         },
-        "state_province": {
-            "title": "State or Province",
-            "type": "string"
-        },
         "time_zone": {
             "description": "FIXME: we can populate this programmatically with Google APIs",
             "enum": [
@@ -207,13 +238,40 @@
             "type": "string"
         },
         "url": {
-            "description": "Institute website",
-            "format": "url",
-            "title": "URL",
-            "type": "string"
-        }
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "doc_string": {
+                        "type": "string",
+                        "description": "FIXME: What is this!?",
+                        "title": "Doc String"
+                    },
+                    "url": {
+                        "title": "URL",
+                        "type": "string",
+                        "format": "url"
+                    },
+                    "material_type": {
+                        "type": "string",
+                        "title": "Type of material"
+                    },
+                    "description": {
+                        "type": "string",
+                        "title": "Description"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "title": "Size"
+                    }
+                },
+                "title": "URL"
+            },
+            "type": "array",
+            "title": "URLs"
+        },
     },
     "required": ["url", "country", "ICN", "institution"],
-    "title": "Insitutition",
+    "title": "Institution",
     "type": "object"
 }

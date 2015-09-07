@@ -25,32 +25,33 @@ from six import string_types
 
 from invenio.base.globals import cfg
 from invenio.ext.login import UserInfo
-from invenio.modules.accounts.models import UserEXT
+from invenio_accounts.models import UserEXT
+from invenio_records.api import Record
 
-from invenio.modules.deposit.types import SimpleRecordDeposition
-from invenio.modules.deposit.tasks import (
+from invenio_deposit.types import SimpleRecordDeposition
+from invenio_deposit.tasks import (
     dump_record_sip,
     render_form,
     prepare_sip,
     prefill_draft,
     process_sip_metadata
 )
-from invenio.modules.deposit.models import Deposition, InvalidDepositionType
+from invenio_deposit.models import Deposition, InvalidDepositionType
 from invenio.modules.knowledge.api import get_kb_mappings
-from invenio.modules.workflows.tasks.logic_tasks import (
+from invenio_workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else,
 )
-from invenio.modules.workflows.definitions import WorkflowBase
+from invenio_workflows.definitions import WorkflowBase
 
-from inspire.modules.workflows.tasks.matching import(
-    match_record_remote_deposit,
-)
+from inspire.dojson.hep import hep2marc
+
+from inspire.modules.workflows.tasks.matching import match
+
 from inspire.modules.workflows.tasks.submission import (
     halt_record_with_action,
-    send_robotupload_deposit,
+    send_robotupload,
     halt_to_render,
-    add_files_to_task_results,
     create_ticket,
     create_curation_ticket,
     reply_ticket,
@@ -62,9 +63,10 @@ from inspire.modules.workflows.tasks.submission import (
 from inspire.modules.workflows.tasks.actions import (
     was_approved,
     reject_record,
-    add_core_deposit
+    add_core,
 )
 from inspire.modules.deposit.forms import LiteratureForm
+from inspire.modules.predicter.tasks import guess_coreness
 
 from ..tasks import add_submission_extra_data
 from ..utils import filter_empty_helper
@@ -89,6 +91,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
     object_type = "submission"
 
+    model = Deposition
+
     workflow = [
         # Pre-fill draft with values passed in from request
         prefill_draft(draft_id='default'),
@@ -103,26 +107,31 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         process_sip_metadata(),
         add_submission_extra_data,
         # Generate MARC based on metadata dictionary.
-        finalize_record_sip(is_dump=False),
+        finalize_record_sip(processor=hep2marc),
         halt_to_render,
         create_ticket(template="deposit/tickets/curator_submitted.html",
                       queue="HEP_add_user",
                       ticket_id_key="ticket_id"),
         reply_ticket(template="deposit/tickets/user_submitted.html",
                      keep_new=True),
-        add_files_to_task_results,
+        # add_files_to_task_results,  Not needed as no files are added..
+        guess_coreness("new_astro_model.pickle"),
+        # classify_paper_with_deposit(
+        #    taxonomy="HEPont.rdf",
+        #    output_mode="dict",
+        # ),
         halt_record_with_action(action="core_approval",
                                 message="Accept submission?"),
         workflow_if(was_approved),
         [
-            workflow_if(match_record_remote_deposit, True),
+            workflow_if(match, True),
             [
-                add_core_deposit,
+                add_core,
                 add_note_entry,
                 user_pdf_get,
-                finalize_record_sip(is_dump=False),
+                finalize_record_sip(processor=hep2marc),
                 # Send robotupload and halt until webcoll callback
-                send_robotupload_deposit(),
+                send_robotupload(),
                 create_curation_ticket(
                     template="deposit/tickets/curation_core.html",
                     queue="HEP_curation",
@@ -160,11 +169,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         sip = deposit_object.get_latest_sip()
         if sip:
             # Get the SmartJSON object
-            record = sip.metadata
-            try:
-                return record.get("title", {"title": "No title"}).get("title")
-            except AttributeError:
-                return record.get("title")
+            record = Record(sip.metadata)
+            return record.get("title.title", ["No title"])[0]
         else:
             return "User submission in progress"
 
@@ -183,10 +189,10 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
         sip = deposit_object.get_latest_sip()
         if sip:
-            record = sip.metadata
+            record = Record(sip.metadata)
             identifiers = []
             report_numbers = record.get("report_number", [])
-            doi = record.get("doi", "").get("doi")
+            doi = record.get("doi", {}).get("doi")
             if report_numbers:
                 for report_number in report_numbers:
                     number = report_number.get("primary", "")
@@ -199,8 +205,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             subjects = record.get("subject_term", [])
             if subjects:
                 for subject in subjects:
-                    if not isinstance(subject, string_types):
-                        categories += subject
+                    if isinstance(subject, string_types):
+                        categories += [subject]
                     else:
                         categories += [subject.get("term") for subject in subjects]
             categories = [record.get("type_of_doc", "")] + categories
@@ -241,28 +247,18 @@ class literature(SimpleRecordDeposition, WorkflowBase):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Return formatted data of object."""
-        from invenio.modules.formatter import format_record
         try:
             deposit_object = Deposition(bwo)
         except InvalidDepositionType:
             return "This submission is disabled: {0}.".format(bwo.workflow.name)
 
         submission_data = deposit_object.get_latest_sip(deposit_object.submitted)
+        record = submission_data.metadata
 
-        if hasattr(submission_data, "package"):
-            marcxml = submission_data.package
-        else:
-            return "No data found in submission (no package)."
-
-        of = kwargs.get("of", "hd")
-        if of == "xm":
-            return marcxml
-        else:
-            return format_record(
-                record=submission_data.metadata,
-                of=of,
-                xml_record=marcxml
-            )
+        return render_template(
+            'format/record/Holding_Pen_HTML_detailed.tpl',
+            record=Record(record)
+        )
 
     @classmethod
     def process_sip_metadata(cls, deposition, metadata):
@@ -297,13 +293,13 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                         'system_number_external': 'oai:arXiv.org:' + form_fields['arxiv_id'],
                         'institute': 'arXiv'
                     }
-        if metadata["publication_info"]:
+        if "publication_info" in metadata:
             metadata['collections'].append({'primary': "Published"})
         # ============================
         # Title source
         # ============================
         if 'title_source' in form_fields and form_fields['title_source']:
-            metadata['title']['source'] = form_fields['title_source']
+            metadata['title'][0]['source'] = form_fields['title_source']
         # ============================
         # Conference name
         # ============================
@@ -330,6 +326,16 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         if metadata.get("language") == "oth":
             if form_fields.get("other_language"):
                 metadata["language"] = form_fields["other_language"]
+
+        # ===============================
+        # arXiv category in report number
+        # ===============================
+        if metadata.get("_categories"):
+            for repnum in metadata["report_number"]:
+                if repnum.get("source") == "arXiv":
+                    repnum["arxiv_category"] = metadata.get("_categories").split(' ')[0]
+            del metadata["_categories"]
+
         # ============================
         # Date of defense
         # ============================

@@ -70,6 +70,7 @@ def title_translation2marc(self, key, value):
 
 
 @hep.over('title', '^245[10_][0_]')
+@utils.for_each_value
 @utils.filter_values
 def title(self, key, value):
     """Title Statement."""

@@ -18,7 +18,7 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from invenio.modules.deposit.tasks import (
+from invenio_deposit.tasks import (
     render_form,
     prepare_sip,
     prefill_draft,

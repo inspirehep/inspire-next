@@ -30,6 +30,7 @@ def convert_marcxml(source):
     from inspire.dojson.institutions import institutions
     from inspire.dojson.journals import journals
     from inspire.dojson.experiments import experiments
+    from inspire.dojson.hepnames import hepnames
 
     for data in split_blob(source.read()):
         record = create_record(data)
@@ -39,6 +40,8 @@ def convert_marcxml(source):
             yield experiments.do(record)
         elif _collection_in_record(record, 'journals'):
             yield journals.do(record)
+        elif _collection_in_record(record, 'hepnames'):
+            yield hepnames.do(record)
         else:
             yield hep.do(record)
 

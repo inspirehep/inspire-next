@@ -1,7 +1,6 @@
 content_type: text/html
-default: Default_HTML_detailed.bft
+default: Holding_Pen_HTML_detailed.tpl
 description: HTML for Holding Pen
 name: HTML for Holding Pen
 visibility: 0
-rules:
-- {field: 980.a, template: Hepnames_HTML_detailed.bft, value: 'HEPNAMES'}
+

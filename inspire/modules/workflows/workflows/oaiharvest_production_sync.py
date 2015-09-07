@@ -19,22 +19,32 @@
 
 """Generic record process in harvesting with backwards compatibility."""
 
-from invenio.modules.workflows.definitions import RecordWorkflow
+from invenio_oaiharvester.tasks.records import convert_record_to_json
+from invenio_workflows.definitions import RecordWorkflow
 
-from inspire.modules.oaiharvester.tasks.filtering import get_content_from_file
+from inspire.modules.converter.tasks import (
+    convert_record,
+    convert_encoding,
+)
+from inspire.modules.workflows.tasks.upload import store_record
 
 
-class oaiharvest_production_sync_record(RecordWorkflow):
+class oaiharvest_production_sync(RecordWorkflow):
 
     """Workflow run for each file containing OAI records harvested."""
 
-    object_type = "OAI harvest"
+    object_type = "production sync"
 
     workflow = [
-        get_content_from_file,
-        # TODO: Add new records with records API.
-        # convert_record_with_repository("oaimarc2marcxml.xsl"),
-        # upload_step_marcxml,
+        convert_encoding(
+            from_encoding="ISO-8859-1",
+            to_encoding="UTF-8"
+        ),
+        convert_record(
+            stylesheet="oaiinspiremarc2marcxml.xsl",
+        ),
+        convert_record_to_json,
+        store_record,
     ]
 
     @staticmethod

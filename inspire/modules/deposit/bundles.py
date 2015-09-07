@@ -18,7 +18,7 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from invenio.modules.deposit.bundles import js as _deposit_js, \
+from invenio_deposit.bundles import js as _deposit_js, \
     styles as _deposit_styles
 from invenio.ext.assets import Bundle, RequireJSFilter
 from invenio.base.bundles import jquery as _j, invenio as _i

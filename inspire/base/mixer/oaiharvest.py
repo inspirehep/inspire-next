@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2015 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -21,15 +21,10 @@ from six import with_metaclass as meta
 
 from invenio.ext.mixer import MixerMeta
 from invenio_oaiharvester.models import OaiHARVEST
-from invenio.modules.oairepository.models import OaiREPOSITORY
 
 
 class OaiHARVESTMixer(meta(MixerMeta)):
     __model__ = OaiHARVEST
 
 
-class OaiREPOSITORYMixer(meta(MixerMeta)):
-    __model__ = OaiREPOSITORY
-
-
-__all__ = ('OaiHARVESTMixer', 'OaiREPOSITORYMixer', )
+__all__ = ('OaiHARVESTMixer', )

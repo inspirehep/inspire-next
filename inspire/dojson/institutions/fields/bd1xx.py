@@ -53,16 +53,33 @@ def name(self, key, value):
 
 
 @institutions.over('institution', '^110..')
-@utils.filter_values
 def institution(self, key, value):
+    """Institution name."""
+    return value.get('a')
+
+
+@institutions.over('department', '^110..')
+def department(self, key, value):
     """Institution info."""
-    return {
-        'name': value.get('a'),
-        'department': value.get('b'),
-        'new_name': value.get('t'),
-        'affiliation': value.get('u'),
-        'obsolete_icn': value.get('x'),
-    }
+    return value.get('b')
+
+
+@institutions.over('department_acronym', '^110..')
+def department_acronym(self, key, value):
+    """Institution info."""
+    return value.get('u')
+
+
+@institutions.over('obsolete_ICN', '^110..')
+def obsolete_ICN(self, key, value):
+    """Institution info."""
+    return value.get('x')
+
+
+@institutions.over('ICN', '^110..')
+def ICN(self, key, value):
+    """Institution info."""
+    return value.get('t')
 
 
 @institutions.over('address', '^371..')
@@ -73,23 +90,40 @@ def address(self, key, value):
     return {
         'address': value.get('a'),
         'city': value.get('b'),
-        'state': value.get('c'),
+        'state_province': value.get('c'),
         'country': value.get('d'),
         'postal_code': value.get('e'),
         'country_code': value.get('g'),
     }
 
 
-@institutions.over('activity', '^372..')
-def activity(self, key, value):
+@institutions.over('field_activity', '^372..')
+def field_activity(self, key, value):
     """Field of activity."""
     return value.get('a')
 
 
 @institutions.over('name_variants', '^410..')
 @utils.for_each_value
+@utils.filter_values
 def name_variants(self, key, value):
     """Variants of the name."""
+    return {
+        "source": value.get('9'),
+        "value": value.get('a')
+    }
+
+
+@institutions.over('extra_words', '^410..')
+@utils.for_each_value
+def extra_words(self, key, value):
+    """Variants of the name."""
+    return value.get('g')
+
+
+@institutions.over('content_classification', '^65017')
+def content_classification(self, key, value):
+    """Institution info."""
     return value.get('a')
 
 
@@ -97,3 +131,17 @@ def name_variants(self, key, value):
 def core(self, key, value):
     """Check if it is a CORE institution."""
     return value.get('a', "").upper() == "CORE"
+
+
+@institutions.over('hidden_note', '^667..')
+@utils.for_each_value
+def hidden_note(self, key, value):
+    """Hidden note."""
+    return value.get('a')
+
+
+@institutions.over('public_note', '^680..')
+@utils.for_each_value
+def public_note(self, key, value):
+    """Hidden note."""
+    return value.get('i')

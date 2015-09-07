@@ -15,12 +15,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Tseemple Place, Suite 330, Boston, MA 02111-1307, USA.
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 """Blueprint for handling editing from Holding Pen."""
 
-from invenio.modules.deposit.helpers import make_record
-from invenio.modules.deposit.models import Deposition
+from invenio_deposit.helpers import make_record
 
 from six import text_type
 from flask import Blueprint, jsonify, request
@@ -28,8 +27,9 @@ from flask_login import login_required
 from harvestingkit.html_utils import MathMLParser
 from invenio.base.decorators import wash_arguments
 from invenio.ext.principal import permission_required
-from invenio.modules.workflows.acl import viewholdingpen
-from invenio.modules.workflows.models import BibWorkflowObject
+from invenio_workflows.acl import viewholdingpen
+from invenio_workflows.models import BibWorkflowObject
+from inspire.utils.helpers import get_model_from_obj
 
 
 blueprint = Blueprint(
@@ -43,7 +43,7 @@ blueprint = Blueprint(
 
 # Constants
 SUBJECT_TERM = "subject_term"
-TERM = "term"
+VALUE = "value"
 SCHEME = "scheme"
 INSPIRE_SCHEME = "INSPIRE"
 
@@ -54,6 +54,30 @@ TITLE = "title"
 URL = 'url'
 
 
+# Helper methods for editing
+def get_attributes(objectid):
+    """Returns the required attributes for record editing."""
+    editable_obj = BibWorkflowObject.query.get(objectid)
+    model = get_model_from_obj(editable_obj)
+    sip = model.get_latest_sip()
+    metadata = sip.metadata
+
+    return model, sip, metadata
+
+
+def save_changes(sip, model):
+    """Saves the changes in the record."""
+    sip.package = make_record(sip.metadata)
+    model.save()
+
+
+def json_success_message(attribute):
+    return jsonify({
+        "category": "success",
+        "message": "Edit on {0} was successful.".format(attribute)
+    })
+
+
 @blueprint.route('/edit_record_title', methods=['POST'])
 @login_required
 @permission_required(viewholdingpen.name)
@@ -61,26 +85,11 @@ URL = 'url'
                  'objectid': (int, 0)})
 def edit_record_title(value, objectid):
     """Entrypoint for editing title from detailed pages."""
-    editable_obj = BibWorkflowObject.query.get(objectid)
-    data = editable_obj.get_data()
+    model, sip, metadata = get_attributes(objectid)
 
-    if type(data) is dict:
-        deposition = Deposition(editable_obj)
-        sip = deposition.get_latest_sip()
-        metadata = sip.metadata
-
-        metadata[TITLE][TITLE] = MathMLParser.html_to_text(value)
-        sip.package = make_record(sip.metadata).legacy_export_as_marc()
-        deposition.save()
-    else:
-        data[TITLE_FIELD] = MathMLParser.html_to_text(value)
-        editable_obj.set_data(data)
-        editable_obj.save()
-
-    return jsonify({
-        "category": "success",
-        "message": "Edit on title was successful."
-    })
+    metadata[TITLE][TITLE] = MathMLParser.html_to_text(value)
+    save_changes(sip, model)
+    return json_success_message('title')
 
 
 @blueprint.route('/edit_record_urls', methods=['POST'])
@@ -89,12 +98,8 @@ def edit_record_title(value, objectid):
 @wash_arguments({'objectid': (text_type, "")})
 def edit_record_urls(objectid):
     """Entrypoint for editing urls from detailed pages."""
-    editable_obj = BibWorkflowObject.query.get(objectid)
+    model, sip, metadata = get_attributes(objectid)
     new_urls = request.values.getlist('urls[]') or []
-
-    deposition = Deposition(editable_obj)
-    sip = deposition.get_latest_sip()
-    metadata = sip.metadata
 
     # Get the new urls and format them, the way the object does
     new_urls_array = []
@@ -102,13 +107,8 @@ def edit_record_urls(objectid):
         new_urls_array.append({'url': url})
 
     metadata[URL] = new_urls_array
-    sip.package = make_record(sip.metadata).legacy_export_as_marc()
-    deposition.save()
-
-    return jsonify({
-        "category": "success",
-        "message": "Edit on urls was successful."
-    })
+    save_changes(sip, model)
+    return json_success_message('urls')
 
 
 @blueprint.route('/edit_record_subject', methods=['POST'])
@@ -117,56 +117,21 @@ def edit_record_urls(objectid):
 @wash_arguments({'objectid': (text_type, "")})
 def edit_record_subject(objectid):
     """Entrypoint for editing subjects from detailed pages."""
-    editable_obj = BibWorkflowObject.query.get(objectid)
-    data = editable_obj.get_data()
-
+    model, sip, metadata = get_attributes(objectid)
     new_subjects_list = request.values.getlist('subjects[]') or []
+
     subject_dict = []
+    subject_dict.extend(metadata.get(SUBJECT_TERM))
 
-    # We need to check the type of the object due to differences
-    # Submission: dict /  Harvest: SmartJson
-    if type(data) is dict:
-        deposition = Deposition(editable_obj)
-        sip = deposition.get_latest_sip()
-        metadata = sip.metadata
-
-        subject_dict.extend(metadata.get(SUBJECT_TERM))
-        edit_submission(deposition, metadata, sip,
-                        new_subjects_list, subject_dict)
-    else:
-        subject_dict.extend(data.get(SUBJECT_TERM))
-        edit_harvest(editable_obj, data, new_subjects_list, subject_dict)
-
-    return jsonify({
-        "category": "success",
-        "message": "Edit on subjects was successful."
-    })
-
-
-def edit_harvest(editable_obj, data, new_subjects_list, subject_dict):
-    """Subject editing for harvested records."""
-    old_subjects_list = data.get(SUBJECT_FIELD, [])
-
-    data[SUBJECT_TERM] = revised_subjects_list(old_subjects_list,
-                                               new_subjects_list,
-                                               subject_dict)
-    editable_obj.set_data(data)
-    editable_obj.save()
-
-
-def edit_submission(deposition, metadata, sip, new_subjects_list, subject_dict):
-    """Subject editing for submissions."""
     old_subjects_list = []
     for subj in subject_dict:
-        old_subjects_list.append(subj[TERM])
+        old_subjects_list.append(subj[VALUE])
 
     metadata[SUBJECT_TERM] = revised_subjects_list(old_subjects_list,
                                                    new_subjects_list,
                                                    subject_dict)
-
-    # hacky thing to update package as well, needed to show changes
-    sip.package = make_record(sip.metadata).legacy_export_as_marc()
-    deposition.save()
+    save_changes(sip, model)
+    return json_success_message('subjects')
 
 
 def revised_subjects_list(old, new, subject_dict):
@@ -178,12 +143,12 @@ def revised_subjects_list(old, new, subject_dict):
 
     # Remove subjects
     subject_objects = [subj for subj in subject_dict
-                       if subj[TERM] not in to_remove]
+                       if subj[VALUE] not in to_remove]
 
     # Add the new subjects
     for subj in to_add:
         subject_objects.append({
-            TERM: subj,
+            VALUE: subj,
             SCHEME: INSPIRE_SCHEME
         })
 

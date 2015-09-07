@@ -286,49 +286,10 @@ You can go to a shell instance with database initialized using the `shell` comma
     Out[1]: <Flask 'invenio.base'>
 
 
-4. Harvesting workflows
------------------------
-
-4.1 CORE prediction
-~~~~~~~~~~~~~~~~~~~
-
-If you need to setup prediction models such as the CORE guessing it is required to install some extra packages such as beard which requires scipy, numpy and scikit-learn. This means that you need to make sure you have the required libraries installed.
-
-For example, on Ubuntu/Debian you could execute:
-
-.. code-block:: bash
-
-    (inspire)$ sudo aptitude install -y libblas-dev liblapack-dev gfortran imagemagick
-
-Then to install beard:
-
-.. code-block:: bash
-
-    (inspire)$ cdvirtualenv src/inspire-next
-    (inspire)$ pip install -r requirements-harvesting.txt --exists-action i
-
-
-Now you can train a prediction model or use an existing pickled model file:
-
-.. code-block:: bash
-
-    (inspire)$ cdvirtualenv var/data/classifier/models/
-    (inspire)$ cp /path/to/core_guessing.pickle .
-
-Here is how to train the model from scratch:
-
-.. code-block:: bash
-
-    (inspire)$ inveniomanage classifier train -r /path/to/trainingset.json -o core_guessing.pickle
-
-
-TODO: Add link to training set.
-TODO: Add link sample model.
-
-5. Known issues
+4. Known issues
 ---------------
 
-5.1 Problem with invenio-query-parser
+4.1 Problem with invenio-query-parser
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 On a fresh install in a new virtual environment you may experience that search

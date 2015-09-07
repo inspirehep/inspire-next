@@ -19,7 +19,7 @@
 #
 """BibFormat element - Prints the page and date of article
 """
-from invenio.modules.formatter.format_elements.bfe_field import format_element as get_field
+from invenio_formatter.format_elements.bfe_field import format_element as get_field
 from bfe_inspire_date import format_element as get_date_element
 
 

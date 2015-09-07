@@ -25,69 +25,77 @@
 from collections import OrderedDict
 from flask import render_template
 
-from invenio.modules.workflows.tasks.marcxml_tasks import (
-    convert_record_to_bibfield,
-)
+from invenio_oaiharvester.tasks.records import convert_record_to_json
+
+from invenio_deposit.models import DepositionType
 
 from inspire.modules.workflows.tasks.matching import(
     exists_in_inspire_or_rejected,
     exists_in_holding_pen,
-    save_identifiers_oaiharvest,
+    save_identifiers_to_kb,
     update_old_object,
     delete_self_and_stop_processing,
     arxiv_set_category_field
 )
 
-from inspire.modules.refextract.tasks import extract_journal_info
+# from inspire.modules.refextract.tasks import extract_journal_info
 
-from invenio.modules.classifier.tasks.classification import (
-    classify_paper_with_oaiharvester,
+from inspire.dojson.hep import hep2marc
+
+from inspire.modules.workflows.tasks.classifier import (
+    filter_core_keywords,
+    classify_paper,
 )
 
-from invenio_oaiharvester.tasks.arxiv import (
+from inspire.modules.oaiharvester.tasks.arxiv import (
     arxiv_plot_extract,
     arxiv_fulltext_download,
-    arxiv_refextract,
     arxiv_author_list,
 )
-from invenio.modules.workflows.tasks.workflows_tasks import log_info
+from invenio_workflows.tasks.workflows_tasks import log_info
+
 from inspire.modules.workflows.tasks.actions import (
     was_approved,
-    add_core_oaiharvest,
+    add_core,
 )
 
-from invenio.modules.workflows.tasks.logic_tasks import (
+from invenio_workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else,
 )
-from invenio.modules.workflows.tasks.marcxml_tasks import convert_record
-from invenio.modules.workflows.definitions import RecordWorkflow
-from inspire.modules.oaiharvester.tasks.upload import (
-    send_robotupload_oaiharvest,
+
+from inspire.modules.converter.tasks import convert_record
+from invenio_workflows.definitions import RecordWorkflow
+
+from inspire.modules.workflows.tasks.submission import (
+    halt_record_with_action,
+    send_robotupload,
+    finalize_record_sip,
 )
-from inspire.modules.workflows.tasks.submission import halt_record_with_action
 from inspire.modules.predicter.tasks import (
-    filter_core_keywords,
     guess_coreness
 )
+from inspire.modules.workflows.models import Payload, create_payload
+from inspire.utils.helpers import get_record_from_model
 
-
-class process_record_arxiv(RecordWorkflow):
+class process_record_arxiv(RecordWorkflow, DepositionType):
 
     """Processing workflow for a single arXiv record.
 
     The records have been harvested via oaiharvester.
     """
 
-    object_type = "arXiv"
+    model = Payload
 
+    object_type = "arXiv"
     workflow = [
         # First we perform conversion from OAI-PMH XML to MARCXML
         convert_record("oaiarXiv2inspire_nofilter.xsl"),
-        # Then we convert from MARCXML to SmartJSON object
-        # TODO: Use DOJSON when we are ready to switch from bibfield
-        convert_record_to_bibfield(model=["hep"]),
-        workflow_if(exists_in_inspire_or_rejected),
+        # Then we convert from MARCXML to JSON object with doJSON
+        convert_record_to_json,
+        # Create payload object to align with Deposition object
+        create_payload,
+        workflow_if(exists_in_inspire_or_rejected()),
         [
             delete_self_and_stop_processing,
             # update_existing_record_oaiharvest(),
@@ -102,13 +110,13 @@ class process_record_arxiv(RecordWorkflow):
             workflow_else,
             [
                 arxiv_set_category_field,  # FIXME: Remove this when elasticsearch filtering is ready
-                save_identifiers_oaiharvest("HP_IDENTIFIERS"),
+                save_identifiers_to_kb("HP_IDENTIFIERS"),
                 arxiv_plot_extract,
                 arxiv_fulltext_download(),
                 # arxiv_refextract,
                 arxiv_author_list("authorlist2marcxml.xsl"),
-                extract_journal_info,
-                classify_paper_with_oaiharvester(
+                # extract_journal_info,
+                classify_paper(
                     taxonomy="HEPont",
                     only_core_tags=False,
                     spires=True,
@@ -120,8 +128,9 @@ class process_record_arxiv(RecordWorkflow):
                                         message="Accept article?"),
                 workflow_if(was_approved),
                 [
-                    add_core_oaiharvest,
-                    # send_robotupload_oaiharvest(),
+                    add_core,
+                    finalize_record_sip(processor=hep2marc),
+                    send_robotupload(),
                 ],
                 workflow_else,
                 [
@@ -132,28 +141,39 @@ class process_record_arxiv(RecordWorkflow):
     ]
 
     @staticmethod
+    def get_title(bwo):
+        if not isinstance(bwo.data, dict):
+            return "No title found."
+        model = process_record_arxiv.model(bwo)
+        record = get_record_from_model(model)
+        return "; ".join(record.get("title.title", ["No title found"]))
+
+    @staticmethod
     def get_description(bwo):
         """Get the description column part."""
-        record = bwo.data
+        if not isinstance(bwo.data, dict):
+            return "No description found."
+        model = process_record_arxiv.model(bwo)
+        record = get_record_from_model(model)
         abstract = ""
         authors = []
         categories = []
         final_identifiers = []
         if hasattr(record, "get"):
             # Get identifiers
-            doi = record.get("doi")
+            doi = record.get("doi.doi", [])
             if doi:
-                final_identifiers.append(doi)
+                final_identifiers.extend(doi)
 
-            system_no = record.get("system_number_external", {}).get("value")
+            system_no = record.get("system_control_number.system_control_number", [])
             if system_no:
-                final_identifiers.append(system_no)
+                final_identifiers.extend(system_no)
 
-            # Get subject categories, adding main one first.
+            # Get subject categories, adding main one first. Order matters here.
             categories = record.get("report_number.arxiv_category", [])
-            categories.extend(record.get("subject_term.term", []))
+            categories.extend(record.get("subject_term.value", []))
             categories = list(OrderedDict.fromkeys(categories))  # Unique only
-            abstract = record.get("abstract", {}).get("summary", "")
+            abstract = record.get("abstract.summary", [""])[0]
             authors = record.get("authors", [])
         return render_template('workflows/styles/harvesting_record.html',
                                object=bwo,
@@ -201,3 +221,13 @@ class process_record_arxiv(RecordWorkflow):
             }
         else:
             return {}
+
+    @staticmethod
+    def formatter(bwo, **kwargs):
+        """Nicely format the record."""
+        model = process_record_arxiv.model(bwo)
+        record = get_record_from_model(model)
+        return render_template(
+            'format/record/Holding_Pen_HTML_detailed.tpl',
+            record=record
+        )

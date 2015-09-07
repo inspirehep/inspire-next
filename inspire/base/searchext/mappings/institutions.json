@@ -1,0 +1,109 @@
+{
+    "settings": {
+        "analysis": {
+            "filter": {
+                "asciifold_with_orig": {
+                    "type": "asciifolding",
+                    "preserve_original": true
+                },
+                "synonyms_kbr": {
+                    "type": "synonym",
+                    "synonyms": [
+                        "production => creation"
+                    ]
+                }
+            },
+            "analyzer": {
+                "natural_text": {
+                    "type": "custom",
+                    "tokenizer":  "standard",
+                    "filter": [
+                        "asciifold_with_orig",
+                        "lowercase",
+                        "synonyms_kbr"
+                    ]
+                },
+                "basic_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "standard",
+                    "filter": [
+                        "asciifold_with_orig",
+                        "lowercase"
+                    ]
+                }
+            }
+        },
+        "index.percolator.map_unmapped_fields_as_string": true
+    },
+    "mappings": {
+        "record": {
+            "_all": {"enabled": true},
+            "date_detection": false,
+            "numeric_detection": false,
+            "dynamic_templates": [{
+                "default": {
+                    "match_mapping_type": "string",
+                    "mapping": {
+                        "analyzer": "basic_analyzer",
+                        "type": "string",
+                        "copy_to": "global_default"
+                    }
+                }
+            }],
+            "properties": {
+                "global_fulltext": {
+                    "type": "string",
+                    "analyzer": "natural_text"
+                },
+                "global_default": {
+                    "type": "string",
+                    "analyzer": "basic_analyzer"
+                },
+                "_collections": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                },
+                "collections": {
+                    "properties": {
+                        "primary": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        },
+                        "secondary": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        }
+                    }
+                },
+                "date_and_time_of_latest_transaction": {
+                    "type": "date",
+                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S"
+                },
+                "affautocomplete": {
+                    "type": "string"
+                },
+                "institution": {
+                    "type": "string",
+                    "copy_to": ["affautocomplete"]
+                },
+                "name": {
+                    "type": "string",
+                    "copy_to": ["affautocomplete"]
+                },
+                "name_variants": {
+                    "type": "object",
+                    "properties": {
+                        "value": {
+                            "type": "string",
+                            "copy_to": ["affautocomplete"]
+                        }
+                    }
+                },
+                "ICN": {
+                    "type": "string",
+                    "copy_to": ["affautocomplete"]
+                }
+            }
+        }
+    }
+}

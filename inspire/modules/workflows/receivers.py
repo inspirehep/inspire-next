@@ -19,7 +19,7 @@
 
 """Signal receivers for workflows."""
 
-from invenio.modules.workflows.signals import (
+from invenio_workflows.signals import (
     workflow_halted
 )
 
@@ -34,7 +34,7 @@ def continue_workflow(sender, **kwargs):
 
 def precache_holdingpen_row(sender, **kwargs):
     """Precache a Holding Pen row."""
-    from invenio.modules.workflows.utils import get_formatted_holdingpen_object
+    from invenio_workflows.utils import get_formatted_holdingpen_object
     # Call it to cache it
     get_formatted_holdingpen_object(sender)
 

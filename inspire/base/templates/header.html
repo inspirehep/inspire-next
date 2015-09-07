@@ -30,7 +30,7 @@
 {% set navigation_bar = [
   ('collections.index', {}, 'search', 'Home'),
   ('webdeposit.create', {"deposition_type": "literature"}, 'webdeposit', 'Submit'),
-  ('/inspire/help', {}, '', 'Help'),
+  ('https://labs.inspirehep.net/help', {}, '', 'Help'),
 ] -%}
 
 
@@ -45,7 +45,7 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="{{ url_for('collections.index') }}">
-          <img src="{{ url_for('static', filename='img/labs_white.svg') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}">
+          <img src="{{ url_for('static', filename='img/labs-logo.svg') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}">
         </a>
       </div>
       <div class="navbar-collapse navbar-ex1-collapse collapse overflow">

@@ -25,50 +25,52 @@
 
 {%- block global_bundles %}
   {{ super() }}
+  {% bundles "landing_page.css" %}
 {%- endblock %}
 
 {%- block extra_style %}{% endblock extra_style -%}
 
 {% block index %}
 
-<div class="wrap">
-  <section>
-    {{ flashed_messages() }}
-    <div id="landing-title" class="jumbotron">
-      <div class="container">
-        <div class="row">
-          <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
-            <h1>{{- _("Welcome to INSPIRE Labs!") -}}</h1>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="content-box">
-    <div class="container">
-      <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-          <div class="page-header text-center">
-            <h3>{{- _("Is there an article, preprint, conference paper or thesis you'd like to see added to INSPIRE?") -}}</h3>
-            <a class="btn btn-warning btn-lg" id="submit-btn" href="{{ url_for('webdeposit.create', deposition_type='literature') }}">{{- _("Send a suggestion!") -}}</a>
-            <p>
-            <strong><em>All accepted suggestions are automatically transferred to INSPIRE</em></strong>
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="row home-intro text-center">
-        <div class="col-lg-12">
-          <h3>{{- _("What is INSPIRE Labs?") -}}</h3>
-          <p class="lead">
-            {{ _("INSPIRE Labs provides a sneak preview of new features and designs currently under development.") }}
-            {{ _("Try it out, and please use the feedback button to let us know what you think!") }}</p>
-          <hr class="small">
+  <section class="container container-intro">
+     <div class="row">
+      <div class="col-xs-12">
+        <div class="text-center">
+          <img class="landing-page-flask" src="img/labs-flask-darkbg.svg" alt="">
+          <br>
+          <br>
+          <p class="intro-text">
+            INSPIRE <span class="action-text">Labs</span> provides a sneak preview of new features and designs currently under development.
+          </p>
+          <br>
+          <p class="intro-text">
+             Try it out, and please use the feedback button to let us know what you think!
+          </p>
         </div>
       </div>
     </div>
   </section>
 
-</div>
+
+
+<section class="container container-action">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="text-center">
+          <br>
+          <p class="intro-text">
+            Is there an article, preprint, conference paper or thesis you'd like to see added to INSPIRE?
+          </p>
+          <br>
+          <a class="btn btn-warning btn-lg" id="submit-btn" href="{{ url_for('webdeposit.create', deposition_type='literature') }}">{{- _("Send a suggestion!") -}}</a>
+          <br>
+          <br>
+          <p>
+            <span class="action-text intro-text">All accepted suggestions are automatically transferred to INSPIRE</span>
+          </p>
+        </div>
+      </div>
+    </div>
+</section>
 
 {% endblock index %}

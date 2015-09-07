@@ -30,14 +30,23 @@ define([
     this.dataEngine = new Bloodhound({
       name: 'authors',
       remote: {
-        url: '/search?cc=HepNames&p=author:%QUERY*&of=recjson&rg=100',
+        url: '/search?cc=HepNames&p=authorautocomplete:/%QUERY.*/&of=recjson&rg=100',
+        replace: function(url, query) {
+          var query_components = query.toLowerCase().split(" ");
+          var pattern = "";
+          $.each(query_components, function(index) {
+            if (index != 0) {
+              pattern = pattern + " AND ";
+            }
+            pattern = pattern + "authorautocomplete:" + "/" + this + ".*/";
+          })
+
+          return '/search?cc=HepNames&p=' + pattern + '&of=recjson&rg=100'
+        },
         filter: function(response) {
-          var authors = $.map(response, function(item, idx) {
-            return item.authors;
-          });
-          return authors.sort(function(a, b){
-            if(a.full_name < b.full_name) return -1;
-            if(a.full_name > b.full_name) return 1;
+          return response.sort(function(a, b){
+            if(a.name.value < b.name.value) return -1;
+            if(a.name.value > b.name.value) return 1;
             return 0;
           })
         }
@@ -51,7 +60,10 @@ define([
     this.$element = $element;
 
     var suggestionTemplate = Hogan.compile(
-      '<strong>{{ full_name }}</strong><br>'
+      '<strong>{{ name.value }}</strong><br>' +
+      '<small>' +
+      '{{#affiliation}}{{ affiliation }}<br>{{/affiliation}}' +
+      '</small>'
     );
 
     this.$element.typeahead({
@@ -68,12 +80,22 @@ define([
           callback(suggestions);
         }.bind(this));
       }.bind(this),
-      displayKey: 'full_name',
+      displayKey: 'name.value',
       templates: {
         empty: function(data) {
           return 'Cannot find this author in our database.';
         },
         suggestion: function(data) {
+          data.affiliation = null;
+          if ( data.positions ) {
+            var currentPosition = $.map(data.positions, function(item, idx) {
+              if ( 'status' in item && 'institution' in item  ) {
+                if ( item.status.toLowerCase() === "current" ) {
+                  data.affiliation = item.institution.name;
+                }
+              }
+            });
+          }
           return suggestionTemplate.render.call(suggestionTemplate, data);
         }.bind(this)
       }

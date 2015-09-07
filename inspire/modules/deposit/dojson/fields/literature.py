@@ -31,6 +31,8 @@ in order to produce MARCXML.
 
 from ..model import literature
 
+from dojson import utils
+
 
 @literature.over('abstract', '^abstract$')
 def abstract(self, key, value):
@@ -92,6 +94,7 @@ def categories(self, key, value):
         self['subject_term'].extend(subject_list)
     else:
         self['subject_term'] = subject_list
+    return value
 
 
 @literature.over('collaboration', '^collaboration$')
@@ -260,6 +263,7 @@ def thesis_supervisor(self, key, value):
 
 
 @literature.over('title', '^title$')
+@utils.for_each_value
 def title(self, key, value):
     return {
         "title": value

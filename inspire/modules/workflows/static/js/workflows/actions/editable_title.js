@@ -21,11 +21,15 @@
 define(
   [
     'jquery',
-    'flight/lib/component'
+    'flight/lib/component',
+    'hgn!js/workflows/templates/editable_title',
+    'hgn!js/workflows/templates/saving_spinner'
   ],
   function(
     $,
-    defineComponent) {
+    defineComponent,
+    title_modal_tpl,
+    tpl_spinner) {
 
     'use strict';
 
@@ -34,42 +38,52 @@ define(
     function EditableTitle() {
 
       this.attributes({
-        editSelector: "#editable-title",
-        activeEditableClass: "active-editable",
+        titleSelector: "#title-text",
+        editButtonSelector: "#edit-title",
+
+        // Modal Selectors
+        modalSelector: "#edit-title-modal",
+        saveChangesSelector: "#save-changes",
+        newTitleSelector: "#new-title",
 
         edit_url: "",
-        objectid: ""
+        objectid: "",
+        newTitle: ""
       });
 
       this.createPayloadForEdit = function() {
         return {
-          "value": $(this.attr.editSelector).html(),
+          "value": this.attr.newTitle,
           "objectid": this.attr.objectid
         }
       };
 
-      // Editable/Uneditable Elements
       this.makeEditable = function(ev) {
-        if (!$(this.attr.editSelector).hasClass(this.attr.activeEditableClass) && window.getSelection) {
-          var sel = window.getSelection();
-          sel.removeAllRanges();
-        }
-        $(this.attr.editSelector)
-          .addClass(this.attr.activeEditableClass)
-          .attr('contenteditable', 'true')
-          .focus();
-      };
+        // Inject modal from template
+        $(this.attr.modalSelector).replaceWith(title_modal_tpl({
+          title: $(this.attr.titleSelector).text().trim()
+        }));
 
-      this.makeUneditable = function() {
-        $(this.attr.editSelector)
-          .removeClass(this.attr.activeEditableClass)
-          .attr('contenteditable','false');
+        var that = this;
+        $(this.attr.modalSelector)
+          .modal('show')
+
+          // Save title
+          .on('click', this.attr.saveChangesSelector, function(ev) {
+            that.attr.newTitle = $(that.attr.newTitleSelector).val().trim();
+
+            // Replace the title with the edited one
+            $(that.attr.titleSelector).text(that.attr.newTitle);
+            that.makePostRequest();
+          });
       };
 
       this.makePostRequest = function(ev) {
         var payload = this.createPayloadForEdit();
         var that = this;
 
+        // Add spinner on save button
+        $(this.attr.saveChangesSelector).replaceWith(tpl_spinner());
         $.ajax({
           type: "POST",
           url: that.attr.edit_url,
@@ -81,15 +95,13 @@ define(
             });
           },
           complete: function() {
-            that.makeUneditable()
+            $(that.attr.modalSelector).modal("hide");
           }
         });
       };
 
       this.after('initialize', function() {
-        this.on(this.attr.editSelector, 'dblclick', this.makeEditable);
-        this.on(this.attr.editSelector, 'focusout', this.makePostRequest);
-
+        this.on(this.attr.editButtonSelector, 'click', this.makeEditable);
         console.log("Editable Title OK");
       });
     }

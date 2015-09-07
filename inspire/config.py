@@ -32,43 +32,17 @@ point specified in the setup.py::
     },
 """
 
-from celery.schedules import crontab
 from invenio_query_parser.contrib.spires.walkers.pypeg_to_ast import PypegConverter
 from invenio_query_parser.contrib.spires.walkers.spires_to_invenio import SpiresToInvenio
 
+from invenio.base.config import PACKAGES as _PACKAGES, \
+                                EXTENSIONS as _EXTENSIONS
 
-EXTENSIONS = [
+
+EXTENSIONS = _EXTENSIONS + [
     'invenio.ext.arxiv:Arxiv',
     'invenio.ext.crossref:CrossRef',
-    'invenio.ext.confighacks',
-    'invenio.ext.passlib:Passlib',
-    'invenio.ext.debug_toolbar',
-    'invenio.ext.babel',
-    'invenio.ext.sqlalchemy',
-    'invenio.ext.sslify',
-    'invenio.ext.cache',
-    'invenio.ext.session',
-    'invenio.ext.login',
-    'invenio.ext.principal',
-    'invenio.ext.email',
-    'invenio.ext.fixtures',  # before legacy
-    'invenio.ext.legacy',
-    'invenio.ext.assets',
-    'invenio.ext.template',
-    'invenio.ext.admin',
-    'invenio.ext.logging',
-    'invenio.ext.logging.backends.fs',
-    'invenio.ext.logging.backends.legacy',
-    'invenio.ext.logging.backends.sentry',
-    'invenio.ext.gravatar',
-    'invenio.ext.collect',
-    'invenio.ext.restful',
     'invenio.ext.mixer',
-    'invenio.ext.jasmine',
-    'invenio.ext.es',
-    'flask.ext.menu:Menu',
-    'flask.ext.breadcrumbs:Breadcrumbs',
-    'invenio.modules.deposit.url_converters',
     'inspire.ext.search_bar',
     'inspire.ext.formatter_jinja_filters',
     'inspire.ext.deprecation_warnings:disable_deprecation_warnings',
@@ -80,36 +54,10 @@ PACKAGES = [
     'inspire.dojson',
     'inspire.ext',
     'inspire.utils',
-    'inspire.modules.access',
-    'inspire.modules.audit',
-    'inspire.modules.authors',
-    'inspire.modules.predicter',
-    'inspire.modules.deposit',
-    'inspire.modules.formatter',
-    'inspire.modules.harvester',
-    'inspire.modules.oaiharvester',
-    'inspire.modules.forms',
-    'inspire.modules.ranker',
-    'inspire.modules.refextract',
-    'inspire.modules.styleguide',
-    'inspire.modules.workflows',
-    'invenio_records',
+    'inspire.modules.*',
+    'invenio_classifier',
     'invenio_oaiharvester',
-    'invenio_pidstore',
-    'invenio.modules.*',
-    'invenio.base',
-]
-
-PACKAGES_EXCLUDE = [
-    'invenio.modules.annotations',
-    'invenio.modules.archiver',
-    'invenio.modules.communities',  # remove with invenio/modules/communities
-    'invenio.modules.multimedia',
-    'invenio.modules.records',
-    'invenio.modules.tags',
-    'invenio.modules.oaiharvester',
-    'invenio.modules.pidstore',
-]
+] + _PACKAGES
 
 # Configuration related to Deposit module
 
@@ -121,7 +69,7 @@ DEPOSIT_DEFAULT_TYPE = "inspire.modules.deposit.workflows.literature:literature"
 
 # facets ignored by auto-discovery service, they are not accessible in inspire
 PACKAGES_FACETS_EXCLUDE = [
-    'invenio.modules.search.facets.collection',
+    'invenio_search.facets.collection',
 ]
 
 
@@ -179,14 +127,14 @@ OAUTHCLIENT_REMOTE_APPS = dict(
         title='ORCID',
         description='Connecting Research and Researchers.',
         icon='',
-        authorized_handler="invenio.modules.oauthclient.handlers"
+        authorized_handler="invenio_oauthclient.handlers"
                            ":authorized_signup_handler",
-        disconnect_handler="invenio.modules.oauthclient.handlers"
+        disconnect_handler="invenio_oauthclient.handlers"
                            ":disconnect_handler",
         signup_handler=dict(
-            info="invenio.modules.oauthclient.contrib.orcid:account_info",
-            setup="invenio.modules.oauthclient.contrib.orcid:account_setup",
-            view="invenio.modules.oauthclient.handlers:signup_handler",
+            info="invenio_oauthclient.contrib.orcid:account_info",
+            setup="invenio_oauthclient.contrib.orcid:account_setup",
+            view="invenio_oauthclient.handlers:signup_handler",
         ),
         params=dict(
             request_token_params={'scope': '/authenticate'},
@@ -263,6 +211,7 @@ RECORD_PROCESSORS = {
     'json': 'json.load',
     'marcxml': 'inspire.dojson.processors:convert_marcxml',
 }
+RECORDS_BREADCRUMB_TITLE_KEY = 'title.title[0]'
 
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
 # invenio keywords to elasticsearch fields
@@ -289,3 +238,15 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "980__b": ["collections.secondary"],
     "542__l": ["information_relating_to_copyright_status.copyright_status"],
 }
+
+SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
+    "HEP": "hep",
+    "Conferences": "conferences",
+    "Institutions": "institutions",
+    "Experiments": "experiments",
+    "Jobs": "jobs",
+    "Journals": "journals",
+    "HepNames": "authors"
+}
+
+SEARCH_ELASTIC_DEFAULT_INDEX = 'hep'

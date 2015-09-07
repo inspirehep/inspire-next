@@ -24,6 +24,6 @@ from .fields import (
     bd1xx,
 )
 
-from .model import hepnames
+from .model import hepnames, hepnames2marc
 
-__all__ = ('hepnames',)
+__all__ = ('hepnames', 'hepnames2marc')

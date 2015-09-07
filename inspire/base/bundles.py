@@ -22,24 +22,37 @@
 
 from invenio.ext.assets import Bundle, RequireJSFilter
 from invenio.base.bundles import jquery as _j, invenio as _i
+from invenio_search.bundles import js as _search_js
+from invenio_formatter.bundles import css as _formatter_css
 
 js = Bundle(
     'js/inspire_base_init.js',
     output='base.js',
     filters=RequireJSFilter(exclude=[_j, _i]),
     weight=20,
+    bower={
+        "toastr": "latest"
+    }
 )
 
-# index_js = Bundle(
-#     'vendors/jquery-feeds/dist/jquery.feeds.js',
-#     'vendors/moment/moment.js',
-#     output='index.js',
-#     filters="requirejs",
-#     weight=60,
-#     bower={
-#         "jquery-feeds": "git://github.com/camagu/jquery-feeds.git",
-#     },
-# )
+dependencies_to_remove = ["MathJax"]
+
+for elem in dependencies_to_remove:
+    try:
+        del _j.bower[elem]
+    except KeyError:
+        pass
+
+
+landing_page_styles = Bundle(
+    "less/landing_page.less",
+    output="landing_page.css",
+    depends=[
+        "less/landing_page.less"
+    ],
+    filters="less,cleancss",
+    weight=60,
+)
 
 # '_' prefix indicates private variables, and prevents duplicated import by
 # auto-discovery service of invenio
@@ -67,6 +80,7 @@ _base_styles.contents += (
     'less/feedback/modal.less',
     'less/format/brief-results.less',
     'less/workflows/workflows.less',
+    'vendors/toastr/toastr.css'
 )
 
 to_remove = ["less/base.less",
@@ -77,15 +91,10 @@ to_remove = ["less/base.less",
 for elem in to_remove:
     _base_styles.contents.remove(elem)
 
-from invenio.modules.search.bundles import js as _search_js
-
 _search_js.contents += (
     'js/search/invenio_with_spires_typeahead_configuration.js',
     'js/search/search_results.js',
-    # 'js/search/search_box.js',
 )
-
-from invenio.modules.formatter.bundles import css as _formatter_css
 
 _formatter_css.contents += (
     'css/formatter/templates_detailed_inspire.css',

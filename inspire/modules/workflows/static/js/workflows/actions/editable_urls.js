@@ -24,14 +24,16 @@ define(
     'flight/lib/component',
     'hgn!js/workflows/templates/editable_urls',
     'hgn!js/workflows/templates/editable_urls_input',
-    'hgn!js/workflows/templates/editable_urls_after_edit'
+    'hgn!js/workflows/templates/editable_urls_after_edit',
+    'hgn!js/workflows/templates/saving_spinner'
   ],
   function(
     $,
     defineComponent,
     tpl_edit_urls,
     tpl_edit_urls_input,
-    tpl_after_edit_urls) {
+    tpl_after_edit_urls,
+    tpl_spinner) {
 
     'use strict';
 
@@ -41,7 +43,7 @@ define(
 
       this.attributes({
         // On init
-        editSelector: "#editable-urls",
+        editSelector: "#edit-urls",
         modalSelector: "#edit-urls-modal",
         urlContainerSelector: "#url-container",
         urlLinksSelector: "#url-links",
@@ -62,7 +64,9 @@ define(
       this.getURLs = function() {
         var urls = [];
         $(this.attr.urlContainerSelector + " a").each(function() {
-          urls.push($(this).text());
+          // check for the edit button 'a' tag and potential empty inputs
+          var url = $(this).text();
+          if (url.length) urls.push(url);
         });
 
         this.attr.urls = urls;
@@ -78,7 +82,6 @@ define(
             that.attr.urls[index] = 'http://' + url;
           }
         });
-
         return this.attr.urls;
       };
 
@@ -129,7 +132,7 @@ define(
           // Save urls in list
           .on('click', this.attr.saveChangesSelector, function(ev) {
             $(that.attr.inputsSelector).each(function(index, element) {
-              newUrlList.push(element.value);
+              if (element.value.length) newUrlList.push(element.value);
             });
 
             that.attr.urls = newUrlList;
@@ -140,6 +143,9 @@ define(
 
       this.makePostRequest = function() {
         var that = this;
+
+        // Add spinner on save button
+        $(this.attr.saveChangesSelector).replaceWith(tpl_spinner());
         $.ajax({
           type: "POST",
           url: that.attr.edit_url,
@@ -149,12 +155,15 @@ define(
               category: data.category,
               message: data.message
             });
+          },
+          complete: function() {
+            $(that.attr.modalSelector).modal("hide");
           }
         });
       };
 
       this.after('initialize', function() {
-        this.on(this.attr.editSelector, 'dblclick', this.makeEditable);
+        this.on(this.attr.editSelector, 'click', this.makeEditable);
         console.log("Editable URLs OK");
       });
     }

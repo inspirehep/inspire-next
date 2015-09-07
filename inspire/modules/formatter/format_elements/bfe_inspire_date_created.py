@@ -19,7 +19,7 @@
 #
 """BibFormat element - Prints document date
 """
-from invenio.modules.formatter.format_elements import bfe_creation_date
+from invenio_formatter.format_elements import bfe_creation_date
 
 __revision__ = "$Id$"
 

@@ -53,3 +53,23 @@
     {% endif %}
   {% endif %}
 {%- endmacro %}
+
+{% macro get_status_badge(label, icon, status) -%}
+    <span class="label label-{{ label }}"><i class="fa fa-{{ icon }}"></i> {{ status }}</span>
+{%- endmacro %}
+
+{% macro check_status(object) %}
+    {% if object.get_extra_data().has_key('core') -%}
+
+        {% if object.get_extra_data()['core']  %}
+            {{ get_status_badge('success', 'check', 'CORE') }}
+        {% else %}
+            {% if object.get_extra_data()['approved'] %}
+                {{ get_status_badge('warning', 'check', 'Accepted') }}
+            {% else %}
+                {{ get_status_badge('danger', 'times', 'Rejected') }}
+            {% endif %}
+        {% endif %}
+
+    {% endif %}
+{%- endmacro %}

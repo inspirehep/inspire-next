@@ -27,15 +27,15 @@ from flask.ext.wtf import Form
 
 from invenio.base.i18n import _
 from invenio.base.globals import cfg
-from invenio.modules.deposit import fields
-from invenio.modules.deposit.form import WebDepositForm
-from invenio.modules.deposit.field_widgets import ColumnInput, \
+from invenio_deposit import fields
+from invenio_deposit.form import WebDepositForm
+from invenio_deposit.field_widgets import ColumnInput, \
     ExtendedListWidget, \
     ItemWidget, \
     DynamicListWidget, \
     DynamicItemWidget
-from invenio.modules.deposit.autocomplete_utils import kb_dynamic_autocomplete
-from invenio.modules.deposit.validation_utils import DOISyntaxValidator
+from invenio_deposit.autocomplete_utils import kb_dynamic_autocomplete
+from invenio_deposit.validation_utils import DOISyntaxValidator
 
 from .fields import ArXivField
 # from .fields import ISBNField

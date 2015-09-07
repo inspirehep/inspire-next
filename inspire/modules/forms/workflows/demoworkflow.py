@@ -19,16 +19,16 @@
 
 from flask import render_template
 
-from invenio.modules.workflows.definitions import WorkflowBase
-from invenio.modules.workflows.tasks.logic_tasks import (
+from invenio_workflows.definitions import WorkflowBase
+from invenio_workflows.tasks.logic_tasks import (
     workflow_else,
     workflow_if,
 )
-from invenio.modules.workflows.tasks.marcxml_tasks import (
+from invenio_workflows.tasks.marcxml_tasks import (
     approve_record,
     was_approved
 )
-from invenio.modules.workflows.tasks.workflows_tasks import log_info
+from invenio_workflows.tasks.workflows_tasks import log_info
 
 
 class demoworkflow(WorkflowBase):

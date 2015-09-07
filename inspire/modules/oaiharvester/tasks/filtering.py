@@ -26,7 +26,7 @@ import traceback
 
 def get_content_from_file(obj, eng):
     """Replace object data with content from filepath in object data."""
-    from invenio.modules.workflows.errors import WorkflowError
+    from invenio_workflows.errors import WorkflowError
 
     filepath = obj.data
     try:

@@ -1,19 +1,19 @@
 {#
-# This file is part of Inspire.
+# This file is part of INSPIRE.
 # Copyright (C) 2015 CERN.
 #
-# Invenio is free software; you can redistribute it and/or
+# INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
-# Invenio is distributed in the hope that it will be useful, but
+# INSPIRE is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Invenio; if not, write to the Free Software Foundation, Inc.,
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
@@ -59,13 +59,13 @@
   {% if record.get('abstract')|is_list() %}
   {% for source in record.get('abstract') %}
     {% if source.get('summary') %}
-      <div class="abstract" id="main{{ record.get('_id') }}">{{ source.get('summary')|words(50)|e }}<span id="dots{{ record.get('_id') }}">...</span>
-        <a class="expand" id="{{ record.get('_id') }}"  data-toggle="collapse" href="#more{{ record.get('_id') }}" aria-expanded="false" onclick="functions.changeArrow('{{ record.get('_id') }}','arrow_down{{ record.get('_id') }}','arrow_up{{ record.get('_id') }}')"> 
-        <i class="fa fa-arrow-down" id="arrow_down{{ record.get('_id') }}"></i>
-        <i class="fa fa-arrow-up" id="arrow_up{{ record.get('_id') }}"></i>
+      <div class="abstract" id="main{{ record.get('recid') }}">{{ source.get('summary')|words(50)|e }}<span id="dots{{ record.get('recid') }}">...</span>
+        <a class="expand" id="{{ record.get('recid') }}"  data-toggle="collapse" href="#more{{ record.get('recid') }}" aria-expanded="false" onclick="functions.changeArrow('{{ record.get('recid') }}','arrow_down{{ record.get('recid') }}','arrow_up{{ record.get('recid') }}')"> 
+        <i class="fa fa-arrow-down" id="arrow_down{{ record.get('recid') }}"></i>
+        <i class="fa fa-arrow-up" id="arrow_up{{ record.get('recid') }}"></i>
         </a>
       </div>
-      <div id="more{{ record.get('_id') }}" class="collapse">{{ source.get('summary')|words(50)|e }}</div>
+      <div id="more{{ record.get('recid') }}" class="collapse">{{ source.get('summary')|words_to_end(50)|e }}</div>
     {% endif %}
   {% endfor %}
   {% endif %}
