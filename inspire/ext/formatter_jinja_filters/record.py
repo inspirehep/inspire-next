@@ -21,6 +21,8 @@ from inspire.ext.formatter_jinja_filters.general import apply_template_on_array
 from inspire.utils.bibtex import Bibtex
 from inspire.utils.latex import Latex
 from inspire.utils.cv_latex import Cv_latex
+from inspire.utils.cv_latex_html_text import Cv_latex_html_text
+
 
 def email_links(record):
     """
@@ -121,6 +123,10 @@ def cv_latex(record):
     return Cv_latex(record).format()
 
 
+def cv_latex_html_text(record, format_type):
+    return Cv_latex_html_text(record, format_type).format()
+
+
 def get_filters():
     return {
         'email_links': email_links,
@@ -138,4 +144,5 @@ def get_filters():
         'bibtex': bibtex,
         'latex': latex,
         'cv_latex': cv_latex,
+        'cv_latex_html_text': cv_latex_html_text,
     }
