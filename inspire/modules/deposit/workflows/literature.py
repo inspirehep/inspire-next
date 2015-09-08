@@ -116,7 +116,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         reply_ticket(template="deposit/tickets/user_submitted.html",
                      keep_new=True),
         # add_files_to_task_results,  Not needed as no files are added..
-        guess_coreness("new_astro_model.pickle"),
+        guess_coreness("literature_guessing.pickle"),
         # classify_paper_with_deposit(
         #    taxonomy="HEPont.rdf",
         #    output_mode="dict",
