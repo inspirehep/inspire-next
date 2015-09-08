@@ -87,6 +87,12 @@ def name(self, key, value):
     }
 
 
+@hepnames.over('breadcrum_title', '^100..')
+def breadcrum_title(self, key, value):
+    """Title used in breadcrum and html title."""
+    return value.get('a')
+
+
 @hepnames2marc.over('100', '^name$')
 @utils.filter_values
 def name2marc(self, key, value):

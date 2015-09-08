@@ -24,22 +24,13 @@
 
 {% block record_header %}
   <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-    {{ record.get('name.preferred_name', '') }}
+    {{ record['title'] }}
   </a>
-  {% if record["positions"] %}
-    {% if record["positions"] %}
-      {% if record["positions"][0].get("institution", {}).get("name") %}
-        ({{record["positions"][0].get("institution", {}).get("name")}})
-      {% endif %}
-    {% endif %}
-  {% endif %}
 {% endblock %}
 
 {% block record_info %}
-  {{ record|email_links|join_array(", ")|new_line_after }}
-  {{ record|url_links|join_array(", ")|new_line_after }}
-  {% set field_categories = record.get('field_categories', []) %}
-  {% for category in field_categories %}
-    {{category["name"]}}
-  {% endfor %}
+  {{ record['short_title'] }}
+  {% if record['urls'] %}
+    <br>{{record['urls'][0]|urlize}}
+  {% endif %}
 {% endblock %}

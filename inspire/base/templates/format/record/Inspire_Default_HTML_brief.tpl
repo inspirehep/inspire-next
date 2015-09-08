@@ -32,29 +32,29 @@
           <b>
             {% if record['title']|is_list %}
               {% for title in record['title'] %}          
-                <a class="title" href="{{ url_for('record.metadata', recid=record['recid']) }}">
+                <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
                 {{ title['title']|capitalize }}
                 </a>
                 {% if title['title']|count_words() > 5 %}
-                <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['recid']) }}">
+                <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
                 {{ title['title']|capitalize | words(5) + "..."}}
                 </a>
                 {% else %}
-                 <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['recid']) }}">
+                 <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
                 {{ title['title']|capitalize }}
                 {% endif %}
                 </a> 
               {% endfor %}
             {% else %}
-              <a class="title" href="{{ url_for('record.metadata', recid=record['recid']) }}">
+              <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
               {{ record['title']['title']|capitalize }}
               </a>
               {% if record['title']['title']|count_words() > 5 %}
-              <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['recid']) }}">
+              <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
               {{ record['title']['title']|capitalize | words(5) + "..."}}
               </a>
               {% else %}
-               <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['recid']) }}">
+               <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
               {{ record['title']['title']|capitalize }}
               {% endif %}
               </a> 
@@ -96,12 +96,12 @@
         {% endif %}
         {% endif %}
         <span class="dropdown">
-         <button class="btn btn-default dropdown-toggle dropdown-cite" type="button" id="dropdownMenu{{record['recid']}}" data-recid="{{record['recid']}}"  data-toggle="modal" data-target="#myModal{{record['recid']}}">
+         <button class="btn btn-default dropdown-toggle dropdown-cite" type="button" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#myModal{{record['control_number']}}">
             Cite
           </button>
         </span>
         <!-- MODAL -->
-       <div class="modal fade" id="myModal{{record['recid']}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+       <div class="modal fade" id="myModal{{record['control_number']}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog brief-results-modal">
           <div class="modal-content">
             <div class="modal-header">
@@ -109,12 +109,12 @@
               <h4 class="modal-title" id="myModalLabel">Export Article</h4>
               <div class="btn-group">
               <button type="button" class="btn btn-primary dropdown-toggle" id="btn-drop" data-toggle="dropdown" aria-expanded="false">
-                Format: <span id="format{{record['recid']}}"></span> <span class="caret"></span>
+                Format: <span id="format{{record['control_number']}}"></span> <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
-                <li><a class="pointer bibtex" id="bibtex{{record['recid']}}" data-recid="{{record['recid']}}">BibTex</a></li>
-                <li><a class="pointer latex_eu" id="latex_eu{{record['recid']}}" data-recid="{{record['recid']}}">LaTex(EU)</a></li>
-                <li><a class="pointer latex_us" id="latex_us{{record['recid']}}" data-recid="{{record['recid']}}">LaTex(US)</a></li>
+                <li><a class="pointer bibtex" id="bibtex{{record['control_number']}}" data-recid="{{record['control_number']}}">BibTex</a></li>
+                <li><a class="pointer latex_eu" id="latex_eu{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(EU)</a></li>
+                <li><a class="pointer latex_us" id="latex_us{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(US)</a></li>
               </ul>
             </div>
                 <button type="button" class="btn  btn-primary">Download</button>
@@ -122,7 +122,7 @@
             <div class="modal-body">
               <div class="row">
                 <div class="col-md-12">
-                  <div class="editable" contenteditable="true" onclick="document.execCommand('selectAll',false,null)"><pre id="text{{record['recid']}}"></pre></div>
+                  <div class="editable" contenteditable="true" onclick="document.execCommand('selectAll',false,null)"><pre id="text{{record['control_number']}}"></pre></div>
                 </div>
               </div> 
             </div>
@@ -138,12 +138,12 @@
             <i class="glyphicon glyphicon-calendar"></i> {{ record.get('date_updated').split('-')[0] }}<br/>
           {% endif %}               
           {% if  record.get('_cited_by_count') > 0  %}
-            <i class="fa fa-quote-left"></i><span><a href="/record/{{ record.get('recid') }}/citations"  target="_blank"> Cited {{ record.get('_cited_by_count') }} times</a></span><br/>
+            <i class="fa fa-quote-left"></i><span><a href="/record/{{ record.get('control_number') }}/citations"  target="_blank"> Cited {{ record.get('_cited_by_count') }} times</a></span><br/>
           {% else %}
             <i class="fa fa-quote-left"></i><span> Cited 0 times</span><br/>
           {% endif %}
           {% if record.get('references') %}
-            <i class="fa fa-link"></i><span><a href="/record/{{ record.get('recid') }}/references" target="_blank">  {{ (record.get('references', '')) | count }} References</a></span>
+            <i class="fa fa-link"></i><span><a href="/record/{{ record.get('control_number') }}/references" target="_blank">  {{ (record.get('references', '')) | count }} References</a></span>
           {% else %}
             <i class="fa fa-link"></i><span> 0 References</span>
           {% endif %}

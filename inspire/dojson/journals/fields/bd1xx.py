@@ -40,22 +40,21 @@ def coden(self, key, value):
 
 
 @journals.over('title', '^130..')
-@utils.filter_values
 def title(self, key, value):
     """Title Statement."""
-    return {
-        'title': value.get('a'),
-    }
+    return value.get('a')
+
+
+@journals.over('breadcrum_title', '^130..')
+def breadcrum_title(self, key, value):
+    """Title used in breadcrum and html title."""
+    return value.get('a')
 
 
 @journals.over('short_title', '^711..')
-@utils.for_each_value
-@utils.filter_values
 def short_title(self, key, value):
     """Title Statement."""
-    return {
-        'short_title': value.get('a'),
-    }
+    return value.get('a')
 
 
 @journals.over('name_variants', '^730..')
@@ -63,3 +62,10 @@ def short_title(self, key, value):
 def name_variants(self, key, value):
     """Variants of the name."""
     return value.get('a')
+
+
+@journals.over('urls', '^856.[10_28]')
+@utils.for_each_value
+def urls(self, key, value):
+    """URLs."""
+    return value.get('u')

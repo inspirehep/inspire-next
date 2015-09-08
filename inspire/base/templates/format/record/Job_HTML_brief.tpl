@@ -1,6 +1,6 @@
 {#
 ## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2015 CERN.
 ##
 ## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -24,22 +24,22 @@
 
 {% block record_header %}
   <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-    {{ record.get('name.preferred_name', '') }}
+    {{ record['position'] }}
   </a>
-  {% if record["positions"] %}
-    {% if record["positions"] %}
-      {% if record["positions"][0].get("institution", {}).get("name") %}
-        ({{record["positions"][0].get("institution", {}).get("name")}})
-      {% endif %}
-    {% endif %}
+  {% if record['deadline_date'] %}
+    <strong>[Deadline: {{record['deadline_date']}} ]</strong>
   {% endif %}
 {% endblock %}
 
 {% block record_info %}
-  {{ record|email_links|join_array(", ")|new_line_after }}
-  {{ record|url_links|join_array(", ")|new_line_after }}
-  {% set field_categories = record.get('field_categories', []) %}
-  {% for category in field_categories %}
-    {{category["name"]}}
-  {% endfor %}
+  {% if record['rank']|is_list %}
+    {% for rank in record['rank'] %}
+      {{rank}}&nbsp;|&nbsp;
+    {% endfor %}
+  {% endif %}
+  {% if record['research_area']|is_list %}
+    {% for research_area in record['research_area'] %}
+      {{research_area}}&nbsp;
+    {% endfor %}
+  {% endif %}
 {% endblock %}

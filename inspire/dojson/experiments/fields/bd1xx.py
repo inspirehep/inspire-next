@@ -72,3 +72,10 @@ def description(self, key, value):
 def spokesperson(self, key, value):
     """Spokesperson of experiment."""
     return value.get("a")
+
+
+@experiments.over('urls', '^856.[10_28]')
+@utils.for_each_value
+def urls(self, key, value):
+    """URLs."""
+    return value.get('u')
