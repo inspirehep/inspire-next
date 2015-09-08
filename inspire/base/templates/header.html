@@ -50,6 +50,30 @@
       </div>
       <div class="navbar-collapse navbar-ex1-collapse collapse overflow">
         <ul class="nav navbar-nav navbar-right">
+        {% if config.DEBUG %}
+          <li>
+            <form class="search-form" action="/search" style="
+            display: inline-block;
+            margin-top: 20px;
+            margin-right: 60px;
+            color: #000;">
+            <div class="search-box" style="display: inline-block;">
+                <input type="text" name="p" placeholder="Search INSPIRE Labs" value="" style="width: 200px;">
+            </div>
+            <div class="search-dropdown" style="display: inline-block;">
+            <select name="cc">
+              <option value="HEP">HEP</option>
+              <option value="HepNames">Authors</option>
+              <option value="Institutions">Institutions</option>
+              <option value="Conferences">Conferences</option>
+              <option value="Jobs">Jobs</option>
+              <option value="Experiments">Experiments</option>
+              <option value="Journals">Journals</option>
+            </select>
+            </div>
+            <button type="submit" class="btn-warning search-submit">Search</button></form>
+          </li>
+        {% endif %}
           <li class="move-down">
             {% for endpoint, values, blueprint, caption in navigation_bar %}
             <li {% if request.blueprint == blueprint|e %} class="active" {% endif %}>
