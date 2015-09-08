@@ -41,7 +41,13 @@ manager = Manager(usage=__doc__)
                 help='Train the model from records from this file.')
 @manager.option('--output', '-o', dest='output',
                 help='Pickle the model to this file.')
-def train(records, output):
+@manager.option('--skip-categories', '-c', dest='skip_categories',
+                action="store_true", help='Train using record categories',
+                default=False)
+@manager.option('--skip-astro', dest='skip_astro',
+                action="store_true", help='Skip astro records.',
+                default=False)
+def train(records, output, skip_categories=False, skip_astro=False):
     """Train a set of records from the command line.
 
     Usage: inveniomanage predicter train -r /path/to/json -o model.pickle
@@ -59,6 +65,8 @@ def train(records, output):
         output = os.path.join(
             cfg.get("CLASSIFIER_MODEL_PATH", ""), output
         )
+    else:
+        output = os.path.abspath(output)
 
     # Make sure directories are created
     if not os.path.exists(os.path.dirname(output)):
@@ -69,5 +77,5 @@ def train(records, output):
         print("{0} is not writable file!".format(output), file=sys.stderr)
         return
 
-    job = celery_train.delay(records, output)
+    job = celery_train.delay(records, output, skip_categories, skip_astro)
     print("Scheduled job {0}".format(job.id))
