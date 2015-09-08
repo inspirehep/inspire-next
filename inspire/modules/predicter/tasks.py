@@ -57,7 +57,8 @@ def filter_core_keywords(filter_kb):
     return _filter_core_keywords
 
 
-def guess_coreness(model_path="arxiv_guessing.pickle", deposit=False):
+def guess_coreness(model_path="arxiv_guessing.pickle", deposit=False,
+                   top_words=0):
     """Using a prediction model, predict if record is CORE."""
     @wraps(guess_coreness)
     def _guess_coreness(obj, eng):
@@ -87,10 +88,19 @@ def guess_coreness(model_path="arxiv_guessing.pickle", deposit=False):
         else:
             prepared_record = prepare_prediction_record(obj.data)
         pipeline = load_model(full_model_path)
-        decision, scores = predict(pipeline, prepared_record)
-        obj.log.info("Successfully predicted as {0} with {1}".format(decision, max(scores)))
 
         result = {}
+        if not top_words:
+            decision, scores = predict(pipeline, prepared_record, top_words)
+        else:
+            decision, scores, top_core, top_noncore, top_rejected = \
+                predict(pipeline, prepared_record, top_words)
+            result["top_core"] = top_core
+            result["top_noncore"] = top_noncore
+            result["top_rejected"] = top_rejected
+
+        obj.log.info("Successfully predicted as {0} with {1}".format(decision, max(scores)))
+
         result["decision"] = decision
         result["max_score"] = max(scores)
         result["all_scores"] = scores
@@ -107,7 +117,7 @@ def guess_coreness(model_path="arxiv_guessing.pickle", deposit=False):
 
 
 @celery.task()
-def train(records, output, skip_astro=True):
+def train(records, output, skip_categories=True, skip_astro=True):
     """Train a set of records and save model to file."""
     from .arxiv import train as core_train
 
@@ -127,6 +137,6 @@ def train(records, output, skip_astro=True):
                    if not (astro_categories & set(r["categories"]) and not
                            (r["id"].startswith("14") or r["id"].startswith("15")))]
         print("Records after filtering: {0}".format(len(records)))
-    pipeline = core_train(records)
+    pipeline = core_train(records, not skip_categories)
     pickle.dump(pipeline, open(output, "w"))
     print("Dumped trained model to {0}".format(output))
