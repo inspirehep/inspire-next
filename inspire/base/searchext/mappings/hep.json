@@ -46,7 +46,7 @@
                     "mapping": {
                         "analyzer": "basic_analyzer",
                         "type": "string",
-                        "copy_to": "global_default"
+                        "copy_to": "global_fulltext"
                     }
                 }
                 }
