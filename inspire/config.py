@@ -35,8 +35,10 @@ point specified in the setup.py::
 from invenio_query_parser.contrib.spires.walkers.pypeg_to_ast import PypegConverter
 from invenio_query_parser.contrib.spires.walkers.spires_to_invenio import SpiresToInvenio
 
-from invenio.base.config import PACKAGES as _PACKAGES, \
-                                EXTENSIONS as _EXTENSIONS
+from invenio.base.config import (
+    PACKAGES as _PACKAGES,
+    EXTENSIONS as _EXTENSIONS
+)
 
 
 EXTENSIONS = _EXTENSIONS + [

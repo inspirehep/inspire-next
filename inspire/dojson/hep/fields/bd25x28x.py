@@ -58,6 +58,7 @@ def imprint(self, key, value):
         'date': value.get('c'),
     }
 
+
 @hep2marc.over('260', 'imprint')
 @utils.for_each_value
 @utils.filter_values

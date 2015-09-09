@@ -90,8 +90,8 @@ def authors2marc(self, key, value):
 def corporate_author(self, key, value):
     """Main Entry-Corporate Name."""
     return {
-            'corporate_author': value.get('a'),
-        }
+        'corporate_author': value.get('a'),
+    }
 
 
 @hep2marc.over('110', 'corporate_author')
@@ -102,4 +102,3 @@ def corporate_author2marc(self, key, value):
     return {
         'a': value.get('corporate_author'),
     }
-

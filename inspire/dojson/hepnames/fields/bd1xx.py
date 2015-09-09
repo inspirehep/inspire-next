@@ -146,7 +146,7 @@ def ids2marc(self, key, value):
     """All identifiers, both internal and external."""
     return {
         'a': value.get('value'),
-        '9':  value.get('type'),
+        '9': value.get('type'),
     }
 
 
@@ -361,7 +361,6 @@ def prizes2marc(self, key, value):
 @utils.for_each_value
 def _public_note(self, key, value):
     return value.get('i')
-
 
 
 @hepnames2marc.over('680', '^_public_note$')
