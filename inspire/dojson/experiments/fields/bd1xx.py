@@ -53,6 +53,12 @@ def title(self, key, value):
     }
 
 
+@experiments.over('breadcrum_title', '^245[10_][0_]')
+def breadcrum_title(self, key, value):
+    """Title used in breadcrum and html title."""
+    return value.get('a')
+
+
 @experiments.over('name_variants', '^419..')
 @utils.for_each_value
 def name_variants(self, key, value):
