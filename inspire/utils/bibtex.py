@@ -1,23 +1,27 @@
+# -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
 # Copyright (C) 2015 CERN.
-##
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
-##
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
-##
-# You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 import re
+
 from invenio_knowledge.api import get_kbr_keys
 
 
@@ -37,7 +41,7 @@ class MissingRequiredFieldError(LookupError):
 
 class Bibtex(object):
 
-    """docstring for Bibtex"""
+    """Docstring for Bibtex"""
 
     def __init__(self, record):
         self.record = record
@@ -340,7 +344,8 @@ class Bibtex(object):
             if self.record['authors'][0]['relator_term'] and \
                self.record['authors'][0]['relator_term'] == 'ed.':
                 result.append(spacinginitials.sub(
-                            r'\1 \2', self.record['authors'][0]['full_name']))
+                    r'\1 \2', self.record['authors'][0]['full_name']
+                ))
             if result:
                 return ''.join(editor for editor in result)
 
@@ -499,20 +504,22 @@ class Bibtex(object):
                 try:
                     journal = pub_info[0]
                     if 'journal_volume' in journal:
-                        if 'journal_title' in journal and \
-                                        journal['journal_title'] == 'JHEP':
-                            volume = re.sub(r'\d\d(\d\d)', r'\1',
-                                            journal['journal_volume'])
+                        if 'journal_title' in journal and journal['journal_title'] == 'JHEP':
+                            volume = re.sub(
+                                r'\d\d(\d\d)', r'\1',
+                                journal['journal_volume']
+                            )
                         else:
                             volume = journal['journal_volume']
                 except IndexError:
                     pass
             else:
                 if 'journal_volume' in pub_info:
-                    if 'journal_title' in pub_info and \
-                                    pub_info['journal_title'] == 'JHEP':
-                        volume = re.sub(r'\d\d(\d\d)', r'\1',
-                                        pub_info['journal_volume'])
+                    if 'journal_title' in pub_info and pub_info['journal_title'] == 'JHEP':
+                        volume = re.sub(
+                            r'\d\d(\d\d)', r'\1',
+                            pub_info['journal_volume']
+                        )
                     else:
                         volume = pub_info['journal_volume']
             if not volume:
@@ -585,16 +592,16 @@ class Bibtex(object):
                         if index >= 1:
                             note = ''
                             if 'note' not in val and \
-                                ('journal_title' in val
-                                    or 'journal_volume' in val
-                                    or 'journal_issue' in val
-                                    or 'page_artid' in val
-                                    or 'year' in val):
+                                ('journal_title' in val or
+                                 'journal_volume' in val or
+                                 'journal_issue' in val or
+                                 'page_artid' in val or
+                                 'year' in val):
                                 if 'journal_title' in val:
                                     if not ('journal_volume' in val or
-                                            'journal_issue' in val
-                                            or 'page_artid' in val
-                                            or 'doi' in self.record):
+                                            'journal_issue' in val or
+                                            'page_artid' in val or
+                                            'doi' in self.record):
                                         note += 'Submitted to: ' +\
                                                 re.sub(r'\.([A-Z])', r'. \1',
                                                        val['journal_title'])
@@ -770,9 +777,7 @@ class Bibtex(object):
                         cite_element = field['primary'].upper()
                         cite_line = '%%CITATION = ' + cite_element + ';%%'
                 if not cite_element:
-                    cite_element = self\
-                                   .record['report_number'][0]['primary']\
-                                   .upper()
+                    cite_element = self.record['report_number'][0]['primary'].upper()
                     cite_line = '%%CITATION = ' + cite_element + ';%%'
         else:
             cite_element = str(self.record['recid'])

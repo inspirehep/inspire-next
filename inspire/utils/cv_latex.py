@@ -3,24 +3,27 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2015 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 import re
-from invenio.base.globals import cfg
 import time
+
+from invenio.base.globals import cfg
 
 
 class MissingRequiredFieldError(LookupError):
@@ -79,7 +82,7 @@ class Cv_latex(object):
             for field in self.record['system_control_number']:
                 if 'institute' in field and \
                     (field['institute'] == 'INSPIRETeX' or
-                        field['institute'] == 'SPIRESTeX'):
+                     field['institute'] == 'SPIRESTeX'):
                     result.append(field)
             for key in result:
                 if key['institute'] in ('INSPIRETeX', 'SPIRESTeX'):
@@ -132,21 +135,19 @@ class Cv_latex(object):
                 if 'collaboration' in self.record:
                     try:
                         if 'collaboration' in self.record['collaboration'][0]:
-                            collaboration = self.\
-                                    record['collaboration'][0]['collaboration']
+                            collaboration = self.record['collaboration'][0]['collaboration']
                             if 'Collaboration' in collaboration:
-                                out += u' {\it et al.} [' + collaboration + \
-                                   '].<br/>'
+                                out += u' {\it et al.} [' + collaboration + '].<br/>'
                             else:
-                                out += u' {\it et al.} [' + collaboration + \
-                                   ' Collaboration].<br/>'
+                                out += u' {\it et al.} [' + collaboration + ' Collaboration].<br/>'
                     except IndexError:
                         pass
                 else:
                     out += u' {\it et al.}.<br/>'
             else:
                 out += u'&nbsp;&nbsp;\\\\{{}}{} and {}.<br/>'.format(
-                    ', '.join(value[:-1]), value[-1])
+                    ', '.join(value[:-1]), value[-1]
+                )
         elif field == 'title':
             out += u'{1}<br/>'.format(field, value)
         elif field == 'publi_info':
@@ -175,10 +176,12 @@ class Cv_latex(object):
     def _get_author(self):
         """Return list of name(s) of the author(s)."""
         re_last_first = re.compile(
-        r'^(?P<last>[^,]+)\s*,\s*(?P<first_names>[^\,]*)(?P<extension>\,?.*)$')
+            r'^(?P<last>[^,]+)\s*,\s*(?P<first_names>[^\,]*)(?P<extension>\,?.*)$'
+        )
         re_initials = re.compile(r'(?P<initial>\w)([\w`\']+)?.?\s*')
         re_tildehyph = re.compile(
-        ur'(?<=\.)~(?P<hyphen>[\u002D\u00AD\u2010-\u2014-])(?=\w)')
+            ur'(?<=\.)~(?P<hyphen>[\u002D\u00AD\u2010-\u2014-])(?=\w)'
+        )
         result = []
         if 'authors' in self.record:
             for author in self.record['authors']:
@@ -190,8 +193,9 @@ class Cv_latex(object):
                             author_full_name)
                         if first_last_match:
                             first = re_initials.sub(
-                                r'\g<initial>.~', first_last_match.group(
-                                                  'first_names'))
+                                r'\g<initial>.~',
+                                first_last_match.group('first_names')
+                            )
                             first = re_tildehyph.sub(r'\g<hyphen>', first)
                             result.append(first +
                                           first_last_match.group('last') +
@@ -201,8 +205,9 @@ class Cv_latex(object):
                             author['full_name'])
                         if first_last_match:
                             first = re_initials.sub(
-                                r'\g<initial>.~', first_last_match.group(
-                                                  'first_names'))
+                                r'\g<initial>.~',
+                                first_last_match.group('first_names')
+                            )
                             first = re_tildehyph.sub(r'\g<hyphen>', first)
                             result.append(first +
                                           first_last_match.group('last') +
@@ -215,20 +220,23 @@ class Cv_latex(object):
                             corp_author['corporate_author'])
                         if first_last_match:
                             first = re_initials.sub(
-                                r'\g<initial>.~', first_last_match.group(
-                                                  'first_names'))
+                                r'\g<initial>.~',
+                                first_last_match.group('first_names')
+                            )
                             first = re_tildehyph.sub(r'\g<hyphen>', first)
                             result.append(first +
                                           first_last_match.group('last') +
                                           first_last_match.group('extension'))
             else:
                 first_last_match = re_last_first.search(
-                            self.record['corporate_author']
-                            ['corporate_author'])
+                    self.record['corporate_author']
+                    ['corporate_author']
+                )
                 if first_last_match:
                     first = re_initials.sub(
-                        r'\g<initial>.~', first_last_match.group(
-                                          'first_names'))
+                        r'\g<initial>.~',
+                        first_last_match.group('first_names')
+                    )
                     first = re_tildehyph.sub(r'\g<hyphen>', first)
                     result.append(first +
                                   first_last_match.group('last') +
@@ -247,8 +255,8 @@ class Cv_latex(object):
             else:
                 record_title = self.record['title']['title'].strip()
             return r"{\bf ``" + re.sub(
-                                r'(?<!\\)([#&%])', r'\\\1', record_title)\
-                + "''}"
+                r'(?<!\\)([#&%])', r'\\\1', record_title
+            ) + "''}"
         else:
             return record_title
 
@@ -260,11 +268,9 @@ class Cv_latex(object):
                 out = ''
                 if 'journal_title' in field:
                     if isinstance(field['journal_title'], list):
-                        journal_title = field['journal_title'][-1].\
-                                replace(".", '.\\ ')
+                        journal_title = field['journal_title'][-1].replace(".", '.\\ ')
                     else:
-                        journal_title = field['journal_title'].\
-                            replace(".", '.\\ ')
+                        journal_title = field['journal_title'].replace(".", '.\\ ')
                     if 'journal_volume' in field and not \
                             field['journal_title'] == 'Conf.Proc.':
                         journal_letter = ''
@@ -286,8 +292,7 @@ class Cv_latex(object):
                             year = ' (' + field['year'] + ')'
                     if 'journal_issue' in field:
                         if field['journal_issue']:
-                            journal_issue = ', no. ' + \
-                                                field['journal_issue']
+                            journal_issue = ', no. ' + field['journal_issue']
                     if 'page_artid' in field:
                         page_artid = ''
                         if field['page_artid']:
@@ -345,7 +350,7 @@ class Cv_latex(object):
                     datestruct = self.parse_date(str(date['date']))
                 break
             if datestruct:
-                return self._format_date(datestruct)  #FIX ME ADD 0 IN THE DAY
+                return self._format_date(datestruct)  # FIX ME ADD 0 IN THE DAY
 
         if self._get_arxiv_field():
             date = re.search('(\d+)',
@@ -356,7 +361,7 @@ class Cv_latex(object):
                     year = '19' + year
                 else:
                     year = '20' + year
-                date = year + date[2:4]  #FIX ME DONT ADD 00 AS A DAY
+                date = year + date[2:4]  # FIX ME DONT ADD 00 AS A DAY
                 date = self.parse_date(str(date))
                 if date:
                     return self._format_date(date)
@@ -437,7 +442,7 @@ class Cv_latex(object):
                     try:
                         datestruct.append(int(date))
                         continue
-                    except ValueError, e:
+                    except ValueError:
                         pass
                 break
         else:
@@ -458,6 +463,6 @@ class Cv_latex(object):
                 if day == "":
                     return tuple(datestruct)
                 datestruct.append(int(day))
-            except ValueError, e:
+            except ValueError:
                 pass
         return tuple(datestruct)

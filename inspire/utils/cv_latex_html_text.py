@@ -3,28 +3,33 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2015 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
+
 
 import re
+
 from invenio.base.globals import cfg
 
 
 class MissingRequiredFieldError(LookupError):
 
     """Base class for exceptions in this module.
+
     The exception should be raised when the specific,
     required field doesn't exist in the record.
     """
@@ -37,9 +42,8 @@ class MissingRequiredFieldError(LookupError):
 
 
 class Cv_latex_html_text(object):
-    """Class used to output CV format(html) and
-       CV format(text).
-    """
+
+    """Class used to output CV format(html) and CV format(text)."""
 
     def __init__(self, record, format_type):
         self.record = record
@@ -105,16 +109,15 @@ class Cv_latex_html_text(object):
                 if 'collaboration' in self.record:
                     try:
                         if 'collaboration' in self.record['collaboration'][0]:
-                            collaboration = self.\
-                                    record['collaboration'][0]['collaboration']
+                            collaboration = self.record['collaboration'][0]['collaboration']
                             if 'Collaboration' in collaboration:
-                                out += u'By ' + collaboration + \
-                                    '({1} et al.).<br/>'.format(
-                                        field, value[0])
+                                out += u'By ' + collaboration + '({1} et al.).<br/>'.format(
+                                    field, value[0]
+                                )
                             else:
-                                out += u'By ' + collaboration + \
-                                    ' Collaboration ({1} et al.).<br/>'.format(
-                                            field, value[0])
+                                out += u'By ' + collaboration + ' Collaboration ({1} et al.).<br/>'.format(
+                                    field, value[0]
+                                )
                     except IndexError:
                         pass
                 else:
@@ -128,7 +131,8 @@ class Cv_latex_html_text(object):
                 out += u'{1}.<br/>'.format(field, value)
         elif field == 'doi':
             out += u'<a href="http://dx.doi.org/{1}">{1}</a>.<br/>'.format(
-                                                            field, value)
+                field, value
+            )
         elif field == 'publi_info':
             out += u'{1}.<br/>'.format(field, value)
         return out
@@ -137,16 +141,17 @@ class Cv_latex_html_text(object):
         """Return arXiv field if exists"""
         if 'report_number' in self.record:
             for field in self.record['report_number']:
-                if ('source' in field and field['source'] == 'arXiv') \
-                    or 'arxiv_category' in field or \
+                if ('source' in field and field['source'] == 'arXiv') or \
+                    'arxiv_category' in field or \
                     ('primary' in field and
-                        field['primary'].upper().startswith('ARXIV:')):
+                     field['primary'].upper().startswith('ARXIV:')):
                     return field
 
     def _get_author(self):
         """Return list of name(s) of the author(s)."""
         re_last_first = re.compile(
-        r'^(?P<last>[^,]+)\s*,\s*(?P<first_names>[^\,]*)(?P<extension>\,?.*)$')
+            r'^(?P<last>[^,]+)\s*,\s*(?P<first_names>[^\,]*)(?P<extension>\,?.*)$'
+        )
         result = []
         if 'authors' in self.record:
             for author in self.record['authors']:
@@ -157,20 +162,23 @@ class Cv_latex_html_text(object):
                         first_last_match = re_last_first.search(
                             author_full_name)
                         if first_last_match:
-                            result.append(first_last_match.group('first_names')
-                                          + ' ' + first_last_match.
-                                          group('last')
-                                          + first_last_match.
-                                          group('extension'))
+                            result.append(
+                                first_last_match.group('first_names') +
+                                ' ' + first_last_match.
+                                group('last') +
+                                first_last_match.
+                                group('extension')
+                            )
                     else:
                         first_last_match = re_last_first.search(
                             author['full_name'])
                         if first_last_match:
-                            result.append(first_last_match.group('first_names')
-                                          + ' ' + first_last_match.
-                                          group('last')
-                                          + first_last_match.
-                                          group('extension'))
+                            result.append(
+                                first_last_match.group('first_names') +
+                                ' ' + first_last_match.
+                                group('last') +
+                                first_last_match.group('extension')
+                            )
         elif 'corporate_author' in self.record:
             if isinstance(self.record['corporate_author'], list):
                 for corp_author in self.record['corporate_author']:
@@ -217,18 +225,18 @@ class Cv_latex_html_text(object):
                 if 'journal_title' in field:
                     if isinstance(field['journal_title'], list):
                         if not ('journal_volume' in field or
-                                'journal_issue' in field
-                                or 'page_artid' in field
-                                or 'doi' in self.record):
+                                'journal_issue' in field or
+                                'page_artid' in field or
+                                'doi' in self.record):
                             journal_title = 'Submitted to:' +\
                                 field['journal_title'][-1]
                         else:
                             journal_title = field['journal_title'][-1]
                     else:
                         if not ('journal_volume' in field or
-                                'journal_issue' in field
-                                or 'page_artid' in field
-                                or 'doi' in self.record):
+                                'journal_issue' in field or
+                                'page_artid' in field or
+                                'doi' in self.record):
                             journal_title = 'Submitted to:' +\
                                 field['journal_title']
                         else:
