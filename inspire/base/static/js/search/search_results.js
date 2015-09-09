@@ -46,30 +46,6 @@ require(['jquery', 'bootstrap'], function($) {
     });
   })
 
-  $( document ).ready(function() {
-    var loc = window.location.href;
-    var is_root = location.pathname == "/";
-    if(/references/.test(loc)) {
-      $('.information').removeClass('active');
-      $('.references').addClass('active');
-    }
-
-    if(/citations/.test(loc)) {
-      $('.information').removeClass('active');
-      $('.citations').addClass('active');
-    }
-
-    if(/plots/.test(loc)) {
-      $('.information').removeClass('active');
-      $('.plots').addClass('active');
-    }
-  
-    if(is_root) {
-      $('#search-box-main').addClass('search-box-centered');
-    }
-  
-  });
-
   $(".fa-arrow-up").hide();
   functions = {
     changeArrow: function(id,id_down,id_up) {
