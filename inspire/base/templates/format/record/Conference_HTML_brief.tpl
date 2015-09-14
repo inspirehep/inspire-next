@@ -19,16 +19,76 @@
 
 {% extends "format/record/Default_HTML_brief_base.tpl" %}
 
-{% block above_record_header %}
-{% endblock %}
-
 {% block record_header %}
-  <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-    {{ record['title'] }}
-  </a>
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default custom-panel" >
+    <div class="panel-body" >
+      <div class="row">
+      <div class="col-md-12">
+        <h4 class="custom-h">
+          <b>
+            {% if record['title']|is_list %}
+              {% for title in record['title'] %}          
+                <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+                {{ title|capitalize }}
+                </a>
+                {% if title|count_words() > 5 %}
+                <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+                {{ title|capitalize | words(5) + "..."}}
+                </a>
+                {% else %}
+                 <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+                {{ title|capitalize }}
+                {% endif %}
+                </a> 
+              {% endfor %}
+              {% if record['acronym'] %}
+                ({{ record['acronym'] }}) 
+              {% endif %}
+            {% else %}
+              <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+              {{ record['title']|capitalize }}
+              </a>
+              {% if record['title']|count_words() > 5 %}
+              <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+              {{ record['title']|capitalize | words(5) + "..."}}
+              </a>
+              {% else %}
+               <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+              {{ record['title']|capitalize }} 
+              {% endif %}
+              </a> 
+              {% if record['acronym'] %} 
+                ({{ record['acronym'] }}) 
+              {% endif %}
+            {% endif %}
+          </b> 
+      </h4>
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+          {{ record|conference_date }}
+          {{ record['place'] }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+          {{ record['cnum'] }},
+          <a href="">Contributions</a> 
+        </div>
+      </div>
+      {% if record['url'] %}
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+          <a href="{{ record['url'][0] }}">{{ record['url'][0] }}</a>
+        </div>
+      </div>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+</div>
 {% endblock %}
 
-{% block record_info %}
-  {{ record['opening_date'] }}
-  {{ record['place'] }}
-{% endblock %}

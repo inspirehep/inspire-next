@@ -22,15 +22,33 @@
 
 {%- extends "search/results_base.html" -%}
 
-
 {%- block results_actions %}
 {%- endblock results_actions %}
 
 {%- block search_result_settings_display %}
 {%- endblock search_result_settings_display %}
 
-{%- block search_result_prefix -%}
-{%- endblock search_result_prefix -%}
+{%- block search_results scoped -%}
+{%- for record in records -%}{% set recordloop = loop %}{%- block search_result scoped -%}
+  {%- set recid = record['recid'] %}
+  {%- if of[0] == 'h' -%}
+    <div class="row">
+      {%- block search_result_prefix scoped -%}
+      {%- endblock search_result_prefix -%}
+      {%- block search_result_record scoped -%}
+      <div class="col-sm-11 col-xs-11">
+        {{ format_record(record, of, ln=g.ln, qid=qid, extra_context=dict(collection=collection))|u|safe }}
+      </div>
+      {%- endblock search_result_record -%}
+    </div>
+  {%- else -%}
+  {%- block search_result_record_nohtml scoped %}
+  {{ format_record(record, of, ln=g.ln, extra_context=dict(collection=collection)) }}
+  {%- endblock search_result_record_nohtml %}
+  {%- endif -%}
+  {%- endblock search_result -%}
+{%- endfor -%}
+{%- endblock search_results -%}
 
 {%- block search_results_export -%}
-{%- endblock search_results_export -%}
+{%- endblock search_results_export -%}  

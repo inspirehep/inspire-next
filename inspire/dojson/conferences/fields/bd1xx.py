@@ -30,6 +30,7 @@ from ..model import conferences
 @conferences.over('acronym', '^111')
 def acronym(self, key, value):
     """Conference acronym."""
+    self['date'] = value.get('d')
     self['opening_date'] = value.get('x')
     self['closing_date'] = value.get('y')
     self['cnum'] = value.get('g')
@@ -117,3 +118,10 @@ def transparencies(self, key, value):
     """Conference transparencies."""
     if value.get('y', '').lower() == 'transparencies':
         return value.get('u')
+
+
+@conferences.over('url', '^8564')
+@utils.for_each_value
+def url(self, key, value):
+    """Conference transparencies."""
+    return value.get('u')

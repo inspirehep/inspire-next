@@ -19,18 +19,42 @@
 
 {% extends "format/record/Default_HTML_brief_base.tpl" %}
 
-{% block above_record_header %}
-{% endblock %}
-
 {% block record_header %}
-  <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-    {{ record['title'] }}
-  </a>
-{% endblock %}
-
-{% block record_info %}
-  {{ record['short_title'] }}
-  {% if record['urls'] %}
-    <br>{{record['urls'][0]|urlize}}
-  {% endif %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default custom-panel" >
+    <div class="panel-body" >
+      <div class="row">
+      <div class="col-md-12">
+        <h4 class="custom-h">
+          <b>
+            <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+              {{ record['title'] }}
+            </a>
+          </b> 
+      </h4>
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+         {{ record['short_title'] }}
+        </div>
+      </div>
+      {% if record['urls'] %}
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+         {% for url in record['urls'] %}
+            {{ url|urlize }} 
+            {% if url['doc_string'] %}
+              ({{ url['doc_string']}})
+            {% endif %}
+             <br/>
+         {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+</div>
 {% endblock %}

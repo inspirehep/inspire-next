@@ -68,4 +68,7 @@ def name_variants(self, key, value):
 @utils.for_each_value
 def urls(self, key, value):
     """URLs."""
-    return value.get('u')
+    return {
+        'urls': value.get('u'),
+        'doc_string': value.get('w')
+    }

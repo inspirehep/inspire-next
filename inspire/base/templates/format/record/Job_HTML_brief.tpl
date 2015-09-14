@@ -19,27 +19,43 @@
 
 {% extends "format/record/Default_HTML_brief_base.tpl" %}
 
-{% block above_record_header %}
-{% endblock %}
-
 {% block record_header %}
-  <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-    {{ record['position'] }}
-  </a>
-  {% if record['deadline_date'] %}
-    <strong>[Deadline: {{record['deadline_date']}} ]</strong>
-  {% endif %}
-{% endblock %}
-
-{% block record_info %}
-  {% if record['rank']|is_list %}
-    {% for rank in record['rank'] %}
-      {{rank}}&nbsp;|&nbsp;
-    {% endfor %}
-  {% endif %}
-  {% if record['research_area']|is_list %}
-    {% for research_area in record['research_area'] %}
-      {{research_area}}&nbsp;
-    {% endfor %}
-  {% endif %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default custom-panel" >
+    <div class="panel-body" >
+      <div class="row">
+      <div class="col-md-12">
+        <h4 class="custom-h">
+          <b>
+            <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+              {{ record['position'] }}<br/>
+            </a>
+          </b>
+          {% if record['institution'][0]['name']%}
+              {% if record['continent'] %}
+                ({{ record['institution'][0]['name'] }} - {{ record['continent'] }})
+              {% else %}
+                ({{ record['institution'][0]['name'] }})
+              {% endif %}
+            {% endif%}
+          {% if record['deadline_date'] %}
+            <strong>[Deadline: {{record['deadline_date']}}]</strong>
+          {% endif %} 
+      </h4>
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+          {% if record['rank']|is_list %}
+            {{ record['rank'][0] }} - 
+          {% endif %}
+          {% if record['research_area']|is_list %}
+            {{ record['research_area']|join(', ') }}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+</div>
 {% endblock %}

@@ -28,12 +28,11 @@ from inspire.utils.cv_latex import Cv_latex
 from inspire.utils.cv_latex_html_text import Cv_latex_html_text
 
 
-def email_links(record):
+def email_links(value):
     """
         returns array of links to record emails
     """
-    return apply_template_on_array([email["value"] for email in
-                                    record.get('_public_emails', [])],
+    return apply_template_on_array(value,
                                    'format/record/field_templates/email.tpl')
 
 
@@ -131,6 +130,37 @@ def cv_latex_html_text(record, format_type):
     return Cv_latex_html_text(record, format_type).format()
 
 
+def conference_date(record):
+    if 'date' in record and record['date']:
+        return record['date'] + '.'
+    from datetime import datetime
+    out = ''
+    opening_date = record['opening_date']
+    closing_date = record['closing_date']
+    converted_opening_date = datetime.strptime(opening_date, "%Y-%m-%d")
+    converted_closing_date = datetime.strptime(closing_date, "%Y-%m-%d")
+    if opening_date.split('-')[0] == closing_date.split('-')[0]:
+        if opening_date.split('-')[1] == closing_date.split('-')[1]:
+            out += opening_date.split('-')[2] + '-' +\
+                closing_date.split('-')[2] +\
+                ' ' + converted_opening_date.strftime('%b') +\
+                ' ' + opening_date.split('-')[0] + '.'
+        else:
+            out += opening_date.split('-')[2] + ' '\
+                + converted_opening_date.strftime('%b') + ' - ' +\
+                closing_date.split('-')[2] + ' ' +\
+                converted_closing_date.strftime('%b') + ' ' +\
+                opening_date.split('-')[0] + '.'
+    else:
+        out += opening_date.split('-')[2] + ' ' +\
+            converted_opening_date.strftime('%b') + ' '\
+            + opening_date.split('-')[0] + ' - ' + \
+            closing_date.split('-')[2] + ' ' +\
+            converted_closing_date.strftime('%b') + ' ' +\
+            closing_date.split('-')[0] + '.'
+    return out
+
+
 def get_filters():
     return {
         'email_links': email_links,
@@ -149,4 +179,5 @@ def get_filters():
         'latex': latex,
         'cv_latex': cv_latex,
         'cv_latex_html_text': cv_latex_html_text,
+        'conference_date': conference_date,
     }

@@ -19,15 +19,52 @@
 
 {% extends "format/record/Default_HTML_brief_base.tpl" %}
 
-{% block above_record_header %}
-{% endblock %}
-
 {% block record_header %}
-  <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-    {{ record['name'][0] }}
-  </a>
-{% endblock %}
-
-{% block record_info %}
-  {{ record['address'][0]['address'][0] }}
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default custom-panel" >
+    <div class="panel-body" >
+      <div class="row">
+      <div class="col-md-12">
+        <h4 class="custom-h">
+          <b>
+            <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">{{record['department_acronym']}}
+            </a> 
+           {% if record['ICN'] %}
+           [Future INSPIRE ID: {{record['ICN']}}]
+           {%endif%}
+          </b> 
+      </h4>
+      {% if record['institution'] %}
+      <div class="row">
+        <div class="col-md-12 record-brief-details" >
+         {{ record['institution']}}
+        </div>
+      </div>
+      {% endif %}
+      <div class="row">
+        <div class="col-md-12 record-brief-details" >
+        {% if record['address'][0]['address']|is_list %}
+          {{ record['address'][0]['address']|join(', ') }}
+        {% else %}
+          {{ record['address'][0]['address'] }}
+        {% endif %}
+        {% if record['address'][0]['country'] %}
+          , {{ record['address'][0]['country'] }}
+        {% endif %}
+        </div>
+      </div>
+      {% if record['urls'] %}
+      <div class="row">
+        <div class="col-md-12 record-brief-details" >
+          <a href="{{ record['urls'][0] }}">{{ record['urls'][0] }}</a>
+        </div>
+      </div>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+</div>
 {% endblock %}

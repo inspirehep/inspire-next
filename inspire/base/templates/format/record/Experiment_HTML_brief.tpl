@@ -19,20 +19,47 @@
 
 {% extends "format/record/Default_HTML_brief_base.tpl" %}
 
-{% block above_record_header %}
-{% endblock %}
-
 {% block record_header %}
-  <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-    {{ record['experiment_name'][0] }}
-  </a>
-  {% if record['affiliation'] %}
-    ({{record['affiliation'][0]}})
-  {% endif %}
-{% endblock %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default custom-panel" >
+    <div class="panel-body" >
+      <div class="row">
+      <div class="col-md-12">
+        <h4 class="custom-h">
+          <b>
+            <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+              {{ record['experiment_name'][0] }}
+            </a>
+            {% if record['affiliation'] %}
+              ({{record['affiliation'][0]}})
+            {% endif %}
+          </b> 
+      </h4>
+      {% if record['breadcrum_title'] %}
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+        {{ record['breadcrum_title'] }}
+        </div>
+      </div>
+      {% endif %}
+      {% if record['urls'] %}
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+        {{ record['urls'][0]|urlize }}
+        </div>
+      </div>
+      {% endif %}
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+        <a href="#">HEP articles associated with {{ record['experiment_name'][0] }}</a>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+  </div>
+  </div>
+</div>
+{% endblock %}  
 
-{% block record_info %}
-  {% if record['urls'] %}
-    {{record['urls'][0]|urlize}}
-  {% endif %}
-{% endblock %}

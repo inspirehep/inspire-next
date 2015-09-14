@@ -24,7 +24,7 @@
 {% block record_header %}
 <div class="row">
   <div class="col-md-12">
-    <div class="panel panel-default custom-panel" >
+    <div id="panel-default-brief" class="panel panel-default" >
     <div class="panel-body" >
       <div class="row">
       <div class="col-md-9"  id="left-column">

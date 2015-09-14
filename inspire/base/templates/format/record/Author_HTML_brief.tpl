@@ -19,27 +19,58 @@
 
 {% extends "format/record/Default_HTML_brief_base.tpl" %}
 
-{% block above_record_header %}
-{% endblock %}
-
 {% block record_header %}
-  <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-    {{ record.get('name.preferred_name', '') }}
-  </a>
-  {% if record["positions"] %}
-    {% if record["positions"] %}
-      {% if record["positions"][0].get("institution", {}).get("name") %}
-        ({{record["positions"][0].get("institution", {}).get("name")}})
-      {% endif %}
-    {% endif %}
-  {% endif %}
-{% endblock %}
-
-{% block record_info %}
-  {{ record|email_links|join_array(", ")|new_line_after }}
-  {{ record|url_links|join_array(", ")|new_line_after }}
-  {% set field_categories = record.get('field_categories', []) %}
-  {% for category in field_categories %}
-    {{category["name"]}}
-  {% endfor %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default custom-panel" >
+    <div class="panel-body" >
+      <div class="row">
+      <div class="col-md-12">
+        <h4 class="custom-h">
+          <b>
+            <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+              {{ record.get('name.preferred_name', '') }}
+            </a>
+            {% set institution = [] %}
+            {% if record['positions'] %}
+              {% for rec in record['positions'] %}
+                {% if rec.get('institution', {}).get('name') %}
+                  {% do institution.append(rec.get('institution', {}).get('name')) %}
+                {% endif %}
+              {% endfor %}
+              {% if institution %}
+                ({{ institution[0] }})
+              {%endif%}
+            {% endif %}
+          </b> 
+      </h4>
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+         {% for email in record.get('positions', []) %}
+            {% if 'email' in email %}
+                {% if email['email']|is_list %}
+                  {{ email['email']|email_links|join_array(", ") }}
+                {% else %}
+                  {{ email['email']|email_links|join_array(", ")|new_line_after }}
+                {% endif %}
+            {% endif %}
+         {% endfor %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+          {{ record|url_links|join_array(", ")|new_line_after }}
+          {% set field_categories = record.get('field_categories', []) %}
+          {% set category_name = [] %}
+          {% for category in field_categories %}
+            {% do category_name.append(category["name"]) %}
+          {% endfor %}
+          {{ category_name|join(', ') }}
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+</div>
 {% endblock %}
