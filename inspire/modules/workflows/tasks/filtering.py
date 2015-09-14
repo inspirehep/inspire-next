@@ -105,7 +105,7 @@ def inspire_filter_custom(fields, custom_accepted=(), custom_refused=(),
         sum_action = action_to_take[0] + action_to_take[1] + action_to_take[2]
 
         if sum_action == 0:
-            #We allow the * option which means at final case
+            # We allow the * option which means at final case
             if '*' in custom_widgeted:
                 msg = ("Insert record?")
                 eng.halt(msg, action=action)
@@ -206,7 +206,7 @@ def inspire_filter_category(category_accepted_param=(),
         sum_action = action_to_take[0] + action_to_take[1] + action_to_take[2]
 
         if sum_action == 0:
-            #We allow the * option which means at final case
+            # We allow the * option which means at final case
             if '*' in category_accepted:
                 obj.extra_data["approved"] = True
             elif '*' in category_refused:

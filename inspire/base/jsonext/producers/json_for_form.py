@@ -1,21 +1,24 @@
 # -*- coding: utf-8 -*-
-##
-## This file is part of Invenio.
-## Copyright (C) 2013, 2014 CERN.
-##
-## Invenio is free software; you can redistribute it and/or
-## modify it under the terms of the GNU General Public License as
-## published by the Free Software Foundation; either version 2 of the
-## License, or (at your option) any later version.
-##
-## Invenio is distributed in the hope that it will be useful, but
-## WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-## General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with Invenio; if not, write to the Free Software Foundation, Inc.,
-## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#
+# This file is part of INSPIRE.
+# Copyright (C) 2014, 2015 CERN.
+#
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 
 def produce(self, fields=None):
@@ -40,16 +43,15 @@ def produce(self, fields=None):
             continue
         json_id = self.meta_metadata[field]['json_id']
         values = self.get(field)
-        if not  isinstance(values, (list, tuple)):
+        if not isinstance(values, (list, tuple)):
             values = (values, )
         for value in values:
             try:
                 rules = get_producer_rules(json_id, 'json_for_form', 'recordext')
                 for rule in rules:
-                    tags = rule[0] if isinstance(rule[0], tuple) \
-                                        else (rule[0], )
-                    if tags and not any([tag in tags \
-                            for tag in self.meta_metadata[field]['function']]):
+                    tags = rule[0] if isinstance(rule[0], tuple) else (rule[0], )
+                    if tags and not any([tag in tags
+                       for tag in self.meta_metadata[field]['function']]):
                         continue
                     tmp_dict = {}
                     for key, subfield in rule[1].items():
@@ -60,10 +62,10 @@ def produce(self, fields=None):
                                 tmp_dict[key] = value[subfield]
                             except:
                                 try:
-                                    tmp_dict[key] = try_to_eval(subfield,
-                                        functions(
-                                            self.additional_info.namespace),
-                                        value=value, self=self)
+                                    tmp_dict[key] = try_to_eval(subfield, functions(
+                                        self.additional_info.namespace),
+                                        value=value, self=self
+                                    )
                                 except ImportError:
                                     pass
                                 except Exception as e:

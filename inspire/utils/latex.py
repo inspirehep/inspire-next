@@ -3,22 +3,25 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2015 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 import re
+
 from invenio_knowledge.api import get_kbr_keys
 
 
@@ -133,13 +136,11 @@ class Latex(object):
                     try:
                         if 'collaboration' in self.record['collaboration'][0]:
                             collaboration = self.\
-                                    record['collaboration'][0]['collaboration']
+                                record['collaboration'][0]['collaboration']
                             if 'Collaboration' in collaboration:
-                                out += u' {{\it et al.}} [' + collaboration + \
-                                   '],\n'
+                                out += u' {{\it et al.}} [' + collaboration + '],\n'
                             else:
-                                out += u' {{\it et al.}} [' + collaboration + \
-                                   ' Collaboration],\n'
+                                out += u' {{\it et al.}} [' + collaboration + ' Collaboration],\n'
                     except IndexError:
                         pass
                 else:
@@ -175,10 +176,12 @@ class Latex(object):
     def _get_author(self):
         """Return list of name(s) of the author(s)."""
         re_last_first = re.compile(
-        r'^(?P<last>[^,]+)\s*,\s*(?P<first_names>[^\,]*)(?P<extension>\,?.*)$')
+            r'^(?P<last>[^,]+)\s*,\s*(?P<first_names>[^\,]*)(?P<extension>\,?.*)$'
+        )
         re_initials = re.compile(r'(?P<initial>\w)([\w`\']+)?.?\s*')
         re_tildehyph = re.compile(
-        ur'(?<=\.)~(?P<hyphen>[\u002D\u00AD\u2010-\u2014-])(?=\w)')
+            ur'(?<=\.)~(?P<hyphen>[\u002D\u00AD\u2010-\u2014-])(?=\w)'
+        )
         result = []
         if 'authors' in self.record:
             for author in self.record['authors']:
@@ -190,8 +193,9 @@ class Latex(object):
                             author_full_name)
                         if first_last_match:
                             first = re_initials.sub(
-                                r'\g<initial>.~', first_last_match.group(
-                                                  'first_names'))
+                                r'\g<initial>.~',
+                                first_last_match.group('first_names')
+                            )
                             first = re_tildehyph.sub(r'\g<hyphen>', first)
                             result.append(first +
                                           first_last_match.group('last') +
@@ -201,8 +205,9 @@ class Latex(object):
                             author['full_name'])
                         if first_last_match:
                             first = re_initials.sub(
-                                r'\g<initial>.~', first_last_match.group(
-                                                  'first_names'))
+                                r'\g<initial>.~',
+                                first_last_match.group('first_names')
+                            )
                             first = re_tildehyph.sub(r'\g<hyphen>', first)
                             result.append(first +
                                           first_last_match.group('last') +
@@ -215,20 +220,22 @@ class Latex(object):
                             corp_author['corporate_author'])
                         if first_last_match:
                             first = re_initials.sub(
-                                r'\g<initial>.~', first_last_match.group(
-                                                  'first_names'))
+                                r'\g<initial>.~',
+                                first_last_match.group('first_names')
+                            )
                             first = re_tildehyph.sub(r'\g<hyphen>', first)
                             result.append(first +
                                           first_last_match.group('last') +
                                           first_last_match.group('extension'))
             else:
                 first_last_match = re_last_first.search(
-                            self.record['corporate_author']
-                            ['corporate_author'])
+                    self.record['corporate_author']['corporate_author']
+                )
                 if first_last_match:
                     first = re_initials.sub(
-                        r'\g<initial>.~', first_last_match.group(
-                                          'first_names'))
+                        r'\g<initial>.~',
+                        first_last_match.group('first_names')
+                    )
                     first = re_tildehyph.sub(r'\g<hyphen>', first)
                     result.append(first +
                                   first_last_match.group('last') +
@@ -260,7 +267,7 @@ class Latex(object):
                 if 'journal_title' in field:
                     if isinstance(field['journal_title'], list):
                         journal_title = field['journal_title'][-1].\
-                                replace(".", '.\\ ')
+                            replace(".", '.\\ ')
                     else:
                         journal_title = field['journal_title'].\
                             replace(".", '.\\ ')
@@ -363,9 +370,7 @@ class Latex(object):
                         cite_element = field['primary'].upper()
                         cite_line = '%%CITATION = ' + cite_element + ';%%'
                 if not cite_element:
-                    cite_element = self\
-                                   .record['report_number'][0]['primary']\
-                                   .upper()
+                    cite_element = self.record['report_number'][0]['primary'].upper()
                     cite_line = '%%CITATION = ' + cite_element + ';%%'
         else:
             cite_element = str(self.record['recid'])
