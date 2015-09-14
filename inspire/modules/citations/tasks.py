@@ -22,13 +22,30 @@
 
 from __future__ import print_function
 
-from inspire.modules.citations.models import Citation_Log
+from inspire.modules.citations.models import Citation, Citation_Log
 
 from invenio.base.globals import cfg
 
 from invenio.celery import celery
 
+from invenio_records.api import get_record
+
 import requests
+
+
+def update_records_citations(new_citations):
+    """Gets a set of records that need to be updated
+    and querys database to get all citations for each record.
+    Saves this ciattions on a new set and updates the record.
+    """
+    citees = set()
+    for id in new_citations:
+        cit = Citation.query.filter_by(citer=id).all()
+        for rec in cit:
+            citees.add(rec.citee)
+        rec = get_record(id)
+        rec.update({"refid": list(citees)})
+        citees.clear()
 
 
 @celery.task()
@@ -65,7 +82,8 @@ def update_citations_log():
             last_entry = id
             cit = Citation_Log(id, citee, citer, action_date, citation_type)
             cit.save()
-            new_citations.add(citee)
+            new_citations.add(citer)
         url_ap = cfg.get("CITATIONS_FETCH_LEGACY_URL") + \
             "?id=" + str(last_entry)
         data = requests.get(url_ap).json()
+    update_records_citations(new_citations)
