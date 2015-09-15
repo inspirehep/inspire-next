@@ -239,11 +239,8 @@ the original files. As a developer you may want to have symbolic links instead.
 Once you have everything installed, you can create the database and populate it
 with demo records.
 
-.. code-block:: console
-
-    (invenio)$ inveniomanage database init --user=root --password=$MYSQL_ROOT --yes-i-know
-    (invenio)$ inveniomanage database create
-
+In order to accomplish this task you will need MySQL (or compatible) and
+Elasticsearch services up and running.
 
 As a developer, you may want to use the provided
 ``Procfile`` with `honcho <https://pypi.python.org/pypi/honcho>`_. It
@@ -256,6 +253,14 @@ to monitor the *Celery* tasks.
     (invenio)$ pip install honcho flower
     (invenio)$ cdvirtualenv src/inspire-next
     (invenio)$ honcho start
+
+You can now proceed to initialize the database and create the related tables:
+
+.. code-block:: console
+
+    (invenio)$ inveniomanage database init --user=root --password=$MYSQL_ROOT --yes-i-know
+    (invenio)$ inveniomanage database create
+
 
 You can now load the INSPIRE demo records:
 
