@@ -33,7 +33,6 @@ from flask import render_template
 
 from harvestingkit.world_scientific_package import WorldScientific
 
-from invenio.ext.cache import cache
 from invenio.ext.email import send_email
 from invenio.base.globals import cfg
 
@@ -45,15 +44,6 @@ from inspire.modules.harvester.utils import (
 )
 
 
-def update_lastrun(key):
-    """Update the lastrun entry of a workflow with now."""
-    @wraps(update_lastrun)
-    def _update_lastrun(obj, eng):
-        cache.set(key, datetime.now().strftime('%Y-%m-%d'),
-                  timeout=999999999999)
-    return _update_lastrun
-
-
 def get_files_from_ftp(source_folder, target_folder):
     """Get all files in given folder on FTP server to target folder.
 
@@ -62,17 +52,12 @@ def get_files_from_ftp(source_folder, target_folder):
     @wraps(get_files_from_ftp)
     def _get_files_from_ftp(obj, eng):
         netrc_file = obj.extra_data["config"].get("ftp_netrc_file")
-        if netrc_file:
-            netrc_path = join(cfg.get("CFG_PREFIX"),
-                              netrc_file)
-        else:
-            netrc_path = None
         target_folder_full = get_storage_path(suffix=target_folder)
         obj.data['all_files'], obj.data['new_files'] = ftp_download_files(
             source_folder,
             target_folder_full,
             server=obj.extra_data["config"]["ftp_server"],
-            netrc_file=netrc_path
+            netrc_file=netrc_file
         )
         obj.log.info("{0} new files downloaded, in total {1} files".format(
             len(obj.data["new_files"]),
@@ -84,32 +69,38 @@ def get_files_from_ftp(source_folder, target_folder):
 def unzip_files(target_folder):
     """Unzip new files to target location.
 
-    All extracted files are stored in data["extracted_files"].
+    All extracted files are stored in data["all_extracted_files"] and
+    data["newly_extracted_files"].
     """
     @wraps(unzip_files)
     def _unzip_files(obj, eng):
         target_folder_full = get_storage_path(suffix=target_folder)
         filenames = obj.data.get('all_files', list())
-        extracted_files = []
+        all_extracted_files = []
+        newly_extracted_files = []
         for filename in filenames:
             try:
-                extracted_files.extend(unzip(filename, target_folder_full))
+                all_extracted, new_extracted = unzip(filename,
+                                                     target_folder_full)
+                all_extracted_files.extend(all_extracted)
+                newly_extracted_files.extend(new_extracted)
             except BadZipfile as e:
                 obj.log.error("Error unzipping file {0}: {1}".format(
                     filename,
                     e
                 ))
                 pass
-        obj.data['extracted_files'] = extracted_files
+        obj.data['all_extracted_files'] = all_extracted_files
+        obj.data['newly_extracted_files'] = newly_extracted_files
         obj.log.debug("{0} new files extracted".format(
-            len(obj.data["extracted_files"])
+            len(obj.data["newly_extracted_files"])
         ))
 
     return _unzip_files
 
 
-def convert_files(target_folder, date_key):
-    """Convert files in data["extracted_files"] to MARCXML."""
+def convert_files(target_folder, weeks_threshold=30):
+    """Convert appropriate files in data to MARCXML."""
     @wraps(convert_files)
     def _convert_files(obj, eng):
         from invenio_knowledge.api import get_kb_mappings
@@ -124,21 +115,34 @@ def convert_files(target_folder, date_key):
         target_folder_full = get_storage_path(suffix=target_folder)
 
         args = obj.extra_data['args']
+
         # By default, we set the from date as today
         to_date = args.get("to_date") or datetime.now().strftime('%Y-%m-%d')
 
-        # By last resort, we set the from date a week before
-        from_date = args.get("from_date") or cache.get(date_key) \
-            or (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+        # By last resort, we set the from date months before
+        from_date = args.get("from_date")
+
+        if not from_date:
+            if args.get("reharvest"):
+                # Since "beginning" of time when not specified
+                from_date = datetime.strptime("1900-01-01", "%Y-%m-%d")
+            else:
+                # Dynamic date in the past when not specified and not reharvest
+                from_date = datetime.now() - timedelta(weeks=weeks_threshold)\
+                    .strftime('%Y-%m-%d')
 
         obj.extra_data['args']["to_date"] = to_date
         obj.extra_data['args']["from_date"] = from_date
 
         insert_files = []
-        filenames = obj.data['extracted_files']
+        if args.get("reharvest"):
+            filenames = obj.data['all_extracted_files']
+        else:
+            filenames = obj.data['newly_extracted_files']
+
         for filename in filenames:
             date = ws.get_date(filename)
-            if from_date <= date <= to_date:
+            if date is None or (from_date <= date <= to_date):
                 marc = ws.get_record(filename)
                 if marc:
                     filename = basename(filename)
@@ -146,9 +150,12 @@ def convert_files(target_folder, date_key):
                     insert_files.append(filename)
                     with open(filename, 'w') as outfile:
                         outfile.write(marc)
+            else:
+                obj.log.info("Filtered out {0} ({1})".format(filename, date))
 
-        obj.log.info("Converted {0} articles between {1} to {2}".format(
+        obj.log.info("Converted {0}/{1} articles between {2} to {3}".format(
             len(insert_files),
+            len(filenames),
             from_date,
             to_date
         ))
@@ -212,17 +219,12 @@ def put_files_to_ftp(obj, eng):
     collections = obj.data.get('collections', dict())
     server = obj.extra_data["config"]["ftp_server"]
     netrc_file = obj.extra_data["config"].get("ftp_netrc_file")
-    if netrc_file:
-        netrc_path = join(cfg.get("CFG_PREFIX"),
-                          netrc_file)
-    else:
-        netrc_path = None
     for filename in collections.values():
         if cfg.get("PRODUCTION_MODE"):
             ftp_upload(
                 filename,
                 server=server,
-                netrc_file=netrc_path,
+                netrc_file=netrc_file,
             )
             obj.log.info("Uploaded {0} to {1}".format(filename, server))
         else:

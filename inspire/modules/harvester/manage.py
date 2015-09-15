@@ -52,7 +52,9 @@ def get_harvesting_workflows():
                 help='Get records from this date and on.')
 @manager.option('--to', '-t', dest='to_date',
                 help='Get records until this date.')
-def run(workflow, from_date, to_date):
+@manager.option('--reharvest', '-R', dest='reharvest', action="store_true",
+                help='Indicate a full reharvest.')
+def run(workflow, from_date, to_date, reharvest=False):
     """Run a harvesting workflow from the command line.
 
     Usage: inveniomanage harvester run -w workflow_name -f 2014-01-01 -t 2014-12-31
@@ -76,7 +78,8 @@ def run(workflow, from_date, to_date):
     args = {
         "workflow": workflow,
         "from_date": from_date,
-        "to_date": to_date
+        "to_date": to_date,
+        "reharvest": reharvest
     }
 
     job = run_harvest.delay(**args)
