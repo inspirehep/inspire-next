@@ -23,11 +23,15 @@
 {% endblock %}
 
 {% block record_header %}
-  <a href="{{ url_for('record.metadata', recid=record['recid']) }}">
+  <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
     {{ record.get('name.preferred_name', '') }}
   </a>
   {% if record["positions"] %}
-    ({{record["positions"][0]["institution"]}})
+    {% if record["positions"] %}
+      {% if record["positions"][0].get("institution", {}).get("name") %}
+        ({{record["positions"][0].get("institution", {}).get("name")}})
+      {% endif %}
+    {% endif %}
   {% endif %}
 {% endblock %}
 

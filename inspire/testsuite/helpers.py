@@ -39,16 +39,15 @@ class WorkflowTasksTestCase(InvenioTestCase):
 
     def create_registries(self):
         """Create registries for testing."""
-        self.app.extensions['registry']['workflows.tests'] = \
-            ImportPathRegistry(initial=TEST_PACKAGES)
-        self.app.extensions['registry']['workflows'] = \
-            WorkflowsRegistry(
-                'workflows', app=self.app, registry_namespace='workflows.tests'
-            )
-        self.app.extensions['registry']['workflows.actions'] = \
-            WorkflowsRegistry(
-                'actions', app=self.app, registry_namespace='workflows.tests'
-            )
+        self.app.extensions['registry']['workflows.tests'] = ImportPathRegistry(
+            initial=TEST_PACKAGES
+        )
+        self.app.extensions['registry']['workflows'] = WorkflowsRegistry(
+            'workflows', app=self.app, registry_namespace='workflows.tests'
+        )
+        self.app.extensions['registry']['workflows.actions'] = WorkflowsRegistry(
+            'actions', app=self.app, registry_namespace='workflows.tests'
+        )
 
     def cleanup_registries(self):
         """Clean registries for testing."""

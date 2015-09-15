@@ -28,18 +28,21 @@ from ..model import experiments
 
 
 @experiments.over('experiment_name', '^119..')
+@utils.for_each_value
 def experiment_name(self, key, value):
     """Name of experiment."""
     return value.get("a")
 
 
 @experiments.over('affiliation', '^119..')
+@utils.for_each_value
 def affiliation(self, key, value):
     """Affiliation of experiment."""
     return value.get("u")
 
 
 @experiments.over('title', '^245[10_][0_]')
+@utils.for_each_value
 @utils.filter_values
 def title(self, key, value):
     """Title Statement."""
@@ -50,6 +53,12 @@ def title(self, key, value):
     }
 
 
+@experiments.over('breadcrum_title', '^245[10_][0_]')
+def breadcrum_title(self, key, value):
+    """Title used in breadcrum and html title."""
+    return value.get('a')
+
+
 @experiments.over('name_variants', '^419..')
 @utils.for_each_value
 def name_variants(self, key, value):
@@ -58,6 +67,7 @@ def name_variants(self, key, value):
 
 
 @experiments.over('description', '^520..')
+@utils.for_each_value
 def description(self, key, value):
     """Description of experiment."""
     return value.get("a")
@@ -68,3 +78,10 @@ def description(self, key, value):
 def spokesperson(self, key, value):
     """Spokesperson of experiment."""
     return value.get("a")
+
+
+@experiments.over('urls', '^856.[10_28]')
+@utils.for_each_value
+def urls(self, key, value):
+    """URLs."""
+    return value.get('u')

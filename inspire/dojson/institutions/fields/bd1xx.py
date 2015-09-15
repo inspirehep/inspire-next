@@ -52,6 +52,12 @@ def name(self, key, value):
     return names
 
 
+@institutions.over('breadcrum_title', '^110..')
+def breadcrum_title(self, key, value):
+    """Title used in breadcrum and html title."""
+    return value.get('a')
+
+
 @institutions.over('institution', '^110..')
 def institution(self, key, value):
     """Institution name."""
@@ -133,15 +139,29 @@ def core(self, key, value):
     return value.get('a', "").upper() == "CORE"
 
 
-@institutions.over('hidden_note', '^667..')
+@institutions.over('non_public_notes', '^667..')
 @utils.for_each_value
-def hidden_note(self, key, value):
+def non_public_notes(self, key, value):
     """Hidden note."""
     return value.get('a')
 
 
-@institutions.over('public_note', '^680..')
+@institutions.over('hidden_notes', '^595..')
 @utils.for_each_value
-def public_note(self, key, value):
+def hidden_notes(self, key, value):
+    """Hidden note."""
+    return value.get('a')
+
+
+@institutions.over('public_notes', '^680..')
+@utils.for_each_value
+def public_notes(self, key, value):
     """Hidden note."""
     return value.get('i')
+
+
+@institutions.over('urls', '^856.[10_28]')
+@utils.for_each_value
+def urls(self, key, value):
+    """Contact person."""
+    return value.get('u')

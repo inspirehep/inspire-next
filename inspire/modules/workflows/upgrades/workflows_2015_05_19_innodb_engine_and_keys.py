@@ -19,7 +19,7 @@
 
 import warnings
 
-from invenio.modules.upgrader.api import op
+from invenio_upgrader.api import op
 from invenio.ext.sqlalchemy import db
 from invenio.utils.text import wait_for_user
 
@@ -65,6 +65,7 @@ def do_upgrade():
                                     ["id_object"],
                                     ["id"])
 
+
 def estimate():
     """Estimate running time of upgrade in seconds (optional)."""
     return 1
@@ -109,6 +110,7 @@ def pre_upgrade():
         db.engine.execute(
             """DELETE FROM bwlWORKFLOWLOGGING WHERE id_object NOT IN (SELECT uuid FROM bwlWORKFLOW)"""
         )
+
 
 def post_upgrade():
     """Run post-upgrade checks (optional)."""

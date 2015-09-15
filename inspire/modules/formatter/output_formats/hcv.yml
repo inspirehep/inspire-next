@@ -1,5 +1,5 @@
 content_type: text/html
-default: text_link_CV.bft
+default: Inspire_CVLATEXHTML.tpl
 description: A CV with hyperlinks
 name: HTML CV
 rules: []

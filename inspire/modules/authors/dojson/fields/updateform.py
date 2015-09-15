@@ -98,7 +98,6 @@ def linkedin_url(self, key, value):
         self['url'] = [linkedin_url]
 
 
-
 @updateform.over('_orcid', '^orcid$')
 def orcid(self, key, value):
     orcid = {
@@ -161,7 +160,6 @@ def research_field(self, key, value):
         self['field_categories'] = field_categories
 
 
-
 @updateform.over('positions', '^institution_history$')
 def institution_history(self, key, value):
     positions = []
@@ -175,7 +173,7 @@ def institution_history(self, key, value):
             "start_date": position["start_year"],
             "end_date": position["end_year"],
             "rank": position["rank"] if position["rank"] != "rank" else ""
-            })
+        })
 
     return positions
 
@@ -189,7 +187,7 @@ def advisors(self, key, value):
         advisors.append({
             "name": advisor["full_name"],
             "degree_type": advisor["degree_type"]
-            })
+        })
 
     return advisors
 

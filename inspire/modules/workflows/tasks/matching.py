@@ -22,22 +22,25 @@
 
 """Tasks to check if the incoming record already exist."""
 
-import os
-import requests
-import traceback
 import datetime
-
-from flask import current_app
+import os
+import traceback
 
 from functools import wraps
 
-from invenio.base.globals import cfg
+from flask import current_app
 
 from inspire.modules.oaiharvester.tasks.arxiv import get_arxiv_id_from_record
 
 from inspire.utils.datefilter import date_older_than
-from inspire.utils.helpers import get_record_from_model, \
+from inspire.utils.helpers import (
+    get_record_from_model,
     get_record_from_obj
+)
+
+from invenio.base.globals import cfg
+
+import requests
 
 
 def search(query):
@@ -150,7 +153,7 @@ def exists_in_inspire_or_rejected(days_ago=None):
             obj.log.info("Record already exists in INSPIRE.")
             return True
 
-        if not cfg.get('DEBUG'):
+        if cfg.get('PRODUCTION_MODE'):
             model = eng.workflow_definition.model(obj)
             record = get_record_from_model(model)
 

@@ -19,7 +19,7 @@
 
 import copy
 
-from flask import render_template
+from flask import render_template, current_app
 
 from six import string_types
 
@@ -37,7 +37,7 @@ from invenio_deposit.tasks import (
     process_sip_metadata
 )
 from invenio_deposit.models import Deposition, InvalidDepositionType
-from invenio.modules.knowledge.api import get_kb_mappings
+from invenio_knowledge.api import get_kb_mappings
 from invenio_workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else,
@@ -67,6 +67,7 @@ from inspire.modules.workflows.tasks.actions import (
 )
 from inspire.modules.deposit.forms import LiteratureForm
 from inspire.modules.predicter.tasks import guess_coreness
+from inspire.utils.helpers import get_record_from_model
 
 from ..tasks import add_submission_extra_data
 from ..utils import filter_empty_helper
@@ -177,7 +178,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
     @staticmethod
     def get_description(bwo):
         """Return description of object."""
-        from invenio.modules.access.control import acc_get_user_email
+        from invenio_access.control import acc_get_user_email
         results = bwo.get_tasks_results()
         try:
             deposit_object = Deposition(bwo)
@@ -259,6 +260,20 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             'format/record/Holding_Pen_HTML_detailed.tpl',
             record=Record(record)
         )
+
+    @classmethod
+    def get_record(cls, obj, **kwargs):
+        """Return a dictionary-like object representing the current object.
+
+        This object will be used for indexing and be the basis for display
+        in Holding Pen.
+        """
+        try:
+            model = cls.model(obj)
+            return get_record_from_model(model).dumps()  # Turn into pure dict
+        except Exception as err:
+            current_app.logger.exception(err)
+            return {}
 
     @classmethod
     def process_sip_metadata(cls, deposition, metadata):

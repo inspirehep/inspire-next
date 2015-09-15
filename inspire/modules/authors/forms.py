@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
 #
-## This file is part of INSPIRE.
-## Copyright (C) 2015 CERN.
-##
-## INSPIRE is free software; you can redistribute it and/or
-## modify it under the terms of the GNU General Public License as
-## published by the Free Software Foundation; either version 2 of the
-## License, or (at your option) any later version.
-##
-## INSPIRE is distributed in the hope that it will be useful, but
-## WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-## General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# This file is part of INSPIRE.
+# Copyright (C) 2014, 2015 CERN.
 #
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 from wtforms import validators
 from wtforms.widgets import html_params, \
@@ -122,22 +124,28 @@ class InstitutionInlineForm(WebDepositForm):
     start_year = fields.StringField(
         placeholder=_('Start Year'),
         description='Format: YYYY.',
-        widget=WrappedInput(wrapped_widget=TextInput(),
-                            wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
-                            ),
-        validators=[RegexpStopValidator("^(\d{4})?$",
-                                      message="{} is not a valid year. Please use <i>yyyy</i> format.")],
+        widget=WrappedInput(
+            wrapped_widget=TextInput(),
+            wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
+        ),
+        validators=[RegexpStopValidator(
+            "^(\d{4})?$",
+            message="{} is not a valid year. Please use <i>yyyy</i> format."
+        )],
         widget_classes="datepicker form-control"
     )
 
     end_year = fields.StringField(
         placeholder=_('End Year'),
         description='Format: YYYY.',
-        widget=WrappedInput(wrapped_widget=TextInput(),
-                            wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
-                            ),
-        validators=[RegexpStopValidator("^(\d{4})?$",
-                                      message="{} is not a valid year. Please use <i>yyyy</i> format.")],
+        widget=WrappedInput(
+            wrapped_widget=TextInput(),
+            wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
+        ),
+        validators=[RegexpStopValidator(
+            "^(\d{4})?$",
+            message="{} is not a valid year. Please use <i>yyyy</i> format."
+        )],
         widget_classes="datepicker form-control"
     )
 
@@ -164,19 +172,24 @@ class ExperimentsInlineForm(WebDepositForm):
         widget=WrappedInput(wrapped_widget=TextInput(),
                             wrapper='<div class="col-md-6">%(field)s</div>'
                             ),
-        validators=[RegexpStopValidator("^(\d{4})?$",
-                                      message="{} is not a valid year. Please use <i>yyyy</i> format.")],
+        validators=[RegexpStopValidator(
+            "^(\d{4})?$",
+            message="{} is not a valid year. Please use <i>yyyy</i> format."
+        )],
         widget_classes="datepicker form-control"
     )
 
     end_year = fields.StringField(
         placeholder=_('End Year'),
         description='Format: YYYY.',
-        widget=WrappedInput(wrapped_widget=TextInput(),
-                            wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
-                            ),
-        validators=[RegexpStopValidator("^(\d{4})?$",
-                                      message="{} is not a valid year. Please use <i>yyyy</i> format.")],
+        widget=WrappedInput(
+            wrapped_widget=TextInput(),
+            wrapper='<div class="col-md-6 col-margin-top">%(field)s</div>'
+        ),
+        validators=[RegexpStopValidator(
+            "^(\d{4})?$",
+            message="{} is not a valid year. Please use <i>yyyy</i> format."
+        )],
         widget_classes="datepicker form-control"
     )
 
@@ -193,7 +206,8 @@ class AdvisorsInlineForm(WebDepositForm):
         widget_classes='form-control',
         placeholder="Name. Type for suggestions",
         autocomplete='author',
-        widget=ColumnInput(class_="col-xs-5", description="Family name, First name"),
+        widget=ColumnInput(
+            class_="col-xs-5", description="Family name, First name"),
         export_key='full_name',
     )
 
@@ -207,9 +221,11 @@ class AdvisorsInlineForm(WebDepositForm):
     def __init__(self, *args, **kwargs):
         """Constructor."""
         super(AdvisorsInlineForm, self).__init__(*args, **kwargs)
-        from invenio.modules.knowledge.api import get_kb_mappings
-        self.degree_type.choices = [('', '')] + [(x['value'], x['value'])
-            for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_DEGREE_KB"])]
+        from invenio_knowledge.api import get_kb_mappings
+        self.degree_type.choices = [('', '')] + [
+            (x['value'], x['value'])
+            for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_DEGREE_KB"])
+        ]
 
 
 class WebpageInlineForm(WebDepositForm):
@@ -231,6 +247,7 @@ class DynamicUnsortedItemWidget(DynamicItemWidget):
 
 
 class DynamicUnsortedWidget(DynamicListWidget):
+
     def __init__(self, **kwargs):
         """Initialize dynamic list widget."""
         self.item_widget = DynamicUnsortedItemWidget()
@@ -304,8 +321,8 @@ class AuthorUpdateForm(WebDepositForm):
                     RegexpStopValidator(
                         "\d{4}-\d{4}-\d{4}-\d{3}[\dX]",
                         message="A valid ORCID iD consists of 16 digits separated by dashes.",
-                    ),
-                    ORCIDValidator]
+        ),
+            ORCIDValidator]
     )
 
     status_options = [("active", _("Active")),
@@ -458,20 +475,22 @@ class AuthorUpdateForm(WebDepositForm):
             ['given_names', 'family_name', 'display_name', 'native_name', 'email',
              'public_email', 'status', 'orcid', 'bai', 'inspireid'],
             {"icon": "fa fa-user"}
-        ),
+         ),
         ('Personal Websites',
-            ['websites', 'linkedin_url', 'blog_url', 'twitter_url', "twitter_hidden"],
+            ['websites', 'linkedin_url', 'blog_url',
+                'twitter_url', "twitter_hidden"],
             {"icon": "fa fa-globe"}
 
-        ),
+         ),
         ('Career Information',
-            ['research_field', 'institution_history', 'experiments', 'advisors'],
+            ['research_field', 'institution_history',
+                'experiments', 'advisors'],
             {"icon": "fa fa-university"}
-        ),
+         ),
         ('Comments',
             ['comments'],
             {"icon": "fa fa-comments"}
-        )
+         )
     ]
 
     def __init__(self, is_review=False, *args, **kwargs):

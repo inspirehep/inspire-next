@@ -272,7 +272,7 @@
                 }
             },
             "type": "array",
-            "description": "Contains a link to author's website."
+            "description": "Contains links."
         },
         "birth_date": {
             "type": "string",

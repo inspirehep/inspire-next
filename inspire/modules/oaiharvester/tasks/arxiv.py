@@ -49,6 +49,7 @@ REGEXP_REFS = re.compile(
     "<record.*?>.*?<controlfield .*?>.*?</controlfield>(.*?)</record>",
     re.DOTALL)
 
+
 # FIXME(jacquerie): consider moving this to the inspire.utils module.
 def get_arxiv_id_from_record(record):
     """Return the arXiv identifier from given record.

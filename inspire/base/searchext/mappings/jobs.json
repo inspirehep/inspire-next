@@ -37,7 +37,7 @@
     },
     "mappings": {
         "record": {
-            "_all": {"enabled": false},
+            "_all": {"enabled": true},
             "date_detection": false,
             "numeric_detection": false,
             "dynamic_templates": [
@@ -64,49 +64,6 @@
                     "type": "string",
                     "index": "not_analyzed"
                 },
-                "hidden_note": {
-                    "type": "object",
-                    "properties": {
-                        "cds": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "accelerator_experiment": {
-                    "type": "object",
-                    "properties": {
-                        "experiment": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "experimentautocomplete": {
-                    "type": "string"
-                },
-                "experiment_name": {
-                    "type": "string",
-                    "copy_to": ["experimentautocomplete"]
-                },
-                "report_number": {
-                    "type": "object",
-                    "properties": {
-                        "primary": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "collaboration": {
-                    "type": "object",
-                    "properties": {
-                        "collaboration": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
                 "collections": {
                     "properties": {
                         "primary": {
@@ -119,61 +76,40 @@
                         }
                     }
                 },
-                "exactauthor": {
-                    "type": "string",
-                    "fields": {
-                        "raw": {
+                "acquisition_source": {
+                    "type": "object",
+                    "properties": {
+                        "submission_number": {
                             "type": "string",
                             "index": "not_analyzed"
                         }
                     }
                 },
-                "affautocomplete": {
-                    "type": "string"
+                "experiment": {
+                    "type": "string",
+                    "index": "not_analyzed"
                 },
-                "authors": {
-                    "type": "object",
-                    "properties": {
-                        "full_name": {
-                            "type": "string",
-                            "copy_to": ["exactauthor"],
-                            "analyzer": "natural_text"
-                        },
-                        "affiliation": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "division": {
-                    "type": "string"
+                "rank": {
+                    "type": "string",
+                    "index": "not_analyzed"
                 },
                 "date_and_time_of_latest_transaction": {
                     "type": "date",
                     "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S"
                 },
-                "date": {
+                "deadline_date": {
                     "type": "date",
-                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S||dd MM yyyy||dd MMM yyyy||MMM yyyy||MMM yyyy?||yyyy ('repr'.1964.)"
+                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S||dd MM yyyy||yyyy-MM-dd||dd MMM yyyy||MMM yyyy||MMM yyyy?||yyyy ('repr'.1964.)"
+                },
+                "closed_date": {
+                    "type": "date",
+                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S||dd MM yyyy||yyyy-MM-dd||dd MMM yyyy||MMM yyyy||MMM yyyy?||yyyy ('repr'.1964.)"
                 },
                 "institution": {
                     "type": "object",
                     "properties": {
-                        "affiliation": {
-                            "type": "string",
-                            "copy_to": ["affautocomplete"]
-                        }
-                    }
-                },
-                "publication_info": {
-                    "type": "object",
-                    "properties": {
-                        "journal_volume": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        },
-                        "year": {
-                            "type": "date",
-                            "format": "yyyy"
+                        "name": {
+                            "type": "string"
                         }
                     }
                 }

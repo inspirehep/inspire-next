@@ -159,7 +159,7 @@ def create_curation_ticket(template, queue="Test", ticket_id_key="ticket_id"):
     in the extra_data key specified in ticket_id_key."""
     @wraps(create_ticket)
     def _create_curation_ticket(obj, eng):
-        from invenio.modules.access.control import acc_get_user_email
+        from invenio_access.control import acc_get_user_email
 
         deposition = Deposition(obj)
         requestors = acc_get_user_email(obj.id_user)
@@ -186,7 +186,7 @@ def create_ticket(template, queue="Test", ticket_id_key="ticket_id"):
     in the extra_data key specified in ticket_id_key."""
     @wraps(create_ticket)
     def _create_ticket(obj, eng):
-        from invenio.modules.access.control import acc_get_user_email
+        from invenio_access.control import acc_get_user_email
 
         deposition = Deposition(obj)
         requestors = acc_get_user_email(obj.id_user)

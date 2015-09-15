@@ -35,8 +35,10 @@ point specified in the setup.py::
 from invenio_query_parser.contrib.spires.walkers.pypeg_to_ast import PypegConverter
 from invenio_query_parser.contrib.spires.walkers.spires_to_invenio import SpiresToInvenio
 
-from invenio.base.config import PACKAGES as _PACKAGES, \
-                                EXTENSIONS as _EXTENSIONS
+from invenio.base.config import (
+    PACKAGES as _PACKAGES,
+    EXTENSIONS as _EXTENSIONS
+)
 
 
 EXTENSIONS = _EXTENSIONS + [
@@ -211,7 +213,7 @@ RECORD_PROCESSORS = {
     'json': 'json.load',
     'marcxml': 'inspire.dojson.processors:convert_marcxml',
 }
-RECORDS_BREADCRUMB_TITLE_KEY = 'title.title[0]'
+RECORDS_BREADCRUMB_TITLE_KEY = 'breadcrum_title'
 
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
 # invenio keywords to elasticsearch fields
@@ -245,6 +247,7 @@ SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
     "Institutions": "institutions",
     "Experiments": "experiments",
     "Jobs": "jobs",
+    "Jobs Hidden": "jobshidden",
     "Journals": "journals",
     "HepNames": "authors"
 }

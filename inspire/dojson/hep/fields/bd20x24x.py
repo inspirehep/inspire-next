@@ -81,6 +81,12 @@ def title(self, key, value):
     }
 
 
+@hep.over('breadcrum_title', '^245[10_][0_]')
+def breadcrum_title(self, key, value):
+    """Title used in breadcrum and html title."""
+    return value.get('a')
+
+
 @hep2marc.over('245', '^title$')
 @utils.for_each_value
 @utils.filter_values

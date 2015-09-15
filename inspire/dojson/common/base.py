@@ -25,17 +25,21 @@
 from dojson import utils
 
 from ..hep.model import hep, hep2marc
+from ..conferences.model import conferences
 from ..institutions.model import institutions
 from ..experiments.model import experiments
 from ..journals.model import journals
 from ..hepnames.model import hepnames, hepnames2marc
+from ..jobs.model import jobs
 
 
 @institutions.over('control_number', '^001')
 @hep.over('control_number', '^001')
+@conferences.over('control_number', '^001')
 @experiments.over('control_number', '^001')
 @journals.over('control_number', '^001')
 @hepnames.over('control_number', '^001')
+@jobs.over('control_number', '^001')
 def control_number(self, key, value):
     """Record Identifier."""
     return value[0]
@@ -50,9 +54,11 @@ def control_number2marc(self, key, value):
 
 @institutions.over('agency_code', '^003')
 @hep.over('agency_code', '^003')
+@conferences.over('agency_code', '^003')
 @experiments.over('agency_code', '^003')
 @journals.over('agency_code', '^003')
 @hepnames.over('agency_code', '^003')
+@jobs.over('agency_code', '^003')
 def agency_code(self, key, value):
     """Control Number Identifier."""
     return value[0]
@@ -67,9 +73,11 @@ def agency_code2marc(self, key, value):
 
 @institutions.over('date_and_time_of_latest_transaction', '^005')
 @hep.over('date_and_time_of_latest_transaction', '^005')
+@conferences.over('date_and_time_of_latest_transaction', '^005')
 @experiments.over('date_and_time_of_latest_transaction', '^005')
 @journals.over('date_and_time_of_latest_transaction', '^005')
 @hepnames.over('date_and_time_of_latest_transaction', '^005')
+@jobs.over('date_and_time_of_latest_transaction', '^005')
 def date_and_time_of_latest_transaction(self, key, value):
     """Date and Time of Latest Transaction."""
     return value[0]
@@ -82,48 +90,13 @@ def date_and_time_of_latest_transaction2marc(self, key, value):
     return value
 
 
-@institutions.over('url', '^856.[10_28]')
-@experiments.over('url', '^856.[10_28]')
-@journals.over('url', '^856.[10_28]')
-@hep.over('url', '^856.[10_28]')
-@hepnames.over('url', '^856.[10_28]')
-@utils.for_each_value
-@utils.filter_values
-def url(self, key, value):
-    """URL to external resource."""
-    return {
-        'url': value.get('u'),
-        'doc_string': value.get('w'),
-        'description': value.get('y'),
-        'material_type': value.get('3'),
-        'comment': value.get('z'),
-        'name': value.get('f'),
-        'size': value.get('s'),
-    }
-
-
-@hep2marc.over('8564', 'url')
-@hepnames2marc.over('8564', 'url')
-@utils.for_each_value
-@utils.filter_values
-def url2marc(self, key, value):
-    """URL to external resource."""
-    return {
-        'u': value.get('url'),
-        'w': value.get('doc_string'),
-        'y': value.get('description'),
-        '3': value.get('material_type'),
-        'z': value.get('comment'),
-        'f': value.get('name'),
-        's': value.get('size'),
-    }
-
-
 @hep.over('oai_pmh', '^909CO')
+@conferences.over('oai_pmh', '^909CO')
 @institutions.over('oai_pmh', '^909CO')
 @experiments.over('oai_pmh', '^909CO')
 @journals.over('oai_pmh', '^909CO')
 @hepnames.over('oai_pmh', '^909CO')
+@jobs.over('oai_pmh', '^909CO')
 @utils.for_each_value
 @utils.filter_values
 def oai_pmh(self, key, value):
@@ -149,10 +122,12 @@ def oai_pmh2marc(self, key, value):
 
 
 @hep.over('creation_modification_date', '^961..')
+@conferences.over('creation_modification_date', '^961..')
 @institutions.over('creation_modification_date', '^961..')
 @experiments.over('creation_modification_date', '^961..')
 @journals.over('creation_modification_date', '^961..')
 @hepnames.over('creation_modification_date', '^961..')
+@jobs.over('creation_modification_date', '^961..')
 @utils.for_each_value
 @utils.filter_values
 def creation_modification_date(self, key, value):
@@ -176,10 +151,12 @@ def creation_modification_date2marc(self, key, value):
 
 
 @hep.over('spires_sysno', '^970..')
+@conferences.over('spires_sysno', '^970..')
 @institutions.over('spires_sysno', '^970..')
 @experiments.over('spires_sysno', '^970..')
 @journals.over('spires_sysno', '^970..')
 @hepnames.over('spires_sysno', '^970..')
+@jobs.over('spires_sysno', '^970..')
 @utils.for_each_value
 @utils.filter_values
 def spires_sysno(self, key, value):
@@ -201,10 +178,12 @@ def spires_sysno2marc(self, key, value):
 
 
 @hep.over('collections', '^980..')
+@conferences.over('collections', '^980..')
 @institutions.over('collections', '^980..')
 @experiments.over('collections', '^980..')
 @journals.over('collections', '^980..')
 @hepnames.over('collections', '^980..')
+@jobs.over('collections', '^980..')
 @utils.for_each_value
 @utils.filter_values
 def collections(self, key, value):
@@ -230,10 +209,12 @@ def collections2marc(self, key, value):
 
 
 @hep.over('deleted_recid', '^981..')
+@conferences.over('deleted_recid', '^981..')
 @institutions.over('deleted_recid', '^981..')
 @experiments.over('deleted_recid', '^981..')
 @journals.over('deleted_recid', '^981..')
 @hepnames.over('deleted_recid', '^981..')
+@jobs.over('deleted_recid', '^981..')
 @utils.for_each_value
 @utils.filter_values
 def deleted_recid(self, key, value):
@@ -244,6 +225,7 @@ def deleted_recid(self, key, value):
 
 
 @hep.over('fft', '^FFT..')
+@conferences.over('fft', '^FFT..')
 @institutions.over('fft', '^FFT..')
 @experiments.over('fft', '^FFT..')
 @journals.over('fft', '^FFT..')
@@ -261,6 +243,7 @@ def fft(self, key, value):
 
 
 @hep.over('FFT', 'fft')
+@conferences.over('FFT', 'fft')
 @institutions.over('FFT', 'fft')
 @experiments.over('FFT', 'fft')
 @journals.over('FFT', 'fft')

@@ -25,7 +25,7 @@
             "title": "Conference ID (CNUM)",
             "type": "string"
         },
-        "contact person": {
+        "contact_person": {
             "title": "Contact person",
             "type": "string"
         },

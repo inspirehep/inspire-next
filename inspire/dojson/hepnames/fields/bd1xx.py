@@ -27,6 +27,34 @@ from dojson import utils
 from ..model import hepnames, hepnames2marc
 
 
+@hepnames.over('acquisition_source', '^541[10_].')
+@utils.for_each_value
+@utils.filter_values
+def acquisition_source(self, key, value):
+    """Immediate Source of Acquisition Note."""
+    return {
+        'source': value.get('a'),
+        'email': value.get('b'),
+        'method': value.get('c'),
+        'date': value.get('d'),
+        'submission_number': value.get('e')
+    }
+
+
+@hepnames2marc.over('541', 'acquisition_source')
+@utils.for_each_value
+@utils.filter_values
+def acquisition_source2marc(self, key, value):
+    """Immediate Source of Acquisition Note."""
+    return {
+        'a': value.get('source'),
+        'b': value.get('email'),
+        'c': value.get('method'),
+        'd': value.get('date'),
+        'e': value.get('submission_number'),
+    }
+
+
 @hepnames.over('name', '^100..')
 @utils.filter_values
 def name(self, key, value):
@@ -57,6 +85,12 @@ def name(self, key, value):
         'status': value.get('g'),
         'preferred_name': value.get('q'),
     }
+
+
+@hepnames.over('breadcrum_title', '^100..')
+def breadcrum_title(self, key, value):
+    """Title used in breadcrum and html title."""
+    return value.get('a')
 
 
 @hepnames2marc.over('100', '^name$')
@@ -112,7 +146,7 @@ def ids2marc(self, key, value):
     """All identifiers, both internal and external."""
     return {
         'a': value.get('value'),
-        '9':  value.get('type'),
+        '9': value.get('type'),
     }
 
 
@@ -329,7 +363,6 @@ def _public_note(self, key, value):
     return value.get('i')
 
 
-
 @hepnames2marc.over('680', '^_public_note$')
 @utils.for_each_value
 def _public_note2marc(self, key, value):
@@ -437,4 +470,26 @@ def phd_advisors2marc(self, key, value):
         'i': value.get("id"),
         'a': value.get("name"),
         'g': value.get("degree_type")
+    }
+
+
+@hepnames.over('urls', '^856.[10_28]')
+@utils.for_each_value
+@utils.filter_values
+def urls(self, key, value):
+    """URL to external resource."""
+    return {
+        'value': value.get('u'),
+        'description': value.get('y'),
+    }
+
+
+@hepnames2marc.over('8564', 'url')
+@utils.for_each_value
+@utils.filter_values
+def url2marc(self, key, value):
+    """URL to external resource."""
+    return {
+        'u': value.get('value'),
+        'y': value.get('description'),
     }

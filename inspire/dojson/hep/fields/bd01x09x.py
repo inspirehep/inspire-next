@@ -100,7 +100,7 @@ def system_control_number2marc(self, key, value):
 def report_number(self, key, value):
     """Source of Acquisition."""
     return {
-        'primary': value.get('a'),
+        'primary': value.get('a', value.get('z')),
         'arxiv_category': value.get('c'),
         'source': value.get('9')
     }
