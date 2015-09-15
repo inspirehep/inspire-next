@@ -27,15 +27,21 @@ define(function(require, exports, module) {
 
   function massageColumnData(data) {
     var series = [];
-    for(var i in data) { 
+    for(var i in data) {
+      var percent_data = $.map(data[i].data, function(value){
+        return value*100/data[i].total;
+      });
       series.push({name: data[i].name,
-                   data: data[i].data});
+                   data: percent_data,
+                   raw_data: data[i]});
     }
 
     return series;
   };
 
   function DepositionChart(options) {
+
+    var that = this;
 
     this.title = options.title;
     this.subtitle = options.subtitle ?
@@ -47,7 +53,9 @@ define(function(require, exports, module) {
       options.categories : ["empty"];
 
     this.data = options.data ?
-      options.data : [['empty', 1]];
+      options.data : undefined;
+
+    this.data_dict = options.data_dict;
 
     this.pie_options = {
       chart: {
@@ -59,7 +67,7 @@ define(function(require, exports, module) {
         text: this.title
       },
       tooltip: {
-        pointFormat: "<b>{point.percentage:.1f}% ({point.y})</b>"
+        pointFormat: "<b>{point.percentage:.1f}%</b>"
       },
       plotOptions: {
         pie: {
@@ -67,7 +75,7 @@ define(function(require, exports, module) {
           cursor: "pointer",
           dataLabels: {
             enabled: true,
-            format: "<b>{point.name}</b>: {point.percentage:.1f} % ({point.y})",
+            format: "<b>{point.name}</b>: {point.percentage:.1f}%",
             style: {
               color: "black"
             },
@@ -78,34 +86,58 @@ define(function(require, exports, module) {
       series: [{
         type: this.type,
         name: "Depositions",
-        data: this.data
+        data: this.data ?
+          this.data : [["empty", 0]]
       }]
     };
 
     this.column_options = {
       chart: {
-          type: 'column'
+        type: 'column'
       },
       title: {
-          text: this.title
+        text: this.title
       },
       subtitle: {
-          text: this.subtitle
+        text: this.subtitle
       },
       xAxis: {
-          categories: this.categories
+        categories: this.categories
       },
       yAxis: {
-          min: 0,
-          title: {
-              text: 'Times filled by users'
+        min: 0,
+        max: 100,
+        title: {
+          text: 'Times filled by users'
+        },
+        labels: {
+          formatter: function(){
+            return ( 100*this.value / $(this.axis.tickPositions).last()[0] | 0 ) + '%';
           }
+        },
+      },
+      tooltip: {
+        formatter: function(){
+          var header = '<span style="font-size:10px">' + this.x + '</span><table>';
+          var body = '';
+          for(point in this.points) {
+            var count = that.data_dict[this.points[point].series.name][this.x];
+            var safe_count = count ? count : 0;
+            body += '<tr><td style="padding:0">' + this.points[point].series.name + ': </td>' +
+              '<td style="padding:0"><b>' + Math.floor(this.points[point].y) + '% (' + safe_count + ')</b></td></tr>';
+          }
+          var footer = '</table>';
+
+          return [header, body, footer].join();
+        },
+        shared: true,
+        useHTML: true
       },
       plotOptions: {
-          column: {
-              pointPadding: 0.2,
-              borderWidth: 0
-          }
+        column: {
+          pointPadding: 0.2,
+          borderWidth: 0
+        }
       },
       series: massageColumnData(this.data)
     };
@@ -117,7 +149,8 @@ define(function(require, exports, module) {
         title: "Submitted depositions",
         type: "column",
         data: data.columns_deposition_data,
-        categories: data.metadata_categories
+        categories: data.metadata_categories,
+        data_dict: data.dict_by_types
       };
 
       $deposition_charts.highcharts(

@@ -23,6 +23,8 @@
 from itertools import groupby
 import collections
 
+from invenio.modules.workflows.models import BibWorkflowObject
+
 
 def filter_empty_helper(keys=None):
     """ Remove empty elements from a list."""
@@ -97,6 +99,17 @@ def clean_unwanted_metadata(metadata_keys, metadata_values, include_hidden=False
     return d.keys(), d.values()
 
 
+def add_extra_data(d_id):
+    """Get depositions extra data."""
+    submission_data = BibWorkflowObject.query.get(d_id).get_extra_data().get('submission_data')
+    extra_data = {}
+    if submission_data:
+        extra_data = {'comments': submission_data.get('extra_comments'),
+                      'references': submission_data.get('references')}
+
+    return dict((k, v) for k, v in extra_data.iteritems() if v is not None)
+
+
 def humanize_keys(strings):
     """Humanize metadata keys.
 
@@ -114,8 +127,13 @@ def process_metadata_for_charts(submitted_depositions, group_by=None, include_hi
     metadata grouped by types, a dict with the metadata grouped and prepared for
     column charts and a list with all the metadata fields.
     """
+    metadata = []
+    for d in submitted_depositions:
+        metadata.append(d.get_latest_sip(sealed=True).metadata.update(add_extra_data(d.id)))
+
     metadata = [d.get_latest_sip(sealed=True).metadata for d in submitted_depositions]
     metadata_by_types = {}
+    dict_by_types = {}
     metadata_for_column = {}
     metadata_categories = ['']
     c = collections.Counter()
@@ -128,14 +146,17 @@ def process_metadata_for_charts(submitted_depositions, group_by=None, include_hi
                 metadata_by_types[str(key.encode('utf-8')).title()] = list(group)
 
         for group_by in metadata_by_types:
+            total = len(metadata_by_types[group_by])
             for deposition in metadata_by_types[group_by]:
                 c.update(deposition.keys())
             categories, data = clean_unwanted_metadata(clean_unicode_keys(c.keys()),
                                                        c.values(),
                                                        include_hidden)
+            dict_by_types[group_by] = dict(zip(humanize_keys(categories), data))
             metadata_by_types[group_by] = map(list, zip(humanize_keys(categories), data))
             metadata_for_column[group_by] = {'categories': categories,
                                              'name': group_by.title(),
+                                             'total': total,
                                              'data': data}
             c = collections.Counter()
 
@@ -160,6 +181,7 @@ def process_metadata_for_charts(submitted_depositions, group_by=None, include_hi
     return dict(
         overall_metadata=metadata,
         stats=metadata_by_types,
+        dict_by_types=dict_by_types,
         metadata_categories=metadata_categories,
         metadata_for_column=metadata_for_column,
     )
