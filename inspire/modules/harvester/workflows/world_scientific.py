@@ -26,7 +26,7 @@ from ..definitions import HarvestingWorkflowBase
 from ..tasks.world_scientific import (convert_files, create_collection,
                                       get_files_from_ftp, move_to_done,
                                       put_files_to_ftp, report_via_email,
-                                      unzip_files, update_lastrun)
+                                      unzip_files)
 
 
 class world_scientific(HarvestingWorkflowBase):
@@ -34,7 +34,6 @@ class world_scientific(HarvestingWorkflowBase):
     """Harvest and convert World Scientific articles from FTP."""
 
     object_type = "legacy harvesting"
-    lastrun_key = "harvester_world_scientific"
 
     workflow = [
         get_files_from_ftp(
@@ -42,10 +41,9 @@ class world_scientific(HarvestingWorkflowBase):
             target_folder='worldscientific/ws_download'
         ),
         unzip_files('worldscientific/ws_extracted'),
-        convert_files('worldscientific/ws_marc', lastrun_key),
+        convert_files('worldscientific/ws_marc'),
         create_collection,
         put_files_to_ftp,
         move_to_done("worldscientific/ws_done"),
-        update_lastrun(lastrun_key),
         report_via_email(template="harvester/ftp_upload_notification.html"),
     ]
