@@ -46,14 +46,16 @@ def get_storage_path(suffix=""):
 def unzip(filename, target_folder):
     """Unzip files (XML only) into target folder."""
     z = ZipFile(filename)
-    xml_files_extracted = []
+    new_xml_files = []
+    all_xml_files = []
     for filename in z.namelist():
         if filename.endswith(".xml"):
             absolute_path = os.path.join(target_folder, filename)
-            xml_files_extracted.append(absolute_path)
+            all_xml_files.append(absolute_path)
             if not os.path.exists(absolute_path):
                 z.extract(filename, target_folder)
-    return xml_files_extracted
+                new_xml_files.append(absolute_path)
+    return all_xml_files, new_xml_files
 
 
 def ftp_download_files(server_folder, target_folder, **serverinfo):
