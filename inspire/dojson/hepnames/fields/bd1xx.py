@@ -411,11 +411,11 @@ def experiments(self, key, value):
     """
     try:
         start_year = int(value.get('s'))
-    except TypeError:
+    except (TypeError, ValueError):
         start_year = None
     try:
         end_year = int(value.get('d'))
-    except TypeError:
+    except (TypeError, ValueError):
         end_year = None
 
     return {

@@ -694,6 +694,22 @@
                         "title": "Email",
                         "type": "string",
                         "format": "email"
+                    },
+                    "profile": {
+                        "title": "Profile URL",
+                        "description": "Link to the author's profile.",
+                        "type": "object",
+                        "properties": {
+                            "__url__": {
+                                "type": "string",
+                                "format": "url"
+                            }
+                        }
+                    },
+                    "claimed": {
+                        "title": "Claim status",
+                        "description": "Status whether the paper was claimed by the author.",
+                        "type": "boolean"
                     }
                 },
                 "title": "Author"

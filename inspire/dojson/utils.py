@@ -74,3 +74,14 @@ def legacy_export_as_marc(json, tabsize=4):
                 export += ['\t</datafield>\n'.expandtabs(tabsize)]
     export += ['</record>\n']
     return "".join(export)
+
+
+def create_profile_url(profile_id):
+    """Create HEP author profile link based on the profile_id."""
+    base_url = 'http://inspirehep.net/record/'
+
+    try:
+        int(profile_id)
+        return base_url + str(profile_id)
+    except (TypeError, ValueError):
+        return ''

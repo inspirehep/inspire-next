@@ -24,6 +24,7 @@
 
 from dojson import utils
 
+from inspire.dojson import utils as inspire_dojson_utils
 from ..model import hep, hep2marc
 
 
@@ -44,6 +45,9 @@ def authors(self, key, value):
                 'affiliation': utils.force_list(
                     value.get('u')
                 ),
+                'profile': inspire_dojson_utils.create_profile_url(
+                    value.get('x')),
+                'claimed': value.get('y')
             }
 
     authors = self.get('authors', [])
@@ -74,6 +78,8 @@ def authors2marc(self, key, value):
                 'u': utils.force_list(
                     value.get('affiliation')
                 ),
+                'x': value.get('profile'),
+                'y': value.get('claimed')
             }
 
     if len(value) > 1:
