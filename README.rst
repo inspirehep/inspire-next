@@ -1,3 +1,10 @@
+
+.. image:: https://coveralls.io/repos/inspirehep/inspire-next/badge.svg?branch=master&service=github
+  :target: https://coveralls.io/github/inspirehep/inspire-next?branch=master
+
+.. image:: https://travis-ci.org/inspirehep/inspire-next.svg?branch=master
+    :target: https://travis-ci.org/inspirehep/inspire-next
+
 ===============
 INSPIRE overlay
 ===============
