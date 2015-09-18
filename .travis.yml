@@ -79,7 +79,11 @@ before_script:
   - "inveniomanage database create --quiet || echo ':('"
   - "inveniomanage records create inspire/demosite/data/demo-records.xml -t marcxml"
   - "travis_retry pip install pytest==2.7.0"
+  - "travis_retry pip install coveralls"
 
 script:
   - "sphinx-build -qnNW docs docs/_build/html"
   - "python setup.py test"
+
+after_success:
+  - coveralls
