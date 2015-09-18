@@ -1,5 +1,5 @@
 content_type: text/html
-default: INSPIRE_BibTeX.bft
+default: Inspire_BIBTEX.tpl
 description: BibTeX.
 name: BibTeX
 rules: []
