@@ -56,7 +56,7 @@ setup(
     platforms='any',
     install_requires=[
         "rt",
-        "HarvestingKit>=0.3",
+        "HarvestingKit>=0.6.2",
         "mixer==4.9.5",
         "requests==2.3",
         "raven==5.0.0",
