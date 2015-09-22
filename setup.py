@@ -31,7 +31,7 @@ from setuptools.command.test import test as TestCommand
 
 requirements = [
     "rt",
-    "HarvestingKit>=0.6",
+    "HarvestingKit>=0.6.2",
     "mixer==4.9.5",  # FIXME: Due to incompatibility with our mixer usage
     "raven==5.0.0",  # FIXME: To be compatible with our sentry version
     "orcid",
