@@ -94,6 +94,8 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
             obj.log.exception(e)
             return
 
+        clean_instances_from_data(result.get("complete_output", {}))
+
         final_result = {"dict": result}
         final_result["fast_mode"] = fast_mode
         # Check if it is not empty output before adding
@@ -151,3 +153,14 @@ def classify_paper_with_deposit(taxonomy, rebuild_cache=False, no_cache=False,
                        extract_acronyms, only_core_tags, fast_mode)
 
     return _classify_paper_with_deposit
+
+
+def clean_instances_from_data(output):
+    """Check if specific keys are of InstanceType and replace them with their id."""
+    from types import InstanceType
+
+    for output_key in output.keys():
+        keywords = output[output_key]
+        for key in keywords:
+            if type(key) == InstanceType:
+                keywords[key.id] = keywords.pop(key)
