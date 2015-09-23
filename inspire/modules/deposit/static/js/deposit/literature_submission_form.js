@@ -130,7 +130,7 @@ define(function(require, exports, module) {
      */
     this.setters = {};
 
-    this.$importIdsFields = $('form:first .panel:eq(0) *:input[type=text]');
+    this.$importIdsFields = $('#submitForm .panel:eq(0) *:input[type=text]');
 
     this.init();
     this.connectEvents();
@@ -148,7 +148,7 @@ define(function(require, exports, module) {
       this.preventFormSubmit();
 
       // focus on the first element of the form
-      this.$first_input_field = $('form:first *:input[type!=hidden]:first');
+      this.$first_input_field = $('#submitForm *:input[type!=hidden]:first');
       this.$first_input_field.focus();
 
       this.fieldsGroup = $("#journal_title, #volume, #issue, #page_range_article_id, #year")
@@ -240,7 +240,7 @@ define(function(require, exports, module) {
         that.validate(that.$importIdsFields)
         // trigger like this because importData returns a Deferred object
         // and importData needs to have set 'this' to the form object
-        .then(that.importData.bind(that))
+        .then(that.importData.bind(that));
       });
 
       this.$skipButton.click(function(event) {
