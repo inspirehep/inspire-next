@@ -19,6 +19,10 @@
 
 """dojson related utilities."""
 
+import datetime
+
+from dateutil.parser import parse
+
 import six
 
 
@@ -85,3 +89,16 @@ def create_profile_url(profile_id):
         return base_url + str(profile_id)
     except (TypeError, ValueError):
         return ''
+
+
+def create_valid_date(date):
+    """ Add '01' as a value of missing month and/or day values."""
+    try:
+        valid_date = parse(date, default=datetime.datetime(
+            year=1990,
+            month=1,
+            day=1)).strftime("%Y-%m-%d")
+    except ValueError:
+        valid_date = ''
+
+    return valid_date

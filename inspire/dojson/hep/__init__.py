@@ -36,5 +36,6 @@ from .fields import (
 )
 
 from .model import hep, hep2marc
+from .receivers import *
 
 __all__ = ('hep', 'hep2marc')

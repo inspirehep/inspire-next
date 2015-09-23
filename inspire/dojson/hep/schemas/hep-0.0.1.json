@@ -186,6 +186,10 @@
             },
             "type": "array"
         },
+        "earliest_date": {
+            "type": "string",
+            "format": "date"
+        },
         "preprint_date": {
             "type": "string",
             "format": "date"
@@ -619,6 +623,11 @@
                         "description": "Just in case...",
                         "title": "Other IDs"
                     },
+                    "uuid": {
+                        "title": "UUID",
+                        "description": "Universally unique identifier of the author.",
+                        "type": "string"
+                    },
                     "name": {
                         "title": "Author name",
                         "type": "string",
@@ -710,6 +719,11 @@
                         "title": "Claim status",
                         "description": "Status whether the paper was claimed by the author.",
                         "type": "boolean"
+                    },
+                    "ml_block": {
+                        "title": "Phonetic name",
+                        "description": "Phonetic notation of the author's name.",
+                        "type": "string"
                     }
                 },
                 "title": "Author"
