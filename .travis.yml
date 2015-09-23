@@ -56,7 +56,9 @@ before_install:
   - "travis_retry pip install mock"
 
 install:
+  - "source travis-install.sh"
   - "travis_retry pip install unittest2"
+  - "travis_retry pip install cython"
   - "travis_retry pip install -r requirements.txt --allow-all-external"
   - "travis_retry pip install -e .[$REXTRAS] --process-dependency-links"
   - "python setup.py compile_catalog"
@@ -86,4 +88,5 @@ script:
   - "python setup.py test"
 
 after_success:
-  - coveralls
+  # ERR: Couldn't find a repository matching this job.
+  # - coveralls
