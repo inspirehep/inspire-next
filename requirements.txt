@@ -2,6 +2,7 @@ git+https://github.com/inspirehep/invenio@labs#egg=Invenio
 git+https://github.com/inspirehep/invenio-search@master-es-indices#egg=invenio-search==0.1.4.dev20150904
 git+https://github.com/inspirehep/invenio-oaiharvester@master#egg=invenio-oaiharvester==0.1.2.dev20150825
 git+https://github.com/inspirehep/invenio-workflows@master#egg=invenio-workflows==0.1.2.dev20150825
+git+https://github.com/inveniosoftware/beard@master#egg=beard
 git+https://github.com/mloesch/sickle@master#egg=Sickle
 
 -e .[development]
