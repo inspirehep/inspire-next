@@ -30,16 +30,17 @@ sudo: false
 
 language: python
 
+matrix:
+  include:
+    - python: "2.7"
+      env: PYTHON_VERSION="2.7" NUMPY_VERSION="1.9" SCIPY_VERSION="0.15" SKLEARN_VERSION="0.16.1"
+
 cache:
   - apt
   - pip
 
-env:
-  - REXTRAS=docs
 
 python:
-# FIXME: the build times out on Python 2.6 (inveniosoftware/invenio#1789)
-#  - "2.6"
   - "2.7"
 
 addons:
@@ -56,9 +57,11 @@ before_install:
   - "travis_retry pip install mock"
 
 install:
+  - "source travis-install.sh"
   - "travis_retry pip install unittest2"
+  - "travis_retry pip install cython"
   - "travis_retry pip install -r requirements.txt --allow-all-external"
-  - "travis_retry pip install -e .[$REXTRAS] --process-dependency-links"
+  - "travis_retry pip install -e .[docs] --process-dependency-links"
   - "python setup.py compile_catalog"
   - "npm update"
   - "npm install --silent -g bower less clean-css uglify-js requirejs"
@@ -78,8 +81,6 @@ before_script:
   - "inveniomanage database init --yes-i-know || echo ':('"
   - "inveniomanage database create --quiet || echo ':('"
   - "inveniomanage records create inspire/demosite/data/demo-records.xml -t marcxml"
-  - "travis_retry pip install pytest==2.7.0"
-  - "travis_retry pip install coveralls"
 
 script:
   - "sphinx-build -qnNW docs docs/_build/html"
