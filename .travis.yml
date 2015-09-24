@@ -1,89 +1,41 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2013, 2014, 2015 CERN.
+# Copyright (C) 2015 CERN.
 #
-# Invenio is free software; you can redistribute it and/or
+# INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
-# Invenio is distributed in the hope that it will be useful, but
+# INSPIRE is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Invenio; if not, write to the Free Software Foundation, Inc.,
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 notifications:
   email: false
 
 services:
-  - mysql
-  - redis
-  - elasticsearch
-  - rabbitmq
+  - docker
 
-sudo: false
+cache:
+  - docker
 
 language: python
 
-cache:
-  - apt
-  - pip
-
-env:
-  - REXTRAS=docs
-
 python:
-# FIXME: the build times out on Python 2.6 (inveniosoftware/invenio#1789)
-#  - "2.6"
-  - "2.7"
-
-addons:
-  apt:
-    packages:
-      - apache2
-      - git
-      - liblzma-dev
-      - nodejs
-      - poppler-utils
-
-before_install:
-  - "travis_retry pip install --upgrade pip"
-  - "travis_retry pip install mock"
+  - 2.7
 
 install:
-  - "travis_retry pip install unittest2"
-  - "travis_retry pip install -r requirements.txt --allow-all-external"
-  - "travis_retry pip install -e .[$REXTRAS] --process-dependency-links"
-  - "python setup.py compile_catalog"
-  - "npm update"
-  - "npm install --silent -g bower less clean-css uglify-js requirejs"
-  - "inveniomanage config create secret-key"
-  - "inveniomanage config set CFG_EMAIL_BACKEND flask.ext.email.backends.console.Mail"
-  - "inveniomanage config set COLLECT_STORAGE flask.ext.collect.storage.link"
-  - "inveniomanage config set CFG_BIBSCHED_PROCESS_USER `whoami`"
-  - "inveniomanage config set CFG_TMPDIR /tmp"
-  - "inveniomanage config set ASSETS_DEBUG True"
-  - "inveniomanage bower -i bower-base.json > bower.json"
-  - "bower install --silent"
-  - "inveniomanage collect > /dev/null"
-  - "inveniomanage assets build"
-
-before_script:
-  - "inveniomanage apache create-config"
-  - "inveniomanage database init --yes-i-know || echo ':('"
-  - "inveniomanage database create --quiet || echo ':('"
-  - "inveniomanage records create inspire/demosite/data/demo-records.xml -t marcxml"
-  - "travis_retry pip install pytest==2.7.0"
-  - "travis_retry pip install coveralls"
+  - docker ps
 
 script:
-  - "sphinx-build -qnNW docs docs/_build/html"
-  - "python setup.py test"
+  - docker run -v `pwd`:`pwd` inspirehep/inspire-next:deps /bin/bash -c "cd `pwd` && ./install.sh && python setup.py test"
 
 after_success:
   - coveralls
