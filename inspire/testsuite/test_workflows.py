@@ -25,7 +25,6 @@ import httpretty
 import os
 import pkg_resources
 import tempfile
-import pytest
 
 from invenio.celery import celery
 from invenio.testsuite import make_test_suite, run_test_suite
@@ -207,7 +206,6 @@ class WorkflowTest(WorkflowTasksTestCase):
         self.assertEqual(workflow.objects, [])
 
     @httpretty.activate
-    @pytest.mark.xfail
     def test_harvesting_workflow_without_match(self):
         """Test a full harvesting workflow."""
         from invenio.base.globals import cfg

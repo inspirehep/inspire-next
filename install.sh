@@ -6,8 +6,12 @@ service redis-server start
 service rabbitmq-server start
 /elasticsearch-"${ES_VERSION}"/bin/elasticsearch 1> /dev/null &
 
+# Needed to fix Python 2.7.9 TypeError with Jinja2.
+# See: https://github.com/inveniosoftware/invenio/issues/2862#issuecomment-90508434
+pip install unittest2
+
 # Install INSPIRE
-pip install -r requirements.txt
+pip install -r requirements.txt --quiet
 
 # Configuration
 inveniomanage config set CFG_EMAIL_BACKEND flask.ext.email.backends.console.Mail
