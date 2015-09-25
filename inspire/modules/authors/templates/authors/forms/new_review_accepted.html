@@ -20,7 +20,7 @@
 
 {% block body %}
 <div class="alert alert-success alert-form-success">
-  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
   <strong>The author update has been{% if approved %} approved {% else %} rejected {% endif %}<br></strong><br><a href="{{url_for('holdingpen.details', objectid=request.args.get('objectid'))}}">Go back to the Holding Pen record.</a>
 </div>
 {% endblock body %}
