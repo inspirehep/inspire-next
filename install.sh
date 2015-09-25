@@ -31,13 +31,11 @@ inveniomanage config set LESS_BIN false      # false is /usr/bin/false
 inveniomanage config set REQUIREJS_BIN false
 inveniomanage config set UGLIFYJS_BIN false
 inveniomanage config set ASSETS_AUTO_BUILD False
+inveniomanage config set CELERY_ALWAYS_EAGER True
 
 # Database configuration
 inveniomanage database init --user=root --password= --yes-i-know || echo ':('
 inveniomanage database create --quiet || echo ':('
 
 # Load demo records
-inveniomanage records create -t marcxml /src/inspire-next/inspire/demosite/data/demo-records.xml > /dev/null 2>&1
-
-# Start Celery worker
-celery worker -E -A invenio.celery.celery --loglevel=INFO --workdir=$VIRTUAL_ENV 1> /dev/null &
+inveniomanage records create -t marcxml `pwd`/inspire/demosite/data/demo-records.xml
