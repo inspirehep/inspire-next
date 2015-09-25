@@ -36,6 +36,7 @@ requirements = [
     "raven==5.0.0",  # FIXME: To be compatible with our sentry version
     "orcid",
     "retrying",
+    "invenio-query-parser>=0.3.0",
     "invenio_classifier==0.1.0",
     "invenio-access==0.1.0",
     "invenio-accounts==0.1.2",
