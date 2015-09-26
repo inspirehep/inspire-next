@@ -39,7 +39,6 @@ requirements = [
     "invenio-query-parser>=0.3.0",
     "invenio_classifier==0.1.0",
     "invenio-access==0.1.0",
-    "invenio-accounts==0.1.2",
     "invenio-client==0.1.0",
     "invenio-deposit==0.2.0",
     "invenio-formatter==0.2.1",
