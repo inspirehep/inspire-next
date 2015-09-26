@@ -41,7 +41,6 @@ requirements = [
     "invenio-access==0.1.0",
     "invenio-accounts==0.1.2",
     "invenio-client==0.1.0",
-    "invenio-collections==0.1.2",
     "invenio-deposit==0.2.0",
     "invenio-formatter==0.2.1",
     "invenio-groups==0.1.3",

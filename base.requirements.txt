@@ -4,5 +4,6 @@ git+https://github.com/mloesch/sickle@master#egg=Sickle
 git+https://github.com/inspirehep/invenio-search@master-es-indices#egg=invenio-search==0.1.4.dev20150904
 git+https://github.com/inspirehep/invenio-oaiharvester@master#egg=invenio-oaiharvester==0.1.2.dev20150825
 git+https://github.com/inspirehep/invenio-workflows@master#egg=invenio-workflows==0.1.2.dev20150825
+git+https://github.com/inspirehep/invenio-collections@master#egg=invenio-collections==0.1.3.dev20150904
 git+https://github.com/inspirehep/invenio-deposit@labs#egg=invenio-deposit==0.2.1.dev20150914
 git+https://github.com/inveniosoftware/beard@master#egg=beard
