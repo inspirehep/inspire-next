@@ -626,7 +626,8 @@
                     "uuid": {
                         "title": "UUID",
                         "description": "Universally unique identifier of the author.",
-                        "type": "string"
+                        "type": "string",
+                        "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
                     },
                     "name": {
                         "title": "Author name",
@@ -720,9 +721,9 @@
                         "description": "Status whether the paper was claimed by the author.",
                         "type": "boolean"
                     },
-                    "ml_block": {
+                    "signature_block": {
                         "title": "Phonetic name",
-                        "description": "Phonetic notation of the author's name.",
+                        "description": "Phonetic notation of the author's full name.",
                         "type": "string"
                     }
                 },
