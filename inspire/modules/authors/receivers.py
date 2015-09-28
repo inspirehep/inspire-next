@@ -3,34 +3,54 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2014, 2015 CERN.
 #
-# INSPIRE is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-#
-# In applying this licence, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as an Intergovernmental Organization
-# or submit itself to any jurisdiction.
-
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 import uuid
+
+from beard.clustering import block_phonetic
 
 from invenio_records.signals import (
     before_record_insert,
     before_record_update,
 )
 
+from numpy import array as np_array
+from numpy import object as np_object
+
 
 @before_record_insert.connect
 @before_record_update.connect
+def assign_phonetic_name(sender, *args, **kwargs):
+    """Assign phonetic notation of each author's name."""
+    if 'author' in sender:
+        authors = sender['authors']
+
+        for author in authors:
+            if 'full_name' in author:
+                name = {'author_name': author['full_name']}
+
+                ml_block = block_phonetic(
+                    np_array([name], dtype=np_object).reshape(-1, 1),
+                    threshold=0,
+                    phonetic_algorithm='nysiis'
+                )
+
+                author['ml_block'] = ml_block[0]
+
+
+@before_record_insert.connect
 def assign_uuid(sender, *args, **kwargs):
     """Assign uuid to each author of a HEP paper."""
     if 'authors' in sender:
