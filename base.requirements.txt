@@ -7,4 +7,5 @@ git+https://github.com/inspirehep/invenio-workflows@master#egg=invenio-workflows
 git+https://github.com/inspirehep/invenio-collections@master#egg=invenio-collections==0.1.3.dev20150904
 git+https://github.com/inspirehep/invenio-accounts@master#egg=invenio-accounts==0.1.3.dev20150903
 git+https://github.com/inspirehep/invenio-deposit@labs#egg=invenio-deposit==0.2.1.dev20150914
+git+https://github.com/inspirehep/invenio-upgrader@master#egg=invenio-upgrader==0.1.2.dev20150907
 git+https://github.com/inveniosoftware/beard@master#egg=beard
