@@ -28,14 +28,21 @@ import os
 import sys
 
 from flask import current_app
+from flask.ext.script import prompt_bool
 
 from invenio.ext.es import create_index as create_main_index
 from invenio.ext.es import delete_index as delete_main_index
 from invenio.ext.script import Manager
 from invenio.ext.sqlalchemy import db
 
+from invenio_records.api import Record
+
 from invenio_workflows.receivers import create_holdingpen_index
 from invenio_workflows.receivers import delete_holdingpen_index
+
+import six
+
+from werkzeug.utils import import_string
 
 from .tasks import migrate
 
@@ -52,7 +59,9 @@ manager = Manager(description=__doc__)
                 help='Specific collections to migrate.')
 @manager.option('--input', '-f', dest='file_input',
                 help='Specific collections to migrate.')
-def populate(records, collections, file_input=None):
+@manager.option('-t', '--input-type', dest='input_type', default='marcxml',
+                help="Format of input file.")
+def populate(records, collections, file_input=None, input_type=None):
     """Train a set of records from the command line.
 
     Usage: inveniomanage predicter train -r /path/to/json -o model.pickle
@@ -69,50 +78,73 @@ def populate(records, collections, file_input=None):
         print("{0} is not a file!".format(file_input), file=sys.stderr)
         return
 
-    legacy_base_url = current_app.config.get("CFG_INSPIRE_LEGACY_BASEURL")
-    print("Migrating records from {0}".format(legacy_base_url), file=sys.stderr)
+    if file_input:
+        print("Migrating records from file: {0}".format(file_input))
+        # FIXME: Add hook to allow for pre-allocation of IDs (--force)
+        processor = current_app.config['RECORD_PROCESSORS'][input_type]
+        if isinstance(processor, six.string_types):
+            processor = import_string(processor)
+        data = processor(open(file_input))
 
-    job = migrate.delay(legacy_base_url,
-                        records=records,
-                        collections=collections,
-                        file_input=file_input)
-    print("Scheduled job {0}".format(job.id))
+        if isinstance(data, dict):
+            Record.create(data)
+        else:
+            [Record.create(item) for item in data]
+    else:
+        legacy_base_url = current_app.config.get("CFG_INSPIRE_LEGACY_BASEURL")
+        print(
+            "Migrating records from {0}".format(
+                legacy_base_url
+            ),
+            file=sys.stderr
+        )
+
+        job = migrate.delay(legacy_base_url,
+                            records=records,
+                            collections=collections,
+                            file_input=file_input)
+        print("Scheduled migration job {0}".format(job.id))
 
 
 @manager.command
 def remove_bibxxx():
     """Drop all the legacy bibxxx tables."""
-    table_names = db.engine.execute(
-        "SELECT TABLE_NAME"
-        " FROM INFORMATION_SCHEMA.TABLES"
-        " WHERE ENGINE='MyISAM'"
-        " AND TABLE_NAME LIKE '%%_bib%%x'"
-        " AND table_schema='{0}'".format(
-            current_app.config.get('CFG_DATABASE_NAME')
-        )
-    ).fetchall()
-    for table in table_names:
-        db.engine.execute("DROP TABLE {0}".format(table[0]))
-        print(">>> Dropped {0}.".format(table[0]))
-    print(">>> Removed {0} tables.".format(len(table_names)))
+    drop_tables("bib%%x")
 
 
 @manager.command
 def remove_idx():
-    """Deop all the legacy BibIndex tables."""
-    table_names = db.engine.execute(
-        "SELECT TABLE_NAME"
-        " FROM INFORMATION_SCHEMA.TABLES"
-        " WHERE ENGINE='MyISAM'"
-        " AND TABLE_NAME LIKE 'idx%%'"
-        " AND table_schema='{0}'".format(
-            current_app.config.get('CFG_DATABASE_NAME')
-        )
-    ).fetchall()
-    for table in table_names:
-        db.engine.execute("DROP TABLE {0}".format(table[0]))
-        print(">>> Dropped {0}.".format(table[0]))
-    print(">>> Removed {0} tables.".format(len(table_names)))
+    """Drop all the legacy BibIndex tables."""
+    drop_tables('idx%%')
+    drop_tables('tmp_idx%%')
+
+
+@manager.command
+def remove_others():
+    """Drop misc legacy tables."""
+    drop_tables('aid%%')
+    drop_tables('bsk%%')
+    drop_tables('rnk%%')
+    drop_tables('jrn%%')
+    drop_tables('sbm%%')
+    drop_tables('swr%%')
+    drop_tables('crc%%')
+
+
+@manager.command
+def remove_legacy_tables():
+    """Remove all legacy tables."""
+    db.session.begin(subtransactions=True)
+    try:
+        db.engine.execute("SET FOREIGN_KEY_CHECKS=0;")
+        remove_others()
+        remove_bibxxx()
+        remove_idx()
+        db.engine.execute("SET FOREIGN_KEY_CHECKS=1;")
+        db.session.commit()
+    except Exception as err:  # noqa
+        db.session.rollback()
+        current_app.logger.exception(err)
 
 
 @manager.command
@@ -144,7 +176,10 @@ def clean_records():
 
     print('>>> Truncating all records.')
 
-    fks = []
+    tables_to_truncate = [
+        "bibrec",
+        "record_json",
+    ]
     db.session.begin(subtransactions=True)
     try:
         db.engine.execute("SET FOREIGN_KEY_CHECKS=0;")
@@ -152,23 +187,39 @@ def clean_records():
         # Grab any table with foreign keys to bibrec for truncating
         inspector = reflection.Inspector.from_engine(db.engine)
         for table_name in inspector.get_table_names():
-            for fk in inspector.get_foreign_keys(table_name):
-                if not fk["referred_table"] == "bibrec":
-                    continue
-                fks.append(fk["referred_table"])
+            for foreign_key in inspector.get_foreign_keys(table_name):
+                if foreign_key["referred_table"] == "bibrec":
+                    tables_to_truncate.append(table_name)
 
-        for table in fks:
+        if not prompt_bool("Going to truncate: {0}".format(
+                "\n".join(tables_to_truncate))):
+            return
+        for table in tables_to_truncate:
             db.engine.execute("TRUNCATE TABLE {0}".format(table))
             print(">>> Truncated {0}".format(table))
-        db.engine.execute("TRUNCATE TABLE bibrec")
-        print(">>> Truncated bibrec")
-        db.engine.execute("TRUNCATE TABLE record_json")
-        print(">>> Truncated record_json")
+
         db.engine.execute("DELETE FROM pidSTORE WHERE pid_type='recid'")
         print(">>> Truncated pidSTORE WHERE pid_type='recid'")
 
         db.engine.execute("SET FOREIGN_KEY_CHECKS=1;")
         db.session.commit()
-    except Exception as err:
+    except Exception as err:  # noqa
         db.session.rollback()
         current_app.logger.exception(err)
+
+
+def drop_tables(table_filter):
+    """Drop tables helper."""
+    table_names = db.engine.execute(
+        "SELECT TABLE_NAME"
+        " FROM INFORMATION_SCHEMA.TABLES"
+        " WHERE TABLE_NAME LIKE '{0}'"
+        " AND table_schema='{1}'".format(
+            table_filter,
+            current_app.config.get('CFG_DATABASE_NAME')
+        )
+    ).fetchall()
+    for table in table_names:
+        db.engine.execute("DROP TABLE {0}".format(table[0]))
+        print(">>> Dropped {0}.".format(table[0]))
+    print(">>> Removed {0} tables.".format(len(table_names)))
