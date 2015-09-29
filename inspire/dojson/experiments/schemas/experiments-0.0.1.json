@@ -22,6 +22,10 @@
             "title": "Collaboration",
             "type": "string"
         },
+        "contact_email": {
+            "title": "Contact email",
+            "type": "string"
+        },
         "curated_relation": {
             "title": "Curated relation",
             "type": "boolean"
