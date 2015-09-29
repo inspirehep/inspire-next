@@ -29,7 +29,12 @@ import sys
 
 from flask import current_app
 
+from invenio.ext.es import create_index as create_main_index
+from invenio.ext.es import delete_index as delete_main_index
 from invenio.ext.script import Manager
+
+from invenio_workflows.receivers import create_holdingpen_index
+from invenio_workflows.receivers import delete_holdingpen_index
 
 from .tasks import migrate
 
@@ -109,6 +114,28 @@ def remove_idx():
         db.engine.execute("DROP TABLE {0}".format(table[0]))
         print(">>> Dropped {0}.".format(table[0]))
     print(">>> Removed {0} tables.".format(len(table_names)))
+
+
+@manager.command
+def create_index():
+    """Create or recreate the indices for records and holdingpen.
+
+    The methods called require an argument which then they don't use.
+    So we work around that by passing a dummy argument.
+    """
+    create_main_index('banana')
+    create_holdingpen_index('banana')
+
+
+@manager.command
+def delete_index():
+    """Delete the indices for records and holdingpen.
+
+    The methods called require an argument which then they don't use.
+    So we work around that by passing a dummy argument.
+    """
+    delete_main_index('banana')
+    delete_holdingpen_index('banana')
 
 
 @manager.command
