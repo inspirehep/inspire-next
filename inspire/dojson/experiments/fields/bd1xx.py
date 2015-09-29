@@ -41,6 +41,13 @@ def affiliation(self, key, value):
     return value.get("u")
 
 
+@experiments.over('contact_email', '^270..')
+@utils.for_each_value
+def contact_email(self, key, value):
+    """Contact email of experiment."""
+    return value.get("m")
+
+
 @experiments.over('title', '^245[10_][0_]')
 @utils.for_each_value
 @utils.filter_values
@@ -80,6 +87,12 @@ def spokesperson(self, key, value):
     return value.get("a")
 
 
+@experiments.over('collaboration', '^710..')
+def collaboration(self, key, value):
+    """Collaboration of experiment."""
+    return value.get("g")
+
+
 @experiments.over('urls', '^856.[10_28]')
 @utils.for_each_value
 def urls(self, key, value):
@@ -87,7 +100,45 @@ def urls(self, key, value):
     return value.get('u')
 
 
-@experiments.over('collaboration', '^710')
-def collaboration(self, key, value):
-    """Collaboration."""
-    return value.get('g')
+@experiments.over('related_experiments', '^510')
+@utils.for_each_value
+def related_experiments(self, key, value):
+    """Related experiments."""
+    try:
+        recid = int(value.get('0'))
+    except (TypeError, ValueError):
+        recid = None
+    return {
+        'name': value.get('a'),
+        'recid': recid
+    }
+
+
+@experiments.over('date_started', '^046..')
+def date_started(self, key, value):
+    """Date created."""
+    def get_value(value):
+        return value.get('s')
+
+    date_created = self.get('date_created', [])
+
+    for element in value:
+        if 's' in element:
+            date_created.append(get_value(element))
+    if date_created:
+        return date_created[0]
+
+
+@experiments.over('date_completed', '^046..')
+def date_completed(self, key, value):
+    """Date created."""
+    def get_value(value):
+        return value.get('t')
+
+    date_completed = self.get('date_completed', [])
+
+    for element in value:
+        if 't' in element:
+            date_completed.append(get_value(element))
+    if date_completed:
+        return date_completed[0]

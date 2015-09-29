@@ -125,3 +125,17 @@ def transparencies(self, key, value):
 def url(self, key, value):
     """Conference transparencies."""
     return value.get('u')
+
+
+@conferences.over('sessions', '^8564')
+@utils.for_each_value
+def sessions(self, key, value):
+    """Conference sessions."""
+    return value.get('t')
+
+
+@conferences.over('extra_place_info', '^270')
+@utils.for_each_value
+def extra_place_info(self, key, value):
+    """Conference extra place info."""
+    return value.get('b')

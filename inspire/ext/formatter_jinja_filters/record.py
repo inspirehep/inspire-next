@@ -26,6 +26,7 @@ from inspire.utils.bibtex import Bibtex
 from inspire.utils.latex import Latex
 from inspire.utils.cv_latex import Cv_latex
 from inspire.utils.cv_latex_html_text import Cv_latex_html_text
+from invenio_search.api import Query
 
 
 def email_links(value):
@@ -132,7 +133,7 @@ def cv_latex_html_text(record, format_type):
 
 def conference_date(record):
     if 'date' in record and record['date']:
-        return record['date'] + '.'
+        return record['date']
     from datetime import datetime
     out = ''
     opening_date = record['opening_date']
@@ -144,20 +145,20 @@ def conference_date(record):
             out += opening_date.split('-')[2] + '-' +\
                 closing_date.split('-')[2] +\
                 ' ' + converted_opening_date.strftime('%b') +\
-                ' ' + opening_date.split('-')[0] + '.'
+                ' ' + opening_date.split('-')[0]
         else:
             out += opening_date.split('-')[2] + ' '\
                 + converted_opening_date.strftime('%b') + ' - ' +\
                 closing_date.split('-')[2] + ' ' +\
                 converted_closing_date.strftime('%b') + ' ' +\
-                opening_date.split('-')[0] + '.'
+                opening_date.split('-')[0]
     else:
         out += opening_date.split('-')[2] + ' ' +\
             converted_opening_date.strftime('%b') + ' '\
             + opening_date.split('-')[0] + ' - ' + \
             closing_date.split('-')[2] + ' ' +\
             converted_closing_date.strftime('%b') + ' ' +\
-            closing_date.split('-')[0] + '.'
+            closing_date.split('-')[0]
     return out
 
 
@@ -167,6 +168,55 @@ def search_for_experiments(value):
         '<a href="/search?p=experiment_name:%s&cc=Experiments">%s</a>'
         % (i, i)
         for i in value])
+
+
+def experiment_date(record):
+    result = []
+    if 'date_started' in record:
+        result.append('Started: ' + record['date_started'])
+    if 'date_completed' in record:
+        if record['date_completed'] == '9999':
+            result.append('Still Running')
+        else:
+            result.append('Completed: ' + record['date_completed'])
+    if result:
+        return ', '.join(r for r in result)
+
+
+def proceedings_link(record):
+    cnum = record['cnum']
+    out = ''
+    if not cnum:
+        return out
+    search_result = Query("cnum:%s and 980__a:proceedings" % (cnum,)).\
+        search().recids
+    if search_result:
+        if len(search_result) > 1:
+            from invenio.legacy.bibrecord import get_fieldvalues
+            proceedings = []
+            for i, recid in enumerate(search_result):
+                doi = get_fieldvalues(recid, '0247_a')
+                if doi:
+                    proceedings.append('<a href="/record/%(ID)s">#%(number)s</a> (DOI: <a href="http://dx.doi.org/%(doi)s">%(doi)s</a>)'
+                                       % {'ID': recid, 'number': i + 1, 'doi': doi[0]})
+                else:
+                    proceedings.append(
+                        '<a href="/record/%(ID)s">#%(number)s</a>' % {'ID': recid, 'number': i + 1})
+                out = 'Proceedings: '
+                out += ', '.join(proceedings)
+        elif len(search_result) == 1:
+            out += '<a href="/record/' + str(search_result[0]) + \
+                '">Proceedings</a>'
+    return out
+
+
+def experiment_link(record):
+    result = []
+    if record['related_experiments']:
+        for element in record['related_experiments']:
+            result.append(
+                '<a href=/search?cc=Experiments&p=experiment_name:' +
+                element['name'] + '>' + element['name'] + '</a>')
     return result
 
 
@@ -190,4 +240,7 @@ def get_filters():
         'cv_latex_html_text': cv_latex_html_text,
         'conference_date': conference_date,
         'search_for_experiments': search_for_experiments,
+        'experiment_date': experiment_date,
+        'proceedings_link': proceedings_link,
+        'experiment_link': experiment_link,
     }
