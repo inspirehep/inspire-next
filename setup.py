@@ -40,7 +40,6 @@ requirements = [
     "invenio_classifier==0.1.0",
     "invenio-access==0.1.0",
     "invenio-client==0.1.0",
-    "invenio-deposit==0.2.0",
     "invenio-formatter==0.2.1",
     "invenio-groups==0.1.3",
     "invenio-knowledge==0.1.0",
@@ -51,7 +50,6 @@ requirements = [
     "invenio-records==0.3.2",
     "invenio-documents==0.1.0.post2",
     "invenio-unapi==0.1.0",
-    "invenio-upgrader==0.1.0",
     "invenio-webhooks==0.1.0",
 ]
 
