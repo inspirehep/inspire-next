@@ -32,6 +32,7 @@ from flask import current_app
 from invenio.ext.es import create_index as create_main_index
 from invenio.ext.es import delete_index as delete_main_index
 from invenio.ext.script import Manager
+from invenio.ext.sqlalchemy import db
 
 from invenio_workflows.receivers import create_holdingpen_index
 from invenio_workflows.receivers import delete_holdingpen_index
@@ -81,7 +82,6 @@ def populate(records, collections, file_input=None):
 @manager.command
 def remove_bibxxx():
     """Drop all the legacy bibxxx tables."""
-    from invenio.ext.sqlalchemy import db
     table_names = db.engine.execute(
         "SELECT TABLE_NAME"
         " FROM INFORMATION_SCHEMA.TABLES"
@@ -100,7 +100,6 @@ def remove_bibxxx():
 @manager.command
 def remove_idx():
     """Deop all the legacy BibIndex tables."""
-    from invenio.ext.sqlalchemy import db
     table_names = db.engine.execute(
         "SELECT TABLE_NAME"
         " FROM INFORMATION_SCHEMA.TABLES"
@@ -140,5 +139,36 @@ def delete_index():
 
 @manager.command
 def clean_records():
-    """Truncate all the record tables."""
+    """Truncate all the records from various tables."""
+    from sqlalchemy.engine import reflection
+
     print('>>> Truncating all records.')
+
+    fks = []
+    db.session.begin(subtransactions=True)
+    try:
+        db.engine.execute("SET FOREIGN_KEY_CHECKS=0;")
+
+        # Grab any table with foreign keys to bibrec for truncating
+        inspector = reflection.Inspector.from_engine(db.engine)
+        for table_name in inspector.get_table_names():
+            for fk in inspector.get_foreign_keys(table_name):
+                if not fk["referred_table"] == "bibrec":
+                    continue
+                fks.append(fk["referred_table"])
+
+        for table in fks:
+            db.engine.execute("TRUNCATE TABLE {0}".format(table))
+            print(">>> Truncated {0}".format(table))
+        db.engine.execute("TRUNCATE TABLE bibrec")
+        print(">>> Truncated bibrec")
+        db.engine.execute("TRUNCATE TABLE record_json")
+        print(">>> Truncated record_json")
+        db.engine.execute("DELETE FROM pidSTORE WHERE pid_type='recid'")
+        print(">>> Truncated pidSTORE WHERE pid_type='recid'")
+
+        db.engine.execute("SET FOREIGN_KEY_CHECKS=1;")
+        db.session.commit()
+    except Exception as err:
+        db.session.rollback()
+        current_app.logger.exception(err)
