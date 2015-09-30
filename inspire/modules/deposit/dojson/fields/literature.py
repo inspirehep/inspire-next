@@ -128,6 +128,7 @@ def preprint_created(self, key, value):
 
 
 @literature.over('defense_date', '^defense_date$')
+@utils.for_each_value
 def defense_date(self, key, value):
     return {'date': value}
 
