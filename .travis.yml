@@ -31,6 +31,10 @@ language: python
 python:
   - 2.7
 
+before_install:
+  - "travis_retry pip install --upgrade pip"
+  - "travis_retry pip install check-manifest mock twine wheel coveralls"
+
 install:
   - docker ps
 
