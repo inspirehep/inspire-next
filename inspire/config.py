@@ -59,6 +59,7 @@ PACKAGES = [
     'inspire.modules.*',
     'invenio_classifier',
     'invenio_oaiharvester',
+    'invenio_grobid',
 ] + _PACKAGES
 
 # Configuration related to Deposit module
