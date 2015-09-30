@@ -62,11 +62,15 @@ def hidden_note(self, key, value):
 
     hidden_note_list = self.get('hidden_note', [])
 
-    for element in value:
-        if type(element) is dict:
+    if isinstance(value, list):
+        for element in value:
             hidden_note_list.append(get_value(element))
-    hidden_note = [dict(t) for t in set([tuple(d.items()) for d in
-                   hidden_note_list])]
+    else:
+        hidden_note_list.append(get_value(value))
+    hidden_note = []
+    for element in hidden_note_list:
+        if element not in hidden_note:
+            hidden_note.append(element)
     return hidden_note
 
 
@@ -114,7 +118,6 @@ def abstract(self, key, value):
     """Summary, Etc.."""
     return {
         'value': value.get('a'),
-        'hepdata_summary': value.get('9'),
         'source': value.get('9'),
     }
 
@@ -126,7 +129,6 @@ def abstract2marc(self, key, value):
     """Summary, Etc.."""
     return {
         'a': value.get('value'),
-        '9': value.get('hepdata_summary'),
         '9': value.get('source'),
     }
 

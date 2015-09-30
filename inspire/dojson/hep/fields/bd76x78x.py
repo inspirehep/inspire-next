@@ -73,6 +73,7 @@ def publication_info2marc(self, key, value):
         'x': value.get('pubinfo_freetext'),
         'y': value.get('year'),
         'z': value.get('isbn'),
+        'm': value.get('note')
     }
 
 

@@ -35,9 +35,11 @@ def title_variation(self, key, value):
 
     title_variation_list = self.get('title_variation', [])
 
-    for element in value:
-        if type(element) is dict:
+    if isinstance(value, list):
+        for element in value:
             title_variation_list.append(get_value(element))
+    else:
+        title_variation_list.append(get_value(value))
 
     seen = set()
     title_variation = []
@@ -54,7 +56,7 @@ def title_variation(self, key, value):
 def title_variation2marc(self, key, value):
     """Title variation."""
     return {
-        'a': value.get('title_variation'),
+        'a': value,
     }
 
 

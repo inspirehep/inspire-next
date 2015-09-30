@@ -110,9 +110,11 @@ def thesaurus_terms(self, key, value):
         }
     thesaurus_terms_list = self.get('thesaurus_terms', [])
 
-    for element in value:
-        if type(element) is dict:
+    if isinstance(value, list):
+        for element in value:
             thesaurus_terms_list.append(get_value(element))
+    else:
+        thesaurus_terms_list.append(get_value(value))
     thesaurus_terms = [dict(t) for t in set([tuple(d.items()) for d
                        in thesaurus_terms_list])]
     return thesaurus_terms
