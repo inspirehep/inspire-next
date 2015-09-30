@@ -108,7 +108,7 @@ class MatchingTests(InvenioTestCase):
 
         record = Record({"report_number": [
             {
-                "primary": "arXiv:1505.12345",
+                "value": "arXiv:1505.12345",
                 "source": "arXiv",
             }
         ]})

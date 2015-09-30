@@ -54,13 +54,19 @@ def thesis_supervisor2marc(self, key, value):
 
 
 @hep.over('collaboration', '^710[10_2][_2]')
-@utils.for_each_value
-@utils.filter_values
 def collaboration(self, key, value):
     """Added Entry-Corporate Name."""
-    return {
-        'collaboration': value.get('g')
-    }
+    def get_value(value):
+        return value.get('g')
+    collaboration = self.get('collaboration', [])
+    if isinstance(value, list):
+        filtered_value = [dict(t) for t in
+                          set([tuple(d.items()) for d in value])]
+        for element in filtered_value:
+            collaboration.append(get_value(element))
+    else:
+        collaboration.append(get_value(value))
+    return collaboration
 
 
 @hep2marc.over('710', 'collaboration')

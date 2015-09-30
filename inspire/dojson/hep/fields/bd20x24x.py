@@ -28,13 +28,24 @@ from ..model import hep, hep2marc
 
 
 @hep.over('title_variation', '^210[10_][0_]')
-@utils.for_each_value
-@utils.filter_values
 def title_variation(self, key, value):
     """Title variation."""
-    return {
-        'title_variation': value.get('a')
-    }
+    def get_value(value):
+        return value.get('a')
+
+    title_variation_list = self.get('title_variation', [])
+
+    for element in value:
+        if type(element) is dict:
+            title_variation_list.append(get_value(element))
+
+    seen = set()
+    title_variation = []
+    for element in title_variation_list:
+        if element not in seen:
+            title_variation.append(element)
+            seen.add(element)
+    return title_variation
 
 
 @hep2marc.over('210', 'title_variation')

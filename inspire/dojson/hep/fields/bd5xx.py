@@ -50,16 +50,24 @@ def note2marc(self, key, value):
 
 
 @hep.over('hidden_note', '^595..')
-@utils.for_each_value
-@utils.filter_values
 def hidden_note(self, key, value):
     """Hidden note."""
-    return {
-        'value': value.get('a'),
-        'cern_reference': value.get('b'),
-        'cds': value.get('c'),
-        'source': value.get('9'),
-    }
+    def get_value(value):
+        return {
+            'value': value.get('a'),
+            'cern_reference': value.get('b'),
+            'cds': value.get('c'),
+            'source': value.get('9'),
+        }
+
+    hidden_note_list = self.get('hidden_note', [])
+
+    for element in value:
+        if type(element) is dict:
+            hidden_note_list.append(get_value(element))
+    hidden_note = [dict(t) for t in set([tuple(d.items()) for d in
+                   hidden_note_list])]
+    return hidden_note
 
 
 @hep2marc.over('595', 'hidden_note')
@@ -105,7 +113,7 @@ def thesis2marc(self, key, value):
 def abstract(self, key, value):
     """Summary, Etc.."""
     return {
-        'summary': value.get('a'),
+        'value': value.get('a'),
         'hepdata_summary': value.get('9'),
         'source': value.get('9'),
     }
@@ -117,7 +125,7 @@ def abstract(self, key, value):
 def abstract2marc(self, key, value):
     """Summary, Etc.."""
     return {
-        'a': value.get('summary'),
+        'a': value.get('value'),
         '9': value.get('hepdata_summary'),
         '9': value.get('source'),
     }

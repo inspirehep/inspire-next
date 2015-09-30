@@ -32,6 +32,10 @@ from ..model import hep, hep2marc
 @utils.filter_values
 def url(self, key, value):
     """URL to external resource."""
+    try:
+        size = int(value.get('s'))
+    except TypeError:
+        size = None
     return {
         'url': value.get('u'),
         'doc_string': value.get('w'),
@@ -39,7 +43,7 @@ def url(self, key, value):
         'material_type': value.get('3'),
         'comment': value.get('z'),
         'name': value.get('f'),
-        'size': value.get('s'),
+        'size': size,
     }
 
 

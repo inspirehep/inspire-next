@@ -118,6 +118,7 @@
                 "properties": {
                     "source": {
                         "enum": [
+                            "arXiv",
                             "AIP",
                             "APS",
                             "Annual Reviews",

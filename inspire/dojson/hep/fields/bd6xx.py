@@ -96,15 +96,26 @@ def accelerator_experiment2marc(self, key, value):
 
 
 @hep.over('thesaurus_terms', '^695..')
-@utils.for_each_value
-@utils.filter_values
 def thesaurus_terms(self, key, value):
     """Controlled keywords."""
-    return {
-        'keyword': value.get('a'),
-        'energy_range': value.get('e'),
-        'classification_scheme': value.get('2'),
-    }
+    def get_value(value):
+        try:
+            energy_range = int(value.get('e'))
+        except (TypeError, ValueError):
+            energy_range = None
+        return {
+            'keyword': value.get('a'),
+            'energy_range': energy_range,
+            'classification_scheme': value.get('2'),
+        }
+    thesaurus_terms_list = self.get('thesaurus_terms', [])
+
+    for element in value:
+        if type(element) is dict:
+            thesaurus_terms_list.append(get_value(element))
+    thesaurus_terms = [dict(t) for t in set([tuple(d.items()) for d
+                       in thesaurus_terms_list])]
+    return thesaurus_terms
 
 
 @hep2marc.over('695', 'thesaurus_terms')

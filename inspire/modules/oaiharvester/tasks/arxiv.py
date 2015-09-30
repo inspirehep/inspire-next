@@ -61,9 +61,15 @@ def get_arxiv_id_from_record(record):
         report_numbers = record.get('report_number', [])
         for number in report_numbers:
             if number.get("source", "").lower() == "arxiv":
-                arxiv_id = number.get("primary")
+                arxiv_id = number.get("value")
 
-    if not arxiv_id.lower().startswith("oai:arxiv") and not \
+    if not arxiv_id:
+        arxiv_eprints = record.get('arxiv_eprints', [])
+        for element in arxiv_eprints:
+            if element.get("value", ""):
+                arxiv_id = element.get("value", "")
+
+    if arxiv_id and not arxiv_id.lower().startswith("oai:arxiv") and not \
        arxiv_id.lower().startswith("arxiv") and \
        "/" not in arxiv_id:
         arxiv_id = "arXiv:{0}".format(arxiv_id)
