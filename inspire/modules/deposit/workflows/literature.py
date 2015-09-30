@@ -400,3 +400,5 @@ class literature(SimpleRecordDeposition, WorkflowBase):
 
             metadata['publication_info']['journal_title'] = journals_kb.get(metadata['publication_info']['journal_title'].lower(),
                                                                             metadata['publication_info']['journal_title'])
+        if metadata.get("publication_info") and not isinstance(metadata['publication_info'], list):
+            metadata["publication_info"] = [metadata['publication_info']]
