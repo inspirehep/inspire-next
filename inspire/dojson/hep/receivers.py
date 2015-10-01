@@ -17,6 +17,8 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
+"""Contains signal receivers for HEP dojson processing."""
+
 from inspire.dojson import utils as inspire_dojson_utils
 
 from invenio_records.signals import (
@@ -28,7 +30,7 @@ from invenio_records.signals import (
 @before_record_insert.connect
 @before_record_update.connect
 def earliest_date(sender, *args, **kwargs):
-    """ Find and assign the earliest date to a HEP paper. """
+    """Find and assign the earliest date to a HEP paper."""
     dates = []
 
     if 'preprint_info' in sender:
@@ -51,7 +53,7 @@ def earliest_date(sender, *args, **kwargs):
             if 'year' in publication_info_key:
                 dates.append(publication_info_key['year'])
 
-    """ Sort dates and pick the first one. """
+    # Sort dates and pick the first one.
     dates.sort()
 
     try:
