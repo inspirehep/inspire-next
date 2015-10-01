@@ -29,7 +29,10 @@
         <h4 class="custom-h">
           <b>
             <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-              {{ record.get('name.preferred_name', '') }}
+              {{ record.get('name.preferred_name', '') }} 
+              {% if record['native_name']%}
+                ({{ record['native_name']}})
+              {% endif %}
             </a>
             {% set institution = [] %}
             {% if record['positions'] %}
@@ -39,7 +42,7 @@
                 {% endif %}
               {% endfor %}
               {% if institution %}
-                ({{ institution[0] }})
+                (<a href="/search?p=department_acronym:{{ institution[0] }}&cc=Institutions">{{ institution[0] }}</a>)
               {%endif%}
             {% endif %}
           </b> 
