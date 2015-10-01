@@ -82,7 +82,7 @@ class ingestion_arxiv_math(oaiharvest_harvest_repositories):
                 [
                     workflow_if(filtering_oai_pmh_identifier),
                     [
-                        workflow_if(num_workflow_running_greater(10), neg=True),
+                        workflow_if(num_workflow_running_greater(50), neg=True),
                         [
                             start_async_workflow("process_record_arxiv",
                                                  preserve_data=True,
