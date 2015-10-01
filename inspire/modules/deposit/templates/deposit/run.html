@@ -44,21 +44,13 @@ require(
   [
     "jquery",
     "js/forms/inspire-form",
-    "js/deposit/literature_submission_form",
-    "js/deposit/uploader/uploader",
-    "js/deposit/uploader/uploaders/pluploader",
-    "js/deposit/uploader/ui/filelist",
-    "js/deposit/uploader/ui/errorlist"
+    "js/deposit/literature_submission_form"
   ],
 
   function(
     $,
     deposit_form,
-    LiteratureSubmissionForm,
-    Uploader,
-    PlUploader,
-    FileList,
-    ErrorList
+    LiteratureSubmissionForm
   ) {
 
     $(function() {
@@ -74,32 +66,6 @@ require(
             format: "YYYY-MM-DD",
         }
       },
-
-      uploader: {
-        get_file_url: '{{ url_for('.get_file', deposition_type=deposition_type, uuid=uuid) }}',
-        delete_url: '{{ url_for('.delete_file', deposition_type=deposition_type, uuid=uuid) }}',
-        form_selector: "#submitForm",
-        form_files: {{ form.files|safe }},
-        resolve_uuid_url: '{{ url_for(".create", deposition_type=deposition_type) }}',
-        resolve_uuid: false,
-        continue_url: '{{ url_for('.run', deposition_type=deposition_type, uuid='-1') }}',
-        autoupload: true,
-        fileListSelector: '#uploader-filelist',
-        errorListSelector: '#uploader-errorlist'
-      },
-
-      pluploader: {
-        url: '{{ url_for('.upload_file', deposition_type=deposition_type, uuid=uuid) }}',
-        max_file_size: '{{config.DEPOSIT_MAX_UPLOAD_SIZE|default('10mb')}}',
-        drop_element: $('#field-file_field')[0],
-        filters: {
-          mime_types : [
-            { title : "PDF files", extensions : "pdf" },
-          ],
-          max_file_size: "100mb",
-          prevent_duplicates: true
-        }
-      },
       inspire: {
         arxiv_to_inspire_categories_kb: "{{ config.get('DEPOSIT_ARXIV_TO_INSPIRE_CATEGORIES_KB') }}",
         save_url: '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, draft_id=draft.id) }}',
@@ -113,12 +79,6 @@ require(
     deposit_form.attachTo("#submitForm", config.form);
 
     form.postInvenioHook();
-
-    Uploader.attachTo("#uploader", config.uploader);
-    PlUploader.attachTo("#pluploader", config.pluploader);
-    FileList.attachTo("#uploader-filelist");
-    ErrorList.attachTo("#uploader-errorlist");
-
   });
 });
 </script>

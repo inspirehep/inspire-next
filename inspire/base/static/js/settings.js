@@ -54,6 +54,9 @@ require.config({
     "jasmine-events": "js/jasmine/events_checker",
     "jasmine-initialization": "js/jasmine/initialization_checker",
     "select2": "vendor/select2/select2.min",
+    "jsoneditor": "vendors/json-editor/dist/jsoneditor",
+    "ckeditor-core": "vendors/ckeditor/ckeditor",
+    "ckeditor-jquery": "vendors/ckeditor/adapters/jquery",
     // INSPIRE
     "bootstrap-multiselect": "vendors/bootstrap-multiselect/dist/js/bootstrap-multiselect",
     "readmore": "vendors/readmore/readmore",
@@ -151,6 +154,12 @@ require.config({
     select2: {
       deps: ["jquery"],
       exports: "select2"
+    },
+    jsoneditor: {
+      exports: "JSONEditor"
+    },
+    "ckeditor-jquery": {
+      deps: ["jquery", "ckeditor-core"]
     },
     // INSPIRE
     "bootstrap-multiselect": {
