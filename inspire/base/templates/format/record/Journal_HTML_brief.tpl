@@ -25,14 +25,16 @@
     <div class="panel panel-default custom-panel" >
     <div class="panel-body" >
       <div class="row">
-      <div class="col-md-12">
+        <div class="col-md-12">
         <h4 class="custom-h">
           <b>
             <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
               {{ record['title'] }}
             </a>
           </b> 
-      </h4>
+        </h4>
+        </div>
+      </div>
       <div class="row">
         <div class="col-md-12 record-brief-details">
          {{ record['short_title'] }}
@@ -42,7 +44,7 @@
       <div class="row">
         <div class="col-md-12 record-brief-details">
          {% for url in record['urls'] %}
-            {{ url|urlize }} 
+            {{ url['urls']|urlize }} 
             {% if url['doc_string'] %}
               ({{ url['doc_string']}})
             {% endif %}
@@ -51,10 +53,15 @@
         </div>
       </div>
       {% endif %}
+      {% if record['publisher'] %}
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+         {{ record['publisher'] }}
+        </div>
       </div>
+      {% endif %}
     </div>
-  </div>
-  </div>
+    </div>
   </div>
 </div>
 {% endblock %}
