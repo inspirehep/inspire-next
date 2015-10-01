@@ -225,7 +225,6 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     },
     "abstract": ["abstract.summary"],
     "collection": ["_collections"],
-    "collaboration": ["collaboration.collaboration"],
     "affiliation": ["authors.affiliation"],
     "reportnumber": ["report_number.value"],
     "experiment": ["accelerator_experiment.experiment"],

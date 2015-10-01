@@ -85,3 +85,9 @@ def spokesperson(self, key, value):
 def urls(self, key, value):
     """URLs."""
     return value.get('u')
+
+
+@experiments.over('collaboration', '^710')
+def collaboration(self, key, value):
+    """Collaboration."""
+    return value.get('g')
