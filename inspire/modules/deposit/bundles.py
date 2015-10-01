@@ -28,7 +28,8 @@ from invenio.base.bundles import jquery as _j, invenio as _i
 # '_' prefix indicates private variables, and prevents duplicated import by
 # auto-discovery service of invenio
 
-_deposit_js.contents.append('js/deposit/inspire_init.js')
+
+_deposit_js.contents = ['js/deposit/inspire_init.js']
 
 _deposit_js.bower.update({
     'buckets': 'git://github.com/mauriciosantos/buckets.git',
