@@ -161,6 +161,15 @@ def conference_date(record):
     return out
 
 
+def search_for_experiments(value):
+    result = []
+    result = ', '.join([
+        '<a href="/search?p=experiment_name:%s&cc=Experiments">%s</a>'
+        % (i, i)
+        for i in value])
+    return result
+
+
 def get_filters():
     return {
         'email_links': email_links,
@@ -180,4 +189,5 @@ def get_filters():
         'cv_latex': cv_latex,
         'cv_latex_html_text': cv_latex_html_text,
         'conference_date': conference_date,
+        'search_for_experiments': search_for_experiments,
     }
