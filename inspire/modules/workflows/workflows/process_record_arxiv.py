@@ -177,7 +177,7 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
             categories = record.get("report_number.arxiv_category", [])
             categories.extend(record.get("subject_term.value", []))
             categories = list(OrderedDict.fromkeys(categories))  # Unique only
-            abstract = record.get("abstract.summary", [""])[0]
+            abstract = record.get("abstract.value", [""])[0]
             authors = record.get("authors", [])
         return render_template('workflows/styles/harvesting_record.html',
                                object=bwo,
