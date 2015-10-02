@@ -1,0 +1,96 @@
+{#
+# This file is part of INSPIRE.
+# Copyright (C) 2015 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+<div class="reference-record">
+  {% if recid %}
+    {% if citations %}
+      <span class="reference-citations pull-right">{{ citations }}</span>
+    {% endif %}
+    {% if title %}
+      <div class="reference-title">{{ number }}. <a href="http://inspirehep.net/record/{{recid}}">{{ title }}</a></div>
+    {% endif %}
+    {% if authors %}
+      <div class="reference-authors">{{ authors }}</div>
+    {% endif %}
+    {% if journal and recid %}
+      <div class="reference-journal">{{ journal }}</div>
+    {% endif %}
+  {% else %}
+    {% if number %}
+      <div class="reference-title">{{ number }}.
+        {% if reference['title'] %}
+          {{ reference['title'] }}
+        {% elif reference['misc'] %}
+          {{ reference['misc'] }}
+          {% set misc_displayed = true %}
+        {% elif reference['collaboration'] %}
+          {{ reference['collaboration'] }}
+          {% set collaboration_displayed = true %}
+        {% elif reference['journal_pubnote'] %}
+          {{ reference['journal_pubnote'] }}
+          {% set journal_displayed = true %}
+        {% elif reference['report_number'] %}
+          {{ reference['report_number'] }}
+          {% if reference['year'] %}
+            , {{ reference['year'] }}
+          {% endif %}
+          {% set report_displayed = true %}
+        {% endif %}
+      </div>
+    {% endif %}
+    <div class="reference-subtitle">
+      {% if reference['authors'] %}
+        <span class="reference-detail">{{ reference['authors'] }}</span>
+      {% endif %}
+      {% if not journal_displayed and reference['journal_pubnote'] %}
+        <span class="reference-detail">{{ reference['journal_pubnote'] }}</span>
+      {% endif %}
+      {% if not collaboration_displayed and reference['collaboration']%}
+        <span class="reference-detail">{{ reference['collaboration'] }}</span>
+      {% endif %}
+      {% if not report_displayed and reference['report_number'] %}
+        <span class="reference-detail">{{ reference['report_number'] }}</span>
+          {% if reference['year'] %}
+            <span class="reference-detail">{{ reference['year'] }}</span>
+            {% set year_displayed = true %}
+          {% endif %}
+      {% endif %}
+      {% if not year_displayed and reference['year'] %}
+        <span class="reference-detail">{{ reference['year'] }}</span>
+      {% endif %}
+      {% if reference['publisher'] %}
+        <span class="reference-detail">{{ reference['publisher'] }}</span>
+      {% endif %}
+      {% if not misc_displayed and reference['misc'] %}
+        <span class="reference-detail">{{ reference['misc'] }}</span>
+      {% endif %}
+      {% if reference['doi'] %}
+        <span class="reference-detail">{{ reference['doi'] }}</span>
+      {% endif %}
+      {% if reference['url'] %}
+        <span class="reference-detail">
+          <a href="reference['url']">{{ reference['url'] }}</a>
+        </span>
+      {% endif %}
+      {% if reference['isbn'] %}
+        <span class="reference-detail">{{ reference['isbn'] }}</span>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>

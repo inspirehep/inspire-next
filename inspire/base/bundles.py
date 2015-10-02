@@ -61,6 +61,25 @@ landing_page_styles = Bundle(
     weight=60,
 )
 
+detailed_record_styles = Bundle(
+    "less/format/detailed-record.less",
+    output="detailed-record.css",
+    depends=[
+        "less/format/detailed-record.less"
+    ],
+    filters="less,cleancss",
+    weight=60,
+)
+
+brief_result_styles = Bundle(
+    "less/format/brief-results.less",
+    output="brief-results.css",
+    depends=[
+        "less/format/brief-results.less"
+    ],
+    filters="less,cleancss",
+    weight=60,
+)
 
 # FIXME variables.less is already imported in inspire.less so there should be
 # no need to add it here to the contents. If it is not added, the depends=
@@ -81,7 +100,6 @@ _base_styles.contents += (
     'less/search/index.less',
     'less/feedback/button.less',
     'less/feedback/modal.less',
-    'less/format/brief-results.less',
     'less/workflows/workflows.less',
     'vendors/toastr/toastr.css'
 )

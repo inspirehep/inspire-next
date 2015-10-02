@@ -1,4 +1,5 @@
 /**
+ *
  * This file is part of INSPIRE.
  * Copyright (C) 2015 CERN.
 
@@ -15,8 +16,33 @@
  * You should have received a copy of the GNU General Public License
  * along with Invenio; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
- */ 
+ */
 
+ @import (reference) "../inspire.less";
+
+ @teal: #EDF3F3;
+ @grey: #7E8D8E;
+ @purple: #293E51;
+
+ .ellipsis {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    color: grey;
+ }
+
+ #collections {
+    background-color: @blue-purple;
+    font-weight: 700;
+    font-size: large;
+    height: 60px;
+    padding: 20px;
+
+@teal: #EDF3F3;
+@grey: #7E8D8E;
+@purple: #293E51;
 
 #record_content .record-detailed .record-header {
     padding: 10px;
@@ -35,4 +61,262 @@
 
 .collection-primary {
     margin-left: 5px;
+}
+
+#topnav {
+	min-height: 65px;
+	border-bottom: 0px;
+}
+
+body {
+	background-color: @teal;
+}
+
+#record-collection-heading {
+	margin-bottom: 25px;
+
+	#search-hep {
+		color: @orange;
+		font-weight: 700;
+	}
+
+	#title {
+		color: grey;
+		opacity: 0.5;
+	}
+}
+
+#record-title {
+	font-size: x-large;
+	padding-bottom: 15px;
+	font-weight: bold;
+}
+
+#record_content .record-detailed .record-header {
+	padding: 20px;
+	background-color: white;
+	text-align: left;
+	font-size: normal;
+}
+
+.pdf-btn, .cite-btn {
+	color: white;
+	border: none;
+}
+
+.cite-btn:link, .cite-btn:visited, .cite-btn:hover, .cite-btn:active {
+	color: white;
+}
+
+.cite-btn, .cite-btn:link, .cite-btn:visited, .cite-btn:hover, .cite-btn:active {
+	background-color: #293D51;
+	z-index: 0;
+}
+
+@media screen and (min-width: @screen-sm-min) {
+	.cite-modal {
+		width: 900px;
+	}
+	#record-keywords {
+		margin-top: 20px;
+	}
+}
+
+.cite-modal {
+	width: 75%;
+	font-weight: normal;
+	text-align: left;
+} 
+
+#citeModalLabel {
+	margin-bottom: 10px;
+}  
+
+#record-title, .journal,
+#external_links, #doi-eprint-experiment, {
+	color: @blue-purple;
+}
+
+#external_links {
+	float: left;
+}
+
+#record-authors #authors-show-more {
+	background-color: #293D51;
+	color: white;
+	padding: 3px 6px;
+}
+
+.journal {
+	font-size: 16px;
+	margin-top: 15px;
+	font-weight: 500;
+}
+
+#record-abstract-keywords {
+    background: white;
+    margin-bottom: 20px;
+    padding: 20px;
+    font-size: 15px;
+    color: black;
+}
+
+.record-abstract {
+	display: none;
+}
+
+#record-abstract-title, #record-keywords-title, #record-reference-title, #record-citation-title {
+	font-size: 18px;
+	font-weight: 600;
+}
+
+#record-abstract-title, #record-keywords-title {
+	margin-bottom: 20px;
+}
+
+.record-detailed {
+	margin-left: 3.5%;
+	width: 93%;
+}
+
+#references, #citations {
+
+	height: 500px;
+	overflow: auto;
+
+	#references-filter, #citations-filter {
+
+		margin-top: 20px;
+
+		form {
+			margin-right: 10px;
+			display: inline;
+		}
+
+		input {
+			background-color: @teal;
+			border: 0px;
+			line-height: 2;
+		}
+
+		button {
+			color: @purple;
+		}
+	}
+
+	form input {
+		font-family: Lato, sans-serif, FontAwesome;
+	}
+
+	.table > tbody > tr > td {
+		border-top: 0px;
+	}
+
+	.panel-heading {
+		position: absolute;
+		background-color: white;
+		width: 90%;
+
+		.references-citations-table {
+			margin-top: 15px;	
+		}
+
+		.references-citations-showing {
+			font-weight: 700;
+			font-size: larger;
+		}
+
+		.references-citations-cited-by {
+			color: @grey;
+		}
+	}
+
+	.panel-body {
+
+		padding-top: 150px;
+		padding-bottom: 50px;
+
+		.reference-record {
+
+			margin-bottom: 15px;
+
+			.reference-authors, .reference-subtitle {
+				color: @grey;
+
+				.reference-detail:after {
+					content: ';';
+				}
+				.reference-detail:last-child:after {
+					content: '';
+				}
+			}
+
+			.reference-journal {
+				color: black;	
+			}
+		}
+
+		.reference-title {
+			color: @blue;
+			width: 90%;
+			font-size: larger;
+			font-weight: 700;
+		}
+
+		.reference-journal {
+			color: @purple;
+		}
+	}
+
+	.panel-footer {
+		position:absolute;
+		width:100%;
+		bottom:20px;
+		background-color: white;
+		border: none;
+		width: 90%;
+	}
+
+	a.btn {
+		background-color: @teal;
+		margin-right: 5px;
+		border: 0px;
+		color: @grey;
+		font-weight: 700;
+	}
+}
+
+#record_content .record-detailed .record-details {
+	padding-top: 30px;
+	text-align: left;
+	background-color: @teal;
+}
+
+#doi-eprint-experiment {
+	margin-top: 25px;
+	margin-bottom: 15px;
+	padding-bottom: 20px;
+
+	.doi, .eprint {
+		font-weight: 600;
+	}
+}
+
+.cite-pdf-buttons {
+	text-align: right;
+}
+
+::-webkit-scrollbar {
+	-webkit-appearance: none;
+	width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+	background-color: rgba(0,0,0,.5);
+	-webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+#record_content > div.row {
+	display: none;
 }
