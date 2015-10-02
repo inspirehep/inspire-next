@@ -182,7 +182,7 @@ def language(self, key, value):
 def language2marc(self, key, value):
     """Language Code."""
     return {
-        'a': value.get('language'),
+        'a': value,
     }
 
 
