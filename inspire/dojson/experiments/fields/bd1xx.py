@@ -60,8 +60,8 @@ def title(self, key, value):
     }
 
 
-@experiments.over('breadcrum_title', '^245[10_][0_]')
-def breadcrum_title(self, key, value):
+@experiments.over('breadcrumb_title', '^245[10_][0_]')
+def breadcrumb_title(self, key, value):
     """Title used in breadcrum and html title."""
     return value.get('a')
 

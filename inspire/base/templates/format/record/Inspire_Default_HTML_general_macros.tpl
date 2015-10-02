@@ -59,18 +59,16 @@
 {% endmacro %}
 
 {% macro record_arxiv() %}
-  {% if record.get('report_number') %}
-  {% if record.get('report_number') | is_list() %}
-  {% set filtered_arxiv = record.get('report_number')| remove_duplicates_from_dict() %}
-  {% for i in filtered_arxiv %}
-  {% if i.get('source') == 'arXiv' %}
-  <b>e-Print:</b><a href="http://arxiv.org/abs/{{ i.get('primary') }}" > {{ i.get('primary') }}
-  </a>
-  {% if i.get('arxiv_category') %}
-  &nbsp;<b>[{{  i.get('arxiv_category')  }}]</b>
-  {% endif %}
-  {% endif %}
-  {% endfor %}
-  {% endif %}
+  {% if record.get('arxiv_eprints') %}
+    {% if record.get('arxiv_eprints') | is_list() %}
+      {% set filtered_arxiv = record.get('arxiv_eprints')| remove_duplicates_from_dict() %}
+      {% for i in filtered_arxiv %}
+        <b>e-Print:</b>
+          <a href="http://arxiv.org/abs/{{ i.get('value') }}">{{ i.get('value') }}</a>
+        {% if i.get('categories') %}
+          &nbsp;<b>[{{  i.get('categories')|join(',')  }}]</b>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
   {% endif %}
 {% endmacro %}

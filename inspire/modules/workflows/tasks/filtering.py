@@ -170,12 +170,12 @@ def inspire_filter_category(category_accepted_param=(),
         category_to_process = []
         action_to_take = [0, 0, 0]
         try:
-            category = obj.data["report_number"]
+            category = obj.data["arxiv_eprints"]
             if isinstance(category, list):
                 for i in category:
-                    category_to_process.append(i["arxiv_category"])
+                    category_to_process.extend(i["categories"])
             else:
-                category_to_process.append(category["arxiv_category"])
+                category_to_process.extend(category["categories"])
             obj.add_task_result("Category filter", category_to_process)
         except KeyError:
             msg = "Category not found in the record. Human intervention needed"

@@ -24,29 +24,17 @@ import re
 
 from invenio_knowledge.api import get_kbr_keys
 
-
-class MissingRequiredFieldError(LookupError):
-
-    """Base class for exceptions in this module.
-    The exception should be raised when the specific,
-    required field doesn't exist in the record.
-    """
-
-    def _init_(self, field):
-        self.field = field
-
-    def _str_(self):
-        return "Missing field: " + self.field
+from .export import MissingRequiredFieldError, Export
 
 
-class Latex(object):
+class Latex(Export):
     """Class used to output LaTex format.
     TODO Fix the citation number latex
     e.g %245 citations counted in INSPIRE as of 21 Aug 2015
     """
 
     def __init__(self, record, latex_format):
-        self.record = record
+        super(Latex, self).__init__(record)
         self.arxiv_field = self._get_arxiv_field()
         self.latex_format = latex_format
 
@@ -73,36 +61,6 @@ class Latex(object):
         out += r'\bibitem{' + self._get_citation_key() + '}\n'
         out += self._fetch_fields(req, opt) + '\n'
         return out
-
-    def _get_citation_key(self):
-        """Returns citation key for LaTex"""
-        if 'system_control_number' in self.record:
-            result = []
-            citation_key = ''
-            for field in self.record['system_control_number']:
-                if 'institute' in field and \
-                    (field['institute'] == 'INSPIRETeX' or
-                        field['institute'] == 'SPIRESTeX'):
-                    result.append(field)
-            for key in result:
-                if key['institute'] in ('INSPIRETeX', 'SPIRESTeX'):
-                    if 'system_control_number' in key:
-                        citation_key = key['system_control_number']
-                    elif 'value' in key:
-                        citation_key = key['value']
-                    elif 'obsolete' in key:
-                        citation_key = key['obsolete']
-                    else:
-                        citation_key = ''
-                if not result:
-                    return ''
-            if isinstance(citation_key, list):
-                for element in citation_key:
-                    return element.replace(' ', '')
-            else:
-                return citation_key.replace(' ', '')
-        else:
-            return ''
 
     def _fetch_fields(self, req_fields, opt_fields=[]):
         fields = {
@@ -162,16 +120,6 @@ class Latex(object):
         elif field == 'SLACcitation':
             out += u'  {1}'.format(field, value)
         return out
-
-    def _get_arxiv_field(self):
-        """Return arXiv field if exists"""
-        if 'report_number' in self.record:
-            for field in self.record['report_number']:
-                if ('source' in field and field['source'] == 'arXiv') \
-                    or 'arxiv_category' in field or \
-                    ('primary' in field and
-                        field['primary'].upper().startswith('ARXIV:')):
-                    return field
 
     def _get_author(self):
         """Return list of name(s) of the author(s)."""
@@ -246,13 +194,13 @@ class Latex(object):
         """Return record titles"""
         record_title = ''
         if 'title' in self.record:
-            if isinstance(self.record['title'], list):
-                for title in self.record['title']:
+            if isinstance(self.record['titles'], list):
+                for title in self.record['titles']:
                     if 'title' in title:
                         record_title = title['title']
                         break
             else:
-                record_title = self.record['title']['title'].strip()
+                record_title = self.record['titles']['title'].strip()
             return "%``" + re.sub(r'(?<!\\)([#&%])', r'\\\1', record_title) \
                          + ",''"
         else:
@@ -330,53 +278,10 @@ class Latex(object):
             if out:
                 return out
 
-    def _get_arxiv(self):
-        arxiv = ''
-        if self.arxiv_field:
-            if 'primary' in self.arxiv_field:
-                arxiv = self.arxiv_field['primary']
-                if 'arxiv_category' in self.arxiv_field:
-                    arxiv += ' [' + self.arxiv_field['arxiv_category'] + ']'
-        return arxiv
-
     def _get_report_number(self):
         """Return report number separated by commas"""
         if not (self._get_publi_info() or self._get_arxiv()):
-            report_number = []
-            if 'report_number' in self.record:
-                for field in self.record['report_number']:
-                    if len(field) == 1:
-                        report_number.append(field['primary'])
-                return ', '.join(str(p) for p in report_number)
-            else:
-                return report_number
-
-    def _get_slac_citation(self):
-        """Return SLACcitation"""
-        cite_line = ''
-        cite_element = ''
-        if self.arxiv_field:
-            if 'primary' in self.arxiv_field:
-                cite_element = self.arxiv_field['primary'].upper()
-                cite_line = '%%CITATION = ' + \
-                            cite_element + ';%%'
-        elif self._get_pubnote():
-            cite_element = self._get_pubnote()
-            cite_line = '%%CITATION = ' + cite_element + ';%%'
-        elif 'report_number' in self.record:
-            if isinstance(self.record['report_number'], list):
-                for field in self.record['report_number']:
-                    if 'arxiv_category' in field:
-                        cite_element = field['primary'].upper()
-                        cite_line = '%%CITATION = ' + cite_element + ';%%'
-                if not cite_element:
-                    cite_element = self.record['report_number'][0]['primary'].upper()
-                    cite_line = '%%CITATION = ' + cite_element + ';%%'
-        else:
-            cite_element = str(self.record['recid'])
-            cite_line = '%%CITATION = ' + 'INSPIRE-' + \
-                cite_element + ';%%'
-        return cite_line
+            return super(Latex, self)._get_report_number()
 
     def _get_pubnote(self):
         """Return publication note"""

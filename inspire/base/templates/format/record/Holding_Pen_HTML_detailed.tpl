@@ -29,7 +29,7 @@
           <!-- Title -->
           <strong>
             <span id='title-text'>
-              {{ record['title.title'][0] }}
+              {{ record.get('titles.title', [""])[0] }}
             </span>
           </strong>
         </h4>
@@ -53,8 +53,8 @@
         <a href='#' id='edit-subjects'><i class='fa fa-pencil-square-o'></i></a>
         <!-- Subjects -->
         <span id='editable-subjects'><strong> Subjects:</strong>
-        {% for term in record['subject_term'] %}
-          <span> {{ term['value'] }}</span>
+        {% for term in record['subject_terms'] %}
+          <span> {{ term['term'] }}</span>
           {{ add_delimiter(loop, ',') }}
         {% endfor %}
         </span>
@@ -63,11 +63,11 @@
 
     <!-- Extra Info Row -->
     <!-- e-Print & pdf
-    {% if record.report_number %}
+    {% if record.arxiv_eprints %}
     <div class="row">
       <div class="col-md-11">
         <b>e-Print:</b> <a href="http://arxiv.org/abs/arXiv:{{ get_arxiv_id(record)|trim }}">{{ get_arxiv_id(record) }}</a>
-        [{{ record['report_number.arxiv_category']|join('') }}]<b> | </b>
+        [{{ record['arxiv_eprints.categories']|join('') }}]<b> | </b>
         <b><a href="http://arXiv.org/pdf/{{ get_arxiv_id(record) }}.pdf">PDF</a></b>
       </div>
     </div><br>
@@ -75,7 +75,7 @@
     -->
 
     <!-- Abstract Row-->
-    {% if record.abstract %}
+    {% if record.abstracts %}
     <div class="row">
       <div class="col-md-11">
         <p align="justify"><strong>Abstract: </strong>{{ get_abstract(record) }}</p>
@@ -84,9 +84,9 @@
     {% endif %}
 
     <!-- Note Row
-    {% if record.note %}
+    {% if record.public_notes %}
     <div class="row">
-      <i class="col-md-11"><h6><strong>Note: </strong>{{ record['note.value'] }}</h6></i>
+      <i class="col-md-11"><h6><strong>Note: </strong>{{ record['public_notes.value'] }}</h6></i>
     </div>
     {% endif %}
     -->

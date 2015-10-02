@@ -192,18 +192,18 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         if sip:
             record = Record(sip.metadata)
             identifiers = []
-            report_numbers = record.get("report_number", [])
-            doi = record.get("doi", {}).get("doi")
+            report_numbers = record.get("report_numbers", [])
+            dois = record.get("dois.value", [])
             if report_numbers:
                 for report_number in report_numbers:
-                    number = report_number.get("primary", "")
+                    number = report_number.get("value", "")
                     if number:
                         identifiers.append(number)
-            if doi:
-                identifiers.append("doi:{0}".format(doi))
+            if dois:
+                identifiers.extend(["doi:{0}".format(d) for d in dois])
 
             categories = []
-            subjects = record.get("subject_term", [])
+            subjects = record.get("subject_terms", [])
             if subjects:
                 for subject in subjects:
                     if isinstance(subject, string_types):
@@ -296,17 +296,17 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         metadata['collections'] = [{'primary': "HEP"}]
         if form_fields['type_of_doc'] == 'thesis':
             metadata['collections'].append({'primary': "THESIS"})
-        if "subject_term" in metadata:
+        if "subject_terms" in metadata:
             # Check if it was imported from arXiv
-            if any([x["scheme"] == "arXiv" for x in metadata["subject_term"]]):
+            if any([x["scheme"] == "arXiv" for x in metadata["subject_terms"]]):
                 metadata['collections'].extend([{'primary': "arXiv"},
                                                 {'primary': "Citeable"}])
                 # Add arXiv as source
-                if metadata.get("abstract"):
-                    metadata['abstract']['source'] = 'arXiv'
+                if metadata.get("abstracts"):
+                    metadata['abstracts'][0]['source'] = 'arXiv'
                 if form_fields.get("arxiv_id"):
-                    metadata['system_number_external'] = {
-                        'system_number_external': 'oai:arXiv.org:' + form_fields['arxiv_id'],
+                    metadata['external_system_number'] = {
+                        'value': 'oai:arXiv.org:' + form_fields['arxiv_id'],
                         'institute': 'arXiv'
                     }
         if "publication_info" in metadata:
@@ -320,7 +320,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Conference name
         # ============================
         if 'conf_name' in form_fields:
-            metadata.setdefault("hidden_note", []).append({
+            metadata.setdefault("hidden_notes", []).append({
                 "value": form_fields['conf_name']
             })
         # ============================
@@ -347,9 +347,6 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # arXiv category in report number
         # ===============================
         if metadata.get("_categories"):
-            for repnum in metadata["report_number"]:
-                if repnum.get("source") == "arXiv":
-                    repnum["arxiv_category"] = metadata.get("_categories").split(' ')[0]
             del metadata["_categories"]
 
         # ============================
@@ -359,7 +356,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             defense_note = {
                 'value': 'Presented on ' + form_fields['defense_date']
             }
-            metadata.setdefault("note", []).append(defense_note)
+            metadata.setdefault("public_notes", []).append(defense_note)
         # ==========
         # Owner Info
         # ==========
@@ -385,7 +382,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # Extra comments
         # ==============
         if form_fields.get('extra_comments'):
-            metadata.setdefault('hidden_note', []).append(
+            metadata.setdefault('hidden_notes', []).append(
                 {
                     'value': form_fields['extra_comments'],
                     'source': 'submitter'

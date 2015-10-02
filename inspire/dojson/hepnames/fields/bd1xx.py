@@ -87,8 +87,8 @@ def name(self, key, value):
     }
 
 
-@hepnames.over('breadcrum_title', '^100..')
-def breadcrum_title(self, key, value):
+@hepnames.over('breadcrumb_title', '^100..')
+def breadcrumb_title(self, key, value):
     """Title used in breadcrum and html title."""
     return value.get('a')
 

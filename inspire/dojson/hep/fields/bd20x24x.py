@@ -82,10 +82,10 @@ def title_translation2marc(self, key, value):
     }
 
 
-@hep.over('title', '^245[10_][0_]')
+@hep.over('titles', '^245[10_][0_]')
 @utils.for_each_value
 @utils.filter_values
-def title(self, key, value):
+def titles(self, key, value):
     """Title Statement."""
     return {
         'title': value.get('a'),
@@ -94,16 +94,16 @@ def title(self, key, value):
     }
 
 
-@hep.over('breadcrum_title', '^245[10_][0_]')
-def breadcrum_title(self, key, value):
+@hep.over('breadcrumb_title', '^245[10_][0_]')
+def breadcrumb_title(self, key, value):
     """Title used in breadcrum and html title."""
     return value.get('a')
 
 
-@hep2marc.over('245', '^title$')
+@hep2marc.over('245', '^titles$')
 @utils.for_each_value
 @utils.filter_values
-def title2marc(self, key, value):
+def titles2marc(self, key, value):
     """Title Statement."""
     return {
         'a': value.get('title'),

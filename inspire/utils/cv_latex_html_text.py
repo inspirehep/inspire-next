@@ -25,27 +25,15 @@ import re
 
 from invenio.base.globals import cfg
 
-
-class MissingRequiredFieldError(LookupError):
-
-    """Base class for exceptions in this module.
-
-    The exception should be raised when the specific,
-    required field doesn't exist in the record.
-    """
-
-    def _init_(self, field):
-        self.field = field
-
-    def _str_(self):
-        return "Missing field: " + self.field
+from .export import MissingRequiredFieldError, Export
 
 
-class Cv_latex_html_text(object):
+class Cv_latex_html_text(Export):
 
     """Class used to output CV format(html) and CV format(text)."""
 
     def __init__(self, record, format_type):
+        super(Cv_latex_html_text, self).__init__(record)
         self.record = record
         self.arxiv_field = self._get_arxiv_field()
         self.format_type = format_type
@@ -137,16 +125,6 @@ class Cv_latex_html_text(object):
             out += u'{1}.<br/>'.format(field, value)
         return out
 
-    def _get_arxiv_field(self):
-        """Return arXiv field if exists"""
-        if 'report_number' in self.record:
-            for field in self.record['report_number']:
-                if ('source' in field and field['source'] == 'arXiv') or \
-                    'arxiv_category' in field or \
-                    ('primary' in field and
-                     field['primary'].upper().startswith('ARXIV:')):
-                    return field
-
     def _get_author(self):
         """Return list of name(s) of the author(s)."""
         re_last_first = re.compile(
@@ -194,22 +172,22 @@ class Cv_latex_html_text(object):
         """Return record title(s)"""
         record_title = ''
         if 'title' in self.record:
-            if isinstance(self.record['title'], list):
-                for title in self.record['title']:
+            if isinstance(self.record['titles'], list):
+                for title in self.record['titles']:
                     if 'title' in title:
                         record_title = title['title']
                         break
             else:
-                record_title = self.record['title']['title'].strip()
+                record_title = self.record['titles']['title'].strip()
 
-            if isinstance(self.record['title'], list):
-                for subtitle in self.record['title']:
+            if isinstance(self.record['titles'], list):
+                for subtitle in self.record['titles']:
                     if 'subtitle' in subtitle:
                         record_title += ' : ' + subtitle['subtitle']
                         break
             else:
-                if 'subtitle' in self.record['title']:
-                    record_title += ' : ' + self.record['title']['subtitle']
+                if 'subtitle' in self.record['titles']:
+                    record_title += ' : ' + self.record['titles']['subtitle']
             if record_title.upper() == record_title or \
                record_title.find('THE') >= 0:
                 record_title = ' '.join([word.capitalize() for word
@@ -266,23 +244,3 @@ class Cv_latex_html_text(object):
                 journal_issue + pages
             if out:
                 return out
-
-    def _get_arxiv(self):
-        """Return arXiv and arXiv category"""
-        arxiv = ''
-        if self.arxiv_field:
-            if 'primary' in self.arxiv_field:
-                arxiv = self.arxiv_field['primary']
-                if 'arxiv_category' in self.arxiv_field:
-                    arxiv += ' [' + self.arxiv_field['arxiv_category'] + ']'
-        return arxiv
-
-    def _get_doi(self):
-        """Return page numbers"""
-        if 'doi' in self.record:
-            doi_list = []
-            for doi in self.record['doi']:
-                doi_list.append(doi['doi'])
-            return ', '.join(doi for doi in list(set(doi_list)))
-        else:
-            return ''

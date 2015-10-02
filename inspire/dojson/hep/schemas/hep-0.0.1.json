@@ -1,9 +1,7 @@
 {
     "description": "An article or thesis or book or...",
     "title": "Publication",
-    "required": [
-        "title"
-    ],
+    "required": [],
     "id": "http://labs.inspirehep.net/schemas/hep-0.0.1.json",
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
@@ -32,7 +30,7 @@
             "description": "Information related to funding. FIXME: Do we care about this? So far only 349 records were tagged and all for a single EU project.",
             "title": "Funding information"
         },
-        "isbn": {
+        "isbns": {
             "uniqueItems": true,
             "items": {
                 "required": [
@@ -71,7 +69,7 @@
             },
             "type": "array"
         },
-        "report_number": {
+        "report_numbers": {
             "uniqueItems": true,
             "items": {
                 "type": "object",
@@ -107,7 +105,7 @@
             },
             "type": "array"
         },
-        "abstract": {
+        "abstracts": {
             "uniqueItems": true,
             "items": {
                 "required": [
@@ -195,7 +193,7 @@
             "type": "string",
             "format": "date"
         },
-        "imprint": {
+        "imprints": {
             "uniqueItems": true,
             "items": {
                 "type": "object",
@@ -305,7 +303,7 @@
             },
             "type": "array"
         },
-        "hidden_note": {
+        "hidden_notes": {
             "uniqueItems": true,
             "items": {
                 "type": "object",
@@ -373,7 +371,7 @@
             "type": "array",
             "description": "FIXME: Shall we split conference information away? FIXME: shall we move the DOI and ISBN next to where it belongs? So that we can also align erratum and friends?"
         },
-        "reference": {
+        "references": {
             "uniqueItems": true,
             "items": {
                 "type": "object",
@@ -530,26 +528,32 @@
             },
             "type": "array"
         },
-        "experiment": {
-            "required": [
-                "value"
-            ],
-            "type": "object",
-            "properties": {
-                "curated_relation": {
-                    "default": false,
-                    "type": "boolean",
-                    "description": "Was the experiment actually proofchecked by a cataloguer?"
-                },
-                "recid": {
-                    "type": "integer",
-                    "description": "Record ID of the corresponding experiment."
-                },
-                "value": {
-                    "type": "string",
-                    "description": "Raw string. Do we actually need it at all? Can it be taken from the record ID? NOTE: I am not adding accelerator field. Do we have papers on accelerators but not on experiments? Can we always derive the accelerator from the experiment?"
+        "accelerator_experiments": {
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "curated_relation": {
+                        "default": false,
+                        "type": "boolean",
+                        "description": "Was the experiment actually proofchecked by a cataloguer?"
+                    },
+                    "recid": {
+                        "type": "integer",
+                        "description": "Record ID of the corresponding experiment."
+                    },
+                    "experiment": {
+                        "type": "string",
+                    },
+                    "accelerator": {
+                        "type": "string",
+                    },
+                    "institution": {
+                        "type": "string",
+                    }
                 }
-            }
+            },
+            "type": "array"
         },
         "arxiv_eprints": {
             "uniqueItems": true,
@@ -576,6 +580,21 @@
             },
             "type": "array"
         },
+        "free_keywords": {
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "source": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "type": "array"
+        },
         "core": {
             "type": "boolean",
             "description": "Whether this document is CORE and hence need special curation. NOTE: set this explicitly to false, in order to have real noncore."
@@ -591,6 +610,45 @@
                     "type": "string",
                     "description": "Title of the book series"
                 }
+            }
+        },
+        "succeeding_entry": {
+            "type": "object",
+            "properties": {
+                "relationship_code": {
+                    "type": "string"
+                },
+                "recid": {
+                    "type": "string"
+                },
+                "isbn": {
+                    "type": "string"
+                }
+            }
+        },
+        "acquisition_source": {
+            "type": "object",
+            "properties": {
+                "source": {
+                    "type": "string",
+                    "description": "Specific volume number"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "Title of the book series"
+                },
+                "method": {
+                    "type": "string",
+                    "description": "Title of the book series"
+                },
+                "date": {
+                    "type": "string",
+                    "description": "Title of the book series"
+                },
+                "submission_number": {
+                    "type": "string",
+                    "description": "Title of the book series"
+                },
             }
         },
         "collaboration": {
@@ -811,6 +869,20 @@
             "type": "array",
             "title": "Document type"
         },
+        "collections": {
+            "minItems": 1,
+            "items": {
+                "properties": {
+                    "primary": {
+                        "type": "string"
+                    }
+                },
+                "type": "string"
+            },
+            "uniqueItems": true,
+            "type": "array",
+            "title": "Collection"
+        },
         "citeable": {
             "type": "boolean",
             "description": "Whether this document can be cited. FIXME: can this be derived from other properties?",
@@ -849,6 +921,11 @@
             "type": "string",
             "description": "FIXME: we shall provide the ISO enum",
             "title": "Language"
+        },
+        "page_nr": {
+            "type": "string",
+            "description": "FIXME: shall it be integer perhaps?",
+            "title": "Number of pages"
         },
         "url": {
             "uniqueItems": true,
@@ -915,7 +992,7 @@
             "type": "array",
             "title": "Corporate authors"
         },
-        "external_system_number": {
+        "external_system_numbers": {
             "uniqueItems": true,
             "items": {
                 "type": "object",

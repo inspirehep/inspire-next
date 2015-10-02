@@ -145,8 +145,8 @@ def position(self, key, value):
     return value.get('a')
 
 
-@jobs.over('breadcrum_title', '^245..')
-def breadcrum_title(self, key, value):
+@jobs.over('breadcrumb_title', '^245..')
+def breadcrumb_title(self, key, value):
     """Title used in breadcrum and html title."""
     return value.get('a')
 

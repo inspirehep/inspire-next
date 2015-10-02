@@ -32,18 +32,16 @@
 
 
 {% macro get_arxiv_id(record) %}
-    {% if ':' in record['report_number'][0]['primary'] %}
-        {{ record['report_number'][0]['primary'][6:] }}
+    {% if ':' in record['arxiv_eprints.value'][0] %}
+        {{ record['arxiv_eprints.value'][0][6:] }}
     {% else %}
-        {{ record['report_number'][0]['primary'] }}
+      {{ record['arxiv_eprints.value'][0] }}
     {% endif %}
 {% endmacro %}
 
 
 {% macro get_abstract(record) %}
-    {% if record['abstract'] is mapping %}
-       {{ record['abstract']['summary'] }}
-    {% else %}
-       {{ record['abstract'][0]['summary'] }}
+    {% if record.abstracts %}
+       {{ record['abstracts'][0]['value'] }}
     {% endif %}
 {% endmacro %}

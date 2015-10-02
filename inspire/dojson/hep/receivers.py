@@ -33,10 +33,8 @@ def earliest_date(sender, *args, **kwargs):
     """Find and assign the earliest date to a HEP paper."""
     dates = []
 
-    if 'preprint_info' in sender:
-        for preprint_info_key in sender['preprint_info']:
-            if 'date' in preprint_info_key:
-                dates.append(preprint_info_key['date'])
+    if 'preprint_date' in sender:
+        dates.append(sender['preprint_date'])
 
     if 'defense_date' in sender:
         for defense_date_key in sender['defense_date']:

@@ -58,7 +58,7 @@ def get_arxiv_id_from_record(record):
     """
     arxiv_id = record.get("arxiv_id")
     if not arxiv_id:
-        report_numbers = record.get('report_number', [])
+        report_numbers = record.get('report_numbers', [])
         for number in report_numbers:
             if number.get("source", "").lower() == "arxiv":
                 arxiv_id = number.get("value")

@@ -196,7 +196,7 @@ INSPIRE_ACCEPTED_CATEGORIES = ["hep-th", "hep-ph", "hep-lat", "hep-ex", "nucl-th
                                "nucl-ex", "physics.acc-ph", "gr-qc", "physics.ins-det",
                                "astro-ph.co", "astro-ph.he"]
 
-OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP = "system_number_external.value"
+OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP = "arxiv_eprints.value"
 WORKFLOWS_HOLDING_PEN_DEFAULT_OUTPUT_FORMAT = "hp"
 
 # Harvester config
@@ -214,7 +214,7 @@ RECORD_PROCESSORS = {
     'json': 'json.load',
     'marcxml': 'inspire.dojson.processors:convert_marcxml',
 }
-RECORDS_BREADCRUMB_TITLE_KEY = 'breadcrum_title'
+RECORDS_BREADCRUMB_TITLE_KEY = 'breadcrumb_title'
 
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
 # invenio keywords to elasticsearch fields
@@ -224,19 +224,19 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
         'p': ["authors.full_name"],
         'e': ['exactauthor.raw'],
     },
-    "abstract": ["abstract.summary"],
+    "abstract": ["abstracts.value"],
     "collection": ["_collections"],
     "affiliation": ["authors.affiliation"],
-    "reportnumber": ["report_number.value"],
-    "experiment": ["accelerator_experiment.experiment"],
-    "title": ["title.title"],
+    "reportnumber": ["report_numbers.value"],
+    "experiment": ["accelerator_experiments.experiment"],
+    "title": ["titles.title"],
     "cnum": ["publication_info.cnum"],
     "980": [
         "collections.primary",
         "collections.secondary",
         "collections.deleted",
     ],
-    "595__c": ["hidden_note.cds"],
+    "595__c": ["hidden_notes.cds"],
     "980__a": ["collections.primary"],
     "980__b": ["collections.secondary"],
     "542__l": ["information_relating_to_copyright_status.copyright_status"],

@@ -34,12 +34,12 @@
             {% if record['affiliation'] %}
               ({{record['affiliation'][0]}})
             {% endif %}
-          </b> 
+          </b>
       </h4>
-      {% if record['breadcrum_title'] %}
+      {% if record['breadcrumb_title'] %}
       <div class="row">
         <div class="col-md-12 record-brief-details">
-        {{ record['breadcrum_title'] }}
+        {{ record['breadcrumb_title'] }}
         </div>
       </div>
       {% endif %}
@@ -68,5 +68,4 @@
   </div>
   </div>
 </div>
-{% endblock %}  
-
+{% endblock %}

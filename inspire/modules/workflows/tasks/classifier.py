@@ -71,7 +71,7 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
                 data = obj.extra_data["pdf"]
                 callback = get_keywords_from_local_file
         if not data:
-            data = [record.get("title.title", "")] + record.get("abstract.summary", [])
+            data = [record.get("titles.title", "")] + record.get("abstracts.value", [])
             callback = get_keywords_from_text
             is_fast_mode = True
 
@@ -142,8 +142,8 @@ def classify_paper_with_deposit(taxonomy, rebuild_cache=False, no_cache=False,
             except AttributeError as err:
                 obj.log.error("Error getting data: {0}".format(err))
 
-            data = [metadata.get("title", {}).get("title", ""),
-                    metadata.get("abstract", {}).get("summary", "")]
+            data = [metadata.get("titles", {}).get("title", ""),
+                    metadata.get("abstracts", {}).get("value", "")]
             callback = get_keywords_from_text
 
         classify_paper(obj, eng, callback, data,

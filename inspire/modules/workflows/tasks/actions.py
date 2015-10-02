@@ -52,12 +52,12 @@ def add_core(obj, eng):
 def update_note(metadata):
     """Check if the record was approved as CORE."""
     new_notes = []
-    for note in metadata.get("note", []):
+    for note in metadata.get("public_notes", []):
         if note.get("value", "") == "*Brief entry*":
             note = {"value": "*Temporary entry*"}
         new_notes.append(note)
     if new_notes:
-        metadata["note"] = new_notes
+        metadata["public_notes"] = new_notes
     return metadata
 
 

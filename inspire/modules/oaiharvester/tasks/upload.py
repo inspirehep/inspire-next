@@ -70,10 +70,10 @@ def update_existing_record_oaiharvest(url=None):
             if diff_type == 'add':
                 if new_key:
                     if isinstance(new_key, list):
-                        # ['subject_term', 0]
+                        # ['subject_terms', 0]
                         updated_keys.append(new_key[0])
                     else:
-                        # 'subject_term'
+                        # 'subject_terms'
                         updated_keys.append(new_key)
                 else:
                     # content must be list of new adds
