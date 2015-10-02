@@ -17,9 +17,11 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors, record_arxiv with context %}
+{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors, record_abstract, record_arxiv, record_cite_modal with context %}
 
-{% from "format/record/Inspire_Default_HTML_brief_macros.tpl" import record_info, record_journal_info, record_abstract  with context %}
+{% from "format/record/Inspire_Default_HTML_brief_macros.tpl" import record_info, record_journal_info,  with context %}
+
+{% bundles "brief-results.css" %}
 
 {% block record_header %}
 <div class="row">
@@ -44,7 +46,7 @@
             {% endif %}
           </b>
       </h4>
-      {{ render_record_authors(10) }}
+      {{ render_record_authors(10, is_brief=true) }}
       <div class="row"><div class="col-md-12"><p></p></div></div>
       <div class="row">
       {% if record.get('publication_info') %}
@@ -65,66 +67,34 @@
           <div class="col-md-6"></div>
         </div>
         <div class="row"><div class="col-md-12"><p></p></div></div>
-        {{ record_abstract() }}
+        {{ record_abstract(is_brief=true) }}         
       </div>
       <div class="col-md-3" id="right-column" >
         {% if record.get('arxiv_eprints') %}
           {% if record.get('arxiv_eprints') | is_list() %}
             {% set filtered_arxiv = record.get('arxiv_eprints') %}
             {% for i in filtered_arxiv %}
-                <a type="button" class="btn  custom-btn blue-btn" id="link-to-pdf"  href="http://arxiv.org/pdf/{{ i.get('value') }}">PDF </a>
+                <a type="button" class="btn  custom-btn blue-btn" id="link-to-pdf"  href="http://arxiv.org/pdf/{{ i.get('value') }}"><i class="fa fa-eye"></i> PDF </a>
             {% endfor %}
           {% endif %}
         {% endif %}
         <span class="dropdown">
-         <button class="btn btn-default dropdown-toggle dropdown-cite" type="button" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#myModal{{record['control_number']}}">
-            Cite
+         <button class="btn btn-default dropdown-toggle dropdown-cite" type="button" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#citeModal{{record['control_number']}}">
+           <i class="fa fa-quote-left"></i> Cite
           </button>
         </span>
-        <!-- MODAL -->
-       <div class="modal fade" id="myModal{{record['control_number']}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog brief-results-modal">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="myModalLabel">Cite Article</h4>
-              <div class="row"><div class="col-md-12"><p></p></div></div>
-              <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle" id="btn-drop" data-toggle="dropdown" aria-expanded="false">
-                  Format: <span id="format{{record['control_number']}}"></span> <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                  <li><a class="pointer bibtex" id="bibtex{{record['control_number']}}" data-recid="{{record['control_number']}}">BibTex</a></li>
-                  <li><a class="pointer latex_eu" id="latex_eu{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(EU)</a></li>
-                  <li><a class="pointer latex_us" id="latex_us{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(US)</a></li>
-                </ul>
-              </div>
-              <a type="button" id="download{{record['control_number']}}" class="btn btn-primary">Download</a>
-            </div>
-            <div class="modal-body">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="editable" contenteditable="true" onclick="document.execCommand('selectAll',false,null)"><pre id="text{{record['control_number']}}"></pre></div>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-            </div>
-            </div>
-          </div>
-        </div>
-          <!-- END MODAL -->
+        {{ record_cite_modal() }}
         <div class="citations-references">
           {% if record.get('date_updated') %}
             <i class="glyphicon glyphicon-calendar"></i> {{ record.get('date_updated').split('-')[0] }}<br/>
           {% endif %}
           {% if  record.get('_cited_by_count') > 0  %}
-            <i class="fa fa-quote-left"></i><span><a href="/record/{{ record.get('control_number') }}/citations"  target="_blank"> Cited {{ record.get('_cited_by_count') }} times</a></span><br/>
+            <i class="fa fa-quote-left"></i><span><a href="/record/{{ record.get('control_number') }}#citations"  target="_blank"> Cited {{ record.get('_cited_by_count') }} times</a></span><br/>
           {% else %}
             <i class="fa fa-quote-left"></i><span> Cited 0 times</span><br/>
           {% endif %}
           {% if record.get('references') %}
-            <i class="fa fa-link"></i><span><a href="/record/{{ record.get('control_number') }}/references" target="_blank">  {{ (record.get('references', '')) | count }} References</a></span>
+            <i class="fa fa-link"></i><span><a href="/record/{{ record.get('control_number') }}#references" target="_blank">  {{ (record.get('references', '')) | count }} References</a></span>
           {% else %}
             <i class="fa fa-link"></i><span> 0 References</span>
           {% endif %}

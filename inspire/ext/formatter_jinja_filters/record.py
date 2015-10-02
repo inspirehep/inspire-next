@@ -27,6 +27,7 @@ from inspire.utils.latex import Latex
 from inspire.utils.cv_latex import Cv_latex
 from inspire.utils.cv_latex_html_text import Cv_latex_html_text
 from invenio_search.api import Query
+from inspire.utils.references import Reference
 
 
 def email_links(value):
@@ -121,6 +122,10 @@ def bibtex(record):
 
 def latex(record, latex_format):
     return Latex(record, latex_format).format()
+
+
+def references(record):
+    return Reference(record).references()
 
 
 def cv_latex(record):
@@ -294,4 +299,5 @@ def get_filters():
         'format_cnum_with_hyphons': format_cnum_with_hyphons,
         'link_to_hep_affiliation': link_to_hep_affiliation,
         'join_nested_lists': join_nested_lists,
+        'references': references,
     }
