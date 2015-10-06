@@ -34,9 +34,11 @@
           </b>
           {% if record['institution'][0]['name']%}
               {% if record['continent'] %}
-                ({{ record['institution'][0]['name'] }} - {{ record['continent'] }})
+                (<a href="/search?p=department_acronym:'{{ record['institution'][0]['name'] }}'&cc=Institutions">
+                  {{ record['institution'][0]['name'] }}
+                </a> - {{ record['continent'] }})
               {% else %}
-                ({{ record['institution'][0]['name'] }})
+                (<a href="/search?p=department_acronym:'{{ record['institution'][0]['name'] }}'&cc=Institutions">{{ record['institution'][0]['name'] }}</a>)
               {% endif %}
             {% endif%}
           {% if record['deadline_date'] %}
@@ -50,6 +52,10 @@
           {% endif %}
           {% if record['research_area']|is_list %}
             {{ record['research_area']|join(', ') }}
+          {% endif %}
+          {% if record['experiment'] %}
+            - 
+            {{ record['experiment']|search_for_experiments }}
           {% endif %}
         </div>
       </div>

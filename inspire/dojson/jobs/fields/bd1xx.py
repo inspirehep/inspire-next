@@ -170,3 +170,9 @@ def rank(self, key, value):
 def urls(self, key, value):
     """Contact person."""
     return value.get('u')
+
+
+@jobs.over('experiment', '^693..')
+@utils.for_each_value
+def experiment(self, key, value):
+    return value.get('e')
