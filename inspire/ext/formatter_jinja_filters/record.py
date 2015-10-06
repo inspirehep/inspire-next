@@ -162,6 +162,7 @@ def conference_date(record):
     return out
 
 
+<<<<<<< HEAD
 def search_for_experiments(value):
     result = []
     result = ', '.join([
@@ -220,6 +221,36 @@ def experiment_link(record):
     return result
 
 
+def format_cnum_with_slash(value):
+    value = str(value)
+    cnum = value[:3] + '/' + value[3:5] + '/'
+    if "-" in value:
+        return value.replace("-", "/")
+    else:
+        if len(value) == 8:
+            day = value[5:7]
+            nr = value[7]
+            return cnum + day + '.' + nr
+        else:
+            day = value[5:]
+            return cnum + day
+
+
+def format_cnum_with_hyphons(value):
+    value = str(value)
+    cnum = value[:3] + '-' + value[3:5] + '-'
+    if "-" in value:
+        return value
+    else:
+        if len(value) == 8:
+            day = value[5:7]
+            nr = value[7]
+            return cnum + day + '.' + nr
+        else:
+            day = value[5:]
+            return cnum + day
+
+
 def get_filters():
     return {
         'email_links': email_links,
@@ -243,4 +274,6 @@ def get_filters():
         'experiment_date': experiment_date,
         'proceedings_link': proceedings_link,
         'experiment_link': experiment_link,
+        'format_cnum_with_slash': format_cnum_with_slash,
+        'format_cnum_with_hyphons': format_cnum_with_hyphons,
     }
