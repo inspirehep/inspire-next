@@ -51,6 +51,12 @@ def breadcrum_title(self, key, value):
     return value.get('a')
 
 
+@journals.over('publisher', '^643..')
+def publisher(self, key, value):
+    """Title used in breadcrum and html title."""
+    return value.get('b')
+
+
 @journals.over('short_title', '^711..')
 def short_title(self, key, value):
     """Title Statement."""
