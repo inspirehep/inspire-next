@@ -26,6 +26,7 @@ from inspire.utils.bibtex import Bibtex
 from inspire.utils.latex import Latex
 from inspire.utils.cv_latex import Cv_latex
 from inspire.utils.cv_latex_html_text import Cv_latex_html_text
+from invenio_search.api import Query
 
 
 def email_links(value):
@@ -161,6 +162,18 @@ def conference_date(record):
     return out
 
 
+def link_to_hep_affiliation(record):
+    reccnt = Query("affiliation:%s" % (record['department_acronym'],))\
+        .search().recids
+    if len(reccnt) > 0:
+        if len(reccnt) == 1:
+            return str(len(reccnt)) + ' Paper from ' +\
+                str(record['department_acronym'])
+        else:
+            return str(len(reccnt)) + ' Papers from ' +\
+                str(record['department_acronym'])
+
+
 def get_filters():
     return {
         'email_links': email_links,
@@ -180,4 +193,5 @@ def get_filters():
         'cv_latex': cv_latex,
         'cv_latex_html_text': cv_latex_html_text,
         'conference_date': conference_date,
+        'link_to_hep_affiliation': link_to_hep_affiliation,
     }
