@@ -162,7 +162,6 @@ def conference_date(record):
     return out
 
 
-<<<<<<< HEAD
 def search_for_experiments(value):
     result = []
     result = ', '.join([
@@ -251,6 +250,18 @@ def format_cnum_with_hyphons(value):
             return cnum + day
 
 
+def link_to_hep_affiliation(record):
+    reccnt = Query("affiliation:%s" % (record['department_acronym'],))\
+        .search().recids
+    if len(reccnt) > 0:
+        if len(reccnt) == 1:
+            return str(len(reccnt)) + ' Paper from ' +\
+                str(record['department_acronym'])
+        else:
+            return str(len(reccnt)) + ' Papers from ' +\
+                str(record['department_acronym'])
+
+
 def get_filters():
     return {
         'email_links': email_links,
@@ -276,4 +287,5 @@ def get_filters():
         'experiment_link': experiment_link,
         'format_cnum_with_slash': format_cnum_with_slash,
         'format_cnum_with_hyphons': format_cnum_with_hyphons,
+        'link_to_hep_affiliation': link_to_hep_affiliation
     }
