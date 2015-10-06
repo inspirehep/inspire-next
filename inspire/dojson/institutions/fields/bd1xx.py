@@ -165,3 +165,10 @@ def public_notes(self, key, value):
 def urls(self, key, value):
     """Contact person."""
     return value.get('u')
+
+
+@institutions.over('historical_data', '^6781..')
+@utils.for_each_value
+def historical_data(self, key, value):
+    """Historical data."""
+    return value.get('a')
