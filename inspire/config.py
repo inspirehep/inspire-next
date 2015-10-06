@@ -231,6 +231,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "reportnumber": ["report_number.value"],
     "experiment": ["accelerator_experiment.experiment"],
     "title": ["title.title"],
+    "cnum": ["publication_info.cnum"],
     "980": [
         "collections.primary",
         "collections.secondary",
