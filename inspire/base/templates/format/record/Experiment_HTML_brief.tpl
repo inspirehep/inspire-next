@@ -52,9 +52,16 @@
       {% endif %}
       <div class="row">
         <div class="col-md-12 record-brief-details">
-        <a href="#">HEP articles associated with {{ record['experiment_name'][0] }}</a>
+        <a href="/search?p=experiment:{{ record['experiment_name'][0] }}&cc=HEP">HEP articles associated with {{ record['experiment_name'][0] }}</a>
         </div>
       </div>
+      {% if record['collaboration'] %}
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+        <a href="/search?p=collaboration:{{ record['collaboration'] }}&cc=HEP">{{ record['collaboration'] }}</a>
+        </div>
+      </div>
+      {% endif %}
     </div>
     </div>
   </div>
