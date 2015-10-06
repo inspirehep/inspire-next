@@ -61,6 +61,13 @@
         </div>
       </div>
       {% endif %}
+      {% if record|link_to_hep_affiliation %}
+      <div class="row">
+        <div class="col-md-12 record-brief-details" >
+          <a href="search?p=affiliation:{{ record['department_acronym']}}&cc=Hep">{{ record|link_to_hep_affiliation }}</a>
+        </div>
+      </div>
+      {% endif %}
       </div>
     </div>
   </div>
