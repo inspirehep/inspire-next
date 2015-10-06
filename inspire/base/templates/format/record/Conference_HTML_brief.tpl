@@ -59,6 +59,9 @@
               {{ record['title']|capitalize }} 
               {% endif %}
               </a> 
+              {% if record['subtitle'] %}
+                : {{ record['subtitle'] }}
+              {% endif %}
               {% if record['acronym'] %} 
                 ({{ record['acronym'] }}) 
               {% endif %}
@@ -74,7 +77,17 @@
       <div class="row">
         <div class="col-md-12 record-brief-details">
           {{ record['cnum'] }},
-          <a href="">Contributions</a> 
+          <!-- MERGE DETAILED RESULTS SO AS TO ENABLE proceedings_link FILTER -->
+          {#
+          {% if record|proceedings_link %}
+            <div class="row">
+              <div class="col-md-12">
+                {{ record|proceedings_link }}, 
+              </div>
+            </div>
+          {% endif %}
+          #}
+          <a href="/search?p=cnum:{{ record['cnum']|format_cnum_with_slash }} or cnum:{{ record['cnum']|format_cnum_with_hyphons }} and 980__a:ConferencePaper">Contributions</a> 
         </div>
       </div>
       {% if record['url'] %}
