@@ -107,7 +107,7 @@
     <subfield code="a">Value</subfield>
     <subfield code="b">cern_reference</subfield>
     <subfield code="c">cds</subfield>
-    <subfield code="9">source</subfield>
+    <subfield code="9">CERN</subfield>
   </datafield>
   <datafield tag="502" ind1=" " ind2=" ">
     <subfield code="b">PhD</subfield>
@@ -118,7 +118,7 @@
     <subfield code="a">
       The relativistic hydrodynamical equations are being examined with the aim of extracting the quantum-mechanical equations (the relativistic Klein-Gordon equation and the Schr\"odinger equation in the non-relativistic limit). In both cases it is required to get the quantum potential, which follows from pressure gradients within a superfluid vacuum medium. This special fluid, endowed with viscosity allows to describe emergence of the flat orbital speeds of spiral galaxies. The viscosity averaged on time vanishes, but   its variance is different from zero. It is a function fluctuating about zero. Therefore the flattening is the result of the energy  exchange of the torque with zero-point fluctuations of the physical vacuum on the ultra-low frequencies.
     </subfield>
-    <subfield code="9">source</subfield>
+    <subfield code="9">arXiv</subfield>
   </datafield>
   <datafield tag="536" ind1=" " ind2=" ">
     <subfield code="0">G:(EU-Grant)317089</subfield>
@@ -152,7 +152,7 @@
   <datafield tag="650" ind1="1" ind2="7">
     <subfield code="2">INSPIRE</subfield>
     <subfield code="a">General Physics</subfield>
-    <subfield code="9">source</subfield>
+    <subfield code="9">submitter</subfield>
   </datafield>
   <datafield tag="653" ind1="1" ind2=" ">
     <subfield code="9">source</subfield>
@@ -164,7 +164,7 @@
   </datafield>
   <datafield tag="695" ind1=" " ind2=" ">
     <subfield code="2">INSPIRE</subfield>
-    <subfield code="e">10</subfield>
+    <subfield code="e">8</subfield>
     <subfield code="a">Monte Carlo</subfield>
   </datafield>
   <datafield tag="701" ind1=" " ind2=" ">
@@ -247,11 +247,11 @@
     <subfield code="q">maintitle</subfield>
     <subfield code="p">publisher</subfield>
     <subfield code="i">isbn</subfield>
-    <subfield code="0">recid</subfield>
+    <subfield code="0">1000</subfield>
     <subfield code="m">misc</subfield>
     <subfield code="e">editors</subfield>
     <subfield code="c">collaboration</subfield>
-    <subfield code="a">doi</subfield>
+    <subfield code="a">10.1063/1.4930630 doi</subfield>
     <subfield code="1">texkey</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">

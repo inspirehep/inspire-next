@@ -1,7 +1,6 @@
 {
     "description": "An article or thesis or book or...",
     "title": "Publication",
-    "required": [],
     "id": "http://labs.inspirehep.net/schemas/hep-0.0.1.json",
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
@@ -543,13 +542,13 @@
                         "description": "Record ID of the corresponding experiment."
                     },
                     "experiment": {
-                        "type": "string",
+                        "type": "string"
                     },
                     "accelerator": {
-                        "type": "string",
+                        "type": "string"
                     },
                     "institution": {
-                        "type": "string",
+                        "type": "string"
                     }
                 }
             },
@@ -561,7 +560,7 @@
                 "properties": {
                     "value": {
                         "type": "string",
-                        "pattern": "\\d{4}.\\d{4}{5}|\\w+-\\+/\\d+"
+                        "pattern": "\\d{4}.\\d{4,5}|\\w+-\\+/\\d+"
                     },
                     "categories": {
                         "items": {
@@ -648,7 +647,7 @@
                 "submission_number": {
                     "type": "string",
                     "description": "Title of the book series"
-                },
+                }
             }
         },
         "collaboration": {
