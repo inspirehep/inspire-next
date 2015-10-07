@@ -29,53 +29,83 @@
 {% endmacro %}
 
 {% macro render_record_authors(number_of_displayed_authors, is_brief) %}
+  {% if is_brief %}
+    {% set number_of_displayed_authors = 5 %}
+  {% else %}
+    {% set number_of_displayed_authors = 20 %}
+  {% endif %}
   {% if record.authors %}
     {% set sep = joiner("; ") %}
     {% set authors = record.authors %}
     {% for author in authors[0:number_of_displayed_authors] %}
       <small>{{ sep() }}</small>
-      <small class="text-left" ><a {% if author.get('affiliation') %} data-toggle="tooltip" data-placement="bottom" title={% if author.get('affiliation')|is_list() %} "{{ author.get('affiliation')[0] }}" {% else %} "{{ author.get('affiliation') }}" {% endif %} {% endif %} href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
+      <small class="text-left">
+        <a {% if not is_brief and author.get('affiliation') %} data-toggle="tooltip" data-placement="bottom" title={% if author.get('affiliation')|is_list %} "{{ author.get('affiliation')[0] }}" {% else %} "{{ author.get('affiliation') }}" {% endif %} {% endif %} href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
           {{ author.get('full_name') }}
-        </a></small>
+        </a>
+      </small>
     {% endfor %}
-    {% if record.authors|length > number_of_displayed_authors %}
+    {% if record.authors | length > number_of_displayed_authors %}
       {{ sep() }}
       <small>
         {% if is_brief %}
-          <a id="authors-show-more" href="#authors_{{ record['control_number'] }}" class="text-muted" data-toggle="modal" data-target="#authors">
+          <a id="authors-show-more" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
+          Show {{ record.authors | count }} authors
         {% else %}
-          <a id="authors-show-more" class="btn" href="#authors_{{ record['control_number'] }}" class="text-muted" data-toggle="modal" data-target="#authors">
+          <a id="authors-show-more" class="btn" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
+          Show {{ record.authors | count }} authors & affiliations
         {% endif %}
-            {{ _(' Show all') }}
         </a>
       </small>
-      <div class="modal fade" id="authors" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="myModalLabel">Authors</h4>
-            </div>
-            <div class="modal-body">
-              {% for author in record.authors %}
-              <small class="text-left" ><a {% if author.get('affiliation') %} data-toggle="tooltip" data-placement="bottom" title={% if author.get('affiliation')|is_list() %} "{{ author.get('affiliation')[0] }}" {% else %} "{{ author.get('affiliation') }}" {% endif %} {% endif %} href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
+    {% else %}
+      <small>
+        {% if not is_brief %}
+          <a id="authors-show-more" class="btn" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
+            Show affiliations
+          </a>
+        {% endif %}
+      </small>
+    {% endif %}
+
+    <div class="modal fade" id="authors_{{ record['control_number'] }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Authors</h4>
+          </div>
+          <div class="modal-body">
+            {% for author in record.authors %}
+              <small class="text-left" >
+              <a href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
                {{ author.get('full_name') }}
-              </a></small>
+              </a>
+               {% if author.get('affiliation') %}
+                {% if author.get('affiliation') | is_list %} 
+                  <a href="{{ url_for('search.search', p='"' + author.get('affiliation')[0] + '"' + "&cc=Institutions") }}">
+                    ({{ author.get('affiliation')[0] }})
+                  </a>
+                {% else %}
+                  <a href="{{ url_for('search.search', p='"' + author.get('affiliation') + '"' + "&cc=Institutions") }}">
+                    ({{ author.get('affiliation') }}) 
+                  </a>
+                {% endif %} 
+              {% endif %}
+              </small>
               <small>{{ sep() }}</small>
-              {% endfor %}
-            </div>
-            <div class="modal-footer">
-            </div>
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
           </div>
         </div>
       </div>
-    {% endif %}
+    </div>
   {% endif %}
 {% endmacro %}
 
 {% macro record_abstract(is_brief) %}
   {% if is_brief %}
-    {% set number_of_words = 50 %}
+    {% set number_of_words = 30 %}
   {% else %}
     {% set number_of_words = 100 %}
   {% endif %}
