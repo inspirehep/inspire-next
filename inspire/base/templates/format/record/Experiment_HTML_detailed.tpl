@@ -20,7 +20,6 @@
 {% extends "format/record/Default_HTML_detailed.tpl" %}
 
 {% block header %}
-{{ record }}
   <div class="row">
     <div class="col-md-12">
       <h3>
