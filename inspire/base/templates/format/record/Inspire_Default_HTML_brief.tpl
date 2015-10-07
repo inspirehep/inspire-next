@@ -46,7 +46,7 @@
             {% endif %}
           </b>
       </h4>
-      {{ render_record_authors(10, is_brief=true) }}
+      {{ render_record_authors(is_brief=true) }}
       <div class="row"><div class="col-md-12"><p></p></div></div>
       <div class="row">
       {% if record.get('publication_info') %}
@@ -67,7 +67,7 @@
           <div class="col-md-6"></div>
         </div>
         <div class="row"><div class="col-md-12"><p></p></div></div>
-        {{ record_abstract(is_brief=true) }}         
+        {{ record_abstract(is_brief=true) }}
       </div>
       <div class="col-md-3" id="right-column" >
         {% if record.get('arxiv_eprints') %}
@@ -80,7 +80,7 @@
         {% endif %}
         <span class="dropdown">
          <button class="btn btn-default dropdown-toggle dropdown-cite" type="button" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#citeModal{{record['control_number']}}">
-           <i class="fa fa-quote-left"></i> Cite
+           <i class="fa fa-quote-right"></i> Cite
           </button>
         </span>
         {{ record_cite_modal() }}
