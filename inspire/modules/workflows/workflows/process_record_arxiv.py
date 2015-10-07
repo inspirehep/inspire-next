@@ -174,8 +174,13 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
                 final_identifiers.extend(system_no)
 
             # Get subject categories, adding main one first. Order matters here.
-            categories = record.get("arxiv_eprints.categories", [])
-            categories.extend(record.get("subject_terms.term", []))
+            record_categories = record.get("arxiv_eprints.categories", []) + \
+                record.get("subject_terms.term", [])
+            for category_list in record_categories:
+                if isinstance(category_list, list):
+                    categories.extend(category_list)
+                else:
+                    categories.append(category_list)
             categories = list(OrderedDict.fromkeys(categories))  # Unique only
             abstract = record.get("abstracts.value", [""])[0]
             authors = record.get("authors", [])

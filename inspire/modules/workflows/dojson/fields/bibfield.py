@@ -55,8 +55,8 @@ def arxiv_eprints(self, key, value):
     if isinstance(value, dict):
         value = [value]
     for val in value:
-        if value.get('institute') == "arXiv":
-            return [{'value': value.get('value')}]
+        if val.get('institute') == "arXiv":
+            return [{'value': val.get('value')}]
 
 
 @bibfield.over('external_system_numbers', '^system_number_external$')
@@ -122,11 +122,25 @@ def authors(self, key, value):
 
 
 @bibfield.over('titles', '^title$')
-def title(self, key, value):
-    return [{
-        "title": value.get('title'),
-        "source": value.get('source')
-    }]
+def titles(self, key, value):
+    def get_value(existing):
+        if not isinstance(value, list):
+            values = [value]
+        else:
+            values = value
+        out = []
+        for val in values:
+            out.append({
+                'title': val.get('a'),
+                'subtitle': val.get('b'),
+                'source': val.get('9'),
+            })
+        return existing + out
+
+    if 'titles' in self:
+        return get_value(self['titles'])
+    else:
+        return get_value([])
 
 
 @bibfield.over('breadcrumb_title', '^title$')
@@ -218,19 +232,31 @@ def thesis_supervisor(self, key, value):
 @utils.for_each_value
 def title_translation(self, key, value):
     return {
-        "value": value.get('value'),
-        "subtitle": value.get('subtitle'),
-    }
-
-
-@bibfield.over('title_arxiv', '^title_arXiv$')
-@utils.for_each_value
-def title_arxiv(self, key, value):
-    return {
         "title": value.get('value'),
         "subtitle": value.get('subtitle'),
-        "source": "arXiv"
     }
+
+
+@bibfield.over('titles', '^title_arXiv$')
+def title_arxiv(self, key, value):
+    def get_value(existing):
+        if not isinstance(value, list):
+            values = [value]
+        else:
+            values = value
+        out = []
+        for val in values:
+            out.append({
+                'title': val.get('a'),
+                'subtitle': val.get('b'),
+                'source': val.get('9'),
+            })
+        return existing + out
+
+    if 'titles' in self:
+        return get_value(self['titles'])
+    else:
+        return get_value([])
 
 
 @bibfield.over('spires_sysnos', '^spires_sysno$')
@@ -243,6 +269,18 @@ def url(self, key, value):
     if not isinstance(value, list):
         return [value]
     return value
+
+
+@bibfield.over('titles_old', '^title_old$')
+def titles_old(self, key, value):
+    if not isinstance(value, list):
+        value = [value]
+    return [
+        {
+            'title': val.get('main'),
+            'subtitle': val.get('subtitle')
+        } for val in value
+    ]
 
 
 @bibfield.over('publication_info', '^publication_info$')

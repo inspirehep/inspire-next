@@ -99,7 +99,6 @@ def report_numbers(self, key, value):
     """Source of Acquisition."""
     def get_value(value):
         return {
-            'primary': bool(value.get('a')),
             'source': value.get('9'),
             'value': value.get('a', value.get('z')),
         }

@@ -158,7 +158,6 @@ def creation_modification_date2marc(self, key, value):
 @hepnames.over('spires_sysnos', '^970..')
 @jobs.over('spires_sysnos', '^970..')
 @utils.for_each_value
-@utils.filter_values
 def spires_sysnos(self, key, value):
     """Old SPIRES number."""
     return value.get('a')
@@ -167,7 +166,6 @@ def spires_sysnos(self, key, value):
 @hep2marc.over('970', 'spires_sysnos')
 @hepnames2marc.over('970', 'spires_sysnos')
 @utils.for_each_value
-@utils.filter_values
 def spires_sysnos2marc(self, key, value):
     """Old SPIRES number."""
     return {

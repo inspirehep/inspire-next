@@ -17,15 +17,24 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
+{% macro render_author_names(author) %}
+  <a{% if author.affiliations|length > 0 %}
+      data-toggle="tooltip"
+      data-placement="bottom"
+      title="{{ author.get('affiliations')[0] }}"
+    {% endif %}
+    href="{{ url_for('search.search', p='author:"' + author.full_name + '"') }}">
+    {{ author.get('full_name') }}
+  </a>
+{% endmacro %}
+
 {% macro render_record_authors(number_of_displayed_authors) %}
   {% if record.authors %}
   {% set sep = joiner("; ") %}
   {% set authors = record.authors %}
   {% for author in authors[0:number_of_displayed_authors] %}
-  <small>{{ sep() }}</small>
-  <small class="text-left" ><a {% if author.get('affiliation') %} data-toggle="tooltip" data-placement="bottom" title={% if author.get('affiliation')|is_list() %} "{{ author.get('affiliation')[0] }}" {% else %} "{{ author.get('affiliation') }}" {% endif %} {% endif %} href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
-      {{ author.get('full_name') }}
-    </a></small>
+    <small>{{ sep() }}</small>
+    <small class="text-left">{{ render_author_names(author) }}</small>
   {% endfor %}
   {% if record.authors|length > number_of_displayed_authors %}
   {{ sep() }}
@@ -43,10 +52,8 @@
       </div>
       <div class="modal-body">
         {% for author in record.authors %}
-        <small class="text-left" ><a {% if author.get('affiliation') %} data-toggle="tooltip" data-placement="bottom" title={% if author.get('affiliation')|is_list() %} "{{ author.get('affiliation')[0] }}" {% else %} "{{ author.get('affiliation') }}" {% endif %} {% endif %} href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
-         {{ author.get('full_name') }}
-        </a></small>
-        <small>{{ sep() }}</small>
+          <small class="text-left">{{ render_author_names(author) }}</small>
+          <small>{{ sep() }}</small>
         {% endfor %}
       </div>
       <div class="modal-footer">

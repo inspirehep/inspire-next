@@ -34,18 +34,20 @@ def authors(self, key, value):
     value = utils.force_list(value)
 
     def get_value(value):
-        affiliation = None
+        affiliations = []
         if value.get('u'):
-            affiliation = list(set(utils.force_list(
+            affiliations = list(set(utils.force_list(
                 value.get('u'))))
+            affiliations = [{'value': aff} for aff in affiliations]
         return {
             'full_name': value.get('a'),
-            'relator_term': value.get('e'),
+            'role': value.get('e'),
             'alternative_name': value.get('q'),
-            'INSPIRE_id': value.get('i'),
-            'external_id': value.get('j'),
-            'e_mail': value.get('m'),
-            'affiliation': affiliation,
+            'inspire_id': value.get('i'),
+            'orcid': value.get('j'),
+            'recid': value.get('x'),
+            'email': value.get('m'),
+            'affiliations': affiliations,
             'profile': inspire_dojson_utils.create_profile_url(
                 value.get('x')
             ),
@@ -66,23 +68,23 @@ def authors(self, key, value):
     return filtered_authors
 
 
-@hep2marc.over('100', 'authors')
+@hep2marc.over('100', '^authors$')
 def authors2marc(self, key, value):
     """Main Entry-Personal Name."""
     value = utils.force_list(value)
-
     def get_value(value):
+        affiliations = [
+            aff.get('value') for aff in value.get('affiliations', [])
+        ]
         return {
             'a': value.get('full_name'),
-            'e': value.get('relator_term'),
+            'e': value.get('role'),
             'q': value.get('alternative_name'),
-            'i': value.get('INSPIRE_id'),
-            'j': value.get('external_id'),
-            'm': value.get('e_mail'),
-            'u': utils.force_list(
-                value.get('affiliation')
-            ),
-            'x': value.get('profile'),
+            'i': value.get('inspire_id'),
+            'j': value.get('orcid'),
+            'm': value.get('email'),
+            'u': affiliations,
+            'x': value.get('recid'),
             'y': value.get('claimed')
         }
 
@@ -103,7 +105,7 @@ def corporate_author(self, key, value):
     }
 
 
-@hep2marc.over('110', 'corporate_author')
+@hep2marc.over('110', '^corporate_author$')
 @utils.for_each_value
 @utils.filter_values
 def corporate_author2marc(self, key, value):

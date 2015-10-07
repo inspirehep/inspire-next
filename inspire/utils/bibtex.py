@@ -294,8 +294,8 @@ class Bibtex(Export):
         result = []
         spacinginitials = re.compile(r'([A-Z][a-z]{0,1}[}]?\.)(\b|[-\{])')
         if 'authors' in self.record:
-            if self.record['authors'][0]['relator_term'] and \
-               self.record['authors'][0]['relator_term'] == 'ed.':
+            if self.record['authors'][0]['role'] and \
+               self.record['authors'][0]['role'] == 'ed.':
                 result.append(spacinginitials.sub(
                     r'\1 \2', self.record['authors'][0]['full_name']
                 ))
@@ -361,12 +361,12 @@ class Bibtex(Export):
         school = ''
         if 'authors' in self.record:
             for author in self.record['authors']:
-                if 'affiliation' in author and author['affiliation']:
-                    if len(author['affiliation']) > 1:
-                        school = author['affiliation'][0]
+                if author.get('affiliations'):
+                    if len(author['affiliations']) > 1:
+                        school = author['affiliations'][0]['value']
                     else:
-                        school = ''.join(affilation for affilation in
-                                         author['affiliation'])
+                        school = ''.join(affilation.get('value') for affilation in
+                                         author['affiliations'])
         return school
 
     def _get_booktitle(self):
@@ -559,8 +559,7 @@ class Bibtex(Export):
                                 if 'year' in val:
                                     note += "(" + val['year'] + ")"
                                 elif 'preprint_date' in self.record:
-                                    note += "(" + self.record['preprint_date']\
-                                                    .split('-')[0] + ")"
+                                    note += "(" + self.record['preprint_date'].split('-')[0] + ")"
                                 result = '[' + note + ']'
                                 note_list.append(result)
                             elif 'note' in val and \

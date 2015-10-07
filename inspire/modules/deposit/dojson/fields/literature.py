@@ -81,6 +81,8 @@ def authors(self, key, value):
                 match_authors_initials(name[1]):
             name[1] = name[1].replace(' ', '')
             author['full_name'] = ", ".join(name)
+        author['affiliations'] = [dict(value=author['affiliation'])]
+        del author['affiliation']
     return value
 
 
@@ -129,10 +131,13 @@ def preprint_created(self, key, value):
         self['imprints'] = [dict(date=value)]
 
 
-@literature.over('defense_date', '^defense_date$')
+@literature.over('_defense_date', '^defense_date$')
 @utils.for_each_value
 def defense_date(self, key, value):
-    return {'date': value}
+    if 'thesis' in self:
+        self['thesis']['defense_date'] = value
+    else:
+        self['thesis'] = dict(defense_date=value)
 
 
 @literature.over('_degree_type', '^degree_type$')
@@ -266,26 +271,51 @@ def thesis_supervisor(self, key, value):
 
 
 @literature.over('titles', '^title$')
-@utils.for_each_value
 def titles(self, key, value):
-    return {
-        "title": value
-    }
+    def get_value(existing):
+        if not isinstance(value, list):
+            values = [value]
+        else:
+            values = value
+        out = []
+        for val in values:
+            out.append({
+                'title': val,
+            })
+        return existing + out
+
+    if 'titles' in self:
+        return get_value(self['titles'])
+    else:
+        return get_value([])
 
 
 @literature.over('title_translation', '^title_translation$')
 def title_translation(self, key, value):
     return {
-        "title_translation": value
+        "title": value
     }
 
 
-@literature.over('title_arxiv', '^title_arXiv$')
+@literature.over('titles', '^title_arXiv$')
 def title_arxiv(self, key, value):
-    return {
-        "title": value,
-        "source": "arXiv"
-    }
+    def get_value(existing):
+        if not isinstance(value, list):
+            values = [value]
+        else:
+            values = value
+        out = []
+        for val in values:
+            out.append({
+                'title': val,
+                'source': 'arXiv'
+            })
+        return existing + out
+
+    if 'titles' in self:
+        return get_value(self['titles'])
+    else:
+        return get_value([])
 
 
 @literature.over('url', '^url$')

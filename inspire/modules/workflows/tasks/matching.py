@@ -136,13 +136,14 @@ def is_too_old(record, days_ago=5):
     If the record is older then it's probably an update of an earlier
     record, and we don't want those.
     """
-    defense_dates = record.get('defense_date.date', '')
-    for defense_date in defense_dates:
-        parsed_date = datetime.datetime.strptime(defense_date, "%Y-%m-%d")
-        if date_older_than(parsed_date,
-                           datetime.datetime.now(),
-                           days=days_ago):
-            return True
+    earliest_date = record.get('earliest_date', '')
+    if not earliest_date:
+        earliest_date = record.get('preprint_date', '')
+    parsed_date = datetime.datetime.strptime(earliest_date, "%Y-%m-%d")
+    if date_older_than(parsed_date,
+                       datetime.datetime.now(),
+                       days=days_ago):
+        return True
 
 
 def exists_in_inspire_or_rejected(days_ago=None):
