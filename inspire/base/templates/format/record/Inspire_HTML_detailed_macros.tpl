@@ -122,17 +122,6 @@
   {% endif %}
 {% endmacro %}
 
-{% macro record_arxiv() %}
-	{% if record.get('report_number') %}
-		{% for report_number in record.get('report_number') %}
-			{% if report_number.get('source') == 'arXiv' %}
-				<span class="eprint">e-Print</span>
-				<a href="http://arxiv.org/abs/{{ report_number.get('primary') }}" title="arXiv" target="_blank">{{ report_number.get('primary') }} <i class="fa fa-external-link"></i></a>
-			{% endif %}
-		{% endfor %}
-	{% endif %}
-{% endmacro %}
-
 {% macro detailed_record_abstract() %}
   <div id="record-abstract">
     <div id="record-abstract-title">
