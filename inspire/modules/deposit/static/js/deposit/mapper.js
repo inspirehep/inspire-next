@@ -61,7 +61,7 @@ define(function(require, exports, module) {
     this.extract_contributor = options.extract_contributor ?
       options.extract_contributor : function(contributor) {
         return contributor;
-    };
+      };
   }
 
   DataMapper.prototype = {

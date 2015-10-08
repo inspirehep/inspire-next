@@ -32,20 +32,20 @@ define(
     return defineComponent(CoreApprovalAction);
 
     /**
-    * .. js:class:: CoreApprovalAction()
-    *
-    * Handles the events from the UI button elements for acceping/rejecting
-    * records by sending the selected action to the server.
-    *
-    * The actionGroupSelector is required for handling display of any action
-    * elements to be hidden or shown. It should be wrapped around every action
-    * UI component.
-    *
-    * :param string actionResolveSelector: DOM selector of elements resolving actions.
-    * :param string actionGroupSelector: DOM selector for wrapping display elements
-    * :param string action_url: URL for resolving the action.
-    *
-    */
+     * .. js:class:: CoreApprovalAction()
+     *
+     * Handles the events from the UI button elements for acceping/rejecting
+     * records by sending the selected action to the server.
+     *
+     * The actionGroupSelector is required for handling display of any action
+     * elements to be hidden or shown. It should be wrapped around every action
+     * UI component.
+     *
+     * :param string actionResolveSelector: DOM selector of elements resolving actions.
+     * :param string actionGroupSelector: DOM selector for wrapping display elements
+     * :param string action_url: URL for resolving the action.
+     *
+     */
     function CoreApprovalAction() {
 
       this.attributes({
@@ -57,7 +57,7 @@ define(
       });
 
       // POST object init
-      this.get_action_values = function (elem) {
+      this.get_action_values = function(elem) {
         var actionValues = {
           "value": elem.data("value"),
           "objectids": []
@@ -67,7 +67,7 @@ define(
         return actionValues;
       };
 
-      this.get_pdf_submission_value = function () {
+      this.get_pdf_submission_value = function() {
         return $(this.attr.pdfCheckboxSelector).prop("checked");
       };
 
@@ -85,7 +85,7 @@ define(
         // FIXME: on the details page we should move to next record instead
       };
 
-      this.onAccept = function (ev, data) {
+      this.onAccept = function(ev, data) {
         var element = $(data.el);
         var payload = this.get_action_values(element);
         var pdf_submission = this.get_pdf_submission_value();
@@ -110,20 +110,20 @@ define(
         this.pdf_submission_readonly();
       };
 
-      this.preRejection = function (ev, data) {
+      this.preRejection = function(ev, data) {
         var element = $(data.el);
         var payload = this.get_action_values(element);
         console.log("GOT HERE");
         this.trigger(document, "loadRejectionModal", payload);
       };
 
-      this.doRejection = function (ev, data) {
+      this.doRejection = function(ev, data) {
         data.value = "reject";
         var element = $("button.core-approval-action-reject[data-objectid=" + data.objectid + "]");
         this.requestToServer(data, element);
       };
 
-      this.pdf_submission_readonly = function () {
+      this.pdf_submission_readonly = function() {
         $(this.attr.pdfCheckboxSelector).prop("disabled", true);
       };
 

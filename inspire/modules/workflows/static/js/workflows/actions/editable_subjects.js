@@ -61,7 +61,9 @@ define(
       this.createPayloadForEdit = function() {
         return {
           "objectid": this.attr.objectid,
-          "subjects": this.attr.tagInput.tagsinput('items').map(function(x) {return x.trim();})
+          "subjects": this.attr.tagInput.tagsinput('items').map(function(x) {
+            return x.trim();
+          })
         };
       };
 
@@ -74,9 +76,11 @@ define(
 
         // Differentiate the colors between the existing and the new tags
         this.attr.tagInput.tagsinput({
-          tagClass: function (item) {
+          tagClass: function(item) {
             var subjectCodes = that.attr.shortcodes
-              .map(function(shortcode) { return shortcode.to; });
+              .map(function(shortcode) {
+                return shortcode.to;
+              });
 
             var subject = $.trim(item);
 
@@ -98,8 +102,12 @@ define(
         this.attr.tagInput.on('beforeItemAdd', function(ev) {
           var originalValue = ev.item;
           var newValue = that.attr.shortcodes
-            .filter(function(shortcode) { return shortcode.from === originalValue; })
-            .map(function(shortcode) { return shortcode.to; })
+            .filter(function(shortcode) {
+              return shortcode.from === originalValue;
+            })
+            .map(function(shortcode) {
+              return shortcode.to;
+            })
             .toString();
 
           // Check if a new value was returned;

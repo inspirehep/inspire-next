@@ -47,9 +47,9 @@ define([
           var affiliations = $.map(response, function(item, idx) {
             return item.institution;
           });
-          return affiliations.sort(function(a, b){
-            if(a.affiliation < b.affiliation) return -1;
-            if(a.affiliation > b.affiliation) return 1;
+          return affiliations.sort(function(a, b) {
+            if (a.affiliation < b.affiliation) return -1;
+            if (a.affiliation > b.affiliation) return 1;
             return 0;
           })
         }

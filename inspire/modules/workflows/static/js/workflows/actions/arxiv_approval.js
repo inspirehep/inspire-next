@@ -31,20 +31,20 @@ define(
     return defineComponent(ArxivApprovalAction);
 
     /**
-    * .. js:class:: ArxivApprovalAction()
-    *
-    * Handles the events from the UI button elements for acceping/rejecting
-    * records by sending the selected action to the server.
-    *
-    * The actionGroupSelector is required for handling display of any action
-    * elements to be hidden or shown. It should be wrapped around every action
-    * UI component.
-    *
-    * :param string actionResolveSelector: DOM selector of elements resolving actions.
-    * :param string actionGroupSelector: DOM selector for wrapping display elements
-    * :param string action_url: URL for resolving the action.
-    *
-    */
+     * .. js:class:: ArxivApprovalAction()
+     *
+     * Handles the events from the UI button elements for acceping/rejecting
+     * records by sending the selected action to the server.
+     *
+     * The actionGroupSelector is required for handling display of any action
+     * elements to be hidden or shown. It should be wrapped around every action
+     * UI component.
+     *
+     * :param string actionResolveSelector: DOM selector of elements resolving actions.
+     * :param string actionGroupSelector: DOM selector for wrapping display elements
+     * :param string action_url: URL for resolving the action.
+     *
+     */
     function ArxivApprovalAction() {
 
       this.attributes({
@@ -57,17 +57,17 @@ define(
 
 
       // PDF-related functions
-      this.get_pdf_submission_value = function () {
+      this.get_pdf_submission_value = function() {
         return $(this.attr.pdfCheckboxSelector).prop("checked");
       };
 
-      this.pdf_submission_readonly = function () {
+      this.pdf_submission_readonly = function() {
         $(this.attr.pdfCheckboxSelector).prop("disabled", true);
       };
 
 
       // POST object init
-      this.get_action_values = function (elem) {
+      this.get_action_values = function(elem) {
         var actionValues = {
           "value": elem.data("value"),
           "objectids": []
@@ -81,14 +81,14 @@ define(
       // Action functions (batch + standard)
       this.onBatchAction = function(ev, data) {
         var payload = {
-          "value":data.value,
+          "value": data.value,
           "objectids": data.selectedIDs
         };
 
         this.requestToServer(payload);
       };
 
-      this.onAction = function (ev, data) {
+      this.onAction = function(ev, data) {
         var element = $(data.el);
         var payload = this.get_action_values(element);
 
@@ -107,11 +107,13 @@ define(
             type: "POST",
             url: $this.attr.action_url,
             data: payload,
-            success: function (data) {
+            success: function(data) {
               $this.post_request(data);
-              $this.trigger(document, "removeSentElements", {"ids": objectids});
+              $this.trigger(document, "removeSentElements", {
+                "ids": objectids
+              });
             },
-            error: function (request, status, error) {
+            error: function(request, status, error) {
               console.log(error);
             }
           });

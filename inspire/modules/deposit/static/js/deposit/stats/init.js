@@ -21,8 +21,9 @@
  */
 
 require(['js/deposit/stats/deposition_charts',
-         'bootstrap-datetimepicker',
-         'highcharts'], function() {
+  'bootstrap-datetimepicker',
+  'highcharts'
+], function() {
   // Loads the required module into a bundle that can be used in the html
   // pages.
 });

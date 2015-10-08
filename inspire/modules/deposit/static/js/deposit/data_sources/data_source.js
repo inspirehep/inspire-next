@@ -101,8 +101,8 @@ define(function(require, exports, module) {
       var importDataPromise = new $.Deferred();
 
       $.ajax({
-        url: this.url + id
-      })
+          url: this.url + id
+        })
         .always(function(data) {
           var result = processQuery(data);
           importDataPromise.resolve(result);

@@ -212,7 +212,7 @@ define(function(require, exports, module) {
           that.subject_kb = response_kb;
         });
 
-      if(!this.isFormBlank()){
+      if (!this.isFormBlank()) {
         this.showForm();
       }
     },
@@ -238,9 +238,9 @@ define(function(require, exports, module) {
 
       this.$importButton.click(function(event) {
         that.validate(that.$importIdsFields)
-        // trigger like this because importData returns a Deferred object
-        // and importData needs to have set 'this' to the form object
-        .then(that.importData.bind(that));
+          // trigger like this because importData returns a Deferred object
+          // and importData needs to have set 'this' to the form object
+          .then(that.importData.bind(that));
       });
 
       this.$skipButton.click(function(event) {
@@ -272,13 +272,12 @@ define(function(require, exports, module) {
         }
       }.bind(this));
 
-      $(document).on('click', '.panel div.clickable', function (e) {
+      $(document).on('click', '.panel div.clickable', function(e) {
         var $this = $(this);
         var $toggle_element = $this.find('.panel-toggle');
-        if ( $(e.target).is($toggle_element) ) {
+        if ($(e.target).is($toggle_element)) {
           return;
-        }
-        else {
+        } else {
           $toggle_element.click();
         }
       });
@@ -504,9 +503,9 @@ define(function(require, exports, module) {
           .children('.panel-body')
           .children('.form-group:visible')
           .length === 0) {
-            $(field_name).slideUp();
+          $(field_name).slideUp();
         }
-        if ( to_hide ) {
+        if (to_hide) {
           $(field_name).children('.panel-collapse').removeClass("in")
         }
       });
@@ -603,11 +602,11 @@ define(function(require, exports, module) {
         this.$doi_field.val(importedFields.doi);
         repeats = true;
       }
-      if (importFields.arxiv === "" && importedFields.arxiv !== undefined){
+      if (importFields.arxiv === "" && importedFields.arxiv !== undefined) {
         this.$arxiv_id_field.val(importedFields.arxiv);
         repeats = true;
       }
-      if (importFields.arxiv === "" && importedFields.isbn !== undefined){
+      if (importFields.arxiv === "" && importedFields.isbn !== undefined) {
         this.$isbn_field.val(importedFields.isbn);
         repeats = true;
       }
@@ -710,15 +709,16 @@ define(function(require, exports, module) {
      */
     handleSubjectRelevance: function handleSubjectRelevance() {
       var subjects = this.$subject.val();
-      if (subjects === null) { subjects = []; }
+      if (subjects === null) {
+        subjects = [];
+      }
       var HEP_subjects = $.grep(subjects, function(element) {
         return element.indexOf("HEP") > -1;
       });
       if (typeof HEP_subjects === "undefined" || HEP_subjects.length === 0) {
         $("#hep-relevance-alert").remove();
         this.$comments.before("<div class='alert alert-info' id='hep-relevance-alert' role='alert'><strong>TIP:</strong> Why is this content relevant to INSPIRE?</div>");
-      }
-      else {
+      } else {
         $("#hep-relevance-alert").remove();
       }
     },
@@ -740,10 +740,10 @@ define(function(require, exports, module) {
     },
 
     /**
-      * Gets knowledge base dictionary.
-      * @param kbname knowledge base name
-      * @returns dictionary with the knowledge base
-      */
+     * Gets knowledge base dictionary.
+     * @param kbname knowledge base name
+     * @returns dictionary with the knowledge base
+     */
     getKB: function getKB(kbname) {
       var url = "/api/knowledge/" + kbname + "/mappings";
       var deferred = new $.Deferred();
@@ -822,17 +822,17 @@ define(function(require, exports, module) {
       var categories_arXiv;
       if (dataMapping.categories_arXiv) {
         categories_arXiv = dataMapping.categories_arXiv.split(' ');
-        $.each(categories_arXiv, function(i, category){
-        if (!that.subject_kb[category]) {
-          for(var subject_key in that.subject_kb) {
-            if (category.indexOf(subject_key) === 0) {
-              $('#subject').multiselect('select', that.subject_kb[subject_key]);
+        $.each(categories_arXiv, function(i, category) {
+          if (!that.subject_kb[category]) {
+            for (var subject_key in that.subject_kb) {
+              if (category.indexOf(subject_key) === 0) {
+                $('#subject').multiselect('select', that.subject_kb[subject_key]);
+              }
             }
+          } else {
+            $('#subject').multiselect('select', that.subject_kb[category]);
           }
-        } else {
-          $('#subject').multiselect('select', that.subject_kb[category]);
-        }
-      });
+        });
       }
 
       // triggers the "dataFormSave" in order the empty fields can be saved as well

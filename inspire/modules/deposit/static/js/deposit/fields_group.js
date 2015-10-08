@@ -27,7 +27,7 @@ define(function(require, exports, module) {
    * the selector are empty, and when at least one of them is filled
    */
   var $ = require("jquery"),
-      buckets = require("buckets");
+    buckets = require("buckets");
 
   /**
    * Constructor.
@@ -129,37 +129,37 @@ define(function(require, exports, module) {
   };
 
 
-$.fn.fieldsGroup = function(options) {
+  $.fn.fieldsGroup = function(options) {
 
-  var $fields = this;
-  var data = new FieldsGroup($fields, options);
+    var $fields = this;
+    var data = new FieldsGroup($fields, options);
 
-  this.each(function() {
-    var $this = $(this);
-    // attach jQuery plugin
-    if (!$this.data('fields-group')) {
-      $this.data('fields-group', data);
-    }
-  });
+    this.each(function() {
+      var $this = $(this);
+      // attach jQuery plugin
+      if (!$this.data('fields-group')) {
+        $this.data('fields-group', data);
+      }
+    });
 
-  data.init();
-  data.connectEvents();
+    data.init();
+    data.connectEvents();
 
-  return data;
-};
+    return data;
+  };
 
-$.fn.fieldsGroup.defaults = {
+  $.fn.fieldsGroup.defaults = {
 
-  /**
-   * @param onEmpty {function} triggered when all fields are empty
-   */
-  onEmpty: function() {},
+    /**
+     * @param onEmpty {function} triggered when all fields are empty
+     */
+    onEmpty: function() {},
 
-  /**
-   * @param onNotEmpty {function} triggered when the first field gets
-   *  filled
-   */
-  onNotEmpty: function() {},
-};
+    /**
+     * @param onNotEmpty {function} triggered when the first field gets
+     *  filled
+     */
+    onNotEmpty: function() {},
+  };
 
 });
