@@ -24,7 +24,7 @@
 define(function(require, exports, module) {
   var $ = require("jquery");
   var jQueryPlugin = require('js/jquery_plugin');
-  
+
   var MessageBox = (function() {
 
     /**

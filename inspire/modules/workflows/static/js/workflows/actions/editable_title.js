@@ -68,14 +68,14 @@ define(
         $(this.attr.modalSelector)
           .modal('show')
 
-          // Save title
-          .on('click', this.attr.saveChangesSelector, function(ev) {
-            that.attr.newTitle = $(that.attr.newTitleSelector).val().trim();
+        // Save title
+        .on('click', this.attr.saveChangesSelector, function(ev) {
+          that.attr.newTitle = $(that.attr.newTitleSelector).val().trim();
 
-            // Replace the title with the edited one
-            $(that.attr.titleSelector).text(that.attr.newTitle);
-            that.makePostRequest();
-          });
+          // Replace the title with the edited one
+          $(that.attr.titleSelector).text(that.attr.newTitle);
+          that.makePostRequest();
+        });
       };
 
       this.makePostRequest = function(ev) {

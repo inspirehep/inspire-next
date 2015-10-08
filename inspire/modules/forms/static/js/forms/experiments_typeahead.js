@@ -47,9 +47,9 @@ define([
           return '/search?cc=Experiments&p=' + pattern + '&of=recjson&rg=100'
         },
         filter: function(response) {
-          return response.sort(function(a, b){
-            if(a.experiment_name < b.experiment_name) return -1;
-            if(a.experiment_name > b.experiment_name) return 1;
+          return response.sort(function(a, b) {
+            if (a.experiment_name < b.experiment_name) return -1;
+            if (a.experiment_name > b.experiment_name) return 1;
             return 0;
           })
         }

@@ -27,9 +27,11 @@ define(function(require, exports, module) {
 
   function massageColumnData(data) {
     var series = [];
-    for(var i in data) { 
-      series.push({name: data[i].name,
-                   data: data[i].data});
+    for (var i in data) {
+      series.push({
+        name: data[i].name,
+        data: data[i].data
+      });
     }
 
     return series;
@@ -47,7 +49,9 @@ define(function(require, exports, module) {
       options.categories : ["empty"];
 
     this.data = options.data ?
-      options.data : [['empty', 1]];
+      options.data : [
+        ['empty', 1]
+      ];
 
     this.pie_options = {
       chart: {
@@ -84,35 +88,35 @@ define(function(require, exports, module) {
 
     this.column_options = {
       chart: {
-          type: 'column'
+        type: 'column'
       },
       title: {
-          text: this.title
+        text: this.title
       },
       subtitle: {
-          text: this.subtitle
+        text: this.subtitle
       },
       xAxis: {
-          categories: this.categories
+        categories: this.categories
       },
       yAxis: {
-          min: 0,
-          title: {
-              text: 'Times filled by users'
-          }
+        min: 0,
+        title: {
+          text: 'Times filled by users'
+        }
       },
       plotOptions: {
-          column: {
-              pointPadding: 0.2,
-              borderWidth: 0
-          }
+        column: {
+          pointPadding: 0.2,
+          borderWidth: 0
+        }
       },
       series: massageColumnData(this.data)
     };
   }
 
   DepositionChart.prototype = {
-    init: function(data){
+    init: function(data) {
       var chart_options = {
         title: "Submitted depositions",
         type: "column",
@@ -125,8 +129,8 @@ define(function(require, exports, module) {
       );
     },
 
-    update: function(data){
-      if(Object.keys(data.deposition_data).length > 0){
+    update: function(data) {
+      if (Object.keys(data.deposition_data).length > 0) {
         var chart_type = $chart_type.val();
         var chart_data = ((chart_type === "column") ?
           data.columns_deposition_data : data.overall_depositions.pie);
@@ -137,9 +141,8 @@ define(function(require, exports, module) {
           data: chart_data
         };
 
-        if(chart_type === "column") {
-          chart_options.categories = (data.metadata_categories === '') ?
-            ['empty'] : data.metadata_categories;
+        if (chart_type === "column") {
+          chart_options.categories = (data.metadata_categories === '') ? ['empty'] : data.metadata_categories;
         }
 
         $include_hidden.show();
@@ -156,22 +159,22 @@ define(function(require, exports, module) {
       }
     },
 
-    filter: function(url){
+    filter: function(url) {
       var since_date = $('#since_date').val();
       var until_date = $('#until_date').val();
       var params = {};
 
-      if(since_date !== "")
+      if (since_date !== "")
         params.since_date = since_date;
-      if(until_date !== "")
+      if (until_date !== "")
         params.until_date = until_date;
-      if($include_hidden.hasClass("active"))
+      if ($include_hidden.hasClass("active"))
         params.include_hidden = true;
 
       $.ajax({
-        url: url,
-        data: params
-      })
+          url: url,
+          data: params
+        })
         .done(function(data) {
           var charts_data = {
             deposition_data: data.stats,
@@ -181,7 +184,7 @@ define(function(require, exports, module) {
           }
           $deposition_charts.empty();
           new DepositionChart({}).update(charts_data);
-          if(Object.keys(charts_data.deposition_data).length > 1){
+          if (Object.keys(charts_data.deposition_data).length > 1) {
             $('div[id^="chart-"]').parents('.row').show();
             new DepositionChart({}).generate_individual(charts_data);
           } else {
@@ -190,23 +193,23 @@ define(function(require, exports, module) {
         });
     },
 
-    reset_filter: function(url){
+    reset_filter: function(url) {
       $('#since_date').val('');
       $('#until_date').val('');
 
       this.filter(url);
     },
 
-    generate: function(){
-      if(this.type === "pie")
+    generate: function() {
+      if (this.type === "pie")
         return this.pie_options;
-      if(this.type === "column")
+      if (this.type === "column")
         return this.column_options;
     },
 
-    generate_individual: function(data){
-      $.each(data.deposition_data, function(name, values){
-        $('#chart-'+name).highcharts(
+    generate_individual: function(data) {
+      $.each(data.deposition_data, function(name, values) {
+        $('#chart-' + name).highcharts(
           new DepositionChart({
             title: name + " submissions",
             type: "pie",
@@ -216,16 +219,20 @@ define(function(require, exports, module) {
       });
     },
 
-    radial_colors: function(){
-      colors = Highcharts.map(Highcharts.getOptions().colors, function (color) {
-                          return {
-                            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-                            stops: [
-                                [0, color],
-                                [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-                            ]
-                          };
-                        });
+    radial_colors: function() {
+      colors = Highcharts.map(Highcharts.getOptions().colors, function(color) {
+        return {
+          radialGradient: {
+            cx: 0.5,
+            cy: 0.3,
+            r: 0.7
+          },
+          stops: [
+            [0, color],
+            [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+          ]
+        };
+      });
       return colors;
     }
   }

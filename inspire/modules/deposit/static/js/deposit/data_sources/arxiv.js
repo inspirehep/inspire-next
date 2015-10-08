@@ -34,18 +34,18 @@ define(function(require, exports, module) {
 
       common_mapping: function(data) {
         return {
-            doi: data.doi,
-            title: data.title,
-            title_source: 'arXiv',
-            title_arXiv: data.title,
-            categories_arXiv: data.categories,
-            abstract: data.abstract,
-            authors: data.authors,
-            journal_title: data["journal-ref"],
-            preprint_created: data.created,
-            license_url: data.license,
-            note: data.comments,
-          };
+          doi: data.doi,
+          title: data.title,
+          title_source: 'arXiv',
+          title_arXiv: data.title,
+          categories_arXiv: data.categories,
+          abstract: data.abstract,
+          authors: data.authors,
+          journal_title: data["journal-ref"],
+          preprint_created: data.created,
+          license_url: data.license,
+          note: data.comments,
+        };
       },
 
       extract_contributor: function(authors) {

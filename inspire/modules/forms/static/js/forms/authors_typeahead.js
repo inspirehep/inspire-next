@@ -44,9 +44,9 @@ define([
           return '/search?cc=HepNames&p=' + pattern + '&of=recjson&rg=100'
         },
         filter: function(response) {
-          return response.sort(function(a, b){
-            if(a.name.value < b.name.value) return -1;
-            if(a.name.value > b.name.value) return 1;
+          return response.sort(function(a, b) {
+            if (a.name.value < b.name.value) return -1;
+            if (a.name.value > b.name.value) return 1;
             return 0;
           })
         }
@@ -87,10 +87,10 @@ define([
         },
         suggestion: function(data) {
           data.affiliation = null;
-          if ( data.positions ) {
+          if (data.positions) {
             var currentPosition = $.map(data.positions, function(item, idx) {
-              if ( 'status' in item && 'institution' in item  ) {
-                if ( item.status.toLowerCase() === "current" ) {
+              if ('status' in item && 'institution' in item) {
+                if (item.status.toLowerCase() === "current") {
                   data.affiliation = item.institution.name;
                 }
               }

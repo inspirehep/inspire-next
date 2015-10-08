@@ -31,12 +31,12 @@ define(
     return defineComponent(CoreApprovalModal);
 
     /**
-    * .. js:class:: CoreApprovalModal()
-    *
-    * Handles the events from the UI button elements for acceping/rejecting
-    * records by sending the selected action to the server.
-    *
-    */
+     * .. js:class:: CoreApprovalModal()
+     *
+     * Handles the events from the UI button elements for acceping/rejecting
+     * records by sending the selected action to the server.
+     *
+     */
     function CoreApprovalModal() {
 
       this.attributes({

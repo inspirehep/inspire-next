@@ -59,19 +59,19 @@ define([
             })
 
             return '/search?cc=Conferences&p=' + pattern + '&of=recjson&rg=100'
+          },
+          filter: function(response) {
+            response = response.sort(function(a, b) {
+              if (a.title < b.title) return -1;
+              if (a.title > b.title) return 1;
+              return 0;
+            });
+            return response;
+          }
         },
-        filter: function(response) {
-          response = response.sort(function(a, b) {
-            if(a.title < b.title) return -1;
-            if(a.title > b.title) return 1;
-            return 0;
-          });
-          return response;
-        }
-      },
-      datumTokenizer: function() {},
-      queryTokenizer: Bloodhound.tokenizers.whitespace,
-      limit: 100,
+        datumTokenizer: function() {},
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        limit: 100,
       })
     });
 

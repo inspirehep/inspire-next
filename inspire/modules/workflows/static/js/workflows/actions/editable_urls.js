@@ -107,7 +107,9 @@ define(
       this.addUrlsToPage = function() {
         var that = this;
         $(this.attr.urlLinksSelector).replaceWith(
-          tpl_after_edit_urls({urls: that.attr.urls})
+          tpl_after_edit_urls({
+            urls: that.attr.urls
+          })
         );
       };
 
@@ -123,32 +125,32 @@ define(
         $(this.attr.modalSelector)
           .modal('show')
 
-          // Delete the url using 'data-id' from the delete button
-          .on('click', this.attr.deleteUrlSelector, function(ev) {
-            var url_container = "#" + $(this).data('id');
-            $(url_container).remove();
-          })
+        // Delete the url using 'data-id' from the delete button
+        .on('click', this.attr.deleteUrlSelector, function(ev) {
+          var url_container = "#" + $(this).data('id');
+          $(url_container).remove();
+        })
 
-          // Create new url input and add id attr for it
-          .on('click', this.attr.addNewUrlSelector, function(ev) {
-            $(that.attr.urlInputsSelector).append(tpl_edit_urls_input({
-              id: that.attr.idCounter++
-            }));
-            $(that.attr.urlInputsSelector + " input:last").focus();
-          })
+        // Create new url input and add id attr for it
+        .on('click', this.attr.addNewUrlSelector, function(ev) {
+          $(that.attr.urlInputsSelector).append(tpl_edit_urls_input({
+            id: that.attr.idCounter++
+          }));
+          $(that.attr.urlInputsSelector + " input:last").focus();
+        })
 
-          // Save urls in list getting the value from the modal inputs
-          .on('click', this.attr.saveChangesSelector, function(ev) {
-            $(that.attr.inputsSelector).each(function(index, element) {
-              if (element.value.length) {
-                newUrlList.push(element.value);
-              }
-            });
-
-            that.attr.urls = newUrlList;
-            that.makePostRequest();
-            that.addUrlsToPage();
+        // Save urls in list getting the value from the modal inputs
+        .on('click', this.attr.saveChangesSelector, function(ev) {
+          $(that.attr.inputsSelector).each(function(index, element) {
+            if (element.value.length) {
+              newUrlList.push(element.value);
+            }
           });
+
+          that.attr.urls = newUrlList;
+          that.makePostRequest();
+          that.addUrlsToPage();
+        });
       };
 
 
