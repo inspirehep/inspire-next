@@ -19,7 +19,7 @@
 
 {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors, record_abstract, record_arxiv, record_cite_modal with context %}
 
-{% from "format/record/Inspire_Default_HTML_brief_macros.tpl" import record_info, record_journal_info,  with context %}
+{% from "format/record/Inspire_Default_HTML_brief_macros.tpl" import record_info, record_journal_info with context %}
 
 {% bundles "brief-results.css" %}
 
@@ -62,7 +62,7 @@
       </div>
         <div class="row">
           <div class="col-md-6">
-           {{ record_arxiv() }}
+           {{ record_arxiv(is_brief=true) }}
           </div>
           <div class="col-md-6"></div>
         </div>
