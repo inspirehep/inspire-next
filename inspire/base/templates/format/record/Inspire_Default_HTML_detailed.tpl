@@ -25,7 +25,7 @@
 
 {% block header %}
   {{ record_cite_modal() }}
-  <div id="record-collection-heading">
+  <div id="{{record.collections | record_current_collection("") }}" class="record-collection-heading ellipsis">
     {{ record_collection_heading() }}
   </div>
   <div id="record-title">

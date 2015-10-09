@@ -20,6 +20,7 @@
 {% extends "format/record/Default_HTML_brief_base.tpl" %}
 
 {% block record_header %}
+
 <div class="row">
   <div class="col-md-12">
     <div class="panel panel-default custom-panel" >

@@ -23,30 +23,140 @@
  @teal: #EDF3F3;
  @grey: #7E8D8E;
  @purple: #293E51;
+ @darken: 8%;
 
- .ellipsis {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-    color: grey;
- }
-
- #collections {
+#collections {
     background-color: @blue-purple;
     font-weight: 700;
     font-size: large;
     height: 60px;
     padding: 20px;
 
-@teal: #EDF3F3;
-@grey: #7E8D8E;
-@purple: #293E51;
+    span+span {
+        margin-left: 20px;
+    }
 
-#record_content .record-detailed .record-header {
-    padding: 10px;
-    font-size: 15px;
+    .currect-collection {
+        color: @literature-collection;
+    }
+
+    #hep-collection {
+        color: @literature-collection;
+    }
+
+    #hepnames-collection {
+        color: @authors-collection;
+    }
+
+    #conferences-collection {
+        color: @conferences-collection;
+    }
+
+    #jobs-collection {
+        color: @literature-collection;
+    }
+}
+
+.collection-header#hep-collection {
+    background-color: @literature-collection;
+
+    .search-box input {
+        background-color: darken(@literature-collection, @darken);
+    }
+}
+
+
+.collection-header#hepnames-collection {
+    background-color: @authors-collection;
+
+    .search-box input {
+        background-color: darken(@authors-collection, @darken);
+    }
+}
+
+.collection-header#conferences-collection {
+    background-color: @conferences-collection;
+
+    .search-box input {
+        background-color: darken(@conferences-collection, @darken);
+    }
+}
+
+.collection-header#jobs-collection {
+    background-color: @jobs-collection;
+
+    .search-box input {
+        background-color: darken(@jobs-collection, @darken);
+    }
+}
+
+.collection-header#experiments-collection {
+    background-color: @experiments-collection;
+
+    .search-box input {
+        background-color: darken(@experiments-collection, @darken);
+    }
+}
+
+.collection-header#journals-collection {
+    background-color: @journals-collection;
+
+    .search-box input {
+        background-color: darken(@journals-collection, @darken);
+    }
+}
+
+.collection-header#institutions-collection {
+    background-color: @institutions-collection;
+
+    .search-box input {
+        background-color: darken(@institutions-collection, @darken);
+    }
+}
+
+.search-form {
+
+    // Do not group these rules!
+    ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+        color: white;
+    }
+    :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+        color: white;
+        opacity: 1;
+    }
+    ::-moz-placeholder { /* Mozilla Firefox 19+ */
+        color: white;
+        opacity: 1;
+    }
+    :-ms-input-placeholder { /* Internet Explorer 10-11 */
+        color: white;
+    }
+}
+
+.collection-header {
+    background-color: @literature-collection;
+    font-weight: 700;
+    height: 150px;
+    padding: 30px 20px 0 20px;
+    z-index: -1;
+
+    .currect-collection {
+        font-size: x-large;
+    }
+
+    .search-box input {
+        font-family: Lato, sans-serif, FontAwesome;
+        background-color: darken(@literature-collection, @darken);
+        border: 0px;
+        padding: 10px;
+        width: 300px;
+        font-size: initial;
+        font-weight: 300;
+    }
+}
+
+#collections, .collection-header {
+    color: white;
 }
 
 #record_content .record-detailed {
@@ -64,93 +174,139 @@
 }
 
 #topnav {
-	min-height: 65px;
-	border-bottom: 0px;
+    min-height: 65px;
+    border-bottom: 0px;
 }
 
 body {
-	background-color: @teal;
+    background-color: @teal;
 }
 
-#record-collection-heading {
-	margin-bottom: 25px;
+.record-collection-heading {
+    font-weight: 700;
 
-	#search-hep {
-		color: @orange;
-		font-weight: 700;
-	}
+    #title {
+        color: grey;
+        opacity: 0.5;
+    }
+}
 
-	#title {
-		color: grey;
-		opacity: 0.5;
-	}
+#hep-collection.ellipsis {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    color: grey;
+    margin-bottom: 20px;
+    font-weight: 200;
+    color: lighten(grey, 25%);
+}
+
+#search-title {
+    font-weight: 700;
+    font-size: 110%;
+}
+
+#hep-collection #search-title {
+    color: @literature-collection;  
+}
+
+#authors-collection #search-title {
+    color: @literature-collection;  
+}
+
+#conferences-collection #search-title {
+    color: @conferences-collection;  
+}
+
+#jobs-collection #search-title {
+    color: @jobs-collection;  
+}
+
+#data-collection #search-title {
+    color: @data-collection;  
+}
+
+#experiments-collection #search-title {
+    color: @experiments-collection;  
+}
+
+#institutions-collection #search-title {
+    color: @institutions-collection;  
 }
 
 #record-title {
-	font-size: x-large;
-	padding-bottom: 15px;
-	font-weight: bold;
+    font-size: x-large;
+    padding-bottom: 15px;
+    font-weight: bold;
+}
+
+#record_content {
+    margin-top: -50px;
 }
 
 #record_content .record-detailed .record-header {
-	padding: 20px;
-	background-color: white;
-	text-align: left;
-	font-size: normal;
+    padding: 20px;
+    background-color: white;
+    text-align: left;
+    padding: 10px;
+    font-size: 15px;
+    color: black;
 }
 
 .pdf-btn, .cite-btn {
-	color: white;
-	border: none;
+    color: white;
+    border: none;
 }
 
 .cite-btn:link, .cite-btn:visited, .cite-btn:hover, .cite-btn:active {
-	color: white;
+    color: white;
 }
 
 .cite-btn, .cite-btn:link, .cite-btn:visited, .cite-btn:hover, .cite-btn:active {
-	background-color: #293D51;
-	z-index: 0;
+    background-color: #293D51;
+    z-index: 0;
 }
 
 @media screen and (min-width: @screen-sm-min) {
-	.cite-modal {
-		width: 900px;
-	}
-	#record-keywords {
-		margin-top: 20px;
-	}
+    .cite-modal {
+        width: 900px;
+    }
+    #record-keywords {
+        margin-top: 20px;
+    }
 }
 
 .cite-modal {
-	width: 75%;
-	font-weight: normal;
-	text-align: left;
+    width: 75%;
+    font-weight: normal;
+    text-align: left;
 } 
 
 #citeModalLabel {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }  
 
 #record-title, .journal,
 #external_links, #doi-eprint-experiment, {
-	color: @blue-purple;
+    color: @blue-purple;
 }
 
 #external_links {
-	float: left;
+    float: left;
 }
 
 #record-authors #authors-show-more {
-	background-color: #293D51;
-	color: white;
-	padding: 3px 6px;
+    background-color: #293D51;
+    color: white;
+    padding: 3px 6px;
 }
 
 .journal {
-	font-size: 16px;
-	margin-top: 15px;
-	font-weight: 500;
+    font-size: 16px;
+    margin-top: 15px;
+    font-weight: 500;
 }
 
 #record-abstract-keywords {
@@ -166,155 +322,162 @@ body {
 }
 
 #record-abstract-title, #record-keywords-title, #record-reference-title, #record-citation-title {
-	font-size: 18px;
-	font-weight: 600;
+    font-size: 18px;
+    font-weight: 600;
 }
 
 #record-abstract-title, #record-keywords-title {
-	margin-bottom: 20px;
-}
-
-.record-detailed {
-	margin-left: 3.5%;
-	width: 93%;
+    margin-bottom: 20px;
 }
 
 #references, #citations {
 
-	height: 500px;
-	overflow: auto;
+    height: 500px;
+    overflow: auto;
 
-	#references-filter, #citations-filter {
+    #references-filter, #citations-filter {
 
-		margin-top: 20px;
+        margin-top: 20px;
 
-		form {
-			margin-right: 10px;
-			display: inline;
-		}
+        form {
+            margin-right: 10px;
+            display: inline;
+        }
 
-		input {
-			background-color: @teal;
-			border: 0px;
-			line-height: 2;
-		}
+        input {
+            background-color: @teal;
+            border: 0px;
+            line-height: 2;
+        }
 
-		button {
-			color: @purple;
-		}
-	}
+        button {
+            color: @purple;
+        }
 
-	form input {
-		font-family: Lato, sans-serif, FontAwesome;
-	}
+        // Do not group these rules!
+        ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+            color: gray;
+        }
+        :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+            color: gray;
+            opacity: 1;
+        }
+        ::-moz-placeholder { /* Mozilla Firefox 19+ */
+            color: gray;
+            opacity: 1;
+        }
+        :-ms-input-placeholder { /* Internet Explorer 10-11 */
+            color: gray;
+        }
+    }
 
-	.table > tbody > tr > td {
-		border-top: 0px;
-	}
+    .table > tbody > tr > td {
+        border-top: 0px;
+    }
 
-	.panel-heading {
-		position: absolute;
-		background-color: white;
-		width: 90%;
+    .panel-heading {
+        position: absolute;
+        background-color: white;
+        width: 90%;
 
-		.references-citations-table {
-			margin-top: 15px;	
-		}
+        .references-citations-table {
+            margin-top: 15px;   
+        }
 
-		.references-citations-showing {
-			font-weight: 700;
-			font-size: larger;
-		}
+        .references-citations-showing {
+            font-weight: 700;
+            font-size: larger;
+        }
 
-		.references-citations-cited-by {
-			color: @grey;
-		}
-	}
+        .references-citations-cited-by {
+            color: @grey;
+        }
+    }
 
-	.panel-body {
+    .panel-body {
 
-		padding-top: 150px;
-		padding-bottom: 50px;
+        padding-top: 150px;
+        padding-bottom: 50px;
 
-		.reference-record {
+        .reference-record {
 
-			margin-bottom: 15px;
+            margin-bottom: 15px;
 
-			.reference-authors, .reference-subtitle {
-				color: @grey;
+            .reference-authors, .reference-subtitle {
+                color: @grey;
 
-				.reference-detail:after {
-					content: ';';
-				}
-				.reference-detail:last-child:after {
-					content: '';
-				}
-			}
+                .reference-detail:after {
+                    content: ';';
+                }
+                .reference-detail:last-child:after {
+                    content: '';
+                }
+            }
 
-			.reference-journal {
-				color: black;	
-			}
-		}
+            .reference-journal {
+                color: black;   
+            }
+        }
 
-		.reference-title {
-			color: @blue;
-			width: 90%;
-			font-size: larger;
-			font-weight: 700;
-		}
+        .reference-title {
+            color: @blue;
+            width: 90%;
+            font-size: larger;
+            font-weight: 700;
+        }
 
-		.reference-journal {
-			color: @purple;
-		}
-	}
+        .reference-journal {
+            color: @purple;
+        }
+    }
 
-	.panel-footer {
-		position:absolute;
-		width:100%;
-		bottom:20px;
-		background-color: white;
-		border: none;
-		width: 90%;
-	}
+    .panel-footer {
+        position:absolute;
+        width:100%;
+        bottom:20px;
+        background-color: white;
+        border: none;
+        width: 90%;
+    }
 
-	a.btn {
-		background-color: @teal;
-		margin-right: 5px;
-		border: 0px;
-		color: @grey;
-		font-weight: 700;
-	}
+    a.btn {
+        background-color: @teal;
+        margin-right: 5px;
+        border: 0px;
+        color: @grey;
+        font-weight: 700;
+    }
 }
 
 #record_content .record-detailed .record-details {
-	padding-top: 30px;
-	text-align: left;
-	background-color: @teal;
+    padding-top: 30px;
+    text-align: left;
+    background-color: @teal;
 }
 
 #doi-eprint-experiment {
-	margin-top: 25px;
-	margin-bottom: 15px;
-	padding-bottom: 20px;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    padding-bottom: 20px;
 
-	.doi, .eprint {
-		font-weight: 600;
-	}
+    .doi, .eprint {
+        font-weight: 600;
+    }
 }
 
 .cite-pdf-buttons {
-	text-align: right;
+    text-align: right;
 }
 
 ::-webkit-scrollbar {
-	-webkit-appearance: none;
-	width: 7px;
+    -webkit-appearance: none;
+    width: 7px;
 }
 
 ::-webkit-scrollbar-thumb {
     border-radius: 4px;
-	background-color: rgba(0,0,0,.5);
-	-webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
 
 #record_content > div.row {

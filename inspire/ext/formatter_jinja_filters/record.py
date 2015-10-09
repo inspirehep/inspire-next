@@ -272,6 +272,106 @@ def join_nested_lists(l, sep):
     return sep.join(new_list)
 
 
+def collection_get_title(collection_name):
+    if collection_name is None:
+        return ""
+    collection_name = collection_name.strip().lower()
+    if collection_name == "hep":
+        return '<i class="fa fa-book"></i> Literature'
+    elif collection_name == "hepnames":
+        return '<i class="fa fa-users"></i> Authors'
+    elif collection_name == "conferences":
+        return '<i class="fa fa-calendar"></i> Conferences'
+    elif (collection_name == "job" or collection_name == "jobs"):
+        return '<i class="fa fa-briefcase"></i> Jobs'
+    elif collection_name == "institutions":
+        return '<i class="fa fa-building-o"></i> Institutions'
+    elif collection_name == "experiment" or collection_name == "experiments":
+        return '<i class="fa fa-flask"></i> Experiments'
+    else:
+        return ""
+
+
+def record_current_collection(collections, current_collection):
+    if collections is None:
+        return ""
+    try:
+        for collection_name in collections:
+
+            collection_name = collection_name['primary'].strip().lower()
+
+            if collection_name == "hep" and (current_collection == "Literature"
+                                             or current_collection == ""):
+                return "hep-collection"
+            elif collection_name == "hepnames" and (current_collection == "Authors"
+                                                    or current_collection == ""):
+                return "hepnames-collection"
+            elif collection_name == "conferences" and \
+                    (current_collection == "Conferences" or current_collection == ""):
+                return "conferences-collection"
+            elif (collection_name == "jobs" or collection_name == "job") and \
+                    (current_collection == "Jobs" or current_collection == ""):
+                return "jobs-collection"
+            elif (collection_name == "institution" or collection_name == "institutions") and \
+                    (current_collection == "Institutions" or current_collection == ""):
+                return "institutions-collection"
+            elif collection_name == "experiment" and \
+                    (current_collection == "Experiments" or current_collection == ""):
+                return "experiments-collection"
+            elif collection_name == "journals" and \
+                    (current_collection == "Journals" or current_collection == ""):
+                return "journals-collection"
+    except KeyError:
+        pass
+
+    return ""
+
+
+def collection_select_current(collection_name, current_collection):
+    if collection_name is None:
+        return ""
+    collection_name = collection_name.strip().lower()
+    if collection_name == "hep" and current_collection == "Literature":
+        return collection_name + "-collection"
+    elif collection_name == "hepnames" and current_collection == "Authors":
+        return collection_name + "-collection"
+    elif collection_name == "conferences" and \
+            current_collection == "Conferences":
+        return collection_name + "-collection"
+    elif collection_name == "jobs" and current_collection == "Jobs":
+        return collection_name + "-collection"
+    else:
+        return ""
+
+
+def search_collection(collection_name, is_search):
+    if collection_name is None:
+        return ""
+    collection_name = collection_name.strip().lower()
+
+    if collection_name == "hep":
+        search = 'Literature'
+    elif collection_name == "hepnames":
+        search = 'Authors'
+    elif collection_name == "conferences":
+        search = 'Conferences'
+    elif collection_name == "job" or collection_name == "jobs":
+        search = 'Jobs'
+    elif collection_name == "institution" or collection_name == "institutions":
+        search = 'Institutions'
+    elif collection_name == "experiment":
+        search = 'Experiments'
+    elif collection_name == "journals":
+        search = 'Journals'
+    else:
+        return ""
+
+    if is_search:
+        return '&#xF002; Search ' + search
+    else:
+        return 'Search ' + search + ' >'
+
+
 def get_filters():
     return {
         'email_links': email_links,
@@ -300,4 +400,8 @@ def get_filters():
         'link_to_hep_affiliation': link_to_hep_affiliation,
         'join_nested_lists': join_nested_lists,
         'references': references,
+        'collection_get_title': collection_get_title,
+        'collection_select_current': collection_select_current,
+        'search_collection': search_collection,
+        'record_current_collection': record_current_collection,
     }

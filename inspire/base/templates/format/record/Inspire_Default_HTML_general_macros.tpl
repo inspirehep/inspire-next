@@ -40,7 +40,7 @@
     {% for author in authors[0:number_of_displayed_authors] %}
       <small>{{ sep() }}</small>
       <small class="text-left">
-        <a {% if not is_brief and author.get('affiliation') %} data-toggle="tooltip" data-placement="bottom" title={% if author.get('affiliation')|is_list %} "{{ author.get('affiliation')[0] }}" {% else %} "{{ author.get('affiliation') }}" {% endif %} {% endif %} href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
+        <a {% if not is_brief and author.get('affiliations') %} data-toggle="tooltip" data-placement="bottom" title={% if author.get('affiliations')|is_list %} "{{ author.get('affiliations')[0].value }}" {% else %} "{{ author.get('affiliations').value }}" {% endif %} {% endif %} href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
           {{ author.get('full_name') }}
         </a>
       </small>
@@ -80,14 +80,14 @@
               <a href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
                {{ author.get('full_name') }}
               </a>
-               {% if author.get('affiliation') %}
-                {% if author.get('affiliation') | is_list %} 
-                  <a href="{{ url_for('search.search', p='"' + author.get('affiliation')[0] + '"' + "&cc=Institutions") }}">
-                    ({{ author.get('affiliation')[0] }})
+               {% if author.get('affiliations') %}
+                {% if author.get('affiliations') | is_list %} 
+                  <a href="{{ url_for('search.search', p='"' + author.get('affiliations')[0].value + '"' + "&cc=Institutions") }}">
+                    ({{ author.get('affiliations')[0].value }})
                   </a>
                 {% else %}
-                  <a href="{{ url_for('search.search', p='"' + author.get('affiliation') + '"' + "&cc=Institutions") }}">
-                    ({{ author.get('affiliation') }}) 
+                  <a href="{{ url_for('search.search', p='"' + author.get('affiliations').value + '"' + "&cc=Institutions") }}">
+                    ({{ author.get('affiliations').value }}) 
                   </a>
                 {% endif %} 
               {% endif %}

@@ -17,12 +17,20 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
+{% from "records/Inspire_Default_HTML_detailed_macros.tpl" import display_collections, display_current_collection, collection_header,  search_bar with context %}
+
 {% extends "page.html" %}
 
 {% block title %}
 {% endblock title %}
 
 {%- block header %}
+    <div id="collections">
+      <div class="container">
+      {{ display_collections() | safe }}
+      </div>
+    </div>
+    {{ collection_header() | safe }}
   {%- include "base/scripts.html" %}
   {{- super() }}
 {%- endblock header %}

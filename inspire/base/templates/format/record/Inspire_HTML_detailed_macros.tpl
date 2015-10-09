@@ -18,23 +18,10 @@
 #}
 
 {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import record_cite_modal, record_abstract with context %}
+{% from "records/Inspire_Default_HTML_detailed_macros.tpl" import search_current_collection with context %}
 
 {% macro record_collection_heading() %}
-  {% if record.get('collections') %}
-    {% set collections = record.collections %}
-    {% for collection in collections %}
-      {% set collection_name = collection.get('primary') %}
-      {% if collection_name == "HEP" %}
-        <span id="search-hep">Search Literature &gt;</span>
-      {% elif collection_name == "HEPNAMES" %}
-        <span id="search-hep">Search Authors &gt;</span>
-      {% elif collection_name == "CONFERENCES" %}
-        <span id="search-hep">Search Conferences &gt;</span>
-      {% elif collection_name == "JOB" %}
-        <span id="search-hep">Search Jobs &gt;</span>
-      {% endif %}
-    {% endfor %}
-  {% endif %}
+  <span id="search-title">{{ search_current_collection(is_search=false) | trim  }}</span>
   <span id="title">{{ record_title() }}</span>
 {% endmacro %}
 
