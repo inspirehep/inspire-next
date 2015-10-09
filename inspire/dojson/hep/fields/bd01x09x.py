@@ -54,9 +54,24 @@ def isbns2marc(self, key, value):
 @utils.filter_values
 def dois(self, key, value):
     """Other Standard Identifier."""
-    return {
-        'value': value.get('a')
-    }
+    if value.get("2").lower() == "doi":
+        return {
+            'value': value.get('a'),
+            'source': value.get('9')
+        }
+
+
+@hep.over('persistent_identifiers', '^024[1032478_][10_]')
+@utils.for_each_value
+@utils.filter_values
+def persistent_identifiers(self, key, value):
+    """Persistent identifiers."""
+    if value.get("2").lower() != "doi":
+        return {
+            'value': value.get('a'),
+            'source': value.get('9'),
+            'type': value.get('2')
+        }
 
 
 @hep2marc.over('024', 'dois')
@@ -134,7 +149,7 @@ def report_numbers2marc(self, key, value):
 
 @hep.over('arxiv_eprints', '^037..')
 def arxiv_eprints(self, key, value):
-
+    """ArXiv identifiers to JSON."""
     def get_value(value):
         return {
             'value': value.get('a'),
@@ -155,6 +170,7 @@ def arxiv_eprints(self, key, value):
 
 @hep2marc.over('037', 'arxiv_eprints')
 def arxiv_eprints2marc(self, key, value):
+    """Arxiv identifiers to MARC."""
     value = utils.force_list(value)
 
     def get_value(value):
