@@ -84,7 +84,18 @@ def page_nr(self, key, value):
 
 
 @bibfield.over('references', '^reference$')
+@utils.for_each_value
 def references(self, key, value):
+    return value
+
+
+@bibfield.over('edition', '^edition$')
+def edition(self, key, value):
+    return value
+
+
+@bibfield.over('refextract', '^refextract$')
+def refextract(self, key, value):
     return value
 
 
@@ -104,21 +115,22 @@ def subject_terms(self, key, value):
 
 
 @bibfield.over('authors', '^authors$')
+@utils.for_each_value
 def authors(self, key, value):
-    import re
-
-    def match_authors_initials(author_name):
-        """Check if author's name contains only its initials."""
-        return not bool(re.compile(r'[^A-Z. ]').search(author_name))
-
-    value = filter(None, value)
-    for author in value:
-        name = author.get('full_name').split(',')
-        if len(name) > 1 and \
-                match_authors_initials(name[1]):
-            name[1] = name[1].replace(' ', '')
-            author['full_name'] = ", ".join(name)
-    return value
+    affiliations = []
+    if value.get('affiliation'):
+        affiliations = list(set(utils.force_list(
+            value.get('affiliation'))))
+        affiliations = [{'value': aff} for aff in affiliations]
+    return {
+        'full_name': value.get('full_name'),
+        'role': value.get('relator_term'),
+        'alternative_name': value.get('alternative_name'),
+        'inspire_id': value.get('INSPIRE_id'),
+        'orcid': value.get('external_id'),
+        'email': value.get('e_mail'),
+        'affiliations': affiliations,
+    }
 
 
 @bibfield.over('titles', '^title$')
@@ -153,9 +165,21 @@ def breadcrumb_title(self, key, value):
     return val.get('title')
 
 
+@bibfield.over('corporate_author', '^corporate_author$')
+@utils.for_each_value
+def corporate_author(self, key, value):
+    return value
+
+
 @bibfield.over('collaboration', '^collaboration$')
+@utils.for_each_value
 def collaboration(self, key, value):
-    return [value]
+    return value
+
+
+@bibfield.over('preprint_date', '^preprint_info$')
+def preprint_date(self, key, value):
+    return value.get('date')
 
 
 @bibfield.over('hidden_notes', '^hidden_note$')
@@ -176,6 +200,12 @@ def public_notes(self, key, value):
 @bibfield.over('imprints', '^imprint$')
 @utils.for_each_value
 def imprints(self, key, value):
+    return value
+
+
+@bibfield.over('oai_pmh', '^oai_pmh$')
+@utils.for_each_value
+def oai_pmh(self, key, value):
     return value
 
 
@@ -265,9 +295,8 @@ def spires_sysnos(self, key, value):
 
 
 @bibfield.over('url', '^url$')
+@utils.for_each_value
 def url(self, key, value):
-    if not isinstance(value, list):
-        return [value]
     return value
 
 
@@ -284,9 +313,14 @@ def titles_old(self, key, value):
 
 
 @bibfield.over('publication_info', '^publication_info$')
+@utils.for_each_value
 def publication_info(self, key, value):
-    if not isinstance(value, list):
-        return [value]
+    return value
+
+
+@bibfield.over('free_keywords', '^free_keyword$')
+@utils.for_each_value
+def free_keywords(self, key, value):
     return value
 
 

@@ -280,13 +280,9 @@ class Bibtex(Export):
                             r'\1 \2', author['full_name'])
                         result.append(author_full_name)
         elif 'corporate_author' in self.record:
-            if isinstance(self.record['corporate_author'], list):
-                for corp_author in self.record['corporate_author']:
-                    if 'corporate_author' in corp_author:
-                        result.append(corp_author['corporate_author'])
-            else:
-                result.append(
-                    self.record['corporate_author']['corporate_author'])
+            for corp_author in self.record['corporate_author']:
+                if corp_author:
+                    result.append(corp_author)
         return result
 
     def _get_editor(self):

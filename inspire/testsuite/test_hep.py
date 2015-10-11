@@ -48,8 +48,13 @@ class HepRecordsTests(InvenioTestCase):
 
     def test_dois(self):
         """Test if dois is created correctly"""
-        self.assertEqual(self.marcxml_to_json['dois'][0]['value'],
-                         self.json_to_marc['024'][0]['a'])
+        self.assertTrue(self.marcxml_to_json['dois'][0]['value'] in
+                        [p.get('a') for p in self.json_to_marc['024'] if 'a' in p])
+
+    def test_persistent_identifiers(self):
+        """Test if persistent_identifiers is created correctly"""
+        self.assertTrue(self.marcxml_to_json['persistent_identifiers'][0]['value'] in
+                        [p.get('a') for p in self.json_to_marc['024'] if 'a' in p])
 
     def test_external_system_numbers(self):
         """Test if system control number is created correctly"""
@@ -118,8 +123,7 @@ class HepRecordsTests(InvenioTestCase):
 
     def test_corporate_author(self):
         """Test if corporate_author is created correctly"""
-        self.assertEqual(self.marcxml_to_json['corporate_author']
-                         [0]['corporate_author'],
+        self.assertEqual(self.marcxml_to_json['corporate_author'][0],
                          self.json_to_marc['110'][0]['a'])
 
     def test_title_variation(self):

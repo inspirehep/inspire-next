@@ -8,6 +8,11 @@
     <subfield code="2">DOI</subfield>
     <subfield code="a">10.1103/PhysRevLett.105.026802</subfield>
   </datafield>
+  <datafield tag="024" ind1="7" ind2=" ">
+    <subfield code="2">OTHER</subfield>
+    <subfield code="a">12341234</subfield>
+    <subfield code="9">test</subfield>
+  </datafield>
   <datafield tag="035" ind1=" " ind2=" ">
     <subfield code="a">Seidel:2010cea</subfield>
     <subfield code="9">INSPIRETeX</subfield>

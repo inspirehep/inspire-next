@@ -161,33 +161,18 @@ class Latex(Export):
                                           first_last_match.group('last') +
                                           first_last_match.group('extension'))
         elif 'corporate_author' in self.record:
-            if isinstance(self.record['corporate_author'], list):
-                for corp_author in self.record['corporate_author']:
-                    if 'corporate_author' in corp_author:
-                        first_last_match = re_last_first.search(
-                            corp_author['corporate_author'])
-                        if first_last_match:
-                            first = re_initials.sub(
-                                r'\g<initial>.~',
-                                first_last_match.group('first_names')
-                            )
-                            first = re_tildehyph.sub(r'\g<hyphen>', first)
-                            result.append(first +
-                                          first_last_match.group('last') +
-                                          first_last_match.group('extension'))
-            else:
-                first_last_match = re_last_first.search(
-                    self.record['corporate_author']['corporate_author']
-                )
-                if first_last_match:
-                    first = re_initials.sub(
-                        r'\g<initial>.~',
-                        first_last_match.group('first_names')
-                    )
-                    first = re_tildehyph.sub(r'\g<hyphen>', first)
-                    result.append(first +
-                                  first_last_match.group('last') +
-                                  first_last_match.group('extension'))
+            for corp_author in self.record['corporate_author']:
+                if corp_author:
+                    first_last_match = re_last_first.search(corp_author)
+                    if first_last_match:
+                        first = re_initials.sub(
+                            r'\g<initial>.~',
+                            first_last_match.group('first_names')
+                        )
+                        first = re_tildehyph.sub(r'\g<hyphen>', first)
+                        result.append(first +
+                                      first_last_match.group('last') +
+                                      first_last_match.group('extension'))
         return result
 
     def _get_title(self):

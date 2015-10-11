@@ -25,6 +25,7 @@
 from dojson import utils
 
 from inspire.dojson import utils as inspire_dojson_utils
+
 from ..model import hep, hep2marc
 
 
@@ -72,6 +73,7 @@ def authors(self, key, value):
 def authors2marc(self, key, value):
     """Main Entry-Personal Name."""
     value = utils.force_list(value)
+
     def get_value(value):
         affiliations = [
             aff.get('value') for aff in value.get('affiliations', [])
@@ -97,19 +99,15 @@ def authors2marc(self, key, value):
 
 @hep.over('corporate_author', '^110[10_2].')
 @utils.for_each_value
-@utils.filter_values
 def corporate_author(self, key, value):
     """Main Entry-Corporate Name."""
-    return {
-        'corporate_author': value.get('a'),
-    }
+    return value.get('a')
 
 
 @hep2marc.over('110', '^corporate_author$')
 @utils.for_each_value
-@utils.filter_values
 def corporate_author2marc(self, key, value):
     """Main Entry-Corporate Name."""
     return {
-        'a': value.get('corporate_author'),
+        'a': value,
     }

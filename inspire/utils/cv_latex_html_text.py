@@ -158,14 +158,9 @@ class Cv_latex_html_text(Export):
                                 first_last_match.group('extension')
                             )
         elif 'corporate_author' in self.record:
-            if isinstance(self.record['corporate_author'], list):
-                for corp_author in self.record['corporate_author']:
-                    if 'corporate_author' in corp_author:
-                        result.append(corp_author['corporate_author'])
-            else:
-                if 'corporate_author' in self.record['corporate_author']:
-                    result.append(self.record['corporate_author']
-                                             ['corporate_author'])
+            for corp_author in self.record['corporate_author']:
+                if corp_author:
+                    result.append(corp_author)
         return result
 
     def _get_title(self):

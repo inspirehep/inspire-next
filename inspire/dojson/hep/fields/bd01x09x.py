@@ -50,39 +50,50 @@ def isbns2marc(self, key, value):
 
 
 @hep.over('dois', '^024[1032478_][10_]')
-@utils.for_each_value
-@utils.filter_values
 def dois(self, key, value):
     """Other Standard Identifier."""
-    if value.get("2").lower() == "doi":
-        return {
-            'value': value.get('a'),
-            'source': value.get('9')
-        }
+    value = utils.force_list(value)
+    out = []
+    for val in value:
+        if val and val.get("2").lower() == "doi":
+            out.append({
+                'value': val.get('a'),
+                'source': val.get('9')
+            })
+    return out
 
 
 @hep.over('persistent_identifiers', '^024[1032478_][10_]')
-@utils.for_each_value
-@utils.filter_values
 def persistent_identifiers(self, key, value):
     """Persistent identifiers."""
-    if value.get("2").lower() != "doi":
-        return {
-            'value': value.get('a'),
-            'source': value.get('9'),
-            'type': value.get('2')
-        }
+    value = utils.force_list(value)
+    out = []
+    for val in value:
+        if val and val.get("2").lower() != "doi":
+            out.append({
+                'value': val.get('a'),
+                'source': val.get('9'),
+                'type': val.get('2')
+            })
+    return out
 
 
-@hep2marc.over('024', 'dois')
-@utils.for_each_value
-@utils.filter_values
+@hep2marc.over('024', '^(dois|persistent_identifiers)$')
 def dois2marc(self, key, value):
     """Other Standard Identifier."""
-    return {
-        'a': value.get('value'),
-        '2': "DOI"
-    }
+    value = utils.force_list(value)
+
+    def get_value(val):
+        return {
+            'a': val.get('value'),
+            '9': val.get('source'),
+            '2': val.get('type') or "DOI"
+        }
+
+    self['024'] = self.get('024', [])
+    for val in value:
+        self['024'].append(get_value(val))
+    return self['024']
 
 
 @hep.over('external_system_numbers', '^035..')
