@@ -54,7 +54,7 @@ module.exports = function(grunt) {
       all: ['inspire/modules/**/static/js/**/*.js']
     },
     jsbeautifier: {
-      files: ["inspire/modules/**/static/js/**/*.js"],
+      files: ["inspire/modules/**/static/js/**/*.js", "inspire/base/**/static/js/**/*.js"],
       options: {
         js: {
           braceStyle: "collapse",

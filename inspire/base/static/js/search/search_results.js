@@ -1,10 +1,10 @@
 require(['jquery', 'bootstrap'], function($) {
 
-  $(function () {
+  $(function() {
     $('[data-toggle="tooltip"]').tooltip()
 
-    $(".dropdown-cite").on('click', function() {       
-       $.getJSON('/formatter/bibtex', {
+    $(".dropdown-cite").on('click', function() {
+      $.getJSON('/formatter/bibtex', {
         recid: $(this).data("recid")
       }, function(data) {
         $("#text" + data.recid).text(data.result);
@@ -12,9 +12,9 @@ require(['jquery', 'bootstrap'], function($) {
         $("#download" + data.recid).attr("href", "/formatter/download-bibtex/" + data.recid)
       });
     });
-  
-    $(".bibtex").on('click', function() {       
-       $.getJSON('/formatter/bibtex', {
+
+    $(".bibtex").on('click', function() {
+      $.getJSON('/formatter/bibtex', {
         recid: $(this).data("recid")
       }, function(data) {
         $("#text" + data.recid).text(data.result);
@@ -22,9 +22,9 @@ require(['jquery', 'bootstrap'], function($) {
         $("#download" + data.recid).attr("href", "/formatter/download-bibtex/" + data.recid)
       });
     });
-  
-    $(".latex_eu").on('click', function() {       
-       $.getJSON('/formatter/latex', {
+
+    $(".latex_eu").on('click', function() {
+      $.getJSON('/formatter/latex', {
         recid: $(this).data("recid"),
         latex_format: 'latex_eu'
       }, function(data) {
@@ -33,9 +33,9 @@ require(['jquery', 'bootstrap'], function($) {
         $("#download" + data.recid).attr("href", "/formatter/download-latex/latex_eu/" + data.recid)
       });
     });
-  
-    $(".latex_us").on('click', function() {       
-       $.getJSON('/formatter/latex', {
+
+    $(".latex_us").on('click', function() {
+      $.getJSON('/formatter/latex', {
         recid: $(this).data("recid"),
         latex_format: 'latex_us'
       }, function(data) {
@@ -48,21 +48,20 @@ require(['jquery', 'bootstrap'], function($) {
 
   $(".fa-arrow-up").hide();
   functions = {
-    changeArrow: function(id,id_down,id_up) {
-      var dots = $('#dots'+id);
-      var id_down = $('#'+id_down);
-      var id_up = $('#'+id_up); 
-      if(id_up.css('display')=='none') {
+    changeArrow: function(id, id_down, id_up) {
+      var dots = $('#dots' + id);
+      var id_down = $('#' + id_down);
+      var id_up = $('#' + id_up);
+      if (id_up.css('display') == 'none') {
         dots.hide();
         id_up.show();
         id_down.hide();
-      }
-      else {
+      } else {
         id_up.hide();
         dots.show();
         id_down.show();
-      }       
-    }     
+      }
+    }
   }
 
 });
