@@ -64,7 +64,8 @@ require.config({
     "feedback": "js/feedback/feedback",
     "toastr": "vendors/toastr/toastr",
     "html2canvas": "vendors/html2canvas/build/html2canvas",
-    "highcharts": "vendors/highcharts-release/highcharts"
+    "highcharts": "vendors/highcharts-release/highcharts",
+    "jquery-menu-aim": "vendors/jQuery-menu-aim/jquery.menu-aim"
   },
   shim: {
     jquery: {
@@ -176,6 +177,10 @@ require.config({
     "highcharts": {
       deps: ["jquery"],
       exports: "Highcharts"
+    },
+    "jquery-menu-aim": {
+      deps: ["jquery"],
+      exports: "$.fn.menuAim"
     }
   }
 });
