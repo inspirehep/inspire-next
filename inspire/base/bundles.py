@@ -38,7 +38,8 @@ js = Bundle(
     filters=RequireJSFilter(exclude=[_j, _i]),
     weight=20,
     bower={
-        "toastr": "latest"
+        "toastr": "latest",
+        "jQuery-menu-aim": "latest"
     }
 )
 
