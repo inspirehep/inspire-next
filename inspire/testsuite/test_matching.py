@@ -106,7 +106,7 @@ class MatchingTests(InvenioTestCase):
         res = match_by_arxiv_id(record)
         self.assertTrue(res)
 
-        record = Record({"report_number": [
+        record = Record({"report_numbers": [
             {
                 "value": "arXiv:1505.12345",
                 "source": "arXiv",
@@ -129,7 +129,7 @@ class MatchingTests(InvenioTestCase):
             content_type="application/json"
         )
 
-        record = Record({"doi": {"doi": "10.1086/305772"}})
+        record = Record({"dois": {"value": "10.1086/305772"}})
         res = match_by_doi(record)
         self.assertTrue(res)
 

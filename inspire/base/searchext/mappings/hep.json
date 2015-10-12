@@ -64,7 +64,7 @@
                     "type": "string",
                     "index": "not_analyzed"
                 },
-                "hidden_note": {
+                "hidden_notes": {
                     "type": "object",
                     "properties": {
                         "cds": {
@@ -73,7 +73,7 @@
                         }
                     }
                 },
-                "accelerator_experiment": {
+                "accelerator_experiments": {
                     "type": "object",
                     "properties": {
                         "experiment": {
@@ -89,7 +89,7 @@
                     "type": "string",
                     "copy_to": ["experimentautocomplete"]
                 },
-                "report_number": {
+                "report_numbers": {
                     "type": "object",
                     "properties": {
                         "value": {
@@ -111,7 +111,7 @@
                     "type": "string",
                     "properties": {
                             "type": "string",
-                            "index": "not_analyzed"                    
+                            "index": "not_analyzed"
                     }
                 },
                 "collections": {

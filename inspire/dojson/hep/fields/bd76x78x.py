@@ -78,8 +78,6 @@ def publication_info2marc(self, key, value):
 
 
 @hep.over('succeeding_entry', '^785..')
-@utils.for_each_value
-@utils.filter_values
 def succeeding_entry(self, key, value):
     """Succeeding Entry."""
     return {
@@ -90,8 +88,6 @@ def succeeding_entry(self, key, value):
 
 
 @hep2marc.over('785', 'succeeding_entry')
-@utils.for_each_value
-@utils.filter_values
 def succeeding_entry2marc(self, key, value):
     """Succeeding Entry."""
     return {

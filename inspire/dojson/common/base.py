@@ -150,30 +150,26 @@ def creation_modification_date2marc(self, key, value):
     }
 
 
-@hep.over('spires_sysno', '^970..')
-@conferences.over('spires_sysno', '^970..')
-@institutions.over('spires_sysno', '^970..')
-@experiments.over('spires_sysno', '^970..')
-@journals.over('spires_sysno', '^970..')
-@hepnames.over('spires_sysno', '^970..')
-@jobs.over('spires_sysno', '^970..')
+@hep.over('spires_sysnos', '^970..')
+@conferences.over('spires_sysnos', '^970..')
+@institutions.over('spires_sysnos', '^970..')
+@experiments.over('spires_sysnos', '^970..')
+@journals.over('spires_sysnos', '^970..')
+@hepnames.over('spires_sysnos', '^970..')
+@jobs.over('spires_sysnos', '^970..')
 @utils.for_each_value
-@utils.filter_values
-def spires_sysno(self, key, value):
+def spires_sysnos(self, key, value):
     """Old SPIRES number."""
-    return {
-        'spires_sysno': value.get('a')
-    }
+    return value.get('a')
 
 
-@hep2marc.over('970', 'spires_sysno')
-@hepnames2marc.over('970', 'spires_sysno')
+@hep2marc.over('970', 'spires_sysnos')
+@hepnames2marc.over('970', 'spires_sysnos')
 @utils.for_each_value
-@utils.filter_values
-def spires_sysno2marc(self, key, value):
+def spires_sysnos2marc(self, key, value):
     """Old SPIRES number."""
     return {
-        'a': value.get('spires_sysno')
+        'a': value
     }
 
 

@@ -25,29 +25,17 @@ import time
 
 from invenio.base.globals import cfg
 
-
-class MissingRequiredFieldError(LookupError):
-
-    """Base class for exceptions in this module.
-    The exception should be raised when the specific,
-    required field doesn't exist in the record.
-    """
-
-    def _init_(self, field):
-        self.field = field
-
-    def _str_(self):
-        return "Missing field: " + self.field
+from .export import MissingRequiredFieldError, Export
 
 
-class Cv_latex(object):
+class Cv_latex(Export):
     """Class used to output CV LaTex format.
     TODO Fix the citation number latex
     e.g %245 citations counted in INSPIRE as of 21 Aug 2015
     """
 
     def __init__(self, record):
-        self.record = record
+        super(Cv_latex, self).__init__(record)
         self.arxiv_field = self._get_arxiv_field()
 
     def format(self):
@@ -73,36 +61,6 @@ class Cv_latex(object):
         out += r'\item%{' + self._get_citation_key() + '}<br/>'
         out += self._fetch_fields(req, opt) + '<br/>'
         return out
-
-    def _get_citation_key(self):
-        """Returns citation key for CV LaTex"""
-        if 'system_control_number' in self.record:
-            result = []
-            citation_key = ''
-            for field in self.record['system_control_number']:
-                if 'institute' in field and \
-                    (field['institute'] == 'INSPIRETeX' or
-                     field['institute'] == 'SPIRESTeX'):
-                    result.append(field)
-            for key in result:
-                if key['institute'] in ('INSPIRETeX', 'SPIRESTeX'):
-                    if 'system_control_number' in key:
-                        citation_key = key['system_control_number']
-                    elif 'value' in key:
-                        citation_key = key['value']
-                    elif 'obsolete' in key:
-                        citation_key = key['obsolete']
-                    else:
-                        citation_key = ''
-                if not result:
-                    return ''
-            if isinstance(citation_key, list):
-                for element in citation_key:
-                    return element.replace(' ', '')
-            else:
-                return citation_key.replace(' ', '')
-        else:
-            return ''
 
     def _fetch_fields(self, req_fields, opt_fields=[]):
         fields = {
@@ -163,16 +121,6 @@ class Cv_latex(object):
             out += u' %\href{{{1}}}{{HEP entry}}.<br/>'.format(field, value)
         return out
 
-    def _get_arxiv_field(self):
-        """Return arXiv field if exists"""
-        if 'report_number' in self.record:
-            for field in self.record['report_number']:
-                if ('source' in field and field['source'] == 'arXiv') \
-                    or 'arxiv_category' in field or \
-                    ('primary' in field and
-                        field['primary'].upper().startswith('ARXIV:')):
-                    return field
-
     def _get_author(self):
         """Return list of name(s) of the author(s)."""
         re_last_first = re.compile(
@@ -213,47 +161,31 @@ class Cv_latex(object):
                                           first_last_match.group('last') +
                                           first_last_match.group('extension'))
         elif 'corporate_author' in self.record:
-            if isinstance(self.record['corporate_author'], list):
-                for corp_author in self.record['corporate_author']:
-                    if 'corporate_author' in corp_author:
-                        first_last_match = re_last_first.search(
-                            corp_author['corporate_author'])
-                        if first_last_match:
-                            first = re_initials.sub(
-                                r'\g<initial>.~',
-                                first_last_match.group('first_names')
-                            )
-                            first = re_tildehyph.sub(r'\g<hyphen>', first)
-                            result.append(first +
-                                          first_last_match.group('last') +
-                                          first_last_match.group('extension'))
-            else:
-                first_last_match = re_last_first.search(
-                    self.record['corporate_author']
-                    ['corporate_author']
-                )
-                if first_last_match:
-                    first = re_initials.sub(
-                        r'\g<initial>.~',
-                        first_last_match.group('first_names')
-                    )
-                    first = re_tildehyph.sub(r'\g<hyphen>', first)
-                    result.append(first +
-                                  first_last_match.group('last') +
-                                  first_last_match.group('extension'))
+            for corp_author in self.record['corporate_author']:
+                if corp_author:
+                    first_last_match = re_last_first.search(corp_author)
+                    if first_last_match:
+                        first = re_initials.sub(
+                            r'\g<initial>.~',
+                            first_last_match.group('first_names')
+                        )
+                        first = re_tildehyph.sub(r'\g<hyphen>', first)
+                        result.append(first +
+                                      first_last_match.group('last') +
+                                      first_last_match.group('extension'))
         return result
 
     def _get_title(self):
         """Return record titles"""
         record_title = ''
-        if 'title' in self.record:
-            if isinstance(self.record['title'], list):
-                for title in self.record['title']:
+        if 'titles' in self.record:
+            if isinstance(self.record['titles'], list):
+                for title in self.record['titles']:
                     if 'title' in title:
                         record_title = title['title']
                         break
             else:
-                record_title = self.record['title']['title'].strip()
+                record_title = self.record['titles']['title'].strip()
             return r"{\bf ``" + re.sub(
                 r'(?<!\\)([#&%])', r'\\\1', record_title
             ) + "''}"
@@ -322,39 +254,17 @@ class Cv_latex(object):
         return cfg['CFG_SITE_URL'] + '/record/' + \
             str(self.record['control_number'])
 
-    def _get_arxiv(self):
-        arxiv = ''
-        if self.arxiv_field:
-            if 'primary' in self.arxiv_field:
-                arxiv = self.arxiv_field['primary']
-                if 'arxiv_category' in self.arxiv_field:
-                    arxiv += ' [' + self.arxiv_field['arxiv_category'] + ']'
-        return arxiv
-
-    def _get_doi(self):
-        """Return doi"""
-        if 'doi' in self.record:
-            doi_list = []
-            for doi in self.record['doi']:
-                doi_list.append(doi['doi'])
-            return ', '.join(doi for doi in list(set(doi_list)))
-        else:
-            return ''
-
     def _get_date(self):
         """Returns date looking for every case"""
         datestruct = ''
-        if 'preprint_info' in self.record:
-            for date in self.record['preprint_info']:
-                if 'date' in date:
-                    datestruct = self.parse_date(str(date['date']))
-                break
+        if 'preprint_date' in self.record:
+            datestruct = self.parse_date(str(self.record['preprint_date']))
             if datestruct:
                 return self._format_date(datestruct)  # FIX ME ADD 0 IN THE DAY
 
-        if self._get_arxiv_field():
+        if self.arxiv_field:
             date = re.search('(\d+)',
-                             self._get_arxiv_field()['primary']).groups()[0]
+                             self.arxiv_field['value']).groups()[0]
             if len(date) >= 4:
                 year = date[0:2]
                 if year > '90':
@@ -385,8 +295,8 @@ class Cv_latex(object):
             if datestruct:
                 return self._format_date(datestruct)
 
-        if 'imprint' in self.record:
-            for field in self.record['imprint']:
+        if 'imprints' in self.record:
+            for field in self.record['imprints']:
                 if 'date' in field:
                     date = field['date']
                     if date:

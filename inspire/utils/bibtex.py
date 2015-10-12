@@ -24,27 +24,15 @@ import re
 
 from invenio_knowledge.api import get_kbr_keys
 
-
-class MissingRequiredFieldError(LookupError):
-
-    """Base class for exceptions in this module.
-    The exception should be raised when the specific,
-    required field doesn't exist in the record.
-    """
-
-    def _init_(self, field):
-        self.field = field
-
-    def _str_(self):
-        return "Missing field: " + self.field
+from .export import MissingRequiredFieldError, Export
 
 
-class Bibtex(object):
+class Bibtex(Export):
 
     """Docstring for Bibtex"""
 
     def __init__(self, record):
-        self.record = record
+        super(Bibtex, self).__init__(record)
         self.entry_type, self.original_entry = self._get_entry_type()
         self.arxiv_field = self._get_arxiv_field()
 
@@ -195,31 +183,6 @@ class Bibtex(object):
         out += '}'
         return out
 
-    def _get_citation_key(self):
-        """Returns citation key for Bibtex"""
-        result = []
-        citation_key = ''
-        if 'system_control_number' in self.record:
-            for field in self.record['system_control_number']:
-                if 'institute' in field and \
-                    (field['institute'] == 'INSPIRETeX' or
-                        field['institute'] == 'SPIRESTeX'):
-                    result.append(field)
-            for key in result:
-                if key['institute'] in ('INSPIRETeX', 'SPIRESTeX'):
-                    if 'system_control_number' in key:
-                        citation_key = key['system_control_number']
-                    elif 'value' in key:
-                        citation_key = key['value']
-                    elif 'obsolete' in key:
-                        citation_key = key['obsolete']
-                    else:
-                        citation_key = ''
-        if isinstance(citation_key, list):
-            return citation_key[0].replace(' ', '')
-        else:
-            return citation_key.replace(' ', '')
-
     def _fetch_fields(self, req_fields, opt_fields=[]):
         fields = {
             'key': self._get_key,
@@ -293,16 +256,6 @@ class Bibtex(object):
         except (ValueError, TypeError):
             return False
 
-    def _get_arxiv_field(self):
-        """Return arXiv field if exists"""
-        if 'report_number' in self.record:
-            for field in self.record['report_number']:
-                if ('source' in field and field['source'] == 'arXiv') \
-                    or 'arxiv_category' in field or \
-                    ('primary' in field and
-                        field['primary'].upper().startswith('ARXIV:')):
-                    return field
-
     def _get_key(self):
         """Returns record key"""
         key = ''
@@ -327,13 +280,9 @@ class Bibtex(object):
                             r'\1 \2', author['full_name'])
                         result.append(author_full_name)
         elif 'corporate_author' in self.record:
-            if isinstance(self.record['corporate_author'], list):
-                for corp_author in self.record['corporate_author']:
-                    if 'corporate_author' in corp_author:
-                        result.append(corp_author['corporate_author'])
-            else:
-                result.append(
-                    self.record['corporate_author']['corporate_author'])
+            for corp_author in self.record['corporate_author']:
+                if corp_author:
+                    result.append(corp_author)
         return result
 
     def _get_editor(self):
@@ -341,8 +290,8 @@ class Bibtex(object):
         result = []
         spacinginitials = re.compile(r'([A-Z][a-z]{0,1}[}]?\.)(\b|[-\{])')
         if 'authors' in self.record:
-            if self.record['authors'][0]['relator_term'] and \
-               self.record['authors'][0]['relator_term'] == 'ed.':
+            if self.record['authors'][0]['role'] and \
+               self.record['authors'][0]['role'] == 'ed.':
                 result.append(spacinginitials.sub(
                     r'\1 \2', self.record['authors'][0]['full_name']
                 ))
@@ -352,14 +301,14 @@ class Bibtex(object):
     def _get_title(self):
         """Return record titles"""
         record_title = ''
-        if 'title' in self.record:
-            if isinstance(self.record['title'], list):
-                for title in self.record['title']:
+        if 'titles' in self.record:
+            if isinstance(self.record['titles'], list):
+                for title in self.record['titles']:
                     if 'title' in title:
                         record_title = title['title']
                         break
             else:
-                record_title = self.record['title']['title'].strip()
+                record_title = self.record['titles']['title'].strip()
             return re.sub(r'(?<!\\)([#&%])', r'\\\1', record_title)
         else:
             return record_title
@@ -367,8 +316,8 @@ class Bibtex(object):
     def _get_organization(self):
         """Return record organization"""
         organization = ''
-        if 'imprint' in self.record:
-            for element in self.record['imprint']:
+        if 'imprints' in self.record:
+            for element in self.record['imprints']:
                 if 'publisher' in element:
                     organization = element['publisher']
                     break
@@ -377,8 +326,8 @@ class Bibtex(object):
     def _get_publisher(self):
         """Return record publisher"""
         publisher = ''
-        if 'imprint' in self.record:
-            for field in self.record['imprint']:
+        if 'imprints' in self.record:
+            for field in self.record['imprints']:
                 if 'publisher' in field and field['publisher']:
                     publisher = field['publisher']
         return publisher
@@ -386,8 +335,8 @@ class Bibtex(object):
     def _get_address(self):
         """Return record address"""
         address = []
-        if 'imprint' in self.record:
-            for field in self.record['imprint']:
+        if 'imprints' in self.record:
+            for field in self.record['imprints']:
                 if 'place' in field and field['place']:
                     address.append(field['place'])
             if address:
@@ -408,12 +357,12 @@ class Bibtex(object):
         school = ''
         if 'authors' in self.record:
             for author in self.record['authors']:
-                if 'affiliation' in author and author['affiliation']:
-                    if len(author['affiliation']) > 1:
-                        school = author['affiliation'][0]
+                if author.get('affiliations'):
+                    if len(author['affiliations']) > 1:
+                        school = author['affiliations'][0]['value']
                     else:
-                        school = ''.join(affilation for affilation in
-                                         author['affiliation'])
+                        school = ''.join(affilation.get('value') for affilation in
+                                         author['affiliations'])
         return school
 
     def _get_booktitle(self):
@@ -437,40 +386,34 @@ class Bibtex(object):
                         if 'year' in val:
                             year = val['year']
                 if not year:
-                    if 'imprint' in self.record:
-                        for imprint in self.record['imprint']:
+                    if 'imprints' in self.record:
+                        for imprint in self.record['imprints']:
                             if 'date' in imprint:
                                 year = imprint['date'].split('-')[0]
-                    elif 'preprint_info' in self.record:
-                        for preprint_info in self.record['preprint_info']:
-                            if 'date' in preprint_info:
-                                year = preprint_info['date'].split('-')[0]
+                    elif 'preprint_date' in self.record:
+                        year = self.record['preprint_date'].split('-')[0]
             else:
                 if 'year' in pub_info:
                     year = pub_info['year']
-                elif 'preprint_info' in self.record:
-                    year = self.record['preprint_info']['date'].split('-')[0]
+                elif 'preprint_date' in self.record:
+                    year = self.record['preprint_date'].split('-')[0]
         elif self.original_entry == 'thesis' and 'thesis' in self.record:
             for date in self.record['thesis']:
                 if 'date' in date and date['date']:
                     year = date['date']
             if not year:
-                if 'preprint_info' in self.record:
-                    for preprint_info in self.record['preprint_info']:
-                        if 'date' in preprint_info:
-                            year = preprint_info['date'].split('-')[0]
-                elif 'imprint' in self.record:
-                    for imprint in self.record['imprint']:
+                if 'preprint_date' in self.record:
+                    year = self.record['preprint_date'].split('-')[0]
+                elif 'imprints' in self.record:
+                    for imprint in self.record['imprints']:
                         if 'date' in imprint:
                             year = imprint['date'].split('-')[0]
-        elif 'imprint' in self.record:
-            for imprint in self.record['imprint']:
+        elif 'imprints' in self.record:
+            for imprint in self.record['imprints']:
                 if 'date' in imprint:
                     year = imprint['date'].split('-')[0]
-        elif 'preprint_info' in self.record:
-            for preprint_info in self.record['preprint_info']:
-                if 'date' in preprint_info:
-                    year = preprint_info['date'].split('-')[0]
+        elif 'preprint_date' in self.record:
+            year = self.record['preprint_date'].split('-')[0]
         return year
 
     def _get_journal(self):
@@ -570,16 +513,6 @@ class Bibtex(object):
                     pages = pub_info['page_artid']
         return pages
 
-    def _get_doi(self):
-        """Return page numbers"""
-        if 'doi' in self.record:
-            doi_list = []
-            for doi in self.record['doi']:
-                doi_list.append(doi['doi'])
-            return ', '.join(doi for doi in list(set(doi_list)))
-        else:
-            return ''
-
     def _get_note(self):
         """Return record note"""
         if self.entry_type in ('article', 'inproceedings'):
@@ -621,13 +554,8 @@ class Bibtex(object):
                                             val['page_artid'].split('-', 1)[0]
                                 if 'year' in val:
                                     note += "(" + val['year'] + ")"
-                                elif 'preprint_info' in self.record:
-                                    for preprint_info in self.\
-                                            record['preprint_info']:
-                                        if 'date' in preprint_info:
-                                            note += "(" + \
-                                                    preprint_info['date']\
-                                                    .split('-')[0] + ")"
+                                elif 'preprint_date' in self.record:
+                                    note += "(" + self.record['preprint_date'].split('-')[0] + ")"
                                 result = '[' + note + ']'
                                 note_list.append(result)
                             elif 'note' in val and \
@@ -682,10 +610,10 @@ class Bibtex(object):
         """Return eprint"""
         result = []
         if self.arxiv_field:
-            if self.arxiv_field['primary'].upper().startswith('ARXIV:'):
-                result.append(self.arxiv_field['primary'][6:])
+            if self.arxiv_field['value'].upper().startswith('ARXIV:'):
+                result.append(self.arxiv_field['value'][6:])
             else:
-                result.append(self.arxiv_field['primary'])
+                result.append(self.arxiv_field['value'])
         try:
             return result[0]
         except IndexError:
@@ -694,36 +622,18 @@ class Bibtex(object):
     def _get_archive_prefix(self):
         """Return archive prefix"""
         result = ''
-        if 'report_number' in self.record:
-            for field in self.record['report_number']:
-                if 'source' in field:
-                    result = field['source']
-                elif 'arxiv_category' in field:
-                    result = 'arXiv'
-                elif 'primary' in field:
-                    if field['primary'].upper().startswith('ARXIV:'):
-                        result = 'arXiv'
+        if 'arxiv_eprints' in self.record and len(self.record['arxiv_eprints']):
+            result = "arXiv"
         return result
 
     def _get_primary_class(self):
         """Return primary class"""
-        if 'report_number' in self.record:
-            for field in self.record['report_number']:
-                if 'arxiv_category' in field:
-                    return field['arxiv_category']
+        if 'arxiv_eprints' in self.record:
+            for field in self.record['arxiv_eprints']:
+                if 'categories' in field:
+                    return field['categories'][0]
         else:
             return ''
-
-    def _get_report_number(self):
-        """Return report number separated by commas"""
-        report_number = []
-        if 'report_number' in self.record:
-            for field in self.record['report_number']:
-                if len(field) == 1:
-                    report_number.append(field['primary'])
-            return ', '.join(str(p) for p in report_number)
-        else:
-            return report_number
 
     def _get_series(self):
         """Return series"""
@@ -736,13 +646,13 @@ class Bibtex(object):
 
     def _get_isbn(self):
         """Return ISBN"""
-        isbn = []
+        isbn_list = []
         result = []
-        if 'isbn' in self.record:
-            for d in self.record['isbn']:
-                isbn.append(d['isbn'])
-            if len(isbn) > 1:
-                for element in isbn:
+        if 'isbns' in self.record:
+            for isbn in self.record['isbns']:
+                isbn_list.append(isbn['value'])
+            if len(isbn_list) > 1:
+                for element in isbn_list:
                     if isinstance(element, list):
                         result.append(element[0])
                     else:
@@ -757,33 +667,6 @@ class Bibtex(object):
                     return ''.join(result for result in isbn)
         else:
             return isbn
-
-    def _get_slac_citation(self):
-        """Return SLACcitation"""
-        cite_line = ''
-        cite_element = ''
-        if self.arxiv_field:
-            if 'primary' in self.arxiv_field:
-                cite_element = self.arxiv_field['primary'].upper()
-                cite_line = '%%CITATION = ' + \
-                            cite_element + ';%%'
-        elif self._get_pubnote():
-            cite_element = self._get_pubnote()
-            cite_line = '%%CITATION = ' + cite_element + ';%%'
-        elif 'report_number' in self.record:
-            if isinstance(self.record['report_number'], list):
-                for field in self.record['report_number']:
-                    if 'arxiv_category' in field:
-                        cite_element = field['primary'].upper()
-                        cite_line = '%%CITATION = ' + cite_element + ';%%'
-                if not cite_element:
-                    cite_element = self.record['report_number'][0]['primary'].upper()
-                    cite_line = '%%CITATION = ' + cite_element + ';%%'
-        else:
-            cite_element = str(self.record['recid'])
-            cite_line = '%%CITATION = ' + 'INSPIRE-' + \
-                cite_element + ';%%'
-        return cite_line
 
     def _get_pubnote(self):
         """Return publication note"""

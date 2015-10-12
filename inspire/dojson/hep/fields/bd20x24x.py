@@ -50,7 +50,7 @@ def title_variation(self, key, value):
     return title_variation
 
 
-@hep2marc.over('210', 'title_variation')
+@hep2marc.over('210', '^title_variation$')
 @utils.for_each_value
 @utils.filter_values
 def title_variation2marc(self, key, value):
@@ -66,44 +66,60 @@ def title_variation2marc(self, key, value):
 def title_translation(self, key, value):
     """Translation of Title by Cataloging Agency."""
     return {
-        'title_translation': value.get('a'),
+        'title': value.get('a'),
         'subtitle': value.get('b')
     }
 
 
-@hep2marc.over('242', 'title_translation')
+@hep2marc.over('242', '^title_translation$')
 @utils.for_each_value
 @utils.filter_values
 def title_translation2marc(self, key, value):
     """Translation of Title by Cataloging Agency."""
     return {
-        'a': value.get('title_translation'),
+        'a': value.get('title'),
         'b': value.get('subtitle'),
     }
 
 
-@hep.over('title', '^245[10_][0_]')
-@utils.for_each_value
-@utils.filter_values
-def title(self, key, value):
+@hep.over('titles', '^245[10_][0_]')
+def titles(self, key, value):
     """Title Statement."""
-    return {
-        'title': value.get('a'),
-        'subtitle': value.get('b'),
-        'source': value.get('9'),
-    }
+    def get_value(existing):
+        if not isinstance(value, list):
+            values = [value]
+        else:
+            values = value
+        out = []
+        for val in values:
+            out.append({
+                'title': val.get('a'),
+                'subtitle': val.get('b'),
+                'source': val.get('9'),
+            })
+        return existing + out
+
+    if 'titles' in self:
+        return get_value(self['titles'])
+    else:
+        return get_value([])
 
 
-@hep.over('breadcrum_title', '^245[10_][0_]')
-def breadcrum_title(self, key, value):
-    """Title used in breadcrum and html title."""
-    return value.get('a')
+@hep.over('breadcrumb_title', '^245[10_][0_]')
+def breadcrumb_title(self, key, value):
+    """Title used in breadcrumb and html title."""
+    if 'breadcrumb_title' in self:
+        return self['breadcrumb_title']
+    else:
+        if isinstance(value, list):
+            value = value[0]
+        return value.get('a')
 
 
-@hep2marc.over('245', '^title$')
+@hep2marc.over('245', '^titles$')
 @utils.for_each_value
 @utils.filter_values
-def title2marc(self, key, value):
+def titles2marc(self, key, value):
     """Title Statement."""
     return {
         'a': value.get('title'),
@@ -112,34 +128,49 @@ def title2marc(self, key, value):
     }
 
 
-@hep.over('title_arxiv', '^246[1032_][_103254768]')
-@utils.for_each_value
-@utils.filter_values
+@hep.over('titles', '^246[1032_][_103254768]')
 def title_arxiv(self, key, value):
     """Varying Form of Title."""
-    return {
-        'title': value.get('a'),
-        'subtitle': value.get('b'),
-        'source': value.get('9'),
-    }
+    def get_value(existing):
+        if not isinstance(value, list):
+            values = [value]
+        else:
+            values = value
+        out = []
+        for val in values:
+            out.append({
+                'title': val.get('a'),
+                'subtitle': val.get('b'),
+                'source': val.get('9'),
+            })
+        return existing + out
+
+    if 'titles' in self:
+        return get_value(self['titles'])
+    else:
+        return get_value([])
 
 
-@hep2marc.over('246', 'title_arxiv')
-@utils.for_each_value
-@utils.filter_values
+@hep2marc.over('246', '^titles$')
 def title_arxiv2marc(self, key, value):
     """Varying Form of Title."""
-    return {
-        'a': value.get('title'),
-        'b': value.get('subtitle'),
-        '9': value.get('source'),
-    }
+    if not isinstance(value, list):
+        values = [value]
+    else:
+        values = value
+    for val in values:
+        if val.get('source', '') and val.get('source', '').lower() == "arxiv":
+            return {
+                'a': val.get('title'),
+                'b': val.get('subtitle'),
+                '9': val.get('source'),
+            }
 
 
-@hep.over('title_old', '^247[10_][10_]')
+@hep.over('titles_old', '^247[10_][10_]')
 @utils.for_each_value
 @utils.filter_values
-def title_old(self, key, value):
+def titles_old(self, key, value):
     """Former Title."""
     return {
         'title': value.get('a'),
@@ -148,10 +179,10 @@ def title_old(self, key, value):
     }
 
 
-@hep2marc.over('247', 'title_old')
+@hep2marc.over('247', '^titles_old$')
 @utils.for_each_value
 @utils.filter_values
-def title_old2marc(self, key, value):
+def titles_old2marc(self, key, value):
     """Former Title."""
     return {
         'a': value.get('title'),

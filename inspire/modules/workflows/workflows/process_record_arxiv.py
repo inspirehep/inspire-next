@@ -150,7 +150,7 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
             return "No title found."
         model = process_record_arxiv.model(bwo)
         record = get_record_from_model(model)
-        return "; ".join(record.get("title.title", ["No title found"]))
+        return "; ".join(record.get("titles.title", ["No title found"]))
 
     @staticmethod
     def get_description(bwo):
@@ -165,19 +165,24 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
         final_identifiers = []
         if hasattr(record, "get"):
             # Get identifiers
-            doi = record.get("doi.doi", [])
-            if doi:
-                final_identifiers.extend(doi)
+            dois = record.get("dois.value", [])
+            if dois:
+                final_identifiers.extend(dois)
 
-            system_no = record.get("system_control_number.system_control_number", [])
+            system_no = record.get("external_system_numbers.value", [])
             if system_no:
                 final_identifiers.extend(system_no)
 
             # Get subject categories, adding main one first. Order matters here.
-            categories = record.get("report_number.arxiv_category", [])
-            categories.extend(record.get("subject_term.value", []))
+            record_categories = record.get("arxiv_eprints.categories", []) + \
+                record.get("subject_terms.term", [])
+            for category_list in record_categories:
+                if isinstance(category_list, list):
+                    categories.extend(category_list)
+                else:
+                    categories.append(category_list)
             categories = list(OrderedDict.fromkeys(categories))  # Unique only
-            abstract = record.get("abstract.summary", [""])[0]
+            abstract = record.get("abstracts.value", [""])[0]
             authors = record.get("authors", [])
         return render_template('workflows/styles/harvesting_record.html',
                                object=bwo,

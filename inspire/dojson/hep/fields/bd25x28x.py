@@ -47,10 +47,10 @@ def edition2marc(self, key, value):
     }
 
 
-@hep.over('imprint', '^260[_23].')
+@hep.over('imprints', '^260[_23].')
 @utils.for_each_value
 @utils.filter_values
-def imprint(self, key, value):
+def imprints(self, key, value):
     """Publication, Distribution, etc. (Imprint)."""
     return {
         'place': value.get('a'),
@@ -59,10 +59,10 @@ def imprint(self, key, value):
     }
 
 
-@hep2marc.over('260', 'imprint')
+@hep2marc.over('260', 'imprints')
 @utils.for_each_value
 @utils.filter_values
-def imprint2marc(self, key, value):
+def imprints2marc(self, key, value):
     """Publication, Distribution, etc. (Imprint)."""
     return {
         'a': value.get('place'),
@@ -71,41 +71,17 @@ def imprint2marc(self, key, value):
     }
 
 
-@hep.over('defense_date', '^269..')
+@hep.over('preprint_date', '^269..')
+def preprint_date(self, key, value):
+    """Preprint info."""
+    return value.get('c')
+
+
+@hep2marc.over('269', 'preprint_date')
 @utils.for_each_value
 @utils.filter_values
-def defense_date(self, key, value):
-    """Date of defense of a thesis"""
-    return {
-        'date': value.get('c'),
-    }
-
-
-@hep2marc.over('269', 'defense_date')
-@utils.for_each_value
-@utils.filter_values
-def defense_date2marc(self, key, value):
-    """Date of defense of a thesis"""
-    return {
-        'c': value.get('date'),
-    }
-
-
-@hep.over('preprint_info', '^269..')
-@utils.for_each_value
-@utils.filter_values
-def preprint_info(self, key, value):
+def preprint_date2marc(self, key, value):
     """Preprint info."""
     return {
-        'date': value.get('c'),
-    }
-
-
-@hep2marc.over('269', 'preprint_info')
-@utils.for_each_value
-@utils.filter_values
-def preprint_info2marc(self, key, value):
-    """Preprint info."""
-    return {
-        'c': value.get('date'),
+        'c': value,
     }

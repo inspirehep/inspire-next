@@ -32,15 +32,24 @@ from ..model import hep, hep2marc
 @utils.filter_values
 def references(self, key, value):
     """Produce list of references."""
+    try:
+        recid = int(value.get('0'))
+        number = int(value.get('o'))
+        year = int(value.get('y'))
+    except (TypeError, ValueError):
+        recid = None
+        number = None
+        year = None
+
     return {
-        'recid': value.get('0'),
+        'recid': recid,
         'texkey': value.get('1'),
         'doi': value.get('a'),
         'collaboration': value.get('c'),
         'editors': value.get('e'),
         'authors': value.get('h'),
         'misc': value.get('m'),
-        'number': value.get('o'),
+        'number': number,
         'isbn': value.get('i'),
         'publisher': value.get('p'),
         'maintitle': value.get('q'),
@@ -49,7 +58,7 @@ def references(self, key, value):
         'url': value.get('u'),
         'journal_pubnote': value.get('s'),
         'raw_reference': value.get('x'),
-        'year': value.get('y'),
+        'year': year,
     }
 
 

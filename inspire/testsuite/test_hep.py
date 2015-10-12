@@ -17,11 +17,13 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-from invenio.testsuite import make_test_suite, run_test_suite, InvenioTestCase
-from inspire.dojson.hep import hep2marc, hep
-from dojson.contrib.marc21.utils import create_record
 import pkg_resources
 import os
+
+from dojson.contrib.marc21.utils import create_record
+
+from invenio.testsuite import InvenioTestCase, make_test_suite, run_test_suite
+from inspire.dojson.hep import hep2marc, hep
 
 
 class HepRecordsTests(InvenioTestCase):
@@ -37,44 +39,49 @@ class HepRecordsTests(InvenioTestCase):
         self.marcxml_to_json = hep.do(record)
         self.json_to_marc = hep2marc.do(self.marcxml_to_json)
 
-    def test_isbn(self):
-        """Test if isbn is created correctly"""
-        self.assertEqual(self.marcxml_to_json['isbn'][0]['isbn'],
+    def test_isbns(self):
+        """Test if isbns is created correctly"""
+        self.assertEqual(self.marcxml_to_json['isbns'][0]['value'],
                          self.json_to_marc['020'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['isbn'][0]['medium'],
+        self.assertEqual(self.marcxml_to_json['isbns'][0]['medium'],
                          self.json_to_marc['020'][0]['b'])
 
-    def test_doi(self):
-        """Test if doi is created correctly"""
-        self.assertEqual(self.marcxml_to_json['doi'][0]['doi'],
-                         self.json_to_marc['024'][0]['a'])
+    def test_dois(self):
+        """Test if dois is created correctly"""
+        self.assertTrue(self.marcxml_to_json['dois'][0]['value'] in
+                        [p.get('a') for p in self.json_to_marc['024'] if 'a' in p])
 
-    def test_system_control_number(self):
+    def test_persistent_identifiers(self):
+        """Test if persistent_identifiers is created correctly"""
+        self.assertTrue(self.marcxml_to_json['persistent_identifiers'][0]['value'] in
+                        [p.get('a') for p in self.json_to_marc['024'] if 'a' in p])
+
+    def test_external_system_numbers(self):
         """Test if system control number is created correctly"""
-        self.assertEqual(self.marcxml_to_json['system_control_number']
+        self.assertEqual(self.marcxml_to_json['external_system_numbers']
                          [0]['institute'],
                          self.json_to_marc['035'][0]['9'])
-        self.assertEqual(self.marcxml_to_json['system_control_number']
-                         [0]['system_control_number'],
+        self.assertEqual(self.marcxml_to_json['external_system_numbers']
+                         [0]['value'],
                          self.json_to_marc['035'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['system_control_number']
+        self.assertEqual(self.marcxml_to_json['external_system_numbers']
                          [0]['obsolete'],
                          self.json_to_marc['035'][0]['z'])
 
-    def test_report_number(self):
+    def test_report_numbers(self):
         """Test if report number is created correctly"""
-        self.assertEqual(self.marcxml_to_json['report_number'][0]['source'],
-                         self.json_to_marc['037'][0]['9'])
-        self.assertEqual(self.marcxml_to_json['report_number'][0]['value'],
-                         self.json_to_marc['037'][0]['a'])
+        self.assertTrue(self.marcxml_to_json['report_numbers'][0]['source'] in
+                        [a.get('9') for a in self.json_to_marc['037'] if '9' in a])
+        self.assertTrue(self.marcxml_to_json['report_numbers'][0]['value'] in
+                        [a.get('a') for a in self.json_to_marc['037'] if 'a' in a])
 
     def test_arxiv_eprints(self):
         """Test if arxiv eprints is created correctly"""
         self.assertEqual(self.marcxml_to_json['arxiv_eprints'][0]
                          ['categories'],
-                         self.json_to_marc['037'][1]['c'])
-        self.assertEqual(self.marcxml_to_json['arxiv_eprints'][0]['value'],
-                         self.json_to_marc['037'][1]['a'])
+                         [c.get('c')[0] for c in self.json_to_marc['037'] if 'c' in c])
+        self.assertTrue(self.marcxml_to_json['arxiv_eprints'][0]['value'] in
+                        [a.get('a') for a in self.json_to_marc['037'] if 'a' in a])
 
     def test_language(self):
         """Test if language is created correctly"""
@@ -96,28 +103,27 @@ class HepRecordsTests(InvenioTestCase):
         """Test if authors are created correctly"""
         self.assertEqual(self.marcxml_to_json['authors'][0]['full_name'],
                          self.json_to_marc['100']['a'])
-        self.assertEqual(self.marcxml_to_json['authors'][0]['relator_term'],
+        self.assertEqual(self.marcxml_to_json['authors'][0]['role'],
                          self.json_to_marc['100']['e'])
         self.assertEqual(self.marcxml_to_json['authors']
                          [0]['alternative_name'],
                          self.json_to_marc['100']['q'])
-        self.assertEqual(self.marcxml_to_json['authors'][0]['INSPIRE_id'],
+        self.assertEqual(self.marcxml_to_json['authors'][0]['inspire_id'],
                          self.json_to_marc['100']['i'])
-        self.assertEqual(self.marcxml_to_json['authors'][0]['external_id'],
+        self.assertEqual(self.marcxml_to_json['authors'][0]['orcid'],
                          self.json_to_marc['100']['j'])
-        self.assertEqual(self.marcxml_to_json['authors'][0]['e_mail'],
+        self.assertEqual(self.marcxml_to_json['authors'][0]['email'],
                          self.json_to_marc['100']['m'])
-        self.assertEqual(self.marcxml_to_json['authors'][0]['affiliation'],
-                         self.json_to_marc['100']['u'])
-        self.assertEqual(self.marcxml_to_json['authors'][0]['profile'],
+        self.assertEqual(self.marcxml_to_json['authors'][0]['affiliations'][0]['value'],
+                         self.json_to_marc['100']['u'][0])
+        self.assertEqual(self.marcxml_to_json['authors'][0]['recid'],
                          self.json_to_marc['100']['x'])
         self.assertEqual(self.marcxml_to_json['authors'][0]['claimed'],
                          self.json_to_marc['100']['y'])
 
     def test_corporate_author(self):
         """Test if corporate_author is created correctly"""
-        self.assertEqual(self.marcxml_to_json['corporate_author']
-                         [0]['corporate_author'],
+        self.assertEqual(self.marcxml_to_json['corporate_author'][0],
                          self.json_to_marc['110'][0]['a'])
 
     def test_title_variation(self):
@@ -129,7 +135,7 @@ class HepRecordsTests(InvenioTestCase):
     def test_title_translation(self):
         """Test if title_translation is created correctly"""
         self.assertEqual(self.marcxml_to_json['title_translation']
-                         [0]['title_translation'],
+                         [0]['title'],
                          self.json_to_marc['242'][0]['a'])
         self.assertEqual(self.marcxml_to_json['title_translation']
                          [0]['subtitle'],
@@ -137,49 +143,44 @@ class HepRecordsTests(InvenioTestCase):
 
     def test_title(self):
         """Test if title is created correctly"""
-        self.assertEqual(self.marcxml_to_json['title'][0]['title'],
+        self.assertEqual(self.marcxml_to_json['titles'][0]['title'],
                          self.json_to_marc['245'][0]['a'])
 
-    def test_breadcrum_title(self):
-        """Test if breadcrum title is created correctly"""
-        self.assertEqual(self.marcxml_to_json['breadcrum_title'],
-                         self.json_to_marc['245'][0]['a'])
+    def test_breadcrumb_title(self):
+        """Test if breadcrumb title is created correctly"""
+        titles = [d.get('a') for d in self.json_to_marc['245']]
+        self.assertTrue(self.marcxml_to_json['breadcrumb_title'] in titles)
 
     def test_title_arxiv(self):
         """Test if title arxiv is created correctly"""
-        self.assertEqual(self.marcxml_to_json['title_arxiv'][0]['source'],
-                         self.json_to_marc['246'][0]['9'])
-        self.assertEqual(self.marcxml_to_json['title_arxiv'][0]['subtitle'],
-                         self.json_to_marc['246'][0]['b'])
-        self.assertEqual(self.marcxml_to_json['title_arxiv'][0]['title'],
-                         self.json_to_marc['246'][0]['a'])
+        def get(key):
+            return [d.get(key) for d in self.marcxml_to_json['titles']]
 
-    def test_title_old(self):
-        """Test if title_old is created correctly"""
-        self.assertEqual(self.marcxml_to_json['title_old'][0]['source'],
+        self.assertTrue(self.json_to_marc['246']['9'] in get('source'))
+        self.assertTrue(self.json_to_marc['246']['b'] in get('subtitle'))
+        self.assertTrue(self.json_to_marc['246']['a'] in get('title'))
+
+    def test_titles_old(self):
+        """Test if titles_old is created correctly"""
+        self.assertEqual(self.marcxml_to_json['titles_old'][0]['source'],
                          self.json_to_marc['247'][0]['9'])
-        self.assertEqual(self.marcxml_to_json['title_old'][0]['subtitle'],
+        self.assertEqual(self.marcxml_to_json['titles_old'][0]['subtitle'],
                          self.json_to_marc['247'][0]['b'])
-        self.assertEqual(self.marcxml_to_json['title_old'][0]['title'],
+        self.assertEqual(self.marcxml_to_json['titles_old'][0]['title'],
                          self.json_to_marc['247'][0]['a'])
 
-    def test_imprint(self):
-        """Test if imprint is created correctly"""
-        self.assertEqual(self.marcxml_to_json['imprint'][0]['place'],
+    def test_imprints(self):
+        """Test if imprints is created correctly"""
+        self.assertEqual(self.marcxml_to_json['imprints'][0]['place'],
                          self.json_to_marc['260'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['imprint'][0]['publisher'],
+        self.assertEqual(self.marcxml_to_json['imprints'][0]['publisher'],
                          self.json_to_marc['260'][0]['b'])
-        self.assertEqual(self.marcxml_to_json['imprint'][0]['date'],
+        self.assertEqual(self.marcxml_to_json['imprints'][0]['date'],
                          self.json_to_marc['260'][0]['c'])
 
-    def test_defense_date(self):
-        """Test if defense_date is created correctly"""
-        self.assertEqual(self.marcxml_to_json['defense_date'][0]['date'],
-                         self.json_to_marc['269'][0]['c'])
-
-    def test_preprint_info(self):
-        """Test if preprint_info is created correctly"""
-        self.assertEqual(self.marcxml_to_json['preprint_info'][0]['date'],
+    def test_preprint_date(self):
+        """Test if preprint_date is created correctly"""
+        self.assertEqual(self.marcxml_to_json['preprint_date'],
                          self.json_to_marc['269'][0]['c'])
 
     def test_page_nr(self):
@@ -194,23 +195,23 @@ class HepRecordsTests(InvenioTestCase):
         self.assertEqual(self.marcxml_to_json['book_series'][0]['volume'],
                          self.json_to_marc['490'][0]['v'])
 
-    def test_note(self):
-        """Test if note is created correctly"""
-        self.assertEqual(self.marcxml_to_json['note'][0]['value'],
+    def test_public_notes(self):
+        """Test if public_notes is created correctly"""
+        self.assertEqual(self.marcxml_to_json['public_notes'][0]['value'],
                          self.json_to_marc['500'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['note'][0]['source'],
+        self.assertEqual(self.marcxml_to_json['public_notes'][0]['source'],
                          self.json_to_marc['500'][0]['9'])
 
-    def test_hidden_note(self):
-        """Test if hidden_note is created correctly"""
-        self.assertEqual(self.marcxml_to_json['hidden_note'][0]['value'],
+    def test_hidden_notes(self):
+        """Test if hidden_notes is created correctly"""
+        self.assertEqual(self.marcxml_to_json['hidden_notes'][0]['value'],
                          self.json_to_marc['595'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['hidden_note'][0]
+        self.assertEqual(self.marcxml_to_json['hidden_notes'][0]
                          ['cern_reference'],
                          self.json_to_marc['595'][0]['b'])
-        self.assertEqual(self.marcxml_to_json['hidden_note'][0]['cds'],
+        self.assertEqual(self.marcxml_to_json['hidden_notes'][0]['cds'],
                          self.json_to_marc['595'][0]['c'])
-        self.assertEqual(self.marcxml_to_json['hidden_note'][0]['source'],
+        self.assertEqual(self.marcxml_to_json['hidden_notes'][0]['source'],
                          self.json_to_marc['595'][0]['9'])
 
     def test_thesis(self):
@@ -225,9 +226,9 @@ class HepRecordsTests(InvenioTestCase):
 
     def test_abstract(self):
         """Test if abstract is created correctly"""
-        self.assertEqual(self.marcxml_to_json['abstract'][0]['value'],
+        self.assertEqual(self.marcxml_to_json['abstracts'][0]['value'],
                          self.json_to_marc['520'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['abstract'][0]
+        self.assertEqual(self.marcxml_to_json['abstracts'][0]
                          ['source'],
                          self.json_to_marc['520'][0]['9'])
 
@@ -281,28 +282,28 @@ class HepRecordsTests(InvenioTestCase):
         self.assertEqual(self.marcxml_to_json['copyright'][0]['url'],
                          self.json_to_marc['542'][0]['u'])
 
-    def test_subject_term(self):
+    def test_subject_terms(self):
         """Test if subject term is created correctly"""
-        self.assertEqual(self.marcxml_to_json['subject_term'][0]['scheme'],
+        self.assertEqual(self.marcxml_to_json['subject_terms'][0]['scheme'],
                          self.json_to_marc['65017'][0]['2'])
-        self.assertEqual(self.marcxml_to_json['subject_term'][0]['value'],
+        self.assertEqual(self.marcxml_to_json['subject_terms'][0]['term'],
                          self.json_to_marc['65017'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['subject_term'][0]['source'],
+        self.assertEqual(self.marcxml_to_json['subject_terms'][0]['source'],
                          self.json_to_marc['65017'][0]['9'])
 
-    def test_free_keyword(self):
-        """Test if free_keyword is created correctly"""
-        self.assertEqual(self.marcxml_to_json['free_keyword'][0]['value'],
+    def test_free_keywords(self):
+        """Test if free_keywords is created correctly"""
+        self.assertEqual(self.marcxml_to_json['free_keywords'][0]['value'],
                          self.json_to_marc['653'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['free_keyword'][0]['source'],
+        self.assertEqual(self.marcxml_to_json['free_keywords'][0]['source'],
                          self.json_to_marc['653'][0]['9'])
 
-    def test_accelerator_experiment(self):
+    def test_accelerator_experiments(self):
         """Test if accelerator_experiment is created correctly"""
-        self.assertEqual(self.marcxml_to_json['accelerator_experiment'][0]
+        self.assertEqual(self.marcxml_to_json['accelerator_experiments'][0]
                          ['accelerator'],
                          self.json_to_marc['693'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['accelerator_experiment'][0]
+        self.assertEqual(self.marcxml_to_json['accelerator_experiments'][0]
                          ['experiment'],
                          self.json_to_marc['693'][0]['e'])
 
@@ -382,13 +383,13 @@ class HepRecordsTests(InvenioTestCase):
 
     def test_succeeding_entry(self):
         """Test if succeeding_entry is created correctly"""
-        self.assertEqual(self.marcxml_to_json['succeeding_entry'][0]
+        self.assertEqual(self.marcxml_to_json['succeeding_entry']
                          ['relationship_code'],
-                         self.json_to_marc['785'][0]['r'])
-        self.assertEqual(self.marcxml_to_json['succeeding_entry'][0]['recid'],
-                         self.json_to_marc['785'][0]['w'])
-        self.assertEqual(self.marcxml_to_json['succeeding_entry'][0]['isbn'],
-                         self.json_to_marc['785'][0]['z'])
+                         self.json_to_marc['785']['r'])
+        self.assertEqual(self.marcxml_to_json['succeeding_entry']['recid'],
+                         self.json_to_marc['785']['w'])
+        self.assertEqual(self.marcxml_to_json['succeeding_entry']['isbn'],
+                         self.json_to_marc['785']['z'])
 
     def test_url(self):
         """Test if url is created correctly"""

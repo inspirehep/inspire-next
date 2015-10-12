@@ -70,9 +70,9 @@
 <h5><span class="label label-default">{{doctype}}</span></h5>
 {% endif %}
 
-{% if record.abstract %}
+{% if record.abstracts %}
 <div class="collapse" id="collapsed-abstract-{{object.id}}">
-{{ record.abstract.summary }}
+{{ record.abstracts[0]['value'] }}
 </div>
 <a class="faded toggle" data-toggle="collapse" href="#collapsed-abstract-{{object.id}}" aria-expanded="false" aria-controls="collapsed-abstract-{{object.id}}">Abstract </a>
 {% endif %}

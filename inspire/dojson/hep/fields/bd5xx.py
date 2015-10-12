@@ -27,10 +27,10 @@ from dojson import utils
 from ..model import hep, hep2marc
 
 
-@hep.over('note', '^500..')
+@hep.over('public_notes', '^500..')
 @utils.for_each_value
 @utils.filter_values
-def note(self, key, value):
+def public_notes(self, key, value):
     """General Note."""
     return {
         'value': value.get('a'),
@@ -38,10 +38,10 @@ def note(self, key, value):
     }
 
 
-@hep2marc.over('500', 'note')
+@hep2marc.over('500', 'public_notes')
 @utils.for_each_value
 @utils.filter_values
-def note2marc(self, key, value):
+def public_notes2marc(self, key, value):
     """General Note."""
     return {
         'a': value.get('value'),
@@ -49,9 +49,9 @@ def note2marc(self, key, value):
     }
 
 
-@hep.over('hidden_note', '^595..')
-def hidden_note(self, key, value):
-    """Hidden note."""
+@hep.over('hidden_notes', '^595..')
+def hidden_notes(self, key, value):
+    """Hidden notes."""
     def get_value(value):
         return {
             'value': value.get('a'),
@@ -60,7 +60,7 @@ def hidden_note(self, key, value):
             'source': value.get('9'),
         }
 
-    hidden_note_list = self.get('hidden_note', [])
+    hidden_note_list = self.get('hidden_notes', [])
 
     if isinstance(value, list):
         for element in value:
@@ -74,7 +74,7 @@ def hidden_note(self, key, value):
     return hidden_note
 
 
-@hep2marc.over('595', 'hidden_note')
+@hep2marc.over('595', 'hidden_notes')
 @utils.for_each_value
 @utils.filter_values
 def hidden_note2marc(self, key, value):
@@ -111,10 +111,10 @@ def thesis2marc(self, key, value):
     }
 
 
-@hep.over('abstract', '^520[10_2483].')
+@hep.over('abstracts', '^520[10_2483].')
 @utils.for_each_value
 @utils.filter_values
-def abstract(self, key, value):
+def abstracts(self, key, value):
     """Summary, Etc.."""
     return {
         'value': value.get('a'),
@@ -122,7 +122,7 @@ def abstract(self, key, value):
     }
 
 
-@hep2marc.over('520', 'abstract')
+@hep2marc.over('520', 'abstracts')
 @utils.for_each_value
 @utils.filter_values
 def abstract2marc(self, key, value):

@@ -45,8 +45,8 @@ def title(self, key, value):
     return value.get('a')
 
 
-@journals.over('breadcrum_title', '^130..')
-def breadcrum_title(self, key, value):
+@journals.over('breadcrumb_title', '^130..')
+def breadcrumb_title(self, key, value):
     """Title used in breadcrum and html title."""
     return value.get('a')
 

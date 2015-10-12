@@ -38,91 +38,38 @@ def generate_booktitle(record):
     pubinfo = ''
     if 'publication_info' in record:
         pubinfo = record['publication_info']
-        if isinstance(pubinfo, list):
-            for field in pubinfo:
-                if 'reportnumber' in field:
-                    rn = field['reportnumber']
-                    if rn:
-                        acronym = field['acronym']
-                        if acronym:
-                            booktitle = "%s: %s" % (rn, acronym, )
-                        else:
-                            recids = Query(
-                                "reportnumber:%s" % (rn,)
-                            ).search().recids
-                            if recids:
-                                rec = get_record(recids[0])
-                                title = rec['title']['title']
-                                if title:
-                                    booktitle = title
-                                    if 'subtitle' in rec['title']:
-                                        subtitles = rec['title']['subtitle']
-                                        if subtitles:
-                                            booktitle += ': ' + subtitles
-        else:
-            if 'reportnumber' in pubinfo:
-                rn = pubinfo['reportnumber']
+        if not isinstance(pubinfo, list):
+            pubinfo = [pubinfo]
+        for field in pubinfo:
+            if 'reportnumber' in field:
+                rn = field['reportnumber']
                 if rn:
-                    acronym = pubinfo['acronym']
+                    acronym = field['acronym']
                     if acronym:
                         booktitle = "%s: %s" % (rn, acronym, )
                     else:
-                        recids = Query("reportnumber:%s" % (rn,)).search().recids
+                        recids = Query(
+                            "reportnumber:%s" % (rn,)
+                        ).search().recids
                         if recids:
                             rec = get_record(recids[0])
-                            title = rec['title']['title']
-                            if title:
-                                booktitle = title
-                                if 'subtitle' in rec['title']:
-                                    subtitles = rec['title']['subtitle']
-                                    if subtitles:
-                                        booktitle += ': ' + subtitles
-
-    # if not booktitle:
-    #     cnum = ''
-    #     if isinstance(pubinfo, list):
-    #         for field in pubinfo:
-    #             if 'cnum' in field:
-    #                 cnum = cnum.replace("/", "-")
-    #                 recids = search_pattern(
-    #             p='773__w:%s 980__a:PROCEEDINGS' % (cnum,))
-    #                 if recids:
-    #                     rec = get_record(recids[0])
-    #                     titles = rec['title']['title']
-    #                     if titles:
-    #                         booktitle = titles
-    #                         if 'subtitle' in rec['title']:
-    #                             subtitles = rec['title']['subtitle']
-    #                             if subtitles:
-    #                                 booktitle += ': ' + subtitles
-    #     else:
-    #         if 'cnum' in pubinfo:
-    #             cnum = cnum.replace("/", "-")
-    #             recids = search_pattern(
-    #             p='773__w:%s 980__a:PROCEEDINGS' % (cnum,))
-    #             if recids:
-    #                 rec = get_record(recids[0])
-    #                 titles = rec['title']['title']
-    #                 if titles:
-    #                     booktitle = titles
-    #                     if 'subtitle' in rec['title']:
-    #                         subtitles = rec['title']['subtitle']
-    #                         if subtitles:
-    #                             booktitle += ': ' + subtitles
-
-    if not booktitle:
-        result = []
-        if isinstance(pubinfo, list):
-            for field in pubinfo:
-                if 'pubinfo_freetext' in field:
-                    result.append(field['pubinfo_freetext'])
-            if result:
-                if any(isinstance(i, list) for i in result):
-                    nested_list = list(traverse(result))
-                    booktitle = ', '.join(str(title) for title in nested_list)
-                else:
-                    booktitle = ', '.join(str(title) for title in result)
-        else:
-            if 'pubinfo_freetext' in pubinfo:
-                booktitle = pubinfo['pubinfo_freetext']
+                            for title in rec['titles']:
+                                booktitle = title.get('title', "")
+                                if title.get('subtitle'):
+                                    booktitle += ': ' + title.get('subtitle')
+        if not booktitle:
+            result = []
+            if isinstance(pubinfo, list):
+                for field in pubinfo:
+                    if 'pubinfo_freetext' in field:
+                        result.append(field['pubinfo_freetext'])
+                if result:
+                    if any(isinstance(i, list) for i in result):
+                        nested_list = list(traverse(result))
+                        booktitle = ', '.join(str(title) for title in nested_list)
+                    else:
+                        booktitle = ', '.join(str(title) for title in result)
+            else:
+                if 'pubinfo_freetext' in pubinfo:
+                    booktitle = pubinfo['pubinfo_freetext']
     return booktitle

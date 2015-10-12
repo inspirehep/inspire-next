@@ -17,15 +17,24 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
+{% macro render_author_names(author) %}
+  <a{% if author.affiliations|length > 0 %}
+      data-toggle="tooltip"
+      data-placement="bottom"
+      title="{{ author.get('affiliations')[0] }}"
+    {% endif %}
+    href="{{ url_for('search.search', p='author:"' + author.full_name + '"') }}">
+    {{ author.get('full_name') }}
+  </a>
+{% endmacro %}
+
 {% macro render_record_authors(number_of_displayed_authors) %}
   {% if record.authors %}
   {% set sep = joiner("; ") %}
   {% set authors = record.authors %}
   {% for author in authors[0:number_of_displayed_authors] %}
-  <small>{{ sep() }}</small>
-  <small class="text-left" ><a {% if author.get('affiliation') %} data-toggle="tooltip" data-placement="bottom" title={% if author.get('affiliation')|is_list() %} "{{ author.get('affiliation')[0] }}" {% else %} "{{ author.get('affiliation') }}" {% endif %} {% endif %} href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
-      {{ author.get('full_name') }}
-    </a></small>
+    <small>{{ sep() }}</small>
+    <small class="text-left">{{ render_author_names(author) }}</small>
   {% endfor %}
   {% if record.authors|length > number_of_displayed_authors %}
   {{ sep() }}
@@ -43,10 +52,8 @@
       </div>
       <div class="modal-body">
         {% for author in record.authors %}
-        <small class="text-left" ><a {% if author.get('affiliation') %} data-toggle="tooltip" data-placement="bottom" title={% if author.get('affiliation')|is_list() %} "{{ author.get('affiliation')[0] }}" {% else %} "{{ author.get('affiliation') }}" {% endif %} {% endif %} href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
-         {{ author.get('full_name') }}
-        </a></small>
-        <small>{{ sep() }}</small>
+          <small class="text-left">{{ render_author_names(author) }}</small>
+          <small>{{ sep() }}</small>
         {% endfor %}
       </div>
       <div class="modal-footer">
@@ -59,18 +66,16 @@
 {% endmacro %}
 
 {% macro record_arxiv() %}
-  {% if record.get('report_number') %}
-  {% if record.get('report_number') | is_list() %}
-  {% set filtered_arxiv = record.get('report_number')| remove_duplicates_from_dict() %}
-  {% for i in filtered_arxiv %}
-  {% if i.get('source') == 'arXiv' %}
-  <b>e-Print:</b><a href="http://arxiv.org/abs/{{ i.get('primary') }}" > {{ i.get('primary') }}
-  </a>
-  {% if i.get('arxiv_category') %}
-  &nbsp;<b>[{{  i.get('arxiv_category')  }}]</b>
-  {% endif %}
-  {% endif %}
-  {% endfor %}
-  {% endif %}
+  {% if record.get('arxiv_eprints') %}
+    {% if record.get('arxiv_eprints') | is_list() %}
+      {% set filtered_arxiv = record.get('arxiv_eprints')| remove_duplicates_from_dict() %}
+      {% for i in filtered_arxiv %}
+        <b>e-Print:</b>
+          <a href="http://arxiv.org/abs/{{ i.get('value') }}">{{ i.get('value') }}</a>
+        {% if i.get('categories') %}
+          &nbsp;<b>[{{  i.get('categories')|join(',')  }}]</b>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
   {% endif %}
 {% endmacro %}

@@ -34,11 +34,11 @@ from ..model import literature
 from dojson import utils
 
 
-@literature.over('abstract', '^abstract$')
-def abstract(self, key, value):
-    return {
-        'summary': value,
-    }
+@literature.over('abstracts', '^abstract$')
+def abstracts(self, key, value):
+    return [{
+        'value': value,
+    }]
 
 
 @literature.over('_arxiv_id', '^arxiv_id$')
@@ -46,24 +46,24 @@ def arxiv_id(self, key, value):
     from invenio.utils.persistentid import is_arxiv_post_2007
 
     if is_arxiv_post_2007(value):
-        arxiv_rep_number = {'primary': 'arXiv:' + value,
+        arxiv_rep_number = {'value': 'arXiv:' + value,
                             'source': 'arXiv'}
     else:
-        arxiv_rep_number = {'primary': value,
+        arxiv_rep_number = {'value': value,
                             'source': 'arXiv'}
     if len(value.split('/')) == 2:
-        arxiv_rep_number['arxiv_category'] = value.split('/')[0]
-    if 'report_number' in self:
-        self['report_number'].append(arxiv_rep_number)
+        arxiv_rep_number['categories'] = value.split('/')[0]
+    if 'arxiv_eprints' in self:
+        self['arxiv_eprints'].append(arxiv_rep_number)
     else:
-        self['report_number'] = [arxiv_rep_number]
+        self['arxiv_eprints'] = [arxiv_rep_number]
 
 
-@literature.over('doi', '^doi$')
-def doi(self, key, value):
-    return {
-        'doi': value,
-    }
+@literature.over('dois', '^doi$')
+def dois(self, key, value):
+    return [{
+        'value': value,
+    }]
 
 
 @literature.over('authors', '^authors$')
@@ -81,19 +81,23 @@ def authors(self, key, value):
                 match_authors_initials(name[1]):
             name[1] = name[1].replace(' ', '')
             author['full_name'] = ", ".join(name)
+        author['affiliations'] = [dict(value=author['affiliation'])]
+        del author['affiliation']
     return value
 
 
 @literature.over('_categories', '^categories$')
 def categories(self, key, value):
     subject_list = [{
-        "value": c,
+        "term": c,
         "scheme": "arXiv"
     } for c in value.split()]
-    if 'subject_term' in self:
-        self['subject_term'].extend(subject_list)
+    if 'subject_terms' in self:
+        self['subject_terms'].extend(subject_list)
     else:
-        self['subject_term'] = subject_list
+        self['subject_terms'] = subject_list
+    if 'arxiv_eprints' in self:
+        self['arxiv_eprints'][0]['categories'] = value.split()
     return value
 
 
@@ -104,11 +108,11 @@ def collaboration(self, key, value):
     }
 
 
-@literature.over('hidden_note', '^hidden_note$')
-def hidden_note(self, key, value):
-    return {
+@literature.over('hidden_notes', '^hidden_note$')
+def hidden_notes(self, key, value):
+    return [{
         "value": value
-    }
+    }]
 
 
 @literature.over('_conference_id', '^conference_id$')
@@ -121,16 +125,19 @@ def conference_id(self, key, value):
 
 @literature.over('_preprint_created', '^preprint_created$')
 def preprint_created(self, key, value):
-    if 'imprint' in self:
-        self['imprint']['date'] = value
+    if 'imprints' in self:
+        self['imprints'][0]['date'] = value
     else:
-        self['imprint'] = dict(date=value)
+        self['imprints'] = [dict(date=value)]
 
 
-@literature.over('defense_date', '^defense_date$')
+@literature.over('_defense_date', '^defense_date$')
 @utils.for_each_value
 def defense_date(self, key, value):
-    return {'date': value}
+    if 'thesis' in self:
+        self['thesis']['defense_date'] = value
+    else:
+        self['thesis'] = dict(defense_date=value)
 
 
 @literature.over('_degree_type', '^degree_type$')
@@ -157,8 +164,8 @@ def thesis_date(self, key, value):
         self['thesis'] = dict(date=value)
 
 
-@literature.over('accelerator_experiment', '^experiment$')
-def accelerator_experiment(self, key, value):
+@literature.over('accelerator_experiments', '^experiment$')
+def accelerator_experiments(self, key, value):
     return {'experiment': value}
 
 
@@ -228,30 +235,30 @@ def license_url(self, key, value):
         self['license'] = dict(url=value)
 
 
-@literature.over('note', '^note$')
-def note(self, key, value):
-    return {
+@literature.over('public_notes', '^note$')
+def public_notes(self, key, value):
+    return [{
         'value': value,
-    }
+    }]
 
 
 @literature.over('_report_numbers', '^report_numbers$')
 def report_numbers(self, key, value):
-    """ Report numbers coming from the user."""
+    """Report numbers coming from the user."""
     repnums = []
     for repnum in value:
-        repnums.append(dict(primary=repnum.get('report_number')))
-    if 'report_number' in self:
-        self['report_number'].extend(repnums)
+        repnums.append(dict(value=repnum.get('report_number')))
+    if 'report_numbers' in self:
+        self['report_numbers'].extend(repnums)
     else:
-        self['report_number'] = repnums
+        self['report_numbers'] = repnums
 
 
-@literature.over('subject_term', '^subject_term$')
-def subject_term(self, key, value):
+@literature.over('subject_terms', '^subject_term$')
+def subject_terms(self, key, value):
     return [
         {
-            "value": t,
+            "term": t,
             "scheme": "INSPIRE",
             "source": "submitter"
         }
@@ -263,27 +270,52 @@ def thesis_supervisor(self, key, value):
     return value
 
 
-@literature.over('title', '^title$')
-@utils.for_each_value
-def title(self, key, value):
-    return {
-        "title": value
-    }
+@literature.over('titles', '^title$')
+def titles(self, key, value):
+    def get_value(existing):
+        if not isinstance(value, list):
+            values = [value]
+        else:
+            values = value
+        out = []
+        for val in values:
+            out.append({
+                'title': val,
+            })
+        return existing + out
+
+    if 'titles' in self:
+        return get_value(self['titles'])
+    else:
+        return get_value([])
 
 
 @literature.over('title_translation', '^title_translation$')
 def title_translation(self, key, value):
     return {
-        "title_translation": value
+        "title": value
     }
 
 
-@literature.over('title_arxiv', '^title_arXiv$')
+@literature.over('titles', '^title_arXiv$')
 def title_arxiv(self, key, value):
-    return {
-        "title": value,
-        "source": "arXiv"
-    }
+    def get_value(existing):
+        if not isinstance(value, list):
+            values = [value]
+        else:
+            values = value
+        out = []
+        for val in values:
+            out.append({
+                'title': val,
+                'source': 'arXiv'
+            })
+        return existing + out
+
+    if 'titles' in self:
+        return get_value(self['titles'])
+    else:
+        return get_value([])
 
 
 @literature.over('url', '^url$')

@@ -69,7 +69,7 @@ def get_ticket_body(template, deposition, metadata, email, obj):
         template,
         email=email,
         title=deposition.title,
-        identifier=metadata.get("system_number_external", {}).get("value", ""),
+        identifier=metadata.get("external_system_numbers", [{}])[0].get("value", ""),
         user_comment=user_comment,
         references=obj.extra_data.get("submission_data", {}).get("references"),
         object=obj,
@@ -93,15 +93,15 @@ def get_curation_body(template, metadata, email, extra_data):
     if arxiv_id and is_arxiv_post_2007(arxiv_id):
         arxiv_id = ''.join(['arXiv:', arxiv_id])
 
-    report_number = metadata.get('report_number')
+    report_number = metadata.get('report_numbers')
     if report_number:
-        report_number = report_number[0].get('primary')
+        report_number = report_number[0].get('value')
 
     link_to_pdf = extra_data.get('submission_data').get('pdf')
 
     subject = ' '.join(filter(lambda x: x is not None,
                        [arxiv_id,
-                        metadata.get('doi'),
+                        " ".join(["doi:{0}".format(d) for d in metadata.get('dois')]),
                         report_number,
                         '(#{0})'.format(recid)]))
 
@@ -375,10 +375,10 @@ def add_note_entry(obj, eng):
         else {'value': '*Brief entry*'}
     deposition = Deposition(obj)
     metadata = deposition.get_latest_sip(sealed=True).metadata
-    if metadata.get('note') is None or not isinstance(metadata.get("note"), list):
-        metadata['note'] = [entry]
+    if metadata.get('public_notes') is None or not isinstance(metadata.get("public_notes"), list):
+        metadata['public_notes'] = [entry]
     else:
-        metadata['note'].append(entry)
+        metadata['public_notes'].append(entry)
     deposition.update()
 
 

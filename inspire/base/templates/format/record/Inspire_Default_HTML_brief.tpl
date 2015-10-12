@@ -30,8 +30,8 @@
       <div class="col-md-9"  id="left-column">
         <h4 class="custom-h">
           <b>
-            {% if record['title']|is_list %}
-              {% for title in record['title'] %}          
+            {% if record.titles %}
+              {% for title in record['titles'] %}
                 <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
                 {{ title['title']|capitalize }}
                 </a>
@@ -43,23 +43,10 @@
                  <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
                 {{ title['title']|capitalize }}
                 {% endif %}
-                </a> 
+                </a>
               {% endfor %}
-            {% else %}
-              <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-              {{ record['title']['title']|capitalize }}
-              </a>
-              {% if record['title']['title']|count_words() > 5 %}
-              <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-              {{ record['title']['title']|capitalize | words(5) + "..."}}
-              </a>
-              {% else %}
-               <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-              {{ record['title']['title']|capitalize }}
-              {% endif %}
-              </a> 
             {% endif %}
-          </b> 
+          </b>
       </h4>
       {{ render_record_authors(10) }}
       <div class="row"><div class="col-md-12"><p></p></div></div>
@@ -69,7 +56,7 @@
         {{ record_journal_info() }}
       </div>
       {% endif %}
-      {% if  record.get('doi') %}
+      {% if  record.get('dois') %}
       <div class="col-md-6 ">
         <span class="text-left"><b>DOI:</b></span>{{ record_info() }}
       </div>
@@ -82,18 +69,16 @@
           <div class="col-md-6"></div>
         </div>
         <div class="row"><div class="col-md-12"><p></p></div></div>
-        {{ record_abstract() }}         
+        {{ record_abstract() }}
       </div>
       <div class="col-md-3" id="right-column" >
-        {% if record.get('report_number') %}
-        {% if record.get('report_number') | is_list() %}
-        {% set filtered_arxiv = record.get('report_number')| remove_duplicates_from_dict() %}
-        {% for i in filtered_arxiv %}
-        {% if i.get('source') == 'arXiv' %}
-          <a type="button" class="btn  custom-btn blue-btn" id="link-to-pdf"  href="http://arxiv.org/pdf/{{ i.get('primary') }}">PDF </a>
-        {% endif %}
-        {% endfor %}
-        {% endif %}
+        {% if record.get('arxiv_eprints') %}
+          {% if record.get('arxiv_eprints') | is_list() %}
+            {% set filtered_arxiv = record.get('arxiv_eprints')| remove_duplicates_from_dict() %}
+            {% for i in filtered_arxiv %}
+                <a type="button" class="btn  custom-btn blue-btn" id="link-to-pdf"  href="http://arxiv.org/pdf/{{ i.get('value') }}">PDF </a>
+            {% endfor %}
+          {% endif %}
         {% endif %}
         <span class="dropdown">
          <button class="btn btn-default dropdown-toggle dropdown-cite" type="button" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#myModal{{record['control_number']}}">
@@ -125,7 +110,7 @@
                 <div class="col-md-12">
                   <div class="editable" contenteditable="true" onclick="document.execCommand('selectAll',false,null)"><pre id="text{{record['control_number']}}"></pre></div>
                 </div>
-              </div> 
+              </div>
             </div>
             <div class="modal-footer">
             </div>
@@ -136,7 +121,7 @@
         <div class="citations-references">
           {% if record.get('date_updated') %}
             <i class="glyphicon glyphicon-calendar"></i> {{ record.get('date_updated').split('-')[0] }}<br/>
-          {% endif %}               
+          {% endif %}
           {% if  record.get('_cited_by_count') > 0  %}
             <i class="fa fa-quote-left"></i><span><a href="/record/{{ record.get('control_number') }}/citations"  target="_blank"> Cited {{ record.get('_cited_by_count') }} times</a></span><br/>
           {% else %}
@@ -155,6 +140,3 @@
 </div>
 </div>
 {% endblock %}
-
-
-

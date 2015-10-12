@@ -41,19 +41,6 @@ blueprint = Blueprint(
 )
 
 
-# Constants
-SUBJECT_TERM = "subject_term"
-VALUE = "value"
-SCHEME = "scheme"
-INSPIRE_SCHEME = "INSPIRE"
-
-# Fields
-SUBJECT_FIELD = "subject_term.term"
-TITLE_FIELD = "title.title"
-TITLE = "title"
-URL = 'url'
-
-
 # Helper methods for editing
 def get_attributes(objectid):
     """Returns the required attributes for record editing."""
@@ -87,7 +74,7 @@ def edit_record_title(value, objectid):
     """Entrypoint for editing title from detailed pages."""
     model, sip, metadata = get_attributes(objectid)
 
-    metadata[TITLE][TITLE] = MathMLParser.html_to_text(value)
+    metadata["titles"][0] = {"title": MathMLParser.html_to_text(value)}
     save_changes(sip, model)
     return json_success_message('title')
 
@@ -106,7 +93,7 @@ def edit_record_urls(objectid):
     for url in new_urls:
         new_urls_array.append({'url': url})
 
-    metadata[URL] = new_urls_array
+    metadata['url'] = new_urls_array
     save_changes(sip, model)
     return json_success_message('urls')
 
@@ -121,15 +108,15 @@ def edit_record_subject(objectid):
     new_subjects_list = request.values.getlist('subjects[]') or []
 
     subject_dict = []
-    subject_dict.extend(metadata.get(SUBJECT_TERM))
+    subject_dict.extend(metadata.get("subject_terms"))
 
     old_subjects_list = []
     for subj in subject_dict:
-        old_subjects_list.append(subj[VALUE])
+        old_subjects_list.append(subj["term"])
 
-    metadata[SUBJECT_TERM] = revised_subjects_list(old_subjects_list,
-                                                   new_subjects_list,
-                                                   subject_dict)
+    metadata["subject_terms"] = revised_subjects_list(old_subjects_list,
+                                                      new_subjects_list,
+                                                      subject_dict)
     save_changes(sip, model)
     return json_success_message('subjects')
 
@@ -143,13 +130,13 @@ def revised_subjects_list(old, new, subject_dict):
 
     # Remove subjects
     subject_objects = [subj for subj in subject_dict
-                       if subj[VALUE] not in to_remove]
+                       if subj["term"] not in to_remove]
 
     # Add the new subjects
     for subj in to_add:
         subject_objects.append({
-            VALUE: subj,
-            SCHEME: INSPIRE_SCHEME
+            "term": subj,
+            "scheme": "INSPIRE"
         })
 
     return subject_objects

@@ -81,7 +81,7 @@ def match_by_arxiv_id(record):
 
 def match_by_doi(record):
     """Match by DOIs."""
-    dois = record.get('doi.doi', [])
+    dois = record.get('dois.value', [])
 
     result = set()
     for doi in dois:
@@ -124,7 +124,7 @@ def was_already_harvested(record):
     We use the following heuristic: if the record belongs to one of the
     CORE categories then it was probably ingested in some other way.
     """
-    categories = record.get('subject_term.value', [])
+    categories = record.get('subject_terms.term', [])
     for category in categories:
         if category.lower() in cfg.get('INSPIRE_ACCEPTED_CATEGORIES', []):
             return True
@@ -136,13 +136,14 @@ def is_too_old(record, days_ago=5):
     If the record is older then it's probably an update of an earlier
     record, and we don't want those.
     """
-    defense_dates = record.get('defense_date.date', '')
-    for defense_date in defense_dates:
-        parsed_date = datetime.datetime.strptime(defense_date, "%Y-%m-%d")
-        if date_older_than(parsed_date,
-                           datetime.datetime.now(),
-                           days=days_ago):
-            return True
+    earliest_date = record.get('earliest_date', '')
+    if not earliest_date:
+        earliest_date = record.get('preprint_date', '')
+    parsed_date = datetime.datetime.strptime(earliest_date, "%Y-%m-%d")
+    if date_older_than(parsed_date,
+                       datetime.datetime.now(),
+                       days=days_ago):
+        return True
 
 
 def exists_in_inspire_or_rejected(days_ago=None):
@@ -175,7 +176,7 @@ def exists_in_inspire_or_rejected(days_ago=None):
 
 
 def save_identifiers_to_kb(kb_name,
-                           identifier_key="report_number.value"):
+                           identifier_key="report_numbers.value"):
     """Save the record identifiers into a KB."""
     @wraps(save_identifiers_to_kb)
     def _save_identifiers_to_kb(obj, eng):
@@ -189,7 +190,7 @@ def save_identifiers_to_kb(kb_name,
 
 
 def exists_in_holding_pen(kb_name,
-                          identifier_key="report_number.value"):
+                          identifier_key="report_numbers.value"):
     """Check if a record exists in HP by looking in given KB."""
     @wraps(exists_in_holding_pen)
     def _exists_in_holding_pen(obj, eng):
@@ -227,19 +228,16 @@ def update_old_object(kb_name):
         from inspire.utils.knowledge import get_value
         from invenio_workflows.models import BibWorkflowObject
 
+        record = get_record_from_obj(obj, eng)
         identifiers = []
-        report_numbers = obj.get_data().get('report_number', [])
-        for number in report_numbers:
-            if number.get("source", "").lower() == "arxiv":
-                arxiv_id = number.get("primary")
-                identifiers.append(arxiv_id)
+        identifiers = record.get('arxiv_eprints.value', [])
 
         object_id = get_value(kb_name, identifiers)
         if object_id:
             old_object = BibWorkflowObject.query.get(object_id)
             if old_object:
                 # record waiting approval
-                old_object.set_data(obj.get_data())
+                old_object.set_data(obj.data)
                 old_object.save()
 
     return _update_old_object

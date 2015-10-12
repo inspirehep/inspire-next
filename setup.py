@@ -35,6 +35,7 @@ requirements = [
     "mixer==4.9.5",  # FIXME: Due to incompatibility with our mixer usage
     "raven==5.0.0",  # FIXME: To be compatible with our sentry version
     "orcid",
+    "dojson>=0.2.0",
     "retrying",
     "invenio-query-parser>=0.3.0",
     "invenio_classifier==0.1.0",
