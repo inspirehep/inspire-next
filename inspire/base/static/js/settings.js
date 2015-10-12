@@ -170,10 +170,10 @@ require.config({
       deps: ["jquery"],
       exports: "$.fn.readmore"
     },
-    "html2canvas" : {
+    "html2canvas": {
       deps: ["jquery"]
     },
-    "highcharts" : {
+    "highcharts": {
       deps: ["jquery"],
       exports: "Highcharts"
     }

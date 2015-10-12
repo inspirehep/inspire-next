@@ -20,12 +20,12 @@
  * or submit itself to any jurisdiction.
  */
 
- require([
-    "js/jquery_plugin",
-    "js/feedback_inspire",
-    "js/header/header",
-    "js/notification",
-    ], function() {
-    // loading all the libraries everywhere.
-    console.info("js/inspire_base_init is loaded");
+require([
+  "js/jquery_plugin",
+  "js/feedback_inspire",
+  "js/header/header",
+  "js/notification",
+], function() {
+  // loading all the libraries everywhere.
+  console.info("js/inspire_base_init is loaded");
 });

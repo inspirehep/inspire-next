@@ -22,18 +22,18 @@
  */
 
 ({
-    preserveLicenseComments: false,
-    optimize: 'uglify2',
-    uglify2: {
-        output: {
-            beautify: false,
-            comments: false
-        },
-        compress: {
-            drop_console: true
-        },
-        warnings: true,
-        mangle: false
+  preserveLicenseComments: false,
+  optimize: 'uglify2',
+  uglify2: {
+    output: {
+      beautify: false,
+      comments: false
     },
-    mainConfigFile: './settings.js',
+    compress: {
+      drop_console: true
+    },
+    warnings: true,
+    mangle: false
+  },
+  mainConfigFile: './settings.js',
 })

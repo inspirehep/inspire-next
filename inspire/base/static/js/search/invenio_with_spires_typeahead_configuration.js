@@ -18,7 +18,7 @@
  * In applying this licence, CERN does not waive the privileges and immunities
  * granted to it by virtue of its status as an Intergovernmental Organization
  * or submit itself to any jurisdiction.
-*/
+ */
 
 
 function getInvenioSpiresParserConf(area_keywords) {
@@ -47,8 +47,7 @@ function getInvenioSpiresParserConf(area_keywords) {
   }
 
   function notStartsNorEndsWithColon(str, char_roles, start_idx, keyword) {
-    return notEndsWithColon(str, char_roles, start_idx + keyword.length)
-      && !(start_idx > 0 && str[start_idx - 1] == ':');
+    return notEndsWithColon(str, char_roles, start_idx + keyword.length) && !(start_idx > 0 && str[start_idx - 1] == ':');
   }
 
   function isFirstWord(str, char_roles, start_idx, keyword) {
@@ -69,8 +68,7 @@ function getInvenioSpiresParserConf(area_keywords) {
     min_length: 1,
     keyword_function: setSpireSyntax,
     detection_condition: function(str, char_roles, start_idx, keyword) {
-      return isFirstWord(str, char_roles, start_idx, keyword)
-        && notStartsNorEndsWithColon(str, char_roles, start_idx, keyword)
+      return isFirstWord(str, char_roles, start_idx, keyword) && notStartsNorEndsWithColon(str, char_roles, start_idx, keyword)
     },
     values: ['find'],
     autocomplete_suffix: ' '
