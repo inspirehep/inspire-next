@@ -100,13 +100,14 @@
 {% endmacro %}
 
 {% macro record_doi() %}
-  {% if record.get('dois') %}
-    {% if record.get('dois') %}
-      {% for title in record.get('dois') %}
-        <span class="text-left"><b>DOI </b></span><a href="http://dx.doi.org/{{ title.value | trim | safe}}" title="DOI">{{ title.value }}</a>
+    {% if record.get('dois') | is_list %}
+      {% set filtered_doi = record.get('dois.value') | remove_duplicates %}
+      {% for doi in filtered_doi %}
+        {% if not doi | has_space %}
+          <span class="text-left"><b>DOI </b></span><a href="http://dx.doi.org/{{ doi | trim | safe}}" title="DOI">{{ doi }}</a>
+        {% endif %}
       {% endfor %}
     {% endif %}
-  {% endif %}
 {% endmacro %}
 
 {% macro detailed_record_abstract() %}
@@ -127,6 +128,7 @@
 
     {% if record.get('thesaurus_terms') %}
       {% set showMore = [] %}
+      {% set keywords_number = [] %}
         {% for keywords in record.get('thesaurus_terms') %}
           {% if (loop.index < 15) %}
             {% if 'keyword' in keywords.keys() %}
@@ -135,6 +137,9 @@
               </small>
             {% endif %}
 
+            {% if loop.first %}
+              {% do keywords_number.append(loop.length) %}
+            {% endif %}
             {% if not loop.last %}
               ,
             {% endif %}
@@ -147,7 +152,12 @@
       {% if showMore %}
         {{ sep() }}
         <a href="" class="text-muted" data-toggle="modal"data-target="#keywordsFull">
-          <small>Show all</small>
+          <small>
+            Show all
+            {% if keywords_number %}
+              {{ keywords_number[0] }}
+            {% endif %}
+          </small>
         </a>
         <div class="modal fade" id="keywordsFull" tabindex="-1" role="dialog" aria-labelledby="keywordsFull" aria-hidden="true">
           <div class="modal-dialog">
@@ -212,7 +222,7 @@
 
       <div id="references-filter">
         <form>
-          <input type="text" placeholder=" &#xF002;  Filter" value="">
+          <input type="text" placeholder=" &#xf002;  Filter" value="">
         </form>
 
         <div class="btn-group">

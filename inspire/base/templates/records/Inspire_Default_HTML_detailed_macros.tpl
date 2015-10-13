@@ -29,7 +29,7 @@
 
 {% macro collection_header() %}
   {% set collections = record.collections %}
-  <div class="collection-header" id="{{collections | record_return_collection() }}">
+  <div class="collection-header" id="{{collections | record_current_collection("") }}">
     <div class="container">
       {{ display_current_collection() | safe }}
       {{ search_bar() | safe }}
@@ -50,25 +50,22 @@
 {% macro search_bar() %}
   <div class="search-box pull-right" style="display: inline-block;">
     <form class="search-form" action="/search">
-      <input type="text" name="p" placeholder="{{ search_current_collection() | safe | trim }}" value="">
+      <input type="text" name="p" placeholder="{{ search_current_collection(is_search=true) | safe | trim }}" value="">
         {% if record.get('collections') %}
           {% set collections = record.collections %}
-          {% for collection in collections %}
-            {% set collection_name = collection.get('primary') %}
-            <input type="hidden" name="cc" value="{{ collection_name }}">
-          {% endfor %}
+          <input type="hidden" name="cc" value="{{ collections | return_collection_name | safe }}">
         {% endif %}
     </form>
   </div>
 {% endmacro %}
 
-{% macro search_current_collection() %}
+{% macro search_current_collection(is_search) %}
   {% if record.get('collections') %}
   {% set collection_found = [] %}
     {% set collections = record.collections %}
     {% for collection in collections %}
       {% set collection_name = collection.get('primary') %}
-      {{ collection_name | search_collection | safe }}
+      {{ collection_name | search_collection(is_search) | safe }}
     {% endfor %}
   {% endif %} 
 {% endmacro %}

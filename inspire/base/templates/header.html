@@ -128,3 +128,19 @@
   </nav>
 </section>
 
+{% if request.path  == "/search" %}
+  <div id="collections">
+    <div class="container">
+      {% set collection_name = request.args.get('cc') %}
+        <span id="{{collection_name | collection_select_current("Literature") }}">Literature</span>
+        <span id="{{collection_name | collection_select_current("Authors") }}">Authors</span>
+        <span id="{{collection_name | collection_select_current("Conferences") }}">Conferences</span>
+        <span id="{{collection_name | collection_select_current("Jobs") }}">Jobs</span>
+    </div>
+  </div>
+  <div class="collection-header" id="{{collection_name | lower }}-collection">
+    <div class="container">
+    {{ collection_name | collection_get_title | safe }}
+    </div>
+  </div>
+{% endif %}

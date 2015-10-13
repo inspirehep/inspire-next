@@ -39,11 +39,7 @@
     {% set authors = record.authors %}
     {% for author in authors[0:number_of_displayed_authors] %}
       <small>{{ sep() }}</small>
-      <small class="text-left">
-        <a {% if not is_brief and author.get('affiliations') %} data-toggle="tooltip" data-placement="bottom" title={% if author.get('affiliations')|is_list %} "{{ author.get('affiliations')[0].value }}" {% else %} "{{ author.get('affiliations').value }}" {% endif %} {% endif %} href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
-          {{ author.get('full_name') }}
-        </a>
-      </small>
+      <small class="text-left">{{ render_author_names(author) }}</small>
     {% endfor %}
     {% if record.authors | length > number_of_displayed_authors %}
       {{ sep() }}
@@ -77,10 +73,8 @@
           <div class="modal-body">
             {% for author in record.authors %}
               <small class="text-left" >
-              <a href="{{ url_for('search.search', p='author:"' + author.get('full_name') + '"') }}">
-               {{ author.get('full_name') }}
-              </a>
-               {% if author.get('affiliations') %}
+              <small class="text-left">{{ render_author_names(author) }}</small>
+               {% if author.get('affiliations') and not is_brief %}
                 {% if author.get('affiliations') | is_list %} 
                   <a href="{{ url_for('search.search', p='"' + author.get('affiliations')[0].value + '"' + "&cc=Institutions") }}">
                     ({{ author.get('affiliations')[0].value }})
