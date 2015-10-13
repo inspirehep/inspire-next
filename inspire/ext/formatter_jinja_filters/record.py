@@ -26,7 +26,9 @@ from inspire.utils.bibtex import Bibtex
 from inspire.utils.latex import Latex
 from inspire.utils.cv_latex import Cv_latex
 from inspire.utils.cv_latex_html_text import Cv_latex_html_text
+
 from invenio_search.api import Query
+
 from inspire.utils.references import Reference
 
 
@@ -284,10 +286,12 @@ def collection_get_title(collection_name):
         return '<i class="fa fa-calendar"></i> Conferences'
     elif (collection_name == "job" or collection_name == "jobs"):
         return '<i class="fa fa-briefcase"></i> Jobs'
-    elif collection_name == "institutions":
+    elif collection_name == "institution" or collection_name == "institutions":
         return '<i class="fa fa-building-o"></i> Institutions'
     elif collection_name == "experiment" or collection_name == "experiments":
         return '<i class="fa fa-flask"></i> Experiments'
+    elif collection_name == "journals":
+        return 'Journals'
     else:
         return ""
 
@@ -295,34 +299,34 @@ def collection_get_title(collection_name):
 def record_current_collection(collections, current_collection):
     if collections is None:
         return ""
-    try:
-        for collection_name in collections:
+    for collection_name in collections:
 
-            collection_name = collection_name['primary'].strip().lower()
+        if 'primary' not in collection_name:
+            continue
 
-            if collection_name == "hep" and (current_collection == "Literature"
-                                             or current_collection == ""):
-                return "hep-collection"
-            elif collection_name == "hepnames" and (current_collection == "Authors"
-                                                    or current_collection == ""):
-                return "hepnames-collection"
-            elif collection_name == "conferences" and \
-                    (current_collection == "Conferences" or current_collection == ""):
-                return "conferences-collection"
-            elif (collection_name == "jobs" or collection_name == "job") and \
-                    (current_collection == "Jobs" or current_collection == ""):
-                return "jobs-collection"
-            elif (collection_name == "institution" or collection_name == "institutions") and \
-                    (current_collection == "Institutions" or current_collection == ""):
-                return "institutions-collection"
-            elif collection_name == "experiment" and \
-                    (current_collection == "Experiments" or current_collection == ""):
-                return "experiments-collection"
-            elif collection_name == "journals" and \
-                    (current_collection == "Journals" or current_collection == ""):
-                return "journals-collection"
-    except KeyError:
-        pass
+        collection_name = collection_name['primary'].strip().lower()
+
+        if collection_name == "hep" and \
+                (current_collection == "Literature" or current_collection == ""):
+            return "hep-collection"
+        elif collection_name == "hepnames" and \
+                (current_collection == "Authors" or current_collection == ""):
+            return "hepnames-collection"
+        elif collection_name == "conferences" and \
+                (current_collection == "Conferences" or current_collection == ""):
+            return "conferences-collection"
+        elif (collection_name == "jobs" or collection_name == "job") and \
+                (current_collection == "Jobs" or current_collection == ""):
+            return "jobs-collection"
+        elif (collection_name == "institution" or collection_name == "institutions") and \
+                (current_collection == "Institutions" or current_collection == ""):
+            return "institutions-collection"
+        elif collection_name == "experiment" and \
+                (current_collection == "Experiments" or current_collection == ""):
+            return "experiments-collection"
+        elif collection_name == "journals" and \
+                (current_collection == "Journals" or current_collection == ""):
+            return "journals-collection"
 
     return ""
 
@@ -372,6 +376,29 @@ def search_collection(collection_name, is_search):
         return 'Search ' + search + ' >'
 
 
+def return_collection_name(collections):
+    if collections is None:
+        return ""
+    for collection_name in collections:
+
+        if 'primary' not in collection_name:
+            continue
+
+        collection_name = collection_name['primary'].strip().lower()
+
+        if collection_name == "hep" or \
+            collection_name == "hepnames" or \
+            collection_name == "conferences" or \
+                collection_name == "journals":
+            return collection_name
+        elif (collection_name == "institution" or
+                collection_name == "job" or
+                collection_name == "experiment"):
+            return collection_name + 's'
+
+    return ""
+
+
 def get_filters():
     return {
         'email_links': email_links,
@@ -404,4 +431,5 @@ def get_filters():
         'collection_select_current': collection_select_current,
         'search_collection': search_collection,
         'record_current_collection': record_current_collection,
+        'return_collection_name': return_collection_name
     }

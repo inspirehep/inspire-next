@@ -161,7 +161,6 @@
 
 #record_content .record-detailed {
     background-color: #415161;
-    color: white;
     border-radius: 3px;
 }
 
@@ -186,8 +185,7 @@ body {
     font-weight: 700;
 
     #title {
-        color: grey;
-        opacity: 0.5;
+        margin-left: 5px;
     }
 }
 
@@ -333,7 +331,6 @@ body {
 #references, #citations {
 
     height: 500px;
-    overflow: auto;
 
     #references-filter, #citations-filter {
 
@@ -357,17 +354,21 @@ body {
         // Do not group these rules!
         ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
             color: gray;
+            font-family: FontAwesome;
         }
         :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
             color: gray;
             opacity: 1;
+            font-family: FontAwesome;
         }
         ::-moz-placeholder { /* Mozilla Firefox 19+ */
             color: gray;
             opacity: 1;
+            font-family: FontAwesome;
         }
         :-ms-input-placeholder { /* Internet Explorer 10-11 */
             color: gray;
+            font-family: FontAwesome;
         }
     }
 
@@ -396,8 +397,10 @@ body {
 
     .panel-body {
 
-        padding-top: 150px;
-        padding-bottom: 50px;
+        margin-top: 150px;
+        margin-bottom: 50px;
+        max-height: 300px;
+        overflow-y: scroll;
 
         .reference-record {
 
@@ -422,9 +425,13 @@ body {
         .reference-title {
             color: @blue;
             width: 90%;
-            font-size: larger;
             font-weight: 700;
         }
+
+        .reference-subtitle {
+            width: 90%;    
+        }
+
 
         .reference-journal {
             color: @purple;
@@ -469,16 +476,7 @@ body {
     text-align: right;
 }
 
-::-webkit-scrollbar {
-    -webkit-appearance: none;
-    width: 7px;
-}
 
-::-webkit-scrollbar-thumb {
-    border-radius: 4px;
-    background-color: rgba(0,0,0,.5);
-    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
-}
 
 #record_content > div.row {
 	display: none;

@@ -1,8 +1,7 @@
 /**
- * -*- mode: text; coding: utf-8; -*-
  *
  * This file is part of INSPIRE.
- * Copyright (C) 2014 CERN.
+ * Copyright (C) 2014, 2015 CERN.
 
  * INSPIRE is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -76,6 +75,89 @@ body {
 .navbar-nav > li > a {
     line-height: 40px;
     color: #f8f8f8;
+}
+
+ #collections {
+    background-color: @blue-purple;
+    font-weight: 700;
+    font-size: large;
+    height: 60px;
+    padding: 20px;
+
+    span+span {
+        margin-left: 20px;
+    }
+
+    #hep-collection {
+        color: @literature-collection;
+    }
+
+    #hepnames-collection {
+        color: @authors-collection;
+    }
+
+    #conferences-collection {
+        color: @conferences-collection;
+    }
+
+    #jobs-collection {
+        color: @jobs-collection;
+    }
+
+ }
+
+ .collection-header {
+    font-weight: 700;
+    height: 100px;
+    padding: 30px 20px 0 20px;
+    z-index: -1;
+    font-size: x-large;
+    color: white;
+}
+
+.collection-header {
+    background-color: @literature-collection;
+}
+
+.collection-header#hep-collection {
+    background-color: @literature-collection;
+}
+
+.collection-header#hepnames-collection {
+    background-color: @authors-collection;
+}
+
+.collection-header#conferences-collection {
+    background-color: @conferences-collection;
+}
+
+.collection-header#jobs-collection {
+    background-color: @jobs-collection;
+}
+
+.collection-header#experiments-collection {
+    background-color: @experiments-collection;
+}
+
+.collection-header#journals-collection {
+    background-color: @journals-collection;
+}
+
+.collection-header#institutions-collection {
+    background-color: @institutions-collection;
+}
+
+#collections {
+    color: white;
+
+    #current-collection {
+        color: @literature-collection;
+    }
+}
+
+#topnav {
+    min-height: 65px;
+    border-bottom: 0px;
 }
 
 /* Dropdown menu in Header styles

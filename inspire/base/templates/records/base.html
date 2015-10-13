@@ -25,14 +25,14 @@
 {% endblock title %}
 
 {%- block header %}
-    <div id="collections">
-      <div class="container">
-      {{ display_collections() | safe }}
-      </div>
-    </div>
-    {{ collection_header() | safe }}
   {%- include "base/scripts.html" %}
   {{- super() }}
+  <div id="collections">
+    <div class="container">
+    {{ display_collections() | safe }}
+    </div>
+  </div>
+  {{ collection_header() | safe }}
 {%- endblock header %}
 {%- block _bottom_assets %}
   {# The legacy page requires that the scripts are loaded from the <head>
@@ -59,6 +59,7 @@
 
   {% block record_tabs %}
   {% endblock %}
+
 
   <div id="record_content">
   {% block record_content %}
