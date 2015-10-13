@@ -74,7 +74,7 @@
       <div class="col-md-3" id="right-column" >
         {% if record.get('arxiv_eprints') %}
           {% if record.get('arxiv_eprints') | is_list() %}
-            {% set filtered_arxiv = record.get('arxiv_eprints')| remove_duplicates_from_dict() %}
+            {% set filtered_arxiv = record.get('arxiv_eprints') %}
             {% for i in filtered_arxiv %}
                 <a type="button" class="btn  custom-btn blue-btn" id="link-to-pdf"  href="http://arxiv.org/pdf/{{ i.get('value') }}">PDF </a>
             {% endfor %}
