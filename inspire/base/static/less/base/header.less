@@ -78,6 +78,77 @@ body {
     color: #f8f8f8;
 }
 
+ #collections {
+    background-color: @blue-purple;
+    font-weight: 700;
+    font-size: large;
+    height: 60px;
+    padding: 20px;
+
+    span+span {
+        margin-left: 20px;
+    }
+
+    #HEP-collection {
+        color: @literature-orange;
+    }
+
+    #HepNames-collection {
+        color: @authors-blue;
+    }
+
+    #Conferences-collection {
+        color: @conferences-green;
+    }
+
+    #Jobs-collection {
+        color: @literature-orange;
+    }
+
+ }
+
+ .collection-header {
+    font-weight: 700;
+    height: 100px;
+    padding: 30px 20px 0 20px;
+    z-index: -1;
+    font-size: x-large;
+    color: white;
+}
+
+.collection-header {
+    background-color: @literature-orange;
+}
+
+.collection-header#HEP-collection {
+    background-color: @literature-orange;
+}
+
+.collection-header#HepNames-collection {
+    background-color: @authors-blue;
+}
+
+.collection-header#Conferences-collection {
+    background-color: @conferences-green;
+}
+
+.collection-header#Jobs-collection {
+    background-color: @literature-orange;
+}
+
+#collections {
+    color: white;
+
+    #current-collection {
+        color: @literature-orange;
+    }
+}
+
+#topnav {
+    min-height: 65px;
+    border-bottom: 0px;
+}
+
 /* Dropdown menu in Header styles
 -------------------------------------------------- */
 .dropdown-menu-arrow:before {

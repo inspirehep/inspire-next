@@ -262,6 +262,36 @@ def link_to_hep_affiliation(record):
                 str(record['department_acronym'])
 
 
+def collection_get_title(collection_name):
+    if collection_name == "HEP":
+        return '<i class="fa fa-book"></i> Literature'
+    elif collection_name == "HepNames":
+        return '<i class="fa fa-users"></i> Authors'
+    elif collection_name == "Conferences":
+        return '<i class="fa fa-calendar"></i> Conferences'
+    elif collection_name == "Jobs":
+        return '<i class="fa fa-briefcase"></i> Jobs'
+    elif collection_name == "Institutions":
+        return '<i class="fa fa-building-o"></i> Institutions'
+    elif collection_name == "Experiments":
+        return '<i class="fa fa-flask"></i> Experiments'
+    else:
+        return collection_name
+
+
+def collection_select_current(collection_name, current_collection):
+    if collection_name == "HEP" and current_collection == "Literature":
+        return collection_name + "-collection"
+    elif collection_name == "HepNames" and current_collection == "Authors":
+        return collection_name + "-collection"
+    elif collection_name == "Conferences" and current_collection == "Conferences":
+        return collection_name + "-collection"
+    elif collection_name == "Jobs" and current_collection == "Jobs":
+        return collection_name + "-collection"
+    else:
+        return ""
+
+
 def get_filters():
     return {
         'email_links': email_links,
@@ -287,5 +317,7 @@ def get_filters():
         'experiment_link': experiment_link,
         'format_cnum_with_slash': format_cnum_with_slash,
         'format_cnum_with_hyphons': format_cnum_with_hyphons,
-        'link_to_hep_affiliation': link_to_hep_affiliation
+        'link_to_hep_affiliation': link_to_hep_affiliation,
+        'collection_get_title': collection_get_title,
+        'collection_select_current': collection_select_current
     }
