@@ -68,7 +68,7 @@
 {% macro record_arxiv() %}
   {% if record.get('arxiv_eprints') %}
     {% if record.get('arxiv_eprints') | is_list() %}
-      {% set filtered_arxiv = record.get('arxiv_eprints')| remove_duplicates_from_dict() %}
+      {% set filtered_arxiv = record.get('arxiv_eprints') %}
       {% for i in filtered_arxiv %}
         <b>e-Print:</b>
           <a href="http://arxiv.org/abs/{{ i.get('value') }}">{{ i.get('value') }}</a>
