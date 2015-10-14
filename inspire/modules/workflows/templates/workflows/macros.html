@@ -73,3 +73,22 @@
 
     {% endif %}
 {%- endmacro %}
+
+{% macro batch_action_buttons() %}
+    <div>
+        <div class="pull-right batch-action-buttons hidden">
+        <span class="text-muted">{{ _("For all selected") }}: </span>
+        <div class="btn-group" role="group">
+            <button class="btn btn-success arxiv-approval-action-accept batch-button" role="button" data-value="accept_core">
+                <i class="fa fa-check"></i> CORE
+            </button>
+            <button class="btn btn-warning arxiv-approval-action-accept batch-button" role="button" data-value="accept">
+                <i class="fa fa-check"></i> Accept
+            </button>
+            <button class="btn btn-danger arxiv-approval-action-reject batch-button"  role="button" data-value="reject">
+                <i class="fa fa-times"></i> Reject
+            </button>
+        </div>
+        </div>
+    </div>
+{% endmacro %}

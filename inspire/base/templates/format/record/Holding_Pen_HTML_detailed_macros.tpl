@@ -41,7 +41,9 @@
 
 
 {% macro get_abstract(record) %}
-    {% if record.abstracts %}
+    {% if record['abstracts'] is mapping %}
+       {{ record['abstracts']['value'] }}
+    {% else %}
        {{ record['abstracts'][0]['value'] }}
     {% endif %}
 {% endmacro %}
