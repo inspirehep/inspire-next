@@ -20,5 +20,6 @@ Contents
 
    installation
    harvesting
+   grobid
    tools
 
