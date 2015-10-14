@@ -22,13 +22,14 @@
 
 """Legacy workflow metadata in BibField conversion to updated data model."""
 
-from ..model import bibfield
-
 from dojson import utils
+
+from ..model import bibfield
 
 
 @bibfield.over('abstracts', '^abstract$')
 def abstracts(self, key, value):
+    """Get abstracts from object."""
     return [{
         'value': value.get('summary'),
         'source': value.get('source')
@@ -37,21 +38,25 @@ def abstracts(self, key, value):
 
 @bibfield.over('acquisition_source', '^acquisition_source$')
 def acquisition_source(self, key, value):
+    """Get acquisition_source from object."""
     return value
 
 
 @bibfield.over('fft', '^fft$')
 def fft(self, key, value):
+    """Get FFT from object."""
     return value
 
 
 @bibfield.over('collections', '^collections$')
 def collections(self, key, value):
+    """Get collections from object."""
     return value
 
 
 @bibfield.over('arxiv_eprints', '^system_number_external$')
 def arxiv_eprints(self, key, value):
+    """Get arxiv_eprints from object."""
     if isinstance(value, dict):
         value = [value]
     for val in value:
@@ -61,6 +66,7 @@ def arxiv_eprints(self, key, value):
 
 @bibfield.over('external_system_numbers', '^system_number_external$')
 def external_system_numbers(self, key, value):
+    """Get system_number_external from object."""
     if isinstance(value, list):
         return value
     return [value]
@@ -68,6 +74,7 @@ def external_system_numbers(self, key, value):
 
 @bibfield.over('dois', '^doi$')
 def dois(self, key, value):
+    """Get DOIs from object."""
     return [{
         'value': value,
     }]
@@ -75,34 +82,39 @@ def dois(self, key, value):
 
 @bibfield.over('license', '^license$')
 def license(self, key, value):  # noqa
+    """Get license from object."""
     return value
 
 
 @bibfield.over('page_nr', '^page_nr$')
 def page_nr(self, key, value):
+    """Get number of pages from object."""
     return value
 
 
 @bibfield.over('references', '^reference$')
 @utils.for_each_value
 def references(self, key, value):
+    """Get references from object."""
     return value
 
 
 @bibfield.over('edition', '^edition$')
 def edition(self, key, value):
+    """Get edition from object."""
     return value
 
 
 @bibfield.over('refextract', '^refextract$')
 def refextract(self, key, value):
+    """Get refextract from object."""
     return value
 
 
 @bibfield.over('report_numbers', '^report_number$')
 @utils.for_each_value
 def report_numbers(self, key, value):
-    """Report numbers."""
+    """Get report numbers from object."""
     return {
         "value": value.get('primary'),
         "source": value.get('source')
@@ -111,12 +123,14 @@ def report_numbers(self, key, value):
 
 @bibfield.over('subject_terms', '^subject_term$')
 def subject_terms(self, key, value):
+    """Get subjects from object."""
     return value
 
 
 @bibfield.over('authors', '^authors$')
 @utils.for_each_value
 def authors(self, key, value):
+    """Get authors from object."""
     affiliations = []
     if value.get('affiliation'):
         affiliations = list(set(utils.force_list(
@@ -135,6 +149,7 @@ def authors(self, key, value):
 
 @bibfield.over('titles', '^title$')
 def titles(self, key, value):
+    """Get titles from object."""
     def get_value(existing):
         if not isinstance(value, list):
             values = [value]
@@ -143,9 +158,9 @@ def titles(self, key, value):
         out = []
         for val in values:
             out.append({
-                'title': val.get('a'),
-                'subtitle': val.get('b'),
-                'source': val.get('9'),
+                'title': val.get('title'),
+                'subtitle': val.get('subtitle'),
+                'source': val.get('source'),
             })
         return existing + out
 
@@ -168,23 +183,27 @@ def breadcrumb_title(self, key, value):
 @bibfield.over('corporate_author', '^corporate_author$')
 @utils.for_each_value
 def corporate_author(self, key, value):
+    """Get corp. author from object."""
     return value
 
 
 @bibfield.over('collaboration', '^collaboration$')
 @utils.for_each_value
 def collaboration(self, key, value):
+    """Get collaboration from object."""
     return value
 
 
 @bibfield.over('preprint_date', '^preprint_info$')
 def preprint_date(self, key, value):
+    """Get preprint date from object."""
     return value.get('date')
 
 
 @bibfield.over('hidden_notes', '^hidden_note$')
 @utils.for_each_value
 def hidden_notes(self, key, value):
+    """Get hidden notes from object."""
     return {
         "value": value.get('value'),
         "source": value.get('source')
@@ -194,40 +213,49 @@ def hidden_notes(self, key, value):
 @bibfield.over('public_notes', '^note$')
 @utils.for_each_value
 def public_notes(self, key, value):
+    """Get public notes from object."""
     return value
 
 
 @bibfield.over('imprints', '^imprint$')
 @utils.for_each_value
 def imprints(self, key, value):
+    """Get imprints from object."""
     return value
 
 
 @bibfield.over('oai_pmh', '^oai_pmh$')
-@utils.for_each_value
 def oai_pmh(self, key, value):
+    """Get OAI PMH from object."""
     return value
 
 
 @bibfield.over('thesis', '^thesis$')
 def thesis(self, key, value):
+    """Get thesis from object."""
     return value
 
 
 @bibfield.over('isbns', '^isbn$')
+@utils.for_each_value
+@utils.filter_values
 def isbns(self, key, value):
-    if not isinstance(value, list):
-        return [value]
-    return value
+    """Get ISBNs from object."""
+    return {
+        "value": value.get('isbn') or value.get('value'),
+        "medium": value.get('medium')
+    }
 
 
 @bibfield.over('copyright', '^coyright$')
 def copyright(self, key, value):
+    """Get copyright from object."""
     return value
 
 
 @bibfield.over('accelerator_experiments', '^accelerator_experiment$')
 def accelerator_experiments(self, key, value):
+    """Get accelerator and experiment from object."""
     if not isinstance(value, list):
         return [value]
     return value
@@ -235,32 +263,31 @@ def accelerator_experiments(self, key, value):
 
 @bibfield.over('language', '^language$')
 def language(self, key, value):
-    languages = [("en", "English"),
-                 ("rus", "Russian"),
-                 ("ger", "German"),
-                 ("fre", "French"),
-                 ("ita", "Italian"),
-                 ("spa", "Spanish"),
-                 ("chi", "Chinese"),
-                 ("por", "Portuguese"),
-                 ("oth", "Other")]
-
-    if value not in ('en', 'oth'):
-        return unicode(dict(languages).get(value))
-    else:
-        return value
+    """Get language from object."""
+    return value
 
 
 @bibfield.over('thesis_supervisor', '^thesis_supervisor$')
 def thesis_supervisor(self, key, value):
+    """Get thesis supervisor from object."""
     if not isinstance(value, list):
-        return [value]
-    return value
+        value = [value]
+    out = []
+    for val in value:
+        out.append({
+            "full_name": val.get('full_name'),
+            "recid": val.get('external_id'),
+            "affiliation": {
+                "value": val.get('affiliation')
+            },
+        })
+    return out
 
 
 @bibfield.over('title_translation', '^title_translation$')
 @utils.for_each_value
 def title_translation(self, key, value):
+    """Get translated title from object."""
     return {
         "title": value.get('value'),
         "subtitle": value.get('subtitle'),
@@ -269,6 +296,7 @@ def title_translation(self, key, value):
 
 @bibfield.over('titles', '^title_arXiv$')
 def title_arxiv(self, key, value):
+    """Get arXiv title from object."""
     def get_value(existing):
         if not isinstance(value, list):
             values = [value]
@@ -277,9 +305,9 @@ def title_arxiv(self, key, value):
         out = []
         for val in values:
             out.append({
-                'title': val.get('a'),
-                'subtitle': val.get('b'),
-                'source': val.get('9'),
+                'title': val.get('title'),
+                'subtitle': val.get('subtitle'),
+                'source': val.get('source'),
             })
         return existing + out
 
@@ -291,42 +319,47 @@ def title_arxiv(self, key, value):
 
 @bibfield.over('spires_sysnos', '^spires_sysno$')
 def spires_sysnos(self, key, value):
-    return [value.get('value')]
+    """Get SPIRES number from object."""
+    if not isinstance(value, list):
+        value = [value]
+    return [v.get('value') for v in value]
 
 
 @bibfield.over('url', '^url$')
 @utils.for_each_value
 def url(self, key, value):
+    """Get URLs from object."""
     return value
 
 
 @bibfield.over('titles_old', '^title_old$')
+@utils.for_each_value
 def titles_old(self, key, value):
-    if not isinstance(value, list):
-        value = [value]
-    return [
-        {
-            'title': val.get('main'),
-            'subtitle': val.get('subtitle')
-        } for val in value
-    ]
+    """Get old titles from object."""
+    return {
+        'title': value.get('main'),
+        'subtitle': value.get('subtitle')
+    }
 
 
 @bibfield.over('publication_info', '^publication_info$')
 @utils.for_each_value
 def publication_info(self, key, value):
+    """Get pubinfo from object."""
     return value
 
 
 @bibfield.over('free_keywords', '^free_keyword$')
 @utils.for_each_value
 def free_keywords(self, key, value):
+    """Get keywords from object."""
     return value
 
 
 @bibfield.over('thesaurus_terms', '^thesaurus_terms$')
 @utils.for_each_value
 def thesaurus_terms(self, key, value):
+    """Get thesaurus terms from object."""
     return {
         "keyword": value.get('keyword'),
         "energy_range": value.get('energy_range'),

@@ -1,0 +1,235 @@
+{
+   "abstract":{
+      "source":"arXiv",
+      "summary":"We evaluate complex time series of online user communication in Twitter social network. We construct spike trains of each user participating any interaction with any other users in the network. Retweet a message, mention a user in a message, and reply to a message are types of interaction observed in Twitter. By applying the local variation originally established for neuron spike trains, we quantify the temporal behavior of active and passive but popular users separately. We show that the local variation of active users give bursts independent of the activation frequency. On the other hand, the local variation of popular users present irregular random (Poisson) patterns and the resultant temporal patterns are highly influenced by the frequency of the attention, e.g. bursts for less popular users, but randomly distributed temporarily uncorrelated spikes for most popular users. To understand the coincidence in the temporal patterns of two distinct interactions, we propose linear correlations of the local variation of the filtered spikes based on concerned interactions. We conclude that the local variations of the retweet and mention spike trains provide a good agreement only for most popular users, which suggests that the dynamics of mention a user together with that of retweet is a better identity of popular users instead of only paying attention of the dynamics of retweet, a conventional measure of user popularity."
+   },
+   "acquisition_source":{
+      "method":"OAI",
+      "source":"arxiv"
+   },
+   "oai_pmh":{
+      "id":"oai:inspirehep.net:1391950",
+      "set":"INSPIRE:HEP",
+      "previous_set":"SPIRES:HEP"
+   },
+   "doi": "10.1103/PhysRevSTAB.18.101002",
+   "edition": "2nd ed.",
+   "collaboration": "CMS",
+   "spires_sysno": {
+      "value": "SPIRES-249505"
+   },
+   "url": {
+      "url": "https://edoc.ub.uni-muenchen.de/13575/"
+   },
+   "title_translation": {
+      "value": "Some title in another language",
+      "subtitle": "subtitle"
+   },
+   "title_old": {
+      "main": "Some old title",
+      "subtitle": "subtitle"
+   },
+   "thesaurus_terms": [
+      {
+          "classification_scheme": "INSPIRE",
+          "keyword": "interaction: model"
+      },
+      {
+          "classification_scheme": "INSPIRE",
+          "keyword": "effect: Casimir"
+      }
+   ],
+   "language": "Russian",
+   "thesis_supervisor": {
+      "full_name": "Kolb, Edward W.",
+      "affiliation": "Chicago U."
+   },
+   "publication_info": {
+      "volume": "185",
+      "pagination": "829-843",
+      "title": "Usp.Fiz.Nauk",
+      "year": "2015"
+   },
+   "thesis": {
+      "university": "PhD",
+      "defense_date": "Oklahoma U.",
+      "date": "2004"
+   },
+   "free_keyword": [
+      {
+          "source": "author",
+          "value": "General relativity"
+      },
+      {
+          "source": "author",
+          "value": "Cosmology"
+      }
+   ],
+   "coyright": {
+      "statement": "Elsevier B.V."
+   },
+   "isbn": [
+      {
+        "value": "9783319183169"
+      },
+      {
+        "value": "9783319183176"
+      }
+   ],
+   "imprint": {
+      "date": "2016-04",
+      "place": "Geneva",
+      "publisher": "CERN"
+   },
+   "authors":[
+      {
+         "first_name":"Ceyda",
+         "full_name":"Sand, Ceyda",
+         "last_name":"Sand",
+         "INSPIRE_id":"12345",
+         "affiliation":"Some U."
+      },
+      {
+         "first_name":"Renaud",
+         "full_name":"Lambiotte, Renaud",
+         "last_name":"Lambiotte",
+         "relator_term":"Ed.",
+         "INSPIRE_id":"12346",
+         "affiliation":"Some Other U."
+      }
+   ],
+   "collections":[
+      {
+         "primary":"arXiv"
+      },
+      {
+         "primary":"Citeable"
+      },
+      {
+         "primary":"HEP"
+      }
+   ],
+   "hidden_note":[
+      {
+         "value": "I am hidden",
+         "cern_reference": "ForCDS",
+         "source": "Catalogers"
+      }
+   ],
+   "fft":[
+      {
+         "description":"00000 \\small Illustration of communication in Twitter. Users in who interact in time with users in whom by retweeting (RT) the messages and mentioning (@) the user names of whom in a message and replying (RE) to the messages from whom. Quantifying temporal patterns in time series of who users with various ranges of the activity of users $a_U$ and of whom users by increasing the popularity of users $p_U$ is the main scope of this paper.",
+         "docfile_type":"Plot",
+         "url":"/afs/cern.ch/project/inspire/LABSQA/var/data/oaiharvester/storage/0028e69e-3b7b-11e5-b31d-02163e00a130/2015/08/arXiv:1508.00540/arXiv:1508.00540_plots/Fig1_whowhom.png"
+      },
+      {
+         "docfile_type":"Plot",
+         "flag":"HIDDEN",
+         "url":"/afs/cern.ch/project/inspire/LABSQA/var/data/oaiharvester/storage/0028e69e-3b7b-11e5-b31d-02163e00a130/2015/08/arXiv:1508.00540/arXiv:1508.00540_plots/Fig1_whowhom.png.context"
+      }
+   ],
+   "license":{
+      "imposing":"arXiv",
+      "url":"http://arxiv.org/licenses/nonexclusive-distrib/1.0/"
+   },
+   "corporate_name": [
+      {
+          "name": "CMS Collaboration"
+      },
+      {
+          "collaboration": "CMS"
+      }
+   ],
+   "accelerator_experiment": {
+      "experiment": "CERN-LHC-CMS",
+      "accelerator": "CERN LHC"
+   },
+   "note":[
+      {
+         "source":"arXiv",
+         "value":"A statistical data analysis & data mining on Social Dynamic Behavior, 9 pages and 7 figures"
+      },
+      {
+         "value":"*Brief entry*"
+      }
+   ],
+   "number_of_authors":2,
+   "page_nr":"9",
+   "corporate_author":"Some CORP",
+   "preprint_info":{
+      "date":"2015-08-03"
+   },
+   "refextract":{
+      "comment":"",
+      "time":"2015-10-15 07:19:29",
+      "version":"Invenio/1.1.2.1260-aa76f refextract/1.5.44",
+      "source":"content.pdf;1"
+   },
+   "reference":[
+      {
+         "authors":"A. Abisheva, V. R. K. Garimella, D. Garcia, and I. Weber",
+         "misc":"Proceedings of the 7th ACM International Conference on Web Search and Data Mining, 593 (2014)",
+         "number":"1"
+      },
+      {
+         "authors":"J. P. Gleeson, J. A. Ward, K. P. Sullivan, and W. T. Lee",
+         "journal_pubnote":"Phys. Rev. Lett.,112,048701",
+         "number":"71",
+         "year":"2014"
+      },
+      {
+         "authors":"U. Cetin and H. O. Bingol",
+         "journal_pubnote":"Phys. Rev. E,90,032801",
+         "number":"72",
+         "year":"2014"
+      },
+      {
+         "authors":"J. P. Gleeson, K. P. Sullivan, R. A. Banos, and Y. Moreno",
+         "misc":"ArXiv e-prints (2015)",
+         "number":"73",
+         "report_number":"arXiv:1501.05956 [physics.soc-ph]"
+      }
+   ],
+   "report_number":[
+      {
+         "arxiv_category":"cs.SI",
+         "primary":"arXiv:1508.00540",
+         "source":"arXiv"
+      }
+   ],
+   "subject_term":[
+      {
+         "scheme":"arXiv",
+         "term":"cs.SI"
+      },
+      {
+         "scheme":"INSPIRE",
+         "term":"Computing"
+      },
+      {
+         "scheme":"arXiv",
+         "term":"cs.IT"
+      },
+      {
+         "scheme":"INSPIRE",
+         "term":"Computing"
+      },
+      {
+         "scheme":"arXiv",
+         "term":"math.IT"
+      },
+      {
+         "scheme":"INSPIRE",
+         "term":"Math and Math Physics"
+      }
+   ],
+   "system_number_external":{
+      "institute":"arXiv",
+      "value":"oai:arXiv.org:1508.00540"
+   },
+   "title":{
+      "source":"arXiv",
+      "subtitle":"Test",
+      "title":"Temporal Pattern of Communication Spike Trains in Twitter: How Often, Who Interacts with Whom?"
+   }
+}
