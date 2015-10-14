@@ -230,7 +230,7 @@
                             "ssrl",
                             "other"
                         ],
-                        "type": "string",
+                        "type": "array",
                         "description": "FIXME: Time to revise this list?"
                     },
                     "type": {

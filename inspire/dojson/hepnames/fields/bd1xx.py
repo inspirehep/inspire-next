@@ -304,13 +304,31 @@ def positions2marc(self, key, value):
 
 
 @hepnames.over('field_categories', '^65017')
-@utils.for_each_value
-@utils.filter_values
 def field_categories(self, key, value):
-    return {
-        'name': value.get('a').lower(),
-        'type': value.get('2'),
-    }
+
+    def get_value(value):
+        if isinstance(value, dict):
+            name = utils.force_list(value.get('a', '').lower())
+            t = value.get('2')
+        else:
+            name = utils.force_list(value)
+            t = value
+        return {
+            'name': name,
+            'type': t,
+        }
+
+    field_categories = self.get('field_categories', [])
+    if isinstance(value, list):
+        for element in value:
+            if isinstance(element.get('a'), list):
+                for val in element.get('a'):
+                    field_categories.append(get_value(val))
+            else:
+                field_categories.append(get_value(element))
+    else:
+        field_categories.append(get_value(value))
+    return field_categories
 
 
 @hepnames2marc.over('65017', '^field_categories$')
