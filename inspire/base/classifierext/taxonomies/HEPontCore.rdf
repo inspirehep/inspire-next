@@ -572,6 +572,12 @@
   <note xml:lang="en">core</note>
 </Concept>
 
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#BESS">
+  <prefLabel xml:lang="en">BESS</prefLabel>
+  <note xml:lang="en">core</note>
+  <definition xml:lang="en">Balloon-borne Experiment with Superconducting Spectrometer</definition>
+</Concept>
+
 <Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#betabeam">
   <prefLabel xml:lang="en">beta beam</prefLabel>
   <note xml:lang="en">core</note>
@@ -2521,6 +2527,13 @@
   <note xml:lang="en">core</note>
 </Concept>
 
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#GAPS">
+  <prefLabel xml:lang="en">GAPS</prefLabel>
+  <note xml:lang="en">core</note>
+  <definition xml:lang="en">General Antiparticle Spectrometer</definition>
+  <historyNote xml:lang="en">2015-09-11</historyNote>
+</Concept>
+
 <Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#gas">
   <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.neutrinogas"/>
   <prefLabel xml:lang="en">gas</prefLabel>
@@ -2843,6 +2856,13 @@
   <altLabel xml:lang="en">HTL approximation</altLabel>
   <altLabel xml:lang="en">HTLA</altLabel>
   <note xml:lang="en">core</note>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#HAWC">
+  <prefLabel xml:lang="en">HAWC</prefLabel>
+  <note xml:lang="en">CORE</note>
+  <definition xml:lang="en">High Altitude Water Cherenkov</definition>
+  <historyNote xml:lang="en">2015-08-2</historyNote>
 </Concept>
 
 <Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#heavy">
@@ -3668,6 +3688,18 @@
   <prefLabel xml:lang="en">leptonic decay</prefLabel>
 </Concept>
 
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#leptophilic">
+  <prefLabel xml:lang="en">leptophilic</prefLabel>
+  <note xml:lang="en">core</note>
+  <historyNote xml:lang="en">2015-09-10</historyNote>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#leptophobic">
+  <prefLabel xml:lang="en">leptophobic</prefLabel>
+  <note xml:lang="en">core</note>
+  <historyNote xml:lang="en">2015-09-10</historyNote>
+</Concept>
+
 <Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#leptoproduction">
   <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.neutrino/tauleptoproduction"/>
   <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.neutrino/muleptoproduction"/>
@@ -3841,6 +3873,12 @@
 <Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#lunar">
   <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.neutrinolunar"/>
   <prefLabel xml:lang="en">lunar</prefLabel>
+</Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#LUX">
+  <prefLabel xml:lang="en">LUX</prefLabel>
+  <note xml:lang="en">core</note>
+  <definition xml:lang="en">Large Underground Xenon experiment</definition>
 </Concept>
 
 <Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#M-brane">
@@ -5167,6 +5205,14 @@
   <composite rdf:resource="http://cern.ch/thesauri/HEPontology.rdf#Composite.pi-mesicatom"/>
   <prefLabel xml:lang="en">pi-</prefLabel>
 </Concept>
+
+<Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#PINGU">
+  <prefLabel xml:lang="en">PINGU</prefLabel>
+  <note xml:lang="en">core</note>
+  <definition xml:lang="en">Precision IceCube Next Generation Upgrade</definition>
+  <historyNote xml:lang="en">2015-09-10</historyNote>
+</Concept>
+
 
 <Concept rdf:about="http://cern.ch/thesauri/HEPontology.rdf#PIPER">
   <prefLabel xml:lang="en">PIPER</prefLabel>
