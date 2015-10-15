@@ -208,8 +208,16 @@ class BibFieldToJSONTests(InvenioTestCase):
     def test_thesis(self):
         """Test if thesis is created correctly"""
         self.assertEqual(
-            self.bibfield_json['thesis'],
-            self.record['thesis']
+            self.bibfield_json['thesis']['university'],
+            self.record['thesis']['university']
+        )
+        self.assertEqual(
+            self.bibfield_json['thesis']['date'],
+            self.record['thesis']['date']
+        )
+        self.assertEqual(
+            self.bibfield_json['defense_date'],
+            self.record['thesis']['defense_date']
         )
 
     def test_isbn(self):
@@ -341,24 +349,31 @@ class BibFieldToJSONTests(InvenioTestCase):
 
     def test_authors(self):
         """Test if authors is created correctly"""
-        self.assertEqual(
-            self.bibfield_json['authors'][0]['full_name'],
-            self.record['authors'][0]['full_name']
-        )
-        self.assertEqual(
-            self.bibfield_json['authors'][0]['affiliation'],
-            self.record['authors'][0]['affiliations'][0]['value']
-        )
-        self.assertEqual(
-            self.bibfield_json['authors'][1]['relator_term'],
-            self.record['authors'][1]['role']
-        )
-        self.assertEqual(
-            self.bibfield_json['authors'][1]['INSPIRE_id'],
-            self.record['authors'][1]['inspire_id']
-        )
-        self.assertEqual(len(self.bibfield_json['authors']),
+        all_authors = self.bibfield_json['authors'] + \
+            [self.bibfield_json['_first_author']] + \
+            self.bibfield_json['_additional_authors']
+
+        self.assertEqual(len(all_authors),
                          len(self.record['authors']))
+        for author in all_authors:
+            self.assertTrue(
+                author['full_name'] in
+                [a['full_name'] for a in self.record['authors']]
+            )
+            self.assertTrue(
+                author['affiliation'] in
+                [a['affiliations'][0]['value'] for a in self.record['authors']]
+            )
+            if "relator_term" in author:
+                self.assertTrue(
+                    author['relator_term'] in
+                    [a['role'] for a in self.record['authors']]
+                )
+            if "INSPIRE_id" in author:
+                self.assertTrue(
+                    author['INSPIRE_id'] in
+                    [a['inspire_id'] for a in self.record['authors']]
+                )
 
 
 TEST_SUITE = make_test_suite(BibFieldToJSONTests)

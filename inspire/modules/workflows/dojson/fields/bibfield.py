@@ -22,6 +22,8 @@
 
 """Legacy workflow metadata in BibField conversion to updated data model."""
 
+from __future__ import absolute_import, print_function, unicode_literals
+
 from dojson import utils
 
 from ..model import bibfield
@@ -127,24 +129,33 @@ def subject_terms(self, key, value):
     return value
 
 
-@bibfield.over('authors', '^authors$')
-@utils.for_each_value
+@bibfield.over('document_type', '^type_of_doc$')
+def document_type(self, key, value):
+    """Get subjects from object."""
+    return utils.force_list(value)
+
+
+@bibfield.over('authors', '^authors$', '^_additional_authors$', '^_first_author$')
 def authors(self, key, value):
     """Get authors from object."""
-    affiliations = []
-    if value.get('affiliation'):
-        affiliations = list(set(utils.force_list(
-            value.get('affiliation'))))
-        affiliations = [{'value': aff} for aff in affiliations]
-    return {
-        'full_name': value.get('full_name'),
-        'role': value.get('relator_term'),
-        'alternative_name': value.get('alternative_name'),
-        'inspire_id': value.get('INSPIRE_id'),
-        'orcid': value.get('external_id'),
-        'email': value.get('e_mail'),
-        'affiliations': affiliations,
-    }
+    authors = self.get('authors', [])
+    value = utils.force_list(value)
+    for val in value:
+        affiliations = []
+        if val.get('affiliation'):
+            affiliations = list(set(utils.force_list(
+                val.get('affiliation'))))
+            affiliations = [{'value': aff} for aff in affiliations]
+        authors.append({
+            'full_name': val.get('full_name'),
+            'role': val.get('relator_term'),
+            'alternative_name': val.get('alternative_name'),
+            'inspire_id': val.get('INSPIRE_id'),
+            'orcid': val.get('external_id'),
+            'email': val.get('e_mail'),
+            'affiliations': affiliations,
+        })
+    return authors
 
 
 @bibfield.over('titles', '^title$')
@@ -233,7 +244,17 @@ def oai_pmh(self, key, value):
 @bibfield.over('thesis', '^thesis$')
 def thesis(self, key, value):
     """Get thesis from object."""
-    return value
+    thesis = self.get('thesis', {})
+    thesis.update(value)
+    return thesis
+
+
+@bibfield.over('thesis', '^defense_date$')
+def defense_date_thesis(self, key, value):
+    """Get thesis from object."""
+    thesis = self.get('thesis', {})
+    thesis.update({"defense_date": value})
+    return thesis
 
 
 @bibfield.over('isbns', '^isbn$')

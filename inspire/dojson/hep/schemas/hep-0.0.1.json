@@ -380,7 +380,7 @@
                     "journal_issue": {
                         "type": "string"
                     },
-                    "page_range": {
+                    "page_artid": {
                         "type": "string",
                         "description": "FIXME: for ejournals this could be the page index, but there is no realiable way to know whether something is a page index or a first page, does it?"
                     }

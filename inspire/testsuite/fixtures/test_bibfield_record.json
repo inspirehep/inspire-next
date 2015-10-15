@@ -50,9 +50,10 @@
       "title": "Usp.Fiz.Nauk",
       "year": "2015"
    },
+   "defense_date": "2007-07-18",
    "thesis": {
-      "university": "PhD",
-      "defense_date": "Oklahoma U.",
+      "degree_type": "PhD",
+      "university": "Oklahoma U.",
       "date": "2004"
    },
    "free_keyword": [
@@ -81,6 +82,16 @@
       "place": "Geneva",
       "publisher": "CERN"
    },
+   "_first_author": {
+      "affiliation": "Giessen U.",
+      "full_name": "Fr\u00a8omel, Frank "
+   },
+   "_additional_authors": [
+       {
+          "affiliation": "Giessen U.",
+          "full_name": "Fr\u00a8omel, Frank "
+       }
+   ],
    "authors":[
       {
          "first_name":"Ceyda",
@@ -199,22 +210,27 @@
    ],
    "subject_term":[
       {
+         "source": "submitter",
          "scheme":"arXiv",
          "term":"cs.SI"
       },
       {
+         "source": "submitter",
          "scheme":"INSPIRE",
          "term":"Computing"
       },
       {
+         "source": "submitter",
          "scheme":"arXiv",
          "term":"cs.IT"
       },
       {
+         "source": "submitter",
          "scheme":"INSPIRE",
          "term":"Computing"
       },
       {
+         "source": "submitter",
          "scheme":"arXiv",
          "term":"math.IT"
       },
