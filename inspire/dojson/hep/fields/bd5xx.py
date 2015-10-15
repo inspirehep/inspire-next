@@ -91,8 +91,9 @@ def hidden_note2marc(self, key, value):
 @utils.for_each_value
 @utils.filter_values
 def thesis(self, key, value):
-    """Thesis Information."""
+    """Get Thesis Information."""
     return {
+        'defense_date': value.get('a'),
         'degree_type': value.get('b'),
         'university': value.get('c'),
         'date': value.get('d')
@@ -103,8 +104,9 @@ def thesis(self, key, value):
 @utils.for_each_value
 @utils.filter_values
 def thesis2marc(self, key, value):
-    """Thesis Information."""
+    """Get Thesis Information."""
     return {
+        'a': value.get('defense_date'),
         'b': value.get('degree_type'),
         'c': value.get('university'),
         'd': value.get('date'),
@@ -161,7 +163,7 @@ def funding_info2marc(self, key, value):
 @utils.for_each_value
 @utils.filter_values
 def license(self, key, value):
-    """Terms Governing Use and Reproduction Note."""
+    """Add Terms Governing Use and Reproduction Note."""
     return {
         'license': value.get('a'),
         'imposing': value.get('b'),
@@ -174,7 +176,7 @@ def license(self, key, value):
 @utils.for_each_value
 @utils.filter_values
 def license2marc(self, key, value):
-    """Terms Governing Use and Reproduction Note."""
+    """Add Terms Governing Use and Reproduction Note."""
     return {
         'a': value.get('license'),
         'b': value.get('imposing'),
