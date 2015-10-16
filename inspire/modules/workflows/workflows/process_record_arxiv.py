@@ -182,7 +182,7 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
                 else:
                     categories.append(category_list)
             categories = list(OrderedDict.fromkeys(categories))  # Unique only
-            abstract = record.get("abstracts.value", [""])[0]
+            abstract = record.get("abstract.value", [""])[0]
             authors = record.get("authors", [])
         return render_template('workflows/styles/harvesting_record.html',
                                object=bwo,
@@ -251,7 +251,7 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
         This object will be used for indexing and be the basis for display
         in Holding Pen.
         """
-        if isinstance(obj.data, six.text_type):
+        if isinstance(obj.get_data(), six.text_type):
             return {}
         model = cls.model(obj)
         return get_record_from_model(model).dumps()  # Turn into pure dict
