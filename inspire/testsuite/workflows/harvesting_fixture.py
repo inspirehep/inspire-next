@@ -43,8 +43,7 @@ from inspire.modules.workflows.tasks.matching import(
     exists_in_inspire_or_rejected,
     exists_in_holding_pen,
     save_identifiers_to_kb,
-    delete_self_and_stop_processing,
-    arxiv_set_category_field
+    delete_self_and_stop_processing
 )
 from inspire.modules.workflows.tasks.submission import halt_record_with_action
 
@@ -96,8 +95,6 @@ class harvesting_fixture(RecordWorkflow, DepositionType):
             ],
             workflow_else,
             [
-                # FIXME: Remove this when elasticsearch filtering is ready
-                arxiv_set_category_field,
                 save_identifiers_to_kb("harvesting_fixture_kb"),
                 # arxiv_plot_extract,
                 # arxiv_fulltext_download(),

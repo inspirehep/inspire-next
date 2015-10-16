@@ -36,8 +36,7 @@ from inspire.modules.workflows.tasks.matching import(
     exists_in_holding_pen,
     save_identifiers_to_kb,
     update_old_object,
-    delete_self_and_stop_processing,
-    arxiv_set_category_field
+    delete_self_and_stop_processing
 )
 
 # from inspire.modules.refextract.tasks import extract_journal_info
@@ -112,8 +111,6 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
             ],
             workflow_else,
             [
-                # FIXME: Remove this when elasticsearch filtering is ready
-                arxiv_set_category_field,
                 save_identifiers_to_kb("HP_IDENTIFIERS"),
                 # arxiv_plot_extract,
                 # arxiv_fulltext_download(),

@@ -241,9 +241,3 @@ def update_old_object(kb_name):
                 old_object.save()
 
     return _update_old_object
-
-
-def arxiv_set_category_field(obj, eng):
-    """Temporary measure to enable sorting by primary category."""
-    record = get_record_from_obj(obj, eng)
-    obj.uri = record.get("arxiv_eprints.categories", [""])[0]
