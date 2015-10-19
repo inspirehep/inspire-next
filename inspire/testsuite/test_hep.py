@@ -185,7 +185,7 @@ class HepRecordsTests(InvenioTestCase):
 
     def test_page_nr(self):
         """Test if page_nr is created correctly"""
-        self.assertEqual(self.marcxml_to_json['page_nr'][0]['value'],
+        self.assertEqual(self.marcxml_to_json['page_nr'][0],
                          self.json_to_marc['300'][0]['a'])
 
     def test_book_series(self):
