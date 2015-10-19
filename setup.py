@@ -31,6 +31,7 @@ from setuptools.command.test import test as TestCommand
 
 requirements = [
     'HarvestingKit>=0.6.2',
+    "plotextractor>=0.1.0",
     'mixer==4.9.5',
     'orcid',
     'raven==5.0.0',

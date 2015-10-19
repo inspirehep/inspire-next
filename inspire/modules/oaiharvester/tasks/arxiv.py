@@ -30,17 +30,15 @@ from invenio_base.globals import cfg
 
 from invenio_utils.shell import Timeout
 
-# from invenio_utils.plotextractor.api import (
-#     get_tarball_from_arxiv,
-#     get_marcxml_plots_from_tarball,
-#     get_pdf_from_arxiv,
-# )
 from inspire.utils.helpers import (
     get_record_from_model,
     add_file_by_name,
     get_file_by_name,
 )
 from inspire.utils.marcxml import get_json_from_marcxml
+from inspire.utils.arxiv import get_tarball, get_pdf
+
+from plotextractor.api import process_tarball
 
 
 REGEXP_AUTHLIST = re.compile(
@@ -76,7 +74,7 @@ def get_pdf_for_model(eng, arxiv_id):
         cfg.get('OAIHARVESTER_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
         str(eng.uuid)
     )
-    return get_pdf_from_arxiv(
+    return get_pdf(
         arxiv_id,
         extract_path
     )
@@ -88,7 +86,7 @@ def get_tarball_for_model(eng, arxiv_id):
         cfg.get('OAIHARVESTER_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
         str(eng.uuid)
     )
-    return get_tarball_from_arxiv(
+    return get_tarball(
         arxiv_id,
         extract_path
     )
@@ -175,15 +173,15 @@ def arxiv_plot_extract(obj, eng):
         tarball = existing_file.get_syspath()
 
     try:
-        marcxml = get_marcxml_plots_from_tarball(tarball)
+        plots = process_tarball(tarball)
     except Timeout:
         eng.log.error(
             'Timeout during tarball extraction on {0}'.format(tarball)
         )
 
-    if marcxml:
+    if plots:
         # We store the path to the directory the tarball contents lives
-        new_dict = get_json_from_marcxml(marcxml)[0]
+        new_dict = get_json_for_plots(plots)
         record.update(new_dict)
         obj.update_task_results(
             "Plots",
@@ -254,13 +252,10 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
     """
     @wraps(arxiv_author_list)
     def _author_list(obj, eng):
-        from invenio_oaiharvester.utils import find_matching_files
-
-        from invenio_utils.plotextractor.cli import get_defaults
-        from invenio_utils.plotextractor.converter import untar
-        from invenio_utils.shell import Timeout
-
         from inspire.modules.converter.xslt import convert
+        from invenio_oaiharvester.utils import find_matching_files
+        from invenio_utils.shell import Timeout
+        from plotextractor.converter import untar
 
         model = eng.workflow_definition.model(obj)
         record = get_record_from_model(model)
@@ -278,18 +273,12 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
         else:
             tarball = existing_file.get_syspath()
 
-        sub_dir, dummy = get_defaults(str(tarball),
-                                      cfg['CFG_TMPDIR'], "")
+        sub_dir = os.path.abspath("{0}_files".format(tarball))
+        file_list = untar(tarball, sub_dir)
+        obj.log.info("Extracted tarball to: {0}".format(sub_dir))
 
-        try:
-            untar(str(tarball), sub_dir)
-            obj.log.info("Extracted tarball to: {0}".format(sub_dir))
-        except Timeout:
-            eng.log.error('Timeout during tarball extraction on {0}'.format(
-                tarball
-            ))
-
-        xml_files_list = find_matching_files(sub_dir, ["xml"])
+        xml_files_list = [filename for filename in file_list
+                          if filename.endswith(".xml")]
         obj.log.info("Found xmlfiles: {0}".format(xml_files_list))
 
         for xml_file in xml_files_list:

@@ -20,11 +20,15 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+"""Various helpers for the overlay."""
+
 import os
+
+import requests
 
 
 def get_model_from_obj(obj):
-    """Returns an instance of the model from the workflow."""
+    """Return an instance of the model from the workflow."""
     from invenio_workflows.registry import workflows
     workflow = workflows.get(obj.workflow.name)
 
@@ -35,7 +39,7 @@ def get_model_from_obj(obj):
 
 
 def get_record_from_obj(obj, eng):
-    """Returns a Record instance of a BibWorkflowObject."""
+    """Return a Record instance of a BibWorkflowObject."""
     from invenio_records.api import Record
 
     model = eng.workflow_definition.model(obj)
@@ -44,7 +48,7 @@ def get_record_from_obj(obj, eng):
 
 
 def get_record_from_model(model):
-    """Returns a Record instance of a model-like object."""
+    """Return a Record instance of a model-like object."""
     from invenio_records.api import Record
 
     sip = model.get_latest_sip()
@@ -57,11 +61,6 @@ def add_file_by_name(model, file_path, filename=None):
     """Save given file to storage and attach to object, return new path."""
     from inspire.modules.workflows.models import PayloadStorage
     from invenio_deposit.models import (
-        Deposition,
-        Agent,
-        DepositionDraft,
-        SubmissionInformationPackage,
-        DepositionStorage,
         DepositionFile,
         FilenameAlreadyExists,
     )
@@ -89,3 +88,37 @@ def get_file_by_name(model, filename):
     for f in model.files:
         if f.name == secure_filename(filename):
             return f
+
+
+def download_file(url, output_file, chunk_size=1024):
+    """Download a file to specified location."""
+    from invenio.utils.url import make_user_agent_string
+
+    headers = {
+        "User-agent": make_user_agent_string("inspire"),
+    }
+
+    r = requests.get(
+        url=url,
+        headers=headers,
+        stream=True
+    )
+    if r.status_code == 200:
+        with open(output_file, 'wb') as f:
+            for chunk in r.iter_content(chunk_size):
+                f.write(chunk)
+    return output_file
+
+
+def get_json_for_plots(plots):
+    """Return proper FFT format from plotextracted plots."""
+    output_records = []
+    index = 0
+    for plot in plots:
+        output_records.append(dict(
+            url=plot.get('url'),
+            docfile_type='Plot',
+            description="{0:05d} {1}" % (index, "".join(plot.get('captions'))),
+            filename=plot.get('name'),
+        ))
+    return dict(fft=output_records)
