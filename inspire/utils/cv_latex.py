@@ -36,7 +36,6 @@ class Cv_latex(Export):
 
     def __init__(self, record):
         super(Cv_latex, self).__init__(record)
-        self.arxiv_field = self._get_arxiv_field()
 
     def format(self):
         """Return CV LaTex export for single record."""
@@ -92,8 +91,8 @@ class Cv_latex(Export):
                 out += u'&nbsp;&nbsp;\\\\{{}}{1}'.format(field, value[0])
                 if 'collaboration' in self.record:
                     try:
-                        if 'collaboration' in self.record['collaboration'][0]:
-                            collaboration = self.record['collaboration'][0]['collaboration']
+                        if 'collaboration' in self.record:
+                            collaboration = self.record['collaboration'][0]
                             if 'Collaboration' in collaboration:
                                 out += u' {\it et al.} [' + collaboration + '].<br/>'
                             else:
@@ -109,7 +108,11 @@ class Cv_latex(Export):
         elif field == 'title':
             out += u'{1}<br/>'.format(field, value)
         elif field == 'publi_info':
-            out += u'  \\\\{{}}{1}.'.format(field, value)
+            if len(value) > 1:
+                out += u'  \\\\{{}}{},    {}\n'.format(''.join(
+                    value[:-1]), value[-1])
+            else:
+                out += u'  \\\\{{}}{1}.'.format(field, value[0])
             if self._get_date():
                 out += ' %(' + str(self._get_date()) + ')<br/>'
         elif field == 'arxiv':
@@ -193,6 +196,7 @@ class Cv_latex(Export):
             return record_title
 
     def _get_publi_info(self):
+        result = []
         if 'publication_info' in self.record:
             journal_title, journal_volume, year, journal_issue, pages = \
                 ('', '', '', '', '')
@@ -213,15 +217,15 @@ class Cv_latex(Export):
                             else:
                                 break
                         journal_letter = field['journal_volume'][:char_i]
-                        if journal_letter and journal_title != ' ':
+                        if journal_letter and journal_title[-1] != ' ':
                             journal_letter = ' ' + journal_letter
                         journal_volume = journal_letter + ' {\\bf ' + \
                             field['journal_volume'][char_i:] + '}'
                     if 'year' in field:
                         if isinstance(field['year'], list):
-                            year = ' (' + field['year'][-1] + ')'
+                            year = ' (' + str(field['year'][-1]) + ')'
                         else:
-                            year = ' (' + field['year'] + ')'
+                            year = ' (' + str(field['year']) + ')'
                     if 'journal_issue' in field:
                         if field['journal_issue']:
                             journal_issue = ', no. ' + field['journal_issue']
@@ -241,14 +245,18 @@ class Cv_latex(Export):
                                 else:
                                     page_artid = field['page_artid']
                             pages = ', ' + page_artid
-                    break
+
+                    out += journal_title + journal_volume + journal_issue + \
+                        pages + year
+                    result.append(out)
                 else:
                     if 'pubinfo_freetext' in field and len(field) == 1:
                         return field['pubinfo_freetext']
-            out += journal_title + journal_volume + journal_issue + \
-                pages + year
-            if out:
-                return out
+            for k, v in enumerate(result):
+                if k > 0:
+                    v = '[' + v + ']'
+                    result[k] = v
+            return result
 
     def _get_url(self):
         return cfg['CFG_SITE_URL'] + '/record/' + \

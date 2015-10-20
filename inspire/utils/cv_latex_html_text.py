@@ -35,7 +35,6 @@ class Cv_latex_html_text(Export):
     def __init__(self, record, format_type):
         super(Cv_latex_html_text, self).__init__(record)
         self.record = record
-        self.arxiv_field = self._get_arxiv_field()
         self.format_type = format_type
 
     def format(self):
@@ -96,16 +95,15 @@ class Cv_latex_html_text(Export):
             elif len(value) > 8:
                 if 'collaboration' in self.record:
                     try:
-                        if 'collaboration' in self.record['collaboration'][0]:
-                            collaboration = self.record['collaboration'][0]['collaboration']
-                            if 'Collaboration' in collaboration:
-                                out += u'By ' + collaboration + '({1} et al.).<br/>'.format(
-                                    field, value[0]
-                                )
-                            else:
-                                out += u'By ' + collaboration + ' Collaboration ({1} et al.).<br/>'.format(
-                                    field, value[0]
-                                )
+                        collaboration = self.record['collaboration'][0]
+                        if 'Collaboration' in collaboration:
+                            out += u'By ' + collaboration + '({1} et al.).<br/>'.format(
+                                field, value[0]
+                            )
+                        else:
+                            out += u'By ' + collaboration + ' Collaboration ({1} et al.).<br/>'.format(
+                                field, value[0]
+                            )
                     except IndexError:
                         pass
                 else:
@@ -118,11 +116,14 @@ class Cv_latex_html_text(Export):
             else:
                 out += u'{1}.<br/>'.format(field, value)
         elif field == 'doi':
-            out += u'<a href="http://dx.doi.org/{1}">{1}</a>.<br/>'.format(
-                field, value
-            )
+            dois_splitted = value.split(',')
+            for k, v in enumerate(dois_splitted):
+                v = '<a href="http://dx.doi.org/' + v + '">' + v + '</a>'
+                dois_splitted[k] = v
+            out += u'{1}.<br/>'.format(field, ', '.join(out for
+                                                        out in dois_splitted))
         elif field == 'publi_info':
-            out += u'{1}.<br/>'.format(field, value)
+            out += u'{1}.<br/>'.format(field, ', '.join(out for out in value))
         return out
 
     def _get_author(self):
@@ -166,7 +167,7 @@ class Cv_latex_html_text(Export):
     def _get_title(self):
         """Return record title(s)"""
         record_title = ''
-        if 'title' in self.record:
+        if 'titles' in self.record:
             if isinstance(self.record['titles'], list):
                 for title in self.record['titles']:
                     if 'title' in title:
@@ -177,7 +178,7 @@ class Cv_latex_html_text(Export):
 
             if isinstance(self.record['titles'], list):
                 for subtitle in self.record['titles']:
-                    if 'subtitle' in subtitle:
+                    if 'subtitle' in subtitle and subtitle['subtitle']:
                         record_title += ' : ' + subtitle['subtitle']
                         break
             else:
@@ -190,6 +191,7 @@ class Cv_latex_html_text(Export):
         return record_title
 
     def _get_publi_info(self):
+        result = []
         if 'publication_info' in self.record:
             journal_title, journal_volume, year, journal_issue, pages = \
                 ('', '', '', '', '')
@@ -218,9 +220,9 @@ class Cv_latex_html_text(Export):
                         journal_volume = ' ' + field['journal_volume']
                     if 'year' in field:
                         if isinstance(field['year'], list):
-                            year = ' (' + field['year'][-1] + ')'
+                            year = ' (' + str(field['year'][-1]) + ')'
                         else:
-                            year = ' (' + field['year'] + ')'
+                            year = ' (' + str(field['year']) + ')'
                     if 'journal_issue' in field:
                         if field['journal_issue']:
                                 journal_issue = ' ' + \
@@ -231,11 +233,10 @@ class Cv_latex_html_text(Export):
                                 pages = ' ' + field['page_artid'][-1]
                             else:
                                 pages = ' ' + field['page_artid']
-                    break
+                    out += journal_title + journal_volume + year + \
+                        journal_issue + pages
+                    result.append(out)
                 else:
                     if 'pubinfo_freetext' in field and len(field) == 1:
                         return field['pubinfo_freetext']
-            out += journal_title + journal_volume + year + \
-                journal_issue + pages
-            if out:
-                return out
+            return result

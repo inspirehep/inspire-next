@@ -34,7 +34,6 @@ class Bibtex(Export):
     def __init__(self, record):
         super(Bibtex, self).__init__(record)
         self.entry_type, self.original_entry = self._get_entry_type()
-        self.arxiv_field = self._get_arxiv_field()
 
     def format(self):
         """Return BibTeX export for single record."""
@@ -52,7 +51,7 @@ class Bibtex(Export):
     def _format_article(self):
         """Format article entry type"""
         name = "article"
-        required_fields = ['key', 'author', 'editor', 'title',
+        required_fields = ['key', 'author', 'editor', 'title', 'collaboration',
                            'booktitle', 'journal', 'volume']
         optional_fields = ['year', 'number', 'pages', 'doi', 'note',
                            'eprint', 'archivePrefix', 'primaryClass',
@@ -144,7 +143,8 @@ class Bibtex(Export):
         entry_type = 'article'
         if 'collections' in self.record:
             collections = [collections["primary"].lower()
-                           for collections in self.record['collections']]
+                           for collections in self.record['collections']
+                           if 'primary' in collections]
             if 'conferencepaper' in collections:
                 entry_type = 'inproceedings'
             elif 'thesis' in collections:
@@ -188,6 +188,7 @@ class Bibtex(Export):
             'key': self._get_key,
             'author': self._get_author,
             'editor': self._get_editor,
+            'collaboration': self._get_collaboration,
             'title': self._get_title,
             'organization': self._get_organization,
             'publisher': self._get_publisher,
@@ -313,6 +314,16 @@ class Bibtex(Export):
         else:
             return record_title
 
+    def _get_collaboration(self):
+        """Return collaboration"""
+        collaboration = ''
+        if 'collaboration' in self.record:
+            try:
+                collaboration = self.record['collaboration'][0]
+            except IndexError:
+                pass
+        return collaboration
+
     def _get_organization(self):
         """Return record organization"""
         organization = ''
@@ -391,7 +402,7 @@ class Bibtex(Export):
                             if 'date' in imprint:
                                 year = imprint['date'].split('-')[0]
                     elif 'preprint_date' in self.record:
-                        year = self.record['preprint_date'].split('-')[0]
+                        year = self.record['preprint_date'][0].split('-')[0]
             else:
                 if 'year' in pub_info:
                     year = pub_info['year']
@@ -413,7 +424,10 @@ class Bibtex(Export):
                 if 'date' in imprint:
                     year = imprint['date'].split('-')[0]
         elif 'preprint_date' in self.record:
-            year = self.record['preprint_date'].split('-')[0]
+            for date in self.record['preprint_date']:
+                if date is not None:
+                    year = date.split('-')[0]
+                break
         return year
 
     def _get_journal(self):
@@ -553,9 +567,9 @@ class Bibtex(Export):
                                     note += ',' + \
                                             val['page_artid'].split('-', 1)[0]
                                 if 'year' in val:
-                                    note += "(" + val['year'] + ")"
+                                    note += "(" + str(val['year']) + ")"
                                 elif 'preprint_date' in self.record:
-                                    note += "(" + self.record['preprint_date'].split('-')[0] + ")"
+                                    note += "(" + str(self.record['preprint_date'].split('-')[0]) + ")"
                                 result = '[' + note + ']'
                                 note_list.append(result)
                             elif 'note' in val and \
@@ -576,7 +590,7 @@ class Bibtex(Export):
                                     note += ',' + \
                                             val['page_artid'].split('-', 1)[0]
                                 if 'year' in val:
-                                    note += "(" + val['year'] + ")"
+                                    note += "(" + str(val['year']) + ")"
                                 result = "[" + val['note'] + ": " + note + "]"
                                 note_list.append(result)
                     if note_list:
@@ -666,7 +680,7 @@ class Bibtex(Export):
                 else:
                     return ''.join(result for result in isbn)
         else:
-            return isbn
+            return ''
 
     def _get_pubnote(self):
         """Return publication note"""

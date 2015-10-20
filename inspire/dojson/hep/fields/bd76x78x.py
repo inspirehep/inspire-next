@@ -28,31 +28,42 @@ from ..model import hep, hep2marc
 
 
 @hep.over('publication_info', '^773..')
-@utils.for_each_value
-@utils.filter_values
 def publication_info(self, key, value):
     """Publication info about record."""
-    year = ''
-    recid = ''
-    if 'y' in value:
-        year = int(value.get('y'))
-    if '0' in value:
-        recid = int(value.get('0'))
-    return {
-        'recid': recid,
-        'page_artid': value.get('c'),
-        'journal_issue': value.get('n'),
-        'conf_acronym': value.get('o'),
-        'journal_title': value.get('p'),
-        'reportnumber': value.get('r'),
-        'confpaper_info': value.get('t'),
-        'journal_volume': value.get('v'),
-        'cnum': value.get('w'),
-        'pubinfo_freetext': value.get('x'),
-        'year': year,
-        'isbn': value.get('z'),
-        'note': value.get('m'),
-    }
+
+    def get_value(value):
+        year = ''
+        recid = ''
+        if 'y' in value:
+            year = int(value.get('y'))
+        if '0' in value:
+            recid = int(value.get('0'))
+        return {
+            'recid': recid,
+            'page_artid': value.get('c'),
+            'journal_issue': value.get('n'),
+            'conf_acronym': value.get('o'),
+            'journal_title': value.get('p'),
+            'reportnumber': value.get('r'),
+            'confpaper_info': value.get('t'),
+            'journal_volume': value.get('v'),
+            'cnum': value.get('w'),
+            'pubinfo_freetext': value.get('x'),
+            'year': year,
+            'isbn': value.get('z'),
+            'note': value.get('m'),
+        }
+
+    publication_info = self.get('publication_info', [])
+    filter_values = []
+    if isinstance(value, list):
+        for element in value:
+            publication_info.append(get_value(element))
+    else:
+        publication_info.append(get_value(value))
+    for element in publication_info:
+        filter_values.append(dict((k, v) for k, v in element.iteritems() if v))
+    return filter_values
 
 
 @hep2marc.over('773', 'publication_info')
