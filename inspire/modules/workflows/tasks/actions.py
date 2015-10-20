@@ -24,14 +24,39 @@
 
 from functools import wraps
 
+from flask import current_app
+
 from inspire.utils.helpers import (
     get_record_from_model,
 )
 
 
-def was_approved(obj, eng):
+def shall_upload_record(obj, eng):
     """Check if the record was approved."""
     return obj.extra_data.get("approved", False)
+
+
+def shall_halt_workflow(obj, eng):
+    """Check if the workflow shall be halted."""
+    return obj.extra_data.get("halt_workflow", False)
+
+
+def shall_push_remotely(obj, eng):
+    """Check if the record shall be robotuploaded."""
+    return current_app.config.get("CFG_SITE_URL") != \
+        current_app.config.get("CFG_ROBOTUPLOAD_SUBMISSION_BASEURL")
+
+
+def add_core_check(obj, eng):
+    """Check if CORE shall be added."""
+    if obj.extra_data.get('core'):
+        add_core(obj, eng)
+
+
+def halt_record(obj, eng):
+    """Halt the workflow for approval using extra_data variables."""
+    eng.halt(action=obj.extra_data.get("halt_action"),
+             msg=obj.extra_data.get("halt_message", "Record has been halted."))
 
 
 def add_core(obj, eng):

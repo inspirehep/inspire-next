@@ -71,7 +71,7 @@ def add_file_by_name(model, file_path, filename=None):
             file_object = DepositionFile(backend=PayloadStorage(model.id))
             if file_object.save(fd, filename=filename):
                 super(type(model), model).add_file(file_object)
-                model.save()
+                model.update()
     except FilenameAlreadyExists as e:
         file_object.delete()
         raise e
@@ -92,7 +92,7 @@ def get_file_by_name(model, filename):
 
 def download_file(url, output_file, chunk_size=1024):
     """Download a file to specified location."""
-    from invenio.utils.url import make_user_agent_string
+    from invenio_utils.url import make_user_agent_string
 
     headers = {
         "User-agent": make_user_agent_string("inspire"),
@@ -118,7 +118,8 @@ def get_json_for_plots(plots):
         output_records.append(dict(
             url=plot.get('url'),
             docfile_type='Plot',
-            description="{0:05d} {1}" % (index, "".join(plot.get('captions'))),
+            description="{0:05d} {1}".format(index, "".join(plot.get('captions', []))),
             filename=plot.get('name'),
         ))
+        index += 1
     return dict(fft=output_records)

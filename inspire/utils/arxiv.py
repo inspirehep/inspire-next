@@ -29,7 +29,6 @@ from .helpers import download_file
 
 def get_tarball(arxiv_id, output_directory):
     """Make a robotupload request."""
-    arxiv_id = arxiv_id.replace("arXiv:", '')
     output_file = os.path.join(output_directory, "{0}.tar.gz".format(arxiv_id))
     url = "http://arxiv.org/e-print/{0}".format(arxiv_id)
     return download_file(url, output_file)
@@ -37,7 +36,25 @@ def get_tarball(arxiv_id, output_directory):
 
 def get_pdf(arxiv_id, output_directory):
     """Make a robotupload request."""
-    arxiv_id = arxiv_id.replace("arXiv:", '')
     output_file = os.path.join(output_directory, "{0}.pdf".format(arxiv_id))
     url = "http://arxiv.org/pdf/{0}".format(arxiv_id)
     return download_file(url, output_file)
+
+
+def get_arxiv_id_from_record(record):
+    """Return the arXiv identifier from given record.
+
+    This function works with Deposition and Payload data models.
+    """
+    arxiv_id = record.get("arxiv_id")
+    if not arxiv_id:
+        arxiv_eprints = record.get('arxiv_eprints', [])
+        for element in arxiv_eprints:
+            if element.get("value", ""):
+                arxiv_id = element.get("value", "")
+
+    if arxiv_id and not arxiv_id.lower().startswith("oai:arxiv") and not \
+       arxiv_id.lower().startswith("arxiv") and \
+       "/" not in arxiv_id:
+        arxiv_id = "{0}".format(arxiv_id)
+    return arxiv_id.replace("arXiv:", '')

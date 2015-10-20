@@ -22,13 +22,14 @@
 
 """Approval action for INSPIRE arXiv harvesting."""
 
-from flask import render_template, url_for, request
+from flask import render_template, request, url_for
+
 from flask.ext.login import current_user
 
 from invenio_base.i18n import _
 
 
-class arxiv_approval(object):
+class hep_approval(object):
 
     """Class representing the approval action."""
 
@@ -38,7 +39,7 @@ class arxiv_approval(object):
     def render_mini(self, obj):
         """Method to render the minified action."""
         return render_template(
-            'workflows/actions/arxiv_approval_mini.html',
+            'workflows/actions/hep_approval_mini.html',
             message=obj.get_action_message(),
             object=obj,
             resolve_url=self.url,
@@ -47,11 +48,11 @@ class arxiv_approval(object):
     def render(self, obj):
         """Method to render the action."""
         return {
-            "side": render_template('workflows/actions/arxiv_approval_side.html',
+            "side": render_template('workflows/actions/hep_approval_side.html',
                                     message=obj.get_action_message(),
                                     object=obj,
                                     resolve_url=self.url),
-            "main": render_template('workflows/actions/arxiv_approval_main.html',
+            "main": render_template('workflows/actions/hep_approval_main.html',
                                     message=obj.get_action_message(),
                                     object=obj,
                                     resolve_url=self.url)

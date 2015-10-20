@@ -30,8 +30,7 @@ from functools import wraps
 
 from flask import current_app
 
-from inspire.modules.oaiharvester.tasks.arxiv import get_arxiv_id_from_record
-
+from inspire.utils.arxiv import get_arxiv_id_from_record
 from inspire.utils.datefilter import date_older_than
 from inspire.utils.helpers import (
     get_record_from_model,
@@ -41,6 +40,8 @@ from inspire.utils.helpers import (
 from invenio_base.globals import cfg
 
 import requests
+
+import six
 
 
 def search(query):
@@ -189,23 +190,27 @@ def save_identifiers_to_kb(kb_name,
     return _save_identifiers_to_kb
 
 
-def exists_in_holding_pen(kb_name,
-                          identifier_key="report_numbers.value"):
+def exists_in_holding_pen(obj, eng):
     """Check if a record exists in HP by looking in given KB."""
-    @wraps(exists_in_holding_pen)
-    def _exists_in_holding_pen(obj, eng):
-        from inspire.utils.knowledge import get_value
+    from invenio_workflows.search import search as hp_search
+    record = get_record_from_obj(obj, eng)
 
-        record = get_record_from_obj(obj, eng)
-        identifiers = record.get(identifier_key, [])
-        result = get_value(kb_name, identifiers)
-        if result:
-            obj.log.info("Record already found in Holding Pen ({0})".format(
-                result
-            ))
-        return result
-
-    return _exists_in_holding_pen
+    identifiers = []
+    for field, lookup in six.iteritems(
+            current_app.config.get("HOLDING_PEN_MATCH_MAPPING")):
+        # Add quotes around to make the search exact
+        identifiers += ['{0}:"{1}"'.format(field, i)
+                        for i in record.get(lookup, [])]
+    # Search for any existing record in Holding Pen, exclude self
+    result = set(hp_search(
+        query=" OR ".join(identifiers)
+    )) - set([obj.id])
+    if result:
+        obj.log.info("Record already found in Holding Pen ({0})".format(
+            result
+        ))
+    obj.extra_data["holdingpen_ids"] = list(result)
+    return result
 
 
 def delete_self_and_stop_processing(obj, eng):
@@ -221,23 +226,18 @@ def delete_self_and_stop_processing(obj, eng):
     eng.skipToken()
 
 
-def update_old_object(kb_name):
+def update_old_object(obj, eng):
     """Update the data of the old object with the new data."""
-    @wraps(update_old_object)
-    def _update_old_object(obj, eng):
-        from inspire.utils.knowledge import get_value
-        from invenio_workflows.models import BibWorkflowObject
+    from invenio_workflows.models import BibWorkflowObject
 
-        record = get_record_from_obj(obj, eng)
-        identifiers = []
-        identifiers = record.get('arxiv_eprints.value', [])
-
-        object_id = get_value(kb_name, identifiers)
-        if object_id:
-            old_object = BibWorkflowObject.query.get(object_id)
-            if old_object:
-                # record waiting approval
-                old_object.set_data(obj.data)
-                old_object.save()
-
-    return _update_old_object
+    holdingpen_ids = obj.extra_data.get("holdingpen_ids", [])
+    if holdingpen_ids and len(holdingpen_ids) == 1:
+        old_object = BibWorkflowObject.query.get(holdingpen_ids[0])
+        if old_object:
+            # record waiting approval
+            old_object.set_data(obj.data)
+            old_object.save()
+    else:
+        obj.log.error(
+            "Cannot update old object, non valid ids: {0}".format(holdingpen_ids)
+        )

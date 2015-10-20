@@ -26,19 +26,22 @@ import re
 
 from functools import wraps
 
-from invenio_base.globals import cfg
-
-from invenio_utils.shell import Timeout
-
+from inspire.utils.arxiv import (
+    get_arxiv_id_from_record, get_pdf, get_tarball,
+)
 from inspire.utils.helpers import (
-    get_record_from_model,
     add_file_by_name,
     get_file_by_name,
+    get_json_for_plots,
+    get_record_from_model,
 )
 from inspire.utils.marcxml import get_json_from_marcxml
-from inspire.utils.arxiv import get_tarball, get_pdf
 
+from invenio_base.globals import cfg
+
+from plotextractor.errors import InvalidTarball
 from plotextractor.api import process_tarball
+from plotextractor.converter import untar
 
 
 REGEXP_AUTHLIST = re.compile(
@@ -48,58 +51,42 @@ REGEXP_REFS = re.compile(
     re.DOTALL)
 
 
-# FIXME(jacquerie): consider moving this to the inspire.utils module.
-def get_arxiv_id_from_record(record):
-    """Return the arXiv identifier from given record.
-
-    This function works with Deposition and Payload data models.
-    """
-    arxiv_id = record.get("arxiv_id")
-    if not arxiv_id:
-        arxiv_eprints = record.get('arxiv_eprints', [])
-        for element in arxiv_eprints:
-            if element.get("value", ""):
-                arxiv_id = element.get("value", "")
-
-    if arxiv_id and not arxiv_id.lower().startswith("oai:arxiv") and not \
-       arxiv_id.lower().startswith("arxiv") and \
-       "/" not in arxiv_id:
-        arxiv_id = "arXiv:{0}".format(arxiv_id)
-    return arxiv_id
-
-
 def get_pdf_for_model(eng, arxiv_id):
     """We download it."""
-    extract_path = os.path.join(
+    storage_path = os.path.join(
         cfg.get('OAIHARVESTER_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
         str(eng.uuid)
     )
+    if not os.path.exists(storage_path):
+        os.makedirs(storage_path)
     return get_pdf(
         arxiv_id,
-        extract_path
+        storage_path
     )
 
 
 def get_tarball_for_model(eng, arxiv_id):
     """We download it."""
-    extract_path = os.path.join(
+    storage_path = os.path.join(
         cfg.get('OAIHARVESTER_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
         str(eng.uuid)
     )
+    if not os.path.exists(storage_path):
+        os.makedirs(storage_path)
     return get_tarball(
         arxiv_id,
-        extract_path
+        storage_path
     )
 
 
 def arxiv_fulltext_download(doctype='arXiv'):
+    """Perform the fulltext download step for arXiv records.
+
+    :param obj: Bibworkflow Object to process
+    :param eng: BibWorkflowEngine processing the object
+    """
     @wraps(arxiv_fulltext_download)
     def _arxiv_fulltext_download(obj, eng):
-        """Perform the fulltext download step for arXiv records.
-
-        :param obj: Bibworkflow Object to process
-        :param eng: BibWorkflowEngine processing the object
-        """
         model = eng.workflow_definition.model(obj)
         record = get_record_from_model(model)
         arxiv_id = get_arxiv_id_from_record(record)
@@ -159,7 +146,7 @@ def arxiv_plot_extract(obj, eng):
     model = eng.workflow_definition.model(obj)
     record = get_record_from_model(model)
     arxiv_id = get_arxiv_id_from_record(record)
-    existing_file = get_file_by_name(model, arxiv_id)
+    existing_file = get_file_by_name(model, "{0}.tar.gz".format(arxiv_id))
 
     if not existing_file:
         # We download it
@@ -174,10 +161,11 @@ def arxiv_plot_extract(obj, eng):
 
     try:
         plots = process_tarball(tarball)
-    except Timeout:
+    except InvalidTarball:
         eng.log.error(
-            'Timeout during tarball extraction on {0}'.format(tarball)
+            'Invalid tarball {0}'.format(tarball)
         )
+        return
 
     if plots:
         # We store the path to the directory the tarball contents lives
@@ -254,13 +242,11 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
     def _author_list(obj, eng):
         from inspire.modules.converter.xslt import convert
         from invenio_oaiharvester.utils import find_matching_files
-        from invenio_utils.shell import Timeout
-        from plotextractor.converter import untar
 
         model = eng.workflow_definition.model(obj)
         record = get_record_from_model(model)
         arxiv_id = get_arxiv_id_from_record(record)
-        existing_file = get_file_by_name(model, arxiv_id)
+        existing_file = get_file_by_name(model, "{0}.tar.gz".format(arxiv_id))
 
         if not existing_file:
             # We download it
@@ -274,7 +260,11 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
             tarball = existing_file.get_syspath()
 
         sub_dir = os.path.abspath("{0}_files".format(tarball))
-        file_list = untar(tarball, sub_dir)
+        try:
+            file_list = untar(tarball, sub_dir)
+        except InvalidTarball:
+            obj.log.error("Invalid tarball {0}".format(tarball))
+            return
         obj.log.info("Extracted tarball to: {0}".format(sub_dir))
 
         xml_files_list = [filename for filename in file_list

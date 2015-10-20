@@ -1,6 +1,6 @@
 /*
  * This file is part of INSPIRE.
- * Copyright (C) 2014 CERN.
+ * Copyright (C) 2014, 2015 CERN.
  *
  * INSPIRE is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ define(
     "js/workflows/actions/approval",
     "js/workflows/actions/core_approval",
     "js/workflows/actions/core_approval_modal",
-    "js/workflows/actions/arxiv_approval",
+    "js/workflows/actions/hep_approval",
     "js/workflows/actions/batch_action_hotkeys",
     "js/workflows/actions/editable_subjects",
     "js/workflows/actions/editable_title",
@@ -37,7 +37,7 @@ define(
     ApprovalAction,
     CoreApprovalAction,
     CoreApprovalModal,
-    ArxivApprovalAction,
+    HepApprovalAction,
     BatchActionHotkeys,
     EditableSubjects,
     EditableTitle,
@@ -53,7 +53,7 @@ define(
         action_url: context.action_url
       });
 
-      ArxivApprovalAction.attachTo(context.attach_action_to, {
+      HepApprovalAction.attachTo(context.attach_action_to, {
         action_url: context.action_url
       });
 

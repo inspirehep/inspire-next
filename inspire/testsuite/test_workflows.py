@@ -22,6 +22,7 @@
 from __future__ import print_function, absolute_import
 
 import httpretty
+import re
 import os
 import pkg_resources
 import tempfile
@@ -45,7 +46,6 @@ class WorkflowTest(WorkflowTasksTestCase):
 
     def setUp(self):
         """Setup tests."""
-        from invenio_knowledge.api import add_kb
         from inspire.modules.workflows.receivers import precache_holdingpen_row
         from invenio_workflows.receivers import index_holdingpen_record
         from invenio_workflows.signals import (
@@ -90,12 +90,9 @@ class WorkflowTest(WorkflowTasksTestCase):
                 '1407.7587v1.pdf'
             )
         )
-        # Add temp KB
-        add_kb('harvesting_fixture_kb')
 
     def tearDown(self):
         """Clean up created objects."""
-        from invenio_knowledge.api import delete_kb
         from invenio_workflows.models import Workflow
         from inspire.modules.workflows.receivers import precache_holdingpen_row
         from invenio_workflows.receivers import index_holdingpen_record
@@ -110,7 +107,6 @@ class WorkflowTest(WorkflowTasksTestCase):
         self.delete_objects(
             Workflow.get(Workflow.module_name == 'unit_tests').all())
         self.cleanup_registries()
-        delete_kb('harvesting_fixture_kb')
 
     def test_payload_creation(self):
         """A Payload can be created."""
@@ -189,7 +185,12 @@ class WorkflowTest(WorkflowTasksTestCase):
         from invenio_base.globals import cfg
         from invenio_workflows.api import start
 
-        httpretty.HTTPretty.allow_net_connect = False
+        # Mock Elasticsearch DELETE hook
+        httpretty.register_uri(
+            httpretty.DELETE,
+            re.compile("localhost:9200/holdingpen/record/(\d+)"),
+            status=404
+        )
 
         httpretty.register_uri(
             httpretty.GET,
@@ -214,7 +215,19 @@ class WorkflowTest(WorkflowTasksTestCase):
             get_record_from_obj,
         )
 
-        httpretty.HTTPretty.allow_net_connect = False
+        # Mock Elasticsearch search for Holding Pen check
+        result = {
+            "hits": {
+                "total": 0,
+                "hits": []
+            }
+        }
+        httpretty.register_uri(
+            httpretty.GET,
+            "http://localhost:9200/_search",
+            body=result,
+            status=200
+        )
 
         httpretty.register_uri(
             httpretty.GET,

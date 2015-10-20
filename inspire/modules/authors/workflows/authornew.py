@@ -30,7 +30,7 @@ from invenio_workflows.tasks.logic_tasks import (
     workflow_if,
 )
 
-from inspire.modules.workflows.tasks.actions import was_approved
+from inspire.modules.workflows.tasks.actions import shall_halt_workflow
 
 from invenio_workflows.tasks.workflows_tasks import log_info
 
@@ -65,7 +65,7 @@ class authornew(WorkflowBase):
                      keep_new=True),
         halt_record_with_action(action="author_approval",
                                 message="Accept submission?"),
-        workflow_if(was_approved),
+        workflow_if(shall_halt_workflow),
         [
             workflow_if(recreate_data),
             [

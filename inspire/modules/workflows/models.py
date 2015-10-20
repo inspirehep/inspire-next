@@ -24,13 +24,12 @@ import os
 from invenio_base.globals import cfg
 
 from invenio_deposit.models import (
-    Deposition,
     Agent,
+    Deposition,
     DepositionDraft,
-    SubmissionInformationPackage,
-    DepositionStorage,
     DepositionFile,
-    FilenameAlreadyExists,
+    DepositionStorage,
+    SubmissionInformationPackage,
 )
 from invenio_deposit.storage import Storage
 
@@ -38,7 +37,7 @@ from invenio_deposit.storage import Storage
 def create_payload(obj, eng):
     """Create a proper data model inside obj.data."""
     p = Payload.create(workflow_object=obj, type=eng.name)
-    p.save()
+    p.update()
 
 
 class PayloadStorage(Storage):
@@ -61,6 +60,7 @@ class Payload(Deposition):
     """Wrap a BibWorkflowObject."""
 
     def __init__(self, workflow_object, type=None, user_id=None):
+        """Create a new Payload object."""
         self.files = []
         self.drafts = {}
         self.type = self.get_type(type)
@@ -76,15 +76,7 @@ class Payload(Deposition):
 
     @classmethod
     def create(cls, user=None, type=None, workflow_object=None):
-        """
-        Create a new deposition object.
-
-        To persist the deposition, you must call save() on the created object.
-        If no type is defined, the default deposition type will be assigned.
-
-        @param user: The owner of the deposition
-        @param type: Deposition type identifier.
-        """
+        """Create a new payload object."""
         if user is not None:
             user = user.get_id()
 
@@ -98,7 +90,8 @@ class Payload(Deposition):
                 "type": type,
             }
             workflow_object.set_data(workflow_object.data)
-            workflow_object.save()
+            if workflow_object.id is None:
+                workflow_object.save()
 
         # Note: it is correct to pass 'type' and not 't' below to constructor.
         obj = cls(workflow_object=workflow_object, type=type, user_id=user)
@@ -127,6 +120,7 @@ class Payload(Deposition):
         ]
 
     def prepare_sip(self, from_request_context=False):
+        """Prepare Payload Submission Information Package."""
         sip = self.get_latest_sip()
         if sip is None:
             sip = self.create_sip()

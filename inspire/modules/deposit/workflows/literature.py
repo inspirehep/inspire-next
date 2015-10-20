@@ -63,7 +63,7 @@ from inspire.modules.workflows.tasks.submission import (
     finalize_record_sip
 )
 from inspire.modules.workflows.tasks.actions import (
-    was_approved,
+    shall_upload_record,
     reject_record,
     add_core,
 )
@@ -125,7 +125,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ),
         halt_record_with_action(action="core_approval",
                                 message="Accept submission?"),
-        workflow_if(was_approved),
+        workflow_if(shall_upload_record),
         [
             workflow_if(match, True),
             [

@@ -22,19 +22,18 @@
 
 """Approval action for INSPIRE."""
 
-from flask import render_template, url_for, current_app
+from flask import current_app, render_template
 
-from invenio_base.i18n import _
 from invenio_accounts.models import User
+
 from invenio_deposit.models import Deposition
 
+from .hep_approval import hep_approval
 
-class core_approval(object):
+
+class core_approval(hep_approval):
 
     """Class representing the approval action."""
-
-    name = _("Approve record")
-    url = url_for("holdingpen.resolve_action")
 
     def render_mini(self, obj):
         """Method to render the minified action."""
@@ -46,7 +45,7 @@ class core_approval(object):
                 user=user,
                 title=d.title
             ).split("\n")])
-        except:
+        except Exception:
             current_app.logger.exception("Failed to load rejection_text")
             rejection_text = ""
         return render_template(
@@ -67,7 +66,7 @@ class core_approval(object):
                 user=user,
                 title=d.title
             ).split("\n")])
-        except:
+        except Exception:
             current_app.logger.exception("Failed to load rejection_text")
             rejection_text = ""
         return {
@@ -82,60 +81,3 @@ class core_approval(object):
                                     resolve_url=self.url,
                                     rejection_text=rejection_text)
         }
-
-    def resolve(self, bwo):
-        """Resolve the action taken in the approval action."""
-        from flask import request
-        from flask.ext.login import current_user
-        from inspire.modules.audit.signals import audit_action_taken
-
-        # Audit logging
-        results = bwo.get_tasks_results()
-        prediction_results = results.get("arxiv_guessing", {})
-
-        if prediction_results:
-            prediction_results = prediction_results[0].get("result")
-            score = prediction_results.get("max_score")  # returns 0.222113
-            decision = prediction_results.get("decision")  # returns "Rejected"
-
-            # Map actions to align with the prediction format
-            action_map = {
-                'accept': 'Non-CORE',
-                'accept_core': 'CORE',
-                'reject': 'Rejected'
-            }
-
-            logging_info = {
-                'object_id': bwo.id,
-                'user_id': current_user.get_id(),
-                'score': score,
-                'user_action': action_map.get(request.values.get("value"), ""),
-                'decision': decision,
-                'source': 'holdingpen',
-                'action': 'resolve'
-            }
-            audit_action_taken.send(self, logging_info=logging_info)
-
-        value = request.form.get("value", None)
-        upload_pdf = request.form.get("pdf_submission", False)
-
-        bwo.remove_action()
-        extra_data = bwo.get_extra_data()
-        extra_data["approved"] = value in ('accept', 'accept_core')
-        extra_data["core"] = value == "accept_core"
-        extra_data["reason"] = request.form.get("text", "")
-        extra_data["pdf_upload"] = True if upload_pdf == "true" else False
-        bwo.set_extra_data(extra_data)
-        bwo.save()
-        bwo.continue_workflow(delayed=True)
-
-        if extra_data["approved"]:
-            return {
-                "message": "Suggestion has been accepted!",
-                "category": "success",
-            }
-        else:
-            return {
-                "message": "Suggestion has been rejected",
-                "category": "warning",
-            }

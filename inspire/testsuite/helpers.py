@@ -25,8 +25,6 @@ from flask_registry import ImportPathRegistry
 
 from invenio.testsuite import InvenioTestCase
 
-from invenio_workflows.registry import WorkflowsRegistry
-
 TEST_PACKAGES = [
     'inspire.modules.*',
     'inspire.testsuite',
@@ -39,6 +37,7 @@ class WorkflowTasksTestCase(InvenioTestCase):
 
     def create_registries(self):
         """Create registries for testing."""
+        from invenio_workflows.registry import WorkflowsRegistry
         self.app.extensions['registry']['workflows.tests'] = ImportPathRegistry(
             initial=TEST_PACKAGES
         )

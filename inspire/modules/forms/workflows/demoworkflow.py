@@ -28,7 +28,7 @@ from invenio_workflows.tasks.logic_tasks import (
     workflow_if,
 )
 
-from inspire.modules.workflows.tasks.actions import was_approved
+from inspire.modules.workflows.tasks.actions import shall_halt_workflow
 from invenio_workflows.tasks.workflows_tasks import log_info
 
 
@@ -56,7 +56,7 @@ class demoworkflow(WorkflowBase):
 
     workflow = [
         approve_record,
-        workflow_if(was_approved),
+        workflow_if(shall_halt_workflow),
         [
             log_info("Record has been approved"),
         ],

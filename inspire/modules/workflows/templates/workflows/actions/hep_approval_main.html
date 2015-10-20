@@ -1,6 +1,6 @@
 {#
 ## This file is part of Invenio.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## Invenio is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -18,21 +18,22 @@
 #}
 
 {% block approval_action %}
-<div class="action arxiv-approval-action btn-group-vertical" role="group">
+
+<div class="hep-approval-action well text-right">
 {% if not "CORE" in object.get_data().get("collections", [{}])[0].keys() %}
-  <button class="btn btn-success arxiv-approval-action-accept"
+  <button class="btn btn-success hep-approval-action-accept"
         role="button"
         data-objectid="{{object.id}}"
-        data-value="accept_core"><i class="fa fa-check"></i> {{_("CORE")}}</button>
+        data-value="accept_core">{{_("CORE")}}</button>
 {% endif %}
-  <button class="btn btn-warning arxiv-approval-action-accept"
+  <button class="btn btn-warning hep-approval-action-accept"
         role="button"
         data-objectid="{{object.id}}"
-        data-value="accept"><i class="fa fa-check"></i> {{_("Accept")}}</button>
-  <button class="btn btn-danger arxiv-approval-action-reject"
+        data-value="accept">{{_("Accept")}}</button>
+  <button class="btn btn-danger hep-approval-action-reject"
         data-objectid="{{object.id}}"
         data-value="reject"
-        role="button"><i class="fa fa-times"></i> {{_("Reject")}}</button>
+        role="button">{{_("Reject")}}</button>
 
 </div>
 

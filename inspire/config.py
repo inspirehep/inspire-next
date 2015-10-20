@@ -18,18 +18,18 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 
-"""
-INSPIRE configuration
----------------------
+"""INSPIRE configuration.
 
 This config module is loaded by the Flask application factory via an entry
-point specified in the setup.py::
+point specified in the setup.py:
 
     entry_points={
         'invenio.config': [
             "inspire = inspire.config"
         ]
-    },
+    }
+
+Happy hacking!
 """
 
 from invenio_query_parser.contrib.spires.walkers.pypeg_to_ast import PypegConverter
@@ -241,6 +241,13 @@ INSPIRE_ACCEPTED_CATEGORIES = ["hep-th", "hep-ph", "hep-lat", "hep-ex", "nucl-th
 OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP = "arxiv_eprints.value"
 WORKFLOWS_HOLDING_PEN_DEFAULT_OUTPUT_FORMAT = "hp"
 
+HOLDING_PEN_MATCH_MAPPING = {
+    "reportnumber": "report_numbers.value",
+    "doi": "dois.value",
+    "eprint": "arxiv_eprints.value",
+    "isbn": "isbns.value",
+}
+
 # Harvester config
 HARVESTER_WORKFLOWS = {
     "world_scientific": "inspire.modules.harvester.workflows.world_scientific:world_scientific"
@@ -268,9 +275,11 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     },
     "abstract": ["abstracts.value"],
     "collection": ["_collections"],
+    "doi": ["dois.value"],
     "affiliation": ["authors.affiliations.value"],
     "reportnumber": ["report_numbers.value"],
     "experiment": ["accelerator_experiments.experiment"],
+    "eprint": ["arxiv_eprints.value"],
     "title": ["titles.title"],
     "cnum": ["publication_info.cnum"],
     "980": [

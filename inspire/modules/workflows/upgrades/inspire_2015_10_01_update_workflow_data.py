@@ -50,37 +50,68 @@ def do_upgrade():
     from inspire.modules.workflows.dojson import bibfield
     from inspire.modules.workflows.models import Payload
 
+    def rename_object_action(obj):
+        if obj.get_action() == "arxiv_approval":
+            obj.set_action("hep_approval", obj.get_action_message())
+
     def reset_workflow_object_states(obj):
-        if obj.version == 1:
+        """Fix workflow positions and states.
+
+        Old states from Prod/QA:
+        {(), (0,), (5, 3, 14), (5, 3, 14, 0), (5, 3, 15), (5, 3, 15, 1)}
+
+        {(),
+         (0,),
+         (5,),
+         (5, 3, 1),
+         (5, 3, 10),
+         (5, 3, 11),
+         (5, 3, 12),
+         (5, 3, 14),
+         (5, 3, 14, 0),
+         (6, 3, 4)}
+
+        OLD -> NEW
+        5, 3, 14 -> 0 end
+        5, 3, 10 -> 14, 0 halted
+        """
+        pos = obj.get_current_task()
+        if obj.version == ObjectVersion.COMPLETED:
             obj.save(task_counter=[len(workflows.get(obj.workflow.name).workflow) - 1])
-        elif obj.version == 3:
+            return
+        elif obj.version == ObjectVersion.RUNNING:
             # Running? Nah that cannot be.
-            obj.save(version=ObjectVersion.ERROR)
+            obj.version = ObjectVersion.ERROR
         try:
             obj.get_current_task_info()
         except IndexError:
             # The current task counter is Invalid
-            obj.save(version=ObjectVersion.ERROR)
+            obj.version = ObjectVersion.ERROR
 
         if obj.workflow.name == "process_record_arxiv":
-            pos = obj.get_current_task()
-            if tuple(pos) == (5, 3, 14):
-                pos = [6, 3, 14, 0]
-            elif len(pos) > 1 and pos[0] == 5:
-                # We need to update pos from 5 to 6
-                pos = [6] + list(pos)[1:]
+            if tuple(pos) in [
+                    (5,), (5, 3, 14), (5, 3, 14, 0), (5, 3, 15), (5, 3, 15, 1)]:
+                pos = [len(workflows.get(obj.workflow.name).workflow) - 1]  # finished
+            elif tuple(pos) in [(5, 3, 10), (5, 3, 11), (5, 3, 12)]:
+                pos = [14, 0]  # halted
+            elif len(pos) > 1 and pos[0] == 6:
+                # We need to update pos from 6 to start of pre_processing part
+                pos = [7]
+            else:
+                pos = [0]  # Nothing here, we go to start
             obj.save(task_counter=pos)
 
     # Special submission handling
     for deposit in BibWorkflowObject.query.filter(
             BibWorkflowObject.module_name == "webdeposit"):
+        reset_workflow_object_states(deposit)
         d = Deposition(deposit)
         sip = d.get_latest_sip()
         if sip:
             sip.metadata = bibfield.do(sip.metadata)
             sip.package = legacy_export_as_marc(hep2marc.do(sip.metadata))
-            d.save()
-        reset_workflow_object_states(deposit)
+            d.update()
+        deposit.save()
 
     # Special workflow handling
     workflows_to_fix = ["process_record_arxiv"]
@@ -92,6 +123,7 @@ def do_upgrade():
     for obj in workflow_objects:
         metadata = obj.get_data()
         reset_workflow_object_states(obj)
+        rename_object_action(obj)
         if isinstance(metadata, six.string_types):
             # Ignore records that have string as data
             continue

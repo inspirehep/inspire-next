@@ -1,6 +1,6 @@
 /*
  * This file is part of INSPIRE.
- * Copyright (C) 2013, 2014 CERN.
+ * Copyright (C) 2013, 2014, 2015 CERN.
  *
  * INSPIRE is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -28,10 +28,10 @@ define(
 
     "use strict";
 
-    return defineComponent(ArxivApprovalAction);
+    return defineComponent(HepApprovalAction);
 
     /**
-     * .. js:class:: ArxivApprovalAction()
+     * .. js:class:: HepApprovalAction()
      *
      * Handles the events from the UI button elements for acceping/rejecting
      * records by sending the selected action to the server.
@@ -45,12 +45,12 @@ define(
      * :param string action_url: URL for resolving the action.
      *
      */
-    function ArxivApprovalAction() {
+    function HepApprovalAction() {
 
       this.attributes({
-        actionAcceptSelector: ".arxiv-approval-action-accept",
-        actionRejectSelector: ".arxiv-approval-action-reject",
-        actionGroupSelector: ".arxiv-approval-action",
+        actionAcceptSelector: ".hep-approval-action-accept",
+        actionRejectSelector: ".hep-approval-action-reject",
+        actionGroupSelector: ".hep-approval-action",
         action_url: "",
         pdfCheckboxSelector: "[name='submission-data-pdf']"
       });
@@ -148,7 +148,7 @@ define(
         if ($(this.attr.pdfCheckboxSelector).prop('disabled')) {
           this.pdf_submission_readonly();
         }
-        console.log("Arxiv approval init");
+        console.log("HEP approval init");
       });
     }
   }
