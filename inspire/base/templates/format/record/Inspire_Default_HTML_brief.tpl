@@ -30,21 +30,17 @@
       <div class="col-md-9"  id="left-column">
         <h4 class="custom-h">
           <b>
-            {% if record.titles %}
-              {% for title in record['titles'] %}
-                <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                {{ title['title']|capitalize }}
-                </a>
-                {% if title['title']|count_words() > 5 %}
-                <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                {{ title['title']|capitalize | words(5) + "..."}}
-                </a>
-                {% else %}
-                 <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                {{ title['title']|capitalize }}
-                {% endif %}
-                </a>
-              {% endfor %}
+            <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+              {{ record['titles[0].title']|capitalize }}
+            </a>
+            {% if record['titles[0].title']|count_words() > 5 %}
+              <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+                {{ record['titles[0].title']|capitalize | words(5) + "..."}}
+              </a>
+            {% else %}
+              <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+                {{ record['titles[0].title']|capitalize }}
+              </a>
             {% endif %}
           </b>
       </h4>
