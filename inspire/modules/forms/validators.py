@@ -22,7 +22,7 @@
 
 import re
 
-from invenio.base.globals import cfg
+from invenio_base.globals import cfg
 
 from wtforms.compat import string_types
 from wtforms.validators import StopValidation

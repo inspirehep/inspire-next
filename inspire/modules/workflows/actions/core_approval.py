@@ -24,7 +24,7 @@
 
 from flask import render_template, url_for, current_app
 
-from invenio.base.i18n import _
+from invenio_base.i18n import _
 from invenio_accounts.models import User
 from invenio_deposit.models import Deposition
 

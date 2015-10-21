@@ -23,7 +23,7 @@
 
 import re
 
-from invenio.base.globals import cfg
+from invenio_base.globals import cfg
 
 from .export import MissingRequiredFieldError, Export
 

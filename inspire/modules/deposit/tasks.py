@@ -26,14 +26,14 @@ import os
 
 from tempfile import mkstemp
 
-from invenio.base.globals import cfg
+from invenio_base.globals import cfg
 from invenio_deposit.models import (
     Deposition,
     DepositionFile,
     FilenameAlreadyExists
 )
 from invenio_deposit.storage import DepositionStorage
-from invenio.utils.filedownload import download_url
+from invenio_utils.filedownload import download_url
 
 
 #

@@ -25,7 +25,7 @@
 from flask import render_template, url_for, request
 from flask.ext.login import current_user
 
-from invenio.base.i18n import _
+from invenio_base.i18n import _
 
 
 class arxiv_approval(object):

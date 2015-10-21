@@ -21,7 +21,7 @@
 
 import os
 
-from invenio.base.globals import cfg
+from invenio_base.globals import cfg
 
 from invenio_deposit.models import (
     Deposition,

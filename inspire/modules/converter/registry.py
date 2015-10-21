@@ -21,7 +21,7 @@ import os
 
 from flask_registry import PkgResourcesDirDiscoveryRegistry, \
     ModuleAutoDiscoveryRegistry, RegistryProxy
-from invenio.utils.datastructures import LazyDict
+from invenio_utils.datastructures import LazyDict
 
 converterext = RegistryProxy(
     'converterext', ModuleAutoDiscoveryRegistry, 'converterext'

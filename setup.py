@@ -30,28 +30,31 @@ from setuptools.command.test import test as TestCommand
 
 
 requirements = [
-    "rt",
-    "HarvestingKit>=0.6.2",
-    "mixer==4.9.5",  # FIXME: Due to incompatibility with our mixer usage
-    "raven==5.0.0",  # FIXME: To be compatible with our sentry version
-    "orcid",
-    "retrying",
-    "invenio-query-parser>=0.3.0",
-    "invenio_classifier==0.1.0",
-    "invenio-access==0.1.0",
-    "invenio-client==0.1.0",
-    "invenio-formatter==0.2.1",
-    "invenio-groups==0.1.3",
-    "invenio-knowledge==0.1.0",
-    "invenio-oauth2server==0.1.1",
-    "invenio-oauthclient==0.1.1",
-    "invenio-pidstore[datacite]==0.1.1",
-    "invenio-previewer==0.1.0",
-    "invenio-records==0.3.2",
-    "invenio-documents==0.1.0.post2",
-    "invenio-unapi==0.1.0",
-    "invenio-webhooks==0.1.0",
-    "invenio-grobid>=0.1.0"
+    'HarvestingKit>=0.6.2',
+    'mixer==4.9.5',
+    'orcid',
+    'raven==5.0.0',
+    'retrying',
+    'rt',
+    'invenio-accounts==0.2.0',
+    'invenio-base==0.3.1',
+    'invenio-celery==0.1.1',
+    'invenio-collections==0.3.0',
+    'invenio-documents==0.1.0.post2',
+    'invenio-formatter==0.2.2.post1',
+    'invenio-grobid>=0.1.0',
+    'invenio-groups==0.1.3',
+    'invenio-knowledge==0.1.0',
+    'invenio-oauth2server==0.1.1',
+    'invenio-oauthclient==0.1.1',
+    'invenio-pidstore[datacite]==0.1.2',
+    'invenio-query-parser==0.3.0',
+    'invenio-testing==0.1.1',
+    'invenio-unapi==0.1.1',
+    'invenio-upgrader==0.2.0',
+    'invenio-utils==0.2.0',
+    'invenio-webhooks==0.1.0',
+    'invenio_classifier==0.1.0',
 ]
 
 test_requirements = [

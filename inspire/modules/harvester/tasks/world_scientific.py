@@ -33,8 +33,8 @@ from flask import render_template
 
 from harvestingkit.world_scientific_package import WorldScientific
 
-from invenio.ext.email import send_email
-from invenio.base.globals import cfg
+from invenio_ext.email import send_email
+from invenio_base.globals import cfg
 
 from inspire.modules.harvester.utils import (
     unzip,

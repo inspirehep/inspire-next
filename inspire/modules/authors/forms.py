@@ -27,8 +27,8 @@ from wtforms.widgets import html_params, \
     Select, \
     TextInput
 
-from invenio.base.globals import cfg
-from invenio.base.i18n import _
+from invenio_base.globals import cfg
+from invenio_base.i18n import _
 from invenio_deposit.field_widgets import ColumnInput, \
     ExtendedListWidget, \
     ItemWidget, \

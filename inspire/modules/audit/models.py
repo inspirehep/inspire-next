@@ -20,8 +20,8 @@
 
 from datetime import datetime
 
-from invenio.ext.sqlalchemy import db
-from invenio.ext.sqlalchemy.utils import session_manager
+from invenio_ext.sqlalchemy import db
+from invenio_ext.sqlalchemy.utils import session_manager
 
 
 class Audit(db.Model):

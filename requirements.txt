@@ -1,4 +1,4 @@
-git+https://github.com/inspirehep/invenio@labs#egg=Invenio
+git+https://github.com/inspirehep/invenio@labs-latest-dependencies#egg=Invenio
 
 -r base.requirements.txt
 

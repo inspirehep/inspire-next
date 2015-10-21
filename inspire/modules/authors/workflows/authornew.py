@@ -29,9 +29,9 @@ from invenio_workflows.tasks.logic_tasks import (
     workflow_else,
     workflow_if,
 )
-from invenio_workflows.tasks.marcxml_tasks import (
-    was_approved
-)
+
+from inspire.modules.workflows.tasks.actions import was_approved
+
 from invenio_workflows.tasks.workflows_tasks import log_info
 
 from inspire.modules.workflows.tasks.submission import (

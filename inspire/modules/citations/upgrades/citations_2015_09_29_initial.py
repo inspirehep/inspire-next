@@ -21,7 +21,7 @@
 
 from inspire.modules.citations.models import Citation, Citation_Log
 
-from invenio.ext.sqlalchemy import db
+from invenio_ext.sqlalchemy import db
 from invenio_upgrader.api import op
 
 

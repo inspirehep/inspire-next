@@ -22,7 +22,7 @@
 
 
 from fixture import DataSet
-from invenio.base.globals import cfg
+from invenio_base.globals import cfg
 
 
 class UserData(DataSet):

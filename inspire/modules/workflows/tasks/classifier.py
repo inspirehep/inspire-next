@@ -71,7 +71,7 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
                 data = obj.extra_data["pdf"]
                 callback = get_keywords_from_local_file
         if not data:
-            data = [record.get("titles.title", "")] + record.get("abstracts.value", [])
+            data = [record.get("titles.title", "")].extend(record.get("abstracts.value", []))
             callback = get_keywords_from_text
             is_fast_mode = True
 

@@ -21,10 +21,12 @@ import copy
 
 from flask import render_template, current_app
 
+from sqlalchemy.orm.exc import NoResultFound
+
 from six import string_types
 
-from invenio.base.globals import cfg
-from invenio.ext.login import UserInfo
+from invenio_base.globals import cfg
+from invenio_ext.login import UserInfo
 from invenio_accounts.models import UserEXT
 from invenio_records.api import Record
 
@@ -278,12 +280,15 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         This object will be used for indexing and be the basis for display
         in Holding Pen.
         """
-        try:
-            model = cls.model(obj)
-            return get_record_from_model(model).dumps()  # Turn into pure dict
-        except Exception as err:
-            current_app.logger.exception(err)
-            return {}
+        model = cls.model(obj)
+        record = get_record_from_model(model)
+        if record:
+            return record.dumps()
+        return {}
+
+    @classmethod
+    def get_sort_data(cls, obj, **kwargs):
+        return {}
 
     @classmethod
     def process_sip_metadata(cls, deposition, metadata):
@@ -392,7 +397,10 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         userid = deposition.user_id
         user = UserInfo(userid)
         email = user.info.get('email', '')
-        source = UserEXT.query.filter_by(id_user=userid, method='orcid').one()
+        try:
+            source = UserEXT.query.filter_by(id_user=userid, method='orcid').one()
+        except NoResultFound:
+            source = ''
         if source:
             source = source.method + ':' + source.id
         metadata['acquisition_source'] = dict(

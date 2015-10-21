@@ -25,8 +25,8 @@ from six import text_type
 from flask import Blueprint, jsonify, request
 from flask_login import login_required
 from harvestingkit.html_utils import MathMLParser
-from invenio.base.decorators import wash_arguments
-from invenio.ext.principal import permission_required
+from invenio_base.decorators import wash_arguments
+from invenio_ext.principal import permission_required
 from invenio_workflows.acl import viewholdingpen
 from invenio_workflows.models import BibWorkflowObject
 from inspire.utils.helpers import get_model_from_obj

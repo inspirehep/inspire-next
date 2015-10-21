@@ -26,10 +26,10 @@ from __future__ import print_function
 
 import sys
 
-from invenio.base.globals import cfg
+from invenio_base.globals import cfg
 
 from invenio_workflows.registry import workflows
-from invenio.ext.script import Manager
+from invenio_ext.script import Manager
 
 from .utils import validate_date
 from .tasks import run_harvest

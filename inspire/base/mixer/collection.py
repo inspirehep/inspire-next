@@ -23,7 +23,7 @@
 
 from six import with_metaclass as meta
 
-from invenio.ext.mixer import MixerMeta
+from invenio_ext.mixer import MixerMeta
 from invenio_collections.models import Collection
 
 

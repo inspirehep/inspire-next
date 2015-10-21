@@ -39,10 +39,10 @@ from werkzeug.datastructures import MultiDict
 
 from flask_login import login_required
 
-from invenio.base.decorators import wash_arguments
-from invenio.base.globals import cfg
-from invenio.base.i18n import _
-from invenio.ext.principal import permission_required
+from invenio_base.decorators import wash_arguments
+from invenio_base.globals import cfg
+from invenio_base.i18n import _
+from invenio_ext.principal import permission_required
 from invenio_workflows.models import BibWorkflowObject
 
 from .acl import viewauthorreview

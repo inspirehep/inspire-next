@@ -22,7 +22,7 @@
 
 """Styleguide bundles."""
 
-from invenio.ext.assets import Bundle
+from invenio_ext.assets import Bundle
 
 styles = Bundle(
     "less/styleguide.less",

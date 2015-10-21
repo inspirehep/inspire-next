@@ -27,9 +27,9 @@ from __future__ import print_function
 import os
 import sys
 
-from invenio.base.globals import cfg
+from invenio_base.globals import cfg
 
-from invenio.ext.script import Manager
+from invenio_ext.script import Manager
 
 from .tasks import train as celery_train
 

@@ -48,7 +48,9 @@ def get_record_from_model(model):
     from invenio_records.api import Record
 
     sip = model.get_latest_sip()
-    return Record(sip.metadata)
+
+    if sip and hasattr(sip, 'metadata'):
+        return Record(sip.metadata)
 
 
 def add_file_by_name(model, file_path, filename=None):

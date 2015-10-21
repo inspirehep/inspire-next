@@ -30,10 +30,10 @@ import sys
 from flask import current_app
 from flask.ext.script import prompt_bool
 
-from invenio.ext.es import create_index as create_main_index
-from invenio.ext.es import delete_index as delete_main_index
-from invenio.ext.script import Manager
-from invenio.ext.sqlalchemy import db
+from invenio_ext.es import create_index as create_main_index
+from invenio_ext.es import delete_index as delete_main_index
+from invenio_ext.script import Manager
+from invenio_ext.sqlalchemy import db
 
 from invenio_records.api import Record
 

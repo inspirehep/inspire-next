@@ -124,7 +124,7 @@ def send_robotupload(mode="insert"):
     """Gets the MARCXML from the workflow object and ships it."""
     @wraps(send_robotupload)
     def _send_robotupload(obj, eng):
-        from invenio.base.globals import cfg
+        from invenio_base.globals import cfg
         from invenio_workflows.errors import WorkflowError
         from inspire.utils.robotupload import make_robotupload_marcxml
 
@@ -173,7 +173,7 @@ def create_curator_ticket_update(template, queue="Test",
 
     @wraps(create_curator_ticket_update)
     def _create_curator_ticket_update(obj, eng):
-        from invenio.base.globals import cfg
+        from invenio_base.globals import cfg
 
         user_email = acc_get_user_email(obj.id_user)
         recid = obj.data.get("recid", "")

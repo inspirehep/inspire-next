@@ -28,7 +28,7 @@ from functools import wraps
 from flask import render_template
 from flask_login import current_user
 
-from invenio.base.globals import cfg
+from invenio_base.globals import cfg
 from invenio_deposit.models import Deposition
 from invenio_formatter import format_record
 
@@ -84,7 +84,7 @@ def get_curation_body(template, metadata, email, extra_data):
 
     Ticket used by curators to curate the given record.
     """
-    from invenio.utils.persistentid import is_arxiv_post_2007
+    from idutils import is_arxiv_post_2007
 
     recid = extra_data.get('recid')
     record_url = extra_data.get('url')

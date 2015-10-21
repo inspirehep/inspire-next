@@ -24,7 +24,7 @@ from flask import Blueprint, render_template, url_for
 
 from inspire.modules.forms import fields
 
-from invenio.base.i18n import _
+from invenio_base.i18n import _
 
 from wtforms.validators import DataRequired
 

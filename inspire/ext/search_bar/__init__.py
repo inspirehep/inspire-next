@@ -22,7 +22,7 @@
 
 
 from flask import session, request
-from invenio.ext.template.context_processor import \
+from invenio_ext.template.context_processor import \
     register_template_context_processor
 
 

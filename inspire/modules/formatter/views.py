@@ -27,7 +27,7 @@ from inspire.utils.latex import Latex
 
 from invenio_records.api import get_record
 
-from invenio.base.decorators import wash_arguments
+from invenio_base.decorators import wash_arguments
 
 from six import text_type
 

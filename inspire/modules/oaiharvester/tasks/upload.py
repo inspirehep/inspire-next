@@ -34,7 +34,7 @@ def update_existing_record_oaiharvest(url=None):
 
         from lxml import objectify, etree
 
-        from invenio.base.globals import cfg
+        from invenio_base.globals import cfg
         from invenio_workflows.utils import convert_marcxml_to_bibfield
         from invenio_records.api import Record
 

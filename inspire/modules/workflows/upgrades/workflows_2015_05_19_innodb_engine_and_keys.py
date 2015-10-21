@@ -20,8 +20,8 @@
 import warnings
 
 from invenio_upgrader.api import op
-from invenio.ext.sqlalchemy import db
-from invenio.utils.text import wait_for_user
+from invenio_ext.sqlalchemy import db
+from invenio_utils.text import wait_for_user
 
 
 depends_on = [u'workflows_2014_08_12_initial']

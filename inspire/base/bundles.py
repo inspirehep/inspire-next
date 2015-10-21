@@ -23,14 +23,14 @@
 
 """Inspire bundles."""
 
-from invenio.ext.assets import Bundle, RequireJSFilter
-from invenio.base.bundles import jquery as _j, invenio as _i
+from invenio_ext.assets import Bundle, RequireJSFilter
+from invenio_base.bundles import jquery as _j, invenio as _i
 from invenio_search.bundles import js as _search_js
 from invenio_formatter.bundles import css as _formatter_css
 
 # '_' prefix indicates private variables, and prevents duplicated import by
 # auto-discovery service of invenio
-from invenio.base.bundles import styles as _base_styles
+from invenio_base.bundles import styles as _base_styles
 
 js = Bundle(
     'js/inspire_base_init.js',

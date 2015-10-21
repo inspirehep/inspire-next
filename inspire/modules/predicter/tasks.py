@@ -45,7 +45,7 @@ def guess_coreness(model_path="arxiv_guessing.pickle", top_words=0):
     """Using a prediction model, predict if record is CORE."""
     @wraps(guess_coreness)
     def _guess_coreness(obj, eng):
-        from invenio.base.globals import cfg
+        from invenio_base.globals import cfg
         from .arxiv import predict
 
         if os.path.basename(model_path) == model_path:
