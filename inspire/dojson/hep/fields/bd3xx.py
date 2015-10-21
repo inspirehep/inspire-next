@@ -29,19 +29,15 @@ from ..model import hep, hep2marc
 
 @hep.over('page_nr', '^300..')
 @utils.for_each_value
-@utils.filter_values
 def page_nr(self, key, value):
     """Page number."""
-    return {
-        'value': value.get('a')
-    }
+    return value.get('a')
 
 
 @hep2marc.over('300', 'page_nr')
 @utils.for_each_value
-@utils.filter_values
 def page_nr2marc(self, key, value):
     """Page number."""
     return {
-        'a': value.get('value'),
+        'a': value,
     }

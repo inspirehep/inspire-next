@@ -171,7 +171,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         if sip:
             # Get the SmartJSON object
             record = Record(sip.metadata)
-            return record.get("title.title", ["No title"])[0]
+            return record.get("titles.title", ["No title"])[0]
         else:
             return "User submission in progress"
 
@@ -254,13 +254,22 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         except InvalidDepositionType:
             return "This submission is disabled: {0}.".format(bwo.workflow.name)
 
-        submission_data = deposit_object.get_latest_sip(deposit_object.submitted)
-        record = submission_data.metadata
+        sip = deposit_object.get_latest_sip(deposit_object.submitted)
+        record = sip.metadata
 
-        return render_template(
-            'format/record/Holding_Pen_HTML_detailed.tpl',
-            record=Record(record)
-        )
+        if hasattr(sip, "package"):
+            marcxml = sip.package
+        else:
+            return "No data found in submission (no package)."
+
+        of = kwargs.get("of", "hd")
+        if of == "xm":
+            return marcxml
+        else:
+            return render_template(
+                'format/record/Holding_Pen_HTML_detailed.tpl',
+                record=Record(record)
+            )
 
     @classmethod
     def get_record(cls, obj, **kwargs):
@@ -305,24 +314,46 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 if metadata.get("abstracts"):
                     metadata['abstracts'][0]['source'] = 'arXiv'
                 if form_fields.get("arxiv_id"):
-                    metadata['external_system_number'] = {
+                    metadata['external_system_numbers'] = [{
                         'value': 'oai:arXiv.org:' + form_fields['arxiv_id'],
                         'institute': 'arXiv'
-                    }
+                    }]
         if "publication_info" in metadata:
             metadata['collections'].append({'primary': "Published"})
         # ============================
         # Title source
         # ============================
         if 'title_source' in form_fields and form_fields['title_source']:
-            metadata['title'][0]['source'] = form_fields['title_source']
+            metadata['titles'][0]['source'] = form_fields['title_source']
+        # ============================
+        # Title from arXiv
+        # ============================
+        if 'title_arXiv' in form_fields and form_fields['title_arXiv']:
+            for title in metadata['titles']:
+                if title['title'] == form_fields['title_arXiv']:
+                    break
+            else:
+                metadata['titles'].append({
+                    'title': form_fields['title_arXiv'],
+                    'source': 'arXiv'
+                })
         # ============================
         # Conference name
         # ============================
         if 'conf_name' in form_fields:
-            metadata.setdefault("hidden_notes", []).append({
-                "value": form_fields['conf_name']
-            })
+            if 'nonpublic_note' in form_fields:
+                metadata.setdefault("hidden_notes", []).append({
+                    "value": form_fields['conf_name']
+                })
+                metadata['hidden_notes'].append({
+                    'value': form_fields['nonpublic_note']
+                })
+            else:
+                metadata.setdefault("hidden_notes", []).append({
+                    "value": form_fields['conf_name']
+                })
+            metadata['collections'].extend([{'primary': "ConferencePaper"}])
+
         # ============================
         # Page range
         # ============================
@@ -331,9 +362,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 pages = metadata['publication_info']['page_artid'].split('-')
                 if len(pages) == 2:
                     try:
-                        metadata['page_nr'] = {
-                            "value": int(pages[1]) - int(pages[0]) + 1
-                        }
+                        metadata['page_nr'] = int(pages[1]) - int(pages[0]) + 1
                     except ValueError:
                         pass
         # ============================
@@ -363,12 +392,11 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         userid = deposition.user_id
         user = UserInfo(userid)
         email = user.info.get('email', '')
-        external_ids = UserEXT.query.filter_by(id_user=userid).all()
-        sources = ["{0}{1}".format('inspire:uid:', userid)]
-        sources.extend(["{0}:{1}".format(e_id.method,
-                                         e_id.id) for e_id in external_ids])
+        source = UserEXT.query.filter_by(id_user=userid, method='orcid').one()
+        if source:
+            source = source.method + ':' + source.id
         metadata['acquisition_source'] = dict(
-            source=sources,
+            source=source,
             email=email,
             method="submission",
             submission_number=deposition.id,

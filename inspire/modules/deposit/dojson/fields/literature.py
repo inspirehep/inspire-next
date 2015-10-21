@@ -46,11 +46,9 @@ def arxiv_id(self, key, value):
     from invenio.utils.persistentid import is_arxiv_post_2007
 
     if is_arxiv_post_2007(value):
-        arxiv_rep_number = {'value': 'arXiv:' + value,
-                            'source': 'arXiv'}
+        arxiv_rep_number = {'value': 'arXiv:' + value}
     else:
-        arxiv_rep_number = {'value': value,
-                            'source': 'arXiv'}
+        arxiv_rep_number = {'value': value}
     if len(value.split('/')) == 2:
         arxiv_rep_number['categories'] = value.split('/')[0]
     if 'arxiv_eprints' in self:
@@ -81,8 +79,9 @@ def authors(self, key, value):
                 match_authors_initials(name[1]):
             name[1] = name[1].replace(' ', '')
             author['full_name'] = ", ".join(name)
-        author['affiliations'] = [dict(value=author['affiliation'])]
-        del author['affiliation']
+        if author.get('affiliation'):
+            author['affiliations'] = [dict(value=author['affiliation'])]
+            del author['affiliation']
     return value
 
 
@@ -103,9 +102,7 @@ def categories(self, key, value):
 
 @literature.over('collaboration', '^collaboration$')
 def collaboration(self, key, value):
-    return {
-        'collaboration': value
-    }
+    return value
 
 
 @literature.over('hidden_notes', '^hidden_note$')
@@ -166,7 +163,7 @@ def thesis_date(self, key, value):
 
 @literature.over('accelerator_experiments', '^experiment$')
 def accelerator_experiments(self, key, value):
-    return {'experiment': value}
+    return [{'experiment': value}]
 
 
 @literature.over('_issue', 'issue')
@@ -222,9 +219,9 @@ def language(self, key, value):
                  ("oth", "Other")]
 
     if value not in ('en', 'oth'):
-        return {'language': unicode(dict(languages).get(value))}
+        return unicode(dict(languages).get(value))
     else:
-        return {'language': value}
+        return value
 
 
 @literature.over('_license_url', '^license_url$')
@@ -292,38 +289,21 @@ def titles(self, key, value):
 
 @literature.over('title_translation', '^title_translation$')
 def title_translation(self, key, value):
-    return {
+    return [{
         "title": value
-    }
+    }]
 
 
-@literature.over('titles', '^title_arXiv$')
-def title_arxiv(self, key, value):
-    def get_value(existing):
-        if not isinstance(value, list):
-            values = [value]
-        else:
-            values = value
-        out = []
-        for val in values:
-            out.append({
-                'title': val,
-                'source': 'arXiv'
-            })
-        return existing + out
-
-    if 'titles' in self:
-        return get_value(self['titles'])
-    else:
-        return get_value([])
-
-
-@literature.over('url', '^url$')
+@literature.over('_url', '^url$')
 def url(self, key, value):
     self['pdf'] = value
-    return [{
+    field = {
         "url": value
-    }]
+    }
+    if 'url' in self:
+        self['url'].append(field)
+    else:
+        self['url'] = [field]
 
 
 @literature.over('additional_url', '^additional_url$')
