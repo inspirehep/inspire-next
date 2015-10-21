@@ -19,7 +19,7 @@
 
 import os
 
-from invenio.base.config import CFG_DATADIR, CFG_SITE_URL
+from invenio_base.config import CFG_DATADIR, CFG_SITE_URL
 
 CFG_ROBOTUPLOAD_SUBMISSION_BASEURL = CFG_SITE_URL
 WORKFLOWS_MATCH_REMOTE_SERVER_URL = "{0}/search".format(CFG_SITE_URL)

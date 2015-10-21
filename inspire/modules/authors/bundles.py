@@ -22,7 +22,7 @@
 
 """INSPIRE Author bundles."""
 
-from invenio.ext.assets import Bundle
+from invenio_ext.assets import Bundle
 
 styles = Bundle(
     "less/authors/authors-update-form.less",

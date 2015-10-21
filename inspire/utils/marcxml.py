@@ -29,7 +29,7 @@ from werkzeug.utils import import_string
 
 
 def get_json_from_marcxml(marcxml):
-    from invenio.base.globals import cfg
+    from invenio_base.globals import cfg
     source = StringIO.StringIO(marcxml)
 
     processor = cfg["RECORD_PROCESSORS"]["marcxml"]

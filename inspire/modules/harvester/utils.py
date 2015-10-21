@@ -31,7 +31,7 @@ from harvestingkit.ftp_utils import FtpHandler
 
 def get_storage_path(suffix=""):
     """Return a path ready to store files."""
-    from invenio.base.globals import cfg
+    from invenio_base.globals import cfg
 
     storage_path = os.path.join(
         cfg.get("CFG_PREFIX"),

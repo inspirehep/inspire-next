@@ -35,7 +35,7 @@ def info():
 
 def do_upgrade():
     """Implement your upgrades here."""
-    from invenio.ext.sqlalchemy import db
+    from invenio_ext.sqlalchemy import db
     from invenio_oaiharvester.models import OaiHARVEST
 
     # Change arXiv harvest workflow

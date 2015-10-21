@@ -28,9 +28,9 @@ from flask import request, Blueprint, render_template, current_app
 from flask.ext.menu import register_menu, current_menu
 from flask.ext.login import current_user
 
-from invenio.base.i18n import _
-from invenio.ext.email import send_email
-from invenio.base.globals import cfg
+from invenio_base.i18n import _
+from invenio_ext.email import send_email
+from invenio_base.globals import cfg
 
 
 blueprint = Blueprint('inspire', __name__, url_prefix="",

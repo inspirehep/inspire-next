@@ -20,8 +20,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from invenio.base.bundles import invenio as _i, jquery as _j
-from invenio.ext.assets import Bundle, RequireJSFilter
+from invenio_base.bundles import invenio as _i, jquery as _j
+from invenio_ext.assets import Bundle, RequireJSFilter
 
 
 js = Bundle(

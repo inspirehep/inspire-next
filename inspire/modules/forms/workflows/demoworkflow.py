@@ -27,11 +27,25 @@ from invenio_workflows.tasks.logic_tasks import (
     workflow_else,
     workflow_if,
 )
-from invenio_workflows.tasks.marcxml_tasks import (
-    approve_record,
-    was_approved
-)
+
+from inspire.modules.workflows.tasks.actions import was_approved
 from invenio_workflows.tasks.workflows_tasks import log_info
+
+
+def approve_record(obj, eng):
+    """Will add the approval widget to the record.
+
+    The workflow need to be halted to use the
+    action in the holdingpen.
+    :param obj: Bibworkflow Object to process
+    :param eng: BibWorkflowEngine processing the object
+    """
+    try:
+        eng.halt(action="approval",
+                 msg='Record needs approval')
+    except KeyError:
+        # Log the error
+        obj.extra_data["_error_msg"] = 'Could not assign action'
 
 
 class demoworkflow(WorkflowBase):

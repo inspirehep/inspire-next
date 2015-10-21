@@ -22,8 +22,8 @@
 
 from invenio_deposit.bundles import js as _deposit_js, \
     styles as _deposit_styles
-from invenio.ext.assets import Bundle, RequireJSFilter
-from invenio.base.bundles import jquery as _j, invenio as _i
+from invenio_ext.assets import Bundle, RequireJSFilter
+from invenio_base.bundles import jquery as _j, invenio as _i
 
 # '_' prefix indicates private variables, and prevents duplicated import by
 # auto-discovery service of invenio

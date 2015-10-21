@@ -27,8 +27,8 @@ from wtforms.widgets import html_params, HTMLString, HiddenInput
 from wtforms.fields import DateTimeField, SubmitField
 from flask.ext.wtf import Form
 
-from invenio.base.i18n import _
-from invenio.base.globals import cfg
+from invenio_base.i18n import _
+from invenio_base.globals import cfg
 from invenio_deposit import fields
 from invenio_deposit.form import WebDepositForm
 from invenio_deposit.field_widgets import ColumnInput, \

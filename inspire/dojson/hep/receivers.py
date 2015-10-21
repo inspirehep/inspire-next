@@ -51,8 +51,6 @@ def earliest_date(sender, *args, **kwargs):
     # Sort dates and pick the first one.
     dates.sort()
 
-    try:
+    if dates:
         sender['earliest_date'] = \
             inspire_dojson_utils.create_valid_date(dates[0])
-    except IndexError:
-        pass

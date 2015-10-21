@@ -53,11 +53,11 @@ from inspire.modules.workflows.tasks.actions import (
     was_approved,
     add_core,
 )
-from inspire.modules.oaiharvester.tasks.arxiv import (
-    arxiv_plot_extract,
-    arxiv_fulltext_download,
-    arxiv_author_list,
-)
+# from inspire.modules.oaiharvester.tasks.arxiv import (
+#     arxiv_plot_extract,
+#     arxiv_fulltext_download,
+#     arxiv_author_list,
+# )
 # from inspire.modules.refextract.tasks import extract_journal_info
 from inspire.modules.predicter.tasks import (
     guess_coreness
@@ -99,10 +99,10 @@ class harvesting_fixture(RecordWorkflow, DepositionType):
                 # FIXME: Remove this when elasticsearch filtering is ready
                 arxiv_set_category_field,
                 save_identifiers_to_kb("harvesting_fixture_kb"),
-                arxiv_plot_extract,
-                arxiv_fulltext_download(),
+                # arxiv_plot_extract,
+                # arxiv_fulltext_download(),
                 # arxiv_refextract, FIXME Need to fix extractutils + new linker
-                arxiv_author_list("authorlist2marcxml.xsl"),
+                # arxiv_author_list("authorlist2marcxml.xsl"),
                 # extract_journal_info, FIXME Need to fix extractutils
                 classify_paper(
                     taxonomy="HEPont",

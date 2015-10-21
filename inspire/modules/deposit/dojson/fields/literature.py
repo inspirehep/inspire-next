@@ -43,7 +43,7 @@ def abstracts(self, key, value):
 
 @literature.over('_arxiv_id', '^arxiv_id$')
 def arxiv_id(self, key, value):
-    from invenio.utils.persistentid import is_arxiv_post_2007
+    from idutils import is_arxiv_post_2007
 
     if is_arxiv_post_2007(value):
         arxiv_rep_number = {'value': 'arXiv:' + value}

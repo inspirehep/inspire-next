@@ -17,7 +17,7 @@
 # along with Invenio; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-from invenio.ext.sqlalchemy import db
+from invenio_ext.sqlalchemy import db
 from invenio_upgrader.api import op
 
 from inspire.modules.audit import Audit

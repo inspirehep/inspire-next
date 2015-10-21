@@ -24,8 +24,8 @@
 from os.path import join
 from flask import Blueprint, jsonify, request
 
-from invenio.ext.cache import cache
-from invenio.base.globals import cfg
+from invenio_ext.cache import cache
+from invenio_base.globals import cfg
 from invenio_workflows.models import BibWorkflowObject
 
 
@@ -121,7 +121,7 @@ def robotupload_callback():
             cache.set("pending_records", pending_records,
                       timeout=cfg["PENDING_RECORDS_CACHE_TIMEOUT"])
         else:
-            from invenio.ext.email import send_email
+            from invenio_ext.email import send_email
 
             body = ("There was an error when uploading the "
                     "submission with id: %s.\n" % id_object)

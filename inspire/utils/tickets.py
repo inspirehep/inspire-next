@@ -22,7 +22,7 @@
 
 import rt
 
-from invenio.base.globals import cfg
+from invenio_base.globals import cfg
 
 
 def get_instance():

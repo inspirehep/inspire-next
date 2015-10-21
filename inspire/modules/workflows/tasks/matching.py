@@ -38,7 +38,7 @@ from inspire.utils.helpers import (
     get_record_from_obj
 )
 
-from invenio.base.globals import cfg
+from invenio_base.globals import cfg
 
 import requests
 

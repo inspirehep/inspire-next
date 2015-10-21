@@ -49,11 +49,11 @@ from inspire.modules.workflows.tasks.classifier import (
     classify_paper,
 )
 
-from inspire.modules.oaiharvester.tasks.arxiv import (
-    arxiv_plot_extract,
-    arxiv_fulltext_download,
-    arxiv_author_list,
-)
+# from inspire.modules.oaiharvester.tasks.arxiv import (
+#     arxiv_plot_extract,
+#     arxiv_fulltext_download,
+#     arxiv_author_list,
+# )
 from invenio_workflows.tasks.workflows_tasks import log_info
 
 from inspire.modules.workflows.tasks.actions import (
@@ -115,10 +115,10 @@ class process_record_arxiv(RecordWorkflow, DepositionType):
                 # FIXME: Remove this when elasticsearch filtering is ready
                 arxiv_set_category_field,
                 save_identifiers_to_kb("HP_IDENTIFIERS"),
-                arxiv_plot_extract,
-                arxiv_fulltext_download(),
+                # arxiv_plot_extract,
+                # arxiv_fulltext_download(),
                 # arxiv_refextract,
-                arxiv_author_list("authorlist2marcxml.xsl"),
+                # arxiv_author_list("authorlist2marcxml.xsl"),
                 # extract_journal_info,
                 classify_paper(
                     taxonomy="HEPont",

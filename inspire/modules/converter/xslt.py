@@ -33,7 +33,7 @@ import string
 from StringIO import StringIO
 
 from lxml import etree
-from invenio.utils.text import encode_for_xml
+from invenio_utils.text import encode_for_xml
 
 from .registry import templates, kb
 

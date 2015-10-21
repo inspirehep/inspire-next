@@ -24,8 +24,8 @@
 
 import jsonpatch
 
-from invenio.ext.sqlalchemy import db
-from invenio.ext.sqlalchemy.utils import session_manager
+from invenio_ext.sqlalchemy import db
+from invenio_ext.sqlalchemy.utils import session_manager
 
 from invenio_records.api import create_record, get_record
 from invenio_records.models import Record

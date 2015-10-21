@@ -41,7 +41,7 @@ class MatchingTests(InvenioTestCase):
     @httpretty.activate
     def test_matching_result(self):
         """Test that good matching results are handled correctly."""
-        from invenio.base.globals import cfg
+        from invenio_base.globals import cfg
         from inspire.modules.workflows.tasks.matching import search
 
         httpretty.register_uri(
@@ -59,7 +59,7 @@ class MatchingTests(InvenioTestCase):
     @httpretty.activate
     def test_empty_matching_result(self):
         """Test that empty matching results are handled correctly."""
-        from invenio.base.globals import cfg
+        from invenio_base.globals import cfg
         from inspire.modules.workflows.tasks.matching import search
 
         httpretty.register_uri(
@@ -77,7 +77,7 @@ class MatchingTests(InvenioTestCase):
     @httpretty.activate
     def test_bad_matching_result(self):
         """Test that bad matching results are handled correctly."""
-        from invenio.base.globals import cfg
+        from invenio_base.globals import cfg
         from inspire.modules.workflows.tasks.matching import search
 
         httpretty.register_uri(
@@ -92,7 +92,7 @@ class MatchingTests(InvenioTestCase):
     def test_arxiv_results(self):
         """Test that bad matching results are handled correctly."""
         from invenio_records.api import Record
-        from invenio.base.globals import cfg
+        from invenio_base.globals import cfg
         from inspire.modules.workflows.tasks.matching import match_by_arxiv_id
 
         httpretty.register_uri(
@@ -119,7 +119,7 @@ class MatchingTests(InvenioTestCase):
     def test_doi_results(self):
         """Test that bad matching results are handled correctly."""
         from invenio_records.api import Record
-        from invenio.base.globals import cfg
+        from invenio_base.globals import cfg
         from inspire.modules.workflows.tasks.matching import match_by_doi
 
         httpretty.register_uri(

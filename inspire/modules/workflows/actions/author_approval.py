@@ -19,7 +19,7 @@
 
 """Author Approval action."""
 
-from invenio.base.i18n import _
+from invenio_base.i18n import _
 from flask import render_template, url_for
 
 

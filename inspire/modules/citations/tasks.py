@@ -26,7 +26,7 @@ from flask import current_app
 
 from inspire.modules.citations.models import Citation, Citation_Log
 
-from invenio.base.globals import cfg
+from invenio_base.globals import cfg
 
 from invenio.celery import celery
 

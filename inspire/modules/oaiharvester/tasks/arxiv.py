@@ -26,15 +26,15 @@ import re
 
 from functools import wraps
 
-from invenio.base.globals import cfg
+from invenio_base.globals import cfg
 
-from invenio.utils.shell import Timeout
+from invenio_utils.shell import Timeout
 
-from invenio.utils.plotextractor.api import (
-    get_tarball_from_arxiv,
-    get_marcxml_plots_from_tarball,
-    get_pdf_from_arxiv,
-)
+# from invenio_utils.plotextractor.api import (
+#     get_tarball_from_arxiv,
+#     get_marcxml_plots_from_tarball,
+#     get_pdf_from_arxiv,
+# )
 from inspire.utils.helpers import (
     get_record_from_model,
     add_file_by_name,
@@ -262,9 +262,9 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
     def _author_list(obj, eng):
         from invenio_oaiharvester.utils import find_matching_files
 
-        from invenio.utils.plotextractor.cli import get_defaults
-        from invenio.utils.plotextractor.converter import untar
-        from invenio.utils.shell import Timeout
+        from invenio_utils.plotextractor.cli import get_defaults
+        from invenio_utils.plotextractor.converter import untar
+        from invenio_utils.shell import Timeout
 
         from inspire.modules.converter.xslt import convert
 

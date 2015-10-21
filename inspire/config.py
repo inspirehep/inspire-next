@@ -35,16 +35,39 @@ point specified in the setup.py::
 from invenio_query_parser.contrib.spires.walkers.pypeg_to_ast import PypegConverter
 from invenio_query_parser.contrib.spires.walkers.spires_to_invenio import SpiresToInvenio
 
-from invenio.base.config import (
-    PACKAGES as _PACKAGES,
-    EXTENSIONS as _EXTENSIONS
-)
 
-
-EXTENSIONS = _EXTENSIONS + [
-    'invenio.ext.arxiv:Arxiv',
-    'invenio.ext.crossref:CrossRef',
-    'invenio.ext.mixer',
+EXTENSIONS = [
+    'invenio_ext.confighacks',
+    'invenio_ext.passlib:Passlib',
+    'invenio_ext.debug_toolbar',
+    'invenio_ext.babel',
+    'invenio_ext.sqlalchemy',
+    'invenio_ext.sslify',
+    'invenio_ext.cache',
+    'invenio_ext.session',
+    'invenio_ext.login',
+    'invenio_ext.principal',
+    'invenio_ext.email',
+    'invenio_ext.fixtures',  # before legacy
+    'invenio_ext.legacy',
+    'invenio_ext.assets',
+    'invenio_ext.template',
+    'invenio_ext.admin',
+    'invenio_ext.logging',
+    'invenio_ext.logging.backends.fs',
+    'invenio_ext.logging.backends.legacy',
+    'invenio_ext.logging.backends.sentry',
+    'invenio_ext.gravatar',
+    'invenio_ext.collect',
+    'invenio_ext.restful',
+    'invenio_ext.menu',
+    'invenio_ext.jasmine',  # after assets
+    'flask_breadcrumbs:Breadcrumbs',
+    'invenio_deposit.url_converters',
+    'invenio_ext.arxiv:Arxiv',
+    'invenio_ext.crossref:CrossRef',
+    'invenio_ext.es',
+    'invenio_ext.mixer',
     'inspire.ext.search_bar',
     'inspire.ext.formatter_jinja_filters',
     'inspire.ext.deprecation_warnings:disable_deprecation_warnings',
@@ -54,13 +77,32 @@ PACKAGES = [
     'inspire.base',
     'inspire.demosite',
     'inspire.dojson',
-    'inspire.ext',
     'inspire.utils',
     'inspire.modules.*',
+    'invenio_celery',
     'invenio_classifier',
     'invenio_oaiharvester',
     'invenio_grobid',
-] + _PACKAGES
+    'invenio_records',
+    'invenio_search',
+    'invenio_collections',
+    'invenio_documents',
+    'invenio_pidstore',
+    'invenio_formatter',
+    'invenio_unapi',
+    'invenio_webhooks',
+    'invenio_deposit',
+    'invenio_workflows',
+    'invenio_knowledge',
+    'invenio_oauthclient',
+    'invenio_oauth2server',
+    'invenio_groups',
+    'invenio_access',
+    'invenio_accounts',
+    'invenio_upgrader',
+    'invenio_testing',
+    'invenio_base'
+]
 
 # Configuration related to Deposit module
 

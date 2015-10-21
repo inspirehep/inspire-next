@@ -26,7 +26,7 @@ from invenio.celery import celery
 @celery.task()
 def run_harvest(workflow, **kwargs):
     """Run given harvesting workflow in Celery."""
-    from invenio.base.globals import cfg
+    from invenio_base.globals import cfg
     from invenio_workflows.models import BibWorkflowObject
 
     args = {
