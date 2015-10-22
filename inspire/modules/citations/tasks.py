@@ -30,6 +30,8 @@ from invenio.base.globals import cfg
 
 from invenio.celery import celery
 
+from invenio.ext.sqlalchemy import db
+
 from invenio_records.api import get_record
 
 import requests
@@ -48,6 +50,8 @@ def update_records_citations(new_citations):
         rec = get_record(id)
         if rec is not None:
             rec.update({"references_id": list(citees)})
+            rec.commit()
+            db.session.flush()
         else:
             current_app.logger.exception(
                 "citations: record with id:%d not found", id)
