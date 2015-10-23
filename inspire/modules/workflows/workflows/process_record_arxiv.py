@@ -51,10 +51,11 @@ from invenio.modules.oaiharvester.tasks.postprocess import (
     refextract,
     author_list,
 )
-from invenio.modules.workflows.tasks.workflows_tasks import log_info
 from inspire.modules.workflows.tasks.actions import (
     was_approved,
     add_core_oaiharvest,
+    shall_halt_workflow,
+    reject_record,
 )
 
 from invenio.modules.workflows.tasks.logic_tasks import (
@@ -115,9 +116,15 @@ class process_record_arxiv(RecordWorkflow):
                     with_author_keywords=True,
                 ),
                 filter_core_keywords(filter_kb="antihep"),
-                guess_coreness("new_astro_model.pickle"),
-                halt_record_with_action(action="arxiv_approval",
-                                        message="Accept article?"),
+                guess_coreness(
+                    "new_astro_model.pickle",
+                    top_words=10
+                ),
+                workflow_if(shall_halt_workflow),
+                [
+                    halt_record_with_action(action="arxiv_approval",
+                                            message="Accept article?"),
+                ],
                 workflow_if(was_approved),
                 [
                     add_core_oaiharvest,
@@ -125,7 +132,7 @@ class process_record_arxiv(RecordWorkflow):
                 ],
                 workflow_else,
                 [
-                    log_info("Record rejected"),
+                    reject_record("Record automatically rejected."),
                 ],
             ],
         ],
