@@ -127,10 +127,11 @@ def train(records, use_categories=True):
     X = transformer.fit_transform(records)
     y = np.array([r[0]["decision"] for r in records])
 
+    # FIXME: Perhaps add , n_jobs=-1 for parallel jobs
     grid = GridSearchCV(LinearSVC(),
-                        param_grid={"C": np.linspace(start=0.1, stop=1.0,
-                                                     num=100)},
-                        scoring="accuracy", cv=5, verbose=3)
+                        param_grid={"C": np.linspace(start=0.2, stop=0.5,
+                                                     num=20)},
+                        scoring="accuracy", cv=3, verbose=3)
     grid.fit(X, y)
 
     return Pipeline([("transformer", transformer),
@@ -206,7 +207,6 @@ def predict(pipeline, record, top_words=0):
                              reverse=True, key=lambda x: x[1])[:top_words]
         top_rejected = sorted(top_rejected,
                               reverse=True, key=lambda x: x[1])[:top_words]
-
         return decision, scores, top_core, top_noncore, top_rejected
 
 

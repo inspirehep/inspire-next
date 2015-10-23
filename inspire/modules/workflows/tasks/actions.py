@@ -94,3 +94,23 @@ def reject_record(message):
         obj.extra_data["reason"] = message
         obj.log.info(message)
     return _reject_record
+
+
+def is_record_relevant(obj, eng):
+    """Shall we halt this workflow for potential acceptance or just reject?"""
+    from inspire.modules.predicter.utils import (
+        get_classification_from_task_results,
+    )
+    results = obj.get_tasks_results()
+    prediction_results = results.get("arxiv_guessing", {})
+    classification_results = get_classification_from_task_results(obj)
+
+    if prediction_results and classification_results:
+        prediction_results = prediction_results[0].get("result")
+        score = prediction_results.get("max_score")
+        decision = prediction_results.get("decision")
+        core_keywords = classification_results.get("Core keywords")
+        if decision.lower() == "rejected" and score > 0 and \
+                len(core_keywords) == 0:
+            return False
+    return True
