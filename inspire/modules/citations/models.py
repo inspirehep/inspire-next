@@ -22,7 +22,6 @@
 from datetime import datetime
 
 from invenio.ext.sqlalchemy import db
-from invenio.ext.sqlalchemy.utils import session_manager
 
 
 class Citation(db.Model):
@@ -37,7 +36,6 @@ class Citation(db.Model):
         self.citer = citer
         self.last_updated = last_updated
 
-    @session_manager
     def save(self):
         db.session.merge(self)
 
@@ -67,9 +65,8 @@ class Citation_Log(db.Model):
         self.action_date = action_date
         self.citation_type = citation_type
 
-    @session_manager
     def save(self):
-        """ Saves the new log entry to the database.
+        """ Adds the new log entry to the current session.
 
             It's also responsible for adding or removing the citation from
             rnkCITATIONDICT table.
