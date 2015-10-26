@@ -393,19 +393,19 @@ class HepRecordsTests(InvenioTestCase):
 
     def test_url(self):
         """Test if url is created correctly"""
-        self.assertEqual(self.marcxml_to_json['url'][0]['url'],
+        self.assertEqual(self.marcxml_to_json['urls'][0]['url'],
                          self.json_to_marc['8564'][0]['u'])
-        self.assertEqual(self.marcxml_to_json['url'][0]['size'],
+        self.assertEqual(self.marcxml_to_json['urls'][0]['size'],
                          self.json_to_marc['8564'][0]['s'])
-        self.assertEqual(self.marcxml_to_json['url'][0]['doc_string'],
+        self.assertEqual(self.marcxml_to_json['urls'][0]['doc_string'],
                          self.json_to_marc['8564'][0]['w'])
-        self.assertEqual(self.marcxml_to_json['url'][0]['description'],
+        self.assertEqual(self.marcxml_to_json['urls'][0]['description'],
                          self.json_to_marc['8564'][0]['y'])
-        self.assertEqual(self.marcxml_to_json['url'][0]['material_type'],
+        self.assertEqual(self.marcxml_to_json['urls'][0]['material_type'],
                          self.json_to_marc['8564'][0]['3'])
-        self.assertEqual(self.marcxml_to_json['url'][0]['comment'],
+        self.assertEqual(self.marcxml_to_json['urls'][0]['comment'],
                          self.json_to_marc['8564'][0]['z'])
-        self.assertEqual(self.marcxml_to_json['url'][0]['name'],
+        self.assertEqual(self.marcxml_to_json['urls'][0]['name'],
                          self.json_to_marc['8564'][0]['f'])
 
     def test_oai_pmh(self):
