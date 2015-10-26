@@ -21,7 +21,7 @@
   <a{% if author.affiliations|length > 0 %}
       data-toggle="tooltip"
       data-placement="bottom"
-      title="{{ author.get('affiliations')[0] }}"
+      title="{{ author.get('affiliations')[0]['value'] }}"
     {% endif %}
     href="{{ url_for('search.search', p='author:"' + author.full_name + '"') }}">
     {{ author.get('full_name') }}
