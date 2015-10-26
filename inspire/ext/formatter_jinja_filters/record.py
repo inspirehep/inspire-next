@@ -168,6 +168,7 @@ def search_for_experiments(value):
         '<a href="/search?p=experiment_name:%s&cc=Experiments">%s</a>'
         % (i, i)
         for i in value])
+    return result
 
 
 def experiment_date(record):
@@ -262,6 +263,11 @@ def link_to_hep_affiliation(record):
                 str(record['department_acronym'])
 
 
+def join_nested_lists(l):
+    new_list = [item for sublist in l for item in sublist]
+    return ', '.join(new_list)
+
+
 def get_filters():
     return {
         'email_links': email_links,
@@ -287,5 +293,6 @@ def get_filters():
         'experiment_link': experiment_link,
         'format_cnum_with_slash': format_cnum_with_slash,
         'format_cnum_with_hyphons': format_cnum_with_hyphons,
-        'link_to_hep_affiliation': link_to_hep_affiliation
+        'link_to_hep_affiliation': link_to_hep_affiliation,
+        'join_nested_lists': join_nested_lists,
     }
