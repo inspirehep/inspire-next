@@ -192,14 +192,14 @@ class HEPFormToJSONTests(InvenioTestCase):
         """Test if url is created correctly."""
         self.assertEqual(
             self.hepform_json['url'],
-            self.record['url'][1]['url']
+            self.record['urls'][1]['url']
         )
 
     def test_additional_url(self):
         """Test if additional url is created correctly."""
         self.assertEqual(
             self.hepform_json['additional_url'],
-            self.record['url'][0]['url']
+            self.record['urls'][0]['url']
         )
 
     def test_authors(self):
