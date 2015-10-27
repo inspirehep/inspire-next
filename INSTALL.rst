@@ -42,7 +42,7 @@ First go to GitHub and fork both Invenio and Inspire repositories if you have
 not already done so (see Step 1 in
 `Fork a Repo <https://help.github.com/articles/fork-a-repo>`_):
 
-- `Invenio <https://github.com/inveniosoftware/invenio>`_
+- `Invenio <https://github.com/inspirehep/invenio>`_
 - `Inspire <https://github.com/inspirehep/inspire-next>`_
 
 Next, clone your forks to get development versions of Invenio and Inspire.
@@ -59,20 +59,14 @@ updates to the repository.
 .. code-block:: console
 
     $ cd $HOME/src/invenio
-    $ git remote add upstream https://github.com/inveniosoftware/invenio.git
+    $ git remote add upstream https://github.com/inspirehep/invenio.git
     $ git fetch upstream
     $ cd $HOME/src/inspire-next
     $ git remote add inspire https://github.com/inspirehep/inspire-next.git
     $ git fetch inspire
 
-
-Note that Inspire uses a forked version of Invenio with some special customizations, so you should make sure to also get the Inspire flavour of Invenio:
-
-.. code-block:: console
-
-    $ cd $HOME/src/invenio
-    $ git remote add inspire https://github.com/inspirehep/invenio.git
-    $ git fetch inspire
+.. NOTE::
+    Inspire uses a forked version of Invenio with some special customizations
 
 
 3.2 Working environment
@@ -117,8 +111,7 @@ installation. First install Invenio sources:
 .. code-block:: console
 
     (inspire)$ cdvirtualenv src/invenio
-    (inspire)$ pip install --process-dependency-links -e .[development]
-    (inspire)$ python setup.py compile_catalog
+    (inspire)$ pip install -e .
 
 
 Then proceed to install the Inspire overlay:
@@ -127,6 +120,7 @@ Then proceed to install the Inspire overlay:
 
     (inspire)$ cdvirtualenv src/inspire-next
     (inspire)$ pip install -r requirements.txt --exists-action i
+    (inspire)$ python setup.py compile_catalog
 
 .. NOTE::
    The option ``--exists-action i`` for ``pip install`` is needed to ensure
@@ -153,12 +147,12 @@ Generate the secret key for your installation.
 
     (inspire)$ inveniomanage config create secret-key
     (inspire)$ inveniomanage config set CFG_EMAIL_BACKEND flask_email.backends.console.Mail
-    (inspire)$ inveniomanage config set CFG_BIBSCHED_PROCESS_USER $USER
     (inspire)$ inveniomanage config set CFG_DATABASE_NAME inspire
     (inspire)$ inveniomanage config set CFG_DATABASE_USER inspire
     (inspire)$ inveniomanage config set CFG_SITE_URL http://localhost:4000
     (inspire)$ inveniomanage config set CFG_SITE_SECURE_URL http://localhost:4000
     (inspire)$ inveniomanage config set COLLECT_STORAGE flask_collect.storage.link
+    (inspire)$ inveniomanage config set DEBUG_TB_ENABLED False
 
 
 .. NOTE::
@@ -273,7 +267,25 @@ You can now load the INSPIRE demo records:
 Now you should have a running INSPIRE demo site running at `http://localhost:4000 <http://localhost:4000>`_!
 
 
-3.6. Addendum
+3.6. Enable debug toolbar
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you want to use the Flask Debug toolbar, you need to install it:
+
+.. code-block:: console
+
+    (inspire)$ pip install "Flask-DebugToolbar==0.9.0"
+
+
+and enable it by setting ``DEBUG_TB_ENABLED`` to ``True``.
+
+.. code-block:: console
+
+    (inspire)$ cdvirtualenv var/invenio-base.instance/
+    (inspire)$ vim invenio.cfg #  Change DEBUG_TB_ENABLED to True
+
+
+3.7. Addendum
 ~~~~~~~~~~~~~
 
 You can also start a server without using honcho with the `runserver` command:
@@ -299,10 +311,9 @@ You can go to a shell instance with database initialized using the `shell` comma
 
 On a fresh install in a new virtual environment you may experience that search
 queries are failing due to query parser issues. It means that an older version
-of invenio-query-parser is installed. You can fix it by installing the lastest
+of invenio-query-parser is installed. You can fix it by installing the latest
 sources:
 
 .. code-block:: bash
 
     (inspire)$ pip install --upgrade git+https://github.com/inveniosoftware/invenio-query-parser@master#egg=invenio-query-parser
-
