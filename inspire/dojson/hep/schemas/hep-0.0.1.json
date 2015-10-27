@@ -361,9 +361,8 @@
                     "journal_volume": {
                         "type": "string"
                     },
-                    "conference_paper_info": {
-                        "type": "string",
-                        "description": "FIXME: This is currently the CNUM"
+                    "cnum": {
+                        "type": "string"
                     },
                     "recid": {
                         "type": "integer",
