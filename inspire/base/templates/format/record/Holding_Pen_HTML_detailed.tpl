@@ -100,7 +100,7 @@
             <!-- URLs -->
             <span id='editable-urls'><small><strong>URL(s): </strong></small></span>
             <span id="url-links">
-            {% for url_obj in record['url'] %}
+            {% for url_obj in record['urls'] %}
               <a href="{{ url_obj['url'] }}">{{ url_obj['url'] }}</a>
               {{ add_delimiter(loop, '|') }}
             {% endfor %}

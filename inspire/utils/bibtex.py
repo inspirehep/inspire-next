@@ -586,8 +586,8 @@ class Bibtex(Export):
     def _get_url(self):
         """Return url of the record"""
         result = ''
-        if 'url' in self.record:
-            for url in self.record['url']:
+        if 'urls' in self.record:
+            for url in self.record['urls']:
                 if 'url' in url:
                     if isinstance(url['url'], list):
                         for element in url['url']:

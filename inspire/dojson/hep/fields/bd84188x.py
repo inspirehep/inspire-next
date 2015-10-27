@@ -27,10 +27,10 @@ from dojson import utils
 from ..model import hep, hep2marc
 
 
-@hep.over('url', '^856.[10_28]')
+@hep.over('urls', '^856.[10_28]')
 @utils.for_each_value
 @utils.filter_values
-def url(self, key, value):
+def urls(self, key, value):
     """URL to external resource."""
     try:
         size = int(value.get('s'))
@@ -47,10 +47,10 @@ def url(self, key, value):
     }
 
 
-@hep2marc.over('8564', 'url')
+@hep2marc.over('8564', 'urls')
 @utils.for_each_value
 @utils.filter_values
-def url2marc(self, key, value):
+def urls2marc(self, key, value):
     """URL to external resource."""
     return {
         'u': value.get('url'),
