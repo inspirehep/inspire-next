@@ -28,7 +28,7 @@ from inspire.modules.citations.models import Citation, Citation_Log
 
 from invenio_base.globals import cfg
 
-from invenio.celery import celery
+from invenio_celery import celery
 
 from invenio_records.api import get_record
 

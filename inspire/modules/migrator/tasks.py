@@ -22,7 +22,7 @@
 
 """Manage migration from INSPIRE legacy instance."""
 
-from invenio.celery import celery
+from invenio_celery import celery
 
 
 @celery.task

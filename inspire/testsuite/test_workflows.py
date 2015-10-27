@@ -26,7 +26,7 @@ import os
 import pkg_resources
 import tempfile
 
-from invenio.celery import celery
+from invenio_celery import celery
 from invenio.testsuite import make_test_suite, run_test_suite
 
 from .helpers import WorkflowTasksTestCase
