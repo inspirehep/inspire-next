@@ -295,15 +295,15 @@ def title_translation(self, key, value):
 
 
 @literature.over('_url', '^url$')
-def url(self, key, value):
+def urls(self, key, value):
     self['pdf'] = value
     field = {
         "url": value
     }
-    if 'url' in self:
-        self['url'].append(field)
+    if 'urls' in self:
+        self['urls'].append(field)
     else:
-        self['url'] = [field]
+        self['urls'] = [field]
 
 
 @literature.over('additional_url', '^additional_url$')
@@ -311,7 +311,7 @@ def additional_url(self, key, value):
     field = {
         "url": value
     }
-    if 'url' in self:
-        self['url'].append(field)
+    if 'urls' in self:
+        self['urls'].append(field)
     else:
-        self['url'] = [field]
+        self['urls'] = [field]

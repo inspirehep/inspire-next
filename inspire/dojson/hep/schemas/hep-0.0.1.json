@@ -985,7 +985,7 @@
             "description": "FIXME: shall it be integer perhaps?",
             "title": "Number of pages"
         },
-        "url": {
+        "urls": {
             "uniqueItems": true,
             "items": {
                 "type": "object",
