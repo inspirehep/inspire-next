@@ -27,7 +27,8 @@
     <div id="panel-default-brief" class="panel panel-default" >
     <div class="panel-body" >
       <div class="row">
-      <div class="col-md-9"  id="left-column">
+      <div class="col-md-1"><input type="checkbox" class="checkbox-results" id="{{ record['control_number'] }}"></div>
+      <div class="col-md-8"  id="left-column">
         <h4 class="custom-h">
           <b>
             <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">

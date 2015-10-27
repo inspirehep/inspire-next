@@ -290,13 +290,14 @@ class Bibtex(Export):
         result = []
         spacinginitials = re.compile(r'([A-Z][a-z]{0,1}[}]?\.)(\b|[-\{])')
         if 'authors' in self.record:
-            if self.record['authors'][0]['role'] and \
-               self.record['authors'][0]['role'] == 'ed.':
-                result.append(spacinginitials.sub(
-                    r'\1 \2', self.record['authors'][0]['full_name']
-                ))
-            if result:
-                return ''.join(editor for editor in result)
+            if 'role' in self.record['authors'][0]:
+                if self.record['authors'][0]['role'] and \
+                   self.record['authors'][0]['role'] == 'ed.':
+                    result.append(spacinginitials.sub(
+                        r'\1 \2', self.record['authors'][0]['full_name']
+                    ))
+                if result:
+                    return ''.join(editor for editor in result)
 
     def _get_title(self):
         """Return record titles"""

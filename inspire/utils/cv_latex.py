@@ -219,9 +219,9 @@ class Cv_latex(Export):
                             field['journal_volume'][char_i:] + '}'
                     if 'year' in field:
                         if isinstance(field['year'], list):
-                            year = ' (' + field['year'][-1] + ')'
+                            year = ' (' + str(field['year'][-1]) + ')'
                         else:
-                            year = ' (' + field['year'] + ')'
+                            year = ' (' + str(field['year']) + ')'
                     if 'journal_issue' in field:
                         if field['journal_issue']:
                             journal_issue = ', no. ' + field['journal_issue']
