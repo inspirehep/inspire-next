@@ -186,7 +186,8 @@ def predict(pipeline, record, top_words=0):
             tf1 = transformer.steps[0][1].transformer_list[0][1].steps[2][1]
             tf2 = transformer.steps[0][1].transformer_list[1][1].steps[2][1]
             inv_vocabulary = {v: k for k, v in tf1.vocabulary_.items()}
-            inv_vocabulary.update({v: k for k, v in tf2.vocabulary_.items()})
+            inv_vocabulary.update({v + len(tf1.vocabulary_): k
+                                   for k, v in tf2.vocabulary_.items()})
 
         else:
             tf1 = transformer.steps[2][1]
