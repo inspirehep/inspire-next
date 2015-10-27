@@ -68,7 +68,7 @@
           {% for category in field_categories %}
             {% do category_name.append(category["name"]) %}
           {% endfor %}
-          {{ category_name|join(', ') }}
+          {{ category_name|join_nested_lists(', ') }}
         </div>
       </div>
     </div>
