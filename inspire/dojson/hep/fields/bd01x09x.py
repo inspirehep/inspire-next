@@ -133,10 +133,11 @@ def report_numbers(self, key, value):
 
     if isinstance(value, list):
         for element in value:
-            if '9' in element and element['9'] != 'arXiv':
+            if ('9' in element and element['9'] != 'arXiv') or '9'\
+                    not in element:
                 report_number.append(get_value(element))
     else:
-        if '9' in value and value['9'] != 'arXiv':
+        if ('9' in value and value['9'] != 'arXiv') or '9' not in value:
             report_number.append(get_value(value))
     return [dict(t) for t in set([tuple(d.items()) for d in report_number])]
 

@@ -28,6 +28,7 @@ from .export import MissingRequiredFieldError, Export
 
 
 class Latex(Export):
+
     """Class used to output LaTex format.
     TODO Fix the citation number latex
     e.g %245 citations counted in INSPIRE as of 21 Aug 2015
@@ -35,7 +36,6 @@ class Latex(Export):
 
     def __init__(self, record, latex_format):
         super(Latex, self).__init__(record)
-        self.arxiv_field = self._get_arxiv_field()
         self.latex_format = latex_format
 
     def format(self):
@@ -92,13 +92,14 @@ class Latex(Export):
                 out += u'  {1}'.format(field, value[0])
                 if 'collaboration' in self.record:
                     try:
-                        if 'collaboration' in self.record['collaboration'][0]:
-                            collaboration = self.\
-                                record['collaboration'][0]['collaboration']
-                            if 'Collaboration' in collaboration:
-                                out += u' {{\it et al.}} [' + collaboration + '],\n'
-                            else:
-                                out += u' {{\it et al.}} [' + collaboration + ' Collaboration],\n'
+                        collaboration = self.\
+                            record['collaboration'][0]
+                        if 'Collaboration' in collaboration:
+                            out += u' {{\it et al.}} [' + collaboration +\
+                                '],\n'
+                        else:
+                            out += u' {{\it et al.}} [' + collaboration +\
+                                ' Collaboration],\n'
                     except IndexError:
                         pass
                 else:
@@ -107,9 +108,13 @@ class Latex(Export):
                 out += u'  {} and {},\n'.format(', '.join(value[:-1]),
                                                 value[-1])
         elif field == 'title':
-            out += u'  {1}\n'.format(field, value)
+            out += u'  %``{1},''\n'.format(field, value)
         elif field == 'publi_info':
-            out += u'  {1}.\n'.format(field, value)
+            if len(value) > 1:
+                out += u'  {}\n    {}\n'.format('\n'.join(
+                    value[:-1]), value[-1])
+            else:
+                out += u'  {1}.\n'.format(field, value[0])
         elif field == 'arxiv':
             if self._get_publi_info():
                 out += u'  [{1}].\n'.format(field, value)
@@ -178,7 +183,7 @@ class Latex(Export):
     def _get_title(self):
         """Return record titles"""
         record_title = ''
-        if 'title' in self.record:
+        if 'titles' in self.record:
             if isinstance(self.record['titles'], list):
                 for title in self.record['titles']:
                     if 'title' in title:
@@ -186,12 +191,12 @@ class Latex(Export):
                         break
             else:
                 record_title = self.record['titles']['title'].strip()
-            return "%``" + re.sub(r'(?<!\\)([#&%])', r'\\\1', record_title) \
-                         + ",''"
+            return re.sub(r'(?<!\\)([#&%])', r'\\\1', record_title)
         else:
             return record_title
 
     def _get_publi_info(self):
+        result = []
         if 'publication_info' in self.record:
             journal_title, journal_volume, year, journal_issue, pages = \
                 ('', '', '', '', '')
@@ -214,15 +219,15 @@ class Latex(Export):
                             else:
                                 break
                         journal_letter = field['journal_volume'][:char_i]
-                        if journal_letter and journal_title != ' ':
+                        if journal_letter and journal_title[-1] != ' ':
                             journal_letter = ' ' + journal_letter
                         journal_volume = journal_letter + ' {\\bf ' + \
                             field['journal_volume'][char_i:] + '}'
                     if 'year' in field:
                         if isinstance(field['year'], list):
-                            year = ' (' + field['year'][-1] + ')'
+                            year = ' (' + str(field['year'][-1]) + ')'
                         else:
-                            year = ' (' + field['year'] + ')'
+                            year = ' (' + str(field['year']) + ')'
                     if 'journal_issue' in field:
                         if field['journal_issue']:
                             if self.latex_format == 'latex_eu':
@@ -235,11 +240,12 @@ class Latex(Export):
                         page_artid = ''
                         if field['page_artid']:
                             if isinstance(field['page_artid'], list):
-                                    dashpos = field['page_artid'][-1].find('-')
-                                    if dashpos > -1:
-                                        page_artid = field['page_artid'][-1][:dashpos]
-                                    else:
-                                        page_artid = field['page_artid'][-1]
+                                dashpos = field['page_artid'][-1].find('-')
+                                if dashpos > -1:
+                                    page_artid = field[
+                                        'page_artid'][-1][:dashpos]
+                                else:
+                                    page_artid = field['page_artid'][-1]
                             else:
                                 dashpos = field['page_artid'].find('-')
                                 if dashpos > -1:
@@ -250,18 +256,22 @@ class Latex(Export):
                                 pages = ' ' + page_artid
                             else:
                                 pages = ', ' + page_artid
-                    break
+                    if self.latex_format == 'latex_eu':
+                        out += journal_title + journal_volume + year + \
+                            journal_issue + pages
+                        result.append(out)
+                    else:
+                        out += journal_title + journal_volume + journal_issue \
+                            + pages + year
+                        result.append(out)
                 else:
                     if 'pubinfo_freetext' in field and len(field) == 1:
                         return field['pubinfo_freetext']
-            if self.latex_format == 'latex_eu':
-                out += journal_title + journal_volume + year + \
-                    journal_issue + pages
-            else:
-                out += journal_title + journal_volume + journal_issue + \
-                    pages + year
-            if out:
-                return out
+            for k, v in enumerate(result):
+                if k > 0:
+                    v = '[' + v + ']'
+                    result[k] = v
+            return result
 
     def _get_report_number(self):
         """Return report number separated by commas"""
@@ -294,7 +304,7 @@ class Latex(Export):
                         if journal and (volume != '' or pages != ''):
                             coden = ','.join(
                                 [get_kbr_keys("CODENS", searchvalue=journal,
-                                 searchtype='e')[0][0],
+                                              searchtype='e')[0][0],
                                  volume, pages])
                             return coden
                     except:
@@ -314,7 +324,7 @@ class Latex(Export):
                     if journal and (volume != '' or pages != ''):
                         coden = ','.join(
                             [get_kbr_keys("CODENS", searchvalue=journal,
-                             searchtype='e')[0][0],
+                                          searchtype='e')[0][0],
                              volume, pages])
                         return coden
                 except:

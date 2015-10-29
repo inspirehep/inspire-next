@@ -106,7 +106,7 @@ class MatchingTests(InvenioTestCase):
         res = match_by_arxiv_id(record)
         self.assertTrue(res)
 
-        record = Record({"report_numbers": [
+        record = Record({"arxiv_eprints": [
             {
                 "value": "arXiv:1505.12345",
                 "source": "arXiv",
