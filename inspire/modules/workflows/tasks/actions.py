@@ -74,6 +74,19 @@ def reject_record(message):
     """Reject record with message."""
     @wraps(reject_record)
     def _reject_record(obj, eng):
+        from inspire.modules.audit.api import log_prediction_action
+
+        # Audit logging
+        results = obj.get_tasks_results()
+        prediction_results = results.get("arxiv_guessing", {})
+        log_prediction_action(
+            action="reject_record",
+            prediction_results=prediction_results,
+            object_id=obj.id,
+            user_id=0,
+            source="workflow",
+        )
+
         obj.extra_data["approved"] = False
         obj.extra_data["reason"] = message
         obj.log.info(message)

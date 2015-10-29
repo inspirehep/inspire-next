@@ -125,14 +125,14 @@ class process_record_arxiv(RecordWorkflow):
                     halt_record_with_action(action="arxiv_approval",
                                             message="Accept article?"),
                 ],
+                workflow_else,
+                [
+                    reject_record("Record automatically rejected."),
+                ],
                 workflow_if(was_approved),
                 [
                     add_core_oaiharvest,
                     send_robotupload_oaiharvest(),
-                ],
-                workflow_else,
-                [
-                    reject_record("Record automatically rejected."),
                 ],
             ],
         ],
