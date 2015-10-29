@@ -51,16 +51,13 @@
   <a class="btn btn-default dropdown-toggle dropdown-cite cite-btn" type="button" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#citeModal{{record['control_number']}}">
     <i class="fa fa-quote-right"></i> Cite this record
   </a>
-  {% if record.get('url') %}
-    {% set exists = [] %}
-    {% for url in record.get('url') %}
-      {% if url.get('url').endswith(".pdf") %}
-        {% if not exists %}
-          {% do exists.append(1) %}  
-            <a class="btn custom-btn btn-warning pdf-btn" href="{{ url.get('url') }}" target="_blank" role="button" title="View PDF"><i class="fa fa-eye"></i> View PDF</a>
-        {% endif %}
-      {% endif %}
-    {% endfor %}
+  {% if record.get('arxiv_eprints') %}
+    {% if record.get('arxiv_eprints') | is_list() %}
+      {% set filtered_arxiv = record.get('arxiv_eprints') %}
+      {% for report_number in filtered_arxiv %}
+        <a class="btn custom-btn btn-warning pdf-btn" href="http://arxiv.org/pdf/{{ report_number.get('value') | sanitize_arxiv_pdf }}" role="button" title="View PDF"><i class="fa fa-eye"></i> View PDF</a>
+      {% endfor %}
+    {% endif %}
   {% endif %}
 {% endmacro %}
 
@@ -182,8 +179,8 @@
 {% endmacro%}
 
 {% macro record_links() %}
-  {% if record.get('url') %}
-    {% for url in record.get('url') %}
+  {% if record.get('urls') %}
+    {% for url in record.get('urls') %}
       {% if ( (loop.index == 1) and ( (url.get('url').startswith('http://www.adsabs.') or url.get('url').startswith('http://www-public.slac.stanford.edu') ) ) )  %}
         View in
       {% endif %}

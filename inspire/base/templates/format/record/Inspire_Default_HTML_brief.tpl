@@ -75,7 +75,7 @@
           {% if record.get('arxiv_eprints') | is_list() %}
             {% set filtered_arxiv = record.get('arxiv_eprints') %}
             {% for i in filtered_arxiv %}
-                <a type="button" class="btn  custom-btn blue-btn" id="link-to-pdf"  href="http://arxiv.org/pdf/{{ i.get('value') }}"><i class="fa fa-eye"></i> PDF </a>
+                <a type="button" class="btn  custom-btn blue-btn" id="link-to-pdf"  href="http://arxiv.org/pdf/{{ i.get('value') | sanitize_arxiv_pdf }}"><i class="fa fa-eye"></i> PDF </a>
             {% endfor %}
           {% endif %}
         {% endif %}
