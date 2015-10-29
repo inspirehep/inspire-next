@@ -61,36 +61,22 @@ class hep_approval(object):
     def resolve(self, bwo):
         """Resolve the action taken in the approval action."""
         from invenio_workflows.models import ObjectVersion
-        from inspire.modules.audit.signals import audit_action_taken
+        from inspire.modules.audit.api import log_prediction_action
+
+        value = request.form.get("value", "")
 
         # Audit logging
         results = bwo.get_tasks_results()
         prediction_results = results.get("arxiv_guessing", {})
+        log_prediction_action(
+            action="resolve",
+            prediction_results=prediction_results,
+            object_id=bwo.id,
+            user_id=current_user.get_id(),
+            source="holdingpen",
+            user_action=value,
+        )
 
-        if prediction_results:
-            prediction_results = prediction_results[0].get("result")
-            score = prediction_results.get("max_score")  # returns 0.222113
-            decision = prediction_results.get("decision")  # returns "Rejected"
-
-            # Map actions to align with the prediction format
-            action_map = {
-                'accept': 'Non-CORE',
-                'accept_core': 'CORE',
-                'reject': 'Rejected'
-            }
-
-            logging_info = {
-                'object_id': bwo.id,
-                'user_id': current_user.get_id(),
-                'score': score,
-                'user_action': action_map.get(request.values.get("value"), ""),
-                'decision': decision,
-                'source': 'holdingpen',
-                'action': 'resolve'
-            }
-            audit_action_taken.send(self, logging_info=logging_info)
-
-        value = request.form.get("value", None)
         upload_pdf = request.form.get("pdf_submission", False)
 
         bwo.remove_action()
