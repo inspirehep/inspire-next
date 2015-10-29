@@ -46,7 +46,6 @@
               <img src="{{ url_for('static', filename='img/labs-logo.svg') }}" alt="{{ config.CFG_SITE_NAME_INTL['en'] }}">
             </a>
           </div>
-
           <div class="navbar-collapse navbar-ex1-collapse collapse" style="overflow-x: hidden;">
             <ul class="nav navbar-nav navbar-right">
                  {% if config.DEBUG %}
@@ -70,6 +69,7 @@
                       <option value="Journals">Journals</option>
                     </select>
                     </div>
+                    <input type="hidden" name="post_filter" value="{{request.args.get('post_filter', '')}}">
                     <button type="submit" class="btn-warning search-submit">Search</button></form>
                   </li>
                 {% endif %}
