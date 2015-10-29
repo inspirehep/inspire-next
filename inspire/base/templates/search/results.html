@@ -20,35 +20,112 @@
 ## or submit itself to any jurisdiction.
 #}
 
-{%- extends "search/results_base.html" -%}
-
-{%- block results_actions %}
-{%- endblock results_actions %}
-
-{%- block search_result_settings_display %}
-{%- endblock search_result_settings_display %}
-
-{%- block search_results scoped -%}
-{%- for record in records -%}{% set recordloop = loop %}{%- block search_result scoped -%}
-  {%- set recid = record['recid'] %}
-  {%- if of[0] == 'h' -%}
-    <div class="row">
-      {%- block search_result_prefix scoped -%}
-      {%- endblock search_result_prefix -%}
-      {%- block search_result_record scoped -%}
-      <div class="col-sm-11 col-xs-11">
-        {{ format_record(record, of, ln=g.ln, qid=qid, extra_context=dict(collection=collection))|u|safe }}
-      </div>
-      {%- endblock search_result_record -%}
-    </div>
-  {%- else -%}
-  {%- block search_result_record_nohtml scoped %}
-  {{ format_record(record, of, ln=g.ln, extra_context=dict(collection=collection)) }}
-  {%- endblock search_result_record_nohtml %}
+{% macro render_search_pagination(pagination) %}
+  {%- set args = request.args.copy().to_dict() -%}
+  {%- if pagination.pages > 1 -%}
+  <ul class="pagination">
+    <li{{ ' class="disabled"'|safe if not pagination.has_prev }}>
+      {%- do args.update({'jrec': 1}) -%}
+      <a title="first" href="{{ url_for('search.search', **args) }}">&laquo;</a>
+    </li>
+    <li{{ ' class="disabled"'|safe if not pagination.has_prev }}>
+      {%- set jrec = (pagination.page-1)*pagination.per_page if pagination.has_prev else 1 -%}
+      {%- do args.update({'jrec': jrec}) -%}
+      <a title="prev" href="{{ url_for('search.search', **args) }}">&lsaquo;</a>
+    </li>
+    {%- for page in pagination.iter_pages() %}
+      {%- if page -%}
+        <li{{ ' class="active"'|safe if page == pagination.page }}>
+      {%- do args.update({'jrec': (page-1)*pagination.per_page+1}) -%}
+        <a href="{{ url_for('search.search', **args) }}">{{ page }}</a>
+      </li>
+      {%- else -%}
+        <li class="disabled"><a href="#">...</a></li>
+      {%- endif -%}
+    {%- endfor -%}
+    <li{{ ' class="disabled"'|safe if not pagination.has_next }}>
+      {%- set jrec = (pagination.page+1)*pagination.per_page if pagination.has_next else (pagination.pages-1)*pagination.per_page+1 -%}
+      {%- do args.update({'jrec': jrec}) -%}
+      <a href="{{ url_for('search.search', **args) }}">&rsaquo;</a>
+    </li>
+    <li{{ ' class="disabled"'|safe if not pagination.has_next }}>
+      {%- do args.update({'jrec': (pagination.pages-1)*pagination.per_page+1}) -%}
+      <a title="last" href="{{ url_for('search.search', **args) }}">&raquo;</a>
+    </li>
+  </ul>
   {%- endif -%}
-  {%- endblock search_result -%}
-{%- endfor -%}
-{%- endblock search_results -%}
+{% endmacro %}
 
-{%- block search_results_export -%}
-{%- endblock search_results_export -%}  
+
+{% macro render_search_results(records, collection, pagination, format_record) %}
+  {%- if pagination %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default" id="results-panel">
+        <div class="panel-body" >
+          <div class="form-group" id="panel-form-group">
+            <p class="help-block hidden-xs" id="results-wrapper">
+              {%- set r_from = (pagination.page-1)*pagination.per_page+1 -%}
+              {%- set r_to = pagination.page*pagination.per_page -%}
+              {%- set r_of = pagination.total_count -%}
+              {%- set r_to = r_to if r_to < r_of else r_of -%}
+              {# _('Showing records %(x_from)d to %(x_to)d out of %(x_total)d results.', x_from=r_from, x_to=r_to, x_total=r_of) #}
+              {{ _('<b id="total-results">%(x_total)d</b> results found.', x_total=r_of) }}
+            </p>
+          </div>
+          <hr>
+          {% if not request.args.get('cc') or request.args.get('cc') == "HEP" %}
+          <div class="row">
+            <div class="col-md-12">
+            <input id="checkbox-select-all" type="checkbox">&nbsp;&nbsp;
+            Export as 
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-export" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              BibTex
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" id='formats-dropdown-menu' aria-labelledby="dropdown-export">
+              <li><a class="pointer" id="export-as-bibtex">BibTex</a></li>
+              <li><a class="pointer" id="export-as-latex-eu">LaTex(EU)</a></li>
+              <li><a class="pointer" id="export-as-latex-us">LaTex(US)</a></li>
+              <li><a class="pointer" id="export-as-cv-latex">CV format (LaTex)</a></li>
+              <li><a class="pointer" id="export-as-cv-html">CV format (html)</a></li>
+              <li><a class="pointer" id="export-as-cv-text">CV format (text)</a></li>
+            </ul>
+            <a type="button" id="download-format" class="btn btn-default">Download</a>
+            <i class="fa fa-spinner fa-spin fa-lg" id="spinner-download"></i>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+     </div>   
+    </div> 
+  {% endif %}
+  <hr/>
+  {%- for record in records -%}{% set recordloop = loop %}
+    {%- set recid = record['recid'] %}
+    {%- if of[0] == 'h' -%}
+      <div class="row">
+        <div class="col-sm-12 col-xs-12">
+          {{ format_record(record, of, ln=g.ln, qid=qid, extra_context=dict(collection=collection))|u|safe }}
+        </div>
+      </div>
+    {%- else -%}
+    {{ format_record(record, of, ln=g.ln, extra_context=dict(collection=collection)) }}
+    {%- endif -%}
+  {%- endfor -%}  
+      <div class="form-group pull-right">
+        {{ render_search_pagination(pagination) }}
+      </div>
+    </div>
+  </div>
+{% endmacro %}
+
+{% if not request.is_xhr %}
+{% extends 'search/searchbar_frame.html' %}
+{% block body %}
+{{ render_search_results(records, collection, pagination, format_record) }}
+{% endblock %}
+{% else %}
+{{ render_search_results(records, collection, pagination, format_record) }}
+{% endif %}

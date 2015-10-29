@@ -20,16 +20,23 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from flask import Blueprint, jsonify, Response
+from flask import Blueprint, jsonify, Response, request
 
 from inspire.utils.bibtex import Bibtex
 from inspire.utils.latex import Latex
+from inspire.utils.cv_latex import Cv_latex
+from inspire.utils.cv_latex_html_text import Cv_latex_html_text
 
 from invenio_records.api import get_record
+from invenio_search.api import Query
 
 from invenio_base.decorators import wash_arguments
 
 from six import text_type
+
+from invenio_base.globals import cfg
+
+import itertools
 
 blueprint = Blueprint(
     'inspire_formatter',
@@ -84,3 +91,37 @@ def get_latex_file(recid, latex_format):
             )
         }
     )
+
+
+@blueprint.route("/export-as/<path:export_format>",
+                 methods=['POST'])
+@wash_arguments({'ids': (list, [])})
+def export_as(ids, export_format):
+    """
+    Export file according to format
+    :param ids: the ids of the records.
+    :param export_format: the type of the file the user needs to download.
+    :return: the downloaded file.
+    """
+    ids = request.values.getlist('ids[]')
+    if len(ids) > cfg['EXPORT_LIMIT']:
+        ids = ids[:cfg['EXPORT_LIMIT']]
+    out = []
+    for id in ids:
+        record = get_record(id)
+        if export_format == 'bibtex':
+            results = Bibtex(record).format() + '\n'
+        elif export_format in ('latex_eu', 'latex_us'):
+            results = Latex(record, export_format).format() + '\n'
+        elif export_format == 'cv_latex':
+            results = Cv_latex(record).format() + '\n'
+        elif export_format in ('cv_latex_html', 'cv_latex_text'):
+            results = Cv_latex_html_text(record, export_format).format() + '\n'
+
+        generator = (cell for row in results
+                     for cell in row)
+        out.append(generator)
+    output = itertools.chain()
+    for gen in out:
+        output = itertools.chain(output, gen)
+    return Response(output)
