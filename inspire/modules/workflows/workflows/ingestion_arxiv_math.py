@@ -86,7 +86,7 @@ class ingestion_arxiv_math(oaiharvest_harvest_repositories):
                         [
                             start_async_workflow("process_record_arxiv",
                                                  preserve_data=True,
-                                                 preserve_extra_data_keys=["repository"]),
+                                                 preserve_extra_data_keys=["repository", "oai_identifier"]),
 
                             write_something_generic(
                                 ["Workflow started: ",
