@@ -74,7 +74,8 @@ class Export(object):
         else:
             return ''
 
-    def _get_arxiv_field(self):
+    @property
+    def arxiv_field(self):
         """Return arXiv field if exists"""
         if 'arxiv_eprints' in self.record:
             for field in self.record['arxiv_eprints']:
@@ -97,7 +98,7 @@ class Export(object):
         report_number = []
         if 'report_numbers' in self.record:
             for field in self.record['report_numbers']:
-                if len(field) == 1:
+                if 'value' in field:
                     report_number.append(field['value'])
             return ', '.join(str(p) for p in report_number)
         else:
@@ -120,7 +121,7 @@ class Export(object):
                 if 'categories' in field:
                     cite_element = field['value'].upper()
                     cite_line = '%%CITATION = ' + cite_element + ';%%'
-            if not cite_element:
+            if not cite_element and self.record['report_numbers']:
                 cite_element = self.record['report_numbers'][0]['value'].upper()
                 cite_line = '%%CITATION = ' + cite_element + ';%%'
         else:
