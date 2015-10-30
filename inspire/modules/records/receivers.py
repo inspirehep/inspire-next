@@ -43,7 +43,6 @@ def insert_record(sender, *args, **kwargs):
             # Adds the record to the db.
             rec = Record(id=control_number)
             db.session.add(rec)
-            db.session.commit()
 
 
 def remove_handler():

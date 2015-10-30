@@ -94,6 +94,7 @@ def populate(records, collections, file_input=None, input_type=None, force_impor
             Record.create(data)
         else:
             [Record.create(item) for item in data]
+        db.session.commit()
         if force_import:
             # Disable signal handler
             from inspire.modules.records.receivers import remove_handler
