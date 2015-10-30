@@ -90,7 +90,14 @@ def spokesperson(self, key, value):
 @experiments.over('collaboration', '^710..')
 def collaboration(self, key, value):
     """Collaboration of experiment."""
-    return value.get("g")
+    if isinstance(value, list):
+        collaborations = sorted((elem["g"] for elem in value if 'g' in elem), key=lambda x: len(x))
+        if len(collaborations) > 1:
+            self['collaboration_alternative_names'] = collaborations[1:]
+        if collaborations:
+            return collaborations[0]
+    else:
+        return value.get("g")
 
 
 @experiments.over('urls', '^856.[10_28]')
