@@ -74,6 +74,8 @@ def imprints2marc(self, key, value):
 @hep.over('preprint_date', '^269..')
 def preprint_date(self, key, value):
     """Preprint info."""
+    if isinstance(value, list):
+        return min(elem['c'] for elem in value if 'c' in elem)
     return value.get('c')
 
 
