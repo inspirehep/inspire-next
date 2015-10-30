@@ -25,6 +25,9 @@ from inspire.modules.citations.models import Citation, Citation_Log
 
 from invenio_base.globals import cfg
 
+from invenio_ext.sqlalchemy import db
+
+
 from invenio.testsuite import InvenioTestCase
 
 
@@ -32,13 +35,22 @@ class CitationsTests(InvenioTestCase):
 
     """Test citations connection."""
 
-    setup_flag = True
-    citations_dump = None
-    citations_log_dump = None
-
     @httpretty.activate
     def setUp(self):
         """ Initialises test by adding dummy log entries """
+        from invenio_records.api import create_record
+        self.__transaction = db.session.begin_nested()
+        # Load signal handler
+        from inspire.modules.records.receivers import insert_record
+        try:
+            for i in range(10):
+                create_record({'control_number': i + 1})
+
+        finally:
+            # Disable signal handler
+            from inspire.modules.records.receivers import remove_handler
+            remove_handler()
+
         from inspire.modules.citations.tasks import update_citations_log
         data = u'[[1, 2, 1, "added", "2013-04-25 04:20:30"],[2, 3, 1, "added", "2013-04-25 04:20:30"],[3, 5, 1, "added", "2013-04-25 04:20:30"],[4, 4, 2, "added", "2013-04-25 04:20:30"],[5, 5, 2, "added", "2013-04-25 04:20:30"],[6, 6, 2, "added", "2013-04-25 04:20:30"],[7, 10, 4, "added", "2013-04-25 04:20:30"],[8, 5, 1, "removed", "2013-04-25 04:20:30"],[9, 5, 4, "added", "2013-04-25 04:20:30"],[10, 6, 4, "added", "2013-04-25 04:20:30"],[11, 3, 4, "added", "2013-04-25 04:20:31"],[12, 8, 5, "added", "2013-04-25 04:20:31"],[13, 10, 4, "removed", "2013-04-25 04:20:31"],[14, 7, 6, "added", "2013-04-25 04:20:31"],[15, 9, 6, "added", "2013-04-25 04:20:31"],[16, 10, 6, "added", "2013-04-25 04:20:31"],[17, 1, 7, "added", "2013-04-25 04:20:31"],[18, 8, 7, "added", "2013-04-25 04:20:31"],[19, 10, 7, "added", "2013-04-25 04:20:31"],[20, 3, 8, "added", "2013-04-25 04:20:31"],[21, 10, 9, "added", "2013-04-25 04:20:31"],[22, 3, 9, "added", "2013-04-25 04:20:31"],[23, 3, 8, "removed", "2013-04-25 04:20:31"],[24, 1, 10, "added", "2013-04-25 04:20:31"],[25, 2, 10, "added", "2013-04-25 04:20:31"],[26, 3, 10, "added", "2013-04-25 04:20:31"]]'
         # Mocks two responses. The first one contains the dummy data and the second an empty list
@@ -51,22 +63,13 @@ class CitationsTests(InvenioTestCase):
                 httpretty.Response(body='[]', status=200),
             ]
         )
-        if self.setup_flag:
-            self.citations_dump = Citation.query.all()
-            self.citations_log_dump = Citation_Log.query.all()
-            self.setup_flag = False
         Citation.query.delete()
         Citation_Log.query.delete()
         update_citations_log()
 
     def tearDown(self):
         """Deletes all data used for testing"""
-        Citation.query.delete()
-        Citation_Log.query.delete()
-        for cit in self.citations_log_dump:
-            cit.save
-        for cit in self.citations_dump:
-            cit.save()
+        self.__transaction.rollback()
 
     def test_citations_rnkCITATIONDICT(self):
         """Test if rnkCITATIONDICT(Citations) is populated corectly"""
