@@ -267,6 +267,9 @@ RECORDS_BREADCRUMB_TITLE_KEY = 'breadcrumb_title'
 
 CFG_WEBSEARCH_SEARCH_CACHE_TIMEOUT = None
 
+# Facets config
+MAX_FACETS_LIMIT = 10
+
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
 # invenio keywords to elasticsearch fields
 SEARCH_ELASTIC_KEYWORD_MAPPING = {
