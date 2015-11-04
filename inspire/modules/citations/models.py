@@ -37,7 +37,6 @@ class Citation(db.Model):
         self.citer = citer
         self.last_updated = last_updated
 
-    @session_manager
     def save(self):
         db.session.merge(self)
 
@@ -67,7 +66,6 @@ class Citation_Log(db.Model):
         self.action_date = action_date
         self.citation_type = citation_type
 
-    @session_manager
     def save(self):
         """ Saves the new log entry to the database.
 

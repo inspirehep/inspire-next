@@ -22,6 +22,15 @@
             "title": "Collaboration",
             "type": "string"
         },
+        "collaboration_alternative_names": {
+            "title": "Collaboration alternative names",
+            "type": "array",
+            "items": {
+                "title": "Collaboration alternative name",
+                "type": "string"
+            },
+            "uniqueItems": true
+        },
         "contact_email": {
             "title": "Contact email",
             "type": "string"

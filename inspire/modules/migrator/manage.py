@@ -61,7 +61,9 @@ manager = Manager(description=__doc__)
                 help='Specific collections to migrate.')
 @manager.option('-t', '--input-type', dest='input_type', default='marcxml',
                 help="Format of input file.")
-def populate(records, collections, file_input=None, input_type=None):
+@manager.option('--force', action='store_true', dest='force_import', default=None,
+                help="Force records that are not registered to import on the system")
+def populate(records, collections, file_input=None, input_type=None, force_import=None):
     """Train a set of records from the command line.
 
     Usage: inveniomanage predicter train -r /path/to/json -o model.pickle
@@ -80,7 +82,9 @@ def populate(records, collections, file_input=None, input_type=None):
 
     if file_input:
         print("Migrating records from file: {0}".format(file_input))
-        # FIXME: Add hook to allow for pre-allocation of IDs (--force)
+        if force_import:
+            # Load signal handler
+            from inspire.modules.records.receivers import insert_record
         processor = current_app.config['RECORD_PROCESSORS'][input_type]
         if isinstance(processor, six.string_types):
             processor = import_string(processor)
@@ -90,6 +94,11 @@ def populate(records, collections, file_input=None, input_type=None):
             Record.create(data)
         else:
             [Record.create(item) for item in data]
+        db.session.commit()
+        if force_import:
+            # Disable signal handler
+            from inspire.modules.records.receivers import remove_handler
+            remove_handler()
     else:
         legacy_base_url = current_app.config.get("CFG_INSPIRE_LEGACY_BASEURL")
         print(

@@ -55,7 +55,7 @@ def dois(self, key, value):
     value = utils.force_list(value)
     out = []
     for val in value:
-        if val and val.get("2").lower() == "doi":
+        if val and val.get("2", '').lower() == "doi":
             out.append({
                 'value': val.get('a'),
                 'source': val.get('9')
@@ -69,7 +69,7 @@ def persistent_identifiers(self, key, value):
     value = utils.force_list(value)
     out = []
     for val in value:
-        if val and val.get("2").lower() != "doi":
+        if val and val.get("2", '').lower() != "doi":
             out.append({
                 'value': val.get('a'),
                 'source': val.get('9'),
