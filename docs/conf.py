@@ -37,7 +37,16 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
         return Mock()
 
-MOCK_MODULES = ['lzma', 'scikit-learn', 'scipy', 'numpy', 'backports']
+MOCK_MODULES = [
+    'scikit-learn',
+    'scipy',
+    'numpy',
+    'numpy.distutils',
+    'numpy.distutils.core',
+    'lzma',
+    'backports',
+    'backports.lzma',
+]
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -55,9 +64,7 @@ sys.path.append(os.path.abspath('../inspire'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx'
+    # 'sphinx.ext.autodoc',  # Enable this to allow docs from docstring
 ]
 
 # Add any paths that contain templates here, relative to this directory.
