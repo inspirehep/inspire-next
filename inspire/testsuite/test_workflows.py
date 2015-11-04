@@ -21,14 +21,18 @@
 
 from __future__ import print_function, absolute_import
 
-import httpretty
 import re
 import os
 import pkg_resources
 import tempfile
 
+import httpretty
+import responses
+
 from invenio_celery import celery
 from invenio.testsuite import make_test_suite, run_test_suite
+
+from mock import patch
 
 from .helpers import WorkflowTasksTestCase
 
@@ -202,12 +206,12 @@ class WorkflowTest(WorkflowTasksTestCase):
         workflow = start('harvesting_fixture',
                          data=[self.record_oai_arxiv_plots],
                          module_name='unit_tests')
-
         # XXX(jacquerie): find a better check
         self.assertEqual(workflow.objects, [])
 
-    @httpretty.activate
-    def test_harvesting_workflow_without_match(self):
+    @responses.activate
+    @patch('invenio_workflows.search.search')
+    def test_harvesting_workflow_without_match(self, search):
         """Test a full harvesting workflow."""
         from invenio_base.globals import cfg
         from invenio_workflows.api import start
@@ -216,43 +220,33 @@ class WorkflowTest(WorkflowTasksTestCase):
         )
 
         # Mock Elasticsearch search for Holding Pen check
-        result = {
-            "hits": {
-                "total": 0,
-                "hits": []
-            }
-        }
-        httpretty.register_uri(
-            httpretty.GET,
-            "http://localhost:9200/_search",
-            body=result,
-            status=200
-        )
+        search.return_value = []
 
-        httpretty.register_uri(
-            httpretty.GET,
+        responses.add(
+            responses.GET,
             cfg['WORKFLOWS_MATCH_REMOTE_SERVER_URL'],
             body='[]',
             status=200
         )
 
-        httpretty.register_uri(
-            httpretty.GET,
+        responses.add(
+            responses.GET,
             'http://arxiv.org/e-print/1407.7587',
             content_type="application/x-eprint-tar",
             body=self.arxiv_tarball.read(),
             status=200,
             adding_headers={
                 "Content-Encoding": 'x-gzip',
-            }
+            },
         )
 
-        httpretty.register_uri(
-            httpretty.GET,
-            'http://arxiv.org/pdf/1407.7587.pdf',
+        responses.add(
+            responses.GET,
+            'http://arxiv.org/pdf/1407.7587',
             content_type="application/pdf",
             body=self.arxiv_pdf.read(),
             status=200,
+            stream=True,
         )
 
         robotupload_url = os.path.join(
@@ -260,8 +254,8 @@ class WorkflowTest(WorkflowTasksTestCase):
             "batchuploader/robotupload/insert"
         )
 
-        httpretty.register_uri(
-            httpretty.POST,
+        responses.add(
+            responses.POST,
             robotupload_url,
             body="[INFO] bibupload batchupload --insert /dummy/file/path\n",
             status=200,
