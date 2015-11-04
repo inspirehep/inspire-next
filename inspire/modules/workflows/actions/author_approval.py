@@ -42,6 +42,7 @@ class author_approval(object):
                                     resolve_url=self.url,)
         }
 
-    def resolve(self, bwo):
+    @staticmethod
+    def resolve(bwo):
         """Resolve the action taken in the approval action."""
         pass

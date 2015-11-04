@@ -287,7 +287,8 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         return {}
 
     @classmethod
-    def get_sort_data(cls, obj, **kwargs):
+    def get_sort_data(cls, dummy_obj, **kwargs):
+        """Return any extra sorting data."""
         return {}
 
     @classmethod

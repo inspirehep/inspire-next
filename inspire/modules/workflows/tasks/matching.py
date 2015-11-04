@@ -226,7 +226,7 @@ def delete_self_and_stop_processing(obj, eng):
     eng.skipToken()
 
 
-def update_old_object(obj, eng):
+def update_old_object(obj, *args, **kwargs):
     """Update the data of the old object with the new data."""
     from invenio_workflows.models import BibWorkflowObject
 

@@ -31,7 +31,7 @@ from invenio_records.api import create_record, get_record
 from invenio_records.models import Record
 
 
-def store_record_sip(obj, eng):
+def store_record_sip(obj, *args, **kwargs):
     """Update existing record via `control_number` or create new (SIP)."""
     from inspire.utils.helpers import get_model_from_obj
     from invenio_records.tasks import create_record as create
@@ -46,7 +46,7 @@ def store_record_sip(obj, eng):
     create.delay(json=record, force=force)
 
 
-def store_record(obj, eng):
+def store_record(obj, *args, **kwargs):
     """Update existing record via `control_number` or create new (obj.data)."""
     record = obj.data
     if "control_number" in record:

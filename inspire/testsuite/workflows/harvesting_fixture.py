@@ -61,5 +61,4 @@ class harvesting_fixture(hep_ingestion):
         # arxiv_refextract,
         arxiv_author_list("authorlist2marcxml.xsl"),
         # extract_journal_info,
-        guess_coreness("new_astro_model.pickle"),
     ] + hep_ingestion.before_halt_check

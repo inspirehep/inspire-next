@@ -28,13 +28,18 @@ from flask import render_template
 
 from inspire.dojson.hep import hep2marc
 
+from inspire.modules.predicter.tasks import (
+    guess_coreness,
+)
+
 from inspire.modules.workflows.models import Payload, create_payload
 from inspire.modules.workflows.tasks.actions import (
     add_core_check,
     halt_record,
-    shall_halt_workflow,
+    is_record_relevant,
     shall_push_remotely,
     shall_upload_record,
+    reject_record,
 )
 
 from inspire.modules.workflows.tasks.classifier import (
@@ -48,7 +53,6 @@ from inspire.modules.workflows.tasks.matching import(
     exists_in_inspire_or_rejected,
     update_old_object,
 )
-
 from inspire.modules.workflows.tasks.submission import (
     finalize_record_sip,
     send_robotupload,
@@ -134,10 +138,16 @@ class hep_ingestion(DepositionType):
             with_author_keywords=True,
         ),
         filter_core_keywords(filter_kb="antihep"),
+        # Predict action for a generic HEP paper based only on title
+        # and abstract.
+        guess_coreness("arxiv_skip_astro_title_abstract.pickle"),
     ]
-    halt_check = staticmethod(shall_halt_workflow)
+    halt_check = staticmethod(is_record_relevant)
     on_halt = [
-        halt_record,
+        halt_record(action="hep_approval"),
+    ]
+    on_no_halt = [
+        reject_record("Record automatically rejected")
     ]
     before_upload_check = [
         add_core_check,
@@ -154,7 +164,7 @@ class hep_ingestion(DepositionType):
             store_record_sip,
         ]
     ]
-    on_rejection = []
+    on_no_upload = []
     final_processing = []
 
     @classmethod
@@ -169,11 +179,13 @@ class hep_ingestion(DepositionType):
             cls.before_halt_check + [
                 workflow_if(cls.halt_check),
                 cls.on_halt,
+                workflow_else,
+                cls.on_no_halt,
             ] + cls.before_upload_check + [
                 workflow_if(cls.upload_check),
                 cls.on_upload,
                 workflow_else,
-                cls.on_rejection,
+                cls.on_no_upload,
             ] + cls.final_processing
         )
 

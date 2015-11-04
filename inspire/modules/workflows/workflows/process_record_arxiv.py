@@ -32,17 +32,14 @@ from inspire.modules.predicter.tasks import (
     guess_coreness,
 )
 from inspire.modules.workflows.tasks.actions import shall_upload_record
+from inspire.modules.workflows.tasks.classifier import (
+    classify_paper,
+    filter_core_keywords,
+)
 from inspire.modules.workflows.workflows.hep_ingestion import hep_ingestion
 
 from invenio_oaiharvester.tasks.records import convert_record_to_json
 # from inspire.modules.refextract.tasks import extract_journal_info
-
-
-def arxiv_halt_check(obj, eng):
-    """Return True if record should halt, False if not."""
-    obj.extra_data["halt_action"] = "hep_approval"
-    obj.extra_data["halt_message"] = "Upload record?"
-    return True
 
 
 class process_record_arxiv(hep_ingestion):
@@ -54,8 +51,7 @@ class process_record_arxiv(hep_ingestion):
 
     object_type = "arXiv"
 
-    # Need staticmethod's here to avoid needing class instances
-    halt_check = staticmethod(arxiv_halt_check)
+    # Need staticmethod here to avoid needing class instances
     upload_check = staticmethod(shall_upload_record)
 
     initial_processing = [
@@ -71,5 +67,14 @@ class process_record_arxiv(hep_ingestion):
         # arxiv_refextract,
         arxiv_author_list("authorlist2marcxml.xsl"),
         # extract_journal_info,
-        guess_coreness("new_astro_model.pickle"),
-    ] + hep_ingestion.before_halt_check
+        classify_paper(
+            taxonomy="HEPont",
+            only_core_tags=False,
+            spires=True,
+            with_author_keywords=True,
+        ),
+        filter_core_keywords(filter_kb="antihep"),
+        # Predict action for a generic HEP paper based only on title
+        # and abstract.
+        guess_coreness("new_astro_model.pickle")
+    ]

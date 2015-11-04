@@ -58,7 +58,8 @@ class hep_approval(object):
                                     resolve_url=self.url)
         }
 
-    def resolve(self, bwo):
+    @staticmethod
+    def resolve(bwo):
         """Resolve the action taken in the approval action."""
         from invenio_workflows.models import ObjectVersion
         from inspire.modules.audit.api import log_prediction_action

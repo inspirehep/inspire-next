@@ -31,17 +31,17 @@ from inspire.utils.helpers import (
 )
 
 
-def shall_upload_record(obj, eng):
+def shall_upload_record(obj, *args, **kwargs):
     """Check if the record was approved."""
     return obj.extra_data.get("approved", False)
 
 
-def shall_halt_workflow(obj, eng):
+def shall_halt_workflow(obj, *args, **kwargs):
     """Check if the workflow shall be halted."""
     return obj.extra_data.get("halt_workflow", False)
 
 
-def shall_push_remotely(obj, eng):
+def shall_push_remotely(*args, **kwargs):
     """Check if the record shall be robotuploaded."""
     return current_app.config.get("CFG_SITE_URL") != \
         current_app.config.get("CFG_ROBOTUPLOAD_SUBMISSION_BASEURL")
@@ -53,10 +53,13 @@ def add_core_check(obj, eng):
         add_core(obj, eng)
 
 
-def halt_record(obj, eng):
-    """Halt the workflow for approval using extra_data variables."""
-    eng.halt(action=obj.extra_data.get("halt_action"),
-             msg=obj.extra_data.get("halt_message", "Record has been halted."))
+def halt_record(action=None):
+    """Halt the workflow for approval with optional action."""
+    @wraps(halt_record)
+    def _halt_record(obj, eng):
+        eng.halt(action=obj.extra_data.get("halt_action") or action,
+                 msg=obj.extra_data.get("halt_message", "Record has been halted."))
+    return _halt_record
 
 
 def add_core(obj, eng):
@@ -89,7 +92,7 @@ def update_note(metadata):
 def reject_record(message):
     """Reject record with message."""
     @wraps(reject_record)
-    def _reject_record(obj, eng):
+    def _reject_record(obj, *args, **kwargs):
         from inspire.modules.audit.api import log_prediction_action
 
         # Audit logging
@@ -109,7 +112,7 @@ def reject_record(message):
     return _reject_record
 
 
-def is_record_relevant(obj, eng):
+def is_record_relevant(obj, *args, **kwargs):
     """Shall we halt this workflow for potential acceptance or just reject?"""
     from inspire.modules.predicter.utils import (
         get_classification_from_task_results,
