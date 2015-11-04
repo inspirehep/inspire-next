@@ -16,5 +16,7 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
+
+{% bundles "brief-results.css" %}
  
- {{ record|cv_latex_html_text('cv_latex_html') }}
+{{ record|cv_latex_html_text('cv_latex_html', '<br/>') }}
