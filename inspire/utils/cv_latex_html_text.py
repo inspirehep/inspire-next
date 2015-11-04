@@ -32,10 +32,11 @@ class Cv_latex_html_text(Export):
 
     """Class used to output CV format(html) and CV format(text)."""
 
-    def __init__(self, record, format_type):
+    def __init__(self, record, format_type, separator):
         super(Cv_latex_html_text, self).__init__(record)
         self.record = record
         self.format_type = format_type
+        self.separator = separator
 
     def format(self):
         """Return CV format export for single record."""
@@ -57,7 +58,7 @@ class Cv_latex_html_text(Export):
         :raises: MissingRequiredFieldError
         """
         out = ''
-        out += self._fetch_fields(req, opt) + '\n'
+        out += self._fetch_fields(req, opt) + '%s' % self.separator
         return out
 
     def _fetch_fields(self, req_fields, opt_fields=[]):
@@ -86,44 +87,46 @@ class Cv_latex_html_text(Export):
             if self.format_type == 'cv_latex_html':
                 out += u'<a href="' + cfg['CFG_SITE_URL'] + '/record/' + \
                     str(self.record['control_number']) + '">' \
-                    + '{1}.</a>\n'.format(field, value)
+                    + '{1}.</a>{2}'.format(field, value, self.separator)
             else:
-                out += u'{1}\n'.format(field, value)
+                out += u'{1}{2}'.format(field, value, self.separator)
         elif field == 'author':
             if len(value) == 1:
-                out += u'By {1}.\n'.format(field, value[0])
+                out += u'By {1}.{2}'.format(field, value[0], self.separator)
             elif len(value) > 8:
                 if 'collaboration' in self.record:
                     try:
                         collaboration = self.record['collaboration'][0]
                         if 'Collaboration' in collaboration:
-                            out += u'By ' + collaboration + '({1} et al.).\n'.format(
-                                field, value[0]
+                            out += u'By ' + collaboration + '({1} et al.).{2}'.format(
+                                field, value[0], self.separator
                             )
                         else:
-                            out += u'By ' + collaboration + ' Collaboration ({1} et al.).\n'.format(
-                                field, value[0]
+                            out += u'By ' + collaboration + ' Collaboration ({1} et al.).{2}'.format(
+                                field, value[0], self.separator
                             )
                     except IndexError:
                         pass
                 else:
-                    out += u'By  {1} et al..\n'.format(field, value[0])
+                    out += u'By  {1} et al..{2}'.format(
+                        field, value[0], self.separator)
             else:
-                out += u'By {}.\n'.format(', '.join(value))
+                out += u'By {0}.{1}'.format(', '.join(value), self.separator)
         elif field == 'arxiv':
             if self.format_type == 'cv_latex_html':
-                out += u'[{1}].\n'.format(field, value)
+                out += u'[{1}].{2}'.format(field, value, self.separator)
             else:
-                out += u'{1}.\n'.format(field, value)
+                out += u'{1}.{2}'.format(field, value, self.separator)
         elif field == 'doi':
             dois_splitted = value.split(',')
             for k, v in enumerate(dois_splitted):
                 v = '<a href="http://dx.doi.org/' + v + '">' + v + '</a>'
                 dois_splitted[k] = v
-            out += u'{1}.\n'.format(field, ', '.join(out for
-                                                     out in dois_splitted))
+            out += u'{1}.{2}'.format(field, ', '.join(out for
+                                                      out in dois_splitted), self.separator)
         elif field == 'publi_info':
-            out += u'{1}.\n'.format(field, ', '.join(out for out in value))
+            out += u'{1}.{2}'.format(field,
+                                     ', '.join(out for out in value), self.separator)
         return out
 
     def _get_author(self):
@@ -187,7 +190,7 @@ class Cv_latex_html_text(Export):
             if record_title.upper() == record_title or \
                record_title.find('THE') >= 0:
                 record_title = ' '.join([word.capitalize() for word
-                                        in record_title.split(' ')])
+                                         in record_title.split(' ')])
         return record_title
 
     def _get_publi_info(self):
@@ -225,8 +228,8 @@ class Cv_latex_html_text(Export):
                             year = ' (' + str(field['year']) + ')'
                     if 'journal_issue' in field:
                         if field['journal_issue']:
-                                journal_issue = ' ' + \
-                                                field['journal_issue'] + ','
+                            journal_issue = ' ' + \
+                                            field['journal_issue'] + ','
                     if 'page_artid' in field:
                         if field['page_artid']:
                             if isinstance(field['page_artid'], list):

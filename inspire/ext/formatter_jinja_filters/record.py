@@ -134,8 +134,8 @@ def cv_latex(record):
     return Cv_latex(record).format()
 
 
-def cv_latex_html_text(record, format_type):
-    return Cv_latex_html_text(record, format_type).format()
+def cv_latex_html_text(record, format_type, separator):
+    return Cv_latex_html_text(record, format_type, separator).format()
 
 
 def conference_date(record):

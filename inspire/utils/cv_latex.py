@@ -29,6 +29,7 @@ from .export import MissingRequiredFieldError, Export
 
 
 class Cv_latex(Export):
+
     """Class used to output CV LaTex format.
     TODO Fix the citation number latex
     e.g %245 citations counted in INSPIRE as of 21 Aug 2015
@@ -94,9 +95,11 @@ class Cv_latex(Export):
                         if 'collaboration' in self.record:
                             collaboration = self.record['collaboration'][0]
                             if 'Collaboration' in collaboration:
-                                out += u' {\it et al.} [' + collaboration + '].\n'
+                                out += u' {\it et al.} [' + \
+                                    collaboration + '].\n'
                             else:
-                                out += u' {\it et al.} [' + collaboration + ' Collaboration].\n'
+                                out += u' {\it et al.} [' + \
+                                    collaboration + ' Collaboration].\n'
                     except IndexError:
                         pass
                 else:
@@ -204,9 +207,11 @@ class Cv_latex(Export):
                 out = ''
                 if 'journal_title' in field:
                     if isinstance(field['journal_title'], list):
-                        journal_title = field['journal_title'][-1].replace(".", '.\\ ')
+                        journal_title = field[
+                            'journal_title'][-1].replace(".", '.\\ ')
                     else:
-                        journal_title = field['journal_title'].replace(".", '.\\ ')
+                        journal_title = field[
+                            'journal_title'].replace(".", '.\\ ')
                     if 'journal_volume' in field and not \
                             field['journal_title'] == 'Conf.Proc.':
                         journal_letter = ''
@@ -233,11 +238,12 @@ class Cv_latex(Export):
                         page_artid = ''
                         if field['page_artid']:
                             if isinstance(field['page_artid'], list):
-                                    dashpos = field['page_artid'][-1].find('-')
-                                    if dashpos > -1:
-                                        page_artid = field['page_artid'][-1][:dashpos]
-                                    else:
-                                        page_artid = field['page_artid'][-1]
+                                dashpos = field['page_artid'][-1].find('-')
+                                if dashpos > -1:
+                                    page_artid = field[
+                                        'page_artid'][-1][:dashpos]
+                                else:
+                                    page_artid = field['page_artid'][-1]
                             else:
                                 dashpos = field['page_artid'].find('-')
                                 if dashpos > -1:

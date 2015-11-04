@@ -28,7 +28,6 @@ from inspire.utils.cv_latex import Cv_latex
 from inspire.utils.cv_latex_html_text import Cv_latex_html_text
 
 from invenio_records.api import get_record
-from invenio_search.api import Query
 
 from invenio_base.decorators import wash_arguments
 
@@ -115,9 +114,10 @@ def export_as(ids, export_format):
             results = Latex(record, export_format).format() + '\n'
         elif export_format == 'cv_latex':
             results = Cv_latex(record).format() + '\n'
-        elif export_format in ('cv_latex_html', 'cv_latex_text'):
-            results = Cv_latex_html_text(record, export_format).format() + '\n'
-
+        elif export_format == 'cv_latex_html':
+            results = Cv_latex_html_text(record, export_format, '<br/>').format() + '\n'
+        elif export_format == 'cv_latex_text':
+            results = Cv_latex_html_text(record, export_format, '\n').format() + '\n'
         generator = (cell for row in results
                      for cell in row)
         out.append(generator)
