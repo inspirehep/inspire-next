@@ -39,12 +39,16 @@ class CitationsTests(InvenioTestCase):
     def setUp(self):
         """ Initialises test by adding dummy log entries """
         from invenio_records.api import create_record
+        from invenio_records.models import Record
+
         self.__transaction = db.session.begin_nested()
         # Load signal handler
         from inspire.modules.records.receivers import insert_record
         try:
             for i in range(10):
-                create_record({'control_number': i + 1})
+                rec = Record(id=i + 1)
+                db.session.add(rec)
+                create_record({'recid': i + 1})
 
         finally:
             # Disable signal handler
