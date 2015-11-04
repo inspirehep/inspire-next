@@ -56,9 +56,9 @@ class Cv_latex(Export):
         """
         :raises: MissingRequiredFieldError
         """
-        out = '%\cite{' + self._get_citation_key() + '}<br/>'
-        out += r'\item%{' + self._get_citation_key() + '}<br/>'
-        out += self._fetch_fields(req, opt) + '<br/>'
+        out = '%\cite{' + self._get_citation_key() + '}\n'
+        out += r'\item%{' + self._get_citation_key() + '}\n'
+        out += self._fetch_fields(req, opt) + '\n'
         return out
 
     def _fetch_fields(self, req_fields, opt_fields=[]):
@@ -86,27 +86,27 @@ class Cv_latex(Export):
         out = ''
         if field == 'author':
             if len(value) == 1:
-                out += u'&nbsp;&nbsp;\\\\{{}}{1}.<br/>'.format(field, value[0])
+                out += u'  \\\\{{}}{1}.\n'.format(field, value[0])
             elif len(value) > 8:
-                out += u'&nbsp;&nbsp;\\\\{{}}{1}'.format(field, value[0])
+                out += u'  \\\\{{}}{1}'.format(field, value[0])
                 if 'collaboration' in self.record:
                     try:
                         if 'collaboration' in self.record:
                             collaboration = self.record['collaboration'][0]
                             if 'Collaboration' in collaboration:
-                                out += u' {\it et al.} [' + collaboration + '].<br/>'
+                                out += u' {\it et al.} [' + collaboration + '].\n'
                             else:
-                                out += u' {\it et al.} [' + collaboration + ' Collaboration].<br/>'
+                                out += u' {\it et al.} [' + collaboration + ' Collaboration].\n'
                     except IndexError:
                         pass
                 else:
-                    out += u' {\it et al.}.<br/>'
+                    out += u' {\it et al.}.\n'
             else:
-                out += u'&nbsp;&nbsp;\\\\{{}}{} and {}.<br/>'.format(
+                out += u'  \\\\{{}}{} and {}.\n'.format(
                     ', '.join(value[:-1]), value[-1]
                 )
         elif field == 'title':
-            out += u'{1}<br/>'.format(field, value)
+            out += u'{1}\n'.format(field, value)
         elif field == 'publi_info':
             if len(value) > 1:
                 out += u'  \\\\{{}}{},    {}\n'.format(''.join(
@@ -114,14 +114,14 @@ class Cv_latex(Export):
             else:
                 out += u'  \\\\{{}}{1}.'.format(field, value[0])
             if self._get_date():
-                out += ' %(' + str(self._get_date()) + ')<br/>'
+                out += ' %(' + str(self._get_date()) + ')\n'
         elif field == 'arxiv':
-            out += u'&nbsp;&nbsp;\\\\{{}}{1}.<br/>'.format(field, value)
+            out += u'  \\\\{{}}{1}.\n'.format(field, value)
         elif field == 'doi':
-            out += u'&nbsp;&nbsp;&nbsp;&nbsp;\\\\{{}}{1}.<br/>'.format(
+            out += u'    \\\\{{}}{1}.\n'.format(
                 field, value)
         elif field == 'url':
-            out += u' %\href{{{1}}}{{HEP entry}}.<br/>'.format(field, value)
+            out += u' %\href{{{1}}}{{HEP entry}}.\n'.format(field, value)
         return out
 
     def _get_author(self):

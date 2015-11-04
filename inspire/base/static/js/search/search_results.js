@@ -118,11 +118,10 @@ require(['jquery', 'bootstrap'], function($) {
     }
   });
 
-  var $loading = $('#spinner-download').hide();
   $("#download-format").on('click', function() {
     var obj = get_download_information($('#dropdown-export').text().trim());
     if (sList.length != 0) {
-      $loading.show();
+      $('#spinner-download').show();
       $('#download-format').text('Downloading...');
       $('#download-format').addClass('disabled');
       $.ajax({
@@ -133,14 +132,14 @@ require(['jquery', 'bootstrap'], function($) {
         },
         success: function(data) {
           var response_data = "text/plain;charset=utf-8," + encodeURIComponent(data);
-          $("body").append('<a id="data-download" href="data:' + response_data + '" download="export_as.' +
+          $("body").append('<a id="data-download" href="data:' + response_data + '" download="' + obj['prefix'] + '.' +
             obj['format'] + '">download</a>');
           var trigger_element = document.getElementById('data-download');
           trigger_element.click();
           $("#data-download").remove();
         }
       }).done(function() {
-        $loading.hide();
+        $('#spinner-download').hide();
         $('#download-format').text('Download');
         $('#download-format').removeClass('disabled');
       });
@@ -150,36 +149,44 @@ require(['jquery', 'bootstrap'], function($) {
   function get_download_information(type) {
     var obj = {
       format: '',
-      url: ''
+      url: '',
+      prefix: ''
     };
     switch (type) {
       case 'BibTex':
-        obj['format'] = 'bibtex';
+        obj['format'] = 'bib';
         obj['url'] = '/formatter/export-as/bibtex/';
+        obj['prefix'] = 'bibtex';
         break;
       case 'LaTex(EU)':
         obj['format'] = 'tex';
         obj['url'] = '/formatter/export-as/latex_eu/';
+        obj['prefix'] = 'latex_eu';
         break;
       case 'LaTex(US)':
         obj['format'] = 'tex';
         obj['url'] = '/formatter/export-as/latex_us/';
+        obj['prefix'] = 'latex_us';
         break;
       case 'CV format (LaTex)':
         obj['format'] = 'tex';
         obj['url'] = '/formatter/export-as/cv_latex/';
+        obj['prefix'] = 'cv_format_latex';
         break;
       case 'CV format (html)':
         obj['format'] = 'html';
         obj['url'] = '/formatter/export-as/cv_latex_html/';
+        obj['prefix'] = 'cv_format_html';
         break;
       case 'CV format (text)':
         obj['format'] = 'txt';
         obj['url'] = '/formatter/export-as/cv_latex_text/';
+        obj['prefix'] = 'cv_format_text';
         break;
       default:
-        obj['format'] = 'bibtex';
+        obj['format'] = 'bib';
         obj['url'] = '/formatter/export-as/bibtex/';
+        obj['prefix'] = 'bibtex';
     }
     return obj;
   }

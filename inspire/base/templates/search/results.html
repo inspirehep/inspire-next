@@ -78,7 +78,8 @@
           <div class="row">
             <div class="col-md-12">
             <input id="checkbox-select-all" type="checkbox">&nbsp;&nbsp;
-            Export as 
+            Export as
+            <div class="dropdown" id="export-dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-export" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
               BibTex
               <span class="caret"></span>
@@ -91,6 +92,7 @@
               <li><a class="pointer" id="export-as-cv-html">CV format (html)</a></li>
               <li><a class="pointer" id="export-as-cv-text">CV format (text)</a></li>
             </ul>
+            </div> 
             <a type="button" id="download-format" class="btn btn-default">Download</a>
             <i class="fa fa-spinner fa-spin fa-lg" id="spinner-download"></i>
             </div>
