@@ -3,29 +3,14 @@
         "analysis": {
             "filter": {
                 "asciifold_with_orig": {
-                    "type": "asciifolding",
+                    "type": "icu_folding",
                     "preserve_original": true
-                },
-                "synonyms_kbr": {
-                    "type": "synonym",
-                    "synonyms": [
-                        "production => creation"
-                    ]
                 }
             },
             "analyzer": {
-                "natural_text": {
-                    "type": "custom",
-                    "tokenizer":  "standard",
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase",
-                        "synonyms_kbr"
-                    ]
-                },
                 "basic_analyzer": {
                     "type": "custom",
-                    "tokenizer": "standard",
+                    "tokenizer": "icu_tokenizer",
                     "filter": [
                         "asciifold_with_orig",
                         "lowercase"
@@ -53,8 +38,7 @@
             ],
             "properties": {
                 "global_fulltext": {
-                    "type": "string",
-                    "analyzer": "natural_text"
+                    "type": "string"
                 },
                 "global_default": {
                     "type": "string",
@@ -143,8 +127,7 @@
                     "properties": {
                         "full_name": {
                             "type": "string",
-                            "copy_to": ["exactauthor"],
-                            "analyzer": "natural_text"
+                            "copy_to": ["exactauthor"]
                         },
                         "affiliation": {
                             "type": "string"
