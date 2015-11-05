@@ -116,7 +116,7 @@
         {% endif %}
       {% endif %}
     {% endfor %}
-      {% if not abstract_displayed %}
+      {% if not abstract_displayed and arxiv_abstract %}
         {{ display_abstract(arxiv_abstract[0], number_of_words) }}
         {% do abstract_displayed.append(1) %}
       {% endif %}
