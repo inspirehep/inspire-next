@@ -23,7 +23,7 @@
 {% macro render_search_pagination(pagination) %}
   {%- set args = request.args.copy().to_dict() -%}
   {%- if pagination.pages > 1 -%}
-  <ul class="pagination">
+  <ul class="pagination pagination-sm">
     <li{{ ' class="disabled"'|safe if not pagination.has_prev }}>
       {%- do args.update({'jrec': 1}) -%}
       <a title="first" href="{{ url_for('search.search', **args) }}">&laquo;</a>
@@ -63,15 +63,33 @@
     <div class="col-md-12">
       <div class="panel panel-default" id="results-panel">
         <div class="panel-body" >
-          <div class="form-group" id="panel-form-group">
-            <p class="help-block hidden-xs" id="results-wrapper">
-              {%- set r_from = (pagination.page-1)*pagination.per_page+1 -%}
-              {%- set r_to = pagination.page*pagination.per_page -%}
-              {%- set r_of = pagination.total_count -%}
-              {%- set r_to = r_to if r_to < r_of else r_of -%}
-              {# _('Showing records %(x_from)d to %(x_to)d out of %(x_total)d results.', x_from=r_from, x_to=r_to, x_total=r_of) #}
-              {{ _('<b id="total-results">%(x_total)d</b> results found.', x_total=r_of) }}
-            </p>
+          <div class="row" id="results-wrapper">
+            <div class="col-md-3 vcenter">
+              <p class="help-block hidden-xs">
+                {%- set r_from = (pagination.page-1)*pagination.per_page+1 -%}
+                {%- set r_to = pagination.page*pagination.per_page -%}
+                {%- set r_of = pagination.total_count -%}
+                {%- set r_to = r_to if r_to < r_of else r_of -%}
+                {{ _('%(x_from)d-%(x_to)d of <b id="total-results">%(x_total)d</b> results.', x_from=r_from, x_to=r_to, x_total=r_of) }}
+              </p>
+            </div><!--
+            --><div class="col-md-6 vcenter text-center">
+              <p class="help-block hidden-xs">
+                {{ render_search_pagination(pagination) }}
+              </p>
+            </div><!--
+            --><div class="col-md-3 text-right vcenter">
+              <p class="help-block hidden-xs">
+                Results per page:
+                <select name="rg">
+                  <option value="10">10</option>
+                  <option value="25" selected="selected">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="250">250</option>
+                </select>
+              </p>
+            </div>
           </div>
           <hr>
           {% if not request.args.get('cc') or request.args.get('cc') == "HEP" %}
@@ -101,7 +119,7 @@
         </div>
       </div>
      </div>   
-    </div> 
+    </div>
   {% endif %}
   <hr/>
   {%- for record in records -%}{% set recordloop = loop %}
@@ -115,12 +133,20 @@
     {%- else -%}
     {{ format_record(record, of, ln=g.ln, extra_context=dict(collection=collection)) }}
     {%- endif -%}
-  {%- endfor -%}  
-      <div class="form-group pull-right">
-        {{ render_search_pagination(pagination) }}
+  {%- endfor -%}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default" id="results-bottom-panel">
+        <div class="panel-body">
+          <div class="text-center">
+            {{ render_search_pagination(pagination) }}
+          </div>
+        </div>
       </div>
-    </div>
+     </div>
   </div>
+</div>
+</div>
 {% endmacro %}
 
 {% if not request.is_xhr %}
