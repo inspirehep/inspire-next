@@ -750,6 +750,11 @@
                         "description": "FIXME: needed for import only",
                         "format": ".+, .+"
                     },
+                    "name_variations": {
+                        "title": "Author name variations",
+                        "type": "string",
+                        "description": "All possible variations of the authors full name."
+                    },
                     "affiliations": {
                         "uniqueItems": true,
                         "items": {
