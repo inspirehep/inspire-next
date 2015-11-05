@@ -21,11 +21,6 @@
 
 from invenio_oaiharvester.tasks.records import convert_record_to_json
 
-from invenio_workflows.tasks.logic_tasks import (
-    workflow_if,
-    workflow_else,
-)
-
 from inspire.modules.converter.tasks import convert_record
 
 from inspire.modules.oaiharvester.tasks.arxiv import (
@@ -35,11 +30,8 @@ from inspire.modules.oaiharvester.tasks.arxiv import (
 )
 
 # from inspire.modules.refextract.tasks import extract_journal_info
-from inspire.modules.predicter.tasks import (
-    guess_coreness
-)
+
 from inspire.modules.workflows.workflows.hep_ingestion import hep_ingestion
-from inspire.modules.workflows.workflows.process_record_arxiv import arxiv_halt_check
 
 
 class harvesting_fixture(hep_ingestion):
@@ -47,7 +39,7 @@ class harvesting_fixture(hep_ingestion):
     """A test workflow for the Payload class."""
 
     object_type = "test"
-    halt_check = staticmethod(arxiv_halt_check)
+
     initial_processing = [
         # First we perform conversion from OAI-PMH XML to MARCXML
         convert_record("oaiarXiv2inspire_nofilter.xsl"),

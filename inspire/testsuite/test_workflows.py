@@ -70,6 +70,14 @@ class WorkflowTest(WorkflowTasksTestCase):
                 'oai_arxiv_record_with_plots.xml'
             )
         )
+        self.record_oai_arxiv_accept = pkg_resources.resource_string(
+            'inspire.testsuite',
+            os.path.join(
+                'workflows',
+                'fixtures',
+                'oai_arxiv_record_to_accept.xml'
+            )
+        )
         self.some_record = pkg_resources.resource_string(
             'inspire.testsuite',
             os.path.join(
@@ -92,6 +100,22 @@ class WorkflowTest(WorkflowTasksTestCase):
                 'workflows',
                 'fixtures',
                 '1407.7587v1.pdf'
+            )
+        )
+        self.arxiv_tarball_accept = pkg_resources.resource_stream(
+            'inspire.testsuite',
+            os.path.join(
+                'workflows',
+                'fixtures',
+                '1511.01097'
+            )
+        )
+        self.arxiv_pdf_accept = pkg_resources.resource_stream(
+            'inspire.testsuite',
+            os.path.join(
+                'workflows',
+                'fixtures',
+                '1511.01097v1.pdf'
             )
         )
 
@@ -211,7 +235,7 @@ class WorkflowTest(WorkflowTasksTestCase):
 
     @responses.activate
     @patch('invenio_workflows.search.search')
-    def test_harvesting_workflow_without_match(self, search):
+    def test_harvesting_workflow_rejected(self, search):
         """Test a full harvesting workflow."""
         from invenio_base.globals import cfg
         from invenio_workflows.api import start
@@ -249,6 +273,72 @@ class WorkflowTest(WorkflowTasksTestCase):
             stream=True,
         )
 
+        workflow = start('harvesting_fixture',
+                         data=[self.record_oai_arxiv_plots],
+                         module_name='unit_tests')
+
+        # Let's get the record metadata and check contents
+        obj = workflow.completed_objects[0]
+        record = get_record_from_obj(obj, workflow)
+
+        # This record should be rejected
+        self.assertFalse(obj.extra_data["approved"])
+
+        # Files should have been attached (tarball + pdf)
+        self.assertTrue(len(obj.data["files"]) == 2)
+
+        # Some plots/files should have been added to FFTs
+        self.assertTrue(record.get('fft'))
+
+        # A publication note should have been extracted
+        self.assertTrue(record.get('publication_info'))
+
+        # A prediction should have been made
+        self.assertTrue(obj.get_tasks_results().get("arxiv_guessing"))
+
+        # It is not CORE
+        self.assertFalse("CORE" in record.get("collections.primary"))
+
+    @responses.activate
+    @patch('invenio_workflows.search.search')
+    def test_harvesting_workflow_accepted(self, search):
+        """Test a full harvesting workflow."""
+        from invenio_base.globals import cfg
+        from invenio_workflows.api import start
+        from inspire.utils.helpers import (
+            get_record_from_obj,
+        )
+
+        # Mock Elasticsearch search for Holding Pen check
+        search.return_value = []
+
+        responses.add(
+            responses.GET,
+            cfg['WORKFLOWS_MATCH_REMOTE_SERVER_URL'],
+            body='[]',
+            status=200
+        )
+
+        responses.add(
+            responses.GET,
+            'http://arxiv.org/e-print/1511.01097',
+            content_type="application/x-eprint-tar",
+            body=self.arxiv_tarball_accept.read(),
+            status=200,
+            adding_headers={
+                "Content-Encoding": 'x-gzip',
+            },
+        )
+
+        responses.add(
+            responses.GET,
+            'http://arxiv.org/pdf/1511.01097',
+            content_type="application/pdf",
+            body=self.arxiv_pdf_accept.read(),
+            status=200,
+            stream=True,
+        )
+
         robotupload_url = os.path.join(
             cfg.get("CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"),
             "batchuploader/robotupload/insert"
@@ -261,29 +351,11 @@ class WorkflowTest(WorkflowTasksTestCase):
             status=200,
         )
         workflow = start('harvesting_fixture',
-                         data=[self.record_oai_arxiv_plots],
+                         data=[self.record_oai_arxiv_accept],
                          module_name='unit_tests')
 
-        # Let's get the record metadata and check contents
+        # Let's get the halted record
         obj = workflow.halted_objects[0]
-        record = get_record_from_obj(obj, workflow)
-
-        # Files should have been attached (tarball + pdf)
-        # self.assertTrue(len(obj.data["files"]) == 2)
-
-        # Some plots/files should have been added to FFTs
-        # self.assertTrue(record.get('fft'))
-
-        # A publication note should have been extracted
-        self.assertTrue(record.get('publication_info'))
-
-        # A prediction should have been made
-        self.assertTrue(obj.get_tasks_results().get("arxiv_guessing"))
-
-        record = get_record_from_obj(obj, workflow)
-
-        # This one is not yet CORE
-        self.assertFalse("CORE" in record.get("collections.primary"))
 
         # Now let's resolve it as accepted and continue
         obj.remove_action()
@@ -294,7 +366,6 @@ class WorkflowTest(WorkflowTasksTestCase):
         workflow = obj.continue_workflow()
 
         record = get_record_from_obj(obj, workflow)
-
         # Now it is CORE
         self.assertTrue("CORE" in record.get("collections.primary"))
 
