@@ -265,6 +265,8 @@ RECORD_PROCESSORS = {
 }
 RECORDS_BREADCRUMB_TITLE_KEY = 'breadcrumb_title'
 
+CFG_WEBSEARCH_SEARCH_CACHE_TIMEOUT = None
+
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
 # invenio keywords to elasticsearch fields
 SEARCH_ELASTIC_KEYWORD_MAPPING = {
