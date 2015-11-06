@@ -218,7 +218,7 @@ def newreview(objectid):
 
     form = AuthorUpdateForm(data=extra_data["formdata"], is_review=True)
     ctx = {
-        "action": url_for('.reviewaccepted', objectid=objectid),
+        "action": url_for('.reviewhandler', objectid=objectid),
         "name": "authorUpdateForm",
         "id": "authorUpdateForm",
         "objectid": objectid
@@ -227,14 +227,14 @@ def newreview(objectid):
     return render_template('authors/forms/review_form.html', form=form, **ctx)
 
 
-@blueprint.route('/reviewaccepted', methods=['GET', 'POST'])
+@blueprint.route('/holdingpenreview', methods=['GET', 'POST'])
 @login_required
 @permission_required(viewauthorreview.name)
 @wash_arguments({'objectid': (int, 0),
                  'approved': (bool, False),
                  'ticket': (bool, False)})
-def reviewaccepted(objectid, approved, ticket):
-    """Form handler when a cataloger accepts a new author update"""
+def holdingpenreview(objectid, approved, ticket):
+    """Handler for approval or rejection of new authors in Holding Pen."""
     if not objectid:
         abort(400)
     workflow_object = BibWorkflowObject.query.get(objectid)
@@ -247,6 +247,36 @@ def reviewaccepted(objectid, approved, ticket):
 
     return render_template('authors/forms/new_review_accepted.html',
                            approved=approved)
+
+
+@blueprint.route('/reviewhandler', methods=['POST'])
+@login_required
+@permission_required(viewauthorreview.name)
+@wash_arguments({'objectid': (int, 0)})
+def reviewhandler(objectid):
+    """Form handler when a cataloger accepts an author review."""
+    from inspire.modules.forms.utils import DataExporter
+    from invenio.modules.workflows.models import BibWorkflowObject
+
+    if not objectid:
+        abort(400)
+
+    form = AuthorUpdateForm(formdata=request.form)
+    visitor = DataExporter()
+    visitor.visit(form)
+
+    workflow_object = BibWorkflowObject.query.get(objectid)
+    extra_data = workflow_object.get_extra_data()
+    extra_data["approved"] = True
+    extra_data["recreate_data"] = True
+    extra_data["ticket"] = request.form.get('ticket') == "True"
+    workflow_object.set_extra_data(extra_data)
+    workflow_object.set_data(visitor.data)
+    workflow_object.save()
+    workflow_object.continue_workflow(delayed=True)
+
+    return render_template('authors/forms/new_review_accepted.html',
+                           approved=True)
 
 
 @blueprint.route('/submitupdate', methods=['POST'])

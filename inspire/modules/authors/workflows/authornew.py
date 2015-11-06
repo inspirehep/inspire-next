@@ -44,6 +44,7 @@ from ..tasks import send_robotupload, \
     convert_data_to_model, \
     create_curator_ticket_new, \
     reply_ticket, \
+    recreate_data, \
     curation_ticket_needed, \
     create_curation_ticket
 
@@ -66,6 +67,11 @@ class authornew(WorkflowBase):
                                 message="Accept submission?"),
         workflow_if(was_approved),
         [
+            workflow_if(recreate_data),
+            [
+                convert_data_to_model(),
+                create_marcxml_record()
+            ],
             send_robotupload(mode="insert"),
             reply_ticket(template="authors/tickets/user_accepted.html"),
             log_info("New author info has been approved"),

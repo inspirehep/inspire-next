@@ -340,3 +340,9 @@ def create_curation_ticket(template, queue="Test", ticket_id_key="ticket_id"):
         )
 
     return _create_curation_ticket
+
+
+def recreate_data(obj, eng):
+    """Check if data needs to be recreated."""
+    extra_data = obj.get_extra_data()
+    return extra_data.get("recreate_data", False)
