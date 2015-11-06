@@ -38,9 +38,12 @@ js = Bundle(
     filters=RequireJSFilter(exclude=[_j, _i]),
     weight=20,
     bower={
-        "toastr": "latest"
+        "toastr": "latest",
+        "jQuery-menu-aim": "latest"
     }
 )
+
+
 
 dependencies_to_remove = ["MathJax"]
 
@@ -103,6 +106,8 @@ _base_styles.contents += (
     'less/workflows/workflows.less',
     'vendors/toastr/toastr.css'
 )
+
+_base_styles.bower["font-awesome"] = "4.4.0"
 
 to_remove = ["less/base.less",
              "less/user-menu.less",

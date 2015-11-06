@@ -284,3 +284,250 @@ body {
     margin-top: 5px;
     margin-bottom: 8px;
 }
+
+@media only screen and (max-width : 767px){
+    .dropdown-menu-amazon {
+        position: absolute;
+        top:100%;
+        z-index: 1000;
+        float: left;
+        min-width: 160px;
+        padding: 5px 0;
+        margin: 2px 0 0;
+        list-style: none;
+        font-size: 14px;
+        text-align: left;
+        background-color: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 4px;
+        background-clip: padding-box;
+    }
+
+    .navbar-nav .open .dropdown-menu {
+        position: static;
+        float: none;
+        width: auto;
+        margin-top: 0;
+        background-color: transparent;
+        border: 0;
+        box-shadow: none;
+
+    }
+
+    .small-screens {
+        padding-left: 40px;
+        padding-right: 26px;
+
+    }
+
+    .small-screens.dropdown-menu-list:hover{
+        background-color: #333333;
+    }
+
+    .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {
+        color: #000000;
+    }
+
+
+    .text-link-decoration.small-screens-a {
+        color: #cccccc;
+    }
+
+    .text-link-decoration.small-screens-a:hover {
+        color: #ffffff;
+    }
+
+    .navbar .popover {
+        max-width: 100%;
+        position: relative;
+    }
+
+    .custom-popover {
+        height: 100%;
+    }
+
+}
+
+
+/* Nice dropdown menu*/
+.navbar .popover {
+    width: 400px;
+    -webkit-border-top-left-radius: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    overflow: hidden;
+}
+
+.navbar .popover-content {
+    height: 269px;
+    text-align: center;
+}
+
+.navbar .dropdown-menu {
+    -webkit-border-top-right-radius: 0px;
+    -webkit-border-bottom-right-radius: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    -webkit-box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-nav > li > .dropdown-menu {
+    margin-top: -6px;
+}
+
+
+.dropdown-menu-amazon {
+    position: fixed ;
+    display: block;
+    float: left;
+    left: 0 !important;
+    top: 67px;
+    z-index: 1000;
+    display: none;
+    list-style: none;
+    width: 40%;
+}
+
+
+/* In px according to bootstrap screen, not sure 100% if it is correct*/
+.custom-popover {
+    color:#ffffff;
+    max-width: 1200px;
+    height: 317px;
+}
+
+
+.navbar .popover {
+    width: 1200px;
+}
+
+.arrow-position {
+    float:right;
+    color: black;
+    margin-right: 7px;
+    margin-top: 10px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.popover-title {
+    border-bottom: 0;
+    border-radius: 0;
+    font-size:20px;
+}
+
+.custom-horizontal-line{
+    border-color:#cccccc; 
+    margin-top: 10px; 
+    margin-bottom: 0px;
+}
+
+.dropdown-options {
+    display:inline-block;
+    margin-top:3%
+}
+
+.dropdown-menu-list {
+    height: 35px; 
+    border-left: 1px solid;
+    border-width: 5px;
+}
+
+.dropdown-menu-list:hover {
+    background-color:#f5f5f5;
+}
+
+.text-link-decoration {
+    text-decoration: none; 
+    color:#444;
+}
+
+.text-link-decoration:hover {
+    text-decoration: none; 
+    color:#444;
+}
+
+#first-element {
+    border-color:@jobs-collection;
+}
+
+#second-element {
+    border-color:@conferences-collection;
+}
+
+#third-element {
+    border-color:@journals-collection;
+}
+
+#fourth-element {
+    border-color:@experiments-collection;
+}
+
+#fifth-element {
+    border-color:@institutions-collection;
+}
+
+#sixth-element {
+    border-color:#939393;
+}
+
+#seventh-element {
+    border-color:#53657F;
+}
+
+#jobs,
+#jobs-header {
+    background-color:@jobs-collection;
+}
+
+#tools,
+#tools-header {
+    background-color:#939393;
+}
+
+#conferences,
+#conferences-header {
+    background-color:@conferences-collection; 
+}
+
+#journals,
+#journals-header {
+    background-color:@journals-collection; 
+}
+
+#experiments,
+#expreriments-header {
+    background-color:@experiments-collection; 
+}
+
+#institutions,
+#institutions-header {
+    background-color:@institutions-collection; 
+}
+
+#links-and-stats,
+#links-and-stats-header {
+    background-color:#53657F; 
+}
+
+.font-p {
+    font-size:13px; 
+}
+
+.popover-link {
+    color:#ffffff;
+}
+
+.popover-link:hover {
+    color:#cccccc;
+}
+
+a.external-link::after {
+    content: " \f08e";
+    font-family: FontAwesome;
+}
