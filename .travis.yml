@@ -39,7 +39,7 @@ install:
   - docker ps
 
 script:
-  - docker run -v `pwd`:`pwd` inspirehep/inspire:next /bin/bash -c "cd `pwd` && ./install.sh && python setup.py test"
+  - docker run -v `pwd`:`pwd` inspirehep/inspire:deps /bin/bash -c "cd `pwd` && ./install.sh && python setup.py test"
 
 after_success:
   - coveralls
