@@ -26,7 +26,7 @@
 {% block header %}
   {{ mathjax() | safe }}
   {{ record_cite_modal() }}
-  <div id="{{record.collections | record_current_collection("") }}" class="record-collection-heading ellipsis">
+  <div id="hep-collection" class="record-collection-heading ellipsis">
     {{ record_collection_heading() }}
   </div>
   <div id="record-title">

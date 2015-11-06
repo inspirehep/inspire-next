@@ -78,6 +78,68 @@ def faq():
 
 
 #
+# Collections
+#
+
+@blueprint.route('/literature', methods=['GET', ])
+@blueprint.route('/collection/literature', methods=['GET', ])
+def hep():
+    """View for literature collection landing page."""
+    return render_template('search/collection_literature.html',
+                           collection_name='literature')
+
+
+@blueprint.route('/authors', methods=['GET', ])
+@blueprint.route('/collection/authors', methods=['GET', ])
+def hepnames():
+    """View for authors collection landing page."""
+    return render_template('search/collection_authors.html',
+                           collection_name='authors')
+
+
+@blueprint.route('/conferences', methods=['GET', ])
+def conferences():
+    """View for conferences collection landing page."""
+    return render_template('search/collection_conferences.html',
+                           collection_name='conferences')
+
+
+@blueprint.route('/jobs', methods=['GET', ])
+def jobs():
+    """View for jobs collection landing page."""
+    return render_template('search/collection_jobs.html',
+                           collection_name='jobs')
+
+
+@blueprint.route('/institutions', methods=['GET', ])
+def institutions():
+    """View for institutions collection landing page."""
+    return render_template('search/collection_institutions.html',
+                           collection_name='institutions')
+
+
+@blueprint.route('/experiments', methods=['GET', ])
+def experiments():
+    """View for experiments collection landing page."""
+    return render_template('search/collection_experiments.html',
+                           collection_name='experiments')
+
+
+@blueprint.route('/journals', methods=['GET', ])
+def journals():
+    """View for journals collection landing page."""
+    return render_template('search/collection_journals.html',
+                           collection_name='journals')
+
+
+@blueprint.route('/data', methods=['GET', ])
+def data():
+    """View for data collection landing page."""
+    return render_template('search/collection_data.html',
+                           collection_name='data')
+
+
+#
 # Feedback handler
 #
 

@@ -80,6 +80,16 @@ brief_result_styles = Bundle(
     weight=60,
 )
 
+collection_landing_page_styles = Bundle(
+    "less/search/collection.less",
+    output="collection.css",
+    depends=[
+        "less/search/collection.less"
+    ],
+    filters="less,cleancss",
+    weight=60,
+)
+
 # FIXME variables.less is already imported in inspire.less so there should be
 # no need to add it here to the contents. If it is not added, the depends=
 # parameter takes no effect and modifications to the file don't trigger

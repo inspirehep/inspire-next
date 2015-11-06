@@ -1,0 +1,78 @@
+{#
+# This file is part of INSPIRE.
+# Copyright (C) 2015 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{%- extends "search/collection_basic.html" -%}
+
+{% block inner_content %}
+  <div id="collection-search-bar">
+    <div class="title" id="hep">
+      Search {{ "HEP" | number_of_records }} articles
+    </div>
+    <div id="search-bar">
+      {{ search_bar("hep") | safe }}
+    </div>
+    <div class="subtitle">
+      Example queries:
+      <a href="/search?p=arXiv%3A1007.5048&cc=HEP">arXiv:1007.5048</a>
+      | 
+      <a href="/search?p=find+a+ellis+and+refersto+a+witten&cc=HEP">find a ellis and refersto a witten</a>
+    </div>
+  </div>
+
+  <div id="collection-how-to-search">
+    <div class="title">How to search</div>
+    <div class="row">
+      <div class="col-md-6" id="left">
+        <div class="subtitle">SPIRES syntax is (mostly) supported (requires "find")</div>
+        <div><a href="/search?p=find+a+richter%2C+b+and+t+quark+and+date+>+1984&cc=HEP">find a richter, b and t quark and date > 1984</a></div>
+        <div><a href="/search?p=find+j+phys.rev.%2CD50%2C1140+or+j+jhep%2C0903%2C112&cc=HEP">find j phys.rev.,D50,1140 or j jhep,0903,112</a></div>
+        <div><a href="/search?p=find+eprint+arxiv%3A1007.5048&cc=HEP">find eprint arxiv:1007.5048 (Note the plots available on the detailed record)</a></div>
+        <div><a href="/search?p=find+fulltext+'quark-gluon+plasma'&cc=HEP">find fulltext "quark-gluon plasma" (Note new "fulltext" operator)</a></div>
+        <div><a href="/search?p=find+a+ellis+and+refersto+a+witten&cc=HEP">find a ellis and refersto a witten (Note "refersto")</a></div>
+        <div><a href="/search?p=find+a+kane+and+citedby+title+SUSY+and+topcite+200%2B&cc=HEP">find a kane and citedby title SUSY and topcite 200+ (Note "citedby")</a></div>
+      </div>
+      <div class="col-md-5 col-md-offset-1" id="right">
+        <div class="subtitle">New techniques:</div>
+        <div><a href="/search?p=1985+richter+quark+multiplicity&cc=HEP">1985 richter quark multiplicity</a></div>
+        <div><a href="/search?p=arXiv%3A1007.5048&cc=HEP">arXiv:1007.5048</a></div>
+        <div><a href="/search?p=citedby%3Aauthor%3Aellis+-refersto%3Aauthor%3Awitten&cc=HEP">citedby:author:ellis -refersto:author:witten</a></div>
+        <div><a href="/search?p=author%3Arandall+%7C+author%3Asundrum+cited%3A450->1350&cc=HEP">author:randall | author:sundrum cited:450->1350</a></div>
+        <div class="subtitle">Additional Help:</div>
+        <div><a href="/help">More search tips and full help</a></div>
+      </div>
+    </div>
+  </div>
+
+  <div id='twitter-feed'>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="title">
+          Twitter updates
+        </div>
+        <a class="twitter-timeline" href="https://twitter.com/inspirehep" data-widget-id="345258226717192192" height="250px" data-chrome="noheader nofooter noborders noscrollbar">Tweets by @inspirehep</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </div>
+      <div class="col-md-6">
+        <div class="title">
+          News from our blog
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

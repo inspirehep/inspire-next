@@ -190,3 +190,80 @@ hr {
 .abstract {
     color: #7e8d8e;
 }
+
+// Mixin to set background color
+.collection-background-color(@background-color;) {
+    background-color: @background-color;
+}
+
+#collection-search-bar {
+    background-color: white;
+    padding: 50px 10px;
+    text-align: center;
+    margin-bottom: 50px;
+
+    #search-bar {
+        margin: 30px auto;
+
+        form { 
+            width: 75%;
+            margin: 0 auto;
+
+            .input-group-btn {
+                color: white;
+
+                button {
+                    border: 0;
+                    margin: 0;
+                    background-color: inherit;
+                }
+
+                &#hep-search {
+                    .collection-background-color(@literature-collection);
+                }
+
+                &#hepnames-search {
+                    .collection-background-color(@authors-collection);
+                }
+
+                &#conferences-search {
+                    .collection-background-color(@conferences-collection);
+                }
+
+                &#jobs-search {
+                    .collection-background-color(@jobs-collection);
+                }
+
+                &#experiments-search {
+                    .collection-background-color(@experiments-collection);
+                }
+
+                &#institutions-search {
+                    .collection-background-color(@institutions-collection);
+                }
+
+                &#journals-search {
+                    .collection-background-color(@journals-collection);
+                }
+
+                &#data-search {
+                    .collection-background-color(@data-collection);
+                }
+            }
+        }
+
+        input {
+            width: 100%;
+            height: 51px;
+            background-color: lighten(gray, 40%);
+            font-size: larger;
+            border: 0;
+            padding-left: 20px;
+        }
+    }
+
+    #subtitle {
+        font-size: larger;
+        color: gray;
+    }
+}
