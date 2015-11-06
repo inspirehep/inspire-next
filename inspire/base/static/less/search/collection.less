@@ -8,153 +8,21 @@
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
  *
- * INSPIRE is distributed in the hope that it will be useful, but
+ * Invenio is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+ * along with Invenio; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
+ @import (reference) "../inspire.less";
 
-@import (reference) "../inspire.less";
-
-.custom-panel {
-    margin-bottom: 0px;
-    border: 0px;
-}
-
-#panel-default-brief {
-    border: 0px;
-}
-
-.blue-btn {
-    color: #fff;
-    background-color: #337ab7;
-    border-color: #2e6da4;
-}
-
-.custom-h {
-    margin-top:0px;
-}
-
-#link-to-pdf {
-    text-decoration:none; 
-    color:white;
-}
-
-hr {
-    margin-top:0px;
-}
-
-.mobile-title {
-    display:none;
-}
-
-.custom-dropdown {
-    top: inherit;
-}
-
-#left-column {
-    border-right: 1px solid #D3D3D3;
-    min-height: 114px;
-}
-
-.pointer {
-    cursor:pointer;
-}
-
-.citations-references {
-    margin-top: 10px;
-}
-
-@media only screen and (max-width : 992px){
-    #right-column {
-        display:none;
-    }
-
-    .abstract {
-        display:none;
-    }
-
-    .title {
-        display:none;
-    }   
-
-    .mobile-title {
-        display:block;
-    }
-
-    #left-column {
-        border-right: 0px;
-    }
-
-}
-
-@media screen and (min-width: @screen-sm-min) {
-    .brief-results-modal {
-        width:900px;
-    }
-
-}
-
-.brief-results-modal {
-    width:75%;
-}
-
-.record-brief-details {
-    font-size: 14px;
-}
-
-#facetparent {
-    background-color: #ffffff;
-}
-
-#total-results {
-    color:#e57e25;
-}
-
-#results-wrapper {
-    font-size: 15px;
-}
-
-#panel-form-group {
-    display:block;
-}
-
-.pagination {
-    margin: 0px;
-}
-
-#spinner-download {
-    display: none;
-}
-
-.vcenter {
-    display: inline-block;
-    vertical-align: middle;
-    float: none;
-}
-
-#spinner-download {
-    display: none;
-}
-
-#results-control-panel {
-    .dropdown {
-        display: inline-block;
-    }
-
-    .form-control {
-        display: inline-block;
-        width: auto;
-    }
-}
-
-.fa-arrow-up {
-    display: none;
+.title {
+    font-weight: 700;
+    font-size: x-large;
 }
 
 // Mixin to set background color
@@ -162,11 +30,49 @@ hr {
     background-color: @background-color;
 }
 
+// Mixin to set title color
+.collection-title-color(@color;) {
+    color: @color;
+}
+
 #collection-search-bar {
     background-color: white;
     padding: 50px 10px;
     text-align: center;
-    margin-bottom: 50px;
+    margin-top: -140px;
+
+    .title:extend(.title){}
+
+    .title {
+
+        &#hep {
+            .collection-title-color(@literature-collection);
+        }
+
+        &#authors {
+            .collection-title-color(@authors-collection);
+        } 
+
+        &#institutions {
+            .collection-title-color(@institutions-collection);
+        }
+        
+        &#conferences {
+            .collection-title-color(@conferences-collection);
+        }
+
+        &#jobs {
+            .collection-title-color(@jobs-collection);
+        }
+
+        &#experiments {
+            .collection-title-color(@experiments-collection);
+        }
+
+        &#journals {
+            .collection-title-color(@journals-collection);
+        }
+    }
 
     #search-bar {
         margin: 30px auto;
@@ -232,4 +138,48 @@ hr {
         font-size: larger;
         color: gray;
     }
+}
+
+#collection-how-to-search {
+
+    background-color: white;
+    margin-top: 30px;
+    padding: 30px 20px 50px 20px;
+
+    .title:extend(.title){}
+
+    .title {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    #left, #right {
+        text-align: left;
+
+        .subtitle {
+            font-size: larger;
+            color: grey;
+            margin-bottom: 5px; 
+        }
+
+        :not(.subtitle) {
+            margin-left: 20px;
+        }
+    }
+
+    #right {
+        div:nth-of-type(6) {
+            margin-top: 20px;
+        }
+    }
+}
+
+#twitter-feed {
+    background-color: white;
+    margin-top: 30px;
+    padding: 30px 0 20px 0;
+
+    .title {
+       #collection-how-to-search.title;
+   }
 }
