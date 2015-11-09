@@ -28,12 +28,7 @@
   </a>
 {% endmacro %}
 
-{% macro render_record_authors(number_of_displayed_authors, is_brief) %}
-  {% if is_brief %}
-    {% set number_of_displayed_authors = 5 %}
-  {% else %}
-    {% set number_of_displayed_authors = 20 %}
-  {% endif %}
+{% macro render_record_authors(is_brief, number_of_displayed_authors=5, show_affiliations=true) %}
   {% if record.authors %}
     {% set sep = joiner("; ") %}
     {% set authors = record.authors %}
@@ -41,7 +36,7 @@
       <small>{{ sep() }}</small>
       <small class="text-left">{{ render_author_names(author) }}</small>
     {% endfor %}
-    {% if record.authors | length > number_of_displayed_authors %}
+    {% if (record.authors | length > number_of_displayed_authors) and show_affiliations %}
       {{ sep() }}
       <small>
         {% if is_brief %}
@@ -55,7 +50,7 @@
       </small>
     {% else %}
       <small>
-        {% if not is_brief %}
+        {% if not is_brief and show_affiliations %}
           <a id="authors-show-more" class="btn" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
             Show affiliations
           </a>
@@ -63,35 +58,38 @@
       </small>
     {% endif %}
 
-    <div class="modal fade" id="authors_{{ record['control_number'] }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">Authors</h4>
-          </div>
-          <div class="modal-body">
-            {% for author in record.authors %}
-              {{ render_author_names(author) }}
-               {% if author.get('affiliations') and not is_brief %}
-                {% if author.get('affiliations') | is_list %} 
-                  <a href="{{ url_for('search.search', p='"' + author.get('affiliations')[0].value + '"' + "&cc=Institutions") }}">
-                    ({{ author.get('affiliations')[0].value }})
-                  </a>
-                {% else %}
-                  <a href="{{ url_for('search.search', p='"' + author.get('affiliations').value + '"' + "&cc=Institutions") }}">
-                    ({{ author.get('affiliations').value }}) 
-                  </a>
-                {% endif %} 
-              {% endif %}
-              {{ sep() }}
-            {% endfor %}
-          </div>
-          <div class="modal-footer">
+    {% if show_affiliations %}
+      <div class="modal fade" id="authors_{{ record['control_number'] }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">Authors</h4>
+            </div>
+            <div class="modal-body">
+              {% for author in record.authors %}
+                {{ render_author_names(author) }}
+                 {% if author.get('affiliations') and not is_brief %}
+                  {% if author.get('affiliations') | is_list %} 
+                    <a href="{{ url_for('search.search', p='"' + author.get('affiliations')[0].value + '"' + "&cc=Institutions") }}">
+                      ({{ author.get('affiliations')[0].value }})
+                    </a>
+                  {% else %}
+                    <a href="{{ url_for('search.search', p='"' + author.get('affiliations').value + '"' + "&cc=Institutions") }}">
+                      ({{ author.get('affiliations').value }}) 
+                    </a>
+                  {% endif %} 
+                {% endif %}
+                {{ sep() }}
+              {% endfor %}
+            </div>
+            <div class="modal-footer">
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    {% endif %}
+
   {% endif %}
 {% endmacro %}
 
