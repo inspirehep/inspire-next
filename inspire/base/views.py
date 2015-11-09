@@ -85,63 +85,71 @@ def faq():
 @blueprint.route('/collection/literature', methods=['GET', ])
 def hep():
     """View for literature collection landing page."""
+    collection = {'name': 'hep'}
     return render_template('search/collection_literature.html',
-                           collection_name='literature')
+                           collection=collection)
 
 
 @blueprint.route('/authors', methods=['GET', ])
 @blueprint.route('/collection/authors', methods=['GET', ])
 def hepnames():
     """View for authors collection landing page."""
+    collection = {'name': 'hepnames'}
     return render_template('search/collection_authors.html',
-                           collection_name='authors')
+                           collection=collection)
 
 
 @blueprint.route('/conferences', methods=['GET', ])
 def conferences():
     """View for conferences collection landing page."""
+    collection = {'name': 'conferences'}
     return render_template('search/collection_conferences.html',
-                           collection_name='conferences')
+                           collection=collection)
 
 
 @blueprint.route('/jobs', methods=['GET', ])
 def jobs():
     """View for jobs collection landing page."""
+    collection = {'name': 'jobs'}
     return render_template('search/collection_jobs.html',
-                           collection_name='jobs')
+                           collection=collection)
 
 
 @blueprint.route('/institutions', methods=['GET', ])
 def institutions():
     """View for institutions collection landing page."""
+    collection = {'name': 'institutions'}
     return render_template('search/collection_institutions.html',
-                           collection_name='institutions')
+                           collection=collection)
 
 
 @blueprint.route('/experiments', methods=['GET', ])
 def experiments():
     """View for experiments collection landing page."""
+    collection = {'name': 'experiments'}
     return render_template('search/collection_experiments.html',
-                           collection_name='experiments')
+                           collection=collection)
 
 
 @blueprint.route('/journals', methods=['GET', ])
 def journals():
     """View for journals collection landing page."""
+    collection = {'name': 'journals'}
     return render_template('search/collection_journals.html',
-                           collection_name='journals')
+                           collection=collection)
 
 
 @blueprint.route('/data', methods=['GET', ])
 def data():
     """View for data collection landing page."""
+    collection = {'name': 'data'}
     return render_template('search/collection_data.html',
-                           collection_name='data')
-
+                           collection=collection)
 
 #
 # Feedback handler
 #
+
 
 @blueprint.route('/postfeedback', methods=['POST', ])
 def postfeedback():

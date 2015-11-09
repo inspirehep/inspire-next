@@ -37,7 +37,7 @@
 
 #collection-search-bar {
     background-color: white;
-    padding: 50px 10px;
+    padding: 30px 10px;
     text-align: center;
     margin-top: -140px;
 
@@ -45,99 +45,87 @@
 
     .title {
 
-        &#hep {
+        &#literature-search-bar {
             .collection-title-color(@literature-collection);
         }
 
-        &#authors {
+        &#authors-search-bar {
             .collection-title-color(@authors-collection);
         } 
 
-        &#institutions {
+        &#institutions-search-bar {
             .collection-title-color(@institutions-collection);
         }
         
-        &#conferences {
+        &#conferences-search-bar {
             .collection-title-color(@conferences-collection);
         }
 
-        &#jobs {
+        &#jobs-search-bar {
             .collection-title-color(@jobs-collection);
         }
 
-        &#experiments {
+        &#experiments-search-bar {
             .collection-title-color(@experiments-collection);
         }
 
-        &#journals {
+        &#journals-search-bar {
             .collection-title-color(@journals-collection);
         }
     }
 
     #search-bar {
-        margin: 30px auto;
+        #search-box-main {
+            .navbar {
+                border: 0;
+                margin-bottom: 0;
+                background-color: inherit;
 
-        form { 
-            width: 75%;
-            margin: 0 auto;
-
-            .input-group-btn {
-                color: white;
-
-                button {
-                    border: 0;
-                    margin: 0;
-                    background-color: inherit;
+                 #searchform-input-group input {
+                    height: 50px;
+                    font-size: 18px;
                 }
+            }
 
-                &#hep-search {
+            button {
+                border: 0;
+                font-size: 27px;
+
+                &.literature {
                     .collection-background-color(@literature-collection);
                 }
 
-                &#hepnames-search {
+                &.authors {
                     .collection-background-color(@authors-collection);
                 }
 
-                &#conferences-search {
+                &.conferences {
                     .collection-background-color(@conferences-collection);
                 }
 
-                &#jobs-search {
+                &.jobs {
                     .collection-background-color(@jobs-collection);
                 }
 
-                &#experiments-search {
+                &.experiments {
                     .collection-background-color(@experiments-collection);
                 }
 
-                &#institutions-search {
+                &.institutions {
                     .collection-background-color(@institutions-collection);
                 }
 
-                &#journals-search {
+                &.journals {
                     .collection-background-color(@journals-collection);
                 }
 
-                &#data-search {
+                &.data {
                     .collection-background-color(@data-collection);
                 }
             }
-        }
-
-        input {
-            width: 100%;
-            height: 51px;
-            background-color: lighten(gray, 40%);
-            font-size: larger;
-            border: 0;
-            padding-left: 20px;
-        }
+        }   
     }
 
-    #subtitle {
-        font-size: larger;
-        color: gray;
-    }
 }
 
 #collection-how-to-search {
@@ -182,4 +170,8 @@
     .title {
        #collection-how-to-search.title;
    }
+}
+
+.navbar-form .input-group .input-group-btn {
+  width: 1%;
 }

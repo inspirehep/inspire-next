@@ -19,31 +19,23 @@
 
 {%- extends "page.html" -%}
 
-{% bundles "collection.css" %}
+{% block global_bundles %}
+  {{ super() }}
+  {% bundles "collection.css" %}
+{% endblock %}
 
 {%- block header %}
-  {% if collection is defined %}
-    {% set collection_name = collection.name %}
-  {% elif collection_name is not defined %}
-    {% set collection_name = '' %}
-  {% endif %}
-  <div class="collection-header" id="{{collection_name | lower }}-collection">
+  <div class="collection-header" id="{{collection.name | lower }}-collection">
     <div class="container">
-      {{ collection_name | get_collection_title | safe }}
+      {{ collection.name | get_collection_title | safe }}
     </div>
   </div>
 {% endblock %}
 
-{% macro search_bar(collection) %}
-  <form name="search" action="/search">
-    <div class="input-group">
-      <input type="text" name="p" placeholder="Search" autofocus>
-      <input type="hidden" name="cc" value="{{ collection }}">
-        <span class="input-group-btn" id="{{ collection }}-search">
-        <button class="btn btn-primary btn-block">
-          <i class="fa fa-search fa-2x"></i>
-        </span>
-        </button>
+{% block body %}
+  {% block search_bar %}
+    <div id="search-bar" class="{{collection_name}}">
+      {% include 'search/form/index.html' %}
     </div>
-  </form>
-{% endmacro %}
+  {% endblock %}
+{% endblock %}

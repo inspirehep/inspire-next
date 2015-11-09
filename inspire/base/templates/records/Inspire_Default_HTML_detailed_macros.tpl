@@ -21,7 +21,9 @@
   <div class="collection-header" id="{{ collection.name | sanitize_collection_name()}}-collection">
     <div class="container">
       {{ display_current_collection() | safe }}
-      {{ search_bar() | safe }}
+      <div class="search-box pull-right">
+        {{ search_bar() }}
+      </div>
     </div>
   </div>
 {% endmacro %}
@@ -31,10 +33,14 @@
 {% endmacro %}
 
 {% macro search_bar() %}
+
+  {% include "search/form/form.html" %}
+  {#
   <div class="search-box pull-right" style="display: inline-block;">
     <form class="search-form" action="/search">
       <input type="text" name="p" placeholder="&#xF002; Search {{ collection.name | sanitize_collection_name() }}" value="">
       <input type="hidden" name="cc" value="{{ collection.name }}">
     </form>
   </div>
+  #}
 {% endmacro %}

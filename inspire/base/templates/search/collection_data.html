@@ -19,19 +19,19 @@
 
 {%- extends "search/collection_basic.html" -%}
 
-{% block inner_content %}
+{% block body %}
   {% block collection_header %}
     <div id="collection-search-bar">
-      <div class="title" id="data">
+      <div class="title" id="data-search-bar">
         {% if collection_name %}
           Search {{ collection_name | number_of_records }} data sets
         {% else %}
           Search {{ collection.name | number_of_records }} data sets
         {% endif %}
       </div>
-      <div id="search-bar">
-        {{ search_bar("data") | safe }}
-      </div>
+      {% block search_bar %}
+        {{ super() }}
+      {% endblock search_bar %}
     </div>
   {% endblock %}
 {% endblock %}

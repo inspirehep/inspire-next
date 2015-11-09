@@ -19,15 +19,15 @@
 
 {%- extends "search/collection_basic.html" -%}
 
-{% block inner_content %}
+{% block body %}
   {% block collection_header %}
     <div id="collection-search-bar">
-      <div class="title" id="experiments">
+      <div class="title" id="experiments-search-bar">
         Search {{ "Experiments" | number_of_records }} experiments
       </div>
-      <div id="search-bar">
-        {{ search_bar("experiments") | safe }}
-      </div>
+      {% block search_bar %}
+        {{ super() }}
+      {% endblock search_bar %}
       <div class="subtitle">
         Example query:
           <a href="/search?p=find+year+1997&cc=experiments">find year 1997</a>

@@ -125,7 +125,7 @@
     }
 }
 
-.search-form {
+.search-box {
 
     // Do not group these rules!
     ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
@@ -141,6 +141,20 @@
     }
     :-ms-input-placeholder { /* Internet Explorer 10-11 */
         color: white;
+    }
+
+    .input-group-btn {
+        display: none;
+    }
+
+    .navbar-form {
+        margin: 0;
+        padding: 0;
+
+        #searchform-input-group input{
+            width: 300px;
+            height: 45px;
+        }
     }
 }
 
