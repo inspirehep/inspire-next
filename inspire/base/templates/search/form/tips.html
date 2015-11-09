@@ -17,21 +17,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{%- extends "search/collection_basic.html" -%}
+{% extends "search/form/tips_base.html" %}
 
-{% block body %}
-  {% block collection_header %}
-    <div id="collection-search-bar">
-      <div class="title" id="conferences-search-bar">
-          Search {{ "Conferences" | number_of_records }} conferences
-      </div>
-      {% block search_bar %}
-        {{ super() }}
-      {% endblock search_bar %}
-      <div class="subtitle">
-        Example query:
-        <a href="/search?p=Las+Vegas&cc=conferences">Las Vegas</a>
-      </div>
-    </div>
-  {% endblock %}
+{%- block search_form_ctrls_help -%}
 {% endblock %}

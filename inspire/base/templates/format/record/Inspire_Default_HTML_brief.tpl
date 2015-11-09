@@ -21,8 +21,6 @@
 
 {% from "format/record/Inspire_Default_HTML_brief_macros.tpl" import render_doi, record_journal_info with context %}
 
-{% bundles "brief-results.css" %}
-
 {% block record_header %}
 <div class="row">
   <div class="col-md-12">

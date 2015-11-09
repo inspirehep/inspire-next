@@ -191,79 +191,105 @@ hr {
     color: #7e8d8e;
 }
 
+#search_results #results-panel {
+    margin-bottom: 0;
+}
+
 // Mixin to set background color
 .collection-background-color(@background-color;) {
     background-color: @background-color;
 }
 
-#collection-search-bar {
-    background-color: white;
-    padding: 50px 10px;
-    text-align: center;
-    margin-bottom: 50px;
+#collections-section {
+    margin-bottom: 0;
+}
 
-    #search-bar {
-        margin: 30px auto;
+#search-box-main {
+    .navbar {
+        background-color: white;
+        padding: 30px 10px;
+        margin: -130px 0 0px 0;
+    }
 
-        form { 
-            width: 75%;
-            margin: 0 auto;
+    .navbar-nav {
 
-            .input-group-btn {
-                color: white;
-
-                button {
-                    border: 0;
-                    margin: 0;
-                    background-color: inherit;
-                }
-
-                &#hep-search {
-                    .collection-background-color(@literature-collection);
-                }
-
-                &#hepnames-search {
-                    .collection-background-color(@authors-collection);
-                }
-
-                &#conferences-search {
-                    .collection-background-color(@conferences-collection);
-                }
-
-                &#jobs-search {
-                    .collection-background-color(@jobs-collection);
-                }
-
-                &#experiments-search {
-                    .collection-background-color(@experiments-collection);
-                }
-
-                &#institutions-search {
-                    .collection-background-color(@institutions-collection);
-                }
-
-                &#journals-search {
-                    .collection-background-color(@journals-collection);
-                }
-
-                &#data-search {
-                    .collection-background-color(@data-collection);
-                }
-            }
-        }
-
-        input {
+        #searchform-input-group {
             width: 100%;
-            height: 51px;
-            background-color: lighten(gray, 40%);
-            font-size: larger;
-            border: 0;
-            padding-left: 20px;
         }
     }
 
-    #subtitle {
-        font-size: larger;
-        color: gray;
+    input {
+        height: 50px;
+    }
+
+    button {
+        border: 0;
+        font-size: 27px;
+
+        &.literature {
+            .collection-background-color(@literature-collection);
+        }
+
+        &.authors {
+            .collection-background-color(@authors-collection);
+        }
+
+        &.conferences {
+            .collection-background-color(@conferences-collection);
+        }
+
+        &.jobs {
+            .collection-background-color(@jobs-collection);
+        }
+
+        &.experiments {
+            .collection-background-color(@experiments-collection);
+        }
+
+        &.institutions {
+            .collection-background-color(@institutions-collection);
+        }
+
+        &.journals {
+            .collection-background-color(@journals-collection);
+        }
+
+        &.data {
+            .collection-background-color(@data-collection);
+        }
+    }
+}
+
+#total-results {
+    &.literature-results {
+        color: @literature-collection;
+    }
+
+    &.authors-results {
+        color: @authors-collection;
+    }
+
+    &.conferences-results {
+        color: @conferences-collection;
+    }
+
+    &.jobs-results {
+        color: @jobs-collection;
+    }
+
+    &.experiments-results {
+        color: @experiments-collection;
+    }
+
+    &.institutions-results {
+        color: @institutions-collection;
+    }
+
+    &.journals-results {
+        color: @journals-collection;
+    }
+
+    &.data-results {
+        color: @data-collection;
     }
 }

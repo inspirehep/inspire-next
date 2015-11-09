@@ -32,15 +32,12 @@
   ('https://labs.inspirehep.net/help', {}, '', 'Help'),
 ] -%}
 
-{#
-## Workaround for collection.name vs collection_name
-## Literature and authors collection have collection_name defined
-## while the rest of the collections have collection.name defined
-#}
+{# Work-around for collection name #}
 
-{% if collection is defined %}
-  {% set collection_name = collection.name %}
-{% elif collection_name is not defined %}
+
+{% if collection_name is not defined and collection is defined %}
+ {% set collection_name = collection.name %}
+{% else %}
   {% set collection_name = '' %}
 {% endif %}
 
@@ -453,4 +450,12 @@
     </div>
   </nav>
 </section>
+{% endif %}
+
+{% if request.endpoint == 'search.search' %}
+  <div class="collection-header" id="{{collection_name | lower }}-collection">
+    <div class="container">
+      {{ collection_name | get_collection_title | safe }}
+    </div>
+  </div>
 {% endif %}

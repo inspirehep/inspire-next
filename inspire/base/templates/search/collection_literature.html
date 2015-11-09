@@ -19,14 +19,14 @@
 
 {%- extends "search/collection_basic.html" -%}
 
-{% block inner_content %}
+{% block body %}
   <div id="collection-search-bar">
-    <div class="title" id="hep">
+    <div class="title" id="literature-search-bar">
       Search {{ "HEP" | number_of_records }} articles
     </div>
-    <div id="search-bar">
-      {{ search_bar("hep") | safe }}
-    </div>
+    {% block search_bar %}
+        {{ super() }}
+      {% endblock search_bar %}
     <div class="subtitle">
       Example queries:
       <a href="/search?p=arXiv%3A1007.5048&cc=HEP">arXiv:1007.5048</a>
@@ -59,6 +59,7 @@
     </div>
   </div>
 
+  {#
   <div id='twitter-feed'>
     <div class="row">
       <div class="col-md-6">
@@ -75,4 +76,5 @@
       </div>
     </div>
   </div>
+  #}
 {% endblock %}

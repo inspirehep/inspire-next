@@ -81,6 +81,12 @@ body {
     margin-bottom: 80px;
 
     #collections {
+            z-index: 500;
+
+            a {
+                color: white;
+            }
+
         background-color: @blue-purple;
         font-weight: 700;
         font-size: large;
@@ -174,16 +180,6 @@ body {
     }
 }
 
-#collections {
-    a {
-        color: white;
-    }
-
-    #current-collection {
-        color: @literature-collection;
-    }
-}
-
 #topnav {
     min-height: 65px;
     border-bottom: 0px;
@@ -191,7 +187,7 @@ body {
 
 // Logo customization
 
-#flask-bottom, #flask-top, #inspire-dot, #labs-text {
+#flask-bottom, #inspire-dot, #labs-text {
 
     #literature-collection & {
         fill: @literature-collection !important;
@@ -226,9 +222,41 @@ body {
     }
 }
 
+@darken-percent: 12%;
+#flask-top {
 
+    #literature-collection & {
+        fill: darken(@literature-collection, @darken-percent) !important;
+    }
 
+    #authors-collection & {
+        fill: darken(@authors-collection, @darken-percent) !important;
+    }
 
+    #conferences-collection & {
+        fill: darken(@conferences-collection, @darken-percent) !important;
+    }
+
+    #jobs-collection & {
+        fill: darken(@jobs-collection, @darken-percent) !important;
+    }
+
+    #experiments-collection & {
+        fill: darken(@experiments-collection, @darken-percent) !important;
+    }
+
+    #journals-collection & {
+        fill: darken(@journals-collection, @darken-percent) !important;
+    }
+
+    #institutions-collection & {
+        fill: darken(@institutions-collection, @darken-percent) !important;
+    }
+
+    #data-collection & {
+        fill: darken(@data-collection, @darken-percent) !important;
+    }
+}
 
 /* Dropdown menu in Header styles
 -------------------------------------------------- */
@@ -454,7 +482,7 @@ body {
     display: block;
     float: left;
     left: 0 !important;
-    top: 130px;
+    top: 70px;
     z-index: 1000;
     display: none;
     list-style: none;

@@ -384,5 +384,5 @@ def get_filters():
         'epoch_to_date_format': epoch_to_date_format,
         'sort_list_by_dict_val': sort_list_by_dict_val,
         'sanitize_collection_name': sanitize_collection_name,
-        'number_of_records': number_of_records,
+        'number_of_records': number_of_records
     }

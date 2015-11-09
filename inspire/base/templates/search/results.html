@@ -142,7 +142,8 @@
                 {%- set r_to = pagination.page*pagination.per_page -%}
                 {%- set r_of = pagination.total_count -%}
                 {%- set r_to = r_to if r_to < r_of else r_of -%}
-                {{ _('%(x_from)d-%(x_to)d of <b id="total-results">%(x_total)d</b> results.', x_from=r_from, x_to=r_to, x_total=r_of) }}
+                {%- set collection_name = collection.name | sanitize_collection_name -%}
+                {{ _('%(x_from)d-%(x_to)d of', x_from=r_from, x_to=r_to)}} <b id="total-results" class="{{ collection_name }}-results">{{ _('%(x_total)d</b> results.', x_total=r_of) }}
               </p>
             </div><!--
             --><div class="col-md-6 vcenter text-center">
@@ -162,7 +163,7 @@
             </div>
           </div>
           <hr>
-          {% if not request.args.get('cc') or request.args.get('cc') == "HEP" %}
+          {% if not request.args.get('cc') or request.args.get('cc') in ["hep","HEP"] %}
           <div class="row">
             <div class="col-md-6">
               <input id="export-select-all" type="checkbox">&nbsp;&nbsp;
@@ -234,7 +235,7 @@
 {{ render_search_results(records, collection, pagination, format_record) }}
 {% endblock %}
 {% else %}
-{{ render_search_results(records, collection, pagination, format_record) }}
+  {{ render_search_results(records, collection, pagination, format_record) }}
 {% endif %}
 
 {% block javascript %}

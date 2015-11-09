@@ -19,15 +19,15 @@
 
 {%- extends "search/collection_basic.html" -%}
 
-{% block inner_content %}
+{% block body %}
   {% block collection_header %}
     <div id="collection-search-bar">
-      <div class="title" id="authors">
+      <div class="title" id="authors-search-bar">
           Search {{ "HepNames" | number_of_records }} authors
-      </div>
-      <div id="search-bar">
-        {{ search_bar("hepnames") | safe }}
-      </div>
+      </div>      
+      {% block search_bar %}
+        {{ super() }}
+      {% endblock search_bar %}
       <div class="subtitle">
         Example query:
         <a href="/search?p=find+author+ellis+and+field+hep-th&cc=hepnames">find author ellis and field hep-th</a>
