@@ -133,7 +133,7 @@
           {% if (loop.index < 15) %}
             {% if 'keyword' in keywords.keys() %}
               <small>
-                <a href='/search?p={{ keywords.get('keyword') }}'>{{ keywords.get('keyword') }}</a>
+                <a href='/search?p=keyword:{{ keywords.get('keyword') }}'>{{ keywords.get('keyword') }}</a>
               </small>
             {% endif %}
 
