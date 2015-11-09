@@ -72,8 +72,7 @@
           </div>
           <div class="modal-body">
             {% for author in record.authors %}
-              <small class="text-left" >
-              <small class="text-left">{{ render_author_names(author) }}</small>
+              {{ render_author_names(author) }}
                {% if author.get('affiliations') and not is_brief %}
                 {% if author.get('affiliations') | is_list %} 
                   <a href="{{ url_for('search.search', p='"' + author.get('affiliations')[0].value + '"' + "&cc=Institutions") }}">
@@ -85,8 +84,7 @@
                   </a>
                 {% endif %} 
               {% endif %}
-              </small>
-              <small>{{ sep() }}</small>
+              {{ sep() }}
             {% endfor %}
           </div>
           <div class="modal-footer">
