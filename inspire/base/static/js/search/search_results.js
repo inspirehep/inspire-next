@@ -5,9 +5,10 @@ define(
     'bootstrap'
   ],
   function($, defineComponent) {
-
     'use strict';
+
     var sList = [];
+
     return defineComponent(SearchResults);
 
     function SearchResults() {
@@ -84,14 +85,13 @@ define(
         });
       }
 
-      this.onInitExportDropdown = function() {
+      this.initExportDropdown = function() {
         $('#formats-dropdown-menu > li').each(function(index) {
           $(this).on("click", function() {
             $("#dropdown-export").html($(this).text() + ' <span class="caret"></span>');
           });
         });
       }
-
 
       this.onChangeArrow = function(ev) {
         var split_id = $(ev.target).attr('id').split('-');
@@ -121,11 +121,11 @@ define(
           });
 
           if (parseInt($('#total-results').text()) > EXPORT_LIMIT) {
-            $('#results-panel').after('<div class="panel panel-default" id="info-message">' +
+            $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
               '<div class="panel-body" >You have selected ' + sList.length + ' records of this page. <a class="pointer" id="select-all-records">' +
               'Select ' + EXPORT_LIMIT + ' records (Maximum limit).</a></div></div>');
           } else {
-            $('#results-panel').after('<div class="panel panel-default" id="info-message">' +
+            $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
               '<div class="panel-body" >You have selected ' + sList.length + ' records of this page. <a class="pointer" id="select-all-records">' +
               'Select all ' + $('#total-results').text() + ' results.</a></div></div>');
           }
@@ -145,7 +145,7 @@ define(
         $('#info-message').remove();
         $.get("/search?of=id&rg=" + this.attr.EXPORT_LIMIT, function(data, status) {
           if (status == 'success') {
-            $('#results-panel').after('<div class="alert alert-warning" id="alert-selection" role="alert">' +
+            $('#results-control-panel').after('<div class="alert alert-warning" id="alert-selection" role="alert">' +
               data.length + ' records have been selected.<a class="pointer" id="undo-selection"> Undo selection.</a></div>');
             $('#undo-selection').on("click", $.proxy(that.onUndoSelection, that));
             sList = data;
@@ -210,6 +210,32 @@ define(
         }
       }
 
+      this.onNumpagesChange = function(ev) {
+        $('form[name=search] input[name=rg]').val($(ev.target).val());
+        $('form[name=search]').submit();
+      }
+
+      this.onSortingChange = function(ev) {
+        var $sortField = $('form[name=search] input[name=sf]'),
+            $sortOrder = $('form[name=search] input[name=so]');
+        var sortingVal = $("#select-sorting").val();
+        switch (sortingVal) {
+          case 'bestmatch':
+            $sortField.val('');
+            $sortOrder.val('');
+            break;
+          case 'newest':
+            $sortField.val('earliest_date');
+            $sortOrder.val('desc');
+            break;
+          case 'oldest':
+            $sortField.val('earliest_date');
+            $sortOrder.val('asc');
+            break;
+        }
+        $('form[name=search]').submit();
+      }
+
       this.after('initialize', function() {
         $('[data-toggle="tooltip"]').tooltip()
         this.on("[id^=arrow]", "click", this.onChangeArrow);
@@ -219,8 +245,9 @@ define(
         this.on("#export-select-all", "click", this.onExportSelectAll);
         this.on("#checkbox-parent > input[type=checkbox]", "change", this.onCheckboxChange);
         this.on("#download-format", "click", this.onExportAs);
-        this.onInitExportDropdown();
-        console.log("search_results is loaded");
+        this.on("#select-numpages", "change", this.onNumpagesChange);
+        this.on("#select-sorting", "change", this.onSortingChange);
+        this.initExportDropdown();
       });
 
     }
