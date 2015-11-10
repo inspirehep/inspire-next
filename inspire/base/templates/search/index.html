@@ -21,7 +21,7 @@
 #}
 
 
-{%- extends "search/index_base.html" -%}
+{%- extends "page.html" -%}
 
 {%- block global_bundles %}
   {{ super() }}
@@ -30,7 +30,7 @@
 
 {%- block extra_style %}{% endblock extra_style -%}
 
-{% block index %}
+{% block body %}
 
   <section class="container container-intro">
      <div class="row">
@@ -73,4 +73,4 @@
     </div>
 </section>
 
-{% endblock index %}
+{% endblock body %}

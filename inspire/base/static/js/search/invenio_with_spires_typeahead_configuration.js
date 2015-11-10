@@ -24,9 +24,9 @@ define([
   'js/search/default_typeahead_configuration'
 ], function(getDefaultParserConf) {
 
-  return function getInvenioSpiresParserConf(area_keywords) {
+  return function getInvenioSpiresParserConf(invenio_keywords, spires_keywords) {
 
-    var invenio_parser_options = getDefaultParserConf(area_keywords).invenio;
+    var invenio_parser_options = getDefaultParserConf(invenio_keywords).invenio;
 
     var invenio_get_next_word = invenio_parser_options.get_next_word_type;
 
@@ -98,7 +98,7 @@ define([
         ORDER: {
           QUERY_TYPE: {
             min_length: 1,
-            values: ['a', 'aff', 'j', 'c', 'refersto'],
+            values: spires_keywords,
             autocomplete_suffix: ' '
           },
           QUERY_VALUE: {
