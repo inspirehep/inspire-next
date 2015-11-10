@@ -239,11 +239,11 @@ class HEPFormToJSONTests(InvenioTestCase):
             self.record['dois'][0]['value']
         )
 
-    def test_language(self):
-        """Test if language is created correctly."""
+    def test_languages(self):
+        """Test if languages is created correctly."""
         self.assertEqual(
             self.hepform_json['other_language'],
-            self.record['language']
+            self.record['languages'][0]
         )
 
     def test_report_numbers(self):
