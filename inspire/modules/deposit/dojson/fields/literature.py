@@ -206,8 +206,8 @@ def page_range_article_id(self, key, value):
         self['publication_info'] = dict(page_artid=value)
 
 
-@literature.over('language', '^language$')
-def language(self, key, value):
+@literature.over('languages', '^language$')
+def languages(self, key, value):
     languages = [("en", "English"),
                  ("rus", "Russian"),
                  ("ger", "German"),
@@ -219,9 +219,9 @@ def language(self, key, value):
                  ("oth", "Other")]
 
     if value not in ('en', 'oth'):
-        return unicode(dict(languages).get(value))
+        return [unicode(dict(languages).get(value))]
     else:
-        return value
+        return [value]
 
 
 @literature.over('_license_url', '^license_url$')

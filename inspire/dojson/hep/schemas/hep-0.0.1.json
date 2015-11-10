@@ -974,10 +974,13 @@
             "type": "array",
             "title": "License information"
         },
-        "language": {
-            "type": "string",
-            "description": "FIXME: we shall provide the ISO enum",
-            "title": "Language"
+        "languages": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "description": "FIXME: we shall provide the ISO enum",
+                "title": "Language",
+            }
         },
         "page_nr": {
             "type": "string",

@@ -121,31 +121,25 @@ def related_experiments(self, key, value):
     }
 
 
+@utils.filter_values
 @experiments.over('date_started', '^046..')
 def date_started(self, key, value):
     """Date created."""
-    def get_value(value):
-        return value.get('s')
-
-    date_created = self.get('date_created', [])
-
-    for element in value:
-        if 's' in element:
-            date_created.append(get_value(element))
-    if date_created:
-        return date_created[0]
+    if isinstance(value, list):
+        for elem in value:
+            if elem.get('s'):
+                return elem.get('s')
+        return
+    return value.get('s')
 
 
+@utils.filter_values
 @experiments.over('date_completed', '^046..')
 def date_completed(self, key, value):
-    """Date created."""
-    def get_value(value):
-        return value.get('t')
-
-    date_completed = self.get('date_completed', [])
-
-    for element in value:
-        if 't' in element:
-            date_completed.append(get_value(element))
-    if date_completed:
-        return date_completed[0]
+    """Date completed."""
+    if isinstance(value, list):
+        for elem in value:
+            if elem.get('t'):
+                return elem.get('t')
+        return
+    return value.get('t')
