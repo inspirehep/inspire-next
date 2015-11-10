@@ -286,3 +286,71 @@
     </div>
   </div>
 {% endmacro %}
+
+{% macro record_plots() %}
+  {% if record.get('urls') %}
+    {% set plots_counter = [] %}
+    {% for url in record.get('urls') %}
+      {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+          {% do plots_counter.append(1) %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+{% if plots_counter %}
+  <div id="record-plots">
+    <div id="record-plots-title">Plots ({{ plots_counter | length }})</div>
+    <!-- Slider -->
+    <div class="row">
+      <div class="col-xs-12" id="slider">
+        <!-- Top part of the slider -->
+        <div class="row">
+          <div class="col-sm-8" id="carousel-bounding-box">
+            <div class="carousel slide" id="plotsCarousel">
+              <!-- Carousel items -->
+              <div class="carousel-inner">
+                {% for url in record.get('urls') if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+                  <div class="{% if loop.index == 1 %} active {% endif %} item"
+                       data-slide-number="{{ loop.index0 }}">
+                    <img src="{{ url.get('url') }}">
+                  </div>
+                {% endfor %}
+              </div><!-- Carousel nav -->
+              <a class="left carousel-control" href="#plotsCarousel" role="button" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+              </a>
+              <a class="right carousel-control" href="#plotsCarousel" role="button" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+              </a>                                
+            </div>
+          </div>
+
+          <div class="col-sm-4" id="carousel-text"></div>
+
+          <div id="slide-content" style="display: none;">
+            {% for url in record.get('urls') if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+              <div id="slide-content-{{ loop.index0 }}">
+                <span>{{ url.get('description') }}</span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div><!--/Slider-->
+
+    <div class="row hidden-xs" id="slider-thumbs">
+      <!-- Bottom switcher of slider -->
+      <ul class="hide-bullets">
+        {% for url in record.get('urls') if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+          <li class="col-sm-2 show-plots-thumbnails">
+            <a class="thumbnail" id="carousel-selector-{{ loop.index0 }}">
+              <img width="100" height="100" src="{{ url.get('url') }}">
+            </a>
+          </li>
+        {% endfor %}
+      </ul>                 
+    </div>
+  </div>
+{% endif %}
+
+{% endmacro %}
