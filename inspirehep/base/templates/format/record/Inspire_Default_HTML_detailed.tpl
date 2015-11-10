@@ -19,7 +19,7 @@
 
 {% extends "format/record/Default_HTML_detailed.tpl" %}
 
-{% from "format/record/Inspire_HTML_detailed_macros.tpl" import record_buttons, record_collection_heading, record_title, record_collections, record_publication_info, record_doi, record_links, detailed_record_abstract, record_keywords, record_references, record_citations with context %}
+{% from "format/record/Inspire_HTML_detailed_macros.tpl" import record_buttons, record_collection_heading, record_title, record_collections, record_publication_info, record_doi, record_links, detailed_record_abstract, record_keywords, record_references, record_citations, record_plots with context %}
 
 {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax, render_record_authors, record_cite_modal, record_arxiv with context %}
 
@@ -65,6 +65,7 @@
       </div>
     </div>
   </div>
+  {{ record_plots() }}
   <div class="row">
     <div class="col-md-6">
       {{ record_references() }}
@@ -73,4 +74,14 @@
       {{ record_citations() }}
     </div>
   </div>
+  <script type="text/javascript">
+    require(["jquery",
+             "js/plots"],
+             function($,
+                 Plots) {
+      var context = {
+      }
+      Plots.attachTo(document, context);
+    });
+  </script>
 {% endblock details %}

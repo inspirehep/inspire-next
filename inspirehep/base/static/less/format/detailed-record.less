@@ -508,6 +508,57 @@ body {
     text-align: right;
 }
 
+// Plots
+
+#record-plots {
+    &:extend(#record-abstract-keywords);
+
+    #record-plots-title {
+    &:extend(#record-abstract-title);   
+    }
+}
+
+.hide-bullets {
+  list-style:none;
+  margin-left: -40px;
+  margin-top:20px;
+}
+
+#plotsCarousel{
+    min-height: 300px;
+}
+
+.img-responsive,
+.thumbnail>img, 
+.thumbnail a>img,
+.carousel-inner>.item>img,
+.carousel-inner>.item>a>img{
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 300px;
+}
+
+#carousel-text {
+    overflow-y: scroll;
+    max-height: 500px;
+    min-height: 200px;
+}
+
+.carousel-control {
+
+    &.left, &.right {
+        background-image: none;
+
+        span {
+            color: black;
+        }
+    }
+}
+
+#slider-thumbs {
+    max-height: 200px;
+    overflow-y: auto;
+}
 
 #record_content > div.row {
 	display: none;
