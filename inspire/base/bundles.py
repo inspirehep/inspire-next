@@ -23,11 +23,14 @@
 # auto-discovery service of invenio
 from invenio_base.bundles import invenio as _i, jquery as _j, styles as _base_styles
 
+from invenio_deposit.bundles import js as _deposit_js
+
 from invenio_ext.assets import Bundle, RequireJSFilter
 
 from invenio_formatter.bundles import css as _formatter_css
 
 from invenio_search.bundles import js as _search_js
+
 
 js = Bundle(
     'js/inspire_base_init.js',
@@ -39,7 +42,6 @@ js = Bundle(
         "jQuery-menu-aim": "latest"
     }
 )
-
 
 dependencies_to_remove = ["MathJax"]
 
@@ -117,6 +119,9 @@ _search_js.contents += (
     'js/search/invenio_with_spires_typeahead_configuration.js',
     'js/search/search_results.js',
 )
+
+_deposit_js.bower["eonasdan-bootstrap-datetimepicker"] = \
+    "git://github.com/inspirehep/bootstrap-datetimepicker.git#allow-only-year"
 
 _formatter_css.contents += (
     'css/formatter/templates_detailed_inspire.css',
