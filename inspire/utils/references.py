@@ -41,30 +41,10 @@ class Reference(object):
                     recid = reference['recid']
                     record = get_record(recid)
                     if record:
-                        try:
-                            title = record['title'][0]['title']
-                            authors = record['authors'][0]['full_name']
-                            journal = record['publication_info'][0]
-                            ['journal_title']
-                            + ' ' + record['publication_info'][0]
-                            ['journal_volume'] + ' ('
-                            + record['publication_info'][0]['year'] + ') , '
-                            + record['publication_info'][0]['page_artid']
-
                             out += render_template_to_string(
                                 "references.html",
                                 number=str(number),
-                                recid=recid,
-                                title=title,
-                                authors=authors,
-                                journal=journal)
-                        except (UnboundLocalError, TypeError, KeyError):
-                            out += render_template_to_string(
-                                "references.html",
-                                number=str(number),
-                                recid=recid,
-                                title=title,
-                                authors=authors)
+                                record=record)
             if 'recid' not in reference:
                 out += render_template_to_string(
                     "references.html",
