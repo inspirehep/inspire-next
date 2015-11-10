@@ -31,6 +31,8 @@ from invenio_search.api import Query
 
 from inspire.utils.references import Reference
 
+import time
+
 
 def email_links(value):
     """
@@ -399,6 +401,16 @@ def return_collection_name(collections):
     return ""
 
 
+def sort_list_by_dict_val(l):
+    from operator import itemgetter
+    newlist = sorted(l, key=itemgetter('doc_count'), reverse=True)
+    return newlist
+
+
+def epoch_to_date_format(date):
+    return time.strftime('%Y',  time.gmtime(int(date)/1000.))
+
+
 def get_filters():
     return {
         'email_links': email_links,
@@ -431,5 +443,7 @@ def get_filters():
         'collection_select_current': collection_select_current,
         'search_collection': search_collection,
         'record_current_collection': record_current_collection,
-        'return_collection_name': return_collection_name
+        'return_collection_name': return_collection_name,
+        'epoch_to_date_format': epoch_to_date_format,
+        'sort_list_by_dict_val': sort_list_by_dict_val,
     }

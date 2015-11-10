@@ -17,7 +17,75 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
+
 {% extends "search/search_base.html" %}
+
+
+{%- block facets %}
+<div class="col-md-3 visible-md visible-lg" id="facetparent">
+  <div class="facet" id="facet_list" data-clampedwidth="#facetparent">
+    {% if 'author' in response._search()['aggregations'] %}
+    <div class="facet-container">
+      <h4>Author</h4>
+      {% for author in response._search()['aggregations']['author']['buckets'] %}
+      <div class="checkbox">
+        <label>
+          {%- set is_checked = 'checked' if 'author' in filtered_facets
+              and author['key'] in filtered_facets['author']['inc'] -%}
+          <input class="include-facet"
+                type="checkbox"
+                {{is_checked}}
+                name="author" value="{{ author['key'] }}">
+          <span class="facet-title-truncate">{{ author['key'] }}</span>
+          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ author['doc_count'] }}</span>
+        </label>
+      </div>
+      {% endfor %}
+      <hr />
+    </div>
+    {% endif %}
+    {% if 'experiment' in response._search()['aggregations'] %}
+    <div class="facet-container">
+      <h4>Experiment</h4>
+      {% for experiment in response._search()['aggregations']['experiment']['buckets'] %}
+      <div class="checkbox">
+        <label>
+          {%- set is_checked = 'checked' if 'experiment' in filtered_facets
+              and experiment['key'] in filtered_facets['experiment']['inc'] -%}
+          <input class="include-facet"
+                type="checkbox"
+                {{is_checked}}
+                name="experiment" value="{{ experiment['key'] }}">
+          <span class="facet-title-truncate">{{ experiment['key'] }}</span>
+          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ experiment['doc_count'] }}</span>
+        </label>
+      </div>
+      {% endfor %}
+      <hr />
+    </div>
+    {% endif %}
+    {% if 'year' in response._search()['aggregations'] %}
+    <div class="facet-container">
+      <h4>Year</h4>
+        {% for year in response._search()['aggregations']['year']['buckets'] %}
+      <div class="checkbox">
+        <label>
+          {%- set is_checked = 'checked' if 'year' in filtered_facets
+              and year['key'] in filtered_facets['year']['inc'] -%}
+          <input class="include-facet"
+                type="checkbox"
+                {{is_checked}}
+                name="year" value="{{ year['key'] }}">
+          <span class="facet-title-truncate">{{ year['key'] | epoch_to_date_format }}</span>
+          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ year['doc_count'] }}</span>
+        </label>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{%- endblock facets %}
 
 {%- block javascript %}
 {{ super() }}

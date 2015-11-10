@@ -162,6 +162,10 @@
                     "type": "date",
                     "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S||dd MM yyyy||dd MMM yyyy||MMM yyyy||MMM yyyy?||yyyy ('repr'.1964.)"
                 },
+                "earliest_date": {
+                    "type": "date",
+                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyy-MM-dd||yyyyMMddHHmmss||yyyyMMddHHmmss.S||dd MM yyyy||dd MMM yyyy||MMM yyyy||MMM yyyy?||yyyy ('repr'.1964.)"
+                },
                 "institution": {
                     "type": "object",
                     "properties": {

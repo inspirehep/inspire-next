@@ -27,7 +27,6 @@
 
 {% if searchbar_enable %}
   {% from "_formhelpers.html" import render_filter_form with context %}
-  {% from "search/helpers.html" import search_form, search_form_javascript with context %}
 {% endif %}
 
 {%- block global_bundles %}
@@ -42,13 +41,6 @@
 
 {%- block css %}
 <link href='https://fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
-{% endblock %}
-
-{% block javascript %}
-  {{ super() }}
-  {% if searchbar_enable %}
-    {{ search_form_javascript(collection) }}
-  {% endif %}
 {% endblock %}
 
 {% block trackingcode %}
@@ -86,7 +78,7 @@
 {%- if not no_pagebody -%}
 {%- block page_body -%}
 {# adds .container to all pages except for the landing one #}
-<div {% if request.endpoint != "collections.index" %} class="container main-container" {% endif %}>
+<div {% if request.endpoint != "collections.index" %} class="container main-container" {% endif %} id="main-results">
   {% block title %}
   {% endblock title %}
   {#
@@ -96,10 +88,7 @@
   {% set flash = flashed_messages() %}
   {% block body %}
     {{ super() }}
-    {% if searchbar_enable %}
-    {{ search_form(collection, easy_search_form) }}
-    {% endif %}
-
+    
     {% block inner_content %}
     <!-- Here goes the content visible below the search bar -->
     {% endblock inner_content %}
