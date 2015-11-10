@@ -25,6 +25,32 @@
    'jquery-menu-aim',
  ], function($, $menuAim) {
    $(window).ready(function() {
+     var $menu = $(".dropdown-menu");
+
+     function activateSubmenu(row) {
+       var $row = $(row),
+         submenuId = $row.data("submenuId"),
+         $submenu = $("#" + submenuId),
+         height = $menu.outerHeight(),
+         width = $menu.outerWidth();
+       // Show the submenu
+       $submenu.css({
+         display: "block",
+         top: -1,
+         left: width - 3 // main should overlay submenu
+           //height: height - 4  // padding for main dropdown's arrow
+       });
+     }
+
+     function deactivateSubmenu(row) {
+       var $row = $(row),
+         submenuId = $row.data("submenuId"),
+         $submenu = $("#" + submenuId);
+       // Hide the submenu and remove the row's highlighted look
+       $submenu.css("display", "none");
+       //$row.find("a").removeClass("maintainHover");
+     }
+
      doneResizing();
      var id;
      $(window).resize(function() {
@@ -35,7 +61,6 @@
 
      function doneResizing() {
        var wi = $(window).width();
-       var $menu = $(".dropdown-menu");
        if (wi > 767) {
          $menu.menuAim({
            activate: activateSubmenu,
@@ -62,31 +87,6 @@
          arrowDefaultState("#fifth-arrow");
          arrowDefaultState("#sixth-arrow");
          arrowDefaultState("#seventh-arrow");
-
-
-         function activateSubmenu(row) {
-           var $row = $(row),
-             submenuId = $row.data("submenuId"),
-             $submenu = $("#" + submenuId),
-             height = $menu.outerHeight(),
-             width = $menu.outerWidth();
-           // Show the submenu
-           $submenu.css({
-             display: "block",
-             top: -1,
-             left: width - 3 // main should overlay submenu
-               //height: height - 4  // padding for main dropdown's arrow
-           });
-         }
-
-         function deactivateSubmenu(row) {
-           var $row = $(row),
-             submenuId = $row.data("submenuId"),
-             $submenu = $("#" + submenuId);
-           // Hide the submenu and remove the row's highlighted look
-           $submenu.css("display", "none");
-           //$row.find("a").removeClass("maintainHover");
-         }
 
          $(".dropdown-menu li").click(function(e) {
            e.stopPropagation();
@@ -131,7 +131,6 @@
        }
      }
    });
-
 
    function arrowDefaultState(id) {
      $(id).addClass('fa-chevron-right').removeClass('fa-chevron-down');
