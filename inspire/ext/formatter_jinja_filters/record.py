@@ -182,9 +182,9 @@ def experiment_date(record):
     if 'date_started' in record:
         result.append('Started: ' + record['date_started'])
     if 'date_completed' in record:
-        if record['date_completed'] == '9999':
+        if record.get('date_completed') == '9999':
             result.append('Still Running')
-        else:
+        elif record.get('date_completed'):
             result.append('Completed: ' + record['date_completed'])
     if result:
         return ', '.join(r for r in result)
