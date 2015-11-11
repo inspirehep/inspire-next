@@ -399,6 +399,14 @@ def return_collection_name(collections):
     return ""
 
 
+def sanitize_arxiv_pdf(arxiv_value):
+    """Sanitizes the arXiv PDF link so it is always correct"""
+    if 'arXiv' in arxiv_value:
+        arxiv_value = arxiv_value[6:]
+
+    return arxiv_value + '.pdf'
+
+
 def get_filters():
     return {
         'email_links': email_links,
@@ -431,5 +439,6 @@ def get_filters():
         'collection_select_current': collection_select_current,
         'search_collection': search_collection,
         'record_current_collection': record_current_collection,
-        'return_collection_name': return_collection_name
+        'return_collection_name': return_collection_name,
+        'sanitize_arxiv_pdf': sanitize_arxiv_pdf
     }

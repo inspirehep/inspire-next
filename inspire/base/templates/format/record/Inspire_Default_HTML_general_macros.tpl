@@ -17,8 +17,8 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% macro render_author_names(author) %}
-  <a{% if author.affiliations|length > 0 %}
+{% macro render_author_names(author, show_affiliation) %}
+  <a{% if author.affiliations|length > 0  and show_affiliation %}
       data-toggle="tooltip"
       data-placement="bottom"
       title="{{ author.get('affiliations')[0]['value'] }}"
@@ -34,7 +34,7 @@
     {% set authors = record.authors %}
     {% for author in authors[0:number_of_displayed_authors] %}
       <small>{{ sep() }}</small>
-      <small class="text-left">{{ render_author_names(author) }}</small>
+      <small class="text-left">{{ render_author_names(author, show_affiliation = True ) }}</small>
     {% endfor %}
     {% if (record.authors | length > number_of_displayed_authors) and show_affiliations %}
       {{ sep() }}
