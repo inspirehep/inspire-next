@@ -3,34 +3,30 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2014, 2015 CERN.
 #
-# INSPIRE is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-#
-# In applying this licence, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as an Intergovernmental Organization
-# or submit itself to any jurisdiction.
+# along with INSPIRE. If not, write to Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-import six
-
-from wtforms.validators import ValidationError, StopValidation
-
-from invenio_base.globals import cfg
+from datetime import datetime
+from urllib import urlencode
 
 from idutils import is_arxiv, is_isbn
 
-from invenio_deposit.validation_utils import RequiredIf
+from invenio_base.globals import cfg
 
-from urllib import urlencode
+import six
+
+from wtforms.validators import StopValidation, ValidationError
 
 
 def arxiv_syntax_validation(form, field):
@@ -131,7 +127,7 @@ def pdf_validator(form, field):
                 url,
                 allow_redirects=True
             )
-        except:
+        except requests.exceptions.RequestException:
             return
         return response.headers['content-type']
 
@@ -139,6 +135,21 @@ def pdf_validator(form, field):
 
     if field.data and get_content_type(field.data) != 'application/pdf':
         raise StopValidation(message)
+
+
+def date_validator(form, field):
+    message = ("Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM"
+               " or YYYY.")
+    if field.data:
+        for date_format in ["%Y-%m-%d", "%Y-%m", "%Y"]:
+            try:
+                datetime.strptime(field.data, date_format).date()
+            except ValueError:
+                pass
+            else:
+                break
+        else:
+            raise StopValidation(message)
 
 
 class RequiredIfFiles(object):

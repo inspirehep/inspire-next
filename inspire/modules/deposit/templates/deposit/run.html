@@ -16,6 +16,7 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
+
 {% extends "deposit/run_base.html" %}
 {% set title = "Suggest content" %}
 
@@ -64,6 +65,8 @@ require(
         datepicker_element: '.datepicker',
         datepicker_options: {
             format: "YYYY-MM-DD",
+            extraFormats: ["YYYY", "YYYY-MM"],
+
         }
       },
       inspire: {

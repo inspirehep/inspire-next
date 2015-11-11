@@ -22,30 +22,30 @@
 
 """Contains forms related to INSPIRE submission."""
 
-from wtforms import validators
-from wtforms.widgets import html_params, HTMLString, HiddenInput
-from wtforms.fields import DateTimeField, SubmitField
 from flask.ext.wtf import Form
 
-from invenio_base.i18n import _
 from invenio_base.globals import cfg
+from invenio_base.i18n import _
+
 from invenio_deposit import fields
-from invenio_deposit.form import WebDepositForm
-from invenio_deposit.field_widgets import ColumnInput, \
-    ExtendedListWidget, \
-    ItemWidget, \
-    DynamicListWidget, \
-    DynamicItemWidget
 from invenio_deposit.autocomplete_utils import kb_dynamic_autocomplete
+from invenio_deposit.field_widgets import (ColumnInput, DynamicItemWidget,
+                                           DynamicListWidget,
+                                           ExtendedListWidget, ItemWidget)
+from invenio_deposit.form import WebDepositForm
 from invenio_deposit.validation_utils import DOISyntaxValidator
 
+from wtforms import validators
+from wtforms.fields import DateTimeField, SubmitField
+from wtforms.widgets import HTMLString, HiddenInput, html_params
+
 from .fields import ArXivField
+from .filters import clean_empty_list
 # from .fields import ISBNField
 from .validators.dynamic_fields import AuthorsValidation
-from .filters import clean_empty_list
-from .validators.simple_fields import duplicated_doi_validator, \
-    duplicated_arxiv_id_validator, arxiv_syntax_validation, \
-    pdf_validator
+from .validators.simple_fields import (arxiv_syntax_validation, date_validator,
+                                       duplicated_arxiv_id_validator,
+                                       duplicated_doi_validator, pdf_validator)
 
 #
 # Field class names
@@ -411,15 +411,17 @@ class LiteratureForm(WebDepositForm):
         widget_classes=THESIS_CLASS,
     )
 
-    thesis_date = fields.Date(
+    thesis_date = fields.TextField(
         label=_('Date of Submission'),
-        description='Format: YYYY-MM-DD.',
+        description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
+        validators=[date_validator],
         widget=defensedate_widget,
     )
 
-    defense_date = fields.Date(
+    defense_date = fields.TextField(
         label=_('Date of Defense'),
-        description='Format: YYYY-MM-DD.',
+        description='Format: YYYY-MM-DD, YYYY-MM or YYYY.',
+        validators=[date_validator],
         widget=defensedate_widget,
     )
 
@@ -607,6 +609,8 @@ class LiteratureForm(WebDepositForm):
     field_sizes = {
         'type_of_doc': 'col-xs-12 col-md-3',
         'wrap_nonpublic_note': 'col-md-9',
+        'defense_date': 'col-xs-12 col-md-4',
+        'thesis_date': 'col-xs-12 col-md-4',
         'degree_type': 'col-xs-12 col-md-3',
     }
 
