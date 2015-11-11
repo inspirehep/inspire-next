@@ -16,21 +16,7 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
-
 {%- extends "search/helpers_base.html" -%}
-
-{% block searchfield_typeahead_configuration %}
-
-  var parser_options = getInvenioSpiresParserConf(area_keywords);
-
-  searchField.searchTypeahead({
-    value_hints_url: '/list/%TYPE?q=%QUERY',
-    options_sets: parser_options,
-    default_set: 'invenio'
-  });
-
-{% endblock searchfield_typeahead_configuration %}
-
 
 {% macro search_form(collection, easy_search_form) %}
 {% block search_form scoped %}
@@ -161,4 +147,57 @@
   </div>#}
 {%- endblock search_form_body %}
 {% endblock search_form %}
+{% endmacro %}
+
+
+{% macro _search_simple_box(collection, easy_search_form) %}
+  {% block _search_simple_box scoped %}
+    {% for f in easy_search_form if not f.name=='csrf_token' %}
+    <div class="form-group">
+      <label class="col-md-2 col-sm-3 control-label" for="{{ f.label.field_id }}">
+        {{ f.label.text }}
+      </label>
+      <div class="col-md-10 col-sm-9">
+        {{ f(class_='form-control') }}
+      </div>
+    </div>
+    {% endfor %}
+
+    <div class="form-group">
+      <div class="col-md-offset-2 col-md-10 col-sm-offset-3 col-sm-9">
+        <div class="pull-right">
+          <button name="action_search" type="submit" class="btn btn-primary">
+            <i class="glyphicon glyphicon-search"></i> {{ _("Search") }}
+          </button>
+        </div>
+      </div>
+    </div>
+  {% endblock _search_simple_box %}
+{% endmacro %}
+
+{% macro search_box(collection, easy_search_form) %}
+{% block search_box scoped %}
+  <div class="form-horizontal add_to_search-form">
+    {{ _search_simple_box(collection, easy_search_form) }}
+  </div>
+{% endblock search_box %}
+{% endmacro %}
+
+
+{% macro search_form_javascript(collection) %}{% block search_form_javascript %}
+<script type="text/javascript">
+require(['jquery', 'js/search/form'], function($, searchForm) {
+  var args = {
+    invenio_keywords: {{ config.SEARCH_TYPEAHEAD_INVENIO_KEYWORDS | tojson | safe }},
+    spires_keywords: {{ config.SEARCH_TYPEAHEAD_SPIRES_KEYWORDS | tojson | safe }},
+    hintsUrl: '/list/%TYPE?q=%QUERY',
+    defaultSet: 'invenio'
+  };
+
+  $(function() {
+    searchForm(args)
+  })
+})
+</script>
+{% endblock search_form_javascript %}
 {% endmacro %}

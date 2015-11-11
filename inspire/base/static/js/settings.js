@@ -50,7 +50,6 @@ require.config({
     "jasmine-ajax": "vendors/jasmine-ajax/lib/mock-ajax",
     "jasmine-flight": "vendors/jasmine-flight/lib/jasmine-flight",
     "jasmine-boot": "js/jasmine/boot",
-    "searchtypeahead-configuration": "js/search/default_typeahead_configuration",
     "jasmine-events": "js/jasmine/events_checker",
     "jasmine-initialization": "js/jasmine/initialization_checker",
     "select2": "vendor/select2/select2.min",
@@ -65,7 +64,8 @@ require.config({
     "toastr": "vendors/toastr/toastr",
     "html2canvas": "vendors/html2canvas/build/html2canvas",
     "highcharts": "vendors/highcharts-release/highcharts",
-    "jquery-menu-aim": "vendors/jQuery-menu-aim/jquery.menu-aim"
+    "jquery-menu-aim": "vendors/jQuery-menu-aim/jquery.menu-aim",
+    "searchtypeahead-configuration": "js/search/invenio_with_spires_typeahead_configuration"
   },
   shim: {
     jquery: {

@@ -34,6 +34,7 @@ Happy hacking!
 
 from invenio_query_parser.contrib.spires.walkers.pypeg_to_ast import PypegConverter
 from invenio_query_parser.contrib.spires.walkers.spires_to_invenio import SpiresToInvenio
+from invenio_query_parser.contrib.spires.config import SPIRES_KEYWORDS
 
 
 EXTENSIONS = [
@@ -68,7 +69,6 @@ EXTENSIONS = [
     'invenio_ext.crossref:CrossRef',
     'invenio_ext.es',
     'invenio_ext.mixer',
-    'inspire.ext.search_bar',
     'inspire.ext.formatter_jinja_filters',
     'inspire.ext.deprecation_warnings:disable_deprecation_warnings',
 ]
@@ -266,6 +266,22 @@ RECORD_PROCESSORS = {
 RECORDS_BREADCRUMB_TITLE_KEY = 'breadcrumb_title'
 
 CFG_WEBSEARCH_SEARCH_CACHE_TIMEOUT = None
+
+# INSPIRE-specific configuration for keywords that typeahead should propose
+# when using Invenio syntax
+SEARCH_TYPEAHEAD_INVENIO_KEYWORDS = [
+    'title',
+    'author',
+    'abstract',
+    'doi',
+    'affiliation',
+    'eprint',
+    'reportnumber',
+]
+
+# INSPIRE-specific configuration for keywords that typeahead should propose
+# when using SPIRES syntax
+SEARCH_TYPEAHEAD_SPIRES_KEYWORDS = list(set(SPIRES_KEYWORDS.keys()))
 
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
 # invenio keywords to elasticsearch fields
