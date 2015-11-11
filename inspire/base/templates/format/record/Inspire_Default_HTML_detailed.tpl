@@ -21,9 +21,10 @@
 
 {% from "format/record/Inspire_HTML_detailed_macros.tpl" import record_buttons, record_collection_heading, record_title, record_collections, record_publication_info, record_doi, record_links, detailed_record_abstract, record_keywords, record_references, record_citations with context %}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors, record_cite_modal, record_arxiv with context %}
+{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax, render_record_authors, record_cite_modal, record_arxiv with context %}
 
 {% block header %}
+  {{ mathjax() | safe }}
   {{ record_cite_modal() }}
   <div id="{{record.collections | record_current_collection("") }}" class="record-collection-heading ellipsis">
     {{ record_collection_heading() }}
