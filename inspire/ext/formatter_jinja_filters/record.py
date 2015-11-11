@@ -452,7 +452,10 @@ def get_filters():
         'search_collection': search_collection,
         'record_current_collection': record_current_collection,
         'return_collection_name': return_collection_name,
+<<<<<<< 602f21c843753f54087ef472fa5cd9254f68509d
         'sanitize_arxiv_pdf': sanitize_arxiv_pdf,
+=======
+>>>>>>> facets: initial commit
         'epoch_to_date_format': epoch_to_date_format,
         'sort_list_by_dict_val': sort_list_by_dict_val,
     }
