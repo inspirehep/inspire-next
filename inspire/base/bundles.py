@@ -23,6 +23,8 @@
 # auto-discovery service of invenio
 from invenio_base.bundles import invenio as _i, jquery as _j, styles as _base_styles
 
+from invenio_deposit.bundles import js as _deposit_js
+
 from invenio_ext.assets import Bundle, RequireJSFilter
 
 from invenio_formatter.bundles import css as _formatter_css
@@ -110,6 +112,10 @@ to_remove = ["less/base.less",
 
 for elem in to_remove:
     _base_styles.contents.remove(elem)
+
+
+_deposit_js.bower["eonasdan-bootstrap-datetimepicker"] = \
+    "git://github.com/inspirehep/bootstrap-datetimepicker.git#allow-only-year"
 
 _formatter_css.contents += (
     'css/formatter/templates_detailed_inspire.css',
