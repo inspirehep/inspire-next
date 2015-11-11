@@ -65,16 +65,12 @@
 
 {%- if not no_pagebody -%}
 {%- block page_body -%}
-{{ super() }}
 {# adds .container to all pages except for the landing one #}
 <div {% if request.endpoint != "collections.index" %} class="container main-container" {% endif %}>
-  {% block title %}
-  {% endblock title %}
-  {#
-     FIXME: we just pop the flashed messages here to ignore them
-     due to redundancy.
-  #}
   {% set flash = flashed_messages() %}
+  {%- block body %}
+    {{ body }}
+  {%- endblock body %}
 </div>
 {%- endblock page_body %}
 {%- endif %}

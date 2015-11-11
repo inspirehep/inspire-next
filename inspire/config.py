@@ -311,6 +311,28 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "542__l": ["information_relating_to_copyright_status.copyright_status"],
 }
 
+SEARCH_ELASTIC_AGGREGATIONS = {
+    "hep": {
+        "author": {
+            "terms": {
+                "field": "exactauthor.raw"
+            }
+        },
+        "experiment": {
+            "terms": {
+                "field": "accelerator_experiments.experiment"
+            }
+        },
+        "year": {
+            "date_histogram": {
+                "field": "earliest_date",
+                "interval": "year",
+                "format": "YYYY"
+            }
+        }
+    }
+}
+
 SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
     "HEP": "hep",
     "Conferences": "conferences",
