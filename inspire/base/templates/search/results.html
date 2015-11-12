@@ -20,6 +20,11 @@
 ## or submit itself to any jurisdiction.
 #}
 
+{% bundles "search.js", "brief-results.css", "search.css" %}
+
+{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax %}
+
+
 {% macro render_search_pagination(pagination) %}
   {%- set args = request.args.copy().to_dict() -%}
   {%- if pagination.pages > 1 -%}
@@ -56,11 +61,78 @@
   {%- endif -%}
 {% endmacro %}
 
+{% macro render_facets() %}
+<div class="col-md-3 visible-md visible-lg" id="facetparent">
+  <div class="facet" id="facet_list" data-clampedwidth="#facetparent">
+    {% if 'author' in response._search()['aggregations'] %}
+    <div class="facet-container">
+      <h4>Filter by Author</h4>
+      {% for author in response._search()['aggregations']['author']['buckets'] %}
+      <div class="checkbox">
+        <label>
+          {%- set is_checked = 'checked' if 'author' in filtered_facets
+              and author['key'] in filtered_facets['author']['inc'] -%}
+          <input class="include-facet"
+                type="checkbox"
+                {{is_checked}}
+                name="author" value="{{ author['key'] }}">
+          <span class="facet-title-truncate">{{ author['key'] }}</span>
+          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ author['doc_count'] }}</span>
+        </label>
+      </div>
+      {% endfor %}
+      <hr />
+    </div>
+    {% endif %}
+    {% if 'experiment' in response._search()['aggregations'] %}
+    <div class="facet-container">
+      <h4>Filter by Experiment</h4>
+      {% for experiment in response._search()['aggregations']['experiment']['buckets'] %}
+      <div class="checkbox">
+        <label>
+          {%- set is_checked = 'checked' if 'experiment' in filtered_facets
+              and experiment['key'] in filtered_facets['experiment']['inc'] -%}
+          <input class="include-facet"
+                type="checkbox"
+                {{is_checked}}
+                name="experiment" value="{{ experiment['key'] }}">
+          <span class="facet-title-truncate">{{ experiment['key'] }}</span>
+          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ experiment['doc_count'] }}</span>
+        </label>
+      </div>
+      {% endfor %}
+      <hr />
+    </div>
+    {% endif %}
+    {% if 'year' in response._search()['aggregations'] %}
+    {% set sorted_year = response._search()['aggregations']['year']['buckets']|sort_list_by_dict_val %}
+    <div class="facet-container">
+      <h4>Filter by Year</h4>
+        {% for year in sorted_year %}
+      <div class="checkbox">
+        <label>
+          {%- set is_checked = 'checked' if 'year' in filtered_facets
+              and year['key']| epoch_to_date_format in filtered_facets['year']['inc'][0] -%}
+          <input class="include-facet"
+                type="checkbox"
+                {{is_checked}}
+                name="year" value="{{ year['key']| epoch_to_date_format }}">
+          <span class="facet-title-truncate">{{ year['key'] | epoch_to_date_format }}</span>
+          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ year['doc_count'] }}</span>
+        </label>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
 
 {% macro render_search_results(records, collection, pagination, format_record) %}
   {%- if pagination %}
-  <div class="row">
-    <div class="col-md-12">
+  <div class="row" id="search-results">
+  {{ render_facets() }}
+    <div class="col-md-9">
       <div class="panel panel-default" id="results-panel">
         <div class="panel-body" >
           <div class="row" id="results-wrapper">
@@ -95,7 +167,7 @@
           {% if not request.args.get('cc') or request.args.get('cc') == "HEP" %}
           <div class="row">
             <div class="col-md-12">
-            <input id="checkbox-select-all" type="checkbox">&nbsp;&nbsp;
+            <input id="export-select-all" type="checkbox">&nbsp;&nbsp;
             Export as
             <div class="dropdown" id="export-dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-export" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -118,10 +190,8 @@
           {% endif %}
         </div>
       </div>
-     </div>   
-    </div>
+      <hr/>
   {% endif %}
-  <hr/>
   {%- for record in records -%}{% set recordloop = loop %}
     {%- set recid = record['recid'] %}
     {%- if of[0] == 'h' -%}
@@ -153,9 +223,43 @@
 
 {% if not request.is_xhr %}
 {% extends 'search/searchbar_frame.html' %}
-{% block body %}
+{% block inner_content %}
 {{ render_search_results(records, collection, pagination, format_record) }}
 {% endblock %}
 {% else %}
 {{ render_search_results(records, collection, pagination, format_record) }}
 {% endif %}
+
+{% block javascript %}
+  {{ mathjax() | safe }}
+
+  <script type="text/javascript">
+    require(["jquery",
+             "js/search/facets_filter",
+             "js/search/search",
+             "js/search/facets_menu",
+             "js/search/search_results"],
+             function($,
+                 FacetsFilter,
+                 Search,
+                 FacetsMenu,
+                 SearchResults) {
+      var facetsFilter = new FacetsFilter({{ filtered_facets | tojson | safe }});
+      var context = {
+        searchUrl: '{{ url_for('search.search') }}',
+        urlArgs: {{ request.args.to_dict() | tojson | safe }},
+        facetsMenuSelector: '.facet',
+        searchFormSelector: '#searchform',
+        searchQueryFiltersSelector: '#search-query-filters',
+        searchQueryFiltersTextSelector: '.search-query-filters-text',
+        searchQueryFiltersEditSelector: '.search-query-filters-edit',
+        searchResultsSelector: '#search-results',
+        facetsFilter: facetsFilter,
+      }
+      FacetsMenu.attachTo(context.facetsMenuSelector, context);
+      Search.attachTo(document, context);
+      SearchResults.attachTo(document, context);
+      $(document).trigger("initSearch");
+    });
+  </script>
+{% endblock %}

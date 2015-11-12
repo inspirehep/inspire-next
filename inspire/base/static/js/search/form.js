@@ -27,6 +27,7 @@ define([
     "use strict";
 
     $("form[name=search]").submit(function() {
+        $(this).children(':input[value=""]').attr("disabled", "disabled");
         $('.add_to_search-form').remove()
         return true; // ensure form still submits
     })

@@ -27,8 +27,6 @@ from invenio_ext.assets import Bundle, RequireJSFilter
 
 from invenio_formatter.bundles import css as _formatter_css
 
-from invenio_search.bundles import js as _search_js
-
 js = Bundle(
     'js/inspire_base_init.js',
     output='base.js',
@@ -112,10 +110,6 @@ to_remove = ["less/base.less",
 
 for elem in to_remove:
     _base_styles.contents.remove(elem)
-
-_search_js.contents += (
-    'js/search/search_results.js',
-)
 
 _formatter_css.contents += (
     'css/formatter/templates_detailed_inspire.css',
