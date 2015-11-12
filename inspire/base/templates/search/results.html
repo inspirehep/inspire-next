@@ -153,7 +153,7 @@
             --><div class="col-md-3 text-right vcenter">
               <p class="help-block hidden-xs">
                 Results per page:
-                <select name="rg">
+                <select name="rg" id="results-per-page">
                   <option value="10">10</option>
                   <option value="25" selected="selected">25</option>
                   <option value="50">50</option>
@@ -175,12 +175,12 @@
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" id='formats-dropdown-menu' aria-labelledby="dropdown-export">
-              <li><a class="pointer" id="export-as-bibtex">BibTex</a></li>
-              <li><a class="pointer" id="export-as-latex-eu">LaTex(EU)</a></li>
-              <li><a class="pointer" id="export-as-latex-us">LaTex(US)</a></li>
-              <li><a class="pointer" id="export-as-cv-latex">CV format (LaTex)</a></li>
-              <li><a class="pointer" id="export-as-cv-html">CV format (html)</a></li>
-              <li><a class="pointer" id="export-as-cv-text">CV format (text)</a></li>
+              <li><a class="pointer export-as-element" id="export-as-bibtex">BibTex</a></li>
+              <li><a class="pointer export-as-element" id="export-as-latex-eu">LaTex(EU)</a></li>
+              <li><a class="pointer export-as-element" id="export-as-latex-us">LaTex(US)</a></li>
+              <li><a class="pointer export-as-element" id="export-as-cv-latex">CV format (LaTex)</a></li>
+              <li><a class="pointer export-as-element" id="export-as-cv-html">CV format (html)</a></li>
+              <li><a class="pointer export-as-element" id="export-as-cv-text">CV format (text)</a></li>
             </ul>
             </div> 
             <a type="button" id="download-format" class="btn btn-default">Download</a>
