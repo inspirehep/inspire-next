@@ -4,7 +4,7 @@
 service mysql start
 service redis-server start
 service rabbitmq-server start
-/elasticsearch-"${ES_VERSION}"/bin/elasticsearch 1> /dev/null &
+/elasticsearch-"${ES_VERSION}"/bin/elasticsearch --path.plugins="/elasticsearch-${ES_VERSION}/plugins" 1> /dev/null &
 
 # Needed to fix Python 2.7.9 TypeError with Jinja2.
 # See: https://github.com/inveniosoftware/invenio/issues/2862#issuecomment-90508434

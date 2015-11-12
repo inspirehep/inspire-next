@@ -146,7 +146,7 @@ cluster.name: inspire
 
 # Path to directory where to store index data allocated for this node.
 #
-path.data: /usr/local/var/elasticsearch/
+# path.data: /usr/local/var/elasticsearch/
 #
 # Can optionally include more than one location, causing data to be striped across
 # the locations (a la RAID 0) on a file level, favouring locations with most free
@@ -160,11 +160,11 @@ path.data: /usr/local/var/elasticsearch/
 
 # Path to log files:
 #
-path.logs: /usr/local/var/log/elasticsearch/
+# path.logs: /usr/local/var/log/elasticsearch/
 
 # Path to where plugins are installed:
 #
-path.plugins: /usr/local/var/lib/elasticsearch/plugins
+# path.plugins: /usr/local/var/lib/elasticsearch/plugins
 
 
 #################################### Plugin ###################################
