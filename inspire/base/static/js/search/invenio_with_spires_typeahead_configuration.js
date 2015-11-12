@@ -50,8 +50,7 @@ define([
     }
 
     function notStartsNorEndsWithColon(str, char_roles, start_idx, keyword) {
-      return notEndsWithColon(str, char_roles, start_idx + keyword.length)
-        && !(start_idx > 0 && str[start_idx - 1] == ':');
+      return notEndsWithColon(str, char_roles, start_idx + keyword.length) && !(start_idx > 0 && str[start_idx - 1] == ':');
     }
 
     function isFirstWord(str, char_roles, start_idx, keyword) {
@@ -71,8 +70,7 @@ define([
       min_length: 1,
       keyword_function: setSpireSyntax,
       detection_condition: function(str, char_roles, start_idx, keyword) {
-        return isFirstWord(str, char_roles, start_idx, keyword)
-          && notStartsNorEndsWithColon(str, char_roles, start_idx, keyword)
+        return isFirstWord(str, char_roles, start_idx, keyword) && notStartsNorEndsWithColon(str, char_roles, start_idx, keyword)
       },
       values: ['find'],
       autocomplete_suffix: ' '
