@@ -260,15 +260,15 @@ def format_cnum_with_hyphons(value):
 
 
 def link_to_hep_affiliation(record):
-    reccnt = Query("affiliation:%s" % (record['department_acronym'],))\
+    reccnt = Query("affiliation:%s" % (record['ICN'],))\
         .search().recids
     if len(reccnt) > 0:
         if len(reccnt) == 1:
             return str(len(reccnt)) + ' Paper from ' +\
-                str(record['department_acronym'])
+                str(record['ICN'])
         else:
             return str(len(reccnt)) + ' Papers from ' +\
-                str(record['department_acronym'])
+                str(record['ICN'])
 
 
 def join_nested_lists(l, sep):

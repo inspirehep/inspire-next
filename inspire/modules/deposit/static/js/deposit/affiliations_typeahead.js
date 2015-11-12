@@ -44,12 +44,10 @@ define([
           return '/search?cc=Institutions&p=' + pattern + '&of=recjson&rg=100'
         },
         filter: function(response) {
-          var affiliations = $.map(response, function(item, idx) {
-            return item.institution;
-          });
-          return affiliations.sort(function(a, b) {
-            if (a.affiliation < b.affiliation) return -1;
-            if (a.affiliation > b.affiliation) return 1;
+
+          return response.sort(function(a, b) {
+            if (a.ICN < b.ICN) return -1;
+            if (a.ICN > b.ICN) return 1;
             return 0;
           })
         }
@@ -63,11 +61,11 @@ define([
     this.$element = $element;
 
     var suggestionTemplate = Hogan.compile(
-      '<strong>{{ affiliation }}</strong><br>' +
+      '<strong>{{ ICN }}</strong><br>' +
       '<small>' +
-      '{{#new_name}}{{#show_future_name}}Alternative name: {{new_name}}<br>{{/show_future_name}}{{/new_name}}' +
+      '{{#new_ICN}}{{#show_future_name}}Alternative name: {{new_ICN}}<br>{{/show_future_name}}{{/new_ICN}}' +
       '{{#department}}{{ department }}<br>{{/department}}' +
-      '{{#name}}{{ name }}{{/name}}' +
+      '{{#institution}}{{ institution }}{{/institution}}' +
       '</small>'
     );
 
@@ -91,7 +89,7 @@ define([
           return 'Cannot find this affiliation in our database.';
         },
         suggestion: function(data) {
-          if (data.new_name != data.affiliation) {
+          if (data.new_ICN != data.ICN) {
             data.show_future_name = true;
           }
           return suggestionTemplate.render.call(suggestionTemplate, data);
