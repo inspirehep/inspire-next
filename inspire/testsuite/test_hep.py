@@ -83,9 +83,9 @@ class HepRecordsTests(InvenioTestCase):
         self.assertTrue(self.marcxml_to_json['arxiv_eprints'][0]['value'] in
                         [a.get('a') for a in self.json_to_marc['037'] if 'a' in a])
 
-    def test_language(self):
-        """Test if language is created correctly"""
-        self.assertEqual(self.marcxml_to_json['language'],
+    def test_languages(self):
+        """Test if languages is created correctly"""
+        self.assertEqual(self.marcxml_to_json['languages'][0],
                          self.json_to_marc['041'][0]['a'])
 
     def test_classification_number(self):
