@@ -37,7 +37,7 @@
     <div class="col-md-12">
       <h4 class="custom-h pull-left">
         <b>
-         {{record['department_acronym']}} 
+         {{record['ICN']}}
          {% if record['ICN'] %}
          [Future INSPIRE ID:{{record['ICN']}}]
          {%endif%}
@@ -89,11 +89,11 @@
       {% set name_var = [] %}
       {% for element in record['name_variants'] %}
         {% if 'source' not in element and 'value' in element %}
-          {% do name_var.append(element) %}
+          {% do name_var.append(element['value']) %}
         {% endif %} 
       {% endfor %}   
       {% if name_var %}
-        <label>Name variants: </label>{{ name_var|join(', ') }}
+        <label>Name variants: </label>{{ name_var[0]|join(', ') }}
       {% endif %}
       </div>
     </div>
@@ -129,21 +129,21 @@
   <div class="row">
     <div class="col-md-12">
       <div class="pull-left">
-        <span>HEP list of<a href="#"> Ph.D. theses </a> at {{ record['department_acronym'] }}</span>
+        <span>HEP list of<a href="#"> Ph.D. theses </a> at {{ record['ICN'] }}</span>
       </div>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
       <div class="pull-left">
-        <span>HEPNAMES list of<a href="#"> people</a> at {{ record['department_acronym'] }}</span>
+        <span>HEPNAMES list of<a href="#"> people</a> at {{ record['ICN'] }}</span>
       </div>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
       <div class="pull-left">
-        <span>EXPERIMENTS list of<a href="/search?p=affiliation:{{ record['name'][0] }}&cc=Experiments"> experiments</a> performed <b>at</b> {{ record['department_acronym'] }}</span>
+        <span>EXPERIMENTS list of<a href="/search?p=affiliation:{{ record['institution'][0] }}&cc=Experiments"> experiments</a> performed <b>at</b> {{ record['ICN'] }}</span>
       </div>
     </div>
   </div>

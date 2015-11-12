@@ -70,8 +70,8 @@ def department(self, key, value):
     return value.get('b')
 
 
-@institutions.over('department_acronym', '^110..')
-def department_acronym(self, key, value):
+@institutions.over('ICN', '^110..')
+def ICN(self, key, value):
     """Institution info."""
     return value.get('u')
 
@@ -82,8 +82,8 @@ def obsolete_ICN(self, key, value):
     return value.get('x')
 
 
-@institutions.over('ICN', '^110..')
-def ICN(self, key, value):
+@institutions.over('new_ICN', '^110..')
+def new_ICN(self, key, value):
     """Institution info."""
     return value.get('t')
 
