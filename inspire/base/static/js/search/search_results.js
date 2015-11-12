@@ -12,6 +12,7 @@ define(
     return defineComponent(SearchResults);
 
     function SearchResults() {
+      var minimum_page_limit = $("#results-per-page option:selected").text();
       this.attributes({
         EXPORT_LIMIT: 5000
       });
@@ -120,14 +121,19 @@ define(
             sList.push($(this).attr("id"));
           });
 
-          if (parseInt($('#total-results').text()) > EXPORT_LIMIT) {
-            $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
-              '<div class="panel-body" >You have selected ' + sList.length + ' records of this page. <a class="pointer" id="select-all-records">' +
-              'Select ' + EXPORT_LIMIT + ' records (Maximum limit).</a></div></div>');
+          if (parseInt($('#total-results').text()) > minimum_page_limit) {
+            if (parseInt($('#total-results').text()) > EXPORT_LIMIT) {
+              $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
+                '<div class="panel-body" >You have selected ' + sList.length + ' records of this page. <a class="pointer" id="select-all-records">' +
+                'Select ' + EXPORT_LIMIT + ' records (Maximum limit).</a></div></div>');
+            } else {
+              $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
+                '<div class="panel-body" >You have selected ' + sList.length + ' records of this page. <a class="pointer" id="select-all-records">' +
+                'Select all ' + $('#total-results').text() + ' results.</a></div></div>');
+            }
           } else {
             $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
-              '<div class="panel-body" >You have selected ' + sList.length + ' records of this page. <a class="pointer" id="select-all-records">' +
-              'Select all ' + $('#total-results').text() + ' results.</a></div></div>');
+              '<div class="panel-body" >You have selected ' + sList.length + ' records of this page.</div></div>');
           }
           this.on('#select-all-records', "click", this.onSelectAllRecords);
         } else {
@@ -142,8 +148,12 @@ define(
 
       this.onSelectAllRecords = function(ev) {
         var that = this;
+        var limit = $('#total-results').text();
         $('#info-message').remove();
-        $.get("/search?of=id&rg=" + this.attr.EXPORT_LIMIT, function(data, status) {
+        if (parseInt($('#total-results').text()) > this.attr.EXPORT_LIMIT) {
+          limit = this.attr.EXPORT_LIMIT;
+        }
+        $.get("/search?of=id&rg=" + limit, function(data, status) {
           if (status == 'success') {
             $('#results-control-panel').after('<div class="alert alert-warning" id="alert-selection" role="alert">' +
               data.length + ' records have been selected.<a class="pointer" id="undo-selection"> Undo selection.</a></div>');
@@ -236,7 +246,12 @@ define(
         $('form[name=search]').submit();
       }
 
+      this.onDropdownCheck = function() {
+        $("#dropdown-export").dropdown("toggle");
+      }
+
       this.after('initialize', function() {
+        sList = [];
         $('[data-toggle="tooltip"]').tooltip()
         this.on("[id^=arrow]", "click", this.onChangeArrow);
         this.on(".dropdown-cite, .bibtex", "click", this.onDownloadBibtex);
@@ -248,6 +263,7 @@ define(
         this.on("#select-numpages", "change", this.onNumpagesChange);
         this.on("#select-sorting", "change", this.onSortingChange);
         this.initExportDropdown();
+        this.on("a.export-as-element", "click", this.onDropdownCheck);
       });
 
     }
