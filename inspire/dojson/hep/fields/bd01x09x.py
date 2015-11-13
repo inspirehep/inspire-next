@@ -198,16 +198,21 @@ def arxiv_eprints2marc(self, key, value):
     return self['037']
 
 
-@hep.over('language', '^041[10_].')
-def language(self, key, value):
+@hep.over('languages', '^041[10_].')
+def languages(self, key, value):
     """Language Code."""
-    return value.get('a')
+    values = utils.force_list(value)
+    languages = self.get('languages', [])
+    for value in values:
+        if value.get('a'):
+            languages.append(value)
+    return languages
 
 
-@hep2marc.over('041', 'language')
+@hep2marc.over('041', 'languages')
 @utils.for_each_value
 @utils.filter_values
-def language2marc(self, key, value):
+def languages2marc(self, key, value):
     """Language Code."""
     return {
         'a': value,

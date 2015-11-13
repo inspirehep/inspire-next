@@ -374,9 +374,9 @@ class literature(SimpleRecordDeposition, WorkflowBase):
         # ============================
         # Language
         # ============================
-        if metadata.get("language") == "oth":
+        if metadata.get("languages", []) and metadata["languages"][0] == "oth":
             if form_fields.get("other_language"):
-                metadata["language"] = form_fields["other_language"]
+                metadata["languages"] = [form_fields["other_language"]]
 
         # ===============================
         # arXiv category in report number

@@ -282,10 +282,10 @@ def accelerator_experiments(self, key, value):
     return value
 
 
-@bibfield.over('language', '^language$')
-def language(self, key, value):
+@bibfield.over('languages', '^language$')
+def languages(self, key, value):
     """Get language from object."""
-    return value
+    return [value]
 
 
 @bibfield.over('thesis_supervisor', '^thesis_supervisor$')

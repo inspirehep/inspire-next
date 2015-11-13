@@ -248,11 +248,11 @@ class BibFieldToJSONTests(InvenioTestCase):
             self.record['free_keywords']
         )
 
-    def test_language(self):
+    def test_languages(self):
         """Test if language is created correctly"""
         self.assertEqual(
             self.bibfield_json['language'],
-            self.record['language']
+            self.record['languages'][0]
         )
 
     def test_titles_old(self):
