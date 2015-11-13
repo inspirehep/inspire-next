@@ -133,7 +133,7 @@
   <div class="row" id="search-results">
   {{ render_facets() }}
     <div class="col-md-9">
-      <div class="panel panel-default" id="results-panel">
+      <div class="panel panel-default" id="results-control-panel">
         <div class="panel-body" >
           <div class="row" id="results-wrapper">
             <div class="col-md-3 vcenter">
@@ -153,12 +153,10 @@
             --><div class="col-md-3 text-right vcenter">
               <p class="help-block hidden-xs">
                 Results per page:
-                <select name="rg">
-                  <option value="10">10</option>
-                  <option value="25" selected="selected">25</option>
-                  <option value="50">50</option>
-                  <option value="100">100</option>
-                  <option value="250">250</option>
+                <select class='form-control' id="select-numpages">
+                  {%- for i in [10, 25, 50, 100, 250] -%}
+                    <option value="{{ i }}"{{ ' selected' if request.args.get('rg', 25) ==i.__str__() }}>{{ i }}</option>
+                  {%- endfor -%}
                 </select>
               </p>
             </div>
@@ -166,25 +164,34 @@
           <hr>
           {% if not request.args.get('cc') or request.args.get('cc') == "HEP" %}
           <div class="row">
-            <div class="col-md-12">
-            <input id="export-select-all" type="checkbox">&nbsp;&nbsp;
-            Export as
-            <div class="dropdown" id="export-dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-export" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              BibTex
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" id='formats-dropdown-menu' aria-labelledby="dropdown-export">
-              <li><a class="pointer" id="export-as-bibtex">BibTex</a></li>
-              <li><a class="pointer" id="export-as-latex-eu">LaTex(EU)</a></li>
-              <li><a class="pointer" id="export-as-latex-us">LaTex(US)</a></li>
-              <li><a class="pointer" id="export-as-cv-latex">CV format (LaTex)</a></li>
-              <li><a class="pointer" id="export-as-cv-html">CV format (html)</a></li>
-              <li><a class="pointer" id="export-as-cv-text">CV format (text)</a></li>
-            </ul>
-            </div> 
-            <a type="button" id="download-format" class="btn btn-default">Download</a>
-            <i class="fa fa-spinner fa-spin fa-lg" id="spinner-download"></i>
+            <div class="col-md-6">
+              <input id="checkbox-select-all" type="checkbox">&nbsp;&nbsp;
+              Export as
+              <div class="dropdown" id="export-dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-export" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                BibTex
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" id='formats-dropdown-menu' aria-labelledby="dropdown-export">
+                <li><a class="pointer" id="export-as-bibtex">BibTex</a></li>
+                <li><a class="pointer" id="export-as-latex-eu">LaTex(EU)</a></li>
+                <li><a class="pointer" id="export-as-latex-us">LaTex(US)</a></li>
+                <li><a class="pointer" id="export-as-cv-latex">CV format (LaTex)</a></li>
+                <li><a class="pointer" id="export-as-cv-html">CV format (html)</a></li>
+                <li><a class="pointer" id="export-as-cv-text">CV format (text)</a></li>
+              </ul>
+              </div>
+              <a type="button" id="download-format" class="btn btn-default">Download</a>
+              <i class="fa fa-spinner fa-spin fa-lg" id="spinner-download"></i>
+            </div>
+            <div class="col-md-6 text-right">
+              Sort by:
+              <select class='form-control' id="select-sorting">
+                <option value="bestmatch"{{ ' selected' if not request.args.get('sf') }}>Best Match</option>
+                <option value="newest"{{ ' selected' if request.args.get('sf') == 'earliest_date' and request.args.get('so') == 'desc'}}>Newest first</option>
+                <option value="oldest"{{ ' selected' if request.args.get('sf') == 'earliest_date' and request.args.get('so') == 'asc'}}>Oldest first</option>
+                <option value="mostcited">Most Cited</option>
+              </select>
             </div>
           </div>
           {% endif %}

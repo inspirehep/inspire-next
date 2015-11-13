@@ -333,6 +333,8 @@ SEARCH_ELASTIC_AGGREGATIONS = {
     }
 }
 
+SEARCH_ELASTIC_SORT_FIELDS = ["earliest_date"]
+
 SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
     "HEP": "hep",
     "Conferences": "conferences",
