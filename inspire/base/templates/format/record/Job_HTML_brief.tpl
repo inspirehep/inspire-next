@@ -28,6 +28,9 @@
       <div class="col-md-12">
         <h4 class="custom-h">
           <b>
+            {% if record['creation_modification_date'] %}
+              {{ record['creation_modification_date'][0]['creation_date'] }}:
+            {% endif %}
             <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
               {{ record['position'] }}<br/>
             </a>
