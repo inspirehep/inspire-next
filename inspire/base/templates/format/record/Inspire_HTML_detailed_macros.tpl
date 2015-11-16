@@ -159,7 +159,10 @@
         <div class="modal fade" id="keywordsFull" tabindex="-1" role="dialog" aria-labelledby="keywordsFull" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
-              <div class="modal-header">Full list of keywords</div>
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="keywordsFull">Full list of keywords</h4>
+              </div>
               <div class="modal-body">
                 {% for keywords in record.get('thesaurus_terms') %}
                   {% if 'keyword' in keywords.keys() %}
@@ -272,7 +275,7 @@
           <li><a class="pointer latex_us" id="latex_us{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(US)</a></li>
         </ul>
       </div>
-      <a class="btn btn-default pull-right" href="" data-toggle="modal">View in Search Results</a>
+      <a class="btn btn-default pull-right" href="/search?p=citedby%3Arecid%3A+{{record['control_number']}}&cc=HEP" data-toggle="modal">View in Search Results</a>
     </div>
   </div>  
 {% endmacro %}
