@@ -32,6 +32,10 @@ define([
     return true; // ensure form still submits
   })
 
+  $("button[name=action_search]").on("click", function(){
+    $("input[name=post_filter]").val('');
+  })
+
   // ------------ typeahead for "Add to search" form ----------------
 
   $('[data-provide="typeahead-url"]').each(function(index, elem) {
@@ -208,6 +212,7 @@ define([
     $('.add_to_search-form button[name=action_search]').on('click', function(e) {
       makeSearchQuery()
       e.stopPropagation()
+
     })
 
 
