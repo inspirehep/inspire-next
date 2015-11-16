@@ -43,7 +43,7 @@
           <a id="authors-show-more" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
           Show {{ record.authors | count }} authors
         {% else %}
-          <a id="authors-show-more" class="btn" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
+          <a id="authors-show-more" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
           Show {{ record.authors | count }} authors & affiliations
         {% endif %}
         </a>
@@ -51,7 +51,7 @@
     {% else %}
       <small>
         {% if not is_brief and show_affiliations %}
-          <a id="authors-show-more" class="btn" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
+          <a id="authors-show-more" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
             Show affiliations
           </a>
         {% endif %}
@@ -59,7 +59,7 @@
     {% endif %}
 
     {% if show_affiliations %}
-      <div class="modal fade" id="authors_{{ record['control_number'] }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal fade authors-modal" id="authors_{{ record['control_number'] }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
