@@ -122,13 +122,17 @@
 {% endmacro %}
 
 {% macro display_abstract(abstract, number_of_words) %}
-  <div class="abstract" id="main{{ record.get('control_number') }}">{{ abstract | words(number_of_words)| e }}<span id="dots{{ record.get('control_number') }}">...</span>
-  <a class="expand" id="{{ record.get('control_number') }}"  data-toggle="collapse" href="#more{{ record.get('control_number') }}" aria-expanded="false"> 
-  <i class="fa fa-arrow-down" id="arrow_down-{{ record.get('control_number') }}"></i>
-  <i class="fa fa-arrow-up" id="arrow_up-{{ record.get('control_number') }}"></i>
-  </a>
+  <div class="abstract">
+    <input type="checkbox" class="read-more-state" id="abstract-input-{{ record.get('control_number') }}" />
+    <div class="read-more-wrap">
+      {{ abstract | words(number_of_words)| e }}
+      <span class="read-more-ellipsis">...</span>
+      <span class="read-more-target">
+        {{ abstract | words_to_end(number_of_words)| e }}
+      </span>
+    </div>
+    <label for="abstract-input-{{ record.get('control_number') }}" class="read-more-trigger"></label>
   </div>
-  <div id="more{{ record.get('control_number') }}" class="collapse">{{ abstract | words_to_end(number_of_words)| e }}</div>
 {% endmacro %}
 
 {% macro record_arxiv(is_brief) %}

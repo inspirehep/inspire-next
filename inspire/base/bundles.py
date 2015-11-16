@@ -62,6 +62,7 @@ landing_page_styles = Bundle(
 
 detailed_record_styles = Bundle(
     "less/format/detailed-record.less",
+    "less/format/abstract.less",
     output="detailed-record.css",
     depends=[
         "less/format/detailed-record.less"
@@ -72,6 +73,7 @@ detailed_record_styles = Bundle(
 
 brief_result_styles = Bundle(
     "less/format/brief-results.less",
+    "less/format/abstract.less",
     output="brief-results.css",
     depends=[
         "less/format/brief-results.less"
