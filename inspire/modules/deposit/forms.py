@@ -448,8 +448,7 @@ class LiteratureForm(WebDepositForm):
         placeholder=_("Start typing for suggestions"),
         label=_('Journal Title'),
         widget_classes="form-control" + ARTICLE_CLASS,
-        autocomplete_fn=kb_dynamic_autocomplete("dynamic_journal_titles",
-                                                mapper=journal_title_kb_mapper)
+        autocomplete='journal'
     )
 
     page_range_article_id = fields.TextField(
