@@ -302,6 +302,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "experiment": ["accelerator_experiments.experiment"],
     "eprint": ["arxiv_eprints.value"],
     "title": ["titles.title"],
+    "subject": ["facet_inspire_subjects"],
     "cnum": ["publication_info.cnum"],
     "980": [
         "collections.primary",
@@ -316,6 +317,11 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
 
 SEARCH_ELASTIC_AGGREGATIONS = {
     "hep": {
+        "subject": {
+            "terms": {
+                "field": "facet_inspire_subjects"
+            }
+        },
         "author": {
             "terms": {
                 "field": "exactauthor.raw"
