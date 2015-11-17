@@ -56,6 +56,7 @@ def populate_inspire_subjects(recid, json):
         Adds a field for faceting INSPIRE subjects
     """
     inspire_subjects = [
-        s['term'] for s in json.get('subject_terms', []) if s['scheme'] == 'INSPIRE'
+        s['term'] for s in json.get('subject_terms', [])
+        if s.get('scheme', '') == 'INSPIRE' and s.get('term')
     ]
     json['facet_inspire_subjects'] = inspire_subjects

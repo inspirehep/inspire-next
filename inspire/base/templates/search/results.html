@@ -64,6 +64,26 @@
 {% macro render_facets() %}
 <div class="col-md-3 visible-md visible-lg" id="facetparent">
   <div class="facet" id="facet_list" data-clampedwidth="#facetparent">
+     {% if 'subject' in response._search()['aggregations'] %}
+    <div class="facet-container">
+      <h4>Filter by Subject</h4>
+      {% for subject in response._search()['aggregations']['subject']['buckets'] %}
+      <div class="checkbox">
+        <label>
+          {%- set is_checked = 'checked' if 'subject' in filtered_facets
+              and subject['key'] in filtered_facets['subject']['inc'] -%}
+          <input class="include-facet"
+                type="checkbox"
+                {{is_checked}}
+                name="subject" value="{{ subject['key'] }}">
+          <span class="facet-title-truncate">{{ subject['key'] }}</span>
+          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ subject['doc_count'] }}</span>
+        </label>
+      </div>
+      {% endfor %}
+      <hr />
+    </div>
+    {% endif %}
     {% if 'author' in response._search()['aggregations'] %}
     <div class="facet-container">
       <h4>Filter by Author</h4>
@@ -122,6 +142,7 @@
         </label>
       </div>
       {% endfor %}
+      <hr />
     </div>
     {% endif %}
   </div>
