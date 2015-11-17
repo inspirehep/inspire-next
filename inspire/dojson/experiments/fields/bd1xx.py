@@ -28,10 +28,10 @@ from ..model import experiments
 
 
 @experiments.over('experiment_name', '^119..')
-@utils.for_each_value
 def experiment_name(self, key, value):
     """Name of experiment."""
-    return value.get("a")
+    value = utils.force_list(value)
+    return [v.get("a") for v in value if v.get('a')]
 
 
 @experiments.over('affiliation', '^119..')

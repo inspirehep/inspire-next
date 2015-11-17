@@ -63,7 +63,7 @@ define([
     this.$element = $element;
 
     var suggestionTemplate = Hogan.compile(
-      '<strong>{{ experiment_name }}</strong><br>'
+      '<strong>{{ display_name }}</strong><br>'
     );
 
     this.$element.typeahead({
@@ -80,12 +80,13 @@ define([
           callback(suggestions);
         }.bind(this));
       }.bind(this),
-      displayKey: 'experiment_name',
+      displayKey: 'display_name',
       templates: {
         empty: function(data) {
           return 'Cannot find this experiment in our database.';
         },
         suggestion: function(data) {
+          data.display_name = data.experiment_name[0];
           return suggestionTemplate.render.call(suggestionTemplate, data);
         }.bind(this)
       }
