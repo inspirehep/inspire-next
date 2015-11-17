@@ -33,7 +33,7 @@
     {{ record_title() }}
   </div>
   <div id="record-authors">
-    {{ render_record_authors(is_brief=false, number_of_displayed_authors=20) }}
+    {{ render_record_authors(is_brief=false, number_of_displayed_authors=25) }}
   </div>
   <div class="journal">
     {{ record_publication_info() }}

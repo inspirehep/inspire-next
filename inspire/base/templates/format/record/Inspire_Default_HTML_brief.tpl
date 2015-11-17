@@ -47,7 +47,7 @@
             {% endif %}
           </b>
       </h4>
-      {{ render_record_authors(is_brief=true) }}
+      {{ render_record_authors(is_brief=true, show_affiliations=false) }}
       <div class="row"><div class="col-md-12"><p></p></div></div>
       <div class="row">
       {% if record.get('publication_info') %}

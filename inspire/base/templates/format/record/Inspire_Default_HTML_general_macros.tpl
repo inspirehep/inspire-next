@@ -28,7 +28,7 @@
   </a>
 {% endmacro %}
 
-{% macro render_record_authors(is_brief, number_of_displayed_authors=5, show_affiliations=true) %}
+{% macro render_record_authors(is_brief, number_of_displayed_authors=10, show_affiliations=true) %}
   {% if record.authors %}
     {% set sep = joiner("; ") %}
     {% set authors = record.authors %}
@@ -36,17 +36,15 @@
       <small>{{ sep() }}</small>
       <small class="text-left">{{ render_author_names(author, show_affiliation = True ) }}</small>
     {% endfor %}
-    {% if (record.authors | length > number_of_displayed_authors) and show_affiliations %}
-      {{ sep() }}
+    {% if (record.authors | length > number_of_displayed_authors) %}
       <small>
         {% if is_brief %}
-          <a id="authors-show-more" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
-          Show {{ record.authors | count }} authors
+          <i>et al.</i>
         {% else %}
           <a id="authors-show-more" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
-          Show {{ record.authors | count }} authors & affiliations
+            Show {{ record.authors | count }} authors & affiliations
+          </a>
         {% endif %}
-        </a>
       </small>
     {% else %}
       <small>
