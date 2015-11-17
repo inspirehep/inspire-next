@@ -176,6 +176,17 @@
                             "format": "yyyy"
                         }
                     }
+                },
+                "journalautocomplete": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "copy_to": ["journalautocomplete"]
+                },
+                "short_title": {
+                    "type": "string",
+                    "copy_to": ["journalautocomplete"]
                 }
             }
         }
