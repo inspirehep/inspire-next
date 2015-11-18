@@ -346,8 +346,14 @@ def sort_list_by_dict_val(l):
     return newlist
 
 
-def epoch_to_date_format(date):
+def epoch_to_year_format(date):
     return time.strftime('%Y', time.gmtime(int(date) / 1000.))
+
+
+def construct_date_format(date):
+    starting_date = time.strftime('%Y-%m-%d', time.gmtime(int(date) / 1000.))
+    ending_date = time.strftime('%Y-12-31', time.gmtime(int(date) / 1000.))
+    return starting_date + '->' + ending_date
 
 
 def get_filters():
@@ -381,8 +387,9 @@ def get_filters():
         'get_collection_title': get_collection_title,
         'collection_select_current': collection_select_current,
         'sanitize_arxiv_pdf': sanitize_arxiv_pdf,
-        'epoch_to_date_format': epoch_to_date_format,
+        'epoch_to_year_format': epoch_to_year_format,
         'sort_list_by_dict_val': sort_list_by_dict_val,
         'sanitize_collection_name': sanitize_collection_name,
-        'number_of_records': number_of_records
+        'number_of_records': number_of_records,
+        'construct_date_format': construct_date_format
     }
