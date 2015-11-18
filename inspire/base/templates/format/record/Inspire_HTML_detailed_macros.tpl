@@ -215,45 +215,22 @@
 {% macro record_references() %}
   <div class="panel" id="references">
     <div class="panel-heading">
-
       <div id="record-reference-title">References
         ({{ (record.get('references', '')) | count }})
       </div>
-
       <div id="references-filter">
         <form>
           <input type="text" placeholder=" &#xf002;  Filter" value="">
         </form>
-
-        <div class="btn-group">
-          <a type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            All Years <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            {# <li><a href="#">Year</a></li> #}
-          </ul>
-        </div>
-
-        <div class="btn-group">
-          <a type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            All Types <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            {# <li><a href="#">Type</a></li> #}
-          </ul>
-        </div>
       </div>
-
       <div class="references-citations-table">
         <span class="references-citations-showing">
         Showing {{ (record.get('references', '')) | count }} of {{ (record.get('references', '')) | count }}
         </span>
-
         <span class="references-citations-cited-by pull-right">
           Cited by
         </span>
       </div>
-
     </div>
 
     <div class="panel-body">
@@ -290,30 +267,10 @@
       </span>
 
       <div id="citations-filter">
-
         <form>
           <input type="text" placeholder=" &#xF002;  Filter" value="">
         </form>
-
-        <div class="btn-group">
-          <a type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            All Years <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            {# <li><a href="#">Year</a></li> #}
-          </ul>
-        </div>
-
-        <div class="btn-group">
-          <a type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            All Types <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            {# <li><a href="#">Type</a></li> #}
-          </ul>
-        </div>
       </div>
-
     </div>
 
     <div class="panel-footer">
