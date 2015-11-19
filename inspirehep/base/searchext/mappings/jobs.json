@@ -93,6 +93,14 @@
                     "type": "string",
                     "index": "not_analyzed"
                 },
+                "continent": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                },
+                "research_area": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                },
                 "date_and_time_of_latest_transaction": {
                     "type": "date",
                     "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S"

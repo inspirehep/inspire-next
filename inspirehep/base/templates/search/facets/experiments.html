@@ -1,0 +1,80 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+##
+## In applying this licence, CERN does not waive the privileges and immunities
+## granted to it by virtue of its status as an Intergovernmental Organization
+## or submit itself to any jurisdiction.
+#}
+
+{% if 'field_code' in response._search()['aggregations'] and response._search()['aggregations']['field_code']['buckets'] %}
+  <h4 id="filter-by-field_code" class="pointer">Filter by Subject <i class="fa fa-chevron-down"></i></h4>
+  <div class="facet-container" id="facet-field_code">
+  {% for field_code in response._search()['aggregations']['field_code']['buckets'] %}
+  <div class="checkbox checkbox-facets">
+    <label>
+      {%- set is_checked = 'checked' if 'field_code' in filtered_facets
+          and field_code['key'] in filtered_facets['field_code']['inc'] -%}
+      <input class="include-facet"
+            type="checkbox"
+            {{is_checked}}
+            name="field_code" value="{{ field_code['key'] }}">
+      <span class="facet-title-truncate">{{ field_code['key'] }}</span>
+      <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ field_code['doc_count'] }}</span>
+    </label>
+  </div>
+  {% endfor %}
+  <hr />
+</div>
+{% endif %}
+{% if 'wwwlab' in response._search()['aggregations'] and response._search()['aggregations']['wwwlab']['buckets'] %}
+  <h4 id="filter-by-wwwlab" class="pointer">Filter by ICN <i class="fa fa-chevron-down"></i></h4>
+  <div class="facet-container" id="facet-wwwlab">
+  {% for wwwlab in response._search()['aggregations']['wwwlab']['buckets'] %}
+  <div class="checkbox checkbox-facets">
+    <label>
+      {%- set is_checked = 'checked' if 'wwwlab' in filtered_facets
+          and wwwlab['key'] in filtered_facets['wwwlab']['inc'] -%}
+      <input class="include-facet"
+            type="checkbox"
+            {{is_checked}}
+            name="wwwlab" value="{{ wwwlab['key'] }}">
+      <span class="facet-title-truncate">{{ wwwlab['key'] }}</span>
+      <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ wwwlab['doc_count'] }}</span>
+    </label>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% if 'accelerator' in response._search()['aggregations'] and response._search()['aggregations']['accelerator']['buckets'] %}
+  <h4 id="filter-by-accelerator" class="pointer">Filter by Accelerator <i class="fa fa-chevron-down"></i></h4>
+  <div class="facet-container" id="facet-accelerator">
+  {% for accelerator in response._search()['aggregations']['accelerator']['buckets'] %}
+  <div class="checkbox checkbox-results">
+    <label>
+      {%- set is_checked = 'checked' if 'accelerator' in filtered_facets
+          and accelerator['key'] in filtered_facets['accelerator']['inc'] -%}
+      <input class="include-facet"
+            type="checkbox"
+            {{is_checked}}
+            name="accelerator" value="{{ accelerator['key'] }}">
+      <span class="facet-title-truncate">{{ accelerator['key'] }}</span>
+      <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ accelerator['doc_count'] }}</span>
+    </label>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

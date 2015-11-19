@@ -27,7 +27,6 @@ from invenio_records.signals import before_record_index
 def populate_inspire_subjects(recid, json):
     """
     Populate a json record before indexing it to elastic.
-
     Adds a field for faceting INSPIRE subjects
     """
     inspire_subjects = [
@@ -35,3 +34,44 @@ def populate_inspire_subjects(recid, json):
         if s.get('scheme', '') == 'INSPIRE' and s.get('term')
     ]
     json['facet_inspire_subjects'] = inspire_subjects
+
+
+@before_record_index.connect
+def populate_inspire_document_type(recid, json):
+    """ Populates a json record before indexing it to elastic.
+        Adds a field for faceting INSPIRE document type
+    """
+    inspire_doc_type = []
+    if 'collections' in json:
+        for element in json.get('collections', []):
+            if 'primary' in element and element.get('primary', ''):
+                if element['primary'].lower() == 'thesis':
+                    inspire_doc_type.append(element['primary'].lower())
+                    break
+                elif element['primary'].lower() == 'published':
+                    inspire_doc_type.append('peer reviewed')
+                    break
+                elif element['primary'].lower() == 'bookchapter':
+                    inspire_doc_type.append('book chapter')
+                    break
+                elif element['primary'].lower() == 'book':
+                    inspire_doc_type.append(element['primary'].lower())
+                    break
+                elif element['primary'].lower() == 'proceedings':
+                    inspire_doc_type.append(element['primary'].lower())
+                    break
+                elif element['primary'].lower() == 'conferencepaper':
+                    inspire_doc_type.append('conference paper')
+                    break
+                elif json.get('publication_info', []):
+                    for field in json.get('publication_info', []):
+                        if 'page_artid' not in field:
+                            inspire_doc_type.append('preprint')
+                            break
+
+        inspire_doc_type.extend([s['primary'].lower() for s in
+                                 json.get('collections', []) if 'primary'
+                                 in s and s['primary'] is not None and
+                                 s['primary'].lower() in
+                                 ('review', 'lectures')])
+    json['facet_inspire_doc_type'] = inspire_doc_type

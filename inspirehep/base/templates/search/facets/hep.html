@@ -1,0 +1,161 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+##
+## In applying this licence, CERN does not waive the privileges and immunities
+## granted to it by virtue of its status as an Intergovernmental Organization
+## or submit itself to any jurisdiction.
+#} 
+  {% if 'doc_type' in response._search()['aggregations'] and response._search()['aggregations']['doc_type']['buckets'] %}
+    <h4 id="filter-by-document" class="pointer">Filter by Document type <i class="fa fa-chevron-down"></i></h4>
+    <div class="facet-container" id="facet-doc_type">
+    {% for doc_type in response._search()['aggregations']['doc_type']['buckets'] %}
+    <div class="checkbox checkbox-facets">
+      <label>
+        {%- set is_checked = 'checked' if 'doc_type' in filtered_facets
+            and doc_type['key'] in filtered_facets['doc_type']['inc'] -%}
+        <input class="include-facet"
+              type="checkbox"
+              {{is_checked}}
+              name="doc_type" value="{{ doc_type['key'] }}">
+        <span class="facet-title-truncate">{{ doc_type['key'] }}</span>
+        <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ doc_type['doc_count'] }}</span>
+      </label>
+    </div>
+    {% endfor %}
+    <hr />
+  </div>
+  {% endif %}
+  {% if 'subject' in response._search()['aggregations'] %}
+    <div class="facet-container">
+      <h4>Filter by Subject</h4>
+      {% for subject in response._search()['aggregations']['subject']['buckets'] %}
+      <div class="checkbox">
+        <label>
+          {%- set is_checked = 'checked' if 'subject' in filtered_facets
+              and subject['key'] in filtered_facets['subject']['inc'] -%}
+          <input class="include-facet"
+                type="checkbox"
+                {{is_checked}}
+                name="subject" value="{{ subject['key'] }}">
+          <span class="facet-title-truncate">{{ subject['key'] }}</span>
+          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ subject['doc_count'] }}</span>
+        </label>
+      </div>
+      {% endfor %}
+      <hr />
+    </div>
+  {% endif %}
+  {% if 'author' in response._search()['aggregations'] and response._search()['aggregations']['author']['buckets'] %}
+    <h4 id="filter-by-author" class="pointer">Filter by Author <i class="fa fa-chevron-down"></i></h4>
+    <div class="facet-container" id="facet-author">
+    {% for author in response._search()['aggregations']['author']['buckets'] %}
+    <div class="checkbox checkbox-facets">
+      <label>
+        {%- set is_checked = 'checked' if 'author' in filtered_facets
+            and author['key'] in filtered_facets['author']['inc'] -%}
+        <input class="include-facet"
+              type="checkbox"
+              {{is_checked}}
+              name="author" value="{{ author['key'] }}">
+        <span class="facet-title-truncate">{{ author['key'] }}</span>
+        <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ author['doc_count'] }}</span>
+      </label>
+    </div>
+    {% endfor %}
+    <hr />
+  </div>
+  {% endif %}
+  {% if 'affiliation' in response._search()['aggregations'] and response._search()['aggregations']['affiliation']['buckets'] %}
+  <h4 id="filter-by-affiliation" class="pointer">Filter by Affiliation <i class="fa fa-chevron-down"></i></h4>
+  <div class="facet-container" id="facet-affiliation">
+    {% for affiliation in response._search()['aggregations']['affiliation']['buckets'] %}
+    <div class="checkbox checkbox-facets">
+      <label>
+        {%- set is_checked = 'checked' if 'affiliation' in filtered_facets
+            and affiliation['key'] in filtered_facets['affiliation']['inc'] -%}
+        <input class="include-facet"
+              type="checkbox"
+              {{is_checked}}
+              name="affiliation" value="{{ affiliation['key'] }}">
+        <span class="facet-title-truncate">{{ affiliation['key'] }}</span>
+        <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ affiliation['doc_count'] }}</span>
+      </label>
+    </div>
+    {% endfor %}
+    <hr />
+  </div>
+  {% endif %}
+  {% if 'languages' in response._search()['aggregations'] and response._search()['aggregations']['languages']['buckets'] %}
+    <h4 id="filter-by-language" class="pointer">Filter by Language <i class="fa fa-chevron-down"></i></h4>
+    <div class="facet-container" id="facet-languages">
+    {% for language in response._search()['aggregations']['languages']['buckets'] %}
+    <div class="checkbox checkbox-facets">
+      <label>
+        {%- set is_checked = 'checked' if 'languages' in filtered_facets
+            and language['key'] in filtered_facets['languages']['inc'] -%}
+        <input class="include-facet"
+              type="checkbox"
+              {{is_checked}}
+              name="languages" value="{{ language['key'] }}">
+        <span class="facet-title-truncate">{{ language['key'] }}</span>
+        <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ language['doc_count'] }}</span>
+      </label>
+    </div>
+    {% endfor %}
+    <hr />
+  </div>
+  {% endif %}
+  {% if 'experiment' in response._search()['aggregations'] and response._search()['aggregations']['experiment']['buckets'] %}
+    <h4 id="filter-by-experiment" class="pointer">Filter by Experiment <i class="fa fa-chevron-down"></i></h4>
+    <div class="facet-container" id="facet-experiment">
+    {% for experiment in response._search()['aggregations']['experiment']['buckets'] %}
+    <div class="checkbox checkbox-facets">
+      <label>
+        {%- set is_checked = 'checked' if 'experiment' in filtered_facets
+            and experiment['key'] in filtered_facets['experiment']['inc'] -%}
+        <input class="include-facet"
+              type="checkbox"
+              {{is_checked}}
+              name="experiment" value="{{ experiment['key'] }}">
+        <span class="facet-title-truncate">{{ experiment['key'] }}</span>
+        <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ experiment['doc_count'] }}</span>
+      </label>
+    </div>
+    {% endfor %}
+    <hr />
+  </div>
+  {% endif %}
+  {% if 'earliest_date' in response._search()['aggregations'] and response._search()['aggregations']['earliest_date']['buckets'] %}
+    {% set sorted_year = response._search()['aggregations']['earliest_date']['buckets']|sort_list_by_dict_val %}
+      <h4 id="filter-by-year" class="pointer">Filter by Year <i class="fa fa-chevron-down"></i></h4>
+      <div class="facet-container" id="facet-earliest_date">
+        {% for earliest_date in sorted_year| limit_facet_elements %}
+      <div class="checkbox checkbox-facets">
+        <label>
+          {%- set is_checked = 'checked' if 'earliest_date' in filtered_facets
+              and earliest_date['key']| epoch_to_year_format in filtered_facets['earliest_date']['inc'][0] -%}
+          <input class="include-facet"
+                type="checkbox"
+                {{is_checked}}
+                name="earliest_date" value="{{ earliest_date['key']| construct_date_format }}">
+          <span class="facet-title-truncate">{{ earliest_date['key']| epoch_to_year_format }}</span>
+          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ earliest_date['doc_count'] }}</span>
+        </label>
+      </div>
+      {% endfor %}
+    </div>
+  {% endif %}
