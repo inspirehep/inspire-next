@@ -50,6 +50,9 @@
       </small>
     {% else %}
       <small>
+        {% if is_brief %}
+          <em>et al.</em>
+        {% endif %}
         {% if not is_brief and show_affiliations %}
           <a id="authors-show-more" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
             Show affiliations
