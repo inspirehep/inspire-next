@@ -64,87 +64,19 @@
 {% macro render_facets() %}
 <div class="col-md-3 visible-md visible-lg" id="facetparent">
   <div class="facet" id="facet_list" data-clampedwidth="#facetparent">
-     {% if 'subject' in response._search()['aggregations'] %}
-    <div class="facet-container">
-      <h4>Filter by Subject</h4>
-      {% for subject in response._search()['aggregations']['subject']['buckets'] %}
-      <div class="checkbox">
-        <label>
-          {%- set is_checked = 'checked' if 'subject' in filtered_facets
-              and subject['key'] in filtered_facets['subject']['inc'] -%}
-          <input class="include-facet"
-                type="checkbox"
-                {{is_checked}}
-                name="subject" value="{{ subject['key'] }}">
-          <span class="facet-title-truncate">{{ subject['key'] }}</span>
-          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ subject['doc_count'] }}</span>
-        </label>
-      </div>
-      {% endfor %}
-      <hr />
-    </div>
-    {% endif %}
-    {% if 'author' in response._search()['aggregations'] %}
-    <div class="facet-container">
-      <h4>Filter by Author</h4>
-      {% for author in response._search()['aggregations']['author']['buckets'] %}
-      <div class="checkbox">
-        <label>
-          {%- set is_checked = 'checked' if 'author' in filtered_facets
-              and author['key'] in filtered_facets['author']['inc'] -%}
-          <input class="include-facet"
-                type="checkbox"
-                {{is_checked}}
-                name="author" value="{{ author['key'] }}">
-          <span class="facet-title-truncate">{{ author['key'] }}</span>
-          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ author['doc_count'] }}</span>
-        </label>
-      </div>
-      {% endfor %}
-      <hr />
-    </div>
-    {% endif %}
-    {% if 'experiment' in response._search()['aggregations'] %}
-    <div class="facet-container">
-      <h4>Filter by Experiment</h4>
-      {% for experiment in response._search()['aggregations']['experiment']['buckets'] %}
-      <div class="checkbox">
-        <label>
-          {%- set is_checked = 'checked' if 'experiment' in filtered_facets
-              and experiment['key'] in filtered_facets['experiment']['inc'] -%}
-          <input class="include-facet"
-                type="checkbox"
-                {{is_checked}}
-                name="experiment" value="{{ experiment['key'] }}">
-          <span class="facet-title-truncate">{{ experiment['key'] }}</span>
-          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ experiment['doc_count'] }}</span>
-        </label>
-      </div>
-      {% endfor %}
-      <hr />
-    </div>
-    {% endif %}
-    {% if 'earliest_date' in response._search()['aggregations'] %}
-    {% set sorted_year = response._search()['aggregations']['earliest_date']['buckets']|sort_list_by_dict_val %}
-    <div class="facet-container">
-      <h4>Filter by Year</h4>
-        {% for earliest_date in sorted_year %}
-      <div class="checkbox">
-        <label>
-          {%- set is_checked = 'checked' if 'earliest_date' in filtered_facets
-              and earliest_date['key']| epoch_to_year_format in filtered_facets['earliest_date']['inc'][0] -%}
-          <input class="include-facet"
-                type="checkbox"
-                {{is_checked}}
-                name="earliest_date" value="{{ earliest_date['key']| construct_date_format }}">
-          <span class="facet-title-truncate">{{ earliest_date['key']| epoch_to_year_format }}</span>
-          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ earliest_date['doc_count'] }}</span>
-        </label>
-      </div>
-      {% endfor %}
-      <hr />
-    </div>
-    {% endif %}
+  {% if not request.args.get('cc') or request.args.get('cc').lower() == "hep" %}
+    {% include 'search/facets/hep.html' %}
+  {% elif request.args.get('cc').lower() == "jobs" %}
+    {% include 'search/facets/jobs.html' %}
+  {% elif request.args.get('cc').lower() == "institutions" %}
+    {% include 'search/facets/institutions.html' %}  
+  {% elif request.args.get('cc').lower() == "journals" %}
+    {% include 'search/facets/journals.html' %}
+  {% elif request.args.get('cc').lower() == "experiments" %}
+    {% include 'search/facets/experiments.html' %}  
+  {% elif request.args.get('cc').lower() == "conferences" %}
+    {% include 'search/facets/conferences.html' %}  
+  {% endif %}
   </div>
 </div>
 {% endmacro %}
@@ -274,7 +206,7 @@
                  SearchResults) {
       var facetsFilter = new FacetsFilter({{ filtered_facets | tojson | safe }});
       var context = {
-        searchUrl: '{{ url_for('search.search') }}',
+        searchUrl: '{{ url_for('search.search', cc=collection.name) }}',
         urlArgs: {{ request.args.to_dict() | tojson | safe }},
         facetsMenuSelector: '.facet',
         searchFormSelector: '#searchform',

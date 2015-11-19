@@ -238,6 +238,19 @@ define(
         $("#dropdown-export").dropdown("toggle");
       }
 
+      this.onFacetDropdown = function(ev) {
+        var id = $(ev.target).attr("id");
+        var facetOption = $('#'+id + ' i');
+        if (facetOption.hasClass('fa-chevron-down')) {
+          facetOption.addClass('fa-chevron-right').removeClass('fa-chevron-down');
+        } else {
+          facetOption.addClass('fa-chevron-down').removeClass('fa-chevron-right');
+        }
+        var content_to_slide = $('#'+id).next().attr("id");
+        $('#'+content_to_slide).slideToggle();
+
+      }
+
       this.after('initialize', function() {
         sList = [];
         $('[data-toggle="tooltip"]').tooltip()
@@ -251,6 +264,12 @@ define(
         this.on("#select-sorting", "change", this.onSortingChange);
         this.initExportDropdown();
         this.on("a.export-as-element", "click", this.onDropdownCheck);
+        this.on("#filter-by-document, #filter-by-author, #filter-by-affiliation," + 
+                "#filter-by-language, #filter-by-experiment, #filter-by-year," +
+                "#filter-by-series, #filter-by-subject, #filter-by-conf-year," +
+                "#filter-by-continent, #filter-by-rank, #filter-by-research-area," +
+                "#filter-by-country, #filter-by-field_code, #filter-by-wwwlab," +
+                "#filter-by-accelerator, #filter-by-publisher", "click", this.onFacetDropdown);
       });
 
     }

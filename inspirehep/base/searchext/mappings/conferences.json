@@ -93,13 +93,27 @@
                     "copy_to": ["conferenceautocomplete"]
                 },
                 "opening_date": {
-                    "type": "string",
+                    "type": "date",
+                    "format": "date",
                     "copy_to": ["conferenceautocomplete"]
                 },
                 "cnum": {
                     "type": "string",
                     "index": "not_analyzed",
                     "copy_to": ["conferenceautocomplete"]
+                },
+                "series": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                },
+                "field_code": {
+                    "type": "object",
+                    "properties": {
+                        "value": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        }
+                    }
                 }
             }
         }

@@ -86,8 +86,19 @@
                     "type": "string"
                 },
                 "experiment_name": {
-                    "type": "string",
-                    "copy_to": ["experimentautocomplete"]
+                    "type": "object",
+                     "properties": {
+                        "experiment": {
+                            "type": "string",
+                            "index": "not_analyzed",
+                            "copy_to": ["experimentautocomplete"]
+                        },
+                        "wwwlab": {
+                            "type": "string",        
+                            "index": "not_analyzed"
+                        }
+
+                    }
                 },
                 "report_number": {
                     "type": "object",
@@ -100,6 +111,14 @@
                 },
                 "collaboration": {
                     "type": "string"
+                },
+                "field_code": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                },
+                "accelerator": {
+                    "type": "string",
+                    "index": "not_analyzed"
                 },
                 "collections": {
                     "properties": {

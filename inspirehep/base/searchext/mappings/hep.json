@@ -180,6 +180,10 @@
                 "facet_inspire_subjects": {
                     "type": "string",
                     "index": "not_analyzed"
+                },
+                "facet_inspire_doc_type": {
+                    "type": "string",
+                    "index": "not_analyzed"
                 }
             }
         }

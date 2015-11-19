@@ -30,6 +30,7 @@ from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
 from invenio_search.api import Query
 
 from inspirehep.utils.references import Reference
+from invenio_base.globals import cfg
 
 import time
 
@@ -358,3 +359,7 @@ def setup_app(app):
         starting_date = time.strftime('%Y-%m-%d', time.gmtime(int(date) / 1000.))
         ending_date = time.strftime('%Y-12-31', time.gmtime(int(date) / 1000.))
         return starting_date + '->' + ending_date
+
+    @app.template_filter()
+    def limit_facet_elements(l):
+        return l[:cfg["FACETS_SIZE_LIMIT"]]

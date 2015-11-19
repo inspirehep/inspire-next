@@ -31,7 +31,10 @@ from ..model import experiments
 def experiment_name(self, key, value):
     """Name of experiment."""
     value = utils.force_list(value)
-    return [v.get("a") for v in value if v.get('a')]
+    return {
+        'experiment': [v.get("a") for v in value if v.get('a')],
+        'wwwlab': [v.get("u") for v in value if v.get('u')]
+    }
 
 
 @experiments.over('affiliation', '^119..')
@@ -143,3 +146,17 @@ def date_completed(self, key, value):
                 return elem.get('t')
         return
     return value.get('t')
+
+
+@experiments.over('field_code', '^65017')
+@utils.for_each_value
+def field_code(self, key, value):
+    """Field code."""
+    return value.get('a')
+
+
+@experiments.over('accelerator', '^693')
+@utils.for_each_value
+def accelerator(self, key, value):
+    """Field code."""
+    return value.get('a')
