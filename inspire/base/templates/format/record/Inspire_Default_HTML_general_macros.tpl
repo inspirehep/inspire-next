@@ -23,7 +23,7 @@
       data-placement="bottom"
       title="{{ author.get('affiliations')[0]['value'] }}"
     {% endif %}
-    href="{{ url_for('search.search', p='author:"' + author.full_name + '"') }}">
+    href="http://inspirehep.net/author/profile/{{author.full_name}}?recid={{record['control_number']}}">
     {{ author.get('full_name') }}
   </a>
 {% endmacro %}
