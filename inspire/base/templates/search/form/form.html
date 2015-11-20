@@ -20,11 +20,11 @@
 
 {# Collect the nav links, forms, and other content for toggling #}
 <form name="search" action="{{ url_for('search.search') }}" method="get" role="search" id="searchform">
-  {%- if collection.id > 1 %}
+  {%- if collection is defined %}
   <input type="hidden" name="cc" value="{{collection.name}}">
   {%- endif %}
   <input type="hidden" name="post_filter" value="{{request.args.get('post_filter', '')}}">
-  <div class="nav navbar-nav navbar-left navbar-form">
+  <div class="nav navbar-nav navbar-form">
     <div class="input-group" id="searchform-input-group">
       {% include "search/form/controls.html" %}
     </div>

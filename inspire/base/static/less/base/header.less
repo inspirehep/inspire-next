@@ -77,39 +77,68 @@ body {
     color: #f8f8f8;
 }
 
- #collections {
-    background-color: @blue-purple;
+#collections-section {
+    margin-bottom: 80px;
+
+    #collections {
+            z-index: 500;
+
+            a {
+                color: white;
+            }
+
+        background-color: @blue-purple;
+        font-weight: 700;
+        font-size: large;
+        height: 60px;
+        padding: 20px;
+
+        &.navbar-fixed-top {
+            top: 65px;
+        }
+        
+        span+span {
+            margin-left: 20px;
+        }
+
+        .active {
+
+            &#literature-collection a {
+                color: @literature-collection;
+            }
+
+            &#authors-collection a {
+                color: @authors-collection;
+            }
+
+            &#conferences-collection a {
+                color: @conferences-collection;
+            }
+
+            &#jobs-collection a {
+                color: @jobs-collection;
+            }
+
+            &#institutions-collection a {
+                color: @institutions-collection;
+            }
+
+            &#experiments-collection a {
+                color: @experiments-collection;
+            }
+
+            &#journals-collection a {
+                color: @journals-collection;
+            }
+        }
+
+    }
+}
+
+.collection-header {
     font-weight: 700;
-    font-size: large;
-    height: 60px;
-    padding: 20px;
-
-    span+span {
-        margin-left: 20px;
-    }
-
-    #hep-collection {
-        color: @literature-collection;
-    }
-
-    #hepnames-collection {
-        color: @authors-collection;
-    }
-
-    #conferences-collection {
-        color: @conferences-collection;
-    }
-
-    #jobs-collection {
-        color: @jobs-collection;
-    }
-
- }
-
- .collection-header {
-    font-weight: 700;
-    height: 100px;
-    padding: 30px 20px 0 20px;
+    height: 200px;
+    padding: 80px 20px 0 20px;
     z-index: -1;
     font-size: x-large;
     color: white;
@@ -117,47 +146,116 @@ body {
 
 .collection-header {
     background-color: @literature-collection;
-}
 
-.collection-header#hep-collection {
-    background-color: @literature-collection;
-}
+    &#literature-collection, &#hep-collection {
+        background-color: @literature-collection;
+    }
 
-.collection-header#hepnames-collection {
-    background-color: @authors-collection;
-}
+    &#authors-collection, &#hepnames-collection {
+        background-color: @authors-collection;
+    }
 
-.collection-header#conferences-collection {
-    background-color: @conferences-collection;
-}
+    &#conferences-collection {
+        background-color: @conferences-collection;
+    }
 
-.collection-header#jobs-collection {
-    background-color: @jobs-collection;
-}
+    &#jobs-collection {
+        background-color: @jobs-collection;
+    }
 
-.collection-header#experiments-collection {
-    background-color: @experiments-collection;
-}
+    &#experiments-collection {
+        background-color: @experiments-collection;
+    }
 
-.collection-header#journals-collection {
-    background-color: @journals-collection;
-}
+    &#journals-collection {
+        background-color: @journals-collection;
+    }
 
-.collection-header#institutions-collection {
-    background-color: @institutions-collection;
-}
+    &#institutions-collection {
+        background-color: @institutions-collection;
+    }
 
-#collections {
-    color: white;
-
-    #current-collection {
-        color: @literature-collection;
+    &#data-collection {
+        background-color: @data-collection;
     }
 }
 
 #topnav {
     min-height: 65px;
     border-bottom: 0px;
+}
+
+// Logo customization
+
+#flask-bottom, #inspire-dot, #labs-text {
+
+    #literature-collection & {
+        fill: @literature-collection !important;
+    }
+
+    #authors-collection & {
+        fill: @authors-collection !important;
+    }
+
+    #conferences-collection & {
+        fill: @conferences-collection !important;
+    }
+
+    #jobs-collection & {
+        fill: @jobs-collection !important;
+    }
+
+    #experiments-collection & {
+        fill: @experiments-collection !important;
+    }
+
+    #journals-collection & {
+        fill: @journals-collection !important;
+    }
+
+    #institutions-collection & {
+        fill: @institutions-collection !important;
+    }
+
+    #data-collection & {
+        fill: @data-collection !important;
+    }
+}
+
+@darken-percent: 12%;
+#flask-top {
+
+    #literature-collection & {
+        fill: darken(@literature-collection, @darken-percent) !important;
+    }
+
+    #authors-collection & {
+        fill: darken(@authors-collection, @darken-percent) !important;
+    }
+
+    #conferences-collection & {
+        fill: darken(@conferences-collection, @darken-percent) !important;
+    }
+
+    #jobs-collection & {
+        fill: darken(@jobs-collection, @darken-percent) !important;
+    }
+
+    #experiments-collection & {
+        fill: darken(@experiments-collection, @darken-percent) !important;
+    }
+
+    #journals-collection & {
+        fill: darken(@journals-collection, @darken-percent) !important;
+    }
+
+    #institutions-collection & {
+        fill: darken(@institutions-collection, @darken-percent) !important;
+    }
+
+    #data-collection & {
+        fill: darken(@data-collection, @darken-percent) !important;
+    }
 }
 
 /* Dropdown menu in Header styles
@@ -384,7 +482,7 @@ body {
     display: block;
     float: left;
     left: 0 !important;
-    top: 67px;
+    top: 70px;
     z-index: 1000;
     display: none;
     list-style: none;

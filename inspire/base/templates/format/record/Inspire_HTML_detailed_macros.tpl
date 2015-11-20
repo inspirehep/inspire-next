@@ -21,7 +21,7 @@
 {% from "records/Inspire_Default_HTML_detailed_macros.tpl" import search_current_collection with context %}
 
 {% macro record_collection_heading() %}
-  <span id="search-title">{{ search_current_collection(is_search=false) | trim  }}</span>
+  <span id="search-title">Search literature &#62;</span>
   <span id="title">{{ record_title() }}</span>
 {% endmacro %}
 

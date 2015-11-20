@@ -156,3 +156,106 @@ hr {
 .fa-arrow-up {
     display: none;
 }
+
+#search_results #results-panel {
+    margin-bottom: 0;
+}
+
+// Mixin to set background color
+.collection-background-color(@background-color;) {
+    background-color: @background-color;
+}
+
+#collections-section {
+    margin-bottom: 0;
+}
+
+#search-box-main {
+    .navbar {
+        background-color: white;
+        padding: 30px 10px;
+        margin: -130px 0 0px 0;
+    }
+
+    .navbar-nav {
+
+        #searchform-input-group {
+            width: 100%;
+        }
+    }
+
+    input {
+        height: 50px;
+    }
+
+    button {
+        border: 0;
+        font-size: 27px;
+
+        &.literature {
+            .collection-background-color(@literature-collection);
+        }
+
+        &.authors {
+            .collection-background-color(@authors-collection);
+        }
+
+        &.conferences {
+            .collection-background-color(@conferences-collection);
+        }
+
+        &.jobs {
+            .collection-background-color(@jobs-collection);
+        }
+
+        &.experiments {
+            .collection-background-color(@experiments-collection);
+        }
+
+        &.institutions {
+            .collection-background-color(@institutions-collection);
+        }
+
+        &.journals {
+            .collection-background-color(@journals-collection);
+        }
+
+        &.data {
+            .collection-background-color(@data-collection);
+        }
+    }
+}
+
+#total-results {
+    &.literature-results {
+        color: @literature-collection;
+    }
+
+    &.authors-results {
+        color: @authors-collection;
+    }
+
+    &.conferences-results {
+        color: @conferences-collection;
+    }
+
+    &.jobs-results {
+        color: @jobs-collection;
+    }
+
+    &.experiments-results {
+        color: @experiments-collection;
+    }
+
+    &.institutions-results {
+        color: @institutions-collection;
+    }
+
+    &.journals-results {
+        color: @journals-collection;
+    }
+
+    &.data-results {
+        color: @data-collection;
+    }
+}

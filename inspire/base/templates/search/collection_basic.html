@@ -17,13 +17,25 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-<div id="search-box-main" class="row">
-  <div class="col-sm-12">
-    <div class="navbar navbar-default">
-      {% include "breadcrumbs.html" %}
-      <div class="navbar-collapse">
-        {% include "search/form/form.html" %}
-      </div>
+{%- extends "page.html" -%}
+
+{% block global_bundles %}
+  {{ super() }}
+  {% bundles "collection.css" %}
+{% endblock %}
+
+{%- block header %}
+  <div class="collection-header" id="{{collection.name | lower }}-collection">
+    <div class="container">
+      {{ collection.name | get_collection_title | safe }}
     </div>
   </div>
-</div>
+{% endblock %}
+
+{% block body %}
+  {% block search_bar %}
+    <div id="search-bar" class="{{collection_name}}">
+      {% include 'search/form/index.html' %}
+    </div>
+  {% endblock %}
+{% endblock %}

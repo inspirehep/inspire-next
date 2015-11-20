@@ -36,28 +36,39 @@
         margin-left: 20px;
     }
 
-    .currect-collection {
-        color: @literature-collection;
-    }
+    .active {
 
-    #hep-collection {
-        color: @literature-collection;
-    }
+        &#hep-collection a {
+            color: @literature-collection;
+        }
 
-    #hepnames-collection {
-        color: @authors-collection;
-    }
+        &#hepnames-collection a {
+            color: @authors-collection;
+        }
 
-    #conferences-collection {
-        color: @conferences-collection;
-    }
+        &#conferences-collection a {
+            color: @conferences-collection;
+        }
 
-    #jobs-collection {
-        color: @literature-collection;
+        &#jobs-collection a {
+            color: @jobs-collection;
+        }
+
+        &#institutions-collection a {
+            color: @institutions-collection;
+        }
+
+        &#experiments-collection a {
+            color: @experiments-collection;
+        }
+
+        &#journals-collection a {
+            color: @journals-collection;
+        }
     }
 }
 
-.collection-header#hep-collection {
+.collection-header#literature-collection {
     background-color: @literature-collection;
 
     .search-box input {
@@ -66,7 +77,7 @@
 }
 
 
-.collection-header#hepnames-collection {
+.collection-header#authors-collection {
     background-color: @authors-collection;
 
     .search-box input {
@@ -114,7 +125,7 @@
     }
 }
 
-.search-form {
+.search-box {
 
     // Do not group these rules!
     ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
@@ -131,13 +142,27 @@
     :-ms-input-placeholder { /* Internet Explorer 10-11 */
         color: white;
     }
+
+    .input-group-btn {
+        display: none;
+    }
+
+    .navbar-form {
+        margin: 0;
+        padding: 0;
+
+        #searchform-input-group input{
+            width: 300px;
+            height: 45px;
+        }
+    }
 }
 
 .collection-header {
     background-color: @literature-collection;
     font-weight: 700;
-    height: 150px;
-    padding: 30px 20px 0 20px;
+    height: 200px;
+    padding: 80px 20px 0 20px;
     z-index: -1;
 
     .currect-collection {
@@ -241,7 +266,7 @@ body {
 }
 
 #record_content {
-    margin-top: -50px;
+    margin-top: -130px;
 }
 
 #record_content .record-detailed .record-header {

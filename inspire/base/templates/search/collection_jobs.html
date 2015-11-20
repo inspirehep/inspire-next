@@ -17,13 +17,21 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-<div id="search-box-main" class="row">
-  <div class="col-sm-12">
-    <div class="navbar navbar-default">
-      {% include "breadcrumbs.html" %}
-      <div class="navbar-collapse">
-        {% include "search/form/form.html" %}
+{%- extends "search/collection_basic.html" -%}
+
+{% block body %}
+  {% block collection_header %}
+    <div id="collection-search-bar">
+      <div class="title" id="jobs-search-bar">
+        Search {{ "Jobs" | number_of_records }} jobs
+      </div>
+      {% block search_bar %}
+        {{ super() }}
+      {% endblock search_bar %}
+      <div class="subtitle">
+        Example query:
+        <a href="/search?p=particle+physics&cc=jobs">particle physics</a>
       </div>
     </div>
-  </div>
-</div>
+  {% endblock %}
+{% endblock %}

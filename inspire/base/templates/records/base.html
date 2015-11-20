@@ -27,11 +27,6 @@
 {%- block header %}
   {%- include "base/scripts.html" %}
   {{- super() }}
-  <div id="collections">
-    <div class="container">
-    {{ display_collections() | safe }}
-    </div>
-  </div>
   {{ collection_header() | safe }}
 {%- endblock header %}
 {%- block _bottom_assets %}

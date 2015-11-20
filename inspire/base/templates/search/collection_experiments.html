@@ -17,13 +17,21 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-<div id="search-box-main" class="row">
-  <div class="col-sm-12">
-    <div class="navbar navbar-default">
-      {% include "breadcrumbs.html" %}
-      <div class="navbar-collapse">
-        {% include "search/form/form.html" %}
+{%- extends "search/collection_basic.html" -%}
+
+{% block body %}
+  {% block collection_header %}
+    <div id="collection-search-bar">
+      <div class="title" id="experiments-search-bar">
+        Search {{ "Experiments" | number_of_records }} experiments
+      </div>
+      {% block search_bar %}
+        {{ super() }}
+      {% endblock search_bar %}
+      <div class="subtitle">
+        Example query:
+          <a href="/search?p=find+year+1997&cc=experiments">find year 1997</a>
       </div>
     </div>
-  </div>
-</div>
+  {% endblock %}
+{% endblock %}
