@@ -323,11 +323,10 @@ SEARCH_ELASTIC_AGGREGATIONS = {
                 "field": "accelerator_experiments.experiment"
             }
         },
-        "year": {
+        "earliest_date": {
             "date_histogram": {
                 "field": "earliest_date",
-                "interval": "year",
-                "format": "YYYY"
+                "interval": "year"
             }
         }
     }

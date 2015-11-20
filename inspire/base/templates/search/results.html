@@ -104,21 +104,21 @@
       <hr />
     </div>
     {% endif %}
-    {% if 'year' in response._search()['aggregations'] %}
-    {% set sorted_year = response._search()['aggregations']['year']['buckets']|sort_list_by_dict_val %}
+    {% if 'earliest_date' in response._search()['aggregations'] %}
+    {% set sorted_year = response._search()['aggregations']['earliest_date']['buckets']|sort_list_by_dict_val %}
     <div class="facet-container">
       <h4>Filter by Year</h4>
-        {% for year in sorted_year %}
+        {% for earliest_date in sorted_year %}
       <div class="checkbox">
         <label>
-          {%- set is_checked = 'checked' if 'year' in filtered_facets
-              and year['key']| epoch_to_date_format in filtered_facets['year']['inc'][0] -%}
+          {%- set is_checked = 'checked' if 'earliest_date' in filtered_facets
+              and earliest_date['key']| epoch_to_year_format in filtered_facets['earliest_date']['inc'][0] -%}
           <input class="include-facet"
                 type="checkbox"
                 {{is_checked}}
-                name="year" value="{{ year['key']| epoch_to_date_format }}">
-          <span class="facet-title-truncate">{{ year['key'] | epoch_to_date_format }}</span>
-          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ year['doc_count'] }}</span>
+                name="earliest_date" value="{{ earliest_date['key']| construct_date_format }}">
+          <span class="facet-title-truncate">{{ earliest_date['key']| epoch_to_year_format }}</span>
+          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ earliest_date['doc_count'] }}</span>
         </label>
       </div>
       {% endfor %}
