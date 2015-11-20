@@ -3,6 +3,9 @@
 git+https://github.com/mloesch/sickle@master#egg=Sickle
 git+https://github.com/inveniosoftware/beard@master#egg=beard
 
+# ES 2.0 compatibility - until 2.2 is released
+git+https://github.com/elastic/elasticsearch-py@master#egg=elasticsearch==2.2.0.dev0
+
 ## INSPIRE forks of Invenio packages
 
 git+https://github.com/inspirehep/invenio-access@master#egg=invenio-access==0.2.1.dev20151005

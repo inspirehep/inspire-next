@@ -11,7 +11,7 @@ first time. Production grade deployment is not covered here.
 2. Prerequisites
 ----------------
 
-To install the overlay, first follow the "2. Prerequisites" in `First Steps with Invenio <http://invenio.readthedocs.org/en/latest/getting-started/first-steps.html#prerequisites>`_.
+To install the overlay, first follow the "2. Prerequisites" in `First Steps with Invenio <http://invenio.readthedocs.org/en/stable/getting-started/first-steps.html#prerequisites>`_.
 
 Come back to this documentation to continue the installation.
 

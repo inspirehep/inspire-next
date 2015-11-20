@@ -12,12 +12,27 @@ INSPIRE overlay
 This is the INSPIRE source code overlay for Invenio v.2.0. It installs on top of
 Invenio Digital Library platform source code. The overlay is currently used for `<http://labs.inspirehep.net>`_
 
-Developer documentation
-=======================
-See http://inspirehep.readthedocs.org
+
+Latest news
+===========
+
+*2015-11-24: ElasticSearch 2.0 now required!*
+
+Update your ElasticSearch installation and in order fetch updated packages you
+need to run:
+
+``pip install -r requirements.txt``
+
+PS: This will override some invenio modules, so be sure to keep an eye on
+what is re-installed in case you have installed them in development mode.
 
 
-.. include:: INSTALL.rst
+Installation
+============
+
+See the `install guide`_ here.
+
+.. _install guide: docs/installation.rst
 
 ==============
 Happy hacking!
