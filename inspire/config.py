@@ -69,7 +69,8 @@ EXTENSIONS = [
     'invenio_ext.crossref:CrossRef',
     'invenio_ext.es',
     'invenio_ext.mixer',
-    'inspire.ext.formatter_jinja_filters',
+    'inspire.ext.jinja_filters.general',
+    'inspire.ext.jinja_filters.record',
     'inspire.ext.deprecation_warnings:disable_deprecation_warnings',
 ]
 
