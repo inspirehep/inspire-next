@@ -116,12 +116,13 @@ define(
         var that = this;
         sList = [];
         if ($(ev.target).prop('checked')) {
+          $('#download-format').removeClass('disabled');
           $('.checkbox-results').each(function() {
             $(this).prop('checked', true);
             sList.push($(this).attr("id"));
           });
 
-          if (parseInt($('#total-results').text()) > minimum_page_limit) {
+          if (parseInt($('#total-results').text()) > parseInt(minimum_page_limit)) {
             if (parseInt($('#total-results').text()) > EXPORT_LIMIT) {
               $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
                 '<div class="panel-body" >You have selected ' + sList.length + ' records of this page. <a class="pointer" id="select-all-records">' +
@@ -137,6 +138,7 @@ define(
           }
           this.on('#select-all-records', "click", this.onSelectAllRecords);
         } else {
+          $('#download-format').addClass('disabled');
           $('.checkbox-results').each(function() {
             $(this).prop('checked', false);
           });
@@ -216,7 +218,10 @@ define(
           }
         }
         if (sList.length != 0) {
+          $('#download-format').removeClass('disabled');
           $("#dropdown-export").html($('#dropdown-export').text().trim() + ' <span class="caret"></span>');
+        } else {
+          $('#download-format').addClass('disabled');
         }
       }
 
