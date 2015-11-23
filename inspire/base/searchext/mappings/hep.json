@@ -121,7 +121,8 @@
                     "type": "string"
                 },
                 "authors": {
-                    "type": "object",
+                    "type": "nested",
+                    "include_in_parent": true,
                     "properties": {
                         "full_name": {
                             "type": "string",
@@ -134,6 +135,9 @@
                           "type": "string",
                           "index": "not_analyzed",
                           "copy_to": "global_fulltext"
+                        },
+                        "signature_block": {
+                            "type": "string"
                         }
                     }
                 },
