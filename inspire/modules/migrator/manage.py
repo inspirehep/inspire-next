@@ -35,14 +35,8 @@ from invenio_ext.es import delete_index as delete_main_index
 from invenio_ext.script import Manager
 from invenio_ext.sqlalchemy import db
 
-from invenio_records.api import Record
-
 from invenio_workflows.receivers import create_holdingpen_index
 from invenio_workflows.receivers import delete_holdingpen_index
-
-import six
-
-from werkzeug.utils import import_string
 
 manager = Manager(description=__doc__)
 
@@ -61,10 +55,16 @@ manager = Manager(description=__doc__)
                 help="Format of input file.")
 @manager.option('--force', action='store_true', dest='force_import', default=None,
                 help="Force records that are not registered to import on the system")
-def populate(records, collections, file_input=None, input_type=None, force_import=None):
-    """Train a set of records from the command line.
+@manager.option('--broken-output', '-b', dest='broken_output', default=None,
+                help='Where to write back records that were not possible to migrate')
+@manager.option('--dry-run', '-d', action='store_true', dest='dry_run', default=False,
+                help='Whether records should really be imported or not')
+def populate(records, collections, file_input=None, input_type=None,
+             force_import=None, broken_output=None, dry_run=False):
+    """Populates the system with records
 
-    Usage: inveniomanage predicter train -r /path/to/json -o model.pickle
+    Usage: inveniomanage migrator populate -f prodsync20151117173222.xml.gz \
+                --force --broken-output=/tmp/broken.xml:
     """
     from .tasks import migrate
 
@@ -83,7 +83,8 @@ def populate(records, collections, file_input=None, input_type=None, force_impor
     if file_input:
         print("Migrating records from file: {0}".format(file_input))
 
-        migrate.delay(os.path.abspath(file_input))
+        migrate.delay(os.path.abspath(file_input), broken_output=broken_output,
+                      dry_run=dry_run)
     else:
         legacy_base_url = current_app.config.get("CFG_INSPIRE_LEGACY_BASEURL")
         print(
@@ -96,7 +97,9 @@ def populate(records, collections, file_input=None, input_type=None, force_impor
         job = migrate.delay(legacy_base_url,
                             records=records,
                             collections=collections,
-                            file_input=file_input)
+                            file_input=file_input,
+                            broken_output=broken_output,
+                            dry_run=dry_run)
         print("Scheduled migration job {0}".format(job.id))
 
 

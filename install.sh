@@ -23,6 +23,7 @@ inveniomanage config set CFG_SITE_SECURE_URL https://localhost
 inveniomanage config set ASSETS_DEBUG True  # ignore assets issues
 inveniomanage config set LESS_RUN_IN_DEBUG False
 inveniomanage config set REQUIREJS_RUN_IN_DEBUG False
+inveniomanage config set CELERY_ALWAYS_EAGER True
 
 inveniomanage bower -i bower-base.json > bower.json
 bower install --silent --force-latest --allow-root

@@ -22,66 +22,155 @@
 
 """Manage migration from INSPIRE legacy instance."""
 
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
-from invenio_ext.sqlalchemy import db
+from celery.utils.log import get_task_logger
+
+import gzip
+import re
+
+from six import text_type
+
+from dojson.contrib.marc21.utils import create_record as marc_create_record
+from invenio_celery import celery
 from invenio_records.api import Record as record_api
 from invenio_records.models import Record
 
-from inspire.dojson.hep import hep
-from inspire.dojson.institutions import institutions
-from inspire.dojson.journals import journals
-from inspire.dojson.experiments import experiments
-from inspire.dojson.hepnames import hepnames
-from inspire.dojson.jobs import jobs
 from inspire.dojson.conferences import conferences
+from inspire.dojson.experiments import experiments
+from inspire.dojson.hep import hep
+from inspire.dojson.hepnames import hepnames
+from inspire.dojson.institutions import institutions
+from inspire.dojson.jobs import jobs
+from inspire.dojson.journals import journals
 from inspire.dojson.processors import _collection_in_record
+from invenio_ext.sqlalchemy import db
+from invenio_ext.es import es
 
-from dojson.contrib.marc21.utils import create_record as marc_create_record
+from .models import InspireProdRecords
 
-from lxml import etree
+logger = get_task_logger(__name__)
 
-from invenio_celery import celery
+CHUNK_SIZE = 1000
+
+split_marc = re.compile('<record.*?>.*?</record>', re.DOTALL)
 
 
-@celery.task
-def migrate(source, **kwargs):
+def chunker(iterable, chunksize):
+    buf = []
+    for elem in iterable:
+        buf.append(elem)
+        if len(buf) == chunksize:
+            yield buf
+            buf = []
+    if buf:
+        yield buf
+
+
+def split_blob(blob):
+    """Split the blob using <record.*?>.*?</record> as pattern."""
+    for match in split_marc.finditer(blob):
+        yield match.group()
+
+
+def split_stream(stream):
+    """Split the stream using <record.*?>.*?</record> as pattern."""
+    buf = []
+    for row in stream:
+        row = text_type(row, 'utf8')
+        index = row.rfind('</record>')
+        if index >= 0:
+            buf.append(row[:index + 9])
+            for blob in split_blob(''.join(buf)):
+                yield blob.encode('utf8')
+            buf = [row[index + 9:]]
+        else:
+            buf.append(row)
+
+
+@celery.task(ignore_result=True)
+def migrate(source, broken_output=None, dry_run=False):
     """Main migration function."""
-    from dojson.contrib.marc21.utils import split_stream
-    with db.session.begin_nested():
-        for record in split_stream(open(source)):
-            create_record(etree.tostring(record, method='html'), force=True)
+    if source.endswith('.gz'):
+        fd = gzip.open(source)
+    else:
+        fd = open(source)
+
+    es.indices.put_settings({'index': {'refresh_interval': "10s"}})
+    try:
+        for i, chunk in enumerate(chunker(split_stream(fd), CHUNK_SIZE)):
+            logger.info("Processed {} records".format(i * CHUNK_SIZE))
+            chunk_broken_output = None
+            if broken_output:
+                chunk_broken_output = "{}-{}".format(broken_output, i)
+            migrate_chunk.delay(chunk, chunk_broken_output, dry_run)
+    finally:
+        # FIXME: to be restored to the real initial default value
+        es.indices.put_settings({'index': {'refresh_interval': "1s"}})
+
+
+@celery.task(ignore_result=True)
+def migrate_chunk(chunk, broken_output=None, dry_run=False):
+    for record in chunk:
+        try:
+            create_record(record, force=True, dry_run=dry_run)
+        except Exception:
+            if broken_output:
+                broken_output_fd = open(broken_output, "a")
+                print(record, file=broken_output_fd)
+    logger.info("Committing chunk")
     db.session.commit()
 
 
-def create_record(data, force=False):
+def create_record(data, force=False, dry_run=False):
     record = marc_create_record(data)
-    if _collection_in_record(record, 'institution'):
-        json = institutions.do(record)
-    elif _collection_in_record(record, 'experiment'):
-        json = experiments.do(record)
-    elif _collection_in_record(record, 'journals'):
-        json = journals.do(record)
-    elif _collection_in_record(record, 'hepnames'):
-        json = hepnames.do(record)
-    elif _collection_in_record(record, 'job') or \
-            _collection_in_record(record, 'jobhidden'):
-        json = jobs.do(record)
-    elif _collection_in_record(record, 'conferences'):
-        json = conferences.do(record)
-    else:
-        json = hep.do(record)
+    recid = None
+    if '001' in record:
+        recid = int(record['001'][0])
+    if not dry_run and recid:
+        prod_record = InspireProdRecords(recid=recid, marcxml=data)
+    try:
+        if _collection_in_record(record, 'institution'):
+            json = institutions.do(record)
+        elif _collection_in_record(record, 'experiment'):
+            json = experiments.do(record)
+        elif _collection_in_record(record, 'journals'):
+            json = journals.do(record)
+        elif _collection_in_record(record, 'hepnames'):
+            json = hepnames.do(record)
+        elif _collection_in_record(record, 'job') or \
+                _collection_in_record(record, 'jobhidden'):
+            json = jobs.do(record)
+        elif _collection_in_record(record, 'conferences'):
+            json = conferences.do(record)
+        else:
+            json = hep.do(record)
+        if dry_run:
+            return
 
-    if force and any(key in json for key in ('control_number', 'recid')):
-        try:
-            control_number = json['control_number']
-        except KeyError:
-            control_number = json['recid']
-        control_number = int(control_number)
-        # Searches if record already exists.
-        record = Record.query.filter_by(id=control_number).first()
-        if record is None:
-            # Adds the record to the db session.
-            rec = Record(id=control_number)
-            db.session.add(rec)
-        record_api.create(json)
+        if force and any(key in json for key in ('control_number', 'recid')):
+            try:
+                control_number = json['control_number']
+            except KeyError:
+                control_number = json['recid']
+            control_number = int(control_number)
+            # Searches if record already exists.
+            record = record_api.get_record(control_number)
+            if record is None:
+                # Adds the record to the db session.
+                rec = Record(id=control_number)
+                db.session.add(rec)
+                record_api.create(json)
+            else:
+                record.update(json)
+                record.commit()
+            if recid:
+                prod_record.successful = True
+                db.session.add(prod_record)
+            logger.info("Elaborated record {}".format(control_number))
+    except Exception:
+        if recid:
+            prod_record.successful = False
+            db.session.merge(prod_record)
+            logger.exception("Error in elaborating record ID {}".format(recid))
+        raise
