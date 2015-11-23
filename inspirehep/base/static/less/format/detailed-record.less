@@ -292,32 +292,22 @@ body {
     z-index: 0;
 }
 
-@media screen and (min-width: @screen-sm-min) {
-    .cite-modal {
-        width: 900px;
-    }
-    #record-keywords {
-        margin-top: 20px;
-    }
-}
-
 .cite-modal {
-    width: 75%;
     font-weight: normal;
     text-align: left;
-} 
 
-#citeModalLabel {
-    margin-bottom: 10px;
-}  
+    #citeModalLabel {
+        margin-bottom: 10px;
+    }
+
+    .pointer {
+        cursor:pointer;
+    }
+} 
 
 #record-title, .journal,
 #external_links, #doi-eprint-experiment, {
     color: @blue-purple;
-}
-
-#external_links {
-    float: left;
 }
 
 .journal {
@@ -496,7 +486,6 @@ body {
 
 #doi-eprint-experiment {
     margin-top: 25px;
-    margin-bottom: 15px;
     padding-bottom: 20px;
 
     .doi, .eprint {
