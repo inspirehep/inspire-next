@@ -94,23 +94,6 @@ define(
         });
       }
 
-      this.onChangeArrow = function(ev) {
-        var split_id = $(ev.target).attr('id').split('-');
-        var recid = split_id[split_id.length - 1];
-        var $dots = $('#dots' + recid);
-        var $id_down = $('#arrow_down-' + recid);
-        var $id_up = $('#arrow_up-' + recid);
-        if (split_id[0].match("^arrow_down")) {
-          $dots.hide();
-          $id_up.show();
-          $id_down.hide();
-        } else {
-          $id_up.hide();
-          $dots.show();
-          $id_down.show();
-        }
-      }
-
       this.onExportSelectAll = function(ev) {
         var EXPORT_LIMIT = this.attr.EXPORT_LIMIT;
         var that = this;
@@ -253,7 +236,6 @@ define(
       this.after('initialize', function() {
         sList = [];
         $('[data-toggle="tooltip"]').tooltip()
-        this.on("[id^=arrow]", "click", this.onChangeArrow);
         this.on(".dropdown-cite, .bibtex", "click", this.onDownloadBibtex);
         this.on(".latex_eu", "click", this.onDownloadLatexEu);
         this.on(".latex_us", "click", this.onDownloadLatexUs);
