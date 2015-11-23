@@ -155,8 +155,8 @@
               <p class="help-block hidden-xs">
                 Results per page:
                 <select class='form-control' id="select-numpages">
-                  {%- for i in [10, 25, 50, 100, 250] -%}
-                    <option value="{{ i }}"{{ ' selected' if request.args.get('rg', 25) ==i.__str__() }}>{{ i }}</option>
+                  {%- for i in ['10', '25', '50', '100', '250'] -%}
+                    <option value="{{ i }}"{{ ' selected' if request.args.get('rg', '25') == i.__str__() }}>{{ i }}</option>
                   {%- endfor -%}
                 </select>
               </p>
