@@ -347,6 +347,18 @@ body {
     margin-bottom: 20px;
 }
 
+// Always show scrollbars
+
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
 #references, #citations {
 
     height: 500px;
@@ -364,6 +376,7 @@ body {
             background-color: @teal;
             border: 0px;
             line-height: 2;
+            width: 90%;
         }
 
         button {
@@ -398,7 +411,7 @@ body {
     .panel-heading {
         position: absolute;
         background-color: white;
-        width: 90%;
+        width: 94%;
 
         .references-citations-table {
             margin-top: 15px;   
