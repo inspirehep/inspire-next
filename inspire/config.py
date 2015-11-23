@@ -283,6 +283,9 @@ SEARCH_TYPEAHEAD_INVENIO_KEYWORDS = [
 # when using SPIRES syntax
 SEARCH_TYPEAHEAD_SPIRES_KEYWORDS = list(set(SPIRES_KEYWORDS.keys()))
 
+# Default number of search results
+CFG_WEBSEARCH_DEF_RECORDS_IN_GROUPS = 25
+
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
 # invenio keywords to elasticsearch fields
 SEARCH_ELASTIC_KEYWORD_MAPPING = {
