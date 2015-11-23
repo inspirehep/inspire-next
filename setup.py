@@ -30,6 +30,7 @@ from setuptools.command.test import test as TestCommand
 
 
 requirements = [
+    'dojson==0.4.0',
     'HarvestingKit>=0.6.2',
     "plotextractor>=0.1.0",
     'mixer==4.9.5',

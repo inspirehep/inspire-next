@@ -44,8 +44,6 @@ import six
 
 from werkzeug.utils import import_string
 
-from .tasks import migrate
-
 manager = Manager(description=__doc__)
 
 
@@ -68,6 +66,8 @@ def populate(records, collections, file_input=None, input_type=None, force_impor
 
     Usage: inveniomanage predicter train -r /path/to/json -o model.pickle
     """
+    from .tasks import migrate
+
     if records is None and collections is None:
         # We harvest all
         print("Migrating all records...", file=sys.stderr)
@@ -82,23 +82,8 @@ def populate(records, collections, file_input=None, input_type=None, force_impor
 
     if file_input:
         print("Migrating records from file: {0}".format(file_input))
-        if force_import:
-            # Load signal handler
-            from inspire.modules.records.receivers import insert_record
-        processor = current_app.config['RECORD_PROCESSORS'][input_type]
-        if isinstance(processor, six.string_types):
-            processor = import_string(processor)
-        data = processor(open(file_input))
 
-        if isinstance(data, dict):
-            Record.create(data)
-        else:
-            [Record.create(item) for item in data]
-        db.session.commit()
-        if force_import:
-            # Disable signal handler
-            from inspire.modules.records.receivers import remove_handler
-            remove_handler()
+        migrate.delay(os.path.abspath(file_input))
     else:
         legacy_base_url = current_app.config.get("CFG_INSPIRE_LEGACY_BASEURL")
         print(
