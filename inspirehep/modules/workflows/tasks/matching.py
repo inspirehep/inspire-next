@@ -3,22 +3,19 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2014, 2015 CERN.
 #
-# INSPIRE is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-#
-# In applying this license, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as an Intergovernmental Organization
-# or submit itself to any jurisdiction.
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 """Tasks to check if the incoming record already exist."""
 
@@ -38,10 +35,14 @@ from inspirehep.utils.helpers import (
 )
 
 from invenio_base.globals import cfg
+from invenio_base.wrappers import lazy_import
 
 import requests
 
 import six
+
+
+BibWorkflowObject = lazy_import('invenio_workflows.models.BibWorkflowObject')
 
 
 def search(query):
@@ -228,7 +229,6 @@ def delete_self_and_stop_processing(obj, eng):
 
 def update_old_object(obj, *args, **kwargs):
     """Update the data of the old object with the new data."""
-    from invenio_workflows.models import BibWorkflowObject
 
     holdingpen_ids = obj.extra_data.get("holdingpen_ids", [])
     if holdingpen_ids and len(holdingpen_ids) == 1:
