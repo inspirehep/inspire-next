@@ -4,7 +4,7 @@
 service mysql start
 service redis-server start
 service rabbitmq-server start
-/elasticsearch-"${ES_VERSION}"/bin/elasticsearch --path.plugins="/elasticsearch-${ES_VERSION}/plugins" 1> /dev/null &
+/elasticsearch-"${ES_VERSION}"/bin/elasticsearch --path.plugins="/elasticsearch-${ES_VERSION}/plugins" &
 
 # Needed to fix Python 2.7.9 TypeError with Jinja2.
 # See: https://github.com/inveniosoftware/invenio/issues/2862#issuecomment-90508434
@@ -12,6 +12,8 @@ pip install unittest2
 
 # Install INSPIRE
 pip install -r requirements.txt --quiet
+
+pip freeze
 
 # Configuration
 inveniomanage config set CFG_EMAIL_BACKEND flask.ext.email.backends.console.Mail
@@ -41,7 +43,7 @@ inveniomanage database init --user=root --password= --yes-i-know || echo ':('
 inveniomanage database create --quiet || echo ':('
 
 # Start Celery
-celery worker -E -A invenio_celery.celery --workdir=$VIRTUAL_ENV 1> /dev/null &
+celery worker -E -A invenio_celery.celery --loglevel=INFO --workdir=$VIRTUAL_ENV &
 
 # Load demo records
 inveniomanage migrator populate -t marcxml -f `pwd`/inspire/demosite/data/demo-records.xml --force

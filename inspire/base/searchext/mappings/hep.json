@@ -169,6 +169,10 @@
                             "type": "integer"
                         }
                     }
+                },
+                "facet_inspire_subjects": {
+                    "type": "string",
+                    "index": "not_analyzed"
                 }
             }
         }

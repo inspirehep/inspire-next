@@ -24,7 +24,7 @@ from invenio.ext.sqlalchemy import db
 
 from invenio_records.models import Record
 
-from invenio_records.signals import before_record_insert
+from invenio_records.signals import before_record_insert, before_record_index
 
 
 @before_record_insert.connect
@@ -48,3 +48,15 @@ def insert_record(sender, *args, **kwargs):
 def remove_handler():
     """Disconnects the signal handler."""
     before_record_insert.disconnect(insert_record)
+
+
+@before_record_index.connect
+def populate_inspire_subjects(recid, json):
+    """ Populates a json record before indexing it to elastic.
+        Adds a field for faceting INSPIRE subjects
+    """
+    inspire_subjects = [
+        s['term'] for s in json.get('subject_terms', [])
+        if s.get('scheme', '') == 'INSPIRE' and s.get('term')
+    ]
+    json['facet_inspire_subjects'] = inspire_subjects
