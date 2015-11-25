@@ -295,6 +295,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
         'e': ['exactauthor.raw'],
     },
     "abstract": ["abstracts.value"],
+    "subject": ["subject_terms.scheme"],
     "collection": ["_collections"],
     "doi": ["dois.value"],
     "affiliation": ["authors.affiliations.value"],
@@ -316,6 +317,11 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
 
 SEARCH_ELASTIC_AGGREGATIONS = {
     "hep": {
+        "subject": {
+            "terms": {
+                "field": "subject_terms.scheme"
+            }
+        },
         "author": {
             "terms": {
                 "field": "exactauthor.raw"
