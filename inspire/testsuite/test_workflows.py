@@ -216,7 +216,7 @@ class WorkflowTest(WorkflowTasksTestCase):
         # Mock Elasticsearch DELETE hook
         httpretty.register_uri(
             httpretty.DELETE,
-            re.compile(".*holdingpen/record/(\d+)"),
+            re.compile(".*holdingpen-.*/record/(\d+)"),
             status=404
         )
 

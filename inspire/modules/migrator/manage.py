@@ -30,13 +30,16 @@ import sys
 from flask import current_app
 from flask.ext.script import prompt_bool
 
-from invenio_ext.es import create_index as create_main_index
-from invenio_ext.es import delete_index as delete_main_index
+from invenio_ext.es import es
 from invenio_ext.script import Manager
 from invenio_ext.sqlalchemy import db
+from invenio_records.api import Record
 
-from invenio_workflows.receivers import create_holdingpen_index
-from invenio_workflows.receivers import delete_holdingpen_index
+import six
+
+from werkzeug.utils import import_string
+
+from .tasks import migrate
 
 manager = Manager(description=__doc__)
 
@@ -144,26 +147,51 @@ def remove_legacy_tables():
         current_app.logger.exception(err)
 
 
-@manager.command
-def create_index():
-    """Create or recreate the indices for records and holdingpen.
-
-    The methods called require an argument which then they don't use.
-    So we work around that by passing a dummy argument.
-    """
-    create_main_index('banana')
-    create_holdingpen_index('banana')
+def recreate_index(name, mapping):
+    """Recreate an ElasticSearch index."""
+    es.indices.delete(index=name, ignore=404)
+    es.indices.create(index=name + "_v1", body=mapping)
+    es.indices.put_alias(index=name + "_v1", name=name)
 
 
 @manager.command
-def delete_index():
-    """Delete the indices for records and holdingpen.
+def create_indices():
+    """Create or recreate the indices for records and holdingpen."""
+    import json
 
-    The methods called require an argument which then they don't use.
-    So we work around that by passing a dummy argument.
-    """
-    delete_main_index('banana')
-    delete_holdingpen_index('banana')
+    from invenio.base.globals import cfg
+    from invenio_search.registry import mappings
+
+    indices = set(cfg["SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING"].values())
+    indices.add(cfg['SEARCH_ELASTIC_DEFAULT_INDEX'])
+    for index in indices:
+        mapping = {}
+        mapping_filename = index + ".json"
+        if mapping_filename in mappings:
+            mapping = json.load(open(mappings[mapping_filename], "r"))
+        recreate_index(index, mapping)
+        # Create Holding Pen index
+        if mapping:
+            mapping['mappings']['record']['properties'].update(
+                cfg['WORKFLOWS_HOLDING_PEN_ES_PROPERTIES']
+            )
+        name = cfg['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + index
+        recreate_index(name, mapping)
+
+
+@manager.command
+def delete_indices():
+    """Delete all the indices for records and holdingpen."""
+    from invenio.base.globals import cfg
+
+    indices = set(cfg["SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING"].values())
+    indices.add(cfg['SEARCH_ELASTIC_DEFAULT_INDEX'])
+    holdingpen_indices = [
+        cfg['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + name for name in list(indices)
+    ]
+    indices.update(holdingpen_indices)
+    for index in indices:
+        es.indices.delete(index=index, ignore=404)
 
 
 @manager.command
