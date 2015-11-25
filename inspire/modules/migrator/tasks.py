@@ -46,6 +46,7 @@ from inspire.dojson.journals import journals
 from inspire.dojson.processors import _collection_in_record
 from invenio_ext.sqlalchemy import db
 from invenio_ext.es import es
+from invenio_records.recordext.functions.get_record_collections import update_collections
 
 from .models import InspireProdRecords
 
@@ -96,30 +97,43 @@ def migrate(source, broken_output=None, dry_run=False):
     else:
         fd = open(source)
 
-    es.indices.put_settings({'index': {'refresh_interval': "10s"}})
-    try:
-        for i, chunk in enumerate(chunker(split_stream(fd), CHUNK_SIZE)):
-            logger.info("Processed {} records".format(i * CHUNK_SIZE))
-            chunk_broken_output = None
-            if broken_output:
-                chunk_broken_output = "{}-{}".format(broken_output, i)
-            migrate_chunk.delay(chunk, chunk_broken_output, dry_run)
-    finally:
-        # FIXME: to be restored to the real initial default value
-        es.indices.put_settings({'index': {'refresh_interval': "1s"}})
+    for i, chunk in enumerate(chunker(split_stream(fd), CHUNK_SIZE)):
+        logger.info("Processed {} records".format(i * CHUNK_SIZE))
+        chunk_broken_output = None
+        if broken_output:
+            chunk_broken_output = "{}-{}".format(broken_output, i)
+        migrate_chunk.delay(chunk, chunk_broken_output, dry_run)
 
 
 @celery.task(ignore_result=True)
 def migrate_chunk(chunk, broken_output=None, dry_run=False):
-    for record in chunk:
-        try:
-            create_record(record, force=True, dry_run=dry_run)
-        except Exception:
-            if broken_output:
-                broken_output_fd = open(broken_output, "a")
-                print(record, file=broken_output_fd)
-    logger.info("Committing chunk")
-    db.session.commit()
+    from flask_sqlalchemy import models_committed
+    from invenio_records.receivers import record_modification
+    from invenio_records.tasks.index import get_record_index
+    from invenio.base.globals import cfg
+    from elasticsearch.helpers import bulk as es_bulk
+    from invenio_records.signals import before_record_index
+    models_committed.disconnect(record_modification)
+
+    records_to_index = []
+    try:
+        for record in chunk:
+            try:
+                recid, json = create_record(record, force=True, dry_run=dry_run)
+                index = get_record_index(json) or cfg['SEARCH_ELASTIC_DEFAULT_INDEX']
+                before_record_index.send(recid, json=json)
+                json.update({'_index': index, '_type': 'record', '_id': recid})
+                records_to_index.append(json)
+            except Exception:
+                if broken_output:
+                    broken_output_fd = open(broken_output, "a")
+                    print(record, file=broken_output_fd)
+        logger.info("Committing chunk")
+        db.session.commit()
+        logger.info("Sending chunk to elasticsearch")
+        es_bulk(es, records_to_index)
+    finally:
+        models_committed.connect(record_modification)
 
 
 def create_record(data, force=False, dry_run=False):
@@ -146,7 +160,7 @@ def create_record(data, force=False, dry_run=False):
         else:
             json = hep.do(record)
         if dry_run:
-            return
+            return recid, json
 
         if force and any(key in json for key in ('control_number', 'recid')):
             try:
@@ -160,14 +174,15 @@ def create_record(data, force=False, dry_run=False):
                 # Adds the record to the db session.
                 rec = Record(id=control_number)
                 db.session.add(rec)
-                record_api.create(json)
+                record = record_api.create(json)
             else:
                 record.update(json)
                 record.commit()
             if recid:
                 prod_record.successful = True
-                db.session.add(prod_record)
+                db.session.merge(prod_record)
             logger.info("Elaborated record {}".format(control_number))
+            return control_number, dict(record)
     except Exception:
         if recid:
             prod_record.successful = False
