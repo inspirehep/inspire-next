@@ -20,18 +20,31 @@
 {%- extends "search/collection_basic.html" -%}
 
 {% block body %}
-  {% block collection_header %}
-    <div id="collection-search-bar">
-      <div class="title" id="authors-search-bar">
-          Search {{ "HepNames" | number_of_records }} authors
-      </div>      
-      {% block search_bar %}
-        {{ super() }}
-      {% endblock search_bar %}
-      <div class="subtitle">
-        Example query:
-        <a href="/search?p=find+author+ellis+and+field+hep-th&cc=hepnames">find author ellis and field hep-th</a>
+  <div id="collection-search-bar">
+    <div class="title" id="authors-search-bar">
+        Search {{ "HepNames" | number_of_records }} authors
+    </div>      
+    {% block search_bar %}
+      {{ super() }}
+      <script type="text/javascript">
+        window.onload = function () {
+          // Disable search bar
+          document.getElementById('search-form-input').disabled = true;
+          document.getElementById('search-form-button').disabled = true;
+        }
+      </script>
+    {% endblock search_bar %}
+  </div>
+
+  <div id="collection-authors-not-available">
+    <div class="row">
+      <div class="col-md-12">
+        The authors collection is not yet available on INSPIRE labs.<br/>
+        Follow us on <a href="https://twitter.com/inspirehep">Twitter</a> and through our <a href="http://blog.inspirehep.net/">blog</a> to get updated when the newly designed collection is ready.
+      </div>
+      <div class="col-md-12">
+        <a type="button" class="btn" href="http://inspirehep.net/collection/HepNames">Access authors on INSPIRE-HEP</a>
       </div>
     </div>
-  {% endblock %}
+  </div>
 {% endblock %}
