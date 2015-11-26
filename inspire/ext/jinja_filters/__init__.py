@@ -19,14 +19,3 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
-
-def setup_app(app):
-    from inspire.ext.formatter_jinja_filters import record, general
-
-    filters = {}
-    filters.update(general.get_filters())
-    filters.update(record.get_filters())
-
-    for name, fn in filters.iteritems():
-        app.jinja_env.filters[name] = fn

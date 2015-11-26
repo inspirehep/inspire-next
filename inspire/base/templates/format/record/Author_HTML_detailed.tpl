@@ -43,7 +43,7 @@
       {{ row('Field', record.get('field', [])|join_array(' ')) }}
       {{ row('Author profile', record|author_profile|join_array(' ')) }}
       {{ row('Inspire ID', record.get('inspire_id', [])|join_array(' ')) }}
-      {{ row('Institute', record|institute_links|join_array('\n')) }}
+      {{ row('Institute', record|institutes_links|join_array('\n')) }}
     </table>
   </div>
 {% endblock %}
