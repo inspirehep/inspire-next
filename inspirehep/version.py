@@ -3,23 +3,19 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2014, 2015 CERN.
 #
-# INSPIRE is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-#
-# In applying this licence, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as an Intergovernmental Organization
-# or submit itself to any jurisdiction.
-
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 """Version number.
 
@@ -31,10 +27,15 @@ Respect the following format: major, minor, patch, ..., "dev"?, revision?
 - dev has to be set in development mode (non-release).
 - revision can be set if you want to override the date coming from git.
 
-See the doctest below.
+See the tests.
 
 (This is taken from Invenio repository)
 """
+
+import datetime
+
+import subprocess
+
 
 version = (2, 0, 1, 'dev', 20141107094016)
 
@@ -44,24 +45,6 @@ def build_version(*args):
     Build a PEP440 compatible version based on a list of arguments.
 
     Inspired by Django's django.utils.version
-
-    .. doctest::
-
-        >>> print(build_version(1, 0, 0))
-        1.0
-        >>> print(build_version(1, 1, 1))
-        1.1.1
-        >>> print(build_version(1, 2, 3, 4))
-        1.2.3.4
-        >>> print(build_version(2, 0, 0, 'dev', 1))
-        2.0.dev1
-        >>> print(build_version(2, 0, 0, 'dev'))  # doctest: +ELLIPSIS
-        2.0.dev...
-        >>> print(build_version(2, 0, 1, 'dev'))  # doctest: +ELLIPSIS
-        2.0.1.dev...
-        >>> print(build_version(1, 2, 3, 4, 5, 6, 'dev'))  # doctest: +ELLIPSIS
-        1.2.3.4.5.6.dev...
-
     """
     if 'dev' in args:
         pos = args.index('dev')
@@ -93,8 +76,6 @@ def build_version(*args):
 def git_revision():
     """Get the timestamp of the latest git revision."""
     if not hasattr(git_revision, '_cache'):
-        import datetime
-        import subprocess
         call = subprocess.Popen(r'git log -1 --pretty=format:%ct --quiet HEAD',
                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE, shell=True)
