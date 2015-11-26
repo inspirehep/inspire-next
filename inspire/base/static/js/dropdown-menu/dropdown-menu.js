@@ -99,9 +99,9 @@
          });
 
          //Function for opening both parts on click
-         /*$(".dropdown-toggle").click(function() {
-            $("#jobs").css({"display":"block","top": "-1px", "left": "733px","position":"absolute"});
-           });*/
+          $( ".dropdown-toggle" ).on( "click", function() {
+            $("#jobs").css({"display":"block","top": "-1px", "left": "573px","position":"absolute"});
+          });
        } else {
          $(document).click(function() {
            $(".move-down").css({
