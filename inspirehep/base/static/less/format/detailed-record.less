@@ -20,8 +20,6 @@
 
  @import (reference) "../inspire.less";
 
- @teal: #EDF3F3;
- @grey: #7E8D8E;
  @purple: #293E51;
  @darken: 8%;
 
@@ -73,6 +71,7 @@
 
     .search-box input {
         background-color: darken(@literature-collection, @darken);
+        color: white;
     }
 }
 
@@ -202,10 +201,6 @@
     border-bottom: 0px;
 }
 
-body {
-    background-color: @teal;
-}
-
 .record-collection-heading {
     font-weight: 700;
 
@@ -279,17 +274,16 @@ body {
 }
 
 .pdf-btn, .cite-btn {
-    color: white;
-    border: none;
+    background-color: @teal;
+    margin-right: 5px;
+    border: 0px;
+    color: @grey;
+    font-weight: 700;
 }
 
-.cite-btn:link, .cite-btn:visited, .cite-btn:hover, .cite-btn:active {
+.cite-btn:hover {
+    background-color: @blue-purple;
     color: white;
-}
-
-.cite-btn, .cite-btn:link, .cite-btn:visited, .cite-btn:hover, .cite-btn:active {
-    background-color: #293D51;
-    z-index: 0;
 }
 
 @media screen and (min-width: @screen-sm-min) {
@@ -496,7 +490,7 @@ body {
 #record_content .record-detailed .record-details {
     padding-top: 30px;
     text-align: left;
-    background-color: @teal;
+    background-color: @page-background;
 }
 
 #doi-eprint-experiment {

@@ -69,13 +69,21 @@
         {% endif %}
       </small>
     {% else %}
-      <small>
         {% if not is_brief and show_affiliations %}
-          <a id="authors-show-more" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
-            Show affiliations
-          </a>
+          {% set affiliations_exist = [] %}
+          {% for author in record.authors %}
+            {% if author.get('affiliations') %}
+              {% do affiliations_exist.append(1) %}
+            {% endif %}
+          {% endfor %}
         {% endif %}
-      </small>
+        {% if affiliations_exist %}
+          <small>
+            <a id="authors-show-more" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
+              Show affiliations
+            </a>
+          </small>
+        {% endif %}
     {% endif %}
 
     {% if show_affiliations %}
@@ -157,16 +165,18 @@
 {% endmacro %}
 
 {% macro record_arxiv(is_brief) %}
-  {% if record.arxiv_eprints %}
-    {% for report_number in record.arxiv_eprints %}
-      {% if report_number.value and report_number.value is not none %}
-        {% if is_brief %}
-          <div class="eprint">e-Print:
-            <a href="http://arxiv.org/abs/{{ report_number.value }}" > {{ report_number.value }}</a>
-          </div>
-        {% else %}
-          <span class="eprint">e-Print</span>
-          <a href="http://arxiv.org/abs/{{ report_number.value }}" title="arXiv" target="_blank">{{ report_number.value }} <i class="fa fa-external-link"></i></a>
+  {% if record.get('arxiv_eprints') %}
+    {% for report_number in record.get('arxiv_eprints') %}
+      {% if is_brief %}
+        e-Print:<a href="http://arxiv.org/abs/{{ report_number.get('value') }}" > {{ report_number.get('value') }}</a>
+        {% if report_number.get('categories') %}
+          [{{ report_number.get('categories')[0] }}]
+        {% endif %}
+      {% else %}
+        <span class="eprint">e-Print</span>
+        <a href="http://arxiv.org/abs/{{ report_number.get('value') }}" title="arXiv" target="_blank">{{ report_number.get('value') }}</a>
+        {% if report_number.get('categories') %}
+          [{{ report_number.get('categories')[0] }}]
         {% endif %}
       {% endif %}
     {% endfor %}

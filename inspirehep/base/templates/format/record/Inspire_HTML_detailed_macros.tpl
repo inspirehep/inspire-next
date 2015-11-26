@@ -75,36 +75,44 @@
 
 {% macro show_publication_info(pub_info) %}
   {% if pub_info.get('journal_title') and pub_info.get('journal_volume') and pub_info.get('year') and pub_info.get('page_artid') %}
-    <span>{{ pub_info.get('journal_title') }} {{ pub_info.get('journal_volume') }} ({{pub_info.get('year')}}), {{ pub_info.get('page_artid') }}</span>
+    Published in
+    <span><em>{{ pub_info.get('journal_title') }} {{ pub_info.get('journal_volume') }} ({{pub_info.get('year')}}), {{ pub_info.get('page_artid') }}</em></span>
   {% else %}
     {% if pub_info.get('journal_title') or pub_info.get('journal_volume') or pub_info.get('year') or pub_info.get('page_artid') %}
+      Published in
       <span>
-        {% if pub_info.get('journal_title') %}
-          {{ pub_info.get('journal_title') }} 
-        {% endif %}
-        {% if pub_info.get('journal_volume') %}
-          {{ pub_info.get('journal_volume') }} 
-        {% endif %}
-        {% if pub_info.get('year') %}
-          {{ pub_info.get('year') }} 
-        {% endif %}
-        {% if pub_info.get('page_artid') %}
-          {{ pub_info.get('page_artid') }} 
-        {% endif %}
+        <em>
+          {% if pub_info.get('journal_title') %}
+            {{ pub_info.get('journal_title') }} 
+          {% endif %}
+          {% if pub_info.get('journal_volume') %}
+            {{ pub_info.get('journal_volume') }} 
+          {% endif %}
+          {% if pub_info.get('year') %}
+            {{ pub_info.get('year') }} 
+          {% endif %}
+          {% if pub_info.get('page_artid') %}
+            {{ pub_info.get('page_artid') }} 
+          {% endif %}
+        </em>
       </span>
     {% endif %}
   {% endif %}
 {% endmacro %}
 
 {% macro record_doi() %}
-    {% if record.get('dois') | is_list %}
-      {% set filtered_doi = record.get('dois.value') | remove_duplicates %}
-      {% for doi in filtered_doi %}
-        {% if not doi | has_space %}
-          <span class="text-left"><b>DOI </b></span><a href="http://dx.doi.org/{{ doi | trim | safe}}" title="DOI">{{ doi }}</a>
+  {% if record.get('dois') | is_list %}
+    {% set filtered_doi = record.get('dois.value') | remove_duplicates %}
+    <b>DOI </b>
+    {% for doi in filtered_doi %}
+      {% if not doi | has_space %}
+        <a href="http://dx.doi.org/{{ doi | trim | safe}}" title="DOI">{{ doi }}</a>
+        {% if not loop.last %}
+        , 
         {% endif %}
-      {% endfor %}
-    {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
 {% endmacro %}
 
 {% macro detailed_record_abstract() %}

@@ -25,92 +25,93 @@
 <div class="row">
   <div class="col-md-12">
     <div id="panel-default-brief" class="panel panel-default" >
-    <div class="panel-body" >
-      <div class="row">
-      <div class="col-md-9"  id="left-column">
-        <h4 class="custom-h">
-          <span id='checkbox-parent'>
-            <input type="checkbox" class="checkbox-results" id="{{ record['control_number'] }}">
-          </span>
-          <b>
-            <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-              {{ record['titles[0].title']|capitalize }}
-            </a>
-            {% if record['titles[0].title']|count_words() > 5 %}
-              <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                {{ record['titles[0].title']|capitalize | words(5) + "..."}}
-              </a>
-            {% else %}
-              <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                {{ record['titles[0].title']|capitalize }}
-              </a>
-            {% endif %}
-          </b>
-      </h4>
-      {% if record.authors %}
-        <div class="authors">
-          {{ render_record_authors(is_brief=true, show_affiliations=false) }}
-        </div>
-      {% endif %}
-      {% if record.get('publication_info') or record.get('dois')%}
+      <div class="panel-body" >
         <div class="row">
-          {% if record.get('publication_info') %}
-            <div class="col-md-6 ">
-              {{ record_journal_info() }}
+          <div class="col-md-9 left-column">
+            <div class="row">
+              <div class="col-md-1">
+                <span id='checkbox-parent'>
+                  <input type="checkbox" class="checkbox-results" id="{{ record['control_number'] }}">
+                </span>
+              </div>
+              <div class="col-md-11">
+                <h4 class="custom-h">
+                  <b>
+                    <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+                      {{ record['titles[0].title']|capitalize }}
+                    </a>
+                    {% if record['titles[0].title']|count_words() > 5 %}
+                      <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+                        {{ record['titles[0].title']|capitalize | words(5) + "..."}}
+                      </a>
+                    {% else %}
+                      <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+                        {{ record['titles[0].title']|capitalize }}
+                      </a>
+                    {% endif %}
+                  </b>
+                </h4>
+                {% if record.authors %}
+                  <div class="authors">
+                    {{ render_record_authors(is_brief=true, show_affiliations=false) }}
+                  </div>
+                {% endif %}
+                <div class="row">
+                  {% if record.get('publication_info') or record.get('dois') %}
+                    <div class="col-md-7 ">
+                      {{ record_journal_info() }}
+                      {% if record.get('publication_info') and record.get('dois') %}
+                        ,
+                      {% endif %}
+                      {{ render_doi() }}
+                    </div>
+                  {% endif %}
+                  {% if record.get('arxiv_eprints') %}
+                    <div class="col-md-5">
+                     {{ record_arxiv(is_brief=true) }}
+                    </div>
+                  {% endif %}
+                </div>
+                {% if record.get('abstracts') %}
+                    {{ record_abstract(is_brief=true) }}
+                {% endif %}
+              </div>
             </div>
-          {% endif %}
-          {% if record.get('dois') %}
-            <div class="col-md-6 ">
-              DOI: {{ render_doi() }}
-            </div>
-          {% endif %}
-        </div>
-      {% endif %}
-      {% if record.get('arxiv_eprints') %}
-        <div class="row">
-          <div class="col-md-6">
-           {{ record_arxiv(is_brief=true) }}
           </div>
-        </div>
-      {% endif %}
-      {% if record.get('abstracts') %}
-          {{ record_abstract(is_brief=true) }}
-      {% endif %} 
-        </div>
-      <div class="col-md-3" id="right-column" >
-        {% if record.get('arxiv_eprints') %}
-          {% if record.get('arxiv_eprints') | is_list() %}
-            {% set filtered_arxiv = record.get('arxiv_eprints') %}
-            {% for i in filtered_arxiv %}
-                <a type="button" class="btn  custom-btn blue-btn" id="link-to-pdf"  href="http://arxiv.org/pdf/{{ i.get('value') | sanitize_arxiv_pdf }}"><i class="fa fa-eye"></i> PDF </a>
-            {% endfor %}
-          {% endif %}
-        {% endif %}
-        <span class="dropdown">
-         <button class="btn btn-default dropdown-toggle dropdown-cite" type="button" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#citeModal{{record['control_number']}}">
-           <i class="fa fa-quote-right"></i> Cite
-          </button>
-        </span>
-        {{ record_cite_modal() }}
-        <div class="citations-references">
-          {% if record.get('date_updated') %}
-            <i class="glyphicon glyphicon-calendar"></i> {{ record.get('date_updated').split('-')[0] }}<br/>
-          {% endif %}
-          {% if  record.get('_cited_by_count') > 0  %}
-            <i class="fa fa-quote-left"></i><span><a href="/record/{{ record.get('control_number') }}#citations"  target="_blank"> Cited {{ record.get('_cited_by_count') }} times</a></span><br/>
-          {% else %}
-            <i class="fa fa-quote-left"></i><span> Cited 0 times</span><br/>
-          {% endif %}
-          {% if record.get('references') %}
-            <i class="fa fa-link"></i><span><a href="/record/{{ record.get('control_number') }}#references" target="_blank">  {{ (record.get('references', '')) | count }} References</a></span>
-          {% else %}
-            <i class="fa fa-link"></i><span> 0 References</span>
-          {% endif %}
+          <div class="col-md-3 right-column" >
+            {% if record.get('arxiv_eprints') %}
+              {% if record.get('arxiv_eprints') | is_list() %}
+                {% set eprints = record.get('arxiv_eprints') %}
+                {% for eprint in eprints %}
+                  <a type="button" class="btn custom-btn btn-warning link-to-pdf" href="http://arxiv.org/pdf/{{ eprint.get('value') | sanitize_arxiv_pdf }}"><i class="fa fa-eye"></i> PDF </a>
+                {% endfor %}
+              {% endif %}
+            {% endif %}
+            <span class="dropdown">
+              <button class="btn btn-default dropdown-toggle dropdown-cite" type="button" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#citeModal{{record['control_number']}}">
+                <i class="fa fa-quote-right"></i> Cite
+              </button>
+            </span>
+            {{ record_cite_modal() }}
+            <div class="citations-references">
+              {% if record.get('earliest_date') %}
+                <i class="glyphicon glyphicon-calendar"></i> {{ record.get('earliest_date').split('-')[0] }}<br/>
+              {% endif %}
+              {% if  record.get('citation_count') > 0  %}
+                <i class="fa fa-quote-left"></i><span><a href="/record/{{ record.get('control_number') }}#citations"  target="_blank"> Cited {{ record.get('citation_count') }} times</a></span><br/>
+              {% else %}
+                <i class="fa fa-quote-left"></i><span> Cited 0 times</span><br/>
+              {% endif %}
+              {% if record.get('references') %}
+                <i class="fa fa-link"></i><span><a href="/record/{{ record.get('control_number') }}#references" target="_blank">  {{ (record.get('references', '')) | count }} References</a></span>
+              {% else %}
+                <i class="fa fa-link"></i><span> 0 References</span>
+              {% endif %}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-</div>
 </div>
 {% endblock %}

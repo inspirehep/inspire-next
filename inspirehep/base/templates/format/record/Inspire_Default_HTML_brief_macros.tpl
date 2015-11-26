@@ -22,7 +22,12 @@
     {% set filtered_doi = record.get('dois.value')| remove_duplicates() %}
     {% for doi in filtered_doi %}
     {% if not doi|has_space() %}
-      <a href="http://dx.doi.org/{{ doi |trim()|safe}}" title="DOI" >{{ doi }}</a><br/>
+      <a data-toggle="tooltip"
+      data-placement="bottom"
+      title="{{ doi }}"
+      href="http://dx.doi.org/{{ doi |trim()|safe}}" title="DOI">
+        DOI
+      </a>
     {% endif %}
     {% endfor %}
   {% endif %}
@@ -32,7 +37,8 @@
   {% if record.get('publication_info')|is_list() %}
     {% for pub_info in record.get('publication_info')%}
       {% if pub_info.get('journal_title') and pub_info.get('journal_volume') and  pub_info.get('year') and pub_info.get('page_artid') %}
-      <span class="text-left"><i>{{ pub_info.get('journal_title') }}</i> {{ pub_info.get('journal_volume') }} ({{pub_info.get('year')}}) {{ pub_info.get('page_artid') }}</span><br/>
+      Published in
+      <span class="text-left"><i>{{ pub_info.get('journal_title') }}</i> {{ pub_info.get('journal_volume') }} ({{pub_info.get('year')}}) {{ pub_info.get('page_artid') }}</span>
       {% endif %}
     {% endfor %}
   {% else %}

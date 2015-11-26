@@ -31,15 +31,16 @@
     border: 0px;
 }
 
-.blue-btn {
-    color: #fff;
-    background-color: #337ab7;
-    border-color: #2e6da4;
+a.link-to-pdf, button.dropdown-cite {
+    background-color: @teal;
+    border: 0px;
+    color: @grey;
+    font-weight: 700;
 }
 
-#link-to-pdf {
-    text-decoration:none; 
-    color:white;
+button.dropdown-cite:hover {
+    background-color: @blue-purple;
+    color: white;
 }
 
 hr {
@@ -54,12 +55,30 @@ hr {
     top: inherit;
 }
 
-#left-column {
+.left-column {
     border-right: 1px solid #D3D3D3;
     min-height: 114px;
 
     .eprint, .authors {
         margin-bottom: 10px;
+    }
+
+    div {
+        padding: 0;
+        margin: 0;
+    }
+
+    .col-md-1 {
+        width: 3%;
+    }
+
+    .col-md-11 {
+        width: 97%;
+    }
+
+    .abstract {
+        color: #7e8d8e;
+        margin-top: 10px;
     }
 }
 
@@ -72,7 +91,7 @@ hr {
 }
 
 @media only screen and (max-width : 992px){
-    #right-column {
+    .right-column {
         display:none;
     }
 
@@ -88,7 +107,7 @@ hr {
         display:block;
     }
 
-    #left-column {
+    .left-column {
         border-right: 0px;
     }
 
@@ -180,11 +199,11 @@ hr {
 #panel-default-brief .panel-body {
     padding: 0;
 
-    #left-column {
-        padding: 10px 5px 10px 35px;
+    .left-column {
+        padding: 10px 5px 10px 25px;
     }
 
-    #right-column {
+    .right-column {
         padding: 10px;
     }
 
@@ -193,9 +212,6 @@ hr {
     }
 }
 
-.abstract {
-    color: #7e8d8e;
-}
 
 #search_results #results-panel {
     margin-bottom: 0;
@@ -213,9 +229,15 @@ hr {
 #search-box-main {
     margin-top: 10px;
     margin-bottom: 15px;
+
+    div.col-sm-12 {
+        padding-left: 0;
+    }
+
     .breadcrumb {
         margin-bottom: 0;
     }
+
     .navbar {
         background-color: white;
         padding: 20px 10px;
@@ -232,6 +254,7 @@ hr {
 
     input {
         height: 50px;
+        font-size: 18px;
     }
 
     button {
