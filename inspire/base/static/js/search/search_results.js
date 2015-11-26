@@ -12,7 +12,6 @@ define(
     return defineComponent(SearchResults);
 
     function SearchResults() {
-      var minimum_page_limit = $("#results-per-page option:selected").text();
       this.attributes({
         EXPORT_LIMIT: 5000
       });
@@ -95,6 +94,7 @@ define(
       }
 
       this.onExportSelectAll = function(ev) {
+        var minimum_page_limit = $("#select-numpages option:selected").text();
         var EXPORT_LIMIT = this.attr.EXPORT_LIMIT;
         var that = this;
         sList = [];
@@ -215,7 +215,7 @@ define(
 
       this.onSortingChange = function(ev) {
         var $sortField = $('form[name=search] input[name=sf]'),
-            $sortOrder = $('form[name=search] input[name=so]');
+          $sortOrder = $('form[name=search] input[name=so]');
         var sortingVal = $("#select-sorting").val();
         switch (sortingVal) {
           case 'bestmatch':
