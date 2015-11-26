@@ -123,36 +123,41 @@
     </div>
     {% set sep = joiner("; ") %}
 
-    {% if record.get('thesaurus_terms') %}
+    {% if record.get('thesaurus_terms') or record.get('free_keywords') %}
       {% set showMore = [] %}
       {% set keywords_number = [] %}
-        {% for keywords in record.get('thesaurus_terms') %}
-          {% if (loop.index < 15) %}
-            {% if 'keyword' in keywords.keys() %}
-              <small>
-                <a href='/search?p=keyword:{{ keywords.get('keyword') }}'>{{ keywords.get('keyword') }}</a>
-              </small>
-            {% endif %}
+        {% if record.get('thesaurus_terms') %}
+          {% for keywords in record.get('thesaurus_terms') %}
+            {% if (loop.index < 15) %}
+              {% if 'keyword' in keywords.keys() %}
+                <small>
+                  <a href='/search?p=keyword:{{ keywords.get('keyword') }}'>{{ keywords.get('keyword') }}</a>
+                </small>
+              {% endif %}
 
-            {% if loop.first %}
-              {% do keywords_number.append(loop.length) %}
+              {% if loop.first %}
+                {% do keywords_number.append(loop.length) %}
+              {% endif %}
+              {% if not loop.last %}
+                ,
+              {% endif %}
             {% endif %}
-            {% if not loop.last %}
-              ,
+            {% if (loop.index == 15) %}
+              {% do showMore.append(1) %} 
             {% endif %}
-          {% endif %}
-          {% if (loop.index == 15) %}
-            {% do showMore.append(1) %} 
-          {% endif %}
-        {% endfor %}
+          {% endfor %}
+        {% endif %}
 
-      {% if showMore %}
+      {% if showMore or record.get('free_keywords')%}
         {{ sep() }}
         <a href="" class="text-muted" data-toggle="modal"data-target="#keywordsFull">
           <small>
             Show all
             {% if keywords_number %}
-              {{ keywords_number[0] }}
+              {{ keywords_number[0] }} plus
+            {% endif %}
+            {% if record.get('free_keywords') %}
+              author supplied keywords
             {% endif %}
           </small>
         </a>
@@ -164,17 +169,28 @@
                 <h4 class="modal-title" id="keywordsFull">Full list of keywords</h4>
               </div>
               <div class="modal-body">
-                {% for keywords in record.get('thesaurus_terms') %}
-                  {% if 'keyword' in keywords.keys() %}
-                  <a href='http://inspirehep.net/search?f=keyword&p="{{ keywords.get('keyword') }}"&ln=en'>{{ keywords.get('keyword') }}</a>,
-                  {% endif %}
-                {% endfor %}
+              <h4>INSPIRE keywords</h4>
+                {% if record.get('thesaurus_terms') %}
+                  {% for keywords in record.get('thesaurus_terms') %}
+                    {% if 'keyword' in keywords.keys() %}
+                    <a href='/search?p=keyword:{{ keywords.get('keyword') }}'>{{ keywords.get('keyword') }}</a>,
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+
+                {% if record.get('free_keywords') %}
+                  <h4>Author supplied keywords</h4>
+                  {% for keywords in record.get('free_keywords') %}
+                    {% if 'value' in keywords.keys() %}
+                      <a href='/search?p=keyword:{{ keywords.get('value') }}'>{{ keywords.get('value') }}</a>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
               </div>
             </div>
           </div>
         </div>
       {% endif %}
-
     {% else %}
       No keywords available
     {% endif %}
