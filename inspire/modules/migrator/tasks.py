@@ -124,14 +124,16 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
                 before_record_index.send(recid, json=json)
                 json.update({'_index': index, '_type': 'record', '_id': recid})
                 records_to_index.append(json)
-            except Exception:
+            except Exception as err:
+                logger.exception(err)
                 if broken_output:
                     broken_output_fd = open(broken_output, "a")
                     print(record, file=broken_output_fd)
+
         logger.info("Committing chunk")
         db.session.commit()
         logger.info("Sending chunk to elasticsearch")
-        es_bulk(es, records_to_index)
+        es_bulk(es, records_to_index, timeout=60)
     finally:
         models_committed.connect(record_modification)
 
