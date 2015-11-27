@@ -231,7 +231,7 @@ class BibFieldToJSONTests(InvenioTestCase):
         """Test if url is created correctly"""
         self.assertEqual(
             self.bibfield_json['url'],
-            self.record['url'][0]
+            self.record['urls'][0]
         )
 
     def test_publication_info(self):
