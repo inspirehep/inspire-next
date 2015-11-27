@@ -17,21 +17,19 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-"""Tests for text utls."""
-
-from __future__ import print_function, absolute_import
+"""Tests for the datefilter utility functions."""
 
 from datetime import datetime
 
-from invenio.testsuite import make_test_suite, run_test_suite, InvenioTestCase
+from invenio_testing import InvenioTestCase
 
 
 class DateTests(InvenioTestCase):
 
-    """Test the datefilter functions."""
+    """Test the datefilter utility functions."""
 
     def test_older_date(self):
-        """Test proper handling when bad MARCXML is sent."""
+        """date_older_than recognizes older dates."""
         from inspirehep.utils.datefilter import date_older_than
         parsed_date = datetime.strptime("2015-01-01", "%Y-%m-%d")
         other_parsed_date = datetime.strptime("2015-01-04", "%Y-%m-%d")
@@ -39,14 +37,9 @@ class DateTests(InvenioTestCase):
         self.assertTrue(date_older_than(parsed_date, other_parsed_date, days=2))
 
     def test_newer_date(self):
-        """Test proper handling when bad MARCXML is sent."""
+        """date_older_than recognizes newer dates."""
         from inspirehep.utils.datefilter import date_older_than
         parsed_date = datetime.strptime("2015-01-01", "%Y-%m-%d")
         other_parsed_date = datetime.strptime("2015-01-04", "%Y-%m-%d")
 
         self.assertFalse(date_older_than(parsed_date, other_parsed_date, days=6))
-
-TEST_SUITE = make_test_suite(DateTests)
-
-if __name__ == "__main__":
-    run_test_suite(TEST_SUITE)

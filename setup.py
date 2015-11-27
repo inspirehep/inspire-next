@@ -153,7 +153,7 @@ setup(
             "inspirehep = inspirehep.config"
         ]
     },
-    test_suite='inspirehep.testsuite',
+    test_suite='tests',
     tests_require=test_requirements,
     cmdclass={'test': PyTest}
 )

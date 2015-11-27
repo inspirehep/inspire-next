@@ -26,8 +26,7 @@ from flask_registry import ImportPathRegistry
 from invenio.testsuite import InvenioTestCase
 
 TEST_PACKAGES = [
-    'inspirehep.modules.*',
-    'inspirehep.testsuite',
+    'tests',
 ]
 
 

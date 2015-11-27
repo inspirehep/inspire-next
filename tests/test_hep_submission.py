@@ -48,7 +48,7 @@ class HEPFormToJSONTests(InvenioTestCase):
 
         self.hepform_json = json.loads(
             pkg_resources.resource_string(
-                'inspirehep.modules.deposit.testsuite',
+                'tests',
                 os.path.join(
                     'fixtures',
                     'hep_submission_form.json'

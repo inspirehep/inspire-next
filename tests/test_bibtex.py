@@ -31,7 +31,7 @@ Bibtex = lazy_import('inspirehep.utils.bibtex.Bibtex')
 class BibtexTests(InvenioTestCase):
 
     def setUp(self):
-        self.marcxml = pkg_resources.resource_string('inspirehep.testsuite',
+        self.marcxml = pkg_resources.resource_string('tests',
                                                      os.path.join(
                                                          'fixtures',
                                                          'test_hep_formats.xml')

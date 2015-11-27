@@ -17,18 +17,19 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-"""Tests for utils."""
+"""Tests for the BAI generation."""
 
-from invenio.testsuite import InvenioTestCase, make_test_suite, run_test_suite
+from inspirehep.modules.authors.utils import bai
 
-from ..utils import bai
+from invenio_testing import InvenioTestCase
 
 
 class BaiTests(InvenioTestCase):
 
-    """Test the BAI generation function."""
+    """Tests for the BAI generation."""
 
     def test_bai(self):
+        """bai conforms to the spec."""
         self.assertEqual(bai("Ellis, Jonathan Richard"), "J.R.Ellis")
         self.assertEqual(bai("ellis, jonathan richard"), "J.R.Ellis")
         self.assertEqual(bai("ELLIS, JONATHAN RICHARD"), "J.R.Ellis")
@@ -71,8 +72,3 @@ class BaiTests(InvenioTestCase):
                                       'Richard Ellis',
                                       'Richard, E',
                                       'Richard, Ellis'])
-
-TEST_SUITE = make_test_suite(BaiTests)
-
-if __name__ == "__main__":
-    run_test_suite(TEST_SUITE)

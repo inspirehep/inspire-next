@@ -32,7 +32,7 @@ Cv_latex = lazy_import('inspirehep.utils.cv_latex.Cv_latex')
 class CvLatexTests(InvenioTestCase):
 
     def setUp(self):
-        self.marcxml = pkg_resources.resource_string('inspirehep.testsuite',
+        self.marcxml = pkg_resources.resource_string('tests',
                                                      os.path.join(
                                                          'fixtures',
                                                          'test_hep_formats.xml')

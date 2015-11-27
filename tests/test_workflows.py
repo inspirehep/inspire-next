@@ -63,7 +63,7 @@ class WorkflowTest(WorkflowTasksTestCase):
 
         self.create_registries()
         self.record_oai_arxiv_plots = pkg_resources.resource_string(
-            'inspirehep.testsuite',
+            'tests',
             os.path.join(
                 'workflows',
                 'fixtures',
@@ -71,7 +71,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             )
         )
         self.record_oai_arxiv_accept = pkg_resources.resource_string(
-            'inspirehep.testsuite',
+            'tests',
             os.path.join(
                 'workflows',
                 'fixtures',
@@ -79,7 +79,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             )
         )
         self.some_record = pkg_resources.resource_string(
-            'inspirehep.testsuite',
+            'tests',
             os.path.join(
                 'workflows',
                 'fixtures',
@@ -87,7 +87,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             )
         )
         self.arxiv_tarball = pkg_resources.resource_stream(
-            'inspirehep.testsuite',
+            'tests',
             os.path.join(
                 'workflows',
                 'fixtures',
@@ -95,7 +95,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             )
         )
         self.arxiv_pdf = pkg_resources.resource_stream(
-            'inspirehep.testsuite',
+            'tests',
             os.path.join(
                 'workflows',
                 'fixtures',
@@ -103,7 +103,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             )
         )
         self.arxiv_tarball_accept = pkg_resources.resource_stream(
-            'inspirehep.testsuite',
+            'tests',
             os.path.join(
                 'workflows',
                 'fixtures',
@@ -111,7 +111,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             )
         )
         self.arxiv_pdf_accept = pkg_resources.resource_stream(
-            'inspirehep.testsuite',
+            'tests',
             os.path.join(
                 'workflows',
                 'fixtures',

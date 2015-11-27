@@ -34,7 +34,7 @@ class BibFieldToJSONTests(InvenioTestCase):
 
         self.bibfield_json = json.loads(
             pkg_resources.resource_string(
-                'inspirehep.testsuite',
+                'tests',
                 os.path.join(
                     'fixtures',
                     'test_bibfield_record.json'
