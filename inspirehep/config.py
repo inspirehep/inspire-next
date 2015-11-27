@@ -306,6 +306,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "country": ["address.country"],
     "wwwlab": ["experiment_name.wwwlab"],
     "subject": ["field_code.value"],
+    "phd_advisors": ["phd_advisors.name"],
     "eprint": ["arxiv_eprints.value"],
     "title": ["titles.title"],
     "subject": ["facet_inspire_subjects"],

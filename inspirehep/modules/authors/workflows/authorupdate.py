@@ -81,7 +81,7 @@ class authorupdate(WorkflowBase):
         else:
             # FIXME add a template for the author display in the HP
             return render_template("authors/workflows/authorupdate.html",
-                                   record_preview="",
+                                   record=bwo.data,
                                    user_email=user_email,
                                    ticket_url=ticket_url,
                                    comments=extra_data.get("comments"))
