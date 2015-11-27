@@ -202,8 +202,8 @@ def setup_app(app):
         if not cnum:
             return out
         search_result = Query("cnum:%s and 980__a:proceedings" % (cnum,)).\
-            search().recids
-        if search_result:
+            search()
+        if len(search_result):
             if len(search_result) > 1:
                 from invenio.legacy.bibrecord import get_fieldvalues
                 proceedings = []
@@ -217,7 +217,7 @@ def setup_app(app):
                             '<a href="/record/%(ID)s">#%(number)s</a>' % {'ID': recid, 'number': i + 1})
                     out = 'Proceedings: '
                     out += ', '.join(proceedings)
-            elif len(search_result) == 1:
+            else:
                 out += '<a href="/record/' + str(search_result[0]) + \
                     '">Proceedings</a>'
         return out
@@ -265,8 +265,8 @@ def setup_app(app):
     @app.template_filter()
     def link_to_hep_affiliation(record):
         reccnt = Query("affiliation:%s" % (record['ICN'],))\
-            .search().recids
-        if len(reccnt) > 0:
+            .search()
+        if len(reccnt):
             if len(reccnt) == 1:
                 return str(len(reccnt)) + ' Paper from ' +\
                     str(record['ICN'])
@@ -333,7 +333,7 @@ def setup_app(app):
     def number_of_records(collection_name):
         """Returns number of records for the collection."""
         return len(Query("collection:" + collection_name).
-                   search(collection=collection_name).recids)
+                   search(collection=collection_name))
 
     @app.template_filter()
     def sanitize_arxiv_pdf(arxiv_value):

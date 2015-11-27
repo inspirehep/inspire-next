@@ -48,11 +48,11 @@ def generate_booktitle(record):
                     if acronym:
                         booktitle = "%s: %s" % (rn, acronym, )
                     else:
-                        recids = Query(
+                        records = Query(
                             "reportnumber:%s" % (rn,)
-                        ).search().recids
-                        if recids:
-                            rec = get_record(recids[0])
+                        ).search().records()
+                        if records:
+                            rec = records[0]
                             for title in rec['titles']:
                                 booktitle = title.get('title', "")
                                 if title.get('subtitle'):
