@@ -47,29 +47,36 @@
             {% endif %}
           </b>
       </h4>
-      {{ render_record_authors(is_brief=true, show_affiliations=false) }}
-      <div class="row"><div class="col-md-12"><p></p></div></div>
-      <div class="row">
-      {% if record.get('publication_info') %}
-      <div class="col-md-6 ">
-        {{ record_journal_info() }}
-      </div>
+      {% if record.authors %}
+        <div class="authors">
+          {{ render_record_authors(is_brief=true, show_affiliations=false) }}
+        </div>
       {% endif %}
-      {% if  record.get('dois') %}
-      <div class="col-md-6 ">
-        DOI: {{ render_doi() }}
-      </div>
+      {% if record.get('publication_info') or record.get('dois')%}
+        <div class="row">
+          {% if record.get('publication_info') %}
+            <div class="col-md-6 ">
+              {{ record_journal_info() }}
+            </div>
+          {% endif %}
+          {% if record.get('dois') %}
+            <div class="col-md-6 ">
+              DOI: {{ render_doi() }}
+            </div>
+          {% endif %}
+        </div>
       {% endif %}
-      </div>
+      {% if record.get('arxiv_eprints') %}
         <div class="row">
           <div class="col-md-6">
            {{ record_arxiv(is_brief=true) }}
           </div>
-          <div class="col-md-6"></div>
         </div>
-        <div class="row"><div class="col-md-12"><p></p></div></div>
-        {{ record_abstract(is_brief=true) }}
-      </div>
+      {% endif %}
+      {% if record.get('abstracts') %}
+          {{ record_abstract(is_brief=true) }}
+      {% endif %} 
+        </div>
       <div class="col-md-3" id="right-column" >
         {% if record.get('arxiv_eprints') %}
           {% if record.get('arxiv_eprints') | is_list() %}
