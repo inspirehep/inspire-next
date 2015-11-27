@@ -133,7 +133,7 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
         logger.info("Committing chunk")
         db.session.commit()
         logger.info("Sending chunk to elasticsearch")
-        es_bulk(es, records_to_index)
+        es_bulk(es, records_to_index, timeout=60)
     finally:
         models_committed.connect(record_modification)
 
