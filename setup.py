@@ -106,13 +106,13 @@ packages = find_packages(exclude=['docs'])
 # Load __version__, should not be done using import.
 # http://python-packaging-user-guide.readthedocs.org/en/latest/tutorial.html
 g = {}
-with open(os.path.join('inspire', 'version.py'), 'rt') as fp:
+with open(os.path.join('inspirehep', 'version.py'), 'rt') as fp:
     exec(fp.read(), g)
     version = g['__version__']
 
 
 setup(
-    name='Inspire',
+    name='Inspirehep',
     version=version,
     url='https://github.com/inspirehep/inspire-next',
     license='GPLv2',
@@ -121,7 +121,7 @@ setup(
     description=__doc__,
     long_description=open('README.rst', 'rt').read(),
     packages=packages,
-    namespace_packages=["inspire", "inspire.ext", ],
+    namespace_packages=["inspirehep", "inspirehep.ext", ],
     include_package_data=True,
     zip_safe=False,
     platforms='any',
@@ -150,10 +150,10 @@ setup(
     ],
     entry_points={
         'invenio.config': [
-            "inspire = inspire.config"
+            "inspirehep = inspirehep.config"
         ]
     },
-    test_suite='inspire.testsuite',
+    test_suite='tests',
     tests_require=test_requirements,
     cmdclass={'test': PyTest}
 )
