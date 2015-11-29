@@ -45,4 +45,4 @@ inveniomanage database create --quiet || echo ':('
 celery worker -E -A invenio_celery.celery --workdir=$VIRTUAL_ENV 1> /dev/null &
 
 # Load demo records
-inveniomanage migrator populate -t marcxml -f `pwd`/inspire/demosite/data/demo-records.xml --force
+inveniomanage migrator populate -t marcxml -f `pwd`/inspirehep/demosite/data/demo-records.xml --force

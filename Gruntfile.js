@@ -51,10 +51,10 @@ module.exports = function(grunt) {
           jQuery: true
         }
       },
-      all: ['inspire/modules/**/static/js/**/*.js']
+      all: ['inspirehep/modules/**/static/js/**/*.js']
     },
     jsbeautifier: {
-      files: ["inspire/modules/**/static/js/**/*.js", "inspire/base/**/static/js/**/*.js"],
+      files: ["inspirehep/modules/**/static/js/**/*.js", "inspirehep/base/**/static/js/**/*.js"],
       options: {
         js: {
           braceStyle: "collapse",
