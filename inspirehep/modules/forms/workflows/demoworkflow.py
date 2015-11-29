@@ -28,7 +28,7 @@ from invenio_workflows.tasks.logic_tasks import (
     workflow_if,
 )
 
-from inspire.modules.workflows.tasks.actions import shall_halt_workflow
+from inspirehep.modules.workflows.tasks.actions import shall_halt_workflow
 from invenio_workflows.tasks.workflows_tasks import log_info
 
 

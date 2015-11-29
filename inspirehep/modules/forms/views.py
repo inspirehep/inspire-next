@@ -22,7 +22,7 @@
 
 from flask import Blueprint, render_template, url_for
 
-from inspire.modules.forms import fields
+from inspirehep.modules.forms import fields
 
 from invenio_base.i18n import _
 
@@ -66,7 +66,7 @@ class DemoForm(InspireForm):
 @blueprint.route('/demoform', methods=['GET', 'POST'])
 def demoform():
     """View for INSPIRE demo form."""
-    # from inspire.modules.forms.utils import DataExporter
+    # from inspirehep.modules.forms.utils import DataExporter
 
     form = DemoForm(data={"nickname": "John Doe"})
     ctx = {

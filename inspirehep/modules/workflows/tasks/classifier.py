@@ -21,15 +21,15 @@
 
 from functools import wraps
 
-from inspire.utils.helpers import get_record_from_model
+from inspirehep.utils.helpers import get_record_from_model
 
 
 def filter_core_keywords(filter_kb):
     """Filter core keywords."""
     @wraps(filter_core_keywords)
     def _filter_core_keywords(obj, eng):
-        from inspire.utils.knowledge import check_keys
-        from inspire.modules.predicter.utils import (
+        from inspirehep.utils.knowledge import check_keys
+        from inspirehep.modules.predicter.utils import (
             get_classification_from_task_results,
             update_classification_in_task_results,
         )

@@ -29,7 +29,7 @@ from invenio_base.decorators import wash_arguments
 from invenio_ext.principal import permission_required
 from invenio_workflows.acl import viewholdingpen
 from invenio_workflows.models import BibWorkflowObject
-from inspire.utils.helpers import get_model_from_obj
+from inspirehep.utils.helpers import get_model_from_obj
 
 
 blueprint = Blueprint(

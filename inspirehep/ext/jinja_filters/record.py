@@ -20,16 +20,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from inspire.ext.jinja_filters.general import apply_template_on_array
+from inspirehep.ext.jinja_filters.general import apply_template_on_array
 
-from inspire.utils.bibtex import Bibtex
-from inspire.utils.latex import Latex
-from inspire.utils.cv_latex import Cv_latex
-from inspire.utils.cv_latex_html_text import Cv_latex_html_text
+from inspirehep.utils.bibtex import Bibtex
+from inspirehep.utils.latex import Latex
+from inspirehep.utils.cv_latex import Cv_latex
+from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
 
 from invenio_search.api import Query
 
-from inspire.utils.references import Reference
+from inspirehep.utils.references import Reference
 
 import time
 

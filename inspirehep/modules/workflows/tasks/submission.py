@@ -124,7 +124,7 @@ def get_curation_body(template, metadata, email, extra_data):
 @retry(stop_max_attempt_number=5, wait_fixed=10000)
 def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     """Submit ticket to RT with the given parameters."""
-    from inspire.utils.tickets import get_instance
+    from inspirehep.utils.tickets import get_instance
 
     # Trick to prepare ticket body
     body = "\n ".join([line.strip() for line in body.split("\n")])
@@ -211,7 +211,7 @@ def reply_ticket(template=None, keep_new=False):
     def _reply_ticket(obj, eng):
         from invenio_accounts.models import User
         from invenio_workflows.errors import WorkflowError
-        from inspire.utils.tickets import get_instance
+        from inspirehep.utils.tickets import get_instance
 
         ticket_id = obj.extra_data.get("ticket_id", "")
         if not ticket_id:
@@ -267,7 +267,7 @@ def close_ticket(ticket_id_key="ticket_id"):
     """Close the ticket associated with this record found in given key."""
     @wraps(close_ticket)
     def _close_ticket(obj, eng):
-        from inspire.utils.tickets import get_instance
+        from inspirehep.utils.tickets import get_instance
 
         ticket_id = obj.extra_data.get(ticket_id_key, "")
         if not ticket_id:
@@ -325,7 +325,7 @@ def send_robotupload(url=None,
     @wraps(send_robotupload)
     def _send_robotupload(obj, eng):
         from invenio_workflows.errors import WorkflowError
-        from inspire.utils.robotupload import make_robotupload_marcxml
+        from inspirehep.utils.robotupload import make_robotupload_marcxml
 
         combined_callback_url = os.path.join(cfg["CFG_SITE_URL"], callback_url)
         model = eng.workflow_definition.model(obj)
@@ -401,7 +401,7 @@ def finalize_record_sip(processor):
     """Finalize the SIP by generating the MARC and storing it in the SIP."""
     @wraps(finalize_record_sip)
     def _finalize_sip(obj, eng):
-        from inspire.dojson.utils import legacy_export_as_marc
+        from inspirehep.dojson.utils import legacy_export_as_marc
         model = eng.workflow_definition.model(obj)
         sip = model.get_latest_sip()
         sip.package = legacy_export_as_marc(processor.do(sip.metadata))

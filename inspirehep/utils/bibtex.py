@@ -355,7 +355,7 @@ class Bibtex(Export):
                     return address[0]
                 else:
                     if any(isinstance(i, list) for i in address):
-                        from inspire.utils import bibtex_booktitle
+                        from inspirehep.utils import bibtex_booktitle
                         nested_list = list(bibtex_booktitle.traverse(address))
                         return nested_list[0]
                     else:
@@ -380,7 +380,7 @@ class Bibtex(Export):
         """Return record booktitle"""
         if self.entry_type == 'inproceedings' or \
            self.original_entry == 'inproceedings':
-            from inspire.utils import bibtex_booktitle
+            from inspirehep.utils import bibtex_booktitle
             booktitle = bibtex_booktitle.generate_booktitle(self.record)
             if booktitle:
                 bt = re.sub(r'(?<!\\)([#_&%$])', r'\\\1', booktitle)
@@ -674,7 +674,7 @@ class Bibtex(Export):
                 return ', '.join(element for element in result)
             else:
                 if any(isinstance(i, list) for i in isbn):
-                    from inspire.utils import bibtex_booktitle
+                    from inspirehep.utils import bibtex_booktitle
                     nested_list = list(bibtex_booktitle.traverse(isbn))
                     return nested_list[0]
                 else:

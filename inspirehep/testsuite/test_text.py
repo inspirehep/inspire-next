@@ -59,13 +59,13 @@ class TextTests(InvenioTestCase):
 
     def test_clean_xml(self):
         """Test proper handling when bad MARCXML is sent."""
-        from inspire.utils.text import clean_xml
+        from inspirehep.utils.text import clean_xml
 
         self.assertEqual(clean_xml(self.bad_xml), self.good_xml)
 
     def test_unicode_clean_xml(self):
         """Test proper handling when bad MARCXML is sent."""
-        from inspire.utils.text import clean_xml
+        from inspirehep.utils.text import clean_xml
 
         self.assertEqual(clean_xml(self.unicode_xml), self.good_unicode_xml)
 

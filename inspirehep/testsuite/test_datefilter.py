@@ -32,7 +32,7 @@ class DateTests(InvenioTestCase):
 
     def test_older_date(self):
         """Test proper handling when bad MARCXML is sent."""
-        from inspire.utils.datefilter import date_older_than
+        from inspirehep.utils.datefilter import date_older_than
         parsed_date = datetime.strptime("2015-01-01", "%Y-%m-%d")
         other_parsed_date = datetime.strptime("2015-01-04", "%Y-%m-%d")
 
@@ -40,7 +40,7 @@ class DateTests(InvenioTestCase):
 
     def test_newer_date(self):
         """Test proper handling when bad MARCXML is sent."""
-        from inspire.utils.datefilter import date_older_than
+        from inspirehep.utils.datefilter import date_older_than
         parsed_date = datetime.strptime("2015-01-01", "%Y-%m-%d")
         other_parsed_date = datetime.strptime("2015-01-04", "%Y-%m-%d")
 

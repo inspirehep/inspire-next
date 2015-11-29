@@ -22,10 +22,10 @@
 from invenio_oaiharvester.tasks.records import convert_record_to_json
 from invenio_workflows.definitions import RecordWorkflow
 
-from inspire.modules.converter.tasks import (
+from inspirehep.modules.converter.tasks import (
     convert_record
 )
-from inspire.modules.workflows.tasks.upload import store_record
+from inspirehep.modules.workflows.tasks.upload import store_record
 
 
 class oaiharvest_production_sync(RecordWorkflow):

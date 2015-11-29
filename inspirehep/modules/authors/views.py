@@ -158,7 +158,7 @@ def validate():
 def update(recid):
     """View for INSPIRE author update form."""
     from dojson.contrib.marc21.utils import create_record
-    from inspire.dojson.hepnames import hepnames
+    from inspirehep.dojson.hepnames import hepnames
 
     data = {}
     if recid:
@@ -255,7 +255,7 @@ def holdingpenreview(objectid, approved, ticket):
 @wash_arguments({'objectid': (int, 0)})
 def reviewhandler(objectid):
     """Form handler when a cataloger accepts an author review."""
-    from inspire.modules.forms.utils import DataExporter
+    from inspirehep.modules.forms.utils import DataExporter
     from invenio.modules.workflows.models import BibWorkflowObject
 
     if not objectid:
@@ -283,7 +283,7 @@ def reviewhandler(objectid):
 @login_required
 def submitupdate():
     """Form action handler for INSPIRE author update form."""
-    from inspire.modules.forms.utils import DataExporter
+    from inspirehep.modules.forms.utils import DataExporter
     from invenio_workflows.models import BibWorkflowObject
     from flask.ext.login import current_user
     form = AuthorUpdateForm(formdata=request.form)
@@ -306,7 +306,7 @@ def submitupdate():
 @login_required
 def submitnew():
     """Form action handler for INSPIRE author new form."""
-    from inspire.modules.forms.utils import DataExporter
+    from inspirehep.modules.forms.utils import DataExporter
     from invenio_workflows.models import BibWorkflowObject
     from flask.ext.login import current_user
     form = AuthorUpdateForm(formdata=request.form)

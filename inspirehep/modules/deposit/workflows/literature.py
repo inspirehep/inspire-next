@@ -46,11 +46,11 @@ from invenio_workflows.tasks.logic_tasks import (
 )
 from invenio_workflows.definitions import WorkflowBase
 
-from inspire.dojson.hep import hep2marc
+from inspirehep.dojson.hep import hep2marc
 
-from inspire.modules.workflows.tasks.matching import match
+from inspirehep.modules.workflows.tasks.matching import match
 
-from inspire.modules.workflows.tasks.submission import (
+from inspirehep.modules.workflows.tasks.submission import (
     halt_record_with_action,
     send_robotupload,
     halt_to_render,
@@ -62,14 +62,14 @@ from inspire.modules.workflows.tasks.submission import (
     close_ticket,
     finalize_record_sip
 )
-from inspire.modules.workflows.tasks.actions import (
+from inspirehep.modules.workflows.tasks.actions import (
     shall_upload_record,
     reject_record,
     add_core,
 )
-from inspire.modules.deposit.forms import LiteratureForm
-from inspire.modules.predicter.tasks import guess_coreness
-from inspire.utils.helpers import get_record_from_model
+from inspirehep.modules.deposit.forms import LiteratureForm
+from inspirehep.modules.predicter.tasks import guess_coreness
+from inspirehep.utils.helpers import get_record_from_model
 
 from ..tasks import add_submission_extra_data
 from ..utils import filter_empty_helper
@@ -234,7 +234,7 @@ class literature(SimpleRecordDeposition, WorkflowBase):
     @staticmethod
     def get_additional(bwo, **kwargs):
         """Return formatted data of object."""
-        from inspire.modules.predicter.utils import get_classification_from_task_results
+        from inspirehep.modules.predicter.utils import get_classification_from_task_results
         keywords = get_classification_from_task_results(bwo)
         results = bwo.get_tasks_results()
         prediction_results = results.get("arxiv_guessing", {})

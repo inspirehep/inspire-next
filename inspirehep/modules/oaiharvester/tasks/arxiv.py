@@ -26,16 +26,16 @@ import re
 
 from functools import wraps
 
-from inspire.utils.arxiv import (
+from inspirehep.utils.arxiv import (
     get_arxiv_id_from_record, get_pdf, get_tarball,
 )
-from inspire.utils.helpers import (
+from inspirehep.utils.helpers import (
     add_file_by_name,
     get_file_by_name,
     get_json_for_plots,
     get_record_from_model,
 )
-from inspire.utils.marcxml import get_json_from_marcxml
+from inspirehep.utils.marcxml import get_json_from_marcxml
 
 from invenio_base.globals import cfg
 
@@ -240,7 +240,7 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
     """
     @wraps(arxiv_author_list)
     def _author_list(obj, eng):
-        from inspire.modules.converter.xslt import convert
+        from inspirehep.modules.converter.xslt import convert
         from invenio_oaiharvester.utils import find_matching_files
 
         model = eng.workflow_definition.model(obj)

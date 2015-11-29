@@ -74,7 +74,7 @@ def generate_name_variatons(recid, json):
     :param json: The json representation of the record that is going to be
                  indexed.
     """
-    from inspire.modules.authors.utils import author_tokenize
+    from inspirehep.modules.authors.utils import author_tokenize
     authors = json.get("authors")
     if authors:
         for author in authors:

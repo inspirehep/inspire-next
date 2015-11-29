@@ -32,7 +32,7 @@ class RobotUploadTests(InvenioTestCase):
     @httpretty.activate
     def test_robotupload_bad_xml(self):
         """Test proper handling when bad MARCXML is sent."""
-        from inspire.utils.robotupload import make_robotupload_marcxml
+        from inspirehep.utils.robotupload import make_robotupload_marcxml
         httpretty.register_uri(
             httpretty.POST,
             "http://localhost:4000/batchuploader/robotupload/insert",
@@ -51,7 +51,7 @@ class RobotUploadTests(InvenioTestCase):
     @httpretty.activate
     def test_robotupload_success(self):
         """Test proper handling when good MARCXML is sent."""
-        from inspire.utils.robotupload import make_robotupload_marcxml
+        from inspirehep.utils.robotupload import make_robotupload_marcxml
         httpretty.register_uri(
             httpretty.POST,
             "http://localhost:4000/batchuploader/robotupload/insert",
@@ -70,7 +70,7 @@ class RobotUploadTests(InvenioTestCase):
     @httpretty.activate
     def test_robotupload_success_append(self):
         """Test proper handling when good MARCXML is sent."""
-        from inspire.utils.robotupload import make_robotupload_marcxml
+        from inspirehep.utils.robotupload import make_robotupload_marcxml
         httpretty.register_uri(
             httpretty.POST,
             "http://localhost:4000/batchuploader/robotupload/append",
@@ -89,7 +89,7 @@ class RobotUploadTests(InvenioTestCase):
     @httpretty.activate
     def test_robotupload_callback_url(self):
         """Test passing of a callback URL."""
-        from inspire.utils.robotupload import make_robotupload_marcxml
+        from inspirehep.utils.robotupload import make_robotupload_marcxml
         body = (
             "[INFO] bibupload batchupload --insert /some/path"
             "--callback-url http://localhost"

@@ -54,7 +54,7 @@ class BaiTests(InvenioTestCase):
     def test_name_variations_existance(self):
         """Test if name variations are saved in the record """
         from invenio_ext.es import es
-        from inspire.modules.authors.utils import author_tokenize
+        from inspirehep.modules.authors.utils import author_tokenize
         rec = es.get(index='hep', id=1343791)
         rec_list = rec['_source']['authors'][0]['name_variations']
         name = rec['_source']['authors'][0]['full_name']
@@ -63,7 +63,7 @@ class BaiTests(InvenioTestCase):
 
     def test_author_tokenizer(self):
         """Test author name tokenizer """
-        from inspire.modules.authors.utils import author_tokenize
+        from inspirehep.modules.authors.utils import author_tokenize
         token_list = author_tokenize("Ellis Richard")
         self.assertEqual(token_list, ['E Richard',
                                       'Ellis Richard',

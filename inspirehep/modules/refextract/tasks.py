@@ -25,7 +25,7 @@
 
 # from invenio.legacy.refextract.api import extract_journal_reference
 
-from inspire.utils.helpers import get_record_from_model
+from inspirehep.utils.helpers import get_record_from_model
 
 
 def extract_journal_info(obj, eng):

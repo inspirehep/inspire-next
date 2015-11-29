@@ -21,7 +21,7 @@ import os
 
 from dojson.contrib.marc21.utils import create_record
 
-from inspire.dojson.hep import hep
+from inspirehep.dojson.hep import hep
 
 from invenio.base.wrappers import lazy_import
 
@@ -30,13 +30,13 @@ from invenio.testsuite import InvenioTestCase, make_test_suite, run_test_suite
 import pkg_resources
 
 
-Cv_latex_html_text = lazy_import('inspire.utils.cv_latex_html_text.Cv_latex_html_text')
+Cv_latex_html_text = lazy_import('inspirehep.utils.cv_latex_html_text.Cv_latex_html_text')
 
 
 class CvLatexHtmlTextTests(InvenioTestCase):
 
     def setUp(self):
-        self.marcxml = pkg_resources.resource_string('inspire.testsuite',
+        self.marcxml = pkg_resources.resource_string('inspirehep.testsuite',
                                                      os.path.join(
                                                          'fixtures',
                                                          'test_hep_formats.xml')

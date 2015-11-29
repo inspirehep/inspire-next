@@ -36,7 +36,7 @@ from harvestingkit.world_scientific_package import WorldScientific
 from invenio_ext.email import send_email
 from invenio_base.globals import cfg
 
-from inspire.modules.harvester.utils import (
+from inspirehep.modules.harvester.utils import (
     unzip,
     ftp_upload,
     ftp_download_files,

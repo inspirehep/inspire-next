@@ -42,7 +42,7 @@ class MatchingTests(InvenioTestCase):
     def test_matching_result(self):
         """Test that good matching results are handled correctly."""
         from invenio_base.globals import cfg
-        from inspire.modules.workflows.tasks.matching import search
+        from inspirehep.modules.workflows.tasks.matching import search
 
         httpretty.register_uri(
             httpretty.GET,
@@ -60,7 +60,7 @@ class MatchingTests(InvenioTestCase):
     def test_empty_matching_result(self):
         """Test that empty matching results are handled correctly."""
         from invenio_base.globals import cfg
-        from inspire.modules.workflows.tasks.matching import search
+        from inspirehep.modules.workflows.tasks.matching import search
 
         httpretty.register_uri(
             httpretty.GET,
@@ -78,7 +78,7 @@ class MatchingTests(InvenioTestCase):
     def test_bad_matching_result(self):
         """Test that bad matching results are handled correctly."""
         from invenio_base.globals import cfg
-        from inspire.modules.workflows.tasks.matching import search
+        from inspirehep.modules.workflows.tasks.matching import search
 
         httpretty.register_uri(
             httpretty.GET,
@@ -93,7 +93,7 @@ class MatchingTests(InvenioTestCase):
         """Test that bad matching results are handled correctly."""
         from invenio_records.api import Record
         from invenio_base.globals import cfg
-        from inspire.modules.workflows.tasks.matching import match_by_arxiv_id
+        from inspirehep.modules.workflows.tasks.matching import match_by_arxiv_id
 
         httpretty.register_uri(
             httpretty.GET,
@@ -120,7 +120,7 @@ class MatchingTests(InvenioTestCase):
         """Test that bad matching results are handled correctly."""
         from invenio_records.api import Record
         from invenio_base.globals import cfg
-        from inspire.modules.workflows.tasks.matching import match_by_doi
+        from inspirehep.modules.workflows.tasks.matching import match_by_doi
 
         httpretty.register_uri(
             httpretty.GET,

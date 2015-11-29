@@ -26,14 +26,14 @@ from collections import OrderedDict
 
 from flask import render_template
 
-from inspire.dojson.hep import hep2marc
+from inspirehep.dojson.hep import hep2marc
 
-from inspire.modules.predicter.tasks import (
+from inspirehep.modules.predicter.tasks import (
     guess_coreness,
 )
 
-from inspire.modules.workflows.models import Payload, create_payload
-from inspire.modules.workflows.tasks.actions import (
+from inspirehep.modules.workflows.models import Payload, create_payload
+from inspirehep.modules.workflows.tasks.actions import (
     add_core_check,
     halt_record,
     is_record_relevant,
@@ -42,24 +42,24 @@ from inspire.modules.workflows.tasks.actions import (
     reject_record,
 )
 
-from inspire.modules.workflows.tasks.classifier import (
+from inspirehep.modules.workflows.tasks.classifier import (
     classify_paper,
     filter_core_keywords,
 )
 
-from inspire.modules.workflows.tasks.matching import(
+from inspirehep.modules.workflows.tasks.matching import(
     delete_self_and_stop_processing,
     exists_in_holding_pen,
     exists_in_inspire_or_rejected,
     update_old_object,
 )
-from inspire.modules.workflows.tasks.submission import (
+from inspirehep.modules.workflows.tasks.submission import (
     finalize_record_sip,
     send_robotupload,
 )
-from inspire.modules.workflows.tasks.upload import store_record_sip
+from inspirehep.modules.workflows.tasks.upload import store_record_sip
 
-from inspire.utils.helpers import get_record_from_model
+from inspirehep.utils.helpers import get_record_from_model
 
 from invenio_deposit.models import DepositionType
 
@@ -244,7 +244,7 @@ class hep_ingestion(DepositionType):
     @staticmethod
     def get_additional(bwo):
         """Return rendered view for additional information."""
-        from inspire.modules.predicter.utils import get_classification_from_task_results
+        from inspirehep.modules.predicter.utils import get_classification_from_task_results
 
         keywords = get_classification_from_task_results(bwo)
         results = bwo.get_tasks_results()

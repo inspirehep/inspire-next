@@ -25,7 +25,7 @@ point specified in the setup.py:
 
     entry_points={
         'invenio.config': [
-            "inspire = inspire.config"
+            "inspire = inspirehep.config"
         ]
     }
 
@@ -69,17 +69,17 @@ EXTENSIONS = [
     'invenio_ext.crossref:CrossRef',
     'invenio_ext.es',
     'invenio_ext.mixer',
-    'inspire.ext.jinja_filters.general',
-    'inspire.ext.jinja_filters.record',
-    'inspire.ext.deprecation_warnings:disable_deprecation_warnings',
+    'inspirehep.ext.jinja_filters.general',
+    'inspirehep.ext.jinja_filters.record',
+    'inspirehep.ext.deprecation_warnings:disable_deprecation_warnings',
 ]
 
 PACKAGES = [
-    'inspire.base',
-    'inspire.demosite',
-    'inspire.dojson',
-    'inspire.utils',
-    'inspire.modules.*',
+    'inspirehep.base',
+    'inspirehep.demosite',
+    'inspirehep.dojson',
+    'inspirehep.utils',
+    'inspirehep.modules.*',
     'invenio_celery',
     'invenio_classifier',
     'invenio_oaiharvester',
@@ -108,10 +108,10 @@ PACKAGES = [
 # Configuration related to Deposit module
 
 DEPOSIT_TYPES = [
-    'inspire.modules.deposit.workflows.literature.literature',
-    'inspire.modules.deposit.workflows.literature_simple.literature_simple',
+    'inspirehep.modules.deposit.workflows.literature.literature',
+    'inspirehep.modules.deposit.workflows.literature_simple.literature_simple',
 ]
-DEPOSIT_DEFAULT_TYPE = "inspire.modules.deposit.workflows.literature:literature"
+DEPOSIT_DEFAULT_TYPE = "inspirehep.modules.deposit.workflows.literature:literature"
 
 # facets ignored by auto-discovery service, they are not accessible in inspire
 PACKAGES_FACETS_EXCLUDE = [
@@ -251,7 +251,7 @@ HOLDING_PEN_MATCH_MAPPING = {
 
 # Harvester config
 HARVESTER_WORKFLOWS = {
-    "world_scientific": "inspire.modules.harvester.workflows.world_scientific:world_scientific"
+    "world_scientific": "inspirehep.modules.harvester.workflows.world_scientific:world_scientific"
 }
 HARVESTER_WORKFLOWS_CONFIG = {
     "world_scientific": {}
@@ -262,7 +262,7 @@ HARVESTER_WORKFLOWS_CONFIG = {
 # DoJSON configuration
 RECORD_PROCESSORS = {
     'json': 'json.load',
-    'marcxml': 'inspire.dojson.processors:convert_marcxml',
+    'marcxml': 'inspirehep.dojson.processors:convert_marcxml',
 }
 RECORDS_BREADCRUMB_TITLE_KEY = 'breadcrumb_title'
 

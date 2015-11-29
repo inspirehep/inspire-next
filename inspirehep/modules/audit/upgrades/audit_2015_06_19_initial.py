@@ -20,7 +20,7 @@
 from invenio_ext.sqlalchemy import db
 from invenio_upgrader.api import op
 
-from inspire.modules.audit import Audit
+from inspirehep.modules.audit import Audit
 
 depends_on = []
 

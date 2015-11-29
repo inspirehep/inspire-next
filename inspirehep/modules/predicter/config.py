@@ -26,6 +26,6 @@ import pkg_resources
 
 
 CLASSIFIER_MODEL_PATH = pkg_resources.resource_filename(
-    'inspire.modules.predicter', 'classifiers'
+    'inspirehep.modules.predicter', 'classifiers'
 )
 """The base path for prediction models."""

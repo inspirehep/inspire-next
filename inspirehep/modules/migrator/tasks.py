@@ -36,14 +36,14 @@ from invenio_celery import celery
 from invenio_records.api import Record as record_api
 from invenio_records.models import Record
 
-from inspire.dojson.conferences import conferences
-from inspire.dojson.experiments import experiments
-from inspire.dojson.hep import hep
-from inspire.dojson.hepnames import hepnames
-from inspire.dojson.institutions import institutions
-from inspire.dojson.jobs import jobs
-from inspire.dojson.journals import journals
-from inspire.dojson.processors import _collection_in_record
+from inspirehep.dojson.conferences import conferences
+from inspirehep.dojson.experiments import experiments
+from inspirehep.dojson.hep import hep
+from inspirehep.dojson.hepnames import hepnames
+from inspirehep.dojson.institutions import institutions
+from inspirehep.dojson.jobs import jobs
+from inspirehep.dojson.journals import journals
+from inspirehep.dojson.processors import _collection_in_record
 from invenio_ext.sqlalchemy import db
 from invenio_ext.es import es
 from invenio_records.recordext.functions.get_record_collections import update_collections

@@ -19,7 +19,7 @@
 
 """Contains signal receivers for HEP dojson processing."""
 
-from inspire.dojson import utils as inspire_dojson_utils
+from inspirehep.dojson import utils as inspire_dojson_utils
 
 from invenio_records.signals import (
     before_record_insert,

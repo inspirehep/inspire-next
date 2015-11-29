@@ -22,10 +22,10 @@
 
 from flask import Blueprint, jsonify, Response, request
 
-from inspire.utils.bibtex import Bibtex
-from inspire.utils.latex import Latex
-from inspire.utils.cv_latex import Cv_latex
-from inspire.utils.cv_latex_html_text import Cv_latex_html_text
+from inspirehep.utils.bibtex import Bibtex
+from inspirehep.utils.latex import Latex
+from inspirehep.utils.cv_latex import Cv_latex
+from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
 
 from invenio_records.api import get_record
 

@@ -26,7 +26,7 @@ from functools import wraps
 
 from flask import current_app
 
-from inspire.utils.helpers import (
+from inspirehep.utils.helpers import (
     get_record_from_model,
 )
 
@@ -93,7 +93,7 @@ def reject_record(message):
     """Reject record with message."""
     @wraps(reject_record)
     def _reject_record(obj, *args, **kwargs):
-        from inspire.modules.audit.api import log_prediction_action
+        from inspirehep.modules.audit.api import log_prediction_action
 
         # Audit logging
         results = obj.get_tasks_results()
@@ -114,7 +114,7 @@ def reject_record(message):
 
 def is_record_relevant(obj, *args, **kwargs):
     """Shall we halt this workflow for potential acceptance or just reject?"""
-    from inspire.modules.predicter.utils import (
+    from inspirehep.modules.predicter.utils import (
         get_classification_from_task_results,
     )
     results = obj.get_tasks_results()

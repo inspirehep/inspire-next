@@ -23,9 +23,9 @@ from invenio_oaiharvester.tasks.records import convert_record_to_json
 
 from invenio_deposit.models import DepositionType
 
-from inspire.modules.converter.tasks import convert_record
+from inspirehep.modules.converter.tasks import convert_record
 
-from inspire.modules.workflows.models import create_payload
+from inspirehep.modules.workflows.models import create_payload
 
 
 class payload_fixture(DepositionType):

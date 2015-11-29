@@ -30,11 +30,11 @@ import pkg_resources
 class BibFieldToJSONTests(InvenioTestCase):
 
     def setUp(self):
-        from inspire.modules.workflows.dojson import bibfield
+        from inspirehep.modules.workflows.dojson import bibfield
 
         self.bibfield_json = json.loads(
             pkg_resources.resource_string(
-                'inspire.testsuite',
+                'inspirehep.testsuite',
                 os.path.join(
                     'fixtures',
                     'test_bibfield_record.json'

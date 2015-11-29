@@ -29,8 +29,8 @@ from flask import render_template
 
 from invenio_access.control import acc_get_user_email
 
-from inspire.modules.deposit.utils import filter_empty_helper
-from inspire.modules.workflows.tasks.submission import submit_rt_ticket
+from inspirehep.modules.deposit.utils import filter_empty_helper
+from inspirehep.modules.workflows.tasks.submission import submit_rt_ticket
 
 
 def filter_empty_elements(recjson):
@@ -54,8 +54,8 @@ def create_marcxml_record():
     """Create MarcXML from JSON using author model."""
     @wraps(create_marcxml_record)
     def _create_marcxml_record(obj, eng):
-        from inspire.dojson.hepnames import hepnames2marc
-        from inspire.dojson.utils import legacy_export_as_marc
+        from inspirehep.dojson.hepnames import hepnames2marc
+        from inspirehep.dojson.utils import legacy_export_as_marc
         obj.extra_data["marcxml"] = legacy_export_as_marc(
             hepnames2marc.do(obj.data)
         )
@@ -126,7 +126,7 @@ def send_robotupload(mode="insert"):
     def _send_robotupload(obj, eng):
         from invenio_base.globals import cfg
         from invenio_workflows.errors import WorkflowError
-        from inspire.utils.robotupload import make_robotupload_marcxml
+        from inspirehep.utils.robotupload import make_robotupload_marcxml
 
         callback_url = os.path.join(cfg["CFG_SITE_URL"],
                                     "callback/workflows/robotupload")
@@ -242,7 +242,7 @@ def reply_ticket(template=None, keep_new=False):
     def _reply_ticket(obj, eng):
         from invenio_accounts.models import User
         from invenio_workflows.errors import WorkflowError
-        from inspire.utils.tickets import get_instance
+        from inspirehep.utils.tickets import get_instance
         from flask import render_template
 
         ticket_id = obj.extra_data.get("ticket_id", "")

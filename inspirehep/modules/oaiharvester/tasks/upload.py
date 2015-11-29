@@ -38,7 +38,7 @@ def update_existing_record_oaiharvest(url=None):
         from invenio_workflows.utils import convert_marcxml_to_bibfield
         from invenio_records.api import Record
 
-        from inspire.utils.robotupload import make_robotupload_marcxml
+        from inspirehep.utils.robotupload import make_robotupload_marcxml
 
         try:
             recid = obj.extra_data["recid"]

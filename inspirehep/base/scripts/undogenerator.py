@@ -34,7 +34,7 @@ DEF_REGEXP = re.compile(r"def (\w+)\s*\((.*?)\):")
 
 
 filenames = [
-    pkg_resources.resource_filename("inspire.dojson", x) for
+    pkg_resources.resource_filename("inspirehep.dojson", x) for
     x in pkg_resources.resource_listdir("inspire", "dojson")
 ]
 dirs = [filename for filename in filenames if os.path.isdir(filename)]

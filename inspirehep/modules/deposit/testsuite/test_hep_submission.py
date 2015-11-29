@@ -34,7 +34,7 @@ class HEPFormToJSONTests(InvenioTestCase):
         from invenio_accounts.models import UserEXT
         from mock import MagicMock
 
-        from inspire.modules.deposit.workflows.literature import literature
+        from inspirehep.modules.deposit.workflows.literature import literature
 
         UserEXT.query.delete()
         u = UserEXT(
@@ -48,7 +48,7 @@ class HEPFormToJSONTests(InvenioTestCase):
 
         self.hepform_json = json.loads(
             pkg_resources.resource_string(
-                'inspire.modules.deposit.testsuite',
+                'inspirehep.modules.deposit.testsuite',
                 os.path.join(
                     'fixtures',
                     'hep_submission_form.json'

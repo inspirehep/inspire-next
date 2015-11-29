@@ -33,7 +33,7 @@ from invenio_records.models import Record
 
 def store_record_sip(obj, *args, **kwargs):
     """Update existing record via `control_number` or create new (SIP)."""
-    from inspire.utils.helpers import get_model_from_obj
+    from inspirehep.utils.helpers import get_model_from_obj
     from invenio_records.tasks import create_record as create
 
     model = get_model_from_obj(obj)

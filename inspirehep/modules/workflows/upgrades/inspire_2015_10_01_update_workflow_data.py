@@ -45,10 +45,10 @@ def do_upgrade():
     from invenio_workflows.registry import workflows
     from invenio_deposit.models import Deposition
 
-    from inspire.dojson.utils import legacy_export_as_marc
-    from inspire.dojson.hep import hep2marc
-    from inspire.modules.workflows.dojson import bibfield
-    from inspire.modules.workflows.models import Payload
+    from inspirehep.dojson.utils import legacy_export_as_marc
+    from inspirehep.dojson.hep import hep2marc
+    from inspirehep.modules.workflows.dojson import bibfield
+    from inspirehep.modules.workflows.models import Payload
 
     def rename_object_action(obj):
         if obj.get_action() == "arxiv_approval":

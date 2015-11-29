@@ -31,7 +31,7 @@ from functools import wraps
 
 from invenio_celery import celery
 
-from inspire.utils.helpers import (
+from inspirehep.utils.helpers import (
     get_record_from_model,
 )
 

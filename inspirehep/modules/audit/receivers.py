@@ -19,8 +19,8 @@
 
 """Signal receivers for audit."""
 
-from inspire.modules.audit.models import Audit
-from inspire.modules.audit.signals import audit_action_taken
+from inspirehep.modules.audit.models import Audit
+from inspirehep.modules.audit.signals import audit_action_taken
 
 
 def add_audit_entry(sender, logging_info, **kwargs):

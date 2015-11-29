@@ -193,9 +193,9 @@ Feedback:
 
 @blueprint.app_template_filter('marcxml')
 def marcxml_filter(record):
-    from inspire.dojson.hep import hep2marc
-    from inspire.dojson.hepnames import hepnames2marc
-    from inspire.dojson.utils import legacy_export_as_marc
+    from inspirehep.dojson.hep import hep2marc
+    from inspirehep.dojson.hepnames import hepnames2marc
+    from inspirehep.dojson.utils import legacy_export_as_marc
 
     collections = [
         collection['primary'] for collection in record["collections"]

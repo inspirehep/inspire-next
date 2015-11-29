@@ -30,7 +30,7 @@ def do_upgrade():
     """Implement your upgrades here."""
     from flask import current_app
     from invenio_workflows.models import BibWorkflowObject
-    from inspire.modules.workflows.tasks.classifier import clean_instances_from_data
+    from inspirehep.modules.workflows.tasks.classifier import clean_instances_from_data
 
     all_objects = BibWorkflowObject.query.all()
     current_app.logger.info("Applying changes on objects ({0} records)".format(

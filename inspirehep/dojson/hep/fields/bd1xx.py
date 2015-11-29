@@ -24,7 +24,7 @@
 
 from dojson import utils
 
-from inspire.dojson import utils as inspire_dojson_utils
+from inspirehep.dojson import utils as inspire_dojson_utils
 
 from ..model import hep, hep2marc
 

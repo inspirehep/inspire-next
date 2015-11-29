@@ -30,11 +30,11 @@ from invenio_workflows.tasks.logic_tasks import (
     workflow_if,
 )
 
-from inspire.modules.workflows.tasks.actions import shall_halt_workflow
+from inspirehep.modules.workflows.tasks.actions import shall_halt_workflow
 
 from invenio_workflows.tasks.workflows_tasks import log_info
 
-from inspire.modules.workflows.tasks.submission import (
+from inspirehep.modules.workflows.tasks.submission import (
     halt_record_with_action,
     close_ticket
 )

@@ -22,24 +22,24 @@
 
 """Workflow for processing single arXiv records harvested."""
 
-from inspire.modules.converter.tasks import convert_record
-from inspire.modules.oaiharvester.tasks.arxiv import (
+from inspirehep.modules.converter.tasks import convert_record
+from inspirehep.modules.oaiharvester.tasks.arxiv import (
     arxiv_author_list,
     arxiv_fulltext_download,
     arxiv_plot_extract,
 )
-from inspire.modules.predicter.tasks import (
+from inspirehep.modules.predicter.tasks import (
     guess_coreness,
 )
-from inspire.modules.workflows.tasks.actions import shall_upload_record
-from inspire.modules.workflows.tasks.classifier import (
+from inspirehep.modules.workflows.tasks.actions import shall_upload_record
+from inspirehep.modules.workflows.tasks.classifier import (
     classify_paper,
     filter_core_keywords,
 )
-from inspire.modules.workflows.workflows.hep_ingestion import hep_ingestion
+from inspirehep.modules.workflows.workflows.hep_ingestion import hep_ingestion
 
 from invenio_oaiharvester.tasks.records import convert_record_to_json
-# from inspire.modules.refextract.tasks import extract_journal_info
+# from inspirehep.modules.refextract.tasks import extract_journal_info
 
 
 class process_record_arxiv(hep_ingestion):

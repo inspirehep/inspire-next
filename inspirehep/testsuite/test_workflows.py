@@ -50,7 +50,7 @@ class WorkflowTest(WorkflowTasksTestCase):
 
     def setUp(self):
         """Setup tests."""
-        from inspire.modules.workflows.receivers import precache_holdingpen_row
+        from inspirehep.modules.workflows.receivers import precache_holdingpen_row
         from invenio_workflows.receivers import index_holdingpen_record
         from invenio_workflows.signals import (
             workflow_halted,
@@ -63,7 +63,7 @@ class WorkflowTest(WorkflowTasksTestCase):
 
         self.create_registries()
         self.record_oai_arxiv_plots = pkg_resources.resource_string(
-            'inspire.testsuite',
+            'inspirehep.testsuite',
             os.path.join(
                 'workflows',
                 'fixtures',
@@ -71,7 +71,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             )
         )
         self.record_oai_arxiv_accept = pkg_resources.resource_string(
-            'inspire.testsuite',
+            'inspirehep.testsuite',
             os.path.join(
                 'workflows',
                 'fixtures',
@@ -79,7 +79,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             )
         )
         self.some_record = pkg_resources.resource_string(
-            'inspire.testsuite',
+            'inspirehep.testsuite',
             os.path.join(
                 'workflows',
                 'fixtures',
@@ -87,7 +87,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             )
         )
         self.arxiv_tarball = pkg_resources.resource_stream(
-            'inspire.testsuite',
+            'inspirehep.testsuite',
             os.path.join(
                 'workflows',
                 'fixtures',
@@ -95,7 +95,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             )
         )
         self.arxiv_pdf = pkg_resources.resource_stream(
-            'inspire.testsuite',
+            'inspirehep.testsuite',
             os.path.join(
                 'workflows',
                 'fixtures',
@@ -103,7 +103,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             )
         )
         self.arxiv_tarball_accept = pkg_resources.resource_stream(
-            'inspire.testsuite',
+            'inspirehep.testsuite',
             os.path.join(
                 'workflows',
                 'fixtures',
@@ -111,7 +111,7 @@ class WorkflowTest(WorkflowTasksTestCase):
             )
         )
         self.arxiv_pdf_accept = pkg_resources.resource_stream(
-            'inspire.testsuite',
+            'inspirehep.testsuite',
             os.path.join(
                 'workflows',
                 'fixtures',
@@ -122,7 +122,7 @@ class WorkflowTest(WorkflowTasksTestCase):
     def tearDown(self):
         """Clean up created objects."""
         from invenio_workflows.models import Workflow
-        from inspire.modules.workflows.receivers import precache_holdingpen_row
+        from inspirehep.modules.workflows.receivers import precache_holdingpen_row
         from invenio_workflows.receivers import index_holdingpen_record
         from invenio_workflows.signals import (
             workflow_halted,
@@ -155,7 +155,7 @@ class WorkflowTest(WorkflowTasksTestCase):
     def test_payload_sip_creation(self):
         """A Payload has a sip."""
         from invenio_workflows.api import start
-        from inspire.modules.workflows.models import Payload
+        from inspirehep.modules.workflows.models import Payload
 
         workflow = start('payload_fixture',
                          data=[self.some_record],
@@ -184,8 +184,8 @@ class WorkflowTest(WorkflowTasksTestCase):
     def test_payload_file_creation(self):
         """Can add a file to a Payload."""
         from invenio_workflows.models import BibWorkflowObject
-        from inspire.modules.workflows.models import Payload
-        from inspire.utils.helpers import (
+        from inspirehep.modules.workflows.models import Payload
+        from inspirehep.utils.helpers import (
             get_file_by_name,
             add_file_by_name,
         )
@@ -239,7 +239,7 @@ class WorkflowTest(WorkflowTasksTestCase):
         """Test a full harvesting workflow."""
         from invenio_base.globals import cfg
         from invenio_workflows.api import start
-        from inspire.utils.helpers import (
+        from inspirehep.utils.helpers import (
             get_record_from_obj,
         )
 
@@ -305,7 +305,7 @@ class WorkflowTest(WorkflowTasksTestCase):
         """Test a full harvesting workflow."""
         from invenio_base.globals import cfg
         from invenio_workflows.api import start
-        from inspire.utils.helpers import (
+        from inspirehep.utils.helpers import (
             get_record_from_obj,
         )
 

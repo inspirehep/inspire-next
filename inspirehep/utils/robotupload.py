@@ -29,7 +29,7 @@ import requests
 def make_robotupload_marcxml(url, marcxml, mode, **kwargs):
     """Make a robotupload request."""
     from invenio_utils.url import make_user_agent_string
-    from inspire.utils.text import clean_xml
+    from inspirehep.utils.text import clean_xml
 
     from invenio_base.globals import cfg
     headers = {

@@ -24,15 +24,15 @@ from invenio.base.globals import cfg
 from dojson.contrib.marc21.utils import create_record
 
 from invenio.testsuite import InvenioTestCase, make_test_suite, run_test_suite
-from inspire.dojson.hep import hep
+from inspirehep.dojson.hep import hep
 from invenio.base.wrappers import lazy_import
-Cv_latex = lazy_import('inspire.utils.cv_latex.Cv_latex')
+Cv_latex = lazy_import('inspirehep.utils.cv_latex.Cv_latex')
 
 
 class CvLatexTests(InvenioTestCase):
 
     def setUp(self):
-        self.marcxml = pkg_resources.resource_string('inspire.testsuite',
+        self.marcxml = pkg_resources.resource_string('inspirehep.testsuite',
                                                      os.path.join(
                                                          'fixtures',
                                                          'test_hep_formats.xml')

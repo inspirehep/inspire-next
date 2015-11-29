@@ -30,9 +30,9 @@ from functools import wraps
 
 from flask import current_app
 
-from inspire.utils.arxiv import get_arxiv_id_from_record
-from inspire.utils.datefilter import date_older_than
-from inspire.utils.helpers import (
+from inspirehep.utils.arxiv import get_arxiv_id_from_record
+from inspirehep.utils.datefilter import date_older_than
+from inspirehep.utils.helpers import (
     get_record_from_model,
     get_record_from_obj
 )
@@ -181,7 +181,7 @@ def save_identifiers_to_kb(kb_name,
     """Save the record identifiers into a KB."""
     @wraps(save_identifiers_to_kb)
     def _save_identifiers_to_kb(obj, eng):
-        from inspire.utils.knowledge import save_keys_to_kb
+        from inspirehep.utils.knowledge import save_keys_to_kb
         record = get_record_from_obj(obj, eng)
 
         identifiers = record.get(identifier_key, [])

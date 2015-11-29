@@ -59,7 +59,7 @@ def get_record_from_model(model):
 
 def add_file_by_name(model, file_path, filename=None):
     """Save given file to storage and attach to object, return new path."""
-    from inspire.modules.workflows.models import PayloadStorage
+    from inspirehep.modules.workflows.models import PayloadStorage
     from invenio_deposit.models import (
         DepositionFile,
         FilenameAlreadyExists,

@@ -26,13 +26,13 @@ def convert_marcxml(source):
     """Convert MARC XML to JSON."""
     from dojson.contrib.marc21.utils import create_record, split_blob
 
-    from inspire.dojson.hep import hep
-    from inspire.dojson.institutions import institutions
-    from inspire.dojson.journals import journals
-    from inspire.dojson.experiments import experiments
-    from inspire.dojson.hepnames import hepnames
-    from inspire.dojson.jobs import jobs
-    from inspire.dojson.conferences import conferences
+    from inspirehep.dojson.hep import hep
+    from inspirehep.dojson.institutions import institutions
+    from inspirehep.dojson.journals import journals
+    from inspirehep.dojson.experiments import experiments
+    from inspirehep.dojson.hepnames import hepnames
+    from inspirehep.dojson.jobs import jobs
+    from inspirehep.dojson.conferences import conferences
 
     for data in split_blob(source.read()):
         record = create_record(data)

@@ -62,7 +62,7 @@ class hep_approval(object):
     def resolve(bwo):
         """Resolve the action taken in the approval action."""
         from invenio_workflows.models import ObjectVersion
-        from inspire.modules.audit.api import log_prediction_action
+        from inspirehep.modules.audit.api import log_prediction_action
 
         value = request.form.get("value", "")
 

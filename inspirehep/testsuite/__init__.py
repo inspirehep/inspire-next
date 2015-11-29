@@ -28,10 +28,10 @@ from invenio.testsuite import iter_suites
 def suite():
     """Create the testsuite that has all the tests."""
     packages = [
-        'inspire.modules.deposit',
+        'inspirehep.modules.deposit',
         # Run after records have been created by other tests
         'inspire',
-        'inspire.base',
+        'inspirehep.base',
     ]
     suite = unittest.TestSuite()
     for other_suite in iter_suites(packages=packages):
