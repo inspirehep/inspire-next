@@ -116,7 +116,10 @@ def short_description(self, key, value):
 @utils.for_each_value
 def transparencies(self, key, value):
     """Conference transparencies."""
-    if value.get('y', '').lower() == 'transparencies':
+    if isinstance(value.get('y'), list):
+        if 'transparencies' in [e.lower() for e in value['y']]:
+            return value.get('u')
+    elif value.get('y', '').lower() == 'transparencies':
         return value.get('u')
 
 

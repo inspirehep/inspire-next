@@ -34,7 +34,8 @@ def urls(self, key, value):
     """URL to external resource."""
     try:
         size = int(value.get('s'))
-    except TypeError:
+    except:
+        # Some crap in the size or not available
         size = None
     return {
         'url': value.get('u'),

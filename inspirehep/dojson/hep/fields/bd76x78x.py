@@ -35,9 +35,20 @@ def publication_info(self, key, value):
     year = ''
     recid = ''
     if 'y' in value:
-        year = int(value.get('y'))
-    if '0' in value:
-        recid = int(value.get('0'))
+        try:
+            year = int(value.get('y'))
+        except:
+            # Some crap in they year :-(
+            pass
+    try:
+        if '0' in value:
+            if isinstance(value['0'], list):
+                recid = int(value['0'][0])
+            else:
+                recid = int(value.get('0'))
+    except:
+        # Some crap in the recid :-(
+        pass
     return {
         'recid': recid,
         'page_artid': value.get('c'),
@@ -80,6 +91,10 @@ def publication_info2marc(self, key, value):
 @hep.over('succeeding_entry', '^785..')
 def succeeding_entry(self, key, value):
     """Succeeding Entry."""
+    if isinstance(value, list):
+        # Too bad: there can only be one succeeding entry.
+        value = value[0]
+
     return {
         'relationship_code': value.get('r'),
         'recid': value.get('w'),

@@ -78,6 +78,8 @@ def name(self, key, value):
     + Sr.
     + roman numbers (like VII)
     """
+    if isinstance(value, list):
+        value = value[0]
     return {
         'value': value.get('a'),
         'numeration': value.get('b'),
@@ -90,6 +92,8 @@ def name(self, key, value):
 @hepnames.over('breadcrumb_title', '^100..')
 def breadcrumb_title(self, key, value):
     """Title used in breadcrum and html title."""
+    if isinstance(value, list):
+        value = value[0]
     return value.get('a')
 
 
