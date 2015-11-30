@@ -37,6 +37,8 @@ from inspirehep.utils.helpers import (
 from invenio_base.globals import cfg
 from invenio_base.wrappers import lazy_import
 
+from invenio_matcher.api import match as _match
+
 import requests
 
 import six
@@ -118,6 +120,30 @@ def match(obj, eng):
         return True
 
     return False
+
+
+def match_with_invenio_matcher(obj, eng):
+    """TODO."""
+    model = eng.workflow_definition.model(obj)
+    record = get_record_from_model(model)
+
+    queries = [
+        {'type': 'exact', 'match': 'dois.value'},
+        {'type': 'exact', 'match': 'arxiv_eprints.value'}
+    ]
+
+    for el in _match(record, queries=queries, index='hep', doc_type='records'):
+        # FIXME(jacquerie): it should unwrap the MatchResult class.
+        obj.extra_data['recid'].append(el)
+        obj.extra_data['url'].append(
+            os.path.join(
+                cfg['CFG_ROBOTUPLOAD_SUBMISSION_BASEURL'],
+                'record',
+                str(el)
+            )
+        )
+
+    return len(obj.extra_data['recid']) > 0
 
 
 def was_already_harvested(record):

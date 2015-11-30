@@ -238,6 +238,47 @@ class MatchingTests(InvenioTestCase):
         self.assertFalse(result)
         self.assertEqual([], obj.extra_data['recid'])
 
+    @mock.patch('inspirehep.modules.workflows.tasks.matching.get_record_from_model')
+    @mock.patch('inspirehep.modules.workflows.tasks.matching._match')
+    def test_match_with_invenio_matcher_task_with_result(self, _match, get_record_from_model):
+        """TODO."""
+        from invenio_records.api import Record
+        from inspirehep.modules.workflows.tasks.matching import match_with_invenio_matcher
+
+        obj = self.MockObj()
+        eng = self.MockEng()
+
+        # FIXME(jacquerie): should yield a MatchResult.
+        _match.return_value.__iter__.return_value = iter([1, 2])
+
+        record = Record({'titles': [{'title': 'foo'}]})
+        get_record_from_model.return_value = record
+
+        result = match_with_invenio_matcher(obj, eng)
+
+        self.assertTrue(result)
+        self.assertTrue(1 in obj.extra_data['recid'] and 2 in obj.extra_data['recid'])
+
+    @mock.patch('inspirehep.modules.workflows.tasks.matching.get_record_from_model')
+    @mock.patch('inspirehep.modules.workflows.tasks.matching._match')
+    def test_match_with_invenio_matcher_task_without_result(self, _match, get_record_from_model):
+        """TODO."""
+        from invenio_records.api import Record
+        from inspirehep.modules.workflows.tasks.matching import match_with_invenio_matcher
+
+        obj = self.MockObj()
+        eng = self.MockEng()
+
+        _match.return_value.__iter__.return_value = iter([])
+
+        record = Record({'titles': [{'title': 'foo'}]})
+        get_record_from_model.return_value = record
+
+        result = match_with_invenio_matcher(obj, eng)
+
+        self.assertFalse(result)
+        self.assertEqual([], obj.extra_data['recid'])
+
     @mock.patch('inspirehep.modules.workflows.tasks.matching.cfg', {'INSPIRE_ACCEPTED_CATEGORIES': ['foo']})
     def test_was_already_harvested_true(self):
         """TODO."""
