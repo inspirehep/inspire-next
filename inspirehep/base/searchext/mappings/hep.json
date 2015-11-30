@@ -141,6 +141,11 @@
                         }
                     }
                 },
+
+                "citation_count": {
+                    "type": "integer"
+                },
+
                 "division": {
                     "type": "string"
                 },
