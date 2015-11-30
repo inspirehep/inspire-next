@@ -46,7 +46,6 @@ from inspirehep.dojson.journals import journals
 from inspirehep.dojson.processors import _collection_in_record
 from invenio_ext.sqlalchemy import db
 from invenio_ext.es import es
-from invenio_records.recordext.functions.get_record_collections import update_collections
 
 from .models import InspireProdRecords
 
@@ -57,7 +56,7 @@ CHUNK_SIZE = 1000
 split_marc = re.compile('<record.*?>.*?</record>', re.DOTALL)
 
 
-def chunker(iterable, chunksize):
+def chunker(iterable, chunksize=CHUNK_SIZE):
     buf = []
     for elem in iterable:
         buf.append(elem)
@@ -90,6 +89,23 @@ def split_stream(stream):
 
 
 @celery.task(ignore_result=True)
+def migrate_broken_records(broken_output=None, dry_run=False):
+    """Migrate records declared as broken.
+
+    Directly migrates the records declared as broken, e.g. if the dojson
+    conversion script have been corrected.
+    """
+    for i, chunk in enumerate(chunker(
+            record.marcxml for record in
+            db.session.query(InspireProdRecords).filter_by(successful=False))):
+        logger.info("Processed {} records".format(i * CHUNK_SIZE))
+        chunk_broken_output = None
+        if broken_output:
+            chunk_broken_output = "{}-{}".format(broken_output, i)
+        migrate_chunk.delay(chunk, chunk_broken_output, dry_run)
+
+
+@celery.task(ignore_result=True)
 def migrate(source, broken_output=None, dry_run=False):
     """Main migration function."""
     if source.endswith('.gz'):
@@ -105,7 +121,7 @@ def migrate(source, broken_output=None, dry_run=False):
         migrate_chunk.delay(chunk, chunk_broken_output, dry_run)
 
 
-@celery.task(ignore_result=True)
+@celery.task(ignore_result=True, compress='zlib')
 def migrate_chunk(chunk, broken_output=None, dry_run=False):
     from flask_sqlalchemy import models_committed
     from invenio_records.receivers import record_modification
@@ -131,7 +147,7 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
         logger.info("Committing chunk")
         db.session.commit()
         logger.info("Sending chunk to elasticsearch")
-        es_bulk(es, records_to_index)
+        es_bulk(es, records_to_index, request_timeout=60)
     finally:
         models_committed.connect(record_modification)
 

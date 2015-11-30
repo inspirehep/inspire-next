@@ -33,13 +33,8 @@ from flask.ext.script import prompt_bool
 from invenio_ext.es import es
 from invenio_ext.script import Manager
 from invenio_ext.sqlalchemy import db
-from invenio_records.api import Record
 
-import six
-
-from werkzeug.utils import import_string
-
-from .tasks import migrate
+from .tasks import migrate, migrate_broken_records
 
 manager = Manager(description=__doc__)
 
@@ -54,6 +49,8 @@ manager = Manager(description=__doc__)
                 help='Specific collections to migrate.')
 @manager.option('--input', '-f', dest='file_input',
                 help='Specific collections to migrate.')
+@manager.option('--remigrate', '-m', action='store_true', dest='remigrate',
+                default=False, help='Try to remigrate broken records')
 @manager.option('-t', '--input-type', dest='input_type', default='marcxml',
                 help="Format of input file.")
 @manager.option('--force', action='store_true', dest='force_import', default=None,
@@ -62,15 +59,14 @@ manager = Manager(description=__doc__)
                 help='Where to write back records that were not possible to migrate')
 @manager.option('--dry-run', '-d', action='store_true', dest='dry_run', default=False,
                 help='Whether records should really be imported or not')
-def populate(records, collections, file_input=None, input_type=None,
-             force_import=None, broken_output=None, dry_run=False):
+def populate(records, collections, file_input=None, remigrate=False,
+             input_type=None, force_import=None, broken_output=None,
+             dry_run=False):
     """Populates the system with records
 
     Usage: inveniomanage migrator populate -f prodsync20151117173222.xml.gz \
                 --force --broken-output=/tmp/broken.xml:
     """
-    from .tasks import migrate
-
     if records is None and collections is None:
         # We harvest all
         print("Migrating all records...", file=sys.stderr)
@@ -79,11 +75,14 @@ def populate(records, collections, file_input=None, input_type=None,
     if collections:
         print("Migrating collections: {0}".format(",".join(collections)))
 
-    if file_input and not os.path.isfile(file_input):
-        print("{0} is not a file!".format(file_input), file=sys.stderr)
-        return
+    if remigrate:
+        print("Remigrate broken records...")
+        migrate_broken_records.delay(broken_output=broken_output, dry_run=dry_run)
 
-    if file_input:
+    elif file_input and not os.path.isfile(file_input):
+        print("{0} is not a file!".format(file_input), file=sys.stderr)
+
+    elif file_input:
         print("Migrating records from file: {0}".format(file_input))
 
         migrate.delay(os.path.abspath(file_input), broken_output=broken_output,
