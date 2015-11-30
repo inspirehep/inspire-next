@@ -160,7 +160,8 @@ def create_record(data, force=False, dry_run=False):
     if '001' in record:
         recid = int(record['001'][0])
     if not dry_run and recid:
-        prod_record = InspireProdRecords(recid=recid, marcxml=data)
+        prod_record = InspireProdRecords(recid=recid)
+        prod_record.marcxml = data
     try:
         if _collection_in_record(record, 'institution'):
             json = institutions.do(record)

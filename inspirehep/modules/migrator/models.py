@@ -20,8 +20,10 @@
 """Models for Migrator."""
 
 from datetime import datetime
+from zlib import compress, decompress, error
 
 from invenio_ext.sqlalchemy import db
+from sqlalchemy.ext.hybrid import hybrid_property
 
 
 class InspireProdRecords(db.Model):
@@ -29,5 +31,18 @@ class InspireProdRecords(db.Model):
 
     recid = db.Column(db.Integer, primary_key=True, index=True)
     last_updated = db.Column(db.DateTime, default=datetime.now, nullable=False, index=True)
-    marcxml = db.Column(db.LargeBinary, nullable=False)
+    _marcxml = db.Column('marcxml', db.LargeBinary, nullable=False)
     successful = db.Column(db.Boolean, default=None, nullable=True, index=True)
+
+    @hybrid_property
+    def marcxml(self):
+        """marcxml column wrapper to compress/decompress on the fly."""
+        try:
+            return decompress(self._marcxml)
+        except error:
+            # Legacy uncompress data?
+            return self._marcxml
+
+    @marcxml.setter
+    def marcxml(self, value):
+        self._marcxml = compress(value)
