@@ -54,9 +54,13 @@ def convert_marcxml(source):
 
 
 def _collection_in_record(record, collection):
-    """Return a list of collections (lowercased) from 980__a."""
+    """Returns True if record is in collection"""
     colls = force_list(record.get("980__", []))
-    return collection in [
-        coll.get('a', "").lower()
-        for coll in colls if coll
-    ]
+    for coll in colls:
+        coll = coll.get('a', [])
+        if isinstance(coll, list):
+            if collection in [c.lower() for c in coll]:
+                return True
+        elif coll.lower() == collection:
+            return True
+    return False
