@@ -17,17 +17,29 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-"""Tests for text utls."""
+"""Test helpers."""
 
-from __future__ import print_function, absolute_import
+import sys
+
+from importlib import import_module
 
 from flask_registry import ImportPathRegistry
 
 from invenio.testsuite import InvenioTestCase
 
+
 TEST_PACKAGES = [
     'tests',
 ]
+
+
+def reimport_module(module_name):
+    """Import a module to use as a mock without `sys.modules` cache."""
+    try:
+        del sys.modules[module_name]
+    except KeyError:
+        pass
+    return import_module(module_name)
 
 
 class WorkflowTasksTestCase(InvenioTestCase):
