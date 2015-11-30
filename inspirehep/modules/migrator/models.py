@@ -28,6 +28,6 @@ class InspireProdRecords(db.Model):
     __tablename__ = 'inspire_prod_records'
 
     recid = db.Column(db.Integer, primary_key=True, index=True)
-    last_updated = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    last_updated = db.Column(db.DateTime, default=datetime.now, nullable=False, index=True)
     marcxml = db.Column(db.LargeBinary, nullable=False)
-    successful = db.Column(db.Boolean, default=None, nullable=True)
+    successful = db.Column(db.Boolean, default=None, nullable=True, index=True)
