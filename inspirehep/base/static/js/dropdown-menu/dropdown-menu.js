@@ -93,16 +93,14 @@
            e.stopPropagation();
          });
 
-         $(document).click(function() {
-           // Simply hide the submenu on any click. Again, this is just a hacked
-           // together menu/submenu structure to show the use of jQuery-menu-aim.
-           $(".popover").css("display", "none");
-         });
-
-         //Function for opening both parts on click
-         /*$(".dropdown-toggle").click(function() {
-            $("#jobs").css({"display":"block","top": "-1px", "left": "733px","position":"absolute"});
-           });*/
+         function activateFirstElement() {
+          if ( $('.dropdown-menu-amazon').css('display') === "block" ) {
+            $('li .first-submenu-item').click();
+          }
+         }
+         $(".dropdown-toggle").click(function() {
+            setTimeout(activateFirstElement, 10);
+        });
        } else {
          $(document).click(function() {
            $(".move-down").css({
