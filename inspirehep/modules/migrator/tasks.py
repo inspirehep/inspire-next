@@ -31,6 +31,7 @@ import re
 
 from six import text_type
 
+from flask import current_app
 from dojson.contrib.marc21.utils import create_record as marc_create_record
 from invenio_celery import celery
 from invenio_records.api import Record as record_api
@@ -121,7 +122,18 @@ def migrate(source, broken_output=None, dry_run=False):
         migrate_chunk.delay(chunk, chunk_broken_output, dry_run)
 
 
-@celery.task(ignore_result=True, compress='zlib')
+@celery.task(ignore_result=True)
+def continuos_migration():
+    """Task to continuosly migrate what is pushed up by Legacy."""
+    from redis import StrictRedis
+    redis_url = current_app.config.get('CACHE_REDIS_URL')
+    r = StrictRedis.from_url(redis_url)
+    while r.llen('legacy_records'):
+        record = r.lpop('legacy_records')
+        create_record(record, force=True)
+
+
+@celery.task(ignore_result=True, compress='zlib', acks_late=True)
 def migrate_chunk(chunk, broken_output=None, dry_run=False):
     from flask_sqlalchemy import models_committed
     from invenio_records.receivers import record_modification

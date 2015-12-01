@@ -57,6 +57,7 @@ requirements = [
     'invenio-utils==0.2.0',
     'invenio-webhooks==0.1.0',
     'invenio_classifier==0.1.0',
+    'librabbitmq>=1.6.1',
 ]
 
 test_requirements = [
@@ -67,6 +68,8 @@ test_requirements = [
     'pytest-pep8>=1.0.6',
     'coverage>=4.0.0',
     'responses>=0.4.0',
+    'pyinotify>=0.9.6',
+    'setproctitle>=1.1.9',
 ]
 
 
