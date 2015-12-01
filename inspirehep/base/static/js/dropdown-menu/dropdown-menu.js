@@ -25,7 +25,7 @@
    'jquery-menu-aim',
  ], function($, $menuAim) {
    $(window).ready(function() {
-     var $menu = $(".dropdown-menu");
+     var $menu = $("#dropdown-menu-amazon");
 
      function activateSubmenu(row) {
        var $row = $(row),
@@ -61,6 +61,8 @@
 
      function doneResizing() {
        var wi = $(window).width();
+       $("#dropdown-amazon").removeClass('open');
+
        if (wi > 767) {
          $menu.menuAim({
            activate: activateSubmenu,
@@ -72,8 +74,7 @@
          });
          $(".move-down").css({
            "margin-top": "0px"
-         }); // change it to class! 
-         $(".dropdown").removeClass('open');
+         }); // change it to class!
          $(".popover").css({
            "display": "none"
          });
@@ -88,7 +89,7 @@
          arrowDefaultState("#sixth-arrow");
          arrowDefaultState("#seventh-arrow");
 
-         $(".dropdown-menu li").click(function(e) {
+         $("#dropdown-menu-amazon li").click(function(e) {
            e.stopPropagation();
          });
 
@@ -112,8 +113,7 @@
          $(".popover").css({
            "display": "none"
          });
-         $(".dropdown").removeClass('open');
-         $(".dropdown-toggle").off("click");
+         $("#dropdown-amazon .dropdown-toggle").off("click");
          $(".first-submenu-item, .second-submenu-item, .third-submenu-item," +
            ".fourth-submenu-item, .fifth-submenu-item, .sixth-submenu-item, .seventh-submenu-item").off();
 
