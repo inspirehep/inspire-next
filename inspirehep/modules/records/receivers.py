@@ -21,7 +21,7 @@ from invenio_records.signals import before_record_index
 
 
 @before_record_index.connect
-def populate_inspire_subjects(recid, json):
+def populate_inspire_subjects(recid, json, index):
     """
     Populate a json record before indexing it to elastic.
     Adds a field for faceting INSPIRE subjects
@@ -34,7 +34,7 @@ def populate_inspire_subjects(recid, json):
 
 
 @before_record_index.connect
-def populate_inspire_document_type(recid, json):
+def populate_inspire_document_type(recid, json, index):
     """ Populates a json record before indexing it to elastic.
         Adds a field for faceting INSPIRE document type
     """
@@ -78,7 +78,7 @@ def populate_inspire_document_type(recid, json):
 
 
 @before_record_index.connect
-def match_valid_experiments(recid, json):
+def match_valid_experiments(recid, json, index):
     """Matches misspelled experiment names with valid experiments.
        Tries to match with valid experiments by matching lowercased and
        whitespace-free versions of known experiments.

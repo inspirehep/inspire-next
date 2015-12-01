@@ -1,24 +1,22 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
-# INSPIRE is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-#
-# In applying this license, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as an Intergovernmental Organization
-# or submit itself to any jurisdiction.
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
 
 """Manage migration from INSPIRE legacy instance."""
 
@@ -44,6 +42,8 @@ manager = Manager(usage=__doc__)
 
 @manager.option('--input', '-f', dest='file_input',
                 help='Specific collections to migrate.')
+@manager.option('--wait', '-w', dest='wait_for_results',
+                help='Wait for migration to complete.')
 @manager.option('--remigrate', '-m', action='store_true', dest='remigrate',
                 default=False, help='Try to remigrate broken records')
 @manager.option('--broken-output', '-b', dest='broken_output', default=None,
@@ -53,7 +53,8 @@ manager = Manager(usage=__doc__)
 def populate(file_input=None,
              remigrate=False,
              broken_output=None,
-             dry_run=False):
+             dry_run=False,
+             wait_for_results=False):
     """Populates the system with records from migration files.
 
     Usage: inveniomanage migrator populate -f prodsync20151117173222.xml.gz
@@ -67,18 +68,17 @@ def populate(file_input=None,
     elif file_input:
         print("Migrating records from file: {0}".format(file_input))
 
-        from invenio_celery.utils import disable_queue, enable_queue
-        disable_queue("celery")
-        try:
-            migrate(os.path.abspath(file_input), broken_output=broken_output,
-                    dry_run=dry_run)
-        finally:
-            enable_queue("celery")
+        migrate(os.path.abspath(file_input), broken_output=broken_output,
+                dry_run=dry_run, wait_for_results=wait_for_results)
 
 
 @manager.command
-def count_citations():
-    add_citation_counts.delay()
+def count_citations(test_mode=False):
+    """Adds field citation_count to every record in 'HEP' and calculates its proper value."""
+    print("Adding citation_count to all records")
+    cit_task = add_citation_counts.delay()
+    if test_mode:
+        cit_task.wait()
 
 
 @manager.command

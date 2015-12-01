@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -17,15 +17,10 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-from invenio.testsuite import InvenioTestCase
 
+def calculate_citation_count(recid, record):
+    """Sets field citation_count of the given record with the given recid to the proper value
+    checking how many other records in db refer to this record."""
+    from invenio_search.api import Query
 
-class CitationCountTest(InvenioTestCase):
-
-    def test_citation_count(self):
-        from invenio_ext.es import es
-        from invenio_search.api import Query
-        recid = u'1196797'
-        count = len(Query('refersto:'+recid).search())
-        record = es.get(index='hep', id=recid)
-        self.assertEqual(count, record['_source'].get('citation_count'))
+    record['citation_count'] = len(Query('refersto:' + str(recid)).search())

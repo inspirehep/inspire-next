@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -17,18 +17,20 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-import numpy as np
 import uuid
 
 from beard.clustering import block_phonetic
+
 from invenio_records.signals import (
     before_record_index,
     before_record_insert,
 )
 
+import numpy as np
+
 
 @before_record_index.connect
-def assign_signature_block(recid, json):
+def assign_signature_block(recid, json, *args, **kwargs):
     """Assign phonetic block to each signature.
 
     The method extends the given signature with a phonetic
@@ -66,7 +68,7 @@ def assign_uuid(sender, *args, **kwargs):
 
 
 @before_record_index.connect
-def generate_name_variatons(recid, json):
+def generate_name_variatons(recid, json, *args, **kwargs):
     """Populates a json record before indexing it to elastic.
     Adds a field for all the possible variations of an authors name
 
