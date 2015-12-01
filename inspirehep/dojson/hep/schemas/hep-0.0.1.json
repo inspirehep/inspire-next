@@ -562,6 +562,10 @@
                     "experiment": {
                         "type": "string"
                     },
+                    "facets_experiment": {
+                        "type": "string",
+                        "description": "Experiment name to be used on facets."
+                    },
                     "accelerator": {
                         "type": "string"
                     },
