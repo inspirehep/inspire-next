@@ -29,7 +29,7 @@
         <h4 class="custom-h">
           <b>
             <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-              {{ record['experiment_name'][0] }}
+              {{ record['experiment_name']['experiment'][0] }}
             </a>
             {% if record['affiliation'] %}
               ({{record['affiliation'][0]}})
@@ -52,7 +52,7 @@
       {% endif %}
       <div class="row">
         <div class="col-md-12 record-brief-details">
-        <a href="/search?p=experiment:{{ record['experiment_name'][0] }}&cc=HEP">HEP articles associated with {{ record['experiment_name'][0] }}</a>
+        <a href="/search?p=experiment:{{ record['experiment_name']['experiment'][0] }}&cc=HEP">HEP articles associated with {{ record['experiment_name']['experiment'][0] }}</a>
         </div>
       </div>
       {% if record['collaboration'] %}
