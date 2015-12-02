@@ -21,7 +21,7 @@
 #}
 
 {% if 'series' in response._search()['aggregations'] and  response._search()['aggregations']['series']['buckets'] %}
-  <h4 id="filter-by-series" class="pointer">Filter by Series <i class="fa fa-chevron-down"></i></h4>
+  <h4 id="filter-by-series" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Series</h4>
   <div class="facet-container" id="facet-series">
   {% for series in response._search()['aggregations']['series']['buckets'] %}
   <div class="checkbox checkbox-facets">
@@ -41,7 +41,7 @@
 </div>
 {% endif %}
 {% if 'subject' in response._search()['aggregations'] and response._search()['aggregations']['subject']['buckets'] %}
-  <h4 id="filter-by-subject" class="pointer">Filter by Subject <i class="fa fa-chevron-down"></i></h4>
+  <h4 id="filter-by-subject" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Subject</h4>
   <div class="facet-container" id="facet-conf-subject">
   {% for subject in response._search()['aggregations']['subject']['buckets'] %}
   <div class="checkbox checkbox-facets">
@@ -62,7 +62,7 @@
 {% endif %}
 {% if 'opening_date' in response._search()['aggregations']  and response._search()['aggregations']['opening_date']['buckets'] %}
 {% set sorted_year = response._search()['aggregations']['opening_date']['buckets']|sort_list_by_dict_val %}
-  <h4 id="filter-by-conf-year" class="pointer">Filter by Year <i class="fa fa-chevron-down"></i></h4>
+  <h4 id="filter-by-conf-year" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Year</h4>
   <div class="facet-container" id="facet-conf-year">
   {% for opening_date in sorted_year|limit_facet_elements %}
   <div class="checkbox checkbox-facets">

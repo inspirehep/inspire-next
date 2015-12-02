@@ -21,7 +21,7 @@
 #}
 
 {% if 'country' in response._search()['aggregations'] and response._search()['aggregations']['country']['buckets'] %}
-    <h4 id="filter-by-country" class="pointer">Filter by Country <i class="fa fa-chevron-down"></i></h4>
+    <h4 id="filter-by-country" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Country</h4>
     <div class="facet-container" id="facet-country">
     {% for country in response._search()['aggregations']['country']['buckets'] %}
     <div class="checkbox checkbox-facets">

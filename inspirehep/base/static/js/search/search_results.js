@@ -240,11 +240,15 @@ define(
 
       this.onFacetDropdown = function(ev) {
         var id = $(ev.target).attr("id");
-        var facetOption = $('#'+id + ' i');
+        if ( $(ev.target).is('i') ) {
+          // The chevron icon was clicked
+          var id = $(ev.target).parent().attr("id");
+        }
+        var facetOption = $('#' + id + ' i');
         if (facetOption.hasClass('fa-chevron-down')) {
-          facetOption.addClass('fa-chevron-right').removeClass('fa-chevron-down');
+          facetOption.addClass('fa-chevron-right facet-slider').removeClass('fa-chevron-down');
         } else {
-          facetOption.addClass('fa-chevron-down').removeClass('fa-chevron-right');
+          facetOption.addClass('fa-chevron-down facet-slider').removeClass('fa-chevron-right');
         }
         var content_to_slide = $('#'+id).next().attr("id");
         $('#'+content_to_slide).slideToggle();
@@ -264,12 +268,7 @@ define(
         this.on("#select-sorting", "change", this.onSortingChange);
         this.initExportDropdown();
         this.on("a.export-as-element", "click", this.onDropdownCheck);
-        this.on("#filter-by-document, #filter-by-author, #filter-by-affiliation," + 
-                "#filter-by-language, #filter-by-experiment, #filter-by-year," +
-                "#filter-by-series, #filter-by-subject, #filter-by-conf-year," +
-                "#filter-by-continent, #filter-by-rank, #filter-by-research-area," +
-                "#filter-by-country, #filter-by-field_code, #filter-by-wwwlab," +
-                "#filter-by-accelerator, #filter-by-publisher", "click", this.onFacetDropdown);
+        this.on("h4[id^='filter-by-']", "click", this.onFacetDropdown);
       });
 
     }

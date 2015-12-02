@@ -21,7 +21,7 @@
 #}
 
 {% if 'field_code' in response._search()['aggregations'] and response._search()['aggregations']['field_code']['buckets'] %}
-  <h4 id="filter-by-field_code" class="pointer">Filter by Subject <i class="fa fa-chevron-down"></i></h4>
+  <h4 id="filter-by-field_code" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Subject</h4>
   <div class="facet-container" id="facet-field_code">
   {% for field_code in response._search()['aggregations']['field_code']['buckets'] %}
   <div class="checkbox checkbox-facets">
@@ -41,7 +41,7 @@
 </div>
 {% endif %}
 {% if 'wwwlab' in response._search()['aggregations'] and response._search()['aggregations']['wwwlab']['buckets'] %}
-  <h4 id="filter-by-wwwlab" class="pointer">Filter by ICN <i class="fa fa-chevron-down"></i></h4>
+  <h4 id="filter-by-wwwlab" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by ICN</h4>
   <div class="facet-container" id="facet-wwwlab">
   {% for wwwlab in response._search()['aggregations']['wwwlab']['buckets'] %}
   <div class="checkbox checkbox-facets">
@@ -60,7 +60,7 @@
 </div>
 {% endif %}
 {% if 'accelerator' in response._search()['aggregations'] and response._search()['aggregations']['accelerator']['buckets'] %}
-  <h4 id="filter-by-accelerator" class="pointer">Filter by Accelerator <i class="fa fa-chevron-down"></i></h4>
+  <h4 id="filter-by-accelerator" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Accelerator</h4>
   <div class="facet-container" id="facet-accelerator">
   {% for accelerator in response._search()['aggregations']['accelerator']['buckets'] %}
   <div class="checkbox checkbox-results">

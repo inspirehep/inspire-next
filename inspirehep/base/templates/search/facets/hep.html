@@ -20,7 +20,7 @@
 ## or submit itself to any jurisdiction.
 #} 
   {% if 'doc_type' in response._search()['aggregations'] and response._search()['aggregations']['doc_type']['buckets'] %}
-    <h4 id="filter-by-document" class="pointer">Filter by Document type <i class="fa fa-chevron-down"></i></h4>
+    <h4 id="filter-by-document" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Document type</h4>
     <div class="facet-container" id="facet-doc_type">
     {% for doc_type in response._search()['aggregations']['doc_type']['buckets'] %}
     <div class="checkbox checkbox-facets">
@@ -39,9 +39,9 @@
     <hr />
   </div>
   {% endif %}
-  {% if 'subject' in response._search()['aggregations'] %}
-    <div class="facet-container">
-      <h4>Filter by Subject</h4>
+  {% if 'subject' in response._search()['aggregations'] and response._search()['aggregations']['subject']['buckets'] %}
+    <h4 id="filter-by-subject" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Subject</h4>
+    <div class="facet-container" id="facet-subject">
       {% for subject in response._search()['aggregations']['subject']['buckets'] %}
       <div class="checkbox">
         <label>
@@ -60,7 +60,7 @@
     </div>
   {% endif %}
   {% if 'author' in response._search()['aggregations'] and response._search()['aggregations']['author']['buckets'] %}
-    <h4 id="filter-by-author" class="pointer">Filter by Author <i class="fa fa-chevron-down"></i></h4>
+    <h4 id="filter-by-author" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Author</h4>
     <div class="facet-container" id="facet-author">
     {% for author in response._search()['aggregations']['author']['buckets'] %}
     <div class="checkbox checkbox-facets">
@@ -80,7 +80,7 @@
   </div>
   {% endif %}
   {% if 'affiliation' in response._search()['aggregations'] and response._search()['aggregations']['affiliation']['buckets'] %}
-  <h4 id="filter-by-affiliation" class="pointer">Filter by Affiliation <i class="fa fa-chevron-down"></i></h4>
+  <h4 id="filter-by-affiliation" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Affiliation</h4>
   <div class="facet-container" id="facet-affiliation">
     {% for affiliation in response._search()['aggregations']['affiliation']['buckets'] %}
     <div class="checkbox checkbox-facets">
@@ -100,7 +100,7 @@
   </div>
   {% endif %}
   {% if 'languages' in response._search()['aggregations'] and response._search()['aggregations']['languages']['buckets'] %}
-    <h4 id="filter-by-language" class="pointer">Filter by Language <i class="fa fa-chevron-down"></i></h4>
+    <h4 id="filter-by-language" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Language</h4>
     <div class="facet-container" id="facet-languages">
     {% for language in response._search()['aggregations']['languages']['buckets'] %}
     <div class="checkbox checkbox-facets">
@@ -120,7 +120,7 @@
   </div>
   {% endif %}
   {% if 'experiment' in response._search()['aggregations'] and response._search()['aggregations']['experiment']['buckets'] %}
-    <h4 id="filter-by-experiment" class="pointer">Filter by Experiment <i class="fa fa-chevron-down"></i></h4>
+    <h4 id="filter-by-experiment" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Experiment</h4>
     <div class="facet-container" id="facet-experiment">
     {% for experiment in response._search()['aggregations']['experiment']['buckets'] %}
     <div class="checkbox checkbox-facets">
@@ -141,7 +141,7 @@
   {% endif %}
   {% if 'earliest_date' in response._search()['aggregations'] and response._search()['aggregations']['earliest_date']['buckets'] %}
     {% set sorted_year = response._search()['aggregations']['earliest_date']['buckets']|sort_list_by_dict_val %}
-      <h4 id="filter-by-year" class="pointer">Filter by Year <i class="fa fa-chevron-down"></i></h4>
+      <h4 id="filter-by-year" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Year</h4>
       <div class="facet-container" id="facet-earliest_date">
         {% for earliest_date in sorted_year| limit_facet_elements %}
       <div class="checkbox checkbox-facets">
