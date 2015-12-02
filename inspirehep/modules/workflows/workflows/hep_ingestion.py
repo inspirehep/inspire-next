@@ -62,7 +62,7 @@ from inspirehep.modules.workflows.tasks.upload import store_record_sip
 from inspirehep.utils.helpers import get_record_from_model
 
 from invenio_deposit.models import DepositionType
-
+from invenio_formatter import format_record
 from invenio_workflows.tasks.logic_tasks import (
     workflow_else,
     workflow_if,
@@ -289,6 +289,10 @@ class hep_ingestion(DepositionType):
             record = get_record_from_model(model)
         except TypeError as err:
             return "Error: {0}".format(err)
+        if kwargs.get('of'):
+            if "recid" not in record:
+                record['recid'] = None
+            return format_record(record=record, of=kwargs.get('of'))
         return render_template(
             'format/record/Holding_Pen_HTML_detailed.tpl',
             record=record
