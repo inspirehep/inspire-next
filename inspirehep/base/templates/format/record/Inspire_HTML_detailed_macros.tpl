@@ -17,33 +17,12 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import record_abstract with context %}
+{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, record_cite_modal, record_abstract with context %}
+{% from "records/Inspire_Default_HTML_detailed_macros.tpl" import search_current_collection with context %}
 
 {% macro record_collection_heading() %}
   <span id="search-title">Search literature &#62;</span>
-  <span id="title">{{ record_title() }}</span>
-{% endmacro %}
-
-{% macro record_title() %}
-  {% block title %}
-  {% set title_displayed = [] %}
-    {% if record['titles'] %}
-      {% for title in record['titles'] %}
-        {% if title.get('title') and not title.get('source') == 'arXiv' and not title_displayed %}
-          {{ title['title']|capitalize }}
-          {% do title_displayed.append(1) %}
-        {% endif %}
-      {% endfor %}
-      {% if not title_displayed %}
-        {% for title in record['titles'] %}
-          {% if title.get('title') and title.get('source') == 'arXiv' and not title_displayed %}
-            {{ title['title']|capitalize }}
-            {% do title_displayed.append(1) %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endif %}
-  {% endblock %}
+  <span id="title">{{ render_record_title() }}</span>
 {% endmacro %}
 
 {% macro record_buttons() %}
