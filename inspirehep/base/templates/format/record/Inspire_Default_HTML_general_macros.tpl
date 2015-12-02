@@ -29,17 +29,39 @@
 {% endmacro %}
 
 {% macro render_record_authors(is_brief, number_of_displayed_authors=10, show_affiliations=true) %}
+  {% if record.collaboration %}
+    {% set collaboration_displayed = [] %}
+    {% for collaboration in record.collaboration if collaboration != None %}
+      <a href="/search?p=collaboration:'{{ collaboration }}'">{{ collaboration }}</a>
+      {% do collaboration_displayed.append(1) %}
+      {% if not loop.last %}
+        and 
+      {% endif %}
+      {% if loop.last %}
+        {% if loop.index == 1%}
+          Collaboration
+        {% else %}
+          Collaborations
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
   {% if record.authors %}
     {% set sep = joiner("; ") %}
     {% set authors = record.authors %}
+    {% if not collaboration_displayed %}
       {% for author in authors[0:number_of_displayed_authors] %}
         <small>{{ sep() }}</small>
         <small class="text-left">{{ render_author_names(author, show_affiliation = True ) }}</small>
       {% endfor %}
+    {% endif %}
     {% if (record.authors | length > number_of_displayed_authors) %}
       <small>
         {% if is_brief %}
-          <i>et al.</i>
+          {% if not collaboration_displayed %}
+            <i>et al.</i>
+          {% endif %}
         {% else %}
           <a id="authors-show-more" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
             Show {{ record.authors | count }} authors & affiliations
@@ -87,7 +109,6 @@
         </div>
       </div>
     {% endif %}
-
   {% endif %}
 {% endmacro %}
 
