@@ -128,39 +128,37 @@
       {% set keywords_number = [] %}
         {% if record.get('thesaurus_terms') %}
           {% for keywords in record.get('thesaurus_terms') %}
-            {% if (loop.index < 15) %}
+            {% if (loop.index < 10) %}
               {% if 'keyword' in keywords.keys() %}
-                <small>
-                  <a href='/search?p=keyword:{{ keywords.get('keyword') }}'>{{ keywords.get('keyword') }}</a>
-                </small>
+                <span class="label label-default label-keyword">
+                  <a href='/search?p=keyword:{{ keywords.get('keyword') }}'>{{ keywords.get('keyword') | trim }}</a>
+                </span>
+                &nbsp;
               {% endif %}
-
               {% if loop.first %}
                 {% do keywords_number.append(loop.length) %}
               {% endif %}
-              {% if not loop.last %}
-                ,
-              {% endif %}
             {% endif %}
-            {% if (loop.index == 15) %}
+            {% if (loop.index == 10) %}
               {% do showMore.append(1) %} 
             {% endif %}
           {% endfor %}
         {% endif %}
 
       {% if showMore or record.get('free_keywords')%}
-        {{ sep() }}
-        <a href="" class="text-muted" data-toggle="modal"data-target="#keywordsFull">
-          <small>
-            Show all
-            {% if keywords_number %}
-              {{ keywords_number[0] }} plus
-            {% endif %}
-            {% if record.get('free_keywords') %}
-              author supplied keywords
-            {% endif %}
-          </small>
-        </a>
+        <div>
+          <a href="" class="text-muted" data-toggle="modal" data-target="#keywordsFull">
+            <small>
+              Show all
+              {% if keywords_number %}
+                {{ keywords_number[0] }} keywords
+              {% endif %}
+              {% if record.get('free_keywords') %}
+                plus author supplied keywords
+              {% endif %}
+            </small>
+          </a>
+        </div>
         <div class="modal fade" id="keywordsFull" tabindex="-1" role="dialog" aria-labelledby="keywordsFull" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -173,7 +171,10 @@
                 {% if record.get('thesaurus_terms') %}
                   {% for keywords in record.get('thesaurus_terms') %}
                     {% if 'keyword' in keywords.keys() %}
-                    <a href='/search?p=keyword:{{ keywords.get('keyword') }}'>{{ keywords.get('keyword') }}</a>,
+                      <span class="label label-default label-keyword">
+                        <a href='/search?p=keyword:{{ keywords.get('keyword') }}'>{{ keywords.get('keyword') }}</a>
+                      </span>
+                      &nbsp;
                     {% endif %}
                   {% endfor %}
                 {% endif %}
@@ -182,7 +183,10 @@
                   <h4>Author supplied keywords</h4>
                   {% for keywords in record.get('free_keywords') %}
                     {% if 'value' in keywords.keys() %}
-                      <a href='/search?p=keyword:{{ keywords.get('value') }}'>{{ keywords.get('value') }}</a>
+                      <span class="label label-default label-keyword">
+                        <a href='/search?p=keyword:{{ keywords.get('value') }}'>{{ keywords.get('value') }}</a>
+                      </span>
+                      &nbsp;
                     {% endif %}
                   {% endfor %}
                 {% endif %}
