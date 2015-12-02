@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of INSPIRE.
 # Copyright (C) 2015 CERN.
 #
@@ -10,32 +8,29 @@
 #
 # INSPIRE is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this license, CERN does not waive the privileges and immunities
+# In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
+
 
 """Manage migration from INSPIRE legacy instance."""
 
 from __future__ import absolute_import, print_function
 
-from celery.utils.log import get_task_logger
-
 import gzip
+
 import re
 
-from six import text_type
+from celery.utils.log import get_task_logger
 
 from flask import current_app
 from dojson.contrib.marc21.utils import create_record as marc_create_record
-from invenio_celery import celery
-from invenio_records.api import Record as record_api
-from invenio_records.models import Record
 
 from inspirehep.dojson.conferences import conferences
 from inspirehep.dojson.experiments import experiments
@@ -45,8 +40,16 @@ from inspirehep.dojson.institutions import institutions
 from inspirehep.dojson.jobs import jobs
 from inspirehep.dojson.journals import journals
 from inspirehep.dojson.processors import _collection_in_record
-from invenio_ext.sqlalchemy import db
+
+from invenio_celery import celery
+
 from invenio_ext.es import es
+from invenio_ext.sqlalchemy import db
+
+from invenio_records.api import Record as record_api
+from invenio_records.models import Record
+
+from six import text_type
 
 from .models import InspireProdRecords
 
@@ -147,8 +150,10 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
     try:
         for record in chunk:
             try:
-                recid, json = create_record(record, force=True, dry_run=dry_run)
-                index = get_record_index(json) or cfg['SEARCH_ELASTIC_DEFAULT_INDEX']
+                recid, json = create_record(record,
+                                            force=True, dry_run=dry_run)
+                index = get_record_index(json) or \
+                    cfg['SEARCH_ELASTIC_DEFAULT_INDEX']
                 before_record_index.send(recid, json=json)
                 json.update({'_index': index, '_type': 'record', '_id': recid})
                 records_to_index.append(json)
@@ -164,6 +169,57 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
         es_bulk(es, records_to_index, request_timeout=60)
     finally:
         models_committed.connect(record_modification)
+
+
+@celery.task(ignore_result=True)
+def add_citation_counts():
+    from elasticsearch.helpers import bulk as es_bulk
+    from elasticsearch.helpers import scan as es_scan
+    from collections import Counter
+
+    # list of update-jsons for each record
+    records_to_update = []
+
+    # lookup dictionary where key: recid of the record
+    # and value: number of records that cite that record
+    citations_lookup = Counter()
+    for record in es_scan(
+            es,
+            query={
+                "_source": "references.recid",
+                "filter": {
+                    "exists": {
+                        "field": "references.recid"
+                    }
+                },
+                "size": CHUNK_SIZE
+            },
+            scroll=u'1m',
+            index="hep",
+            doc_type="record"):
+
+        # update lookup dictionary based on references of the record
+        if 'references' in record['_source']:
+            references = record['_source']['references']
+            for reference in references:
+                recid = unicode(reference.get('recid'))
+                if recid is not None:
+                    citations_lookup[recid] += 1
+
+        # prepare json to update the record
+        json = {'_op_type': 'update',
+                '_index': 'hep',
+                '_type': 'record',
+                '_id': record['_id'],
+                }
+        records_to_update.append(json)
+
+    for json in records_to_update:
+        citation_count = citations_lookup[json['_id']]
+        json.update({'doc': {'citation_count': citation_count}})
+
+    for chunk in chunker(records_to_update, CHUNK_SIZE):
+        es_bulk(es, chunk)
 
 
 def create_record(data, force=False, dry_run=False):

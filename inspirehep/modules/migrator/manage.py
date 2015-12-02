@@ -34,7 +34,7 @@ from invenio_ext.es import es
 from invenio_ext.script import Manager
 from invenio_ext.sqlalchemy import db
 
-from .tasks import migrate, migrate_broken_records
+from .tasks import add_citation_counts, migrate, migrate_broken_records
 
 manager = Manager(description=__doc__)
 
@@ -103,6 +103,11 @@ def populate(records, collections, file_input=None, remigrate=False,
                             broken_output=broken_output,
                             dry_run=dry_run)
         print("Scheduled migration job {0}".format(job.id))
+
+
+@manager.command
+def count_citations():
+    add_citation_counts.delay()
 
 
 @manager.command

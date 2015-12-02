@@ -32,9 +32,9 @@ point specified in the setup.py:
 Happy hacking!
 """
 
+from invenio_query_parser.contrib.spires.config import SPIRES_KEYWORDS
 from invenio_query_parser.contrib.spires.walkers.pypeg_to_ast import PypegConverter
 from invenio_query_parser.contrib.spires.walkers.spires_to_invenio import SpiresToInvenio
-from invenio_query_parser.contrib.spires.config import SPIRES_KEYWORDS
 
 
 EXTENSIONS = [
@@ -300,6 +300,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "doi": ["dois.value"],
     "affiliation": ["authors.affiliations.value"],
     "reportnumber": ["report_numbers.value"],
+    "refersto": ["references.recid"],
     "experiment": ["accelerator_experiments.experiment"],
     "eprint": ["arxiv_eprints.value"],
     "title": ["titles.title"],
