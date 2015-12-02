@@ -17,14 +17,14 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "format/record/Inspire_HTML_detailed_macros.tpl" import record_title, record_publication_info with context %}
+{% from "format/record/Inspire_HTML_detailed_macros.tpl" import  record_publication_info with context %}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors with context %}
+{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors, render_record_title with context %}
 
 <div class="reference-record">
   {% if record %}
       <span class="reference-citations pull-right">{{ record.get('references', '') | count }}</span>
-      <div class="reference-title">{{ number }}. <a href="/record/{{record.recid}}">{{ record_title() }}</a></div>
+      <div class="reference-title">{{ number }}. <a href="/record/{{record.recid}}">{{ render_record_title() }}</a></div>
       <div class="reference-authors">{{ render_record_authors(is_brief=false, show_affiliations=false) | safe }}</div>
       <div class="reference-journal">{{ record_publication_info() | safe }}</div>
   {% else %}

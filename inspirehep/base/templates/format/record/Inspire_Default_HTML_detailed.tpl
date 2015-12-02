@@ -19,9 +19,9 @@
 
 {% extends "format/record/Default_HTML_detailed.tpl" %}
 
-{% from "format/record/Inspire_HTML_detailed_macros.tpl" import record_buttons, record_collection_heading, record_title, record_collections, record_publication_info, record_doi, record_links, detailed_record_abstract, record_keywords, record_references, record_citations, record_plots with context %}
+{% from "format/record/Inspire_HTML_detailed_macros.tpl" import record_buttons, record_collection_heading, record_collections, record_publication_info, record_doi, record_links, detailed_record_abstract, record_keywords, record_references, record_citations, record_plots with context %}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax, render_record_authors, record_cite_modal, record_arxiv with context %}
+{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax, render_record_title, render_record_authors, record_cite_modal, record_arxiv, record_report_numbers with context %}
 
 {% block header %}
   {{ mathjax() | safe }}
@@ -30,14 +30,24 @@
     {{ record_collection_heading() }}
   </div>
   <div id="record-title">
-    {{ record_title() }}
+    {{ render_record_title() }}
   </div>
   <div id="record-authors">
     {{ render_record_authors(is_brief=false, number_of_displayed_authors=25) }}
   </div>
+  <div id="record-year">
+    {% if record.get('earliest_date') %}
+     {{ record.get('earliest_date').split('-')[0] }}
+    {% endif %}
+  </div>
   <div class="journal">
     {{ record_publication_info() }}
   </div>
+  {% if record.get('report_numbers') %}
+  <div class="report-numbers">
+    {{ record_report_numbers() }}
+  </div>
+  {% endif %}
   <div id="doi-eprint-experiment">
     {{ record_doi() }}
     {{ record_arxiv(is_brief=false) }}

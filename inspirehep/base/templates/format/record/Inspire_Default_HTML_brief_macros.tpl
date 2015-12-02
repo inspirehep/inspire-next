@@ -27,17 +27,3 @@
     {% endfor %}
   {% endif %}
 {% endmacro %}
-
-{% macro record_journal_info() %}
-  {% if record.get('publication_info')|is_list() %}
-    {% for pub_info in record.get('publication_info')%}
-      {% if pub_info.get('journal_title') and pub_info.get('journal_volume') and  pub_info.get('year') and pub_info.get('page_artid') %}
-      <span class="text-left"><i>{{ pub_info.get('journal_title') }}</i> {{ pub_info.get('journal_volume') }} ({{pub_info.get('year')}}) {{ pub_info.get('page_artid') }}</span><br/>
-      {% endif %}
-    {% endfor %}
-  {% else %}
-    {% if record.get('publication_info').get('journal_title') and record.get('publication_info').get('journal_volume') and  record.get('publication_info').get('year') and record.get('publication_info').get('page_artid') %}
-      <span class="text-left"><b><i>{{ record.get('publication_info').get('journal_title') }}</i> {{ record.get('publication_info').get('journal_volume') }} ({{record.get('publication_info').get('year')}}), {{ record.get('publication_info').get('page_artid') }}</b></span><br/>
-    {% endif %}
-  {% endif %}
-{% endmacro %}

@@ -17,34 +17,12 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import record_cite_modal, record_abstract with context %}
+{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, record_cite_modal, record_abstract with context %}
 {% from "records/Inspire_Default_HTML_detailed_macros.tpl" import search_current_collection with context %}
 
 {% macro record_collection_heading() %}
   <span id="search-title">Search literature &#62;</span>
-  <span id="title">{{ record_title() }}</span>
-{% endmacro %}
-
-{% macro record_title() %}
-  {% block title %}
-  {% set title_displayed = [] %}
-    {% if record['titles'] %}
-      {% for title in record['titles'] %}
-        {% if title.get('title') and not title.get('source') == 'arXiv' and not title_displayed %}
-          {{ title['title']|capitalize }}
-          {% do title_displayed.append(1) %}
-        {% endif %}
-      {% endfor %}
-      {% if not title_displayed %}
-        {% for title in record['titles'] %}
-          {% if title.get('title') and title.get('source') == 'arXiv' and not title_displayed %}
-            {{ title['title']|capitalize }}
-            {% do title_displayed.append(1) %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endif %}
-  {% endblock %}
+  <span id="title">{{ render_record_title() }}</span>
 {% endmacro %}
 
 {% macro record_buttons() %}
@@ -62,38 +40,7 @@
 {% endmacro %}
 
 {% macro record_publication_info() %}
-  {% if record.get('publication_info') | is_list %}
-      {% for pub_info in record.get('publication_info')%}
-        {{ show_publication_info(pub_info) }}
-      {% endfor %}
-  {% else %}
-    {% if record.get('publication_info') %}
-      {{ show_publication_info(pub_info) }}
-    {% endif %}
-  {% endif %}
-{% endmacro %}
-
-{% macro show_publication_info(pub_info) %}
-  {% if pub_info.get('journal_title') and pub_info.get('journal_volume') and pub_info.get('year') and pub_info.get('page_artid') %}
-    <span>{{ pub_info.get('journal_title') }} {{ pub_info.get('journal_volume') }} ({{pub_info.get('year')}}), {{ pub_info.get('page_artid') }}</span>
-  {% else %}
-    {% if pub_info.get('journal_title') or pub_info.get('journal_volume') or pub_info.get('year') or pub_info.get('page_artid') %}
-      <span>
-        {% if pub_info.get('journal_title') %}
-          {{ pub_info.get('journal_title') }} 
-        {% endif %}
-        {% if pub_info.get('journal_volume') %}
-          {{ pub_info.get('journal_volume') }} 
-        {% endif %}
-        {% if pub_info.get('year') %}
-          {{ pub_info.get('year') }} 
-        {% endif %}
-        {% if pub_info.get('page_artid') %}
-          {{ pub_info.get('page_artid') }} 
-        {% endif %}
-      </span>
-    {% endif %}
-  {% endif %}
+ {{ record|publication_info|join('<br/>') }}
 {% endmacro %}
 
 {% macro record_doi() %}

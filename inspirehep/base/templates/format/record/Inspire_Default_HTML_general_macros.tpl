@@ -17,6 +17,25 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
+{% macro render_record_title() %}
+  {% if record['titles[0].title']|is_upper() %}
+    {{ record['titles[0].title']|capitalize }}
+  {% else %}
+    {{ record['titles[0].title'] }}
+  {% endif %}
+  {% if record['titles'] %}
+    {% for subtitle in record['titles'] %}
+      {% if 'subtitle' in subtitle and subtitle['subtitle'] %}
+        {% if subtitle['subtitle']|is_upper() %} 
+          : {{ subtitle['subtitle']|capitalize }}
+        {% else %}
+          : {{ subtitle['subtitle'] }}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endmacro%}
+
 {% macro render_author_names(author, show_affiliation) %}
   <a{% if author.affiliations|length > 0  and show_affiliation %}
       data-toggle="tooltip"
@@ -29,7 +48,7 @@
 {% endmacro %}
 
 {% macro render_record_authors(is_brief, number_of_displayed_authors=10, show_affiliations=true) %}
-  {% if record.collaboration %}
+  {% if record.collaboration and not record.get('corporate_author') %}
     {% set collaboration_displayed = [] %}
     {% for collaboration in record.collaboration if collaboration != None %}
       <a href="/search?p=collaboration:'{{ collaboration }}'">{{ collaboration }}</a>
@@ -46,7 +65,7 @@
       {% endif %}
     {% endfor %}
   {% endif %}
-
+  
   {% if record.authors %}
     {% set sep = joiner("; ") %}
     {% set authors = record.authors %}
@@ -61,6 +80,8 @@
         {% if is_brief %}
           {% if not collaboration_displayed %}
             <i>et al.</i>
+          {% else %}
+            ({{ render_author_names(authors[0], show_affiliation = True) }} <i>et al.</i>)
           {% endif %}
         {% else %}
           <a id="authors-show-more" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
@@ -109,7 +130,19 @@
         </div>
       </div>
     {% endif %}
+  {% elif record.get('corporate_author') %}
+    {{ record.get('corporate_author')|join('; ') }}
   {% endif %}
+{% endmacro %}
+
+{% macro record_report_numbers() %}
+  {% set report_numbers = [] %}
+  {% for rn in record['report_numbers'] %}
+    {% if 'value' in rn %}
+      {% do report_numbers.append(rn['value']) %}
+    {% endif %}
+  {% endfor %}
+  {{ report_numbers|join(', ') }}
 {% endmacro %}
 
 {% macro record_abstract(is_brief) %}
