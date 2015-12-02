@@ -24,48 +24,6 @@
  /* Helpers styles
 -------------------------------------------------- */
 
-#myTab.nav-tabs {
-  border-bottom: none;
-}
-#search-box-main {
-  margin-top: 20px;
-  margin-bottom: 45px;
-}
-#drop {
-  border-left: none;
-  width: 170px;
-}
-#myTab {
-  padding: 12px 0 0;
-  background-image: -webkit-linear-gradient(bottom, #f6f6f6 0%, #fff 8px);
-  background-image: -moz-linear-gradient(bottom, #f6f6f6 0%, #fff 8px);
-  background-image: linear-gradient(to top, #f6f6f6 0%, #fff 8px);
-  border-bottom: 1px solid #eee;
-  li.active {
-    a {
-      background: #fff;
-      border: 1px solid #eee;
-      color: #333;
-      border-bottom: 1px solid white;
-      box-shadow: 0 -3px 0 #FC9;
-    }
-  }
-  li:not(.active) {
-    a:hover {
-      box-shadow: inset 0 -3px 0 #C7C7C7;
-      color: #333;
-    }
-  }
-  li {
-    a {
-      position:relative;
-      top:1px;
-      border: 1px solid #eee;
-      color: #777;
-      border-bottom: 1px solid white;
-    }
-  }
-}
 /*
     see here for more details:
     http://stackoverflow.com/questions/18153234/center-a-div-using-bootstrap-3-markup-or-css
@@ -73,27 +31,6 @@
 .col-centered {
   float: none;
   margin: 0 auto;
-}
-#search_box {
-  margin: 40px 0px 40px 0px;
-}
-
-/*
-   this mediaquery is set to stack the list elements 3x3 in mobile version
-*/
-@media screen and (max-width: @screen-tablet) {
-  #myTab {
-  > li {
-      width: 50%;
-    > a {
-      text-align: center;
-    }
-  }
-  }
-  // takes the 3 first li elements
-  #myTab > li:nth-child(-n+3) {
-    float: left;
-  }
 }
 
 /* Image helpers
