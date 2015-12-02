@@ -16,39 +16,51 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
+
 {% block details_page %}
 
-{% from "format/record/Holding_Pen_HTML_detailed_macros.tpl" import get_arxiv_id, get_subject, add_delimiter, get_abstract%}
+  {% from "format/record/Holding_Pen_HTML_detailed_macros.tpl" import record_arxiv_pdf, add_delimiter, get_abstract with context %}
+  {% from "format/record/Inspire_HTML_detailed_macros.tpl" import record_title, record_publication_info, record_doi, record_keywords with context %}
+  {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax, render_record_authors, record_arxiv with context %}
 
-<div class="container col-md-12">
-  <!-- Title Row -->
-  <div class="row pull-left col-md-12">
-    <h4 id='editable-title' class="">
+  <div class="container col-md-12">
+    <!-- Title Row -->
+    <div class="row col-md-12">
+      <h3 id='editable-title' class="">
       <!-- Edit Button -->
         <a href='#' id='edit-title'><i class='fa fa-pencil-square-o'></i></a>
-          <!-- Title -->
-          <strong>
-            <span id='title-text'>
-              {{ record.get('titles.title', [""])[0] }}
-            </span>
-          </strong>
-        </h4>
+        <!-- Title -->
+        <strong>
+          <span id='title-text'>
+            {{ record_title() }}
+          </span>
+        </strong>
+      </h3>
     </div>
 
     <!-- Authors Row-->
     <div class="row">
-      <div class="col-md-10">
-        <h5><b>
-          {% for author in record.get('authors', []) %}
-            <span> {{ author['full_name'] }}</span>{{ add_delimiter(loop, '|') }}
-          {% endfor %}
-        </b></h5>
+      <div class="col-md-12">
+        {{ render_record_authors(is_brief=false, number_of_displayed_authors=25) }}
+      </div>
+    </div>
+
+    <div class="row hp-horizonal-delimiter"></div>
+
+    <!-- Pubinfo Row-->
+    {% if record.publication_info %}
+      <div class="row">
+        <div class="col-md-12">
+          {{ record_publication_info() }}
         </div>
-    </div><br>
+      </div>
+      <div class="row hp-horizonal-delimiter"></div>
+    {% endif %}
 
     <!-- Subjects Row-->
+    {% if record.subject_terms %}
     <div class="row">
-      <div class="col-md-11">
+      <div class="col-md-12">
         <!-- Edit Button -->
         <a href='#' id='edit-subjects'><i class='fa fa-pencil-square-o'></i></a>
         <!-- Subjects -->
@@ -59,42 +71,65 @@
         {% endfor %}
         </span>
         </div>
-    </div><br>
+    </div>
+    <div class="row hp-horizonal-delimiter"></div>
+    {% endif %}
 
     <!-- Extra Info Row -->
-    <!-- e-Print & pdf
+    <!-- e-Print & pdf -->
     {% if record.arxiv_eprints %}
     <div class="row">
-      <div class="col-md-11">
-        <b>e-Print:</b> <a href="http://arxiv.org/abs/arXiv:{{ get_arxiv_id(record)|trim }}">{{ get_arxiv_id(record) }}</a>
-        [{{ record['arxiv_eprints.categories']|join('') }}]<b> | </b>
-        <b><a href="http://arXiv.org/pdf/{{ get_arxiv_id(record) }}.pdf">PDF</a></b>
+      <div class="col-md-12">
+        {{ record_arxiv(is_brief=False) }}
+        {{ record_arxiv_pdf() }}
       </div>
-    </div><br>
+    </div>
+    <div class="row hp-horizonal-delimiter"></div>
     {% endif %}
-    -->
+
+    <!-- dois -->
+    {% if record.dois %}
+    <div class="row">
+      <div class="col-md-12">
+        {{ record_doi() }}
+      </div>
+    </div>
+    <div class="row hp-horizonal-delimiter"></div>
+    {% endif %}
 
     <!-- Abstract Row-->
     {% if record.abstracts %}
     <div class="row">
-      <div class="col-md-11">
-        <p align="justify"><strong>Abstract: </strong>{{ get_abstract(record) }}</p>
+      <div class="col-xs-12 col-md-11">
+        {{ get_abstract() }}
+      </div>
+    </div>
+    <div class="row hp-horizonal-delimiter"></div>
+    {% endif %}
+
+    {% if record.free_keywords %}
+    <div class="row">
+      <div class="col-sm-3">
+        {{ record_keywords() }}
       </div>
     </div>
     {% endif %}
 
-    <!-- Note Row
+    <!-- Note Row -->
     {% if record.public_notes %}
     <div class="row">
-      <i class="col-md-11"><h6><strong>Note: </strong>{{ record['public_notes.value'] }}</h6></i>
+      <div class="col-md-12">
+        <strong>Note: </strong>
+          {{ record['public_notes.value']|join('; ') }}
+      </div>
     </div>
+    <div class="row hp-horizonal-delimiter"></div>
     {% endif %}
-    -->
     <!-- URL Row-->
-    {% if record.url %}
+    {% if record.urls %}
       <div class="row">
         <div id='url-container'>
-          <div class="col-md-11">
+          <div class="col-md-12">
             <!-- Edit Button -->
             <a href='#' id='edit-urls'><i class='fa fa-pencil-square-o'></i></a>
             <!-- URLs -->
@@ -109,5 +144,5 @@
         </div>
       </div><br>
     {% endif %}
-</div>
+  </div>
 {% endblock %}
