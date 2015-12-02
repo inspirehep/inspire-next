@@ -17,9 +17,10 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "format/record/Inspire_HTML_detailed_macros.tpl" import record_buttons, record_collection_heading, record_title, record_collections, record_publication_info, record_doi, record_links, detailed_record_abstract, record_keywords, record_references, record_citations, record_plots with context %}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors, record_cite_modal, record_arxiv with context %}
+{% from "format/record/Inspire_HTML_detailed_macros.tpl" import record_buttons, record_collection_heading, record_collections, record_publication_info, record_doi, record_links, detailed_record_abstract, record_keywords, record_references, record_citations, record_plots with context %}
+
+{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax, render_record_title, render_record_authors, record_cite_modal, record_arxiv, record_report_numbers with context %}
 
 <div class="record-detailed">
   <div class="record-header">
@@ -28,41 +29,53 @@
       {{ record_collection_heading() }}
     </div>
     <div id="record-title">
-      {{ record_title() }}
+      {{ render_record_title() }}
     </div>
     <div id="record-authors">
       {{ render_record_authors(is_brief=false, number_of_displayed_authors=25) }}
+    </div>
+    <div id="record-year">
+      {% if record.get('earliest_date') %}
+       {{ record.get('earliest_date').split('-')[0] }}
+      {% endif %}
     </div>
     <div class="journal">
     {% if record.get('publication_info') %}
       {{ record_publication_info() }}
     {% endif %}
     </div>
+    {% if record.get('report_numbers') %}
+      <div class="report-numbers">
+        {{ record_report_numbers() }}
+      </div>
+    {% endif %}
     <div id="doi-eprint-experiment">
       {% if record.get('dois') %}
         {{ record_doi() }}
       {% endif %}
       {{ record_arxiv(is_brief=false) }}
-      <div class="cite-pdf-buttons">
-        <div class="btn-group">
-          {{ record_buttons() }}
-        </div>
-      </div>
     </div>
-    <div id="external_links">
+    <hr/>
+    <div id="external_links">  
       {{ record_links() }}
+    </div>
+    <div class="cite-pdf-buttons">
+      <div class="btn-group">
+        {{ record_buttons() }}
+      </div>
     </div>
   </div>
 
   <div class="record-details">
     <div id="record-abstract-keywords">
-    <div>
-      <div class="row">
-        <div class="col-xs-12 col-sm-9">
-          {{ detailed_record_abstract() }}
-        </div>
-        <div class="clearfix col-sm-3">
-          {{ record_keywords() }}
+      <div>
+        <div class="row">
+          <div class="col-xs-12 col-sm-9">
+            {{ detailed_record_abstract() }}
+          </div>
+          <div class="clearfix col-sm-3">
+            {{ record_keywords() }}
+          </div>
         </div>
       </div>
     </div>

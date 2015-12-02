@@ -416,3 +416,40 @@ def setup_app(app):
         # Replay the Query to get total number of hits
         return len(Query("%s" % (query,)).
                    search(collection=collection_name))
+
+    @app.template_filter()
+    def publication_info(record):
+        result = []
+        if 'publication_info' in record:
+            journal_title = journal_volume = year = journal_issue = pages = ''
+            for field in record['publication_info']:
+                out = ''
+                if 'journal_title' in field:
+                    if not ('journal_volume' in field or 'journal_issue' in
+                            field or 'page_artid' in field or
+                            'dois' in record):
+                        journal_title = 'Submitted to:' +\
+                            field['journal_title']
+                    else:
+                        journal_title = field['journal_title']
+
+                    if 'journal_volume' in field:
+                        journal_volume = ' ' + field['journal_volume']
+
+                    if 'year' in field:
+                        year = ' (' + str(field['year']) + ')'
+
+                    if 'journal_issue' in field:
+                        journal_issue = ' ' + field['journal_issue'] + ', '
+
+                    if 'page_artid' in field:
+                        pages = ' ' + field['page_artid']
+
+                    out += '<i>' + journal_title + '</i>&nbsp;' +\
+                        journal_volume + year + journal_issue + pages
+                    result.append(out)
+        return result
+
+    @app.template_filter()
+    def is_upper(s):
+        return s.isupper

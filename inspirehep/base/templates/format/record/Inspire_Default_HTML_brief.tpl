@@ -17,7 +17,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors, record_abstract, record_arxiv, record_cite_modal with context %}
+{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, render_record_authors, record_abstract, record_arxiv, record_report_numbers, record_cite_modal with context %}
 
 {% from "format/record/Inspire_Default_HTML_brief_macros.tpl" import record_journal_info, render_doi, record_journal_info_and_doi with context %}
 
@@ -60,6 +60,9 @@
                 {% if record.authors %}
                   <div class="authors">
                     {{ render_record_authors(is_brief=true, show_affiliations=false) }}
+                    {% if record.get('earliest_date') %}
+                      {{ record.get('earliest_date').split('-')[0] }}
+                    {% endif %}
                   </div>
                 {% endif %}
                 <div class="row">
@@ -85,9 +88,18 @@
                       {{ render_doi() }}
                     </div>
                   {% endif %}
-                  {% if record.get('arxiv_eprints') %}
-                    <div class="col-md-5">
-                     {{ record_arxiv(is_brief=true) }}
+                  {% if record['report_numbers'] or record.get('arxiv_eprints') %}
+                    <div class="row">
+                      {% if record.get('arxiv_eprints') %}
+                        <div class="col-md-6">{{ record_arxiv(is_brief=true) }}</div>
+                      {% endif %}
+                      {% if record.get('report_numbers') %}
+                      <div class="col-md-6">
+                        <span class="text-left">
+                          {{ record_report_numbers() }}
+                        </span>
+                      </div>
+                      {% endif %}
                     </div>
                   {% endif %}
                 </div>
