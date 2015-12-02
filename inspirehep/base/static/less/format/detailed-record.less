@@ -292,6 +292,12 @@ body {
     z-index: 0;
 }
 
+@media screen and (min-width: @screen-sm-min) {
+    .cite-modal {
+        width: 900px;
+    }
+}
+
 .cite-modal {
     font-weight: normal;
     text-align: left;
@@ -322,6 +328,15 @@ body {
     padding: 20px;
     font-size: 15px;
     color: black;
+}
+
+#record-keywords .label-keyword {
+    background-color: #D3D3D3;
+
+    a {
+        color: black;
+        font-weight: 500;
+    }
 }
 
 .record-abstract {
