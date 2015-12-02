@@ -1,6 +1,6 @@
 {{!
   This file is part of INSPIRE.
-  Copyright (C) 2015 CERN.
+  Copyright (C) 2015, 2016 CERN.
 
   INSPIRE is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License as
@@ -19,7 +19,7 @@
 <div class="modal fade in" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="feedbackModalTitle" aria-hidden="false">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
+      <div id="feedbackModalHeader" class="modal-header">
         <button type="button" class="close" data-dismiss="modal">
           <span aria-hidden="true">×</span>
 	  <span class="sr-only">{{close}}</span>
@@ -28,14 +28,18 @@
       </div>
       <form id="feedbackModalForm">
         <div class="modal-body">
-          <div id="feedbackModalErrors"></div>
+          <div id="feedbackModalError"></div>
+          <div id="feedbackModalEmail"></div>
           <div class="form-group">
-            <label for="feedbackModalBody" class="control-label required">{{label}}</label>
-            <textarea id="feedbackModalBody" class="form-control"></textarea>
+            <label for="feedbackModalFeedback" class="control-label required">{{label}}</label>
+            <textarea id="feedbackModalFeedback" class="form-control"></textarea>
+            <p class="text-muted">{{{clarification}}}</p>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-warning">{{button}}</button>
+          <button type="submit" class="btn btn-warning">
+            {{button}} <i class="fa fa-paper-plane-o"></i>
+          </button>
         </div>
       </form>
     </div>
