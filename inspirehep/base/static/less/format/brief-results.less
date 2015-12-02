@@ -98,10 +98,6 @@ hr {
     cursor:pointer;
 }
 
-.citations-references {
-    margin-top: 10px;
-}
-
 @media only screen and (max-width : 992px){
     .right-column {
         display:none;
@@ -217,6 +213,14 @@ hr {
 
     .right-column {
         padding: 10px;
+        height: 100%;
+        position: absolute;
+        right: 0;
+
+        .citations-references {
+            position: absolute;
+            bottom: 15px;
+        }
     }
 
     .fa {
