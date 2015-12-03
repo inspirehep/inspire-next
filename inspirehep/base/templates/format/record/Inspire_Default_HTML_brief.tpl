@@ -17,9 +17,9 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors, record_abstract, record_arxiv, record_cite_modal with context %}
+{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, render_record_authors, record_abstract, record_arxiv, record_report_numbers, record_cite_modal with context %}
 
-{% from "format/record/Inspire_Default_HTML_brief_macros.tpl" import render_doi, record_journal_info with context %}
+{% from "format/record/Inspire_Default_HTML_brief_macros.tpl" import render_doi with context %}
 
 {% block record_header %}
 <div class="row">
@@ -34,29 +34,42 @@
           </span>
           <b>
             <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-              {{ record['titles[0].title']|capitalize }}
+              {{ render_record_title() }}
             </a>
             {% if record['titles[0].title']|count_words() > 5 %}
               <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                {{ record['titles[0].title']|capitalize | words(5) + "..."}}
+              {% if record['titles[0].title']|is_upper() %}
+                {{ record['titles[0].title']|capitalize|words(5) + "..."}}
+              {% else %}
+                {{ record['titles[0].title']|words(5) + "..."}}
+              {% endif %}
               </a>
             {% else %}
               <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+              {% if record['titles[0].title']|is_upper() %}
                 {{ record['titles[0].title']|capitalize }}
+              {% else %}
+                {{ record['titles[0].title'] }}
+              {% endif %}
               </a>
             {% endif %}
           </b>
       </h4>
-      {% if record.authors %}
+      {% if record.authors or record.get('earliest_date') %}
         <div class="authors">
-          {{ render_record_authors(is_brief=true, show_affiliations=false) }}
+          {% if record.authors %}
+            {{ render_record_authors(is_brief=true, show_affiliations=false) }}
+          {% endif %}
+          {% if record.get('earliest_date') %}
+            {{ record.get('earliest_date').split('-')[0] }}
+          {% endif %}
         </div>
       {% endif %}
-      {% if record.get('publication_info') or record.get('dois')%}
+      {% if record.get('publication_info') or record.get('dois') %}
         <div class="row">
           {% if record.get('publication_info') %}
             <div class="col-md-6 ">
-              {{ record_journal_info() }}
+              <span class="text-left">{{ record|publication_info|join('<br/>') }}</span>
             </div>
           {% endif %}
           {% if record.get('dois') %}
@@ -66,11 +79,18 @@
           {% endif %}
         </div>
       {% endif %}
-      {% if record.get('arxiv_eprints') %}
+      {% if record['report_numbers'] or record.get('arxiv_eprints') %}
         <div class="row">
+          {% if record.get('arxiv_eprints') %}
+          <div class="col-md-6">{{ record_arxiv(is_brief=true) }}</div>
+          {% endif %}
+          {% if record.get('report_numbers') %}
           <div class="col-md-6">
-           {{ record_arxiv(is_brief=true) }}
+            <span class="text-left">
+              {{ record_report_numbers() }}
+            </span>
           </div>
+          {% endif %}
         </div>
       {% endif %}
       {% if record.get('abstracts') %}
