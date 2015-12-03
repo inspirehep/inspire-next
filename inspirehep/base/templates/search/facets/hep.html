@@ -31,7 +31,7 @@
               type="checkbox"
               {{is_checked}}
               name="doc_type" value="{{ doc_type['key'] }}">
-        <span class="facet-title-truncate">{{ doc_type['key'] }}</span>
+        <span class="facet-title-truncate">{{ doc_type['key']|capitalize }}</span>
         <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ doc_type['doc_count'] }}</span>
       </label>
     </div>
