@@ -261,7 +261,7 @@ You can now load the INSPIRE demo records:
 .. code-block:: console
 
     (inspire)$ cdvirtualenv src/inspire-next
-    (inspire)$ inveniomanage migrator populate -t marcxml -f inspire/demosite/data/demo-records.xml --force
+    (inspire)$ inveniomanage migrator populate -t marcxml -f inspirehep/demosite/data/demo-records.xml --force
     (inspire)$ inveniomanage migrator count_citations
 
 Now you should have a running INSPIRE demo site running at `http://localhost:4000 <http://localhost:4000>`_!
