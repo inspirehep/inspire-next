@@ -29,8 +29,9 @@ import re
 
 from celery.utils.log import get_task_logger
 
-from flask import current_app
 from dojson.contrib.marc21.utils import create_record as marc_create_record
+
+from flask import current_app
 
 from inspirehep.dojson.conferences import conferences
 from inspirehep.dojson.experiments import experiments
@@ -155,7 +156,7 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
                 index = get_record_index(json) or \
                     cfg['SEARCH_ELASTIC_DEFAULT_INDEX']
                 before_record_index.send(recid, json=json)
-                json.update({'_index': index, '_type': 'record', '_id': recid})
+                json.update({'_index': index, '_type': 'record', '_id': recid, 'citation_count': 0})
                 records_to_index.append(json)
             except Exception as err:
                 logger.exception(err)
@@ -177,8 +178,14 @@ def add_citation_counts():
     from elasticsearch.helpers import scan as es_scan
     from collections import Counter
 
-    # list of update-jsons for each record
-    records_to_update = []
+    def get_records_to_update_generator(citation_lookup):
+        for recid, citation_count in citation_lookup.iteritems():
+            yield {'_op_type': 'update',
+                   '_index': 'hep',
+                   '_type': 'record',
+                   '_id': recid,
+                   'doc': {'citation_count': citation_count}
+                   }
 
     # lookup dictionary where key: recid of the record
     # and value: number of records that cite that record
@@ -202,23 +209,11 @@ def add_citation_counts():
         if 'references' in record['_source']:
             references = record['_source']['references']
             for reference in references:
-                recid = unicode(reference.get('recid'))
-                if recid is not None:
-                    citations_lookup[recid] += 1
+                recid = reference.get('recid')
+                if recid:
+                    citations_lookup[unicode(recid)] += 1
 
-        # prepare json to update the record
-        json = {'_op_type': 'update',
-                '_index': 'hep',
-                '_type': 'record',
-                '_id': record['_id'],
-                }
-        records_to_update.append(json)
-
-    for json in records_to_update:
-        citation_count = citations_lookup[json['_id']]
-        json.update({'doc': {'citation_count': citation_count}})
-
-    for chunk in chunker(records_to_update, CHUNK_SIZE):
+    for chunk in chunker(get_records_to_update_generator(citations_lookup), CHUNK_SIZE):
         es_bulk(es, chunk)
 
 
