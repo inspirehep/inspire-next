@@ -17,33 +17,10 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "records/Inspire_Default_HTML_detailed_macros.tpl" import display_collections, display_current_collection, collection_header,  search_bar with context %}
+{%- if not request.is_xhr -%}
+  {% extends "records/base.html" %}
+{%- endif -%}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax %}
-
-{% extends "page.html" %}
-
-{%- block header %}
-  {{- super() }}
-  {{ collection_header() | safe }}
-{%- endblock header %}
-
-{% block global_bundles %}
-  {{ super() }}
-  {% bundles "detailed_record.js", "detailed-record.css" %}
+{% block record_content %}
+  {{ format_record(record, of=of, ln=g.ln)|safe }}
 {% endblock %}
-
-{% block body %}
-  {{ super() }}
-
-  <div id="record_content">
-  {% block record_content %}
-    <!-- record content -->
-  {% endblock %}
-  </div>
-{% endblock %}
-
-{%- block javascript %}
-  {{ super() }}
-  {{ mathjax() | safe }}
-{%- endblock javascript %}
