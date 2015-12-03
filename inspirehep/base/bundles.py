@@ -71,6 +71,13 @@ detailed_record_styles = Bundle(
     weight=60,
 )
 
+detailed_record_js = Bundle(
+    "js/detailed_record_init.js",
+    output="detailed_record.js",
+    filters=RequireJSFilter(exclude=[_j, _i]),
+    weight=51
+)
+
 brief_result_styles = Bundle(
     "less/format/brief-results.less",
     "less/format/abstract.less",
