@@ -43,7 +43,7 @@
     <h4 id="filter-by-subject" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Subject</h4>
     <div class="facet-container" id="facet-subject">
       {% for subject in response._search()['aggregations']['subject']['buckets'] %}
-      <div class="checkbox">
+      <div class="checkbox checkbox-facets">
         <label>
           {%- set is_checked = 'checked' if 'subject' in filtered_facets
               and subject['key'] in filtered_facets['subject']['inc'] -%}
