@@ -63,11 +63,16 @@
 
 {% macro record_publication_info() %}
   {% if record.get('publication_info') | is_list %}
-      {% for pub_info in record.get('publication_info')%}
-        {{ show_publication_info(pub_info) }}
-      {% endfor %}
+    Published in
+    {% for pub_info in record.get('publication_info')%}
+      {{ show_publication_info(pub_info) }}
+      {% if not loop.last %}
+        and
+      {% endif %}
+    {% endfor %}
   {% else %}
     {% if record.get('publication_info') %}
+      Published in
       {{ show_publication_info(pub_info) }}
     {% endif %}
   {% endif %}
@@ -75,11 +80,9 @@
 
 {% macro show_publication_info(pub_info) %}
   {% if pub_info.get('journal_title') and pub_info.get('journal_volume') and pub_info.get('year') and pub_info.get('page_artid') %}
-    Published in
     <span><em>{{ pub_info.get('journal_title') }} {{ pub_info.get('journal_volume') }} ({{pub_info.get('year')}}), {{ pub_info.get('page_artid') }}</em></span>
   {% else %}
     {% if pub_info.get('journal_title') or pub_info.get('journal_volume') or pub_info.get('year') or pub_info.get('page_artid') %}
-      Published in
       <span>
         <em>
           {% if pub_info.get('journal_title') %}
