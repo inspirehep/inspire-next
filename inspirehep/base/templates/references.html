@@ -81,7 +81,7 @@
       {% endif %}
       {% if reference['url'] %}
         <span class="reference-detail">
-          <a href="reference['url']">{{ reference['url'] }}</a>
+          <a href={{ reference['url'] }}>{{ reference['url'] }}</a>
         </span>
       {% endif %}
       {% if reference['isbn'] %}

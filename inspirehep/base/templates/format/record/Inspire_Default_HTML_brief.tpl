@@ -1,6 +1,6 @@
 {#
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -111,7 +111,7 @@
                 <i class="glyphicon glyphicon-calendar"></i> {{ record.get('earliest_date').split('-')[0] }}<br/>
               {% endif %}
               {% if  record.get('citation_count') > 0  %}
-                <i class="fa fa-quote-left"></i><span><a href="/search?p=refersto:{{ record.get('control_number') }}"> Cited {{ record.get('citation_count') }} times</a></span><br/>
+                <i class="fa fa-quote-left"></i><span><a href="/search?p=refersto:{{ record.get('control_number') }}"> {{ record.get('citation_count') | citation_phrase }} </a></span><br/>
               {% else %}
                 <i class="fa fa-quote-left"></i><span> Cited 0 times</span><br/>
               {% endif %}
