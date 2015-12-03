@@ -63,6 +63,9 @@ def populate_inspire_document_type(recid, json):
                 elif element['primary'].lower() == 'conferencepaper':
                     inspire_doc_type.append('conference paper')
                     break
+                elif element['primary'].lower() == 'note':
+                    inspire_doc_type.append('note')
+                    break
                 elif json.get('publication_info', []):
                     for field in json.get('publication_info', []):
                         if 'page_artid' not in field:
