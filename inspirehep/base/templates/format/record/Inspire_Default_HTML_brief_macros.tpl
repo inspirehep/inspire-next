@@ -22,8 +22,11 @@
     {% set filtered_doi = record.get('dois.value')| remove_duplicates() %}
     DOI: 
     {% for doi in filtered_doi %}
+      {% if not loop.first %}
+        , 
+      {% endif %}
       {% if not doi | has_space() %}
-        <a href="http://dx.doi.org/{{ doi |trim()|safe}}" title="DOI" >{{ doi }}</a><br/>
+        <a href="http://dx.doi.org/{{ doi |trim()|safe}}" title="DOI" >{{ doi }}</a>
       {% endif %}
     {% endfor %}
   {% endif %}
@@ -36,16 +39,16 @@
         {% if loop.first %}
           Published in
         {% endif %}
-        <span class="text-left"><i>{{ pub_info.get('journal_title') }}</i> {{ pub_info.get('journal_volume') }} ({{pub_info.get('year')}}) {{ pub_info.get('page_artid') }}</span>
-        {% if not loop.last %}
+        {% if not loop.first %}
           and
         {% endif %}
+        <i>{{ pub_info.get('journal_title') }}</i> {{ pub_info.get('journal_volume') }} ({{pub_info.get('year')}}) {{ pub_info.get('page_artid') }}
       {% endif %}
     {% endfor %}
   {% else %}
     {% if record.get('publication_info').get('journal_title') and record.get('publication_info').get('journal_volume') and  record.get('publication_info').get('year') and record.get('publication_info').get('page_artid') %}
       Published in
-      <span class="text-left"><b><i>{{ record.get('publication_info').get('journal_title') }}</i> {{ record.get('publication_info').get('journal_volume') }} ({{record.get('publication_info').get('year')}}), {{ record.get('publication_info').get('page_artid') }}</b></span><br/>
+      <b><i>{{ record.get('publication_info').get('journal_title') }}</i> {{ record.get('publication_info').get('journal_volume') }} ({{record.get('publication_info').get('year')}}), {{ record.get('publication_info').get('page_artid') }}</b><br/>
     {% endif %}
   {% endif %}
 {% endmacro %}
@@ -58,12 +61,12 @@
           {% set filtered_doi = record.get('dois.value')| remove_duplicates() %}
           {% for doi in filtered_doi %}
             {% if not doi|has_space() %}
-            {% if loop.first %}
-              Published in
-            {% endif %}
-              <a href="http://dx.doi.org/{{ doi |trim()|safe}}" title="DOI">
-                <span class="text-left"><i>{{ pub_info.get('journal_title') }}</i> {{ pub_info.get('journal_volume') }} ({{pub_info.get('year')}}) {{ pub_info.get('page_artid') }}</span>
-              </a>
+              {% if loop.first %}
+                Published in
+              {% endif %}
+                <a href="http://dx.doi.org/{{ doi |trim()|safe}}" title="DOI">
+                  <span class="text-left"><i>{{ pub_info.get('journal_title') }}</i> {{ pub_info.get('journal_volume') }} ({{pub_info.get('year')}}) {{ pub_info.get('page_artid') }}</span>
+                </a>
             {% endif %}
           {% endfor %}
         {% endif %}

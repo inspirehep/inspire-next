@@ -58,9 +58,18 @@
                 {% endif %}
                 <div class="row">
                   {% if record.get('publication_info') and record.get('dois') %}
-                    <div class="col-md-7 ">
-                      {{ record_journal_info_and_doi() }}
-                    </div>
+                    {% if record.get('publication_info') | length == 1 
+                    and record.get('dois') | length == 1 %}
+                      <div class="col-md-7 ">
+                        {{ record_journal_info_and_doi() }}
+                      </div>
+                    {% else %}
+                      <div class="col-md-7 ">
+                        {{ record_journal_info() }}
+                        <br/>
+                        {{ render_doi() }}
+                      </div>
+                    {% endif %}
                   {% elif record.get('publication_info') %}
                     <div class="col-md-7 ">
                       {{ record_journal_info() }}

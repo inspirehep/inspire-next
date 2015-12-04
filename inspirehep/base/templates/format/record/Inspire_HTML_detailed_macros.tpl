@@ -65,10 +65,12 @@
   {% if record.get('publication_info') | is_list %}
     Published in
     {% for pub_info in record.get('publication_info')%}
-      {{ show_publication_info(pub_info) }}
-      {% if not loop.last %}
-        and
+      {% if pub_info.get('journal_title') or pub_info.get('journal_volume') or pub_info.get('year') or pub_info.get('page_artid') %}
+        {% if not loop.first %}
+          and
+        {% endif %}
       {% endif %}
+      {{ show_publication_info(pub_info) }}
     {% endfor %}
   {% else %}
     {% if record.get('publication_info') %}
