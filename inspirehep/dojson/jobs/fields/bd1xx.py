@@ -109,8 +109,9 @@ def deadline_date(self, key, value):
 
 
 @jobs.over('continent', '^043..')
+@utils.for_each_value
 def continent(self, key, value):
-    """Contact person."""
+    """Continent"""
     return value.get('a')
 
 

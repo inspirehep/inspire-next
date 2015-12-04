@@ -39,7 +39,7 @@
               {% if record['continent'] %}
                 (<a href="/search?p=department_acronym:'{{ record['institution'][0]['name'] }}'&cc=Institutions">
                   {{ record['institution'][0]['name'] }}
-                </a> - {{ record['continent'] }})
+                </a> - {{ record['continent'][0] }})
               {% else %}
                 (<a href="/search?p=department_acronym:'{{ record['institution'][0]['name'] }}'&cc=Institutions">{{ record['institution'][0]['name'] }}</a>)
               {% endif %}
