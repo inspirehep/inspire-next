@@ -155,12 +155,16 @@
     <input type="checkbox" class="read-more-state" id="abstract-input-{{ record.get('control_number') }}" />
     <div class="read-more-wrap">
       {{ abstract | words(number_of_words)| e }}
-      <span class="read-more-ellipsis">...</span>
-      <span class="read-more-target">
-        {{ abstract | words_to_end(number_of_words)| e }}
-      </span>
+      {% if abstract | words_to_end(number_of_words) %}
+        <span class="read-more-ellipsis">...</span>
+        <span class="read-more-target">
+          {{ abstract | words_to_end(number_of_words)| e }}
+        </span>
+      {% endif %}
     </div>
-    <label for="abstract-input-{{ record.get('control_number') }}" class="read-more-trigger"></label>
+    {% if abstract | words_to_end(number_of_words) %}
+      <label for="abstract-input-{{ record.get('control_number') }}" class="read-more-trigger"></label>
+    {% endif %}
   </div>
 {% endmacro %}
 
