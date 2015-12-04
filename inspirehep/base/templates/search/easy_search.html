@@ -1,0 +1,222 @@
+{#
+# This file is part of INSPIRE.
+# Copyright (C) 2015 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+ <div id="easy-search" class="collapse">
+  <form class="form-horizontal">
+  <div class="form-group">
+    <label for="inputAuthor" class="col-sm-2 control-label">Author</label>
+    <div class="col-sm-10">
+      <input style="width: 97%;" class="form-control" id="inputAuthor" placeholder="Author">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputTitle" class="col-sm-2 control-label">Title</label>
+    <div class="col-sm-10">
+      <input style="width: 97%;" class="form-control" id="inputTitle" placeholder="Title">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputReportNumber" class="col-sm-2 control-label">Report Number</label>
+    <div class="col-sm-10">
+      <input style="width: 97%;" class="form-control" id="inputReportNumber" placeholder="Report Number">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputAffiliation" class="col-sm-2 control-label">Affiliation</label>
+    <div class="col-sm-10">
+      <input style="width: 97%;" class="form-control" id="inputAffiliation" placeholder="Affiliation">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputCollaboration" class="col-sm-2 control-label">Collaboration</label>
+    <div class="col-sm-10">
+      <input style="width: 97%;" class="form-control" id="inputCollaboration" placeholder="Collaboration">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputKeywords" class="col-sm-2 control-label">Keywords</label>
+    <div class="col-sm-10">
+      <input  style="width: 97%;" class="form-control" id="inputKeywords" placeholder="Keywords">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputEprint" class="col-sm-2 control-label">Eprint</label>
+    <div class="col-sm-4 dropdown">
+      <button style="width:100%" class="btn btn-default dropdown-toggle" type="button" id="eprintDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Any Type
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" id="eprintDropdownMenu" aria-labelledby="eprintDropdown">
+        <li><a>Any Type</a></li>
+        <li><a>ACC-PHYS</a></li>
+        <li><a>ASTRO-PH</a></li>
+        <li><a>GR-QC</a></li>
+        <li><a>HEP-EX</a></li>
+        <li><a>HEP-LAT</a></li>
+        <li><a>HEP-PH</a></li>
+        <li><a>HEP-TH</a></li>
+        <li><a>NUCL-EX</a></li>
+        <li><a>NUCL-TH</a></li>
+        <li><a>PHYSICS</a></li>
+        <li><a>QUANT-PH</a></li>
+      </ul>
+    </div>
+    <label for="inputNumber" class="col-sm-1 control-label">Number</label>
+    <div class="col-sm-5">
+      <input  style="width: 94%;" class="form-control" id="inputNumber" placeholder="Number">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputTopCite" class="col-sm-2 control-label">Topcite</label>
+    <div class="col-sm-4 dropdown">
+    <button style="width:100%;" class="btn btn-default dropdown-toggle" type="button" id="topciteDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Don't care
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" id="topciteDropdownMenu" aria-labelledby="topciteDropdown">
+        <li><a>Don't care</a></li>
+        <li><a>50+</a></li>
+        <li><a>100+</a></li>
+        <li><a>250+</a></li>
+        <li><a>500+</a></li>
+        <li><a>1000+</a></li>
+        <li><a>50->99</a></li>
+        <li><a>100->249</a></li>
+        <li><a>250->499</a></li>
+        <li><a>500->999</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputJournal" class="col-sm-2 control-label">Journal</label>
+    <div class="col-sm-4 dropdown">
+    <button style="width:100%;" class="btn btn-default dropdown-toggle" type="button" id="journalDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Any Journal
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" id="journalDropdownmenu" aria-labelledby="topciteDropdown">
+        <li><a>Any Journal</a></li>
+        <li><a>Acta Phys.Austr.</a></li>
+        <li><a>Acta Phys.Polon.</a></li>
+        <li><a>Ann.Poincare</a></li>
+        <li><a>Ann.Phys.(N.Y.)</a></li>
+        <li><a>Astropart.Phys.</a></li>
+        <li><a>Astrophys.J.</a></li>
+        <li><a>Can.J.Phys.</a></li>
+        <li><a>Class.Quant.Grav.</a></li>
+        <li><a>Comm.Nucl.Part.Phys.</a></li>
+        <li><a>Commun.Math.Phys.</a></li>
+        <li><a>Commun.Theor.Phys.</a></li>
+        <li><a>Comput.Phys.Commun.</a></li>
+        <li><a>Czech.J.Phys.</a></li>
+        <li><a>Europhys.Lett.</a></li>
+        <li><a>Eur.Phys.J.</a></li>
+        <li><a>Few Body Syst.</a></li>
+        <li><a>Fiz.Elem.Chast.At.Yadra</a></li>
+        <li><a>Fizika</a></li>
+        <li><a>Fortschr.Phys.</a></li>
+        <li><a>Found.Phys.</a></li>
+        <li><a>Gen.Rel.Grav.</a></li>
+        <li><a>Hadronic J.</a></li>
+        <li><a>Helv.Phys.Acta</a></li>
+        <li><a>High Energy Phys.Nucl.Phys.</a></li>
+        <li><a>Ieee Trans.Magnetics</a></li>
+        <li><a>Ieee Trans.Nucl.Sci.</a></li>
+        <li><a>Instrum.Exp.Tech.</a></li>
+        <li><a>Int.J.Mod.Phys.</a></li>
+        <li><a>Int.J.Theor.Phys.</a></li>
+        <li><a>JCAP</a></li>
+        <li><a>JHEP</a></li>
+        <li><a>JINST</a></li>
+        <li><a>J.Math.Phys.</a></li>
+        <li><a>J.Phys.- A -</a></li>
+        <li><a>J.Phys.- G -</a></li>
+        <li><a>J.Phys.Soc.Jap.</a></li>
+        <li><a>Jetp Lett.</a></li>
+        <li><a>Lett.Math.Phys.</a></li>
+        <li><a>Lett.Nuovo Cim.</a></li>
+        <li><a>Living Rev.Rel.</a></li>
+        <li><a>Mod.Phys.Lett.</a></li>
+        <li><a>Mon.Not.Roy.Astron.Soc.</a></li>
+        <li><a>New J.Phys.</a></li>
+        <li><a>Nucl.Instrum.Meth.</a></li>
+        <li><a>Nucl.Phys.</a></li>
+        <li><a>Nucl.Phys.(Proc.Suppl.)</a></li>
+        <li><a>Nuovo Cim.</a></li>
+        <li><a>Part.Accel.</a></li>
+        <li><a>Phys.Atom.Nucl.</a></li>
+        <li><a>Phys.Lett.</a></li>
+        <li><a>Phys.Rept.</a></li>
+        <li><a>Phys.Rev.</a></li>
+        <li><a>Phys.Rev.Lett.</a></li>
+        <li><a>Phys.Scripta</a></li>
+        <li><a>Physica</a></li>
+        <li><a>Pisma Zh.Eksp.Teor.Fiz.</a></li>
+        <li><a>Pramana</a></li>
+        <li><a>Prog.Part.Nucl.Phys.</a></li>
+        <li><a>Prog.Theor.Phys.</a></li>
+        <li><a>PTEP</a></li>
+        <li><a>Rept.Math.Phys.</a></li>
+        <li><a>Rept.Prog.Phys.</a></li>
+        <li><a>Rev.Mod.Phys.</a></li>
+        <li><a>Rev.Sci.Instrum.</a></li>
+        <li><a>Riv.Nuovo Cim.</a></li>
+        <li><a>Russ.Phys.J.(Sov.Phys.J.)</a></li>
+        <li><a>Sov.J.Nucl.Phys.</a></li>
+        <li><a>Sov.Phys.Jetp</a></li>
+        <li><a>Teor.Mat.Fiz.</a></li>
+        <li><a>Theor.Math.Phys.</a></li>
+        <li><a>Yad.Fiz.</a></li>
+        <li><a>Z.Phys.</a></li>
+        <li><a>Zh.Eksp.Teor.Fiz.</a></li>
+    </ul>
+    </div>
+    <label for="inputVol" class="col-sm-1 control-label">vol</label>
+    <div class="col-sm-2">
+      <input style="width: 84%;" class="form-control" id="inputVol" placeholder="vol">
+    </div>
+    <label for="inputPg" class="col-sm-1 control-label">pg</label>
+    <div class="col-sm-2">
+      <input style="width: 84%;"  class="form-control" id="inputPg" placeholder="pg">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputDate" class="col-sm-2 control-label">Date</label>
+    <div class="col-sm-4">
+      <div class='input-group date' id='inputDate'>
+          <input type='text' id='s_date' class="form-control"/>
+          <span class="input-group-addon">
+              <span class="glyphicon glyphicon-calendar"></span>
+          </span>
+      </div>
+    </div>
+    <label for="inputUntil" class="col-sm-1 control-label">until</label>
+    <div class="col-sm-5">
+      <div class='input-group date' id='inputUntil' style="width: 94%;">
+          <input type='text' id='e_date' class="form-control" />
+          <span class="input-group-addon">
+              <span class="glyphicon glyphicon-calendar"></span>
+          </span>
+      </div>
+    </div>
+  </div>
+</form>
+<div class="col-sm-offset-2 col-sm-10 text-left">
+  <button style="margin-left: -1%;" id="submit-easy-search" class="btn btn-default">Submit</button>
+</div>    
+</div>
