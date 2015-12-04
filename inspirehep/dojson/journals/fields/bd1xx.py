@@ -28,9 +28,14 @@ from ..model import journals
 
 
 @journals.over('issn', '^022..')
+@utils.for_each_value
+@utils.filter_values
 def issn(self, key, value):
     """ISSN Statement."""
-    return value.get("a")
+    return {
+        "value": value.get("a"),
+        "material": value.get("b")
+    }
 
 
 @journals.over('coden', '^030..')
