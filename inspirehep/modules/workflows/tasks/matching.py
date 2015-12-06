@@ -3,22 +3,19 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2014, 2015 CERN.
 #
-# INSPIRE is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-#
-# In applying this license, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as an Intergovernmental Organization
-# or submit itself to any jurisdiction.
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 """Tasks to check if the incoming record already exist."""
 
@@ -38,10 +35,16 @@ from inspirehep.utils.helpers import (
 )
 
 from invenio_base.globals import cfg
+from invenio_base.wrappers import lazy_import
+
+from invenio_matcher.api import match as _match
 
 import requests
 
 import six
+
+
+BibWorkflowObject = lazy_import('invenio_workflows.models.BibWorkflowObject')
 
 
 def search(query):
@@ -117,6 +120,30 @@ def match(obj, eng):
         return True
 
     return False
+
+
+def match_with_invenio_matcher(obj, eng):
+    """TODO."""
+    model = eng.workflow_definition.model(obj)
+    record = get_record_from_model(model)
+
+    queries = [
+        {'type': 'exact', 'match': 'dois.value'},
+        {'type': 'exact', 'match': 'arxiv_eprints.value'}
+    ]
+
+    for el in _match(record, queries=queries, index='hep', doc_type='records'):
+        # FIXME(jacquerie): it should unwrap the MatchResult class.
+        obj.extra_data['recid'].append(el)
+        obj.extra_data['url'].append(
+            os.path.join(
+                cfg['CFG_ROBOTUPLOAD_SUBMISSION_BASEURL'],
+                'record',
+                str(el)
+            )
+        )
+
+    return len(obj.extra_data['recid']) > 0
 
 
 def was_already_harvested(record):
@@ -228,7 +255,6 @@ def delete_self_and_stop_processing(obj, eng):
 
 def update_old_object(obj, *args, **kwargs):
     """Update the data of the old object with the new data."""
-    from invenio_workflows.models import BibWorkflowObject
 
     holdingpen_ids = obj.extra_data.get("holdingpen_ids", [])
     if holdingpen_ids and len(holdingpen_ids) == 1:
