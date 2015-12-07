@@ -49,7 +49,7 @@
     </div>
   </div>
   <div class="row"><div class="col-md-12"><p></p></div></div>
-  {% if record['rank'][0] %}
+  {% if 'rank' in record and record['rank'][0] %}
   <div class="row">
     <div class="col-md-12">
      <div class="pull-left">
