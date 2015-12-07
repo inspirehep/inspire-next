@@ -231,7 +231,7 @@ define(
 
       this.onFacetDropdown = function(ev) {
         var id = $(ev.target).attr("id");
-        if ( $(ev.target).is('i') ) {
+        if ($(ev.target).is('i')) {
           // The chevron icon was clicked
           var id = $(ev.target).parent().attr("id");
         }
@@ -241,9 +241,30 @@ define(
         } else {
           facetOption.addClass('fa-chevron-down facet-slider').removeClass('fa-chevron-right');
         }
-        var content_to_slide = $('#'+id).next().attr("id");
-        $('#'+content_to_slide).slideToggle();
+        var content_to_slide = $('#' + id).next().attr("id");
+        $('#' + content_to_slide).slideToggle();
 
+      }
+
+      this.onClearFilters = function() {
+        var url = window.location.search;
+        var parameter = 'post_filter'
+        var urlparts = url.split('?');
+        if (urlparts.length >= 2) {
+          var prefix = encodeURIComponent(parameter) + '=';
+          var pars = urlparts[1].split(/[&;]/g);
+          //reverse iteration as may be destructive
+          for (var i = pars.length; i-- > 0;) {
+            //idiom for string.startsWith
+            if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+              pars.splice(i, 1);
+            }
+          }
+          url = urlparts[0] + '?' + pars.join('&');
+        }
+        var path = window.location.origin + window.location.pathname +
+          url;
+        window.location.href = path;
       }
 
       this.after('initialize', function() {
@@ -259,6 +280,7 @@ define(
         this.on("h4[id^='filter-by-']", "click", this.onFacetDropdown);
         CitationModal.teardownAll();
         CitationModal.attachTo(document);
+        this.on("#clear-filters", "click", this.onClearFilters);
       });
 
     }

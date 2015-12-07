@@ -155,6 +155,21 @@
         </div>
       </div>
   {% endif %}
+  {% if request.args.get('post_filter') %}
+  <div class="panel panel-default">
+    <div class="panel-body" >
+      <div class="row">
+        <div class="col-md-9">
+          <span class="text-left" id="clear-facets-message">{{ pagination.total_count }} of {{ request.args.get('cc') | number_of_records }} results match the filters you selected.</span><br/>
+          <small id="clear-facets-info">Clear filters to see all results.</small>
+        </div>
+        <div class="col-md-3 text-right">
+          <button id="clear-filters" class="btn btn-default">Clear filters</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
   {%- for record in records -%}{% set recordloop = loop %}
     {%- set recid = record['recid'] %}
     {%- if of[0] == 'h' -%}
