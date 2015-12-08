@@ -53,49 +53,49 @@ def websites(self, key, value):
     urls = []
     for website in value:
         urls.append({
-            "url": website["webpage"],
+            "value": website["webpage"],
             "description": ""
         })
     if 'url' in self:
-        self['url'].extend(urls)
+        self['urls'].extend(urls)
     else:
-        self['url'] = urls
+        self['urls'] = urls
 
 
 @updateform.over('_twitter_url', '^twitter_url$')
 def twitter_url(self, key, value):
     twitter_url = {
-        'url': value,
+        'value': value,
         'description': 'TWITTER'
     }
-    if 'url' in self:
-        self['url'].append(twitter_url)
+    if 'urls' in self:
+        self['urls'].append(twitter_url)
     else:
-        self['url'] = [twitter_url]
+        self['urls'] = [twitter_url]
 
 
 @updateform.over('_blog_url', '^blog_url$')
 def blog_url(self, key, value):
     blog_url = {
-        'url': value,
+        'value': value,
         'description': 'BLOG'
     }
-    if 'url' in self:
-        self['url'].append(blog_url)
+    if 'urls' in self:
+        self['urls'].append(blog_url)
     else:
-        self['url'] = [blog_url]
+        self['urls'] = [blog_url]
 
 
 @updateform.over('_linkedin_url', '^linkedin_url$')
 def linkedin_url(self, key, value):
     linkedin_url = {
-        'url': value,
+        'value': value,
         'description': 'LINKEDIN'
     }
-    if 'url' in self:
-        self['url'].append(linkedin_url)
+    if 'urls' in self:
+        self['urls'].append(linkedin_url)
     else:
-        self['url'] = [linkedin_url]
+        self['urls'] = [linkedin_url]
 
 
 @updateform.over('_orcid', '^orcid$')
@@ -146,18 +146,9 @@ def public_email(self, key, value):
         self['positions'] = [position]
 
 
-@updateform.over('_research_field', '^research_field$')
-def research_field(self, key, value):
-    field_categories = []
-    for field in value:
-        field_categories.append({
-            'name': field,
-            'type': 'INSPIRE'
-        })
-    if 'field_categories' in self:
-        self['field_categories'].extend(field_categories)
-    else:
-        self['field_categories'] = field_categories
+@updateform.over('field_categories', '^research_field$')
+def field_categories(self, key, value):
+    return value
 
 
 @updateform.over('positions', '^institution_history$')

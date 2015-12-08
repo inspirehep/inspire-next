@@ -64,11 +64,7 @@
         <div class="col-md-12 record-brief-details">
           {{ record|url_links|join_array(", ")|new_line_after }}
           {% set field_categories = record.get('field_categories', []) %}
-          {% set category_name = [] %}
-          {% for category in field_categories %}
-            {% do category_name.append(category["name"]) %}
-          {% endfor %}
-          {{ category_name|join_nested_lists(', ') }}
+          {{ field_categories|join(', ') }}
         </div>
       </div>
     </div>
