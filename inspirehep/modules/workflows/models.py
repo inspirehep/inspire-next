@@ -20,6 +20,9 @@
 """Unified data model in workflow, based on Deposition model."""
 
 import os
+import six
+
+from flask import render_template
 
 from invenio_base.globals import cfg
 
@@ -30,8 +33,13 @@ from invenio_deposit.models import (
     DepositionFile,
     DepositionStorage,
     SubmissionInformationPackage,
+    InvalidDepositionType,
 )
 from invenio_deposit.storage import Storage
+
+from invenio_formatter import format_record
+
+from inspirehep.utils.helpers import get_record_from_model
 
 
 def create_payload(obj, eng):
@@ -132,3 +140,107 @@ class Payload(Deposition):
         sip.agents = [Agent(role='creator',
                             from_request_context=from_request_context)]
         self.update()
+
+
+class SIPWorkflowMixin(object):
+
+    """Base mixin for workflow definitions using SIP as their data models."""
+
+    @classmethod
+    def get_title(cls, obj, **kwargs):
+        """Return the value to put in the title column of Holding Pen."""
+        if not hasattr(obj, "data"):
+            obj.data = obj.get_data()
+        if isinstance(obj.data, dict):
+            try:
+                model = cls.model(obj)
+            except InvalidDepositionType:
+                return "This submission is disabled: {0}.".format(obj.workflow.name)
+            record = get_record_from_model(model)
+            if record:
+                titles = filter(None, record.get("titles.title"))
+                if titles:
+                    # Show first title that evaluates to True
+                    return titles[0]
+        return "No title available"
+
+    @classmethod
+    def get_description(cls, obj, **kwargs):
+        """Return the value to put in the description column of HoldingPen."""
+        return "No description"
+
+    @classmethod
+    def get_additional(cls, obj, **kwargs):
+        """Return the value to put in the additional column of HoldingPen."""
+        from inspirehep.modules.predicter.utils import get_classification_from_task_results
+        keywords = get_classification_from_task_results(obj)
+        results = obj.get_tasks_results()
+        prediction_results = results.get("arxiv_guessing", {})
+        if prediction_results:
+            prediction_results = prediction_results[0].get("result")
+        return render_template(
+            'workflows/styles/harvesting_record_additional.html',
+            object=obj,
+            keywords=keywords,
+            score=prediction_results.get("max_score"),
+            decision=prediction_results.get("decision")
+        )
+
+    @classmethod
+    def formatter(cls, obj, **kwargs):
+        """Nicely format the record."""
+        try:
+            model = cls.model(obj)
+            record = get_record_from_model(model)
+        except TypeError as err:
+            return "Error: {0}".format(err)
+        if not record:
+            return ""
+        if kwargs.get('of'):
+            if "recid" not in record:
+                record['recid'] = None
+            return format_record(record=record, of=kwargs.get('of'))
+        return render_template(
+            'format/record/Holding_Pen_HTML_detailed.tpl',
+            record=record
+        )
+
+    @classmethod
+    def get_sort_data(cls, obj, **kwargs):
+        """Return a dictionary useful for sorting in Holding Pen."""
+        results = obj.get_tasks_results()
+        prediction_results = results.get("arxiv_guessing", {})
+        if prediction_results:
+            prediction_results = prediction_results[0].get("result")
+            max_score = prediction_results.get("max_score")
+            decision = prediction_results.get("decision")
+            relevance_score = max_score
+            if decision == "CORE":
+                relevance_score += 10
+            elif decision == "Rejected":
+                relevance_score = (max_score * -1) - 10
+            return {
+                "max_score": prediction_results.get("max_score"),
+                "decision": prediction_results.get("decision"),
+                "relevance_score": relevance_score
+            }
+        else:
+            return {}
+
+    @classmethod
+    def get_record(cls, obj, **kwargs):
+        """Return a dictionary-like object representing the current object.
+
+        This object will be used for indexing and be the basis for display
+        in Holding Pen.
+        """
+        if not hasattr(obj, "data"):
+            obj.data = obj.get_data()
+        if isinstance(obj.data, six.text_type):
+            return {}
+        model = cls.model(obj)
+        record = get_record_from_model(model)
+        if record:
+            return record.dumps()
+        else:
+            return {}

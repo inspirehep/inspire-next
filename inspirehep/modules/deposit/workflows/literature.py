@@ -17,9 +17,11 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
+"""Main HEP literature submission workflow."""
+
 import copy
 
-from flask import render_template, current_app
+from flask import render_template
 
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -44,7 +46,6 @@ from invenio_workflows.tasks.logic_tasks import (
     workflow_if,
     workflow_else,
 )
-from invenio_workflows.definitions import WorkflowBase
 
 from inspirehep.dojson.hep import hep2marc
 
@@ -66,10 +67,12 @@ from inspirehep.modules.workflows.tasks.actions import (
     shall_upload_record,
     reject_record,
     add_core,
+    shall_push_remotely,
 )
+from inspirehep.modules.workflows.tasks.upload import store_record_sip
+from inspirehep.modules.workflows.models import SIPWorkflowMixin
 from inspirehep.modules.deposit.forms import LiteratureForm
 from inspirehep.modules.predicter.tasks import guess_coreness
-from inspirehep.utils.helpers import get_record_from_model
 
 from ..tasks import add_submission_extra_data
 from ..utils import filter_empty_helper
@@ -88,8 +91,7 @@ def filter_empty_elements(recjson):
     return recjson
 
 
-class literature(SimpleRecordDeposition, WorkflowBase):
-
+class literature(SIPWorkflowMixin, SimpleRecordDeposition):
     """Literature deposit submission."""
 
     object_type = "submission"
@@ -134,7 +136,14 @@ class literature(SimpleRecordDeposition, WorkflowBase):
                 user_pdf_get,
                 finalize_record_sip(processor=hep2marc),
                 # Send robotupload and halt until webcoll callback
-                send_robotupload(),
+                workflow_if(shall_push_remotely),
+                [
+                    send_robotupload(),
+                ],
+                workflow_else,
+                [
+                    store_record_sip,
+                ],
                 create_curation_ticket(
                     template="deposit/tickets/curation_core.html",
                     queue="HEP_curation",
@@ -161,21 +170,6 @@ class literature(SimpleRecordDeposition, WorkflowBase):
     draft_definitions = {
         'default': LiteratureForm,
     }
-
-    @staticmethod
-    def get_title(bwo):
-        """Return title of object."""
-        try:
-            deposit_object = Deposition(bwo)
-        except InvalidDepositionType:
-            return "This submission is disabled: {0}.".format(bwo.workflow.name)
-        sip = deposit_object.get_latest_sip()
-        if sip:
-            # Get the SmartJSON object
-            record = Record(sip.metadata)
-            return record.get("titles.title", ["No title"])[0]
-        else:
-            return "User submission in progress"
 
     @staticmethod
     def get_description(bwo):
@@ -230,66 +224,6 @@ class literature(SimpleRecordDeposition, WorkflowBase):
             )
         else:
             return "Submitter: {0}".format(user_email)
-
-    @staticmethod
-    def get_additional(bwo, **kwargs):
-        """Return formatted data of object."""
-        from inspirehep.modules.predicter.utils import get_classification_from_task_results
-        keywords = get_classification_from_task_results(bwo)
-        results = bwo.get_tasks_results()
-        prediction_results = results.get("arxiv_guessing", {})
-        if prediction_results:
-            prediction_results = prediction_results[0].get("result")
-        return render_template(
-            'workflows/styles/harvesting_record_additional.html',
-            object=bwo,
-            keywords=keywords,
-            score=prediction_results.get("max_score"),
-            decision=prediction_results.get("decision")
-        )
-
-    @staticmethod
-    def formatter(bwo, **kwargs):
-        """Return formatted data of object."""
-        try:
-            deposit_object = Deposition(bwo)
-        except InvalidDepositionType:
-            return "This submission is disabled: {0}.".format(bwo.workflow.name)
-
-        sip = deposit_object.get_latest_sip(deposit_object.submitted)
-        record = sip.metadata
-
-        if hasattr(sip, "package"):
-            marcxml = sip.package
-        else:
-            return "No data found in submission (no package)."
-
-        of = kwargs.get("of", "hd")
-        if of == "xm":
-            return marcxml
-        else:
-            return render_template(
-                'format/record/Holding_Pen_HTML_detailed.tpl',
-                record=Record(record)
-            )
-
-    @classmethod
-    def get_record(cls, obj, **kwargs):
-        """Return a dictionary-like object representing the current object.
-
-        This object will be used for indexing and be the basis for display
-        in Holding Pen.
-        """
-        model = cls.model(obj)
-        record = get_record_from_model(model)
-        if record:
-            return record.dumps()
-        return {}
-
-    @classmethod
-    def get_sort_data(cls, dummy_obj, **kwargs):
-        """Return any extra sorting data."""
-        return {}
 
     @classmethod
     def process_sip_metadata(cls, deposition, metadata):
