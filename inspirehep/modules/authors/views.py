@@ -71,22 +71,21 @@ def convert_for_form(data):
         data["family_name"] = data["name"].get("value").split(",")[0].strip()
         data["display_name"] = data["name"].get("preferred_name")
         data["status"] = data["name"].get("status").lower()
-    if "url" in data:
+    if "urls" in data:
         data["websites"] = []
-        for url in data["url"]:
+        for url in data["urls"]:
             if "description" not in url:
-                data["websites"].append({"webpage": url["url"]})
+                data["websites"].append({"webpage": url["value"]})
             else:
                 if url["description"].lower() == "twitter":
-                    data["twitter_url"] = url["url"]
+                    data["twitter_url"] = url["value"]
                 elif url["description"].lower() == "blog":
-                    data["blog_url"] = url["url"]
+                    data["blog_url"] = url["value"]
                 elif url["description"].lower() == "linkedin":
-                    data["linkedin_url"] = url["url"]
-        del data["url"]
+                    data["linkedin_url"] = url["value"]
+        del data["urls"]
     if "field_categories" in data:
-        data["research_field"] = [field["name"].lower() for
-                                  field in data["field_categories"]]
+        data["research_field"] = data['field_categories']
     if "positions" in data:
         data["institution_history"] = []
         for position in data["positions"]:

@@ -198,10 +198,9 @@
         "field_categories": {
             "uniqueItems": true,
             "items": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "enum": [
+                "name": {
+                    "type": "string",
+                    "enum": [
                             "acc-phys",
                             "astro-ph",
                             "atom-ph",
@@ -230,12 +229,7 @@
                             "ssrl",
                             "other"
                         ],
-                        "type": "array",
-                        "description": "FIXME: Time to revise this list?"
-                    },
-                    "type": {
-                        "type": "string"
-                    }
+                    "description": "FIXME: Time to revise this list?"
                 }
             },
             "type": "array",

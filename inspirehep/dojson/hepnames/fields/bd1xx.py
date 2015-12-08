@@ -312,15 +312,10 @@ def field_categories(self, key, value):
 
     def get_value(value):
         if isinstance(value, dict):
-            name = utils.force_list(value.get('a', '').lower())
-            t = value.get('2')
+            name = value.get('a', '').lower()
         else:
-            name = utils.force_list(value)
-            t = value
-        return {
-            'name': name,
-            'type': t,
-        }
+            name = value.lower()
+        return name
 
     field_categories = self.get('field_categories', [])
     if isinstance(value, list):
@@ -337,11 +332,10 @@ def field_categories(self, key, value):
 
 @hepnames2marc.over('65017', '^field_categories$')
 @utils.for_each_value
-@utils.filter_values
 def field_categories2marc(self, key, value):
     return {
-        'a': value.get('name'),
-        '2': value.get('type'),
+        'a': value,
+        '2': 'INSPIRE',
     }
 
 
