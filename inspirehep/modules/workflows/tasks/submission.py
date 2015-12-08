@@ -32,6 +32,8 @@ from invenio_base.globals import cfg
 from invenio_deposit.models import Deposition
 from invenio_formatter import format_record
 
+from inspirehep.utils.helpers import get_record_from_obj
+
 from retrying import retry
 
 
@@ -78,7 +80,7 @@ def get_ticket_body(template, deposition, metadata, email, obj):
     return subject, body
 
 
-def get_curation_body(template, metadata, email, extra_data):
+def get_curation_body(template, record, email, extra_data):
     """
     Get ticket content.
 
@@ -89,21 +91,19 @@ def get_curation_body(template, metadata, email, extra_data):
     recid = extra_data.get('recid')
     record_url = extra_data.get('url')
 
-    arxiv_id = metadata.get('arxiv_id')
-    if arxiv_id and is_arxiv_post_2007(arxiv_id):
-        arxiv_id = ''.join(['arXiv:', arxiv_id])
+    arxiv_ids = record.get('arxiv_eprints.value')
+    for index, arxiv_id in enumerate(arxiv_ids):
+        if arxiv_id and is_arxiv_post_2007(arxiv_id):
+            arxiv_ids[index] = 'arXiv:{0}'.format(arxiv_id)
 
-    report_number = metadata.get('report_numbers')
-    if report_number:
-        report_number = report_number[0].get('value')
-
+    report_numbers = record.get('report_numbers.value')
+    dois = ["doi:{0}".format(record.get('dois.value'))]
     link_to_pdf = extra_data.get('submission_data').get('pdf')
 
-    subject = ' '.join(filter(lambda x: x is not None,
-                       [arxiv_id,
-                        " ".join(["doi:{0}".format(d) for d in metadata.get('dois')]),
-                        report_number,
-                        '(#{0})'.format(recid)]))
+    subject = ' '.join(filter(
+        lambda x: x is not None,
+        arxiv_ids + dois + report_numbers + ['(#{0})'.format(recid)]
+    ))
 
     references = extra_data.get('submission_data').get('references')
     user_comment = extra_data.get('submission_data').get('extra_comments')
@@ -161,13 +161,12 @@ def create_curation_ticket(template, queue="Test", ticket_id_key="ticket_id"):
     def _create_curation_ticket(obj, eng):
         from invenio_access.control import acc_get_user_email
 
-        deposition = Deposition(obj)
         requestors = acc_get_user_email(obj.id_user)
-        metadata = deposition.get_latest_sip(sealed=True).metadata
+        record = get_record_from_obj(obj, eng)
 
         if obj.extra_data.get("core"):
             subject, body = get_curation_body(template,
-                                              metadata,
+                                              record,
                                               requestors,
                                               obj.extra_data)
             submit_rt_ticket(obj,
