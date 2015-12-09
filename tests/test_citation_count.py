@@ -26,6 +26,6 @@ class CitationCountTest(InvenioTestCase):
         from invenio_ext.es import es
         from invenio_search.api import Query
         recid = u'1196797'
-        count = len(Query('refersto:'+recid).search().recids)
+        count = len(Query('refersto:'+recid).search())
         record = es.get(index='hep', id=recid)
         self.assertEqual(count, record['_source'].get('citation_count'))
