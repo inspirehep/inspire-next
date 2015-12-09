@@ -59,8 +59,8 @@ from invenio_deposit.models import Deposition
 from invenio_ext.es import es
 from invenio_ext.sqlalchemy import db
 
-from invenio_records.api import Record as record_api
-from invenio_records.models import Record
+from invenio_records.api import Record
+from invenio_records.models import Record as RecordModel
 
 from six import text_type, string_types
 
@@ -265,14 +265,14 @@ def create_record(data, force=False, dry_run=False):
                 control_number = json['recid']
             control_number = int(control_number)
             # Searches if record already exists.
-            record = record_api.get_record(control_number)
+            record = Record.get_record(control_number)
             if record is None:
                 # Adds the record to the db session.
-                rec = Record(id=control_number)
+                rec = RecordModel(id=control_number)
                 db.session.add(rec)
-                record = record_api.create(json)
+                record = Record.create(json)
             else:
-                record.update(json)
+                record = Record(json, model=record.model)
                 record.commit()
             if recid:
                 prod_record.successful = True
