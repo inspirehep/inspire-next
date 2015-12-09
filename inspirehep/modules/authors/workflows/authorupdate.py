@@ -57,7 +57,7 @@ class authorupdate(WorkflowBase):
     def get_description(bwo):
         """Return description of object."""
         return "Updating author {}".format(
-            bwo.get_data().get("name", {}).get("display_name")
+            bwo.get_data().get("name", {}).get("preferred_name")
         )
 
     @staticmethod
@@ -81,7 +81,7 @@ class authorupdate(WorkflowBase):
         else:
             # FIXME add a template for the author display in the HP
             return render_template("authors/workflows/authorupdate.html",
-                                   record_preview="",
+                                   record=bwo.data,
                                    user_email=user_email,
                                    ticket_url=ticket_url,
                                    comments=extra_data.get("comments"))

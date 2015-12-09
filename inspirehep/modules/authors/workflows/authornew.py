@@ -30,7 +30,7 @@ from invenio_workflows.tasks.logic_tasks import (
     workflow_if,
 )
 
-from inspirehep.modules.workflows.tasks.actions import shall_halt_workflow
+from inspirehep.modules.workflows.tasks.actions import shall_upload_record
 
 from invenio_workflows.tasks.workflows_tasks import log_info
 
@@ -65,7 +65,7 @@ class authornew(WorkflowBase):
                      keep_new=True),
         halt_record_with_action(action="author_approval",
                                 message="Accept submission?"),
-        workflow_if(shall_halt_workflow),
+        workflow_if(shall_upload_record),
         [
             workflow_if(recreate_data),
             [
@@ -104,7 +104,7 @@ class authornew(WorkflowBase):
     @staticmethod
     def get_description(bwo):
         """Return description of object."""
-        return bwo.get_data().get("name").get("display_name")
+        return bwo.get_data().get("name").get("preferred_name")
 
     @staticmethod
     def formatter(bwo, **kwargs):
@@ -127,7 +127,7 @@ class authornew(WorkflowBase):
         else:
             # FIXME add a template for the author display in the HP
             return render_template("authors/workflows/authorupdate.html",
-                                   record_preview="",
+                                   record=bwo.data,
                                    user_email=user_email,
                                    ticket_url=ticket_url,
                                    comments=extra_data.get("comments"))

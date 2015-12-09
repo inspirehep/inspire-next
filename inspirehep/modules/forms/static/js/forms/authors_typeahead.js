@@ -80,7 +80,9 @@ define([
           callback(suggestions);
         }.bind(this));
       }.bind(this),
-      displayKey: 'name.value',
+      displayKey: function(data) {
+        return data.name.value;
+      },
       templates: {
         empty: function(data) {
           return 'Cannot find this author in our database.';

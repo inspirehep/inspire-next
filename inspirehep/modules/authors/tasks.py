@@ -81,7 +81,6 @@ def convert_data_to_model():
 
         filter_empty_elements(data)
         converted = updateform.do(data)
-        data.clear()
         data.update(converted)
 
         author_name = ''

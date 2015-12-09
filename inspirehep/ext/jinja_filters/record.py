@@ -33,6 +33,7 @@ from inspirehep.utils.references import Reference
 from invenio_base.globals import cfg
 
 import time
+import re
 
 
 def setup_app(app):
@@ -356,10 +357,50 @@ def setup_app(app):
 
     @app.template_filter()
     def construct_date_format(date):
-        starting_date = time.strftime('%Y-%m-%d', time.gmtime(int(date) / 1000.))
+        starting_date = time.strftime(
+            '%Y-%m-%d', time.gmtime(int(date) / 1000.))
         ending_date = time.strftime('%Y-12-31', time.gmtime(int(date) / 1000.))
         return starting_date + '->' + ending_date
 
     @app.template_filter()
     def limit_facet_elements(l):
         return l[:cfg["FACETS_SIZE_LIMIT"]]
+
+    @app.template_filter()
+    def author_urls(l, separator):
+        result = []
+        for name in l:
+            if 'name' in name:
+                url = '<a href="/search?ln=en&amp;cc=HepNames&amp;p=name:'\
+                      + name['name'] + '&amp;of=hd">' + name['name'] + '</a>'
+                result.append(url)
+        return separator.join(result)
+
+    @app.template_filter()
+    def ads_links(record):
+        lastname = ''
+        firstnames = ''
+        initial = ''
+        link = ''
+        re_last_first = '^(?P<last>[^,]+)\s*,\s*(?P<first_names>[^\,]*)(?P<extension>\,?.*)$'
+        re_initials = r'(?P<initial>\w)([\w`\']+)?.?\s*'
+        ADSURL = 'http://adsabs.harvard.edu/cgi-bin/author_form?'
+        author = record['name']['value']
+        initialmatch = None
+        if author:
+            amatch = re.search(re_last_first, author)
+        if amatch:
+            lastname = amatch.group('last')
+            firstnames = amatch.group('first_names')
+        if firstnames:
+            initialmatch = re.search(re_initials, firstnames)
+            firstnames = re.sub('\s+', '+', firstnames)
+        if initialmatch:
+            initial = initialmatch.group('initial')
+        if lastname:
+            lastname = re.sub('\s+', '+', lastname)
+            link = "%sauthor=%s,+%s&fullauthor=%s,+%s" % \
+                (ADSURL, lastname, initial, lastname, firstnames)
+        else:
+            link = "%sauthor=%s" % (ADSURL, record['name']['preferred_name'])
+        return link
