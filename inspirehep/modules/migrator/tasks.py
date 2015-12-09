@@ -26,6 +26,7 @@ from __future__ import absolute_import, print_function
 import gzip
 
 import re
+import traceback
 
 from celery.utils.log import get_task_logger
 
@@ -41,8 +42,19 @@ from inspirehep.dojson.institutions import institutions
 from inspirehep.dojson.jobs import jobs
 from inspirehep.dojson.journals import journals
 from inspirehep.dojson.processors import _collection_in_record
+from inspirehep.dojson.utils import legacy_export_as_marc
+from inspirehep.dojson.hep import hep2marc
+
+from inspirehep.modules.workflows.dojson import bibfield
+from inspirehep.modules.workflows.models import Payload
 
 from invenio_celery import celery
+
+from invenio_workflows.models import (
+    BibWorkflowObject,
+    ObjectVersion
+)
+from invenio_deposit.models import Deposition
 
 from invenio_ext.es import es
 from invenio_ext.sqlalchemy import db
@@ -50,9 +62,11 @@ from invenio_ext.sqlalchemy import db
 from invenio_records.api import Record as record_api
 from invenio_records.models import Record
 
-from six import text_type
+from six import text_type, string_types
 
 from .models import InspireProdRecords
+from .utils import rename_object_action, reset_workflow_object_states
+
 
 logger = get_task_logger(__name__)
 
@@ -270,4 +284,46 @@ def create_record(data, force=False, dry_run=False):
             prod_record.successful = False
             db.session.merge(prod_record)
             logger.exception("Error in elaborating record ID {}".format(recid))
+        raise
+
+
+@celery.task(ignore_result=True)
+def migrate_workflow_object(obj_id):
+    try:
+        obj = BibWorkflowObject.query.get(obj_id)
+        rename_object_action(obj)
+        if obj.workflow.name == "process_record_arxiv":
+            metadata = obj.get_data()
+            if isinstance(metadata, string_types):
+                # Ignore records that have string as data
+                return
+            if 'drafts' in metadata:
+                # New data model detected, just save and exit
+                obj.save()
+                return
+            if hasattr(metadata, 'dumps'):
+                metadata = metadata.dumps(clean=True)
+            obj.data = bibfield.do(metadata)
+            payload = Payload.create(
+                type=obj.workflow.name,
+                workflow_object=obj
+            )
+            payload.save()
+        elif obj.workflow.name == "literature":
+            d = Deposition(obj)
+            sip = d.get_latest_sip()
+            if sip:
+                sip.metadata = bibfield.do(sip.metadata)
+                sip.package = legacy_export_as_marc(hep2marc.do(sip.metadata))
+                d.save()
+        else:
+            obj.save()  # To update and trigger indexing
+        reset_workflow_object_states(obj)
+    except Exception as err:
+        current_app.logger.error("Problem migrating record {0}".format(obj_id))
+        current_app.logger.exception(err)
+        msg = "Error: %r\n%s" % \
+              (err, traceback.format_exc())
+        obj.set_error_message(str(err), msg)
+        obj.save(version=ObjectVersion.ERROR)
         raise

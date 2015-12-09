@@ -19,18 +19,21 @@
 
 """Blueprint for handling editing from Holding Pen."""
 
-from invenio_deposit.helpers import make_record
-
 from six import text_type
+
 from flask import Blueprint, jsonify, request
 from flask_login import login_required
+
 from harvestingkit.html_utils import MathMLParser
+
 from invenio_base.decorators import wash_arguments
 from invenio_ext.principal import permission_required
 from invenio_workflows.acl import viewholdingpen
 from invenio_workflows.models import BibWorkflowObject
-from inspirehep.utils.helpers import get_model_from_obj
 
+from inspirehep.utils.helpers import get_model_from_obj
+from inspirehep.dojson.utils import legacy_export_as_marc
+from inspirehep.dojson.hep import hep2marc
 
 blueprint = Blueprint(
     'inspire_holdingpen',
@@ -54,7 +57,7 @@ def get_attributes(objectid):
 
 def save_changes(sip, model):
     """Saves the changes in the record."""
-    sip.package = make_record(sip.metadata)
+    sip.package = legacy_export_as_marc(hep2marc.do(sip.metadata))
     model.save()
 
 
@@ -93,7 +96,7 @@ def edit_record_urls(objectid):
     for url in new_urls:
         new_urls_array.append({'url': url})
 
-    metadata['url'] = new_urls_array
+    metadata['urls'] = new_urls_array
     save_changes(sip, model)
     return json_success_message('urls')
 

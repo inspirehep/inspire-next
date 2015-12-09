@@ -35,7 +35,7 @@
       <a href="/search?p=collaboration:'{{ collaboration }}'">{{ collaboration }}</a>
       {% do collaboration_displayed.append(1) %}
       {% if not loop.last %}
-        and 
+        and
       {% endif %}
       {% if loop.last %}
         {% if loop.index == 1%}
@@ -90,15 +90,15 @@
               {% for author in record.authors %}
                 {{ render_author_names(author) }}
                  {% if author.get('affiliations') and not is_brief %}
-                  {% if author.get('affiliations') | is_list %} 
+                  {% if author.get('affiliations') | is_list %}
                     <a href="{{ url_for('search.search', p='"' + author.get('affiliations')[0].value + '"' + "&cc=Institutions") }}">
                       ({{ author.get('affiliations')[0].value }})
                     </a>
                   {% else %}
                     <a href="{{ url_for('search.search', p='"' + author.get('affiliations').value + '"' + "&cc=Institutions") }}">
-                      ({{ author.get('affiliations').value }}) 
+                      ({{ author.get('affiliations').value }})
                     </a>
-                  {% endif %} 
+                  {% endif %}
                 {% endif %}
                 {{ sep() }}
               {% endfor %}
@@ -157,15 +157,17 @@
 {% endmacro %}
 
 {% macro record_arxiv(is_brief) %}
-  {% if record.get('arxiv_eprints') %}
-    {% for report_number in record.get('arxiv_eprints') %}
-      {% if is_brief %}
-        <div class="eprint">e-Print: 
-          <a href="http://arxiv.org/abs/{{ report_number.get('value') }}" > {{ report_number.get('value') }}</a>
-        </div>
-      {% else %}
-        <span class="eprint">e-Print</span>
-        <a href="http://arxiv.org/abs/{{ report_number.get('value') }}" title="arXiv" target="_blank">{{ report_number.get('value') }} <i class="fa fa-external-link"></i></a>
+  {% if record.arxiv_eprints %}
+    {% for report_number in record.arxiv_eprints %}
+      {% if report_number.value and report_number.value is not none %}
+        {% if is_brief %}
+          <div class="eprint">e-Print:
+            <a href="http://arxiv.org/abs/{{ report_number.value }}" > {{ report_number.value }}</a>
+          </div>
+        {% else %}
+          <span class="eprint">e-Print</span>
+          <a href="http://arxiv.org/abs/{{ report_number.value }}" title="arXiv" target="_blank">{{ report_number.value }} <i class="fa fa-external-link"></i></a>
+        {% endif %}
       {% endif %}
     {% endfor %}
   {% endif %}
@@ -196,7 +198,7 @@
             <div class="col-md-12">
               <div class="editable" contenteditable="true" onclick="document.execCommand('selectAll',false,null)"><pre id="text{{record['control_number']}}"></pre></div>
             </div>
-          </div> 
+          </div>
         </div>
         <div class="modal-footer">
         </div>

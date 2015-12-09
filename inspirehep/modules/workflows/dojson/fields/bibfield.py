@@ -24,6 +24,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import dateutil
+import six
+
 from dojson import utils
 
 from ..model import bibfield
@@ -124,8 +127,11 @@ def report_numbers(self, key, value):
 
 
 @bibfield.over('subject_terms', '^subject_term$')
+@utils.for_each_value
 def subject_terms(self, key, value):
     """Get subjects from object."""
+    if isinstance(value, six.string_types):
+        return {"term": value}
     return value
 
 
@@ -168,6 +174,8 @@ def titles(self, key, value):
             values = value
         out = []
         for val in values:
+            if isinstance(val, six.string_types):
+                val = {"title": val}
             out.append({
                 'title': val.get('title'),
                 'subtitle': val.get('subtitle'),
@@ -186,6 +194,8 @@ def breadcrumb_title(self, key, value):
     """Title used in breadcrum and html title."""
     if isinstance(value, list):
         val = value[0]
+    elif isinstance(value, six.string_types):
+        val = {"title": value}
     else:
         val = value
     return val.get('title')
@@ -225,6 +235,8 @@ def hidden_notes(self, key, value):
 @utils.for_each_value
 def public_notes(self, key, value):
     """Get public notes from object."""
+    if isinstance(value, six.string_types):
+        value = {"value": value}
     return value
 
 
@@ -309,6 +321,8 @@ def thesis_supervisor(self, key, value):
 @utils.for_each_value
 def title_translation(self, key, value):
     """Get translated title from object."""
+    if isinstance(value, six.string_types):
+        value = {"value": value}
     return {
         "title": value.get('value'),
         "subtitle": value.get('subtitle'),
@@ -325,6 +339,8 @@ def title_arxiv(self, key, value):
             values = value
         out = []
         for val in values:
+            if isinstance(val, six.string_types):
+                val = {"title": val}
             out.append({
                 'title': val.get('title'),
                 'subtitle': val.get('subtitle'),
@@ -346,10 +362,12 @@ def spires_sysnos(self, key, value):
     return [v.get('value') for v in value]
 
 
-@bibfield.over('url', '^url$')
+@bibfield.over('urls', '^url$')
 @utils.for_each_value
-def url(self, key, value):
+def urls(self, key, value):
     """Get URLs from object."""
+    if isinstance(value, six.string_types):
+        return {"url": value}
     return value
 
 
@@ -357,6 +375,8 @@ def url(self, key, value):
 @utils.for_each_value
 def titles_old(self, key, value):
     """Get old titles from object."""
+    if isinstance(value, six.string_types):
+        value = {"main": value}
     return {
         'title': value.get('main'),
         'subtitle': value.get('subtitle')
@@ -367,6 +387,26 @@ def titles_old(self, key, value):
 @utils.for_each_value
 def publication_info(self, key, value):
     """Get pubinfo from object."""
+    if value and isinstance(value, dict):
+        # Special handling of crap values
+        if value.get('journal_issue') == 'issue':
+            del value['journal_issue']
+        if value.get('journal_title') == 'journal title':
+            del value['journal_title']
+        if value.get('journal_volume') == 'volume':
+            del value['journal_volume']
+        if value.get('page_artid') == 'page range':
+            del value['page_artid']
+        # Special year handling
+        if value.get('year'):
+            try:
+                value['year'] = six.text_type(dateutil.parser.parse(value["year"]).year)
+            except (ValueError, AttributeError):
+                try:
+                    value['year'] = six.text_type(int(value['year']))
+                except (TypeError, ValueError, AttributeError):
+                    # Some crap in the year
+                    del value['year']
     return value
 
 

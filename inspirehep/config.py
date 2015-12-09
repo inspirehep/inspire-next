@@ -133,6 +133,12 @@ SEARCH_QUERY_WALKERS = [
 CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
 CELERY_ACCEPT_CONTENT = ["msgpack"]
 
+# Needed for Celery beat to be scheduled correctly in our timezone
+CELERY_TIMEZONE = 'Europe/Amsterdam'
+
+# Performance boost as long as we do not use rate limits on tasks
+CELERY_DISABLE_RATE_LIMITS = True
+
 BROKER_URL = "amqp://guest:guest@localhost:5672//"
 
 # Site name configuration

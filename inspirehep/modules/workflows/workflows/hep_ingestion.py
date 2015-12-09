@@ -32,7 +32,11 @@ from inspirehep.modules.predicter.tasks import (
     guess_coreness,
 )
 
-from inspirehep.modules.workflows.models import Payload, create_payload
+from inspirehep.modules.workflows.models import (
+    SIPWorkflowMixin,
+    Payload,
+    create_payload,
+)
 from inspirehep.modules.workflows.tasks.actions import (
     add_core_check,
     halt_record,
@@ -68,8 +72,6 @@ from invenio_workflows.tasks.logic_tasks import (
     workflow_if,
 )
 
-import six
-
 
 class ClassProperty(property):
 
@@ -80,8 +82,7 @@ class ClassProperty(property):
         return self.fget.__get__(None, owner)()
 
 
-class hep_ingestion(DepositionType):
-
+class hep_ingestion(SIPWorkflowMixin, DepositionType):
     """Generic HEP ingestion workflow for a single record.
 
     This workflow is built upon a set of steps that can be overridden.
@@ -192,17 +193,6 @@ class hep_ingestion(DepositionType):
     workflow = ClassProperty(get_workflow)
 
     @staticmethod
-    def get_title(bwo):
-        """Return title."""
-        if isinstance(bwo.data, dict):
-            model = hep_ingestion.model(bwo)
-            record = get_record_from_model(model)
-            titles = record.get("titles.title")
-            if titles:
-                return titles[0]
-        return "No title available"
-
-    @staticmethod
     def get_description(bwo):
         """Get the description column part."""
         if not isinstance(bwo.data, dict):
@@ -240,68 +230,3 @@ class hep_ingestion(DepositionType):
                                categories=categories,
                                abstract=abstract,
                                identifiers=final_identifiers)
-
-    @staticmethod
-    def get_additional(bwo):
-        """Return rendered view for additional information."""
-        from inspirehep.modules.predicter.utils import get_classification_from_task_results
-
-        keywords = get_classification_from_task_results(bwo)
-        results = bwo.get_tasks_results()
-        prediction_results = results.get("arxiv_guessing", {})
-        if prediction_results:
-            prediction_results = prediction_results[0].get("result")
-        return render_template(
-            'workflows/styles/harvesting_record_additional.html',
-            object=bwo,
-            keywords=keywords,
-            score=prediction_results.get("max_score"),
-            decision=prediction_results.get("decision")
-        )
-
-    @staticmethod
-    def get_sort_data(bwo, **kwargs):
-        """Return a dictionary of key values useful for sorting in Holding Pen."""
-        results = bwo.get_tasks_results()
-        prediction_results = results.get("arxiv_guessing", {})
-        if prediction_results:
-            prediction_results = prediction_results[0].get("result")
-            max_score = prediction_results.get("max_score")
-            decision = prediction_results.get("decision")
-            relevance_score = max_score
-            if decision == "CORE":
-                relevance_score += 10
-            elif decision == "Rejected":
-                relevance_score = (max_score * -1) - 10
-            return {
-                "max_score": prediction_results.get("max_score"),
-                "decision": prediction_results.get("decision"),
-                "relevance_score": relevance_score
-            }
-        else:
-            return {}
-
-    @staticmethod
-    def formatter(bwo, **kwargs):
-        """Nicely format the record."""
-        try:
-            model = hep_ingestion.model(bwo)
-            record = get_record_from_model(model)
-        except TypeError as err:
-            return "Error: {0}".format(err)
-        return render_template(
-            'format/record/Holding_Pen_HTML_detailed.tpl',
-            record=record
-        )
-
-    @classmethod
-    def get_record(cls, obj, **kwargs):
-        """Return a dictionary-like object representing the current object.
-
-        This object will be used for indexing and be the basis for display
-        in Holding Pen.
-        """
-        if isinstance(obj.data, six.text_type):
-            return {}
-        model = cls.model(obj)
-        return get_record_from_model(model).dumps()  # Turn into pure dict

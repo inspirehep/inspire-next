@@ -244,7 +244,7 @@ class WorkflowTest(WorkflowTasksTestCase):
         )
 
         # Mock Elasticsearch search for Holding Pen check
-        search.return_value = []
+        search.return_value = ([], 0)
 
         responses.add(
             responses.GET,
@@ -310,7 +310,7 @@ class WorkflowTest(WorkflowTasksTestCase):
         )
 
         # Mock Elasticsearch search for Holding Pen check
-        search.return_value = []
+        search.return_value = ([], 0)
 
         responses.add(
             responses.GET,

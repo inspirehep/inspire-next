@@ -25,7 +25,7 @@ from invenio_upgrader.api import op
 
 # Important: Below is only a best guess. You MUST validate which previous
 # upgrade you depend on.
-depends_on = [u'inspire_2015_10_01_update_workflow_data']
+depends_on = []
 
 
 def info():

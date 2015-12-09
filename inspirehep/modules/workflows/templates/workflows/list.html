@@ -18,33 +18,22 @@
 #}
 
 {% extends "workflows/list_base.html" %}
+{% from "workflows/macros.html" import batch_action_buttons %}
 
 {% block help_bar %}
 <div id="help-bar" class="row">
   <div class="pull-left">
     <p class="text-muted">Ctrl+A: Select all, Esc: Deselect</p>
   </div>
-  <div id="batch-action-buttons" class="pull-right hidden">
-    <span class="text-muted">{{ _("For all selected") }}: </span>
-    <div class="btn-group" role="group">
-      <button class="btn btn-success hep-approval-action-accept batch-button" role="button" data-value="accept_core">
-        <i class="fa fa-check"></i> CORE
-      </button>
-      <button class="btn btn-warning hep-approval-action-accept batch-button" role="button" data-value="accept">
-        <i class="fa fa-check"></i> Accept
-      </button>
-      <button class="btn btn-danger hep-approval-action-reject batch-button"  role="button" data-value="reject">
-        <i class="fa fa-times"></i> Reject
-      </button>
-    </div>
-  </div>
+
+  {{ batch_action_buttons() }}
 </div>
 {% endblock %}
 
 {% block navigation_sort_selection %}
   <li class="dropdown">
     <a class="dropdown-toggle dropdown-headline" data-toggle="dropdown" href="#">{{ _('Sort') }}<b class="caret"></b></a>
-    <ul id="sort-menu" class="dropdown-menu" role="menu">
+    <ul id="hp-sort-menu" class="dropdown-menu" role="menu">
         <li><a class="task-btn" name="created_desc">{{ _("Newest")}}</a></li>
         <li><a class="task-btn" name="created">{{ _("Oldest")}}</a></li>
         <li><a class="task-btn" name="modified_desc">{{ _("Recently updated")}}</a></li>
@@ -53,4 +42,8 @@
         <li><a class="task-btn" name="relevance_score">{{ _("Least relevant")}}</a></li>
     </ul>
   </li>
+{% endblock %}
+
+{% block batch_action_buttons_bottom %}
+    {{ batch_action_buttons() }}
 {% endblock %}
