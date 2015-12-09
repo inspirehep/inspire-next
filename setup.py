@@ -50,7 +50,6 @@ requirements = [
     'invenio-oauth2server==0.1.1',
     'invenio-oauthclient==0.1.1',
     'invenio-pidstore[datacite]==0.1.2',
-    'invenio-query-parser==0.3.0',
     'invenio-testing==0.1.1',
     'invenio-unapi==0.1.1',
     'invenio-upgrader==0.2.0',
