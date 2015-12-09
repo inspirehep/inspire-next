@@ -106,14 +106,14 @@ class literature(SIPWorkflowMixin, SimpleRecordDeposition):
         # Create the submission information package by merging form data
         # from all drafts (in this case only one draft exists).
         prepare_sip(),
+        halt_to_render,
         dump_record_sip(),
         # Process metadata to match your JSONAlchemy record model. This will
         # call process_sip_metadata() on your subclass.
-        process_sip_metadata(),
         add_submission_extra_data,
+        process_sip_metadata(),
         # Generate MARC based on metadata dictionary.
         finalize_record_sip(processor=hep2marc),
-        halt_to_render,
         create_ticket(template="deposit/tickets/curator_submitted.html",
                       queue="HEP_add_user",
                       ticket_id_key="ticket_id"),

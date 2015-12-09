@@ -158,7 +158,7 @@ class SIPWorkflowMixin(object):
                 return "This submission is disabled: {0}.".format(obj.workflow.name)
             record = get_record_from_model(model)
             if record:
-                titles = filter(None, record.get("titles.title"))
+                titles = filter(None, record.get("titles.title", []))
                 if titles:
                     # Show first title that evaluates to True
                     return titles[0]
