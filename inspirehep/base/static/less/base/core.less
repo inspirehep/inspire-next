@@ -62,3 +62,23 @@ body {
     top: 128px !important;
     right: 30px !important;
 }
+
+/* External links styling
+================================================== */
+
+a[href^="http://"]:after, a[href^="https://"]:after {
+  content: "\f08e";
+  font-size: 80%;
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  text-decoration: none;
+  padding-left: 3px;
+}
+
+a.no-external-icon:after {
+  content: "";
+  padding-left: 0;
+  display: inline;
+}

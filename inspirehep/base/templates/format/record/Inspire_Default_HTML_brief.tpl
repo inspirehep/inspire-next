@@ -96,7 +96,7 @@
               {% if record.get('arxiv_eprints') | is_list() %}
                 {% set eprints = record.get('arxiv_eprints') %}
                 {% for eprint in eprints %}
-                  <a type="button" class="btn custom-btn btn-warning link-to-pdf" href="http://arxiv.org/pdf/{{ eprint.get('value') | sanitize_arxiv_pdf }}"><i class="fa fa-eye"></i> PDF </a>
+                  <a type="button" class="btn custom-btn btn-warning link-to-pdf no-external-icon" href="http://arxiv.org/pdf/{{ eprint.get('value') | sanitize_arxiv_pdf }}">PDF</a>
                 {% endfor %}
               {% endif %}
             {% endif %}
