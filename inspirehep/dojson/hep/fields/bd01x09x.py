@@ -205,7 +205,7 @@ def languages(self, key, value):
     languages = self.get('languages', [])
     for value in values:
         if value.get('a'):
-            languages.append(value)
+            languages.append(value.get('a'))
     return languages
 
 
