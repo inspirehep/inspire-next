@@ -312,9 +312,9 @@ def field_categories(self, key, value):
 
     def get_value(value):
         if isinstance(value, dict):
-            name = value.get('a', '').lower()
+            name = value.get('a', '')
         else:
-            name = value.lower()
+            name = value
         return name
 
     field_categories = self.get('field_categories', [])

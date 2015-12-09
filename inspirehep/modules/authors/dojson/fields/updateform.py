@@ -43,9 +43,9 @@ def status(self, key, value):
 @updateform.over('_display_name', '^display_name$')
 def display_name(self, key, value):
     if 'name' in self:
-        self['name']['display_name'] = value
+        self['name']['preferred_name'] = value
     else:
-        self['name'] = dict(display_name=value)
+        self['name'] = dict(preferred_name=value)
 
 
 @updateform.over('_websites', '^websites$')
@@ -56,7 +56,7 @@ def websites(self, key, value):
             "value": website["webpage"],
             "description": ""
         })
-    if 'url' in self:
+    if 'urls' in self:
         self['urls'].extend(urls)
     else:
         self['urls'] = urls
@@ -163,6 +163,8 @@ def institution_history(self, key, value):
             "status": "current" if position["current"] else "",
             "start_date": position["start_year"],
             "end_date": position["end_year"],
+            "email": position["email"],
+            "old_email": position["old_email"],
             "rank": position["rank"] if position["rank"] != "rank" else ""
         })
 

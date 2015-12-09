@@ -102,9 +102,11 @@ def convert_for_form(data):
             pos["start_year"] = position.get("start_date", "")
             pos["end_year"] = position.get("end_date", "")
             pos["current"] = True if position.get("status") else False
-            data["institution_history"].append(pos)
+            pos["old_email"] = position.get("old_email", "")
             if position.get("email"):
+                pos["email"] = position.get("email", "")
                 data["public_email"] = position.get("email")
+            data["institution_history"].append(pos)
         data["institution_history"].reverse()
     if "phd_advisors" in data:
         phd_advisors = data["phd_advisors"]
@@ -133,10 +135,8 @@ def validate():
     """Validate form and return validation errors."""
     if request.method != 'POST':
         abort(400)
-
     data = request.json or MultiDict({})
     formdata = MultiDict(data or {})
-
     form = AuthorUpdateForm(formdata=formdata)
     form.validate()
 
@@ -255,7 +255,7 @@ def holdingpenreview(objectid, approved, ticket):
 def reviewhandler(objectid):
     """Form handler when a cataloger accepts an author review."""
     from inspirehep.modules.forms.utils import DataExporter
-    from invenio.modules.workflows.models import BibWorkflowObject
+    from invenio_workflows.models import BibWorkflowObject
 
     if not objectid:
         abort(400)

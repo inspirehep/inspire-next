@@ -386,6 +386,7 @@ def setup_app(app):
         re_initials = r'(?P<initial>\w)([\w`\']+)?.?\s*'
         ADSURL = 'http://adsabs.harvard.edu/cgi-bin/author_form?'
         author = record['name']['value']
+        initialmatch = None
         if author:
             amatch = re.search(re_last_first, author)
         if amatch:
@@ -401,5 +402,5 @@ def setup_app(app):
             link = "%sauthor=%s,+%s&fullauthor=%s,+%s" % \
                 (ADSURL, lastname, initial, lastname, firstnames)
         else:
-            link = "%sauthor=%s" % (ADSURL, record['name']['display_name'])
+            link = "%sauthor=%s" % (ADSURL, record['name']['preferred_name'])
         return link

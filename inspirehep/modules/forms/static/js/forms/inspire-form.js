@@ -881,10 +881,12 @@ define(function(require, exports, module) {
     /**
      * Hide completely hidden fields to avoid seeing labels.
      * "not" part excludes field list elements e.g. authors
+     * and elements inside a dynamic field list.
      */
     this.hideHiddenFields = function(ev, data) {
       $('input[type="hidden"]')
         .not('[id$="__last_index__"]')
+        .not('.dynamic-field-list input')
         .parents('.form-group')
         .hide();
     }
@@ -902,7 +904,7 @@ define(function(require, exports, module) {
      * Disable form submit on ENTER
      */
     this.preventFormSubmit = function(ev, data) {
-        $(this.attr.formSelector).bind('keydown', function(e) {
+        $(this.attr.formSelector + ' ' + 'input').bind('keydown', function(e) {
           if (e.keyCode == 13) {
             e.preventDefault();
           }

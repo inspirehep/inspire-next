@@ -153,6 +153,10 @@ class InstitutionInlineForm(WebDepositForm):
         widget=currentCheckboxWidget
     )
 
+    email = fields.HiddenField()
+
+    old_email = fields.HiddenField()
+
 
 class ExperimentsInlineForm(WebDepositForm):
 
@@ -374,33 +378,33 @@ class AuthorUpdateForm(WebDepositForm):
         widget=DynamicUnsortedWidget()
     )
 
-    research_field_options = [("acc-phys", _("acc-phys")),
-                              ("astro-ph", _("astro-ph")),
-                              ("atom-ph", _("atom-ph")),
-                              ("chao-dyn", _("chao-dyn")),
-                              ("climate", _("climate")),
-                              ("comp", _("comp")),
-                              ("cond-mat", _("cond-mat")),
-                              ("genl-th", _("genl-th")),
-                              ("gr-qc", _("gr-qc")),
-                              ("hep-ex", _("hep-ex")),
-                              ("hep-lat", _("hep-lat")),
-                              ("hep-ph", _("hep-ph")),
-                              ("hep-th", _("hep-th")),
-                              ("instr", _("instr")),
-                              ("librarian", _("librarian")),
-                              ("math", _("math")),
-                              ("math-ph", _("math-ph")),
-                              ("med-phys", _("med-phys")),
-                              ("nlin", _("nlin")),
-                              ("nucl-ex", _("nucl-ex")),
-                              ("nucl-th", _("nucl-th")),
-                              ("physics", _("physics")),
-                              ("plasma-phys", _("plasma-phys")),
-                              ("q-bio", _("q-bio")),
-                              ("quant-ph", _("quant-ph")),
-                              ("ssrl", _("ssrl")),
-                              ("other", _("other"))]
+    research_field_options = [("ACC-PHYS", _("acc-phys")),
+                              ("ASTRO-PH", _("astro-ph")),
+                              ("ATOM-PH", _("atom-ph")),
+                              ("CHAO-DYN", _("chao-dyn")),
+                              ("CLIMATE", _("climate")),
+                              ("COMP", _("comp")),
+                              ("COND-MAT", _("cond-mat")),
+                              ("GENL-TH", _("genl-th")),
+                              ("GR-QC", _("gr-qc")),
+                              ("HEP-EX", _("hep-ex")),
+                              ("HEP-LAT", _("hep-lat")),
+                              ("HEP-PH", _("hep-ph")),
+                              ("HEP-TH", _("hep-th")),
+                              ("INSTR", _("instr")),
+                              ("LIBRARIAN", _("librarian")),
+                              ("MATH", _("math")),
+                              ("MATH-PH", _("math-ph")),
+                              ("MED-PHYS", _("med-phys")),
+                              ("NLIN", _("nlin")),
+                              ("NUCL-EX", _("nucl-ex")),
+                              ("NUCL-TH", _("nucl-th")),
+                              ("PHYSICS", _("physics")),
+                              ("PLASMA-PHYS", _("plasma-phys")),
+                              ("Q-BIO", _("q-bio")),
+                              ("QUANT-PH", _("quant-ph")),
+                              ("SSRL", _("ssrl")),
+                              ("OTHER", _("other"))]
 
     research_field = fields.SelectMultipleField(
         label=_('Field of Research'),

@@ -48,8 +48,8 @@ define([
         },
         filter: function(response) {
           return response.sort(function(a, b) {
-            if (a.experiment_name < b.experiment_name) return -1;
-            if (a.experiment_name > b.experiment_name) return 1;
+            if (a.experiment_name.experiment[0] < b.experiment_name.experiment[0]) return -1;
+            if (a.experiment_name.experiment[0] > b.experiment_name.experiment[0]) return 1;
             return 0;
           })
         }
@@ -80,13 +80,15 @@ define([
           callback(suggestions);
         }.bind(this));
       }.bind(this),
-      displayKey: 'display_name',
+      displayKey: function(data) {
+        return data.experiment_name.experiment[0];
+      },
       templates: {
         empty: function(data) {
           return 'Cannot find this experiment in our database.';
         },
         suggestion: function(data) {
-          data.display_name = data.experiment_name[0];
+          data.display_name = data.experiment_name.experiment[0];
           return suggestionTemplate.render.call(suggestionTemplate, data);
         }.bind(this)
       }

@@ -57,7 +57,7 @@ class authorupdate(WorkflowBase):
     def get_description(bwo):
         """Return description of object."""
         return "Updating author {}".format(
-            bwo.get_data().get("name", {}).get("display_name")
+            bwo.get_data().get("name", {}).get("preferred_name")
         )
 
     @staticmethod
