@@ -16,12 +16,13 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
-
 {%- extends "page.html" -%}
+
+{% from "search/helpers.html" import search_form_javascript %}
 
 {% block global_bundles %}
   {{ super() }}
-  {% bundles "collection.css" %}
+  {% bundles "search.js", "collection.css" %}
 {% endblock %}
 
 {%- block header %}
@@ -39,3 +40,7 @@
     </div>
   {% endblock %}
 {% endblock %}
+
+{% block javascript %}
+  {{ search_form_javascript() }}
+{% endblock javascript %}
