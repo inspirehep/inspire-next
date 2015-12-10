@@ -985,7 +985,7 @@
             "items": {
                 "type": "string",
                 "description": "FIXME: we shall provide the ISO enum",
-                "title": "Language",
+                "title": "Language"
             }
         },
         "page_nr": {
@@ -1084,7 +1084,7 @@
                 "properties": {
                     "source": {
                         "type": "string",
-                        "description": "Provenance of the persistent identifier",
+                        "description": "Provenance of the persistent identifier"
                     },
                     "type": {
                         "type": "string",
