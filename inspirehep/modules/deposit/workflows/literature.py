@@ -110,8 +110,8 @@ class literature(SIPWorkflowMixin, SimpleRecordDeposition):
         dump_record_sip(),
         # Process metadata to match your JSONAlchemy record model. This will
         # call process_sip_metadata() on your subclass.
-        add_submission_extra_data,
         process_sip_metadata(),
+        add_submission_extra_data,
         # Generate MARC based on metadata dictionary.
         finalize_record_sip(processor=hep2marc),
         create_ticket(template="deposit/tickets/curator_submitted.html",
@@ -228,7 +228,6 @@ class literature(SIPWorkflowMixin, SimpleRecordDeposition):
     @classmethod
     def process_sip_metadata(cls, deposition, metadata):
         from ..dojson.model import literature
-
         form_fields = copy.deepcopy(metadata)
 
         filter_empty_elements(metadata)
@@ -359,6 +358,7 @@ class literature(SIPWorkflowMixin, SimpleRecordDeposition):
                     'source': 'submitter'
                 }
             )
+            metadata["extra_comments"] = form_fields.get("extra_comments")
         # ======================================
         # Journal name Knowledge Base conversion
         # ======================================

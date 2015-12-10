@@ -36,7 +36,7 @@ from invenio_deposit.field_widgets import ColumnInput, \
     ItemWidget, \
     DynamicListWidget, \
     DynamicItemWidget
-from invenio_deposit.autocomplete_utils import kb_dynamic_autocomplete
+
 from invenio_deposit.validation_utils import DOISyntaxValidator
 
 from .fields import ArXivField
