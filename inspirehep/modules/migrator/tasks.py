@@ -45,7 +45,7 @@ from inspirehep.dojson.processors import _collection_in_record
 from inspirehep.dojson.utils import legacy_export_as_marc
 from inspirehep.dojson.hep import hep2marc
 
-from inspirehep.modules.workflows.dojson import bibfield
+from inspirehep.modules.workflows.dojson import bibfield, author_bibfield
 from inspirehep.modules.workflows.models import Payload
 
 from invenio_celery import celery
@@ -316,6 +316,10 @@ def migrate_workflow_object(obj_id):
                 sip.metadata = bibfield.do(sip.metadata)
                 sip.package = legacy_export_as_marc(hep2marc.do(sip.metadata))
                 d.save()
+        elif obj.workflow.name in ("authornew", "authorupdate"):
+            data = obj.get_data()
+            obj.set_data(author_bibfield.do(data))
+            obj.save()
         else:
             obj.save()  # To update and trigger indexing
         reset_workflow_object_states(obj)

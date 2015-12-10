@@ -25,3 +25,5 @@
 from dojson import Overdo
 
 bibfield = Overdo()
+
+author_bibfield = Overdo()
