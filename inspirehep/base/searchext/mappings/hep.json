@@ -73,6 +73,15 @@
                     "type": "string",
                     "copy_to": ["experimentautocomplete"]
                 },
+                "dois": {
+                    "type": "object",
+                        "properties": {
+                            "value": {
+                                "type": "string",
+                                "index": "not_analyzed"
+                            }
+                    }
+                },
                 "report_numbers": {
                     "type": "object",
                     "properties": {
