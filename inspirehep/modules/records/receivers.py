@@ -1,24 +1,21 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2014, 2015 CERN.
 #
-# INSPIRE is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-#
-# In applying this license, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as an Intergovernmental Organization
-# or submit itself to any jurisdiction.
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 from invenio_records.signals import before_record_index
 
@@ -78,3 +75,29 @@ def populate_inspire_document_type(recid, json):
                                  s['primary'].lower() in
                                  ('review', 'lectures')])
     json['facet_inspire_doc_type'] = inspire_doc_type
+
+
+@before_record_index.connect
+def match_valid_experiments(recid, json):
+    """Matches misspelled experiment names with valid experiments.
+       Tries to match with valid experiments by matching lowercased and
+       whitespace-free versions of known experiments.
+    """
+    experiments = json.get("accelerator_experiments")
+    if experiments:
+        for exp in experiments:
+            # FIXME: These lists are temporary. We should have a list of experiment names
+            # that is generated from the current state of our data.
+            from .experiment_list import EXPERIMENTS_NAMES as experiments_list_original, experiments_list
+            experiment = exp.get("experiment")
+            experiment = experiment.lower()
+            experiment = experiment.replace(' ', '')
+            try:
+                # Check if normalized form of experiment is in the list of
+                # valid experiments
+                x = experiments_list.index(experiment)
+                facet_experiment = experiments_list_original[x]
+            except ValueError:
+                # If the experiment cannot be matched it is considered valid
+                facet_experiment = exp.get("experiment")
+            exp.update({"facet_experiment": facet_experiment})
