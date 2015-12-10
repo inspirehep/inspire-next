@@ -269,7 +269,7 @@ def create_record(data, force=False, dry_run=False):
             if record is None:
                 # Adds the record to the db session.
                 rec = RecordModel(id=control_number)
-                db.session.add(rec)
+                db.session.merge(rec)
                 record = Record.create(json)
             else:
                 record = Record(json, model=record.model)
