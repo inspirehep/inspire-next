@@ -297,11 +297,8 @@ CFG_WEBSEARCH_DEF_RECORDS_IN_GROUPS = 25
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
 # invenio keywords to elasticsearch fields
 SEARCH_ELASTIC_KEYWORD_MAPPING = {
-    "author": {
-        'a': ["authors.full_name"],
-        'p': ["authors.full_name"],
-        'e': ['exactauthor.raw'],
-    },
+    "author": ["authors.full_name"],
+    "exactauthor": ["exactauthor.raw"],
     "abstract": ["abstracts.value"],
     "collection": ["_collections"],
     "doi": ["dois.value"],
