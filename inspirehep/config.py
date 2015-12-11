@@ -444,3 +444,58 @@ SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
 }
 
 SEARCH_ELASTIC_DEFAULT_INDEX = 'hep'
+
+WORKFLOWS_HOLDING_PEN_ES_PROPERTIES = {
+    # BibWorkflowObject model related fields
+    "status": {
+        "type": "string",
+        "index": "not_analyzed"
+    },
+    "version": {
+        "type": "string",
+        "index": "not_analyzed"
+    },
+    "type": {
+        "type": "string",
+        "index": "not_analyzed"
+    },
+    "created": {
+        "type": "date"
+    },
+    "modified": {
+        "type": "date"
+    },
+    "uri": {
+        "type": "string",
+        "index": "not_analyzed"
+    },
+    "id_workflow": {
+        "type": "string",
+        "index": "not_analyzed"
+    },
+    "id_user": {
+        "type": "integer",
+        "index": "not_analyzed"
+    },
+    "id_parent": {
+        "type": "integer",
+        "index": "not_analyzed"
+    },
+    "workflow": {
+        "type": "string",
+        "index": "not_analyzed"
+    },
+    # HEP workflow related fields
+    "relevance_score": {
+        "type": "double",
+    },
+    "decision": {
+        "type": "string",
+        "index": "not_analyzed"
+    },
+    "max_score": {
+        "type": "double"
+    }
+}
+"""Updates default properties that should be added to the Holding Pen index
+mappings."""
