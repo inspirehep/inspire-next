@@ -153,7 +153,7 @@ def remove_legacy_tables():
 
 def recreate_index(name, mapping):
     """Recreate an ElasticSearch index."""
-    es.indices.delete(index=name, ignore=404)
+    es.indices.delete(index=name + "_v1", ignore=404)
     es.indices.create(index=name + "_v1", body=mapping)
     es.indices.put_alias(index=name + "_v1", name=name)
 
