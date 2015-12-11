@@ -181,10 +181,28 @@
 </div>
 {% endmacro %}
 
+{% macro render_no_results() %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default no-results">
+        <div class="panel-body">
+          <p class="text-left">Your search <b>"{{ request.args.get('p') }}"</b> did not match any results. Please modify your query.</p>
+          <p class="text-left">You can <a href="https://inspirehep.net/info/hep/search-tips" target="_blank">visit our search tips</a> or <a href="#" id="send-feedback-link">send us some feedback</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endmacro%}
+
 {% if not request.is_xhr %}
 {% extends 'search/searchbar_frame.html' %}
 {% block inner_content %}
-{{ render_search_results(records, collection, pagination, format_record) }}
+  {% if records|count != 0 %}
+    {{ render_search_results(records, collection, pagination, format_record) }}
+  {% else %}
+    {{ render_no_results() }}
+  {% endif %}
 {% endblock %}
 {% else %}
   {{ render_search_results(records, collection, pagination, format_record) }}
@@ -219,6 +237,10 @@
       FacetsMenu.attachTo(context.facetsMenuSelector, context);
       Search.attachTo(document, context);
       SearchResults.attachTo(document, context);
+      $("#send-feedback-link").on("click", function(e) {
+        e.preventDefault();
+        $(".feedback-fixed-left").click()
+      });
       $(document).trigger("initSearch");
     });
   </script>
