@@ -22,8 +22,8 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from .fields import bibfield as bibfields
+from .fields import bibfield as bibfields, author_bibfield as author_bibfields
 
-from .model import bibfield
+from .model import bibfield, author_bibfield
 
-__all__ = ('bibfield',)
+__all__ = ('bibfield', 'author_bibfield')
