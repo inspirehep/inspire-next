@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -26,7 +26,6 @@ import os
 import pkg_resources
 import tempfile
 
-import httpretty
 import responses
 
 from invenio_celery import celery
@@ -207,24 +206,56 @@ class WorkflowTest(WorkflowTasksTestCase):
                                          os.path.basename(filename)))
         BibWorkflowObject.delete(obj)
 
-    @httpretty.activate
-    def test_harvesting_workflow_with_match(self):
-        """Test an harvesting workflow when the record already exists."""
-        from invenio_base.globals import cfg
+    @responses.activate
+    @patch('invenio_workflows.search.search')
+    def test_harvesting_workflow_with_match(self, search):
+        """Test an harvesting workflow when the record already exists in Holding Pen."""
         from invenio_workflows.api import start
 
+        # Mock Elasticsearch search for Holding Pen check
+        search.return_value = (["1"], 1)
+
         # Mock Elasticsearch DELETE hook
-        httpretty.register_uri(
-            httpretty.DELETE,
+        responses.add(
+            responses.DELETE,
             re.compile(".*holdingpen-.*/record/(\d+)"),
             status=404
         )
 
-        httpretty.register_uri(
-            httpretty.GET,
-            cfg['WORKFLOWS_MATCH_REMOTE_SERVER_URL'],
-            body='[1212]',
-            status=200
+        # Mock check in record database
+        responses.add(
+            responses.GET,
+            re.compile(".*hep/record/_search"),
+            status=200,
+            body="""{
+               "hits": {
+                  "total": 0,
+                  "max_score": null,
+                  "hits": []
+               }
+            }""",
+            content_type="application/json"
+        )
+
+        # Mock check in Holding Pen
+        responses.add(
+            responses.GET,
+            re.compile(".*holdingpen-.*/record/_search"),
+            status=200,
+            body="""{
+               "hits": {
+                  "total": 0,
+                  "max_score": null,
+                  "hits": [{
+                      "_index": "hep_v1",
+                      "_type": "record",
+                      "_id": "1",
+                      "_score": 1,
+                      "_source": {}
+                  }]
+               }
+            }""",
+            content_type="application/json"
         )
 
         workflow = start('harvesting_fixture',
@@ -237,7 +268,6 @@ class WorkflowTest(WorkflowTasksTestCase):
     @patch('invenio_workflows.search.search')
     def test_harvesting_workflow_rejected(self, search):
         """Test a full harvesting workflow."""
-        from invenio_base.globals import cfg
         from invenio_workflows.api import start
         from inspirehep.utils.helpers import (
             get_record_from_obj,
@@ -246,11 +276,19 @@ class WorkflowTest(WorkflowTasksTestCase):
         # Mock Elasticsearch search for Holding Pen check
         search.return_value = ([], 0)
 
+        # Mock matching checks
         responses.add(
             responses.GET,
-            cfg['WORKFLOWS_MATCH_REMOTE_SERVER_URL'],
-            body='[]',
-            status=200
+            re.compile(".*record/_search"),
+            status=200,
+            body="""{
+               "hits": {
+                  "total": 0,
+                  "max_score": null,
+                  "hits": []
+               }
+            }""",
+            content_type='application/json'
         )
 
         responses.add(
@@ -312,11 +350,19 @@ class WorkflowTest(WorkflowTasksTestCase):
         # Mock Elasticsearch search for Holding Pen check
         search.return_value = ([], 0)
 
+        # Mock matching checks
         responses.add(
             responses.GET,
-            cfg['WORKFLOWS_MATCH_REMOTE_SERVER_URL'],
-            body='[]',
-            status=200
+            re.compile(".*record/_search"),
+            status=200,
+            body="""{
+               "hits": {
+                  "total": 0,
+                  "max_score": null,
+                  "hits": []
+               }
+            }""",
+            content_type='application/json'
         )
 
         responses.add(

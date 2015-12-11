@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -35,10 +35,10 @@ class MatchingTests(InvenioTestCase):
     """Tests for the matching."""
 
     def setup_class(self):
-        """TODO."""
+        """Sets up Mock object."""
         class MockObj(object):
             def __init__(self):
-                self._extra_data = {'recid': [], 'url': []}
+                self._extra_data = {'record_matches': {}}
 
             @property
             def extra_data(self):
@@ -166,7 +166,7 @@ class MatchingTests(InvenioTestCase):
     @mock.patch('inspirehep.modules.workflows.tasks.matching.match_by_arxiv_id', return_value=[1])
     @mock.patch('inspirehep.modules.workflows.tasks.matching.match_by_doi', return_value=[2])
     def test_match_task_both_with_result(self, match_by_doi, match_by_arxiv_id, get_record_from_model):
-        """TODO."""
+        """Check result for match with both arXiv and DOI."""
         from invenio_records.api import Record
         from inspirehep.modules.workflows.tasks.matching import match
 
@@ -179,13 +179,13 @@ class MatchingTests(InvenioTestCase):
         result = match(obj, eng)
 
         self.assertTrue(result)
-        self.assertTrue(1 == obj.extra_data['recid'] or 2 == obj.extra_data['recid'])
+        self.assertTrue(len(obj.extra_data['record_matches']['recids']) == 2)
 
     @mock.patch('inspirehep.modules.workflows.tasks.matching.get_record_from_model')
     @mock.patch('inspirehep.modules.workflows.tasks.matching.match_by_arxiv_id', return_value=[1])
     @mock.patch('inspirehep.modules.workflows.tasks.matching.match_by_doi', return_value=[])
     def test_match_task_with_arxiv_id_result(self, match_by_doi, match_by_arxiv_id, get_record_from_model):
-        """TODO."""
+        """Check result for match with arXiv."""
         from invenio_records.api import Record
         from inspirehep.modules.workflows.tasks.matching import match
 
@@ -198,13 +198,13 @@ class MatchingTests(InvenioTestCase):
         result = match(obj, eng)
 
         self.assertTrue(result)
-        self.assertEqual(1, obj.extra_data['recid'])
+        self.assertEqual(["1"], obj.extra_data['record_matches']['recids'])
 
     @mock.patch('inspirehep.modules.workflows.tasks.matching.get_record_from_model')
     @mock.patch('inspirehep.modules.workflows.tasks.matching.match_by_arxiv_id', return_value=[])
     @mock.patch('inspirehep.modules.workflows.tasks.matching.match_by_doi', return_value=[2])
     def test_match_task_second_with_doi_result(self, match_by_doi, match_by_arxiv_id, get_record_from_model):
-        """TODO."""
+        """Check result for match with DOI."""
         from invenio_records.api import Record
         from inspirehep.modules.workflows.tasks.matching import match
 
@@ -217,13 +217,13 @@ class MatchingTests(InvenioTestCase):
         result = match(obj, eng)
 
         self.assertTrue(result)
-        self.assertEqual(2, obj.extra_data['recid'])
+        self.assertEqual(["2"], obj.extra_data['record_matches']['recids'])
 
     @mock.patch('inspirehep.modules.workflows.tasks.matching.get_record_from_model')
     @mock.patch('inspirehep.modules.workflows.tasks.matching.match_by_arxiv_id', return_value=[])
     @mock.patch('inspirehep.modules.workflows.tasks.matching.match_by_doi', return_value=[])
     def test_match_task_without_result(self, match_by_doi, match_by_arxiv_id, get_record_from_model):
-        """TODO."""
+        """Check result for no matches."""
         from invenio_records.api import Record
         from inspirehep.modules.workflows.tasks.matching import match
 
@@ -236,33 +236,36 @@ class MatchingTests(InvenioTestCase):
         result = match(obj, eng)
 
         self.assertFalse(result)
-        self.assertEqual([], obj.extra_data['recid'])
+        self.assertEqual([], obj.extra_data['record_matches']['recids'])
 
     @mock.patch('inspirehep.modules.workflows.tasks.matching.get_record_from_model')
     @mock.patch('inspirehep.modules.workflows.tasks.matching._match')
     def test_match_with_invenio_matcher_task_with_result(self, _match, get_record_from_model):
-        """TODO."""
+        """Check invenio-matcher multiple results."""
         from invenio_records.api import Record
+        from invenio_matcher.models import MatchResult
         from inspirehep.modules.workflows.tasks.matching import match_with_invenio_matcher
 
         obj = self.MockObj()
         eng = self.MockEng()
 
-        # FIXME(jacquerie): should yield a MatchResult.
-        _match.return_value.__iter__.return_value = iter([1, 2])
+        _match.return_value.__iter__.return_value = iter([
+            MatchResult(Record({"control_number": "1"}), 1.0),
+            MatchResult(Record({"control_number": "2"}), 1.0),
+        ])
 
         record = Record({'titles': [{'title': 'foo'}]})
         get_record_from_model.return_value = record
 
-        result = match_with_invenio_matcher(obj, eng)
+        result = match_with_invenio_matcher()(obj, eng)
 
         self.assertTrue(result)
-        self.assertTrue(1 in obj.extra_data['recid'] and 2 in obj.extra_data['recid'])
+        self.assertTrue(len(obj.extra_data['record_matches']['recids']) == 2)
 
     @mock.patch('inspirehep.modules.workflows.tasks.matching.get_record_from_model')
     @mock.patch('inspirehep.modules.workflows.tasks.matching._match')
     def test_match_with_invenio_matcher_task_without_result(self, _match, get_record_from_model):
-        """TODO."""
+        """Check invenio-matcher without results."""
         from invenio_records.api import Record
         from inspirehep.modules.workflows.tasks.matching import match_with_invenio_matcher
 
@@ -274,14 +277,14 @@ class MatchingTests(InvenioTestCase):
         record = Record({'titles': [{'title': 'foo'}]})
         get_record_from_model.return_value = record
 
-        result = match_with_invenio_matcher(obj, eng)
+        result = match_with_invenio_matcher()(obj, eng)
 
         self.assertFalse(result)
-        self.assertEqual([], obj.extra_data['recid'])
+        self.assertEqual([], obj.extra_data['record_matches']['recids'])
 
     @mock.patch('inspirehep.modules.workflows.tasks.matching.cfg', {'INSPIRE_ACCEPTED_CATEGORIES': ['foo']})
     def test_was_already_harvested_true(self):
-        """TODO."""
+        """Check already harvested check with match."""
         from invenio_records.api import Record
         from inspirehep.modules.workflows.tasks.matching import was_already_harvested
 
@@ -293,7 +296,7 @@ class MatchingTests(InvenioTestCase):
 
     @mock.patch('inspirehep.modules.workflows.tasks.matching.cfg', {'INSPIRE_ACCEPTED_CATEGORIES': ['foo']})
     def test_was_already_harvested_false(self):
-        """TODO."""
+        """Check already harvested check without match."""
         from invenio_records.api import Record
         from inspirehep.modules.workflows.tasks.matching import was_already_harvested
 
@@ -305,7 +308,7 @@ class MatchingTests(InvenioTestCase):
 
     @mock.patch('inspirehep.modules.workflows.tasks.matching.date_older_than', return_value=True)
     def test_is_too_old_earliest_date_true(self, date_older_than):
-        """TODO."""
+        """Check record is too old to harvest (earliest_date)."""
         from invenio_records.api import Record
         from inspirehep.modules.workflows.tasks.matching import is_too_old
 
@@ -317,7 +320,7 @@ class MatchingTests(InvenioTestCase):
 
     @mock.patch('inspirehep.modules.workflows.tasks.matching.date_older_than', return_value=True)
     def test_is_too_old_preprint_date_true(self, date_older_than):
-        """TODO."""
+        """Check record is too old to harvest (preprint_date)."""
         from invenio_records.api import Record
         from inspirehep.modules.workflows.tasks.matching import is_too_old
 
@@ -329,7 +332,7 @@ class MatchingTests(InvenioTestCase):
 
     @mock.patch('inspirehep.modules.workflows.tasks.matching.date_older_than', return_value=False)
     def test_is_too_old_false(self, date_older_than):
-        """TODO."""
+        """Check record is not too old to harvest."""
         from invenio_records.api import Record
         from inspirehep.modules.workflows.tasks.matching import is_too_old
 
@@ -341,7 +344,7 @@ class MatchingTests(InvenioTestCase):
 
     @mock.patch('inspirehep.modules.workflows.tasks.matching.BibWorkflowObject')
     def test_update_old_object_success(self, BWO):
-        """TODO."""
+        """Check update of old record."""
         from inspirehep.modules.workflows.tasks.matching import update_old_object
 
         class MockBWO(object):
@@ -372,7 +375,7 @@ class MatchingTests(InvenioTestCase):
         self.assertEqual(old_obj._data, 'foo')
 
     def test_update_old_object_failure(self):
-        """TODO."""
+        """Check record is not updated."""
         from inspirehep.modules.workflows.tasks.matching import update_old_object
 
         class MockLog(object):
