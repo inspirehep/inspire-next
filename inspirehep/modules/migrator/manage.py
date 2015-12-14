@@ -27,6 +27,8 @@ from __future__ import print_function
 import os
 import sys
 
+from time import sleep
+
 from flask import current_app
 from flask.ext.script import prompt_bool
 
@@ -151,20 +153,58 @@ def remove_legacy_tables():
         current_app.logger.exception(err)
 
 
-def recreate_index(name, mapping):
+def recreate_index(name, mapping, rebuild=False, delete_old=True):
     """Recreate an ElasticSearch index."""
-    es.indices.delete(index=name + "_v1", ignore=404)
-    es.indices.create(index=name + "_v1", body=mapping)
-    es.indices.put_alias(index=name + "_v1", name=name)
+    if rebuild:
+        print("Rebuilding {}...".format(name))
+        current_index = es.indices.get_alias(name).keys()[0]
+        future_index = name + '_v2' if current_index.endswith('_v1') else name + '_v1'
+        es.indices.delete(index=future_index, ignore=404)
+        es.indices.create(index=future_index, body=mapping)
+        es.indices.put_settings(index=current_index, body={'index': {'blocks': {'read_only': True}}})
+        code, answer = es.cat.transport.perform_request('POST', '/{}/_reindex/{}/'.format(current_index, future_index))
+        assert code == 200
+        assert answer['acknowledged']
+        reindex_name = answer['name']
+        while reindex_name in es.cat.transport.perform_request('GET', '/_reindex/')[1]['names']:
+            # Let's poll to wait for finishing
+            sleep(3)
+        es.indices.put_alias(index=future_index, name=name)
+        if delete_old:
+            es.indices.put_settings(index=current_index, body={'index': {'blocks': {'read_only': False}}})
+            es.indices.delete(index=current_index)
+        print("DONE.")
+    else:
+        es.indices.delete(index=name + "_v1", ignore=404)
+        es.indices.delete(index=name + "_v2", ignore=404)
+        es.indices.create(index=name + "_v1", body=mapping)
+        es.indices.put_alias(index=name + "_v1", name=name)
 
 
-@manager.command
-def create_indices():
+@manager.option('--rebuild', '-r', dest='rebuild',
+                action='store_true',
+                default=False,
+                help='Whether to rebuild indexes rather than just create them empty.')
+@manager.option('--holdingpen', '-h', dest='holdingpen',
+                action='store_true',
+                default=False,
+                help='Whether to reindex also the holdingpen indexes.')
+@manager.option('--delete-old', '-d', dest='delete_old',
+                action='store_true',
+                default=False,
+                help='Delete old index after the rebuild process has completed.')
+def create_indices(rebuild=False, holdingpen=True, delete_old=False):
     """Create or recreate the indices for records and holdingpen."""
     import json
 
     from invenio.base.globals import cfg
     from invenio_search.registry import mappings
+
+    if rebuild:
+        plugins = [plugin['name'] for plugin in es.nodes.info()['nodes'].values()[0]['plugins']]
+        if 'reindexing' not in plugins:
+            print("ERROR: Please install the ElasticSearch reindexing plugin if you want to rebuild indexes.", file=sys.stderr)
+            sys.exit(1)
 
     indices = set(cfg["SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING"].values())
     indices.add(cfg['SEARCH_ELASTIC_DEFAULT_INDEX'])
@@ -173,14 +213,15 @@ def create_indices():
         mapping_filename = index + ".json"
         if mapping_filename in mappings:
             mapping = json.load(open(mappings[mapping_filename], "r"))
-        recreate_index(index, mapping)
-        # Create Holding Pen index
-        if mapping:
-            mapping['mappings']['record']['properties'].update(
-                cfg['WORKFLOWS_HOLDING_PEN_ES_PROPERTIES']
-            )
-        name = cfg['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + index
-        recreate_index(name, mapping)
+        recreate_index(index, mapping, rebuild=rebuild)
+        if holdingpen:
+            # Create Holding Pen index
+            if mapping:
+                mapping['mappings']['record']['properties'].update(
+                    cfg['WORKFLOWS_HOLDING_PEN_ES_PROPERTIES']
+                )
+            name = cfg['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + index
+            recreate_index(name, mapping, rebuild=rebuild)
 
 
 @manager.command
