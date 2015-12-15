@@ -111,7 +111,7 @@
                 <i class="glyphicon glyphicon-calendar"></i> {{ record.get('earliest_date').split('-')[0] }}<br/>
               {% endif %}
               {% if  record.get('citation_count') > 0  %}
-                <i class="fa fa-quote-left"></i><span><a href="/record/{{ record.get('control_number') }}#citations"  target="_blank"> Cited {{ record.get('citation_count') }} times</a></span><br/>
+                <i class="fa fa-quote-left"></i><span><a href="/search?p=refersto:{{ record.get('control_number') }}"> Cited {{ record.get('citation_count') }} times</a></span><br/>
               {% else %}
                 <i class="fa fa-quote-left"></i><span> Cited 0 times</span><br/>
               {% endif %}
