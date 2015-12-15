@@ -22,8 +22,17 @@
 
 """HEP model definition."""
 
+import types
 from dojson import Overdo
-from dojson import utils
+
+
+def custom_do(self, blob):
+    """Custom do function that allows extra post-processing."""
+    record = self._do(blob)
+    return record
 
 hep = Overdo()
+hep._do = hep.do
+hep.do = types.MethodType(custom_do, hep)
+
 hep2marc = Overdo()
