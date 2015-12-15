@@ -23,7 +23,6 @@
 {% bundles "search.js", "brief-results.css", "search.css" %}
 
 {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax %}
-{% from "search/helpers.html" import search_form_javascript %}
 
 
 {% macro render_search_pagination(pagination) %}
@@ -223,5 +222,4 @@
       $(document).trigger("initSearch");
     });
   </script>
-  {{ search_form_javascript() }}
 {% endblock %}

@@ -253,6 +253,5 @@ define([
       options_sets: getParserConf(InvenioKeywords, SpiresKeywords),
       default_set: form.defaultSet
     })
-    $('form[name=search] input[name=p]').focus();
   }
 })
