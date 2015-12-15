@@ -114,11 +114,13 @@ class HepRecordsTests(InvenioTestCase):
                          self.json_to_marc['100']['j'])
         self.assertEqual(self.marcxml_to_json['authors'][0]['email'],
                          self.json_to_marc['100']['m'])
-        self.assertEqual(self.marcxml_to_json['authors'][0]['affiliations'][0]['value'],
+        self.assertEqual(self.marcxml_to_json['authors'][0]['affiliations'][0]
+                         ['value'],
                          self.json_to_marc['100']['u'][0])
         self.assertEqual(self.marcxml_to_json['authors'][0]['recid'],
                          self.json_to_marc['100']['x'])
-        self.assertEqual(self.marcxml_to_json['authors'][0]['claimed'],
+        self.assertEqual(self.marcxml_to_json['authors'][0]
+                         ['curated_relation'],
                          self.json_to_marc['100']['y'])
 
     def test_corporate_author(self):

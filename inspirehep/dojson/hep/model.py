@@ -26,4 +26,19 @@ from dojson import Overdo
 from dojson import utils
 
 hep = Overdo()
+
+
+@hep.over('book', '^773..')
+def book(self, key, value):
+    recid = ''
+    if 'collections' in self:
+        for element in self['collections']:
+            if 'primary' in element and element['primary']:
+                if element['primary'].lower() == 'bookchapter':
+                    if value.get('0'):
+                        recid = int(value.get('0'))
+                        break
+    return {
+        'recid': recid
+    }
 hep2marc = Overdo()

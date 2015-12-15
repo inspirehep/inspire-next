@@ -31,9 +31,11 @@
 {% macro render_record_authors(is_brief, number_of_displayed_authors=10, show_affiliations=true) %}
   {% if record.collaboration %}
     {% set collaboration_displayed = [] %}
-    {% for collaboration in record.collaboration if collaboration != None %}
-      <a href="/search?p=collaboration:'{{ collaboration }}'">{{ collaboration }}</a>
+    {% for collaboration in record.collaboration %}
+      {% if collaboration['value'] %}
+      <a href="/search?p=collaboration:'{{ collaboration['value'] }}'">{{ collaboration['value'] }}</a>
       {% do collaboration_displayed.append(1) %}
+      {% endif %}
       {% if not loop.last %}
         and
       {% endif %}

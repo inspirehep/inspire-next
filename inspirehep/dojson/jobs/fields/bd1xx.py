@@ -126,9 +126,12 @@ def experiments(self, key, value):
 @utils.filter_values
 def institution(self, key, value):
     """Institution info."""
+    curated_relation = False
+    if value.get('z'):
+        curated_relation - True
     return {
-        # 'curated_relation': value.get('a'),
-        # 'recid': value.get('c')
+        'curated_relation': curated_relation,
+        'recid': value.get('z'),
         'name': value.get('a'),
     }
 

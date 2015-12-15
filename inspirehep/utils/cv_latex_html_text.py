@@ -96,7 +96,8 @@ class Cv_latex_html_text(Export):
             elif len(value) > 8:
                 if 'collaboration' in self.record:
                     try:
-                        collaboration = self.record['collaboration'][0]
+                        collaboration = self.record[
+                            'collaboration'][0]['value']
                         if 'Collaboration' in collaboration:
                             out += u'By ' + collaboration + '({1} et al.).{2}'.format(
                                 field, value[0], self.separator

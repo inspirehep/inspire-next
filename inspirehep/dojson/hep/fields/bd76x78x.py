@@ -34,6 +34,7 @@ def publication_info(self, key, value):
     """Publication info about record."""
     year = ''
     recid = ''
+    journal_recid = ''
     if 'y' in value:
         try:
             year = int(value.get('y'))
@@ -41,17 +42,20 @@ def publication_info(self, key, value):
             # Some crap in they year :-(
             pass
     try:
-        if '0' in value:
-            if isinstance(value['0'], list):
-                recid = int(value['0'][0])
+        if '2' in value:
+            if isinstance(value.get('2'), list):
+                recid = int(value.get('2')[0])
             else:
-                recid = int(value.get('0'))
+                recid = int(value.get('2'))
+        if '1' in value:
+            journal_recid = int(value.get('1'))
     except:
         # Some crap in the recid :-(
         pass
     return {
         'recid': recid,
         'page_artid': value.get('c'),
+        'journal_recid': journal_recid,
         'journal_issue': value.get('n'),
         'conf_acronym': value.get('o'),
         'journal_title': value.get('p'),
