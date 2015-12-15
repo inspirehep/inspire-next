@@ -50,7 +50,7 @@
     <subfield code="j">External_id</subfield>
     <subfield code="m">mail</subfield>
     <subfield code="x">profile</subfield>
-    <subfield code="y">claimed</subfield>
+    <subfield code="y">1</subfield>
   </datafield>
   <datafield tag="110" ind1=" " ind2=" ">
     <subfield code="a">CMS Collaboration</subfield>

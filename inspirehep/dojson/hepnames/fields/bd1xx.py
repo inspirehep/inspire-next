@@ -266,14 +266,19 @@ def positions(self, key, value):
     In dates field you can put months in addition to years. In this case you
     have to follow the convention `mth-year`. For example: `10-2012`.
     """
+    curated_relation = False
+    if value.get('z'):
+        curated_relation = True
     return {
-        'institution': {'name': value.get('a')} if value.get('a') else None,
+        'institution': {'name': value.get('a'), 'recid': value.get('z')} if
+        value.get('a') else None,
         'rank': value.get('r'),
         'start_date': value.get('s'),
         'end_date': value.get('t'),
         'email': value.get('m'),
         'old_email': value.get('o'),
-        'status': value.get('z')
+        'status': value.get('z'),
+        'curated_relation': curated_relation,
     }
 
 
