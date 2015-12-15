@@ -110,9 +110,12 @@ def setup_app(app):
         """Counts the amount of words in a string"""
         import re
         from string import punctuation
-        r = re.compile(r'[{}]'.format(punctuation))
-        new_strs = r.sub(' ', value)
-        return len(new_strs.split())
+        words = 0
+        if value:
+            r = re.compile(r'[{}]'.format(punctuation))
+            new_strs = r.sub(' ', value)
+            words = len(new_strs.split())
+        return words
 
     @app.template_filter()
     def is_intbit_set(value):
