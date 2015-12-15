@@ -193,7 +193,11 @@ def recreate_index(name, mapping, rebuild=False, delete_old=True):
                 action='store_true',
                 default=False,
                 help='Delete old index after the rebuild process has completed.')
-def create_indices(rebuild=False, holdingpen=True, delete_old=False):
+@manager.option('--index-name', '-n', dest='index_name',
+                action='store',
+                default=None,
+                help='Specific name of an index to recreate/rebuild.')
+def create_indices(rebuild=False, holdingpen=True, delete_old=False, index_name=None):
     """Create or recreate the indices for records and holdingpen."""
     import json
 
@@ -209,6 +213,8 @@ def create_indices(rebuild=False, holdingpen=True, delete_old=False):
     indices = set(cfg["SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING"].values())
     indices.add(cfg['SEARCH_ELASTIC_DEFAULT_INDEX'])
     for index in indices:
+        if index_name is not None and index_name != index:
+            continue
         mapping = {}
         mapping_filename = index + ".json"
         if mapping_filename in mappings:
