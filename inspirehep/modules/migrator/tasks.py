@@ -341,3 +341,11 @@ def migrate_workflow_object(obj_id):
         obj.set_error_message(str(err), msg)
         obj.save(version=ObjectVersion.ERROR)
         raise
+
+
+@celery.task(ignore_result=True)
+def reindex_holdingpen_object(obj_id):
+    from invenio_workflows.signals import workflow_object_saved
+
+    obj = BibWorkflowObject.query.get(obj_id)
+    workflow_object_saved.send(obj)
