@@ -61,16 +61,16 @@
   {% endif %}
   {% if 'author' in response._search()['aggregations'] and response._search()['aggregations']['author']['buckets'] %}
     <h4 id="filter-by-author" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Author</h4>
-    <div class="facet-container" id="facet-author">
+    <div class="facet-container" id="facet-exactauthor">
     {% for author in response._search()['aggregations']['author']['buckets'] %}
     <div class="checkbox checkbox-facets">
       <label>
-        {%- set is_checked = 'checked' if 'author' in filtered_facets
-            and author['key'] in filtered_facets['author']['inc'] -%}
+        {%- set is_checked = 'checked' if 'exactauthor' in filtered_facets
+            and author['key'] in filtered_facets['exactauthor']['inc'] -%}
         <input class="include-facet"
               type="checkbox"
               {{is_checked}}
-              name="author" value="{{ author['key'] }}">
+              name="exactauthor" value="{{ author['key'] }}">
         <span class="facet-title-truncate">{{ author['key'] }}</span>
         <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ author['doc_count'] }}</span>
       </label>
