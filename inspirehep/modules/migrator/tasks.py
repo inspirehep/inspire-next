@@ -1,22 +1,21 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of INSPIRE.
 # Copyright (C) 2015 CERN.
 #
-# INSPIRE is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-#
-# In applying this licence, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as an Intergovernmental Organization
-# or submit itself to any jurisdiction.
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 
 """Manage migration from INSPIRE legacy instance."""
@@ -34,27 +33,22 @@ from dojson.contrib.marc21.utils import create_record as marc_create_record
 
 from flask import current_app
 
-from inspirehep.dojson.utils import strip_empty_values
 from inspirehep.dojson.conferences import conferences
 from inspirehep.dojson.experiments import experiments
-from inspirehep.dojson.hep import hep
+from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.hepnames import hepnames
 from inspirehep.dojson.institutions import institutions
 from inspirehep.dojson.jobs import jobs
 from inspirehep.dojson.journals import journals
 from inspirehep.dojson.processors import _collection_in_record
 from inspirehep.dojson.utils import legacy_export_as_marc
-from inspirehep.dojson.hep import hep2marc
+from inspirehep.dojson.utils import strip_empty_values
 
-from inspirehep.modules.workflows.dojson import bibfield, author_bibfield
+from inspirehep.modules.workflows.dojson import author_bibfield, bibfield
 from inspirehep.modules.workflows.models import Payload
 
 from invenio_celery import celery
 
-from invenio_workflows.models import (
-    BibWorkflowObject,
-    ObjectVersion
-)
 from invenio_deposit.models import Deposition
 
 from invenio_ext.es import es
@@ -63,7 +57,12 @@ from invenio_ext.sqlalchemy import db
 from invenio_records.api import Record
 from invenio_records.models import Record as RecordModel
 
-from six import text_type, string_types
+from invenio_workflows.models import (
+    BibWorkflowObject,
+    ObjectVersion
+)
+
+from six import string_types, text_type
 
 from .models import InspireProdRecords
 from .utils import rename_object_action, reset_workflow_object_states
@@ -228,11 +227,15 @@ def add_citation_counts():
 
         # update lookup dictionary based on references of the record
         if 'references' in record['_source']:
+            unique_refs_ids = set()
             references = record['_source']['references']
             for reference in references:
                 recid = reference.get('recid')
                 if recid:
-                    citations_lookup[unicode(recid)] += 1
+                    unique_refs_ids.add(recid)
+
+        for unique_refs_id in unique_refs_ids:
+            citations_lookup[unique_refs_id] += 1
 
     for chunk in chunker(get_records_to_update_generator(citations_lookup), CHUNK_SIZE):
         es_bulk(es, chunk)
