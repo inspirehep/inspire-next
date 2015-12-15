@@ -34,6 +34,7 @@ from dojson.contrib.marc21.utils import create_record as marc_create_record
 
 from flask import current_app
 
+from inspirehep.dojson.utils import strip_empty_values
 from inspirehep.dojson.conferences import conferences
 from inspirehep.dojson.experiments import experiments
 from inspirehep.dojson.hep import hep
@@ -147,8 +148,11 @@ def continuos_migration():
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
     while r.llen('legacy_records'):
-        record = r.lpop('legacy_records')
-        create_record(record, force=True)
+        try:
+            record = r.lpop('legacy_records')
+            create_record(record, force=True)
+        finally:
+            db.session.close()
 
 
 @celery.task(ignore_result=True, compress='zlib', acks_late=True)
@@ -164,6 +168,7 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
     records_to_index = []
     try:
         for record in chunk:
+            recid = json = None
             try:
                 recid, json = create_record(record,
                                             force=True, dry_run=dry_run)
@@ -173,6 +178,7 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
                 json.update({'_index': index, '_type': 'record', '_id': recid, 'citation_count': 0})
                 records_to_index.append(json)
             except Exception as err:
+                logger.error("ERROR with record {} and json {}".format(recid, json))
                 logger.exception(err)
                 if broken_output:
                     broken_output_fd = open(broken_output, "a")
@@ -184,6 +190,7 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
         es_bulk(es, records_to_index, request_timeout=60)
     finally:
         models_committed.connect(record_modification)
+        db.session.close()
 
 
 @celery.task(ignore_result=True)
@@ -241,20 +248,20 @@ def create_record(data, force=False, dry_run=False):
         prod_record.marcxml = data
     try:
         if _collection_in_record(record, 'institution'):
-            json = institutions.do(record)
+            json = strip_empty_values(institutions.do(record))
         elif _collection_in_record(record, 'experiment'):
-            json = experiments.do(record)
+            json = strip_empty_values(experiments.do(record))
         elif _collection_in_record(record, 'journals'):
-            json = journals.do(record)
+            json = strip_empty_values(journals.do(record))
         elif _collection_in_record(record, 'hepnames'):
-            json = hepnames.do(record)
+            json = strip_empty_values(hepnames.do(record))
         elif _collection_in_record(record, 'job') or \
                 _collection_in_record(record, 'jobhidden'):
-            json = jobs.do(record)
+            json = strip_empty_values(jobs.do(record))
         elif _collection_in_record(record, 'conferences'):
-            json = conferences.do(record)
+            json = strip_empty_values(conferences.do(record))
         else:
-            json = hep.do(record)
+            json = strip_empty_values(hep.do(record))
         if dry_run:
             return recid, json
 

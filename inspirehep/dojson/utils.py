@@ -102,3 +102,22 @@ def create_valid_date(date):
         valid_date = ''
 
     return valid_date
+
+
+def strip_empty_values(obj):
+    """Recursively strips empty values."""
+
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            value = strip_empty_values(value)
+            if value or value is False or value == 0:
+                obj[key] = value
+            else:
+                del obj[key]
+        return obj
+    elif isinstance(obj, (list, tuple, set)):
+        new_obj = [strip_empty_values(v) for v in obj]
+        new_obj = [v for v in new_obj if v or v is False or v == 0]
+        return type(obj)(new_obj)
+    else:
+        return obj

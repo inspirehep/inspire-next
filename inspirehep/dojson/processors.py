@@ -26,6 +26,7 @@ def convert_marcxml(source):
     """Convert MARC XML to JSON."""
     from dojson.contrib.marc21.utils import create_record, split_blob
 
+    from inspirehep.dojson.utils import strip_empty_values
     from inspirehep.dojson.hep import hep
     from inspirehep.dojson.institutions import institutions
     from inspirehep.dojson.journals import journals
@@ -37,20 +38,20 @@ def convert_marcxml(source):
     for data in split_blob(source.read()):
         record = create_record(data)
         if _collection_in_record(record, 'institution'):
-            yield institutions.do(record)
+            yield strip_empty_values(institutions.do(record))
         elif _collection_in_record(record, 'experiment'):
-            yield experiments.do(record)
+            yield strip_empty_values(experiments.do(record))
         elif _collection_in_record(record, 'journals'):
-            yield journals.do(record)
+            yield strip_empty_values(journals.do(record))
         elif _collection_in_record(record, 'hepnames'):
-            yield hepnames.do(record)
+            yield strip_empty_values(hepnames.do(record))
         elif _collection_in_record(record, 'job') or \
                 _collection_in_record(record, 'jobhidden'):
-            yield jobs.do(record)
+            yield strip_empty_values(jobs.do(record))
         elif _collection_in_record(record, 'conferences'):
-            yield conferences.do(record)
+            yield strip_empty_values(conferences.do(record))
         else:
-            yield hep.do(record)
+            yield strip_empty_values(hep.do(record))
 
 
 def _collection_in_record(record, collection):
