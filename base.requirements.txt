@@ -8,7 +8,7 @@ git+https://github.com/elastic/elasticsearch-py@master#egg=elasticsearch==2.2.0.
 
 ## INSPIRE forks of Invenio packages
 
-git+https://github.com/inspirehep/invenio-query-parser@master#egg=invenio-query-parser==invenio-query-parser-0.3.1.dev20151210
+git+https://github.com/inspirehep/invenio-query-parser@master#egg=invenio-query-parser==invenio-query-parser-0.3.1.dev20151215
 git+https://github.com/inspirehep/invenio-access@master#egg=invenio-access==0.2.1.dev20151005
 git+https://github.com/inspirehep/invenio-deposit.git@master#egg=invenio-deposit==0.2.1.dev20150914
 git+https://github.com/inspirehep/invenio-ext@master#egg=invenio-ext==0.3.3.dev20151125
