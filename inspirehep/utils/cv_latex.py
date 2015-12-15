@@ -93,7 +93,7 @@ class Cv_latex(Export):
                 if 'collaboration' in self.record:
                     try:
                         if 'collaboration' in self.record:
-                            collaboration = self.record['collaboration'][0]
+                            collaboration = self.record['collaboration'][0]['value']
                             if 'Collaboration' in collaboration:
                                 out += u' {\it et al.} [' + \
                                     collaboration + '].\n'

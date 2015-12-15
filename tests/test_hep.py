@@ -34,9 +34,16 @@ class HepRecordsTests(InvenioTestCase):
                                                          'fixtures',
                                                          'test_hep_record.xml')
                                                      )
+        self.book_marcxml = pkg_resources.resource_string('tests',
+                                                     os.path.join(
+                                                         'fixtures',
+                                                         'test_hep_book.xml')
+                                                     )
         record = create_record(self.marcxml)
+        book_record = create_record(self.book_marcxml)
 
         self.marcxml_to_json = hep.do(record)
+        self.marcxml_to_json_book = hep.do(book_record)
         self.json_to_marc = hep2marc.do(self.marcxml_to_json)
 
     def test_isbns(self):
@@ -114,11 +121,13 @@ class HepRecordsTests(InvenioTestCase):
                          self.json_to_marc['100']['j'])
         self.assertEqual(self.marcxml_to_json['authors'][0]['email'],
                          self.json_to_marc['100']['m'])
-        self.assertEqual(self.marcxml_to_json['authors'][0]['affiliations'][0]['value'],
+        self.assertEqual(self.marcxml_to_json['authors'][0]['affiliations'][0]
+                         ['value'],
                          self.json_to_marc['100']['u'][0])
         self.assertEqual(self.marcxml_to_json['authors'][0]['recid'],
                          self.json_to_marc['100']['x'])
-        self.assertEqual(self.marcxml_to_json['authors'][0]['claimed'],
+        self.assertEqual(self.marcxml_to_json['authors'][0]
+                         ['curated_relation'],
                          self.json_to_marc['100']['y'])
 
     def test_corporate_author(self):
@@ -487,6 +496,11 @@ class HepRecordsTests(InvenioTestCase):
                          self.json_to_marc['999C6'][0]['c'])
         self.assertEqual(self.marcxml_to_json['refextract'][0]['source'],
                          self.json_to_marc['999C6'][0]['s'])
+
+    def test_book_link(self):
+        """Test if the link to the book recid is generated correctly."""
+        self.assertEqual(self.marcxml_to_json_book['book']['recid'],
+                         1409249)
 
 TEST_SUITE = make_test_suite(HepRecordsTests)
 

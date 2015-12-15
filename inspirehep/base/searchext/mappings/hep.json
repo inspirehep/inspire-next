@@ -173,14 +173,17 @@
                     "index": "not_analyzed"
                 },
                 "collaboration": {
-                    "type": "string",
-                    "fields" : {
-                        "raw" : {
+                    "type": "object",
+                    "properties" : {
+                        "value" : {
                             "type" : "string",
-                            "index" : "not_analyzed"
+                            "index" : "not_analyzed",
+                            "copy_to": ["global_fulltext"]
+                        },
+                        "recid":{
+                            "type": "integer"
                         }
-                    },
-                    "copy_to": ["global_fulltext"]
+                    }
                 },
                 "collections": {
                     "type": "object",
@@ -226,6 +229,9 @@
                                 "value": {
                                     "type": "string",
                                     "copy_to": ["affiliation"]
+                                },
+                                "recid": {
+                                    "type": "integer"
                                 }
                             }
                         },
@@ -301,6 +307,9 @@
                             "type": "string",
                             "index": "not_analyzed",
                             "copy_to": ["cnum"]
+                        },
+                        "journal_recid": {
+                            "type": "integer"
                         }
                     }
                 },

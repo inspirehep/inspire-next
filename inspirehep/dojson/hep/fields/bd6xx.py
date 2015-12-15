@@ -78,9 +78,20 @@ def free_keywords2marc(self, key, value):
 @utils.filter_values
 def accelerator_experiments(self, key, value):
     """The accelerator/experiment related to this record."""
+    recid = ''
+    curated_relation = False
+    if '0' in value:
+        try:
+            recid = int(value.get('0'))
+        except (TypeError, ValueError, AttributeError):
+            pass
+    if recid:
+        curated_relation = True
     return {
+        'recid': recid,
         'accelerator': value.get('a'),
         'experiment': value.get('e'),
+        'curated_relation': curated_relation
     }
 
 
