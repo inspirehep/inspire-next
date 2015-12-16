@@ -1,24 +1,21 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2014, 2015 CERN.
 #
-# INSPIRE is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-#
-# In applying this license, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as an Intergovernmental Organization
-# or submit itself to any jurisdiction.
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 """Manage migration from INSPIRE legacy instance."""
 
@@ -176,3 +173,40 @@ def drop_tables(table_filter):
         db.engine.execute("DROP TABLE {0}".format(table[0]))
         print(">>> Dropped {0}.".format(table[0]))
     print(">>> Removed {0} tables.".format(len(table_names)))
+
+
+@manager.command
+def generate_keywords_list():
+    """Generate a list of all possible keywords for the parser."""
+    import json
+    from .tasks import dotter
+    # Get the path of invenio_query_parser.
+    import invenio_query_parser as e
+    path = e.__file__
+    path = path[:-12]
+    # Get all the available keywords from inspire config file.
+    from invenio_base.globals import cfg
+    x = cfg['SEARCH_ELASTIC_KEYWORD_MAPPING']
+    keywords = x.keys()
+    # Get all the (possible) nested keywords.
+    for k in x.values():
+        if isinstance(k, dict):
+            keywords += k.keys()
+    # Get all available keywords from the json schema.
+    with open('inspirehep/dojson/hep/schemas/hep-0.0.1.json') as data_file:
+        data = json.load(data_file)
+        data = data.get('properties')
+        res = dotter(data, '', [])
+        # Remove unwanted fields from json schema.
+        for i in range(len(res)):
+            res[i] = res[i][1:]
+            res[i] = str(res[i].rsplit('.', 1)[0])
+        result = []
+        # Remove duplicates.
+        for i in res:
+            if i not in result:
+                result.append(i)
+        keywords += result
+    # Write the results to a file for invenio_query_parser to read.
+    with open(path + "/keywords.py", "w") as fp:
+        fp.write('keyword_list = ' + str(keywords))

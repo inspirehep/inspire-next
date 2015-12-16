@@ -349,3 +349,27 @@ def reindex_holdingpen_object(obj_id):
 
     obj = BibWorkflowObject.query.get(obj_id)
     workflow_object_saved.send(obj)
+
+
+def dotter(d, key, dots):
+    """ Given a json schema dictionary (d argument) returns all the properties
+        in a dotted notation.
+
+        e.g
+        authors
+        authors.full_name
+        author.affiliation
+        etc...
+    """
+    if isinstance(d, dict):
+        if 'items' in d:
+            dots.append(key)
+            dotter(d['items'], key, dots)
+        elif 'properties' in d:
+            dotter(d['properties'], key, dots)
+        else:
+            for k in d:
+                dotter(d[k], key + '.' + k, dots)
+    else:
+        dots.append(key)
+    return dots
