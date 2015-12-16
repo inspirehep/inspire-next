@@ -117,7 +117,7 @@ class Export(object):
             cite_element = self._get_pubnote()
             cite_line = '%%CITATION = ' + cite_element + ';%%'
         elif 'report_numbers' in self.record:
-            for field in self.record['arxiv_eprints']:
+            for field in self.record.get('arxiv_eprints', []):
                 if 'categories' in field:
                     cite_element = field['value'].upper()
                     cite_line = '%%CITATION = ' + cite_element + ';%%'
