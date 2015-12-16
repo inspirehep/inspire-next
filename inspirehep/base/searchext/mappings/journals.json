@@ -73,6 +73,19 @@
                         }
                     }
                 },
+                "issn": {
+                    "type": "object",
+                    "properties": {
+                        "value": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        },
+                        "material": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        }
+                    }
+                },
                 "accelerator_experiment": {
                     "type": "object",
                     "properties": {
