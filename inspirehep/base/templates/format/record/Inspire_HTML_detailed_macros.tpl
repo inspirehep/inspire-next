@@ -26,9 +26,6 @@
 {% endmacro %}
 
 {% macro record_buttons() %}
-  <button class="btn btn-default dropdown-toggle dropdown-cite cite-btn" type="button" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#citeModal{{record['control_number']}}">
-  <i class="fa fa-quote-right"></i> Cite this record
-  </button>
   {% if record.get('arxiv_eprints') %}
     {% if record.get('arxiv_eprints') | is_list() %}
       {% set filtered_arxiv = record.get('arxiv_eprints') %}
@@ -37,43 +34,13 @@
       {% endfor %}
     {% endif %}
   {% endif %}
+  <a class="btn btn-default dropdown-toggle dropdown-cite cite-btn" type="button" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#citeModal{{record['control_number']}}">
+    <i class="fa fa-quote-right"></i> Cite
+  </a>
 {% endmacro %}
 
 {% macro record_publication_info() %}
-  Published in
-  {% for pub_info in record.get('publication_info', [])%}
-    {% if pub_info.get('journal_title') or pub_info.get('journal_volume') or pub_info.get('year') or pub_info.get('page_artid') %}
-      {% if not loop.first %}
-        and
-      {% endif %}
-    {% endif %}
-    {{ show_publication_info(pub_info) }}
-  {% endfor %}
-{% endmacro %}
-
-{% macro show_publication_info(pub_info) %}
-  {% if pub_info.get('journal_title') and pub_info.get('journal_volume') and pub_info.get('year') and pub_info.get('page_artid') %}
-    <span><em>{{ pub_info.get('journal_title') }} {{ pub_info.get('journal_volume') }} ({{pub_info.get('year')}}), {{ pub_info.get('page_artid') }}</em></span>
-  {% else %}
-    {% if pub_info.get('journal_title') or pub_info.get('journal_volume') or pub_info.get('year') or pub_info.get('page_artid') %}
-      <span>
-        <em>
-          {% if pub_info.get('journal_title') %}
-            {{ pub_info.get('journal_title') }} 
-          {% endif %}
-          {% if pub_info.get('journal_volume') %}
-            {{ pub_info.get('journal_volume') }} 
-          {% endif %}
-          {% if pub_info.get('year') %}
-            {{ pub_info.get('year') }} 
-          {% endif %}
-          {% if pub_info.get('page_artid') %}
-            {{ pub_info.get('page_artid') }} 
-          {% endif %}
-        </em>
-      </span>
-    {% endif %}
-  {% endif %}
+  {{ record|publication_info|join(' and ') }}
 {% endmacro %}
 
 {% macro record_doi() %}

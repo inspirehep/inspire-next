@@ -60,9 +60,6 @@
                 {% if record.authors %}
                   <div class="authors">
                     {{ render_record_authors(is_brief=true, show_affiliations=false) }}
-                    {% if record.get('earliest_date') %}
-                      {{ record.get('earliest_date').split('-')[0] }}
-                    {% endif %}
                   </div>
                 {% endif %}
                 <div class="row">
@@ -93,11 +90,9 @@
                       {% if record.get('arxiv_eprints') %}
                         <div class="col-md-6">{{ record_arxiv(is_brief=true) }}</div>
                       {% endif %}
-                      {% if record.get('report_numbers') %}
+                      {% if record.get('report_numbers') and not record.get('publication_info') %}
                       <div class="col-md-6">
-                        <span class="text-left">
-                          {{ record_report_numbers() }}
-                        </span>
+                        {{ record_report_numbers() }}
                       </div>
                       {% endif %}
                     </div>
