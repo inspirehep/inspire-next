@@ -134,7 +134,7 @@ def migrate(source, broken_output=None, dry_run=False):
         fd = open(source)
 
     for i, chunk in enumerate(chunker(split_stream(fd), CHUNK_SIZE)):
-        logger.info("Processed {} records".format(i * CHUNK_SIZE))
+        print("Processed {} records".format(i * CHUNK_SIZE))
         chunk_broken_output = None
         if broken_output:
             chunk_broken_output = "{}-{}".format(broken_output, i)

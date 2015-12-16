@@ -87,8 +87,13 @@ def populate(records, collections, file_input=None, remigrate=False,
     elif file_input:
         print("Migrating records from file: {0}".format(file_input))
 
-        migrate.delay(os.path.abspath(file_input), broken_output=broken_output,
-                      dry_run=dry_run)
+        from invenio_celery.utils import disable_queue, enable_queue
+        disable_queue("celery")
+        try:
+            migrate(os.path.abspath(file_input), broken_output=broken_output,
+                    dry_run=dry_run)
+        finally:
+            enable_queue("celery")
     else:
         legacy_base_url = current_app.config.get("CFG_INSPIRE_LEGACY_BASEURL")
         print(
