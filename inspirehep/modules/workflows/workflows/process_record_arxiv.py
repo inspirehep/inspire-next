@@ -101,5 +101,5 @@ class process_record_arxiv(hep_ingestion):
         filter_core_keywords(filter_kb="antihep"),
         # Predict action for a generic HEP paper based only on title
         # and abstract.
-        guess_coreness("new_astro_model.pickle")
+        guess_coreness("new_astro_model.pickle", top_words=10)
     ]
