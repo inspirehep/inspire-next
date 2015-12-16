@@ -76,6 +76,7 @@ EXTENSIONS = [
 ]
 
 PACKAGES = [
+    'inspirehep',
     'inspirehep.base',
     'inspirehep.demosite',
     'inspirehep.dojson',
