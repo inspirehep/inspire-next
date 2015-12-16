@@ -27,7 +27,7 @@ define(
     'bootstrap',
     'js/citation_modal'
   ],
-  function($, defineComponent) {
+  function($, defineComponent, Bootstrap, CitationModal) {
     'use strict';
 
     var sList = [];
@@ -85,7 +85,7 @@ define(
       }
 
       this.onExportSelectAll = function(ev) {
-        var minimum_page_limit = $("#select-numpages option:selected").text();
+        var minimum_page_limit = $(".select-numpages option:selected").eq(0).text();
         var EXPORT_LIMIT = this.attr.EXPORT_LIMIT;
         var that = this;
         sList = [];
@@ -96,15 +96,15 @@ define(
             sList.push($(this).attr("id"));
           });
 
-          if (parseInt($('#total-results').text()) > parseInt(minimum_page_limit)) {
-            if (parseInt($('#total-results').text()) > EXPORT_LIMIT) {
+          if (parseInt($('.total-results').eq(0).text()) > parseInt(minimum_page_limit)) {
+            if (parseInt($('.total-results').eq(0).text()) > EXPORT_LIMIT) {
               $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
                 '<div class="panel-body" >You have selected ' + sList.length + ' records of this page. <a class="pointer" id="select-all-records">' +
                 'Select ' + EXPORT_LIMIT + ' records (Maximum limit).</a></div></div>');
             } else {
               $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
                 '<div class="panel-body" >You have selected ' + sList.length + ' records of this page. <a class="pointer" id="select-all-records">' +
-                'Select all ' + $('#total-results').text() + ' results.</a></div></div>');
+                'Select all ' + $('.total-results').eq(0).text() + ' results.</a></div></div>');
             }
           } else {
             $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
@@ -124,9 +124,9 @@ define(
 
       this.onSelectAllRecords = function(ev) {
         var that = this;
-        var limit = $('#total-results').text();
+        var limit = $('.total-results').eq(0).text();
         $('#info-message').remove();
-        if (parseInt($('#total-results').text()) > this.attr.EXPORT_LIMIT) {
+        if (parseInt($('.total-results').eq(0).text()) > this.attr.EXPORT_LIMIT) {
           limit = this.attr.EXPORT_LIMIT;
         }
         $.get("/search?of=id&rg=" + limit, function(data, status) {
@@ -252,11 +252,13 @@ define(
         this.on("#export-select-all", "click", this.onExportSelectAll);
         this.on("#checkbox-parent > input[type=checkbox]", "change", this.onCheckboxChange);
         this.on("#download-format", "click", this.onExportAs);
-        this.on("#select-numpages", "change", this.onNumpagesChange);
+        this.on(".select-numpages", "change", this.onNumpagesChange);
         this.on("#select-sorting", "change", this.onSortingChange);
         this.initExportDropdown();
         this.on("a.export-as-element", "click", this.onDropdownCheck);
         this.on("h4[id^='filter-by-']", "click", this.onFacetDropdown);
+        CitationModal.teardownAll();
+        CitationModal.attachTo(document);
       });
 
     }

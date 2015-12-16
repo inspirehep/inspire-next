@@ -33,7 +33,7 @@ define(
 
     function CitationsModal() {
 
-      $('.dropdown-cite, .bibtex').click(function(ev) {
+      this.onCiteClick = function(ev) {
         $.getJSON('/formatter/bibtex', {
           recid: $(ev.target).data("recid")
         }, function(data) {
@@ -41,9 +41,9 @@ define(
           $("#format" + data.recid).text('BibTex')
           $("#download" + data.recid).attr("href", "/formatter/download-bibtex/" + data.recid)
         })
-      })
+      }
 
-      $('.latex_eu').click(function(ev) {
+      this.onLatexEUClick = function(ev) {
         $.getJSON('/formatter/latex', {
           recid: $(ev.target).data("recid"),
           latex_format: 'latex_eu'
@@ -52,9 +52,9 @@ define(
           $("#format" + data.recid).text('LaTex(EU)')
           $("#download" + data.recid).attr("href", "/formatter/download-latex/latex_eu/" + data.recid)
         })
-      })
+      }
 
-      $('.latex_us').click(function(ev) {
+      this.onLatexUSClick = function(ev) {
         $.getJSON('/formatter/latex', {
           recid: $(ev.target).data("recid"),
           latex_format: 'latex_us'
@@ -63,6 +63,12 @@ define(
           $("#format" + data.recid).text('LaTex(US)')
           $("#download" + data.recid).attr("href", "/formatter/download-latex/latex_us/" + data.recid)
         })
-      })
+      }
+
+      this.after('initialize', function() {
+        $('.dropdown-cite, .bibtex').on('click', this.onCiteClick)
+        $('.latex_eu').on('click', this.onLatexEUClick)
+        $('.latex_us').on('click', this.onLatexUSClick)
+      });
     }
   });
