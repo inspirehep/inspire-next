@@ -423,7 +423,7 @@ def setup_app(app):
         if 'publication_info' in record:
             journal_title = journal_volume = year = journal_issue = pages = ''
             for field in record['publication_info']:
-                out = ''
+                out = 'Published in '
                 if 'journal_title' in field:
                     if not ('journal_volume' in field or 'journal_issue' in
                             field or 'page_artid' in field or

@@ -147,9 +147,12 @@
 
 {% macro record_report_numbers() %}
   {% set report_numbers = [] %}
-  {% for rn in record['report_numbers'] %}
-    {% if 'value' in rn %}
-      {% do report_numbers.append(rn['value']) %}
+  {% for report_number in record['report_numbers'] %}
+    {% if 'value' in report_number %}
+      {% if loop.first %}
+        Report number:
+      {% endif %}
+      {% do report_numbers.append(report_number['value']) %}
     {% endif %}
   {% endfor %}
   {{ report_numbers|join(', ') }}

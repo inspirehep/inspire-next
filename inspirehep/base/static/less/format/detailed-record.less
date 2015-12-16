@@ -27,11 +27,6 @@
     color: white;
 }
 
-#record_content .record-detailed {
-    background-color: #415161;
-    border-radius: 3px;
-}
-
 #record_content .record-detailed .record-title {
     font-size: x-large;
 }
@@ -41,8 +36,15 @@
 }
 
 .record-collection-heading {
-    font-weight: 500;
+    font-weight: 700;
+    color: white;
 
+    #search-title {
+        font-weight: 700;
+        font-size: 110%;
+        color: white;
+    }
+    
     #title {
         margin-left: 5px;
     }
@@ -52,10 +54,10 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    margin: 0;
+    margin-bottom: 10px;
     padding: 0;
     color: grey;
-    margin-bottom: 20px;
+    color: white;
     font-weight: 200;
     color: lighten(grey, 25%);
 }
@@ -106,6 +108,10 @@
     padding: 10px;
     font-size: 15px;
     color: black;
+
+    .cite-pdf-buttons {
+        margin-bottom: 10px;
+    }
 }
 
 .pdf-btn, .cite-btn {
@@ -140,12 +146,12 @@
     }
 } 
 
-#record-title, .journal,
+#record-title, #record-journal,
 #external_links, #doi-eprint-experiment, {
     color: @blue-purple;
 }
 
-.journal {
+#record-journal {
     font-size: 16px;
     margin-top: 15px;
     font-weight: 500;
@@ -315,10 +321,6 @@
     .doi, .eprint {
         font-weight: 600;
     }
-}
-
-.cite-pdf-buttons {
-    text-align: right;
 }
 
 // Plots
