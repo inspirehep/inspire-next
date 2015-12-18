@@ -15,5 +15,5 @@ git+https://github.com/inspirehep/invenio-ext@master#egg=invenio-ext==0.3.3.dev2
 git+https://github.com/inspirehep/invenio-oaiharvester@master#egg=invenio-oaiharvester==0.1.2.dev20151113
 git+https://github.com/inspirehep/invenio-oauthclient@master#egg=invenio-oauthclient==0.1.1.dev20151215
 git+https://github.com/inspirehep/invenio-records@master#egg=invenio-records==0.3.5.dev20151612
-git+https://github.com/inspirehep/invenio-search@master#egg=invenio-search==0.1.6.dev20151211
+git+https://github.com/inspirehep/invenio-search@master#egg=invenio-search==0.1.6.dev20151218
 git+https://github.com/inspirehep/invenio-workflows@master#egg=invenio-workflows==0.1.3.dev20151210
