@@ -170,7 +170,13 @@
                 },
                 "collaboration": {
                     "type": "string",
-                    "index": "not_analyzed"
+                    "fields" : {
+                        "raw" : {
+                            "type" : "string",
+                            "index" : "not_analyzed"
+                        }
+                    },
+                    "copy_to": ["global_fulltext"]
                 },
                 "collections": {
                     "type": "object",
@@ -309,7 +315,13 @@
                       },
                       "title": {
                           "type": "string",
-                          "copy_to": "title"
+                          "copy_to": "title",
+                          "fields" : {
+                            "raw" : {
+                                "type" : "string",
+                                "index" : "not_analyzed"
+                            }
+                        }
                       }
                   }
                 },
