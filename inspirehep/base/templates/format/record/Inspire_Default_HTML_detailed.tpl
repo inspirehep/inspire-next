@@ -23,18 +23,20 @@
 {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax, render_record_title, render_record_authors, record_cite_modal, record_arxiv, record_report_numbers with context %}
 
 <div class="record-detailed">
-  <div class="record-header">
-    <div id="hep-collection" class="record-collection-heading ellipsis">
-      {{ record_collection_heading() }}
-    </div>
+  <div class="record-header" id="detailed-header">
     <div class="row">
         {{ record_cite_modal() }}
-      <div class="col-md-10">
+      <div class="col-md-12" id="detailed-header-top">
         <div id="record-title">
           {{ render_record_title() }}
         </div>
         <div id="record-authors">
           {{ render_record_authors(is_brief=false, number_of_displayed_authors=25) }}
+          {% if record.get('earliest_date') %}
+            <span id="record-date">
+              - {{ record.get('earliest_date').split('-')[0] }}
+            </span>
+          {% endif %}
         </div>
         <div id="record-journal">
           {{ record_publication_info() }}
@@ -46,38 +48,24 @@
         {% endif %}
         {% if record.get('dois') or record.get('arxiv_eprints') %}
           <div id="doi-eprint-experiment">
-            {{ record_doi() }}
+            {% if record.get('dois') %}
+              {{ record_doi() }}
+            {% endif %}
             <br/>
-            {{ record_arxiv(is_brief=false) }}
+            {% if record.get('arxiv_eprints') %}
+              {{ record_arxiv(is_brief=false) }}
+            {% endif %}
           </div>
         {% endif %}
         {% if record.get('urls') %}
-          <hr/>
           <div id="external_links">  
             {{ record_links() }}
           </div>
         {% endif %}
       </div>
-      <div class="col-md-2">
-        <div class="cite-pdf-buttons">
-          <div class="btn-group">
-            {{ record_buttons() }}
-          </div>
-        </div>
-        <div class="citations-references">
-          {% if record.get('earliest_date') %}
-            <i class="glyphicon glyphicon-calendar"></i> {{ record.get('earliest_date').split('-')[0] }}<br/>
-          {% endif %}
-          {% if record.get('citation_count') > 0  %}
-            <i class="fa fa-quote-left"></i><span><a href="/search?p=refersto:recid:{{ record.get('control_number') }}"> Cited {{ record.get('citation_count') }} times</a></span><br/>
-          {% else %}
-            <i class="fa fa-quote-left"></i><span> Cited 0 times</span><br/>
-          {% endif %}
-          {% if record.get('references') %}
-            <i class="fa fa-link"></i><span><a href="/record/{{ record.get('control_number') }}#references">  {{ (record.get('references', '')) | count }} References</a></span>
-          {% else %}
-            <i class="fa fa-link"></i><span> 0 References</span>
-          {% endif %}
+      <div class="col-md-12" id="cite-pdf-buttons">
+        <div class="btn-group">
+          {{ record_buttons() }}
         </div>
       </div>
     </div>

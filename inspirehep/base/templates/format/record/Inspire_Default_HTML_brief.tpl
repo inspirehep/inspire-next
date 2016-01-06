@@ -36,66 +36,52 @@
               </div>
               <div class="col-md-11">
                 <h4 class="custom-h">
-                    {% if record['titles[0].title']|is_list() %}
-                      {% set title = record['titles[0].title[0]'] %}
-                    {% else %}
-                      {% set title = record['titles[0].title'] %}
-                    {% endif %}
-                    {% if not title %}
-                      {% set title = record['titles.title[0]'] %}
-                    {% endif %}
                     <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                      {{ title|capitalize }}
+                      {{ render_record_title() }}
                     </a>
-                    {% if title|count_words() > 5 %}
-                      <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                        {{ title|capitalize | words(5) + "..."}}
-                      </a>
-                    {% else %}
-                      <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                        {{ title|capitalize }}
-                      </a>
-                    {% endif %}
                 </h4>
-                {% if record.authors %}
-                  <div class="authors">
-                    {{ render_record_authors(is_brief=true, show_affiliations=false) }}
-                  </div>
-                {% endif %}
+                <div class="authors">
+                  {{ render_record_authors(is_brief=true, show_affiliations=false) }}
+                  {% if record.get('earliest_date') %}
+                    <span id="record-date">
+                      - {{ record.get('earliest_date').split('-')[0] }}
+                    </span>
+                  {% endif %}
+                </div>
                 <div class="row">
                   {% if record.get('publication_info') and record.get('dois') %}
                     {% if record.get('publication_info') | length == 1 
                     and record.get('dois') | length == 1 %}
-                      <div class="col-md-7 ">
+                      <div class="col-md-12 ">
                         {{ record_journal_info_and_doi() }}
                       </div>
                     {% else %}
-                      <div class="col-md-7 ">
+                      <div class="col-md-12 ">
                         {{ record_journal_info() }}
                         <br/>
                         {{ render_doi() }}
                       </div>
                     {% endif %}
                   {% elif record.get('publication_info') %}
-                    <div class="col-md-7 ">
+                    <div class="col-md-12 ">
                       {{ record_journal_info() }}
                     </div>
                   {% elif record.get('dois') %}
-                    <div class="col-md-7 ">
+                    <div class="col-md-12 ">
                       {{ render_doi() }}
                     </div>
                   {% endif %}
                   {% if record['report_numbers'] or record.get('arxiv_eprints') %}
-                    <div class="row">
-                      {% if record.get('arxiv_eprints') %}
-                        <div class="col-md-6">{{ record_arxiv(is_brief=true) }}</div>
-                      {% endif %}
-                      {% if record.get('report_numbers') and not record.get('publication_info') %}
-                      <div class="col-md-6">
+                    {% if record.get('arxiv_eprints') %}
+                      <div>
+                        {{ record_arxiv(is_brief=true) }}
+                      </div>
+                    {% endif %}
+                    {% if record.get('report_numbers') and not record.get('publication_info') %}
+                      <div>
                         {{ record_report_numbers() }}
                       </div>
-                      {% endif %}
-                    </div>
+                    {% endif %}
                   {% endif %}
                 </div>
                 {% if record.get('abstracts') %}
@@ -120,9 +106,6 @@
             </span>
             {{ record_cite_modal() }}
             <div class="citations-references">
-              {% if record.get('earliest_date') %}
-                <i class="glyphicon glyphicon-calendar"></i> {{ record.get('earliest_date').split('-')[0] }}<br/>
-              {% endif %}
               {% if  record.get('citation_count') > 0  %}
                 <i class="fa fa-quote-left"></i><span><a href="/search?p=refersto:{{ record.get('control_number') }}"> {{ record.get('citation_count') | citation_phrase }} </a></span><br/>
               {% else %}

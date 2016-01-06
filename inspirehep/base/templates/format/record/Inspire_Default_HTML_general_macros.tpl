@@ -18,19 +18,11 @@
 #}
 
 {% macro render_record_title() %}
-  {% if record['titles[0].title']|is_upper() %}
-    {{ record['titles[0].title']|capitalize }}
-  {% else %}
-    {{ record['titles[0].title'] }}
-  {% endif %}
+  {{ record['titles[0].title'] }}
   {% if record['titles'] %}
     {% for subtitle in record['titles'] %}
       {% if 'subtitle' in subtitle and subtitle['subtitle'] %}
-        {% if subtitle['subtitle']|is_upper() %} 
-          : {{ subtitle['subtitle']|capitalize }}
-        {% else %}
           : {{ subtitle['subtitle'] }}
-        {% endif %}
       {% endif %}
     {% endfor %}
   {% endif %}
@@ -43,7 +35,7 @@
       title="{{ author.get('affiliations')[0]['value'] }}"
     {% endif %}
     href="http://inspirehep.net/author/profile/{{author.full_name}}?recid={{record['control_number']}}" class="no-external-icon">
-    {{ author.get('full_name') }}
+    {{ author.get('full_name', '') | split_author_name() }}
   </a>
 {% endmacro %}
 

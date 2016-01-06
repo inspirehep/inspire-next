@@ -35,33 +35,6 @@
     margin-left: 5px;
 }
 
-.record-collection-heading {
-    font-weight: 700;
-    color: white;
-
-    #search-title {
-        font-weight: 700;
-        font-size: 110%;
-        color: white;
-    }
-    
-    #title {
-        margin-left: 5px;
-    }
-}
-
-#hep-collection.ellipsis {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    margin-bottom: 10px;
-    padding: 0;
-    color: grey;
-    color: white;
-    font-weight: 200;
-    color: lighten(grey, 25%);
-}
-
 #search-title {
     font-weight: 500;
     font-size: 110%;
@@ -102,23 +75,40 @@
 }
 
 #record_content .record-detailed .record-header {
-    padding: 20px;
+
     background-color: white;
     text-align: left;
-    padding: 10px;
     font-size: 15px;
     color: black;
+    padding: 20px;
 
-    .cite-pdf-buttons {
-        margin-bottom: 10px;
+    &#detailed-header {
+        padding: 20px 0 0 0;
+
+        .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
+
+    #detailed-header-top {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    #cite-pdf-buttons {
+        padding: 10px;
+        padding-left: 20px;
+        margin-top: 25px;
+        background-color: #E6E6E6;
     }
 }
 
 .pdf-btn, .cite-btn {
-    background-color: @teal;
+    background-color: #848484;
     margin-right: 5px;
     border: 0px;
-    color: @grey;
+    color: white;
     font-weight: 500;
 }
 
@@ -151,9 +141,11 @@
     color: @blue-purple;
 }
 
+#record-authors #record-date {
+    color: @grey;
+}
+
 #record-journal {
-    font-size: 16px;
-    margin-top: 15px;
     font-weight: 500;
 }
 
@@ -316,7 +308,6 @@
 
 #doi-eprint-experiment {
     margin-top: 25px;
-    padding-bottom: 20px;
 
     .doi, .eprint {
         font-weight: 600;

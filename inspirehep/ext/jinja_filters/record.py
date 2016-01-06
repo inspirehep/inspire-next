@@ -453,3 +453,8 @@ def setup_app(app):
     @app.template_filter()
     def is_upper(s):
         return s.isupper
+
+    @app.template_filter()
+    def split_author_name(name):
+        new_name = name.split(',')
+        return ' '.join(reversed(new_name))
