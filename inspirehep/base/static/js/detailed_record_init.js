@@ -23,6 +23,9 @@
 require([
   "js/plots",
   "js/citation_modal"
-], function() {
+], function(Plots, CitationModal) {
+	CitationModal.teardownAll();
+    CitationModal.attachTo(document);
+	console.log('js/detailed_record_init is loaded')
   // Needed to have the JavaScript available when ASSETS_DEBUG=False.
 });

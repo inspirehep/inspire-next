@@ -48,9 +48,9 @@
 {% endmacro %}
 
 {% macro record_buttons() %}
-  <a class="btn btn-default dropdown-toggle dropdown-cite cite-btn" type="button" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#citeModal{{record['control_number']}}">
-    <i class="fa fa-quote-right"></i> Cite this record
-  </a>
+  <button class="btn btn-default dropdown-toggle dropdown-cite cite-btn" type="button" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#citeModal{{record['control_number']}}">
+  <i class="fa fa-quote-right"></i> Cite this record
+  </button>
   {% if record.get('arxiv_eprints') %}
     {% if record.get('arxiv_eprints') | is_list() %}
       {% set filtered_arxiv = record.get('arxiv_eprints') %}
