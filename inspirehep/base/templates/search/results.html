@@ -146,7 +146,7 @@
               Sort by:
               <select class='form-control' id="select-sorting">
                 <option value="bestmatch"{{ ' selected' if not request.args.get('sf') }}>Best Match</option>
-                <option value="newest"{{ ' selected' if request.args.get('sf') == 'earliest_date' and request.args.get('so') == 'desc'}}>Newest first</option>
+                <option value="newest"{{ ' selected' if request.args.get('sf') == 'earliest_date' and request.args.get('so') == 'desc'}}>Newest First</option>
                 <option value="mostcited">Most Cited</option>
               </select>
             </div>
