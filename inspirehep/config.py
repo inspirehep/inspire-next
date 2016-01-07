@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -33,8 +33,8 @@ Happy hacking!
 """
 
 from invenio_query_parser.contrib.spires.config import SPIRES_KEYWORDS
-from invenio_query_parser.contrib.spires.walkers.pypeg_to_ast import PypegConverter
-from invenio_query_parser.contrib.spires.walkers.spires_to_invenio import SpiresToInvenio
+
+import pkg_resources
 
 
 EXTENSIONS = [
@@ -124,8 +124,8 @@ PACKAGES_FACETS_EXCLUDE = [
 SEARCH_QUERY_PARSER = 'invenio_query_parser.contrib.spires.parser:Main'
 
 SEARCH_QUERY_WALKERS = [
-    PypegConverter,
-    SpiresToInvenio,
+    'invenio_query_parser.contrib.spires.walkers.pypeg_to_ast:PypegConverter',
+    'invenio_query_parser.contrib.spires.walkers.spires_to_invenio:SpiresToInvenio'
 ]
 
 # Task queue configuration
@@ -243,9 +243,18 @@ INSPIRE_ARXIV_CATEGORIES = ['acc-phys', 'astro-ph', 'atom-ph', 'chao-dyn',
                             'q-bio', 'quant-ph', 'ssrl', 'other']
 
 INSPIRE_CATEGORIES_SOURCES = ['arxiv']
-INSPIRE_ACCEPTED_CATEGORIES = ["hep-th", "hep-ph", "hep-lat", "hep-ex", "nucl-th",
-                               "nucl-ex", "physics.acc-ph", "gr-qc", "physics.ins-det",
-                               "astro-ph.co", "astro-ph.he"]
+INSPIRE_ACCEPTED_CATEGORIES = [
+    "hep-th",
+    "hep-ph",
+    "hep-lat",
+    "hep-ex",
+    "nucl-th",
+    "nucl-ex",
+    "physics.acc-ph",
+    "gr-qc",
+    "physics.ins-det",
+    "astro-ph.co",
+    "astro-ph.he"]
 
 OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP = "arxiv_eprints.value"
 WORKFLOWS_HOLDING_PEN_DEFAULT_OUTPUT_FORMAT = "hp"
@@ -299,6 +308,7 @@ CFG_WEBSEARCH_DEF_RECORDS_IN_GROUPS = 25
 # invenio keywords to elasticsearch fields
 SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "author": ["authors.full_name"],
+    "a": ["authors.full_name"],
     "exactauthor": ["exactauthor.raw"],
     "abstract": ["abstracts.value"],
     "collaboration": ["collaboration", "collaboration.raw^2"],
@@ -314,6 +324,8 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "subject": ["field_code.value"],
     "phd_advisors": ["phd_advisors.name"],
     "title": ["titles.title", "titles.title.raw^2"],
+    "eprint": ["arxiv_eprints.value"],
+    "t": ["titles.title"],
     "subject": ["facet_inspire_subjects"],
     "cnum": ["publication_info.cnum"],
     "980": [
@@ -442,6 +454,10 @@ SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
 }
 
 SEARCH_ELASTIC_DEFAULT_INDEX = 'hep'
+
+INSPIRE_PATH = pkg_resources.resource_filename("inspirehep", "")
+JSON_SCHEMA_PATHS = {pkg_resources.resource_filename(
+    "inspirehep", "dojson/hep/schemas/hep-0.0.1.json")}
 
 WORKFLOWS_HOLDING_PEN_ES_PROPERTIES = {
     # BibWorkflowObject model related fields
