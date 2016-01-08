@@ -308,7 +308,6 @@ CFG_WEBSEARCH_DEF_RECORDS_IN_GROUPS = 25
 # invenio keywords to elasticsearch fields
 SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "author": ["authors.full_name"],
-    "a": ["authors.full_name"],
     "exactauthor": ["exactauthor.raw"],
     "abstract": ["abstracts.value"],
     "collaboration": ["collaboration", "collaboration.raw^2"],
@@ -324,8 +323,6 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "subject": ["field_code.value"],
     "phd_advisors": ["phd_advisors.name"],
     "title": ["titles.title", "titles.title.raw^2"],
-    "eprint": ["arxiv_eprints.value"],
-    "t": ["titles.title"],
     "subject": ["facet_inspire_subjects"],
     "cnum": ["publication_info.cnum"],
     "980": [
