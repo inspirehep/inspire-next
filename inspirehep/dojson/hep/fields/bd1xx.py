@@ -40,7 +40,7 @@ def authors(self, key, value):
             affiliations = list(set(utils.force_list(
                 value.get('u'))))
             affiliations = [{'value': aff} for aff in affiliations]
-        return {
+        ret = {
             'full_name': value.get('a'),
             'role': value.get('e'),
             'alternative_name': value.get('q'),
@@ -54,6 +54,13 @@ def authors(self, key, value):
             ),
             'claimed': value.get('y')
         }
+        # HACK: This is to workaround broken records where multiple authors
+        # got meshed up together.
+        if isinstance(ret['full_name'], list):
+            import warnings
+            warnings.warn("Record with mashed-up author list! Taking first author: {}".format(value))
+            ret['full_name'] = ret['full_name'][0]
+        return ret
 
     authors = self.get('authors', [])
 

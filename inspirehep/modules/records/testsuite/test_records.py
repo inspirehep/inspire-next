@@ -27,7 +27,7 @@ class RecordsTests(InvenioTestCase):
     def test_facets_experiments(self):
         """Test if misspelled experiments are corrected."""
         from invenio_ext.es import es
-        record = es.get(index='hep', id='559118')
+        record = es.get(index='hep', id='480267')
         source = record.get("_source")
         exp = source.get("accelerator_experiments")
         # Gets misspelled experiment

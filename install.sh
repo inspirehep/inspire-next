@@ -45,7 +45,7 @@ inveniomanage database create --quiet || echo ':('
 celery worker -E -A invenio_celery.celery --workdir=$VIRTUAL_ENV 1> /dev/null &
 
 # Load demo records
-inveniomanage migrator populate -f `pwd`/inspirehep/demosite/data/demo-records.xml
+inveniomanage migrator populate -f `pwd`/inspirehep/demosite/data/demo-records.xml.gz
 
 # Add field citation_count to records
 inveniomanage migrator count_citations
