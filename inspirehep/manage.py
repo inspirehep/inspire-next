@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -165,22 +165,28 @@ def delete_indices():
 def recreate_index(name, mapping, rebuild=False, delete_old=True):
     """Recreate an ElasticSearch index."""
     if rebuild:
-        current_index = es.indices.get_alias(name).keys()[0]
-        future_index = name + '_v2' if current_index.endswith('_v1') else name + '_v1'
-        es.indices.delete(index=future_index, ignore=404)
-        es.indices.create(index=future_index, body=mapping)
-        es.indices.put_settings(index=current_index, body={'index': {'blocks': {'read_only': True}}})
-        code, answer = es.cat.transport.perform_request('POST', '/{}/_reindex/{}/'.format(current_index, future_index))
-        assert code == 200
-        assert answer['acknowledged']
-        reindex_name = answer['name']
-        while reindex_name in es.cat.transport.perform_request('GET', '/_reindex/')[1]['names']:
-            # Let's poll to wait for finishing
-            sleep(3)
-        es.indices.put_alias(index=future_index, name=name)
-        if delete_old:
-            es.indices.put_settings(index=current_index, body={'index': {'blocks': {'read_only': False}}})
-            es.indices.delete(index=current_index)
+        try:
+            # The reindexing plugin can work only with one client.
+            es.transport.set_connections(es.transport.hosts[:1])
+            current_index = es.indices.get_alias(name).keys()[0]
+            future_index = name + '_v2' if current_index.endswith('_v1') else name + '_v1'
+            es.indices.delete(index=future_index, ignore=404)
+            es.indices.create(index=future_index, body=mapping)
+            es.indices.put_settings(index=current_index, body={'index': {'blocks': {'read_only': True}}})
+            code, answer = es.cat.transport.perform_request('POST', '/{}/_reindex/{}/'.format(current_index, future_index))
+            assert code == 200
+            assert answer['acknowledged']
+            reindex_name = answer['name']
+            while reindex_name in es.cat.transport.perform_request('GET', '/_reindex/')[1]['names']:
+                # Let's poll to wait for finishing
+                sleep(3)
+            es.indices.put_alias(index=future_index, name=name)
+            if delete_old:
+                es.indices.put_settings(index=current_index, body={'index': {'blocks': {'read_only': False}}})
+                es.indices.delete(index=current_index)
+        finally:
+            # We restore all the correct connections
+            es.transport.set_connections(es.transport.hosts)
     else:
         es.indices.delete(index=name + "_v1", ignore=404)
         es.indices.delete(index=name + "_v2", ignore=404)
