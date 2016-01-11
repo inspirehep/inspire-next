@@ -1,7 +1,7 @@
 /**
  *
  * This file is part of INSPIRE.
- * Copyright (C) 2014, 2015 CERN.
+ * Copyright (C) 2014, 2015, 2016 CERN.
 
  * INSPIRE is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -77,112 +77,79 @@ body {
     color: #f8f8f8;
 }
 
-#collections-section {
-    margin-bottom: 80px;
+#collections-section #collections-nav {
 
-    #collections {
-            z-index: 500;
+    position: static;
+    background-color: white;
+    z-index: 500;
+    height: 30px;
+    margin-bottom: 45px;
+    box-shadow: -3px -3px 3px 0 rgba(0,0,0,0.19) , 3px 0 3px 0 rgba(0,0,0,0.19) , 0 3px 3px 0 rgba(0,0,0,0.23);
 
-            a {
-                color: white;
-            }
+    a {
+        color: black;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        font-size: 12px;
+        width: 14.28%;
+        text-align: center;
+        float: left;
+        padding: 7px 1%;
+        border-right: 1px solid rgba(0,0,0,0.2);
+        -webkit-transition: color .15s cubic-bezier(.33,.66,.66,1);
+        transition: color .15s cubic-bezier(.33,.66,.66,1);
+    }
 
-        background-color: @blue-purple;
-        font-weight: 700;
-        font-size: large;
-        height: 60px;
-        padding: 20px;
+    a:hover {
+        text-decoration: none;
+    }
 
-        &.navbar-fixed-top {
-            top: 65px;
+    &.navbar-fixed-top {
+        top: 65px;
+    }
+
+    .active, a:hover {
+
+        color: white;
+
+        &#literature-collection {
+            background-color: @literature-collection;
         }
 
-        span+span {
-            margin-left: 20px;
+        &#authors-collection {
+            background-color: @authors-collection;
         }
 
-        .active {
-
-            &#literature-collection a {
-                color: @literature-collection;
-            }
-
-            &#authors-collection a {
-                color: @authors-collection;
-            }
-
-            &#conferences-collection a {
-                color: @conferences-collection;
-            }
-
-            &#jobs-collection a {
-                color: @jobs-collection;
-            }
-
-            &#institutions-collection a {
-                color: @institutions-collection;
-            }
-
-            &#experiments-collection a {
-                color: @experiments-collection;
-            }
-
-            &#journals-collection a {
-                color: @journals-collection;
-            }
+        &#conferences-collection {
+            background-color: @conferences-collection;
         }
 
-    }
-}
+        &#jobs-collection {
+            background-color: @jobs-collection;
+        }
 
-.collection-header {
-    font-weight: 700;
-    height: 180px;
-    padding: 77px 20px 0 20px;
-    z-index: -1;
-    font-size: x-large;
-    color: white;
-}
+        &#institutions-collection {
+            background-color: @institutions-collection;
+        }
 
-.collection-header {
-    background-color: @literature-collection;
+        &#experiments-collection {
+            background-color: @experiments-collection;
+        }
 
-    &#literature-collection, &#hep-collection {
-        background-color: @literature-collection;
-    }
-
-    &#authors-collection, &#hepnames-collection {
-        background-color: @authors-collection;
-    }
-
-    &#conferences-collection {
-        background-color: @conferences-collection;
-    }
-
-    &#jobs-collection {
-        background-color: @jobs-collection;
-    }
-
-    &#experiments-collection {
-        background-color: @experiments-collection;
-    }
-
-    &#journals-collection {
-        background-color: @journals-collection;
-    }
-
-    &#institutions-collection {
-        background-color: @institutions-collection;
-    }
-
-    &#data-collection {
-        background-color: @data-collection;
+        &#journals-collection {
+            background-color: @journals-collection;
+        }
     }
 }
 
 #topnav {
-    min-height: 65px;
+    padding: 0 2.5%;
+    min-height: 50px;
+    height: 50px;
     border-bottom: 0px;
+    @media (max-width: 441px) {
+        height: auto;
+    }
 }
 
 // Logo customization
@@ -628,4 +595,185 @@ body {
 a.external-link::after {
     content: " \f08e";
     font-family: FontAwesome;
+}
+
+// Mixin to set background color
+.collection-background-color(@background-color;) {
+    background-color: @background-color;
+}
+
+@media (max-width: @screen-md-min) {
+    #top-search-bar-full {
+        display: none;
+    }
+}
+
+@media (min-width: @screen-md-min) {
+    #top-search-bar-small {
+        display: none;
+    }
+}
+
+// To prevent shrinking search field after applying typeahead 
+.navbar-form .input-group .form-control {
+  width: 100%;
+}
+
+.navbar-form .input-group .input-group-btn {
+  width: 1%;
+}
+
+.navbar-default .navbar-collapse,
+.navbar-default .navbar-form {
+    border: 0;
+}
+
+#top-search-bar-small {
+
+    float: none;
+    margin: 0 auto;
+
+    #searchform .navbar-form {
+        margin-top: 8px;
+    }
+}
+
+#top-search-bar-full {
+
+    #searchform .navbar-form {
+        margin-top: 8px;
+    }
+
+    @media (min-width: @screen-lg) {
+        margin-left: 3%;
+    }
+}
+
+
+#top-search-bar-full, #top-search-bar-small {
+
+    padding: 0;
+
+    #searchform .navbar-form {
+        box-shadow: none;
+    }
+
+    #searchform-input-group {
+        width: initial;
+        font-size: larger;
+    }
+
+    #search-form-input {
+        min-width: 75px;
+        border: 0;
+        border-radius: 0;
+        font-size: 17px;
+    }
+
+    button {
+        padding-left: 20px;
+        padding-right: 20px;
+        border: 0;
+        font-size: 16px;
+
+        // Top bar search button colours
+        &.literature {
+            .collection-background-color(@literature-collection);
+        }
+
+        &.authors {
+            .collection-background-color(@authors-collection);
+        }
+
+        &.conferences {
+            .collection-background-color(@conferences-collection);
+        }
+
+        &.jobs {
+            .collection-background-color(@jobs-collection);
+        }
+
+        &.experiments {
+            .collection-background-color(@experiments-collection);
+        }
+
+        &.institutions {
+            .collection-background-color(@institutions-collection);
+        }
+
+        &.journals {
+            .collection-background-color(@journals-collection);
+        }
+
+        &.data {
+            .collection-background-color(@data-collection);
+        }
+    }
+}
+
+@media (min-width: @screen-sm-min) {
+    #collections-section {
+        margin-top: -14px;
+    }
+}
+
+@media (max-width: @screen-sm-min) {
+    #collections-section {
+        margin-top: -1px;
+    }
+}
+
+@media (min-width: @screen-sm-min) {
+    .navbar-nav>li>a {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+}
+
+// Switch to hamburger menu
+@media (max-width: @screen-md-min) {
+    .navbar-header {
+        float: none;
+    }
+
+    .navbar-toggle {
+        display: block;
+    }
+
+    .navbar-collapse {
+        border-top: 1px solid transparent;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+
+    .navbar-collapse.collapse {
+        display: none!important;
+    }
+
+    .navbar-nav {
+        float: none!important;
+        margin: 7.5px -15px;
+    }
+
+    .navbar-nav>li {
+        float: none;
+    }
+
+    .navbar-nav>li>a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .navbar-text {
+        float: none;
+        margin: 15px 0;
+    }
+
+    /* since 3.1.0 */
+    .navbar-collapse.collapse.in { 
+        display: block!important;
+    }
+
+    .collapsing {
+        overflow: hidden!important;
+    }
 }

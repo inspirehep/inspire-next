@@ -1,7 +1,7 @@
 /**
  *
  * This file is part of INSPIRE.
- * Copyright (C) 2015 CERN.
+ * Copyright (C) 2015, 2016 CERN.
 
  * INSPIRE is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -36,10 +36,14 @@
 }
 
 #collection-search-bar {
+
     background-color: white;
     padding: 30px 10px;
     text-align: center;
-    margin-top: -135px;
+
+    .navbar-form .input-group .input-group-btn {
+        width: 1%;
+    }
 
     .title:extend(.title){}
 
@@ -190,8 +194,4 @@
     .title {
        #collection-how-to-search.title;
    }
-}
-
-.navbar-form .input-group .input-group-btn {
-  width: 1%;
 }

@@ -288,33 +288,6 @@ def setup_app(app):
         return sep.join(new_list)
 
     @app.template_filter()
-    def get_collection_title(collection_name):
-        """Returns collection title along with font awesome icon."""
-
-        collection_name = sanitize_collection_name(collection_name)
-
-        if collection_name == "literature":
-            collection_title = '<i class="fa fa-book"></i> '
-        elif collection_name == "authors":
-            collection_title = '<i class="fa fa-users"></i> '
-        elif collection_name == "conferences":
-            collection_title = '<i class="fa fa-calendar"></i> '
-        elif collection_name == "jobs":
-            collection_title = '<i class="fa fa-briefcase"></i> '
-        elif collection_name == "institutions":
-            collection_title = '<i class="fa fa-building-o"></i> '
-        elif collection_name == "experiments":
-            collection_title = '<i class="fa fa-flask"></i> '
-        elif collection_name == "journals":
-            collection_title = '<i class="fa fa-newspaper-o"></i> '
-        elif collection_name == "data":
-            collection_title = ''
-        else:
-            collection_title = ''
-
-        return collection_title + collection_name.capitalize()
-
-    @app.template_filter()
     def sanitize_collection_name(collection_name):
         """Changes 'hep' to 'literature' and 'hepnames' to 'authors'."""
 

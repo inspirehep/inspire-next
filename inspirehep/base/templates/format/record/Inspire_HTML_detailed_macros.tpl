@@ -18,7 +18,6 @@
 #}
 
 {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import record_abstract with context %}
-{% from "records/Inspire_Default_HTML_detailed_macros.tpl" import search_current_collection with context %}
 
 {% macro record_collection_heading() %}
   <span id="search-title">Search literature &#62;</span>

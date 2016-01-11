@@ -62,7 +62,8 @@
 {% endmacro %}
 
 {% macro render_facets() %}
-<div class="col-md-3 visible-md visible-lg" id="facetparent">
+{%- set collection_name = collection.name | sanitize_collection_name -%}
+<div class="col-md-3 visible-md visible-lg {{ collection_name }}-facet" id="facetparent">
   <div class="facet" id="facet_list" data-clampedwidth="#facetparent">
   {% if not request.args.get('cc') or request.args.get('cc').lower() == "hep" %}
     {% include 'search/facets/hep.html' %}
