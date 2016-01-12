@@ -24,12 +24,12 @@
 <div class="reference-record">
   {% if record %}
       <span class="reference-citations pull-right">{{ record.get('references', '') | count }}</span>
-      <div class="reference-title">{{ number }}. <a href="/record/{{record.recid}}">{{ record_title() }}</a></div>
+      <div class="reference-title"><a href="/record/{{record.recid}}">{{ record_title() }}</a></div>
       <div class="reference-authors">{{ render_record_authors(is_brief=false, show_affiliations=false) | safe }}</div>
       <div class="reference-journal">{{ record_publication_info() | safe }}</div>
   {% else %}
     {% if number %}
-      <div class="reference-title">{{ number }}.
+      <div class="reference-title">
         {% if reference['title'] %}
           {{ reference['title'] }}
         {% elif reference['misc'] %}

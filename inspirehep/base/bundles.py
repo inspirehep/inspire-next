@@ -63,6 +63,7 @@ landing_page_styles = Bundle(
 detailed_record_styles = Bundle(
     "less/format/detailed-record.less",
     "less/format/abstract.less",
+    "vendors/datatables/media/css/dataTables.bootstrap.css",
     output="detailed-record.css",
     depends=[
         "less/format/detailed-record.less"
@@ -75,7 +76,10 @@ detailed_record_js = Bundle(
     "js/detailed_record_init.js",
     output="detailed_record.js",
     filters=RequireJSFilter(exclude=[_j, _i]),
-    weight=51
+    weight=51,
+    bower={
+        "datatables": "1.10.10"
+    }
 )
 
 brief_result_styles = Bundle(

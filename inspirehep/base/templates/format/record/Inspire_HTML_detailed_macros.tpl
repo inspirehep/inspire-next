@@ -257,24 +257,19 @@
       <div id="record-reference-title">References
         ({{ (record.get('references', '')) | count }})
       </div>
-      <div id="references-filter">
-        <form>
-          <input type="text" placeholder=" &#xf002;  Filter" value="">
-        </form>
-      </div>
-      <div class="references-citations-table">
-        <span class="references-citations-showing">
-        Showing {{ (record.get('references', '')) | count }} of {{ (record.get('references', '')) | count }}
-        </span>
-        <span class="references-citations-cited-by pull-right">
-          Cited by
-        </span>
-      </div>
     </div>
 
     <div class="panel-body">
       {%  if record.get('references', '') %}
-        {{ record | references }}
+        <table id="record-references-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Reference</th>
+                <th>Citations</th>
+            </tr>
+        </thead>
+        </table>
       {% else %}
         There are no references available for this record
       {% endif %}
@@ -304,12 +299,6 @@
           ({{ record.get('_cited_by_count', '')  }})
         {% endif %}
       </span>
-
-      <div id="citations-filter">
-        <form>
-          <input type="text" placeholder=" &#xF002;  Filter" value="">
-        </form>
-      </div>
     </div>
 
     <div class="panel-footer">

@@ -46,4 +46,21 @@
 {%- block javascript %}
   {{ super() }}
   {{ mathjax() | safe }}
+  <script type="text/javascript">
+  require(
+    [
+      "jquery",
+      "js/datatables",
+    ],
+
+    function(
+      $,
+      DataTables
+    ) {
+      DataTables.attachTo(document, {
+        'recid': "{{recid}}",
+        'collection': "{{collection.name}}"
+      });
+    });
+</script>
 {%- endblock javascript %}

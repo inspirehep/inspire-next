@@ -30,25 +30,35 @@ class Reference(object):
         self.record = record
 
     def references(self):
-        """Return reference export for single record."""
-        out = ''
+        """Reference export for single record in datatables format.
+
+        :returns: list
+            List of lists where every item represents a datatables row.
+            A row consists of [reference_number, reference, num_citations]
+        """
+        out = []
+        row = []
         number = 0
         references = self.record['references']
         for reference in references:
             number += 1
+            row.append(number)
             for reference_field in reference:
                 if 'recid' in reference_field:
                     recid = reference['recid']
                     record = get_record(recid)
                     if record:
-                            out += render_template_to_string(
-                                "references.html",
-                                number=str(number),
-                                record=record)
+                        row.append(render_template_to_string(
+                            "references.html",
+                            number=str(number),
+                            record=record))
             if 'recid' not in reference:
-                out += render_template_to_string(
+                row.append(render_template_to_string(
                     "references.html",
                     number=str(number),
-                    reference=reference)
-                continue
+                    reference=reference))
+            # FIXME add the number of citations
+            row.append("")
+            out.append(row)
+            row = []
         return out

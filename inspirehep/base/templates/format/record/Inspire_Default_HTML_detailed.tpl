@@ -65,10 +65,12 @@
   </div>
   {{ record_plots() }}
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
       {{ record_references() }}
     </div>
-    <div class="col-md-6">
+  </div>
+  <div class="row">
+    <div class="col-md-12">
       {{ record_citations() }}
     </div>
   </div>

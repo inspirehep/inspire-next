@@ -360,46 +360,15 @@
 
 #references, #citations {
 
-    height: 500px;
+    min-height: 200px;
 
-    #references-filter, #citations-filter {
-
-        margin-top: 20px;
-
-        form {
-            margin-right: 10px;
-            display: inline;
-        }
+    div.dataTables_filter {
 
         input {
             background-color: @teal;
             border: 0px;
             line-height: 2;
-            width: 90%;
-        }
-
-        button {
-            color: @purple;
-        }
-
-        // Do not group these rules!
-        ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-            color: gray;
-            font-family: FontAwesome;
-        }
-        :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-            color: gray;
-            opacity: 1;
-            font-family: FontAwesome;
-        }
-        ::-moz-placeholder { /* Mozilla Firefox 19+ */
-            color: gray;
-            opacity: 1;
-            font-family: FontAwesome;
-        }
-        :-ms-input-placeholder { /* Internet Explorer 10-11 */
-            color: gray;
-            font-family: FontAwesome;
+            width: 300px;
         }
     }
 
@@ -428,14 +397,11 @@
 
     .panel-body {
 
-        margin-top: 150px;
+        margin-top: 44px;
         margin-bottom: 50px;
-        max-height: 300px;
         overflow-y: scroll;
 
         .reference-record {
-
-            margin-bottom: 15px;
 
             .reference-authors, .reference-subtitle {
                 color: @grey;
@@ -473,6 +439,7 @@
         position:absolute;
         width:100%;
         bottom:20px;
+        right: 16px;
         background-color: white;
         border: none;
         width: 90%;
