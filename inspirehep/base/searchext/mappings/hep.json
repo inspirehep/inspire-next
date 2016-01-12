@@ -5,6 +5,11 @@
                 "asciifold_with_orig": {
                     "type": "icu_folding",
                     "preserve_original": true
+                },
+                "whitespace_remove": {
+                    "type": "pattern_replace",
+                    "pattern": "[ \t]{2,}",
+                    "replacement": " "
                 }
             },
             "analyzer": {
@@ -14,6 +19,16 @@
                     "filter": [
                         "asciifold_with_orig",
                         "lowercase"
+                    ]
+                },
+                "no_tokenizing_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "keyword",
+                    "filter": [
+                        "asciifold_with_orig",
+                        "lowercase",
+                        "whitespace_remove",
+                        "trim"
                     ]
                 }
             }
@@ -221,6 +236,7 @@
                     "properties": {
                         "full_name": {
                             "type": "string",
+                            "analyzer": "no_tokenizing_analyzer",
                             "copy_to": ["exactauthor"]
                         },
                         "affiliations": {
@@ -237,7 +253,7 @@
                         },
                         "name_variations":{
                           "type": "string",
-                          "index": "not_analyzed",
+                          "analyzer": "no_tokenizing_analyzer",
                           "copy_to": ["global_fulltext", "author"]
                         },
                         "signature_block": {
