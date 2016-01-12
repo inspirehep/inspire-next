@@ -1,6 +1,6 @@
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -17,13 +17,12 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from invenio.ext.template import render_template_to_string
+from invenio_ext.template import render_template_to_string
 
-from invenio_records.api import get_record
+MAX_REFERENCES_NUMBER = 200
 
 
 class Reference(object):
-
     """Class used to output reference format in detailed record"""
 
     def __init__(self, record):
@@ -31,24 +30,46 @@ class Reference(object):
 
     def references(self):
         """Return reference export for single record."""
+        from invenio_search.api import Query
+
         out = ''
-        number = 0
-        references = self.record['references']
-        for reference in references:
-            number += 1
-            for reference_field in reference:
-                if 'recid' in reference_field:
+        references = self.record.get('references')
+        if references:
+            refs_to_get_from_es = [ref['recid'] for i, ref in enumerate(references)
+                                   if ref.get('recid') and i <= MAX_REFERENCES_NUMBER]
+            es_query = ' or '.join(['control_number:' + str(recid) for recid in refs_to_get_from_es])
+            refs_from_es = {record['control_number']: record for record in Query(es_query).search().records()}
+
+            number = 0
+            for reference in references:
+                if 'recid' in reference:
                     recid = reference['recid']
-                    record = get_record(recid)
-                    if record:
-                            out += render_template_to_string(
-                                "references.html",
-                                number=str(number),
-                                record=record)
-            if 'recid' not in reference:
-                out += render_template_to_string(
-                    "references.html",
-                    number=str(number),
-                    reference=reference)
-                continue
-        return out
+                    ref_record = refs_from_es.get(str(recid))
+                    if ref_record:
+                        number += 1
+                        out += render_template_to_string(
+                            "references.html",
+                            number=str(number),
+                            record=ref_record
+                        )
+
+                else:
+                    number += 1
+                    out += render_template_to_string(
+                        "references.html",
+                        number=str(number),
+                        reference=reference)
+
+                if number >= MAX_REFERENCES_NUMBER:
+                    break
+
+        if out:
+            return out
+        else:
+            return
+
+    def display_count(self):
+        references_count = len(self.record['references']) if self.record.get('references') else 0
+        show_count = references_count if references_count < MAX_REFERENCES_NUMBER else MAX_REFERENCES_NUMBER
+
+        return "Showing {0} of {1}".format(show_count, references_count)

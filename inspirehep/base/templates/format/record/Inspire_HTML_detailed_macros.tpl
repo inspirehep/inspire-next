@@ -264,12 +264,15 @@
       </div>
       <div class="references-citations-table">
         <span class="references-citations-showing">
-        Showing {{ (record.get('references', '')) | count }} of {{ (record.get('references', '')) | count }}
+        {{ record | references_count_display }}
         </span>
         <span class="references-citations-cited-by pull-right">
           Cited by
         </span>
       </div>
+      {% if record.get('references', '') %}
+        <a class="pull-left" href="/search?p=citedby:{{record['control_number']}}&cc=HEP" data-toggle="modal">View in search results</a>
+      {% endif %}
     </div>
 
     <div class="panel-body">
@@ -291,7 +294,6 @@
           <li><a class="pointer latex_us" id="latex_us{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(US)</a></li>
         </ul>
       </div>
-      <a class="btn btn-default pull-right" href="/search?p=citedby:{{record['control_number']}}&cc=HEP" data-toggle="modal">View in Search Results</a>
     </div>
   </div>  
 {% endmacro %}
@@ -299,9 +301,9 @@
 {% macro record_citations() %}
   <div class="panel" id="citations">
     <div class="panel-heading">
-      <span id="record-reference-title">Citations
-        {% if record.get('_cited_by_count', 0) > 0 %}
-          ({{ record.get('_cited_by_count', '')  }})
+      <span id="record-citation-title">Citations
+        {% if record.get('citation_count', 0) > 0 %}
+          ({{ record.get('citation_count', '')  }})
         {% endif %}
       </span>
 
@@ -310,6 +312,22 @@
           <input type="text" placeholder=" &#xF002;  Filter" value="">
         </form>
       </div>
+
+      <div class="references-citations-table">
+        <span class="references-citations-showing">
+        {{ record | citations_count_display }}
+        </span>
+        <span class="references-citations-cited-by pull-right">
+          Cited by
+        </span>
+      </div>
+      {% if record.get('citation_count') > 0 %}
+      <a class="pull-left" href="/search?p=refersto:{{record['control_number']}}&cc=HEP" data-toggle="modal">View in search results</a>
+      {% endif %}
+    </div>
+
+    <div class="panel-body">
+      {{ record | citations }}
     </div>
 
     <div class="panel-footer">
@@ -321,7 +339,6 @@
           {# <li><a href="#">Citation type</a></li> #}
         </ul>
       </div>
-      <a class="btn btn-default pull-right" href="/search?p=refersto:{{record['control_number']}}&cc=HEP" data-toggle="modal">View in Search Results</a>
     </div>
   </div>
 {% endmacro %}

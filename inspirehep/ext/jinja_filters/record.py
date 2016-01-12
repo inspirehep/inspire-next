@@ -1,39 +1,38 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# This file is part of Invenio.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
-# INSPIRE is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Invenio is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# Invenio is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-#
-# In applying this licence, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as an Intergovernmental Organization
-# or submit itself to any jurisdiction.
+# along with Invenio; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+import re
+
+import time
 
 from inspirehep.ext.jinja_filters.general import apply_template_on_array
 
 from inspirehep.utils.bibtex import Bibtex
-from inspirehep.utils.latex import Latex
+from inspirehep.utils.citations import Citation
 from inspirehep.utils.cv_latex import Cv_latex
 from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
-
-from invenio_search.api import Query
-
+from inspirehep.utils.latex import Latex
 from inspirehep.utils.references import Reference
+
 from invenio_base.globals import cfg
 
-import time
-import re
+from invenio_search.api import Query
 
 
 def setup_app(app):
@@ -139,6 +138,18 @@ def setup_app(app):
     @app.template_filter()
     def references(record):
         return Reference(record).references()
+
+    @app.template_filter()
+    def references_count_display(record):
+        return Reference(record).display_count()
+
+    @app.template_filter()
+    def citations(record):
+        return Citation(record).citations()
+
+    @app.template_filter()
+    def citations_count_display(record):
+        return Citation(record).cit_count()
 
     @app.template_filter()
     def cv_latex(record):
@@ -407,3 +418,10 @@ def setup_app(app):
         else:
             link = "%sauthor=%s" % (ADSURL, record['name']['preferred_name'])
         return link
+
+    @app.template_filter()
+    def citation_phrase(count):
+        if count == 1:
+            return 'Cited 1 time'
+        else:
+            return 'Cited ' + str(count) + ' times'
