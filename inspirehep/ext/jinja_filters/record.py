@@ -139,17 +139,9 @@ def setup_app(app):
     def references(record):
         return Reference(record).references()
 
-    # @app.template_filter()
-    # def references_count_display(record):
-    #     return Reference(record).display_count()
-
     @app.template_filter()
     def citations(record):
         return Citation(record).citations()
-
-    @app.template_filter()
-    def citations_count_display(record):
-        return Citation(record).cit_count()
 
     @app.template_filter()
     def cv_latex(record):

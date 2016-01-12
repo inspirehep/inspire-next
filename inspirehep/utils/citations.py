@@ -24,8 +24,6 @@
 
 from invenio_ext.template import render_template_to_string
 
-MAX_CITATIONS_NUMBER = 200
-
 
 class Citation(object):
     """Class used to output citations format in detailed record"""
@@ -37,28 +35,22 @@ class Citation(object):
         """Return citation export for single record."""
         from invenio_search.api import Query
 
-        out = ''
-        recid = self.record['recid']
+        out = []
+        row = []
+        recid = self.record['control_number']
         es_query = Query('refersto:' + str(recid)).search()
         es_query.body.update({
-            'size': MAX_CITATIONS_NUMBER,
             'sort': [{'citation_count': {'order': 'desc'}}]
         })
         citations = es_query.records()
 
         for index, citation in enumerate(citations):
-            out += render_template_to_string("citations.html",
-                                             number=str(index + 1),
-                                             record=citation)
-        if out:
-            return out
-        else:
-            return 'There are no citations available for this record'
+            row.append(index + 1)
+            row.append(render_template_to_string("citations.html",
+                                                 number=str(index + 1),
+                                                 record=citation))
+            row.append(citation.get('citation_count', ''))
+            out.append(row)
+            row = []
 
-    def cit_count(self):
-        all_citations_count = self.record.get('citation_count', 0)
-        show_count = all_citations_count \
-            if all_citations_count < MAX_CITATIONS_NUMBER\
-            else MAX_CITATIONS_NUMBER
-
-        return "Showing {0} of {1}".format(show_count, all_citations_count)
+        return out

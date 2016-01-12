@@ -54,6 +54,39 @@
                 collection: that.attr.collection
               },
               "method": "POST"
+            },
+            "fnInitComplete": function(oSettings, json) {
+              if ( json.data.length > 0 ) {
+                $("#record-references-loading").hide();
+                $('#record-references-table-wrapper').show();
+              }
+              else {
+                $('#references .panel-body').text("There are no references available for this record.").show()
+              }
+            }
+          });
+
+          $('#record-citations-table').DataTable({
+            language: {
+              search: "_INPUT_",
+              searchPlaceholder: "Filter citations..."
+            },
+            "ajax": {
+              "url": "/ajax/citations",
+              "data": {
+                recid: that.attr.recid,
+                collection: that.attr.collection
+              },
+              "method": "POST"
+            },
+            "fnInitComplete": function(oSettings, json) {
+              if ( json.data.length > 0 ) {
+                $("#record-citations-loading").hide();
+                $('#record-citations-table-wrapper').show();
+              }
+              else {
+                $('#citations .panel-body').text("There are no citations available for this record.").show()
+              }
             }
           });
       });

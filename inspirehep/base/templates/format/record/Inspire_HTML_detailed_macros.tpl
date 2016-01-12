@@ -260,7 +260,10 @@
     </div>
 
     <div class="panel-body">
-      {%  if record.get('references', '') %}
+      <div id="record-references-loading">
+        <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading references...
+      </div>
+      <div id="record-references-table-wrapper">
         <table id="record-references-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
@@ -270,13 +273,11 @@
             </tr>
         </thead>
         </table>
-      {% else %}
-        There are no references available for this record
-      {% endif %}
+      </div>
     </div>
 
     <div class="panel-footer">
-      <div class="btn-group pull-right">
+      <!-- <div class="btn-group pull-right">
         <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Export {{ (record.get('references', '')) | count }} references <span class="caret"></span>
         </a>
@@ -286,7 +287,7 @@
           <li><a class="pointer latex_us" id="latex_us{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(US)</a></li>
         </ul>
       </div>
-      <a class="btn btn-default pull-right" href="/search?p=citedby:{{record['control_number']}}&cc=HEP" data-toggle="modal">View in Search Results</a>
+      <a class="btn btn-default pull-right" href="/search?p=citedby:{{record['control_number']}}&cc=HEP" data-toggle="modal">View in Search Results</a> -->
     </div>
   </div>  
 {% endmacro %}
@@ -299,38 +300,36 @@
           ({{ record.get('citation_count', '')  }})
         {% endif %}
       </span>
-
-      <div id="citations-filter">
-        <form>
-          <input type="text" placeholder=" &#xF002;  Filter" value="">
-        </form>
-      </div>
-
-      <div class="references-citations-table">
-        <span class="references-citations-showing">
-        {{ record | citations_count_display }}
-        </span>
-        <span class="references-citations-cited-by pull-right">
-          Cited by
-        </span>
-      </div>
-      {% if record.get('citation_count') > 0 %}
-      <a class="pull-left" href="/search?p=refersto:{{record['control_number']}}&cc=HEP" data-toggle="modal">View in search results</a>
-      {% endif %}
     </div>
 
     <div class="panel-body">
-      {{ record | citations }}
+      <div id="record-citations-loading">
+        <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading citations...
+      </div>
+      <div id="record-citations-table-wrapper">
+        <table id="record-citations-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Citation</th>
+                <th>Citations</th>
+            </tr>
+        </thead>
+        </table>
+      </div>
     </div>
-
     <div class="panel-footer">
       <div class="btn-group pull-right">
-        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Export citations <span class="caret"></span>
+        <!-- <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Export {{ record.get('citation_count', 0) }} citations <span class="caret"></span>
         </a>
-        <ul class="dropdown-menu">
-          {# <li><a href="#">Citation type</a></li> #}
+        <ul class="dropdown-menu" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#citeModal{{record['control_number']}}">
+          <li><a class="pointer bibtex" id="bibtex{{record['control_number']}}" data-recid="{{record['control_number']}}">BibTex</a></li>
+          <li><a class="pointer latex_eu" id="latex_eu{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(EU)</a></li>
+          <li><a class="pointer latex_us" id="latex_us{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(US)</a></li>
         </ul>
+      </div> -->
+        <a class="btn btn-default pull-right" href="/search?p=refersto:{{record['control_number']}}&cc=HEP">View in Search Results</a>
       </div>
     </div>
   </div>

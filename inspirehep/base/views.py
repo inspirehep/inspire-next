@@ -169,6 +169,24 @@ def ajax_references(recid, collection):
         }
     )
 
+
+@blueprint.route('/ajax/citations', methods=['GET', 'POST'])
+@wash_arguments({'recid': (unicode, ""),
+                 'collection': (unicode, "")})
+def ajax_citations(recid, collection):
+    """Handler for datatables citations view"""
+    from flask import jsonify
+    from inspirehep.utils.citations import Citation
+    from invenio.base.globals import cfg
+    from invenio_ext.es import es
+
+    index = cfg['SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING'].get(collection, 'hep')
+    return jsonify(
+        {
+            "data": Citation(es.get(index=index, id=recid)['_source']).citations()
+        }
+    )
+
 #
 # Feedback handler
 #

@@ -22,8 +22,7 @@
 {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors with context %}
 
 <div class="reference-record">
-    <span class="reference-citations pull-right">{{ record.get('citation_count') }}</span>
-    <div class="reference-title">{{ number }}. <a href="/record/{{record.recid}}">{{ record_title() }}</a></div>
+    <div class="reference-title"><a href="/record/{{record.recid}}">{{ record_title() }}</a></div>
     <div class="reference-authors">{{ render_record_authors(is_brief=true, show_affiliations=false) | safe }}</div>
     <div class="reference-journal">{{ record_publication_info() | safe }}</div>
 </div>

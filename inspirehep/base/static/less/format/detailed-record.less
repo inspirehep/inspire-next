@@ -358,6 +358,18 @@
     -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
 
+#citations .panel-body {
+    margin-bottom: 50px;
+}
+
+#record-references-table-wrapper, #record-citations-table-wrapper {
+    display: none;
+}
+
+#record-references-loading, #record-citations-loading {
+    text-align: center;
+}
+
 #references, #citations {
 
     min-height: 200px;
@@ -377,9 +389,6 @@
     }
 
     .panel-heading {
-        position: absolute;
-        background-color: white;
-        width: 94%;
 
         .references-citations-table {
             margin-top: 15px;   
@@ -397,8 +406,6 @@
 
     .panel-body {
 
-        margin-top: 44px;
-        margin-bottom: 50px;
         overflow-y: scroll;
 
         .reference-record {
