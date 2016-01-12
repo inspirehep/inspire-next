@@ -42,17 +42,17 @@ def populate_inspire_document_type(recid, json):
     if 'collections' in json:
         for element in json.get('collections', []):
             if 'primary' in element and element.get('primary', ''):
-                if element['primary'].lower() == 'thesis':
+                if element['primary'].lower() == 'published':
                     inspire_doc_type.append(element['primary'].lower())
                     break
-                elif element['primary'].lower() == 'published':
+                elif element['primary'].lower() == 'thesis':
                     inspire_doc_type.append('peer reviewed')
-                    break
-                elif element['primary'].lower() == 'bookchapter':
-                    inspire_doc_type.append('book chapter')
                     break
                 elif element['primary'].lower() == 'book':
                     inspire_doc_type.append(element['primary'].lower())
+                    break
+                elif element['primary'].lower() == 'bookchapter':
+                    inspire_doc_type.append('book chapter')
                     break
                 elif element['primary'].lower() == 'proceedings':
                     inspire_doc_type.append(element['primary'].lower())
@@ -63,12 +63,13 @@ def populate_inspire_document_type(recid, json):
                 elif element['primary'].lower() == 'note':
                     inspire_doc_type.append('note')
                     break
-                elif json.get('publication_info', []):
-                    for field in json.get('publication_info', []):
-                        if 'page_artid' not in field:
-                            inspire_doc_type.append('preprint')
-                            break
-
+        complete_pub_info = []
+        if not inspire_doc_type:
+            for field in json.get('publication_info', []):
+                for k, v in field.iteritems():
+                    complete_pub_info.append(k)
+            if 'page_artid' not in complete_pub_info:
+                inspire_doc_type.append('preprint')
         inspire_doc_type.extend([s['primary'].lower() for s in
                                  json.get('collections', []) if 'primary'
                                  in s and s['primary'] is not None and
