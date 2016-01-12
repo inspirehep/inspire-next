@@ -363,7 +363,8 @@ SEARCH_ELASTIC_AGGREGATIONS = {
         "earliest_date": {
             "date_histogram": {
                 "field": "earliest_date",
-                "interval": "year"
+                "interval": "year",
+                "min_doc_count": 1
             }
         }
     },
