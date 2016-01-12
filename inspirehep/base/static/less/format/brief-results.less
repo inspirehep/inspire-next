@@ -53,14 +53,14 @@
     }
 }
 
-a.link-to-pdf, button.dropdown-cite {
+a.link-to-pdf, button.dropdown-cite, a#cite-all-format {
     background-color: @teal;
     border: 0px;
     color: @grey;
     font-weight: 700;
 }
 
-button.dropdown-cite:hover {
+button.dropdown-cite:hover, a#cite-all-format:hover {
     background-color: @blue-purple;
     color: white;
 }
@@ -190,7 +190,7 @@ hr {
     float: none;
 }
 
-#spinner-download {
+#spinner-modal-download {
     display: none;
 }
 
@@ -379,6 +379,11 @@ i.fa-chevron-right.facet-slider {
     font-size: 18px;
 }
 
+@media screen and (min-width: @screen-sm-min) {
+    .cite-modal {
+        width: 900px;
+    }
+}
 #clear-facets-message {
     color: #e67e24;
     text-decoration: none;
@@ -386,4 +391,33 @@ i.fa-chevron-right.facet-slider {
 
 #clear-facets-info {
     color: #7e8d8e;
+}
+
+.modal-dialog-scrollable {
+    overflow-y: initial !important
+}
+
+.modal-body-scrollable {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.modal-content-cite-all {
+    min-height: 400px;
+}
+
+#editable-modal, #response-data {
+    min-height: 237px;   
+}
+
+#spinner-modal-wait {
+    position: absolute;
+    display: none;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+#spinner-message {
+    margin-left: -20%;
 }

@@ -72,7 +72,7 @@ def get_bibtex_file(recid):
     return Response(generator,
                     mimetype="text/plain",
                     headers={"Content-Disposition":
-                             "attachment;filename=Bibtex%d.bibtex" % recid})
+                             "attachment;filename=Bibtex%d.bib" % recid})
 
 
 @blueprint.route("/download-latex/<path:latex_format>/<int:recid>")
@@ -109,7 +109,7 @@ def export_as(ids, export_format):
     for id in ids:
         record = get_record(id)
         if export_format == 'bibtex':
-            results = Bibtex(record).format() + '\n'
+            results = Bibtex(record).format() + '\n' * 2
         elif export_format in ('latex_eu', 'latex_us'):
             results = Latex(record, export_format).format() + '\n'
         elif export_format == 'cv_latex':

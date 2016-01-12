@@ -90,7 +90,7 @@ define(
         var that = this;
         sList = [];
         if ($(ev.target).prop('checked')) {
-          $('#download-format').removeClass('disabled');
+          $('#cite-all-format').removeClass('disabled');
           $('.checkbox-results').each(function() {
             $(this).prop('checked', true);
             sList.push($(this).attr("id"));
@@ -112,7 +112,7 @@ define(
           }
           this.on('#select-all-records', "click", this.onSelectAllRecords);
         } else {
-          $('#download-format').addClass('disabled');
+          $('#cite-all-format').addClass('disabled');
           $('.checkbox-results').each(function() {
             $(this).prop('checked', false);
           });
@@ -126,11 +126,17 @@ define(
         var that = this;
         var limit = $('.total-results').eq(0).text();
         $('#info-message').remove();
+        $('#spinner-download').show();
+        $('#cite-all-format').text('Processing...');
+        $('#cite-all-format').addClass('disabled');
         if (parseInt($('.total-results').eq(0).text()) > this.attr.EXPORT_LIMIT) {
           limit = this.attr.EXPORT_LIMIT;
         }
         $.get("/search?of=id&rg=" + limit, function(data, status) {
           if (status == 'success') {
+            $('#spinner-download').hide();
+            $('#cite-all-format').removeClass('disabled');
+            $('#cite-all-format').html('<i class="fa fa-quote-right"></i> Cite all selected records');
             $('#results-control-panel').after('<div class="alert alert-warning" id="alert-selection" role="alert">' +
               data.length + ' records have been selected.<a class="pointer" id="undo-selection"> Undo selection.</a></div>');
             $('#undo-selection').on("click", $.proxy(that.onUndoSelection, that));
@@ -147,14 +153,18 @@ define(
         });
         $('#export-select-all').prop('checked', false);
         $('#export-select-all').prop('indeterminate', false);
+        $('#cite-all-format').addClass('disabled');
       }
 
-      this.onExportAs = function(ev) {
-        var obj = this.get_download_information($('#dropdown-export').text().trim());
+      this.onCiteAs = function(ev) {
+        var format_id = '#' + $(ev.target).attr("id");
+        var obj = this.get_download_information($(format_id).text().trim());
+        $("#response-data").html('');
+        $("#dropdown-export").html('BibTex <span class="caret"></span>')
         if (sList.length != 0) {
-          $('#spinner-download').show();
-          $('#download-format').text('Downloading...');
-          $('#download-format').addClass('disabled');
+            $('#spinner-modal-wait').show();
+            $('#editable-modal').css('pointer-events', 'none');
+            $('#cite-all-format, #download-format, #dropdown-export').addClass('disabled');
           $.ajax({
             type: "POST",
             url: obj['url'],
@@ -162,17 +172,43 @@ define(
               ids: sList
             },
             success: function(data) {
+              $("#response-data").html(data);  
+            }
+          }).done(function() {
+              $('#spinner-modal-wait').hide();
+              $('#editable-modal').css('pointer-events', 'auto');
+              $('#cite-all-format').html('<i class="fa fa-quote-right"></i> Cite all selected records');
+              $('#cite-all-format, #download-format, #dropdown-export').removeClass('disabled');
+          });
+        }
+      }
+
+      this.onDownloadAllCitation = function(ev) {
+        var obj = this.get_download_information($('#dropdown-export').text().trim());        
+        if (sList.length != 0) {
+          $('#spinner-modal-download').show();
+          $('#download-format').text('Downloading...');
+          $('#download-format').addClass('disabled');
+          $("#dropdown-export").addClass('disabled');
+          $.ajax({
+          type: "POST",
+          url: obj['url'],
+          data: {
+            ids: sList
+          },
+          success: function(data) {
               var response_data = "text/plain;charset=utf-8," + encodeURIComponent(data);
               $("body").append('<a id="data-download" href="data:' + response_data + '" download="' + obj['filename'] + '">download</a>');
               var trigger_element = document.getElementById('data-download');
               trigger_element.click();
               $("#data-download").remove();
-            }
-          }).done(function() {
-            $('#spinner-download').hide();
-            $('#download-format').text('Download');
+          }
+        }).done(function() {
+            $('#spinner-modal-download').hide();
+            $("#dropdown-export").removeClass('disabled');
+            $('#download-format').html('<i class="fa fa-download"></i> Download');
             $('#download-format').removeClass('disabled');
-          });
+        });
         }
       }
 
@@ -192,10 +228,10 @@ define(
           }
         }
         if (sList.length != 0) {
-          $('#download-format').removeClass('disabled');
+          $('#cite-all-format').removeClass('disabled');
           $("#dropdown-export").html($('#dropdown-export').text().trim() + ' <span class="caret"></span>');
         } else {
-          $('#download-format').addClass('disabled');
+          $('#cite-all-format').addClass('disabled');
         }
       }
 
@@ -270,16 +306,17 @@ define(
       this.after('initialize', function() {
         sList = [];
         $('[data-toggle="tooltip"]').tooltip()
+        CitationModal.teardownAll();
+        CitationModal.attachTo(document);
         this.on("#export-select-all", "click", this.onExportSelectAll);
         this.on("#checkbox-parent > input[type=checkbox]", "change", this.onCheckboxChange);
-        this.on("#download-format", "click", this.onExportAs);
+        this.on("a[id^='export-as'], #cite-all-format" , "click", this.onCiteAs);
+        this.on("#download-format", "click", this.onDownloadAllCitation);
         this.on(".select-numpages", "change", this.onNumpagesChange);
         this.on("#select-sorting", "change", this.onSortingChange);
         this.initExportDropdown();
         this.on("a.export-as-element", "click", this.onDropdownCheck);
         this.on("h4[id^='filter-by-']", "click", this.onFacetDropdown);
-        CitationModal.teardownAll();
-        CitationModal.attachTo(document);
         this.on("#clear-filters", "click", this.onClearFilters);
       });
 

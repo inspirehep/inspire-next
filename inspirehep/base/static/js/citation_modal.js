@@ -65,10 +65,16 @@ define(
         })
       }
 
+      this.onSelectContent = function(ev) {
+        document.execCommand('selectAll', false, null);
+        $(this).off(ev);
+      }
+
       this.after('initialize', function() {
-        $('.dropdown-cite, .bibtex').on('click', this.onCiteClick)
-        $('.latex_eu').on('click', this.onLatexEUClick)
-        $('.latex_us').on('click', this.onLatexUSClick)
+        this.on('.dropdown-cite, .bibtex', 'click', this.onCiteClick);
+        this.on('.latex_eu', 'click', this.onLatexEUClick);
+        this.on('.latex_us', 'click', this.onLatexUSClick);
+        this.on('.editable', 'click', this.onSelectContent);
       });
     }
   });

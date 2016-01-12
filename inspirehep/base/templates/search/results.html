@@ -122,27 +122,14 @@
           <hr>
           {% if not request.args.get('cc') or request.args.get('cc') in ["hep","HEP"] %}
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-7">
               <input id="export-select-all" type="checkbox">&nbsp;&nbsp;
-              Export as
-              <div class="dropdown" id="export-dropdown">
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-export" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                BibTex
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" id='formats-dropdown-menu' aria-labelledby="dropdown-export">
-                <li><a class="pointer export-as-element" id="export-as-bibtex">BibTex</a></li>
-                <li><a class="pointer export-as-element" id="export-as-latex-eu">LaTex(EU)</a></li>
-                <li><a class="pointer export-as-element" id="export-as-latex-us">LaTex(US)</a></li>
-                <li><a class="pointer export-as-element" id="export-as-cv-latex">CV format (LaTex)</a></li>
-                <li><a class="pointer export-as-element" id="export-as-cv-html">CV format (html)</a></li>
-                <li><a class="pointer export-as-element" id="export-as-cv-text">CV format (text)</a></li>
-              </ul>
-              </div>
-              <a type="button" id="download-format" class="btn btn-default disabled">Download</a>
+              <a class="btn btn-default dropdown-toggle disabled" type="button" id="cite-all-format" data-toggle="modal" data-target="#citeAllModal">
+                <i class="fa fa-quote-right"></i> Cite all selected records
+              </a>
               <i class="fa fa-spinner fa-spin fa-lg" id="spinner-download"></i>
             </div>
-            <div class="col-md-6 text-right">
+            <div class="col-md-5 text-right">
               Sort by:
               <select class='form-control' id="select-sorting">
                 <option value="bestmatch"{{ ' selected' if not request.args.get('sf') }}>Best Match</option>
@@ -195,6 +182,7 @@
   {%- endif -%}
 </div>
 </div>
+{{ render_cite_all_modal() }}
 {% endmacro %}
 
 {% macro render_no_results() %}
@@ -210,6 +198,56 @@
     </div>
   </div>
 {% endmacro%}
+
+{% macro render_cite_all_modal() %}
+<div class="modal fade" id="citeAllModal"  role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog cite-modal modal-dialog-scrollable">
+    <div class="modal-content modal-content-cite-all">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="citeModalLabel">Cite Articles</h4>
+      </div>
+      <div class="modal-body modal-body-scrollable">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="editable" id="editable-modal" contenteditable="true"><pre id="response-data"></pre>
+            </div>
+            <div id="spinner-modal-wait">
+              <i class="fa fa-spinner fa-spin fa-5x" ></i><br/>
+              <span id="spinner-message"><i>Exporting citations...</i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+      <div class="row">
+        <div class="col-md-6 text-left">
+          <small>* Click inside the box to select the whole content.</small>
+        </div>
+        <div class="col-md-6">
+         <div class="btn-group" id="export-dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdown-export" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                BibTex
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" id='formats-dropdown-menu' aria-labelledby="dropdown-export">
+                <li><a class="pointer export-as-element" id="export-as-bibtex">BibTex</a></li>
+                <li><a class="pointer export-as-element" id="export-as-latex-eu">LaTex(EU)</a></li>
+                <li><a class="pointer export-as-element" id="export-as-latex-us">LaTex(US)</a></li>
+                <li><a class="pointer export-as-element" id="export-as-cv-latex">CV format (LaTex)</a></li>
+                <li><a class="pointer export-as-element" id="export-as-cv-html">CV format (html)</a></li>
+                <li><a class="pointer export-as-element" id="export-as-cv-text">CV format (text)</a></li>
+              </ul>
+          </div>
+          <a type="button" id="download-format" class="btn btn-primary"><i class="fa fa-download"></i> Download</a>
+          <i class="fa fa-spinner fa-spin fa-lg" id="spinner-modal-download"></i>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
 
 {% if not request.is_xhr %}
 {% extends 'search/searchbar_frame.html' %}
