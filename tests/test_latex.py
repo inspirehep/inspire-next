@@ -36,13 +36,26 @@ class LatexTests(InvenioTestCase):
                                                          'fixtures',
                                                          'test_hep_formats.xml')
                                                      )
+
+        self.marcxml_publi_info = pkg_resources.resource_string('tests',
+                                                                os.path.join(
+                                                                    'fixtures',
+                                                                    'test_hep_publi_info.xml')
+                                                                )
         record = create_record(self.marcxml)
 
+        record_publi_info = create_record(self.marcxml_publi_info)
+
         self.hep_record = hep.do(record)
+
+        self.hep_record_publi_info = hep.do(record_publi_info)
 
         self.latex_eu = Latex(self.hep_record, 'latex_eu')
 
         self.latex_us = Latex(self.hep_record, 'latex_us')
+
+        self.latex_eu_publi_info = Latex(
+            self.hep_record_publi_info, 'latex_eu')
 
         self.sample_latex_eu = {
             'citation_key': 'Aad:2015wqa',
@@ -53,6 +66,10 @@ class LatexTests(InvenioTestCase):
             'report_number': '',
             'SLACcitation': '%%CITATION = ARXIV:1503.03290;%%',
 
+        }
+
+        self.sample_latex_publi_info = {
+            'publi_info': ['Class.\\ Quant.\\ Grav.\\  {\\bf 15} (1998) 2153']
         }
 
         self.sample_latex_us = {
@@ -97,6 +114,9 @@ class LatexTests(InvenioTestCase):
 
         self.assertEqual(self.sample_latex_us['publi_info'],
                          self.latex_us._get_publi_info())
+
+        self.assertEqual(self.sample_latex_publi_info['publi_info'],
+                         self.latex_eu_publi_info._get_publi_info())
 
     def test_arxiv(self):
         """Test if arxiv is created correctly"""

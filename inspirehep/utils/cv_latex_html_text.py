@@ -240,7 +240,8 @@ class Cv_latex_html_text(Export):
                     out += journal_title + journal_volume + year + \
                         journal_issue + pages
                     result.append(out)
-                else:
+            if not result:
+                for field in self.record['publication_info']:
                     if 'pubinfo_freetext' in field and len(field) == 1:
                         return field['pubinfo_freetext']
             return result

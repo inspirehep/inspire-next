@@ -111,11 +111,14 @@ class Cv_latex(Export):
         elif field == 'title':
             out += u'{1}\n'.format(field, value)
         elif field == 'publi_info':
-            if len(value) > 1:
-                out += u'  \\\\{{}}{},    {}\n'.format(''.join(
-                    value[:-1]), value[-1])
+            if isinstance(value, list):
+                if len(value) > 1:
+                    out += u'  \\\\{{}}{},  {}'.format(''.join(
+                        value[:-1]), value[-1])
+                else:
+                    out += u'  \\\\{{}}{1}.'.format(field, value[0])
             else:
-                out += u'  \\\\{{}}{1}.'.format(field, value[0])
+                out += u'  \\\\{{}}{1}.'.format(field, value)
             if self._get_date():
                 out += ' %(' + str(self._get_date()) + ')\n'
         elif field == 'arxiv':
@@ -255,9 +258,10 @@ class Cv_latex(Export):
                     out += journal_title + journal_volume + journal_issue + \
                         pages + year
                     result.append(out)
-                else:
-                    if 'pubinfo_freetext' in field and len(field) == 1:
-                        return field['pubinfo_freetext']
+                if not result:
+                    for field in self.record['publication_info']:
+                        if 'pubinfo_freetext' in field and len(field) == 1:
+                            return field['pubinfo_freetext']
             for k, v in enumerate(result):
                 if k > 0:
                     v = '[' + v + ']'

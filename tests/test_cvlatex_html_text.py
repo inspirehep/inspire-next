@@ -41,9 +41,18 @@ class CvLatexHtmlTextTests(InvenioTestCase):
                                                          'fixtures',
                                                          'test_hep_formats.xml')
                                                      )
+        self.marcxml_publi_info = pkg_resources.resource_string('tests',
+                                                                os.path.join(
+                                                                    'fixtures',
+                                                                    'test_hep_publi_info.xml')
+                                                                )
         record = create_record(self.marcxml)
 
+        record_publi_info = create_record(self.marcxml_publi_info)
+
         self.hep_record = hep.do(record)
+
+        self.hep_record_publi_info = hep.do(record_publi_info)
 
         self.sample_cv_latex_html = {
             'title': '\nSearch for supersymmetry in events containing a same-flavour opposite-sign dilepton pair, jets, and large missing transverse momentum in $\sqrt{s}=8$ TeV $pp$ collisions with the ATLAS detector\n',
@@ -63,54 +72,74 @@ class CvLatexHtmlTextTests(InvenioTestCase):
 
         }
 
+        self.sample_cv_latex_html_text_publi_info = {
+            'publi_info': ['Class.Quant.Grav. 15 (1998) 2153-2164']
+        }
+
     def test_title(self):
         """Test if title is created correctly"""
         self.assertEqual(self.sample_cv_latex_html['title'],
-                         Cv_latex_html_text(self.hep_record, 'cv_latex_html', "<br/>").
+                         Cv_latex_html_text(self.hep_record,
+                                            'cv_latex_html', "<br/>").
                          _get_title())
 
         self.assertEqual(self.sample_cv_latex_text['title'],
-                         Cv_latex_html_text(self.hep_record, 'cv_latex_text', "\n").
+                         Cv_latex_html_text(self.hep_record,
+                                            'cv_latex_text', "\n").
                          _get_title())
 
     def test_author(self):
         """Test if author is created correctly"""
         self.assertEqual(self.sample_cv_latex_html['author'],
-                         Cv_latex_html_text(self.hep_record, 'cv_latex_html', "<br/>").
+                         Cv_latex_html_text(self.hep_record,
+                                            'cv_latex_html', "<br/>").
                          _get_author()[0])
 
         self.assertEqual(self.sample_cv_latex_text['author'],
-                         Cv_latex_html_text(self.hep_record, 'cv_latex_text', "\n").
+                         Cv_latex_html_text(self.hep_record,
+                                            'cv_latex_text', "\n").
                          _get_author()[0])
 
     def test_arxiv(self):
         """Test if arxiv is created correctly"""
         self.assertEqual(self.sample_cv_latex_html['arxiv'],
-                         Cv_latex_html_text(self.hep_record, 'cv_latex_html', "<br/>").
+                         Cv_latex_html_text(self.hep_record,
+                                            'cv_latex_html', "<br/>").
                          _get_arxiv())
 
         self.assertEqual(self.sample_cv_latex_text['arxiv'],
-                         Cv_latex_html_text(self.hep_record, 'cv_latex_text', "\n").
+                         Cv_latex_html_text(self.hep_record,
+                                            'cv_latex_text', "\n").
                          _get_arxiv())
 
     def test_doi(self):
         """Test if doi is created correctly"""
         self.assertEqual(self.sample_cv_latex_html['doi'],
-                         Cv_latex_html_text(self.hep_record, 'cv_latex_html', "<br/>").
+                         Cv_latex_html_text(self.hep_record,
+                                            'cv_latex_html', "<br/>").
                          _get_doi())
 
         self.assertEqual(self.sample_cv_latex_text['doi'],
-                         Cv_latex_html_text(self.hep_record, 'cv_latex_text', "\n").
+                         Cv_latex_html_text(self.hep_record,
+                                            'cv_latex_text', "\n").
                          _get_doi())
 
     def test_publi_info(self):
         """Test if publication info is created correctly"""
         self.assertEqual(self.sample_cv_latex_html['publi_info'],
-                         Cv_latex_html_text(self.hep_record, 'cv_latex_html', "<br/>").
+                         Cv_latex_html_text(self.hep_record,
+                                            'cv_latex_html', "<br/>").
                          _get_publi_info())
 
         self.assertEqual(self.sample_cv_latex_text['publi_info'],
-                         Cv_latex_html_text(self.hep_record, 'cv_latex_text', "\n").
+                         Cv_latex_html_text(self.hep_record,
+                                            'cv_latex_text', "\n").
+                         _get_publi_info())
+
+        self.assertEqual(self.
+                         sample_cv_latex_html_text_publi_info['publi_info'],
+                         Cv_latex_html_text(self.hep_record_publi_info,
+                                            'cv_latex_text', "\n").
                          _get_publi_info())
 TEST_SUITE = make_test_suite(CvLatexHtmlTextTests)
 

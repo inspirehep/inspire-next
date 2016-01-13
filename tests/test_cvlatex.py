@@ -37,9 +37,19 @@ class CvLatexTests(InvenioTestCase):
                                                          'fixtures',
                                                          'test_hep_formats.xml')
                                                      )
+
+        self.marcxml_publi_info = pkg_resources.resource_string('tests',
+                                                                os.path.join(
+                                                                    'fixtures',
+                                                                    'test_hep_publi_info.xml')
+                                                                )
         record = create_record(self.marcxml)
 
+        record_publi_info = create_record(self.marcxml_publi_info)
+
         self.hep_record = hep.do(record)
+
+        self.hep_record_publi_info = hep.do(record_publi_info)
 
         self.sample_cv_latex = {
             'author': 'G.~Aad',
@@ -47,6 +57,10 @@ class CvLatexTests(InvenioTestCase):
             'publi_info': ['Eur.\ Phys.\ J.\ C {\\bf 75}, no. 7, 318 (2015)', '[Eur.\ Phys.\ J.\ C {\\bf 75}, no. 10, 463 (2015)]'],
             'url': cfg['CFG_SITE_URL'] + '/record/1351762',
             'date': 'Mar 11, 2015'
+        }
+
+        self.sample_cv_latex_publi_info = {
+            'publi_info': ['Class.\\ Quant.\\ Grav.\\  {\\bf 15}, 2153 (1998)']
         }
 
     def test_author(self):
@@ -63,6 +77,10 @@ class CvLatexTests(InvenioTestCase):
         """Test if publication info is created correctly"""
         self.assertEqual(self.sample_cv_latex['publi_info'],
                          Cv_latex(self.hep_record).
+                         _get_publi_info())
+
+        self.assertEqual(self.sample_cv_latex_publi_info['publi_info'],
+                         Cv_latex(self.hep_record_publi_info).
                          _get_publi_info())
 
     def test_url(self):
