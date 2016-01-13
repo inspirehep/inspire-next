@@ -23,7 +23,6 @@ inveniomanage config set CFG_SITE_SECURE_URL https://localhost
 inveniomanage config set ASSETS_DEBUG True  # ignore assets issues
 inveniomanage config set LESS_RUN_IN_DEBUG False
 inveniomanage config set REQUIREJS_RUN_IN_DEBUG False
-inveniomanage config set CELERY_ALWAYS_EAGER True
 
 inveniomanage bower -i bower-base.json > bower.json
 bower install --silent --force-latest --allow-root
@@ -45,7 +44,7 @@ inveniomanage database create --quiet || echo ':('
 celery worker -E -A invenio_celery.celery --workdir=$VIRTUAL_ENV 1> /dev/null &
 
 # Load demo records
-inveniomanage migrator populate -f `pwd`/inspirehep/demosite/data/demo-records.xml.gz
+inveniomanage migrator populate -f inspirehep/demosite/data/demo-records.xml.gz -w True
 
 # Add field citation_count to records
-inveniomanage migrator count_citations
+inveniomanage migrator count_citations -t

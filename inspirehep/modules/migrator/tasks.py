@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -125,19 +125,42 @@ def migrate_broken_records(broken_output=None, dry_run=False):
 
 
 @celery.task(ignore_result=True)
-def migrate(source, broken_output=None, dry_run=False):
+def migrate(source, broken_output=None, dry_run=False, wait_for_results=False):
     """Main migration function."""
+    from celery.task.sets import TaskSet
     if source.endswith('.gz'):
         fd = gzip.open(source)
     else:
         fd = open(source)
 
+    if wait_for_results:
+        # if the wait_for_results is true we enable returning results from migrate_chunk task
+        # so that we could use them to synchronize migrate task (which in that case waits for
+        # the migrate_chunk tasks to complete before it finishes).
+        tasks = []
+        migrate_chunk.ignore_result = False
+    from invenio_celery.utils import disable_queue, enable_queue
+    disable_queue("celery")
+
     for i, chunk in enumerate(chunker(split_stream(fd), CHUNK_SIZE)):
-        print("Processed {} records".format(i * CHUNK_SIZE))
-        chunk_broken_output = None
-        if broken_output:
-            chunk_broken_output = "{}-{}".format(broken_output, i)
-        migrate_chunk.delay(chunk, chunk_broken_output, dry_run)
+            print("Processed {} records".format(i * CHUNK_SIZE))
+            chunk_broken_output = None
+            if broken_output:
+                chunk_broken_output = "{}-{}".format(broken_output, i)
+            if wait_for_results:
+                tasks.append(migrate_chunk.s(chunk, chunk_broken_output, dry_run))
+            else:
+                migrate_chunk.delay(chunk, chunk_broken_output, dry_run)
+
+    if wait_for_results:
+        job = TaskSet(tasks=tasks)
+        result = job.apply_async()
+        enable_queue("celery")
+        result.join()
+        migrate_chunk.ignore_result = True
+        print('All migration tasks have been completed.')
+    else:
+        enable_queue("celery")
 
 
 @celery.task(ignore_result=True)
@@ -154,15 +177,18 @@ def continuos_migration():
             db.session.close()
 
 
-@celery.task(ignore_result=True, compress='zlib', acks_late=True)
+@celery.task(ignore_result=False, compress='zlib', acks_late=True)
 def migrate_chunk(chunk, broken_output=None, dry_run=False):
     from flask_sqlalchemy import models_committed
     from invenio_records.receivers import record_modification
     from invenio_records.tasks.index import get_record_index
     from invenio.base.globals import cfg
     from elasticsearch.helpers import bulk as es_bulk
-    from invenio_records.signals import before_record_index
+    from inspirehep.modules.citations.receivers import catch_citations_insert, add_citation_count_on_insert_or_update
+    from invenio_records.signals import before_record_index, after_record_insert
     models_committed.disconnect(record_modification)
+    after_record_insert.disconnect(catch_citations_insert)
+    before_record_index.disconnect(add_citation_count_on_insert_or_update)
 
     records_to_index = []
     try:
@@ -173,7 +199,7 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
                                             force=True, dry_run=dry_run)
                 index = get_record_index(json) or \
                     cfg['SEARCH_ELASTIC_DEFAULT_INDEX']
-                before_record_index.send(recid, json=json)
+                before_record_index.send(recid, json=json, index=index)
                 json.update({'_index': index, '_type': 'record', '_id': recid, 'citation_count': 0})
                 records_to_index.append(json)
             except Exception as err:
@@ -189,10 +215,12 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
         es_bulk(es, records_to_index, request_timeout=60)
     finally:
         models_committed.connect(record_modification)
+        after_record_insert.connect(catch_citations_insert)
+        before_record_index.connect(add_citation_count_on_insert_or_update)
         db.session.close()
 
 
-@celery.task(ignore_result=True)
+@celery.task()
 def add_citation_counts():
     from elasticsearch.helpers import bulk as es_bulk
     from elasticsearch.helpers import scan as es_scan
