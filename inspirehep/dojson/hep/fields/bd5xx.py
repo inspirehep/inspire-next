@@ -129,8 +129,14 @@ def abstracts(self, key, value):
 @utils.filter_values
 def abstract2marc(self, key, value):
     """Summary, Etc.."""
+    if isinstance(value.get('value'), list):
+        import warnings
+        warnings.warn("Record with double abstract! Taking first abstract: {}".format(value.get('value')[0]))
+        abstract = value.get('value')[0]
+    else:
+        abstract = value.get('value')
     return {
-        'a': value.get('value'),
+        'a': abstract,
         '9': value.get('source'),
     }
 
