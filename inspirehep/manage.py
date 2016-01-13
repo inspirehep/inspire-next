@@ -165,30 +165,45 @@ def delete_indices():
 def recreate_index(name, mapping, rebuild=False, delete_old=True):
     """Recreate an ElasticSearch index."""
     if rebuild:
+        from copy import deepcopy
+        original_es_hosts = deepcopy(es.transport.hosts)
         try:
             # The reindexing plugin can work only with one client.
-            es.transport.set_connections(es.transport.hosts[:1])
+            es.transport.hosts = es.transport.hosts[:1]
+            es.transport.set_connections(es.transport.hosts)
             current_index = es.indices.get_alias(name).keys()[0]
             future_index = name + '_v2' if current_index.endswith('_v1') else name + '_v1'
+            original_number_of_documents = es.count(current_index)['count']
             es.indices.delete(index=future_index, ignore=404)
             es.indices.create(index=future_index, body=mapping)
             es.indices.put_settings(index=current_index, body={'index': {'blocks': {'read_only': True}}})
-            code, answer = es.cat.transport.perform_request('POST', '/{}/_reindex/{}/'.format(current_index, future_index))
-            assert code == 200
-            assert answer['acknowledged']
-            reindex_name = answer['name']
-            while reindex_name in es.cat.transport.perform_request('GET', '/_reindex/')[1]['names']:
-                # Let's poll to wait for finishing
-                sleep(3)
+            try:
+                code, answer = es.cat.transport.perform_request('POST', '/{}/_reindex/{}/'.format(current_index, future_index))
+                assert code == 200
+                assert answer['acknowledged']
+                reindex_name = answer['name']
+                while reindex_name in es.cat.transport.perform_request('GET', '/_reindex/')[1]['names']:
+                    # Let's poll to wait for finishing
+                    sleep(3)
+                if original_number_of_documents != es.count(future_index)['count']:
+                    click.echo("ERROR when reindexing {current_index} into {future_index}. Bailing out.".format({
+                               'current_index': current_index,
+                               'future_index': future_index,
+                               }))
+                    return False
+            finally:
+                es.indices.put_settings(index=current_index, body={'index': {'blocks': {'read_only': False}}})
+
             es.indices.put_alias(index=future_index, name=name)
             if delete_old:
-                es.indices.put_settings(index=current_index, body={'index': {'blocks': {'read_only': False}}})
                 es.indices.delete(index=current_index)
         finally:
             # We restore all the correct connections
+            es.transport.hosts = original_es_hosts
             es.transport.set_connections(es.transport.hosts)
     else:
         es.indices.delete(index=name + "_v1", ignore=404)
         es.indices.delete(index=name + "_v2", ignore=404)
         es.indices.create(index=name + "_v1", body=mapping)
         es.indices.put_alias(index=name + "_v1", name=name)
+    return True
