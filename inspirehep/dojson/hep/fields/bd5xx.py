@@ -118,8 +118,14 @@ def thesis2marc(self, key, value):
 @utils.filter_values
 def abstracts(self, key, value):
     """Summary, Etc.."""
+    if isinstance(value.get('a'), list):
+        import warnings
+        warnings.warn("Record with double abstract! Taking first abstract: {}".format(value.get('a')[0]))
+        abstract = value.get('a')[0]
+    else:
+        abstract = value.get('a')
     return {
-        'value': value.get('a'),
+        'value': abstract,
         'source': value.get('9'),
     }
 
