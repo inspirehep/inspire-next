@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+#
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # Invenio is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -27,9 +28,10 @@ from inspirehep.modules.oaiharvester.tasks.arxiv import (
     arxiv_plot_extract,
     arxiv_fulltext_download,
     arxiv_author_list,
+    arxiv_refextract,
 )
 
-# from inspirehep.modules.refextract.tasks import extract_journal_info
+from inspirehep.modules.refextract.tasks import extract_journal_info
 
 from inspirehep.modules.workflows.workflows.hep_ingestion import hep_ingestion
 
@@ -50,7 +52,7 @@ class harvesting_fixture(hep_ingestion):
     before_halt_check = [
         arxiv_plot_extract,
         arxiv_fulltext_download(),
-        # arxiv_refextract,
+        arxiv_refextract,
         arxiv_author_list("authorlist2marcxml.xsl"),
-        # extract_journal_info,
+        extract_journal_info,
     ] + hep_ingestion.before_halt_check
