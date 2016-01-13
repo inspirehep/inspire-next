@@ -30,6 +30,7 @@ from flask.ext.login import current_user
 
 from invenio_base.i18n import _
 from invenio_ext.email import send_email
+from invenio_base.decorators import wash_arguments
 from invenio_base.globals import cfg
 
 
@@ -145,6 +146,46 @@ def data():
     collection = {'name': 'data'}
     return render_template('search/collection_data.html',
                            collection=collection)
+
+
+#
+# Handlers for AJAX requests regarding references and citations
+#
+
+@blueprint.route('/ajax/references', methods=['GET', 'POST'])
+@wash_arguments({'recid': (unicode, ""),
+                 'collection': (unicode, "")})
+def ajax_references(recid, collection):
+    """Handler for datatables references view"""
+    from flask import jsonify
+    from inspirehep.utils.references import Reference
+    from invenio.base.globals import cfg
+    from invenio_ext.es import es
+
+    index = cfg['SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING'].get(collection, 'hep')
+    return jsonify(
+        {
+            "data": Reference(es.get(index=index, id=recid)['_source']).references()
+        }
+    )
+
+
+@blueprint.route('/ajax/citations', methods=['GET', 'POST'])
+@wash_arguments({'recid': (unicode, ""),
+                 'collection': (unicode, "")})
+def ajax_citations(recid, collection):
+    """Handler for datatables citations view"""
+    from flask import jsonify
+    from inspirehep.utils.citations import Citation
+    from invenio.base.globals import cfg
+    from invenio_ext.es import es
+
+    index = cfg['SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING'].get(collection, 'hep')
+    return jsonify(
+        {
+            "data": Citation(es.get(index=index, id=recid)['_source']).citations()
+        }
+    )
 
 #
 # Feedback handler

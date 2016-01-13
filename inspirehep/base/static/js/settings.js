@@ -24,6 +24,8 @@
 require.config({
   baseUrl: "/",
   paths: {
+    "datatables.net": "vendors/datatables/media/js/jquery.dataTables",
+    "datatables": "vendors/datatables/media/js/dataTables.bootstrap",
     jquery: "vendors/jquery/dist/jquery",
     "jquery.ui": "vendors/jquery-ui/jquery-ui",
     ui: "vendors/jquery-ui/ui",
