@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -156,7 +156,6 @@ def scan_author_string_for_phrases(s):
             # filter empty strings
             retval[tag] = [x for x in retval[tag] if x != '']
         retval['titles'] = [x.strip() for x in retval['titles'] if x != '']
-
     return retval
 
 
@@ -203,7 +202,7 @@ def parse_scanned_author_for_phrases(scanned):
                 continue
             retval.append(first + ' ' + last + title_word)
             retval.append(last + ', ' + first + title_word)
-
+        retval += lastlist
         return retval
 
     last_parts = scanned['lastnames']
@@ -313,5 +312,6 @@ def expand_nonlastnames(namelist):
 
 def author_tokenize(phrase):
     """Return all possible variatons of a name"""
-    return parse_scanned_author_for_phrases(
+    name_variations = parse_scanned_author_for_phrases(
         scan_author_string_for_phrases(phrase))
+    return [x.lower() for x in name_variations]
