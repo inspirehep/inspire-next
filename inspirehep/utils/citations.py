@@ -45,7 +45,8 @@ class Citation(object):
         recid = self.record['control_number']
         es_query = Query('refersto:' + str(recid)).search()
         es_query.body.update({
-            'sort': [{'citation_count': {'order': 'desc'}}]
+            'sort': [{'citation_count': {'order': 'desc'}}],
+            'size': 9999
         })
         citations = es_query.records()
 
