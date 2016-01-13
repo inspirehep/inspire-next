@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -21,7 +21,7 @@ from invenio_records.signals import before_record_index
 
 
 @before_record_index.connect
-def populate_inspire_subjects(recid, json, index):
+def populate_inspire_subjects(recid, json, *args, **kwargs):
     """
     Populate a json record before indexing it to elastic.
     Adds a field for faceting INSPIRE subjects
@@ -34,7 +34,7 @@ def populate_inspire_subjects(recid, json, index):
 
 
 @before_record_index.connect
-def populate_inspire_document_type(recid, json, index):
+def populate_inspire_document_type(recid, json, *args, **kwargs):
     """ Populates a json record before indexing it to elastic.
         Adds a field for faceting INSPIRE document type
     """
@@ -79,7 +79,7 @@ def populate_inspire_document_type(recid, json, index):
 
 
 @before_record_index.connect
-def match_valid_experiments(recid, json, index):
+def match_valid_experiments(recid, json, *args, **kwargs):
     """Matches misspelled experiment names with valid experiments.
        Tries to match with valid experiments by matching lowercased and
        whitespace-free versions of known experiments.
