@@ -31,7 +31,7 @@ class Reference(object):
 
         :returns: list
             List of lists where every item represents a datatables row.
-            A row consists of [reference_number, reference, num_citations]
+            A row consists of [reference, num_citations]
         """
         from invenio_search.api import Query
 
@@ -43,19 +43,16 @@ class Reference(object):
             es_query = ' or '.join(['control_number:' + str(recid) for recid in refs_to_get_from_es])
             refs_from_es = {record['control_number']: record for record in Query(es_query).search().records()}
 
-            number = 1
             for reference in references:
                 row = []
-                row.append(number)
-                number += 1
                 if 'recid' in reference:
                     recid = reference['recid']
                     ref_record = refs_from_es.get(str(recid))
                     if ref_record:
                         row.append(render_template_to_string(
                             "references.html",
-                            number=str(number),
-                            record=ref_record
+                            record=ref_record,
+                            reference=reference
                         ))
                         row.append(ref_record.get('citation_count', ''))
                         out.append(row)
@@ -63,7 +60,6 @@ class Reference(object):
 
                 row.append(render_template_to_string(
                     "references.html",
-                    number=str(number),
                     reference=reference))
                 row.append('')
                 out.append(row)

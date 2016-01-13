@@ -63,7 +63,9 @@
               else {
                 $('#references .panel-body').text("There are no references available for this record.").show()
               }
-            }
+            },
+            "aaSorting": [],
+            "autoWidth": false
           });
 
           $('#record-citations-table').DataTable({
@@ -87,7 +89,9 @@
               else {
                 $('#citations .panel-body').text("There are no citations available for this record.").show()
               }
-            }
+            },
+            "aaSorting": [],
+            "autoWidth": false
           });
       });
 

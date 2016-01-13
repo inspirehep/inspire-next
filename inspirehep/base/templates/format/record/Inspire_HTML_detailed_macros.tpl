@@ -267,7 +267,6 @@
         <table id="record-references-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
-                <th>#</th>
                 <th>Reference</th>
                 <th>Citations</th>
             </tr>
@@ -310,7 +309,6 @@
         <table id="record-citations-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
-                <th>#</th>
                 <th>Citation</th>
                 <th>Citations</th>
             </tr>

@@ -32,7 +32,12 @@ class Citation(object):
         self.record = record
 
     def citations(self):
-        """Return citation export for single record."""
+        """Citation export for single record in datatables format.
+
+        :returns: list
+            List of lists where every item represents a datatables row.
+            A row consists of [reference, num_citations]
+        """
         from invenio_search.api import Query
 
         out = []
@@ -44,10 +49,8 @@ class Citation(object):
         })
         citations = es_query.records()
 
-        for index, citation in enumerate(citations):
-            row.append(index + 1)
+        for citation in citations:
             row.append(render_template_to_string("citations.html",
-                                                 number=str(index + 1),
                                                  record=citation))
             row.append(citation.get('citation_count', ''))
             out.append(row)
