@@ -185,11 +185,11 @@ def recreate_index(name, mapping, rebuild=False, delete_old=True):
                 while reindex_name in es.cat.transport.perform_request('GET', '/_reindex/')[1]['names']:
                     # Let's poll to wait for finishing
                     sleep(3)
+                es.indices.flush(future_index, wait_if_ongoing=True)
                 if original_number_of_documents != es.count(future_index)['count']:
-                    click.echo("ERROR when reindexing {current_index} into {future_index}. Bailing out.".format({
-                               'current_index': current_index,
-                               'future_index': future_index,
-                               }))
+                    click.echo("ERROR when reindexing {current_index} into {future_index}. Bailing out.".format(
+                        current_index=current_index,
+                        future_index=future_index))
                     return False
             finally:
                 es.indices.put_settings(index=current_index, body={'index': {'blocks': {'read_only': False}}})
