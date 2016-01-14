@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ requirements = [
     'HarvestingKit>=0.6.2',
     'plotextractor>=0.1.2',
     'refextract>=0.1.0',
+    'python-scrapyd-api>=0.2.0',
     'mixer==4.9.5',
     'orcid',
     'raven==5.0.0',
