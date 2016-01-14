@@ -24,15 +24,28 @@
 
 import types
 from dojson import Overdo
+from dojson.utils import force_list
+
+
+def add_book_info(record, blob):
+    """Add link to the appropriate book record."""
+    collections = [c['primary'].lower() for c in record['collections']]
+    if 'bookchapter' in collections:
+        pubinfos = force_list(blob.get("773__", []))
+        for pubinfo in pubinfos:
+            if pubinfo.get('0'):
+                record['book'] = {
+                    'recid': int(pubinfo['0'])
+                }
 
 
 def custom_do(self, blob):
     """Custom do function that allows extra post-processing."""
     record = self._do(blob)
+    add_book_info(record, blob)
     return record
 
 hep = Overdo()
 hep._do = hep.do
 hep.do = types.MethodType(custom_do, hep)
-
 hep2marc = Overdo()

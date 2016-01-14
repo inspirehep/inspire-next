@@ -318,8 +318,8 @@ class Bibtex(Export):
         collaboration = ''
         if 'collaboration' in self.record:
             try:
-                collaboration = self.record['collaboration'][0]
-            except IndexError:
+                collaboration = self.record['collaboration'][0]['value']
+            except (IndexError, KeyError):
                 pass
         return collaboration
 
