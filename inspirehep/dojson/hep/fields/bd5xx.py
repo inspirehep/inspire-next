@@ -92,11 +92,16 @@ def hidden_note2marc(self, key, value):
 @utils.filter_values
 def thesis(self, key, value):
     """Get Thesis Information."""
+    curated_relation = False
+    if value.get('z'):
+        curated_relation = True
     return {
         'defense_date': value.get('a'),
         'degree_type': value.get('b'),
         'university': value.get('c'),
-        'date': value.get('d')
+        'date': value.get('d'),
+        'recid': value.get('z'),
+        'curated_relation': curated_relation,
     }
 
 

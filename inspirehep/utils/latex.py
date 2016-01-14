@@ -93,7 +93,7 @@ class Latex(Export):
                 if 'collaboration' in self.record:
                     try:
                         collaboration = self.\
-                            record['collaboration'][0]
+                            record['collaboration'][0]['value']
                         if 'Collaboration' in collaboration:
                             out += u' {{\it et al.}} [' + collaboration +\
                                 '],\n'

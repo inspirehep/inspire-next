@@ -57,7 +57,16 @@ def thesis_supervisor2marc(self, key, value):
 def collaboration(self, key, value):
     """Added Entry-Corporate Name."""
     def get_value(value):
-        return value.get('g')
+        recid = ''
+        if '0' in value:
+            try:
+                recid = int(value.get('0'))
+            except:
+                pass
+        return {
+            'value': value.get('g'),
+            'recid': recid
+        }
     collaboration = self.get('collaboration', [])
     if isinstance(value, list):
         filtered_value = [dict(t) for t in

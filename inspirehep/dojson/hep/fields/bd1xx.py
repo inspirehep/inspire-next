@@ -36,11 +36,18 @@ def authors(self, key, value):
 
     def get_value(value):
         affiliations = []
+        curated_relation = False
         if value.get('u'):
             affiliations = list(set(utils.force_list(
                 value.get('u'))))
-            affiliations = [{'value': aff} for aff in affiliations]
-        ret = {
+            affiliations = [{'value': aff, 'recid': value.get('z')} for
+                            aff in affiliations]
+        if value.get('y'):
+            if value.get('y') == '1':
+                curated_relation = True
+        elif value.get('z'):
+            curated_relation = True
+        return {
             'full_name': value.get('a'),
             'role': value.get('e'),
             'alternative_name': value.get('q'),
@@ -52,7 +59,7 @@ def authors(self, key, value):
             'profile': inspire_dojson_utils.create_profile_url(
                 value.get('x')
             ),
-            'claimed': value.get('y')
+            'curated_relation': curated_relation
         }
         # HACK: This is to workaround broken records where multiple authors
         # got meshed up together.
@@ -94,7 +101,7 @@ def authors2marc(self, key, value):
             'm': value.get('email'),
             'u': affiliations,
             'x': value.get('recid'),
-            'y': value.get('claimed')
+            'y': value.get('curated_relation')
         }
 
     if len(value) > 1:
