@@ -1,6 +1,6 @@
 /*
  * This file is part of INSPIRE.
- * Copyright (C) 2014, 2015 CERN.
+ * Copyright (C) 2014, 2015, 2016 CERN.
  *
  * INSPIRE is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ require.config({
     // INSPIRE
     "bootstrap-multiselect": "vendors/bootstrap-multiselect/dist/js/bootstrap-multiselect",
     "readmore": "vendors/readmore/readmore",
-    "buckets": "vendors/buckets/buckets",
+    "buckets": "vendors/buckets/dist/buckets",
     "feedback": "js/feedback/feedback",
     "toastr": "vendors/toastr/toastr",
     "html2canvas": "vendors/html2canvas/build/html2canvas",
