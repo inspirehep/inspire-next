@@ -32,7 +32,8 @@ from setuptools.command.test import test as TestCommand
 requirements = [
     'elasticsearch>=2.2.0.dev0,<3.0.0',
     'HarvestingKit>=0.6.2',
-    "plotextractor>=0.1.2",
+    'plotextractor>=0.1.2',
+    'refextract>=0.1.0',
     'mixer==4.9.5',
     'orcid',
     'raven==5.0.0',

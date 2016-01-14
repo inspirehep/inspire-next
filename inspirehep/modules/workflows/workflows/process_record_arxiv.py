@@ -27,6 +27,7 @@ from inspirehep.modules.oaiharvester.tasks.arxiv import (
     arxiv_author_list,
     arxiv_fulltext_download,
     arxiv_plot_extract,
+    arxiv_refextract,
 )
 from inspirehep.modules.predicter.tasks import (
     guess_coreness,
@@ -45,7 +46,8 @@ from inspirehep.modules.workflows.workflows.hep_ingestion import hep_ingestion
 
 from invenio_oaiharvester.tasks.records import convert_record_to_json
 from invenio_workflows.tasks.logic_tasks import workflow_if
-# from inspirehep.modules.refextract.tasks import extract_journal_info
+
+from inspirehep.modules.refextract.tasks import extract_journal_info
 
 
 class process_record_arxiv(hep_ingestion):
@@ -87,9 +89,9 @@ class process_record_arxiv(hep_ingestion):
     before_halt_check = [
         arxiv_plot_extract,
         arxiv_fulltext_download(),
-        # arxiv_refextract,
+        arxiv_refextract,
         arxiv_author_list("authorlist2marcxml.xsl"),
-        # extract_journal_info,
+        extract_journal_info,
         classify_paper(
             taxonomy="HEPont",
             only_core_tags=False,

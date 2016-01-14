@@ -32,6 +32,8 @@ from inspirehep.modules.predicter.tasks import (
     guess_coreness,
 )
 
+from inspirehep.modules.refextract.tasks import extract_journal_info
+
 from inspirehep.modules.workflows.models import (
     SIPWorkflowMixin,
     Payload,
@@ -133,6 +135,7 @@ class hep_ingestion(SIPWorkflowMixin, DepositionType):
         ]
     ]
     before_halt_check = [
+        extract_journal_info,
         classify_paper(
             taxonomy="HEPont",
             only_core_tags=False,

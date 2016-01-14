@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,9 @@ from invenio_knowledge.api import (
     add_kb_mapping,
     get_kb_mappings,
     kb_mapping_exists,
+    get_kb_by_name,
 )
+from invenio_knowledge.models import KnwKBRVAL
 
 
 def get_value(kb_name, list_of_keys):
@@ -53,3 +55,11 @@ def save_keys_to_kb(kb_name, list_of_keys, value):
     else:
         for key in list_of_keys:
             add_kb_mapping(kb_name, key, value)
+
+
+def get_mappings_from_kbname(kb_name, cache={}):  # noqa cache trick
+    """Get cached (key, value) mappings for given KB."""
+    if kb_name not in cache:
+        kb = get_kb_by_name(kb_name)
+        cache[kb_name] = [(m.m_key, m.m_value) for m in KnwKBRVAL.query_kb_mappings(kb.id)]
+    return cache[kb_name]

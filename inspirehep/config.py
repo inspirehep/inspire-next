@@ -267,6 +267,8 @@ HOLDING_PEN_MATCH_MAPPING = {
     "isbn": "isbns.value",
 }
 
+REFEXTRACT_KB_NAME = "docextract-journals"
+
 # Harvester config
 HARVESTER_WORKFLOWS = {
     "world_scientific": "inspirehep.modules.harvester.workflows.world_scientific:world_scientific"

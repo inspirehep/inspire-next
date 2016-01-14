@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # Invenio is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -36,6 +36,8 @@ from inspirehep.utils.helpers import (
     get_record_from_model,
 )
 from inspirehep.utils.marcxml import get_json_from_marcxml
+
+from inspirehep.modules.refextract.tasks import extract_references
 
 from invenio_base.globals import cfg
 
@@ -189,8 +191,6 @@ def arxiv_refextract(obj, eng):
     :param obj: Bibworkflow Object to process
     :param eng: BibWorkflowEngine processing the object
     """
-    from invenio.legacy.refextract.api import extract_references_from_file_xml
-
     model = eng.workflow_definition.model(obj)
     record = get_record_from_model(model)
     arxiv_id = get_arxiv_id_from_record(record)
@@ -208,24 +208,19 @@ def arxiv_refextract(obj, eng):
         pdf = existing_file.get_syspath()
 
     if pdf and os.path.isfile(pdf):
-        references_xml = extract_references_from_file_xml(pdf)
-        if references_xml:
-            updated_xml = '<?xml version="1.0" encoding="UTF-8"?>\n' \
-                          '<collection>\n' + references_xml + \
-                          "\n</collection>"
-            new_dict = get_json_from_marcxml(updated_xml)[0]
-            if "references" in new_dict:
-                record["references"] = new_dict["references"]
-                obj.log.info("Extracted {0} references".format(
-                    len(obj.data["references"])
-                ))
-                obj.update_task_results(
-                    "References",
-                    [{"name": "References",
-                      "result": new_dict['references'],
-                      "template": "workflows/results/refextract.html"}]
-                )
-                model.update()
+        mapped_references = extract_references(pdf)
+        if mapped_references:
+            record["references"] = mapped_references
+            obj.log.info("Extracted {0} references".format(
+                len(mapped_references)
+            ))
+            obj.update_task_results(
+                "References",
+                [{"name": "References",
+                  "result": mapped_references,
+                  "template": "workflows/results/refextract.html"}]
+            )
+            model.update()
         else:
             obj.log.info("No references extracted")
     else:
@@ -241,7 +236,6 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
     @wraps(arxiv_author_list)
     def _author_list(obj, eng):
         from inspirehep.modules.converter.xslt import convert
-        from invenio_oaiharvester.utils import find_matching_files
 
         model = eng.workflow_definition.model(obj)
         record = get_record_from_model(model)
