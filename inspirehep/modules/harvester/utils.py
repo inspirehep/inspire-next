@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,8 +34,8 @@ def get_storage_path(suffix=""):
     from invenio_base.globals import cfg
 
     storage_path = os.path.join(
-        cfg.get("CFG_PREFIX"),
-        cfg.get("HARVESTER_STORAGE_PREFIX"),
+        cfg.get("CFG_DATADIR", ""),
+        cfg.get("HARVESTER_STORAGE_PREFIX", ""),
         suffix
     )
     if not os.path.exists(storage_path):
