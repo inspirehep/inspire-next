@@ -26,7 +26,7 @@ require([
   "js/datatables"
 ], function(Plots, CitationModal, datatables) {
 	CitationModal.teardownAll();
-  CitationModal.attachTo(document);
+  	CitationModal.attachTo(document);
 	console.log('js/detailed_record_init is loaded')
   // Needed to have the JavaScript available when ASSETS_DEBUG=False.
 });

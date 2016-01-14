@@ -67,7 +67,8 @@ require.config({
     "html2canvas": "vendors/html2canvas/build/html2canvas",
     "highcharts": "vendors/highcharts-release/highcharts",
     "jquery-menu-aim": "vendors/jQuery-menu-aim/jquery.menu-aim",
-    "searchtypeahead-configuration": "js/search/invenio_with_spires_typeahead_configuration"
+    "searchtypeahead-configuration": "js/search/invenio_with_spires_typeahead_configuration",
+    "clipboard": "vendors/clipboard/dist/clipboard"
   },
   shim: {
     jquery: {
