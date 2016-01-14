@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,6 +31,11 @@ from inspirehep.modules.oaiharvester.tasks.arxiv import (
 from inspirehep.modules.predicter.tasks import (
     guess_coreness,
 )
+from inspirehep.modules.workflows.tasks.matching import(
+    delete_self_and_stop_processing,
+    already_harvested,
+    previously_rejected,
+)
 from inspirehep.modules.workflows.tasks.actions import shall_upload_record
 from inspirehep.modules.workflows.tasks.classifier import (
     classify_paper,
@@ -39,6 +44,7 @@ from inspirehep.modules.workflows.tasks.classifier import (
 from inspirehep.modules.workflows.workflows.hep_ingestion import hep_ingestion
 
 from invenio_oaiharvester.tasks.records import convert_record_to_json
+from invenio_workflows.tasks.logic_tasks import workflow_if
 # from inspirehep.modules.refextract.tasks import extract_journal_info
 
 
@@ -53,6 +59,23 @@ class process_record_arxiv(hep_ingestion):
 
     # Need staticmethod here to avoid needing class instances
     upload_check = staticmethod(shall_upload_record)
+
+    match_processing = [
+        # FIXME: This filtering step should be removed when
+        #        arXiv CORE harvesting is enabled on labs
+        workflow_if(already_harvested),
+        [
+            delete_self_and_stop_processing,
+        ],
+        # FIXME: This filtering step should be removed when:
+        #        old previously rejected records are treated differently
+        #        e.g. good auto-reject heuristics or better time based
+        #        filtering (5 days is quite random now.
+        workflow_if(previously_rejected()),
+        [
+            delete_self_and_stop_processing,
+        ]
+    ] + hep_ingestion.match_processing
 
     initial_processing = [
         # First we perform conversion from OAI-PMH XML to MARCXML

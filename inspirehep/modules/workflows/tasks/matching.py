@@ -1,24 +1,21 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
-# INSPIRE is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-#
-# In applying this license, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as an Intergovernmental Organization
-# or submit itself to any jurisdiction.
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 """Tasks to check if the incoming record already exist."""
 
@@ -38,10 +35,16 @@ from inspirehep.utils.helpers import (
 )
 
 from invenio_base.globals import cfg
+from invenio_base.wrappers import lazy_import
+
+from invenio_matcher.api import match as _match
 
 import requests
 
 import six
+
+
+BibWorkflowObject = lazy_import('invenio_workflows.models.BibWorkflowObject')
 
 
 def search(query):
@@ -105,18 +108,53 @@ def match(obj, eng):
         set(match_by_arxiv_id(record)) | set(match_by_doi(record))
     )
 
-    if response:
-        # FIXME(jacquerie): use more than just the first id.
-        obj.extra_data['recid'] = response[0]
-        obj.extra_data['url'] = os.path.join(
+    obj.extra_data['record_matches'] = {
+        "recids": [str(recid) for recid in response],
+        "records": [],
+        "base_url": os.path.join(
             cfg["CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"],
-            'record',
-            str(response[0])
+            'record'
         )
+    }
+    return bool(obj.extra_data['record_matches']['recids'])
 
-        return True
 
-    return False
+def match_with_invenio_matcher(queries=None, index="hep", doc_type="record"):
+    """Match record using Invenio Matcher."""
+    @wraps(match_with_invenio_matcher)
+    def _match_with_invenio_matcher(obj, eng):
+        model = eng.workflow_definition.model(obj)
+        record = get_record_from_model(model)
+
+        if queries is None:
+            queries_ = [
+                {'type': 'exact', 'match': 'dois.value'},
+                {'type': 'exact', 'match': 'arxiv_eprints.value'}
+            ]
+        else:
+            queries_ = queries
+
+        record_matches = {
+            "recids": [],
+            "records": [],
+            "base_url": os.path.join(
+                cfg["CFG_SITE_URL"],
+                'record'
+            )
+        }
+
+        for matched_record in _match(record, queries=queries_, index=index, doc_type='record'):
+            matched_recid = matched_record.record.get('control_number')
+            record_matches['recids'].append(matched_recid)
+            record_matches['records'].append({
+                "source": matched_record.record.dumps(),
+                "score": matched_record.score
+            })
+
+        obj.extra_data["record_matches"] = record_matches
+
+        return bool(record_matches['recids'])
+    return _match_with_invenio_matcher
 
 
 def was_already_harvested(record):
@@ -147,21 +185,40 @@ def is_too_old(record, days_ago=5):
         return True
 
 
-def exists_in_inspire_or_rejected(days_ago=None):
-    """Check if record exist on INSPIRE or already rejected."""
-    @wraps(exists_in_inspire_or_rejected)
-    def _exists_in_inspire_or_rejected(obj, eng):
+def record_exists(obj, eng):
+    """Check if record exist in the system."""
+    # Use matcher if not on production
+    if not cfg.get('PRODUCTION_MODE'):
+        if match_with_invenio_matcher()(obj, eng):
+            obj.log.info("Record already exists in INSPIRE (using matcher).")
+            return True
+    else:
+        obj.log.warning("Remote match is deprecated.")
         if match(obj, eng):
             obj.log.info("Record already exists in INSPIRE.")
             return True
+    return False
 
+
+def already_harvested(obj, eng):
+    """Check if record is already harvested."""
+    if cfg.get('PRODUCTION_MODE'):
+        model = eng.workflow_definition.model(obj)
+        record = get_record_from_model(model)
+
+        if was_already_harvested(record):
+            obj.log.info('Record is already being harvested on INSPIRE.')
+            return True
+    return False
+
+
+def previously_rejected(days_ago=None):
+    """Check if record exist on INSPIRE or already rejected."""
+    @wraps(previously_rejected)
+    def _previously_rejected(obj, eng):
         if cfg.get('PRODUCTION_MODE'):
             model = eng.workflow_definition.model(obj)
             record = get_record_from_model(model)
-
-            if was_already_harvested(record):
-                obj.log.info('Record is already being harvested on INSPIRE.')
-                return True
 
             if days_ago is None:
                 _days_ago = cfg.get('INSPIRE_ACCEPTANCE_TIMEOUT', 5)
@@ -173,7 +230,7 @@ def exists_in_inspire_or_rejected(days_ago=None):
                 return True
         return False
 
-    return _exists_in_inspire_or_rejected
+    return _previously_rejected
 
 
 def save_identifiers_to_kb(kb_name,
@@ -228,10 +285,13 @@ def delete_self_and_stop_processing(obj, eng):
     eng.skipToken()
 
 
+def stop_processing(obj, eng):
+    """Stop processing for object and return as completed."""
+    eng.stopProcessing()
+
+
 def update_old_object(obj, *args, **kwargs):
     """Update the data of the old object with the new data."""
-    from invenio_workflows.models import BibWorkflowObject
-
     holdingpen_ids = obj.extra_data.get("holdingpen_ids", [])
     if holdingpen_ids and len(holdingpen_ids) == 1:
         old_object = BibWorkflowObject.query.get(holdingpen_ids[0])

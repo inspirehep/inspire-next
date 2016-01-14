@@ -86,6 +86,7 @@ PACKAGES = [
     'invenio_classifier',
     'invenio_oaiharvester',
     'invenio_grobid',
+    'invenio_matcher',
     'invenio_records',
     'invenio_search',
     'invenio_collections',

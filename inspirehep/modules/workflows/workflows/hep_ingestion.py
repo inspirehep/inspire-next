@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,8 +53,9 @@ from inspirehep.modules.workflows.tasks.classifier import (
 
 from inspirehep.modules.workflows.tasks.matching import(
     delete_self_and_stop_processing,
+    stop_processing,
     exists_in_holding_pen,
-    exists_in_inspire_or_rejected,
+    record_exists,
     update_old_object,
 )
 from inspirehep.modules.workflows.tasks.submission import (
@@ -121,9 +122,9 @@ class hep_ingestion(SIPWorkflowMixin, DepositionType):
 
     initial_processing = [create_payload]
     match_processing = [
-        workflow_if(exists_in_inspire_or_rejected()),
+        workflow_if(record_exists),
         [
-            delete_self_and_stop_processing,
+            stop_processing,
         ],
         workflow_if(exists_in_holding_pen),
         [

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # Invenio is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -36,8 +36,7 @@ class payload_fixture(DepositionType):
         # First we perform conversion from OAI-PMH XML to MARCXML
         convert_record("oaiarXiv2inspire_nofilter.xsl"),
 
-        # Then we convert from MARCXML to SmartJSON object
-        # TODO: Use DOJSON when we are ready to switch from bibfield
+        # Then we convert from MARCXML to JSON object
         convert_record_to_json,
         create_payload,
     ]
