@@ -19,6 +19,8 @@
 
 from invenio_celery import celery
 
+from .signals import after_citation_count_update
+
 
 @celery.task
 def update_citation_count_for_records(recids):
@@ -42,3 +44,4 @@ def update_citation_count(recid):
         es.update(index='hep', id=recid, doc_type='record', body={'doc': doc_update})
     except TransportError:
         pass
+    after_citation_count_update.send(recid)

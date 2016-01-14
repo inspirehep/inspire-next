@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2016 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -22,32 +22,9 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-from invenio_ext.template import render_template_to_string
+from .proxy import cache_manager
+from .receivers import *
 
-from invenio_search.api import Query
-
-
-def render_citations(recid):
-    """Citation export for single record in datatables format.
-
-        :returns: list
-            List of lists where every item represents a datatables row.
-            A row consists of [reference, num_citations]
-    """
-    out = []
-    row = []
-    es_query = Query('refersto:' + str(recid)).search()
-    es_query.body.update({
-        'sort': [{'citation_count': {'order': 'desc'}}],
-        'size': 9999
-    })
-    citations = es_query.records()
-
-    for citation in citations:
-        row.append(render_template_to_string("citations.html",
-                                             record=citation, reference=None))
-        row.append(citation.get('citation_count', ''))
-        out.append(row)
-        row = []
-
-    return out
+__all__ = (
+    'cache_manager'
+)

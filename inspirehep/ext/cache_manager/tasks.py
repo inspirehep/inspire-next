@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -17,4 +17,17 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-from .receivers import *
+from inspirehep.ext.cache_manager import cache_manager
+
+from invenio_celery import celery
+
+
+@celery.task
+def invalidate_cache_on_record_index(sender):
+    cache_manager.invalidate_view('record_oneline', recid=sender)
+    cache_manager.invalidate_view('record_brief', recid=sender)
+
+
+@celery.task
+def invalidate_cache_on_citation_count_update(sender):
+    cache_manager.invalidate_view('record_brief', recid=sender)

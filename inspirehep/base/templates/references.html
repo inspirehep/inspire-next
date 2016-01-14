@@ -1,6 +1,6 @@
 {#
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -21,16 +21,20 @@
 
 {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors, render_record_title with context %}
 
+{% from "format/record/Cache_HTML_macros.tpl" import cache_if_not_debug %}
+
 <div class="reference-record">
   {% if record %}
       <div class="reference-title">
         {% if reference['number'] %}
           [{{ reference['number'] }}]
         {% endif %}
+        {% call cache_if_not_debug('record_oneline', record['control_number']) %}
         <a href="/record/{{record.recid}}">{{ render_record_title() }}</a>
       </div>
       <div class="reference-authors">{{ render_record_authors(is_brief=false, show_affiliations=false) | safe }}</div>
       <div class="reference-journal">{{ record_publication_info() | safe }}</div>
+        {% endcall %}
   {% else %}
     <div class="reference-title">
       {% if reference['number'] %}

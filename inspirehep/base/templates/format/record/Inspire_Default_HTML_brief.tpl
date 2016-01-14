@@ -21,7 +21,10 @@
 
 {% from "format/record/Inspire_Default_HTML_brief_macros.tpl" import record_journal_info, render_doi, record_journal_info_and_doi with context %}
 
+{% from "format/record/Cache_HTML_macros.tpl" import cache_if_not_debug %}
+
 {% block record_header %}
+{% call cache_if_not_debug('record_brief', record['control_number']) %}
 <div class="row">
   <div class="col-md-12">
     <div id="panel-default-brief" class="panel panel-default" >
@@ -125,4 +128,6 @@
     </div>
   </div>
 </div>
+{% endcall %}
+
 {% endblock %}

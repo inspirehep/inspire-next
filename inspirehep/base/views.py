@@ -1,44 +1,43 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
-# INSPIRE is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-#
-# In applying this licence, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as an Intergovernmental Organization
-# or submit itself to any jurisdiction.
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 """Inspire views."""
 
 import json
 
 from flask import (
-    redirect,
-    request,
     Blueprint,
-    render_template,
     current_app,
+    redirect,
+    render_template,
+    request,
     url_for
 )
-from flask.ext.menu import register_menu, current_menu
-from flask.ext.login import current_user
 
-from invenio_base.i18n import _
-from invenio_ext.email import send_email
+from flask.ext.login import current_user
+from flask.ext.menu import current_menu, register_menu
+
 from invenio_base.decorators import wash_arguments
 from invenio_base.globals import cfg
+from invenio_base.i18n import _
+
+from invenio_ext.email import send_email
 
 
 blueprint = Blueprint('inspire', __name__, url_prefix="",
@@ -163,15 +162,29 @@ def data():
                  'collection': (unicode, "")})
 def ajax_references(recid, collection):
     """Handler for datatables references view"""
+
+    from elasticsearch import TransportError
     from flask import jsonify
-    from inspirehep.utils.references import Reference
-    from invenio.base.globals import cfg
+    from inspirehep.utils.references import render_references
     from invenio_ext.es import es
+    from invenio_base.globals import cfg
 
     index = cfg['SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING'].get(collection, 'hep')
+
+    try:
+        record = es.get(index=index, id=recid)['_source']
+    except TransportError:
+        current_app.logger.exception('Cannot render references for record no. {0}. Could not find record in ES.'
+                                     .format(str(recid)))
+        return jsonify(
+            {
+                "data": []
+            }
+        )
+
     return jsonify(
         {
-            "data": Reference(es.get(index=index, id=recid)['_source']).references()
+            "data": render_references(record)
         }
     )
 
@@ -181,15 +194,12 @@ def ajax_references(recid, collection):
                  'collection': (unicode, "")})
 def ajax_citations(recid, collection):
     """Handler for datatables citations view"""
-    from flask import jsonify
-    from inspirehep.utils.citations import Citation
-    from invenio.base.globals import cfg
-    from invenio_ext.es import es
 
-    index = cfg['SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING'].get(collection, 'hep')
+    from flask import jsonify
+    from inspirehep.utils.citations import render_citations
     return jsonify(
         {
-            "data": Citation(es.get(index=index, id=recid)['_source']).citations()
+            "data": render_citations(recid)
         }
     )
 
