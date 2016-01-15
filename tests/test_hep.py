@@ -363,7 +363,7 @@ class HepRecordsTests(InvenioTestCase):
                          [0]['journal_volume'],
                          self.json_to_marc['773'][0]['v'])
         self.assertEqual(self.marcxml_to_json['publication_info']
-                         [0]['recid'],
+                         [0]['parent_recid'],
                          self.json_to_marc['773'][0]['0'])
         self.assertEqual(self.marcxml_to_json['publication_info']
                          [0]['year'],
