@@ -364,9 +364,23 @@
                     "cnum": {
                         "type": "string"
                     },
-                    "recid": {
+                    "note": {
+                        "type": "string"
+                    },
+                    "parent_recid": {
                         "type": "integer",
-                        "description": "Record ID of the conference"
+                        "description": "Record ID of the parent this record is part of"
+                    },
+                    "journal_recid": {
+                        "type": "integer",
+                        "description": "Record ID of corresponding Journal"
+                    },
+                    "conference_recid": {
+                        "type": "integer",
+                        "description": "Record ID of corresponding Conference"
+                    },
+                    "reportnumber": {
+                        "type": "string"
                     },
                     "year": {
                         "minimum": 1000,
@@ -382,10 +396,6 @@
                     "page_artid": {
                         "type": "string",
                         "description": "FIXME: for ejournals this could be the page index, but there is no realiable way to know whether something is a page index or a first page, does it?"
-                    },
-                    "journal_recid": {
-                        "type": "integer",
-                        "description": "Record ID of corresponding Journal"
                     }
                 }
             },

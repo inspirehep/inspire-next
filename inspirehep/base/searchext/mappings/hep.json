@@ -300,7 +300,10 @@
                         "year": {
                             "type": "integer"
                         },
-                        "recid": {
+                        "parent_recid": {
+                            "type": "integer"
+                        },
+                        "conference_recid": {
                             "type": "integer"
                         },
                         "cnum": {

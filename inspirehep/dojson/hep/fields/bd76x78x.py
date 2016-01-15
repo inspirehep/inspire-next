@@ -33,8 +33,9 @@ from ..model import hep, hep2marc
 def publication_info(self, key, value):
     """Publication info about record."""
     year = ''
-    recid = ''
+    parent_recid = ''
     journal_recid = ''
+    conference_recid = ''
     if 'y' in value:
         try:
             year = int(value.get('y'))
@@ -42,20 +43,29 @@ def publication_info(self, key, value):
             # Some crap in they year :-(
             pass
     try:
+        if '0' in value:
+            if isinstance(value.get('0'), list):
+                parent_recid = int(value.get('0')[0])
+            else:
+                parent_recid = int(value.get('0'))
+        if '1' in value:
+            if isinstance(value.get('1'), list):
+                journal_recid = int(value.get('1')[0])
+            else:
+                journal_recid = int(value.get('1'))
         if '2' in value:
             if isinstance(value.get('2'), list):
-                recid = int(value.get('2')[0])
+                conference_recid = int(value.get('2')[0])
             else:
-                recid = int(value.get('2'))
-        if '1' in value:
-            journal_recid = int(value.get('1'))
+                conference_recid = int(value.get('2'))
     except:
         # Some crap in the recid :-(
         pass
     return {
-        'recid': recid,
-        'page_artid': value.get('c'),
+        'parent_recid': parent_recid,
         'journal_recid': journal_recid,
+        'conference_recid': conference_recid,
+        'page_artid': value.get('c'),
         'journal_issue': value.get('n'),
         'conf_acronym': value.get('o'),
         'journal_title': value.get('p'),
@@ -76,7 +86,7 @@ def publication_info(self, key, value):
 def publication_info2marc(self, key, value):
     """Publication info about record."""
     return {
-        '0': value.get('recid'),
+        '0': value.get('parent_recid'),
         'c': value.get('page_artid'),
         'n': value.get('journal_issue'),
         'o': value.get('conf_acronym'),
