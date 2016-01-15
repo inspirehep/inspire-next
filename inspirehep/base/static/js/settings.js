@@ -61,7 +61,7 @@ require.config({
     // INSPIRE
     "bootstrap-multiselect": "vendors/bootstrap-multiselect/dist/js/bootstrap-multiselect",
     "readmore": "vendors/readmore/readmore",
-    "buckets": "vendors/buckets/dist/buckets",
+    "bucketsjs": "vendors/bucketsjs/dist/buckets",
     "feedback": "js/feedback/feedback",
     "toastr": "vendors/toastr/toastr",
     "html2canvas": "vendors/html2canvas/build/html2canvas",
