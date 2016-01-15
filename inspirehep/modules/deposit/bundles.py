@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ from invenio_base.bundles import jquery as _j, invenio as _i
 _deposit_js.contents = ['js/deposit/inspire_init.js']
 
 _deposit_js.bower.update({
-    'buckets': 'git://github.com/mauriciosantos/buckets.git',
+    'bucketsjs': '1.98.1',
     'bootstrap-multiselect': '0.9.10',
     'readmore': '*',
 })
