@@ -13,6 +13,7 @@ git+https://github.com/inspirehep/invenio-access@master#egg=invenio-access==0.2.
 git+https://github.com/inspirehep/invenio-deposit.git@master#egg=invenio-deposit==0.2.1.dev20150914
 git+https://github.com/inspirehep/invenio-ext@master#egg=invenio-ext==0.3.3.dev20151125
 git+https://github.com/inspirehep/invenio-oaiharvester@master#egg=invenio-oaiharvester==0.1.2.dev20151113
+git+https://github.com/inspirehep/invenio-utils@master#egg=invenio-utils==0.2.1.dev20160116
 
 git+https://github.com/inspirehep/invenio-oauthclient@master#egg=invenio-oauthclient==0.1.1.dev20151215
 git+https://github.com/inspirehep/invenio-records@master#egg=invenio-records==0.3.5.dev20160112
