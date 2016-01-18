@@ -6,6 +6,9 @@ git+https://github.com/inveniosoftware/beard@master#egg=beard
 # ES 2.0 compatibility - until 2.2 is released
 git+https://github.com/elastic/elasticsearch-py@master#egg=elasticsearch==2.2.0.dev0
 
+# Raven backported fix for new Flask Login on old Sentry
+git+https://github.com/inspirehep/raven-python@master#egg=raven-python==5.1.1.dev20160118
+
 ## INSPIRE forks of Invenio packages
 
 git+https://github.com/inspirehep/invenio-query-parser@master#egg=invenio-query-parser==invenio-query-parser-0.3.1.dev20160118
@@ -19,3 +22,4 @@ git+https://github.com/inspirehep/invenio-records@master#egg=invenio-records==0.
 git+https://github.com/inspirehep/invenio-search@master#egg=invenio-search==0.1.6.dev20160118
 git+https://github.com/inspirehep/invenio-workflows@master#egg=invenio-workflows==0.1.3.dev20160113
 git+https://github.com/inspirehep/invenio-matcher@master#egg=invenio-matcher==0.1.0.dev20150000
+
