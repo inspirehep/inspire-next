@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -68,6 +68,7 @@ class BaiTests(InvenioTestCase):
         token_list = author_tokenize("Ellis Richard")
         self.assertEqual(token_list, ['E Richard',
                                       'Ellis Richard',
+                                      'Richard',
                                       'Richard E',
                                       'Richard Ellis',
                                       'Richard, E',
