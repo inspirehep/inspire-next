@@ -24,57 +24,92 @@ define(
   [
     'jquery',
     'flight/lib/component',
-    'bootstrap'
+    'bootstrap',
+    'clipboard'
   ],
-  function($, defineComponent) {
+  function($, defineComponent, Bootstrap, Clipboard) {
     'use strict';
 
     return defineComponent(CitationsModal);
 
     function CitationsModal() {
+      this.onSelectContent = function(record_id) {
+        setTimeout(function(){
+            var id = 'singleRecord' + record_id
+            var range = document.createRange();
+            range.selectNodeContents(document.getElementById(id));
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range); 
+          }, 300);
+      }
 
       this.onCiteClick = function(ev) {
+        var that = this;
+        $('.copy-clp').addClass('disabled');
+        $('.copy-clp' + $(ev.target).data("recid")).tooltip();
         $.getJSON('/formatter/bibtex', {
           recid: $(ev.target).data("recid")
         }, function(data) {
+          $('.copy-clp').removeClass('disabled');
+          $('.copy-clp').tooltip('destroy');
           $("#text" + data.recid).text(data.result);
           $("#format" + data.recid).text('BibTex')
           $("#download" + data.recid).attr("href", "/formatter/download-bibtex/" + data.recid)
+          that.onSelectContent($(ev.target).data("recid"));
         })
       }
 
       this.onLatexEUClick = function(ev) {
+        var that = this;
+        $('.copy-clp').addClass('disabled');
+        $('.copy-clp').tooltip();
         $.getJSON('/formatter/latex', {
           recid: $(ev.target).data("recid"),
           latex_format: 'latex_eu'
         }, function(data) {
+          $('.copy-clp').removeClass('disabled');
+          $('.copy-clp').tooltip('destroy');
           $("#text" + data.recid).text(data.result);
           $("#format" + data.recid).text('LaTex(EU)')
           $("#download" + data.recid).attr("href", "/formatter/download-latex/latex_eu/" + data.recid)
+          that.onSelectContent($(ev.target).data("recid"));
         })
       }
 
       this.onLatexUSClick = function(ev) {
+        var that = this;
+        $('.copy-clp').addClass('disabled');
+        $('.copy-clp').tooltip();
         $.getJSON('/formatter/latex', {
           recid: $(ev.target).data("recid"),
           latex_format: 'latex_us'
         }, function(data) {
+          $('.copy-clp').removeClass('disabled');
+          $('.copy-clp').tooltip('destroy');
           $("#text" + data.recid).text(data.result);
           $("#format" + data.recid).text('LaTex(US)')
           $("#download" + data.recid).attr("href", "/formatter/download-latex/latex_us/" + data.recid)
+          that.onSelectContent($(ev.target).data("recid"));
         })
       }
 
-      this.onSelectContent = function(ev) {
-        document.execCommand('selectAll', false, null);
-        $(this).off(ev);
+      this.onCopyToClipboard = function(ev) {
+        $('#' + $(ev.target).attr("id")).tooltip();        
+        var clipboard = new Clipboard('#' + $(ev.target).attr("id"));
+        clipboard.on('success', function(e) {
+          $('#' + $(ev.target).attr("id")).attr('data-original-title','Copied!').tooltip('show');
+        });
       }
 
       this.after('initialize', function() {
+        $(".copy-clp").hover(function(){
+          $(".copy-clp").tooltip('destroy');
+        });
         this.on('.dropdown-cite, .bibtex', 'click', this.onCiteClick);
         this.on('.latex_eu', 'click', this.onLatexEUClick);
         this.on('.latex_us', 'click', this.onLatexUSClick);
-        this.on('.editable', 'click', this.onSelectContent);
+        this.on(".copy-clp", "click", this.onCopyToClipboard);
       });
     }
   });

@@ -201,14 +201,16 @@
         <div class="modal-body">
           <div class="row">
             <div class="col-md-12">
-              <div class="editable" contenteditable="true"><pre id="text{{record['control_number']}}"></pre></div>
+              <div class="editable" id="singleRecord{{record['control_number']}}" contenteditable="true"><pre id="text{{record['control_number']}}"></pre></div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
         <div class="row">
           <div class="col-md-6 text-left">
-            <small>* Click inside the box to select the whole content.</small>
+            <button class="btn btn-default copy-clp" id="copy-single-record-clipboard{{record['control_number']}}" data-toggle="tooltip" data-placement="bottom" data-clipboard-target="#singleRecord{{record['control_number']}}" data-original-title="Copied!">
+              <i class="fa fa-clipboard pointer"></i> Copy to clipboard
+            </button>
           </div>
           <div class="col-md-6">
             <div class="btn-group">

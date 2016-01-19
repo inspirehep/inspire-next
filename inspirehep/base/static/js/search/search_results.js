@@ -157,7 +157,9 @@ define(
         var format_id = '#' + $(ev.target).attr("id");
         var obj = this.get_download_information($(format_id).text().trim());
         $("#response-data").html('');
-        $("#dropdown-export").html('BibTex <span class="caret"></span>')
+        $("#dropdown-export").html('BibTex <span class="caret"></span>');
+        $('.copy-clp').addClass('disabled');
+        $('.copy-clp').tooltip();
         if (sList.length != 0) {
             $('#spinner-modal-wait').show();
             $('#editable-modal').css('pointer-events', 'none');
@@ -175,7 +177,15 @@ define(
               $('#spinner-modal-wait').hide();
               $('#editable-modal').css('pointer-events', 'auto');
               $('#cite-all-format').html('<i class="fa fa-quote-right"></i> Cite all selected records');
-              $('#cite-all-format, #download-format, #dropdown-export').removeClass('disabled');
+              $('#cite-all-format, #download-format, #dropdown-export, #copy-to-clipboard').removeClass('disabled');
+              $('.copy-clp').tooltip('destroy');
+              setTimeout(function(){ 
+                  var range = document.createRange();
+                  range.selectNodeContents(document.getElementById('editable-modal'));
+                  var sel = window.getSelection();
+                  sel.removeAllRanges();
+                  sel.addRange(range);
+              }, 300);              
           });
         }
       }
@@ -300,6 +310,7 @@ define(
         window.location.href = path;
       }
 
+
       this.after('initialize', function() {
         sList = [];
         $('[data-toggle="tooltip"]').tooltip()
@@ -316,7 +327,5 @@ define(
         this.on("h4[id^='filter-by-']", "click", this.onFacetDropdown);
         this.on("#clear-filters", "click", this.onClearFilters);
       });
-
     }
-
   });

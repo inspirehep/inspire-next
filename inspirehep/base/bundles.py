@@ -36,7 +36,8 @@ js = Bundle(
     weight=20,
     bower={
         "toastr": "latest",
-        "jQuery-menu-aim": "latest"
+        "jQuery-menu-aim": "latest",
+        "clipboard": "latest"
     }
 )
 
