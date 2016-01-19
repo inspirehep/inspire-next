@@ -87,47 +87,47 @@ class Cv_latex_html_text(Export):
             if self.format_type == 'cv_latex_html':
                 out += u'<a href="' + cfg['CFG_SITE_URL'] + '/record/' + \
                     str(self.record['control_number']) + '">' \
-                    + '{1}.</a>{2}'.format(field, value, self.separator)
+                    + '{0}.</a>{1}'.format(value, self.separator)
             else:
-                out += u'{1}{2}'.format(field, value, self.separator)
+                out += u'{0}{1}'.format(value, self.separator)
         elif field == 'author':
             if len(value) == 1:
-                out += u'By {1}.{2}'.format(field, value[0], self.separator)
+                out += u'By {0}.{1}'.format(value[0], self.separator)
             elif len(value) > 8:
                 if 'collaboration' in self.record:
                     try:
                         collaboration = self.record[
                             'collaboration'][0]['value']
                         if 'Collaboration' in collaboration:
-                            out += u'By ' + collaboration + '({1} et al.).{2}'.format(
-                                field, value[0], self.separator
+                            out += u'By ' + collaboration + '({0} et al.).{1}'.format(
+                                value[0], self.separator
                             )
                         else:
-                            out += u'By ' + collaboration + ' Collaboration ({1} et al.).{2}'.format(
-                                field, value[0], self.separator
+                            out += u'By ' + collaboration + ' Collaboration ({0} et al.).{1}'.format(
+                                value[0], self.separator
                             )
                     except IndexError:
                         pass
                 else:
-                    out += u'By  {1} et al..{2}'.format(
-                        field, value[0], self.separator)
+                    out += u'By  {0} et al..{1}'.format(value[0],
+                                                        self.separator)
             else:
                 out += u'By {0}.{1}'.format(', '.join(value), self.separator)
         elif field == 'arxiv':
             if self.format_type == 'cv_latex_html':
-                out += u'[{1}].{2}'.format(field, value, self.separator)
+                out += u'[{0}].{1}'.format(value, self.separator)
             else:
-                out += u'{1}.{2}'.format(field, value, self.separator)
+                out += u'{0}.{1}'.format(value, self.separator)
         elif field == 'doi':
             dois_splitted = value.split(',')
             for k, v in enumerate(dois_splitted):
                 v = '<a href="http://dx.doi.org/' + v + '">' + v + '</a>'
                 dois_splitted[k] = v
-            out += u'{1}.{2}'.format(field, ', '.join(out for
-                                                      out in dois_splitted), self.separator)
+            out += u'{0}.{1}'.format(', '.join(out for out in dois_splitted),
+                                     self.separator)
         elif field == 'publi_info':
-            out += u'{1}.{2}'.format(field,
-                                     ', '.join(out for out in value), self.separator)
+            out += u'{0}.{1}'.format(', '.join(out for out in value),
+                                     self.separator)
         return out
 
     def _get_author(self):
@@ -138,7 +138,7 @@ class Cv_latex_html_text(Export):
         result = []
         if 'authors' in self.record:
             for author in self.record['authors']:
-                if author['full_name']:
+                if 'full_name' in author and author['full_name']:
                     if isinstance(author['full_name'], list):
                         author_full_name = ''.join(full_name for full_name
                                                    in author['full_name'])

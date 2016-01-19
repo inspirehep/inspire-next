@@ -1,0 +1,834 @@
+<collection xmlns="http://www.loc.gov/MARC21/slim">
+<record>
+<controlfield tag="001">930193</controlfield>
+<controlfield tag="005">20150619013831.0</controlfield>
+<datafield tag="970" ind1=" " ind2=" ">
+<subfield code="a">SPIRES-9213791</subfield>
+</datafield>
+<datafield tag="100" ind1=" " ind2=" ">
+<subfield code="a">Banerjee, Kinjal</subfield>
+<subfield code="u">Beijing Normal U.</subfield>
+</datafield>
+<datafield tag="700" ind1=" " ind2=" ">
+<subfield code="a">Calcagni, Gianluca</subfield>
+<subfield code="u">Potsdam, Max Planck Inst.</subfield>
+</datafield>
+<datafield tag="700" ind1=" " ind2=" ">
+<subfield code="a">Martin-Benito, Mercedes</subfield>
+<subfield code="u">Potsdam, Max Planck Inst.</subfield>
+</datafield>
+<datafield tag="773" ind1=" " ind2=" ">
+<subfield code="p">SIGMA</subfield>
+<subfield code="v">8</subfield>
+<subfield code="c">016</subfield>
+<subfield code="y">2012</subfield>
+</datafield>
+<datafield tag="856" ind1="4" ind2=" ">
+<subfield code="u">
+http://inspirehep.net/record/930193/files/Calcagni-Fig1.png
+</subfield>
+<subfield code="y">
+00000 Expectation values and dispersions of $\hat{v}|_{\phi}$ (in red, vertical bars) in the superselection sector with $\varepsilon=1$, corresponding to the physical prof\/ile given in equation~\eqref{profile} with $\langle \hat P_\phi \rangle=1000$ and ${\Delta\hat P_\phi}/{\langle \hat P_\phi \rangle}=0.1$. The quantum evolution is also compared with the classical trajectories, one in expansion (blue curve, increasing from left to right) and the other in contraction (green curve, decreasing). Graph by courtesy of J.~Olmedo.
+</subfield>
+</datafield>
+<datafield tag="856" ind1="4" ind2=" ">
+<subfield code="u">
+http://inspirehep.net/record/930193/files/arXiv:1109.6801.pdf
+</subfield>
+</datafield>
+<datafield tag="909" ind1="C" ind2="O">
+<subfield code="o">oai:inspirehep.net:930193</subfield>
+<subfield code="p">INSPIRE:HEP</subfield>
+<subfield code="p">CDS</subfield>
+</datafield>
+<datafield tag="650" ind1="1" ind2="7">
+<subfield code="a">Astrophysics</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="650" ind1="1" ind2="7">
+<subfield code="a">Gravitation and Cosmology</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="650" ind1="1" ind2="7">
+<subfield code="a">Theory-HEP</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="690" ind1="C" ind2=" ">
+<subfield code="a">Published</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="690" ind1="C" ind2=" ">
+<subfield code="a">Review</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="520" ind1=" " ind2=" ">
+<subfield code="a">
+This is an introduction to loop quantum cosmology (LQC) reviewing mini- and midisuperspace models as well as homogeneous and inhomogeneous effective dynamics.
+</subfield>
+<subfield code="9">arXiv</subfield>
+</datafield>
+<datafield tag="037" ind1=" " ind2=" ">
+<subfield code="a">arXiv:1109.6801</subfield>
+<subfield code="9">arXiv</subfield>
+<subfield code="c">gr-qc</subfield>
+</datafield>
+<datafield tag="245" ind1=" " ind2=" ">
+<subfield code="a">Introduction to loop quantum cosmology</subfield>
+</datafield>
+<datafield tag="300" ind1=" " ind2=" ">
+<subfield code="a">73</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+<subfield code="a">quantum cosmology: loop space</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+<subfield code="a">review: introductory</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+<subfield code="a">cosmological model</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+<subfield code="a">midisuperspace</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+<subfield code="a">minisuperspace</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+<subfield code="a">space-time: Robertson-Walker</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+<subfield code="a">bounce</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+<subfield code="a">constraint: Hamiltonian</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+<subfield code="a">space-time: Bianchi</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+<subfield code="a">operator: constraint</subfield>
+<subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="246" ind1=" " ind2=" ">
+<subfield code="a">Introduction to Loop Quantum Cosmology</subfield>
+<subfield code="9">arXiv</subfield>
+</datafield>
+<datafield tag="024" ind1="7" ind2=" ">
+<subfield code="a">10.3842/SIGMA.2012.016</subfield>
+<subfield code="2">DOI</subfield>
+</datafield>
+<datafield tag="035" ind1=" " ind2=" ">
+<subfield code="a">oai:arXiv.org:1109.6801</subfield>
+<subfield code="z">oai:arXiv.org:1109.6801</subfield>
+<subfield code="9">arXiv</subfield>
+</datafield>
+<datafield tag="035" ind1=" " ind2=" ">
+<subfield code="z">D12-03240</subfield>
+<subfield code="9">DESY</subfield>
+</datafield>
+<datafield tag="035" ind1=" " ind2=" ">
+<subfield code="a">Banerjee:2011qu</subfield>
+<subfield code="9">SPIRESTeX</subfield>
+</datafield>
+<datafield tag="035" ind1=" " ind2=" ">
+<subfield code="9">CDS</subfield>
+<subfield code="a">1386880</subfield>
+</datafield>
+<datafield tag="653" ind1="1" ind2=" ">
+<subfield code="a">loop quantum cosmology</subfield>
+<subfield code="9">author</subfield>
+</datafield>
+<datafield tag="653" ind1="1" ind2=" ">
+<subfield code="a">loop quantum gravity.</subfield>
+<subfield code="9">author</subfield>
+</datafield>
+<datafield tag="980" ind1=" " ind2=" ">
+<subfield code="a">Published</subfield>
+</datafield>
+<datafield tag="980" ind1=" " ind2=" ">
+<subfield code="a">arXiv</subfield>
+</datafield>
+<datafield tag="980" ind1=" " ind2=" ">
+<subfield code="a">Citeable</subfield>
+</datafield>
+<datafield tag="980" ind1=" " ind2=" ">
+<subfield code="a">Introductory</subfield>
+</datafield>
+<datafield tag="980" ind1=" " ind2=" ">
+<subfield code="a">Review</subfield>
+</datafield>
+<datafield tag="980" ind1=" " ind2=" ">
+<subfield code="a">Introductory</subfield>
+</datafield>
+<datafield tag="980" ind1=" " ind2=" ">
+<subfield code="a">CORE</subfield>
+</datafield>
+<datafield tag="980" ind1=" " ind2=" ">
+<subfield code="a">HEP</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0404018</subfield>
+<subfield code="s">Class.Quant.Grav.,21,R53</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1108.0893</subfield>
+<subfield code="s">Class.Quant.Grav.,28,213001</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Phys.Rev.Lett.,57,2244</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Phys.Rev.,D36,1587</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Phys.Rev.Lett.,61,1155</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Nucl.Phys.,B331,80</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9410014</subfield>
+<subfield code="s">Phys.Rev.,D51,5507</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9701052</subfield>
+<subfield code="s">Nucl.Phys.Proc.Suppl.,57,65</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9612030</subfield>
+<subfield code="s">Class.Quant.Grav.,14,L177</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">hep-th/9202053</subfield>
+<subfield code="s">Class.Quant.Grav.,9,1433</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9311010</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">hep-th/9310201</subfield>
+<subfield code="s">Lett.Math.Phys.,31,213</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9411046</subfield>
+<subfield code="s">J.Math.Phys.,36,2170</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Living Rev.Rel.,11,4</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0702030</subfield>
+<subfield code="s">Nuovo Cim.,B122,135</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0812.0177</subfield>
+<subfield code="s">Gen.Rel.Grav.,41,707</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0907.5160</subfield>
+<subfield code="s">AIP Conf.Proc.,1130,89</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9910103</subfield>
+<subfield code="s">Class.Quant.Grav.,17,1489</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9910104</subfield>
+<subfield code="s">Class.Quant.Grav.,17,1509</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0008052</subfield>
+<subfield code="s">Class.Quant.Grav.,18,1055</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Class.Quant.Grav.,18,1701</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0008053</subfield>
+<subfield code="s">Class.Quant.Grav.,18,1071</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0102069</subfield>
+<subfield code="s">Phys.Rev.Lett.,86,5227</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0304074</subfield>
+<subfield code="s">Adv.Theor.Math.Phys.,7,233</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0602086</subfield>
+<subfield code="s">Phys.Rev.Lett.,96,141301</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0604013</subfield>
+<subfield code="s">Phys.Rev.,D73,124038</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0607039</subfield>
+<subfield code="s">Phys.Rev.,D74,084003</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0710.3565</subfield>
+<subfield code="s">Phys.Rev.,D77,024046</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0704.2397</subfield>
+<subfield code="s">Class.Quant.Grav.,24,3745</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Proc.Nat.Acad.Sci.,A16,172</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Math.Ann.,104,570</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Phys.Rev.,160,1113</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9411005</subfield>
+<subfield code="s">Nucl.Phys.,B442,593</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Nucl.Phys.,B456,753</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9602046</subfield>
+<subfield code="s">Class.Quant.Grav.,14,A55</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0805.0136</subfield>
+<subfield code="s">Phys.Rev.,D78,024034</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9606088</subfield>
+<subfield code="s">Phys.Lett.,B380,257</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9606089</subfield>
+<subfield code="s">Class.Quant.Grav.,15,839</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0809.2590</subfield>
+<subfield code="s">Class.Quant.Grav.,26,035012</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0909.2829</subfield>
+<subfield code="s">Phys.Rev.,D80,104015</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1108.0829</subfield>
+<subfield code="s">Phys.Rev.,D84,064012</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0303073</subfield>
+<subfield code="s">Class.Quant.Grav.,20,2595</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0709.3120</subfield>
+<subfield code="s">Class.Quant.Grav.,25,035001</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1001.2663</subfield>
+<subfield code="s">Phys.Rev.,D81,084027</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9508015</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9404053</subfield>
+<subfield code="s">Class.Quant.Grav.,12,1199</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9409049</subfield>
+<subfield code="s">Class.Quant.Grav.,12,1441</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9412016</subfield>
+<subfield code="s">Class.Quant.Grav.,12,2469</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9504018</subfield>
+<subfield code="s">J.Math.Phys.,36,6456</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9303026</subfield>
+<subfield code="s">Class.Quant.Grav.,10,2261</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9403001</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Phys.Rev.,D4,955</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0110035</subfield>
+<subfield code="s">Phys.Rev.,D65,124013</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0507106</subfield>
+<subfield code="s">Class.Quant.Grav.,23,6155</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0411013</subfield>
+<subfield code="s">Gen.Rel.Grav.,39,1891</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Phys.Rev.,D28,2960</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Nucl.Phys.,B239,257</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0710.4543</subfield>
+<subfield code="s">Phys.Rev.Lett.,100,161302</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0303072</subfield>
+<subfield code="s">Phys.Rev.,D67,124023</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0312110</subfield>
+<subfield code="s">Phys.Rev.,D69,104008</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0406042</subfield>
+<subfield code="s">Phys.Rev.,D70,063521</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0612101</subfield>
+<subfield code="s">Class.Quant.Grav.,24,2621</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0612104</subfield>
+<subfield code="s">Phys.Rev.,D75,024035</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0803.4484</subfield>
+<subfield code="s">Phys.Rev.,D78,023515</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0906.2503</subfield>
+<subfield code="s">JCAP,0911,014</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1012.1307</subfield>
+<subfield code="s">Phys.Rev.,D83,064027</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0612070</subfield>
+<subfield code="s">Phys.Rev.,D75,023523</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0707.1816</subfield>
+<subfield code="s">Class.Quant.Grav.,24,6191</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0912.0162</subfield>
+<subfield code="s">Phys.Rev.,D81,024014</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0803.4446</subfield>
+<subfield code="s">Phys.Rev.,D77,124025</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Annals Israel Phys.Soc.,9,65</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Class.Quant.Grav.,10,559</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9304041</subfield>
+<subfield code="s">Phys.Rev.,D48,3704</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Am.J.Math.,43,217</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0609029</subfield>
+<subfield code="s">Phys.Rev.,D75,024029</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0804.3157</subfield>
+<subfield code="s">Phys.Rev.,D78,064008</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0803.3559</subfield>
+<subfield code="s">Phys.Rev.,D78,064035</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0903.3397</subfield>
+<subfield code="s">Phys.Rev.,D79,083535</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1005.5654</subfield>
+<subfield code="s">Phys.Rev.,D82,044048</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1006.2369</subfield>
+<subfield code="s">Phys.Rev.,D82,084012</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0710.0416</subfield>
+<subfield code="s">Phys.Rev.,D76,124037</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0906.3751</subfield>
+<subfield code="s">Phys.Rev.,D80,084038</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0311004</subfield>
+<subfield code="s">Class.Quant.Grav.,21,1253</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0910.1278</subfield>
+<subfield code="s">Phys.Rev.,D80,123532</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1005.5565</subfield>
+<subfield code="s">Phys.Rev.,D82,043508</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1010.1637</subfield>
+<subfield code="s">Living Rev.Rel.,13,6</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0407017</subfield>
+<subfield code="s">Class.Quant.Grav.,21,3733</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0407018</subfield>
+<subfield code="s">Class.Quant.Grav.,21,4881</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0511108</subfield>
+<subfield code="s">Class.Quant.Grav.,23,2129</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0506128</subfield>
+<subfield code="s">Phys.Rev.Lett.,95,061301</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0806.2593</subfield>
+<subfield code="s">Phys.Rev.,D78,064057</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0703135</subfield>
+<subfield code="s">Class.Quant.Grav.,24,3649</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0712.0817</subfield>
+<subfield code="s">AIP Conf.Proc.,977,52</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0807.4748</subfield>
+<subfield code="s">Adv.Sci.Lett.,2,251</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">J.Math.Phys.,12,918</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Mod.Phys.Lett.,A5,733</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Phys.Rev.Lett.,27,826</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Annals Phys.,83,203</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Annals Phys.,132,87</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Phys.Rev.,D23,312</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Annals Phys.,199,84</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Phys.Rev.,D8,3271</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Annals Phys.,83,458</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Phys.Rev.,D11,2770</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Annals Phys.,156,155</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0101013</subfield>
+<subfield code="s">Int.J.Mod.Phys.,D11,135</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0204053</subfield>
+<subfield code="s">Int.J.Mod.Phys.,D11,1451</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0206083</subfield>
+<subfield code="s">Phys.Rev.,D66,084017</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0507139</subfield>
+<subfield code="s">Phys.Rev.,D72,064020</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0510109</subfield>
+<subfield code="s">Phys.Rev.,D73,041502</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0603006</subfield>
+<subfield code="s">Phys.Rev.,D73,084020</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0607136</subfield>
+<subfield code="s">Class.Quant.Grav.,23,6301</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0702117</subfield>
+<subfield code="s">Phys.Rev.,D75,084027</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0804.1098</subfield>
+<subfield code="s">Phys.Rev.,D78,083516</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0907.3797</subfield>
+<subfield code="s">Int.J.Mod.Phys.,A24,2820</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9806105</subfield>
+<subfield code="s">Phys.Rev.,D58,104017</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0902.0697</subfield>
+<subfield code="s">Class.Quant.Grav.,27,052001</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1106.3793</subfield>
+<subfield code="s">Phys.Rev.,D84,124017</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1012.2324</subfield>
+<subfield code="s">Phys.Rev.,D83,084050</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1001.0946</subfield>
+<subfield code="s">Phys.Rev.,D81,044037</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1004.5320</subfield>
+<subfield code="s">JCAP,1010,030</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1101.2397</subfield>
+<subfield code="s">Phys.Rev.,D83,025002</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0712.0683</subfield>
+<subfield code="s">Class.Quant.Grav.,25,105014</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0712.0687</subfield>
+<subfield code="s">Class.Quant.Grav.,25,145004</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Nucl.Phys.,B327,205</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9704041</subfield>
+<subfield code="s">Phys.Rev.,D56,908</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1006.4146</subfield>
+<subfield code="s">Phys.Rev.,D83,044034</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1106.1448</subfield>
+<subfield code="s">Class.Quant.Grav.,29,065019</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9705019</subfield>
+<subfield code="s">Class.Quant.Grav.,15,1281</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0202077</subfield>
+<subfield code="s">Class.Quant.Grav.,19,2717</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0707.0588</subfield>
+<subfield code="s">Phys.Rev.,D76,104003</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0403106</subfield>
+<subfield code="s">Phys.Rev.,D70,043530</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Phys.Rev.,D75,081301</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0608100</subfield>
+<subfield code="s">Phys.Rev.,D74,081301</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0706.1057</subfield>
+<subfield code="s">Phys.Rev.,D76,063511</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0801.4001</subfield>
+<subfield code="s">Gen.Rel.Grav.,40,2659</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0603043</subfield>
+<subfield code="s">Phys.Rev.,D73,063508</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0606032</subfield>
+<subfield code="s">Phys.Rev.,D74,043510</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0611112</subfield>
+<subfield code="s">Phys.Rev.,D75,064022</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0609034</subfield>
+<subfield code="s">Gen.Rel.Grav.,38,1771</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0402053</subfield>
+<subfield code="s">Pramana,63,765</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0709.2365</subfield>
+<subfield code="s">Phys.Rev.,D77,023508</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/9308002</subfield>
+<subfield code="s">Phys.Rev.Lett.,72,446</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">astro-ph/0003278</subfield>
+<subfield code="s">Phys.Rev.,D62,043527</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1107.1540</subfield>
+<subfield code="s">JCAP,1111,046</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0811.4129</subfield>
+<subfield code="s">Class.Quant.Grav.,26,075020</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0105067</subfield>
+<subfield code="s">Phys.Rev.,D64,084018</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0206053</subfield>
+<subfield code="s">Class.Quant.Grav.,19,5113</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0709.0872</subfield>
+<subfield code="s">Class.Quant.Grav.,24,4801</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0806.3929</subfield>
+<subfield code="s">Phys.Rev.,D78,063547</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0810.4330</subfield>
+<subfield code="s">Adv.Sci.Lett.,2,184</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0811.1572</subfield>
+<subfield code="s">Phys.Rev.,D79,043505</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="s">Phys.Rev.,D82,109903</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1011.2779</subfield>
+<subfield code="s">JCAP,1103,032</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1101.5391</subfield>
+<subfield code="s">Phys.Rev.Lett.,107,211302</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1106.3744</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0807.0712</subfield>
+<subfield code="s">JCAP,0811,011</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0810.0104</subfield>
+<subfield code="s">Phys.Rev.,D79,023508</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0902.0145</subfield>
+<subfield code="s">Phys.Rev.Lett.,102,081301</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1003.4660</subfield>
+<subfield code="s">Phys.Rev.,D81,104049</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1011.1811</subfield>
+<subfield code="s">Phys.Rev.,D82,123520</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:1108.6265</subfield>
+<subfield code="s">Class.Quant.Grav.,29,085005</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0704.1137</subfield>
+<subfield code="s">Phys.Rev.,D76,064018</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">astro-ph/0311015</subfield>
+<subfield code="s">Class.Quant.Grav.,21,5767</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0411012</subfield>
+<subfield code="s">Class.Quant.Grav.,22,2511</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">gr-qc/0607059</subfield>
+<subfield code="s">Class.Quant.Grav.,24,829</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="9">CURATOR</subfield>
+<subfield code="r">arXiv:1011.4290</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="9">CURATOR</subfield>
+<subfield code="r">arXiv:1201.4151</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0708.1261</subfield>
+<subfield code="s">Phys.Rev.,D77,023510</subfield>
+</datafield>
+<datafield tag="999" ind1="C" ind2="5">
+<subfield code="r">arXiv:0909.0334</subfield>
+<subfield code="s">Phys.Rev.,D80,063538</subfield>
+</datafield>
+<datafield tag="269" ind1=" " ind2=" ">
+<subfield code="c">2011-09</subfield>
+</datafield>
+<datafield tag="961" ind1=" " ind2=" ">
+<subfield code="x">2011-10-02</subfield>
+</datafield>
+<datafield tag="961" ind1=" " ind2=" ">
+<subfield code="c">2012-06-19</subfield>
+</datafield>
+</record>
+</collection>
