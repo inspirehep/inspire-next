@@ -1,7 +1,7 @@
 /**
  *
  * This file is part of INSPIRE.
- * Copyright (C) 2015 CERN.
+ * Copyright (C) 2015, 2016 CERN.
 
  * INSPIRE is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -151,7 +151,40 @@ hr {
 }
 
 #facetparent {
+    border-top: 3px solid;
     background-color: #ffffff;
+
+    &.literature-facet {
+        border-color: @literature-collection;
+    }
+
+    &.authors-facet {
+        border-color: @authors-collection;
+    }
+
+    &.conferences-facet {
+        border-color: @conferences-collection;
+    }
+
+    &.jobs-facet {
+        border-color: @jobs-collection;
+    }
+
+    &.experiments-facet {
+        border-color: @experiments-collection;
+    }
+
+    &.institutions-facet {
+        border-color: @institutions-collection;
+    }
+
+    &.journals-facet {
+        border-color: @journals-collection;
+    }
+
+    &.data-facet {
+        border-color: @data-collection;
+    }
 }
 
 .facet-label {
@@ -192,6 +225,10 @@ hr {
 
 #spinner-modal-download {
     display: none;
+}
+
+#results-control-panel {
+    border-top: 3px solid #95a5a6;
 }
 
 #results-control-panel, #results-bottom-panel {
@@ -245,81 +282,6 @@ hr {
 
 #search_results #results-panel {
     margin-bottom: 0;
-}
-
-// Mixin to set background color
-.collection-background-color(@background-color;) {
-    background-color: @background-color;
-}
-
-#collections-section {
-    margin-bottom: 0;
-}
-
-#search-box-main {
-    margin-top: 10px;
-    margin-bottom: 15px;
-
-    div.col-sm-12 {
-        padding-left: 0;
-    }
-
-    .breadcrumb {
-        margin-bottom: 0;
-    }
-
-    .navbar {
-        background-color: white;
-        padding: 20px 10px;
-        margin: -64px 0 0px 0;
-    }
-
-    #searchform > .navbar-nav, #searchform-input-group {
-        width: 100%;
-    }
-
-    input {
-        height: 50px;
-        font-size: 18px;
-    }
-
-    button {
-        border: 0;
-        font-size: 20px;
-        padding: 11PX;
-
-        &.literature {
-            .collection-background-color(@literature-collection);
-        }
-
-        &.authors {
-            .collection-background-color(@authors-collection);
-        }
-
-        &.conferences {
-            .collection-background-color(@conferences-collection);
-        }
-
-        &.jobs {
-            .collection-background-color(@jobs-collection);
-        }
-
-        &.experiments {
-            .collection-background-color(@experiments-collection);
-        }
-
-        &.institutions {
-            .collection-background-color(@institutions-collection);
-        }
-
-        &.journals {
-            .collection-background-color(@journals-collection);
-        }
-
-        &.data {
-            .collection-background-color(@data-collection);
-        }
-    }
 }
 
 .total-results {

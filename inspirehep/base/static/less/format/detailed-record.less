@@ -1,7 +1,7 @@
 /**
  *
  * This file is part of INSPIRE.
- * Copyright (C) 2015 CERN.
+ * Copyright (C) 2015, 2016 CERN.
 
  * INSPIRE is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -23,162 +23,6 @@
  @purple: #293E51;
  @darken: 8%;
 
-#collections {
-    background-color: @blue-purple;
-    font-weight: 700;
-    font-size: large;
-    height: 60px;
-    padding: 20px;
-
-    span+span {
-        margin-left: 20px;
-    }
-
-    .active {
-
-        &#hep-collection a {
-            color: @literature-collection;
-        }
-
-        &#hepnames-collection a {
-            color: @authors-collection;
-        }
-
-        &#conferences-collection a {
-            color: @conferences-collection;
-        }
-
-        &#jobs-collection a {
-            color: @jobs-collection;
-        }
-
-        &#institutions-collection a {
-            color: @institutions-collection;
-        }
-
-        &#experiments-collection a {
-            color: @experiments-collection;
-        }
-
-        &#journals-collection a {
-            color: @journals-collection;
-        }
-    }
-}
-
-.collection-header#literature-collection {
-    background-color: @literature-collection;
-
-    .search-box input {
-        background-color: darken(@literature-collection, @darken);
-        color: white;
-    }
-}
-
-
-.collection-header#authors-collection {
-    background-color: @authors-collection;
-
-    .search-box input {
-        background-color: darken(@authors-collection, @darken);
-    }
-}
-
-.collection-header#conferences-collection {
-    background-color: @conferences-collection;
-
-    .search-box input {
-        background-color: darken(@conferences-collection, @darken);
-    }
-}
-
-.collection-header#jobs-collection {
-    background-color: @jobs-collection;
-
-    .search-box input {
-        background-color: darken(@jobs-collection, @darken);
-    }
-}
-
-.collection-header#experiments-collection {
-    background-color: @experiments-collection;
-
-    .search-box input {
-        background-color: darken(@experiments-collection, @darken);
-    }
-}
-
-.collection-header#journals-collection {
-    background-color: @journals-collection;
-
-    .search-box input {
-        background-color: darken(@journals-collection, @darken);
-    }
-}
-
-.collection-header#institutions-collection {
-    background-color: @institutions-collection;
-
-    .search-box input {
-        background-color: darken(@institutions-collection, @darken);
-    }
-}
-
-.search-box {
-
-    // Do not group these rules!
-    ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-        color: white;
-    }
-    :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-        color: white;
-        opacity: 1;
-    }
-    ::-moz-placeholder { /* Mozilla Firefox 19+ */
-        color: white;
-        opacity: 1;
-    }
-    :-ms-input-placeholder { /* Internet Explorer 10-11 */
-        color: white;
-    }
-
-    .input-group-btn {
-        display: none;
-    }
-
-    .navbar-form {
-        margin: 0;
-        padding: 0;
-
-        #searchform-input-group input{
-            width: 300px;
-            height: 45px;
-        }
-    }
-}
-
-.collection-header {
-    background-color: @literature-collection;
-    font-weight: 700;
-    height: 200px;
-    padding: 80px 20px 0 20px;
-    z-index: -1;
-
-    .currect-collection {
-        font-size: x-large;
-    }
-
-    .search-box input {
-        font-family: Lato, sans-serif, FontAwesome;
-        background-color: darken(@literature-collection, @darken);
-        border: 0px;
-        padding: 10px;
-        width: 300px;
-        font-size: initial;
-        font-weight: 300;
-    }
-}
-
 #collections, .collection-header {
     color: white;
 }
@@ -194,11 +38,6 @@
 
 .collection-primary {
     margin-left: 5px;
-}
-
-#topnav {
-    min-height: 65px;
-    border-bottom: 0px;
 }
 
 .record-collection-heading {
@@ -258,10 +97,6 @@
     font-size: x-large;
     padding-bottom: 15px;
     font-weight: bold;
-}
-
-#record_content {
-    margin-top: -130px;
 }
 
 #record_content .record-detailed .record-header {
@@ -544,4 +379,15 @@
 
 .authors-modal {
     font-size: 13.5px;
+}
+
+#top-search-bar-small {
+    padding: 0 15px 0 15px;
+    
+    .navbar-nav {
+        border: 0;
+        margin-bottom: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
 }
