@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -19,7 +19,7 @@
 
 """dojson related utilities."""
 
-import datetime
+from invenio_utils.date import datetime
 
 from dateutil.parser import parse
 
@@ -92,9 +92,9 @@ def create_profile_url(profile_id):
 
 
 def create_valid_date(date):
-    """ Add '01' as a value of missing month and/or day values."""
+    """Add '01' as a value of missing month and/or day values."""
     try:
-        valid_date = parse(six.text_type(date), default=datetime.datetime(
+        valid_date = parse(six.text_type(date), default=datetime(
             year=1990,
             month=1,
             day=1)).strftime("%Y-%m-%d")
