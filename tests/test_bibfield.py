@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -163,7 +163,7 @@ class BibFieldToJSONTests(InvenioTestCase):
         """Test if collaboration is created correctly"""
         self.assertEqual(
             self.bibfield_json['collaboration'],
-            self.record['collaboration'][0]
+            self.record['collaboration'][0]['value']
         )
 
     def test_preprint_date(self):

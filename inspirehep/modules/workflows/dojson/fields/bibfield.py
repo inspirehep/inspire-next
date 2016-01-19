@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -212,7 +212,9 @@ def corporate_author(self, key, value):
 @utils.for_each_value
 def collaboration(self, key, value):
     """Get collaboration from object."""
-    return value
+    return {
+        'value': value
+    }
 
 
 @bibfield.over('preprint_date', '^preprint_info$')
