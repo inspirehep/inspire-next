@@ -46,7 +46,7 @@ class Latex(Export):
         return formats['record']()
 
     def _format_record(self):
-        required_fields = ['author', 'title', 'publi_info', 'arxiv']
+        required_fields = ['author', 'title', 'publi_info', 'doi', 'arxiv']
         optional_fields = ['report_number', 'SLACcitation']
         try:
             return self._format_entry(required_fields, optional_fields)
@@ -67,6 +67,7 @@ class Latex(Export):
             'author': self._get_author,
             'title': self._get_title,
             'publi_info': self._get_publi_info,
+            'doi': self._get_doi,
             'arxiv': self._get_arxiv,
             'report_number': self._get_report_number,
             'SLACcitation': self._get_slac_citation,
@@ -110,11 +111,16 @@ class Latex(Export):
         elif field == 'title':
             out += u'  %``{1},''\n'.format(field, value)
         elif field == 'publi_info':
-            if len(value) > 1:
-                out += u'  {}\n    {}\n'.format('\n'.join(
-                    value[:-1]), value[-1])
+            if isinstance(value, list):
+                if len(value) > 1:
+                    out += u'  {}\n    {}\n'.format('\n'.join(
+                        value[:-1]), value[-1])
+                else:
+                    out += u'  {1}\n'.format(field, value[0])
             else:
-                out += u'  {1}.\n'.format(field, value[0])
+                out += u'  {1}.\n'.format(field, value)
+        elif field == 'doi':
+            out += u'  doi:{1}.\n'.format(field, value)
         elif field == 'arxiv':
             if self._get_publi_info():
                 out += u'  [{1}].\n'.format(field, value)
@@ -264,9 +270,10 @@ class Latex(Export):
                         out += journal_title + journal_volume + journal_issue \
                             + pages + year
                         result.append(out)
-                else:
-                    if 'pubinfo_freetext' in field and len(field) == 1:
-                        return field['pubinfo_freetext']
+                if not result:
+                    for field in self.record['publication_info']:
+                        if 'pubinfo_freetext' in field and len(field) == 1:
+                            return field['pubinfo_freetext']
             for k, v in enumerate(result):
                 if k > 0:
                     v = '[' + v + ']'
