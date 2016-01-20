@@ -424,11 +424,6 @@
   </nav>
 </section>
 
-
-{#
-## If not home path, show collections bar
-#}
-{% if request.path != '/' %}
 <section id="collections-section">
   <nav id="collections-nav">
       <a href="/literature" id="literature-collection" class="{{collection_name | collection_select_current("Literature") }}">
@@ -454,4 +449,3 @@
       </a>
   </nav>
 </section>
-{% endif %}
