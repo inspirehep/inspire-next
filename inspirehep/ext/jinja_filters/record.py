@@ -390,3 +390,15 @@ def setup_app(app):
             return 'Cited 1 time'
         else:
             return 'Cited ' + str(count) + ' times'
+
+    @app.template_filter()
+    def tranform_nested_list(l):
+        """Gets a list with nested list and tranforms it to list"""
+        new_list = []
+        for inner_l in l:
+            if isinstance(inner_l, list):
+                for item in inner_l:
+                    new_list.append(item)
+            else:
+                new_list.append(inner_l)
+        return new_list

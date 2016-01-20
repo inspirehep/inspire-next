@@ -18,8 +18,7 @@
 #}
 
 {% macro render_doi() %}
-  {% if record.get('dois')| is_list() %}
-    {% set filtered_doi = record.get('dois.value')| remove_duplicates() %}
+    {% set filtered_doi = record.get('dois.value')|tranform_nested_list()|remove_duplicates() %}
     DOI: 
     {% for doi in filtered_doi %}
       {% if not loop.first %}
@@ -29,7 +28,6 @@
         <a href="http://dx.doi.org/{{ doi |trim()|safe}}" title="DOI" >{{ doi }}</a>
       {% endif %}
     {% endfor %}
-  {% endif %}
 {% endmacro %}
 
 {% macro record_journal_info() %}
@@ -58,7 +56,7 @@
     {% for pub_info in record.get('publication_info')%}
       {% if pub_info.get('journal_title') and pub_info.get('journal_volume') and  pub_info.get('year') and pub_info.get('page_artid') %}
         {% if record.get('dois')| is_list() %}
-          {% set filtered_doi = record.get('dois.value')| remove_duplicates() %}
+          {% set filtered_doi = record.get('dois.value')|tranform_nested_list()|remove_duplicates() %}
           {% for doi in filtered_doi %}
             {% if not doi|has_space() %}
               {% if loop.first %}
@@ -75,7 +73,7 @@
   {% else %}
     {% if record.get('publication_info').get('journal_title') and record.get('publication_info').get('journal_volume') and  record.get('publication_info').get('year') and record.get('publication_info').get('page_artid') %}
       {% if record.get('dois')| is_list() %}
-        {% set filtered_doi = record.get('dois.value')| remove_duplicates() %}
+        {% set filtered_doi = record.get('dois.value')|tranform_nested_list()|remove_duplicates() %}
         {% for doi in filtered_doi %}
           {% if not doi | has_space() %}
             {% if loop.first %}
