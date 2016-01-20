@@ -128,7 +128,7 @@ class CitationTestsOnRecordUpdate(InvenioTestCase):
 
         self.test_recid = u'1196797'
         record = get_record(recid=self.test_recid)
-        self.removed_reference_recid = 454197
+        self.removed_reference_recid = u'454197'
         self.citation_count_before_update = Query('control_number:' + str(self.removed_reference_recid))\
             .search().records()[0]['citation_count']
 
