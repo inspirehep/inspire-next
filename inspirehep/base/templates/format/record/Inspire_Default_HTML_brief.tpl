@@ -36,7 +36,6 @@
               </div>
               <div class="col-md-11">
                 <h4 class="custom-h">
-                  <b>
                     {% if record['titles[0].title']|is_list() %}
                       {% set title = record['titles[0].title[0]'] %}
                     {% else %}

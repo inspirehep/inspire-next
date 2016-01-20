@@ -56,11 +56,18 @@ def dois(self, key, value):
     out = []
     for val in value:
         if val and val.get("2", '').lower() == "doi":
-            out.append({
-                'value': val.get('a'),
-                'source': val.get('9')
-            })
-    return out
+            if isinstance(val.get('a'), list):
+                for v in val.get('a'):
+                    out.append({
+                        'value': v,
+                        'source': val.get('9')
+                    })
+            else:
+                out.append({
+                    'value': val.get('a'),
+                    'source': val.get('9')
+                })
+    return [dict(t) for t in set([tuple(d.items()) for d in out])]
 
 
 @hep.over('persistent_identifiers', '^024[1032478_][10_]')

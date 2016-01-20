@@ -37,8 +37,15 @@ def urls(self, key, value):
     except:
         # Some crap in the size or not available
         size = None
+    url = value.get('u')
+    if isinstance(url, list):
+        url = filter(None, url)
+        if len(url) != 1:
+            url = url[0]
+        else:
+            url = [x for x in url if x.startswith('http')][0]
     return {
-        'url': value.get('u'),
+        'url': url,
         'doc_string': value.get('w'),
         'description': value.get('y'),
         'material_type': value.get('3'),

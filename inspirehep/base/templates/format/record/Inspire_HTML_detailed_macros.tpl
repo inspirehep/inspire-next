@@ -61,22 +61,15 @@
 {% endmacro %}
 
 {% macro record_publication_info() %}
-  {% if record.get('publication_info') | is_list %}
-    Published in
-    {% for pub_info in record.get('publication_info')%}
-      {% if pub_info.get('journal_title') or pub_info.get('journal_volume') or pub_info.get('year') or pub_info.get('page_artid') %}
-        {% if not loop.first %}
-          and
-        {% endif %}
+  Published in
+  {% for pub_info in record.get('publication_info')%}
+    {% if pub_info.get('journal_title') or pub_info.get('journal_volume') or pub_info.get('year') or pub_info.get('page_artid') %}
+      {% if not loop.first %}
+        and
       {% endif %}
-      {{ show_publication_info(pub_info) }}
-    {% endfor %}
-  {% else %}
-    {% if record.get('publication_info') %}
-      Published in
-      {{ show_publication_info(pub_info) }}
     {% endif %}
-  {% endif %}
+    {{ show_publication_info(pub_info) }}
+  {% endfor %}
 {% endmacro %}
 
 {% macro show_publication_info(pub_info) %}
@@ -105,8 +98,7 @@
 {% endmacro %}
 
 {% macro record_doi() %}
-  {% if record.get('dois') | is_list %}
-    {% set filtered_doi = record.get('dois.value') | remove_duplicates %}
+    {% set filtered_doi = record.get('dois.value')|remove_duplicates() %}
     <b>DOI </b>
     {% for doi in filtered_doi %}
       {% if not doi | has_space %}
@@ -116,7 +108,6 @@
         {% endif %}
       {% endif %}
     {% endfor %}
-  {% endif %}
 {% endmacro %}
 
 {% macro detailed_record_abstract() %}
@@ -222,30 +213,32 @@
 {% macro record_links() %}
   {% if record.get('urls') %}
     {% for url in record.get('urls') %}
-      {% if ( (loop.index == 1) and ( (url.get('url').startswith('http://www.adsabs.') or url.get('url').startswith('http://www-public.slac.stanford.edu') ) ) )  %}
-        View in
-      {% endif %}
-      {% if url.get('url').startswith('http://www.adsabs.') %}
-        <a href='{{ url.get('url') }}'>ADS</a>
-      {% endif %}
-      {% if url.get('url').startswith('http://www-public.slac.stanford.edu') %}
-        <a href='{{ url.get('url') }}'>SLAC</a>
-      {% endif %}
-      {% if url.get('url').startswith('http://www.ams.org') %}
-        <a href='{{ url.get('url') }}'>AMS MathSciNet</a>
-      {% endif %}
-      {% if url.get('url').startswith('http://www.zentralblatt-math.org') %}
-        <a href='{{ url.get('url') }}'>zbMATH</a>
-      {% endif %}
-      {% if url.get('url').startswith('http://projecteuclid.org') %}
-        <a href='{{ url.get('url') }}'>Project Euclid</a>
-      {% endif %}
-      {% if url.get('url').startswith('http://www-lib.kek.jp') %}
-        <a href='{{ url.get('url') }}'>KEK scanned document</a>
-      {% endif %}
-      {% if url.get('url').startswith('http://cds.cern.ch/record/') %}
-        <a href='{{ url.get('url') }}'>CDS</a>
-      {% endif %}
+    {% if url.get('url') != None %}
+       {% if ( (loop.index == 1) and ( (url.get('url').startswith('http://www.adsabs.') or url.get('url').startswith('http://www-public.slac.stanford.edu') ) ) )  %}
+          View in
+        {% endif %}
+        {% if url.get('url').startswith('http://www.adsabs.') %}
+          <a href='{{ url.get('url') }}'>ADS</a>
+        {% endif %}
+        {% if url.get('url').startswith('http://www-public.slac.stanford.edu') %}
+          <a href='{{ url.get('url') }}'>SLAC</a>
+        {% endif %}
+        {% if url.get('url').startswith('http://www.ams.org') %}
+          <a href='{{ url.get('url') }}'>AMS MathSciNet</a>
+        {% endif %}
+        {% if url.get('url').startswith('http://www.zentralblatt-math.org') %}
+          <a href='{{ url.get('url') }}'>zbMATH</a>
+        {% endif %}
+        {% if url.get('url').startswith('http://projecteuclid.org') %}
+          <a href='{{ url.get('url') }}'>Project Euclid</a>
+        {% endif %}
+        {% if url.get('url').startswith('http://www-lib.kek.jp') %}
+          <a href='{{ url.get('url') }}'>KEK scanned document</a>
+        {% endif %}
+        {% if url.get('url').startswith('http://cds.cern.ch/record/') %}
+          <a href='{{ url.get('url') }}'>CDS</a>
+        {% endif %}
+     {% endif %}
     {% endfor %}
   {% endif %}
 {% endmacro %}
@@ -336,8 +329,10 @@
   {% if record.get('urls') %}
     {% set plots_counter = [] %}
     {% for url in record.get('urls') %}
-      {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
-          {% do plots_counter.append(1) %}
+      {% if url.get('url') %}
+          {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+            {% do plots_counter.append(1) %}
+          {% endif %}
       {% endif %}
     {% endfor %}
   {% endif %}
@@ -354,11 +349,15 @@
             <div class="carousel slide" id="plotsCarousel">
               <!-- Carousel items -->
               <div class="carousel-inner">
-                {% for url in record.get('urls') if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
-                  <div class="{% if loop.index == 1 %} active {% endif %} item"
-                       data-slide-number="{{ loop.index0 }}">
-                    <img src="{{ url.get('url') }}">
-                  </div>
+                {% for url in record.get('urls')  %}
+                {% if url.get('url') %}
+                  {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+                    <div class="{% if loop.index == 1 %} active {% endif %} item"
+                         data-slide-number="{{ loop.index0 }}">
+                      <img src="{{ url.get('url') }}">
+                    </div>
+                  {% endif %}
+                 {% endif %}
                 {% endfor %}
               </div><!-- Carousel nav -->
               <a class="left carousel-control" href="#plotsCarousel" role="button" data-slide="prev">
@@ -373,10 +372,14 @@
           <div class="col-sm-4" id="carousel-text"></div>
 
           <div id="slide-content" style="display: none;">
-            {% for url in record.get('urls') if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
-              <div id="slide-content-{{ loop.index0 }}">
-                <span>{{ url.get('description') }}</span>
-              </div>
+            {% for url in record.get('urls') %}
+              {% if url.get('url') %}
+                {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+                <div id="slide-content-{{ loop.index0 }}">
+                  <span>{{ url.get('description') }}</span>
+                </div>
+                {% endif %}
+              {% endif %}
             {% endfor %}
           </div>
         </div>
@@ -386,12 +389,16 @@
     <div class="row hidden-xs" id="slider-thumbs">
       <!-- Bottom switcher of slider -->
       <ul class="hide-bullets">
-        {% for url in record.get('urls') if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
-          <li class="col-sm-2 show-plots-thumbnails">
-            <a class="thumbnail" id="carousel-selector-{{ loop.index0 }}">
-              <img width="100" height="100" src="{{ url.get('url') }}">
-            </a>
-          </li>
+        {% for url in record.get('urls') %}
+            {% if url.get('url') %}
+              {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+              <li class="col-sm-2 show-plots-thumbnails">
+                <a class="thumbnail" id="carousel-selector-{{ loop.index0 }}">
+                  <img width="100" height="100" src="{{ url.get('url') }}">
+                </a>
+              </li>
+              {% endif %}
+            {% endif %}
         {% endfor %}
       </ul>                 
     </div>
