@@ -21,6 +21,7 @@ from invenio_ext.template import render_template_to_string
 
 
 class Reference(object):
+
     """Class used to output reference format in detailed record"""
 
     def __init__(self, record):
@@ -38,10 +39,19 @@ class Reference(object):
         out = []
         references = self.record.get('references')
         if references:
-            refs_to_get_from_es = [ref['recid'] for i, ref in enumerate(references)
-                                   if ref.get('recid')]
-            es_query = ' or '.join(['control_number:' + str(recid) for recid in refs_to_get_from_es])
-            refs_from_es = {record['control_number']: record for record in Query(es_query).search().records()}
+            refs_to_get_from_es = [
+                ref['recid'] for ref in references if ref.get('recid')
+            ]
+            es_query = ' or '.join(
+                ['control_number:' + str(recid) for recid in refs_to_get_from_es]
+            )
+            es_query = Query(es_query).search()
+            es_query.body.update({
+                'size': 9999
+            })
+            refs_from_es = {
+                record['control_number']: record for record in es_query.records()
+            }
 
             for reference in references:
                 row = []
