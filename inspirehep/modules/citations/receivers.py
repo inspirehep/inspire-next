@@ -17,8 +17,13 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
+"""Signal receivers for invenio_records."""
 
-from invenio_records.signals import after_record_insert, after_record_update, before_record_index
+from invenio_records.signals import (
+    after_record_insert,
+    before_record_index,
+    before_record_update,
+)
 
 from .tasks import update_citation_count_for_records
 from .utils import calculate_citation_count
@@ -26,8 +31,7 @@ from .utils import calculate_citation_count
 
 @after_record_insert.connect
 def catch_citations_insert(sender, *args, **kwargs):
-    """Triggers update of citation count for all the records
-    which are affected by insertion of the sender
+    """Trigger update of citation count for all the records affected by insert.
 
     :param sender: The json representation of the record that is going to be inserted
     """
@@ -42,7 +46,7 @@ def catch_citations_insert(sender, *args, **kwargs):
 
 @before_record_index.connect
 def add_citation_count_on_insert_or_update(sender, *args, **kwargs):
-    """Adds citation_count field on record insert/update."""
+    """Add citation_count field on record insert/update."""
     if kwargs is not None:
         json = kwargs.get('json')
         index = kwargs.get('index')
@@ -50,25 +54,28 @@ def add_citation_count_on_insert_or_update(sender, *args, **kwargs):
             calculate_citation_count(sender, json)
 
 
-@after_record_update.connect
+@before_record_update.connect
 def catch_citations_update(sender, *args, **kwargs):
-    """Triggers update of citation count for all the records
-    which are affected by update of the sender
+    """Trigger update of citation count for all the records affected by sender.
 
     :param sender: The json representation of the record that is going to be updated
     """
-    refs_before_update = []
-    if sender.original_json:
-        if 'references' in sender.original_json:
-            refs_before_update = [ref['recid'] for ref in sender.original_json['references'] if ref.get('recid')]
+    from invenio_records.api import get_record
 
-    refs_after_update = []
-    if sender.original_json:
-        if 'references' in sender:
-            refs_after_update = [ref['recid'] for ref in sender['references'] if ref.get('recid')]
+    current_record = get_record(sender.get('recid', -1))
+    if current_record:
+        refs_before_update = [
+            ref['recid']
+            for ref in current_record.get('references', [])
+            if ref.get('recid')
+        ]
+        refs_after_update = [
+            ref['recid']
+            for ref in sender.get('references', [])
+            if ref.get('recid')
+        ]
+        refs_diff = list(set(refs_before_update) ^ set(refs_after_update))
 
-    refs_diff = list(set(refs_before_update) ^ set(refs_after_update))
-
-    if refs_diff:
-        # countdown added as it takes a while before an indexed record can be accessed from es
-        update_citation_count_for_records.apply_async(args=[refs_diff], countdown=3)
+        if refs_diff:
+            # countdown added as it takes a while before an indexed record can be accessed from es
+            update_citation_count_for_records.apply_async(args=[refs_diff], countdown=3)
