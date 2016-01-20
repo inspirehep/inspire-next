@@ -1,5 +1,5 @@
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,14 @@ def reset_workflow_object_states(obj):
     """Fix workflow positions and states.
 
     Old states from Prod/QA:
-    {(), (0,), (5, 3, 14), (5, 3, 14, 0), (5, 3, 15), (5, 3, 15, 1)}
+    {(),
+     (0,),
+     (3, 0),
+     (5, 3, 11, 0),
+     (5, 3, 14),
+     (5, 3, 14, 0),
+     (5, 3, 15),
+     (5, 3, 15, 1)}
 
     {(),
      (0,),
@@ -69,8 +76,10 @@ def reset_workflow_object_states(obj):
         if tuple(pos) in [
                 (5,), (5, 3, 14), (5, 3, 14, 0), (5, 3, 15), (5, 3, 15, 1)]:
             pos = [len(workflows.get(obj.workflow.name).workflow) - 1]  # finished
-        elif tuple(pos) in [(5, 3, 10), (5, 3, 11), (5, 3, 12)]:
+        elif tuple(pos) in [(5, 3, 10), (5, 3, 11, 0), (5, 3, 12)]:
             pos = [14, 0]  # halted
+        elif tuple(pos) == (3, 0):
+            pos = [4, 0]  # deleted
         elif len(pos) > 1 and pos[0] == 6:
             # We need to update pos from 6 to start of pre_processing part
             pos = [7]
