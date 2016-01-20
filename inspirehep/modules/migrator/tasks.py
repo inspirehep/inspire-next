@@ -71,6 +71,7 @@ from .utils import rename_object_action, reset_workflow_object_states
 logger = get_task_logger(__name__)
 
 CHUNK_SIZE = 1000
+LARGE_CHUNK_SIZE = 10000
 
 split_marc = re.compile('<record.*?>.*?</record>', re.DOTALL)
 
@@ -235,10 +236,12 @@ def add_citation_counts():
                    'doc': {'citation_count': citation_count}
                    }
 
+    logger.info("Extracting all citations...")
+
     # lookup dictionary where key: recid of the record
     # and value: number of records that cite that record
     citations_lookup = Counter()
-    for record in es_scan(
+    for i, record in enumerate(es_scan(
             es,
             query={
                 "_source": "references.recid",
@@ -247,11 +250,11 @@ def add_citation_counts():
                         "field": "references.recid"
                     }
                 },
-                "size": CHUNK_SIZE
+                "size": LARGE_CHUNK_SIZE
             },
-            scroll=u'1m',
+            scroll=u'2m',
             index="hep",
-            doc_type="record"):
+            doc_type="record")):
 
         # update lookup dictionary based on references of the record
         if 'references' in record['_source']:
@@ -265,8 +268,14 @@ def add_citation_counts():
         for unique_refs_id in unique_refs_ids:
             citations_lookup[unique_refs_id] += 1
 
-    for chunk in chunker(get_records_to_update_generator(citations_lookup), CHUNK_SIZE):
-        es_bulk(es, chunk)
+        if (i + 1) % LARGE_CHUNK_SIZE == 0:
+            logger.info("Extracted citations from {} records".format(i + 1))
+
+    logger.info("... DONE.")
+    logger.info("Adding citation numbers...")
+
+    success, failed = es_bulk(es, get_records_to_update_generator(citations_lookup), raise_on_exception=False, raise_on_error=False, stats_only=True)
+    logger.info("... DONE: {} records updated with success. {} failures.".format(success, failed))
 
 
 def create_record(data, force=False, dry_run=False):
