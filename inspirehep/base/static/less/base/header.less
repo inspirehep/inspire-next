@@ -28,14 +28,11 @@ body {
 }
 .navbar-fixed-top {
     .navbar-brand {
-        padding: 2px 15px;
+        padding: 0px 15px;
     }
 }
 .navbar-brand {
-    img {
-        height: 40px;
-        margin-top: 10px;
-    }
+    height: 50px;
 }
 #topnav {
     li.active {
@@ -44,21 +41,21 @@ body {
 }
 .navbar {
     .divider-vertical {
-        height: 30px;
+        height:21px;
         margin: 15px 9px;
         border-right: 1px solid #cccccc;
         border-left: 1px solid #cccccc;
     }
 }
 
-@media (min-width: @screen-sm-min) {
+@media (min-width: @screen-md-min) {
     .navbar-nav > li > a {
         padding-top: 10px;
         padding-bottom: 10px;
     }
 }
 
-@media (max-width: @screen-sm-min) {
+@media (max-width: @screen-md-min) {
     .navbar-collapse {
         .nav {
             & > .divider-vertical {
@@ -145,7 +142,6 @@ body {
 #topnav {
     padding: 0 2.5%;
     min-height: 50px;
-    height: 50px;
     border-bottom: 0px;
     @media (max-width: 441px) {
         height: auto;
@@ -449,7 +445,7 @@ body {
     display: block;
     float: left;
     left: 0 !important;
-    top: 70px;
+    top: 55px;
     z-index: 1000;
     display: none;
     list-style: none;
@@ -602,25 +598,16 @@ a.external-link::after {
     background-color: @background-color;
 }
 
-@media (max-width: @screen-md-min) {
-    #top-search-bar-full {
-        display: none;
-    }
-}
-
-@media (min-width: @screen-md-min) {
+@media (min-width: 992px) {
     #top-search-bar-small {
         display: none;
     }
 }
 
-// To prevent shrinking search field after applying typeahead 
-.navbar-form .input-group .form-control {
-  width: 100%;
-}
-
-.navbar-form .input-group .input-group-btn {
-  width: 1%;
+@media (max-width: 991px) {
+    #top-search-bar-full {
+        display: none;
+    }
 }
 
 .navbar-default .navbar-collapse,
@@ -630,11 +617,17 @@ a.external-link::after {
 
 #top-search-bar-small {
 
-    float: none;
+    float: left;
     margin: 0 auto;
+
+    #searchform {
+        height: 40px;
+    }
 
     #searchform .navbar-form {
         margin-top: 8px;
+        margin-bottom: 0px;
+        height: 40px;
     }
 }
 
@@ -642,17 +635,21 @@ a.external-link::after {
 
     #searchform .navbar-form {
         margin-top: 8px;
+        margin-bottom: 0px;
+        height: 40px;
     }
 
-    @media (min-width: @screen-lg) {
-        margin-left: 3%;
+    .col-lg-5 {
+        width: 35%;
+    }
+
+    .col-md-4 {
+        width: 29%;
     }
 }
 
 
 #top-search-bar-full, #top-search-bar-small {
-
-    padding: 0;
 
     #searchform .navbar-form {
         box-shadow: none;
@@ -711,13 +708,13 @@ a.external-link::after {
     }
 }
 
-@media (min-width: @screen-sm-min) {
+@media (min-width: @screen-sm-max) {
     #collections-section {
-        margin-top: -14px;
+        margin-top: -13px;
     }
 }
 
-@media (max-width: @screen-sm-min) {
+@media (max-width: @screen-md-min) {
     #collections-section {
         margin-top: -1px;
     }
@@ -730,8 +727,13 @@ a.external-link::after {
     }
 }
 
+.navbar-toggle {
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
 // Switch to hamburger menu
-@media (max-width: @screen-md-min) {
+@media (max-width: 991px) {
     .navbar-header {
         float: none;
     }
