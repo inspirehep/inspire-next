@@ -20,7 +20,23 @@
 {%- extends "search/collection_basic.html" -%}
 
 {% block body %}
-  <div id="collection-search-bar">
+  <div id="collection-landing-page-text">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="text-center">
+          <img class="landing-page-flask" src="img/logo-mark-dark.svg" alt="INSPIRE Labs logo">
+          <p class="intro-text">
+            INSPIRE <span class="action-text">Labs</span> provides a sneak preview of new features and designs currently under development.
+          </p>
+          <br>
+          <p class="intro-text">
+             Try it out, and please use the feedback button to let us know what you think!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="collection-search-bar" class="literature-collection-search-bar">
     <div class="title" id="literature-search-bar">
       Search {{ "HEP" | number_of_records }} articles
     </div>
