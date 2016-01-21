@@ -157,29 +157,32 @@ def setup_app(app):
             return record['date']
         from datetime import datetime
         out = ''
-        opening_date = record['opening_date']
-        closing_date = record['closing_date']
-        converted_opening_date = datetime.strptime(opening_date, "%Y-%m-%d")
-        converted_closing_date = datetime.strptime(closing_date, "%Y-%m-%d")
-        if opening_date.split('-')[0] == closing_date.split('-')[0]:
-            if opening_date.split('-')[1] == closing_date.split('-')[1]:
-                out += opening_date.split('-')[2] + '-' +\
-                    closing_date.split('-')[2] +\
-                    ' ' + converted_opening_date.strftime('%b') +\
-                    ' ' + opening_date.split('-')[0]
+        opening_date = record.get('opening_date', '')
+        closing_date = record.get('closing_date', '')
+        if opening_date and closing_date:
+            converted_opening_date = datetime.strptime(
+                opening_date, "%Y-%m-%d")
+            converted_closing_date = datetime.strptime(
+                closing_date, "%Y-%m-%d")
+            if opening_date.split('-')[0] == closing_date.split('-')[0]:
+                if opening_date.split('-')[1] == closing_date.split('-')[1]:
+                    out += opening_date.split('-')[2] + '-' +\
+                        closing_date.split('-')[2] +\
+                        ' ' + converted_opening_date.strftime('%b') +\
+                        ' ' + opening_date.split('-')[0]
+                else:
+                    out += opening_date.split('-')[2] + ' '\
+                        + converted_opening_date.strftime('%b') + ' - ' +\
+                        closing_date.split('-')[2] + ' ' +\
+                        converted_closing_date.strftime('%b') + ' ' +\
+                        opening_date.split('-')[0]
             else:
-                out += opening_date.split('-')[2] + ' '\
-                    + converted_opening_date.strftime('%b') + ' - ' +\
+                out += opening_date.split('-')[2] + ' ' +\
+                    converted_opening_date.strftime('%b') + ' '\
+                    + opening_date.split('-')[0] + ' - ' + \
                     closing_date.split('-')[2] + ' ' +\
                     converted_closing_date.strftime('%b') + ' ' +\
-                    opening_date.split('-')[0]
-        else:
-            out += opening_date.split('-')[2] + ' ' +\
-                converted_opening_date.strftime('%b') + ' '\
-                + opening_date.split('-')[0] + ' - ' + \
-                closing_date.split('-')[2] + ' ' +\
-                converted_closing_date.strftime('%b') + ' ' +\
-                closing_date.split('-')[0]
+                    closing_date.split('-')[0]
         return out
 
     @app.template_filter()
@@ -205,7 +208,7 @@ def setup_app(app):
 
     @app.template_filter()
     def proceedings_link(record):
-        cnum = record['cnum']
+        cnum = record.get('cnum', '')
         out = ''
         if not cnum:
             return out

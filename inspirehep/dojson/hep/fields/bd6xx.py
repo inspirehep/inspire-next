@@ -119,16 +119,17 @@ def thesaurus_terms(self, key, value):
             'energy_range': energy_range,
             'classification_scheme': value.get('2'),
         }
-    thesaurus_terms_list = self.get('thesaurus_terms', [])
+    thesaurus_terms = self.get('thesaurus_terms', [])
 
     if isinstance(value, list):
         for element in value:
-            thesaurus_terms_list.append(get_value(element))
+            thesaurus_terms.append(get_value(element))
     else:
-        thesaurus_terms_list.append(get_value(value))
-    thesaurus_terms = [dict(t) for t in set([tuple(d.items()) for d
-                       in thesaurus_terms_list])]
-    return thesaurus_terms
+        thesaurus_terms.append(get_value(value))
+    for element in thesaurus_terms:
+        if isinstance(element['keyword'], list):
+            return thesaurus_terms
+    return [dict(t) for t in set([tuple(d.items()) for d in thesaurus_terms])]
 
 
 @hep2marc.over('695', 'thesaurus_terms')

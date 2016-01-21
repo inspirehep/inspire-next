@@ -55,18 +55,33 @@ def dois(self, key, value):
     value = utils.force_list(value)
     out = []
     for val in value:
-        if val and val.get("2", '').lower() == "doi":
-            if isinstance(val.get('a'), list):
-                for v in val.get('a'):
-                    out.append({
-                        'value': v,
-                        'source': val.get('9')
-                    })
+        if val:
+            if isinstance(val.get("2"), list):
+                if val.get("2", '')[0].lower() == "doi":
+                    if isinstance(val.get('a'), list):
+                        for v in val.get('a'):
+                            out.append({
+                                'value': v,
+                                'source': val.get('9')
+                            })
+                    else:
+                        out.append({
+                            'value': val.get('a'),
+                            'source': val.get('9')
+                        })
             else:
-                out.append({
-                    'value': val.get('a'),
-                    'source': val.get('9')
-                })
+                if val.get("2", '').lower() == "doi":
+                    if isinstance(val.get('a'), list):
+                        for v in val.get('a'):
+                            out.append({
+                                'value': v,
+                                'source': val.get('9')
+                            })
+                    else:
+                        out.append({
+                            'value': val.get('a'),
+                            'source': val.get('9')
+                        })
     return [dict(t) for t in set([tuple(d.items()) for d in out])]
 
 
@@ -76,12 +91,21 @@ def persistent_identifiers(self, key, value):
     value = utils.force_list(value)
     out = []
     for val in value:
-        if val and val.get("2", '').lower() != "doi":
-            out.append({
-                'value': val.get('a'),
-                'source': val.get('9'),
-                'type': val.get('2')
-            })
+        if val:
+            if isinstance(val.get("2"), list):
+                if val.get("2", '')[0].lower() != "doi":
+                    out.append({
+                        'value': val.get('a'),
+                        'source': val.get('9'),
+                        'type': val.get('2')[0]
+                    })
+            else:
+                if val.get("2", '').lower() != "doi":
+                    out.append({
+                        'value': val.get('a'),
+                        'source': val.get('9'),
+                        'type': val.get('2')
+                    })
     return out
 
 
@@ -146,6 +170,9 @@ def report_numbers(self, key, value):
     else:
         if ('9' in value and value['9'] != 'arXiv') or '9' not in value:
             report_number.append(get_value(value))
+    for element in report_number:
+        if isinstance(element['value'], list):
+            return report_number
     return [dict(t) for t in set([tuple(d.items()) for d in report_number])]
 
 

@@ -27,13 +27,23 @@
       <div class="row">
       <div class="col-md-12">
         <h4 class="custom-h">
-          <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">{{record['ICN']}}
+        {% if record['ICN']|is_list() %}
+          <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">{{ record['ICN'][0] }}
           </a>
-         {% if record['ICN'] %}
+         [Future INSPIRE ID: {{record['ICN'][0]}}]
+        {% else %}
+          <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">{{ record['ICN'] }}
+          </a>
          [Future INSPIRE ID: {{record['ICN']}}]
-         {%endif%}
+        {%endif%}
       </h4>
-      {% if record['institution'] %}
+      {% if record['institution']|is_list() %}
+      <div class="row">
+        <div class="col-md-12 record-brief-details" >
+         {{ record['institution'][0] }}
+        </div>
+      </div>
+      {% else %}
       <div class="row">
         <div class="col-md-12 record-brief-details" >
          {{ record['institution']}}

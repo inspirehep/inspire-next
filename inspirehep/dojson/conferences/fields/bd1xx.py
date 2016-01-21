@@ -28,6 +28,7 @@ from ..model import conferences
 
 
 @conferences.over('acronym', '^111')
+@utils.for_each_value
 def acronym(self, key, value):
     """Conference acronym."""
     self['date'] = value.get('d')

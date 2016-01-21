@@ -61,8 +61,10 @@
             {% if record['subtitle'] %}
               : {{ record['subtitle'] }}
             {% endif %}
-            {% if record['acronym'] %}
-              ({{ record['acronym'] }})
+            {% if record['acronym']|is_list() %}
+              ({{ record['acronym'][0] }})
+            {% else %}
+                ({{ record['acronym'] }})
             {% endif %}
           {% endif %}
       </h4>

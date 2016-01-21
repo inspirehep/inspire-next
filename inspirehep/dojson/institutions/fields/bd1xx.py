@@ -38,12 +38,14 @@ def location(self, key, value):
 
 
 @institutions.over('timezone', '^043..')
+@utils.for_each_value
 def timezone(self, key, value):
     """Timezone."""
     return value.get('t')
 
 
 @institutions.over('name', '^110..')
+@utils.for_each_value
 def name(self, key, value):
     """List of names."""
     names = utils.force_list(value.get('a')) or []
@@ -53,36 +55,42 @@ def name(self, key, value):
 
 
 @institutions.over('breadcrumb_title', '^110..')
+@utils.for_each_value
 def breadcrumb_title(self, key, value):
     """Title used in breadcrum and html title."""
     return value.get('a')
 
 
 @institutions.over('institution', '^110..')
+@utils.for_each_value
 def institution(self, key, value):
     """Institution name."""
     return value.get('a')
 
 
 @institutions.over('department', '^110..')
+@utils.for_each_value
 def department(self, key, value):
     """Institution info."""
     return value.get('b')
 
 
 @institutions.over('ICN', '^110..')
+@utils.for_each_value
 def ICN(self, key, value):
     """Institution info."""
     return value.get('u')
 
 
 @institutions.over('obsolete_ICN', '^110..')
+@utils.for_each_value
 def obsolete_ICN(self, key, value):
     """Institution info."""
     return value.get('x')
 
 
 @institutions.over('new_ICN', '^110..')
+@utils.for_each_value
 def new_ICN(self, key, value):
     """Institution info."""
     return value.get('t')
@@ -104,6 +112,7 @@ def address(self, key, value):
 
 
 @institutions.over('field_activity', '^372..')
+@utils.for_each_value
 def field_activity(self, key, value):
     """Field of activity."""
     return value.get('a')
@@ -128,6 +137,7 @@ def extra_words(self, key, value):
 
 
 @institutions.over('content_classification', '^65017')
+@utils.for_each_value
 def content_classification(self, key, value):
     """Institution info."""
     return value.get('a')
