@@ -17,6 +17,8 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
+"""Signal receivers for INSPIRE authors."""
+
 import uuid
 
 from beard.clustering import block_phonetic
@@ -44,11 +46,17 @@ def assign_signature_block(recid, json, *args, **kwargs):
         if 'full_name' in author:
             name = {'author_name': author['full_name']}
 
-            signature_block = block_phonetic(
-                np.array([name], dtype=np.object).reshape(-1, 1),
-                threshold=0,
-                phonetic_algorithm='nysiis'
-            )
+            try:
+                signature_block = block_phonetic(
+                    np.array([name], dtype=np.object).reshape(-1, 1),
+                    threshold=0,
+                    phonetic_algorithm='nysiis'
+                )
+            except IndexError as err:
+                # Most likely a malformed author name, report & continue
+                from flask import current_app
+                current_app.logger.exception(err)
+                continue
 
             author['signature_block'] = signature_block[0]
 
@@ -69,7 +77,8 @@ def assign_uuid(sender, *args, **kwargs):
 
 @before_record_index.connect
 def generate_name_variatons(recid, json, *args, **kwargs):
-    """Populates a json record before indexing it to elastic.
+    """Populate a json record before indexing it.
+
     Adds a field for all the possible variations of an authors name
 
     :param recid: The id of the record that is going to be indexed.
