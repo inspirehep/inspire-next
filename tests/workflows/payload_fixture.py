@@ -18,14 +18,14 @@
 
 """Implements a workflow for testing."""
 
-
-from invenio_oaiharvester.tasks.records import convert_record_to_json
-
 from invenio_deposit.models import DepositionType
 
 from inspirehep.modules.converter.tasks import convert_record
 
 from inspirehep.modules.workflows.models import create_payload
+from inspirehep.modules.workflows.tasks.upload import (
+    convert_record_to_json,
+)
 
 
 class payload_fixture(DepositionType):

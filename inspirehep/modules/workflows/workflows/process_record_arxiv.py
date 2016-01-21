@@ -44,7 +44,10 @@ from inspirehep.modules.workflows.tasks.classifier import (
 )
 from inspirehep.modules.workflows.workflows.hep_ingestion import hep_ingestion
 
-from invenio_oaiharvester.tasks.records import convert_record_to_json
+from inspirehep.modules.workflows.tasks.upload import (
+    convert_record_to_json,
+)
+
 from invenio_workflows.tasks.logic_tasks import workflow_if
 
 from inspirehep.modules.refextract.tasks import extract_journal_info

@@ -20,8 +20,6 @@
 """Implements a workflow for testing."""
 
 
-from invenio_oaiharvester.tasks.records import convert_record_to_json
-
 from inspirehep.modules.converter.tasks import convert_record
 
 from inspirehep.modules.oaiharvester.tasks.arxiv import (
@@ -33,6 +31,10 @@ from inspirehep.modules.oaiharvester.tasks.arxiv import (
 
 from inspirehep.modules.refextract.tasks import extract_journal_info
 
+
+from inspirehep.modules.workflows.tasks.upload import (
+    convert_record_to_json,
+)
 from inspirehep.modules.workflows.workflows.hep_ingestion import hep_ingestion
 
 

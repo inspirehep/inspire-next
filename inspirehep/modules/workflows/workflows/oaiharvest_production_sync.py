@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # Invenio is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -19,13 +19,15 @@
 
 """Generic record process in harvesting with backwards compatibility."""
 
-from invenio_oaiharvester.tasks.records import convert_record_to_json
 from invenio_workflows.definitions import RecordWorkflow
 
 from inspirehep.modules.converter.tasks import (
     convert_record
 )
-from inspirehep.modules.workflows.tasks.upload import store_record
+from inspirehep.modules.workflows.tasks.upload import (
+    store_record,
+    convert_record_to_json,
+)
 
 
 class oaiharvest_production_sync(RecordWorkflow):
