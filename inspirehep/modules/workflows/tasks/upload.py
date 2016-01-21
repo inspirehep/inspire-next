@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,12 +23,32 @@
 """Tasks related to record uploading."""
 
 import jsonpatch
+import StringIO
+import six
+
+from werkzeug.utils import import_string
 
 from invenio_ext.sqlalchemy import db
 from invenio_ext.sqlalchemy.utils import session_manager
 
 from invenio_records.api import create_record, get_record
 from invenio_records.models import Record
+
+
+def convert_record_to_json(obj, eng):
+    """Convert one record from MARCXML to JSON."""
+    from invenio_base.globals import cfg
+    source = StringIO.StringIO(obj.data)
+
+    processor = cfg["RECORD_PROCESSORS"]["marcxml"]
+    if isinstance(processor, six.string_types):
+        processor = import_string(processor)
+
+    for record in processor(source):
+        # Should only be one.
+        obj.data = record
+        break
+    source.close()
 
 
 def store_record_sip(obj, *args, **kwargs):
