@@ -381,13 +381,27 @@
     font-size: 13.5px;
 }
 
-#top-search-bar-small {
-    padding: 0 15px 0 15px;
-    
-    .navbar-nav {
-        border: 0;
-        margin-bottom: 0;
-        padding-top: 0;
-        padding-bottom: 0;
+@media (min-width: @screen-sm-min) {
+
+    #top-search-bar {
+
+        .navbar-form .input-group .form-control {
+            width: auto;
+        }
+
+        .navbar-form .input-group > .form-control {
+            width: 100%;
+        }
     }
+}
+
+#top-search-bar #searchform {
+
+    #searchform-input-group {
+        width: 100%;
+    }
+
+    .navbar-form {
+        display: flex;
+    } 
 }

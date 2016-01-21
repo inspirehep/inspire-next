@@ -28,21 +28,23 @@ body {
 }
 .navbar-fixed-top {
     .navbar-brand {
-        padding: 0px 15px;
+        padding: 2px 15px;
+        height: 50px;
     }
-}
-.navbar-brand {
-    height: 50px;
 }
 #topnav {
     li.active {
         border-bottom: 2px solid @btn-warning-bg;
     }
+
+    .navbar-header {
+        float: none;
+    }
 }
 .navbar {
     .divider-vertical {
-        height:21px;
-        margin: 15px 9px;
+        height: 30px;
+        margin: 9px 9px;
         border-right: 1px solid #cccccc;
         border-left: 1px solid #cccccc;
     }
@@ -147,8 +149,10 @@ body {
     padding: 0 2.5%;
     min-height: 50px;
     border-bottom: 0px;
-    @media (max-width: 441px) {
-        height: auto;
+
+    .navbar-toggle {
+        margin-top: 8px;
+        margin-bottom: 0;
     }
 }
 
@@ -602,70 +606,35 @@ a.external-link::after {
     background-color: @background-color;
 }
 
-@media (min-width: 992px) {
-    #top-search-bar-small {
-        display: none;
-    }
-}
+#top-search-bar {
 
-@media (max-width: 991px) {
-    #top-search-bar-full {
-        display: none;
-    }
-}
+    padding: 0;
+    height: 40px;
 
-.navbar-default .navbar-collapse,
-.navbar-default .navbar-form {
-    border: 0;
-}
-
-#top-search-bar-small {
-
-    float: left;
-    margin: 0 auto;
-
-    #searchform {
-        height: 40px;
-    }
+    #searchform-input-group #search-form-input,
+    .navbar-form .input-group .form-control {
+        width: 100%;
+    }  
 
     #searchform .navbar-form {
         margin-top: 8px;
-        margin-bottom: 0px;
-        height: 40px;
-    }
-}
-
-#top-search-bar-full {
-
-    #searchform .navbar-form {
-        margin-top: 8px;
-        margin-bottom: 0px;
-        height: 40px;
-    }
-
-    .col-lg-5 {
-        width: 35%;
-    }
-
-    .col-md-4 {
-        width: 29%;
-    }
-}
-
-
-#top-search-bar-full, #top-search-bar-small {
-
-    #searchform .navbar-form {
+        margin-bottom: 0;
+        border: 0;
+        padding: 0;
         box-shadow: none;
+        float: none !important;
     }
 
     #searchform-input-group {
-        width: initial;
+        padding-left: 60px;
+        padding-right: 30px;
+        display: table;
+        width: auto;
         font-size: larger;
+        max-width: 850px;
     }
 
     #search-form-input {
-        min-width: 75px;
         border: 0;
         border-radius: 0;
         font-size: 17px;
@@ -678,35 +647,35 @@ a.external-link::after {
         font-size: 16px;
 
         // Top bar search button colours
-        &.literature {
+        &.literature-search-button {
             .collection-background-color(@literature-collection);
         }
 
-        &.authors {
+        &.authors-search-button {
             .collection-background-color(@authors-collection);
         }
 
-        &.conferences {
+        &.conferences-search-button {
             .collection-background-color(@conferences-collection);
         }
 
-        &.jobs {
+        &.jobs-search-button {
             .collection-background-color(@jobs-collection);
         }
 
-        &.experiments {
+        &.experiments-search-button {
             .collection-background-color(@experiments-collection);
         }
 
-        &.institutions {
+        &.institutions-search-button {
             .collection-background-color(@institutions-collection);
         }
 
-        &.journals {
+        &.journals-search-button {
             .collection-background-color(@journals-collection);
         }
 
-        &.data {
+        &.data-search-button {
             .collection-background-color(@data-collection);
         }
     }
@@ -731,16 +700,19 @@ a.external-link::after {
     }
 }
 
-.navbar-toggle {
-    margin-top: 8px;
-    margin-bottom: 0;
+@media (min-width: @screen-md-min) {
+
+    #topnav-right {
+        float: right;
+    }
+
+    #user-info + .dropdown-menu {
+        margin-left: -100px;
+    }
 }
 
 // Switch to hamburger menu
-@media (max-width: 991px) {
-    .navbar-header {
-        float: none;
-    }
+@media (max-width: @screen-md-min) {
 
     .navbar-toggle {
         display: block;
@@ -749,14 +721,16 @@ a.external-link::after {
     .navbar-collapse {
         border-top: 1px solid transparent;
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+        padding-right: 15px;
+        padding-left: 15px;
     }
 
     .navbar-collapse.collapse {
-        display: none!important;
+        display: none !important;
     }
 
     .navbar-nav {
-        float: none!important;
+        float: none !important;
         margin: 7.5px -15px;
     }
 
@@ -776,10 +750,36 @@ a.external-link::after {
 
     /* since 3.1.0 */
     .navbar-collapse.collapse.in { 
-        display: block!important;
+        display: block !important;
     }
 
     .collapsing {
-        overflow: hidden!important;
+        overflow: hidden !important;
+    }
+
+    #topnav {
+        height: auto;
+    }
+
+    #topnav-right {
+        width: 100%;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+    }
+}
+
+@media (max-width: 600px) {
+
+    #top-search-bar #searchform-input-group {
+        width: 100%;
+        padding: 0 2.5%;
+    }
+
+    #topnav {
+        padding-bottom: 10px;
+    }
+
+    #top-search-bar {
+        float: left;
     }
 }
