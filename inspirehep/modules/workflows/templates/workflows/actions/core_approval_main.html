@@ -1,6 +1,6 @@
 {#
 ## This file is part of Invenio.
-## Copyright (C) 2014 CERN.
+## Copyright (C) 2014, 2015, 2016 CERN.
 ##
 ## Invenio is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -17,8 +17,11 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-<div class="core-approval-action well text-right">
-{% if not "CORE" in object.get_data().get("collections", [{}])[0].keys() %}
+{% from "workflows/macros.html" import render_prediction %}
+
+{{ render_prediction(object) }}
+
+{% if not "CORE" in object.data.get("collections", [{}])[0].keys() %}
   <button class="btn btn-success core-approval-action-accept"
         role="button"
         data-objectid="{{object.id}}"
@@ -33,7 +36,7 @@
         data-value="reject"
         role="button">{{_("Reject")}}</button>
 
-</div>
+<hr class="separator">
 
 
 <div class="modal fade" id="rejection-modal-{{object.id}}" tabindex="-1" role="dialog" aria-labelledby="rejectionModal" aria-hidden="true">

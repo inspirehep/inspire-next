@@ -274,13 +274,6 @@ def exists_in_holding_pen(obj, eng):
 
 def delete_self_and_stop_processing(obj, eng):
     """Delete both versions of itself and stops the workflow."""
-    from invenio_workflows.models import BibWorkflowObject
-    # delete snapshot created with original data
-    initial_obj = BibWorkflowObject.query.filter(
-        BibWorkflowObject.id_parent == obj.id
-    ).one()
-    BibWorkflowObject.delete(initial_obj.id)
-    # delete self
     BibWorkflowObject.delete(obj.id)
     eng.skipToken()
 
@@ -300,6 +293,6 @@ def update_old_object(obj, *args, **kwargs):
             old_object.set_data(obj.data)
             old_object.save()
     else:
-        obj.log.error(
-            "Cannot update old object, non valid ids: {0}".format(holdingpen_ids)
-        )
+        msg = "Cannot update old object, non valid ids: {0}".format(holdingpen_ids)
+        obj.log.error(msg)
+        raise Exception(msg)

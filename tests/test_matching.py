@@ -392,7 +392,4 @@ class MatchingTests(InvenioTestCase):
                 return MockLog()
 
         obj = MockBWO()
-
-        update_old_object(obj)
-
-        obj.log.msg = 'Cannot update old object, non valid ids: []'
+        self.assertRaises(Exception, update_old_object, obj)
