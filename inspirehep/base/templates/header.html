@@ -1,20 +1,20 @@
 {#
-## This file is part of INSPIRE.
-## Copyright (C) 2014, 2015, 2016 CERN.
-##
-## INSPIRE is free software; you can redistribute it and/or
-## modify it under the terms of the GNU General Public License as
-## published by the Free Software Foundation; either version 2 of the
-## License, or (at your option) any later version.
-##
-## INSPIRE is distributed in the hope that it will be useful, but
-## WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-## General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# This file is part of INSPIRE.
+# Copyright (C) 2014, 2015, 2016 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
 {#
@@ -35,7 +35,7 @@
 {# Work-around for collection name #}
 
 {% if collection_name is not defined and collection is defined %}
- {% set collection_name = collection.name %}
+ {% set collection_name = collection.name | sanitize_collection_name %}
 {% else %}
   {% set collection_name = '' %}
 {% endif %}
@@ -50,18 +50,18 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="{{ url_for('collections.index') }}">
-        <span id="{{ collection_name | sanitize_collection_name }}-collection">
+        <span id="{{ collection_name }}-collection">
           {% include 'labs-logo.svg' %}
         </span>
       </a>
       {% if request.endpoint in ['search.search', 'record.metadata'] %}
-        <div id="top-search-bar-small" class="col-sm-5 {{collection.name}}">
+        <div id="top-search-bar-small" class="col-sm-5 {{collection_name}}">
           {% include "search/form/form.html" %}
         </div>
       {% endif %}
     </div>
     {% if request.endpoint in ['search.search', 'record.metadata'] %}
-      <div id="top-search-bar-full" class="col-md-4 col-lg-5 {{collection.name}}">
+      <div id="top-search-bar-full" class="col-md-4 col-lg-5 {{collection_name}}">
         {% include "search/form/form.html" %}
       </div>
     {% endif %}

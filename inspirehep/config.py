@@ -73,6 +73,7 @@ EXTENSIONS = [
     'inspirehep.ext.jinja_filters.record',
     'inspirehep.ext.redis.client',
     'inspirehep.ext.deprecation_warnings:disable_deprecation_warnings',
+    'inspirehep.ext.error_pages',
 ]
 
 PACKAGES = [
