@@ -19,7 +19,7 @@
 
 {% extends "format/record/Default_HTML_brief_base.tpl" %}
 
-{% block record_header %}
+{% block record_content %}
 <div class="row">
   <div class="col-md-12">
     <div class="panel panel-default custom-panel" >
@@ -27,46 +27,44 @@
       <div class="row">
       <div class="col-md-12">
         <h4 class="custom-h">
-          <b>
-            {% if record['title']|is_list %}
-              {% for title in record['title'] %}          
-                <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                {{ title|capitalize }}
-                </a>
-                {% if title|count_words() > 5 %}
-                <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                {{ title|capitalize | words(5) + "..."}}
-                </a>
-                {% else %}
-                 <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                {{ title|capitalize }}
-                {% endif %}
-                </a> 
-              {% endfor %}
-              {% if record['acronym'] %}
-                ({{ record['acronym'] }}) 
-              {% endif %}
-            {% else %}
+          {% if record['title']|is_list %}
+            {% for title in record['title'] %}
               <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-              {{ record['title']|capitalize }}
+              {{ title|capitalize }}
               </a>
-              {% if record['title']|count_words() > 5 %}
+              {% if title|count_words() > 5 %}
               <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-              {{ record['title']|capitalize | words(5) + "..."}}
+              {{ title|capitalize | words(5) + "..."}}
               </a>
               {% else %}
                <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-              {{ record['title']|capitalize }} 
+              {{ title|capitalize }}
               {% endif %}
               </a> 
-              {% if record['subtitle'] %}
-                : {{ record['subtitle'] }}
-              {% endif %}
-              {% if record['acronym'] %} 
-                ({{ record['acronym'] }}) 
-              {% endif %}
+            {% endfor %}
+            {% if record['acronym'] %}
+              ({{ record['acronym'] }}) 
             {% endif %}
-          </b> 
+          {% else %}
+            <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+            {{ record['title']|capitalize }}
+            </a>
+            {% if record['title']|count_words() > 5 %}
+            <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+            {{ record['title']|capitalize | words(5) + "..."}}
+            </a>
+            {% else %}
+             <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+            {{ record['title']|capitalize }}
+            {% endif %}
+            </a>
+            {% if record['subtitle'] %}
+              : {{ record['subtitle'] }}
+            {% endif %}
+            {% if record['acronym'] %}
+              ({{ record['acronym'] }})
+            {% endif %}
+          {% endif %}
       </h4>
       <div class="row">
         <div class="col-md-12 record-brief-details">

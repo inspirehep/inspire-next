@@ -19,7 +19,7 @@
 
 {% extends "format/record/Default_HTML_brief_base.tpl" %}
 
-{% block record_header %}
+{% block record_content %}
 <div class="row">
   <div class="col-md-12">
     <div class="panel panel-default custom-panel" >
@@ -27,14 +27,12 @@
       <div class="row">
       <div class="col-md-12">
         <h4 class="custom-h">
-          <b>
-            <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-              {{ record['experiment_name']['experiment'][0] }}
-            </a>
-            {% if record['affiliation'] %}
-              ({{record['affiliation'][0]}})
-            {% endif %}
-          </b>
+          <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+            {{ record['experiment_name']['experiment'][0] }}
+          </a>
+          {% if record['affiliation'] %}
+            ({{record['affiliation'][0]}})
+          {% endif %}
       </h4>
       {% if record['breadcrumb_title'] %}
       <div class="row">

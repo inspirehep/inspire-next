@@ -57,7 +57,7 @@ a.link-to-pdf, button.dropdown-cite, a#cite-all-format {
     background-color: @teal;
     border: 0px;
     color: @grey;
-    font-weight: 700;
+    font-weight: 500;
 }
 
 button.dropdown-cite:hover, a#cite-all-format:hover {
@@ -148,11 +148,21 @@ hr {
 
 .record-brief-details {
     font-size: 14px;
+    font-weight: 300;
 }
 
 #facetparent {
     border-top: 3px solid;
     background-color: #ffffff;
+    font-size: 13px;
+
+    h4 {
+        font-size: 17px;
+    }
+
+    input.include-facet {
+        top: 1px;
+    }
 
     &.literature-facet {
         border-color: @literature-collection;
@@ -271,6 +281,10 @@ hr {
         .citations-references {
             position: absolute;
             bottom: 15px;
+
+            .glyphicon, .fa {
+                color: @grey;
+            }
         }
     }
 
@@ -382,4 +396,12 @@ i.fa-chevron-right.facet-slider {
 
 #spinner-message {
     margin-left: -20%;
+}
+
+.abstract label {
+    font-weight: 500;
+}
+
+.export-all-div {
+    padding-left: 9px;
 }

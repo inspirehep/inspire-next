@@ -123,7 +123,7 @@
           <hr>
           {% if not request.args.get('cc') or request.args.get('cc') in ["hep","HEP"] %}
           <div class="row">
-            <div class="col-md-7">
+            <div class="col-md-7 export-all-div">
               <input id="export-select-all" type="checkbox">&nbsp;&nbsp;
               <a class="btn btn-default dropdown-toggle disabled" type="button" id="cite-all-format" data-toggle="modal" data-target="#citeAllModal">
                 <i class="fa fa-quote-right"></i> Cite all selected records
