@@ -114,6 +114,10 @@ img.landing-page-flask {
 
         &#authors-search-bar {
             .collection-title-color(@authors-collection);
+        }
+
+        &#data-search-bar {
+            .collection-title-color(@data-collection);
         } 
 
         &#institutions-search-bar {
@@ -230,7 +234,7 @@ img.landing-page-flask {
     }
 }
 
-#collection-authors-not-available {
+#collection-authors-not-available, #collection-data-not-available {
     &:extend(#collection-how-to-search);
     padding-bottom: 25px;
 
@@ -240,9 +244,17 @@ img.landing-page-flask {
         margin-bottom: 20px;
 
         a.btn {
-            background-color: @authors-collection;
             color: white;
+
+            &.btn-authors {
+                background-color: @authors-collection;
+            }
+
+            &.btn-data {
+                background-color: @data-collection;
+            }
         }
+
     }
 }
 
