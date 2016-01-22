@@ -84,7 +84,8 @@ def faq():
 
 @blueprint.route('/literature', methods=['GET', ])
 @blueprint.route('/collection/literature', methods=['GET', ])
-def hep():
+@blueprint.route('/', methods=['GET', 'POST'])
+def index():
     """View for literature collection landing page."""
     collection = {'name': 'hep'}
     return render_template('search/collection_literature.html',
