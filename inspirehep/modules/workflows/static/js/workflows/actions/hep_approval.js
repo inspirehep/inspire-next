@@ -1,6 +1,6 @@
 /*
  * This file is part of INSPIRE.
- * Copyright (C) 2013, 2014, 2015 CERN.
+ * Copyright (C) 2013, 2014, 2015, 2016 CERN.
  *
  * INSPIRE is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -36,12 +36,7 @@ define(
      * Handles the events from the UI button elements for acceping/rejecting
      * records by sending the selected action to the server.
      *
-     * The actionGroupSelector is required for handling display of any action
-     * elements to be hidden or shown. It should be wrapped around every action
-     * UI component.
-     *
      * :param string actionResolveSelector: DOM selector of elements resolving actions.
-     * :param string actionGroupSelector: DOM selector for wrapping display elements
      * :param string action_url: URL for resolving the action.
      *
      */
@@ -50,7 +45,6 @@ define(
       this.attributes({
         actionAcceptSelector: ".hep-approval-action-accept",
         actionRejectSelector: ".hep-approval-action-reject",
-        actionGroupSelector: ".hep-approval-action",
         action_url: "",
         pdfCheckboxSelector: "[name='submission-data-pdf']"
       });
@@ -128,11 +122,13 @@ define(
           message: data.message
         });
 
-        this.trigger(document, "reloadHoldingPenTable");
-
         // Check if we are in the details page or
         // the main list, to trigger the right event
-        if (document.URL.indexOf('/details/')) this.trigger(document, "changePage");
+        if (document.URL.indexOf('/details/')) {
+          this.trigger(document, "changePage");
+        } else {
+          this.trigger(document, "reloadHoldingPenTable");
+        }
       };
 
 

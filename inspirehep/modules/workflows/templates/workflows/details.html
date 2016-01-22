@@ -1,6 +1,6 @@
 {#
 ## This file is part of INSPIRE.
-## Copyright (C) 2014, 2015 CERN.
+## Copyright (C) 2014, 2015, 2016 CERN.
 ##
 ## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -18,6 +18,8 @@
 #}
 
 {% extends "workflows/details_base.html" %}
+
+{% from "workflows/macros.html" import render_prediction %}
 
 {% block javascript %}
 
@@ -75,57 +77,51 @@
 
 {%- block hp_details_main -%}
 
-  {{ self.hp_action_main() }}
-
-  {# Ensure prediction results are first. #}
-  {% if task_results and "arxiv_guessing" in task_results %}
-    {{ task_results.get("arxiv_guessing")|safe }}
-  {% endif %}
+  {% set submission_data = bwobject.extra_data.get("submission_data") %}
 
   {{ self.action_alert() }}
   {{ self.workflow_completed() }}
 
-  {% set submission_data = bwobject.extra_data.get("submission_data") %}
-
   {% block hp_preview %}
   <div class="row">
-    <div class="col-md-12">
-      <div id="object-preview"
-           class="btn-group btn-group-xs pull-right"
-           name="object_preview_btn"
-           data-toggle="buttons-radio">
-        <button class="btn btn-primary preview"
-                type="button"
-                data-id="{{ bwobject.id }}"
-                name="hp">Detailed format</button>
-        <button class="btn btn-primary preview"
-                type="button"
-                data-id="{{ bwobject.id }}"
-                name="xm">MARCXML</button>
-      </div>
-      <big><div>
-        {% block status_badges %}
-          {% from 'workflows/macros.html' import check_status %}
-          {{ check_status(bwobject) }}
-        {% endblock %}
-      </div></big>
-    </div>
-  </div>
-  <br />
-  <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-10">
       <div id="object_preview_container{{bwobject.id}}" class="object_preview_container">
         {{ data_preview|safe }}
       </div>
     </div>
+    <div class="col-md-2">
+      <div id="object-preview" class="approval-action well btn-group-vertical text-right" role="group">
+
+        {% if not rendered_actions and bwobject.version != 1 %}
+          {{ render_prediction(bwobject) }}
+        {% endif %}
+
+        {% block status_badges %}
+          {% from 'workflows/macros.html' import check_status %}
+          {{ check_status(bwobject) }}
+        {% endblock %}
+
+        {{ self.hp_action_main() }}
+
+        <button class="btn btn-primary preview"
+                type="button"
+                data-id="{{ bwobject.id }}"
+                name="hp">HTML</button>
+        <button class="btn btn-primary preview"
+                type="button"
+                data-id="{{ bwobject.id }}"
+                name="xm">MARCXML</button>
+        </div>
+    </div>
+
   </div>
   {% endblock %}
 
-  {% if workflow_class.object_type == "submission" and submission_data.extra_comments %}
+  {% if submission_data.extra_comments %}
     <h5>Comments from user</h5>
     <pre>{{ submission_data.extra_comments }}</pre>
   {% endif %}
-  {% if workflow_class.object_type == "submission" and submission_data.pdf %}
+  {% if submission_data.pdf %}
     <div class="row">
       <div class="col-md-12">
         <p>
@@ -146,7 +142,7 @@
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active"><a href="#task-results" aria-controls="task-results" role="tab" data-toggle="tab">Results</a></li>
-      {% if workflow_class.object_type == "submission" and submission_data %}
+      {% if submission_data %}
         <li role="presentation"><a href="#references" aria-controls="references" role="tab" data-toggle="tab">References</a></li>
       {% endif  %}
       <li role="presentation"><a href="#task-logs" aria-controls="task-logs" role="tab" data-toggle="tab">Logs</a></li>
@@ -227,7 +223,7 @@
           {% endif %}
         {% endblock %}
       </div>
-      {% if workflow_class.object_type == "submission" and submission_data %}
+      {% if submission_data %}
         <div role="tabpanel" class="tab-pane" id="references">
           <pre>{{ submission_data.references }}</pre>
         </div>

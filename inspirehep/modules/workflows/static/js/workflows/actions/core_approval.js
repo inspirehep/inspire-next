@@ -1,6 +1,6 @@
 /*
  * This file is part of INSPIRE.
- * Copyright (C) 2013, 2014 CERN.
+ * Copyright (C) 2013, 2014, 2015, 2016 CERN.
  *
  * INSPIRE is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -42,7 +42,6 @@ define(
      * UI component.
      *
      * :param string actionResolveSelector: DOM selector of elements resolving actions.
-     * :param string actionGroupSelector: DOM selector for wrapping display elements
      * :param string action_url: URL for resolving the action.
      *
      */
@@ -51,7 +50,6 @@ define(
       this.attributes({
         actionAcceptSelector: ".core-approval-action-accept",
         actionRejectSelector: ".core-approval-action-reject",
-        actionGroupSelector: ".core-approval-action",
         action_url: "",
         pdfCheckboxSelector: "[name='submission-data-pdf']"
       });
@@ -77,12 +75,14 @@ define(
           category: data.category,
           message: data.message
         });
-        var parent = element.parents(this.attr.actionGroupSelector);
-        if (typeof parent !== 'undefined') {
-          parent.fadeOut();
+
+        // Check if we are in the details page or
+        // the main list, to trigger the right event
+        if (document.URL.indexOf('/details/')) {
+          this.trigger(document, "changePage");
+        } else {
+          this.trigger(document, "reloadHoldingPenTable");
         }
-        this.trigger(document, "reloadHoldingPenTable");
-        // FIXME: on the details page we should move to next record instead
       };
 
       this.onAccept = function(ev, data) {

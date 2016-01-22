@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,11 +49,9 @@ class hep_approval(object):
         """Method to render the action."""
         return {
             "side": render_template('workflows/actions/hep_approval_side.html',
-                                    message=obj.get_action_message(),
                                     object=obj,
                                     resolve_url=self.url),
             "main": render_template('workflows/actions/hep_approval_main.html',
-                                    message=obj.get_action_message(),
                                     object=obj,
                                     resolve_url=self.url)
         }

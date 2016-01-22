@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -74,7 +74,7 @@ class Payload(Deposition):
         self.type = self.get_type(type)
         self.title = ''
         self.sips = []
-        super(Payload, self).__init__(workflow_object, type, user_id)
+        super(Payload, self).__init__(workflow_object, self.type, user_id)
 
     @classmethod
     def get_type(self, type_or_id):
