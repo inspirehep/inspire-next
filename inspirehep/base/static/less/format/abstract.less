@@ -23,6 +23,10 @@
     display: none;
 }
 
+div.read-more-wrap {
+    float: left;
+}
+
 .read-more-ellipsis {
     opacity: 1;
 }
@@ -45,15 +49,15 @@
 }
 
 .read-more-state ~ .read-more-trigger:before {
-    content: 'Show more';
+    content: 'Show abstract';
 }
 
 .read-more-state:checked ~ .read-more-trigger:before {
-    content: 'Show less';
+    content: 'Hide abstract';
 }
 
 .read-more-trigger {
-    font-family: FontAwesome, Lato, sans-serif;
+    font-family: FontAwesome, "Helvetica Neue", sans-serif;
     font-size: 85%;
     margin-bottom: 0;
     cursor: pointer;

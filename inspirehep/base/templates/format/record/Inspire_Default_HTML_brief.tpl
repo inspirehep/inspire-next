@@ -36,7 +36,6 @@
               </div>
               <div class="col-md-11">
                 <h4 class="custom-h">
-                  <b>
                     <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
                       {{ record['titles[0].title']|capitalize }}
                     </a>
@@ -49,7 +48,6 @@
                         {{ record['titles[0].title']|capitalize }}
                       </a>
                     {% endif %}
-                  </b>
                 </h4>
                 {% if record.authors %}
                   <div class="authors">

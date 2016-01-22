@@ -19,7 +19,7 @@
 
 {% extends "format/record/Default_HTML_brief_base.tpl" %}
 
-{% block record_header %}
+{% block record_content %}
 <div class="row">
   <div class="col-md-12">
     <div class="panel panel-default custom-panel" >
@@ -27,14 +27,12 @@
       <div class="row">
       <div class="col-md-12">
         <h4 class="custom-h">
-          <b>
-            {% if record['creation_modification_date'] %}
-              {{ record['creation_modification_date'][0]['creation_date'] }}:
-            {% endif %}
-            <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-              {{ record['position'] }}<br/>
-            </a>
-          </b>
+          {% if record['creation_modification_date'] %}
+            {{ record['creation_modification_date'][0]['creation_date'] }}:
+          {% endif %}
+          <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
+            {{ record['position'] }}<br/>
+          </a>
           {% if record['institution'][0]['name']%}
               {% if record['continent'] %}
                 (<a href="/search?p=department_acronym:'{{ record['institution'][0]['name'] }}'&cc=Institutions">
@@ -66,5 +64,6 @@
   </div>
   </div>
   </div>
+</div>
 </div>
 {% endblock %}

@@ -124,7 +124,7 @@
 
 {% macro record_abstract(is_brief) %}
   {% if is_brief %}
-    {% set number_of_words = 30 %}
+    {% set number_of_words = 0 %}
   {% else %}
     {% set number_of_words = 100 %}
   {% endif %}
@@ -158,7 +158,9 @@
     <div class="read-more-wrap">
       {{ abstract | words(number_of_words)| e }}
       {% if abstract | words_to_end(number_of_words) %}
-        <span class="read-more-ellipsis">...</span>
+        {% if number_of_words > 0 %}
+          <span class="read-more-ellipsis">...</span>
+        {% endif %} 
         <span class="read-more-target">
           {{ abstract | words_to_end(number_of_words)| e }}
         </span>

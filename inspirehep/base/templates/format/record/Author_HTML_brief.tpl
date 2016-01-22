@@ -27,7 +27,6 @@
       <div class="row">
       <div class="col-md-12">
         <h4 class="custom-h">
-          <b>
             <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
               {{ record.get('name.preferred_name', '') }} 
               {% if record['native_name']%}
@@ -45,7 +44,6 @@
                 (<a href="/search?p=department_acronym:{{ institution[0] }}&cc=Institutions">{{ institution[0] }}</a>)
               {%endif%}
             {% endif %}
-          </b> 
       </h4>
       <div class="row">
         <div class="col-md-12 record-brief-details">
