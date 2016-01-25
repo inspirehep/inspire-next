@@ -70,7 +70,7 @@ from .utils import rename_object_action, reset_workflow_object_states
 
 logger = get_task_logger(__name__)
 
-CHUNK_SIZE = 1000
+CHUNK_SIZE = 100
 LARGE_CHUNK_SIZE = 10000
 
 split_marc = re.compile('<record.*?>.*?</record>', re.DOTALL)
@@ -263,6 +263,10 @@ def add_citation_counts():
             for reference in references:
                 recid = reference.get('recid')
                 if recid:
+                    if isinstance(recid, list):
+                        # Sometimes there is more than one recid in the
+                        # reference.
+                        recid = recid.pop()
                     unique_refs_ids.add(recid)
 
         for unique_refs_id in unique_refs_ids:

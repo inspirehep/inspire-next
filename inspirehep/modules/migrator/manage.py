@@ -73,12 +73,10 @@ def populate(file_input=None,
 
 
 @manager.command
-def count_citations(test_mode=False):
+def count_citations():
     """Adds field citation_count to every record in 'HEP' and calculates its proper value."""
     print("Adding citation_count to all records")
-    cit_task = add_citation_counts.delay()
-    if test_mode:
-        cit_task.wait()
+    add_citation_counts()
 
 
 @manager.command

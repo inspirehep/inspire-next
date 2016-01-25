@@ -47,4 +47,4 @@ celery worker -E -A invenio_celery.celery --workdir=$VIRTUAL_ENV 1> /dev/null &
 inveniomanage migrator populate -f inspirehep/demosite/data/demo-records.xml.gz -w True
 
 # Add field citation_count to records
-inveniomanage migrator count_citations -t
+inveniomanage migrator count_citations
