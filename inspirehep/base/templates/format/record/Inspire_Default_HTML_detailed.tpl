@@ -39,7 +39,9 @@
           {% endif %}
         </div>
         <div id="record-journal">
-          {{ record_publication_info() }}
+          {% if record|publication_info %}
+            {{ record_publication_info() }}
+          {% endif %}
         </div>
         {% if record.get('report_numbers') %}
           <div id="record-report-numbers">
