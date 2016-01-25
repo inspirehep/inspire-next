@@ -231,8 +231,7 @@
                     "type": "string"
                 },
                 "authors": {
-                    "type": "nested",
-                    "include_in_parent": true,
+                    "type": "object",
                     "properties": {
                         "full_name": {
                             "type": "string",
