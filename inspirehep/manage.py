@@ -177,6 +177,7 @@ def recreate_index(name, mapping, rebuild=False, delete_old=True):
             es.indices.delete(index=future_index, ignore=404)
             es.indices.create(index=future_index, body=mapping)
             es.indices.put_settings(index=current_index, body={'index': {'blocks': {'read_only': True}}})
+            es.indices.put_settings(index=future_index, body={'index': {'refresh_interval': -1}})
             try:
                 code, answer = es.cat.transport.perform_request('POST', '/{}/_reindex/{}/'.format(current_index, future_index))
                 assert code == 200
@@ -193,6 +194,8 @@ def recreate_index(name, mapping, rebuild=False, delete_old=True):
                     return False
             finally:
                 es.indices.put_settings(index=current_index, body={'index': {'blocks': {'read_only': False}}})
+                es.indices.put_settings(index=future_index, body={'index': {'refresh_interval': "1s"}})
+                es.indices.forcemerge(index=future_index, max_num_segments=5)
 
             es.indices.put_alias(index=future_index, name=name)
             if delete_old:
