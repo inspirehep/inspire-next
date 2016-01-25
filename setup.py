@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,7 +44,6 @@ requirements = [
     'invenio-celery==0.1.1',
     'invenio-collections==0.3.0',
     'invenio-documents==0.1.0.post2',
-    'invenio-formatter==0.2.2.post1',
     'invenio-grobid>=0.1.0',
     'invenio-groups==0.1.3',
     'invenio-knowledge==0.1.0',
