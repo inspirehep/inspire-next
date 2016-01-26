@@ -258,24 +258,48 @@ class literature(SIPWorkflowMixin, SimpleRecordDeposition):
                         'institute': 'arXiv'
                     }]
         if "publication_info" in metadata:
-            metadata['collections'].append({'primary': "Published"})
+            if all([key in metadata['publication_info'].keys() for key in
+                   ('year', 'journal_issue', 'journal_volume', 'page_artid')]):
+                # NOTE: Only peer reviewed journals should have this collection
+                # we are adding it here but ideally should be manually added
+                # by a curator.
+                metadata['collections'].append({'primary': "Published"})
+                # Add Citeable collection if not present
+                collections = [x['primary'] for x in metadata['collections']]
+                if "Citeable" not in collections:
+                    metadata['collections'].append({'primary': "Citeable"})
         # ============================
-        # Title source
+        # Title source and cleanup
         # ============================
-        if 'title_source' in form_fields and form_fields['title_source']:
-            metadata['titles'][0]['source'] = form_fields['title_source']
-        # ============================
-        # Title from arXiv
-        # ============================
-        if 'title_arXiv' in form_fields and form_fields['title_arXiv']:
-            for title in metadata['titles']:
-                if title['title'] == form_fields['title_arXiv']:
-                    break
+        try:
+            # Clean up all extra spaces in title
+            metadata['titles'][0]['title'] = " ".join(
+                metadata['titles'][0]['title'].split()
+            )
+            title = metadata['titles'][0]['title']
+        except (KeyError, IndexError):
+            title = ""
+        if form_fields.get('title_arXiv'):
+            title_arxiv = " ".join(form_fields.get('title_arXiv').split())
+            if title == title_arxiv:
+                metadata['titles'][0]["source"] = "arXiv"
             else:
                 metadata['titles'].append({
-                    'title': form_fields['title_arXiv'],
-                    'source': 'arXiv'
+                    'title': title_arxiv,
+                    'source': "arXiv"
                 })
+        if form_fields.get('title_crossref'):
+            title_crossref = " ".join(
+                form_fields.get('title_crossref').split()
+            )
+            if title == title_crossref:
+                metadata['titles'][0]["source"] = "CrossRef"
+            else:
+                metadata['titles'].append({
+                    'title': title_crossref,
+                    'source': "CrossRef"
+                })
+
         # ============================
         # Conference name
         # ============================

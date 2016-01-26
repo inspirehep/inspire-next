@@ -276,8 +276,8 @@ class LiteratureForm(WebDepositForm):
         export_key='title',
     )
 
-    title_source = fields.TitleField(
-        export_key='title_source',
+    title_crossref = fields.TitleField(
+        export_key='title_crossref',
         widget=HiddenInput(),
     )
 

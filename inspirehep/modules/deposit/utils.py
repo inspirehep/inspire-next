@@ -44,7 +44,7 @@ DELETE_KEYS = ['type_of_doc',
                'ok_to_upload']
 
 HIDDEN_INPUTS = ['categories_arXiv',
-                 'title_source',
+                 'title_crossref',
                  'title_arXiv',
                  'page_nr',
                  'conference_id',

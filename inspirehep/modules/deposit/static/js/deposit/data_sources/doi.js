@@ -47,7 +47,6 @@ define(function(require, exports, module) {
         }
 
         var doi_obj = {
-          title_source: 'CrossRef',
           journal_title: journal,
           isbn: data.isbn,
           page_range_article_id: data.page,
@@ -60,7 +59,7 @@ define(function(require, exports, module) {
 
         // filtering the object out of undefined values
         for (var idx in doi_obj) {
-          if (doi_obj[idx] === null || doi_obj[idx] === undefined) {
+          if (doi_obj[idx] === null || doi_obj[idx] === undefined || doi_obj[idx].length === 0 ) {
             delete doi_obj[idx];
           }
         }
@@ -75,9 +74,14 @@ define(function(require, exports, module) {
           };
         },
         article: function(data) {
-          return {
-            title: data.title
-          };
+          var extra_mapping = {};
+          if ( data['title'].length > 0 ) {
+            extra_mapping = {
+              title: data.title,
+              title_crossref: data.title
+            }
+          }
+          return extra_mapping;
         }
       },
 

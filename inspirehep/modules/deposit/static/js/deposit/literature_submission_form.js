@@ -54,7 +54,7 @@ define(function(require, exports, module) {
       var priorities = {
         title: ['doi', 'arxiv'],
         title_arXiv: ['arxiv'],
-        title_source: ['doi', 'arxiv'],
+        title_crossref: ['doi'],
         doi: ['arxiv'],
         categories_arXiv: ['arxiv'],
         journal_title: ['doi', 'arxiv'],
@@ -745,7 +745,7 @@ define(function(require, exports, module) {
      * @returns dictionary with the knowledge base
      */
     getKB: function getKB(kbname) {
-      var url = "/api/knowledge/" + kbname + "/mappings";
+      var url = "/api/knowledge/" + kbname + "/mappings?per_page=100";
       var deferred = new $.Deferred();
       $.ajax({
         url: url,
