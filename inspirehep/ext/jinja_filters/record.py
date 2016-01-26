@@ -313,7 +313,7 @@ def setup_app(app):
     @app.template_filter()
     def number_of_records(collection_name):
         """Returns number of records for the collection."""
-        return len(Query("collection:" + collection_name).
+        return len(Query("").
                    search(collection=collection_name))
 
     @app.template_filter()
