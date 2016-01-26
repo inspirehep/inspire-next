@@ -40,18 +40,18 @@
   <hr />
 </div>
 {% endif %}
-{% if 'subject' in aggs and aggs['subject']['buckets'] %}
+{% if 'conf_subject' in aggs and aggs['conf_subject']['buckets'] %}
   <h4 id="filter-by-subject" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Subject</h4>
   <div class="facet-container" id="facet-conf-subject">
-  {% for subject in aggs['subject']['buckets'] %}
+  {% for subject in aggs['conf_subject']['buckets'] %}
   <div class="checkbox checkbox-facets">
     <label>
-      {%- set is_checked = 'checked' if 'subject' in filtered_facets
-          and subject['key'] in filtered_facets['subject']['inc'] -%}
+      {%- set is_checked = 'checked' if 'conf_subject' in filtered_facets
+          and subject['key'] in filtered_facets['conf_subject']['inc'] -%}
       <input class="include-facet"
             type="checkbox"
             {{is_checked}}
-            name="subject" value="{{ subject['key'] }}">
+            name="conf_subject" value="{{ subject['key'] }}">
       <span class="facet-title-truncate">{{ subject['key'] }}</span>
       <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ subject['doc_count'] }}</span>
     </label>
