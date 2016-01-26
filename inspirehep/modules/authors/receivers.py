@@ -72,7 +72,9 @@ def assign_uuid(sender, *args, **kwargs):
     authors = sender.get('authors', [])
 
     for author in authors:
-        author['uuid'] = str(uuid.uuid4())
+        # Skip if a record was already populated with uuids.
+        if 'uuid' not in author:
+            author['uuid'] = str(uuid.uuid4())
 
 
 @before_record_index.connect
