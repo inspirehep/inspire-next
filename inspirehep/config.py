@@ -460,8 +460,28 @@ SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
 SEARCH_ELASTIC_DEFAULT_INDEX = 'hep'
 
 INSPIRE_PATH = pkg_resources.resource_filename("inspirehep", "")
-JSON_SCHEMA_PATHS = {pkg_resources.resource_filename(
-    "inspirehep", "dojson/hep/schemas/hep-0.0.1.json")}
+JSON_SCHEMA_PATHS = [
+    pkg_resources.resource_filename(
+        "inspirehep", "dojson/hep/schemas/hep-0.0.1.json")
+]
+ELASTIC_MAPPINGS_PATHS = [
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/hep.json"),
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/conferences.json"),
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/experiments.json"),
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/authors.json"),
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/institutions.json"),
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/jobs.json"),
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/jobshidden.json"),
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/journals.json")
+]
 
 WORKFLOWS_HOLDING_PEN_ES_PROPERTIES = {
     # BibWorkflowObject model related fields
