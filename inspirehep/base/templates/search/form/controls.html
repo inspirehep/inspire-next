@@ -19,6 +19,12 @@
 
 {% extends "search/form/controls_base.html" %}
 
+{% if collection_name is not defined and collection is defined %}
+ {% set collection_name = collection.name | sanitize_collection_name %}
+{% else %}
+  {% set collection_name = '' %}
+{% endif %}
+
 {%- block search_form_ctrls_input -%}
 <input autocomplete="off"
        id="search-form-input"
