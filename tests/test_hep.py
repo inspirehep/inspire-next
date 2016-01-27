@@ -152,7 +152,7 @@ class HepRecordsTests(InvenioTestCase):
 
     def test_title(self):
         """Test if title is created correctly"""
-        self.assertEqual(self.marcxml_to_json['titles'][0]['title'],
+        self.assertEqual(self.marcxml_to_json['titles'][1]['title'],
                          self.json_to_marc['245'][0]['a'])
 
     def test_breadcrumb_title(self):

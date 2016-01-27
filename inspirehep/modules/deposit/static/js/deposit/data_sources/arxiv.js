@@ -36,7 +36,6 @@ define(function(require, exports, module) {
         return {
           doi: data.doi,
           title: data.title,
-          title_source: 'arXiv',
           title_arXiv: data.title,
           categories_arXiv: data.categories,
           abstract: data.abstract,

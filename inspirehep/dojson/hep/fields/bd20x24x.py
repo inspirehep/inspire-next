@@ -117,15 +117,22 @@ def breadcrumb_title(self, key, value):
 
 
 @hep2marc.over('245', '^titles$')
-@utils.for_each_value
-@utils.filter_values
 def titles2marc(self, key, value):
     """Title Statement."""
-    return {
-        'a': value.get('title'),
-        'b': value.get('subtitle'),
-        '9': value.get('source'),
-    }
+    if len(value) == 1:
+        return [{
+            'a': value[0].get('title'),
+            'b': value[0].get('subtitle'),
+            '9': value[0].get('source'),
+        }]
+    else:
+        for title in value:
+            if not title.get('source') or title.get('source', '').lower() != "arxiv":
+                    return [{
+                        'a': title.get('title'),
+                        'b': title.get('subtitle'),
+                        '9': title.get('source'),
+                    }]
 
 
 @hep.over('titles', '^246[1032_][_103254768]')
