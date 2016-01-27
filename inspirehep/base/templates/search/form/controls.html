@@ -19,7 +19,7 @@
 
 {% extends "search/form/controls_base.html" %}
 
-{% if collection_name is not defined and collection is defined %}
+{% if collection is defined %}
  {% set collection_name = collection.name | sanitize_collection_name %}
 {% else %}
   {% set collection_name = '' %}

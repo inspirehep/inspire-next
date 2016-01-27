@@ -19,11 +19,11 @@
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
 #}
-
-{% if 'continent' in response._search()['aggregations'] and response._search()['aggregations']['continent']['buckets'] %}
+{%- set aggs = response._search()['aggregations'] -%}
+{% if 'continent' in aggs and aggs['continent']['buckets'] %}
   <h4 id="filter-by-continent" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Region</h4>
   <div class="facet-container" id="facet-continent">
-  {% for continent in response._search()['aggregations']['continent']['buckets'] %}
+  {% for continent in aggs['continent']['buckets'] %}
   <div class="checkbox checkbox-facets">
     <label>
       {%- set is_checked = 'checked' if 'continent' in filtered_facets
@@ -40,10 +40,10 @@
   <hr />
 </div>
 {% endif %}
-{% if 'rank' in response._search()['aggregations'] and response._search()['aggregations']['rank']['buckets'] %}
+{% if 'rank' in aggs and aggs['rank']['buckets'] %}
   <h4 id="filter-by-rank" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Rank</h4>
   <div class="facet-container" id="facet-rank">
-  {% for rank in response._search()['aggregations']['rank']['buckets'] %}
+  {% for rank in aggs['rank']['buckets'] %}
   <div class="checkbox checkbox-facets">
     <label>
       {%- set is_checked = 'checked' if 'rank' in filtered_facets
@@ -60,10 +60,10 @@
   <hr />
 </div>
 {% endif %}
-{% if 'research_area' in response._search()['aggregations'] and response._search()['aggregations']['research_area']['buckets'] %}
+{% if 'research_area' in aggs and aggs['research_area']['buckets'] %}
   <h4 id="filter-by-research-area" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Subject</h4>
   <div class="facet-container" id="facet-research-area">
-  {% for research_area in response._search()['aggregations']['research_area']['buckets'] %}
+  {% for research_area in aggs['research_area']['buckets'] %}
   <div class="checkbox checkbox-facets">
     <label>
       {%- set is_checked = 'checked' if 'research_area' in filtered_facets

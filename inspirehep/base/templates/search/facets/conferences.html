@@ -19,11 +19,11 @@
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
 #}
-
-{% if 'series' in response._search()['aggregations'] and  response._search()['aggregations']['series']['buckets'] %}
+{%- set aggs = response._search()['aggregations'] -%}
+{% if 'series' in aggs and  aggs['series']['buckets'] %}
   <h4 id="filter-by-series" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Series</h4>
   <div class="facet-container" id="facet-series">
-  {% for series in response._search()['aggregations']['series']['buckets'] %}
+  {% for series in aggs['series']['buckets'] %}
   <div class="checkbox checkbox-facets">
     <label>
       {%- set is_checked = 'checked' if 'series' in filtered_facets
@@ -40,10 +40,10 @@
   <hr />
 </div>
 {% endif %}
-{% if 'subject' in response._search()['aggregations'] and response._search()['aggregations']['subject']['buckets'] %}
+{% if 'subject' in aggs and aggs['subject']['buckets'] %}
   <h4 id="filter-by-subject" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Subject</h4>
   <div class="facet-container" id="facet-conf-subject">
-  {% for subject in response._search()['aggregations']['subject']['buckets'] %}
+  {% for subject in aggs['subject']['buckets'] %}
   <div class="checkbox checkbox-facets">
     <label>
       {%- set is_checked = 'checked' if 'subject' in filtered_facets
@@ -60,8 +60,8 @@
   <hr />
 </div>
 {% endif %}
-{% if 'opening_date' in response._search()['aggregations']  and response._search()['aggregations']['opening_date']['buckets'] %}
-{% set sorted_year = response._search()['aggregations']['opening_date']['buckets']|sort_list_by_dict_val %}
+{% if 'opening_date' in aggs  and aggs['opening_date']['buckets'] %}
+{% set sorted_year = aggs['opening_date']['buckets']|sort_list_by_dict_val %}
   <h4 id="filter-by-conf-year" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Year</h4>
   <div class="facet-container" id="facet-conf-year">
   {% for opening_date in sorted_year|limit_facet_elements %}
