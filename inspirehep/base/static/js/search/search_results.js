@@ -161,9 +161,9 @@ define(
         $('.copy-clp').addClass('disabled');
         $('.copy-clp').tooltip();
         if (sList.length != 0) {
-            $('#spinner-modal-wait').show();
-            $('#editable-modal').css('pointer-events', 'none');
-            $('#cite-all-format, #download-format, #dropdown-export').addClass('disabled');
+          $('#spinner-modal-wait').show();
+          $('#editable-modal').css('pointer-events', 'none');
+          $('#cite-all-format, #download-format, #dropdown-export').addClass('disabled');
           $.ajax({
             type: "POST",
             url: obj['url'],
@@ -171,51 +171,51 @@ define(
               ids: sList
             },
             success: function(data) {
-              $("#response-data").html(data);  
+              $("#response-data").html(data);
             }
           }).done(function() {
-              $('#spinner-modal-wait').hide();
-              $('#editable-modal').css('pointer-events', 'auto');
-              $('#cite-all-format').html('<i class="fa fa-quote-right"></i> Cite all selected records');
-              $('#cite-all-format, #download-format, #dropdown-export, #copy-to-clipboard').removeClass('disabled');
-              $('.copy-clp').tooltip('destroy');
-              setTimeout(function(){ 
-                  var range = document.createRange();
-                  range.selectNodeContents(document.getElementById('editable-modal'));
-                  var sel = window.getSelection();
-                  sel.removeAllRanges();
-                  sel.addRange(range);
-              }, 300);              
+            $('#spinner-modal-wait').hide();
+            $('#editable-modal').css('pointer-events', 'auto');
+            $('#cite-all-format').html('<i class="fa fa-quote-right"></i> Cite all selected records');
+            $('#cite-all-format, #download-format, #dropdown-export, #copy-to-clipboard').removeClass('disabled');
+            $('.copy-clp').tooltip('destroy');
+            setTimeout(function() {
+              var range = document.createRange();
+              range.selectNodeContents(document.getElementById('editable-modal'));
+              var sel = window.getSelection();
+              sel.removeAllRanges();
+              sel.addRange(range);
+            }, 300);
           });
         }
       }
 
       this.onDownloadAllCitation = function(ev) {
-        var obj = this.get_download_information($('#dropdown-export').text().trim());        
+        var obj = this.get_download_information($('#dropdown-export').text().trim());
         if (sList.length != 0) {
           $('#spinner-modal-download').show();
           $('#download-format').text('Downloading...');
           $('#download-format').addClass('disabled');
           $("#dropdown-export").addClass('disabled');
           $.ajax({
-          type: "POST",
-          url: obj['url'],
-          data: {
-            ids: sList
-          },
-          success: function(data) {
+            type: "POST",
+            url: obj['url'],
+            data: {
+              ids: sList
+            },
+            success: function(data) {
               var response_data = "text/plain;charset=utf-8," + encodeURIComponent(data);
               $("body").append('<a id="data-download" href="data:' + response_data + '" download="' + obj['filename'] + '">download</a>');
               var trigger_element = document.getElementById('data-download');
               trigger_element.click();
               $("#data-download").remove();
-          }
-        }).done(function() {
+            }
+          }).done(function() {
             $('#spinner-modal-download').hide();
             $("#dropdown-export").removeClass('disabled');
             $('#download-format').html('<i class="fa fa-download"></i> Download');
             $('#download-format').removeClass('disabled');
-        });
+          });
         }
       }
 
@@ -318,7 +318,7 @@ define(
         CitationModal.attachTo(document);
         this.on("#export-select-all", "click", this.onExportSelectAll);
         this.on("#checkbox-parent > input[type=checkbox]", "change", this.onCheckboxChange);
-        this.on("a[id^='export-as'], #cite-all-format" , "click", this.onCiteAs);
+        this.on("a[id^='export-as'], #cite-all-format", "click", this.onCiteAs);
         this.on("#download-format", "click", this.onDownloadAllCitation);
         this.on(".select-numpages", "change", this.onNumpagesChange);
         this.on("#select-sorting", "change", this.onSortingChange);

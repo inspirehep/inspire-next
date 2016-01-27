@@ -63,6 +63,7 @@
 
 {% macro render_facets() %}
 {%- set collection_name = collection.name | sanitize_collection_name -%}
+{% set aggs = response._search()['aggregations']['earliest_date']['buckets']|sort_list_by_dict_val|safe %}
 <div class="col-md-3 visible-md visible-lg {{ collection_name }}-facet" id="facetparent">
   <div class="facet" id="facet_list" data-clampedwidth="#facetparent">
   {% if not request.args.get('cc') or request.args.get('cc').lower() == "hep" %}
@@ -273,12 +274,14 @@
              "js/search/facets_filter",
              "js/search/search",
              "js/search/facets_menu",
-             "js/search/search_results"],
+             "js/search/search_results",
+             "js/search/search_vis"],
              function($,
                  FacetsFilter,
                  Search,
                  FacetsMenu,
-                 SearchResults) {
+                 SearchResults,
+                 SearchVis) {
       var facetsFilter = new FacetsFilter({{ filtered_facets | tojson | safe }});
       var context = {
         searchUrl: '{{ url_for('search.search', cc=collection.name) }}',
@@ -290,10 +293,17 @@
         searchQueryFiltersEditSelector: '.search-query-filters-edit',
         searchResultsSelector: '#search-results',
         facetsFilter: facetsFilter,
+      } 
+      
+      var context_vis = {
+        min_year: "{{ response._search()['aggregations']['earliest_date']['buckets'][-1]['key_as_string']|safe }}",
+        max_year: "{{ response._search()['aggregations']['earliest_date']['buckets'][0]['key_as_string']|safe }}",
+        year_facet: {{ response._search()['aggregations']['earliest_date']['buckets']|sort_list_by_dict_val|tojson|safe }},
       }
       FacetsMenu.attachTo(context.facetsMenuSelector, context);
       Search.attachTo(document, context);
       SearchResults.attachTo(document, context);
+      SearchVis.attachTo(document, context_vis);
       $("#send-feedback-link").on("click", function(e) {
         e.preventDefault();
         $(".feedback-fixed-left").click()

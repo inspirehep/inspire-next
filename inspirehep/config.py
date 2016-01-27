@@ -434,7 +434,8 @@ SEARCH_ELASTIC_AGGREGATIONS = {
             "date_histogram": {
                 "field": "earliest_date",
                 "interval": "year",
-                "min_doc_count": 1
+                "min_doc_count": 1,
+                "order": {"_key": "desc"}
             }
         }
     },

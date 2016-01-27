@@ -94,13 +94,13 @@
          });
 
          function activateFirstElement() {
-          if ( $('.dropdown-menu-amazon').css('display') === "block" ) {
-            $('li .first-submenu-item').click();
-          }
+           if ($('.dropdown-menu-amazon').css('display') === "block") {
+             $('li .first-submenu-item').click();
+           }
          }
          $(".dropdown-toggle").click(function() {
-            setTimeout(activateFirstElement, 10);
-        });
+           setTimeout(activateFirstElement, 10);
+         });
        } else {
          $(document).click(function() {
            $(".move-down").css({

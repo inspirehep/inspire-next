@@ -19,7 +19,7 @@
  ** granted to it by virtue of its status as an Intergovernmental Organization
  ** or submit itself to any jurisdiction.
  */
- 
+
 define(
   [
     'jquery',
@@ -34,14 +34,14 @@ define(
 
     function CitationsModal() {
       this.onSelectContent = function(record_id) {
-        setTimeout(function(){
-            var id = 'singleRecord' + record_id
-            var range = document.createRange();
-            range.selectNodeContents(document.getElementById(id));
-            var sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range); 
-          }, 300);
+        setTimeout(function() {
+          var id = 'singleRecord' + record_id
+          var range = document.createRange();
+          range.selectNodeContents(document.getElementById(id));
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }, 300);
       }
 
       this.onCiteClick = function(ev) {
@@ -95,15 +95,15 @@ define(
       }
 
       this.onCopyToClipboard = function(ev) {
-        $('#' + $(ev.target).attr("id")).tooltip();        
+        $('#' + $(ev.target).attr("id")).tooltip();
         var clipboard = new Clipboard('#' + $(ev.target).attr("id"));
         clipboard.on('success', function(e) {
-          $('#' + $(ev.target).attr("id")).attr('data-original-title','Copied!').tooltip('show');
+          $('#' + $(ev.target).attr("id")).attr('data-original-title', 'Copied!').tooltip('show');
         });
       }
 
       this.after('initialize', function() {
-        $(".copy-clp").hover(function(){
+        $(".copy-clp").hover(function() {
           $(".copy-clp").tooltip('destroy');
         });
         this.on('.dropdown-cite, .bibtex', 'click', this.onCiteClick);

@@ -453,3 +453,74 @@ i.fa-chevron-right.facet-slider {
 .brief-results-sortby {
 	color: #737373;
 }
+
+ .brush .extent {
+  fill: rgb(230, 126, 36);
+    fill-opacity: .9;
+    stroke: none;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+  font-size: 10px;
+  fill: #2c3e50;
+}
+
+.brush-year {
+  fill: #d35400;
+  font-size: 12px;
+  font-weight: bolder;
+}
+
+.domain {
+  display: none;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #2c3e50;
+  shape-rendering: crispEdges;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 10px;
+  background: rgba(44, 62, 80, 0.9);
+  color: #fff;
+  border-radius: 5px;
+}
+
+
+/* Creates a small triangle extender for the tooltip */
+
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(44, 62, 80, 0.9);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+
+/* Style northward tooltips differently */
+
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+#reset-link {
+  float: right; 
+  margin-top: 4px;
+}
+
+#year-hist {
+  padding-top: 30px;
+}

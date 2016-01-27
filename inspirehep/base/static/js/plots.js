@@ -21,33 +21,33 @@
   */
 
  define(
-  [
-    'jquery',
-    'flight/lib/component',
-    'bootstrap'
-  ],
-  function($, defineComponent) {
-      'use strict';
+   [
+     'jquery',
+     'flight/lib/component',
+     'bootstrap'
+   ],
+   function($, defineComponent) {
+     'use strict';
 
-      return defineComponent(Plots);
+     return defineComponent(Plots);
 
-      function Plots() {
+     function Plots() {
 
-        $('#carousel-text').html($('#slide-content-0').html());
+       $('#carousel-text').html($('#slide-content-0').html());
 
-        //Handles the carousel thumbnails
-        $('[id^=carousel-selector-]').click( function(){
-          var id = this.id.substr(this.id.lastIndexOf("-") + 1);
-          var id = parseInt(id);
-          $('#plotsCarousel').carousel(id);
-        });
-        
-        // When the carousel slides, auto update the text
-        $('#plotsCarousel').on('slid.bs.carousel', function (e) {
-         var id = $('.item.active').data('slide-number');
-         $('#carousel-text').html($('#slide-content-'+id).html());
+       //Handles the carousel thumbnails
+       $('[id^=carousel-selector-]').click(function() {
+         var id = this.id.substr(this.id.lastIndexOf("-") + 1);
+         var id = parseInt(id);
+         $('#plotsCarousel').carousel(id);
        });
 
-      }
-      
-    });
+       // When the carousel slides, auto update the text
+       $('#plotsCarousel').on('slid.bs.carousel', function(e) {
+         var id = $('.item.active').data('slide-number');
+         $('#carousel-text').html($('#slide-content-' + id).html());
+       });
+
+     }
+
+   });

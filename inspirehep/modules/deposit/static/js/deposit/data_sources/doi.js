@@ -59,7 +59,7 @@ define(function(require, exports, module) {
 
         // filtering the object out of undefined values
         for (var idx in doi_obj) {
-          if (doi_obj[idx] === null || doi_obj[idx] === undefined || doi_obj[idx].length === 0 ) {
+          if (doi_obj[idx] === null || doi_obj[idx] === undefined || doi_obj[idx].length === 0) {
             delete doi_obj[idx];
           }
         }
@@ -75,7 +75,7 @@ define(function(require, exports, module) {
         },
         article: function(data) {
           var extra_mapping = {};
-          if ( data['title'].length > 0 ) {
+          if (data['title'].length > 0) {
             extra_mapping = {
               title: data.title,
               title_crossref: data.title
