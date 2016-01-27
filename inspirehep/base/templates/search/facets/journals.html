@@ -19,11 +19,11 @@
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
 #}
-
-{% if 'publisher' in response._search()['aggregations'] and  response._search()['aggregations']['publisher']['buckets'] %}
+{%- set aggs = response._search()['aggregations'] -%}
+{% if 'publisher' in aggs and  aggs['publisher']['buckets'] %}
     <h4 id="filter-by-publisher" class="pointer">Filter by Publisher <i class="fa fa-chevron-down"></i></h4>
     <div class="facet-container" id="facet-publisher">
-    {% for publisher in response._search()['aggregations']['publisher']['buckets'] %}
+    {% for publisher in aggs['publisher']['buckets'] %}
     <div class="checkbox checkbox-facets">
       <label>
         {%- set is_checked = 'checked' if 'publisher' in filtered_facets

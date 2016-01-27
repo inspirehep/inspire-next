@@ -18,11 +18,12 @@
 ## In applying this licence, CERN does not waive the privileges and immunities
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
-#} 
-  {% if 'doc_type' in response._search()['aggregations'] and response._search()['aggregations']['doc_type']['buckets'] %}
+#}
+{%- set aggs = response._search()['aggregations'] -%}
+  {% if 'doc_type' in aggs and aggs['doc_type']['buckets'] %}
     <h4 id="filter-by-document" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Document type</h4>
     <div class="facet-container" id="facet-doc_type">
-    {% for doc_type in response._search()['aggregations']['doc_type']['buckets'] %}
+    {% for doc_type in aggs['doc_type']['buckets'] %}
     <div class="checkbox checkbox-facets">
       <label>
         {%- set is_checked = 'checked' if 'doc_type' in filtered_facets
@@ -39,10 +40,10 @@
     <hr />
   </div>
   {% endif %}
-  {% if 'subject' in response._search()['aggregations'] and response._search()['aggregations']['subject']['buckets'] %}
+  {% if 'subject' in aggs and aggs['subject']['buckets'] %}
     <h4 id="filter-by-subject" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Subject</h4>
     <div class="facet-container" id="facet-subject">
-      {% for subject in response._search()['aggregations']['subject']['buckets'] %}
+      {% for subject in aggs['subject']['buckets'] %}
       <div class="checkbox checkbox-facets">
         <label>
           {%- set is_checked = 'checked' if 'subject' in filtered_facets
@@ -59,10 +60,10 @@
       <hr />
     </div>
   {% endif %}
-  {% if 'author' in response._search()['aggregations'] and response._search()['aggregations']['author']['buckets'] %}
+  {% if 'author' in aggs and aggs['author']['buckets'] %}
     <h4 id="filter-by-author" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Author</h4>
     <div class="facet-container" id="facet-exactauthor">
-    {% for author in response._search()['aggregations']['author']['buckets'] %}
+    {% for author in aggs['author']['buckets'] %}
     <div class="checkbox checkbox-facets">
       <label>
         {%- set is_checked = 'checked' if 'exactauthor' in filtered_facets
@@ -79,10 +80,10 @@
     <hr />
   </div>
   {% endif %}
-  {% if 'affiliation' in response._search()['aggregations'] and response._search()['aggregations']['affiliation']['buckets'] %}
+  {% if 'affiliation' in aggs and aggs['affiliation']['buckets'] %}
   <h4 id="filter-by-affiliation" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Affiliation</h4>
   <div class="facet-container" id="facet-affiliation">
-    {% for affiliation in response._search()['aggregations']['affiliation']['buckets'] %}
+    {% for affiliation in aggs['affiliation']['buckets'] %}
     <div class="checkbox checkbox-facets">
       <label>
         {%- set is_checked = 'checked' if 'affiliation' in filtered_facets
@@ -99,10 +100,10 @@
     <hr />
   </div>
   {% endif %}
-  {% if 'languages' in response._search()['aggregations'] and response._search()['aggregations']['languages']['buckets'] %}
+  {% if 'languages' in aggs and aggs['languages']['buckets'] %}
     <h4 id="filter-by-language" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Language</h4>
     <div class="facet-container" id="facet-languages">
-    {% for language in response._search()['aggregations']['languages']['buckets'] %}
+    {% for language in aggs['languages']['buckets'] %}
     <div class="checkbox checkbox-facets">
       <label>
         {%- set is_checked = 'checked' if 'languages' in filtered_facets
@@ -119,10 +120,10 @@
     <hr />
   </div>
   {% endif %}
-  {% if 'experiment' in response._search()['aggregations'] and response._search()['aggregations']['experiment']['buckets'] %}
+  {% if 'experiment' in aggs and aggs['experiment']['buckets'] %}
     <h4 id="filter-by-experiment" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Experiment</h4>
     <div class="facet-container" id="facet-experiment">
-    {% for experiment in response._search()['aggregations']['experiment']['buckets'] %}
+    {% for experiment in aggs['experiment']['buckets'] %}
     <div class="checkbox checkbox-facets">
       <label>
         {%- set is_checked = 'checked' if 'experiment' in filtered_facets
@@ -139,8 +140,8 @@
     <hr />
   </div>
   {% endif %}
-  {% if 'earliest_date' in response._search()['aggregations'] and response._search()['aggregations']['earliest_date']['buckets'] %}
-    {% set sorted_year = response._search()['aggregations']['earliest_date']['buckets']|sort_list_by_dict_val %}
+  {% if 'earliest_date' in aggs and aggs['earliest_date']['buckets'] %}
+    {% set sorted_year = aggs['earliest_date']['buckets']|sort_list_by_dict_val %}
       <h4 id="filter-by-year" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Year</h4>
       <div class="facet-container" id="facet-earliest_date">
         {% for earliest_date in sorted_year| limit_facet_elements %}
