@@ -36,11 +36,22 @@ class ExportTests(InvenioTestCase):
                                                          'fixtures',
                                                          'test_hep_formats.xml')
                                                      )
+        self.marcxml_for_citations = pkg_resources.resource_string('tests',
+                                                     os.path.join(
+                                                         'fixtures',
+                                                         'test_citation_line.xml')
+                                                     )
         record = create_record(self.marcxml)
+
+        record_for_citation = create_record(self.marcxml_for_citations)
 
         self.hep_record = hep.do(record)
 
+        self.hep_record_citation = hep.do(record_for_citation)
+
         self.export = Export(self.hep_record)
+
+        self.export_citation = Export(self.hep_record_citation)
 
         self.sample_export_good = {
             'citation_key': 'Aad:2015wqa',
@@ -49,6 +60,10 @@ class ExportTests(InvenioTestCase):
             'arxiv': 'arXiv:1503.03290 [hep-ex]',
             'reportNumber': 'CERN-PH-EP-2015-038',
             'SLACcitation': '%%CITATION = ARXIV:1503.03290;%%',
+        }
+
+        self.sample_export_good_citation_line = {
+            'citation_count': '2 citations counted in INSPIRE as of 26 Jan 2016'
         }
 
     def test_citation_key(self):
@@ -80,6 +95,11 @@ class ExportTests(InvenioTestCase):
         """Test if slac citation is created correctly"""
         self.assertEqual(self.sample_export_good['SLACcitation'],
                          self.export._get_slac_citation())
+
+    def test_citation_count(self):
+        self.assertEqual(self.sample_export_good_citation_line[
+                         'citation_count'],
+                         self.export_citation._get_citation_number())
 
 TEST_SUITE = make_test_suite(ExportTests)
 

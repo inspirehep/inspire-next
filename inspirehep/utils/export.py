@@ -122,10 +122,31 @@ class Export(object):
                     cite_element = field['value'].upper()
                     cite_line = '%%CITATION = ' + cite_element + ';%%'
             if not cite_element and self.record['report_numbers']:
-                cite_element = self.record['report_numbers'][0]['value'].upper()
+                cite_element = self.record[
+                    'report_numbers'][0]['value'].upper()
                 cite_line = '%%CITATION = ' + cite_element + ';%%'
         else:
             cite_element = str(self.record['recid'])
             cite_line = '%%CITATION = ' + 'INSPIRE-' + \
                 cite_element + ';%%'
         return cite_line
+
+    def _get_citation_number(self):
+        """Returns how many times record was cited. If 0, returns nothing"""
+        from invenio_ext.es import es
+        import time
+        today = time.strftime("%d %b %Y")
+        record = es.get(index='hep', id=self.record['control_number'])
+        citations = ''
+        try:
+            times_cited = record['_source']['citation_count']
+            if times_cited != 0:
+                if times_cited > 1:
+                    citations = '%d citations counted in INSPIRE as of %s' \
+                                % (times_cited, today)
+                else:
+                    citations = '%d citation counted in INSPIRE as of %s'\
+                                % (times_cited, today)
+        except KeyError:
+            pass
+        return citations

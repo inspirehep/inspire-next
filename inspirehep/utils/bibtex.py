@@ -270,7 +270,7 @@ class Bibtex(Export):
         spacinginitials = re.compile(r'([A-Z][a-z]{0,1}[}]?\.)(\b|[-\{])')
         if 'authors' in self.record:
             for author in self.record['authors']:
-                if author['full_name']:
+                if 'full_name' in author and author['full_name']:
                     if isinstance(author['full_name'], list):
                         author_full_name = 'and '.join(full_name for full_name
                                                        in author['full_name'])

@@ -30,10 +30,7 @@ from .export import MissingRequiredFieldError, Export
 
 class Cv_latex(Export):
 
-    """Class used to output CV LaTex format.
-    TODO Fix the citation number latex
-    e.g %245 citations counted in INSPIRE as of 21 Aug 2015
-    """
+    """Class used to output CV LaTex format."""
 
     def __init__(self, record):
         super(Cv_latex, self).__init__(record)
@@ -47,7 +44,7 @@ class Cv_latex(Export):
 
     def _format_record(self):
         required_fields = ['title', 'author', 'arxiv']
-        optional_fields = ['doi', 'publi_info', 'url']
+        optional_fields = ['doi', 'publi_info', 'url', 'citation_count']
         try:
             return self._format_entry(required_fields, optional_fields)
         except MissingRequiredFieldError as e:
@@ -70,6 +67,7 @@ class Cv_latex(Export):
             'doi': self._get_doi,
             'publi_info': self._get_publi_info,
             'url': self._get_url,
+            'citation_count': self._get_citation_number
         }
         out = ''
         for field in req_fields:
@@ -87,9 +85,9 @@ class Cv_latex(Export):
         out = ''
         if field == 'author':
             if len(value) == 1:
-                out += u'  \\\\{{}}{1}.\n'.format(field, value[0])
+                out += u'  \\\\{{}}{}.\n'.format(value[0])
             elif len(value) > 8:
-                out += u'  \\\\{{}}{1}'.format(field, value[0])
+                out += u'  \\\\{{}}{}'.format(value[0])
                 if 'collaboration' in self.record:
                     try:
                         if 'collaboration' in self.record:
@@ -109,25 +107,26 @@ class Cv_latex(Export):
                     ', '.join(value[:-1]), value[-1]
                 )
         elif field == 'title':
-            out += u'{1}\n'.format(field, value)
+            out += u'{}\n'.format(value)
         elif field == 'publi_info':
             if isinstance(value, list):
                 if len(value) > 1:
                     out += u'  \\\\{{}}{},  {}'.format(''.join(
                         value[:-1]), value[-1])
                 else:
-                    out += u'  \\\\{{}}{1}.'.format(field, value[0])
+                    out += u'  \\\\{{}}{}.'.format(value[0])
             else:
-                out += u'  \\\\{{}}{1}.'.format(field, value)
+                out += u'  \\\\{{}}{}.'.format(value)
             if self._get_date():
                 out += ' %(' + str(self._get_date()) + ')\n'
         elif field == 'arxiv':
-            out += u'  \\\\{{}}{1}.\n'.format(field, value)
+            out += u'  \\\\{{}}{}.\n'.format(value)
         elif field == 'doi':
-            out += u'    \\\\{{}}{1}.\n'.format(
-                field, value)
+            out += u'    \\\\{{}}{}.\n'.format(value)
         elif field == 'url':
-            out += u' %\href{{{1}}}{{HEP entry}}.\n'.format(field, value)
+            out += u' %\href{{{}}}{{HEP entry}}.\n'.format(value)
+        elif field == 'citation_count':
+            out += u' %{}'.format(value)
         return out
 
     def _get_author(self):
@@ -142,7 +141,7 @@ class Cv_latex(Export):
         result = []
         if 'authors' in self.record:
             for author in self.record['authors']:
-                if author['full_name']:
+                if 'full_name' in author and author['full_name']:
                     if isinstance(author['full_name'], list):
                         author_full_name = ' '.join(full_name for full_name
                                                     in author['full_name'])

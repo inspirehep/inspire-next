@@ -29,10 +29,7 @@ from .export import MissingRequiredFieldError, Export
 
 class Latex(Export):
 
-    """Class used to output LaTex format.
-    TODO Fix the citation number latex
-    e.g %245 citations counted in INSPIRE as of 21 Aug 2015
-    """
+    """Class used to output LaTex format."""
 
     def __init__(self, record, latex_format):
         super(Latex, self).__init__(record)
@@ -47,7 +44,7 @@ class Latex(Export):
 
     def _format_record(self):
         required_fields = ['author', 'title', 'publi_info', 'doi', 'arxiv']
-        optional_fields = ['report_number', 'SLACcitation']
+        optional_fields = ['report_number', 'SLACcitation', 'citation_count']
         try:
             return self._format_entry(required_fields, optional_fields)
         except MissingRequiredFieldError as e:
@@ -71,6 +68,7 @@ class Latex(Export):
             'arxiv': self._get_arxiv,
             'report_number': self._get_report_number,
             'SLACcitation': self._get_slac_citation,
+            'citation_count': self._get_citation_number
         }
         out = ''
         for field in req_fields:
@@ -88,9 +86,9 @@ class Latex(Export):
         out = ''
         if field == 'author':
             if len(value) == 1:
-                out += u'  {1},\n'.format(field, value[0])
+                out += u'  {},\n'.format(value[0])
             elif len(value) > 8:
-                out += u'  {1}'.format(field, value[0])
+                out += u'  {}'.format(value[0])
                 if 'collaboration' in self.record:
                     try:
                         collaboration = self.\
@@ -109,27 +107,29 @@ class Latex(Export):
                 out += u'  {} and {},\n'.format(', '.join(value[:-1]),
                                                 value[-1])
         elif field == 'title':
-            out += u'  %``{1},''\n'.format(field, value)
+            out += u'  %``{},''\n'.format(value)
         elif field == 'publi_info':
             if isinstance(value, list):
                 if len(value) > 1:
                     out += u'  {}\n    {}\n'.format('\n'.join(
                         value[:-1]), value[-1])
                 else:
-                    out += u'  {1}\n'.format(field, value[0])
+                    out += u'  {}\n'.format(value[0])
             else:
-                out += u'  {1}.\n'.format(field, value)
+                out += u'  {}.\n'.format(value)
         elif field == 'doi':
-            out += u'  doi:{1}.\n'.format(field, value)
+            out += u'  {0}:{1}.\n'.format(field, value)
         elif field == 'arxiv':
             if self._get_publi_info():
-                out += u'  [{1}].\n'.format(field, value)
+                out += u'  [{}].\n'.format(value)
             else:
-                out += u'  {1}.\n'.format(field, value)
+                out += u'  {}.\n'.format(value)
         elif field == 'report_number':
-            out += u'  {1}.\n'.format(field, value)
+            out += u'  {}.\n'.format(value)
         elif field == 'SLACcitation':
-            out += u'  {1}'.format(field, value)
+            out += u'  {}\n'.format(value)
+        elif field == 'citation_count':
+            out += u'  %{}'.format(value)
         return out
 
     def _get_author(self):
@@ -144,7 +144,7 @@ class Latex(Export):
         result = []
         if 'authors' in self.record:
             for author in self.record['authors']:
-                if author['full_name']:
+                if 'full_name' in author and author['full_name']:
                     if isinstance(author['full_name'], list):
                         author_full_name = ' '.join(full_name for full_name
                                                     in author['full_name'])
