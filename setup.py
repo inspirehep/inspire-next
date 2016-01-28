@@ -34,6 +34,7 @@ requirements = [
     'HarvestingKit>=0.6.2',
     'plotextractor>=0.1.2',
     'refextract>=0.1.0',
+    'python-scrapyd-api>=0.2.0',
     'mixer==4.9.5',
     'orcid',
     'raven==5.0.0',
