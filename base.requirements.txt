@@ -11,7 +11,7 @@ git+https://github.com/inspirehep/raven-python@master#egg=raven-python==5.1.1.de
 
 ## INSPIRE forks of Invenio packages
 
-git+https://github.com/inspirehep/invenio-query-parser@master#egg=invenio-query-parser==invenio-query-parser-0.3.1.dev20160121
+git+https://github.com/inspirehep/invenio-query-parser@master#egg=invenio-query-parser==0.3.1.dev20160128
 git+https://github.com/inspirehep/invenio-access@master#egg=invenio-access==0.2.1.dev20151005
 git+https://github.com/inspirehep/invenio-ext@master#egg=invenio-ext==0.3.3.dev20160126
 git+https://github.com/inspirehep/invenio-deposit.git@master#egg=invenio-deposit==0.2.1.dev20160122
