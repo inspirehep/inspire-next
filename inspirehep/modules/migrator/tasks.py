@@ -23,6 +23,7 @@
 from __future__ import absolute_import, print_function
 
 import gzip
+import zlib
 
 import re
 import traceback
@@ -173,7 +174,12 @@ def continuos_migration():
     while r.llen('legacy_records'):
         try:
             record = r.lpop('legacy_records')
-            create_record(record, force=True)
+            if record:
+                # The record might be None, in case a parallel
+                # continuos_migration task has already consumed the queue.
+                record = zlib.decompress(record)
+                recid, dummy = create_record(record, force=True)
+                logger.info("Successfully migrated record {}".format(recid))
         finally:
             db.session.close()
 
