@@ -67,7 +67,7 @@ def create_marcxml_record():
 
 def convert_data_to_model():
     """Manipulate form data to match author model keys."""
-    @wraps(create_marcxml_record)
+    @wraps(convert_data_to_model)
     def _convert_data_to_model(obj, eng):
         import copy
 
@@ -99,9 +99,9 @@ def convert_data_to_model():
             data["_private_note"] = form_fields["comments"]
 
         # Add HEPNAMES collection
-        data["collections"] = {
+        data["collections"] = [{
             "primary": "HEPNAMES"
-        }
+        }]
 
         # ==========
         # Owner Info
