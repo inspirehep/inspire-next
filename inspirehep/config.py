@@ -326,6 +326,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "refersto": ["references.recid"],
     "experiment": ["accelerator_experiments.experiment"],
     "country": ["address.country", "address.country.raw"],
+    "experiment_f": ["accelerator_experiments.facet_experiment"],
     "wwwlab": ["experiment_name.wwwlab"],
     "subject": ["field_code.value"],
     "phd_advisors": ["phd_advisors.name"],
@@ -414,7 +415,7 @@ SEARCH_ELASTIC_AGGREGATIONS = {
         },
         "experiment": {
             "terms": {
-                "field": "accelerator_experiments.experiment"
+                "field": "accelerator_experiments.facet_experiment"
             }
         },
         "earliest_date": {

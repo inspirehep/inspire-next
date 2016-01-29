@@ -93,16 +93,21 @@ def match_valid_experiments(recid, json, *args, **kwargs):
             # FIXME: These lists are temporary. We should have a list of experiment names
             # that is generated from the current state of our data.
             from .experiment_list import EXPERIMENTS_NAMES as experiments_list_original, experiments_list
-            experiment = exp.get("experiment")
-            if experiment:
-                experiment = experiment.lower()
-                experiment = experiment.replace(' ', '')
-                try:
-                    # Check if normalized form of experiment is in the list of
-                    # valid experiments
-                    x = experiments_list.index(experiment)
-                    facet_experiment = experiments_list_original[x]
-                except ValueError:
-                    # If the experiment cannot be matched it is considered valid
-                    facet_experiment = exp.get("experiment")
-                exp.update({"facet_experiment": facet_experiment})
+            facet_experiments_list = []
+            experiments = exp.get("experiment")
+            if experiments:
+                if type(experiments) is not list:
+                    experiments = [experiments]
+                for experiment in experiments:
+                    experiment = experiment.lower()
+                    experiment = experiment.replace(' ', '')
+                    try:
+                        # Check if normalized form of experiment is in the list of
+                        # valid experiments
+                        x = experiments_list.index(experiment)
+                        facet_experiment = experiments_list_original[x]
+                    except ValueError:
+                        # If the experiment cannot be matched it is considered valid
+                        facet_experiment = exp.get("experiment")
+                    facet_experiments_list.append(facet_experiment)
+                exp.update({"facet_experiment": [facet_experiments_list]})
