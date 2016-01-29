@@ -52,7 +52,6 @@ requirements = [
     'invenio-testing==0.1.1',
     'invenio-unapi==0.1.1',
     'invenio-upgrader==0.2.0',
-    'invenio-utils==0.2.0',
     'invenio-webhooks==0.1.0',
     'invenio_classifier==0.1.0',
     'librabbitmq>=1.6.1',
