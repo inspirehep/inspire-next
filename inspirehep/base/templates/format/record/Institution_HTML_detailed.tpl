@@ -143,7 +143,9 @@
   <div class="row">
     <div class="col-md-12">
       <div class="pull-left">
+      {% if 'institution' in record %}
         <span>EXPERIMENTS list of<a href="/search?p=affiliation:{{ record['institution'][0] }}&cc=Experiments"> experiments</a> performed <b>at</b> {{ record['ICN'] }}</span>
+      {% endif %}
       </div>
     </div>
   </div>

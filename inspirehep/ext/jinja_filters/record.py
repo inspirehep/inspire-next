@@ -290,13 +290,13 @@ def setup_app(app):
     @app.template_filter()
     def sanitize_collection_name(collection_name):
         """Changes 'hep' to 'literature' and 'hepnames' to 'authors'."""
+        if collection_name:
+            collection_name = collection_name.strip().lower()
 
-        collection_name = collection_name.strip().lower()
+            collection_name = collection_name.replace("hepnames", "authors")
+            collection_name = collection_name.replace("hep", "literature")
 
-        collection_name = collection_name.replace("hepnames", "authors")
-        collection_name = collection_name.replace("hep", "literature")
-
-        return collection_name
+            return collection_name
 
     @app.template_filter()
     def collection_select_current(collection_name, current_collection):

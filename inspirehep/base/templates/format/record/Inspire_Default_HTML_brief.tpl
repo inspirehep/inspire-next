@@ -36,16 +36,24 @@
               </div>
               <div class="col-md-11">
                 <h4 class="custom-h">
+                    {% if record['titles[0].title']|is_list() %}
+                      {% set title = record['titles[0].title[0]'] %}
+                    {% else %}
+                      {% set title = record['titles[0].title'] %}
+                    {% endif %}
+                    {% if not title %}
+                      {% set title = record['titles.title[0]'] %}
+                    {% endif %}
                     <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                      {{ record['titles[0].title']|capitalize }}
+                      {{ title|capitalize }}
                     </a>
-                    {% if record['titles[0].title']|count_words() > 5 %}
+                    {% if title|count_words() > 5 %}
                       <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                        {{ record['titles[0].title']|capitalize | words(5) + "..."}}
+                        {{ title|capitalize | words(5) + "..."}}
                       </a>
                     {% else %}
                       <a class="mobile-title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                        {{ record['titles[0].title']|capitalize }}
+                        {{ title|capitalize }}
                       </a>
                     {% endif %}
                 </h4>

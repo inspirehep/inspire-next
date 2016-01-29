@@ -34,10 +34,14 @@
       {{ render_record_authors(is_brief=false, number_of_displayed_authors=25) }}
     </div>
     <div class="journal">
+    {% if record.get('publication_info') %}
       {{ record_publication_info() }}
+    {% endif %}
     </div>
     <div id="doi-eprint-experiment">
-      {{ record_doi() }}
+      {% if record.get('dois') %}
+        {{ record_doi() }}
+      {% endif %}
       {{ record_arxiv(is_brief=false) }}
       <div class="cite-pdf-buttons">
         <div class="btn-group">

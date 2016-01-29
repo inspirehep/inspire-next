@@ -29,14 +29,16 @@ from dojson.utils import force_list
 
 def add_book_info(record, blob):
     """Add link to the appropriate book record."""
-    collections = [c['primary'].lower() for c in record['collections']]
-    if 'bookchapter' in collections:
-        pubinfos = force_list(blob.get("773__", []))
-        for pubinfo in pubinfos:
-            if pubinfo.get('0'):
-                record['book'] = {
-                    'recid': int(pubinfo['0'])
-                }
+    if 'collections' in record:
+        collections = [c['primary'].lower() for c in record['collections']
+                       if 'primary' in c]
+        if 'bookchapter' in collections:
+            pubinfos = force_list(blob.get("773__", []))
+            for pubinfo in pubinfos:
+                if pubinfo.get('0'):
+                    record['book'] = {
+                        'recid': int(pubinfo['0'])
+                    }
 
 
 def custom_do(self, blob):
