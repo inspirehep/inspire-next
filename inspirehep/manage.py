@@ -149,12 +149,7 @@ def delete_indices():
         cfg['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + name for name in list(indices)
     ]
     indices.update(holdingpen_indices)
-    click.echo(click.style('Going to delete ALL indices...', fg='red'), nl=False)
-    click.echo('Continue? [yn] ', nl=False)
-    c = click.getchar()
-    click.echo()
-    if c == 'n':
-        return
+    click.echo(click.style('Deleting ALL indices...', fg='red'), nl=False)
     with click.progressbar(indices) as indices_to_delete:
         for index in indices_to_delete:
             es.indices.delete(index=index, ignore=404)

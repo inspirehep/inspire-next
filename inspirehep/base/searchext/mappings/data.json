@@ -1,0 +1,82 @@
+{
+    "settings": {
+        "analysis": {
+            "filter": {
+                "asciifold_with_orig": {
+                    "type": "asciifolding",
+                    "preserve_original": true
+                },
+                "synonyms_kbr": {
+                    "type": "synonym",
+                    "synonyms": [
+                        "production => creation"
+                    ]
+                },
+                "word_delimiter_orig" : {
+                    "type" : "word_delimiter",
+                    "preserve_original": true
+                }
+            },
+            "analyzer": {
+                "natural_text": {
+                    "type": "custom",
+                    "tokenizer":  "standard",
+                    "filter": [
+                        "asciifold_with_orig",
+                        "lowercase",
+                        "synonyms_kbr"
+                    ]
+                },
+                "autocomplete_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "whitespace",
+                    "filter": [
+                        "lowercase",
+                        "word_delimiter_orig"
+                    ]
+                },
+                "basic_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "standard",
+                    "filter": [
+                        "asciifold_with_orig",
+                        "lowercase"
+                    ]
+                }
+            }
+        },
+        "index.percolator.map_unmapped_fields_as_string": true
+    },
+    "mappings": {
+        "record": {
+            "_all": {"enabled": false},
+            "date_detection": false,
+            "numeric_detection": false,
+            "dynamic_templates": [
+                {"default": {
+                    "match_mapping_type": "string",
+                    "mapping": {
+                        "analyzer": "basic_analyzer",
+                        "type": "string",
+                        "copy_to": "global_default"
+                    }
+                }
+                }
+            ],
+            "properties": {
+                "global_fulltext": {
+                    "type": "string",
+                    "analyzer": "natural_text"
+                },
+                "global_default": {
+                    "type": "string",
+                    "analyzer": "basic_analyzer"
+                },
+                "_collections": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                }
+            }
+        }
+    }
+}
