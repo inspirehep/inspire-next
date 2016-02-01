@@ -70,13 +70,13 @@
   {% elif request.args.get('cc').lower() == "jobs" %}
     {% include 'search/facets/jobs.html' %}
   {% elif request.args.get('cc').lower() == "institutions" %}
-    {% include 'search/facets/institutions.html' %}  
+    {% include 'search/facets/institutions.html' %}
   {% elif request.args.get('cc').lower() == "journals" %}
     {% include 'search/facets/journals.html' %}
   {% elif request.args.get('cc').lower() == "experiments" %}
-    {% include 'search/facets/experiments.html' %}  
+    {% include 'search/facets/experiments.html' %}
   {% elif request.args.get('cc').lower() == "conferences" %}
-    {% include 'search/facets/conferences.html' %}  
+    {% include 'search/facets/conferences.html' %}
   {% endif %}
   </div>
 </div>
@@ -158,6 +158,28 @@
     </div>
   </div>
   {% endif %}
+  {% with messages = get_flashed_messages(category_filter=["query_suggestion"]) %}
+    {% if messages %}
+    <div class="alert alert-warning">
+    <ul class=flashes>
+      {% for message in messages %}
+      <li class="fa fa-exclamation-triangle">   {{ message }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+    {% endif %}
+    {% endwith %}
+    {% with messages = get_flashed_messages(category_filter=["query_suggestion_with_redirect"]) %}
+      {% if messages %}
+      <div class="alert alert-warning">
+      <ul class=flashes>
+        {% for message in messages %}
+        <li class="fa fa-exclamation-triangle">   {{ message }} Try: <a target="_blank" href='http://inspirehep.net/search?{{request.query_string}}'>inspirehep.net</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+      {% endif %}
+      {% endwith %}
   {%- for record in records -%}{% set recordloop = loop %}
     {%- set recid = record['recid'] %}
     {%- if of[0] == 'h' -%}
@@ -198,6 +220,28 @@
       </div>
     </div>
   </div>
+  {% with messages = get_flashed_messages(category_filter=["query_suggestion"]) %}
+    {% if messages %}
+    <div class="alert alert-warning">
+    <ul class=flashes>
+      {% for message in messages %}
+      <li class="fa fa-exclamation-triangle">   {{ message }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+    {% endif %}
+    {% endwith %}
+    {% with messages = get_flashed_messages(category_filter=["query_suggestion_with_redirect"]) %}
+      {% if messages %}
+      <div class="alert alert-warning">
+      <ul class=flashes>
+        {% for message in messages %}
+        <li class="fa fa-exclamation-triangle">   {{ message }} Try: <a target="_blank" href='http://inspirehep.net/search?{{request.query_string}}'>inspirehep.net</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+      {% endif %}
+      {% endwith %}
 {% endmacro%}
 
 {% macro render_cite_all_modal() %}
