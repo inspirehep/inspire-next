@@ -38,6 +38,7 @@ requirements = [
     'orcid',
     'raven==5.0.0',
     'retrying',
+    'flower',
     'rt',
     'invenio-accounts==0.2.0',
     'invenio-base==0.3.1',
