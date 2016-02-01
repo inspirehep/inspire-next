@@ -99,4 +99,6 @@ class AuthorWorkflowTests(InvenioTestCase):
 
         f(obj, eng)
 
+        del obj.data['acquisition_source']['date']
+
         self.assertEqual(obj.data, self.test_author_form_converted)
