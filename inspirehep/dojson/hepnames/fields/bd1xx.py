@@ -190,33 +190,10 @@ def native_name2marc(self, key, value):
     }
 
 
-@hepnames.over('dates', '^800..')
-@utils.for_each_value
-@utils.filter_values
+@hepnames.over('dates', '^100..')
 def dates(self, key, value):
     """Store birth and death dates."""
-    dates = {}
-
-    date_parts = value.get('d').split('-')
-    dates['birth'] = date_parts[0]
-    try:
-        dates['death'] = date_parts[1]
-    except IndexError:
-        pass
-    return dates
-
-
-@hepnames2marc.over('880', '^dates$')
-@utils.for_each_value
-@utils.filter_values
-def dates2marc(self, key, value):
-    """Store birth and death dates."""
-    death = ""
-    if value.get("death"):
-        death = "-" + value.get("death")
-    return {
-        'd': value.get('birth') + death
-    }
+    return value.get('d')
 
 
 @hepnames.over('private_current_emails', '^595..')
@@ -225,12 +202,16 @@ def private_current_emails(self, key, value):
     return value.get('m')
 
 
-@hepnames2marc.over('595', '^private_current_emails$')
+@hepnames2marc.over('595_', '^private_current_emails$')
 @utils.for_each_value
 def private_current_emails2marc(self, key, value):
-    return {
+    val = {
         'm': value
     }
+    if '595' in self:
+        self['595'].append(val)
+    else:
+        self['595'] = [val]
 
 
 @hepnames.over('private_old_emails', '^595..')
@@ -239,12 +220,16 @@ def private_old_emails(self, key, value):
     return value.get('o')
 
 
-@hepnames2marc.over('595', '^private_old_emails$')
+@hepnames2marc.over('595_', '^private_old_emails$')
 @utils.for_each_value
 def private_old_emails2marc(self, key, value):
-    return {
+    val = {
         'o': value
     }
+    if '595' in self:
+        self['595'].append(val)
+    else:
+        self['595'] = [val]
 
 
 @hepnames.over('positions', '^371..')
@@ -398,12 +383,16 @@ def _private_note(self, key, value):
     return value.get('a')
 
 
-@hepnames2marc.over('595', '^_private_note$')
+@hepnames2marc.over('595_', '^_private_note$')
 @utils.for_each_value
 def _private_note2marc(self, key, value):
-    return {
+    val = {
         'a': value
     }
+    if '595' in self:
+        self['595'].append(val)
+    else:
+        self['595'] = [val]
 
 
 @hepnames.over('_curators_note', '^667..')

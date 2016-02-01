@@ -47,7 +47,6 @@
   "_status": null,
   "public_email": "publicemail@email.com",
   "acquisition_source": {
-    "date": "2016-01-29",
     "source": [
       "inspire:uid:1"
     ],
