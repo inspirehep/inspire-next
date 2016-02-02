@@ -313,8 +313,12 @@
                             "index": "not_analyzed"
                         },
                         "year": {
+                            "copy_to": "publication_info.year_raw",
                             "type": "integer"
                         },
+                        "year_raw": {
+                            "type": "string"
+                        },                          
                         "parent_recid": {
                             "type": "integer"
                         },
