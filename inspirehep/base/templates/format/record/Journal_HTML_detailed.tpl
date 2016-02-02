@@ -42,13 +42,19 @@
     </div>
   </div>
 </div>
-<div class="row">
-  <div class="col-md-12">
-    <div class="pull-left">
-      {{ record['short_title'] }}
+{% if record['short_title']|is_list() %}
+  <div class="row">
+    <div class="col-md-12 record-brief-details">
+     {{ record['short_title'][0] }}
     </div>
   </div>
-</div>
+  {% else %}
+  <div class="row">
+    <div class="col-md-12 record-brief-details">
+     {{ record['short_title'] }}
+    </div>
+  </div>
+  {% endif %}
 {% if record['urls'] %}
 {% for url in record['urls'] %}
 <div class="row">
@@ -74,7 +80,15 @@
 </div>
 <div class="row"><div class="col-md-12"><p></p></div></div>
 <div class="row"><div class="col-md-12"><p></p></div></div>
-{% if record['coden'] %}
+{% if record['coden']|is_list() %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="pull-left">
+      {{ record['coden'][0] }}
+   </div>
+  </div>
+</div>
+{% else %}
 <div class="row">
   <div class="col-md-12">
     <div class="pull-left">

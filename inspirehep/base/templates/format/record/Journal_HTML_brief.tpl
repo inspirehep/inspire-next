@@ -33,11 +33,19 @@
         </h4>
         </div>
       </div>
+      {% if record['short_title']|is_list() %}
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+         {{ record['short_title'][0] }}
+        </div>
+      </div>
+      {% else %}
       <div class="row">
         <div class="col-md-12 record-brief-details">
          {{ record['short_title'] }}
         </div>
       </div>
+      {% endif %}
       {% if record['urls'] %}
       <div class="row">
         <div class="col-md-12 record-brief-details">
@@ -51,7 +59,13 @@
         </div>
       </div>
       {% endif %}
-      {% if record['publisher'] %}
+      {% if record['publisher']|is_list() %}
+      <div class="row">
+        <div class="col-md-12 record-brief-details">
+         {{ record['publisher'][0] }}
+        </div>
+      </div>
+      {% else %}
       <div class="row">
         <div class="col-md-12 record-brief-details">
          {{ record['publisher'] }}

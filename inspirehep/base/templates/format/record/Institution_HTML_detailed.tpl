@@ -37,22 +37,39 @@
     <div class="col-md-12">
       <h4 class="custom-h pull-left">
         <b>
-         {{record['ICN']}}
-         {% if record['ICN'] %}
-         [Future INSPIRE ID:{{record['ICN']}}]
-         {%endif%}
+        {% if record['ICN'] %}
+          {% if record['ICN']|is_list() %}
+            {{record['ICN'][0]}}
+            [Future INSPIRE ID:{{record['ICN'][0]}}]  
+          {% else %}
+            {{ record['ICN'] }}
+            [Future INSPIRE ID:{{record['ICN']}}]  
+          {% endif %}
+        {% endif %}
         </b> 
       </h4>
     </div>
   </div>
-  {% if record['institution'] %}
+  {% if record['institution']|is_list() %}
   <div class="row">
     <div class="col-md-12">
-     <span class="pull-left">{{ record['institution']}}</span>
+     <span class="pull-left">{{ record['institution'][0] }}</span>
+    </div>
+  </div>
+  {% else %}
+  <div class="row">
+    <div class="col-md-12">
+     <span class="pull-left">{{ record['institution'] }}</span>
     </div>
   </div>
   {% endif %}
-  {% if record['department'] %}
+  {% if record['department']|is_list() %}
+  <div class="row">
+    <div class="col-md-12">
+     <span class="pull-left">{{ record['department'][0] }}</span>
+    </div>
+  </div>
+  {% else %}
   <div class="row">
     <div class="col-md-12">
      <span class="pull-left">{{ record['department']}}</span>
@@ -129,22 +146,38 @@
   <div class="row">
     <div class="col-md-12">
       <div class="pull-left">
-        <span>HEP list of<a href="#"> Ph.D. theses </a> at {{ record['ICN'] }}</span>
+      {% if record['ICN'] %}
+        {% if record['ICN']|is_list() %}
+          <span>HEP list of<a href="#"> Ph.D. theses </a> at {{ record['ICN'][0] }}</span>
+        {% else %}
+          <span>HEP list of<a href="#"> Ph.D. theses </a> at {{ record['ICN'] }}</span>
+        {% endif %}
+      {% endif %}
       </div>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
       <div class="pull-left">
-        <span>HEPNAMES list of<a href="#"> people</a> at {{ record['ICN'] }}</span>
+      {% if record['ICN'] %}
+        {% if record['ICN']|is_list() %}
+          <span>HEPNAMES list of<a href="#"> people</a> at {{ record['ICN'][0] }}</span>
+        {% else %}
+          <span>HEPNAMES list of<a href="#"> people</a> at {{ record['ICN'] }}</span>
+        {% endif %}
+      {% endif %}
       </div>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
       <div class="pull-left">
-      {% if 'institution' in record %}
-        <span>EXPERIMENTS list of<a href="/search?p=affiliation:{{ record['institution'][0] }}&cc=Experiments"> experiments</a> performed <b>at</b> {{ record['ICN'] }}</span>
+      {% if record['ICN'] and record['institution'] %}
+        {% if record['ICN']|is_list() %}
+          <span>EXPERIMENTS list of<a href="/search?p=affiliation:{{ record['institution'][0] }}&cc=Experiments"> experiments</a> performed <b>at</b> {{ record['ICN'][0] }}</span>
+        {% else %}
+          <span>EXPERIMENTS list of<a href="/search?p=affiliation:{{ record['institution'] }}&cc=Experiments"> experiments</a> performed <b>at</b> {{ record['ICN'] }}</span>
+        {% endif %}
       {% endif %}
       </div>
     </div>

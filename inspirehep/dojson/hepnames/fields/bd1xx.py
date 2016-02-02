@@ -135,7 +135,7 @@ def name2marc(self, key, value):
 def ids(self, key, value):
     """All identifiers, both internal and external."""
     id_type = value.get('9')
-    if id_type not in ('arXiv', 'GoogleScholar'):
+    if id_type and id_type not in ('arXiv', 'GoogleScholar'):
         id_type = id_type.upper()
     return {
         'value': value.get('a'),
@@ -177,6 +177,7 @@ def other_names2marc(self, key, value):
 
 
 @hepnames.over('native_name', '^880..')
+@utils.for_each_value
 def native_name(self, key, value):
     """Name in native form."""
     return value.get('a')
@@ -464,11 +465,18 @@ def phd_advisors(self, key, value):
         "phd": "PhD",
         "master": "Master"
     }
+    if isinstance(value.get("g"), list):
+        degree_type = degree_type_map.get(
+            value.get("g", "")[0].lower(),
+            value.get("g")[0])
+    else:
+        degree_type = degree_type_map.get(
+            value.get("g", "").lower(),
+            value.get("g"))
     return {
         'id': value.get("i"),
         'name': value.get("a"),
-        'degree_type': degree_type_map.get(value.get("g", "").lower(),
-                                           value.get("g"))
+        'degree_type': degree_type
     }
 
 
