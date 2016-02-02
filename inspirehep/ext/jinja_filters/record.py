@@ -393,3 +393,8 @@ def setup_app(app):
             return 'Cited 1 time'
         else:
             return 'Cited ' + str(count) + ' times'
+
+    @app.template_filter()
+    def number_of_search_results(query, collection_name):
+        return len(Query("%s" % (query,)).
+                   search(collection=collection_name))

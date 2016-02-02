@@ -148,7 +148,7 @@
     <div class="panel-body" >
       <div class="row">
         <div class="col-md-9">
-          <span class="text-left" id="clear-facets-message">{{ pagination.total_count }} of {{ request.args.get('cc') | number_of_records }} results match the filters you selected.</span><br/>
+          <span class="text-left {{ request.args.get('cc')|lower() }}" id="clear-facets-message">{{ pagination.total_count }} of {{ request.args.get('p')|number_of_search_results(request.args.get('cc')) }} results match the filters you selected.</span><br/>
           <small id="clear-facets-info">Clear filters to see all results.</small>
         </div>
         <div class="col-md-3 text-right">

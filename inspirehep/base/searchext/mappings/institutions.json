@@ -102,6 +102,19 @@
                 "ICN": {
                     "type": "string",
                     "copy_to": ["affautocomplete"]
+                },
+                "address": {
+                    "properties": {
+                        "country": {
+                            "type": "string",
+                            "fields": {
+                                "raw": {
+                                    "type": "string",
+                                    "index": "not_analyzed"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
