@@ -385,7 +385,7 @@ def migrate_workflow_object(obj_id):
         current_app.logger.exception(err)
         msg = "Error: %r\n%s" % \
               (err, traceback.format_exc())
-        obj.set_error_message(str(err), msg)
+        obj.set_error_message(msg)
         obj.save(version=ObjectVersion.ERROR)
         raise
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -54,7 +54,9 @@ def get_harvesting_workflows():
                 help='Get records until this date.')
 @manager.option('--reharvest', '-R', dest='reharvest', action="store_true",
                 help='Indicate a full reharvest.')
-def run(workflow, from_date, to_date, reharvest=False):
+@manager.option('--queue', '-Q', dest='queue', action="store_true",
+                help='Enqueue job.')
+def run(workflow, from_date, to_date, reharvest=False, queue=False):
     """Run a harvesting workflow from the command line.
 
     Usage: inveniomanage harvester run -w workflow_name -f 2014-01-01 -t 2014-12-31
@@ -82,8 +84,11 @@ def run(workflow, from_date, to_date, reharvest=False):
         "reharvest": reharvest
     }
 
-    job = run_harvest.delay(**args)
-    print("Scheduled job {0} with args: {1}".format(job.id, args))
+    if queue:
+        job = run_harvest.delay(**args)
+        print("Scheduled job {0} with args: {1}".format(job.id, args))
+    else:
+        run_harvest(**args)
 
 
 @manager.command
