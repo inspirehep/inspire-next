@@ -259,17 +259,19 @@ def exists_in_holding_pen(obj, eng):
         identifiers += ['{0}:"{1}"'.format(field, i)
                         for i in record.get(lookup, [])]
     # Search for any existing record in Holding Pen, exclude self
-    result = set(hp_search(
-        query=" OR ".join(identifiers),
-        per_page=10,
-        page=1,
-    )[0]) - set([obj.id])
-    if result:
-        obj.log.info("Record already found in Holding Pen ({0})".format(
-            result
-        ))
-    obj.extra_data["holdingpen_ids"] = list(result)
-    return result
+    if identifiers:
+        result = set(hp_search(
+            query=" OR ".join(identifiers),
+            per_page=10,
+            page=1,
+        )[0]) - set([obj.id])
+        if result:
+            obj.log.info("Record already found in Holding Pen ({0})".format(
+                result
+            ))
+        obj.extra_data["holdingpen_ids"] = list(result)
+        return result
+    return False
 
 
 def delete_self_and_stop_processing(obj, eng):
