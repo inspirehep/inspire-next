@@ -299,6 +299,11 @@ class literature(SIPWorkflowMixin, SimpleRecordDeposition):
                     'title': title_crossref,
                     'source': "CrossRef"
                 })
+        try:
+            metadata['titles'][0]['source']
+        except KeyError:
+            # Title has no source, so should be the submitter
+            metadata['titles'][0]['source'] = "submitter"
 
         # ============================
         # Conference name
