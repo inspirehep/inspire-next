@@ -24,7 +24,14 @@
 
 import json
 
-from flask import request, Blueprint, render_template, current_app
+from flask import (
+    redirect,
+    request,
+    Blueprint,
+    render_template,
+    current_app,
+    url_for
+)
 from flask.ext.menu import register_menu, current_menu
 from flask.ext.login import current_user
 
@@ -112,9 +119,7 @@ def conferences():
 @blueprint.route('/jobs', methods=['GET', ])
 def jobs():
     """View for jobs collection landing page."""
-    collection = {'name': 'jobs'}
-    return render_template('search/collection_jobs.html',
-                           collection=collection)
+    return redirect(url_for('search.search', cc='jobs'))
 
 
 @blueprint.route('/institutions', methods=['GET', ])
