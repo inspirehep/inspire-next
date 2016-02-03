@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,4 +41,4 @@ def run_harvest(workflow, **kwargs):
     data.set_extra_data(extra_data)
     data.set_data({})
     data.save()
-    data.start_workflow(workflow, delayed=True)
+    data.start_workflow(workflow, delayed=args.get('queue', False))
