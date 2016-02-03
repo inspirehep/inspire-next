@@ -68,33 +68,41 @@ def populate_inspire_document_type(recid, json, *args, **kwargs):
         Adds a field for faceting INSPIRE document type
     """
     inspire_doc_type = []
+    collections = []
     if 'collections' in json:
-        for element in json.get('collections', []):
-            if 'primary' in element and element.get('primary', ''):
-                if element['primary'].lower() == 'published':
-                    inspire_doc_type.append(element['primary'].lower())
-                    break
-                elif element['primary'].lower() == 'thesis':
-                    inspire_doc_type.append('peer reviewed')
-                    break
-                elif element['primary'].lower() == 'book':
-                    inspire_doc_type.append(element['primary'].lower())
-                    break
-                elif element['primary'].lower() == 'bookchapter':
-                    inspire_doc_type.append('book chapter')
-                    break
-                elif element['primary'].lower() == 'proceedings':
-                    inspire_doc_type.append(element['primary'].lower())
-                    break
-                elif element['primary'].lower() == 'conferencepaper':
-                    inspire_doc_type.append('conference paper')
-                    break
-                elif element['primary'].lower() == 'note':
-                    inspire_doc_type.append('note')
-                    break
-                elif element['primary'].lower() == 'report':
-                    inspire_doc_type.append(element['primary'].lower())
-                    break
+        for c in json['collections']:
+            if 'primary' in c and c.get('primary', ''):
+                if isinstance(c['primary'], list):
+                    collections.append(', '.join(c['primary']))
+                else:
+                    collections.append(c['primary'])
+        for idx, item in enumerate(collections):
+            collections[idx] = item.lower()
+        for element in collections:
+            if element == 'published':
+                inspire_doc_type.append(element)
+                break
+            elif element == 'thesis':
+                inspire_doc_type.append('peer reviewed')
+                break
+            elif element == 'book':
+                inspire_doc_type.append(element)
+                break
+            elif element == 'bookchapter':
+                inspire_doc_type.append('book chapter')
+                break
+            elif element == 'proceedings':
+                inspire_doc_type.append(element)
+                break
+            elif element == 'conferencepaper':
+                inspire_doc_type.append('conference paper')
+                break
+            elif element == 'note':
+                inspire_doc_type.append(element)
+                break
+            elif element == 'report':
+                inspire_doc_type.append(element)
+                break
         complete_pub_info = []
         if not inspire_doc_type:
             for field in json.get('publication_info', []):
@@ -102,11 +110,9 @@ def populate_inspire_document_type(recid, json, *args, **kwargs):
                     complete_pub_info.append(k)
             if 'page_artid' not in complete_pub_info:
                 inspire_doc_type.append('preprint')
-        inspire_doc_type.extend([s['primary'].lower() for s in
-                                 json.get('collections', []) if 'primary'
-                                 in s and s['primary'] is not None and
-                                 s['primary'].lower() in
-                                 ('review', 'lectures')])
+        inspire_doc_type.extend([s for s in collections
+                                 if s is not None and
+                                 s in ('review', 'lectures')])
     json['facet_inspire_doc_type'] = inspire_doc_type
 
 

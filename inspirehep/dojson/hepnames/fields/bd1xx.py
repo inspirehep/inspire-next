@@ -194,6 +194,7 @@ def native_name2marc(self, key, value):
 
 
 @hepnames.over('dates', '^100..')
+@utils.for_each_value
 def dates(self, key, value):
     """Store birth and death dates."""
     return value.get('d')

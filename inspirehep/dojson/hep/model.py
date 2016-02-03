@@ -30,16 +30,28 @@ from ..schema import SchemaOverdo
 
 def add_book_info(record, blob):
     """Add link to the appropriate book record."""
+    collections = []
     if 'collections' in record:
-        collections = [c['primary'].lower() for c in record['collections']
-                       if 'primary' in c]
+        for c in record['collections']:
+            if 'primary' in c:
+                if isinstance(c['primary'], list):
+                    collections.append(', '.join(c['primary']))
+                else:
+                    collections.append(c['primary'])
+        for idx, item in enumerate(collections):
+            collections[idx] = item.lower()
         if 'bookchapter' in collections:
             pubinfos = force_list(blob.get("773__", []))
             for pubinfo in pubinfos:
                 if pubinfo.get('0'):
-                    record['book'] = {
-                        'recid': int(pubinfo['0'])
-                    }
+                    if isinstance(pubinfo['0'], list):
+                        record['book'] = {
+                            'recid': int(pubinfo['0'][0])
+                        }
+                    else:
+                        record['book'] = {
+                            'recid': int(pubinfo['0'])
+                        }
 
 
 class Publication(SchemaOverdo):
