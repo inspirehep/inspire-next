@@ -26,13 +26,26 @@ class RecordsTest(InvenioTestCase):
 
     """Tests for the Records."""
 
+    def setUp(self):
+        from invenio_records.api import Record
+        self.test_recid = 1402176
+        self.original_record = dict(Record.get_record(self.test_recid))
+
+    def tearDown(self):
+        from invenio_ext.sqlalchemy import db
+        from invenio_records.api import Record
+
+        rec = Record.get_record(self.test_recid)
+        rec.model.json = self.original_record
+        db.session.commit()
+
     def test_update_record(self):
         """Test updating record."""
         from invenio_ext.sqlalchemy import db
         from invenio_records.api import Record
 
-        # This demo record has {"languages": ["Croatian"], ..}
-        rec = Record.get_record(1402176)
+        rec = Record.get_record(self.test_recid)
+        assert rec["languages"] == ["Croatian"]
 
         # 1. Need to make a new clean dict and update it
         new_dict = dict(rec)
@@ -43,7 +56,7 @@ class RecordsTest(InvenioTestCase):
         rec.commit()
         db.session.commit()
 
-        rec = Record.get_record(1402176)
+        rec = Record.get_record(self.test_recid)
         assert rec["languages"] == ["Norwegian"]
 
     def test_doted_author_search(self):
@@ -57,3 +70,7 @@ class RecordsTest(InvenioTestCase):
         for record in query_2:
             query_2_results.append(record.get("control_number"))
         self.assertEqual(query_1_results, query_2_results)
+
+    def test_update_record_again(self):
+        """Test updating record again to make sure tearDown does the right thing."""
+        self.test_update_record()

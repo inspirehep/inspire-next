@@ -493,17 +493,18 @@ SEARCH_ELASTIC_AGGREGATIONS = {
     }
 }
 
-SEARCH_QUERY_ENHANCERS = []
+SEARCH_QUERY_ENHANCERS = ['invenio_search.enhancers.collection_filter.apply']
 SEARCH_ELASTIC_SORT_FIELDS = ["earliest_date", "citation_count"]
 
 
 SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
     "HEP": "hep",
+    "CDF Internal Notes": "hep",
     "Conferences": "conferences",
     "Institutions": "institutions",
     "Experiments": "experiments",
     "Jobs": "jobs",
-    "Jobs Hidden": "jobshidden",
+    "Jobs Hidden": "jobs",
     "Journals": "journals",
     "HepNames": "authors",
     "Data": "data"
@@ -529,8 +530,6 @@ ELASTIC_MAPPINGS_PATHS = [
         "inspirehep", "base/searchext/mappings/institutions.json"),
     pkg_resources.resource_filename(
         "inspirehep", "base/searchext/mappings/jobs.json"),
-    pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/jobshidden.json"),
     pkg_resources.resource_filename(
         "inspirehep", "base/searchext/mappings/journals.json")
 ]

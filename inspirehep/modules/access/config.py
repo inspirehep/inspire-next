@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 # or submit itself to any jurisdiction.
 
 """INSPIRE default access configuration."""
+
 
 # Demo site roles
 #           name          description          definition
@@ -50,4 +51,5 @@ DEF_DEMO_AUTHS = (
     ('cataloger', 'runbibmerge', {}),
     ('cataloger', 'viewholdingpen', {}),
     ('cataloger', 'viewauthorreview', {}),
+    ('cataloger', 'viewrestrcoll', {'collection': 'CDF Internal Notes'}),
 )
