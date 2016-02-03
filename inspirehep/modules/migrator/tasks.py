@@ -23,10 +23,9 @@
 from __future__ import absolute_import, print_function
 
 import gzip
-import zlib
-
 import re
 import traceback
+import zlib
 
 from celery.utils.log import get_task_logger
 
@@ -191,11 +190,16 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
     from invenio_records.tasks.index import get_record_index
     from invenio.base.globals import cfg
     from elasticsearch.helpers import bulk as es_bulk
-    from inspirehep.modules.citations.receivers import catch_citations_insert, add_citation_count_on_insert_or_update
+    from inspirehep.modules.citations.receivers import (
+        catch_citations_insert,
+        add_citation_count_on_insert_or_update,
+        catch_citations_update
+    )
     from invenio_records.signals import before_record_index, after_record_insert
     models_committed.disconnect(record_modification)
     after_record_insert.disconnect(catch_citations_insert)
     before_record_index.disconnect(add_citation_count_on_insert_or_update)
+    before_record_index.disconnect(catch_citations_update)
 
     records_to_index = []
     try:
@@ -224,6 +228,7 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
         models_committed.connect(record_modification)
         after_record_insert.connect(catch_citations_insert)
         before_record_index.connect(add_citation_count_on_insert_or_update)
+        before_record_index.connect(catch_citations_update)
         db.session.close()
 
 
