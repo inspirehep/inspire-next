@@ -1,6 +1,6 @@
 {#
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -62,7 +62,7 @@
 
 {% macro record_publication_info() %}
   Published in
-  {% for pub_info in record.get('publication_info')%}
+  {% for pub_info in record.get('publication_info', [])%}
     {% if pub_info.get('journal_title') or pub_info.get('journal_volume') or pub_info.get('year') or pub_info.get('page_artid') %}
       {% if not loop.first %}
         and
