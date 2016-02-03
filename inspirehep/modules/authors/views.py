@@ -95,6 +95,9 @@ def convert_for_form(data):
                                                 'start_year', 'end_year')
                 ]
             ):
+                if 'email' in position:
+                    # Only email available, take as public_email
+                    data["public_email"] = position.get("email")
                 continue
             pos = {}
             pos["name"] = position.get("institution", {}).get("name")
@@ -105,7 +108,8 @@ def convert_for_form(data):
             pos["old_email"] = position.get("old_email", "")
             if position.get("email"):
                 pos["email"] = position.get("email", "")
-                data["public_email"] = position.get("email")
+                if not data.get("public_email"):
+                    data["public_email"] = position.get("email")
             data["institution_history"].append(pos)
         data["institution_history"].reverse()
     if "phd_advisors" in data:
