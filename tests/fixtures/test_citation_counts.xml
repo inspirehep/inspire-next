@@ -197,7 +197,6 @@
     <subfield code="r">arXiv:1303.6254 [hep-ph]</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">1193346</subfield>
     <subfield code="h">M. Czakon and A. Mitov</subfield>
     <subfield code="o">2</subfield>
     <subfield code="r">arXiv:1210.6832 [hep-ph]</subfield>
@@ -205,7 +204,6 @@
     <subfield code="y">2013</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">1120738</subfield>
     <subfield code="h">M. Czakon and A. Mitov</subfield>
     <subfield code="o">3</subfield>
     <subfield code="r">arXiv:1207.0236 [hep-ph]</subfield>
@@ -213,7 +211,6 @@
     <subfield code="y">2012</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">1112110</subfield>
     <subfield code="h">P. Baernreuther, M. Czakon and A. Mitov</subfield>
     <subfield code="o">4</subfield>
     <subfield code="r">arXiv:1204.5201 [hep-ph]</subfield>
@@ -221,7 +218,6 @@
     <subfield code="y">2012</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">825249</subfield>
     <subfield code="h">M. Beneke, P. Falgari and C. Schwinn</subfield>
     <subfield code="o">5</subfield>
     <subfield code="r">arXiv:0907.1443 [hep-ph]</subfield>
@@ -229,7 +225,6 @@
     <subfield code="y">2010</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">825411</subfield>
     <subfield code="h">M. Czakon, A. Mitov and G. F. Sterman</subfield>
     <subfield code="o">6</subfield>
     <subfield code="r">arXiv:0907.1790 [hep-ph]</subfield>
@@ -237,7 +232,6 @@
     <subfield code="y">2009</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">955207</subfield>
     <subfield code="h">M. Cacciari, M. Czakon, M. L. Mangano, A. Mitov and P. Nason</subfield>
     <subfield code="o">7</subfield>
     <subfield code="r">arXiv:1111.5869 [hep-ph]</subfield>
@@ -245,7 +239,6 @@
     <subfield code="y">2012</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">1118057</subfield>
     <subfield code="h">M. Beneke, P. Falgari, S. Klein, J. Piclum, C. Schwinn, M. Ubiali and F. Yan</subfield>
     <subfield code="o">8</subfield>
     <subfield code="r">arXiv:1206.2454 [hep-ph]</subfield>
@@ -253,7 +246,6 @@
     <subfield code="y">2012</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">860789</subfield>
     <subfield code="h">M. Aliev, H. Lacker, U. Langenfeld, S. Moch, P. Uwer and M. Wiedermann</subfield>
     <subfield code="o">9</subfield>
     <subfield code="r">arXiv:1007.1327 [hep-ph]</subfield>
@@ -272,7 +264,6 @@
     <subfield code="u">http://hepforge.cedar.ac.uk/lhapdf/</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">810127</subfield>
     <subfield code="h">A. D. Martin, W. J. Stirling, R. S. Thorne and G. Watt</subfield>
     <subfield code="o">11</subfield>
     <subfield code="r">arXiv:0901.0002 [hep-ph]</subfield>
@@ -280,7 +271,6 @@
     <subfield code="y">2009</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">466455</subfield>
     <subfield code="h">R. Bonciani, S. Catani, M. L. Mangano, P. Nason</subfield>
     <subfield code="o">12</subfield>
     <subfield code="r">hep-ph/9801375</subfield>
@@ -288,7 +278,6 @@
     <subfield code="y">1998</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">417809</subfield>
     <subfield code="h">S. Catani, M. L. Mangano, P. Nason and L. Trentadue</subfield>
     <subfield code="m">[arXiv:</subfield>
     <subfield code="o">13</subfield>
@@ -297,14 +286,12 @@
     <subfield code="y">1996</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">565230</subfield>
     <subfield code="h">P. M. Nadolsky and Z. Sullivan</subfield>
     <subfield code="m">eConfC 010630, P510 (2001)</subfield>
     <subfield code="o">14</subfield>
     <subfield code="r">hep-ph/0110378</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">783663</subfield>
     <subfield code="h">M. Cacciari, S. Frixione, M. L. Mangano, P. Nason, G. Ridolfi</subfield>
     <subfield code="o">15</subfield>
     <subfield code="r">arXiv:0804.2800 [hep-ph]</subfield>
@@ -312,7 +299,6 @@
     <subfield code="y">2008</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">861245</subfield>
     <subfield code="h">H. -L. Lai, M. Guzzi, J. Huston, Z. Li, P. M. Nadolsky, J. Pumplin and C. -P. Yuan</subfield>
     <subfield code="o">16</subfield>
     <subfield code="r">arXiv:1007.2241 [hep-ph]</subfield>
@@ -320,7 +306,6 @@
     <subfield code="y">2010</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">918528</subfield>
     <subfield code="h">R. D. Ball et al.</subfield>
     <subfield code="m">[The NNPDF Collaboration]</subfield>
     <subfield code="o">17</subfield>
@@ -329,7 +314,6 @@
     <subfield code="y">2012</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">1088724</subfield>
     <subfield code="h">S. Alekhin, J. Blumlein and S. Moch</subfield>
     <subfield code="o">18</subfield>
     <subfield code="r">arXiv:1202.2281 [hep-ph]</subfield>
@@ -337,7 +321,6 @@
     <subfield code="y">2012</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">829121</subfield>
     <subfield code="h">S. Alekhin, J. Blumlein, S. Klein and S. Moch</subfield>
     <subfield code="o">19</subfield>
     <subfield code="r">arXiv:0908.2766 [hep-ph]</subfield>
@@ -345,7 +328,6 @@
     <subfield code="y">2010</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">601517</subfield>
     <subfield code="h">S. Alekhin</subfield>
     <subfield code="o">20</subfield>
     <subfield code="r">hep-ph/0211096</subfield>
@@ -353,7 +335,6 @@
     <subfield code="y">2003</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">803909</subfield>
     <subfield code="h">M. Czakon and A. Mitov</subfield>
     <subfield code="o">21</subfield>
     <subfield code="r">arXiv:0812.0353 [hep-ph]</subfield>
@@ -361,7 +342,6 @@
     <subfield code="y">2009</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">838222</subfield>
     <subfield code="h">M. Beneke, M. Czakon, P. Falgari, A. Mitov, C. Schwinn</subfield>
     <subfield code="o">22</subfield>
     <subfield code="r">arXiv:0911.5166 [hep-ph]</subfield>
@@ -369,14 +349,12 @@
     <subfield code="y">2010</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">251743</subfield>
     <subfield code="h">P. Nason, S. Dawson and R. K. Ellis</subfield>
     <subfield code="o">23</subfield>
     <subfield code="s">Nucl.Phys.,B303,607</subfield>
     <subfield code="y">1988</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="0">803507</subfield>
     <subfield code="9">CURATOR</subfield>
     <subfield code="h">M. Czakon and A. Mitov</subfield>
     <subfield code="o">24</subfield>
