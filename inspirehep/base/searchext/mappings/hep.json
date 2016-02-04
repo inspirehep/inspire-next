@@ -6,6 +6,16 @@
                     "type": "icu_folding",
                     "preserve_original": true
                 },
+                "apostrophes_remove": {
+                    "type": "pattern_replace",
+                    "pattern":"‘|’|“|”|'|'|\"",
+                    "replacement": "'"
+                },
+                "characters_remove": {
+                    "type": "pattern_replace",
+                    "pattern": ",|'|\\.|-|_",
+                    "replacement": " "
+                },
                 "whitespace_remove": {
                     "type": "pattern_replace",
                     "pattern": "[ \t]{2,}",
@@ -27,6 +37,8 @@
                     "filter": [
                         "asciifold_with_orig",
                         "lowercase",
+                        "apostrophes_remove",
+                        "characters_remove",
                         "whitespace_remove",
                         "trim"
                     ]
@@ -318,7 +330,7 @@
                         },
                         "year_raw": {
                             "type": "string"
-                        },                          
+                        },
                         "parent_recid": {
                             "type": "integer"
                         },

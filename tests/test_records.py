@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -45,3 +45,15 @@ class RecordsTest(InvenioTestCase):
 
         rec = Record.get_record(1402176)
         assert rec["languages"] == ["Norwegian"]
+
+    def test_doted_author_search(self):
+        from invenio_search.api import Query
+        query_1 = Query('find a storaci b').search().records()
+        query_1_results = []
+        for record in query_1:
+            query_1_results.append(record.get("control_number"))
+        query_2 = Query('find a storaci b.').search().records()
+        query_2_results = []
+        for record in query_2:
+            query_2_results.append(record.get("control_number"))
+        self.assertEqual(query_1_results, query_2_results)
