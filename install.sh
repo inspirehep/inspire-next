@@ -28,14 +28,9 @@ inveniomanage config set CFG_SITE_URL http://localhost
 inveniomanage config set CFG_SITE_SECURE_URL http://localhost
 inveniomanage config set MATHOID_SERVER http://localhost:10044
 
-inveniomanage config set ASSETS_DEBUG True  # ignore assets issues
-inveniomanage config set LESS_RUN_IN_DEBUG False
-inveniomanage config set REQUIREJS_RUN_IN_DEBUG False
-
 inveniomanage bower -i bower-base.json > bower.json
 bower install --silent --force-latest --allow-root
 
-inveniomanage config set COLLECT_STORAGE flask.ext.collect.storage.link
 inveniomanage collect > /dev/null
 inveniomanage assets build
 inveniomanage config set CLEANCSS_BIN false  # deactivate all the things
