@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -28,17 +28,19 @@ class DateTests(InvenioTestCase):
 
     """Test the datefilter utility functions."""
 
-    def test_older_date(self):
+    def test_date_older_than_older_date(self):
         """date_older_than recognizes older dates."""
         from inspirehep.utils.datefilter import date_older_than
+
         parsed_date = datetime.strptime("2015-01-01", "%Y-%m-%d")
         other_parsed_date = datetime.strptime("2015-01-04", "%Y-%m-%d")
 
         self.assertTrue(date_older_than(parsed_date, other_parsed_date, days=2))
 
-    def test_newer_date(self):
+    def test_date_older_than_newer_date(self):
         """date_older_than recognizes newer dates."""
         from inspirehep.utils.datefilter import date_older_than
+
         parsed_date = datetime.strptime("2015-01-01", "%Y-%m-%d")
         other_parsed_date = datetime.strptime("2015-01-04", "%Y-%m-%d")
 

@@ -20,16 +20,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Function for sending robotuploads to other Invenio instances."""
+"""TODO."""
+
+from invenio_base.globals import cfg
 
 import six
+
 import StringIO
 
 from werkzeug.utils import import_string
 
 
 def get_json_from_marcxml(marcxml):
-    from invenio_base.globals import cfg
+    """TODO."""
     source = StringIO.StringIO(marcxml)
 
     processor = cfg["RECORD_PROCESSORS"]["marcxml"]
