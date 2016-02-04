@@ -61,14 +61,8 @@ class RecordsTest(InvenioTestCase):
 
     def test_doted_author_search(self):
         from invenio_search.api import Query
-        query_1 = Query('find a storaci b').search().records()
-        query_1_results = []
-        for record in query_1:
-            query_1_results.append(record.get("control_number"))
-        query_2 = Query('find a storaci b.').search().records()
-        query_2_results = []
-        for record in query_2:
-            query_2_results.append(record.get("control_number"))
+        query_1_results = Query('find a storaci b').search().recids
+        query_2_results = Query('find a storaci b.').search().recids
         self.assertEqual(query_1_results, query_2_results)
 
     def test_update_record_again(self):
