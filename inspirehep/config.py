@@ -148,7 +148,7 @@ BROKER_URL = "amqp://guest:guest@localhost:5672//"
 
 CFG_SITE_LANG = u"en"
 CFG_SITE_LANGS = ['en', ]
-
+TESTING = True
 # CFG_SITE_NAME and main collection name should be the same for empty search
 # to work
 CFG_SITE_NAME = u"HEP"

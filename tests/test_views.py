@@ -20,19 +20,112 @@
 """Tests for views"""
 
 from invenio.testsuite import InvenioTestCase
+from flask import url_for
 
 
 class ViewsTests(InvenioTestCase):
     """Tests views."""
+    def setUp(self):
+        from invenio.config import CFG_SITE_SECURE_URL
+        self.login = self.client.post(
+            url_for('webaccount.login', scheme='https'),
+            base_url=CFG_SITE_SECURE_URL,
+            data=dict(nickname='admin',
+                      password='admin'),
+            follow_redirects=True)
 
-    def test_detailed_records(self):
-        """Test visiting each detailed record returns 200"""
-        from invenio_records.models import Record
-        failing_recids = []
-        for recid in Record.allids():
-            try:
-                if self.client.get("/record/{recid}".format(recid=recid)).status_code != 200:
-                    failing_recids.append(recid)
-            except Exception:
-                failing_recids.append(recid)
-        self.failIf(failing_recids)
+    def tearDown(self):
+        from invenio.config import CFG_SITE_SECURE_URL
+        self.logout = self.client.get(
+            url_for('webaccount.logout'),
+            base_url=CFG_SITE_SECURE_URL,
+            follow_redirects=True)
+
+    # def test_detailed_records(self):
+    #     """Test visiting each detailed record returns 200"""
+    #     from invenio_records.models import Record
+    #     failing_recids = []
+    #     for recid in Record.allids():
+    #         try:
+    #             if self.client.get("/record/{recid}".format(
+    #                     recid=recid)).status_code != 200:
+    #                 failing_recids.append(recid)
+    #         except Exception:
+    #             failing_recids.append(recid)
+    #     self.failIf(failing_recids)
+
+    def test_login(self):
+        """Test visiting login page returns 200"""
+        self.assertEqual(self.login.status_code, 200)
+
+    def test_literature_landing_page(self):
+        """Test visiting literature landing page returns 200"""
+        self.assertEqual(self.client.get("/literature").status_code, 200)
+
+    def test_conferences_landing_page(self):
+        """Test visiting conferences landing page returns 200"""
+        self.assertEqual(self.client.get("/conferences").status_code, 200)
+
+    def test_jobs_landing_page(self):
+        """Test jobs each landing page returns 200"""
+        self.assertEqual(self.client.get("/jobs").status_code, 200)
+
+    def test_institutions_landing_page(self):
+        """Test visiting institutions landing page returns 200"""
+        self.assertEqual(self.client.get("/institutions").status_code, 200)
+
+    def test_experiments_landing_page(self):
+        """Test visiting experiments landing page returns 200"""
+        self.assertEqual(self.client.get("/experiments").status_code, 200)
+
+    def test_journals_landing_page(self):
+        """Test visiting journals landing page returns 200"""
+        self.assertEqual(self.client.get("/journals").status_code, 200)
+
+    def test_author_update(self):
+        """Test visiting author update page returns 200"""
+        self.assertEqual(self.login.status_code, 200)
+        self.assertEqual(self.client.get(
+            "/author/update?recid=997876").status_code, 200)
+
+    def test_author_new(self):
+        """Test visiting author new page returns 200"""
+        self.assertEqual(self.login.status_code, 200)
+        self.assertEqual(self.client.get("/author/new").status_code, 200)
+
+    def test_literature_create(self):
+        """Test visiting submit page returns 200"""
+        self.assertEqual(self.login.status_code, 200)
+        self.assertEqual(self.client.get(
+            "/submit/literature/create").status_code, 200)
+
+    def test_holdingpen_list(self):
+        """Test visiting holdingpen list page returns 200"""
+        self.assertEqual(self.login.status_code, 200)
+        self.assertEqual(self.client.get(
+            "/admin/holdingpen/list").status_code, 200)
+
+    def test_search(self):
+        """Test visiting search page returns 200"""
+        self.assertEqual(self.client.get("/search").status_code, 200)
+        self.assertEqual(self.client.get(
+            "/search?cc=HEP&p=&sf=earliest_date&so=desc&rg=25")
+            .status_code, 200)
+        self.assertEqual(self.client.get(
+            "/search?cc=HEP&p=&sf=citation_count&so=desc&rg=100")
+            .status_code, 200)
+        self.assertEqual(self.client.get(
+            "/search?cc=HEP&p=higgs&action_search=&sf=citation_count&so=desc&rg=100&post_filter=doc_type%3A'peer%20reviewed'")
+            .status_code, 200)
+
+    def test_doi_search(self):
+        """Test visiting doi search page returns 200"""
+        self.assertEqual(self.login.status_code, 200)
+        self.assertEqual(self.client.get(
+            "/doi/search?doi=10.1103/PhysRevLett.54.2580").status_code, 200)
+
+    def test_arxiv_search(self):
+        """Test visiting arxiv search page returns 200"""
+        self.assertEqual(self.login.status_code, 200)
+        self.assertEqual(self.client.get(
+            "/arxiv/search?arxiv=1506.03115").status_code, 200)
