@@ -19,7 +19,7 @@ inveniomanage config set CFG_BIBSCHED_PROCESS_USER `whoami`
 inveniomanage config set PACKAGES_EXCLUDE []  # test all packages
 inveniomanage config set CFG_TMPDIR /tmp
 inveniomanage config set CFG_SITE_URL http://localhost
-inveniomanage config set CFG_SITE_SECURE_URL https://localhost
+inveniomanage config set CFG_SITE_SECURE_URL http://localhost
 inveniomanage config set ASSETS_DEBUG True  # ignore assets issues
 inveniomanage config set LESS_RUN_IN_DEBUG False
 inveniomanage config set REQUIREJS_RUN_IN_DEBUG False
