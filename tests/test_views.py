@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -28,11 +28,9 @@ class ViewsTests(InvenioTestCase):
     def test_detailed_records(self):
         """Test visiting each detailed record returns 200"""
         from invenio_records.models import Record
-        failing_recids = []
+
+        self.login('admin', 'admin')  # To also check restricted records
         for recid in Record.allids():
-            try:
-                if self.client.get("/record/{recid}".format(recid=recid)).status_code != 200:
-                    failing_recids.append(recid)
-            except Exception:
-                failing_recids.append(recid)
-        self.failIf(failing_recids)
+            response = self.client.get("/record/{recid}".format(recid=recid))
+            if response.status_code != 200:
+                raise Exception(response, recid)
