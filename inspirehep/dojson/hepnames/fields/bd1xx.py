@@ -87,7 +87,7 @@ def name(self, key, value):
         'numeration': value.get('b'),
         'title': value.get('c'),
         'status': value.get('g'),
-        'preferred_name': value.get('q'),
+        'preferred_name': utils.force_list(value.get('q')),
     }
 
 
@@ -202,7 +202,14 @@ def dates(self, key, value):
 
 @hepnames.over('private_current_emails', '^595..')
 def private_current_emails(self, key, value):
-    return [x.get('m') for x in value if x.get('m')]
+    private_current_emails = []
+    for x in value:
+        if isinstance(x, dict):
+            if x.get('m'):
+                private_current_emails.append(x.get('m'))
+        else:
+            private_current_emails.append(x)
+    return private_current_emails
 
 
 @hepnames2marc.over('595', '^private_current_emails$')
@@ -224,7 +231,14 @@ def private_current_emails2marc(self, key, value):
 
 @hepnames.over('private_old_emails', '^595..')
 def private_old_emails(self, key, value):
-    return [x.get('o') for x in value if x.get('o')]
+    private_old_emails = []
+    for x in value:
+        if isinstance(x, dict):
+            if x.get('o'):
+                private_old_emails.append(x.get('o'))
+        else:
+            private_old_emails.append(x)
+    return private_old_emails
 
 
 @hepnames2marc.over('595', '^private_old_emails$')
@@ -407,7 +421,14 @@ def _public_note2marc(self, key, value):
 
 @hepnames.over('_private_note', '^595..')
 def _private_note(self, key, value):
-    return [x.get('a') for x in value if x.get('a')]
+    private_note = []
+    for x in value:
+        if isinstance(x, dict):
+            if x.get('a'):
+                private_note.append(x.get('a'))
+        else:
+            private_note.append(x)
+    return private_note
 
 
 @hepnames2marc.over('595', '^_private_note$')

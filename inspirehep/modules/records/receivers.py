@@ -23,11 +23,15 @@ import six
 
 from flask import current_app
 
-from invenio_records.signals import before_record_index
+from invenio_records.signals import (before_record_index,
+                                     before_record_insert,
+                                     before_record_update)
 
 from inspirehep.utils.date import create_valid_date
 from inspirehep.utils.formulas import get_all_unicode_formula_tokens_from_text
 from invenio_base.globals import cfg
+
+from inspirehep.dojson import utils as inspire_dojson_utils
 
 
 @before_record_index.connect
@@ -70,14 +74,9 @@ def populate_inspire_document_type(recid, json, *args, **kwargs):
     inspire_doc_type = []
     collections = []
     if 'collections' in json:
-        for c in json['collections']:
-            if 'primary' in c and c.get('primary', ''):
-                if isinstance(c['primary'], list):
-                    collections.append(', '.join(c['primary']))
-                else:
-                    collections.append(c['primary'])
-        for idx, item in enumerate(collections):
-            collections[idx] = item.lower()
+        for c in json.get('collections', ''):
+            if c.get('primary', ''):
+                collections.append(c.get('primary').lower())
         for element in collections:
             if element == 'published':
                 inspire_doc_type.append(element)
@@ -172,3 +171,16 @@ def references_validator(recid, json, *args, **kwargs):
             # Bad recid! Remove.
             current_app.logger.warning('MALFORMED: recid value found in references of {0}: {1}'.format(recid, ref.get('recid')))
             del ref['recid']
+
+
+@before_record_insert.connect
+@before_record_update.connect
+def clean_dois(sender, *args, **kwargs):
+    filtered_dois = []
+    if 'dois' in sender:
+        for element in sender['dois']:
+            filtered_dois.append(dict(
+                (key, value) for key, value in
+                element.items() if key == 'value'))
+    sender['dois'] = inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
+        filtered_dois)

@@ -32,14 +32,9 @@ def add_book_info(record, blob):
     """Add link to the appropriate book record."""
     collections = []
     if 'collections' in record:
-        for c in record['collections']:
-            if 'primary' in c:
-                if isinstance(c['primary'], list):
-                    collections.append(', '.join(c['primary']))
-                else:
-                    collections.append(c['primary'])
-        for idx, item in enumerate(collections):
-            collections[idx] = item.lower()
+        for c in record.get('collections', ''):
+            if c.get('primary', ''):
+                collections.append(c.get('primary').lower())
         if 'bookchapter' in collections:
             pubinfos = force_list(blob.get("773__", []))
             for pubinfo in pubinfos:

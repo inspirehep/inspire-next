@@ -28,6 +28,8 @@ from inspirehep.dojson import utils as inspire_dojson_utils
 
 from ..model import hep, hep2marc
 
+from inspirehep.dojson.utils import strip_empty_values
+
 
 @hep.over('isbns', '^020..')
 @utils.for_each_value
@@ -55,36 +57,19 @@ def isbns2marc(self, key, value):
 def dois(self, key, value):
     """Other Standard Identifier."""
     value = utils.force_list(value)
-    out = []
+    value = strip_empty_values(value)
+    dois = self.get('dois', [])
     for val in value:
         if val:
-            if isinstance(val.get("2"), list):
-                if val.get("2", '')[0].lower() == "doi":
-                    if isinstance(val.get('a'), list):
-                        for v in val.get('a'):
-                            out.append({
-                                'value': v,
-                                'source': val.get('9')
-                            })
-                    else:
-                        out.append({
-                            'value': val.get('a'),
-                            'source': val.get('9')
-                        })
-            else:
-                if val.get("2", '').lower() == "doi":
-                    if isinstance(val.get('a'), list):
-                        for v in val.get('a'):
-                            out.append({
-                                'value': v,
-                                'source': val.get('9')
-                            })
-                    else:
-                        out.append({
-                            'value': val.get('a'),
-                            'source': val.get('9')
-                        })
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(out)
+            for k, v in val.iteritems():
+                val[k] = utils.force_list(v)
+            if val.get("2") and val.get("2", '')[0].lower() == "doi":
+                for v in val.get('a'):
+                    dois.append({
+                        'value': v,
+                        'source': val.get('9', [''])[0]
+                    })
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(dois)
 
 
 @hep.over('persistent_identifiers', '^024[1032478_][10_]')
@@ -97,14 +82,14 @@ def persistent_identifiers(self, key, value):
             if isinstance(val.get("2"), list):
                 if val.get("2", '')[0].lower() != "doi":
                     out.append({
-                        'value': val.get('a'),
+                        'value': utils.force_list(val.get('a')),
                         'source': val.get('9'),
                         'type': val.get('2')[0]
                     })
             else:
                 if val.get("2", '').lower() != "doi":
                     out.append({
-                        'value': val.get('a'),
+                        'value': utils.force_list(val.get('a')),
                         'source': val.get('9'),
                         'type': val.get('2')
                     })

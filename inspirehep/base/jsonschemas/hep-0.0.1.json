@@ -734,7 +734,8 @@
                     "type": "string",
                     "description": "Special submission ID"
                 }
-            }
+            },
+            "type": "array"
         },
         "collaboration": {
             "uniqueItems": true,
@@ -1146,7 +1147,7 @@
                         "title": "Type of persistent identifier"
                     },
                     "value": {
-                        "type": "string",
+                        "type": "array",
                         "title": "Value of the persistent identifier"
                     }
                 },

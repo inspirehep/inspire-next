@@ -89,8 +89,13 @@
                             "VISITOR",
                             "PD",
                             "PHD",
+                            "PhD",
                             "MAS",
-                            "UG"
+                            "UG",
+                            "Diploma",
+                            "Bachelor",
+                            "smirnov@ictp.it"
+
                         ],
                         "type": "string"
                     },
@@ -317,7 +322,7 @@
             "description": "Contains name information.",
             "properties": {
                 "preferred_name": {
-                    "type": "string"
+                    "type": "array"
                 },
                 "numeration": {
                     "enum": [
