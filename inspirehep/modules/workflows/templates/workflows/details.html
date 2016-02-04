@@ -57,30 +57,66 @@
   </script>
 {%- endblock javascript %}
 
-{%- block workflow_completed -%}
-  {% if bwobject.version == 1 %}
-    <div id="successmessage" class="alert alert-success">
-      {{ _('Workflow completed with success') }}
-      {% if 'url' in bwobject.extra_data %}
-        <a href="{{ bwobject.extra_data.get('url') }}">{{ _('click here ') }}</a> {{ _('to visit the record.') }}
-      {% endif %}
-      <a class="close" data-dismiss="alert">&times;</a>
-    </div>
-  {% elif bwobject.version == 3 %}
-      <div class="alert alert-warning">
-        {{ _('Object is currently processing') }}
+{%- block alerts -%}
+  {%- block action_alert -%}
+    {% if 'message' in bwobject.extra_data and bwobject.get_action() != None %}
+      <div id="usermessage" class="alert alert-warning alert-dismissible">
+        {{ bwobject.extra_data['_message'] }}
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      </div>
+    {% endif %}
+  {%- endblock -%}
+
+  {%- block workflow_completed -%}
+    {% if bwobject.version == 1 %}
+      <div id="successmessage" class="alert alert-success">
+        {{ _('Record ingestion completed') }}
+        {% if 'url' in bwobject.extra_data %}
+          <a href="{{ bwobject.extra_data.get('url') }}">{{ _('click here ') }}</a> {{ _('to visit the record.') }}
+        {% endif %}
         <a class="close" data-dismiss="alert">&times;</a>
       </div>
-  {% endif %}
+    {% elif bwobject.version == 2 %}
+      <div class="alert alert-warning">
+        {{ _('Record is halted - awaiting decision') }}
+        <a class="close" data-dismiss="alert">&times;</a>
+      </div>
+    {% elif bwobject.version == 3 %}
+      <div class="alert alert-warning">
+        {{ _('Record is currently processing') }}
+        <a class="close" data-dismiss="alert">&times;</a>
+      </div>
+    {% elif bwobject.version == 4 %}
+      <div class="alert alert-danger">
+        {{ _('Record has stopped with an error') }}
+        <a class="close" data-dismiss="alert">&times;</a>
+      </div>
+    {% endif %}
+  {%- endblock -%}
 {%- endblock -%}
+
+{% block top_center %}
+
+  {% if bwobject.data.sips and bwobject.data.sips[0].agents|length > 0 %}
+    <div class="navbar-text">
+      <i class="fa fa-user"> {{ bwobject.data.sips[0].agents[0].email_address }}</i>
+    </div>
+  {% endif %}
+
+  {% if bwobject.extra_data.ticket_id %}
+    <div class="navbar-text">
+      <a href="https://rt.inspirehep.net/Ticket/Display.html?id={{ bwobject.extra_data.ticket_id }}">
+        <i class="fa fa-comments-o"> RT-Ticket</i>
+      </a>
+    </div>
+  {% endif %}
+
+{% endblock %}
 
 
 {%- block hp_details_main -%}
 
   {% set submission_data = bwobject.extra_data.get("submission_data") %}
-
-  {{ self.action_alert() }}
-  {{ self.workflow_completed() }}
 
   {% block hp_preview %}
   <div class="row">
@@ -142,55 +178,11 @@
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active"><a href="#task-results" aria-controls="task-results" role="tab" data-toggle="tab">Results</a></li>
-      {% if submission_data %}
+      {% if submission_data.references %}
         <li role="presentation"><a href="#references" aria-controls="references" role="tab" data-toggle="tab">References</a></li>
       {% endif  %}
       <li role="presentation"><a href="#task-logs" aria-controls="task-logs" role="tab" data-toggle="tab">Logs</a></li>
-
-      <!-- Block for the extra information that appear on the tabpanel (ticket, submitter email) -->
-      {% block extra_info %}
-          {% macro get_email() -%}
-            {% if 'sips' in bwobject.data and bwobject.data['sips'][0]['agents']|length > 0 %}
-                <i class="fa fa-user"> {{ bwobject.data['sips'][0]['agents'][0]['email_address'] }}</i>
-            {% endif %}
-          {% endmacro %}
-
-          {% macro get_ticket() -%}
-            <a href="https://rt.inspirehep.net/Ticket/Display.html?id={{ bwobject.extra_data['ticket_id'] }}">
-              <i class="fa fa-comments-o"> RT-Ticket</i>
-            </a>
-          {% endmacro %}
-
-          <!-- Return a list element of the right size and content -->
-          {% macro list_element(size) -%}
-            <div class="col-lg-{{ size }}"> {{ caller() }}</div>
-          {% endmacro %}
-
-
-          <!-- We check what exists, in order to give the right amount of
-          Bootstrap columns to the 2 extra elements  -->
-          <li role="presentation" class="info-in-panel pull-right col-lg-8">
-            <!-- If both exist, 6 columns each -->
-            {% if 'ticket_id' in bwobject.extra_data and 'sips' in bwobject.data %}
-              {% call list_element(6) %}
-                {{ get_ticket() }}
-              {% endcall %}
-              {% call list_element(6) %}
-                {{ get_email() }}
-              {% endcall %}
-
-            <!-- Else, 12 for a single element -->
-            {% elif 'ticket_id' in bwobject.extra_data %}
-              {% call list_element(12) %}
-                {{ get_ticket() }}
-              {% endcall %}
-            {% elif 'sips' in bwobject.data %}
-              {% call list_element(12) %}
-                {{ get_email() }}
-              {% endcall %}
-            {% endif %}
-          </li>
-      {% endblock %}
+      <li role="presentation"><a href="#task-dangerzone" class="text-danger" aria-controls="task-dangerzone" role="tab" data-toggle="tab">Delete Record?</a></li>
     </ul>
 
     <!-- Tab panes -->
@@ -223,7 +215,7 @@
           {% endif %}
         {% endblock %}
       </div>
-      {% if submission_data %}
+      {% if submission_data.references %}
         <div role="tabpanel" class="tab-pane" id="references">
           <pre>{{ submission_data.references }}</pre>
         </div>
@@ -247,9 +239,17 @@
           </div>
         {% endblock %}
       </div>
+
+      <div role="tabpanel" class="tab-pane" id="task-dangerzone">
+        {{ self.danger_zone() }}
+      </div>
     </div>
 
   </div>
   <div id="edit-urls-modal"></div>
   <div id="edit-title-modal"></div>
 {%- endblock -%}
+
+{% block hpbody_details %}
+  {{ self.workflow_error() }}
+{% endblock %}
