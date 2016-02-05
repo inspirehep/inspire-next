@@ -42,3 +42,8 @@ Happy hacking!
 |   Email: admin@inspirehep.net
 |   Twitter: @inspirehep
 |   URL: http://inspirehep.net
+
+
+.. image:: https://badges.gitter.im/inspirehep/inspire-next.svg
+   :alt: Join the chat at https://gitter.im/inspirehep/inspire-next
+   :target: https://gitter.im/inspirehep/inspire-next?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
