@@ -214,6 +214,12 @@
     <subfield code="o">oai:inspirehep.net:1236510</subfield>
     <subfield code="p">INSPIRE:HEP</subfield>
   </datafield>
+  <datafield tag="970" ind1=" " ind2=" ">
+    <subfield code="d">12345</subfield>
+  </datafield>
+  <datafield tag="970" ind1=" " ind2=" ">
+    <subfield code="a">SPIRES-1234123</subfield>
+  </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
     <subfield code="a">Published</subfield>
   </datafield>
@@ -225,6 +231,9 @@
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
     <subfield code="a">arXiv</subfield>
+  </datafield>
+  <datafield tag="981" ind1=" " ind2=" ">
+    <subfield code="a">123</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
     <subfield code="o">1</subfield>
