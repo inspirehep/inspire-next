@@ -18,8 +18,10 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 import re
-
+import datetime
 import time
+
+from flask import session
 
 from inspirehep.ext.jinja_filters.general import apply_template_on_array
 
@@ -396,5 +398,21 @@ def setup_app(app):
 
     @app.template_filter()
     def number_of_search_results(query, collection_name):
+        """
+        Filter used to show total number of results out of filtered ones.
+        """
+        session_key = 'last-query' + query + collection_name
+        if session.get(session_key):
+            query_timestamp = session[session_key]['timestamp']
+            seconds_since_query = (datetime.datetime.utcnow() - query_timestamp).total_seconds()
+            if seconds_since_query < 300:
+                # Only use the session value if it is newer than 5 minutes
+                # This should allow for the common use case of navigating
+                # facets and avoid using an outdated value when using a direct
+                # link
+                return session[session_key][
+                    "number_of_hits"
+                ]
+        # Replay the Query to get total number of hits
         return len(Query("%s" % (query,)).
                    search(collection=collection_name))
