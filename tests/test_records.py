@@ -59,7 +59,7 @@ class RecordsTest(InvenioTestCase):
         rec = Record.get_record(self.test_recid)
         assert rec["languages"] == ["Norwegian"]
 
-    def test_doted_author_search(self):
+    def test_dotted_author_search(self):
         from invenio_search.api import Query
         query_1_results = Query('find a storaci b').search().recids
         query_2_results = Query('find a storaci b.').search().recids
@@ -68,3 +68,16 @@ class RecordsTest(InvenioTestCase):
     def test_update_record_again(self):
         """Test updating record again to make sure tearDown does the right thing."""
         self.test_update_record()
+
+    def test_facets_experiments(self):
+        """Test if misspelled experiments are corrected."""
+        from invenio_ext.es import es
+        record = es.get(index='hep', id='480267')
+        source = record.get("_source")
+        exp = source.get("accelerator_experiments")
+        # Gets misspelled experiment
+        experiment = exp[0].get("experiment")
+        # This should contain the corected experiment name
+        facet_experiment = exp[0].get("facet_experiment")
+        self.assertEqual(experiment, "CERN-LHC-LHCB")
+        self.assertEqual(facet_experiment, [["CERN-LHC-LHCb"]])
