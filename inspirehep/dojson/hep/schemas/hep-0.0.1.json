@@ -969,6 +969,19 @@
             "description": "Whether this document can be cited. FIXME: can this be derived from other properties?",
             "title": "Citeable?"
         },
+        "deleted_recids": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "List of deleted recids referring to this record",
+            "title": "Deleted Records"
+        },
+        "new_recid": {
+            "type": "string",
+            "description": "Master record that replaces this record",
+            "title": "New recid"
+        },
         "license": {
             "uniqueItems": true,
             "items": {

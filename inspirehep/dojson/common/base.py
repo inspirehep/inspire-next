@@ -157,20 +157,59 @@ def creation_modification_date2marc(self, key, value):
 @journals.over('spires_sysnos', '^970..')
 @hepnames.over('spires_sysnos', '^970..')
 @jobs.over('spires_sysnos', '^970..')
-@utils.for_each_value
+@utils.ignore_value
 def spires_sysnos(self, key, value):
     """Old SPIRES number."""
-    return value.get('a')
+    value = utils.force_list(value)
+    sysnos = []
+    for val in value:
+        if 'a' in val:
+            # Only append if there is something
+            sysnos.append(val.get('a'))
+    return sysnos or None
 
 
 @hep2marc.over('970', 'spires_sysnos')
 @hepnames2marc.over('970', 'spires_sysnos')
-@utils.for_each_value
 def spires_sysnos2marc(self, key, value):
     """Old SPIRES number."""
-    return {
-        'a': value
-    }
+    # Special handing of shared end key in 970 with new_recid
+    value = utils.force_list(value)
+    existing_values = self.get('970', [])
+    existing_values.extend(
+        [{'a': val} for val in value]
+    )
+    return existing_values
+
+
+@hep.over('new_recid', '^970..')
+@conferences.over('new_recid', '^970..')
+@institutions.over('new_recid', '^970..')
+@experiments.over('new_recid', '^970..')
+@journals.over('new_recid', '^970..')
+@hepnames.over('new_recid', '^970..')
+@jobs.over('new_recid', '^970..')
+@utils.ignore_value
+def new_recid(self, key, value):
+    """Reference to new recid."""
+    value = utils.force_list(value)
+    for val in value:
+        if 'd' in val:
+            # Only return if there is a d subfield, otherwise let the loop go.
+            return val.get('d')
+
+
+@hep2marc.over('970', 'new_recid')
+@hepnames2marc.over('970', 'new_recid')
+def new_recid2marc(self, key, value):
+    """New recid."""
+    # Special handing of shared end key in 970 with spires_sysnos
+    value = utils.force_list(value)
+    existing_values = self.get('970', [])
+    existing_values.extend(
+        [{'d': val} for val in value]
+    )
+    return existing_values
 
 
 @hep.over('collections', '^980..')
@@ -204,20 +243,18 @@ def collections2marc(self, key, value):
     }
 
 
-@hep.over('deleted_recid', '^981..')
-@conferences.over('deleted_recid', '^981..')
-@institutions.over('deleted_recid', '^981..')
-@experiments.over('deleted_recid', '^981..')
-@journals.over('deleted_recid', '^981..')
-@hepnames.over('deleted_recid', '^981..')
-@jobs.over('deleted_recid', '^981..')
+@hep.over('deleted_recids', '^981..')
+@conferences.over('deleted_recids', '^981..')
+@institutions.over('deleted_recids', '^981..')
+@experiments.over('deleted_recids', '^981..')
+@journals.over('deleted_recids', '^981..')
+@hepnames.over('deleted_recids', '^981..')
+@jobs.over('deleted_recids', '^981..')
 @utils.for_each_value
-@utils.filter_values
-def deleted_recid(self, key, value):
-    """Collection this record belongs to."""
-    return {
-        'deleted_recid': value.get('a'),
-    }
+@utils.ignore_value
+def deleted_recids(self, key, value):
+    """Recid of deleted record this record is master for."""
+    return value.get('a')
 
 
 @hep.over('fft', '^FFT..')
@@ -256,12 +293,12 @@ def fft2marc(self, key, value):
     }
 
 
-@hep2marc.over('981', 'deleted_recid')
-@hepnames2marc.over('981', 'deleted_recid')
+@hep2marc.over('981', 'deleted_recids')
+@hepnames2marc.over('981', 'deleted_recids')
 @utils.for_each_value
 @utils.filter_values
-def deleted_recid2marc(self, key, value):
-    """Collection this record belongs to."""
+def deleted_recids2marc(self, key, value):
+    """Deleted recids."""
     return {
-        'a': value.get('deleted_recid'),
+        'a': value
     }
