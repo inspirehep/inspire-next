@@ -8,6 +8,7 @@
     "grunt-jsbeautifier": "~0.2.7"
   },
   "dependencies": {
-    "time-grunt": "*"
+    "time-grunt": "*",
+    "mathoid": "~0.3.0"
   }
 }
