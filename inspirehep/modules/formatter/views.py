@@ -27,7 +27,7 @@ from inspirehep.utils.latex import Latex
 from inspirehep.utils.cv_latex import Cv_latex
 from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
 
-from invenio_records.api import get_record
+from invenio_ext.es import es
 
 from invenio_base.decorators import wash_arguments
 
@@ -49,7 +49,7 @@ blueprint = Blueprint(
 @blueprint.route('/bibtex', methods=['GET', ])
 @wash_arguments({'recid': (int, 0)})
 def get_bibtex(recid):
-    record = get_record(recid)
+    record = es.get_source(index='hep', id=recid, doc_type='record')
     bibtex = Bibtex(record).format()
     return jsonify({"result": bibtex, "recid": recid})
 
@@ -58,14 +58,14 @@ def get_bibtex(recid):
 @wash_arguments({'recid': (int, 0),
                  'latex_format': (text_type, "")})
 def get_latex(recid, latex_format):
-    record = get_record(recid)
+    record = es.get_source(index='hep', id=recid, doc_type='record')
     latex = Latex(record, latex_format).format()
     return jsonify({"result": latex, "recid": recid})
 
 
 @blueprint.route("/download-bibtex/<int:recid>")
 def get_bibtex_file(recid):
-    record = get_record(recid)
+    record = es.get_source(index='hep', id=recid, doc_type='record')
     results = Bibtex(record).format()
     generator = (cell for row in results
                  for cell in row)
@@ -77,7 +77,7 @@ def get_bibtex_file(recid):
 
 @blueprint.route("/download-latex/<path:latex_format>/<int:recid>")
 def get_latex_file(recid, latex_format):
-    record = get_record(recid)
+    record = es.get_source(index='hep', id=recid, doc_type='record')
     results = Latex(record, latex_format).format()
     generator = (cell for row in results
                  for cell in row)
@@ -106,8 +106,8 @@ def export_as(ids, export_format):
     if len(ids) > cfg['EXPORT_LIMIT']:
         ids = ids[:cfg['EXPORT_LIMIT']]
     out = []
-    for id in ids:
-        record = get_record(id)
+    for idx in ids:
+        record = es.get_source(index='hep', id=idx, doc_type='record')
         if export_format == 'bibtex':
             results = Bibtex(record).format() + '\n' * 2
         elif export_format in ('latex_eu', 'latex_us'):

@@ -126,7 +126,7 @@ class Export(object):
                     'report_numbers'][0]['value'].upper()
                 cite_line = '%%CITATION = ' + cite_element + ';%%'
         else:
-            cite_element = str(self.record['recid'])
+            cite_element = str(self.record['control_number'])
             cite_line = '%%CITATION = ' + 'INSPIRE-' + \
                 cite_element + ';%%'
         return cite_line

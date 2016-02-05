@@ -261,7 +261,7 @@ class Bibtex(Export):
         """Returns record key"""
         key = ''
         if not self._get_citation_key():
-            key = self.record['recid']
+            key = self.record['control_number']
         return key
 
     def _get_author(self):
