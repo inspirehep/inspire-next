@@ -46,12 +46,12 @@
       {% for subject in aggs['subject']['buckets'] %}
       <div class="checkbox checkbox-facets">
         <label>
-          {%- set is_checked = 'checked' if 'subject' in filtered_facets
-              and subject['key'] in filtered_facets['subject']['inc'] -%}
+          {%- set is_checked = 'checked' if 'facet_inspire_subjects' in filtered_facets
+              and subject['key'] in filtered_facets['facet_inspire_subjects']['inc'] -%}
           <input class="include-facet"
                 type="checkbox"
                 {{is_checked}}
-                name="subject" value="{{ subject['key'] }}">
+                name="facet_inspire_subjects" value="{{ subject['key'] }}">
           <span class="facet-title-truncate">{{ subject['key'] }}</span>
           <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ subject['doc_count'] }}</span>
         </label>

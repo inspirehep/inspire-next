@@ -333,7 +333,6 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "title": ["titles.title", "titles.title.raw^2",
               "title_translation.title", "title_variation",
               "title_translation.subtitle", "titles.subtitle"],
-    "subject": ["facet_inspire_subjects"],
     "cnum": ["publication_info.cnum"],
     "980": [
         "collections.primary",
