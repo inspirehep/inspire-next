@@ -17,11 +17,7 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-"""dojson related utilities."""
-
-from invenio_utils.date import datetime
-
-from dateutil.parser import parse
+"""DoJSON related utilities."""
 
 import six
 
@@ -92,22 +88,8 @@ def create_profile_url(profile_id):
         return ''
 
 
-def create_valid_date(date):
-    """Add '01' as a value of missing month and/or day values."""
-    try:
-        valid_date = parse(six.text_type(date), default=datetime(
-            year=1990,
-            month=1,
-            day=1)).strftime("%Y-%m-%d")
-    except ValueError:
-        valid_date = ''
-
-    return valid_date
-
-
 def strip_empty_values(obj):
     """Recursively strips empty values."""
-
     if isinstance(obj, dict):
         for key, value in obj.items():
             value = strip_empty_values(value)

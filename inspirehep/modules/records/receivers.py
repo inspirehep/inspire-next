@@ -17,7 +17,15 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
+"""Pre-record receivers."""
+
+import six
+
+from flask import current_app
+
 from invenio_records.signals import before_record_index
+
+from inspirehep.utils.date import create_valid_date
 from inspirehep.utils.formulas import get_all_unicode_formula_tokens_from_text
 
 
@@ -129,3 +137,29 @@ def match_valid_experiments(recid, json, *args, **kwargs):
                         facet_experiment = exp.get("experiment")
                     facet_experiments_list.append(facet_experiment)
                 exp.update({"facet_experiment": [facet_experiments_list]})
+
+
+@before_record_index.connect
+def dates_validator(recid, json, *args, **kwargs):
+    """Find and assign the correct dates in a record."""
+    dates_to_check = ['opening_date', 'closing_date', 'deadline_date']
+    for date_key in dates_to_check:
+        if date_key in json:
+            valid_date = create_valid_date(json[date_key])
+            if valid_date != json[date_key]:
+                current_app.logger.warning(
+                    'MALFORMED: {0} value in {1}: {3}'.format(
+                        date_key, recid, json[date_key]
+                    )
+                )
+            json[date_key] = valid_date
+
+
+@before_record_index.connect
+def references_validator(recid, json, *args, **kwargs):
+    """Find and assign the correct references in a record."""
+    for ref in json.get('references', []):
+        if ref.get('recid') and not six.text_type(ref.get('recid')).isdigit():
+            # Bad recid! Remove.
+            current_app.logger.warning('MALFORMED: recid value found in references of {0}: {1}'.format(recid, ref.get('recid')))
+            del ref['recid']
