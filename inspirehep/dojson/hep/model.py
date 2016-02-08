@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,9 +22,10 @@
 
 """HEP model definition."""
 
-import types
 from dojson import Overdo
 from dojson.utils import force_list
+
+from ..schema import SchemaOverdo
 
 
 def add_book_info(record, blob):
@@ -41,13 +42,12 @@ def add_book_info(record, blob):
                     }
 
 
-def custom_do(self, blob):
-    """Custom do function that allows extra post-processing."""
-    record = self._do(blob)
-    add_book_info(record, blob)
-    return record
+class Publication(SchemaOverdo):
 
-hep = Overdo()
-hep._do = hep.do
-hep.do = types.MethodType(custom_do, hep)
+    def do(self, blob):
+        output = super(Publication, self).do(blob)
+        add_book_info(output, blob)
+        return output
+
+hep = Publication(schema="hep-0.0.1.json")
 hep2marc = Overdo()

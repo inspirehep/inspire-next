@@ -33,6 +33,8 @@ from dojson.contrib.marc21.utils import create_record as marc_create_record
 
 from flask import current_app
 
+from jsonschema import ValidationError
+
 from inspirehep.dojson.conferences import conferences
 from inspirehep.dojson.experiments import experiments
 from inspirehep.dojson.hep import hep, hep2marc
@@ -65,7 +67,11 @@ from invenio_workflows.models import (
 from six import string_types, text_type
 
 from .models import InspireProdRecords
-from .utils import rename_object_action, reset_workflow_object_states
+from .utils import (
+    rename_object_action,
+    reset_workflow_object_states,
+    validate
+)
 
 
 logger = get_task_logger(__name__)
@@ -144,14 +150,14 @@ def migrate(source, broken_output=None, dry_run=False, wait_for_results=False):
     disable_queue("celery")
 
     for i, chunk in enumerate(chunker(split_stream(fd), CHUNK_SIZE)):
-            print("Processed {} records".format(i * CHUNK_SIZE))
-            chunk_broken_output = None
-            if broken_output:
-                chunk_broken_output = "{}-{}".format(broken_output, i)
-            if wait_for_results:
-                tasks.append(migrate_chunk.s(chunk, chunk_broken_output, dry_run))
-            else:
-                migrate_chunk.delay(chunk, chunk_broken_output, dry_run)
+        print("Processed {} records".format(i * CHUNK_SIZE))
+        chunk_broken_output = None
+        if broken_output:
+            chunk_broken_output = "{}-{}".format(broken_output, i)
+        if wait_for_results:
+            tasks.append(migrate_chunk.s(chunk, chunk_broken_output, dry_run))
+        else:
+            migrate_chunk.delay(chunk, chunk_broken_output, dry_run)
 
     if wait_for_results:
         job = TaskSet(tasks=tasks)
@@ -170,6 +176,7 @@ def continuous_migration():
     from redis import StrictRedis
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
+
     try:
         while r.llen('legacy_records'):
             raw_record = r.lpop('legacy_records')
@@ -183,9 +190,13 @@ def continuous_migration():
                 prod_record.marcxml = raw_record
                 try:
                     with db.session.begin_nested():
-                        recid, dummy = create_record(recid, record, force=True)
+                        errors, recid, dummy = create_record(
+                            recid, record, force=True, validation=True
+                        )
                         logger.info("Successfully migrated record {}".format(recid))
                         prod_record.successful = True
+                        prod_record.valid = not errors
+                        prod_record.errors = errors
                         db.session.merge(prod_record)
                 except Exception as err:
                     logger.error("Error when migrating record {}".format(recid))
@@ -225,8 +236,12 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
             prod_record.marcxml = raw_record
             try:
                 with db.session.begin_nested():
-                    recid, json = create_record(recid, record, force=True,
-                                                dry_run=dry_run)
+                    errors, recid, json = create_record(
+                        recid, record, force=True,
+                        dry_run=dry_run, validation=True
+                    )
+                    prod_record.valid = not errors
+                    prod_record.errors = errors
                     index = get_record_index(json) or \
                         cfg['SEARCH_ELASTIC_DEFAULT_INDEX']
                     before_record_index.send(recid, json=json, index=index)
@@ -313,7 +328,10 @@ def add_citation_counts():
     logger.info("... DONE: {} records updated with success. {} failures.".format(success, failed))
 
 
-def create_record(recid, record, force=False, dry_run=False):
+def create_record(recid, record, force=False, dry_run=False, validation=False):
+    """Create record from marc21 model."""
+    errors = ""
+
     if _collection_in_record(record, 'institution'):
         json = strip_empty_values(institutions.do(record))
     elif _collection_in_record(record, 'experiment'):
@@ -329,8 +347,16 @@ def create_record(recid, record, force=False, dry_run=False):
         json = strip_empty_values(conferences.do(record))
     else:
         json = strip_empty_values(hep.do(record))
+
+    if validation:
+        try:
+            validate(json)
+        except ValidationError as err:
+            errors = "ValidationError: Record {0}: {1}".format(recid, err)
+            current_app.logger.warning(errors)
+
     if dry_run:
-        return recid, json
+        return errors, recid, json
 
     if force and any(key in json for key in ('control_number', 'recid')):
         try:
@@ -350,7 +376,7 @@ def create_record(recid, record, force=False, dry_run=False):
                 record = Record(json, model=record.model)
                 record.commit()
         logger.info("Elaborated record {}".format(control_number))
-        return control_number, dict(record)
+        return errors, control_number, dict(record)
 
 
 @celery.task(ignore_result=True)

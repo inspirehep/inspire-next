@@ -22,8 +22,30 @@
 
 from __future__ import absolute_import, print_function
 
+from jsonschema import validate as json_validate
+
+from invenio_utils.memoise import memoize
+
 from invenio_workflows.models import ObjectVersion
 from invenio_workflows.registry import workflows
+
+from invenio_jsonschemas.api import get_schema_data, get_schemas
+
+
+@memoize
+def load_schemas():
+    """Load JSON schemas available."""
+    out = {}
+    for s in get_schemas():
+        out[s] = get_schema_data(s)
+    return out
+
+
+def validate(record):
+    """Validate $schema in JSON record."""
+    schema = record.pop('$schema', None)
+    if schema:
+        json_validate(record, load_schemas().get(schema))
 
 
 def rename_object_action(obj):

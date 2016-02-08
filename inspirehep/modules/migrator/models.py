@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -33,6 +33,8 @@ class InspireProdRecords(db.Model):
     last_updated = db.Column(db.DateTime, default=datetime.now, nullable=False, index=True)
     _marcxml = db.Column('marcxml', db.LargeBinary, nullable=False)
     successful = db.Column(db.Boolean, default=None, nullable=True, index=True)
+    valid = db.Column(db.Boolean, default=None, nullable=True, index=True)
+    errors = db.Column(db.Text(), nullable=True)
 
     @hybrid_property
     def marcxml(self):

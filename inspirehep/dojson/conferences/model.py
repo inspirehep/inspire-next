@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 
 """Conferences model definition."""
 
-from dojson import Overdo
-from dojson import utils
+from ..schema import SchemaOverdo
 
-conferences = Overdo()
+conferences = SchemaOverdo(schema="conferences-0.0.1.json")

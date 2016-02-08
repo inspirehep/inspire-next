@@ -55,6 +55,7 @@ requirements = [
     'invenio-upgrader==0.2.0',
     'invenio-webhooks==0.1.0',
     'invenio_classifier==0.1.0',
+    'invenio_jsonschemas==0.1.0',
     'librabbitmq>=1.6.1',
     'dojson==0.4.0',
 ]
