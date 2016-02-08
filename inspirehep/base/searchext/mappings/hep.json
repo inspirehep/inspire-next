@@ -290,15 +290,15 @@
                 },
                 "date_and_time_of_latest_transaction": {
                     "type": "date",
-                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S"
+                    "format": "yyyyMMddHHmmss||yyyyMMddHHmmss.S"
                 },
                 "date": {
                     "type": "date",
-                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S||dd MM yyyy||dd MMM yyyy||MMM yyyy||MMM yyyy?||yyyy ('repr'.1964.)"
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd"
                 },
                 "earliest_date": {
                     "type": "date",
-                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyy-MM-dd||yyyyMMddHHmmss||yyyyMMddHHmmss.S||dd MM yyyy||dd MMM yyyy||MMM yyyy||MMM yyyy?||yyyy ('repr'.1964.)"
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd"
                 },
                 "institution": {
                     "type": "object",

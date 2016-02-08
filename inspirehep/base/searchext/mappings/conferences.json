@@ -94,7 +94,7 @@
                 },
                 "opening_date": {
                     "type": "date",
-                    "format": "date",
+                    "format": "yyyy||yyyy-MM||yyyy-MM-dd",
                     "copy_to": ["conferenceautocomplete"]
                 },
                 "cnum": {
