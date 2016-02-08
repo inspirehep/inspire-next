@@ -65,12 +65,11 @@
     {% set authors = record.authors %}
     {% if not collaboration_displayed %}
       {% for author in authors[0:number_of_displayed_authors] %}
-        <small>{{ sep() }}</small>
-        <small class="text-left">{{ render_author_names(author, show_affiliation = True ) }}</small>
+        {{ sep() }}
+        {{ render_author_names(author, show_affiliation = True ) }}
       {% endfor %}
     {% endif %}
     {% if (record.authors | length > number_of_displayed_authors) %}
-      <small>
         {% if is_brief %}
           {% if not collaboration_displayed %}
             <i>et al.</i>
@@ -78,11 +77,10 @@
             ({{ render_author_names(authors[0], show_affiliation = True) }} <i>et al.</i>)
           {% endif %}
         {% else %}
-          <a id="authors-show-more" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
+          <a id="authors-show-more" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
             Show {{ record.authors | count }} authors & affiliations
           </a>
         {% endif %}
-      </small>
     {% else %}
         {% if not is_brief and show_affiliations %}
           {% set affiliations_exist = [] %}
@@ -93,14 +91,11 @@
           {% endfor %}
         {% endif %}
         {% if affiliations_exist %}
-          <small>
-            <a id="authors-show-more" class="text-muted" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
+            <a id="authors-show-more" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
               Show affiliations
             </a>
-          </small>
         {% endif %}
     {% endif %}
-
     {% if show_affiliations %}
       <div class="modal fade authors-modal" id="authors_{{ record['control_number'] }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">

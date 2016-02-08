@@ -83,6 +83,7 @@ hr {
 
     .custom-h {
         margin-top: 0;
+        font-size: 16px;
     }
 
     .eprint, .authors {
@@ -161,7 +162,7 @@ hr {
     font-size: 13px;
 
     h4 {
-        font-size: 17px;
+        font-size: 16px;
     }
 
     input.include-facet {
@@ -201,22 +202,24 @@ hr {
     }
 }
 
-.facet-label {
-    background-color: #edf3f3;
-    color: #7e8d8e;
-}
+.facet-container {
+    color: @grey;
 
-.facet-label.label-primary {
-    background-color: #32495E;
-    color: #fff;
+    .facet-label {
+        background-color: #edf3f3;
+        color: #7e8d8e;
+        letter-spacing: 0.04em;
+    }
+
+    .facet-label.label-primary {
+        background-color: #32495E;
+        color: #fff;
+        letter-spacing: 0.04em;
+    }
 }
 
 .total-results {
     color:#e57e25;
-}
-
-.results-wrapper {
-    font-size: 15px;
 }
 
 #panel-form-group {
@@ -437,3 +440,10 @@ i.fa-chevron-right.facet-slider {
     color: @journals-collection;
 }
 
+.brief-record-details {
+    font-size: 13px;
+}
+
+.authors {
+    color: @grey;
+}

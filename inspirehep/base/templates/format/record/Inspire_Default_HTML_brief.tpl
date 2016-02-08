@@ -40,6 +40,7 @@
                       {{ render_record_title() }}
                     </a>
                 </h4>
+                <div class="brief-record-details">
                 <div class="authors">
                   {{ render_record_authors(is_brief=true, show_affiliations=false) }}
                   {% if record.get('earliest_date') %}
@@ -87,6 +88,7 @@
                 {% if record.get('abstracts') %}
                     {{ record_abstract(is_brief=true) }}
                 {% endif %}
+              </div>
               </div>
             </div>
           </div>
