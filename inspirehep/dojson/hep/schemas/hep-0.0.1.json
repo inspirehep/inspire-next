@@ -245,6 +245,18 @@
             "type": "array",
             "description": "FIXME: Old 247, shall it still have its own field?"
         },
+        "edition": {
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "edition": {
+                        "type": "string"
+                    }
+                }
+            },
+            "type": "array"
+        },
         "thesis_supervisor": {
             "uniqueItems": true,
             "items": {
@@ -341,6 +353,9 @@
                     },
                     "value": {
                         "type": "string"
+                    },
+                    "cds": {
+                        "type": "string"  
                     }
                 }
             },
@@ -396,6 +411,15 @@
                     "page_artid": {
                         "type": "string",
                         "description": "FIXME: for ejournals this could be the page index, but there is no realiable way to know whether something is a page index or a first page, does it?"
+                    },
+                    "conf_acronym": {
+                        "type": "string"
+                    },
+                    "confpaper_info": {
+                        "type": "string"
+                    },
+                    "isbn": {
+                        "type": "string"  
                     }
                 }
             },
@@ -495,11 +519,9 @@
                 "statement": {
                     "type": "string",
                     "description": "FIXME: What's that? there are all sorts of usages on production!"
-                },
-                "year": {
-                    "type": "integer"
                 }
-            }
+            },
+            "type": "array"
         },
         "subject_terms": {
             "uniqueItems": true,
@@ -539,7 +561,7 @@
             "items": {
                 "type": "object",
                 "properties": {
-                    "scheme": {
+                    "classification_scheme": {
                         "enum": [
                             "INSPIRE",
                             "JACoW"
@@ -645,25 +667,29 @@
                     "type": "string",
                     "description": "Title of the book series"
                 }
-            }
+            },
+            "type": "array"
         },
         "refextract": {
-            "type": "object",
-            "properties": {
-                "comment": {
-                    "type": "string"
-                },
-                "time": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
-                },
-                "source": {
-                    "type": "string"
+            "items": {
+                "type": "object",
+                "properties": {
+                    "comment": {
+                        "type": "string"
+                    },
+                    "time": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "source": {
+                        "type": "string"
+                    }
                 }
             },
-            "description": "Technical information from a refextract run"
+            "description": "Technical information from a refextract run",
+            "type": "array"
         },
         "oai_pmh": {
             "type": "object",
@@ -723,7 +749,15 @@
         "collaboration": {
             "uniqueItems": true,
             "items": {
-                "type": "string"
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string"
+                    },
+                    "recid": {
+                        "type": "integer"
+                    }
+                }
             },
             "type": "array"
         },
@@ -889,6 +923,10 @@
                         ],
                         "type": "string",
                         "title": "Standard"
+                    },
+                    "source": {
+                        "type": "string",
+                        "title": "Source"
                     }
                 },
                 "title": "Classification number"
@@ -905,16 +943,6 @@
                         "type": "string",
                         "description": "Issuing of DOI. FIXME: should we have an enum",
                         "title": "DOI registrant"
-                    },
-                    "qualifying_information": {
-                        "enum": [
-                            "Erratum",
-                            "Addendum",
-                            "ebook",
-                            "Corrigendum"
-                        ],
-                        "type": "string",
-                        "title": "Qualifying information"
                     },
                     "value": {
                         "pattern": "10\\.\\d+(\\.\\d+)?/.+",
@@ -1020,9 +1048,12 @@
             }
         },
         "page_nr": {
-            "type": "string",
-            "description": "FIXME: shall it be integer perhaps?",
-            "title": "Number of pages"
+            "type": "array",
+            "items": {
+                "type": "string",
+                "description": "FIXME: shall it be integer perhaps?",
+                "title": "Number of pages"
+            }
         },
         "urls": {
             "uniqueItems": true,
@@ -1050,6 +1081,12 @@
                     "size": {
                         "type": "integer",
                         "title": "Size"
+                    },
+                    "comment": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
                     }
                 },
                 "title": "URL"
