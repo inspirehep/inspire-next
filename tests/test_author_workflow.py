@@ -38,10 +38,22 @@ class AuthorWorkflowTests(InvenioTestCase):
                 'tests',
                 os.path.join(
                     'fixtures',
-                    'test_author_form_converted.json'
+                    'test_author_workflow_form_converted.json'
                 )
             )
         )
+
+        self.test_author_form_final_marcxml = pkg_resources.resource_string(
+                'tests',
+                os.path.join(
+                    'fixtures',
+                    'test_author_workflow_final_marcxml.xml'
+                )
+            )
+
+        class MockLog(object):
+            def info(self, msg):
+                self.msg = msg
 
         class MockObj(object):
             def __init__(self):
@@ -51,7 +63,7 @@ class AuthorWorkflowTests(InvenioTestCase):
                         'tests',
                         os.path.join(
                             'fixtures',
-                            'test_author_form.json'
+                            'test_author_workflow_filled_form.json'
                         )
                     )
                 )
@@ -76,6 +88,10 @@ class AuthorWorkflowTests(InvenioTestCase):
             def model(self):
                 return 'banana'
 
+            @property
+            def log(self):
+                return MockLog()
+
         class MockWorkflowDefinition(object):
             def model(self, obj):
                 return obj.model
@@ -91,6 +107,7 @@ class AuthorWorkflowTests(InvenioTestCase):
     def test_form_dojson_data_model_conversion(self):
         """Test if the form data gets converted properly to dojson."""
         from inspirehep.modules.authors.tasks import convert_data_to_model
+        from inspirehep.modules.authors.tasks import create_marcxml_record
 
         obj = self.MockObj()
         eng = self.MockEng()
@@ -101,4 +118,15 @@ class AuthorWorkflowTests(InvenioTestCase):
 
         del obj.data['acquisition_source']['date']
 
+        # Make sure the author form JSON got properly converted to a
+        # XML export friendly JSON
         self.assertEqual(obj.data, self.test_author_form_converted)
+
+        f = create_marcxml_record()
+        f(obj, eng)
+
+        # Now make sure that the produced MARCXML is correct
+        self.assertEqual(
+            obj.extra_data["marcxml"],
+            self.test_author_form_final_marcxml
+        )
