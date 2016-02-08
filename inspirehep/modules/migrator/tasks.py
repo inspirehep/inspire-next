@@ -165,22 +165,36 @@ def migrate(source, broken_output=None, dry_run=False, wait_for_results=False):
 
 
 @celery.task(ignore_result=True)
-def continuos_migration():
-    """Task to continuosly migrate what is pushed up by Legacy."""
+def continuous_migration():
+    """Task to continuously migrate what is pushed up by Legacy."""
     from redis import StrictRedis
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
-    while r.llen('legacy_records'):
-        try:
-            record = r.lpop('legacy_records')
-            if record:
+    try:
+        while r.llen('legacy_records'):
+            raw_record = r.lpop('legacy_records')
+            if raw_record:
                 # The record might be None, in case a parallel
-                # continuos_migration task has already consumed the queue.
-                record = zlib.decompress(record)
-                recid, dummy = create_record(record, force=True)
-                logger.info("Successfully migrated record {}".format(recid))
-        finally:
-            db.session.close()
+                # continuous_migration task has already consumed the queue.
+                raw_record = zlib.decompress(raw_record)
+                record = marc_create_record(raw_record)
+                recid = int(record['001'][0])
+                prod_record = InspireProdRecords(recid=recid)
+                prod_record.marcxml = raw_record
+                try:
+                    with db.session.begin_nested():
+                        recid, dummy = create_record(recid, record, force=True)
+                        logger.info("Successfully migrated record {}".format(recid))
+                        prod_record.successful = True
+                        db.session.merge(prod_record)
+                except Exception as err:
+                    logger.error("Error when migrating record {}".format(recid))
+                    logger.exception(err)
+                    prod_record.successful = False
+                    db.session.merge(prod_record)
+    finally:
+        db.session.commit()
+        db.session.close()
 
 
 @celery.task(ignore_result=False, compress='zlib', acks_late=True)
@@ -203,23 +217,29 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
 
     records_to_index = []
     try:
-        for record in chunk:
-            recid = json = None
+        for raw_record in chunk:
+            json = None
+            record = marc_create_record(raw_record)
+            recid = int(record['001'][0])
+            prod_record = InspireProdRecords(recid=recid)
+            prod_record.marcxml = raw_record
             try:
-                recid, json = create_record(record,
-                                            force=True, dry_run=dry_run)
-                index = get_record_index(json) or \
-                    cfg['SEARCH_ELASTIC_DEFAULT_INDEX']
-                before_record_index.send(recid, json=json, index=index)
-                json.update({'_index': index, '_type': 'record', '_id': recid, 'citation_count': 0})
-                records_to_index.append(json)
+                with db.session.begin_nested():
+                    recid, json = create_record(recid, record, force=True,
+                                                dry_run=dry_run)
+                    index = get_record_index(json) or \
+                        cfg['SEARCH_ELASTIC_DEFAULT_INDEX']
+                    before_record_index.send(recid, json=json, index=index)
+                    json.update({'_index': index, '_type': 'record',
+                                 '_id': recid, 'citation_count': 0})
+                    records_to_index.append(json)
+                    prod_record.successful = True
+                    db.session.merge(prod_record)
             except Exception as err:
                 logger.error("ERROR with record {} and json {}".format(recid, json))
                 logger.exception(err)
-                if broken_output:
-                    broken_output_fd = open(broken_output, "a")
-                    print(record, file=broken_output_fd)
-
+                prod_record.successful = False
+                db.session.merge(prod_record)
         logger.info("Committing chunk")
         db.session.commit()
         logger.info("Sending chunk to elasticsearch")
@@ -293,40 +313,33 @@ def add_citation_counts():
     logger.info("... DONE: {} records updated with success. {} failures.".format(success, failed))
 
 
-def create_record(data, force=False, dry_run=False):
-    record = marc_create_record(data)
-    recid = None
-    if '001' in record:
-        recid = int(record['001'][0])
-    if not dry_run and recid:
-        prod_record = InspireProdRecords(recid=recid)
-        prod_record.marcxml = data
-    try:
-        if _collection_in_record(record, 'institution'):
-            json = strip_empty_values(institutions.do(record))
-        elif _collection_in_record(record, 'experiment'):
-            json = strip_empty_values(experiments.do(record))
-        elif _collection_in_record(record, 'journals'):
-            json = strip_empty_values(journals.do(record))
-        elif _collection_in_record(record, 'hepnames'):
-            json = strip_empty_values(hepnames.do(record))
-        elif _collection_in_record(record, 'job') or \
-                _collection_in_record(record, 'jobhidden'):
-            json = strip_empty_values(jobs.do(record))
-        elif _collection_in_record(record, 'conferences'):
-            json = strip_empty_values(conferences.do(record))
-        else:
-            json = strip_empty_values(hep.do(record))
-        if dry_run:
-            return recid, json
+def create_record(recid, record, force=False, dry_run=False):
+    if _collection_in_record(record, 'institution'):
+        json = strip_empty_values(institutions.do(record))
+    elif _collection_in_record(record, 'experiment'):
+        json = strip_empty_values(experiments.do(record))
+    elif _collection_in_record(record, 'journals'):
+        json = strip_empty_values(journals.do(record))
+    elif _collection_in_record(record, 'hepnames'):
+        json = strip_empty_values(hepnames.do(record))
+    elif _collection_in_record(record, 'job') or \
+            _collection_in_record(record, 'jobhidden'):
+        json = strip_empty_values(jobs.do(record))
+    elif _collection_in_record(record, 'conferences'):
+        json = strip_empty_values(conferences.do(record))
+    else:
+        json = strip_empty_values(hep.do(record))
+    if dry_run:
+        return recid, json
 
-        if force and any(key in json for key in ('control_number', 'recid')):
-            try:
-                control_number = json['control_number']
-            except KeyError:
-                control_number = json['recid']
-            control_number = int(control_number)
-            # Searches if record already exists.
+    if force and any(key in json for key in ('control_number', 'recid')):
+        try:
+            control_number = json['control_number']
+        except KeyError:
+            control_number = json['recid']
+        control_number = int(control_number)
+        # Searches if record already exists.
+        with db.session.begin_nested():
             record = Record.get_record(control_number)
             if record is None:
                 # Adds the record to the db session.
@@ -336,17 +349,8 @@ def create_record(data, force=False, dry_run=False):
             else:
                 record = Record(json, model=record.model)
                 record.commit()
-            if recid:
-                prod_record.successful = True
-                db.session.merge(prod_record)
-            logger.info("Elaborated record {}".format(control_number))
-            return control_number, dict(record)
-    except Exception:
-        if recid:
-            prod_record.successful = False
-            db.session.merge(prod_record)
-            logger.exception("Error in elaborating record ID {}".format(recid))
-        raise
+        logger.info("Elaborated record {}".format(control_number))
+        return control_number, dict(record)
 
 
 @celery.task(ignore_result=True)
