@@ -264,7 +264,8 @@
           <li><a class="pointer latex_us" id="latex_us{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(US)</a></li>
         </ul>
       </div> -->
-        <a class="btn btn-default pull-right" href="/search?p=refersto:{{record['control_number']}}&cc=HEP">View in Search Results</a>
+        <a class="btn btn-default pull-right" href="/search?p=refersto:{{record['control_number']}}&cc=HEP">
+            View all {% if record.get('citation_count', 0) > 0  %} {{ record.get('citation_count', '') }} {% endif %} citations</a>
       </div>
     </div>
   </div>
