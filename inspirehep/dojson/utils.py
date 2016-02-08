@@ -63,18 +63,19 @@ def legacy_export_as_marc(json, tabsize=4):
                 export += ['\t<datafield tag="%s" ind1="%s" '
                            'ind2="%s">\n'.expandtabs(tabsize)
                            % (tag, ind1, ind2)]
-                for code, subfieldvalue in six.iteritems(field):
-                    if subfieldvalue:
-                        if isinstance(subfieldvalue, list):
-                            for val in subfieldvalue:
+                if field:
+                    for code, subfieldvalue in six.iteritems(field):
+                        if subfieldvalue:
+                            if isinstance(subfieldvalue, list):
+                                for val in subfieldvalue:
+                                    export += ['\t\t<subfield code="%s">%s'
+                                               '</subfield>\n'.expandtabs(tabsize)
+                                               % (code, encode_for_marcxml(val))]
+                            else:
                                 export += ['\t\t<subfield code="%s">%s'
                                            '</subfield>\n'.expandtabs(tabsize)
-                                           % (code, encode_for_marcxml(val))]
-                        else:
-                            export += ['\t\t<subfield code="%s">%s'
-                                       '</subfield>\n'.expandtabs(tabsize)
-                                       % (code,
-                                          encode_for_marcxml(subfieldvalue))]
+                                           % (code,
+                                              encode_for_marcxml(subfieldvalue))]
                 export += ['\t</datafield>\n'.expandtabs(tabsize)]
     export += ['</record>\n']
     return "".join(export)

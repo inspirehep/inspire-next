@@ -82,6 +82,9 @@
         <subfield code="e">339830</subfield>
     </datafield>
     <datafield tag="595" ind1=" " ind2=" ">
+        <subfield code="a">This is a hidden note</subfield>
+    </datafield>
+    <datafield tag="595" ind1=" " ind2=" ">
         <subfield code="m">abdessel@math.univ-paris13.fr</subfield>
         <subfield code="o">craig.aalseth@pnl.gov</subfield>
     </datafield>

@@ -198,39 +198,47 @@ def dates(self, key, value):
 
 
 @hepnames.over('private_current_emails', '^595..')
-@utils.for_each_value
 def private_current_emails(self, key, value):
-    return value.get('m')
+    return [x.get('m') for x in value if x.get('m')]
 
 
-@hepnames2marc.over('595_', '^private_current_emails$')
-@utils.for_each_value
+@hepnames2marc.over('595', '^private_current_emails$')
 def private_current_emails2marc(self, key, value):
-    val = {
-        'm': value
-    }
+    value = utils.force_list(value)
+    out = []
+    for item in value:
+        if item:
+            out.append({
+                'm': item
+            })
+
     if '595' in self:
-        self['595'].append(val)
+        self['595'].extend(out)
     else:
-        self['595'] = [val]
+        self['595'] = out
+    return self['595']
 
 
 @hepnames.over('private_old_emails', '^595..')
-@utils.for_each_value
 def private_old_emails(self, key, value):
-    return value.get('o')
+    return [x.get('o') for x in value if x.get('o')]
 
 
-@hepnames2marc.over('595_', '^private_old_emails$')
-@utils.for_each_value
+@hepnames2marc.over('595', '^private_old_emails$')
 def private_old_emails2marc(self, key, value):
-    val = {
-        'o': value
-    }
+    value = utils.force_list(value)
+    out = []
+    for item in value:
+        if item:
+            out.append({
+                'o': item
+            })
+
     if '595' in self:
-        self['595'].append(val)
+        self['595'].extend(out)
     else:
-        self['595'] = [val]
+        self['595'] = out
+    return self['595']
 
 
 @hepnames.over('positions', '^371..')
@@ -388,21 +396,25 @@ def _public_note2marc(self, key, value):
 
 
 @hepnames.over('_private_note', '^595..')
-@utils.for_each_value
 def _private_note(self, key, value):
-    return value.get('a')
+    return [x.get('a') for x in value if x.get('a')]
 
 
-@hepnames2marc.over('595_', '^_private_note$')
-@utils.for_each_value
+@hepnames2marc.over('595', '^_private_note$')
 def _private_note2marc(self, key, value):
-    val = {
-        'a': value
-    }
+    value = utils.force_list(value)
+    out = []
+    for item in value:
+        if item:
+            out.append({
+                'a': item
+            })
+
     if '595' in self:
-        self['595'].append(val)
+        self['595'].extend(out)
     else:
-        self['595'] = [val]
+        self['595'] = out
+    return self['595']
 
 
 @hepnames.over('_curators_note', '^667..')

@@ -147,6 +147,11 @@ class HepNamesRecordsTests(InvenioTestCase):
         self.assertEqual(self.marcxml_to_json['private_old_emails'][0],
                          self.json_to_marc['595'][0]['o'])
 
+    def test_private_notes(self):
+        """Test if private_notes is created correctly."""
+        self.assertEqual(self.marcxml_to_json['_private_note'][0],
+                         self.json_to_marc['595'][2]['a'])
+
     def test_prizes(self):
         """Test if prizes is created correctly."""
         self.assertEqual(self.marcxml_to_json['prizes'][0],
