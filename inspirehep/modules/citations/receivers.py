@@ -19,6 +19,8 @@
 
 """Signal receivers for dealing with citation count."""
 
+import six
+
 from invenio_records.signals import (
     after_record_insert,
     before_record_index,
@@ -36,7 +38,8 @@ def catch_citations_insert(sender, *args, **kwargs):
     """
     records_to_recompute = []
     if 'references' in sender:
-        records_to_recompute = [ref['recid'] for ref in sender['references'] if ref.get('recid')]
+        records_to_recompute = [ref['recid'] for ref in sender['references']
+                                if ref.get('recid') and six.text_type(ref.get('recid')).isdigit()]
 
     if records_to_recompute:
         # countdown added as it takes a while before an indexed record can be accessed from es
@@ -70,12 +73,12 @@ def catch_citations_update(recid, json, index, **kwargs):
         refs_before_update = [
             ref['recid']
             for ref in current_record.get('references', [])
-            if ref.get('recid')
+            if ref.get('recid') and six.text_type(ref.get('recid')).isdigit()
         ]
         refs_after_update = [
             ref['recid']
             for ref in json.get('references', [])
-            if ref.get('recid')
+            if ref.get('recid') and six.text_type(ref.get('recid')).isdigit()
         ]
         refs_diff = list(set(refs_before_update) ^ set(refs_after_update))
 

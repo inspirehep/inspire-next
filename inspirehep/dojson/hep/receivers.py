@@ -19,7 +19,7 @@
 
 """Contains signal receivers for HEP dojson processing."""
 
-from inspirehep.dojson import utils as inspire_dojson_utils
+from inspirehep.utils.date import create_earliest_date
 
 from invenio_records.signals import (
     before_record_insert,
@@ -48,9 +48,6 @@ def earliest_date(sender, *args, **kwargs):
             if 'year' in publication_info_key:
                 dates.append(publication_info_key['year'])
 
-    # Sort dates and pick the first one.
-    dates.sort()
-
-    if dates:
-        sender['earliest_date'] = \
-            inspire_dojson_utils.create_valid_date(dates[0])
+    earliest_date = create_earliest_date(dates)
+    if earliest_date:
+        sender['earliest_date'] = earliest_date
