@@ -31,6 +31,11 @@ language: python
 python:
   - 2.7
 
+env:
+  - PYTEST="tests/test_views.py"
+  - PYTEST="tests/test_workflows.py"
+  - PYTEST="--ignore tests/test_views.py --ignore tests/test_workflows.py"
+
 before_install:
   - "travis_retry pip install --upgrade pip"
   - "travis_retry pip install check-manifest mock twine wheel coveralls"
@@ -39,7 +44,8 @@ install:
   - docker ps
 
 script:
-  - docker run -v `pwd`:`pwd` inspirehep/inspire:next /bin/bash -c "cd `pwd` && ./install.sh && python setup.py test"
+  - docker run -v `pwd`:`pwd` inspirehep/inspire:next /bin/bash -c "cd `pwd` && ./install.sh && python setup.py test --pytest=\"$PYTEST\""
 
 after_success:
   - coveralls
+
