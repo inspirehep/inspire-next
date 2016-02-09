@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 # Install mathoid
-npm install -g mathoid
+npm install mathoid
 
 # Run mathoid
-/usr/lib/node_modules/mathoid/server.js -c /usr/lib/node_modules/mathoid/config.dev.yaml &
+node_modules/mathoid/server.js -c mathoid.config.yaml &
 
 # Run services
 service mysql start
@@ -26,6 +26,8 @@ inveniomanage config set PACKAGES_EXCLUDE []  # test all packages
 inveniomanage config set CFG_TMPDIR /tmp
 inveniomanage config set CFG_SITE_URL http://localhost
 inveniomanage config set CFG_SITE_SECURE_URL http://localhost
+inveniomanage config set MATHOID_SERVER http://localhost:10044
+
 inveniomanage config set ASSETS_DEBUG True  # ignore assets issues
 inveniomanage config set LESS_RUN_IN_DEBUG False
 inveniomanage config set REQUIREJS_RUN_IN_DEBUG False
