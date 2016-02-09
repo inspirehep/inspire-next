@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of Invenio.
+# This file is part of INSPIRE.
 # Copyright (C) 2014, 2015, 2016 CERN.
 #
-# Invenio is free software; you can redistribute it and/or
+# INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
-# Invenio is distributed in the hope that it will be useful, but
+# INSPIRE is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Invenio; if not, write to the Free Software Foundation, Inc.,
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 import re
@@ -26,11 +26,9 @@ from flask import session
 from inspirehep.ext.jinja_filters.general import apply_template_on_array
 
 from inspirehep.utils.bibtex import Bibtex
-from inspirehep.utils.citations import Citation
 from inspirehep.utils.cv_latex import Cv_latex
 from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
 from inspirehep.utils.latex import Latex
-from inspirehep.utils.references import Reference
 
 from invenio_base.globals import cfg
 
@@ -136,14 +134,6 @@ def setup_app(app):
     @app.template_filter()
     def latex(record, latex_format):
         return Latex(record, latex_format).format()
-
-    @app.template_filter()
-    def references(record):
-        return Reference(record).references()
-
-    @app.template_filter()
-    def citations(record):
-        return Citation(record).citations()
 
     @app.template_filter()
     def cv_latex(record):
@@ -458,3 +448,7 @@ def setup_app(app):
     def split_author_name(name):
         new_name = name.split(',')
         return ' '.join(reversed(new_name))
+
+    @app.template_filter()
+    def long_timeout(timeout):
+        return 5184000  # 60 days

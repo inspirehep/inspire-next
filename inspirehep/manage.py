@@ -3,32 +3,37 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2015, 2016 CERN.
 #
-# INSPIRE is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-#
-# In applying this license, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as an Intergovernmental Organization
-# or submit itself to any jurisdiction.
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 """Manage INSPIRE instance."""
 
 from __future__ import print_function
 
-import click
 import json
+
 import sys
 
 from time import sleep
+
+import click
+
+from flask_script import prompt_choices
+
+from inspirehep.ext.cache_manager import cache_manager
+
+from invenio_base.globals import cfg
 
 from invenio_ext.es import es
 from invenio_ext.script import Manager
@@ -205,3 +210,25 @@ def recreate_index(name, mapping, rebuild=False, delete_old=True):
         es.indices.create(index=name + "_v1", body=mapping)
         es.indices.put_alias(index=name + "_v1", name=name)
     return True
+
+
+@manager.option('-c', '--cache', dest='cache_name',
+                default=None,
+                help='Name of the cached view type to invalidate.')
+def invalidate_cache(cache_name):
+    """Invalidate cache of certain type e.g. brief, citation etc."""
+    possible_caches = cfg['CACHED_VIEWS'].keys() + ['all']
+    how_many_invalidated = 0
+
+    if cache_name not in possible_caches:
+        cache_name = prompt_choices(name="Choose cache view you want to invalidate: ", choices=possible_caches)
+    if cache_name == 'all':
+        click.echo('Removing all cached views...')
+        how_many_invalidated = cache_manager.invalidate_all_cached_views()
+        click.echo('Invalidated {count} cached views.'.format(count=how_many_invalidated))
+    elif cache_name in possible_caches:
+        click.echo('Removing {cache_type} view...'.format(cache_type=cache_name))
+        how_many_invalidated = cache_manager.invalidate_all_certain_views(cache_name)
+        click.echo('Invalidated {count} cached views.'.format(count=how_many_invalidated))
+    else:
+        click.echo('Chosen cached view does not exist.')

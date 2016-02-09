@@ -72,6 +72,8 @@ EXTENSIONS = [
     'inspirehep.ext.jinja_filters.general',
     'inspirehep.ext.jinja_filters.record',
     'inspirehep.ext.redis.client',
+    'inspirehep.ext.cache_manager.cache',
+    'inspirehep.ext.cache_manager.manager',
     'inspirehep.ext.deprecation_warnings:disable_deprecation_warnings',
     'inspirehep.ext.error_pages',
 ]
@@ -596,3 +598,16 @@ WORKFLOWS_HOLDING_PEN_ES_PROPERTIES = {
 }
 """Updates default properties that should be added to the Holding Pen index
 mappings."""
+
+CACHED_VIEWS = {
+    'record_oneline': {
+        'type': 'jinja_cache',
+        'template_name': 'record_oneline',
+        'kwargs': ['recid']
+    },
+    'record_brief': {
+        'type': 'jinja_cache',
+        'template_name': 'record_brief',
+        'kwargs': ['recid']
+    }
+}
