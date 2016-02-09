@@ -40,6 +40,26 @@
     <hr />
   </div>
   {% endif %}
+  {% if 'formulas' in aggs and aggs['formulas']['buckets'] %}
+    <h4 id="filter-by-formulas" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Formulas</h4>
+    <div class="facet-container" id="facet-doc_type">
+    {% for formulas in aggs['formulas']['buckets'] %}
+    <div class="checkbox checkbox-facets">
+      <label>
+        {%- set is_checked = 'checked' if 'formulas' in filtered_facets
+            and formulas['key'] in filtered_facets['formulas']['inc'] -%}
+        <input class="include-facet"
+              type="checkbox"
+              {{is_checked}}
+              name="formulas" value="{{ formulas['key'] }}">
+        <span class="facet-title-truncate">{{ formulas['key'] }}</span>
+        <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ formulas['doc_count'] }}</span>
+      </label>
+    </div>
+    {% endfor %}
+    <hr />
+  </div>
+  {% endif %}
   {% if 'subject' in aggs and aggs['subject']['buckets'] %}
     <h4 id="filter-by-subject" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Subject</h4>
     <div class="facet-container" id="facet-subject">

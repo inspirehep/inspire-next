@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Install mathoid
+npm install -g mathoid
+
+# Run mathoid
+/usr/lib/node_modules/mathoid/server.js -c /usr/lib/node_modules/mathoid/config.dev.yaml &
+
 # Run services
 service mysql start
 service redis-server start
@@ -35,6 +41,7 @@ inveniomanage config set LESS_BIN false      # false is /usr/bin/false
 inveniomanage config set REQUIREJS_BIN false
 inveniomanage config set UGLIFYJS_BIN false
 inveniomanage config set ASSETS_AUTO_BUILD False
+
 
 # Database configuration
 inveniomanage database init --user=root --password= --yes-i-know || echo ':('

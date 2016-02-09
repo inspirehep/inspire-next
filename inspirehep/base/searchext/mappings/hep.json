@@ -391,6 +391,10 @@
                     "type": "string",
                     "index": "not_analyzed",
                     "copy_to": ["doc_type"]
+                },
+                "facet_formulas": {
+                    "type": "string",
+                    "index": "not_analyzed"
                 }
             }
         }

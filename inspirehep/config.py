@@ -211,6 +211,8 @@ ORCID_APP_CREDENTIALS = dict(
     consumer_secret="changeme",
 )
 
+MATHOID_SERVER = "http://localhost:10044"
+
 CFG_WEBSEARCH_SYNONYM_KBRS = {
     'journal': ['JOURNALS', 'leading_to_comma'],
     'collection': ['COLLECTION', 'exact'],
@@ -321,6 +323,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "collection": ["_collections"],
     "doi": ["dois.value"],
     "doc_type": ["facet_inspire_doc_type"],
+    "formulas": ["facet_formulas"],
     "affiliation": ["authors.affiliations.value", "corporate_author"],
     "reportnumber": ["report_numbers.value", "arxiv_eprints.value"],
     "refersto": ["references.recid"],
@@ -405,6 +408,11 @@ SEARCH_ELASTIC_AGGREGATIONS = {
         "doc_type": {
             "terms": {
                 "field": "facet_inspire_doc_type"
+            }
+        },
+        "formulas": {
+            "terms": {
+                "field": "facet_formulas"
             }
         },
         "author": {
