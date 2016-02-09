@@ -51,7 +51,6 @@
             {% if record.get('dois') %}
               {{ record_doi() }}
             {% endif %}
-            <br/>
             {% if record.get('arxiv_eprints') %}
               {{ record_arxiv(is_brief=false) }}
             {% endif %}
