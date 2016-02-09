@@ -24,14 +24,21 @@
 
 from __future__ import print_function
 
-import click
 import json
 import sys
-
 from time import sleep
-
+import click
+from elasticsearch.helpers import streaming_bulk
+from invenio_base.globals import cfg
 from invenio_ext.es import es
 from invenio_ext.script import Manager
+from invenio_records.models import RecordMetadata
+from invenio_records.signals import before_record_index
+from invenio_records.tasks.index import get_record_index
+from invenio_search.registry import mappings
+from invenio_workflows.models import BibWorkflowObject
+from inspirehep.modules.migrator.tasks import reindex_holdingpen_object
+
 
 manager = Manager(usage=__doc__)
 
@@ -39,8 +46,6 @@ manager = Manager(usage=__doc__)
 @manager.command
 def reindexhp():
     """Reindex all Holding Pen objects."""
-    from invenio_workflows.models import BibWorkflowObject
-    from inspirehep.modules.migrator.tasks import reindex_holdingpen_object
 
     query = BibWorkflowObject.query.with_entities(BibWorkflowObject.id).filter(
         BibWorkflowObject.id_parent == None).all()  # noqa
@@ -63,8 +68,15 @@ def reindexhp():
 @manager.command
 def reindex():
     """Reindex all records."""
-    from invenio_records.models import RecordMetadata
-    from invenio_records.tasks.index import index_record
+
+    def process_a_record(obj):
+        recid = obj.id
+        json = obj.json
+        index = get_record_index(json) or \
+            cfg['SEARCH_ELASTIC_DEFAULT_INDEX']
+        before_record_index.send(recid, json=json, index=index)
+        action = {'index': {'_index': index, '_id': recid, '_type': 'record'}}
+        return action, json
 
     query = RecordMetadata.query.all()
     click.echo(
@@ -75,8 +87,12 @@ def reindex():
     click.echo()
 
     with click.progressbar(query) as record_objects:
-        for obj in record_objects:
-            index_record(obj.id, obj.json)
+        for ok, data in streaming_bulk(es, record_objects,
+                                       raise_on_error=False,
+                                       raise_on_exception=False,
+                                       expand_action_callback=process_a_record):
+            if not ok:
+                click.echo("ERROR while indexing: {}".format(data), err=True)
 
     click.echo()
     click.echo(click.style('DONE', fg='green'))
@@ -100,8 +116,6 @@ def reindex():
                 help='Specific name of an index to recreate/rebuild.')
 def create_indices(rebuild=False, holdingpen=True, delete_old=False, index_name=None):
     """Create or recreate the indices for records and holdingpen."""
-    from invenio.base.globals import cfg
-    from invenio_search.registry import mappings
 
     if rebuild:
         plugins = [plugin['name'] for plugin in es.nodes.info()['nodes'].values()[0]['plugins']]
@@ -141,7 +155,6 @@ def create_indices(rebuild=False, holdingpen=True, delete_old=False, index_name=
 @manager.command
 def delete_indices():
     """Delete all the indices for records and holdingpen."""
-    from invenio.base.globals import cfg
 
     indices = set(cfg["SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING"].values())
     indices.add(cfg['SEARCH_ELASTIC_DEFAULT_INDEX'])
