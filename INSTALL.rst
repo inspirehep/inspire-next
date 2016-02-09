@@ -246,6 +246,7 @@ to monitor the *Celery* tasks.
 
     (invenio)$ pip install honcho flower
     (invenio)$ cdvirtualenv src/inspire-next
+    (invenio)$ npm install
     (invenio)$ honcho start
 
 You can now proceed to initialize the database and create the related tables:

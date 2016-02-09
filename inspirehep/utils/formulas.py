@@ -96,7 +96,7 @@ def splitter(formula):
         return [formula] + [splitter(component) for component in formula.split(u'→')]
     if u'/' in formula:
         return [formula] + [splitter(component) for component in formula.split(u'/')]
-    return [formula]
+    return [formula] if formula else []
 
 
 def parenthesizer(formula):

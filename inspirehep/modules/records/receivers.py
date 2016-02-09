@@ -27,6 +27,7 @@ from invenio_records.signals import before_record_index
 
 from inspirehep.utils.date import create_valid_date
 from inspirehep.utils.formulas import get_all_unicode_formula_tokens_from_text
+from invenio_base.globals import cfg
 
 
 @before_record_index.connect
@@ -35,6 +36,8 @@ def populate_formulas(recid, json, *args, **kwargs):
     Extract all useful LaTeX/MathML formulas from title/abstract and add it
     to the facet_formulas facet.
     """
+    if not cfg.get("MATHOID_SERVER"):
+        return
     formulas = set()
     for title in json.get('titles', []):
         if 'title' in title:

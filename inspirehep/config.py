@@ -213,7 +213,7 @@ ORCID_APP_CREDENTIALS = dict(
     consumer_secret="changeme",
 )
 
-MATHOID_SERVER = "http://localhost:10044"
+MATHOID_SERVER = ""  # "http://localhost:10044"
 
 CFG_WEBSEARCH_SYNONYM_KBRS = {
     'journal': ['JOURNALS', 'leading_to_comma'],
