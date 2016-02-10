@@ -47,11 +47,9 @@
                 <div class="brief-record-details">
                 <div class="authors">
                   {{ render_record_authors(is_brief=true, show_affiliations=false) }}
-                  {% if record.get('earliest_date') %}
-                    <span id="record-date">
-                      - {{ record.get('earliest_date').split('-')[0] }}
-                    </span>
-                  {% endif %}
+                  <span id="record-date">
+                    - {{ record.get('earliest_date')|format_date }}
+                  </span>
                 </div>
                 <div class="row">
                   {% if pub_info['pub_info'] and record.get('dois') %}

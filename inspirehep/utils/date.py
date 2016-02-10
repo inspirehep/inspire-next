@@ -87,3 +87,19 @@ def create_valid_date(date, date_format_full="%Y-%m-%d",
                 except ValueError:
                     pass
     return valid_date
+
+
+def create_datestruct(datetext):
+    """
+    Create a datestruct out of a date text in format YYYY-MM-dd
+    :param datetext: date from record
+    :type datetext: str
+    :returns: tuple of 1 or more integers, up to max (year, month, day).
+        Otherwise None.
+    """
+    if isinstance(datetext, int):
+        datetext = unicode(datetext)
+    if not datetext or not isinstance(datetext, six.string_types):
+        return None
+    datetext = datetext.strip()
+    return tuple([int(component) for component in datetext.split('-')])

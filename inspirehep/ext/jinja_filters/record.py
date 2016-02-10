@@ -518,3 +518,28 @@ def setup_app(app):
                         template="format/record/Conference_info_macros.tpl",
                         ctx=ctx)
         return result
+
+    @app.template_filter()
+    def format_date(datetext):
+        """Display date in human readable form from available metadata."""
+        from inspirehep.utils.date import create_datestruct
+        from invenio_utils.date import convert_datestruct_to_dategui
+
+        datestruct = create_datestruct(datetext)
+
+        if datestruct:
+            dummy_time = (0, 0, 44, 2, 320, 0)
+            if len(datestruct) == 3:
+                datestruct = datestruct + dummy_time
+                date = convert_datestruct_to_dategui(
+                    datestruct, output_format="MMM d, Y"
+                )
+                return date
+            elif len(datestruct) == 2:
+                datestruct = datestruct + (1,) + dummy_time
+                date = convert_datestruct_to_dategui(
+                    datestruct, output_format="MMM Y"
+                )
+                return date
+            elif len(datestruct) == 1:
+                return datestruct[0]
