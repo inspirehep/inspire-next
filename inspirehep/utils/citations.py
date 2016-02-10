@@ -38,8 +38,7 @@ def render_citations(recid):
     row = []
     es_query = Query('refersto:' + str(recid)).search()
     es_query.body.update({
-        'sort': [{'citation_count': {'order': 'desc'}}],
-        'size': 9999
+        'sort': [{'citation_count': {'order': 'desc'}}]
     })
     citations = es_query.records()
 
