@@ -55,44 +55,49 @@ def json_to_marc(marcxml_to_json):
     return hep2marc.do(marcxml_to_json)
 
 
+def test_schema_present(marcxml_to_json):
+    """Test if $schema is created correctly."""
+    assert marcxml_to_json['$schema']
+
+
 def test_isbns(marcxml_to_json, json_to_marc):
-    """Test if isbns is created correctly"""
+    """Test if isbns is created correctly."""
     assert marcxml_to_json['isbns'][0]['value'] == json_to_marc['020'][0]['a']
     assert marcxml_to_json['isbns'][0]['medium'] == json_to_marc['020'][0]['b']
 
 
 def test_dois(marcxml_to_json, json_to_marc):
-    """Test if dois is created correctly"""
+    """Test if dois is created correctly."""
     assert (marcxml_to_json['dois'][0]['value'] in
             [p.get('a') for p in json_to_marc['024'] if 'a' in p])
 
 
 def test_spires_sysnos(marcxml_to_json, json_to_marc):
-    """Test if spires_sysnos is created correctly"""
+    """Test if spires_sysnos is created correctly."""
     assert (marcxml_to_json['spires_sysnos'][0] in
             [p.get('a') for p in json_to_marc['970'] if 'a' in p])
 
 
 def test_deleted_recids(marcxml_to_json, json_to_marc):
-    """Test if deleted_recids is created correctly"""
+    """Test if deleted_recids is created correctly."""
     assert (marcxml_to_json['deleted_recids'][0] in
             [p.get('a') for p in json_to_marc['981'] if 'a' in p])
 
 
 def test_new_recid(marcxml_to_json, json_to_marc):
-    """Test if deleted_recids is created correctly"""
+    """Test if deleted_recids is created correctly."""
     assert (marcxml_to_json['new_recid'] in
             [p.get('d') for p in json_to_marc['970'] if 'd' in p])
 
 
 def test_persistent_identifiers(marcxml_to_json, json_to_marc):
-    """Test if persistent_identifiers is created correctly"""
+    """Test if persistent_identifiers is created correctly."""
     assert (marcxml_to_json['persistent_identifiers'][0]['value'] in
             [p.get('a') for p in json_to_marc['024'] if 'a' in p])
 
 
 def test_external_system_numbers(marcxml_to_json, json_to_marc):
-    """Test if system control number is created correctly"""
+    """Test if system control number is created correctly."""
     assert (marcxml_to_json['external_system_numbers'][0]['institute'] ==
             json_to_marc['035'][0]['9'])
     assert (marcxml_to_json['external_system_numbers'][0]['value'] ==
@@ -102,7 +107,7 @@ def test_external_system_numbers(marcxml_to_json, json_to_marc):
 
 
 def test_report_numbers(marcxml_to_json, json_to_marc):
-    """Test if report number is created correctly"""
+    """Test if report number is created correctly."""
     assert (marcxml_to_json['report_numbers'][0]['source'] in
             [a.get('9') for a in json_to_marc['037'] if '9' in a])
     assert (marcxml_to_json['report_numbers'][0]['value'] in
@@ -110,7 +115,7 @@ def test_report_numbers(marcxml_to_json, json_to_marc):
 
 
 def test_arxiv_eprints(marcxml_to_json, json_to_marc):
-    """Test if arxiv eprints is created correctly"""
+    """Test if arxiv eprints is created correctly."""
     assert (marcxml_to_json['arxiv_eprints'][0]['categories'] ==
             [c.get('c')[0] for c in json_to_marc['037'] if 'c' in c])
     assert (marcxml_to_json['arxiv_eprints'][0]['value'] in
@@ -118,12 +123,12 @@ def test_arxiv_eprints(marcxml_to_json, json_to_marc):
 
 
 def test_languages(marcxml_to_json, json_to_marc):
-    """Test if languages is created correctly"""
+    """Test if languages is created correctly."""
     assert marcxml_to_json['languages'][0] == json_to_marc['041'][0]['a']
 
 
 def test_classification_number(marcxml_to_json, json_to_marc):
-    """Test if classification_number is created correctly"""
+    """Test if classification_number is created correctly."""
     for index, val in enumerate(
             marcxml_to_json['classification_number']):
         assert (val['classification_number'],
@@ -135,7 +140,7 @@ def test_classification_number(marcxml_to_json, json_to_marc):
 
 
 def test_authors(marcxml_to_json, json_to_marc):
-    """Test if authors are created correctly"""
+    """Test if authors are created correctly."""
     assert (marcxml_to_json['authors'][0]['full_name'],
             json_to_marc['100']['a'])
     assert (marcxml_to_json['authors'][0]['role'],
@@ -160,20 +165,20 @@ def test_authors(marcxml_to_json, json_to_marc):
 
 
 def test_corporate_author(marcxml_to_json, json_to_marc):
-    """Test if corporate_author is created correctly"""
+    """Test if corporate_author is created correctly."""
     assert (marcxml_to_json['corporate_author'][0],
             json_to_marc['110'][0]['a'])
 
 
 def test_title_variation(marcxml_to_json, json_to_marc):
-    """Test if title_variation is created correctly"""
+    """Test if title_variation is created correctly."""
     assert (marcxml_to_json['title_variation']
             [0],
             json_to_marc['210'][0]['a'])
 
 
 def test_title_translation(marcxml_to_json, json_to_marc):
-    """Test if title_translation is created correctly"""
+    """Test if title_translation is created correctly."""
     assert (marcxml_to_json['title_translation']
             [0]['title'],
             json_to_marc['242'][0]['a'])
@@ -183,19 +188,19 @@ def test_title_translation(marcxml_to_json, json_to_marc):
 
 
 def test_title(marcxml_to_json, json_to_marc):
-    """Test if title is created correctly"""
+    """Test if title is created correctly."""
     assert (marcxml_to_json['titles'][1]['title'],
             json_to_marc['245'][0]['a'])
 
 
 def test_breadcrumb_title(marcxml_to_json, json_to_marc):
-    """Test if breadcrumb title is created correctly"""
+    """Test if breadcrumb title is created correctly."""
     titles = [d.get('a') for d in json_to_marc['245']]
     assert (marcxml_to_json['breadcrumb_title'] in titles)
 
 
 def test_title_arxiv(marcxml_to_json, json_to_marc):
-    """Test if title arxiv is created correctly"""
+    """Test if title arxiv is created correctly."""
     def get(key):
         return [d.get(key) for d in marcxml_to_json['titles']]
 
@@ -205,7 +210,7 @@ def test_title_arxiv(marcxml_to_json, json_to_marc):
 
 
 def test_titles_old(marcxml_to_json, json_to_marc):
-    """Test if titles_old is created correctly"""
+    """Test if titles_old is created correctly."""
     assert (marcxml_to_json['titles_old'][0]['source'],
             json_to_marc['247'][0]['9'])
     assert (marcxml_to_json['titles_old'][0]['subtitle'],
@@ -215,7 +220,7 @@ def test_titles_old(marcxml_to_json, json_to_marc):
 
 
 def test_imprints(marcxml_to_json, json_to_marc):
-    """Test if imprints is created correctly"""
+    """Test if imprints is created correctly."""
     assert (marcxml_to_json['imprints'][0]['place'],
             json_to_marc['260'][0]['a'])
     assert (marcxml_to_json['imprints'][0]['publisher'],
@@ -225,19 +230,19 @@ def test_imprints(marcxml_to_json, json_to_marc):
 
 
 def test_preprint_date(marcxml_to_json, json_to_marc):
-    """Test if preprint_date is created correctly"""
+    """Test if preprint_date is created correctly."""
     assert (marcxml_to_json['preprint_date'],
             json_to_marc['269'][0]['c'])
 
 
 def test_page_nr(marcxml_to_json, json_to_marc):
-    """Test if page_nr is created correctly"""
+    """Test if page_nr is created correctly."""
     assert (marcxml_to_json['page_nr'][0],
             json_to_marc['300'][0]['a'])
 
 
 def test_book_series(marcxml_to_json, json_to_marc):
-    """Test if book_series is created correctly"""
+    """Test if book_series is created correctly."""
     assert (marcxml_to_json['book_series'][0]['value'],
             json_to_marc['490'][0]['a'])
     assert (marcxml_to_json['book_series'][0]['volume'],
@@ -245,7 +250,7 @@ def test_book_series(marcxml_to_json, json_to_marc):
 
 
 def test_public_notes(marcxml_to_json, json_to_marc):
-    """Test if public_notes is created correctly"""
+    """Test if public_notes is created correctly."""
     assert (marcxml_to_json['public_notes'][0]['value'],
             json_to_marc['500'][0]['a'])
     assert (marcxml_to_json['public_notes'][0]['source'],
@@ -253,7 +258,7 @@ def test_public_notes(marcxml_to_json, json_to_marc):
 
 
 def test_hidden_notes(marcxml_to_json, json_to_marc):
-    """Test if hidden_notes is created correctly"""
+    """Test if hidden_notes is created correctly."""
     assert (marcxml_to_json['hidden_notes'][0]['value'],
             json_to_marc['595'][0]['a'])
     assert (marcxml_to_json['hidden_notes'][0]
@@ -266,7 +271,7 @@ def test_hidden_notes(marcxml_to_json, json_to_marc):
 
 
 def test_thesis(marcxml_to_json, json_to_marc):
-    """Test if thesis is created correctly"""
+    """Test if thesis is created correctly."""
     assert (marcxml_to_json['thesis'][0]['degree_type'],
             json_to_marc['502'][0]['b'])
     assert (marcxml_to_json['thesis'][0]
@@ -277,7 +282,7 @@ def test_thesis(marcxml_to_json, json_to_marc):
 
 
 def test_abstract(marcxml_to_json, json_to_marc):
-    """Test if abstract is created correctly"""
+    """Test if abstract is created correctly."""
     assert (marcxml_to_json['abstracts'][0]['value'],
             json_to_marc['520'][0]['a'])
     assert (marcxml_to_json['abstracts'][0]
@@ -286,7 +291,7 @@ def test_abstract(marcxml_to_json, json_to_marc):
 
 
 def test_funding_info(marcxml_to_json, json_to_marc):
-    """Test if funding_info is created correctly"""
+    """Test if funding_info is created correctly."""
     assert (marcxml_to_json['funding_info'][0]['agency'],
             json_to_marc['536'][0]['a'])
     assert (marcxml_to_json['funding_info'][0]
@@ -298,7 +303,7 @@ def test_funding_info(marcxml_to_json, json_to_marc):
 
 
 def test_licence(marcxml_to_json, json_to_marc):
-    """Test if license is created correctly"""
+    """Test if license is created correctly."""
     assert (marcxml_to_json['license'][0]['license'],
             json_to_marc['540'][0]['a'])
     assert (marcxml_to_json['license'][0]['imposing'],
@@ -310,7 +315,7 @@ def test_licence(marcxml_to_json, json_to_marc):
 
 
 def test_acquisition_source(marcxml_to_json, json_to_marc):
-    """Test if acquisition_source is created correctly"""
+    """Test if acquisition_source is created correctly."""
     assert (marcxml_to_json['acquisition_source'][0]
             ['source'],
             json_to_marc['541'][0]['a'])
@@ -328,7 +333,7 @@ def test_acquisition_source(marcxml_to_json, json_to_marc):
 
 
 def test_copyright(marcxml_to_json, json_to_marc):
-    """Test if copyright is created correctly"""
+    """Test if copyright is created correctly."""
     assert (marcxml_to_json['copyright'][0]['material'],
             json_to_marc['542'][0]['3'])
     assert (marcxml_to_json['copyright'][0]['holder'],
@@ -340,7 +345,7 @@ def test_copyright(marcxml_to_json, json_to_marc):
 
 
 def test_subject_terms(marcxml_to_json, json_to_marc):
-    """Test if subject term is created correctly"""
+    """Test if subject term is created correctly."""
     assert (marcxml_to_json['subject_terms'][0]['scheme'],
             json_to_marc['65017'][0]['2'])
     assert (marcxml_to_json['subject_terms'][0]['term'],
@@ -350,7 +355,7 @@ def test_subject_terms(marcxml_to_json, json_to_marc):
 
 
 def test_free_keywords(marcxml_to_json, json_to_marc):
-    """Test if free_keywords is created correctly"""
+    """Test if free_keywords is created correctly."""
     assert (marcxml_to_json['free_keywords'][0]['value'],
             json_to_marc['653'][0]['a'])
     assert (marcxml_to_json['free_keywords'][0]['source'],
@@ -358,7 +363,7 @@ def test_free_keywords(marcxml_to_json, json_to_marc):
 
 
 def test_accelerator_experiments(marcxml_to_json, json_to_marc):
-    """Test if accelerator_experiment is created correctly"""
+    """Test if accelerator_experiment is created correctly."""
     assert (marcxml_to_json['accelerator_experiments'][0]
             ['accelerator'],
             json_to_marc['693'][0]['a'])
@@ -368,7 +373,7 @@ def test_accelerator_experiments(marcxml_to_json, json_to_marc):
 
 
 def test_thesaurus_terms(marcxml_to_json, json_to_marc):
-    """Test if thesaurus_terms is created correctly"""
+    """Test if thesaurus_terms is created correctly."""
     assert (marcxml_to_json['thesaurus_terms'][0]
             ['classification_scheme'],
             json_to_marc['695'][0]['2'])
@@ -381,7 +386,7 @@ def test_thesaurus_terms(marcxml_to_json, json_to_marc):
 
 
 def test_thesis_supervisor(marcxml_to_json, json_to_marc):
-    """Test if thesis_supervisor is created correctly"""
+    """Test if thesis_supervisor is created correctly."""
     assert (marcxml_to_json['thesis_supervisor'][0]
             ['full_name'],
             json_to_marc['701'][0]['a'])
@@ -397,13 +402,13 @@ def test_thesis_supervisor(marcxml_to_json, json_to_marc):
 
 
 def test_collaboration(marcxml_to_json, json_to_marc):
-    """Test if collaboration is created correctly"""
+    """Test if collaboration is created correctly."""
     assert (marcxml_to_json['collaboration'][0],
             json_to_marc['710'][0]['g'])
 
 
 def test_publication_info(marcxml_to_json, json_to_marc):
-    """Test if publication info is created correctly"""
+    """Test if publication info is created correctly."""
     assert (marcxml_to_json['publication_info']
             [0]['page_artid'],
             json_to_marc['773'][0]['c'])
@@ -446,7 +451,7 @@ def test_publication_info(marcxml_to_json, json_to_marc):
 
 
 def test_succeeding_entry(marcxml_to_json, json_to_marc):
-    """Test if succeeding_entry is created correctly"""
+    """Test if succeeding_entry is created correctly."""
     assert (marcxml_to_json['succeeding_entry']
             ['relationship_code'],
             json_to_marc['785']['r'])
@@ -457,7 +462,7 @@ def test_succeeding_entry(marcxml_to_json, json_to_marc):
 
 
 def test_url(marcxml_to_json, json_to_marc):
-    """Test if url is created correctly"""
+    """Test if url is created correctly."""
     assert (marcxml_to_json['urls'][0]['url'],
             json_to_marc['8564'][0]['u'])
     assert (marcxml_to_json['urls'][0]['size'],
@@ -475,7 +480,7 @@ def test_url(marcxml_to_json, json_to_marc):
 
 
 def test_oai_pmh(marcxml_to_json, json_to_marc):
-    """Test if oal_pmh is created correctly"""
+    """Test if oal_pmh is created correctly."""
     assert (marcxml_to_json['oai_pmh'][0]['id'],
             json_to_marc['909CO'][0]['o'])
     assert (marcxml_to_json['oai_pmh'][0]['set'],
@@ -483,7 +488,7 @@ def test_oai_pmh(marcxml_to_json, json_to_marc):
 
 
 def test_collections(marcxml_to_json, json_to_marc):
-    """Test if collections is created correctly"""
+    """Test if collections is created correctly."""
     for index, val in enumerate(marcxml_to_json['collections']):
         if 'primary' in val:
             assert (val['primary'],
@@ -491,7 +496,7 @@ def test_collections(marcxml_to_json, json_to_marc):
 
 
 def test_references(marcxml_to_json, json_to_marc):
-    """Test if references are created correctly"""
+    """Test if references are created correctly."""
     for index, val in enumerate(marcxml_to_json['references']):
         if 'recid' in val:
             assert (val['recid'],
@@ -547,7 +552,7 @@ def test_references(marcxml_to_json, json_to_marc):
 
 
 def test_refextract(marcxml_to_json, json_to_marc):
-    """Test if refextract is created correctly"""
+    """Test if refextract is created correctly."""
     assert (marcxml_to_json['refextract'][0]['time'],
             json_to_marc['999C6'][0]['t'])
     assert (marcxml_to_json['refextract'][0]['version'],

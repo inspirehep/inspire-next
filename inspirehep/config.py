@@ -99,6 +99,7 @@ PACKAGES = [
     'invenio_unapi',
     'invenio_webhooks',
     'invenio_deposit',
+    'invenio_jsonschemas',
     'invenio_workflows',
     'invenio_knowledge',
     'invenio_oauthclient',
@@ -523,9 +524,10 @@ SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
 SEARCH_ELASTIC_DEFAULT_INDEX = 'hep'
 
 INSPIRE_PATH = pkg_resources.resource_filename("inspirehep", "")
+
 JSON_SCHEMA_PATHS = [
     pkg_resources.resource_filename(
-        "inspirehep", "dojson/hep/schemas/hep-0.0.1.json")
+        "inspirehep", "base/jsonschemas/hep-0.0.1.json")
 ]
 ELASTIC_MAPPINGS_PATHS = [
     pkg_resources.resource_filename(

@@ -48,13 +48,13 @@
                         ],
                         "title": "Country code",
                         "type": "string"
-                    },
+                    }
                 },
                 "title": "Address",
                 "type": "object"
             },
             "title": "Addresses",
-            "type": "array",
+            "type": "array"
         },
         "content_classification": {
             "items": {
@@ -138,7 +138,7 @@
                     "description": "FIXME: we can populate this programmatically with Google APIs",
                     "title": "longitude",
                     "type": "number"
-                },
+                }
             },
             "title": "GPS location",
             "type": "object"

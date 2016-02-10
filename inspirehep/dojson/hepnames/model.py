@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@
 """institutions model definition."""
 
 from dojson import Overdo
-from dojson import utils
 
-hepnames = Overdo()
+from ..schema import SchemaOverdo
+
+hepnames = SchemaOverdo(schema="hepnames-0.0.1.json")
 hepnames2marc = Overdo()
