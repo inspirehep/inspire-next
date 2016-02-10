@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -53,7 +53,7 @@ class BibtexTests(InvenioTestCase):
             'year': 2015,
             'number': '7',
             'pages': '318',
-            'doi': '10.1140/epjc/s10052-015-3518-2, 10.1140/epjc/s10052-015-3661-9',
+            'doi': '10.1140/epjc/s10052-015-3661-9, 10.1140/epjc/s10052-015-3518-2',
             'note': '[Erratum: Eur. Phys. J.C75,no.10,463(2015)]',
             'eprint': '1503.03290',
             'archivePrefix': 'arXiv',

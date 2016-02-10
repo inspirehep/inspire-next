@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 """MARC 21 model definition."""
 
 from dojson import utils
+
+from inspirehep.dojson import utils as inspire_dojson_utils
 
 from ..model import hep, hep2marc
 
@@ -129,7 +131,7 @@ def thesaurus_terms(self, key, value):
     for element in thesaurus_terms:
         if isinstance(element['keyword'], list):
             return thesaurus_terms
-    return [dict(t) for t in set([tuple(d.items()) for d in thesaurus_terms])]
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(thesaurus_terms)
 
 
 @hep2marc.over('695', 'thesaurus_terms')

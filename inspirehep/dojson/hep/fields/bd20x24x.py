@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 
 from dojson import utils
 
+from inspirehep.dojson import utils as inspire_dojson_utils
+
 from ..model import hep, hep2marc
 
 
@@ -41,13 +43,7 @@ def title_variation(self, key, value):
     else:
         title_variation_list.append(get_value(value))
 
-    seen = set()
-    title_variation = []
-    for element in title_variation_list:
-        if element not in seen:
-            title_variation.append(element)
-            seen.add(element)
-    return title_variation
+    return inspire_dojson_utils.remove_duplicates_from_list(title_variation_list)
 
 
 @hep2marc.over('210', '^title_variation$')
