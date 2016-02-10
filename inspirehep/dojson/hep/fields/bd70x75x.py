@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 """MARC 21 model definition."""
 
 from dojson import utils
+
+from inspirehep.dojson import utils as inspire_dojson_utils
 
 from ..model import hep, hep2marc
 
@@ -69,8 +71,7 @@ def collaboration(self, key, value):
         }
     collaboration = self.get('collaboration', [])
     if isinstance(value, list):
-        filtered_value = [dict(t) for t in
-                          set([tuple(d.items()) for d in value])]
+        filtered_value = inspire_dojson_utils.remove_duplicates_from_list_of_dicts(value)
         for element in filtered_value:
             collaboration.append(get_value(element))
     else:

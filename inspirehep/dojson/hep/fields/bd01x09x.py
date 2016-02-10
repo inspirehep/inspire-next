@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 """MARC 21 model definition."""
 
 from dojson import utils
+
+from inspirehep.dojson import utils as inspire_dojson_utils
 
 from ..model import hep, hep2marc
 
@@ -82,7 +84,7 @@ def dois(self, key, value):
                             'value': val.get('a'),
                             'source': val.get('9')
                         })
-    return [dict(t) for t in set([tuple(d.items()) for d in out])]
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(out)
 
 
 @hep.over('persistent_identifiers', '^024[1032478_][10_]')
@@ -173,7 +175,7 @@ def report_numbers(self, key, value):
     for element in report_number:
         if isinstance(element['value'], list):
             return report_number
-    return [dict(t) for t in set([tuple(d.items()) for d in report_number])]
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(report_number)
 
 
 @hep2marc.over('037', 'report_numbers')

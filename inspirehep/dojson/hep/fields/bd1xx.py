@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,8 +43,8 @@ def authors(self, key, value):
                 recid = int(value.get('z'))
             except:
                 pass
-            affiliations = list(set(utils.force_list(
-                value.get('u'))))
+            affiliations = inspire_dojson_utils.remove_duplicates_from_list(
+                utils.force_list(value.get('u')))
             affiliations = [{'value': aff, 'recid': recid} for
                             aff in affiliations]
         if value.get('y'):

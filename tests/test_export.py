@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -56,7 +56,7 @@ class ExportTests(InvenioTestCase):
 
         self.sample_export_good = {
             'citation_key': 'Aad:2015wqa',
-            'doi': '10.1140/epjc/s10052-015-3518-2, 10.1140/epjc/s10052-015-3661-9',
+            'doi': '10.1140/epjc/s10052-015-3661-9, 10.1140/epjc/s10052-015-3518-2',
             'arxiv_field': {u'categories': [u'hep-ex'], u'value': u'arXiv:1503.03290'},
             'arxiv': 'arXiv:1503.03290 [hep-ex]',
             'reportNumber': 'CERN-PH-EP-2015-038',
