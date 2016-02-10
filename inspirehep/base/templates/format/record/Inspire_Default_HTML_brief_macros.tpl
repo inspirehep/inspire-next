@@ -31,35 +31,27 @@
 {% endmacro %}
 
 {% macro record_journal_info() %}
-  {% for pub_info in record.get('publication_info')%}
-    {% if pub_info.get('journal_title') and pub_info.get('journal_volume') and  pub_info.get('year') and pub_info.get('page_artid') %}
-      {% if loop.first %}
-        Published in
-      {% endif %}
-      {% if not loop.first %}
-        and
-      {% endif %}
-      <i>{{ pub_info.get('journal_title') }}</i> {{ pub_info.get('journal_volume') }} ({{pub_info.get('year')}}) {{ pub_info.get('page_artid') }}
+  {% set pub_info = record|publication_info %}
+  {% if pub_info['pub_info'] %}
+    {% if pub_info['pub_info']|length == 1 %}
+      Published in {{ pub_info['pub_info'][0] }}
+    {% else %} 
+      Published in {{ pub_info['pub_info']|join(' and ') }}
     {% endif %}
-  {% endfor %}
+  {% endif %}
+  {% if pub_info['conf_info'] %}
+    {{ pub_info['conf_info']|safe }}
+  {% endif %}
 {% endmacro %}
 
 {% macro record_journal_info_and_doi() %}
-  {% for pub_info in record.get('publication_info')%}
-    {% if pub_info.get('journal_title') and pub_info.get('journal_volume') and  pub_info.get('year') and pub_info.get('page_artid') %}
-      {% if record.get('dois')| is_list() %}
-        {% set filtered_doi = record.get('dois.value')|remove_duplicates() %}
-        {% for doi in filtered_doi %}
-          {% if not doi|has_space() %}
-            {% if loop.first %}
-              Published in
-            {% endif %}
-              <a href="http://dx.doi.org/{{ doi |trim()|safe}}" title="DOI">
-                <span class="text-left"><i>{{ pub_info.get('journal_title') }}</i> {{ pub_info.get('journal_volume') }} ({{pub_info.get('year')}}) {{ pub_info.get('page_artid') }}</span>
-              </a>
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endif %}
-  {% endfor %}
+  {% set pub_info = record|publication_info %}
+  Published in
+  {% set filtered_doi = record.get('dois.value')|remove_duplicates()  %}
+  <a href="http://dx.doi.org/{{ filtered_doi[0]|safe }}" title="DOI">
+    <span class="text-left">{{ pub_info['pub_info'][0] }}</span>
+  </a>
+  {% if pub_info['conf_info'] %}
+    {{ pub_info['conf_info']|safe }}
+  {% endif %}
 {% endmacro %}

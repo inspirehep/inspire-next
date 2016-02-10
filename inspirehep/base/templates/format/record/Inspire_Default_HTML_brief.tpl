@@ -25,6 +25,7 @@
 
 {% block record_header %}
 {% call cache_if_not_debug('record_brief', record['control_number']) %}
+{% set pub_info = record|publication_info %}
 <div class="row">
   <div class="col-md-12">
     <div id="panel-default-brief" class="panel panel-default" >
@@ -53,9 +54,9 @@
                   {% endif %}
                 </div>
                 <div class="row">
-                  {% if record.get('publication_info') and record.get('dois') %}
-                    {% if record.get('publication_info') | length == 1 
-                    and record.get('dois') | length == 1 %}
+                  {% if pub_info['pub_info'] and record.get('dois') %}
+                    {% if pub_info['pub_info'] | length == 1 
+                    and record.get('dois.value')|remove_duplicates() | length == 1 %}
                       <div class="col-md-12 ">
                         {{ record_journal_info_and_doi() }}
                       </div>
@@ -66,7 +67,7 @@
                         {{ render_doi() }}
                       </div>
                     {% endif %}
-                  {% elif record.get('publication_info') %}
+                  {% elif pub_info %}
                     <div class="col-md-12 ">
                       {{ record_journal_info() }}
                     </div>

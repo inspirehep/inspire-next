@@ -30,6 +30,9 @@ from inspirehep.utils.cv_latex import Cv_latex
 from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
 from inspirehep.utils.latex import Latex
 
+from invenio_ext.es import es
+from invenio_ext.template.utils import render_macro_from_template
+
 from invenio_base.globals import cfg
 
 from invenio_search.api import Query
@@ -408,39 +411,6 @@ def setup_app(app):
                    search(collection=collection_name))
 
     @app.template_filter()
-    def publication_info(record):
-        result = []
-        if 'publication_info' in record:
-            journal_title = journal_volume = year = journal_issue = pages = ''
-            for field in record['publication_info']:
-                out = 'Published in '
-                if 'journal_title' in field:
-                    if not ('journal_volume' in field or 'journal_issue' in
-                            field or 'page_artid' in field or
-                            'dois' in record):
-                        journal_title = 'Submitted to:' +\
-                            field['journal_title']
-                    else:
-                        journal_title = field['journal_title']
-
-                    if 'journal_volume' in field:
-                        journal_volume = ' ' + field['journal_volume']
-
-                    if 'year' in field:
-                        year = ' (' + str(field['year']) + ')'
-
-                    if 'journal_issue' in field:
-                        journal_issue = ' ' + field['journal_issue'] + ', '
-
-                    if 'page_artid' in field:
-                        pages = ' ' + field['page_artid']
-
-                    out += '<i>' + journal_title + '</i>&nbsp;' +\
-                        journal_volume + year + journal_issue + pages
-                    result.append(out)
-        return result
-
-    @app.template_filter()
     def is_upper(s):
         return s.isupper
 
@@ -452,3 +422,99 @@ def setup_app(app):
     @app.template_filter()
     def long_timeout(timeout):
         return 5184000  # 60 days
+
+    @app.template_filter()
+    def publication_info(record):
+        """Displays inline publication and conference information"""
+        result = {}
+        out = []
+        """Publication info line"""
+        if 'publication_info' in record:
+            journal_title, journal_volume, year, journal_issue, pages = \
+                ('', '', '', '', '')
+            for pub_info in record['publication_info']:
+                if 'journal_title' in pub_info:
+                    journal_title = '<i>' + pub_info['journal_title'] + '</i>'
+                    if 'journal_volume' in pub_info:
+                        journal_volume = ' ' + pub_info['journal_volume']
+                    if 'year' in pub_info:
+                        year = ' (' + str(pub_info['year']) + ')'
+                    if 'journal_issue' in pub_info:
+                        journal_issue = ' ' + pub_info['journal_issue'] + ', '
+                    if 'page_artid' in pub_info:
+                        pages = ' ' + pub_info['page_artid']
+                    out.append(journal_title + journal_volume +
+                               year + journal_issue + pages)
+            if out:
+                result['pub_info'] = out
+            if not result:
+                for field in record['publication_info']:
+                    if 'pubinfo_freetext' in field:
+                        out.append(field['pubinfo_freetext'])
+                        result['pub_info'] = out
+                        break
+            # Conference info line
+            for pub_info in record['publication_info']:
+                if 'conference_recid' in pub_info \
+                        and 'parent_recid' in pub_info:
+                    conference_rec = es.get_source(
+                        index='conferences',
+                        id=pub_info['conference_recid'],
+                        doc_type='record')
+                    ctx = {
+                        "parent_recid": str(
+                            pub_info['parent_recid']),
+                        "conference_recid": str(
+                            pub_info['conference_recid']),
+                        "conference_title": conference_rec['title']
+                    }
+                    if result:
+                        result['conf_info'] = render_macro_from_template(
+                            name="conf_with_pub_info",
+                            template="format/record/Conference_info_macros.tpl",
+                            ctx=ctx)
+                        break
+                    else:
+                        if 'page_artid' in pub_info:
+                            ctx.update(
+                                {"page_artid": pub_info['page_artid']})
+                        result['conf_info'] = render_macro_from_template(
+                            name="conf_without_pub_info",
+                            template="format/record/Conference_info_macros.tpl",
+                            ctx=ctx)
+                        break
+                elif 'conference_recid' in pub_info \
+                        and 'parent_recid' not in pub_info:
+                    conference_rec = es.get_source(
+                        index='conferences',
+                        id=pub_info['conference_recid'],
+                        doc_type='record')
+                    ctx = {
+                        "conference_recid": str(
+                            pub_info['conference_recid']),
+                        "conference_title": conference_rec['title'],
+                        "pub_info": bool(result.get('pub_info', ''))
+                    }
+                    result['conf_info'] = render_macro_from_template(
+                        name="conference_only",
+                        template="format/record/Conference_info_macros.tpl",
+                        ctx=ctx)
+                elif 'parent_recid' in pub_info and \
+                        'conference_recid' not in pub_info:
+                    parent_rec = es.get_source(
+                        index='hep',
+                        id=pub_info['parent_recid'],
+                        doc_type='record')
+                    ctx = {
+                        "parent_recid": str(
+                            pub_info['parent_recid']),
+                        "parent_title": parent_rec['titles'][0]['title']
+                        .replace(
+                            "Proceedings, ", "", 1),
+                        "pub_info": bool(result.get('pub_info', ''))
+                    }
+                    result['conf_info'] = render_macro_from_template(
+                        name="proceedings_only",
+                        template="format/record/Conference_info_macros.tpl",
+                        ctx=ctx)
+        return result
