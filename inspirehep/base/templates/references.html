@@ -30,7 +30,7 @@
           [{{ reference['number'] }}]
         {% endif %}
         {% call cache_if_not_debug('record_oneline', record['control_number']) %}
-        <a href="/record/{{record.recid}}">{{ render_record_title() }}</a>
+        <a href="/record/{{record['control_number']}}">{{ render_record_title() }}</a>
       </div>
       <div class="reference-authors">{{ render_record_authors(is_brief=true, show_affiliations=false) | safe }}</div>
       <div class="reference-journal">{{ record_publication_info() | safe }}</div>

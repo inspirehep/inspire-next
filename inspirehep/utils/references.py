@@ -17,6 +17,8 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
+from invenio_records.api import Record
+
 from invenio_ext.es import es
 
 from invenio_ext.template import render_template_to_string
@@ -46,7 +48,6 @@ def render_references(record):
         refs_from_es = {
             ref['_id']: ref['_source'] for ref in records_from_es
         }
-
         for reference in references:
             row = []
             recid = reference.get('recid')
@@ -54,7 +55,7 @@ def render_references(record):
 
             if recid and ref_record:
                 recid = reference['recid']
-                ref_record = refs_from_es.get(str(recid))
+                ref_record = Record(refs_from_es.get(str(recid)))
                 if ref_record:
                     row.append(render_template_to_string(
                         "references.html",
