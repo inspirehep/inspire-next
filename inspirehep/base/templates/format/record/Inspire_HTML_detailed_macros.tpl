@@ -333,7 +333,7 @@
               {% if url.get('url') %}
                 {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
                 <div id="slide-content-{{ loop.index0 }}">
-                  <span>{{ url.get('description') }}</span>
+                  <span>{{ url.get('description')|strip_leading_number_plot_caption }}</span>
                 </div>
                 {% endif %}
               {% endif %}
