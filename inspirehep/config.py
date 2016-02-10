@@ -263,7 +263,9 @@ INSPIRE_ACCEPTED_CATEGORIES = [
     "astro-ph.co",
     "astro-ph.he"]
 
-OAIHARVESTER_RECORD_ARXIV_ID_LOOKUP = "arxiv_eprints.value"
+OAIHARVESTER_WORKFLOWS = {
+    "arxiv_math_daily": "process_record_arxiv",
+}
 WORKFLOWS_HOLDING_PEN_DEFAULT_OUTPUT_FORMAT = "hp"
 
 HOLDING_PEN_MATCH_MAPPING = {
