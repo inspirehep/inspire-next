@@ -53,6 +53,7 @@
         {% endif %}
       {% endif %}
     {% endfor %}
+    <br>
 {% endmacro %}
 
 {% macro detailed_record_abstract() %}

@@ -77,9 +77,9 @@
             ({{ render_author_names(authors[0], show_affiliation = True) }} <i>et al.</i>)
           {% endif %}
         {% else %}
-          <a id="authors-show-more" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
+          - <i><a id="authors-show-more" class="authors-show-more" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
             Show {{ record.authors | count }} authors & affiliations
-          </a>
+          </a></i>
         {% endif %}
     {% else %}
         {% if not is_brief and show_affiliations %}
@@ -91,9 +91,9 @@
           {% endfor %}
         {% endif %}
         {% if affiliations_exist %}
-            <a id="authors-show-more" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
+            - <i><a id="authors-show-more" class="authors-show-more" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
               Show affiliations
-            </a>
+            </a></i>
         {% endif %}
     {% endif %}
     {% if show_affiliations %}

@@ -145,10 +145,6 @@
     padding-bottom: 20px;
 }
 
-#record-journal {
-    font-weight: 500;
-}
-
 #record-abstract-keywords {
     background: white;
     margin-bottom: 20px;
@@ -249,6 +245,7 @@
         .reference-record {
 
             .reference-authors, .reference-subtitle {
+                font-size: 12px;
                 color: @grey;
 
                 .reference-detail:after {
@@ -397,3 +394,12 @@
         display: flex;
     } 
 }
+
+.authors-show-more {
+    color: @alternate-link-color;
+
+    &:hover {
+        color: darken(@alternate-link-color, 10%);
+    }
+}
+
