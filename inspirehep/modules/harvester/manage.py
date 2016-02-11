@@ -81,14 +81,10 @@ def run(workflow, from_date, to_date, reharvest=False, queue=False):
         "workflow": workflow,
         "from_date": from_date,
         "to_date": to_date,
-        "reharvest": reharvest
+        "reharvest": reharvest,
+        "queue": queue
     }
-
-    if queue:
-        job = run_harvest.delay(**args)
-        print("Scheduled job {0} with args: {1}".format(job.id, args))
-    else:
-        run_harvest(**args)
+    run_harvest(**args)
 
 
 @manager.command

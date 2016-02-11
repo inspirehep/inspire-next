@@ -20,8 +20,8 @@
 {% block details_page %}
 
   {% from "format/record/Holding_Pen_HTML_detailed_macros.tpl" import record_arxiv_pdf, add_delimiter, get_abstract with context %}
-  {% from "format/record/Inspire_HTML_detailed_macros.tpl" import record_title, record_publication_info, record_doi, record_keywords with context %}
-  {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax, render_record_authors, record_arxiv with context %}
+  {% from "format/record/Inspire_HTML_detailed_macros.tpl" import record_publication_info, record_doi, record_keywords with context %}
+  {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, mathjax, render_record_authors, record_arxiv with context %}
 
   <div class="container col-md-12">
     <!-- Title Row -->
@@ -32,7 +32,7 @@
         <!-- Title -->
         <strong>
           <span id='title-text'>
-            {{ record_title() }}
+            {{ render_record_title() }}
           </span>
         </strong>
       </h3>

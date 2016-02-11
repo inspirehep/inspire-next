@@ -49,8 +49,10 @@ class WorkflowTest(WorkflowTasksTestCase):
 
     def setUp(self):
         """Setup tests."""
-        from inspirehep.modules.workflows.receivers import precache_holdingpen_row
-        from invenio_workflows.receivers import index_holdingpen_record
+        from inspirehep.modules.workflows.receivers import (
+            precache_holdingpen_row,
+            index_holdingpen_record,
+        )
         from invenio_workflows.signals import (
             workflow_halted,
             workflow_object_saved
@@ -121,8 +123,10 @@ class WorkflowTest(WorkflowTasksTestCase):
     def tearDown(self):
         """Clean up created objects."""
         from invenio_workflows.models import Workflow
-        from inspirehep.modules.workflows.receivers import precache_holdingpen_row
-        from invenio_workflows.receivers import index_holdingpen_record
+        from inspirehep.modules.workflows.receivers import (
+            precache_holdingpen_row,
+            index_holdingpen_record
+        )
         from invenio_workflows.signals import (
             workflow_halted,
             workflow_object_saved
