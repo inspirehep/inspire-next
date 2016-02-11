@@ -146,12 +146,17 @@ img.landing-page-flask {
     #search-bar {
         #search-box-main {
             .navbar {
-                border: 0;
+                border: none;
                 margin-bottom: 0;
                 background-color: inherit;
 
+                .navbar-collapse {
+                    border: none;
+                }
+
                 #searchform > .navbar-nav {
                     width: 100%;
+                    border: none; 
                 }
 
                  #searchform-input-group input {
@@ -259,14 +264,4 @@ img.landing-page-flask {
         }
 
     }
-}
-
-#twitter-feed {
-    background-color: white;
-    margin-top: 30px;
-    padding: 30px 0 20px 0;
-
-    .title {
-       #collection-how-to-search.title;
-   }
 }
