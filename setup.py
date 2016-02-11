@@ -30,11 +30,12 @@ from setuptools.command.test import test as TestCommand
 
 
 requirements = [
-    'elasticsearch>=2.2.0.dev0,<3.0.0',
+    'elasticsearch>=2.2.0,<3.0.0',
     'HarvestingKit>=0.6.2',
     'plotextractor>=0.1.2',
     'refextract>=0.1.0',
     'mixer==4.9.5',
+    'Sickle>=0.5.0',
     'orcid',
     'raven==5.0.0',
     'retrying',
@@ -54,8 +55,9 @@ requirements = [
     'invenio-unapi==0.1.1',
     'invenio-upgrader==0.2.0',
     'invenio-webhooks==0.1.0',
-    'invenio_classifier==0.1.0',
-    'invenio_jsonschemas==0.1.0',
+    'invenio-classifier==0.1.0',
+    'invenio-jsonschemas==0.1.0',
+    'invenio-matcher==0.1.0',
     'librabbitmq>=1.6.1',
     'dojson==0.4.0',
 ]
