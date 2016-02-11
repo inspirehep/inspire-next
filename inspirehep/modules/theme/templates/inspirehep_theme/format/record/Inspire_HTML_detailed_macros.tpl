@@ -258,7 +258,8 @@
         </ul>
       </div> -->
         <a class="btn btn-default pull-right" href="/search?p=refersto:{{record['control_number']}}&cc=HEP">
-            View all {% if record.get('citation_count', 0) > 0  %} {{ record.get('citation_count', '') }} {% endif %} citations</a>
+            View all {% if record.get('citation_count', 0) > 0  %} {{ record.get('citation_count', '') }} {% endif %} citations
+        </a>
       </div>
     </div>
   </div>

@@ -28,6 +28,8 @@
 ## structure: (endpoint, values, blueprint, caption)
 #}
 {% set navigation_bar = [
+  ('/tools/', {}, '', 'Tools'),
+  ('/links-stats/', {}, '', 'Links and stats'),
   ('https://labs.inspirehep.net/help', {}, '', 'Help'),
 ] -%}
 
@@ -40,327 +42,83 @@
 {% endif %}
 
 
-<section>
+<section id="header-section">
   <nav id="topnav" class="navbar navbar-fixed-top navbar-inverse navbar-custom" role="navigation">
     <div class="navbar-header">
-      <a class="navbar-brand" href="{{ url_for('inspirehep_theme.index') }}">
-        <span id="{{ collection_name | sanitize_collection_name }}-collection">
-          {% include 'inspirehep_theme/labs-logo.svg' %}
-        </span>
-      </a>
-      <button type="button" id="topnav-button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-        <span class="sr-only">{{ _("Toggle navigation") }}</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
+      <div id="mobile-header">
+        <a class="navbar-brand" href="{{ url_for('inspirehep_theme.index') }}">
+          <span id="{{ collection_name | sanitize_collection_name }}-collection">
+            {% include 'inspirehep_theme/labs-logo.svg' %}
+          </span>
+        </a>
+        <button type="button" id="topnav-button" class="navbar-toggle collapsed" data-target=".navbar-ex1-collapse" data-toggle="modal" data-backdrop="static">
+          <span class="sr-only">{{ _("Toggle navigation") }}</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
       <div class="navbar-collapse navbar-ex1-collapse collapse overflow" id="topnav-right">
-        <ul class="nav navbar-nav">
-            <!-- Nice dropdown  -->
-            <li id="dropdown-amazon" class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown"  href="#">Tools/Resources<span id="arrow-handler" class="down-arrow right-arrow-small-screen"></a>
-              <ul class="dropdown-menu dropdown-menu-amazon" id="dropdown-menu-amazon" role="menu">
-                <li data-submenu-id="jobs-dropdown" class="first-submenu-item">
-                 <div class="row">
-                  <div class="col-md-8"></div>
-                  <div id="first-element" class="col-md-4 cursor-pointer small-screens dropdown-menu-list">
-                    <span class="dropdown-options">
-                      <a class="text-link-decoration small-screens-a"><i class="fa fa-briefcase"></i> Jobs</a>
-                    </span>
-                    <i id="first-arrow" class="fa fa-chevron-right arrow-position"></i>
-                  </div>
-                </div>
-                <div id="jobs-dropdown" class="popover custom-popover">
-                  <h3 class="popover-title" id="jobs-header"> <i class="fa fa-briefcase"></i> Jobs
-                    <div class="row">
-                      <div class="col-md-6"><hr class="custom-horizontal-line"></div>
-                      <div class="col-md-6"></div>
-                    </div>
-                  </h3>
+        <div class="row" id="mobile-menu">
+          <div class="col-sm-3 col-xs-4 col-xxs-6">
+            <div class="mobile-menu-square"></div>
+            <a href="/literature" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='img/mobile-menu-icon-literature.svg') }}">
+              <p id="literature-collection">Literature</p>
+            </a>
+          </div>
+          <div class="col-sm-3 col-xs-4 col-xxs-6">
+            <div class="mobile-menu-square"></div>
+            <a href="/authors" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='img/mobile-menu-icon-authors.svg') }}" >
+              <p id="authors-collection">Authors</p>
+            </a>
+          </div>
+          <div class="col-sm-3 col-xs-4 col-xxs-6">
+            <div class="mobile-menu-square"></div>
+            <a href="/data" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='img/mobile-menu-icon-data.svg') }}" >
+              <p id="data-collection">Data</p>
+            </a>
+         </div>
+           <div class="col-sm-3 col-xs-4 col-xxs-6">
+            <div class="mobile-menu-square"></div>
+            <a href="/conferences" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='img/mobile-menu-icon-conferences.svg') }}" >
+              <p id="conferences-collection">Conferences</p>
+            </a>
+         </div>
+           <div class="col-sm-3 col-xs-4 col-xxs-6">
+            <div class="mobile-menu-square"></div>
+            <a href="/jobs" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='img/mobile-menu-icon-jobs.svg') }}" >
+              <p id="jobs-collection">Jobs</p>
+            </a>
+          </div>
+          <div class="col-sm-3 col-xs-4 col-xxs-6">
+            <div class="mobile-menu-square"></div>
+            <a href="/institutions" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='img/mobile-menu-icon-institutions.svg') }}" >
+              <p id="institutions-collection">Institutions</p>
+            </a>
+          </div>
+          <div class="col-sm-3 col-xs-4 col-xxs-6">
+            <div class="mobile-menu-square"></div>
+            <a href="/experiments" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='img/mobile-menu-icon-experiments.svg') }}" >
+              <p id="experiments-collection">Experiments</p>
+            </a>
+         </div>
+           <div class="col-sm-3 col-xs-4 col-xxs-6">
+            <div class="mobile-menu-square"></div>
+            <a href="/journals" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='img/mobile-menu-icon-journals.svg') }}" >
+              <p id="journals-collection">Journals</p>
+            </a>
+         </div>
+        </div>
 
-                  <div class="popover-content">
-                    <div class="row">
-                      <div class="col-md-3">
-                        <h5 class="text-left"><ins><a class="cursor-pointer popover-link external-link" href="http://inspirehep.net/info/Jobs/tools/jobs-matrix">Job matrix</a></ins></h5>
-                        <p class="text-left font-p">Choose your next HEP related job based on your education and your field.</p>
-                      </div>
-                      <div class="col-md-3">
-                        <h5 class="text-left"><ins><a class="cursor-pointer popover-link" href="/collection/jobs">Search Jobs</a></ins></h5>
-                        <p class="text-left font-p">Search for jobs in INSPIRE by using SPIRES or INVENIO syntax.</p>
-                      </div>
-                      <div class="col-md-6"></div>
-                    </div>
-                    <div class="row"><div class="col-md-12"><p></p></div></div>
-                    <div class="row"><div class="col-md-12"><p></p></div></div>
-                    <div class="row">
-                      <div class="col-md-3">
-                        <h5 class="text-left"><ins><a class="cursor-pointer popover-link external-link" href="http://inspirehep.net/search?ln=en&cc=Jobs&p=&action_search=Search&rg=200">See all</a></ins></h5>
-                        <p class="text-left font-p">Find everything you need to know about jobs at INSPIRE.</p>
-                      </div>
-                      <div class="col-md-3"></div>
-                      <div class="col-md-6"></div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-
-              <div class="row"><div class="col-md-12"><p></p></div></div>
-              <li data-submenu-id="conferences-dropdown" class="second-submenu-item">
-                <div class="row">
-                  <div class="col-md-8"></div>
-                  <div id="second-element" class="col-md-4 cursor-pointer small-screens dropdown-menu-list" >
-                    <span class="dropdown-options">
-                      <a class="text-link-decoration small-screens-a"><i class="fa fa-calendar"></i> Conferences</a>
-                    </span>
-                    <i id="second-arrow" class="fa fa-chevron-right arrow-position"></i>
-                  </div>
-                </div>
-                <div id="conferences-dropdown" class="popover custom-popover">
-                  <h3 class="popover-title" id="conferences-header"><i class="fa fa-calendar"></i> Conferences
-                    <div class="row">
-                      <div class="col-md-6"><hr class="custom-horizontal-line"></div>
-                      <div class="col-md-6"></div>
-                    </div>
-                  </h3>
-                  <div class="popover-content">
-                    <div class="row">
-                      <div class="col-md-3">
-                        <h5 class="text-left"><ins><a class="cursor-pointer popover-link external-link" href="https://inspirehep.net/search?ln=en&cc=Conferences&p=fin+date+%3E+today&sf=year&so=a">Upcoming conferences</a></ins></h5>
-                        <p class="text-left font-p">Here you can search for all the HEP related conferences that are about to happen.</p>
-                      </div>
-                      <div class="col-md-3">
-                        <h5 class="text-left"><ins><a class="cursor-pointer popover-link" href="/collections/conferences">Search conferences</a></ins></h5>
-                        <p class="text-left font-p">Search for conferences, using SPIRES or INVENIO search syntax.</p>
-                      </div>
-                      <div class="col-md-6"></div>
-                    </div>
-                    <div class="row"><div class="col-md-12"><p></p></div></div>
-                    <div class="row"><div class="col-md-12"><p></p></div></div>
-                    <div class="row">
-                      <div class="col-md-3">
-                        <h5 class="text-left"><ins><a class="cursor-pointer popover-link external-link" href="https://inspirehep.net/info/Conferences/series">Conference series</a></ins></h5>
-                        <p class="text-left font-p">Here you can find all of the conference series. Conferences organised by categories.</p>
-                      </div>
-                      <div class="col-md-3"></div>
-                      <div class="col-md-6"></div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-              <div class="row"><div class="col-md-12"><p></p></div></div>
-              <li data-submenu-id="journals-dropdown" class="third-submenu-item">
-                <div class="row">
-                  <div class="col-md-8"></div>
-                  <div id="third-element" class="col-md-4 cursor-pointer small-screens dropdown-menu-list">
-                    <span class="dropdown-options">
-                      <a class="text-link-decoration small-screens-a"><i class="fa fa-newspaper-o"></i> Journals</a>
-                    </span>
-                    <i id="third-arrow" class="fa fa-chevron-right arrow-position"></i>
-                  </div>
-                </div>
-                <div id="journals-dropdown" class="popover custom-popover">
-                  <h3 class="popover-title" id="journals-header"><i class="fa fa-newspaper-o"></i> Journals
-                    <div class="row">
-                      <div class="col-md-6"><hr class="custom-horizontal-line"></div>
-                      <div class="col-md-6"></div>
-                    </div>
-                  </h3>
-                  <div class="popover-content">
-                    <div class="row">
-                      <div class="col-md-3">
-                        <h5 class="text-left"><ins><a class="cursor-pointer popover-link" href="/collections/journals">Search journals</a></ins></h5>
-                        <p class="text-left font-p">Search for Journals using SPIRES or INVENIO search syntax.</p>
-                      </div>
-                      <div class="col-md-3"></div>
-                      <div class="col-md-6"></div>
-                    </div>
-                    <div class="row"><div class="col-md-12"><p></p></div></div>
-                    <div class="row"><div class="col-md-12"><p></p></div></div>
-                    <div class="row">
-                      <div class="col-md-3"></div>
-                      <div class="col-md-3"></div>
-                      <div class="col-md-6"></div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-              <div class="row"><div class="col-md-12"><p></p></div></div>
-              <li data-submenu-id="experiments-dropdown" class="fourth-submenu-item">
-                <div class="row">
-                  <div class="col-md-8"></div>
-                  <div id="fourth-element" class="col-md-4 cursor-pointer small-screens dropdown-menu-list">
-                    <span class="dropdown-options">
-                      <a class="text-link-decoration small-screens-a"><i class="fa fa-flask"></i> Experiments</a>
-                    </span>
-                    <i id="fourth-arrow" class="fa fa-chevron-right arrow-position"></i>
-                  </div>
-                </div>
-                <div id="experiments-dropdown" class="popover custom-popover">
-                  <h3 class="popover-title" id="experiments-header"><i class="fa fa-flask"></i>  Experiments
-                    <div class="row">
-                      <div class="col-md-6"><hr class="custom-horizontal-line"></div>
-                      <div class="col-md-6"></div>
-                    </div>
-                  </h3>
-                  <div class="popover-content">
-                    <div class="row">
-                      <div class="col-md-3">
-                        <h5 class="text-left"><ins><a class="cursor-pointer popover-link external-link" href="http://inspirehep.net/search?cc=Experiments&p=046__t%3A9999&sf=119__a&so=a&rg=100">Current experiments</a></ins></h5>
-                        <p class="text-left font-p">Search for the latest HEP experiments.</p>
-                      </div>
-                      <div class="col-md-3">
-                        <h5 class="text-left"><ins><a class="cursor-pointer popover-link" href="/collection/experiments">Search experiments</a></ins></h5>
-                        <p class="text-left font-p">Search for experiments with SPIRES or INVENIO search syntax.</p>
-                      </div>
-                      <div class="col-md-6"></div>
-                    </div>
-                    <div class="row"><div class="col-md-12"><p></p></div></div>
-                    <div class="row"><div class="col-md-12"><p></p></div></div>
-                    <div class="row">
-                      <div class="col-md-3"></div>
-                      <div class="col-md-3"></div>
-                      <div class="col-md-6"></div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-              <div class="row"><div class="col-md-12"><p></p></div></div>
-              <li data-submenu-id="institutions-dropdown" class="fifth-submenu-item">
-                <div class="row">
-                  <div class="col-md-8"></div>
-                  <div id="fifth-element" class="col-md-4 cursor-pointer small-screens dropdown-menu-list">
-                    <span class="dropdown-options">
-                      <a class="text-link-decoration small-screens-a"><i class="fa fa-building-o"></i> Institutions</a>
-                    </span>
-                    <i id="fifth-arrow" class="fa fa-chevron-right arrow-position"></i>
-                  </div>
-                </div>
-                <div id="institutions-dropdown" class="popover custom-popover">
-                  <h3 class="popover-title" id="institutions-header"><i class="fa fa-building-o"></i> Institutions
-                    <div class="row">
-                      <div class="col-md-6"><hr class="custom-horizontal-line"></div>
-                      <div class="col-md-6"></div>
-                    </div>
-                  </h3>
-                  <div class="popover-content">
-                    <div class="row">
-                      <div class="col-md-3">
-                        <h5 class="text-left"><ins><a class="cursor-pointer popover-link external-link" href="http://www.slac.stanford.edu/spires/institutions/map/">Top 500 Institutions</a></ins></h5>
-                        <p class="text-left font-p">The 500 most recognised Universities world wide.</p>
-                      </div>
-                      <div class="col-md-3">
-                        <h5 class="text-left"><ins><a class="cursor-pointer popover-link" href="/collections/institutions"> Search institutions</a></ins></h5>
-                        <p class="text-left font-p">Search for Institutions with SPIRES or INVENIO search syntax.</p>
-                      </div>
-                      <div class="col-md-6"></div>
-                    </div>
-                    <div class="row"><div class="col-md-12"><p></p></div></div>
-                    <div class="row"><div class="col-md-12"><p></p></div></div>
-                    <div class="row">
-                      <div class="col-md-3"></div>
-                      <div class="col-md-3"></div>
-                      <div class="col-md-6"></div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-
-              <div class="row"><div class="col-md-12"><p></p></div></div>
-              <li data-submenu-id="tools-dropdown" class="sixth-submenu-item">
-               <div class="row">
-                <div class="col-md-8"></div>
-                <div id="sixth-element" class="col-md-4 cursor-pointer small-screens dropdown-menu-list">
-                  <span class="dropdown-options">
-                    <a class="text-link-decoration small-screens-a"><i class="fa fa-wrench"></i> Tools</a>
-                  </span>
-                  <i id="sixth-arrow" class="fa fa-chevron-right arrow-position"></i>
-                </div>
-              </div>
-              <div id="tools-dropdown" class="popover custom-popover">
-                <h3 class="popover-title" id="tools-header"><i class="fa fa-wrench"></i> Tools
-                  <div class="row">
-                    <div class="col-md-6"><hr class="custom-horizontal-line"></div>
-                    <div class="col-md-6"></div>
-                  </div>
-                </h3>
-                <div class="popover-content">
-                  <div class="row">
-                    <div class="col-md-3">
-                      <h5 class="text-left"><ins><a class="cursor-pointer popover-link external-link" href="https://inspirehep.net/textmining/">Reference extractor</a></ins></h5>
-                      <p class="text-left font-p">Use this tool to extract references from publications.</p>
-                    </div>
-                    <div class="col-md-3">
-                      <h5 class="text-left"><ins><a class="cursor-pointer popover-link external-link" href="https://inspirehep.net/info/hep/tools/index">User-developed tools</a></ins></h5>
-                      <p class="text-left font-p">Tools based on Python programs that accesses information on papers or retrieve results from the database.</p>
-                    </div>
-                    <div class="col-md-6"></div>
-                  </div>
-                  <div class="row"><div class="col-md-12"><p></p></div></div>
-                  <div class="row"><div class="col-md-12"><p></p></div></div>
-                  <div class="row">
-                    <div class="col-md-3">
-                      <h5 class="text-left"><ins><a class="cursor-pointer popover-link external-link" href="https://inspirehep.net/info/hep/tools/bibliography_generate">Bibliography generator</a></ins></h5>
-                      <p class="text-left font-p">By uploading a paper, the bibliography will be returned.</p>
-                    </div>
-                    <div class="col-md-3"></div>
-                    <div class="col-md-6"></div>
-                  </div>
-                </div>
-              </div>
-            </li>
-
-            <div class="row"><div class="col-md-12"><p></p></div></div>
-            <li data-submenu-id="links-and-stats-dropdown" class="seventh-submenu-item">
-              <div class="row">
-                <div class="col-md-8"></div>
-                <div id="seventh-element" class="col-md-4 cursor-pointer small-screens dropdown-menu-list">
-                  <span class="dropdown-options">
-                    <a class="text-link-decoration small-screens-a"><i class="fa fa-line-chart"></i> Links and stats</a>
-                  </span>
-                  <i id="seventh-arrow" class="fa fa-chevron-right arrow-position"></i>
-                </div>
-              </div>
-              <div id="links-and-stats-dropdown" class="popover custom-popover">
-                <h3 class="popover-title" id="links-and-stats-header"><i class="fa fa-line-chart"></i> Links and stats
-                  <div class="row">
-                    <div class="col-md-6"><hr class="custom-horizontal-line"></div>
-                    <div class="col-md-6"></div>
-                  </div>
-                </h3>
-                <div class="popover-content">
-                  <div class="row">
-                    <div class="col-md-3">
-                      <h5 class="text-left"><ins><a class="cursor-pointer popover-link external-link" href="http://inspirehep.net/info/hep/stats/topcites/index">Top cites</a></ins></h5>
-                      <p class="text-left font-p">All the publications with the most citations.</p>
-                    </div>
-                    <div class="col-md-3">
-                      <h5 class="text-left"><ins><a class="cursor-pointer popover-link">Other databases</a></ins></h5>
-                      <p class="text-left font-p">Partners, directories and resources.</p>
-                    </div>
-                    <div class="col-md-6"></div>
-                  </div>
-                  <div class="row"><div class="col-md-12"><p></p></div></div>
-                  <div class="row"><div class="col-md-12"><p></p></div></div>
-                  <div class="row">
-                    <div class="col-md-3">
-                      <h5 class="text-left"><ins><a class="cursor-pointer popover-link external-link" href="http://inspirehep.net/search?of=hcs&action_search=Search">HEP Citesummary</a></ins></h5>
-                      <p class="text-left font-p">Statistics concerning HEP related information.</p>
-                    </div>
-                    <div class="col-md-3">
-                      <h5 class="text-left"><ins><a class="cursor-pointer popover-link">External resources</a></ins></h5>
-                      <p class="text-left font-p">Non-HEP related resources.</p>
-                    </div>
-                    <div class="col-md-6"></div>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </li>
-        <!-- End Nice dropdown  -->
-
-          <li class="move-down">
-
+        <ul class="nav navbar-nav" id="header-links">
           {% for endpoint, values, blueprint, caption in navigation_bar %}
           <li {% if request.blueprint == blueprint|e %} class="active" {% endif %}>
             <a href={% if blueprint %}"{{ url_for( endpoint|e, **values ) }}"{% else %}{{endpoint}}{% endif %}>{{- _(caption|e) -}}</a>
@@ -368,7 +126,7 @@
           {% endfor %}
           <li class="divider-vertical"></li>
           {%- if not current_user.is_authenticated %}
-          <li>
+          <li id="mobile-sign-in">
             <a class="" href="{{url_for_security('login', next=request.path)}}">
               <i class="glyphicon glyphicon-log-in"></i> {{ _("Sign in") }}
             </a>

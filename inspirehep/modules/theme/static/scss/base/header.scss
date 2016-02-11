@@ -24,7 +24,13 @@
 body {
     padding-top: 64px;
 }
+
 .navbar-fixed-top {
+
+    .navbar-fixed-top .navbar-collapse {
+        max-height: none;
+    }
+
     .navbar-brand {
         padding: 2px 15px;
         height: 50px;
@@ -49,6 +55,10 @@ body {
 }
 
 @media (min-width: $screen-md-min) {
+    #mobile-menu {
+        display: none;
+    }
+
     .navbar-nav > li > a {
         padding-top: 10px;
         padding-bottom: 10px;
@@ -57,6 +67,9 @@ body {
 
 @media (max-width: $screen-md-min) {
     .navbar-collapse {
+
+        max-height: none;
+
         .nav {
             & > .divider-vertical {
                 display: none;
@@ -147,6 +160,7 @@ body {
     padding: 0 2.5%;
     min-height: 50px;
     border-bottom: 0px;
+    // overflow: scroll;
 
     .navbar-toggle {
         margin-top: 8px;
@@ -496,7 +510,7 @@ $darken-percent: 12%;
 
 .dropdown-options {
     display:inline-block;
-    margin-top:3%
+    margin-top:1%
 }
 
 .dropdown-menu-list {
@@ -688,6 +702,7 @@ a.external-link::after {
 @media (max-width: $screen-md-min) {
     #collections-section {
         margin-top: -1px;
+        display: none;
     }
 }
 
@@ -773,11 +788,167 @@ a.external-link::after {
         padding: 0 2.5%;
     }
 
-    #topnav {
-        padding-bottom: 10px;
-    }
-
     #top-search-bar {
         float: left;
+    }
+
+}
+
+/* Mobile styles
+-------------------------------------------------- */
+@media only screen and (max-width : $screen-md-min) {
+
+    #header-section {
+        padding-bottom: 50px;
+    }
+
+    #topnav {
+
+        padding: 0;
+
+        #topnav-right {
+
+            height:100vh !important;
+            max-height: none;
+            padding: 15px;
+
+            #mobile-menu {
+                margin: 0;
+            }
+
+            #header-links {
+
+                margin: 50px 0 0;
+
+                li {
+                    float: left;
+                    width: 50%;
+                }
+
+                li:nth-child(2n+3) {
+                    clear: both;
+                }
+
+                li:nth-child(-n+4) a:before {
+                    padding: 15px;
+                    background-color: lighten(#2c3e50, 15%);
+                    border-radius: 50%;
+                    margin-right: 15px;
+                    font-family: FontAwesome;
+                }
+
+                // FontAwesome icons
+                li:nth-child(1) a:before {
+                    content: "\f0ad";
+                }
+
+                li:nth-child(2) a:before {
+                    content: "\f0c1";
+                }
+
+                li:nth-child(3) a:before {
+                    content: "\f0ee";
+                }
+
+                li:nth-child(4) a:before {
+                    margin-right: 20px;
+                    content: "\f128";
+                }
+
+                #mobile-sign-in {
+                    width: 100%;
+                    margin-top: 50px;
+                    margin-bottom: 50px;
+                    text-align:center;
+                    background-color: lighten(#2c3e50, 15%);
+                }
+
+                .divider-vertical {
+                    display: none !important;
+                }
+            }
+        }
+    }
+
+    .mobile-menu-square {
+        margin-top: 100%;
+    }
+
+    .mobile-menu-thumbnail {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 10px;
+        bottom: 0;
+        left: 10px;
+        right: 0;
+        text-align:center;
+        background-color: #324A5D;
+
+        &:hover {
+            text-decoration: none;
+        }
+
+        img {
+            width: 50px;
+            margin-bottom: 3px;
+        }
+
+        p:hover {
+            text-decoration: none;
+        }
+
+        p {
+
+            color: white;
+
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            font-size: 13px;
+
+            &#literature-collection {
+                color: $literature-collection;
+            }
+
+            &#authors-collection {
+                color: $authors-collection;
+            }
+
+            &#data-collection {
+                color: $data-collection;
+            }
+
+            &#conferences-collection {
+                color: $conferences-collection;
+            }
+
+            &#jobs-collection {
+                color: $jobs-collection;
+            }
+
+            &#institutions-collection {
+                color: $institutions-collection;
+            }
+
+            &#experiments-collection {
+                color: $experiments-collection;
+            }
+
+            &#journals-collection {
+                color: $journals-collection;
+            }
+        }
+    }
+
+    .modal-backdrop.in {
+        z-index: 0;
+    }
+}
+
+@media only screen and (max-width : 450px) {
+    #mobile-menu > div.col-xxs-6 {
+        width: 50%;
     }
 }

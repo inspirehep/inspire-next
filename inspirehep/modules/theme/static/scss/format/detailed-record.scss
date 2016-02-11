@@ -21,6 +21,46 @@
  $purple: #293E51;
  $darken: 8%;
 
+/* Mobile styles
+-------------------------------------------------- */
+@media only screen and (max-width : $screen-md-min) {
+
+    #header-section {
+        padding-bottom: 100px;
+    }
+
+    .record-detailed #detailed-header {
+        .modal-footer {
+
+            text-align: center;
+
+            .col-md-6 {
+                display: inline-block;
+            }
+
+            .col-md-6+.col-md-6 {
+                margin-top: 10px;
+            }
+        }
+    }
+
+    .caret {
+        border-top: 4px dashed;
+        border-right: 4px solid transparent;
+        border-left: 4px solid transparent;
+    }
+}
+
+@media (max-width: 600px) {
+    #topnav {
+        padding-bottom: 20px;
+    }
+
+    #top-search-bar {
+        padding: 0 2.5%;
+    }
+}
+
 #collections, .collection-header {
     color: white;
 }
@@ -172,24 +212,17 @@
     margin-bottom: 20px;
 }
 
-// Always show scrollbars
-
-::-webkit-scrollbar {
-    -webkit-appearance: none;
-    width: 7px;
-}
-::-webkit-scrollbar-thumb {
-    border-radius: 4px;
-    background-color: rgba(0,0,0,.5);
-    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
-}
-
-#citations .panel-body {
-    margin-bottom: 50px;
+#citations .panel-footer {
+    padding-bottom: 50px;
 }
 
 #record-references-table-wrapper, #record-citations-table-wrapper {
     display: none;
+
+    .col-sm-6 {
+        width: 50%;
+        float: left;
+    }
 }
 
 #record-references-loading, #record-citations-loading {
@@ -199,6 +232,13 @@
 #record-references-table, #record-citations-table {
     td:nth-child(2) {
         width: 20px;
+    }
+}
+
+#record-references-table, #record-citations-table {
+    tbody tr td:nth-child(2) {
+        text-align: center;
+        vertical-align: middle;
     }
 }
 
@@ -276,13 +316,8 @@
     }
 
     .panel-footer {
-        position:absolute;
-        width:100%;
-        bottom:20px;
-        right: 16px;
         background-color: white;
         border: none;
-        width: 90%;
     }
 
     a.btn {
@@ -416,5 +451,9 @@
     &:hover {
         color: darken($alternate-link-color, 10%);
     }
+}
+
+#citations div.dataTables_filter input, #references div.dataTables_filter input {
+    max-width: inherit;
 }
 

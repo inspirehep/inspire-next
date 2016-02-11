@@ -144,12 +144,17 @@ img.landing-page-flask {
     #search-bar {
         #search-box-main {
             .navbar {
-                border: 0;
+                border: none;
                 margin-bottom: 0;
                 background-color: inherit;
 
+                .navbar-collapse {
+                    border: none;
+                }
+
                 #searchform > .navbar-nav {
                     width: 100%;
+                    border: none; 
                 }
 
                  #searchform-input-group input {
