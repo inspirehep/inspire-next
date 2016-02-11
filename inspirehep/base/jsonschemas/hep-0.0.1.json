@@ -889,11 +889,6 @@
                             }
                         }
                     },
-                    "claimed": {
-                        "title": "Claim status",
-                        "description": "Status whether the paper was claimed by the author.",
-                        "type": "boolean"
-                    },
                     "signature_block": {
                         "title": "Phonetic name",
                         "description": "Phonetic notation of the author's name.",
