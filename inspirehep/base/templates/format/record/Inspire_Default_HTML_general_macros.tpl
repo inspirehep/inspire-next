@@ -18,11 +18,19 @@
 #}
 
 {% macro render_record_title() %}
-  {{ record['titles[0].title'] }}
+  {% if record['titles[0].title'] | is_upper %}
+    {{ record['titles[0].title'] | capitalize }}
+  {% else %}
+    {{ record['titles[0].title'] }}
+  {% endif %}
   {% if record['titles'] %}
     {% for subtitle in record['titles'] %}
       {% if 'subtitle' in subtitle and subtitle['subtitle'] %}
-          : {{ subtitle['subtitle'] }}
+          {% if subtitle['subtitle'] | is_upper %}
+            : {{ subtitle['subtitle'] | capitalize }}
+          {% else %}
+            : {{ subtitle['subtitle'] }}
+          {% endif %}
       {% endif %}
     {% endfor %}
   {% endif %}
