@@ -19,7 +19,9 @@
 
 """Tests for DoJSON utilities."""
 
-from inspirehep.utils.date import create_valid_date, create_earliest_date
+from inspirehep.utils.date import (create_valid_date,
+                                   create_earliest_date,
+                                   create_datestruct)
 
 
 def test_create_valid_date():
@@ -39,3 +41,10 @@ def test_create_earliest_date():
     """Test the date validator that excepts list."""
     assert create_earliest_date([1877, '2002-01-05']) == '1877'
     assert create_earliest_date(['1877-02-03', '1877']) == '1877-02-03'
+
+
+def test_create_datestruct():
+    """Test the datestruct creation."""
+    assert create_datestruct('2002-01-05') == (2002, 1, 5)
+    assert create_datestruct('1877-02') == (1877, 2)
+    assert create_datestruct('1900') == (1900, )

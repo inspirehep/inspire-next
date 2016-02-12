@@ -32,11 +32,9 @@
         </div>
         <div id="record-authors">
           {{ render_record_authors(is_brief=false, number_of_displayed_authors=25) }}
-          {% if record.get('earliest_date') %}
-            <span id="record-date">
-              - {{ record.get('earliest_date').split('-')[0] }}
-            </span>
-          {% endif %}
+          <span id="record-date">
+            - {{ record.get('earliest_date')|format_date }}
+          </span>
         </div>
         <div id="record-journal">
           {% if record|publication_info %}

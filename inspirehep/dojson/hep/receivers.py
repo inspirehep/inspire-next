@@ -48,6 +48,16 @@ def earliest_date(sender, *args, **kwargs):
             if 'year' in publication_info_key:
                 dates.append(publication_info_key['year'])
 
+    if 'creation_modification_date' in sender:
+        for date in sender['creation_modification_date']:
+            if 'creation_date' in date:
+                dates.append(date['creation_date'])
+
+    if 'imprints' in sender:
+        for imprint in sender['imprints']:
+            if 'date' in imprint:
+                dates.append(imprint['date'])
+
     earliest_date = create_earliest_date(dates)
     if earliest_date:
         sender['earliest_date'] = earliest_date
