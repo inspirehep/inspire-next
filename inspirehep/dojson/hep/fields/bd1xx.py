@@ -36,7 +36,6 @@ def authors(self, key, value):
 
     def get_value(value):
         affiliations = []
-        curated_relation = False
         if value.get('u'):
             recid = ''
             try:
@@ -47,11 +46,6 @@ def authors(self, key, value):
                 utils.force_list(value.get('u')))
             affiliations = [{'value': aff, 'recid': recid} for
                             aff in affiliations]
-        if value.get('y'):
-            if value.get('y') == '1':
-                curated_relation = True
-        elif value.get('z'):
-            curated_relation = True
         ret = {
             'full_name': value.get('a'),
             'role': value.get('e'),
@@ -64,7 +58,7 @@ def authors(self, key, value):
             'profile': inspire_dojson_utils.create_profile_url(
                 value.get('x')
             ),
-            'curated_relation': curated_relation
+            'curated_relation': value.get('y', 0) == 1
         }
         # HACK: This is to workaround broken records where multiple authors
         # got meshed up together.
