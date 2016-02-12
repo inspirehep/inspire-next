@@ -128,11 +128,16 @@ def experiments(self, key, value):
 def institution(self, key, value):
     """Institution info."""
     curated_relation = False
+    recid = ''
     if value.get('z'):
-        curated_relation - True
+        curated_relation = True
+        try:
+            recid = int(value.get('z'))
+        except:
+            pass
     return {
         'curated_relation': curated_relation,
-        'recid': value.get('z'),
+        'recid': recid,
         'name': value.get('a'),
     }
 

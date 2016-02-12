@@ -24,6 +24,8 @@
 
 from dojson import utils
 
+from inspirehep.dojson import utils as inspire_dojson_utils
+
 from ..model import conferences
 
 
@@ -38,7 +40,7 @@ def acronym(self, key, value):
     self['place'] = value.get('c')
     self['subtitle'] = value.get('b')
     self['title'] = value.get('a')
-    return value.get('e')
+    return utils.force_list(value.get('e'))
 
 
 @conferences.over('alternative_titles', '^711')
@@ -69,14 +71,21 @@ def field_code(self, key, value):
 
 
 @conferences.over('keywords', '^6531')
-@utils.for_each_value
-@utils.filter_values
 def keywords(self, key, value):
     """Field code."""
-    return {
-        'value': value.get('a'),
-        'source': value.get('9')
-    }
+    def get_value(value):
+        return {
+            'value': value.get('a'),
+            'source': value.get('9')
+        }
+    keywords = self.get('keywords', [])
+    if isinstance(value, list):
+        for val in value:
+            keywords.append(get_value(val))
+    else:
+        keywords.append(get_value(value))
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
+        keywords)
 
 
 @conferences.over('nonpublic_note', '^595')
@@ -98,7 +107,12 @@ def note(self, key, value):
 def series(self, key, value):
     """Conference series."""
     if value.get('n'):
-        self['series_number'] = value.get('n')
+        series_number = ''
+        try:
+            series_number = int(value.get('n'))
+            self['series_number'] = series_number
+        except:
+            pass
     return value.get('a')
 
 

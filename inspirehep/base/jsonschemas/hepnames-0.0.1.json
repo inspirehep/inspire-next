@@ -56,7 +56,7 @@
             "description": "Contains past email addresses"
         },
         "native_name": {
-            "type": "string",
+            "type": "array",
             "description": "Stores name in native form."
         },
         "conferences": {
@@ -158,7 +158,8 @@
                             "JACOW",
                             "GoogleScholar",
                             "RESEARCHERID",
-                            "SCOPUS"
+                            "SCOPUS",
+                            "WIKIPEDIA"
                         ],
                         "type": "string"
                     },

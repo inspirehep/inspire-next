@@ -24,6 +24,9 @@
 
 from dojson import utils
 
+from inspirehep.dojson import utils as inspire_dojson_utils
+from inspirehep.dojson.utils import strip_empty_values
+
 from ..hep.model import hep, hep2marc
 from ..conferences.model import conferences
 from ..institutions.model import institutions
@@ -103,7 +106,7 @@ def oai_pmh(self, key, value):
     """Local OAI-PMH record information."""
     return {
         'id': value.get('o'),
-        'set': value.get('p'),
+        'set': utils.force_list(value.get('p')),
         'previous_set': value.get('q'),
     }
 
@@ -219,15 +222,33 @@ def new_recid2marc(self, key, value):
 @journals.over('collections', '^980..')
 @hepnames.over('collections', '^980..')
 @jobs.over('collections', '^980..')
-@utils.for_each_value
-@utils.filter_values
 def collections(self, key, value):
     """Collection this record belongs to."""
-    return {
-        'primary': value.get('a'),
-        'secondary': value.get('b'),
-        'deleted': value.get('c'),
-    }
+    def get_value(value):
+        return {
+            'primary': value.get('a'),
+            'secondary': value.get('b'),
+            'deleted': value.get('c'),
+        }
+
+    collections = self.get('collections', [])
+
+    if isinstance(value, list):
+        for val in value:
+            collections.append(get_value(val))
+    else:
+        collections.append(get_value(value))
+    contains_list = False
+    for element in collections:
+        for k, v in enumerate(element):
+            if isinstance(element[v], list):
+                contains_list = True
+                break
+    if contains_list:
+        return strip_empty_values(collections)
+    else:
+        return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
+            collections)
 
 
 @hep2marc.over('980', 'collections')

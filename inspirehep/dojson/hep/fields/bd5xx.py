@@ -52,6 +52,8 @@ def public_notes2marc(self, key, value):
 @hep.over('hidden_notes', '^595..')
 def hidden_notes(self, key, value):
     """Hidden notes."""
+    value = utils.force_list(value)
+
     def get_value(value):
         return {
             'value': value.get('a'),
@@ -62,11 +64,9 @@ def hidden_notes(self, key, value):
 
     hidden_note_list = self.get('hidden_notes', [])
 
-    if isinstance(value, list):
-        for element in value:
-            hidden_note_list.append(get_value(element))
-    else:
-        hidden_note_list.append(get_value(value))
+    for element in value:
+        hidden_note_list.append(get_value(element))
+
     hidden_note = []
     for element in hidden_note_list:
         if element not in hidden_note:

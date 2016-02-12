@@ -24,33 +24,62 @@
 
 from dojson import utils
 
+from inspirehep.dojson import utils as inspire_dojson_utils
+from inspirehep.dojson.utils import strip_empty_values
+
 from ..model import hep, hep2marc
 
 
 @hep.over('references', '^999C5')
-@utils.for_each_value
-@utils.filter_values
 def references(self, key, value):
     """Produce list of references."""
-    return {
-        'recid': value.get('0'),
-        'texkey': value.get('1'),
-        'doi': value.get('a'),
-        'collaboration': value.get('c'),
-        'editors': value.get('e'),
-        'authors': value.get('h'),
-        'misc': value.get('m'),
-        'number': value.get('o'),
-        'isbn': value.get('i'),
-        'publisher': value.get('p'),
-        'maintitle': value.get('q'),
-        'report_number': value.get('r'),
-        'title': value.get('t'),
-        'url': value.get('u'),
-        'journal_pubnote': value.get('s'),
-        'raw_reference': value.get('x'),
-        'year': value.get('y'),
-    }
+    value = utils.force_list(value)
+
+    def get_value(value):
+        recid = ''
+        number = ''
+        year = ''
+        if '0' in value:
+            try:
+                recid = int(value.get('0'))
+            except:
+                pass
+        if 'o' in value:
+            try:
+                number = int(value.get('o'))
+            except:
+                pass
+        if 'y' in value:
+            try:
+                year = int(value.get('y'))
+            except:
+                pass
+        return {
+            'recid': recid,
+            'texkey': value.get('1'),
+            'doi': value.get('a'),
+            'collaboration': utils.force_list(value.get('c')),
+            'editors': value.get('e'),
+            'authors': utils.force_list(value.get('h')),
+            'misc': utils.force_list(value.get('m')),
+            'number': number,
+            'isbn': value.get('i'),
+            'publisher': utils.force_list(value.get('p')),
+            'maintitle': value.get('q'),
+            'report_number': utils.force_list(value.get('r')),
+            'title': utils.force_list(value.get('t')),
+            'url': utils.force_list(value.get('u')),
+            'journal_pubnote': utils.force_list(value.get('s')),
+            'raw_reference': utils.force_list(value.get('x')),
+            'year': year,
+        }
+    references = self.get('references', [])
+
+    for val in value:
+        references.append(get_value(val))
+
+    return inspire_dojson_utils.remove_duplicates_from_list(
+        strip_empty_values(references))
 
 
 @hep2marc.over('999C5', 'references')
@@ -87,7 +116,7 @@ def refextract(self, key, value):
     return {
         'comment': value.get('c'),
         'time': value.get('t'),
-        'version': value.get('v'),
+        'version': utils.force_list(value.get('v')),
         'source': value.get('s'),
     }
 
