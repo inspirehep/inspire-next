@@ -424,6 +424,10 @@ def setup_app(app):
         return 5184000  # 60 days
 
     @app.template_filter()
+    def strip_leading_number_plot_caption(text):
+        return re.sub(r'^\d{5}\s+', '', text)
+
+    @app.template_filter()
     def publication_info(record):
         """Displays inline publication and conference information"""
         result = {}
