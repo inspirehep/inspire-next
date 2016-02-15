@@ -27,7 +27,8 @@ from flask import (
     redirect,
     render_template,
     request,
-    url_for
+    url_for,
+    jsonify,
 )
 
 from flask.ext.login import current_user
@@ -210,38 +211,37 @@ def ajax_citations(recid, collection):
 
 @blueprint.route('/postfeedback', methods=['POST', ])
 def postfeedback():
-    """Handler to create a ticket for user feedback."""
-    subject = "INSPIRE Labs feedback"
+    """Handler to create a ticket from user feedback."""
+    feedback = request.form.get('feedback')
+    if feedback == '':
+        response = jsonify(success=False)
+        response.status_code = 400
+        return response
 
-    feedback = json.loads(request.form.get("data"))
+    replytoaddr = request.form.get('replytoaddr', None)
+    if replytoaddr is None:
+        replytoaddr = current_user.get('email')
 
-    content = """
-Feedback:
+        if replytoaddr == '':
+            response = jsonify(success=False)
+            response.status_code = 403
+            return response
 
-{feedback}
-    """.format(feedback=feedback)
+    content = '''Feedback:
 
-    # fd, temp_path = mkstemp(suffix=".png")
-    # fh = os.fdopen(fd, "wb")
-    # fh.write("".join(feedback_data[1].split(",")[1:]).decode('base64'))
-    # fh.close()
-
-    # attachments = [temp_path]
-    attachments = []
+{feedback}'''.format(feedback=feedback)
 
     if send_email(fromaddr=cfg['CFG_SITE_SUPPORT_EMAIL'],
                   toaddr=cfg['INSPIRELABS_FEEDBACK_EMAIL'],
-                  subject=subject,
+                  subject='INSPIRE Labs feedback',
                   content=content,
-                  replytoaddr=current_user.get("email"),
-                  attachments=attachments):
-        return json.dumps(
-            {'success': True}
-        ), 200, {'ContentType': 'application/json'}
+                  replytoaddr=replytoaddr,
+                  attachments=[]):
+        return jsonify(success=True)
     else:
-        return json.dumps(
-            {'success': False}
-        ), 500, {'ContentType': 'application/json'}
+        response = jsonify(success=False)
+        response.status_code = 500
+        return response
 
 #
 # Jinja2 filters

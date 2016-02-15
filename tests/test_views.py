@@ -21,6 +21,18 @@
 
 from invenio.testsuite import InvenioTestCase
 
+import mock
+
+
+# FIXME(jacquerie): should be in an helpers file.
+mock_user = {'email': 'user@example.com'}
+
+# FIXME(jacquerie): should be in an helpers file.
+feedback_email_cfg = {
+    'CFG_SITE_SUPPORT_EMAIL': 'support@inspirehep.net',
+    'INSPIRELABS_FEEDBACK_EMAIL': 'feedback@inspirehep.net'
+}
+
 
 class ViewsTests(InvenioTestCase):
     """Tests views."""
@@ -111,3 +123,53 @@ class ViewsTests(InvenioTestCase):
         self.login('admin', 'admin')
         self.assertEqual(self.client.get(
             "/arxiv/search?arxiv=1506.03115").status_code, 200)
+
+    @mock.patch('inspirehep.base.views.cfg', feedback_email_cfg)
+    @mock.patch('inspirehep.base.views.send_email', return_value=True)
+    def test_postfeedback_provided_email(self, send_email):
+        """Accepts feedback when providing an email."""
+        response = self.client.post('/postfeedback', data=dict(
+            replytoaddr='user@example.com', feedback='foo bar'))
+
+        send_email.assert_called_once_with(attachments=[],
+            content='Feedback:\n\nfoo bar', fromaddr='support@inspirehep.net',
+            replytoaddr='user@example.com', subject='INSPIRE Labs feedback',
+            toaddr='feedback@inspirehep.net')
+
+        self.assertEqual(response.status_code, 200)
+
+    @mock.patch('inspirehep.base.views.current_user', mock_user)
+    @mock.patch('inspirehep.base.views.cfg', feedback_email_cfg)
+    @mock.patch('inspirehep.base.views.send_email', return_value=True)
+    def test_postfeedback_logged_in_user(self, send_email):
+        """Falls back to the email of the logged in user."""
+        response = self.client.post('/postfeedback', data=dict(feedback='foo bar'))
+
+        send_email.assert_called_once_with(attachments=[],
+            content='Feedback:\n\nfoo bar', fromaddr='support@inspirehep.net',
+            replytoaddr='user@example.com', subject='INSPIRE Labs feedback',
+            toaddr='feedback@inspirehep.net')
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_postfeedback_anonymous_user(self):
+        """Rejects feedback without an email."""
+        response = self.client.post('/postfeedback', data=dict(feedback='foo bar'))
+
+        self.assertEqual(response.status_code, 403)
+
+    @mock.patch('inspirehep.base.views.current_user', mock_user)
+    def test_postfeedback_empty_feedback(self):
+        """Rejects empty feedback."""
+        response = self.client.post('/postfeedback', data=dict(feedback=''))
+
+        self.assertEqual(response.status_code, 400)
+
+    @mock.patch('inspirehep.base.views.cfg', feedback_email_cfg)
+    @mock.patch('inspirehep.base.views.send_email', return_value=False)
+    def test_postfeedback_send_email_failure(self, send_email):
+        """Informs the user when a server error occurred."""
+        response = self.client.post('/postfeedback', data=dict(
+            replytoaddr='user@example.com', feedback='foo bar'))
+
+        self.assertEqual(response.status_code, 500)
