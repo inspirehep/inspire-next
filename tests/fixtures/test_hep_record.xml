@@ -1,0 +1,425 @@
+<collection>
+<record>
+  <datafield tag="020" ind1=" " ind2=" ">
+    <subfield code="a">9783954501687</subfield>
+    <subfield code="b">mediumisbn</subfield>
+  </datafield>
+  <datafield tag="024" ind1="7" ind2=" ">
+    <subfield code="2">DOI</subfield>
+    <subfield code="a">10.1103/PhysRevLett.105.026802</subfield>
+  </datafield>
+  <datafield tag="024" ind1="7" ind2=" ">
+    <subfield code="2">OTHER</subfield>
+    <subfield code="a">12341234</subfield>
+    <subfield code="9">test</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">Seidel:2010cea</subfield>
+    <subfield code="9">INSPIRETeX</subfield>
+    <subfield code="z">obsolete</subfield>
+  </datafield>
+  <datafield tag="037" ind1=" " ind2=" ">
+    <subfield code="9">arXiv</subfield>
+    <subfield code="a">arXiv:1002.2647</subfield>
+    <subfield code="c">cond-mat.mes-hall</subfield>
+  </datafield>
+  <datafield tag="037" ind1=" " ind2=" ">
+    <subfield code="9">notarXiv</subfield>
+    <subfield code="a">blabla</subfield>
+    <subfield code="c">test</subfield>
+  </datafield>
+  <datafield tag="041" ind1=" " ind2=" ">
+    <subfield code="a">Spanish</subfield>
+  </datafield>
+  <datafield tag="084" ind1=" " ind2=" ">
+    <subfield code="2">PACS</subfield>
+    <subfield code="a">13.88.+e</subfield>
+    <subfield code="9">testclassification</subfield>
+  </datafield>
+  <datafield tag="084" ind1=" " ind2=" ">
+    <subfield code="2">PACS</subfield>
+    <subfield code="a">13.60.-r</subfield>
+    <subfield code="9">testclassification</subfield>
+  </datafield>
+  <datafield tag="100" ind1=" " ind2=" ">
+    <subfield code="a">Seidel, Alexander</subfield>
+    <subfield code="u">Washington U., St. Louis</subfield>
+    <subfield code="e">relator_term</subfield>
+    <subfield code="q">alternative_name</subfield>
+    <subfield code="i">Inspire_id</subfield>
+    <subfield code="j">External_id</subfield>
+    <subfield code="m">mail</subfield>
+    <subfield code="x">profile</subfield>
+    <subfield code="y">1</subfield>
+  </datafield>
+  <datafield tag="110" ind1=" " ind2=" ">
+    <subfield code="a">CMS Collaboration</subfield>
+  </datafield>
+  <datafield tag="210" ind1=" " ind2=" ">
+    <subfield code="a">PARTIALLY CONSERVED AXIAL VECTOR CURRENT</subfield>
+  </datafield>
+  <datafield tag="242" ind1=" " ind2=" ">
+    <subfield code="a">
+      Algebraic structure of quantum systems in non-commutative phase spaces
+    </subfield>
+    <subfield code="b">
+      subtitle of hep
+    </subfield>
+  </datafield>
+  <datafield tag="245" ind1=" " ind2=" ">
+    <subfield code="a">S-Duality Constraints on 1D Patterns Associated with Fractional Quantum Hall States</subfield>
+  </datafield>
+  <datafield tag="246" ind1=" " ind2=" ">
+    <subfield code="9">arXiv</subfield>
+    <subfield code="a">
+    Topology of the Gauged Kahler Isometry in Minimal Supergravity Models of Inflation
+    </subfield>
+    <subfield code="b">subtitle arxiv</subfield>
+  </datafield>
+  <datafield tag="247" ind1=" " ind2=" ">
+    <subfield code="a">
+      A Functional integral equation for the complete effective action in quantum field theory
+    </subfield>
+    <subfield code="b">
+      Subtitle of title old.
+    </subfield>
+    <subfield code="9">
+      Source of title old.
+    </subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="a">Geneva, Switzerland</subfield>
+    <subfield code="b">JACoW</subfield>
+    <subfield code="c">2015</subfield>
+  </datafield>
+  <datafield tag="269" ind1=" " ind2=" ">
+    <subfield code="c">2015</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">emulateapj</subfield>
+  </datafield>
+  <datafield tag="490" ind1=" " ind2=" ">
+    <subfield code="a">Mathematical Physics Studies</subfield>
+    <subfield code="v">Volume</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">
+    10 pages, 6 figures. Submitted to MNRAS. A public version of the GIZMO code, user's guide, test problem setups, and movies are available at http://www.tapir.caltech.edu/~phopkins/Site/GIZMO.html
+    </subfield>
+    <subfield code="9">arXiv</subfield>
+  </datafield>
+  <datafield tag="595" ind1=" " ind2=" ">
+    <subfield code="a">Value</subfield>
+    <subfield code="b">cern_reference</subfield>
+    <subfield code="c">cds</subfield>
+    <subfield code="9">CERN</subfield>
+  </datafield>
+  <datafield tag="502" ind1=" " ind2=" ">
+    <subfield code="b">PhD</subfield>
+    <subfield code="c">U. Hamburg, Dept. Phys.</subfield>
+    <subfield code="d">2015</subfield>
+  </datafield>
+  <datafield tag="520" ind1=" " ind2=" ">
+    <subfield code="a">
+      The relativistic hydrodynamical equations are being examined with the aim of extracting the quantum-mechanical equations (the relativistic Klein-Gordon equation and the Schr\"odinger equation in the non-relativistic limit). In both cases it is required to get the quantum potential, which follows from pressure gradients within a superfluid vacuum medium. This special fluid, endowed with viscosity allows to describe emergence of the flat orbital speeds of spiral galaxies. The viscosity averaged on time vanishes, but   its variance is different from zero. It is a function fluctuating about zero. Therefore the flattening is the result of the energy  exchange of the torque with zero-point fluctuations of the physical vacuum on the ultra-low frequencies.
+    </subfield>
+    <subfield code="9">arXiv</subfield>
+  </datafield>
+  <datafield tag="536" ind1=" " ind2=" ">
+    <subfield code="0">G:(EU-Grant)317089</subfield>
+    <subfield code="a">
+    GATIS - Gauge Theory as an Integrable System (317089)
+    </subfield>
+    <subfield code="c">317089</subfield>
+    <subfield code="f">FP7-PEOPLE-2012-ITN</subfield>
+  </datafield>
+  <datafield tag="540" ind1=" " ind2=" ">
+    <subfield code="a">Creative Commons Attribution 3.0 License</subfield>
+    <subfield code="u">http://creativecommons.org/licenses/by/3.0/</subfield>
+    <subfield code="3">material</subfield>
+    <subfield code="b">impossing</subfield>
+  </datafield>
+  <datafield tag="541" ind1=" " ind2=" ">
+    <subfield code="a">source</subfield>
+    <subfield code="b">email</subfield>
+    <subfield code="c">method</subfield>
+    <subfield code="d">date</subfield>
+    <subfield code="e">submission_number</subfield>
+  </datafield>
+  <datafield tag="542" ind1=" " ind2=" ">
+    <subfield code="f">
+    Creative Commons Attribution-NonCommercial-No Derivs 3.0 Unported (CC BY-NC-ND)
+    </subfield>
+    <subfield code="u">http://creativecommons.org/licenses/by-nc-nd/3.0/</subfield>
+    <subfield code="d">holder</subfield>
+    <subfield code="3">material</subfield>
+  </datafield>
+  <datafield tag="650" ind1="1" ind2="7">
+    <subfield code="2">INSPIRE</subfield>
+    <subfield code="a">General Physics</subfield>
+    <subfield code="9">submitter</subfield>
+  </datafield>
+  <datafield tag="653" ind1="1" ind2=" ">
+    <subfield code="9">source</subfield>
+    <subfield code="a">value</subfield>
+  </datafield>
+  <datafield tag="693" ind1=" " ind2=" ">
+    <subfield code="e">CERN-LHC-ATLAS</subfield>
+    <subfield code="a">LHC</subfield>
+  </datafield>
+  <datafield tag="695" ind1=" " ind2=" ">
+    <subfield code="2">INSPIRE</subfield>
+    <subfield code="e">8</subfield>
+    <subfield code="a">Monte Carlo</subfield>
+  </datafield>
+  <datafield tag="701" ind1=" " ind2=" ">
+    <subfield code="a">Weiglein, Georg</subfield>
+    <subfield code="g">Inspire_id</subfield>
+    <subfield code="j">External_id</subfield>
+    <subfield code="u">Stanford</subfield>
+  </datafield>
+  <datafield tag="710" ind1=" " ind2=" ">
+    <subfield code="g">Olga Kambeitz for the Pierre Auger</subfield>
+  </datafield>
+  <datafield tag="773" ind1=" " ind2=" ">
+    <subfield code="c">026802</subfield>
+    <subfield code="n">2</subfield>
+    <subfield code="p">Phys.Rev.Lett.</subfield>
+    <subfield code="v">105</subfield>
+    <subfield code="y">2010</subfield>
+    <subfield code="m">note</subfield>
+    <subfield code="z">isbn</subfield>
+    <subfield code="x">pubinfo_freetext</subfield>
+    <subfield code="w">cnum</subfield>
+    <subfield code="t">confpaper_info</subfield>
+    <subfield code="r">reportNumber</subfield>
+    <subfield code="o">ConfAcr</subfield>
+    <subfield code="0">1</subfield>
+  </datafield>
+  <datafield tag="785" ind1="0" ind2="2">
+    <subfield code="r">CERN-PH-EP-2014-262</subfield>
+    <subfield code="w">recid</subfield>
+    <subfield code="z">isbn</subfield>
+  </datafield>
+  <datafield tag="856" ind1="4" ind2=" ">
+    <subfield code="s">126140</subfield>
+    <subfield code="u">http://inspirehep.net/record/1236510/files/arXiv:1002.2647.pdf</subfield>
+    <subfield code="w">doc_string</subfield>
+    <subfield code="y">description</subfield>
+    <subfield code="3">material_type</subfield>
+    <subfield code="z">comment</subfield>
+    <subfield code="f">name</subfield>
+  </datafield>
+  <datafield tag="909" ind1="C" ind2="O">
+    <subfield code="o">oai:inspirehep.net:1236510</subfield>
+    <subfield code="p">INSPIRE:HEP</subfield>
+  </datafield>
+  <datafield tag="970" ind1=" " ind2=" ">
+    <subfield code="d">12345</subfield>
+  </datafield>
+  <datafield tag="970" ind1=" " ind2=" ">
+    <subfield code="a">SPIRES-1234123</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">Published</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">citeable</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">HEP</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">arXiv</subfield>
+  </datafield>
+  <datafield tag="981" ind1=" " ind2=" ">
+    <subfield code="a">123</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">1</subfield>
+    <subfield code="h">R. B. Laughlin</subfield>
+    <subfield code="s">Phys.Rev.Lett.,50,1395</subfield>
+    <subfield code="y">1983</subfield>
+    <subfield code="0">198155</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">2</subfield>
+    <subfield code="h">J. K. Jain</subfield>
+    <subfield code="s">Phys.Rev.Lett.,63,199</subfield>
+    <subfield code="y">1989</subfield>
+    <subfield code="0">276500</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">3</subfield>
+    <subfield code="h">G. Moore and N. Read</subfield>
+    <subfield code="s">Nucl.Phys.,B360,362</subfield>
+    <subfield code="y">1991</subfield>
+    <subfield code="x">raw_reference</subfield>
+    <subfield code="u">url</subfield>
+    <subfield code="t">title</subfield>
+    <subfield code="r">report_number</subfield>
+    <subfield code="q">maintitle</subfield>
+    <subfield code="p">publisher</subfield>
+    <subfield code="i">isbn</subfield>
+    <subfield code="0">1000</subfield>
+    <subfield code="m">misc</subfield>
+    <subfield code="e">editors</subfield>
+    <subfield code="c">collaboration</subfield>
+    <subfield code="a">10.1063/1.4930630 doi</subfield>
+    <subfield code="1">texkey</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">4</subfield>
+    <subfield code="h">A. Seidel, H. Fu, D.-H. Lee, J. M. Leinaas, and J. E. Moore</subfield>
+    <subfield code="s">Phys.Rev.Lett.,95,266405</subfield>
+    <subfield code="y">2005</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">5</subfield>
+    <subfield code="h">A. Seidel and D.-H. Lee</subfield>
+    <subfield code="s">Phys.Rev.Lett.,97,056804</subfield>
+    <subfield code="y">2006</subfield>
+    <subfield code="0">1236504</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">6</subfield>
+    <subfield code="h">E. J. Bergholtz and A. Karlhede</subfield>
+    <subfield code="s">Phys.Rev.Lett.,94,026802</subfield>
+    <subfield code="y">2005</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">7</subfield>
+    <subfield code="h">E. J. Bergholtz and A. Karlhede</subfield>
+    <subfield code="m">J. Stat Mech. L04001 (2006)</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">8</subfield>
+    <subfield code="h">A. Seidel and K. Yang</subfield>
+    <subfield code="s">Phys.Rev.Lett.,101,036804</subfield>
+    <subfield code="y">2008</subfield>
+    <subfield code="0">1236509</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">9</subfield>
+    <subfield code="h">E. J. Bergholtz, J. Kailasvuori, E. Wikberg, T. H. Hansson, and A. Karlhede</subfield>
+    <subfield code="s">Phys.Rev.,B74,081308</subfield>
+    <subfield code="m">R) (2006)</subfield>
+    <subfield code="0">1236505</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">10</subfield>
+    <subfield code="h">B. A. Bernevig and F. D. M. Haldane</subfield>
+    <subfield code="s">Phys.Rev.Lett.,100,246802</subfield>
+    <subfield code="y">2008</subfield>
+    <subfield code="0">1236499</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">11</subfield>
+    <subfield code="h">X.-G. Wen and Z. Wang</subfield>
+    <subfield code="s">Phys.Rev.,B77,1711</subfield>
+    <subfield code="y">2008</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">12</subfield>
+    <subfield code="h">A. Seidel</subfield>
+    <subfield code="s">Phys.Rev.Lett.,101,196802</subfield>
+    <subfield code="y">2008</subfield>
+    <subfield code="0">1236508</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">13</subfield>
+    <subfield code="h">J. Flavin and A. Seidel</subfield>
+    <subfield code="m">to be published</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">14</subfield>
+    <subfield code="h">N. Read and E. Rezayi</subfield>
+    <subfield code="s">Phys.Rev.,B59,8084</subfield>
+    <subfield code="y">1999</subfield>
+    <subfield code="0">492282</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">15</subfield>
+    <subfield code="h">A. Seidel and D.-H. Lee</subfield>
+    <subfield code="s">Phys.Rev.,B76,155101</subfield>
+    <subfield code="y">2007</subfield>
+    <subfield code="0">1236506</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">16</subfield>
+    <subfield code="h">M. Oshikawa</subfield>
+    <subfield code="s">Phys.Rev.Lett.,84,1535</subfield>
+    <subfield code="y">2000</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">17</subfield>
+    <subfield code="h">M. B. Hastings</subfield>
+    <subfield code="s">Phys.Rev.,B69,104431</subfield>
+    <subfield code="y">2004</subfield>
+    <subfield code="0">626511</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">18</subfield>
+    <subfield code="h">W. P. Su</subfield>
+    <subfield code="s">Phys.Rev.,B34,1031</subfield>
+    <subfield code="y">1986</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">19</subfield>
+    <subfield code="h">R. Tao and Y.-S. Wu</subfield>
+    <subfield code="s">Phys.Rev.,B31,6859</subfield>
+    <subfield code="y">1985</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">20</subfield>
+    <subfield code="h">E. J. Bergholtz and A. Karlhede</subfield>
+    <subfield code="s">Phys.Rev.,B77,155308</subfield>
+    <subfield code="y">2008</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">21</subfield>
+    <subfield code="h">E. Ardonne, E. J. Bergholtz, J. Kailasvuori, and E. Wikberg</subfield>
+    <subfield code="m">J. Stat Mech. P04016 (2008)</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">22</subfield>
+    <subfield code="h">N. Read and D. Green</subfield>
+    <subfield code="s">Phys.Rev.,B61,10267</subfield>
+    <subfield code="y">2000</subfield>
+    <subfield code="0">503279</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">23</subfield>
+    <subfield code="h">M. Greiter, X.-G. Wen, and F. Wiczek</subfield>
+    <subfield code="s">Nucl.Phys.,B374,567</subfield>
+    <subfield code="y">1992</subfield>
+    <subfield code="0">319950</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">24</subfield>
+    <subfield code="h">R. L. Willett, M. A. Paalanen, R. R. Ruel, K. W. West, L. N. Pfeiffer, and D. J. Bishop</subfield>
+    <subfield code="s">Phys.Rev.Lett.,65,112</subfield>
+    <subfield code="y">1990</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">25</subfield>
+    <subfield code="h">S. H. Simon, E. H. Rezayi, N. R. Cooper, and I. Berdnikov</subfield>
+    <subfield code="s">Phys.Rev.,B75,075317</subfield>
+    <subfield code="y">2007</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="5">
+    <subfield code="o">26</subfield>
+    <subfield code="h">E. Ardonne</subfield>
+    <subfield code="s">Phys.Rev.Lett.,102,180401</subfield>
+    <subfield code="y">2009</subfield>
+    <subfield code="0">796543</subfield>
+  </datafield>
+  <datafield tag="999" ind1="C" ind2="6">
+    <subfield code="a">0-0-1-1-0-0-0</subfield>
+    <subfield code="t">2013-06-05 17:58:01</subfield>
+    <subfield code="c">comment</subfield>
+    <subfield code="v">Invenio/1.0.0.1712-3d18 refextract/1.5.35</subfield>
+    <subfield code="s">source</subfield>
+  </datafield>
+</record>
+</collection>
