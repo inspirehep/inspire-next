@@ -62,7 +62,7 @@ def hidden_notes(self, key, value):
 
     hidden_note_list = self.get('hidden_notes', [])
 
-    if isinstance(value, list):
+    if isinstance(value, (tuple, list)):
         for element in value:
             hidden_note_list.append(get_value(element))
     else:
@@ -105,7 +105,7 @@ def thesis(self, key, value):
     }
 
 
-@hep2marc.over('502', 'thesis')
+@hep2marc.over('502', '^thesis$')
 @utils.for_each_value
 @utils.filter_values
 def thesis2marc(self, key, value):

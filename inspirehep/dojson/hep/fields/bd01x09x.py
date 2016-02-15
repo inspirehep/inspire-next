@@ -51,64 +51,55 @@ def isbns2marc(self, key, value):
     }
 
 
-@hep.over('dois', '^024[1032478_][10_]')
-def dois(self, key, value):
-    """Other Standard Identifier."""
-    value = utils.force_list(value)
-    out = []
-    for val in value:
-        if val:
-            if isinstance(val.get("2"), list):
-                if val.get("2", '')[0].lower() == "doi":
-                    if isinstance(val.get('a'), list):
-                        for v in val.get('a'):
-                            out.append({
-                                'value': v,
-                                'source': val.get('9')
-                            })
-                    else:
-                        out.append({
-                            'value': val.get('a'),
-                            'source': val.get('9')
-                        })
-            else:
-                if val.get("2", '').lower() == "doi":
-                    if isinstance(val.get('a'), list):
-                        for v in val.get('a'):
-                            out.append({
-                                'value': v,
-                                'source': val.get('9')
-                            })
-                    else:
-                        out.append({
-                            'value': val.get('a'),
-                            'source': val.get('9')
-                        })
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(out)
-
-
-@hep.over('persistent_identifiers', '^024[1032478_][10_]')
+@hep.over('persistent_identifiers', '^024..')
 def persistent_identifiers(self, key, value):
-    """Persistent identifiers."""
+    """Persistent Standard Identifiers."""
     value = utils.force_list(value)
-    out = []
+    dois = []
+    idents = []
     for val in value:
         if val:
-            if isinstance(val.get("2"), list):
-                if val.get("2", '')[0].lower() != "doi":
-                    out.append({
+            if isinstance(val.get("2"), (list, tuple)):
+                if val.get("2", '')[0].lower() == "doi":
+                    if isinstance(val.get('a'), (list, tuple)):
+                        for v in val.get('a'):
+                            dois.append({
+                                'value': v,
+                                'source': val.get('9')
+                            })
+                    else:
+                        dois.append({
+                            'value': val.get('a'),
+                            'source': val.get('9')
+                        })
+                else:
+                    idents.append({
                         'value': val.get('a'),
                         'source': val.get('9'),
                         'type': val.get('2')[0]
                     })
             else:
-                if val.get("2", '').lower() != "doi":
-                    out.append({
-                        'value': val.get('a'),
+                if val.get("2", '').lower() == "doi":
+                    if isinstance(val.get('a'), (list, tuple)):
+                        for v in val.get('a'):
+                            dois.append({
+                                'value': v,
+                                'source': val.get('9')
+                            })
+                    else:
+                        dois.append({
+                            'value': val.get('a'),
+                            'source': val.get('9')
+                        })
+                else:
+                    idents.append({
+                        'value': utils.force_list(val.get('a'))[0],
                         'source': val.get('9'),
                         'type': val.get('2')
                     })
-    return out
+    if dois:
+        self['dois'] = inspire_dojson_utils.remove_duplicates_from_list_of_dicts(dois)
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(idents)
 
 
 @hep2marc.over('024', '^(dois|persistent_identifiers)$')
@@ -155,82 +146,54 @@ def external_system_numbers2marc(self, key, value):
 
 @hep.over('report_numbers', '^037..')
 def report_numbers(self, key, value):
-    """Source of Acquisition."""
+    """Report numbers and arXiv numbers from 037."""
     def get_value(value):
         return {
             'source': value.get('9'),
             'value': value.get('a', value.get('z')),
         }
 
-    report_number = self.get('report_numbers', [])
-
-    if isinstance(value, list):
-        for element in value:
-            if ('9' in element and element['9'] != 'arXiv') or '9'\
-                    not in element:
-                report_number.append(get_value(element))
-    else:
-        if ('9' in value and value['9'] != 'arXiv') or '9' not in value:
-            report_number.append(get_value(value))
-    for element in report_number:
-        if isinstance(element['value'], list):
-            return report_number
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(report_number)
-
-
-@hep2marc.over('037', 'report_numbers')
-def report_numbers2marc(self, key, value):
-    """Source of Acquisition."""
-    value = utils.force_list(value)
-
-    def get_value(value):
-        return {
-            'a': value.get('value'),
-            '9': value.get('source'),
-        }
-
-    self['037'] = self.get('037', [])
-    for rn in value:
-        self['037'].append(get_value(rn))
-    return self['037']
-
-
-@hep.over('arxiv_eprints', '^037..')
-def arxiv_eprints(self, key, value):
-    """ArXiv identifiers to JSON."""
-    def get_value(value):
+    def get_value_arxiv(value):
         return {
             'value': value.get('a'),
             'categories': utils.force_list(value.get('c')),
         }
 
+    report_number = self.get('report_numbers', [])
     arxiv_eprints = self.get('arxiv_eprints', [])
 
-    if isinstance(value, list):
-        for element in value:
-            if element['9'] == 'arXiv' and 'c' in element:
-                arxiv_eprints.append(get_value(element))
-    else:
-        if value['9'] == 'arXiv' and 'c' in value:
-            arxiv_eprints.append(get_value(value))
-    return arxiv_eprints
+    value = utils.force_list(value)
+    for element in value:
+        if element.get('9') and element.get('9') == 'arXiv' and 'c' in element:
+            arxiv_eprints.append(get_value_arxiv(element))
+        else:
+            report_number.append(get_value(element))
+
+    self['arxiv_eprints'] = inspire_dojson_utils.remove_duplicates_from_list_of_dicts(arxiv_eprints)
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(report_number)
 
 
-@hep2marc.over('037', 'arxiv_eprints')
-def arxiv_eprints2marc(self, key, value):
-    """Arxiv identifiers to MARC."""
+@hep2marc.over('037', '(arxiv_eprints|report_numbers)')
+def report_numbers2marc(self, key, value):
+    """Source of Acquisition."""
     value = utils.force_list(value)
 
     def get_value(value):
-        return {
-            'a': value.get('value'),
-            'c': value.get('categories'),
-            '9': "arXiv"
-        }
+        if key == "report_numbers":
+            return {
+                'a': value.get('value'),
+                '9': value.get('source'),
+            }
+        elif key == "arxiv_eprints":
+            return {
+                'a': value.get('value'),
+                'c': value.get('categories'),
+                '9': "arXiv",
+            }
 
     self['037'] = self.get('037', [])
-    for arxiv in value:
-        self['037'].append(get_value(arxiv))
+    for rn in value:
+        self['037'].append(get_value(rn))
     return self['037']
 
 

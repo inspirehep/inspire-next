@@ -37,7 +37,7 @@ def title_variation(self, key, value):
 
     title_variation_list = self.get('title_variation', [])
 
-    if isinstance(value, list):
+    if isinstance(value, (tuple, list)):
         for element in value:
             title_variation_list.append(get_value(element))
     else:
@@ -78,11 +78,11 @@ def title_translation2marc(self, key, value):
     }
 
 
-@hep.over('titles', '^245[10_][0_]')
+@hep.over('titles', '^24[56][10_][0_]')
 def titles(self, key, value):
     """Title Statement."""
     def get_value(existing):
-        if not isinstance(value, list):
+        if not isinstance(value, (tuple, list)):
             values = [value]
         else:
             values = value
@@ -95,79 +95,38 @@ def titles(self, key, value):
             })
         return existing + out
 
+
     if 'titles' in self:
-        return get_value(self['titles'])
+        titles = get_value(self['titles'])
     else:
-        return get_value([])
+        titles = get_value([])
 
+    if titles and 'breadcrumb_title' not in self:
+        self['breadcrumb_title'] = titles[0]['title']
 
-@hep.over('breadcrumb_title', '^245[10_][0_]')
-def breadcrumb_title(self, key, value):
-    """Title used in breadcrumb and html title."""
-    if 'breadcrumb_title' in self:
-        return self['breadcrumb_title']
-    else:
-        if isinstance(value, list):
-            value = value[0]
-        return value.get('a')
+    return titles
 
 
 @hep2marc.over('245', '^titles$')
 def titles2marc(self, key, value):
-    """Title Statement."""
-    if len(value) == 1:
-        return [{
-            'a': value[0].get('title'),
-            'b': value[0].get('subtitle'),
-            '9': value[0].get('source'),
-        }]
-    else:
-        for title in value:
-            if not title.get('source') or title.get('source', '').lower() != "arxiv":
-                    return [{
-                        'a': title.get('title'),
-                        'b': title.get('subtitle'),
-                        '9': title.get('source'),
-                    }]
+    """Title Statement for 245/246."""
+    title_245 = None
+    arxiv_246 = None
 
+    for title in utils.force_list(value):
+        transformed_title = {
+            'a': title.get('title'),
+            'b': title.get('subtitle'),
+            '9': title.get('source'),
+        }
+        if title.get('source') is not None and title.get('source', '').lower() == "arxiv":
+            arxiv_246 = transformed_title
+        elif title_245 is None:
+            title_245 = transformed_title
 
-@hep.over('titles', '^246[1032_][_103254768]')
-def title_arxiv(self, key, value):
-    """Varying Form of Title."""
-    def get_value(existing):
-        if not isinstance(value, list):
-            values = [value]
-        else:
-            values = value
-        out = []
-        for val in values:
-            out.append({
-                'title': val.get('a'),
-                'subtitle': val.get('b'),
-                'source': val.get('9'),
-            })
-        return existing + out
-
-    if 'titles' in self:
-        return get_value(self['titles'])
-    else:
-        return get_value([])
-
-
-@hep2marc.over('246', '^titles$')
-def title_arxiv2marc(self, key, value):
-    """Varying Form of Title."""
-    if not isinstance(value, list):
-        values = [value]
-    else:
-        values = value
-    for val in values:
-        if val.get('source', '') and val.get('source', '').lower() == "arxiv":
-            return {
-                'a': val.get('title'),
-                'b': val.get('subtitle'),
-                '9': val.get('source'),
-            }
+    if arxiv_246 is not None:
+        self['246'] = arxiv_246
+    return [title_245]
 
 
 @hep.over('titles_old', '^247[10_][10_]')

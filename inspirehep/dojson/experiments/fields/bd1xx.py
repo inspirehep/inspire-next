@@ -93,7 +93,7 @@ def spokesperson(self, key, value):
 @experiments.over('collaboration', '^710..')
 def collaboration(self, key, value):
     """Collaboration of experiment."""
-    if isinstance(value, list):
+    if isinstance(value, (tuple, list)):
         collaborations = sorted((elem["g"] for elem in value if 'g' in elem), key=lambda x: len(x))
         if len(collaborations) > 1:
             self['collaboration_alternative_names'] = collaborations[1:]
@@ -128,7 +128,7 @@ def related_experiments(self, key, value):
 @experiments.over('date_started', '^046..')
 def date_started(self, key, value):
     """Date created."""
-    if isinstance(value, list):
+    if isinstance(value, (tuple, list)):
         for elem in value:
             if elem.get('s'):
                 return elem.get('s')
@@ -140,7 +140,7 @@ def date_started(self, key, value):
 @experiments.over('date_completed', '^046..')
 def date_completed(self, key, value):
     """Date completed."""
-    if isinstance(value, list):
+    if isinstance(value, (tuple, list)):
         for elem in value:
             if elem.get('t'):
                 return elem.get('t')

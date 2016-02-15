@@ -49,5 +49,5 @@ class Publication(SchemaOverdo):
         add_book_info(output, blob)
         return output
 
-hep = Publication(schema="hep-0.0.1.json")
-hep2marc = Overdo()
+hep = Publication(schema="hep-0.0.1.json", entry_point_group="inspirehep.dojson.hep")
+hep2marc = Overdo(entry_point_group="inspirehep.dojson.hep")

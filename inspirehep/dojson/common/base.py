@@ -159,26 +159,35 @@ def creation_modification_date2marc(self, key, value):
 @jobs.over('spires_sysnos', '^970..')
 @utils.ignore_value
 def spires_sysnos(self, key, value):
-    """Old SPIRES number."""
+    """Old SPIRES number and new_recid from 970."""
     value = utils.force_list(value)
     sysnos = []
+    new_recid = None
     for val in value:
         if 'a' in val:
             # Only append if there is something
             sysnos.append(val.get('a'))
+        elif 'd' in val:
+            new_recid = val.get('d')
+    self['new_recid'] = new_recid or None
     return sysnos or None
 
 
-@hep2marc.over('970', 'spires_sysnos')
-@hepnames2marc.over('970', 'spires_sysnos')
+@hep2marc.over('970', '(spires_sysnos|new_recid)')
+@hepnames2marc.over('970', '(spires_sysnos|new_recid)')
 def spires_sysnos2marc(self, key, value):
-    """Old SPIRES number."""
-    # Special handing of shared end key in 970 with new_recid
+    """970 SPIRES number and new recid."""
     value = utils.force_list(value)
     existing_values = self.get('970', [])
-    existing_values.extend(
-        [{'a': val} for val in value]
-    )
+
+    if key == 'spires_sysnos':
+        existing_values.extend(
+            [{'a': val} for val in value]
+        )
+    elif key == 'new_recid':
+        existing_values.extend(
+            [{'d': val} for val in value]
+        )
     return existing_values
 
 
@@ -197,19 +206,6 @@ def new_recid(self, key, value):
         if 'd' in val:
             # Only return if there is a d subfield, otherwise let the loop go.
             return val.get('d')
-
-
-@hep2marc.over('970', 'new_recid')
-@hepnames2marc.over('970', 'new_recid')
-def new_recid2marc(self, key, value):
-    """New recid."""
-    # Special handing of shared end key in 970 with spires_sysnos
-    value = utils.force_list(value)
-    existing_values = self.get('970', [])
-    existing_values.extend(
-        [{'d': val} for val in value]
-    )
-    return existing_values
 
 
 @hep.over('collections', '^980..')

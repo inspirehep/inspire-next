@@ -105,7 +105,7 @@ def publication_info2marc(self, key, value):
 @hep.over('succeeding_entry', '^785..')
 def succeeding_entry(self, key, value):
     """Succeeding Entry."""
-    if isinstance(value, list):
+    if isinstance(value, (tuple, list)):
         # Too bad: there can only be one succeeding entry.
         value = value[0]
 

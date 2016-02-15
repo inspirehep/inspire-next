@@ -116,7 +116,7 @@ def test_report_numbers(marcxml_to_json, json_to_marc):
 
 def test_arxiv_eprints(marcxml_to_json, json_to_marc):
     """Test if arxiv eprints is created correctly."""
-    assert (marcxml_to_json['arxiv_eprints'][0]['categories'] ==
+    assert (marcxml_to_json['arxiv_eprints'][0]['categories'][0] in
             [c.get('c')[0] for c in json_to_marc['037'] if 'c' in c])
     assert (marcxml_to_json['arxiv_eprints'][0]['value'] in
             [a.get('a') for a in json_to_marc['037'] if 'a' in a])

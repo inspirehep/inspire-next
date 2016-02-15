@@ -123,7 +123,7 @@ def thesaurus_terms(self, key, value):
         }
     thesaurus_terms = self.get('thesaurus_terms', [])
 
-    if isinstance(value, list):
+    if isinstance(value, (list, tuple)):
         for element in value:
             thesaurus_terms.append(get_value(element))
     else:

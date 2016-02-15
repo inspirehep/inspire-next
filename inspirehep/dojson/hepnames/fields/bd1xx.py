@@ -78,7 +78,7 @@ def name(self, key, value):
     + Sr.
     + roman numbers (like VII)
     """
-    if isinstance(value, list):
+    if isinstance(value, (tuple, list)):
         value = value[0]
     return {
         'value': value.get('a'),
@@ -92,7 +92,7 @@ def name(self, key, value):
 @hepnames.over('breadcrumb_title', '^100..')
 def breadcrumb_title(self, key, value):
     """Title used in breadcrum and html title."""
-    if isinstance(value, list):
+    if isinstance(value, (tuple, list)):
         value = value[0]
     return value.get('a')
 
@@ -326,7 +326,7 @@ def field_categories(self, key, value):
         return name
 
     field_categories = self.get('field_categories', [])
-    if isinstance(value, list):
+    if isinstance(value, (tuple, list)):
         for element in value:
             if isinstance(element.get('a'), list):
                 for val in element.get('a'):

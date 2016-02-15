@@ -38,7 +38,7 @@ def legacy_export_as_marc(json, tabsize=4):
             continue
         if key.startswith('00') and len(key) == 3:
             # Controlfield
-            if isinstance(value, list):
+            if isinstance(value, (tuple, list)):
                 value = value[0]
             export += ['\t<controlfield tag="%s">%s'
                        '</controlfield>\n'.expandtabs(tabsize)
