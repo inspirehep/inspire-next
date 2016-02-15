@@ -27,7 +27,7 @@ THEME_SITENAME = _("inspirehep")
 # Database
 SQLALCHEMY_DATABASE_URI = os.environ.get(
     "SQLALCHEMY_DATABASE_URI",
-    "postgresql+psycopg2://localhost/hepdata")
+    "postgresql+psycopg2://inspirehep:dbpass123@localhost:5432/inspirehep")
 SQLALCHEMY_ECHO = False
 
 # Distributed task queue
