@@ -17,9 +17,9 @@ BABEL_DEFAULT_TIMEZONE = 'Europe/Zurich'
 I18N_LANGUAGES = [
 ]
 
-BASE_TEMPLATE = "invenio_theme/page.html"
-COVER_TEMPLATE = "invenio_theme/page_cover.html"
-SETTINGS_TEMPLATE = "invenio_theme/settings/content.html"
+# Assets configuration
+SASS_BIN = 'node-sass'
+REQUIREJS_CONFIG = 'js/build.js'
 
 # Theme
 THEME_SITENAME = _("inspirehep")
@@ -77,9 +77,7 @@ SECURITY_RESET_SALT = "CHANGE_ME"
 #     "Rp5zp04IKW-s1IbpTOGB7Z6XY60oloZD5C3kTM-AiY4"
 # ]
 
-# BASE_TEMPLATE = "hepdata_theme/page.html"
-# COVER_TEMPLATE = "hepdata_theme/page_cover.html"
-# SETTINGS_TEMPLATE = "invenio_theme/page_settings.html"
+# SETTINGS_TEMPLATE = "inspire_theme/page_settings.html"
 
 # ELASTICSEARCH_INDEX = 'hepdata'
 # SEARCH_ELASTIC_HOSTS = [

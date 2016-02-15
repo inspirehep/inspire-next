@@ -1,0 +1,36 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+
+{# Collect the nav links, forms, and other content for toggling #}
+<form name="search" action="" method="get" role="search" id="searchform">
+  {%- if collection is defined %}
+  <input type="hidden" name="cc" value="{{collection.name}}">
+  {%- endif %}
+  <input type="hidden" name="post_filter" value="{{request.args.get('post_filter', '')}}">
+  <div class="nav navbar-nav navbar-form">
+    <div class="input-group" id="searchform-input-group">
+      {% include "inspirehep_theme/search/form/controls.html" %}
+    </div>
+  </div>
+  {% include "inspirehep_theme/search/form/dropdown.html" %}
+  <input type="hidden" name="sf" value="{{request.args.get('sf', '')}}">
+  <input type="hidden" name="so" value="{{request.args.get('so', '')}}">
+  <input type="hidden" name="rg" value="{{request.args.get('rg', 25)}}">
+</form>

@@ -1,0 +1,73 @@
+/**
+ * -*- mode: text; coding: utf-8; -*-
+ *
+ * This file is part of INSPIRE.
+ * Copyright (C) 2015 CERN.
+
+ * INSPIRE is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * Invenio is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Invenio; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/* Account settings page style */
+
+.link-display {
+	display: block;
+}
+
+.list-group-item.active.custom-active {
+    background-color: #EBEBEB;
+    border-color: #EBEBEB;
+}
+
+.list-group-item.active.custom-active:hover {
+    background-color: #E3E3E3;
+}
+
+#top-row {
+    margin: 10px 0px 30px 0px;
+}
+
+#user-icon {
+    float:left;
+}
+
+@media only screen and (min-width : 768px) {
+    #settings-form {
+        margin-left: 25px;
+    }
+}
+
+.check-icon {
+	color: #336f51;
+}
+
+.custom-alert {
+    margin: 10px;
+}
+
+.custom-panel > .panel-body > .alert {
+    margin:10px;
+}
+
+input[name='profile-nickname'], label[for='profile-nickname'] {
+    display: none;
+}
+
+#top-row {
+    margin-left: 25px;
+}
+
+.profile-summary {
+    margin-top: 20px;
+}

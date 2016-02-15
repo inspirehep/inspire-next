@@ -1,0 +1,50 @@
+{#
+# This file is part of INSPIRE.
+# Copyright (C) 2015 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{%- extends "inspirehep_theme/search/collection_basic.html" -%}
+
+{% block body %}
+  <div id="collection-search-bar" class="authors-collection-search-bar">
+    <div class="title" id="authors-search-bar">
+        Search {{ "HepNames" | number_of_records }} authors
+    </div>      
+    {% block search_bar %}
+      {{ super() }}
+      <script type="text/javascript">
+        window.onload = function () {
+          // Disable search bar
+          document.getElementById('search-form-input').disabled = true;
+          document.getElementById('search-form-button').disabled = true;
+        }
+      </script>
+    {% endblock search_bar %}
+  </div>
+
+  <div id="collection-authors-not-available">
+    <div class="row">
+      <div class="col-md-12">
+        The authors collection is not yet available on INSPIRE labs.<br/>
+        Follow us on <a href="https://twitter.com/inspirehep">Twitter</a> and through our <a href="http://blog.inspirehep.net/">blog</a> to get updated when the newly designed collection is ready.
+      </div>
+      <div class="col-md-12">
+        <a type="button" class="btn btn-authors" href="http://inspirehep.net/collection/HepNames">Access authors on INSPIRE-HEP</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

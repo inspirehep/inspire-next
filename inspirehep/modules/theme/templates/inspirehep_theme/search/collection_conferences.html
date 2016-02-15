@@ -1,0 +1,37 @@
+{#
+# This file is part of INSPIRE.
+# Copyright (C) 2015 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{%- extends "inspirehep_theme/search/collection_basic.html" -%}
+
+{% block body %}
+  {% block collection_header %}
+    <div id="collection-search-bar" class="conferences-collection-search-bar">
+      <div class="title" id="conferences-search-bar">
+          Search {{ "Conferences" | number_of_records }} conferences
+      </div>
+      {% block search_bar %}
+        {{ super() }}
+      {% endblock search_bar %}
+      <div class="subtitle">
+        Example query:
+        <a href="/search?p=Las+Vegas&cc=conferences">Las Vegas</a>
+      </div>
+    </div>
+  {% endblock %}
+{% endblock %}

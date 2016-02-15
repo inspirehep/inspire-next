@@ -74,7 +74,7 @@ install_requires = [
     # 'invenio-records-ui',
     'invenio-rest', # need to check if it is needed
     'invenio-search',
-    'invenio-theme', # we should create inspire-theme instead
+    #'invenio-theme', # we should create inspire-theme instead
     'invenio-userprofiles',
     'invenio>=3.0.0a1,<3.1.0',
     # 'jsonref'
@@ -200,6 +200,17 @@ setup(
         'console_scripts': [
             'inspirehep = inspirehep.cli:cli',
         ],
+        'invenio_base.apps': [
+            'inspire_jinja2filters = inspirehep.modules.theme.jinja2filters:INSPIREJinjaFilters',
+            'inspire_theme = inspirehep.modules.theme.ext:INSPIRETheme'
+        ],
+        'invenio_assets.bundles': [
+            'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
+            'inspirehep_theme_js = inspirehep.modules.theme.bundles:js'
+        ],
+        'invenio_base.blueprints': [
+            'inspirehep_theme = inspirehep.modules.theme.views:blueprint',
+        ]
     },
     tests_require=tests_require,
     cmdclass={'test': PyTest}

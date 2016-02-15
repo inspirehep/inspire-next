@@ -1,0 +1,81 @@
+/*
+ *
+ * This file is part of INSPIRE.
+ * Copyright (C) 2014 CERN.
+
+ * INSPIRE is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * Invenio is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Invenio; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/*
+Generic core styles that are included in all INSPIRE pages.
+*/
+
+/* ===========================================================
+    Document Setup (body, common classes, structure etc)
+============================================================ */
+
+.main-container {
+	padding-bottom: 50px;
+}
+.alert-form-success {
+	margin-top: 30px;
+}
+
+/* Breadcrums
+================================================== */
+
+.breadcrumb {
+    background-color: transparent;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    -o-border-radius: 0;
+}
+.breadcrumb > li + li:before {
+	/* change breadcrumb separator to >> symbol */
+    content: "\00BB";
+    color: #aaa;
+}
+.breadcrumb > li:first-child {
+    margin-left: -15px;
+}
+
+/* Toast message styling
+================================================== */
+
+.toast-top-right {
+    top: 128px !important;
+    right: 30px !important;
+}
+
+/* External links styling
+================================================== */
+
+a[href^="http://"]:after, a[href^="https://"]:after {
+  content: "\f08e";
+  font-size: 80%;
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  text-decoration: none;
+  padding-left: 3px;
+}
+
+a.no-external-icon:after {
+  content: "";
+  padding-left: 0;
+  display: inline;
+}

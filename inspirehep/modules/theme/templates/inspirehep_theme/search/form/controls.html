@@ -1,0 +1,52 @@
+{#
+# This file is part of INSPIRE.
+# Copyright (C) 2015, 2016 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{% extends "inspirehep_theme/search/form/controls_base.html" %}
+
+{% if collection is defined %}
+  {% set collection_name = collection.name | sanitize_collection_name %}
+{% else %}
+  {% set collection_name = '' %}
+{% endif %}
+
+{%- block search_form_ctrls_input -%}
+<input autocomplete="off"
+       id="search-form-input"
+       data-items="4"
+       name="p"
+       class="form-control"
+       type="text"
+       tabindex="1"
+       value="{{ request.args.get('p', '') }}"
+       placeholder="Search {{ collection_name }}"
+       {%- if request.endpoint != 'record.metadata' %}
+       autofocus
+       {%- endif -%}/>
+{%- endblock -%}
+
+{%- block search_form_ctrls_settings -%}
+{%- endblock -%}
+
+{%- block search_form_ctrls_button -%}
+  <span class="input-group-btn">
+  <button name="action_search" tabindex="2" type="submit" class="btn btn-primary btn-inline-icon-hide-sm {{ collection_name }}-search-button" id="search-form-button">
+    <i class="glyphicon glyphicon-search"></i>
+  </button>
+</span>
+{%- endblock -%}

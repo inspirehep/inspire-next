@@ -1,0 +1,82 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+##
+## In applying this licence, CERN does not waive the privileges and immunities
+## granted to it by virtue of its status as an Intergovernmental Organization
+## or submit itself to any jurisdiction.
+#}
+{%- set aggs = response._search()['aggregations'] -%}
+{% if 'series' in aggs and  aggs['series']['buckets'] %}
+  <h4 id="filter-by-series" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Series</h4>
+  <div class="facet-container" id="facet-series">
+  {% for series in aggs['series']['buckets'] %}
+  <div class="checkbox checkbox-facets">
+    <label>
+      {%- set is_checked = 'checked' if 'series' in filtered_facets
+          and series['key'] in filtered_facets['series']['inc'] -%}
+      <input class="include-facet"
+            type="checkbox"
+            {{is_checked}}
+            name="series" value="{{ series['key'] }}">
+      <span class="facet-title-truncate">{{ series['key'] }}</span>
+      <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ series['doc_count'] }}</span>
+    </label>
+  </div>
+  {% endfor %}
+  <hr />
+</div>
+{% endif %}
+{% if 'conf_subject' in aggs and aggs['conf_subject']['buckets'] %}
+  <h4 id="filter-by-subject" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Subject</h4>
+  <div class="facet-container" id="facet-conf-subject">
+  {% for subject in aggs['conf_subject']['buckets'] %}
+  <div class="checkbox checkbox-facets">
+    <label>
+      {%- set is_checked = 'checked' if 'conf_subject' in filtered_facets
+          and subject['key'] in filtered_facets['conf_subject']['inc'] -%}
+      <input class="include-facet"
+            type="checkbox"
+            {{is_checked}}
+            name="conf_subject" value="{{ subject['key'] }}">
+      <span class="facet-title-truncate">{{ subject['key'] }}</span>
+      <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ subject['doc_count'] }}</span>
+    </label>
+  </div>
+  {% endfor %}
+  <hr />
+</div>
+{% endif %}
+{% if 'opening_date' in aggs  and aggs['opening_date']['buckets'] %}
+{% set sorted_year = aggs['opening_date']['buckets']|sort_list_by_dict_val %}
+  <h4 id="filter-by-conf-year" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Year</h4>
+  <div class="facet-container" id="facet-conf-year">
+  {% for opening_date in sorted_year|limit_facet_elements %}
+  <div class="checkbox checkbox-facets">
+    <label>
+      {%- set is_checked = 'checked' if 'opening_date' in filtered_facets
+          and opening_date['key']| epoch_to_year_format in filtered_facets['opening_date']['inc'][0] -%}
+      <input class="include-facet"
+            type="checkbox"
+            {{is_checked}}
+            name="opening_date" value="{{ opening_date['key']| construct_date_format }}">
+      <span class="facet-title-truncate">{{ opening_date['key']| epoch_to_year_format }}</span>
+      <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ opening_date['doc_count'] }}</span>
+    </label>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

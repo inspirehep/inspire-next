@@ -1,0 +1,41 @@
+// /**
+//  *
+//  * This file is part of INSPIRE.
+//  * Copyright (C) 2015 CERN.
+//  *
+//  * INSPIRE is free software; you can redistribute it and/or
+//  * modify it under the terms of the GNU General Public License as
+//  * published by the Free Software Foundation; either version 2 of the
+//  * License, or (at your option) any later version.
+//  *
+//  * Invenio is distributed in the hope that it will be useful, but
+//  * WITHOUT ANY WARRANTY; without even the implied warranty of
+//  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  * General Public License for more details.
+//  *
+//  * You should have received a copy of the GNU General Public License
+//  * along with Invenio; if not, write to the Free Software Foundation, Inc.,
+//  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+//  */
+
+
+.feedback-fixed-left {
+    position: fixed;
+    left: -48px;
+    display: block;
+    top: 50%;
+    margin-right: 53px;
+    border-top-right-radius: $border-radius-base;
+    border-top-left-radius: $border-radius-base;
+}
+
+.feedback-transform {
+    -webkit-transform:rotate(90deg);
+    -moz-transform:rotate(90deg);
+    -ms-transform:rotate(90deg);
+    -o-transform:rotate(90deg);
+    transform:rotate(90deg);
+    -webkit-transition: all 0.15s ease-in-out;
+    -moz-transition: all 0.15s ease-in-out;
+    transition: all 0.15s ease-in-out;
+}
