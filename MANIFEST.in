@@ -1,6 +1,0 @@
-include requirements*.txt *.rst COPYING
-recursive-include inspirehep *
-
-recursive-include docs *
-recursive-exclude docs/_build *
-recursive-exclude * *.pyc *.pyo

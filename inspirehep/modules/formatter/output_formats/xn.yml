@@ -1,6 +1,0 @@
-content_type: text/xml
-default: NLM.xsl
-description: XML NLM.
-name: NLM
-rules: []
-visibility: 0

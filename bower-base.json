@@ -1,7 +1,0 @@
-{
-    "name": "inspirehep",
-    "resolutions": {
-	    "jquery": "~1.11",
-	    "bootstrap": "~3.3.4"
-    }
-}

@@ -29,50 +29,106 @@ from setuptools import find_packages, setup
 from setuptools.command.test import test as TestCommand
 
 
-requirements = [
-    'elasticsearch>=2.2.0,<3.0.0',
+readme = open('README.rst').read()
+
+
+install_requires = [
+    'elasticsearch>=2.2.0,<3.0.0',  # Not on Hepdata overlay - required by some other library ?
     'HarvestingKit>=0.6.2',
     'plotextractor>=0.1.2',
     'refextract>=0.1.0',
-    'mixer==4.9.5',
+    'mixer==4.9.5',  # Still needed to load the fixtures?
     'Sickle>=0.5.0',
     'orcid',
     'raven==5.0.0',
     'retrying',
     'flower',
     'rt',
-    'invenio-accounts==0.2.0',
-    'invenio-base==0.3.1',
-    'invenio-celery==0.1.1',
-    'invenio-collections==0.3.0',
-    'invenio-documents==0.1.0.post2',
-    'invenio-grobid>=0.1.0',
-    'invenio-groups==0.1.3',
-    'invenio-knowledge==0.1.0',
-    'invenio-oauth2server==0.1.1',
-    'invenio-pidstore[datacite]==0.1.2',
-    'invenio-testing==0.1.1',
-    'invenio-unapi==0.1.1',
-    'invenio-upgrader==0.2.0',
-    'invenio-webhooks==0.1.0',
-    'invenio-classifier==0.1.0',
-    'invenio-jsonschemas==0.1.0',
-    'invenio-matcher==0.1.0',
+    # 'invenio-matcher==0.1.0', # Needs to be ported to Invenio 3
     'librabbitmq>=1.6.1',
-    'dojson==0.4.0',
+    #'dojson',  # Not on Hepdata, maybe already required by other package
+    # 'invenio-classifier==0.1.0', # Needs to be ported to Invenio 3
+    'invenio-jsonschemas',
+    #'invenio-knowledge',  # Needs to be ported to Invenio 3
+    'invenio-collections',  # Needed? Not on Hepdata overlay
+    #'invenio-grobid>=0.1.0', # Needs to be ported to Invenio 3
+    # 'invenio-upgrader==0.2.0', # Needed?
+    # 'invenio-testing==0.1.1', # Needed ?
+
+    ## From here on, new dependencies from Invenio 3
+    'idutils>=0.1.1',
+    'invenio-access',
+    'invenio-accounts',
+    'invenio-admin',
+    'invenio-assets',
+    'invenio-base',
+    'invenio-celery',
+    'invenio-config',
+    'invenio-formatter',
+    'invenio-i18n',
+    'invenio-logging',
+    'invenio-mail',
+    'invenio-pidstore',
+    'invenio-records',
+    # 'invenio-records-rest',
+    # 'invenio-records-ui',
+    'invenio-rest', # need to check if it is needed
+    'invenio-search',
+    'invenio-theme', # we should create inspire-theme instead
+    'invenio-userprofiles',
+    'invenio>=3.0.0a1,<3.1.0',
+    # 'jsonref'
 ]
 
-test_requirements = [
-    'unittest2>=1.1.0',
-    'Flask-Testing>=0.4.2',
-    'pytest>=2.8.0',
-    'pytest-cov>=2.1.0',
+tests_require = [
+    'check-manifest>=0.25',
+    'coverage>=4.0',
+    'isort>=4.2.2',
+    'pep257>=0.7.0',
+    'pytest-cache>=1.0',
+    'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
-    'coverage>=4.0.0',
-    'responses>=0.4.0',
-    'pyinotify>=0.9.6',
-    'setproctitle>=1.1.9',
+    'pytest>=2.8.0',
+    # 'Flask-Testing>=0.4.2', # Was on INSPIRE overlay, not needed?
+    # 'unittest2>=1.1.0', # Was on INSPIRE overlay, not needed?
+    # 'responses>=0.4.0', # Was on INSPIRE overlay, not needed?
+    # 'pyinotify>=0.9.6', # Was on INSPIRE overlay, not needed?
+    # 'setproctitle>=1.1.9', # Was on INSPIRE overlay, not needed?
 ]
+
+extras_require = {
+    'docs': [
+        'Sphinx>=1.3',
+    ],
+    'postgresql': [
+        'invenio-db[postgresql]>=1.0.0a6',
+    ],
+    'mysql': [
+        'invenio-db[mysql]>=1.0.0a6',
+    ],
+    'sqlite': [
+        'invenio-db>=1.0.0a6',
+    ],
+    'tests': tests_require,
+    'development': [
+            'Flask-DebugToolbar>=0.9',
+            'ipython',
+            'ipdb',
+            'kwalitee'
+        ]
+}
+
+extras_require['all'] = []
+for name, reqs in extras_require.items():
+    if name in ('postgresql', 'mysql', 'sqlite'):
+        continue
+    extras_require['all'].extend(reqs)
+
+setup_requires = [
+    'Babel>=1.3',
+]
+
+packages = find_packages(exclude=['docs'])
 
 
 class PyTest(TestCommand):
@@ -106,7 +162,6 @@ class PyTest(TestCommand):
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
-packages = find_packages(exclude=['docs'])
 
 # Load __version__, should not be done using import.
 # http://python-packaging-user-guide.readthedocs.org/en/latest/tutorial.html
@@ -124,26 +179,14 @@ setup(
     author='CERN',
     author_email='admin@inspirehep.net',
     description=__doc__,
-    long_description=open('README.rst', 'rt').read(),
+    long_description=readme,
     packages=packages,
-    namespace_packages=["inspirehep", "inspirehep.ext", ],
     include_package_data=True,
     zip_safe=False,
     platforms='any',
-    install_requires=requirements,
-    extras_require={
-        'development': [
-            'Flask-DebugToolbar>=0.9',
-            'ipython',
-            'ipdb',
-            'kwalitee'
-        ],
-        'docs': [
-            'Sphinx>=1.3',
-            'sphinx_rtd_theme>=0.1.7'
-        ],
-        'tests': test_requirements
-    },
+    install_requires=install_requires,
+    setup_requires=setup_requires,
+    extras_require=extras_require,
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
@@ -154,11 +197,10 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
     entry_points={
-        'invenio.config': [
-            "inspirehep = inspirehep.config"
-        ]
+        'console_scripts': [
+            'inspirehep = inspirehep.cli:cli',
+        ],
     },
-    test_suite='tests',
-    tests_require=test_requirements,
+    tests_require=tests_require,
     cmdclass={'test': PyTest}
 )

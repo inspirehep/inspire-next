@@ -1,143 +1,39 @@
 # -*- coding: utf-8 -*-
-#
-# This file is part of INSPIRE.
-# Copyright (C) 2014, 2015, 2016 CERN.
-#
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
-#
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+"""inspirehep base Invenio configuration."""
+
+from __future__ import absolute_import, print_function
+
+import os
 
 
-"""INSPIRE configuration.
+# Identity function for string extraction
+def _(x):
+    return x
 
-This config module is loaded by the Flask application factory via an entry
-point specified in the setup.py:
-
-    entry_points={
-        'invenio.config': [
-            "inspire = inspirehep.config"
-        ]
-    }
-
-Happy hacking!
-"""
-
-from invenio_query_parser.contrib.spires.config import SPIRES_KEYWORDS
-
-import pkg_resources
-
-
-EXTENSIONS = [
-    'invenio_ext.confighacks',
-    'invenio_ext.passlib:Passlib',
-    'invenio_ext.debug_toolbar',
-    'invenio_ext.babel',
-    'invenio_ext.sqlalchemy',
-    'invenio_ext.sslify',
-    'invenio_ext.cache',
-    'invenio_ext.session',
-    'invenio_ext.login',
-    'invenio_ext.principal',
-    'invenio_ext.email',
-    'invenio_ext.fixtures',  # before legacy
-    'invenio_ext.legacy',
-    'invenio_ext.assets',
-    'invenio_ext.template',
-    'invenio_ext.admin',
-    'invenio_ext.logging',
-    'invenio_ext.logging.backends.fs',
-    'invenio_ext.logging.backends.legacy',
-    'invenio_ext.logging.backends.sentry',
-    'invenio_ext.gravatar',
-    'invenio_ext.collect',
-    'invenio_ext.restful',
-    'invenio_ext.menu',
-    'invenio_ext.jasmine',  # after assets
-    'flask_breadcrumbs:Breadcrumbs',
-    'invenio_deposit.url_converters',
-    'invenio_ext.arxiv:Arxiv',
-    'invenio_ext.crossref:CrossRef',
-    'invenio_ext.es',
-    'invenio_ext.mixer',
-    'inspirehep.ext.jinja_filters.general',
-    'inspirehep.ext.jinja_filters.record',
-    'inspirehep.ext.redis.client',
-    'inspirehep.ext.cache_manager.cache',
-    'inspirehep.ext.cache_manager.manager',
-    'inspirehep.ext.deprecation_warnings:disable_deprecation_warnings',
-    'inspirehep.ext.error_pages',
+# Default language and timezone
+BABEL_DEFAULT_LANGUAGE = 'en'
+BABEL_DEFAULT_TIMEZONE = 'Europe/Zurich'
+I18N_LANGUAGES = [
 ]
 
-PACKAGES = [
-    'inspirehep',
-    'inspirehep.base',
-    'inspirehep.demosite',
-    'inspirehep.dojson',
-    'inspirehep.utils',
-    'inspirehep.modules.*',
-    'invenio_celery',
-    'invenio_classifier',
-    'invenio_oaiharvester',
-    'invenio_grobid',
-    'invenio_matcher',
-    'invenio_records',
-    'invenio_search',
-    'invenio_collections',
-    'invenio_documents',
-    'invenio_pidstore',
-    'invenio_formatter',
-    'invenio_unapi',
-    'invenio_webhooks',
-    'invenio_deposit',
-    'invenio_jsonschemas',
-    'invenio_workflows',
-    'invenio_knowledge',
-    'invenio_oauthclient',
-    'invenio_oauth2server',
-    'invenio_groups',
-    'invenio_access',
-    'invenio_accounts',
-    'invenio_upgrader',
-    'invenio_testing',
-    'invenio_base'
-]
+BASE_TEMPLATE = "invenio_theme/page.html"
+COVER_TEMPLATE = "invenio_theme/page_cover.html"
+SETTINGS_TEMPLATE = "invenio_theme/settings/content.html"
 
-# Configuration related to Deposit module
+# Theme
+THEME_SITENAME = _("inspirehep")
 
-DEPOSIT_TYPES = [
-    'inspirehep.modules.deposit.workflows.literature.literature',
-    'inspirehep.modules.deposit.workflows.literature_simple.literature_simple',
-]
-DEPOSIT_DEFAULT_TYPE = "inspirehep.modules.deposit.workflows.literature:literature"
+# Database
+SQLALCHEMY_DATABASE_URI = os.environ.get(
+    "SQLALCHEMY_DATABASE_URI",
+    "postgresql+psycopg2://localhost/hepdata")
+SQLALCHEMY_ECHO = False
 
-# facets ignored by auto-discovery service, they are not accessible in inspire
-PACKAGES_FACETS_EXCLUDE = [
-    'invenio_search.facets.collection',
-]
-
-
-SEARCH_QUERY_PARSER = 'invenio_query_parser.contrib.spires.parser:Main'
-
-SEARCH_QUERY_WALKERS = [
-    'invenio_query_parser.contrib.spires.walkers.pypeg_to_ast:PypegConverter',
-    'invenio_query_parser.contrib.spires.walkers.spires_to_invenio:SpiresToInvenio'
-]
-
-# Task queue configuration
-
-
+# Distributed task queue
+BROKER_URL = "amqp://guest:guest@localhost:5672//"
 CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
-CELERY_ACCEPT_CONTENT = ["msgpack"]
+CELERY_ACCEPT_CONTENT = ['msgpack']
 
 # Needed for Celery beat to be scheduled correctly in our timezone
 CELERY_TIMEZONE = 'Europe/Amsterdam'
@@ -145,473 +41,49 @@ CELERY_TIMEZONE = 'Europe/Amsterdam'
 # Performance boost as long as we do not use rate limits on tasks
 CELERY_DISABLE_RATE_LIMITS = True
 
-BROKER_URL = "amqp://guest:guest@localhost:5672//"
+# Cache
+CACHE_KEY_PREFIX = "cache::"
+CACHE_REDIS_URL = "redis://localhost:6379/0"
+CACHE_TYPE = "redis"
 
-# Site name configuration
+# Session
+SESSION_REDIS = "redis://localhost:6379/0"
 
-CFG_SITE_LANG = u"en"
-CFG_SITE_LANGS = ['en', ]
+# Accounts
+RECAPTCHA_PUBLIC_KEY = "CHANGE_ME"
+RECAPTCHA_SECRET_KEY = "CHANGE_ME"
 
-# CFG_SITE_NAME and main collection name should be the same for empty search
-# to work
-CFG_SITE_NAME = u"HEP"
+# SECURITY_REGISTER_USER_TEMPLATE = \
+#     "hepdata_theme/security/register_user.html"
+# SECURITY_LOGIN_USER_TEMPLATE = \
+#     "hepdata_theme/security/login_user.html"
+# SECURITY_RESET_PASSWORD_TEMPLATE = \
+#     "hepdata_theme/security/reset_password.html"
 
-# Logs
-CFG_APACHE_LOGDIR = "/var/log/httpd"
+SECURITY_CONFIRM_SALT = "CHANGE_ME"
+SECURITY_EMAIL_SENDER = "admin@inspirehep.net"
+SECURITY_EMAIL_SUBJECT_REGISTER = _("Welcome to INSPIRE Labs!")
+SECURITY_LOGIN_SALT = "CHANGE_ME"
+SECURITY_PASSWORD_SALT = "CHANGE_ME"
+SECURITY_REMEMBER_SALT = "CHANGE_ME"
+SECURITY_RESET_SALT = "CHANGE_ME"
 
-# a working mode when the server cooperates with inspirehep.net database
-PRODUCTION_MODE = False
-CFG_INSPIRE_SITE = 1
+# Theme
+# THEME_SITENAME = _("HEPData")
+# THEME_TWITTERHANDLE = "@hepdata"
+# THEME_LOGO = "img/hepdata_logo.svg"
+# THEME_GOOGLE_SITE_VERIFICATION = [
+#     "5fPGCLllnWrvFxH9QWI0l1TadV7byeEvfPcyK2VkS_s",
+#     "Rp5zp04IKW-s1IbpTOGB7Z6XY60oloZD5C3kTM-AiY4"
+# ]
 
-langs = {}
-for lang in CFG_SITE_LANGS:
-    langs[lang] = u"INSPIRE Labs"
-CFG_SITE_NAME_INTL = langs
+# BASE_TEMPLATE = "hepdata_theme/page.html"
+# COVER_TEMPLATE = "hepdata_theme/page_cover.html"
+# SETTINGS_TEMPLATE = "invenio_theme/page_settings.html"
 
-# Rename blueprint prefixes
+# ELASTICSEARCH_INDEX = 'hepdata'
+# SEARCH_ELASTIC_HOSTS = [
+#     'localhost:9200'
+# ]
 
-BLUEPRINTS_URL_PREFIXES = {'webdeposit': '/submit'}
-
-# Flask specific configuration - This prevents from getting "MySQL server
-# has gone away" error
-
-SQLALCHEMY_POOL_RECYCLE = 60
-
-DEPRECATION_WARNINGS_PRODUCTION_ENABLED = False
-
-# OAUTH configuration
-
-OAUTHCLIENT_REMOTE_APPS = dict(
-    orcid=dict(
-        title='ORCID',
-        description='Connecting Research and Researchers.',
-        icon='',
-        authorized_handler="invenio_oauthclient.handlers"
-                           ":authorized_signup_handler",
-        disconnect_handler="invenio_oauthclient.handlers"
-                           ":disconnect_handler",
-        signup_handler=dict(
-            info="invenio_oauthclient.contrib.orcid:account_info",
-            setup="invenio_oauthclient.contrib.orcid:account_setup",
-            view="invenio_oauthclient.handlers:signup_handler",
-        ),
-        params=dict(
-            request_token_params={'scope': '/authenticate'},
-            base_url='https://pub.orcid.org/',
-            request_token_url=None,
-            access_token_url="https://pub.orcid.org/oauth/token",
-            access_token_method='POST',
-            authorize_url="https://orcid.org/oauth/authorize#show_login",
-            app_key="ORCID_APP_CREDENTIALS",
-            content_type="application/json",
-        ),
-        remember=True
-    ),
-)
-
-ORCID_APP_CREDENTIALS = dict(
-    consumer_key="changeme",
-    consumer_secret="changeme",
-)
-
-MATHOID_SERVER = ""  # "http://localhost:10044"
-
-CFG_WEBSEARCH_SYNONYM_KBRS = {
-    'journal': ['JOURNALS', 'leading_to_comma'],
-    'collection': ['COLLECTION', 'exact'],
-    'subject': ['SUBJECT', 'exact'],
-}
-
-# DOI and arXiv id database search prefixes
-CROSSREF_SEARCH_PREFIX = u"doi:"
-ARXIV_SEARCH_PREFIX = u"035__a:oai:arXiv.org:"
-
-# remember_me cookie set by Flask-Login should be marked as secure
-# or Invenio will crash when using http
-
-REMEMBER_COOKIE_SECURE = True
-
-# Inspire specific config
-
-INSPIRE_EMAIL_REGEX = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-INSPIRE_URL_REGEX = "^(?:http(?:s)?:\/\/)?(?:www\.)?(?:[\w-]*)\.\w{2,}$"
-
-# year - month (2 digits) -day (2 digits)
-INSPIRE_DATE_REGEX = "^[1|2][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0|1])$"
-
-INSPIRE_YEAR_MIN = 1000
-INSPIRE_YEAR_MAX = 2050
-
-INSPIRE_ARXIV_CATEGORIES = ['acc-phys', 'astro-ph', 'atom-ph', 'chao-dyn',
-                            'climate', 'comp', 'cond-mat', 'genl-th', 'gr-qc',
-                            'hep-ex', 'hep-lat', 'hep-ph', 'hep-th', 'instr',
-                            'librarian', 'math', 'math-ph', 'med-phys', 'nlin',
-                            'nucl-ex', 'nucl-th', 'physics', 'plasma-phys',
-                            'q-bio', 'quant-ph', 'ssrl', 'other']
-
-INSPIRE_CATEGORIES_SOURCES = ['arxiv']
-INSPIRE_ACCEPTED_CATEGORIES = [
-    "hep-th",
-    "hep-ph",
-    "hep-lat",
-    "hep-ex",
-    "nucl-th",
-    "nucl-ex",
-    "physics.acc-ph",
-    "gr-qc",
-    "physics.ins-det",
-    "astro-ph.co",
-    "astro-ph.he"]
-
-OAIHARVESTER_WORKFLOWS = {
-    "arxiv_math_daily": "process_record_arxiv",
-}
-WORKFLOWS_HOLDING_PEN_DEFAULT_OUTPUT_FORMAT = "hp"
-
-HOLDING_PEN_MATCH_MAPPING = {
-    "reportnumber": "report_numbers.value",
-    "doi": "dois.value",
-    "eprint": "arxiv_eprints.value",
-    "isbn": "isbns.value",
-}
-
-REFEXTRACT_KB_NAME = "docextract-journals"
-
-# Harvester config
-HARVESTER_WORKFLOWS = {
-    "world_scientific": "inspirehep.modules.harvester.workflows.world_scientific:world_scientific"
-}
-HARVESTER_WORKFLOWS_CONFIG = {
-    "world_scientific": {}
-    # Specify special config locally.
-    # Expected params: ftp_server, ftp_netrc_file and recipients
-}
-
-# DoJSON configuration
-RECORD_PROCESSORS = {
-    'json': 'json.load',
-    'marcxml': 'inspirehep.dojson.processors:convert_marcxml',
-}
-RECORDS_BREADCRUMB_TITLE_KEY = 'breadcrumb_title'
-
-CFG_WEBSEARCH_SEARCH_CACHE_TIMEOUT = None
-
-# INSPIRE-specific configuration for keywords that typeahead should propose
-# when using Invenio syntax
-SEARCH_TYPEAHEAD_INVENIO_KEYWORDS = [
-    'title',
-    'author',
-    'abstract',
-    'doi',
-    'affiliation',
-    'eprint',
-    'reportnumber',
-]
-
-# INSPIRE-specific configuration for keywords that typeahead should propose
-# when using SPIRES syntax
-SEARCH_TYPEAHEAD_SPIRES_KEYWORDS = list(set(SPIRES_KEYWORDS.keys()))
-
-# Default number of search results
-CFG_WEBSEARCH_DEF_RECORDS_IN_GROUPS = 25
-
-# SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
-# invenio keywords to elasticsearch fields
-SEARCH_ELASTIC_KEYWORD_MAPPING = {
-    "control_number": ["control_number"],
-    "author": ["authors.full_name", "authors.alternative_name"],
-    "exactauthor": ["exactauthor.raw", "authors.full_name",
-                    "authors.alternative_name"
-                    ],
-    "abstract": ["abstracts.value"],
-    "collaboration": ["collaboration.value", "collaboration.raw^2"],
-    "collection": ["_collections"],
-    "doi": ["dois.value"],
-    "doc_type": ["facet_inspire_doc_type"],
-    "formulas": ["facet_formulas"],
-    "affiliation": ["authors.affiliations.value", "corporate_author"],
-    "reportnumber": ["report_numbers.value", "arxiv_eprints.value"],
-    "refersto": ["references.recid"],
-    "experiment": ["accelerator_experiments.experiment"],
-    "country": ["address.country", "address.country.raw"],
-    "experiment_f": ["accelerator_experiments.facet_experiment"],
-    "wwwlab": ["experiment_name.wwwlab"],
-    "subject": ["field_code.value"],
-    "phd_advisors": ["phd_advisors.name"],
-    "title": ["titles.title", "titles.title.raw^2",
-              "title_translation.title", "title_variation",
-              "title_translation.subtitle", "titles.subtitle"],
-    "cnum": ["publication_info.cnum"],
-    "980": [
-        "collections.primary",
-        "collections.secondary",
-        "collections.deleted",
-    ],
-    "595__c": ["hidden_notes.cds"],
-    "980__a": ["collections.primary"],
-    "980__b": ["collections.secondary"],
-    "542__l": ["information_relating_to_copyright_status.copyright_status"],
-    "conf_subject": ["field_code.value"],
-    "037__c": ["arxiv_eprints.categories"],
-    "246__a": ["titles.title"],
-    "595": ["hidden_notes"],
-    "650__a": ["subject_terms.term"],
-    "695__a": ["thesaurus_terms.keyword"],
-    "773__y": ["publication_info.year"],
-    "authorcount": ["authors.full_name"],
-    "arXiv": ["arxiv_eprints.value"],
-    "caption": ["urls.description"],
-    "country": ["authors.affiliations.value"],
-    "firstauthor": ["authors.full_name", "authors.alternative_name"],
-    "fulltext": ["urls.url"],
-    "journal": ["publication_info.recid",
-                "publication_info.page_artid",
-                "publication_info.journal_issue",
-                "publication_info.conf_acronym",
-                "publication_info.journal_title",
-                "publication_info.reportnumber",
-                "publication_info.confpaper_info",
-                "publication_info.journal_volume",
-                "publication_info.cnum",
-                "publication_info.pubinfo_freetext",
-                "publication_info.year_raw",
-                "publication_info.isbn",
-                "publication_info.note"
-                ],
-    "journal_page": ["publication_info.page_artid"],
-    "keyword": ["thesaurus_terms.keyword", "free_keywords.value"],
-    "note": ["public_notes.value"],
-    "reference": ["references.doi", "references.report_number",
-                  "references.journal_pubnote"
-                  ],
-    "subject": ["subject_terms.term"],
-    "texkey": ["external_system_numbers.value",
-               "external_system_numbers.obsolete"
-               ],
-    "year": ["imprints.date",
-             "preprint_date",
-             "thesis.date",
-             "publication_info.year"
-             ],
-    "confnumber": ["publication_info.cnum"],
-    "earliest_date": ["earliest_date"],
-    "address": ["corporate_author"],
-    "datecreated": ["creation_modification_date.creation_date"],
-    "datemodified": ["creation_modification_date.modification_date"],
-    "recid": ["control_number"]
-}
-
-FACETS_SIZE_LIMIT = 10
-
-SEARCH_ELASTIC_AGGREGATIONS = {
-    "hep": {
-        "subject": {
-            "terms": {
-                "field": "facet_inspire_subjects"
-            }
-        },
-        "doc_type": {
-            "terms": {
-                "field": "facet_inspire_doc_type"
-            }
-        },
-        "formulas": {
-            "terms": {
-                "field": "facet_formulas"
-            }
-        },
-        "author": {
-            "terms": {
-                "field": "exactauthor.raw"
-            }
-        },
-        "experiment": {
-            "terms": {
-                "field": "accelerator_experiments.facet_experiment"
-            }
-        },
-        "earliest_date": {
-            "date_histogram": {
-                "field": "earliest_date",
-                "interval": "year",
-                "min_doc_count": 1
-            }
-        }
-    },
-    "conferences": {
-        "series": {
-            "terms": {
-                "field": "series"
-            }
-        },
-        "conf_subject": {
-            "terms": {
-                "field": "field_code.value"
-            }
-        },
-        "opening_date": {
-            "date_histogram": {
-                "field": "opening_date",
-                "interval": "year"
-            }
-        }
-    },
-    "experiments": {
-        "field_code": {
-            "terms": {
-                "field": "field_code"
-            }
-        },
-        "wwwlab": {
-            "terms": {
-                "field": "experiment_name.wwwlab"
-            }
-        },
-        "accelerator": {
-            "terms": {
-                "field": "accelerator"
-            }
-        }
-    },
-    "journals": {
-        "publisher": {
-            "terms": {
-                "field": "publisher"
-            }
-        }
-    },
-    "institutions": {
-        "country": {
-            "terms": {
-                "field": "address.country.raw"
-            }
-        }
-    },
-    "jobs": {
-        "continent": {
-            "terms": {
-                "field": "continent"
-            }
-        },
-        "rank": {
-            "terms": {
-                "field": "rank"
-            }
-        },
-        "research_area": {
-            "terms": {
-                "field": "research_area"
-            }
-        }
-    }
-}
-
-SEARCH_QUERY_ENHANCERS = ['invenio_search.enhancers.collection_filter.apply']
-SEARCH_ELASTIC_SORT_FIELDS = ["earliest_date", "citation_count"]
-
-
-SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
-    "HEP": "hep",
-    "CDF Internal Notes": "hep",
-    "Conferences": "conferences",
-    "Institutions": "institutions",
-    "Experiments": "experiments",
-    "Jobs": "jobs",
-    "Jobs Hidden": "jobs",
-    "Journals": "journals",
-    "HepNames": "authors",
-    "Data": "data"
-}
-
-SEARCH_ELASTIC_DEFAULT_INDEX = 'hep'
-
-INSPIRE_PATH = pkg_resources.resource_filename("inspirehep", "")
-
-JSON_SCHEMA_PATHS = [
-    pkg_resources.resource_filename(
-        "inspirehep", "base/jsonschemas/hep-0.0.1.json")
-]
-ELASTIC_MAPPINGS_PATHS = [
-    pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/hep.json"),
-    pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/conferences.json"),
-    pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/experiments.json"),
-    pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/authors.json"),
-    pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/institutions.json"),
-    pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/jobs.json"),
-    pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/journals.json")
-]
-
-WORKFLOWS_HOLDING_PEN_ES_PROPERTIES = {
-    # BibWorkflowObject model related fields
-    "status": {
-        "type": "string",
-        "index": "not_analyzed"
-    },
-    "version": {
-        "type": "string",
-        "index": "not_analyzed"
-    },
-    "type": {
-        "type": "string",
-        "index": "not_analyzed"
-    },
-    "created": {
-        "type": "date"
-    },
-    "modified": {
-        "type": "date"
-    },
-    "uri": {
-        "type": "string",
-        "index": "not_analyzed"
-    },
-    "id_workflow": {
-        "type": "string",
-        "index": "not_analyzed"
-    },
-    "id_user": {
-        "type": "integer",
-        "index": "not_analyzed"
-    },
-    "id_parent": {
-        "type": "integer",
-        "index": "not_analyzed"
-    },
-    "workflow": {
-        "type": "string",
-        "index": "not_analyzed"
-    },
-    # HEP workflow related fields
-    "relevance_score": {
-        "type": "double",
-    },
-    "decision": {
-        "type": "string",
-        "index": "not_analyzed"
-    },
-    "max_score": {
-        "type": "double"
-    }
-}
-"""Updates default properties that should be added to the Holding Pen index
-mappings."""
-
-CACHED_VIEWS = {
-    'record_oneline': {
-        'type': 'jinja_cache',
-        'template_name': 'record_oneline',
-        'kwargs': ['recid']
-    },
-    'record_brief': {
-        'type': 'jinja_cache',
-        'template_name': 'record_brief',
-        'kwargs': ['recid']
-    }
-}
+SEARCH_AUTOINDEX = []
