@@ -38,7 +38,7 @@ def legacy_export_as_marc(json, tabsize=4):
             continue
         if key.startswith('00') and len(key) == 3:
             # Controlfield
-            if isinstance(value, list):
+            if isinstance(value, (tuple, list)):
                 value = value[0]
             export += ['\t<controlfield tag="%s">%s'
                        '</controlfield>\n'.expandtabs(tabsize)
@@ -62,7 +62,7 @@ def legacy_export_as_marc(json, tabsize=4):
                 if field:
                     for code, subfieldvalue in six.iteritems(field):
                         if subfieldvalue:
-                            if isinstance(subfieldvalue, list):
+                            if isinstance(subfieldvalue, (list, tuple)):
                                 for val in subfieldvalue:
                                     export += ['\t\t<subfield code="%s">%s'
                                                '</subfield>\n'.expandtabs(tabsize)

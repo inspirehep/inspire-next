@@ -20,158 +20,158 @@
 import pkg_resources
 import os
 
+import pytest
+
 from dojson.contrib.marc21.utils import create_record
 
-from invenio.testsuite import InvenioTestCase, make_test_suite, run_test_suite
 from inspirehep.dojson.hepnames import hepnames2marc, hepnames
 
 
-class HepNamesRecordsTests(InvenioTestCase):
+@pytest.fixture
+def marcxml_to_json():
+    marcxml = pkg_resources.resource_string('tests',
+                                            os.path.join(
+                                                'fixtures',
+                                                'test_hepnames_record.xml')
+                                            )
+    record = create_record(marcxml)
+    return hepnames.do(record)
 
-    def setUp(self):
-        self.marcxml = pkg_resources.resource_string('tests',
-                                                     os.path.join(
-                                                         'fixtures',
-                                                         'test_hepnames_record.xml')
-                                                     )
-        record = create_record(self.marcxml)
-        self.marcxml_to_json = hepnames.do(record)
-        self.json_to_marc = hepnames2marc.do(self.marcxml_to_json)
 
-    def test_acquisition_source(self):
-        """Test if acquisition_source is created correctly."""
-        self.assertEqual(self.marcxml_to_json['acquisition_source'][0]['source'],
-                         self.json_to_marc['541'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['acquisition_source'][0]['email'],
-                         self.json_to_marc['541'][0]['b'])
-        self.assertEqual(self.marcxml_to_json['acquisition_source'][0]['method'],
-                         self.json_to_marc['541'][0]['c'])
-        self.assertEqual(self.marcxml_to_json['acquisition_source'][0]['date'],
-                         self.json_to_marc['541'][0]['d'])
-        self.assertEqual(self.marcxml_to_json['acquisition_source'][0]['submission_number'],
-                         self.json_to_marc['541'][0]['e'])
+@pytest.fixture
+def json_to_marc(marcxml_to_json):
+    return hepnames2marc.do(marcxml_to_json)
 
-    def test_dates(self):
-        """Test if dates is created correctly."""
-        #TODO fix dojson to take dates from 100__d
-        pass
 
-    def test_experiments(self):
-        """Test if experiments is created correctly."""
-        self.assertEqual(self.marcxml_to_json['experiments'][1]['name'],
-                         self.json_to_marc['693'][1]['e'])
-        self.assertEqual(self.marcxml_to_json['experiments'][1]['start_year'],
-                         self.json_to_marc['693'][1]['s'])
-        self.assertEqual(self.marcxml_to_json['experiments'][1]['end_year'],
-                         self.json_to_marc['693'][1]['d'])
-        self.assertEqual(self.marcxml_to_json['experiments'][1]['status'],
-                         self.json_to_marc['693'][1]['z'])
+def test_acquisition_source(marcxml_to_json, json_to_marc):
+    """Test if acquisition_source is created correctly."""
+    assert (marcxml_to_json['acquisition_source'][0]['source'],
+            json_to_marc['541'][0]['a'])
+    assert (marcxml_to_json['acquisition_source'][0]['email'],
+            json_to_marc['541'][0]['b'])
+    assert (marcxml_to_json['acquisition_source'][0]['method'],
+            json_to_marc['541'][0]['c'])
+    assert (marcxml_to_json['acquisition_source'][0]['date'],
+            json_to_marc['541'][0]['d'])
+    assert (marcxml_to_json['acquisition_source'][0]['submission_number'],
+            json_to_marc['541'][0]['e'])
 
-    def test_field_categories(self):
-        """Test if field_categories is created correctly."""
-        self.assertEqual(self.marcxml_to_json['field_categories'][0],
-                         self.json_to_marc['65017'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['field_categories'][1],
-                         self.json_to_marc['65017'][1]['a'])
-        self.assertEqual(self.json_to_marc['65017'][1]['2'], 'INSPIRE')
+def test_dates(marcxml_to_json, json_to_marc):
+    """Test if dates is created correctly."""
+    #TODO fix dojson to take dates from 100__d
+    pass
 
-    def test_ids(self):
-        """Test if ids is created correctly."""
-        self.assertEqual(self.marcxml_to_json['ids'][0]['value'],
-                         self.json_to_marc['035'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['ids'][0]['type'],
-                         self.json_to_marc['035'][0]['9'])
-        self.assertEqual(self.marcxml_to_json['ids'][1]['value'],
-                         self.json_to_marc['035'][1]['a'])
-        self.assertEqual(self.marcxml_to_json['ids'][1]['type'],
-                         self.json_to_marc['035'][1]['9'])
+def test_experiments(marcxml_to_json, json_to_marc):
+    """Test if experiments is created correctly."""
+    assert (marcxml_to_json['experiments'][1]['name'],
+            json_to_marc['693'][1]['e'])
+    assert (marcxml_to_json['experiments'][1]['start_year'],
+            json_to_marc['693'][1]['s'])
+    assert (marcxml_to_json['experiments'][1]['end_year'],
+            json_to_marc['693'][1]['d'])
+    assert (marcxml_to_json['experiments'][1]['status'],
+            json_to_marc['693'][1]['z'])
 
-    def test_name(self):
-        """Test if name is created correctly."""
-        self.assertEqual(self.marcxml_to_json['name']['value'],
-                         self.json_to_marc['100']['a'])
-        self.assertEqual(self.marcxml_to_json['name']['numeration'],
-                         self.json_to_marc['100']['b'])
-        self.assertEqual(self.marcxml_to_json['name']['title'],
-                         self.json_to_marc['100']['c'])
-        self.assertEqual(self.marcxml_to_json['name']['status'],
-                         self.json_to_marc['100']['g'])
-        self.assertEqual(self.marcxml_to_json['name']['preferred_name'],
-                         self.json_to_marc['100']['q'])
+def test_field_categories(marcxml_to_json, json_to_marc):
+    """Test if field_categories is created correctly."""
+    assert (marcxml_to_json['field_categories'][0],
+            json_to_marc['65017'][0]['a'])
+    assert (marcxml_to_json['field_categories'][1],
+            json_to_marc['65017'][1]['a'])
+    assert (json_to_marc['65017'][1]['2'], 'INSPIRE')
 
-    def test_native_name(self):
-        """Test if native_name is created correctly."""
-        self.assertEqual(self.marcxml_to_json['native_name'],
-                         self.json_to_marc['880']['a'])
+def test_ids(marcxml_to_json, json_to_marc):
+    """Test if ids is created correctly."""
+    assert (marcxml_to_json['ids'][0]['value'],
+            json_to_marc['035'][0]['a'])
+    assert (marcxml_to_json['ids'][0]['type'],
+            json_to_marc['035'][0]['9'])
+    assert (marcxml_to_json['ids'][1]['value'],
+            json_to_marc['035'][1]['a'])
+    assert (marcxml_to_json['ids'][1]['type'],
+            json_to_marc['035'][1]['9'])
 
-    def test_other_names(self):
-        """Test if other_names is created correctly."""
-        self.assertEqual(self.marcxml_to_json['other_names'][0],
-                         self.json_to_marc['400'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['other_names'][1],
-                         self.json_to_marc['400'][1]['a'])
+def test_name(marcxml_to_json, json_to_marc):
+    """Test if name is created correctly."""
+    assert (marcxml_to_json['name']['value'],
+            json_to_marc['100']['a'])
+    assert (marcxml_to_json['name']['numeration'],
+            json_to_marc['100']['b'])
+    assert (marcxml_to_json['name']['title'],
+            json_to_marc['100']['c'])
+    assert (marcxml_to_json['name']['status'],
+            json_to_marc['100']['g'])
+    assert (marcxml_to_json['name']['preferred_name'],
+            json_to_marc['100']['q'])
 
-    def test_phd_advisors(self):
-        """Test if phd_advisors is created correctly."""
-        self.assertEqual(self.marcxml_to_json['phd_advisors'][0]['id'],
-                         self.json_to_marc['701'][0]['i'])
-        self.assertEqual(self.marcxml_to_json['phd_advisors'][0]['name'],
-                         self.json_to_marc['701'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['phd_advisors'][0]['degree_type'],
-                         self.json_to_marc['701'][0]['g'])
+def test_native_name(marcxml_to_json, json_to_marc):
+    """Test if native_name is created correctly."""
+    assert (marcxml_to_json['native_name'],
+            json_to_marc['880']['a'])
 
-    def test_positions(self):
-        """Test if positions is created correctly."""
-        self.assertEqual(self.marcxml_to_json['positions'][0]['institution']['name'],
-                         self.json_to_marc['371'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['positions'][0]['rank'],
-                         self.json_to_marc['371'][0]['r'])
-        self.assertEqual(self.marcxml_to_json['positions'][0]['start_date'],
-                         self.json_to_marc['371'][0]['s'])
-        self.assertEqual(self.marcxml_to_json['positions'][0]['email'],
-                         self.json_to_marc['371'][0]['m'])
-        self.assertEqual(self.marcxml_to_json['positions'][0]['status'],
-                         self.json_to_marc['371'][0]['z'])
-        self.assertEqual(self.marcxml_to_json['positions'][1]['end_date'],
-                         self.json_to_marc['371'][1]['t'])
-        self.assertEqual(self.marcxml_to_json['positions'][2]['old_email'],
-                         self.json_to_marc['371'][2]['o'])
+def test_other_names(marcxml_to_json, json_to_marc):
+    """Test if other_names is created correctly."""
+    assert (marcxml_to_json['other_names'][0],
+            json_to_marc['400'][0]['a'])
+    assert (marcxml_to_json['other_names'][1],
+            json_to_marc['400'][1]['a'])
 
-    def test_private_current_emails(self):
-        """Test if private_current_emails is created correctly."""
-        self.assertEqual(self.marcxml_to_json['private_current_emails'][0],
-                         self.json_to_marc['595'][1]['m'])
+def test_phd_advisors(marcxml_to_json, json_to_marc):
+    """Test if phd_advisors is created correctly."""
+    assert (marcxml_to_json['phd_advisors'][0]['id'],
+            json_to_marc['701'][0]['i'])
+    assert (marcxml_to_json['phd_advisors'][0]['name'],
+            json_to_marc['701'][0]['a'])
+    assert (marcxml_to_json['phd_advisors'][0]['degree_type'],
+            json_to_marc['701'][0]['g'])
 
-    def test_private_old_emails(self):
-        """Test if private_old_emails is created correctly."""
-        self.assertEqual(self.marcxml_to_json['private_old_emails'][0],
-                         self.json_to_marc['595'][0]['o'])
+def test_positions(marcxml_to_json, json_to_marc):
+    """Test if positions is created correctly."""
+    assert (marcxml_to_json['positions'][0]['institution']['name'],
+            json_to_marc['371'][0]['a'])
+    assert (marcxml_to_json['positions'][0]['rank'],
+            json_to_marc['371'][0]['r'])
+    assert (marcxml_to_json['positions'][0]['start_date'],
+            json_to_marc['371'][0]['s'])
+    assert (marcxml_to_json['positions'][0]['email'],
+            json_to_marc['371'][0]['m'])
+    assert (marcxml_to_json['positions'][0]['status'],
+            json_to_marc['371'][0]['z'])
+    assert (marcxml_to_json['positions'][1]['end_date'],
+            json_to_marc['371'][1]['t'])
+    assert (marcxml_to_json['positions'][2]['old_email'],
+            json_to_marc['371'][2]['o'])
 
-    def test_private_notes(self):
-        """Test if private_notes is created correctly."""
-        self.assertEqual(self.marcxml_to_json['_private_note'][0],
-                         self.json_to_marc['595'][2]['a'])
+def test_private_current_emails(marcxml_to_json, json_to_marc):
+    """Test if private_current_emails is created correctly."""
+    assert (marcxml_to_json['private_current_emails'][0],
+            json_to_marc['595'][1]['m'])
 
-    def test_prizes(self):
-        """Test if prizes is created correctly."""
-        self.assertEqual(self.marcxml_to_json['prizes'][0],
-                         self.json_to_marc['678'][0]['a'])
+def test_private_old_emails(marcxml_to_json, json_to_marc):
+    """Test if private_old_emails is created correctly."""
+    assert (marcxml_to_json['private_old_emails'][0],
+            json_to_marc['595'][0]['o'])
 
-    def test_source(self):
-        """Test if source is created correctly."""
-        self.assertEqual(self.marcxml_to_json['source'][0]['name'],
-                         self.json_to_marc['670'][0]['a'])
-        self.assertEqual(self.marcxml_to_json['source'][1]['date_verified'],
-                         self.json_to_marc['670'][1]['d'])
+def test_private_notes(marcxml_to_json, json_to_marc):
+    """Test if private_notes is created correctly."""
+    assert (marcxml_to_json['_private_note'][0],
+            json_to_marc['595'][2]['a'])
 
-    def test_urls(self):
-        """Test if urls is created correctly."""
-        self.assertEqual(self.marcxml_to_json['urls'][0]['value'],
-                         self.json_to_marc['8564'][0]['u'])
-        self.assertEqual(self.marcxml_to_json['urls'][0]['description'],
-                         self.json_to_marc['8564'][0]['y'])
+def test_prizes(marcxml_to_json, json_to_marc):
+    """Test if prizes is created correctly."""
+    assert (marcxml_to_json['prizes'][0],
+            json_to_marc['678'][0]['a'])
 
-TEST_SUITE = make_test_suite(HepNamesRecordsTests)
+def test_source(marcxml_to_json, json_to_marc):
+    """Test if source is created correctly."""
+    assert (marcxml_to_json['source'][0]['name'],
+            json_to_marc['670'][0]['a'])
+    assert (marcxml_to_json['source'][1]['date_verified'],
+            json_to_marc['670'][1]['d'])
 
-if __name__ == "__main__":
-    run_test_suite(TEST_SUITE)
+def test_urls(marcxml_to_json, json_to_marc):
+    """Test if urls is created correctly."""
+    assert (marcxml_to_json['urls'][0]['value'],
+            json_to_marc['8564'][0]['u'])
+    assert (marcxml_to_json['urls'][0]['description'],
+            json_to_marc['8564'][0]['y'])

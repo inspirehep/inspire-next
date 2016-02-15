@@ -58,10 +58,7 @@ def _collection_in_record(record, collection):
     """Returns True if record is in collection"""
     colls = force_list(record.get("980__", []))
     for coll in colls:
-        coll = coll.get('a', [])
-        if isinstance(coll, list):
-            if collection in [c.lower() for c in coll]:
-                return True
-        elif coll.lower() == collection:
+        coll = force_list(coll.get('a', []))
+        if collection in [c.lower() for c in coll]:
             return True
     return False

@@ -24,6 +24,9 @@ import re
 
 from invenio_knowledge.api import get_kbr_keys
 
+from dojson.utils import force_list
+
+
 from .export import MissingRequiredFieldError, Export
 
 
@@ -302,13 +305,11 @@ class Bibtex(Export):
         """Return record titles"""
         record_title = ''
         if 'titles' in self.record:
-            if isinstance(self.record['titles'], list):
-                for title in self.record['titles']:
-                    if 'title' in title:
-                        record_title = title['title']
-                        break
-            else:
-                record_title = self.record['titles']['title'].strip()
+            titles = force_list(self.record['titles'])
+            for title in titles:
+                if 'title' in title:
+                    record_title = title['title']
+                    break
             return re.sub(r'(?<!\\)([#&%])', r'\\\1', record_title)
         else:
             return record_title

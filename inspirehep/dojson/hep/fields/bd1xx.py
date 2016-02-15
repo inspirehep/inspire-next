@@ -54,10 +54,7 @@ def authors(self, key, value):
                 pass
         inspire_id = ''
         if value.get('i'):
-            if isinstance(value.get('i'), list):
-                inspire_id = value.get('i')[0]
-            else:
-                inspire_id = value.get('i')
+            inspire_id = utils.force_list(value.get('i'))[0]
         ret = {
             'full_name': value.get('a'),
             'role': value.get('e'),
@@ -74,7 +71,7 @@ def authors(self, key, value):
         }
         # HACK: This is to workaround broken records where multiple authors
         # got meshed up together.
-        if isinstance(ret['full_name'], list):
+        if isinstance(ret['full_name'], (list, tuple)):
             import warnings
             warnings.warn("Record with mashed-up author list! Taking first author: {}".format(value))
             ret['full_name'] = ret['full_name'][0]

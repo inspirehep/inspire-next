@@ -139,14 +139,12 @@ def thesaurus_terms(self, key, value):
             'energy_range': energy_range,
             'classification_scheme': value.get('2'),
         }
+
     thesaurus_terms = self.get('thesaurus_terms', [])
 
     for element in value:
         thesaurus_terms.append(get_value(element))
 
-    for element in thesaurus_terms:
-        if isinstance(element['keyword'], list):
-            return thesaurus_terms
     return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
         thesaurus_terms)
 

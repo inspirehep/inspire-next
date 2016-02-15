@@ -38,6 +38,7 @@ requirements = [
     'Sickle>=0.5.0',
     'orcid',
     'raven==5.0.0',
+    'lxml>=3.5.0',
     'retrying',
     'flower',
     'rt',
@@ -59,7 +60,7 @@ requirements = [
     'invenio-jsonschemas==0.1.0',
     'invenio-matcher==0.1.0',
     'librabbitmq>=1.6.1',
-    'dojson==0.4.0',
+    'dojson>=1.0.0',
 ]
 
 test_requirements = [
@@ -156,7 +157,13 @@ setup(
     entry_points={
         'invenio.config': [
             "inspirehep = inspirehep.config"
-        ]
+        ],
+        'dojson.cli.rule': [
+            'hep = inspirehep.dojson.hep:hep',
+            'hep2marc = inspirehep.dojson.hep:hep2marc',
+            'hepnames = inspirehep.dojson.hepnames:hepnames',
+            'hepnames2marc = inspirehep.dojson.hepnames2marc:hepnames2marc',
+        ],
     },
     test_suite='tests',
     tests_require=test_requirements,

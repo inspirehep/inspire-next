@@ -48,12 +48,7 @@ def coden(self, key, value):
 @journals.over('title', '^130..')
 def title(self, key, value):
     """Title Statement."""
-    return value.get('a')
-
-
-@journals.over('breadcrumb_title', '^130..')
-def breadcrumb_title(self, key, value):
-    """Title used in breadcrum and html title."""
+    self.setdefault('breadcrumb_title', value.get('a'))
     return value.get('a')
 
 

@@ -46,7 +46,7 @@ from inspirehep.dojson.processors import _collection_in_record
 from inspirehep.dojson.utils import legacy_export_as_marc
 from inspirehep.dojson.utils import strip_empty_values
 
-from inspirehep.modules.workflows.dojson import author_bibfield, bibfield
+from inspirehep.dojson.bibfield import author_bibfield, bibfield
 from inspirehep.modules.workflows.models import Payload
 
 from invenio_celery import celery

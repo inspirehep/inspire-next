@@ -45,7 +45,8 @@ def validate(record):
     """Validate $schema in JSON record."""
     schema = record.pop('$schema', None)
     if schema:
-        json_validate(record, load_schemas().get(schema))
+        json_validate(record, load_schemas().get(schema),
+                      types={'array': (list, tuple)})
 
 
 def rename_object_action(obj):

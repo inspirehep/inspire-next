@@ -32,33 +32,19 @@ from ..model import hep, hep2marc
 @utils.filter_values
 def publication_info(self, key, value):
     """Publication info about record."""
-    year = ''
-    parent_recid = ''
-    journal_recid = ''
-    conference_recid = ''
-    if 'y' in value:
-        try:
-            year = int(value.get('y'))
-        except:
-            pass
-    try:
-        if '0' in value:
-            if isinstance(value.get('0'), list):
-                parent_recid = int(value.get('0')[0])
-            else:
-                parent_recid = int(value.get('0'))
-        if '1' in value:
-            if isinstance(value.get('1'), list):
-                journal_recid = int(value.get('1')[0])
-            else:
-                journal_recid = int(value.get('1'))
-        if '2' in value:
-            if isinstance(value.get('2'), list):
-                conference_recid = int(value.get('2')[0])
-            else:
-                conference_recid = int(value.get('2'))
-    except:
-        pass
+    def get_int_value(val):
+        if val:
+            out = utils.force_list(val)[0]
+            if out.isdigit():
+                out = int(out)
+                return out
+        return None
+
+    year = get_int_value(value.get('y'))
+    parent_recid = get_int_value(value.get('0'))
+    journal_recid = get_int_value(value.get('1'))
+    conference_recid = get_int_value(value.get('2'))
+
     return {
         'parent_recid': parent_recid,
         'journal_recid': journal_recid,
@@ -103,7 +89,7 @@ def publication_info2marc(self, key, value):
 @hep.over('succeeding_entry', '^785..')
 def succeeding_entry(self, key, value):
     """Succeeding Entry."""
-    if isinstance(value, list):
+    if isinstance(value, (tuple, list)):
         # Too bad: there can only be one succeeding entry.
         value = value[0]
 

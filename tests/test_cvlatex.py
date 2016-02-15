@@ -53,7 +53,7 @@ class CvLatexTests(InvenioTestCase):
 
         self.sample_cv_latex = {
             'author': 'G.~Aad',
-            'title': "{\\bf ``\nSearch for supersymmetry in events containing a same-flavour opposite-sign dilepton pair, jets, and large missing transverse momentum in $\sqrt{s}=8$ TeV $pp$ collisions with the ATLAS detector\n''}",
+            'title': "{\\bf ``\nSearch for supersymmetry in events containing a same-flavour opposite-sign dilepton pair, jets, and large missing transverse momentum in $\sqrt{s}=8$ TeV pp collisions with the ATLAS detector\n''}",
             'publi_info': ['Eur.\ Phys.\ J.\ C {\\bf 75}, no. 7, 318 (2015)', '[Eur.\ Phys.\ J.\ C {\\bf 75}, no. 10, 463 (2015)]'],
             'url': cfg['CFG_SITE_URL'] + '/record/1351762',
             'date': 'Mar 11, 2015'

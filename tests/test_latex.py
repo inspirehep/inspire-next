@@ -60,7 +60,7 @@ class LatexTests(InvenioTestCase):
         self.sample_latex_eu = {
             'citation_key': 'Aad:2015wqa',
             'author': 'G.~Aad',
-            'title': '\nSearch for supersymmetry in events containing a same-flavour opposite-sign dilepton pair, jets, and large missing transverse momentum in $\sqrt{s}=8$ TeV $pp$ collisions with the ATLAS detector\n',
+            'title': '\nSearch for supersymmetry in events containing a same-flavour opposite-sign dilepton pair, jets, and large missing transverse momentum in $\sqrt{s}=8$ TeV pp collisions with the ATLAS detector\n',
             'publi_info': ['Eur.\ Phys.\ J.\ C {\\bf 75} (2015) 7,  318', '[Eur.\ Phys.\ J.\ C {\\bf 75} (2015) 10,  463]'],
             'arxiv': 'arXiv:1503.03290 [hep-ex]',
             'report_number': '',
@@ -75,7 +75,7 @@ class LatexTests(InvenioTestCase):
         self.sample_latex_us = {
             'citation_key': 'Aad:2015wqa',
             'author': 'G.~Aad',
-            'title': '\nSearch for supersymmetry in events containing a same-flavour opposite-sign dilepton pair, jets, and large missing transverse momentum in $\sqrt{s}=8$ TeV $pp$ collisions with the ATLAS detector\n',
+            'title': '\nSearch for supersymmetry in events containing a same-flavour opposite-sign dilepton pair, jets, and large missing transverse momentum in $\sqrt{s}=8$ TeV pp collisions with the ATLAS detector\n',
             'publi_info': ['Eur.\ Phys.\ J.\ C {\\bf 75}, no. 7, 318 (2015)', '[Eur.\ Phys.\ J.\ C {\\bf 75}, no. 10, 463 (2015)]'],
             'arxiv': 'arXiv:1503.03290 [hep-ex]',
             'report_number': '',

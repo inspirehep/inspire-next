@@ -25,6 +25,7 @@ from dojson.contrib.marc21.utils import create_record
 from invenio.testsuite import InvenioTestCase, make_test_suite, run_test_suite
 from inspirehep.dojson.hep import hep
 from invenio.base.wrappers import lazy_import
+
 Bibtex = lazy_import('inspirehep.utils.bibtex.Bibtex')
 
 
@@ -46,7 +47,7 @@ class BibtexTests(InvenioTestCase):
             'collections': ('article', 'article'),
             'citation_key': 'Aad:2015wqa',
             'author': 'Aad, Georges',
-            'title': '\nSearch for supersymmetry in events containing a same-flavour opposite-sign dilepton pair, jets, and large missing transverse momentum in $\sqrt{s}=8$ TeV $pp$ collisions with the ATLAS detector\n',
+            'title': '\nSearch for supersymmetry in events containing a same-flavour opposite-sign dilepton pair, jets, and large missing transverse momentum in $\sqrt{s}=8$ TeV pp collisions with the ATLAS detector\n',
             'collaboration': 'ATLAS',
             'journal': 'Eur. Phys. J.',
             'volume': 'C75',
