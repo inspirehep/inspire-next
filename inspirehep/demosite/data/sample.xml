@@ -1,0 +1,111 @@
+<record>
+  <controlfield tag="001">4328</controlfield>
+  <controlfield tag="005">20150424185039.0</controlfield>
+  <datafield tag="024" ind1="7" ind2=" ">
+    <subfield code="2">DOI</subfield>
+    <subfield code="a">10.1016/0029-5582(61)90469-2</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="z">D82-03581</subfield>
+    <subfield code="9">DESY</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">Glashow:1961tr</subfield>
+    <subfield code="9">SPIRESTeX</subfield>
+  </datafield>
+  <datafield tag="100" ind1=" " ind2=" ">
+    <subfield code="a">Glashow, S.L.</subfield>
+    <subfield code="i">INSPIRE-00085173</subfield>
+    <subfield code="u">Copenhagen U.</subfield>
+    <subfield code="y">1</subfield>
+  </datafield>
+<datafield tag="245" ind1=" " ind2=" ">
+  <subfield code="a">Partial Symmetries of Weak Interactions</subfield>
+  <subfield code="9">arXiv</subfield>
+</datafield>
+<datafield tag="269" ind1=" " ind2=" ">
+  <subfield code="c">1961</subfield>
+</datafield>
+<datafield tag="650" ind1="1" ind2="7">
+  <subfield code="2">INSPIRE</subfield>
+  <subfield code="a">Phenomenology-HEP</subfield>
+  <subfield code="9">automatically added based on DCC, PPF, DK</subfield>
+</datafield>
+<datafield tag="690" ind1="C" ind2=" ">
+  <subfield code="a">Published</subfield>
+  <subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+  <subfield code="a">ELECTROWEAK INTERACTION</subfield>
+  <subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+  <subfield code="a">COUPLING: YUKAWA</subfield>
+  <subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+  <subfield code="a">YUKAWA: COUPLING</subfield>
+  <subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+  <subfield code="a">CURRENT: CONSERVATION LAW</subfield>
+  <subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+  <subfield code="a">PARITY: VIOLATION</subfield>
+  <subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+  <subfield code="a">VIOLATION: PARITY</subfield>
+  <subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+  <subfield code="a">GAUGE BOSON</subfield>
+  <subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="695" ind1=" " ind2=" ">
+  <subfield code="a">INVARIANCE: CP</subfield>
+  <subfield code="2">INSPIRE</subfield>
+</datafield>
+<datafield tag="773" ind1=" " ind2=" ">
+  <subfield code="p">Nucl.Phys.</subfield>
+  <subfield code="v">22</subfield>
+  <subfield code="c">579-588</subfield>
+  <subfield code="y">1961</subfield>
+  <subfield code="1">1214548</subfield>
+</datafield>
+<datafield tag="773" ind1=" " ind2=" ">
+  <subfield code="x">Nucl. Phys. 22 (1961) 579-588</subfield>
+</datafield>
+<datafield tag="773" ind1=" " ind2=" ">
+  <subfield code="x">Also in *Lai, C. H. (Ed.): Gauge Theory Of Weak and Electromagnetic Interactions*, 171-180</subfield>
+</datafield>
+<datafield tag="856" ind1="4" ind2=" ">
+  <subfield code="w">00295582%2322%23579%23&amp;_version=1&amp;md5=aa370227c9b1d7ed0ead359e430549f6</subfield>
+  <subfield code="y">SCIDIR</subfield>
+  <subfield code="u">http://www.sciencedirect.com/science?_ob=GatewayURL&amp;_origin=SPIRES&amp;_method=citationSearch&amp;_volkey=00295582%2322%23579%23&amp;_version=1&amp;md5=aa370227c9b1d7ed0ead359e430549f6</subfield>
+</datafield>
+<datafield tag="909" ind1="C" ind2="O">
+  <subfield code="o">oai:inspirehep.net:4328</subfield>
+  <subfield code="p">INSPIRE:HEP</subfield>
+</datafield>
+<datafield tag="961" ind1=" " ind2=" ">
+  <subfield code="c">1982-01-01</subfield>
+  <subfield code="x">2015-04-24</subfield>
+</datafield>
+<datafield tag="970" ind1=" " ind2=" ">
+  <subfield code="a">SPIRES-154008</subfield>
+</datafield>
+<datafield tag="980" ind1=" " ind2=" ">
+  <subfield code="a">Published</subfield>
+</datafield>
+<datafield tag="980" ind1=" " ind2=" ">
+  <subfield code="a">Citeable</subfield>
+</datafield>
+<datafield tag="980" ind1=" " ind2=" ">
+  <subfield code="a">CORE</subfield>
+</datafield>
+<datafield tag="980" ind1=" " ind2=" ">
+  <subfield code="a">HEP</subfield>
+</datafield>
+</record>
