@@ -28,7 +28,7 @@ class SchemaOverdo(Overdo):
         super(SchemaOverdo, self).__init__(*args, **kwargs)
         self.schema = schema
 
-    def do(self, blob):
-        output = super(SchemaOverdo, self).do(blob)
-        output['$schema'] = self.schema
+    def do(self, blob, **kwargs):
+        output = super(SchemaOverdo, self).do(blob, **kwargs)
+        # output['$schema'] = self.schema FIXME Add back schema support
         return output

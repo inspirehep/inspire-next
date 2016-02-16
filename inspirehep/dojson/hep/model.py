@@ -44,8 +44,8 @@ def add_book_info(record, blob):
 
 class Publication(SchemaOverdo):
 
-    def do(self, blob):
-        output = super(Publication, self).do(blob)
+    def do(self, blob, **kwargs):
+        output = super(Publication, self).do(blob, **kwargs)
         add_book_info(output, blob)
         return output
 
