@@ -22,7 +22,7 @@
 from datetime import datetime
 from zlib import compress, decompress, error
 
-from invenio_ext.sqlalchemy import db
+from invenio_db import db
 from sqlalchemy.ext.hybrid import hybrid_property
 
 

@@ -22,31 +22,6 @@
 
 from __future__ import absolute_import, print_function
 
-from jsonschema import validate as json_validate
-
-from invenio_utils.memoise import memoize
-
-from invenio_workflows.models import ObjectVersion
-from invenio_workflows.registry import workflows
-
-from invenio_jsonschemas.api import get_schema_data, get_schemas
-
-
-@memoize
-def load_schemas():
-    """Load JSON schemas available."""
-    out = {}
-    for s in get_schemas():
-        out[s] = get_schema_data(s)
-    return out
-
-
-def validate(record):
-    """Validate $schema in JSON record."""
-    schema = record.pop('$schema', None)
-    if schema:
-        json_validate(record, load_schemas().get(schema))
-
 
 def rename_object_action(obj):
     if obj.get_action() == "arxiv_approval":
@@ -81,6 +56,9 @@ def reset_workflow_object_states(obj):
     5, 3, 14 -> 0 end
     5, 3, 10 -> 14, 0 halted
     """
+    from invenio_workflows.models import ObjectVersion
+    from invenio_workflows.registry import workflows
+
     pos = obj.get_current_task()
     if obj.version == ObjectVersion.COMPLETED:
         obj.save(task_counter=[len(workflows.get(obj.workflow.name).workflow) - 1])

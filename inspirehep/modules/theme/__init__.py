@@ -22,6 +22,11 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""INSPIRE theme."""
+"""INSPIRE theme and filters."""
 
 from __future__ import absolute_import, print_function
+
+from .ext import INSPIRETheme
+from .jinja2filters import INSPIREJinjaFilters
+
+__all__ = ('INSPIRETheme', 'INSPIREJinjaFilters')

@@ -33,8 +33,6 @@ from dojson.contrib.marc21.utils import create_record as marc_create_record
 
 from flask import current_app
 
-from jsonschema import ValidationError
-
 from inspirehep.dojson.conferences import conferences
 from inspirehep.dojson.experiments import experiments
 from inspirehep.dojson.hep import hep, hep2marc
@@ -46,23 +44,12 @@ from inspirehep.dojson.processors import _collection_in_record
 from inspirehep.dojson.utils import legacy_export_as_marc
 from inspirehep.dojson.utils import strip_empty_values
 
-from inspirehep.modules.workflows.dojson import author_bibfield, bibfield
-from inspirehep.modules.workflows.models import Payload
+from celery import shared_task
 
-from invenio_celery import celery
+#from invenio_ext.es import es
+from invenio_db import db
 
-from invenio_deposit.models import Deposition
-
-from invenio_ext.es import es
-from invenio_ext.sqlalchemy import db
-
-from invenio_records.api import Record
-from invenio_records.models import Record as RecordModel
-
-from invenio_workflows.models import (
-    BibWorkflowObject,
-    ObjectVersion
-)
+from invenio_records import Record
 
 from six import string_types, text_type
 
@@ -70,7 +57,6 @@ from .models import InspireProdRecords
 from .utils import (
     rename_object_action,
     reset_workflow_object_states,
-    validate
 )
 
 
@@ -114,7 +100,7 @@ def split_stream(stream):
             buf.append(row)
 
 
-@celery.task(ignore_result=True)
+@shared_task(ignore_result=True)
 def migrate_broken_records(broken_output=None, dry_run=False):
     """Migrate records declared as broken.
 
@@ -131,7 +117,7 @@ def migrate_broken_records(broken_output=None, dry_run=False):
         migrate_chunk.delay(chunk, chunk_broken_output, dry_run)
 
 
-@celery.task(ignore_result=True)
+@shared_task(ignore_result=True)
 def migrate(source, broken_output=None, dry_run=False, wait_for_results=False):
     """Main migration function."""
     from celery.task.sets import TaskSet
@@ -170,7 +156,7 @@ def migrate(source, broken_output=None, dry_run=False, wait_for_results=False):
         enable_queue("celery")
 
 
-@celery.task(ignore_result=True)
+@shared_task(ignore_result=True)
 def continuous_migration():
     """Task to continuously migrate what is pushed up by Legacy."""
     from redis import StrictRedis
@@ -190,8 +176,8 @@ def continuous_migration():
                 prod_record.marcxml = raw_record
                 try:
                     with db.session.begin_nested():
-                        errors, recid, dummy = create_record(
-                            recid, record, force=True, validation=True
+                        errors, dummy = create_record(
+                            record, force=True, validation=True
                         )
                         logger.info("Successfully migrated record {}".format(recid))
                         prod_record.successful = True
@@ -208,7 +194,7 @@ def continuous_migration():
         db.session.close()
 
 
-@celery.task(ignore_result=False, compress='zlib', acks_late=True)
+@shared_task(ignore_result=False, compress='zlib', acks_late=True)
 def migrate_chunk(chunk, broken_output=None, dry_run=False):
     from flask_sqlalchemy import models_committed
     from invenio_records.receivers import record_modification
@@ -236,8 +222,8 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
             prod_record.marcxml = raw_record
             try:
                 with db.session.begin_nested():
-                    errors, recid, json = create_record(
-                        recid, record, force=True,
+                    errors, json = create_record(
+                        record, force=True,
                         dry_run=dry_run, validation=True
                     )
                     prod_record.valid = not errors
@@ -267,7 +253,7 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
         db.session.close()
 
 
-@celery.task()
+@shared_task()
 def add_citation_counts():
     from elasticsearch.helpers import bulk as es_bulk
     from elasticsearch.helpers import scan as es_scan
@@ -328,7 +314,7 @@ def add_citation_counts():
     logger.info("... DONE: {} records updated with success. {} failures.".format(success, failed))
 
 
-def create_record(recid, record, force=False, dry_run=False, validation=False):
+def create_record(record, force=True, dry_run=False):
     """Create record from marc21 model."""
     errors = ""
 
@@ -348,39 +334,38 @@ def create_record(recid, record, force=False, dry_run=False, validation=False):
     else:
         json = strip_empty_values(hep.do(record))
 
-    if validation:
-        try:
-            validate(json)
-        except ValidationError as err:
-            errors = "ValidationError: Record {0}: {1}".format(recid, err)
-            current_app.logger.warning(errors)
-
     if dry_run:
-        return errors, recid, json
+        return errors, json
 
-    if force and any(key in json for key in ('control_number', 'recid')):
-        try:
-            control_number = json['control_number']
-        except KeyError:
-            control_number = json['recid']
+    control_number = json.get('control_number', json.get('recid'))
+    if control_number:
         control_number = int(control_number)
+
+    if force and control_number:
         # Searches if record already exists.
         with db.session.begin_nested():
             record = Record.get_record(control_number)
             if record is None:
                 # Adds the record to the db session.
-                rec = RecordModel(id=control_number)
-                db.session.merge(rec)
-                record = Record.create(json)
+                record = Record.create(json, _id=control_number)
             else:
-                record = Record(json, model=record.model)
-                record.commit()
+                record.update(json)
+            record.commit()
+        db.session.commit()
         logger.info("Elaborated record {}".format(control_number))
-        return errors, control_number, dict(record)
+        return errors, dict(record)
 
 
-@celery.task(ignore_result=True)
+@shared_task(ignore_result=True)
 def migrate_workflow_object(obj_id):
+    from inspirehep.modules.workflows.dojson import author_bibfield, bibfield
+    from inspirehep.modules.workflows.models import Payload
+    from invenio_deposit.models import Deposition
+    from invenio_workflows.models import (
+        BibWorkflowObject,
+        ObjectVersion
+    )
+
     try:
         obj = BibWorkflowObject.query.get(obj_id)
         rename_object_action(obj)
@@ -425,9 +410,10 @@ def migrate_workflow_object(obj_id):
         raise
 
 
-@celery.task(ignore_result=True)
+@shared_task(ignore_result=True)
 def reindex_holdingpen_object(obj_id):
     from invenio_workflows.signals import workflow_object_saved
+    from invenio_workflows.models import BibWorkflowObject
 
     obj = BibWorkflowObject.query.get(obj_id)
     workflow_object_saved.send(obj)

@@ -200,17 +200,27 @@ setup(
         'console_scripts': [
             'inspirehep = inspirehep.cli:cli',
         ],
+        'dojson.cli.rule': [
+            'hep = inspirehep.dojson.hep:hep',
+            'hep2marc = inspirehep.dojson.hep:hep2marc',
+            'hepnames = inspirehep.dojson.hepnames:hepnames',
+            'hepnames2marc = inspirehep.dojson.hepnames2marc:hepnames2marc',
+        ],
         'invenio_base.apps': [
-            'inspire_jinja2filters = inspirehep.modules.theme.jinja2filters:INSPIREJinjaFilters',
-            'inspire_theme = inspirehep.modules.theme.ext:INSPIRETheme'
+            'inspire_jinja2filters = inspirehep.modules.theme:INSPIREJinjaFilters',
+            'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
+            'inspire_migrator = inspirehep.modules.migrator:INSPIREMigrator',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
-            'inspirehep_theme_js = inspirehep.modules.theme.bundles:js'
+            'inspirehep_theme_js = inspirehep.modules.theme.bundles:js',
         ],
         'invenio_base.blueprints': [
             'inspirehep_theme = inspirehep.modules.theme.views:blueprint',
-        ]
+        ],
+        'invenio_db.models': [
+            'inspire_migrator = inspirehep.modules.migrator.models',
+        ],
     },
     tests_require=tests_require,
     cmdclass={'test': PyTest}
