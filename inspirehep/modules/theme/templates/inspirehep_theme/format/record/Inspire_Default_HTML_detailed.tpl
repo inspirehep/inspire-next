@@ -16,10 +16,12 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
-
+{%- extends "inspirehep_theme/page.html" -%}
 
 {% from "inspirehep_theme/format/record/Inspire_HTML_detailed_macros.tpl" import record_buttons, record_collection_heading, record_collections, record_publication_info, record_doi, record_links, detailed_record_abstract, record_keywords, record_references, record_citations, record_plots with context %}
 {% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax, render_record_title, render_record_authors, record_cite_modal, record_arxiv, record_report_numbers with context %}
+
+{% block body %}
 
 <div class="record-detailed">
   <div class="record-header" id="detailed-header">
@@ -96,3 +98,5 @@
   </div>
   </div>
 </div>
+
+{% endblock body %}
