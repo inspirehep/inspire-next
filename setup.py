@@ -70,9 +70,7 @@ install_requires = [
     'invenio-mail',
     'invenio-pidstore',
     'invenio-records',
-    # 'invenio-records-rest',
-    # 'invenio-records-ui',
-    'invenio-rest',  # need to check if it is needed
+    'invenio-rest',
     'invenio-search',
     'invenio-search-ui',
     'invenio-records',

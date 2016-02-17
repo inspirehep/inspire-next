@@ -21,6 +21,8 @@
 
 from __future__ import print_function, absolute_import
 
+from .cli import migrator
+
 
 class INSPIREMigrator(object):
     """INSPIRE migrator extension."""
@@ -32,6 +34,7 @@ class INSPIREMigrator(object):
 
     def init_app(self, app, **kwargs):
         """Initialize application object."""
+        app.cli.add_command(migrator)
         self.init_config(app.config)
         # Save reference to self on object
         app.extensions['inspire-migrator'] = self

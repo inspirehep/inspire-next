@@ -89,6 +89,8 @@ RECORDS_REST_SORT_OPTIONS = dict(
 )
 
 JSONSCHEMAS_HOST = "localhost:5000"
+INDEXER_DEFAULT_INDEX = "records-hep"
+INDEXER_DEFAULT_DOC_TYPE = "record"
 
 # from invenio_records_rest.facets import terms_filter
 # SEARCH_UI_SEARCH_API='/api/records/'

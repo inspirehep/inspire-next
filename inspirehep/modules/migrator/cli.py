@@ -18,18 +18,20 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 
-"""Manage migration from INSPIRE legacy instance."""
+"""Manage migrator from INSPIRE legacy instance."""
 
 from __future__ import print_function
 
+
+import click
 import os
 import sys
 
 from flask import current_app
 from flask.ext.script import prompt_bool
 
-from invenio_ext.script import Manager
-from invenio_ext.sqlalchemy import db
+# from invenio_ext.script import click
+from invenio_db import db
 
 from .tasks import (
     add_citation_counts,
@@ -37,25 +39,31 @@ from .tasks import (
     migrate_broken_records,
 )
 
-manager = Manager(usage=__doc__)
+# manager = Manager(usage=__doc__)
 
 
-@manager.option('--input', '-f', dest='file_input',
+@click.group()
+def migrator():
+    """Command related to migrating INSPIRE data."""
+
+
+@migrator.command()
+@click.option('--file-input', '-f',
                 help='Specific collections to migrate.')
-@manager.option('--wait', '-w', dest='wait_for_results',
-                help='Wait for migration to complete.')
-@manager.option('--remigrate', '-m', action='store_true', dest='remigrate',
+@click.option('--remigrate', '-m', type=bool,
                 default=False, help='Try to remigrate broken records')
-@manager.option('--broken-output', '-b', dest='broken_output', default=None,
+@click.option('--broken-output', '-b',
                 help='Where to write back records that were not possible to migrate')
-@manager.option('--dry-run', '-d', action='store_true', dest='dry_run', default=False,
+@click.option('--dry-run', '-d', type=bool, default=False,
                 help='Whether records should really be imported or not')
+@click.option('--wait', '-w',
+                help='Wait for migrator to complete.')
 def populate(file_input=None,
              remigrate=False,
              broken_output=None,
              dry_run=False,
-             wait_for_results=False):
-    """Populates the system with records from migration files.
+             wait=False):
+    """Populates the system with records from migrator files.
 
     Usage: inveniomanage migrator populate -f prodsync20151117173222.xml.gz
         --broken-output=/tmp/broken.xml:
@@ -69,30 +77,30 @@ def populate(file_input=None,
         print("Migrating records from file: {0}".format(file_input))
 
         migrate(os.path.abspath(file_input), broken_output=broken_output,
-                dry_run=dry_run, wait_for_results=wait_for_results)
+                dry_run=dry_run, wait_for_results=wait)
 
 
-@manager.command
+@migrator.command()
 def count_citations():
     """Adds field citation_count to every record in 'HEP' and calculates its proper value."""
     print("Adding citation_count to all records")
     add_citation_counts()
 
 
-@manager.command
+@migrator.command()
 def remove_bibxxx():
     """Drop all the legacy bibxxx tables."""
     drop_tables("bib%%x")
 
 
-@manager.command
+@migrator.command()
 def remove_idx():
     """Drop all the legacy BibIndex tables."""
     drop_tables('idx%%')
     drop_tables('tmp_idx%%')
 
 
-@manager.command
+@migrator.command()
 def remove_others():
     """Drop misc legacy tables."""
     drop_tables('aid%%')
@@ -104,7 +112,7 @@ def remove_others():
     drop_tables('crc%%')
 
 
-@manager.command
+@migrator.command()
 def remove_legacy_tables():
     """Remove all legacy tables."""
     db.session.begin(subtransactions=True)
@@ -120,7 +128,7 @@ def remove_legacy_tables():
         current_app.logger.exception(err)
 
 
-@manager.command
+@migrator.command()
 def clean_records():
     """Truncate all the records from various tables."""
     from sqlalchemy.engine import reflection
