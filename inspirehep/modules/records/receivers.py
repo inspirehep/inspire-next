@@ -23,11 +23,15 @@ import six
 
 from flask import current_app
 
-from invenio_records.signals import before_record_index
+from invenio_records.signals import (before_record_index,
+                                     before_record_insert,
+                                     before_record_update)
 
 from inspirehep.utils.date import create_valid_date
 from inspirehep.utils.formulas import get_all_unicode_formula_tokens_from_text
 from invenio_base.globals import cfg
+
+from inspirehep.dojson import utils as inspire_dojson_utils
 
 
 @before_record_index.connect
@@ -68,33 +72,36 @@ def populate_inspire_document_type(recid, json, *args, **kwargs):
         Adds a field for faceting INSPIRE document type
     """
     inspire_doc_type = []
+    collections = []
     if 'collections' in json:
-        for element in json.get('collections', []):
-            if 'primary' in element and element.get('primary', ''):
-                if element['primary'].lower() == 'published':
-                    inspire_doc_type.append(element['primary'].lower())
-                    break
-                elif element['primary'].lower() == 'thesis':
-                    inspire_doc_type.append('peer reviewed')
-                    break
-                elif element['primary'].lower() == 'book':
-                    inspire_doc_type.append(element['primary'].lower())
-                    break
-                elif element['primary'].lower() == 'bookchapter':
-                    inspire_doc_type.append('book chapter')
-                    break
-                elif element['primary'].lower() == 'proceedings':
-                    inspire_doc_type.append(element['primary'].lower())
-                    break
-                elif element['primary'].lower() == 'conferencepaper':
-                    inspire_doc_type.append('conference paper')
-                    break
-                elif element['primary'].lower() == 'note':
-                    inspire_doc_type.append('note')
-                    break
-                elif element['primary'].lower() == 'report':
-                    inspire_doc_type.append(element['primary'].lower())
-                    break
+        for c in json.get('collections', ''):
+            if c.get('primary', ''):
+                collections.append(c.get('primary').lower())
+        for element in collections:
+            if element == 'published':
+                inspire_doc_type.append(element)
+                break
+            elif element == 'thesis':
+                inspire_doc_type.append('peer reviewed')
+                break
+            elif element == 'book':
+                inspire_doc_type.append(element)
+                break
+            elif element == 'bookchapter':
+                inspire_doc_type.append('book chapter')
+                break
+            elif element == 'proceedings':
+                inspire_doc_type.append(element)
+                break
+            elif element == 'conferencepaper':
+                inspire_doc_type.append('conference paper')
+                break
+            elif element == 'note':
+                inspire_doc_type.append(element)
+                break
+            elif element == 'report':
+                inspire_doc_type.append(element)
+                break
         complete_pub_info = []
         if not inspire_doc_type:
             for field in json.get('publication_info', []):
@@ -102,11 +109,9 @@ def populate_inspire_document_type(recid, json, *args, **kwargs):
                     complete_pub_info.append(k)
             if 'page_artid' not in complete_pub_info:
                 inspire_doc_type.append('preprint')
-        inspire_doc_type.extend([s['primary'].lower() for s in
-                                 json.get('collections', []) if 'primary'
-                                 in s and s['primary'] is not None and
-                                 s['primary'].lower() in
-                                 ('review', 'lectures')])
+        inspire_doc_type.extend([s for s in collections
+                                 if s is not None and
+                                 s in ('review', 'lectures')])
     json['facet_inspire_doc_type'] = inspire_doc_type
 
 
@@ -166,3 +171,16 @@ def references_validator(recid, json, *args, **kwargs):
             # Bad recid! Remove.
             current_app.logger.warning('MALFORMED: recid value found in references of {0}: {1}'.format(recid, ref.get('recid')))
             del ref['recid']
+
+
+@before_record_insert.connect
+@before_record_update.connect
+def clean_dois(sender, *args, **kwargs):
+    filtered_dois = []
+    if 'dois' in sender:
+        for element in sender['dois']:
+            filtered_dois.append(dict(
+                (key, value) for key, value in
+                element.items() if key == 'value'))
+    sender['dois'] = inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
+        filtered_dois)

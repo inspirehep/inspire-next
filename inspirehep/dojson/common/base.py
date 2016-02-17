@@ -224,20 +224,25 @@ def new_recid2marc(self, key, value):
 @jobs.over('collections', '^980..')
 def collections(self, key, value):
     """Collection this record belongs to."""
+    value = utils.force_list(value)
+
     def get_value(value):
+        primary = ''
+        if isinstance(value.get('a'), list):
+            primary = value.get('a')[0]
+        else:
+            primary = value.get('a')
         return {
-            'primary': value.get('a'),
+            'primary': primary,
             'secondary': value.get('b'),
             'deleted': value.get('c'),
         }
 
     collections = self.get('collections', [])
 
-    if isinstance(value, list):
-        for val in value:
-            collections.append(get_value(val))
-    else:
-        collections.append(get_value(value))
+    for val in value:
+        collections.append(get_value(val))
+
     contains_list = False
     for element in collections:
         for k, v in enumerate(element):

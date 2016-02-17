@@ -62,14 +62,22 @@ def subject_terms2marc(self, key, value):
 
 
 @hep.over('free_keywords', '^653[10_2][_1032546]')
-@utils.for_each_value
-@utils.filter_values
 def free_keywords(self, key, value):
     """Free keywords."""
-    return {
-        'value': value.get('a'),
-        'source': value.get('9'),
-    }
+    value = utils.force_list(value)
+
+    def get_value(value):
+        return {
+            'value': value.get('a'),
+            'source': value.get('9'),
+        }
+
+    free_keywords = self.get('free_keywords', [])
+    for val in value:
+        free_keywords.append(get_value(val))
+
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
+        free_keywords)
 
 
 @hep2marc.over('653', 'free_keywords')
