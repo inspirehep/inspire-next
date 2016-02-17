@@ -19,7 +19,7 @@
 
 
 {# Collect the nav links, forms, and other content for toggling #}
-<form name="search" action="" method="get" role="search" id="searchform">
+<form name="search" action="{{url_for('inspirehep_search.search')}}" method="get" role="search" id="searchform">
   {%- if collection is defined %}
   <input type="hidden" name="cc" value="{{collection.name}}">
   {%- endif %}

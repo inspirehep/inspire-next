@@ -24,11 +24,17 @@
 
 """Search blueprint in order for template and static files to be loaded."""
 
-from flask import Blueprint, request, g
+from __future__ import absolute_import, print_function
 
-from invenio_collections.models import Collection
+import datetime
+
+from flask import Blueprint, request, g, current_app, session, redirect, url_for, render_template
+
 from invenio_search.api import Query
+from invenio_search.walkers.elasticsearch import ElasticSearchDSL
 
+from .pagination import Pagination
+from .results import Results
 
 blueprint = Blueprint('inspirehep_search',
                       __name__,
@@ -37,34 +43,97 @@ blueprint = Blueprint('inspirehep_search',
                       static_folder='static')
 
 
-@blueprint.route('', methods=['GET', 'POST'])
-def search(p='', cc=''):
+@blueprint.route('/', methods=['GET', 'POST'])
+def search():
     # Get all request arguments
     # @wash_arguments does not exist anymore ?
-    p = request.args.get('p', '')
-    rg = request.args.get('rg', '')
-    sf = request.args.get('sf', '')
-    so = request.args.get('so', '')
-    post_filter = request.args.get('post_filter', '')
-    cc = request.args.get('cc', '')
-    cc = request.args.get('jrec', 1)
+    p = request.values.get('p', "", type=unicode)
+    rg = request.values.get('rg', 25, type=int)
+    sf = request.values.get('sf', '', type=unicode)
+    so = request.values.get('so', '', type=unicode)
+    post_filter = request.values.get('post_filter', '', type=unicode)
+    cc = request.values.get('cc', 'hep', type=unicode)
+    jrec = request.values.get('jrec', 1, type=int)
 
-    if cc:
-        g.collection = collection = Collection.query.filter(
-            Collection.name == cc).first_or_404()
-    else:
-        g.collection = collection = Collection.query.get_or_404(1)
 
-    # Create ES DSL
+    # if cc:
+    #     g.collection = collection = Collection.query.filter(
+    #         Collection.name == cc).first_or_404()
+    # else:
+    #     g.collection = collection = Collection.query.get_or_404(1)
+
+    # # Create ES DSL
     response = Query(p)
     response.build()
+    response = Results(response.body, index="records-hep") # FIXME do not hardcode index
 
     response.body.update({
         'size': int(rg),
         'from': jrec-1,
-        'aggs': cfg['SEARCH_ELASTIC_AGGREGATIONS'].get(
-            collection.name.lower(), {}
+        'aggs': current_app.config['SEARCH_ELASTIC_AGGREGATIONS'].get(
+            cc, {}
         )
     })
 
-    return "Hello"
+    if sf in current_app.config['SEARCH_ELASTIC_SORT_FIELDS']:
+        so = so if so in ('asc', 'desc') else ''
+        sorting = {
+            'sort': {
+                sf: {
+                    'order': so
+                }
+            }
+        }
+        response.body.update(sorting)
+
+    filtered_facets = ''
+    if 'post_filter' in request.values and request.values['post_filter']:
+        parsed_post_filter = Query(request.values.get('post_filter'))
+        post_filter = parsed_post_filter.query.accept(
+            ElasticSearchDSL()
+        )
+        response.body['query'] = {
+            "filtered": {
+                'query': response.body['query'],
+                'filter': post_filter
+            }
+        }
+        # extracting the facet filtering
+        from .walkers.facets import FacetsVisitor
+        filtered_facets = parsed_post_filter.query.accept(
+            FacetsVisitor()
+        )
+        # sets cannot be converted to json. use facetsVisitor to convert them
+        # to lists
+        filtered_facets = FacetsVisitor.jsonable(filtered_facets)
+    else:
+        # Save current query and number of hits in the user session
+        session_key = 'last-query' + p + cc
+        if not session.get(session_key):
+            session[session_key] = {}
+
+        session[session_key] = {
+            "p": p,
+            "collection": cc,
+            "number_of_hits": len(response),
+            "timestamp": datetime.datetime.utcnow()
+        }
+
+    number_of_hits = len(response)
+
+    if number_of_hits and jrec > number_of_hits:
+        args = request.args.copy()
+        args['jrec'] = 1
+        return redirect(url_for('inspirehep_search.search', **args))
+
+    pagination = Pagination((jrec-1) // rg + 1, rg, number_of_hits)
+
+    ctx = dict(
+        filtered_facets=filtered_facets,
+        response=response,
+        rg=rg,
+        pagination=pagination,
+        collection=cc,
+    )
+
+    return render_template("inspirehep_theme/search/dummy.html", **ctx)

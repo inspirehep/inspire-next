@@ -203,6 +203,9 @@ setup(
         'console_scripts': [
             'inspirehep = inspirehep.cli:cli',
         ],
+        'invenio_base.blueprints': [
+            'inspirehep_search = inspirehep.modules.search.views:blueprint',
+        ],
         'dojson.cli.rule': [
             'hep = inspirehep.dojson.hep:hep',
             'hep2marc = inspirehep.dojson.hep:hep2marc',

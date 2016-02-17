@@ -407,7 +407,7 @@
           </li>
         </ul>
       </div>
-      {% if request.endpoint in ['search.search', 'record.metadata'] %}
+      {% if request.endpoint in ['inspirehep_search.search', 'record.metadata'] %}
         <div id="top-search-bar" class="{{collection_name}}">
           {% include "inspirehep_theme/search/form/form.html" %}
         </div>

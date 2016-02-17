@@ -5,6 +5,7 @@
 from __future__ import absolute_import, print_function
 
 import os
+import pkg_resources
 
 
 # Identity function for string extraction
@@ -156,3 +157,248 @@ INDEXER_DEFAULT_DOC_TYPE = "record"
 # )
 
 # RECORDS_UI_DEFAULT_PERMISSION_FACTORY=None
+#
+#
+
+
+######### From here onwards is the backported search configuration ###########
+
+SEARCH_QUERY_PARSER = 'invenio_query_parser.contrib.spires.parser:Main'
+
+SEARCH_QUERY_WALKERS = [
+    'invenio_query_parser.contrib.spires.walkers.pypeg_to_ast:PypegConverter',
+    'invenio_query_parser.contrib.spires.walkers.spires_to_invenio:SpiresToInvenio'
+]
+
+# SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
+# invenio keywords to elasticsearch fields
+SEARCH_ELASTIC_KEYWORD_MAPPING = {
+    "control_number": ["control_number"],
+    "author": ["authors.full_name", "authors.alternative_name"],
+    "exactauthor": ["exactauthor.raw", "authors.full_name",
+                    "authors.alternative_name"
+                    ],
+    "abstract": ["abstracts.value"],
+    "collaboration": ["collaboration.value", "collaboration.raw^2"],
+    "collection": ["_collections"],
+    "doi": ["dois.value"],
+    "doc_type": ["facet_inspire_doc_type"],
+    "formulas": ["facet_formulas"],
+    "affiliation": ["authors.affiliations.value", "corporate_author"],
+    "reportnumber": ["report_numbers.value", "arxiv_eprints.value"],
+    "refersto": ["references.recid"],
+    "experiment": ["accelerator_experiments.experiment"],
+    "country": ["address.country", "address.country.raw"],
+    "experiment_f": ["accelerator_experiments.facet_experiment"],
+    "wwwlab": ["experiment_name.wwwlab"],
+    "subject": ["field_code.value"],
+    "phd_advisors": ["phd_advisors.name"],
+    "title": ["titles.title", "titles.title.raw^2",
+              "title_translation.title", "title_variation",
+              "title_translation.subtitle", "titles.subtitle"],
+    "cnum": ["publication_info.cnum"],
+    "980": [
+        "collections.primary",
+        "collections.secondary",
+        "collections.deleted",
+    ],
+    "595__c": ["hidden_notes.cds"],
+    "980__a": ["collections.primary"],
+    "980__b": ["collections.secondary"],
+    "542__l": ["information_relating_to_copyright_status.copyright_status"],
+    "conf_subject": ["field_code.value"],
+    "037__c": ["arxiv_eprints.categories"],
+    "246__a": ["titles.title"],
+    "595": ["hidden_notes"],
+    "650__a": ["subject_terms.term"],
+    "695__a": ["thesaurus_terms.keyword"],
+    "773__y": ["publication_info.year"],
+    "authorcount": ["authors.full_name"],
+    "arXiv": ["arxiv_eprints.value"],
+    "caption": ["urls.description"],
+    "country": ["authors.affiliations.value"],
+    "firstauthor": ["authors.full_name", "authors.alternative_name"],
+    "fulltext": ["urls.url"],
+    "journal": ["publication_info.recid",
+                "publication_info.page_artid",
+                "publication_info.journal_issue",
+                "publication_info.conf_acronym",
+                "publication_info.journal_title",
+                "publication_info.reportnumber",
+                "publication_info.confpaper_info",
+                "publication_info.journal_volume",
+                "publication_info.cnum",
+                "publication_info.pubinfo_freetext",
+                "publication_info.year_raw",
+                "publication_info.isbn",
+                "publication_info.note"
+                ],
+    "journal_page": ["publication_info.page_artid"],
+    "keyword": ["thesaurus_terms.keyword", "free_keywords.value"],
+    "note": ["public_notes.value"],
+    "reference": ["references.doi", "references.report_number",
+                  "references.journal_pubnote"
+                  ],
+    "subject": ["subject_terms.term"],
+    "texkey": ["external_system_numbers.value",
+               "external_system_numbers.obsolete"
+               ],
+    "year": ["imprints.date",
+             "preprint_date",
+             "thesis.date",
+             "publication_info.year"
+             ],
+    "confnumber": ["publication_info.cnum"],
+    "earliest_date": ["earliest_date"],
+    "address": ["corporate_author"],
+    "datecreated": ["creation_modification_date.creation_date"],
+    "datemodified": ["creation_modification_date.modification_date"],
+    "recid": ["control_number"]
+}
+
+FACETS_SIZE_LIMIT = 10
+
+SEARCH_ELASTIC_AGGREGATIONS = {
+    "hep": {
+        "subject": {
+            "terms": {
+                "field": "facet_inspire_subjects"
+            }
+        },
+        "doc_type": {
+            "terms": {
+                "field": "facet_inspire_doc_type"
+            }
+        },
+        "formulas": {
+            "terms": {
+                "field": "facet_formulas"
+            }
+        },
+        "author": {
+            "terms": {
+                "field": "exactauthor.raw"
+            }
+        },
+        "experiment": {
+            "terms": {
+                "field": "accelerator_experiments.facet_experiment"
+            }
+        },
+        "earliest_date": {
+            "date_histogram": {
+                "field": "earliest_date",
+                "interval": "year",
+                "min_doc_count": 1
+            }
+        }
+    },
+    "conferences": {
+        "series": {
+            "terms": {
+                "field": "series"
+            }
+        },
+        "conf_subject": {
+            "terms": {
+                "field": "field_code.value"
+            }
+        },
+        "opening_date": {
+            "date_histogram": {
+                "field": "opening_date",
+                "interval": "year"
+            }
+        }
+    },
+    "experiments": {
+        "field_code": {
+            "terms": {
+                "field": "field_code"
+            }
+        },
+        "wwwlab": {
+            "terms": {
+                "field": "experiment_name.wwwlab"
+            }
+        },
+        "accelerator": {
+            "terms": {
+                "field": "accelerator"
+            }
+        }
+    },
+    "journals": {
+        "publisher": {
+            "terms": {
+                "field": "publisher"
+            }
+        }
+    },
+    "institutions": {
+        "country": {
+            "terms": {
+                "field": "address.country.raw"
+            }
+        }
+    },
+    "jobs": {
+        "continent": {
+            "terms": {
+                "field": "continent"
+            }
+        },
+        "rank": {
+            "terms": {
+                "field": "rank"
+            }
+        },
+        "research_area": {
+            "terms": {
+                "field": "research_area"
+            }
+        }
+    }
+}
+
+# SEARCH_QUERY_ENHANCERS = ['invenio_search.enhancers.collection_filter.apply']
+SEARCH_ELASTIC_SORT_FIELDS = ["earliest_date", "citation_count"]
+
+
+SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
+    "HEP": "hep",
+    "CDF Internal Notes": "hep",
+    "Conferences": "conferences",
+    "Institutions": "institutions",
+    "Experiments": "experiments",
+    "Jobs": "jobs",
+    "Jobs Hidden": "jobs",
+    "Journals": "journals",
+    "HepNames": "authors",
+    "Data": "data"
+}
+
+SEARCH_ELASTIC_DEFAULT_INDEX = 'hep'
+
+INSPIRE_PATH = pkg_resources.resource_filename("inspirehep", "")
+
+JSON_SCHEMA_PATHS = [
+    pkg_resources.resource_filename(
+        "inspirehep", "base/jsonschemas/hep-0.0.1.json")
+]
+ELASTIC_MAPPINGS_PATHS = [
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/hep.json"),
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/conferences.json"),
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/experiments.json"),
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/authors.json"),
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/institutions.json"),
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/jobs.json"),
+    pkg_resources.resource_filename(
+        "inspirehep", "base/searchext/mappings/journals.json")
+]
