@@ -30,15 +30,23 @@ from ..model import hep, hep2marc
 
 
 @hep.over('subject_terms', '^650[1_][_7]')
-@utils.for_each_value
-@utils.filter_values
 def subject_terms(self, key, value):
     """Subject Added Entry-Topical Term."""
-    return {
-        'term': value.get('a'),
-        'scheme': value.get('2'),
-        'source': value.get('9'),
-    }
+    value = utils.force_list(value)
+
+    def get_value(value):
+        return {
+            'term': value.get('a'),
+            'scheme': value.get('2'),
+            'source': value.get('9'),
+        }
+    subject_terms = self.get('subject_terms', [])
+
+    for val in value:
+        subject_terms.append(get_value(val))
+
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
+        subject_terms)
 
 
 @hep2marc.over('65017', 'subject_terms')
@@ -111,6 +119,8 @@ def accelerator_experiments2marc(self, key, value):
 @hep.over('thesaurus_terms', '^695..')
 def thesaurus_terms(self, key, value):
     """Controlled keywords."""
+    value = utils.force_list(value)
+
     def get_value(value):
         try:
             energy_range = int(value.get('e'))
@@ -123,15 +133,14 @@ def thesaurus_terms(self, key, value):
         }
     thesaurus_terms = self.get('thesaurus_terms', [])
 
-    if isinstance(value, list):
-        for element in value:
-            thesaurus_terms.append(get_value(element))
-    else:
-        thesaurus_terms.append(get_value(value))
+    for element in value:
+        thesaurus_terms.append(get_value(element))
+
     for element in thesaurus_terms:
         if isinstance(element['keyword'], list):
             return thesaurus_terms
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(thesaurus_terms)
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
+        thesaurus_terms)
 
 
 @hep2marc.over('695', 'thesaurus_terms')

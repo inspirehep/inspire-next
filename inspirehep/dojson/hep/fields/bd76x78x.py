@@ -40,7 +40,6 @@ def publication_info(self, key, value):
         try:
             year = int(value.get('y'))
         except:
-            # Some crap in they year :-(
             pass
     try:
         if '0' in value:
@@ -59,7 +58,6 @@ def publication_info(self, key, value):
             else:
                 conference_recid = int(value.get('2'))
     except:
-        # Some crap in the recid :-(
         pass
     return {
         'parent_recid': parent_recid,
@@ -72,7 +70,7 @@ def publication_info(self, key, value):
         'reportnumber': value.get('r'),
         'confpaper_info': value.get('t'),
         'journal_volume': value.get('v'),
-        'cnum': value.get('w'),
+        'cnum': utils.force_list(value.get('w')),
         'pubinfo_freetext': value.get('x'),
         'year': year,
         'isbn': value.get('z'),

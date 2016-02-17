@@ -128,8 +128,9 @@ class CitationTestsOnRecordUpdate(InvenioTestCase):
 
         self.test_recid = u'1196797'
         record = get_record(recid=self.test_recid)
-        self.removed_reference_recid = u'454197'
-        self.citation_count_before_update = Query('control_number:' + str(self.removed_reference_recid))\
+        print(record)
+        self.removed_reference_recid = 454197
+        self.citation_count_before_update = Query('control_number:%d' %(self.removed_reference_recid))\
             .search().records()[0]['citation_count']
 
         self.expected_citation_count_after_update = self.citation_count_before_update - 1
@@ -157,8 +158,8 @@ class CitationTestsOnRecordUpdate(InvenioTestCase):
         time.sleep(6)
 
     def test_citation_count_on_update(self):
-        updated_citation_count = Query('control_number:' +
-                                       str(self.removed_reference_recid)).search().records()[0]['citation_count']
+        updated_citation_count = Query('control_number:%d'
+                                       %(self.removed_reference_recid)).search().records()[0]['citation_count']
         self.assertEqual(updated_citation_count, self.expected_citation_count_after_update)
 
     def tearDown(self):

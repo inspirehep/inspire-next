@@ -24,6 +24,8 @@
 
 from dojson import utils
 
+from inspirehep.dojson import utils as inspire_dojson_utils
+
 from ..model import hepnames, hepnames2marc
 
 
@@ -348,13 +350,20 @@ def field_categories2marc(self, key, value):
 
 
 @hepnames.over('source', '^670..')
-@utils.for_each_value
-@utils.filter_values
 def source(self, key, value):
-    return {
-        'name': value.get('a'),
-        'date_verified': value.get('d'),
-    }
+    def get_value(value):
+        return {
+            'name': value.get('a'),
+            'date_verified': value.get('d'),
+        }
+    source = self.get('source', [])
+    if isinstance(value, list):
+        for val in value:
+            source.append(get_value(val))
+    else:
+        source.append(get_value(value))
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
+        source)
 
 
 @hepnames2marc.over('670', '^source$')

@@ -46,18 +46,30 @@ def authors(self, key, value):
                 utils.force_list(value.get('u')))
             affiliations = [{'value': aff, 'recid': recid} for
                             aff in affiliations]
+        person_recid = ''
+        if value.get('x'):
+            try:
+                person_recid = int(value.get('x'))
+            except:
+                pass
+        inspire_id = ''
+        if value.get('i'):
+            if isinstance(value.get('i'), list):
+                inspire_id = value.get('i')[0]
+            else:
+                inspire_id = value.get('i')
         ret = {
             'full_name': value.get('a'),
             'role': value.get('e'),
             'alternative_name': value.get('q'),
-            'inspire_id': value.get('i'),
+            'inspire_id': inspire_id,
             'orcid': value.get('j'),
-            'recid': value.get('x'),
+            'recid': person_recid,
             'email': value.get('m'),
             'affiliations': affiliations,
-            'profile': inspire_dojson_utils.create_profile_url(
+            'profile': {"__url__": inspire_dojson_utils.create_profile_url(
                 value.get('x')
-            ),
+            )},
             'curated_relation': value.get('y', 0) == 1
         }
         # HACK: This is to workaround broken records where multiple authors

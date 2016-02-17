@@ -5,7 +5,7 @@
         "ICN": {
             "description": "HEP affiliation following new standards",
             "title": "New INSPIRE control number",
-            "type": "string"
+            "type": "array"
         },
         "address": {
             "items": {
@@ -13,7 +13,7 @@
                     "address": {
                         "description": "Street etc, city with postal code + additions (native language) FIXME: isn't postal code redundant?",
                         "title": "Address",
-                        "type": "string"
+                        "type": "array"
                     },
                     "city": {
                         "title": "City",
@@ -25,27 +25,14 @@
                     },
                     "country": {
                         "description": "FIXME can't we derive this from country_code?",
-                        "enum": [
-                            "does",
-                            "it",
-                            "exist?"
-                        ],
                         "string": "Country name",
                         "type": "string"
                     },
                     "postal_code": {
                         "title": "Postal code",
-                        "type": "string"
+                        "type": "array"
                     },
                     "country_code": {
-                        "enum": [
-                            "let's",
-                            "take",
-                            "the",
-                            "enum",
-                            "from",
-                            "iso"
-                        ],
                         "title": "Country code",
                         "type": "string"
                     }
@@ -74,7 +61,7 @@
         "department": {
             "description": "Subordinate unit in native language",
             "title": "Department",
-            "type": "string"
+            "type": "array"
         },
         "core": {
             "description": "Is this a CORE institution?",
@@ -89,20 +76,23 @@
         "extra_words": {
             "items": {
                 "title": "Extra word",
-                "type": "string"
+                "type": "array"
             },
             "title": "Extra words",
             "type": "array",
             "uniqueItems": true
         },
         "field_activity": {
-            "enum": [
-                "University",
-                "Research center",
-                "Company"
-            ],
+            "items": {
+                "enum": [
+                    "University",
+                    "Research center",
+                    "Company"
+                ],
+                "type": "string"
+            },
             "title": "Field of activity",
-            "type": "string"
+            "type": "array"
         },
         "hidden_notes": {
             "items": {
@@ -125,7 +115,7 @@
         "institution": {
             "description": "Corporate name in native language",
             "title": "Institution name",
-            "type": "string"
+            "type": "array"
         },
         "location": {
             "properties": {
@@ -158,7 +148,7 @@
                     },
                     "value": {
                         "title": "Name variant",
-                        "type": "string"
+                        "type": "array"
                     }
                 },
                 "title": "Name variant",
@@ -256,7 +246,6 @@
             "description": "Contains links."
         }
     },
-    "required": ["url", "country", "ICN", "institution"],
     "title": "Institution",
     "type": "object"
 }

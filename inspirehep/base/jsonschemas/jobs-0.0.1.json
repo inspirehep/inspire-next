@@ -89,6 +89,7 @@
                 "description": "FIXME: should this be identical to hepnames rank? I would say so",
                 "enum": [
                     "Postdc",
+                    "Postdoc",
                     "Junior",
                     "Student",
                     "Senior",
@@ -117,7 +118,19 @@
                 "enum": [
                     "usual",
                     "arXiv",
-                    "list"
+                    "list",
+                    "physics.ins-det",
+                    "astro-ph",
+                    "nucl-th",
+                    "hep-lat",
+                    "physics",
+                    "hep-th",
+                    "hep-ex",
+                    "gr-qc",
+                    "hep-ph",
+                    "physics.acc-phys",
+                    "nucl-ex",
+                    "physics-other"
                 ],
                 "type": "string"
             },
@@ -135,17 +148,6 @@
             "description": "Contains links."
         }
     },
-    "required": [
-        "continent",
-        "position",
-        "institution",
-        "contact_email",
-        "contact_person",
-        "description",
-        "url",
-        "rank",
-        "research_area"
-    ],
     "title": "HEP Job",
     "type": "object"
 }

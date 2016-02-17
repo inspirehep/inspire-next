@@ -31,9 +31,20 @@ from ..model import institutions
 @utils.filter_values
 def location(self, key, value):
     """GPS location info."""
+    longitude, latitude = ('', '')
+    if value.get('d'):
+        try:
+            longitude = float(value.get('d'))
+        except:
+            pass
+    if value.get('f'):
+        try:
+            latitude = float(value.get('f'))
+        except:
+            pass
     return {
-        'longitude': value.get('d'),
-        'latitude': value.get('f')
+        'longitude': longitude,
+        'latitude': latitude
     }
 
 
@@ -102,11 +113,11 @@ def new_ICN(self, key, value):
 def address(self, key, value):
     """Address info."""
     return {
-        'address': value.get('a'),
+        'address': utils.force_list(value.get('a')),
         'city': value.get('b'),
         'state_province': value.get('c'),
         'country': value.get('d'),
-        'postal_code': value.get('e'),
+        'postal_code': utils.force_list(value.get('e')),
         'country_code': value.get('g'),
     }
 
@@ -125,7 +136,7 @@ def name_variants(self, key, value):
     """Variants of the name."""
     return {
         "source": value.get('9'),
-        "value": value.get('a')
+        "value": utils.force_list(value.get('a'))
     }
 
 
@@ -133,7 +144,7 @@ def name_variants(self, key, value):
 @utils.for_each_value
 def extra_words(self, key, value):
     """Variants of the name."""
-    return value.get('g')
+    return utils.force_list(value.get('g'))
 
 
 @institutions.over('content_classification', '^65017')

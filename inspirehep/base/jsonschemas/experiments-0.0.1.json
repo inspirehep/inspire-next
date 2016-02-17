@@ -12,7 +12,7 @@
         "affiliation": {
             "description": "Institution ICN",
             "title": "Affiliation",
-            "type": "string"
+            "type": "array"
         },
         "affiliation_recid": {
             "title": "Record ID of institution",
@@ -33,7 +33,7 @@
         },
         "contact_email": {
             "title": "Contact email",
-            "type": "string"
+            "type": "array"
         },
         "curated_relation": {
             "title": "Curated relation",
@@ -66,14 +66,17 @@
         },
         "description": {
             "title": "Description",
-            "type": "string"
+            "type": "array"
         },
         "field_code": {
             "items": {
                 "enum": [
                     "usual",
                     "arXiv",
-                    "list"
+                    "list",
+                    "astro-ph",
+                    "physics",
+                    "ASTRO-PH"
                 ],
                 "type": "string"
             },
@@ -141,9 +144,6 @@
                         "type": "string"
                     }
                 },
-                "required": [
-                    "name"
-                ],
                 "type": "object"
             },
             "title": "Related experiments",
@@ -191,8 +191,20 @@
             "uniqueItems": true
         },
         "title": {
-            "title": "Title",
-            "type": "string"
+            "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "subtitle": {
+                        "type": "string"
+                    },
+                    "source": {
+                        "type": "string"
+                    }
+                },
+            "type":"array",
+            "title": "Title"
         },
         "url": {
             "format": "url",
@@ -200,9 +212,6 @@
             "type": "string"
         }
     },
-    "required": [
-        "name"
-    ],
     "title": "Experiment",
     "type": "object"
 }
