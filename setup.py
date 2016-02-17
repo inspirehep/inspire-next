@@ -115,11 +115,12 @@ extras_require = {
     ],
     'tests': tests_require,
     'development': [
-            'Flask-DebugToolbar>=0.9',
-            'ipython',
-            'ipdb',
-            'kwalitee'
-        ]
+        'Flask-DebugToolbar>=0.9',
+        'ipython',
+        'ipdb',
+        'kwalitee',
+        'honcho',
+    ]
 }
 
 extras_require['all'] = []
