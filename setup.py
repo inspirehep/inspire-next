@@ -72,11 +72,9 @@ install_requires = [
     'invenio-records',
     'invenio-rest',
     'invenio-search',
-    'invenio-search-ui',
     'invenio-records',
     'invenio-records-rest',
     'invenio-records-ui',
-    #'invenio-theme',  # we should create inspire-theme instead
     'invenio-userprofiles',
     'invenio>=3.0.0a1,<3.1.0',
     # 'jsonref'
