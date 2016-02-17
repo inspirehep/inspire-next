@@ -1,0 +1,262 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "id": "http://labs.inspirehep.net/schemas/institutions-0.0.1.json",
+    "properties": {
+        "ICN": {
+            "description": "HEP affiliation following new standards",
+            "title": "New INSPIRE control number",
+            "type": "string"
+        },
+        "address": {
+            "items": {
+                "properties": {
+                    "address": {
+                        "description": "Street etc, city with postal code + additions (native language) FIXME: isn't postal code redundant?",
+                        "title": "Address",
+                        "type": "string"
+                    },
+                    "city": {
+                        "title": "City",
+                        "type": "string"
+                    },
+                    "state_province": {
+                        "title": "State or Province",
+                        "type": "string"
+                    },
+                    "country": {
+                        "description": "FIXME can't we derive this from country_code?",
+                        "enum": [
+                            "does",
+                            "it",
+                            "exist?"
+                        ],
+                        "string": "Country name",
+                        "type": "string"
+                    },
+                    "postal_code": {
+                        "title": "Postal code",
+                        "type": "string"
+                    },
+                    "country_code": {
+                        "enum": [
+                            "let's",
+                            "take",
+                            "the",
+                            "enum",
+                            "from",
+                            "iso"
+                        ],
+                        "title": "Country code",
+                        "type": "string"
+                    }
+                },
+                "title": "Address",
+                "type": "object"
+            },
+            "title": "Addresses",
+            "type": "array"
+        },
+        "content_classification": {
+            "items": {
+                "description": "FIXME: shall we normalize this to the usual arXiv?",
+                "enum": [
+                    "Astrophysics",
+                    "Phenomenology-HEP",
+                    "..."
+                ],
+                "title": "Content classification",
+                "type": "string"
+            },
+            "title": "Content classification",
+            "type": "array",
+            "uniqueItems": true
+        },
+        "department": {
+            "description": "Subordinate unit in native language",
+            "title": "Department",
+            "type": "string"
+        },
+        "core": {
+            "description": "Is this a CORE institution?",
+            "title": "CORE",
+            "type": "boolean"
+        },
+        "department_acronym": {
+            "description": "Subordinate unit well-known acronym",
+            "title": "Department acronym",
+            "type": "string"
+        },
+        "extra_words": {
+            "items": {
+                "title": "Extra word",
+                "type": "string"
+            },
+            "title": "Extra words",
+            "type": "array",
+            "uniqueItems": true
+        },
+        "field_activity": {
+            "enum": [
+                "University",
+                "Research center",
+                "Company"
+            ],
+            "title": "Field of activity",
+            "type": "string"
+        },
+        "hidden_notes": {
+            "items": {
+                "title": "Hidden note",
+                "type": "string"
+            },
+            "title": "Hidden notes",
+            "type": "array",
+            "uniqueItems": true
+        },
+        "historical_data": {
+            "title": "Historical data",
+            "type": "string"
+        },
+        "institution_acronym": {
+            "description": "Corporate well-known acronym",
+            "title": "Institution acronym",
+            "type": "string"
+        },
+        "institution": {
+            "description": "Corporate name in native language",
+            "title": "Institution name",
+            "type": "string"
+        },
+        "location": {
+            "properties": {
+                "latitude": {
+                    "description": "FIXME: we can populate this programmatically with Google APIs",
+                    "title": "latitude",
+                    "type": "number"
+                },
+                "longitude": {
+                    "description": "FIXME: we can populate this programmatically with Google APIs",
+                    "title": "longitude",
+                    "type": "number"
+                }
+            },
+            "title": "GPS location",
+            "type": "object"
+        },
+        "name_variants": {
+            "items": {
+                "properties": {
+                    "source": {
+                        "description": "FIXME: Do we really care about the source?",
+                        "enum": [
+                            "DESY",
+                            "DESY_AFF",
+                            "ADS"
+                        ],
+                        "title": "Name variant source",
+                        "type": "string"
+                    },
+                    "value": {
+                        "title": "Name variant",
+                        "type": "string"
+                    }
+                },
+                "title": "Name variant",
+                "type": "object"
+            },
+            "title": "Name variants",
+            "type": "array",
+            "uniqueItems": true
+        },
+        "obsolete_ICN": {
+            "description": "ICN of obsolete inst for which this inst should be used instead",
+            "title": "Obsolete ICN",
+            "type": "string"
+        },
+        "obsolete_recid": {
+            "description": "record ID of obsolete inst for which this inst should be used instead",
+            "title": "Obsolete record ID",
+            "type": "integer"
+        },
+        "old_ICN": {
+            "description": "HEP affiliation (spires name)",
+            "title": "Old SPIRES control number",
+            "type": "string"
+        },
+        "public_notes": {
+            "items": {
+                "title": "Public note",
+                "type": "string"
+            },
+            "title": "Public notes",
+            "type": "array",
+            "uniqueItems": true
+        },
+        "non_public_notes": {
+            "items": {
+                "title": "Non-Public note",
+                "type": "string"
+            },
+            "title": "FIXME: Difference between hidden note?",
+            "type": "array",
+            "uniqueItems": true
+        },
+        "related_institutes": {
+            "items": {
+                "description": "FIXME: Shall we rather separate in two fields? predecessors and parents?",
+                "properties": {
+                    "curated_relation": {
+                        "title": "Is the relation curated?",
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "title": "Name of related institute",
+                        "type": "string"
+                    },
+                    "recid": {
+                        "title": "Record ID of related institute",
+                        "type": "integer"
+                    },
+                    "relation_type": {
+                        "description": "FIXME: do we actually need 'successor' at all? Can't we derive it from predecessor?",
+                        "enum": [
+                            "predecessor",
+                            "successor",
+                            "parent"
+                        ],
+                        "title": "Relation type",
+                        "type": "string"
+                    }
+                },
+                "title": "Related institute",
+                "type": "object"
+            },
+            "title": "Related institutes",
+            "type": "array",
+            "uniqueItems": true
+        },
+        "time_zone": {
+            "description": "FIXME: we can populate this programmatically with Google APIs",
+            "enum": [
+                "there",
+                "must",
+                "be",
+                "one"
+            ],
+            "title": "Time zone",
+            "type": "string"
+        },
+        "urls": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "format": "url"
+            },
+            "type": "array",
+            "description": "Contains links."
+        }
+    },
+    "required": ["url", "country", "ICN", "institution"],
+    "title": "Institution",
+    "type": "object"
+}

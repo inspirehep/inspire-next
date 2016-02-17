@@ -68,20 +68,81 @@ SECURITY_PASSWORD_SALT = "CHANGE_ME"
 SECURITY_REMEMBER_SALT = "CHANGE_ME"
 SECURITY_RESET_SALT = "CHANGE_ME"
 
-# Theme
-# THEME_SITENAME = _("HEPData")
-# THEME_TWITTERHANDLE = "@hepdata"
-# THEME_LOGO = "img/hepdata_logo.svg"
-# THEME_GOOGLE_SITE_VERIFICATION = [
-#     "5fPGCLllnWrvFxH9QWI0l1TadV7byeEvfPcyK2VkS_s",
-#     "Rp5zp04IKW-s1IbpTOGB7Z6XY60oloZD5C3kTM-AiY4"
-# ]
 
-# SETTINGS_TEMPLATE = "inspire_theme/page_settings.html"
+SEARCH_UI_BASE_TEMPLATE = 'inspirehep_theme/page.html'
 
-# ELASTICSEARCH_INDEX = 'hepdata'
-# SEARCH_ELASTIC_HOSTS = [
-#     'localhost:9200'
-# ]
+RECORDS_REST_SORT_OPTIONS = dict(
+    records=dict(
+        bestmatch=dict(
+            title=_('Best match'),
+            fields=['_score'],
+            default_order='desc',
+            order=1,
+        ),
+        mostrecent=dict(
+            title=_('Most recent'),
+            fields=['earliest_date'],
+            default_order='desc',
+            order=2,
+        ),
+    )
+)
 
-SEARCH_AUTOINDEX = []
+JSONSCHEMAS_HOST = "localhost:5000"
+
+# from invenio_records_rest.facets import terms_filter
+# SEARCH_UI_SEARCH_API='/api/records/'
+# SEARCH_UI_SEARCH_INDEX='hep'
+# INDEXER_DEFAULT_INDEX='hep'
+# INDEXER_DEFAULT_DOC_TYPE='record'
+# RECORDS_REST_ENDPOINTS=dict(
+#     recid=dict(
+#         pid_type='recid',
+#         pid_minter='recid_minter',
+#         pid_fetcher='recid_fetcher',
+#         search_index='testrecords',
+#         search_type=None,
+#         record_serializers={
+#             'application/json': ('invenio_records_rest.serializers'
+#                                  ':record_to_json_serializer'),
+#         },
+#         search_serializers={
+#             'application/json': ('invenio_records_rest.serializers'
+#                                  ':search_to_json_serializer'),
+#         },
+#         list_route='/records/',
+#         item_route='/records/<pid_value>',
+#         default_media_type='application/json'
+#     ),
+# )
+
+# RECORDS_REST_FACETS=dict(
+#     testrecords=dict(
+#         aggs=dict(
+#             authors=dict(terms=dict(
+#                 field='added_entry_personal_name.personal_name')),
+#             languages=dict(terms=dict(
+#                 field='language_code.language_code_of_text_'
+#                       'sound_track_or_separate_title')),
+#             topic=dict(terms=dict(
+#                 field='subject_added_entry_topical_term.'
+#                       'topical_term_or_geographic_name_entry_element')),
+#         ),
+#         post_filters=dict(
+#             authors=terms_filter(
+#                 'added_entry_personal_name.personal_name'),
+#             languages=terms_filter(
+#                 'language_code.language_code_of_text_'
+#                 'sound_track_or_separate_title'),
+#             topic=terms_filter(
+#                 'subject_added_entry_topical_term.'
+#                 'topical_term_or_geographic_name_entry_element'),
+#         )
+#     )
+# )
+
+# RECORDS_REST_DEFAULT_SORT=dict(
+#     testrecords=dict(query='-bestmatch', noquery='controlnumber'),
+# )
+
+# RECORDS_UI_DEFAULT_PERMISSION_FACTORY=None

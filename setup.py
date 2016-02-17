@@ -72,9 +72,13 @@ install_requires = [
     'invenio-records',
     # 'invenio-records-rest',
     # 'invenio-records-ui',
-    'invenio-rest', # need to check if it is needed
+    'invenio-rest',  # need to check if it is needed
     'invenio-search',
-    #'invenio-theme', # we should create inspire-theme instead
+    'invenio-search-ui',
+    'invenio-records',
+    'invenio-records-rest',
+    'invenio-records-ui',
+    #'invenio-theme',  # we should create inspire-theme instead
     'invenio-userprofiles',
     'invenio>=3.0.0a1,<3.1.0',
     # 'jsonref'
@@ -208,19 +212,19 @@ setup(
         ],
         'invenio_base.apps': [
             'inspire_jinja2filters = inspirehep.modules.theme:INSPIREJinjaFilters',
-            'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
+            'inspire_theme = inspirehep.modules.theme:INSPIRETheme'
             'inspire_migrator = inspirehep.modules.migrator:INSPIREMigrator',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
-            'inspirehep_theme_js = inspirehep.modules.theme.bundles:js',
+            'inspirehep_theme_js = inspirehep.modules.theme.bundles:js'
         ],
-        'invenio_base.blueprints': [
-            'inspirehep_theme = inspirehep.modules.theme.views:blueprint',
+        'invenio_jsonschemas.schemas': [
+            'inspire_records = inspirehep.modules.records.jsonschemas',
         ],
-        'invenio_db.models': [
-            'inspire_migrator = inspirehep.modules.migrator.models',
-        ],
+        'invenio_search.mappings': [
+            'records = inspirehep.modules.records.mappings',
+        ]
     },
     tests_require=tests_require,
     cmdclass={'test': PyTest}

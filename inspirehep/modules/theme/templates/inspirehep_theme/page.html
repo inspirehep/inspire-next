@@ -60,6 +60,7 @@
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
     {%- endblock browserupgrade %}
+    {%- block body_inner %}
     {%- block page_header %}
       {% include 'inspirehep_theme/header.html' %}
     {%- endblock page_header %}
@@ -73,6 +74,7 @@
     {%- block page_footer %}
       {% include "inspirehep_theme/footer.html" %}
     {%- endblock page_footer %}
+    {%- endblock body_inner %}
     {%- block javascript %}
       {% include "inspirehep_theme/javascript.html" %}
     {%- endblock javascript %}
