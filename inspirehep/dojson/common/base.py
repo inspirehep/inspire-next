@@ -42,7 +42,7 @@ from ..jobs.model import jobs
 @jobs.over('control_number', '^001')
 def control_number(self, key, value):
     """Record Identifier."""
-    return value[0]
+    return value
 
 
 @hep2marc.over('001', 'control_number')
@@ -80,7 +80,7 @@ def agency_code2marc(self, key, value):
 @jobs.over('date_and_time_of_latest_transaction', '^005')
 def date_and_time_of_latest_transaction(self, key, value):
     """Date and Time of Latest Transaction."""
-    return value[0]
+    return value
 
 
 @hep2marc.over('005', 'date_and_time_of_latest_transaction')

@@ -71,3 +71,11 @@ Access the record (web/rest):
 
    firefox http://localhost:5000/records/1
    curl -i -H "Accept: application/json" http://localhost:5000/api/records/1
+
+
+Search
+======
+
+.. code-block:: console
+
+   (inspirehep)$ inspirehep index init
