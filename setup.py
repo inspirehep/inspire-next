@@ -218,6 +218,9 @@ setup(
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
             'inspirehep_theme_js = inspirehep.modules.theme.bundles:js'
         ],
+        'invenio_base.blueprints': [
+            'inspire_search = inspirehep.modules.search.views:blueprint',
+        ],
         'invenio_jsonschemas.schemas': [
             'inspire_records = inspirehep.modules.records.jsonschemas',
         ],

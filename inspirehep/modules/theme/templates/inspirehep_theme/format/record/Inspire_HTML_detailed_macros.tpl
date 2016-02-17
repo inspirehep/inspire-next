@@ -17,7 +17,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, record_cite_modal, record_abstract with context %}
+{% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, record_cite_modal, record_abstract with context %}
 
 {% macro record_collection_heading() %}
   <span id="search-title">Search literature &#62;</span>
@@ -43,7 +43,7 @@
   {% if pub_info['pub_info'] %}
     {% if pub_info['pub_info']|length == 1 %}
       Published in <em>{{ pub_info['pub_info'][0] }}</em>
-    {% else %} 
+    {% else %}
       Published in <em>{{ pub_info['pub_info']|join(' and ') }}</em>
     {% endif %}
   {% endif %}
@@ -59,7 +59,7 @@
       {% if not doi | has_space %}
         <a href="http://dx.doi.org/{{ doi | trim | safe}}" title="DOI">{{ doi }}</a>
         {% if not loop.last %}
-        , 
+        ,
         {% endif %}
       {% endif %}
     {% endfor %}
@@ -82,83 +82,65 @@
     </div>
     {% set sep = joiner("; ") %}
 
-    {% if record.get('thesaurus_terms') %}
-      {% set showMore = [] %}
-      {% set keywords_number = [] %}
-        {% if record.get('thesaurus_terms') %}
-          {% for keywords in record.get('thesaurus_terms') %}
-            {% if (loop.index < 10) %}
-              {% if 'keyword' in keywords.keys() %}
-                <span class="label label-default label-keyword">
-                  <a href='/search?p=keyword:"{{ keywords.get('keyword') }}"'>{{ keywords.get('keyword') | trim }}</a>
-                </span>
-                &nbsp;
-              {% endif %}
-              {% if loop.first %}
-                {% do keywords_number.append(loop.length) %}
-              {% endif %}
-            {% endif %}
-            {% if (loop.index == 10) %}
-              {% do showMore.append(1) %} 
-            {% endif %}
-          {% if (loop.index == 15) %}
-            {% do showMore.append(1) %} 
+    {% if record.thesaurus_terms %}
+      {% for keywords in record.thesaurus_terms %}
+        {% if (loop.index < 10) %}
+          {% if 'keyword' in keywords.keys() %}
+            <span class="label label-default label-keyword">
+              <a href='/search?p=keyword:"{{ keywords.get('keyword') }}"'>{{ keywords.get('keyword') | trim }}</a>
+            </span>
+            &nbsp;
           {% endif %}
-        {% endfor %}
-      {% endif %}
+        {% endif %}
+    {% endfor %}
 
-
-
-      {% if showMore or record.get('free_keywords')%}
-        <div>
-          <a href="" class="text-muted" data-toggle="modal" data-target="#keywordsFull">
-            <small>
-              Show all
-              {% if keywords_number %}
-                {{ keywords_number[0] }} keywords
+    {% if record.free_keywords or record.thesaurus_terms|length > 10 %}
+      <div>
+        <a href="" class="text-muted" data-toggle="modal" data-target="#keywordsFull">
+          <small>
+            Show all {{ record.thesaurus_terms|length }} keywords
+            {% if record.get('free_keywords') %}
+              plus author supplied keywords
+            {% endif %}
+          </small>
+        </a>
+      </div>
+      <div class="modal fade" id="keywordsFull" tabindex="-1" role="dialog" aria-labelledby="keywordsFull" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="keywordsFull">Full list of keywords</h4>
+            </div>
+            <div class="modal-body">
+            <h4>INSPIRE keywords</h4>
+              {% if record.get('thesaurus_terms') %}
+                {% for keywords in record.get('thesaurus_terms') %}
+                  {% if 'keyword' in keywords.keys() %}
+                    <span class="label label-default label-keyword">
+                      <a href='/search?p=keyword:{{ keywords.get('keyword') }}'>{{ keywords.get('keyword') }}</a>
+                    </span>
+                    &nbsp;
+                  {% endif %}
+                {% endfor %}
               {% endif %}
+
               {% if record.get('free_keywords') %}
-                plus author supplied keywords
+                <h4>Author supplied keywords</h4>
+                {% for keywords in record.get('free_keywords') %}
+                  {% if 'value' in keywords.keys() %}
+                    <span class="label label-default label-keyword">
+                      <a href='/search?p=keyword:{{ keywords.get('value') }}'>{{ keywords.get('value') }}</a>
+                    </span>
+                    &nbsp;
+                  {% endif %}
+                {% endfor %}
               {% endif %}
-            </small>
-          </a>
-        </div>
-        <div class="modal fade" id="keywordsFull" tabindex="-1" role="dialog" aria-labelledby="keywordsFull" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="keywordsFull">Full list of keywords</h4>
-              </div>
-              <div class="modal-body">
-              <h4>INSPIRE keywords</h4>
-                {% if record.get('thesaurus_terms') %}
-                  {% for keywords in record.get('thesaurus_terms') %}
-                    {% if 'keyword' in keywords.keys() %}
-                      <span class="label label-default label-keyword">
-                        <a href='/search?p=keyword:{{ keywords.get('keyword') }}'>{{ keywords.get('keyword') }}</a>
-                      </span>
-                      &nbsp;
-                    {% endif %}
-                  {% endfor %}
-                {% endif %}
-
-                {% if record.get('free_keywords') %}
-                  <h4>Author supplied keywords</h4>
-                  {% for keywords in record.get('free_keywords') %}
-                    {% if 'value' in keywords.keys() %}
-                      <span class="label label-default label-keyword">
-                        <a href='/search?p=keyword:{{ keywords.get('value') }}'>{{ keywords.get('value') }}</a>
-                      </span>
-                      &nbsp;
-                    {% endif %}
-                  {% endfor %}
-                {% endif %}
-              </div>
             </div>
           </div>
         </div>
-      {% endif %}
+      </div>
+    {% endif %}
 
     {% else %}
       No keywords available
@@ -236,7 +218,7 @@
       </div>
       <a class="btn btn-default pull-right" href="/search?p=citedby:{{record['control_number']}}&cc=HEP" data-toggle="modal">View in Search Results</a> -->
     </div>
-  </div>  
+  </div>
 {% endmacro %}
 
 {% macro record_citations() %}
@@ -283,83 +265,72 @@
 {% endmacro %}
 
 {% macro record_plots() %}
-  {% if record.get('urls') %}
-    {% set plots_counter = [] %}
-    {% for url in record.get('urls') %}
-      {% if url.get('url') %}
-          {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
-            {% do plots_counter.append(1) %}
-          {% endif %}
-      {% endif %}
-    {% endfor %}
-  {% endif %}
+  {% if record.urls %}
+    <div id="record-plots">
+      <div id="record-plots-title">Plots ({{ record.urls | length }})</div>
+      <!-- Slider -->
+      <div class="row">
+        <div class="col-xs-12" id="slider">
+          <!-- Top part of the slider -->
+          <div class="row">
+            <div class="col-sm-8" id="carousel-bounding-box">
+              <div class="carousel slide" id="plotsCarousel">
+                <!-- Carousel items -->
+                <div class="carousel-inner">
+                  {% for url in record.get('urls')  %}
+                  {% if url.get('url') %}
+                    {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+                      <div class="{% if loop.index == 1 %} active {% endif %} item"
+                           data-slide-number="{{ loop.index0 }}">
+                        <img src="{{ url.get('url') }}">
+                      </div>
+                    {% endif %}
+                   {% endif %}
+                  {% endfor %}
+                </div><!-- Carousel nav -->
+                <a class="left carousel-control" href="#plotsCarousel" role="button" data-slide="prev">
+                  <span class="glyphicon glyphicon-chevron-left"></span>
+                </a>
+                <a class="right carousel-control" href="#plotsCarousel" role="button" data-slide="next">
+                  <span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
+              </div>
+            </div>
 
-{% if plots_counter %}
-  <div id="record-plots">
-    <div id="record-plots-title">Plots ({{ plots_counter | length }})</div>
-    <!-- Slider -->
-    <div class="row">
-      <div class="col-xs-12" id="slider">
-        <!-- Top part of the slider -->
-        <div class="row">
-          <div class="col-sm-8" id="carousel-bounding-box">
-            <div class="carousel slide" id="plotsCarousel">
-              <!-- Carousel items -->
-              <div class="carousel-inner">
-                {% for url in record.get('urls')  %}
+            <div class="col-sm-4" id="carousel-text"></div>
+
+            <div id="slide-content" style="display: none;">
+              {% for url in record.get('urls') %}
                 {% if url.get('url') %}
                   {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
-                    <div class="{% if loop.index == 1 %} active {% endif %} item"
-                         data-slide-number="{{ loop.index0 }}">
-                      <img src="{{ url.get('url') }}">
-                    </div>
+                  <div id="slide-content-{{ loop.index0 }}">
+                    <span>{{ url.get('description')|strip_leading_number_plot_caption }}</span>
+                  </div>
                   {% endif %}
-                 {% endif %}
-                {% endfor %}
-              </div><!-- Carousel nav -->
-              <a class="left carousel-control" href="#plotsCarousel" role="button" data-slide="prev">
-                <span class="glyphicon glyphicon-chevron-left"></span>
-              </a>
-              <a class="right carousel-control" href="#plotsCarousel" role="button" data-slide="next">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-              </a>                                
+                {% endif %}
+              {% endfor %}
             </div>
           </div>
+        </div>
+      </div><!--/Slider-->
 
-          <div class="col-sm-4" id="carousel-text"></div>
-
-          <div id="slide-content" style="display: none;">
-            {% for url in record.get('urls') %}
+      <div class="row hidden-xs" id="slider-thumbs">
+        <!-- Bottom switcher of slider -->
+        <ul class="hide-bullets">
+          {% for url in record.get('urls') %}
               {% if url.get('url') %}
                 {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
-                <div id="slide-content-{{ loop.index0 }}">
-                  <span>{{ url.get('description')|strip_leading_number_plot_caption }}</span>
-                </div>
+                <li class="col-sm-2 show-plots-thumbnails">
+                  <a class="thumbnail" id="carousel-selector-{{ loop.index0 }}">
+                    <img width="100" height="100" src="{{ url.get('url') }}">
+                  </a>
+                </li>
                 {% endif %}
               {% endif %}
-            {% endfor %}
-          </div>
-        </div>
+          {% endfor %}
+        </ul>
       </div>
-    </div><!--/Slider-->
-
-    <div class="row hidden-xs" id="slider-thumbs">
-      <!-- Bottom switcher of slider -->
-      <ul class="hide-bullets">
-        {% for url in record.get('urls') %}
-            {% if url.get('url') %}
-              {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
-              <li class="col-sm-2 show-plots-thumbnails">
-                <a class="thumbnail" id="carousel-selector-{{ loop.index0 }}">
-                  <img width="100" height="100" src="{{ url.get('url') }}">
-                </a>
-              </li>
-              {% endif %}
-            {% endif %}
-        {% endfor %}
-      </ul>                 
     </div>
-  </div>
-{% endif %}
+  {% endif %}
 
 {% endmacro %}

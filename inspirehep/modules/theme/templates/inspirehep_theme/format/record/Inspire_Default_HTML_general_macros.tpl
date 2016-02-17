@@ -18,20 +18,19 @@
 #}
 
 {% macro render_record_title() %}
-  {% if record['titles[0].title'] | is_upper %}
-    {{ record['titles[0].title'] | capitalize }}
-  {% else %}
-    {{ record['titles[0].title'] }}
-  {% endif %}
-  {% if record['titles'] %}
-    {% for subtitle in record['titles'] %}
-      {% if 'subtitle' in subtitle and subtitle['subtitle'] %}
-          {% if subtitle['subtitle'] | is_upper %}
-            : {{ subtitle['subtitle'] | capitalize }}
-          {% else %}
-            : {{ subtitle['subtitle'] }}
-          {% endif %}
-      {% endif %}
+  {% if record.titles %}
+    {% set title = record.titles[0].title %}
+    {% if title | is_upper %}
+      {{ title | capitalize }}
+    {% else %}
+      {{ title }}
+    {% endif %}
+    {% for subtitle in record['titles.subtitle'] %}
+        {% if subtitle | is_upper %}
+          : {{ subtitle | capitalize }}
+        {% else %}
+          : {{ subtitle }}
+        {% endif %}
     {% endfor %}
   {% endif %}
 {% endmacro%}
@@ -48,12 +47,12 @@
 {% endmacro %}
 
 {% macro render_record_authors(is_brief, number_of_displayed_authors=10, show_affiliations=true) %}
+  {% set collaboration_displayed = false %}
   {% if record.collaboration and not record.get('corporate_author') %}
-    {% set collaboration_displayed = [] %}
     {% for collaboration in record.collaboration %}
       {% if collaboration['value'] %}
       <a href="/search?p=collaboration:'{{ collaboration['value'] }}'">{{ collaboration['value'] }}</a>
-      {% do collaboration_displayed.append(1) %}
+        {% set collaboration_displayed = true %}
       {% endif %}
       {% if not loop.last %}
         and
@@ -67,7 +66,7 @@
       {% endif %}
     {% endfor %}
   {% endif %}
-  
+
   {% if record.authors %}
     {% set sep = joiner("; ") %}
     {% set authors = record.authors %}
@@ -91,10 +90,10 @@
         {% endif %}
     {% else %}
         {% if not is_brief and show_affiliations %}
-          {% set affiliations_exist = [] %}
+          {% set affiliations_exist = false %}
           {% for author in record.authors %}
             {% if author.get('affiliations') %}
-              {% do affiliations_exist.append(1) %}
+              {% set affiliations_exist = true %}
             {% endif %}
           {% endfor %}
         {% endif %}
@@ -117,11 +116,11 @@
                 {{ render_author_names(author) }}
                  {% if author.get('affiliations') and not is_brief %}
                   {% if author.get('affiliations') | is_list %}
-                    <a href="{{ url_for('search.search', p='"' + author.get('affiliations')[0].value + '"' + "&cc=Institutions") }}">
+                    <a href="{{ url_for('inspirehep_search.search', p='"' + author.get('affiliations')[0].value + '"' + "&cc=Institutions") }}">
                       ({{ author.get('affiliations')[0].value }})
                     </a>
                   {% else %}
-                    <a href="{{ url_for('search.search', p='"' + author.get('affiliations').value + '"' + "&cc=Institutions") }}">
+                    <a href="{{ url_for('inspirehep_search.search', p='"' + author.get('affiliations').value + '"' + "&cc=Institutions") }}">
                       ({{ author.get('affiliations').value }})
                     </a>
                   {% endif %}
@@ -141,16 +140,17 @@
 {% endmacro %}
 
 {% macro record_report_numbers() %}
-  {% set report_numbers = [] %}
   {% for report_number in record['report_numbers'] %}
     {% if 'value' in report_number %}
       {% if loop.first %}
         Report number:
       {% endif %}
-      {% do report_numbers.append(report_number['value']) %}
+      {{ report_number['value'] }}
+      {% if not loop.last %}
+        ,
+      {% endif %}
     {% endif %}
   {% endfor %}
-  {{ report_numbers|join(', ') }}
 {% endmacro %}
 
 {% macro record_abstract(is_brief) %}
@@ -159,22 +159,22 @@
   {% else %}
     {% set number_of_words = 100 %}
   {% endif %}
-  {% set abstract_displayed = [] %}
-  {% set arxiv_abstract = [] %}
+  {% set abstract_displayed = false %}
+  {% set arxiv_abstract = "" %}
   {% if record.get('abstracts') %}
     {% for abstract in record.get('abstracts') %}
       {% if abstract.get('value') and not abstract_displayed %}
         {% if not abstract.get('source') == 'arXiv' %}
           {{ display_abstract(abstract.get('value'), number_of_words) }}
-          {% do abstract_displayed.append(1) %}
+          {% set abstract_displayed = true %}
         {% else %}
-          {% do arxiv_abstract.append(abstract.get('value')) %}
+          {% set arxiv_abstract = abstract.get('value') %}
         {% endif %}
       {% endif %}
     {% endfor %}
       {% if not abstract_displayed and arxiv_abstract %}
-        {{ display_abstract(arxiv_abstract[0], number_of_words) }}
-        {% do abstract_displayed.append(1) %}
+        {{ display_abstract(arxiv_abstract, number_of_words) }}
+        {% set abstract_displayed = true %}
       {% endif %}
   {% endif %}
 
@@ -191,7 +191,7 @@
       {% if abstract | words_to_end(number_of_words) %}
         {% if number_of_words > 0 %}
           <span class="read-more-ellipsis">...</span>
-        {% endif %} 
+        {% endif %}
         <span class="read-more-target">
           {{ abstract | words_to_end(number_of_words)| e }}
         </span>

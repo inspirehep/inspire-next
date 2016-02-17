@@ -37,8 +37,8 @@ blueprint = Blueprint('inspirehep_search',
                       static_folder='static')
 
 
-@blueprint.route('/', methods=['GET', 'POST'])
-def search():
+@blueprint.route('', methods=['GET', 'POST'])
+def search(p='', cc=''):
     # Get all request arguments
     # @wash_arguments does not exist anymore ?
     p = request.args.get('p', '')
@@ -49,7 +49,6 @@ def search():
     cc = request.args.get('cc', '')
     cc = request.args.get('jrec', 1)
 
-    import ipdb; ipdb.set_trace()
     if cc:
         g.collection = collection = Collection.query.filter(
             Collection.name == cc).first_or_404()

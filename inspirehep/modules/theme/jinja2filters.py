@@ -112,13 +112,15 @@ class INSPIREJinjaFilters(object):
         @app.template_filter()
         def remove_duplicates(value):
             """Removes duplicate objects from a list and returns the list"""
-            seen = set()
-            uniq = []
-            for x in value:
-                if x not in seen:
-                    uniq.append(x)
-                    seen.add(x)
-            return uniq
+            if value:
+                seen = set()
+                uniq = []
+                for x in value:
+                    if x not in seen:
+                        uniq.append(x)
+                        seen.add(x)
+                return uniq
+            return []
 
         @app.template_filter()
         def has_space(value):
@@ -450,8 +452,11 @@ class INSPIREJinjaFilters(object):
         @app.template_filter()
         def publication_info(record):
             """Displays inline publication and conference information"""
+            from invenio_search import current_search_client as es
+
             result = {}
             out = []
+            return ''  # FIXME: ES integration
             """Publication info line"""
             if 'publication_info' in record:
                 journal_title, journal_volume, year, journal_issue, pages = \
@@ -482,7 +487,7 @@ class INSPIREJinjaFilters(object):
                     if 'conference_recid' in pub_info \
                             and 'parent_recid' in pub_info:
                         conference_rec = es.get_source(
-                            index='conferences',
+                            index='record-conferences',
                             id=pub_info['conference_recid'],
                             doc_type='record')
                         ctx = {
@@ -510,7 +515,7 @@ class INSPIREJinjaFilters(object):
                     elif 'conference_recid' in pub_info \
                             and 'parent_recid' not in pub_info:
                         conference_rec = es.get_source(
-                            index='conferences',
+                            index='record-conferences',
                             id=pub_info['conference_recid'],
                             doc_type='record')
                         ctx = {
@@ -526,7 +531,7 @@ class INSPIREJinjaFilters(object):
                     elif 'parent_recid' in pub_info and \
                             'conference_recid' not in pub_info:
                         parent_rec = es.get_source(
-                            index='hep',
+                            index='record-hep',
                             id=pub_info['parent_recid'],
                             doc_type='record')
                         ctx = {
@@ -546,8 +551,10 @@ class INSPIREJinjaFilters(object):
         @app.template_filter()
         def format_date(datetext):
             """Display date in human readable form from available metadata."""
-            from inspirehep.utils.date import create_datestruct
-            from invenio_utils.date import convert_datestruct_to_dategui
+            from inspirehep.utils.date import (
+                create_datestruct,
+                convert_datestruct_to_dategui,
+            )
 
             datestruct = create_datestruct(datetext)
 

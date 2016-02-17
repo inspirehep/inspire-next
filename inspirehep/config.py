@@ -88,6 +88,14 @@ RECORDS_REST_SORT_OPTIONS = dict(
     )
 )
 
+RECORDS_UI_ENDPOINTS = dict(
+    recid=dict(
+        pid_type='recid',
+        route='/records/<pid_value>',
+        template='inspirehep_theme/format/record/Inspire_Default_HTML_detailed.tpl'
+    )
+)
+
 JSONSCHEMAS_HOST = "localhost:5000"
 INDEXER_DEFAULT_INDEX = "records-hep"
 INDEXER_DEFAULT_DOC_TYPE = "record"
