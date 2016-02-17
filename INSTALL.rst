@@ -7,7 +7,7 @@ First install HEPData all requirements:
 
    $ mkvirtualenv inspirehep
    (inspirehep)$ mkdir src
-   (inspirehep)$ git clone https://github.com/inspirehep/inspire-next.git@invenio3#egg=inspirehep
+   (inspirehep)$ git clone -b invenio3 https://github.com/inspirehep/inspire-next.git
    (inspirehep)$ pip install -r requirements.txt --pre
 
 Next, install and build assets:
@@ -19,7 +19,7 @@ Next, install and build assets:
    (inspirehep)$ cdvirtualenv var/inspirehep-instance/static
    (inspirehep)$ npm install
    (inspirehep)$ inspirehep collect -v
-   (inspirehep)$ inspirehep assets build
+   (inspirehep)$ inspirehep assets build   # NOTE: Might give an error about missing `minjs`, pip install it to fix.
 
 
 Next, create the database and database tables if you haven't already done so:
@@ -34,11 +34,21 @@ Next, create the database and database tables if you haven't already done so:
    (inspirehep)$ inspirehep db create
 
 
+Usage
+=====
+
 Optionally, create the initial user:
 
 .. code-block:: console
 
    (inspirehep)$ inspirehep users create your@email.com -a
+
+Optionally, add a record:
+
+.. code-block:: console
+
+   (inspirehep)$ demouuid = $(dojson do -l marcxml -i inspirehep/demosite/data/sample.xml hep | inspirehep records create)
+   (inspirehep)$ inspirehep pid create -t rec -i $demouuid -s REGISTERED recid 1
 
 
 Run Celery
@@ -53,3 +63,11 @@ Now, start inspirehep:
 .. code-block:: console
 
    (inspirehep)$ inspirehep --debug run
+
+
+Access the record (web/rest):
+
+.. code-block:: console
+
+   firefox http://localhost:5000/records/1
+   curl -i -H "Accept: application/json" http://localhost:5000/api/records/1

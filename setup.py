@@ -212,7 +212,7 @@ setup(
         ],
         'invenio_base.apps': [
             'inspire_jinja2filters = inspirehep.modules.theme:INSPIREJinjaFilters',
-            'inspire_theme = inspirehep.modules.theme:INSPIRETheme'
+            'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_migrator = inspirehep.modules.migrator:INSPIREMigrator',
         ],
         'invenio_assets.bundles': [
