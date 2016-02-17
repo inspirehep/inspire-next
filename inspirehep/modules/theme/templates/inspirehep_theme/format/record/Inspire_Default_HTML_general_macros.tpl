@@ -17,7 +17,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% macro render_record_title() %}
+{% macro render_record_title(record) %}
   {% if record.titles %}
     {% set title = record.titles[0].title %}
     {% if title | is_upper %}
@@ -35,7 +35,7 @@
   {% endif %}
 {% endmacro%}
 
-{% macro render_author_names(author, show_affiliation) %}
+{% macro render_author_names(record, author, show_affiliation) %}
   <a{% if author.affiliations|length > 0  and show_affiliation %}
       data-toggle="tooltip"
       data-placement="bottom"
@@ -46,7 +46,7 @@
   </a>
 {% endmacro %}
 
-{% macro render_record_authors(is_brief, number_of_displayed_authors=10, show_affiliations=true) %}
+{% macro render_record_authors(record, is_brief, number_of_displayed_authors=10, show_affiliations=true) %}
   {% set collaboration_displayed = false %}
   {% if record.collaboration and not record.get('corporate_author') %}
     {% for collaboration in record.collaboration %}
@@ -73,7 +73,7 @@
     {% if not collaboration_displayed %}
       {% for author in authors[0:number_of_displayed_authors] %}
         {{ sep() }}
-        {{ render_author_names(author, show_affiliation = True ) }}
+        {{ render_author_names(record, author, show_affiliation = True ) }}
       {% endfor %}
     {% endif %}
     {% if (record.authors | length > number_of_displayed_authors) %}
@@ -81,7 +81,7 @@
           {% if not collaboration_displayed %}
             <i>et al.</i>
           {% else %}
-            ({{ render_author_names(authors[0], show_affiliation = True) }} <i>et al.</i>)
+            ({{ render_author_names(record, authors[0], show_affiliation = True) }} <i>et al.</i>)
           {% endif %}
         {% else %}
           - <i><a id="authors-show-more" class="authors-show-more" data-toggle="modal" href="" data-target="#authors_{{ record['control_number'] }}">
@@ -113,7 +113,7 @@
             </div>
             <div class="modal-body">
               {% for author in record.authors %}
-                {{ render_author_names(author) }}
+                {{ render_author_names(record, author) }}
                  {% if author.get('affiliations') and not is_brief %}
                   {% if author.get('affiliations') | is_list %}
                     <a href="{{ url_for('inspirehep_search.search', p='"' + author.get('affiliations')[0].value + '"' + "&cc=Institutions") }}">
@@ -139,7 +139,7 @@
   {% endif %}
 {% endmacro %}
 
-{% macro record_report_numbers() %}
+{% macro record_report_numbers(record) %}
   {% for report_number in record['report_numbers'] %}
     {% if 'value' in report_number %}
       {% if loop.first %}
@@ -153,7 +153,7 @@
   {% endfor %}
 {% endmacro %}
 
-{% macro record_abstract(is_brief) %}
+{% macro record_abstract(record, is_brief) %}
   {% if is_brief %}
     {% set number_of_words = 0 %}
   {% else %}
@@ -165,7 +165,7 @@
     {% for abstract in record.get('abstracts') %}
       {% if abstract.get('value') and not abstract_displayed %}
         {% if not abstract.get('source') == 'arXiv' %}
-          {{ display_abstract(abstract.get('value'), number_of_words) }}
+          {{ display_abstract(record, abstract.get('value'), number_of_words) }}
           {% set abstract_displayed = true %}
         {% else %}
           {% set arxiv_abstract = abstract.get('value') %}
@@ -173,7 +173,7 @@
       {% endif %}
     {% endfor %}
       {% if not abstract_displayed and arxiv_abstract %}
-        {{ display_abstract(arxiv_abstract, number_of_words) }}
+        {{ display_abstract(record, arxiv_abstract, number_of_words) }}
         {% set abstract_displayed = true %}
       {% endif %}
   {% endif %}
@@ -183,7 +183,7 @@
   {% endif %}
 {% endmacro %}
 
-{% macro display_abstract(abstract, number_of_words) %}
+{% macro display_abstract(record, abstract, number_of_words) %}
   <div class="abstract">
     <input type="checkbox" class="read-more-state" id="abstract-input-{{ record.get('control_number') }}" />
     <div class="read-more-wrap">
@@ -203,7 +203,7 @@
   </div>
 {% endmacro %}
 
-{% macro record_arxiv(is_brief) %}
+{% macro record_arxiv(record, is_brief) %}
   {% if record.get('arxiv_eprints') %}
     {% for report_number in record.get('arxiv_eprints') %}
       {% if is_brief %}
@@ -222,7 +222,7 @@
   {% endif %}
 {% endmacro %}
 
-{% macro record_cite_modal() %}
+{% macro record_cite_modal(record) %}
   <!-- MODAL -->
   <div class="modal fade" id="citeModal{{record['control_number']}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog cite-modal">

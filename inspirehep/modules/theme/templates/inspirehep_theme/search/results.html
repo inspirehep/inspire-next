@@ -20,9 +20,9 @@
 ## or submit itself to any jurisdiction.
 #}
 
-{% bundles "search.js", "brief-results.css", "search.css" %}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax %}
+{% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax %}
+{% from "inspirehep_theme/format/record/Inspire_Default_HTML_brief.tpl" import brief_format %}
 
 
 {% macro render_search_pagination(pagination) %}
@@ -30,19 +30,19 @@
   {%- if pagination.pages > 1 -%}
   <ul class="pagination pagination-sm">
     <li{{ ' class="disabled"'|safe if not pagination.has_prev }}>
-      {%- do args.update({'jrec': 1}) -%}
-      <a title="first" href="{{ url_for('search.search', **args) }}">&laquo;</a>
+      {%- set _args = args.update({'jrec':1}) -%}
+      <a title="first" href="{{ url_for('inspirehep_search.search', **args) }}">&laquo;</a>
     </li>
     <li{{ ' class="disabled"'|safe if not pagination.has_prev }}>
       {%- set jrec = (pagination.page-1)*pagination.per_page if pagination.has_prev else 1 -%}
-      {%- do args.update({'jrec': jrec}) -%}
-      <a title="prev" href="{{ url_for('search.search', **args) }}">&lsaquo;</a>
+      {%- set _args = args.update({'jrec':jrec}) -%}
+      <a title="prev" href="{{ url_for('inspirehep_search.search', **args) }}">&lsaquo;</a>
     </li>
     {%- for page in pagination.iter_pages() %}
       {%- if page -%}
         <li{{ ' class="active"'|safe if page == pagination.page }}>
-      {%- do args.update({'jrec': (page-1)*pagination.per_page+1}) -%}
-        <a href="{{ url_for('search.search', **args) }}">{{ page }}</a>
+      {%- set _args = args.update({'jrec':(page-1)*pagination.per_page+1}) -%}
+        <a href="{{ url_for('inspirehep_search.search', **args) }}">{{ page }}</a>
       </li>
       {%- else -%}
         <li class="disabled"><a href="#">...</a></li>
@@ -50,12 +50,12 @@
     {%- endfor -%}
     <li{{ ' class="disabled"'|safe if not pagination.has_next }}>
       {%- set jrec = (pagination.page+1)*pagination.per_page if pagination.has_next else (pagination.pages-1)*pagination.per_page+1 -%}
-      {%- do args.update({'jrec': jrec}) -%}
-      <a href="{{ url_for('search.search', **args) }}">&rsaquo;</a>
+      {%- set _args = args.update({'jrec':jrec}) -%}
+      <a href="{{ url_for('inspirehep_search.search', **args) }}">&rsaquo;</a>
     </li>
     <li{{ ' class="disabled"'|safe if not pagination.has_next }}>
-      {%- do args.update({'jrec': (pagination.pages-1)*pagination.per_page+1}) -%}
-      <a title="last" href="{{ url_for('search.search', **args) }}">&raquo;</a>
+      {%- set _args = args.update({'jrec':(pagination.pages-1)*pagination.per_page+1}) -%}
+      <a title="last" href="{{ url_for('inspirehep_search.search', **args) }}">&raquo;</a>
     </li>
   </ul>
   {%- endif -%}
@@ -158,17 +158,13 @@
     </div>
   </div>
   {% endif %}
-  {%- for record in records -%}{% set recordloop = loop %}
+  {%- for record in records -%}
     {%- set recid = record['recid'] %}
-    {%- if of[0] == 'h' -%}
       <div class="row">
         <div class="col-sm-12 col-xs-12">
-          {{ format_record(record, of, ln=g.ln, qid=qid, extra_context=dict(collection=collection))|u|safe }}
+          {{ brief_format(record)|safe }}
         </div>
       </div>
-    {%- else -%}
-    {{ format_record(record, of, ln=g.ln, extra_context=dict(collection=collection)) }}
-    {%- endif -%}
   {%- endfor -%}
   {%- if pagination.pages > 1 -%}
   <div class="row">
@@ -255,6 +251,7 @@
 {% if not request.is_xhr %}
 {% extends 'inspirehep_theme/search/searchbar_frame.html' %}
 {% block inner_content %}
+  {% set records =  response.records() %}
   {% if records|count != 0 %}
     {{ render_search_results(records, collection, pagination, format_record) }}
   {% else %}
@@ -281,7 +278,7 @@
                  SearchResults) {
       var facetsFilter = new FacetsFilter({{ filtered_facets | tojson | safe }});
       var context = {
-        searchUrl: '{{ url_for('search.search', cc=collection.name) }}',
+        searchUrl: '{{ url_for("inspirehep_search.search", cc=collection.name) }}',
         urlArgs: {{ request.args.to_dict() | tojson | safe }},
         facetsMenuSelector: '.facet',
         searchFormSelector: '#searchform',

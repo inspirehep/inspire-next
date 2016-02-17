@@ -70,9 +70,7 @@ def search():
     response.body.update({
         'size': int(rg),
         'from': jrec-1,
-        'aggs': current_app.config['SEARCH_ELASTIC_AGGREGATIONS'].get(
-            cc, {}
-        )
+        'aggs': current_app.config['SEARCH_ELASTIC_AGGREGATIONS']['hep'] #FIXME avoid hardcoding it
     })
 
     if sf in current_app.config['SEARCH_ELASTIC_SORT_FIELDS']:
@@ -136,4 +134,4 @@ def search():
         collection=cc,
     )
 
-    return render_template("inspirehep_theme/search/dummy.html", **ctx)
+    return render_template("inspirehep_theme/search/results.html", **ctx)

@@ -24,7 +24,7 @@
   <span id="title">{{ render_record_title() }}</span>
 {% endmacro %}
 
-{% macro record_buttons() %}
+{% macro record_buttons(record) %}
   {% if record.get('arxiv_eprints') %}
     {% if record.get('arxiv_eprints') | is_list() %}
       {% set filtered_arxiv = record.get('arxiv_eprints') %}
@@ -38,7 +38,7 @@
   </a>
 {% endmacro %}
 
-{% macro record_publication_info() %}
+{% macro record_publication_info(record) %}
   {% set pub_info = record|publication_info %}
   {% if pub_info['pub_info'] %}
     {% if pub_info['pub_info']|length == 1 %}
@@ -52,7 +52,7 @@
   {% endif %}
 {% endmacro %}
 
-{% macro record_doi() %}
+{% macro record_doi(record) %}
     {% set filtered_doi = record.get('dois.value')|remove_duplicates() %}
     <b>DOI </b>
     {% for doi in filtered_doi %}
@@ -66,16 +66,16 @@
     <br>
 {% endmacro %}
 
-{% macro detailed_record_abstract() %}
+{% macro detailed_record_abstract(record) %}
   <div id="record-abstract">
     <div id="record-abstract-title">
       Abstract
     </div>
-    {{ record_abstract(is_brief=false) }}
+    {{ record_abstract(record, is_brief=false) }}
   </div>
 {% endmacro %}
 
-{% macro record_keywords() %}
+{% macro record_keywords(record) %}
   <div id="record-keywords">
     <div id="record-keywords-title">
       Keywords
@@ -148,7 +148,7 @@
   </div>
 {% endmacro%}
 
-{% macro record_links() %}
+{% macro record_links(record) %}
   {% if record.get('urls') %}
     {% for url in record.get('urls') %}
     {% if url.get('url') != None %}
@@ -181,7 +181,7 @@
   {% endif %}
 {% endmacro %}
 
-{% macro record_references() %}
+{% macro record_references(record) %}
   <div class="panel" id="references">
     <div class="panel-heading">
       <div id="record-reference-title">References
@@ -221,7 +221,7 @@
   </div>
 {% endmacro %}
 
-{% macro record_citations() %}
+{% macro record_citations(record) %}
   <div class="panel" id="citations">
     <div class="panel-heading">
       <span id="record-citation-title">Citations
@@ -264,7 +264,7 @@
   </div>
 {% endmacro %}
 
-{% macro record_plots() %}
+{% macro record_plots(record) %}
   {% if record.urls %}
     <div id="record-plots">
       <div id="record-plots-title">Plots ({{ record.urls | length }})</div>

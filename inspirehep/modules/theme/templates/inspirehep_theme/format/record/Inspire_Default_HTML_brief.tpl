@@ -17,14 +17,11 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, render_record_authors, record_abstract, record_arxiv, record_report_numbers, record_cite_modal with context %}
+{% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, render_record_authors, record_abstract, record_arxiv, record_report_numbers, record_cite_modal with context %}
 
-{% from "format/record/Inspire_Default_HTML_brief_macros.tpl" import record_journal_info, render_doi, record_journal_info_and_doi with context %}
+{% from "inspirehep_theme/format/record/Inspire_Default_HTML_brief_macros.tpl" import record_journal_info, render_doi, record_journal_info_and_doi with context %}
 
-{% from "format/record/Cache_HTML_macros.tpl" import cache_if_not_debug %}
-
-{% block record_header %}
-{% call cache_if_not_debug('record_brief', record['control_number']) %}
+{% macro brief_format(record) %}
 {% set pub_info = record|publication_info %}
 <div class="row">
   <div class="col-md-12">
@@ -40,13 +37,13 @@
               </div>
               <div class="col-md-11">
                 <h4 class="custom-h">
-                    <a class="title" href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-                      {{ render_record_title() }}
+                    <a class="title" href="{{ url_for('invenio_records_ui.recid', pid_value=record['control_number']) }}">
+                      {{ render_record_title(record) }}
                     </a>
                 </h4>
                 <div class="brief-record-details">
                 <div class="authors">
-                  {{ render_record_authors(is_brief=true, show_affiliations=false) }}
+
                   <span id="record-date">
                     - {{ record.get('earliest_date')|format_date }}
                   </span>
@@ -60,35 +57,35 @@
                       </div>
                     {% else %}
                       <div class="col-md-12 ">
-                        {{ record_journal_info() }}
+                        {{ record_journal_info(record) }}
                         <br/>
-                        {{ render_doi() }}
+                        {{ render_doi(record) }}
                       </div>
                     {% endif %}
                   {% elif pub_info %}
                     <div class="col-md-12 ">
-                      {{ record_journal_info() }}
+                      {{ record_journal_info(record) }}
                     </div>
                   {% elif record.get('dois') %}
                     <div class="col-md-12 ">
-                      {{ render_doi() }}
+                      {{ render_doi(record) }}
                     </div>
                   {% endif %}
                   {% if record['report_numbers'] or record.get('arxiv_eprints') %}
                     {% if record.get('arxiv_eprints') %}
                       <div>
-                        {{ record_arxiv(is_brief=true) }}
+                        {{ record_arxiv(record, is_brief=true) }}
                       </div>
                     {% endif %}
                     {% if record.get('report_numbers') and not record.get('publication_info') %}
                       <div>
-                        {{ record_report_numbers() }}
+                        {{ record_report_numbers(record) }}
                       </div>
                     {% endif %}
                   {% endif %}
                 </div>
                 {% if record.get('abstracts') %}
-                    {{ record_abstract(is_brief=true) }}
+                    {{ record_abstract(record, is_brief=true) }}
                 {% endif %}
               </div>
               </div>
@@ -108,7 +105,7 @@
                 <i class="fa fa-quote-right"></i> Cite
               </button>
             </span>
-            {{ record_cite_modal() }}
+            {{ record_cite_modal(record) }}
             <div class="citations-references">
               {% if  record.get('citation_count') > 0  %}
                 <i class="fa fa-quote-left"></i><span><a href="/search?p=refersto:{{ record.get('control_number') }}"> {{ record.get('citation_count') | citation_phrase }} </a></span><br/>
@@ -127,6 +124,4 @@
     </div>
   </div>
 </div>
-{% endcall %}
-
-{% endblock %}
+{% endmacro %}

@@ -26,46 +26,46 @@
 <div class="record-detailed">
   <div class="record-header" id="detailed-header">
     <div class="row">
-        {{ record_cite_modal() }}
+        {{ record_cite_modal(record) }}
       <div class="col-md-12" id="detailed-header-top">
         <div id="record-title">
-          {{ render_record_title() }}
+          {{ render_record_title(record) }}
         </div>
         <div id="record-authors">
-          {{ render_record_authors(is_brief=false, number_of_displayed_authors=25) }}
+          {{ render_record_authors(record, is_brief=false, number_of_displayed_authors=25) }}
           <span id="record-date">
             - {{ record.get('earliest_date')|format_date }}
           </span>
         </div>
         <div id="record-journal">
           {% if record|publication_info %}
-            {{ record_publication_info() }}
+            {{ record_publication_info(record) }}
           {% endif %}
         </div>
         {% if record.get('report_numbers') %}
           <div id="record-report-numbers">
-            {{ record_report_numbers() }}
+            {{ record_report_numbers(record) }}
           </div>
         {% endif %}
         {% if record.get('dois') or record.get('arxiv_eprints') %}
           <div id="doi-eprint-experiment">
             {% if record.get('dois') %}
-              {{ record_doi() }}
+              {{ record_doi(record) }}
             {% endif %}
             {% if record.get('arxiv_eprints') %}
-              {{ record_arxiv(is_brief=false) }}
+              {{ record_arxiv(record, is_brief=false) }}
             {% endif %}
           </div>
         {% endif %}
         {% if record.get('urls') %}
           <div id="external_links">
-            {{ record_links() }}
+            {{ record_links(record) }}
           </div>
         {% endif %}
       </div>
       <div class="col-md-12" id="cite-pdf-buttons">
         <div class="btn-group">
-          {{ record_buttons() }}
+          {{ record_buttons(record) }}
         </div>
       </div>
     </div>
@@ -76,24 +76,24 @@
       <div>
         <div class="row">
           <div class="col-xs-12 col-sm-9">
-            {{ detailed_record_abstract() }}
+            {{ detailed_record_abstract(record) }}
           </div>
           <div class="clearfix col-sm-3">
-            {{ record_keywords() }}
+            {{ record_keywords(record) }}
           </div>
         </div>
       </div>
     </div>
   </div>
-  {{ record_plots() }}
+  {{ record_plots(record) }}
   <div class="row">
     <div class="col-md-12">
-      {{ record_references() }}
+      {{ record_references(record) }}
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
-      {{ record_citations() }}
+      {{ record_citations(record) }}
     </div>
   </div>
   </div>
