@@ -79,10 +79,10 @@ def populate_inspire_document_type(recid, json, *args, **kwargs):
                 collections.append(c.get('primary').lower())
         for element in collections:
             if element == 'published':
-                inspire_doc_type.append(element)
+                inspire_doc_type.append('peer reviewed')
                 break
             elif element == 'thesis':
-                inspire_doc_type.append('peer reviewed')
+                inspire_doc_type.append(element)
                 break
             elif element == 'book':
                 inspire_doc_type.append(element)
