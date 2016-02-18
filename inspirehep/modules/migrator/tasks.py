@@ -184,8 +184,8 @@ def continuous_migration():
                 # The record might be None, in case a parallel
                 # continuous_migration task has already consumed the queue.
                 raw_record = zlib.decompress(raw_record)
-                record = marc_create_record(raw_record)
-                recid = int(record['001'][0])
+                record = marc_create_record(raw_record, keep_singletons=False)
+                recid = int(record['001'])
                 prod_record = InspireProdRecords(recid=recid)
                 prod_record.marcxml = raw_record
                 try:
@@ -230,16 +230,19 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
     try:
         for raw_record in chunk:
             json = None
-            record = marc_create_record(raw_record)
-            recid = int(record['001'][0])
-            prod_record = InspireProdRecords(recid=recid)
-            prod_record.marcxml = raw_record
+            record = marc_create_record(raw_record, keep_singletons=False)
+            recid = int(record['001'])
+            if not dry_run:
+                prod_record = InspireProdRecords(recid=recid)
+                prod_record.marcxml = raw_record
             try:
                 with db.session.begin_nested():
                     errors, recid, json = create_record(
                         recid, record, force=True,
                         dry_run=dry_run, validation=True
                     )
+                    if dry_run:
+                        continue
                     prod_record.valid = not errors
                     prod_record.errors = errors
                     index = get_record_index(json) or \
@@ -253,12 +256,14 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
             except Exception as err:
                 logger.error("ERROR with record {} and json {}".format(recid, json))
                 logger.exception(err)
-                prod_record.successful = False
-                db.session.merge(prod_record)
+                if not dry_run:
+                    prod_record.successful = False
+                    db.session.merge(prod_record)
         logger.info("Committing chunk")
         db.session.commit()
         logger.info("Sending chunk to elasticsearch")
-        es_bulk(es, records_to_index, request_timeout=60)
+        if not dry_run:
+            es_bulk(es, records_to_index, request_timeout=60)
     finally:
         models_committed.connect(record_modification)
         after_record_insert.connect(catch_citations_insert)
