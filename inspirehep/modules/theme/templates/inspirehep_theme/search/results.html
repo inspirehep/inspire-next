@@ -19,7 +19,9 @@
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
 #}
+{% if not request.is_xhr %}
 {% extends 'inspirehep_theme/page.html' %}
+{% endif %}
 
 {% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax %}
 {% from "inspirehep_theme/format/record/Inspire_Default_HTML_brief.tpl" import brief_format %}
@@ -258,7 +260,9 @@
 {% endblock body %}
 
 {% block javascript %}
-  {{ super() }}
+  {% if not request.is_xhr %}
+    {{ super() }}
+  {% endif %}
   {{ mathjax() | safe }}
 
   <script type="text/javascript">
