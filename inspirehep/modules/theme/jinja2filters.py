@@ -454,10 +454,10 @@ class INSPIREJinjaFilters(object):
             """Displays inline publication and conference information"""
             from invenio_search import current_search_client as es
 
+            return '' # FIXME: ES integration
+
             result = {}
             out = []
-            return ''  # FIXME: ES integration
-            """Publication info line"""
             if 'publication_info' in record:
                 journal_title, journal_volume, year, journal_issue, pages = \
                     ('', '', '', '', '')
@@ -487,7 +487,7 @@ class INSPIREJinjaFilters(object):
                     if 'conference_recid' in pub_info \
                             and 'parent_recid' in pub_info:
                         conference_rec = es.get_source(
-                            index='record-conferences',
+                            index='records-conferences',
                             id=pub_info['conference_recid'],
                             doc_type='record')
                         ctx = {
@@ -515,7 +515,7 @@ class INSPIREJinjaFilters(object):
                     elif 'conference_recid' in pub_info \
                             and 'parent_recid' not in pub_info:
                         conference_rec = es.get_source(
-                            index='record-conferences',
+                            index='records-conferences',
                             id=pub_info['conference_recid'],
                             doc_type='record')
                         ctx = {
@@ -531,7 +531,7 @@ class INSPIREJinjaFilters(object):
                     elif 'parent_recid' in pub_info and \
                             'conference_recid' not in pub_info:
                         parent_rec = es.get_source(
-                            index='record-hep',
+                            index='records-hep',
                             id=pub_info['parent_recid'],
                             doc_type='record')
                         ctx = {

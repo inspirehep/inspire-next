@@ -43,7 +43,7 @@
                 </h4>
                 <div class="brief-record-details">
                 <div class="authors">
-
+                  {{ render_record_authors(record, is_brief=true, show_affiliations=false) }}
                   <span id="record-date">
                     - {{ record.get('earliest_date')|format_date }}
                   </span>

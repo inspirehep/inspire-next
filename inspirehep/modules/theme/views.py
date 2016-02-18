@@ -24,7 +24,7 @@
 
 """Theme blueprint in order for template and static files to be loaded."""
 
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for
 
 blueprint = Blueprint(
     'inspirehep_theme',
@@ -44,64 +44,58 @@ blueprint = Blueprint(
 @blueprint.route('/', methods=['GET', 'POST'])
 def index():
     """View for literature collection landing page."""
-    collection = {'name': 'hep'}
     return render_template('inspirehep_theme/search/collection_literature.html',
-                           collection=collection)
+                           collection='hep')
 
 
 @blueprint.route('/authors', methods=['GET', ])
 @blueprint.route('/collection/authors', methods=['GET', ])
 def hepnames():
     """View for authors collection landing page."""
-    collection = {'name': 'hepnames'}
+    # collection = {'name': 'hepnames'}
     return render_template('inspirehep_theme/search/collection_authors.html',
-                           collection=collection)
+                           collection='hepnames')
 
 
 @blueprint.route('/conferences', methods=['GET', ])
 def conferences():
     """View for conferences collection landing page."""
-    collection = {'name': 'conferences'}
     return render_template('inspirehep_theme/search/collection_conferences.html',
-                           collection=collection)
+                           collection='conferences')
 
 
-# @blueprint.route('/jobs', methods=['GET', ])
-# def jobs():
-#     """View for jobs collection landing page."""
-#     return redirect(url_for('search.search', cc='jobs'))
+@blueprint.route('/jobs', methods=['GET', ])
+def jobs():
+    """View for jobs collection landing page."""
+    return redirect(url_for('inspirehep_search.search', cc='jobs'))
 
 
 @blueprint.route('/institutions', methods=['GET', ])
 def institutions():
     """View for institutions collection landing page."""
-    collection = {'name': 'institutions'}
     return render_template('inspirehep_theme/search/collection_institutions.html',
-                           collection=collection)
+                           collection='institutions')
 
 
 @blueprint.route('/experiments', methods=['GET', ])
 def experiments():
     """View for experiments collection landing page."""
-    collection = {'name': 'experiments'}
     return render_template('inspirehep_theme/search/collection_experiments.html',
-                           collection=collection)
+                           collection='experiments')
 
 
 @blueprint.route('/journals', methods=['GET', ])
 def journals():
     """View for journals collection landing page."""
-    collection = {'name': 'journals'}
     return render_template('inspirehep_theme/search/collection_journals.html',
-                           collection=collection)
+                           collection='journals')
 
 
 @blueprint.route('/data', methods=['GET', ])
 def data():
     """View for data collection landing page."""
-    collection = {'name': 'data'}
     return render_template('inspirehep_theme/search/collection_data.html',
-                           collection=collection)
+                           collection='data')
 
 
 @blueprint.route('/ping')

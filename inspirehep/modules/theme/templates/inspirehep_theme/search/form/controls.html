@@ -20,7 +20,7 @@
 {% extends "inspirehep_theme/search/form/controls_base.html" %}
 
 {% if collection is defined %}
-  {% set collection_name = collection.name | sanitize_collection_name %}
+  {% set collection_name = collection | sanitize_collection_name %}
 {% else %}
   {% set collection_name = '' %}
 {% endif %}

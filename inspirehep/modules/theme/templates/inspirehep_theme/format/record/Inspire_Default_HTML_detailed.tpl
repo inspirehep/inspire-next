@@ -22,7 +22,7 @@
 {% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax, render_record_title, render_record_authors, record_cite_modal, record_arxiv, record_report_numbers with context %}
 
 {% block body %}
-
+<div id="record_content">
 <div class="record-detailed">
   <div class="record-header" id="detailed-header">
     <div class="row">
@@ -97,6 +97,7 @@
     </div>
   </div>
   </div>
+</div>
 </div>
 
 {% endblock body %}

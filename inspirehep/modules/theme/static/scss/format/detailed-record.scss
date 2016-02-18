@@ -72,21 +72,21 @@
     font-weight: bold;
 }
 
+#detailed-header {
+    padding: 20px 0 0 0 !important;
+
+    & .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
 #record_content .record-detailed .record-header {
 
     background-color: white;
     text-align: left;
     color: black;
     padding: 20px;
-
-    &#detailed-header {
-        padding: 20px 0 0 0;
-
-        .row {
-            margin-left: 0;
-            margin-right: 0;
-        }
-    }
 
     #detailed-header-top {
         padding-left: 20px;

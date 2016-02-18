@@ -21,7 +21,7 @@
 {# Collect the nav links, forms, and other content for toggling #}
 <form name="search" action="{{url_for('inspirehep_search.search')}}" method="get" role="search" id="searchform">
   {%- if collection is defined %}
-  <input type="hidden" name="cc" value="{{collection.name}}">
+  <input type="hidden" name="cc" value="{{collection}}">
   {%- endif %}
   <input type="hidden" name="post_filter" value="{{request.args.get('post_filter', '')}}">
   <div class="nav navbar-nav navbar-form">

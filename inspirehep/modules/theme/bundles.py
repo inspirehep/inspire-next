@@ -52,6 +52,7 @@ css = NpmBundle(
     'scss/inspirehep.scss',
     filters='scss, cleancss',
     output='gen/inspirehep.%(version)s.css',
+    depends='scss/**/*.scss',
     npm={
         "bootstrap-sass": "~3.3.5",
         "font-awesome": "~4.4.0",
