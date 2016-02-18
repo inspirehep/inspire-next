@@ -432,6 +432,7 @@ def setup_app(app):
         """Displays inline publication and conference information"""
         result = {}
         out = []
+        ctx = {}
         """Publication info line"""
         if 'publication_info' in record:
             journal_title, journal_volume, year, journal_issue, pages = \
@@ -464,63 +465,72 @@ def setup_app(app):
                     conference_rec = es.get_source(
                         index='conferences',
                         id=pub_info['conference_recid'],
-                        doc_type='record')
-                    ctx = {
-                        "parent_recid": str(
-                            pub_info['parent_recid']),
-                        "conference_recid": str(
-                            pub_info['conference_recid']),
-                        "conference_title": conference_rec['title']
-                    }
-                    if result:
-                        result['conf_info'] = render_macro_from_template(
-                            name="conf_with_pub_info",
-                            template="format/record/Conference_info_macros.tpl",
-                            ctx=ctx)
-                        break
-                    else:
-                        if 'page_artid' in pub_info:
-                            ctx.update(
-                                {"page_artid": pub_info['page_artid']})
-                        result['conf_info'] = render_macro_from_template(
-                            name="conf_without_pub_info",
-                            template="format/record/Conference_info_macros.tpl",
-                            ctx=ctx)
-                        break
+                        doc_type='record', ignore=404)
+                    try:
+                        ctx = {
+                            "parent_recid": str(
+                                pub_info['parent_recid']),
+                            "conference_recid": str(
+                                pub_info['conference_recid']),
+                            "conference_title": conference_rec['title']
+                        }
+                        if result:
+                            result['conf_info'] = render_macro_from_template(
+                                name="conf_with_pub_info",
+                                template="format/record/Conference_info_macros.tpl",
+                                ctx=ctx)
+                            break
+                        else:
+                            if 'page_artid' in pub_info:
+                                ctx.update(
+                                    {"page_artid": pub_info['page_artid']})
+                            result['conf_info'] = render_macro_from_template(
+                                name="conf_without_pub_info",
+                                template="format/record/Conference_info_macros.tpl",
+                                ctx=ctx)
+                            break
+                    except TypeError:
+                        pass
                 elif 'conference_recid' in pub_info \
                         and 'parent_recid' not in pub_info:
                     conference_rec = es.get_source(
                         index='conferences',
                         id=pub_info['conference_recid'],
-                        doc_type='record')
-                    ctx = {
-                        "conference_recid": str(
-                            pub_info['conference_recid']),
-                        "conference_title": conference_rec['title'],
-                        "pub_info": bool(result.get('pub_info', ''))
-                    }
-                    result['conf_info'] = render_macro_from_template(
-                        name="conference_only",
-                        template="format/record/Conference_info_macros.tpl",
-                        ctx=ctx)
+                        doc_type='record', ignore=404)
+                    try:
+                        ctx = {
+                            "conference_recid": str(
+                                pub_info['conference_recid']),
+                            "conference_title": conference_rec['title'],
+                            "pub_info": bool(result.get('pub_info', ''))
+                        }
+                        result['conf_info'] = render_macro_from_template(
+                            name="conference_only",
+                            template="format/record/Conference_info_macros.tpl",
+                            ctx=ctx)
+                    except TypeError:
+                        pass
                 elif 'parent_recid' in pub_info and \
                         'conference_recid' not in pub_info:
                     parent_rec = es.get_source(
                         index='hep',
                         id=pub_info['parent_recid'],
-                        doc_type='record')
-                    ctx = {
-                        "parent_recid": str(
-                            pub_info['parent_recid']),
-                        "parent_title": parent_rec['titles'][0]['title']
-                        .replace(
-                            "Proceedings, ", "", 1),
-                        "pub_info": bool(result.get('pub_info', ''))
-                    }
-                    result['conf_info'] = render_macro_from_template(
-                        name="proceedings_only",
-                        template="format/record/Conference_info_macros.tpl",
-                        ctx=ctx)
+                        doc_type='record', ignore=404)
+                    try:
+                        ctx = {
+                            "parent_recid": str(
+                                pub_info['parent_recid']),
+                            "parent_title": parent_rec['titles'][0]['title']
+                            .replace(
+                                "Proceedings, ", "", 1),
+                            "pub_info": bool(result.get('pub_info', ''))
+                        }
+                        result['conf_info'] = render_macro_from_template(
+                            name="proceedings_only",
+                            template="format/record/Conference_info_macros.tpl",
+                            ctx=ctx)
+                    except TypeError:
+                        pass
         return result
 
     @app.template_filter()
