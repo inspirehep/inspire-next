@@ -28,7 +28,15 @@ from __future__ import absolute_import, print_function
 
 import datetime
 
-from flask import Blueprint, request, g, current_app, session, redirect, url_for, render_template
+from flask import (
+    Blueprint,
+    request,
+    current_app,
+    session,
+    redirect,
+    url_for,
+    render_template
+)
 
 from invenio_search.api import Query
 from invenio_search.walkers.elasticsearch import ElasticSearchDSL
@@ -45,32 +53,28 @@ blueprint = Blueprint('inspirehep_search',
 
 @blueprint.route('/', methods=['GET', 'POST'])
 def search():
+    """Main search view."""
     # Get all request arguments
-    # @wash_arguments does not exist anymore ?
     p = request.values.get('p', "", type=unicode)
     rg = request.values.get('rg', 25, type=int)
     sf = request.values.get('sf', '', type=unicode)
     so = request.values.get('so', '', type=unicode)
     post_filter = request.values.get('post_filter', '', type=unicode)
-    cc = request.values.get('cc', 'hep', type=unicode)
+    cc = request.values.get('cc', 'hep', type=unicode).lower()
     jrec = request.values.get('jrec', 1, type=int)
 
-
-    # if cc:
-    #     g.collection = collection = Collection.query.filter(
-    #         Collection.name == cc).first_or_404()
-    # else:
-    #     g.collection = collection = Collection.query.get_or_404(1)
-
-    # # Create ES DSL
+    # Create ES DSL
+    index = current_app.config[
+        'SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING'
+    ].get(cc, current_app.config['SEARCH_ELASTIC_DEFAULT_INDEX'])
     response = Query(p)
     response.build()
-    response = Results(response.body, index="records-hep") # FIXME do not hardcode index
+    response = Results(response.body, index=index)
 
     response.body.update({
         'size': int(rg),
         'from': jrec-1,
-        'aggs': current_app.config['SEARCH_ELASTIC_AGGREGATIONS']['hep'] #FIXME avoid hardcoding it
+        'aggs': current_app.config['SEARCH_ELASTIC_AGGREGATIONS'][cc]
     })
 
     if sf in current_app.config['SEARCH_ELASTIC_SORT_FIELDS']:

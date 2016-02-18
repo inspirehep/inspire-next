@@ -366,19 +366,19 @@ SEARCH_ELASTIC_SORT_FIELDS = ["earliest_date", "citation_count"]
 
 
 SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
-    "HEP": "hep",
-    "CDF Internal Notes": "hep",
-    "Conferences": "conferences",
-    "Institutions": "institutions",
-    "Experiments": "experiments",
-    "Jobs": "jobs",
-    "Jobs Hidden": "jobs",
-    "Journals": "journals",
-    "HepNames": "authors",
-    "Data": "data"
+    "HEP": "records-hep",
+    "CDF Internal Notes": "records-hep",
+    "Conferences": "records-conferences",
+    "Institutions": "records-institutions",
+    "Experiments": "records-experiments",
+    "Jobs": "records-jobs",
+    "Jobs Hidden": "records-jobs",
+    "Journals": "records-journals",
+    "HepNames": "records-authors",
+    "Data": "records-data"
 }
 
-SEARCH_ELASTIC_DEFAULT_INDEX = 'hep'
+SEARCH_ELASTIC_DEFAULT_INDEX = 'records-hep'
 
 INSPIRE_PATH = pkg_resources.resource_filename("inspirehep", "")
 
