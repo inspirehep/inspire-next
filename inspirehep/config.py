@@ -92,7 +92,7 @@ RECORDS_REST_SORT_OPTIONS = dict(
 RECORDS_UI_ENDPOINTS = dict(
     recid=dict(
         pid_type='recid',
-        route='/records/<pid_value>',
+        route='/record/<pid_value>',
         template='inspirehep_theme/format/record/Inspire_Default_HTML_detailed.tpl'
     )
 )
