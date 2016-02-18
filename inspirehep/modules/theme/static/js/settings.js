@@ -36,7 +36,7 @@ require.config({
     hgn: "node_modules/requirejs-hogan-plugin/hgn",
     hogan: "node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.amd",
     text: "node_modules/requirejs-hogan-plugin/text",
-    // flight: "vendors/flight",
+    flight: "node_modules/flightjs/build/flight",
     // typeahead: "vendors/typeahead.js/dist/typeahead.bundle",
     // "bootstrap-select": "js/bootstrap-select",
     // "jquery-caret": "vendors/jquery.caret/dist/jquery.caret-1.5.2",
@@ -70,7 +70,7 @@ require.config({
     // "highcharts": "vendors/highcharts-release/highcharts",
     // "jquery-menu-aim": "vendors/jQuery-menu-aim/jquery.menu-aim",
     // "searchtypeahead-configuration": "js/search/invenio_with_spires_typeahead_configuration",
-    // "clipboard": "vendors/clipboard/dist/clipboard"
+    "clipboard": "node_modules/clipboard/dist/clipboard"
   },
   shim: {
     jquery: {

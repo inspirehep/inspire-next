@@ -19,7 +19,7 @@
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
 #}
-
+{% extends 'inspirehep_theme/page.html' %}
 
 {% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax %}
 {% from "inspirehep_theme/format/record/Inspire_Default_HTML_brief.tpl" import brief_format %}
@@ -62,7 +62,7 @@
 {% endmacro %}
 
 {% macro render_facets() %}
-{%- set collection_name = collection.name | sanitize_collection_name -%}
+{%- set collection_name = collection | sanitize_collection_name -%}
 <div class="col-md-3 visible-md visible-lg {{ collection_name }}-facet" id="facetparent">
   <div class="facet" id="facet_list" data-clampedwidth="#facetparent">
   {% if not request.args.get('cc') or request.args.get('cc').lower() == "hep" %}
@@ -90,7 +90,7 @@
       {%- set r_to = pagination.page*pagination.per_page -%}
       {%- set r_of = pagination.total_count -%}
       {%- set r_to = r_to if r_to < r_of else r_of -%}
-      {%- set collection_name = collection.name | sanitize_collection_name -%}
+      {%- set collection_name = collection | sanitize_collection_name -%}
       {{ _('%(x_from)d-%(x_to)d of', x_from=r_from, x_to=r_to)}} <b class="{{ collection_name }}-results total-results">{{ _('%(x_total)d</b> results.', x_total=r_of) }}
     </p>
   </div><!--
@@ -112,7 +112,7 @@
 </div>
 {% endmacro %}
 
-{% macro render_search_results(records, collection, pagination, format_record) %}
+{% macro render_search_results(records, collection, pagination) %}
   {%- if pagination %}
   <div class="row" id="search-results">
   {{ render_facets() }}
@@ -148,7 +148,7 @@
     <div class="panel-body" >
       <div class="row">
         <div class="col-md-9">
-          <span class="text-left {{ request.args.get('cc')|lower() }}" id="clear-facets-message">{{ pagination.total_count }} of {{ request.args.get('p', '')|number_of_search_results(collection.name) }} results match the filters you selected.</span><br/>
+          <span class="text-left {{ request.args.get('cc')|lower() }}" id="clear-facets-message">{{ pagination.total_count }} of {{ request.args.get('p', '')|number_of_search_results(collection) }} results match the filters you selected.</span><br/>
           <small id="clear-facets-info">Clear filters to see all results.</small>
         </div>
         <div class="col-md-3 text-right">
@@ -248,21 +248,17 @@
 </div>
 {% endmacro %}
 
-{% if not request.is_xhr %}
-{% extends 'inspirehep_theme/search/searchbar_frame.html' %}
-{% block inner_content %}
+{% block body %}
   {% set records =  response.records() %}
   {% if records|count != 0 %}
-    {{ render_search_results(records, collection, pagination, format_record) }}
+    {{ render_search_results(records, collection, pagination) }}
   {% else %}
     {{ render_no_results() }}
   {% endif %}
-{% endblock %}
-{% else %}
-  {{ render_search_results(records, collection, pagination, format_record) }}
-{% endif %}
+{% endblock body %}
 
 {% block javascript %}
+  {{ super() }}
   {{ mathjax() | safe }}
 
   <script type="text/javascript">
@@ -278,7 +274,7 @@
                  SearchResults) {
       var facetsFilter = new FacetsFilter({{ filtered_facets | tojson | safe }});
       var context = {
-        searchUrl: '{{ url_for("inspirehep_search.search", cc=collection.name) }}',
+        searchUrl: '{{ url_for("inspirehep_search.search", cc=collection) }}',
         urlArgs: {{ request.args.to_dict() | tojson | safe }},
         facetsMenuSelector: '.facet',
         searchFormSelector: '#searchform',

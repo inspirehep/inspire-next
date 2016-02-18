@@ -20,14 +20,14 @@
  define(
   [
     'jquery',
-    'flight/lib/component',
+    'flight',
     'datatables',
     'bootstrap'
   ],
-  function($, defineComponent) {
+  function($, flight) {
       'use strict';
 
-      return defineComponent(Datatables);
+      return flight.component(Datatables);
 
       function Datatables() {
 

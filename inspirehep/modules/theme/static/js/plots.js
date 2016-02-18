@@ -23,13 +23,13 @@
  define(
   [
     'jquery',
-    'flight/lib/component',
+    'flight',
     'bootstrap'
   ],
-  function($, defineComponent) {
+  function($, flight) {
       'use strict';
 
-      return defineComponent(Plots);
+      return flight.component(Plots);
 
       function Plots() {
 

@@ -20,16 +20,16 @@
 define(
   [
     'jquery',
-    'flight/lib/component',
+    'flight',
     'bootstrap',
     'js/citation_modal'
   ],
-  function($, defineComponent, Bootstrap, CitationModal) {
+  function($, flight, Bootstrap, CitationModal) {
     'use strict';
 
     var sList = [];
 
-    return defineComponent(SearchResults);
+    return flight.component(SearchResults);
 
     function SearchResults() {
       this.attributes({

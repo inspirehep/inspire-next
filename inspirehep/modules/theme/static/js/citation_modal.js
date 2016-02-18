@@ -23,14 +23,14 @@
 define(
   [
     'jquery',
-    'flight/lib/component',
+    'flight',
     'bootstrap',
     'clipboard'
   ],
-  function($, defineComponent, Bootstrap, Clipboard) {
+  function($, flight, Bootstrap, Clipboard) {
     'use strict';
 
-    return defineComponent(CitationsModal);
+    return flight.component(CitationsModal);
 
     function CitationsModal() {
       this.onSelectContent = function(record_id) {

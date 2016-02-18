@@ -36,7 +36,8 @@ js = Bundle(
             "jquery": "~1.9.1",
             "toastr": "latest",
             # "jQuery-menu-aim": "latest", # Not on npm :(
-            "clipboard": "latest"
+            "clipboard": "latest",
+            "flightjs": "~1.5.0"
         }
     ),
     Bundle(

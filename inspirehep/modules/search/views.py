@@ -55,12 +55,14 @@ blueprint = Blueprint('inspirehep_search',
 def search():
     """Main search view."""
     # Get all request arguments
-    p = request.values.get('p', "", type=unicode)
+    p = request.values.get('p', u'', type=unicode)
     rg = request.values.get('rg', 25, type=int)
     sf = request.values.get('sf', '', type=unicode)
     so = request.values.get('so', '', type=unicode)
     post_filter = request.values.get('post_filter', '', type=unicode)
     cc = request.values.get('cc', 'hep', type=unicode).lower()
+    if not cc:
+        cc = 'hep'
     jrec = request.values.get('jrec', 1, type=int)
 
     # Create ES DSL
