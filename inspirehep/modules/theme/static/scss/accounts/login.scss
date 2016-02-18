@@ -30,6 +30,8 @@
     font-weight: bold;
     line-height: 24px;
     vertical-align: middle;
+    width: 300px; 
+    margin-bottom: 15px;
 }
 #orcid_login:hover {
     border: 1px solid $blue-light;
@@ -40,4 +42,12 @@
     margin: 0 .5em 0 0;
     padding: 0;
     float: left;
+    width: 24px;
+    height: 24px;
 }
+
+#login-header {
+    font-weight: 300;    
+}
+
+

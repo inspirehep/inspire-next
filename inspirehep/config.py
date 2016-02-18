@@ -56,12 +56,12 @@ SESSION_REDIS = "redis://localhost:6379/0"
 RECAPTCHA_PUBLIC_KEY = "CHANGE_ME"
 RECAPTCHA_SECRET_KEY = "CHANGE_ME"
 
-# SECURITY_REGISTER_USER_TEMPLATE = \
-#     "hepdata_theme/security/register_user.html"
-# SECURITY_LOGIN_USER_TEMPLATE = \
-#     "hepdata_theme/security/login_user.html"
-# SECURITY_RESET_PASSWORD_TEMPLATE = \
-#     "hepdata_theme/security/reset_password.html"
+SECURITY_LOGIN_USER_TEMPLATE = \
+    "inspirehep_theme/accounts/login.html"
+SECURITY_FORGOT_PASSWORD_TEMPLATE = \
+    "inspirehep_theme/accounts/forgot_password.html"
+SECURITY_RESET_PASSWORD_TEMPLATE = \
+    "inspirehep_theme/accounts/reset_password.html"
 
 SECURITY_CONFIRM_SALT = "CHANGE_ME"
 SECURITY_EMAIL_SENDER = "admin@inspirehep.net"
@@ -106,6 +106,40 @@ RECORDS_VALIDATION_TYPES = {
 JSONSCHEMAS_HOST = "localhost:5000"
 INDEXER_DEFAULT_INDEX = "records-hep"
 INDEXER_DEFAULT_DOC_TYPE = "record"
+
+# OAuthclient
+OAUTHCLIENT_REMOTE_APPS = dict(
+    orcid=dict(
+        title='ORCID',
+        description='Connecting Research and Researchers.',
+        icon='',
+        authorized_handler="invenio_oauthclient.handlers"
+                           ":authorized_signup_handler",
+        disconnect_handler="invenio_oauthclient.handlers"
+                           ":disconnect_handler",
+        signup_handler=dict(
+            info="invenio_oauthclient.contrib.orcid:account_info",
+            setup="invenio_oauthclient.contrib.orcid:account_setup",
+            view="invenio_oauthclient.handlers:signup_handler",
+        ),
+        params=dict(
+            request_token_params={'scope': '/authenticate'},
+            base_url='https://pub.orcid.org/',
+            request_token_url=None,
+            access_token_url="https://pub.orcid.org/oauth/token",
+            access_token_method='POST',
+            authorize_url="https://orcid.org/oauth/authorize?show_login=true",
+            app_key="OAUTHCLIENT_ORCID_CREDENTIALS",
+            content_type="application/json",
+        )
+    ),
+)
+
+OAUTHCLIENT_ORCID_CREDENTIALS = dict(
+    consumer_key="CHANGE_ME",
+    consumer_secret="CHANGE_ME",
+)
+
 
 # from invenio_records_rest.facets import terms_filter
 # SEARCH_UI_SEARCH_API='/api/records/'

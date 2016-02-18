@@ -17,95 +17,60 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% extends "inspirehep_theme/accounts/login_base.html" %}
+{% extends "inspirehep_theme/page.html" %}
+
+
+{% from "invenio_accounts/_macros.html" import render_field, form_errors %}
 {% set title = "Sign in" %}
 
-{%- block form_auth_external scoped -%}{% endblock %}
-{% block nickname_popover_placement %}{% endblock%}
 
-{% block body %}
-{%- if current_user.is_guest %}
-  {{super()}}
-{%- else -%}
-<div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered">
-  <div class="well">
-    <h1>{{ _('Hi') }} {{current_user.nickname}}!</h1>
-    <p style="margin-top: 10px;">{{ _('Where do you go from here?') }}</p>
-    <p style="margin-top: 30px;">
-    </p>
-    <div class="row">
-      <div width="100%" align="center">
-        <a href="/" class="btn btn-default">{{ _('Search') }}</a>
-        <a href="{{ url_for('webaccount.logout') }}" class="btn btn-default">{{ _('Sign out') }}</a>
-      </div>
-    </div>
-  </div>
-</div>
-{%- endif -%}
-{%- endblock body -%}
-
-{%- block form_header_message -%}
+{%- block body -%}
 <div class="col-centered">
   <p class="lead text-center">
     {{ _('Please sign in to suggest content to INSPIRE') }}
   </p>
 </div>
-{%- endblock form_header_message -%}
-
-{%- block form_auth_internal -%}
 <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-centered">
-  {%- block form_auth_internal_form -%}
   <div class="well">
     <br/>
-
-    {% set next = request.url if request.endpoint != 'webaccount.logout' and request.endpoint != 'webaccount.login' else config.CFG_SITE_SECURE_URL %}
+    {% set next = request.url if request.endpoint != 'security.logout' and request.endpoint != 'security.login' else config.SERVER_NAME %}
     <div class="row text-center">
-      <a href="{{url_for('oauthclient.login', remote_app='orcid', next=next)}}" tabindex="0" id="orcid_login" class="btn btn-lg" role="button" style="width: 300px; margin-bottom: 15px;"><img id="orcid-id-logo" src="{{ url_for('static', filename='img/orcid.png') }}" width="24" height="24" alt="ORCID logo"> {{ _('Sign in with ORCID') }}</a>
+      <a href="{{ url_for('invenio_oauthclient.login', remote_app='orcid', next=next) }}" tabindex="0" id="orcid_login" class="btn btn-lg" role="button"><img id="orcid-id-logo" src="{{ url_for('static', filename='images/orcid.png') }}" alt="ORCID logo"> {{ _('Sign in with ORCID') }}</a>
       <p class="text-center">
         <small>
           <a href="https://labs.inspirehep.net/help/knowledge-base/what-is-orcid/" target="_blank">
             {{ _('What is ORCID?') }}
           </a>
         </small>
-      </p>
+      </p>      
       {% if config.DEBUG or request.args.get('local') %}
-        <h3 align="center">&mdash; OR &mdash;</h3>
-        <form class="form-signin" action="{{ url_for('webaccount.login', _external=True, _scheme='https') }}" method="POST">
-        {{ form.referer }}
-        {{ form.login_method }}
-        <div class="form-group{% if form.nickname.errors%} has-error{% endif %}">
-        {{ form.nickname(placeholder=_('Username or email'), class_="form-control", type="text") }}
-        {%- if form.nickname.errors %}{% for error in form.nickname.errors %}
-            <span class="help-block">{{ error }}</span>
-        {%- endfor %}{% endif %}
-        </div>
-        <div class="form-group{% if form.password.errors%} has-error{% endif %}">
-        {{ form.password(placeholder=_('Password'), class_="form-control", type="password") }}
-        {%- if form.password.errors %}{% for error in form.password.errors %}
-            <span class="help-block">{{ error }}</span>
-        {%- endfor %}{% endif %}
-        </div>
-        <div class="checkbox" style="text-align: left;">
-          <label>
-            {{ form.remember(class_="character-checkbox") }} {{ form.remember.label.text }}
-          </label>
-        </div>
-        {{ form.submit(class_="btn btn-info btn-block") }}
-        </form>
-        <p class="text-center"><small>
-          <a href="{{ url_for('webaccount.lost') }}">
-            {{ _('Lost your password?') }}
-          </a>
-        </small></p>
+        <h3 align="center" id="login-header">&mdash; OR &mdash;</h3>
+        {%- with form = login_user_form %}
+        <form action="{{ url_for_security('login') }}"
+                method="POST" name="login_user_form">
+              {{ form.hidden_tag() }}
+              {{ form_errors(form) }}
+              {{ render_field(form.email, icon="fa fa-user", autofocus=True, errormsg=False) }}
+              {{ render_field(form.password, icon="fa fa-lock", errormsg=False) }}
+              <button type="submit"
+                      class="btn btn-primary btn-lg btn-block"><i
+                      class="fa fa-sign-in"></i> {{ _('Log In') }}
+              </button>
+          </form>
+          {%- endwith %}
+            {%- if security.recoverable %}
+            <p class="text-center"><small>
+              <a href="{{ url_for('security.forgot_password') }}">
+                {{ _('Lost your password?') }}
+              </a>
+            </small></p>
+            {%- endif %}
       {% endif %}
     </div>
   </div>
-  {%- endblock form_auth_internal_form -%}
-  {%- block form_auth_internal_title scoped -%}{% endblock %}
 </div>
 </div>
-
-{%- endblock form_auth_internal -%}
+{%- endblock body -%}
 
 {# disables popover on the username field #}
 {%- block javascript %}{% endblock %}
