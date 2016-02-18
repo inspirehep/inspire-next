@@ -50,7 +50,7 @@ install_requires = [
     # 'invenio-classifier==0.1.0', # Needs to be ported to Invenio 3
     'invenio-jsonschemas',
     #'invenio-knowledge',  # Needs to be ported to Invenio 3
-    'invenio-collections',  # Needed? Not on Hepdata overlay
+    # 'invenio-collections',  # Needed? Not on Hepdata overlay
     #'invenio-grobid>=0.1.0', # Needs to be ported to Invenio 3
     # 'invenio-upgrader==0.2.0', # Needed?
     # 'invenio-testing==0.1.1', # Needed ?
