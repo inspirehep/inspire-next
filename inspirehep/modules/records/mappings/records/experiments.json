@@ -36,7 +36,7 @@
         "index.percolator.map_unmapped_fields_as_string": true
     },
     "mappings": {
-        "record": {
+        "experiments": {
             "_all": {"enabled": false},
             "date_detection": false,
             "numeric_detection": false,
@@ -94,7 +94,7 @@
                             "copy_to": ["experimentautocomplete"]
                         },
                         "wwwlab": {
-                            "type": "string",        
+                            "type": "string",
                             "index": "not_analyzed"
                         }
 

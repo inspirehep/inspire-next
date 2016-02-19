@@ -36,7 +36,7 @@
         "index.percolator.map_unmapped_fields_as_string": true
     },
     "mappings": {
-        "record": {
+        "jobs": {
             "_all": {"enabled": true},
             "date_detection": false,
             "numeric_detection": false,

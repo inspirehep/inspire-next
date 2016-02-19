@@ -48,7 +48,7 @@
         "index.percolator.map_unmapped_fields_as_string": true
     },
     "mappings": {
-        "record": {
+        "conferences": {
             "_all": {"enabled": false},
             "date_detection": false,
             "numeric_detection": false,

@@ -49,7 +49,7 @@
         "index.query.default_field": "global_fulltext"
     },
     "mappings": {
-        "record": {
+        "hep": {
             "_all": {"enabled": false},
             "date_detection": false,
             "numeric_detection": false,
