@@ -28,8 +28,7 @@
 ## structure: (endpoint, values, blueprint, caption)
 #}
 {% set navigation_bar = [
-  ('/tools/', {}, '', 'Tools'),
-  ('/links-stats/', {}, '', 'Links and stats'),
+  ('webdeposit.create', {}, '', 'Submit'),
   ('https://labs.inspirehep.net/help', {}, '', 'Help'),
 ] -%}
 
@@ -62,63 +61,86 @@
         <div class="row" id="mobile-menu">
           <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
-            <a href="/literature" class="mobile-menu-thumbnail">
-              <img src="{{ url_for('static', filename='img/mobile-menu-icon-literature.svg') }}">
-              <p id="literature-collection">Literature</p>
+            <a href="{{ url_for("inspirehep_theme.index") }}" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='images/mobile-menu-icon-literature.svg') }}">
+              <p id="mobile-menu-literature-collection">Literature</p>
             </a>
           </div>
           <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
-            <a href="/authors" class="mobile-menu-thumbnail">
-              <img src="{{ url_for('static', filename='img/mobile-menu-icon-authors.svg') }}" >
-              <p id="authors-collection">Authors</p>
+            <a href="{{ url_for("inspirehep_theme.hepnames") }}" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='images/mobile-menu-icon-authors.svg') }}" >
+              <p id="mobile-menu-authors-collection">Authors</p>
             </a>
           </div>
           <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
-            <a href="/data" class="mobile-menu-thumbnail">
-              <img src="{{ url_for('static', filename='img/mobile-menu-icon-data.svg') }}" >
-              <p id="data-collection">Data</p>
+            <a href="{{ url_for("inspirehep_theme.data") }}" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='images/mobile-menu-icon-data.svg') }}" >
+              <p id="mobile-menu-data-collection">Data</p>
             </a>
          </div>
            <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
-            <a href="/conferences" class="mobile-menu-thumbnail">
-              <img src="{{ url_for('static', filename='img/mobile-menu-icon-conferences.svg') }}" >
-              <p id="conferences-collection">Conferences</p>
+            <a href="{{ url_for("inspirehep_theme.conferences") }}" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='images/mobile-menu-icon-conferences.svg') }}" >
+              <p id="mobile-menu-conferences-collection">Conferences</p>
             </a>
          </div>
            <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
-            <a href="/jobs" class="mobile-menu-thumbnail">
-              <img src="{{ url_for('static', filename='img/mobile-menu-icon-jobs.svg') }}" >
-              <p id="jobs-collection">Jobs</p>
+            <a href="{{ url_for("inspirehep_theme.jobs") }}" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='images/mobile-menu-icon-jobs.svg') }}" >
+              <p id="mobile-menu-jobs-collection">Jobs</p>
             </a>
           </div>
           <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
-            <a href="/institutions" class="mobile-menu-thumbnail">
-              <img src="{{ url_for('static', filename='img/mobile-menu-icon-institutions.svg') }}" >
-              <p id="institutions-collection">Institutions</p>
+            <a href="{{ url_for("inspirehep_theme.institutions") }}" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='images/mobile-menu-icon-institutions.svg') }}" >
+              <p id="mobile-menu-institutions-collection">Institutions</p>
             </a>
           </div>
           <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
-            <a href="/experiments" class="mobile-menu-thumbnail">
-              <img src="{{ url_for('static', filename='img/mobile-menu-icon-experiments.svg') }}" >
-              <p id="experiments-collection">Experiments</p>
+            <a href="{{ url_for("inspirehep_theme.experiments") }}" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='images/mobile-menu-icon-experiments.svg') }}" >
+              <p id="mobile-menu-experiments-collection">Experiments</p>
             </a>
          </div>
            <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
-            <a href="/journals" class="mobile-menu-thumbnail">
-              <img src="{{ url_for('static', filename='img/mobile-menu-icon-journals.svg') }}" >
-              <p id="journals-collection">Journals</p>
+            <a href="{{ url_for("inspirehep_theme.journals") }}" class="mobile-menu-thumbnail">
+              <img src="{{ url_for('static', filename='images/mobile-menu-icon-journals.svg') }}" >
+              <p id="mobile-menu-journals-collection">Journals</p>
             </a>
          </div>
         </div>
 
         <ul class="nav navbar-nav" id="header-links">
+          <li class="dropdown top-header-dropdown">
+            <a href="" id="tools-dropdown" class="dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <i class="fa fa-wrench"></i> Tools
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu header-dropdown" aria-labelledby="dropdownTools">
+              <li><a href="https://inspirehep.net/textmining/">Reference extractor</a></li>
+              <li><a href="https://inspirehep.net/info/hep/tools/bibliography_generate">Bibliography generator</a></li>
+              <li><a href="https://inspirehep.net/info/hep/tools/index">User-developed tools</a></li>
+            </ul>
+          </li>
+          <li class="dropdown top-header-dropdown">
+            <a href="" id="dropdown-links-stats" class="dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <i class="fa fa-link"></i> Links and stats
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu header-dropdown" aria-labelledby="dropdownLinksStats">
+              <li><a href="http://inspirehep.net/info/hep/stats/topcites/index">Top cites</a></li>
+              <li><a href="http://inspirehep.net/search?of=hcs&action_search=Search">HEP Citesummary</a></li>
+              <li><a href="">Other databases</a></li>
+              <li><a href="">External resources</a></li>
+            </ul>
+          </li>
           {% for endpoint, values, blueprint, caption in navigation_bar %}
           <li {% if request.blueprint == blueprint|e %} class="active" {% endif %}>
             <a href={% if blueprint %}"{{ url_for( endpoint|e, **values ) }}"{% else %}{{endpoint}}{% endif %}>{{- _(caption|e) -}}</a>
@@ -150,10 +172,7 @@
                   </div>
                 </a>
               </li>
-              <li class="divider custom-divider-dropdown"></li>
-              <div class="row"><div class="col-md-12"><p></p></div></div>
-              <div class="row"><div class="col-md-12"><p></p></div></div>
-              <li >
+              <li>
                 <div class="text-center">
                   <a  role="menuitem" tabindex="-1" href="{{ url_for_security('logout') }}">
                     <button type="button" class="btn btn-info btn-sign-out">{{ _('Sign out') }}</button>
@@ -167,11 +186,8 @@
         </ul>
       </div>
       {% if request.endpoint in ['inspirehep_search.search', 'invenio_records_ui.literature'] %}
-        <div id="top-search-bar" class="{{collection_name}}">
-          <invenio-search-bar
-           template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/searchbar.html') }}"
-           placeholder="{{ _('Search') }}">
-          </invenio-search-bar>
+        <div id="top-search-bar" class="{{ collection }}">
+          {% include 'inspirehep_theme/search/form/form.html' %}
         </div>
       {% endif %}
     </div>

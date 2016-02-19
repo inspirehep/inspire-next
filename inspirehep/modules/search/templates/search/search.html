@@ -57,7 +57,7 @@
   </div>
   {%- endblock search_facets %}
   {%- block search_body %}
-  <div class="col-xs-12 col-md-9">
+  <div class="col-xs-12 col-sm-12 col-md-9 col-md-push-3">
     {%- block search_header %}
     <div class="panel panel-default" id="results-control-panel">
       <div class="panel-body">
@@ -95,10 +95,12 @@
           </div>
           {%- endif %}
           {%- endblock search_sort %}
-          </div>
         </div>
       </div>
-      {%- endblock search_header %}
+      {%- block search_header_footer %}
+      {%- endblock search_header_footer %}
+    </div>
+    {%- endblock search_header %}
 
     {%- block search_error %}
     <invenio-search-error

@@ -20,18 +20,30 @@
 {%- extends "inspirehep_theme/search/collection_basic.html" -%}
 
 {% block body %}
-  {% block collection_header %}
-    <div id="collection-search-bar" class="experiments-collection-search-bar">
-      <div class="title" id="experiments-search-bar">
-        Search {{ "Experiments" | number_of_records }} experiments
-      </div>
-      {% block search_bar %}
-        {{ super() }}
-      {% endblock search_bar %}
-      <div class="subtitle">
-        Example query:
-          <a href="/search?p=find+year+1997&cc=experiments">find year 1997</a>
+  <div id="collection-search-bar" class="experiments-collection-search-bar">
+    <div class="title" id="experiments-search-bar">
+      Search {{ "Experiments" | number_of_records }} experiments
+    </div>
+    {% block search_bar %}
+      {{ super() }}
+    {% endblock search_bar %}
+    <div class="subtitle">
+      Example query:
+        <a href="/search?p=find+year+1997&cc=experiments">find year 1997</a>
+    </div>
+  </div>
+
+  <div id="collection-how-to-search">
+    <div class="title">Useful links</div>
+    <div class="row">
+      <div class="col-md-12" id="left">
+        <div class="useful-collection-link">
+          <a href="http://inspirehep.net/search?cc=Experiments&p=046__t%3A9999&sf=119__a&so=a&rg=100">
+            Current experiments
+          </a>
+          </div>
       </div>
     </div>
-  {% endblock %}
+  </div>
+
 {% endblock %}

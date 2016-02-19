@@ -1,6 +1,6 @@
 {#
 ## This file is part of INSPIRE.
-## Copyright (C) 2014, 2016 CERN.
+## Copyright (C) 2014 CERN.
 ##
 ## INSPIRE is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -86,8 +86,8 @@
 
 {% macro render_pagination() %}
 <div class="row results-wrapper">
-  <div class="col-sm-12 col-md-3 vcenter">
-    <p class="help-block">
+  <div class="col-md-3 vcenter">
+    <p class="help-block hidden-xs">
       {%- set r_from = (pagination.page-1)*pagination.per_page+1 -%}
       {%- set r_to = pagination.page*pagination.per_page -%}
       {%- set r_of = pagination.total_count -%}
@@ -96,13 +96,13 @@
       {{ _('%(x_from)d-%(x_to)d of', x_from=r_from, x_to=r_to)}} <b class="{{ collection_name }}-results total-results">{{ _('%(x_total)d</b> results.', x_total=r_of) }}
     </p>
   </div><!--
-  --><div class="col-sm-12 col-md-6 vcenter text-center">
-    <p class="help-block">
+  --><div class="col-md-6 vcenter text-center">
+    <p class="help-block hidden-xs">
       {{ render_search_pagination(pagination) }}
     </p>
   </div><!--
-  --><div class="col-sm-12 col-md-3 text-right vcenter">
-    <p class="help-block">
+  --><div class="col-md-3 text-right vcenter">
+    <p class="help-block hidden-xs">
       Results per page:
       <select class='form-control select-numpages'>
         {%- for i in ['10', '25', '50', '100', '250'] -%}
