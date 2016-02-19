@@ -66,6 +66,7 @@ install_requires = [
     'invenio-config',
     'invenio-formatter',
     'invenio-i18n',
+    'invenio-indexer',
     'invenio-logging',
     'invenio-mail',
     'invenio-pidstore',
