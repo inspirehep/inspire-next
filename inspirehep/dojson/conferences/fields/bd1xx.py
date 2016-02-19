@@ -24,6 +24,8 @@
 
 from dojson import utils
 
+from inspirehep.dojson import utils as inspire_dojson_utils
+
 from ..model import conferences
 
 
@@ -38,7 +40,7 @@ def acronym(self, key, value):
     self['place'] = value.get('c')
     self['subtitle'] = value.get('b')
     self['title'] = value.get('a')
-    return value.get('e')
+    return utils.force_list(value.get('e'))
 
 
 @conferences.over('alternative_titles', '^711')
@@ -69,14 +71,19 @@ def field_code(self, key, value):
 
 
 @conferences.over('keywords', '^6531')
-@utils.for_each_value
-@utils.filter_values
 def keywords(self, key, value):
     """Field code."""
-    return {
-        'value': value.get('a'),
-        'source': value.get('9')
-    }
+    def get_value(value):
+        return {
+            'value': value.get('a'),
+            'source': value.get('9')
+        }
+    value = utils.force_list(value)
+    keywords = self.get('keywords', [])
+    for val in value:
+        keywords.append(get_value(val))
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
+        keywords)
 
 
 @conferences.over('nonpublic_note', '^595')
@@ -98,7 +105,12 @@ def note(self, key, value):
 def series(self, key, value):
     """Conference series."""
     if value.get('n'):
-        self['series_number'] = value.get('n')
+        series_number = ''
+        try:
+            series_number = int(value.get('n'))
+            self['series_number'] = series_number
+        except:
+            pass
     return value.get('a')
 
 
@@ -113,29 +125,25 @@ def short_description(self, key, value):
     }
 
 
-@conferences.over('transparencies', '^8564')
-@utils.for_each_value
-def transparencies(self, key, value):
-    """Conference transparencies."""
-    if isinstance(value.get('y'), list):
-        if 'transparencies' in [e.lower() for e in value['y']]:
-            return value.get('u')
-    elif value.get('y', '').lower() == 'transparencies':
-        return value.get('u')
-
-
 @conferences.over('url', '^8564')
-@utils.for_each_value
 def url(self, key, value):
     """Conference transparencies."""
-    return value.get('u')
-
-
-@conferences.over('sessions', '^8564')
-@utils.for_each_value
-def sessions(self, key, value):
-    """Conference sessions."""
-    return value.get('t')
+    value = utils.force_list(value)
+    transparencies = []
+    sessions = []
+    urls = []
+    for val in value:
+        if val.get('y'):
+            description = utils.force_list(val.get('y'))
+            if 'transparencies' in [e.lower() for e in val['y']]:
+                transparencies.append(val.get('u'))
+        if val.get('t'):
+            sessions.extend(utils.force_list(val.get('t')))
+        if val.get('u'):
+            urls.append(utils.force_list(val.get('u')))
+    self['transparencies'] = transparencies
+    self['sessions'] = sessions
+    return urls
 
 
 @conferences.over('extra_place_info', '^270')

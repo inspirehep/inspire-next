@@ -30,5 +30,5 @@ class SchemaOverdo(Overdo):
 
     def do(self, blob, **kwargs):
         output = super(SchemaOverdo, self).do(blob, **kwargs)
-        # output['$schema'] = "http://localhost:5000/schemas/" + self.schema
+        output['$schema'] = self.schema
         return output

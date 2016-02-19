@@ -30,15 +30,17 @@ from ..schema import SchemaOverdo
 
 def add_book_info(record, blob):
     """Add link to the appropriate book record."""
+    collections = []
     if 'collections' in record:
-        collections = [c['primary'].lower() for c in record['collections']
-                       if 'primary' in c]
+        for c in record.get('collections', ''):
+            if c.get('primary', ''):
+                collections.append(c.get('primary').lower())
         if 'bookchapter' in collections:
             pubinfos = force_list(blob.get("773__", []))
             for pubinfo in pubinfos:
                 if pubinfo.get('0'):
                     record['book'] = {
-                        'recid': int(pubinfo['0'])
+                        'recid': int(force_list(pubinfo.get('0'))[0])
                     }
 
 
@@ -49,5 +51,5 @@ class Publication(SchemaOverdo):
         add_book_info(output, blob)
         return output
 
-hep = Publication(schema="records/hep-0.0.1.json", entry_point_group="inspirehep.dojson.hep")
-hep2marc = Overdo(entry_point_group="inspirehep.dojson.hep")
+hep = Publication(schema="hep-0.0.1.json", entry_point_group="inspirehep.dojson.hep")
+hep2marc = Overdo(entry_point_group="inspirehep.dojson.hep2marc")

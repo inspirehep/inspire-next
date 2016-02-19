@@ -32,18 +32,18 @@ from ..model import hep, hep2marc
 @hep.over('title_variation', '^210[10_][0_]')
 def title_variation(self, key, value):
     """Title variation."""
+    value = utils.force_list(value)
+
     def get_value(value):
         return value.get('a')
 
     title_variation_list = self.get('title_variation', [])
 
-    if isinstance(value, (tuple, list)):
-        for element in value:
-            title_variation_list.append(get_value(element))
-    else:
-        title_variation_list.append(get_value(value))
+    for element in value:
+        title_variation_list.append(get_value(element))
 
-    return inspire_dojson_utils.remove_duplicates_from_list(title_variation_list)
+    return inspire_dojson_utils.remove_duplicates_from_list(
+        title_variation_list)
 
 
 @hep2marc.over('210', '^title_variation$')
@@ -93,8 +93,9 @@ def titles(self, key, value):
                 'subtitle': val.get('b'),
                 'source': val.get('9'),
             })
-        return existing + out
-
+        cleaned_titles = existing + out
+        return inspire_dojson_utils.remove_duplicates_from_list(
+            cleaned_titles)
 
     if 'titles' in self:
         titles = get_value(self['titles'])

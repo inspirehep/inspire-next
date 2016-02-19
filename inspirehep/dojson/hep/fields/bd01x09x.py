@@ -28,6 +28,8 @@ from inspirehep.dojson import utils as inspire_dojson_utils
 
 from ..model import hep, hep2marc
 
+from inspirehep.dojson.utils import strip_empty_values
+
 
 @hep.over('isbns', '^020..')
 @utils.for_each_value
@@ -55,51 +57,28 @@ def isbns2marc(self, key, value):
 def persistent_identifiers(self, key, value):
     """Persistent Standard Identifiers."""
     value = utils.force_list(value)
-    dois = []
-    idents = []
+
+    dois = self.get('dois', [])
+    persistent_identifiers = self.get('persistent_identifiers', [])
     for val in value:
         if val:
-            if isinstance(val.get("2"), (list, tuple)):
-                if val.get("2", '')[0].lower() == "doi":
-                    if isinstance(val.get('a'), (list, tuple)):
-                        for v in val.get('a'):
-                            dois.append({
-                                'value': v,
-                                'source': val.get('9')
-                            })
-                    else:
-                        dois.append({
-                            'value': val.get('a'),
-                            'source': val.get('9')
-                        })
-                else:
-                    idents.append({
-                        'value': val.get('a'),
-                        'source': val.get('9'),
-                        'type': val.get('2')[0]
+            items = utils.force_list(val.get('a'))
+            if val.get("2") and val.get("2", '').lower() == "doi":
+                for v in items:
+                    dois.append({
+                        'value': v,
+                        'source': val.get('9')
                     })
             else:
-                if val.get("2", '').lower() == "doi":
-                    if isinstance(val.get('a'), (list, tuple)):
-                        for v in val.get('a'):
-                            dois.append({
-                                'value': v,
-                                'source': val.get('9')
-                            })
-                    else:
-                        dois.append({
-                            'value': val.get('a'),
-                            'source': val.get('9')
-                        })
-                else:
-                    idents.append({
-                        'value': utils.force_list(val.get('a'))[0],
+                for v in items:
+                    persistent_identifiers.append({
+                        'value': v,
                         'source': val.get('9'),
                         'type': val.get('2')
                     })
     if dois:
         self['dois'] = inspire_dojson_utils.remove_duplicates_from_list_of_dicts(dois)
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(idents)
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(persistent_identifiers)
 
 
 @hep2marc.over('024', '^(dois|persistent_identifiers)$')
@@ -121,15 +100,23 @@ def dois2marc(self, key, value):
 
 
 @hep.over('external_system_numbers', '^035..')
-@utils.for_each_value
-@utils.filter_values
 def external_system_numbers(self, key, value):
     """System Control Number."""
-    return {
-        'value': value.get('a'),
-        'institute': value.get('9'),
-        'obsolete': value.get('z'),
-    }
+    value = utils.force_list(value)
+
+    def get_value(value):
+        return {
+            'value': value.get('a'),
+            'institute': value.get('9'),
+            'obsolete': bool(value.get('z')),
+        }
+
+    external_system_numbers = self.get('external_system_numbers', [])
+
+    for val in value:
+        external_system_numbers.append(get_value(val))
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
+        external_system_numbers)
 
 
 @hep2marc.over('035', 'external_system_numbers')

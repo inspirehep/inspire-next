@@ -58,6 +58,8 @@ def thesis_supervisor2marc(self, key, value):
 @hep.over('collaboration', '^710[10_2][_2]')
 def collaboration(self, key, value):
     """Added Entry-Corporate Name."""
+    value = utils.force_list(value)
+
     def get_value(value):
         recid = ''
         if '0' in value:
@@ -70,12 +72,12 @@ def collaboration(self, key, value):
             'recid': recid
         }
     collaboration = self.get('collaboration', [])
-    if isinstance(value, (tuple, list)):
-        filtered_value = inspire_dojson_utils.remove_duplicates_from_list_of_dicts(value)
-        for element in filtered_value:
-            collaboration.append(get_value(element))
-    else:
-        collaboration.append(get_value(value))
+
+    filtered_value = inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
+        value)
+    for element in filtered_value:
+        collaboration.append(get_value(element))
+
     return collaboration
 
 

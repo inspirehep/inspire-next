@@ -46,23 +46,32 @@ def authors(self, key, value):
                 utils.force_list(value.get('u')))
             affiliations = [{'value': aff, 'recid': recid} for
                             aff in affiliations]
+        person_recid = ''
+        if value.get('x'):
+            try:
+                person_recid = int(value.get('x'))
+            except:
+                pass
+        inspire_id = ''
+        if value.get('i'):
+            inspire_id = utils.force_list(value.get('i'))[0]
         ret = {
             'full_name': value.get('a'),
             'role': value.get('e'),
             'alternative_name': value.get('q'),
-            'inspire_id': value.get('i'),
+            'inspire_id': inspire_id,
             'orcid': value.get('j'),
-            'recid': value.get('x'),
+            'recid': person_recid,
             'email': value.get('m'),
             'affiliations': affiliations,
-            'profile': inspire_dojson_utils.create_profile_url(
+            'profile': {"__url__": inspire_dojson_utils.create_profile_url(
                 value.get('x')
-            ),
+            )},
             'curated_relation': value.get('y', 0) == 1
         }
         # HACK: This is to workaround broken records where multiple authors
         # got meshed up together.
-        if isinstance(ret['full_name'], list):
+        if isinstance(ret['full_name'], (list, tuple)):
             import warnings
             warnings.warn("Record with mashed-up author list! Taking first author: {}".format(value))
             ret['full_name'] = ret['full_name'][0]

@@ -35,10 +35,9 @@ def urls(self, key, value):
     try:
         size = int(value.get('s'))
     except:
-        # Some crap in the size or not available
         size = None
     url = value.get('u')
-    if isinstance(url, list):
+    if isinstance(url, (list, tuple)):
         url = filter(None, url)
         if len(url) != 1:
             url = url[0]

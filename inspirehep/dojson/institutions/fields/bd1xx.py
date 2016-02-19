@@ -31,9 +31,20 @@ from ..model import institutions
 @utils.filter_values
 def location(self, key, value):
     """GPS location info."""
+    longitude, latitude = ('', '')
+    if value.get('d'):
+        try:
+            longitude = float(value.get('d'))
+        except:
+            pass
+    if value.get('f'):
+        try:
+            latitude = float(value.get('f'))
+        except:
+            pass
     return {
-        'longitude': value.get('d'),
-        'latitude': value.get('f')
+        'longitude': longitude,
+        'latitude': latitude
     }
 
 
@@ -48,52 +59,25 @@ def timezone(self, key, value):
 @utils.for_each_value
 def name(self, key, value):
     """List of names."""
-    names = utils.force_list(value.get('a')) or []
+    def set_value(key, val):
+        val = utils.force_list(val) or []
+        if val:
+            self.setdefault(key, [])
+            self[key].extend(val)
+
+    if value.get('a'):
+        self.setdefault('breadcrumb_title', value.get('a'))
+
+    set_value('institution', value.get('a'))
+    set_value('department', value.get('b'))
+    set_value('ICN', value.get('u'))
+    set_value('obsolete_ICN', value.get('x'))
+    set_value('new_ICN', value.get('t'))
+
+    names = list(utils.force_list(value.get('a'))) or []
     names.extend(utils.force_list(value.get('u')) or [])
     names.extend(utils.force_list(value.get('t')) or [])
     return names
-
-
-@institutions.over('breadcrumb_title', '^110..')
-@utils.for_each_value
-def breadcrumb_title(self, key, value):
-    """Title used in breadcrum and html title."""
-    return value.get('a')
-
-
-@institutions.over('institution', '^110..')
-@utils.for_each_value
-def institution(self, key, value):
-    """Institution name."""
-    return value.get('a')
-
-
-@institutions.over('department', '^110..')
-@utils.for_each_value
-def department(self, key, value):
-    """Institution info."""
-    return value.get('b')
-
-
-@institutions.over('ICN', '^110..')
-@utils.for_each_value
-def ICN(self, key, value):
-    """Institution info."""
-    return value.get('u')
-
-
-@institutions.over('obsolete_ICN', '^110..')
-@utils.for_each_value
-def obsolete_ICN(self, key, value):
-    """Institution info."""
-    return value.get('x')
-
-
-@institutions.over('new_ICN', '^110..')
-@utils.for_each_value
-def new_ICN(self, key, value):
-    """Institution info."""
-    return value.get('t')
 
 
 @institutions.over('address', '^371..')
@@ -102,11 +86,11 @@ def new_ICN(self, key, value):
 def address(self, key, value):
     """Address info."""
     return {
-        'address': value.get('a'),
+        'address': utils.force_list(value.get('a')),
         'city': value.get('b'),
         'state_province': value.get('c'),
         'country': value.get('d'),
-        'postal_code': value.get('e'),
+        'postal_code': utils.force_list(value.get('e')),
         'country_code': value.get('g'),
     }
 
@@ -123,17 +107,13 @@ def field_activity(self, key, value):
 @utils.filter_values
 def name_variants(self, key, value):
     """Variants of the name."""
+    if value.get('g'):
+        self.setdefault('extra_words', [])
+        self['extra_words'].extend(utils.force_list(value.get('g')))
     return {
         "source": value.get('9'),
-        "value": value.get('a')
+        "value": utils.force_list(value.get('a'))
     }
-
-
-@institutions.over('extra_words', '^410..')
-@utils.for_each_value
-def extra_words(self, key, value):
-    """Variants of the name."""
-    return value.get('g')
 
 
 @institutions.over('content_classification', '^65017')

@@ -24,6 +24,9 @@
 
 from dojson import utils
 
+from inspirehep.dojson import utils as inspire_dojson_utils
+from inspirehep.dojson.utils import strip_empty_values
+
 from ..hep.model import hep, hep2marc
 from ..conferences.model import conferences
 from ..institutions.model import institutions
@@ -61,7 +64,7 @@ def control_number2marc(self, key, value):
 @jobs.over('agency_code', '^003')
 def agency_code(self, key, value):
     """Control Number Identifier."""
-    return value[0]
+    return value
 
 
 @hep2marc.over('003', 'agency_code')
@@ -103,7 +106,7 @@ def oai_pmh(self, key, value):
     """Local OAI-PMH record information."""
     return {
         'id': value.get('o'),
-        'set': value.get('p'),
+        'set': utils.force_list(value.get('p')),
         'previous_set': value.get('q'),
     }
 
@@ -169,7 +172,8 @@ def spires_sysnos(self, key, value):
             sysnos.append(val.get('a'))
         elif 'd' in val:
             new_recid = val.get('d')
-    self['new_recid'] = new_recid or None
+    if new_recid is not None:
+        self['new_recid'] = new_recid
     return sysnos or None
 
 
@@ -182,30 +186,13 @@ def spires_sysnos2marc(self, key, value):
 
     if key == 'spires_sysnos':
         existing_values.extend(
-            [{'a': val} for val in value]
+            [{'a': val} for val in value if val]
         )
     elif key == 'new_recid':
         existing_values.extend(
-            [{'d': val} for val in value]
+            [{'d': val} for val in value if val]
         )
     return existing_values
-
-
-@hep.over('new_recid', '^970..')
-@conferences.over('new_recid', '^970..')
-@institutions.over('new_recid', '^970..')
-@experiments.over('new_recid', '^970..')
-@journals.over('new_recid', '^970..')
-@hepnames.over('new_recid', '^970..')
-@jobs.over('new_recid', '^970..')
-@utils.ignore_value
-def new_recid(self, key, value):
-    """Reference to new recid."""
-    value = utils.force_list(value)
-    for val in value:
-        if 'd' in val:
-            # Only return if there is a d subfield, otherwise let the loop go.
-            return val.get('d')
 
 
 @hep.over('collections', '^980..')
@@ -215,15 +202,38 @@ def new_recid(self, key, value):
 @journals.over('collections', '^980..')
 @hepnames.over('collections', '^980..')
 @jobs.over('collections', '^980..')
-@utils.for_each_value
-@utils.filter_values
 def collections(self, key, value):
     """Collection this record belongs to."""
-    return {
-        'primary': value.get('a'),
-        'secondary': value.get('b'),
-        'deleted': value.get('c'),
-    }
+    value = utils.force_list(value)
+
+    def get_value(value):
+        primary = ''
+        if isinstance(value.get('a'), list):
+            primary = value.get('a')[0]
+        else:
+            primary = value.get('a')
+        return {
+            'primary': primary,
+            'secondary': value.get('b'),
+            'deleted': value.get('c'),
+        }
+
+    collections = self.get('collections', [])
+
+    for val in value:
+        collections.append(get_value(val))
+
+    contains_list = False
+    for element in collections:
+        for k, v in enumerate(element):
+            if isinstance(element[v], list):
+                contains_list = True
+                break
+    if contains_list:
+        return strip_empty_values(collections)
+    else:
+        return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
+            collections)
 
 
 @hep2marc.over('980', 'collections')
