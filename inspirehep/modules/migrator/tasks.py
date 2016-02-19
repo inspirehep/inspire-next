@@ -31,7 +31,7 @@ from celery.utils.log import get_task_logger
 
 from dojson.contrib.marc21.utils import create_record as marc_create_record
 
-from flask import current_app
+from flask import current_app, url_for
 
 from inspirehep.dojson.conferences import conferences
 from inspirehep.dojson.experiments import experiments
@@ -173,7 +173,7 @@ def continuous_migration():
                 # The record might be None, in case a parallel
                 # continuous_migration task has already consumed the queue.
                 raw_record = zlib.decompress(raw_record)
-                record = marc_create_record(raw_record)
+                record = marc_create_record(raw_record, keep_singletons=False)
                 recid = int(record['001'][0])
                 prod_record = InspireProdRecords(recid=recid)
                 prod_record.marcxml = raw_record
@@ -219,7 +219,7 @@ def continuous_migration():
 #     try:
 #         for raw_record in chunk:
 #             json = None
-#             record = marc_create_record(raw_record)
+#             record = marc_create_record(raw_record, keep_singletons=False)
 #             recid = int(record['001'][0])
 #             prod_record = InspireProdRecords(recid=recid)
 #             prod_record.marcxml = raw_record
@@ -266,8 +266,13 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
 
     index_queue = []
     for raw_record in chunk:
-        record = marc_create_record(raw_record)
+        record = marc_create_record(raw_record, keep_singletons=False)
         json_record = create_record(record)
+        if '$schema' in json_record:
+            json_record['$schema'] = url_for(
+                'invenio_jsonschemas.get_schema',
+                schema_path="records/{0}".format(json_record['$schema'])
+            )
         rec_uuid = str(Record.create(json_record, id_=None).id)
 
         # Reserve record identifier.

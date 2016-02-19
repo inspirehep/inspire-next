@@ -12,6 +12,8 @@ import pkg_resources
 def _(x):
     return x
 
+SERVER_NAME = "localhost:5000"
+
 # Default language and timezone
 BABEL_DEFAULT_LANGUAGE = 'en'
 BABEL_DEFAULT_TIMEZONE = 'Europe/Zurich'
@@ -96,6 +98,10 @@ RECORDS_UI_ENDPOINTS = dict(
         template='inspirehep_theme/format/record/Inspire_Default_HTML_detailed.tpl'
     )
 )
+
+RECORDS_VALIDATION_TYPES = {
+    'array': (list, tuple),
+}
 
 JSONSCHEMAS_HOST = "localhost:5000"
 INDEXER_DEFAULT_INDEX = "records-hep"
