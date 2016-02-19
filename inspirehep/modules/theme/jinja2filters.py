@@ -30,7 +30,7 @@ import re
 import datetime
 import time
 
-from flask import session
+from flask import session, current_app
 
 from invenio_search.api import Query
 
@@ -363,7 +363,7 @@ class INSPIREJinjaFilters(object):
 
         @app.template_filter()
         def limit_facet_elements(l):
-            return l[:cfg["FACETS_SIZE_LIMIT"]]
+            return l[:current_app.config["FACETS_SIZE_LIMIT"]]
 
         @app.template_filter()
         def author_urls(l, separator):

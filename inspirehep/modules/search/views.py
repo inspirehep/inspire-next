@@ -70,7 +70,7 @@ def search():
         'SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING'
     ].get(cc, current_app.config['SEARCH_ELASTIC_DEFAULT_INDEX'])
     response = Query(p)
-    response = Results(response.body, index=index)
+    response = Results(response.body, index=index, doc_type=cc)
 
     response.body.update({
         'size': int(rg),
