@@ -1,7 +1,7 @@
 Installation
 ============
 
-First install HEPData all requirements:
+First install all requirements:
 
 .. code-block:: console
 
@@ -43,7 +43,28 @@ Optionally, create the initial user:
 
    (inspirehep)$ inspirehep users create your@email.com -a
 
-Optionally, add a record:
+Add demo records
+~~~~~~~~~~~~~~~~
+
+.. code-block:: console
+
+   (inspirehep)$ inspirehep migrator populate -f inspirehep/demosite/data/demo-records.xml.gz
+
+
+Start honcho
+~~~~~~~~~~~~
+
+.. code-block:: console
+
+   (inspirehep)$ honcho start
+
+And the site is now available on `http://localhost:5000`.
+
+**PS: Note the new port!**
+
+
+Adding a single record with CLI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: console
 
@@ -51,21 +72,8 @@ Optionally, add a record:
    (inspirehep)$ inspirehep pid create -t rec -i $demouuid -s REGISTERED recid 1
 
 
-Run Celery
-
-.. code-block:: console
-
-   (inspirehep)$ celery worker -E -A inspirehep.celery
-
-
-Now, start inspirehep:
-
-.. code-block:: console
-
-   (inspirehep)$ inspirehep --debug run
-
-
-Access the record (web/rest):
+Access the record (web/rest)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: console
 
@@ -79,3 +87,8 @@ Search
 .. code-block:: console
 
    (inspirehep)$ inspirehep index init
+
+
+======
+ENJOY!
+======
