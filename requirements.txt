@@ -23,5 +23,6 @@
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
 -e git+https://github.com/inveniosoftware/invenio-formatter.git#egg=invenio-formatter
+-e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3#egg=invenio-query-parser
 
 -e .[postgresql]

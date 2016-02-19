@@ -165,14 +165,17 @@ INDEXER_DEFAULT_DOC_TYPE = "record"
 
 SEARCH_QUERY_PARSER = 'invenio_query_parser.contrib.spires.parser:Main'
 
-SEARCH_QUERY_WALKERS = [
-    'invenio_query_parser.contrib.spires.walkers.pypeg_to_ast:PypegConverter',
-    'invenio_query_parser.contrib.spires.walkers.spires_to_invenio:SpiresToInvenio'
+SEARCH_QUERY_WALKERS = ['invenio_query_parser.contrib.spires.walkers.pypeg_to_ast:PypegConverter']
+
+SEARCH_WALKERS = [
+    'invenio_query_parser.contrib.spires.walkers.spires_to_invenio:SpiresToInvenio',
+    'invenio_search.walkers.elasticsearch:ElasticSearchDSL'
 ]
 
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
 # invenio keywords to elasticsearch fields
 SEARCH_ELASTIC_KEYWORD_MAPPING = {
+    None: ['global_fulltext'],
     "control_number": ["control_number"],
     "author": ["authors.full_name", "authors.alternative_name"],
     "exactauthor": ["exactauthor.raw", "authors.full_name",
@@ -384,21 +387,21 @@ INSPIRE_PATH = pkg_resources.resource_filename("inspirehep", "")
 
 JSON_SCHEMA_PATHS = [
     pkg_resources.resource_filename(
-        "inspirehep", "base/jsonschemas/hep-0.0.1.json")
+        "inspirehep", "modules/records/jsonschemas/records/hep-0.0.1.json")
 ]
 ELASTIC_MAPPINGS_PATHS = [
     pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/hep.json"),
+        "inspirehep", "modules/records/mappings/records/hep.json"),
     pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/conferences.json"),
+        "inspirehep", "modules/records/mappings/records/conferences.json"),
     pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/experiments.json"),
+        "inspirehep", "modules/records/mappings/records/experiments.json"),
     pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/authors.json"),
+        "inspirehep", "modules/records/mappings/records/authors.json"),
     pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/institutions.json"),
+        "inspirehep", "modules/records/mappings/records/institutions.json"),
     pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/jobs.json"),
+        "inspirehep", "modules/records/mappings/records/jobs.json"),
     pkg_resources.resource_filename(
-        "inspirehep", "base/searchext/mappings/journals.json")
+        "inspirehep", "modules/records/mappings/records/journals.json")
 ]
