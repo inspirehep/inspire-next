@@ -212,16 +212,12 @@ setup(
             'hepnames2marc = inspirehep.dojson.hepnames2marc:hepnames2marc',
         ],
         'invenio_base.apps': [
-            'inspire_jinja2filters = inspirehep.modules.theme:INSPIREJinjaFilters',
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_migrator = inspirehep.modules.migrator:INSPIREMigrator',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
             'inspirehep_theme_js = inspirehep.modules.theme.bundles:js'
-        ],
-        'invenio_base.blueprints': [
-            'inspire_search = inspirehep.modules.search.views:blueprint',
         ],
         'invenio_jsonschemas.schemas': [
             'inspire_records = inspirehep.modules.records.jsonschemas',
