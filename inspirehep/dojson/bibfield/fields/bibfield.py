@@ -59,22 +59,16 @@ def collections(self, key, value):
     return value
 
 
-@bibfield.over('arxiv_eprints', '^system_number_external$')
-def arxiv_eprints(self, key, value):
-    """Get arxiv_eprints from object."""
-    if isinstance(value, dict):
-        value = [value]
-    for val in value:
-        if val.get('institute') == "arXiv":
-            return [{'value': val.get('value')}]
-
-
 @bibfield.over('external_system_numbers', '^system_number_external$')
 def external_system_numbers(self, key, value):
-    """Get system_number_external from object."""
-    if isinstance(value, list):
-        return value
-    return [value]
+    """Get system_number_external and arxiv_eprints from object."""
+    value = utils.force_list(value)
+    arxiv_eprints = []
+    for val in value:
+        if val.get('institute') == "arXiv":
+            arxiv_eprints.append({'value': val.get('value')})
+    self['arxiv_eprints'] = arxiv_eprints
+    return value
 
 
 @bibfield.over('dois', '^doi$')
@@ -141,7 +135,7 @@ def document_type(self, key, value):
     return utils.force_list(value)
 
 
-@bibfield.over('authors', '^authors$', '^_additional_authors$', '^_first_author$')
+@bibfield.over('authors', '^(authors|_additional_authors|_first_author)$')
 def authors(self, key, value):
     """Get authors from object."""
     authors = self.get('authors', [])
@@ -164,14 +158,11 @@ def authors(self, key, value):
     return authors
 
 
-@bibfield.over('titles', '^title$')
+@bibfield.over('titles', '^(title|title_arXiv)$')
 def titles(self, key, value):
     """Get titles from object."""
     def get_value(existing):
-        if not isinstance(value, list):
-            values = [value]
-        else:
-            values = value
+        values = utils.force_list(value)
         out = []
         for val in values:
             if isinstance(val, six.string_types):
@@ -184,21 +175,12 @@ def titles(self, key, value):
         return existing + out
 
     if 'titles' in self:
-        return get_value(self['titles'])
+        titles = get_value(self['titles'])
     else:
-        return get_value([])
-
-
-@bibfield.over('breadcrumb_title', '^title$')
-def breadcrumb_title(self, key, value):
-    """Title used in breadcrum and html title."""
-    if isinstance(value, list):
-        val = value[0]
-    elif isinstance(value, six.string_types):
-        val = {"title": value}
-    else:
-        val = value
-    return val.get('title')
+        titles = get_value([])
+    if titles:
+        self.setdefault('breadcrumb_title', titles[0]['title'])
+    return titles
 
 
 @bibfield.over('corporate_author', '^corporate_author$')
@@ -255,19 +237,14 @@ def oai_pmh(self, key, value):
     return value
 
 
-@bibfield.over('thesis', '^thesis$')
+@bibfield.over('thesis', '^(thesis|defense_date)$')
 def thesis(self, key, value):
     """Get thesis from object."""
     thesis = self.get('thesis', {})
-    thesis.update(value)
-    return thesis
-
-
-@bibfield.over('thesis', '^defense_date$')
-def defense_date_thesis(self, key, value):
-    """Get thesis from object."""
-    thesis = self.get('thesis', {})
-    thesis.update({"defense_date": value})
+    if key == "defense_date":
+        thesis.update({"defense_date": value})
+    else:
+        thesis.update(value)
     return thesis
 
 
@@ -291,22 +268,19 @@ def copyright(self, key, value):
 @bibfield.over('accelerator_experiments', '^accelerator_experiment$')
 def accelerator_experiments(self, key, value):
     """Get accelerator and experiment from object."""
-    if not isinstance(value, list):
-        return [value]
-    return value
+    return utils.force_list(value)
 
 
 @bibfield.over('languages', '^language$')
 def languages(self, key, value):
     """Get language from object."""
-    return [value]
+    return utils.force_list(value)
 
 
 @bibfield.over('thesis_supervisor', '^thesis_supervisor$')
 def thesis_supervisor(self, key, value):
     """Get thesis supervisor from object."""
-    if not isinstance(value, list):
-        value = [value]
+    value = utils.force_list(value)
     out = []
     for val in value:
         out.append({
@@ -331,36 +305,10 @@ def title_translation(self, key, value):
     }
 
 
-@bibfield.over('titles', '^title_arXiv$')
-def title_arxiv(self, key, value):
-    """Get arXiv title from object."""
-    def get_value(existing):
-        if not isinstance(value, list):
-            values = [value]
-        else:
-            values = value
-        out = []
-        for val in values:
-            if isinstance(val, six.string_types):
-                val = {"title": val}
-            out.append({
-                'title': val.get('title'),
-                'subtitle': val.get('subtitle'),
-                'source': val.get('source'),
-            })
-        return existing + out
-
-    if 'titles' in self:
-        return get_value(self['titles'])
-    else:
-        return get_value([])
-
-
 @bibfield.over('spires_sysnos', '^spires_sysno$')
 def spires_sysnos(self, key, value):
     """Get SPIRES number from object."""
-    if not isinstance(value, list):
-        value = [value]
+    value = utils.force_list(value)
     return [v.get('value') for v in value]
 
 

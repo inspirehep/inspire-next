@@ -28,7 +28,7 @@ class SchemaOverdo(Overdo):
         super(SchemaOverdo, self).__init__(*args, **kwargs)
         self.schema = schema
 
-    def do(self, blob):
-        output = super(SchemaOverdo, self).do(blob)
+    def do(self, blob, **kwargs):
+        output = super(SchemaOverdo, self).do(blob, **kwargs)
         output['$schema'] = self.schema
         return output

@@ -80,8 +80,11 @@ class ExportTests(InvenioTestCase):
 
     def test_arxiv_field(self):
         """Test if arxiv_field is created correctly"""
-        self.assertEqual(self.sample_export_good['arxiv_field'],
-                         self.export.arxiv_field)
+        self.assertEqual(self.sample_export_good['arxiv_field']['value'],
+                         self.export.arxiv_field['value'])
+        self.assertTrue(len(self.export.arxiv_field['categories']) == 1)
+        self.assertEqual(self.sample_export_good['arxiv_field']['categories'][0],
+                         self.export.arxiv_field['categories'][0])
 
     def test_arxiv(self):
         """Test if arxiv is created correctly"""

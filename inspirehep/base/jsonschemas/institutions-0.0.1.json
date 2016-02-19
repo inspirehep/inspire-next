@@ -74,10 +74,6 @@
             "type": "string"
         },
         "extra_words": {
-            "items": {
-                "title": "Extra word",
-                "type": "array"
-            },
             "title": "Extra words",
             "type": "array",
             "uniqueItems": true

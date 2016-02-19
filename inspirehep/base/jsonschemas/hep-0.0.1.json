@@ -343,7 +343,7 @@
                         "type": "string"
                     },
                     "cds": {
-                        "type": "string"  
+                        "type": "string"
                     }
                 }
             },
@@ -407,7 +407,7 @@
                         "type": "string"
                     },
                     "isbn": {
-                        "type": "string"  
+                        "type": "string"
                     }
                 }
             },
@@ -1147,7 +1147,7 @@
                         "title": "Type of persistent identifier"
                     },
                     "value": {
-                        "type": "array",
+                        "type": "string",
                         "title": "Value of the persistent identifier"
                     }
                 },

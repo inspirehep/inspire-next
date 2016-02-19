@@ -39,22 +39,17 @@ def add_book_info(record, blob):
             pubinfos = force_list(blob.get("773__", []))
             for pubinfo in pubinfos:
                 if pubinfo.get('0'):
-                    if isinstance(pubinfo['0'], list):
-                        record['book'] = {
-                            'recid': int(pubinfo['0'][0])
-                        }
-                    else:
-                        record['book'] = {
-                            'recid': int(pubinfo['0'])
-                        }
+                    record['book'] = {
+                        'recid': int(force_list(pubinfo.get('0'))[0])
+                    }
 
 
 class Publication(SchemaOverdo):
 
-    def do(self, blob):
-        output = super(Publication, self).do(blob)
+    def do(self, blob, **kwargs):
+        output = super(Publication, self).do(blob, **kwargs)
         add_book_info(output, blob)
         return output
 
-hep = Publication(schema="hep-0.0.1.json")
-hep2marc = Overdo()
+hep = Publication(schema="hep-0.0.1.json", entry_point_group="inspirehep.dojson.hep")
+hep2marc = Overdo(entry_point_group="inspirehep.dojson.hep2marc")

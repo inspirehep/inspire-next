@@ -72,6 +72,7 @@ def collaboration(self, key, value):
             'recid': recid
         }
     collaboration = self.get('collaboration', [])
+
     filtered_value = inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
         value)
     for element in filtered_value:

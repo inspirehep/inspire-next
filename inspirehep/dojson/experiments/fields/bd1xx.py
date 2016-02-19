@@ -31,17 +31,11 @@ from ..model import experiments
 def experiment_name(self, key, value):
     """Name of experiment."""
     value = utils.force_list(value)
+    self.setdefault('affiliation', [v.get("u") for v in value if v.get('u')])
     return {
         'experiment': [v.get("a") for v in value if v.get('a')],
         'wwwlab': [v.get("u") for v in value if v.get('u')]
     }
-
-
-@experiments.over('affiliation', '^119..')
-@utils.for_each_value
-def affiliation(self, key, value):
-    """Affiliation of experiment."""
-    return value.get("u")
 
 
 @experiments.over('contact_email', '^270..')
@@ -56,17 +50,12 @@ def contact_email(self, key, value):
 @utils.filter_values
 def title(self, key, value):
     """Title Statement."""
+    self.setdefault('breadcrumb_title', value.get('a'))
     return {
         'title': value.get('a'),
         'subtitle': value.get('b'),
         'source': value.get('9'),
     }
-
-
-@experiments.over('breadcrumb_title', '^245[10_][0_]')
-def breadcrumb_title(self, key, value):
-    """Title used in breadcrum and html title."""
-    return value.get('a')
 
 
 @experiments.over('name_variants', '^419..')
@@ -93,14 +82,12 @@ def spokesperson(self, key, value):
 @experiments.over('collaboration', '^710..')
 def collaboration(self, key, value):
     """Collaboration of experiment."""
-    if isinstance(value, list):
-        collaborations = sorted((elem["g"] for elem in value if 'g' in elem), key=lambda x: len(x))
-        if len(collaborations) > 1:
-            self['collaboration_alternative_names'] = collaborations[1:]
-        if collaborations:
-            return collaborations[0]
-    else:
-        return value.get("g")
+    value = utils.force_list(value)
+    collaborations = sorted((elem["g"] for elem in value if 'g' in elem), key=lambda x: len(x))
+    if len(collaborations) > 1:
+        self['collaboration_alternative_names'] = collaborations[1:]
+    if collaborations:
+        return collaborations[0]
 
 
 @experiments.over('urls', '^856.[10_28]')
@@ -124,28 +111,17 @@ def related_experiments(self, key, value):
     }
 
 
-@utils.filter_values
 @experiments.over('date_started', '^046..')
 def date_started(self, key, value):
-    """Date created."""
-    if isinstance(value, list):
-        for elem in value:
-            if elem.get('s'):
-                return elem.get('s')
-        return
-    return value.get('s')
-
-
-@utils.filter_values
-@experiments.over('date_completed', '^046..')
-def date_completed(self, key, value):
-    """Date completed."""
-    if isinstance(value, list):
-        for elem in value:
-            if elem.get('t'):
-                return elem.get('t')
-        return
-    return value.get('t')
+    """Date started and completed."""
+    value = utils.force_list(value)
+    date_started = None
+    for val in value:
+        if val.get('t'):
+            self.setdefault('date_completed', val.get('t'))
+        if val.get('s'):
+            date_started = val.get('s')
+    return date_started
 
 
 @experiments.over('field_code', '^65017')

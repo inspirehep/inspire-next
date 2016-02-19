@@ -63,7 +63,6 @@ def hidden_notes(self, key, value):
         }
 
     hidden_note_list = self.get('hidden_notes', [])
-
     for element in value:
         hidden_note_list.append(get_value(element))
 
@@ -105,7 +104,7 @@ def thesis(self, key, value):
     }
 
 
-@hep2marc.over('502', 'thesis')
+@hep2marc.over('502', '^thesis$')
 @utils.for_each_value
 @utils.filter_values
 def thesis2marc(self, key, value):
@@ -123,7 +122,7 @@ def thesis2marc(self, key, value):
 @utils.filter_values
 def abstracts(self, key, value):
     """Summary, Etc.."""
-    if isinstance(value.get('a'), list):
+    if isinstance(value.get('a'), (list, tuple)):
         import warnings
         warnings.warn("Record with double abstract! Taking first abstract: {}".format(value.get('a')[0]))
         abstract = value.get('a')[0]

@@ -55,7 +55,7 @@ class CvLatexHtmlTextTests(InvenioTestCase):
         self.hep_record_publi_info = hep.do(record_publi_info)
 
         self.sample_cv_latex_html = {
-            'title': '\nSearch for supersymmetry in events containing a same-flavour opposite-sign dilepton pair, jets, and large missing transverse momentum in $\sqrt{s}=8$ TeV $pp$ collisions with the ATLAS detector\n',
+            'title': '\nSearch for supersymmetry in events containing a same-flavour opposite-sign dilepton pair, jets, and large missing transverse momentum in $\sqrt{s}=8$ TeV pp collisions with the ATLAS detector\n',
             'author': 'Georges Aad',
             'arxiv': 'arXiv:1503.03290 [hep-ex]',
             'doi': '10.1140/epjc/s10052-015-3661-9, 10.1140/epjc/s10052-015-3518-2',
@@ -64,7 +64,7 @@ class CvLatexHtmlTextTests(InvenioTestCase):
         }
 
         self.sample_cv_latex_text = {
-            'title': '\nSearch for supersymmetry in events containing a same-flavour opposite-sign dilepton pair, jets, and large missing transverse momentum in $\sqrt{s}=8$ TeV $pp$ collisions with the ATLAS detector\n',
+            'title': '\nSearch for supersymmetry in events containing a same-flavour opposite-sign dilepton pair, jets, and large missing transverse momentum in $\sqrt{s}=8$ TeV pp collisions with the ATLAS detector\n',
             'author': 'Georges Aad',
             'arxiv': 'arXiv:1503.03290 [hep-ex]',
             'doi': '10.1140/epjc/s10052-015-3661-9, 10.1140/epjc/s10052-015-3518-2',

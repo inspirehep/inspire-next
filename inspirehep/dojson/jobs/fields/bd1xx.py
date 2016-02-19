@@ -40,72 +40,45 @@ def acquisition_source(self, key, value):
     elif key.startswith('270'):
         if value.get('m'):
             result["email"] = value.get('m')
-    if "acquisition_source" in self:
-        self["acquisition_source"][0].update(result)  # assume only one
-        return self["acquisition_source"]
-    else:
-        return result
-
-
-@jobs.over('contact_person', '^270..')
-@utils.for_each_value
-def contact_person(self, key, value):
-    """Contact person."""
-    return value.get('p')
-
-
-@jobs.over('contact_email', '^270..')
-@utils.for_each_value
-def contact_email(self, key, value):
-    """Contact email."""
-    return value.get('m')
-
-
-@jobs.over('reference_email', '^270..')
-@utils.for_each_value
-def reference_email(self, key, value):
-    """Contact email."""
-    return value.get('o')
+        if value.get('p'):
+            self.setdefault('contact_person', [])
+            self['contact_person'].append(value.get('p'))
+        if value.get('m'):
+            self.setdefault('contact_email', [])
+            self['contact_email'].append(value.get('m'))
+        if value.get('o'):
+            self.setdefault('reference_email', [])
+            self['reference_email'].append(value.get('o'))
+    return result
 
 
 @jobs.over('date_closed', '^046..')
 def date_closed(self, key, value):
     """Date the job was closed."""
-    if not isinstance(value, (list, tuple)):
-        value_as_list = [value]
-    else:
-        value_as_list = value
+    value = utils.force_list(value)
     closed_date = None
-    for value in value_as_list:
-        if value.get('l'):
-            if "@" in value.get('l'):
+    deadline_date = None
+    for val in value:
+        if val.get('i'):
+            deadline_date = val.get('i')
+        if val.get('l'):
+            if "@" in val.get('l'):
                 # Its an email
                 if "reference_email" in self:
-                    self["reference_email"].append(value.get('l'))
+                    self["reference_email"].append(val.get('l'))
                 else:
-                    self["reference_email"] = [value.get('l')]
-            elif "www" in value.get('l') or "http" in value.get('l'):
+                    self["reference_email"] = [val.get('l')]
+            elif "www" in val.get('l') or "http" in val.get('l'):
                 # Its a URL
                 if "urls" in self:
-                    self["urls"].append(value.get('l'))
+                    self["urls"].append(val.get('l'))
                 else:
-                    self["urls"] = [value.get('l')]
+                    self["urls"] = [val.get('l')]
             else:
-                closed_date = value.get('l')
+                closed_date = val.get('l')
+    if deadline_date:
+        self['deadline_date'] = deadline_date
     return closed_date
-
-
-@jobs.over('deadline_date', '^046..')
-def deadline_date(self, key, value):
-    """Date of job deadline."""
-    if not isinstance(value, (list, tuple)):
-        value_as_list = [value]
-    else:
-        value_as_list = value
-    deadline_date = None
-    for value in value_as_list:
-        deadline_date = value.get('i')
-    return deadline_date
 
 
 @jobs.over('continent', '^043..')
@@ -128,13 +101,10 @@ def experiments(self, key, value):
 def institution(self, key, value):
     """Institution info."""
     curated_relation = False
-    recid = ''
-    if value.get('z'):
+    recid = None
+    if value.get('z') and value.get('z').isdigit():
         curated_relation = True
-        try:
-            recid = int(value.get('z'))
-        except:
-            pass
+        recid = int(value.get('z'))
     return {
         'curated_relation': curated_relation,
         'recid': recid,
@@ -151,12 +121,7 @@ def description(self, key, value):
 @jobs.over('position', '^245..')
 def position(self, key, value):
     """Contact person."""
-    return value.get('a')
-
-
-@jobs.over('breadcrumb_title', '^245..')
-def breadcrumb_title(self, key, value):
-    """Title used in breadcrum and html title."""
+    self.setdefault('breadcrumb_title', value.get('a'))
     return value.get('a')
 
 

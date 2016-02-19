@@ -80,23 +80,16 @@ def name(self, key, value):
     + Sr.
     + roman numbers (like VII)
     """
-    if isinstance(value, list):
-        value = value[0]
+    value = utils.force_list(value)
+    self.setdefault('breadcrumb_title', value[0].get('a'))
+    self.setdefault('dates', value[0].get('d'))
     return {
-        'value': value.get('a'),
-        'numeration': value.get('b'),
-        'title': value.get('c'),
-        'status': value.get('g'),
-        'preferred_name': utils.force_list(value.get('q')),
+        'value': value[0].get('a'),
+        'numeration': value[0].get('b'),
+        'title': value[0].get('c'),
+        'status': value[0].get('g'),
+        'preferred_name': utils.force_list(value[0].get('q')),
     }
-
-
-@hepnames.over('breadcrumb_title', '^100..')
-def breadcrumb_title(self, key, value):
-    """Title used in breadcrum and html title."""
-    if isinstance(value, list):
-        value = value[0]
-    return value.get('a')
 
 
 @hepnames2marc.over('100', '^name$')
@@ -193,69 +186,33 @@ def native_name2marc(self, key, value):
     }
 
 
-@hepnames.over('dates', '^100..')
-@utils.for_each_value
-def dates(self, key, value):
-    """Store birth and death dates."""
-    return value.get('d')
-
-
 @hepnames.over('private_current_emails', '^595..')
 def private_current_emails(self, key, value):
-    private_current_emails = []
-    for x in value:
-        if isinstance(x, dict):
-            if x.get('m'):
-                private_current_emails.append(x.get('m'))
-        else:
-            private_current_emails.append(x)
+    """Hidden information."""
+    value = utils.force_list(value)
+    private_current_emails = [x.get('m') for x in value if x.get('m')]
+    self.setdefault(
+        'private_old_emails',
+        [x.get('o') for x in value if x.get('o')]
+    )
+    self.setdefault(
+        '_private_note',
+        [x.get('a') for x in value if x.get('a')]
+    )
     return private_current_emails
 
 
-@hepnames2marc.over('595', '^private_current_emails$')
-def private_current_emails2marc(self, key, value):
-    value = utils.force_list(value)
-    out = []
-    for item in value:
-        if item:
-            out.append({
-                'm': item
-            })
+@hepnames2marc.over('595', '^(private_current_emails|_private_note|private_old_emails)$')
+@utils.for_each_value
+@utils.filter_values
+def hidden_notes2marc(self, key, value):
+    return {
+        'a': value if key == '_private_note' else None,
+        'm': value if key == 'private_current_emails' else None,
+        'o': value if key == 'private_old_emails' else None,
+    }
 
-    if '595' in self:
-        self['595'].extend(out)
-    else:
-        self['595'] = out
-    return self['595']
-
-
-@hepnames.over('private_old_emails', '^595..')
-def private_old_emails(self, key, value):
-    private_old_emails = []
-    for x in value:
-        if isinstance(x, dict):
-            if x.get('o'):
-                private_old_emails.append(x.get('o'))
-        else:
-            private_old_emails.append(x)
-    return private_old_emails
-
-
-@hepnames2marc.over('595', '^private_old_emails$')
-def private_old_emails2marc(self, key, value):
-    value = utils.force_list(value)
-    out = []
-    for item in value:
-        if item:
-            out.append({
-                'o': item
-            })
-
-    if '595' in self:
-        self['595'].extend(out)
-    else:
-        self['595'] = out
-    return self['595']
+setattr(hidden_notes2marc, '__extend__', True)
 
 
 @hepnames.over('positions', '^371..')
@@ -334,7 +291,7 @@ def positions2marc(self, key, value):
 
 @hepnames.over('field_categories', '^65017')
 def field_categories(self, key, value):
-
+    """Field categories."""
     def get_value(value):
         if isinstance(value, dict):
             name = value.get('a', '')
@@ -342,16 +299,13 @@ def field_categories(self, key, value):
             name = value
         return name
 
+    value = utils.force_list(value)
     field_categories = self.get('field_categories', [])
-    if isinstance(value, list):
-        for element in value:
-            if isinstance(element.get('a'), list):
-                for val in element.get('a'):
-                    field_categories.append(get_value(val))
-            else:
-                field_categories.append(get_value(element))
-    else:
-        field_categories.append(get_value(value))
+    for element in value:
+        if element.get('a'):
+            el = utils.force_list(element.get('a'))
+            for val in el:
+                field_categories.append(get_value(val))
     return field_categories
 
 
@@ -372,11 +326,12 @@ def source(self, key, value):
             'date_verified': value.get('d'),
         }
     source = self.get('source', [])
-    if isinstance(value, list):
-        for val in value:
-            source.append(get_value(val))
-    else:
-        source.append(get_value(value))
+
+    value = utils.force_list(value)
+
+    for val in value:
+        source.append(get_value(val))
+
     return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
         source)
 
@@ -417,35 +372,6 @@ def _public_note2marc(self, key, value):
     return {
         'i': value
     }
-
-
-@hepnames.over('_private_note', '^595..')
-def _private_note(self, key, value):
-    private_note = []
-    for x in value:
-        if isinstance(x, dict):
-            if x.get('a'):
-                private_note.append(x.get('a'))
-        else:
-            private_note.append(x)
-    return private_note
-
-
-@hepnames2marc.over('595', '^_private_note$')
-def _private_note2marc(self, key, value):
-    value = utils.force_list(value)
-    out = []
-    for item in value:
-        if item:
-            out.append({
-                'a': item
-            })
-
-    if '595' in self:
-        self['595'].extend(out)
-    else:
-        self['595'] = out
-    return self['595']
 
 
 @hepnames.over('_curators_note', '^667..')
@@ -517,14 +443,13 @@ def phd_advisors(self, key, value):
         "phd": "PhD",
         "master": "Master"
     }
-    if isinstance(value.get("g"), list):
+    degree_type = None
+    if value.get("g"):
+        degree_type_raw = utils.force_list(value.get('g'))[0]
         degree_type = degree_type_map.get(
-            value.get("g", "")[0].lower(),
-            value.get("g")[0])
-    else:
-        degree_type = degree_type_map.get(
-            value.get("g", "").lower(),
-            value.get("g"))
+            degree_type_raw.lower(),
+            degree_type_raw
+        )
     return {
         'id': value.get("i"),
         'name': value.get("a"),
