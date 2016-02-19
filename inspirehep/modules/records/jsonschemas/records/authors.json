@@ -56,7 +56,7 @@
             "description": "Contains past email addresses"
         },
         "native_name": {
-            "type": "string",
+            "type": "array",
             "description": "Stores name in native form."
         },
         "conferences": {
@@ -89,8 +89,13 @@
                             "VISITOR",
                             "PD",
                             "PHD",
+                            "PhD",
                             "MAS",
-                            "UG"
+                            "UG",
+                            "Diploma",
+                            "Bachelor",
+                            "smirnov@ictp.it"
+
                         ],
                         "type": "string"
                     },
@@ -158,7 +163,8 @@
                             "JACOW",
                             "GoogleScholar",
                             "RESEARCHERID",
-                            "SCOPUS"
+                            "SCOPUS",
+                            "WIKIPEDIA"
                         ],
                         "type": "string"
                     },
@@ -316,7 +322,7 @@
             "description": "Contains name information.",
             "properties": {
                 "preferred_name": {
-                    "type": "string"
+                    "type": "array"
                 },
                 "numeration": {
                     "enum": [

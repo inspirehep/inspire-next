@@ -40,10 +40,13 @@
                     "medium": {
                         "enum": [
                             "Print",
+                            "print",
                             "Online",
+                            "online",
                             "ebook",
                             "hardcover",
-                            "paperback"
+                            "paperback",
+                            "eBook"
                         ],
                         "type": "string",
                         "description": "FIXME: this really need to be an enum and cleaned up. What is Print?!",
@@ -97,10 +100,6 @@
         "abstracts": {
             "uniqueItems": true,
             "items": {
-                "required": [
-                    "source",
-                    "value"
-                ],
                 "type": "object",
                 "properties": {
                     "source": {
@@ -266,18 +265,7 @@
                 "type": "object",
                 "properties": {
                     "affiliation": {
-                        "type": "object",
-                        "properties": {
-                            "curated_relation": {
-                                "type": "boolean"
-                            },
-                            "recid": {
-                                "type": "integer"
-                            },
-                            "value": {
-                                "type": "string"
-                            }
-                        }
+                        "type": "string"
                     },
                     "recid": {
                         "type": "integer"
@@ -355,7 +343,7 @@
                         "type": "string"
                     },
                     "cds": {
-                        "type": "string"  
+                        "type": "string"
                     }
                 }
             },
@@ -377,7 +365,7 @@
                         "type": "string"
                     },
                     "cnum": {
-                        "type": "string"
+                        "type": "array"
                     },
                     "note": {
                         "type": "string"
@@ -419,7 +407,7 @@
                         "type": "string"
                     },
                     "isbn": {
-                        "type": "string"  
+                        "type": "string"
                     }
                 }
             },
@@ -432,10 +420,10 @@
                 "type": "object",
                 "properties": {
                     "publisher": {
-                        "type": "string"
+                        "type": "array"
                     },
                     "doi": {
-                        "pattern": "10\\.\\d+(\\.\\d+)?/.+",
+                        "pattern": "(10\\.\\d+(\\.\\d+)?/.+)|(\\w+\\:\\d+\\/\\d+)",
                         "type": "string"
                     },
                     "isbn": {
@@ -446,20 +434,20 @@
                         "type": "string"
                     },
                     "report_number": {
-                        "type": "string"
+                        "type": "array"
                     },
                     "url": {
-                        "type": "string",
+                        "type": "array",
                         "format": "url"
                     },
                     "collaboration": {
-                        "type": "string"
+                        "type": "array"
                     },
                     "title": {
-                        "type": "string"
+                        "type": "array"
                     },
                     "misc": {
-                        "type": "string"
+                        "type": "array"
                     },
                     "editors": {
                         "type": "string"
@@ -477,17 +465,17 @@
                         "type": "integer"
                     },
                     "raw_reference": {
-                        "type": "string"
+                        "type": "array"
                     },
                     "year": {
                         "type": "integer"
                     },
                     "authors": {
-                        "type": "string"
+                        "type": "array"
                     },
                     "journal_pubnote": {
                         "pattern": ".*,.*,.*",
-                        "type": "string"
+                        "type": "array"
                     }
                 }
             },
@@ -526,9 +514,6 @@
         "subject_terms": {
             "uniqueItems": true,
             "items": {
-                "required": [
-                    "term"
-                ],
                 "type": "object",
                 "properties": {
                     "source": {
@@ -618,7 +603,7 @@
                 "properties": {
                     "value": {
                         "type": "string",
-                        "pattern": "\\d{4}.\\d{4,5}|\\w+-\\+/\\d+"
+                        "pattern": "\\d{4}.\\d{4,5}|\\w+-\\w+/\\d+|\\w+/\\d+"
                     },
                     "categories": {
                         "items": {
@@ -681,7 +666,7 @@
                         "type": "string"
                     },
                     "version": {
-                        "type": "string"
+                        "type": "array"
                     },
                     "source": {
                         "type": "string"
@@ -692,34 +677,39 @@
             "type": "array"
         },
         "oai_pmh": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "set": {
+                        "type": "array"
+                    },
+                    "previous_set": {
+                        "type": "string"
+                    }
                 },
-                "set": {
-                    "type": "string"
-                },
-                "previous_set": {
-                    "type": "string"
-                }
+                "description": "Local OAI-PMH information"
             },
-            "description": "Local OAI-PMH information"
+            "type": "array"
         },
         "succeeding_entry": {
+            "items": {
             "type": "object",
-            "properties": {
-                "relationship_code": {
-                    "type": "string"
+                "properties": {
+                    "relationship_code": {
+                        "type": "string"
+                    },
+                    "recid": {
+                        "type": "string"
+                    },
+                    "isbn": {
+                        "type": "string"
+                    }
                 },
-                "recid": {
-                    "type": "string"
-                },
-                "isbn": {
-                    "type": "string"
-                }
-            },
-            "description": "Reference to previously merged records."
+                "description": "Reference to previously merged records."
+            }
         },
         "acquisition_source": {
             "type": "object",
@@ -744,7 +734,8 @@
                     "type": "string",
                     "description": "Special submission ID"
                 }
-            }
+            },
+            "type": "array"
         },
         "collaboration": {
             "uniqueItems": true,
@@ -867,7 +858,8 @@
                     "role": {
                         "enum": [
                             "",
-                            "ed."
+                            "ed.",
+                            "Technical Associate"
                         ],
                         "type": "string",
                         "description": "Role of the author within the paper. So far only Editor was captured.",
@@ -976,6 +968,7 @@
         "collections": {
             "minItems": 1,
             "items": {
+                "type": "object",
                 "properties": {
                     "primary": {
                         "type": "string"

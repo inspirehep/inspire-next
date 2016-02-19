@@ -24,4 +24,4 @@
 
 from ..schema import SchemaOverdo
 
-conferences = SchemaOverdo(schema="conferences-0.0.1.json")
+conferences = SchemaOverdo(schema="conferences.json")

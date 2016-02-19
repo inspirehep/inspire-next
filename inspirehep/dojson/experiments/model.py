@@ -24,4 +24,4 @@
 
 from ..schema import SchemaOverdo
 
-experiments = SchemaOverdo(schema="experiments-0.0.1.json")
+experiments = SchemaOverdo(schema="experiments.json")

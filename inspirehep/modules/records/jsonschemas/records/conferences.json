@@ -4,7 +4,7 @@
     "properties": {
         "acronym": {
             "title": "Conference acronym",
-            "type": "string"
+            "type": "array"
         },
         "alternative_titles": {
             "items": {
@@ -21,13 +21,13 @@
             "type": "string"
         },
         "cnum": {
-            "pattern": "C\\d\\d-\\d\\d(-\\d\\d)?(\\.\\d+)",
+            "pattern": "C\\d\\d-\\d\\d(-\\d\\d)?(\\.\\d+)?",
             "title": "Conference ID (CNUM)",
             "type": "string"
         },
         "contact_person": {
             "title": "Contact person",
-            "type": "string"
+            "type": "array"
         },
         "contact_email": {
             "format": "email",
@@ -37,22 +37,42 @@
         "field_code": {
             "items": {
                 "description": "FIXME: shall we normalize this to the usual arXiv?",
-                "enum": [
-                    "Astrophysics",
-                    "Phenomenology-HEP",
-                    "..."
-                ],
-                "title": "Field code",
-                "type": "string"
-            },
+                "properties": {
+                        "value": {
+                            "enum": [
+                                "Astrophysics",
+                                "Phenomenology-HEP",
+                                "hep-ex",
+                                "Math and Math Physics",
+                                "Experiment-HEP",
+                                "Computing",
+                                "hep-ph",
+                                "hep-th",
+                                "Gravitation and Cosmology",
+                                "Theory-HEP",
+                                "..."
+                            ],
+                            "title": "Field code",
+                            "type": "string"
+                        },
+                        "source": {
+                            "type": "string"        
+                        }
+                    },
+                    "type": "object"       
+                },
             "title": "Field codes",
             "type": "array",
             "uniqueItems": true
         },
         "keywords": {
-            "items": {
-                "title": "Free keyword",
-                "type": "string"
+            "properties": {
+                "value": {
+                    "type": "string"    
+                },
+                "source": {
+                    "type": "string"
+                }
             },
             "title": "Free keywords",
             "type": "array",
@@ -64,7 +84,7 @@
         },
         "note": {
             "title": "Note",
-            "type": "string"
+            "type": "array"
         },
         "opening_date": {
             "format": "date",
@@ -72,7 +92,7 @@
             "type": "string"
         },
         "place": {
-            "pattern": "\\.+, \\.+",
+            "pattern": ".+,.+,?.*",
             "title": "Conference place",
             "type": "string"
         },
@@ -84,15 +104,24 @@
         },
         "series": {
             "title": "Conference series",
-            "type": "string"
+            "type": "array"
         },
         "series_number": {
             "title": "Conference series number",
             "type": "integer"
         },
         "short_description": {
-            "title": "Short description",
-            "type": "string"
+            "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string"
+                    },
+                    "source": {
+                        "type": "string"
+                    }
+                },
+                "type":"array",
+                "title": "Short description"
         },
         "subtitle": {
             "title": "Conference subtitle",
@@ -110,7 +139,7 @@
         "url": {
             "format": "url",
             "title": "Conference URL",
-            "type": "string"
+            "type": "array"
         }
     },
     "title": "Conference",

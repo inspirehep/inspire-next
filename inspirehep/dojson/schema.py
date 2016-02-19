@@ -30,5 +30,8 @@ class SchemaOverdo(Overdo):
 
     def do(self, blob, **kwargs):
         output = super(SchemaOverdo, self).do(blob, **kwargs)
+        # FIXME Disabled until validation in invenio-records can be injected
+        # to say that array type is list and tuple
+        # types={'array': (list, tuple)}
         output['$schema'] = self.schema
         return output

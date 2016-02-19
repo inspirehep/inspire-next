@@ -24,4 +24,4 @@
 
 from ..schema import SchemaOverdo
 
-journals = SchemaOverdo(schema="journals-0.0.1.json")
+journals = SchemaOverdo(schema="journals.json")

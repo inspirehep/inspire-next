@@ -26,5 +26,5 @@ from dojson import Overdo
 
 from ..schema import SchemaOverdo
 
-hepnames = SchemaOverdo(schema="hepnames-0.0.1.json")
+hepnames = SchemaOverdo(schema="authors.json")
 hepnames2marc = Overdo()
