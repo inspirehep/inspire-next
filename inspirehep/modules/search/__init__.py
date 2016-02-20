@@ -21,3 +21,11 @@
 # In applying this license, CERN does not
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
+
+"""INSPIRE search."""
+
+from __future__ import absolute_import, print_function
+
+from .ext import INSPIRESearch
+
+__all__ = ('INSPIRESearch', )

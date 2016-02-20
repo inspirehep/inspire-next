@@ -202,9 +202,6 @@ setup(
         'console_scripts': [
             'inspirehep = inspirehep.cli:cli',
         ],
-        'invenio_base.blueprints': [
-            'inspirehep_search = inspirehep.modules.search.views:blueprint',
-        ],
         'dojson.cli.rule': [
             'hep = inspirehep.dojson.hep:hep',
             'hep2marc = inspirehep.dojson.hep:hep2marc',
@@ -214,6 +211,7 @@ setup(
         'invenio_base.apps': [
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_migrator = inspirehep.modules.migrator:INSPIREMigrator',
+            'inspire_search = inspirehep.modules.search:INSPIRESearch',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',

@@ -387,27 +387,5 @@ SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
     "Data": "records-data"
 }
 
+# FIXME replace with invenio-search equal setting
 SEARCH_ELASTIC_DEFAULT_INDEX = 'records-hep'
-
-INSPIRE_PATH = pkg_resources.resource_filename("inspirehep", "")
-
-JSON_SCHEMA_PATHS = [
-    pkg_resources.resource_filename(
-        "inspirehep", "modules/records/jsonschemas/records/hep-0.0.1.json")
-]
-ELASTIC_MAPPINGS_PATHS = [
-    pkg_resources.resource_filename(
-        "inspirehep", "modules/records/mappings/records/hep.json"),
-    pkg_resources.resource_filename(
-        "inspirehep", "modules/records/mappings/records/conferences.json"),
-    pkg_resources.resource_filename(
-        "inspirehep", "modules/records/mappings/records/experiments.json"),
-    pkg_resources.resource_filename(
-        "inspirehep", "modules/records/mappings/records/authors.json"),
-    pkg_resources.resource_filename(
-        "inspirehep", "modules/records/mappings/records/institutions.json"),
-    pkg_resources.resource_filename(
-        "inspirehep", "modules/records/mappings/records/jobs.json"),
-    pkg_resources.resource_filename(
-        "inspirehep", "modules/records/mappings/records/journals.json")
-]

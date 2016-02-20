@@ -69,6 +69,9 @@ def search():
     index = current_app.config[
         'SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING'
     ].get(cc, current_app.config['SEARCH_ELASTIC_DEFAULT_INDEX'])
+
+    # import ipdb; ipdb.set_trace()
+
     response = Query(p)
     response = Results(response.body, index=index, doc_type=cc)
 
