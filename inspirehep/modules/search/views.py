@@ -72,12 +72,12 @@ def search():
     ].get(cc, current_app.config['SEARCH_ELASTIC_DEFAULT_INDEX'])
 
     response = InspireQuery(p)
-    response = Results(response.body, index=index, doc_type=cc)
+    response = Results(response.body, index=index, doc_type=index.split('-')[-1])
 
     response.body.update({
         'size': int(rg),
-        'from': jrec - 1,
-        'aggs': current_app.config['SEARCH_ELASTIC_AGGREGATIONS'][cc]
+        'from': jrec-1,
+        'aggs': current_app.config['SEARCH_ELASTIC_AGGREGATIONS'].get(cc, {})
     })
 
     if sf in current_app.config['SEARCH_ELASTIC_SORT_FIELDS']:

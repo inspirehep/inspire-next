@@ -375,16 +375,16 @@ SEARCH_ELASTIC_SORT_FIELDS = ["earliest_date", "citation_count"]
 
 
 SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
-    "HEP": "records-hep",
-    "CDF Internal Notes": "records-hep",
-    "Conferences": "records-conferences",
-    "Institutions": "records-institutions",
-    "Experiments": "records-experiments",
-    "Jobs": "records-jobs",
-    "Jobs Hidden": "records-jobs",
-    "Journals": "records-journals",
-    "HepNames": "records-authors",
-    "Data": "records-data"
+    "hep": "records-hep",
+    "cdf internal notes": "records-hep",
+    "conferences": "records-conferences",
+    "institutions": "records-institutions",
+    "experiments": "records-experiments",
+    "jobs": "records-jobs",
+    "jobs hidden": "records-jobs",
+    "journals": "records-journals",
+    "hepnames": "records-authors",
+    "data": "records-data"
 }
 
 # FIXME replace with invenio-search equal setting
