@@ -28,7 +28,7 @@
       <div class="col-md-12">
         <h4 class="custom-h">
             <a href="{{ url_for('record.metadata', recid=record['control_number']) }}">
-              {{ record.get('name.preferred_name', '') }} 
+              {{ record.get('name.value', '') }} 
               {% if record['native_name']%}
                 ({{ record['native_name']}})
               {% endif %}
