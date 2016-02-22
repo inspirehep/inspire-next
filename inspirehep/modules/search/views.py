@@ -46,12 +46,12 @@ from .results import Results
 
 blueprint = Blueprint('inspirehep_search',
                       __name__,
-                      url_prefix='/search',
+                      url_prefix='',
                       template_folder='templates',
                       static_folder='static')
 
 
-@blueprint.route('/', methods=['GET', 'POST'])
+@blueprint.route('/search', methods=['GET', 'POST'])
 def search():
     """Main search view."""
     # Get all request arguments
