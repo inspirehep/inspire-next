@@ -34,6 +34,7 @@ readme = open('README.rst').read()
 
 install_requires = [
     'elasticsearch>=2.2.0,<3.0.0',  # Not on Hepdata overlay - required by some other library ?
+    'Flask-Gravatar>=0.4.2',
     'HarvestingKit>=0.6.2',
     'plotextractor>=0.1.2',
     'refextract>=0.1.0',

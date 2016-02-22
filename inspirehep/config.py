@@ -72,6 +72,7 @@ SECURITY_RESET_SALT = "CHANGE_ME"
 
 
 SEARCH_UI_BASE_TEMPLATE = 'inspirehep_theme/page.html'
+USERPROFILES_SETTINGS_TEMPLATE = 'inspirehep_theme/accounts/settings/profile.html'
 
 RECORDS_REST_SORT_OPTIONS = dict(
     records=dict(
