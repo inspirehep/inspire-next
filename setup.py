@@ -81,6 +81,7 @@ install_requires = [
     'dojson==1.0.1',
     'Flask-Breadcrumbs>=0.3.0',
     'Flask-Script>=2.0.5',
+    'jsmin',
     # 'jsonref'
 ]
 
