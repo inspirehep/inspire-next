@@ -38,11 +38,12 @@ from flask import (
     render_template
 )
 
-from invenio_search.api import Query
 from invenio_search.walkers.elasticsearch import ElasticSearchDSL
 
 from .pagination import Pagination
 from .results import Results
+from .query import InspireQuery
+
 
 blueprint = Blueprint('inspirehep_search',
                       __name__,
@@ -70,14 +71,12 @@ def search():
         'SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING'
     ].get(cc, current_app.config['SEARCH_ELASTIC_DEFAULT_INDEX'])
 
-    # import ipdb; ipdb.set_trace()
-
-    response = Query(p)
+    response = InspireQuery(p)
     response = Results(response.body, index=index, doc_type=cc)
 
     response.body.update({
         'size': int(rg),
-        'from': jrec-1,
+        'from': jrec - 1,
         'aggs': current_app.config['SEARCH_ELASTIC_AGGREGATIONS'][cc]
     })
 
@@ -94,7 +93,7 @@ def search():
 
     filtered_facets = ''
     if 'post_filter' in request.values and request.values['post_filter']:
-        parsed_post_filter = Query(request.values.get('post_filter'))
+        parsed_post_filter = InspireQuery(request.values.get('post_filter'))
         post_filter = parsed_post_filter.query.accept(
             ElasticSearchDSL()
         )

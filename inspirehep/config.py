@@ -175,7 +175,7 @@ SEARCH_QUERY_WALKERS = ['invenio_query_parser.contrib.spires.walkers.pypeg_to_as
 
 SEARCH_WALKERS = [
     'invenio_query_parser.contrib.spires.walkers.spires_to_invenio:SpiresToInvenio',
-    'invenio_search.walkers.elasticsearch:ElasticSearchDSL'
+    'inspirehep.modules.search.walkers.elasticsearch:ElasticSearchDSL'
 ]
 
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
