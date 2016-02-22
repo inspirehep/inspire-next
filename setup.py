@@ -69,6 +69,7 @@ install_requires = [
     'invenio-indexer',
     'invenio-logging',
     'invenio-mail',
+    'invenio-oauthclient',
     'invenio-pidstore',
     'invenio-records',
     'invenio-rest',
