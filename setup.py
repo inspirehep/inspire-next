@@ -79,6 +79,9 @@ install_requires = [
     'invenio-records-ui',
     'invenio-userprofiles',
     'invenio>=3.0.0a1,<3.1.0',
+    'dojson==1.0.1',
+    'Flask-Breadcrumbs>=0.3.0',
+    'Flask-Script >= 2.0.5',
     # 'jsonref'
 ]
 
