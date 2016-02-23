@@ -1,0 +1,68 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of INSPIRE.
+# Copyright (C) 2016 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+addons:
+  postgresql: "9.4"
+  apt:
+    packages:
+      - nodejs
+
+notifications:
+  email: false
+
+sudo: false
+
+language: python
+
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/.nvm
+
+services:
+  - postgresql
+  - elasticsearch
+  - rabbitmq
+  - redis
+
+env:
+  - REQUIREMENTS=devel SQLALCHEMY_DATABASE_URL="postgresql+psycopg2://postgres@localhost:5432/inspirehep"
+
+python:
+  - "2.7"
+
+before_install:
+  - "travis_retry pip install --upgrade pip"
+  - "travis_retry pip install coveralls"
+  - "npm update && npm install --silent -g node-sass clean-css uglify-js requirejs"
+
+install:
+  - "travis_retry pip install -r requirements.txt --pre"
+  - "CWD=$(pwd) && inspirehep npm && cd ${VIRTUAL_ENV}/var/inspirehep-instance/static && npm install && cd ${CWD}"
+  - "inspirehep collect -v"
+  - "inspirehep assets build"
+
+before_script:
+  - sleep 10  # Allow ES to start.
+
+script:
+  - "py.test tests"
+
+after_success:
+  - coveralls
