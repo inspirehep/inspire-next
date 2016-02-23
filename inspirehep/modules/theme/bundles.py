@@ -31,12 +31,12 @@ js = Bundle(
         filters='uglifyjs',
         npm={
             "almond": "~0.3.1",
-            "hogan": "latest",
-            "requirejs-hogan-plugin": "latest",
+            "hogan.js": "~3.0.2",
+            "requirejs-hogan-plugin": "~0.3.1",
             "jquery": "~1.9.1",
-            "toastr": "latest",
+            "toastr": "~2.1.2",
             # "jQuery-menu-aim": "latest", # Not on npm :(
-            "clipboard": "latest",
+            "clipboard": "~1.5.8",
             "flightjs": "~1.5.0"
         }
     ),
