@@ -443,8 +443,9 @@ def number_of_search_results(query, collection_name):
                 "number_of_hits"
             ]
     # Replay the Query to get total number of hits
-    return len(Query("%s" % (query,)).
-               search(collection=collection_name))
+    return len(Query('{query} AND collection:"{collection}"'.format(
+        {'query': query, 'collection': collection_name}
+    )))
 
 
 @blueprint.app_template_filter()
