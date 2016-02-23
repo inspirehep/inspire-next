@@ -37,13 +37,13 @@ require.config({
     hogan: "node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.amd",
     text: "node_modules/requirejs-hogan-plugin/text",
     flight: "node_modules/flightjs/build/flight",
-    // typeahead: "vendors/typeahead.js/dist/typeahead.bundle",
+    typeahead: "node_modules/typeahead.js/dist/typeahead.bundle",
     // "bootstrap-select": "js/bootstrap-select",
     // "jquery-caret": "vendors/jquery.caret/dist/jquery.caret-1.5.2",
     // "jquery-tokeninput": "vendors/jquery-tokeninput/src/jquery.tokeninput",
     // "jquery-jeditable": "vendors/jquery.jeditable/index",
-    // "moment": "vendors/moment/moment",
-    // "bootstrap-datetimepicker": "vendors/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker",
+    "moment": "node_modules/moment/moment",
+    "bootstrap-datetimepicker": "node_modules/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker",
     // "bootstrap-tagsinput": "vendors/bootstrap-tagsinput/src/bootstrap-tagsinput",
     // bootstrap: "vendors/bootstrap/dist/js/bootstrap",
     // prism: "vendors/prism/prism",
@@ -61,7 +61,7 @@ require.config({
     // "ckeditor-core": "vendors/ckeditor/ckeditor",
     // "ckeditor-jquery": "vendors/ckeditor/adapters/jquery",
     // // INSPIRE
-    // "bootstrap-multiselect": "vendors/bootstrap-multiselect/dist/js/bootstrap-multiselect",
+    "bootstrap-multiselect": "node_modules/bootstrap-multiselect/dist/js/bootstrap-multiselect",
     // "readmore": "vendors/readmore/readmore",
     // "bucketsjs": "vendors/bucketsjs/dist/buckets",
     "feedback": "js/feedback/feedback",
@@ -78,10 +78,7 @@ require.config({
     },
     bootstrap: {
       deps: ["jquery"]
-    }
-    // jquery: {
-    //   exports: "$"
-    // },
+    },
     // d3: {
     //   exports: "d3"
     // },
@@ -96,10 +93,10 @@ require.config({
     // "jqueryui-timepicker/i18n/jquery-ui-timepicker-addon-i18n": {
     //   deps: ["jqueryui-timepicker/jquery-ui-timepicker-addon"]
     // },
-    // typeahead: {
-    //   deps: ["jquery"],
-    //   exports: "Bloodhound"
-    // },
+    typeahead: {
+      deps: ["jquery"],
+      exports: "Bloodhound"
+    },
     // "bootstrap-select": {
     //   deps: ["jquery"],
     //   exports: "$.fn.buttonSelect"
@@ -120,13 +117,10 @@ require.config({
     //   deps: ["jquery"],
     //   exports: "$.fn.tagsinput"
     // },
-    // bootstrap: {
-    //   deps: ["jquery"]
-    // },
-    // "bootstrap-datetimepicker": {
-    //   deps: ["jquery", "bootstrap", "moment"],
-    //   exports: "$.fn.datetimepicker"
-    // },
+    "bootstrap-datetimepicker": {
+      deps: ["jquery", "bootstrap", "moment"],
+      exports: "$.fn.datetimepicker"
+    },
     // prism: {
     //   exports: "Prism"
     // },
@@ -174,14 +168,14 @@ require.config({
     //   deps: ["jquery", "ckeditor-core"]
     // },
     // // INSPIRE
-    // "bootstrap-multiselect": {
-    //   deps: ["jquery"],
-    //   exports: "$.fn.multiselect"
-    // },
+    "bootstrap-multiselect": {
+      deps: ["jquery"],
+      exports: "$.fn.multiselect"
+    }
     // "readmore": {
     //   deps: ["jquery"],
     //   exports: "$.fn.readmore"
-    // },
+    // }
     // "html2canvas": {
     //   deps: ["jquery"]
     // },

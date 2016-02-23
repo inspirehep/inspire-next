@@ -106,7 +106,7 @@ def oai_pmh(self, key, value):
     """Local OAI-PMH record information."""
     return {
         'id': value.get('o'),
-        'set': utils.force_list(value.get('p')),
+        'set': value.get('p'),
         'previous_set': value.get('q'),
     }
 
