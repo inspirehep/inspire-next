@@ -205,10 +205,12 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
 
 SEARCH_QUERY_PARSER = 'invenio_query_parser.contrib.spires.parser:Main'
 
-SEARCH_QUERY_WALKERS = ['invenio_query_parser.contrib.spires.walkers.pypeg_to_ast:PypegConverter']
+SEARCH_QUERY_WALKERS = [
+    'invenio_query_parser.contrib.spires.walkers.pypeg_to_ast:PypegConverter',
+    'invenio_query_parser.contrib.spires.walkers.spires_to_invenio:SpiresToInvenio'
+]
 
 SEARCH_WALKERS = [
-    'invenio_query_parser.contrib.spires.walkers.spires_to_invenio:SpiresToInvenio',
     'inspirehep.modules.search.walkers.elasticsearch:ElasticSearchDSL'
 ]
 
@@ -223,7 +225,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
                     ],
     "abstract": ["abstracts.value"],
     "collaboration": ["collaboration.value", "collaboration.raw^2"],
-    "collection": ["_collections"],
+    "collection": ["collections.primary"],
     "doi": ["dois.value"],
     "doc_type": ["facet_inspire_doc_type"],
     "formulas": ["facet_formulas"],
