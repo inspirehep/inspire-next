@@ -81,6 +81,7 @@ define(
         });
       }
 
+      
       this.onExportSelectAll = function(ev) {
         var minimum_page_limit = $(".select-numpages option:selected").eq(0).text();
         var EXPORT_LIMIT = this.attr.EXPORT_LIMIT;
@@ -92,22 +93,22 @@ define(
             $(this).prop('checked', true);
             sList.push($(this).attr("id"));
           });
-
-          if (parseInt($('.total-results').eq(0).text()) > parseInt(minimum_page_limit)) {
-            if (parseInt($('.total-results').eq(0).text()) > EXPORT_LIMIT) {
-              $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
-                '<div class="panel-body" >You have selected ' + sList.length + ' records of this page. <a class="pointer" id="select-all-records">' +
-                'Select ' + EXPORT_LIMIT + ' records (Maximum limit).</a></div></div>');
-            } else {
-              $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
-                '<div class="panel-body" >You have selected ' + sList.length + ' records of this page. <a class="pointer" id="select-all-records">' +
-                'Select all ' + $('.total-results').eq(0).text() + ' results.</a></div></div>');
-            }
-          } else {
-            $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
-              '<div class="panel-body" >You have selected ' + sList.length + ' records of this page.</div></div>');
-          }
-          this.on('#select-all-records', "click", this.onSelectAllRecords);
+          // NOTE Uncomment when of= is available
+          // if (parseInt($('.total-results').eq(0).text()) > parseInt(minimum_page_limit)) {
+          //   if (parseInt($('.total-results').eq(0).text()) > EXPORT_LIMIT) {
+          //     $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
+          //       '<div class="panel-body" >You have selected ' + sList.length + ' records of this page. <a class="pointer" id="select-all-records">' +
+          //       'Select ' + EXPORT_LIMIT + ' records (Maximum limit).</a></div></div>');
+          //   } else {
+          //     $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
+          //       '<div class="panel-body" >You have selected ' + sList.length + ' records of this page. <a class="pointer" id="select-all-records">' +
+          //       'Select all ' + $('.total-results').eq(0).text() + ' results.</a></div></div>');
+          //   }
+          // } else {
+          //   $('#results-control-panel').after('<div class="panel panel-default" id="info-message">' +
+          //     '<div class="panel-body" >You have selected ' + sList.length + ' records of this page.</div></div>');
+          // }
+          // this.on('#select-all-records', "click", this.onSelectAllRecords);
         } else {
           $('#cite-all-format').addClass('disabled');
           $('.checkbox-results').each(function() {
@@ -119,28 +120,31 @@ define(
         }
       }
 
-      this.onSelectAllRecords = function(ev) {
-        var that = this;
-        var limit = $('.total-results').eq(0).text();
-        $('#info-message').remove();
-        $('#spinner-download').show();
-        $('#cite-all-format').text('Processing...');
-        $('#cite-all-format').addClass('disabled');
-        if (parseInt($('.total-results').eq(0).text()) > this.attr.EXPORT_LIMIT) {
-          limit = this.attr.EXPORT_LIMIT;
-        }
-        $.get("/search?of=id&rg=" + limit, function(data, status) {
-          if (status == 'success') {
-            $('#spinner-download').hide();
-            $('#cite-all-format').removeClass('disabled');
-            $('#cite-all-format').html('<i class="fa fa-quote-right"></i> Cite all selected records');
-            $('#results-control-panel').after('<div class="alert alert-warning" id="alert-selection" role="alert">' +
-              data.length + ' records have been selected.<a class="pointer" id="undo-selection"> Undo selection.</a></div>');
-            $('#undo-selection').on("click", $.proxy(that.onUndoSelection, that));
-            sList = data;
-          }
-        });
-      }
+      // NOTE Uncomment when of= is available
+
+      // this.onSelectAllRecords = function(ev) {
+      //   var that = this;
+      //   var limit = $('.total-results').eq(0).text();
+      //   $('#info-message').remove();
+      //   $('#spinner-download').show();
+      //   $('#cite-all-format').text('Processing...');
+      //   $('#cite-all-format').addClass('disabled');
+      //   if (parseInt($('.total-results').eq(0).text()) > this.attr.EXPORT_LIMIT) {
+      //     limit = this.attr.EXPORT_LIMIT;
+      //   }
+
+        // $.get("/search?of=id&rg=" + limit, function(data, status) {
+        //   if (status == 'success') {
+        //     $('#spinner-download').hide();
+        //     $('#cite-all-format').removeClass('disabled');
+        //     $('#cite-all-format').html('<i class="fa fa-quote-right"></i> Cite all selected records');
+        //     $('#results-control-panel').after('<div class="alert alert-warning" id="alert-selection" role="alert">' +
+        //       data.length + ' records have been selected.<a class="pointer" id="undo-selection"> Undo selection.</a></div>');
+        //     $('#undo-selection').on("click", $.proxy(that.onUndoSelection, that));
+        //     sList = data;
+        //   }
+        // });
+      // }
 
       this.onUndoSelection = function(ev) {
         sList = [];

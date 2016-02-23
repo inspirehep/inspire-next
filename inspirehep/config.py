@@ -425,6 +425,17 @@ RECORDS_REST_ENDPOINTS = dict(
     ),
 )
 
+# INSPIRE_LEGACY_FORMATS = {
+#     'hb': 'text/html',
+#     'hcv': 'text/html',
+#     'hd': 'text/html',
+#     'hp': 'text/html',
+#     'htcv': 'text/html',
+#     'hx': 'text/html',
+#     'tlcv': 'text/html',
+#     'xm': 'application/marcxml+xml',
+# }
+
 RECORDS_UI_ENDPOINTS = dict(
     literature=dict(
         pid_type='literature',

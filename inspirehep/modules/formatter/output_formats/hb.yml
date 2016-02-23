@@ -1,0 +1,12 @@
+content_type: text/html
+default: Inspire_Default_HTML_brief.tpl
+description: HTML brief output format, used for search results pages.
+name: HTML brief
+rules:
+- {field: collections.primary, template: Author_HTML_brief.tpl, value: 'HEPNAMES'}
+- {field: collections.primary, template: Conference_HTML_brief.tpl, value: 'CONFERENCES'}
+- {field: collections.primary, template: Journal_HTML_brief.tpl, value: 'JOURNALS'}
+- {field: collections.primary, template: Institution_HTML_brief.tpl, value: 'INSTITUTION'}
+- {field: collections.primary, template: Job_HTML_brief.tpl, value: 'JOB'}
+- {field: collections.primary, template: Experiment_HTML_brief.tpl, value: 'EXPERIMENT'}
+visibility: 0
