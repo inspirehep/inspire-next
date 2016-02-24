@@ -46,7 +46,7 @@ from inspirehep.dojson.utils import strip_empty_values
 
 from celery import shared_task
 
-#from invenio_ext.es import es
+# from invenio_ext.es import es
 from invenio_db import db
 
 from invenio_records import Record
