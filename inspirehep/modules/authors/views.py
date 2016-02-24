@@ -70,7 +70,7 @@ def convert_for_form(data):
             data["given_names"] = ""
         data["family_name"] = data["name"].get("value").split(",")[0].strip()
         data["display_name"] = data["name"].get("preferred_name")
-        data["status"] = data["name"].get("status").lower()
+        data["status"] = data["name"].get("status", "").lower()
     if "urls" in data:
         data["websites"] = []
         for url in data["urls"]:

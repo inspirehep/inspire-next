@@ -88,7 +88,7 @@ def name(self, key, value):
         'numeration': value[0].get('b'),
         'title': value[0].get('c'),
         'status': value[0].get('g'),
-        'preferred_name': utils.force_list(value[0].get('q')),
+        'preferred_name': value[0].get('q'),
     }
 
 
