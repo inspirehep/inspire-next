@@ -71,3 +71,4 @@ class INSPIRETheme(object):
         # Set JS bundles to exclude for purpose of avoiding double jQuery etc.
         # when other modules are building their JS bundles.
         config.setdefault("THEME_BASE_BUNDLES_EXCLUDE_JS", [js])
+        config.setdefault("BASE_TEMPLATE", "inspirehep_theme/page.html")
