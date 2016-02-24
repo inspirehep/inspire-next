@@ -201,7 +201,9 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
 #
 
 
-######### From here onwards is the backported search configuration ###########
+# ######################################################## #
+# From here onwards is the backported search configuration #
+# ######################################################## #
 
 SEARCH_QUERY_PARSER = 'invenio_query_parser.contrib.spires.parser:Main'
 
