@@ -43,6 +43,6 @@ class author_approval(object):
         }
 
     @staticmethod
-    def resolve(bwo):
+    def resolve(bwo, data):
         """Resolve the action taken in the approval action."""
         pass

@@ -22,7 +22,7 @@
 
 """Approval action for INSPIRE arXiv harvesting."""
 
-from flask import render_template, request, url_for
+from flask import render_template, url_for
 
 from flask.ext.login import current_user
 
@@ -57,12 +57,12 @@ class hep_approval(object):
         }
 
     @staticmethod
-    def resolve(bwo):
+    def resolve(bwo, data):
         """Resolve the action taken in the approval action."""
         from invenio_workflows.models import ObjectVersion
         from inspirehep.modules.audit.api import log_prediction_action
 
-        value = request.form.get("value", "")
+        value = data.get("value", "")
 
         # Audit logging
         results = bwo.get_tasks_results()
@@ -76,13 +76,13 @@ class hep_approval(object):
             user_action=value,
         )
 
-        upload_pdf = request.form.get("pdf_submission", False)
+        upload_pdf = data.get("pdf_submission", False)
 
         bwo.remove_action()
         extra_data = bwo.get_extra_data()
         extra_data["approved"] = value in ('accept', 'accept_core')
         extra_data["core"] = value == "accept_core"
-        extra_data["reason"] = request.form.get("text", "")
+        extra_data["reason"] = data.get("text", "")
         extra_data["pdf_upload"] = True if upload_pdf == "true" else False
         bwo.set_extra_data(extra_data)
         bwo.save(version=ObjectVersion.WAITING)
