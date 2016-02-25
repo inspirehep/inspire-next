@@ -22,52 +22,36 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""Invenio standard theme."""
+"""INSPIRE module to manage forms (WTForms)."""
 
 from __future__ import absolute_import, print_function
 
-
-from flask_breadcrumbs import Breadcrumbs
-from flask_menu import Menu
-
 from .views import blueprint
 
+# from . import config
 
-class INSPIRETheme(object):
-    """Invenio theme extension."""
+
+class INSPIREForms(object):
+    """INSPIRE forms extension."""
 
     def __init__(self, app=None, **kwargs):
         """Extension initialization."""
-        self.menu_ext = Menu()
-        self.menu = None
-        self.breadcrumbs = Breadcrumbs()
-
         if app:
             self.init_app(app, **kwargs)
 
     def init_app(self, app, assets=None, **kwargs):
         """Initialize application object."""
-        self.init_config(app.config)
-
-        # Initialize extensions
-        self.menu_ext.init_app(app)
-        self.menu = app.extensions['menu']
-        self.breadcrumbs.init_app(app)
-
+        self.init_config(app)
         app.register_blueprint(blueprint)
+        app.extensions['inspire-forms'] = self
 
-        # Register errors handlers.
-        # app.register_error_handler(401, unauthorized)
-        # app.register_error_handler(403, insufficient_permissions)
-        # app.register_error_handler(404, page_not_found)
-        # app.register_error_handler(500, internal_error)
-
-        # Save reference to self on object
-        app.extensions['inspire-theme'] = self
-
-    def init_config(self, config):
+    def init_config(self, app):
         """Initialize configuration."""
-        from .bundles import js
-        # Set JS bundles to exclude for purpose of avoiding double jQuery etc.
-        # when other modules are building their JS bundles.
-        config.setdefault("THEME_BASE_BUNDLES_EXCLUDE_JS", [js])
+        # for k in dir(config):
+        #     if k.startswith('AUTHORS_'):
+        #         app.config.setdefault(k, getattr(config, k))
+
+        # # URL used to prefill author update form
+        # app.config.setdefault("AUTHORS_UPDATE_BASE_URL",
+        #                       app.config["SERVER_NAME"])
+        pass

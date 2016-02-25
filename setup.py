@@ -219,10 +219,16 @@ setup(
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_migrator = inspirehep.modules.migrator:INSPIREMigrator',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
+            'inspire_authors = inspirehep.modules.authors:INSPIREAuthors',
+            'inspire_forms = inspirehep.modules.forms:INSPIREForms',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
-            'inspirehep_theme_js = inspirehep.modules.theme.bundles:js'
+            'inspirehep_theme_js = inspirehep.modules.theme.bundles:js',
+            'almondjs = inspirehep.modules.theme.bundles:almondjs',
+            'inspirehep_forms_css = inspirehep.modules.forms.bundles:css',
+            'inspirehep_forms_js = inspirehep.modules.forms.bundles:js',
+            'inspirehep_author_update_css = inspirehep.modules.authors.bundles:css',
         ],
         'invenio_jsonschemas.schemas': [
             'inspire_records = inspirehep.modules.records.jsonschemas',
