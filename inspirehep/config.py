@@ -139,6 +139,10 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
     consumer_secret="CHANGE_ME",
 )
 
+# Feedback
+CFG_SITE_SUPPORT_EMAIL = "admin@inspirehep.net"
+INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
+
 
 # from invenio_records_rest.facets import terms_filter
 # SEARCH_UI_SEARCH_API='/api/records/'
