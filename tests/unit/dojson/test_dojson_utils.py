@@ -28,7 +28,6 @@ def test_get_record_ref_with_record_type():
     assert utils.get_record_ref(None, 'record_type') == None
 
 
-
 def test_get_record_ref_default():
     ref = utils.get_record_ref(123)
 
@@ -42,4 +41,26 @@ def test_get_recid_from_ref():
     assert utils.get_recid_from_ref({'bad_key': 'some_val'}) == None
     assert utils.get_recid_from_ref({'$ref': 'a_string'}) == None
     assert utils.get_recid_from_ref({'$ref': 'http://bad_url'}) == None
-    assert utils.get_recid_from_ref({'$ref': 'http://good_url/123'}) == 123
+
+
+def test_remove_duplicates_from_list_preserving_order():
+    """Remove duplicates from a list preserving the order."""
+    list_with_duplicates = ['foo', 'bar', 'foo']
+
+    expected = ['foo', 'bar']
+    result = utils.remove_duplicates_from_list(list_with_duplicates)
+
+    assert expected == result
+
+def test_remove_duplicates_from_list_of_dicts_preserving_order():
+    """Remove duplicates from a list of dictionaries preserving the order."""
+    list_of_dicts_with_duplicates = [
+        {'a': 123, 'b': 1234},
+        {'a': 3222, 'b': 1234},
+        {'a': 123, 'b': 1234}
+    ]
+
+    expected = [{'a': 123, 'b': 1234}, {'a': 3222, 'b': 1234}]
+    result = utils.remove_duplicates_from_list_of_dicts(list_of_dicts_with_duplicates)
+
+    assert expected == result
