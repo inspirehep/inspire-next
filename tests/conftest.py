@@ -17,6 +17,11 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
+"""Pytest configuration."""
+
+import os
+import shutil
+import tempfile
 import pytest
 import six
 
@@ -46,6 +51,32 @@ def email_app(request):
     FlaskCeleryExt(app)
 
     InvenioMail(app, StringIO())
+
+    with app.app_context():
+        yield app
+
+
+@pytest.yield_fixture(scope='session', autouse=True)
+def app(request):
+    """Flask application fixture."""
+    instance_path = tempfile.mkdtemp()
+
+    os.environ.update(
+        APP_INSTANCE_PATH=os.environ.get(
+            'INSTANCE_PATH', instance_path),
+    )
+
+    app = create_app(
+        DEBUG_TB_ENABLED=False,
+        SQLALCHEMY_DATABASE_URI=os.environ.get(
+            'SQLALCHEMY_DATABASE_URI', 'sqlite:///test.db'),
+        TESTING=True,
+    )
+
+    def teardown():
+        shutil.rmtree(instance_path)
+
+    request.addfinalizer(teardown)
 
     with app.app_context():
         yield app
