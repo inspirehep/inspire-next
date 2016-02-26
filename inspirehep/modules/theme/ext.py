@@ -44,6 +44,7 @@ class INSPIRETheme(object):
 
         if app:
             self.init_app(app, **kwargs)
+            self.setup_app(app)
 
     def init_app(self, app, assets=None, **kwargs):
         """Initialize application object."""
@@ -72,3 +73,16 @@ class INSPIRETheme(object):
         # when other modules are building their JS bundles.
         config.setdefault("THEME_BASE_BUNDLES_EXCLUDE_JS", [js])
         config.setdefault("BASE_TEMPLATE", "inspirehep_theme/page.html")
+
+    def setup_app(self, app):
+        """Initialize Gravatar extension."""
+        from flask_gravatar import Gravatar
+        gravatar = Gravatar(app,
+                            size=app.config.get('GRAVATAR_SIZE', 100),
+                            rating=app.config.get('GRAVATAR_RATING', 'g'),
+                            default=app.config.get(
+                                'GRAVATAR_DEFAULT', 'retro'),
+                            force_default=False,
+                            force_lower=False)
+        del gravatar
+        return app

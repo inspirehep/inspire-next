@@ -40,6 +40,7 @@ from flask_mail import Message
 
 from invenio_mail.tasks import send_email
 
+from flask.ext.menu import current_menu
 
 blueprint = Blueprint(
     'inspirehep_theme',
@@ -153,3 +154,20 @@ def postfeedback():
         return jsonify(success=False), 500
     else:
         return jsonify(success=True)
+
+
+@blueprint.before_app_first_request
+def register_menu_items():
+    """Hack to remove children of Settings menu"""
+    def menu_fixup():
+        item = current_menu.submenu("settings.change_password")
+        item.hide()
+        item = current_menu.submenu("settings.groups")
+        item.hide()
+        item = current_menu.submenu("settings.workflows")
+        item.hide()
+        item = current_menu.submenu("settings.applications")
+        item.hide()
+        item = current_menu.submenu("settings.oauthclient")
+        item.hide()
+    current_app.before_first_request_funcs.append(menu_fixup)
