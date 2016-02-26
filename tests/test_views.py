@@ -18,8 +18,68 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 import mock
-import pytest
 
+
+#
+# Collections
+#
+
+def test_literature_is_there(app):
+    with app.test_client() as client:
+        assert client.get('/literature').status_code == 200
+        assert client.get('/collection/literature').status_code == 200
+        assert client.get('/').status_code == 200
+
+
+def test_authors_is_there(app):
+    with app.test_client() as client:
+        assert client.get('/authors').status_code == 200
+        assert client.get('/collection/authors').status_code == 200
+
+
+def test_conferences_is_there(app):
+    with app.test_client() as client:
+        assert client.get('/conferences').status_code == 200
+
+
+def test_jobs_redirects(app):
+    """/jobs redirects to /search?cc=jobs."""
+    with app.test_client() as client:
+        assert client.get('/jobs').status_code == 302
+
+
+def test_institutions_is_there(app):
+    with app.test_client() as client:
+        assert client.get('/institutions').status_code == 200
+
+
+def test_experiments_is_there(app):
+    with app.test_client() as client:
+        assert client.get('/experiments').status_code == 200
+
+
+def test_journals_is_there(app):
+    with app.test_client() as client:
+        assert client.get('/journals').status_code == 200
+
+
+def test_data_is_there(app):
+    with app.test_client() as client:
+        assert client.get('/data').status_code == 200
+
+
+#
+# Ping
+#
+
+def test_ping_responds_ok(app):
+    with app.test_client() as client:
+        assert client.get('/ping').data == 'OK'
+
+
+#
+# Feedback
+#
 
 def test_postfeedback_provided_email(email_app):
     """Accepts feedback when providing en email."""

@@ -36,11 +36,10 @@ from flask import (
 
 from flask_login import current_user
 
-from flask_mail import Message
-
 from invenio_mail.tasks import send_email
 
 from flask.ext.menu import current_menu
+
 
 blueprint = Blueprint(
     'inspirehep_theme',
@@ -114,6 +113,10 @@ def data():
                            collection='data')
 
 
+#
+# Ping
+#
+
 @blueprint.route('/ping')
 def ping():
     return 'OK'
@@ -155,19 +158,17 @@ def postfeedback():
     else:
         return jsonify(success=True)
 
+#
+# Menu fixup
+#
 
 @blueprint.before_app_first_request
 def register_menu_items():
     """Hack to remove children of Settings menu"""
     def menu_fixup():
-        item = current_menu.submenu("settings.change_password")
-        item.hide()
-        item = current_menu.submenu("settings.groups")
-        item.hide()
-        item = current_menu.submenu("settings.workflows")
-        item.hide()
-        item = current_menu.submenu("settings.applications")
-        item.hide()
-        item = current_menu.submenu("settings.oauthclient")
-        item.hide()
+        current_menu.submenu("settings.change_password").hide()
+        current_menu.submenu("settings.groups").hide()
+        current_menu.submenu("settings.workflows").hide()
+        current_menu.submenu("settings.applications").hide()
+        current_menu.submenu("settings.oauthclient").hide()
     current_app.before_first_request_funcs.append(menu_fixup)
