@@ -49,15 +49,15 @@ def migrator():
 
 @migrator.command()
 @click.option('--file-input', '-f',
-                help='Specific collections to migrate.')
+              help='Specific collections to migrate.')
 @click.option('--remigrate', '-m', type=bool,
-                default=False, help='Try to remigrate broken records')
+              default=False, help='Try to remigrate broken records')
 @click.option('--broken-output', '-b',
-                help='Where to write back records that were not possible to migrate')
+              help='Where to write back records that were not possible to migrate')
 @click.option('--dry-run', '-d', type=bool, default=False,
-                help='Whether records should really be imported or not')
+              help='Whether records should really be imported or not')
 @click.option('--wait', '-w',
-                help='Wait for migrator to complete.')
+              help='Wait for migrator to complete.')
 def populate(file_input=None,
              remigrate=False,
              broken_output=None,

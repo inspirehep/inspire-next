@@ -24,7 +24,22 @@
 
 """Theme blueprint in order for template and static files to be loaded."""
 
-from flask import Blueprint, render_template, redirect, url_for
+from flask import (
+    Blueprint,
+    current_app,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
+
+from flask_login import current_user
+
+from flask_mail import Message
+
+from invenio_mail.tasks import send_email
+
 
 blueprint = Blueprint(
     'inspirehep_theme',
@@ -101,3 +116,40 @@ def data():
 @blueprint.route('/ping')
 def ping():
     return 'OK'
+
+
+#
+# Feedback
+#
+
+@blueprint.route('/postfeedback', methods=['POST', ])
+def postfeedback():
+    """Handler to create a ticket from user feedback."""
+    feedback = request.form.get('feedback')
+    if feedback == '':
+        return jsonify(success=False), 400
+
+    replytoaddr = request.form.get('replytoaddr', None)
+    if replytoaddr is None:
+        if current_user.is_anonymous:
+            return jsonify(success=False), 403
+        else:
+            replytoaddr = current_user.get('email')
+            if replytoaddr == '':
+                return jsonify(success=False), 403
+
+    content = 'Feedback:\n{feedback}'.format(feedback=feedback)
+    message = {
+        'sender': current_app.config['CFG_SITE_SUPPORT_EMAIL'],
+        'recipients': [current_app.config['INSPIRELABS_FEEDBACK_EMAIL']],
+        'subject': 'INSPIRE Labs Feedback',
+        'body': content,
+        'reply_to': replytoaddr
+    }
+
+    sending = send_email.delay(message)
+
+    if sending.failed():
+        return jsonify(success=False), 500
+    else:
+        return jsonify(success=True)

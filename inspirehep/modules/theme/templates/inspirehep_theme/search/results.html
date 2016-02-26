@@ -26,9 +26,9 @@
 {% from "inspirehep_theme/format/record/Base_HTML_general_macros.tpl" import mathjax %}
 
 {% if not request.args.get('cc') or request.args.get('cc').lower() == "hep" %}
-  {% from "inspirehep_theme/format/record/hep/Inspire_HTML_brief.tpl" import brief_format %}
+  {% from "inspirehep_theme/format/record/literature/Literature_HTML_brief.html" import brief_format %}
 {% elif request.args.get('cc').lower() == "hepnames" %}
-  {% from 'inspirehep_theme/format/record/hepnames/Author_HTML_brief.tpl' import brief_format %}
+  {% from 'inspirehep_theme/format/record/authors/Author_HTML_brief.html' import brief_format %}
 {% endif %}
 
 {% macro render_search_pagination(pagination) %}

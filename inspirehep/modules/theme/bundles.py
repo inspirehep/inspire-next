@@ -21,31 +21,30 @@
 
 from __future__ import absolute_import, print_function
 
-from flask_assets import Bundle
 from invenio_assets import NpmBundle
 
-js = Bundle(
-    NpmBundle(
-        'node_modules/almond/almond.js',
-        'js/settings.js',
-        filters='uglifyjs',
-        npm={
-            "almond": "~0.3.1",
-            "hogan": "latest",
-            "requirejs-hogan-plugin": "latest",
-            "jquery": "~1.9.1",
-            "toastr": "latest",
-            # "jQuery-menu-aim": "latest", # Not on npm :(
-            "clipboard": "latest",
-            "flightjs": "~1.5.0"
-        }
-    ),
-    Bundle(
-        'js/inspire_base_init.js',
-        filters='requirejs',
-    ),
-    filters='jsmin',
+almondjs = NpmBundle(
+    'node_modules/almond/almond.js',
+    'js/settings.js',
+    filters='uglifyjs',
+    output="gen/almond.%(version)s.js",
+    npm={
+        "almond": "~0.3.1",
+        "hogan.js": "~3.0.2",
+        "requirejs-hogan-plugin": "~0.3.1",
+    }
+)
+
+js = NpmBundle(
+    'js/inspire_base_init.js',
+    filters='requirejs',
     output="gen/inspirehep.%(version)s.js",
+    npm={
+        "jquery": "~1.9.1",
+        "toastr": "~2.1.2",
+        "clipboard": "~1.5.8",
+        "flightjs": "~1.5.0"
+    }
 )
 
 css = NpmBundle(

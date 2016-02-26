@@ -57,6 +57,7 @@ class INSPIRETheme(object):
 
         # Add Jinja2 extensions.
         app.jinja_env.add_extension('jinja2.ext.do')
+        app.jinja_env.autoescape = False
 
         # Register errors handlers.
         # app.register_error_handler(401, unauthorized)
@@ -69,4 +70,8 @@ class INSPIRETheme(object):
 
     def init_config(self, config):
         """Initialize configuration."""
-        pass
+        from .bundles import js
+        # Set JS bundles to exclude for purpose of avoiding double jQuery etc.
+        # when other modules are building their JS bundles.
+        config.setdefault("THEME_BASE_BUNDLES_EXCLUDE_JS", [js])
+        config.setdefault("BASE_TEMPLATE", "inspirehep_theme/page.html")

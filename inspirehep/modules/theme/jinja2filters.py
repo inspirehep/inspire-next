@@ -34,6 +34,7 @@ from flask import session, current_app
 
 from invenio_search.api import Query
 
+from .utils import apply_template_on_array
 from .views import blueprint
 
 

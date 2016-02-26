@@ -27,6 +27,7 @@
 from flask import current_app
 from elasticsearch.helpers import scan
 
+
 class Results(object):
 
     def __init__(self, query, index=None, doc_type=None, **kwargs):

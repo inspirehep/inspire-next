@@ -5,7 +5,6 @@
 from __future__ import absolute_import, print_function
 
 import os
-import pkg_resources
 
 
 # Identity function for string extraction
@@ -140,6 +139,10 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
     consumer_secret="CHANGE_ME",
 )
 
+# Feedback
+CFG_SITE_SUPPORT_EMAIL = "admin@inspirehep.net"
+INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
+
 
 # from invenio_records_rest.facets import terms_filter
 # SEARCH_UI_SEARCH_API='/api/records/'
@@ -201,7 +204,9 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
 #
 
 
-######### From here onwards is the backported search configuration ###########
+# ######################################################## #
+# From here onwards is the backported search configuration #
+# ######################################################## #
 
 SEARCH_QUERY_PARSER = 'invenio_query_parser.contrib.spires.parser:Main'
 

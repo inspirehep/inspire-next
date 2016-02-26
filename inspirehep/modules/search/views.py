@@ -76,7 +76,7 @@ def search():
 
     response.body.update({
         'size': int(rg),
-        'from': jrec-1,
+        'from': jrec - 1,
         'aggs': current_app.config['SEARCH_ELASTIC_AGGREGATIONS'].get(cc, {})
     })
 
@@ -131,7 +131,7 @@ def search():
         args['jrec'] = 1
         return redirect(url_for('inspirehep_search.search', **args))
 
-    pagination = Pagination((jrec-1) // rg + 1, rg, number_of_hits)
+    pagination = Pagination((jrec - 1) // rg + 1, rg, number_of_hits)
 
     ctx = dict(
         filtered_facets=filtered_facets,

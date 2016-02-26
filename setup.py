@@ -46,16 +46,18 @@ install_requires = [
     'rt',
     # 'invenio-matcher==0.1.0', # Needs to be ported to Invenio 3
     'librabbitmq>=1.6.1',
-    #'dojson',  # Not on Hepdata, maybe already required by other package
+    # 'dojson',  # Not on Hepdata, maybe already required by other package
     # 'invenio-classifier==0.1.0', # Needs to be ported to Invenio 3
     'invenio-jsonschemas',
-    #'invenio-knowledge',  # Needs to be ported to Invenio 3
+    # 'invenio-knowledge',  # Needs to be ported to Invenio 3
     # 'invenio-collections',  # Needed? Not on Hepdata overlay
-    #'invenio-grobid>=0.1.0', # Needs to be ported to Invenio 3
+    # 'invenio-grobid>=0.1.0', # Needs to be ported to Invenio 3
     # 'invenio-upgrader==0.2.0', # Needed?
     # 'invenio-testing==0.1.1', # Needed ?
 
-    ## From here on, new dependencies from Invenio 3
+    #
+    # From here on, new dependencies from Invenio 3
+    #
     'idutils>=0.1.1',
     'invenio-access',
     'invenio-accounts',
@@ -217,10 +219,16 @@ setup(
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_migrator = inspirehep.modules.migrator:INSPIREMigrator',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
+            'inspire_authors = inspirehep.modules.authors:INSPIREAuthors',
+            'inspire_forms = inspirehep.modules.forms:INSPIREForms',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
-            'inspirehep_theme_js = inspirehep.modules.theme.bundles:js'
+            'inspirehep_theme_js = inspirehep.modules.theme.bundles:js',
+            'almondjs = inspirehep.modules.theme.bundles:almondjs',
+            'inspirehep_forms_css = inspirehep.modules.forms.bundles:css',
+            'inspirehep_forms_js = inspirehep.modules.forms.bundles:js',
+            'inspirehep_author_update_css = inspirehep.modules.authors.bundles:css',
         ],
         'invenio_jsonschemas.schemas': [
             'inspire_records = inspirehep.modules.records.jsonschemas',

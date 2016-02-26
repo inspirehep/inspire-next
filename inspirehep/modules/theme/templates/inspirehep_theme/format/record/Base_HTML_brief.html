@@ -24,24 +24,31 @@
 <div class="row">
   <div class="col-md-12">
     <div id="panel-default-brief" class="panel panel-default" >
-      <div class="panel-body" >
-        {% block panel_body scoped %}
-        <div class="col-md-12">
-          <h4 class="custom-h">
-          {% block title_body scoped %}{% endblock %}
-          </h4>
-          <div class="row">
-            <div class="col-md-12 record-brief-details">
-            {% block brief_detailes_body_1 scoped %}{% endblock %}
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-9 left-column">
+            {% block left_panel_body scoped %}
+            <div class="col-md-12">
+              <h4 class="custom-h">
+              {% block left_panel_title scoped %}{% endblock %}
+              </h4>
+              <div class="row">
+                <div class="col-md-12 record-brief-details">
+                {% block left_panel_subtitle scoped %}{% endblock %}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 record-brief-details">
+                {% block left_panel_brief_body scoped %}{% endblock %}
+                </div>
+              </div>
             </div>
+            {% endblock %}
           </div>
-          <div class="row">
-            <div class="col-md-12 record-brief-details">
-            {% block brief_detailes_body_2 scoped %}{% endblock %}
-            </div>
+          <div class="col-md-3 right-column" >
+            {% block right_panel_body scoped %}{% endblock %}
           </div>
         </div>
-        {% endblock %}
       </div>
     </div>
   </div>
