@@ -81,6 +81,7 @@ install_requires = [
     'invenio-records-rest',
     'invenio-records-ui',
     'invenio-userprofiles',
+    'invenio-utils',  # Not fully Invenio 3 ready
     'invenio>=3.0.0a1,<3.1.0',
     'dojson==1.0.1',
     'Flask-Breadcrumbs>=0.3.0',
