@@ -32,6 +32,8 @@ from flask_menu import Menu
 
 from .views import blueprint
 
+from pkg_resources import resource_filename
+
 
 class INSPIRETheme(object):
     """Invenio theme extension."""
@@ -41,6 +43,7 @@ class INSPIRETheme(object):
         self.menu_ext = Menu()
         self.menu = None
         self.breadcrumbs = Breadcrumbs()
+        self.weblinks = self.init_weblinks_dictionary()
 
         if app:
             self.init_app(app, **kwargs)
@@ -89,3 +92,12 @@ class INSPIRETheme(object):
                             force_lower=False)
         del gravatar
         return app
+
+    def init_weblinks_dictionary(self):
+        """Initialize the dictionary for HEP detailed record external links."""
+        weblinks_dictionary = {}
+        with open(resource_filename('inspirehep', 'kbs/weblinks.kb'), 'r') as kb_file:
+            for line in kb_file:
+                (key, val) = line.split('---')
+                weblinks_dictionary[key] = val
+            return weblinks_dictionary

@@ -64,7 +64,7 @@
             {% endif %}
           </div>
         {% endif %}
-        {% if record.get('urls') %}
+        {% if record.urls or record.external_system_numbers %}
           <div id="external_links">
             {{ record_links(record) }}
           </div>

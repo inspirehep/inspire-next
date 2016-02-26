@@ -1080,3 +1080,22 @@ def test_format_date_returns_none_when_no_datestruct(c_d, app):
         result = format_date('banana')
 
         assert expected == result
+
+
+def test_is_external_link():
+    assert is_external_link('http')
+
+
+def test_is_institute():
+    assert is_institute('kekscan')
+
+
+def test_weblinks():
+    """In case a description is given and found in the dictionary"""
+    assert weblinks('CLNS97') == 'Cornell Document Server'
+
+    """In case description is given but NOT found in the dictionary"""
+    assert weblinks('none') == 'Link to none'
+
+    """In case no description is given"""
+    assert weblinks('') == 'Link to fulltext'
