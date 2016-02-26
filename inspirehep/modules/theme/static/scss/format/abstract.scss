@@ -27,10 +27,6 @@ div.read-more-wrap {
     float: left;
 }
 
-.read-more-ellipsis {
-    opacity: 1;
-}
-
 .read-more-target {
     opacity: 0;
     max-height: 0;
@@ -42,10 +38,6 @@ div.read-more-wrap {
     opacity: 1;
     font-size: inherit;
     max-height: 999em;
-}
-
-.read-more-state:checked ~ .read-more-wrap .read-more-ellipsis {
-    display: none;
 }
 
 .read-more-state ~ .read-more-trigger:before {

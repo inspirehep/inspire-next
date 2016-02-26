@@ -17,7 +17,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, record_cite_modal, record_abstract with context %}
+{% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, record_cite_modal with context %}
 
 {% macro record_collection_heading() %}
   <span id="search-title">Search literature &#62;</span>
@@ -71,7 +71,42 @@
     <div id="record-abstract-title">
       Abstract
     </div>
-    {{ record_abstract(record, is_brief=false) }}
+    {{ record_abstract(record) }}
+  </div>
+{% endmacro %}
+
+{% macro record_abstract(record) %}
+  {% set isAbstractDisplayed = [] %}
+  {% if record.get('abstracts') %}
+    {% for abstract in record.get('abstracts') %}
+      {% if abstract.get('value') and not isAbstractDisplayed %}
+        {% if not abstract.get('source') == 'arXiv' %}
+          {% do isAbstractDisplayed.append(1) %}
+          {{ display_abstract(record, abstract.get('value')) }}
+        {% else %}
+          {% do isAbstractDisplayed.append(1) %}
+          {{ display_abstract(record, abstract.get('value')) }}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if not isAbstractDisplayed %}
+    No abstract available for this record.
+  {% endif %}
+{% endmacro %}
+
+{% macro display_abstract(record, abstract) %}
+  {% set number_of_sentences = 2 %}
+  <div class="abstract">
+    <input type="checkbox" class="read-more-state" id="abstract-input-{{ record.get('control_number') }}" />
+    <div class="read-more-wrap">
+      {{ abstract | words(number_of_sentences, '. ') }}.
+      <span class="read-more-target">
+        {{ abstract | words_to_end(number_of_sentences, '. ') }}
+      </span>
+    </div>
+    <label for="abstract-input-{{ record.get('control_number') }}" class="read-more-trigger"></label>
   </div>
 {% endmacro %}
 
