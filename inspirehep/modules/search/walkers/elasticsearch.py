@@ -34,6 +34,8 @@ from invenio_query_parser.visitor import make_visitor
 
 from ..ast import FilterOp
 
+from ..signals import extra_keywords, unsupported_keyword
+
 
 class ElasticSearchDSL(object):
     """Implement visitor to create Elastic Search DSL."""
@@ -59,6 +61,8 @@ class ElasticSearchDSL(object):
 
     @visitor(AndOp)
     def visit(self, node, left, right):
+        if type(node.right) is ValueQuery:
+            extra_keywords.send()
         return {'bool': {'must': [left, right]}}
 
     @visitor(FilterOp)
@@ -75,6 +79,11 @@ class ElasticSearchDSL(object):
 
     @visitor(KeywordOp)
     def visit(self, node, left, right):
+        if str(left) == 'refersto' or str(left) == 'citedby':
+            unsupported_keyword.send(keyword=left)
+            return {
+                "match_all": {}
+            }
         if callable(right):
             return right(left)
         raise RuntimeError("Not supported second level operation.")
