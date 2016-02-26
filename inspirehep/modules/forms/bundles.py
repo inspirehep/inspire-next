@@ -22,7 +22,6 @@
 
 """Bundles for forms used across INSPIRE."""
 
-from flask_assets import Bundle
 from invenio_assets import NpmBundle
 from invenio_assets.filters import RequireJSFilter
 
@@ -37,6 +36,7 @@ js = NpmBundle(
         "eonasdan-bootstrap-datetimepicker": "~4.15.35",
         "typeahead.js": "~0.10.5",
         "bootstrap-multiselect": "~0.9.13",
+        "moment": "~2.11.2",
     }
 )
 
