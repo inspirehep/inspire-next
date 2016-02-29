@@ -21,17 +21,15 @@ import mock
 
 from inspirehep.utils.url import make_user_agent_string
 
-
+@mock.patch('inspirehep.utils.url.current_app')
 @mock.patch('inspirehep.utils.url.__version__', '0.1.0')
-def test_make_user_agent_string(app):
+def test_make_user_agent_string(current_app, app):
     """Test that user agent is created."""
-    with app.app_context():
-        # Set SERVER_NAME that will be used in user-agent
-        app.config['SERVER_NAME'] = "http://inspirehep.net"
-        user_agent = make_user_agent_string()
+    current_app.config = {'SERVER_NAME': 'http://inspirehep.net'}
 
+    with app.app_context():
+        user_agent = make_user_agent_string()
         assert user_agent == "InspireHEP-0.1.0 (+http://inspirehep.net;)"
 
         user_agent_with_component = make_user_agent_string("submission")
-
         assert user_agent_with_component == "InspireHEP-0.1.0 (+http://inspirehep.net;) [submission]"
