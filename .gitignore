@@ -1,11 +1,20 @@
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*$py.class
+
+# C extensions
 *.so
-bin/
+
+# Distribution / packaging
+.Python
+env/
 build/
 develop-eggs/
 dist/
+downloads/
 eggs/
+.eggs/
 lib/
 lib64/
 parts/
@@ -14,27 +23,73 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
 .tox/
 .coverage
+.coverage.*
 .cache
 nosetests.xml
 coverage.xml
+*,cover
+.hypothesis/
+
+# Translations
 *.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+
+# Flask instance folder
+instance/
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# IPython Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Eclipse/PyDev
 .project
 .pydevproject
+
+# Git merge backup files
 *.orig
-docs/_build/
-bower.json
-**/static/vendors/**
-**/static/gen/**
+
+# Linux backup files
 *~
-dump.rdb
-.idea/
-*.mo
+
+# Mac folder attributes
 .DS_Store
-node_modules/
+
+# Locally installed node modules
+node_modules
+
+# IntelliJ IDE
+.idea
+
+# Redis
+dump.rdb
+
+# KDevelop4
 .kdev4/
 *.kdev4
-
