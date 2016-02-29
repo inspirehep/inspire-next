@@ -53,16 +53,13 @@
 {% endmacro %}
 
 {% macro record_doi(record) %}
-    {% set filtered_doi = record.get('dois.value')|remove_duplicates() %}
-    <b>DOI </b>
-    {% for doi in filtered_doi %}
-      {% if not doi | has_space %}
-        <a href="http://dx.doi.org/{{ doi | trim | safe}}" title="DOI">{{ doi }}</a>
-        {% if not loop.last %}
-        ,
-        {% endif %}
-      {% endif %}
-    {% endfor %}
+  {% set filtered_doi = record.get('dois') | remove_duplicates_from_dict %}
+  {% set comma = joiner() %}
+  <b>DOI</b>
+  {% for value in filtered_doi %}
+    {{ comma() }}
+    <a href="http://dx.doi.org/{{ value.value | trim | safe}}" title="DOI"> {{ value.value }}</a>
+  {% endfor %}
     <br>
 {% endmacro %}
 
