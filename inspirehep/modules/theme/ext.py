@@ -26,7 +26,6 @@
 
 from __future__ import absolute_import, print_function
 
-
 from flask_breadcrumbs import Breadcrumbs
 from flask_menu import Menu
 
@@ -56,6 +55,10 @@ class INSPIRETheme(object):
         self.breadcrumbs.init_app(app)
 
         app.register_blueprint(blueprint)
+
+        # Add Jinja2 extensions.
+        app.jinja_env.add_extension('jinja2.ext.do')
+        app.jinja_env.autoescape = False
 
         # Register errors handlers.
         # app.register_error_handler(401, unauthorized)

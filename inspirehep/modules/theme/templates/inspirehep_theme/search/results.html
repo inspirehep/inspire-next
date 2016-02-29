@@ -23,9 +23,13 @@
 {% extends 'inspirehep_theme/page.html' %}
 {% endif %}
 
-{% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax %}
-{% from "inspirehep_theme/format/record/Inspire_Default_HTML_brief.tpl" import brief_format %}
+{% from "inspirehep_theme/format/record/Base_HTML_general_macros.tpl" import mathjax %}
 
+{% if not request.args.get('cc') or request.args.get('cc').lower() == "hep" %}
+  {% from "inspirehep_theme/format/record/literature/Literature_HTML_brief.html" import brief_format %}
+{% elif request.args.get('cc').lower() == "hepnames" %}
+  {% from 'inspirehep_theme/format/record/authors/Author_HTML_brief.html' import brief_format %}
+{% endif %}
 
 {% macro render_search_pagination(pagination) %}
   {%- set args = request.args.copy().to_dict() -%}
@@ -69,6 +73,8 @@
   <div class="facet" id="facet_list" data-clampedwidth="#facetparent">
   {% if not request.args.get('cc') or request.args.get('cc').lower() == "hep" %}
     {% include 'inspirehep_theme/search/facets/hep.html' %}
+  {% elif request.args.get('cc').lower() == "hepnames" %}
+    {% include 'inspirehep_theme/search/facets/authors.html' %}
   {% elif request.args.get('cc').lower() == "jobs" %}
     {% include 'inspirehep_theme/search/facets/jobs.html' %}
   {% elif request.args.get('cc').lower() == "institutions" %}
@@ -122,6 +128,7 @@
       <div class="panel panel-default" id="results-control-panel">
         <div class="panel-body" >
           {{ render_pagination() }}
+          {# Citation export. Should be moved to hep. #}
           <hr>
           {% if not request.args.get('cc') or request.args.get('cc') in ["hep","HEP"] %}
           <div class="row">

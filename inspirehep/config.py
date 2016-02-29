@@ -95,7 +95,7 @@ RECORDS_UI_ENDPOINTS = dict(
     recid=dict(
         pid_type='recid',
         route='/record/<pid_value>',
-        template='inspirehep_theme/format/record/Inspire_Default_HTML_detailed.tpl'
+        template='inspirehep_theme/format/record/hep/Inspire_HTML_detailed.tpl'
     )
 )
 

@@ -17,7 +17,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, record_cite_modal, record_abstract with context %}
+{% from "inspirehep_theme/format/record/Base_HTML_general_macros.tpl" import render_record_title, record_cite_modal, record_abstract with context %}
 
 {% macro record_collection_heading() %}
   <span id="search-title">Search literature &#62;</span>
