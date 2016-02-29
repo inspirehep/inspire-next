@@ -42,7 +42,8 @@ services:
   - redis
 
 env:
-  - REQUIREMENTS=devel SQLALCHEMY_DATABASE_URL="postgresql+psycopg2://postgres@localhost:5432/inspirehep"
+  - SUITE=tests/unit SQLALCHEMY_DATABASE_URI="sqlite:///test.db"
+  - SUITE=tests/integration SQLALCHEMY_DATABASE_URI="postgresql+psycopg2://postgres@localhost:5432/inspirehep"
 
 python:
   - "2.7"
@@ -51,18 +52,24 @@ before_install:
   - "travis_retry pip install --upgrade pip setuptools py"
   - "travis_retry pip install twine wheel coveralls"
   - "npm update && npm install --silent -g node-sass clean-css uglify-js requirejs"
+  - "psql -c 'create database inspirehep;' -U postgres"
 
 install:
   - "travis_retry pip install -r requirements.txt --pre"
   - "CWD=$(pwd) && inspirehep npm && cd ${VIRTUAL_ENV}/var/inspirehep-instance/static && npm install && cd ${CWD}"
   - "inspirehep collect -v"
   - "inspirehep assets build"
+  - "inspirehep db init"
+  - "inspirehep db create"
 
 before_script:
-  - sleep 10  # Allow ES to start.
+  - "sleep 10"  # Allow ES to start.
+  - "celery worker -E -A inspirehep.celery --workdir=$VIRTUAL_ENV &"
+  - "inspirehep migrator populate -f inspirehep/demosite/data/demo-records.xml.gz"
+  - "sleep 20"  # Give some time to Celery.
 
 script:
-  - "python setup.py test"
+  - "python setup.py test --pytest=${SUITE}"
 
 after_success:
   - coveralls
