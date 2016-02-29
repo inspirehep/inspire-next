@@ -30,6 +30,8 @@ from inspirehep.dojson.hepnames import hepnames2marc, hepnames
 def marcxml_to_json():
     marcxml = pkg_resources.resource_string('tests',
                                             os.path.join(
+                                                'unit',
+                                                'dojson',
                                                 'fixtures',
                                                 'test_hepnames_record.xml'
                                             ))
