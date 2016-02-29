@@ -57,6 +57,9 @@ class INSPIRETheme(object):
 
         app.register_blueprint(blueprint)
 
+        # Add Jinja2 extensions.
+        app.jinja_env.add_extension('jinja2.ext.do')
+
         # Register errors handlers.
         # app.register_error_handler(401, unauthorized)
         # app.register_error_handler(403, insufficient_permissions)
