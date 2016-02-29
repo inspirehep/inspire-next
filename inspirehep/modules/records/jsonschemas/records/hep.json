@@ -683,9 +683,6 @@
                     "id": {
                         "type": "string"
                     },
-                    "set": {
-                        "type": "array"
-                    },
                     "previous_set": {
                         "type": "string"
                     }

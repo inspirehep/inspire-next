@@ -322,7 +322,7 @@
             "description": "Contains name information.",
             "properties": {
                 "preferred_name": {
-                    "type": "array"
+                    "type": "string"
                 },
                 "numeration": {
                     "enum": [
