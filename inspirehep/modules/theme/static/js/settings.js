@@ -32,6 +32,8 @@ require.config({
     'bootstrap-multiselect': 'node_modules/bootstrap-multiselect/dist/js/bootstrap-multiselect',
     'bucketsjs': 'node_modules/buckets-js/dist/buckets',
     clipboard: 'node_modules/clipboard/dist/clipboard',
+    datatables: 'node_modules/datatables.net-bs/js/dataTables.bootstrap',
+    'datatables.net': 'node_modules/datatables.net/js/jquery.dataTables',
     feedback: 'js/feedback/feedback',
     flight: 'node_modules/flightjs/build/flight',
     hgn: 'node_modules/requirejs-hogan-plugin/hgn',

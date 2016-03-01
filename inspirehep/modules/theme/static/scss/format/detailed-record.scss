@@ -271,9 +271,21 @@ $darken: 8%;
         }
     }
 
-    .table > tbody > tr > td {
-        border-top: 0px;
+    .table {
+        border: 0px;
+
+        th.sorting {
+            border: 0px;
+        }
+
+        tbody > tr > td {
+            border: 0px;
+        }
     }
+
+    
+
+
 
     .panel-heading {
 
@@ -330,6 +342,11 @@ $darken: 8%;
     }
 
     .panel-footer {
+        display: none;
+        position: absolute;
+        width: 100%;
+        bottom: 20px;
+        right: 16px;
         background-color: white;
         border: none;
     }
