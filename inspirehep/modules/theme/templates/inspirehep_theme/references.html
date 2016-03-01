@@ -17,11 +17,9 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "format/record/Inspire_HTML_detailed_macros.tpl" import  record_publication_info with context %}
+{% from "inspirehep_theme/format/record/Inspire_HTML_detailed_macros.tpl" import  record_publication_info with context %}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors, render_record_title with context %}
-
-{% from "format/record/Cache_HTML_macros.tpl" import cache_if_not_debug %}
+{% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors, render_record_title with context %}
 
 <div class="reference-record">
   {% if record %}
@@ -29,30 +27,28 @@
         {% if reference['number'] %}
           [{{ reference['number'] }}]
         {% endif %}
-        {% call cache_if_not_debug('record_oneline', record['control_number']) %}
         <a href="/record/{{record['control_number']}}">{{ render_record_title() }}</a>
       </div>
       <div class="reference-authors">{{ render_record_authors(is_brief=true, show_affiliations=false) | safe }}</div>
       <div class="reference-journal">{{ record_publication_info() | safe }}</div>
-        {% endcall %}
   {% else %}
     <div class="reference-title">
       {% if reference['number'] %}
         [{{ reference['number'] }}]
       {% endif %}
       {% if reference['title'] %}
-        {{ reference['title'] }}
+        {{ reference['title'] | join_array(", ") }}
       {% elif reference['misc'] %}
-        {{ reference['misc'] }}
+        {{ reference['misc'] | join_array(", ") }}
         {% set misc_displayed = true %}
       {% elif reference['collaboration'] %}
-        {{ reference['collaboration'] }}
+        {{ reference['collaboration'] | join_array(", ") }}
         {% set collaboration_displayed = true %}
       {% elif reference['journal_pubnote'] %}
-        {{ reference['journal_pubnote'] }}
+        {{ reference['journal_pubnote'] | join_array(", ")}}
         {% set journal_displayed = true %}
       {% elif reference['report_number'] %}
-        {{ reference['report_number'] }}
+        {{ reference['report_number'] | join_array(", ") }}
         {% if reference['year'] %}
           , {{ reference['year'] }}
         {% endif %}
@@ -61,16 +57,16 @@
     </div>
     <div class="reference-subtitle">
       {% if reference['authors'] %}
-        <span class="reference-detail">{{ reference['authors'] }}</span>
+        <span class="reference-detail">{{ reference['authors'] | join_array(", ") }}</span>
       {% endif %}
       {% if not journal_displayed and reference['journal_pubnote'] %}
-        <span class="reference-detail">{{ reference['journal_pubnote'] }}</span>
+        <span class="reference-detail">{{ reference['journal_pubnote'] | join_array(", ") }}</span>
       {% endif %}
       {% if not collaboration_displayed and reference['collaboration']%}
-        <span class="reference-detail">{{ reference['collaboration'] }}</span>
+        <span class="reference-detail">{{ reference['collaboration'] | join_array(", ") }}</span>
       {% endif %}
       {% if not report_displayed and reference['report_number'] %}
-        <span class="reference-detail">{{ reference['report_number'] }}</span>
+        <span class="reference-detail">{{ reference['report_number'] | join_array(", ") }}</span>
           {% if reference['year'] %}
             <span class="reference-detail">{{ reference['year'] }}</span>
             {% set year_displayed = true %}
@@ -80,17 +76,17 @@
         <span class="reference-detail">{{ reference['year'] }}</span>
       {% endif %}
       {% if reference['publisher'] %}
-        <span class="reference-detail">{{ reference['publisher'] }}</span>
+        <span class="reference-detail">{{ reference['publisher'] | join_array(", ") }}</span>
       {% endif %}
       {% if not misc_displayed and reference['misc'] %}
-        <span class="reference-detail">{{ reference['misc'] }}</span>
+        <span class="reference-detail">{{ reference['misc'] | join_array(", ") }}</span>
       {% endif %}
       {% if reference['doi'] %}
         <span class="reference-detail">{{ reference['doi'] }}</span>
       {% endif %}
       {% if reference['url'] %}
         <span class="reference-detail">
-          <a href={{ reference['url'] }}>{{ reference['url'] }}</a>
+          <a href={{ reference['url'] }}>{{ reference['url'] | join_array(", ") }}</a>
         </span>
       {% endif %}
       {% if reference['isbn'] %}

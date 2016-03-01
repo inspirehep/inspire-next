@@ -43,14 +43,23 @@ from flask.ext.menu import current_menu
 from inspirehep.modules.records.conference_series import \
     CONFERENCE_CATEGORIES_TO_SERIES
 
+from invenio_search import current_search_client
+from invenio_pidstore.models import PersistentIdentifier
+
 from inspirehep.utils.date import datetime
 from inspirehep.utils.search import perform_es_search
+from inspirehep.utils.references import Reference
+from inspirehep.utils.citations import Citation
 
 blueprint = Blueprint('inspirehep_theme', __name__,
                       url_prefix='',
                       template_folder='templates',
                       static_folder='static',
                       )
+
+#
+# Collections
+#
 
 
 @blueprint.route('/literature', methods=['GET', ])
@@ -163,6 +172,52 @@ def internal_error(e):
 @blueprint.route('/ping')
 def ping():
     return 'OK'
+
+#
+# Handlers for AJAX requests regarding references and citations
+#
+
+
+@blueprint.route('/ajax/references', methods=['GET'])
+def ajax_references():
+    """Handler for datatables references view"""
+
+    recid = request.args.get('recid', '')
+    collection = request.args.get('collection', '')
+
+    pid = PersistentIdentifier.get(collection, recid)
+
+    record = current_search_client.get_source(index='records-hep',
+                                              id=pid.object_uuid,
+                                              doc_type='hep',
+                                              ignore=404)
+
+    return jsonify(
+        {
+            "data": Reference(record).references()
+        }
+    )
+
+
+@blueprint.route('/ajax/citations', methods=['GET'])
+def ajax_citations():
+    """Handler for datatables citations view"""
+
+    recid = request.args.get('recid', '')
+    collection = request.args.get('collection', '')
+
+    pid = PersistentIdentifier.get(collection, recid)
+
+    record = current_search_client.get_source(index='records-hep',
+                                              id=pid.object_uuid,
+                                              doc_type='hep',
+                                              ignore=404)
+
+    return jsonify(
+        {
+            "data": Citation(record).citations()
+        }
+    )
 
 
 #

@@ -19,11 +19,11 @@
 
 {% macro cache_if_not_debug(template_name, recid) %}
   {% set content=caller() %}
-    {%  if not config.DEBUG %}
+    {% if not config.DEBUG %}
       {% cache timeout | long_timeout, template_name, recid %}
         {{  content }}
       {% endcache %}
     {% else %}
       {{ content }}
-    {%  endif %}
+    {% endif %}
 {% endmacro %}
