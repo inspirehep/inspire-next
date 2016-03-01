@@ -25,12 +25,29 @@ import os
 
 from datetime import date
 from functools import wraps
-from flask import render_template
+from flask import current_app, render_template
 
 from invenio_accounts.models import User
+from workflow.errors import WorkflowError
 
-from inspirehep.modules.deposit.utils import filter_empty_helper
 from inspirehep.modules.workflows.tasks.submission import submit_rt_ticket
+
+
+def filter_empty_helper(keys=None):
+    """
+    Remove empty elements from a list.
+
+    NOTE: Check if this is really needed and move to some helper file
+    """
+    def _inner(elem):
+        if isinstance(elem, dict):
+            for k, v in elem.items():
+                if (keys is None or k in keys) and v:
+                    return True
+            return False
+        else:
+            return bool(elem)
+    return _inner
 
 
 def filter_empty_elements(recjson):
@@ -126,11 +143,9 @@ def send_robotupload(mode="insert"):
     """Gets the MARCXML from the workflow object and ships it."""
     @wraps(send_robotupload)
     def _send_robotupload(obj, eng):
-        from invenio_base.globals import cfg
-        from invenio_workflows.errors import WorkflowError
         from inspirehep.utils.robotupload import make_robotupload_marcxml
 
-        callback_url = os.path.join(cfg["CFG_SITE_URL"],
+        callback_url = os.path.join(current_app.config["SERVER_NAME"],
                                     "callback/workflows/robotupload")
 
         marcxml = obj.get_extra_data().get("marcxml")
@@ -175,15 +190,16 @@ def create_curator_ticket_update(template, queue="Test",
 
     @wraps(create_curator_ticket_update)
     def _create_curator_ticket_update(obj, eng):
-        from invenio_base.globals import cfg
-
-        user_email = acc_get_user_email(obj.id_user)
+        try:
+            user_email = User.query.get(obj.id_user).email
+        except AttributeError:
+            user_email = ''
         recid = obj.data.get("recid", "")
 
         subject = "Your update to author {} on INSPIRE".format(
             obj.data.get("name").get("preferred_name")
         )
-        record_url = os.path.join(cfg["AUTHORS_UPDATE_BASE_URL"], "record",
+        record_url = os.path.join(current_app.config["AUTHORS_UPDATE_BASE_URL"], "record",
                                   str(recid))
         body = render_template(
             template,
@@ -215,7 +231,10 @@ def create_curator_ticket_new(template, queue="Test",
 
     @wraps(create_curator_ticket_new)
     def _create_curator_ticket_new(obj, eng):
-        user_email = acc_get_user_email(obj.id_user)
+        try:
+            user_email = User.query.get(obj.id_user).email
+        except AttributeError:
+            user_email = ''
 
         subject = "Your suggestion to INSPIRE: author {}".format(
             obj.data.get("name").get("preferred_name")
@@ -242,8 +261,6 @@ def reply_ticket(template=None, keep_new=False):
     """Reply to a ticket for the submission."""
     @wraps(reply_ticket)
     def _reply_ticket(obj, eng):
-        from invenio_accounts.models import User
-        from invenio_workflows.errors import WorkflowError
         from inspirehep.utils.tickets import get_instance
         from flask import render_template
 
@@ -309,12 +326,13 @@ def create_curation_ticket(template, queue="Test", ticket_id_key="ticket_id"):
     in the extra_data key specified in ticket_id_key."""
     @wraps(create_curation_ticket)
     def _create_curation_ticket(obj, eng):
-        from invenio_access.control import acc_get_user_email
-
         recid = obj.extra_data.get('recid')
         record_url = obj.extra_data.get('url')
 
-        user_email = acc_get_user_email(obj.id_user)
+        try:
+            user_email = User.query.get(obj.id_user).email
+        except AttributeError:
+            user_email = ''
 
         bai = ""
         if obj.data.get("bai"):

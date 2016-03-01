@@ -318,6 +318,9 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
 CFG_SITE_SUPPORT_EMAIL = "admin@inspirehep.net"
 INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
 
+# Submission
+CFG_ROBOTUPLOAD_SUBMISSION_BASEURL = "http://localhost:5000"
+
 # ######################################################## #
 # From here onwards is the backported search configuration #
 # ######################################################## #

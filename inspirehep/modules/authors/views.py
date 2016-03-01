@@ -220,12 +220,12 @@ def update():
 def submitupdate():
     """Form action handler for INSPIRE author update form."""
     from inspirehep.modules.forms.form import DataExporter
-    from invenio_workflows.models import BibWorkflowObject
+    from invenio_workflows.models import DbWorkflowObject
     from flask_login import current_user
     form = AuthorUpdateForm(formdata=request.form)
     visitor = DataExporter()
     visitor.visit(form)
-    myobj = BibWorkflowObject.create_object(id_user=current_user.get_id())
+    myobj = DbWorkflowObject.create_object(id_user=current_user.get_id())
     myobj.set_data(visitor.data)
     # Start workflow. delayed=True will execute the workflow in the
     # background using, for example, Celery.

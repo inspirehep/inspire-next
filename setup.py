@@ -237,7 +237,10 @@ setup(
         ],
         'invenio_search.mappings': [
             'records = inspirehep.modules.records.mappings',
-        ]
+        ],
+        'invenio_workflows.workflows': [
+            'authorupdate = inspirehep.modules.authors.workflows:AuthorUpdate'
+        ],
     },
     tests_require=tests_require,
     cmdclass={'test': PyTest}
