@@ -24,8 +24,12 @@
 
 """INSPIRE Query class to wrap a query object from invenio_search."""
 
+from flask import request, current_app
+
 from invenio_search.api import Query
 from invenio_search.utils import query_enhancers, search_walkers
+
+from invenio_records_rest.errors import InvalidQueryRESTError
 
 from invenio_query_parser.ast import MalformedQuery
 
@@ -82,3 +86,25 @@ class InspireQuery(Query):
                     query = query.accept(walker)
 
         self.body['query'] = query
+
+
+def inspire_query_factory(index, page, size):
+    """Parse and slice query using InspireQuery and Invenio-Query-Parser.
+
+    :param index: Index to search in.
+    :param page: Requested page.
+    :param size: Request results size.
+    :returns: Tuple of (query, URL arguments).
+    """
+    query_string = request.values.get('q', '')
+
+    try:
+        query = InspireQuery(query_string)[(page - 1) * size:page * size]
+    except SyntaxError:
+        current_app.logger.debug(
+            "Failed parsing query: {0}".format(
+                request.values.get('q', '')),
+            exc_info=True)
+        raise InvalidQueryRESTError()
+
+    return (query, {'q': query_string})
