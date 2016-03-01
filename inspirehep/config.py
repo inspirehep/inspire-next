@@ -72,6 +72,9 @@ SECURITY_RESET_SALT = "CHANGE_ME"
 
 
 SEARCH_UI_BASE_TEMPLATE = 'inspirehep_theme/page.html'
+SEARCH_UI_SEARCH_TEMPLATE = 'search/search.html'
+SEARCH_UI_SEARCH_API = '/api/literature/'  # FIXME there will be different one per search page
+SEARCH_UI_SEARCH_INDEX = 'records-hep'
 USERPROFILES_SETTINGS_TEMPLATE = 'inspirehep_theme/accounts/settings/profile.html'
 
 RECORDS_REST_ENDPOINTS = dict(

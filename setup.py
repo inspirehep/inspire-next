@@ -231,6 +231,8 @@ setup(
             'inspirehep_forms_css = inspirehep.modules.forms.bundles:css',
             'inspirehep_forms_js = inspirehep.modules.forms.bundles:js',
             'inspirehep_author_update_css = inspirehep.modules.authors.bundles:css',
+            'invenio_search_ui_search_css = inspirehep.modules.search.bundles:css',
+            'invenio_search_ui_search_js = inspirehep.modules.search.bundles:js',
         ],
         'invenio_jsonschemas.schemas': [
             'inspire_records = inspirehep.modules.records.jsonschemas',
