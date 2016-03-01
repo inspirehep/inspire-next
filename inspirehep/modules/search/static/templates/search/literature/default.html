@@ -1,0 +1,30 @@
+<ul>
+  <li ng-repeat="record in vm.invenioSearchResults.hits.hits track by $index">
+    <h4><a target="_self" ng-href="/literature/{{record.id}}">{{ record.metadata.titles[0].title }}</a></h4>
+    <div class="text-right">
+      <ul class="list-inline">
+        <li ng-show="record.metadata.authors.length > 0">
+          <a href="#" ng-click="showAuthors=!showAuthors">
+            {{ showAuthors ? 'Hide authors' : 'Show authors' }}
+          </a>
+        </li>
+        <li>
+          <a href="#" ng-click="showSource=!showSource">
+            {{ showSource ? 'Hide source' : 'Show source' }}
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div ng-hide="!showAuthors">
+      <ul>
+        <div ng-repeat='author in record.metadata.authors'>
+          <li>{{ author.full_name }}</li>
+        </div>
+      </ul>
+    </div>
+    <div ng-hide="!showSource">
+      <pre>{{ record | json }}</pre>
+    </div>
+    <hr />
+  </li>
+</ul>
