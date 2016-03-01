@@ -26,6 +26,7 @@
 -e git+https://github.com/inveniosoftware/invenio-mail.git#egg=invenio-mail
 -e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3#egg=invenio-query-parser==0.4.2.dev20160221
 -e git+https://github.com/inspirehep/invenio-records.git@invenio3#egg=invenio-records
+-e git+https://github.com/inspirehep/invenio-pidstore.git#egg=invenio-pidstore
 
 -e git+https://github.com/inspirehep/workflow.git#egg=workflow==2.0.0.dev20160223
 -e git+https://github.com/inspirehep/invenio-workflows.git@invenio3#egg=invenio-workflows==1.0.0a1.dev20160126
