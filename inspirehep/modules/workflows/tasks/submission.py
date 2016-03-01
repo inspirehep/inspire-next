@@ -26,6 +26,8 @@ from retrying import retry
 
 from flask import current_app
 
+from functools import wraps
+
 
 @retry(stop_max_attempt_number=5, wait_fixed=10000)
 def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
@@ -56,3 +58,42 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
             body.encode("utf-8", "ignore")
         ))
     return True
+
+
+def halt_record_with_action(action, message):
+    """Halt the record and set an action (with message)."""
+    @wraps(halt_record_with_action)
+    def _halt_record(obj, eng):
+        """Halt the workflow for approval."""
+        eng.halt(action=action,
+                 msg=message)
+    return _halt_record
+
+
+def close_ticket(ticket_id_key="ticket_id"):
+    """Close the ticket associated with this record found in given key."""
+    @wraps(close_ticket)
+    def _close_ticket(obj, eng):
+        from inspirehep.utils.tickets import get_instance
+
+        ticket_id = obj.extra_data.get(ticket_id_key, "")
+        if not ticket_id:
+            obj.log.error("No ticket ID found!")
+            return
+
+        rt = get_instance()
+        if not rt:
+            obj.log.error("No RT instance available. Skipping!")
+        else:
+            try:
+                rt.edit_ticket(
+                    ticket_id=ticket_id,
+                    Status="resolved"
+                )
+            except IndexError:
+                # Probably already resolved, lets check
+                ticket = rt.get_ticket(ticket_id)
+                if ticket["Status"] != "resolved":
+                    raise
+                obj.log.warning("Ticket is already resolved.")
+    return _close_ticket

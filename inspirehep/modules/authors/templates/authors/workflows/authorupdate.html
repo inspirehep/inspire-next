@@ -1,0 +1,256 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+<div class="panel panel-default">
+  <div class="panel-body">
+  {% if record['name'] %}
+    <b>{{ record['name']['preferred_name'] }}</b>
+  {% endif %}
+  {% if record['native_name'] %}
+    ({{ record['native_name'] }})
+  {% endif %}
+  {% if record['positions'] %}
+    {% set institutions = [] %}
+    {% for inst in record['positions'] %}
+      {% if 'institution' in inst  and  inst['institution']['name'] %}
+        {% do institutions.append(inst['institution']['name']) %}
+      {% endif %}
+    {% endfor%}
+  {% endif %}
+  {% if institutions %}
+    (<a href="/search?cc=Institutions&amp;p=department_acronym:{{ institutions[0] }}">{{ institutions[0] }}</a>)
+  {% endif %}
+  <br>
+  {% if record['name'] %}
+    <a href="http://www.google.com/search?hl=en&amp;q={{ record['name']['display_name'] }}">[Google]</a>
+    <a href="/search?ln=en&amp;cc=HepNames&amp;p=phd_advisors:{{ record['name']['display_name'] }}">[Students]</a>
+    <a href="http://arxiv.org/find/all/1/au:{{ record['name']['value']|replace(',','_') }}/0/1/0/all/0/1?per_page=100">[arXiv]</a>
+    {% endif %}
+  <a href="{{ record|ads_links }}">[ADS]</a>
+  {% if record['ids'] %}
+    {% for type in record['ids'] %}
+      {% if 'type' in type  and type['type'].lower() == 'wikipedia' and type['value'] %}
+        <a href="https://wikipedia.org/wiki/{{ type['type'] }}"`>[Wikipedia]</a>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  <br><br>
+  {% if record['phd_advisors'] %}
+    <label>PhD Advisor:</label> {{ record['phd_advisors']|author_urls('; ')|safe }}
+    <br>
+  {% endif %}
+  {% if record['positions'] %}
+    {% for phd_inst in record['positions'] %}
+      {% if 'rank' in phd_inst and phd_inst['rank'].lower() == 'phd' and phd_inst['institution']['name'] %}
+        <label>PhD Institution:</label>
+        <a href="/search?ln=en&amp;cc=Institutions&amp;p=department_acronym:{{ phd_inst['institution']['name'] }}&amp;action_search=Search&amp;sf=&amp;so=d&amp;rm=&amp;rg=25&amp;sc=0&amp;of=hd">
+            {{ phd_inst['institution']['name'] }}</a>
+        <br/>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if record['positions'] %}
+    {% set ranks = [] %}
+    {% for rank in record['positions'] %}
+      {% if 'rank' in rank  and rank['rank'].lower() == 'ug' and rank['institution']['name'] %}
+        {% do ranks.append(rank['institution']['name']) %}
+        <label>Undergrad:</label>
+        <a href="/search?ln=en&amp;cc=Institutions&amp;p=department_acronym:{{rank['institution']['name']}}&amp;action_search=Search&amp;sf=&amp;so=d&amp;rm=&amp;rg=25&amp;sc=0&amp;of=hd">{{ rank['institution']['name'] }}</a>
+        <br>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if record['positions'] %}
+    {% set email_list = [] %}
+    {% for email in record['positions']%}
+      {% if 'email' in email %}
+        {% do email_list.append(email['email']) %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if email_list %}
+    <label>Email:</label>
+    {% for element in email_list %} 
+      {{ element|email_links|join_array(", ")|safe }}
+    {% endfor %}
+    <br>
+  {% endif %}
+  {% if record['urls'] %}
+    {% for url in record['urls'] %}
+      <label>URL:</label>
+      <a href="{{ url['value'] }}">{{ url['value'] }}</a>
+      <br>
+    {% endfor %}
+  {% endif %}
+  {% if record['ids'] %}
+    {% for id in record['ids'] %}
+      {% if 'type' in id  and id['type'].lower() == 'googlescholar' and id['value'] %}
+        <label>Google Scholar:</label><a href="http://scholar.google.com/citations?user={{ id['value'] }}">http://scholar.google.com/citations?user={{ id['value'] }}</a>
+        <br>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if record['ids'] %}
+    {% for id in record['ids'] %}
+      {% if 'type' in id and id['type'].lower() == 'arxiv' and id['value'] %}
+        <label>arXiv Author Identifier:</label><a href="http://arxiv.org/a/{{ id['value'] }}">{{ id['value'] }}</a>
+        <br>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if record['field_categories'] %}
+    <label>Field:</label> {{ record['field_categories']|join(", ") }}
+    <br>
+  {% endif %}
+  {% if record['experiments'] %}
+    <label>Experiment:</label>
+    {% for experiment in record['experiments'] %}
+      {% if 'name' in experiment %}
+        <a href="/search?ln=en&amp;cc=Experiments&amp;p=experiment:{{ experiment['name'] }}&amp;of=hd">{{ experiment['name'] }}</a>
+        <br>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if record['ids'] %}
+    {% set exists = [] %}
+    {% for id in record['ids'] %}
+      {% if 'type' in id  and id['type'].lower() == 'bai'  and id['value'] %}
+        {% do exists.append(1) %}
+        <label>Author Profile:</label> <a href="/author/profile/{{ id['value'] }}">{{ id['value'] }}</a>
+        <br>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if not exists %}
+    {% if record['name'] %}
+      <label>Author Profile:</label> <a href="/author/search?q={{ record['name']['value'] }}">{{ record['name']['value'] }}</a>
+      <br>
+    {% endif %}
+  {% endif %}
+  {% if record['ids'] %}
+    {% for id in record['ids'] %}
+      {% if 'type' in id  and id['type'].lower() == 'inspire' and id['value'] %}
+        <label>Inspire ID:</label> {{ id['value'] }}
+        <br>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if record['ids'] %}
+    {% for id in record['ids'] %}
+      {% if 'type' in id  and id['type'].lower() == 'orcid' %}
+        <label>ORCID:</label> <a href="http://orcid.org/{{ id['value'] }}">{{ id['value'] }}</a>
+        <br>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if record['_curators_note'] %}
+    <label>Note:</label> {{ record['_curators_note']|join(", ") }}
+    <br>
+  {% endif %}
+  <br>
+  <div class="row">
+    <div class="col-md-12">
+    <label>Institutional History:</label>
+      <table class="table">
+      <thead>
+      <tr>
+      {% if institutions %}
+        <th>Institution</th>
+      {% endif %}
+      {% if record['positions'] %}
+        {% set rank_list = [] %}
+        {% for r in record['positions'] %}
+          {% if 'rank' in r %}
+          {% do rank_list.append(1) %}           
+          {% endif %}
+        {% endfor %}
+      {% endif%}
+      {% if rank_list %}
+        <th>Rank</th>
+      {% endif %}
+      {% if record['positions'] %}
+        {% set start = [] %}
+        {% for start_date in record['positions'] %}
+          {% if 'start_date' in start_date %}
+          {% do start.append(1) %}           
+          {% endif %}
+        {% endfor %}
+      {% endif%}
+      {% if start %}
+        <th>Start Date</th>
+      {% endif %}
+      {% if record['positions'] %}
+      {% set end = [] %}
+        {% for end_date in record['positions'] %}
+          {% if 'end_date' in end_date %}
+            {% do end.append(1) %}
+          {% endif %}
+        {% endfor %}
+      {% endif%}
+      {% if end %}
+        <th>End Date</th>
+      {% endif %}
+      </tr>
+      </thead>
+      <tbody>
+        {% if record['positions'] %}
+        {% for element in record['positions'] %}
+          <tr>
+            {% if 'institution' in element %}
+            <td>
+              <a href="/search?cc=Institutions&amp;p=department_acronym:{{ element['institution']['name'] }}">{{ element['institution']['name'] }}</a>
+            </td>  
+            {% endif %}
+            {% if 'rank' in element %}
+              <td>
+                {{ element['rank'] }}
+              </td>
+            {% endif %}
+            {% if 'start_date' in element %}
+              <td>
+                {{ element['start_date'] }}
+              </td>
+            {% endif %}
+            {% if 'end_date' in element %}
+              <td>
+                {{ element['end_date'] }}
+              </td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        {% endif %}
+      </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 text-right">
+      <a class="btn btn-default" href="http://labs.inspirehep.net/author/update?recid={{record['recid']}}">Update</a>
+    </div>
+  </div>
+  </div>
+</div>
+<hr>
+<p>Submission from: <a href="mailto:{{user_email}}">{{user_email}}</a></p>
+<p>Corresponding RT ticket: <a href="{{ticket_url}}" target="_blank">{{ticket_url}}</a></p>
+{% if comments %}
+  <p>User left the following comments in the form:
+  <pre>{{comments}}</pre>
+  </p>
+  <br>
+{% endif %}

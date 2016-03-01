@@ -26,6 +26,7 @@
 
 from __future__ import absolute_import, print_function
 
+from .authornew import AuthorNew
 from .authorupdate import AuthorUpdate
 
-__all__ = ('AuthorUpdate', )
+__all__ = ('AuthorNew', 'AuthorUpdate', )

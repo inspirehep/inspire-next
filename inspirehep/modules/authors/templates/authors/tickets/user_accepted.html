@@ -1,6 +1,6 @@
 {#
 ## This file is part of INSPIRE.
-## Copyright (C) 2015 CERN.
+## Copyright (C) 2014, 2015 CERN.
 ##
 ## INSPIRE is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -16,12 +16,18 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
-{%- extends config.BASE_TEMPLATE -%}
+{#
+{%- from 'deposit/tickets/ticket_macros.html' import get_user_name -%}
 
-{% block body %}
+Dear {{ get_user_name(user) }},
 
-<div class="alert alert-success alert-form-success">
-  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-  <strong>The author update has been{% if approved %} approved {% else %} rejected {% endif %}<br></strong><br><a href="{{url_for('invenio_workflows_ui.details', objectid=request.args.get('objectid'))}}">Go back to the Holding Pen record.</a>
-</div>
-{% endblock body %}
+Thank you very much again for your suggestion "{{author_name}}". It has been reviewed by our curators and is now in INSPIRE.
+
+{% if record_url %}
+You can find it here: {{record_url}}.
+
+{% endif -%}
+If you have any further questions, don't hesitate to contact us.
+
+Thanks again for your help!
+#}

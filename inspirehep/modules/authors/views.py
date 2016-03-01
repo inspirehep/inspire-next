@@ -29,6 +29,7 @@ from __future__ import absolute_import, print_function
 import os
 import re
 import requests
+import json
 
 from flask_babelex import gettext as _
 
@@ -52,7 +53,9 @@ from inspirehep.dojson.utils import strip_empty_values
 
 # from .acl import viewauthorreview
 from .forms import AuthorUpdateForm
-
+from inspirehep.modules.forms.form import DataExporter
+from invenio_workflows.models import DbWorkflowObject, ObjectStatus
+from flask.ext.login import current_user
 
 blueprint = Blueprint('inspirehep_authors',
                       __name__,
@@ -152,6 +155,28 @@ def get_inspire_url(data):
     return url
 
 
+@blueprint.route(
+    '/<field_name>/',
+    methods=['GET', 'POST'])
+@login_required
+def autocomplete(field_name=None):
+    """Auto-complete a form field."""
+    term = request.args.get('term')  # value
+    limit = request.args.get('limit', 50, type=int)
+
+    form = AuthorUpdateForm()
+
+    result = form.autocomplete(field_name, term, limit=limit)
+    result = result if result is not None else []
+
+    # jsonify doesn't return lists as top-level items.
+    resp = make_response(
+        json.dumps(result, indent=None if request.is_xhr else 2)
+    )
+    resp.mimetype = "application/json"
+    return resp
+
+
 @blueprint.route('/validate', methods=['POST'])
 def validate():
     """Validate form and return validation errors.
@@ -174,6 +199,28 @@ def validate():
     result['messages'] = changed_msgs
 
     return jsonify(result)
+
+
+@blueprint.route('/new', methods=['GET', 'POST'])
+@register_breadcrumb(blueprint, '.new', _('New author information'))
+@login_required
+def new():
+    """View for INSPIRE author new form."""
+    data = {}
+    bai = request.values.get('bai', u"", type=unicode)
+    if bai:
+        # Add BAI information to form in order to keep connection between
+        # a HEPName and an author profile.
+        data["bai"] = bai
+
+    form = AuthorUpdateForm(data=data)
+    ctx = {
+        "action": url_for('.submitnew'),
+        "name": "authorUpdateForm",
+        "id": "authorUpdateForm",
+    }
+
+    return render_template('authors/forms/new_form.html', form=form, **ctx)
 
 
 @blueprint.route('/update', methods=['GET', 'POST'])
@@ -219,9 +266,6 @@ def update():
 @login_required
 def submitupdate():
     """Form action handler for INSPIRE author update form."""
-    from inspirehep.modules.forms.form import DataExporter
-    from invenio_workflows.models import DbWorkflowObject
-    from flask_login import current_user
     form = AuthorUpdateForm(formdata=request.form)
     visitor = DataExporter()
     visitor.visit(form)
@@ -236,3 +280,95 @@ def submitupdate():
     }
 
     return render_template('authors/forms/update_success.html', **ctx)
+
+
+@blueprint.route('/submitnew', methods=['POST'])
+@login_required
+def submitnew():
+    """Form action handler for INSPIRE author new form."""
+    form = AuthorUpdateForm(formdata=request.form)
+    visitor = DataExporter()
+    visitor.visit(form)
+
+    myobj = DbWorkflowObject.create_object(id_user=current_user.get_id())
+    myobj.set_data(visitor.data)
+    # Start workflow. delayed=True will execute the workflow in the
+    # background using, for example, Celery.
+    myobj.start_workflow("authornew", delayed=True)
+
+    ctx = {
+        "inspire_url": get_inspire_url(visitor.data)
+    }
+
+    return render_template('authors/forms/new_success.html', **ctx)
+
+
+@blueprint.route('/newreview', methods=['GET', 'POST'])
+@login_required
+# @permission_required(viewauthorreview.name)
+def newreview():
+    """View for INSPIRE author new form review by a cataloger."""
+    objectid = request.values.get('objectid', 0, type=int)
+    if not objectid:
+        abort(400)
+    workflow_object = DbWorkflowObject.query.get(objectid)
+    extra_data = workflow_object.get_extra_data()
+
+    form = AuthorUpdateForm(data=extra_data["formdata"], is_review=True)
+    ctx = {
+        "action": url_for('.reviewhandler', objectid=objectid),
+        "name": "authorUpdateForm",
+        "id": "authorUpdateForm",
+        "objectid": objectid
+    }
+
+    return render_template('authors/forms/review_form.html', form=form, **ctx)
+
+
+@blueprint.route('/reviewhandler', methods=['POST'])
+@login_required
+# @permission_required(viewauthorreview.name)
+def reviewhandler():
+    """Form handler when a cataloger accepts an author review."""
+    objectid = request.values.get('objectid', 0, type=int)
+    if not objectid:
+        abort(400)
+
+    form = AuthorUpdateForm(formdata=request.form)
+    visitor = DataExporter()
+    visitor.visit(form)
+
+    workflow_object = DbWorkflowObject.query.get(objectid)
+    extra_data = workflow_object.get_extra_data()
+    extra_data["approved"] = True
+    extra_data["recreate_data"] = True
+    extra_data["ticket"] = request.form.get('ticket') == "True"
+    workflow_object.set_extra_data(extra_data)
+    workflow_object.set_data(visitor.data)
+    workflow_object.save(version=ObjectStatus.WAITING)
+    workflow_object.continue_workflow(delayed=True)
+
+    return render_template('authors/forms/new_review_accepted.html',
+                           approved=True)
+
+
+@blueprint.route('/holdingpenreview', methods=['GET', 'POST'])
+@login_required
+# @permission_required(viewauthorreview.name)
+def holdingpenreview():
+    """Handler for approval or rejection of new authors in Holding Pen."""
+    objectid = request.values.get('objectid', 0, type=int)
+    approved = request.values.get('approved', False, type=bool)
+    ticket = request.values.get('ticket', False, type=bool)
+    if not objectid:
+        abort(400)
+    workflow_object = DbWorkflowObject.query.get(objectid)
+    extra_data = workflow_object.get_extra_data()
+    extra_data["approved"] = approved
+    extra_data["ticket"] = ticket
+    workflow_object.set_extra_data(extra_data)
+    workflow_object.save()
+    workflow_object.continue_workflow(delayed=True)
+
+    return render_template('authors/forms/new_review_accepted.html',
+                           approved=approved)

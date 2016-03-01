@@ -31,10 +31,62 @@ import datetime
 import time
 
 from flask import session, current_app
+from jinja2.filters import evalcontextfilter
 
 from invenio_search.api import Query
 
 from .views import blueprint
+
+
+def apply_template_on_array(array, template_path, **common_context):
+    """Render a template specified by 'template_path'.
+    For every item in array, renders the template passing
+    the item as 'content' parameter. Additionally ataches
+    'common_context' as other rendering arguments.
+    Returns list of rendered html strings.
+    :param array: iterable with specific context
+    :param template_path: path to the template
+    :rtype: list of strings
+    """
+
+    from collections import Iterable
+
+    rendered = []
+
+    if isinstance(array, basestring):
+        array = [array]
+
+    if not isinstance(array, Iterable):
+        return rendered
+
+    template = current_app.jinja_env.get_template(template_path)
+
+    for content in array:
+        if content:
+            rendered.append(
+                template.render(content=content, **common_context)
+            )
+
+    return rendered
+
+
+@blueprint.app_template_filter()
+@evalcontextfilter
+def join_array(eval_ctx, value, separator):
+
+    from jinja2.filters import do_join
+
+    if isinstance(value, basestring):
+        value = [value]
+    return do_join(eval_ctx, value, separator)
+
+
+@blueprint.app_template_filter()
+def new_line_after(text):
+    if not text:
+        return text
+
+    return '%s<br>' % text
 
 
 @blueprint.app_template_filter()
@@ -42,7 +94,7 @@ def email_links(value):
     """Return array of links to record emails."""
     return apply_template_on_array(
         value,
-        'format/record/field_templates/email.tpl'
+        'inspirehep_theme/format/record/field_templates/email.tpl'
     )
 
 
@@ -53,7 +105,7 @@ def url_links(record):
     """
     return apply_template_on_array([url["value"] for url in
                                     record.get('urls', [])],
-                                   'format/record/field_templates/link.tpl')
+                                   'inspirehep_theme/format/record/field_templates/link.tpl')
 
 
 @blueprint.app_template_filter()
@@ -62,7 +114,7 @@ def institutes_links(record):
         returns array of links to record institutes
     """
     return apply_template_on_array(record.get('institute', []),
-                                   'format/record/field_templates/institute.tpl')
+                                   'inspirehep_theme/format/record/field_templates/institute.tpl')
 
 
 @blueprint.app_template_filter()
@@ -71,7 +123,7 @@ def author_profile(record):
         returns array of links to record profiles of authores
     """
     return apply_template_on_array(record.get('profile', []),
-                                   'format/record/field_templates/author_profile.tpl')
+                                   'inspirehep_theme/format/record/field_templates/author_profile.tpl')
 
 
 @blueprint.app_template_filter()
@@ -392,10 +444,13 @@ def ads_links(record):
     firstnames = ''
     initial = ''
     link = ''
+    author = ''
+    amatch = ''
     re_last_first = '^(?P<last>[^,]+)\s*,\s*(?P<first_names>[^\,]*)(?P<extension>\,?.*)$'
     re_initials = r'(?P<initial>\w)([\w`\']+)?.?\s*'
     ADSURL = 'http://adsabs.harvard.edu/cgi-bin/author_form?'
-    author = record['name']['value']
+    if 'name' in record:
+        author = record['name']['value']
     initialmatch = None
     if author:
         amatch = re.search(re_last_first, author)
@@ -412,7 +467,8 @@ def ads_links(record):
         link = "%sauthor=%s,+%s&fullauthor=%s,+%s" % \
             (ADSURL, lastname, initial, lastname, firstnames)
     else:
-        link = "%sauthor=%s" % (ADSURL, record['name']['preferred_name'])
+        if 'name' in record:
+            link = "%sauthor=%s" % (ADSURL, record['name']['preferred_name'])
     return link
 
 

@@ -242,13 +242,18 @@ setup(
             'records = inspirehep.modules.records.mappings',
         ],
         'invenio_workflows.workflows': [
-            'authorupdate = inspirehep.modules.authors.workflows:AuthorUpdate',
+            'authornew = inspirehep.modules.authors.workflows:AuthorNew',
+            'authorupdate = inspirehep.modules.authors.workflows:AuthorUpdate'
         ],
         'invenio_pidstore.fetchers': [
             'inspire_recid_fetcher = inspirehep.modules.pidstore.fetchers:inspire_recid_fetcher',
         ],
         'invenio_pidstore.minters': [
             'inspire_recid_minter = inspirehep.modules.pidstore.minters:inspire_recid_minter',
+
+        ],
+        'invenio_workflows_ui.actions': [
+            'author_approval = inspirehep.modules.authors.workflows.actions.author_approval:AuthorApproval',
         ],
     },
     tests_require=tests_require,
