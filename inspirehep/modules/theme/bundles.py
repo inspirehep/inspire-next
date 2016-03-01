@@ -58,6 +58,12 @@ css = NpmBundle(
     }
 )
 
+detailedjs = NpmBundle(
+    "js/detailed_record_init.js",
+    filters='requirejs',
+    output="gen/detailed_record.%(version)s.js",
+)
+
 # detailed_record_styles = Bundle(
 #     "less/format/detailed-record.less",
 #     "less/format/abstract.less",

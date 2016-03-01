@@ -21,9 +21,10 @@
  */
 
 require([
-  "js/plots",
+	'jquery',
+  // "js/plots",
   "js/citation_modal",
-  "js/datatables"
+  // "js/datatables"
 ], function(Plots, CitationModal, datatables) {
 	CitationModal.teardownAll();
   	CitationModal.attachTo(document);
