@@ -37,7 +37,7 @@
               </div>
               <div class="col-md-11">
                 <h4 class="custom-h">
-                    <a class="title" href="{{ url_for('invenio_records_ui.recid', pid_value=record['control_number']) }}">
+                    <a class="title" href="{{ url_for('invenio_records_ui.literature', pid_value=record['control_number']) }}">
                       {{ render_record_title(record) }}
                     </a>
                 </h4>

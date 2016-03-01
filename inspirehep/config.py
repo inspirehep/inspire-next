@@ -74,28 +74,202 @@ SECURITY_RESET_SALT = "CHANGE_ME"
 SEARCH_UI_BASE_TEMPLATE = 'inspirehep_theme/page.html'
 USERPROFILES_SETTINGS_TEMPLATE = 'inspirehep_theme/accounts/settings/profile.html'
 
-RECORDS_REST_SORT_OPTIONS = dict(
-    records=dict(
-        bestmatch=dict(
-            title=_('Best match'),
-            fields=['_score'],
-            default_order='desc',
-            order=1,
-        ),
-        mostrecent=dict(
-            title=_('Most recent'),
-            fields=['earliest_date'],
-            default_order='desc',
-            order=2,
-        ),
-    )
+RECORDS_REST_ENDPOINTS = dict(
+    literature=dict(
+        pid_type='literature',
+        pid_minter='recid_minter',
+        pid_fetcher='recid_fetcher',
+        search_index='records-hep',
+        search_type='hep',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':record_to_json_serializer'),
+        },
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':search_to_json_serializer'),
+        },
+        list_route='/literature/',
+        item_route='/literature/<pid_value>',
+        default_media_type='application/json',
+        max_result_window=10000,
+    ),
+    authors=dict(
+        pid_type='authors',
+        pid_minter='recid_minter',
+        pid_fetcher='recid_fetcher',
+        search_index='records-authors',
+        search_type='authors',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':record_to_json_serializer'),
+        },
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':search_to_json_serializer'),
+        },
+        list_route='/authors/',
+        item_route='/authors/<pid_value>',
+        default_media_type='application/json',
+        max_result_window=10000,
+    ),
+    data=dict(
+        pid_type='data',
+        pid_minter='recid_minter',
+        pid_fetcher='recid_fetcher',
+        search_index='records-data',
+        search_type='data',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':record_to_json_serializer'),
+        },
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':search_to_json_serializer'),
+        },
+        list_route='/data/',
+        item_route='/data/<pid_value>',
+        default_media_type='application/json',
+        max_result_window=10000,
+    ),
+    conferences=dict(
+        pid_type='conferences',
+        pid_minter='recid_minter',
+        pid_fetcher='recid_fetcher',
+        search_index='records-conferences',
+        search_type='conferences',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':record_to_json_serializer'),
+        },
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':search_to_json_serializer'),
+        },
+        list_route='/conferences/',
+        item_route='/conferences/<pid_value>',
+        default_media_type='application/json',
+        max_result_window=10000,
+    ),
+    jobs=dict(
+        pid_type='jobs',
+        pid_minter='recid_minter',
+        pid_fetcher='recid_fetcher',
+        search_index='records-jobs',
+        search_type='jobs',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':record_to_json_serializer'),
+        },
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':search_to_json_serializer'),
+        },
+        list_route='/jobs/',
+        item_route='/jobs/<pid_value>',
+        default_media_type='application/json',
+        max_result_window=10000,
+    ),
+    institutions=dict(
+        pid_type='institutions',
+        pid_minter='recid_minter',
+        pid_fetcher='recid_fetcher',
+        search_index='records-institutions',
+        search_type='institutions',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':record_to_json_serializer'),
+        },
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':search_to_json_serializer'),
+        },
+        list_route='/institutions/',
+        item_route='/institutions/<pid_value>',
+        default_media_type='application/json',
+        max_result_window=10000,
+    ),
+    experiments=dict(
+        pid_type='experiments',
+        pid_minter='recid_minter',
+        pid_fetcher='recid_fetcher',
+        search_index='records-experiments',
+        search_type='experiments',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':record_to_json_serializer'),
+        },
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':search_to_json_serializer'),
+        },
+        list_route='/experiments/',
+        item_route='/experiments/<pid_value>',
+        default_media_type='application/json',
+        max_result_window=10000,
+    ),
+    journals=dict(
+        pid_type='journals',
+        pid_minter='recid_minter',
+        pid_fetcher='recid_fetcher',
+        search_index='records-journals',
+        search_type='journals',
+        record_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':record_to_json_serializer'),
+        },
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':search_to_json_serializer'),
+        },
+        list_route='/journals/',
+        item_route='/journals/<pid_value>',
+        default_media_type='application/json',
+        max_result_window=10000,
+    ),
 )
 
 RECORDS_UI_ENDPOINTS = dict(
-    recid=dict(
-        pid_type='recid',
-        route='/record/<pid_value>',
-        template='inspirehep_theme/format/record/Inspire_Default_HTML_detailed.tpl'
+    literature=dict(
+        pid_type='literature',
+        route='/literature/<pid_value>',
+        template='inspirehep_theme/format/record/'
+                 'Inspire_Default_HTML_detailed.tpl'
+    ),
+    authors=dict(
+        pid_type='authors',
+        route='/authors/<pid_value>',
+        template='inspirehep_theme/format/record/Author_HTML_detailed.tpl'
+    ),
+    data=dict(
+        pid_type='data',
+        route='/data/<pid_value>',
+        template='inspirehep_theme/format/record/Data_HTML_detailed.tpl'
+    ),
+    conferences=dict(
+        pid_type='conferences',
+        route='/conferences/<pid_value>',
+        template='inspirehep_theme/format/record/Conference_HTML_detailed.tpl'
+    ),
+    jobs=dict(
+        pid_type='jobs',
+        route='/jobs/<pid_value>',
+        template='inspirehep_theme/format/record/Job_HTML_detailed.tpl'
+    ),
+    institutions=dict(
+        pid_type='institutions',
+        route='/institutions/<pid_value>',
+        template='inspirehep_theme/format/record/Institution_HTML_detailed.tpl'
+    ),
+    experiments=dict(
+        pid_type='experiments',
+        route='/experiments/<pid_value>',
+        template='inspirehep_theme/format/record/Experiment_HTML_detailed.tpl'
+    ),
+    journals=dict(
+        pid_type='journals',
+        route='/journals/<pid_value>',
+        template='inspirehep_theme/format/record/Journal_HTML_detailed.tpl'
     )
 )
 
@@ -143,67 +317,6 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
 # Feedback
 CFG_SITE_SUPPORT_EMAIL = "admin@inspirehep.net"
 INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
-
-
-# from invenio_records_rest.facets import terms_filter
-# SEARCH_UI_SEARCH_API='/api/records/'
-# SEARCH_UI_SEARCH_INDEX='hep'
-# INDEXER_DEFAULT_INDEX='hep'
-# INDEXER_DEFAULT_DOC_TYPE='record'
-# RECORDS_REST_ENDPOINTS=dict(
-#     recid=dict(
-#         pid_type='recid',
-#         pid_minter='recid_minter',
-#         pid_fetcher='recid_fetcher',
-#         search_index='testrecords',
-#         search_type=None,
-#         record_serializers={
-#             'application/json': ('invenio_records_rest.serializers'
-#                                  ':record_to_json_serializer'),
-#         },
-#         search_serializers={
-#             'application/json': ('invenio_records_rest.serializers'
-#                                  ':search_to_json_serializer'),
-#         },
-#         list_route='/records/',
-#         item_route='/records/<pid_value>',
-#         default_media_type='application/json'
-#     ),
-# )
-
-# RECORDS_REST_FACETS=dict(
-#     testrecords=dict(
-#         aggs=dict(
-#             authors=dict(terms=dict(
-#                 field='added_entry_personal_name.personal_name')),
-#             languages=dict(terms=dict(
-#                 field='language_code.language_code_of_text_'
-#                       'sound_track_or_separate_title')),
-#             topic=dict(terms=dict(
-#                 field='subject_added_entry_topical_term.'
-#                       'topical_term_or_geographic_name_entry_element')),
-#         ),
-#         post_filters=dict(
-#             authors=terms_filter(
-#                 'added_entry_personal_name.personal_name'),
-#             languages=terms_filter(
-#                 'language_code.language_code_of_text_'
-#                 'sound_track_or_separate_title'),
-#             topic=terms_filter(
-#                 'subject_added_entry_topical_term.'
-#                 'topical_term_or_geographic_name_entry_element'),
-#         )
-#     )
-# )
-
-# RECORDS_REST_DEFAULT_SORT=dict(
-#     testrecords=dict(query='-bestmatch', noquery='controlnumber'),
-# )
-
-# RECORDS_UI_DEFAULT_PERMISSION_FACTORY=None
-#
-#
-
 
 # ######################################################## #
 # From here onwards is the backported search configuration #
