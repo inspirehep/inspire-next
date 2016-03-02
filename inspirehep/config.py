@@ -6,6 +6,7 @@ from __future__ import absolute_import, print_function
 
 import os
 
+from invenio_records_rest.facets import terms_filter
 
 # Identity function for string extraction
 def _(x):
@@ -541,6 +542,13 @@ SEARCH_ELASTIC_AGGREGATIONS = {
 
 RECORDS_REST_FACETS = {
     "records-hep": {
+        "filters": {
+            "author": terms_filter('exactauthor.raw'),
+            "subject": terms_filter('facet_inspire_subjects'),
+            "doc_type": terms_filter('facet_inspire_doc_type'),
+            "formulas": terms_filter('facet_formulas'),
+            "experiment": terms_filter('accelerator_experiments.facet_experiment'),
+        },
         "aggs": {
             "subject": {
                 "terms": {
@@ -654,9 +662,35 @@ RECORDS_REST_FACETS = {
     }
 }
 
-# SEARCH_QUERY_ENHANCERS = ['invenio_search.enhancers.collection_filter.apply']
-SEARCH_ELASTIC_SORT_FIELDS = ["earliest_date", "citation_count"]
+RECORDS_REST_SORT_OPTIONS = {
+    "records-hep": {
+        "bestmatch": {
+            "title": _('Best match'),
+            "fields": ['_score'],
+            "default_order": 'desc',
+            "order": 1,
+        },
+        "mostrecent": {
+            "title": _('Most recent'),
+            "fields": ['earliest_date'],
+            "default_order": 'desc',
+            "order": 2,
+        },
+        "mostcited": {
+            "title": _('Most cited'),
+            "fields": ['citation_count'],
+            "default_order": 'desc',
+            "order": 3,
+        },
+    },
+}
 
+RECORDS_REST_DEFAULT_SORT = {
+    "records-hep": {
+        "query": "bestmatch",
+        "noquery": "mostrecent"
+    }
+}
 
 SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
     "hep": "records-hep",
