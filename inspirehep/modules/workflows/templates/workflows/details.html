@@ -77,8 +77,8 @@
         <a class="close" data-dismiss="alert">&times;</a>
       </div>
     {% elif bwobject.version == 2 %}
-      <div class="alert alert-warning">
-        {{ _('Record is halted - awaiting decision') }}
+      <div class="alert alert-info">
+        {{ _('Record is stopped awaiting user action') }}
         <a class="close" data-dismiss="alert">&times;</a>
       </div>
     {% elif bwobject.version == 3 %}
@@ -87,8 +87,17 @@
         <a class="close" data-dismiss="alert">&times;</a>
       </div>
     {% elif bwobject.version == 4 %}
+      <div class="alert alert-warning">
+        {{ _('Record is waiting to be processed') }}
+        <a class="close" data-dismiss="alert">&times;</a>
+      </div>
+    {% elif bwobject.version == 5 %}
       <div class="alert alert-danger">
-        {{ _('Record has stopped with an error') }}
+        {{ _('Record has stopped with an error.') }}
+        <a role="button"
+           data-toggle="modal"
+           data-target="#error_details_modal"
+           class="float-right">See details</a>
         <a class="close" data-dismiss="alert">&times;</a>
       </div>
     {% endif %}
