@@ -16,6 +16,11 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
+{% if not record.name %}
+<div class="alert alert-warning">
+  {{ _('Updates are queued. Formatted information will be available shortly.') }}
+</div>
+  {% else %}
 <div class="panel panel-default">
   <div class="panel-body">
   {% if record['name'] %}
@@ -85,7 +90,7 @@
   {% endif %}
   {% if email_list %}
     <label>Email:</label>
-    {% for element in email_list %} 
+    {% for element in email_list %}
       {{ element|email_links|join_array(", ")|safe }}
     {% endfor %}
     <br>
@@ -176,7 +181,7 @@
         {% set rank_list = [] %}
         {% for r in record['positions'] %}
           {% if 'rank' in r %}
-          {% do rank_list.append(1) %}           
+          {% do rank_list.append(1) %}
           {% endif %}
         {% endfor %}
       {% endif%}
@@ -187,7 +192,7 @@
         {% set start = [] %}
         {% for start_date in record['positions'] %}
           {% if 'start_date' in start_date %}
-          {% do start.append(1) %}           
+          {% do start.append(1) %}
           {% endif %}
         {% endfor %}
       {% endif%}
@@ -214,7 +219,7 @@
             {% if 'institution' in element %}
             <td>
               <a href="/search?cc=Institutions&amp;p=department_acronym:{{ element['institution']['name'] }}">{{ element['institution']['name'] }}</a>
-            </td>  
+            </td>
             {% endif %}
             {% if 'rank' in element %}
               <td>
@@ -238,13 +243,10 @@
       </table>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-12 text-right">
-      <a class="btn btn-default" href="http://labs.inspirehep.net/author/update?recid={{record['recid']}}">Update</a>
-    </div>
-  </div>
+
   </div>
 </div>
+  {% endif %}
 <hr>
 <p>Submission from: <a href="mailto:{{user_email}}">{{user_email}}</a></p>
 <p>Corresponding RT ticket: <a href="{{ticket_url}}" target="_blank">{{ticket_url}}</a></p>
