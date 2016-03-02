@@ -259,7 +259,7 @@ def holdingpenreview(objectid, approved, ticket):
 def reviewhandler(objectid):
     """Form handler when a cataloger accepts an author review."""
     from inspirehep.modules.forms.utils import DataExporter
-    from invenio_workflows.models import BibWorkflowObject
+    from invenio_workflows.models import BibWorkflowObject, ObjectVersion
 
     if not objectid:
         abort(400)
@@ -275,7 +275,7 @@ def reviewhandler(objectid):
     extra_data["ticket"] = request.form.get('ticket') == "True"
     workflow_object.set_extra_data(extra_data)
     workflow_object.set_data(visitor.data)
-    workflow_object.save()
+    workflow_object.save(version=ObjectVersion.WAITING)
     workflow_object.continue_workflow(delayed=True)
 
     return render_template('authors/forms/new_review_accepted.html',
