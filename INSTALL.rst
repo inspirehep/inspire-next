@@ -43,13 +43,6 @@ Optionally, create the initial user:
 
    (inspirehep)$ inspirehep users create your@email.com -a
 
-Add demo records
-~~~~~~~~~~~~~~~~
-
-.. code-block:: console
-
-   (inspirehep)$ inspirehep migrator populate -f inspirehep/demosite/data/demo-records.xml.gz
-
 
 Start honcho
 ~~~~~~~~~~~~
@@ -61,6 +54,24 @@ Start honcho
 And the site is now available on `http://localhost:5000`.
 
 **PS: Note the new port!**
+
+
+Create ElasticSearch Indices and Aliases
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: console
+
+   (inspirehep)$ inspirehep index init
+
+Note, that you have to install the analysis-icu plugin for this command to work.
+
+
+Add demo records
+~~~~~~~~~~~~~~~~
+
+.. code-block:: console
+
+   (inspirehep)$ inspirehep migrator populate -f inspirehep/demosite/data/demo-records.xml.gz
 
 
 Adding a single record with CLI
