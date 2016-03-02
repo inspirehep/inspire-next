@@ -57,7 +57,7 @@ class authorupdate(WorkflowBase):
     def get_description(bwo):
         """Return description of object."""
         return "Updating author {}".format(
-            bwo.get_data().get("name", {}).get("preferred_name")
+            bwo.data.get("name", {}).get("preferred_name", "No name found")
         )
 
     @staticmethod
@@ -66,12 +66,11 @@ class authorupdate(WorkflowBase):
 
         of = kwargs.get("of", "hp")
 
-        extra_data = bwo.get_extra_data()
-        xml = extra_data.get("marcxml")
+        xml = bwo.extra_data.get("marcxml")
 
         id_user = bwo.id_user
         user_email = acc_get_user_email(id_user)
-        ticket_id = extra_data.get("ticket_id")
+        ticket_id = bwo.extra_data.get("ticket_id")
         ticket_url = "https://rt.inspirehep.net/Ticket/Display.html?id={}".format(
             ticket_id
         )
@@ -84,4 +83,4 @@ class authorupdate(WorkflowBase):
                                    record=bwo.data,
                                    user_email=user_email,
                                    ticket_url=ticket_url,
-                                   comments=extra_data.get("comments"))
+                                   comments=bwo.extra_data.get("comments"))
