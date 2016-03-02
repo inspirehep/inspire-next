@@ -257,10 +257,10 @@ def continuous_migration():
 
 @shared_task(ignore_result=False, compress='zlib', acks_late=True)
 def migrate_chunk(chunk, broken_output=None, dry_run=False):
-    from invenio_records.api import Record
-    from invenio_pidstore.models import PersistentIdentifier, PIDStatus, \
-        RecordIdentifier
     from invenio_indexer.api import RecordIndexer
+    from invenio_records.api import Record
+
+    from ..pidstore.minters import inspire_recid_minter
 
     indexer = RecordIndexer()
 
@@ -275,17 +275,8 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
             )
         rec_uuid = str(Record.create(json_record, id_=None).id)
 
-        # Reserve record identifier.
-        recid = json_record['control_number']
-        RecordIdentifier.insert(recid)
-
         # Create persistent identifier.
-        pid = PersistentIdentifier.create(
-            pid_type=get_pid_type(record),
-            pid_value=str(recid),
-            object_type='rec',
-            object_uuid=rec_uuid,
-            status=PIDStatus.REGISTERED)
+        pid = inspire_recid_minter(rec_uuid, json_record)
 
         index_queue.append(pid.object_uuid)
 
@@ -297,31 +288,6 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
 
     # Send task to migrate files.
     return rec_uuid
-
-
-def get_pid_type(record):
-    """
-    Get pid type for a given record.
-
-    This is then used to create different views for each pid type.
-    """
-    if _collection_in_record(record, 'institution'):
-        return 'institutions'
-    elif _collection_in_record(record, 'experiment'):
-        return 'experiments'
-    elif _collection_in_record(record, 'journals'):
-        return 'journals'
-    elif _collection_in_record(record, 'hepnames'):
-        return 'authors'
-    elif _collection_in_record(record, 'job') or \
-            _collection_in_record(record, 'jobhidden'):
-        return 'jobs'
-    elif _collection_in_record(record, 'conferences'):
-        return 'conferences'
-    elif _collection_in_record(record, 'data'):
-        return 'data'
-    else:
-        return 'literature'
 
 
 @shared_task()

@@ -71,13 +71,17 @@ def search():
         'SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING'
     ].get(cc, current_app.config['SEARCH_ELASTIC_DEFAULT_INDEX'])
 
+    # Ported to REST
     response = InspireQuery(p)
     response = Results(response.body, index=index, doc_type=index.split('-')[-1])
 
+    # Ported to REST
     response.body.update({
         'size': int(rg),
         'from': jrec - 1,
-        'aggs': current_app.config['SEARCH_ELASTIC_AGGREGATIONS'].get(cc, {})
+        'aggs': current_app.config['SEARCH_ELASTIC_AGGREGATIONS'].get(
+            'records-{0}'.format(cc), {}
+        )
     })
 
     if sf in current_app.config['SEARCH_ELASTIC_SORT_FIELDS']:
