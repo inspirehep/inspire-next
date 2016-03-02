@@ -125,13 +125,18 @@ def index_holdingpen_record(sender, **kwargs):
     # Add collection to get correct mapping
     record["_collections"] = get_record_collections(record)
 
-    # Depends on "_collections" being filled correctly for record
-    record_index = get_record_index(record) or current_app.config["SEARCH_ELASTIC_DEFAULT_INDEX"]
+    if hasattr(workflow, "search_index"):
+        record_index = workflow.search_index
+    else:
+        # Depends on "_collections" being filled correctly for record
+        record_index = get_record_index(record)
 
     # Trigger any before_record_index receivers
     before_record_index.send(sender.id, json=record, index=record_index)
 
     if record_index:
+        # Delete from other indexes in case index changed.
+        delete_from_index(None, None, sender)
         index = current_app.config['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + record_index
         es.index(
             index=index,

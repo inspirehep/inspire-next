@@ -36,6 +36,9 @@ class authorupdate(WorkflowBase):
 
     object_type = "Author Update"
 
+    # FIXME: Until we get index from schema in v3
+    search_index = "authors"
+
     workflow = [
         convert_data_to_model(),
         create_marcxml_record(),
