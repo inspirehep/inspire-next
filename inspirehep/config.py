@@ -31,6 +31,7 @@ import os
 from invenio_records_rest.facets import terms_filter
 
 
+# Identity function for string extraction
 def _(x):
     """Identity function for string extraction."""
     return x

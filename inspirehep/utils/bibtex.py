@@ -22,6 +22,7 @@
 
 import re
 
+from inspirehep.utils import bibtex_booktitle
 from invenio_search import current_search_client as es
 from invenio_pidstore.models import PersistentIdentifier
 from dojson.utils import force_list
@@ -347,7 +348,6 @@ class Bibtex(Export):
                     return address[0]
                 else:
                     if any(isinstance(i, list) for i in address):
-                        from inspirehep.utils import bibtex_booktitle
                         nested_list = list(bibtex_booktitle.traverse(address))
                         return nested_list[0]
                     else:
@@ -372,7 +372,6 @@ class Bibtex(Export):
         """Return record booktitle"""
         if self.entry_type == 'inproceedings' or \
            self.original_entry == 'inproceedings':
-            from inspirehep.utils import bibtex_booktitle
             booktitle = bibtex_booktitle.generate_booktitle(self.record)
             if booktitle:
                 bt = re.sub(r'(?<!\\)([#_&%$])', r'\\\1', booktitle)
@@ -638,7 +637,6 @@ class Bibtex(Export):
                 return ', '.join(element for element in result)
             else:
                 if any(isinstance(i, list) for i in isbn):
-                    from inspirehep.utils import bibtex_booktitle
                     nested_list = list(bibtex_booktitle.traverse(isbn))
                     return nested_list[0]
                 else:
@@ -670,7 +668,8 @@ class Bibtex(Export):
                 try:
                     if journal and (volume != '' or pages != ''):
                         recid = self.record['control_number', '']
-                        pid = PersistentIdentifier.get('recid', str(recid))
+                        pid = PersistentIdentifier.get(
+                            'literature', str(recid))
                         record = es.get_source(
                             index='records-journals',
                             id=str(pid.object_uuid),

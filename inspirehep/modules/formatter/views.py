@@ -44,7 +44,7 @@ blueprint = Blueprint(
 @blueprint.route('/bibtex', methods=['GET', ])
 def get_bibtex():
     recid = request.values.get('recid', 0, type=int)
-    pid = PersistentIdentifier.get('recid', str(recid))
+    pid = PersistentIdentifier.get('literature', str(recid))
     record = es.get_source(
         index='records-hep', id=str(pid.object_uuid), doc_type='hep')
     bibtex = Bibtex(record).format()
@@ -54,7 +54,7 @@ def get_bibtex():
 @blueprint.route('/latex', methods=['GET', ])
 def get_latex():
     recid = request.values.get('recid', 0, type=int)
-    pid = PersistentIdentifier.get('recid', str(recid))
+    pid = PersistentIdentifier.get('literature', str(recid))
     latex_format = request.values.get('latex_format', '', type=unicode)
     record = es.get_source(
         index='records-hep', id=str(pid.object_uuid), doc_type='hep')
@@ -64,7 +64,7 @@ def get_latex():
 
 @blueprint.route("/download-bibtex/<int:recid>")
 def get_bibtex_file(recid):
-    pid = PersistentIdentifier.get('recid', str(recid))
+    pid = PersistentIdentifier.get('literature', str(recid))
     record = es.get_source(
         index='records-hep', id=str(pid.object_uuid), doc_type='hep')
     results = Bibtex(record).format()
@@ -78,7 +78,7 @@ def get_bibtex_file(recid):
 
 @blueprint.route("/download-latex/<path:latex_format>/<int:recid>")
 def get_latex_file(recid, latex_format):
-    pid = PersistentIdentifier.get('recid', str(recid))
+    pid = PersistentIdentifier.get('literature', str(recid))
     record = es.get_source(
         index='records-hep', id=str(pid.object_uuid), doc_type='hep')
     results = Latex(record, latex_format).format()
@@ -111,7 +111,7 @@ def export_as(export_format):
     results = ''
     export_format = export_format.replace('/', '')
     for idx in ids:
-        pid = PersistentIdentifier.get('recid', str(idx))
+        pid = PersistentIdentifier.get('literature', str(idx))
         record = es.get_source(
             index='records-hep', id=str(pid.object_uuid), doc_type='hep')
         if export_format == 'bibtex':

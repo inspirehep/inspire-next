@@ -309,7 +309,8 @@ class Latex(Export):
                 try:
                     if journal and (volume != '' or pages != ''):
                         recid = self.record['control_number', '']
-                        pid = PersistentIdentifier.get('recid', str(recid))
+                        pid = PersistentIdentifier.get(
+                            'literature', str(recid))
                         record = es.get_source(
                             index='records-journals',
                             id=str(pid.object_uuid),

@@ -135,7 +135,7 @@ class Export(object):
         """Returns how many times record was cited. If 0, returns nothing"""
         today = time.strftime("%d %b %Y")
         recid = self.record['control_number']
-        pid = PersistentIdentifier.get('recid', str(recid))
+        pid = PersistentIdentifier.get('literature', str(recid))
         record = es.get_source(
             index='records-hep', id=str(pid.object_uuid), doc_type='hep')
         citations = ''
