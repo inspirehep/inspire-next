@@ -112,15 +112,16 @@ def index_holdingpen_record(sender, **kwargs):
     record["id_user"] = sender.id_user
     record["id_parent"] = sender.id_parent
     record["workflow"] = sender.workflow.name
-    try:
-        record.update(workflow.get_record(sender))
-    except Exception as err:
-        current_app.logger.exception(err)
 
     try:
+        record.update(workflow.get_record(sender))
         record.update(workflow.get_sort_data(sender))
-    except Exception as err:
+    except Exception as err:  # noqa
         current_app.logger.exception(err)
+        current_app.logger.error("Indexing skipped for Holding Pen record {0}".format(
+            sender.id
+        ))
+        return
 
     # Add collection to get correct mapping
     record["_collections"] = get_record_collections(record)
