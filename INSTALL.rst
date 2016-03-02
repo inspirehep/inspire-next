@@ -93,14 +93,6 @@ Access the record (web/rest)
    curl -i -H "Accept: application/json" http://localhost:5000/api/records/1
 
 
-Search
-======
-
-.. code-block:: console
-
-   (inspirehep)$ inspirehep index init
-
-
 ======
 ENJOY!
 ======
