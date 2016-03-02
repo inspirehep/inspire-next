@@ -35,18 +35,15 @@
 
 {%- block body_inner %}
 <div id="invenio-search">
-  <invenio-search search-endpoint="{{ config.SEARCH_UI_SEARCH_API }}">
+  <invenio-search search-endpoint="{{ config.SEARCH_UI_SEARCH_API }}" search-extra-params='{"size": 25}'>
   {{super()}}
   </invenio-search>
 </div>
 {%- endblock body_inner %}
 
-{%- block page_header %}
-{% include "inspirehep_theme/header.html" %}
-{%- endblock page_header %}
 
-{%- block page_body %}
-<div class="container search-page">
+{%- block body %}
+<div class="search-page">
   <div class="row">
     {%- block search_body %}
     <div class="col-xs-12 col-md-9 col-md-push-3">
@@ -101,13 +98,13 @@
       {%- endblock search_error %}
       {%- block search_loading %}
       <invenio-search-loading
-       template="{{ url_for('static', filename='node_modules/invenio-search-js/dist/templates/loading.html') }}"
+       template="{{ url_for('static', filename='templates/search/loading.html') }}"
        message="{{ _('Loading...') }}">
       </invenio-search-loading>
       {%- endblock search_loading %}
       {%- block search_results %}
       <invenio-search-results
-       template="{{ url_for('static', filename='templates/search/literature/default.html') }}">
+       template="{{ url_for('static', filename='templates/search/literature/briefresults.html') }}">
       </invenio-search-results>
       {%- endblock search_results %}
       {%- block search_pagination_bottom %}
@@ -122,10 +119,10 @@
     {%- block search_facets %}
     <div class="col-md-3 col-md-pull-9 col-xs-12">
       <invenio-search-facets
-       template="{{ url_for('static', filename='node_modules/invenio-search-js/dist/templates/facets.html') }}">
+       template="{{ url_for('static', filename='templates/search/facets.html') }}">
       </invenio-search-facets>
     </div>
     {%- endblock search_facets %}
   </div>
 </div>
-{%- endblock page_body -%}
+{%- endblock body -%}
