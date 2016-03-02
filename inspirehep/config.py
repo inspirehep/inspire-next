@@ -8,9 +8,11 @@ import os
 
 from invenio_records_rest.facets import terms_filter
 
+
 # Identity function for string extraction
 def _(x):
     return x
+
 
 SERVER_NAME = "localhost:5000"
 
