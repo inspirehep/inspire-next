@@ -60,7 +60,7 @@ class AuthorUpdate(WorkflowBase):
     def get_description(bwo):
         """Return description of object."""
         return "Updating author {}".format(
-            bwo.get_data().get("name", {}).get("preferred_name")
+            bwo.data.get("name", {}).get("preferred_name", "No name found")
         )
 
     @staticmethod
@@ -69,8 +69,7 @@ class AuthorUpdate(WorkflowBase):
 
         of = kwargs.get("of", "hp")
 
-        extra_data = bwo.get_extra_data()
-        xml = extra_data.get("marcxml")
+        xml = bwo.extra_data.get("marcxml")
 
         id_user = bwo.id_user
         try:
@@ -90,4 +89,4 @@ class AuthorUpdate(WorkflowBase):
                                    record=bwo.data,
                                    user_email=user_email,
                                    ticket_url=ticket_url,
-                                   comments=extra_data.get("comments"))
+                                   comments=bwo.extra_data.get("comments"))

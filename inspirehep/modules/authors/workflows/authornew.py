@@ -100,7 +100,7 @@ class AuthorNew(WorkflowBase):
     @staticmethod
     def get_description(bwo):
         """Return description of object."""
-        return bwo.get_data().get("name", {}).get("preferred_name")
+        return bwo.data.get("name", {}).get("preferred_name", "No name found")
 
     @staticmethod
     def formatter(bwo, **kwargs):
@@ -108,8 +108,7 @@ class AuthorNew(WorkflowBase):
 
         of = kwargs.get("of", "hp")
 
-        extra_data = bwo.get_extra_data()
-        xml = extra_data.get("marcxml")
+        xml = bwo.extra_data.get("marcxml")
 
         id_user = bwo.id_user
         try:
@@ -129,4 +128,4 @@ class AuthorNew(WorkflowBase):
                                    record=bwo.data,
                                    user_email=user_email,
                                    ticket_url=ticket_url,
-                                   comments=extra_data.get("comments"))
+                                   comments=bwo.extra_data.get("comments"))
