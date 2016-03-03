@@ -22,15 +22,22 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
--e git+https://github.com/inveniosoftware/invenio-formatter.git#egg=invenio-formatter
--e git+https://github.com/inveniosoftware/invenio-mail.git#egg=invenio-mail
--e git+https://github.com/inveniosoftware/invenio-records-rest.git#egg=invenio-records-rest
--e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3#egg=invenio-query-parser==0.4.2.dev20160221
--e git+https://github.com/inspirehep/invenio-records.git@invenio3#egg=invenio-records
--e git+https://github.com/inspirehep/invenio-pidstore.git#egg=invenio-pidstore
+"""Persistent identifier minters."""
 
--e git+https://github.com/inspirehep/workflow.git#egg=workflow==2.0.0.dev20160223
--e git+https://github.com/inspirehep/invenio-workflows.git@invenio3#egg=invenio-workflows==1.0.0a1.dev20160126
--e git+https://github.com/jalavik/invenio-workflows-ui.git@master#egg=invenio-workflows-ui==0.1.0.dev20160000
+from __future__ import absolute_import, print_function
 
--e .[postgresql]
+from collections import namedtuple
+
+from .providers import InspireRecordIdProvider
+
+FetchedPID = namedtuple('FetchedPID', ['provider', 'pid_type', 'pid_value'])
+
+
+def inspire_recid_fetcher(record_uuid, data):
+    """Fetch a record's identifiers."""
+    assert "$schema" in data
+    return FetchedPID(
+        provider=InspireRecordIdProvider,
+        pid_type=InspireRecordIdProvider.schema_to_pid_type(data['$schema']),
+        pid_value=str(data['control_number']),
+    )

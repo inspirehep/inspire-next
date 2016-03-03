@@ -22,15 +22,26 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
--e git+https://github.com/inveniosoftware/invenio-formatter.git#egg=invenio-formatter
--e git+https://github.com/inveniosoftware/invenio-mail.git#egg=invenio-mail
--e git+https://github.com/inveniosoftware/invenio-records-rest.git#egg=invenio-records-rest
--e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3#egg=invenio-query-parser==0.4.2.dev20160221
--e git+https://github.com/inspirehep/invenio-records.git@invenio3#egg=invenio-records
--e git+https://github.com/inspirehep/invenio-pidstore.git#egg=invenio-pidstore
+"""UI for Invenio-Search."""
 
--e git+https://github.com/inspirehep/workflow.git#egg=workflow==2.0.0.dev20160223
--e git+https://github.com/inspirehep/invenio-workflows.git@invenio3#egg=invenio-workflows==1.0.0a1.dev20160126
--e git+https://github.com/jalavik/invenio-workflows-ui.git@master#egg=invenio-workflows-ui==0.1.0.dev20160000
+from flask_assets import Bundle
+from invenio_assets import NpmBundle
 
--e .[postgresql]
+css = Bundle(
+    'scss/search/search.scss',
+    filters='scss, cleancss',
+    output='gen/search.%(version)s.css'
+)
+
+js = NpmBundle(
+    'node_modules/angular/angular.js',
+    'js/search/app.js',
+    filters='requirejs',
+    depends=('node_modules/invenio-search-js/dist/*.js', ),
+    output='gen/search.%(version)s.js',
+    npm={
+        "almond": "~0.3.1",
+        'angular': '~1.4.7',
+        'invenio-search-js': '~0.1.0'
+    },
+)

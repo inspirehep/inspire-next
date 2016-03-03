@@ -1,0 +1,14 @@
+<form name="search" role="search" id="searchform">
+  <div class="nav navbar-nav navbar-form">
+    <div class="input-group" id="searchform-input-group">
+      <input
+      type="text"
+      class="form-control"
+      placeholder="{{placeholder}}"
+      ng-model="vm.userQuery"
+      ng-model-options="{ debounce: { 'default': 500, 'blur': 0 } }"
+      ng-keyup="$event.keyCode == 13 && updateQuery()"
+      >
+    </div>
+  </div>
+</form>

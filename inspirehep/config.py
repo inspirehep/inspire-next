@@ -6,6 +6,7 @@ from __future__ import absolute_import, print_function
 
 import os
 
+from invenio_records_rest.facets import terms_filter
 
 # Identity function for string extraction
 def _(x):
@@ -72,160 +73,173 @@ SECURITY_RESET_SALT = "CHANGE_ME"
 
 
 SEARCH_UI_BASE_TEMPLATE = 'inspirehep_theme/page.html'
+SEARCH_UI_SEARCH_TEMPLATE = 'search/search.html'
+SEARCH_UI_SEARCH_API = '/api/literature/'  # FIXME there will be different one per search page
+SEARCH_UI_SEARCH_INDEX = 'records-hep'
 USERPROFILES_SETTINGS_TEMPLATE = 'inspirehep_theme/accounts/settings/profile.html'
 
 RECORDS_REST_ENDPOINTS = dict(
     literature=dict(
         pid_type='literature',
-        pid_minter='recid_minter',
-        pid_fetcher='recid_fetcher',
+        pid_minter='inspire_recid_minter',
+        pid_fetcher='inspire_recid_fetcher',
         search_index='records-hep',
         search_type='hep',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':record_to_json_serializer'),
+                                 ':json_v1_response'),
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':search_to_json_serializer'),
+                                 ':json_v1_search'),
+            'application/vnd+inspire.brief+json': ('inspirehep.modules.records.serializers'
+                                                   ':json_brief_v1_search'),
         },
         list_route='/literature/',
         item_route='/literature/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
+        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
     ),
     authors=dict(
         pid_type='authors',
-        pid_minter='recid_minter',
-        pid_fetcher='recid_fetcher',
+        pid_minter='inspire_recid_minter',
+        pid_fetcher='inspire_recid_fetcher',
         search_index='records-authors',
         search_type='authors',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':record_to_json_serializer'),
+                                 ':json_v1_response'),
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':search_to_json_serializer'),
+                                 ':json_v1_search'),
         },
         list_route='/authors/',
         item_route='/authors/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
+        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
     ),
     data=dict(
         pid_type='data',
-        pid_minter='recid_minter',
-        pid_fetcher='recid_fetcher',
+        pid_minter='inspire_recid_minter',
+        pid_fetcher='inspire_recid_fetcher',
         search_index='records-data',
         search_type='data',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':record_to_json_serializer'),
+                                 ':json_v1_response'),
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':search_to_json_serializer'),
+                                 ':json_v1_search'),
         },
         list_route='/data/',
         item_route='/data/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
+        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
     ),
     conferences=dict(
         pid_type='conferences',
-        pid_minter='recid_minter',
-        pid_fetcher='recid_fetcher',
+        pid_minter='inspire_recid_minter',
+        pid_fetcher='inspire_recid_fetcher',
         search_index='records-conferences',
         search_type='conferences',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':record_to_json_serializer'),
+                                 ':json_v1_response'),
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':search_to_json_serializer'),
+                                 ':json_v1_search'),
         },
         list_route='/conferences/',
         item_route='/conferences/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
+        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
     ),
     jobs=dict(
         pid_type='jobs',
-        pid_minter='recid_minter',
-        pid_fetcher='recid_fetcher',
+        pid_minter='inspire_recid_minter',
+        pid_fetcher='inspire_recid_fetcher',
         search_index='records-jobs',
         search_type='jobs',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':record_to_json_serializer'),
+                                 ':json_v1_response'),
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':search_to_json_serializer'),
+                                 ':json_v1_search'),
         },
         list_route='/jobs/',
         item_route='/jobs/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
+        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
     ),
     institutions=dict(
         pid_type='institutions',
-        pid_minter='recid_minter',
-        pid_fetcher='recid_fetcher',
+        pid_minter='inspire_recid_minter',
+        pid_fetcher='inspire_recid_fetcher',
         search_index='records-institutions',
         search_type='institutions',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':record_to_json_serializer'),
+                                 ':json_v1_response'),
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':search_to_json_serializer'),
+                                 ':json_v1_search'),
         },
         list_route='/institutions/',
         item_route='/institutions/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
+        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
     ),
     experiments=dict(
         pid_type='experiments',
-        pid_minter='recid_minter',
-        pid_fetcher='recid_fetcher',
+        pid_minter='inspire_recid_minter',
+        pid_fetcher='inspire_recid_fetcher',
         search_index='records-experiments',
         search_type='experiments',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':record_to_json_serializer'),
+                                 ':json_v1_response'),
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':search_to_json_serializer'),
+                                 ':json_v1_search'),
         },
         list_route='/experiments/',
         item_route='/experiments/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
+        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
     ),
     journals=dict(
         pid_type='journals',
-        pid_minter='recid_minter',
-        pid_fetcher='recid_fetcher',
+        pid_minter='inspire_recid_minter',
+        pid_fetcher='inspire_recid_fetcher',
         search_index='records-journals',
         search_type='journals',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':record_to_json_serializer'),
+                                 ':json_v1_response'),
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
-                                 ':search_to_json_serializer'),
+                                 ':json_v1_search'),
         },
         list_route='/journals/',
         item_route='/journals/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
+        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
     ),
 )
 
@@ -426,7 +440,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
 FACETS_SIZE_LIMIT = 10
 
 SEARCH_ELASTIC_AGGREGATIONS = {
-    "hep": {
+    "records-hep": {
         "subject": {
             "terms": {
                 "field": "facet_inspire_subjects"
@@ -460,7 +474,7 @@ SEARCH_ELASTIC_AGGREGATIONS = {
             }
         }
     },
-    "conferences": {
+    "records-conferences": {
         "series": {
             "terms": {
                 "field": "series"
@@ -478,7 +492,7 @@ SEARCH_ELASTIC_AGGREGATIONS = {
             }
         }
     },
-    "experiments": {
+    "records-experiments": {
         "field_code": {
             "terms": {
                 "field": "field_code"
@@ -495,21 +509,21 @@ SEARCH_ELASTIC_AGGREGATIONS = {
             }
         }
     },
-    "journals": {
+    "records-journals": {
         "publisher": {
             "terms": {
                 "field": "publisher"
             }
         }
     },
-    "institutions": {
+    "records-institutions": {
         "country": {
             "terms": {
                 "field": "address.country.raw"
             }
         }
     },
-    "jobs": {
+    "records-jobs": {
         "continent": {
             "terms": {
                 "field": "continent"
@@ -528,9 +542,157 @@ SEARCH_ELASTIC_AGGREGATIONS = {
     }
 }
 
-# SEARCH_QUERY_ENHANCERS = ['invenio_search.enhancers.collection_filter.apply']
-SEARCH_ELASTIC_SORT_FIELDS = ["earliest_date", "citation_count"]
+RECORDS_REST_FACETS = {
+    "records-hep": {
+        "filters": {
+            "author": terms_filter('exactauthor.raw'),
+            "subject": terms_filter('facet_inspire_subjects'),
+            "doc_type": terms_filter('facet_inspire_doc_type'),
+            "formulas": terms_filter('facet_formulas'),
+            "experiment": terms_filter('accelerator_experiments.facet_experiment'),
+        },
+        "aggs": {
+            "subject": {
+                "terms": {
+                    "field": "facet_inspire_subjects"
+                }
+            },
+            "doc_type": {
+                "terms": {
+                    "field": "facet_inspire_doc_type"
+                }
+            },
+            "formulas": {
+                "terms": {
+                    "field": "facet_formulas"
+                }
+            },
+            "author": {
+                "terms": {
+                    "field": "exactauthor.raw"
+                }
+            },
+            "experiment": {
+                "terms": {
+                    "field": "accelerator_experiments.facet_experiment"
+                }
+            },
+            "earliest_date": {
+                "date_histogram": {
+                    "field": "earliest_date",
+                    "interval": "year",
+                    "min_doc_count": 1
+                }
+            }
+        }
+    },
+    "records-conferences": {
+        "aggs": {
+            "series": {
+                "terms": {
+                    "field": "series"
+                }
+            },
+            "conf_subject": {
+                "terms": {
+                    "field": "field_code.value"
+                }
+            },
+            "opening_date": {
+                "date_histogram": {
+                    "field": "opening_date",
+                    "interval": "year"
+                }
+            }
+        }
+    },
+    "records-experiments": {
+        "aggs": {
+            "field_code": {
+                "terms": {
+                    "field": "field_code"
+                }
+            },
+            "wwwlab": {
+                "terms": {
+                    "field": "experiment_name.wwwlab"
+                }
+            },
+            "accelerator": {
+                "terms": {
+                    "field": "accelerator"
+                }
+            }
+        }
+    },
+    "records-journals": {
+        "aggs": {
+            "publisher": {
+                "terms": {
+                    "field": "publisher"
+                }
+            }
+        }
+    },
+    "records-institutions": {
+        "aggs": {
+            "country": {
+                "terms": {
+                    "field": "address.country.raw"
+                }
+            }
+        }
+    },
+    "records-jobs": {
+        "aggs": {
+            "continent": {
+                "terms": {
+                    "field": "continent"
+                }
+            },
+            "rank": {
+                "terms": {
+                    "field": "rank"
+                }
+            },
+            "research_area": {
+                "terms": {
+                    "field": "research_area"
+                }
+            }
+        }
+    }
+}
 
+RECORDS_REST_SORT_OPTIONS = {
+    "records-hep": {
+        "bestmatch": {
+            "title": _('Best match'),
+            "fields": ['_score'],
+            "default_order": 'desc',
+            "order": 1,
+        },
+        "mostrecent": {
+            "title": _('Most recent'),
+            "fields": ['earliest_date'],
+            "default_order": 'desc',
+            "order": 2,
+        },
+        "mostcited": {
+            "title": _('Most cited'),
+            "fields": ['citation_count'],
+            "default_order": 'desc',
+            "order": 3,
+        },
+    },
+}
+
+RECORDS_REST_DEFAULT_SORT = {
+    "records-hep": {
+        "query": "bestmatch",
+        "noquery": "mostrecent"
+    }
+}
 
 SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
     "hep": "records-hep",

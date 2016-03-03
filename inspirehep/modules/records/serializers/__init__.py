@@ -22,15 +22,13 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
--e git+https://github.com/inveniosoftware/invenio-formatter.git#egg=invenio-formatter
--e git+https://github.com/inveniosoftware/invenio-mail.git#egg=invenio-mail
--e git+https://github.com/inveniosoftware/invenio-records-rest.git#egg=invenio-records-rest
--e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3#egg=invenio-query-parser==0.4.2.dev20160221
--e git+https://github.com/inspirehep/invenio-records.git@invenio3#egg=invenio-records
--e git+https://github.com/inspirehep/invenio-pidstore.git#egg=invenio-pidstore
+"""Record serialization."""
 
--e git+https://github.com/inspirehep/workflow.git#egg=workflow==2.0.0.dev20160223
--e git+https://github.com/inspirehep/invenio-workflows.git@invenio3#egg=invenio-workflows==1.0.0a1.dev20160126
--e git+https://github.com/jalavik/invenio-workflows-ui.git@master#egg=invenio-workflows-ui==0.1.0.dev20160000
+from __future__ import absolute_import, print_function
 
--e .[postgresql]
+from invenio_records_rest.serializers.response import search_responsify
+from invenio_records_rest.serializers.schemas.json import RecordSchemaJSONV1
+from .json import JSONBriefSerializer
+
+json_brief_v1 = JSONBriefSerializer(RecordSchemaJSONV1)
+json_brief_v1_search = search_responsify(json_brief_v1, 'application/json')
