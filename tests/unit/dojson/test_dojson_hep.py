@@ -32,6 +32,8 @@ from inspirehep.dojson.hep import hep, hep2marc
 def marcxml_to_json():
     marcxml = pkg_resources.resource_string('tests',
                                             os.path.join(
+                                                'unit',
+                                                'dojson',
                                                 'fixtures',
                                                 'test_hep_record.xml')
                                             )
@@ -43,6 +45,8 @@ def marcxml_to_json():
 def marcxml_to_json_book():
     marcxml = pkg_resources.resource_string('tests',
                                             os.path.join(
+                                                'unit',
+                                                'dojson',
                                                 'fixtures',
                                                 'test_hep_book.xml')
                                             )
