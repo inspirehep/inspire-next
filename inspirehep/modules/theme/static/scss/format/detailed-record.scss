@@ -80,7 +80,7 @@ $darken: 8%;
     color: white;
 }
 
-h1.record-detailed-title {
+h1.record-detailed-title, .record-title {
     margin: 0px;
     font-size: x-large;
     padding-bottom: 5px;
@@ -211,10 +211,9 @@ h1.record-detailed-title, .record-header label, #record-journal,
     background: white;
     margin-bottom: 20px;
     padding: 20px;
-    color: black;
 }
 
-#record-keywords .label-keyword {
+.label-keyword {
     background-color: #D3D3D3;
 
     a {
@@ -238,7 +237,8 @@ h1.record-detailed-title, .record-header label, #record-journal,
     font-size: 0.7em;
 }
 
-#record-abstract-title, #record-keywords-title, #record-reference-title, #record-citation-title, #record-impact-graph {
+#record-abstract-title,
+.record-detailed-title {
     font-size: 18px;
     font-weight: 600;
 }
@@ -615,8 +615,62 @@ h1.record-detailed-title, .record-header label, #record-journal,
     #record-detailed-jobs-sidebox,
     #record-detailed-jobs-deadline {
         @media (min-width: $screen-md-min) {
-        float: right;
+            float: right;
+        }
+
+        padding-left: 0;
+        padding-right: 0;
     }
+}
+
+#record-detailed-conference {
+
+    #record-detailed-conference-information-map {
+        margin-bottom: 25px;
+    }
+
+    #record-detailed-conference-information, #record-detailed-jobs-deadline{
+        background-color: white;
+    }
+
+    #conference-detailed-map {
+        height: 250px;
+        width: 250px;
+        margin: 0 auto;
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    #conference-detailed-map-place {
+        text-align: center;
+    }
+
+    .col-md-8, .col-md-3 {
+        background-color: white;
+    }
+
+    .detailed-conference-information {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    @media (min-width: $screen-md-min) {
+
+        #record-detailed-conference-information,
+        #record-detailed-conference-map {
+            min-height: 375px;
+        }
+
+        #record-detailed-conference-information.col-md-8 {
+            width: 73%;
+        }
+    }
+
+    #record-detailed-conference-map {
+        @media (min-width: $screen-md-min) {
+            float: right;
+        }
+
         padding-left: 0;
         padding-right: 0;
     }

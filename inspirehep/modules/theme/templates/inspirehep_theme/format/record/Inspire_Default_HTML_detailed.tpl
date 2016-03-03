@@ -125,7 +125,10 @@
       ) {
         DataTables.attachTo(document, {
           'recid': "{{ record.control_number }}",
-          'collection': "literature"
+          'collection': "literature",
+          {% if record['series'] %}
+            'seriesname' : "{{ record['series'][0] }}"
+          {% endif %}
         });
       });
   </script>
