@@ -1,6 +1,6 @@
 {#
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -20,18 +20,231 @@
 {%- extends "inspirehep_theme/search/collection_basic.html" -%}
 
 {% block body %}
-  {% block collection_header %}
-    <div id="collection-search-bar" class="conferences-collection-search-bar">
-      <div class="title" id="conferences-search-bar">
-          Search {{ "Conferences" | number_of_records }} conferences
+  <div id="collection-search-bar" class="conferences-collection-search-bar">
+    <div class="title" id="conferences-search-bar">
+        Search {{ "Conferences" | number_of_records }} conferences
+    </div>
+    {% block search_bar %}
+      {{ super() }}
+    {% endblock search_bar %}
+    <div class="subtitle">
+      Example query:
+      <a href="/search?p=Las+Vegas&cc=conferences">Las Vegas</a>
+    </div>
+  </div>
+
+  <div id="collection-how-to-search">
+    <div class="title">Useful links</div>
+    <div class="row">
+      <div class="col-md-6" id="left">
+        <div class="subtitle">
+          Conference series
+        </div>
+        <ol>
+          
+          <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" 
+                data-target="#ReadMoreAccelerators"
+                href="#ReadMoreAccelerators">
+                  <li>Accelerators</li>
+                </a>
+            </h4>
+          </div>
+          <div id="ReadMoreAccelerators" class="panel-collapse collapse">
+              <div class="panel-body">
+                <ul>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-aac+or+411__a:aac">AAC</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-abdw+or+411__a:abdw">ABDW</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-apac+or+411__a:apac">APAC</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-biw+or+411__a:biw">BIW</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-caari+or+411__a:caari">CAARI</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-cool+or+411__a:cool">COOL</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-cyclotrons+or+411__a:cyclotrons">CYCLOTRONS</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-dipac+or+411__a:dipac">DIPAC</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-ecris+or+411__a:ecris">ECRIS</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-epac+or+411__a:epac">EPAC</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-fel+or+411__a:fel">FEL</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-hb+or+411__a:hb">HB</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-heacc+or+411__a:heacc">HEACC</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-hiat+or+411__a:hiat">HIAT</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-ibic+or+411__a:ibic">IBIC</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-icalepcs+or+411__a:icalepcs">ICALEPCS</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-icap+or+411__a:icap">ICAP</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-ipac+or+411__a:ipac">IPAC</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-iwaa+or+411__a:iwaa">IWAA</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-lcws+or+411__a:lcws">LCWS</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-linac+or+411__a:linac">LINAC</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-mt+or+411__a:mt">MT</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-pac+or+411__a:pac">PAC</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-pcapac+or+411__a:pcapac">PCaPAC</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-rupac+or+411__a:rupac">RuPAC</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-srf+or+411__a:srf">SRF</a></li>
+                  <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-USPAS+or+411__a:USPAS">USPAS</a></li>
+                </ul>
+              </div>
+          </div>
+
+          <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" 
+                data-target="#ReadMoreCID"
+                href="#ReadMoreCID">
+                  <li>Computing, Instruments and Detectors</li>
+                </a>
+            </h4>
+          </div>
+          <div id="ReadMoreCID" class="panel-collapse collapse">
+              <div class="panel-body">
+              <ul>
+                <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=411__a:HPDC">HPDC</a></li>
+                <li> <a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-icalepcs+or+411__a:icalepcs">ICALEPCS</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-icatpp+or+411__a:icatpp">ICATPP</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-iworid+or+411__a:iworid">IWORID</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-rt+or+411__a:rt">RT</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=411__a:sc">SC</a></li>
+              </ul>
+              </div>
+          </div>
+
+          <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" 
+                data-target="#ReadMoreHaN"
+                href="#ReadMoreHaN">
+                  <li>Hadrons and Nuclei</li>
+                </a>
+            </h4>
+          </div>
+          <div id="ReadMoreHaN" class="panel-collapse collapse">
+            <div class="panel-body">
+              <ul>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-beach+or+411__a:beach">BEACH</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-beauty+or+411__a:beauty">Beauty</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=411__a:cipanp">CIPANP</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=411__a:confinement">Confinement</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-dis+or+411__a:dis">DIS</a></li> 
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-ericehep+or+411__a:ericehep">Erice (HEP)</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-erice+or+411__a:erice">Erice (Nuclear)</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-efb+or+411__a:efb">European Few Body Problems</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-fb+or+411__a:fb">Few Body Problems</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-hadron+or+411__a:hadron">Hadron</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-hcp+or+411__a:hcp">HCP Hadron Collider Physics</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-hyp+or+411__a:hyp">HYP</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-gordon+or+411__a:gordon">Gordon Conference</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-INPC+or+411__a:INPC">INPC</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-ishepp+or+411__a:ishepp">ISHEPP</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-iwcf+or+411__a:iwcf">IWCF</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-lat+or+411__a:lattice">Lattice</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-lc+or+411__a:lc">LC</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-nic+or+411__a:nic">Nuclei in the cosmos</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-panic+or+411__a:panic">PANIC</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-qm+or+411__a:qm">Quark Matter</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-snit+or+411__a:snit">SNIT</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-spin+or+411__a:spin">Spin</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-sqm+or+411__a:sqm">Strangeness in Quark Matter</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-wein+or+411__a:wein">WEIN</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" 
+                data-target="#ReadMoreHEP"
+                href="#ReadMoreHEP">
+                  <li>HEP (general)</li>
+                </a>
+            </h4>
+          </div>
+          <div id="ReadMoreHEP" class="panel-collapse collapse">
+            <div class="panel-body">
+              <ul>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-chep+or+411__a:chep">CHEP</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=411__a:'Cracow School of Theoretical Physics'">Cracow School of Theoretical Physics</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-ffp+or+411__a:ffp">FFP</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-ichep+or+411__a:ichep">ICHEP</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-lp+or+411__a:lp">Lepton-Photon</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-lh+or+411__a:lh">Les Houches Summer School</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-pic+or+411__a:pic">PIC</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-ppp+or+411__a:ppp">PPP</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-qfext+or+411__a:qfext">QFEXT</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-radcor+or+411__a:radcor">RADCOR</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-rdm+or+411__a:rdm">Rencontres de Moriond</a></li>
+                <ul>
+                  <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=411__a:'Moriond Astro'">Astrophysics/Cosmology</a></li>
+                  <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=411__a:'Moriond EW'">Electroweak</a></li>
+                  <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=411__a:'Moriond QCD'">QCD</a></li>
+                  <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-rdm+or+411__a:rdm+or+411__a:moriond+-411__a:'Moriond Astro'+-411__a:'Moriond EW'+-411__a:'Moriond QCD'">Other</a></li>
+                </ul>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=411__a:SEWM">SEWM</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-ssi+or+411__a:ssi">SLAC Summer Institute</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-snowmass+or+411__a:snowmass">Snowmass</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-strings+or+411__a:strings">Strings</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-sussp+or+411__a:sussp">SUSSP</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-susy+or+411__a:susy">SUSY</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-tasi+or+411__a:tasi">TASI</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-vertex+or+411__a:vertex">Vertex</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" 
+                data-target="#ReadMoreNeutrinos"
+                href="#ReadMoreNeutrinos">
+                  <li>Neutrinos</li>
+                </a>
+            </h4>
+          </div>
+          <div id="ReadMoreNeutrinos" class="panel-collapse collapse">
+            <div class="panel-body">
+              <ul>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=411__a:Neutrino">Neutrino</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-nt+or+411__a:nt">Neutrino Telescopes</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-noon+or+411__a:noon">NOON</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-now+or+411__a:now">NOW</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-nufact+or+411__a:nufact">NuFact</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-nuint+or+411__a:nuint">NuInt</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-win+or+411__a:win">WIN</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" 
+                data-target="#ReadMoreRCA"
+                href="#ReadMoreRCA">
+                  <li>Relativity, Cosmology and Astrophysics</li>
+                </a>
+            </h4>
+          </div>
+          <div id="ReadMoreRCA" class="panel-collapse collapse">
+            <div class="panel-body">
+              <ul>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-cosmion+or+411__a:cosmion">COSMION</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-cosmo+or+411__a:cosmo">COSMO</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-gr+or+411__a:gr">GR</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-icgc+or+411__a:icgc">ICGC</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-icrc+or+411__a:icrc">ICRC</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-jgrg+or+411__a:jgrg">JGRG</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-MG+or+411__a:MG">Marcel Grossman</a></li>
+                <li><a href="/search?cc=Conferences&amp;rg=100&amp;sf=year&amp;p=series-texas+or+411__a:texas">Texas Symposium On Relativistic Astrophysics</a></li>
+                </ul>
+            </div>
+          </div>
+
+        </ol>
+            
       </div>
-      {% block search_bar %}
-        {{ super() }}
-      {% endblock search_bar %}
-      <div class="subtitle">
-        Example query:
-        <a href="/search?p=Las+Vegas&cc=conferences">Las Vegas</a>
+
+      <div class="col-md-6 col-md-offset-1" id="right">
+        <div class="useful-collection-link">
+          
+        </div>
       </div>
     </div>
-  {% endblock %}
+  </div>
 {% endblock %}
