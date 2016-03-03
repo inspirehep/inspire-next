@@ -24,7 +24,7 @@ require([
   "js/plots",
   // "js/citation_modal",
   // "js/datatables"
-], function(Plots, CitationModal, datatables) {
+], function(Plots) {
 	// CitationModal.teardownAll();
   	// CitationModal.attachTo(document);
 	console.log('js/detailed_record_init is loaded')

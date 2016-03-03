@@ -52,7 +52,7 @@
                 recid: that.attr.recid,
                 collection: that.attr.collection
               },
-              "method": "POST"
+              "method": "GET"
             },
             "fnInitComplete": function(oSettings, json) {
               if ( json.data.length > 0 ) {
@@ -93,6 +93,32 @@
             "autoWidth": false,
             "paging": false,
             "searching": false
+          });
+
+          $('#record-other-conferences-table').DataTable({
+            language: {
+              info: "Showing _START_ to _END_ of _TOTAL_ conferences",
+              search: "_INPUT_",
+              searchPlaceholder: "Filter conferences..."
+            },
+            "ajax": {
+              "url": "/ajax/other-conferences",
+              "data": {
+                recid: that.attr.recid,
+              },
+              "method": "GET"
+            },
+            "fnInitComplete": function(oSettings, json) {
+              if ( json.data.length > 0 ) {
+                $("#record-other-conferences-loading").hide();
+                $('#record-other-conferences-table-wrapper').show();
+              }
+              else {
+                $('#other-conferences .panel-body').text("There are no other conferences in this series.").show()
+              }
+            },
+            "aaSorting": [],
+            "autoWidth": false
           });
       });
 

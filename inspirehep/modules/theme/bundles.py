@@ -74,10 +74,15 @@ detailedjs = NpmBundle(
     "js/detailed_record_init.js",
     filters="requirejs",
     output="gen/detailed_record.%(version)s.js",
+        npm={
+            "datatables.net": "~1.10.11",
+            "datatables.net-bs": "~1.10.11",
+    }
 )
 
 css = NpmBundle(
     "scss/inspirehep.scss",
+    "node_modules/datatables.net-bs/css/dataTables.bootstrap.css",
     filters="scss, cleancss",
     output="gen/inspirehep.%(version)s.css",
     depends="scss/**/*.scss",

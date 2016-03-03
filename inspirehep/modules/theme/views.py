@@ -47,9 +47,11 @@ from inspirehep.modules.records.conference_series import \
 from inspirehep.modules.search.query import perform_query
 
 from invenio_search import current_search_client
+from invenio_pidstore.models import PersistentIdentifier
 
 from inspirehep.utils.date import datetime
 from inspirehep.utils.search import perform_es_search
+from inspirehep.utils.other_conferences import Conference
 
 blueprint = Blueprint('inspirehep_theme', __name__,
                       url_prefix='',
@@ -219,3 +221,18 @@ def register_menu_items():
         current_menu.submenu("settings.oauthclient").hide()
 
     current_app.before_first_request_funcs.append(menu_fixup)
+
+
+@blueprint.route('/ajax/other-conferences', methods=['GET'])
+def ajax_references():
+    """Handler for datatables references view"""
+
+    if request.args.get('recid'):
+        recid = request.args.get('recid', '')
+
+    return jsonify(
+        {
+            "data": Conference(recid).conferences()
+        }
+    )
+

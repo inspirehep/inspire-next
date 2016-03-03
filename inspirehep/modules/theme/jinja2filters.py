@@ -33,6 +33,7 @@ import time
 
 from flask import session, current_app
 from jinja2.filters import evalcontextfilter
+from inspirehep.utils.jinja2 import render_template_to_string
 
 from inspirehep.utils.date import (
     create_datestruct,
@@ -94,6 +95,57 @@ def collection_to_index(collection_name):
 @blueprint.app_template_filter()
 @evalcontextfilter
 def join_array(eval_ctx, value, separator):
+    from jinja2.filters import do_join
+
+    if isinstance(value, basestring):
+        value = [value]
+    return do_join(eval_ctx, value, separator)
+
+
+@blueprint.app_template_filter()
+def new_line_after(text):
+    if not text:
+        return text
+
+    return '%s<br>' % text
+
+
+def apply_template_on_array(array, template_path, **common_context):
+    """Render a template specified by 'template_path'.
+    For every item in array, renders the template passing
+    the item as 'content' parameter. Additionally ataches
+    'common_context' as other rendering arguments.
+    Returns list of rendered html strings.
+    :param array: iterable with specific context
+    :param template_path: path to the template
+    :rtype: list of strings
+    """
+
+    from collections import Iterable
+
+    rendered = []
+
+    if isinstance(array, basestring):
+        array = [array]
+
+    if not isinstance(array, Iterable):
+        return rendered
+
+    template = current_app.jinja_env.get_template(template_path)
+
+    for content in array:
+        if content:
+            rendered.append(
+                template.render(content=content, **common_context)
+            )
+
+    return rendered
+
+
+@blueprint.app_template_filter()
+@evalcontextfilter
+def join_array(eval_ctx, value, separator):
+
     from jinja2.filters import do_join
 
     if isinstance(value, basestring):
@@ -756,3 +808,4 @@ def weblinks(description):
     if description:
         return 'Link to ' + description
     return 'Link to fulltext'
+

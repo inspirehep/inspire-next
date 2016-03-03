@@ -1,6 +1,6 @@
 {#
 # This file is part of INSPIRE.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -17,31 +17,6 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax %}
-
-{% extends "inspirehep_theme/page.html" %}
-
-{%- block header %}
-  {{- super() }}
-{%- endblock header %}
-
-{% block global_bundles %}
-  {{ super() }}
-  {% bundles "detailed_record.js" %}
-{% endblock %}
-
-{% block body %}
-  {{ super() }}
-
-  <div id="record_content">
-  {% block record_content %}
-    <!-- record content -->
-  {% endblock %}
-  </div>
-{% endblock %}
-
-{%- block javascript %}
-  {{ super() }}
-  {{ mathjax() | safe }}
-</script>
-{%- endblock javascript %}
+<div id="other-conferences-in-the-series">
+  <a href="/conferences/{{record.control_number}}"> {{ record.title }}</a>
+</div>
