@@ -18,8 +18,13 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
- $purple: #293E51;
- $darken: 8%;
+@import "../base/variables";
+@import "../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap";
+@import "../base/sticky-footer";
+@import "../base/header";
+
+$reference-journal: #293E51;
+$darken: 8%;
 
 /* Mobile styles
 -------------------------------------------------- */
@@ -45,19 +50,33 @@
     }
 
     .caret {
-        border-top: 4px dashed;
-        border-right: 4px solid transparent;
-        border-left: 4px solid transparent;
+        border-top: $border-radius-base dashed;
+        border-right: $border-radius-base solid transparent;
+        border-left: $border-radius-base solid transparent;
     }
 }
 
 @media (max-width: 600px) {
     #topnav {
-        padding-bottom: 20px;
+        padding-bottom: 45px;
     }
 
     #top-search-bar {
         padding: 0 2.5%;
+
+        #searchform-input-group {
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+    }
+}
+
+@media (min-width: 600px) {
+
+    #top-search-bar #searchform {
+        .navbar-form {
+            display: flex;
+        }
     }
 }
 
@@ -309,9 +328,8 @@
             width: 90%;    
         }
 
-
         .reference-journal {
-            color: $purple;
+            color: $reference-journal;
         }
     }
 
@@ -439,10 +457,6 @@
     #searchform-input-group {
         width: 100%;
     }
-
-    .navbar-form {
-        display: flex;
-    } 
 }
 
 .authors-show-more {
@@ -456,4 +470,3 @@
 #citations div.dataTables_filter input, #references div.dataTables_filter input {
     max-width: inherit;
 }
-

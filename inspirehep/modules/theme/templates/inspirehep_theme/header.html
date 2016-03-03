@@ -37,24 +37,29 @@
 {% if collection is defined %}
  {% set collection_name = collection| sanitize_collection_name %}
 {% else %}
-  {% set collection_name = '' %}
+  {% set collection_name = request.url | find_collection_from_url %}
 {% endif %}
 
 
 <section id="header-section">
+
+
+    <div class="collapse navbar-collapse" id="navigation">
+    </div>
+
   <nav id="topnav" class="navbar navbar-fixed-top navbar-inverse navbar-custom" role="navigation">
     <div class="navbar-header">
       <div id="mobile-header">
         <a class="navbar-brand" href="{{ url_for('inspirehep_theme.index') }}">
-          <span id="{{ collection_name | sanitize_collection_name }}-collection">
+          <span id="{{ collection_name | sanitize_collection_name }}-logo-collection">
             {% include 'inspirehep_theme/labs-logo.svg' %}
           </span>
         </a>
-        <button type="button" id="topnav-button" class="navbar-toggle collapsed" data-target=".navbar-ex1-collapse" data-toggle="modal" data-backdrop="static">
-          <span class="sr-only">{{ _("Toggle navigation") }}</span>
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#topnav-right" data-toggle="modal">
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
+          <span class="sr-only">Toggle navigation</span>
         </button>
       </div>
       <div class="navbar-collapse navbar-ex1-collapse collapse overflow" id="topnav-right">
@@ -63,56 +68,56 @@
             <div class="mobile-menu-square"></div>
             <a href="{{ url_for("inspirehep_theme.index") }}" class="mobile-menu-thumbnail">
               <img src="{{ url_for('static', filename='images/mobile-menu-icon-literature.svg') }}">
-              <p id="mobile-menu-literature-collection">Literature</p>
+              <p>Literature</p>
             </a>
           </div>
           <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
             <a href="{{ url_for("inspirehep_theme.hepnames") }}" class="mobile-menu-thumbnail">
               <img src="{{ url_for('static', filename='images/mobile-menu-icon-authors.svg') }}" >
-              <p id="mobile-menu-authors-collection">Authors</p>
+              <p>Authors</p>
             </a>
           </div>
           <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
             <a href="{{ url_for("inspirehep_theme.data") }}" class="mobile-menu-thumbnail">
               <img src="{{ url_for('static', filename='images/mobile-menu-icon-data.svg') }}" >
-              <p id="mobile-menu-data-collection">Data</p>
+              <p>Data</p>
             </a>
          </div>
            <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
             <a href="{{ url_for("inspirehep_theme.conferences") }}" class="mobile-menu-thumbnail">
               <img src="{{ url_for('static', filename='images/mobile-menu-icon-conferences.svg') }}" >
-              <p id="mobile-menu-conferences-collection">Conferences</p>
+              <p>Conferences</p>
             </a>
          </div>
            <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
             <a href="{{ url_for("inspirehep_theme.jobs") }}" class="mobile-menu-thumbnail">
               <img src="{{ url_for('static', filename='images/mobile-menu-icon-jobs.svg') }}" >
-              <p id="mobile-menu-jobs-collection">Jobs</p>
+              <p>Jobs</p>
             </a>
           </div>
           <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
             <a href="{{ url_for("inspirehep_theme.institutions") }}" class="mobile-menu-thumbnail">
               <img src="{{ url_for('static', filename='images/mobile-menu-icon-institutions.svg') }}" >
-              <p id="mobile-menu-institutions-collection">Institutions</p>
+              <p>Institutions</p>
             </a>
           </div>
           <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
             <a href="{{ url_for("inspirehep_theme.experiments") }}" class="mobile-menu-thumbnail">
               <img src="{{ url_for('static', filename='images/mobile-menu-icon-experiments.svg') }}" >
-              <p id="mobile-menu-experiments-collection">Experiments</p>
+              <p>Experiments</p>
             </a>
          </div>
            <div class="col-sm-3 col-xs-4 col-xxs-6">
             <div class="mobile-menu-square"></div>
             <a href="{{ url_for("inspirehep_theme.journals") }}" class="mobile-menu-thumbnail">
               <img src="{{ url_for('static', filename='images/mobile-menu-icon-journals.svg') }}" >
-              <p id="mobile-menu-journals-collection">Journals</p>
+              <p>Journals</p>
             </a>
          </div>
         </div>

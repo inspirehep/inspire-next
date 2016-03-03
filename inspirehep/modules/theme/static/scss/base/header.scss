@@ -57,7 +57,7 @@ body {
 }
 
 .custom-dropdown-header{
-    color: #428bca;
+    color: $link-color;
     display: block;
 }
 
@@ -90,9 +90,9 @@ body {
         top: -6px;
         left: 160px;
         display: inline-block;
-        border-right: 6px solid transparent;
-        border-bottom: 6px solid #ffffff;
-        border-left: 6px solid transparent;
+        border-right: $border-radius-large solid transparent;
+        border-bottom: $border-radius-large solid #ffffff;
+        border-left: $border-radius-large solid transparent;
         content: '';
     }
 
@@ -207,35 +207,35 @@ body {
 
 #flask-bottom, #inspire-dot, #labs-text {
 
-    #mobile-menu-literature-collection & {
+    #literature-logo-collection & {
         fill: $literature-collection !important;
     }
 
-    #mobile-menu-authors-collection & {
+    #authors-logo-collection & {
         fill: $authors-collection !important;
     }
 
-    #mobile-menu-conferences-collection & {
+    #conferences-logo-collection & {
         fill: $conferences-collection !important;
     }
 
-    #mobile-menu-jobs-collection & {
+    #jobs-logo-collection & {
         fill: $jobs-collection !important;
     }
 
-    #mobile-menu-experiments-collection & {
+    #experiments-logo-collection & {
         fill: $experiments-collection !important;
     }
 
-    #mobile-menu-journals-collection & {
+    #journals-logo-collection & {
         fill: $journals-collection !important;
     }
 
-    #mobile-menu-institutions-collection & {
+    #institutions-logo-collection & {
         fill: $institutions-collection !important;
     }
 
-    #mobile-menu-data-collection & {
+    #data-logo-collection & {
         fill: $data-collection !important;
     }
 }
@@ -243,35 +243,35 @@ body {
 $darken-percent: 12%;
 #flask-top {
 
-    #literature-collection & {
+    #literature-logo-collection & {
         fill: darken($literature-collection, $darken-percent) !important;
     }
 
-    #authors-collection & {
+    #authors-logo-collection & {
         fill: darken($authors-collection, $darken-percent) !important;
     }
 
-    #conferences-collection & {
+    #conferences-logo-collection & {
         fill: darken($conferences-collection, $darken-percent) !important;
     }
 
-    #jobs-collection & {
+    #jobs-logo-collection & {
         fill: darken($jobs-collection, $darken-percent) !important;
     }
 
-    #experiments-collection & {
+    #experiments-logo-collection & {
         fill: darken($experiments-collection, $darken-percent) !important;
     }
 
-    #journals-collection & {
+    #journals-logo-collection & {
         fill: darken($journals-collection, $darken-percent) !important;
     }
 
-    #institutions-collection & {
+    #institutions-logo-collection & {
         fill: darken($institutions-collection, $darken-percent) !important;
     }
 
-    #data-collection & {
+    #data-logo-collection & {
         fill: darken($data-collection, $darken-percent) !important;
     }
 }
@@ -286,15 +286,15 @@ $darken-percent: 12%;
     }
 
     .caret {
-        border-top: 4px solid transparent;
-        border-bottom: 4px solid transparent;
-        border-left: 4px  solid;
+        border-top: $border-radius-base solid transparent;
+        border-bottom: $border-radius-base solid transparent;
+        border-left: $border-radius-base  solid;
     }
 
     .dropdown .open .caret {
-        border-top: 4px solid;
-        border-right: 4px solid transparent;
-        border-left: 4px solid transparent;
+        border-top: $border-radius-base solid;
+        border-right: $border-radius-base solid transparent;
+        border-left: $border-radius-base solid transparent;
     }
 
     .down-arrow.right-arrow-small-screen {
@@ -303,9 +303,9 @@ $darken-percent: 12%;
         height: 0;
         margin-left: 2px;
         vertical-align: middle;
-        border-top: 4px solid transparent;
-        border-bottom: 4px solid transparent;
-        border-left: 4px solid ;
+        border-top: $border-radius-base solid transparent;
+        border-bottom: $border-radius-base solid transparent;
+        border-left: $border-radius-base solid ;
     }
 }
 
@@ -644,6 +644,7 @@ a.external-link::after {
     }
 
     #topnav {
+        padding-bottom: 0px;
         height: auto;
     }
 
@@ -654,19 +655,6 @@ a.external-link::after {
     }
 }
 
-// @media (max-width: 600px) {
-
-//     #top-search-bar #searchform-input-group {
-//         width: 100%;
-//         padding: 0 2.5%;
-//     }
-
-//     #top-search-bar {
-//         float: left;
-//     }
-
-// }
-
 /* Mobile styles
 -------------------------------------------------- */
 @media only screen and (max-width : $screen-md-min) {
@@ -676,6 +664,33 @@ a.external-link::after {
     }
 
     #topnav {
+
+        $speed: 200ms;
+        $easing: cubic-bezier(0.7, 0, 0, 0.7);
+
+        .navbar-toggle {
+          overflow: hidden;
+
+          .icon-bar {
+            transition: opacity, transform;
+            transition-duration: $speed;
+            transition-timing-function: $easing;
+          }
+
+          &:not(.collapsed) {
+            .icon-bar {
+              &:nth-child(1) {
+                transform: translateY(6px) rotate(45deg);
+              }
+              &:nth-child(2) {
+                opacity: 0;
+              }
+              &:nth-child(3) {
+                transform: translateY(-6px) rotate(-45deg);
+              }
+            }
+          }
+        }
 
         padding: 0;
 
