@@ -32,7 +32,7 @@ define([
     return true; // ensure form still submits
   })
 
-  $("button[name=action_search]").on("click", function(){
+  $("button[name=action_search]").on("click", function() {
     $("input[name=post_filter]").val('');
   })
 

@@ -37,7 +37,9 @@ js = Bundle(
     bower={
         "toastr": "latest",
         "jQuery-menu-aim": "latest",
-        "clipboard": "latest"
+        "clipboard": "latest",
+        "d3": "latest",
+        "d3-tip": "latest"
     }
 )
 

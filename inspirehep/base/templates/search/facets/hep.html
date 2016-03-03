@@ -19,7 +19,18 @@
 ## granted to it by virtue of its status as an Intergovernmental Organization
 ## or submit itself to any jurisdiction.
 #}
+
+
 {%- set aggs = response._search()['aggregations'] -%}
+{% if 'earliest_date' in aggs and aggs['earliest_date']['buckets'] %}
+    {% set sorted_year = aggs['earliest_date']['buckets']|sort_list_by_dict_val %}
+    <h4>Filter by Year<small id="reset-link"><a href="#">Reset</a></small></h4>
+    <div id="year_hist">
+    </div>
+    <div id="year_select">
+    </div>
+    <hr />
+  {% endif %}
   {% if 'doc_type' in aggs and aggs['doc_type']['buckets'] %}
     <h4 id="filter-by-document" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Document type</h4>
     <div class="facet-container" id="facet-doc_type">
@@ -157,26 +168,5 @@
       </label>
     </div>
     {% endfor %}
-    <hr />
   </div>
-  {% endif %}
-  {% if 'earliest_date' in aggs and aggs['earliest_date']['buckets'] %}
-    {% set sorted_year = aggs['earliest_date']['buckets']|sort_list_by_dict_val %}
-      <h4 id="filter-by-year" class="pointer"><i class="fa fa-chevron-down facet-slider"></i> Filter by Year</h4>
-      <div class="facet-container" id="facet-earliest_date">
-        {% for earliest_date in sorted_year| limit_facet_elements %}
-      <div class="checkbox checkbox-facets">
-        <label>
-          {%- set is_checked = 'checked' if 'earliest_date' in filtered_facets
-              and earliest_date['key']| epoch_to_year_format in filtered_facets['earliest_date']['inc'][0] -%}
-          <input class="include-facet"
-                type="checkbox"
-                {{is_checked}}
-                name="earliest_date" value="{{ earliest_date['key']| construct_date_format }}">
-          <span class="facet-title-truncate">{{ earliest_date['key']| epoch_to_year_format }}</span>
-          <span class="facet-label label label-default {{ 'label-primary' if is_checked}} pull-right">{{ earliest_date['doc_count'] }}</span>
-        </label>
-      </div>
-      {% endfor %}
-    </div>
   {% endif %}
