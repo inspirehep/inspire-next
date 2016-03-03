@@ -20,10 +20,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from invenio_records.api import get_record
 from invenio_search.api import Query
 
 
+# XXX(jacquerie): should be in helpers.
 def traverse(o, tree_types=(list, tuple)):
     if isinstance(o, tree_types):
         for value in o:

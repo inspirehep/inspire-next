@@ -24,7 +24,7 @@
 
 from invenio_ext.template import render_template_to_string
 
-from invenio_search.api import Query
+from invenio_search.api import Query, Results
 
 
 def render_citations(recid):
@@ -36,6 +36,8 @@ def render_citations(recid):
     """
     out = []
     row = []
+
+    # XXX(jacquerie): extract this query building.
     es_query = Query('refersto:' + str(recid)).search()
     es_query.body.update({
         'sort': [{'citation_count': {'order': 'desc'}}]

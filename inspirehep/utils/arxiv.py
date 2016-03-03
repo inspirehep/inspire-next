@@ -59,8 +59,10 @@ def get_arxiv_id_from_record(record):
             if element.get("value", ""):
                 arxiv_id = element.get("value", "")
 
+    # XXX(jacquerie): should use normalize_arxiv from idutils.
     if arxiv_id and not arxiv_id.lower().startswith("oai:arxiv") and not \
        arxiv_id.lower().startswith("arxiv") and \
        "/" not in arxiv_id:
         arxiv_id = "{0}".format(arxiv_id)
+
     return arxiv_id.replace("arXiv:", '')

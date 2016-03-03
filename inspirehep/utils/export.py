@@ -20,7 +20,13 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+import time
 
+from invenio_ext.es import es
+
+
+# XXX(jacquerie): should be moved to errors.py
+#                 to enhance testability.
 class MissingRequiredFieldError(LookupError):
 
     """Base class for exceptions in this module.
@@ -28,10 +34,10 @@ class MissingRequiredFieldError(LookupError):
     required field doesn't exist in the record.
     """
 
-    def _init_(self, field):
+    def __init__(self, field):
         self.field = field
 
-    def _str_(self):
+    def __str__(self):
         return "Missing field: " + self.field
 
 
@@ -118,7 +124,9 @@ class Export(object):
             cite_line = '%%CITATION = ' + cite_element + ';%%'
         elif 'report_numbers' in self.record:
             for field in self.record.get('arxiv_eprints', []):
-                if 'categories' in field:
+                # XXX(jacquerie): never executed, because this would mean that
+                #                 we are in the first case of the if/elif/else.
+                if 'categories' in field:  # pragma: no cover
                     cite_element = field['value'].upper()
                     cite_line = '%%CITATION = ' + cite_element + ';%%'
             if not cite_element and self.record['report_numbers']:
@@ -133,8 +141,6 @@ class Export(object):
 
     def _get_citation_number(self):
         """Returns how many times record was cited. If 0, returns nothing"""
-        from invenio_ext.es import es
-        import time
         today = time.strftime("%d %b %Y")
         record = es.get(index='hep', id=self.record['control_number'])
         citations = ''

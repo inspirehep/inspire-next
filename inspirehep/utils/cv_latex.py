@@ -47,6 +47,7 @@ class Cv_latex(Export):
         optional_fields = ['doi', 'publi_info', 'url', 'citation_count']
         try:
             return self._format_entry(required_fields, optional_fields)
+        # XXX(jacquerie): not raised by the current implementation.
         except MissingRequiredFieldError as e:
             raise e
 

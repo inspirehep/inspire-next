@@ -22,11 +22,11 @@
 
 import re
 
-from invenio_knowledge.api import get_kbr_keys
-
 from dojson.utils import force_list
 
+from invenio_knowledge.api import get_kbr_keys
 
+from .bibtex_booktitle import generate_booktitle, traverse
 from .export import MissingRequiredFieldError, Export
 
 
@@ -61,7 +61,8 @@ class Bibtex(Export):
                            'reportNumber', 'SLACcitation']
         try:
             return self._format_entry(name, required_fields, optional_fields)
-        except MissingRequiredFieldError as e:
+        # XXX(jacquerie): never raised by the current implementation.
+        except MissingRequiredFieldError as e:  # pragma: nocover
             raise e
 
     def _format_inproceeding(self):
@@ -75,7 +76,8 @@ class Bibtex(Export):
                            'reportNumber', 'SLACcitation']
         try:
             return self._format_entry(name, required_fields, optional_fields)
-        except MissingRequiredFieldError as e:
+        # XXX(jacquerie): never raised by the current implementation.
+        except MissingRequiredFieldError as e:  # pragma: nocover
             raise e
 
     def _format_proceeding(self):
@@ -89,7 +91,8 @@ class Bibtex(Export):
                            'reportNumber', 'series', 'ISBN', 'SLACcitation']
         try:
             return self._format_entry(name, required_fields, optional_fields)
-        except MissingRequiredFieldError as e:
+        # XXX(jacquerie): never raised by the current implementation.
+        except MissingRequiredFieldError as e:  # pragma: nocover
             raise e
 
     def _format_thesis(self):
@@ -112,7 +115,8 @@ class Bibtex(Export):
                            'reportNumber', 'SLACcitation']
         try:
             return self._format_entry(name, required_fields, optional_fields)
-        except MissingRequiredFieldError as e:
+        # XXX(jacquerie): never raised by the current implementation.
+        except MissingRequiredFieldError as e:  # pragma: nocover
             raise e
 
     def _format_book(self):
@@ -125,7 +129,8 @@ class Bibtex(Export):
                            'reportNumber', 'series', 'ISBN', 'SLACcitation']
         try:
             return self._format_entry(name, required_fields, optional_fields)
-        except MissingRequiredFieldError as e:
+        # XXX(jacquerie): never raised by the current implementation.
+        except MissingRequiredFieldError as e:  # pragma: nocover
             raise e
 
     def _format_inbook(self):
@@ -138,7 +143,8 @@ class Bibtex(Export):
                            'reportNumber', 'series', 'SLACcitation']
         try:
             return self._format_entry(name, required_fields, optional_fields)
-        except MissingRequiredFieldError as e:
+        # XXX(jacquerie): never raised by the current implementation.
+        except MissingRequiredFieldError as e:  # pragma: nocover
             raise e
 
     def _get_entry_type(self):
@@ -226,6 +232,7 @@ class Bibtex(Export):
                 out += self._format_output_row(field, value)
         return out
 
+    # XXX(jacquerie): should be in a separate file.
     def _format_output_row(self, field, value):
         out = ''
         if field == 'author':
@@ -247,12 +254,14 @@ class Bibtex(Export):
         elif field == 'SLACcitation':
             out += u'      {0:<14} = \"{1}\"'.format(field, value)
         else:
+            # XXX(jacquerie): no difference between branches.
             if self._is_number(value):
                 out += u'      {0:<14} = \"{1}\",\n'.format(field, value)
             else:
                 out += u'      {0:<14} = \"{1}\",\n'.format(field, value)
         return out
 
+    # XXX(jacquerie): should be in a separate file.
     def _is_number(self, s):
         try:
             int(s)
@@ -275,6 +284,7 @@ class Bibtex(Export):
             for author in self.record['authors']:
                 if 'full_name' in author and author['full_name']:
                     if isinstance(author['full_name'], list):
+                        # XXX(jacquerie): add space before 'and'.
                         author_full_name = 'and '.join(full_name for full_name
                                                        in author['full_name'])
                         result.append(spacinginitials.sub(
@@ -355,8 +365,7 @@ class Bibtex(Export):
                     return address[0]
                 else:
                     if any(isinstance(i, list) for i in address):
-                        from inspirehep.utils import bibtex_booktitle
-                        nested_list = list(bibtex_booktitle.traverse(address))
+                        nested_list = list(traverse(address))
                         return nested_list[0]
                     else:
                         return ''.join(result for result in address)
@@ -380,8 +389,7 @@ class Bibtex(Export):
         """Return record booktitle"""
         if self.entry_type == 'inproceedings' or \
            self.original_entry == 'inproceedings':
-            from inspirehep.utils import bibtex_booktitle
-            booktitle = bibtex_booktitle.generate_booktitle(self.record)
+            booktitle = generate_booktitle(self.record)
             if booktitle:
                 bt = re.sub(r'(?<!\\)([#_&%$])', r'\\\1', booktitle)
                 return '{' + bt + '}'
@@ -392,6 +400,7 @@ class Bibtex(Export):
         if 'publication_info' in self.record:
             pub_info = self.record['publication_info']
             if isinstance(pub_info, list):
+                # XXX(jacquerie): why iterate if we only check the first?
                 for index, val in enumerate(pub_info):
                     if index == 0:
                         if 'year' in val:
@@ -440,6 +449,7 @@ class Bibtex(Export):
                     journal = pub_info[0]
                     if 'journal_title' in journal:
                         if isinstance(journal['journal_title'], list):
+                            # XXX(jacquerie): regexp not applied here.
                             journal_title = journal['journal_title'][-1]
                         else:
                             journal_title = re.sub(r'\.([A-Z])', r'. \1',
@@ -536,6 +546,7 @@ class Bibtex(Export):
                     result = ''
                     note_list = []
                     for index, val in enumerate(pub_info):
+                        # XXX(jacquerie): why skip the first publication_info?
                         if index >= 1:
                             note = ''
                             if 'note' not in val and \
@@ -673,11 +684,13 @@ class Bibtex(Export):
                         result.append(element)
                 return ', '.join(element for element in result)
             else:
-                if any(isinstance(i, list) for i in isbn):
-                    from inspirehep.utils import bibtex_booktitle
-                    nested_list = list(bibtex_booktitle.traverse(isbn))
+                # XXX(jacquerie): fails when record['isbns'] is an empty list,
+                #                 and should use isbn_list anyway.
+                if any(isinstance(i, list) for i in isbn):  # pragma: nocover
+                    nested_list = list(traverse(isbn))
                     return nested_list[0]
                 else:
+                    # XXX(jacquerie): should use isbn_list.
                     return ''.join(result for result in isbn)
         else:
             return ''
@@ -698,19 +711,26 @@ class Bibtex(Export):
                         if pages:
                             if isinstance(pages, list):
                                 for page in pages:
+                                    # XXX(jacquerie): will stop after the first,
+                                    #                 if the first has no dash
+                                    #                 then we won't extract any
+                                    #                 pages.
                                     dashpos = page.find('-')
                                     break
                             else:
                                 dashpos = pages.find('-')
                             if dashpos > -1:
+                                # XXX(jacquerie): fails if pages was a list.
                                 pages = pages.split('-')[0]
                     try:
+                        # XXX(jacquerie): extra commas in output.
                         if journal and (volume != '' or pages != ''):
                             coden = ','.join(
                                 [get_kbr_keys("CODENS", searchvalue=journal,
                                  searchtype='e')[0][0],
                                  volume, pages])
                             return coden
+                    # XXX(jacquerie): naked except.
                     except:
                         return ''
             else:
@@ -726,11 +746,13 @@ class Bibtex(Export):
                             pages = pages.split('-')[0]
                 try:
                     if journal and (volume != '' or pages != ''):
+                        # XXX(jacquerie): extra commas in output.
                         coden = ','.join(
                             [get_kbr_keys("CODENS", searchvalue=journal,
                              searchtype='e')[0][0],
                              volume, pages])
                         return coden
+                # XXX(jacquerie): naked except.
                 except:
                     return ''
         else:

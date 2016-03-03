@@ -47,7 +47,8 @@ class Latex(Export):
         optional_fields = ['report_number', 'SLACcitation', 'citation_count']
         try:
             return self._format_entry(required_fields, optional_fields)
-        except MissingRequiredFieldError as e:
+        # XXX(jacquerie): never raised by the current implementation.
+        except MissingRequiredFieldError as e:  # pragma: nocover
             raise e
 
     def _format_entry(self, req, opt):
@@ -99,6 +100,7 @@ class Latex(Export):
                         else:
                             out += u' {{\it et al.}} [' + collaboration +\
                                 ' Collaboration],\n'
+                    # XXX(jacquerie): only the first author gets printed.
                     except IndexError:
                         pass
                 else:
@@ -133,7 +135,8 @@ class Latex(Export):
         return out
 
     def _get_author(self):
-        """Return list of name(s) of the author(s)."""
+        # XXX(jacquerie): compile regexps outside function for a minor
+        #                 performance improvement.
         re_last_first = re.compile(
             r'^(?P<last>[^,]+)\s*,\s*(?P<first_names>[^\,]*)(?P<extension>\,?.*)$'
         )
@@ -148,6 +151,8 @@ class Latex(Export):
                     if isinstance(author['full_name'], list):
                         author_full_name = ' '.join(full_name for full_name
                                                     in author['full_name'])
+                        # XXX(jacquerie): name manipulation should be extracted
+                        #                 in an helper method.
                         first_last_match = re_last_first.search(
                             author_full_name)
                         if first_last_match:
@@ -174,8 +179,10 @@ class Latex(Export):
         elif 'corporate_author' in self.record:
             for corp_author in self.record['corporate_author']:
                 if corp_author:
+                    # XXX(jacquerie): name manipulation shouldn't be applied
+                    #                 to corporate authors.
                     first_last_match = re_last_first.search(corp_author)
-                    if first_last_match:
+                    if first_last_match:  # pragma: nocover
                         first = re_initials.sub(
                             r'\g<initial>.~',
                             first_last_match.group('first_names')
@@ -210,6 +217,7 @@ class Latex(Export):
                 out = ''
                 if 'journal_title' in field:
                     if isinstance(field['journal_title'], list):
+                        # XXX(jacquerie): fails for an empty list.
                         journal_title = field['journal_title'][-1].\
                             replace(".", '.\\ ')
                     else:
@@ -217,6 +225,7 @@ class Latex(Export):
                             replace(".", '.\\ ')
                     if 'journal_volume' in field and not \
                             field['journal_title'] == 'Conf.Proc.':
+                        # XXX(jacquerie): needs refactoring.
                         journal_letter = ''
                         char_i = 0
                         for char in field['journal_volume']:
@@ -231,6 +240,7 @@ class Latex(Export):
                             field['journal_volume'][char_i:] + '}'
                     if 'year' in field:
                         if isinstance(field['year'], list):
+                            # XXX(jacquerie): fails for an empty list.
                             year = ' (' + str(field['year'][-1]) + ')'
                         else:
                             year = ' (' + str(field['year']) + ')'
@@ -246,6 +256,7 @@ class Latex(Export):
                         page_artid = ''
                         if field['page_artid']:
                             if isinstance(field['page_artid'], list):
+                                # XXX(jacquerie): could be extracted.
                                 dashpos = field['page_artid'][-1].find('-')
                                 if dashpos > -1:
                                     page_artid = field[
@@ -271,6 +282,7 @@ class Latex(Export):
                             + pages + year
                         result.append(out)
                 if not result:
+                    # XXX(jacquerie): assumes that it's formatted correctly.
                     for field in self.record['publication_info']:
                         if 'pubinfo_freetext' in field and len(field) == 1:
                             return field['pubinfo_freetext']
@@ -283,9 +295,10 @@ class Latex(Export):
     def _get_report_number(self):
         """Return report number separated by commas"""
         if not (self._get_publi_info() or self._get_arxiv()):
-            return super(Latex, self)._get_report_number()
+            return super(Latex, self)._get_report_number()  # pragma: nocover
 
-    def _get_pubnote(self):
+    # XXX(jacquerie): cut and pasted from Bibtex.
+    def _get_pubnote(self):  # pragma: nocover
         """Return publication note"""
         journal, volume, pages = ['', '', '']
         if 'publication_info' in self.record:

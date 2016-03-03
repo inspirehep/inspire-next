@@ -17,7 +17,7 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-"""Tests for DoJSON utilities."""
+"""Unit tests for the date utility functions."""
 
 from inspirehep.utils.date import (create_valid_date,
                                    create_earliest_date,
@@ -38,7 +38,7 @@ def test_create_valid_date():
 
 
 def test_create_earliest_date():
-    """Test the date validator that excepts list."""
+    """Test the date validator that accepts list."""
     assert create_earliest_date([1877, '2002-01-05']) == '1877'
     assert create_earliest_date(['1877-02-03', '1877']) == '1877-02-03'
 
