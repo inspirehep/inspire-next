@@ -92,8 +92,8 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
-            'application/vnd+inspire.brief+json': ('invenio_records_rest.serializers'
-                                 ':json_v1_search'),
+            'application/vnd+inspire.brief+json': ('inspirehep.modules.records.serializers'
+                                                   ':json_brief_v1_search'),
         },
         list_route='/literature/',
         item_route='/literature/<pid_value>',
