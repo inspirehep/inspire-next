@@ -20,7 +20,7 @@
 {% if collection is defined %}
   {% set collection_name = collection | sanitize_collection_name %}
 {% else %}
-  {% set collection_name = '' %}
+  {% set collection_name = request.url | find_collection_from_url %}
 {% endif %}
 
 <input autocomplete="off"

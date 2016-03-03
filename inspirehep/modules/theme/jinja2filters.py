@@ -668,3 +668,20 @@ def format_date(datetext):
             return date
         elif len(datestruct) == 1:
             return datestruct[0]
+
+
+@blueprint.app_template_filter()
+def find_collection_from_url(url):
+    """Returns the collection based on the URL."""
+    if url.find('/literature/'):
+        return 'literature'
+    elif url.find('/jobs/'):
+        return 'jobs'
+    elif url.find('/institutions/'):
+        return 'institutions'
+    elif url.find('/journals/'):
+        return 'journals'
+    elif url.find('/experiments/'):
+        return 'experiments'
+    elif url.find('/conferences/'):
+        return 'conferences'
