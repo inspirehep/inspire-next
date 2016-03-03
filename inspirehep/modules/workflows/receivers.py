@@ -132,15 +132,30 @@ def index_holdingpen_record(sender, **kwargs):
         # Depends on "_collections" being filled correctly for record
         record_index = get_record_index(record)
 
-    # Trigger any before_record_index receivers
-    before_record_index.send(sender.id, json=record, index=record_index)
-
     if record_index:
+        record_index = current_app.config['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + record_index
+
+        # Disconnect some before_record_index signals
+        from inspirehep.modules.citations.receivers import (
+            add_citation_count_on_insert_or_update,
+            catch_citations_update
+        )
+        from invenio_records.signals import before_record_index, after_record_insert
+
+        before_record_index.disconnect(add_citation_count_on_insert_or_update)
+        before_record_index.disconnect(catch_citations_update)
+        try:
+            before_record_index.send(sender.id, json=record, index=record_index)
+        except Exception as err:
+            current_app.logger.exception(err)
+        finally:
+            before_record_index.connect(add_citation_count_on_insert_or_update)
+            before_record_index.connect(catch_citations_update)
+
         # Delete from other indexes in case index changed.
         delete_from_index(None, None, sender)
-        index = current_app.config['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + record_index
         es.index(
-            index=index,
+            index=record_index,
             doc_type=current_app.config["WORKFLOWS_HOLDING_PEN_DOC_TYPE"],
             body=dict(record),
             id=sender.id
