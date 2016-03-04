@@ -29,11 +29,11 @@
                     </div>
                     <div ng-bind-html='record.metadata.dois | doi' class="col-md-12 ">
                     </div>
-                    <div>
-                      Arxiv info
+                    <div ng-bind-html='record.metadata | arxivInfo : true' class="col-md-12 ">
                     </div>
                   </div>
-                  Abstract here.
+                  <div ng-bind-html='record.metadata | abstract : true' class="col-md-12 ">
+                    </div>
                 </div>
               </div>
             </div>
