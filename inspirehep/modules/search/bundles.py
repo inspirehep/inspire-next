@@ -34,14 +34,10 @@ css = Bundle(
 )
 
 js = NpmBundle(
-    'node_modules/angular/angular.js',
     'js/search/app.js',
     filters='requirejs',
-    depends=('node_modules/invenio-search-js/dist/*.js', ),
     output='gen/search.%(version)s.js',
     npm={
-        "almond": "~0.3.1",
-        'angular': '~1.4.7',
         'invenio-search-js': '~0.1.0'
     },
 )

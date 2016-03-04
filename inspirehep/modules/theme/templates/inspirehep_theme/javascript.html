@@ -21,7 +21,18 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 -#}
-{% assets "almondjs" %}<script src="{{ ASSET_URL }}"></script>
-{% endassets %}
-{% assets "inspirehep_theme_js" %}<script src="{{ ASSET_URL }}"></script>
+{%- if config.get("ASSETS_DEBUG") -%}
+  {%- if not config.get("REQUIREJS_RUN_IN_DEBUG") -%}
+    {% assets "requirejs" %}
+    <script src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+  {%- endif -%}
+{%- endif -%}
+{%- if not config.get("ASSETS_DEBUG") or config.get("REQUIREJS_RUN_IN_DEBUG") -%}
+  {% assets "almondjs" %}
+  <script src="{{ ASSET_URL }}"></script>
+  {% endassets %}
+{%- endif -%}
+{% assets "inspirehep_theme_js" %}
+<script src="{{ ASSET_URL }}"></script>
 {% endassets %}

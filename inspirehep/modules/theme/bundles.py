@@ -35,6 +35,20 @@ almondjs = NpmBundle(
     }
 )
 
+# require.js is only used when:
+#
+#  - ASSETS_DEBUG is True
+#  - REQUIREJS_RUN_IN_DEBUG is not False
+requirejs = NpmBundle(
+    "node_modules/requirejs/require.js",
+    "js/settings.js",
+    output="gen/require.%(version)s.js",
+    filters="uglifyjs",
+    npm={
+        "requirejs": "latest",
+    }
+)
+
 js = NpmBundle(
     'js/inspire_base_init.js',
     filters='requirejs',
