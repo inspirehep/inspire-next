@@ -24,11 +24,14 @@
 require([
     'node_modules/invenio-search-js/dist/invenio-search-js',
     'js/search/inspire-search',
+    'js/inspire/module'
   ], function(search) {
     // When the DOM is ready bootstrap the `invenio-serach-js`
     angular.element(document).ready(function() {
       angular.bootstrap(
-        document.getElementById("invenio-search"), ['invenioSearch', 'inspireSearch']
+        document.getElementById("invenio-search"), ['invenioSearch',
+                                                    'inspireSearch',
+                                                    'inspire']
       );
     });
 });

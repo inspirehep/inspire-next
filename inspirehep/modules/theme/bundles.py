@@ -38,12 +38,20 @@ almondjs = NpmBundle(
 js = NpmBundle(
     'js/inspire_base_init.js',
     filters='requirejs',
+    depends=(
+        'js/*.js',
+        'js/inspire/*.js',
+        'js/inspire/filters/*.js',
+        'node_modules/invenio-search-js/dist/*.js',
+    ),
     output="gen/inspirehep.%(version)s.js",
     npm={
         "jquery": "~1.9.1",
         "toastr": "~2.1.2",
         "clipboard": "~1.5.8",
-        "flightjs": "~1.5.0"
+        "flightjs": "~1.5.0",
+        "angular": "~1.4.9",
+        "angular-sanitize": "~1.4.9"
     }
 )
 

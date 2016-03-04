@@ -26,6 +26,8 @@ require.config({
   paths: {
     jquery: "node_modules/jquery/jquery",
     bootstrap: "node_modules/bootstrap-sass/assets/javascripts/bootstrap",
+    angular: "node_modules/angular/angular",
+    "angular-sanitize": "node_modules/angular-sanitize/angular-sanitize",
     // "datatables.net": "vendors/datatables/media/js/jquery.dataTables",
     // "datatables": "vendors/datatables/media/js/dataTables.bootstrap",
     // jquery: "vendors/jquery/dist/jquery",
@@ -73,6 +75,9 @@ require.config({
     "clipboard": "node_modules/clipboard/dist/clipboard"
   },
   shim: {
+    angular: {
+      exports: 'angular'
+    },
     jquery: {
       exports: "$"
     },
