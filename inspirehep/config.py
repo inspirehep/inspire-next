@@ -436,7 +436,9 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "address": ["corporate_author"],
     "datecreated": ["creation_modification_date.creation_date"],
     "datemodified": ["creation_modification_date.modification_date"],
-    "recid": ["control_number"]
+    "recid": ["control_number"],
+    "cited": ["citation_count"],
+    "topcite": ["citation_count"]
 }
 
 FACETS_SIZE_LIMIT = 10
