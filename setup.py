@@ -228,6 +228,7 @@ setup(
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
             'inspirehep_theme_js = inspirehep.modules.theme.bundles:js',
             'almondjs = inspirehep.modules.theme.bundles:almondjs',
+            'requirejs = inspirehep.modules.theme.bundles:requirejs',
             'inspirehep_forms_css = inspirehep.modules.forms.bundles:css',
             'inspirehep_forms_js = inspirehep.modules.forms.bundles:js',
             'inspirehep_author_update_css = inspirehep.modules.authors.bundles:css',

@@ -22,10 +22,11 @@
  */
 
 require([
-    'node_modules/invenio-search-js/dist/invenio-search-js',
-    'js/search/inspire-search',
+    'angular',
+    'invenio-search',
+    'inspire-search',
     'js/inspire/module'
-  ], function(search) {
+  ], function() {
     // When the DOM is ready bootstrap the `invenio-serach-js`
     angular.element(document).ready(function() {
       angular.bootstrap(
