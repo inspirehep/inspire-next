@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "properties": {
+        "$ref": {
+            "description": "URL to the referenced resource",
+            "type": "string",
+            "format": "url"
+        }
+    },
+    "required": ["$ref"],
+    "type": "object"
+}
