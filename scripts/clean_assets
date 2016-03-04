@@ -36,6 +36,11 @@ inspirehep npm
 CWD=$(pwd)
 cd "${VIRTUAL_ENV}/var/inspirehep-instance/static"
 npm install
+# FIXME: Temporary fix for missint dist folder. Remove with new version of invenio-search-js
+cd node_modules/invenio-search-js
+npm install
+npm run-script build
+# End FIXME
 inspirehep collect -v
 inspirehep assets build
 cd "${CWD}"
