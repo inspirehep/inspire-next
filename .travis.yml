@@ -42,7 +42,7 @@ services:
   - redis
 
 env:
-  - REQUIREMENTS=devel SQLALCHEMY_DATABASE_URL="postgresql+psycopg2://postgres@localhost:5432/inspirehep"
+  - SQLALCHEMY_DATABASE_URI="postgresql+psycopg2://postgres@localhost:5432/inspirehep"
 
 python:
   - "2.7"
@@ -54,12 +54,10 @@ before_install:
 
 install:
   - "travis_retry pip install -r requirements.txt --pre"
-  - "CWD=$(pwd) && inspirehep npm && cd ${VIRTUAL_ENV}/var/inspirehep-instance/static && npm install && cd ${CWD}"
-  - "inspirehep collect -v"
-  - "inspirehep assets build"
+  - "scripts/clean_assets"
 
 before_script:
-  - sleep 10  # Allow ES to start.
+  - "sleep 10"  # Allow ES to start.
 
 script:
   - "python setup.py test"

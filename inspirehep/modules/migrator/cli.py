@@ -56,7 +56,7 @@ def migrator():
               help='Where to write back records that were not possible to migrate')
 @click.option('--dry-run', '-d', type=bool, default=False,
               help='Whether records should really be imported or not')
-@click.option('--wait', '-w',
+@click.option('--wait', '-w', type=bool, default=False,
               help='Wait for migrator to complete.')
 def populate(file_input=None,
              remigrate=False,
