@@ -115,7 +115,7 @@ class AuthorNew(WorkflowBase):
             user_email = User.query.get(id_user).email
         except AttributeError:
             user_email = ''
-        ticket_id = extra_data.get("ticket_id")
+        ticket_id = bwo.extra_data.get("ticket_id")
         ticket_url = "https://rt.inspirehep.net/Ticket/Display.html?id={}".format(
             ticket_id
         )
