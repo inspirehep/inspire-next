@@ -1,6 +1,5 @@
 {
     "$schema": "http://json-schema.org/schema#",
-    "id": "http://labs.inspirehep.net/schemas/acquisition_source-0.0.1.json",
     "properties": {
         "acquisition_source": {
             "id": "#acquisition_source",

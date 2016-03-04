@@ -1,6 +1,5 @@
 {
     "$schema": "http://json-schema.org/schema#",
-    "id": "http://labs.inspirehep.net/schemas/journals-0.0.1.json",
     "properties": {
         "coden": {
             "items": {
@@ -111,10 +110,6 @@
                     "title": "ISSN of the related record",
                     "type": "string"
                 },
-                "recid": {
-                    "title": "Record ID of the related record",
-                    "type": "integer"
-                },
                 "relation": {
                     "description": "FIXME: as usual, shall we capture only superseeded records and derive the symmetric relation automatically?",
                     "enum": [
@@ -123,6 +118,10 @@
                     ],
                     "title": "Type of relation",
                     "type": "string"
+                },
+                "record": {
+                    "title": "URI for the related record",
+                    "$ref": "json_reference.json"
                 }
             },
             "required": [

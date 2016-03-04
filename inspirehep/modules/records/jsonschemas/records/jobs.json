@@ -1,6 +1,5 @@
 {
     "$schema": "http://json-schema.org/schema#",
-    "id": "http://labs.inspirehep.net/schemas/jobs-0.0.1.json",
     "properties": {
         "closed_date": {
             "format": "date",
@@ -65,9 +64,9 @@
                         "title": "Institution name",
                         "type": "string"
                     },
-                    "recid": {
-                        "title": "Institution Record ID",
-                        "type": "integer"
+                    "record": {
+                        "title": "Institution Record URI",
+                        "$ref": "json_reference.json"
                     }
                 },
                 "title": "Institution",

@@ -10,9 +10,6 @@
             "items": {
                 "type": "object",
                 "properties": {
-                    "recid": {
-                        "type": "integer"
-                    },
                     "degree_type": {
                         "enum": [
                             "PhD",
@@ -26,6 +23,9 @@
                     },
                     "curated_relation": {
                         "type": "boolean"
+                    },
+                    "record": {
+                        "$ref": "json_reference.json"
                     }
                 }
             },
@@ -62,10 +62,10 @@
         "conferences": {
             "uniqueItems": true,
             "items": {
-                "type": "integer"
+                "$ref": "json_reference.json"
             },
             "type": "array",
-            "description": "Contains information about attended conferences. (their recids)"
+            "description": "Contains information about attended conferences. (their record URIs)"
         },
         "positions": {
             "uniqueItems": true,
@@ -95,7 +95,6 @@
                             "Diploma",
                             "Bachelor",
                             "smirnov@ictp.it"
-
                         ],
                         "type": "string"
                     },
@@ -105,13 +104,13 @@
                             "curated_relation": {
                                 "type": "boolean"
                             },
-                            "recid": {
-                                "type": "integer",
-                                "description": "Corresponding record ID in the institution database"
-                            },
                             "name": {
                                 "type": "string",
                                 "description": "The raw institution name"
+                            },
+                            "record": {
+                                "description": "Corresponding URI for the institution record",
+                                "$ref": "json_reference.json"
                             }
                         }
                     },
@@ -299,9 +298,9 @@
                     "curated_relation": {
                         "type": "boolean"
                     },
-                    "recid": {
-                        "type": "integer",
-                        "description": "Record ID of the experiment record"
+                    "record": {
+                        "description": "URI for the experiment record",
+                        "$ref": "json_reference.json"
                     }
                 }
             },

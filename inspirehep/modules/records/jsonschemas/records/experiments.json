@@ -1,6 +1,5 @@
 {
     "$schema": "http://json-schema.org/schema#",
-    "id": "http://labs.inspirehep.net/schemas/experiments-0.0.1.json",
     "properties": {
         "accelerator": {
             "enum": [
@@ -14,9 +13,9 @@
             "title": "Affiliation",
             "type": "array"
         },
-        "affiliation_recid": {
-            "title": "Record ID of institution",
-            "type": "integer"
+        "affiliation_record": {
+            "title": "Institution record URI",
+            "$ref": "json_reference.json"
         },
         "collaboration": {
             "title": "Collaboration",
@@ -130,10 +129,6 @@
                         "title": "Name of related experiment",
                         "type": "string"
                     },
-                    "recid": {
-                        "title": "Record ID of related experiment",
-                        "type": "integer"
-                    },
                     "relation": {
                         "description": "FIXME: shall we simply store preceeding experiment and generate the symmetric relation automatically?",
                         "enum": [
@@ -142,6 +137,10 @@
                         ],
                         "title": "Type of relation",
                         "type": "string"
+                    },
+                    "record": {
+                        "title": "URI for the related experiment record",
+                        "$ref": "json_reference.json"
                     }
                 },
                 "type": "object"
@@ -170,14 +169,14 @@
                         "title": "Name",
                         "type": "string"
                     },
-                    "recid": {
-                        "title": "Record ID of the person",
-                        "type": "integer"
-                    },
                     "start_date": {
                         "format": "date",
                         "title": "Start date",
                         "type": "string"
+                    },
+                    "record": {
+                        "title": "URI for the person record",
+                        "$ref": "json_reference.json"
                     }
                 },
                 "required": [
