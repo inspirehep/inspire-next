@@ -36,7 +36,7 @@ def references(self, key, value):
     value = utils.force_list(value)
 
     def get_value(value):
-        recid = ''
+        recid = None
         number = ''
         year = ''
         if '0' in value:
@@ -55,7 +55,7 @@ def references(self, key, value):
             except:
                 pass
         return {
-            'recid': recid,
+            'record': inspire_dojson_utils.get_record_ref(recid, 'literature'),
             'texkey': value.get('1'),
             'doi': value.get('a'),
             'collaboration': utils.force_list(value.get('c')),
@@ -88,7 +88,7 @@ def references(self, key, value):
 def references2marc(self, key, value):
     """Produce list of references."""
     return {
-        '0': value.get('recid'),
+        '0': inspire_dojson_utils.get_recid_from_ref(value.get('record')),
         '1': value.get('texkey'),
         'a': value.get('doi'),
         'c': value.get('collaboration'),

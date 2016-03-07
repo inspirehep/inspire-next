@@ -235,7 +235,7 @@ def positions(self, key, value):
     have to follow the convention `mth-year`. For example: `10-2012`.
     """
     curated_relation = False
-    recid = ''
+    recid = None
     status = ''
     recid_status = utils.force_list(value.get('z'))
     if recid_status:
@@ -246,9 +246,11 @@ def positions(self, key, value):
                 recid = val
                 curated_relation = True
 
+    inst = {'name': value.get('a'),
+            'record': inspire_dojson_utils.get_record_ref(recid,
+                                                          'institutions')}
     return {
-        'institution': {'name': value.get('a'), 'recid': recid} if
-        value.get('a') else None,
+        'institution': inst if inst['name'] else None,
         'rank': value.get('r'),
         'start_date': value.get('s'),
         'end_date': value.get('t'),

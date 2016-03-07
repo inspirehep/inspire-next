@@ -24,6 +24,8 @@
 
 from dojson import utils
 
+from inspirehep.dojson import utils as inspire_dojson_utils
+
 from ..model import hep, hep2marc
 
 
@@ -99,7 +101,8 @@ def thesis(self, key, value):
         'degree_type': value.get('b'),
         'university': value.get('c'),
         'date': value.get('d'),
-        'recid': value.get('z'),
+        'record': inspire_dojson_utils.get_record_ref(value.get('z'),
+                                                      'institutions'),
         'curated_relation': curated_relation,
     }
 

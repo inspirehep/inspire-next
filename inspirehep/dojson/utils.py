@@ -166,6 +166,8 @@ def get_recid_from_ref(ref_obj):
 
     If no recid can be parsed, return None.
     """
+    if not isinstance(ref_obj, dict):
+        return None
     url = ref_obj.get('$ref', '')
     try:
         res = int(url.split('/')[-1])

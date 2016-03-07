@@ -24,6 +24,8 @@
 
 from dojson import utils
 
+from inspirehep.dojson import utils as inspire_dojson_utils
+
 from ..model import experiments
 
 
@@ -107,7 +109,7 @@ def related_experiments(self, key, value):
         recid = None
     return {
         'name': value.get('a'),
-        'recid': recid
+        'record': inspire_dojson_utils.get_record_ref(recid, 'experiments')
     }
 
 

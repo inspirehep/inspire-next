@@ -24,6 +24,8 @@
 
 from dojson import utils
 
+from inspirehep.dojson import utils as inspire_dojson_utils
+
 from ..model import hep, hep2marc
 
 
@@ -44,11 +46,16 @@ def publication_info(self, key, value):
     parent_recid = get_int_value(value.get('0'))
     journal_recid = get_int_value(value.get('1'))
     conference_recid = get_int_value(value.get('2'))
-
-    return {
-        'parent_recid': parent_recid,
-        'journal_recid': journal_recid,
-        'conference_recid': conference_recid,
+    parent_record = inspire_dojson_utils.get_record_ref(parent_recid,
+                                                        'literature')
+    conference_record = inspire_dojson_utils.get_record_ref(conference_recid,
+                                                            'conferences')
+    journal_record = inspire_dojson_utils.get_record_ref(journal_recid,
+                                                         'journals')
+    res = {
+        'parent_record': parent_record,
+        'conference_record': conference_record,
+        'journal_record': journal_record,
         'page_artid': value.get('c'),
         'journal_issue': value.get('n'),
         'conf_acronym': value.get('o'),
@@ -63,6 +70,8 @@ def publication_info(self, key, value):
         'note': value.get('m'),
     }
 
+    return res
+
 
 @hep2marc.over('773', 'publication_info')
 @utils.for_each_value
@@ -70,7 +79,8 @@ def publication_info(self, key, value):
 def publication_info2marc(self, key, value):
     """Publication info about record."""
     return {
-        '0': value.get('parent_recid'),
+        '0': inspire_dojson_utils.get_recid_from_ref(
+            value.get('parent_record')),
         'c': value.get('page_artid'),
         'n': value.get('journal_issue'),
         'o': value.get('conf_acronym'),
@@ -95,7 +105,8 @@ def succeeding_entry(self, key, value):
 
     return {
         'relationship_code': value.get('r'),
-        'recid': value.get('w'),
+        'record': inspire_dojson_utils.get_record_ref(
+            value.get('w'), 'literature'),
         'isbn': value.get('z'),
     }
 
@@ -105,6 +116,6 @@ def succeeding_entry2marc(self, key, value):
     """Succeeding Entry."""
     return {
         'r': value.get('relationship_code'),
-        'w': value.get('recid'),
+        'w': inspire_dojson_utils.get_recid_from_ref(value.get('record')),
         'z': value.get('isbn'),
     }

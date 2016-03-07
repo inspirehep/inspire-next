@@ -96,7 +96,7 @@ def free_keywords2marc(self, key, value):
 @utils.filter_values
 def accelerator_experiments(self, key, value):
     """The accelerator/experiment related to this record."""
-    recid = ''
+    recid = None
     curated_relation = False
     if '0' in value:
         try:
@@ -106,7 +106,7 @@ def accelerator_experiments(self, key, value):
     if recid:
         curated_relation = True
     return {
-        'recid': recid,
+        'record': inspire_dojson_utils.get_record_ref(recid, 'experiments'),
         'accelerator': value.get('a'),
         'experiment': value.get('e'),
         'curated_relation': curated_relation
