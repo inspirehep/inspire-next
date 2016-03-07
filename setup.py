@@ -218,6 +218,9 @@ setup(
             'hepnames = inspirehep.dojson.hepnames:hepnames',
             'hepnames2marc = inspirehep.dojson.hepnames2marc:hepnames2marc',
         ],
+        'invenio_base.api_apps': [
+            'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
+        ],
         'invenio_base.apps': [
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_migrator = inspirehep.modules.migrator:INSPIREMigrator',

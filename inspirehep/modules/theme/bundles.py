@@ -33,7 +33,7 @@ almondjs = NpmBundle(
     npm={
         "almond": "~0.3.1",
         "hogan.js": "~3.0.2",
-        "requirejs-hogan-plugin": "~0.3.1",
+        "requirejs-hogan-plugin": "~0.3.1"
     }
 )
 
@@ -65,7 +65,6 @@ js = NpmBundle(
         "flightjs": "~1.5.0",
         "angular": "~1.4.8",
         "inspirehep-js": "git+https://git@github.com/inspirehep/inspirehep-js.git"
-
     }
 )
 

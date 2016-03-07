@@ -69,7 +69,7 @@ require.config({
       deps: ['angular', 'angular-ui-bootstrap']
     },
     'inspirehep-search': {
-        deps: ['angular', 'angular-sanitize']
+        deps: ['angular', 'angular-sanitize', 'angular-ui-bootstrap']
     },
     'invenio-search': {
         deps: ['angular']
