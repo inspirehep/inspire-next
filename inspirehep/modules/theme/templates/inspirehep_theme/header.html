@@ -411,7 +411,7 @@
       {% if request.endpoint in ['inspirehep_search.search', 'invenio_records_ui.literature'] %}
         <div id="top-search-bar" class="{{collection_name}}">
           <invenio-search-bar
-           template="{{ url_for('static', filename='templates/search/searchbar.html') }}"
+           template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/searchbar.html') }}"
            placeholder="{{ _('Search') }}">
           </invenio-search-bar>
         </div>

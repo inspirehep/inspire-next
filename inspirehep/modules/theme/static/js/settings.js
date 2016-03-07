@@ -29,7 +29,7 @@ require.config({
     angular: "node_modules/angular/angular",
     "angular-sanitize": "node_modules/angular-sanitize/angular-sanitize",
     "invenio-search": "node_modules/invenio-search-js/dist/invenio-search-js",
-    "inspire-search": "js/search/inspire-search",
+    "inspirehep-search": "node_modules/inspirehep-search-js/dist/inspirehep-search",
     hgn: "node_modules/requirejs-hogan-plugin/hgn",
     hogan: "node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.amd",
     text: "node_modules/requirejs-hogan-plugin/text",
@@ -49,6 +49,9 @@ require.config({
     jquery: {
       exports: "$"
     },
+    "angular-sanitize": {
+      deps: ["angular"]
+    },
     bootstrap: {
       deps: ["jquery"]
     },
@@ -67,8 +70,8 @@ require.config({
     "invenio-search": {
         deps: ["angular"]
     },
-    "inspire-search": {
-        deps: ["angular"]
+    "inspirehep-search": {
+        deps: ["angular", "angular-sanitize"]
     }
   }
 });
