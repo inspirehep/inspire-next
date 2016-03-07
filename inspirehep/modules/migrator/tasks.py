@@ -184,6 +184,9 @@ def continuous_migration():
                 # The record might be None, in case a parallel
                 # continuous_migration task has already consumed the queue.
                 raw_record = zlib.decompress(raw_record)
+                if not raw_record:
+                    # Somehow the decompressed record is empty
+                    continue
                 record = marc_create_record(raw_record, keep_singletons=False)
                 recid = int(record['001'])
                 prod_record = InspireProdRecords(recid=recid)
