@@ -36,6 +36,9 @@ from jinja2.filters import evalcontextfilter
 from invenio_search.api import Query
 
 from .views import blueprint
+from invenio_pidstore.models import PersistentIdentifier
+from inspirehep.utils.template import render_macro_from_template
+from invenio_search import current_search_client as es
 
 
 def apply_template_on_array(array, template_path, **common_context):
@@ -528,10 +531,6 @@ def strip_leading_number_plot_caption(text):
 @blueprint.app_template_filter()
 def publication_info(record):
     """Displays inline publication and conference information"""
-    from invenio_search import current_search_client as es
-
-    return ''  # FIXME: ES integration
-
     result = {}
     out = []
     if 'publication_info' in record:
@@ -562,66 +561,84 @@ def publication_info(record):
         for pub_info in record['publication_info']:
             if 'conference_recid' in pub_info \
                     and 'parent_recid' in pub_info:
+                pid = PersistentIdentifier.get(
+                    'conferences', str(pub_info['conference_recid']))
                 conference_rec = es.get_source(
                     index='records-conferences',
-                    id=pub_info['conference_recid'],
-                    doc_type='record')
-                ctx = {
-                    "parent_recid": str(
-                        pub_info['parent_recid']),
-                    "conference_recid": str(
-                        pub_info['conference_recid']),
-                    "conference_title": conference_rec['title']
-                }
-                if result:
-                    result['conf_info'] = render_macro_from_template(
-                        name="conf_with_pub_info",
-                        template="format/record/Conference_info_macros.tpl",
-                        ctx=ctx)
-                    break
-                else:
-                    if 'page_artid' in pub_info:
-                        ctx.update(
-                            {"page_artid": pub_info['page_artid']})
-                    result['conf_info'] = render_macro_from_template(
-                        name="conf_without_pub_info",
-                        template="format/record/Conference_info_macros.tpl",
-                        ctx=ctx)
-                    break
+                    id=str(pid.object_uuid),
+                    doc_type='conferences',
+                    ignore=404)
+                try:
+                    ctx = {
+                        "parent_recid": str(
+                            pub_info['parent_recid']),
+                        "conference_recid": str(
+                            pub_info['conference_recid']),
+                        "conference_title": conference_rec['title']
+                    }
+                    if result:
+                        result['conf_info'] = render_macro_from_template(
+                            name="conf_with_pub_info",
+                            template="inspirehep_theme/format/record/Conference_info_macros.tpl",
+                            ctx=ctx)
+                        break
+                    else:
+                        if 'page_artid' in pub_info:
+                            ctx.update(
+                                {"page_artid": pub_info['page_artid']})
+                        result['conf_info'] = render_macro_from_template(
+                            name="conf_without_pub_info",
+                            template="inspirehep_theme/format/record/Conference_info_macros.tpl",
+                            ctx=ctx)
+                        break
+                except TypeError:
+                    pass
             elif 'conference_recid' in pub_info \
                     and 'parent_recid' not in pub_info:
+                pid = PersistentIdentifier.get(
+                    'conferences', str(pub_info['conference_recid']))
                 conference_rec = es.get_source(
                     index='records-conferences',
-                    id=pub_info['conference_recid'],
-                    doc_type='record')
-                ctx = {
-                    "conference_recid": str(
-                        pub_info['conference_recid']),
-                    "conference_title": conference_rec['title'],
-                    "pub_info": bool(result.get('pub_info', ''))
-                }
-                result['conf_info'] = render_macro_from_template(
-                    name="conference_only",
-                    template="format/record/Conference_info_macros.tpl",
-                    ctx=ctx)
+                    id=str(pid.object_uuid),
+                    doc_type='conferences',
+                    ignore=404)
+                try:
+                    ctx = {
+                        "conference_recid": str(
+                            pub_info['conference_recid']),
+                        "conference_title": conference_rec['title'],
+                        "pub_info": bool(result.get('pub_info', ''))
+                    }
+                    result['conf_info'] = render_macro_from_template(
+                        name="conference_only",
+                        template="inspirehep_theme/format/record/Conference_info_macros.tpl",
+                        ctx=ctx)
+                except TypeError:
+                    pass
             elif 'parent_recid' in pub_info and \
                     'conference_recid' not in pub_info:
+                pid = PersistentIdentifier.get(
+                    'conferences', str(pub_info['parent_recid']))
                 parent_rec = es.get_source(
                     index='records-hep',
-                    id=pub_info['parent_recid'],
-                    doc_type='record')
-                ctx = {
-                    "parent_recid": str(
-                        pub_info['parent_recid']),
-                    "parent_title": parent_rec['titles'][0]['title']
-                    .replace(
-                        "Proceedings, ", "", 1),
-                    "pub_info": bool(result.get('pub_info', ''))
-                }
-                result['conf_info'] = render_macro_from_template(
-                    name="proceedings_only",
-                    template="format/record/Conference_info_macros.tpl",
-                    ctx=ctx)
+                    id=str(pid.object_uuid),
+                    doc_type='hep',
+                    ignore=404)
+                try:
+                    ctx = {
+                        "parent_recid": str(
+                            pub_info['parent_recid']),
+                        "parent_title": parent_rec['titles'][0]['title']
+                        .replace(
+                            "Proceedings, ", "", 1),
+                        "pub_info": bool(result.get('pub_info', ''))
+                    }
+                    result['conf_info'] = render_macro_from_template(
+                        name="proceedings_only",
+                        template="inspirehep_theme/format/record/Conference_info_macros.tpl",
+                        ctx=ctx)
+                except TypeError:
+                    pass
     return result
 
 
