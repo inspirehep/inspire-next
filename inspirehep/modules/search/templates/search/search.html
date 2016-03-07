@@ -53,14 +53,14 @@
           {%- block search_count %}
           <div class="col-md-3 col-sm-12">
             <invenio-search-count
-             template="{{ url_for('static', filename='templates/search/count.html') }}">
+             template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/count.html') }}">
             </invenio-search-count>
           </div>
           {%- endblock search_count %}
           {%- block search_pagination_top %}
           <div class="col-md-6 col-sm-12 text-center">
             <invenio-search-pagination
-              template="{{ url_for('static', filename='templates/search/pagination.html') }}">
+              template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/pagination.html') }}">
             </invenio-search-pagination>
           </div>
           {%- endblock search_pagination_top %}
@@ -74,14 +74,14 @@
                sort-key="sort"
                default-option="{{ sort_options|default_sortoption }}"
                available-options='{{ sort_options|format_sortoptions|safe }}'
-               template="{{ url_for('static', filename='templates/search/selectbox.html') }}"
+               template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/selectbox.html') }}"
               >
             </invenio-search-select-box>
             {%- endblock search_sort_select %}
             {%- block search_sort_order scoped %}
             <invenio-search-sort-order
              sort-key="sort"
-             template="{{ url_for('static', filename='templates/search/togglebutton.html') }}"
+             template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/togglebutton.html') }}"
             >
             </invenio-search-sort-order>
             {%- endblock search_sort_order %}
@@ -95,25 +95,25 @@
 
     {%- block search_error %}
     <invenio-search-error
-     template="{{ url_for('static', filename='templates/search/error.html') }}"
+     template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/error.html') }}"
      message="{{ _('Search failed.') }}">
     </invenio-search-error>
     {%- endblock search_error %}
     {%- block search_loading %}
     <invenio-search-loading
-     template="{{ url_for('static', filename='templates/search/loading.html') }}"
+     template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/loading.html') }}"
      message="{{ _('Loading...') }}">
     </invenio-search-loading>
     {%- endblock search_loading %}
     {%- block search_results %}
     <invenio-search-results
-     template="{{ url_for('static', filename='templates/search/literature/briefresults.html') }}">
+     template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/literature/results.html') }}">
     </invenio-search-results>
     {%- endblock search_results %}
     {%- block search_pagination_bottom %}
     <div align="center">
       <invenio-search-pagination
-       template="{{ url_for('static', filename='templates/search/pagination.html') }}">
+       template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/pagination.html') }}">
       </invenio-search-pagination>
     </div>
     {%- endblock search_pagination_bottom %}
@@ -122,7 +122,7 @@
   {%- block search_facets %}
   <div class="col-md-3 col-md-pull-9 col-xs-12">
     <invenio-search-facets
-     template="{{ url_for('static', filename='templates/search/facets.html') }}">
+     template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/facets.html') }}">
     </invenio-search-facets>
   </div>
   {%- endblock search_facets %}
