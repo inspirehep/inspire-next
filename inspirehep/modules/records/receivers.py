@@ -156,7 +156,7 @@ def dates_validator(recid, json, *args, **kwargs):
             valid_date = create_valid_date(json[date_key])
             if valid_date != json[date_key]:
                 current_app.logger.warning(
-                    'MALFORMED: {0} value in {1}: {3}'.format(
+                    'MALFORMED: {0} value in {1}: {2}'.format(
                         date_key, recid, json[date_key]
                     )
                 )
