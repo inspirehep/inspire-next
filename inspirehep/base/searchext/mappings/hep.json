@@ -273,6 +273,14 @@
                         },
                         "signature_block": {
                             "type": "string"
+                        },
+                        "profile": {
+                            "type": "object",
+                            "properties": {
+                                "__url__": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 },
