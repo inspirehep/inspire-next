@@ -36,9 +36,9 @@ from inspirehep.ext.cache_manager import cache_manager
 
 from invenio_base.globals import cfg
 
+from invenio_ext.sqlalchemy import db
 from invenio_ext.es import es
 from invenio_ext.script import Manager
-
 
 
 manager = Manager(usage=__doc__)
@@ -68,47 +68,35 @@ def reindexhp():
     click.echo(click.style('DONE', fg='green'))
 
 
-@manager.option('--collection', '-c', dest='collections',
-                action='append',
-                default=[],
-                help='Specific collection to reindex.')
-@manager.option('--query', '-q', dest='query',
-                action='store',
-                default="",
-                help='Specific query to use.')
 @manager.option('--bulksize', '-b', dest='bulk_size',
                 action='store',
                 default=500,
                 help='Bulk size.')
-def reindex(collections=[], query="", bulk_size=500):
+def reindex(bulk_size=500):
     """Reindex all records from metadata store."""
-    from invenio_search.api import Query
     from invenio_records.models import RecordMetadata
-    from invenio_records.api import get_record
     from inspirehep.modules.migrator.tasks import reindex_recids
 
-    if not collections:
-        collections = ["HEP"]
+    bulk_size = int(bulk_size)
+    recids = []
+    total = 0
+    for record_id in db.session.query(RecordMetadata).with_entities(RecordMetadata.id).yield_per(bulk_size):
+        recids.append(record_id[0])
+        if len(recids) % bulk_size == 0:
+            # Time to index
+            reindex_recids.delay(recids, bulk_size)
+            total += len(recids)
+            recids = []
 
-    prefix_query = ""
-    if query:
-        prefix_query += "{0} AND ".format(query)
+    if len(recids) > 0:
+        total += len(recids)
+        reindex_recids.delay(recids, bulk_size)
 
-    for coll in collections:
-        final_query = '{0}collection:"{1}"'.format(prefix_query, coll)
-
-        recids = []
-        for recid_tuple in RecordMetadata.query.with_entities(RecordMetadata.id).all():
-            recid = recid_tuple[0]
-            if Query(final_query).match(get_record(recid)):
-                recids.append(recid)
-
-        click.echo(
-            click.style(
-                'Going to reindex {0} records from {1}...'.format(len(recids), coll), fg='yellow'
-            )
+    click.echo(
+        click.style(
+            'Scheduled {0} records for reindexing'.format(total), fg='yellow'
         )
-    reindex_recids.delay(list(recids), int(bulk_size))
+    )
     click.echo()
 
 
