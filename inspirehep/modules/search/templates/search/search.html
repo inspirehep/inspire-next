@@ -35,7 +35,7 @@
 
 {%- block body_inner %}
 <div id="invenio-search">
-  <invenio-search search-endpoint="{{ config.SEARCH_UI_SEARCH_API }}" search-extra-params='{"size": 25}'>
+  <invenio-search search-endpoint="{{ search_api }}" search-extra-params='{"size": 25}'>
   {{super()}}
   </invenio-search>
 </div>
