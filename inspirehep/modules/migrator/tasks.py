@@ -275,6 +275,47 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
         db.session.close()
 
 
+@celery.task(ignore_result=False, compress='zlib', acks_late=True)
+def reindex_recids(recids, bulk_size=500):
+    from elasticsearch.helpers import bulk as es_bulk
+    from invenio_records.signals import before_record_index
+    from invenio_records.api import get_record
+    from inspirehep.modules.citations.receivers import (
+        add_citation_count_on_insert_or_update,
+        catch_citations_update
+    )
+
+    before_record_index.disconnect(add_citation_count_on_insert_or_update)
+    before_record_index.disconnect(catch_citations_update)
+
+    records = []
+    try:
+        for recid in recids:
+            records.append(prepare_record_for_indexing(
+                get_record(recid), before_record_index
+            ).dumps())
+            if len(records) % bulk_size == 0:
+                # Time to index
+                es_bulk(es, records, request_timeout=60)
+                records = []
+        if records:
+            es_bulk(es, records, request_timeout=60)
+    finally:
+        before_record_index.connect(add_citation_count_on_insert_or_update)
+        before_record_index.connect(catch_citations_update)
+
+
+def prepare_record_for_indexing(json, before_record_index):
+    from invenio_records.tasks.index import get_record_index
+    recid = json.get('control_number') or json.get('recid')
+    index = get_record_index(json) or \
+        current_app.config['SEARCH_ELASTIC_DEFAULT_INDEX']
+    before_record_index.send(recid, json=json, index=index)
+    json.update({'_index': index, '_type': 'record',
+                 '_id': recid, 'citation_count': 0})
+    return json
+
+
 @celery.task()
 def add_citation_counts():
     from elasticsearch.helpers import bulk as es_bulk

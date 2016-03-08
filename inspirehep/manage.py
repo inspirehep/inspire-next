@@ -29,6 +29,7 @@ from time import sleep
 
 import click
 
+from flask import current_app
 from flask_script import prompt_choices
 
 from inspirehep.ext.cache_manager import cache_manager
@@ -37,6 +38,8 @@ from invenio_base.globals import cfg
 
 from invenio_ext.es import es
 from invenio_ext.script import Manager
+
+
 
 manager = Manager(usage=__doc__)
 
@@ -65,26 +68,48 @@ def reindexhp():
     click.echo(click.style('DONE', fg='green'))
 
 
-@manager.command
-def reindex():
-    """Reindex all records."""
+@manager.option('--collection', '-c', dest='collections',
+                action='append',
+                default=[],
+                help='Specific collection to reindex.')
+@manager.option('--query', '-q', dest='query',
+                action='store',
+                default="",
+                help='Specific query to use.')
+@manager.option('--bulksize', '-b', dest='bulk_size',
+                action='store',
+                default=500,
+                help='Bulk size.')
+def reindex(collections=[], query="", bulk_size=500):
+    """Reindex all records from metadata store."""
+    from invenio_search.api import Query
     from invenio_records.models import RecordMetadata
-    from invenio_records.tasks.index import index_record
+    from invenio_records.api import get_record
+    from inspirehep.modules.migrator.tasks import reindex_recids
 
-    query = RecordMetadata.query.all()
-    click.echo(
-        click.style(
-            'Going to reindex {0} records...'.format(len(query)), fg='green'
+    if not collections:
+        collections = ["HEP"]
+
+    prefix_query = ""
+    if query:
+        prefix_query += "{0} AND ".format(query)
+
+    for coll in collections:
+        final_query = '{0}collection:"{1}"'.format(prefix_query, coll)
+
+        recids = []
+        for recid_tuple in RecordMetadata.query.with_entities(RecordMetadata.id).all():
+            recid = recid_tuple[0]
+            if Query(final_query).match(get_record(recid)):
+                recids.append(recid)
+
+        click.echo(
+            click.style(
+                'Going to reindex {0} records from {1}...'.format(len(recids), coll), fg='yellow'
+            )
         )
-    )
+    reindex_recids.delay(list(recids), int(bulk_size))
     click.echo()
-
-    with click.progressbar(query) as record_objects:
-        for obj in record_objects:
-            index_record(obj.id, obj.json)
-
-    click.echo()
-    click.echo(click.style('DONE', fg='green'))
 
 
 @manager.option('--rebuild', '-r', dest='rebuild',
@@ -99,13 +124,12 @@ def reindex():
                 action='store_true',
                 default=False,
                 help='Delete old index after the rebuild process has completed.')
-@manager.option('--index-name', '-n', dest='index_name',
-                action='store',
-                default=None,
+@manager.option('--index-name', '-n', dest='index_names',
+                action='append',
+                default=[],
                 help='Specific name of an index to recreate/rebuild.')
-def create_indices(rebuild=False, holdingpen=True, delete_old=False, index_name=None):
+def create_indices(rebuild=False, holdingpen=False, delete_old=False, index_names=[]):
     """Create or recreate the indices for records and holdingpen."""
-    from invenio.base.globals import cfg
     from invenio_search.registry import mappings
 
     if rebuild:
@@ -114,14 +138,15 @@ def create_indices(rebuild=False, holdingpen=True, delete_old=False, index_name=
             print("ERROR: Please install the ElasticSearch reindexing plugin if you want to rebuild indexes.", file=sys.stderr)
             sys.exit(1)
 
-    indices = set(cfg["SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING"].values())
-    indices.add(cfg['SEARCH_ELASTIC_DEFAULT_INDEX'])
+    if index_names:
+        indices = index_names
+    else:
+        indices = set(current_app.config["SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING"].values())
+        indices.add(current_app.config['SEARCH_ELASTIC_DEFAULT_INDEX'])
     for index in indices:
         possible_indices = [index]
         if holdingpen:
-            possible_indices.append(cfg['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + index)
-        if index_name is not None and index_name not in possible_indices:
-            continue
+            possible_indices.append(current_app.config['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + index)
         click.echo(click.style('Rebuilding {0}... '.format(index), fg='yellow'), nl=False)
         mapping = {}
         mapping_filename = index + ".json"
@@ -133,9 +158,9 @@ def create_indices(rebuild=False, holdingpen=True, delete_old=False, index_name=
             # Create Holding Pen index
             if mapping:
                 mapping['mappings']['record']['properties'].update(
-                    cfg['WORKFLOWS_HOLDING_PEN_ES_PROPERTIES']
+                    current_app.config['WORKFLOWS_HOLDING_PEN_ES_PROPERTIES']
                 )
-            name = cfg['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + index
+            name = current_app.config['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + index
             click.echo(click.style(
                 'Rebuilding {0}... '.format(name), fg='yellow'
             ), nl=False)
