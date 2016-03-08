@@ -531,5 +531,5 @@ def test_refextract(marcxml_to_json, json_to_marc):
 
 def test_book_link(marcxml_to_json_book):
     """Test if the link to the book recid is generated correctly."""
-    assert (marcxml_to_json_book['book']['recid'] ==
+    assert (get_recid_from_ref(marcxml_to_json_book['book']['record']) ==
             1409249)

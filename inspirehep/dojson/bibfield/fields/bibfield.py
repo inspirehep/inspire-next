@@ -29,6 +29,8 @@ import six
 
 from dojson import utils
 
+from inspirehep.dojson import utils as inspire_dojson_utils
+
 from ..model import bibfield
 
 
@@ -285,7 +287,8 @@ def thesis_supervisor(self, key, value):
     for val in value:
         out.append({
             "full_name": val.get('full_name'),
-            "recid": val.get('external_id'),
+            "record": inspire_dojson_utils.get_record_ref(
+                val.get('external_id'), 'literature'),
             "affiliation": {
                 "value": val.get('affiliation')
             },
