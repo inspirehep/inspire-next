@@ -493,6 +493,15 @@ def test_topcite_colon():
     assert expected == result
 
 
+def test_type_code_colon():
+    query = InspireQuery('tc: l')
+
+    expected = {'query': {'multi_match': {'query': 'l', 'fields': ['collection']}}}
+    result = query.body
+
+    assert expected == result
+
+
 def test_find_journal():
     query = InspireQuery('find j "Phys.Rev.Lett.,105*"')
 
@@ -781,7 +790,7 @@ def test_find_country_code():
 def test_find_date():
     query = InspireQuery('fin date > today')
 
-    expected =  {}
+    expected = {}
     result = query.body
 
     assert expected == result
@@ -807,11 +816,10 @@ def test_find_report():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='tracked in issue #817')
 def test_find_type_code():
     query = InspireQuery('find tc book')
 
-    expected = {}
+    expected = {'query': {'multi_match': {'query': 'book', 'fields': ['collection']}}}
     result = query.body
 
     assert expected == result

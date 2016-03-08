@@ -20,7 +20,20 @@
                     "type": "pattern_replace",
                     "pattern": "[ \t]{2,}",
                     "replacement": " "
-                }
+                },
+                "tc_synonyms" : {
+                    "type" : "synonym",
+                    "synonyms" : [
+                        "b => book",
+                        "c => conferencepaper",
+                        "experimental note => note",
+                        "p => published",
+                        "t => thesis",
+                        "i => introductory",
+                        "l => lectures",
+                        "r => review"
+                      ]
+                    }
             },
             "analyzer": {
                 "basic_analyzer": {
@@ -42,6 +55,11 @@
                         "whitespace_remove",
                         "trim"
                     ]
+                },
+                "tc_synonyms_analyzer": {
+                  "type": "custom",
+                  "tokenizer": "keyword",
+                  "filter": ["tc_synonyms", "lowercase"]
                 }
             }
         },
@@ -232,7 +250,7 @@
                 },
                 "collection": {
                     "type": "string",
-                    "index": "not_analyzed"
+                    "analyzer": "tc_synonyms_analyzer"
                 },
                 "exactauthor": {
                     "type": "string",
