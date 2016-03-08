@@ -79,15 +79,15 @@ def test_spires_sysnos(marcxml_to_json, json_to_marc):
             [p.get('a') for p in json_to_marc['970'] if 'a' in p])
 
 
-def test_deleted_recids(marcxml_to_json, json_to_marc):
+def test_deleted_records(marcxml_to_json, json_to_marc):
     """Test if deleted_recids is created correctly."""
-    assert (marcxml_to_json['deleted_recids'][0] in
+    assert (get_recid_from_ref(marcxml_to_json['deleted_records'][0]) in
             [p.get('a') for p in json_to_marc['981'] if 'a' in p])
 
 
-def test_new_recid(marcxml_to_json, json_to_marc):
-    """Test if deleted_recids is created correctly."""
-    assert (marcxml_to_json['new_recid'] in
+def test_new_record(marcxml_to_json, json_to_marc):
+    """Test if new_record is created correctly."""
+    assert (get_recid_from_ref(marcxml_to_json['new_record']) in
             [p.get('d') for p in json_to_marc['970'] if 'd' in p])
 
 
