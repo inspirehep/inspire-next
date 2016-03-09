@@ -23,14 +23,10 @@
   {%- if collection is defined %}
   <input type="hidden" name="cc" value="{{collection}}">
   {%- endif %}
-  <input type="hidden" name="post_filter" value="{{request.args.get('post_filter', '')}}">
   <div class="nav navbar-nav navbar-form">
     <div class="input-group" id="searchform-input-group">
       {% include "inspirehep_theme/search/form/controls.html" %}
     </div>
   </div>
   {% include "inspirehep_theme/search/form/dropdown.html" %}
-  <input type="hidden" name="sf" value="{{request.args.get('sf', '')}}">
-  <input type="hidden" name="so" value="{{request.args.get('so', '')}}">
-  <input type="hidden" name="rg" value="{{request.args.get('rg', 25)}}">
 </form>

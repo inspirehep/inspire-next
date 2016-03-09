@@ -94,8 +94,10 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
-            'application/vnd+inspire.brief+json': ('inspirehep.modules.records.serializers'
-                                                   ':json_brief_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'inspirehep.modules.records.serializers'
+                ':json_brief_v1_search'
+            ),
         },
         list_route='/literature/',
         item_route='/literature/<pid_value>',
@@ -116,6 +118,10 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'inspirehep.modules.records.serializers'
+                ':json_brief_v1_search'
+            ),
         },
         list_route='/authors/',
         item_route='/authors/<pid_value>',
@@ -136,6 +142,10 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'inspirehep.modules.records.serializers'
+                ':json_brief_v1_search'
+            ),
         },
         list_route='/data/',
         item_route='/data/<pid_value>',
@@ -156,6 +166,10 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'inspirehep.modules.records.serializers'
+                ':json_brief_v1_search'
+            ),
         },
         list_route='/conferences/',
         item_route='/conferences/<pid_value>',
@@ -176,6 +190,10 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'inspirehep.modules.records.serializers'
+                ':json_brief_v1_search'
+            ),
         },
         list_route='/jobs/',
         item_route='/jobs/<pid_value>',
@@ -196,6 +214,10 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'inspirehep.modules.records.serializers'
+                ':json_brief_v1_search'
+            ),
         },
         list_route='/institutions/',
         item_route='/institutions/<pid_value>',
@@ -216,6 +238,10 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'inspirehep.modules.records.serializers'
+                ':json_brief_v1_search'
+            ),
         },
         list_route='/experiments/',
         item_route='/experiments/<pid_value>',
@@ -236,6 +262,10 @@ RECORDS_REST_ENDPOINTS = dict(
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'inspirehep.modules.records.serializers'
+                ':json_brief_v1_search'
+            ),
         },
         list_route='/journals/',
         item_route='/journals/<pid_value>',
