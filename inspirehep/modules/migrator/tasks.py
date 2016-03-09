@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, print_function
 
+import datetime
 import gzip
 import re
 import traceback
@@ -480,3 +481,22 @@ def reindex_holdingpen_object(obj_id):
 
     obj = BibWorkflowObject.query.get(obj_id)
     workflow_object_saved.send(obj)
+
+
+@celery.task(ignore_result=True)
+def clean_submissions(submission_type=None):
+    """Drop submissions older than 4 weeks stuck on rendering form."""
+    from invenio_deposit.models import Deposition, DepositionType
+
+    threshold_date = datetime.datetime.now() - datetime.timedelta(weeks=4)
+
+    submissions = Deposition.get_depositions(
+        type=DepositionType.get(submission_type) if submission_type else None
+    )
+    deleted_count = 0
+    for submission in submissions:
+        if submission.workflow_object.get_current_task() == [1] \
+           and submission.workflow_object.modified < threshold_date:
+            submission.delete()
+            deleted_count += 1
+    current_app.logger.info("Deleted {0} submissions".format(deleted_count))

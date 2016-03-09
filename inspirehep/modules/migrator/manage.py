@@ -22,6 +22,7 @@
 
 from __future__ import print_function
 
+import datetime
 import os
 import sys
 
@@ -35,6 +36,7 @@ from .tasks import (
     add_citation_counts,
     migrate,
     migrate_broken_records,
+    clean_submissions
 )
 
 manager = Manager(usage=__doc__)
@@ -90,6 +92,13 @@ def remove_idx():
     """Drop all the legacy BibIndex tables."""
     drop_tables('idx%%')
     drop_tables('tmp_idx%%')
+
+
+@manager.option('--submission', '-s', action='store', dest='submission_type',
+                default=None, help='Filter which submissions to delete.')
+def remove_old_submissions(submission_type=None):
+    """Drop all outdated submissions."""
+    clean_submissions.delay(submission_type)
 
 
 @manager.command
