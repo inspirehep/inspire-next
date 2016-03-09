@@ -159,6 +159,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "country": ["address.country", "address.country.raw"],
     "experiment_f": ["accelerator_experiments.facet_experiment"],
     "wwwlab": ["experiment_name.wwwlab"],
+    "fc": ["field_code"],
     "subject": ["field_code.value"],
     "phd_advisors": ["phd_advisors.name"],
     "title": ["titles.title", "titles.title.raw^2",

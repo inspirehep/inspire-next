@@ -435,6 +435,15 @@ def test_exactauthor_colon_bai():
     assert expected == result
 
 
+def test_field_code_colon():
+    query = InspireQuery('fc: a')
+
+    expected = {'query': {'multi_match': {'query': 'a', 'fields': ['field_code']}}}
+    result = query.body
+
+    assert expected == result
+
+
 @pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_or_of_exactauthor_colon_queries():
     query = InspireQuery('exactauthor:X.Yin.1 or exactauthor:"Yin, Xi"')
@@ -796,11 +805,10 @@ def test_find_date():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='tracked in issue #817')
 def test_find_field_code():
     query = InspireQuery('find fc a')
 
-    expected = {}
+    expected = {'query': {'multi_match': {'query': 'a', 'fields': ['field_code']}}}
     result = query.body
 
     assert expected == result
