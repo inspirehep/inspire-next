@@ -85,7 +85,7 @@
       </div>
     </div>
   </div>
-  {{ record_plots(record) }}
+    {{ record_plots(record) }}
   <div class="row">
     <div class="col-md-12">
       {{ record_references(record) }}
@@ -101,3 +101,13 @@
 </div>
 
 {% endblock body %}
+
+{% block javascript %}
+  {{ super() }}
+  {%- assets "inspirehep_detailed_js" %}
+    <script src="{{ ASSET_URL }}"></script>
+  {%- endassets %}
+{% endblock javascript %}
+
+
+

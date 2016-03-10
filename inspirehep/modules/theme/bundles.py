@@ -69,6 +69,12 @@ js = NpmBundle(
     }
 )
 
+detailedjs = NpmBundle(
+    "js/detailed_record_init.js",
+    filters='requirejs',
+    output="gen/detailed_record.%(version)s.js",
+)
+
 css = NpmBundle(
     'scss/inspirehep.scss',
     filters='scss, cleancss',

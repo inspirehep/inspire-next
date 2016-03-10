@@ -308,13 +308,16 @@
     }
 }
 
-// Plots
+
+/* ===========================================================
+    Record plots
+============================================================ */
 
 #record-plots {
     @extend #record-abstract-keywords;
 
     #record-plots-title {
-    @extend #record-abstract-title;   
+        @extend #record-abstract-title;   
     }
 }
 
@@ -324,24 +327,37 @@
   margin-top:20px;
 }
 
-#plotsCarousel{
-    min-height: 300px;
-}
-
 .img-responsive,
 .thumbnail>img, 
-.thumbnail a>img,
-.carousel-inner>.item>img,
-.carousel-inner>.item>a>img{
+.thumbnail a>img {
     margin: 0 auto;
+    width: 100px;
+    height: 100px;
     max-width: 100%;
     max-height: 300px;
 }
 
+.carousel-inner {
+
+    & > .item {
+        max-width: 80%;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        
+        & > img,
+        & > a > img {
+            max-height: 300px;
+            margin: auto;   
+        }
+    }
+}
+
 #carousel-text {
     overflow-y: scroll;
-    max-height: 500px;
-    min-height: 200px;
+    max-height: 300px;
 }
 
 .carousel-control {
@@ -356,9 +372,10 @@
 }
 
 #slider-thumbs {
-    max-height: 200px;
+    max-height: 300px;
     overflow-y: auto;
 }
+// End of record plots
 
 #record_content > div.row {
 	display: none;
