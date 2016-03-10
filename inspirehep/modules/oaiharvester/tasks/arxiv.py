@@ -24,6 +24,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 import os
 import re
 
+from flask import current_app
+
 from functools import wraps
 
 from inspirehep.utils.arxiv import (
@@ -210,7 +212,9 @@ def arxiv_refextract(obj, eng):
     if pdf and os.path.isfile(pdf):
         mapped_references = extract_references(pdf)
         if mapped_references:
-            record["references"] = mapped_references
+            # FIXME For now we do not add these references to the final record.
+            if not current_app.config.get("PRODUCTION_MODE", False):
+                record["references"] = mapped_references
             obj.log.info("Extracted {0} references".format(
                 len(mapped_references)
             ))
