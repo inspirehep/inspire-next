@@ -75,7 +75,7 @@ install_requires = [
     'invenio-oauthclient',
     'invenio-pidstore',
     'invenio-records',
-    'invenio-rest',
+    'invenio-rest[cors]',
     'invenio-search',
     'invenio-records',
     'invenio-records-rest',
