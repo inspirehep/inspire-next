@@ -101,3 +101,10 @@
 </div>
 
 {% endblock body %}
+
+{% block javascript %}
+  {{ super() }}
+  {%- assets "inspirehep_detailed_js" %}
+    <script src="{{ ASSET_URL }}"></script>
+  {%- endassets %}
+{% endblock javascript %}
