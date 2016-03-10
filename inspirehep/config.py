@@ -594,13 +594,13 @@ RECORDS_REST_SORT_OPTIONS = {
     "records-hep": {
         "bestmatch": {
             "title": 'Best match',
-            "fields": ['-_score'],
+            "fields": ['_score'],
             "default_order": 'desc',  # Used for invenio-search-js config
             "order": 1,
         },
         "mostrecent": {
             "title": 'Most recent',
-            "fields": ['-earliest_date'],
+            "fields": ['earliest_date'],
             "default_order": 'desc',  # Used for invenio-search-js config
             "order": 2,
         },
