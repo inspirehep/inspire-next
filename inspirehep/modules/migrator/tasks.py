@@ -433,6 +433,8 @@ def create_record(recid, record, force=False, dry_run=False, validation=False):
 def migrate_workflow_object(obj_id):
     try:
         obj = BibWorkflowObject.query.get(obj_id)
+        if obj is None:
+            return
         rename_object_action(obj)
         if obj.workflow.name == "process_record_arxiv":
             metadata = obj.get_data()
