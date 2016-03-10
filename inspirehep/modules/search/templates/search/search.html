@@ -79,11 +79,6 @@
             </invenio-search-select-box>
             {%- endblock search_sort_select %}
             {%- block search_sort_order scoped %}
-            <invenio-search-sort-order
-             sort-key="sort"
-             template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/togglebutton.html') }}"
-            >
-            </invenio-search-sort-order>
             {%- endblock search_sort_order %}
           </div>
           {%- endif %}
