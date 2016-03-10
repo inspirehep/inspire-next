@@ -170,7 +170,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "695__a": ["thesaurus_terms.keyword"],
     "773__y": ["publication_info.year"],
     "authorcount": ["authors.full_name"],
-    "arXiv": ["arxiv_eprints.value"],
+    "arxiv": ["arxiv_eprints.value"],
     "caption": ["urls.description"],
     "country": ["authors.affiliations.value"],
     "firstauthor": ["authors.full_name", "authors.alternative_name"],
