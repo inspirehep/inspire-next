@@ -269,10 +269,10 @@ OAIHARVESTER_WORKFLOWS = {
 WORKFLOWS_HOLDING_PEN_DEFAULT_OUTPUT_FORMAT = "hp"
 
 HOLDING_PEN_MATCH_MAPPING = {
-    "reportnumber": "report_numbers.value",
     "doi": "dois.value",
     "eprint": "arxiv_eprints.value",
     "isbn": "isbns.value",
+    "external_system_numbers.value": "external_system_numbers.value",
 }
 
 REFEXTRACT_KB_NAME = "docextract-journals"
