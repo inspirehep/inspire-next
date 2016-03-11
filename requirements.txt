@@ -25,7 +25,7 @@
 -e git+https://github.com/inveniosoftware/invenio-formatter.git#egg=invenio-formatter
 -e git+https://github.com/inveniosoftware/invenio-mail.git#egg=invenio-mail
 -e git+https://github.com/inveniosoftware/invenio-records-rest.git#egg=invenio-records-rest
--e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3#egg=invenio-query-parser==0.4.2.dev20160221
+-e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3#egg=invenio-query-parser==0.4.2.dev20160310
 -e git+https://github.com/inspirehep/invenio-records.git@invenio3#egg=invenio-records
 -e git+https://github.com/inspirehep/invenio-pidstore.git#egg=invenio-pidstore
 
