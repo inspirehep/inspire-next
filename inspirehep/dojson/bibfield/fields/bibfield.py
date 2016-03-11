@@ -286,9 +286,7 @@ def thesis_supervisor(self, key, value):
         out.append({
             "full_name": val.get('full_name'),
             "recid": val.get('external_id'),
-            "affiliation": {
-                "value": val.get('affiliation')
-            },
+            "affiliation": val.get('affiliation')
         })
     return out
 

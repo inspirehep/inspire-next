@@ -317,7 +317,7 @@ def test_thesis_supervisor(hep_bibfield, record):
     )
     assert (
         hep_bibfield['thesis_supervisor']['affiliation'] ==
-        record['thesis_supervisor'][0]['affiliation']['value']
+        record['thesis_supervisor'][0]['affiliation']
     )
 
 

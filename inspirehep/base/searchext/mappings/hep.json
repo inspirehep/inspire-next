@@ -317,6 +317,23 @@
                         }
                     }
                 },
+                "thesis_supervisor": {
+                    "type": "object",
+                    "properties": {
+                        "affiliation": {
+                            "type": "string"
+                        },
+                        "recid": {
+                            "type": "integer"
+                        },
+                        "full_name": {
+                            "type": "string"
+                        },
+                        "curated_relation": {
+                            "type": "boolean"
+                        }
+                    }
+                },
                 "references": {
                     "type": "object",
                     "properties": {
