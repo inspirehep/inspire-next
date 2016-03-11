@@ -25,6 +25,8 @@
 from dojson import Overdo
 from dojson.utils import force_list
 
+from inspirehep.dojson import utils as inspire_dojson_utils
+
 from ..schema import SchemaOverdo
 
 
@@ -40,7 +42,8 @@ def add_book_info(record, blob):
             for pubinfo in pubinfos:
                 if pubinfo.get('0'):
                     record['book'] = {
-                        'recid': int(force_list(pubinfo.get('0'))[0])
+                        'record': inspire_dojson_utils.get_record_ref(
+                            int(force_list(pubinfo.get('0'))[0]), 'literature')
                     }
 
 

@@ -61,7 +61,7 @@ def collaboration(self, key, value):
     value = utils.force_list(value)
 
     def get_value(value):
-        recid = ''
+        recid = None
         if '0' in value:
             try:
                 recid = int(value.get('0'))
@@ -69,7 +69,7 @@ def collaboration(self, key, value):
                 pass
         return {
             'value': value.get('g'),
-            'recid': recid
+            'record': inspire_dojson_utils.get_record_ref(recid, 'experiments')
         }
     collaboration = self.get('collaboration', [])
 

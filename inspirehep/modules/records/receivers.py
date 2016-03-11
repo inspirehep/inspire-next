@@ -26,6 +26,7 @@ from flask import current_app
 from invenio_indexer.signals import before_record_index
 
 from inspirehep.utils.date import create_valid_date
+from inspirehep.dojson.utils import get_recid_from_ref
 
 
 @before_record_index.connect
@@ -137,7 +138,6 @@ def dates_validator(recid, json, *args, **kwargs):
             json[date_key] = valid_date
 
 
-@before_record_index.connect
 def references_validator(recid, json, *args, **kwargs):
     """Find and assign the correct references in a record."""
     for ref in json.get('references', []):
@@ -145,3 +145,62 @@ def references_validator(recid, json, *args, **kwargs):
             # Bad recid! Remove.
             current_app.logger.warning('MALFORMED: recid value found in references of {0}: {1}'.format(recid, ref.get('recid')))
             del ref['recid']
+
+
+def populate_recid_from_ref(recid, json, *args, **kwargs):
+    """Extracts recids from all reference fields and adds them to ES.
+
+    For every field that has as a value a reference object to another record,
+    add a sibling after extracting the record id. e.g.
+        {"record": {"$ref": "http://x/y/2}}
+    is transformed to:
+        {"record": {"$ref": "http://x/y/2},
+         "recid": 2}
+    Siblings are renamed using the following scheme:
+        Remove "record" occurrences and append _recid without doubling or
+        prepending underscores to the original name.
+
+    For every known list of object references add a new list with the
+    corresponding recids. e.g.
+        {"records": [{"$ref": "http://x/y/1"}, {"$ref": "http://x/y/2"}]}
+        is transformed to:
+        {"records": [{"$ref": "http://x/y/1"}, {"$ref": "http://x/y/2"}]
+         "recids": [1, 2]}
+    """
+    list_ref_fields_translations = {
+        'deleted_records': 'deleted_recids'
+    }
+
+    def _recusive_find_refs(json_root):
+        if isinstance(json_root, list):
+            items = enumerate(json_root)
+        elif isinstance(json_root, dict):
+            # Note that items have to be generated before altering the dict.
+            # In this case, iteritems might break during iteration.
+            items = json_root.items()
+        else:
+            items = []
+
+        for key, value in items:
+            if (isinstance(json_root, dict) and isinstance(value, dict) and
+                    '$ref' in value):
+                # Append '_recid' and remove 'record' from the key name.
+                key_basename = key.replace('record', '').rstrip('_')
+                new_key = '{}_recid'.format(key_basename).lstrip('_')
+                json_root[new_key] = get_recid_from_ref(value)
+            elif (isinstance(json_root, dict) and isinstance(value, list) and
+                    key in list_ref_fields_translations):
+                new_list = [get_recid_from_ref(v) for v in value]
+                new_key = list_ref_fields_translations[key]
+                json_root[new_key] = new_list
+            else:
+                _recusive_find_refs(value)
+
+    _recusive_find_refs(json)
+
+
+@before_record_index.connect
+def add_recids_and_validate(recid, json, *args, **kwargs):
+    """Ensure that recids are generated before being validated."""
+    populate_recid_from_ref(recid, json, *args, **kwargs)
+    references_validator(recid, json, *args, **kwargs)

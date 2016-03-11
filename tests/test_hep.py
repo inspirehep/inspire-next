@@ -26,6 +26,7 @@ import pytest
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hep import hep, hep2marc
+from inspirehep.dojson.utils import get_recid_from_ref
 
 
 @pytest.fixture
@@ -78,15 +79,15 @@ def test_spires_sysnos(marcxml_to_json, json_to_marc):
             [p.get('a') for p in json_to_marc['970'] if 'a' in p])
 
 
-def test_deleted_recids(marcxml_to_json, json_to_marc):
+def test_deleted_records(marcxml_to_json, json_to_marc):
     """Test if deleted_recids is created correctly."""
-    assert (marcxml_to_json['deleted_recids'][0] in
+    assert (get_recid_from_ref(marcxml_to_json['deleted_records'][0]) in
             [p.get('a') for p in json_to_marc['981'] if 'a' in p])
 
 
-def test_new_recid(marcxml_to_json, json_to_marc):
-    """Test if deleted_recids is created correctly."""
-    assert (marcxml_to_json['new_recid'] in
+def test_new_record(marcxml_to_json, json_to_marc):
+    """Test if new_record is created correctly."""
+    assert (get_recid_from_ref(marcxml_to_json['new_record']) in
             [p.get('d') for p in json_to_marc['970'] if 'd' in p])
 
 
@@ -155,7 +156,7 @@ def test_authors(marcxml_to_json, json_to_marc):
             json_to_marc['100']['m'])
     assert (marcxml_to_json['authors'][0]['affiliations'][0]['value'] ==
             json_to_marc['100']['u'][0])
-    assert (marcxml_to_json['authors'][0]['recid'] ==
+    assert (get_recid_from_ref(marcxml_to_json['authors'][0]['record']) ==
             json_to_marc['100']['x'])
     assert (marcxml_to_json['authors'][0]['curated_relation'] ==
             json_to_marc['100']['y'])
@@ -393,7 +394,8 @@ def test_publication_info(marcxml_to_json, json_to_marc):
             json_to_marc['773'][0]['p'])
     assert (marcxml_to_json['publication_info'][0]['journal_volume'] ==
             json_to_marc['773'][0]['v'])
-    assert (marcxml_to_json['publication_info'][0]['parent_recid'] ==
+    assert (get_recid_from_ref(marcxml_to_json['publication_info']
+            [0]['parent_record']) ==
             json_to_marc['773'][0]['0'])
     assert (marcxml_to_json['publication_info'][0]['year'] ==
             json_to_marc['773'][0]['y'])
@@ -418,7 +420,8 @@ def test_succeeding_entry(marcxml_to_json, json_to_marc):
     assert (marcxml_to_json['succeeding_entry']
             ['relationship_code'] ==
             json_to_marc['785']['r'])
-    assert (marcxml_to_json['succeeding_entry']['recid'] ==
+    assert (get_recid_from_ref(
+                marcxml_to_json['succeeding_entry']['record']) ==
             json_to_marc['785']['w'])
     assert (marcxml_to_json['succeeding_entry']['isbn'] ==
             json_to_marc['785']['z'])
@@ -461,8 +464,8 @@ def test_collections(marcxml_to_json, json_to_marc):
 def test_references(marcxml_to_json, json_to_marc):
     """Test if references are created correctly."""
     for index, val in enumerate(marcxml_to_json['references']):
-        if 'recid' in val:
-            assert (val['recid'] ==
+        if 'record' in val:
+            assert (get_recid_from_ref(val['record']) ==
                     json_to_marc['999C5'][index]['0'])
         if 'texkey' in val:
             assert (val['texkey'] ==
@@ -528,5 +531,5 @@ def test_refextract(marcxml_to_json, json_to_marc):
 
 def test_book_link(marcxml_to_json_book):
     """Test if the link to the book recid is generated correctly."""
-    assert (marcxml_to_json_book['book']['recid'] ==
+    assert (get_recid_from_ref(marcxml_to_json_book['book']['record']) ==
             1409249)

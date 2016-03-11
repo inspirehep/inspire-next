@@ -173,12 +173,14 @@ def spires_sysnos(self, key, value):
         elif 'd' in val:
             new_recid = val.get('d')
     if new_recid is not None:
-        self['new_recid'] = new_recid
+        # FIXME we are currently using the default /record API. Which might
+        # resolve to a 404 response.
+        self['new_record'] = inspire_dojson_utils.get_record_ref(new_recid)
     return sysnos or None
 
 
-@hep2marc.over('970', '(spires_sysnos|new_recid)')
-@hepnames2marc.over('970', '(spires_sysnos|new_recid)')
+@hep2marc.over('970', '(spires_sysnos|new_record)')
+@hepnames2marc.over('970', '(spires_sysnos|new_record)')
 def spires_sysnos2marc(self, key, value):
     """970 SPIRES number and new recid."""
     value = utils.force_list(value)
@@ -188,9 +190,11 @@ def spires_sysnos2marc(self, key, value):
         existing_values.extend(
             [{'a': val} for val in value if val]
         )
-    elif key == 'new_recid':
+    elif key == 'new_record':
+        val_recids = [inspire_dojson_utils.get_recid_from_ref(val)
+                      for val in value]
         existing_values.extend(
-            [{'d': val} for val in value if val]
+            [{'d': val} for val in val_recids if val]
         )
     return existing_values
 
@@ -249,18 +253,20 @@ def collections2marc(self, key, value):
     }
 
 
-@hep.over('deleted_recids', '^981..')
-@conferences.over('deleted_recids', '^981..')
-@institutions.over('deleted_recids', '^981..')
-@experiments.over('deleted_recids', '^981..')
-@journals.over('deleted_recids', '^981..')
-@hepnames.over('deleted_recids', '^981..')
-@jobs.over('deleted_recids', '^981..')
+@hep.over('deleted_records', '^981..')
+@conferences.over('deleted_records', '^981..')
+@institutions.over('deleted_records', '^981..')
+@experiments.over('deleted_records', '^981..')
+@journals.over('deleted_records', '^981..')
+@hepnames.over('deleted_records', '^981..')
+@jobs.over('deleted_records', '^981..')
 @utils.for_each_value
 @utils.ignore_value
-def deleted_recids(self, key, value):
+def deleted_records(self, key, value):
     """Recid of deleted record this record is master for."""
-    return value.get('a')
+    # FIXME we are currently using the default /record API. Which might
+    # resolve to a 404 response.
+    return inspire_dojson_utils.get_record_ref(value.get('a'))
 
 
 @hep.over('fft', '^FFT..')
@@ -299,12 +305,12 @@ def fft2marc(self, key, value):
     }
 
 
-@hep2marc.over('981', 'deleted_recids')
-@hepnames2marc.over('981', 'deleted_recids')
+@hep2marc.over('981', 'deleted_records')
+@hepnames2marc.over('981', 'deleted_records')
 @utils.for_each_value
 @utils.filter_values
-def deleted_recids2marc(self, key, value):
+def deleted_records2marc(self, key, value):
     """Deleted recids."""
     return {
-        'a': value
+        'a': inspire_dojson_utils.get_recid_from_ref(value)
     }

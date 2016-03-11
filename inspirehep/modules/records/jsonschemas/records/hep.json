@@ -1,7 +1,6 @@
 {
     "description": "An article or thesis or book or...",
     "title": "Publication",
-    "id": "http://labs.inspirehep.net/schemas/hep-0.0.1.json",
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
     "properties": {
@@ -267,14 +266,14 @@
                     "affiliation": {
                         "type": "string"
                     },
-                    "recid": {
-                        "type": "integer"
-                    },
                     "full_name": {
                         "type": "string"
                     },
                     "curated_relation": {
                         "type": "boolean"
+                    },
+                    "record": {
+                        "$ref": "json_reference.json"
                     }
                 }
             },
@@ -300,10 +299,6 @@
                         "type": "string",
                         "description": "FIXME: shall we match these with the insitution database? I guess so."
                     },
-                    "recid": {
-                        "type": "integer",
-                        "description": "Record ID of the matched insitution."
-                    },
                     "degree_type": {
                         "enum": [
                             "PhD",
@@ -316,6 +311,10 @@
                         ],
                         "type": "string",
                         "description": "FIXME: this enum must be reviewed"
+                    },
+                    "record": {
+                        "description": "URI of the matched insitution record.",
+                        "$ref": "json_reference.json"
                     }
                 }
             },
@@ -370,17 +369,17 @@
                     "note": {
                         "type": "string"
                     },
-                    "parent_recid": {
-                        "type": "integer",
-                        "description": "Record ID of the parent this record is part of"
+                    "parent_record": {
+                        "$ref": "json_reference.json",
+                        "description": "URI for the parent this record is part of"
                     },
-                    "journal_recid": {
-                        "type": "integer",
-                        "description": "Record ID of corresponding Journal"
+                    "journal_record": {
+                        "$ref": "json_reference.json",
+                        "description": "URI for corresponding Journal"
                     },
-                    "conference_recid": {
-                        "type": "integer",
-                        "description": "Record ID of corresponding Conference"
+                    "conference_record": {
+                        "$ref": "json_reference.json",
+                        "description": "URI for corresponding Conference"
                     },
                     "reportnumber": {
                         "type": "string"
@@ -461,9 +460,6 @@
                     "maintitle": {
                         "type": "string"
                     },
-                    "recid": {
-                        "type": "integer"
-                    },
                     "raw_reference": {
                         "type": "array"
                     },
@@ -476,6 +472,9 @@
                     "journal_pubnote": {
                         "pattern": ".*,.*,.*",
                         "type": "array"
+                    },
+                    "record": {
+                        "$ref": "json_reference.json"
                     }
                 }
             },
@@ -576,10 +575,6 @@
                         "type": "boolean",
                         "description": "Was the experiment actually proofchecked by a cataloguer?"
                     },
-                    "recid": {
-                        "type": "integer",
-                        "description": "Record ID of the corresponding experiment."
-                    },
                     "experiment": {
                         "type": "string"
                     },
@@ -592,6 +587,10 @@
                     },
                     "institution": {
                         "type": "string"
+                    },
+                    "record": {
+                        "description": "URI for the corresponding experiment record.",
+                        "$ref": "json_reference.json"
                     }
                 }
             },
@@ -698,11 +697,11 @@
                     "relationship_code": {
                         "type": "string"
                     },
-                    "recid": {
-                        "type": "string"
-                    },
                     "isbn": {
                         "type": "string"
+                    },
+                    "record": {
+                        "$ref": "json_reference.json"
                     }
                 },
                 "description": "Reference to previously merged records."
@@ -742,8 +741,8 @@
                     "value": {
                         "type": "string"
                     },
-                    "recid": {
-                        "type": "integer"
+                    "record": {
+                        "$ref": "json_reference.json"
                     }
                 }
             },
@@ -806,15 +805,15 @@
                                     "description": "Did a cataloguer proof-checked the recid?",
                                     "title": "The affiliation is curated?"
                                 },
-                                "recid": {
-                                    "type": "integer",
-                                    "description": "Record ID in the Institution collection",
-                                    "title": "Record ID of institution"
-                                },
                                 "value": {
                                     "type": "string",
                                     "description": "The affiliation as it appears on the paper",
                                     "title": "Name of institution"
+                                },
+                                "record": {
+                                    "description": "URI for the Institution collection record",
+                                    "title": "URI for the Institution collection record",
+                                    "$ref": "json_reference.json"
                                 }
                             },
                             "title": "Affiliation"
@@ -839,11 +838,6 @@
                         "type": "boolean",
                         "description": "Was this signature actually claimed or proof-checked by cataloguer?",
                         "title": "The relation is curated?"
-                    },
-                    "recid": {
-                        "type": "integer",
-                        "description": "Record ID of the person in HepNames",
-                        "title": "Record ID of the person"
                     },
                     "orcid": {
                         "pattern": "\\d{4}-\\d{4}-\\d{4}-\\d{4}",
@@ -882,6 +876,11 @@
                         "title": "Phonetic name",
                         "description": "Phonetic notation of the author's name.",
                         "type": "string"
+                    },
+                    "record": {
+                        "description": "URI for the person record",
+                        "title": "URI for the person record",
+                        "$ref": "json_reference.json"
                     }
                 },
                 "title": "Author"
@@ -982,18 +981,18 @@
             "description": "Whether this document can be cited. FIXME: can this be derived from other properties?",
             "title": "Citeable?"
         },
-        "deleted_recids": {
+        "deleted_records": {
             "type": "array",
             "items": {
-                "type": "string"
+                "$ref": "json_reference.json"
             },
-            "description": "List of deleted recids referring to this record",
+            "description": "List of deleted records referring to this record",
             "title": "Deleted Records"
         },
-        "new_recid": {
-            "type": "string",
+        "new_record": {
+            "$ref": "json_reference.json",
             "description": "Master record that replaces this record",
-            "title": "New recid"
+            "title": "New record"
         },
         "license": {
             "uniqueItems": true,

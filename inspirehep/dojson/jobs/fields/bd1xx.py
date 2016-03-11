@@ -24,6 +24,8 @@
 
 from dojson import utils
 
+from inspirehep.dojson import utils as inspire_dojson_utils
+
 from ..model import jobs
 
 
@@ -107,7 +109,7 @@ def institution(self, key, value):
         recid = int(value.get('z'))
     return {
         'curated_relation': curated_relation,
-        'recid': recid,
+        'record': inspire_dojson_utils.get_record_ref(recid, 'isntitutions'),
         'name': value.get('a'),
     }
 

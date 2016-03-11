@@ -37,16 +37,17 @@ def authors(self, key, value):
     def get_value(value):
         affiliations = []
         if value.get('u'):
-            recid = ''
+            recid = None
             try:
                 recid = int(value.get('z'))
             except:
                 pass
             affiliations = inspire_dojson_utils.remove_duplicates_from_list(
                 utils.force_list(value.get('u')))
-            affiliations = [{'value': aff, 'recid': recid} for
+            record = inspire_dojson_utils.get_record_ref(recid, 'institutions')
+            affiliations = [{'value': aff, 'record': record} for
                             aff in affiliations]
-        person_recid = ''
+        person_recid = None
         if value.get('x'):
             try:
                 person_recid = int(value.get('x'))
@@ -55,13 +56,15 @@ def authors(self, key, value):
         inspire_id = ''
         if value.get('i'):
             inspire_id = utils.force_list(value.get('i'))[0]
+        person_record = inspire_dojson_utils.get_record_ref(person_recid,
+                                                            'authors')
         ret = {
             'full_name': value.get('a'),
             'role': value.get('e'),
             'alternative_name': value.get('q'),
             'inspire_id': inspire_id,
             'orcid': value.get('j'),
-            'recid': person_recid,
+            'record': person_record,
             'email': value.get('m'),
             'affiliations': affiliations,
             'profile': {"__url__": inspire_dojson_utils.create_profile_url(
@@ -108,7 +111,7 @@ def authors2marc(self, key, value):
             'j': value.get('orcid'),
             'm': value.get('email'),
             'u': affiliations,
-            'x': value.get('recid'),
+            'x': inspire_dojson_utils.get_recid_from_ref(value.get('record')),
             'y': value.get('curated_relation')
         }
 

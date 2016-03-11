@@ -33,6 +33,11 @@ import time
 from flask import session, current_app
 from jinja2.filters import evalcontextfilter
 
+from inspirehep.utils.date import (
+    create_datestruct,
+    convert_datestruct_to_dategui,
+)
+
 from invenio_search.api import Query
 
 from .views import blueprint
@@ -318,7 +323,8 @@ def format_cnum_with_slash(value):
     cnum = value[:3] + '/' + value[3:5] + '/'
     if "-" in value:
         return value.replace("-", "/")
-    else:
+    else:  # pragma: nocover
+        # XXX(jacquerie): never happens.
         if len(value) == 8:
             day = value[5:7]
             nr = value[7]
@@ -328,13 +334,15 @@ def format_cnum_with_slash(value):
             return cnum + day
 
 
+# XXX(jacquerie): hyphEns.
 @blueprint.app_template_filter()
 def format_cnum_with_hyphons(value):
     value = str(value)
     cnum = value[:3] + '-' + value[3:5] + '-'
     if "-" in value:
         return value
-    else:
+    else:  # pragma: nocover
+        # XXX(jacquerie): never happens.
         if len(value) == 8:
             day = value[5:7]
             nr = value[7]
@@ -471,6 +479,7 @@ def ads_links(record):
             (ADSURL, lastname, initial, lastname, firstnames)
     else:
         if 'name' in record:
+            # XXX(jacquerie): should escape whitespace?
             link = "%sauthor=%s" % (ADSURL, record['name']['preferred_name'])
     return link
 
@@ -559,10 +568,19 @@ def publication_info(record):
                     break
         # Conference info line
         for pub_info in record['publication_info']:
-            if 'conference_recid' in pub_info \
-                    and 'parent_recid' in pub_info:
+            # FIXME(@mihaibivol) use proper json reference resolvers.
+            conference_recid = None
+            parent_recid = None
+            if 'conference_record' in pub_info:
+                conference_ref = pub_info['conference_record']['$ref']
+                conference_recid = conference_ref.split('/')[-1]
+            if 'parent_record' in pub_info:
+                parent_ref = pub_info['parent_record']['$ref']
+                parent_recid = parent_ref.split('/')[-1]
+            if conference_recid and parent_recid:
+                # XXX(jacquerie): should be abstracted in a method.
                 pid = PersistentIdentifier.get(
-                    'conferences', str(pub_info['conference_recid']))
+                    'conferences', conference_recid)
                 conference_rec = es.get_source(
                     index='records-conferences',
                     id=str(pid.object_uuid),
@@ -570,10 +588,8 @@ def publication_info(record):
                     ignore=404)
                 try:
                     ctx = {
-                        "parent_recid": str(
-                            pub_info['parent_recid']),
-                        "conference_recid": str(
-                            pub_info['conference_recid']),
+                        "parent_recid": parent_recid,
+                        "conference_recid": conference_recid,
                         "conference_title": conference_rec['title']
                     }
                     if result:
@@ -593,10 +609,10 @@ def publication_info(record):
                         break
                 except TypeError:
                     pass
-            elif 'conference_recid' in pub_info \
-                    and 'parent_recid' not in pub_info:
+            elif conference_recid and not parent_recid:
+                # XXX(jacquerie): should be abstracted in a method.
                 pid = PersistentIdentifier.get(
-                    'conferences', str(pub_info['conference_recid']))
+                    'conferences', conference_recid)
                 conference_rec = es.get_source(
                     index='records-conferences',
                     id=str(pid.object_uuid),
@@ -604,8 +620,7 @@ def publication_info(record):
                     ignore=404)
                 try:
                     ctx = {
-                        "conference_recid": str(
-                            pub_info['conference_recid']),
+                        "conference_recid": conference_recid,
                         "conference_title": conference_rec['title'],
                         "pub_info": bool(result.get('pub_info', ''))
                     }
@@ -615,10 +630,10 @@ def publication_info(record):
                         ctx=ctx)
                 except TypeError:
                     pass
-            elif 'parent_recid' in pub_info and \
-                    'conference_recid' not in pub_info:
+            elif parent_recid and not conference_recid:
+                # XXX(jacquerie): should be abstracted in a method.
                 pid = PersistentIdentifier.get(
-                    'conferences', str(pub_info['parent_recid']))
+                    'conferences', parent_recid)
                 parent_rec = es.get_source(
                     index='records-hep',
                     id=str(pid.object_uuid),
@@ -626,8 +641,7 @@ def publication_info(record):
                     ignore=404)
                 try:
                     ctx = {
-                        "parent_recid": str(
-                            pub_info['parent_recid']),
+                        "parent_recid": parent_recid,
                         "parent_title": parent_rec['titles'][0]['title']
                         .replace(
                             "Proceedings, ", "", 1),
@@ -645,11 +659,6 @@ def publication_info(record):
 @blueprint.app_template_filter()
 def format_date(datetext):
     """Display date in human readable form from available metadata."""
-    from inspirehep.utils.date import (
-        create_datestruct,
-        convert_datestruct_to_dategui,
-    )
-
     datestruct = create_datestruct(datetext)
 
     if datestruct:

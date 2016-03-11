@@ -19,7 +19,13 @@
 
 """DoJSON related utilities."""
 
+import pkg_resources
 import six
+
+try:
+    from flask import current_app
+except ImportError:
+    current_app = None
 
 
 def legacy_export_as_marc(json, tabsize=4):
@@ -136,3 +142,35 @@ def remove_duplicates_from_list_of_dicts(ld):
             seen.add(t)
 
     return result
+
+
+def get_record_ref(recid, record_type='record'):
+    """Create record jsonref reference object from recid.
+
+    None recids will return a None object.
+    Valid recids will return an object in the form of:
+        {'$ref': url_for_record}
+    """
+    if recid is None:
+        return None
+    default_server = 'inspirehep.net'
+    if current_app:
+        server = current_app.config.get('SERVER_NAME', default_server)
+    else:
+        server = default_server
+    return {'$ref': 'http://{}/api/{}/{}'.format(server, record_type, recid)}
+
+
+def get_recid_from_ref(ref_obj):
+    """Retrieve recid from jsonref reference object.
+
+    If no recid can be parsed, return None.
+    """
+    if not isinstance(ref_obj, dict):
+        return None
+    url = ref_obj.get('$ref', '')
+    try:
+        res = int(url.split('/')[-1])
+    except ValueError:
+        res = None
+    return res

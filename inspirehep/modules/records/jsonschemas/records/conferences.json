@@ -1,6 +1,5 @@
 {
     "$schema": "http://json-schema.org/schema#",
-    "id": "http://labs.inspirehep.net/schemas/conferences-0.0.1.json",
     "properties": {
         "acronym": {
             "title": "Conference acronym",

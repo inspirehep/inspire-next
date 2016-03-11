@@ -1,6 +1,5 @@
 {
     "$schema": "http://json-schema.org/schema#",
-    "id": "http://labs.inspirehep.net/schemas/institutions-0.0.1.json",
     "properties": {
         "ICN": {
             "description": "HEP affiliation following new standards",
@@ -159,10 +158,10 @@
             "title": "Obsolete ICN",
             "type": "string"
         },
-        "obsolete_recid": {
-            "description": "record ID of obsolete inst for which this inst should be used instead",
-            "title": "Obsolete record ID",
-            "type": "integer"
+        "obsolete_record": {
+            "description": "record URI of obsolete inst for which this inst should be used instead",
+            "title": "Obsolete record URI",
+            "$ref": "json_reference.json"
         },
         "old_ICN": {
             "description": "HEP affiliation (spires name)",
@@ -199,10 +198,6 @@
                         "title": "Name of related institute",
                         "type": "string"
                     },
-                    "recid": {
-                        "title": "Record ID of related institute",
-                        "type": "integer"
-                    },
                     "relation_type": {
                         "description": "FIXME: do we actually need 'successor' at all? Can't we derive it from predecessor?",
                         "enum": [
@@ -212,6 +207,10 @@
                         ],
                         "title": "Relation type",
                         "type": "string"
+                    },
+                    "record": {
+                        "title": "URI for the related institute record",
+                        "$ref": "json_reference.json"
                     }
                 },
                 "title": "Related institute",
