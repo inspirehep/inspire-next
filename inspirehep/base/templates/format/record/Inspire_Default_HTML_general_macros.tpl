@@ -18,18 +18,18 @@
 #}
 
 {% macro render_record_title() %}
-  {% if record['titles[0].title'] | is_upper %}
-    {{ record['titles[0].title'] | capitalize }}
-  {% else %}
-    {{ record['titles[0].title'] }}
-  {% endif %}
-  {% if record['titles'] %}
-    {% for subtitle in record['titles'] %}
-      {% if 'subtitle' in subtitle and subtitle['subtitle'] %}
-          {% if subtitle['subtitle'] | is_upper %}
-            : {{ subtitle['subtitle'] | capitalize }}
+  {% if record.titles %}
+    {% if record.titles[0].title and record.titles[0].title | is_upper %}
+      {{ record['titles[0].title'] | capitalize }}
+    {% else %}
+      {{ record['titles[0].title'] }}
+    {% endif %}
+    {% for subtitle in record.titles %}
+      {% if 'subtitle' in subtitle and subtitle.subtitle %}
+          {% if subtitle.subtitle | is_upper %}
+            : {{ subtitle.subtitle | capitalize }}
           {% else %}
-            : {{ subtitle['subtitle'] }}
+            : {{ subtitle.subtitle }}
           {% endif %}
       {% endif %}
     {% endfor %}
@@ -67,7 +67,7 @@
       {% endif %}
     {% endfor %}
   {% endif %}
-  
+
   {% if record.authors %}
     {% set sep = joiner("; ") %}
     {% set authors = record.authors %}
@@ -191,7 +191,7 @@
       {% if abstract | words_to_end(number_of_words) %}
         {% if number_of_words > 0 %}
           <span class="read-more-ellipsis">...</span>
-        {% endif %} 
+        {% endif %}
         <span class="read-more-target">
           {{ abstract | words_to_end(number_of_words)| e }}
         </span>
