@@ -45,6 +45,8 @@ from invenio_base.i18n import _
 from invenio_ext.principal import permission_required
 from invenio_workflows.models import BibWorkflowObject
 
+from inspirehep.modules.migrator.tasks import split_marc
+
 from .acl import viewauthorreview
 from .forms import AuthorUpdateForm
 
@@ -169,8 +171,11 @@ def update(recid):
             url = os.path.join(cfg["AUTHORS_UPDATE_BASE_URL"], "record",
                                str(recid), "export", "xm")
             xml = requests.get(url)
-            data = hepnames.do(create_record(xml.content.encode("utf-8")))
-            convert_for_form(data)
+            xml = xml.content.encode("utf-8")
+            xml = split_marc.findall(xml)
+            if xml:
+                data = hepnames.do(create_record(xml[0]))
+                convert_for_form(data)
         except requests.exceptions.RequestException:
             pass
         data["recid"] = recid
