@@ -67,7 +67,7 @@ def authors(self, key, value):
             'profile': {"__url__": inspire_dojson_utils.create_profile_url(
                 value.get('x')
             )},
-            'curated_relation': value.get('y', 0) == 1
+            'curated_relation': int(value.get('y', 0)) == 1
         }
         # HACK: This is to workaround broken records where multiple authors
         # got meshed up together.

@@ -55,6 +55,11 @@ def json_to_marc(marcxml_to_json):
     return hep2marc.do(marcxml_to_json)
 
 
+def test_author_claim(marcxml_to_json):
+    """Test if claims are correctly mapped."""
+    assert marcxml_to_json['authors'][0]['curated_relation'] == True
+
+
 def test_schema_present(marcxml_to_json):
     """Test if $schema is created correctly."""
     assert marcxml_to_json['$schema']
