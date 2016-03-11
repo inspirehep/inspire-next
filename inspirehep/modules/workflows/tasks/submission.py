@@ -91,7 +91,7 @@ def get_curation_body(template, record, email, extra_data):
     recid = extra_data.get('recid')
     record_url = extra_data.get('url')
 
-    arxiv_ids = record.get('arxiv_eprints.value')
+    arxiv_ids = record.get('arxiv_eprints.value') or []
     for index, arxiv_id in enumerate(arxiv_ids):
         if arxiv_id and is_arxiv_post_2007(arxiv_id):
             arxiv_ids[index] = 'arXiv:{0}'.format(arxiv_id)
