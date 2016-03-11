@@ -22,11 +22,23 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""INSPIRE search."""
 
-from __future__ import absolute_import, print_function
+from flask import flash
 
-from .ext import INSPIRESearch
-from .receivers import *
+from .signals import extra_keywords, malformed_query, unsupported_keyword
 
-__all__ = ('INSPIRESearch', )
+
+@unsupported_keyword.connect
+def unsupported_keyword_message(sender, keyword, *args, **kwargs):
+    flash(str("{} keyword is currently unsupported.").format(keyword), "query_suggestion")
+
+
+@malformed_query.connect
+def malformed_query_message(sender):
+    flash("Malformed Query. The results may contain unintended results.",
+          "query_suggestion")
+
+
+@extra_keywords.connect
+def extra_keywords_message(sender):
+    flash("Extra-keyword Query", "query_suggestion")

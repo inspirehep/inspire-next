@@ -22,11 +22,12 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""INSPIRE search."""
 
-from __future__ import absolute_import, print_function
+from blinker import Namespace
 
-from .ext import INSPIRESearch
-from .receivers import *
+_signals = Namespace()
 
-__all__ = ('INSPIRESearch', )
+
+unsupported_keyword = _signals.signal('unsupported_keyword')
+malformed_query = _signals.signal('malformed_query')
+extra_keywords = _signals.signal('extra_keywords')

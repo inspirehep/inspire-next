@@ -46,7 +46,6 @@ class ElasticSearchNoKeywordsDSL(object):
 
     @visitor(MalformedQuery)
     def visit(self, op):
-        # FIXME: Should send signal to display a message to the user.
         return
 
     @visitor(AndOp)
