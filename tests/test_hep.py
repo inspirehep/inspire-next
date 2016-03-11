@@ -60,6 +60,13 @@ def test_schema_present(marcxml_to_json):
     assert marcxml_to_json['$schema']
 
 
+def test_ffts(marcxml_to_json):
+    """Test if isbns is created correctly."""
+    marcxml_to_json['fft'] = [{'url': 'test/url'}]
+    marc = hep2marc.do(marcxml_to_json)
+    assert marc['FFT'] == [{'a': 'test/url'}]
+
+
 def test_isbns(marcxml_to_json, json_to_marc):
     """Test if isbns is created correctly."""
     assert marcxml_to_json['isbns'][0]['value'] == json_to_marc['020'][0]['a']
