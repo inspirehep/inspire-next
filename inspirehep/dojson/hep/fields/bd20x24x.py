@@ -109,6 +109,7 @@ def titles(self, key, value):
 
 
 @hep2marc.over('245', '^titles$')
+@utils.ignore_value
 def titles2marc(self, key, value):
     """Title Statement for 245/246."""
     title_245 = None
@@ -127,7 +128,10 @@ def titles2marc(self, key, value):
 
     if arxiv_246 is not None:
         self['246'] = arxiv_246
-    return [title_245]
+        if title_245 is None:
+            title_245 = arxiv_246
+    if title_245:
+        return [title_245]
 
 
 @hep.over('titles_old', '^247[10_][10_]')
