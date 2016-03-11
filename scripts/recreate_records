@@ -36,14 +36,30 @@ if [ ! -x "$(command -v celery)" ]; then
   exit 1
 fi
 
+CELERY_LOGLEVEL=$1
+if [ -z $1 ]; then
+	CELERY_LOGLEVEL="ERROR"
+fi
+
+cleanup() {
+	echo "----> Killing Celery Worker ${CELERY_PID}"
+	kill "${CELERY_PID}"
+}
+
+CELERY_PIDFILE="${VIRTUAL_ENV}/worker.pid"
+if [ -f "${CELERY_PIDFILE}" ]; then
+	echo "----> Purging all pending messages"
+	celery purge -f -A inspirehep.celery --workdir="${VIRTUAL_ENV}"
+else
+	celery worker -E -A inspirehep.celery --loglevel=${CELERY_LOGLEVEL} --workdir="${VIRTUAL_ENV}" --autoreload --pidfile="${CELERY_PIDFILE}" --purge &
+	CELERY_PID=$!
+	trap 'cleanup' 0 1 2 3 6
+fi
+
 inspirehep db drop --yes-i-know
 inspirehep db create
 inspirehep index destroy --force --yes-i-know
 inspirehep index init
 
-celery 2>/dev/null worker -E -A inspirehep.celery --workdir="${VIRTUALENV}" --purge &
-CELERY_PID=$!
-
 inspirehep migrator populate -f inspirehep/demosite/data/demo-records.xml.gz --wait=true
 
-kill "${CELERY_PID}"
