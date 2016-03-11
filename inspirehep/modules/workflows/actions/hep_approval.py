@@ -59,6 +59,7 @@ class hep_approval(object):
     @staticmethod
     def resolve(bwo, data):
         """Resolve the action taken in the approval action."""
+        from invenio_ext.sqlalchemy import db
         from invenio_workflows.models import ObjectVersion
         from inspirehep.modules.audit.api import log_prediction_action
 
@@ -86,6 +87,7 @@ class hep_approval(object):
         extra_data["pdf_upload"] = True if upload_pdf == "true" else False
         bwo.set_extra_data(extra_data)
         bwo.save(version=ObjectVersion.WAITING)
+        db.session.commit()
         bwo.continue_workflow(delayed=True)
 
         if extra_data["approved"]:

@@ -25,6 +25,7 @@ from os.path import join
 from flask import Blueprint, jsonify, request
 
 from invenio_ext.cache import cache
+from invenio_ext.sqlalchemy import db
 from invenio_base.globals import cfg
 from invenio_workflows.models import BibWorkflowObject
 
@@ -66,6 +67,8 @@ def continue_workflow_callback():
                     extra_data['recid'] = recid
                     workflow_object.set_extra_data(extra_data)
             # Will add the results to the engine extra_data column.
+            workflow_object.save()
+            db.session.commit()
             workflow_object.continue_workflow(
                 delayed=True,
                 callback_results=callback_results
@@ -91,6 +94,8 @@ def webcoll_callback():
             extra_data['url'] = join(cfg["CFG_ROBOTUPLOAD_SUBMISSION_BASEURL"], 'record', str(rid))
             extra_data['recid'] = rid
             workflow_object.set_extra_data(extra_data)
+            workflow_object.save()
+            db.session.commit()
             workflow_object.continue_workflow(delayed=True)
             del pending_records[rid]
             cache.set("pending_records", pending_records,

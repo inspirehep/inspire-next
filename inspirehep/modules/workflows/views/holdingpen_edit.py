@@ -28,6 +28,7 @@ from harvestingkit.html_utils import MathMLParser
 
 from invenio_base.decorators import wash_arguments
 from invenio_ext.principal import permission_required
+from invenio_ext.sqlalchemy import db
 from invenio_workflows.acl import viewholdingpen
 from invenio_workflows.models import BibWorkflowObject
 
@@ -59,6 +60,7 @@ def save_changes(sip, model):
     """Saves the changes in the record."""
     sip.package = legacy_export_as_marc(hep2marc.do(sip.metadata))
     model.save()
+    db.session.commit()
 
 
 def json_success_message(attribute):
