@@ -39,6 +39,7 @@ from inspirehep.utils.date import (
 )
 
 from invenio_search.api import Query
+from invenio_search import current_search_client as es
 
 from .views import blueprint
 from inspirehep.utils.template import render_macro_from_template
@@ -75,6 +76,17 @@ def apply_template_on_array(array, template_path, **common_context):
             )
 
     return rendered
+
+
+def collection_to_index(collection_name):
+    """Translates a collection name to the corresponding index."""
+    try:
+        mapping = current_app.config['SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING']
+        index = mapping[collection_name.lower()]
+    except KeyError:
+        index = 'records-hep'
+
+    return index
 
 
 @blueprint.app_template_filter()
@@ -187,16 +199,19 @@ def count_words(value):
 
 
 @blueprint.app_template_filter()
-def is_intbit_set(value):
-    from intbitset import intbitset
-    if isinstance(value, intbitset):
-        value = value.tolist()
-    return value
-
-
-@blueprint.app_template_filter()
 def remove_duplicates_from_dict(value):
-    return [dict(t) for t in set([tuple(d.items()) for d in value])]
+    """Actually removed duplicates from a list.
+
+    Kept because other PRs might depend on it.
+    FIXME(jacquerie): remove or rename.
+    """
+    result = []
+
+    for d in value:
+        if d not in result:
+            result.append(d)
+
+    return result
 
 
 @blueprint.app_template_filter()
@@ -283,36 +298,53 @@ def proceedings_link(record):
     out = ''
     if not cnum:
         return out
-    search_result = Query("cnum:%s and 980__a:proceedings" % (cnum,)).\
-        search()
-    if len(search_result):
-        if len(search_result) > 1:
-            from invenio.legacy.bibrecord import get_fieldvalues
+
+    query = Query("cnum:%s and 980__a:proceedings" % (cnum,))
+    result = es.search(body=query.body)
+    records = result['hits']['hits']
+
+    if len(records):
+        if len(records) > 1:
             proceedings = []
-            for i, recid in enumerate(search_result):
-                doi = get_fieldvalues(recid, '0247_a')
-                if doi:
-                    proceedings.append('<a href="/record/%(ID)s">#%(number)s</a> (DOI: <a href="http://dx.doi.org/%(doi)s">%(doi)s</a>)'
-                                       % {'ID': recid, 'number': i + 1, 'doi': doi[0]})
-                else:
+
+            for i, record in enumerate(records, start=1):
+                try:
+                    dois = record['dois']
                     proceedings.append(
-                        '<a href="/record/%(ID)s">#%(number)s</a>' % {'ID': recid, 'number': i + 1})
-                out = 'Proceedings: '
-                out += ', '.join(proceedings)
+                        '<a href="/record/{recid}">#{i}</a> (DOI: <a '
+                        'href="http://dx.doi.org/{doi}">{doi}</a>'.format(
+                            recid=record['control_number'],
+                            doi=dois[0]['value'], i=i))
+                except KeyError:
+                    # Guards both against records not having a "dois" field
+                    # and doi values not having a "value" field.
+                    proceedings.append(
+                        '<a href="/record/{recid}">#{i}</a>'.format(
+                            recid=record['control_number'], i=i))
+
+            out = 'Proceedings: '
+            out += ', '.join(proceedings)
         else:
-            out += '<a href="/record/' + str(search_result[0]) + \
-                '">Proceedings</a>'
+            out += '<a href="/record/{recid}">Proceedings</a>'.format(
+                recid=records[0]['control_number'])
+
     return out
 
 
 @blueprint.app_template_filter()
 def experiment_link(record):
+    try:
+        related_experiments = record['related_experiments']
+    except KeyError:
+        return []
+
     result = []
-    if record['related_experiments']:
-        for element in record['related_experiments']:
+    if related_experiments:
+        for element in related_experiments:
             result.append(
                 '<a href=/search?cc=Experiments&p=experiment_name:' +
                 element['name'] + '>' + element['name'] + '</a>')
+
     return result
 
 
@@ -353,15 +385,24 @@ def format_cnum_with_hyphons(value):
 
 @blueprint.app_template_filter()
 def link_to_hep_affiliation(record):
-    reccnt = Query("affiliation:%s" % (record['ICN'],))\
-        .search()
-    if len(reccnt):
-        if len(reccnt) == 1:
-            return str(len(reccnt)) + ' Paper from ' +\
+    try:
+        icn = record['ICN']
+    except KeyError:
+        return ''
+
+    query = Query("affiliation:%s" % icn)
+    result = es.search(body=query.body)
+    records = result['hits']['hits']
+
+    if len(records):
+        if len(records) == 1:
+            return str(len(records)) + ' Paper from ' +\
                 str(record['ICN'])
         else:
-            return str(len(reccnt)) + ' Papers from ' +\
+            return str(len(records)) + ' Papers from ' +\
                 str(record['ICN'])
+    else:
+        return ''
 
 
 @blueprint.app_template_filter()
@@ -385,7 +426,6 @@ def sanitize_collection_name(collection_name):
 @blueprint.app_template_filter()
 def collection_select_current(collection_name, current_collection):
     """Returns the active collection based on the current collection page."""
-
     collection_name = sanitize_collection_name(collection_name)
     current_collection = current_collection.strip().lower()
 
@@ -398,9 +438,11 @@ def collection_select_current(collection_name, current_collection):
 @blueprint.app_template_filter()
 def number_of_records(collection_name):
     """Returns number of records for the collection."""
-    # return len(Query("").
-    #            search(collection=collection_name))
-    return 0
+    query = Query()
+    index = collection_to_index(collection_name)
+    result = es.count(index=index, body=query.body)
+
+    return result['count']
 
 
 @blueprint.app_template_filter()
@@ -509,15 +551,17 @@ def number_of_search_results(query, collection_name):
             return session[session_key][
                 "number_of_hits"
             ]
-    # Replay the Query to get total number of hits
-    return len(Query('{query} AND collection:"{collection}"'.format(
-        {'query': query, 'collection': collection_name}
-    )))
+
+    query = Query(query)
+    index = collection_to_index(collection_name)
+    result = es.count(index=index, body=query.body)
+
+    return result['count']
 
 
 @blueprint.app_template_filter()
 def is_upper(s):
-    return s.isupper
+    return s.isupper()
 
 
 @blueprint.app_template_filter()
@@ -652,4 +696,5 @@ def format_date(datetext):
             )
             return date
         elif len(datestruct) == 1:
+            # XXX(jacquerie): returns int instead of string.
             return datestruct[0]

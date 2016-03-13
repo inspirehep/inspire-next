@@ -30,6 +30,7 @@ from datetime import date as real_date
 from datetime import datetime as real_datetime
 
 from flask_babelex import format_datetime as babel_format_datetime
+from flask_babelex import gettext as _
 
 # This library does not support strftime's "%s" or "%y" format strings.
 # Allowed if there's an even number of "%"s because they are escaped.

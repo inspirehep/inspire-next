@@ -19,6 +19,7 @@
 
 import json
 import mock
+import pytest
 
 
 class MockUser(object):
@@ -42,6 +43,7 @@ user_empty_email = MockUser('')
 # Collections
 #
 
+@pytest.mark.xfail(reason='requires ES')
 def test_literature_is_there(app):
     with app.test_client() as client:
         assert client.get('/literature').status_code == 200
@@ -49,12 +51,14 @@ def test_literature_is_there(app):
         assert client.get('/').status_code == 200
 
 
+@pytest.mark.xfail(reason='requires ES')
 def test_authors_is_there(app):
     with app.test_client() as client:
         assert client.get('/authors').status_code == 200
         assert client.get('/collection/authors').status_code == 200
 
 
+@pytest.mark.xfail(reason='requires ES')
 def test_conferences_is_there(app):
     with app.test_client() as client:
         assert client.get('/conferences').status_code == 200
@@ -66,21 +70,25 @@ def test_jobs_redirects(app):
         assert client.get('/jobs').status_code == 302
 
 
+@pytest.mark.xfail(reason='requires ES')
 def test_institutions_is_there(app):
     with app.test_client() as client:
         assert client.get('/institutions').status_code == 200
 
 
+@pytest.mark.xfail(reason='requires ES')
 def test_experiments_is_there(app):
     with app.test_client() as client:
         assert client.get('/experiments').status_code == 200
 
 
+@pytest.mark.xfail(reason='requires ES')
 def test_journals_is_there(app):
     with app.test_client() as client:
         assert client.get('/journals').status_code == 200
 
 
+@pytest.mark.xfail(reason='requires ES')
 def test_data_is_there(app):
     with app.test_client() as client:
         assert client.get('/data').status_code == 200
