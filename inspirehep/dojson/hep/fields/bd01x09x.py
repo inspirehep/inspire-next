@@ -81,7 +81,7 @@ def persistent_identifiers(self, key, value):
     return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(persistent_identifiers)
 
 
-@hep2marc.over('024', '^(dois|persistent_identifiers)$')
+@hep2marc.over('0247', '^(dois|persistent_identifiers)$')
 def dois2marc(self, key, value):
     """Other Standard Identifier."""
     value = utils.force_list(value)
@@ -93,10 +93,10 @@ def dois2marc(self, key, value):
             '2': val.get('type') or "DOI"
         }
 
-    self['024'] = self.get('024', [])
+    self['0247'] = self.get('0247', [])
     for val in value:
-        self['024'].append(get_value(val))
-    return self['024']
+        self['0247'].append(get_value(val))
+    return self['0247']
 
 
 @hep.over('external_system_numbers', '^035..')
