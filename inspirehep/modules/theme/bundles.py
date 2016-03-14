@@ -23,10 +23,12 @@ from __future__ import absolute_import, print_function
 
 from invenio_assets import NpmBundle
 
+
+# Used when ASSETS_DEBUG is False - like production
 almondjs = NpmBundle(
-    'node_modules/almond/almond.js',
-    'js/settings.js',
-    filters='uglifyjs',
+    "node_modules/almond/almond.js",
+    "js/settings.js",
+    filters="uglifyjs",
     output="gen/almond.%(version)s.js",
     npm={
         "almond": "~0.3.1",
@@ -45,18 +47,15 @@ requirejs = NpmBundle(
     output="gen/require.%(version)s.js",
     filters="uglifyjs",
     npm={
-        "requirejs": "latest",
+        "requirejs": "~2.1.22",
     }
 )
 
 js = NpmBundle(
-    'js/inspire_base_init.js',
-    filters='requirejs',
+    "js/inspire_base_init.js",
+    filters="requirejs",
     depends=(
-        'js/*.js',
-        'js/inspire/*.js',
-        'js/inspire/filters/*.js',
-        'node_modules/invenio-search-js/dist/*.js',
+        "js/**/*.js"
     ),
     output="gen/inspirehep.%(version)s.js",
     npm={
@@ -65,66 +64,25 @@ js = NpmBundle(
         "clipboard": "~1.5.8",
         "flightjs": "~1.5.0",
         "angular": "~1.4.9",
-        "angular-sanitize": "~1.4.9"
+        "angular-sanitize": "~1.4.9",
+        "inspirehep-js": "git+https://git@github.com/inspirehep/inspirehep-js.git"
+
     }
 )
 
 detailedjs = NpmBundle(
     "js/detailed_record_init.js",
-    filters='requirejs',
+    filters="requirejs",
     output="gen/detailed_record.%(version)s.js",
 )
 
 css = NpmBundle(
-    'scss/inspirehep.scss',
-    filters='scss, cleancss',
-    output='gen/inspirehep.%(version)s.css',
-    depends='scss/**/*.scss',
+    "scss/inspirehep.scss",
+    filters="scss, cleancss",
+    output="gen/inspirehep.%(version)s.css",
+    depends="scss/**/*.scss",
     npm={
         "bootstrap-sass": "~3.3.5",
         "font-awesome": "~4.4.0",
     }
 )
-
-# detailed_record_styles = Bundle(
-#     "less/format/detailed-record.less",
-#     "less/format/abstract.less",
-#     "vendors/datatables/media/css/dataTables.bootstrap.css",
-#     output="detailed-record.css",
-#     depends=[
-#         "less/format/detailed-record.less"
-#     ],
-#     filters="less,cleancss",
-#     weight=60,
-# )
-
-# detailed_record_js = Bundle(
-#     "js/detailed_record_init.js",
-#     output="detailed_record.js",
-#     filters=RequireJSFilter(exclude=[_j, _i]),
-#     weight=51,
-#     bower={
-#         "datatables": "1.10.10"
-#     }
-# )
-
-# brief_result_styles = Bundle(
-#     "less/format/brief-results.less",
-#     "less/format/abstract.less",
-#     output="brief-results.css",
-#     depends=[
-#         "less/format/brief-results.less"
-#     ],
-#     filters="less,cleancss",
-#     weight=60,
-# )
-
-# collection_landing_page_styles = Bundle(
-#     "less/search/collection.less",
-#     output="collection.css",
-#     depends=[
-#         "less/search/collection.less"
-#     ],
-#     filters="less,cleancss",
-#     weight=60,
-# )
