@@ -1,0 +1,165 @@
+{
+  "inspire_id": "613135",
+  "year": "2003",
+  "citations": [
+    {
+      "inspire_id": "1406546",
+      "year": "2015",
+      "citation_count": 0,
+      "title": "Dynamical Systems Analysis of Various Dark Energy Models"
+    },
+    {
+      "inspire_id": "710976",
+      "year": "2006",
+      "citation_count": 1,
+      "title": "Les Houches 'Physics at TeV colliders 2005' Beyond the standard model working group: Summary report."
+    },
+    {
+      "inspire_id": "1407029",
+      "year": "2015",
+      "citation_count": 0,
+      "title": "Generalized Ghost Pilgrim Scalar Field Models of Dark Energy"
+    },
+    {
+      "inspire_id": "1208271",
+      "year": "2012",
+      "citation_count": 6,
+      "title": "Nine-Year Wilkinson Microwave Anisotropy Probe (WMAP) Observations: Final Maps and Results"
+    },
+    {
+      "inspire_id": "1407939",
+      "year": "2015",
+      "citation_count": 0,
+      "title": "A search for neutrino signal from dark matter annihilation in the center of the Milky Way with Baikal NT200"
+    },
+    {
+      "inspire_id": "1404775",
+      "year": "2015",
+      "citation_count": 0,
+      "title": "Analysis of dark energy models in DGP braneworld"
+    },
+    {
+      "inspire_id": "1404052",
+      "year": "2007",
+      "citation_count": 0,
+      "title": "Baryon Asymmetry of the Universe and Neutrino Physics"
+    },
+    {
+      "inspire_id": "1286727",
+      "year": "2014",
+      "citation_count": 2,
+      "title": "Natural Inflation: Consistency with Cosmic Microwave Background Observations of Planck and BICEP2"
+    },
+    {
+      "inspire_id": "1343079",
+      "year": "2015",
+      "citation_count": 4,
+      "title": "Planck 2015 results. XIII. Cosmological parameters"
+    },
+    {
+      "inspire_id": "1407807",
+      "year": "2015",
+      "citation_count": 0,
+      "title": "Relativistic Stars in dRGT Massive Gravity"
+    },
+    {
+      "inspire_id": "1408252",
+      "year": "2016",
+      "citation_count": 0,
+      "title": "Beyond Standard Model Physics under the ground and in the sky"
+    },
+    {
+      "inspire_id": "1402716",
+      "year": "2007",
+      "citation_count": 0,
+      "title": "Signatures of new physics from the primordial universe"
+    },
+    {
+      "inspire_id": "1403701",
+      "year": "2015",
+      "citation_count": 0,
+      "title": "Holographic dark energy in a vector field cosmology"
+    },
+    {
+      "inspire_id": "1405627",
+      "year": "2014",
+      "citation_count": 0,
+      "title": "Anisotropic inflationary scenarios and observational signatures"
+    }
+  ],
+  "references": [
+    {
+      "inspire_id": "604625",
+      "year": "2002",
+      "citation_count": 2,
+      "title": "Does the sun shine by p p or CNO fusion reactions?"
+    },
+    {
+      "inspire_id": "482987",
+      "year": "1998",
+      "citation_count": 1,
+      "title": "The Age of the Universe"
+    },
+    {
+      "inspire_id": "611633",
+      "year": "2003",
+      "citation_count": 1,
+      "title": "Effects of the sound speed of quintessence on the microwave background and large scale structure."
+    },
+    {
+      "inspire_id": "556264",
+      "year": "2001",
+      "citation_count": 2,
+      "title": "Accelerated universe from gravity leaking to extra dimensions."
+    },
+    {
+      "inspire_id": "553744",
+      "year": "2001",
+      "citation_count": 2,
+      "title": "Constraints on inflation from CMB and Lyman-alpha forest."
+    },
+    {
+      "inspire_id": "524480",
+      "year": "2000",
+      "citation_count": 1,
+      "title": "CMB anisotropies: A Decadal survey"
+    },
+    {
+      "inspire_id": "452092",
+      "year": "1997",
+      "citation_count": 3,
+      "title": "Weighing neutrinos with galaxy surveys."
+    },
+    {
+      "inspire_id": "598954",
+      "year": "2002",
+      "citation_count": 1,
+      "title": "Atmospheric neutrinos in 2002."
+    },
+    {
+      "inspire_id": "484837",
+      "year": "1998",
+      "citation_count": 16,
+      "title": "Measurements of Omega and Lambda from 42 High-Redshift Supernovae"
+    },
+    {
+      "inspire_id": "470671",
+      "year": "1998",
+      "citation_count": 20,
+      "title": "Observational Evidence from Supernovae for an Accelerating Universe and a Cosmological Constant"
+    },
+    {
+      "inspire_id": "507635",
+      "year": "1999",
+      "citation_count": 3,
+      "title": "Observational evidence for self-interacting cold dark matter."
+    },
+    {
+      "inspire_id": "586817",
+      "year": "2002",
+      "citation_count": 2,
+      "title": "Inflation, CDM, and the central density problem."
+    }
+  ],
+  "title": "First Year Wilkinson Microwave Anisotropy Probe (WMAP) Observations: Determination of Cosmological Parameters"
+}
