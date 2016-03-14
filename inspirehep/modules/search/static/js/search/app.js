@@ -22,6 +22,9 @@
  */
 
 require([
+    'angular',
+    'angular-sanitize',
+    'angular-ui-bootstrap',
     'invenio-search',
     'inspirehep-search',
     'inspirehep'
