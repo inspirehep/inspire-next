@@ -66,7 +66,7 @@ from inspirehep.modules.workflows.tasks.submission import (
 from inspirehep.modules.workflows.tasks.actions import (
     shall_upload_record,
     reject_record,
-    add_core,
+    add_core_check,
     shall_push_remotely,
 )
 from inspirehep.modules.workflows.tasks.upload import store_record_sip
@@ -131,7 +131,7 @@ class literature(SIPWorkflowMixin, SimpleRecordDeposition):
         [
             workflow_if(match, True),
             [
-                add_core,
+                add_core_check,
                 add_note_entry,
                 user_pdf_get,
                 finalize_record_sip(processor=hep2marc),
