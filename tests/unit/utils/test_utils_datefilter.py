@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2015 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -17,21 +17,23 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-import mock
+"""Unit tests for the datefilter utility functions."""
 
-from inspirehep.utils.url import make_user_agent_string
+from datetime import datetime
+
+from inspirehep.utils.datefilter import date_older_than
 
 
-@mock.patch('inspirehep.utils.url.__version__', '0.1.0')
-def test_make_user_agent_string(app):
-    """Test that user agent is created."""
-    with app.app_context():
-        # Set SERVER_NAME that will be used in user-agent
-        app.config['SERVER_NAME'] = "http://inspirehep.net"
-        user_agent = make_user_agent_string()
+def test_older_date():
+    """date_older_than recognizes older dates."""
+    some_date = datetime.strptime("2015-01-01", "%Y-%m-%d")
+    three_days_later = datetime.strptime("2015-01-04", "%Y-%m-%d")
 
-        assert user_agent == "InspireHEP-0.1.0 (+http://inspirehep.net;)"
+    assert date_older_than(some_date, three_days_later, days=2)
 
-        user_agent_with_component = make_user_agent_string("submission")
+def test_newer_date():
+    """date_older_than recognizes newer dates."""
+    some_date = datetime.strptime("2015-01-01", "%Y-%m-%d")
+    three_days_later = datetime.strptime("2015-01-04", "%Y-%m-%d")
 
-        assert user_agent_with_component == "InspireHEP-0.1.0 (+http://inspirehep.net;) [submission]"
+    assert not date_older_than(some_date, three_days_later, days=6)
