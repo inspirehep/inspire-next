@@ -23,6 +23,7 @@ define([
   'searchtypeahead-configuration',
   'typeahead',
   'js/search/typeahead',
+  'bootstrap-datetimepicker'
 ], function($, getParserConf, Bloodhound) {
   "use strict";
 
@@ -35,6 +36,78 @@ define([
   $("button[name=action_search]").on("click", function(){
     $("input[name=post_filter]").val('');
   })
+
+  $('#eprintDropdownMenu > li').each(function(index) {
+    $(this).on("click", function() {
+      $("#eprintDropdown").html($(this).text() + ' <span class="caret"></span>');
+    });
+  }); 
+
+  $('#topciteDropdownMenu > li').each(function(index) {
+    $(this).on("click", function() {
+      $("#topciteDropdown").html($(this).text() + ' <span class="caret"></span>');
+    });
+  });
+
+  $('#journalDropdownmenu > li').each(function(index) {
+    $(this).on("click", function() {
+      $("#journalDropdown").html($(this).text() + ' <span class="caret"></span>');
+    });
+  });
+
+  $(function () {
+    $('#inputDate, #inputUntil').datetimepicker({
+    });
+  });
+
+
+  $( "#submit-easy-search" ).on( "click", function() {
+    var query = 'find',
+        author = $('#inputAuthor').val(),
+        title = $('#inputTitle').val(),
+        rn = $('#inputReportNumber').val(),
+        aff = $('#inputAffiliation').val(),
+        cn = $('#inputCollaboration').val(),
+        k = $('#inputKeywords').val(),
+        eprinttype = $('#eprintDropdown').text().trim(),
+        eprintnumber = $('#inputNumber').val(),
+        topcite = $('#topciteDropdown').text().trim(),
+        j = $('#journalDropdown').text().trim(),
+        jvol = $('#inputVol').val(),
+        jpage = $('#inputPg').val(),
+        date = $('#s_date').val(),
+        dateuntil = $('#e_date').val()
+
+    if (author != '') { query += ' and a ' + author; }
+    if (title != '') { query += ' and t ' + title; }
+    if (rn != '') { query += ' and rn ' + rn; }
+    if (aff != '') { query += ' and aff ' + aff; }
+    if (cn != '') { query += ' and cn ' + cn; }
+    if (k != '') { query += ' and k ' + k; }
+    if (eprinttype != '' && eprintnumber != '') {
+        query += ' and eprint ' + eprinttype + ' ' + eprintnumber;
+    }
+    else {
+        if (eprinttype != '') {
+            query += ' and eprint ' + eprinttype;
+        }
+        if (eprintnumber != '') {
+            query += ' and eprint ' + eprintnumber;
+        }
+    }
+    if (topcite != '') { query += ' and topcite ' + topcite; }
+    if (j != '' && jvol != '' && jpage != '') { query += ' and j ' + j + ','+ jvol + ',' + jpage; }
+    else {
+        if (j != '') { query += ' and j ' + j; }
+        if (jvol != '') { query += ' and vol ' + jvol; }
+        if (jpage != '') { query += ' and jp ' + jpage; }
+    }
+    query = query.replace(/topcite (\d+)?\+/, 'topcite $1->99999');
+    query = query.replace(' and ', ' ');
+    query = query.replace(/ /g, '+');
+    var search_url = '/search?p=' + query;
+    window.location = search_url;
+  });
 
   // ------------ typeahead for "Add to search" form ----------------
 

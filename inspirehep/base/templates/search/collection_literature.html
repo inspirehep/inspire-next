@@ -42,7 +42,13 @@
     </div>
     {% block search_bar %}
         {{ super() }}
+        <div class="row">
+          <div class="col-md-12 text-right" >
+            <small style="margin-right: 30px;" data-toggle="collapse" data-target="#easy-search"><a href="javascript:void(0)">Easy search</a></small>
+          </div>
+        </div>
       {% endblock search_bar %}
+    {% include 'search/easy_search.html' %}
     <div class="subtitle">
       Example queries:
       <a href="/search?p=arXiv%3A1007.5048&cc=HEP">arXiv:1007.5048</a>
@@ -50,7 +56,6 @@
       <a href="/search?p=find+a+ellis+and+refersto+a+witten&cc=HEP">find a ellis and refersto a witten</a>
     </div>
   </div>
-
   <div id="collection-how-to-search">
     <div class="title">How to search</div>
     <div class="row">
