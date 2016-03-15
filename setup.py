@@ -99,6 +99,7 @@ tests_require = [
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
     'pytest>=2.8.0',
+    'mock>=1.3.0',
     # 'Flask-Testing>=0.4.2', # Was on INSPIRE overlay, not needed?
     # 'unittest2>=1.1.0', # Was on INSPIRE overlay, not needed?
     # 'responses>=0.4.0', # Was on INSPIRE overlay, not needed?
