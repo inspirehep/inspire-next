@@ -48,7 +48,7 @@ python:
   - "2.7"
 
 before_install:
-  - "travis_retry pip install --upgrade pip setuptools py"
+  - "travis_retry pip install --upgrade pip setuptools py mock pytest"
   - "travis_retry pip install twine wheel coveralls"
   - "npm update && npm install --silent -g node-sass clean-css uglify-js requirejs"
 
