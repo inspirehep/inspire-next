@@ -63,7 +63,8 @@ js = NpmBundle(
         "toastr": "~2.1.2",
         "clipboard": "~1.5.8",
         "flightjs": "~1.5.0",
-        "angular": "~1.4.8",
+        "angular": "~1.4.9",
+        "angular-sanitize": "~1.4.9",
         "inspirehep-js": "git+https://git@github.com/inspirehep/inspirehep-js.git"
     }
 )
