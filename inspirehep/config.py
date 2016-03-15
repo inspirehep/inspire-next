@@ -104,7 +104,9 @@ SECURITY_RESET_SALT = "CHANGE_ME"
 
 # User profile
 # ============
-USERPROFILES_EXTEND_SECURITY_FORMS = True
+# FIXME Investigate why setting this to True sometimes forces using
+# the flask_security extension before being correctly initialized.
+USERPROFILES_EXTEND_SECURITY_FORMS = False
 USERPROFILES_SETTINGS_TEMPLATE = 'inspirehep_theme/accounts/settings/profile.html'
 
 # Search
