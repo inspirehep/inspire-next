@@ -22,15 +22,14 @@
  */
 
 require([
-    'angular',
-    'angular-sanitize',
     'invenio-search',
     'inspirehep-search',
+    'inspirehep'
   ], function() {
-    // When the DOM is ready bootstrap the `inspire-search-js`
+    // When the DOM is ready bootstrap the AngularJS modules
     angular.element(document).ready(function() {
       angular.bootstrap(
-        document.getElementById("invenio-search"), ['inspirehepSearch']
+        document.getElementById("invenio-search"), ['inspirehepSearch', 'inspirehep']
       );
     });
 });

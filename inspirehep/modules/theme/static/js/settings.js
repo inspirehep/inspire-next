@@ -22,56 +22,64 @@
  */
 
 require.config({
-  baseUrl: "/static/",
+  baseUrl: '/static/',
   paths: {
-    jquery: "node_modules/jquery/jquery",
-    bootstrap: "node_modules/bootstrap-sass/assets/javascripts/bootstrap",
-    angular: "node_modules/angular/angular",
-    "angular-sanitize": "node_modules/angular-sanitize/angular-sanitize",
-    "invenio-search": "node_modules/invenio-search-js/dist/invenio-search-js",
-    "inspirehep-search": "node_modules/inspirehep-search-js/dist/inspirehep-search",
-    hgn: "node_modules/requirejs-hogan-plugin/hgn",
-    hogan: "node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.amd",
-    text: "node_modules/requirejs-hogan-plugin/text",
-    flight: "node_modules/flightjs/build/flight",
-    typeahead: "node_modules/typeahead.js/dist/typeahead.bundle",
-    "moment": "node_modules/moment/moment",
-    "bootstrap-datetimepicker": "node_modules/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker",
-    "bootstrap-multiselect": "node_modules/bootstrap-multiselect/dist/js/bootstrap-multiselect",
-    "feedback": "js/feedback/feedback",
-    "toastr": "node_modules/toastr/toastr",
-    "clipboard": "node_modules/clipboard/dist/clipboard"
+    angular: 'node_modules/angular/angular',
+    'angular-sanitize': 'node_modules/angular-sanitize/angular-sanitize',
+    'angular-ui-bootstrap': 'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls',
+    bootstrap: 'node_modules/bootstrap-sass/assets/javascripts/bootstrap',
+    'bootstrap-datetimepicker': 'node_modules/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
+    'bootstrap-multiselect': 'node_modules/bootstrap-multiselect/dist/js/bootstrap-multiselect',
+    clipboard: 'node_modules/clipboard/dist/clipboard',
+    feedback: 'js/feedback/feedback',
+    flight: 'node_modules/flightjs/build/flight',
+    hgn: 'node_modules/requirejs-hogan-plugin/hgn',
+    hogan: 'node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.amd',
+    inspirehep: 'node_modules/inspirehep-js/dist/inspirehep',
+    'inspirehep-search': 'node_modules/inspirehep-search-js/dist/inspirehep-search',
+    'invenio-search': 'node_modules/invenio-search-js/dist/invenio-search-js',
+    jquery: 'node_modules/jquery/jquery',
+    moment: 'node_modules/moment/moment',
+    text: 'node_modules/requirejs-hogan-plugin/text',
+    toastr: 'node_modules/toastr/toastr',
+    typeahead: 'node_modules/typeahead.js/dist/typeahead.bundle'
   },
   shim: {
     angular: {
       exports: 'angular'
     },
-    jquery: {
-      exports: "$"
+    'angular-sanitize': {
+      deps: ['angular']
     },
-    "angular-sanitize": {
-      deps: ["angular"]
+    'angular-ui-bootstrap': {
+      deps: ['angular']
     },
     bootstrap: {
-      deps: ["jquery"]
+      deps: ['jquery']
+    },
+    'bootstrap-datetimepicker': {
+      deps: ['jquery', 'bootstrap', 'moment'],
+      exports: '$.fn.datetimepicker'
+    },
+    'bootstrap-multiselect': {
+      deps: ['jquery'],
+      exports: '$.fn.multiselect'
+    },
+    'inspirehep': {
+      deps: ['angular', 'angular-ui-bootstrap']
+    },
+    'inspirehep-search': {
+        deps: ['angular', 'angular-sanitize']
+    },
+    'invenio-search': {
+        deps: ['angular']
+    },
+    jquery: {
+      exports: '$'
     },
     typeahead: {
-      deps: ["jquery"],
-      exports: "Bloodhound"
-    },
-    "bootstrap-datetimepicker": {
-      deps: ["jquery", "bootstrap", "moment"],
-      exports: "$.fn.datetimepicker"
-    },
-    "bootstrap-multiselect": {
-      deps: ["jquery"],
-      exports: "$.fn.multiselect"
-    },
-    "invenio-search": {
-        deps: ["angular"]
-    },
-    "inspirehep-search": {
-        deps: ["angular", "angular-sanitize"]
+      deps: ['jquery'],
+      exports: 'Bloodhound'
     }
   }
 });
