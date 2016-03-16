@@ -17,50 +17,53 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
-addons:
-  postgresql: "9.4"
-  apt:
-    packages:
-      - nodejs
-
 notifications:
   email: false
 
+# Not needed at the moment since we use Docker.
+# If this kicks in we can try to use the cache
 sudo: false
 
 language: python
 
-cache:
-  directories:
-    - $HOME/.cache/pip
-    - $HOME/.nvm
-
 services:
-  - postgresql
-  - elasticsearch
-  - rabbitmq
-  - redis
+  - docker
 
 env:
-  - SQLALCHEMY_DATABASE_URI="postgresql+psycopg2://postgres@localhost:5432/inspirehep"
+  global:
+    - DOCKER_DATA="$HOME/docker_data"
+    - DOCKER_VERSION=1.10.1-0~trusty
+    - DOCKER_COMPOSE_VERSION=1.6.0
 
 python:
   - "2.7"
 
 before_install:
-  - "travis_retry pip install --upgrade pip setuptools py mock pytest"
-  - "travis_retry pip install twine wheel coveralls"
-  - "npm update && npm install --silent -g node-sass clean-css uglify-js requirejs"
+  - travis_retry pip install coveralls
+  # List available docker versions.
+  - apt-cache madison docker-engine
+  # Update Docker to 1.10.1 https://graysonkoonce.com/managing-docker-and-docker-compose-versions-on-travis-ci/.
+  - sudo apt-get -o Dpkg::Options::="--force-confnew" install -y docker-engine=${DOCKER_VERSION}
+  # Add docker-compose at the version specified in ENV.
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
 
 install:
-  - "travis_retry pip install -r requirements.txt --pre"
-  - "scripts/clean_assets"
-
-before_script:
-  - "sleep 10"  # Allow ES to start.
+  - "travis_retry docker-compose pull"
+  - "travis_retry docker-compose build"
+  - "travis_retry docker-compose -f docker-compose.deps.yml run --rm pip"
+  - "docker-compose -f docker-compose.deps.yml run --rm assets"
 
 script:
-  - "python setup.py test"
+  - "docker-compose -f docker-compose.test.yml run --rm test"
+
+after_script:
+  - "docker-compose -f docker-compose.test.yml kill"
+  - "docker-compose -f docker-compose.test.yml rm -f"
 
 after_success:
+  # Coverage report contains Docker paths. We replace them, so that we can run Coveralls.
+  - sed -i 's@\"/code/@'"\"$(pwd)/"'@g' .coverage
   - coveralls

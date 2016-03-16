@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo find . \( -name __pycache__ -o -name '*.pyc' \) | xargs rm -rf

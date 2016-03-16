@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  pip:
+    extends:
+      file: services.yml
+      service: base
+    command: pip-accel install -r requirements.txt --pre
+    volumes_from:
+      - static
+  assets:
+    extends:
+      file: services.yml
+      service: base
+    command: scripts/clean_assets
+    volumes_from:
+      - static
+  static:
+    extends:
+      file: services.yml
+      service: static

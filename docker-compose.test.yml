@@ -1,0 +1,55 @@
+version: '2'
+
+services:
+  service_base:
+    # Overrides default inspirehep config.
+    extends:
+      file: services.yml
+      service: base
+    environment:
+      - SQLALCHEMY_DATABASE_URI=postgresql+psycopg2://inspirehep:dbpass123@database:5432/inspirehep
+      - BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=amqp://guest:guest@rabbitmq:5672//
+      - CACHE_REDIS_URL=redis://redis:6379/0
+      - SEARCH_ELASTIC_HOSTS=indexer
+
+  test:
+    extends:
+      service: service_base
+    command: python setup.py test
+    volumes_from:
+      - static
+    links:
+      - database
+      - indexer
+      - rabbitmq
+      - redis
+    depends_on:
+      - worker
+  worker:
+    extends:
+      service: service_base
+    command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge
+    volumes_from:
+      - static
+    links:
+      - database
+      - indexer
+      - rabbitmq
+      - redis
+  redis:
+    image: redis
+  indexer:
+    extends:
+      file: services.yml
+      service: indexer
+  rabbitmq:
+    image: rabbitmq
+  database:
+    extends:
+      file: services.yml
+      service: database
+  static:
+    extends:
+      file: services.yml
+      service: static
