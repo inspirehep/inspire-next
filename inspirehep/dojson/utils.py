@@ -19,8 +19,8 @@
 
 """DoJSON related utilities."""
 
-import pkg_resources
 import six
+import re
 
 try:
     from flask import current_app
@@ -153,12 +153,16 @@ def get_record_ref(recid, record_type='record'):
     """
     if recid is None:
         return None
-    default_server = 'inspirehep.net'
+    default_server = 'http://inspirehep.net'
     if current_app:
         server = current_app.config.get('SERVER_NAME', default_server)
     else:
         server = default_server
-    return {'$ref': 'http://{}/api/{}/{}'.format(server, record_type, recid)}
+    # This config might also be http://inspirehep.net or
+    # https://inspirehep.net.
+    if not re.match('^https?://', server):
+        server = 'http://{}'.format(server)
+    return {'$ref': '{}/api/{}/{}'.format(server, record_type, recid)}
 
 
 def get_recid_from_ref(ref_obj):

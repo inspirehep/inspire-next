@@ -17,14 +17,37 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
+import mock
+
 from inspirehep.dojson import utils
+
+
+@mock.patch('inspirehep.dojson.utils.current_app')
+def test_get_record_ref_server_name(current_app):
+    # Test empty SERVER_NAME.
+    current_app.config = {}
+    ref = utils.get_record_ref(123, 'record_type')
+    assert ref['$ref'].startswith('http://inspirehep.net')
+
+    # Test dev SERVER_NAME.
+    current_app.config = {'SERVER_NAME': 'localhost:5000'}
+    ref = utils.get_record_ref(123, 'record_type')
+    assert ref['$ref'].startswith('http://localhost:5000')
+
+    # Test http prod SERVER_NAME.
+    current_app.config = {'SERVER_NAME': 'http://inspirehep.net'}
+    ref = utils.get_record_ref(123, 'record_type')
+    assert ref['$ref'].startswith('http://inspirehep.net')
+
+    # Test https prod SERVER_NAME.
+    current_app.config = {'SERVER_NAME': 'https://inspirehep.net'}
+    ref = utils.get_record_ref(123, 'record_type')
+    assert ref['$ref'].startswith('https://inspirehep.net')
 
 
 def test_get_record_ref_with_record_type():
     ref = utils.get_record_ref(123, 'record_type')
-
     assert ref['$ref'].endswith('/api/record_type/123')
-    assert ref['$ref'].startswith('http://')
     assert utils.get_record_ref(None, 'record_type') == None
 
 
