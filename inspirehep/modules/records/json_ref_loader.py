@@ -22,6 +22,7 @@
 
 """Resource-aware json reference loaders to be used with jsonref."""
 
+import re
 from jsonref import JsonLoader, JsonRef
 from werkzeug.urls import url_parse
 
@@ -42,9 +43,9 @@ class AbstractRecordLoader(JsonLoader):
 
     def get_remote_json(self, uri, **kwargs):
         parsed_uri = url_parse(uri)
-        # Normalize optional 'http://' protocol in the config.
+        # Add http:// protocol so uri.netloc is correctly parsed.
         server_name = current_app.config.get('SERVER_NAME')
-        if not server_name.startswith('http://'):
+        if not re.match('^https?://', server_name):
             server_name = 'http://{}'.format(server_name)
         parsed_server = url_parse(server_name)
 
