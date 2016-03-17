@@ -28,7 +28,9 @@ from __future__ import absolute_import, print_function
 
 from invenio_records_rest.serializers.json import JSONSerializer
 
-from inspirehep.modules.theme.jinja2filters import format_date
+from inspirehep.modules.theme.jinja2filters import (
+    format_date, publication_info
+)
 
 
 def process_es_hit(record):
@@ -57,6 +59,10 @@ def get_display_fields(record):
         display['number_of_references'] = len(record['references'])
     if 'earliest_date' in record:
         display['date'] = format_date(record['earliest_date'])
+    if 'publication_info' in record:
+        display['publication_info_line'] = publication_info(record)
+    if 'authors' in record:
+        display['number_of_authors'] = len(record['authors'])
 
     return display
 
