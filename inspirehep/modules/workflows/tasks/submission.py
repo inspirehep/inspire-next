@@ -96,7 +96,7 @@ def get_curation_body(template, record, email, extra_data):
         if arxiv_id and is_arxiv_post_2007(arxiv_id):
             arxiv_ids[index] = 'arXiv:{0}'.format(arxiv_id)
 
-    report_numbers = record.get('report_numbers.value')
+    report_numbers = record.get('report_numbers.value') or []
     dois = ["doi:{0}".format(record.get('dois.value'))]
     link_to_pdf = extra_data.get('submission_data').get('pdf')
 
@@ -373,7 +373,7 @@ def add_note_entry(obj, eng):
     entry = {'value': '*Temporary entry*'} if obj.extra_data.get("core") \
         else {'value': '*Brief entry*'}
     deposition = Deposition(obj)
-    metadata = deposition.get_latest_sip(sealed=True).metadata
+    metadata = deposition.get_latest_sip().metadata
     if metadata.get('public_notes') is None or not isinstance(metadata.get("public_notes"), list):
         metadata['public_notes'] = [entry]
     else:
@@ -387,7 +387,7 @@ def user_pdf_get(obj, eng):
         fft = {'url': obj.extra_data.get('submission_data').get('pdf'),
                'docfile_type': 'INSPIRE-PUBLIC'}
         deposition = Deposition(obj)
-        metadata = deposition.get_latest_sip(sealed=True).metadata
+        metadata = deposition.get_latest_sip().metadata
         if metadata.get('fft'):
             metadata['fft'].append(fft)
         else:
