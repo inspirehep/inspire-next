@@ -56,23 +56,26 @@ def legacy_export_as_marc(json, tabsize=4):
             if isinstance(value, dict):
                 value = [value]
             for field in value:
-                export += ['\t<datafield tag="%s" ind1="%s" '
-                           'ind2="%s">\n'.expandtabs(tabsize)
-                           % (tag, ind1, ind2)]
                 if field:
+                    datafield = ['\t<datafield tag="%s" ind1="%s" '
+                                 'ind2="%s">\n'.expandtabs(tabsize)
+                                 % (tag, ind1, ind2)]
+                    subfields = []
                     for code, subfieldvalue in six.iteritems(field):
                         if subfieldvalue:
                             if isinstance(subfieldvalue, (list, tuple)):
                                 for val in subfieldvalue:
-                                    export += ['\t\t<subfield code="%s">%s'
-                                               '</subfield>\n'.expandtabs(tabsize)
-                                               % (code, encode_for_marcxml(val))]
+                                    subfields += ['\t\t<subfield code="%s">%s'
+                                                  '</subfield>\n'.expandtabs(tabsize)
+                                                  % (code, encode_for_marcxml(val))]
                             else:
-                                export += ['\t\t<subfield code="%s">%s'
-                                           '</subfield>\n'.expandtabs(tabsize)
-                                           % (code,
-                                              encode_for_marcxml(subfieldvalue))]
-                export += ['\t</datafield>\n'.expandtabs(tabsize)]
+                                subfields += ['\t\t<subfield code="%s">%s'
+                                              '</subfield>\n'.expandtabs(tabsize)
+                                              % (code,
+                                                 encode_for_marcxml(subfieldvalue))]
+                    if subfields:
+                        export += datafield + subfields
+                        export += ['\t</datafield>\n'.expandtabs(tabsize)]
     export += ['</record>\n']
     return "".join(export)
 
