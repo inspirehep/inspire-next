@@ -19,6 +19,8 @@
 
 """OAI harvester signal receivers."""
 
+import six
+
 from invenio_oaiharvester.signals import oaiharvest_finished
 
 
@@ -42,4 +44,5 @@ def spawn_workflow_from_oai_harvest(request, records, name, **kwargs):
         return
 
     for record in records:
-        start_delayed(workflow, data=[record.raw])
+        recxml = six.text_type(record)
+        start_delayed(workflow, data=[recxml])
