@@ -79,3 +79,9 @@ a.no-external-icon:after {
   padding-left: 0;
   display: inline;
 }
+
+/* AngularJS special classes
+================================================== */
+a[ng-click]{
+    cursor: pointer;
+}

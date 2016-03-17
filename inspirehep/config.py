@@ -481,34 +481,40 @@ RECORDS_REST_FACETS = {
         "aggs": {
             "subject": {
                 "terms": {
-                    "field": "facet_inspire_subjects"
+                    "field": "facet_inspire_subjects",
+                    "size": 20
                 }
             },
             "doc_type": {
                 "terms": {
-                    "field": "facet_inspire_doc_type"
+                    "field": "facet_inspire_doc_type",
+                    "size": 20
                 }
             },
             "formulas": {
                 "terms": {
-                    "field": "facet_formulas"
+                    "field": "facet_formulas",
+                    "size": 20
                 }
             },
             "author": {
                 "terms": {
-                    "field": "exactauthor.raw"
+                    "field": "exactauthor.raw",
+                    "size": 20
                 }
             },
             "experiment": {
                 "terms": {
-                    "field": "accelerator_experiments.facet_experiment"
+                    "field": "accelerator_experiments.facet_experiment",
+                    "size": 20
                 }
             },
             "earliest_date": {
                 "date_histogram": {
                     "field": "earliest_date",
                     "interval": "year",
-                    "min_doc_count": 1
+                    "min_doc_count": 1,
+                    "order": {"_count": "desc"}
                 }
             }
         }
@@ -517,18 +523,22 @@ RECORDS_REST_FACETS = {
         "aggs": {
             "series": {
                 "terms": {
-                    "field": "series"
+                    "field": "series",
+                    "size": 20
                 }
             },
             "conf_subject": {
                 "terms": {
-                    "field": "field_code.value"
+                    "field": "field_code.value",
+                    "size": 20
                 }
             },
             "opening_date": {
                 "date_histogram": {
                     "field": "opening_date",
-                    "interval": "year"
+                    "interval": "year",
+                    "min_doc_count": 1,
+                    "order": {"_count": "desc"}
                 }
             }
         }
@@ -537,17 +547,20 @@ RECORDS_REST_FACETS = {
         "aggs": {
             "field_code": {
                 "terms": {
-                    "field": "field_code"
+                    "field": "field_code",
+                    "size": 20
                 }
             },
             "wwwlab": {
                 "terms": {
-                    "field": "experiment_name.wwwlab"
+                    "field": "experiment_name.wwwlab",
+                    "size": 20
                 }
             },
             "accelerator": {
                 "terms": {
-                    "field": "accelerator"
+                    "field": "accelerator",
+                    "size": 20
                 }
             }
         }
@@ -556,7 +569,8 @@ RECORDS_REST_FACETS = {
         "aggs": {
             "publisher": {
                 "terms": {
-                    "field": "publisher"
+                    "field": "publisher",
+                    "size": 20
                 }
             }
         }
@@ -565,7 +579,8 @@ RECORDS_REST_FACETS = {
         "aggs": {
             "country": {
                 "terms": {
-                    "field": "address.country.raw"
+                    "field": "address.country.raw",
+                    "size": 20
                 }
             }
         }
@@ -574,17 +589,20 @@ RECORDS_REST_FACETS = {
         "aggs": {
             "continent": {
                 "terms": {
-                    "field": "continent"
+                    "field": "continent",
+                    "size": 20
                 }
             },
             "rank": {
                 "terms": {
-                    "field": "rank"
+                    "field": "rank",
+                    "size": 20
                 }
             },
             "research_area": {
                 "terms": {
-                    "field": "research_area"
+                    "field": "research_area",
+                    "size": 20
                 }
             }
         }

@@ -22,3 +22,13 @@
 #}
 
 {% extends 'search/search.html' %}
+
+{%- block search_facets %}
+<div class="col-md-3 visible-md visible-lg data-facet" id="facetparent">
+  <div class="facet" id="facet_list" data-clampedwidth="#facetparent">
+    <invenio-search-facets
+     template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/data/facets.html') }}">
+    </invenio-search-facets>
+  </div>
+</div>
+{%- endblock search_facets %}
