@@ -147,6 +147,8 @@ def arxiv_fulltext_download(doctype='arXiv'):
 
 def arxiv_plot_extract(obj, eng):
     """Extract plots from an arXiv archive."""
+    from wand.exceptions import DelegateError
+
     model = eng.workflow_definition.model(obj)
     record = get_record_from_model(model)
     arxiv_id = get_arxiv_id_from_record(record)
@@ -166,9 +168,13 @@ def arxiv_plot_extract(obj, eng):
     try:
         plots = process_tarball(tarball)
     except InvalidTarball:
-        eng.log.error(
+        obj.log.error(
             'Invalid tarball {0}'.format(tarball)
         )
+        return
+    except DelegateError as err:
+        obj.log.error("Error extracting plots. Report and skip.")
+        current_app.logger.exception(err)
         return
 
     if plots:
