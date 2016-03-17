@@ -21,7 +21,7 @@
 
   {% from "format/record/Holding_Pen_HTML_detailed_macros.tpl" import record_arxiv_pdf, add_delimiter, get_abstract with context %}
   {% from "format/record/Inspire_HTML_detailed_macros.tpl" import record_publication_info, record_doi, record_keywords with context %}
-  {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, mathjax, render_record_authors, record_arxiv with context %}
+  {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, mathjax, render_record_authors, record_arxiv, record_report_numbers with context %}
 
   <div class="container col-md-12">
     <!-- Title Row -->
@@ -36,6 +36,11 @@
           </span>
         </strong>
       </h3>
+      {% if record.title_translation %}
+      <h4>
+        {{ record.title_translation[0].title }}
+      </h4>
+      {% endif %}
     </div>
 
     <!-- Authors Row-->
@@ -92,6 +97,16 @@
     <div class="row">
       <div class="col-md-12">
         {{ record_doi() }}
+      </div>
+    </div>
+    <div class="row hp-horizonal-delimiter"></div>
+    {% endif %}
+
+    <!-- Reportnumber Row-->
+    {% if record.report_numbers %}
+    <div class="row">
+      <div class="col-xs-12 col-md-11">
+        {{ record_report_numbers() }}
       </div>
     </div>
     <div class="row hp-horizonal-delimiter"></div>
