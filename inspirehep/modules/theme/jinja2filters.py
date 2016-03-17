@@ -41,9 +41,8 @@ from inspirehep.utils.date import (
 from invenio_search.api import Query
 
 from .views import blueprint
-from invenio_pidstore.models import PersistentIdentifier
 from inspirehep.utils.template import render_macro_from_template
-from invenio_search import current_search_client as es
+from inspirehep.modules.records.json_ref_loader import replace_refs
 
 
 def apply_template_on_array(array, template_path, **common_context):
@@ -568,24 +567,17 @@ def publication_info(record):
                     break
         # Conference info line
         for pub_info in record['publication_info']:
-            # FIXME(@mihaibivol) use proper json reference resolvers.
             conference_recid = None
             parent_recid = None
             if 'conference_record' in pub_info:
-                conference_ref = pub_info['conference_record']['$ref']
-                conference_recid = conference_ref.split('/')[-1]
+                conference_rec = replace_refs(pub_info['conference_record'],
+                                              'es')
+                conference_recid = conference_rec['control_number']
             if 'parent_record' in pub_info:
-                parent_ref = pub_info['parent_record']['$ref']
-                parent_recid = parent_ref.split('/')[-1]
+                parent_rec = replace_refs(pub_info['parent_record'], 'es')
+                parent_recid = parent_rec['control_number']
+
             if conference_recid and parent_recid:
-                # XXX(jacquerie): should be abstracted in a method.
-                pid = PersistentIdentifier.get(
-                    'conferences', conference_recid)
-                conference_rec = es.get_source(
-                    index='records-conferences',
-                    id=str(pid.object_uuid),
-                    doc_type='conferences',
-                    ignore=404)
                 try:
                     ctx = {
                         "parent_recid": parent_recid,
@@ -610,14 +602,6 @@ def publication_info(record):
                 except TypeError:
                     pass
             elif conference_recid and not parent_recid:
-                # XXX(jacquerie): should be abstracted in a method.
-                pid = PersistentIdentifier.get(
-                    'conferences', conference_recid)
-                conference_rec = es.get_source(
-                    index='records-conferences',
-                    id=str(pid.object_uuid),
-                    doc_type='conferences',
-                    ignore=404)
                 try:
                     ctx = {
                         "conference_recid": conference_recid,
@@ -631,14 +615,6 @@ def publication_info(record):
                 except TypeError:
                     pass
             elif parent_recid and not conference_recid:
-                # XXX(jacquerie): should be abstracted in a method.
-                pid = PersistentIdentifier.get(
-                    'conferences', parent_recid)
-                parent_rec = es.get_source(
-                    index='records-hep',
-                    id=str(pid.object_uuid),
-                    doc_type='hep',
-                    ignore=404)
                 try:
                     ctx = {
                         "parent_recid": parent_recid,
