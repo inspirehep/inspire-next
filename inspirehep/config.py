@@ -520,6 +520,10 @@ RECORDS_REST_FACETS = {
         }
     },
     "records-conferences": {
+        "filters": {
+            "series": terms_filter('series'),
+            "conf_subject": terms_filter('field_code.value')
+        },
         "aggs": {
             "series": {
                 "terms": {
@@ -544,6 +548,11 @@ RECORDS_REST_FACETS = {
         }
     },
     "records-experiments": {
+        "filters": {
+            "field_code": terms_filter('field_code'),
+            "wwwlab": terms_filter('experiment_name.wwwlab'),
+            "accelerator": terms_filter('accelerator')
+        },
         "aggs": {
             "field_code": {
                 "terms": {
@@ -566,6 +575,9 @@ RECORDS_REST_FACETS = {
         }
     },
     "records-journals": {
+        "filters": {
+            "publisher": terms_filter('publisher')
+        },
         "aggs": {
             "publisher": {
                 "terms": {
@@ -576,6 +588,9 @@ RECORDS_REST_FACETS = {
         }
     },
     "records-institutions": {
+        "filters": {
+            "country": terms_filter('address.country.raw')
+        },
         "aggs": {
             "country": {
                 "terms": {
@@ -586,6 +601,11 @@ RECORDS_REST_FACETS = {
         }
     },
     "records-jobs": {
+        "filters": {
+            "continent": terms_filter('continent'),
+            "rank": terms_filter('rank'),
+            "research_area": terms_filter('research_area')
+        },
         "aggs": {
             "continent": {
                 "terms": {
