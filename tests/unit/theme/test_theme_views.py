@@ -116,6 +116,15 @@ def test_postfeedback_logged_in_user(email_app):
         assert response.status_code == 200
 
 
+@mock.patch('inspirehep.modules.theme.views.current_user', user_empty_email)
+def test_postfeedback_empty_email(email_app):
+    """Rejects feedback from user with empty email."""
+    with email_app.test_client() as client:
+        response = client.post('/postfeedback', data=dict(feedback='foo bar'))
+
+        assert response.status_code == 403
+
+
 def test_postfeedback_anonymous_user(email_app):
     """Rejects feedback without an email."""
     with email_app.test_client() as client:
