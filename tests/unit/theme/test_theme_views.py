@@ -20,6 +20,23 @@
 import mock
 
 
+class MockUser(object):
+    def __init__(self, email):
+        self.email = email
+
+    def get(self, key):
+        if key == 'email':
+            return self.email
+
+    @property
+    def is_anonymous(self):
+        return False
+
+
+user_with_email = MockUser('foo@bar.com')
+user_empty_email = MockUser('')
+
+
 #
 # Collections
 #
@@ -90,12 +107,9 @@ def test_postfeedback_provided_email(email_app):
         assert response.status_code == 200
 
 
-@mock.patch('inspirehep.modules.theme.views.current_user')
-def test_postfeedback_logged_in_user(current_user, email_app):
+@mock.patch('inspirehep.modules.theme.views.current_user', user_with_email)
+def test_postfeedback_logged_in_user(email_app):
     """Falls back to the email of the logged in user."""
-    current_user.is_anonymous = False
-    current_user.get.return_value = 'foo@bar.com'
-
     with email_app.test_client() as client:
         response = client.post('/postfeedback', data=dict(feedback='foo bar'))
 
