@@ -46,6 +46,15 @@ def jinja_mock_env():
     return JinjaMockEnv()
 
 
+@pytest.fixture
+def mock_replace_refs():
+    def get_replace_refs_mock(title, control_numbers):
+        control_numbers_map = {c[0]['$ref']: c[1] for c in control_numbers}
+        return lambda o, s: {'title': title,
+                             'control_number': control_numbers_map[o['$ref']]}
+    return get_replace_refs_mock
+
+
 @mock.patch('inspirehep.modules.theme.jinja2filters.current_app.jinja_env.get_template')
 def test_apply_template_on_array_returns_empty_list_on_empty_list(g_t, jinja_env):
     g_t.return_value = jinja_env.from_string('{{ content }}')
@@ -823,18 +832,20 @@ def test_publication_info_from_pubinfo_freetext():
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.PersistentIdentifier.get')
-@mock.patch('inspirehep.modules.theme.jinja2filters.es.get_source')
-def test_publication_info_from_conference_recid_and_parent_recid(g_s, g):
-    with_title = Record({'title': '2005 International Linear Collider Workshop (LCWS 2005)'})
+@mock.patch('inspirehep.modules.theme.jinja2filters.replace_refs')
+def test_publication_info_from_conference_recid_and_parent_recid(r_r, mock_replace_refs):
+    conf_rec = {'$ref': 'http://x/y/976391'}
+    parent_rec = {'$ref': 'http://x/y/1402672'}
+    with_title = '2005 International Linear Collider Workshop (LCWS 2005)'
 
-    g_s.return_value = with_title
+    r_r.side_effect = mock_replace_refs(with_title, [(conf_rec, 976391),
+                                                     (parent_rec, 1402672)])
 
     with_conference_recid_and_parent_recid = Record({
         'publication_info': [
             {
-                'conference_record': {'$ref': 'http://x/y/976391'},
-                'parent_record': {'$ref': 'http://x/y/1402672'}
+                'conference_record': conf_rec,
+                'parent_record': parent_rec
             }
         ]
     })
@@ -849,18 +860,20 @@ def test_publication_info_from_conference_recid_and_parent_recid(g_s, g):
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.PersistentIdentifier.get')
-@mock.patch('inspirehep.modules.theme.jinja2filters.es.get_source')
-def test_publication_info_from_conference_recid_and_parent_recid_with_pages(g_s, g):
-    with_title = Record({'title': '50th Rencontres de Moriond on EW Interactions and Unified Theories'})
+@mock.patch('inspirehep.modules.theme.jinja2filters.replace_refs')
+def test_publication_info_from_conference_recid_and_parent_recid_with_pages(r_r, mock_replace_refs):
+    with_title = '50th Rencontres de Moriond on EW Interactions and Unified Theories'
+    conf_rec = {'$ref': 'http://x/y/1331207'}
+    parent_rec = {'$ref': 'http://x/y/1402672'}
 
-    g_s.return_value = with_title
+    r_r.side_effect = mock_replace_refs(with_title, [(conf_rec, 1331207),
+                                                     (parent_rec, 1402672)])
 
     with_conference_recid_and_parent_recid_and_pages = Record({
         'publication_info': [
             {
-                'conference_record': {'$ref': 'http://x/y/1331207'},
-                'parent_record': {'$ref': 'http://x/y/1402672'},
+                'conference_record': conf_rec,
+                'parent_record': parent_rec,
                 'page_artid': '515-518'
             }
         ]
@@ -877,14 +890,14 @@ def test_publication_info_from_conference_recid_and_parent_recid_with_pages(g_s,
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.PersistentIdentifier.get')
-@mock.patch('inspirehep.modules.theme.jinja2filters.es.get_source')
-def test_publication_info_with_pub_info_and_conf_info(g_s, g):
-    with_title = Record({
-        'title': '2005 International Linear Collider Workshop (LCWS 2005)'
-    })
+@mock.patch('inspirehep.modules.theme.jinja2filters.replace_refs')
+def test_publication_info_with_pub_info_and_conf_info(r_r, mock_replace_refs):
+    with_title = '2005 International Linear Collider Workshop (LCWS 2005)'
+    conf_rec = {'$ref': 'http://x/y/976391'}
+    parent_rec = {'$ref': 'http://x/y/706120'}
 
-    g_s.return_value = with_title
+    r_r.side_effect = mock_replace_refs(with_title, [(conf_rec, 976391),
+                                                     (parent_rec, 706120)])
 
     with_pub_info_and_conf_info = Record({
         'publication_info': [
@@ -893,8 +906,8 @@ def test_publication_info_with_pub_info_and_conf_info(g_s, g):
                 'journal_volume': 'C050318'
             },
             {
-                'conference_record': {'$ref': 'http://x/y/976391'},
-                'parent_record': {'$ref': 'http://x/y/706120'}
+                'conference_record': conf_rec,
+                'parent_record': parent_rec
             }
         ]
     })
@@ -910,18 +923,16 @@ def test_publication_info_with_pub_info_and_conf_info(g_s, g):
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.PersistentIdentifier.get')
-@mock.patch('inspirehep.modules.theme.jinja2filters.es.get_source')
-def test_publication_info_from_conference_recid_and_not_parent_recid(g_s, g):
-    with_title = Record({
-        'title': '20th International Workshop on Deep-Inelastic Scattering and Related Subjects'
-    })
+@mock.patch('inspirehep.modules.theme.jinja2filters.replace_refs')
+def test_publication_info_from_conference_recid_and_not_parent_recid(r_r, mock_replace_refs):
+    with_title = '20th International Workshop on Deep-Inelastic Scattering and Related Subjects'
+    conf_rec = {'$ref': 'http://x/y/1086512'}
 
-    g_s.return_value = with_title
+    r_r.side_effect = mock_replace_refs(with_title, [(conf_rec, 1086512)])
 
     with_conference_recid_without_parent_recid = Record({
         'publication_info': [
-            {'conference_record': {'$ref': 'http://x/y/1086512'}}
+            {'conference_record': conf_rec}
         ]
     })
 
