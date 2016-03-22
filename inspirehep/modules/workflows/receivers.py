@@ -19,7 +19,6 @@
 
 """Signal receivers for workflows."""
 
-
 from flask import current_app
 
 from sqlalchemy.event import listen
@@ -69,6 +68,8 @@ def delete_from_index(mapper, connection, target):
 @workflow_object_saved.connect
 def index_holdingpen_record(sender, **kwargs):
     """Index a Holding Pen record."""
+    from elasticsearch.exceptions import ElasticsearchException
+
     from invenio_ext.es import es
     from invenio_records.api import Record
     from invenio_records.signals import before_record_index
@@ -87,6 +88,20 @@ def index_holdingpen_record(sender, **kwargs):
         # Ignore initial versions
         return
 
+    def get_base_record():
+        record = Record({})
+        record["version"] = ObjectVersion.name_from_version(sender.version)
+        record["type"] = sender.data_type
+        record["status"] = sender.status
+        record["created"] = sender.created.isoformat()
+        record["modified"] = sender.modified.isoformat()
+        record["uri"] = sender.uri
+        record["id_workflow"] = sender.id_workflow
+        record["id_user"] = sender.id_user
+        record["id_parent"] = sender.id_parent
+        record["workflow"] = sender.workflow.name
+        return record
+
     workflow = workflows.get(sender.workflow.name)
     if not workflow:
         current_app.logger.info(
@@ -101,18 +116,7 @@ def index_holdingpen_record(sender, **kwargs):
     if not hasattr(sender, 'extra_data'):
         sender.extra_data = sender.get_extra_data()
 
-    record = Record({})
-    record["version"] = ObjectVersion.name_from_version(sender.version)
-    record["type"] = sender.data_type
-    record["status"] = sender.status
-    record["created"] = sender.created.isoformat()
-    record["modified"] = sender.modified.isoformat()
-    record["uri"] = sender.uri
-    record["id_workflow"] = sender.id_workflow
-    record["id_user"] = sender.id_user
-    record["id_parent"] = sender.id_parent
-    record["workflow"] = sender.workflow.name
-
+    record = get_base_record()
     try:
         record.update(workflow.get_record(sender))
         record.update(workflow.get_sort_data(sender))
@@ -154,12 +158,24 @@ def index_holdingpen_record(sender, **kwargs):
 
         # Delete from other indexes in case index changed.
         delete_from_index(None, None, sender)
-        es.index(
-            index=record_index,
-            doc_type=current_app.config["WORKFLOWS_HOLDING_PEN_DOC_TYPE"],
-            body=dict(record),
-            id=sender.id
-        )
+        try:
+            es.index(
+                index=record_index,
+                doc_type=current_app.config["WORKFLOWS_HOLDING_PEN_DOC_TYPE"],
+                body=dict(record),
+                id=sender.id
+            )
+        except ElasticsearchException as err:
+            # At least then index base metadata to have it show up in HP.
+            base_record = get_base_record()
+            base_record["version"] = ObjectVersion.name_from_version(ObjectVersion.ERROR)
+            es.index(
+                index=record_index,
+                doc_type=current_app.config["WORKFLOWS_HOLDING_PEN_DOC_TYPE"],
+                body=dict(base_record),
+                id=sender.id
+            )
+            raise err
 
 workflow_halted.connect(precache_holdingpen_row)
 workflow_halted.connect(continue_workflow)
