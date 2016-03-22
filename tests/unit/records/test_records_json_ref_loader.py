@@ -82,13 +82,32 @@ def test_abstract_loader_url_fallbacks(get_record, super_get_r_j, current_app):
     current_app.config = {'SERVER_NAME': 'localhost:5000'}
     expect_actual = JsonRef({'$ref': 'http://localhost:5000/api/rt/1'},
                             loader=AbstractRecordLoader())
-
     assert expect_actual == with_actual
+
     expect_actual = JsonRef({'$ref': '/api/rt/1'},
                             loader=AbstractRecordLoader())
     assert expect_actual == with_actual
 
     expect_super = JsonRef({'$ref': 'http://inspirehep.net/api/rt/1'},
+                           loader=AbstractRecordLoader())
+    assert expect_super == with_super
+
+    # Check against prod https SERVER_NAME
+    current_app.config = {'SERVER_NAME': 'https://inspirehep.net'}
+    expect_actual = JsonRef({'$ref': 'https://inspirehep.net/api/rt/1'},
+                            loader=AbstractRecordLoader())
+    assert expect_actual == with_actual
+
+    expect_actual = JsonRef({'$ref': '/api/rt/1'},
+                            loader=AbstractRecordLoader())
+    assert expect_actual == with_actual
+
+    # https should be backwards compatible with resources indexed with http://.
+    expect_actual = JsonRef({'$ref': 'http://inspirehep.net/api/rt/1'},
+                            loader=AbstractRecordLoader())
+    assert expect_actual == with_actual
+
+    expect_super = JsonRef({'$ref': 'http://otherhost.net/api/rt/1'},
                            loader=AbstractRecordLoader())
     assert expect_super == with_super
 
