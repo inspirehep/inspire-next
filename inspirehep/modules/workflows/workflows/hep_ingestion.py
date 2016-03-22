@@ -126,7 +126,6 @@ class hep_ingestion(SIPWorkflowMixin, DepositionType):
     match_processing = [
         workflow_if(exists_in_holding_pen),
         [
-            update_old_object,
             delete_self_and_stop_processing,
         ],
         workflow_if(record_exists),

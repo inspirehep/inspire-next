@@ -285,13 +285,13 @@ def stop_processing(obj, eng):
     eng.stopProcessing()
 
 
-def update_old_object(obj, *args, **kwargs):
+def update_old_object(obj, eng):
     """Update the data of the old object with the new data."""
     holdingpen_ids = obj.extra_data.get("holdingpen_ids", [])
     if holdingpen_ids and len(holdingpen_ids) == 1:
         old_object = BibWorkflowObject.query.get(holdingpen_ids[0])
-        if old_object:
-            # record waiting approval
+        if old_object.workflow.name == eng.name:
+            # Update record if part of the same workflow
             old_object.set_data(obj.data)
             old_object.save()
     else:

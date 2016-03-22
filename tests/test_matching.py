@@ -360,7 +360,7 @@ class MatchingTests(InvenioTestCase):
 
         BWO.query.get = mock.Mock(return_value=old_obj)
 
-        update_old_object(obj)
+        update_old_object(obj, eng=None)
 
         self.assertEqual(old_obj._data, 'foo')
 
@@ -382,4 +382,4 @@ class MatchingTests(InvenioTestCase):
                 return MockLog()
 
         obj = MockBWO()
-        self.assertRaises(Exception, update_old_object, obj)
+        self.assertRaises(Exception, update_old_object, obj, None)
