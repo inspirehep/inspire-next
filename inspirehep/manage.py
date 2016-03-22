@@ -131,36 +131,29 @@ def create_indices(rebuild=False, holdingpen=False, delete_old=False, index_name
     else:
         indices = set(current_app.config["SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING"].values())
         indices.add(current_app.config['SEARCH_ELASTIC_DEFAULT_INDEX'])
+
     for index in indices:
-        possible_indices = [index]
-        if holdingpen:
-            possible_indices.append(current_app.config['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + index)
-        click.echo(click.style('Rebuilding {0}... '.format(index), fg='yellow'), nl=False)
         mapping = {}
         mapping_filename = index + ".json"
         if mapping_filename in mappings:
             mapping = json.load(open(mappings[mapping_filename], "r"))
-        recreate_index(index, mapping, rebuild=rebuild)
-        click.echo(click.style('OK', fg='green'))
+
         if holdingpen:
             # Create Holding Pen index
             if mapping:
                 mapping['mappings']['record']['properties'].update(
                     current_app.config['WORKFLOWS_HOLDING_PEN_ES_PROPERTIES']
                 )
-            name = current_app.config['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + index
-            click.echo(click.style(
-                'Rebuilding {0}... '.format(name), fg='yellow'
-            ), nl=False)
-            recreate_index(name, mapping, rebuild=rebuild)
-            click.echo(click.style('OK', fg='green'))
+            index = current_app.config['WORKFLOWS_HOLDING_PEN_ES_PREFIX'] + index
+
+        click.echo(click.style('Rebuilding {0}... '.format(index), fg='yellow'), nl=False)
+        recreate_index(index, mapping, rebuild=rebuild)
+        click.echo(click.style('OK', fg='green'))
 
 
 @manager.command
 def delete_indices():
     """Delete all the indices for records and holdingpen."""
-    from invenio.base.globals import cfg
-
     indices = set(cfg["SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING"].values())
     indices.add(cfg['SEARCH_ELASTIC_DEFAULT_INDEX'])
     holdingpen_indices = [
@@ -198,17 +191,21 @@ def recreate_index(name, mapping, rebuild=False, delete_old=True):
                 reindex_name = answer['name']
                 while reindex_name in es.cat.transport.perform_request('GET', '/_reindex/')[1]['names']:
                     # Let's poll to wait for finishing
-                    sleep(3)
+                    sleep(10)
                 es.indices.flush(future_index, wait_if_ongoing=True)
-                if original_number_of_documents != es.count(future_index)['count']:
-                    click.echo("ERROR when reindexing {current_index} into {future_index}. Bailing out.".format(
-                        current_index=current_index,
-                        future_index=future_index))
-                    return False
             finally:
                 es.indices.put_settings(index=current_index, body={'index': {'blocks': {'read_only': False}}})
                 es.indices.put_settings(index=future_index, body={'index': {'refresh_interval': "1s"}})
                 es.indices.forcemerge(index=future_index, max_num_segments=5)
+
+            sleep(30)
+            click.echo("original_number_of_documents: {0}".format(original_number_of_documents))
+            click.echo("es.count(future_index)['count']: {0}".format(es.count(future_index)['count']))
+            if original_number_of_documents != es.count(future_index)['count']:
+                click.echo("ERROR when reindexing {current_index} into {future_index}. Bailing out.".format(
+                    current_index=current_index,
+                    future_index=future_index))
+                return False
 
             es.indices.put_alias(index=future_index, name=name)
             if delete_old:
