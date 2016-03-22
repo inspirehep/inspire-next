@@ -56,9 +56,6 @@ install:
   - "travis_retry pip install -r requirements.txt --pre"
   - "scripts/clean_assets"
 
-before_script:
-  - "sleep 10"  # Allow ES to start.
-
 script:
   - "python setup.py test"
 
