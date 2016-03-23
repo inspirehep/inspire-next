@@ -60,6 +60,21 @@ services:
     volumes:
       - "${DOCKER_DATA}/tmp/inspirehep_db/data:/var/lib/postgresql/data/pgdata"
 
+  # Services useful for monitoring/debugging.
+  flower:
+    extends:
+      service: service_base
+    ports:
+      - "5555:5555"
+    command: celery flower -A inspirehep.celery --broker=amqp://guest:guest@rabbitmq:5672//
+    volumes_from:
+      - static
+    links:
+      - database
+      - indexer
+      - rabbitmq
+      - redis
+
   # Static volume config for service_base.
   static:
     extends:
