@@ -5,6 +5,11 @@
     ],
     "type": "object",
     "properties": {
+        "self": {
+          "description": "Url of the record itself",
+          "title": "Url of the record",
+          "$ref": "json_reference.json"
+        },
         "phd_advisors": {
             "uniqueItems": true,
             "items": {
