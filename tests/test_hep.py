@@ -76,7 +76,7 @@ def test_isbns(marcxml_to_json, json_to_marc):
 def test_dois(marcxml_to_json, json_to_marc):
     """Test if dois is created correctly."""
     assert (marcxml_to_json['dois'][0]['value'] in
-            [p.get('a') for p in json_to_marc['024'] if 'a' in p])
+            [p.get('a') for p in json_to_marc['0247'] if 'a' in p])
 
 
 def test_spires_sysnos(marcxml_to_json, json_to_marc):
@@ -100,7 +100,7 @@ def test_new_recid(marcxml_to_json, json_to_marc):
 def test_persistent_identifiers(marcxml_to_json, json_to_marc):
     """Test if persistent_identifiers is created correctly."""
     assert (marcxml_to_json['persistent_identifiers'][0]['value'] in
-            [p.get('a') for p in json_to_marc['024'] if 'a' in p])
+            [p.get('a') for p in json_to_marc['0247'] if 'a' in p])
 
 
 def test_external_system_numbers(marcxml_to_json, json_to_marc):

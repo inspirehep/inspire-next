@@ -337,6 +337,10 @@ class MatchingTests(InvenioTestCase):
         """Check update of old record."""
         from inspirehep.modules.workflows.tasks.matching import update_old_object
 
+        class MockEng(object):
+            name = "fooworkflow"
+
+
         class MockBWO(object):
             def __init__(self, data):
                 self._data = data
@@ -349,6 +353,10 @@ class MatchingTests(InvenioTestCase):
             def extra_data(self):
                 return {'holdingpen_ids': [1]}
 
+            @property
+            def workflow(self):
+                return MockEng()
+
             def set_data(self, data):
                 self._data = data
 
@@ -360,7 +368,7 @@ class MatchingTests(InvenioTestCase):
 
         BWO.query.get = mock.Mock(return_value=old_obj)
 
-        update_old_object(obj, eng=None)
+        update_old_object(obj, MockEng())
 
         self.assertEqual(old_obj._data, 'foo')
 

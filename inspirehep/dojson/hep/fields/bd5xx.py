@@ -110,7 +110,6 @@ def thesis(self, key, value):
 def thesis2marc(self, key, value):
     """Get Thesis Information."""
     return {
-        'a': value.get('defense_date'),
         'b': value.get('degree_type'),
         'c': value.get('university'),
         'd': value.get('date'),

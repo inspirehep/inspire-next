@@ -586,7 +586,7 @@ class LiteratureForm(WebDepositForm):
              'collaboration', 'experiment', 'abstract', 'page_nr',
              'report_numbers']),
         ('Thesis Information',
-            ['supervisors', 'defense_date', 'thesis_date', 'degree_type',
+            ['supervisors', 'thesis_date', 'defense_date', 'degree_type',
              'institution', 'license_url']),
         # ('Licenses and copyright',
         #     ['license', 'license_url'], {'classes': 'collapse'}),
