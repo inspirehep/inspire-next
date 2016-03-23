@@ -58,7 +58,7 @@ REGEXP_REFS = re.compile(
 def get_pdf_for_model(eng, arxiv_id):
     """We download it."""
     storage_path = os.path.join(
-        cfg.get('OAIHARVESTER_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
+        cfg.get('WORKFLOWS_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
         str(eng.uuid)
     )
     if not os.path.exists(storage_path):
@@ -72,7 +72,7 @@ def get_pdf_for_model(eng, arxiv_id):
 def get_tarball_for_model(eng, arxiv_id):
     """We download it."""
     storage_path = os.path.join(
-        cfg.get('OAIHARVESTER_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
+        cfg.get('WORKFLOWS_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
         str(eng.uuid)
     )
     if not os.path.exists(storage_path):
