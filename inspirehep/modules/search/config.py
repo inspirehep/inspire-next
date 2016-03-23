@@ -216,3 +216,24 @@ SPIRES_KEYWORDS = {
     'year': 'year',
     'control_number': 'recid',
 }
+
+# Specify special boosting when no keyword is given in a query.
+DEFAULT_FIELDS_BOOSTING = {
+    "records-hep": [
+        "title^3",
+        "title.raw^10",
+        "abstract^2",
+        "abstract.raw^4",
+        "author^10",
+        "author.raw^15",
+        "reportnumber^10",
+        "eprint^10",
+        "doi^10"],
+    "records-institutions": ["field1^10", "field2^15"],
+    "records-journals": ["field1^10", "field2^15"],
+    "records-experiments": ["field1^10", "field2^15"],
+    "records-data": ["field1^10", "field2^15"],
+    "records-conferences": ["field1^10", "field2^15"],
+    "records-authors": ["field1^10", "field2^15"],
+    "records-jobs": ["field1^10", "field2^15"]
+}

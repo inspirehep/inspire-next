@@ -22,9 +22,9 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""INSPIRE search factory used in invenio-records-rest"""
+"""INSPIRE search factory used in invenio-records-rest."""
 
-from flask import request, current_app
+from flask import current_app, request
 
 from invenio_records_rest.errors import InvalidQueryRESTError
 
@@ -42,8 +42,12 @@ def inspire_search_factory(self, search):
     from invenio_records_rest.sorter import default_sorter_factory
 
     query_string = request.values.get('q', '')
+    # FIXME: what is the proper way to retrieve the collection?
+    # FIXME: what if someone put an invalid cc?
+    index = 'records-{}'.format(request.values.get('cc', 'hep'))
+
     try:
-        search = search.query(IQ(query_string))
+        search = search.query(IQ(query_string, index=index))
     except SyntaxError:
         current_app.logger.debug(
             "Failed parsing query: {0}".format(
