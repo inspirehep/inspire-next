@@ -27,28 +27,61 @@
 from __future__ import absolute_import, print_function
 
 import json
-import pypeg2
-
-from flask import current_app
 
 from elasticsearch_dsl import Q
 
+from flask import current_app
+
 from invenio_query_parser.ast import MalformedQuery
+
+import pypeg2
 
 from .parser import Main
 
-from .walkers.pypeg_to_ast import PypegConverter
-from .walkers.spires_to_invenio import SpiresToInvenio
 from .walkers.elasticsearch import ElasticSearchDSL
 from .walkers.elasticsearch_no_keywords import ElasticSearchNoKeywordsDSL
 from .walkers.elasticsearch_no_keywords import QueryHasKeywords
+from .walkers.pypeg_to_ast import PypegConverter
+from .walkers.spires_to_invenio import SpiresToInvenio
+
+
+walkers = [PypegConverter(), SpiresToInvenio()]
+
+
+def get_fields_by_index(index):
+    if index == "records-hep":
+        return [
+            "title^3",
+            "title.raw^10",
+            "abstract^2",
+            "abstract.raw^4",
+            "author^10",
+            "author.raw^15",
+            "reportnumber^10",
+            "eprint^10",
+            "doi^10"]
+    elif index == "records-institutions":
+        return ['global_fulltext']
+    elif index == "records-journals":
+        return ['global_fulltext']
+    elif index == "records-experiments":
+        return ['global_fulltext']
+    elif index == "records-data":
+        return ['global_fulltext']
+    elif index == "records-conferences":
+        return ['global_fulltext']
+    elif index == "records-authors":
+        return ['global_fulltext']
+    elif index == "records-jobs":
+        return ['global_fulltext']
+    else:
+        return ['global_fulltext']
 
 
 def inspire_query_factory():
     """Create a parser returning Elastic Search DSL query instance."""
 
-    def invenio_query(pattern):
-        walkers = [PypegConverter(), SpiresToInvenio()]
+    def invenio_query(pattern, index='records-hep'):
 
         # Enhance query first
         # for enhancer in query_enhancers():
@@ -65,18 +98,10 @@ def inspire_query_factory():
         try:
             search_walker = ElasticSearchNoKeywordsDSL()
             query.accept(search_walker)
-            query = Q('multi_match', query=pattern, fields=[
-                "title^3",
-                "title.raw^10",
-                "abstract^2",
-                "abstract.raw^4",
-                "author^10",
-                "author.raw^15",
-                "reportnumber^10",
-                "eprint^10",
-                "doi^10"],
-                zero_terms_query="all"
-            )
+            query = Q('multi_match',
+                      query=pattern,
+                      fields=get_fields_by_index(index),
+                      zero_terms_query="all")
         except QueryHasKeywords:
             query = query.accept(ElasticSearchDSL(
                 current_app.config.get(
