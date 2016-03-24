@@ -160,6 +160,10 @@ img.landing-page-flask {
                  #searchform-input-group input {
                     height: 50px;
                     font-size: 18px;
+                     background-color: $page-background;
+                     border: none;
+                     box-shadow: none;
+                     -webkit-box-shadow: none;
                 }
             }
 
@@ -265,4 +269,45 @@ img.landing-page-flask {
         }
 
     }
+}
+
+#landing-map {
+    margin-top:-42px;
+    width: 100%;
+    height: 300px;
+}
+
+#landing-map-info {
+    min-height: 40px;
+    margin-bottom: 30px;
+
+    &.conferences {
+        background-color: $conferences-collection;
+    }
+
+    &.institutions {
+        background-color: $institutions-collection;
+    }
+
+    &.experiments {
+        background-color: $experiments-collection;
+    }
+
+    p {
+        font-size: 1.2em;
+        padding: 10px;
+        color: white;
+    }
+}
+
+.subtitle {
+    font-size: .7em;
+    color: $grey;
+}
+
+.block {
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 1px 1px rgba(0,0,0,.15);
+
 }

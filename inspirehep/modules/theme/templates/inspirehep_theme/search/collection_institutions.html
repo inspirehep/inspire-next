@@ -17,32 +17,31 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{%- extends "inspirehep_theme/search/collection_basic.html" -%}
+{%- extends "inspirehep_theme/search/collection_map.html" -%}
+
+{% block page_banner %}
+    <div id="landing-map"></div>
+    <div id="landing-map-info" class="institutions">
+        <p class="text-center">
+            13,000 institutions in 100 countries
+        </p>
+    </div>
+{% endblock %}
 
 {% block body %}
-  <div id="collection-search-bar" class="institutions-collection-search-bar">
-    <div class="title" id="institutions-search-bar">
-      Search {{ "Institutions" | number_of_records }} institutions
-    </div>
-    {% block search_bar %}
-      {{ super() }}
-    {% endblock search_bar %}
-    <div class="subtitle">
-      Example query:
-      <a href="/search?p=find+address+menlo+park&cc=institutions">find address menlo park</a>
-    </div>
-  </div>
 
-  <div id="collection-how-to-search">
-    <div class="title">Useful links</div>
-    <div class="row">
-      <div class="col-md-12" id="left">
-        <div class="useful-collection-link">
-          <a href="http://www.slac.stanford.edu/spires/institutions/map/">
-            Top 500 Institutions
-          </a>
-          </div>
-      </div>
-    </div>
-  </div>
+    {% block collection_header %}
+        <div id="collection-search-bar" class="institutions-collection-search-bar">
+            <div class="title" id="institutions-search-bar">
+                Search {{ "Institutions" | number_of_records }} institutions
+            </div>
+            {% block search_bar %}
+                {{ super() }}
+            {% endblock search_bar %}
+            <div class="subtitle">
+                Example query:
+                <a href="/search?p=find+address+menlo+park&cc=institutions">find address menlo park</a>
+            </div>
+        </div>
+    {% endblock %}
 {% endblock %}
