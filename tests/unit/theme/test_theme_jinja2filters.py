@@ -55,6 +55,34 @@ def mock_replace_refs():
     return get_replace_refs_mock
 
 
+@mock.patch(
+    'inspirehep.modules.theme.jinja2filters.current_app.config',
+    {'SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING': {'foo': 'bar'}})
+def test_collection_to_index_fetches_from_mapping():
+    expected = 'bar'
+    result = collection_to_index('foo')
+
+    assert expected == result
+
+
+@mock.patch(
+    'inspirehep.modules.theme.jinja2filters.current_app.config',
+    {'SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING': {'foo': 'bar'}})
+def test_collection_to_index_falls_back_to_records_hep_if_no_key():
+    expected = 'records-hep'
+    result = collection_to_index('baz')
+
+    assert expected == result
+
+
+@mock.patch('inspirehep.modules.theme.jinja2filters.current_app.config', {})
+def test_collection_to_index_falls_back_to_records_hep_if_no_mapping():
+    expected = 'records-hep'
+    result = collection_to_index('foo')
+
+    assert expected == result
+
+
 @mock.patch('inspirehep.modules.theme.jinja2filters.current_app.jinja_env.get_template')
 def test_apply_template_on_array_returns_empty_list_on_empty_list(g_t, jinja_env):
     g_t.return_value = jinja_env.from_string('{{ content }}')
@@ -219,27 +247,6 @@ def test_count_words():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='intbitset not installed')
-def test_is_intbit_set_converts_to_list_if_true():
-    an_intbit_set = intbitset([1, 2, 3])
-
-    expected = [1, 2, 3]
-    result = is_intbit_set(an_intbit_set)
-
-    assert expected == result
-
-
-@pytest.mark.xfail(reason='intbitset not installed')
-def test_is_intbit_set_leaves_untouched_if_false():
-    not_an_intbit_set = intbitset([1, 2, 3])
-
-    expected = [1, 2, 3]
-    result = is_intbit_set(not_an_intbit_set)
-
-    assert expected == result
-
-
-@pytest.mark.xfail(reason='does not preserve order')
 def test_remove_duplicates_from_dict_removes_duplicates():
     list_of_dicts_with_duplicates = [
         {'a': 123, 'b': 1234},
@@ -382,8 +389,10 @@ def test_proceedings_link_returns_empty_string_without_cnum():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='invenio_search.api.Query has no search method')
-def test_proceedings_link_returns_empty_string_with_zero_search_results():
+@mock.patch('inspirehep.modules.theme.jinja2filters.es.search')
+def test_proceedings_link_returns_empty_string_with_zero_search_results(s):
+    s.return_value = {'hits': {'hits': []}}
+
     with_cnum = Record({'cnum': 'banana'})
 
     expected = ''
@@ -392,28 +401,56 @@ def test_proceedings_link_returns_empty_string_with_zero_search_results():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='invenio_search.api.Query has no search method')
-def test_proceedings_link_returns_a_link_with_one_search_result():
+@mock.patch('inspirehep.modules.theme.jinja2filters.es.search')
+def test_proceedings_link_returns_a_link_with_one_search_result(s):
+    s.return_value = {
+        'hits': {
+            'hits': [
+                Record({'control_number': '1410174'})
+            ]
+        }
+    }
+
     with_cnum = Record({'cnum': 'banana'})
 
-    expected = '<a href="/record/foo">Proceedings</a>'
+    expected = '<a href="/record/1410174">Proceedings</a>'
     result = proceedings_link(with_cnum)
 
     assert expected == result
 
 
-@pytest.mark.xfail(reason='invenio_search.api.Query has no search method')
-def test_proceedings_link_joins_with_a_comma_and_a_space():
-    """Also depends on removed invenio.legacy.bibrecord."""
+@mock.patch('inspirehep.modules.theme.jinja2filters.es.search')
+def test_proceedings_link_joins_with_a_comma_and_a_space(s):
+    s.return_value = {
+        'hits': {
+            'hits': [
+                Record({
+                    'control_number': '1407068',
+                    'dois': [
+                        {
+                            'source': 'Elsevier',
+                            'value': u'10.1016/j.ppnp.2015.10.002'
+                        }
+                    ]
+                }),
+                Record({
+                    'control_number': '1407079'
+                })
+            ]
+        }
+    }
+
     with_cnum = Record({'cnum': 'banana'})
 
-    expected = 'TODO'
+    expected = ('Proceedings: <a href="/record/1407068">#1</a> (DOI: <a '
+                'href="http://dx.doi.org/10.1016/j.ppnp.2015.10.002">'
+                '10.1016/j.ppnp.2015.10.002</a>, '
+                '<a href="/record/1407079">#2</a>')
     result = proceedings_link(with_cnum)
 
     assert expected == result
 
 
-@pytest.mark.xfail(reason='KeyError accessing related_experiments')
 def test_experiment_link_returns_empty_list_without_related_experiments():
     without_related_experiment = Record({})
 
@@ -450,11 +487,46 @@ def test_format_cnum_with_hyphons():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='invenio_search.api.Query has no search method')
-def test_link_to_hep_affiliation_returns_link_when_record_has_ICN():
-    with_ICN = Record({'ICN': 'foo'})
+def test_link_to_hep_affiliation_returns_empty_string_when_record_has_no_ICN():
+    without_ICN = Record({})
 
-    expected = 'TODO'
+    expected = ''
+    result = link_to_hep_affiliation(without_ICN)
+
+    assert expected == result
+
+
+@mock.patch('inspirehep.modules.theme.jinja2filters.es.search')
+def test_link_to_hep_affiliation_returns_empty_string_when_empty_results(s):
+    s.return_value = {'hits': {'hits': []}}
+
+    with_ICN = Record({'ICN': 'CERN'})
+
+    expected = ''
+    result = link_to_hep_affiliation(with_ICN)
+
+    assert expected == result
+
+
+@mock.patch('inspirehep.modules.theme.jinja2filters.es.search')
+def test_link_to_hep_affiliation_singular_when_one_result(s):
+    s.return_value = {'hits': {'hits': [{}]}}
+
+    with_ICN = Record({'ICN': 'DESY'})
+
+    expected = '1 Paper from DESY'
+    result = link_to_hep_affiliation(with_ICN)
+
+    assert expected == result
+
+
+@mock.patch('inspirehep.modules.theme.jinja2filters.es.search')
+def test_link_to_hep_affiliation_plural_when_more_results(s):
+    s.return_value = {'hits': {'hits': [{}, {}]}}
+
+    with_ICN = Record({'ICN': 'Fermilab'})
+
+    expected = '2 Papers from Fermilab'
     result = link_to_hep_affiliation(with_ICN)
 
     assert expected == result
@@ -499,9 +571,11 @@ def test_collection_select_current_returns_empty_string_if_different():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='to be implemented')
-def test_number_of_records():
-    expected = -1
+@mock.patch('inspirehep.modules.theme.jinja2filters.es.count')
+def test_number_of_records(c):
+    c.return_value = {'count': 1337}
+
+    expected = 1337
     result = number_of_records('foo')
 
     assert expected == result
@@ -543,7 +617,9 @@ def test_construct_date_format():
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.current_app.config', {'FACETS_SIZE_LIMIT': 2})
+@mock.patch(
+    'inspirehep.modules.theme.jinja2filters.current_app.config',
+    {'FACETS_SIZE_LIMIT': 2})
 def test_limit_facet_elements():
     expected = ['foo', 'bar']
     result = limit_facet_elements(['foo', 'bar', 'baz'])
@@ -643,20 +719,22 @@ def test_number_of_search_results_fetches_from_session(mock_datetime):
 
     assert expected == result
 
-@pytest.mark.xfail(reason='should pass keyword arguments, not a dict')
-@mock.patch('inspirehep.modules.theme.jinja2filters.session', {})
-@mock.patch('inspirehep.modules.theme.jinja2filters.Query')
-def test_number_of_search_results_falls_back_to_query(Query):
-    number_of_search_results('foo', 'bar')
 
-    Query.assert_called_once_with('foo AND collection:"bar"')
+@mock.patch('inspirehep.modules.theme.jinja2filters.session', {})
+@mock.patch('inspirehep.modules.theme.jinja2filters.es.count')
+def test_number_of_search_results_falls_back_to_query(c):
+    c.return_value = {'count': 1337}
+
+    expected = 1337
+    result = number_of_search_results('foo', 'bar')
+
+    assert expected == result
 
 
 def test_is_upper_returns_true_when_all_uppercase():
     assert is_upper('FOO')
 
 
-@pytest.mark.xfail(reason='function is returned instead')
 def test_is_upper_returns_false_when_not_all_uppercase():
     assert not is_upper('foo')
 
@@ -972,34 +1050,33 @@ def test_format_date_returns_none_when_datestruct_is_none(c_d):
     assert format_date('banana') is None
 
 
-@pytest.mark.xfail(reason='outputs an integer')
 @mock.patch('inspirehep.modules.theme.jinja2filters.create_datestruct')
 def test_format_date_returns_none_when_datestruct_has_one_element(c_d):
     c_d.return_value = (1993,)
 
-    expected = '1993'
+    expected = 1993
     result = format_date('banana')
 
     assert expected == result
 
 
-@pytest.mark.xfail(reason='doesn\'t format the date')
 @mock.patch('inspirehep.modules.theme.jinja2filters.create_datestruct')
-def test_format_date_returns_none_when_no_datestruct(c_d):
-    c_d.return_value = (1993, 2)
+def test_format_date_returns_none_when_no_datestruct(c_d, app):
+    with app.test_request_context():
+        c_d.return_value = (1993, 2)
 
-    expected = 'February 1, 1993'
-    result = format_date('banana')
+        expected = 'Feb, 1993'
+        result = format_date('banana')
 
-    assert expected == result
+        assert expected == result
 
 
-@pytest.mark.xfail(reason='doesn\'t format the date')
 @mock.patch('inspirehep.modules.theme.jinja2filters.create_datestruct')
-def test_format_date_returns_none_when_no_datestruct(c_d):
-    c_d.return_value = (1993, 2, 2)
+def test_format_date_returns_none_when_no_datestruct(c_d, app):
+    with app.test_request_context():
+        c_d.return_value = (1993, 2, 2)
 
-    expected = 'February 2, 1993'
-    result = format_date('banana')
+        expected = 'Feb 2, 1993'
+        result = format_date('banana')
 
-    assert expected == result
+        assert expected == result
