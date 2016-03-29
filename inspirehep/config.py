@@ -65,8 +65,12 @@ SQLALCHEMY_ECHO = False
 
 # Celery
 # ======
-BROKER_URL = "amqp://guest:guest@localhost:5672//"
-CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
+BROKER_URL = os.environ.get(
+    "BROKER_URL",
+    "amqp://guest:guest@localhost:5672//")
+CELERY_RESULT_BACKEND = os.environ.get(
+    "CELERY_RESULT_BACKEND",
+    "amqp://guest:guest@localhost:5672//")
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']
 CELERY_TIMEZONE = 'Europe/Amsterdam'
 CELERY_DISABLE_RATE_LIMITS = True
@@ -74,7 +78,9 @@ CELERY_DISABLE_RATE_LIMITS = True
 # Cache
 # =====
 CACHE_KEY_PREFIX = "cache::"
-CACHE_REDIS_URL = "redis://localhost:6379/0"
+CACHE_REDIS_URL = os.environ.get(
+    "CACHE_REDIS_URL",
+    "redis://localhost:6379/0")
 CACHE_TYPE = "redis"
 ACCOUNTS_SESSION_REDIS_URL = "redis://localhost:6379/2"
 
@@ -111,6 +117,9 @@ USERPROFILES_SETTINGS_TEMPLATE = 'inspirehep_theme/accounts/settings/profile.htm
 
 # Search
 # ======
+SEARCH_ELASTIC_HOSTS = os.environ.get(
+    'SEARCH_ELASTIC_HOSTS',
+    'localhost').split(';')
 SEARCH_UI_BASE_TEMPLATE = 'inspirehep_theme/page.html'
 SEARCH_UI_SEARCH_TEMPLATE = 'search/search.html'
 SEARCH_UI_SEARCH_API = '/api/literature/'

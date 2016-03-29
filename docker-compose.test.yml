@@ -1,0 +1,77 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of INSPIRE.
+# Copyright (C) 2016 CERN.
+#
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
+
+version: '2'
+
+services:
+  service_base:
+    # Overrides default inspirehep config.
+    extends:
+      file: services.yml
+      service: base
+    environment:
+      - SQLALCHEMY_DATABASE_URI=postgresql+psycopg2://inspirehep:dbpass123@database:5432/inspirehep
+      - BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=amqp://guest:guest@rabbitmq:5672//
+      - CACHE_REDIS_URL=redis://redis:6379/0
+      - SEARCH_ELASTIC_HOSTS=indexer
+
+  test:
+    extends:
+      service: service_base
+    command: python setup.py test
+    volumes_from:
+      - static
+    links:
+      - database
+      - indexer
+      - rabbitmq
+      - redis
+    depends_on:
+      - worker
+  worker:
+    extends:
+      service: service_base
+    command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge
+    volumes_from:
+      - static
+    links:
+      - database
+      - indexer
+      - rabbitmq
+      - redis
+  redis:
+    image: redis
+  indexer:
+    extends:
+      file: services.yml
+      service: indexer
+  rabbitmq:
+    image: rabbitmq
+  database:
+    extends:
+      file: services.yml
+      service: database
+  static:
+    extends:
+      file: services.yml
+      service: static
