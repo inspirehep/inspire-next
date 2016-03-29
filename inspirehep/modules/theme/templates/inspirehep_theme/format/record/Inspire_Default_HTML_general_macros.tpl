@@ -267,22 +267,21 @@
 {% endmacro %}
 
 {% macro mathjax() %}
-{% set version = '2.5.3' %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/{{version}}/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <script type="text/javascript">
-    require([
-      "jquery",
-      ], function ($) {
-          $(document).ready(function () {
-            MathJax.Hub.Config({
-                tex2jax: {inlineMath: [['$', '$'], ['\\(', '\\)']],
-                processEscapes: true},
-                showProcessingMessages: false,
-                messageStyle: "none"
-            });
-            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-          })
-      }
-    );
+  require([
+    "jquery",
+    ], function ($) {
+      $(document).ready(function () {
+        MathJax.Hub.Config({
+          tex2jax: {inlineMath: [['$', '$'], ['\\(', '\\)']],
+          processEscapes: true},
+          showProcessingMessages: false,
+          messageStyle: "none"
+        });
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+      })
+    }
+  );
 </script>
 {% endmacro %}

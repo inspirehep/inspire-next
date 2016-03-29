@@ -104,6 +104,7 @@
 
 {% block javascript %}
   {{ super() }}
+  {{ mathjax() | safe }}
   {%- assets "inspirehep_detailed_js" %}
     <script src="{{ ASSET_URL }}"></script>
   {%- endassets %}

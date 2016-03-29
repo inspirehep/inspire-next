@@ -21,6 +21,8 @@
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 #}
 
+{% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax %}
+
 {% extends config.SEARCH_UI_BASE_TEMPLATE %}
 
 {%- block css %}
@@ -30,6 +32,7 @@
 
 {%- block javascript %}
   {{ super() }}
+  {{ mathjax() | safe }}
   {% assets "invenio_search_ui_search_js" %}<script src="{{ ASSET_URL }}"></script>{% endassets %}
 {%- endblock javascript %}
 
