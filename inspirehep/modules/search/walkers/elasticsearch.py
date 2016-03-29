@@ -90,6 +90,11 @@ class ElasticSearchDSL(object):
     @visitor(Value)
     def visit(self, node):
         def query(keyword):
+            # FIXME: This is a temporary hack that should be removed when
+            # nested keywords search is implemented.
+            if str(node.value).startswith('recid:'):
+                node.value = node.value[len('recid:'):]
+
             fields = self.get_fields_for_keyword(keyword, mode='a')
             if fields == ['authors.full_name', 'authors.alternative_name']:
                 return {"bool":
