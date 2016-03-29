@@ -730,7 +730,7 @@ OAUTHCLIENT_REMOTE_APPS = dict(
             view="invenio_oauthclient.handlers:signup_handler",
         ),
         params=dict(
-            request_token_params={'scope': '/authenticate'},
+            request_token_params={'scope': '/orcid-profile/read-limited /activities/update /orcid-bio/update'},
             base_url='https://pub.orcid.org/',
             request_token_url=None,
             access_token_url="https://pub.orcid.org/oauth/token",
@@ -747,6 +747,11 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
     consumer_secret="CHANGE_ME",
 )
 
+OAUTHCLIENT_SETTINGS_TEMPLATE = 'inspirehep_theme/page.html'
+
+
+# Error Pages
+# ========
 THEME_401_TEMPLATE = "inspirehep_theme/errors/401.html"
 THEME_403_TEMPLATE = "inspirehep_theme/errors/403.html"
 THEME_404_TEMPLATE = "inspirehep_theme/errors/404.html"
