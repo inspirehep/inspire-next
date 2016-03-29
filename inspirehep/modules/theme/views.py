@@ -23,7 +23,9 @@
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
 """Theme blueprint in order for template and static files to be loaded."""
+import json
 
+from dateutil.relativedelta import relativedelta
 from flask import (
     Blueprint,
     current_app,
@@ -40,13 +42,19 @@ from invenio_mail.tasks import send_email
 
 from flask.ext.menu import current_menu
 
+from inspirehep.modules.records.conference_series import CONFERENCE_CATEGORIES_TO_SERIES
+from inspirehep.modules.search.query import perform_query
+
+from invenio_search import current_search_client
+
+from inspirehep.utils.date import datetime
 
 blueprint = Blueprint(
-    'inspirehep_theme',
-    __name__,
-    url_prefix='',
-    template_folder='templates',
-    static_folder='static',
+        'inspirehep_theme',
+        __name__,
+        url_prefix='',
+        template_folder='templates',
+        static_folder='static',
 )
 
 
@@ -75,7 +83,25 @@ def hepnames():
 @blueprint.route('/conferences', methods=['GET', ])
 def conferences():
     """View for conferences collection landing page."""
+
+    today = datetime.today()
+    today_str = today.strftime('%Y-%m-%d')
+
+    six_months_str = (today + relativedelta(months=+6)).strftime('%Y-%m-%d')
+
+    query, qs_kwargs = perform_query('opening_date:{0}->{1}'.format(today_str, six_months_str), 1, 100)
+    search_result = current_search_client.search(
+            index='records-conferences',
+            doc_type='conferences',
+            sort='opening_date:asc',
+            body=query.body,
+            version=True,
+    )
+
+    upcoming_conferences = [hit['_source'] for hit in search_result['hits']['hits']]
+
     return render_template('inspirehep_theme/search/collection_conferences.html',
+                           ctx={'conference_subject_areas': CONFERENCE_CATEGORIES_TO_SERIES, 'upcoming': upcoming_conferences},
                            collection='conferences')
 
 
@@ -166,10 +192,12 @@ def postfeedback():
 @blueprint.before_app_first_request
 def register_menu_items():
     """Hack to remove children of Settings menu"""
+
     def menu_fixup():
         current_menu.submenu("settings.change_password").hide()
         current_menu.submenu("settings.groups").hide()
         current_menu.submenu("settings.workflows").hide()
         current_menu.submenu("settings.applications").hide()
         current_menu.submenu("settings.oauthclient").hide()
+
     current_app.before_first_request_funcs.append(menu_fixup)

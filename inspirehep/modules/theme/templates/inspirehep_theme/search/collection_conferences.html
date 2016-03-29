@@ -23,7 +23,7 @@
     <div id="landing-map"></div>
     <div id="landing-map-info" class="conferences">
         <p class="text-center">
-            46 Upcoming Conferences in the next year
+            {{ ctx.upcoming|length }} Upcoming Conferences in the next 6 months.
         </p>
     </div>
 {% endblock %}
@@ -49,13 +49,87 @@
     <div class="row">
 
         <div class="col-md-6">
-            <div class="block">
+            <div class="collection-block">
                 <h4>Conference Series’</h4>
+
+                <div class="contents conference-series">
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+                        {% for subject_area in ctx.conference_subject_areas %}
+                            <div class="panel panel-default">
+                                <div class="panel-heading" role="tab" id="headingOne">
+                                    <h4 class="panel-title">
+                                        <a role="button" data-toggle="collapse" data-parent="#accordion"
+                                           href="#collapse-{{ loop.index }}"
+                                           aria-expanded="true" aria-controls="collapse-{{ loop.index }}">
+                                            {{ subject_area.name }}
+                                        </a>
+                                        <span class="badge pull-right">{{ subject_area.series|length }}</span>
+                                    </h4>
+                                </div>
+                                <div id="collapse-{{ loop.index }}" class="panel-collapse collapse" role="tabpanel"
+                                     aria-labelledby="headingOne">
+                                    <div class="panel-body">
+                                        <ul>
+                                            {% for series in  subject_area.series %}
+                                                <li>{{ series.name }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="block">
-                <h4>Upcoming Conferences</h4>
+            <div class="collection-block">
+                <h4>{{ ctx.upcoming|length }} Upcoming Conferences <small>in the next 6 months</small></h4>
+
+                <div class="contents">
+                    {% for upcoming_conf in ctx.upcoming %}
+                        <div class="upcoming-conference">
+
+                            <div class="title">
+                                <a href="/{{ collection }}/{{ upcoming_conf.control_number }}">
+                                    {{ upcoming_conf.title }}
+                                </a>
+                            </div>
+
+                            <div>
+                                <span class="date">
+                                    {% if upcoming_conf.date %}
+                                        {{ upcoming_conf.date }}
+                                    {% else %}
+                                        {{ upcoming_conf.opening_date }}
+                                    {% endif %}
+                                </span>
+
+                                <span class="place">{{ upcoming_conf.place }}</span>
+                            </div>
+
+                            <div>
+                                {% if upcoming_conf.series|length > 0 %}
+                                    <span class="series pull-left">
+                                    Part of the <a href="{{ upcoming_conf.series[0][0] }}">
+                                        {{ upcoming_conf.series[0] }}</a> series
+                                    </span>
+                                {% endif %}
+
+                                {% if upcoming_conf.url|length > 0 %}
+                                    <span class="url pull-right">
+                                        <a href="{{ upcoming_conf.url[0][0] }}" target="_new">Go to conference
+                                            website</a>
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>

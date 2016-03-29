@@ -26,6 +26,7 @@
 
 from __future__ import absolute_import, print_function
 
+import json
 import re
 import datetime
 import time
@@ -579,6 +580,10 @@ def long_timeout(timeout):
 def strip_leading_number_plot_caption(text):
     return re.sub(r'^\d{5}\s+', '', text)
 
+
+@blueprint.app_template_filter()
+def json_dumps(data):
+    return json.dumps(data)
 
 @blueprint.app_template_filter()
 def publication_info(record):

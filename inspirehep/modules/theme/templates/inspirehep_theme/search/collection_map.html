@@ -8,8 +8,9 @@
 
         function init() {
             // TODO: Should we move this to angular also??
+            var geocoder = new google.maps.Geocoder();
             var mapOptions = {
-                zoom: 2,
+                zoom: 3,
 
                 // Map centre location
                 center: new google.maps.LatLng(55, 0),
@@ -71,14 +72,36 @@
             var mapElement = document.getElementById('landing-map');
 
             var map = new google.maps.Map(mapElement, mapOptions);
+            var infowindow = new google.maps.InfoWindow();
 
-            var dummy_locs = [{lat: 40, long: -74.9}, {lat: 55, long: -3}, {lat: 59, long: 7}];
+            var docs = {{ ctx.upcoming|json_dumps|safe }};
 
-            for (var loc_idx in dummy_locs) {
-                new google.maps.Marker({
-                    map: map,
-                    position: new google.maps.LatLng(dummy_locs[loc_idx].lat, dummy_locs[loc_idx].long),
-                    icon: '/static/images/map/marker-{{collection}}.svg'
+            for (var doc_idx in docs) {
+                geocode_address(docs[doc_idx]);
+            }
+
+            function geocode_address(document) {
+                //Largely from https://google-developers.appspot.com/maps/documentation/javascript/examples/geocoding-simple
+                geocoder.geocode({'address': document.place}, function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        map.setCenter(results[0].geometry.location);
+                        var marker = new google.maps.Marker({
+                            map: map,
+                            position: results[0].geometry.location,
+                            icon: '/static/images/map/marker-{{collection}}.svg'
+                        });
+
+                        google.maps.event.addListener(marker, 'click', function () {
+                            var date = document.date ? document.date : document.opening_date;
+                            infowindow.setContent('<span class="date">' + date + '</span><br/>' +
+                                    '<a href="/{{ collection }}/' + document.control_number + '">' +
+                                    '<strong>' + document.title + '</strong></a><br/>' +
+                                    '<strong>' + document.place + '</strong>');
+                            infowindow.open(map, this);
+                        });
+                    } else {
+                        console.error('Geocode was not successful for the following reason: ' + status);
+                    }
                 });
             }
 
