@@ -64,6 +64,10 @@ def test_schema_present(marcxml_to_json):
     """Test if $schema is created correctly."""
     assert marcxml_to_json['$schema']
 
+def test_control_number(marcxml_to_json_book):
+    """"Test if control number and self present."""
+    assert marcxml_to_json_book['control_number']
+    assert marcxml_to_json_book['self']
 
 def test_isbns(marcxml_to_json, json_to_marc):
     """Test if isbns is created correctly."""

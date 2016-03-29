@@ -36,16 +36,20 @@ from ..hepnames.model import hepnames, hepnames2marc
 from ..jobs.model import jobs
 
 
-@institutions.over('control_number', '^001')
-@hep.over('control_number', '^001')
-@conferences.over('control_number', '^001')
-@experiments.over('control_number', '^001')
-@journals.over('control_number', '^001')
-@hepnames.over('control_number', '^001')
-@jobs.over('control_number', '^001')
-def control_number(self, key, value):
-    """Record Identifier."""
-    return value
+def self_url(index):
+    def _self_url(self, key, value):
+        """Url of the record itself."""
+        self['control_number'] = value
+        return inspire_dojson_utils.get_record_ref(value, index)
+    return _self_url
+
+institutions.over('self', '^001')(self_url('institutions'))
+hep.over('self', '^001')(self_url('literature'))
+conferences.over('self', '^001')(self_url('conferences'))
+experiments.over('self', '^001')(self_url('experiments'))
+journals.over('self', '^001')(self_url('journals'))
+hepnames.over('self', '^001')(self_url('authors'))
+jobs.over('self', '^001')(self_url('jobs'))
 
 
 @hep2marc.over('001', 'control_number')

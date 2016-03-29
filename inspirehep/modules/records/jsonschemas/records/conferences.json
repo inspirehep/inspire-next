@@ -1,6 +1,11 @@
 {
     "$schema": "http://json-schema.org/schema#",
     "properties": {
+        "self": {
+          "description": "Url of the record itself",
+          "title": "Url of the record",
+          "$ref": "json_reference.json"
+        },
         "acronym": {
             "title": "Conference acronym",
             "type": "array"
@@ -55,10 +60,10 @@
                             "type": "string"
                         },
                         "source": {
-                            "type": "string"        
+                            "type": "string"
                         }
                     },
-                    "type": "object"       
+                    "type": "object"
                 },
             "title": "Field codes",
             "type": "array",
@@ -67,7 +72,7 @@
         "keywords": {
             "properties": {
                 "value": {
-                    "type": "string"    
+                    "type": "string"
                 },
                 "source": {
                     "type": "string"
