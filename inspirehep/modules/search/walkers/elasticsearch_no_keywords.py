@@ -29,6 +29,8 @@ from invenio_query_parser.ast import (
 )
 from invenio_query_parser.visitor import make_visitor
 
+from ..signals import malformed_query
+
 
 class QueryHasKeywords(Exception):
     pass
@@ -46,7 +48,7 @@ class ElasticSearchNoKeywordsDSL(object):
 
     @visitor(MalformedQuery)
     def visit(self, op):
-        # FIXME: Should send signal to display a message to the user.
+        malformed_query.send()
         return
 
     @visitor(AndOp)

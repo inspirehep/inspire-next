@@ -1,23 +1,26 @@
 {#
-## This file is part of INSPIRE.
-## Copyright (C) 2014 CERN.
-##
-## INSPIRE is free software: you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, either version 3 of the License, or
-## (at your option) any later version.
-##
-## INSPIRE is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-## GNU General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
-##
-## In applying this licence, CERN does not waive the privileges and immunities
-## granted to it by virtue of its status as an Intergovernmental Organization
-## or submit itself to any jurisdiction.
+# -*- coding: utf-8 -*-
+#
+# This file is part of INSPIRE.
+# Copyright (C) 2015, 2016 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#
+# In applying this license, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 #}
 {% if not request.is_xhr %}
 {% extends 'inspirehep_theme/page.html' %}
@@ -72,13 +75,13 @@
   {% elif request.args.get('cc').lower() == "jobs" %}
     {% include 'inspirehep_theme/search/facets/jobs.html' %}
   {% elif request.args.get('cc').lower() == "institutions" %}
-    {% include 'inspirehep_theme/search/facets/institutions.html' %}  
+    {% include 'inspirehep_theme/search/facets/institutions.html' %}
   {% elif request.args.get('cc').lower() == "journals" %}
     {% include 'inspirehep_theme/search/facets/journals.html' %}
   {% elif request.args.get('cc').lower() == "experiments" %}
-    {% include 'inspirehep_theme/search/facets/experiments.html' %}  
+    {% include 'inspirehep_theme/search/facets/experiments.html' %}
   {% elif request.args.get('cc').lower() == "conferences" %}
-    {% include 'inspirehep_theme/search/facets/conferences.html' %}  
+    {% include 'inspirehep_theme/search/facets/conferences.html' %}
   {% endif %}
   </div>
 </div>
@@ -267,11 +270,13 @@
 
   <script type="text/javascript">
     require(["jquery",
+             "toastr",
              "js/search/facets_filter",
              "js/search/search",
              "js/search/facets_menu",
              "js/search/search_results"],
              function($,
+                 toastr,
                  FacetsFilter,
                  Search,
                  FacetsMenu,
@@ -296,6 +301,28 @@
         $(".feedback-fixed-left").click()
       });
       $(document).trigger("initSearch");
+
+
+      toastr.options = {
+     "closeButton": true,
+     "positionClass": "toast-top-center",
+     "timeOut": 0,
+     "extendedTimeOut": 0
+   }
+
+
+      var mes1 =  {{ get_flashed_messages(with_categories=True, category_filter=["query_suggestion"])|safe}}
+      var mes2 =  {{ get_flashed_messages(with_categories=True, category_filter=["query_suggestion_with_redirect"])|safe}}
+      var arrayLength = mes1.length;
+      for (var i = 0; i < arrayLength; i++) {
+        toastr.warning(mes1[i]);
+      }
+      var arrayLength = mes2.length;
+      for (var i = 0; i < arrayLength; i++) {
+        toastr.warning(mes2[i]+"<br>Try: <a target='_blank' href='http://inspirehep.net/search?{{request.query_string|safe}}'>inspirehep.net</a>");
+      }
+
+
     });
   </script>
 {% endblock %}
