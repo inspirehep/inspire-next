@@ -86,6 +86,7 @@ def conferences():
 
     today = datetime.today()
     today_str = today.strftime('%Y-%m-%d')
+    today_str = "2000-01-01"
 
     six_months_str = (today + relativedelta(months=+6)).strftime('%Y-%m-%d')
 
