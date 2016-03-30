@@ -142,6 +142,15 @@
             </div>
           </div>
           {% endif %}
+          {% if request.args.get('cc') in ["jobs"] %}
+            <div class="row">
+              <div class="col-md-12">
+                <a href="http://inspirehep.net/info/Jobs/tools/jobs-matrix">
+                  Job matrix
+                </a>
+              </div>
+            </div>
+          {% endif %}
         </div>
       </div>
   {% endif %}
