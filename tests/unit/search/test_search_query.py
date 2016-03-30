@@ -465,7 +465,6 @@ def test_journal_colon():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='extra "recid:" added to the ES query')
 def test_refersto_colon_recid_colon():
     query = InspireQuery('refersto:recid:1286113')
 
