@@ -147,6 +147,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
                     ],
     "abstract": ["abstracts.value"],
     "collaboration": ["collaboration.value", "collaboration.raw^2"],
+    "tc": ["collection"],
     "collection": ["collections.primary"],
     "doi": ["dois.value"],
     "doc_type": ["facet_inspire_doc_type"],
