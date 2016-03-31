@@ -503,6 +503,10 @@ i.fa-chevron-right.facet-slider {
     color: $experiments-collection;
   }
 
+  .place {
+    color: $grey;
+  }
+
   .description {
     color: $blue;
     display: -webkit-box;
@@ -513,7 +517,6 @@ i.fa-chevron-right.facet-slider {
     line-height: 17px;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-
   }
 
   .small-text {
