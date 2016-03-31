@@ -19,36 +19,55 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
-// New design colors
-$blue: #2C3E50;
-$blue-purple: #32495E;
-$literature-collection: #E67E24;
-$authors-collection: #6196D0;
-$conferences-collection: #e4b622;
-$jobs-collection: #26b99a;
-$data-collection: #875BA1;
-$experiments-collection: #C84D3E;
-$institutions-collection: #79B873;
-$journals-collection: #98A3A4;
-$page-background: #ecf0f1;
+// FlatUI Colors - https://flatuicolors.com/
+
+$turquoise: #1abc9c;
+$green-sea: #16a085;
+$pete-river: #3498db;
+$belize-hole: #2980b9;
+$amethyst: #9b59b6;
+$wisteria: #8e44ad;
+$wet-asphalt: #34495e;
+$midnight-blue: #2c3e50;
+$sun-flower: #f1c40f;
+$orange: #f39c12;
+$carrot: #e67e22;
+$pumpkin: #d35400;
+$alizarin: #e74c3c;
+$pomegranate: #c0392b;
+$clouds: #ecf0f1;
+$silver: #bdc3c7;
+$concrete: #95a5a6;
+$asbestos: #7f8c8d;
+
+$blue: $midnight-blue;
+$blue-purple: $wet-asphalt;
+$literature-collection: $carrot;
+$authors-collection: $belize-hole;
+$conferences-collection: $sun-flower;
+$jobs-collection: $turquoise;
+$data-collection: $amethyst;
+$experiments-collection: $alizarin;
+$institutions-collection: $turquoise;
+$journals-collection: $concrete;
+$page-background: $clouds;
 
 // Buttons colors
 
 // Background color for buttons
-$teal: #EDF3F3;
 // (Font) color for buttons
-$grey: #7E8D8E;
+$grey: $asbestos;
 
 //== Colors
 //
 //## Brand colors for use across Inspire.
 
-$blue-light: #3fa0c9;
-$blue-dark: #5889c2;
-$brand-primary: #2C3E4F;
-$brand-success: #43926a;
-$brand-warning: #E57E25;
-$brand-info: #3498db;
+$blue-light: $pete-river;
+$blue-dark: $belize-hole;
+$brand-primary: $midnight-blue;
+$brand-success: $turquoise;
+$brand-warning: $carrot;
+$brand-info: $pete-river;
 
 //== Sticky footer height
 
@@ -62,13 +81,11 @@ $footer-height: 160px;
 
 $body-bg: #ecf0f1;
 
-
 //== Wells
 //
 //##
 
 $well-bg: #fff;
-
 
 //== Links
 //
@@ -76,7 +93,6 @@ $well-bg: #fff;
 
 $link-color: #428bca;
 $alternate-link-color: #179A17;
-
 
 //== Navbar
 //
@@ -87,7 +103,6 @@ $alternate-link-color: #179A17;
 $navbar-inverse-bg: #2C3E50;
 $navbar-inverse-border: darken($navbar-inverse-bg, 6.5%);
 $navbar-height: 60px;
-
 
 // Navbar links
 
