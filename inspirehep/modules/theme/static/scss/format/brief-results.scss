@@ -477,6 +477,18 @@ i.fa-chevron-right.facet-slider {
 
 }
 
+.journals {
+  color: $blue;
+
+  .small-text {
+    color: $grey;
+  }
+
+  .publisher {
+    font-size: .9em;
+  }
+}
+
 .experiments {
 
   .description {
