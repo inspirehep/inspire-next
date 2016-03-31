@@ -86,28 +86,37 @@
         </div>
         <div class="col-md-6">
             <div class="collection-block">
-                <h4>{{ ctx.upcoming|length }} Upcoming Conferences <small>in the next 6 months</small></h4>
+                <h4>{{ ctx.upcoming|length }} Upcoming Conferences
+                    <small>in the next 6 months</small>
+                </h4>
 
                 <div class="contents">
                     {% for upcoming_conf in ctx.upcoming %}
                         <div class="upcoming-conference">
 
-                            <div class="title">
-                                <a href="/{{ collection }}/{{ upcoming_conf.control_number }}">
-                                    {{ upcoming_conf.title }}
-                                </a>
-                            </div>
+                            <div class="details">
+                                {% if upcoming_conf.acronym %}
+                                    <a class="acronym" href="/{{ collection }}/{{ upcoming_conf.control_number }}">
+                                        {{ upcoming_conf.acronym[0][0] }}
+                                    </a>
+                                {% endif %}
 
-                            <div>
                                 <span class="date">
+                                    <i class="fa fa-calendar"></i>
                                     {% if upcoming_conf.date %}
                                         {{ upcoming_conf.date }}
                                     {% else %}
                                         {{ upcoming_conf.opening_date }}
                                     {% endif %}
                                 </span>
+                                <span class="place"><i class="fa fa-map-marker"></i> {{ upcoming_conf.place }}</span>
+                            </div>
 
-                                <span class="place">{{ upcoming_conf.place }}</span>
+
+                            <div class="title">
+                                <a href="/{{ collection }}/{{ upcoming_conf.control_number }}">
+                                    {{ upcoming_conf.title }}
+                                </a>
                             </div>
 
                             <div>

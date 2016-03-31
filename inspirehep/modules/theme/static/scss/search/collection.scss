@@ -361,14 +361,23 @@ img.landing-page-flask {
     padding-top: 10px;
   }
 
+  .details {
+    .acronym {
+      font-weight: bolder;
+    }
+
+    .date, .place{
+      font-size: .9em;
+      font-weight: bolder;
+      background-color: transparent;
+    }
+  }
+
   .title {
     margin-bottom: 5px;
     font-size: 1.1em;
   }
 
-  .date {
-    font-size: .9em;
-  }
   .url, .series {
     font-size: .8em;
   }
