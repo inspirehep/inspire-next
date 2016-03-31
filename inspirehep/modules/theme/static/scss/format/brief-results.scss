@@ -458,6 +458,25 @@ i.fa-chevron-right.facet-slider {
   color: $conferences-collection;
 }
 
+.institutions {
+  color: $blue;
+
+  .department {
+    font-size: .9em;
+  }
+
+  .details {
+    padding-bottom: 10px;
+    .address {
+      color: $grey;
+      i {
+        font-size: 1em;
+      }
+    }
+  }
+
+}
+
 .jobs {
   color: $blue;
 
