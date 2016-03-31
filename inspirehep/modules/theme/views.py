@@ -77,7 +77,7 @@ def hepnames():
     """View for authors collection landing page."""
     # collection = {'name': 'hepnames'}
     return render_template('inspirehep_theme/search/collection_authors.html',
-                           collection='hepnames')
+                           collection='authors')
 
 
 @blueprint.route('/conferences', methods=['GET', ])
