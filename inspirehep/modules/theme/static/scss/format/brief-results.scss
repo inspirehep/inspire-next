@@ -477,6 +477,26 @@ i.fa-chevron-right.facet-slider {
 
 }
 
+.experiments {
+
+  .description {
+    color: $blue;
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: .8em;
+    max-height: 48px;
+    line-height: 17px;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+  }
+
+  .small-text {
+    color: $grey !important;
+  }
+}
+
 .jobs {
   color: $blue;
 
