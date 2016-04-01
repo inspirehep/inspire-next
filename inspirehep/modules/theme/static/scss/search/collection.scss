@@ -230,14 +230,13 @@ img.landing-page-flask {
       margin-bottom: 5px;
     }
 
+    .useful-collection-link {
+      text-align: center;
+    }
     :not(.subtitle) {
       margin-left: 20px;
     }
   }
-  .useful-collection-link {
-    text-align: center;
-  }
-
   .search-link {
     margin-left: 20px;
   }
@@ -246,8 +245,8 @@ img.landing-page-flask {
 #right {
   div:nth-of-type(6) {
     margin-top: 20px;
-  }
 
+  }
 }
 
 #collection-authors-not-available, #collection-data-not-available {
@@ -270,6 +269,7 @@ img.landing-page-flask {
         background-color: $data-collection;
       }
     }
+
   }
 }
 
@@ -366,7 +366,7 @@ img.landing-page-flask {
       font-weight: bolder;
     }
 
-    .date, .place{
+    .date, .place {
       font-size: .9em;
       font-weight: bolder;
       background-color: transparent;
@@ -386,4 +386,5 @@ img.landing-page-flask {
     color: $grey;
   }
 }
+
 
