@@ -21,10 +21,18 @@
  /* Header styles
 -------------------------------------------------- */
 
+$light-blue: lighten(#2c3e50, 15%);
+
 body {
     padding-top: 64px;
 }
+
 .navbar-fixed-top {
+
+    .navbar-fixed-top .navbar-collapse {
+        max-height: none;
+    }
+
     .navbar-brand {
         padding: 2px 15px;
         height: 50px;
@@ -48,15 +56,56 @@ body {
     }
 }
 
+.custom-dropdown-header{
+    color: $link-color;
+    display: block;
+}
+
 @media (min-width: $screen-md-min) {
+    #mobile-menu {
+        display: none;
+    }
+
     .navbar-nav > li > a {
         padding-top: 10px;
         padding-bottom: 10px;
+    }
+    
+    /* Dropdown menu in Header styles
+    -------------------------------------------------- */
+    .dropdown-menu-arrow:before {
+        position: absolute;
+        top: -7px;
+        left: 159px;
+        display: inline-block;
+        border-right: 7px solid transparent;
+        border-bottom: 7px solid #ccc;
+        border-left: 7px solid transparent;
+        border-bottom-color: rgba(0, 0, 0, 0.2);
+        content: '';
+    }
+
+    .dropdown-menu-arrow:after {
+        position: absolute;
+        top: -6px;
+        left: 160px;
+        display: inline-block;
+        border-right: $border-radius-large solid transparent;
+        border-bottom: $border-radius-large solid #ffffff;
+        border-left: $border-radius-large solid transparent;
+        content: '';
+    }
+
+    #header-links .top-header-dropdown > ul li {
+        padding: 5px;
     }
 }
 
 @media (max-width: $screen-md-min) {
     .navbar-collapse {
+
+        max-height: none;
+
         .nav {
             & > .divider-vertical {
                 display: none;
@@ -158,35 +207,35 @@ body {
 
 #flask-bottom, #inspire-dot, #labs-text {
 
-    #literature-collection & {
+    #literature-logo-collection & {
         fill: $literature-collection !important;
     }
 
-    #authors-collection & {
+    #authors-logo-collection & {
         fill: $authors-collection !important;
     }
 
-    #conferences-collection & {
+    #conferences-logo-collection & {
         fill: $conferences-collection !important;
     }
 
-    #jobs-collection & {
+    #jobs-logo-collection & {
         fill: $jobs-collection !important;
     }
 
-    #experiments-collection & {
+    #experiments-logo-collection & {
         fill: $experiments-collection !important;
     }
 
-    #journals-collection & {
+    #journals-logo-collection & {
         fill: $journals-collection !important;
     }
 
-    #institutions-collection & {
+    #institutions-logo-collection & {
         fill: $institutions-collection !important;
     }
 
-    #data-collection & {
+    #data-logo-collection & {
         fill: $data-collection !important;
     }
 }
@@ -194,67 +243,37 @@ body {
 $darken-percent: 12%;
 #flask-top {
 
-    #literature-collection & {
+    #literature-logo-collection & {
         fill: darken($literature-collection, $darken-percent) !important;
     }
 
-    #authors-collection & {
+    #authors-logo-collection & {
         fill: darken($authors-collection, $darken-percent) !important;
     }
 
-    #conferences-collection & {
+    #conferences-logo-collection & {
         fill: darken($conferences-collection, $darken-percent) !important;
     }
 
-    #jobs-collection & {
+    #jobs-logo-collection & {
         fill: darken($jobs-collection, $darken-percent) !important;
     }
 
-    #experiments-collection & {
+    #experiments-logo-collection & {
         fill: darken($experiments-collection, $darken-percent) !important;
     }
 
-    #journals-collection & {
+    #journals-logo-collection & {
         fill: darken($journals-collection, $darken-percent) !important;
     }
 
-    #institutions-collection & {
+    #institutions-logo-collection & {
         fill: darken($institutions-collection, $darken-percent) !important;
     }
 
-    #data-collection & {
+    #data-logo-collection & {
         fill: darken($data-collection, $darken-percent) !important;
     }
-}
-
-/* Dropdown menu in Header styles
--------------------------------------------------- */
-.dropdown-menu-arrow:before {
-    position: absolute;
-    top: -7px;
-    left: 159px;
-    display: inline-block;
-    border-right: 7px solid transparent;
-    border-bottom: 7px solid #ccc;
-    border-left: 7px solid transparent;
-    border-bottom-color: rgba(0, 0, 0, 0.2);
-    content: '';
-}
-
-.dropdown-menu-arrow:after {
-    position: absolute;
-    top: -6px;
-    left: 160px;
-    display: inline-block;
-    border-right: 6px solid transparent;
-    border-bottom: 6px solid #ffffff;
-    border-left: 6px solid transparent;
-    content: '';
-}
-
-.custom-dropdown-header{
-    color:#428bca;
-    display:block;
 }
 
 @media only screen and (max-width : $screen-sm-min){
@@ -266,21 +285,16 @@ $darken-percent: 12%;
         display: none;
     }
 
-    .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover {
-        background-color: #f5f5f5;
-        color:#000000;
-    }
-
     .caret {
-        border-top: 4px solid transparent;
-        border-bottom: 4px solid transparent;
-        border-left: 4px  solid;
+        border-top: $border-radius-base solid transparent;
+        border-bottom: $border-radius-base solid transparent;
+        border-left: $border-radius-base  solid;
     }
 
     .dropdown .open .caret {
-        border-top: 4px solid;
-        border-right: 4px solid transparent;
-        border-left: 4px solid transparent;
+        border-top: $border-radius-base solid;
+        border-right: $border-radius-base solid transparent;
+        border-left: $border-radius-base solid transparent;
     }
 
     .down-arrow.right-arrow-small-screen {
@@ -289,9 +303,9 @@ $darken-percent: 12%;
         height: 0;
         margin-left: 2px;
         vertical-align: middle;
-        border-top: 4px solid transparent;
-        border-bottom: 4px solid transparent;
-        border-left: 4px solid ;
+        border-top: $border-radius-base solid transparent;
+        border-bottom: $border-radius-base solid transparent;
+        border-left: $border-radius-base solid ;
     }
 }
 
@@ -353,55 +367,8 @@ $darken-percent: 12%;
 }
 
 @media only screen and (max-width : $screen-sm-min){
-    .dropdown-menu-amazon {
-        position: absolute;
-        top:100%;
-        z-index: 1000;
-        float: left;
-        min-width: 160px;
-        padding: 5px 0;
-        margin: 2px 0 0;
-        list-style: none;
-        font-size: 14px;
-        text-align: left;
-        background-color: #ffffff;
-        border: 1px solid rgba(0, 0, 0, 0.15);
-        border-radius: 4px;
-        background-clip: padding-box;
-    }
-
-    .navbar-nav .open .dropdown-menu {
-        position: static;
-        float: none;
-        width: auto;
-        margin-top: 0;
-        background-color: transparent;
-        border: 0;
-        box-shadow: none;
-
-    }
-
-    .small-screens {
-        padding-left: 40px;
-        padding-right: 26px;
-
-    }
-
-    .small-screens.dropdown-menu-list:hover{
-        background-color: #333333;
-    }
-
     .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {
         color: #000000;
-    }
-
-
-    .text-link-decoration.small-screens-a {
-        color: #cccccc;
-    }
-
-    .text-link-decoration.small-screens-a:hover {
-        color: #ffffff;
     }
 
     .navbar .popover {
@@ -412,9 +379,7 @@ $darken-percent: 12%;
     .custom-popover {
         height: 100%;
     }
-
 }
-
 
 /* Nice dropdown menu*/
 .navbar .popover {
@@ -494,21 +459,6 @@ $darken-percent: 12%;
     margin-bottom: 0px;
 }
 
-.dropdown-options {
-    display:inline-block;
-    margin-top:3%
-}
-
-.dropdown-menu-list {
-    height: 35px;
-    border-left: 1px solid;
-    border-width: 5px;
-}
-
-.dropdown-menu-list:hover {
-    background-color:#f5f5f5;
-}
-
 .text-link-decoration {
     text-decoration: none;
     color:#444;
@@ -517,69 +467,6 @@ $darken-percent: 12%;
 .text-link-decoration:hover {
     text-decoration: none;
     color:#444;
-}
-
-#first-element {
-    border-color:$jobs-collection;
-}
-
-#second-element {
-    border-color:$conferences-collection;
-}
-
-#third-element {
-    border-color:$journals-collection;
-}
-
-#fourth-element {
-    border-color:$experiments-collection;
-}
-
-#fifth-element {
-    border-color:$institutions-collection;
-}
-
-#sixth-element {
-    border-color:#939393;
-}
-
-#seventh-element {
-    border-color:#53657F;
-}
-
-#jobs-dropdown,
-#jobs-header {
-    background-color:$jobs-collection;
-}
-
-#tools-dropdown,
-#tools-header {
-    background-color:#939393;
-}
-
-#conferences-dropdown,
-#conferences-header {
-    background-color:$conferences-collection;
-}
-
-#journals-dropdown,
-#journals-header {
-    background-color:$journals-collection;
-}
-
-#experiments-dropdown,
-#experiments-header {
-    background-color:$experiments-collection;
-}
-
-#institutions-dropdown,
-#institutions-header {
-    background-color:$institutions-collection;
-}
-
-#links-and-stats-dropdown,
-#links-and-stats-header {
-    background-color:#53657F;
 }
 
 .font-p {
@@ -688,6 +575,7 @@ a.external-link::after {
 @media (max-width: $screen-md-min) {
     #collections-section {
         margin-top: -1px;
+        display: none;
     }
 }
 
@@ -756,6 +644,7 @@ a.external-link::after {
     }
 
     #topnav {
+        padding-bottom: 0px;
         height: auto;
     }
 
@@ -766,18 +655,221 @@ a.external-link::after {
     }
 }
 
-@media (max-width: 600px) {
+/* Mobile styles
+-------------------------------------------------- */
+@media only screen and (max-width : $screen-md-min) {
 
-    #top-search-bar #searchform-input-group {
-        width: 100%;
-        padding: 0 2.5%;
+    #header-section {
+        padding-bottom: 50px;
     }
 
     #topnav {
-        padding-bottom: 10px;
+
+        $speed: 200ms;
+        $easing: cubic-bezier(0.7, 0, 0, 0.7);
+
+        .navbar-toggle {
+          overflow: hidden;
+
+          .icon-bar {
+            transition: opacity, transform;
+            transition-duration: $speed;
+            transition-timing-function: $easing;
+          }
+
+          &:not(.collapsed) {
+            .icon-bar {
+              &:nth-child(1) {
+                transform: translateY(6px) rotate(45deg);
+              }
+              &:nth-child(2) {
+                opacity: 0;
+              }
+              &:nth-child(3) {
+                transform: translateY(-6px) rotate(-45deg);
+              }
+            }
+          }
+        }
+
+        padding: 0;
+
+        #topnav-right {
+
+            height:100vh !important;
+            max-height: none;
+            padding: 15px;
+
+            #mobile-menu {
+                margin: 0;
+            }
+
+            #header-links {
+
+                margin: 50px 0 0;
+
+                .dropdown-menu {
+                    position: static;
+                    float: none;
+                    width: auto;
+                    margin-top: 0;
+                    background-color: transparent;
+                    border: 0;
+                    box-shadow: none;
+                }
+
+                .dropdown-menu-arrow {
+                    li {
+                        background-color: white;
+                        float: none;
+                        padding-bottom: 10px;
+                    }
+                }
+
+                & > li {
+                    float: left;
+                    width: 50%;
+                }
+
+                li:last-of-type {
+                    width: auto;
+                }
+
+                li:nth-child(2n+3) {
+                    clear: both;
+                }
+
+                #tools-dropdown i,
+                #dropdown-links-stats i,
+                li:nth-child(3) a:before,
+                li:nth-child(4) a:before {
+                    padding: 15px;
+                    background-color: $light-blue;
+                    border-radius: 50%;
+                    margin-right: 15px;
+                    
+                }
+
+                li.dropdown + li:nth-child(3) a:before {
+                    content: "\f0ee";
+                    font-family: FontAwesome;
+                }
+
+                & > li:nth-child(4) a:before {
+                    margin-right: 20px;
+                    font-family: FontAwesome;
+                    content: "\f128";
+                }
+
+                #mobile-sign-in {
+                    width: 100%;
+                    margin-top: 50px;
+                    margin-bottom: 50px;
+                    text-align:center;
+                    background-color: $light-blue;
+                }
+
+                .divider-vertical {
+                    display: none !important;
+                }
+
+                .header-dropdown li {
+                    float: none;
+                    width: auto;
+                    margin: 10px 0;
+
+                    a, a:hover {
+                        color: #ccc;
+                        background-color: transparent;
+                    }
+
+                    a:hover {
+                        color: #fff;   
+                    }
+                }
+            }
+        }
     }
 
-    #top-search-bar {
-        float: left;
+    .mobile-menu-square {
+        margin-top: 100%;
+    }
+
+    .mobile-menu-thumbnail {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 10px;
+        bottom: 0;
+        left: 10px;
+        right: 0;
+        text-align:center;
+        background-color: #324A5D;
+
+        &:hover {
+            text-decoration: none;
+        }
+
+        img {
+            width: 50px;
+            margin-bottom: 3px;
+        }
+
+        p:hover {
+            text-decoration: none;
+        }
+
+        p {
+
+            color: white;
+
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            font-size: 13px;
+
+            &#literature-collection {
+                color: $literature-collection;
+            }
+
+            &#authors-collection {
+                color: $authors-collection;
+            }
+
+            &#data-collection {
+                color: $data-collection;
+            }
+
+            &#conferences-collection {
+                color: $conferences-collection;
+            }
+
+            &#jobs-collection {
+                color: $jobs-collection;
+            }
+
+            &#institutions-collection {
+                color: $institutions-collection;
+            }
+
+            &#experiments-collection {
+                color: $experiments-collection;
+            }
+
+            &#journals-collection {
+                color: $journals-collection;
+            }
+        }
+    }
+
+    .modal-backdrop.in {
+        z-index: 0;
+    }
+}
+
+@media only screen and (max-width : 450px) {
+    #mobile-menu > div.col-xxs-6 {
+        width: 50%;
     }
 }

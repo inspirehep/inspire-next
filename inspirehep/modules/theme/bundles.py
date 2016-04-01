@@ -84,3 +84,10 @@ css = NpmBundle(
         "font-awesome": "~4.4.0",
     }
 )
+
+detailedcss = NpmBundle(
+    "scss/format/detailed-record.scss",
+    filters="scss, cleancss",
+    output='gen/inspirehep-detailed.%(version)s.css',
+    depends='scss/format/*.scss',
+)

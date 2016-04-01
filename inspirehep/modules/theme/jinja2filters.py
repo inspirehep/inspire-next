@@ -698,3 +698,26 @@ def format_date(datetext):
         elif len(datestruct) == 1:
             # XXX(jacquerie): returns int instead of string.
             return datestruct[0]
+
+
+@blueprint.app_template_filter()
+def find_collection_from_url(url):
+    """Returns the collection based on the URL."""
+    if url.find('/literature/'):
+        return 'literature'
+    elif url.find('/jobs/'):
+        return 'jobs'
+    elif url.find('/institutions/'):
+        return 'institutions'
+    elif url.find('/journals/'):
+        return 'journals'
+    elif url.find('/experiments/'):
+        return 'experiments'
+    elif url.find('/conferences/'):
+        return 'conferences'
+
+
+@blueprint.app_template_filter()
+def show_citations_number(citation_count):
+    """Shows citations number"""
+    return 'View all' + str(citation_count) + 'citations'

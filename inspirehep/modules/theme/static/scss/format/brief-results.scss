@@ -18,18 +18,20 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
+@media screen and (min-width: $screen-md-min) {
 
-#search-results {
-    .col-md-3 {
-        width: 22%
-    }
+    #search-results {
+        .col-md-3 {
+            width: 22%
+        }
 
-    .col-md-9 {
-        width: 78%;
-    }
+        .col-md-9 {
+            width: 78%;
+        }
 
-    .results-wrapper .col-md-3 {
-        width: 25%;
+        .results-wrapper .col-md-3 {
+            width: 25%;
+        }
     }
 }
 
@@ -65,10 +67,6 @@ button.dropdown-cite:hover, a#cite-all-format:hover {
 
 hr {
     margin-top:0px;
-}
-
-.mobile-title {
-    display:none;
 }
 
 .custom-dropdown {
@@ -116,27 +114,29 @@ hr {
     cursor:pointer;
 }
 
-@media only screen and (max-width : 992px){
-    .right-column {
-        display:none;
+/* Mobile styles
+-------------------------------------------------- */
+@media only screen and (max-width : $screen-md-min) {
+
+    #header-section {
+        padding-bottom: 50px;
     }
 
-    .abstract {
-        display:none;
+    #search-results #results-control-panel .panel-body .row > div {
+        text-align: center;
+        margin-bottom: 10px;   
+    }
+}
+
+@media (max-width: 600px) {
+
+    #header-section {
+        padding-bottom: 100px;
     }
 
-    .title {
-        display:none;
-    }   
-
-    .mobile-title {
-        display:block;
+    #topnav {
+        padding-bottom: 45px;
     }
-
-    .left-column {
-        border-right: 0px;
-    }
-
 }
 
 @media screen and (min-width: $screen-sm-min) {
@@ -299,26 +299,6 @@ hr {
 
 #spinner-modal-download {
     display: none;
-}
-
-#results-control-panel {
-    border-top: 3px solid #95a5a6;
-}
-
-#results-control-panel, #results-bottom-panel {
-    margin-bottom: 10px;
-
-    .panel-body {
-        padding: 10px 15px;
-    }
-    .dropdown {
-        display: inline-block;
-    }
-
-    .form-control {
-        display: inline-block;
-        width: auto;
-    }
 }
 
 .fa-arrow-up {
@@ -508,4 +488,54 @@ i.fa-chevron-right.facet-slider {
 
 .brief-results-sortby {
 	color: #737373;
+}
+
+@media (min-width: 600px) {
+
+    #top-search-bar #searchform {
+        .navbar-form {
+            display: flex;
+        }
+    }
+}
+
+@media (min-width: $screen-sm-min) {
+
+    #top-search-bar {
+
+        .navbar-form .input-group .form-control {
+            width: auto;
+        }
+
+        .navbar-form .input-group > .form-control {
+            width: 100%;
+        }
+    }
+}
+
+#top-search-bar #searchform {
+
+    #searchform-input-group {
+        width: 100%;
+    }
+}
+@media (min-width: $screen-sm-min) {
+
+    #top-search-bar {
+
+        .navbar-form .input-group .form-control {
+            width: auto;
+        }
+
+        .navbar-form .input-group > .form-control {
+            width: 100%;
+        }
+    }
+}
+
+#top-search-bar #searchform {
+
+    #searchform-input-group {
+        width: 100%;
+    }
 }
