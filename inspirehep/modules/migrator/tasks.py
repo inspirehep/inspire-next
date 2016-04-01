@@ -54,10 +54,6 @@ from invenio_records import Record
 from six import string_types, text_type
 
 from .models import InspireProdRecords
-from .utils import (
-    rename_object_action,
-    reset_workflow_object_states,
-)
 
 
 logger = get_task_logger(__name__)
@@ -395,63 +391,9 @@ def create_record(record, force=True, dry_run=False):
 
 
 @shared_task(ignore_result=True)
-def migrate_workflow_object(obj_id):
-    from inspirehep.modules.workflows.dojson import author_bibfield, bibfield
-    from inspirehep.modules.workflows.models import Payload
-    from invenio_deposit.models import Deposition
-    from invenio_workflows.models import (
-        BibWorkflowObject,
-        ObjectVersion
-    )
-
-    try:
-        obj = BibWorkflowObject.query.get(obj_id)
-        rename_object_action(obj)
-        if obj.workflow.name == "process_record_arxiv":
-            metadata = obj.get_data()
-            if isinstance(metadata, string_types):
-                # Ignore records that have string as data
-                return
-            if 'drafts' in metadata:
-                # New data model detected, just save and exit
-                obj.save()
-                return
-            if hasattr(metadata, 'dumps'):
-                metadata = metadata.dumps(clean=True)
-            obj.data = bibfield.do(metadata)
-            payload = Payload.create(
-                type=obj.workflow.name,
-                workflow_object=obj
-            )
-            payload.save()
-        elif obj.workflow.name == "literature":
-            d = Deposition(obj)
-            sip = d.get_latest_sip()
-            if sip:
-                sip.metadata = bibfield.do(sip.metadata)
-                sip.package = legacy_export_as_marc(hep2marc.do(sip.metadata))
-                d.save()
-        elif obj.workflow.name in ("authornew", "authorupdate"):
-            data = obj.get_data()
-            obj.set_data(author_bibfield.do(data))
-            obj.save()
-        else:
-            obj.save()  # To update and trigger indexing
-        reset_workflow_object_states(obj)
-    except Exception as err:
-        current_app.logger.error("Problem migrating record {0}".format(obj_id))
-        current_app.logger.exception(err)
-        msg = "Error: %r\n%s" % \
-              (err, traceback.format_exc())
-        obj.set_error_message(msg)
-        obj.save(version=ObjectVersion.ERROR)
-        raise
-
-
-@shared_task(ignore_result=True)
 def reindex_holdingpen_object(obj_id):
     from invenio_workflows.signals import workflow_object_saved
-    from invenio_workflows.models import BibWorkflowObject
+    from invenio_workflows import WorkflowObject
 
-    obj = BibWorkflowObject.query.get(obj_id)
+    obj = WorkflowObject.query.get(obj_id)
     workflow_object_saved.send(obj)

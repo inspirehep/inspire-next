@@ -29,7 +29,7 @@ import requests
 
 def get_model_from_obj(obj):
     """Return an instance of the model from the workflow."""
-    from invenio_workflows.registry import workflows
+    from invenio_workflows.proxies import workflows
     workflow = workflows.get(obj.workflow.name)
 
     if workflow is not None:

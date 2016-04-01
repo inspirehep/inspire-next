@@ -48,7 +48,7 @@ from werkzeug.datastructures import MultiDict
 
 from invenio_db import db
 
-from invenio_workflows.models import DbWorkflowObject
+from invenio_workflows import WorkflowObject, start, resume
 
 from inspirehep.dojson.utils import strip_empty_values
 from inspirehep.modules.forms.form import DataExporter
@@ -268,13 +268,13 @@ def submitupdate():
     form = AuthorUpdateForm(formdata=request.form)
     visitor = DataExporter()
     visitor.visit(form)
-    workflow_object = DbWorkflowObject.create_object(id_user=current_user.get_id())
+    workflow_object = WorkflowObject.create_object(id_user=current_user.get_id())
     workflow_object.data = visitor.data
     workflow_object.save()
     db.session.commit()
-    # Start workflow. delayed=True will execute the workflow in the
-    # background using, for example, Celery.
-    workflow_object.start_workflow("authorupdate", delayed=True)
+
+    # Start workflow. delay will execute the workflow in the background
+    start.delay("authorupdate", object_id=workflow_object.id)
 
     ctx = {
         "inspire_url": get_inspire_url(visitor.data)
@@ -291,13 +291,14 @@ def submitnew():
     visitor = DataExporter()
     visitor.visit(form)
 
-    workflow_object = DbWorkflowObject.create_object(id_user=current_user.get_id())
+    workflow_object = WorkflowObject.create_object(id_user=current_user.get_id())
     workflow_object.data = visitor.data
     workflow_object.save()
     db.session.commit()
+
     # Start workflow. delayed=True will execute the workflow in the
     # background using, for example, Celery.
-    workflow_object.start_workflow("authornew", delayed=True)
+    start.delay("authornew", object_id=workflow_object.id)
 
     ctx = {
         "inspire_url": get_inspire_url(visitor.data)
@@ -314,7 +315,7 @@ def newreview():
     objectid = request.values.get('objectid', 0, type=int)
     if not objectid:
         abort(400)
-    workflow_object = DbWorkflowObject.query.get(objectid)
+    workflow_object = WorkflowObject.query.get(objectid)
 
     form = AuthorUpdateForm(data=workflow_object.extra_data["formdata"], is_review=True)
     ctx = {
@@ -340,7 +341,7 @@ def reviewhandler():
     visitor = DataExporter()
     visitor.visit(form)
 
-    workflow_object = DbWorkflowObject.query.get(objectid)
+    workflow_object = WorkflowObject.query.get(objectid)
     workflow_object.extra_data["approved"] = True
     workflow_object.extra_data["recreate_data"] = True
     workflow_object.extra_data["ticket"] = request.form.get('ticket') == "True"
@@ -348,7 +349,7 @@ def reviewhandler():
     workflow_object.save()
     db.session.commit()
 
-    workflow_object.continue_workflow(delayed=True)
+    resume.delay(workflow_object.id)
 
     return render_template('authors/forms/new_review_accepted.html',
                            approved=True)
@@ -364,13 +365,13 @@ def holdingpenreview():
     ticket = request.values.get('ticket', False, type=bool)
     if not objectid:
         abort(400)
-    workflow_object = DbWorkflowObject.query.get(objectid)
+    workflow_object = WorkflowObject.query.get(objectid)
     workflow_object.extra_data["approved"] = approved
     workflow_object.extra_data["ticket"] = ticket
     workflow_object.save()
     db.session.commit()
 
-    workflow_object.continue_workflow(delayed=True)
+    resume.delay(workflow_object.id)
 
     return render_template('authors/forms/new_review_accepted.html',
                            approved=approved)
