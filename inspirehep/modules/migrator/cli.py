@@ -30,7 +30,6 @@ import sys
 from flask import current_app
 from flask.ext.script import prompt_bool
 
-# from invenio_ext.script import click
 from invenio_db import db
 
 from .tasks import (
@@ -38,8 +37,6 @@ from .tasks import (
     migrate,
     migrate_broken_records,
 )
-
-# manager = Manager(usage=__doc__)
 
 
 @click.group()

@@ -42,20 +42,19 @@ from flask import abort, \
     url_for, \
     redirect
 from flask_breadcrumbs import register_breadcrumb
+from flask_login import login_required, current_user
+
 from werkzeug.datastructures import MultiDict
 
-from flask_login import login_required
+from invenio_db import db
+
+from invenio_workflows import WorkflowObject, start, resume
 
 from inspirehep.dojson.utils import strip_empty_values
-
-# from invenio_ext.principal import permission_required
-# from invenio_workflows.models import BibWorkflowObject
-
-# from .acl import viewauthorreview
-from .forms import AuthorUpdateForm
 from inspirehep.modules.forms.form import DataExporter
-from invenio_workflows.models import DbWorkflowObject, ObjectStatus
-from flask.ext.login import current_user
+
+from .forms import AuthorUpdateForm
+
 
 blueprint = Blueprint('inspirehep_authors',
                       __name__,
@@ -269,11 +268,13 @@ def submitupdate():
     form = AuthorUpdateForm(formdata=request.form)
     visitor = DataExporter()
     visitor.visit(form)
-    myobj = DbWorkflowObject.create_object(id_user=current_user.get_id())
-    myobj.set_data(visitor.data)
-    # Start workflow. delayed=True will execute the workflow in the
-    # background using, for example, Celery.
-    myobj.start_workflow("authorupdate", delayed=True)
+    workflow_object = WorkflowObject.create_object(id_user=current_user.get_id())
+    workflow_object.data = visitor.data
+    workflow_object.save()
+    db.session.commit()
+
+    # Start workflow. delay will execute the workflow in the background
+    start.delay("authorupdate", object_id=workflow_object.id)
 
     ctx = {
         "inspire_url": get_inspire_url(visitor.data)
@@ -290,11 +291,14 @@ def submitnew():
     visitor = DataExporter()
     visitor.visit(form)
 
-    myobj = DbWorkflowObject.create_object(id_user=current_user.get_id())
-    myobj.set_data(visitor.data)
+    workflow_object = WorkflowObject.create_object(id_user=current_user.get_id())
+    workflow_object.data = visitor.data
+    workflow_object.save()
+    db.session.commit()
+
     # Start workflow. delayed=True will execute the workflow in the
     # background using, for example, Celery.
-    myobj.start_workflow("authornew", delayed=True)
+    start.delay("authornew", object_id=workflow_object.id)
 
     ctx = {
         "inspire_url": get_inspire_url(visitor.data)
@@ -311,10 +315,9 @@ def newreview():
     objectid = request.values.get('objectid', 0, type=int)
     if not objectid:
         abort(400)
-    workflow_object = DbWorkflowObject.query.get(objectid)
-    extra_data = workflow_object.get_extra_data()
+    workflow_object = WorkflowObject.query.get(objectid)
 
-    form = AuthorUpdateForm(data=extra_data["formdata"], is_review=True)
+    form = AuthorUpdateForm(data=workflow_object.extra_data["formdata"], is_review=True)
     ctx = {
         "action": url_for('.reviewhandler', objectid=objectid),
         "name": "authorUpdateForm",
@@ -338,15 +341,15 @@ def reviewhandler():
     visitor = DataExporter()
     visitor.visit(form)
 
-    workflow_object = DbWorkflowObject.query.get(objectid)
-    extra_data = workflow_object.get_extra_data()
-    extra_data["approved"] = True
-    extra_data["recreate_data"] = True
-    extra_data["ticket"] = request.form.get('ticket') == "True"
-    workflow_object.set_extra_data(extra_data)
-    workflow_object.set_data(visitor.data)
-    workflow_object.save(version=ObjectStatus.WAITING)
-    workflow_object.continue_workflow(delayed=True)
+    workflow_object = WorkflowObject.query.get(objectid)
+    workflow_object.extra_data["approved"] = True
+    workflow_object.extra_data["recreate_data"] = True
+    workflow_object.extra_data["ticket"] = request.form.get('ticket') == "True"
+    workflow_object.data = visitor.data
+    workflow_object.save()
+    db.session.commit()
+
+    resume.delay(workflow_object.id)
 
     return render_template('authors/forms/new_review_accepted.html',
                            approved=True)
@@ -362,13 +365,13 @@ def holdingpenreview():
     ticket = request.values.get('ticket', False, type=bool)
     if not objectid:
         abort(400)
-    workflow_object = DbWorkflowObject.query.get(objectid)
-    extra_data = workflow_object.get_extra_data()
-    extra_data["approved"] = approved
-    extra_data["ticket"] = ticket
-    workflow_object.set_extra_data(extra_data)
+    workflow_object = WorkflowObject.query.get(objectid)
+    workflow_object.extra_data["approved"] = approved
+    workflow_object.extra_data["ticket"] = ticket
     workflow_object.save()
-    workflow_object.continue_workflow(delayed=True)
+    db.session.commit()
+
+    resume.delay(workflow_object.id)
 
     return render_template('authors/forms/new_review_accepted.html',
                            approved=approved)
