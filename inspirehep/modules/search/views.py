@@ -87,7 +87,7 @@ def format_sortoptions(sort_options):
     """Create sort options JSON dump for Invenio-Search-JS."""
     return json.dumps(dict(
         options=sorted_options(sort_options)
-    ))
+    ), sort_keys=True)
 
 
 @blueprint.app_template_filter('default_sortoption')
