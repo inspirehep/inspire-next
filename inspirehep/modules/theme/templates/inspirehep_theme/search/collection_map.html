@@ -74,11 +74,27 @@
             var map = new google.maps.Map(mapElement, mapOptions);
             var infowindow = new google.maps.InfoWindow();
 
-            var docs = {{ ctx.upcoming|json_dumps|safe }};
+            var docs = {{ ctx.results|json_dumps|safe }};
+            var collection = '{{ collection }}';
 
             for (var doc_idx in docs) {
-                geocode_address(docs[doc_idx]);
+                var data = docs[doc_idx];
+
+                if (collection === 'conferences') {
+                    data.important_info = data.date ? data.date : data.opening_date;
+                } else if(collection === 'institutions') {
+                    data.title = data.institution[0];
+                    data.important_info = data.field_activity[0];
+
+                    var address = "";
+                    for(var address_part_idx in data.address[0]) {
+                        address += data.address[0][address_part_idx] + " "
+                    }
+                    data.place = address;
+                }
+                geocode_address(data);
             }
+
 
             function geocode_address(document) {
                 //Largely from https://google-developers.appspot.com/maps/documentation/javascript/examples/geocoding-simple
@@ -92,7 +108,8 @@
                         });
 
                         google.maps.event.addListener(marker, 'click', function () {
-                            var date = document.date ? document.date : document.opening_date;
+
+                            var date = document.important_info;
                             infowindow.setContent('<span class="date">' + date + '</span><br/>' +
                                     '<a href="/{{ collection }}/' + document.control_number + '">' +
                                     '<strong>' + document.title + '</strong></a><br/>' +

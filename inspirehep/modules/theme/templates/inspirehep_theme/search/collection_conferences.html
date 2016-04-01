@@ -23,7 +23,7 @@
     <div id="landing-map"></div>
     <div id="landing-map-info" class="conferences">
         <p class="text-center">
-            {{ ctx.upcoming|length }} Upcoming Conferences in the next 6 months.
+            {{ ctx.results|length }} Upcoming Conferences in the next 6 months.
         </p>
     </div>
 {% endblock %}
@@ -79,19 +79,18 @@
                                 </div>
                             </div>
                         {% endfor %}
-
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="collection-block">
-                <h4>{{ ctx.upcoming|length }} Upcoming Conferences
+                <h4>{{ ctx.results|length }} Upcoming Conferences
                     <small>in the next 6 months</small>
                 </h4>
 
                 <div class="contents">
-                    {% for upcoming_conf in ctx.upcoming %}
+                    {% for upcoming_conf in ctx.results %}
                         <div class="upcoming-conference">
 
                             <div class="details">

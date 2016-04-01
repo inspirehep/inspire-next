@@ -48,6 +48,7 @@ from inspirehep.modules.search.query import perform_query
 from invenio_search import current_search_client
 
 from inspirehep.utils.date import datetime
+from inspirehep.utils.search import perform_es_search
 
 blueprint = Blueprint(
         'inspirehep_theme',
@@ -57,10 +58,6 @@ blueprint = Blueprint(
         static_folder='static',
 )
 
-
-#
-# Collections
-#
 
 @blueprint.route('/literature', methods=['GET', ])
 @blueprint.route('/collection/literature', methods=['GET', ])
@@ -90,19 +87,12 @@ def conferences():
 
     six_months_str = (today + relativedelta(months=+6)).strftime('%Y-%m-%d')
 
-    query, qs_kwargs = perform_query('opening_date:{0}->{1}'.format(today_str, six_months_str), 1, 100)
-    search_result = current_search_client.search(
-            index='records-conferences',
-            doc_type='conferences',
-            sort='opening_date:asc',
-            body=query.body,
-            version=True,
-    )
-
-    upcoming_conferences = [hit['_source'] for hit in search_result['hits']['hits']]
+    upcoming_conferences = perform_es_search('opening_date:{0}->{1}'.format(today_str, six_months_str),
+                                             1, 100, 'conferences', 'opening_date:asc')
 
     return render_template('inspirehep_theme/search/collection_conferences.html',
-                           ctx={'conference_subject_areas': CONFERENCE_CATEGORIES_TO_SERIES, 'upcoming': upcoming_conferences},
+                           ctx={'conference_subject_areas': CONFERENCE_CATEGORIES_TO_SERIES,
+                                'results': upcoming_conferences},
                            collection='conferences')
 
 
@@ -115,7 +105,10 @@ def jobs():
 @blueprint.route('/institutions', methods=['GET', ])
 def institutions():
     """View for institutions collection landing page."""
+    institutions_list = perform_es_search('', 1, 250, 'institutions')
+
     return render_template('inspirehep_theme/search/collection_institutions.html',
+                           ctx={'results': institutions_list},
                            collection='institutions')
 
 

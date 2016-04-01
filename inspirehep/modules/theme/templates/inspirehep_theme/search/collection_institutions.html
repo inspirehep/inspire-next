@@ -17,8 +17,16 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{%- extends "inspirehep_theme/search/collection_basic.html" -%}
+{%- extends "inspirehep_theme/search/collection_map.html" -%}
 
+{% block page_banner %}
+    <div id="landing-map"></div>
+    <div id="landing-map-info" class="institutions">
+        <p class="text-center">
+            Search on {{ ctx.results|length }} Institutions all around the world.
+        </p>
+    </div>
+{% endblock %}
 
 {% block body %}
 
