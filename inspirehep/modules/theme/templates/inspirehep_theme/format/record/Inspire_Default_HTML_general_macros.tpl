@@ -153,56 +153,6 @@
   {% endfor %}
 {% endmacro %}
 
-{% macro record_abstract(record, is_brief) %}
-  {% if is_brief %}
-    {% set number_of_words = 0 %}
-  {% else %}
-    {% set number_of_words = 100 %}
-  {% endif %}
-  {% set abstract_displayed = false %}
-  {% set arxiv_abstract = "" %}
-  {% if record.get('abstracts') %}
-    {% for abstract in record.get('abstracts') %}
-      {% if abstract.get('value') and not abstract_displayed %}
-        {% if not abstract.get('source') == 'arXiv' %}
-          {{ display_abstract(record, abstract.get('value'), number_of_words) }}
-          {% set abstract_displayed = true %}
-        {% else %}
-          {% set arxiv_abstract = abstract.get('value') %}
-        {% endif %}
-      {% endif %}
-    {% endfor %}
-      {% if not abstract_displayed and arxiv_abstract %}
-        {{ display_abstract(record, arxiv_abstract, number_of_words) }}
-        {% set abstract_displayed = true %}
-      {% endif %}
-  {% endif %}
-
-  {% if not is_brief and not abstract_displayed %}
-      No abstract available for this record
-  {% endif %}
-{% endmacro %}
-
-{% macro display_abstract(record, abstract, number_of_words) %}
-  <div class="abstract">
-    <input type="checkbox" class="read-more-state" id="abstract-input-{{ record.get('control_number') }}" />
-    <div class="read-more-wrap">
-      {{ abstract | words(number_of_words)| e }}
-      {% if abstract | words_to_end(number_of_words) %}
-        {% if number_of_words > 0 %}
-          <span class="read-more-ellipsis">...</span>
-        {% endif %}
-        <span class="read-more-target">
-          {{ abstract | words_to_end(number_of_words)| e }}
-        </span>
-      {% endif %}
-    </div>
-    {% if abstract | words_to_end(number_of_words) %}
-      <label for="abstract-input-{{ record.get('control_number') }}" class="read-more-trigger"></label>
-    {% endif %}
-  </div>
-{% endmacro %}
-
 {% macro record_arxiv(record, is_brief) %}
   {% if record.get('arxiv_eprints') %}
     {% for report_number in record.get('arxiv_eprints') %}
