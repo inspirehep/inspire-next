@@ -24,11 +24,21 @@
 {% extends 'search/search.html' %}
 
 {%- block search_facets %}
-<div class="col-md-3 visible-md visible-lg journals-facet" id="facetparent">
-  <div class="facet" id="facet_list" data-clampedwidth="#facetparent">
-    <invenio-search-facets
-     template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/journals/facets.html') }}">
-    </invenio-search-facets>
-  </div>
-</div>
+    <div class="col-md-3 visible-md visible-lg journals-facet" id="facetparent">
+        <div class="facet" id="facet_list" data-clampedwidth="#facetparent">
+            <invenio-search-facets
+                    template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/journals/facets.html') }}">
+            </invenio-search-facets>
+        </div>
+    </div>
 {%- endblock search_facets %}
+
+{%- block search_results %}
+    <invenio-search-results
+            template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/journals/results.html') }}">
+    </invenio-search-results>
+{%- endblock search_results %}
+
+{%- block search_sort %}
+
+{%- endblock -%}

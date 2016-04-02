@@ -1,0 +1,127 @@
+{%- extends "inspirehep_theme/search/collection_basic.html" -%}
+
+{% block additional_javascript %}
+    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript">
+        // When the window has finished loading create our google map below
+        google.maps.event.addDomListener(window, 'load', init);
+
+        function init() {
+            // TODO: Should we move this to angular also??
+            var geocoder = new google.maps.Geocoder();
+            var mapOptions = {
+                zoom: 3,
+
+                // Map centre location
+                center: new google.maps.LatLng(55, 0),
+
+                // Snazzy Map styling.
+                styles: [{
+                    "featureType": "water",
+                    "elementType": "geometry",
+                    "stylers": [{"color": "#e9e9e9"}, {"lightness": 17}]
+                }, {
+                    "featureType": "landscape",
+                    "elementType": "geometry",
+                    "stylers": [{"color": "#f5f5f5"}, {"lightness": 20}]
+                }, {
+                    "featureType": "road.highway",
+                    "elementType": "geometry.fill",
+                    "stylers": [{"color": "#ffffff"}, {"lightness": 17}]
+                }, {
+                    "featureType": "road.highway",
+                    "elementType": "geometry.stroke",
+                    "stylers": [{"color": "#ffffff"}, {"lightness": 29}, {"weight": 0.2}]
+                }, {
+                    "featureType": "road.arterial",
+                    "elementType": "geometry",
+                    "stylers": [{"color": "#ffffff"}, {"lightness": 18}]
+                }, {
+                    "featureType": "road.local",
+                    "elementType": "geometry",
+                    "stylers": [{"color": "#ffffff"}, {"lightness": 16}]
+                }, {
+                    "featureType": "poi",
+                    "elementType": "geometry",
+                    "stylers": [{"color": "#f5f5f5"}, {"lightness": 21}]
+                }, {
+                    "featureType": "poi.park",
+                    "elementType": "geometry",
+                    "stylers": [{"color": "#dedede"}, {"lightness": 21}]
+                }, {
+                    "elementType": "labels.text.stroke",
+                    "stylers": [{"visibility": "on"}, {"color": "#ffffff"}, {"lightness": 16}]
+                }, {
+                    "elementType": "labels.text.fill",
+                    "stylers": [{"saturation": 36}, {"color": "#333333"}, {"lightness": 40}]
+                }, {"elementType": "labels.icon", "stylers": [{"visibility": "off"}]}, {
+                    "featureType": "transit",
+                    "elementType": "geometry",
+                    "stylers": [{"color": "#f2f2f2"}, {"lightness": 19}]
+                }, {
+                    "featureType": "administrative",
+                    "elementType": "geometry.fill",
+                    "stylers": [{"color": "#fefefe"}, {"lightness": 20}]
+                }, {
+                    "featureType": "administrative",
+                    "elementType": "geometry.stroke",
+                    "stylers": [{"color": "#fefefe"}, {"lightness": 17}, {"weight": 1.2}]
+                }]
+            };
+
+            var mapElement = document.getElementById('landing-map');
+
+            var map = new google.maps.Map(mapElement, mapOptions);
+            var infowindow = new google.maps.InfoWindow();
+
+            var docs = {{ ctx.results|json_dumps|safe }};
+            var collection = '{{ collection }}';
+
+            for (var doc_idx in docs) {
+                var data = docs[doc_idx];
+
+                if (collection === 'conferences') {
+                    data.important_info = data.date ? data.date : data.opening_date;
+                } else if(collection === 'institutions') {
+                    data.title = data.institution[0];
+                    data.important_info = data.field_activity[0];
+
+                    var address = "";
+                    for(var address_part_idx in data.address[0]) {
+                        address += data.address[0][address_part_idx] + " "
+                    }
+                    data.place = address;
+                }
+                geocode_address(data);
+            }
+
+
+            function geocode_address(document) {
+                //Largely from https://google-developers.appspot.com/maps/documentation/javascript/examples/geocoding-simple
+                geocoder.geocode({'address': document.place}, function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        map.setCenter(results[0].geometry.location);
+                        var marker = new google.maps.Marker({
+                            map: map,
+                            position: results[0].geometry.location,
+                            icon: '/static/images/map/marker-{{collection}}.svg'
+                        });
+
+                        google.maps.event.addListener(marker, 'click', function () {
+
+                            var date = document.important_info;
+                            infowindow.setContent('<span class="date">' + date + '</span><br/>' +
+                                    '<a href="/{{ collection }}/' + document.control_number + '">' +
+                                    '<strong>' + document.title + '</strong></a><br/>' +
+                                    '<strong>' + document.place + '</strong>');
+                            infowindow.open(map, this);
+                        });
+                    } else {
+                        console.error('Geocode was not successful for the following reason: ' + status);
+                    }
+                });
+            }
+
+        }
+    </script>
+{% endblock %}

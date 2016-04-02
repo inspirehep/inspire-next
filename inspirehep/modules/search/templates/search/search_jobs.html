@@ -33,6 +33,16 @@
 </div>
 {%- endblock search_facets %}
 
+{%- block search_results %}
+    <invenio-search-results
+            template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/jobs/results.html') }}">
+    </invenio-search-results>
+{%- endblock search_results %}
+
+{%- block search_sort %}
+
+{%- endblock -%}
+
 {%- block search_header_footer %}
   <div class="panel-footer">
     <a href="http://inspirehep.net/info/Jobs/tools/jobs-matrix">

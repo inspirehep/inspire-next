@@ -40,7 +40,6 @@ from .walkers.elasticsearch_no_keywords import QueryHasKeywords
 
 
 class InspireQuery(Query):
-
     """Extension of invenio_search.api.Query."""
 
     def __init__(self, *args, **kwargs):
@@ -98,13 +97,21 @@ def inspire_query_factory(index, page, size):
     """
     query_string = request.values.get('q', '')
 
+    return perform_query(query_string, page, size)
+
+
+def perform_query(query_string, page, size):
+    """
+
+    :param query_string:
+    :param page:
+    :param size:
+    :return:
+    """
     try:
         query = InspireQuery(query_string)[(page - 1) * size:page * size]
     except SyntaxError:
-        current_app.logger.debug(
-            "Failed parsing query: {0}".format(
-                request.values.get('q', '')),
-            exc_info=True)
+        current_app.logger.debug("Failed parsing query: {0}".format(
+            request.values.get('q', '')), exc_info=True)
         raise InvalidQueryRESTError()
-
-    return (query, {'q': query_string})
+    return query, {'q': query_string}

@@ -32,3 +32,13 @@
   </div>
 </div>
 {%- endblock search_facets %}
+
+{%- block search_results %}
+    <invenio-search-results
+            template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/institutions/results.html') }}">
+    </invenio-search-results>
+{%- endblock search_results %}
+
+{%- block search_sort %}
+
+{%- endblock -%}

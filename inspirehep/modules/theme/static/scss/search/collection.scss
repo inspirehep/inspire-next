@@ -19,250 +19,372 @@
  */
 
 #collection-search-bar.title {
-    font-weight: 500;
-    font-size: x-large;
+  font-weight: 500;
+  font-size: x-large;
 }
 
 p.intro-text {
-    font-size: 20px;
-    color: $blue;
+  font-size: 20px;
+  color: $blue;
 }
 
 img.landing-page-flask {
-    height: 80px;
-    margin-bottom: 30px;
+  height: 80px;
+  margin-bottom: 30px;
 }
 
 .action-text {
-    color: $brand-warning;
+  color: $brand-warning;
 }
 
 // Mixin to set background color
 @mixin collection-background-color($background-color) {
-    background-color: $background-color;
+  background-color: $background-color;
 }
 
 // Mixin to set title color
 @mixin collection-title-color($color) {
-    color: $color;
+  color: $color;
 }
 
 // Mixin to set border top color
 @mixin collection-title-border-top($color) {
-    border-top: 3px solid $color;
+  border-top: 3px solid $color;
 }
 
 #collection-landing-page-text {
-    margin-bottom: 30px;
-    background: none;
-    border: none;
+  margin-bottom: 30px;
+  background: none;
+  border: none;
 }
 
 #collection-search-bar {
 
-    background-color: white;
-    padding: 30px 10px;
-    text-align: center;
-    box-shadow: 0 1px 1px rgba(0,0,0,.15);
+  background-color: white;
+  padding: 30px 10px;
+  text-align: center;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .15);
 
-    &.literature-collection-search-bar {
-        @include collection-title-border-top($literature-collection);
+  &.literature-collection-search-bar {
+    @include collection-title-border-top($literature-collection);
+  }
+
+  &.journals-collection-search-bar {
+    @include collection-title-border-top($journals-collection);
+  }
+
+  &.jobs-collection-search-bar {
+    @include collection-title-border-top($jobs-collection);
+  }
+
+  &.institutions-collection-search-bar {
+    @include collection-title-border-top($institutions-collection);
+  }
+
+  &.experiments-collection-search-bar {
+    @include collection-title-border-top($experiments-collection);
+  }
+
+  &.data-collection-search-bar {
+    @include collection-title-border-top($data-collection);
+  }
+
+  &.conferences-collection-search-bar {
+    @include collection-title-border-top($conferences-collection);
+  }
+
+  &.authors-collection-search-bar {
+    @include collection-title-border-top($authors-collection);
+  }
+
+  .navbar-form .input-group .input-group-btn {
+    width: 1%;
+  }
+
+  @extend .title;
+
+  .title {
+
+    letter-spacing: 0.03em;
+
+    &#literature-search-bar {
+      @include collection-title-color($literature-collection);
     }
 
-    &.journals-collection-search-bar {
-        @include collection-title-border-top($journals-collection);
+    &#authors-search-bar {
+      @include collection-title-color($authors-collection);
     }
 
-    &.jobs-collection-search-bar {
-        @include collection-title-border-top($jobs-collection);
+    &#data-search-bar {
+      @include collection-title-color($data-collection);
     }
 
-    &.institutions-collection-search-bar {
-        @include collection-title-border-top($institutions-collection);
+    &#institutions-search-bar {
+      @include collection-title-color($institutions-collection);
     }
 
-    &.experiments-collection-search-bar {
-        @include collection-title-border-top($experiments-collection);
+    &#conferences-search-bar {
+      @include collection-title-color($conferences-collection);
     }
 
-    &.data-collection-search-bar {
-        @include collection-title-border-top($data-collection);
+    &#jobs-search-bar {
+      @include collection-title-color($jobs-collection);
     }
 
-    &.conferences-collection-search-bar {
-        @include collection-title-border-top($conferences-collection);
+    &#experiments-search-bar {
+      @include collection-title-color($experiments-collection);
     }
 
-     &.authors-collection-search-bar {
-        @include collection-title-border-top($authors-collection);
+    &#journals-search-bar {
+      @include collection-title-color($journals-collection);
     }
+  }
 
+  #search-bar {
+    #search-box-main {
+      .navbar {
+        border: none;
+        margin-bottom: 0;
+        background-color: inherit;
 
-    .navbar-form .input-group .input-group-btn {
-        width: 1%;
-    }
-
-    @extend .title;
-
-    .title {
-
-        letter-spacing: 0.03em;
-
-        &#literature-search-bar {
-            @include collection-title-color($literature-collection);
+        .navbar-collapse {
+          border: none;
         }
 
-        &#authors-search-bar {
-            @include collection-title-color($authors-collection);
+        #searchform > .navbar-nav {
+          width: 100%;
+          border: none;
         }
 
-        &#data-search-bar {
-            @include collection-title-color($data-collection);
-        } 
-
-        &#institutions-search-bar {
-            @include collection-title-color($institutions-collection);
+        #searchform-input-group input {
+          height: 50px;
+          font-size: 18px;
+          background-color: $page-background;
+          border: none;
+          box-shadow: none;
+          -webkit-box-shadow: none;
         }
-        
-        &#conferences-search-bar {
-            @include collection-title-color($conferences-collection);
-        }
+      }
 
-        &#jobs-search-bar {
-            @include collection-title-color($jobs-collection);
-        }
+      button {
+        border: 0;
+        font-size: 27px;
 
-        &#experiments-search-bar {
-            @include collection-title-color($experiments-collection);
+        &.literature-search-button {
+          @include collection-background-color($literature-collection);
         }
 
-        &#journals-search-bar {
-            @include collection-title-color($journals-collection);
+        &.authors-search-button {
+          @include collection-background-color($authors-collection);
         }
+
+        &.conferences-search-button {
+          @include collection-background-color($conferences-collection);
+        }
+
+        &.jobs-search-button {
+          @include collection-background-color($jobs-collection);
+        }
+
+        &.experiments-search-button {
+          @include collection-background-color($experiments-collection);
+        }
+
+        &.institutions-search-button {
+          @include collection-background-color($institutions-collection);
+        }
+
+        &.journals-search-button {
+          @include collection-background-color($journals-collection);
+        }
+
+        &.data-search-button {
+          @include collection-background-color($data-collection);
+        }
+      }
     }
-
-    #search-bar {
-        #search-box-main {
-            .navbar {
-                border: none;
-                margin-bottom: 0;
-                background-color: inherit;
-
-                .navbar-collapse {
-                    border: none;
-                }
-
-                #searchform > .navbar-nav {
-                    width: 100%;
-                    border: none; 
-                }
-
-                 #searchform-input-group input {
-                    height: 50px;
-                    font-size: 18px;
-                }
-            }
-
-            button {
-                border: 0;
-                font-size: 27px;
-
-                &.literature-search-button {
-                    @include collection-background-color($literature-collection);
-                }
-
-                &.authors-search-button {
-                    @include collection-background-color($authors-collection);
-                }
-
-                &.conferences-search-button {
-                    @include collection-background-color($conferences-collection);
-                }
-
-                &.jobs-search-button {
-                    @include collection-background-color($jobs-collection);
-                }
-
-                &.experiments-search-button {
-                    @include collection-background-color($experiments-collection);
-                }
-
-                &.institutions-search-button {
-                    @include collection-background-color($institutions-collection);
-                }
-
-                &.journals-search-button {
-                    @include collection-background-color($journals-collection);
-                }
-
-                &.data-search-button {
-                    @include collection-background-color($data-collection);
-                }
-            }
-        }
-    }
+  }
 }
 
 #collection-how-to-search {
 
-    background-color: white;
-    margin-top: 30px;
-    padding: 30px 20px 50px 20px;
-    box-shadow: 0 1px 1px rgba(0,0,0,.15);
+  background-color: white;
+  margin-top: 30px;
+  padding: 30px 20px 50px 20px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .15);
 
-    .title {
-        text-align: center;
-        margin-bottom: 20px;
-        letter-spacing: .03em;
-        font-weight: 500;
-        font-size: x-large;
+  .title {
+    text-align: center;
+    margin-bottom: 20px;
+    letter-spacing: .03em;
+    font-weight: 500;
+    font-size: x-large;
+  }
+
+  #left, #right {
+    text-align: left;
+
+    .subtitle {
+      font-size: larger;
+      color: grey;
+      margin-bottom: 5px;
     }
 
-    #left, #right {
-        text-align: left;
-
-        .subtitle {
-            font-size: larger;
-            color: grey;
-            margin-bottom: 5px; 
-        }
-
-        .useful-collection-link {
-            text-align: center;
-        }
-
-        .search-link {
-            margin-left: 20px;
-        }
+    .useful-collection-link {
+      text-align: center;
     }
-
-    #right {
-        div:nth-of-type(6) {
-            margin-top: 20px;
-        }
+    :not(.subtitle) {
+      margin-left: 20px;
     }
+  }
+  .search-link {
+    margin-left: 20px;
+  }
+}
+
+#right {
+  div:nth-of-type(6) {
+    margin-top: 20px;
+
+  }
 }
 
 #collection-authors-not-available, #collection-data-not-available {
-    @extend #collection-how-to-search;
-    padding-bottom: 25px;
+  @extend #collection-how-to-search;
+  padding-bottom: 25px;
 
-    .col-md-12 {
-        font-size: larger;
-        text-align: center;
-        margin-bottom: 20px;
+  .col-md-12 {
+    font-size: larger;
+    text-align: center;
+    margin-bottom: 20px;
 
-        a.btn {
-            color: white;
+    a.btn {
+      color: white;
 
-            &.btn-authors {
-                background-color: $authors-collection;
-            }
+      &.btn-authors {
+        background-color: $authors-collection;
+      }
 
-            &.btn-data {
-                background-color: $data-collection;
-            }
-        }
-
+      &.btn-data {
+        background-color: $data-collection;
+      }
     }
+
+  }
 }
+
+#landing-map {
+  margin-top: -42px;
+  width: 100%;
+  height: 300px;
+}
+
+.date {
+  background-color: $clouds;
+  padding: 2px 5px;
+  border-radius: 3px;
+  color: $blue;
+  display: inline-block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+#landing-map-info {
+  min-height: 40px;
+  margin-bottom: 30px;
+
+  &.conferences {
+    background-color: $conferences-collection;
+  }
+
+  &.institutions {
+    background-color: $institutions-collection;
+  }
+
+  &.experiments {
+    background-color: $experiments-collection;
+  }
+
+  p {
+    font-size: 1.2em;
+    padding: 10px;
+    color: white;
+  }
+}
+
+.subtitle {
+  font-size: .7em;
+  color: $grey;
+}
+
+.collection-block {
+  color: $blue;
+  min-height: 400px;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .15);
+
+  .contents {
+    height: 350px;
+    overflow-y: auto;
+  }
+}
+
+.conference-series {
+  .panel-heading {
+    background-color: $clouds;
+    h4 {
+      a {
+        color: $blue;
+      }
+      .badge {
+        background-color: $conferences-collection;
+        color: $blue;
+      }
+    }
+  }
+
+  ul {
+    list-style: none;
+    -webkit-padding-start: 10px;
+    font-weight: bolder;
+  }
+}
+
+.upcoming-conference {
+  padding-bottom: 30px;
+
+  display: block;
+  border-bottom: 1px solid $clouds;
+
+  &:not(:first-child) {
+    padding-top: 10px;
+  }
+
+  .details {
+    .acronym {
+      font-weight: bolder;
+    }
+
+    .date, .place {
+      font-size: .9em;
+      font-weight: bolder;
+      background-color: transparent;
+    }
+  }
+
+  .title {
+    margin-bottom: 5px;
+    font-size: 1.1em;
+  }
+
+  .url, .series {
+    font-size: .8em;
+  }
+
+  .series {
+    color: $grey;
+  }
+}
+
+

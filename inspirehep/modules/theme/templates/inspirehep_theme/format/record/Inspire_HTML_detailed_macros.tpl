@@ -185,33 +185,38 @@
 
 {% macro record_links(record) %}
   {% if record.get('urls') %}
+
     {% for url in record.get('urls') %}
-    {% if url.get('url') != None %}
-       {% if ( (loop.index == 1) and ( (url.get('url').startswith('http://www.adsabs.') or url.get('url').startswith('http://www-public.slac.stanford.edu') ) ) )  %}
-          View in
-        {% endif %}
-        {% if url.get('url').startswith('http://www.adsabs.') %}
-          <a href='{{ url.get('url') }}'>ADS</a>
-        {% endif %}
-        {% if url.get('url').startswith('http://www-public.slac.stanford.edu') %}
-          <a href='{{ url.get('url') }}'>SLAC</a>
-        {% endif %}
-        {% if url.get('url').startswith('http://www.ams.org') %}
-          <a href='{{ url.get('url') }}'>AMS MathSciNet</a>
-        {% endif %}
-        {% if url.get('url').startswith('http://www.zentralblatt-math.org') %}
-          <a href='{{ url.get('url') }}'>zbMATH</a>
-        {% endif %}
-        {% if url.get('url').startswith('http://projecteuclid.org') %}
-          <a href='{{ url.get('url') }}'>Project Euclid</a>
-        {% endif %}
-        {% if url.get('url').startswith('http://www-lib.kek.jp') %}
-          <a href='{{ url.get('url') }}'>KEK scanned document</a>
-        {% endif %}
-        {% if url.get('url').startswith('http://cds.cern.ch/record/') %}
-          <a href='{{ url.get('url') }}'>CDS</a>
-        {% endif %}
-     {% endif %}
+         {% if url is not none and url is mapping %}
+            {% if url.get('url') != None %}
+               {% if ( (loop.index == 1) and ( (url.get('url').startswith('http://www.adsabs.') or url.get('url').startswith('http://www-public.slac.stanford.edu') ) ) )  %}
+                  View in
+                {% endif %}
+                {% if url.get('url').startswith('http://www.adsabs.') %}
+                  <a href='{{ url.get('url') }}'>ADS</a>
+                {% endif %}
+                {% if url.get('url').startswith('http://www-public.slac.stanford.edu') %}
+                  <a href='{{ url.get('url') }}'>SLAC</a>
+                {% endif %}
+                {% if url.get('url').startswith('http://www.ams.org') %}
+                  <a href='{{ url.get('url') }}'>AMS MathSciNet</a>
+                {% endif %}
+                {% if url.get('url').startswith('http://www.zentralblatt-math.org') %}
+                  <a href='{{ url.get('url') }}'>zbMATH</a>
+                {% endif %}
+                {% if url.get('url').startswith('http://projecteuclid.org') %}
+                  <a href='{{ url.get('url') }}'>Project Euclid</a>
+                {% endif %}
+                {% if url.get('url').startswith('http://www-lib.kek.jp') %}
+                  <a href='{{ url.get('url') }}'>KEK scanned document</a>
+                {% endif %}
+                {% if url.get('url').startswith('http://cds.cern.ch/record/') %}
+                  <a href='{{ url.get('url') }}'>CDS</a>
+                {% endif %}
+             {% endif %}
+         {% else %}
+             <a href='{{ url }}'>{{url}}</a>
+         {% endif %}
     {% endfor %}
   {% endif %}
 {% endmacro %}
@@ -307,10 +312,13 @@
   {% set plotsCount = [0] %}
   {% if record.urls %}
     {% for url in record.get('urls') %}
-      {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
-        {% do plotExists.append(1) %}
-        {# increment plotsCount by 1 #}
-        {% if plotsCount.append(plotsCount.pop() + 1) %}{% endif %}
+       {% if url is not none and url is mapping and url.get('url') is not none %}
+
+          {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+            {% do plotExists.append(1) %}
+            {# increment plotsCount by 1 #}
+            {% if plotsCount.append(plotsCount.pop() + 1) %}{% endif %}
+          {% endif %}
       {% endif %}
     {% endfor %}
   {% endif %}
@@ -330,7 +338,7 @@
               <ul class="hide-bullets">
                 {% set count = 0 %}
                 {% for url in record.get('urls') %}
-                  {% if url.get('url') %}
+                   {% if url is not none and url is mapping %}
                     {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
                       <li class="col-sm-12 show-plots-thumbnails">
                         <a class="thumbnail" id="carousel-selector-{{ count }}">
@@ -350,7 +358,7 @@
                 <div class="carousel-inner">
                   {% set count = 0 %}
                   {% for url in record.get('urls')  %}
-                    {% if url.get('url') %}
+                    {% if url is not none and url is mapping %}
                       {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
                         <div class=" item {% if count == 0 %} active {% endif %}"
                              data-slide-number="{{ count }}">
@@ -375,13 +383,13 @@
             <div id="slide-content" style="display: none;">
               {% set count = 0 %}
               {% for url in record.get('urls') %}
-                {% if url.get('url') %}
-                  {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
-                  <div id="slide-content-{{ count }}">
-                    <span>{{ url.get('description')|strip_leading_number_plot_caption }}</span>
-                  </div>
-                  {% set count = count + 1 %}
-                  {% endif %}
+                 {% if url is not none and url is mapping %}
+                      {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+                         <div id="slide-content-{{ count }}">
+                            <span>{{ url.get('description')|strip_leading_number_plot_caption }}</span>
+                         </div>
+                         {% set count = count + 1 %}
+                      {% endif %}
                 {% endif %}
               {% endfor %}
             </div>

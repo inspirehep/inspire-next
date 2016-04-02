@@ -18,253 +18,232 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
-@media screen and (min-width: $screen-md-min) {
-
-    #search-results {
-        .col-md-3 {
-            width: 22%
-        }
-
-        .col-md-9 {
-            width: 78%;
-        }
-
-        .results-wrapper .col-md-3 {
-            width: 25%;
-        }
-    }
-}
-
 .custom-panel {
-    margin-bottom: 0px;
-    border: 0px;
-}
-
-#panel-default-brief {
-    margin-bottom: 10px;
-    border: 0px;
-
-    .col-md-9 {
-        width: 80%;
-    }
-
-    .col-md-3 {
-        width: 20%;
-    }
+  margin-bottom: 0px;
+  border: 0px;
 }
 
 a.link-to-pdf, button.dropdown-cite, a#cite-all-format {
-    background-color: $teal;
-    border: 0px;
-    color: $grey;
-    font-weight: 500;
+  background-color: $clouds;
+  border: 0px;
+  color: $grey;
+  font-weight: 500;
 }
 
 button.dropdown-cite:hover, a#cite-all-format:hover {
-    background-color: $blue-purple;
-    color: white;
+  background-color: $blue-purple;
+  color: white;
 }
 
 hr {
-    margin-top:0px;
+  margin-top: 0px;
+}
+
+.mobile-title {
+  display: none;
 }
 
 .custom-dropdown {
-    top: inherit;
+  top: inherit;
 }
 
 .left-column {
-    border-right: 1px solid #D3D3D3;
-    min-height: 114px;
+  border-right: 1px solid $silver;
 
-    .custom-h {
-        margin-top: 0;
-        font-size: 16px;
-        margin-bottom: 7px;
-    }
+  .custom-h {
+    margin-top: 0;
+    font-size: 16px;
+    margin-bottom: 7px;
+  }
 
-    .eprint, .authors {
-        margin-bottom: 10px;
-    }
+  .eprint, .authors {
+    margin-bottom: 10px;
+  }
 
-    .authors #record-date {
-        color: $grey;
-    }
+  .authors #record-date {
+    color: $grey;
+  }
 
-    div {
-        padding: 0;
-        margin: 0;
-    }
+  div {
+    padding: 0;
+    margin: 0;
+  }
 
-    .col-md-1 {
-        width: 3%;
-    }
-
-    .col-md-11 {
-        width: 97%;
-    }
-
-    .abstract {
-        color: #7e8d8e;
-        margin-top: 10px;
-    }
+  .abstract {
+    color: $concrete;
+    margin-top: 10px;
+  }
 }
 
 .pointer {
-    cursor:pointer;
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 992px) {
+  .right-column {
+    display: none;
+  }
 }
 
 /* Mobile styles
 -------------------------------------------------- */
-@media only screen and (max-width : $screen-md-min) {
+@media only screen and (max-width: $screen-md-min) {
 
-    #header-section {
-        padding-bottom: 50px;
-    }
+  .abstract {
+    display: none;
+  }
+  #header-section {
+    padding-bottom: 50px;
+  }
 
-    #search-results #results-control-panel .panel-body .row > div {
-        text-align: center;
-        margin-bottom: 10px;   
-    }
+  .left-column {
+    border-right: 0px;
+  }
+  #search-results #results-control-panel .panel-body .row > div {
+    text-align: center;
+    margin-bottom: 10px;
+  }
 }
 
 @media (max-width: 600px) {
 
-    #header-section {
-        padding-bottom: 100px;
-    }
+  #header-section {
+    padding-bottom: 100px;
+  }
 
-    #topnav {
-        padding-bottom: 45px;
-    }
+  #topnav {
+    padding-bottom: 45px;
+  }
 }
 
 @media screen and (min-width: $screen-sm-min) {
-    .brief-results-modal {
-        width:900px;
-    }
+  .brief-results-modal {
+    width: 900px;
+  }
 
 }
 
 .brief-results-modal {
-    width:75%;
+  width: 75%;
 }
 
 .record-brief-details {
-    font-size: 14px;
-    font-weight: 300;
+  font-size: 14px;
+  font-weight: 300;
 }
 
 #facetparent {
-    border-top: 3px solid;
-    background-color: #ffffff;
-    font-size: 13px;
+  border-top: 3px solid;
+  background-color: white;
+  font-size: 13px;
 
-    h4 {
-        font-size: 16px;
-    }
+  h4 {
+    font-size: 16px;
+  }
 
-    input.include-facet {
-        top: 1px;
-    }
+  input.include-facet {
+    top: 1px;
+  }
 
-    &.literature-facet {
-        border-color: $literature-collection;
-    }
+  &.literature-facet {
+    border-color: $literature-collection;
+  }
 
-    &.authors-facet {
-        border-color: $authors-collection;
-    }
+  &.authors-facet {
+    border-color: $authors-collection;
+  }
 
-    &.conferences-facet {
-        border-color: $conferences-collection;
-    }
+  &.conferences-facet {
+    border-color: $conferences-collection;
+  }
 
-    &.jobs-facet {
-        border-color: $jobs-collection;
-    }
+  &.jobs-facet {
+    border-color: $jobs-collection;
+  }
 
-    &.experiments-facet {
-        border-color: $experiments-collection;
-    }
+  &.experiments-facet {
+    border-color: $experiments-collection;
+  }
 
-    &.institutions-facet {
-        border-color: $institutions-collection;
-    }
+  &.institutions-facet {
+    border-color: $institutions-collection;
+  }
 
-    &.journals-facet {
-        border-color: $journals-collection;
-    }
+  &.journals-facet {
+    border-color: $journals-collection;
+  }
 
-    &.data-facet {
-        border-color: $data-collection;
-    }
+  &.data-facet {
+    border-color: $data-collection;
+  }
 }
 
 .facet-container {
-    color: $grey;
+  color: $grey;
 
-    .facet-label {
-        background-color: #edf3f3;
-        color: #7e8d8e;
-        letter-spacing: 0.04em;
+  .facet-label {
+    background-color: $clouds;
+    color: $concrete;
+    letter-spacing: 0.04em;
+  }
+
+  .facet-label.label-primary {
+    background-color: $wet-asphalt;
+    color: #fff;
+    letter-spacing: 0.04em;
+  }
+
+  label {
+    width: 100%;
+  }
+
+  .checkbox {
+    padding: 2px 3px;
+
+    &:hover {
+      background: $clouds;
     }
+  }
+}
 
-    .facet-label.label-primary {
-        background-color: #32495E;
-        color: #fff;
-        letter-spacing: 0.04em;
+#facet_list {
+  .panel-heading {
+    background-color: whiteSmoke;
+
+    a:after {
+      content: ' ';
+      float: right;
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      line-height: 14px;
+      vertical-align: text-top;
+      background-image: url("../img/glyphicons-halflings.png");
+      background-position: 14px 14px;
+      background-repeat: no-repeat;
+      /* list alt */
+      background-position: -264px -24px;
     }
-}
+  }
 
-#facet_list .panel-heading {
-  background-color: whiteSmoke;
-}
+  ul.list-unstyled ul.list-unstyled {
+    padding-left: 10px;
+    font-size: 90%;
+  }
 
-#facet_list .panel-heading a:after {
-  content: ' ';
-  float: right;
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  line-height: 14px;
-  vertical-align: text-top;
-  background-image: url("../img/glyphicons-halflings.png");
-  background-position: 14px 14px;
-  background-repeat: no-repeat;
-  /* list alt */
-  background-position: -264px -24px;
-}
+  .affix {
+    top: 28px;
+  }
 
-#facet_list ul.list-unstyled ul.list-unstyled {
-  padding-left: 10px;
-  font-size: 90%;
-}
-
-#facet_list.affix {
-  top: 28px;
-}
-
-#facet_list.affix-bottom {
-  position: absolute;
-  top: auto;
-  bottom: 170px;
-}
-
-.facet-container label{
-  width: 100%;
-}
-
-.facet-container .checkbox {
-  padding: 2px 3px;
-}
-
-.facet-container .checkbox:hover{
-  background: #eee;
+  .affix-bottom {
+    position: absolute;
+    top: auto;
+    bottom: 170px;
+  }
 }
 
 .facet-title-truncate {
-  width: 60%!important;
+  width: 60% !important;
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;
@@ -276,266 +255,434 @@ hr {
 }
 
 .total-results {
-    color:#e57e25;
+  color: $orange;
 }
 
 #panel-form-group {
-    display:block;
+  display: block;
 }
 
 .pagination {
-    margin: 0px;
+  margin: 0px;
 }
 
 #spinner-download {
-    display: none;
+  display: none;
 }
 
 .vcenter {
-    display: inline-block;
-    vertical-align: middle;
-    float: none;
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
 }
 
 #spinner-modal-download {
-    display: none;
+  display: none;
+}
+
+#results-control-panel {
+  border-top: 3px solid $concrete;
+}
+
+#results-control-panel, #results-bottom-panel {
+  margin-bottom: 10px;
+
+  .panel-body {
+    padding: 10px 15px;
+  }
+  .dropdown {
+    display: inline-block;
+  }
+
+  .form-control {
+    display: inline-block;
+    width: auto;
+  }
 }
 
 .fa-arrow-up {
-    display: none;
+  display: none;
 }
 
 #checkbox-parent {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 #panel-default-brief .panel-body {
-    padding: 0;
+  padding: 0;
 
-    .left-column {
-        padding: 10px 5px 10px 25px;
+  .left-column {
+    padding: 10px 5px 10px 25px;
+  }
+
+  .right-column {
+    padding: 10px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+
+    .citations-references {
+      position: absolute;
+      bottom: 15px;
+      font-size: 13px;
+
+      .glyphicon, .fa {
+        color: $grey;
+      }
     }
+  }
 
-    .right-column {
-        padding: 10px;
-        height: 100%;
-        position: absolute;
-        right: 0;
-
-        .citations-references {
-            position: absolute;
-            bottom: 15px;
-            font-size: 13px;
-
-            .glyphicon, .fa {
-                color: $grey;
-            }
-        }
-    }
-
-    .fa {
-        font-size: 11px;
-    }
+  .fa {
+    font-size: 11px;
+  }
 }
 
-
 #search_results #results-panel {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .total-results {
-    &.literature-results {
-        color: $literature-collection;
-    }
+  &.literature-results {
+    color: $literature-collection;
+  }
 
-    &.authors-results {
-        color: $authors-collection;
-    }
+  &.authors-results {
+    color: $authors-collection;
+  }
 
-    &.conferences-results {
-        color: $conferences-collection;
-    }
+  &.conferences-results {
+    color: $conferences-collection;
+  }
 
-    &.jobs-results {
-        color: $jobs-collection;
-    }
+  &.jobs-results {
+    color: $jobs-collection;
+  }
 
-    &.experiments-results {
-        color: $experiments-collection;
-    }
+  &.experiments-results {
+    color: $experiments-collection;
+  }
 
-    &.institutions-results {
-        color: $institutions-collection;
-    }
+  &.institutions-results {
+    color: $institutions-collection;
+  }
 
-    &.journals-results {
-        color: $journals-collection;
-    }
+  &.journals-results {
+    color: $journals-collection;
+  }
 
-    &.data-results {
-        color: $data-collection;
-    }
+  &.data-results {
+    color: $data-collection;
+  }
 }
 
 .checkbox-facets {
-    position: relative;
-    display: block;
-    margin-top: 0px;
-    margin-bottom: 10px;
+  position: relative;
+  display: block;
+  margin-top: 0px;
+  margin-bottom: 10px;
 }
 
 i.fa-chevron-down.facet-slider {
-    color: #7E8D8E;
+  color: $asbestos;
 }
 
 i.fa-chevron-right.facet-slider {
-    color: #7E8D8E;
+  color: $asbestos;
 }
 
 .no-results {
-    margin-left: -14px;
+  margin-left: -14px;
 }
 
 .text-prominent {
-    font-size: 18px;
+  font-size: 18px;
 }
 
 @media screen and (min-width: $screen-sm-min) {
-    .cite-modal {
-        width: 900px;
-    }
+  .cite-modal {
+    width: 900px;
+  }
 }
+
 #clear-facets-message {
-    color: #e67e24;
-    text-decoration: none;
+  color: $carrot;
+  text-decoration: none;
 }
 
 #clear-facets-info {
-    color: #7e8d8e;
+  color: $concrete;
 }
 
 .modal-dialog-scrollable {
-    overflow-y: initial !important
+  overflow-y: initial !important
 }
 
 .modal-body-scrollable {
-    max-height: 70vh;
-    overflow-y: auto;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 .modal-content-cite-all {
-    min-height: 400px;
+  min-height: 400px;
 }
 
 #editable-modal, #response-data {
-    min-height: 237px;   
+  min-height: 237px;
 }
 
 #spinner-modal-wait {
-    position: absolute;
-    display: none;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
+  position: absolute;
+  display: none;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
 }
 
 #spinner-message {
-    margin-left: -20%;
+  margin-left: -20%;
 }
 
 .abstract label {
-    font-weight: 500;
+  font-weight: 500;
 }
 
 .export-all-div {
-    padding-left: 9px;
+  padding-left: 9px;
 }
 
 .tooltip.bottom .tooltip-inner {
-    padding: 5px;
+  padding: 5px;
 }
+
 .hep#clear-facets-message {
-    color: $literature-collection;
+  color: $literature-collection;
 }
 
-.conferences#clear-facets-message {
-    color: $conferences-collection;
-}
+.institutions {
 
-.jobs#clear-facets-message {
-    color: $jobs-collection;
-}
-
-.institutions#clear-facets-message {
+  #clear-facets-message {
     color: $institutions-collection;
+  }
+
+  color: $blue;
+
+  .department {
+    font-size: .9em;
+  }
+
+  .details {
+    padding-bottom: 10px;
+    .address {
+      color: $grey;
+      i {
+        font-size: 1em;
+      }
+    }
+  }
+
 }
 
-.experiments#clear-facets-message {
-    color: $experiments-collection;
-}
+.journals {
 
-.journals#clear-facets-message {
+  color: $blue;
+
+  #clear-facets-message {
     color: $journals-collection;
+  }
+
+  .small-text {
+    color: $grey;
+  }
+
+  .publisher {
+    font-size: .9em;
+  }
 }
 
+.experiments {
+
+  #clear-facets-message {
+    color: $experiments-collection;
+  }
+
+  .place {
+    color: $grey;
+  }
+
+  .description {
+    color: $blue;
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: .8em;
+    max-height: 48px;
+    line-height: 17px;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .small-text {
+    color: $grey !important;
+  }
+}
+
+.jobs {
+  color: $blue;
+
+  .title {
+    font-size: 1.1em;
+  }
+
+  #clear-facets-message {
+    color: $jobs-collection;
+  }
+  .deadline-header {
+    margin-top: 10px;
+    color: $concrete;
+    font-weight: bolder;
+    text-transform: uppercase;
+
+    &.closed {
+      color: $alizarin;
+    }
+
+    &.open {
+      color: $turquoise;
+    }
+  }
+
+  .deadline-date {
+    font-weight: bolder;
+    color: $grey;
+
+    &.open {
+      color: $blue;
+    }
+  }
+
+  .details {
+    font-weight: bolder;
+    i {
+      font-size: 1em !important;
+    }
+
+    span {
+      margin-right: 10px;
+    }
+
+    .institution {
+      padding-top: 5px;
+      padding-bottom: 5px;
+      color: $grey !important;
+    }
+
+  }
+
+}
+
+.research-area {
+  list-style: none;
+  -webkit-padding-start: 0;
+  font-size: .9em;
+  font-weight: bolder;
+  color: $grey !important;
+
+  li {
+    display: inline-block;
+    text-align: center;
+    background-color: $clouds;
+
+    padding: 2px 4px;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    border-radius: 3px;
+  }
+}
+
+.conferences {
+  color: $blue;
+
+  #clear-facets-message {
+    color: $conferences-collection;
+  }
+
+  .series {
+    color: $grey;
+
+    a {
+      font-weight: bolder;
+    }
+  }
+
+  .conf-place, .conf-date {
+
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: .7em;
+    display: inline-block;
+  }
+}
+
+.journals
 .brief-record-details {
-    font-size: 13px;
+  font-size: 13px;
 }
 
 .authors {
-    color: $grey;
+  color: $grey;
 }
 
 .brief-results-sortby {
-	color: #737373;
+  color: $grey;
 }
 
 @media (min-width: 600px) {
 
-    #top-search-bar #searchform {
-        .navbar-form {
-            display: flex;
-        }
+  #top-search-bar #searchform {
+    .navbar-form {
+      display: flex;
     }
+  }
 }
 
 @media (min-width: $screen-sm-min) {
 
-    #top-search-bar {
+  #top-search-bar {
 
-        .navbar-form .input-group .form-control {
-            width: auto;
-        }
-
-        .navbar-form .input-group > .form-control {
-            width: 100%;
-        }
+    .navbar-form .input-group .form-control {
+      width: auto;
     }
+
+    .navbar-form .input-group > .form-control {
+      width: 100%;
+    }
+  }
 }
 
 #top-search-bar #searchform {
 
-    #searchform-input-group {
-        width: 100%;
-    }
+  #searchform-input-group {
+    width: 100%;
+  }
 }
+
 @media (min-width: $screen-sm-min) {
 
-    #top-search-bar {
+  #top-search-bar {
 
-        .navbar-form .input-group .form-control {
-            width: auto;
-        }
-
-        .navbar-form .input-group > .form-control {
-            width: 100%;
-        }
+    .navbar-form .input-group .form-control {
+      width: auto;
     }
+
+    .navbar-form .input-group > .form-control {
+      width: 100%;
+    }
+  }
 }
 
 #top-search-bar #searchform {
 
-    #searchform-input-group {
-        width: 100%;
-    }
+  #searchform-input-group {
+    width: 100%;
+  }
 }
