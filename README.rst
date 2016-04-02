@@ -32,7 +32,7 @@ Installation
 
 See the `install guide`_ here.
 
-.. _install guide: docs/installation.rst
+.. _install guide: ./INSTALL.rst
 
 ==============
 Happy hacking!
