@@ -42,7 +42,8 @@ from invenio_mail.tasks import send_email
 
 from flask.ext.menu import current_menu
 
-from inspirehep.modules.records.conference_series import CONFERENCE_CATEGORIES_TO_SERIES
+from inspirehep.modules.records.conference_series import \
+    CONFERENCE_CATEGORIES_TO_SERIES
 from inspirehep.modules.search.query import perform_query
 
 from invenio_search import current_search_client
@@ -50,13 +51,11 @@ from invenio_search import current_search_client
 from inspirehep.utils.date import datetime
 from inspirehep.utils.search import perform_es_search
 
-blueprint = Blueprint(
-        'inspirehep_theme',
-        __name__,
-        url_prefix='',
-        template_folder='templates',
-        static_folder='static',
-)
+blueprint = Blueprint('inspirehep_theme', __name__,
+                      url_prefix='',
+                      template_folder='templates',
+                      static_folder='static',
+                      )
 
 
 @blueprint.route('/literature', methods=['GET', ])
@@ -64,8 +63,9 @@ blueprint = Blueprint(
 @blueprint.route('/', methods=['GET', 'POST'])
 def index():
     """View for literature collection landing page."""
-    return render_template('inspirehep_theme/search/collection_literature.html',
-                           collection='hep')
+    return render_template(
+        'inspirehep_theme/search/collection_literature.html',
+        collection='hep')
 
 
 @blueprint.route('/authors', methods=['GET', ])
@@ -86,13 +86,15 @@ def conferences():
 
     six_months_str = (today + relativedelta(months=+6)).strftime('%Y-%m-%d')
 
-    upcoming_conferences = perform_es_search('opening_date:{0}->{1}'.format(today_str, six_months_str),
-                                             1, 100, 'conferences', 'opening_date:asc')
+    upcoming_conferences = perform_es_search(
+        'opening_date:{0}->{1}'.format(today_str, six_months_str),
+        1, 100, 'conferences', 'opening_date:asc')
 
-    return render_template('inspirehep_theme/search/collection_conferences.html',
-                           ctx={'conference_subject_areas': CONFERENCE_CATEGORIES_TO_SERIES,
-                                'results': upcoming_conferences},
-                           collection='conferences')
+    return render_template(
+        'inspirehep_theme/search/collection_conferences.html',
+        ctx={'conference_subject_areas': CONFERENCE_CATEGORIES_TO_SERIES,
+             'results': upcoming_conferences},
+        collection='conferences')
 
 
 @blueprint.route('/jobs', methods=['GET', ])
@@ -106,30 +108,33 @@ def institutions():
     """View for institutions collection landing page."""
     institutions_list = perform_es_search('', 1, 250, 'institutions')
 
-    return render_template('inspirehep_theme/search/collection_institutions.html',
-                           ctx={'results': institutions_list},
-                           collection='institutions')
+    return render_template(
+        'inspirehep_theme/search/collection_institutions.html',
+        ctx={'results': institutions_list}, collection='institutions')
 
 
 @blueprint.route('/experiments', methods=['GET', ])
 def experiments():
     """View for experiments collection landing page."""
-    return render_template('inspirehep_theme/search/collection_experiments.html',
-                           collection='experiments')
+    return render_template(
+        'inspirehep_theme/search/collection_experiments.html',
+        collection='experiments')
 
 
 @blueprint.route('/journals', methods=['GET', ])
 def journals():
     """View for journals collection landing page."""
-    return render_template('inspirehep_theme/search/collection_journals.html',
-                           collection='journals')
+    return render_template(
+        'inspirehep_theme/search/collection_journals.html',
+        collection='journals')
 
 
 @blueprint.route('/data', methods=['GET', ])
 def data():
     """View for data collection landing page."""
-    return render_template('inspirehep_theme/search/collection_data.html',
-                           collection='data')
+    return render_template(
+        'inspirehep_theme/search/collection_data.html',
+        collection='data')
 
 
 #

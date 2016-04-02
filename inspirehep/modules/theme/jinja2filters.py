@@ -93,7 +93,6 @@ def collection_to_index(collection_name):
 @blueprint.app_template_filter()
 @evalcontextfilter
 def join_array(eval_ctx, value, separator):
-
     from jinja2.filters import do_join
 
     if isinstance(value, basestring):
@@ -112,10 +111,8 @@ def new_line_after(text):
 @blueprint.app_template_filter()
 def email_links(value):
     """Return array of links to record emails."""
-    return apply_template_on_array(
-        value,
-        'inspirehep_theme/format/record/field_templates/email.tpl'
-    )
+    return apply_template_on_array(value,
+                                   'inspirehep_theme/format/record/field_templates/email.tpl')
 
 
 @blueprint.app_template_filter()
@@ -123,9 +120,9 @@ def url_links(record):
     """
         returns array of links to record emails
     """
-    return apply_template_on_array([url["value"] for url in
-                                    record.get('urls', [])],
-                                   'inspirehep_theme/format/record/field_templates/link.tpl')
+    return apply_template_on_array(
+        [url["value"] for url in record.get('urls', [])],
+        'inspirehep_theme/format/record/field_templates/link.tpl')
 
 
 @blueprint.app_template_filter()
@@ -133,8 +130,9 @@ def institutes_links(record):
     """
         returns array of links to record institutes
     """
-    return apply_template_on_array(record.get('institute', []),
-                                   'inspirehep_theme/format/record/field_templates/institute.tpl')
+    return apply_template_on_array(
+        record.get('institute', []),
+        'inspirehep_theme/format/record/field_templates/institute.tpl')
 
 
 @blueprint.app_template_filter()
@@ -142,8 +140,9 @@ def author_profile(record):
     """
         returns array of links to record profiles of authores
     """
-    return apply_template_on_array(record.get('profile', []),
-                                   'inspirehep_theme/format/record/field_templates/author_profile.tpl')
+    return apply_template_on_array(
+        record.get('profile', []),
+        'inspirehep_theme/format/record/field_templates/author_profile.tpl')
 
 
 @blueprint.app_template_filter()
@@ -250,22 +249,22 @@ def conference_date(record):
             closing_date, "%Y-%m-%d")
         if opening_date.split('-')[0] == closing_date.split('-')[0]:
             if opening_date.split('-')[1] == closing_date.split('-')[1]:
-                out += opening_date.split('-')[2] + '-' +\
-                    closing_date.split('-')[2] +\
-                    ' ' + converted_opening_date.strftime('%b') +\
+                out += opening_date.split('-')[2] + '-' + \
+                    closing_date.split('-')[2] + \
+                    ' ' + converted_opening_date.strftime('%b') + \
                     ' ' + opening_date.split('-')[0]
             else:
-                out += opening_date.split('-')[2] + ' '\
-                    + converted_opening_date.strftime('%b') + ' - ' +\
-                    closing_date.split('-')[2] + ' ' +\
-                    converted_closing_date.strftime('%b') + ' ' +\
+                out += opening_date.split('-')[2] + ' ' \
+                    + converted_opening_date.strftime('%b') + ' - ' + \
+                    closing_date.split('-')[2] + ' ' + \
+                    converted_closing_date.strftime('%b') + ' ' + \
                     opening_date.split('-')[0]
         else:
-            out += opening_date.split('-')[2] + ' ' +\
-                converted_opening_date.strftime('%b') + ' '\
+            out += opening_date.split('-')[2] + ' ' + \
+                converted_opening_date.strftime('%b') + ' ' \
                 + opening_date.split('-')[0] + ' - ' + \
-                closing_date.split('-')[2] + ' ' +\
-                converted_closing_date.strftime('%b') + ' ' +\
+                closing_date.split('-')[2] + ' ' + \
+                converted_closing_date.strftime('%b') + ' ' + \
                 closing_date.split('-')[0]
     return out
 
@@ -274,8 +273,7 @@ def conference_date(record):
 def search_for_experiments(value):
     result = ', '.join([
         '<a href="/search?p=experiment_name:%s&cc=Experiments">%s</a>'
-        % (i, i)
-        for i in value])
+        % (i, i) for i in value])
     return result
 
 
@@ -397,10 +395,10 @@ def link_to_hep_affiliation(record):
 
     if len(records):
         if len(records) == 1:
-            return str(len(records)) + ' Paper from ' +\
+            return str(len(records)) + ' Paper from ' + \
                 str(record['ICN'])
         else:
-            return str(len(records)) + ' Papers from ' +\
+            return str(len(records)) + ' Papers from ' + \
                 str(record['ICN'])
     else:
         return ''
@@ -485,7 +483,7 @@ def author_urls(l, separator):
     result = []
     for name in l:
         if 'name' in name:
-            url = '<a href="/search?ln=en&amp;cc=HepNames&amp;p=name:'\
+            url = '<a href="/search?ln=en&amp;cc=HepNames&amp;p=name:' \
                   + name['name'] + '&amp;of=hd">' + name['name'] + '</a>'
             result.append(url)
     return separator.join(result)
@@ -518,7 +516,7 @@ def ads_links(record):
     if lastname:
         lastname = re.sub('\s+', '+', lastname)
         link = "%sauthor=%s,+%s&fullauthor=%s,+%s" % \
-            (ADSURL, lastname, initial, lastname, firstnames)
+               (ADSURL, lastname, initial, lastname, firstnames)
     else:
         if 'name' in record:
             # XXX(jacquerie): should escape whitespace?
@@ -585,6 +583,7 @@ def strip_leading_number_plot_caption(text):
 def json_dumps(data):
     return json.dumps(data)
 
+
 @blueprint.app_template_filter()
 def publication_info(record):
     """Displays inline publication and conference information"""
@@ -641,8 +640,7 @@ def publication_info(record):
                         break
                     else:
                         if 'page_artid' in pub_info:
-                            ctx.update(
-                                {"page_artid": pub_info['page_artid']})
+                            ctx.update({"page_artid": pub_info['page_artid']})
                         result['conf_info'] = render_macro_from_template(
                             name="conf_without_pub_info",
                             template="inspirehep_theme/format/record/Conference_info_macros.tpl",
@@ -667,9 +665,9 @@ def publication_info(record):
                 try:
                     ctx = {
                         "parent_recid": parent_recid,
-                        "parent_title": parent_rec['titles'][0]['title']
-                        .replace(
-                            "Proceedings, ", "", 1),
+                        "parent_title":
+                            parent_rec['titles'][0]['title'].replace(
+                                "Proceedings, ", "", 1),
                         "pub_info": bool(result.get('pub_info', ''))
                     }
                     result['conf_info'] = render_macro_from_template(

@@ -29,12 +29,11 @@ from inspirehep.modules.search.query import perform_query
 def perform_es_search(query_string, page, size, collection, sort=''):
     query, qs_kwargs = perform_query(query_string, page, size)
     search_result = current_search_client.search(
-            index='records-{0}'.format(collection),
-            doc_type=collection,
-            sort=sort,
-            body=query.body,
-            version=True,
-    )
+        index='records-{0}'.format(collection),
+        doc_type=collection,
+        sort=sort,
+        body=query.body,
+        version=True)
 
     results = [hit['_source'] for hit in search_result['hits']['hits']]
     return results

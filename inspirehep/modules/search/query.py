@@ -111,10 +111,7 @@ def perform_query(query_string, page, size):
     try:
         query = InspireQuery(query_string)[(page - 1) * size:page * size]
     except SyntaxError:
-        current_app.logger.debug(
-                "Failed parsing query: {0}".format(
-                        request.values.get('q', '')),
-                exc_info=True)
+        current_app.logger.debug("Failed parsing query: {0}".format(
+            request.values.get('q', '')), exc_info=True)
         raise InvalidQueryRESTError()
-
-    return (query, {'q': query_string})
+    return query, {'q': query_string}
