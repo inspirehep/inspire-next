@@ -27,12 +27,6 @@
 from flask_assets import Bundle
 from invenio_assets import NpmBundle
 
-css = Bundle(
-    'scss/search/search.scss',
-    filters='scss, cleancss',
-    output='gen/search.%(version)s.css'
-)
-
 js = NpmBundle(
     'js/search/app.js',
     filters='requirejs',

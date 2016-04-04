@@ -25,10 +25,6 @@
 
 {% extends config.SEARCH_UI_BASE_TEMPLATE %}
 
-{%- block css %}
-    {{ super() }}
-    {% assets "invenio_search_ui_search_css" %}<link href="{{ ASSET_URL }}" rel="stylesheet">{% endassets %}
-{%- endblock css %}
 
 {%- block javascript %}
   {{ super() }}

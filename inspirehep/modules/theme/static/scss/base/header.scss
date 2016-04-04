@@ -125,12 +125,13 @@ body {
 
 #collections-section #collections-nav {
 
-    position: static;
+    position: fixed;
     background-color: white;
     z-index: 500;
     height: 30px;
     margin-bottom: 45px;
     box-shadow: -3px -3px 3px 0 rgba(0,0,0,0.19) , 3px 0 3px 0 rgba(0,0,0,0.19) , 0 3px 3px 0 rgba(0,0,0,0.23);
+    width: 100%;
 
     a {
         color: black;
