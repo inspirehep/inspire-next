@@ -43,25 +43,25 @@ def search():
     collection = request.values.get('cc', 'hep', type=unicode).lower()
     ctx = {}
     if collection == 'conferences':
-        ctx['search_api'] = '/api/conferences'
+        ctx['search_api'] = '/api/conferences/'
         return render_template('search/search_conferences.html', **ctx)
     if collection == 'authors':
-        ctx['search_api'] = '/api/authors'
+        ctx['search_api'] = '/api/authors/'
         return render_template('search/search_authors.html', **ctx)
     if collection == 'data':
-        ctx['search_api'] = '/api/data'
+        ctx['search_api'] = '/api/data/'
         return render_template('search/search_data.html', **ctx)
     if collection == 'experiments':
-        ctx['search_api'] = '/api/experiments'
+        ctx['search_api'] = '/api/experiments/'
         return render_template('search/search_experiments.html', **ctx)
     if collection == 'institutions':
-        ctx['search_api'] = '/api/institutions'
+        ctx['search_api'] = '/api/institutions/'
         return render_template('search/search_institutions.html', **ctx)
     if collection == 'journals':
-        ctx['search_api'] = '/api/journals'
+        ctx['search_api'] = '/api/journals/'
         return render_template('search/search_journals.html', **ctx)
     if collection == 'jobs':
-        ctx['search_api'] = '/api/jobs'
+        ctx['search_api'] = '/api/jobs/'
         return render_template('search/search_jobs.html', **ctx)
 
     ctx['search_api'] = current_app.config['SEARCH_UI_SEARCH_API']
