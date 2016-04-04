@@ -484,7 +484,7 @@ def author_urls(l, separator):
     for name in l:
         if 'name' in name:
             url = '<a href="/search?ln=en&amp;cc=HepNames&amp;p=name:' \
-                  + name['name'] + '&amp;of=hd">' + name['name'] + '</a>'
+                + name['name'] + '&amp;of=hd">' + name['name'] + '</a>'
             result.append(url)
     return separator.join(result)
 
@@ -706,18 +706,22 @@ def format_date(datetext):
 @blueprint.app_template_filter()
 def find_collection_from_url(url):
     """Returns the collection based on the URL."""
-    if url.find('/literature/'):
+    if 'hep' in url or 'literature' in url:
         return 'literature'
-    elif url.find('/jobs/'):
-        return 'jobs'
-    elif url.find('/institutions/'):
-        return 'institutions'
-    elif url.find('/journals/'):
-        return 'journals'
-    elif url.find('/experiments/'):
-        return 'experiments'
-    elif url.find('/conferences/'):
+    elif 'conferences' in url:
         return 'conferences'
+    elif 'jobs' in url:
+        return 'jobs'
+    elif 'institutions' in url:
+        return 'institutions'
+    elif 'journals' in url:
+        return 'journals'
+    elif 'experiments' in url:
+        return 'experiments'
+    elif 'conferences' in url:
+        return 'conferences'
+    elif 'authors' in url:
+        return 'authors'
 
 
 @blueprint.app_template_filter()
@@ -729,19 +733,22 @@ def show_citations_number(citation_count):
 @blueprint.app_template_filter()
 def is_external_link(url):
     """Checks if given url is an external link."""
-    return (url.startswith('http') and not url.endswith(('.pdf', '.png', '.jpg', '.jpeg')))
+    return (url.startswith('http') and not url.endswith(
+            ('.pdf', '.png', '.jpg', '.jpeg')))
 
 
 @blueprint.app_template_filter()
 def is_institute(institute):
     """Checks if given string is an institute."""
-    return institute.lower() in ['kekscan', 'ads', 'cds', 'hal', 'msnet', 'msnet']
+    return institute.lower() in ['kekscan', 'ads', 'cds', 'hal', 'msnet',
+                                 'msnet']
 
 
 @blueprint.app_template_filter()
 def weblinks(description):
     """Renames external links based on the description given."""
-    value = current_app.extensions.get('inspire-theme').weblinks.get(description)
+    value = current_app.extensions.get('inspire-theme').weblinks.get(
+        description)
     if value:
         return value.rstrip()
     if description:
