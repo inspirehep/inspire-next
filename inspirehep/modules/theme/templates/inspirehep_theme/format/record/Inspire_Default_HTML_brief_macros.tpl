@@ -17,19 +17,6 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% macro render_doi(record) %}
-    {% set filtered_doi = record.get('dois.value')|remove_duplicates() %}
-    DOI: 
-    {% for doi in filtered_doi %}
-      {% if not loop.first %}
-        , 
-      {% endif %}
-      {% if not doi | has_space() %}
-        <a href="http://dx.doi.org/{{ doi |trim()|safe}}" title="DOI" >{{ doi }}</a>
-      {% endif %}
-    {% endfor %}
-{% endmacro %}
-
 {% macro record_journal_info(record) %}
   {% set pub_info = record|publication_info %}
   {% if pub_info['pub_info'] %}

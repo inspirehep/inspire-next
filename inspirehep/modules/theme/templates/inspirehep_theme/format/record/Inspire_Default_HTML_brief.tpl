@@ -19,7 +19,7 @@
 
 {% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, render_record_authors, record_abstract, record_arxiv, record_report_numbers, record_cite_modal with context %}
 
-{% from "inspirehep_theme/format/record/Inspire_Default_HTML_brief_macros.tpl" import record_journal_info, render_doi, record_journal_info_and_doi with context %}
+{% from "inspirehep_theme/format/record/Inspire_Default_HTML_brief_macros.tpl" import record_journal_info, record_journal_info_and_doi with context %}
 
 {% macro brief_format(record) %}
 {% set pub_info = record|publication_info %}
