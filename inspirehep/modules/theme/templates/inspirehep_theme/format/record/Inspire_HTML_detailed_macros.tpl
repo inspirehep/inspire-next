@@ -184,41 +184,101 @@
 {% endmacro%}
 
 {% macro record_links(record) %}
-  {% if record.get('urls') %}
+  {% set viewInDisplayed = [] %}
+  {% set comma = joiner() %}
 
+  {% if record.get('urls') %}
     {% for url in record.get('urls') %}
-         {% if url is not none and url is mapping %}
-            {% if url.get('url') != None %}
-               {% if ( (loop.index == 1) and ( (url.get('url').startswith('http://www.adsabs.') or url.get('url').startswith('http://www-public.slac.stanford.edu') ) ) )  %}
-                  View in
-                {% endif %}
-                {% if url.get('url').startswith('http://www.adsabs.') %}
-                  <a href='{{ url.get('url') }}'>ADS</a>
-                {% endif %}
-                {% if url.get('url').startswith('http://www-public.slac.stanford.edu') %}
-                  <a href='{{ url.get('url') }}'>SLAC</a>
-                {% endif %}
-                {% if url.get('url').startswith('http://www.ams.org') %}
-                  <a href='{{ url.get('url') }}'>AMS MathSciNet</a>
-                {% endif %}
-                {% if url.get('url').startswith('http://www.zentralblatt-math.org') %}
-                  <a href='{{ url.get('url') }}'>zbMATH</a>
-                {% endif %}
-                {% if url.get('url').startswith('http://projecteuclid.org') %}
-                  <a href='{{ url.get('url') }}'>Project Euclid</a>
-                {% endif %}
-                {% if url.get('url').startswith('http://www-lib.kek.jp') %}
-                  <a href='{{ url.get('url') }}'>KEK scanned document</a>
-                {% endif %}
-                {% if url.get('url').startswith('http://cds.cern.ch/record/') %}
-                  <a href='{{ url.get('url') }}'>CDS</a>
-                {% endif %}
-             {% endif %}
-         {% else %}
-             <a href='{{ url }}'>{{url}}</a>
-         {% endif %}
+      {% if url is not none and url.get('url') | is_external_link and url is mapping %}
+        {% if url.get('url') != None %}
+          {% set actual_url = url.get('url') %}
+          {% set isExternalUrl = actual_url | is_external_link %}
+          {% if isExternalUrl and not viewInDisplayed %}
+            View in
+            {% do viewInDisplayed.append(1) %}
+          {% endif %}
+          {{ comma() }}
+          <a href='{{ actual_url }}'>{{ url.get('description') | weblinks }}</a>
+        {% endif %}  
+      {% endif %}
     {% endfor %}
   {% endif %}
+
+  {% if record.get('external_system_numbers') %}
+    {% for system_number in record.get('external_system_numbers') if system_number.get('obsolete') == False and system_number.get('institute') | is_institute %}
+      {% if not viewInDisplayed and not isExternalUrl %}
+        View in
+        {% do viewInDisplayed.append(1) %}
+      {% endif %}
+
+      {% set ads = 'http://adsabs.harvard.edu/abs/' %}
+      {% set cds = 'http://cds.cern.ch/record/' %}
+      {% set euclid = 'http://projecteuclid.org/' %}
+      {% set hal = 'https://hal.archives-ouvertes.fr/' %}
+      {% set kek = 'http://www-lib.kek.jp/cgi-bin/img_index?' %}
+      {% set msnet = 'http://www.ams.org/mathscinet-getitem?mr=' %}
+      {% set zblatt = 'http://www.zentralblatt-math.org/zmath/en/search/?an=' %}
+      {% set adsLinked = [] %}
+
+      {% if (system_number.get('institute') | lower) == 'kekscan' %}
+        {{ comma() }}
+        <a href='{{ kek }}{{system_number.get('value')}}'>
+          KEK scanned document
+        </a>
+      {% elif (system_number.get('institute') | lower) == 'cds' %}
+        {{ comma() }}
+        <a href='{{ cds }}{{system_number.get('value')}}'>
+          CERN Document Server
+        </a>
+      {% elif (system_number.get('institute') | lower) == 'ads' %}
+        {{ comma() }}
+        <a href='{{ ads }}{{system_number.get('value')}}'>
+          ADS Abstract Service
+        </a>
+        {% do adsLinked.append(1) %}
+      {# HAL: Show only if user is admin - still valid? #}
+      {% elif (system_number.get('institute') | lower) == 'hal' %}
+        {{ comma() }}
+        <a href='{{ hal }}{{system_number.get('value')}}'>
+          HAL Archives Ouvertes
+        </a>
+      {% elif (system_number.get('institute') | lower) == 'msnet' %}
+        {{ comma() }}
+        <a href='{{ msnet }}{{system_number.get('value')}}'>
+          AMS MathSciNet
+        </a>
+      {% elif (system_number.get('institute') | lower) == 'zblatt' %}
+        {{ comma() }}
+        <a href='{{ zblatt }}{{system_number.get('value')}}'>
+          zbMATH
+        </a>
+      {% elif (system_number.get('institute') | lower) == 'euclid' %}
+        {{ comma() }}
+        <a href='{{ euclid }}{{system_number.get('value')}}'>
+          Project Euclid
+        </a>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {# Fallback ADS link via arXiv:e-print #}
+  {% if not adsLinked %}
+    {% set ads = 'http://adsabs.harvard.edu/abs/' %}
+      {% if record.get('arxiv_eprints') | is_list() %}
+        {% if not viewInDisplayed %}
+          View in
+          {% do viewInDisplayed.append(1) %}
+        {% endif %}
+        {% set filtered_arxiv = record.get('arxiv_eprints') %}
+        {% for report_number in filtered_arxiv %}
+          {{ comma() }}
+          <a href='{{ ads }}{{report_number.get('value')}}'>
+            ADS Abstract Service
+          </a>
+        {% endfor %}
+      {% endif %}
+    {% endif %}
+
 {% endmacro %}
 
 {% macro record_references(record) %}
