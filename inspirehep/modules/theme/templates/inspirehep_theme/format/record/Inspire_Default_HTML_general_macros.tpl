@@ -217,19 +217,21 @@
 {% endmacro %}
 
 {% macro mathjax() %}
-<script src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <script type="text/javascript">
   require([
     "jquery",
     ], function ($) {
       $(document).ready(function () {
-        MathJax.Hub.Config({
-          tex2jax: {inlineMath: [['$', '$'], ['\\(', '\\)']],
-          processEscapes: true},
-          showProcessingMessages: false,
-          messageStyle: "none"
+        var mathJaxURL = "//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+        $.getScript(mathJaxURL, function() {
+          MathJax.Hub.Config({
+            tex2jax: {inlineMath: [['$', '$'], ['\\(', '\\)']],
+            processEscapes: true},
+            showProcessingMessages: false,
+            messageStyle: "none"
+          });
+          MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         });
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
       })
     }
   );
