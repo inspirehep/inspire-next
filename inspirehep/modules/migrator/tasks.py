@@ -26,10 +26,16 @@ import gzip
 import re
 import traceback
 import zlib
+import click
 
 from celery.utils.log import get_task_logger
 
+from collections import Counter
+
 from dojson.contrib.marc21.utils import create_record as marc_create_record
+
+from elasticsearch.helpers import bulk as es_bulk
+from elasticsearch.helpers import scan as es_scan
 
 from flask import current_app, url_for
 
@@ -49,7 +55,10 @@ from celery import shared_task
 # from invenio_ext.es import es
 from invenio_db import db
 
+from invenio_pidstore.models import PersistentIdentifier, NoResultFound
 from invenio_records import Record
+from invenio_search import current_search_client
+from invenio_search.utils import schema_to_index
 
 from six import string_types, text_type
 
@@ -254,7 +263,6 @@ def continuous_migration():
 @shared_task(ignore_result=False, compress='zlib', acks_late=True)
 def migrate_chunk(chunk, broken_output=None, dry_run=False):
     from invenio_indexer.api import RecordIndexer
-    from invenio_records.api import Record
 
     from ..pidstore.minters import inspire_recid_minter
 
@@ -288,26 +296,28 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
 
 @shared_task()
 def add_citation_counts():
-    from elasticsearch.helpers import bulk as es_bulk
-    from elasticsearch.helpers import scan as es_scan
-    from collections import Counter
+    index, doc_type = schema_to_index('records/hep.json')
 
     def get_records_to_update_generator(citation_lookup):
         for recid, citation_count in citation_lookup.iteritems():
-            yield {'_op_type': 'update',
-                   '_index': 'hep',
-                   '_type': 'record',
-                   '_id': recid,
-                   'doc': {'citation_count': citation_count}
-                   }
+            try:
+                uuid = PersistentIdentifier.query.filter(PersistentIdentifier.object_type == "rec", PersistentIdentifier.pid_value == str(recid)).one().object_uuid
+                yield {'_op_type': 'update',
+                       '_index': index,
+                       '_type': doc_type,
+                       '_id': str(uuid),
+                       'doc': {'citation_count': citation_count}
+                       }
+            except NoResultFound:
+                continue
 
-    logger.info("Extracting all citations...")
+    click.echo("Extracting all citations...")
 
     # lookup dictionary where key: recid of the record
     # and value: number of records that cite that record
     citations_lookup = Counter()
-    for i, record in enumerate(es_scan(
-            es,
+    with click.progressbar(es_scan(
+            current_search_client,
             query={
                 "_source": "references.recid",
                 "filter": {
@@ -318,33 +328,30 @@ def add_citation_counts():
                 "size": LARGE_CHUNK_SIZE
             },
             scroll=u'2m',
-            index="hep",
-            doc_type="record")):
+            index=index,
+            doc_type=doc_type)) as records:
+        for record in records:
+            # update lookup dictionary based on references of the record
+            if 'references' in record['_source']:
+                unique_refs_ids = set()
+                references = record['_source']['references']
+                for reference in references:
+                    recid = reference.get('recid')
+                    if recid:
+                        if isinstance(recid, list):
+                            # Sometimes there is more than one recid in the
+                            # reference.
+                            recid = recid.pop()
+                        unique_refs_ids.add(recid)
 
-        # update lookup dictionary based on references of the record
-        if 'references' in record['_source']:
-            unique_refs_ids = set()
-            references = record['_source']['references']
-            for reference in references:
-                recid = reference.get('recid')
-                if recid:
-                    if isinstance(recid, list):
-                        # Sometimes there is more than one recid in the
-                        # reference.
-                        recid = recid.pop()
-                    unique_refs_ids.add(recid)
+            for unique_refs_id in unique_refs_ids:
+                citations_lookup[unique_refs_id] += 1
 
-        for unique_refs_id in unique_refs_ids:
-            citations_lookup[unique_refs_id] += 1
+    click.echo("... DONE.")
+    click.echo("Adding citation numbers...")
 
-        if (i + 1) % LARGE_CHUNK_SIZE == 0:
-            logger.info("Extracted citations from {} records".format(i + 1))
-
-    logger.info("... DONE.")
-    logger.info("Adding citation numbers...")
-
-    success, failed = es_bulk(es, get_records_to_update_generator(citations_lookup), raise_on_exception=False, raise_on_error=False, stats_only=True)
-    logger.info("... DONE: {} records updated with success. {} failures.".format(success, failed))
+    success, failed = es_bulk(current_search_client, get_records_to_update_generator(citations_lookup), raise_on_exception=True, raise_on_error=True, stats_only=True)
+    click.echo("... DONE: {} records updated with success. {} failures.".format(success, failed))
 
 
 def create_record(record, force=True, dry_run=False):
