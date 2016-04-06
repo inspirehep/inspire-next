@@ -36,10 +36,12 @@ require.config({
     hgn: 'node_modules/requirejs-hogan-plugin/hgn',
     hogan: 'node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.amd',
     inspirehep: 'node_modules/inspirehep-js/dist/inspirehep',
+    'inspirehep-clipboard': 'js/inspire_clipboard',
     'inspirehep-search': 'node_modules/inspirehep-search-js/dist/inspirehep-search',
     'invenio-search': 'node_modules/invenio-search-js/dist/invenio-search-js',
     jquery: 'node_modules/jquery/jquery',
     moment: 'node_modules/moment/moment',
+    'ngclipboard': 'node_modules/ngclipboard/src/ngclipboard',
     text: 'node_modules/requirejs-hogan-plugin/text',
     toastr: 'node_modules/toastr/toastr',
     typeahead: 'node_modules/typeahead.js/dist/typeahead.bundle'
@@ -66,16 +68,19 @@ require.config({
       exports: '$.fn.multiselect'
     },
     'inspirehep': {
-      deps: ['angular', 'angular-ui-bootstrap']
+      deps: ['angular', 'angular-ui-bootstrap', 'ngclipboard']
     },
     'inspirehep-search': {
-        deps: ['angular', 'angular-sanitize', 'angular-ui-bootstrap']
+        deps: ['angular', 'angular-sanitize', 'angular-ui-bootstrap', 'ngclipboard']
     },
     'invenio-search': {
         deps: ['angular']
     },
     jquery: {
       exports: '$'
+    },
+    'ngclipboard': {
+        deps: ['angular', 'inspirehep-clipboard']
     },
     typeahead: {
       deps: ['jquery'],

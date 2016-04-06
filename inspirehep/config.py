@@ -256,6 +256,18 @@ RECORDS_REST_ENDPOINTS = dict(
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
+            'application/x-bibtex': ('inspirehep.modules.records.serializers'
+                                     ':bibtex_v1_response'),
+            'application/x-latexeu': ('inspirehep.modules.records.serializers'
+                                      ':latexeu_v1_response'),
+            'application/x-latexus': ('inspirehep.modules.records.serializers'
+                                      ':latexus_v1_response'),
+            'application/x-cvformatlatex': ('inspirehep.modules.records.serializers'
+                                            ':cvformatlatex_v1_response'),
+            'application/x-cvformathtml': ('inspirehep.modules.records.serializers'
+                                           ':cvformathtml_v1_response'),
+            'application/x-cvformattext': ('inspirehep.modules.records.serializers'
+                                           ':cvformattext_v1_response')
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'

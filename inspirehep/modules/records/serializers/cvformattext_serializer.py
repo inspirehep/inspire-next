@@ -22,17 +22,21 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""UI for Invenio-Search."""
+"""Cv_format_text serializer for records."""
 
-from flask_assets import Bundle
-from invenio_assets import NpmBundle
+from __future__ import absolute_import, print_function
 
-js = NpmBundle(
-    'js/search/app.js',
-    filters='requirejs',
-    output='gen/search.%(version)s.js',
-    npm={
-        'invenio-search-js': '~0.1.0',
-        'inspirehep-search-js': 'git+https://git@github.com/inspirehep/inspirehep-search-js.git'
-    },
-)
+from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
+
+
+class CVFORMATTEXTSerializer(object):
+    """Cv_format_text serializer for records."""
+
+    def serialize(self, pid, record, links_factory=None):
+        """Serialize a single cv_format_text from a record.
+        :param pid: Persistent identifier instance.
+        :param record: Record instance.
+        :param links_factory: Factory function for the link generation,
+                              which are added to the response.
+        """
+        return Cv_latex_html_text(record, 'cv_latex_text', '\n').format()

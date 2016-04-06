@@ -92,6 +92,12 @@
           {%- endif %}
           {%- endblock search_sort %}
         </div>
+        <hr>
+        {% if not  request.args.get('cc') or request.args.get('cc') in ('hep', '') %}
+          <input ng-controller="checkboxCtrl" id="export-select-all" type="checkbox" ng-click="getAllIdsToExport()">&nbsp;&nbsp;
+          <inspire-export-modal button-template="/static/node_modules/inspirehep-js/dist/templates/export/templates/button.html" body-template="/static/node_modules/inspirehep-js/dist/templates/export/templates/modalbody.html">
+          </inspire-export-modal>
+        {% endif %}
       </div>
       {%- block search_header_footer %}
       {%- endblock search_header_footer %}
