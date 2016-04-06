@@ -706,9 +706,7 @@ def format_date(datetext):
 @blueprint.app_template_filter()
 def find_collection_from_url(url):
     """Returns the collection based on the URL."""
-    if 'hep' in url or 'literature' in url:
-        return 'literature'
-    elif 'conferences' in url:
+    if 'conferences' in url:
         return 'conferences'
     elif 'jobs' in url:
         return 'jobs'
@@ -722,6 +720,7 @@ def find_collection_from_url(url):
         return 'conferences'
     elif 'authors' in url:
         return 'authors'
+    return 'literature'
 
 
 @blueprint.app_template_filter()
