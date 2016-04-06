@@ -31,6 +31,7 @@ import os
 from invenio_records_rest.facets import terms_filter
 
 
+# Identity function for string extraction
 def _(x):
     """Identity function for string extraction."""
     return x
@@ -435,6 +436,17 @@ RECORDS_REST_ENDPOINTS = dict(
         query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
     ),
 )
+
+# INSPIRE_LEGACY_FORMATS = {
+#     'hb': 'text/html',
+#     'hcv': 'text/html',
+#     'hd': 'text/html',
+#     'hp': 'text/html',
+#     'htcv': 'text/html',
+#     'hx': 'text/html',
+#     'tlcv': 'text/html',
+#     'xm': 'application/marcxml+xml',
+# }
 
 RECORDS_UI_ENDPOINTS = dict(
     literature=dict(

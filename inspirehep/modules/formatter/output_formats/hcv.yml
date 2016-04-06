@@ -1,0 +1,6 @@
+content_type: text/html
+default: Inspire_CVLATEXHTML.tpl
+description: A CV with hyperlinks
+name: HTML CV
+rules: []
+visibility: 0
