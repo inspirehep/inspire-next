@@ -24,7 +24,6 @@
 
 """UI for Invenio-Search."""
 
-from flask_assets import Bundle
 from invenio_assets import NpmBundle
 
 js = NpmBundle(
@@ -33,6 +32,6 @@ js = NpmBundle(
     output='gen/search.%(version)s.js',
     npm={
         'invenio-search-js': '~0.1.0',
-        'inspirehep-search-js': 'git+https://git@github.com/inspirehep/inspirehep-search-js.git',
+        'inspirehep-search-js': 'git+https://git@github.com/inspirehep/inspirehep-search-js.git'
     },
 )
