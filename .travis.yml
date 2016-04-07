@@ -32,8 +32,11 @@ services:
 env:
   global:
     - DOCKER_DATA="$HOME/docker_data"
-    - DOCKER_VERSION=1.10.1-0~trusty
-    - DOCKER_COMPOSE_VERSION=1.6.0
+    - DOCKER_VERSION=1.10.3-0~trusty
+    - DOCKER_COMPOSE_VERSION=1.6.2
+  matrix:
+    - SUITE=unit
+    - SUITE=integration
 
 python:
   - "2.7"
@@ -57,7 +60,7 @@ install:
   - "docker-compose -f docker-compose.deps.yml run --rm assets"
 
 script:
-  - "docker-compose -f docker-compose.test.yml run --rm test"
+  - "docker-compose -f docker-compose.test.yml run --rm ${SUITE}"
 
 after_script:
   - "docker-compose -f docker-compose.test.yml kill"

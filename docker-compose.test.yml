@@ -35,10 +35,16 @@ services:
       - CACHE_REDIS_URL=redis://redis:6379/0
       - SEARCH_ELASTIC_HOSTS=indexer
 
-  test:
+  unit:
     extends:
       service: service_base
-    command: python setup.py test
+    volumes_from:
+      - static
+    command: ./run-tests.sh unit
+  integration:
+    extends:
+      service: service_base
+    command: ./run-tests.sh integration
     volumes_from:
       - static
     links:
