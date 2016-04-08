@@ -108,6 +108,11 @@ SECURITY_PASSWORD_SALT = "CHANGE_ME"
 SECURITY_REMEMBER_SALT = "CHANGE_ME"
 SECURITY_RESET_SALT = "CHANGE_ME"
 
+REMEMBER_COOKIE_HTTPONLY = True
+"""
+Prevents the "Remember Me" cookie from being accessed by client-side
+scripts
+"""
 # User profile
 # ============
 # FIXME Investigate why setting this to True sometimes forces using
