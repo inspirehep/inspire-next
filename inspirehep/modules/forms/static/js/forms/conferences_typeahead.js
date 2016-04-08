@@ -21,7 +21,7 @@
  */
 
 define([
-  'js/deposit/extended_typeahead'
+  'js/forms/extended_typeahead'
 ], function(ExtendedTypeahead) {
 
   function conferencesTypeahead($element) {

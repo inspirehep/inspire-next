@@ -244,3 +244,43 @@ panel.panel-default {
 :-ms-input-placeholder { /* Internet Explorer 10+ */
    color:    #C2C2C2!important;
 }
+
+/* Styles for literature suggest form */
+#importData {
+    width: 160px;
+    font-weight: bold;
+    float:right;
+}
+
+#skipImportData {
+    text-decoration: underline;
+}
+
+#abstract {
+    height: 120px;
+}
+
+#references {
+    height: 250px;
+}
+
+#extra_comments {
+    height: 120px;
+}
+
+.box-instructions {
+    padding-left: 10px;
+    padding-top: 10px;
+}
+
+#field-authors .tt-dropdown-menu{
+    width: 165%;
+}
+
+.clearfix-padding {
+    padding: 5px;
+}
+
+.alert-padding {
+    margin: 10px 10px 0px 10px;
+}

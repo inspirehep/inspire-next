@@ -60,11 +60,13 @@ js = NpmBundle(
     output="gen/inspirehep.%(version)s.js",
     npm={
         "jquery": "~1.9.1",
+        "jquery-ui": "~1.10.5",
         "toastr": "~2.1.2",
         "clipboard": "~1.5.8",
         "flightjs": "~1.5.0",
         "angular": "~1.4.8",
-        "inspirehep-js": "git+https://git@github.com/inspirehep/inspirehep-js.git"
+        "inspirehep-js": "git+https://git@github.com/inspirehep/inspirehep-js.git",
+        "readmore-js": "~2.1.0"
     }
 )
 
