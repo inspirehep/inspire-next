@@ -155,10 +155,15 @@ setup(
             'inspirehep = inspirehep.cli:cli',
         ],
         'dojson.cli.rule': [
+            'conferences = inspirehep.dojson.conferences:conferences',
+            'experiments = inspirehep.dojson.experiments:experiments',
             'hep = inspirehep.dojson.hep:hep',
             'hep2marc = inspirehep.dojson.hep:hep2marc',
             'hepnames = inspirehep.dojson.hepnames:hepnames',
             'hepnames2marc = inspirehep.dojson.hepnames2marc:hepnames2marc',
+            'institutions = inspirehep.dojson.institutions:institutions',
+            'journals = inspirehep.dojson.journals:journals',
+            'jobs = inspirehep.dojson.jobs:jobs',
         ],
         'invenio_base.api_apps': [
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
