@@ -40,6 +40,8 @@ $fa-font-path: "/static/node_modules/font-awesome/fonts";
 @import "accounts/login";
 @import "accounts/settings/account-settings.scss";
 
+@import "authors/profiles";
+
 @import "feedback/button";
 @import "feedback/modal";
 
