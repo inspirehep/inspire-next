@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,9 +22,15 @@
 
 """MARC 21 model definition."""
 
-from dojson import utils
+from __future__ import absolute_import, division, print_function
 
-from inspirehep.dojson import utils as inspire_dojson_utils
+from inspirehep.dojson.utils import (
+    parse_conference_address,
+    remove_duplicates_from_list_of_dicts)
+
+import six
+
+from dojson import utils
 
 from ..model import conferences
 
@@ -32,41 +38,72 @@ from ..model import conferences
 @conferences.over('acronym', '^111')
 @utils.for_each_value
 def acronym(self, key, value):
-    """Conference acronym."""
+    """Conference acronym and titles."""
+    def append_to_self(title):
+        """Make a dictionary and append to self."""
+        titles = {}
+        titles['title'] = title
+        titles['subtitle'] = value.get('b')
+        titles['source'] = value.get('9')
+        if titles:
+            self['titles'].append(titles)
+
+    self.setdefault('titles', [])
+    title = value.get('a')
+    if isinstance(title, (tuple, list)):
+        for t in title:
+            append_to_self(t)
+    else:
+        append_to_self(title)
+
     self['date'] = value.get('d')
     self['opening_date'] = value.get('x')
     self['closing_date'] = value.get('y')
     self['cnum'] = value.get('g')
-    self['place'] = value.get('c')
-    self['subtitle'] = value.get('b')
-    self['title'] = value.get('a')
+
+    if value.get('c'):
+        self.setdefault('address', [])
+        raw_addresses = utils.force_list(value.get('c'))
+        for raw_address in raw_addresses:
+            address = parse_conference_address(raw_address)
+            self['address'].append(address)
+
     return utils.force_list(value.get('e'))
 
 
 @conferences.over('alternative_titles', '^711')
 @utils.for_each_value
 def alternative_titles(self, key, value):
-    """Alternative title."""
-    return value.get('a')
+    """Alternative title.
+
+    711__b is for indexing and will not be displayed.
+    """
+    return {
+        'title': value.get('a'),
+        'searchable_title': value.get('b')
+    }
 
 
-@conferences.over('contact_person', '^270')
-@utils.for_each_value
-def contact_person(self, key, value):
-    """Contact person."""
-    if value.get('m'):
-        self['contact_email'] = value.get('m')
-    return value.get('p')
-
-
-@conferences.over('field_code', '^65017')
+@conferences.over('contact_details', '^270')
 @utils.for_each_value
 @utils.filter_values
-def field_code(self, key, value):
-    """Field code."""
+def contact_details(self, key, value):
+    """Map 270 field to contact details and extra_place_info"""
+    self.setdefault('extra_place_info', [])
+    extra_place_info = value.get('b')
+    if isinstance(extra_place_info, six.string_types):
+        self['extra_place_info'].append(extra_place_info)
+    elif isinstance(extra_place_info, tuple):
+        for place in extra_place_info:
+            self['extra_place_info'].append(place)
+    else:
+        pass
+
+    name = value.get('p')
+    email = value.get('m')
     return {
-        'value': value.get('a'),
-        'source': value.get('9')
+        'name': name if isinstance(name, six.string_types) else None,
+        'email': email if isinstance(email, six.string_types) else None
     }
 
 
@@ -82,8 +119,7 @@ def keywords(self, key, value):
     keywords = self.get('keywords', [])
     for val in value:
         keywords.append(get_value(val))
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
-        keywords)
+    return remove_duplicates_from_list_of_dicts(keywords)
 
 
 @conferences.over('nonpublic_note', '^595')
@@ -123,31 +159,3 @@ def short_description(self, key, value):
         'value': value.get('a'),
         'source': value.get('9')
     }
-
-
-@conferences.over('url', '^8564')
-def url(self, key, value):
-    """Conference transparencies."""
-    value = utils.force_list(value)
-    transparencies = []
-    sessions = []
-    urls = []
-    for val in value:
-        if val.get('y'):
-            description = utils.force_list(val.get('y'))
-            if 'transparencies' in [e.lower() for e in val['y']]:
-                transparencies.append(val.get('u'))
-        if val.get('t'):
-            sessions.extend(utils.force_list(val.get('t')))
-        if val.get('u'):
-            urls.append(utils.force_list(val.get('u')))
-    self['transparencies'] = transparencies
-    self['sessions'] = sessions
-    return urls
-
-
-@conferences.over('extra_place_info', '^270')
-@utils.for_each_value
-def extra_place_info(self, key, value):
-    """Conference extra place info."""
-    return value.get('b')

@@ -20,6 +20,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
 from inspirehep.utils.bibtex import Bibtex
 from inspirehep.utils.record_getter import get_db_record
 
@@ -109,7 +111,7 @@ def test_format_book(app):
       title          = "{Differential geometry and Lie groups for physicists}",
       publisher      = "Cambridge University Press",
       year           = "2011",
-      ISBN           = "9780521187961, 9780521845076, 9780511242960",
+      ISBN           = "978-0-521-18796-1, 978-0-521-84507-6, 978-0-511-24296-0",
       SLACcitation   = "%%CITATION = INSPIRE-736770;%%"
 }'''
     result = Bibtex(book).format()

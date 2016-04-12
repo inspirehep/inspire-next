@@ -3,24 +3,41 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2015, 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 """DoJSON related utilities."""
 
+from __future__ import absolute_import, division, print_function
+
 import re
 import six
+
+from dojson import utils
+
+from inspirehep.config import ARXIV_TO_INSPIRE_CATEGORY_MAPPING as ARXIV_MAP
+
+from inspirehep.dojson.geo_helpers import (country_to_iso_code,
+                                           countries_alternative_spellings,
+                                           us_state_to_iso_code,
+                                           us_states_alternative_spellings,
+                                           iso_code_to_country_name,
+                                           countries_alternative_codes,
+                                           south_korean_cities)
 
 try:
     from flask import current_app
@@ -156,3 +173,206 @@ def get_recid_from_ref(ref_obj):
     except ValueError:
         res = None
     return res
+
+
+RANKS_MAPPINGS = {
+    'STAFF': {},
+    'SENIOR': {},
+    'JUNIOR': {},
+    'VISITOR': {
+        'alternative_names': ['VISITING SCIENTIST'],
+    },
+    'POSTDOC': {
+        'abbreviations': ['PD']
+    },
+    'PHD': {
+        'alternative_names': ['STUDENT']
+    },
+    'MASTER': {
+        'abbreviations': ['MAS', 'MS', 'MSC']
+    },
+    'UNDERGRADUATE': {
+        'alternative_names': ['BACHELOR'],
+        'abbreviations': ['UG', 'BS', 'BA', 'BSC']
+    }
+}
+
+
+def classify_rank(value):
+    """Classify raw string as one of the keys in RANKS_MAPPINGS."""
+    if not value:
+        return None
+    elif not isinstance(value, six.string_types):
+        return None
+    else:
+        casted_value = value.upper().replace('.', '')
+        for rank_name, rank_mapping in RANKS_MAPPINGS.items():
+            if rank_name in casted_value:
+                return rank_name
+            else:
+                if rank_mapping.get('alternative_names'):
+                    for alternative in rank_mapping['alternative_names']:
+                        if alternative in casted_value:
+                            return rank_name
+                if rank_mapping.get('abbreviations'):
+                    for abbrev in rank_mapping['abbreviations']:
+                        if abbrev == casted_value:
+                            return rank_name
+
+        return 'OTHER'
+
+
+def parse_conference_address(address_string):
+    """Parse a conference address.
+
+    This is a pretty dummy address parser. It only extracts country
+    and state (for US) and should be replaced with something better,
+    like Google Geocoding.
+    """
+
+    geo_elements = address_string.split(',')
+    city = geo_elements[0]
+    country_name = geo_elements[-1].upper().replace('.', '').strip()
+    us_state = None
+    state = None
+    country_code = None
+
+    # Try to match the country
+    country_code = match_country_name_to_its_code(country_name, city)
+
+    if country_code == 'US':
+        us_state = match_us_state(geo_elements[-2].upper().strip()
+                                  .replace('.', ''))
+
+    if not country_code:
+        # Sometimes the country name stores info about U.S. state
+        us_state = match_us_state(country_name)
+
+    if us_state:
+        state = us_state
+        country_code = 'US'
+
+    return {
+        'original address': address_string,
+        'city': None,
+        'state': state,
+        'country_code': country_code,
+        'longitude': None,  # FIXME: We should get these two from some
+        'latitude': None,   #        geocoding service.
+    }
+
+
+def parse_institution_address(address, city, state_province,
+                              country, postal_code, country_code):
+
+    address_string = utils.force_list(address)
+    state_province = match_us_state(state_province) or state_province
+
+    postal_code = utils.force_list(postal_code)
+    country = utils.force_list(country)
+    country_code = match_country_code(country_code)
+
+    if isinstance(postal_code, (tuple, list)):
+        postal_code = ', '.join(postal_code)
+
+    if isinstance(city, (tuple, list)):
+        city = ', '.join(city)
+
+    if isinstance(country, (tuple, list)):
+        country = ', '.join(set(country))
+
+    if not country_code and country:
+        country_code = match_country_name_to_its_code(country)
+
+    if not country_code and state_province.startswith('US-'):
+        country_code = 'US'
+
+    return {
+        'original_address': utils.force_list(address),
+        'city': city,
+        'state': state_province,
+        'country': country,
+        'postal_code': postal_code,
+        'country_code': country_code,
+    }
+
+
+def match_country_code(original_code):
+    if isinstance(original_code, six.string_types):
+        original_code = original_code.upper()
+        if iso_code_to_country_name.get(original_code):
+            return original_code
+        else:
+            for country_code, alternatives in countries_alternative_codes.items():
+                for alternative in alternatives:
+                    if original_code == alternative:
+                        return country_code
+            return None
+    else:
+        return None
+
+
+def match_country_name_to_its_code(country_name, city=None):
+    """Try to match country name with its code.
+
+    Name of the city helps when country_name is "Korea".
+    """
+    if country_name:
+        country_name = country_name.upper().replace('.', '').strip()
+
+        if country_to_iso_code.get(country_name):
+            return country_to_iso_code.get(country_name)
+        elif country_name == 'KOREA':
+            if city.upper() in south_korean_cities:
+                return 'KR'
+        else:
+            for c_code, spellings in countries_alternative_spellings.items():
+                for spelling in spellings:
+                    if country_name == spelling:
+                        return c_code
+
+    return None
+
+
+def match_us_state(state_string):
+    """Try to match a string with one of the states in the US."""
+    if state_string:
+        state_string = state_string.upper().replace('.', '').strip()
+        if us_state_to_iso_code.get(state_string):
+            return us_state_to_iso_code.get(state_string)
+        else:
+            for code, state_spellings in us_states_alternative_spellings.items():
+                for spelling in state_spellings:
+                    if state_string == spelling:
+                        return code
+    return None
+
+
+def classify_field(value):
+    """Classify raw string as one of the keys in ARXIV_MAP"""
+    if not value:
+        return None
+    elif not isinstance(value, six.string_types):
+        return None
+    else:
+        casted_value = value.upper()
+        for rank_name, rank_mapping in ARXIV_MAP.iteritems():
+            if rank_name.upper() == casted_value:
+                return rank_mapping
+            elif rank_mapping.upper() == casted_value:
+                return rank_mapping
+        return 'Other'
+
+
+def get_int_value(value_dict, key_in_value):
+    """Get the value from a dictionary with a given key and try to convert
+    it to int. Expects the original value to be a castable string.
+    """
+    int_value = None
+    if key_in_value in value_dict:
+        try:
+            int_value = int(value_dict.get(key_in_value))
+        except (ValueError, TypeError):
+            pass
+
+    return int_value

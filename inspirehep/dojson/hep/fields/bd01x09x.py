@@ -22,7 +22,11 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
+
+from idutils import normalize_isbn
 
 from inspirehep.dojson import utils as inspire_dojson_utils
 
@@ -30,16 +34,35 @@ from ..model import hep, hep2marc
 
 from inspirehep.dojson.utils import strip_empty_values
 
+from isbnlib._exceptions import NotValidISBNError
+
 
 @hep.over('isbns', '^020..')
 @utils.for_each_value
-@utils.filter_values
 def isbns(self, key, value):
-    """Other Standard Identifier."""
-    return {
-        'value': value.get('a'),
-        'medium': value.get('b')
-    }
+    """ISBN and its medium with additional comment."""
+    isbn = {}
+    try:
+        isbn['value'] = normalize_isbn(value['a'])
+    except (KeyError, NotValidISBNError):
+        return None
+    if 'b' in value:
+        raw_medium = value.get('b', '').lower()
+        if 'print' in raw_medium:
+            isbn['medium'] = 'print'
+        elif 'online' in raw_medium:
+            isbn['medium'] = 'online'
+        elif 'ebook' in raw_medium:
+            isbn['medium'] = 'online'
+            isbn['comment'] = raw_medium
+        elif 'hardcover' in raw_medium:
+            isbn['medium'] = 'print'
+            isbn['comment'] = raw_medium
+        else:
+            isbn['medium'] = None
+            isbn['comment'] = raw_medium
+
+    return isbn
 
 
 @hep2marc.over('020', 'isbns')
