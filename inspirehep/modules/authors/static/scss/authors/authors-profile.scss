@@ -1,0 +1,202 @@
+/**
+ *
+ * This file is part of INSPIRE.
+ * Copyright (C) 2015, 2016 CERN.
+
+ * INSPIRE is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * Invenio is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Invenio; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+// Colours.
+$background: #ecf0f1;
+$grey: #BBC2C7;
+$light-blue: #2980b9;
+$dark-blue: #233F4F;
+$white: #ffffff;
+
+$green: #27ae60;
+$red: #c0392b;
+
+// General.
+.box {
+  margin-top: 25px;
+  border-radius: 5px;
+  background-color: $white;
+}
+
+.box-buttons {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+// Summary.
+#record-title {
+  color: $dark-blue;
+  font-size: x-large;
+  font-weight: normal;
+
+  #affiliation {
+    font-size: large;
+  }
+}
+
+.record-detailed {
+  background-color: $white;
+  border-radius: 5px;
+
+  hr {
+    margin-top: 25px;
+    margin-bottom: 15px;
+  }
+
+  .btn {
+    background-color: $light-blue;
+    color: $white;
+  }
+}
+
+// Links.
+.profile-links {
+  padding-bottom: 18px;
+
+  a {
+    color: $dark-blue;
+  }
+}
+
+// Field categories.
+.categories {
+  -webkit-padding-start: 0;
+
+  li {
+    display: inline-block;
+    padding: 0px 4px;
+
+    a {
+      color: $dark-blue !important;
+    }
+  }
+}
+
+.summary {
+  padding-top: 20px;
+}
+
+#author-fields {
+  padding-top: 8px;
+}
+
+#author-biography {
+  padding-top: 8px;
+}
+
+#author-collaborators, #author-position {
+  tr, td {
+    border-width: 0;
+  }
+  .left {
+    color: $grey;
+  }
+  .center {
+    color: $dark-blue;
+  }
+  .right {
+    color: $light-blue;
+  }
+}
+
+#author-collaborators {
+  .td-padding {
+    padding-left: 25px;
+    color: $dark-blue;
+  }
+
+  .fa-plus-circle {
+    color: $green;
+  }
+
+  .fa-minus-circle {
+    color: $red;
+  }
+}
+
+.top-box {
+  margin-top: 30px;
+  background-color: $white;
+  border-radius: 5px 5px 0px 0px;
+}
+
+.bottom-box {
+  background-color: $white;
+  border-radius: 0px 0px 5px 5px;
+}
+
+.no-padding {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+#publications-table_paginate {
+  margin-bottom: 10px;
+}
+
+#author-statistics {
+  tr, td {
+    border-width: 0;
+  }
+
+  .blue td {
+    color: $light-blue;
+  }
+
+  .sub td {
+    padding-left: 25px;
+  }
+}
+
+.record-single-publication {
+  margin-bottom: 10px;
+}
+
+// Statistics graph.
+#plot {
+  margin-top: -30px;
+
+  .axis path, .axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering:crispEdge;
+  }
+
+  .axis {
+    font-size: 0.75em;
+  }
+
+  .xAxis text {
+    transform: rotate(90);
+    text-anchor: start;
+  }
+
+  .yAxis text, .publicationsLabel {
+    fill: $light-blue;
+  }
+
+  .citationsLabel {
+    fill: $dark-blue;
+  }
+
+  .yAxis path, .yAxis line {
+    stroke: $light-blue !important;
+  }
+}  

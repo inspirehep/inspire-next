@@ -24,6 +24,7 @@
 require.config({
   baseUrl: '/static/',
   paths: {
+    'author': 'js/authors/author',
     angular: 'node_modules/angular/angular',
     'angular-sanitize': 'node_modules/angular-sanitize/angular-sanitize',
     'angular-ui-bootstrap': 'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls',
@@ -31,6 +32,9 @@ require.config({
     'bootstrap-datetimepicker': 'node_modules/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
     'bootstrap-multiselect': 'node_modules/bootstrap-multiselect/dist/js/bootstrap-multiselect',
     clipboard: 'node_modules/clipboard/dist/clipboard',
+    d3: "node_modules/d3/d3",
+    datatables: 'node_modules/datatables.net-bs/js/dataTables.bootstrap',
+    'datatables.net': 'node_modules/datatables.net/js/jquery.dataTables',
     feedback: 'js/feedback/feedback',
     flight: 'node_modules/flightjs/build/flight',
     hgn: 'node_modules/requirejs-hogan-plugin/hgn',
@@ -40,6 +44,8 @@ require.config({
     'invenio-search': 'node_modules/invenio-search-js/dist/invenio-search-js',
     jquery: 'node_modules/jquery/jquery',
     moment: 'node_modules/moment/moment',
+    'profile': 'js/authors/profile',
+    'publications': 'js/authors/publications',
     text: 'node_modules/requirejs-hogan-plugin/text',
     toastr: 'node_modules/toastr/toastr',
     typeahead: 'node_modules/typeahead.js/dist/typeahead.bundle'

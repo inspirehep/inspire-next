@@ -235,8 +235,10 @@ setup(
             'requirejs = inspirehep.modules.theme.bundles:requirejs',
             'inspirehep_forms_css = inspirehep.modules.forms.bundles:css',
             'inspirehep_forms_js = inspirehep.modules.forms.bundles:js',
+            'inspirehep_author_profile_css = inspirehep.modules.authors.bundles:profile_css',
+            'inspirehep_author_profile_js = inspirehep.modules.authors.bundles:js',
+            'inspirehep_author_update_css = inspirehep.modules.authors.bundles:update_css',
             'inspirehep_detailed_js = inspirehep.modules.theme.bundles:detailedjs',
-            'inspirehep_author_update_css = inspirehep.modules.authors.bundles:css',
             'invenio_search_ui_search_js = inspirehep.modules.search.bundles:js',
         ],
         'invenio_jsonschemas.schemas': [
