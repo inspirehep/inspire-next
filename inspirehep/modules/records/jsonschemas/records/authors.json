@@ -86,23 +86,11 @@
                         "description": "FIXME: this is redundant?",
                         "format": "email"
                     },
-                    "rank": {
-                        "enum": [
-                            "SENIOR",
-                            "JUNIOR",
-                            "STAFF",
-                            "VISITOR",
-                            "PD",
-                            "PHD",
-                            "PhD",
-                            "MAS",
-                            "UG",
-                            "Diploma",
-                            "Bachelor",
-                            "smirnov@ictp.it"
-                        ],
-                        "type": "string"
+                    "_rank": {
+                        "type": "string",
+                        "title": "Raw value of MARC 371_r field"
                     },
+                    "rank": {"$ref": "elements/rank.json"},
                     "institution": {
                         "type": "object",
                         "properties": {

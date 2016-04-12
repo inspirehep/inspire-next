@@ -134,11 +134,30 @@ def research_area(self, key, value):
     return value.get('a')
 
 
-@jobs.over('rank', '^656..')
-@utils.for_each_value
+@jobs.over('ranks', '^656..')
 def rank(self, key, value):
-    """Contact person."""
-    return value.get('a')
+    """Jobs rank casted to enums"""
+    ranks = []
+    _ranks = []
+    values = utils.force_list(value)
+    for val in values:
+        raw_rank = val.get('a')
+        if isinstance(raw_rank, str):
+            _ranks.append(raw_rank)
+            ranks.append(
+                inspire_dojson_utils.classify_rank(raw_rank)
+            )
+        elif isinstance(raw_rank, tuple):
+            for rank in raw_rank:
+                _ranks.append(rank)
+                ranks.append(
+                    inspire_dojson_utils.classify_rank(rank)
+                )
+        else:
+            pass
+
+    self['_ranks'] = _ranks
+    return ranks
 
 
 @jobs.over('urls', '^856.[10_28]')

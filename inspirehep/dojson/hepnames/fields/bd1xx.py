@@ -221,16 +221,6 @@ setattr(hidden_notes2marc, '__extend__', True)
 def positions(self, key, value):
     """Position information.
 
-    Accepted values for 371__r:
-    + senior
-    + junior
-    + staff
-    + visitor
-    + postdoc
-    + phd
-    + masters
-    + undergrad
-
     In dates field you can put months in addition to years. In this case you
     have to follow the convention `mth-year`. For example: `10-2012`.
     """
@@ -249,14 +239,23 @@ def positions(self, key, value):
     inst = {'name': value.get('a'),
             'record': inspire_dojson_utils.get_record_ref(recid,
                                                           'institutions')}
+
+    raw_rank = value.get('r')
+    if isinstance(raw_rank, tuple):
+        # FIXME: raise Exception("Multiple ranks at the same time?")
+        pass
+
+    rank = inspire_dojson_utils.classify_rank(raw_rank)
+
     return {
         'institution': inst if inst['name'] else None,
-        'rank': value.get('r'),
+        'rank': rank,
+        '_rank': raw_rank if isinstance(raw_rank, str) else None,
         'start_date': value.get('s'),
         'end_date': value.get('t'),
         'email': value.get('m'),
         'old_email': value.get('o'),
-        'status': status,
+        'status': value.get('r'),
         'curated_relation': curated_relation,
     }
 
@@ -267,22 +266,12 @@ def positions(self, key, value):
 def positions2marc(self, key, value):
     """Position information.
 
-    Accepted values for 371__r:
-    + senior
-    + junior
-    + staff
-    + visitor
-    + postdoc
-    + phd
-    + masters
-    + undergrad
-
     In dates field you can put months in addition to years. In this case you
     have to follow the convention `mth-year`. For example: `10-2012`.
     """
     return {
         'a': value.get('institution', {}).get('name'),
-        'r': value.get('rank'),
+        'r': value.get('_rank'),
         's': value.get('start_date'),
         't': value.get('end_date'),
         'm': value.get('email'),
