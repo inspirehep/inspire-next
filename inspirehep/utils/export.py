@@ -31,10 +31,10 @@ class MissingRequiredFieldError(LookupError):
     required field doesn't exist in the record.
     """
 
-    def _init_(self, field):
+    def __init__(self, field):
         self.field = field
 
-    def _str_(self):
+    def __str__(self):
         return "Missing field: " + self.field
 
 

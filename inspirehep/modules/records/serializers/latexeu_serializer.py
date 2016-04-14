@@ -40,3 +40,16 @@ class LATEXEUSerializer(object):
                               which are added to the response.
         """
         return Latex(record, 'latex_eu').format()
+
+    def serialize_search(self, pid_fetcher, search_result, links=None,
+                         item_links_factory=None):
+        """Serialize a search result.
+        :param pid_fetcher: Persistent identifier fetcher.
+        :param search_result: Elasticsearch search result.
+        :param links: Dictionary of links to add to response.
+        """
+        records = []
+        for hit in search_result['hits']['hits']:
+            records.append(Latex(hit['_source'], 'latex_eu').format())
+
+        return "\n".join(records)

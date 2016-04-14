@@ -276,6 +276,18 @@ RECORDS_REST_ENDPOINTS = dict(
                 'inspirehep.modules.records.serializers'
                 ':json_brief_v1_search'
             ),
+            'application/x-bibtex': ('inspirehep.modules.records.serializers'
+                                     ':bibtex_v1_search'),
+            'application/x-latexeu': ('inspirehep.modules.records.serializers'
+                                      ':latexeu_v1_search'),
+            'application/x-latexus': ('inspirehep.modules.records.serializers'
+                                      ':latexus_v1_search'),
+            'application/x-cvformatlatex': ('inspirehep.modules.records.serializers'
+                                            ':cvformatlatex_v1_search'),
+            'application/x-cvformathtml': ('inspirehep.modules.records.serializers'
+                                           ':cvformathtml_v1_search'),
+            'application/x-cvformattext': ('inspirehep.modules.records.serializers'
+                                           ':cvformattext_v1_search'),
         },
         list_route='/literature/',
         item_route='/literature/<pid_value>',

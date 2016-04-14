@@ -40,3 +40,18 @@ class CVFORMATHTMLSerializer(object):
                               which are added to the response.
         """
         return Cv_latex_html_text(record, 'cv_latex_html', '<br/>').format()
+
+    def serialize_search(self, pid_fetcher, search_result, links=None,
+                         item_links_factory=None):
+        """Serialize a search result.
+        :param pid_fetcher: Persistent identifier fetcher.
+        :param search_result: Elasticsearch search result.
+        :param links: Dictionary of links to add to response.
+        """
+        records = []
+        for hit in search_result['hits']['hits']:
+            records.append(Cv_latex_html_text(hit['_source'],
+                                              'cv_latex_html',
+                                              '<br/>').format())
+
+        return "\n".join(records)

@@ -58,3 +58,14 @@ cvformathtml_v1_response = record_responsify(cvformathtml_v1,
                                              'application/x-cvformathtml')
 cvformattext_v1_response = record_responsify(cvformattext_v1,
                                              'application/x-cvformattext')
+
+
+bibtex_v1_search = search_responsify(bibtex_v1, 'application/x-bibtex')
+latexeu_v1_search = search_responsify(latexeu_v1, 'application/x-latexeu')
+latexus_v1_search = search_responsify(latexus_v1, 'application/x-latexus')
+cvformatlatex_v1_search = search_responsify(cvformatlatex_v1,
+                                            'application/x-cvformatlatex')
+cvformathtml_v1_search = search_responsify(cvformathtml_v1,
+                                           'application/x-cvformathtml')
+cvformattext_v1_search = search_responsify(cvformattext_v1,
+                                           'application/x-cvformattext')

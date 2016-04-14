@@ -80,7 +80,7 @@ require.config({
       exports: '$'
     },
     'ngclipboard': {
-        deps: ['angular', 'inspirehep-clipboard']
+        deps: ['angular', 'inspirehep-clipboard', 'clipboard']
     },
     typeahead: {
       deps: ['jquery'],
