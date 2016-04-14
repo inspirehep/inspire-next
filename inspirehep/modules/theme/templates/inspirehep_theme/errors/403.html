@@ -1,0 +1,23 @@
+{% extends "inspirehep_theme/page.html" %}
+
+{%- set body_css_classes=['error-page'] %}
+
+{%- block page_body -%}
+
+
+<div align="center" class="error-text-container">
+  <h1>403</h1>
+  <h4>Sorry, you are not authorised to view this page.</h4>
+</div>
+
+<div class="row-fluid error-container" align="center">
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+    <img src="{{ url_for('static', filename='images/errors/401.svg') }}"
+         width="100%">
+  </div>
+  <div class="col-md-3"></div>
+</div>
+
+
+{%- endblock -%}
