@@ -710,6 +710,8 @@ def find_collection_from_url(url):
         return 'conferences'
     elif 'jobs' in url:
         return 'jobs'
+    elif 'data' in url:
+        return 'data'
     elif 'institutions' in url:
         return 'institutions'
     elif 'journals' in url:

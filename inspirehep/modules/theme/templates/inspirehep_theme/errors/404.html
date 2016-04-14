@@ -1,0 +1,23 @@
+{% extends "inspirehep_theme/page.html" %}
+{% set collection_name = request.url | find_collection_from_url %}
+{%- set body_css_classes=['error-page ' + collection_name] %}
+
+{%- block page_body -%}
+
+
+<div align="center" class="error-text-container {{collection_name}}">
+  <h1>404</h1>
+  <h4>Sorry, we weren't able to find what you were looking for...</h4>
+</div>
+
+<div class="row-fluid error-container" align="center">
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+    <img src="{{ url_for('static', filename='images/errors/404-' + collection_name + '.svg') }}"
+         width="90%">
+  </div>
+  <div class="col-md-3"></div>
+</div>
+
+
+{%- endblock -%}
