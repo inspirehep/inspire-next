@@ -719,7 +719,7 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
 )
 
 
-THEME_404_TEMPLATE = "inspirehep_theme/errors/500.html"
+THEME_404_TEMPLATE = "inspirehep_theme/errors/404.html"
 THEME_500_TEMPLATE = "inspirehep_theme/errors/500.html"
 
 # Feedback
