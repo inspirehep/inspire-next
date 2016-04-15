@@ -1,20 +1,38 @@
 {% extends "inspirehep_theme/page.html" %}
-{% set collection_name = request.url | find_collection_from_url %}
-{%- set body_css_classes=['error-page ' + collection_name] %}
+{% set collection = request.url | find_collection_from_url %}
+{%- set body_css_classes=['error-page ' + collection] %}
 
 {%- block page_body -%}
 
 
-<div align="center" class="error-text-container {{collection_name}}">
+<div align="center" class="error-text-container {{collection}}">
   <h1>404</h1>
   <h4>Sorry, we weren't able to find what you were looking for...</h4>
+
+
+  <div class="search-area {{collection}}">
+    <form name="search" action="{{url_for('inspirehep_search.search')}}"
+          method="get" role="search" id="searchform">
+      {%- if collection is defined %}
+        <input type="hidden" name="cc" value="{{collection}}">
+      {%- endif %}
+
+        <div class="input-group" id="searchform-input-group">
+          {% include "inspirehep_theme/search/form/controls.html" %}
+        </div>
+
+      {% include "inspirehep_theme/search/form/dropdown.html" %}
+    </form>
+  </div>
+
 </div>
 
 <div class="row-fluid error-container" align="center">
   <div class="col-md-3"></div>
   <div class="col-md-6">
-    <img src="{{ url_for('static', filename='images/errors/404-' + collection_name + '.svg') }}"
-         width="90%">
+    <img
+      src="{{ url_for('static', filename='images/errors/404-' + collection + '.svg') }}"
+      width="90%">
   </div>
   <div class="col-md-3"></div>
 </div>

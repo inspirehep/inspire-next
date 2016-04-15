@@ -103,4 +103,51 @@ Generic core styles that are included in all INSPIRE pages.
     font-size: 1.3em;
   }
 
+  .search-area {
+    padding-top: 20px;
+    width: 70%;
+
+    .input-group .form-control {
+      padding: 22px;
+      background-color: $clouds;
+    }
+
+    .input-group-btn button{
+      padding: 13.5px;
+      border: none;
+
+      &.literature-search-button {
+          @include collection-background-color($literature-collection);
+        }
+
+        &.authors-search-button {
+          @include collection-background-color($authors-collection);
+        }
+
+        &.conferences-search-button {
+          @include collection-background-color($conferences-collection);
+        }
+
+        &.jobs-search-button {
+          @include collection-background-color($jobs-collection);
+        }
+
+        &.experiments-search-button {
+          @include collection-background-color($experiments-collection);
+        }
+
+        &.institutions-search-button {
+          @include collection-background-color($institutions-collection);
+        }
+
+        &.journals-search-button {
+          @include collection-background-color($journals-collection);
+        }
+
+        &.data-search-button {
+          @include collection-background-color($data-collection);
+        }
+    }
+  }
+
 }
