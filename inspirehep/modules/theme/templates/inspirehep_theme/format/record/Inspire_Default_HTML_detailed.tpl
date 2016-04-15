@@ -18,7 +18,7 @@
 #}
 {%- extends "inspirehep_theme/page.html" -%}
 
-{% from "inspirehep_theme/format/record/Inspire_HTML_detailed_macros.tpl" import record_buttons, record_collection_heading, record_collections, record_publication_info, record_doi, record_links, detailed_record_abstract, record_keywords, record_references, record_citations, record_plots, record_doi with context %}
+{% from "inspirehep_theme/format/record/Inspire_HTML_detailed_macros.tpl" import record_buttons, record_collection_heading, record_collections, record_publication_info, record_doi, record_links, detailed_record_abstract, record_keywords, record_references, record_citations, record_plots, record_doi, impactgraph with context %}
 {% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax, render_record_title, render_record_authors, record_cite_modal, record_arxiv, record_report_numbers with context %}
 
 {%- block css %}
@@ -103,6 +103,11 @@
       {{ record_citations(record) }}
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-12">
+      {{ impactgraph() }}
+    </div>
+  </div>
   </div>
 </div>
 </div>
@@ -115,6 +120,29 @@
   {%- assets "inspirehep_detailed_js" %}
     <script src="{{ ASSET_URL }}"></script>
   {%- endassets %}
+  <script>
+  require(
+    [
+      "impact-graphs",
+    ],
+
+    function(
+      ImpactGraph
+    ) {
+        $(".impact-graph-container").append('<div id="impact_graph_chart_' + '{{record["control_number"]}}' + '"></div>');
+        ImpactGraph.load('/api/literature/{{record["control_number"]}}#impact_graph_chart_{{record["control_number"]}}',
+          '#impact_graph_chart_' + '{{record["control_number"]}}',
+          {
+            width: 940,
+            height: 280,
+            'content-type': 'application/x-impact.graph+json',
+            y_scale: 'linear',
+            show_axes: true,
+          }
+        );
+      }
+  );
+  </script>
 {% endblock javascript %}
 
 
