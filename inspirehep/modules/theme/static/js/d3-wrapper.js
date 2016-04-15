@@ -1,6 +1,6 @@
 /*
  * This file is part of INSPIRE.
- * Copyright (C) 2015 CERN.
+ * Copyright (C) 2014 CERN.
  *
  * INSPIRE is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,10 @@
  * or submit itself to any jurisdiction.
  */
 
-require([
-  "js/plots",
-  "impact-graphs",
-  // "js/citation_modal",
-  // "js/datatables"
-], function(Plots) {
-	// CitationModal.teardownAll();
-  	// CitationModal.attachTo(document);
-	console.log('js/detailed_record_init is loaded')
-  // Needed to have the JavaScript available when ASSETS_DEBUG=False.
+define([
+  "d3",
+  "d3-tip"
+], function(d3, d3tip) {
+  // loading all the libraries everywhere.
+  d3.tip = d3tip;
 });
