@@ -40,15 +40,22 @@ from .walkers.elasticsearch_no_keywords import QueryHasKeywords
 
 
 class InspireQuery(Query):
+
     """Extension of invenio_search.api.Query."""
 
     def __init__(self, *args, **kwargs):
         """Provide Query parameters."""
+        self.collection = kwargs.pop(
+            "collection",
+            current_app.config['THEME_SITENAME']
+        )
         super(InspireQuery, self).__init__(*args, **kwargs)
 
     @cached_property
     def query(self):
-        """Catch SyntaxError upon query generation and return MalformedQuery."""
+        """
+        Catch SyntaxError upon query generation and return MalformedQuery.
+        """
         try:
             return super(InspireQuery, self).query
         except SyntaxError:
@@ -58,7 +65,9 @@ class InspireQuery(Query):
         """Build query body."""
         # Enhance query first
         for enhancer in query_enhancers():
-            enhancer(self, **kwargs)
+            self.query = enhancer(self.query,
+                                  collection=self.collection,
+                                  **kwargs)
 
         query = self.query
 
@@ -96,11 +105,12 @@ def inspire_query_factory(index, page, size):
     :returns: Tuple of (query, URL arguments).
     """
     query_string = request.values.get('q', '')
+    collection = request.values.get('cc', current_app.config['THEME_SITENAME'])
 
-    return perform_query(query_string, page, size)
+    return perform_query(query_string, page, size, collection)
 
 
-def perform_query(query_string, page, size):
+def perform_query(query_string, page, size, collection):
     """
 
     :param query_string:
@@ -109,7 +119,9 @@ def perform_query(query_string, page, size):
     :return:
     """
     try:
-        query = InspireQuery(query_string)[(page - 1) * size:page * size]
+        query = InspireQuery(query_string, collection=collection)[
+            (page - 1) * size:page * size
+        ]
     except SyntaxError:
         current_app.logger.debug("Failed parsing query: {0}".format(
             request.values.get('q', '')), exc_info=True)

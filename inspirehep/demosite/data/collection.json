@@ -1,0 +1,82 @@
+[
+{
+"dbquery": "980__a:\"HEP\"",
+"name": "HEP"
+},
+{
+"dbquery": "collection:H1-INTERNAL-NOTE",
+"name": "H1 Internal Notes"
+},
+{
+"dbquery": "980__a:\"INSTITUTION\"",
+"name": "Institutions"
+},
+{
+"dbquery": "collection:HERMES-INTERNAL-NOTE",
+"name": "HERMES Internal Notes"
+},
+{
+"dbquery": "collection:ZEUS-INTERNAL-NOTE",
+"name": "ZEUS Internal Notes"
+},
+{
+"dbquery": "980__a:\"JOB\"",
+"name": "Jobs"
+},
+{
+"dbquery": "980__a:\"JOBHIDDEN\"",
+"name": "Jobs Hidden"
+},
+{
+"dbquery": "980__a:\"CONFERENCES\"",
+"name": "Conferences"
+},
+{
+"dbquery": "collection:D0-INTERNAL-NOTE",
+"name": "D0 Internal Notes"
+},
+{
+"dbquery": "980__a:\"EXPERIMENT\"",
+"name": "Experiments"
+},
+{
+"dbquery": "980__a:\"DATA\"",
+"name": "Data"
+},
+{
+"dbquery": "collection:ZEUS-PRELIMINARY-NOTE",
+"name": "ZEUS Preliminary Notes"
+},
+{
+"dbquery": "980__a:\"JOURNALS\"",
+"name": "Journals"
+},
+{
+"dbquery": "collection:H1-PRELIMINARY-NOTE",
+"name": "H1 Preliminary Notes"
+},
+{
+"dbquery": "collection:D0-PRELIMINARY-NOTE",
+"name": "D0 Preliminary Notes"
+},
+{
+"dbquery": "595__c:CDS 980__a:\"HEP\"",
+"name": "For CDS"
+},
+{
+"dbquery": "980__a:CDF-INTERNAL-NOTE",
+"name": "CDF Internal Notes"
+},
+{
+"dbquery": "980__a:\"HIDDEN\"",
+"name": "HIDDEN"
+},
+{
+"dbquery": "980__a:CDF-NOTE",
+"name": "CDF Notes"
+},
+{
+"dbquery": "980__a:\"HEPNAMES\"",
+"name": "HepNames"
+}
+]

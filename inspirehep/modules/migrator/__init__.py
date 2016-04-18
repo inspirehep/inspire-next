@@ -21,16 +21,46 @@
 
 from __future__ import print_function, absolute_import
 
+import json
+import os
+import pkg_resources
+
+from sqlalchemy import event
+
+from invenio_collections.models import Collection
+from invenio_db import db
+
 from .cli import migrator
 
 
+def load_collection_fixture():
+    """Load collection fixture to database."""
+    collections = json.loads(
+        pkg_resources.resource_string(
+            'inspirehep',
+            os.path.join(
+                'demosite',
+                'data',
+                'collection.json'
+            )
+        )
+    )
+
+    for collection in collections:
+        c = Collection(name=collection['name'], dbquery=collection['dbquery'])
+        db.session.add(c)
+    db.session.commit()
+
+
 class INSPIREMigrator(object):
+
     """INSPIRE migrator extension."""
 
     def __init__(self, app=None, **kwargs):
         """Extension initialization."""
         if app:
             self.init_app(app, **kwargs)
+            self.register_signals()
 
     def init_app(self, app, **kwargs):
         """Initialize application object."""
@@ -45,5 +75,11 @@ class INSPIREMigrator(object):
             'CFG_INSPIRE_LEGACY_BASEURL',
             'http://inspireheptest.cern.ch'
         )
+
+    def register_signals(self):
+        """Register signals."""
+        @event.listens_for(Collection.__table__, 'after_create')
+        def receive_after_create(target, connection, **kw):
+            load_collection_fixture()
 
 __all__ = ('INSPIREMigrator',)

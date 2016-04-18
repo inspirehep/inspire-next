@@ -32,4 +32,7 @@
 -e git+https://github.com/inspirehep/invenio-workflows.git@invenio3#egg=invenio-workflows==1.0.0a1.dev20160126
 -e git+https://github.com/jalavik/invenio-workflows-ui.git@master#egg=invenio-workflows-ui==0.1.0.dev20160000
 
+# Temporary invenio-collections fork in inspirehep
+-e git+https://github.com/inspirehep/invenio-collections.git@invenio3#egg=invenio-collections==1.0.0a3.dev20160204
+
 -e .[postgresql]
