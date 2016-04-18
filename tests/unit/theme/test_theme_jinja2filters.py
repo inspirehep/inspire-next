@@ -1051,7 +1051,7 @@ def test_format_date_returns_none_when_datestruct_is_none(c_d):
 
 
 @mock.patch('inspirehep.modules.theme.jinja2filters.create_datestruct')
-def test_format_date_returns_none_when_datestruct_has_one_element(c_d):
+def test_format_date_when_datestruct_has_one_element(c_d):
     c_d.return_value = (1993,)
 
     expected = 1993
@@ -1061,18 +1061,18 @@ def test_format_date_returns_none_when_datestruct_has_one_element(c_d):
 
 
 @mock.patch('inspirehep.modules.theme.jinja2filters.create_datestruct')
-def test_format_date_returns_none_when_no_datestruct(c_d, app):
+def test_format_date_when_datestruct_has_two_elements(c_d, app):
     with app.test_request_context():
         c_d.return_value = (1993, 2)
 
-        expected = 'Feb, 1993'
+        expected = 'Feb 1993'
         result = format_date('banana')
 
         assert expected == result
 
 
 @mock.patch('inspirehep.modules.theme.jinja2filters.create_datestruct')
-def test_format_date_returns_none_when_no_datestruct(c_d, app):
+def test_format_date_when_datestruct_has_three_elements(c_d, app):
     with app.test_request_context():
         c_d.return_value = (1993, 2, 2)
 
@@ -1082,20 +1082,25 @@ def test_format_date_returns_none_when_no_datestruct(c_d, app):
         assert expected == result
 
 
-def test_is_external_link():
-    assert is_external_link('http')
+def test_is_external_link_when_link_is_external():
+    assert is_external_link('http://www.example.com')
 
 
-def test_is_institute():
-    assert is_institute('kekscan')
+def test_is_external_link_when_link_is_to_a_picture():
+    assert not is_external_link('http://www.example.com/foo.png')
 
 
-def test_weblinks():
-    """In case a description is given and found in the dictionary"""
+def test_is_institute_normalizes_to_lowercase():
+    assert is_institute('KEKSCAN')
+
+
+def test_weblinks_when_description_is_found_in_the_kb():
     assert weblinks('CLNS97') == 'Cornell Document Server'
 
-    """In case description is given but NOT found in the dictionary"""
-    assert weblinks('none') == 'Link to none'
 
-    """In case no description is given"""
+def test_weblinks_when_description_is_not_in_the_kb():
+    assert weblinks('foo') == 'Link to foo'
+
+
+def test_weblinks_when_description_is_a_falsy_value():
     assert weblinks('') == 'Link to fulltext'
