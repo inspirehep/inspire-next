@@ -76,9 +76,9 @@ install_requires = [
     'invenio-pidstore',
     'invenio-records',
     'invenio-rest[cors]',
-    'invenio-search',
+    'invenio-search<=1.0.0a5',
     'invenio-records',
-    'invenio-records-rest',
+    'invenio-records-rest<=1.0.0a8',
     'invenio-records-ui',
     'invenio-userprofiles',
     'invenio-utils',  # Not fully Invenio 3 ready
