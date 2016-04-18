@@ -25,46 +25,6 @@ from inspirehep.modules.search.views import (
 )
 
 
-def test_search_conferences_is_there(app):
-    with app.test_client() as client:
-        assert client.get('/search?cc=conferences').status_code == 200
-
-
-def test_search_authors_is_there(app):
-    with app.test_client() as client:
-        assert client.get('/search?cc=authors').status_code == 200
-
-
-def test_search_data_is_there(app):
-    with app.test_client() as client:
-        assert client.get('/search?cc=data').status_code == 200
-
-
-def test_search_experiments_is_there(app):
-    with app.test_client() as client:
-        assert client.get('/search?cc=experiments').status_code == 200
-
-
-def test_search_institutions_is_there(app):
-    with app.test_client() as client:
-        assert client.get('/search?cc=institutions').status_code == 200
-
-
-def test_search_journals_is_there(app):
-    with app.test_client() as client:
-        assert client.get('/search?cc=journals').status_code == 200
-
-
-def test_search_jobs_is_there(app):
-    with app.test_client() as client:
-        assert client.get('/search?cc=jobs').status_code == 200
-
-
-def test_search_falls_back_to_hep(app):
-    with app.test_client() as client:
-        assert client.get('/search').status_code == 200
-
-
 def test_sorted_options():
     sort_options = {
         'foo': {'title': 'foo', 'default_order': 'asc'},
