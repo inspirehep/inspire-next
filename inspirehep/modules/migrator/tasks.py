@@ -295,7 +295,7 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
 
 
 @shared_task()
-def add_citation_counts():
+def add_citation_counts(chunk_size=500, request_timeout=10):
     index, doc_type = schema_to_index('records/hep.json')
 
     def get_records_to_update_generator(citation_lookup):
@@ -350,7 +350,14 @@ def add_citation_counts():
     click.echo("... DONE.")
     click.echo("Adding citation numbers...")
 
-    success, failed = es_bulk(current_search_client, get_records_to_update_generator(citations_lookup), raise_on_exception=True, raise_on_error=True, stats_only=True)
+    success, failed = es_bulk(
+        current_search_client,
+        get_records_to_update_generator(citations_lookup),
+        chunk_size=chunk_size,
+        raise_on_exception=True,
+        raise_on_error=True,
+        request_timeout=request_timeout,
+        stats_only=True)
     click.echo("... DONE: {} records updated with success. {} failures.".format(success, failed))
 
 

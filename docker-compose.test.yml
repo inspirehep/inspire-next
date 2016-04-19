@@ -35,10 +35,16 @@ services:
       - CACHE_REDIS_URL=redis://redis:6379/0
       - SEARCH_ELASTIC_HOSTS=indexer
 
-  test:
+  unit:
     extends:
       service: service_base
-    command: python setup.py test
+    volumes_from:
+      - static
+    command: ./run-tests.sh unit
+  integration:
+    extends:
+      service: service_base
+    command: ./run-tests.sh integration
     volumes_from:
       - static
     links:
@@ -49,6 +55,7 @@ services:
     depends_on:
       - worker
   worker:
+    container_name: inspirehep-test-worker
     extends:
       service: service_base
     command: celery worker -E -A inspirehep.celery --loglevel=INFO --purge
@@ -60,18 +67,23 @@ services:
       - rabbitmq
       - redis
   redis:
+    container_name: inspirehep-test-redis
     image: redis
   indexer:
+    container_name: inspirehep-test-indexer
     extends:
       file: services.yml
       service: indexer
   rabbitmq:
+    container_name: inspirehep-test-rabbitmq
     image: rabbitmq
   database:
+    container_name: inspirehep-test-database
     extends:
       file: services.yml
       service: database
   static:
+    container_name: inspirehep-test-static
     extends:
       file: services.yml
       service: static
