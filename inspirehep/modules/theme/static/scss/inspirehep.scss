@@ -36,6 +36,7 @@ $fa-font-path: "/static/node_modules/font-awesome/fonts";
 @import "base/list-group";
 @import "base/panels";
 @import "base/sticky-footer";
+@import "base/errors";
 
 @import "accounts/login";
 @import "accounts/settings/account-settings.scss";

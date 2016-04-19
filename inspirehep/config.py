@@ -742,6 +742,11 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
     consumer_secret="CHANGE_ME",
 )
 
+THEME_401_TEMPLATE = "inspirehep_theme/errors/401.html"
+THEME_403_TEMPLATE = "inspirehep_theme/errors/403.html"
+THEME_404_TEMPLATE = "inspirehep_theme/errors/404.html"
+THEME_500_TEMPLATE = "inspirehep_theme/errors/500.html"
+
 # Feedback
 # ========
 CFG_SITE_SUPPORT_EMAIL = "admin@inspirehep.net"
@@ -913,3 +918,5 @@ ARXIV_TO_INSPIRE_CATEGORY_MAPPING = {
     'stat.OT': 'Other',
     'stat.TH': 'Other'
 }
+
+ASSETS_DEBUG = True

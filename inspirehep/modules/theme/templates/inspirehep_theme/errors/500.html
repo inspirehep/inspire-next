@@ -1,0 +1,22 @@
+{% extends "inspirehep_theme/page.html" %}
+
+{%- set body_css_classes=['error-page'] %}
+
+{%- block page_body -%}
+
+    <div align="center" class="error-text-container error_500">
+      <h1>500</h1>
+      <h4>Sorry, our servers are having some issues processing your request. </h4>
+        <p>The error has been reported to our developers and we will solve it very soon!</p>
+    <p>If you have any questions, please email <a href="mailto:info@inspirehep.net">info@inspirehep.net</a>.</p>
+    </div>
+
+    <div class="row-fluid error-container" align="center">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <img src="{{ url_for('static', filename='images/errors/500.svg') }}" width="90%">
+        </div>
+    </div>
+    <div class="col-md-3"></div>
+
+{%- endblock -%}

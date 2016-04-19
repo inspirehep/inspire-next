@@ -1,0 +1,153 @@
+/*
+ *
+ * This file is part of INSPIRE.
+ * Copyright (C) 2014 CERN.
+
+ * INSPIRE is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * Invenio is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Invenio; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+ */
+/*
+Generic core styles that are included in all INSPIRE pages.
+*/
+/* ===========================================================
+    403, 404, and 500 page styles
+============================================================ */
+@import "variables";
+
+.error-text-container {
+  margin-top: 30px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+
+  @media all and (max-width: 500px) {
+    margin-top: 0px;
+  }
+
+  color: $blue;
+
+  &.jobs {
+    color: $jobs-collection;
+  }
+
+  &.data {
+    color: $data-collection;
+  }
+
+  &.authors {
+    color: $authors-collection;
+  }
+
+  &.conferences {
+    color: $conferences-collection;
+  }
+
+  &.institutions {
+    color: $institutions-collection;
+  }
+
+  &.journals {
+    color: $journals-collection;
+  }
+
+  &.experiments {
+    color: $experiments-collection;
+  }
+
+  &.literature {
+    color: $literature-collection;
+  }
+
+  &.error_500 {
+    color: $blue;
+  }
+}
+
+.error-container {
+  position: fixed;
+  bottom: $footer-height;
+  z-index: -1;
+  width: 100%;
+  border-bottom: 50px solid $clouds;
+
+  img {
+    margin-bottom: -30px;
+  }
+}
+
+.error-page {
+  background-color: white;
+
+  h1 {
+    font-size: 65px;
+  }
+
+  h4 {
+    font-size: 2em;
+    text-align: center;
+  }
+
+  p {
+    padding: .5em;
+    color: $concrete;
+    font-size: 1.3em;
+  }
+
+  .search-area {
+    padding-top: 20px;
+    width: 70%;
+
+    .input-group .form-control {
+      padding: 22px;
+      background-color: $clouds;
+    }
+
+    .input-group-btn button{
+      padding: 13.5px;
+      border: none;
+
+      &.literature-search-button {
+          @include collection-background-color($literature-collection);
+        }
+
+        &.authors-search-button {
+          @include collection-background-color($authors-collection);
+        }
+
+        &.conferences-search-button {
+          @include collection-background-color($conferences-collection);
+        }
+
+        &.jobs-search-button {
+          @include collection-background-color($jobs-collection);
+        }
+
+        &.experiments-search-button {
+          @include collection-background-color($experiments-collection);
+        }
+
+        &.institutions-search-button {
+          @include collection-background-color($institutions-collection);
+        }
+
+        &.journals-search-button {
+          @include collection-background-color($journals-collection);
+        }
+
+        &.data-search-button {
+          @include collection-background-color($data-collection);
+        }
+    }
+  }
+
+}
