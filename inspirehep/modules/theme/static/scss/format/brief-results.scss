@@ -686,3 +686,18 @@ i.fa-chevron-right.facet-slider {
     width: 100%;
   }
 }
+
+div > .modal-dialog {
+  width: 70%;
+  overflow-y: initial !important
+}
+
+.modal-body-scrollable {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+
+.cite-modal {
+  min-height:237px;
+}
