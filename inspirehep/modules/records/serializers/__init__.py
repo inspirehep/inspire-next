@@ -26,9 +26,12 @@
 
 from __future__ import absolute_import, print_function
 
-from invenio_records_rest.serializers.response import record_responsify, \
+from invenio_records_rest.serializers.response import (
+    record_responsify,
     search_responsify
+)
 
+from .impactgraph_serializer import ImpactGraphSerializer
 from .json import JSONBriefSerializer
 from .bibtex_serializer import BIBTEXSerializer
 from .latexeu_serializer import LATEXEUSerializer
@@ -69,3 +72,6 @@ cvformathtml_v1_search = search_responsify(cvformathtml_v1,
                                            'application/x-cvformathtml')
 cvformattext_v1_search = search_responsify(cvformattext_v1,
                                            'application/x-cvformattext')
+impactgraph_v1 = ImpactGraphSerializer()
+impactgraph_v1_response = record_responsify(impactgraph_v1,
+                                            'application/x-impact.graph+json')
