@@ -226,7 +226,11 @@ setup(
             'inspire_migrator = inspirehep.modules.migrator:INSPIREMigrator',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
             'inspire_authors = inspirehep.modules.authors:INSPIREAuthors',
+            'inspire_literature_suggest = inspirehep.modules.literaturesuggest:INSPIRELiteratureSuggestion',
             'inspire_forms = inspirehep.modules.forms:INSPIREForms',
+            'arxiv = inspirehep.modules.arxiv:Arxiv',
+            'crossref = inspirehep.modules.crossref:CrossRef',
+
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
@@ -237,6 +241,7 @@ setup(
             'inspirehep_forms_js = inspirehep.modules.forms.bundles:js',
             'inspirehep_detailed_js = inspirehep.modules.theme.bundles:detailedjs',
             'inspirehep_author_update_css = inspirehep.modules.authors.bundles:css',
+            'inspirehep_literaturesuggest_js = inspirehep.modules.literaturesuggest.bundles:js',
             'invenio_search_ui_search_js = inspirehep.modules.search.bundles:js',
         ],
         'invenio_jsonschemas.schemas': [
@@ -246,6 +251,7 @@ setup(
             'records = inspirehep.modules.records.mappings',
         ],
         'invenio_workflows.workflows': [
+            'literature = inspirehep.modules.literaturesuggest.workflows:literature',
             'authornew = inspirehep.modules.authors.workflows:AuthorNew',
             'authorupdate = inspirehep.modules.authors.workflows:AuthorUpdate'
         ],

@@ -30,6 +30,7 @@ require.config({
     bootstrap: 'node_modules/bootstrap-sass/assets/javascripts/bootstrap',
     'bootstrap-datetimepicker': 'node_modules/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
     'bootstrap-multiselect': 'node_modules/bootstrap-multiselect/dist/js/bootstrap-multiselect',
+    'bucketsjs': 'node_modules/buckets-js/dist/buckets',
     clipboard: 'node_modules/clipboard/dist/clipboard',
     feedback: 'js/feedback/feedback',
     flight: 'node_modules/flightjs/build/flight',
@@ -40,8 +41,11 @@ require.config({
     'inspirehep-search': 'node_modules/inspirehep-search-js/dist/inspirehep-search',
     'invenio-search': 'node_modules/invenio-search-js/dist/invenio-search-js',
     jquery: 'node_modules/jquery/jquery',
+    'jquery.ui': 'node_modules/jquery-ui',
+    ui: "node_modules/jquery-ui",
     moment: 'node_modules/moment/moment',
     'ngclipboard': 'node_modules/ngclipboard/src/ngclipboard',
+    'readmore': 'node_modules/readmore-js/readmore',
     text: 'node_modules/requirejs-hogan-plugin/text',
     toastr: 'node_modules/toastr/toastr',
     typeahead: 'node_modules/typeahead.js/dist/typeahead.bundle'
@@ -85,6 +89,9 @@ require.config({
     typeahead: {
       deps: ['jquery'],
       exports: 'Bloodhound'
+    },
+    'ui': {
+        deps: ['jquery']
     }
   }
 });
