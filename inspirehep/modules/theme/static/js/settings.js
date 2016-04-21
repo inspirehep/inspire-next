@@ -48,7 +48,9 @@ require.config({
     'readmore': 'node_modules/readmore-js/readmore',
     text: 'node_modules/requirejs-hogan-plugin/text',
     toastr: 'node_modules/toastr/toastr',
-    typeahead: 'node_modules/typeahead.js/dist/typeahead.bundle'
+    typeahead: 'node_modules/typeahead.js/dist/typeahead.bundle',
+    sifter: 'node_modules/sifter/sifter',
+    microplugin: 'node_modules/microplugin/src/microplugin'
   },
   shim: {
     angular: {
