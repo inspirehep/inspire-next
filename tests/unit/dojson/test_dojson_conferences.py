@@ -18,55 +18,53 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 from dojson.contrib.marc21.utils import create_record
-from inspirehep.dojson.jobs import jobs
+from inspirehep.dojson.conferences import conferences
 from inspirehep.dojson.utils import strip_empty_values
 
-def test_ranks_from_marcxml_656_with_single_a():
-    """Two ranks inside one record."""
+
+def test_extra_place_info_from_marcxml_270_with_single_b():
     snippet = (
         '<record> '
-        '<datafield tag="656" ind1=" " ind2=" ">'
-        '<subfield code="a">Senior</subfield>'
+        '<datafield tag="270" ind1=" " ind2=" ">'
+        '<subfield code="b">Grand Hotel dei Castelli</subfield>'
         '</datafield>'
         '</record>'
     )
 
-    record = strip_empty_values(jobs.do(create_record(snippet)))
-    assert record['_ranks'] == ['Senior']
-    assert record["ranks"] == ['SENIOR']
+    record = strip_empty_values(conferences.do(create_record(snippet)))
+    assert record['extra_place_info'] == ['Grand Hotel dei Castelli']
 
-def test_ranks_from_marcxml_656_with_double_a():
-    """Two ranks inside one record."""
+
+def test_extra_place_info_from_marcxml_270_with_double_b():
     snippet = (
         '<record> '
-        '<datafield tag="656" ind1=" " ind2=" ">'
-        '<subfield code="a">Senior</subfield>'
-        '<subfield code="a">Junior</subfield>'
+        '<datafield tag="270" ind1=" " ind2=" ">'
+        '<subfield code="b">Fermilab Illinois</subfield>'
+        '<subfield code="b">Institute of Quantum Physics</subfield>'
         '</datafield>'
         '</record>'
     )
 
-    record = strip_empty_values(jobs.do(create_record(snippet)))
-    assert record['_ranks'] == ['Senior', 'Junior']
-    assert record["ranks"] == ['SENIOR', 'JUNIOR']
+    record = strip_empty_values(conferences.do(create_record(snippet)))
+    assert record['extra_place_info'] == ['Fermilab Illinois',
+                                          'Institute of Quantum Physics']
 
 
-def test_ranks_from_marcxml_double_656():
-    """Two ranks inside one record."""
+def test_extra_place_info_from_double_marcxml_270():
     snippet = (
         '<record> '
-        '<datafield tag="656" ind1=" " ind2=" ">'
-        '<subfield code="a">Senior</subfield>'
+        '<datafield tag="270" ind1=" " ind2=" ">'
+        '<subfield code="b">Fermilab Illinois</subfield>'
         '</datafield>'
-        '<datafield tag="656" ind1=" " ind2=" ">'
-        '<subfield code="a">Junior</subfield>'
+        '<datafield tag="270" ind1=" " ind2=" ">'
+        '<subfield code="b">Institute of Quantum Physics</subfield>'
         '</datafield>'
         '</record>'
     )
 
-    record = strip_empty_values(jobs.do(create_record(snippet)))
-    assert record['_ranks'] == ['Senior', 'Junior']
-    assert record["ranks"] == ['SENIOR', 'JUNIOR']
+    record = strip_empty_values(conferences.do(create_record(snippet)))
+    assert record['extra_place_info'] == ['Fermilab Illinois',
+                                          'Institute of Quantum Physics']
 
 
 def test_contact_details_from_marcxml_270_single_p_single_m():
@@ -79,7 +77,7 @@ def test_contact_details_from_marcxml_270_single_p_single_m():
         '</record>'
     )
 
-    record = strip_empty_values(jobs.do(create_record(snippet)))
+    record = strip_empty_values(conferences.do(create_record(snippet)))
     assert record['contact_details'] == [{
         'name': 'Manfred Lindner',
         'email': 'lindner@mpi-hd.mpg.de'
@@ -99,7 +97,7 @@ def test_contact_details_from_marcxml_270_double_p_single_m():
         '</record>'
     )
 
-    record = strip_empty_values(jobs.do(create_record(snippet)))
+    record = strip_empty_values(conferences.do(create_record(snippet)))
     assert record['contact_details'] == [{
         'email': 'lindner@mpi-hd.mpg.de'
         }
@@ -118,7 +116,7 @@ def test_contact_details_from_marcxml_270_single_p_double_m():
         '</record>'
     )
 
-    record = strip_empty_values(jobs.do(create_record(snippet)))
+    record = strip_empty_values(conferences.do(create_record(snippet)))
     assert record['contact_details'] == [{
         'name': 'Manfred Lindner'
         }
@@ -138,7 +136,7 @@ def test_contact_details_from_multiple_marcxml_270():
         '</record>'
     )
 
-    record = strip_empty_values(jobs.do(create_record(snippet)))
+    record = strip_empty_values(conferences.do(create_record(snippet)))
     assert record['contact_details'] == [{
         'name': 'Manfred Lindner',
         'email': 'lindner@mpi-hd.mpg.de'

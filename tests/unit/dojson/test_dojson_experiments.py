@@ -18,55 +18,8 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 from dojson.contrib.marc21.utils import create_record
-from inspirehep.dojson.jobs import jobs
+from inspirehep.dojson.experiments import experiments
 from inspirehep.dojson.utils import strip_empty_values
-
-def test_ranks_from_marcxml_656_with_single_a():
-    """Two ranks inside one record."""
-    snippet = (
-        '<record> '
-        '<datafield tag="656" ind1=" " ind2=" ">'
-        '<subfield code="a">Senior</subfield>'
-        '</datafield>'
-        '</record>'
-    )
-
-    record = strip_empty_values(jobs.do(create_record(snippet)))
-    assert record['_ranks'] == ['Senior']
-    assert record["ranks"] == ['SENIOR']
-
-def test_ranks_from_marcxml_656_with_double_a():
-    """Two ranks inside one record."""
-    snippet = (
-        '<record> '
-        '<datafield tag="656" ind1=" " ind2=" ">'
-        '<subfield code="a">Senior</subfield>'
-        '<subfield code="a">Junior</subfield>'
-        '</datafield>'
-        '</record>'
-    )
-
-    record = strip_empty_values(jobs.do(create_record(snippet)))
-    assert record['_ranks'] == ['Senior', 'Junior']
-    assert record["ranks"] == ['SENIOR', 'JUNIOR']
-
-
-def test_ranks_from_marcxml_double_656():
-    """Two ranks inside one record."""
-    snippet = (
-        '<record> '
-        '<datafield tag="656" ind1=" " ind2=" ">'
-        '<subfield code="a">Senior</subfield>'
-        '</datafield>'
-        '<datafield tag="656" ind1=" " ind2=" ">'
-        '<subfield code="a">Junior</subfield>'
-        '</datafield>'
-        '</record>'
-    )
-
-    record = strip_empty_values(jobs.do(create_record(snippet)))
-    assert record['_ranks'] == ['Senior', 'Junior']
-    assert record["ranks"] == ['SENIOR', 'JUNIOR']
 
 
 def test_contact_details_from_marcxml_270_single_p_single_m():
@@ -79,7 +32,7 @@ def test_contact_details_from_marcxml_270_single_p_single_m():
         '</record>'
     )
 
-    record = strip_empty_values(jobs.do(create_record(snippet)))
+    record = strip_empty_values(experiments.do(create_record(snippet)))
     assert record['contact_details'] == [{
         'name': 'Manfred Lindner',
         'email': 'lindner@mpi-hd.mpg.de'
@@ -99,7 +52,7 @@ def test_contact_details_from_marcxml_270_double_p_single_m():
         '</record>'
     )
 
-    record = strip_empty_values(jobs.do(create_record(snippet)))
+    record = strip_empty_values(experiments.do(create_record(snippet)))
     assert record['contact_details'] == [{
         'email': 'lindner@mpi-hd.mpg.de'
         }
@@ -118,7 +71,7 @@ def test_contact_details_from_marcxml_270_single_p_double_m():
         '</record>'
     )
 
-    record = strip_empty_values(jobs.do(create_record(snippet)))
+    record = strip_empty_values(experiments.do(create_record(snippet)))
     assert record['contact_details'] == [{
         'name': 'Manfred Lindner'
         }
@@ -138,7 +91,7 @@ def test_contact_details_from_multiple_marcxml_270():
         '</record>'
     )
 
-    record = strip_empty_values(jobs.do(create_record(snippet)))
+    record = strip_empty_values(experiments.do(create_record(snippet)))
     assert record['contact_details'] == [{
         'name': 'Manfred Lindner',
         'email': 'lindner@mpi-hd.mpg.de'
