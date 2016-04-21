@@ -11,19 +11,9 @@
             "title": "Date when the job was closed",
             "type": "string"
         },
-        "contact_email": {
+        "contact_details": {
             "items": {
-                "format": "email",
-                "title": "Contact email",
-                "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
-        "contact_person": {
-            "items": {
-                "title": "Contact person",
-                "type": "string"
+                "$ref": "elements/contact.json"
             },
             "type": "array",
             "uniqueItems": true
@@ -105,7 +95,7 @@
         },
         "reference_email": {
             "items": {
-                "description": "FIXME: what is the difference from contact_email!?",
+                "description": "E-mail address where applications should be sent (if different than contact e-mail)",
                 "format": "email",
                 "title": "Reference email",
                 "type": "string"

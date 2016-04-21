@@ -29,31 +29,6 @@ from inspirehep.dojson import utils as inspire_dojson_utils
 from ..model import jobs
 
 
-@jobs.over('acquisition_source', '^(037|270)..')
-@utils.for_each_value
-def acquisition_source(self, key, value):
-    """Submission information aggregated from various sources."""
-    result = {
-        "method": "submission"
-    }
-    if key.startswith('037'):
-        if "JOBSUBMIT" in value.get('a'):
-            result["submission_number"] = value.get('a')
-    elif key.startswith('270'):
-        if value.get('m'):
-            result["email"] = value.get('m')
-        if value.get('p'):
-            self.setdefault('contact_person', [])
-            self['contact_person'].append(value.get('p'))
-        if value.get('m'):
-            self.setdefault('contact_email', [])
-            self['contact_email'].append(value.get('m'))
-        if value.get('o'):
-            self.setdefault('reference_email', [])
-            self['reference_email'].append(value.get('o'))
-    return result
-
-
 @jobs.over('date_closed', '^046..')
 def date_closed(self, key, value):
     """Date the job was closed."""
@@ -90,13 +65,6 @@ def continent(self, key, value):
     return value.get('a')
 
 
-@jobs.over('experiments', '^693..')
-@utils.for_each_value
-def experiments(self, key, value):
-    """Contact person."""
-    return value.get('e')
-
-
 @jobs.over('institution', '^110..')
 @utils.for_each_value
 @utils.filter_values
@@ -114,23 +82,29 @@ def institution(self, key, value):
     }
 
 
-@jobs.over('description', '^520..')
-def description(self, key, value):
-    """Contact person."""
-    return value.get('a')
-
-
 @jobs.over('position', '^245..')
 def position(self, key, value):
-    """Contact person."""
+    """Breadcrumb title."""
     self.setdefault('breadcrumb_title', value.get('a'))
     return value.get('a')
 
 
-@jobs.over('research_area', '^65017')
+@jobs.over('contact_details', '^270..')
 @utils.for_each_value
-def research_area(self, key, value):
-    """Contact person."""
+def contacts(self, key, value):
+    """Contacts details."""
+    name = value.get('p')
+    email = value.get('m')
+
+    return {
+        'name': name if isinstance(name, str) else None,
+        'email': email if isinstance(email, str) else None
+    }
+
+
+@jobs.over('description', '^520..')
+def description(self, key, value):
+    """Job description"""
     return value.get('a')
 
 
@@ -160,14 +134,22 @@ def rank(self, key, value):
     return ranks
 
 
+@jobs.over('experiments', '^693..')
+@utils.for_each_value
+def experiments(self, key, value):
+    """Related experiments"""
+    return value.get('e')
+
+
+@jobs.over('research_area', '^65017')
+@utils.for_each_value
+def research_area(self, key, value):
+    """Research area"""
+    return value.get('a')
+
+
 @jobs.over('urls', '^856.[10_28]')
 @utils.for_each_value
 def urls(self, key, value):
-    """Contact person."""
+    """Urls."""
     return value.get('u')
-
-
-@jobs.over('experiment', '^693..')
-@utils.for_each_value
-def experiment(self, key, value):
-    return value.get('e')

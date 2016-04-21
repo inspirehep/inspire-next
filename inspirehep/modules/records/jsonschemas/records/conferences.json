@@ -29,14 +29,20 @@
             "title": "Conference ID (CNUM)",
             "type": "string"
         },
-        "contact_person": {
-            "title": "Contact person",
-            "type": "array"
+        "contact_details": {
+            "items": {
+                "$ref": "elements/contact.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
-        "contact_email": {
-            "format": "email",
-            "title": "Contact email",
-            "type": "string"
+        "extra_place_info": {
+            "items": {
+              "title": "Extra place info",
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "field_code": {
             "items": {
