@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -140,7 +140,8 @@ def send_robotupload(mode="insert"):
             marcxml=marcxml,
             callback_url=callback_url,
             mode=mode,
-            nonce=obj.id
+            nonce=obj.id,
+            priority=5
         )
         if "[INFO]" not in result.text:
             if "cannot use the service" in result.text:
