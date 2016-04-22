@@ -40,13 +40,6 @@ def experiment_name(self, key, value):
     }
 
 
-@experiments.over('contact_email', '^270..')
-@utils.for_each_value
-def contact_email(self, key, value):
-    """Contact email of experiment."""
-    return value.get("m")
-
-
 @experiments.over('title', '^245[10_][0_]')
 @utils.for_each_value
 @utils.filter_values
@@ -57,6 +50,19 @@ def title(self, key, value):
         'title': value.get('a'),
         'subtitle': value.get('b'),
         'source': value.get('9'),
+    }
+
+
+@experiments.over('contact_details', '^270..')
+@utils.for_each_value
+def contacts(self, key, value):
+    """Contacts details."""
+    name = value.get('p')
+    email = value.get('m')
+
+    return {
+        'name': name if isinstance(name, str) else None,
+        'email': email if isinstance(email, str) else None
     }
 
 
@@ -90,13 +96,6 @@ def collaboration(self, key, value):
         self['collaboration_alternative_names'] = collaborations[1:]
     if collaborations:
         return collaborations[0]
-
-
-@experiments.over('urls', '^856.[10_28]')
-@utils.for_each_value
-def urls(self, key, value):
-    """URLs."""
-    return value.get('u')
 
 
 @experiments.over('related_experiments', '^510')

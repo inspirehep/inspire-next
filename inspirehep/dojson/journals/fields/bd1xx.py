@@ -71,13 +71,3 @@ def short_title(self, key, value):
 def name_variants(self, key, value):
     """Variants of the name."""
     return value.get('a')
-
-
-@journals.over('urls', '^856.[10_28]')
-@utils.for_each_value
-def urls(self, key, value):
-    """URLs."""
-    return {
-        'urls': value.get('u'),
-        'doc_string': value.get('w')
-    }

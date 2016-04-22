@@ -178,3 +178,52 @@ def get_recid_from_ref(ref_obj):
     except ValueError:
         res = None
     return res
+
+
+RANKS_MAPPINGS = {
+    'STAFF': {},
+    'SENIOR': {},
+    'JUNIOR': {},
+    'VISITOR': {
+        'alternative_names': ['VISITING SCIENTIST'],
+    },
+    'POSTDOC': {
+        'abbreviations': ['PD']
+    },
+    'PHD': {
+        'alternative_names': ['STUDENT']
+    },
+    'MASTER': {
+        'abbreviations': ['MAS', 'MS', 'MSC']
+    },
+    'UNDERGRADUATE': {
+        'alternative_names': ['BACHELOR'],
+        'abbreviations': ['UG', 'BS', 'BA', 'BSC']
+    }
+}
+
+
+def classify_rank(value):
+    """
+    Classifies raw string from rank field as one of the values of RANKS_MAPPINGS
+    """
+    if not value:
+        return None
+    elif not isinstance(value, str) and not isinstance(value, unicode):
+        return None
+    else:
+        casted_value = value.upper().replace('.', '')
+        for rank_name, rank_mapping in RANKS_MAPPINGS.items():
+            if rank_name in casted_value:
+                return rank_name
+            else:
+                if rank_mapping.get('alternative_names'):
+                    for alternative in rank_mapping['alternative_names']:
+                        if alternative in casted_value:
+                            return rank_name
+                if rank_mapping.get('abbreviations'):
+                    for abbrev in rank_mapping['abbreviations']:
+                        if abbrev == casted_value:
+                            return rank_name
+
+        return 'OTHER'

@@ -50,13 +50,26 @@ def alternative_titles(self, key, value):
     return value.get('a')
 
 
-@conferences.over('contact_person', '^270')
+@conferences.over('contact_details', '^270')
 @utils.for_each_value
-def contact_person(self, key, value):
-    """Contact person."""
-    if value.get('m'):
-        self['contact_email'] = value.get('m')
-    return value.get('p')
+def contact_details(self, key, value):
+    """Map 270 field to contact details and extra_place_info"""
+    self.setdefault('extra_place_info', [])
+    extra_place_info = value.get('b')
+    if isinstance(extra_place_info, str):
+        self['extra_place_info'].append(extra_place_info)
+    elif isinstance(extra_place_info, tuple):
+        for place in extra_place_info:
+            self['extra_place_info'].append(place)
+    else:
+        pass
+
+    name = value.get('p')
+    email = value.get('m')
+    return {
+        'name': name if isinstance(name, str) else None,
+        'email': email if isinstance(email, str) else None
+    }
 
 
 @conferences.over('field_code', '^65017')
@@ -123,31 +136,3 @@ def short_description(self, key, value):
         'value': value.get('a'),
         'source': value.get('9')
     }
-
-
-@conferences.over('url', '^8564')
-def url(self, key, value):
-    """Conference transparencies."""
-    value = utils.force_list(value)
-    transparencies = []
-    sessions = []
-    urls = []
-    for val in value:
-        if val.get('y'):
-            description = utils.force_list(val.get('y'))
-            if 'transparencies' in [e.lower() for e in val['y']]:
-                transparencies.append(val.get('u'))
-        if val.get('t'):
-            sessions.extend(utils.force_list(val.get('t')))
-        if val.get('u'):
-            urls.append(utils.force_list(val.get('u')))
-    self['transparencies'] = transparencies
-    self['sessions'] = sessions
-    return urls
-
-
-@conferences.over('extra_place_info', '^270')
-@utils.for_each_value
-def extra_place_info(self, key, value):
-    """Conference extra place info."""
-    return value.get('b')

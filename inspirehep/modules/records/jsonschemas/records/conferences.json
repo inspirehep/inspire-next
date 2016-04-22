@@ -29,14 +29,20 @@
             "title": "Conference ID (CNUM)",
             "type": "string"
         },
-        "contact_person": {
-            "title": "Contact person",
-            "type": "array"
+        "contact_details": {
+            "items": {
+                "$ref": "elements/contact.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
-        "contact_email": {
-            "format": "email",
-            "title": "Contact email",
-            "type": "string"
+        "extra_place_info": {
+            "items": {
+              "title": "Extra place info",
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "field_code": {
             "items": {
@@ -100,12 +106,6 @@
             "title": "Conference place",
             "type": "string"
         },
-        "proceedings": {
-            "description": "FIXME: Shall we rather have a nice link towards the proceedings record? Can we simply derive it?",
-            "format": "url",
-            "title": "Conference proceedings URL",
-            "type": "string"
-        },
         "series": {
             "title": "Conference series",
             "type": "array"
@@ -135,15 +135,8 @@
             "title": "Conference title",
             "type": "string"
         },
-        "transparencies": {
-            "format": "url",
-            "title": "Conference transparencies URL",
-            "type": "string"
-        },
-        "url": {
-            "format": "url",
-            "title": "Conference URL",
-            "type": "array"
+        "urls": {
+            "$ref": "elements/urls.json"
         }
     },
     "title": "Conference",

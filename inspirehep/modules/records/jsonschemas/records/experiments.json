@@ -35,9 +35,12 @@
             },
             "uniqueItems": true
         },
-        "contact_email": {
-            "title": "Contact email",
-            "type": "array"
+        "contact_details": {
+            "items": {
+                "$ref": "elements/contact.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "curated_relation": {
             "title": "Curated relation",
@@ -210,10 +213,8 @@
             "type":"array",
             "title": "Title"
         },
-        "url": {
-            "format": "url",
-            "title": "Experiment web page",
-            "type": "string"
+        "urls": {
+            "$ref": "elements/urls.json"
         }
     },
     "title": "Experiment",

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ def references(self, key, value):
             'maintitle': value.get('q'),
             'report_number': utils.force_list(value.get('r')),
             'title': utils.force_list(value.get('t')),
-            'url': utils.force_list(value.get('u')),
+            'urls': utils.force_list(value.get('u')),
             'journal_pubnote': utils.force_list(value.get('s')),
             'raw_reference': utils.force_list(value.get('x')),
             'year': year,
@@ -101,7 +101,7 @@ def references2marc(self, key, value):
         'q': value.get('maintitle'),
         'r': value.get('report_number'),
         't': value.get('title'),
-        'u': value.get('url'),
+        'u': value.get('urls'),
         's': value.get('journal_pubnote'),
         'x': value.get('raw_reference'),
         'y': value.get('year'),
