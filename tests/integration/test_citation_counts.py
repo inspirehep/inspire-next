@@ -32,7 +32,7 @@ def test_citation_counts_are_correct(app):
 
     with app.app_context():
         assert get_citation_count(712925) == 97
-        assert get_citation_count(12291) == 12
+        assert get_citation_count(12291) == 18
         assert get_citation_count(1319638) == 8
         assert get_citation_count(452060) == 6
         assert get_citation_count(921978) == 5
