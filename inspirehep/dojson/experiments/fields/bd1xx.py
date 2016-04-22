@@ -98,13 +98,6 @@ def collaboration(self, key, value):
         return collaborations[0]
 
 
-@experiments.over('urls', '^856.[10_28]')
-@utils.for_each_value
-def urls(self, key, value):
-    """URLs."""
-    return value.get('u')
-
-
 @experiments.over('related_experiments', '^510')
 @utils.for_each_value
 def related_experiments(self, key, value):

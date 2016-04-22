@@ -213,10 +213,8 @@
             "type":"array",
             "title": "Title"
         },
-        "url": {
-            "format": "url",
-            "title": "Experiment web page",
-            "type": "string"
+        "urls": {
+            "$ref": "elements/urls.json"
         }
     },
     "title": "Experiment",

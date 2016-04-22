@@ -440,7 +440,7 @@
                     "report_number": {
                         "type": "array"
                     },
-                    "url": {
+                    "urls": {
                         "type": "array",
                         "format": "url"
                     },
@@ -869,17 +869,6 @@
                         "type": "string",
                         "format": "email"
                     },
-                    "profile": {
-                        "title": "Profile URL",
-                        "description": "Link to the author's profile.",
-                        "type": "object",
-                        "properties": {
-                            "__url__": {
-                                "type": "string",
-                                "format": "url"
-                            }
-                        }
-                    },
                     "signature_block": {
                         "title": "Phonetic name",
                         "description": "Phonetic notation of the author's name.",
@@ -1046,45 +1035,7 @@
                 "title": "Number of pages"
             }
         },
-        "urls": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "doc_string": {
-                        "type": "string",
-                        "description": "FIXME: What is this!?",
-                        "title": "Doc String"
-                    },
-                    "url": {
-                        "title": "URL",
-                        "type": "string",
-                        "format": "url"
-                    },
-                    "material_type": {
-                        "type": "string",
-                        "title": "Type of material"
-                    },
-                    "description": {
-                        "type": "string",
-                        "title": "Description"
-                    },
-                    "size": {
-                        "type": "integer",
-                        "title": "Size"
-                    },
-                    "comment": {
-                        "type": "string"
-                    },
-                    "name": {
-                        "type": "string"
-                    }
-                },
-                "title": "URL"
-            },
-            "type": "array",
-            "title": "URLs"
-        },
+        "urls": {"$ref": "elements/urls.json"},
         "title_translation": {
             "uniqueItems": true,
             "items": {

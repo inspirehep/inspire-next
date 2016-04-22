@@ -106,12 +106,6 @@
             "title": "Conference place",
             "type": "string"
         },
-        "proceedings": {
-            "description": "FIXME: Shall we rather have a nice link towards the proceedings record? Can we simply derive it?",
-            "format": "url",
-            "title": "Conference proceedings URL",
-            "type": "string"
-        },
         "series": {
             "title": "Conference series",
             "type": "array"
@@ -141,15 +135,8 @@
             "title": "Conference title",
             "type": "string"
         },
-        "transparencies": {
-            "format": "url",
-            "title": "Conference transparencies URL",
-            "type": "string"
-        },
-        "url": {
-            "format": "url",
-            "title": "Conference URL",
-            "type": "array"
+        "urls": {
+            "$ref": "elements/urls.json"
         }
     },
     "title": "Conference",
