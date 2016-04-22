@@ -83,10 +83,8 @@
             "title": "License",
             "type": "string"
         },
-        "license_url": {
-            "format": "url",
-            "title": "License URL",
-            "type": "string"
+        "license_urls": {
+            "$ref": "elements/urls.json"
         },
         "nonpublic_note": {
             "title": "Non public note",
@@ -145,10 +143,8 @@
             "type": "array",
             "uniqueItems": true
         },
-        "url": {
-            "format": "url",
-            "title": "URL of the journal",
-            "type": "string"
+        "urls": {
+            "$ref": "elements/urls.json"
         }
     },
     "title": "Journal",

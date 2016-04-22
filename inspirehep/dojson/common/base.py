@@ -318,3 +318,30 @@ def deleted_records2marc(self, key, value):
     return {
         'a': inspire_dojson_utils.get_recid_from_ref(value)
     }
+
+
+@conferences.over('urls', '^8564')
+@experiments.over('urls', '^8564')
+@hep.over('urls', '^856.[10_28]')
+@hepnames.over('urls', '^856.[10_28]')
+@institutions.over('urls', '^856.[10_28]')
+@jobs.over('urls', '^856.[10_28]')
+@journals.over('urls', '^856.[10_28]')
+def urls(self, key, value):
+    """URL to external resource."""
+    urls = []
+    value = utils.force_list(value)
+    for val in value:
+        if isinstance(val.get('y'), str):
+            description = val.get('y')
+        elif isinstance(val.get('y'), tuple):
+            description = val.get('y')[0]
+            # FIXME: raise Exception("multiple y values")
+        else:
+            description = None
+        if isinstance(val.get('u'), str):
+            urls.append({"value": val.get('u'), "description": description})
+        elif isinstance(val.get('u'), tuple):
+            for u in val.get("u"):
+                urls.append({"value": u, "description": description})
+    return urls

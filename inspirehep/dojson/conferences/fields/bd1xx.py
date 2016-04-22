@@ -136,24 +136,3 @@ def short_description(self, key, value):
         'value': value.get('a'),
         'source': value.get('9')
     }
-
-
-@conferences.over('url', '^8564')
-def url(self, key, value):
-    """Conference transparencies."""
-    value = utils.force_list(value)
-    transparencies = []
-    sessions = []
-    urls = []
-    for val in value:
-        if val.get('y'):
-            description = utils.force_list(val.get('y'))
-            if 'transparencies' in [e.lower() for e in val['y']]:
-                transparencies.append(val.get('u'))
-        if val.get('t'):
-            sessions.extend(utils.force_list(val.get('t')))
-        if val.get('u'):
-            urls.append(utils.force_list(val.get('u')))
-    self['transparencies'] = transparencies
-    self['sessions'] = sessions
-    return urls
