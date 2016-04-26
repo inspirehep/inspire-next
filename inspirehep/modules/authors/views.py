@@ -59,7 +59,7 @@ from .forms import AuthorUpdateForm
 
 blueprint = Blueprint('inspirehep_authors',
                       __name__,
-                      url_prefix='/author',
+                      url_prefix='/submit/author',
                       template_folder='templates',
                       static_folder='static')
 
@@ -290,7 +290,7 @@ def validate():
     return jsonify(result)
 
 
-@blueprint.route('/new', methods=['GET', 'POST'])
+@blueprint.route('/create', methods=['GET', 'POST'])
 @register_breadcrumb(blueprint, '.new', _('New author information'))
 @login_required
 def new():

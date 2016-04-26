@@ -24,6 +24,11 @@
 
 """INSPIRE Literature suggestion blueprint."""
 
+from __future__ import absolute_import, print_function
+
+import copy
+
+
 from flask import (
     abort,
     Blueprint,
@@ -45,21 +50,23 @@ from invenio_workflows import WorkflowObject, start
 
 from .forms import LiteratureForm
 
+from .tasks import convert_data_to_model
+
 
 blueprint = Blueprint('inspirehep_literature_suggest',
                       __name__,
-                      url_prefix='/submit',
+                      url_prefix='/submit/literature',
                       template_folder='templates',
                       static_folder='static')
 
 
-@blueprint.route('/literature/create', methods=['GET'])
+@blueprint.route('/create', methods=['GET'])
 @login_required
 def create():
     """View for INSPIRE suggestion create form."""
     form = LiteratureForm()
     ctx = {
-        "action": url_for('.success'),
+        "action": url_for('.submit'),
         "name": "submitForm",
         "id": "submitForm",
     }
@@ -71,7 +78,7 @@ def create():
     )
 
 
-@blueprint.route('/literature/create/submit', methods=['POST'])
+@blueprint.route('/create/submit', methods=['POST'])
 def submit():
     """Get form data and start workflow."""
     form = LiteratureForm(formdata=request.form)
@@ -80,7 +87,7 @@ def submit():
 
     workflow_object = WorkflowObject.create_object(
         id_user=current_user.get_id())
-    workflow_object.data = visitor.data
+    workflow_object.data = convert_data_to_model(workflow_object, visitor.data)
     workflow_object.save()
     db.session.commit()
 
@@ -91,7 +98,7 @@ def submit():
     return redirect(url_for('.success'))
 
 
-@blueprint.route('/literature/create/success', methods=['POST'])
+@blueprint.route('/create/success', methods=['GET'])
 def success():
     """Render success template for the user."""
     return render_template('literaturesuggest/forms/suggest_success.html')

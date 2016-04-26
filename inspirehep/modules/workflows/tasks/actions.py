@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2014, 2015 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,38 +43,29 @@ def shall_halt_workflow(obj, *args, **kwargs):
 
 def shall_push_remotely(*args, **kwargs):
     """Check if the record shall be robotuploaded."""
-    return current_app.config.get("CFG_SITE_URL") != \
-        current_app.config.get("CFG_ROBOTUPLOAD_SUBMISSION_BASEURL")
+    return current_app.config.get("LEGACY_ROBOTUPLOAD_URL", False)
 
 
-def add_core_check(obj, eng):
-    """Check if CORE shall be added."""
+def add_core(obj, eng):
+    """Add CORE collection tag to collections, if asked for."""
     if obj.extra_data.get('core'):
-        add_core(obj, eng)
+        collections = obj.data.get("collections", [])
+        # Do not add it again if already there
+        has_core = [v for c in collections
+                    for v in c.values()
+                    if v.lower() == "core"]
+        if not has_core:
+            collections.append({"primary": "CORE"})
+            obj.data["collections"] = collections
 
 
-def halt_record(action=None):
+def halt_record(action=None, message=None):
     """Halt the workflow for approval with optional action."""
     @wraps(halt_record)
     def _halt_record(obj, eng):
         eng.halt(action=obj.extra_data.get("halt_action") or action,
-                 msg=obj.extra_data.get("halt_message", "Record has been halted."))
+                 msg=obj.extra_data.get("halt_message") or message)
     return _halt_record
-
-
-def add_core(obj, eng):
-    """Add CORE collection tag to collections."""
-    model = eng.workflow_definition.model(obj)
-    record = get_record_from_model(model)
-    collections = record.get("collections", [])
-    # Do not add it again if already there
-    has_core = [v for c in collections
-                for v in c.values()
-                if v.lower() == "core"]
-    if not has_core:
-        collections.append({"primary": "CORE"})
-        record["collections"] = collections
-    model.update()
 
 
 def update_note(metadata):
@@ -95,9 +86,7 @@ def reject_record(message):
     def _reject_record(obj, *args, **kwargs):
         from inspirehep.modules.audit.api import log_prediction_action
 
-        # Audit logging
-        results = obj.get_tasks_results()
-        prediction_results = results.get("arxiv_guessing", {})
+        prediction_results = obj.extra_data.get("arxiv_guessing")
         log_prediction_action(
             action="reject_record",
             prediction_results=prediction_results,
@@ -114,17 +103,14 @@ def reject_record(message):
 
 def is_record_relevant(obj, *args, **kwargs):
     """Shall we halt this workflow for potential acceptance or just reject?"""
-    from inspirehep.modules.predicter.utils import (
-        get_classification_from_task_results,
-    )
-    results = obj.get_tasks_results()
-    prediction_results = results.get("arxiv_guessing", {})
-    classification_results = get_classification_from_task_results(obj)
+    prediction_results = obj.extra_data.get("arxiv_guessing")
+    classification_results = obj.extra_data.get('classifier_results')
 
     if prediction_results and classification_results:
         prediction_results = prediction_results[0].get("result")
         score = prediction_results.get("max_score")
         decision = prediction_results.get("decision")
+        classification_results = classification_results.get("complete_output")
         core_keywords = classification_results.get("Core keywords")
         if decision.lower() == "rejected" and score > 0 and \
                 len(core_keywords) == 0:

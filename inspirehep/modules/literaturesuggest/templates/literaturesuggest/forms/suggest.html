@@ -47,6 +47,7 @@
 
 {% block body %}
   {% include "literaturesuggest/preview.html" %}
+</div>
   {{ super() }}
 {% endblock body %}
 
@@ -72,7 +73,7 @@ require(
       form: {
         save_url: '{{ url_for("inspirehep_literature_suggest.validate") }}',
         save_all_url: '{{ url_for("inspirehep_literature_suggest.validate") }}',
-        complete_url: '{{ url_for("inspirehep_literature_suggest.validate") }}',
+        complete_url: '{{ url_for("inspirehep_literature_suggest.validate", submit='1') }}',
         datepicker_element: '.datepicker',
         datepicker_options: {
             format: "YYYY-MM-DD",
@@ -101,5 +102,3 @@ require(
 <script src="{{ ASSET_URL }}"></script>
 {%- endassets %}
 {% endblock javascript %}
-
-

@@ -27,14 +27,14 @@
 {% js url_for('static', filename='js/prism.js'), '40-workflows' %}
 {% js url_for('workflows.static', filename='js/workflows/utilities.js'), '50-workflows' %}
 {% js url_for('workflows.static', filename='js/workflows/hp_details.js'), '50-workflows' %}
-{% js url_for('workflows.static', filename='js/workflows/actions/inspire_approval.js'), '50-workflows' %}
+{% js url_for('workflows.static', filename='js/invenio_workflows_ui/actions/inspire_approval.js'), '50-workflows' %}
 
 {%- block javascript %}
     {{ super() }}
 
     <script type="text/javascript">
         $(document).ready(function(){
-            var context_url = "{{ url_for('holdingpen.get_context')|safe }}";
+            var context_url = "{{ url_for('invenio_workflows_ui.get_context')|safe }}";
             window.jQuery.ajax({
                 url: context_url,
                 success: function(data) {
@@ -63,7 +63,7 @@
     {% block navbar_right scoped %}
         <ul class="nav navbar-nav pull-right">
             <li>
-                <a href="{{ url_for('holdingpen.details', objectid=bwobject.id) }}" ><i class="icon-wrenchwhite icon-wrench"></i>More details</a>
+                <a href="{{ url_for('invenio_workflows_ui.details', objectid=bwobject.id) }}" ><i class="icon-wrenchwhite icon-wrench"></i>More details</a>
             </li>
         </ul>
     {% endblock navbar_right %}
@@ -80,7 +80,7 @@
               </div>
               <div class="panel-body">
                 <div id="decision-btns{{i}}" class="decision-btns" >
-                    <form id="form{{i}}" class="theform" method="POST" name="{{ url_for('holdingpen.resolve_action', object_id=bwobject.id, action='' )}}">
+                    <form id="form{{i}}" class="theform" method="POST" name="{{ url_for('invenio_workflows_ui.resolve_action', object_id=bwobject.id, action='' )}}">
                         {% for field in action %}
                             {{ field }}
                         {% endfor %}

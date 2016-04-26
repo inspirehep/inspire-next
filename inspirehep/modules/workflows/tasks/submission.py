@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015, 2016 CERN.
+# Copyright (C) 2014, 2015 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,11 +22,12 @@
 
 """Contains INSPIRE specific submission tasks"""
 
-from retrying import retry
-
-from flask import current_app
+import os
 
 from functools import wraps
+from flask import render_template, current_app
+from invenio_accounts.models import User
+from retrying import retry
 
 
 @retry(stop_max_attempt_number=5, wait_fixed=10000)
@@ -34,40 +35,125 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     """Submit ticket to RT with the given parameters."""
     from inspirehep.utils.tickets import get_instance
 
+    rt_instance = get_instance() if current_app.config.get("PRODUCTION_MODE") else None
+    if not rt_instance:
+        obj.log.error("No RT instance available. Skipping!")
+        obj.log.info(
+            "Was going to submit: {subject}\n\n{body}\n\n"
+            "To: {requestors} Queue: {queue}".format(
+                queue=queue,
+                subject=subject,
+                requestors=requestors,
+                body=body
+            )
+        )
+        return
+
     # Trick to prepare ticket body
     body = "\n ".join([line.strip() for line in body.split("\n")])
-    rt_instance = get_instance() if current_app.config.get("PRODUCTION_MODE") else None
-    rt_queue = current_app.config.get("CFG_BIBCATALOG_QUEUES") or queue
+    rt_queue = current_app.config.get("BIBCATALOG_QUEUES") or queue
     recid = obj.extra_data.get("recid", "")
     if not recid:
         recid = obj.data.get("recid", "")
-    if not rt_instance:
-        obj.log.error("No RT instance available. Skipping!")
-        obj.log.info("Ticket submission ignored.")
-    else:
-        ticket_id = rt_instance.create_ticket(
-            Queue=rt_queue,
-            Subject=subject,
-            Text=body,
-            Requestors=requestors,
-            CF_RecordID=recid
-        )
-        obj.extra_data[ticket_id_key] = ticket_id
-        obj.log.info("Ticket {0} created:\n{1}".format(
-            ticket_id,
-            body.encode("utf-8", "ignore")
-        ))
+
+    ticket_id = rt_instance.create_ticket(
+        Queue=rt_queue,
+        Subject=subject,
+        Text=body,
+        Requestors=requestors,
+        CF_RecordID=recid
+    )
+    obj.extra_data[ticket_id_key] = ticket_id
+    obj.log.info("Ticket {0} created:\n{1}".format(
+        ticket_id,
+        body.encode("utf-8", "ignore")
+    ))
     return True
 
 
-def halt_record_with_action(action, message):
-    """Halt the record and set an action (with message)."""
-    @wraps(halt_record_with_action)
-    def _halt_record(obj, eng):
-        """Halt the workflow for approval."""
-        eng.halt(action=action,
-                 msg=message)
-    return _halt_record
+def create_ticket(template,
+                  context_factory=None,
+                  queue="Test",
+                  ticket_id_key="ticket_id"):
+    """Create a ticket for the submission.
+
+    Creates the ticket in the given queue and stores the ticket ID
+    in the extra_data key specified in ticket_id_key."""
+    @wraps(create_ticket)
+    def _create_ticket(obj, eng):
+        user = User.query.get(obj.id_user)
+        if not user:
+            obj.log.error("No user found for object {0}, skipping ticket creation".format(obj.id))
+            return
+        context = {}
+        if context_factory:
+            context = context_factory(user, obj)
+        body = render_template(
+            template,
+            **context
+        ).strip()
+
+        submit_rt_ticket(obj,
+                         queue,
+                         context.get('subject'),
+                         body,
+                         user.email,
+                         ticket_id_key)
+    return _create_ticket
+
+
+def reply_ticket(template=None,
+                 context_factory=None,
+                 keep_new=False):
+    """Reply to a ticket for the submission."""
+    @wraps(reply_ticket)
+    def _reply_ticket(obj, eng):
+        from inspirehep.utils.tickets import get_instance
+
+        rt = get_instance()
+        if not rt:
+            obj.log.error("No RT instance available. Skipping!")
+            return
+
+        ticket_id = obj.extra_data.get("ticket_id", "")
+        if not ticket_id:
+            obj.log.error("No ticket ID found!")
+            return
+
+        user = User.query.get(obj.id_user)
+        if not user:
+            obj.log.error("No user found for object {0}, skipping ticket creation".format(obj.id))
+
+        if template:
+            context = {}
+            if context_factory:
+                context = context_factory(user, obj)
+            body = render_template(
+                template,
+                **context
+            )
+        else:
+            # Body already rendered in reason.
+            body = obj.extra_data.get("reason").strip()
+        if not body:
+            obj.log.error("No body for ticket reply. Skipping reply.")
+            return
+
+        # Trick to prepare ticket body
+        body = "\n ".join([line.strip() for line in body.strip().split("\n")])
+
+        rt.reply(
+            ticket_id=ticket_id,
+            text=body,
+        )
+
+        if keep_new:
+            # We keep the state as new
+            rt.edit_ticket(
+                ticket_id=ticket_id,
+                Status="new"
+            )
+    return _reply_ticket
 
 
 def close_ticket(ticket_id_key="ticket_id"):
@@ -76,24 +162,85 @@ def close_ticket(ticket_id_key="ticket_id"):
     def _close_ticket(obj, eng):
         from inspirehep.utils.tickets import get_instance
 
+        rt = get_instance()
+        if not rt:
+            obj.log.error("No RT instance available. Skipping!")
+            return
+
         ticket_id = obj.extra_data.get(ticket_id_key, "")
         if not ticket_id:
             obj.log.error("No ticket ID found!")
             return
 
-        rt = get_instance()
-        if not rt:
-            obj.log.error("No RT instance available. Skipping!")
-        else:
-            try:
-                rt.edit_ticket(
-                    ticket_id=ticket_id,
-                    Status="resolved"
-                )
-            except IndexError:
-                # Probably already resolved, lets check
-                ticket = rt.get_ticket(ticket_id)
-                if ticket["Status"] != "resolved":
-                    raise
-                obj.log.warning("Ticket is already resolved.")
+        try:
+            rt.edit_ticket(
+                ticket_id=ticket_id,
+                Status="resolved"
+            )
+        except IndexError:
+            # Probably already resolved, lets check
+            ticket = rt.get_ticket(ticket_id)
+            if ticket["Status"] != "resolved":
+                raise
+            obj.log.warning("Ticket is already resolved.")
     return _close_ticket
+
+
+def send_robotupload(url=None,
+                     marcxml_processor=None,
+                     callback_url="callback/workflows/continue",
+                     mode="insert"):
+    """Get the MARCXML from the model and ship it."""
+    @wraps(send_robotupload)
+    def _send_robotupload(obj, eng):
+        from inspirehep.dojson.utils import legacy_export_as_marc
+        from inspirehep.utils.robotupload import make_robotupload_marcxml
+
+        combined_callback_url = os.path.join(current_app.config["SERVER_NAME"], callback_url)
+        marc_json = marcxml_processor.do(obj.data)
+        marcxml = legacy_export_as_marc(marc_json)
+        result = make_robotupload_marcxml(
+            url=url,
+            marcxml=marcxml,
+            callback_url=combined_callback_url,
+            mode=mode,
+            nonce=obj.id,
+            priority=5,
+        )
+        if "[INFO]" not in result.text:
+            if "cannot use the service" in result.text:
+                # IP not in the list
+                obj.log.error("Your IP is not in "
+                              "current_app.config_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
+                              "on host")
+                obj.log.error(result.text)
+            txt = "Error while submitting robotupload: {0}".format(result.text)
+            raise Exception(txt)
+        else:
+            obj.log.info("Robotupload sent!")
+            obj.log.info(result.text)
+            eng.halt("Waiting for robotupload: {0}".format(result.text))
+        obj.log.info("end of upload")
+    return _send_robotupload
+
+
+def add_note_entry(obj, eng):
+    """Add note entry to metadata on approval."""
+    entry = {'value': '*Temporary entry*'} if obj.extra_data.get("core") \
+        else {'value': '*Brief entry*'}
+    if obj.data.get('public_notes') is None or not isinstance(obj.data.get("public_notes"), list):
+        obj.data['public_notes'] = [entry]
+    else:
+        obj.data['public_notes'].append(entry)
+
+
+def user_pdf_get(obj, eng):
+    """Upload user PDF file, if requested."""
+    if obj.extra_data.get('pdf_upload', False):
+        fft = {'url': obj.extra_data.get('submission_data').get('pdf'),
+               'docfile_type': 'INSPIRE-PUBLIC'}
+        if obj.data.get('fft'):
+            obj.data['fft'].append(fft)
+        else:
+            obj.data['fft'] = [fft]
+        obj.log.info("PDF file added to FFT.")
