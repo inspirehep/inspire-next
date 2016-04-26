@@ -42,7 +42,7 @@ def spawn_arXiv_workflow_from_oai_harvest(request, records, name, **kwargs):
     if not request.endpoint == "http://export.arxiv.org/oai2":
         return
 
-    workflow = "hep_ingestion"
+    workflow = "arxiv_ingestion"
 
     if workflow not in workflows:
         current_app.logger.warning(

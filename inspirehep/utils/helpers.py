@@ -22,85 +22,13 @@
 
 """Various helpers for the overlay."""
 
-import os
-
 import requests
-
-
-def get_model_from_obj(obj):
-    """Return an instance of the model from the workflow."""
-    from invenio_workflows.proxies import workflows
-    workflow = workflows.get(obj.workflow.name)
-
-    if workflow is not None:
-        return workflow.model(obj)
-    else:
-        return None
-
-
-def get_record_from_obj(obj, eng):
-    """Return a Record instance of a WorkflowObject."""
-    from invenio_records.api import Record
-
-    model = eng.workflow_definition.model(obj)
-    sip = model.get_latest_sip()
-    return Record(sip.metadata)
-
-
-def get_record_from_model(model):
-    """Return a Record instance of a model-like object."""
-    from invenio_records.api import Record
-
-    sip = model.get_latest_sip()
-
-    if sip and hasattr(sip, 'metadata'):
-        return Record(sip.metadata)
-
-
-def add_file_by_name(model, file_path, filename=None):
-    """Save given file to storage and attach to object, return new path."""
-    from inspirehep.modules.workflows.models import PayloadStorage
-    from invenio_deposit.models import (
-        DepositionFile,
-        FilenameAlreadyExists,
-    )
-
-    filename = filename or os.path.basename(file_path)
-    try:
-        with open(file_path) as fd:
-            file_object = DepositionFile(backend=PayloadStorage(model.id))
-            if file_object.save(fd, filename=filename):
-                super(type(model), model).add_file(file_object)
-                model.update()
-    except FilenameAlreadyExists as e:
-        file_object.delete()
-        raise e
-    if file_object.is_local():
-        return file_object.get_syspath()
-    else:
-        return file_object.get_url()
-
-
-def get_file_by_name(model, filename):
-    """Get file by filename."""
-    from werkzeug import secure_filename
-
-    for f in model.files:
-        if f.name == secure_filename(filename):
-            return f
 
 
 def download_file(url, output_file, chunk_size=1024):
     """Download a file to specified location."""
-    from invenio_utils.url import make_user_agent_string
-
-    headers = {
-        "User-agent": make_user_agent_string("inspire"),
-    }
-
     r = requests.get(
         url=url,
-        headers=headers,
         stream=True
     )
     if r.status_code == 200:

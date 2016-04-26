@@ -30,8 +30,7 @@ from idutils import is_arxiv_post_2007
 from invenio_accounts.models import User
 from invenio_oauthclient.models import UserIdentity
 from inspirehep.modules.forms.utils import filter_empty_elements
-from inspirehep.utils.record import get_title
-from inspirehep.utils.record import get_smart_value
+from inspirehep.utils.record import get_title, get_value
 
 from .dojson.model import literature
 
@@ -216,7 +215,7 @@ def new_ticket_context(user, obj):
     subject = "Your suggestion to INSPIRE: {0}".format(title)
     user_comment = obj.extra_data.get(
         'submission_data').get('extra_comments')
-    identifiers = get_smart_value(obj.data, "external_system_numbers.value") or []
+    identifiers = get_value(obj.data, "external_system_numbers.value") or []
     return dict(
         email=user.email,
         title=title,
@@ -243,15 +242,15 @@ def curation_ticket_context(user, obj):
     recid = obj.extra_data.get('recid')
     record_url = obj.extra_data.get('url')
 
-    arxiv_ids = get_smart_value(obj.data, 'arxiv_eprints.value') or []
+    arxiv_ids = get_value(obj.data, 'arxiv_eprints.value') or []
     for index, arxiv_id in enumerate(arxiv_ids):
         if arxiv_id and is_arxiv_post_2007(arxiv_id):
             arxiv_ids[index] = 'arXiv:{0}'.format(arxiv_id)
 
-    report_numbers = get_smart_value(obj.data, 'report_numbers.value') or []
+    report_numbers = get_value(obj.data, 'report_numbers.value') or []
     dois = [
         "doi:{0}".format(doi)
-        for doi in get_smart_value(obj.data, 'dois.value') or []
+        for doi in get_value(obj.data, 'dois.value') or []
     ]
     link_to_pdf = obj.extra_data.get('submission_data').get('pdf')
 

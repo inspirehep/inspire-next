@@ -1,0 +1,35 @@
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+<responseDate>2015-11-05T16:30:03Z</responseDate>
+<request verb="GetRecord" identifier="oai:arXiv.org:1511.01097" metadataPrefix="arXiv">http://export.arxiv.org/oai2</request>
+<GetRecord>
+<record>
+<header>
+ <identifier>oai:arXiv.org:1511.01097</identifier>
+ <datestamp>2015-11-05</datestamp>
+ <setSpec>physics:astro-ph</setSpec>
+</header>
+<metadata>
+ <arXiv xmlns="http://arxiv.org/OAI/arXiv/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://arxiv.org/OAI/arXiv/ http://arxiv.org/OAI/arXiv.xsd">
+ <id>1511.01097</id><created>2015-11-03</created><authors><author><keyname>Bruderer</keyname><forenames>Claudio</forenames></author><author><keyname>Read</keyname><forenames>Justin I.</forenames></author><author><keyname>Coles</keyname><forenames>Jonathan P.</forenames></author><author><keyname>Leier</keyname><forenames>Dominik</forenames></author><author><keyname>Falco</keyname><forenames>Emilio E.</forenames></author><author><keyname>Ferreras</keyname><forenames>Ignacio</forenames></author><author><keyname>Saha</keyname><forenames>Prasenjit</forenames></author></authors><title>Light versus dark in strong-lens galaxies: Dark matter haloes that are
+  rounder than their stars</title><categories>astro-ph.GA</categories><comments>16 pages, 7 figures, 4 tables. Accepted for publication by MNRAS</comments><license>http://arxiv.org/licenses/nonexclusive-distrib/1.0/</license><abstract>  We measure the projected density profile, shape and alignment of the stellar
+and dark matter mass distribution in 11 strong-lens galaxies. We find that the
+projected dark matter density profile - under the assumption of a Chabrier
+stellar initial mass function - shows significant variation from galaxy to
+galaxy. Those with an outermost image beyond $\sim 10$ kpc are very well fit by
+a projected NFW profile; those with images within 10 kpc appear to be more
+concentrated than NFW, as expected if their dark haloes contract due to
+baryonic cooling. We find that over several half-light radii, the dark matter
+haloes of these lenses are rounder than their stellar mass distributions. While
+the haloes are never more elliptical than $e_{dm} = 0.2$, their stars can
+extend to $e_* &gt; 0.2$. Galaxies with high dark matter ellipticity and weak
+external shear show strong alignment between light and dark; those with strong
+shear ($\gamma \gtrsim 0.1$) can be highly misaligned. This is reassuring since
+isolated misaligned galaxies are expected to be unstable. Our results provide a
+new constraint on galaxy formation models. For a given cosmology, these must
+explain the origin of both very round dark matter haloes and misaligned
+strong-lens systems.
+</abstract></arXiv>
+</metadata>
+</record>
+</GetRecord>
+</OAI-PMH>

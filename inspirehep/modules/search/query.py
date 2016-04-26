@@ -42,7 +42,6 @@ def inspire_search_factory(self, search):
     from invenio_records_rest.sorter import default_sorter_factory
 
     query_string = request.values.get('q', '')
-
     try:
         search = search.query(IQ(query_string))
     except SyntaxError:

@@ -32,6 +32,12 @@ RUN apt-get update --fix-missing && \
       build-essential \
       libxml2-dev \
       libxslt1-dev \
+      libjpeg-dev \
+      libfreetype6-dev \
+      libtiff-dev \
+      libmagickwand-dev \
+      imagemagick \
+      xpdf \
       libffi-dev \
       liblzma-dev && \
     ln -s /usr/bin/nodejs /usr/bin/node && \

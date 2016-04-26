@@ -55,18 +55,16 @@ class HEPApproval(object):
         """Resolve the action taken in the approval action."""
         from invenio_db import db
         from invenio_workflows import ObjectStatus
-        from inspirehep.modules.audit.api import log_prediction_action
+        from inspirehep.modules.workflows.utils import log_workflows_action
 
         value = kwargs.get("value", "")
         if value:
             res = value[0]  # value was ['accept']
 
-        print(kwargs)
-
         # Audit logging
         results = obj.extra_data.get("_tasks_results", {})
         prediction_results = results.get("arxiv_guessing", {})
-        log_prediction_action(
+        log_workflows_action(
             action="resolve",
             prediction_results=prediction_results,
             object_id=obj.id,

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -31,9 +31,6 @@ from invenio_db import db
 # from invenio_workflows.acl import viewholdingpen
 from invenio_workflows import WorkflowObject
 
-from inspirehep.utils.helpers import get_model_from_obj
-from inspirehep.dojson.utils import legacy_export_as_marc
-from inspirehep.dojson.hep import hep2marc
 
 blueprint = Blueprint(
     'inspire_holdingpen',
@@ -42,24 +39,6 @@ blueprint = Blueprint(
     template_folder='../templates',
     static_folder="../static",
 )
-
-
-# Helper methods for editing
-def get_attributes(objectid):
-    """Returns the required attributes for record editing."""
-    editable_obj = WorkflowObject.query.get(objectid)
-    model = get_model_from_obj(editable_obj)
-    sip = model.get_latest_sip()
-    metadata = sip.metadata
-
-    return model, sip, metadata
-
-
-def save_changes(sip, model):
-    """Saves the changes in the record."""
-    sip.package = legacy_export_as_marc(hep2marc.do(sip.metadata))
-    model.save()
-    db.session.commit()
 
 
 def json_success_message(attribute):
@@ -76,10 +55,10 @@ def edit_record_title():
     """Entrypoint for editing title from detailed pages."""
     value = request.values.get('value', '', type=text_type)
     objectid = request.values.get('objectid', 0, type=int)
-    model, sip, metadata = get_attributes(objectid)
-
-    metadata["titles"][0] = {"title": MathMLParser.html_to_text(value)}
-    save_changes(sip, model)
+    obj = WorkflowObject.query.get(objectid)
+    obj.data["titles"][0] = {"title": MathMLParser.html_to_text(value)}
+    obj.save()
+    db.session.commit()
     return json_success_message('title')
 
 
@@ -89,16 +68,18 @@ def edit_record_title():
 def edit_record_urls():
     """Entrypoint for editing urls from detailed pages."""
     objectid = request.values.get('objectid', 0, type=int)
-    model, sip, metadata = get_attributes(objectid)
     new_urls = request.values.getlist('urls[]') or []
+
+    obj = WorkflowObject.query.get(objectid)
 
     # Get the new urls and format them, the way the object does
     new_urls_array = []
     for url in new_urls:
         new_urls_array.append({'url': url})
 
-    metadata['urls'] = new_urls_array
-    save_changes(sip, model)
+    obj.data['urls'] = new_urls_array
+    obj.save()
+    db.session.commit()
     return json_success_message('urls')
 
 
@@ -108,20 +89,22 @@ def edit_record_urls():
 def edit_record_subject():
     """Entrypoint for editing subjects from detailed pages."""
     objectid = request.values.get('objectid', 0, type=int)
-    model, sip, metadata = get_attributes(objectid)
     new_subjects_list = request.values.getlist('subjects[]') or []
 
+    obj = WorkflowObject.query.get(objectid)
+
     subject_dict = []
-    subject_dict.extend(metadata.get("subject_terms"))
+    subject_dict.extend(obj.data.get("subject_terms"))
 
     old_subjects_list = []
     for subj in subject_dict:
         old_subjects_list.append(subj["term"])
 
-    metadata["subject_terms"] = revised_subjects_list(old_subjects_list,
+    obj.data["subject_terms"] = revised_subjects_list(old_subjects_list,
                                                       new_subjects_list,
                                                       subject_dict)
-    save_changes(sip, model)
+    obj.save()
+    db.session.commit()
     return json_success_message('subjects')
 
 

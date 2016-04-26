@@ -22,10 +22,7 @@
 
 """Workflow tasks using refextract API."""
 
-
 from refextract import extract_journal_reference, extract_references_from_file
-
-from inspirehep.utils.helpers import get_record_from_model
 
 # FIXME get journal mappings for refextract
 # from inspirehep.utils.knowledge import get_mappings_from_kbname

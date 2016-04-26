@@ -1,0 +1,26 @@
+<record xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <header>
+    <identifier>oai:arXiv.org:1503.06504</identifier>
+    <datestamp>2015-08-13</datestamp>
+    <setSpec>math</setSpec>
+  </header>
+  <metadata>
+    <arXiv xmlns="http://arxiv.org/OAI/arXiv/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://arxiv.org/OAI/arXiv/ http://arxiv.org/OAI/arXiv.xsd">
+      <id>1503.06504</id>
+      <created>2015-03-22</created>
+      <updated>2015-08-12</updated>
+      <authors>
+        <author>
+          <keyname>Malkiewich</keyname>
+          <forenames>Cary</forenames>
+        </author>
+      </authors>
+      <title>Coassembly and the $K$-theory of finite groups</title>
+      <categories>math.AT math.KT</categories>
+      <comments>New version includes a generalization to subgroups of $G$, and a proof that our fibrant replacement functor $P$ is monoidal. 42 pages</comments>
+      <msc-class>18F25, 19D10, 55R12, 55R70</msc-class>
+      <license>http://arxiv.org/licenses/nonexclusive-distrib/1.0/</license>
+      <abstract>We study the $K$-theory and Swan theory of the group ring $R[G]$, when $G$ is a finite group and $R$ is any ring or ring spectrum. In this setting, the well-known assembly map for $K(R[G])$ has a companion called the coassembly map. We prove that their composite is the equivariant norm of $K(R)$. This gives a splitting of both assembly and coassembly after $K(n)$-localization, a new map between Whitehead torsion and Tate cohomology, and a partial computation of $K$-theory of representations in the category of spectra.</abstract>
+    </arXiv>
+  </metadata>
+</record>

@@ -26,10 +26,6 @@ from functools import wraps
 
 from flask import current_app
 
-from inspirehep.utils.helpers import (
-    get_record_from_model,
-)
-
 
 def shall_upload_record(obj, *args, **kwargs):
     """Check if the record was approved."""
@@ -53,7 +49,7 @@ def add_core(obj, eng):
         # Do not add it again if already there
         has_core = [v for c in collections
                     for v in c.values()
-                    if v.lower() == "core"]
+                    if v and v.lower() == "core"]
         if not has_core:
             collections.append({"primary": "CORE"})
             obj.data["collections"] = collections
@@ -84,10 +80,10 @@ def reject_record(message):
     """Reject record with message."""
     @wraps(reject_record)
     def _reject_record(obj, *args, **kwargs):
-        from inspirehep.modules.audit.api import log_prediction_action
+        from inspirehep.modules.workflows.utils import log_workflows_action
 
         prediction_results = obj.extra_data.get("arxiv_guessing")
-        log_prediction_action(
+        log_workflows_action(
             action="reject_record",
             prediction_results=prediction_results,
             object_id=obj.id,

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -110,11 +110,6 @@ def reply_ticket(template=None,
     def _reply_ticket(obj, eng):
         from inspirehep.utils.tickets import get_instance
 
-        rt = get_instance()
-        if not rt:
-            obj.log.error("No RT instance available. Skipping!")
-            return
-
         ticket_id = obj.extra_data.get("ticket_id", "")
         if not ticket_id:
             obj.log.error("No ticket ID found!")
@@ -123,6 +118,7 @@ def reply_ticket(template=None,
         user = User.query.get(obj.id_user)
         if not user:
             obj.log.error("No user found for object {0}, skipping ticket creation".format(obj.id))
+            return
 
         if template:
             context = {}
@@ -141,6 +137,17 @@ def reply_ticket(template=None,
 
         # Trick to prepare ticket body
         body = "\n ".join([line.strip() for line in body.strip().split("\n")])
+
+        rt = get_instance()
+        if not rt:
+            obj.log.error("No RT instance available. Skipping!")
+            obj.log.info(
+                "Was going to reply to {ticket_id}\n\n{body}\n\n".format(
+                    ticket_id=ticket_id,
+                    body=body,
+                )
+            )
+            return
 
         rt.reply(
             ticket_id=ticket_id,
@@ -162,14 +169,19 @@ def close_ticket(ticket_id_key="ticket_id"):
     def _close_ticket(obj, eng):
         from inspirehep.utils.tickets import get_instance
 
-        rt = get_instance()
-        if not rt:
-            obj.log.error("No RT instance available. Skipping!")
-            return
-
         ticket_id = obj.extra_data.get(ticket_id_key, "")
         if not ticket_id:
             obj.log.error("No ticket ID found!")
+            return
+
+        rt = get_instance()
+        if not rt:
+            obj.log.error("No RT instance available. Skipping!")
+            obj.log.info(
+                "Was going to close ticket {ticket_id}".format(
+                    ticket_id=ticket_id,
+                )
+            )
             return
 
         try:
@@ -196,7 +208,10 @@ def send_robotupload(url=None,
         from inspirehep.dojson.utils import legacy_export_as_marc
         from inspirehep.utils.robotupload import make_robotupload_marcxml
 
-        combined_callback_url = os.path.join(current_app.config["SERVER_NAME"], callback_url)
+        combined_callback_url = os.path.join(
+            current_app.config["SERVER_NAME"],
+            callback_url
+        )
         marc_json = marcxml_processor.do(obj.data)
         marcxml = legacy_export_as_marc(marc_json)
         result = make_robotupload_marcxml(
@@ -211,7 +226,7 @@ def send_robotupload(url=None,
             if "cannot use the service" in result.text:
                 # IP not in the list
                 obj.log.error("Your IP is not in "
-                              "current_app.config_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
+                              "app.config_BATCHUPLOADER_WEB_ROBOT_RIGHTS "
                               "on host")
                 obj.log.error(result.text)
             txt = "Error while submitting robotupload: {0}".format(result.text)

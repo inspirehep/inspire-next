@@ -810,6 +810,45 @@ WORKFLOWS_UI_DATA_TYPES = dict(
     ),
 )
 
+# Inspire mappings
+# ================
+
+INSPIRE_CATEGORIES = [
+    'Accelerators',
+    'Astrophysics',
+    'Computing',
+    'Experiment-HEP',
+    'Experiment-Nucl',
+    'General Physics',
+    'Gravitation and Cosmology',
+    'Instrumentation',
+    'Lattice',
+    'Math and Math Physics',
+    'Other',
+    'Phenomenology-HEP',
+    'Theory-HEP',
+    'Theory-Nucl'
+]
+
+INSPIRE_DEGREE_TYPES = [
+    'Bachelor',
+    'Diploma',
+    'Habilitation',
+    'Laurea',
+    'Master',
+    'PhD',
+    'Thesis'
+]
+
+INSPIRE_LICENSE_TYPES = [
+    'CC-BY',
+    'CC-BY-NC',
+    'CC-BY-NC-ND',
+    'CC-BY-NC-SA',
+    'CC-BY-ND',
+    'CC-BY-SA',
+    'Other'
+]
 
 # Inspire subject translation
 # ===========================

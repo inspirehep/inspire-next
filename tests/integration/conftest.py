@@ -65,20 +65,3 @@ def app(request):
         es.indices.refresh('records-hep')  # Makes sure that all citation counts were added.
 
         yield app
-
-
-@pytest.yield_fixture(scope='session')
-def db_only_app(request):
-    """Flask application fixture."""
-    app = create_app()
-
-    def teardown():
-        with app.app_context():
-            db.drop_all()
-
-    request.addfinalizer(teardown)
-
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-        yield app

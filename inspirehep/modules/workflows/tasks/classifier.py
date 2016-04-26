@@ -21,26 +21,20 @@
 
 from functools import wraps
 
-from inspirehep.utils.helpers import get_record_from_model
+from ..proxies import antihep_keywords
 
 
-def filter_core_keywords(filter_kb):
+def filter_core_keywords(obj, eng):
     """Filter core keywords."""
-    @wraps(filter_core_keywords)
-    def _filter_core_keywords(obj, eng):
-        # FIXME
-        # from inspirehep.utils.knowledge import check_keys
-
-        result = obj.extra_data.get('classifier_results').get("complete_output")
-        if result is None:
-            return
-        filtered_core_keywords = {}
-        for core_keyword, times_counted in result.get("Core keywords").items():
-            # if not check_keys(filter_kb, [core_keyword]):
-                filtered_core_keywords[core_keyword] = times_counted
-        result["Filtered Core keywords"] = filtered_core_keywords
-        obj.extra_data['classifier_results']["complete_output"] = result
-    return _filter_core_keywords
+    result = obj.extra_data.get('classifier_results').get("complete_output")
+    if result is None:
+        return
+    filtered_core_keywords = {}
+    for core_keyword, times_counted in result.get("Core keywords").items():
+        if core_keyword not in antihep_keywords:
+            filtered_core_keywords[core_keyword] = times_counted
+    result["Filtered Core keywords"] = filtered_core_keywords
+    obj.extra_data['classifier_results']["complete_output"] = result
 
 
 def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
@@ -94,7 +88,9 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
             obj.log.exception(e)
             return
 
-        clean_instances_from_data(result.get("complete_output", {}))
+        result['complete_output'] = clean_instances_from_data(
+            result.get("complete_output", {})
+        )
         result["fast_mode"] = fast_mode
 
         # Check if it is not empty output before adding
@@ -106,10 +102,12 @@ def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,
 
 def clean_instances_from_data(output):
     """Check if specific keys are of InstanceType and replace them with their id."""
-    from types import InstanceType
-
+    from invenio_classifier.reader import KeywordToken
+    new_output = {}
     for output_key in output.keys():
         keywords = output[output_key]
         for key in keywords:
-            if type(key) == InstanceType:
+            if isinstance(key, KeywordToken):
                 keywords[key.id] = keywords.pop(key)
+        new_output[output_key] = keywords
+    return new_output

@@ -36,6 +36,7 @@ from idutils import is_arxiv_post_2007
 
 from ..model import literature
 
+
 @literature.over('abstracts', '^abstract$')
 def abstracts(self, key, value):
     return [{

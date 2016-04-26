@@ -30,13 +30,9 @@ from functools import wraps
 
 from flask import current_app
 
-from inspirehep.utils.arxiv import get_arxiv_id_from_record
+from inspirehep.utils.arxiv import get_clean_arXiv_id
 from inspirehep.utils.datefilter import date_older_than
-from inspirehep.utils.helpers import (
-    get_record_from_model,
-    get_record_from_obj
-)
-from inspirehep.utils.record import get_smart_value
+from inspirehep.utils.record import get_value
 
 
 def search(query):
@@ -66,7 +62,7 @@ def search(query):
 
 def match_by_arxiv_id(record):
     """Match by arXiv identifier."""
-    arxiv_id = get_arxiv_id_from_record(record)
+    arxiv_id = get_clean_arXiv_id(record)
 
     if arxiv_id:
         query = '035:"{0}"'.format(arxiv_id)
@@ -77,7 +73,7 @@ def match_by_arxiv_id(record):
 
 def match_by_doi(record):
     """Match by DOIs."""
-    dois = get_smart_value(record, 'dois.value', [])
+    dois = get_value(record, 'dois.value', [])
 
     result = set()
     for doi in dois:
@@ -107,7 +103,7 @@ def match_legacy_inspire(obj, eng):
     return bool(obj.extra_data['record_matches']['recids'])
 
 
-def match_with_invenio_matcher(queries=None, index="hep", doc_type="record"):
+def match_with_invenio_matcher(queries=None, index="records-hep", doc_type="hep"):
     """Match record using Invenio Matcher."""
     @wraps(match_with_invenio_matcher)
     def _match_with_invenio_matcher(obj, eng):
@@ -131,9 +127,16 @@ def match_with_invenio_matcher(queries=None, index="hep", doc_type="record"):
         }
 
         record = {}
-        record['dois.value'] = get_smart_value(obj.data, 'dois.value')
-        record['arxiv_eprints.value'] = get_smart_value(obj.data, 'arxiv_eprints.value')
-        for matched_record in _match(record, queries=queries_, index=index, doc_type='record'):
+        record['dois.value'] = get_value(obj.data, 'dois.value')
+        record['arxiv_eprints.value'] = get_value(
+            obj.data, 'arxiv_eprints.value'
+        )
+        for matched_record in _match(
+            record,
+            queries=queries_,
+            index=index,
+            doc_type=doc_type
+        ):
             matched_recid = matched_record.record.get('id')
             record_matches['recids'].append(matched_recid)
             record_matches['records'].append({
@@ -153,7 +156,7 @@ def was_already_harvested(record):
     We use the following heuristic: if the record belongs to one of the
     CORE categories then it was probably ingested in some other way.
     """
-    categories = record.get('subject_terms.term', [])
+    categories = get_value(record, 'subject_terms.term', [])
     for category in categories:
         if category.lower() in current_app.config.get('INSPIRE_ACCEPTED_CATEGORIES', []):
             return True
@@ -204,15 +207,13 @@ def previously_rejected(days_ago=None):
     @wraps(previously_rejected)
     def _previously_rejected(obj, eng):
         if current_app.config.get('PRODUCTION_MODE'):
-            model = eng.workflow_definition.model(obj)
-            record = get_record_from_model(model)
 
             if days_ago is None:
                 _days_ago = current_app.config.get('INSPIRE_ACCEPTANCE_TIMEOUT', 5)
             else:
                 _days_ago = days_ago
 
-            if is_too_old(record, days_ago=_days_ago):
+            if is_too_old(obj.data, days_ago=_days_ago):
                 obj.log.info("Record is likely rejected previously.")
                 return True
         return False
@@ -220,37 +221,36 @@ def previously_rejected(days_ago=None):
     return _previously_rejected
 
 
-def save_identifiers_to_kb(kb_name,
-                           identifier_key="report_numbers.value"):
-    """Save the record identifiers into a KB."""
-    @wraps(save_identifiers_to_kb)
-    def _save_identifiers_to_kb(obj, eng):
-        from inspirehep.utils.knowledge import save_keys_to_kb
-        record = get_record_from_obj(obj, eng)
-
-        identifiers = record.get(identifier_key, [])
-        save_keys_to_kb(kb_name, identifiers, obj.id)
-
-    return _save_identifiers_to_kb
-
-
 def exists_in_holding_pen(obj, eng):
     """Check if a record exists in HP by looking in given KB."""
-    from invenio_workflows_ui import current_workflows_ui
+    from invenio_search import RecordsSearch
+    from invenio_workflows_ui.utils import obj_or_import_string
+    from invenio_workflows_ui.search import default_query_factory
+
+    conf = current_app.config['WORKFLOWS_UI_REST_ENDPOINT']
+    index = conf.get('search_index')
+    doc_type = conf.get('search_type')
+    searcher = RecordsSearch(index=index, doc_type=doc_type).params(version=True)
+    search_factory = conf.get(
+        'search_factory', default_query_factory
+    )
+    search_factory = obj_or_import_string(search_factory)
 
     identifiers = []
     for field, lookup in six.iteritems(
             current_app.config.get("HOLDING_PEN_MATCH_MAPPING", {})):
         # Add quotes around to make the search exact
         identifiers += ['{0}:"{1}"'.format(field, i)
-                        for i in get_smart_value(obj.data, lookup, [])]
+                        for i in get_value(obj.data, lookup, [])]
     # Search for any existing record in Holding Pen, exclude self
     if identifiers:
-        _, result = current_workflows_ui.searcher.search(
-            query_string=" OR ".join(identifiers),
-            sort_key="_workflow.modified"  # Needed as we are not in request
+        search, dummy = search_factory(
+            None, searcher,
+            sort="_workflow.modified",
+            q=" OR ".join(identifiers)
         )
-        id_list = [int(hit["_id"]) for hit in result['hits']['hits']]
+        search_result = search.execute()
+        id_list = [int(hit.id) for hit in search_result.hits]
         if set(id_list) - set([obj.id]):
             obj.log.info("Record already found in Holding Pen ({0})".format(
                 id_list
