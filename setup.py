@@ -98,6 +98,7 @@ tests_require = [
     'pytest-cache>=1.0',
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
+    'pytest-runner>=2.7.0',
     'pytest>=2.8.0',
     'mock>=1.3.0',
     # 'Flask-Testing>=0.4.2', # Was on INSPIRE overlay, not needed?
@@ -141,39 +142,6 @@ setup_requires = [
 ]
 
 packages = find_packages(exclude=['docs'])
-
-
-class PyTest(TestCommand):
-
-    """PyTest Test."""
-
-    user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
-
-    def initialize_options(self):
-        """Init pytest."""
-        TestCommand.initialize_options(self)
-        self.pytest_args = []
-        try:
-            from ConfigParser import ConfigParser
-        except ImportError:
-            from configparser import ConfigParser
-        config = ConfigParser()
-        config.read('pytest.ini')
-        self.pytest_args = config.get('pytest', 'addopts').split(' ')
-
-    def finalize_options(self):
-        """Finalize pytest."""
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        """Run tests."""
-        # import here, cause outside the eggs aren't loaded
-        import pytest
-        errno = pytest.main(self.pytest_args)
-        sys.exit(errno)
-
 
 # Load __version__, should not be done using import.
 # http://python-packaging-user-guide.readthedocs.org/en/latest/tutorial.html
@@ -220,6 +188,7 @@ setup(
         ],
         'invenio_base.api_apps': [
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
+            'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
         ],
         'invenio_base.apps': [
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
@@ -228,9 +197,9 @@ setup(
             'inspire_authors = inspirehep.modules.authors:INSPIREAuthors',
             'inspire_literature_suggest = inspirehep.modules.literaturesuggest:INSPIRELiteratureSuggestion',
             'inspire_forms = inspirehep.modules.forms:INSPIREForms',
+            'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'arxiv = inspirehep.modules.arxiv:Arxiv',
             'crossref = inspirehep.modules.crossref:CrossRef',
-
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
@@ -243,17 +212,21 @@ setup(
             'inspirehep_author_update_css = inspirehep.modules.authors.bundles:css',
             'inspirehep_literaturesuggest_js = inspirehep.modules.literaturesuggest.bundles:js',
             'invenio_search_ui_search_js = inspirehep.modules.search.bundles:js',
+            'inspire_workflows_ui_js_actions = inspirehep.modules.workflows.bundles:actions_js',
+            'inspire_workflows_ui_js_details = inspirehep.modules.workflows.bundles:details_js',
         ],
         'invenio_jsonschemas.schemas': [
             'inspire_records = inspirehep.modules.records.jsonschemas',
         ],
         'invenio_search.mappings': [
             'records = inspirehep.modules.records.mappings',
+            'holdingpen = inspirehep.modules.workflows.mappings',
         ],
         'invenio_workflows.workflows': [
-            'literature = inspirehep.modules.literaturesuggest.workflows:literature',
+            'literature = inspirehep.modules.literaturesuggest.workflows:Literature',
             'authornew = inspirehep.modules.authors.workflows:AuthorNew',
-            'authorupdate = inspirehep.modules.authors.workflows:AuthorUpdate'
+            'authorupdate = inspirehep.modules.authors.workflows:AuthorUpdate',
+            'hep_ingestion = inspirehep.modules.workflows.workflows:HEPIngestion',
         ],
         'invenio_pidstore.fetchers': [
             'inspire_recid_fetcher = inspirehep.modules.pidstore.fetchers:inspire_recid_fetcher',
@@ -264,11 +237,12 @@ setup(
         ],
         'invenio_workflows_ui.actions': [
             'author_approval = inspirehep.modules.authors.workflows.actions.author_approval:AuthorApproval',
+            'hep_approval = inspirehep.modules.workflows.actions:HEPApproval',
+            'core_approval = inspirehep.modules.workflows.actions:CoreApproval',
         ],
         'invenio_db.models': [
             'inspire_workflows_audit = inspirehep.modules.workflows.models',
         ],
     },
     tests_require=tests_require,
-    cmdclass={'test': PyTest}
 )
