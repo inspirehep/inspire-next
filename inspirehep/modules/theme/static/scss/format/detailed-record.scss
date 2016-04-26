@@ -202,10 +202,9 @@ $darken: 8%;
     background: white;
     margin-bottom: 20px;
     padding: 20px;
-    color: black;
 }
 
-#record-keywords .label-keyword {
+.label-keyword {
     background-color: #D3D3D3;
 
     a {
@@ -465,4 +464,13 @@ $darken: 8%;
 
 #citations div.dataTables_filter input, #references div.dataTables_filter input {
     max-width: inherit;
+}
+
+#conference-detailed-map {
+    height: 250px;
+}
+
+.detailed-conference-information {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }

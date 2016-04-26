@@ -108,7 +108,7 @@
 {% endmacro %}
 
 {% macro record_keywords(record) %}
-  <div id="record-keywords">
+  <div>
     <div id="record-keywords-title">
       Keywords
     </div>
