@@ -24,7 +24,7 @@ from invenio_query_parser.ast import (
     GreaterEqualOp, GreaterOp, Keyword,
     KeywordOp, LowerEqualOp, LowerOp,
     MalformedQuery, NotOp, OrOp, RangeOp, RegexValue,
-    SingleQuotedValue, Value, ValueQuery
+    SingleQuotedValue, Value, ValueQuery, WildcardQuery
 
 )
 from invenio_query_parser.visitor import make_visitor
@@ -95,6 +95,10 @@ class ElasticSearchNoKeywordsDSL(object):
 
     @visitor(GreaterOp)
     def visit(self, node, value_fn):
+        pass
+
+    @visitor(WildcardQuery)
+    def visit(self, node):
         pass
 
     @visitor(LowerOp)

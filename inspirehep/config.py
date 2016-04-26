@@ -256,6 +256,22 @@ RECORDS_REST_ENDPOINTS = dict(
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
+            'application/x-bibtex': ('inspirehep.modules.records.serializers'
+                                     ':bibtex_v1_response'),
+            'application/x-latexeu': ('inspirehep.modules.records.serializers'
+                                      ':latexeu_v1_response'),
+            'application/x-latexus': ('inspirehep.modules.records.serializers'
+                                      ':latexus_v1_response'),
+            'application/x-cvformatlatex': ('inspirehep.modules.records.serializers'
+                                            ':cvformatlatex_v1_response'),
+            'application/x-cvformathtml': ('inspirehep.modules.records.serializers'
+                                           ':cvformathtml_v1_response'),
+            'application/x-cvformattext': ('inspirehep.modules.records.serializers'
+                                           ':cvformattext_v1_response'),
+            'application/x-impact.graph+json': (
+                'inspirehep.modules.records.serializers'
+                ':impactgraph_v1_response'
+            ),
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
@@ -264,6 +280,18 @@ RECORDS_REST_ENDPOINTS = dict(
                 'inspirehep.modules.records.serializers'
                 ':json_brief_v1_search'
             ),
+            'application/x-bibtex': ('inspirehep.modules.records.serializers'
+                                     ':bibtex_v1_search'),
+            'application/x-latexeu': ('inspirehep.modules.records.serializers'
+                                      ':latexeu_v1_search'),
+            'application/x-latexus': ('inspirehep.modules.records.serializers'
+                                      ':latexus_v1_search'),
+            'application/x-cvformatlatex': ('inspirehep.modules.records.serializers'
+                                            ':cvformatlatex_v1_search'),
+            'application/x-cvformathtml': ('inspirehep.modules.records.serializers'
+                                           ':cvformathtml_v1_search'),
+            'application/x-cvformattext': ('inspirehep.modules.records.serializers'
+                                           ':cvformattext_v1_search'),
         },
         list_route='/literature/',
         item_route='/literature/<pid_value>',
@@ -719,6 +747,11 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
     consumer_secret="CHANGE_ME",
 )
 
+THEME_401_TEMPLATE = "inspirehep_theme/errors/401.html"
+THEME_403_TEMPLATE = "inspirehep_theme/errors/403.html"
+THEME_404_TEMPLATE = "inspirehep_theme/errors/404.html"
+THEME_500_TEMPLATE = "inspirehep_theme/errors/500.html"
+
 # Feedback
 # ========
 CFG_SITE_SUPPORT_EMAIL = "admin@inspirehep.net"
@@ -890,3 +923,5 @@ ARXIV_TO_INSPIRE_CATEGORY_MAPPING = {
     "stat.OT": "Other",
     "stat.TH": "Other"
 }
+
+ASSETS_DEBUG = True

@@ -171,6 +171,23 @@ def test_exactauthor():
     assert expected == result
 
 
+def test_abstract_colon_with_star_wildcard():
+    query = InspireQuery('abstract: part*')
+
+    expected = {
+        'query': {
+            'query_string': {
+                'analyze_wildcard': 'true',
+                'default_field': 'abstracts.value',
+                'query': 'part*'
+            }
+        }
+    }
+    result = query.body
+
+    assert expected == result
+
+
 def test_author_colon():
     query = InspireQuery('author: vagenas')
 
@@ -511,6 +528,29 @@ def test_type_code_colon():
     assert expected == result
 
 
+def test_find_author_with_hash_wildcard():
+    query = InspireQuery('find a chkv#')
+
+    expected = {
+        'query': {
+            'bool': {
+                'should': [{
+                    'query_string': {
+                        'analyze_wildcard': 'true',
+                        'default_field': 'authors.full_name',
+                        'query': 'chkv*'}}, {
+                    'query_string': {
+                        'analyze_wildcard': 'true',
+                        'default_field': 'authors.alternative_name',
+                        'query': 'chkv*'}}
+                ]}
+            }
+        }
+    result = query.body
+
+    assert expected == result
+
+    
 def test_find_journal():
     query = InspireQuery('find j "Phys.Rev.Lett.,105*"')
 

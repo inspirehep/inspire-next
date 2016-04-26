@@ -29,7 +29,7 @@ from invenio_query_parser.ast import (AndOp, DoubleQuotedValue, EmptyQuery,
                                       GreaterEqualOp, GreaterOp, Keyword,
                                       KeywordOp, LowerEqualOp, LowerOp, NotOp,
                                       OrOp, RangeOp, RegexValue,
-                                      SingleQuotedValue, Value, ValueQuery)
+                                      SingleQuotedValue, Value, ValueQuery, WildcardQuery)
 from invenio_query_parser.visitor import make_visitor
 
 from ..ast import FilterOp
@@ -86,6 +86,34 @@ class ElasticSearchDSL(object):
     @visitor(Keyword)
     def visit(self, node):
         return node.value
+
+    @visitor(WildcardQuery)
+    def visit(self, node):
+        def query(keyword):
+            fields = self.get_fields_for_keyword(keyword, mode='p')
+            value = str(node.value).replace('#', '*')
+            if len(fields) > 1:
+                res = {
+                    "bool": {
+                        "should": [
+                            {"query_string":
+                             {
+                                 "analyze_wildcard": "true",
+                                 "default_field": k,
+                                 "query": value
+                             }} for k in fields
+                        ]
+                    }
+                }
+            else:
+                res = {"query_string":
+                       {
+                           "analyze_wildcard": "true",
+                           "default_field": fields[0],
+                           "query": value
+                       }}
+            return res
+        return query
 
     @visitor(Value)
     def visit(self, node):

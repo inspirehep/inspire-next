@@ -1,0 +1,105 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+{%- extends "forms/form.html" -%}
+{% set title = "Literature suggestion - INSPIRE Labs" %}
+
+{%- macro suggest_accordion_start(group, idx) -%}
+    {% include "literaturesuggest/group_start.html" %}
+{%- endmacro -%}
+
+{% block form_group_header scoped %}
+  {% if group %}
+    {{ suggest_accordion_start(group, grouploop.index) }}
+  {% endif %}
+{% endblock %}
+
+{% block form_footer scoped %}
+  {% include "literaturesuggest/action_bar.html" %}
+{% endblock form_footer %}
+
+
+{% block form_title scoped %}
+  <div class="row">
+    <div class="col-xs-12 col-sm-8 col-md-6 vcenter">
+      <h1>{{ form._title }}</h1>
+    </div>
+  </div>
+  <div class="well">
+    This form allows you to suggest a preprint, an article, a conference proceeding or a thesis you'd like to see added to INSPIRE. We will check your suggestion with our <a target="_blank" href="https://inspirehep.net/info/hep/collection-policy">selection policy</a> and transfer it to INSPIRE.
+  </div>
+{% endblock form_title %}
+
+{% block body %}
+  {% include "literaturesuggest/preview.html" %}
+  {{ super() }}
+{% endblock body %}
+
+{% block javascript %}
+{{ super() }}
+<script type="text/javascript">
+require(
+  [
+    "jquery",
+    "js/forms/inspire-form",
+    "js/literaturesuggest/literature_submission_form"
+  ],
+
+  function(
+    $,
+    InspireForm,
+    LiteratureSubmissionForm
+  ) {
+
+    $(function() {
+
+    var config = {
+      form: {
+        save_url: '{{ url_for("inspirehep_literature_suggest.validate") }}',
+        save_all_url: '{{ url_for("inspirehep_literature_suggest.validate") }}',
+        complete_url: '{{ url_for("inspirehep_literature_suggest.validate") }}',
+        datepicker_element: '.datepicker',
+        datepicker_options: {
+            format: "YYYY-MM-DD",
+            extraFormats: ["YYYY", "YYYY-MM"],
+            keepInvalid: true
+        }
+      },
+      inspire: {
+        arxiv_to_inspire_categories_kb: "{{ config.get('DEPOSIT_ARXIV_TO_INSPIRE_CATEGORIES_KB') }}",
+        save_url: '{{ url_for("inspirehep_literature_suggest.validate") }}',
+      }
+    };
+
+    // Initialize INSPIRE form - should be the first thing
+    var form = new LiteratureSubmissionForm(config.inspire);
+
+    // Initialize form
+    InspireForm.attachTo("#submitForm", config.form);
+
+    form.postInvenioHook();
+  });
+});
+</script>
+
+{%- assets "inspirehep_literaturesuggest_js" %}
+<script src="{{ ASSET_URL }}"></script>
+{%- endassets %}
+{% endblock javascript %}
+
+

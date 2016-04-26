@@ -30,7 +30,8 @@ from __future__ import absolute_import, print_function
 from flask_breadcrumbs import Breadcrumbs
 from flask_menu import Menu
 
-from .views import blueprint
+from .views import blueprint, unauthorized, insufficient_permissions, \
+    page_not_found, internal_error
 
 from pkg_resources import resource_filename
 
@@ -64,10 +65,10 @@ class INSPIRETheme(object):
         app.jinja_env.add_extension('jinja2.ext.do')
 
         # Register errors handlers.
-        # app.register_error_handler(401, unauthorized)
-        # app.register_error_handler(403, insufficient_permissions)
-        # app.register_error_handler(404, page_not_found)
-        # app.register_error_handler(500, internal_error)
+        app.register_error_handler(401, unauthorized)
+        app.register_error_handler(403, insufficient_permissions)
+        app.register_error_handler(404, page_not_found)
+        app.register_error_handler(500, internal_error)
 
         # Save reference to self on object
         app.extensions['inspire-theme'] = self

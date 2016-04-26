@@ -93,3 +93,9 @@ a.no-external-icon:after {
 a[ng-click] {
   cursor: pointer;
 }
+
+/* Utility classes
+================================================== */
+.hide-element {
+    display: none;
+}

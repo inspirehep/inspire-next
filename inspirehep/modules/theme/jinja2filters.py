@@ -38,12 +38,13 @@ from inspirehep.utils.date import (
     create_datestruct,
     convert_datestruct_to_dategui,
 )
+from inspirehep.utils.template import render_macro_from_template
 
 from invenio_search.api import Query
 from invenio_search import current_search_client as es
 
 from .views import blueprint
-from inspirehep.utils.template import render_macro_from_template
+
 from inspirehep.modules.records.json_ref_loader import replace_refs
 
 
@@ -710,6 +711,8 @@ def find_collection_from_url(url):
         return 'conferences'
     elif 'jobs' in url:
         return 'jobs'
+    elif 'data' in url:
+        return 'data'
     elif 'institutions' in url:
         return 'institutions'
     elif 'journals' in url:
