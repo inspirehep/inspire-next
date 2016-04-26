@@ -17,18 +17,20 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "format/record/Inspire_HTML_detailed_macros.tpl" import record_publication_info with context %}
+{% from "inspirehep_theme/format/record/Inspire_HTML_detailed_macros.tpl" import record_publication_info with context %}
 
-{% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors, render_record_title with context %}
+{% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_authors, render_record_title with context %}
 
-{% from "format/record/Cache_HTML_macros.tpl" import cache_if_not_debug %}
 
 <div class="reference-record">
     <div class="reference-title">
-    {% call cache_if_not_debug('record_oneline', record['control_number']) %}
-        <a href="/record/{{record.recid}}">{{ render_record_title() }}</a></div>
-    <div class="reference-authors">{{ render_record_authors(is_brief=true, show_affiliations=false) | safe }}</div>
-    <div class="reference-journal">{{ record_publication_info() | safe }}</div>
-    {% endcall %}
+        <a href="/record/{{record.control_number}}">{{ render_record_title(record) }}</a>
+    </div>
+    <div class="reference-authors">
+      {{ render_record_authors(record, is_brief=true, show_affiliations=false) | safe }}
+    </div>
+    <div class="reference-journal">
+      {{ record_publication_info(record) | safe }}
+    </div>
 </div>
 

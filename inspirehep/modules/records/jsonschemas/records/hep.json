@@ -454,7 +454,10 @@
                         "type": "array"
                     },
                     "editors": {
-                        "type": "string"
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "number": {
                         "type": "integer"
