@@ -21,8 +21,6 @@
 
 from functools import wraps
 
-from inspirehep.utils.helpers import get_record_from_model
-
 
 def filter_core_keywords(filter_kb):
     """Filter core keywords."""

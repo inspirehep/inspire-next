@@ -32,10 +32,6 @@ from flask import current_app
 
 from inspirehep.utils.arxiv import get_arxiv_id_from_record
 from inspirehep.utils.datefilter import date_older_than
-from inspirehep.utils.helpers import (
-    get_record_from_model,
-    get_record_from_obj
-)
 from inspirehep.utils.record import get_smart_value
 
 
@@ -153,7 +149,7 @@ def was_already_harvested(record):
     We use the following heuristic: if the record belongs to one of the
     CORE categories then it was probably ingested in some other way.
     """
-    categories = record.get('subject_terms.term', [])
+    categories = get_smart_value(record, 'subject_terms.term', [])
     for category in categories:
         if category.lower() in current_app.config.get('INSPIRE_ACCEPTED_CATEGORIES', []):
             return True
@@ -204,34 +200,18 @@ def previously_rejected(days_ago=None):
     @wraps(previously_rejected)
     def _previously_rejected(obj, eng):
         if current_app.config.get('PRODUCTION_MODE'):
-            model = eng.workflow_definition.model(obj)
-            record = get_record_from_model(model)
 
             if days_ago is None:
                 _days_ago = current_app.config.get('INSPIRE_ACCEPTANCE_TIMEOUT', 5)
             else:
                 _days_ago = days_ago
 
-            if is_too_old(record, days_ago=_days_ago):
+            if is_too_old(obj.data, days_ago=_days_ago):
                 obj.log.info("Record is likely rejected previously.")
                 return True
         return False
 
     return _previously_rejected
-
-
-def save_identifiers_to_kb(kb_name,
-                           identifier_key="report_numbers.value"):
-    """Save the record identifiers into a KB."""
-    @wraps(save_identifiers_to_kb)
-    def _save_identifiers_to_kb(obj, eng):
-        from inspirehep.utils.knowledge import save_keys_to_kb
-        record = get_record_from_obj(obj, eng)
-
-        identifiers = record.get(identifier_key, [])
-        save_keys_to_kb(kb_name, identifiers, obj.id)
-
-    return _save_identifiers_to_kb
 
 
 def exists_in_holding_pen(obj, eng):

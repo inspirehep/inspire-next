@@ -35,7 +35,6 @@ from inspirehep.utils.helpers import (
     add_file_by_name,
     get_file_by_name,
     get_json_for_plots,
-    get_record_from_model,
 )
 from inspirehep.utils.marcxml import get_json_from_marcxml
 
@@ -91,9 +90,7 @@ def arxiv_fulltext_download(doctype='arXiv'):
     """
     @wraps(arxiv_fulltext_download)
     def _arxiv_fulltext_download(obj, eng):
-        model = eng.workflow_definition.model(obj)
-        record = get_record_from_model(model)
-        arxiv_id = get_arxiv_id_from_record(record)
+        arxiv_id = get_arxiv_id_from_record(obj.data)
         existing_file = get_file_by_name(model, "{0}.pdf".format(arxiv_id))
 
         if not existing_file:
@@ -149,9 +146,7 @@ def arxiv_plot_extract(obj, eng):
     """Extract plots from an arXiv archive."""
     from wand.exceptions import DelegateError
 
-    model = eng.workflow_definition.model(obj)
-    record = get_record_from_model(model)
-    arxiv_id = get_arxiv_id_from_record(record)
+    arxiv_id = get_arxiv_id_from_record(obj.data)
     existing_file = get_file_by_name(model, "{0}.tar.gz".format(arxiv_id))
 
     if not existing_file:
@@ -179,8 +174,8 @@ def arxiv_plot_extract(obj, eng):
 
     if plots:
         # We store the path to the directory the tarball contents lives
-        new_dict = get_json_for_plots(plots)
-        record.update(new_dict)
+        json_plots = get_json_for_plots(plots)
+        obj.data.update(json_plots)
         obj.update_task_results(
             "Plots",
             [{
@@ -199,9 +194,7 @@ def arxiv_refextract(obj, eng):
     :param obj: Bibworkflow Object to process
     :param eng: BibWorkflowEngine processing the object
     """
-    model = eng.workflow_definition.model(obj)
-    record = get_record_from_model(model)
-    arxiv_id = get_arxiv_id_from_record(record)
+    arxiv_id = get_arxiv_id_from_record(obj.data)
     existing_file = get_file_by_name(model, "{0}.pdf".format(arxiv_id))
 
     if not existing_file:
@@ -247,9 +240,7 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
     def _author_list(obj, eng):
         from inspirehep.modules.converter.xslt import convert
 
-        model = eng.workflow_definition.model(obj)
-        record = get_record_from_model(model)
-        arxiv_id = get_arxiv_id_from_record(record)
+        arxiv_id = get_arxiv_id_from_record(obj.data)
         existing_file = get_file_by_name(model, "{0}.tar.gz".format(arxiv_id))
 
         if not existing_file:

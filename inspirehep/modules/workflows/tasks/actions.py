@@ -26,10 +26,6 @@ from functools import wraps
 
 from flask import current_app
 
-from inspirehep.utils.helpers import (
-    get_record_from_model,
-)
-
 
 def shall_upload_record(obj, *args, **kwargs):
     """Check if the record was approved."""
