@@ -185,7 +185,7 @@ def license(self, key, value):
     }
 
 
-@hep2marc.over('540', 'license')
+@hep2marc.over('540', '^license$')
 @utils.for_each_value
 @utils.filter_values
 def license2marc(self, key, value):
