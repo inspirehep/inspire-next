@@ -32,7 +32,7 @@ from invenio_search import current_search_client as es
 from inspirehep.factory import create_app
 
 
-@pytest.yield_fixture(scope='session', autouse=True)
+@pytest.yield_fixture(scope='session')
 def app(request):
     """Flask application fixture."""
     app = create_app()
@@ -64,4 +64,21 @@ def app(request):
         add_citation_counts(request_timeout=20)
         es.indices.refresh('records-hep')  # Makes sure that all citation counts were added.
 
+        yield app
+
+
+@pytest.yield_fixture(scope='session')
+def db_only_app(request):
+    """Flask application fixture."""
+    app = create_app()
+
+    def teardown():
+        with app.app_context():
+            db.drop_all()
+
+    request.addfinalizer(teardown)
+
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
         yield app
