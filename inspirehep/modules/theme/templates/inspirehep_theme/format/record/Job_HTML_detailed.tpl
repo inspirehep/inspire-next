@@ -20,142 +20,214 @@
 {% extends "inspirehep_theme/format/record/Inspire_Default_HTML_detailed.tpl" %}
 
 {% block body %}
-  <div class="row">
-    <div class="col-md-12">
-      <h3>
-      {% for collection in record['collections'] %}
-        {% if 'primary' in collection %}
-          <span class="label label-default pull-left {% if not loop.first %} collection-primary {% endif %}">
-          {{ collection['primary'] }}</span>
+  <div id="record-detailed-jobs">
+    <div class="row" id="record-detailed-jobs-information-deadline">
+      <div class="col-md-8" id="record-detailed-jobs-information">
+        
+        <h3>{{ record.position }}</h3>
+        
+        {% if record.rank %}
+          {{ record.rank | join(', ') }}
         {% endif %}
-      {% endfor %}
-      </h3>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <h4 class="pull-left">
-        <b>
-          {{ record['position'] }}
-        </b>
-        {% if record['institution'][0]['name']%}
-          {% if record['continent'] %}
-            (<a href="/search?p=department_acronym:{{ record['institution'][0]['name'] }}&cc=Institutions">{{ record['institution'][0]['name'] }}</a> - {{ record['continent'] }})
-          {% else %}
-            (<a href="/search?p=department_acronym:{{ record['institution'][0]['name'] }}&cc=Institutions">{{ record['institution'][0]['name'] }}</a>)
-        {% endif %}
+        {% if record.institution %}
+          {% for institution in record.institution %}
+            <a href="/search?p=department_acronym:{{ institution }}&cc=Institutions">
+              {{ institution.name }}
+            </a>
+          {% endfor %}
         {% endif%}
-      </h4>
-    </div>
-  </div>
-  <div class="row"><div class="col-md-12"><p></p></div></div>
-  {% if 'rank' in record and record['rank'][0] %}
-  <div class="row">
-    <div class="col-md-12">
-     <div class="pull-left">
-        {{ record['rank'][0] }}
+
+        {% if record.research_area %}
+          <div class="detailed-jobs-information">
+            Field of interest:
+            {{ record.research_area | join(', ') }}
+          </div>
+        {% endif %}
+
+        {% if record.experiments %}
+          <div class="detailed-jobs-information">
+            Experiment:
+            {{ record.experiments | join(', ') }}
+          </div>
+        {% endif %}
+
+        {% if record.continent %}
+          <div class="detailed-jobs-information">
+            Region:
+            {{ record.continent | join(', ') }}
+          </div>
+        {% endif %}
+
+        {% if record.urls %}
+          <div class="detailed-jobs-information">
+            More information:
+            {% for url in record.urls %}
+              <a href="{{ url }}">
+                {{ url }}
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if record.creation_modification_date %}
+          {% if record.creation_modification_date[0] %}
+            <div class="detailed-jobs-information">
+              Date added: {{ record.creation_modification_date[0].creation_date | format_date }}
+            </div>
+          {% endif %}
+        {% endif %}
+
+        <div class="detailed-jobs-information">
+          <a href="mailto:jobs@inspirehep.net?subject=Remove-listing-{% if record['acquisition_source'] %}{{ record['acquisition_source'][0]['submission_number']}} {% endif %}&body=Please remove listing {% if 
+          record['acquisition_source'] %}{{ record['acquisition_source'][0]['submission_number']}} {% endif %} https://inspirehep.net/jobs/{{ record['control_number'] }}/edit">
+            Click here
+          </a>
+          to remove this listing
+        </div>
       </div>
-    </div>
-  </div>
-  {% endif %}
-  <div class="row"><div class="col-md-12"><p></p></div></div>
-  {% if record['research_area'] %}
-  <div class="row">
-    <div class="col-md-12">
-     <div class="pull-left">
-      <label>Field of interest: </label><span>{% if record['research_area']|is_list %}
-            {{ record['research_area']|join(', ') }}
-          {% endif %}</span>
+
+      <div class="col-md-3" id="record-detailed-jobs-deadline">
+        {% if record.deadline_date %}
+          <div class="detailed-jobs-information">
+            <div class="alert alert-info" role="alert">
+              Deadline: {{ record.deadline_date | format_date }}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if record.institution[0].name %}
+          <div id="job-detailed-map">
+            <script>
+              function initMap() {
+                var mapDiv = document.getElementById('job-detailed-map');
+                var address = '{{ record.institution[0].name }}';
+                var geocoder = new google.maps.Geocoder();
+                var map = new google.maps.Map(mapDiv, {
+                  zoom: 5,
+                  // Snazzy Map styling.
+                  styles: [{
+                      "featureType": "water",
+                      "elementType": "geometry",
+                      "stylers": [{"color": "#e9e9e9"}, {"lightness": 17}]
+                  }, {
+                      "featureType": "landscape",
+                      "elementType": "geometry",
+                      "stylers": [{"color": "#f5f5f5"}, {"lightness": 20}]
+                  }, {
+                      "featureType": "road.highway",
+                      "elementType": "geometry.fill",
+                      "stylers": [{"color": "#ffffff"}, {"lightness": 17}]
+                  }, {
+                      "featureType": "road.highway",
+                      "elementType": "geometry.stroke",
+                      "stylers": [{"color": "#ffffff"}, {"lightness": 29}, {"weight": 0.2}]
+                  }, {
+                      "featureType": "road.arterial",
+                      "elementType": "geometry",
+                      "stylers": [{"color": "#ffffff"}, {"lightness": 18}]
+                  }, {
+                      "featureType": "road.local",
+                      "elementType": "geometry",
+                      "stylers": [{"color": "#ffffff"}, {"lightness": 16}]
+                  }, {
+                      "featureType": "poi",
+                      "elementType": "geometry",
+                      "stylers": [{"color": "#f5f5f5"}, {"lightness": 21}]
+                  }, {
+                      "featureType": "poi.park",
+                      "elementType": "geometry",
+                      "stylers": [{"color": "#dedede"}, {"lightness": 21}]
+                  }, {
+                      "elementType": "labels.text.stroke",
+                      "stylers": [{"visibility": "on"}, {"color": "#ffffff"}, {"lightness": 16}]
+                  }, {
+                      "elementType": "labels.text.fill",
+                      "stylers": [{"saturation": 36}, {"color": "#333333"}, {"lightness": 40}]
+                  }, {"elementType": "labels.icon", "stylers": [{"visibility": "off"}]}, {
+                      "featureType": "transit",
+                      "elementType": "geometry",
+                      "stylers": [{"color": "#f2f2f2"}, {"lightness": 19}]
+                  }, {
+                      "featureType": "administrative",
+                      "elementType": "geometry.fill",
+                      "stylers": [{"color": "#fefefe"}, {"lightness": 20}]
+                  }, {
+                      "featureType": "administrative",
+                      "elementType": "geometry.stroke",
+                      "stylers": [{"color": "#fefefe"}, {"lightness": 17}, {"weight": 1.2}]
+                  }]
+                });
+                geocodeAddress(geocoder, map, address);
+              }
+              function geocodeAddress(geocoder, resultsMap, address) {
+                geocoder.geocode({'address': address}, function(results, status) {
+                  if (status === google.maps.GeocoderStatus.OK) {
+                    resultsMap.setCenter(results[0].geometry.location);
+                    var marker = new google.maps.Marker({
+                      map: resultsMap,
+                      position: results[0].geometry.location,
+                      icon: '/static/images/map/marker-conferences.svg'
+                    });
+                  } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                  }
+                });
+              }
+            </script>
+            <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
+            </div>
+        {% endif %}
       </div>
+
+      {% if record.closed_date %}
+        <div class="detailed-jobs-information">
+          Deadline: {{record.closed_date | format_date }}
+        </div>
+      {% endif %}
     </div>
-  </div>
-  {% endif %}
-  <div class="row"><div class="col-md-12"><p></p></div></div>
-  {% if record['experiments'] %}
-  <div class="row">
-    <div class="col-md-12">
-     <div class="pull-left">
-      <label>Experiment: </label>{{ record['experiments']|join(', ') }}
+
+    <div class="row">
+      <div class="col-md-8" id="record-detailed-jobs-description">
+        {% if record.description %}
+          <h3>Job description</h3>
+          <div class="detailed-jobs-information">
+            {{ record.description }}
+          </div>
+        {% endif %}
       </div>
-    </div>
-  </div>
-  {% endif %}
-  {% if record['deadline_date'] %}
-  <div class="row">
-    <div class="col-md-12">
-     <div class="pull-left">
-      <label>Deadline: </label><span> {{record['deadline_date']}}</span>
+      <div class="col-md-3" id="record-detailed-jobs-sidebox">
+        <div id="record-detailed-jobs-applications">
+          <h3>
+            Applications
+          </h3>
+          {% if record.contact_person %}
+            <div class="detailed-jobs-information">
+              Contact: {{ record.contact_person | join(', ') }}
+            </div>
+          {% endif %}
+          {% if record.contact_email %}
+            <div class="detailed-jobs-information">
+              Email: {{ record.contact_email | email_links | join(', ') }}
+            </div>
+          {% endif %}
+          {% if record.reference_email %}
+            <div class="detailed-jobs-information">
+              Letters of Reference should be sent to:
+              {{ record.reference_email | email_links | join(', ') }}
+            </div>
+          {% endif %}
+        </div>
+
+        <hr/>
+
+        <div id="record-detailed-similar-jobs">
+          <h3>
+            Similar Jobs
+          </h3>
+          {{ record.id | jobs_similar }}
+        </div>
       </div>
+
     </div>
   </div>
-  {% endif %}
-  {% if record['continent'] %}
-  <div class="row">
-    <div class="col-md-12">
-     <div class="pull-left">
-      <label>Region: </label><span> {{record['continent']}}</span>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-  {% if record['description'] %}
-  <div class="row">
-    <div class="col-md-12">
-      <label class="pull-left">Job description: </label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <div style="text-align:left;"> {{record['description']}}</div>
-    </div>
-  </div>
-  {% endif %}
-  <div class="row"><div class="col-md-12"><p></p></div></div>
-  {% if record['contact_person'] and record['contact_person'][0] != None  %}
-  <div class="row">
-    <div class="col-md-12">
-     <div class="pull-left">
-      <label>Contact: </label><span> {{ record['contact_person']|join(', ') }}</span>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-  {% if record['contact_email'] %}
-  <div class="row">
-    <div class="col-md-12">
-     <div class="pull-left">
-      <label>Email: </label><span> {{ record['contact_email']|email_links|join_array(", ")|new_line_after}}</span>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-  {% if record['urls'] %}
-  <div class="row">
-    <div class="col-md-12">
-     <div class="pull-left">
-      <label>More information: </label><a href="{{ record['urls'][0] }}"> {{ record['urls'][0] }}</a>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-  {% if record['reference_email']  and record['reference_email'][0] != None %}
-  <div class="row">
-    <div class="col-md-12">
-     <div class="pull-left">
-      <label>Letters of Reference should be sent to: </label><a href=""> {{ record['reference_email']|email_links|join_array(", ")|new_line_after }}</a>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-  <div class="row"><div class="col-md-12"><p></p></div></div>
-  <div class="row"><div class="col-md-12"><p></p></div></div>
-  <div class="row">
-    <div class="col-md-12">
-     <div class="pull-left">
-      <label>To remove this listing: </label><a href="mailto:jobs@inspirehep.net?subject=Remove-listing-{% if record['acquisition_source'] %}{{ record['acquisition_source'][0]['submission_number']}} {% endif %}&body=Please remove listing {% if record['acquisition_source'] %}{{ record['acquisition_source'][0]['submission_number']}} {% endif %} https://inspirehep.net/record/{{ record['control_number'] }}/edit"> Click here</a>
-      </div>
-    </div>
-  </div>
-{% endblock %}
-{% block details %}
 {% endblock %}

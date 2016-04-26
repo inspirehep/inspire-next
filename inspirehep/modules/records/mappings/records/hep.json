@@ -314,6 +314,11 @@
                         },
                         "signature_block": {
                             "type": "string"
+                        },
+                        "inspire_bai": {
+                            "type": "string",
+                            "index": "not_analyzed",
+                            "copy_to": ["author", "exactauthor"]
                         }
                     }
                 },

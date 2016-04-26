@@ -33,6 +33,7 @@ import time
 
 from flask import session, current_app
 from jinja2.filters import evalcontextfilter
+from inspirehep.utils.jinja2 import render_template_to_string
 
 from inspirehep.utils.date import (
     create_datestruct,
@@ -756,3 +757,51 @@ def weblinks(description):
     if description:
         return 'Link to ' + description
     return 'Link to fulltext'
+
+
+@blueprint.app_template_filter()
+def jobs_similar(id):
+
+    out = ''
+
+    es_query = Query()
+    es_query.body.update(
+        {
+            "query": {
+                "filtered": {
+                    "query": {
+                        "more_like_this": {
+                            "docs": [
+                                {
+                                    "_id": id
+                                }
+                            ],
+                            "min_term_freq": 0,
+                            "min_doc_freq": 0,
+                        }
+                    }
+                }
+            }, "size": 2
+        }
+    )
+
+    similar_jobs = es.search(
+        index='records-jobs',
+        doc_type='jobs',
+        body=es_query.body,
+        _source=[
+                'control_number',
+                'position',
+                'deadline_date',
+                'rank',
+                'institution'
+            ]
+    )['hits']['hits']
+
+    for job in similar_jobs:
+        job = job['_source']
+        out = out + (render_template_to_string(
+                    "inspirehep_theme/similar_jobs.html",
+                    record=job))
+
+    return out

@@ -466,3 +466,85 @@ $darken: 8%;
 #citations div.dataTables_filter input, #references div.dataTables_filter input {
     max-width: inherit;
 }
+
+#record-detailed-jobs > .row {
+
+    &#record-detailed-jobs-information-deadline {
+        margin-bottom: 50px;
+
+        #record-detailed-jobs-information, #record-detailed-jobs-deadline {
+            background-color: white;
+            min-height: 350px;
+        }
+        
+        h3 {
+            margin-top: 0px;
+        }
+    }
+
+    .detailed-jobs-information {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    
+    #record-detailed-similar-jobs {
+        & :nth-child(2) {
+            padding-bottom: 20px;
+            border-bottom: 1px solid gray;
+        }
+
+        & :nth-child(3) {
+            padding-top: 10px;
+        }
+    }
+
+    #similar-jobs {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    #record-detailed-jobs-description,
+    #record-detailed-jobs-applications,
+    #record-detailed-similar-jobs {
+        background-color: white;
+    }
+
+    @media (min-width: $screen-md-min) {
+        #record-detailed-jobs-description.col-md-8,
+        #record-detailed-jobs-information.col-md-8 {
+            width: 73%;
+        }
+
+        #record-detailed-jobs-description {
+            min-height: 500px;
+        }
+    }
+
+    @media (max-width: $screen-md-min) {
+        #record-detailed-jobs-information {
+            margin-bottom: 50px;
+        }
+    }
+
+    #record-detailed-jobs-description,
+    #record-detailed-jobs-information,
+    #record-detailed-jobs-applications,
+    #record-detailed-similar-jobs {
+        padding: 20px;
+    }
+
+    #job-detailed-map {
+        height: 250px;
+        width: 250px;
+        margin: 0 auto;
+    }
+
+    #record-detailed-jobs-sidebox,
+    #record-detailed-jobs-deadline {
+        @media (min-width: $screen-md-min) {
+        float: right;
+    }
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
