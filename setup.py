@@ -23,14 +23,11 @@
 """INSPIRE overlay repository for Invenio."""
 
 import os
-import sys
 
 from setuptools import find_packages, setup
-from setuptools.command.test import test as TestCommand
 
 
 readme = open('README.rst').read()
-
 
 install_requires = [
     'Flask-Gravatar>=0.4.2',
@@ -69,7 +66,8 @@ install_requires = [
     'dojson==1.0.1',
     'Flask-Breadcrumbs>=0.3.0',
     'Flask-Script>=2.0.5',
-    'jsmin'
+    'jsmin',
+    'pytest-runner>=2.7.0',
 ]
 
 tests_require = [
@@ -118,39 +116,6 @@ setup_requires = [
 ]
 
 packages = find_packages(exclude=['docs'])
-
-
-class PyTest(TestCommand):
-
-    """PyTest Test."""
-
-    user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
-
-    def initialize_options(self):
-        """Init pytest."""
-        TestCommand.initialize_options(self)
-        self.pytest_args = []
-        try:
-            from ConfigParser import ConfigParser
-        except ImportError:
-            from configparser import ConfigParser
-        config = ConfigParser()
-        config.read('pytest.ini')
-        self.pytest_args = config.get('pytest', 'addopts').split(' ')
-
-    def finalize_options(self):
-        """Finalize pytest."""
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        """Run tests."""
-        # import here, cause outside the eggs aren't loaded
-        import pytest
-        errno = pytest.main(self.pytest_args)
-        sys.exit(errno)
-
 
 # Load __version__, should not be done using import.
 # http://python-packaging-user-guide.readthedocs.org/en/latest/tutorial.html
@@ -249,5 +214,4 @@ setup(
         ],
     },
     tests_require=tests_require,
-    cmdclass={'test': PyTest}
 )
