@@ -24,24 +24,26 @@ from flask import render_template, url_for
 
 class AuthorApproval(object):
     """Class representing the approval action."""
-    name = ("Approve")
+    name = "Approve author update"
 
-    def render_mini(self, obj):
+    @staticmethod
+    def render_mini(obj):
         """Method to render the minified action."""
         return ""
 
-    def render(self, obj):
+    @staticmethod
+    def render(obj):
         """Method to render the action."""
         url = url_for("invenio_workflows_ui.resolve_action")
         return {
             "side": "",
-            "main": render_template('authors/workflows/actions/author_approval_main.html',
+            "main": render_template('inspire_workflows/actions/author_approval_main.html',
                                     message=obj.get_action_message(),
                                     object=obj,
                                     resolve_url=url,)
         }
 
     @staticmethod
-    def resolve(bwo, data):
+    def resolve(obj, *args, **kwargs):
         """Resolve the action taken in the approval action."""
         pass

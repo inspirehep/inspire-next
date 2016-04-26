@@ -39,7 +39,7 @@ def get_model_from_obj(obj):
 
 
 def get_record_from_obj(obj, eng):
-    """Return a Record instance of a BibWorkflowObject."""
+    """Return a Record instance of a WorkflowObject."""
     from invenio_records.api import Record
 
     model = eng.workflow_definition.model(obj)

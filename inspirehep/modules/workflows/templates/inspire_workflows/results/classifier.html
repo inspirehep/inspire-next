@@ -1,0 +1,127 @@
+{#
+# This file is part of INSPIRE.
+# Copyright (C) 2014, 2015, 2016 CERN.
+#
+# INSPIRE is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{% macro display_composite_keyword(title, result) -%}
+  {% if result %}
+    <div class="well">
+      <h5>{{ _(title) }}:</h5>
+      <ul class="list-group">
+        {% for keyword, data in result.items() %}
+          <li class="list-group-item">{{keyword}}: {{data["numbers"]}}, {{data["details"]}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+{%- endmacro %}
+
+{% macro display_keyword(title, result) -%}
+  {% if result %}
+    <div class="well">
+      <em>{{ _(title) }}:</em>
+      <ul class="list-group">
+        {% for keyword, times in result|dictsort(false, 'value')|reverse %}
+          <li class="list-group-item">
+            <span class="badge">{{times}}</span>
+            <strong>{{keyword}}</strong>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+{%- endmacro %}
+
+{% macro display_field_codes(title, result) -%}
+  {% if result %}
+    <div class="well">
+      <em>{{ _(title) }}:</em>
+      <ul class="list-group">
+        {% for keyword, times in result|dictsort(false, 'value')|reverse %}
+          <li class="list-group-item">
+            <span class="badge">{{keyword}}</span>
+            <strong>{{times}}</strong>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+{%- endmacro %}
+
+{% macro display_core_keyword(title, result, filtered) -%}
+  {% if result %}
+   <div class="well">
+    <em>{{ _(title) }}:</em>
+    <ul class="list-group">
+      {% for keyword, times in result|dictsort(false, 'value')|reverse %}
+        {% if filtered and keyword not in filtered %}
+        <li class="list-group-item">
+          <span class="badge">{{times}}</span>
+          <strong>{{keyword}}</strong>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    </div>
+  {% endif %}
+{%- endmacro %}
+
+{% set result = workflow_object.extra_data.classifier_results.complete_output %}
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    {{ _("Keyword extraction") }}
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      {% if result.get("Core keywords") %}
+        <div class="col-md-4">
+          {{ display_keyword("CORE keywords (filtered)", result.get("Filtered Core keywords")) }}
+          <a class="toggle" data-toggle="collapse" href="#collapsed-keywords" aria-expanded="false" aria-controls="collapsed-keywords">
+            {{ _("Show/Hide more") }}
+          </a>
+        </div>
+        <div class="col-md-4">
+        {% if result.get("Core keywords", {})|count != result.get("Filtered Core keywords", {})|count %}
+          {{ display_core_keyword("Other CORE keywords", result.get("Core keywords", {}), result.get("Filtered Core keywords", {})) }}
+        {% endif %}
+        </div>
+        <div class="clearfix"></div>
+        <div class="collapse" id="collapsed-keywords">
+          <div class="col-md-4">
+            {{ display_keyword("Single keywords", result.get("Single keywords")) }}
+          </div>
+          <div class="col-md-4">
+            {{ display_composite_keyword("Composite keywords", result.get("Composite keywords")) }}
+          </div>
+          <div class="col-md-4">
+            {{ display_keyword("Author keywords", result.get("Author keywords")) }}
+          </div>
+          <div class="col-md-4">
+          {{ display_keyword("Acronyms", result.get("Acronyms")) }}
+          </div>
+          <div class="col-md-12">
+          {{ display_field_codes("Field codes", result.get("Field codes")) }}
+          </div>
+        </div>
+      {% else %}
+        <div class="col-md-12">
+          <p>{{ _("No CORE keywords found") }}.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
