@@ -265,6 +265,9 @@ setup(
         'invenio_workflows_ui.actions': [
             'author_approval = inspirehep.modules.authors.workflows.actions.author_approval:AuthorApproval',
         ],
+        'invenio_db.models': [
+            'inspire_workflows_audit = inspirehep.modules.workflows.models',
+        ],
     },
     tests_require=tests_require,
     cmdclass={'test': PyTest}
