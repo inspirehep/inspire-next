@@ -32,7 +32,7 @@ from flask import current_app
 
 from inspirehep.utils.arxiv import get_clean_arXiv_id
 from inspirehep.utils.datefilter import date_older_than
-from inspirehep.utils.record import get_smart_value
+from inspirehep.utils.record import get_value
 
 
 def search(query):
@@ -73,7 +73,7 @@ def match_by_arxiv_id(record):
 
 def match_by_doi(record):
     """Match by DOIs."""
-    dois = get_smart_value(record, 'dois.value', [])
+    dois = get_value(record, 'dois.value', [])
 
     result = set()
     for doi in dois:
@@ -127,8 +127,8 @@ def match_with_invenio_matcher(queries=None, index="hep", doc_type="record"):
         }
 
         record = {}
-        record['dois.value'] = get_smart_value(obj.data, 'dois.value')
-        record['arxiv_eprints.value'] = get_smart_value(obj.data, 'arxiv_eprints.value')
+        record['dois.value'] = get_value(obj.data, 'dois.value')
+        record['arxiv_eprints.value'] = get_value(obj.data, 'arxiv_eprints.value')
         for matched_record in _match(record, queries=queries_, index=index, doc_type='record'):
             matched_recid = matched_record.record.get('id')
             record_matches['recids'].append(matched_recid)
@@ -149,7 +149,7 @@ def was_already_harvested(record):
     We use the following heuristic: if the record belongs to one of the
     CORE categories then it was probably ingested in some other way.
     """
-    categories = get_smart_value(record, 'subject_terms.term', [])
+    categories = get_value(record, 'subject_terms.term', [])
     for category in categories:
         if category.lower() in current_app.config.get('INSPIRE_ACCEPTED_CATEGORIES', []):
             return True
@@ -223,7 +223,7 @@ def exists_in_holding_pen(obj, eng):
             current_app.config.get("HOLDING_PEN_MATCH_MAPPING", {})):
         # Add quotes around to make the search exact
         identifiers += ['{0}:"{1}"'.format(field, i)
-                        for i in get_smart_value(obj.data, lookup, [])]
+                        for i in get_value(obj.data, lookup, [])]
     # Search for any existing record in Holding Pen, exclude self
     if identifiers:
         _, result = current_workflows_ui.searcher.search(

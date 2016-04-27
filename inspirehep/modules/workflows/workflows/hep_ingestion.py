@@ -63,7 +63,7 @@ from inspirehep.modules.workflows.tasks.upload import store_record
 from inspirehep.modules.workflows.tasks.submission import (
     send_robotupload,
 )
-from inspirehep.utils.record import get_smart_value
+from inspirehep.utils.record import get_value
 
 
 class ClassProperty(property):
@@ -176,7 +176,7 @@ class HEPIngestion(object):
     def get_title(cls, obj, **kwargs):
         """Return the value to put in the title column of Holding Pen."""
         if isinstance(obj.data, dict):
-            titles = filter(None, get_smart_value(obj.data, "titles.title", []))
+            titles = filter(None, get_value(obj.data, "titles.title", []))
             if titles:
                 # Show first title that evaluates to True
                 return titles[0]
@@ -255,24 +255,24 @@ class HEPIngestion(object):
         final_identifiers = []
 
         # Get identifiers
-        dois = get_smart_value(obj.data, "dois.value", [])
+        dois = get_value(obj.data, "dois.value", [])
         if dois:
             final_identifiers.extend(dois)
 
-        system_no = get_smart_value(obj.data, "external_system_numbers.value", [])
+        system_no = get_value(obj.data, "external_system_numbers.value", [])
         if system_no:
             final_identifiers.extend(system_no)
 
         # Get subject categories, adding main one first. Order matters here.
-        record_categories = get_smart_value(obj.data, "arxiv_eprints.categories", []) + \
-            get_smart_value(obj.data, "subject_terms.term", [])
+        record_categories = get_value(obj.data, "arxiv_eprints.categories", []) + \
+            get_value(obj.data, "subject_terms.term", [])
         for category_list in record_categories:
             if isinstance(category_list, list):
                 categories.extend(category_list)
             else:
                 categories.append(category_list)
         categories = list(OrderedDict.fromkeys(categories))  # Unique only
-        abstract = get_smart_value(obj.data, "abstracts.value", [""])[0]
+        abstract = get_value(obj.data, "abstracts.value", [""])[0]
         authors = obj.data.get("authors", [])
         return render_template('inspire_workflows/styles/harvesting_record.html',
                                object=obj,

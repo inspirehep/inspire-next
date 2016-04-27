@@ -30,7 +30,7 @@ from invenio_records.api import Record
 from workflow.patterns.controlflow import IF, IF_ELSE
 
 from inspirehep.dojson.hep import hep2marc
-from inspirehep.utils.record import get_smart_value
+from inspirehep.utils.record import get_value
 
 from inspirehep.modules.workflows.tasks.actions import (
     reject_record,
@@ -119,7 +119,7 @@ class Literature(object):
     def get_title(cls, obj, **kwargs):
         """Return the value to put in the title column of Holding Pen."""
         if isinstance(obj.data, dict):
-            titles = filter(None, get_smart_value(obj.data, "titles.title", []))
+            titles = filter(None, get_value(obj.data, "titles.title", []))
             if titles:
                 # Show first title that evaluates to True
                 return titles[0]
