@@ -47,11 +47,8 @@ def get_pdf(arxiv_id, output_directory):
     return download_file(url, output_file)
 
 
-def get_arxiv_id_from_record(record):
-    """Return the arXiv identifier from given record.
-
-    This function works with Deposition and Payload data models.
-    """
+def get_clean_arXiv_id(record):
+    """Return the arXiv identifier from given record."""
     arxiv_id = record.get("arxiv_id")
     if not arxiv_id:
         arxiv_eprints = record.get('arxiv_eprints', [])
@@ -60,11 +57,6 @@ def get_arxiv_id_from_record(record):
                 arxiv_id = element.get("value", "")
 
     if arxiv_id:
-        if not arxiv_id.lower().startswith("oai:arxiv") and not \
-           arxiv_id.lower().startswith("arxiv") and \
-           "/" not in arxiv_id:
-            arxiv_id = "{0}".format(arxiv_id)
-
-        return arxiv_id.replace("arXiv:", '')
+        return arxiv_id.split(':')[-1]
     else:
         return None

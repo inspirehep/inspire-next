@@ -80,10 +80,10 @@ def reject_record(message):
     """Reject record with message."""
     @wraps(reject_record)
     def _reject_record(obj, *args, **kwargs):
-        from inspirehep.modules.audit.api import log_prediction_action
+        from inspirehep.modules.workflows.utils import log_workflows_action
 
         prediction_results = obj.extra_data.get("arxiv_guessing")
-        log_prediction_action(
+        log_workflows_action(
             action="reject_record",
             prediction_results=prediction_results,
             object_id=obj.id,

@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of Invenio.
+# This file is part of INSPIRE.
 # Copyright (C) 2014, 2015, 2016 CERN.
 #
-# Invenio is free software; you can redistribute it and/or
+# INSPIRE is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
-# Invenio is distributed in the hope that it will be useful, but
+# INSPIRE is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Invenio; if not, write to the Free Software Foundation, Inc.,
+# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 """Tasks used in OAI harvesting for arXiv record manipulation."""
@@ -29,7 +29,7 @@ from flask import current_app
 from functools import wraps
 
 from inspirehep.utils.arxiv import (
-    get_arxiv_id_from_record, get_pdf, get_tarball,
+    get_clean_arXiv_id, get_pdf, get_tarball,
 )
 from inspirehep.utils.helpers import (
     add_file_by_name,
@@ -37,10 +37,8 @@ from inspirehep.utils.helpers import (
     get_json_for_plots,
 )
 from inspirehep.utils.marcxml import get_json_from_marcxml
-
 from inspirehep.modules.refextract.tasks import extract_references
-
-from invenio_base.globals import cfg
+from inspirehep.modules.workflows.utils import get_storage_path
 
 from plotextractor.errors import InvalidTarball
 from plotextractor.api import process_tarball
@@ -54,34 +52,6 @@ REGEXP_REFS = re.compile(
     re.DOTALL)
 
 
-def get_pdf_for_model(eng, arxiv_id):
-    """We download it."""
-    storage_path = os.path.join(
-        cfg.get('WORKFLOWS_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
-        str(eng.uuid)
-    )
-    if not os.path.exists(storage_path):
-        os.makedirs(storage_path)
-    return get_pdf(
-        arxiv_id,
-        storage_path
-    )
-
-
-def get_tarball_for_model(eng, arxiv_id):
-    """We download it."""
-    storage_path = os.path.join(
-        cfg.get('WORKFLOWS_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
-        str(eng.uuid)
-    )
-    if not os.path.exists(storage_path):
-        os.makedirs(storage_path)
-    return get_tarball(
-        arxiv_id,
-        storage_path
-    )
-
-
 def arxiv_fulltext_download(doctype='arXiv'):
     """Perform the fulltext download step for arXiv records.
 
@@ -90,24 +60,23 @@ def arxiv_fulltext_download(doctype='arXiv'):
     """
     @wraps(arxiv_fulltext_download)
     def _arxiv_fulltext_download(obj, eng):
-        arxiv_id = get_arxiv_id_from_record(obj.data)
-        existing_file = get_file_by_name(model, "{0}.pdf".format(arxiv_id))
+        if "pdf" not in obj.extra_data:
+            arxiv_id = get_clean_arXiv_id(obj.data)
+            storage_path = get_storage_path(suffix=str(eng.uuid))
 
-        if not existing_file:
             # We download it
-            pdf = get_pdf_for_model(eng, arxiv_id)
+            pdf = get_pdf(arxiv_id, storage_path)
 
-            if pdf is None:
-                obj.log.error("No pdf found")
+            if not pdf:
+                obj.log.error("No arXiv pdf found!")
                 return
-            pdf = add_file_by_name(model, pdf)
             obj.extra_data["pdf"] = pdf
         else:
-            pdf = existing_file.get_syspath()
+            pdf = obj.extra_data["pdf"]
 
-        if pdf:
-            if "fft" in record:
-                record["fft"].append({
+        if pdf and os.path.isfile(pdf):
+            if "fft" in obj.data:
+                obj.data["fft"].append({
                     "url": pdf,
                     "docfile_type": doctype
                 })
@@ -120,24 +89,9 @@ def arxiv_fulltext_download(doctype='arXiv'):
                         }
                     ]
                 }
-                record.update(new_dict_representation)
-
-            fileinfo = {
-                "type": "fulltext",
-                "filename": os.path.basename(pdf),
-                "full_path": pdf,
-            }
-            obj.update_task_results(
-                os.path.basename(pdf),
-                [{
-                    "name": "PDF",
-                    "result": fileinfo,
-                    "template": "workflows/results/files.html"
-                }]
-            )
-            model.update()
+                obj.data.update(new_dict_representation)
         else:
-            obj.log.info("No PDF found.")
+            obj.log.error("No arXiv pdf found!")
 
     return _arxiv_fulltext_download
 
@@ -146,19 +100,19 @@ def arxiv_plot_extract(obj, eng):
     """Extract plots from an arXiv archive."""
     from wand.exceptions import DelegateError
 
-    arxiv_id = get_arxiv_id_from_record(obj.data)
-    existing_file = get_file_by_name(model, "{0}.tar.gz".format(arxiv_id))
+    if "tarball" not in obj.extra_data:
+        arxiv_id = get_clean_arXiv_id(obj.data)
+        storage_path = get_storage_path(suffix=str(eng.uuid))
 
-    if not existing_file:
         # We download it
-        tarball = get_tarball_for_model(eng, arxiv_id)
+        tarball = get_tarball(arxiv_id, storage_path)
 
-        if tarball is None:
-            obj.log.error("No tarball found")
+        if not tarball:
+            obj.log.error("No arXiv tarball found!")
             return
-        add_file_by_name(model, tarball)
+        obj.extra_data["tarball"] = tarball
     else:
-        tarball = existing_file.get_syspath()
+        tarball = obj.extra_data["tarball"]
 
     try:
         plots = process_tarball(tarball)
@@ -173,19 +127,9 @@ def arxiv_plot_extract(obj, eng):
         return
 
     if plots:
-        # We store the path to the directory the tarball contents lives
         json_plots = get_json_for_plots(plots)
         obj.data.update(json_plots)
-        obj.update_task_results(
-            "Plots",
-            [{
-                "name": "Plots",
-                "result": new_dict["fft"],
-                "template": "workflows/results/plots.html"
-            }]
-        )
-        obj.log.info("Added {0} plots.".format(len(new_dict["fft"])))
-        model.update()
+        obj.log.info("Added {0} plots.".format(len(json_plots)))
 
 
 def arxiv_refextract(obj, eng):
@@ -194,36 +138,31 @@ def arxiv_refextract(obj, eng):
     :param obj: Bibworkflow Object to process
     :param eng: BibWorkflowEngine processing the object
     """
-    arxiv_id = get_arxiv_id_from_record(obj.data)
-    existing_file = get_file_by_name(model, "{0}.pdf".format(arxiv_id))
+    if "pdf" not in obj.extra_data:
+        arxiv_id = get_clean_arXiv_id(obj.data)
+        storage_path = get_storage_path(suffix=str(eng.uuid))
 
-    if not existing_file:
         # We download it
-        pdf = get_pdf_for_model(eng, arxiv_id)
+        pdf = get_pdf(arxiv_id, storage_path)
 
-        if pdf is None:
-            obj.log.error("No pdf found")
+        if not pdf:
+            obj.log.error("No arXiv pdf found!")
             return
-        add_file_by_name(model, pdf)
+        obj.extra_data["pdf"] = pdf
     else:
-        pdf = existing_file.get_syspath()
+        pdf = obj.extra_data["pdf"]
 
     if pdf and os.path.isfile(pdf):
         mapped_references = extract_references(pdf)
         if mapped_references:
             # FIXME For now we do not add these references to the final record.
             if not current_app.config.get("PRODUCTION_MODE", False):
-                record["references"] = mapped_references
+                obj.data["references"] = mapped_references
+            else:
+                obj.extra_data["references"] = mapped_references
             obj.log.info("Extracted {0} references".format(
                 len(mapped_references)
             ))
-            obj.update_task_results(
-                "References",
-                [{"name": "References",
-                  "result": mapped_references,
-                  "template": "workflows/results/refextract.html"}]
-            )
-            model.update()
         else:
             obj.log.info("No references extracted")
     else:
@@ -238,21 +177,21 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
     """
     @wraps(arxiv_author_list)
     def _author_list(obj, eng):
-        from inspirehep.modules.converter.xslt import convert
+        from inspirehep.modules.converter import convert
 
-        arxiv_id = get_arxiv_id_from_record(obj.data)
-        existing_file = get_file_by_name(model, "{0}.tar.gz".format(arxiv_id))
+        if "tarball" not in obj.extra_data:
+            arxiv_id = get_clean_arXiv_id(obj.data)
+            storage_path = get_storage_path(suffix=str(eng.uuid))
 
-        if not existing_file:
             # We download it
-            tarball = get_tarball_for_model(eng, arxiv_id)
+            tarball = get_tarball(arxiv_id, storage_path)
 
-            if tarball is None:
-                obj.log.error("No tarball found")
+            if not tarball:
+                obj.log.error("No arXiv tarball found!")
                 return
-            add_file_by_name(model, tarball)
+            obj.extra_data["tarball"] = tarball
         else:
-            tarball = existing_file.get_syspath()
+            tarball = obj.extra_data["tarball"]
 
         sub_dir = os.path.abspath("{0}_files".format(tarball))
         try:
@@ -276,21 +215,6 @@ def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
                 obj.log.info("Found a match for author extraction")
                 authors_xml = convert(xml_content, stylesheet)
                 authorlist_record = get_json_from_marcxml(authors_xml)[0]
-                record.update(authorlist_record)
-                obj.update_task_results(
-                    "authors",
-                    [{
-                        "name": "authors",
-                        "results": authorlist_record["authors"]
-                    }]
-                )
-                obj.update_task_results(
-                    "number_of_authors",
-                    [{
-                        "name": "number_of_authors",
-                        "results": authorlist_record["number_of_authors"]
-                    }]
-                )
+                obj.data.update(authorlist_record)
                 break
-        model.update()
     return _author_list

@@ -62,17 +62,16 @@ class ArXivIngestion(HEPIngestion):
     match_processing = [
         # FIXME: This filtering step should be removed when
         #        arXiv CORE harvesting is enabled on labs
-        workflow_if(already_harvested),
-        [
+        IF(already_harvested, [
             delete_self_and_stop_processing,
-        ],
+        ]),
         # FIXME: This filtering step should be removed when:
         #        old previously rejected records are treated differently
         #        e.g. good auto-reject heuristics or better time based
         #        filtering (5 days is quite random now.
         IF(previously_rejected(), [
             delete_self_and_stop_processing,
-        ])
+        ]),
     ] + HEPIngestion.match_processing
 
     before_halt_check = [

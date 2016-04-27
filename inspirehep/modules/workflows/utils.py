@@ -24,6 +24,17 @@ from __future__ import absolute_import, print_function
 from .models import WorkflowsAudit
 
 
+def get_storage_path(suffix=""):
+    """Return workflow storage path."""
+    storage_path = os.path.join(
+        cfg.get('WORKFLOWS_STORAGEDIR', cfg.get('CFG_TMPSHAREDDIR')),
+        suffix
+    )
+    if not os.path.exists(storage_path):
+        os.makedirs(storage_path)
+    return storage_path
+
+
 def log_workflows_action(action, prediction_results,
                          object_id, user_id,
                          source, user_action=""):
