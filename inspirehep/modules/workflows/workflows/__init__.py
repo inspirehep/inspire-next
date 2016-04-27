@@ -24,6 +24,7 @@
 """Our workflows."""
 
 from .hep_ingestion import HEPIngestion
+from .arxiv_ingestion import ArXivIngestion
 
 
-__all__ = ('HEPIngestion',)
+__all__ = ('HEPIngestion', 'ArXivIngestion')

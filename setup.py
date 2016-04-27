@@ -227,6 +227,7 @@ setup(
             'authornew = inspirehep.modules.authors.workflows:AuthorNew',
             'authorupdate = inspirehep.modules.authors.workflows:AuthorUpdate',
             'hep_ingestion = inspirehep.modules.workflows.workflows:HEPIngestion',
+            'arxiv_ingestion = inspirehep.modules.workflows.workflows:ArXivIngestion',
         ],
         'invenio_pidstore.fetchers': [
             'inspire_recid_fetcher = inspirehep.modules.pidstore.fetchers:inspire_recid_fetcher',

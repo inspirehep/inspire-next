@@ -128,7 +128,7 @@ class HEPIngestion(object):
             spires=True,
             with_author_keywords=True,
         ),
-        # filter_core_keywords(filter_kb="antihep"),
+        filter_core_keywords,
         # Predict action for a generic HEP paper based only on title
         # and abstract.
         # guess_coreness("arxiv_skip_astro_title_abstract.pickle"),

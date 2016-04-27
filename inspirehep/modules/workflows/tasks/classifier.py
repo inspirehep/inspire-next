@@ -21,24 +21,20 @@
 
 from functools import wraps
 
+from ..proxies import antihep_keywords
 
-def filter_core_keywords(filter_kb):
+
+def filter_core_keywords(obj, eng):
     """Filter core keywords."""
-    @wraps(filter_core_keywords)
-    def _filter_core_keywords(obj, eng):
-        # FIXME
-        # from inspirehep.utils.knowledge import check_keys
-
-        result = obj.extra_data.get('classifier_results').get("complete_output")
-        if result is None:
-            return
-        filtered_core_keywords = {}
-        for core_keyword, times_counted in result.get("Core keywords").items():
-            # if not check_keys(filter_kb, [core_keyword]):
-                filtered_core_keywords[core_keyword] = times_counted
-        result["Filtered Core keywords"] = filtered_core_keywords
-        obj.extra_data['classifier_results']["complete_output"] = result
-    return _filter_core_keywords
+    result = obj.extra_data.get('classifier_results').get("complete_output")
+    if result is None:
+        return
+    filtered_core_keywords = {}
+    for core_keyword, times_counted in result.get("Core keywords").items():
+        if core_keyword not in antihep_keywords:
+            filtered_core_keywords[core_keyword] = times_counted
+    result["Filtered Core keywords"] = filtered_core_keywords
+    obj.extra_data['classifier_results']["complete_output"] = result
 
 
 def classify_paper(taxonomy, rebuild_cache=False, no_cache=False,

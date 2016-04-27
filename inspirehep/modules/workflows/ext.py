@@ -46,7 +46,6 @@ class INSPIREWorkflows(object):
 
     def init_config(self, app):
         """Initialize configuration."""
-        # URL used to push uploads
         app.config.setdefault("WORKFLOWS_MATCH_REMOTE_SERVER_URL",
                               app.config["SERVER_NAME"])
         app.config.setdefault("WORKFLOWS_PENDING_RECORDS_CACHE_TIMEOUT",
