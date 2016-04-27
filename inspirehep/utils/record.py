@@ -22,6 +22,10 @@
 
 """Helpers for handling records."""
 
+import re
+
+SPLIT_KEY_PATTERN = re.compile('\.|\[')
+
 
 def get_title(record):
     """Get preferred title from record."""
@@ -31,3 +35,53 @@ def get_title(record):
             return title['title']
 
     return title
+
+
+def get_value(record, key, default=None):
+    """Return item as `dict.__getitem__` but using 'smart queries'.
+    .. note::
+        Accessing one value in a normal way, meaning d['a'], is almost as
+        fast as accessing a regular dictionary. But using the special
+        name convention is a bit slower than using the regular access:
+        .. code-block:: python
+            >>> %timeit x = dd['a[0].b']
+            100000 loops, best of 3: 3.94 us per loop
+            >>> %timeit x = dd['a'][0]['b']
+            1000000 loops, best of 3: 598 ns per loop
+    """
+    def getitem(k, v):
+        if isinstance(v, dict):
+            return v[k]
+        elif ']' in k:
+            k = k[:-1].replace('n', '-1')
+            # Work around for list indexes and slices
+            try:
+                return v[int(k)]
+            except ValueError:
+                return v[slice(*map(
+                    lambda x: int(x.strip()) if x.strip() else None,
+                    k.split(':')
+                ))]
+        else:
+            tmp = []
+            for inner_v in v:
+                try:
+                    tmp.append(getitem(k, inner_v))
+                except KeyError:
+                    continue
+            return tmp
+
+    # Check if we are using python regular keys
+    try:
+        return record[key]
+    except KeyError:
+        pass
+
+    keys = SPLIT_KEY_PATTERN.split(key)
+    value = record
+    for k in keys:
+        try:
+            value = getitem(k, value)
+        except KeyError:
+            return default
+    return value
