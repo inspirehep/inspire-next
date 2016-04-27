@@ -1,0 +1,43 @@
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2016-04-26T13:32:20Z</responseDate>
+  <request verb="GetRecord" identifier="oai:arXiv.org:physics/0112006" metadataPrefix="arXiv">http://export.arxiv.org/oai2</request>
+  <GetRecord>
+    <record>
+      <header>
+        <identifier>oai:arXiv.org:physics/0112006</identifier>
+        <datestamp>2009-11-07</datestamp>
+        <setSpec>physics:physics</setSpec>
+      </header>
+      <metadata>
+        <arXiv xmlns="http://arxiv.org/OAI/arXiv/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://arxiv.org/OAI/arXiv/ http://arxiv.org/OAI/arXiv.xsd">
+          <id>physics/0112006</id>
+          <created>2001-12-04</created>
+          <authors>
+            <author>
+              <keyname>Fiorentini</keyname>
+              <forenames>G.</forenames>
+              <affiliation>INFN, Sezione di Ferrara, Ferrara, Italy</affiliation>
+            </author>
+            <author>
+              <keyname>Okun</keyname>
+              <forenames>L.</forenames>
+              <affiliation>ITEP, Moscow, Russia</affiliation>
+            </author>
+            <author>
+              <keyname>Vysotsky</keyname>
+              <forenames>M.</forenames>
+              <affiliation>ITEP, Moscow, Russia</affiliation>
+            </author>
+          </authors>
+          <title>Is G a conversion factor or a fundamental unit?</title>
+          <categories>physics.class-ph physics.gen-ph</categories>
+          <comments>2 pages</comments>
+          <doi>10.1134/1.1533770</doi>
+          <abstract>
+            By using fundamental units c, h, G as conversion factors one can easily transform the dimensions of all observables. In particular one can make them all ``geometrical'', or dimensionless. However this has no impact on the fact that there are three fundamental units, G being one of them. Only experiment can tell us whether G is basically fundamental.
+          </abstract>
+        </arXiv>
+      </metadata>
+    </record>
+  </GetRecord>
+</OAI-PMH>
