@@ -38,10 +38,8 @@ from inspirehep.utils.date import (
     create_datestruct,
     convert_datestruct_to_dategui,
 )
+from inspirehep.utils.search import perform_es_search
 from inspirehep.utils.template import render_macro_from_template
-
-from invenio_search.api import Query
-from invenio_search import current_search_client as es
 
 from .views import blueprint
 
@@ -299,15 +297,13 @@ def proceedings_link(record):
     if not cnum:
         return out
 
-    query = Query("cnum:%s and 980__a:proceedings" % (cnum,))
-    result = es.search(body=query.body)
-    records = result['hits']['hits']
+    records = perform_es_search("cnum:%s and 980__a:proceedings" % (cnum,))
 
     if len(records):
         if len(records) > 1:
             proceedings = []
 
-            for i, record in enumerate(records, start=1):
+            for i, record in enumerate(records.hits, start=1):
                 try:
                     dois = record['dois']
                     proceedings.append(
@@ -390,16 +386,15 @@ def link_to_hep_affiliation(record):
     except KeyError:
         return ''
 
-    query = Query("affiliation:%s" % icn)
-    result = es.search(body=query.body)
-    records = result['hits']['hits']
+    records = perform_es_search("affiliation:%s" % icn)
+    results = records.hits.total
 
-    if len(records):
-        if len(records) == 1:
-            return str(len(records)) + ' Paper from ' + \
+    if results:
+        if results == 1:
+            return str(results) + ' Paper from ' + \
                 str(record['ICN'])
         else:
-            return str(len(records)) + ' Papers from ' + \
+            return str(results) + ' Papers from ' + \
                 str(record['ICN'])
     else:
         return ''
@@ -438,11 +433,8 @@ def collection_select_current(collection_name, current_collection):
 @blueprint.app_template_filter()
 def number_of_records(collection_name):
     """Returns number of records for the collection."""
-    query = Query()
     index = collection_to_index(collection_name)
-    result = es.count(index=index, body=query.body)
-
-    return result['count']
+    return perform_es_search('', index).hits.total
 
 
 @blueprint.app_template_filter()
@@ -552,11 +544,8 @@ def number_of_search_results(query, collection_name):
                 "number_of_hits"
             ]
 
-    query = Query(query)
     index = collection_to_index(collection_name)
-    result = es.count(index=index, body=query.body)
-
-    return result['count']
+    return perform_es_search(query, index).hits.total
 
 
 @blueprint.app_template_filter()
