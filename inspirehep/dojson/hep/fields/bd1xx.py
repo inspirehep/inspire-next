@@ -63,6 +63,7 @@ def authors(self, key, value):
             'role': value.get('e'),
             'alternative_name': value.get('q'),
             'inspire_id': inspire_id,
+            'inspire_bai': value.get('w'),
             'orcid': value.get('j'),
             'record': person_record,
             'email': value.get('m'),

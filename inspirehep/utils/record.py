@@ -22,12 +22,111 @@
 
 """Helpers for handling records."""
 
+import re
+
+SPLIT_KEY_PATTERN = re.compile('\.|\[')
+
 
 def get_title(record):
     """Get preferred title from record."""
-    title = ""
-    for title in record.get('titles', []):
-        if title.get('title'):
-            return title['title']
+    chosen_title = ""
 
-    return title
+    for title in record.get('titles', []):
+        if 'source' in title and title.get('source') != 'arXiv':
+            return title.get('title')
+        elif 'source' in title and title.get('source') == 'arXiv':
+            pass
+        else:
+            chosen_title = title.get('title')
+
+    if not chosen_title and len(record.get('titles', [])) > 0:
+        chosen_title = record['titles'][0]['title']
+
+    return chosen_title
+
+
+def get_subtitle(record):
+    """Get preferred subtitle from record."""
+    chosen_subtitle = ""
+
+    for title in record.get('titles', []):
+        if 'source' in title and 'subtitle' in title and title.get('source') != 'arXiv':
+            return title.get('subtitle')
+        elif 'source' in title and 'subtitle' in title and title.get('source') == 'arXiv':
+            pass
+        else:
+            if 'subtitle' in title:
+                chosen_subtitle = title.get('subtitle')
+
+    if not chosen_subtitle and len(record['titles']) > 0:
+        chosen_subtitle = record['titles'][0]['subtitle']
+
+    return chosen_subtitle
+
+
+def get_abstract(record):
+    """Get preferred abstract from record."""
+    chosen_abstract = ""
+
+    for abstract in record.get('abstracts', []):
+        if 'source' in abstract and abstract.get('source') != 'arXiv':
+            return abstract.get('value')
+        elif 'source' in abstract and abstract.get('source') == 'arXiv':
+            pass
+        else:
+            chosen_abstract = abstract.get('value')
+
+    if not chosen_abstract and len(record['abstracts']) > 0:
+        chosen_abstract = record['abstracts'][0]['value']
+
+    return chosen_abstract
+
+
+def get_value(record, key, default=None):
+    """Return item as `dict.__getitem__` but using 'smart queries'.
+    .. note::
+        Accessing one value in a normal way, meaning d['a'], is almost as
+        fast as accessing a regular dictionary. But using the special
+        name convention is a bit slower than using the regular access:
+        .. code-block:: python
+            >>> %timeit x = dd['a[0].b']
+            100000 loops, best of 3: 3.94 us per loop
+            >>> %timeit x = dd['a'][0]['b']
+            1000000 loops, best of 3: 598 ns per loop
+    """
+    def getitem(k, v):
+        if isinstance(v, dict):
+            return v[k]
+        elif ']' in k:
+            k = k[:-1].replace('n', '-1')
+            # Work around for list indexes and slices
+            try:
+                return v[int(k)]
+            except ValueError:
+                return v[slice(*map(
+                    lambda x: int(x.strip()) if x.strip() else None,
+                    k.split(':')
+                ))]
+        else:
+            tmp = []
+            for inner_v in v:
+                try:
+                    tmp.append(getitem(k, inner_v))
+                except KeyError:
+                    continue
+            return tmp
+
+    # Check if we are using python regular keys
+    try:
+        return record[key]
+    except KeyError:
+        pass
+
+    keys = SPLIT_KEY_PATTERN.split(key)
+    value = record
+    for k in keys:
+        try:
+            value = getitem(k, value)
+        except KeyError:
+            return default
+    return value

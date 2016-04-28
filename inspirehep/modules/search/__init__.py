@@ -27,5 +27,8 @@
 from __future__ import absolute_import, print_function
 
 from .ext import INSPIRESearch
+from .query_factory import inspire_query_factory
 
-__all__ = ('INSPIRESearch', )
+IQ = inspire_query_factory()
+
+__all__ = ('IQ', 'INSPIRESearch')

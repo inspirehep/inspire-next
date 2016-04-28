@@ -19,12 +19,14 @@
 
 """Tests for record-related utilities."""
 
-from inspirehep.utils.record import get_title
+import pytest
+
+from inspirehep.utils.record import get_title, get_value
 
 
-def test_get_title():
-    """Test get title utility."""
-    double_title = {
+@pytest.fixture
+def double_title():
+    return {
         "titles": [
             {
                 "source": "arXiv",
@@ -36,9 +38,10 @@ def test_get_title():
         ]
     }
 
-    assert get_title(double_title) == "Parton distributions with LHC data"
 
-    single_title = {
+@pytest.fixture
+def single_title():
+    return {
         "titles": [
             {
                 "subtitle": "Harvest of Run 1",
@@ -47,16 +50,30 @@ def test_get_title():
         ]
     }
 
-    assert get_title(single_title) == "The Large Hadron Collider"
 
-    empty_title = {
+@pytest.fixture
+def empty_title():
+    return {
         "titles": []
     }
 
+
+def test_get_title(double_title, single_title, empty_title):
+    """Test get title utility."""
+    assert get_title(double_title) == "Parton distributions with LHC data"
+    assert get_title(single_title) == "The Large Hadron Collider"
     assert get_title(empty_title) == ""
 
     no_title_key = {
         "not_titles": []
     }
-
     assert get_title(no_title_key) == ""
+
+
+def test_get_value(double_title, single_title, empty_title):
+    """Test get_value utility"""
+    assert len(get_value(double_title, "titles.title")) == 2
+    assert get_value(double_title, "titles.title[0]") == "Parton distributions with LHC data"
+    assert get_value(single_title, "titles.title") == ["The Large Hadron Collider"]
+    assert get_value(empty_title, "titles.title") == []
+    assert get_value(empty_title, "foo", {}) == {}

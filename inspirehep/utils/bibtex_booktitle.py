@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from invenio_search.api import Query
+from inspirehep.utils.search import perform_es_search
 
 
 def traverse(o, tree_types=(list, tuple)):
@@ -45,11 +45,12 @@ def generate_booktitle(record):
                     if acronym:
                         booktitle = "%s: %s" % (rn, acronym, )
                     else:
-                        records = Query(
-                            "reportnumber:%s" % (rn,)
-                        ).search().records()
+                        records = perform_es_search(
+                            "reportnumber:%s" % (rn,),
+                            "records-hep"
+                        )
                         if records:
-                            rec = records[0]
+                            rec = records.hits[0]
                             for title in rec['titles']:
                                 booktitle = title.get('title', "")
                                 if title.get('subtitle'):

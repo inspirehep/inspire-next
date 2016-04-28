@@ -19,17 +19,31 @@
 
 """Pre-record receivers."""
 
-import six
-
 from flask import current_app
+
+from inspirehep.dojson.utils import get_recid_from_ref
+
+from inspirehep.utils.date import create_valid_date
 
 from invenio_indexer.signals import before_record_index
 
-from inspirehep.utils.date import create_valid_date
-from inspirehep.dojson.utils import get_recid_from_ref
+import six
+
+from .signals import after_record_enchanced
 
 
 @before_record_index.connect
+def enhance_record(recid, json, *args, **kwargs):
+    """Runs all the record enchancers and fires the after_record_enchanced signals
+       to allow receivers work with a fully populated record."""
+    populate_inspire_subjects(recid, json, *args, **kwargs)
+    populate_inspire_document_type(recid, json, *args, **kwargs)
+    match_valid_experiments(recid, json, *args, **kwargs)
+    dates_validator(recid, json, *args, **kwargs)
+    add_recids_and_validate(recid, json, *args, **kwargs)
+    after_record_enchanced.send(json)
+
+
 def populate_inspire_subjects(recid, json, *args, **kwargs):
     """
     Populate a json record before indexing it to elastic.
@@ -42,7 +56,6 @@ def populate_inspire_subjects(recid, json, *args, **kwargs):
     json['facet_inspire_subjects'] = inspire_subjects
 
 
-@before_record_index.connect
 def populate_inspire_document_type(recid, json, *args, **kwargs):
     """ Populates a json record before indexing it to elastic.
         Adds a field for faceting INSPIRE document type
@@ -90,7 +103,6 @@ def populate_inspire_document_type(recid, json, *args, **kwargs):
     json['facet_inspire_doc_type'] = inspire_doc_type
 
 
-@before_record_index.connect
 def match_valid_experiments(recid, json, *args, **kwargs):
     """Matches misspelled experiment names with valid experiments.
        Tries to match with valid experiments by matching lowercased and
@@ -122,7 +134,6 @@ def match_valid_experiments(recid, json, *args, **kwargs):
                 exp.update({"facet_experiment": [facet_experiments_list]})
 
 
-@before_record_index.connect
 def dates_validator(recid, json, *args, **kwargs):
     """Find and assign the correct dates in a record."""
     dates_to_check = ['opening_date', 'closing_date', 'deadline_date']
@@ -199,7 +210,6 @@ def populate_recid_from_ref(recid, json, *args, **kwargs):
     _recusive_find_refs(json)
 
 
-@before_record_index.connect
 def add_recids_and_validate(recid, json, *args, **kwargs):
     """Ensure that recids are generated before being validated."""
     populate_recid_from_ref(recid, json, *args, **kwargs)
