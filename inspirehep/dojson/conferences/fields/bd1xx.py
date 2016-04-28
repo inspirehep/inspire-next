@@ -37,9 +37,14 @@ def acronym(self, key, value):
     self['opening_date'] = value.get('x')
     self['closing_date'] = value.get('y')
     self['cnum'] = value.get('g')
-    self['place'] = value.get('c')
     self['subtitle'] = value.get('b')
     self['title'] = value.get('a')
+    if value.get('c'):
+        self.setdefault('address', [])
+        raw_addresses = utils.force_list(value.get('c'))
+        for raw_address in raw_addresses:
+            address = inspire_dojson_utils.parse_conference_address(raw_address)
+            self['address'].append(address)
     return utils.force_list(value.get('e'))
 
 

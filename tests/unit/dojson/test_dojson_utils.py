@@ -75,6 +75,7 @@ def test_remove_duplicates_from_list_preserving_order():
 
     assert expected == result
 
+
 def test_remove_duplicates_from_list_of_dicts_preserving_order():
     """Remove duplicates from a list of dictionaries preserving the order."""
     list_of_dicts_with_duplicates = [
@@ -87,3 +88,59 @@ def test_remove_duplicates_from_list_of_dicts_preserving_order():
     result = utils.remove_duplicates_from_list_of_dicts(list_of_dicts_with_duplicates)
 
     assert expected == result
+
+
+def test_parse_conference_address():
+    addresses = [
+        'Waltham, Mass.',
+        'Dubna, USSR',
+        'Austin, Tex.',
+        'Amsterdam, Netherlands',
+        ''
+    ]
+
+    expected = [
+        {'city': None, 'country_code': 'US', 'latitude': None,
+         'longitude': None, 'original address': 'Waltham, Mass.',
+         'state': 'US-MA'},
+        {'city': None, 'country_code': 'SU', 'latitude': None,
+         'longitude': None, 'original address': 'Dubna, USSR',
+         'state': None},
+        {'city': None, 'country_code': 'US', 'latitude': None,
+         'longitude': None, 'original address': 'Austin, Tex.',
+         'state': 'US-TX'},
+        {'city': None, 'country_code': 'NL', 'latitude': None,
+         'longitude': None, 'original address': 'Amsterdam, Netherlands',
+         'state': None},
+        {'city': None, 'country_code': None, 'latitude': None,
+         'longitude': None, 'original address': '',
+         'state': None},
+    ]
+
+    results = [utils.parse_conference_address(address) for address in addresses]
+
+    assert expected == results
+
+
+def test_parse_institution_conference_address():
+    addresses = [
+        {'address': None, 'city': 'Beijing', 'state_province': None,
+         'country': 'China', 'postal_code': '123-CFG', 'country_code': None},
+        {'address': 'Tuscaloosa, AL 35487-0324', 'city': 'Tuscaloosa',
+         'state_province': 'AL', 'country': None,
+         'postal_code': 'PO Box 870324', 'country_code': None},
+    ]
+
+    expected = [
+        {'city': 'Beijing', 'country': 'China', 'country_code': 'CN',
+         'original_address': None, 'postal_code': '123-CFG', 'state': None},
+        {'city': 'Tuscaloosa', 'country': None, 'country_code': 'US',
+         'original_address': ('Tuscaloosa, AL 35487-0324',),
+         'postal_code': 'PO Box 870324', 'state': 'US-AL'}
+    ]
+
+    results = [
+        utils.parse_institution_address(**address) for address in addresses
+    ]
+
+    assert expected == results

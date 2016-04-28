@@ -145,3 +145,55 @@ def test_contact_details_from_multiple_marcxml_270():
                                              'name': 'Wynton Marsalis'
                                          }
                                          ]
+
+
+def test_address_from_marcxml__111_c():
+    snippet = (
+        '<record>'
+        '<datafield tag="111" ind1=" " ind2=" ">'
+        '<subfield code="c">Austin, Tex.</subfield>'
+        '</datafield>'
+        '</record>'
+    )
+
+    record = strip_empty_values(conferences.do(create_record(snippet)))
+    assert record['address'] == [{'country_code': 'US', 'state': 'US-TX',
+                                  'original address': 'Austin, Tex.'}]
+
+
+def test_address_from_multiple_marcxml__111_c():
+    snippet = (
+        '<record>'
+        '<datafield tag="111" ind1=" " ind2=" ">'
+        '<subfield code="c">Austin, Tex.</subfield>'
+        '</datafield>'
+        '<datafield tag="111" ind1=" " ind2=" ">'
+        '<subfield code="c">Den Haag, Nederlands</subfield>'
+        '</datafield>'
+        '</record>'
+    )
+
+    record = strip_empty_values(conferences.do(create_record(snippet)))
+    assert record['address'] == [{'country_code': 'US', 'state': 'US-TX',
+                                  'original address': 'Austin, Tex.'},
+                                  {'country_code': 'NL',
+                                  'original address': 'Den Haag, Nederlands'}
+                                 ]
+
+
+def test_address_from_marcxml__111_multiple_c():
+    snippet = (
+        '<record>'
+        '<datafield tag="111" ind1=" " ind2=" ">'
+        '<subfield code="c">Austin, Tex.</subfield>'
+        '<subfield code="c">Den Haag, Nederlands</subfield>'
+        '</datafield>'
+        '</record>'
+    )
+
+    record = strip_empty_values(conferences.do(create_record(snippet)))
+    assert record['address'] == [{'country_code': 'US', 'state': 'US-TX',
+                                  'original address': 'Austin, Tex.'},
+                                  {'country_code': 'NL',
+                                  'original address': 'Den Haag, Nederlands'}
+                                 ]

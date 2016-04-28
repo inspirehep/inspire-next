@@ -12,49 +12,13 @@
             "type": "array"
         },
         "address": {
-            "items": {
-                "properties": {
-                    "address": {
-                        "description": "Street etc, city with postal code + additions (native language) FIXME: isn't postal code redundant?",
-                        "title": "Address",
-                        "type": "array"
-                    },
-                    "city": {
-                        "title": "City",
-                        "type": "string"
-                    },
-                    "state_province": {
-                        "title": "State or Province",
-                        "type": "string"
-                    },
-                    "country": {
-                        "description": "FIXME can't we derive this from country_code?",
-                        "string": "Country name",
-                        "type": "string"
-                    },
-                    "postal_code": {
-                        "title": "Postal code",
-                        "type": "array"
-                    },
-                    "country_code": {
-                        "title": "Country code",
-                        "type": "string"
-                    }
-                },
-                "title": "Address",
-                "type": "object"
-            },
-            "title": "Addresses",
-            "type": "array"
+          "items": {"$ref": "elements/address.json"},
+          "title": "Address of the conference (usually there is only one)",
+          "type": "array",
+          "uniqueItems": true
         },
         "content_classification": {
             "items": {
-                "description": "FIXME: shall we normalize this to the usual arXiv?",
-                "enum": [
-                    "Astrophysics",
-                    "Phenomenology-HEP",
-                    "..."
-                ],
                 "title": "Content classification",
                 "type": "string"
             },
@@ -85,9 +49,9 @@
         "field_activity": {
             "items": {
                 "enum": [
-                    "University",
-                    "Research center",
-                    "Company"
+                    "UNIVERSITY",
+                    "RESEARCH CENTER",
+                    "COMPANY"
                 ],
                 "type": "string"
             },
@@ -138,11 +102,6 @@
                 "properties": {
                     "source": {
                         "description": "FIXME: Do we really care about the source?",
-                        "enum": [
-                            "DESY",
-                            "DESY_AFF",
-                            "ADS"
-                        ],
                         "title": "Name variant source",
                         "type": "string"
                     },
@@ -159,9 +118,13 @@
             "uniqueItems": true
         },
         "obsolete_ICN": {
+            "items": {
+              "title": "Obsolete ICN",
+              "type": "string"
+            },
             "description": "ICN of obsolete inst for which this inst should be used instead",
-            "title": "Obsolete ICN",
-            "type": "string"
+            "title": "List of obsolete ICNs",
+            "type": "array"
         },
         "obsolete_record": {
             "description": "record URI of obsolete inst for which this inst should be used instead",

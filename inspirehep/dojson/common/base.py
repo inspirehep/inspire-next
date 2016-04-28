@@ -216,10 +216,13 @@ def collections(self, key, value):
 
     def get_value(value):
         primary = ''
-        if isinstance(value.get('a'), list):
+        if isinstance(value.get('a'), (list, tuple)):
             primary = value.get('a')[0]
+            if isinstance(primary, (list, tuple)):
+                primary = primary[0]
         else:
             primary = value.get('a')
+
         return {
             'primary': primary,
             'secondary': value.get('b'),

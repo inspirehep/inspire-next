@@ -10,6 +10,12 @@
             "title": "Conference acronym",
             "type": "array"
         },
+        "address": {
+          "items": {"$ref": "elements/address.json"},
+          "title": "Address of the conference (usually there is only one)",
+          "type": "array",
+          "uniqueItems": true
+        },
         "alternative_titles": {
             "items": {
                 "title": "Alternative title",
@@ -49,19 +55,6 @@
                 "description": "FIXME: shall we normalize this to the usual arXiv?",
                 "properties": {
                         "value": {
-                            "enum": [
-                                "Astrophysics",
-                                "Phenomenology-HEP",
-                                "hep-ex",
-                                "Math and Math Physics",
-                                "Experiment-HEP",
-                                "Computing",
-                                "hep-ph",
-                                "hep-th",
-                                "Gravitation and Cosmology",
-                                "Theory-HEP",
-                                "..."
-                            ],
                             "title": "Field code",
                             "type": "string"
                         },
