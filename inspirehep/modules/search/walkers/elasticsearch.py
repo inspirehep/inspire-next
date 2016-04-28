@@ -23,28 +23,30 @@
 
 """Implement AST convertor to Elastic Search DSL."""
 
-from flask import current_app
+from operator import or_
+
+from elasticsearch_dsl import Q
 
 from invenio_query_parser.ast import (AndOp, DoubleQuotedValue, EmptyQuery,
                                       GreaterEqualOp, GreaterOp, Keyword,
                                       KeywordOp, LowerEqualOp, LowerOp, NotOp,
                                       OrOp, RangeOp, RegexValue,
-                                      SingleQuotedValue, Value, ValueQuery, WildcardQuery)
+                                      SingleQuotedValue, Value,
+                                      ValueQuery, WildcardQuery)
 from invenio_query_parser.visitor import make_visitor
 
 from ..ast import FilterOp
 
 
 class ElasticSearchDSL(object):
+
     """Implement visitor to create Elastic Search DSL."""
 
     visitor = make_visitor()
 
     def __init__(self, keyword_to_fields=None):
         """Provide a dictinary mapping from keywords to Elastic field(s)."""
-        self.keyword_to_fields = current_app.config.get(
-            "SEARCH_ELASTIC_KEYWORD_MAPPING", {}
-        )
+        self.keyword_to_fields = keyword_to_fields or {None: ['_all']}
 
     def get_fields_for_keyword(self, keyword, mode='a'):
         """Convert keyword to fields."""
@@ -57,27 +59,27 @@ class ElasticSearchDSL(object):
 
     # pylint: disable=W0613,E0102
 
-    @visitor(AndOp)
-    def visit(self, node, left, right):
-        return {'bool': {'must': [left, right]}}
-
     @visitor(FilterOp)
     def visit(self, node, left, right):
-        return {'filtered': {'query': [left], "filter": [right]}}
+        return Q({'filtered': {'query': [left], "filter": [right]}})
+
+    @visitor(AndOp)
+    def visit(self, node, left, right):
+        return left & right
 
     @visitor(OrOp)
     def visit(self, node, left, right):
-        return {'bool': {'should': [left, right]}}
+        return left | right
 
     @visitor(NotOp)
     def visit(self, node, op):
-        return {'bool': {'must_not': [op]}}
+        return ~op
 
     @visitor(KeywordOp)
     def visit(self, node, left, right):
         if callable(right):
             return right(left)
-        raise RuntimeError("Not supported second level operation.")
+        raise RuntimeError('Not supported second level operation.')
 
     @visitor(ValueQuery)
     def visit(self, node, op):
@@ -93,25 +95,16 @@ class ElasticSearchDSL(object):
             fields = self.get_fields_for_keyword(keyword, mode='p')
             value = str(node.value).replace('#', '*')
             if len(fields) > 1:
-                res = {
-                    "bool": {
-                        "should": [
-                            {"query_string":
-                             {
-                                 "analyze_wildcard": "true",
-                                 "default_field": k,
-                                 "query": value
-                             }} for k in fields
-                        ]
-                    }
-                }
+                res = Q('bool', should=[
+                        Q('query_string',
+                          query=value,
+                          default_field=k,
+                          analyze_wildcard=True) for k in fields])
             else:
-                res = {"query_string":
-                       {
-                           "analyze_wildcard": "true",
-                           "default_field": fields[0],
-                           "query": value
-                       }}
+                res = Q('query_string',
+                        query=value,
+                        default_field=fields[0],
+                        analyze_wildcard=True)
             return res
         return query
 
@@ -125,31 +118,26 @@ class ElasticSearchDSL(object):
 
             fields = self.get_fields_for_keyword(keyword, mode='a')
             if fields == ['authors.full_name', 'authors.alternative_name']:
-                return {"bool":
-                        {"should": [
-                            {"match": {
-                                "authors.name_variations": str(node.value)}},
-                            {"match": {"authors.full_name": str(node.value)}}]
-                         }}
-            return {
+                return Q({"bool":
+                          {"should": [
+                              {"match": {
+                                  "authors.name_variations": str(node.value)}},
+                              {"match": {"authors.full_name": str(node.value)}}]
+                           }})
+            return Q({
                 'multi_match': {
                     'query': node.value,
                     'fields': fields
                 }
-            }
+            })
         return query
 
     @visitor(SingleQuotedValue)
     def visit(self, node):
         def query(keyword):
             fields = self.get_fields_for_keyword(keyword, mode='p')
-            return {
-                'multi_match': {
-                    'query': node.value,
-                    'type': 'phrase',
-                    'fields': fields,
-                }
-            }
+            return Q('multi_match', query=node.value, fields=fields,
+                     type='phrase')
         return query
 
     @visitor(DoubleQuotedValue)
@@ -157,18 +145,18 @@ class ElasticSearchDSL(object):
         def query(keyword):
             fields = self.get_fields_for_keyword(keyword, mode='e')
             if fields == ['authors.full_name', 'authors.alternative_name']:
-                return {"bool":
-                        {"must": [
-                            {"match": {"authors.name_variations": str(node.value)}}],
-                            "should": [
-                            {"match": {"authors.full_name": str(node.value)}}]
-                         }}
+                return Q({"bool":
+                          {"must": [
+                              {"match": {"authors.name_variations": str(node.value)}}],
+                           "should": [
+                              {"match": {"authors.full_name": str(node.value)}}]
+                           }})
             if (len(fields) > 1):
-                return {"bool":
-                        {"should": [{"term": {k: str(node.value)}}
-                                    for k in fields]}}
+                return Q({"bool":
+                          {"should": [{"term": {k: str(node.value)}}
+                                      for k in fields]}})
             else:
-                return {'term': {fields[0]: node.value}}
+                return Q({'term': {fields[0]: node.value}})
         return query
 
     @visitor(RegexValue)
@@ -176,62 +164,50 @@ class ElasticSearchDSL(object):
         def query(keyword):
             fields = self.get_fields_for_keyword(keyword, mode='r')
             if keyword is None or fields is None:
-                raise RuntimeError("Not supported regex search for all fields")
-            if len(fields) > 1:
-                res = {"bool": {"should": [
-                    {'regexp': {k: node.value}} for k in fields
-                ]}}
-            else:
-                res = {'regexp': {fields[0]: node.value}}
-            return res
+                raise RuntimeError('Not supported regex search for all fields')
+            return reduce(or_, [
+                Q('regexp', **{k: node.value}) for k in fields
+            ])
         return query
 
     @visitor(EmptyQuery)
     def visit(self, node):
-        return {
-            "match_all": {}
-        }
+        return Q('match_all')
 
     def _range_operators(self, node, condition):
         def query(keyword):
             fields = self.get_fields_for_keyword(keyword, mode='r')
-            if len(fields) > 1:
-                res = {"bool": {"should": [
-                    {'range': {k: condition}} for k in fields
-                ]}}
-            else:
-                res = {'range': {fields[0]: condition}}
-            return res
+            return reduce(or_, [Q('range', **{k: condition}) for k in fields])
         return query
 
     @visitor(RangeOp)
     def visit(self, node, left, right):
         condition = {}
         if left:
-            condition['gte'] = left(None)["multi_match"]["query"]
+            condition['gte'] = left(None).to_dict()['multi_match']['query']
         if right:
-            condition['lte'] = right(None)["multi_match"]["query"]
+            condition['lte'] = right(None).to_dict()['multi_match']['query']
 
         return self._range_operators(node, condition)
 
     @visitor(GreaterOp)
     def visit(self, node, value_fn):
-        condition = {"gt": value_fn(None)["multi_match"]["query"]}
+        condition = {'gt': value_fn(None).to_dict()['multi_match']['query']}
         return self._range_operators(node, condition)
 
     @visitor(LowerOp)
     def visit(self, node, value_fn):
-        condition = {"lt": value_fn(None)["multi_match"]["query"]}
+        condition = {'lt': value_fn(None).to_dict()['multi_match']['query']}
         return self._range_operators(node, condition)
 
     @visitor(GreaterEqualOp)
     def visit(self, node, value_fn):
-        condition = {"gte": value_fn(None)["multi_match"]["query"]}
+        condition = {'gte': value_fn(None).to_dict()['multi_match']['query']}
         return self._range_operators(node, condition)
 
     @visitor(LowerEqualOp)
     def visit(self, node, value_fn):
-        condition = {"lte": value_fn(None)["multi_match"]["query"]}
+        condition = {'lte': value_fn(None).to_dict()['multi_match']['query']}
         return self._range_operators(node, condition)
 
     # pylint: enable=W0612,E0102

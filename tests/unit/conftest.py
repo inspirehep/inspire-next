@@ -80,3 +80,165 @@ def app(request):
 
     with app.app_context():
         yield app
+
+
+@pytest.fixture
+def dummy_response():
+    return {
+        "_shards": {
+            "failed": 0,
+            "successful": 10,
+            "total": 10
+        },
+        "hits": {
+            "hits": [
+                {
+                    "_index": "test-index",
+                    "_type": "company",
+                    "_id": "elasticsearch",
+                    "_score": 12.0,
+
+                    "_source": {
+                        "city": "Amsterdam",
+                        "name": "Elasticsearch",
+                    },
+                },
+                {
+                    "_index": "test-index",
+                    "_type": "employee",
+                    "_id": "42",
+                    "_score": 11.123,
+                    "_parent": "elasticsearch",
+
+                    "_source": {
+                        "name": {
+                            "first": "Shay",
+                            "last": "Bannon"
+                        },
+                        "lang": "java",
+                        "twitter": "kimchy",
+                    },
+                },
+                {
+                    "_index": "test-index",
+                    "_type": "employee",
+                    "_id": "47",
+                    "_score": 1,
+                    "_parent": "elasticsearch",
+
+                    "_source": {
+                        "name": {
+                            "first": "Honza",
+                            "last": "Král"
+                        },
+                        "lang": "python",
+                        "twitter": "honzakral",
+                    },
+                },
+                {
+                    "_index": "test-index",
+                    "_type": "employee",
+                    "_id": "53",
+                    "_score": 16.0,
+                    "_parent": "elasticsearch",
+                },
+            ],
+            "max_score": 12.0,
+            "total": 10
+        },
+        "timed_out": False,
+        "took": 123
+    }
+
+
+@pytest.fixture
+def dummy_onerecord_response():
+    return {
+        "_shards": {
+            "failed": 0,
+            "successful": 10,
+            "total": 10
+        },
+        "hits": {
+            "hits": [
+                {
+                    "_index": "test-index",
+                    "_type": "employee",
+                    "_id": "42",
+                    "_score": 11.123,
+                    "_parent": "elasticsearch",
+
+                    "_source": {
+                        "control_number": 1410174
+                    }
+                }
+            ],
+            "max_score": 11.123,
+            "total": 1
+        },
+        "timed_out": False,
+        "took": 123
+    }
+
+
+@pytest.fixture
+def dummy_tworecord_response():
+    return {
+        "_shards": {
+            "failed": 0,
+            "successful": 10,
+            "total": 10
+        },
+        "hits": {
+            "hits": [
+                {
+                    "_index": "test-index",
+                    "_type": "employee",
+                    "_id": "42",
+                    "_score": 11.123,
+                    "_parent": "elasticsearch",
+
+                    "_source": {
+                        "control_number": 1407068,
+                        'dois': [
+                            {
+                                'source': 'Elsevier',
+                                'value': u'10.1016/j.ppnp.2015.10.002'
+                            }
+                        ]
+                    }
+                },
+                {
+                    "_index": "test-index",
+                    "_type": "employee",
+                    "_id": "42",
+                    "_score": 11.123,
+                    "_parent": "elasticsearch",
+
+                    "_source": {
+                        "control_number": 1407079
+                    }
+                }
+            ],
+            "max_score": 11.123,
+            "total": 2
+        },
+        "timed_out": False,
+        "took": 123
+    }
+
+
+@pytest.fixture
+def dummy_empty_response():
+    return {
+        "_shards": {
+            "total": 5,
+            "successful": 5,
+            "failed": 0
+        },
+        "hits": {
+            "total": 0,
+            "max_score": 'null',
+            "hits": []
+        }
+    }
