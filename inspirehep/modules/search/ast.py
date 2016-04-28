@@ -29,6 +29,12 @@ from __future__ import absolute_import, print_function
 from invenio_query_parser.ast import BinaryOp
 
 
+class SpiresOp(BinaryOp):
+    @property
+    def keyword(self):
+        return self.left
+
+
 class FilterOp(BinaryOp):
 
     """Special BinaryOp used to setup filtering queries."""

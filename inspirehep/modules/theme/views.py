@@ -23,8 +23,6 @@
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
 """Theme blueprint in order for template and static files to be loaded."""
-import json
-
 from dateutil.relativedelta import relativedelta
 from flask import (
     Blueprint,
@@ -44,9 +42,6 @@ from flask.ext.menu import current_menu
 
 from inspirehep.modules.records.conference_series import \
     CONFERENCE_CATEGORIES_TO_SERIES
-from inspirehep.modules.search.query import perform_query
-
-from invenio_search import current_search_client
 
 from inspirehep.utils.date import datetime
 from inspirehep.utils.search import perform_es_search
@@ -88,12 +83,14 @@ def conferences():
 
     upcoming_conferences = perform_es_search(
         'opening_date:{0}->{1}'.format(today_str, six_months_str),
-        1, 100, 'conferences', 'opening_date:asc')
+        'records-conferences', 1, 100, {'opening_date': 'asc'})
+
+    results = [hit['_source'] for hit in upcoming_conferences.to_dict()['hits']['hits']]
 
     return render_template(
         'inspirehep_theme/search/collection_conferences.html',
         ctx={'conference_subject_areas': CONFERENCE_CATEGORIES_TO_SERIES,
-             'results': upcoming_conferences},
+             'results': results},
         collection='conferences')
 
 
@@ -106,11 +103,13 @@ def jobs():
 @blueprint.route('/institutions', methods=['GET', ])
 def institutions():
     """View for institutions collection landing page."""
-    institutions_list = perform_es_search('', 1, 250, 'institutions')
+    institutions_list = perform_es_search('', 'records-institutions', 0, 250)
+
+    results = [hit['_source'] for hit in institutions_list.to_dict()['hits']['hits']]
 
     return render_template(
         'inspirehep_theme/search/collection_institutions.html',
-        ctx={'results': institutions_list}, collection='institutions')
+        ctx={'results': results}, collection='institutions')
 
 
 @blueprint.route('/experiments', methods=['GET', ])

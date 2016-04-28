@@ -22,18 +22,16 @@
 
 """Functions for searching ES and returning the results."""
 
-from invenio_search import current_search_client
-from inspirehep.modules.search.query import perform_query
 
+def perform_es_search(q, index, start=0, size=10, sort=None):
+    """."""
+    from invenio_search.api import RecordsSearch
+    from inspirehep.modules.search import IQ
+    query = IQ(q)
 
-def perform_es_search(query_string, page, size, collection, sort=''):
-    query, qs_kwargs = perform_query(query_string, page, size)
-    search_result = current_search_client.search(
-        index='records-{0}'.format(collection),
-        doc_type=collection,
-        sort=sort,
-        body=query.body,
-        version=True)
-
-    results = [hit['_source'] for hit in search_result['hits']['hits']]
-    return results
+    if sort:
+        return RecordsSearch(index=index).query(query). \
+            sort(sort)[start:start + size].execute()
+    else:
+        return RecordsSearch(index=index).query(query)[start:start + size] \
+            .execute()

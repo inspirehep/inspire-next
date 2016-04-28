@@ -29,9 +29,9 @@ from __future__ import absolute_import, print_function
 import json
 
 from invenio_search import current_search_client
-from invenio_search.api import Query
 
 from inspirehep.utils.record import get_title
+from inspirehep.modules.search import IQ
 
 
 class ImpactGraphSerializer(object):
@@ -57,16 +57,12 @@ class ImpactGraphSerializer(object):
         # Get citations
         citations = []
 
-        es_query = Query('refersto:' + record['control_number'])
-        es_query.body.update(
-            {
-                'size': 9999
-            }
-        )
+        es_query = IQ('refersto:' + record['control_number'])
         record_citations = current_search_client.search(
             index='records-hep',
             doc_type='hep',
-            body=es_query.body,
+            body={"query": es_query.to_dict()},
+            size=9999,
             _source=[
                 'control_number',
                 'citation_count',
