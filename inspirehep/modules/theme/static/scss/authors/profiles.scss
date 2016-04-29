@@ -19,14 +19,10 @@
  */
 
 // Colours.
-$background: #ecf0f1;
-$grey: #BBC2C7;
-$light-blue: #2980b9;
-$dark-blue: #233F4F;
+$grey: $silver;
+$light-blue: $belize-hole;
+$dark-blue: $midnight-blue;
 $white: #ffffff;
-
-$green: #27ae60;
-$red: #c0392b;
 
 // General.
 .box {
@@ -41,7 +37,7 @@ $red: #c0392b;
 }
 
 // Summary.
-#record-title {
+#profile-title {
   color: $dark-blue;
   font-size: x-large;
   font-weight: normal;
@@ -51,7 +47,7 @@ $red: #c0392b;
   }
 }
 
-.record-detailed {
+.profile-detailed {
   background-color: $white;
   border-radius: 5px;
 
@@ -121,14 +117,6 @@ $red: #c0392b;
     padding-left: 25px;
     color: $dark-blue;
   }
-
-  .fa-plus-circle {
-    color: $green;
-  }
-
-  .fa-minus-circle {
-    color: $red;
-  }
 }
 
 .top-box {
@@ -149,6 +137,7 @@ $red: #c0392b;
 
 #publications-table_paginate {
   margin-bottom: 10px;
+  float: right;
 }
 
 #author-statistics {

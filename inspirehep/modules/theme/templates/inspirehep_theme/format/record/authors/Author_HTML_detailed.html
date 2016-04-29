@@ -29,7 +29,7 @@
 
 {% block body %}
 <div id="record_content" profile-init record='{{ record|tojson|safe }}'>
-  <div class="record-detailed">
+  <div class="profile-detailed">
     <div class="record-header" id="detailed-header">
       <div class="row">
         <div class="col-md-12 summary" id="detailed-header-top">
@@ -37,7 +37,7 @@
             <img src="{{ url_for('static', filename='images/einstein.svg') }}" width="100%">
           </div>
           <div class="col-md-10">
-            <div id="record-title">
+            <div id="profile-title">
               <author-name></author-name>
               <author-affiliation id="affiliation"></author-affiliation>
             </div>
@@ -124,10 +124,3 @@
 </div>
 </div>
 {% endblock body %}
-
-{%- block css %}
-  {{ super() }}
-  {%- assets "inspirehep_author_profile_css" %}
-    <link href="{{ ASSET_URL }}" rel="stylesheet">
-  {%- endassets %}
-{%- endblock css %}

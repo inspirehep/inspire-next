@@ -32,13 +32,6 @@ update_css = Bundle(
     filters="scss, cleancss"
 )
 
-profile_css = Bundle(
-    "scss/authors/authors-profile.scss",
-    "node_modules/datatables.net-bs/css/dataTables.bootstrap.css",
-    output='gen/authors.%(version)s.css',
-    filters="scss, cleancss"
-)
-
 js = NpmBundle(
     'js/authors/app.js',
     filters='requirejs',

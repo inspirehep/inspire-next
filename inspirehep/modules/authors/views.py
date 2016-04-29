@@ -52,6 +52,7 @@ from invenio_workflows import WorkflowObject, start, resume
 
 from inspirehep.dojson.utils import strip_empty_values
 from inspirehep.modules.forms.form import DataExporter
+from inspirehep.utils.record import get_title
 
 from .forms import AuthorUpdateForm
 
@@ -186,8 +187,7 @@ def get_publications():
             publication = {}
 
             # Get publication title (required).
-            publication['title'] = result_source.get(
-                'titles', [])[0]['title']
+            publication['title'] = get_title(result_source)
 
             # Get publication recid (required).
             publication['recid'] = result_source['control_number']
