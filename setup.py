@@ -33,61 +33,43 @@ readme = open('README.rst').read()
 
 
 install_requires = [
-    'elasticsearch>=2.2.0,<3.0.0',  # Not on Hepdata overlay - required by some other library ?
     'Flask-Gravatar>=0.4.2',
     'HarvestingKit>=0.6.2',
     'plotextractor>=0.1.2',
     'refextract>=0.1.0',
-    'mixer==4.9.5',  # Still needed to load the fixtures?
     'Sickle>=0.5.0',
     'orcid',
     'raven==5.0.0',
     'retrying',
     'flower',
     'rt',
-    # 'invenio-matcher==0.1.0', # Needs to be ported to Invenio 3
     'librabbitmq>=1.6.1',
-    # 'dojson',  # Not on Hepdata, maybe already required by other package
-    # 'invenio-classifier==0.1.0', # Needs to be ported to Invenio 3
-    'invenio-jsonschemas',
-    # 'invenio-knowledge',  # Needs to be ported to Invenio 3
-    # 'invenio-collections',  # Needed? Not on Hepdata overlay
-    # 'invenio-grobid>=0.1.0', # Needs to be ported to Invenio 3
-    # 'invenio-upgrader==0.2.0', # Needed?
-    # 'invenio-testing==0.1.1', # Needed ?
-
-    #
-    # From here on, new dependencies from Invenio 3
-    #
+    'invenio-jsonschemas==1.0.0a3',
     'idutils>=0.1.1',
-    'invenio-access',
-    'invenio-accounts',
-    'invenio-admin',
-    'invenio-assets',
-    'invenio-base',
-    'invenio-celery',
-    'invenio-config',
-    'invenio-formatter',
-    'invenio-i18n',
-    'invenio-indexer',
-    'invenio-logging',
-    'invenio-mail',
-    'invenio-oauthclient',
-    'invenio-pidstore',
-    'invenio-records',
-    'invenio-rest[cors]',
-    'invenio-search<=1.0.0a5',
-    'invenio-records',
-    'invenio-records-rest<=1.0.0a8',
-    'invenio-records-ui',
-    'invenio-userprofiles',
-    'invenio-utils',  # Not fully Invenio 3 ready
+    'invenio-access==1.0.0a5',
+    'invenio-accounts==1.0.0a10',
+    'invenio-admin==1.0.0a3',
+    'invenio-assets==1.0.0a4',
+    'invenio-base==1.0.0a6',
+    'invenio-celery==1.0.0a3',
+    'invenio-config==1.0.0a1',
+    'invenio-i18n==1.0.0a4',
+    'invenio-indexer==1.0.0a3',
+    'invenio-logging==1.0.0a1',
+    'invenio-mail==1.0.0a3',
+    'invenio-oauthclient==1.0.0a1',
+    'invenio-records==1.0.0a15',  # Add [versioning] in the future
+    'invenio-rest[cors]==1.0.0a7',
+    'invenio-search==1.0.0a7',
+    'invenio-records-rest==1.0.0a10',
+    'invenio-records-ui==1.0.0a6',
+    'invenio-userprofiles==1.0.0a3',
+    'invenio-utils==0.2.0',  # Not fully Invenio 3 ready
     'invenio>=3.0.0a1,<3.1.0',
     'dojson==1.0.1',
     'Flask-Breadcrumbs>=0.3.0',
     'Flask-Script>=2.0.5',
-    'jsmin',
-    # 'jsonref'
+    'jsmin'
 ]
 
 tests_require = [
@@ -99,12 +81,7 @@ tests_require = [
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
     'pytest>=2.8.0',
-    'mock>=1.3.0',
-    # 'Flask-Testing>=0.4.2', # Was on INSPIRE overlay, not needed?
-    # 'unittest2>=1.1.0', # Was on INSPIRE overlay, not needed?
-    # 'responses>=0.4.0', # Was on INSPIRE overlay, not needed?
-    # 'pyinotify>=0.9.6', # Was on INSPIRE overlay, not needed?
-    # 'setproctitle>=1.1.9', # Was on INSPIRE overlay, not needed?
+    'mock>=1.3.0'
 ]
 
 extras_require = {
@@ -220,6 +197,7 @@ setup(
         ],
         'invenio_base.api_apps': [
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
+            'inspire_search = inspirehep.modules.search:INSPIRESearch',
         ],
         'invenio_base.apps': [
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
@@ -266,6 +244,9 @@ setup(
         ],
         'invenio_workflows_ui.actions': [
             'author_approval = inspirehep.modules.authors.workflows.actions.author_approval:AuthorApproval',
+        ],
+        'invenio_db.models': [
+            'inspire_workflows_audit = inspirehep.modules.workflows.models',
         ],
     },
     tests_require=tests_require,

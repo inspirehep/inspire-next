@@ -22,96 +22,41 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""INSPIRE Query class to wrap a query object from invenio_search."""
+"""INSPIRE search factory used in invenio-records-rest"""
 
 from flask import request, current_app
 
-from invenio_search.api import Query
-from invenio_search.utils import query_enhancers, search_walkers
-
 from invenio_records_rest.errors import InvalidQueryRESTError
 
-from invenio_query_parser.ast import MalformedQuery
-
-from werkzeug.utils import cached_property
-
-from .walkers.elasticsearch_no_keywords import ElasticSearchNoKeywordsDSL
-from .walkers.elasticsearch_no_keywords import QueryHasKeywords
+from inspirehep.modules.search import IQ
 
 
-class InspireQuery(Query):
-    """Extension of invenio_search.api.Query."""
+def inspire_search_factory(self, search):
+    """Parse query using Invenio-Query-Parser.
 
-    def __init__(self, *args, **kwargs):
-        """Provide Query parameters."""
-        super(InspireQuery, self).__init__(*args, **kwargs)
-
-    @cached_property
-    def query(self):
-        """Catch SyntaxError upon query generation and return MalformedQuery."""
-        try:
-            return super(InspireQuery, self).query
-        except SyntaxError:
-            return MalformedQuery("")
-
-    def build(self, **kwargs):
-        """Build query body."""
-        # Enhance query first
-        for enhancer in query_enhancers():
-            enhancer(self, **kwargs)
-
-        query = self.query
-
-        if self._parser is not None:
-            try:
-                walker = ElasticSearchNoKeywordsDSL()
-                query.accept(walker)
-                query = {
-                    "multi_match": {
-                        "query": self._query,
-                        "zero_terms_query": "all",
-                        "fields": [
-                            "title^3",
-                            "title.raw^10",
-                            "abstract^2",
-                            "abstract.raw^4",
-                            "author^10",
-                            "author.raw^15",
-                            "reportnumber^10",
-                            "eprint^10",
-                            "doi^10"]}}
-            except QueryHasKeywords:
-                for walker in search_walkers():
-                    query = query.accept(walker)
-
-        self.body['query'] = query
-
-
-def inspire_query_factory(index, page, size):
-    """Parse and slice query using InspireQuery and Invenio-Query-Parser.
-
-    :param index: Index to search in.
-    :param page: Requested page.
-    :param size: Request results size.
-    :returns: Tuple of (query, URL arguments).
+    :param self: REST view.
+    :param search: Elastic search DSL search instance.
+    :returns: Tuple with search instance and URL arguments.
     """
+    from invenio_records_rest.facets import default_facets_factory
+    from invenio_records_rest.sorter import default_sorter_factory
+
     query_string = request.values.get('q', '')
 
-    return perform_query(query_string, page, size)
-
-
-def perform_query(query_string, page, size):
-    """
-
-    :param query_string:
-    :param page:
-    :param size:
-    :return:
-    """
     try:
-        query = InspireQuery(query_string)[(page - 1) * size:page * size]
+        search = search.query(IQ(query_string))
     except SyntaxError:
-        current_app.logger.debug("Failed parsing query: {0}".format(
-            request.values.get('q', '')), exc_info=True)
+        current_app.logger.debug(
+            "Failed parsing query: {0}".format(
+                request.values.get('q', '')),
+            exc_info=True)
         raise InvalidQueryRESTError()
-    return query, {'q': query_string}
+
+    search_index = search._index[0]
+    search, urlkwargs = default_facets_factory(search, search_index)
+    search, sortkwargs = default_sorter_factory(search, search_index)
+    for key, value in sortkwargs.items():
+        urlkwargs.add(key, value)
+
+    urlkwargs.add('q', query_string)
+    return search, urlkwargs

@@ -22,852 +22,872 @@
 
 import pytest
 
-from inspirehep.modules.search.query import InspireQuery
+from inspirehep.modules.search import IQ
 
 
 def test_empty():
-    query = InspireQuery('')
+    query = IQ('')
 
     expected = {
-        'query': {
-            'multi_match': {
-                'zero_terms_query': 'all',
-                'query': '',
-                'fields': [
-                    'title^3',
-                    'title.raw^10',
-                    'abstract^2',
-                    'abstract.raw^4',
-                    'author^10',
-                    'author.raw^15',
-                    'reportnumber^10',
-                    'eprint^10',
-                    'doi^10'
-                ]
-            }
+        'multi_match': {
+            'zero_terms_query': 'all',
+            'query': '',
+            'fields': [
+                'title^3',
+                'title.raw^10',
+                'abstract^2',
+                'abstract.raw^4',
+                'author^10',
+                'author.raw^15',
+                'reportnumber^10',
+                'eprint^10',
+                'doi^10'
+            ]
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_google_style():
-    query = InspireQuery('kudenko')
+    query = IQ('kudenko')
 
     expected = {
-        'query': {
-            'multi_match': {
-                'zero_terms_query': 'all',
-                'query': 'kudenko',
-                'fields': [
-                    'title^3',
-                    'title.raw^10',
-                    'abstract^2',
-                    'abstract.raw^4',
-                    'author^10',
-                    'author.raw^15',
-                    'reportnumber^10',
-                    'eprint^10',
-                    'doi^10'
-                ]
-            }
+        'multi_match': {
+            'zero_terms_query': 'all',
+            'query': 'kudenko',
+            'fields': [
+                'title^3',
+                'title.raw^10',
+                'abstract^2',
+                'abstract.raw^4',
+                'author^10',
+                'author.raw^15',
+                'reportnumber^10',
+                'eprint^10',
+                'doi^10'
+            ]
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_google_style_or_google_style():
-    query = InspireQuery('sungtae cho or 1301.7261')
+    query = IQ('sungtae cho or 1301.7261')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_google_style_and_not_collaboration():
-    query = InspireQuery("raffaele d'agnolo and not cn cms")
+    query = IQ("raffaele d'agnolo and not cn cms")
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_author():
-    query = InspireQuery('a kondrashuk')
+    query = IQ('a kondrashuk')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_author_bai():
-    query = InspireQuery('a r.j.hill.1')
+    query = IQ('a r.j.hill.1')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_author_or_author():
-    query = InspireQuery('a fileviez perez,p or p. f. perez')
+    query = IQ('a fileviez perez,p or p. f. perez')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_author_and_not_author():
-    query = InspireQuery('a espinosa,jose r and not a rodriguez espinosa')
+    query = IQ('a espinosa,jose r and not a rodriguez espinosa')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_author_and_not_type_code():
-    query = InspireQuery('a nilles,h and not tc I')
+    query = IQ('a nilles,h and not tc I')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def author_or_author_and_not_collaborations_and_not_title_and_not_type_code():
-    query = InspireQuery(
+    query = IQ(
         'a rojo,j. or rojo-chacon,j. and not collaboration pierre auger '
         'and not collaboration auger and not t auger and tc p')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_exactauthor():
-    query = InspireQuery('ea wu, xing gang')
+    query = IQ('ea wu, xing gang')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_abstract_colon_with_star_wildcard():
-    query = InspireQuery('abstract: part*')
+    query = IQ('abstract: part*')
 
     expected = {
-        'query': {
-            'query_string': {
-                'analyze_wildcard': 'true',
-                'default_field': 'abstracts.value',
-                'query': 'part*'
-            }
+        'query_string': {
+            'query': 'part*',
+            'default_field': 'abstracts.value',
+            'analyze_wildcard': True
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_author_colon():
-    query = InspireQuery('author: vagenas')
+    query = IQ('author: vagenas')
 
     expected = {
-        'query': {
-            'bool': {
-                'should': [
-                    {'match': {'authors.name_variations': 'vagenas'}},
-                    {'match': {'authors.full_name': 'vagenas'}}
-                ]
-            }
+        'bool': {
+            'should': [
+                {'match': {'authors.name_variations': 'vagenas'}},
+                {'match': {'authors.full_name': 'vagenas'}}
+            ]
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_author_colon_with_double_quotes():
-    query = InspireQuery('author:"tachikawa, yuji"')
+    query = IQ('author:"tachikawa, yuji"')
 
     expected = {
-        'query': {
-            'bool': {
-                'must': [
-                    {'match': {'authors.name_variations': 'tachikawa, yuji'}}
-                ],
-                'should': [
-                    {'match': {'authors.full_name': 'tachikawa, yuji'}}
-                ]
-            }
+        'bool': {
+            'must': [
+                {'match': {'authors.name_variations': 'tachikawa, yuji'}}
+            ],
+            'should': [
+                {'match': {'authors.full_name': 'tachikawa, yuji'}}
+            ]
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_author_colon_bai():
-    query = InspireQuery('author:Y.Nomura.1')
+    query = IQ('author:Y.Nomura.1')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_author_colon_bai_and_collection_colon():
-    query = InspireQuery(
+    query = IQ(
         'author:E.Witten.1 AND collection:citeable')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_author_colon_bai_with_double_quotes_and_collection_colon():
-    query = InspireQuery('author:"E.Witten.1" AND collection:citeable')
+    query = IQ('author:"E.Witten.1" AND collection:citeable')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_author_colon_bai_and_collection_colon_and_cited_colon():
-    query = InspireQuery(
+    query = IQ(
         'author:E.Witten.1 AND collection:citeable AND cited:500->1000000')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_author_colon_bai_with_double_quotes_and_collection_colon_and_cited_colon():
-    query = InspireQuery(
+    query = IQ(
         'author:"E.Witten.1" AND collection:citeable AND cited:500->1000000')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_author_colon_or_eprint_without_keyword():
-    query = InspireQuery('author:"Takayanagi, Tadashi" or hep-th/0010101')
+    query = IQ('author:"Takayanagi, Tadashi" or hep-th/0010101')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_author_colon_or_author_colon_or_title_colon_or_title_colon():
-    query = InspireQuery(
+    query = IQ(
         "(author:'Hiroshi Okada' OR (author:'H Okada' hep-ph) OR "
         "title: 'Dark matter in supersymmetric U(1(B-L) model' OR "
         "title: 'Non-Abelian discrete symmetry for flavors')")
 
     expected = {
-        'query': {
-            'bool': {
-                'should': [
-                    {
-                        'bool': {
-                            'should': [
-                                {
-                                    'bool': {
-                                        'should': [
-                                            {
-                                                'multi_match': {
-                                                    'query': 'Hiroshi Okada',
-                                                    'type': 'phrase',
-                                                    'fields': [
-                                                        'authors.full_name',
-                                                        'authors.alternative_name'
-                                                    ],
-                                                }
-                                            },
-                                            {
-                                                'bool': {
-                                                    'must': [
-                                                        {
-                                                            'multi_match': {
-                                                                'query': 'H Okada',
-                                                                'type': 'phrase',
-                                                                'fields': [
-                                                                    'authors.full_name',
-                                                                    'authors.alternative_name'
-                                                                ]
-                                                            }
-                                                        },
-                                                        {
-                                                            'multi_match': {
-                                                                'query': 'hep-ph',
-                                                                'fields': [
-                                                                    'global_fulltext'
-                                                                ]
-                                                            }
+        'bool': {
+            'should': [
+                {
+                    'bool': {
+                        'should': [
+                            {
+                                'bool': {
+                                    'should': [
+                                        {
+                                            'bool': {
+                                                'must': [
+                                                    {
+                                                        'multi_match': {
+                                                            'query': 'H Okada',
+                                                            'type': 'phrase',
+                                                            'fields': [
+                                                                'authors.full_name',
+                                                                'authors.alternative_name'
+                                                            ]
                                                         }
-                                                    ]
-                                                }
+                                                    },
+                                                    {
+                                                        'multi_match': {
+                                                            'query': 'hep-ph',
+                                                            'fields': [
+                                                                'global_fulltext'
+                                                            ]
+                                                        }
+                                                    }
+                                                ]
                                             }
-                                        ]
-                                    }
-                                },
-                                {
-                                    'multi_match': {
-                                        'query': 'Dark matter in supersymmetric U(1(B-L) model',
-                                        'type': 'phrase',
-                                        'fields': [
-                                            'titles.title',
-                                            'titles.title.raw^2',
-                                            'title_translation.title',
-                                            'title_variation',
-                                            'title_translation.subtitle',
-                                            'titles.subtitle'
-                                        ]
-                                    }
+                                        },
+                                        {
+                                            'multi_match': {
+                                                'query': 'Hiroshi Okada',
+                                                'type': 'phrase',
+                                                'fields': [
+                                                    'authors.full_name',
+                                                    'authors.alternative_name'
+                                                ],
+                                            }
+                                        }
+                                    ]
                                 }
-                            ]
-                        }
-                    },
-                    {
-                        'multi_match': {
-                            'query': 'Non-Abelian discrete symmetry for flavors',
-                            'type': 'phrase',
-                            'fields': [
-                                'titles.title',
-                                'titles.title.raw^2',
-                                'title_translation.title',
-                                'title_variation',
-                                'title_translation.subtitle',
-                                'titles.subtitle'
-                            ],
-                        }
+                            },
+                            {
+                                'multi_match': {
+                                    'query': 'Dark matter in supersymmetric U(1(B-L) model',
+                                    'type': 'phrase',
+                                    'fields': [
+                                        'titles.title',
+                                        'titles.title.raw^2',
+                                        'title_translation.title',
+                                        'title_variation',
+                                        'title_translation.subtitle',
+                                        'titles.subtitle'
+                                    ]
+                                }
+                            }
+                        ]
                     }
-                ]
-            }
+                },
+                {
+                    'multi_match': {
+                        'query': 'Non-Abelian discrete symmetry for flavors',
+                        'type': 'phrase',
+                        'fields': [
+                            'titles.title',
+                            'titles.title.raw^2',
+                            'title_translation.title',
+                            'title_variation',
+                            'title_translation.subtitle',
+                            'titles.subtitle'
+                        ],
+                    }
+                }
+            ]
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_citedby_colon():
-    query = InspireQuery('citedby:foobar')
+    query = IQ('citedby:foobar')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_citedby_colon_recid_colon():
-    query = InspireQuery('citedby:recid:902780')
+    query = IQ('citedby:recid:902780')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_eprint_colon_with_arxiv():
-    query = InspireQuery('eprint:arxiv:TODO')
+    query = IQ('eprint:arxiv:TODO')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_eprint_colon_without_arxiv():
-    query = InspireQuery('eprint:TODO')
+    query = IQ('eprint:TODO')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_exactauthor_colon():
-    query = InspireQuery('ea:matt visser')
+    query = IQ('ea:matt visser')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_exactauthor_colon_and_collection_colon():
-    query = InspireQuery('ea: matt visser AND collection:citeable')
+    query = IQ('ea: matt visser AND collection:citeable')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_exactauthor_colon_bai():
-    query = InspireQuery('exactauthor:J.Serra.3')
+    query = IQ('exactauthor:J.Serra.3')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_field_code_colon():
-    query = InspireQuery('fc: a')
+    query = IQ('fc: a')
 
-    expected = {'query': {'multi_match': {'query': 'a', 'fields': ['field_code']}}}
-    result = query.body
+    expected = {'multi_match': {'query': 'a', 'fields': ['field_code']}}
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_or_of_exactauthor_colon_queries():
-    query = InspireQuery('exactauthor:X.Yin.1 or exactauthor:"Yin, Xi"')
+    query = IQ('exactauthor:X.Yin.1 or exactauthor:"Yin, Xi"')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_fulltext_colon():
-    query = InspireQuery('fulltext:TODO')
+    query = IQ('fulltext:TODO')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_journal_colon():
-    query = InspireQuery('journal:TODO')
+    query = IQ('journal:TODO')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_refersto_colon_recid_colon():
-    query = InspireQuery('refersto:recid:1286113')
+    query = IQ('refersto:recid:1286113')
 
     expected = {
-        'query': {
-            'multi_match': {
-                'query': '1286113',
-                'fields': [
-                    'references.recid'
-                ]
-            }
+        'multi_match': {
+            'query': '1286113',
+            'fields': [
+                'references.recid'
+            ]
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_topcite_colon():
-    query = InspireQuery('topcite:200+')
+    query = IQ('topcite:200+')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_type_code_colon():
-    query = InspireQuery('tc: l')
+    query = IQ('tc: l')
 
-    expected = {'query': {'multi_match': {'query': 'l', 'fields': ['collection']}}}
-    result = query.body
+    expected = {'multi_match': {'query': 'l', 'fields': ['collection']}}
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_find_author_with_hash_wildcard():
-    query = InspireQuery('find a chkv#')
+    query = IQ('find a chkv#')
 
     expected = {
-        'query': {
-            'bool': {
-                'should': [{
-                    'query_string': {
-                        'analyze_wildcard': 'true',
-                        'default_field': 'authors.full_name',
-                        'query': 'chkv*'}}, {
-                    'query_string': {
-                        'analyze_wildcard': 'true',
-                        'default_field': 'authors.alternative_name',
-                        'query': 'chkv*'}}
-                ]}
-            }
+        'bool': {
+            'should': [{
+                'query_string': {
+                    'analyze_wildcard': True,
+                    'default_field': 'authors.full_name',
+                    'query': 'chkv*'}}, {
+                'query_string': {
+                    'analyze_wildcard': True,
+                    'default_field': 'authors.alternative_name',
+                    'query': 'chkv*'}}
+            ]}
         }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
-    
+
 def test_find_journal():
-    query = InspireQuery('find j "Phys.Rev.Lett.,105*"')
+    query = IQ('find j "Phys.Rev.Lett.,105*"')
 
     expected = {
-        'query': {
-            'multi_match': {
-                'query': '"Phys.Rev.Lett.,105*"',
-                'fields': [
-                    'publication_info.recid',
-                    'publication_info.page_artid',
-                    'publication_info.journal_issue',
-                    'publication_info.conf_acronym',
-                    'publication_info.journal_title',
-                    'publication_info.reportnumber',
-                    'publication_info.confpaper_info',
-                    'publication_info.journal_volume',
-                    'publication_info.cnum',
-                    'publication_info.pubinfo_freetext',
-                    'publication_info.year_raw',
-                    'publication_info.isbn',
-                    'publication_info.note'
-                ]
-            }
+        'multi_match': {
+            'query': '"Phys.Rev.Lett.,105*"',
+            'fields': [
+                'publication_info.recid',
+                'publication_info.page_artid',
+                'publication_info.journal_issue',
+                'publication_info.conf_acronym',
+                'publication_info.journal_title',
+                'publication_info.reportnumber',
+                'publication_info.confpaper_info',
+                'publication_info.journal_volume',
+                'publication_info.cnum',
+                'publication_info.pubinfo_freetext',
+                'publication_info.year_raw',
+                'publication_info.isbn',
+                'publication_info.note'
+            ]
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_find_exactauthor():
-    query = InspireQuery('find ea witten, edward')
+    query = IQ('find ea witten, edward')
 
     expected = {
-        'query': {
-            'multi_match': {
-                'query': 'witten, edward',
-                'fields': [
-                    'exactauthor.raw',
-                    'authors.full_name',
-                    'authors.alternative_name'
-                ]
-            }
+        'multi_match': {
+            'query': 'witten, edward',
+            'fields': [
+                'exactauthor.raw',
+                'authors.full_name',
+                'authors.alternative_name'
+            ]
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_find_exactauthor_not_affiliation_uppercase():
-    query = InspireQuery(
+    query = IQ(
         'FIND EA RINALDI, MASSIMILIANO NOT AFF SINCROTRONE TRIESTE')
 
     expected = {
-        'query': {
-            'bool': {
-                'must': [
-                    {
-                        'multi_match': {
-                            'query': 'RINALDI, MASSIMILIANO',
-                            'fields': [
-                                'exactauthor.raw',
-                                'authors.full_name',
-                                'authors.alternative_name'
-                            ]
-                        }
-                    },
-                    {
-                        'bool': {
-                            'must_not': [
-                                {
-                                    'multi_match': {
-                                        'query': 'SINCROTRONE TRIESTE',
-                                        'fields': [
-                                            'authors.affiliations.value',
-                                            'corporate_author'
-                                        ]
-                                    }
-                                }
-                            ]
-                        }
+        "bool": {
+            "must_not": [
+                {
+                    "multi_match": {
+                        "query": "SINCROTRONE TRIESTE",
+                        "fields": [
+                            "authors.affiliations.value",
+                            "corporate_author"
+                        ]
                     }
-                ]
-            }
+                }
+            ],
+            "must": [
+                {
+                    "multi_match": {
+                        "query": "RINALDI, MASSIMILIANO",
+                        "fields": [
+                            "exactauthor.raw",
+                            "authors.full_name",
+                            "authors.alternative_name"
+                        ]
+                    }
+                }
+            ]
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_find_author():
-    query = InspireQuery('find a polchinski')
+    query = IQ('find a polchinski')
 
     expected = {
-        'query': {
-            'bool': {
-                'must': [
-                    {'match': {'authors.name_variations': 'polchinski'}}
-                ],
-                'should': [
-                    {'match': {'authors.full_name': 'polchinski'}}
-                ]
-            }
+        'bool': {
+            'must': [
+                {'match': {'authors.name_variations': 'polchinski'}}
+            ],
+            'should': [
+                {'match': {'authors.full_name': 'polchinski'}}
+            ]
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_find_author_uppercase():
-    query = InspireQuery('FIND A W F CHANG')
+    query = IQ('FIND A W F CHANG')
 
     expected = {
-        'query': {
-            'bool': {
-                'must': [
-                    {'match': {'authors.name_variations': 'W F CHANG'}}
-                ],
-                'should': [
-                    {'match': {'authors.full_name': 'W F CHANG'}}
-                ]
-            }
+        'bool': {
+            'must': [
+                {'match': {'authors.name_variations': 'W F CHANG'}}
+            ],
+            'should': [
+                {'match': {'authors.full_name': 'W F CHANG'}}
+            ]
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_find_author_bai():
-    query = InspireQuery('find a B.R.Safdi.1')
+    query = IQ('find a B.R.Safdi.1')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_find_author_and_date():
-    query = InspireQuery('find a hatta and date after 2000')
+    query = IQ('find a hatta and date after 2000')
 
     expected = {
-        'query': {
-            'bool': {
-                'must': [
-                    {
-                        'bool': {
-                            'must': [
-                                {'match': {'authors.name_variations': 'hatta'}}
-                            ],
-                            'should': [
-                                {'match': {'authors.full_name': 'hatta'}}
-                            ]
-                        }
-                    },
-                    {
-                        'bool': {
-                            'should': [
-                                {'range': {'imprints.date': {'gt': '2000'}}},
-                                {'range': {'preprint_date': {'gt': '2000'}}},
-                                {'range': {'thesis.date': {'gt': '2000'}}},
-                                {'range': {'publication_info.year': {'gt': '2000'}}}                            ]
-                        }
+        "bool": {
+            "minimum_should_match": 0,
+            "should": [
+                {
+                    "match": {
+                        "authors.full_name": "hatta"
                     }
-                ]
-            }
+                }
+            ],
+            "must": [
+                {
+                    "match": {
+                        "authors.name_variations": "hatta"
+                    }
+                },
+                {
+                    "bool": {
+                        "minimum_should_match": 1,
+                        "should": [
+                            {
+                                "bool": {
+                                    "should": [
+                                        {
+                                            "bool": {
+                                                "should": [
+                                                    {
+                                                        "range": {
+                                                            "imprints.date": {
+                                                                "gt": "2000"
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "range": {
+                                                            "preprint_date": {
+                                                                "gt": "2000"
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "range": {
+                                                "thesis.date": {
+                                                    "gt": "2000"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "range": {
+                                    "publication_info.year": {
+                                        "gt": "2000"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_find_author_or_author():
-    query = InspireQuery('find a gersdorff, g or a von gersdorff, g')
+    query = IQ('find a gersdorff, g or a von gersdorff, g')
 
     expected = {
-        'query': {
-            'bool': {
-                'should': [
-                    {
-                        'bool': {
-                            'must': [
-                                {'match': {'authors.name_variations': 'gersdorff, g'}}
-                            ],
-                            'should': [
-                                {'match': {'authors.full_name': 'gersdorff, g'}}
-                            ]
-                        }
-                    },
-                    {
-                        'bool': {
-                            'must': [
-                                {'match': {'authors.name_variations': 'von gersdorff, g'}}
-                            ],
-                            'should': [
-                                {'match': {'authors.full_name': 'von gersdorff, g'}}                            ]
-                        }
+        'bool': {
+            'should': [
+                {
+                    'bool': {
+                        'must': [
+                            {'match': {'authors.name_variations': 'gersdorff, g'}}
+                        ],
+                        'should': [
+                            {'match': {'authors.full_name': 'gersdorff, g'}}
+                        ]
                     }
-                ]
-            }
+                },
+                {
+                    'bool': {
+                        'must': [
+                            {'match': {'authors.name_variations': 'von gersdorff, g'}}
+                        ],
+                        'should': [
+                            {'match': {'authors.full_name': 'von gersdorff, g'}}                            ]
+                    }
+                }
+            ]
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_find_author_not_author_not_author():
-    query = InspireQuery('f a ostapchenko not olinto not haungs')
+    query = IQ('f a ostapchenko not olinto not haungs')
 
     expected = {
-        'query': {
-            'bool': {
-                'must': [
-                    {
-                        'bool': {
-                            'must': [
-                                {
-                                    'bool': {
-                                        'must': [{'match': {'authors.name_variations': 'ostapchenko'}}],
-                                        'should': [{'match': {'authors.full_name': 'ostapchenko'}}]
-                                    }
-                                },
-                                {
-                                    'bool': {
-                                        'must_not': [
-                                            {
-                                                'bool': {
-                                                    'must': [{'match': {'authors.name_variations': 'olinto'}}],
-                                                    'should': [{'match': {'authors.full_name': 'olinto'}}]
-                                                }
-                                            }
-                                        ]
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        'bool': {
-                            'must_not': [
-                                {
-                                    'bool': {
-                                        'must': [{'match': {'authors.name_variations': 'haungs'}}],
-                                        'should': [{'match': {'authors.full_name': 'haungs'}}]
-                                    }
-                                }
-                            ]
-                        }
+        "bool": {
+            "minimum_should_match": 0,
+            "must": [
+                {
+                    "match": {
+                        "authors.name_variations": "ostapchenko"
                     }
-                ]
-            }
+                }
+            ],
+            "must_not": [
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "match": {
+                                    "authors.full_name": "olinto"
+                                }
+                            }
+                        ],
+                        "must": [
+                            {
+                                "match": {
+                                    "authors.name_variations": "olinto"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "bool": {
+                        "must": [
+                            {
+                                "match": {
+                                    "authors.name_variations": "haungs"
+                                }
+                            }
+                        ],
+                        "should": [
+                            {
+                                "match": {
+                                    "authors.full_name": "haungs"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "should": [
+                {
+                    "match": {
+                        "authors.full_name": "ostapchenko"
+                    }
+                }
+            ]
         }
     }
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_find_caption():
-    query = InspireQuery('Diagram for the fermion flow violating process')
+    query = IQ('Diagram for the fermion flow violating process')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_find_country_code():
-    query = InspireQuery('find cc italy')
+    query = IQ('find cc italy')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='today must be converted to an actual date')
 def test_find_date():
-    query = InspireQuery('fin date > today')
+    query = IQ('fin date > today')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_find_field_code():
-    query = InspireQuery('find fc a')
+    query = IQ('find fc a')
 
-    expected = {'query': {'multi_match': {'query': 'a', 'fields': ['field_code']}}}
-    result = query.body
+    expected = {'multi_match': {'query': 'a', 'fields': ['field_code']}}
+    result = query.to_dict()
 
     assert expected == result
 
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_find_report():
-    query = InspireQuery('find r atlas-conf-*')
+    query = IQ('find r atlas-conf-*')
 
     expected = {}
-    result = query.body
+    result = query.to_dict()
 
     assert expected == result
 
 
 def test_find_type_code():
-    query = InspireQuery('find tc book')
+    query = IQ('find tc book')
 
-    expected = {'query': {'multi_match': {'query': 'book', 'fields': ['collection']}}}
-    result = query.body
+    expected = {'multi_match': {'query': 'book', 'fields': ['collection']}}
+    result = query.to_dict()
 
     assert expected == result
