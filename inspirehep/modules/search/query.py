@@ -24,14 +24,14 @@
 
 """INSPIRE Query class to wrap a query object from invenio_search."""
 
-from flask import request, current_app
+from flask import current_app, request
 
-from invenio_search.api import Query
-from invenio_search.utils import query_enhancers, search_walkers
+from invenio_query_parser.ast import MalformedQuery
 
 from invenio_records_rest.errors import InvalidQueryRESTError
 
-from invenio_query_parser.ast import MalformedQuery
+from invenio_search.api import Query
+from invenio_search.utils import query_enhancers, search_walkers
 
 from werkzeug.utils import cached_property
 
@@ -39,12 +39,34 @@ from .walkers.elasticsearch_no_keywords import ElasticSearchNoKeywordsDSL
 from .walkers.elasticsearch_no_keywords import QueryHasKeywords
 
 
+google_search_fields = {
+    "records-hep": [
+        "title^3",
+        "title.raw^10",
+        "abstract^2",
+        "abstract.raw^4",
+        "author^10",
+        "author.raw^15",
+        "reportnumber^10",
+        "eprint^10",
+        "doi^10"],
+    "records-institutions": ["field1^10", "field2^15"],
+    "records-journals": ["field1^10", "field2^15"],
+    "records-experiments": ["field1^10", "field2^15"],
+    "records-data": ["field1^10", "field2^15"],
+    "records-conferences": ["field1^10", "field2^15"],
+    "records-authors": ["field1^10", "field2^15"],
+    "records-jobs": ["field1^10", "field2^15"]
+}
+
+
 class InspireQuery(Query):
     """Extension of invenio_search.api.Query."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, index, *args, **kwargs):
         """Provide Query parameters."""
         super(InspireQuery, self).__init__(*args, **kwargs)
+        self.index = index
 
     @cached_property
     def query(self):
@@ -70,16 +92,9 @@ class InspireQuery(Query):
                     "multi_match": {
                         "query": self._query,
                         "zero_terms_query": "all",
-                        "fields": [
-                            "title^3",
-                            "title.raw^10",
-                            "abstract^2",
-                            "abstract.raw^4",
-                            "author^10",
-                            "author.raw^15",
-                            "reportnumber^10",
-                            "eprint^10",
-                            "doi^10"]}}
+                        "fields": google_search_fields[self.index]
+                    }
+                }
             except QueryHasKeywords:
                 for walker in search_walkers():
                     query = query.accept(walker)
@@ -109,7 +124,8 @@ def perform_query(query_string, page, size):
     :return:
     """
     try:
-        query = InspireQuery(query_string)[(page - 1) * size:page * size]
+        query = InspireQuery(index, query_string)[
+            (page - 1) * size:page * size]
     except SyntaxError:
         current_app.logger.debug("Failed parsing query: {0}".format(
             request.values.get('q', '')), exc_info=True)
