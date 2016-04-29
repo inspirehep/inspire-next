@@ -24,16 +24,18 @@
 
 """INSPIRE Query class to wrap a query object from invenio_search."""
 
-from flask import request, current_app
+from flask import current_app, request
+
+from invenio_query_parser.ast import MalformedQuery
+
+from invenio_records_rest.errors import InvalidQueryRESTError
 
 from invenio_search.api import Query
 from invenio_search.utils import query_enhancers, search_walkers
 
-from invenio_records_rest.errors import InvalidQueryRESTError
-
-from invenio_query_parser.ast import MalformedQuery
-
 from werkzeug.utils import cached_property
+
+from .receivers import malformed_query
 
 from .walkers.elasticsearch_no_keywords import ElasticSearchNoKeywordsDSL
 from .walkers.elasticsearch_no_keywords import QueryHasKeywords
@@ -52,6 +54,7 @@ class InspireQuery(Query):
         try:
             return super(InspireQuery, self).query
         except SyntaxError:
+            malformed_query.send()
             return MalformedQuery("")
 
     def build(self, **kwargs):
