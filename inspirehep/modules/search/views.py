@@ -40,6 +40,9 @@ blueprint = Blueprint('inspirehep_search',
 @blueprint.route("/search")
 def search():
     """Search page ui."""
+
+    #TODO Add rules for the other collections.
+
     collection = request.values.get('cc', 'hep', type=unicode).lower()
     ctx = {}
     if collection == 'conferences':

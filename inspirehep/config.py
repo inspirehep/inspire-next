@@ -54,7 +54,7 @@ REQUIREJS_CONFIG = 'js/build.js'
 
 # Theme
 # =====
-THEME_SITENAME = _("inspirehep")
+THEME_SITENAME = "HEP"
 
 # Database
 # ========
@@ -139,6 +139,10 @@ SEARCH_QUERY_WALKERS = [
 
 SEARCH_WALKERS = [
     'inspirehep.modules.search.walkers.elasticsearch:ElasticSearchDSL'
+]
+
+SEARCH_QUERY_ENHANCERS = [
+    'invenio_collections.contrib.search.collection_filter.apply'
 ]
 
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
@@ -244,6 +248,10 @@ SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
     "hepnames": "records-authors",
     "data": "records-data"
 }
+
+COLLECTIONS_USE_PERCOLATOR = True
+""" Use Elasticsearch to match a document against a collection query """
+
 # Records
 # =======
 RECORDS_REST_ENDPOINTS = dict(
