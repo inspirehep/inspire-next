@@ -1,0 +1,126 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2014 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax %}
+
+{% extends config.SEARCH_UI_BASE_TEMPLATE %}
+
+{%- block javascript %}
+  {{ super() }}
+  {{ mathjax() | safe }}
+  {% assets "inspirehep_author_profile_js" %}<script src="{{ ASSET_URL }}"></script>{% endassets %}
+{%- endblock javascript %}
+
+{% block body %}
+<div id="record_content" profile-init record='{{ record|tojson|safe }}'>
+  <div class="profile-detailed">
+    <div class="record-header" id="detailed-header">
+      <div class="row">
+        <div class="col-md-12 summary" id="detailed-header-top">
+          <div class="col-md-2">
+            <img src="{{ url_for('static', filename='images/einstein.svg') }}" width="100%">
+          </div>
+          <div class="col-md-10">
+            <div id="profile-title">
+              <author-name></author-name>
+              <author-affiliation id="affiliation"></author-affiliation>
+            </div>
+            <div id="author-fields">
+              <author-fields fields='{{ config.ARXIV_TO_INSPIRE_CATEGORY_MAPPING|tojson|safe }}'>
+              </author-fields>
+            </div>
+            <div id="author-biography">
+              <biography></biography>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12 profile-links">
+          <hr>
+          <div class="col-md-6">
+            <div class="pull-left align-links">
+             <author-email></author-email>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="record-details">
+    <div class="row">
+      <div class="col-md-12" id="record-statistics">
+        <div class="col-md-12 top-box">
+          <div class="pull-left">
+            <h4 class="custom-h"><i class="fa fa-bar-chart"></i> Statistics works</h4>
+          </div>
+        </div>
+        <div class="col-md-12 bottom-box no-padding">
+          <div class="col-md-4">
+            <statistics></statistics>
+          </div>
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-6" id="statistics-chart">
+            <statistics-chart></statistics-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12" id="list-publications">
+        <div class="col-md-12 top-box">
+          <div class="pull-left">
+            <h4 class="custom-h"><i class="fa fa-flask"></i> Research works</h4>
+          </div>
+        </div>
+        <div class="col-md-12 bottom-box">
+          <publications-list></publications-list>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6" author-positions>
+        <div class="col-md-12 box">
+          <div class="pull-left">
+            <h4 class="custom-h"><i class="fa fa-briefcase"></i> Work</h4>
+          </div>
+          <author-work></author-work>
+        </div>
+
+        <div class="col-md-12 box">
+          <div class="pull-left">
+            <h4 class="custom-h"><i class="fa fa-university"></i> Education</h4>
+          </div>
+          <author-education></author-education>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="col-md-12 box">
+          <div class="pull-left">
+            <h4 class="custom-h"><i class="fa fa-users"></i> Collaborators</h4>
+          </div>
+          <collaborators></collaborators>
+        </div>
+      </div>
+  </div>
+</div>
+</div>
+{% endblock body %}

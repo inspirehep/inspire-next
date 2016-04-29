@@ -24,14 +24,6 @@
 ## {% include 'inspirehep_theme/header.html' %}
 #}
 
-{#
-## structure: (endpoint, values, blueprint, caption)
-#}
-{% set navigation_bar = [
-  ('webdeposit.create', {}, '', 'Submit'),
-  ('https://labs.inspirehep.net/help', {}, '', 'Help'),
-] -%}
-
 {# Work-around for collection name #}
 
 {% if collection is defined %}
@@ -146,11 +138,12 @@
               <li><a href="">External resources</a></li>
             </ul>
           </li>
-          {% for endpoint, values, blueprint, caption in navigation_bar %}
           <li {% if request.blueprint == blueprint|e %} class="active" {% endif %}>
-            <a href={% if blueprint %}"{{ url_for( endpoint|e, **values ) }}"{% else %}{{endpoint}}{% endif %}>{{- _(caption|e) -}}</a>
+            <a href="{{ url_for('inspirehep_literature_suggest.create') }}">{{- _('Submit') -}}</a>
           </li>
-          {% endfor %}
+          <li>
+            <a href="https://labs.inspirehep.net/help">{{- _('Help') -}}</a>
+          </li>
           <li class="divider-vertical"></li>
           {%- if not current_user.is_authenticated %}
           <li id="mobile-sign-in">

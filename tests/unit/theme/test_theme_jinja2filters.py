@@ -26,6 +26,8 @@ import jinja2
 import mock
 import pytest
 
+from elasticsearch_dsl import result
+
 from inspirehep.modules.theme.jinja2filters import *
 
 from invenio_records.api import Record
@@ -53,6 +55,135 @@ def mock_replace_refs():
         return lambda o, s: {'title': title,
                              'control_number': control_numbers_map[o['$ref']]}
     return get_replace_refs_mock
+
+
+@pytest.fixture
+def mock_perform_es_search():
+    return result.Response(
+        {
+            "hits": {
+                "hits": [
+                    {
+                        "_index": "records-hep",
+                        "_type": "hep",
+                        "_id": "elasticsearch",
+                        "_score": 12.0,
+
+                        "_source": {
+                            "title": "Higgs Discovery"
+                        },
+                    },
+                    {
+                        "_index": "records-hep",
+                        "_type": "hep",
+                        "_id": "42",
+                        "_score": 11.123,
+
+                        "_source": {
+                            "title": "Another Higgs Discovery"
+                        },
+                    },
+                    {
+                        "_index": "records-hep",
+                        "_type": "hep",
+                        "_id": "47",
+                        "_score": 1,
+
+                        "_source": {
+                            "title": "And another Higgs Discovery"
+                        },
+                    },
+                    {
+                        "_index": "records-hep",
+                        "_type": "hep",
+                        "_id": "53",
+                        "_score": 16.0,
+                    },
+                ],
+                "max_score": 12.0,
+                "total": 10
+            },
+            "timed_out": False,
+            "took": 123
+        }
+    )
+
+@pytest.fixture
+def mock_perform_es_search_empty():
+    return result.Response(
+        {
+            "hits": {
+                "total": 0,
+                "max_score": 'null',
+                "hits": []
+            }
+        }
+    )
+
+
+@pytest.fixture
+def mock_perform_es_search_onerecord():
+    return result.Response(
+        {
+            "hits": {
+                "hits": [
+                    {
+                        "_index": "records-hep",
+                        "_type": "hep",
+                        "_id": "42",
+                        "_score": 11.123,
+
+                        "_source": {
+                            "control_number": 1410174
+                        }
+                    }
+                ],
+                "max_score": 11.123,
+                "total": 1
+            },
+            "timed_out": False,
+            "took": 123
+        }
+    )
+
+@pytest.fixture
+def mock_perform_es_search_tworecord():
+    return result.Response(
+        {
+            "hits": {
+                "hits": [
+                    {
+                        "_index": "records-hep",
+                        "_type": "hep",
+                        "_id": "42",
+                        "_score": 11.123,
+
+                        "_source": {
+                            "control_number": 1407068,
+                            'dois': [
+                                {
+                                    'source': 'Elsevier',
+                                    'value': u'10.1016/j.ppnp.2015.10.002'
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "_index": "records-hep",
+                        "_type": "hep",
+                        "_id": "43",
+                        "_score": 11.123,
+
+                        "_source": {
+                            "control_number": 1407079
+                        }
+                    }
+                ],
+                "max_score": 11.123,
+                "total": 2
+            }
+        }
+    )
 
 
 @mock.patch(
@@ -389,9 +520,9 @@ def test_proceedings_link_returns_empty_string_without_cnum():
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.es.search')
-def test_proceedings_link_returns_empty_string_with_zero_search_results(s):
-    s.return_value = {'hits': {'hits': []}}
+@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
+def test_proceedings_link_returns_empty_string_with_zero_search_results(c, mock_perform_es_search_empty):
+    c.return_value = mock_perform_es_search_empty
 
     with_cnum = Record({'cnum': 'banana'})
 
@@ -401,15 +532,9 @@ def test_proceedings_link_returns_empty_string_with_zero_search_results(s):
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.es.search')
-def test_proceedings_link_returns_a_link_with_one_search_result(s):
-    s.return_value = {
-        'hits': {
-            'hits': [
-                Record({'control_number': '1410174'})
-            ]
-        }
-    }
+@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
+def test_proceedings_link_returns_a_link_with_one_search_result(c, mock_perform_es_search_onerecord):
+    c.return_value = mock_perform_es_search_onerecord
 
     with_cnum = Record({'cnum': 'banana'})
 
@@ -419,26 +544,9 @@ def test_proceedings_link_returns_a_link_with_one_search_result(s):
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.es.search')
-def test_proceedings_link_joins_with_a_comma_and_a_space(s):
-    s.return_value = {
-        'hits': {
-            'hits': [
-                Record({
-                    'control_number': '1407068',
-                    'dois': [
-                        {
-                            'source': 'Elsevier',
-                            'value': u'10.1016/j.ppnp.2015.10.002'
-                        }
-                    ]
-                }),
-                Record({
-                    'control_number': '1407079'
-                })
-            ]
-        }
-    }
+@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
+def test_proceedings_link_joins_with_a_comma_and_a_space(s, mock_perform_es_search_tworecord):
+    s.return_value = mock_perform_es_search_tworecord
 
     with_cnum = Record({'cnum': 'banana'})
 
@@ -496,9 +604,9 @@ def test_link_to_hep_affiliation_returns_empty_string_when_record_has_no_ICN():
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.es.search')
-def test_link_to_hep_affiliation_returns_empty_string_when_empty_results(s):
-    s.return_value = {'hits': {'hits': []}}
+@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
+def test_link_to_hep_affiliation_returns_empty_string_when_empty_results(s, mock_perform_es_search_empty):
+    s.return_value = mock_perform_es_search_empty
 
     with_ICN = Record({'ICN': 'CERN'})
 
@@ -508,9 +616,9 @@ def test_link_to_hep_affiliation_returns_empty_string_when_empty_results(s):
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.es.search')
-def test_link_to_hep_affiliation_singular_when_one_result(s):
-    s.return_value = {'hits': {'hits': [{}]}}
+@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
+def test_link_to_hep_affiliation_singular_when_one_result(s, mock_perform_es_search_onerecord):
+    s.return_value = mock_perform_es_search_onerecord
 
     with_ICN = Record({'ICN': 'DESY'})
 
@@ -520,9 +628,9 @@ def test_link_to_hep_affiliation_singular_when_one_result(s):
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.es.search')
-def test_link_to_hep_affiliation_plural_when_more_results(s):
-    s.return_value = {'hits': {'hits': [{}, {}]}}
+@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
+def test_link_to_hep_affiliation_plural_when_more_results(s, mock_perform_es_search_tworecord):
+    s.return_value = mock_perform_es_search_tworecord
 
     with_ICN = Record({'ICN': 'Fermilab'})
 
@@ -571,11 +679,11 @@ def test_collection_select_current_returns_empty_string_if_different():
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.es.count')
-def test_number_of_records(c):
-    c.return_value = {'count': 1337}
+@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
+def test_number_of_records(c, mock_perform_es_search):
+    c.return_value = mock_perform_es_search
 
-    expected = 1337
+    expected = 10
     result = number_of_records('foo')
 
     assert expected == result
@@ -721,11 +829,11 @@ def test_number_of_search_results_fetches_from_session(mock_datetime):
 
 
 @mock.patch('inspirehep.modules.theme.jinja2filters.session', {})
-@mock.patch('inspirehep.modules.theme.jinja2filters.es.count')
-def test_number_of_search_results_falls_back_to_query(c):
-    c.return_value = {'count': 1337}
+@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
+def test_number_of_search_results_falls_back_to_query(c, mock_perform_es_search):
+    c.return_value = mock_perform_es_search
 
-    expected = 1337
+    expected = 10
     result = number_of_search_results('foo', 'bar')
 
     assert expected == result

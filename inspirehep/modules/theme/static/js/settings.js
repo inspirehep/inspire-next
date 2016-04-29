@@ -24,6 +24,7 @@
 require.config({
   baseUrl: '/static/',
   paths: {
+    'author': 'js/authors/author',
     angular: 'node_modules/angular/angular',
     'angular-sanitize': 'node_modules/angular-sanitize/angular-sanitize',
     'angular-ui-bootstrap': 'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls',
@@ -32,6 +33,9 @@ require.config({
     'bootstrap-multiselect': 'node_modules/bootstrap-multiselect/dist/js/bootstrap-multiselect',
     'bucketsjs': 'node_modules/buckets-js/dist/buckets',
     clipboard: 'node_modules/clipboard/dist/clipboard',
+    d3: "node_modules/d3/d3",
+    datatables: 'node_modules/datatables.net-bs/js/dataTables.bootstrap',
+    'datatables.net': 'node_modules/datatables.net/js/jquery.dataTables',
     feedback: 'js/feedback/feedback',
     flight: 'node_modules/flightjs/build/flight',
     hgn: 'node_modules/requirejs-hogan-plugin/hgn',
@@ -45,6 +49,8 @@ require.config({
     ui: "node_modules/jquery-ui",
     moment: 'node_modules/moment/moment',
     'ngclipboard': 'node_modules/ngclipboard/src/ngclipboard',
+    'profile': 'js/authors/profile',
+    'publications': 'js/authors/publications',
     'readmore': 'node_modules/readmore-js/readmore',
     text: 'node_modules/requirejs-hogan-plugin/text',
     toastr: 'node_modules/toastr/toastr',

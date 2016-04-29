@@ -23,10 +23,27 @@
 """Bundles for author forms."""
 
 from flask_assets import Bundle
+from invenio_assets import NpmBundle
 
-css = Bundle(
+update_css = Bundle(
     "scss/authors/authors-update-form.scss",
     output='gen/inspire-author-update.%(version)s.css',
     depends='scss/forms/*.scss',
     filters="scss, cleancss"
+)
+
+js = NpmBundle(
+    'js/authors/app.js',
+    filters='requirejs',
+    depends=(
+        'js/authors/author.js',
+        'js/authors/profile.js',
+        'js/authors/publications.js'
+    ),
+    output="gen/authors.%(version)s.js",
+    npm={
+        "d3": "~3.5.16",
+        "datatables.net": "~1.10.11",
+        "datatables.net-bs": "~1.10.11",
+    }
 )

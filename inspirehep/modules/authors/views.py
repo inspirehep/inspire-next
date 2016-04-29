@@ -52,6 +52,7 @@ from invenio_workflows import WorkflowObject, start, resume
 
 from inspirehep.dojson.utils import strip_empty_values
 from inspirehep.modules.forms.form import DataExporter
+from inspirehep.utils.record import get_title
 
 from .forms import AuthorUpdateForm
 
@@ -152,6 +153,95 @@ def get_inspire_url(data):
     else:
         url = "http://inspirehep.net/hepnames"
     return url
+
+
+@blueprint.route('/publications', methods=['GET'])
+def get_publications():
+    from elasticsearch.helpers import scan
+    from invenio_search import current_search_client
+
+    recid = request.values.get('recid', 0, type=int)
+
+    publications = []
+    collaborations = set()
+    keywords = set()
+
+    for result in scan(
+            current_search_client,
+            query={
+                '_source': ['accelerator_experiments',
+                            'control_number',
+                            'earliest_date',
+                            'facet_inspire_doc_type',
+                            'publication_info',
+                            'titles',
+                            'thesaurus_terms'
+                            ],
+                'query': {"match": {"authors.recid": recid}}
+            },
+            index='records-hep',
+            doc_type='hep'):
+
+        try:
+            result_source = result['_source']
+            publication = {}
+
+            # Get publication title (required).
+            publication['title'] = get_title(result_source)
+
+            # Get publication recid (required).
+            publication['recid'] = result_source['control_number']
+        except (IndexError, KeyError):
+            continue
+
+        # Get publication type.
+        try:
+            publication['type'] = result_source.get(
+                'facet_inspire_doc_type', [])[0]
+        except IndexError:
+            publication['type'] = "Not defined"
+
+        # Get journal title.
+        try:
+            publication['journal_title'] = result_source.get(
+                'publication_info', [])[0]['journal_title']
+
+            # Get journal recid.
+            try:
+                publication['journal_recid'] = result_source.get(
+                    'publication_info', [])[0]['journal_recid']
+            except KeyError:
+                pass
+        except (IndexError, KeyError):
+            pass
+
+        # Get publication year.
+        try:
+            publication['year'] = result_source.get(
+                'publication_info', [])[0]['year']
+        except (IndexError, KeyError):
+            pass
+
+        # Get keywords.
+        for keyword in result_source.get('thesaurus_terms', []):
+            if keyword.get('keyword') is not "* Automatic Keywords *" \
+                    and keyword.get('keyword'):
+                keywords.add(keyword.get('keyword'))
+
+        # Get collaborations.
+        for experiment in result_source.get(
+                'accelerator_experiments', []):
+            collaborations.add(experiment.get('experiment'))
+
+        # Append to the list.
+        publications.append(publication)
+
+    response = {}
+    response['publications'] = publications
+    response['keywords'] = list(keywords)
+    response['collaborations'] = list(collaborations)
+
+    return jsonify(response)
 
 
 @blueprint.route(

@@ -1,0 +1,30 @@
+<div>
+  <table class="table no-table-line" id="publications-table">
+      <thead>
+      <tr>
+        <th>Title</th>
+        <th>Journal</th>
+        <th>Year</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="publication in publicationsList">
+        <td width="50%">
+          <a href="/literature/{{ publication.recid }}">
+            {{ publication.title | limitTo: 120 }}
+          </a>
+          <span ng-if="publication.title.length > 120">...</span>
+        </td>
+        <td ng-if="publication.journal_recid !== undefined">
+          <a href="/journals/{{ publication.journal_recid }}">
+            {{ publication.journal_title }}
+          </a>
+        </td>
+        <td ng-if="publication.journal_recid === undefined">
+          {{ publication.journal_title }}
+        </td>
+        <td>{{ publication.year }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
