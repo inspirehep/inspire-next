@@ -977,8 +977,7 @@
                     "primary": {
                         "type": "string"
                     }
-                },
-                "type": "string"
+                }
             },
             "uniqueItems": true,
             "type": "array",
