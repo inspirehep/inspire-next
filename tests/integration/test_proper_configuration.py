@@ -1,6 +1,5 @@
-#!/bin/sh
-set -e
-
+# -*- coding: utf-8 -*-
+#
 # This file is part of INSPIRE.
 # Copyright (C) 2016 CERN.
 #
@@ -21,11 +20,10 @@ set -e
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-case $1 in
-    integration)
-        python setup.py test --addopts="--ignore tests/unit"
-        ;;
-    *)
-        python setup.py test --addopts="--ignore tests/integration"
-        ;;
-esac
+from invenio_search import current_search_client as es
+
+
+def test_icu_plugin_is_present(app):
+    assert 'analysis-icu' in es.cat.plugins(), (
+        'The ICU analyzer plugin is not present. Please install it by running '
+        'bin/plugin -i install analysis-icu from the ES directory.')

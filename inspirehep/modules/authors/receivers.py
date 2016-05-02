@@ -22,12 +22,23 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""INSPIRE authors."""
 
-from __future__ import absolute_import, print_function
+from invenio_indexer.signals import before_record_index
 
-from .ext import INSPIREAuthors
+from .utils import author_tokenize
 
-from .receivers import *
 
-__all__ = ('INSPIREAuthors', )
+@before_record_index.connect
+def generate_name_variations(recid, json, *args, **kwargs):
+    """Adds a field with all the possible variations of an authors name.
+
+    :param recid: The id of the record that is going to be indexed.
+    :param json: The json representation of the record that is going to be
+                 indexed.
+    """
+    authors = json.get("authors")
+    if authors:
+        for author in authors:
+            name = author.get("full_name")
+            if name:
+                author.update({"name_variations": author_tokenize(name)})

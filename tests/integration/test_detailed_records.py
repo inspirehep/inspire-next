@@ -20,41 +20,28 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from inspirehep.modules.search.views import (
-    default_sortoption, format_sortoptions, sorted_options
-)
+from invenio_records.models import RecordMetadata
 
 
-def test_sorted_options():
-    sort_options = {
-        'foo': {'title': 'foo', 'default_order': 'asc'},
-        'bar': {'title': 'bar', 'default_order': 'desc', 'order': 1},
-        'baz': {'title': 'baz', 'order': 2},
-    }
+def test_all_records_were_loaded(app):
+    records = [record.json for record in RecordMetadata.query.all()]
 
-    expected = [
-        {'title': 'foo', 'value': 'foo'},
-        {'title': 'bar', 'value': '-bar'},
-        {'title': 'baz', 'value': 'baz'},
-    ]
-    result = sorted_options(sort_options)
+    expected = 576
+    result = len(records)
 
     assert expected == result
 
 
-def test_format_sortoptions():
-    sort_options = {'foo': {'title': 'foo'}}
+def test_all_records_are_there(app):
+    with app.test_client() as client:
+        failed = []
 
-    expected = '{"options": [{"title": "foo", "value": "foo"}]}'
-    result = format_sortoptions(sort_options)
+        for record in [record.json for record in RecordMetadata.query.all()]:
+            try:
+                absolute_url = record['self']['$ref']
+                relative_url = absolute_url.partition('api')[2]
+                client.get(relative_url)
+            except Exception:
+                failed.append(record['control_number'])
 
-    assert expected == result
-
-
-def test_default_sortoption():
-    sort_options = {'foo': {'title': 'foo'}}
-
-    expected = 'foo'
-    result = default_sortoption(sort_options)
-
-    assert expected == result
+        assert failed == []

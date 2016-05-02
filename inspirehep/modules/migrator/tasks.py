@@ -295,7 +295,7 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
 
 
 @shared_task()
-def add_citation_counts(chunk_size=500, request_timeout=10):
+def add_citation_counts(chunk_size=500, request_timeout=40):
     index, doc_type = schema_to_index('records/hep.json')
 
     def get_records_to_update_generator(citation_lookup):
