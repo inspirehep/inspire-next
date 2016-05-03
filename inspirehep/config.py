@@ -262,12 +262,15 @@ RECORDS_REST_ENDPOINTS = dict(
                                       ':latexeu_v1_response'),
             'application/x-latexus': ('inspirehep.modules.records.serializers'
                                       ':latexus_v1_response'),
-            'application/x-cvformatlatex': ('inspirehep.modules.records.serializers'
-                                            ':cvformatlatex_v1_response'),
-            'application/x-cvformathtml': ('inspirehep.modules.records.serializers'
-                                           ':cvformathtml_v1_response'),
-            'application/x-cvformattext': ('inspirehep.modules.records.serializers'
-                                           ':cvformattext_v1_response'),
+            'application/x-cvformatlatex': (
+            'inspirehep.modules.records.serializers'
+            ':cvformatlatex_v1_response'),
+            'application/x-cvformathtml': (
+            'inspirehep.modules.records.serializers'
+            ':cvformathtml_v1_response'),
+            'application/x-cvformattext': (
+            'inspirehep.modules.records.serializers'
+            ':cvformattext_v1_response'),
             'application/x-impact.graph+json': (
                 'inspirehep.modules.records.serializers'
                 ':impactgraph_v1_response'
@@ -286,12 +289,15 @@ RECORDS_REST_ENDPOINTS = dict(
                                       ':latexeu_v1_search'),
             'application/x-latexus': ('inspirehep.modules.records.serializers'
                                       ':latexus_v1_search'),
-            'application/x-cvformatlatex': ('inspirehep.modules.records.serializers'
-                                            ':cvformatlatex_v1_search'),
-            'application/x-cvformathtml': ('inspirehep.modules.records.serializers'
-                                           ':cvformathtml_v1_search'),
-            'application/x-cvformattext': ('inspirehep.modules.records.serializers'
-                                           ':cvformattext_v1_search'),
+            'application/x-cvformatlatex': (
+            'inspirehep.modules.records.serializers'
+            ':cvformatlatex_v1_search'),
+            'application/x-cvformathtml': (
+            'inspirehep.modules.records.serializers'
+            ':cvformathtml_v1_search'),
+            'application/x-cvformattext': (
+            'inspirehep.modules.records.serializers'
+            ':cvformattext_v1_search'),
         },
         list_route='/literature/',
         item_route='/literature/<pid_value>',
@@ -520,7 +526,8 @@ RECORDS_REST_FACETS = {
             "subject": terms_filter('facet_inspire_subjects'),
             "doc_type": terms_filter('facet_inspire_doc_type'),
             "formulas": terms_filter('facet_formulas'),
-            "experiment": terms_filter('accelerator_experiments.facet_experiment'),
+            "experiment": terms_filter(
+                'accelerator_experiments.facet_experiment'),
         },
         "aggs": {
             "subject": {
@@ -673,7 +680,6 @@ RECORDS_REST_FACETS = {
     }
 }
 
-
 RECORDS_REST_SORT_OPTIONS = {
     "records-hep": {
         "bestmatch": {
@@ -695,12 +701,34 @@ RECORDS_REST_SORT_OPTIONS = {
             "order": 3,
         },
     },
+
+    "record-data": {
+        'latest': {'fields': 'latest', 'default_order': 'asc',
+                        'order': 1, 'title': 'Recent'},
+
+        'relevance': {'fields': 'relevance', 'default_order': 'asc',
+                      'order': 2, 'title': 'Relevance'},
+
+        'title': {'fields': 'title', 'default_order': 'asc',
+                  'order': 3, 'title': 'Title'},
+
+        'collaborations': {'fields': 'collaborations', 'default_order': 'asc',
+                           'order': 4, 'title': 'Collaboration'},
+
+        'date': {'fields': 'date', 'default_order': 'asc',
+                 'order': 5, 'title': 'Publication Date'}
+    }
 }
 
 RECORDS_REST_DEFAULT_SORT = {
     "records-hep": {
         "query": "-bestmatch",
         "noquery": "-mostrecent"
+    },
+
+    "records-data": {
+        "query": "relevance",
+        "noquery": "latest"
     }
 }
 
