@@ -278,8 +278,8 @@ img.landing-page-flask {
   width: 100%;
   height: 300px;
 
-   @media screen and (max-width: $screen-sm-max) {
-      margin-top: -100px;
+  @media screen and (max-width: $screen-sm-max) {
+    margin-top: -100px;
   }
 }
 
@@ -389,6 +389,64 @@ img.landing-page-flask {
   .series {
     color: $grey;
   }
+}
+
+.data {
+  a:after {
+    display: inline-block;
+  }
+  .data-table-count {
+    padding: 5px 0;
+    color: $concrete;
+  }
+
+  .data-brief {
+    padding-left: 20px;
+    padding-top: 5px;
+    font-size: 1em;
+  }
+
+  .hep-content {
+    padding-top: 65px;
+  }
+
+  .data-more {
+    padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  .facet-type {
+    margin-bottom: 30px;
+  }
+
+  .search-results {
+    padding-top: 80px;
+  }
+
+  .record-header {
+    font-weight: bolder;
+  }
+
+  .record-abstract {
+    color: $midnight-blue;
+  }
+
+  .truncated-record-abstract {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1em;
+    max-height: 48px; /* fallback */
+    line-height: 21px;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    color: $concrete;
+  }
+
 }
 
 
