@@ -79,7 +79,7 @@ tests_require = [
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
     'pytest>=2.8.0',
-    'mock>=1.3.0'
+    'mock>=1.3.0',
 ]
 
 extras_require = {
@@ -163,6 +163,7 @@ setup(
         'invenio_base.api_apps': [
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
+            'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
         ],
         'invenio_base.apps': [
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
@@ -171,6 +172,7 @@ setup(
             'inspire_authors = inspirehep.modules.authors:INSPIREAuthors',
             'inspire_literature_suggest = inspirehep.modules.literaturesuggest:INSPIRELiteratureSuggestion',
             'inspire_forms = inspirehep.modules.forms:INSPIREForms',
+            'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'arxiv = inspirehep.modules.arxiv:Arxiv',
             'crossref = inspirehep.modules.crossref:CrossRef',
 
@@ -187,27 +189,33 @@ setup(
             'inspirehep_detailed_js = inspirehep.modules.theme.bundles:detailedjs',
             'inspirehep_literaturesuggest_js = inspirehep.modules.literaturesuggest.bundles:js',
             'invenio_search_ui_search_js = inspirehep.modules.search.bundles:js',
+            'inspire_workflows_ui_js_actions = inspirehep.modules.workflows.bundles:actions_js',
+            'inspire_workflows_ui_js_details = inspirehep.modules.workflows.bundles:details_js',
         ],
         'invenio_jsonschemas.schemas': [
             'inspire_records = inspirehep.modules.records.jsonschemas',
         ],
         'invenio_search.mappings': [
             'records = inspirehep.modules.records.mappings',
+            'holdingpen = inspirehep.modules.workflows.mappings',
         ],
         'invenio_workflows.workflows': [
             'literature = inspirehep.modules.literaturesuggest.workflows:literature',
             'authornew = inspirehep.modules.authors.workflows:AuthorNew',
-            'authorupdate = inspirehep.modules.authors.workflows:AuthorUpdate'
+            'authorupdate = inspirehep.modules.authors.workflows:AuthorUpdate',
+            'hep_ingestion = inspirehep.modules.workflows.workflows:HEPIngestion',
+            'arxiv_ingestion = inspirehep.modules.workflows.workflows:ArXivIngestion',
         ],
         'invenio_pidstore.fetchers': [
             'inspire_recid_fetcher = inspirehep.modules.pidstore.fetchers:inspire_recid_fetcher',
         ],
         'invenio_pidstore.minters': [
             'inspire_recid_minter = inspirehep.modules.pidstore.minters:inspire_recid_minter',
-
         ],
         'invenio_workflows_ui.actions': [
             'author_approval = inspirehep.modules.authors.workflows.actions.author_approval:AuthorApproval',
+            'core_approval = inspirehep.modules.workflows.actions.core_approval:CoreApproval',
+            'hep_approval = inspirehep.modules.workflows.actions.hep_approval:HEPApproval',
         ],
         'invenio_db.models': [
             'inspire_workflows_audit = inspirehep.modules.workflows.models',

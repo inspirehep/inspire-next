@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,31 +20,32 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""
-Literature suggestion form JSON conversion.
-
+"""Literature suggestion form JSON conversion.
 
 Converts keys in the user form to the keys needed by the HEP data model
 in order to produce MARCXML.
-
 """
 
-from ..model import literature
+from __future__ import absolute_import, print_function
+
+import re
 
 from dojson import utils
+from dojson.errors import IgnoreKey
+from idutils import is_arxiv_post_2007
+
+from ..model import literature
 
 
 @literature.over('abstracts', '^abstract$')
 def abstracts(self, key, value):
     return [{
-        'value': value,
+        'value': value.strip(),
     }]
 
 
 @literature.over('_arxiv_id', '^arxiv_id$')
 def arxiv_id(self, key, value):
-    from idutils import is_arxiv_post_2007
-
     if is_arxiv_post_2007(value):
         arxiv_rep_number = {'value': 'arXiv:' + value}
     else:
@@ -55,6 +56,7 @@ def arxiv_id(self, key, value):
         self['arxiv_eprints'].append(arxiv_rep_number)
     else:
         self['arxiv_eprints'] = [arxiv_rep_number]
+    raise IgnoreKey
 
 
 @literature.over('dois', '^doi$')
@@ -66,8 +68,6 @@ def dois(self, key, value):
 
 @literature.over('authors', '^authors$')
 def authors(self, key, value):
-    import re
-
     def match_authors_initials(author_name):
         """Check if author's name contains only its initials."""
         return not bool(re.compile(r'[^A-Z. ]').search(author_name))
@@ -97,12 +97,14 @@ def categories(self, key, value):
         self['subject_terms'] = subject_list
     if 'arxiv_eprints' in self:
         self['arxiv_eprints'][0]['categories'] = value.split()
-    return value
+    raise IgnoreKey
 
 
 @literature.over('collaboration', '^collaboration$')
 def collaboration(self, key, value):
-    return value
+    return [
+        {'value': value}
+    ]
 
 
 @literature.over('hidden_notes', '^hidden_note$')
@@ -115,50 +117,59 @@ def hidden_notes(self, key, value):
 @literature.over('_conference_id', '^conference_id$')
 def conference_id(self, key, value):
     if 'publication_info' in self:
-        self['publication_info']['cnum'] = value
+        self['publication_info'][0].update(dict(cnum=value))
     else:
-        self['publication_info'] = dict(cnum=value)
+        self['publication_info'] = [dict(cnum=value)]
+    raise IgnoreKey
 
 
 @literature.over('_preprint_created', '^preprint_created$')
 def preprint_created(self, key, value):
     if 'imprints' in self:
-        self['imprints'][0]['date'] = value
+        self['imprints'][0].update(dict(date=value))
     else:
         self['imprints'] = [dict(date=value)]
+    raise IgnoreKey
 
 
 @literature.over('_defense_date', '^defense_date$')
 @utils.for_each_value
 def defense_date(self, key, value):
     if 'thesis' in self:
-        self['thesis']['defense_date'] = value
+        self['thesis'][0].update(dict(defense_date=value))
     else:
-        self['thesis'] = dict(defense_date=value)
+        self['thesis'] = [dict(defense_date=value)]
+
+    defense_note = {'value': 'Presented on {0}'.format(value)}
+    self.setdefault("public_notes", []).append(defense_note)
+    raise IgnoreKey
 
 
 @literature.over('_degree_type', '^degree_type$')
 def degree_type(self, key, value):
     if 'thesis' in self:
-        self['thesis']['degree_type'] = value
+        self['thesis'][0].update(dict(degree_type=value))
     else:
-        self['thesis'] = dict(degree_type=value)
+        self['thesis'] = [dict(degree_type=value)]
+    raise IgnoreKey
 
 
 @literature.over('_institution', '^institution$')
 def institution(self, key, value):
     if 'thesis' in self:
-        self['thesis']['university'] = value
+        self['thesis'][0].update(dict(university=value))
     else:
-        self['thesis'] = dict(university=value)
+        self['thesis'] = [dict(university=value)]
+    raise IgnoreKey
 
 
 @literature.over('_thesis_date', '^thesis_date$')
 def thesis_date(self, key, value):
     if 'thesis' in self:
-        self['thesis']['date'] = value
+        self['thesis'][0].update(dict(date=value))
     else:
-        self['thesis'] = dict(date=value)
+        self['thesis'] = [dict(date=value)]
+    raise IgnoreKey
 
 
 @literature.over('accelerator_experiments', '^experiment$')
@@ -166,44 +177,49 @@ def accelerator_experiments(self, key, value):
     return [{'experiment': value}]
 
 
-@literature.over('_issue', 'issue')
+@literature.over('_issue', '^issue$')
 def issue(self, key, value):
     if 'publication_info' in self:
-        self['publication_info']['journal_issue'] = value
+        self['publication_info'][0].update(dict(journal_issue=value))
     else:
-        self['publication_info'] = dict(issue=value)
+        self['publication_info'] = [dict(issue=value)]
+    raise IgnoreKey
 
 
 @literature.over('_journal_title', '^journal_title$')
 def journal_title(self, key, value):
     if 'publication_info' in self:
-        self['publication_info']['journal_title'] = value
+        self['publication_info'][0].update(dict(journal_title=value))
     else:
-        self['publication_info'] = dict(journal_title=value)
+        self['publication_info'] = [dict(journal_title=value)]
+    raise IgnoreKey
 
 
 @literature.over('_volume', '^volume$')
 def volume(self, key, value):
     if 'publication_info' in self:
-        self['publication_info']['journal_volume'] = value
+        self['publication_info'][0].update(dict(journal_volume=value))
     else:
-        self['publication_info'] = dict(journal_volume=value)
+        self['publication_info'] = [dict(journal_volume=value)]
+    raise IgnoreKey
 
 
 @literature.over('_year', '^year$')
 def year(self, key, value):
     if 'publication_info' in self:
-        self['publication_info']['year'] = value
+        self['publication_info'][0].update(dict(year=value))
     else:
-        self['publication_info'] = dict(year=value)
+        self['publication_info'] = [dict(year=value)]
+    raise IgnoreKey
 
 
 @literature.over('_page_range_article_id', '^page_range_article_id$')
 def page_range_article_id(self, key, value):
     if 'publication_info' in self:
-        self['publication_info']['page_artid'] = value
+        self['publication_info'][0].update(dict(page_artid=value))
     else:
-        self['publication_info'] = dict(page_artid=value)
+        self['publication_info'] = [dict(page_artid=value)]
+    raise IgnoreKey
 
 
 @literature.over('languages', '^language$')
@@ -227,16 +243,18 @@ def languages(self, key, value):
 @literature.over('_license_url', '^license_url$')
 def license_url(self, key, value):
     if 'license' in self:
-        self['license']['url'] = value
+        self['license'].append(dict(url=value))
     else:
-        self['license'] = dict(url=value)
+        self['license'] = [dict(url=value)]
+    raise IgnoreKey
 
 
 @literature.over('public_notes', '^note$')
 def public_notes(self, key, value):
-    return [{
-        'value': value,
-    }]
+    public_notes = [{'value': value}]
+    if 'public_notes' in self:
+        public_notes.extend(self['public_notes'])
+    return public_notes
 
 
 @literature.over('_report_numbers', '^report_numbers$')
@@ -249,6 +267,7 @@ def report_numbers(self, key, value):
         self['report_numbers'].extend(repnums)
     else:
         self['report_numbers'] = repnums
+    raise IgnoreKey
 
 
 @literature.over('subject_terms', '^subject_term$')
@@ -296,7 +315,7 @@ def title_translation(self, key, value):
 
 @literature.over('_url', '^url$')
 def urls(self, key, value):
-    self['pdf'] = value
+    self['pdf'] = value  # will be removed later
     field = {
         "url": value
     }
@@ -304,6 +323,7 @@ def urls(self, key, value):
         self['urls'].append(field)
     else:
         self['urls'] = [field]
+    raise IgnoreKey
 
 
 @literature.over('additional_url', '^additional_url$')
@@ -315,3 +335,4 @@ def additional_url(self, key, value):
         self['urls'].append(field)
     else:
         self['urls'] = [field]
+    raise IgnoreKey

@@ -55,6 +55,7 @@ REQUIREJS_CONFIG = 'js/build.js'
 # Theme
 # =====
 THEME_SITENAME = _("inspirehep")
+BASE_TEMPLATE = "inspirehep_theme/page.html"
 
 # Database
 # ========
@@ -125,7 +126,7 @@ USERPROFILES_SETTINGS_TEMPLATE = 'inspirehep_theme/accounts/settings/profile.htm
 SEARCH_ELASTIC_HOSTS = os.environ.get(
     'SEARCH_ELASTIC_HOSTS',
     'localhost').split(';')
-SEARCH_UI_BASE_TEMPLATE = 'inspirehep_theme/page.html'
+SEARCH_UI_BASE_TEMPLATE = BASE_TEMPLATE
 SEARCH_UI_SEARCH_TEMPLATE = 'search/search.html'
 SEARCH_UI_SEARCH_API = '/api/literature/'
 SEARCH_UI_SEARCH_INDEX = 'records-hep'
@@ -760,7 +761,94 @@ INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
 
 # Submission
 # ==========
-CFG_ROBOTUPLOAD_SUBMISSION_BASEURL = "http://localhost:5000"
+LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
+
+
+# Workflows
+# =========
+WORKFLOWS_UI_BASE_TEMPLATE = BASE_TEMPLATE
+WORKFLOWS_UI_LIST_TEMPLATE = "inspire_workflows/list.html"
+WORKFLOWS_UI_DETAILS_TEMPLATE = "inspire_workflows/details.html"
+WORKFLOWS_UI_LIST_ROW_TEMPLATE = "inspire_workflows/list_row.html"
+
+
+WORKFLOWS_UI_URL = "/holdingpen"
+WORKFLOWS_UI_API_URL = "/api/holdingpen/"
+
+WORKFLOWS_UI_REST_ENDPOINT = dict(
+    workflow_object_serializers={
+        'application/json': ('invenio_workflows_ui.serializers'
+                             ':json_serializer'),
+    },
+    search_serializers={
+        'application/json': ('invenio_workflows_ui.serializers'
+                             ':json_search_serializer'),
+    },
+    action_serializers={
+        'application/json': ('invenio_workflows_ui.serializers'
+                             ':json_action_serializer'),
+    },
+    bulk_action_serializers={
+        'application/json': ('invenio_workflows_ui.serializers'
+                             ':json_action_serializer'),
+    },
+    list_route='/holdingpen/',
+    item_route='/holdingpen/<object_id>',
+    search_index="holdingpen",
+    default_media_type='application/json',
+    max_result_window=10000,
+)
+
+WORKFLOWS_UI_DATA_TYPES = dict(
+    hep=dict(
+        search_index='holdingpen-hep',
+        search_type='hep',
+    ),
+    authors=dict(
+        search_index='holdingpen-authors',
+        search_type='authors',
+    ),
+)
+
+# Inspire mappings
+# ================
+
+INSPIRE_CATEGORIES = [
+    'Accelerators',
+    'Astrophysics',
+    'Computing',
+    'Experiment-HEP',
+    'Experiment-Nucl',
+    'General Physics',
+    'Gravitation and Cosmology',
+    'Instrumentation',
+    'Lattice',
+    'Math and Math Physics',
+    'Other',
+    'Phenomenology-HEP',
+    'Theory-HEP',
+    'Theory-Nucl'
+]
+
+INSPIRE_DEGREE_TYPES = [
+    'Bachelor',
+    'Diploma',
+    'Habilitation',
+    'Laurea',
+    'Master',
+    'PhD',
+    'Thesis'
+]
+
+INSPIRE_LICENSE_TYPES = [
+    'CC-BY',
+    'CC-BY-NC',
+    'CC-BY-NC-ND',
+    'CC-BY-NC-SA',
+    'CC-BY-ND',
+    'CC-BY-SA',
+    'Other'
+]
 
 # Inspire subject translation
 # ===========================

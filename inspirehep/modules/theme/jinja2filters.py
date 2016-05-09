@@ -736,6 +736,17 @@ def is_institute(institute):
 
 
 @blueprint.app_template_filter()
+def get_user_email(id_user):
+    """Checks if given string is an institute."""
+    from invenio_accounts.models import User
+    try:
+        email = User.query.get(id_user).email
+    except AttributeError:
+        email = ''
+    return email
+
+
+@blueprint.app_template_filter()
 def weblinks(description):
     """Renames external links based on the description given."""
     value = current_app.extensions.get('inspire-theme').weblinks.get(

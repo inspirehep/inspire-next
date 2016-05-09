@@ -21,7 +21,25 @@
 
 from __future__ import absolute_import, print_function
 
+import os
+
+from flask import current_app
+
 from .models import WorkflowsAudit
+
+
+def get_storage_path(suffix=""):
+    """Return workflow storage path."""
+    storage_path = os.path.join(
+        current_app.config.get(
+            'WORKFLOWS_STORAGEDIR',
+            current_app.config.get('CFG_TMPSHAREDDIR')
+        ),
+        suffix
+    )
+    if not os.path.exists(storage_path):
+        os.makedirs(storage_path)
+    return storage_path
 
 
 def log_workflows_action(action, prediction_results,

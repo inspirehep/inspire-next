@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +20,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+"""Ingestion workflow for new authors."""
+
+from __future__ import absolute_import, print_function
 
 from flask import render_template
 
@@ -27,55 +30,64 @@ from invenio_accounts.models import User
 from invenio_workflows_ui.definitions import WorkflowBase
 from workflow.patterns.controlflow import IF, IF_ELSE
 
-from inspirehep.modules.workflows.tasks.actions import shall_upload_record
-
-from inspirehep.modules.workflows.tasks.submission import (
-    halt_record_with_action,
-    close_ticket
+from inspirehep.dojson.hepnames import hepnames2marc
+from inspirehep.modules.workflows.tasks.actions import (
+    shall_upload_record,
+    halt_record,
 )
 
-from ..tasks import (send_robotupload,
-                     create_marcxml_record,
-                     convert_data_to_model,
-                     create_curator_ticket_new,
-                     reply_ticket,
-                     recreate_data,
-                     curation_ticket_needed,
-                     create_curation_ticket)
+from inspirehep.modules.workflows.tasks.submission import (
+    create_ticket,
+    reply_ticket,
+    close_ticket,
+    send_robotupload
+)
+
+from ..tasks import (
+    convert_data_to_model,
+    recreate_data,
+    curation_ticket_needed,
+    new_ticket_context,
+    reply_ticket_context,
+    curation_ticket_context,
+)
 
 
 class AuthorNew(WorkflowBase):
-
     """Workflow for new author information."""
 
-    object_type = "Author New"
+    name = "New Author"
+    data_type = "authors"
 
     workflow = [
-        convert_data_to_model(),
-        create_marcxml_record(),
-        create_curator_ticket_new(
+        convert_data_to_model,
+        create_ticket(
             template="authors/tickets/curator_new.html",
-            queue="Authors_add_user"),
+            queue="Authors_add_user",
+            context_factory=new_ticket_context),
         reply_ticket(template="authors/tickets/user_new.html",
+                     context_factory=reply_ticket_context,
                      keep_new=True),
-        halt_record_with_action(action="author_approval",
-                                message="Accept submission?"),
+        halt_record(action="author_approval",
+                    message="Accept submission?"),
         IF_ELSE(shall_upload_record,
                 [
                     IF(recreate_data,
-                        [
-                            convert_data_to_model(),
-                            create_marcxml_record()
-                        ]),
-                    send_robotupload(mode="insert"),
+                        [convert_data_to_model]),
+                    send_robotupload(
+                        marcxml_processor=hepnames2marc,
+                        mode="insert"
+                    ),
                     reply_ticket(
-                        template="authors/tickets/user_accepted.html"),
+                        template="authors/tickets/user_accepted.html",
+                        context_factory=reply_ticket_context),
                     close_ticket(ticket_id_key="ticket_id"),
                     IF(curation_ticket_needed,
                         [
-                            create_curation_ticket(
+                            create_ticket(
                                 template="authors/tickets/curation_needed.html",
                                 queue="AUTHORS_curation",
+                                context_factory=curation_ticket_context,
                                 ticket_id_key="curation_ticket_id"
                             ),
                         ]),
@@ -105,10 +117,7 @@ class AuthorNew(WorkflowBase):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Return formatted data of object."""
-
         of = kwargs.get("of", "hp")
-
-        xml = bwo.extra_data.get("marcxml")
 
         id_user = bwo.id_user
         try:
@@ -121,6 +130,7 @@ class AuthorNew(WorkflowBase):
         )
 
         if of == "xm":
+            xml = bwo.extra_data.get("marcxml")
             return xml
         else:
             # FIXME add a template for the author display in the HP

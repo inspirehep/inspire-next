@@ -1,0 +1,78 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2014 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+{% import 'inspire_workflows/macros.html' as macros %}
+
+{% for author in authors[0:10] %}
+  {% if author %}
+    <a class="greyfaded" href="https://inspirehep.net/search?p=find a {{author.full_name}}">
+      {{author.full_name}}
+    {%- if author != authors[-1] -%}
+    ;
+    {%- endif -%}
+  {%- endif -%}
+  </a>
+{% endfor %}
+
+{% if authors|count > 10 %}
+  et al.
+{% endif %}
+
+{% if message %}
+<p class="lead">{{message}}</p>
+{% endif %}
+
+{% if categories %}
+<ul class="list-inline">
+  {% for category in categories %}
+    <li><h5><span class="label label-default">{{category}}</span></h5></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if identifiers %}
+<ul class="list-inline">
+  {% for identifier in identifiers %}
+      <li>
+      {% if 'arxiv' in identifier.lower() %}
+        {% set identifier_part = identifier.split(':')[-1] %}
+        <a href="http://arxiv.org/abs/{{identifier_part}}">{{identifier_part}}</a>
+        <a href="http://arxiv.org/pdf/{{identifier_part}}"><i class="fa fa-file-pdf-o"></i> PDF</a>
+      {% elif 'doi:' in identifier.lower() %}
+        {% set identifier_part = identifier.split(':')[-1] %}
+        <a href="http://dx.doi.org/{{identifier_part}}">{{identifier_part}}</a>
+      {% else %}
+        {{identifier}}
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<p><i class="fa fa-user"></i> {{ user_email }}</p>
+
+{% if doctype %}
+<h5><span class="label label-default">{{doctype}}</span></h5>
+{% endif %}
+
+{% if record.abstracts %}
+<div class="collapse" id="collapsed-abstract-{{object.id}}">
+{{ record.abstracts[0]['value'] }}
+</div>
+<a class="faded toggle" data-toggle="collapse" href="#collapsed-abstract-{{object.id}}" aria-expanded="false" aria-controls="collapsed-abstract-{{object.id}}">Abstract </a>
+{% endif %}

@@ -26,6 +26,6 @@
 
 from __future__ import absolute_import, print_function
 
-from .literature import literature
+from .literature import Literature
 
-__all__ = ('literature', )
+__all__ = ('Literature', )
