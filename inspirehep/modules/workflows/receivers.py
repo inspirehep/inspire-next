@@ -31,15 +31,23 @@ from invenio_oaiharvester.signals import oaiharvest_finished
 from inspirehep.dojson.hep import hep
 from inspirehep.modules.converter.xslt import convert
 
+ARXIV_URLS = ("http://export.arxiv.org/oai2", "http://arxiv.org/oai2")
 
-# FIXME: This is only temporary until hepcrawl integration
+
 @oaiharvest_finished.connect
 def spawn_arXiv_workflow_from_oai_harvest(request, records, name, **kwargs):
     """Receive a list of harvested arXiv records and schedule workflow."""
     from flask import current_app
     from invenio_workflows import start, workflows
 
-    if not request.endpoint == "http://export.arxiv.org/oai2":
+    if request.endpoint not in ARXIV_URLS:
+        # This is not arXiv
+        return
+
+    spider = kwargs.get('spider')
+    workflow = kwargs.get('workflow')
+    if spider or workflow:
+        # Taken care of by inspire-crawler
         return
 
     workflow = "arxiv_ingestion"
