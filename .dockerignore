@@ -1,0 +1,10 @@
+.git
+*.gitignore
+
+*.mo
+*.pyc
+*.swp
+*.swo
+*.~
+
+Procfile*

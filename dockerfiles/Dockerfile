@@ -37,6 +37,7 @@ RUN apt-get update --fix-missing && \
       libtiff-dev \
       libmagickwand-dev \
       imagemagick \
+      ghostscript \
       xpdf \
       libffi-dev \
       liblzma-dev && \
