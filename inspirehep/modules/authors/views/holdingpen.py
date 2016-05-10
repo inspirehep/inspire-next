@@ -22,9 +22,13 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""INSPIRE authors blueprint."""
+"""INSPIRE authors holdingpen views."""
 
-from __future__ import absolute_import, print_function
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
 
 import os
 import re
@@ -33,14 +37,17 @@ import json
 
 from flask_babelex import gettext as _
 
-from flask import abort, \
-    Blueprint, \
-    current_app, \
-    jsonify, \
-    render_template, \
-    request, \
-    url_for, \
-    redirect
+from flask import (
+    abort,
+    Blueprint,
+    current_app,
+    jsonify,
+    make_response,
+    render_template,
+    request,
+    url_for,
+    redirect)
+
 from flask_breadcrumbs import register_breadcrumb
 from flask_login import login_required, current_user
 
@@ -52,16 +59,15 @@ from invenio_workflows import WorkflowObject, start, resume
 
 from inspirehep.dojson.utils import strip_empty_values
 from inspirehep.modules.forms.form import DataExporter
-from inspirehep.utils.record import get_title
 
-from .forms import AuthorUpdateForm
+from ..forms import AuthorUpdateForm
 
 
-blueprint = Blueprint('inspirehep_authors',
+blueprint = Blueprint('inspirehep_authors_holdingpen',
                       __name__,
                       url_prefix='/submit/author',
-                      template_folder='templates',
-                      static_folder='static')
+                      template_folder='../templates',
+                      static_folder='../static')
 
 
 def convert_for_form(data):
@@ -155,95 +161,6 @@ def get_inspire_url(data):
     return url
 
 
-@blueprint.route('/publications', methods=['GET'])
-def get_publications():
-    from elasticsearch.helpers import scan
-    from invenio_search import current_search_client
-
-    recid = request.values.get('recid', 0, type=int)
-
-    publications = []
-    collaborations = set()
-    keywords = set()
-
-    for result in scan(
-            current_search_client,
-            query={
-                '_source': ['accelerator_experiments',
-                            'control_number',
-                            'earliest_date',
-                            'facet_inspire_doc_type',
-                            'publication_info',
-                            'titles',
-                            'thesaurus_terms'
-                            ],
-                'query': {"match": {"authors.recid": recid}}
-            },
-            index='records-hep',
-            doc_type='hep'):
-
-        try:
-            result_source = result['_source']
-            publication = {}
-
-            # Get publication title (required).
-            publication['title'] = get_title(result_source)
-
-            # Get publication recid (required).
-            publication['recid'] = result_source['control_number']
-        except (IndexError, KeyError):
-            continue
-
-        # Get publication type.
-        try:
-            publication['type'] = result_source.get(
-                'facet_inspire_doc_type', [])[0]
-        except IndexError:
-            publication['type'] = "Not defined"
-
-        # Get journal title.
-        try:
-            publication['journal_title'] = result_source.get(
-                'publication_info', [])[0]['journal_title']
-
-            # Get journal recid.
-            try:
-                publication['journal_recid'] = result_source.get(
-                    'publication_info', [])[0]['journal_recid']
-            except KeyError:
-                pass
-        except (IndexError, KeyError):
-            pass
-
-        # Get publication year.
-        try:
-            publication['year'] = result_source.get(
-                'publication_info', [])[0]['year']
-        except (IndexError, KeyError):
-            pass
-
-        # Get keywords.
-        for keyword in result_source.get('thesaurus_terms', []):
-            if keyword.get('keyword') is not "* Automatic Keywords *" \
-                    and keyword.get('keyword'):
-                keywords.add(keyword.get('keyword'))
-
-        # Get collaborations.
-        for experiment in result_source.get(
-                'accelerator_experiments', []):
-            collaborations.add(experiment.get('experiment'))
-
-        # Append to the list.
-        publications.append(publication)
-
-    response = {}
-    response['publications'] = publications
-    response['keywords'] = list(keywords)
-    response['collaborations'] = list(collaborations)
-
-    return jsonify(response)
-
-
 @blueprint.route(
     '/<field_name>/',
     methods=['GET', 'POST'])
@@ -325,8 +242,9 @@ def update():
     data = {}
     if recid:
         try:
-            url = os.path.join(current_app.config["AUTHORS_UPDATE_BASE_URL"], "record",
-                               str(recid), "export", "xm")
+            url = os.path.join(
+                current_app.config["AUTHORS_UPDATE_BASE_URL"],
+                "record", str(recid), "export", "xm")
             xml = requests.get(url)
             record_regex = re.compile(
                 r"\<record\>.*\<\/record\>", re.MULTILINE + re.DOTALL)
@@ -358,7 +276,8 @@ def submitupdate():
     form = AuthorUpdateForm(formdata=request.form)
     visitor = DataExporter()
     visitor.visit(form)
-    workflow_object = WorkflowObject.create_object(id_user=current_user.get_id())
+    workflow_object = WorkflowObject.create_object(
+        id_user=current_user.get_id())
     workflow_object.data = visitor.data
     workflow_object.save()
     db.session.commit()
@@ -381,7 +300,8 @@ def submitnew():
     visitor = DataExporter()
     visitor.visit(form)
 
-    workflow_object = WorkflowObject.create_object(id_user=current_user.get_id())
+    workflow_object = WorkflowObject.create_object(
+        id_user=current_user.get_id())
     workflow_object.data = visitor.data
     workflow_object.save()
     db.session.commit()
@@ -407,7 +327,8 @@ def newreview():
         abort(400)
     workflow_object = WorkflowObject.query.get(objectid)
 
-    form = AuthorUpdateForm(data=workflow_object.extra_data["formdata"], is_review=True)
+    form = AuthorUpdateForm(
+        data=workflow_object.extra_data["formdata"], is_review=True)
     ctx = {
         "action": url_for('.reviewhandler', objectid=objectid),
         "name": "authorUpdateForm",
