@@ -3,25 +3,64 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2015, 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 """Helper functions for authors."""
 
 import re
 
-from beard.utils.strings import asciify
+try:
+    from beard.utils.strings import asciify
+except ImportError:
+    import sys
+    import unicodedata
+    from functools import wraps
+
+    from unidecode import unidecode
+
+    IS_PYTHON_3 = sys.version_info[0] == 3
+
+    def memoize(func):
+        """Memoization function."""
+        cache = {}
+
+        @wraps(func)
+        def wrap(*args, **kwargs):
+
+            frozen = frozenset(kwargs.items())
+            if (args, frozen) not in cache:
+                cache[(args, frozen)] = func(*args, **kwargs)
+            return cache[(args, frozen)]
+
+        return wrap
+
+    @memoize
+    def asciify(string):
+        """Transliterate a string to ASCII."""
+        if not IS_PYTHON_3 and not isinstance(string, unicode):
+            string = unicode(string, "utf8", errors="ignore")
+
+        string = unidecode(unicodedata.normalize("NFKD", string))
+        string = string.encode("ascii", "ignore")
+        string = string.decode("utf8")
+
+        return string
+
 
 _bai_parentheses_cleaner = \
     re.compile(r"(\([^)]*\))|(\[[^\]]*\])|(\{[^\}]*\})", re.UNICODE)

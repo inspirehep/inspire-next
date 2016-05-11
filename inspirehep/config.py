@@ -55,6 +55,7 @@ REQUIREJS_CONFIG = 'js/build.js'
 # Theme
 # =====
 THEME_SITENAME = _("inspirehep")
+BASE_TEMPLATE = "inspirehep_theme/page.html"
 
 # Database
 # ========
@@ -125,16 +126,16 @@ USERPROFILES_SETTINGS_TEMPLATE = 'inspirehep_theme/accounts/settings/profile.htm
 SEARCH_ELASTIC_HOSTS = os.environ.get(
     'SEARCH_ELASTIC_HOSTS',
     'localhost').split(';')
-SEARCH_UI_BASE_TEMPLATE = 'inspirehep_theme/page.html'
+SEARCH_UI_BASE_TEMPLATE = BASE_TEMPLATE
 SEARCH_UI_SEARCH_TEMPLATE = 'search/search.html'
 SEARCH_UI_SEARCH_API = '/api/literature/'
 SEARCH_UI_SEARCH_INDEX = 'records-hep'
 
-SEARCH_QUERY_PARSER = 'invenio_query_parser.contrib.spires.parser:Main'
+SEARCH_QUERY_PARSER = 'inspirehep.modules.search.parser:Main'
 
 SEARCH_QUERY_WALKERS = [
-    'invenio_query_parser.contrib.spires.walkers.pypeg_to_ast:PypegConverter',
-    'invenio_query_parser.contrib.spires.walkers.spires_to_invenio:SpiresToInvenio'
+    'inspirehep.modules.search.walkers.pypeg_to_ast:PypegConverter',
+    'inspirehep.modules.search.walkers.spires_to_invenio:SpiresToInvenio'
 ]
 
 SEARCH_WALKERS = [
@@ -297,7 +298,7 @@ RECORDS_REST_ENDPOINTS = dict(
         item_route='/literature/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
-        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
     authors=dict(
         pid_type='authors',
@@ -321,7 +322,7 @@ RECORDS_REST_ENDPOINTS = dict(
         item_route='/authors/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
-        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
     data=dict(
         pid_type='data',
@@ -345,7 +346,7 @@ RECORDS_REST_ENDPOINTS = dict(
         item_route='/data/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
-        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
     conferences=dict(
         pid_type='conferences',
@@ -369,7 +370,7 @@ RECORDS_REST_ENDPOINTS = dict(
         item_route='/conferences/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
-        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
     jobs=dict(
         pid_type='jobs',
@@ -393,7 +394,7 @@ RECORDS_REST_ENDPOINTS = dict(
         item_route='/jobs/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
-        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
     institutions=dict(
         pid_type='institutions',
@@ -417,7 +418,7 @@ RECORDS_REST_ENDPOINTS = dict(
         item_route='/institutions/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
-        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
     experiments=dict(
         pid_type='experiments',
@@ -441,7 +442,7 @@ RECORDS_REST_ENDPOINTS = dict(
         item_route='/experiments/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
-        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
     journals=dict(
         pid_type='journals',
@@ -465,7 +466,7 @@ RECORDS_REST_ENDPOINTS = dict(
         item_route='/journals/<pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
-        query_factory_imp='inspirehep.modules.search.query:inspire_query_factory',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
 )
 
@@ -479,7 +480,8 @@ RECORDS_UI_ENDPOINTS = dict(
     authors=dict(
         pid_type='authors',
         route='/authors/<pid_value>',
-        template='inspirehep_theme/format/record/Author_HTML_detailed.tpl'
+        template='inspirehep_theme/format/record/'
+                 'authors/Author_HTML_detailed.html'
     ),
     data=dict(
         pid_type='data',
@@ -711,6 +713,7 @@ RECORDS_VALIDATION_TYPES = {
 JSONSCHEMAS_HOST = "localhost:5000"
 INDEXER_DEFAULT_INDEX = "records-hep"
 INDEXER_DEFAULT_DOC_TYPE = "hep"
+INDEXER_REPLACE_REFS = False
 
 # OAuthclient
 # ===========
@@ -758,169 +761,254 @@ INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
 
 # Submission
 # ==========
-CFG_ROBOTUPLOAD_SUBMISSION_BASEURL = "http://localhost:5000"
+LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
+
+
+# Workflows
+# =========
+WORKFLOWS_UI_BASE_TEMPLATE = BASE_TEMPLATE
+WORKFLOWS_UI_LIST_TEMPLATE = "inspire_workflows/list.html"
+WORKFLOWS_UI_DETAILS_TEMPLATE = "inspire_workflows/details.html"
+WORKFLOWS_UI_LIST_ROW_TEMPLATE = "inspire_workflows/list_row.html"
+
+
+WORKFLOWS_UI_URL = "/holdingpen"
+WORKFLOWS_UI_API_URL = "/api/holdingpen/"
+
+WORKFLOWS_UI_REST_ENDPOINT = dict(
+    workflow_object_serializers={
+        'application/json': ('invenio_workflows_ui.serializers'
+                             ':json_serializer'),
+    },
+    search_serializers={
+        'application/json': ('invenio_workflows_ui.serializers'
+                             ':json_search_serializer'),
+    },
+    action_serializers={
+        'application/json': ('invenio_workflows_ui.serializers'
+                             ':json_action_serializer'),
+    },
+    bulk_action_serializers={
+        'application/json': ('invenio_workflows_ui.serializers'
+                             ':json_action_serializer'),
+    },
+    list_route='/holdingpen/',
+    item_route='/holdingpen/<object_id>',
+    search_index="holdingpen",
+    default_media_type='application/json',
+    max_result_window=10000,
+)
+
+WORKFLOWS_UI_DATA_TYPES = dict(
+    hep=dict(
+        search_index='holdingpen-hep',
+        search_type='hep',
+    ),
+    authors=dict(
+        search_index='holdingpen-authors',
+        search_type='authors',
+    ),
+)
+
+# Inspire mappings
+# ================
+
+INSPIRE_CATEGORIES = [
+    'Accelerators',
+    'Astrophysics',
+    'Computing',
+    'Experiment-HEP',
+    'Experiment-Nucl',
+    'General Physics',
+    'Gravitation and Cosmology',
+    'Instrumentation',
+    'Lattice',
+    'Math and Math Physics',
+    'Other',
+    'Phenomenology-HEP',
+    'Theory-HEP',
+    'Theory-Nucl'
+]
+
+INSPIRE_DEGREE_TYPES = [
+    'Bachelor',
+    'Diploma',
+    'Habilitation',
+    'Laurea',
+    'Master',
+    'PhD',
+    'Thesis'
+]
+
+INSPIRE_LICENSE_TYPES = [
+    'CC-BY',
+    'CC-BY-NC',
+    'CC-BY-NC-ND',
+    'CC-BY-NC-SA',
+    'CC-BY-ND',
+    'CC-BY-SA',
+    'Other'
+]
 
 # Inspire subject translation
 # ===========================
 ARXIV_TO_INSPIRE_CATEGORY_MAPPING = {
-    'alg-geom': 'Math and Math Physics',
-    'astro-ph': 'Astrophysics',
-    'astro-ph.CO': 'Astrophysics',
-    'astro-ph.EP': 'Astrophysics',
-    'astro-ph.GA': 'Astrophysics',
-    'astro-ph.HE': 'Astrophysics',
-    'astro-ph.IM': 'Instrumentation',
-    'astro-ph.SR': 'Astrophysics',
-    'cond-mat': 'General Physics',
-    'cond-mat.dis-nn': 'General Physics',
-    'cond-mat.mes-hall': 'General Physics',
-    'cond-mat.mtrl-sci': 'General Physics',
-    'cond-mat.other': 'General Physics',
-    'cond-mat.quant-gas': 'General Physics',
-    'cond-mat.soft': 'General Physics',
-    'cond-mat.stat-mech': 'General Physics',
-    'cond-mat.str-el': 'General Physics',
-    'cond-mat.supr-con': 'General Physics',
-    'cs': 'Computing',
-    'cs.AI': 'Computing',
-    'cs.AR': 'Computing',
-    'cs.CC': 'Computing',
-    'cs.CE': 'Computing',
-    'cs.CG': 'Computing',
-    'cs.CL': 'Computing',
-    'cs.CR': 'Computing',
-    'cs.CV': 'Computing',
-    'cs.CY': 'Computing',
-    'cs.DB': 'Computing',
-    'cs.DC': 'Computing',
-    'cs.DL': 'Computing',
-    'cs.DM': 'Computing',
-    'cs.DS': 'Computing',
-    'cs.ET': 'Computing',
-    'cs.FL': 'Computing',
-    'cs.GL': 'Computing',
-    'cs.GR': 'Computing',
-    'cs.GT': 'Computing',
-    'cs.HC': 'Computing',
-    'cs.IR': 'Computing',
-    'cs.IT': 'Computing',
-    'cs.LG': 'Computing',
-    'cs.LO': 'Computing',
-    'cs.MA': 'Computing',
-    'cs.MM': 'Computing',
-    'cs.MS': 'Computing',
-    'cs.NA': 'Computing',
-    'cs.NE': 'Computing',
-    'cs.NI': 'Computing',
-    'cs.OH': 'Computing',
-    'cs.OS': 'Computing',
-    'cs.PF': 'Computing',
-    'cs.PL': 'Computing',
-    'cs.RO': 'Computing',
-    'cs.SC': 'Computing',
-    'cs.SD': 'Computing',
-    'cs.SE': 'Computing',
-    'cs.SI': 'Computing',
-    'cs.SY': 'Computing',
-    'dg-ga': 'Math and Math Physics',
-    'gr-qc': 'Gravitation and Cosmology',
-    'hep-ex': 'Experiment-HEP',
-    'hep-lat': 'Lattice',
-    'hep-ph': 'Phenomenology-HEP',
-    'hep-th': 'Theory-HEP',
-    'math': 'Math and Math Physics',
-    'math-ph': 'Math and Math Physics',
-    'math.AC': 'Math and Math Physics',
-    'math.AG': 'Math and Math Physics',
-    'math.AP': 'Math and Math Physics',
-    'math.AT': 'Math and Math Physics',
-    'math.CA': 'Math and Math Physics',
-    'math.CO': 'Math and Math Physics',
-    'math.CT': 'Math and Math Physics',
-    'math.CV': 'Math and Math Physics',
-    'math.DG': 'Math and Math Physics',
-    'math.DS': 'Math and Math Physics',
-    'math.FA': 'Math and Math Physics',
-    'math.GM': 'Math and Math Physics',
-    'math.GN': 'Math and Math Physics',
-    'math.GR': 'Math and Math Physics',
-    'math.GT': 'Math and Math Physics',
-    'math.HO': 'Math and Math Physics',
-    'math.IT': 'Math and Math Physics',
-    'math.KT': 'Math and Math Physics',
-    'math.LO': 'Math and Math Physics',
-    'math.MG': 'Math and Math Physics',
-    'math.MP': 'Math and Math Physics',
-    'math.NA': 'Math and Math Physics',
-    'math.NT': 'Math and Math Physics',
-    'math.OA': 'Math and Math Physics',
-    'math.OC': 'Math and Math Physics',
-    'math.PR': 'Math and Math Physics',
-    'math.QA': 'Math and Math Physics',
-    'math.RA': 'Math and Math Physics',
-    'math.RT': 'Math and Math Physics',
-    'math.SG': 'Math and Math Physics',
-    'math.SP': 'Math and Math Physics',
-    'math.ST': 'Math and Math Physics',
-    'nlin': 'General Physics',
-    'nlin.AO': 'General Physics',
-    'nlin.CD': 'General Physics',
-    'nlin.CG': 'General Physics',
-    'nlin.PS': 'Math and Math Physics',
-    'nlin.SI': 'Math and Math Physics',
-    'nucl-ex': 'Experiment-Nucl',
-    'nucl-th': 'Theory-Nucl',
-    'patt-sol': 'Math and Math Physics',
-    'physics': 'General Physics',
-    'physics.acc-ph': 'Accelerators',
-    'physics.ao-ph': 'General Physics',
-    'physics.atm-clus': 'General Physics',
-    'physics.atom-ph': 'General Physics',
-    'physics.bio-ph': 'Other',
-    'physics.chem-ph': 'Other',
-    'physics.class-ph': 'General Physics',
-    'physics.comp-ph': 'Computing',
-    'physics.data-an': 'Computing',
-    'physics.ed-ph': 'Other',
-    'physics.flu-dyn': 'General Physics',
-    'physics.gen-ph': 'General Physics',
-    'physics.geo-ph': 'General Physics',
-    'physics.hist-ph': 'Other',
-    'physics.ins-det': 'Instrumentation',
-    'physics.med-ph': 'Other',
-    'physics.optics': 'General Physics',
-    'physics.plasm-ph': 'General Physics',
-    'physics.pop-ph': 'Other',
-    'physics.soc-ph': 'Other',
-    'physics.space-ph': 'Astrophysics',
-    'q-alg': 'Math and Math Physics',
-    'q-bio.BM': 'Other',
-    'q-bio.CB': 'Other',
-    'q-bio.GN': 'Other',
-    'q-bio.MN': 'Other',
-    'q-bio.NC': 'Other',
-    'q-bio.OT': 'Other',
-    'q-bio.PE': 'Other',
-    'q-bio.QM': 'Other',
-    'q-bio.SC': 'Other',
-    'q-bio.TO': 'Other',
-    'q-fin.CP': 'Other',
-    'q-fin.EC': 'Other',
-    'q-fin.GN': 'Other',
-    'q-fin.MF': 'Other',
-    'q-fin.PM': 'Other',
-    'q-fin.PR': 'Other',
-    'q-fin.RM': 'Other',
-    'q-fin.ST': 'Other',
-    'q-fin.TR': 'Other',
-    'quant-ph': 'General Physics',
-    'solv-int': 'Math and Math Physics',
-    'stat.AP': 'Other',
-    'stat.CO': 'Other',
-    'stat.ME': 'Other',
-    'stat.ML': 'Other',
-    'stat.OT': 'Other',
-    'stat.TH': 'Other'
+    "alg-geom": "Math and Math Physics",
+    "astro-ph": "Astrophysics",
+    "astro-ph.CO": "Astrophysics",
+    "astro-ph.EP": "Astrophysics",
+    "astro-ph.GA": "Astrophysics",
+    "astro-ph.HE": "Astrophysics",
+    "astro-ph.IM": "Instrumentation",
+    "astro-ph.SR": "Astrophysics",
+    "cond-mat": "General Physics",
+    "cond-mat.dis-nn": "General Physics",
+    "cond-mat.mes-hall": "General Physics",
+    "cond-mat.mtrl-sci": "General Physics",
+    "cond-mat.other": "General Physics",
+    "cond-mat.quant-gas": "General Physics",
+    "cond-mat.soft": "General Physics",
+    "cond-mat.stat-mech": "General Physics",
+    "cond-mat.str-el": "General Physics",
+    "cond-mat.supr-con": "General Physics",
+    "cs": "Computing",
+    "cs.AI": "Computing",
+    "cs.AR": "Computing",
+    "cs.CC": "Computing",
+    "cs.CE": "Computing",
+    "cs.CG": "Computing",
+    "cs.CL": "Computing",
+    "cs.CR": "Computing",
+    "cs.CV": "Computing",
+    "cs.CY": "Computing",
+    "cs.DB": "Computing",
+    "cs.DC": "Computing",
+    "cs.DL": "Computing",
+    "cs.DM": "Computing",
+    "cs.DS": "Computing",
+    "cs.ET": "Computing",
+    "cs.FL": "Computing",
+    "cs.GL": "Computing",
+    "cs.GR": "Computing",
+    "cs.GT": "Computing",
+    "cs.HC": "Computing",
+    "cs.IR": "Computing",
+    "cs.IT": "Computing",
+    "cs.LG": "Computing",
+    "cs.LO": "Computing",
+    "cs.MA": "Computing",
+    "cs.MM": "Computing",
+    "cs.MS": "Computing",
+    "cs.NA": "Computing",
+    "cs.NE": "Computing",
+    "cs.NI": "Computing",
+    "cs.OH": "Computing",
+    "cs.OS": "Computing",
+    "cs.PF": "Computing",
+    "cs.PL": "Computing",
+    "cs.RO": "Computing",
+    "cs.SC": "Computing",
+    "cs.SD": "Computing",
+    "cs.SE": "Computing",
+    "cs.SI": "Computing",
+    "cs.SY": "Computing",
+    "dg-ga": "Math and Math Physics",
+    "gr-qc": "Gravitation and Cosmology",
+    "hep-ex": "Experiment-HEP",
+    "hep-lat": "Lattice",
+    "hep-ph": "Phenomenology-HEP",
+    "hep-th": "Theory-HEP",
+    "math": "Math and Math Physics",
+    "math-ph": "Math and Math Physics",
+    "math.AC": "Math and Math Physics",
+    "math.AG": "Math and Math Physics",
+    "math.AP": "Math and Math Physics",
+    "math.AT": "Math and Math Physics",
+    "math.CA": "Math and Math Physics",
+    "math.CO": "Math and Math Physics",
+    "math.CT": "Math and Math Physics",
+    "math.CV": "Math and Math Physics",
+    "math.DG": "Math and Math Physics",
+    "math.DS": "Math and Math Physics",
+    "math.FA": "Math and Math Physics",
+    "math.GM": "Math and Math Physics",
+    "math.GN": "Math and Math Physics",
+    "math.GR": "Math and Math Physics",
+    "math.GT": "Math and Math Physics",
+    "math.HO": "Math and Math Physics",
+    "math.IT": "Math and Math Physics",
+    "math.KT": "Math and Math Physics",
+    "math.LO": "Math and Math Physics",
+    "math.MG": "Math and Math Physics",
+    "math.MP": "Math and Math Physics",
+    "math.NA": "Math and Math Physics",
+    "math.NT": "Math and Math Physics",
+    "math.OA": "Math and Math Physics",
+    "math.OC": "Math and Math Physics",
+    "math.PR": "Math and Math Physics",
+    "math.QA": "Math and Math Physics",
+    "math.RA": "Math and Math Physics",
+    "math.RT": "Math and Math Physics",
+    "math.SG": "Math and Math Physics",
+    "math.SP": "Math and Math Physics",
+    "math.ST": "Math and Math Physics",
+    "nlin": "General Physics",
+    "nlin.AO": "General Physics",
+    "nlin.CD": "General Physics",
+    "nlin.CG": "General Physics",
+    "nlin.PS": "Math and Math Physics",
+    "nlin.SI": "Math and Math Physics",
+    "nucl-ex": "Experiment-Nucl",
+    "nucl-th": "Theory-Nucl",
+    "patt-sol": "Math and Math Physics",
+    "physics": "General Physics",
+    "physics.acc-ph": "Accelerators",
+    "physics.ao-ph": "General Physics",
+    "physics.atm-clus": "General Physics",
+    "physics.atom-ph": "General Physics",
+    "physics.bio-ph": "Other",
+    "physics.chem-ph": "Other",
+    "physics.class-ph": "General Physics",
+    "physics.comp-ph": "Computing",
+    "physics.data-an": "Computing",
+    "physics.ed-ph": "Other",
+    "physics.flu-dyn": "General Physics",
+    "physics.gen-ph": "General Physics",
+    "physics.geo-ph": "General Physics",
+    "physics.hist-ph": "Other",
+    "physics.ins-det": "Instrumentation",
+    "physics.med-ph": "Other",
+    "physics.optics": "General Physics",
+    "physics.plasm-ph": "General Physics",
+    "physics.pop-ph": "Other",
+    "physics.soc-ph": "Other",
+    "physics.space-ph": "Astrophysics",
+    "q-alg": "Math and Math Physics",
+    "q-bio.BM": "Other",
+    "q-bio.CB": "Other",
+    "q-bio.GN": "Other",
+    "q-bio.MN": "Other",
+    "q-bio.NC": "Other",
+    "q-bio.OT": "Other",
+    "q-bio.PE": "Other",
+    "q-bio.QM": "Other",
+    "q-bio.SC": "Other",
+    "q-bio.TO": "Other",
+    "q-fin.CP": "Other",
+    "q-fin.EC": "Other",
+    "q-fin.GN": "Other",
+    "q-fin.MF": "Other",
+    "q-fin.PM": "Other",
+    "q-fin.PR": "Other",
+    "q-fin.RM": "Other",
+    "q-fin.ST": "Other",
+    "q-fin.TR": "Other",
+    "quant-ph": "General Physics",
+    "solv-int": "Math and Math Physics",
+    "stat.AP": "Other",
+    "stat.CO": "Other",
+    "stat.ME": "Other",
+    "stat.ML": "Other",
+    "stat.OT": "Other",
+    "stat.TH": "Other"
 }
-
-ASSETS_DEBUG = True

@@ -1,0 +1,59 @@
+{#
+# This file is part of Invenio.
+# Copyright (C) 2014, 2015 CERN.
+#
+# Invenio is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# Invenio is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Invenio; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{% extends "invenio_workflows_ui/list.html" %}
+
+{% from "inspire_workflows/macros.html" import batch_action_buttons %}
+
+{% block javascript %}
+  {{ super() }}
+  {% assets "inspire_workflows_ui_js_actions" %}<script src="{{ ASSET_URL }}"></script>{% endassets %}
+{%- endblock javascript %}
+
+{%- block list_container -%}
+  <div class="container main-container">
+{%- endblock -%}
+
+{% block help_bar %}
+<div id="help-bar" class="row">
+  <div class="pull-left">
+    <p class="text-muted">Ctrl+A: Select all, Esc: Deselect</p>
+  </div>
+
+  {{ batch_action_buttons() }}
+</div>
+{% endblock %}
+
+{% block navigation_sort_selection %}
+  <li class="dropdown">
+    <a class="dropdown-toggle dropdown-headline" data-toggle="dropdown" href="#">{{ _('Sort') }}<b class="caret"></b></a>
+    <ul id="hp-sort-menu" class="dropdown-menu" role="menu">
+        <li><a class="task-btn" name="_workflow.created_desc">{{ _("Newest")}}</a></li>
+        <li><a class="task-btn" name="_workflow.created">{{ _("Oldest")}}</a></li>
+        <li><a class="task-btn" name="_workflow.modified_desc">{{ _("Recently updated")}}</a></li>
+        <li><a class="task-btn" name="_workflow.modified">{{ _("Least recently updated")}}</a></li>
+        <li><a class="task-btn" name="_workflow.relevance_score_desc">{{ _("Most relevant")}}</a></li>
+        <li><a class="task-btn" name="_workflow.relevance_score">{{ _("Least relevant")}}</a></li>
+    </ul>
+  </li>
+{% endblock %}
+
+{% block batch_action_buttons_bottom %}
+    {{ batch_action_buttons() }}
+{% endblock %}

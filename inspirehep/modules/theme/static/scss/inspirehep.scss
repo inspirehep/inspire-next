@@ -41,6 +41,8 @@ $fa-font-path: "/static/node_modules/font-awesome/fonts";
 @import "accounts/login";
 @import "accounts/settings/account-settings.scss";
 
+@import "authors/profiles";
+
 @import "feedback/button";
 @import "feedback/modal";
 
@@ -52,4 +54,8 @@ $fa-font-path: "/static/node_modules/font-awesome/fonts";
 
 @import "workflows/workflows";
 
-@import "../node_modules/toastr/toastr"
+@import "../node_modules/toastr/toastr";
+
+@import "../node_modules/angular-loading-bar/build/loading-bar.css";
+
+@import "../node_modules/impact-graphs/style";

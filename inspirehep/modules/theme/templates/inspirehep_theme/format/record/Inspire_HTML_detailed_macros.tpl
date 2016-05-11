@@ -196,7 +196,7 @@
           {% endif %}
           {{ comma() }}
           <a href='{{ actual_url }}'>{{ url.get('description') | weblinks }}</a>
-        {% endif %}  
+        {% endif %}
       {% endif %}
     {% endfor %}
   {% endif %}
@@ -360,6 +360,22 @@
           </a>
         {% endif %}
       </div>
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro impactgraph() %}
+  <div class="panel" id="citations">
+    <div class="panel-heading">
+      <span id="record-impact-graph">Publication Impact Graph
+      </span>
+    </div>
+
+    <div class="panel-body">
+      <div class="impact-graph-container">
+      </div>
+    </div>
+    <div class="panel-footer">
     </div>
   </div>
 {% endmacro %}

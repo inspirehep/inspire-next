@@ -295,7 +295,7 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
 
 
 @shared_task()
-def add_citation_counts(chunk_size=500, request_timeout=10):
+def add_citation_counts(chunk_size=500, request_timeout=40):
     index, doc_type = schema_to_index('records/hep.json')
 
     def get_records_to_update_generator(citation_lookup):
@@ -406,8 +406,8 @@ def create_record(record, force=True, dry_run=False):
 
 @shared_task(ignore_result=True)
 def reindex_holdingpen_object(obj_id):
-    from invenio_workflows.signals import workflow_object_saved
+    from invenio_workflows.signals import workflow_object_after_save
     from invenio_workflows import WorkflowObject
 
     obj = WorkflowObject.query.get(obj_id)
-    workflow_object_saved.send(obj)
+    workflow_object_after_save.send(obj)

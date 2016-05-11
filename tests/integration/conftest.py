@@ -32,7 +32,7 @@ from invenio_search import current_search_client as es
 from inspirehep.factory import create_app
 
 
-@pytest.yield_fixture(scope='session', autouse=True)
+@pytest.yield_fixture(scope='session')
 def app(request):
     """Flask application fixture."""
     app = create_app()
@@ -61,7 +61,7 @@ def app(request):
         migrate('./inspirehep/demosite/data/demo-records.xml.gz', wait_for_results=True)
         es.indices.refresh('records-hep')  # Makes sure that all HEP records were migrated.
 
-        add_citation_counts(request_timeout=20)
+        add_citation_counts(request_timeout=40)
         es.indices.refresh('records-hep')  # Makes sure that all citation counts were added.
 
         yield app

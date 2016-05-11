@@ -66,7 +66,8 @@ js = NpmBundle(
         "flightjs": "~1.5.0",
         "angular": "~1.4.8",
         "inspirehep-js": "git+https://git@github.com/inspirehep/inspirehep-js.git",
-        "readmore-js": "~2.1.0"
+        "readmore-js": "~2.1.0",
+        "impact-graphs": "git+https://git@github.com/inspirehep/impact-graphs.git"
     }
 )
 

@@ -94,31 +94,31 @@ $darken: 8%;
 }
 
 #hep-collection #search-title {
-    color: $literature-collection;  
+    color: $literature-collection;
 }
 
 #authors-collection #search-title {
-    color: $literature-collection;  
+    color: $literature-collection;
 }
 
 #conferences-collection #search-title {
-    color: $conferences-collection;  
+    color: $conferences-collection;
 }
 
 #jobs-collection #search-title {
-    color: $jobs-collection;  
+    color: $jobs-collection;
 }
 
 #data-collection #search-title {
-    color: $data-collection;  
+    color: $data-collection;
 }
 
 #experiments-collection #search-title {
-    color: $experiments-collection;  
+    color: $experiments-collection;
 }
 
 #institutions-collection #search-title {
-    color: $institutions-collection;  
+    color: $institutions-collection;
 }
 
 #record-title {
@@ -186,7 +186,7 @@ $darken: 8%;
     .pointer {
         cursor:pointer;
     }
-} 
+}
 
 #record-title, #record-journal,
 #external_links, #doi-eprint-experiment, {
@@ -218,7 +218,7 @@ $darken: 8%;
 	display: none;
 }
 
-#record-abstract-title, #record-keywords-title, #record-reference-title, #record-citation-title {
+#record-abstract-title, #record-keywords-title, #record-reference-title, #record-citation-title, #record-impact-graph {
     font-size: 18px;
     font-weight: 600;
 }
@@ -278,7 +278,7 @@ $darken: 8%;
     .panel-heading {
 
         .references-citations-table {
-            margin-top: 15px;   
+            margin-top: 15px;
         }
 
         .references-citations-showing {
@@ -310,7 +310,7 @@ $darken: 8%;
             }
 
             .reference-journal {
-                color: black;   
+                color: black;
             }
         }
 
@@ -321,7 +321,7 @@ $darken: 8%;
         }
 
         .reference-subtitle {
-            width: 90%;    
+            width: 90%;
         }
 
         .reference-journal {
@@ -366,7 +366,7 @@ $darken: 8%;
     @extend #record-abstract-keywords;
 
     #record-plots-title {
-        @extend #record-abstract-title;   
+        @extend #record-abstract-title;
     }
 }
 
@@ -377,7 +377,7 @@ $darken: 8%;
 }
 
 .img-responsive,
-.thumbnail>img, 
+.thumbnail>img,
 .thumbnail a>img {
     margin: 0 auto;
     width: 100px;
@@ -395,11 +395,11 @@ $darken: 8%;
         top: 0;
         bottom: 0;
         margin: auto;
-        
+
         & > img,
         & > a > img {
             max-height: 300px;
-            margin: auto;   
+            margin: auto;
         }
     }
 }

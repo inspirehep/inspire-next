@@ -22,6 +22,7 @@
 
 """Contains forms related to INSPIRE Literature suggestion."""
 
+from flask import current_app
 from flask_babelex import gettext as _
 
 from wtforms import validators
@@ -618,16 +619,12 @@ class LiteratureForm(INSPIREForm):
     def __init__(self, *args, **kwargs):
         """Constructor."""
         super(LiteratureForm, self).__init__(*args, **kwargs)
-        # from invenio_knowledge.api import get_kb_mappings
-        self.subject.choices = [('dummy', 'dummy')]
-        self.degree_type.choices = [('dummy', 'dummy')]
-        # self.subject.choices = [
-        #     (x['value'], x['value'])
-        #     for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_SUBJECTS_KB"])
-        # ]
-        # self.degree_type.choices = [('', '')] + [
-        #     (x['value'], x['value'])
-        #     for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_DEGREE_KB"])
-        # ]
-        # self.license.choices = [('', '')] + [(x['key'], x['key'])
-        #     for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_LICENSE_KB"])]
+
+        self.subject.choices = [('', '')] + [
+            (val, val)
+            for val in current_app.config['INSPIRE_CATEGORIES']
+        ]
+        self.degree_type.choices = [('', '')] + [
+            (val, val)
+            for val in current_app.config['INSPIRE_DEGREE_TYPES']
+        ]

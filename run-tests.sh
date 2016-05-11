@@ -23,9 +23,9 @@ set -e
 
 case $1 in
     integration)
-        python setup.py test --pytest="--ignore tests/unit"
+        python setup.py test --addopts="--ignore tests/unit"
         ;;
     *)
-        python setup.py test --pytest="--ignore tests/integration"
+        python setup.py test --addopts="--ignore tests/integration"
         ;;
 esac

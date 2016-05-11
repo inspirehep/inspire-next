@@ -25,19 +25,27 @@ require.config({
   baseUrl: '/static/',
   paths: {
     angular: 'node_modules/angular/angular',
+    'angular-loading-bar': 'node_modules/angular-loading-bar/build/loading-bar',
     'angular-sanitize': 'node_modules/angular-sanitize/angular-sanitize',
     'angular-ui-bootstrap': 'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls',
+    'author': 'js/authors/author',
     bootstrap: 'node_modules/bootstrap-sass/assets/javascripts/bootstrap',
     'bootstrap-datetimepicker': 'node_modules/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
     'bootstrap-multiselect': 'node_modules/bootstrap-multiselect/dist/js/bootstrap-multiselect',
     'bucketsjs': 'node_modules/buckets-js/dist/buckets',
     clipboard: 'node_modules/clipboard/dist/clipboard',
+    d3: "node_modules/d3/d3",
+    'd3-tip': 'node_modules/d3-tip/index',
+    'd3wrapper': 'js/d3-wrapper',
+    datatables: 'node_modules/datatables.net-bs/js/dataTables.bootstrap',
+    'datatables.net': 'node_modules/datatables.net/js/jquery.dataTables',
     feedback: 'js/feedback/feedback',
     flight: 'node_modules/flightjs/build/flight',
     hgn: 'node_modules/requirejs-hogan-plugin/hgn',
     hogan: 'node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.amd',
     inspirehep: 'node_modules/inspirehep-js/dist/inspirehep',
     'inspirehep-clipboard': 'js/inspire_clipboard',
+    'impact-graphs': 'node_modules/impact-graphs/impact-graph',
     'inspirehep-search': 'node_modules/inspirehep-search-js/dist/inspirehep-search',
     'invenio-search': 'node_modules/invenio-search-js/dist/invenio-search-js',
     jquery: 'node_modules/jquery/jquery',
@@ -45,6 +53,8 @@ require.config({
     ui: "node_modules/jquery-ui",
     moment: 'node_modules/moment/moment',
     'ngclipboard': 'node_modules/ngclipboard/src/ngclipboard',
+    'profile': 'js/authors/profile',
+    'publications': 'js/authors/publications',
     'readmore': 'node_modules/readmore-js/readmore',
     text: 'node_modules/requirejs-hogan-plugin/text',
     toastr: 'node_modules/toastr/toastr',
@@ -55,6 +65,9 @@ require.config({
   shim: {
     angular: {
       exports: 'angular'
+    },
+    'angular-loading-bar': {
+      deps: ['angular']
     },
     'angular-sanitize': {
       deps: ['angular']
@@ -72,6 +85,10 @@ require.config({
     'bootstrap-multiselect': {
       deps: ['jquery'],
       exports: '$.fn.multiselect'
+    },
+    'impact-graphs': {
+      deps: ['d3wrapper'],
+      exports: 'ImpactGraph'
     },
     'inspirehep': {
       deps: ['angular', 'angular-ui-bootstrap', 'ngclipboard']

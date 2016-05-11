@@ -19,9 +19,9 @@
 
 {% block details_page %}
 
-  {% from "format/record/Holding_Pen_HTML_detailed_macros.tpl" import record_arxiv_pdf, add_delimiter, get_abstract with context %}
-  {% from "format/record/Inspire_HTML_detailed_macros.tpl" import record_publication_info, record_doi, record_keywords with context %}
-  {% from "format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, mathjax, render_record_authors, record_arxiv with context %}
+  {% from "inspirehep_theme/format/record/Holding_Pen_HTML_detailed_macros.tpl" import record_arxiv_pdf, add_delimiter, get_abstract with context %}
+  {% from "inspirehep_theme/format/record/Inspire_HTML_detailed_macros.tpl" import record_publication_info, record_doi, record_keywords with context %}
+  {% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, mathjax, render_record_authors, record_arxiv with context %}
 
   <div class="container col-md-12">
     <!-- Title Row -->
@@ -32,7 +32,7 @@
         <!-- Title -->
         <strong>
           <span id='title-text'>
-            {{ render_record_title() }}
+            {{ render_record_title(record) }}
           </span>
         </strong>
       </h3>
@@ -41,7 +41,7 @@
     <!-- Authors Row-->
     <div class="row">
       <div class="col-md-12">
-        {{ render_record_authors(is_brief=false, number_of_displayed_authors=25) }}
+        {{ render_record_authors(record, is_brief=false, number_of_displayed_authors=25) }}
       </div>
     </div>
 
@@ -51,7 +51,7 @@
     {% if record.publication_info %}
       <div class="row">
         <div class="col-md-12">
-          {{ record_publication_info() }}
+          {{ record_publication_info(record) }}
         </div>
       </div>
       <div class="row hp-horizonal-delimiter"></div>
@@ -80,7 +80,7 @@
     {% if record.arxiv_eprints %}
     <div class="row">
       <div class="col-md-12">
-        {{ record_arxiv(is_brief=False) }}
+        {{ record_arxiv(record, is_brief=False) }}
         {{ record_arxiv_pdf() }}
       </div>
     </div>
@@ -91,7 +91,7 @@
     {% if record.dois %}
     <div class="row">
       <div class="col-md-12">
-        {{ record_doi() }}
+        {{ record_doi(record) }}
       </div>
     </div>
     <div class="row hp-horizonal-delimiter"></div>
@@ -110,7 +110,7 @@
     {% if record.free_keywords %}
     <div class="row">
       <div class="col-sm-3">
-        {{ record_keywords() }}
+        {{ record_keywords(record) }}
       </div>
     </div>
     {% endif %}

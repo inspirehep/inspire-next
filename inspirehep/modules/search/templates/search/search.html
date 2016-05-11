@@ -93,14 +93,11 @@
           {%- endblock search_sort %}
         </div>
         <hr>
-        {#
-        <!--XXX(TSANAKTSIDIS) ENABLE WHEN CHECKBOX CONTROLLER IS MERGED -->
-        {% if not  request.args.get('cc') or request.args.get('cc') in ('hep', '') %}
-          <input ng-controller="checkboxCtrl" id="export-select-all" type="checkbox" ng-click="getAllIdsToExport()">&nbsp;&nbsp;
-          <inspire-export-modal button-template="/static/node_modules/inspirehep-js/dist/templates/export/templates/button.html" body-template="/static/node_modules/inspirehep-js/dist/templates/export/templates/modalbody.html">
+        {% if not request.args.get('cc') or request.args.get('cc') in ('hep', '') %}
+          <input ng-controller="checkboxCtrl" ng-checked="allChecked()" id="export-select-all" type="checkbox" ng-click="toggleAllIds()">&nbsp;&nbsp;
+          <inspire-export-modal button-template="/static/node_modules/inspirehep-js/dist/templates/export/templates/button_multiple.html" body-template="/static/node_modules/inspirehep-js/dist/templates/export/templates/modalbody.html">
           </inspire-export-modal>
         {% endif %}
-        #}
       </div>
       {%- block search_header_footer %}
       {%- endblock search_header_footer %}
@@ -114,10 +111,6 @@
     </invenio-search-error>
     {%- endblock search_error %}
     {%- block search_loading %}
-    <invenio-search-loading
-     template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/loading.html') }}"
-     message="{{ _('Loading...') }}">
-    </invenio-search-loading>
     {%- endblock search_loading %}
     {%- block search_results %}
     <invenio-search-results
