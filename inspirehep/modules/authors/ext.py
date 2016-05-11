@@ -24,9 +24,13 @@
 
 """INSPIRE module to manage authors."""
 
-from __future__ import absolute_import, print_function
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
 
-from .views import blueprint
+from .views import blueprints
 
 from . import config
 
@@ -42,7 +46,8 @@ class INSPIREAuthors(object):
     def init_app(self, app, assets=None, **kwargs):
         """Initialize application object."""
         self.init_config(app)
-        app.register_blueprint(blueprint)
+        for blueprint in blueprints:
+            app.register_blueprint(blueprint)
         app.extensions['inspire-authors'] = self
 
     def init_config(self, app):

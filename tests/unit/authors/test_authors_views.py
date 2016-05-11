@@ -20,11 +20,17 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
 
 from invenio_records.api import Record
 
-from inspirehep.modules.authors.views import convert_for_form, get_inspire_url
+from inspirehep.modules.authors.views.holdingpen import (
+    convert_for_form,
+    get_inspire_url)
 
 
 def test_convert_for_form_without_name_urls_fc_positions_advisors_and_ids():
