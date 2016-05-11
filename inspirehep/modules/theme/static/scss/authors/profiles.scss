@@ -62,6 +62,10 @@ $white: #ffffff;
   }
 }
 
+.profile-image {
+  opacity: 0.5;
+}
+
 // Links.
 .profile-links {
   padding-bottom: 18px;
@@ -188,4 +192,4 @@ $white: #ffffff;
   .yAxis path, .yAxis line {
     stroke: $light-blue !important;
   }
-}  
+}
