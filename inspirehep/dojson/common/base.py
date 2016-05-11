@@ -21,6 +21,7 @@
 # or submit itself to any jurisdiction.
 
 """MARC 21 model definition."""
+import six
 
 from dojson import utils
 
@@ -335,14 +336,14 @@ def urls(self, key, value):
     urls = []
     value = utils.force_list(value)
     for val in value:
-        if isinstance(val.get('y'), str):
+        if isinstance(val.get('y'), six.string_types):
             description = val.get('y')
         elif isinstance(val.get('y'), tuple):
             description = val.get('y')[0]
             # FIXME: raise Exception("multiple y values")
         else:
             description = None
-        if isinstance(val.get('u'), str):
+        if isinstance(val.get('u'), six.string_types):
             urls.append({"value": val.get('u'), "description": description})
         elif isinstance(val.get('u'), tuple):
             for u in val.get("u"):

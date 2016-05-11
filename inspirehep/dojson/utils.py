@@ -216,7 +216,7 @@ def classify_rank(value):
     """
     if not value:
         return None
-    elif not isinstance(value, str) and not isinstance(value, unicode):
+    elif not isinstance(value, six.string_types):
         return None
     else:
         casted_value = value.upper().replace('.', '')

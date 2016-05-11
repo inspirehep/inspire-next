@@ -22,6 +22,8 @@
 
 """MARC 21 model definition."""
 
+import six
+
 from dojson import utils
 
 from inspirehep.dojson import utils as inspire_dojson_utils
@@ -61,7 +63,7 @@ def contact_details(self, key, value):
     """Map 270 field to contact details and extra_place_info"""
     self.setdefault('extra_place_info', [])
     extra_place_info = value.get('b')
-    if isinstance(extra_place_info, str):
+    if isinstance(extra_place_info, six.string_types):
         self['extra_place_info'].append(extra_place_info)
     elif isinstance(extra_place_info, tuple):
         for place in extra_place_info:
@@ -72,8 +74,8 @@ def contact_details(self, key, value):
     name = value.get('p')
     email = value.get('m')
     return {
-        'name': name if isinstance(name, str) else None,
-        'email': email if isinstance(email, str) else None
+        'name': name if isinstance(name, six.string_types) else None,
+        'email': email if isinstance(email, six.string_types) else None
     }
 
 

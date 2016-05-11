@@ -22,6 +22,8 @@
 
 """MARC 21 model definition for HepNames records."""
 
+import six
+
 from dojson import utils
 
 from inspirehep.dojson import utils as inspire_dojson_utils
@@ -242,7 +244,7 @@ def positions(self, key, value):
     return {
         'institution': inst if inst['name'] else None,
         'rank': rank,
-        '_rank': raw_rank if isinstance(raw_rank, str) else None,
+        '_rank': raw_rank if isinstance(raw_rank, six.string_types) else None,
         'start_date': value.get('s'),
         'end_date': value.get('t'),
         'email': value.get('m'),

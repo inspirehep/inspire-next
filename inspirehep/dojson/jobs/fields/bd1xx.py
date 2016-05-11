@@ -22,6 +22,8 @@
 
 """MARC 21 model definition."""
 
+import six
+
 from dojson import utils
 
 from inspirehep.dojson import utils as inspire_dojson_utils
@@ -97,8 +99,8 @@ def contacts(self, key, value):
     email = value.get('m')
 
     return {
-        'name': name if isinstance(name, str) else None,
-        'email': email if isinstance(email, str) else None
+        'name': name if isinstance(name, six.string_types) else None,
+        'email': email if isinstance(email, six.string_types) else None
     }
 
 
@@ -116,7 +118,7 @@ def rank(self, key, value):
     values = utils.force_list(value)
     for val in values:
         raw_rank = val.get('a')
-        if isinstance(raw_rank, str):
+        if isinstance(raw_rank, six.string_types):
             _ranks.append(raw_rank)
             ranks.append(
                 inspire_dojson_utils.classify_rank(raw_rank)
