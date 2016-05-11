@@ -620,11 +620,11 @@ class LiteratureForm(INSPIREForm):
         """Constructor."""
         super(LiteratureForm, self).__init__(*args, **kwargs)
 
-        self.subject.choices = [('', '')] + [
+        self.subject.choices = [
             (val, val)
             for val in current_app.config['INSPIRE_CATEGORIES']
         ]
-        self.degree_type.choices = [('', '')] + [
+        self.degree_type.choices = [
             (val, val)
             for val in current_app.config['INSPIRE_DEGREE_TYPES']
         ]
