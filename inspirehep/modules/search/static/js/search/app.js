@@ -22,6 +22,7 @@
  */
 
 require([
+    'angular-loading-bar',
     'invenio-search',
     'inspirehep-search',
     'inspirehep'
@@ -29,7 +30,9 @@ require([
     // When the DOM is ready bootstrap the AngularJS modules
     angular.element(document).ready(function() {
       angular.bootstrap(
-        document.getElementById("invenio-search"), ['inspirehepSearch', 'inspirehep']
+        document.getElementById("invenio-search"), ['angular-loading-bar',
+                                                    'inspirehepSearch',
+                                                    'inspirehep']
       );
     });
 });

@@ -111,10 +111,6 @@
     </invenio-search-error>
     {%- endblock search_error %}
     {%- block search_loading %}
-    <invenio-search-loading
-     template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/loading.html') }}"
-     message="{{ _('Loading...') }}">
-    </invenio-search-loading>
     {%- endblock search_loading %}
     {%- block search_results %}
     <invenio-search-results
