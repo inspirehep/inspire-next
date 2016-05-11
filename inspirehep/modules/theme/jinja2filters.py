@@ -24,7 +24,11 @@
 
 """Jinja utilities for INSPIRE."""
 
-from __future__ import absolute_import, print_function
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
 
 import json
 import re
@@ -297,7 +301,8 @@ def proceedings_link(record):
     if not cnum:
         return out
 
-    records = perform_es_search("cnum:%s and 980__a:proceedings" % (cnum,))
+    records = perform_es_search(
+        'cnum:%s and 980__a:proceedings' % cnum, 'records-conferences')
 
     if len(records):
         if len(records) > 1:
@@ -386,7 +391,7 @@ def link_to_hep_affiliation(record):
     except KeyError:
         return ''
 
-    records = perform_es_search("affiliation:%s" % icn)
+    records = perform_es_search('affiliation:%s' % icn, 'records-institutions')
     results = records.hits.total
 
     if results:
