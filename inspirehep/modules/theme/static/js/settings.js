@@ -25,6 +25,7 @@ require.config({
   baseUrl: '/static/',
   paths: {
     angular: 'node_modules/angular/angular',
+    'angular-loading-bar': 'node_modules/angular-loading-bar/build/loading-bar',
     'angular-sanitize': 'node_modules/angular-sanitize/angular-sanitize',
     'angular-ui-bootstrap': 'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls',
     'author': 'js/authors/author',
@@ -61,6 +62,9 @@ require.config({
   shim: {
     angular: {
       exports: 'angular'
+    },
+    'angular-loading-bar': {
+      deps: ['angular']
     },
     'angular-sanitize': {
       deps: ['angular']
