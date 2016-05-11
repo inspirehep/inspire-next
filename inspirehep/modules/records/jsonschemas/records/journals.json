@@ -16,26 +16,8 @@
             "type": "array",
             "uniqueItems": true
         },
-        "former_title": {
-            "items": {
-                "title": "Former title",
-                "type": "string"
-            },
-            "title": "Former titles",
-            "type": "array",
-            "uniqueItems": true
-        },
-        "history": {
-            "title": "History",
-            "type": "string"
-        },
-        "inspire_long_title": {
-            "title": "INSPIRE long title",
-            "type": "string"
-        },
-        "inspire_short_title": {
-            "title": "INSPIRE short title",
-            "type": "string"
+        "short_titles": {
+            "$ref": "elements/titles.json"
         },
         "issn": {
             "items": {
@@ -69,9 +51,8 @@
             "title": "Journal handling",
             "type": "string"
         },
-        "journal_title": {
-            "title": "Journal title (from ZDB)",
-            "type": "string"
+        "titles": {
+            "$ref": "elements/titles.json"
         },
         "license": {
             "enum": [
@@ -135,13 +116,7 @@
             "type": "object"
         },
         "title_variants": {
-            "items": {
-                "title": "Title variant",
-                "type": "string"
-            },
-            "title": "Title variants",
-            "type": "array",
-            "uniqueItems": true
+            "$ref": "elements/titles.json"
         },
         "urls": {
             "$ref": "elements/urls.json"

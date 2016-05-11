@@ -80,7 +80,6 @@ def name(self, key, value):
     + roman numbers (like VII)
     """
     value = utils.force_list(value)
-    self.setdefault('breadcrumb_title', value[0].get('a'))
     self.setdefault('dates', value[0].get('d'))
     return {
         'value': value[0].get('a'),

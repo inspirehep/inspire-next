@@ -176,9 +176,17 @@ def test_corporate_author(marcxml_to_json, json_to_marc):
             json_to_marc['110'][0]['a'])
 
 
+def test_titles(marcxml_to_json, json_to_marc):
+    """Test if title is created correctly."""
+    assert (marcxml_to_json['titles'][0]['title'] ==
+            json_to_marc['245'][0]['a'])
+    assert (marcxml_to_json['titles'][0]['subtitle'] ==
+            json_to_marc['245'][0]['b'])
+
+
 def test_title_variation(marcxml_to_json, json_to_marc):
     """Test if title_variation is created correctly."""
-    assert (marcxml_to_json['title_variation'][0] ==
+    assert (marcxml_to_json['title_variation'][0]['title'] ==
             json_to_marc['210'][0]['a'])
 
 
@@ -188,18 +196,6 @@ def test_title_translation(marcxml_to_json, json_to_marc):
             json_to_marc['242'][0]['a'])
     assert (marcxml_to_json['title_translation'][0]['subtitle'] ==
             json_to_marc['242'][0]['b'])
-
-
-def test_title(marcxml_to_json, json_to_marc):
-    """Test if title is created correctly."""
-    assert (marcxml_to_json['titles'][0]['title'] ==
-            json_to_marc['245'][0]['a'])
-
-
-def test_breadcrumb_title(marcxml_to_json, json_to_marc):
-    """Test if breadcrumb title is created correctly."""
-    titles = [d.get('a') for d in json_to_marc['245']]
-    assert (marcxml_to_json['breadcrumb_title'] in titles)
 
 
 def test_title_arxiv(marcxml_to_json, json_to_marc):
@@ -439,18 +435,8 @@ def test_url(marcxml_to_json, json_to_marc):
     """Test if url is created correctly."""
     assert (marcxml_to_json['urls'][0]['value'] ==
             json_to_marc['8564'][0]['u'])
-    #assert (marcxml_to_json['urls'][0]['size'] ==
-            #json_to_marc['8564'][0]['s'])
-    #assert (marcxml_to_json['urls'][0]['doc_string'] ==
-            #json_to_marc['8564'][0]['w'])
     assert (marcxml_to_json['urls'][0]['description'] ==
             json_to_marc['8564'][0]['y'])
-    #assert (marcxml_to_json['urls'][0]['material_type'] ==
-            #json_to_marc['8564'][0]['3'])
-    #assert (marcxml_to_json['urls'][0]['comment'] ==
-            #json_to_marc['8564'][0]['z'])
-    #assert (marcxml_to_json['urls'][0]['name'] ==
-            #json_to_marc['8564'][0]['f'])
 
 
 def test_oai_pmh(marcxml_to_json, json_to_marc):

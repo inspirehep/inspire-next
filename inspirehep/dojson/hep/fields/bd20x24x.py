@@ -29,53 +29,58 @@ from inspirehep.dojson import utils as inspire_dojson_utils
 from ..model import hep, hep2marc
 
 
-@hep.over('title_variation', '^210[10_][0_]')
-def title_variation(self, key, value):
-    """Title variation."""
-    value = utils.force_list(value)
-
-    def get_value(value):
-        return value.get('a')
-
-    title_variation_list = self.get('title_variation', [])
-
-    for element in value:
-        title_variation_list.append(get_value(element))
-
-    return inspire_dojson_utils.remove_duplicates_from_list(
-        title_variation_list)
-
-
-@hep2marc.over('210', '^title_variation$')
-@utils.for_each_value
-@utils.filter_values
-def title_variation2marc(self, key, value):
-    """Title variation."""
-    return {
-        'a': value,
-    }
-
-
 @hep.over('title_translation', '^242[10_][0_]')
+@hep.over('titles_old', '^247[10_][10_]')
 @utils.for_each_value
 @utils.filter_values
-def title_translation(self, key, value):
+def title_translation_old(self, key, value):
     """Translation of Title by Cataloging Agency."""
     return {
+        'source': value.get('9'),
         'title': value.get('a'),
         'subtitle': value.get('b')
     }
 
 
+@hep2marc.over('210', '^title_variation$')
 @hep2marc.over('242', '^title_translation$')
+@hep2marc.over('247', '^titles_old$')
 @utils.for_each_value
 @utils.filter_values
-def title_translation2marc(self, key, value):
+def title_trans_var_old2marc(self, key, value):
     """Translation of Title by Cataloging Agency."""
     return {
         'a': value.get('title'),
         'b': value.get('subtitle'),
+        '9': value.get('source'),
     }
+
+
+@hep.over('title_variation', '^210[10_][0_]')
+def title_variation(self, key, value):
+    """Title variation."""
+    def get_value(existing):
+        if not isinstance(value, (tuple, list)):
+            values = [value]
+        else:
+            values = value
+        out = []
+        for val in values:
+            out.append({
+                'title': val.get('a'),
+                'subtitle': val.get('b'),
+                'source': val.get('9'),
+            })
+        cleaned_titles = existing + out
+        return inspire_dojson_utils.remove_duplicates_from_list(
+            cleaned_titles)
+
+    if 'title_variation' in self:
+        titles = get_value(self['title_variation'])
+    else:
+        titles = get_value([])
+
+    return titles
 
 
 @hep.over('titles', '^24[56][10_][0_]')
@@ -102,9 +107,6 @@ def titles(self, key, value):
     else:
         titles = get_value([])
 
-    if titles and 'breadcrumb_title' not in self:
-        self['breadcrumb_title'] = titles[0]['title']
-
     return titles
 
 
@@ -128,27 +130,3 @@ def titles2marc(self, key, value):
     if arxiv_246 is not None:
         self['246'] = arxiv_246
     return [title_245]
-
-
-@hep.over('titles_old', '^247[10_][10_]')
-@utils.for_each_value
-@utils.filter_values
-def titles_old(self, key, value):
-    """Former Title."""
-    return {
-        'title': value.get('a'),
-        'subtitle': value.get('b'),
-        'source': value.get('9'),
-    }
-
-
-@hep2marc.over('247', '^titles_old$')
-@utils.for_each_value
-@utils.filter_values
-def titles_old2marc(self, key, value):
-    """Former Title."""
-    return {
-        'a': value.get('title'),
-        'b': value.get('subtitle'),
-        '9': value.get('source'),
-    }

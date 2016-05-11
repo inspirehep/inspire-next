@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,26 +32,34 @@ from ..model import experiments
 
 
 @experiments.over('experiment_name', '^119..')
+@utils.for_each_value
 def experiment_name(self, key, value):
-    """Name of experiment."""
-    value = utils.force_list(value)
-    self.setdefault('affiliation', [v.get("u") for v in value if v.get('u')])
+    """Short experiment name."""
+    if 'u' in value:
+        self.setdefault('affiliations', [])
+        self['affiliations'].extend(utils.force_list(value['u']))
     return {
-        'experiment': [v.get("a") for v in value if v.get('a')],
-        'wwwlab': [v.get("u") for v in value if v.get('u')]
+        'source': value.get('9'),
+        'subtitle': value.get('b'),
+        'title': value.get('a'),
     }
 
 
-@experiments.over('title', '^245[10_][0_]')
+@experiments.over('titles', '^245[10_][0_]')
 @utils.for_each_value
-@utils.filter_values
-def title(self, key, value):
-    """Title Statement."""
-    self.setdefault('breadcrumb_title', value.get('a'))
+def titles(self, key, value):
+    """Long experiment name."""
     return {
         'title': value.get('a'),
-        'subtitle': value.get('b'),
-        'source': value.get('9'),
+    }
+
+
+@experiments.over('title_variants', '^419..')
+@utils.for_each_value
+def title_variants(self, key, value):
+    """Variants of the name."""
+    return {
+        'title': value.get('a'),
     }
 
 
@@ -66,13 +74,6 @@ def contacts(self, key, value):
         'name': name if isinstance(name, six.string_types) else None,
         'email': email if isinstance(email, six.string_types) else None
     }
-
-
-@experiments.over('name_variants', '^419..')
-@utils.for_each_value
-def name_variants(self, key, value):
-    """Variants of the name."""
-    return value.get('a')
 
 
 @experiments.over('description', '^520..')

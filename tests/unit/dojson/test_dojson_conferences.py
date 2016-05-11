@@ -197,3 +197,96 @@ def test_address_from_marcxml__111_multiple_c():
                                   {'country_code': 'NL',
                                   'original address': 'Den Haag, Nederlands'}
                                  ]
+
+def test_titles_from_marcxml_111():
+    """Test title."""
+    snippet = ( 
+        '<record> '
+        '<datafield tag="111" ind1=" " ind2=" "> '
+        '<subfield code="a">NASA Laboratory Astrophysics Workshop</subfield> '
+        '<subfield code="d">14-16 Feb 2006</subfield> '
+        '<subfield code="x">2006-02-14</subfield> '
+        '<subfield code="c">Las Vegas, Nevada</subfield> '
+        '<subfield code="g">C06-02-14</subfield> '
+        '<subfield code="y">2006-02-16</subfield> '
+        '</record>'
+    )
+
+    record = strip_empty_values(conferences.do(create_record(snippet)))
+    title = 'NASA Laboratory Astrophysics Workshop'
+    assert record['titles'][0]['title'] == title
+
+
+def test_titles_from_marcxml_111_with_two_a():
+    """Test title."""
+    snippet = ( 
+        '<record> '
+        '<datafield tag="111" ind1=" " ind2=" "> '
+        '<subfield code="a">Conférence IAP 2013</subfield> '
+        '<subfield code="a">75 Anniversary Conference</subfield> '
+        '<subfield code="b">The origin of the Hubble sequence</subfield> '
+        '</record>'
+    )
+
+    record = strip_empty_values(conferences.do(create_record(snippet)))
+    title1 = u'Conférence IAP 2013'
+    subtitle1 = 'The origin of the Hubble sequence'
+    title2 = '75 Anniversary Conference'
+    subtitle2 = 'The origin of the Hubble sequence'
+    assert record['titles'][0]['title'] == title1
+    assert record['titles'][0]['subtitle'] == subtitle1
+    assert record['titles'][1]['title'] == title2
+    assert record['titles'][1]['subtitle'] == subtitle2
+
+
+def test_alternative_titles_from_marcxml_711():
+    """Test alternative title."""
+    snippet = ( 
+        '<record> '
+        '<datafield tag="711" ind1=" " ind2=" "> '
+        '<subfield code="a">GCACSE16</subfield> '
+        '</datafield> '
+        '</record>'
+    )
+
+    record = strip_empty_values(conferences.do(create_record(snippet)))
+    title = 'GCACSE16'
+    assert record['alternative_titles'][0]['title'] == title
+
+
+def test_alternative_titles_from_multiple_marcxml_711():
+    """Test multiple alternative titles."""
+    snippet = ( 
+        '<record> '
+        '<datafield tag="711" ind1=" " ind2=" "> '
+        '<subfield code="a">GCACSE16</subfield> '
+        '</datafield> '
+        '<datafield tag="711" ind1=" " ind2=" "> '
+        '<subfield code="a">GCACSE 2016</subfield> '
+        '</datafield> '
+        '</record>'
+    )
+
+    record = strip_empty_values(conferences.do(create_record(snippet)))
+    title0 = 'GCACSE16'
+    title1 = 'GCACSE 2016'
+    assert record['alternative_titles'][0]['title'] == title0
+    assert record['alternative_titles'][1]['title'] == title1
+
+
+def test_alternative_titles_marcxml_711_with_b():
+    """Test multiple alternative titles."""
+    snippet = ( 
+        '<record> '
+        '<datafield tag="711" ind1=" " ind2=" "> '
+        '<subfield code="a">XX Riunione Nazionale di Elettromagnetismo</subfield> '
+        '<subfield code="b">Padova</subfield> '
+        '</datafield> '
+        '</record>'
+    )
+
+    record = strip_empty_values(conferences.do(create_record(snippet)))
+    title = 'XX Riunione Nazionale di Elettromagnetismo'
+    searchable_title = 'Padova'
+    assert record['alternative_titles'][0]['title'] == title
+    assert record['alternative_titles'][0]['searchable_title'] == searchable_title

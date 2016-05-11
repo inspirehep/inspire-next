@@ -66,9 +66,6 @@ def name(self, key, value):
             self.setdefault(key, [])
             self[key].extend(val)
 
-    if value.get('a'):
-        self.setdefault('breadcrumb_title', value.get('a'))
-
     set_value('institution', value.get('a'))
     set_value('department', value.get('b'))
     set_value('ICN', value.get('u'))

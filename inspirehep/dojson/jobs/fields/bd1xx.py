@@ -79,15 +79,14 @@ def institution(self, key, value):
         recid = int(value.get('z'))
     return {
         'curated_relation': curated_relation,
-        'record': inspire_dojson_utils.get_record_ref(recid, 'isntitutions'),
+        'record': inspire_dojson_utils.get_record_ref(recid, 'istitutions'),
         'name': value.get('a'),
     }
 
 
 @jobs.over('position', '^245..')
 def position(self, key, value):
-    """Breadcrumb title."""
-    self.setdefault('breadcrumb_title', value.get('a'))
+    """Position."""
     return value.get('a')
 
 

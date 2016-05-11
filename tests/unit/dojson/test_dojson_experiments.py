@@ -100,3 +100,96 @@ def test_contact_details_from_multiple_marcxml_270():
                                              'name': 'Wynton Marsalis'
                                          }
                                          ]
+
+def test_experiment_name_from_marcxml_119():
+    """Test experiment name."""
+    snippet = ( 
+        '<record> '
+        '<datafield tag="119" ind1=" " ind2=" "> '
+        '<subfield code="a">CERN-ALPHA</subfield> '
+        '</datafield> '
+        '</record>'
+    )
+
+    record = strip_empty_values(experiments.do(create_record(snippet)))
+    assert record['experiment_name'][0]['title'] == 'CERN-ALPHA'
+    
+def test_experiment_name_and_affiliation_from_marcxml_119():
+    """Test experiment name and affiliation."""
+    snippet = ( 
+        '<record> '
+        '<datafield tag="119" ind1=" " ind2=" "> '
+        '<subfield code="a">CERN-ALPHA</subfield> '
+        '<subfield code="u">CERN</subfield> '
+        '</datafield> '
+        '</record>'
+    )
+
+    record = strip_empty_values(experiments.do(create_record(snippet)))
+    assert record['affiliations'][0] == 'CERN'
+    assert record['experiment_name'][0]['title'] == 'CERN-ALPHA'
+
+
+def test_experiment_name_and_affiliation_from_marcxml_119_two_u():
+    """Test experiment name with two affiliations."""
+    snippet = ( 
+        '<record> '
+        '<datafield tag="119" ind1=" " ind2=" "> '
+        '<subfield code="a">LATTICE-UKQCD</subfield> '
+        '<subfield code="u">Cambridge U.</subfield> '
+        '<subfield code="u">Edinburgh U.</subfield> '
+        '</datafield> '
+        '</record>'
+    )
+
+    record = strip_empty_values(experiments.do(create_record(snippet)))
+    assert record['affiliations'] == ['Cambridge U.', 'Edinburgh U.']
+    assert record['experiment_name'][0]['title'] == 'LATTICE-UKQCD'
+
+
+def test_titles_from_marcxml_245():
+    """Test experiment title (long name)."""
+    snippet = ( 
+        '<record> '
+        '<datafield tag="245" ind1=" " ind2=" "> '
+        '<subfield code="a">The ALPHA experiment</subfield> '
+        '</datafield> '
+        '</record>'
+    )
+
+    record = strip_empty_values(experiments.do(create_record(snippet)))
+    title = 'The ALPHA experiment'
+    assert record['titles'][0]['title'] == title
+
+
+def test_title_variants__from_marcxml_419():
+    """Test experiment title variants."""
+    snippet = ( 
+        '<record> '
+        '<datafield tag="419" ind1=" " ind2=" "> '
+        '<subfield code="a">ALPHA</subfield> '
+        '</datafield> '
+        '</record>'
+    )
+
+    record = strip_empty_values(experiments.do(create_record(snippet)))
+    title_variants = [{'title': 'ALPHA'}]
+    assert record['title_variants'] == title_variants
+
+
+def test_multiple_title_variants__from_marcxml_419():
+    """Test experiment title variants."""
+    snippet = ( 
+        '<record> '
+        '<datafield tag="419" ind1=" " ind2=" "> '
+        '<subfield code="a">P-326</subfield> '
+        '</datafield> '
+        '<datafield tag="419" ind1=" " ind2=" "> '
+        '<subfield code="a">CERN-NA-048-3</subfield> '
+        '</datafield> '
+        '</record>'
+    )
+
+    record = strip_empty_values(experiments.do(create_record(snippet)))
+    assert record['title_variants'][0]['title'] == 'P-326'
+    assert record['title_variants'][1]['title'] == 'CERN-NA-048-3'

@@ -17,13 +17,22 @@
           "uniqueItems": true
         },
         "alternative_titles": {
-            "items": {
-                "title": "Alternative title",
-                "type": "string"
-            },
-            "title": "Alternative titles",
-            "type": "array",
-            "uniqueItems": true
+            "titles": {
+                "uniqueItems": true,
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "searchable_title": {
+                            "type": "string"
+                        },
+                        "title": {
+                            "type": "string"
+                        }
+                    },
+                    "title": "Title (and searchable title 711__b)"
+                },
+                "type": "array"
+            }
         },
         "closing_date": {
             "format": "date",
@@ -120,13 +129,8 @@
                 "type":"array",
                 "title": "Short description"
         },
-        "subtitle": {
-            "title": "Conference subtitle",
-            "type": "string"
-        },
-        "title": {
-            "title": "Conference title",
-            "type": "string"
+        "titles": {
+            "$ref": "elements/titles.json"
         },
         "urls": {
             "$ref": "elements/urls.json"

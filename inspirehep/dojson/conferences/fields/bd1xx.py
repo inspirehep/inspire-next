@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,26 +35,49 @@ from ..model import conferences
 @utils.for_each_value
 def acronym(self, key, value):
     """Conference acronym."""
+    def append_to_self(title):
+        """Make a dictionary and append to self."""
+        titles = {}
+        titles['title'] = title
+        titles['subtitle'] = value.get('b')
+        titles['source'] = value.get('9')
+        if titles:
+            self['titles'].append(titles)
+
     self['date'] = value.get('d')
     self['opening_date'] = value.get('x')
     self['closing_date'] = value.get('y')
     self['cnum'] = value.get('g')
-    self['subtitle'] = value.get('b')
-    self['title'] = value.get('a')
+    self.setdefault('titles', [])
+    title = value.get('a')
+    if isinstance(title, (tuple, list)):
+        for t in title:
+            append_to_self(t)
+    else:
+        append_to_self(title)
+
     if value.get('c'):
         self.setdefault('address', [])
         raw_addresses = utils.force_list(value.get('c'))
         for raw_address in raw_addresses:
             address = inspire_dojson_utils.parse_conference_address(raw_address)
             self['address'].append(address)
+
     return utils.force_list(value.get('e'))
 
 
 @conferences.over('alternative_titles', '^711')
 @utils.for_each_value
 def alternative_titles(self, key, value):
-    """Alternative title."""
-    return value.get('a')
+    """Alternative title.
+
+    711__b is for indexing and will not be displayed.
+    """
+    titles = {}
+    titles['title'] = value.get('a')
+    titles['searchable_title'] = value.get('b')
+
+    return titles
 
 
 @conferences.over('contact_details', '^270')
