@@ -43,7 +43,7 @@ def app(request):
 
             sleep(10)  # Makes sure that ES is up.
             _es = app.extensions['invenio-search']
-            list(_es.delete(ignore=[400]))
+            list(_es.delete(ignore=[404]))
 
     request.addfinalizer(teardown)
 
@@ -56,6 +56,7 @@ def app(request):
 
         sleep(10)  # Makes sure that ES is up.
         _es = app.extensions['invenio-search']
+        list(_es.delete(ignore=[404]))
         list(_es.create(ignore=[400]))
 
         migrate('./inspirehep/demosite/data/demo-records.xml.gz', wait_for_results=True)
