@@ -43,30 +43,29 @@
                 "properties": {
                     "medium": {
                         "enum": [
-                            "Print",
-                            "print",
-                            "Online",
                             "online",
-                            "ebook",
-                            "hardcover",
-                            "paperback",
-                            "eBook"
+                            "print"
                         ],
+                        "title": "Medium",
                         "type": "string",
-                        "description": "FIXME: this really need to be an enum and cleaned up. What is Print?!",
-                        "title": "Medium"
+                        "description": "Medium (type) of the ISBN."
                     },
                     "value": {
-                        "title": "code",
+                        "title": "ISBN",
                         "type": "string",
                         "format": "isbn"
+                    },
+                    "comment": {
+                        "title": "comment",
+                        "type": "string",
+                        "description": "Type might be specified here, e.g. hardcover, ebook"
                     }
                 },
                 "title": "ISBN code"
             },
+            "title": "ISBN codes",
             "type": "array",
-            "description": "ISBN codes identifying the given book",
-            "title": "ISBN codes"
+            "description": "ISBN codes identifying the given book"
         },
         "report_numbers": {
             "uniqueItems": true,

@@ -24,22 +24,45 @@
 
 from dojson import utils
 
+from idutils import normalize_isbn
+
 from inspirehep.dojson import utils as inspire_dojson_utils
 
 from ..model import hep, hep2marc
 
 from inspirehep.dojson.utils import strip_empty_values
 
+from isbnlib._exceptions import NotValidISBNError
+
 
 @hep.over('isbns', '^020..')
 @utils.for_each_value
-@utils.filter_values
 def isbns(self, key, value):
-    """Other Standard Identifier."""
-    return {
-        'value': value.get('a'),
-        'medium': value.get('b')
-    }
+    """ISBN and its medium with additional comment."""
+    isbn = {}
+    if 'a' not in value:
+        return None
+    try:
+        isbn['value'] = normalize_isbn(value['a'])
+    except NotValidISBNError:
+        return None
+    if 'b' in value:
+        isbn['medium'] = value.get('b', '').lower()
+        if isbn['medium'] == 'print':
+            pass
+        elif isbn['medium'] == 'online':
+            pass
+        elif 'ebook' in isbn['medium']:
+            isbn['medium'] = 'online'
+            isbn['comment'] = 'ebook'
+        elif 'hardcover' in isbn['medium']:
+            isbn['medium'] = 'print'
+            isbn['comment'] = 'hardcover'
+        else:
+            isbn['comment'] = isbn['medium']
+            isbn['medium'] = ''
+
+    return isbn
 
 
 @hep2marc.over('020', 'isbns')

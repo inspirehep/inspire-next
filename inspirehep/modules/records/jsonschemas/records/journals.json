@@ -20,32 +20,38 @@
             "$ref": "elements/titles.json"
         },
         "issn": {
+            "uniqueItems": true,
             "items": {
-                "properties": {
-                    "material": {
-                        "description": "FIXME: so far it's not used!",
-                        "enum": [
-                            "electronic",
-                            "print"
-                        ],
-                        "title": "Material",
-                        "type": "string"
-                    },
-                    "value": {
-                        "pattern": "\\d{4}-\\d{3}[\\dX]",
-                        "title": "ISSN",
-                        "type": "string"
-                    }
-                },
                 "required": [
                     "value"
                 ],
-                "title": "ISSN",
-                "type": "object"
+                "type": "object",
+                "properties": {
+                    "medium": {
+                        "enum": [
+                            "online",
+                            "print"
+                        ],
+                        "title": "Medium",
+                        "type": "string",
+                        "description": "Medium (type) of the ISSN."
+                    },
+                    "value": {
+                        "title": "ISSN",
+                        "pattern": "\\d{4}-\\d{3}[\\dX]",
+                        "type": "string"
+                    },
+                    "comment": {
+                        "title": "comment",
+                        "type": "string",
+                        "description": "Type might be specified here, e.g. hardcover, ebook"
+                    }
+                },
+                "title": "ISSN code"
             },
-            "title": "ISSN",
+            "title": "ISSN codes",
             "type": "array",
-            "uniqueItems": true
+            "description": "ISSN codes identifying the given journal"
         },
         "journal_handling": {
             "title": "Journal handling",

@@ -22,9 +22,10 @@ from inspirehep.dojson.journals import journals
 from inspirehep.dojson.utils import strip_empty_values
 
 
-def test_issn_from_marcxml_022():
-    """Test publisher."""
+def test_issn_from_marcxml_022_with_a():
+    """Test simple ISSN without medium."""
     snippet = (
+            '<record> '
             '<datafield tag="022" ind1=" " ind2=" "> '
             '<subfield code="a">2213-1337</subfield> '
             '</datafield> '
@@ -35,8 +36,79 @@ def test_issn_from_marcxml_022():
     assert record['issn'][0]['value'] == '2213-1337'
 
 
+def test_issn_from_marcxml_022_with_a_and_b():
+    """Test ISSN with medium normalization."""
+    snippet = (
+            '<record> '
+            '<datafield tag="022" ind1=" " ind2=" "> '
+            '<subfield code="a">2213-1337</subfield> '
+            '<subfield code="b">Print</subfield> '
+            '</datafield> '
+            '</record>'
+        )
+
+    record = strip_empty_values(journals.do(create_record(snippet)))
+    assert record['issn'][0]['value'] == '2213-1337'
+    assert record['issn'][0]['medium'] == 'print'
+
+
+def test_issn_from_marcxml_022_with_a_and_b_and_comment():
+    """Test ISSN with medium normalization. The original 'b' value
+    will be stored in 'comment'.
+    """
+    snippet = (
+            '<record> '
+            '<datafield tag="022" ind1=" " ind2=" "> '
+            '<subfield code="a">2213-1337</subfield> '
+            '<subfield code="b">ebook</subfield> '
+            '</datafield> '
+            '</record>'
+        )
+
+    record = strip_empty_values(journals.do(create_record(snippet)))
+    assert record['issn'][0]['value'] == '2213-1337'
+    assert record['issn'][0]['medium'] == 'online'
+    assert record['issn'][0]['comment'] == 'ebook'
+
+
+def test_issn_from_marcxml_022_with_b_no_a():
+    """Test ISSN in wrong subfield."""
+    snippet = (
+            '<record> '
+            '<datafield tag="022" ind1=" " ind2=" "> '
+            '<subfield code="b">9780486632827</subfield> '
+            '</datafield> '
+            '</record>'
+        )
+
+    record = strip_empty_values(journals.do(create_record(snippet)))
+    assert 'issn' not in record
+
+
+def test_multiple_issn_from_marcxml_022():
+    """Test multiple ISSNs."""
+    snippet = (
+            '<record> '
+            '<datafield tag="022" ind1=" " ind2=" "> '
+            '<subfield code="a">2349-2716</subfield> '
+            '<subfield code="b">Online</subfield> '
+            '</datafield> '
+            '<datafield tag="022" ind1=" " ind2=" "> '
+            '<subfield code="a">2349-6088</subfield> '
+            '<subfield code="b">Print</subfield> '
+            '</datafield> '
+            '</record>'
+        )
+
+    record = strip_empty_values(journals.do(create_record(snippet)))
+    assert record['issn'][0]['value'] == '2349-2716'
+    assert record['issn'][0]['medium'] == 'online'
+    assert record['issn'][1]['value'] == '2349-6088'
+    assert record['issn'][1]['medium'] == 'print'
+
+
 def test_coden_from_marcxml_030():
-    """Test publisher."""
+    """Test coden."""
     snippet = (
             '<datafield tag="030" ind1=" " ind2=" "> '
             '<subfield code="2">CODEN</subfield> '

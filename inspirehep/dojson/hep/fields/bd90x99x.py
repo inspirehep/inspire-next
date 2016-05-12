@@ -24,10 +24,14 @@
 
 from dojson import utils
 
+from idutils import normalize_isbn
+
 from inspirehep.dojson import utils as inspire_dojson_utils
 from inspirehep.dojson.utils import strip_empty_values
 
 from ..model import hep, hep2marc
+
+from isbnlib._exceptions import NotValidISBNError
 
 
 @hep.over('references', '^999C5')
@@ -36,24 +40,31 @@ def references(self, key, value):
     value = utils.force_list(value)
 
     def get_value(value):
-        recid = None
-        number = ''
-        year = ''
-        if '0' in value:
+        # FIXME: There might be multiple 0, o or y values. I.e. they might be
+        # tuples, not strings.
+        isbn = ''
+        try:
+            recid = int(value.get('0', ''))
+        except (TypeError, ValueError):
+            # FIXME: log.warning("Invalid value(s) in recid")
+            recid = None
+        try:
+            number = int(value.get('o', ''))
+        except (TypeError, ValueError):
+            # FIXME: log.warning("Invalid value(s) in label number")
+            number = ''
+        try:
+            year = int(value.get('y', ''))
+        except (TypeError, ValueError):
+            # FIXME: log.warning("Invalid value(s) in year")
+            year = ''
+        if 'i' in value:
             try:
-                recid = int(value.get('0'))
-            except:
+                isbn = normalize_isbn(value['i'])
+            except NotValidISBNError:
+                # FIXME: log.warning("Invalid ISBN")
                 pass
-        if 'o' in value:
-            try:
-                number = int(value.get('o'))
-            except:
-                pass
-        if 'y' in value:
-            try:
-                year = int(value.get('y'))
-            except:
-                pass
+
         return {
             'record': inspire_dojson_utils.get_record_ref(recid, 'literature'),
             'texkey': value.get('1'),
@@ -63,7 +74,7 @@ def references(self, key, value):
             'authors': utils.force_list(value.get('h')),
             'misc': utils.force_list(value.get('m')),
             'number': number,
-            'isbn': value.get('i'),
+            'isbn': isbn,
             'publisher': utils.force_list(value.get('p')),
             'maintitle': value.get('q'),
             'report_number': utils.force_list(value.get('r')),

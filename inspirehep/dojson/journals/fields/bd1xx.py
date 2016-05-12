@@ -25,18 +25,42 @@
 from dojson import utils
 from inspirehep.dojson import utils as inspire_dojson_utils
 
+from idutils import normalize_issn
+
+from inspirehep.dojson.utils import strip_empty_values
+
 from ..model import journals
 
 
 @journals.over('issn', '^022..')
 @utils.for_each_value
-@utils.filter_values
 def issn(self, key, value):
-    """ISSN Statement."""
-    return {
-        "value": value.get("a"),
-        "material": value.get("b")
-    }
+    """ISSN and its medium with additional comment."""
+    issn = {}
+    if 'a' in value:
+        issn['value'] = normalize_issn(value.get('a', ''))
+    else:
+        return issn
+    if 'b' in value:
+        issn['medium'] = value.get('b', '').lower()
+        if issn['medium'] == 'print':
+            pass
+        elif issn['medium'] == 'online':
+            pass
+        elif 'electronic' in issn['medium']:
+            issn['medium'] = 'online'
+            issn['comment'] = 'electronic'
+        elif 'ebook' in issn['medium']:
+            issn['medium'] = 'online'
+            issn['comment'] = 'ebook'
+        elif 'hardcover' in issn['medium']:
+            issn['medium'] = 'print'
+            issn['comment'] = 'hardcover'
+        else:
+            issn['comment'] = issn['medium']
+            issn['medium'] = ''
+
+    return strip_empty_values(issn)
 
 
 @journals.over('coden', '^030..')
