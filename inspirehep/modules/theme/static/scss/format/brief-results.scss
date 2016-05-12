@@ -18,6 +18,9 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
+$facet-gray: #7e8d8e;
+$facet-label-gray: #edf3f3;
+
 .custom-panel {
   margin-bottom: 0px;
   border: 0px;
@@ -26,7 +29,7 @@
 a.link-to-pdf, button.dropdown-cite, a#cite-all-format {
   background-color: $clouds;
   border: 0px;
-  color: $grey;
+  color: $facet-gray;
   font-weight: 500;
 }
 
@@ -50,10 +53,18 @@ hr {
 .left-column {
   border-right: 1px solid $silver;
 
+  .col-md-1 {
+    width: 3%;
+  }
+
+  .col-md-11 {
+    width: 97%;
+  }
+
   .custom-h {
     margin-top: 0;
-    font-size: 16px;
     margin-bottom: 7px;
+    font-size: 16px;
   }
 
   .eprint, .authors {
@@ -61,7 +72,7 @@ hr {
   }
 
   .authors #record-date {
-    color: $grey;
+    color: $facet-gray;
   }
 
   div {
@@ -179,11 +190,11 @@ hr {
 }
 
 .facet-container {
-  color: $grey;
+  color: $facet-gray;
 
   .facet-label {
-    background-color: $clouds;
-    color: $concrete;
+    background-color: $facet-label-gray;
+    color: $facet-gray;
     letter-spacing: 0.04em;
   }
 
@@ -312,10 +323,12 @@ hr {
   padding: 0;
 
   .left-column {
+    width: 80%;
     padding: 10px 5px 10px 25px;
   }
 
   .right-column {
+    width: 20%;
     padding: 10px;
     height: 100%;
     position: absolute;
@@ -323,7 +336,7 @@ hr {
 
     .citations-references {
       position: absolute;
-      bottom: 15px;
+      bottom: 25px;
       font-size: 13px;
 
       .glyphicon, .fa {
@@ -623,7 +636,7 @@ i.fa-chevron-right.facet-slider {
   }
 }
 
-.journals
+.journals,
 .brief-record-details {
   font-size: 13px;
 }
@@ -700,4 +713,15 @@ div > .modal-dialog {
 
 .cite-modal {
   min-height:237px;
+}
+
+#search-results {
+
+  & > .col-md-3 {
+    width: 22%;
+  }
+
+  & > .col-md-9 {
+    width: 78%;
+  }
 }
