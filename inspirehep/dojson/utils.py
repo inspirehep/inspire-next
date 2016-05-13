@@ -34,6 +34,8 @@ try:
 except ImportError:
     current_app = None
 
+from inspirehep.config import ARXIV_TO_INSPIRE_CATEGORY_MAPPING as ARXIV_MAP
+
 
 def legacy_export_as_marc(json, tabsize=4):
     """Create the MARCXML representation using the producer rules."""
@@ -359,3 +361,21 @@ def match_us_state(state_string):
                     if state_string == spelling:
                         return code
     return None
+
+
+def classify_field(value):
+    """ Classifies raw string from field field as one of the values
+    of ARXIV_MAP.
+    """
+    if not value:
+        return None
+    elif not isinstance(value, (str, unicode)):
+        return None
+    else:
+        casted_value = value.upper()
+        for rank_name, rank_mapping in ARXIV_MAP.iteritems():
+            if rank_name.upper() == casted_value:
+                return rank_mapping
+            elif rank_mapping.upper() == casted_value:
+                return rank_mapping
+        return 'Other'

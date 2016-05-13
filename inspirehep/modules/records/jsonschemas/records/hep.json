@@ -487,35 +487,8 @@
             },
             "type": "array"
         },
-        "subject_terms": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "enum": [
-                            "automatically added based on DCC, PPF, DK",
-                            "submitter",
-                            "INSPIRE"
-                        ],
-                        "type": "string"
-                    },
-                    "term": {
-                        "type": "string"
-                    },
-                    "scheme": {
-                        "enum": [
-                            "INSPIRE",
-                            "arXiv",
-                            "APS",
-                            "PoS",
-                            "Elsevier"
-                        ],
-                        "type": "string"
-                    }
-                }
-            },
-            "type": "array"
+        "field_categories": {
+            "$ref": "elements/field.json"
         },
         "thesaurus_terms": {
             "uniqueItems": true,

@@ -29,33 +29,13 @@ from inspirehep.dojson import utils as inspire_dojson_utils
 from ..model import hep, hep2marc
 
 
-@hep.over('subject_terms', '^650[1_][_7]')
-def subject_terms(self, key, value):
-    """Subject Added Entry-Topical Term."""
-    value = utils.force_list(value)
-
-    def get_value(value):
-        return {
-            'term': value.get('a'),
-            'scheme': value.get('2'),
-            'source': value.get('9'),
-        }
-    subject_terms = self.get('subject_terms', [])
-
-    for val in value:
-        subject_terms.append(get_value(val))
-
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
-        subject_terms)
-
-
-@hep2marc.over('65017', 'subject_terms')
+@hep2marc.over('65017', 'field_categories')
 @utils.for_each_value
 @utils.filter_values
 def subject_terms2marc(self, key, value):
     """Subject Added Entry-Topical Term."""
     return {
-        'a': value.get('term'),
+        'a': value.get('_term'),
         '2': value.get('scheme'),
         '9': value.get('source'),
     }

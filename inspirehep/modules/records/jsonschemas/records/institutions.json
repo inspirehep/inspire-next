@@ -17,14 +17,8 @@
           "type": "array",
           "uniqueItems": true
         },
-        "content_classification": {
-            "items": {
-                "title": "Content classification",
-                "type": "string"
-            },
-            "title": "Content classification",
-            "type": "array",
-            "uniqueItems": true
+        "field_categories": {
+            "$ref": "elements/field.json"
         },
         "department": {
             "description": "Subordinate unit in native language",

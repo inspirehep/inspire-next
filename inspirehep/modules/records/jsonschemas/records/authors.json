@@ -194,44 +194,7 @@
             }
         },
         "field_categories": {
-            "uniqueItems": true,
-            "items": {
-                "name": {
-                    "type": "string",
-                    "enum": [
-                            "acc-phys",
-                            "astro-ph",
-                            "atom-ph",
-                            "chao-dyn",
-                            "climate",
-                            "comp",
-                            "cond-mat",
-                            "genl-th",
-                            "gr-qc",
-                            "hep-ex",
-                            "hep-lat",
-                            "hep-ph",
-                            "hep-th",
-                            "instr",
-                            "librarian",
-                            "math",
-                            "math-ph",
-                            "med-phys",
-                            "nlin",
-                            "nucl-ex",
-                            "nucl-th",
-                            "physics",
-                            "plasma-phys",
-                            "q-bio",
-                            "quant-ph",
-                            "ssrl",
-                            "other"
-                        ],
-                    "description": "FIXME: Time to revise this list?"
-                }
-            },
-            "type": "array",
-            "description": "Contains field category."
+            "$ref": "elements/field.json"
         },
         "prizes": {
             "uniqueItems": true,

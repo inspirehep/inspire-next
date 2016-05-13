@@ -272,26 +272,6 @@ def positions2marc(self, key, value):
     }
 
 
-@hepnames.over('field_categories', '^65017')
-def field_categories(self, key, value):
-    """Field categories."""
-    def get_value(value):
-        if isinstance(value, dict):
-            name = value.get('a', '')
-        else:
-            name = value
-        return name
-
-    value = utils.force_list(value)
-    field_categories = self.get('field_categories', [])
-    for element in value:
-        if element.get('a'):
-            el = utils.force_list(element.get('a'))
-            for val in el:
-                field_categories.append(get_value(val))
-    return field_categories
-
-
 @hepnames2marc.over('65017', '^field_categories$')
 @utils.for_each_value
 def field_categories2marc(self, key, value):

@@ -140,10 +140,3 @@ def rank(self, key, value):
 def experiments(self, key, value):
     """Related experiments"""
     return value.get('e')
-
-
-@jobs.over('research_area', '^65017')
-@utils.for_each_value
-def research_area(self, key, value):
-    """Research area"""
-    return value.get('a')

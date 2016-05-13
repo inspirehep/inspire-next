@@ -76,12 +76,12 @@ def alternative_titles(self, key, value):
     titles = {}
     titles['title'] = value.get('a')
     titles['searchable_title'] = value.get('b')
-
     return titles
 
 
 @conferences.over('contact_details', '^270')
 @utils.for_each_value
+@utils.filter_values
 def contact_details(self, key, value):
     """Map 270 field to contact details and extra_place_info"""
     self.setdefault('extra_place_info', [])
@@ -99,17 +99,6 @@ def contact_details(self, key, value):
     return {
         'name': name if isinstance(name, six.string_types) else None,
         'email': email if isinstance(email, six.string_types) else None
-    }
-
-
-@conferences.over('field_code', '^65017')
-@utils.for_each_value
-@utils.filter_values
-def field_code(self, key, value):
-    """Field code."""
-    return {
-        'value': value.get('a'),
-        'source': value.get('9')
     }
 
 

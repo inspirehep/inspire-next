@@ -26,7 +26,7 @@ import six
 from dojson import utils
 
 from inspirehep.dojson import utils as inspire_dojson_utils
-from inspirehep.dojson.utils import strip_empty_values
+from inspirehep.dojson.utils import strip_empty_values, classify_field
 
 from ..hep.model import hep, hep2marc
 from ..conferences.model import conferences
@@ -336,16 +336,56 @@ def urls(self, key, value):
     urls = []
     value = utils.force_list(value)
     for val in value:
-        if isinstance(val.get('y'), six.string_types):
-            description = val.get('y')
-        elif isinstance(val.get('y'), tuple):
-            description = val.get('y')[0]
-            # FIXME: raise Exception("multiple y values")
-        else:
-            description = None
-        if isinstance(val.get('u'), six.string_types):
-            urls.append({"value": val.get('u'), "description": description})
-        elif isinstance(val.get('u'), tuple):
-            for u in val.get("u"):
-                urls.append({"value": u, "description": description})
-    return urls
+        url_dict = {}
+        description = utils.force_list(val.get('y'))
+        url_values = utils.force_list(val.get('u'))
+        for u in url_values:
+            url_dict = {}
+            url_dict['value'] = u
+            if description:
+                url_dict['description'] = description[0]
+            urls.append(url_dict)
+
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(urls)
+
+
+@hepnames.over('field_categories', '^65017')
+@conferences.over('field_categories', '^65017')
+@institutions.over('field_categories', '^65017')
+@jobs.over('field_categories', '^65017')
+@experiments.over('field_categories', '^65017')
+@hep.over('field_categories', '^650[1_][_7]')
+def field_categories(self, key, value):
+    """Field categories."""
+    value = utils.force_list(value)
+    field_categories = self.get('field_categories', [])
+    for element in value:
+        _scheme = element.get('2')
+        if isinstance(_scheme, (list, tuple)):
+            _scheme = _scheme[0]
+            # FIXME: raise Exception("Multiple schemes")
+        source = element.get('9')
+
+        if 'a' in element:
+            el = utils.force_list(element['a'])
+            for val in el:
+                field_dict = {}
+                corrected_val = classify_field(val)
+                if corrected_val:
+                    field_dict['term'] = corrected_val
+                    field_dict['_term'] = val
+                    field_dict['scheme'] = 'INSPIRE'
+                    if _scheme:
+                        field_dict['_scheme'] = _scheme
+                        # FIXME: right now '_scheme' is what it says in the
+                        # MARCXML. Should the original term's real scheme be
+                        # detected and put here instead?
+                    if source:
+                        if 'automatically' in source:
+                            source = 'INSPIRE'
+                        field_dict['source'] = source
+                    field_categories.append(field_dict)
+                # else:
+                    # raise Exception("Field value type should be str or unicode")
+
+    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(field_categories)

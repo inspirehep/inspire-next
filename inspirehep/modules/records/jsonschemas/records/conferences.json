@@ -59,23 +59,8 @@
             "type": "array",
             "uniqueItems": true
         },
-        "field_code": {
-            "items": {
-                "description": "FIXME: shall we normalize this to the usual arXiv?",
-                "properties": {
-                        "value": {
-                            "title": "Field code",
-                            "type": "string"
-                        },
-                        "source": {
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                },
-            "title": "Field codes",
-            "type": "array",
-            "uniqueItems": true
+        "field_categories": {
+            "$ref": "elements/field.json"
         },
         "keywords": {
             "properties": {

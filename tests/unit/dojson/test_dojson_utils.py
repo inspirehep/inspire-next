@@ -144,3 +144,33 @@ def test_parse_institution_conference_address():
     ]
 
     assert expected == results
+
+
+def test_classify_field():
+    """Test research field code mapping from arXiv to Inspire."""
+    raw_field_codes = ['HEP-TH', 'Gravitation and Cosmology', 'Super Cool Physics']
+    expected = ['Theory-HEP', 'Gravitation and Cosmology', 'Other']
+    result = [utils.classify_field(field) for field in raw_field_codes]
+
+    assert expected == result
+
+def test_classify_field_not_a_value():
+    """Test research field code mapping from arXiv to Inspire.
+
+    Case where input value is equivalent to None."""
+    raw_field_codes = [None, '']
+    expected = [None, None]
+    result = [utils.classify_field(field) for field in raw_field_codes]
+
+    assert expected == result
+
+def test_classify_field_not_a_string():
+    """Test research field code mapping from arXiv to Inspire.
+
+    Case where input value is not a string (or unicode).
+    """
+    raw_field_codes = [('HEP-TH',), ['Gravitation and Cosmology'], 123]
+    expected = [None, None, None]
+    result = [utils.classify_field(field) for field in raw_field_codes]
+
+    assert expected == result

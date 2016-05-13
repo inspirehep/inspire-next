@@ -109,30 +109,8 @@
             "type": "array",
             "uniqueItems": true
         },
-        "research_area": {
-            "items": {
-                "enum": [
-                    "usual",
-                    "arXiv",
-                    "list",
-                    "physics.ins-det",
-                    "astro-ph",
-                    "nucl-th",
-                    "hep-lat",
-                    "physics",
-                    "hep-th",
-                    "hep-ex",
-                    "gr-qc",
-                    "hep-ph",
-                    "physics.acc-phys",
-                    "nucl-ex",
-                    "physics-other"
-                ],
-                "type": "string"
-            },
-            "title": "Research area",
-            "type": "array",
-            "uniqueItems": true
+        "field_categories": {
+            "$ref": "elements/field.json"
         },
         "urls": {"$ref": "elements/urls.json"}
     },
