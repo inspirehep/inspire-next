@@ -221,26 +221,6 @@ def remove_duplicates_from_dict(value):
 
 
 @blueprint.app_template_filter()
-def bibtex(record):
-    return Bibtex(record).format()
-
-
-@blueprint.app_template_filter()
-def latex(record, latex_format):
-    return Latex(record, latex_format).format()
-
-
-@blueprint.app_template_filter()
-def cv_latex(record):
-    return Cv_latex(record).format()
-
-
-@blueprint.app_template_filter()
-def cv_latex_html_text(record, format_type, separator):
-    return Cv_latex_html_text(record, format_type, separator).format()
-
-
-@blueprint.app_template_filter()
 def conference_date(record):
     if 'date' in record and record['date']:
         return record['date']
