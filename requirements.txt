@@ -26,6 +26,8 @@
 -e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3-inspire#egg=invenio-query-parser==0.6.0
 -e git+https://github.com/inspirehep/invenio-pidstore.git#egg=invenio-pidstore
 
+-e git+https://github.com/inveniosoftware/invenio-collections.git@master#egg=invenio-collections==1.0.0a3.dev20160204
+
 # Workflows and Holding Pen related dependencies
 -e git+https://github.com/inveniosoftware/invenio-oaiharvester.git#egg=invenio-oaiharvester
 -e git+https://github.com/inveniosoftware/invenio-classifier.git#egg=invenio-classifier
