@@ -34,7 +34,7 @@ define(function(require, exports, module) {
   var SynchronizedField = require("js/literaturesuggest/synchronized_field");
   require("js/literaturesuggest/message_box");
   require("js/literaturesuggest/fields_group");
-  require('ui/jquery-ui');
+  require('jquery.ui');
   // require('ui/effect-blind');
   require("bootstrap-multiselect");
   require("bootstrap");
@@ -155,7 +155,6 @@ define(function(require, exports, module) {
         .fieldsGroup({
           onEmpty: function enableProceedingsBox() {
             that.$nonpublic_note.removeAttr('disabled');
-            $('.tooltip-wrapper').tooltip(); // trigger the tooltip
             $('.tooltip-wrapper').tooltip('destroy'); // destroy the tooltip
           },
           onNotEmpty: function disableProceedingsBox() {

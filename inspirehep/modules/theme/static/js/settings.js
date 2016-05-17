@@ -49,8 +49,7 @@ require.config({
     'inspirehep-search': 'node_modules/inspirehep-search-js/dist/inspirehep-search',
     'invenio-search': 'node_modules/invenio-search-js/dist/invenio-search-js',
     jquery: 'node_modules/jquery/jquery',
-    'jquery.ui': 'node_modules/jquery-ui',
-    ui: "node_modules/jquery-ui",
+    'jquery.ui': 'node_modules/jquery-ui/jquery-ui',
     moment: 'node_modules/moment/moment',
     'ngclipboard': 'node_modules/ngclipboard/src/ngclipboard',
     'profile': 'js/authors/profile',
@@ -76,7 +75,7 @@ require.config({
       deps: ['angular']
     },
     bootstrap: {
-      deps: ['jquery']
+      deps: ['jquery', 'jquery.ui']
     },
     'bootstrap-datetimepicker': {
       deps: ['jquery', 'bootstrap', 'moment'],
@@ -109,7 +108,7 @@ require.config({
       deps: ['jquery'],
       exports: 'Bloodhound'
     },
-    'ui': {
+    'jquery.ui': {
         deps: ['jquery']
     }
   }
