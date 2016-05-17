@@ -35,6 +35,8 @@ require.config({
     'bucketsjs': 'node_modules/buckets-js/dist/buckets',
     clipboard: 'node_modules/clipboard/dist/clipboard',
     d3: "node_modules/d3/d3",
+    'd3-tip': 'node_modules/d3-tip/index',
+    'd3wrapper': 'js/d3-wrapper',
     datatables: 'node_modules/datatables.net-bs/js/dataTables.bootstrap',
     'datatables.net': 'node_modules/datatables.net/js/jquery.dataTables',
     feedback: 'js/feedback/feedback',
@@ -43,6 +45,7 @@ require.config({
     hogan: 'node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.amd',
     inspirehep: 'node_modules/inspirehep-js/dist/inspirehep',
     'inspirehep-clipboard': 'js/inspire_clipboard',
+    'impact-graphs': 'node_modules/impact-graphs/impact-graph',
     'inspirehep-search': 'node_modules/inspirehep-search-js/dist/inspirehep-search',
     'invenio-search': 'node_modules/invenio-search-js/dist/invenio-search-js',
     jquery: 'node_modules/jquery/jquery',
@@ -82,6 +85,10 @@ require.config({
     'bootstrap-multiselect': {
       deps: ['jquery'],
       exports: '$.fn.multiselect'
+    },
+    'impact-graphs': {
+      deps: ['d3wrapper'],
+      exports: 'ImpactGraph'
     },
     'inspirehep': {
       deps: ['angular', 'angular-ui-bootstrap', 'ngclipboard']
