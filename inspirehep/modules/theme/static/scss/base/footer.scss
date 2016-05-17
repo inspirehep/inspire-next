@@ -22,8 +22,12 @@
  /* Footer styles
 -------------------------------------------------- */
 
-.custom-footer .list-unstyled > li {
-    color: #ccc;
+.custom-footer .list-unstyled {
+    list-style: none;
+    li {
+        color: $silver;
+        line-height: 1.5;
+    }
 }
 
 section.custom-footer {
@@ -33,6 +37,20 @@ section.custom-footer {
     color: #f6f6f6;
     border: 1px solid #202d3b;
     a {
-        color: $blue-light;
+        color: white;
     }
+}
+
+.custom-footer .footer-divider {
+    border: 1px solid rgba(255,255,255,0.1);
+    border-width: 1px 0 0 0;
+}
+
+.footer-heading {
+    color: lighten($navbar-inverse-bg, 40%);
+}
+
+.custom-footer .row .col-xs-4 {
+    padding-left: 10px;
+    padding-right: 10px;
 }

@@ -28,42 +28,34 @@
 #}
 
 <section class="custom-footer">
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-6 col-sm-6 col-md-8 col-lg-8">
-        <div class="row">
-          <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-            <ul class="list-unstyled">
-              <li>
-                <a class="footer" href="http://inspirehep.net/info/general/terms-of-use">{{- _("Terms of use") -}}</a>
-              </li>
-              <li>
-                <a class="footer" href="http://inspirehep.net/info/general/privacy-policy">{{- _("Privacy policy") -}}</a>
-              </li>
-            </ul>
-          </div>
-          <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-md-offset-2">
-            <ul class="list-unstyled">
-              <li>
-                <a class="footer" href="https://twitter.com/inspirehep" target="_blank">Twitter</a>
-              </li>
-              <li>
-                <a class="footer" href="http://blog.inspirehep.net/" target="_blank">Blog</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4 text-right">
-        <ul class="list-unstyled">
-          <li>
-            <a class="footer" href="{{ url_for('inspirehep_theme.index') }}">INSPIRE Labs</a>
-          </li>
-          <li>
-            {{ _("Powered by") }} <a class="footer" href="http://invenio-software.org/" target="_blank">Invenio</a>
-          </li>
-        </ul>
-      </div>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-4">
+      <h4 class="footer-heading">About INSPIRE</h4>
+      <hr class="footer-divider">
+      <ul class="list-unstyled">
+        <li><a class="footer" href="http://inspirehep.net/info/general/terms-of-use">{{- _("Terms of use") -}}</a></li>
+        <li><a class="footer" href="http://inspirehep.net/info/general/privacy-policy">{{- _("Privacy policy") -}}</a></li>
+      </ul>
+    </div>
+
+    <div class="col-xs-4">
+      <h4 class="footer-heading">Follow Us</h4>
+      <hr class="footer-divider">
+      <ul class="list-unstyled">
+        <li><a class="footer" href="https://twitter.com/inspirehep" target="_blank">Twitter</a></li>
+        <li><a class="footer" href="http://blog.inspirehep.net/" target="_blank">Blog</a></li>
+      </ul>
+    </div>
+
+    <div class="col-xs-4">
+      <ul class="list-unstyled">
+        <h4 class="footer-heading">Technology</h4>
+      <hr class="footer-divider">
+        <li><a class="footer" href="{{ url_for('inspirehep_theme.index') }}">INSPIRE Labs</a></li>
+        <li>{{ _("Powered by") }} <a class="footer" href="http://invenio-software.org/" target="_blank">Invenio</a></li>
+      </ul>
     </div>
   </div>
+</div>
 </section>
