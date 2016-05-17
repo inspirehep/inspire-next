@@ -49,7 +49,7 @@ def search():
         ctx['search_api'] = '/api/authors/'
         return render_template('search/search_authors.html', **ctx)
     if collection == 'data':
-        ctx['search_api'] = '/api/data/'
+        ctx['search_api'] = 'https://hepdata.net/search/'
         return render_template('search/search_data.html', **ctx)
     if collection == 'experiments':
         ctx['search_api'] = '/api/experiments/'

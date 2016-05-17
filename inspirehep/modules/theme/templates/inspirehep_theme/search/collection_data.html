@@ -26,25 +26,7 @@
     </div>
     {% block search_bar %}
       {{ super() }}
-      <script type="text/javascript">
-        window.onload = function () {
-          // Disable search bar
-          document.getElementById('search-form-input').disabled = true;
-          document.getElementById('search-form-button').disabled = true;
-        }
-      </script>
     {% endblock search_bar %}
   </div>
 
-  <div id="collection-data-not-available">
-    <div class="row">
-      <div class="col-md-12">
-        The data collection is not yet available on INSPIRE labs.<br/>
-        Follow us on <a href="https://twitter.com/inspirehep">Twitter</a> and through our <a href="http://blog.inspirehep.net/">blog</a> to get updated when the newly designed collection is ready.
-      </div>
-      <div class="col-md-12">
-        <a type="button" class="btn btn-data" href="http://inspirehep.net/collection/data">Access data on INSPIRE-HEP</a>
-      </div>
-    </div>
-  </div>
 {% endblock %}
