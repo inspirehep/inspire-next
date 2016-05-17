@@ -78,7 +78,8 @@ detailedjs = NpmBundle(
 )
 
 css = NpmBundle(
-    "scss/inspirehep.scss",
+    "node_modules/angular-loading-bar/build/loading-bar.css",
+    "scss/inspirehep.scss",  # Keep last to override previous stylesheets
     filters="scss, cleancss",
     output="gen/inspirehep.%(version)s.css",
     depends="scss/**/*.scss",

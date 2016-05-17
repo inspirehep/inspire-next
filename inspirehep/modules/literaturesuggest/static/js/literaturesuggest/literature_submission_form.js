@@ -155,6 +155,7 @@ define(function(require, exports, module) {
         .fieldsGroup({
           onEmpty: function enableProceedingsBox() {
             that.$nonpublic_note.removeAttr('disabled');
+            $('.tooltip-wrapper').tooltip(); // trigger the tooltip
             $('.tooltip-wrapper').tooltip('destroy'); // destroy the tooltip
           },
           onNotEmpty: function disableProceedingsBox() {
