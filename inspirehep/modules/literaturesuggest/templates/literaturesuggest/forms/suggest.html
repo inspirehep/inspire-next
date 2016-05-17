@@ -53,6 +53,11 @@
 
 {% block javascript %}
 {{ super() }}
+
+{%- assets "inspirehep_literaturesuggest_js" %}
+<script src="{{ ASSET_URL }}"></script>
+{%- endassets %}
+
 <script type="text/javascript">
 require(
   [
@@ -97,8 +102,4 @@ require(
   });
 });
 </script>
-
-{%- assets "inspirehep_literaturesuggest_js" %}
-<script src="{{ ASSET_URL }}"></script>
-{%- endassets %}
 {% endblock javascript %}
