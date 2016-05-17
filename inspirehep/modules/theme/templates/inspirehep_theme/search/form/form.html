@@ -17,12 +17,9 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-
 {# Collect the nav links, forms, and other content for toggling #}
 <form name="search" action="{{url_for('inspirehep_search.search')}}" method="get" role="search" id="searchform">
-  {%- if collection is defined %}
-  <input type="hidden" name="cc" value="{{collection}}">
-  {%- endif %}
+  <input type="hidden" name="cc" value="{{collection_name}}">
   <div class="nav navbar-nav navbar-form">
     <div class="input-group" id="searchform-input-group">
       {% include "inspirehep_theme/search/form/controls.html" %}
