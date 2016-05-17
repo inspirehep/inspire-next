@@ -19,10 +19,11 @@
 
 {%- extends "inspirehep_theme/page.html" -%}
 
+{% set collection_name = collection| sanitize_collection_name %}
 
 {% block body %}
   {% block search_bar %}
-    <div id="search-bar" class="{{collection}}">
+    <div id="search-bar" class="{{collection_name}}">
       {% include 'inspirehep_theme/search/form/index.html' %}
     </div>
   {% endblock %}
