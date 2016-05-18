@@ -22,11 +22,20 @@
 
 """MARC 21 model definition."""
 
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
+
+from inspirehep.dojson.utils import (
+    classify_rank,
+    get_record_ref
+)
+
 import six
 
 from dojson import utils
-
-from inspirehep.dojson import utils as inspire_dojson_utils
 
 from ..model import jobs
 
@@ -79,7 +88,7 @@ def institution(self, key, value):
         recid = int(value.get('z'))
     return {
         'curated_relation': curated_relation,
-        'record': inspire_dojson_utils.get_record_ref(recid, 'istitutions'),
+        'record': get_record_ref(recid, 'institutions'),
         'name': value.get('a'),
     }
 
@@ -119,15 +128,11 @@ def rank(self, key, value):
         raw_rank = val.get('a')
         if isinstance(raw_rank, six.string_types):
             _ranks.append(raw_rank)
-            ranks.append(
-                inspire_dojson_utils.classify_rank(raw_rank)
-            )
+            ranks.append(classify_rank(raw_rank))
         elif isinstance(raw_rank, tuple):
             for rank in raw_rank:
                 _ranks.append(rank)
-                ranks.append(
-                    inspire_dojson_utils.classify_rank(rank)
-                )
+                ranks.append(classify_rank(rank))
         else:
             pass
 

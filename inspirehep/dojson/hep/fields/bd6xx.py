@@ -22,9 +22,17 @@
 
 """MARC 21 model definition."""
 
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
+from inspirehep.dojson.utils import (
+    remove_duplicates_from_list_of_dicts,
+    get_record_ref)
 
 from ..model import hep, hep2marc
 
@@ -56,7 +64,7 @@ def free_keywords(self, key, value):
     for val in value:
         free_keywords.append(get_value(val))
 
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
+    return remove_duplicates_from_list_of_dicts(
         free_keywords)
 
 
@@ -86,7 +94,7 @@ def accelerator_experiments(self, key, value):
     if recid:
         curated_relation = True
     return {
-        'record': inspire_dojson_utils.get_record_ref(recid, 'experiments'),
+        'record': get_record_ref(recid, 'experiments'),
         'accelerator': value.get('a'),
         'experiment': value.get('e'),
         'curated_relation': curated_relation
@@ -125,7 +133,7 @@ def thesaurus_terms(self, key, value):
     for element in value:
         thesaurus_terms.append(get_value(element))
 
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
+    return remove_duplicates_from_list_of_dicts(
         thesaurus_terms)
 
 

@@ -22,12 +22,21 @@
 
 """MARC 21 model definition."""
 
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
+
+from inspirehep.dojson.utils import (
+    get_recid_from_ref,
+    get_record_ref,
+    remove_duplicates_from_list,
+    strip_empty_values)
+
 from dojson import utils
 
 from idutils import normalize_isbn
-
-from inspirehep.dojson import utils as inspire_dojson_utils
-from inspirehep.dojson.utils import strip_empty_values
 
 from ..model import hep, hep2marc
 
@@ -66,7 +75,7 @@ def references(self, key, value):
                 pass
 
         return {
-            'record': inspire_dojson_utils.get_record_ref(recid, 'literature'),
+            'record': get_record_ref(recid, 'literature'),
             'texkey': value.get('1'),
             'doi': value.get('a'),
             'collaboration': utils.force_list(value.get('c')),
@@ -89,8 +98,7 @@ def references(self, key, value):
     for val in value:
         references.append(get_value(val))
 
-    return inspire_dojson_utils.remove_duplicates_from_list(
-        strip_empty_values(references))
+    return remove_duplicates_from_list(strip_empty_values(references))
 
 
 @hep2marc.over('999C5', 'references')
@@ -99,7 +107,7 @@ def references(self, key, value):
 def references2marc(self, key, value):
     """Produce list of references."""
     return {
-        '0': inspire_dojson_utils.get_recid_from_ref(value.get('record')),
+        '0': get_recid_from_ref(value.get('record')),
         '1': value.get('texkey'),
         'a': value.get('doi'),
         'c': value.get('collaboration'),

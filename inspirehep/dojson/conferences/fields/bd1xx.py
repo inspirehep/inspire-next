@@ -22,11 +22,19 @@
 
 """MARC 21 model definition."""
 
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
+
+from inspirehep.dojson.utils import (
+    parse_conference_address,
+    remove_duplicates_from_list_of_dicts)
+
 import six
 
 from dojson import utils
-
-from inspirehep.dojson import utils as inspire_dojson_utils
 
 from ..model import conferences
 
@@ -60,7 +68,7 @@ def acronym(self, key, value):
         self.setdefault('address', [])
         raw_addresses = utils.force_list(value.get('c'))
         for raw_address in raw_addresses:
-            address = inspire_dojson_utils.parse_conference_address(raw_address)
+            address = parse_conference_address(raw_address)
             self['address'].append(address)
 
     return utils.force_list(value.get('e'))
@@ -114,8 +122,7 @@ def keywords(self, key, value):
     keywords = self.get('keywords', [])
     for val in value:
         keywords.append(get_value(val))
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
-        keywords)
+    return remove_duplicates_from_list_of_dicts(keywords)
 
 
 @conferences.over('nonpublic_note', '^595')

@@ -3,19 +3,28 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
+
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
 
 from dojson.contrib.marc21.utils import create_record
 from inspirehep.dojson.experiments import experiments
@@ -103,7 +112,7 @@ def test_contact_details_from_multiple_marcxml_270():
 
 def test_experiment_name_from_marcxml_119():
     """Test experiment name."""
-    snippet = ( 
+    snippet = (
         '<record> '
         '<datafield tag="119" ind1=" " ind2=" "> '
         '<subfield code="a">CERN-ALPHA</subfield> '
@@ -113,10 +122,10 @@ def test_experiment_name_from_marcxml_119():
 
     record = strip_empty_values(experiments.do(create_record(snippet)))
     assert record['experiment_name'][0]['title'] == 'CERN-ALPHA'
-    
+
 def test_experiment_name_and_affiliation_from_marcxml_119():
     """Test experiment name and affiliation."""
-    snippet = ( 
+    snippet = (
         '<record> '
         '<datafield tag="119" ind1=" " ind2=" "> '
         '<subfield code="a">CERN-ALPHA</subfield> '
@@ -132,7 +141,7 @@ def test_experiment_name_and_affiliation_from_marcxml_119():
 
 def test_experiment_name_and_affiliation_from_marcxml_119_two_u():
     """Test experiment name with two affiliations."""
-    snippet = ( 
+    snippet = (
         '<record> '
         '<datafield tag="119" ind1=" " ind2=" "> '
         '<subfield code="a">LATTICE-UKQCD</subfield> '
@@ -149,7 +158,7 @@ def test_experiment_name_and_affiliation_from_marcxml_119_two_u():
 
 def test_titles_from_marcxml_245():
     """Test experiment title (long name)."""
-    snippet = ( 
+    snippet = (
         '<record> '
         '<datafield tag="245" ind1=" " ind2=" "> '
         '<subfield code="a">The ALPHA experiment</subfield> '
@@ -164,7 +173,7 @@ def test_titles_from_marcxml_245():
 
 def test_title_variants__from_marcxml_419():
     """Test experiment title variants."""
-    snippet = ( 
+    snippet = (
         '<record> '
         '<datafield tag="419" ind1=" " ind2=" "> '
         '<subfield code="a">ALPHA</subfield> '
@@ -179,7 +188,7 @@ def test_title_variants__from_marcxml_419():
 
 def test_multiple_title_variants__from_marcxml_419():
     """Test experiment title variants."""
-    snippet = ( 
+    snippet = (
         '<record> '
         '<datafield tag="419" ind1=" " ind2=" "> '
         '<subfield code="a">P-326</subfield> '

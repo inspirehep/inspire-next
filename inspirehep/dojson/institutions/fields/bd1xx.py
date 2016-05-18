@@ -22,9 +22,16 @@
 
 """MARC 21 model definition."""
 
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
+
+from inspirehep.dojson.utils import parse_institution_address
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
 from ..model import institutions
 
 
@@ -87,15 +94,12 @@ def address(self, key, value):
     """Address info."""
     country_code = value.get('g')
     if isinstance(country_code, (list, tuple)):
-        country_code = list(set(country_code))
+        country_code = set(country_code)
         if len(country_code) == 1:
-            country_coude = country_code.pop()
-    return inspire_dojson_utils.parse_institution_address(value.get('a'),
-                                                          value.get('b'),
-                                                          value.get('c'),
-                                                          value.get('d'),
-                                                          value.get('e'),
-                                                          country_code)
+            country_code = country_code.pop()
+    return parse_institution_address(value.get('a'), value.get('b'),
+                                     value.get('c'), value.get('d'),
+                                     value.get('e'), country_code)
 
 
 @institutions.over('field_activity', '^372..')

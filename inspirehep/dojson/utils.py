@@ -19,22 +19,31 @@
 
 """DoJSON related utilities."""
 
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
+
 import six
 import re
 
 from dojson import utils
 
-from geo_helpers import (country_to_iso_code, countries_alternative_spellings,
-                         us_state_to_iso_code, us_states_alternative_spellings,
-                         iso_code_to_country_name, countries_alternative_codes,
-                         south_korean_cities)
+from inspirehep.config import ARXIV_TO_INSPIRE_CATEGORY_MAPPING as ARXIV_MAP
+
+from inspirehep.dojson.geo_helpers import (country_to_iso_code,
+                                           countries_alternative_spellings,
+                                           us_state_to_iso_code,
+                                           us_states_alternative_spellings,
+                                           iso_code_to_country_name,
+                                           countries_alternative_codes,
+                                           south_korean_cities)
 
 try:
     from flask import current_app
 except ImportError:
     current_app = None
-
-from inspirehep.config import ARXIV_TO_INSPIRE_CATEGORY_MAPPING as ARXIV_MAP
 
 
 def legacy_export_as_marc(json, tabsize=4):
@@ -313,7 +322,7 @@ def parse_institution_address(address, city, state_province,
 
 
 def match_country_code(original_code):
-    if isinstance(original_code, str):
+    if isinstance(original_code, six.string_types):
         original_code = original_code.upper()
         if iso_code_to_country_name.get(original_code):
             return original_code

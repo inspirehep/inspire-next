@@ -1536,7 +1536,7 @@ def test_get_url_urls_without_value():
     assert expected == result
 
 
-def test_get_url_one_url_not_a_list_to_an_image():
+def test_get_url_one_url_to_an_image():
     one_url_not_a_list_to_an_image = Record({
         'urls': [
             {'value': 'foo.jpg'}
@@ -1549,7 +1549,7 @@ def test_get_url_one_url_not_a_list_to_an_image():
     assert expected == result
 
 
-def test_get_url_one_url_not_a_list_not_to_an_image():
+def test_get_url_one_url_not_to_an_image():
     one_url_not_a_list_not_to_an_image = Record({
         'urls': [
             {'value': 'http://link.aps.org/abstract/PRL/V19/P1264'}

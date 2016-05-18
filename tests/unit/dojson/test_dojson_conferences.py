@@ -3,19 +3,28 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
+
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
 
 from dojson.contrib.marc21.utils import create_record
 from inspirehep.dojson.conferences import conferences
@@ -200,7 +209,7 @@ def test_address_from_marcxml__111_multiple_c():
 
 def test_titles_from_marcxml_111():
     """Test title."""
-    snippet = ( 
+    snippet = (
         '<record> '
         '<datafield tag="111" ind1=" " ind2=" "> '
         '<subfield code="a">NASA Laboratory Astrophysics Workshop</subfield> '
@@ -219,7 +228,7 @@ def test_titles_from_marcxml_111():
 
 def test_titles_from_marcxml_111_with_two_a():
     """Test title."""
-    snippet = ( 
+    snippet = (
         '<record> '
         '<datafield tag="111" ind1=" " ind2=" "> '
         '<subfield code="a">Conférence IAP 2013</subfield> '
@@ -241,7 +250,7 @@ def test_titles_from_marcxml_111_with_two_a():
 
 def test_alternative_titles_from_marcxml_711():
     """Test alternative title."""
-    snippet = ( 
+    snippet = (
         '<record> '
         '<datafield tag="711" ind1=" " ind2=" "> '
         '<subfield code="a">GCACSE16</subfield> '
@@ -256,7 +265,7 @@ def test_alternative_titles_from_marcxml_711():
 
 def test_alternative_titles_from_multiple_marcxml_711():
     """Test multiple alternative titles."""
-    snippet = ( 
+    snippet = (
         '<record> '
         '<datafield tag="711" ind1=" " ind2=" "> '
         '<subfield code="a">GCACSE16</subfield> '
@@ -276,7 +285,7 @@ def test_alternative_titles_from_multiple_marcxml_711():
 
 def test_alternative_titles_marcxml_711_with_b():
     """Test multiple alternative titles."""
-    snippet = ( 
+    snippet = (
         '<record> '
         '<datafield tag="711" ind1=" " ind2=" "> '
         '<subfield code="a">XX Riunione Nazionale di Elettromagnetismo</subfield> '

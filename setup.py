@@ -22,6 +22,12 @@
 
 """INSPIRE overlay repository for Invenio."""
 
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
+
 import os
 
 from setuptools import find_packages, setup

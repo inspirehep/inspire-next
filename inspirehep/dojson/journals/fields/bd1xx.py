@@ -22,12 +22,17 @@
 
 """MARC 21 model definition."""
 
-from dojson import utils
-from inspirehep.dojson import utils as inspire_dojson_utils
-
-from idutils import normalize_issn
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
 
 from inspirehep.dojson.utils import strip_empty_values
+
+from dojson import utils
+
+from idutils import normalize_issn
 
 from ..model import journals
 

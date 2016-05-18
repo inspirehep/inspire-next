@@ -22,11 +22,17 @@
 
 """MARC 21 model definition."""
 
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
+
+from inspirehep.dojson.utils import get_record_ref
+
 import six
 
 from dojson import utils
-
-from inspirehep.dojson import utils as inspire_dojson_utils
 
 from ..model import experiments
 
@@ -111,7 +117,7 @@ def related_experiments(self, key, value):
         recid = None
     return {
         'name': value.get('a'),
-        'record': inspire_dojson_utils.get_record_ref(recid, 'experiments')
+        'record': get_record_ref(recid, 'experiments')
     }
 
 
