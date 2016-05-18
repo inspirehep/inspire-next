@@ -49,9 +49,9 @@ require(
 
     var config = {
       form: {
-        save_url: '{{ url_for("inspirehep_authors.validate") }}',
-        save_all_url: '{{ url_for("inspirehep_authors.validate", all='1') }}',
-        complete_url: '{{ url_for("inspirehep_authors.validate", submit='1') }}',
+        save_url: '{{ url_for("inspirehep_authors_forms.validate") }}',
+        save_all_url: '{{ url_for("inspirehep_authors_forms.validate", all='1') }}',
+        complete_url: '{{ url_for("inspirehep_authors_forms.validate", submit='1') }}',
         datepicker_element: '.datepicker',
         datepicker_options: {
             useCurrent: false,

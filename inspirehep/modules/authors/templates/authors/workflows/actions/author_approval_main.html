@@ -24,16 +24,16 @@
     <div class="text-left" style="float: left;">
       <a class="btn btn-info"
             role="button"
-            href="{{url_for('inspirehep_authors.newreview', objectid=object.id)}}"
+            href="{{url_for('inspirehep_authors_forms.newreview', objectid=object.id)}}"
             ><i class="fa fa-edit fa-lg"></i> {{_("Review Submission")}}
       </a>
     </div>
     <div class="text-right">
-      <a class="btn btn-success" role="button" href="{{url_for('inspirehep_authors.holdingpenreview', approved='True', ticket='False', objectid=object.id)}}"><i class="fa fa-check-circle fa-lg"></i> Accept
+      <a class="btn btn-success" role="button" href="{{url_for('inspirehep_authors_holdingpen.holdingpenreview', approved='True', ticket='False', objectid=object.id)}}"><i class="fa fa-check-circle fa-lg"></i> Accept
       </a>
-      <a class="btn btn-warning" role="button" href="{{url_for('inspirehep_authors.holdingpenreview', approved='True', ticket='True', objectid=object.id)}}"><i class="fa fa-plus-circle fa-lg"></i> Accept + curation
+      <a class="btn btn-warning" role="button" href="{{url_for('inspirehep_authors_holdingpen.holdingpenreview', approved='True', ticket='True', objectid=object.id)}}"><i class="fa fa-plus-circle fa-lg"></i> Accept + curation
       </a>
-      <a class="btn btn-danger" role="button" href="{{url_for('inspirehep_authors.holdingpenreview', approved=False, objectid=object.id)}}"><i class="fa fa-trash-o fa-lg"></i> Reject
+      <a class="btn btn-danger" role="button" href="{{url_for('inspirehep_authors_holdingpen.holdingpenreview', approved=False, objectid=object.id)}}"><i class="fa fa-trash-o fa-lg"></i> Reject
       </a>
   </div>
   {% else %}

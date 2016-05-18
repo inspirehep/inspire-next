@@ -28,7 +28,7 @@ from __future__ import (
 
 from invenio_records.api import Record
 
-from inspirehep.modules.authors.views.holdingpen import (
+from inspirehep.modules.authors.views.forms import (
     convert_for_form,
     get_inspire_url)
 
