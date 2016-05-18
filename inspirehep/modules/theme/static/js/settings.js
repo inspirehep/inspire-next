@@ -90,7 +90,7 @@ require.config({
       exports: 'ImpactGraph'
     },
     'inspirehep': {
-      deps: ['angular', 'angular-ui-bootstrap', 'ngclipboard']
+      deps: ['angular', 'angular-sanitize', 'angular-ui-bootstrap', 'ngclipboard']
     },
     'inspirehep-search': {
         deps: ['angular', 'angular-sanitize', 'angular-ui-bootstrap', 'ngclipboard']

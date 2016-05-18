@@ -33,9 +33,8 @@
       {% endfor %}
     {% endif %}
   {% endif %}
-  <a class="btn btn-default dropdown-toggle dropdown-cite cite-btn" type="button" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#citeModal{{record['control_number']}}">
-    <i class="fa fa-quote-right"></i> Cite
-  </a>
+  <inspire-export-modal button-template="/static/node_modules/inspirehep-js/dist/templates/export/templates/button_single.html" body-template="/static/node_modules/inspirehep-js/dist/templates/export/templates/modalbody.html" recid={{record['control_number']}}>
+  </inspire-export-modal>
 {% endmacro %}
 
 {% macro record_publication_info(record) %}

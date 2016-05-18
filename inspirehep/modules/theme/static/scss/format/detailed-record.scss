@@ -156,7 +156,7 @@ $darken: 8%;
     }
 }
 
-.pdf-btn, .cite-btn {
+.pdf-btn, .dropdown-cite {
     background-color: #848484;
     margin-right: 5px;
     border: 0px;
@@ -164,9 +164,13 @@ $darken: 8%;
     font-weight: 500;
 }
 
-.cite-btn:hover {
-    background-color: $blue-purple;
+#cite-pdf-buttons .dropdown-cite {
+    background-color: #848484;
     color: white;
+}
+
+#cite-pdf-buttons .dropdown-cite:hover {
+    background-color: $blue-purple;
 }
 
 @media screen and (min-width: $screen-sm-min) {
@@ -508,9 +512,9 @@ $darken: 8%;
 
     #detailed-jobs-deadline-alert {
         margin-left: 20px;
-        margin-right: 20px;       
+        margin-right: 20px;
     }
-    
+
     #record-detailed-similar-jobs {
         & :nth-child(2) {
             padding-bottom: 20px;
