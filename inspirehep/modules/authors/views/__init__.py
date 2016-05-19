@@ -25,10 +25,12 @@ from __future__ import (
     print_function,
     unicode_literals)
 
+from .forms import blueprint as forms_blueprint
 from .holdingpen import blueprint as holdingpen_blueprint
 from .publications import blueprint as publications_blueprint
 
 blueprints = [
+    forms_blueprint,
     holdingpen_blueprint,
     publications_blueprint,
 ]

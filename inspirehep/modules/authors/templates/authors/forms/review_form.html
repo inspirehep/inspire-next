@@ -31,7 +31,7 @@
 
 {% block form_footer %}
   <div class="well action-bar">
-  <a class="btn btn-danger pull-left" href="{{url_for('inspirehep_authors.holdingpenreview', approved=False, objectid=objectid)}}"><i class="fa fa-trash-o fa-lg"></i> {{ _('Reject') }}</a>
+  <a class="btn btn-danger pull-left" href="{{url_for('inspirehep_authors_holdingpen.holdingpenreview', approved=False, objectid=objectid)}}"><i class="fa fa-trash-o fa-lg"></i> {{ _('Reject') }}</a>
   <span class="pull-right">
     <a href="#" title="{{_('Press Approve to finalize your review.')}}" class="btn btn-success form-submit" id="approve"><i class="fa fa-check-circle fa-lg"></i> {{ _('Approve') }}</a>
     <a href="#" title="{{_('Press to approve and create a curation ticket.')}}" class="btn btn-warning form-submit" id="approvecurate"><i class="fa fa-plus-circle fa-lg"></i> {{ _('Approve + curate') }}</a>
@@ -60,10 +60,10 @@ require(
 
     var config = {
       form: {
-        save_url: '{{ url_for("inspirehep_authors.validate") }}',
-        save_all_url: '{{ url_for("inspirehep_authors.validate", all='1') }}',
-        complete_url: '{{ url_for("inspirehep_authors.validate", submit='1') }}',
-        autocomplete_url: '{{ url_for("inspirehep_authors.autocomplete", field_name="__FIELDNAME__") }}',
+        save_url: '{{ url_for("inspirehep_authors_forms.validate") }}',
+        save_all_url: '{{ url_for("inspirehep_authors_forms.validate", all='1') }}',
+        complete_url: '{{ url_for("inspirehep_authors_forms.validate", submit='1') }}',
+        autocomplete_url: '{{ url_for("inspirehep_authors_forms.autocomplete", field_name="__FIELDNAME__") }}',
         datepicker_element: '.datepicker',
         datepicker_options: {
             format: "YYYY",
