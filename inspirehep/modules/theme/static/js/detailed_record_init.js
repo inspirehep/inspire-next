@@ -22,8 +22,16 @@
 
 require([
   "js/plots",
-  "impact-graphs",
   "js/datatables",
+  "impact-graphs",
+  'angular-loading-bar',
+  'inspirehep'
 ], function(Plots) {
+  angular.element(document).ready(function() {
+    angular.bootstrap(
+      document.getElementById("record_content"), ['angular-loading-bar',
+                                                  'inspirehep']
+    );
+  });
 	console.log('js/detailed_record_init is loaded')
 });

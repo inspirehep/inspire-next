@@ -17,7 +17,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title, record_cite_modal with context %}
+{% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title with context %}
 
 {% macro record_collection_heading() %}
   <span id="search-title">Search literature &#62;</span>
@@ -33,9 +33,8 @@
       {% endfor %}
     {% endif %}
   {% endif %}
-  <a class="btn btn-default dropdown-toggle dropdown-cite cite-btn" type="button" id="dropdownMenu{{record['control_number']}}" data-recid="{{record['control_number']}}"  data-toggle="modal" data-target="#citeModal{{record['control_number']}}">
-    <i class="fa fa-quote-right"></i> Cite
-  </a>
+  <inspire-export-modal button-template="/static/node_modules/inspirehep-js/dist/templates/export/templates/button_single.html" body-template="/static/node_modules/inspirehep-js/dist/templates/export/templates/modalbody.html" recid={{record['control_number']}}>
+  </inspire-export-modal>
 {% endmacro %}
 
 {% macro record_publication_info(record) %}
