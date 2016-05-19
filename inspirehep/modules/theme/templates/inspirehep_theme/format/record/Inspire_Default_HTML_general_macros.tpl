@@ -172,50 +172,6 @@
   {% endif %}
 {% endmacro %}
 
-{% macro record_cite_modal(record) %}
-  <!-- MODAL -->
-  <div class="modal fade" id="citeModal{{record['control_number']}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog cite-modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="citeModalLabel">Cite Article</h4>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="editable" id="singleRecord{{record['control_number']}}" contenteditable="true"><pre id="text{{record['control_number']}}"></pre></div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-        <div class="row">
-          <div class="col-md-6 text-left">
-            <button class="btn btn-default copy-clp" id="copy-single-record-clipboard{{record['control_number']}}" data-toggle="tooltip" data-placement="bottom" data-clipboard-target="#singleRecord{{record['control_number']}}" data-original-title="Copied!">
-              <i class="fa fa-clipboard pointer"></i> Copy to clipboard
-            </button>
-          </div>
-          <div class="col-md-6">
-            <div class="btn-group">
-              <button type="button" class="btn btn-primary dropdown-toggle" id="btn-drop" data-toggle="dropdown" aria-expanded="false">
-                <span id="format{{record['control_number']}}"></span> <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                <li><a class="pointer bibtex" id="bibtex{{record['control_number']}}" data-recid="{{record['control_number']}}">BibTex</a></li>
-                <li><a class="pointer latex_eu" id="latex_eu{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(EU)</a></li>
-                <li><a class="pointer latex_us" id="latex_us{{record['control_number']}}" data-recid="{{record['control_number']}}">LaTex(US)</a></li>
-              </ul>
-            </div>
-            <a type="button" id="download{{record['control_number']}}" class="btn btn-primary"><i class="fa fa-download"></i> Download</a>
-          </div>
-        </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- END MODAL -->
-{% endmacro %}
-
 {% macro mathjax() %}
 <script type="text/javascript">
   require([

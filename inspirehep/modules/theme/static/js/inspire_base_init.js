@@ -25,8 +25,6 @@ require([
   "js/feedback_inspire",
   "js/header/header",
   "js/notification",
-  "js/search/search_init",
-  // "js/dropdown-menu/dropdown-menu" 
 ], function() {
   // loading all the libraries everywhere.
   console.info("js/inspire_base_init is loaded");
