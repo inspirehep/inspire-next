@@ -109,6 +109,20 @@
 {% block javascript %}
   {{ super() }}
   {{ mathjax() | safe }}
+  <script type="text/javascript">
+    require(
+      [
+        "js/datatables",
+      ],
+      function(
+        DataTables
+      ) {
+        DataTables.attachTo(document, {
+          'recid': "{{ record.control_number }}",
+          'collection': "literature"
+        });
+      });
+  </script>
   {%- assets "inspirehep_detailed_js" %}
     <script src="{{ ASSET_URL }}"></script>
   {%- endassets %}

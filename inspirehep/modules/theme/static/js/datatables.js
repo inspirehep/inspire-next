@@ -52,7 +52,7 @@
                 recid: that.attr.recid,
                 collection: that.attr.collection
               },
-              "method": "POST"
+              "method": "GET"
             },
             "fnInitComplete": function(oSettings, json) {
               if ( json.data.length > 0 ) {
@@ -78,7 +78,7 @@
                 recid: that.attr.recid,
                 collection: that.attr.collection
               },
-              "method": "POST"
+              "method": "GET"
             },
             "fnInitComplete": function(oSettings, json) {
               if ( json.data.length > 0 ) {
@@ -97,5 +97,5 @@
       });
 
     }
-      
+
 });

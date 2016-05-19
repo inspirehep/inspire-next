@@ -23,11 +23,7 @@
 require([
   "js/plots",
   "impact-graphs",
-  // "js/citation_modal",
-  // "js/datatables"
+  "js/datatables",
 ], function(Plots) {
-	// CitationModal.teardownAll();
-  	// CitationModal.attachTo(document);
 	console.log('js/detailed_record_init is loaded')
-  // Needed to have the JavaScript available when ASSETS_DEBUG=False.
 });
