@@ -89,6 +89,11 @@ ACCOUNTS_SESSION_REDIS_URL = "redis://localhost:6379/2"
 # ====
 REST_ENABLE_CORS = True
 
+# Logging
+# =======
+# To enable file logging set it to e.g. "{sys_prefix}/var/log/inspirehep.log"
+LOGGING_FS_LOGFILE = None
+
 # Accounts
 # ========
 RECAPTCHA_PUBLIC_KEY = "CHANGE_ME"
