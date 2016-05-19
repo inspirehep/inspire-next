@@ -46,8 +46,10 @@ section.custom-footer {
     border-width: 1px 0 0 0;
 }
 
-.footer-heading {
+.custom-footer .footer-heading {
     color: lighten($navbar-inverse-bg, 40%);
+    font-size: 18px;
+    text-align: start;
 }
 
 .custom-footer .row .col-xs-4 {
