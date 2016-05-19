@@ -29,7 +29,7 @@ define(['publications'], function(Publications) {
       restrict: 'E',
       template: '<ul class="categories">' +
                 '<li ng-repeat="category in categories">' +
-                '<a href="/search?p=keyword:{{ category }}">' +
+                '<a href="/search?q=keyword:{{ category }}">' +
                 '{{ category }}</a></li></ul>',
       scope: true,
       link: function(scope) {
