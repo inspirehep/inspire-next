@@ -139,7 +139,8 @@ def pdf_validator(form, field):
 
     message = "Please, provide an accessible direct link to a PDF document."
 
-    if field.data and get_content_type(field.data) != 'application/pdf':
+    if field.data and get_content_type(field.data) not in ('application/pdf',
+                                                           'application/octet-stream'):
         raise StopValidation(message)
 
 
