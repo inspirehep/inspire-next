@@ -155,7 +155,7 @@ def get_record_ref(recid, record_type='record'):
         return None
     default_server = 'http://inspirehep.net'
     if current_app:
-        server = current_app.config.get('SERVER_NAME', default_server)
+        server = current_app.config.get('SERVER_NAME') or default_server
     else:
         server = default_server
     # This config might also be http://inspirehep.net or

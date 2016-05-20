@@ -175,7 +175,6 @@ setup(
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'arxiv = inspirehep.modules.arxiv:Arxiv',
             'crossref = inspirehep.modules.crossref:CrossRef',
-
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
