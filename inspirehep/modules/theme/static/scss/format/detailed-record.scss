@@ -592,3 +592,43 @@ $darken: 8%;
         padding-right: 0;
     }
 }
+
+#record-detailed-institution {
+
+    #institution-detailed-map {
+        height: 250px;
+        width: 250px;
+        margin: 0 auto;
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    .col-md-8, .col-md-3 {
+        background-color: white;
+    }
+
+    #record-detailed-institution-information.col-md-8 {
+        width: 73%; 
+    }
+
+    @media (min-width: $screen-md-min) {
+
+        #record-detailed-institution-information,
+        #record-detailed-institution-map {
+            min-height: 300px;
+        }
+
+        #record-detailed-conference-information.col-md-8 {
+            width: 73%;
+        }
+    }
+
+    #record-detailed-institution-map {
+        @media (min-width: $screen-md-min) {
+            float: right;
+        }
+
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
