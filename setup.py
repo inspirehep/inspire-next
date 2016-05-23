@@ -36,7 +36,7 @@ install_requires = [
     'refextract>=0.1.0',
     'Sickle>=0.5.0',
     'orcid',
-    'raven==5.0.0',
+    'raven<=5.1.0',
     'retrying',
     'flower',
     'rt',
@@ -52,7 +52,7 @@ install_requires = [
     'invenio-config==1.0.0a1',
     'invenio-i18n==1.0.0a4',
     'invenio-indexer==1.0.0a3',
-    'invenio-logging==1.0.0a1',
+    'invenio-logging==1.0.0a2',
     'invenio-mail==1.0.0a3',
     'invenio-oauthclient==1.0.0a1',
     'invenio-records==1.0.0a15',  # Add [versioning] in the future
@@ -175,7 +175,6 @@ setup(
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'arxiv = inspirehep.modules.arxiv:Arxiv',
             'crossref = inspirehep.modules.crossref:CrossRef',
-
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
