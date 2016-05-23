@@ -36,7 +36,7 @@ install_requires = [
     'refextract>=0.1.0',
     'Sickle>=0.5.0',
     'orcid',
-    'raven==5.0.0',
+    'raven<=5.1.0',
     'retrying',
     'flower',
     'rt',

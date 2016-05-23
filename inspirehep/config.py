@@ -94,6 +94,9 @@ REST_ENABLE_CORS = True
 # To enable file logging set it to e.g. "{sys_prefix}/var/log/inspirehep.log"
 LOGGING_FS_LOGFILE = None
 
+# Overwrite default Sentry extension class to support Sentry 6.
+LOGGING_SENTRY_CLASS = 'invenio_logging.sentry6:Sentry6'
+
 # Accounts
 # ========
 RECAPTCHA_PUBLIC_KEY = "CHANGE_ME"
