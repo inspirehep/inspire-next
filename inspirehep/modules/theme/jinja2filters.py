@@ -598,8 +598,7 @@ def publication_info(record):
             if 'conference_record' in pub_info:
                 conference_rec = replace_refs(pub_info['conference_record'],
                                               'es')
-                if conference_rec and conference_rec.get('control_number'):
-                    conference_recid = conference_rec['control_number']
+                conference_recid = conference_rec['control_number']
             if 'parent_record' in pub_info:
                 parent_rec = replace_refs(pub_info['parent_record'], 'es')
                 parent_recid = parent_rec['control_number']
@@ -685,19 +684,19 @@ def format_date(datetext):
 @blueprint.app_template_filter()
 def find_collection_from_url(url):
     """Returns the collection based on the URL."""
-    if 'cc=conferences' in url or '/conferences' in url:
+    if 'conferences' in url:
         return 'conferences'
-    elif 'cc=jobs' in url or '/jobs' in url:
+    elif 'jobs' in url:
         return 'jobs'
-    elif 'cc=data' in url or '/data' in url:
+    elif 'data' in url:
         return 'data'
-    elif 'cc=institutions' in url or '/institutions' in url:
+    elif 'institutions' in url:
         return 'institutions'
-    elif 'cc=journals' in url or '/journals' in url:
+    elif 'journals' in url:
         return 'journals'
-    elif 'cc=experiments' in url or '/experiments' in url:
+    elif 'experiments' in url:
         return 'experiments'
-    elif 'cc=authors' in url or '/authors' in url:
+    elif 'authors' in url:
         return 'authors'
     return 'literature'
 
