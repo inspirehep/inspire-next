@@ -1,35 +1,17 @@
-<div
-  ng-init="order={'data_type': 'Type', 'status': 'Status', 'author': 'Author', 'workflow_name': 'Workflow Name'}">
-  <div ng-if="vm.invenioSearchResults.aggregations[key].buckets.length"
-       ng-repeat="(key, title) in order" class="facet-container">
+<div ng-init="order={'data_type': 'Type', 'status': 'Status', 'author': 'Author', 'workflow_name': 'Workflow Name'}">
+  <div ng-if="vm.invenioSearchResults.aggregations[key].buckets.length" ng-repeat="(key, title) in order">
     <h4>Filter by {{ title }}</h4>
-
-    <ul class="list-unstyled" class="hp-facet-item"
-        ng-controller="FacetsShowMoreController">
-      <li
-        ng-repeat="item in vm.invenioSearchResults.aggregations[key].buckets | limitTo: facetResults"
-        ng-click="handleClick(key, item.key)"
-        ng-class="{'active' : handler[key].indexOf(item.key) > -1,
-              error: item.key === 'Error',
-              attention : item.key === 'Need action',
-              done: item.key === 'Done',
-              arxiv: item.key === 'arXiv',
-              literature: item.key === 'hep',
-              authornew: item.key === 'authors',
-              literature : item.key === 'Literature Suggestion',
-              'oai-harvest': item.key === 'OAI Harvest',
-              authornew: item.key === 'New Author',
-              authorupdate: item.key === 'Author Update'}">
-        <span class="facet-title-truncate"><i class="fa fa-times"
-                                              ng-if="handler[key].indexOf(item.key) > -1"></i> {{ item.key }}</span>
-        <span class="facet-label label label-default pull-right">{{ item.doc_count }}</span>
-      </li>
-      <div
-        ng-show="vm.invenioSearchResults.aggregations[key].buckets.length > facetResults">
-        <a ng-click="moreFacetResults()">Show {{calculateStep(key)}} more</a>
-      </div>
-    </ul>
-
+    <div class="facet-container">
+      <ul class="list-unstyled" class="hp-facet-item" ng-controller="FacetsShowMoreController">
+        <li ng-repeat="item in vm.invenioSearchResults.aggregations[key].buckets | limitTo: facetResults" ng-click="handleClick(key, item.key)" ng-class="{'active' : handler[key].indexOf(item.key) > -1}">
+            <span class="facet-title-truncate"><i class="fa fa-times" ng-if="handler[key].indexOf(item.key) > -1"></i> {{ item.key }}</span>
+            <span class="facet-label label label-default pull-right">{{ item.doc_count }}</span>
+        </li>
+        <div ng-show="vm.invenioSearchResults.aggregations[key].buckets.length > facetResults">
+          <a ng-click="moreFacetResults()">Show {{calculateStep(key)}} more</a>
+        </div>
+      </ul>
+    </div>
     <hr ng-if="!$last">
   </div>
 </div>
