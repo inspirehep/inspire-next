@@ -1,0 +1,88 @@
+<div ng-controller="checkboxCtrl" id="hp-list">
+
+  <div class="row hp-header-row">
+
+    <div class="col-md-1">
+    </div>
+
+    <div class="col-md-4">
+      Details
+    </div>
+
+    <div class="col-md-2">
+      Submission Info
+    </div>
+
+    <div class="col-md-2">
+      Subject Areas
+    </div>
+
+    <div class="col-md-3">
+      Decision
+    </div>
+
+  </div>
+
+  <div class="row hp-item"
+       ng-repeat="record in vm.invenioSearchResults.hits.hits track by record._id"
+       ng-class="{hperror: record._source._workflow.status === 'Error', hpattention : record._source._workflow.status === 'Need action', hpdone: record._source._workflow.status === 'Done'}">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-1">
+                <span id='checkbox-parent'>
+                  <input type="checkbox" class="checkbox-results"
+                         ng-click="toggleId(record._id)"
+                         ng-checked="isChecked(record._id)"/>
+                </span>
+        </div>
+        <div class="col-md-4">
+          <h4 class="custom-h"><a class="title"
+                                  ng-href="/holdingpen/{{record._id}}"
+                                  ng-bind='record._source.titles[0].title'>
+          </a>
+          </h4>
+
+          <div class="authors">
+              <span ng-repeat="author in record._source.authors">
+                {{author.full_name}}<span ng-if="!$last">, </span>
+              </span>
+          </div>
+        </div>
+
+        <div class="col-md-2 pad-top-10">
+          <p class="workflow-type"
+             ng-class="record._source._workflow.workflow_class"
+             ng-bind="record._source._workflow.workflow_name"></p>
+          <p ng-bind="record._source.acquisition_source.email"></p>
+          <p
+            ng-bind="record._source._workflow.created | date: ''"></p>
+        </div>
+
+        <div class="col-md-2 pad-top-10">
+          <ul class="subject-terms">
+            <li ng-repeat="subject in record._source.subject_terms">
+              {{subject.term}}
+            </li>
+          </ul>
+        </div>
+
+        <div class="col-md-3">
+
+        </div>
+
+      </div>
+      <div class="row" ng-if='record._source.abstracts.length > 0'>
+        <div class="col-md-offset-1 col-md-11 abstract">
+          <a href="" ng-click='showAbstract=!showAbstract'>
+            {{ showAbstract ? 'Hide abstract' : 'Show abstract'
+            }}
+          </a>
+          <div ng-show='showAbstract'
+               ng-bind-html='record._source.abstracts | abstract'
+               class="col-md-12">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

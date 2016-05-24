@@ -82,8 +82,7 @@
                sort-key="sort"
                default-option="{{ sort_options|default_sortoption }}"
                available-options='{{ sort_options|format_sortoptions|safe }}'
-               template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/selectbox.html') }}"
-              >
+               template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/selectbox.html') }}">
             </invenio-search-select-box>
             {%- endblock search_sort_select %}
             {%- block search_sort_order scoped %}
