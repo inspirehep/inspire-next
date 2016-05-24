@@ -116,7 +116,8 @@ def match_valid_experiments(recid, json, *args, **kwargs):
                         x = experiments_list.index(experiment)
                         facet_experiment = experiments_list_original[x]
                     except ValueError:
-                        # If the experiment cannot be matched it is considered valid
+                        # If the experiment cannot be matched it is considered
+                        # valid
                         facet_experiment = exp.get("experiment")
                     facet_experiments_list.append(facet_experiment)
                 exp.update({"facet_experiment": [facet_experiments_list]})
@@ -143,7 +144,8 @@ def references_validator(recid, json, *args, **kwargs):
     for ref in json.get('references', []):
         if ref.get('recid') and not six.text_type(ref.get('recid')).isdigit():
             # Bad recid! Remove.
-            current_app.logger.warning('MALFORMED: recid value found in references of {0}: {1}'.format(recid, ref.get('recid')))
+            current_app.logger.warning(
+                'MALFORMED: recid value found in references of {0}: {1}'.format(recid, ref.get('recid')))
             del ref['recid']
 
 

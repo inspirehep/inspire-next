@@ -90,14 +90,13 @@ class ImpactGraphSerializer(object):
         ]
 
         if reference_recids:
-            mget_body = {
-                "ids": reference_recids
-            }
+            query = IQ(' OR '.join('recid:' + str(ref)
+                                   for ref in reference_recids))
 
-            record_references = current_search_client.mget(
+            record_references = current_search_client.search(
                 index='records-hep',
                 doc_type='hep',
-                body=mget_body,
+                body={"query": query.to_dict()},
                 _source=[
                     'control_number',
                     'citation_count',
@@ -106,7 +105,7 @@ class ImpactGraphSerializer(object):
                 ]
             )
 
-            for reference in record_references["docs"]:
+            for reference in record_references['hits']['hits']:
                 ref_info = reference["_source"]
 
                 references.append({
