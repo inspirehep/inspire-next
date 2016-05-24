@@ -126,6 +126,10 @@ $hp_table_bg: #223142;
     -webkit-margin-before: 0;
   }
 
+  hr {
+    display: none;
+  }
+
   select {
     background-color: $midnight-blue;
     border: none;
@@ -133,7 +137,7 @@ $hp_table_bg: #223142;
     margin-bottom: 10px;
   }
 
-  .type-facets {
+  .hp-facet-item {
     list-style: none;
     -webkit-padding-start: 0;
 
@@ -226,71 +230,83 @@ $hp_table_bg: #223142;
 }
 
 #hp-list {
-  table-layout: fixed;
   border-radius: 3px;
-  background-color: $hp_table_bg;
+  background-color: transparent;
   color: $blue-haze;
   border: none;
-  padding: 10px;
+  padding: 16px;
 
-  tr:hover {
+  .hp-item {
     background-color: $hp_table_bg;
-  }
+    margin-bottom: 3px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    border-left: 4px solid $hp_table_bg;
+    border-radius: 0;
 
-  thead td {
-    font-weight: bolder;
-  }
-
-  tbody td {
-    border-top: 1px solid $blue-haze;
-  }
-
-  td {
-
-    &.hp-check {
-      width: 5%;
+    &.hperror {
+      border-left: 4px solid $alizarin;
     }
 
-    &.hp-main-info {
-      width: 40%;
+    &.hpattention {
+      border-left: 4px solid $sun-flower;
     }
 
-    &.hp-submission-info {
-      width: 20%;
+    &.hpdone {
+      border-left: 4px solid $turquoise;
     }
 
-    &.hp-subject-areas {
-      width: 15%;
+    .custom-h {
+      margin-top: 0px;
     }
 
-    &.hp-decision {
-      width: 20%;
+    .workflow-type {
+      font-size: 1em;
+      &.authors {
+        color: $pete-river;
+      }
+
+      &.authors-update {
+        color: $belize-hole;
+      }
+
+      &.arxiv_ingestion {
+        color: $alizarin;
+      }
+
+      &.literature {
+        color: $carrot;
+      }
+
+      &.oai-harvest {
+        color: $concrete;
+      }
+    }
+
+    .subject-terms {
+      list-style: none;
+      -webkit-padding-start: 0;
+
+      li {
+        background-color: $midnight-blue;
+        padding: 3px 5px;
+        display: inline-block;
+        margin: 2px;
+      }
     }
   }
 
-  .hp-authors {
-    font-size: .9em;
-  }
+}
 
-  .row-action {
-    text-align: center;
-  }
-
-  .hp-abstract {
-    td {
-      border-top: none !important;
-    }
-
-  }
-
-  .hp-title {
-    font-weight: bolder;
-    font-size: 1.2em;
-  }
-
-  #hp-list-select-all {
-    margin-top: 4px;
-  }
+.hp-header-row {
+  background-color: $hp_table_bg;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom: 1px solid $wet-asphalt;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  font-weight: bolder;
+  font-size: 1.1em;
 }
 
 #list-header {
@@ -300,3 +316,4 @@ $hp_table_bg: #223142;
 .feedback-fixed-left {
   display: none;
 }
+
