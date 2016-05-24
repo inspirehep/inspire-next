@@ -82,7 +82,7 @@ def reject_record(message):
     def _reject_record(obj, *args, **kwargs):
         from inspirehep.modules.workflows.utils import log_workflows_action
 
-        prediction_results = obj.extra_data.get("arxiv_guessing")
+        prediction_results = obj.extra_data.get("relevance_prediction")
         log_workflows_action(
             action="reject_record",
             prediction_results=prediction_results,
@@ -99,11 +99,10 @@ def reject_record(message):
 
 def is_record_relevant(obj, *args, **kwargs):
     """Shall we halt this workflow for potential acceptance or just reject?"""
-    prediction_results = obj.extra_data.get("arxiv_guessing")
+    prediction_results = obj.extra_data.get("prediction_results")
     classification_results = obj.extra_data.get('classifier_results')
 
     if prediction_results and classification_results:
-        prediction_results = prediction_results[0].get("result")
         score = prediction_results.get("max_score")
         decision = prediction_results.get("decision")
         classification_results = classification_results.get("complete_output")

@@ -800,6 +800,10 @@ INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
 LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 
 
+# Web services and APIs
+# =====================
+BEARD_API_URL = ""   # e.g. "http://beard.inspirehep.net/api"
+
 # Workflows
 # =========
 WORKFLOWS_UI_BASE_TEMPLATE = BASE_TEMPLATE
