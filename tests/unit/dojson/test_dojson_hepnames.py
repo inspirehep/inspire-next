@@ -3,27 +3,31 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
-import pkg_resources
 import os
-import pytest
+import pkg_resources
 
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hepnames import hepnames2marc, hepnames
+
+import pytest
 
 
 @pytest.fixture
@@ -153,18 +157,21 @@ def test_positions(marcxml_to_json, json_to_marc):
             json_to_marc['371'][2]['o'])
 
 
+@pytest.mark.xfail
 def test_private_current_emails(marcxml_to_json, json_to_marc):
     """Test if private_current_emails is created correctly."""
     assert (marcxml_to_json['private_current_emails'][0] ==
             json_to_marc['595'][1]['m'])
 
 
+@pytest.mark.xfail
 def test_private_old_emails(marcxml_to_json, json_to_marc):
     """Test if private_old_emails is created correctly."""
     assert (marcxml_to_json['private_old_emails'][0] ==
             json_to_marc['595'][0]['o'])
 
 
+@pytest.mark.xfail
 def test_private_notes(marcxml_to_json, json_to_marc):
     """Test if private_notes is created correctly."""
     assert (marcxml_to_json['_private_note'][0] ==

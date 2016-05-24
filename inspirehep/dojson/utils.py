@@ -19,13 +19,15 @@
 
 """DoJSON related utilities."""
 
-import six
 import re
+import six
 
 try:
     from flask import current_app
 except ImportError:
     current_app = None
+
+from inspirehep.utils.dedupers import dedupe_list, dedupe_list_of_dicts
 
 
 def legacy_export_as_marc(json, tabsize=4):
@@ -113,35 +115,11 @@ def strip_empty_values(obj):
 
 
 def remove_duplicates_from_list(l):
-    """Remove duplicates from a list preserving the order.
-
-    We might be tempted to use the list(set(l)) idiom,
-    but it doesn't preserve the order, which hinders
-    testability."""
-    result = []
-
-    for el in l:
-        if el not in result:
-            result.append(el)
-
-    return result
+    return dedupe_list(l)
 
 
 def remove_duplicates_from_list_of_dicts(ld):
-    """Remove duplicates from a list of dictionaries preserving the order.
-
-    We can't use the generic list helper because a dictionary isn't
-    hashable. Taken from http://stackoverflow.com/a/9427216/374865."""
-    result = []
-    seen = set()
-
-    for d in ld:
-        t = tuple(d.items())
-        if t not in seen:
-            result.append(d)
-            seen.add(t)
-
-    return result
+    return dedupe_list_of_dicts(ld)
 
 
 def get_record_ref(recid, record_type='record'):
