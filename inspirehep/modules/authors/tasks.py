@@ -95,8 +95,7 @@ def curation_ticket_needed(obj, eng):
 
 def recreate_data(obj, eng):
     """Check if data needs to be recreated."""
-    extra_data = obj.get_extra_data()
-    return extra_data.get("recreate_data", False)
+    return obj.extra_data.get("recreate_data", False)
 
 
 def new_ticket_context(user, obj):
