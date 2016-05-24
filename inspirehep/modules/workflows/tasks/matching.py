@@ -223,18 +223,17 @@ def previously_rejected(days_ago=None):
 
 def exists_in_holding_pen(obj, eng):
     """Check if a record exists in HP by looking in given KB."""
+    from elasticsearch_dsl import Q
     from invenio_search import RecordsSearch
     from invenio_workflows_ui.utils import obj_or_import_string
     from invenio_workflows_ui.search import default_query_factory
 
-    conf = current_app.config['WORKFLOWS_UI_REST_ENDPOINT']
-    index = conf.get('search_index')
-    doc_type = conf.get('search_type')
-    searcher = RecordsSearch(index=index, doc_type=doc_type).params(version=True)
-    search_factory = conf.get(
-        'search_factory', default_query_factory
-    )
-    search_factory = obj_or_import_string(search_factory)
+    config = current_app.config['WORKFLOWS_UI_REST_ENDPOINT']
+    index = config.get('search_index')
+    doc_type = config.get('search_type')
+    searcher = RecordsSearch(
+        index=index, doc_type=doc_type
+    ).params(version=True)
 
     identifiers = []
     for field, lookup in six.iteritems(
@@ -244,11 +243,9 @@ def exists_in_holding_pen(obj, eng):
                         for i in get_value(obj.data, lookup, [])]
     # Search for any existing record in Holding Pen, exclude self
     if identifiers:
-        search, dummy = search_factory(
-            None, searcher,
-            sort="_workflow.modified",
-            q=" OR ".join(identifiers)
-        )
+        search = searcher.query(Q('query_string',
+                                query=" OR ".join(identifiers),
+                                allow_leading_wildcard=False))
         search_result = search.execute()
         id_list = [int(hit.id) for hit in search_result.hits]
         if set(id_list) - set([obj.id]):
