@@ -17,26 +17,21 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% extends "inspirehep_theme/page.html" %}
+{% extends "invenio_workflows_ui/list.html" %}
 
-{%set body_css_classes=['holding-pen']%}
-
-{%- block css %}
-{{ super() }}
-{% assets "inspirehep_holding_css" %}
-<link href="{{ ASSET_URL }}" rel="stylesheet"/>
-{% endassets %}
-{%- endblock css %}
+{% from "inspire_workflows/macros.html" import batch_action_buttons %}
 
 {% block javascript %}
 {{ super() }}
-{% assets "invenio_search_ui_search_js" %}
-<script src="{{ ASSET_URL }}"></script>{% endassets %}
 {% assets "inspire_workflows_ui_js_actions" %}
-<script src="{{ ASSET_URL }}"></script>{% endassets %}
+<script src="{{ ASSET_URL }}"></script>
+{% endassets %}
+{% assets "inspirehep_holding_css" %}
+<link href="{{ ASSET_URL }}" rel="stylesheet"/>
+{% endassets %}
 {%- endblock javascript %}
 
-{% block page_banner %}
+{%- block list_container -%}
 <div class="holding-page-header">
   <ul class="pull-left">
     <li>Holding Pen</li>
@@ -50,55 +45,114 @@
     </form>
   </div>
 </div>
-{% endblock %}
+<div class="clearfix"></div>
+<div class="row hp-container">
+  <div class="col-md-2 hp-filters">
 
-{%- block body -%}
-<div id="invenio-search">
-  <invenio-search search-endpoint="/api/holdingpen"
-                  search-extra-params='{"size": 25}'>
-    <div class="clearfix"></div>
-    <div class="row">
-      <div class="col-md-2 hp-filters facet-container">
-        <h4>Sort by</h4>
+    <h4>Sort by</h4>
+    <form>
+      <select id="hp-sort-menu" class="form-control" role="menu" name="sort">
+        <option value="_workflow.created_desc" selected>{{ _("Newest")}}
+        </option>
+        <option value="_workflow.created">{{ _("Oldest")}}</option>
+        <option value="_workflow.modified_desc">{{ _("Recently updated")}}
+        </option>
+        <option value="_workflow.modified">{{ _("Least recently updated")}}
+        </option>
+        <option value="_workflow.relevance_score_desc">{{ _("Most relevant")}}
+        </option>
+        <option value="_workflow.relevance_score">{{ _("Least relevant")}}
+        </option>
+      </select>
+    </form>
 
+    <h4>Filter by Type</h4>
 
-        {%- set sort_options = config.get('WORKFLOWS_UI_REST_SORT_OPTIONS', {}).get('holdingpen') %}
-          {%- if sort_options %}
-            <invenio-search-select-box
-               sort-key="sort"
-               default-option="{{ sort_options|default_sortoption }}"
-               available-options='{{ sort_options|format_sortoptions|safe }}'
-               template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/selectbox.html') }}">
-            </invenio-search-select-box>
-          {%- endif %}
+    <ul class="type-facets">
 
+      {% set type_facets = [
+      {'class': 'authors', 'name': 'New Authors', 'count': 12, 'active': true},
+      {'class': 'authors-update', 'name': 'Author Updates', 'count': 5,
+      'active': false},
+      {'class': 'literature', 'name': 'Literature', 'count': 12, 'active':
+      true},
+      {'class': 'oai-harvest', 'name': 'OAI Harvest', 'count': 5},
+      {'class': 'arxiv', 'name': 'arXiv', 'count': 231}
+      ] %}
+      {% for type_facet in type_facets %}
+      <li class="{{type_facet.class}} {%if type_facet.active%}active{%endif%}">
+        <div class="row">
+          <div class="col-md-9">{{type_facet.name}}</div>
+          <div class="col-md-2 text-right">{{type_facet.count}}</div>
+        </div>
+        <div class="clearfix"></div>
+      </li>
+      {% endfor %}
+    </ul>
 
-        <invenio-search-facets
-          template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/facets.html') }}">
-        </invenio-search-facets>
+    <h4>Filter by Status</h4>
 
+    {% set status_facets = [
+    {'class': 'inprogress', 'name': 'In Progress', 'count': 0, 'active': true},
+    {'class': 'error', 'name': 'Error', 'count': 0, 'active': true},
+    {'class': 'attention', 'name': 'Attention Required', 'count': 0, 'active':
+    false},
+    {'class': 'done', 'name': 'Done', 'count': 2, 'active': true}
+    ] %}
+    <ul class="type-facets">
+      {% for type_facet in status_facets %}
+      <li class="{{type_facet.class}} {%if type_facet.active%}active{%endif%}">
+        <div class="row">
+          <div class="col-md-9">{{type_facet.name}}</div>
+          <div class="col-md-2 text-right">{{type_facet.count}}</div>
+        </div>
+        <div class="clearfix"></div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="col-md-10">
+    {%- endblock -%}
+
+    {% block help_bar %}
+    <div id="help-bar" class="row">
+      <div class="pull-left">
+        <p class="text-muted">Ctrl+A: Select all, Esc: Deselect</p>
       </div>
 
-      <div class="col-md-10 result-list">
-        <div id="help-bar" class="row">
-          <div class="pull-left">
-            <p class="text-muted">Ctrl+A: Select all, Esc: Deselect</p>
-          </div>
-        </div>
-
-        <invenio-search-results
-          template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/results.html') }}">
-        </invenio-search-results>
-
-        <div class="col-md-12 col-sm-12 text-center">
-          <invenio-search-pagination
-            template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/pagination.html') }}">
-          </invenio-search-pagination>
-        </div>
-      </div>
+      {{ batch_action_buttons() }}
     </div>
-  </invenio-search>
-</div>
-{%- endblock -%}
+    {% endblock %}
 
+    {% block navigation_check_all %}
+    {% endblock %}
+    {% block navigation_sort_selection %}
+    {% endblock %}
 
+    {% block batch_action_buttons_bottom %}
+    {{ batch_action_buttons() }}
+    {% endblock %}
+
+    {% block table %}
+    <table id="hp-list"
+           cellpadding="0"
+           cellspacing="0"
+           border="0"
+           class="table">
+      <thead>
+      <tr>
+        <td class="hp-check" align="center">
+          <input id="hp-list-select-all" type="checkbox">
+        </td>
+        <td class="hp-main-info">Name</td>
+        <td class="hp-submission-info">Submission Info</td>
+        <td class="hp-subject-areas">Subject Areas</td>
+        <td class="hp-decision text-center">Decision</td>
+      </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+    {% endblock %}
