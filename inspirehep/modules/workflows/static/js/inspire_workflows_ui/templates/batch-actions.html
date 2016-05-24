@@ -1,0 +1,24 @@
+<div class="row detail-section" ng-show="vm.selected_records.length > 0">
+  <div class="col-md-12">
+    <div class="row detail-panel" >
+
+      <div class="col-md-3">
+        <h4>Perform batch operation on {{vm.selected_records.length}} selected
+        records.</h4>
+      </div>
+      <div class="col-md-9 text-right">
+        <button class="btn btn-danger"
+                ng-click="BatchUtils.setDecision('reject')">Reject
+        </button>
+        <button class="btn btn-warning"
+                ng-click="BatchUtils.setDecision('accept')">Accept
+        </button>
+        <button class="btn btn-success"
+                ng-click="BatchUtils.setDecision('accept_core')">Core
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+</div>

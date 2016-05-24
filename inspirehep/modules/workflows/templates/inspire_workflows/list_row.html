@@ -18,33 +18,56 @@
 #}
 
 <tr>
-<td class="row-checkbox">
+  <td class="row-checkbox hp-check">
     <input type="checkbox" value="{{object.id}}">
-</td>
+  </td>
 
-<td class="row-content">
-    <h4>
-    <a href="{{url_for('invenio_workflows_ui.details', objectid=object.id)}}">
+  <td class="row-content hp-main-info">
+    <a class="hp-title" href="{{url_for('invenio_workflows_ui.details', objectid=object.id)}}">
       {{ title }}
     </a>
-    <small>on
-    <time datetime="{{object.modified.isoformat()}}" title="{{object.modified.isoformat()}}">{{object.created.strftime("%b %d %H:%m")}}</time></small>
-    </h4>
-    {{ description|safe }}
-</td>
+    <br/>
+    <div class="hp-authors">
+      {%for author in object.data.authors %}
+      {{author.full_name}}
+      {%endfor%}
+    </div>
+  </td>
 
-<td class="row-additional">
-    {{ additional|safe }}
-</td>
+  <td class="hp-submission-info">
+    {{object.data.acquisition_source.email}} <br/>
+      <time datetime="{{object.modified.isoformat()}}"
+            title="{{object.modified.isoformat()}}">
+        {{object.created.strftime("%b %d %H:%m")}}
+      </time>
+  </td>
 
-<td class="row-action">
-    {% if action %}
-        {{ action|safe}}
-    {% else %}
-        {% block status_badges %}
-            {% from 'inspire_workflows/macros.html' import check_status %}
-            {{ check_status(object) }}
-        {% endblock %}
-    {% endif %}
-</td>
+
+  <td class="hp-subject-areas">
+    {% for subject_term in object.data.subject_terms %}
+    {{subject_term.term}}
+    {% endfor %}
+
+
+  </td>
+
+
+  <td class="row-action hp-decision">
+    Automatic Decision: {{decision}}<br/>
+    Core: LSP.
+    <!--{% if action %}-->
+    <!--{{ action|safe}}-->
+    <!--{% else %}-->
+    <!--{% block status_badges %}-->
+    <!--{% from 'inspire_workflows/macros.html' import check_status %}-->
+    <!--{{ check_status(object) }}-->
+    <!--{% endblock %}-->
+    <!--{% endif %}-->
+  </td>
+</tr>
+<tr class="hp-abstract">
+  <td></td>
+  <td colspan="4">
+    <span class="font-bolder">Abstract </span> {{object.data.abstracts[0].value |safe}}
+  </td>
 </tr>

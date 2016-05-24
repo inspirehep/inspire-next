@@ -199,6 +199,9 @@
                 }
               }
             },
+            "abstract": {
+              "type": "string"
+            },
             "accelerator_experiments": {
               "type": "object",
               "properties": {
@@ -214,6 +217,13 @@
                   "index": "not_analyzed"
                 }
               }
+            },
+            "experiment": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "experimentautocomplete": {
+              "type": "string"
             },
             "experiment_name": {
               "type": "string",
@@ -233,6 +243,10 @@
                 }
               }
             },
+            "doi": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
             "report_numbers": {
               "type": "object",
               "properties": {
@@ -244,6 +258,10 @@
                   ]
                 }
               }
+            },
+            "reportnumber": {
+              "type": "string",
+              "index": "not_analyzed"
             },
             "arxiv_eprints": {
               "type": "object",
@@ -264,6 +282,13 @@
                   ]
                 }
               }
+            },
+            "arXiv": {
+              "type": "string"
+            },
+            "eprint": {
+              "type": "string",
+              "index": "not_analyzed"
             },
             "isbns": {
               "type": "object",
@@ -292,6 +317,10 @@
                   "type": "string"
                 }
               }
+            },
+            "subject": {
+              "type": "string",
+              "index": "not_analyzed"
             },
             "collaboration": {
               "type": "object",
@@ -323,6 +352,22 @@
                   "index": "not_analyzed"
                 }
               }
+            },
+            "collection": {
+              "type": "string",
+              "analyzer": "tc_synonyms_analyzer"
+            },
+            "exactauthor": {
+              "type": "string",
+              "fields": {
+                "raw": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                }
+              }
+            },
+            "affautocomplete": {
+              "type": "string"
             },
             "authors": {
               "type": "object",
@@ -360,6 +405,12 @@
                   "type": "string"
                 }
               }
+            },
+            "author": {
+              "type": "string"
+            },
+            "affiliation": {
+              "type": "string"
             },
             "citation_count": {
               "type": "integer"
@@ -401,6 +452,9 @@
                 }
               }
             },
+            "refersto": {
+              "type": "integer"
+            },
             "publication_info": {
               "type": "object",
               "properties": {
@@ -432,6 +486,10 @@
                   "type": "integer"
                 }
               }
+            },
+            "cnum": {
+              "type": "string",
+              "index": "not_analyzed"
             },
             "titles": {
               "type": "object",
@@ -489,6 +547,9 @@
         "collection": {
           "type": "string",
           "analyzer": "tc_synonyms_analyzer"
+        },
+        "title": {
+          "type": "string"
         },
         "doc_type": {
           "type": "string",

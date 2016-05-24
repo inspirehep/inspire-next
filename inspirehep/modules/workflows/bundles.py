@@ -29,14 +29,12 @@ from invenio_assets.filters import RequireJSFilter
 from inspirehep.modules.theme.bundles import js as _js
 
 
-actions_js = NpmBundle(
-    "js/inspire_workflows_ui/actions/init.js",
-    output="gen/inspire-workflows.actions.%(version)s.js",
-    filters=RequireJSFilter(exclude=[_js])
-)
-
 details_js = NpmBundle(
-    "js/inspire_workflows_ui/details/init.js",
+    "js/inspire_workflows_ui/holdingpen/app.js",
     output="gen/inspire-workflows.details.%(version)s.js",
-    filters=RequireJSFilter(exclude=[_js])
+    filters=RequireJSFilter(exclude=[_js]),
+    npm={
+        "angular-xeditable": "~0.1.12",
+        "angular-hotkeys-light": "~1.1.0"
+    }
 )

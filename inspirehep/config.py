@@ -852,7 +852,7 @@ LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 # Web services and APIs
 # =====================
 BEARD_API_URL = None   # e.g. "http://beard.inspirehep.net/api"
-MAGPIE_API_URL = None   # e.g. "http://magpie.inspirehep.net/api"
+MAGPIE_API_URL = "http://magpie.inspirehep.net/api"
 
 # Harvesting and Workflows
 # ========================
@@ -863,6 +863,7 @@ WORKFLOWS_DEFAULT_FILE_LOCATION_NAME = "holdingpen"
 """Name of default workflow Location reference."""
 
 WORKFLOWS_UI_BASE_TEMPLATE = BASE_TEMPLATE
+WORKFLOWS_UI_INDEX_TEMPLATE = "inspire_workflows/index.html"
 WORKFLOWS_UI_LIST_TEMPLATE = "inspire_workflows/list.html"
 WORKFLOWS_UI_DETAILS_TEMPLATE = "inspire_workflows/details.html"
 WORKFLOWS_UI_LIST_ROW_TEMPLATE = "inspire_workflows/list_row.html"
@@ -877,8 +878,10 @@ WORKFLOWS_UI_REST_ENDPOINT = dict(
                              ':json_serializer'),
     },
     search_serializers={
-        'application/json': ('invenio_workflows_ui.serializers'
+        'application/vnd+inspire.brief+json': ('invenio_workflows_ui.serializers'
                              ':json_search_serializer'),
+        'application/json': ('invenio_workflows_ui.serializers'
+                             ':json_search_serializer')
     },
     action_serializers={
         'application/json': ('invenio_workflows_ui.serializers'
