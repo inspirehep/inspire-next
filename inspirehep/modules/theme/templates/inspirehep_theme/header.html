@@ -33,6 +33,8 @@
 {% endif %}
 
 
+
+
 <section id="header-section">
     <div class="collapse navbar-collapse" id="navigation">
     </div>
@@ -190,6 +192,8 @@
 </section>
 
 <section id="collections-section">
+
+  collection name is {{collection_name}}
   <nav id="collections-nav">
       <a href="/literature" id="literature-collection" class="{{collection_name | collection_select_current("Literature") }}">
         Literature

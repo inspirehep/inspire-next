@@ -697,8 +697,6 @@ def find_collection_from_url(url):
         return 'journals'
     elif 'experiments' in url:
         return 'experiments'
-    elif 'conferences' in url:
-        return 'conferences'
     elif 'authors' in url:
         return 'authors'
     return 'literature'

@@ -27,8 +27,10 @@ $pete-river: #3498db;
 $belize-hole: #2980b9;
 $amethyst: #9b59b6;
 $wisteria: #8e44ad;
+$blue-haze: #74889c;
 $wet-asphalt: #34495e;
 $midnight-blue: #2c3e50;
+$dark-blue:#1D2D3D;
 $sun-flower: #f1c40f;
 $orange: #f39c12;
 $carrot: #e67e22;
@@ -100,7 +102,7 @@ $alternate-link-color: $turquoise;
 
 // Basics of a navbar
 
-$navbar-inverse-bg: #2C3E50;
+$navbar-inverse-bg: $dark-blue;
 $navbar-inverse-border: darken($navbar-inverse-bg, 6.5%);
 $navbar-height: 60px;
 
@@ -114,4 +116,4 @@ $navbar-inverse-link-color: white;
 //
 //##
 
-$panel-default-heading-bg: #35495E;
+$panel-default-heading-bg: $dark-blue;

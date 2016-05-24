@@ -1,0 +1,19 @@
+<ul class="statuses">
+  {% for status_item in status_items %}
+  <li>
+    <a href='/holdingpen/list/_workflow.data_type:"{{status_item.type}}"'>
+      <div class="row-fluid {{status_item.color}}">
+        <div class="col-md-1">
+          <i class="fa {{status_item.icon}}"></i>
+        </div>
+        <div class="col-md-8">
+          {{status_item.name}}
+        </div>
+        <div class="col-md-2">
+          {{status_item.count}}
+        </div>
+      </div>
+    </a>
+  </li>
+  {% endfor %}
+</ul>

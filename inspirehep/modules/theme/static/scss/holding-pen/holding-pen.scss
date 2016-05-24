@@ -1,0 +1,302 @@
+@import "../base/variables";
+
+html, body {
+  background-color: $dark-blue !important;
+}
+
+$hp_table_bg: #223142;
+
+#collections-section {
+  display: none;
+}
+
+.hp-container {
+  padding: 50px 70px 70px;
+}
+
+.holding-page-header {
+  background-color: $midnight-blue;
+  padding: 15px;
+  color: white;
+  height: 50px;
+  font-size: 1.2em;
+  ul {
+    list-style: none;
+    li {
+      display: inline-block;
+
+      &.active {
+        color: $silver;
+      }
+    }
+  }
+}
+
+.overview-container {
+  width: 80%;
+  margin: 0 auto !important;
+}
+
+.header-text {
+  color: $wet-asphalt;
+  margin-bottom: 20px;
+}
+
+#submission-history-container {
+  background-color: $midnight-blue;
+  height: 10vh;
+}
+
+.overview-item {
+
+  background-color: $midnight-blue;
+  height: 260px;
+  border-radius: 3px;
+  margin-bottom: 10px;
+
+  .summary {
+    background-color: $concrete;
+    height: 130px;
+    border-radius: 3px 3px 0 0;
+    padding: 10px;
+
+    h2 {
+      color: white;
+      font-size: 2.6em;
+      padding-left: 10px;
+      padding-bottom: 10px;
+      margin: 0;
+    }
+
+    h4 {
+      margin: 0;
+      color: white;
+      text-transform: uppercase;
+      font-size: .9em;
+      padding: 10px;
+    }
+
+    p {
+      color: white;
+      padding-left: 10px;
+    }
+
+    &.authors {
+      background-color: $pete-river;
+    }
+
+    &.authors-update {
+      background-color: $belize-hole;
+    }
+
+    &.arxiv {
+      background-color: $alizarin;
+    }
+
+    &.literature {
+      background-color: $carrot;
+    }
+  }
+
+  .statuses {
+    -webkit-padding-start: 0px;
+
+    li {
+      margin-bottom: 5px;
+    }
+  }
+}
+
+.hp-search-form {
+  input {
+    background-color: $dark-blue;
+    border: none;
+    padding: 7px 15px;
+    margin-top: -8px;
+    font-size: .9em;
+  }
+}
+
+.hp-filters {
+  h4 {
+    color: $clouds;
+    font-size: 1.1em;
+    font-weight: normal;
+    padding-top: 10px;
+    -webkit-margin-before: 0;
+  }
+
+  select {
+    background-color: $midnight-blue;
+    border: none;
+    color: $blue-haze;
+    margin-bottom: 10px;
+  }
+
+  .type-facets {
+    list-style: none;
+    -webkit-padding-start: 0;
+
+    li {
+      margin-bottom: 4px;
+      padding: 4px 6px;
+      cursor: pointer;
+      border-radius: 3px;
+
+      &.authors {
+        color: $pete-river;
+
+        &.active {
+          background-color: $pete-river;
+          color: white;
+        }
+      }
+
+      &.authors-update {
+        color: $belize-hole;
+
+        &.active {
+          background-color: $belize-hole;
+          color: white;
+        }
+      }
+
+      &.arxiv {
+        color: $alizarin;
+
+        &.active {
+          background-color: $alizarin;
+          color: white;
+        }
+      }
+
+      &.literature {
+        color: $carrot;
+        &.active {
+          background-color: $carrot;
+          color: white;
+        }
+      }
+
+      &.oai-harvest {
+        color: $concrete;
+
+        &.active {
+          background-color: $concrete;
+          color: white;
+        }
+
+      }
+    }
+  }
+
+}
+
+.error {
+  color: $alizarin !important;
+
+  &.active {
+    background-color: $alizarin;
+    color: white !important;
+  }
+}
+
+.inprogress {
+  color: $concrete !important;
+  &.active {
+    background-color: $concrete;
+    color: white !important;
+  }
+}
+
+.attention {
+  color: $orange !important;
+  &.active {
+    background-color: $orange;
+    color: white !important;
+  }
+}
+
+.done {
+  color: $green-sea !important;
+  &.active {
+    background-color: $green-sea;
+    color: white !important;
+  }
+}
+
+#hp-list {
+  table-layout: fixed;
+  border-radius: 3px;
+  background-color: $hp_table_bg;
+  color: $blue-haze;
+  border: none;
+  padding: 10px;
+
+  tr:hover {
+    background-color: $hp_table_bg;
+  }
+
+  thead td {
+    font-weight: bolder;
+  }
+
+  tbody td {
+    border-top: 1px solid $blue-haze;
+  }
+
+  td {
+
+    &.hp-check {
+      width: 5%;
+    }
+
+    &.hp-main-info {
+      width: 40%;
+    }
+
+    &.hp-submission-info {
+      width: 20%;
+    }
+
+    &.hp-subject-areas {
+      width: 15%;
+    }
+
+    &.hp-decision {
+      width: 20%;
+    }
+  }
+
+  .hp-authors {
+    font-size: .9em;
+  }
+
+  .row-action {
+    text-align: center;
+  }
+
+  .hp-abstract {
+    td {
+      border-top: none !important;
+    }
+
+  }
+
+  .hp-title {
+    font-weight: bolder;
+    font-size: 1.2em;
+  }
+
+  #hp-list-select-all {
+    margin-top: 4px;
+  }
+}
+
+#list-header {
+  display: none;
+}
+
+.feedback-fixed-left {
+  display: none;
+}

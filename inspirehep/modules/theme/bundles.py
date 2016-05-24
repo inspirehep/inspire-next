@@ -23,7 +23,6 @@ from __future__ import absolute_import, print_function
 
 from invenio_assets import NpmBundle
 
-
 # Used when ASSETS_DEBUG is False - like production
 almondjs = NpmBundle(
     "node_modules/almond/almond.js",
@@ -65,16 +64,20 @@ js = NpmBundle(
         "clipboard": "~1.5.8",
         "flightjs": "~1.5.0",
         "angular": "~1.4.8",
+        "impact-graphs": "git+https://git@github.com/inspirehep/impact-graphs.git",
         "inspirehep-js": "git+https://git@github.com/inspirehep/inspirehep-js.git",
-        "readmore-js": "~2.1.0",
-        "impact-graphs": "git+https://git@github.com/inspirehep/impact-graphs.git"
+        "readmore-js": "~2.1.0"
     }
 )
 
+detailedjs = NpmBundle(
+    "js/detailed_record_init.js",
+    filters="requirejs",
+    output="gen/detailed_record.%(version)s.js",
+)
+
 css = NpmBundle(
-    "node_modules/angular-loading-bar/build/loading-bar.css",
-    "node_modules/datatables.net-bs/css/dataTables.bootstrap.css",
-    "scss/inspirehep.scss",  # Keep last to override previous stylesheets
+    "scss/inspirehep.scss",
     filters="scss, cleancss",
     output="gen/inspirehep.%(version)s.css",
     depends="scss/**/*.scss",
@@ -84,12 +87,9 @@ css = NpmBundle(
     }
 )
 
-detailedjs = NpmBundle(
-    "js/detailed_record_init.js",
-    filters='requirejs',
-    output="gen/detailed_record.%(version)s.js",
-    npm={
-        "datatables.net": "~1.10.11",
-        "datatables.net-bs": "~1.10.11",
-    }
+holding_pen_css = NpmBundle(
+    "scss/holding-pen/holding-pen.scss",
+    filters="scss, cleancss",
+    output="gen/inspirehep.holding.%(version)s.css",
+    depends="scss/**/*.scss"
 )

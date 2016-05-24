@@ -189,7 +189,7 @@ setup(
             'inspirehep_literaturesuggest_js = inspirehep.modules.literaturesuggest.bundles:js',
             'invenio_search_ui_search_js = inspirehep.modules.search.bundles:js',
             'inspire_workflows_ui_js_actions = inspirehep.modules.workflows.bundles:actions_js',
-            'inspire_workflows_ui_js_details = inspirehep.modules.workflows.bundles:details_js',
+            'inspirehep_holding_css = inspirehep.modules.theme.bundles:holding_pen_css',
         ],
         'invenio_jsonschemas.schemas': [
             'inspire_records = inspirehep.modules.records.jsonschemas',

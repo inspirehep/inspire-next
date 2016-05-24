@@ -813,6 +813,7 @@ MAGPIE_API_URL = None   # e.g. "http://magpie.inspirehep.net/api"
 # Workflows
 # =========
 WORKFLOWS_UI_BASE_TEMPLATE = BASE_TEMPLATE
+WORKFLOWS_UI_INDEX_TEMPLATE = "inspire_workflows/index.html"
 WORKFLOWS_UI_LIST_TEMPLATE = "inspire_workflows/list.html"
 WORKFLOWS_UI_DETAILS_TEMPLATE = "inspire_workflows/details.html"
 WORKFLOWS_UI_LIST_ROW_TEMPLATE = "inspire_workflows/list_row.html"

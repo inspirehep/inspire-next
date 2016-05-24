@@ -1,0 +1,117 @@
+{% extends "inspirehep_theme/page.html" %}
+
+{%- block header %}
+{{- super() }}
+{% assets "inspirehep_holding_css" %}
+<link href="{{ ASSET_URL }}" rel="stylesheet"/>
+{% endassets %}
+{%- endblock header %}
+
+{%- block page_body -%}
+<div class="holding-page-header">
+  <ul class="pull-left">
+    <li>Holding Pen</li>
+    <li class="active">Dashboard
+    </li>
+  </ul>
+</div>
+<div class="clearfix"></div>
+
+<div class="container-fluid">
+  <h3 class="text-center header-text">
+    OVERVIEW
+  </h3>
+
+  <div class="row overview-container">
+    <div class="col-md-3 col-sm-6">
+      <div class="overview-item">
+
+        <div class="summary authors">
+          <h4>New Author Submissions</h4>
+          <h2>134</h2>
+          <p><i class="fa fa-caret-up"></i> 22% increase</p>
+        </div>
+
+        {% set status_items = [
+          {'type': 'authors', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
+          {'type': 'authors', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
+          {'type': 'authors', 'name': 'Attention Required', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
+          {'type': 'authors', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
+        ] %}
+        {% include "inspire_workflows/components/dashboard_status_widget.html" %}
+
+      </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+      <div class="overview-item">
+        <div class="summary authors-update">
+          <h4>New Author Updates</h4>
+          <h2>12</h2>
+          <p><i class="fa fa-caret-up"></i> 12% increase</p>
+        </div>
+
+        {% set status_items = [
+          {'type': 'authors', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
+          {'type': 'authors', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 0},
+          {'type': 'authors', 'name': 'Attention Required', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 0},
+          {'type': 'authors', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 2}
+        ] %}
+        {% include "inspire_workflows/components/dashboard_status_widget.html" %}
+
+      </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+      <div class="overview-item">
+
+        <div class="summary literature">
+          <h4>New Literature Submissions</h4>
+          <h2>134</h2>
+          <p><i class="fa fa-caret-up"></i> 22% increase</p>
+        </div>
+
+        {% set status_items = [
+          {'type': 'hep', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
+          {'type': 'hep', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
+          {'type': 'hep', 'name': 'Attention Required', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
+          {'type': 'hep', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
+        ] %}
+        {% include "inspire_workflows/components/dashboard_status_widget.html" %}
+
+      </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+      <div class="overview-item">
+        <div class="summary arxiv">
+          <h4>New arXiv Submissions</h4>
+           <h2>2,134</h2>
+          <p><i class="fa fa-caret-up"></i> 42% increase</p>
+        </div>
+
+          {% set status_items = [
+          {'type': 'hep', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
+          {'type': 'hep', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
+          {'type': 'hep', 'name': 'Attention Required', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
+          {'type': 'hep', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
+        ] %}
+        {% include "inspire_workflows/components/dashboard_status_widget.html" %}
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="clearfix"></div>
+<br/>
+<div class="container-fluid">
+  <h3 class="text-center header-text">
+    SUBMISSION STATS
+  </h3>
+
+  <div class="container-fluid">
+    <div ihd="submission-history-container" class="col-md-12">
+    </div>
+  </div>
+</div>
+{%- endblock -%}
