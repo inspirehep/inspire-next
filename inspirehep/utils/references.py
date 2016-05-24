@@ -17,9 +17,12 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from invenio_records.api import Record
-from invenio_search import current_search_client as es
 from jinja2 import render_template_to_string
+
+from invenio_records.api import Record
+from invenio_search import current_search_client
+
+from inspirehep.modules.search import IQ
 
 
 class Reference(object):
@@ -42,15 +45,27 @@ class Reference(object):
             refs_to_get_from_es = [
                 ref['recid'] for ref in references if ref.get('recid')
             ]
-            records_from_es = []
-
-            if refs_to_get_from_es:
-                records_from_es = es.mget(body={
-                    "ids": refs_to_get_from_es
-                }, index="records-hep")['docs']
+            query = IQ(' OR '.join('recid:' + str(ref)
+                                   for ref in refs_to_get_from_es))
+            records_from_es = current_search_client.search(
+                index='records-hep',
+                doc_type='hep',
+                body={"query": query.to_dict()},
+                size=9999,
+                _source=[
+                    'control_number',
+                    'citation_count',
+                    'titles',
+                    'earliest_date',
+                    'authors',
+                    'collaboration',
+                    'corporate_author',
+                    'publication_info'
+                ]
+            )['hits']['hits']
 
             refs_from_es = {
-                ref['_id']: ref['_source'] for ref in records_from_es if '_source' in ref
+                str(ref['_source']['control_number']): ref['_source'] for ref in records_from_es
             }
             for reference in references:
                 row = []
@@ -58,8 +73,7 @@ class Reference(object):
                 ref_record = refs_from_es.get(str(recid)) if recid else None
 
                 if recid and ref_record:
-                    recid = reference['recid']
-                    ref_record = Record(refs_from_es.get(str(recid)))
+                    ref_record = Record(ref_record)
                     if ref_record:
                         row.append(render_template_to_string(
                             "inspirehep_theme/references.html",
@@ -69,7 +83,6 @@ class Reference(object):
                         row.append(ref_record.get('citation_count', ''))
                         out.append(row)
                 else:
-
                     row.append(render_template_to_string(
                         "inspirehep_theme/references.html",
                         reference=reference))
