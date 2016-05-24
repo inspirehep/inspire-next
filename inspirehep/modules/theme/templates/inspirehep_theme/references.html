@@ -27,10 +27,10 @@
         {% if reference['number'] %}
           [{{ reference['number'] }}]
         {% endif %}
-        <a href="/record/{{record['control_number']}}">{{ render_record_title() }}</a>
+        <a href="/literature/{{record['control_number']}}">{{ render_record_title(record) }}</a>
       </div>
-      <div class="reference-authors">{{ render_record_authors(is_brief=true, show_affiliations=false) | safe }}</div>
-      <div class="reference-journal">{{ record_publication_info() | safe }}</div>
+      <div class="reference-authors">{{ render_record_authors(record, is_brief=true, show_affiliations=false, number_of_displayed_authors=1) | safe }}</div>
+      <div class="reference-journal">{{ record_publication_info(record) | safe }}</div>
   {% else %}
     <div class="reference-title">
       {% if reference['number'] %}
