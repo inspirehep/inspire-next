@@ -196,6 +196,65 @@ $hp_table_bg: #223142;
 
 }
 
+.facet-container {
+  ul li {
+    cursor: pointer;
+    padding: 5px 5px 0px;
+    border-radius: 3px;
+  }
+
+  h4 {
+    color: $blue-haze;
+  }
+
+  .facet-label {
+    color: $midnight-blue;
+  }
+
+  .arxiv {
+    color: $alizarin !important;
+
+    &.active {
+      background-color: $alizarin;
+      color: white !important;
+    }
+  }
+
+  .oai-harvest {
+    color: $concrete !important;
+    &.active {
+      background-color: $concrete;
+      color: white !important;
+    }
+  }
+
+  .literature {
+    color: $carrot !important;
+    &.active {
+      background-color: $carrot;
+      color: white !important;
+
+    }
+  }
+
+  .authors {
+    color: $pete-river !important;
+    &.active {
+      background-color: $pete-river;
+      color: white !important;
+    }
+  }
+
+  .authors-update {
+    color: $belize-hole !important;
+    &.active {
+      background-color: $belize-hole;
+      color: white !important;
+    }
+  }
+
+}
+
 .error {
   color: $alizarin !important;
 

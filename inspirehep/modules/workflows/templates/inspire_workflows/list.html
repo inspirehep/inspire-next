@@ -17,9 +17,9 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% extends "invenio_workflows_ui/list.html" %}
+{% extends "inspirehep_theme/page.html" %}
 
-{% from "inspire_workflows/macros.html" import batch_action_buttons %}
+<!--{% from "inspire_workflows/macros.html" import batch_action_buttons %}-->
 
 {% block javascript %}
 {{ super() }}
@@ -31,7 +31,7 @@
 <link href="{{ ASSET_URL }}" rel="stylesheet"/>{% endassets %}
 {%- endblock javascript %}
 
-{%- block list_container -%}
+{%- block body -%}
 <div id="invenio-search">
   <invenio-search search-endpoint="/api/holdingpen"
                   search-extra-params='{"size": 25}'>
@@ -87,8 +87,6 @@
         <p class="text-muted">Ctrl+A: Select all, Esc: Deselect</p>
       </div>
 
-
-      {{ batch_action_buttons() }}
     </div>
     {% endblock %}
 
