@@ -135,9 +135,20 @@ def fake_download_file(url, *args, **kwargs):
     raise Exception("Download file not mocked!")
 
 
+def fake_query_beard_api(url, data):
+    """Mock query_beard_api func."""
+    return {
+        'decision': u'Rejected',
+        'scores': [
+            -0.20895982018928272, -1.6722188892559084, 0.8358207729691823
+        ]
+    }
+
+
 @mock.patch('inspirehep.utils.arxiv.download_file', side_effect=fake_download_file)
+@mock.patch('inspirehep.modules.workflows.tasks.beard.query_beard_api', side_effect=fake_query_beard_api)
 def test_harvesting_arxiv_workflow_rejected(
-        mocked, app, record_oai_arxiv_plots):
+        mocked_download, mocked_beard, app, record_oai_arxiv_plots):
     """Test a full harvesting workflow."""
     from invenio_workflows import (
         start, WorkflowEngine, ObjectStatus, WorkflowObject
@@ -156,6 +167,8 @@ def test_harvesting_arxiv_workflow_rejected(
     record_json = hep.do(record_marc)
     workflow_uuid = None
     with app.app_context():
+        app.config["BEARD_API_URL"] = "http://example.com/api"
+
         workflow_uuid = start('arxiv_ingestion', [record_json])
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
@@ -178,8 +191,11 @@ def test_harvesting_arxiv_workflow_rejected(
         assert pub_info[0].get('year') == "2014"
         assert pub_info[0].get('journal_title') == "J. Math. Phys."
 
-        # FIXME A prediction should have been made
-        # assert obj.extra_data.get("arxiv_guessing")
+        # A prediction should have been made
+        prediction = obj.extra_data.get("relevance_prediction")
+        assert prediction
+        assert prediction['decision'] == "Rejected"
+        assert prediction['scores']['Rejected'] == 0.8358207729691823
 
         # This record should not have been touched yet
         assert "approved" not in obj.extra_data
@@ -247,9 +263,6 @@ def test_harvesting_arxiv_workflow_accepted(
         assert pub_info[0]
         assert pub_info[0].get('year') == "2014"
         assert pub_info[0].get('journal_title') == "J. Math. Phys."
-
-        # FIXME A prediction should have been made
-        # assert obj.extra_data.get("arxiv_guessing")
 
         # This record should not have been touched yet
         assert "approved" not in obj.extra_data

@@ -62,8 +62,7 @@ class HEPApproval(object):
             res = value[0]  # value was ['accept']
 
         # Audit logging
-        results = obj.extra_data.get("_tasks_results", {})
-        prediction_results = results.get("arxiv_guessing", {})
+        prediction_results = obj.extra_data.get("relevance_prediction", {})
         log_workflows_action(
             action="resolve",
             prediction_results=prediction_results,

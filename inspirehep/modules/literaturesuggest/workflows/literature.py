@@ -50,7 +50,6 @@ from inspirehep.modules.workflows.tasks.submission import (
     close_ticket,
 )
 from inspirehep.modules.workflows.tasks.upload import store_record
-# from inspirehep.modules.predicter.tasks import guess_coreness
 
 from ..forms import LiteratureForm
 from ..tasks import (
@@ -132,9 +131,7 @@ class Literature(object):
             "complete_output"
         )
         results = obj.extra_data.get('_tasks_results', {})
-        prediction_results = results.get("arxiv_guessing", {})
-        if prediction_results:
-            prediction_results = prediction_results[0].get("result")
+        prediction_results = results.get("relevance_prediction", {})
         return render_template(
             'inspire_workflows/styles/harvesting_record_additional.html',
             object=obj,
@@ -159,21 +156,12 @@ class Literature(object):
     @classmethod
     def get_sort_data(cls, obj, **kwargs):
         """Return a dictionary useful for sorting in Holding Pen."""
-        results = obj.extra_data.get("_tasks_results", {})
-        prediction_results = results.get("arxiv_guessing", {})
+        prediction_results = obj.extra_data.get("relevance_prediction", {})
         if prediction_results:
-            prediction_results = prediction_results[0].get("result")
-            max_score = prediction_results.get("max_score")
-            decision = prediction_results.get("decision")
-            relevance_score = max_score
-            if decision == "CORE":
-                relevance_score += 10
-            elif decision == "Rejected":
-                relevance_score = (max_score * -1) - 10
             return {
                 "max_score": prediction_results.get("max_score"),
                 "decision": prediction_results.get("decision"),
-                "relevance_score": relevance_score
+                "relevance_score": prediction_results.get("relevance_score")
             }
         else:
             return {}
