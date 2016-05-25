@@ -10,208 +10,263 @@ $hp_table_bg: #223142;
   display: none;
 }
 
-.hp-container {
-  padding: 50px 70px 70px;
-}
+.holding-pen {
+  .main-container {
+    width: 95%;
+    margin: 0 auto;
+    padding-top: 30px;
+  }
 
-.holding-page-header {
-  background-color: $midnight-blue;
-  padding: 15px;
-  color: white;
-  height: 50px;
-  font-size: 1.2em;
-  ul {
-    list-style: none;
-    li {
-      display: inline-block;
+  .result-list {
+    .col-md-1 {
+      width: 30px;
+    }
 
-      &.active {
-        color: $silver;
+    .col-md-offset-1 {
+      margin-left: 30px;
+    }
+  }
+
+  .holding-page-header {
+    background-color: $midnight-blue;
+    padding: 15px;
+    color: white;
+    height: 50px;
+    font-size: 1.2em;
+    ul {
+      list-style: none;
+      li {
+        display: inline-block;
+
+        &.active {
+          color: $silver;
+        }
       }
     }
   }
-}
 
-.overview-container {
-  width: 80%;
-  margin: 0 auto !important;
-}
-
-.header-text {
-  color: $wet-asphalt;
-  margin-bottom: 20px;
-}
-
-#submission-history-container {
-  background-color: $midnight-blue;
-  height: 10vh;
-}
-
-.overview-item {
-
-  background-color: $midnight-blue;
-  height: 260px;
-  border-radius: 3px;
-  margin-bottom: 10px;
-
-  .summary {
-    background-color: $concrete;
-    height: 130px;
-    border-radius: 3px 3px 0 0;
-    padding: 10px;
-
-    h2 {
-      color: white;
-      font-size: 2.6em;
-      padding-left: 10px;
-      padding-bottom: 10px;
-      margin: 0;
-    }
-
-    h4 {
-      margin: 0;
-      color: white;
-      text-transform: uppercase;
-      font-size: .9em;
-      padding: 10px;
-    }
-
-    p {
-      color: white;
-      padding-left: 10px;
-    }
-
-    &.authors {
-      background-color: $pete-river;
-    }
-
-    &.authors-update {
-      background-color: $belize-hole;
-    }
-
-    &.arxiv {
-      background-color: $alizarin;
-    }
-
-    &.literature {
-      background-color: $carrot;
-    }
+  .overview-container {
+    width: 80%;
+    margin: 0 auto !important;
   }
 
-  .statuses {
-    -webkit-padding-start: 0px;
-
-    li {
-      margin-bottom: 5px;
-    }
-  }
-}
-
-.hp-search-form {
-  input {
-    background-color: $dark-blue;
-    border: none;
-    padding: 7px 15px;
-    margin-top: -8px;
-    font-size: .9em;
-  }
-}
-
-.hp-filters {
-  h4 {
-    color: $clouds;
-    font-size: 1.1em;
-    font-weight: normal;
-    padding-top: 10px;
-    -webkit-margin-before: 0;
+  .header-text {
+    color: $wet-asphalt;
+    margin-bottom: 20px;
   }
 
-  hr {
-    display: none;
-  }
-
-  select {
+  #submission-history-container {
     background-color: $midnight-blue;
-    border: none;
-    color: $blue-haze;
-    margin-bottom: 10px;
+    height: 10vh;
   }
 
-  .hp-facet-item {
-    list-style: none;
-    -webkit-padding-start: 0;
+  .overview-item {
 
-    li {
-      margin-bottom: 4px;
-      padding: 4px 6px;
-      cursor: pointer;
-      border-radius: 3px;
+    background-color: $midnight-blue;
+    height: 260px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+
+    .summary {
+      background-color: $concrete;
+      height: 130px;
+      border-radius: 3px 3px 0 0;
+      padding: 10px;
+
+      h2 {
+        color: white;
+        font-size: 2.6em;
+        padding-left: 10px;
+        padding-bottom: 10px;
+        margin: 0;
+      }
+
+      h4 {
+        margin: 0;
+        color: white;
+        text-transform: uppercase;
+        font-size: .9em;
+        padding: 10px;
+      }
+
+      p {
+        color: white;
+        padding-left: 10px;
+      }
 
       &.authors {
-        color: $pete-river;
-
-        &.active {
-          background-color: $pete-river;
-          color: white;
-        }
+        background-color: $pete-river;
       }
 
       &.authors-update {
-        color: $belize-hole;
-
-        &.active {
-          background-color: $belize-hole;
-          color: white;
-        }
+        background-color: $belize-hole;
       }
 
       &.arxiv {
-        color: $alizarin;
-
-        &.active {
-          background-color: $alizarin;
-          color: white;
-        }
+        background-color: $alizarin;
       }
 
       &.literature {
-        color: $carrot;
-        &.active {
-          background-color: $carrot;
-          color: white;
-        }
+        background-color: $carrot;
       }
+    }
 
-      &.oai-harvest {
-        color: $concrete;
+    .statuses {
+      -webkit-padding-start: 0px;
 
-        &.active {
-          background-color: $concrete;
-          color: white;
-        }
-
+      li {
+        margin-bottom: 5px;
       }
     }
   }
 
-}
-
-.facet-container {
-  ul li {
-    cursor: pointer;
-    padding: 5px 5px 0px;
-    border-radius: 3px;
+  .hp-search-form {
+    input {
+      background-color: $dark-blue;
+      border: none;
+      padding: 7px 15px;
+      margin-top: -8px;
+      font-size: .9em;
+    }
   }
 
-  h4 {
-    color: $blue-haze;
+  .hp-filters {
+    h4 {
+      color: $clouds;
+      font-size: 1.1em;
+      font-weight: normal;
+      padding-top: 10px;
+      -webkit-margin-before: 0;
+    }
+
+    hr {
+      display: none;
+    }
+
+    select {
+      background-color: $midnight-blue;
+      border: none;
+      color: $blue-haze;
+      margin-bottom: 10px;
+    }
+
+    .hp-facet-item {
+      list-style: none;
+      -webkit-padding-start: 0;
+
+      li {
+        margin-bottom: 4px;
+        padding: 4px 6px;
+        cursor: pointer;
+        border-radius: 3px;
+
+        &.authors {
+          color: $pete-river;
+
+          &.active {
+            background-color: $pete-river;
+            color: white;
+          }
+        }
+
+        &.authors-update {
+          color: $belize-hole;
+
+          &.active {
+            background-color: $belize-hole;
+            color: white;
+          }
+        }
+
+        &.arxiv {
+          color: $alizarin;
+
+          &.active {
+            background-color: $alizarin;
+            color: white;
+          }
+        }
+
+        &.literature {
+          color: $carrot;
+          &.active {
+            background-color: $carrot;
+            color: white;
+          }
+        }
+
+        &.oai-harvest {
+          color: $concrete;
+
+          &.active {
+            background-color: $concrete;
+            color: white;
+          }
+        }
+      }
+    }
   }
 
-  .facet-label {
-    color: $midnight-blue;
+  .facet-container {
+    ul li {
+      cursor: pointer;
+      padding: 5px 5px 0px;
+      border-radius: 3px;
+    }
+
+    h4 {
+      color: $blue-haze;
+    }
+
+    .facet-label {
+      color: $midnight-blue;
+    }
+
+    .arxiv {
+      color: $alizarin !important;
+
+      &.active {
+        background-color: $alizarin;
+        color: white !important;
+      }
+    }
+
+    .oai-harvest {
+      color: $concrete !important;
+      &.active {
+        background-color: $concrete;
+        color: white !important;
+      }
+    }
+
+    .literature {
+      color: $carrot !important;
+      &.active {
+        background-color: $carrot;
+        color: white !important;
+
+      }
+    }
+
+    .authornew {
+      color: $pete-river !important;
+      &.active {
+        background-color: $pete-river;
+        color: white !important;
+      }
+    }
+
+    .authorupdate {
+      color: $belize-hole !important;
+      &.active {
+        background-color: $belize-hole;
+        color: white !important;
+      }
+    }
+
   }
 
-  .arxiv {
+  .error {
     color: $alizarin !important;
 
     &.active {
@@ -220,7 +275,7 @@ $hp_table_bg: #223142;
     }
   }
 
-  .oai-harvest {
+  .inprogress {
     color: $concrete !important;
     &.active {
       background-color: $concrete;
@@ -228,151 +283,178 @@ $hp_table_bg: #223142;
     }
   }
 
-  .literature {
-    color: $carrot !important;
+  .attention {
+    color: $sun-flower !important;
     &.active {
-      background-color: $carrot;
-      color: white !important;
-
-    }
-  }
-
-  .authors {
-    color: $pete-river !important;
-    &.active {
-      background-color: $pete-river;
+      background-color: $sun-flower;
       color: white !important;
     }
   }
 
-  .authors-update {
-    color: $belize-hole !important;
+  .done {
+    color: $green-sea !important;
     &.active {
-      background-color: $belize-hole;
+      background-color: $green-sea;
       color: white !important;
     }
   }
 
-}
+  #hp-list {
+    border-radius: 3px;
+    background-color: transparent;
+    color: $blue-haze;
+    border: none;
+    padding: 16px;
 
-.error {
-  color: $alizarin !important;
+    .hp-item {
+      background-color: $hp_table_bg;
+      margin-bottom: 3px;
+      padding-bottom: 10px;
+      padding-top: 10px;
+      border-left: 4px solid $hp_table_bg;
+      border-radius: 0;
 
-  &.active {
-    background-color: $alizarin;
-    color: white !important;
+      &.hperror {
+        border-left: 4px solid $alizarin;
+      }
+
+      &.hpattention {
+        border-left: 4px solid $sun-flower;
+      }
+
+      &.hpdone {
+        border-left: 4px solid $turquoise;
+      }
+
+      .custom-h {
+        margin-top: 0px;
+      }
+
+      .workflow-type {
+        font-size: 1em;
+        &.authornew {
+          color: $pete-river;
+        }
+
+        &.authorsupdate {
+          color: $belize-hole;
+        }
+
+        &.arxiv_ingestion {
+          color: $alizarin;
+        }
+
+        &.literature {
+          color: $carrot;
+        }
+
+        &.oai-harvest {
+          color: $concrete;
+        }
+      }
+
+      .subject-terms {
+        list-style: none;
+        -webkit-padding-start: 0;
+
+        li {
+          background-color: $midnight-blue;
+          padding: 3px 5px;
+          display: inline-block;
+          margin: 2px;
+        }
+      }
+
+      .decision {
+        text-align: center;
+
+        .reject {
+          color: $alizarin;
+        }
+
+        .core {
+          color: $green-sea
+        }
+
+        .accept {
+          color: $orange;
+        }
+
+        ul {
+          list-style: none;
+          -webkit-padding-start: 0;
+          padding-top: 5px;
+          li {
+            background-color: $midnight-blue;
+            padding: 4px 5px;
+            display: inline-block;
+            cursor: pointer;
+
+            &:first-child {
+              border-radius: 3px 0 0 3px;
+            }
+
+            &:last-child{
+              border-radius: 0 3px 3px 0;
+            }
+
+            &.core {
+              color: $blue-haze;
+              &.active {
+                background-color: $green-sea;
+                color: $midnight-blue;
+                font-weight: bolder;
+              }
+            }
+
+            &.reject {
+              color: $blue-haze;
+              &.active {
+                background-color: $alizarin;
+                color: $midnight-blue;
+                font-weight: bolder;
+              }
+            }
+
+            &.accept {
+              color: $blue-haze;
+              &.active {
+                background-color: $orange;
+                color: $midnight-blue;
+                font-weight: bolder;
+              }
+            }
+          }
+        }
+      }
+
+      .institution-details {
+        .current {
+          color: white;
+        }
+      }
+    }
+
   }
-}
 
-.inprogress {
-  color: $concrete !important;
-  &.active {
-    background-color: $concrete;
-    color: white !important;
-  }
-}
-
-.attention {
-  color: $orange !important;
-  &.active {
-    background-color: $orange;
-    color: white !important;
-  }
-}
-
-.done {
-  color: $green-sea !important;
-  &.active {
-    background-color: $green-sea;
-    color: white !important;
-  }
-}
-
-#hp-list {
-  border-radius: 3px;
-  background-color: transparent;
-  color: $blue-haze;
-  border: none;
-  padding: 16px;
-
-  .hp-item {
+  .hp-header-row {
     background-color: $hp_table_bg;
-    margin-bottom: 3px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom: 1px solid $wet-asphalt;
     padding-bottom: 10px;
     padding-top: 10px;
-    border-left: 4px solid $hp_table_bg;
-    border-radius: 0;
-
-    &.hperror {
-      border-left: 4px solid $alizarin;
-    }
-
-    &.hpattention {
-      border-left: 4px solid $sun-flower;
-    }
-
-    &.hpdone {
-      border-left: 4px solid $turquoise;
-    }
-
-    .custom-h {
-      margin-top: 0px;
-    }
-
-    .workflow-type {
-      font-size: 1em;
-      &.authors {
-        color: $pete-river;
-      }
-
-      &.authors-update {
-        color: $belize-hole;
-      }
-
-      &.arxiv_ingestion {
-        color: $alizarin;
-      }
-
-      &.literature {
-        color: $carrot;
-      }
-
-      &.oai-harvest {
-        color: $concrete;
-      }
-    }
-
-    .subject-terms {
-      list-style: none;
-      -webkit-padding-start: 0;
-
-      li {
-        background-color: $midnight-blue;
-        padding: 3px 5px;
-        display: inline-block;
-        margin: 2px;
-      }
-    }
+    font-weight: bolder;
+    font-size: 1.1em;
   }
 
-}
+  #list-header {
+    display: none;
+  }
 
-.hp-header-row {
-  background-color: $hp_table_bg;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-  border-bottom: 1px solid $wet-asphalt;
-  padding-bottom: 10px;
-  padding-top: 10px;
-  font-weight: bolder;
-  font-size: 1.1em;
-}
+  .feedback-fixed-left {
+    display: none;
+  }
 
-#list-header {
-  display: none;
-}
-
-.feedback-fixed-left {
-  display: none;
 }
 
