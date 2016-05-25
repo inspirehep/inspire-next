@@ -313,6 +313,8 @@ RECORDS_REST_ENDPOINTS = dict(
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        record_class='inspirehep.modules.records.es_record:ESRecord'
+
     ),
     authors=dict(
         pid_type='authors',
@@ -489,7 +491,8 @@ RECORDS_UI_ENDPOINTS = dict(
         pid_type='literature',
         route='/literature/<pid_value>',
         template='inspirehep_theme/format/record/'
-                 'Inspire_Default_HTML_detailed.tpl'
+                 'Inspire_Default_HTML_detailed.tpl',
+        record_class='inspirehep.modules.records.es_record:ESRecord'
     ),
     authors=dict(
         pid_type='authors',
@@ -741,6 +744,8 @@ RECORDS_REST_DEFAULT_SORT = {
         "noquery": "latest"
     }
 }
+
+RECORDS_REST_DEFAULT_READ_PERMISSION_FACTORY = None
 
 RECORDS_VALIDATION_TYPES = {
     'array': (list, tuple),

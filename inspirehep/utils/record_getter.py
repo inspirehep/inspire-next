@@ -51,12 +51,12 @@ class RecordGetterError(Exception):
 
 def raise_record_getter_error_and_log(f):
     @wraps(f)
-    def wrapper(record_type, recid):
+    def wrapper(*args):
         try:
-            return f(record_type, recid)
+            return f(*args)
         except Exception as e:
-            current_app.logger.error('Error in retrieving record [{0}:{1}] '
-                                     'caused by {2}'.format(record_type, recid,
+            current_app.logger.error('Error in retrieving record {0} '
+                                     'caused by {1}'.format(repr(args),
                                                             repr(e)))
             raise RecordGetterError(e.message, e)
 
@@ -71,6 +71,18 @@ def get_es_record(record_type, recid):
     return es.get_source(
         index=search_conf['search_index'],
         id=str(pid.object_uuid),
+        doc_type=search_conf['search_type'])
+
+
+@raise_record_getter_error_and_log
+def get_es_record_by_uuid(uuid):
+    pid = PersistentIdentifier.query.filter_by(
+        object_uuid=uuid).one()
+    search_conf = current_app.config['RECORDS_REST_ENDPOINTS'][pid.pid_type]
+
+    return es.get_source(
+        index=search_conf['search_index'],
+        id=str(uuid),
         doc_type=search_conf['search_type'])
 
 
