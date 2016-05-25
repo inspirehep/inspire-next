@@ -10,8 +10,16 @@
         ng-repeat="item in vm.invenioSearchResults.aggregations[key].buckets | limitTo: facetResults"
         ng-click="handleClick(key, item.key)"
         ng-class="{'active' : handler[key].indexOf(item.key) > -1,
-              error: item.key === 'Error', attention : item.key === 'Need action', done: item.key === 'Done',
-              arxiv: item.key === 'arXiv', literature : item.key === 'Literature Suggestion', 'oai-harvest': item.key === 'OAI Harvest'}">
+              error: item.key === 'Error',
+              attention : item.key === 'Need action',
+              done: item.key === 'Done',
+              arxiv: item.key === 'arXiv',
+              literature: item.key === 'hep',
+              authornew: item.key === 'authors',
+              literature : item.key === 'Literature Suggestion',
+              'oai-harvest': item.key === 'OAI Harvest',
+              authornew: item.key === 'New Author',
+              authorupdate: item.key === 'Author Update'}">
         <span class="facet-title-truncate"><i class="fa fa-times"
                                               ng-if="handler[key].indexOf(item.key) > -1"></i> {{ item.key }}</span>
         <span class="facet-label label label-default pull-right">{{ item.doc_count }}</span>

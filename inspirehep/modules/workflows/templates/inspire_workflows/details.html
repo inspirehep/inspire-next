@@ -17,205 +17,44 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
 
-{% extends "invenio_workflows_ui/details.html" %}
+{% extends "inspirehep_theme/page.html" %}
+{%set body_css_classes=['holding-pen']%}
+{%- block css %}
+{{ super() }}
+{% assets "inspirehep_holding_css" %}
+<link href="{{ ASSET_URL }}" rel="stylesheet"/>
+{% endassets %}
+{%- endblock css %}
 
-{% from "inspire_workflows/macros.html" import render_prediction %}
 
 {% block javascript %}
-  {{ super() }}
-  {% assets "inspire_workflows_ui_js_actions" %}<script src="{{ ASSET_URL }}"></script>{% endassets %}
-  {% assets "inspire_workflows_ui_js_details" %}<script src="{{ ASSET_URL }}"></script>{% endassets %}
+{{ super() }}
+{% assets "inspirehep_holding_js" %}
+<script src="{{ ASSET_URL }}"></script>{% endassets %}
 {%- endblock javascript %}
 
-{%- block details_app_init -%}
-<div id="workflows-ui-init"
-     data-ui-url="{{ config.WORKFLOWS_UI_URL }}"
-     data-api-url="{{ config.WORKFLOWS_UI_API_URL }}"
-     data-next-objectid="{% if next_object_id %}{{ next_object_id }}{% endif %}"
-     data-previous-objectid="{% if previous_object_id %}{{ previous_object_id }}{% endif %}"
-     data-objectid="{{ workflow_object.id }}"
-     data-edit-subj-url="{{ url_for('inspire_holdingpen.edit_record_subject')|safe }}"
-     data-edit-title-url="{{ url_for('inspire_holdingpen.edit_record_title')|safe }}"
-     data-edit-urls-url="{{ url_for('inspire_holdingpen.edit_record_urls')|safe }}"></div>
-{% endblock %}
+{% block page_banner %}
+<div class="holding-page-header">
+  <ul class="pull-left">
+    <li>Holding Pen</li>
+    <li><a href="/holdingpen">Dashboard</a></li>
+    <li><a href="/holdingpen/list">List</a></li>
+    <li class="active" id="breadcrumb"></li>
+  </ul>
 
-{%- block details_container -%}
-  <div class="container main-container">
-{%- endblock -%}
-
-{%- block alerts -%}
-  {%- block action_alert -%}
-    {% if 'message' in workflow_object.extra_data and workflow_object.get_action() != None %}
-      <div id="usermessage" class="alert alert-warning alert-dismissible">
-        {{ workflow_object.extra_data['_message'] }}
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-      </div>
-    {% endif %}
-  {%- endblock -%}
-
-  {%- block workflow_completed -%}
-    {% if workflow_object.version == 1 %}
-      <div id="successmessage" class="alert alert-success">
-        {{ _('Record ingestion completed') }}
-        {% if 'url' in workflow_object.extra_data %}
-          <a href="{{ workflow_object.extra_data.get('url') }}">{{ _('click here ') }}</a> {{ _('to visit the record.') }}
-        {% endif %}
-        <a class="close" data-dismiss="alert">&times;</a>
-      </div>
-    {% elif workflow_object.version == 2 %}
-      <div class="alert alert-info">
-        {{ _('Record is stopped awaiting cataloger decision') }}
-        <a class="close" data-dismiss="alert">&times;</a>
-      </div>
-    {% elif workflow_object.version == 3 %}
-      <div class="alert alert-warning">
-        {{ _('Record is currently processing') }}
-        <a class="close" data-dismiss="alert">&times;</a>
-      </div>
-    {% elif workflow_object.version == 4 %}
-      <div class="alert alert-warning">
-        {{ _('Record is waiting to be processed') }}
-        <a class="close" data-dismiss="alert">&times;</a>
-      </div>
-    {% elif workflow_object.version == 5 %}
-      <div class="alert alert-danger">
-        {{ _('Record has stopped with an error.') }}
-        <a role="button"
-           data-toggle="modal"
-           data-target="#error_details_modal"
-           class="float-right">See details</a>
-        <a class="close" data-dismiss="alert">&times;</a>
-      </div>
-    {% endif %}
-  {%- endblock -%}
-{%- endblock -%}
-
-{% block top_center %}
-
-  {% if workflow_object.id_user %}
-    <div class="navbar-text">
-      <i class="fa fa-user"> {{ workflow_object.id_user | get_user_email }}</i>
-    </div>
-  {% endif %}
-
-  {% if workflow_object.extra_data.ticket_id %}
-    <div class="navbar-text">
-      <a href="https://rt.inspirehep.net/Ticket/Display.html?id={{ workflow_object.extra_data.ticket_id }}">
-        <i class="fa fa-comments-o"> RT-Ticket</i>
-      </a>
-    </div>
-  {% endif %}
-
-{% endblock %}
-
-
-{%- block hp_details_main -%}
-
-  {% set submission_data = workflow_object.extra_data.get("submission_data") %}
-
-  {% block hp_preview %}
-  <div class="row">
-    <div class="col-md-10">
-      <div id="object_preview_container{{workflow_object.id}}" class="object_preview_container">
-        {{ data_preview|safe }}
-      </div>
-    </div>
-    <div class="col-md-2">
-      <div id="object-preview" class="approval-action well btn-group-vertical text-right" role="group">
-
-        {% if not rendered_actions and workflow_object.version != 1 %}
-          {{ render_prediction(workflow_object) }}
-        {% endif %}
-
-        {% block status_badges %}
-          {% from 'inspire_workflows/macros.html' import check_status %}
-          {{ check_status(workflow_object) }}
-        {% endblock %}
-
-        {{ self.hp_action_main() }}
-
-        <button class="btn btn-primary preview"
-                type="button"
-                data-id="{{ workflow_object.id }}"
-                name="hp">HTML</button>
-        <button class="btn btn-primary preview"
-                type="button"
-                data-id="{{ workflow_object.id }}"
-                name="xm">MARCXML</button>
-        </div>
-    </div>
-
+  <div class="pull-right">
+    <form action="" class="hp-search-form">
+      <input type="text" placeholder="Search the holding pen">
+    </form>
   </div>
-  {% endblock %}
+</div>
+{% endblock %}
 
-  {% if submission_data.extra_comments %}
-    <h5>Comments from user</h5>
-    <pre>{{ submission_data.extra_comments }}</pre>
-  {% endif %}
-  {% if submission_data.pdf %}
-    <div class="row">
-      <div class="col-md-12">
-        <p>
-          PDF from user: <a href="{{ submission_data.pdf }}">{{ submission_data.pdf }}</a> <i class="fa fa-file-pdf-o"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-          {% if workflow_object.extra_data.get('pdf_upload') != None %}
-            <input type="checkbox" name="submission-data-pdf" id="submission-data-pdf" {% if workflow_object.extra_data.get('pdf_upload') == True %}checked{% endif %} disabled>
-          {% else %}
-            <input type="checkbox" name="submission-data-pdf" id="submission-data-pdf" checked>
-          {% endif %}
-          &nbsp;<label for="submission-data-pdf">Attach PDF</label>
-        </p>
-      </div>
-    </div>
-  {% endif %}
-
-  <div role="tabpanel">
-
-    <!-- Nav tabs -->
-    <ul class="nav nav-tabs" role="tablist">
-      <li role="presentation" class="active"><a href="#task-results" aria-controls="task-results" role="tab" data-toggle="tab">Extra data</a></li>
-      {% if submission_data.references %}
-        <li role="presentation"><a href="#references" aria-controls="references" role="tab" data-toggle="tab">References</a></li>
-      {% endif  %}
-      <li role="presentation"><a href="#task-logs" aria-controls="task-logs" role="tab" data-toggle="tab">Logs</a></li>
-      <li role="presentation"><a href="#task-dangerzone" class="text-danger" aria-controls="task-dangerzone" role="tab" data-toggle="tab">Delete Record?</a></li>
-    </ul>
-
-    <!-- Tab panes -->
-    <div class="tab-content">
-      <div role="tabpanel" class="tab-pane active" id="task-results">
-        {# Ensure keywords extraction results are second. #}
-        {% if "classifier_results" in workflow_object.extra_data %}
-          {% include 'inspire_workflows/results/classifier.html' %}
-        {% endif %}
-      </div>
-
-      {% if submission_data.references %}
-        <div role="tabpanel" class="tab-pane" id="references">
-          <pre>{{ submission_data.references }}</pre>
-        </div>
-      {% endif %}
-
-      <div role="tabpanel" class="tab-pane" id="task-logs">
-        <div class="panel panel-warning">
-          <div class="panel-heading">
-            {{ _("Task logs") }}
-          </div>
-          <div class="panel-body">
-            Logs temporarily unavailable.
-          </div>
-        </div>
-      </div>
-
-      <div role="tabpanel" class="tab-pane" id="task-dangerzone">
-        {{ self.danger_zone() }}
-      </div>
-    </div>
-
-  </div>
-  <div id="edit-urls-modal"></div>
-  <div id="edit-title-modal"></div>
+{%- block body -%}
+<div ng-app="inspireHoldingPen">
+  <holding-pen url="/api/holdingpen/{{workflow_object.id}}"
+                      Template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/details.html') }}">
+  </holding-pen>
+</div>
 {%- endblock -%}
 
-{% block hpbody_details %}
-  {{ self.workflow_error() }}
-{% endblock %}

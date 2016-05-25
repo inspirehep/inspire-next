@@ -19,7 +19,14 @@
 
 {% extends "inspirehep_theme/page.html" %}
 
-<!--{% from "inspire_workflows/macros.html" import batch_action_buttons %}-->
+{%set body_css_classes=['holding-pen']%}
+
+{%- block css %}
+{{ super() }}
+{% assets "inspirehep_holding_css" %}
+<link href="{{ ASSET_URL }}" rel="stylesheet"/>
+{% endassets %}
+{%- endblock css %}
 
 {% block javascript %}
 {{ super() }}
@@ -27,18 +34,9 @@
 <script src="{{ ASSET_URL }}"></script>{% endassets %}
 {% assets "inspire_workflows_ui_js_actions" %}
 <script src="{{ ASSET_URL }}"></script>{% endassets %}
-{% assets "inspirehep_holding_css" %}
-<link href="{{ ASSET_URL }}" rel="stylesheet"/>{% endassets %}
 {%- endblock javascript %}
 
-{%- block body -%}
-<div id="invenio-search">
-  <invenio-search search-endpoint="/api/holdingpen"
-                  search-extra-params='{"size": 25}'>
-    {{super()}}
-  </invenio-search>
-</div>
-
+{% block page_banner %}
 <div class="holding-page-header">
   <ul class="pull-left">
     <li>Holding Pen</li>
@@ -52,63 +50,55 @@
     </form>
   </div>
 </div>
-<div class="clearfix"></div>
-<div class="row hp-container">
-  <div class="col-md-2 hp-filters">
-    <h4>Sort by</h4>
-    <form>
-      <select id="hp-sort-menu" class="form-control" role="menu" name="sort">
-        <option value="_workflow.created_desc" selected>{{ _("Newest")}}
-        </option>
-        <option value="_workflow.created">{{ _("Oldest")}}</option>
-        <option value="_workflow.modified_desc">{{ _("Recently updated")}}
-        </option>
-        <option value="_workflow.modified">{{ _("Least recently updated")}}
-        </option>
-        <option value="_workflow.relevance_score_desc">{{ _("Most relevant")}}
-        </option>
-        <option value="_workflow.relevance_score">{{ _("Least relevant")}}
-        </option>
-      </select>
-    </form>
+{% endblock %}
 
-    <invenio-search-facets
-      template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/facets.html') }}">
-    </invenio-search-facets>
+{%- block body -%}
+<div id="invenio-search">
+  <invenio-search search-endpoint="/api/holdingpen"
+                  search-extra-params='{"size": 25}'>
+    <div class="clearfix"></div>
+    <div class="row">
+      <div class="col-md-2 hp-filters facet-container">
+        <h4>Sort by</h4>
 
-  </div>
 
-  <div class="col-md-10">
-    {%- endblock -%}
+        {%- set sort_options = config.get('WORKFLOWS_UI_REST_SORT_OPTIONS', {}).get('holdingpen') %}
+          {%- if sort_options %}
+            <invenio-search-select-box
+               sort-key="sort"
+               default-option="{{ sort_options|default_sortoption }}"
+               available-options='{{ sort_options|format_sortoptions|safe }}'
+               template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/selectbox.html') }}">
+            </invenio-search-select-box>
+          {%- endif %}
 
-    {% block help_bar %}
-    <div id="help-bar" class="row">
-      <div class="pull-left">
-        <p class="text-muted">Ctrl+A: Select all, Esc: Deselect</p>
+
+        <invenio-search-facets
+          template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/facets.html') }}">
+        </invenio-search-facets>
+
       </div>
 
+      <div class="col-md-10 result-list">
+        <div id="help-bar" class="row">
+          <div class="pull-left">
+            <p class="text-muted">Ctrl+A: Select all, Esc: Deselect</p>
+          </div>
+        </div>
+
+        <invenio-search-results
+          template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/results.html') }}">
+        </invenio-search-results>
+
+        <div class="col-md-12 col-sm-12 text-center">
+          <invenio-search-pagination
+            template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/pagination.html') }}">
+          </invenio-search-pagination>
+        </div>
+      </div>
     </div>
-    {% endblock %}
+  </invenio-search>
+</div>
+{%- endblock -%}
 
-    {% block navigation_check_all %}
-    {% endblock %}
-    {% block navigation_sort_selection %}
-    {% endblock %}
 
-    {% block batch_action_buttons_bottom %}
-    {{ batch_action_buttons() }}
-    {% endblock %}
-
-    {% block table %}
-    <invenio-search-results
-      template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/results.html') }}">
-    </invenio-search-results>
-    {% endblock %}
-
-    {% block pagination %}
-    <div class="col-md-12 col-sm-12 text-center">
-      <invenio-search-pagination
-        template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/pagination.html') }}">
-      </invenio-search-pagination>
-    </div>
-    {% endblock pagination %}

@@ -1,13 +1,14 @@
 {% extends "inspirehep_theme/page.html" %}
-
-{%- block header %}
-{{- super() }}
+{%set body_css_classes=['holding-pen']%}
+{%- block css %}
+{{ super() }}
 {% assets "inspirehep_holding_css" %}
 <link href="{{ ASSET_URL }}" rel="stylesheet"/>
 {% endassets %}
-{%- endblock header %}
+{%- endblock css %}
 
-{%- block page_body -%}
+
+{% block page_banner %}
 <div class="holding-page-header">
   <ul class="pull-left">
     <li>Holding Pen</li>
@@ -15,7 +16,9 @@
     </li>
   </ul>
 </div>
-<div class="clearfix"></div>
+{% endblock page_banner %}
+
+{%- block body -%}
 
 <div class="container-fluid">
   <h3 class="text-center header-text">
@@ -32,13 +35,14 @@
           <p><i class="fa fa-caret-up"></i> 22% increase</p>
         </div>
 
-        {% set status_items = [
-          {'type': 'authors', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
-          {'type': 'authors', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
-          {'type': 'authors', 'name': 'Attention Required', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
-          {'type': 'authors', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
+         {% set status_items = [
+          {'type': 'New Author', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
+          {'type': 'New Author', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 0},
+          {'type': 'New Author', 'name': 'Need action', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 0},
+          {'type': 'New Author', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 2}
         ] %}
         {% include "inspire_workflows/components/dashboard_status_widget.html" %}
+
 
       </div>
     </div>
@@ -51,11 +55,12 @@
           <p><i class="fa fa-caret-up"></i> 12% increase</p>
         </div>
 
+
         {% set status_items = [
-          {'type': 'authors', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
-          {'type': 'authors', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 0},
-          {'type': 'authors', 'name': 'Attention Required', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 0},
-          {'type': 'authors', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 2}
+          {'type': 'Author Update', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
+          {'type': 'Author Update', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
+          {'type': 'Author Update', 'name': 'Need action', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
+          {'type': 'Author Update', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
         ] %}
         {% include "inspire_workflows/components/dashboard_status_widget.html" %}
 
@@ -72,10 +77,10 @@
         </div>
 
         {% set status_items = [
-          {'type': 'hep', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
-          {'type': 'hep', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
-          {'type': 'hep', 'name': 'Attention Required', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
-          {'type': 'hep', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
+          {'type': 'Literature Suggestion', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
+          {'type': 'Literature Suggestion', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
+          {'type': 'Literature Suggestion', 'name': 'Need action', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
+          {'type': 'Literature Suggestion', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
         ] %}
         {% include "inspire_workflows/components/dashboard_status_widget.html" %}
 
@@ -91,10 +96,10 @@
         </div>
 
           {% set status_items = [
-          {'type': 'hep', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
-          {'type': 'hep', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
-          {'type': 'hep', 'name': 'Attention Required', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
-          {'type': 'hep', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
+          {'type': 'arXiv', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
+          {'type': 'arXiv', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
+          {'type': 'arXiv', 'name': 'Need action', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
+          {'type': 'arXiv', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
         ] %}
         {% include "inspire_workflows/components/dashboard_status_widget.html" %}
 
