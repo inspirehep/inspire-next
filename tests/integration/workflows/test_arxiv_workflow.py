@@ -135,8 +135,8 @@ def fake_download_file(url, *args, **kwargs):
     raise Exception("Download file not mocked!")
 
 
-def fake_query_beard_api(url, data):
-    """Mock query_beard_api func."""
+def fake_beard_api_request(url, data):
+    """Mock json_api_request func."""
     return {
         'decision': u'Rejected',
         'scores': [
@@ -145,10 +145,93 @@ def fake_query_beard_api(url, data):
     }
 
 
-@mock.patch('inspirehep.utils.arxiv.download_file', side_effect=fake_download_file)
-@mock.patch('inspirehep.modules.workflows.tasks.beard.query_beard_api', side_effect=fake_query_beard_api)
+def fake_magpie_api_request(url, data):
+    """Mock json_api_request func."""
+    if data.get('corpus') == "experiments":
+        return {
+            "labels": [
+                [
+                  "CMS",
+                  0.75495152473449707
+                ],
+                [
+                  "GEMS",
+                  0.45495152473449707
+                ],
+                [
+                  "ALMA",
+                  0.39597576856613159
+                ],
+                [
+                  "XMM",
+                  0.28373843431472778
+                ],
+            ],
+            "status_code": 200
+        }
+    elif data.get('corpus') == "categories":
+        return {
+            "labels": [
+                [
+                  "Astrophysics",
+                  0.9941025972366333
+                ],
+                [
+                  "Phenomenology-HEP",
+                  0.0034253709018230438
+                ],
+                [
+                  "Instrumentation",
+                  0.0025460966862738132
+                ],
+                [
+                  "Gravitation and Cosmology",
+                  0.0017545684240758419
+                ],
+            ],
+            "status_code": 200
+        }
+    elif data.get('corpus') == "keywords":
+        return {
+            "labels": [
+                [
+                  "galaxy",
+                  0.29424679279327393
+                ],
+                [
+                  "numerical calculations",
+                  0.22625420987606049
+                ],
+                [
+                  "numerical calculations: interpretation of experiments",
+                  0.031719371676445007
+                ],
+                [
+                  "luminosity",
+                  0.028066780418157578
+                ],
+                [
+                  "experimental results",
+                  0.027784878388047218
+                ],
+                [
+                  "talk",
+                  0.023392116650938988
+                ],
+            ],
+            "status_code": 200
+        }
+
+
+@mock.patch('inspirehep.utils.arxiv.download_file',
+            side_effect=fake_download_file)
+@mock.patch('inspirehep.modules.workflows.tasks.beard.json_api_request',
+            side_effect=fake_beard_api_request)
+@mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request',
+            side_effect=fake_magpie_api_request)
 def test_harvesting_arxiv_workflow_rejected(
-        mocked_download, mocked_beard, app, record_oai_arxiv_plots):
+        mocked_api_request_magpie, mocked_api_request_beard, mocked_download,
+        app, record_oai_arxiv_plots):
     """Test a full harvesting workflow."""
     from invenio_workflows import (
         start, WorkflowEngine, ObjectStatus, WorkflowObject
@@ -165,11 +248,16 @@ def test_harvesting_arxiv_workflow_rejected(
     )
     record_marc = create_record(record_oai_arxiv_plots_marcxml)
     record_json = hep.do(record_marc)
+
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+        "MAGPIE_API_URL": "http://example.com/magpie",
+    }
+
     workflow_uuid = None
     with app.app_context():
-        app.config["BEARD_API_URL"] = "http://example.com/api"
-
-        workflow_uuid = start('arxiv_ingestion', [record_json])
+        with mock.patch.dict(app.config, extra_config):
+            workflow_uuid = start('arxiv_ingestion', [record_json])
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = list(eng.objects)[0]
@@ -196,6 +284,16 @@ def test_harvesting_arxiv_workflow_rejected(
         assert prediction
         assert prediction['decision'] == "Rejected"
         assert prediction['scores']['Rejected'] == 0.8358207729691823
+
+        experiments_prediction = obj.extra_data.get("experiments_prediction")
+        assert experiments_prediction
+        assert experiments_prediction['experiments'] == [
+            ('CMS', 0.7549515247344971)
+        ]
+
+        keywords_prediction = obj.extra_data.get("keywords_prediction")
+        assert keywords_prediction
+        assert ("galaxy", 0.29424679279327393) in keywords_prediction['keywords']
 
         # This record should not have been touched yet
         assert "approved" not in obj.extra_data

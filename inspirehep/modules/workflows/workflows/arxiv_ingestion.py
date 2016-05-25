@@ -35,7 +35,10 @@ from inspirehep.modules.workflows.tasks.matching import(
     already_harvested,
     previously_rejected,
 )
-from inspirehep.modules.workflows.tasks.actions import shall_upload_record
+from inspirehep.modules.workflows.tasks.actions import (
+    shall_upload_record,
+    is_experimental_paper,
+)
 from inspirehep.modules.workflows.tasks.classifier import (
     classify_paper,
     filter_core_keywords,
@@ -44,6 +47,10 @@ from inspirehep.modules.refextract.tasks import extract_journal_info
 
 from inspirehep.modules.workflows.tasks.beard import (
     guess_coreness,
+)
+from inspirehep.modules.workflows.tasks.magpie import (
+    guess_keywords,
+    guess_experiments,
 )
 
 from .hep_ingestion import HEPIngestion
@@ -89,5 +96,9 @@ class ArXivIngestion(HEPIngestion):
         filter_core_keywords,
         # Predict action for a generic HEP paper based only on title
         # and abstract.
+        IF(is_experimental_paper, [
+            guess_experiments,
+        ]),
+        guess_keywords,
         guess_coreness,   # ("new_astro_model.pickle", top_words=10)
     ]
