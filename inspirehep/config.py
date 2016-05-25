@@ -805,6 +805,10 @@ INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
 LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 
 
+# Web services and APIs
+# =====================
+BEARD_API_URL = ""   # e.g. "http://beard.inspirehep.net/api"
+
 # Workflows
 # =========
 WORKFLOWS_UI_BASE_TEMPLATE = BASE_TEMPLATE
@@ -850,6 +854,60 @@ WORKFLOWS_UI_DATA_TYPES = dict(
         search_type='authors',
     ),
 )
+
+WORKFLOWS_UI_REST_FACETS = {
+    "holdingpen": {
+        "filters": {
+            "status": terms_filter('_workflow.status'),
+            "data_type": terms_filter('_workflow.data_type'),
+            "workflow_name": terms_filter('_workflow.workflow_name'),
+        },
+        "aggs": {
+            "status": {
+                "terms": {
+                    "field": "_workflow.status",
+                    "size": 20
+                }
+            },
+            "data_type": {
+                "terms": {
+                    "field": "_workflow.data_type",
+                    "size": 20
+                }
+            },
+            "workflow_name": {
+                "terms": {
+                    "field": "_workflow.workflow_name",
+                    "size": 20
+                }
+            },
+        }
+    }
+}
+
+WORKFLOWS_UI_REST_SORT_OPTIONS = {
+    "holdingpen": {
+        "bestmatch": {
+            "title": 'Best match',
+            "fields": ['_score'],
+            "default_order": 'desc',
+            "order": 1,
+        },
+        "mostrecent": {
+            "title": 'Most recent',
+            "fields": ['_workflow.modified'],
+            "default_order": 'desc',
+            "order": 2,
+        },
+    },
+}
+
+WORKFLOWS_UI_REST_DEFAULT_SORT = {
+    "holdingpen": {
+        "query": "-bestmatch",
+        "noquery": "-mostrecent"
+    }
+}
 
 # Inspire mappings
 # ================

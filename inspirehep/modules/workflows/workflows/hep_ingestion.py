@@ -31,11 +31,6 @@ from workflow.patterns.controlflow import IF, IF_ELSE
 from inspirehep.dojson.hep import hep2marc
 from inspirehep.dojson.utils import legacy_export_as_marc
 
-# FIXME: Revive beard-server to provide predicter
-# from inspirehep.modules.predicter.tasks import (
-#     guess_coreness,
-# )
-
 from inspirehep.modules.refextract.tasks import extract_journal_info
 
 from inspirehep.modules.workflows.tasks.actions import (
@@ -51,6 +46,7 @@ from inspirehep.modules.workflows.tasks.classifier import (
     classify_paper,
     filter_core_keywords,
 )
+from inspirehep.modules.workflows.tasks.beard import guess_coreness
 
 from inspirehep.modules.workflows.tasks.matching import(
     delete_self_and_stop_processing,
@@ -131,7 +127,7 @@ class HEPIngestion(object):
         filter_core_keywords,
         # Predict action for a generic HEP paper based only on title
         # and abstract.
-        # guess_coreness("arxiv_skip_astro_title_abstract.pickle"),
+        guess_coreness,  # ("arxiv_skip_astro_title_abstract.pickle"),
     ]
     halt_check = staticmethod(is_record_relevant)
     on_halt = [
@@ -189,9 +185,7 @@ class HEPIngestion(object):
             keywords = obj.extra_data.get('classifier_results').get("complete_output")
         else:
             keywords = []
-        prediction_results = obj.extra_data.get("arxiv_guessing", {})
-        if prediction_results:
-            prediction_results = prediction_results[0].get("result")
+        prediction_results = obj.extra_data.get("relevance_prediction", {})
         return render_template(
             'inspire_workflows/styles/harvesting_record_additional.html',
             object=obj,
@@ -215,20 +209,12 @@ class HEPIngestion(object):
     @classmethod
     def get_sort_data(cls, obj, **kwargs):
         """Return a dictionary useful for sorting in Holding Pen."""
-        prediction_results = obj.extra_data.get("arxiv_guessing")
+        prediction_results = obj.extra_data.get("relevance_prediction", {})
         if prediction_results:
-            prediction_results = prediction_results[0].get("result")
-            max_score = prediction_results.get("max_score")
-            decision = prediction_results.get("decision")
-            relevance_score = max_score
-            if decision == "CORE":
-                relevance_score += 10
-            elif decision == "Rejected":
-                relevance_score = (max_score * -1) - 10
             return {
                 "max_score": prediction_results.get("max_score"),
                 "decision": prediction_results.get("decision"),
-                "relevance_score": relevance_score
+                "relevance_score": prediction_results.get("relevance_score")
             }
         else:
             return {}

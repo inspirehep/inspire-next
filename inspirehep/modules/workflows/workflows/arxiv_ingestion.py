@@ -42,9 +42,9 @@ from inspirehep.modules.workflows.tasks.classifier import (
 )
 from inspirehep.modules.refextract.tasks import extract_journal_info
 
-# from inspirehep.modules.predicter.tasks import (
-#     guess_coreness,
-# )
+from inspirehep.modules.workflows.tasks.beard import (
+    guess_coreness,
+)
 
 from .hep_ingestion import HEPIngestion
 
@@ -89,5 +89,5 @@ class ArXivIngestion(HEPIngestion):
         filter_core_keywords,
         # Predict action for a generic HEP paper based only on title
         # and abstract.
-        # guess_coreness("new_astro_model.pickle", top_words=10)
+        guess_coreness,   # ("new_astro_model.pickle", top_words=10)
     ]

@@ -34,13 +34,11 @@ class AuthorApproval(object):
     @staticmethod
     def render(obj):
         """Method to render the action."""
-        url = url_for("invenio_workflows_ui.resolve_action")
         return {
             "side": "",
             "main": render_template('inspire_workflows/actions/author_approval_main.html',
                                     message=obj.get_action_message(),
-                                    object=obj,
-                                    resolve_url=url,)
+                                    object=obj)
         }
 
     @staticmethod
