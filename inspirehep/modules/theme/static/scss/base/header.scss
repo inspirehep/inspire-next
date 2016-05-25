@@ -70,7 +70,7 @@ body {
         padding-top: 10px;
         padding-bottom: 10px;
     }
-    
+
     /* Dropdown menu in Header styles
     -------------------------------------------------- */
     .dropdown-menu-arrow:before {
@@ -500,7 +500,7 @@ a.external-link::after {
     #searchform-input-group #search-form-input,
     .navbar-form .input-group .form-control {
         width: 100%;
-    }  
+    }
 
     #searchform .navbar-form {
         margin-top: 8px;
@@ -570,6 +570,7 @@ a.external-link::after {
 @media (min-width: $screen-sm-max) {
     #collections-section {
         margin-top: -13px;
+        min-height: 50px;
     }
 }
 
@@ -636,7 +637,7 @@ a.external-link::after {
     }
 
     /* since 3.1.0 */
-    .navbar-collapse.collapse.in { 
+    .navbar-collapse.collapse.in {
         display: block !important;
     }
 
@@ -748,7 +749,7 @@ a.external-link::after {
                     background-color: $light-blue;
                     border-radius: 50%;
                     margin-right: 15px;
-                    
+
                 }
 
                 li.dropdown + li:nth-child(3) a:before {
@@ -785,7 +786,7 @@ a.external-link::after {
                     }
 
                     a:hover {
-                        color: #fff;   
+                        color: #fff;
                     }
                 }
             }
