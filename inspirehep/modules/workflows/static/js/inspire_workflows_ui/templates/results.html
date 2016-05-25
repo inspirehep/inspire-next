@@ -22,8 +22,10 @@
     </div>
 
   </div>
-
-  <div class="row hp-item"
+  <div class="row hp-item" ng-if="vm.invenioSearchResults.hits.total == 0">
+    Sorry, there's nothing to see here.
+  </div>
+  <div class="row hp-item" ng-if="vm.invenioSearchResults.hits.total > 0"
        ng-repeat="record in vm.invenioSearchResults.hits.hits track by record._id"
        ng-class="{hperror: record._source._workflow.status === 'Error', hpattention : record._source._workflow.status === 'Need action', hpdone: record._source._workflow.status === 'Done'}">
     <div class="col-md-12">
@@ -36,16 +38,34 @@
                 </span>
         </div>
         <div class="col-md-4">
-          <h4 class="custom-h"><a class="title"
-                                  ng-href="/holdingpen/{{record._id}}"
-                                  ng-bind='record._source.titles[0].title'>
-          </a>
+          <h4 class="custom-h">
+            <a class="title" ng-if="record._source.titles"
+               ng-href="/holdingpen/{{record._id}}"
+               ng-bind='record._source.titles[0].title'></a>
+            <a class="title" ng-if="record._source.name"
+               ng-href="/holdingpen/{{record._id}}"
+               ng-bind='record._source.given_names + record._source.family_name'></a>
+
           </h4>
 
-          <div class="authors">
+          <div class="authors" ng-if="record._source.authors">
               <span ng-repeat="author in record._source.authors">
                 {{author.full_name}}<span ng-if="!$last">, </span>
               </span>
+          </div>
+
+          <div class="institution-details"
+               ng-if="record._source.institution_history[0].name != ''">
+            <p ng-repeat="institution in record._source.institution_history"
+               ng-class="{current: institution.current}"
+               ng-bind="{{institution.name}}">
+            </p>
+          </div>
+          <div class="institution-details"
+               ng-if="record._source.institution_history[0].name === ''
+               && record._source.institution_history.length === 1">
+            <p>No institution information supplied.
+            </p>
           </div>
         </div>
 
@@ -60,14 +80,27 @@
 
         <div class="col-md-2 pad-top-10">
           <ul class="subject-terms">
-            <li ng-repeat="subject in record._source.subject_terms">
+            <li ng-repeat="subject in record._source.subject_terms"
+                ng-if="record._source.subject_terms">
               {{subject.term}}
+            </li>
+            <li ng-repeat="field in record._source.field_categories"
+                ng-if="record._source.field_categories">
+              {{field}}
             </li>
           </ul>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3 decision">
+          Automatic Decision: <span class="reject">Reject</span>
 
+          <ul class="decision">
+            <li class="reject">Reject</li>
+            <li class="accept">Accept</li>
+            <li class="core">Core</li>
+          </ul>
+
+          <p>Core keywords: <br/>awesome, science, stuff.</p>
         </div>
 
       </div>
