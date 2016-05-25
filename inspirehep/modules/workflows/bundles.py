@@ -36,10 +36,8 @@ actions_js = NpmBundle(
 )
 
 details_js = NpmBundle(
+    "js/inspire_workflows_ui/holdingpen/inspire-holdingpen.module.js",
     "js/inspire_workflows_ui/holdingpen/app.js",
     output="gen/inspire-workflows.details.%(version)s.js",
-    filters=RequireJSFilter(exclude=[_js]),
-    npm={
-        "angular-xeditable": "~0.1.12"
-    }
+    filters=RequireJSFilter(exclude=[_js])
 )

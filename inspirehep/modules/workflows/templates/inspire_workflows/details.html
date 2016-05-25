@@ -51,9 +51,9 @@
 {% endblock %}
 
 {%- block body -%}
-<div ng-app="invenioHoldingPen">
-  <holding-pen workflow-id="{{workflow_object.id}}"
-                      template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/details.html') }}">
+<div ng-app="inspireHoldingPen">
+  <holding-pen url="/api/holdingpen/{{workflow_object.id}}"
+                      Template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/details.html') }}">
   </holding-pen>
 </div>
 {%- endblock -%}

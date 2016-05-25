@@ -1,7 +1,7 @@
 <ul class="statuses">
   {% for status_item in status_items %}
   <li>
-    <a href='/holdingpen/list/_workflow.data_type:"{{status_item.type}}"'>
+    <a href='/holdingpen/list/?workflow_name={{status_item.type}}&status={{status_item.name}}'>
       <div class="row-fluid {{status_item.color}}">
         <div class="col-md-1">
           <i class="fa {{status_item.icon}}"></i>
