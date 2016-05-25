@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -187,19 +187,14 @@ def native_name2marc(self, key, value):
 
 
 @hepnames.over('private_current_emails', '^595..')
+@utils.for_each_value
 def private_current_emails(self, key, value):
     """Hidden information."""
-    value = utils.force_list(value)
-    private_current_emails = [x.get('m') for x in value if x.get('m')]
-    self.setdefault(
-        'private_old_emails',
-        [x.get('o') for x in value if x.get('o')]
-    )
-    self.setdefault(
-        '_private_note',
-        [x.get('a') for x in value if x.get('a')]
-    )
-    return private_current_emails
+    if 'o' in value:
+        self.setdefault('private_old_emails', []).append(value['o'])
+    if 'a' in value:
+        self.setdefault('_private_note', []).append(value['a'])
+    return value.get('m')
 
 
 @hepnames2marc.over('595', '^(private_current_emails|_private_note|private_old_emails)$')

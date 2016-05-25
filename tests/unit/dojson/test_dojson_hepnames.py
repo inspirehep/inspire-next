@@ -157,21 +157,18 @@ def test_positions(marcxml_to_json, json_to_marc):
             json_to_marc['371'][2]['o'])
 
 
-@pytest.mark.xfail
 def test_private_current_emails(marcxml_to_json, json_to_marc):
     """Test if private_current_emails is created correctly."""
     assert (marcxml_to_json['private_current_emails'][0] ==
             json_to_marc['595'][1]['m'])
 
 
-@pytest.mark.xfail
 def test_private_old_emails(marcxml_to_json, json_to_marc):
     """Test if private_old_emails is created correctly."""
     assert (marcxml_to_json['private_old_emails'][0] ==
             json_to_marc['595'][0]['o'])
 
 
-@pytest.mark.xfail
 def test_private_notes(marcxml_to_json, json_to_marc):
     """Test if private_notes is created correctly."""
     assert (marcxml_to_json['_private_note'][0] ==
