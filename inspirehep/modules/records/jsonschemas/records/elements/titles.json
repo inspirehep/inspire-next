@@ -1,0 +1,21 @@
+{
+    "titles": {
+        "uniqueItems": true,
+        "items": {
+            "type": "object",
+            "properties": {
+                "source": {
+                    "type": "string"
+                },
+                "subtitle": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            },
+            "title": "Title (and subtitle)"
+        },
+        "type": "array"
+    }
+}

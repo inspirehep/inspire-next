@@ -22,36 +22,22 @@
 
 """MARC 21 model definition."""
 
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
+
+from inspirehep.dojson.utils import (
+    classify_rank,
+    get_record_ref
+)
+
+import six
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
-
 from ..model import jobs
-
-
-@jobs.over('acquisition_source', '^(037|270)..')
-@utils.for_each_value
-def acquisition_source(self, key, value):
-    """Submission information aggregated from various sources."""
-    result = {
-        "method": "submission"
-    }
-    if key.startswith('037'):
-        if "JOBSUBMIT" in value.get('a'):
-            result["submission_number"] = value.get('a')
-    elif key.startswith('270'):
-        if value.get('m'):
-            result["email"] = value.get('m')
-        if value.get('p'):
-            self.setdefault('contact_person', [])
-            self['contact_person'].append(value.get('p'))
-        if value.get('m'):
-            self.setdefault('contact_email', [])
-            self['contact_email'].append(value.get('m'))
-        if value.get('o'):
-            self.setdefault('reference_email', [])
-            self['reference_email'].append(value.get('o'))
-    return result
 
 
 @jobs.over('date_closed', '^046..')
@@ -90,13 +76,6 @@ def continent(self, key, value):
     return value.get('a')
 
 
-@jobs.over('experiments', '^693..')
-@utils.for_each_value
-def experiments(self, key, value):
-    """Contact person."""
-    return value.get('e')
-
-
 @jobs.over('institution', '^110..')
 @utils.for_each_value
 @utils.filter_values
@@ -109,46 +88,60 @@ def institution(self, key, value):
         recid = int(value.get('z'))
     return {
         'curated_relation': curated_relation,
-        'record': inspire_dojson_utils.get_record_ref(recid, 'isntitutions'),
+        'record': get_record_ref(recid, 'institutions'),
         'name': value.get('a'),
+    }
+
+
+@jobs.over('position', '^245..')
+def position(self, key, value):
+    """Position."""
+    return value.get('a')
+
+
+@jobs.over('contact_details', '^270..')
+@utils.for_each_value
+def contacts(self, key, value):
+    """Contacts details."""
+    name = value.get('p')
+    email = value.get('m')
+
+    return {
+        'name': name if isinstance(name, six.string_types) else None,
+        'email': email if isinstance(email, six.string_types) else None
     }
 
 
 @jobs.over('description', '^520..')
 def description(self, key, value):
-    """Contact person."""
+    """Job description"""
     return value.get('a')
 
 
-@jobs.over('position', '^245..')
-def position(self, key, value):
-    """Contact person."""
-    self.setdefault('breadcrumb_title', value.get('a'))
-    return value.get('a')
-
-
-@jobs.over('research_area', '^65017')
-@utils.for_each_value
-def research_area(self, key, value):
-    """Contact person."""
-    return value.get('a')
-
-
-@jobs.over('rank', '^656..')
-@utils.for_each_value
+@jobs.over('ranks', '^656..')
 def rank(self, key, value):
-    """Contact person."""
-    return value.get('a')
+    """Jobs rank casted to enums"""
+    ranks = []
+    _ranks = []
+    values = utils.force_list(value)
+    for val in values:
+        raw_rank = val.get('a')
+        if isinstance(raw_rank, six.string_types):
+            _ranks.append(raw_rank)
+            ranks.append(classify_rank(raw_rank))
+        elif isinstance(raw_rank, tuple):
+            for rank in raw_rank:
+                _ranks.append(rank)
+                ranks.append(classify_rank(rank))
+        else:
+            pass
+
+    self['_ranks'] = _ranks
+    return ranks
 
 
-@jobs.over('urls', '^856.[10_28]')
+@jobs.over('experiments', '^693..')
 @utils.for_each_value
-def urls(self, key, value):
-    """Contact person."""
-    return value.get('u')
-
-
-@jobs.over('experiment', '^693..')
-@utils.for_each_value
-def experiment(self, key, value):
+def experiments(self, key, value):
+    """Related experiments"""
     return value.get('e')

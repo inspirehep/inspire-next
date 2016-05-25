@@ -22,16 +22,27 @@
 
 """MARC 21 model definition for HepNames records."""
 
-from dojson import utils
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
 
-from inspirehep.dojson import utils as inspire_dojson_utils
+from inspirehep.dojson.utils import (
+    classify_rank,
+    get_record_ref,
+    remove_duplicates_from_list_of_dicts
+)
+
+import six
+
+from dojson import utils
 
 from ..model import hepnames, hepnames2marc
 
 
 @hepnames.over('acquisition_source', '^541[10_].')
 @utils.for_each_value
-@utils.filter_values
 def acquisition_source(self, key, value):
     """Immediate Source of Acquisition Note."""
     return {
@@ -45,7 +56,6 @@ def acquisition_source(self, key, value):
 
 @hepnames2marc.over('541', 'acquisition_source')
 @utils.for_each_value
-@utils.filter_values
 def acquisition_source2marc(self, key, value):
     """Immediate Source of Acquisition Note."""
     return {
@@ -58,7 +68,6 @@ def acquisition_source2marc(self, key, value):
 
 
 @hepnames.over('name', '^100..')
-@utils.filter_values
 def name(self, key, value):
     """Name information.
 
@@ -81,7 +90,6 @@ def name(self, key, value):
     + roman numbers (like VII)
     """
     value = utils.force_list(value)
-    self.setdefault('breadcrumb_title', value[0].get('a'))
     self.setdefault('dates', value[0].get('d'))
     return {
         'value': value[0].get('a'),
@@ -93,7 +101,6 @@ def name(self, key, value):
 
 
 @hepnames2marc.over('100', '^name$')
-@utils.filter_values
 def name2marc(self, key, value):
     """Name information.
 
@@ -126,7 +133,6 @@ def name2marc(self, key, value):
 
 @hepnames.over('ids', '^035..')
 @utils.for_each_value
-@utils.filter_values
 def ids(self, key, value):
     """All identifiers, both internal and external."""
     id_type = value.get('9')
@@ -140,7 +146,6 @@ def ids(self, key, value):
 
 @hepnames2marc.over('035', '^ids$')
 @utils.for_each_value
-@utils.filter_values
 def ids2marc(self, key, value):
     """All identifiers, both internal and external."""
     return {
@@ -204,7 +209,6 @@ def private_current_emails(self, key, value):
 
 @hepnames2marc.over('595', '^(private_current_emails|_private_note|private_old_emails)$')
 @utils.for_each_value
-@utils.filter_values
 def hidden_notes2marc(self, key, value):
     return {
         'a': value if key == '_private_note' else None,
@@ -217,19 +221,8 @@ setattr(hidden_notes2marc, '__extend__', True)
 
 @hepnames.over('positions', '^371..')
 @utils.for_each_value
-@utils.filter_values
 def positions(self, key, value):
     """Position information.
-
-    Accepted values for 371__r:
-    + senior
-    + junior
-    + staff
-    + visitor
-    + postdoc
-    + phd
-    + masters
-    + undergrad
 
     In dates field you can put months in addition to years. In this case you
     have to follow the convention `mth-year`. For example: `10-2012`.
@@ -247,68 +240,45 @@ def positions(self, key, value):
                 curated_relation = True
 
     inst = {'name': value.get('a'),
-            'record': inspire_dojson_utils.get_record_ref(recid,
-                                                          'institutions')}
+            'record': get_record_ref(recid, 'institutions')}
+
+    raw_rank = value.get('r')
+    if isinstance(raw_rank, tuple):
+        # FIXME: raise Exception("Multiple ranks at the same time?")
+        pass
+
+    rank = classify_rank(raw_rank)
+
     return {
         'institution': inst if inst['name'] else None,
-        'rank': value.get('r'),
+        'rank': rank,
+        '_rank': raw_rank if isinstance(raw_rank, six.string_types) else None,
         'start_date': value.get('s'),
         'end_date': value.get('t'),
         'email': value.get('m'),
         'old_email': value.get('o'),
-        'status': status,
+        'status': value.get('r'),
         'curated_relation': curated_relation,
     }
 
 
 @hepnames2marc.over('371', '^positions$')
 @utils.for_each_value
-@utils.filter_values
 def positions2marc(self, key, value):
     """Position information.
-
-    Accepted values for 371__r:
-    + senior
-    + junior
-    + staff
-    + visitor
-    + postdoc
-    + phd
-    + masters
-    + undergrad
 
     In dates field you can put months in addition to years. In this case you
     have to follow the convention `mth-year`. For example: `10-2012`.
     """
     return {
         'a': value.get('institution', {}).get('name'),
-        'r': value.get('rank'),
+        'r': value.get('_rank'),
         's': value.get('start_date'),
         't': value.get('end_date'),
         'm': value.get('email'),
         'o': value.get('old_email'),
         'z': value.get('status')
     }
-
-
-@hepnames.over('field_categories', '^65017')
-def field_categories(self, key, value):
-    """Field categories."""
-    def get_value(value):
-        if isinstance(value, dict):
-            name = value.get('a', '')
-        else:
-            name = value
-        return name
-
-    value = utils.force_list(value)
-    field_categories = self.get('field_categories', [])
-    for element in value:
-        if element.get('a'):
-            el = utils.force_list(element.get('a'))
-            for val in el:
-                field_categories.append(get_value(val))
-    return field_categories
 
 
 @hepnames2marc.over('65017', '^field_categories$')
@@ -334,13 +304,11 @@ def source(self, key, value):
     for val in value:
         source.append(get_value(val))
 
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
-        source)
+    return remove_duplicates_from_list_of_dicts(source)
 
 
 @hepnames2marc.over('670', '^source$')
 @utils.for_each_value
-@utils.filter_values
 def source2marc(self, key, value):
     return {
         'a': value.get('name'),
@@ -392,7 +360,6 @@ def _curators_note2marc(self, key, value):
 
 @hepnames.over('experiments', '^693..')
 @utils.for_each_value
-@utils.filter_values
 def experiments(self, key, value):
     """Information about experiments.
 
@@ -420,7 +387,6 @@ def experiments(self, key, value):
 
 @hepnames2marc.over('693', '^experiments$')
 @utils.for_each_value
-@utils.filter_values
 def experiments2marc(self, key, value):
     """Information about experiments.
 
@@ -439,7 +405,6 @@ def experiments2marc(self, key, value):
 
 @hepnames.over('phd_advisors', '^701..')
 @utils.for_each_value
-@utils.filter_values
 def phd_advisors(self, key, value):
     degree_type_map = {
         "phd": "PhD",
@@ -461,7 +426,6 @@ def phd_advisors(self, key, value):
 
 @hepnames2marc.over('701', '^phd_advisors$')
 @utils.for_each_value
-@utils.filter_values
 def phd_advisors2marc(self, key, value):
     return {
         'i': value.get("id"),
@@ -470,20 +434,8 @@ def phd_advisors2marc(self, key, value):
     }
 
 
-@hepnames.over('urls', '^856.[10_28]')
-@utils.for_each_value
-@utils.filter_values
-def urls(self, key, value):
-    """URL to external resource."""
-    return {
-        'value': value.get('u'),
-        'description': value.get('y'),
-    }
-
-
 @hepnames2marc.over('8564', 'url')
 @utils.for_each_value
-@utils.filter_values
 def url2marc(self, key, value):
     """URL to external resource."""
     return {

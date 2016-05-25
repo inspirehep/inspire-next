@@ -22,6 +22,12 @@
 
 """INSPIRE overlay repository for Invenio."""
 
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
+
 import os
 
 from setuptools import find_packages, setup
@@ -42,7 +48,7 @@ install_requires = [
     'rt',
     'librabbitmq>=1.6.1',
     'invenio-jsonschemas==1.0.0a3',
-    'idutils>=0.1.1',
+    'idutils>=0.2.0',
     'invenio-access==1.0.0a5',
     'invenio-accounts==1.0.0a10',
     'invenio-admin==1.0.0a3',
@@ -154,10 +160,15 @@ setup(
             'inspirehep = inspirehep.cli:cli',
         ],
         'dojson.cli.rule': [
+            'conferences = inspirehep.dojson.conferences:conferences',
+            'experiments = inspirehep.dojson.experiments:experiments',
             'hep = inspirehep.dojson.hep:hep',
             'hep2marc = inspirehep.dojson.hep:hep2marc',
             'hepnames = inspirehep.dojson.hepnames:hepnames',
             'hepnames2marc = inspirehep.dojson.hepnames2marc:hepnames2marc',
+            'institutions = inspirehep.dojson.institutions:institutions',
+            'journals = inspirehep.dojson.journals:journals',
+            'jobs = inspirehep.dojson.jobs:jobs',
         ],
         'invenio_base.api_apps': [
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',

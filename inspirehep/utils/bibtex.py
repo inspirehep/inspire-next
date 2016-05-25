@@ -20,6 +20,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
+
 import re
 
 from inspirehep.utils import bibtex_booktitle
@@ -563,22 +569,13 @@ class Bibtex(Export):
         result = ''
         if 'urls' in self.record:
             for url in self.record['urls']:
-                if 'url' in url:
-                    if isinstance(url['url'], list):
-                        for element in url['url']:
-                            if element.lower().endswith(
-                                    ('.png', '.jpg', '.jpeg', '.gif', '.eps')):
-                                continue
-                            else:
-                                result = url['url']
-                                break
+                if 'value' in url:
+                    if url['value'].lower().endswith(
+                            ('.png', '.jpg', '.jpeg', '.gif', '.eps')):
+                            continue
                     else:
-                        if url['url'].lower().endswith(
-                                ('.png', '.jpg', '.jpeg', '.gif', '.eps')):
-                                continue
-                        else:
-                            result = url['url']
-                            break
+                        result = url['value']
+                        break
         return result
 
     def _get_eprint(self):

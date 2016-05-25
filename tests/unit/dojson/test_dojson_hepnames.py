@@ -17,6 +17,12 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals)
+
 import pkg_resources
 import os
 import pytest
@@ -139,7 +145,7 @@ def test_positions(marcxml_to_json, json_to_marc):
     """Test if positions is created correctly."""
     assert (marcxml_to_json['positions'][0]['institution']['name'] ==
             json_to_marc['371'][0]['a'])
-    assert (marcxml_to_json['positions'][0]['rank'] ==
+    assert (marcxml_to_json['positions'][0]['_rank'] ==
             json_to_marc['371'][0]['r'])
     assert (marcxml_to_json['positions'][0]['start_date'] ==
             json_to_marc['371'][0]['s'])

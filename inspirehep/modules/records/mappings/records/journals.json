@@ -194,12 +194,34 @@
                     "type": "string"
                 },
                 "title": {
-                    "type": "string",
-                    "copy_to": ["journalautocomplete"]
+                    "type": "object",
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "subtitle": {
+                            "type": "string"
+                        },
+                        "title": {
+                            "type": "string",
+                            "copy_to": ["journalautocomplete"]
+                        }
+                    }
                 },
                 "short_title": {
-                    "type": "string",
-                    "copy_to": ["journalautocomplete"]
+                    "type": "object",
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "subtitle": {
+                            "type": "string"
+                        },
+                        "title": {
+                            "type": "string",
+                            "copy_to": ["journalautocomplete"]
+                        }
+                    }
                 },
                 "publisher": {
                     "type": "string",
