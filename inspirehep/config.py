@@ -563,7 +563,7 @@ RECORDS_REST_FACETS = {
             },
             "author": {
                 "terms": {
-                    "field": "exactauthor.raw",
+                    "field": "facet_authors",
                     "size": 20
                 }
             },
