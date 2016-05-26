@@ -6,11 +6,24 @@ html, body {
 
 $hp_table_bg: #243547;
 
+@mixin facet-colors($color) {
+  color: $color !important;
+  &.active {
+    background-color: $color;
+    color: white !important;
+  }
+}
+
 #collections-section {
   display: none;
 }
 
 .holding-pen {
+
+  a {
+    color: $pete-river;
+  }
+
   .main-container {
     width: 95%;
     margin: 0 auto;
@@ -33,6 +46,7 @@ $hp_table_bg: #243547;
     color: white;
     height: 50px;
     font-size: 1.2em;
+    margin-top: -16px;
     ul {
       list-style: none;
       li {
@@ -72,9 +86,10 @@ $hp_table_bg: #243547;
       height: 130px;
       border-radius: 3px 3px 0 0;
       padding: 10px;
+      color: white;
 
       h2 {
-        color: white;
+
         font-size: 2.6em;
         padding-left: 10px;
         padding-bottom: 10px;
@@ -83,14 +98,12 @@ $hp_table_bg: #243547;
 
       h4 {
         margin: 0;
-        color: white;
         text-transform: uppercase;
         font-size: .9em;
         padding: 10px;
       }
 
       p {
-        color: white;
         padding-left: 10px;
       }
 
@@ -103,7 +116,8 @@ $hp_table_bg: #243547;
       }
 
       &.arxiv {
-        background-color: $alizarin;
+        background-color: white;
+        color: $midnight-blue !important;
       }
 
       &.literature {
@@ -159,50 +173,6 @@ $hp_table_bg: #243547;
         padding: 4px 6px;
         cursor: pointer;
         border-radius: 3px;
-
-        &.authors {
-          color: $pete-river;
-
-          &.active {
-            background-color: $pete-river;
-            color: white;
-          }
-        }
-
-        &.authors-update {
-          color: $belize-hole;
-
-          &.active {
-            background-color: $belize-hole;
-            color: white;
-          }
-        }
-
-        &.arxiv {
-          color: $alizarin;
-
-          &.active {
-            background-color: $alizarin;
-            color: white;
-          }
-        }
-
-        &.literature {
-          color: $carrot;
-          &.active {
-            background-color: $carrot;
-            color: white;
-          }
-        }
-
-        &.oai-harvest {
-          color: $concrete;
-
-          &.active {
-            background-color: $concrete;
-            color: white;
-          }
-        }
       }
     }
   }
@@ -223,80 +193,48 @@ $hp_table_bg: #243547;
     }
 
     .arxiv {
-      color: $alizarin !important;
+      color: white !important;
 
       &.active {
-        background-color: $alizarin;
-        color: white !important;
+        background-color: white;
+        color: $midnight-blue !important;
       }
     }
 
     .oai-harvest {
-      color: $concrete !important;
-      &.active {
-        background-color: $concrete;
-        color: white !important;
-      }
+
+      @include facet-colors($concrete);
     }
 
     .literature {
-      color: $carrot !important;
-      &.active {
-        background-color: $carrot;
-        color: white !important;
-
-      }
+      @include facet-colors($carrot);
     }
 
     .authornew {
-      color: $pete-river !important;
-      &.active {
-        background-color: $pete-river;
-        color: white !important;
-      }
+      @include facet-colors($pete-river);
     }
 
     .authorupdate {
-      color: $belize-hole !important;
-      &.active {
-        background-color: $belize-hole;
-        color: white !important;
-      }
+      @include facet-colors($belize-hole);
     }
 
   }
 
   .error {
-    color: $alizarin !important;
-
-    &.active {
-      background-color: $alizarin;
-      color: white !important;
-    }
+    @include facet-colors($alizarin);
   }
 
   .inprogress {
-    color: $concrete !important;
-    &.active {
-      background-color: $concrete;
-      color: white !important;
-    }
+
+    @include facet-colors($concrete);
   }
 
   .attention {
-    color: $sun-flower !important;
-    &.active {
-      background-color: $sun-flower;
-      color: white !important;
-    }
+    @include facet-colors($sun-flower);
   }
 
   .done {
-    color: $green-sea !important;
-    &.active {
-      background-color: $green-sea;
-      color: white !important;
-    }
+    @include facet-colors($green-sea);
   }
 
   #hp-list {
@@ -313,6 +251,11 @@ $hp_table_bg: #243547;
       padding-top: 10px;
       border-left: 4px solid $hp_table_bg;
       border-radius: 0;
+      -webkit-transition: all 0.3s;
+      -moz-transition: all 0.3s;
+      -ms-transition: all 0.3s;
+      -o-transition: all 0.3s;
+      transition: all 0.3s;
 
       &.hperror {
         border-left: 4px solid $alizarin;
@@ -330,6 +273,10 @@ $hp_table_bg: #243547;
         margin-top: 0px;
       }
 
+      &:hover {
+        background-color: $dark-blue;
+      }
+
       .workflow-type {
         font-size: 1em;
         &.authornew {
@@ -341,7 +288,7 @@ $hp_table_bg: #243547;
         }
 
         &.arxiv_ingestion {
-          color: $alizarin;
+          color: white;
         }
 
         &.literature {
@@ -394,7 +341,7 @@ $hp_table_bg: #243547;
               border-radius: 3px 0 0 3px;
             }
 
-            &:last-child{
+            &:last-child {
               border-radius: 0 3px 3px 0;
             }
 
