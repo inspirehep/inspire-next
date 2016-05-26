@@ -24,7 +24,6 @@ from __future__ import absolute_import, print_function
 
 import gzip
 import re
-import traceback
 import zlib
 import click
 
@@ -41,14 +40,12 @@ from flask import current_app, url_for
 
 from inspirehep.dojson.conferences import conferences
 from inspirehep.dojson.experiments import experiments
-from inspirehep.dojson.hep import hep, hep2marc
+from inspirehep.dojson.hep import hep
 from inspirehep.dojson.hepnames import hepnames
 from inspirehep.dojson.institutions import institutions
 from inspirehep.dojson.jobs import jobs
 from inspirehep.dojson.journals import journals
 from inspirehep.dojson.processors import _collection_in_record
-from inspirehep.dojson.utils import legacy_export_as_marc
-from inspirehep.dojson.utils import strip_empty_values
 
 from celery import shared_task
 
@@ -60,7 +57,7 @@ from invenio_records import Record
 from invenio_search import current_search_client
 from invenio_search.utils import schema_to_index
 
-from six import string_types, text_type
+from six import text_type
 
 from .models import InspireProdRecords
 
@@ -366,20 +363,20 @@ def create_record(record, force=True, dry_run=False):
     errors = ""
 
     if _collection_in_record(record, 'institution'):
-        json = strip_empty_values(institutions.do(record))
+        json = institutions.do(record)
     elif _collection_in_record(record, 'experiment'):
-        json = strip_empty_values(experiments.do(record))
+        json = experiments.do(record)
     elif _collection_in_record(record, 'journals'):
-        json = strip_empty_values(journals.do(record))
+        json = journals.do(record)
     elif _collection_in_record(record, 'hepnames'):
-        json = strip_empty_values(hepnames.do(record))
+        json = hepnames.do(record)
     elif _collection_in_record(record, 'job') or \
             _collection_in_record(record, 'jobhidden'):
-        json = strip_empty_values(jobs.do(record))
+        json = jobs.do(record)
     elif _collection_in_record(record, 'conferences'):
-        json = strip_empty_values(conferences.do(record))
+        json = conferences.do(record)
     else:
-        json = strip_empty_values(hep.do(record))
+        json = hep.do(record)
 
     if dry_run:
         return errors, json
