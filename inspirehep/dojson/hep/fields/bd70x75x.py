@@ -87,5 +87,5 @@ def collaboration(self, key, value):
 def collaboration2marc(self, key, value):
     """Added Entry-Corporate Name."""
     return {
-        'g': value,
+        'g': value.get('value'),
     }
