@@ -50,10 +50,17 @@ $hp_table_bg: #243547;
     position: fixed;
     width: 100%;
     z-index: 1000;
+
     ul {
       list-style: none;
       li {
         display: inline-block;
+
+        &:not(:last-child):after {
+          content: '|';
+          color: $blue-haze;
+          padding-left: 5px;
+        }
 
         &.active {
           color: $silver;
