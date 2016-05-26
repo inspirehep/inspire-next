@@ -29,7 +29,7 @@ require([
     angular.element(document).ready(function() {
       angular.bootstrap(
         document.getElementById("holding-pen"), ['angular-loading-bar',
-                                                    'inspirehepHoldingPen']
+                                                    'invenioHoldingPen']
       );
     });
 });

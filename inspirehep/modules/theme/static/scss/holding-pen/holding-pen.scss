@@ -4,7 +4,7 @@ html, body {
   background-color: $dark-blue !important;
 }
 
-$hp_table_bg: #223142;
+$hp_table_bg: #243547;
 
 #collections-section {
   display: none;
@@ -454,6 +454,78 @@ $hp_table_bg: #223142;
 
   .feedback-fixed-left {
     display: none;
+  }
+
+  .alert-success {
+    background-color: $green-sea;
+    color: $midnight-blue;
+    font-weight: bolder;
+    border: none;
+    font-size: 1.2em;
+    text-align: center;
+  }
+
+  .alert-danger {
+    margin: 5px;
+    background-color: $hp_table_bg;
+    border: none;
+    font-weight: bolder;
+    color: white;
+    padding: 15px;
+    height: 63px;
+
+    -webkit-transition: all 0.4s;
+    -moz-transition: all 0.4s;
+    -ms-transition: all 0.4s;
+    -o-transition: all 0.4s;
+    transition: all 0.4s;
+
+    &:hover {
+      background-color: $alizarin;
+    }
+
+    p {
+      margin-top: 3px;
+      font-size: 1.2em;
+    }
+    .btn-danger {
+      background-color: $pomegranate;
+    }
+  }
+
+  .detail-section {
+    margin-bottom: 15px;
+    .detail-panel {
+      margin: 5px;
+      border-radius: 3px;
+      padding: 15px;
+      background-color: $hp_table_bg;
+
+      h4 {
+        margin: 0;
+        margin-bottom: 10px;
+        color: $blue-haze;
+        font-size: 1.3em;
+      }
+
+      .record-title {
+        color: white;
+      }
+      .record-abstract {
+        color: $blue-haze;
+        display: block;
+      }
+
+      .record-authors {
+        list-style: none;
+        -webkit-padding-start: 0;
+        color: white;
+
+        li {
+          display: inline-block;
+        }
+      }
+    }
   }
 
 }
