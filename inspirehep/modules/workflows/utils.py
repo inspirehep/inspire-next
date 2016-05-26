@@ -22,10 +22,37 @@
 from __future__ import absolute_import, print_function
 
 import os
+import requests
+import json
 
 from flask import current_app
 
 from .models import WorkflowsAudit
+
+
+def json_api_request(url, data, headers=None):
+    """Make JSON API request and return JSON response."""
+    final_headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+    if headers:
+        final_headers.update(headers)
+    current_app.logger.debug("POST {0} with \n{1}".format(
+        url, json.dumps(data, indent=4)
+    ))
+    try:
+        response = requests.post(
+            url=url,
+            headers=final_headers,
+            data=json.dumps(data),
+            timeout=30
+        )
+    except requests.exceptions.RequestException as err:
+        current_app.logger.exception(err)
+        raise
+    if response.status_code == 200:
+        return response.json()
 
 
 def get_storage_path(suffix=""):

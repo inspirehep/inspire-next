@@ -21,27 +21,13 @@
 
 from __future__ import absolute_import, print_function
 
-import json
 import requests
 
 from flask import current_app
 
 from inspirehep.utils.record import get_value
 
-
-def query_beard_api(url, data):
-    """Query Beard API."""
-    headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }
-    response = requests.post(
-        url=url,
-        headers=headers,
-        data=json.dumps(data)
-    )
-    if response.status_code == 200:
-        return response.json()
+from inspirehep.modules.workflows.utils import json_api_request
 
 
 def prepare_payload(record):
@@ -69,27 +55,39 @@ def guess_coreness(obj, eng):
     if not base_url:
         # Skip task if no API URL set
         return
-    # FIXME: Have option to select different prediction models
     predictor_url = "{base_url}/predictor/coreness".format(
         base_url=base_url
     )
+    # FIXME: Have option to select different prediction models when
+    # available in the API
     payload = prepare_payload(obj.data)
-    results = query_beard_api(predictor_url, payload)
+    try:
+        results = json_api_request(predictor_url, payload)
+    except requests.exceptions.RequestException:
+        # We still continue even if there was an exception.
+        pass
     if results:
         scores = results.get('scores') or []
         max_score = max(scores)
         decision = results.get('decision')
-        relevance_score = max_score
         scores = {
             "CORE": scores[0],
             "Non-CORE": scores[1],
             "Rejected": scores[2],
         }
+        # Generate a normalized relevance_score useful for sorting
+        # We assume a CORE paper to have the highest relevance so we add a
+        # significant value to seperate it from Non-Core and Rejected.
+        # Normally scores range from -2 / +2 so 10 is significant.
+        # Non-CORE scores are untouched, while Rejected is substracted -10.
+        # Finally this provides one normalized score of relevance across
+        # all categories of papers.
+        relevance_score = max_score
         if decision == "CORE":
             relevance_score += 10
         elif decision == "Rejected":
             relevance_score = (max_score * -1) - 10
-        # FIXME: Add top_words when available
+        # FIXME: Add top_words info when available from the API
         obj.extra_data["relevance_prediction"] = dict(
             max_score=max_score,
             decision=decision,

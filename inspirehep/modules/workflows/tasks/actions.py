@@ -26,6 +26,8 @@ from functools import wraps
 
 from flask import current_app
 
+from inspirehep.utils.record import get_value
+
 
 def shall_upload_record(obj, *args, **kwargs):
     """Check if the record was approved."""
@@ -111,3 +113,10 @@ def is_record_relevant(obj, *args, **kwargs):
                 len(core_keywords) == 0:
             return False
     return True
+
+
+def is_experimental_paper(obj, eng):
+    """Is the record an experimental paper."""
+    categories = get_value(obj.data, "arxiv_eprints.categories", []) + \
+        get_value(obj.data, "subject_terms.term", [])
+    return "hep-ex" in categories or "Experiment-HEP" in categories
