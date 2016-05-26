@@ -3,15 +3,48 @@
  */
 
 (function (angular) {
-  var inspireHoldingPen = angular.module("inspirehepHoldingPen", []);
+  var invenioHoldingPen = angular.module("invenioHoldingPen", []);
 
-  inspireHoldingPen.controller("holdingPenCtrl", function ($scope) {
+  invenioHoldingPen.factory("HoldingPenDetailViewService", ["$http",
+    function ($http) {
+      return {
+        getRecord: function (vm, workflowId) {
+          $http.get('/api/holdingpen/' + workflowId).then(function (response) {
+            vm.record = response.data;
+          }).catch(function (value) {
+            vm.record = {};
+          });
+        }
+      }
+    }]
+  );
 
-  });
 
-  inspireHoldingPen.directive("holding-pen", function () {
+  function holdingPen() {
+
+    var controller = ["$scope", "HoldingPenDetailViewService",
+      function ($scope, HoldingPenDetailViewService) {
+
+        $scope.vm = {};
+        $scope.vm.loading = true;
+        HoldingPenDetailViewService.getRecord($scope.vm, $scope.workflowId);
+
+      }
+    ];
+
+    function templateUrl(element, attrs) {
+      return attrs.template;
+    }
+
     return {
-      template: "<h1>Made by a directive!</h1>"
+      templateUrl: templateUrl,
+      restrict: 'AE',
+      scope: {
+        workflowId: '@workflowId'
+      },
+      controller: controller
     };
-  });
+  }
+
+  invenioHoldingPen.directive("holdingPen", holdingPen);
 })(angular);
