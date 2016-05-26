@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,16 +22,17 @@
 
 """Functions for searching ES and returning the results."""
 
+from invenio_search.api import RecordsSearch
+from inspirehep.modules.search import IQ
 
-def perform_es_search(q, index, start=0, size=10, sort=None):
-    """."""
-    from invenio_search.api import RecordsSearch
-    from inspirehep.modules.search import IQ
+
+def perform_es_search(q, index, start=0, size=10, sort=None, fields=None):
+    """Helper to use elasticsearch_dsl with Spires/Invenio syntax."""
     query = IQ(q)
 
+    search = RecordsSearch(index=index).query(query)
     if sort:
-        return RecordsSearch(index=index).query(query). \
-            sort(sort)[start:start + size].execute()
-    else:
-        return RecordsSearch(index=index).query(query)[start:start + size] \
-            .execute()
+        search = search.sort(sort)
+    if fields and isinstance(fields, list):
+        search = search.extra(_source={'include': fields})
+    return search[start:start + size].execute()
