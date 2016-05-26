@@ -24,11 +24,9 @@
 
     var controller = ["$scope", "HoldingPenDetailViewService",
       function ($scope, HoldingPenDetailViewService) {
-
         $scope.vm = {};
         $scope.vm.loading = true;
         HoldingPenDetailViewService.getRecord($scope.vm, $scope.workflowId);
-
       }
     ];
 

@@ -27,7 +27,7 @@ $hp_table_bg: #243547;
   .main-container {
     width: 95%;
     margin: 0 auto;
-    padding-top: 30px;
+    padding-top: 50px;
   }
 
   .result-list {
@@ -47,6 +47,9 @@ $hp_table_bg: #243547;
     height: 50px;
     font-size: 1.2em;
     margin-top: -16px;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
     ul {
       list-style: none;
       li {
@@ -178,6 +181,8 @@ $hp_table_bg: #243547;
   }
 
   .facet-container {
+
+
     ul li {
       cursor: pointer;
       padding: 5px 5px 0px;
@@ -446,6 +451,7 @@ $hp_table_bg: #243547;
       margin: 5px;
       border-radius: 3px;
       padding: 15px;
+      color: white;
       background-color: $hp_table_bg;
 
       h4 {
@@ -471,6 +477,29 @@ $hp_table_bg: #243547;
         li {
           display: inline-block;
         }
+      }
+
+      .subject-areas {
+        list-style: none;
+        -webkit-padding-start: 0;
+
+        li {
+          background-color: $midnight-blue;
+          padding: 5px;
+          display: block;
+          margin-bottom: 5px;
+          border-radius: 3px;
+        }
+
+        .scheme {
+          background-color: $hp_table_bg;
+          padding: 3px 5px;
+          font-size: .8em;
+        }
+      }
+
+      .references {
+        color: $blue-haze;
       }
     }
   }

@@ -12,7 +12,8 @@
       <h4 class="record-title" ng-bind="vm.record.titles[0].title"></h4>
       <ul class="record-authors">
         <li ng-repeat="author in vm.record.authors">
-          <span ng-bind="author.full_name"></span><span ng-if="!$last">, </span>
+          <span ng-bind="author.full_name"></span><span
+          ng-if="!$last">, </span>
         </li>
       </ul>
       <p class="record-abstract" ng-bind="vm.record.abstracts[0].value"></p>
@@ -32,12 +33,39 @@
       <div class="col-md-12">
         <div class="detail-panel">
           <h4>Source</h4>
+
+          <div class="row">
+            <div class="col-md-3">
+              <p class="font-bolder">Method</p>
+            </div>
+            <div class="col-md-9">
+              <p ng-bind="vm.record.acquisition_source[0].method"></p>
+            </div>
+
+            <div class="col-md-3">
+              <p class="font-bolder">Source</p>
+            </div>
+            <div class="col-md-9">
+              <p ng-bind="vm.record.acquisition_source[0].source"></p>
+            </div>
+
+
+            <div class="col-md-3">
+              <p class="font-bolder">License</p>
+            </div>
+            <div class="col-md-9">
+              <p ng-bind="vm.record.license[0].url"></p>
+            </div>
+          </div>
+
         </div>
+
       </div>
     </div>
-
-
   </div>
+
+
+</div>
 </div>
 
 <div class="clearfix"></div>
@@ -46,18 +74,52 @@
   <div class="col-md-4">
     <div class="detail-panel">
       <h4>Subject Areas</h4>
+
+      <ul class="subject-areas">
+        <li ng-repeat="subject_term in vm.record.subject_terms">
+          <span class="scheme" ng-bind="subject_term.scheme"></span> <span
+          ng-bind="subject_term.term"></span>
+        </li>
+      </ul>
     </div>
   </div>
 
   <div class="col-md-4">
     <div class="detail-panel">
       <h4>Keywords</h4>
+      <div class="row"
+           ng-repeat="keyword in vm.record._extra_data.keywords_prediction.keywords">
+        <div class="col-md-7" ng-bind="keyword[0]"></div>
+        <div class="col-md-3" ng-bind="keyword[1] | number : 4"></div>
+        <div class="col-md-2"></div>
+      </div>
     </div>
   </div>
 
   <div class="col-md-4">
     <div class="detail-panel">
       <h4>Notes</h4>
+
+      <div class="row" ng-repeat="note in vm.record.public_notes">
+
+        <div ng-if="note.source">
+          <div class="col-md-3">
+            <p class="font-bolder" ng-bind="note.source"></p>
+          </div>
+          <div class="col-md-9">
+            <p ng-bind="note.value"></p>
+          </div>
+        </div>
+        <div ng-if="!note.source">
+          <div class="col-md-12 text-center">
+            <div
+              ng-class="{'alert': note.value == '*Temporary entry*'}">
+              <p ng-bind="note.value"></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 </div>
@@ -66,8 +128,25 @@
 
 <div class="row-fluid detail-section">
   <div class="col-md-12">
-    <div class="detail-panel">
+    <div class="detail-panel references">
       <h4>References</h4>
+
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-3">Authors</div>
+        <div class="col-md-2">Journal Info</div>
+        <div class="col-md-1">Year</div>
+        <div class="col-md-2">Misc</div>
+      </div>
+      <div class="clearfix"></div>
+
+      <div class="row" ng-repeat="reference in vm.record.references">
+        <div class="col-md-1" ng-bind="reference.number"></div>
+        <div class="col-md-3" ng-bind="reference.authors"></div>
+        <div class="col-md-2" ng-bind="reference.journal_pubnote"></div>
+        <div class="col-md-1" ng-bind="reference.year"></div>
+        <div class="col-md-2" ng-bind="reference.misc"></div>
+      </div>
     </div>
   </div>
 </div>
