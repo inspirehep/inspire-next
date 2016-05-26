@@ -102,7 +102,7 @@ def categories(self, key, value):
 
 @literature.over('collaboration', '^collaboration$')
 def collaboration(self, key, value):
-    return value
+    return [{"value": value}]
 
 
 @literature.over('hidden_notes', '^hidden_note$')
