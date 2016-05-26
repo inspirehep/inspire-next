@@ -49,7 +49,7 @@
     <subfield code="i">Inspire_id</subfield>
     <subfield code="j">External_id</subfield>
     <subfield code="m">mail</subfield>
-    <subfield code="x">profile</subfield>
+    <subfield code="x">123</subfield>
     <subfield code="y">1</subfield>
   </datafield>
   <datafield tag="110" ind1=" " ind2=" ">

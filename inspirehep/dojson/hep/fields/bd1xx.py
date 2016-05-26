@@ -88,11 +88,10 @@ def authors(self, key, value):
     else:
         for single_value in value:
             authors.append(get_value(single_value))
-    filtered_authors = []
-    for element in authors:
-        if element not in filtered_authors:
-            filtered_authors.append(element)
-    return filtered_authors
+
+    # XXX: duplicates are not stripped here, because this is an expensive
+    #      operation that would be repeated one time per field.
+    return authors
 
 
 @hep2marc.over('100', '^authors$')
