@@ -60,6 +60,11 @@ $hp_table_bg: #243547;
         }
       }
     }
+
+    @media screen and (max-width: 992px) {
+      margin-top: -102px;
+
+    }
   }
 
   .overview-container {
