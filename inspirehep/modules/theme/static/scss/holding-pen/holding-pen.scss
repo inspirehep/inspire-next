@@ -182,7 +182,6 @@ $hp_table_bg: #243547;
 
   .facet-container {
 
-
     ul li {
       cursor: pointer;
       padding: 5px 5px 0px;
@@ -317,69 +316,6 @@ $hp_table_bg: #243547;
         }
       }
 
-      .decision {
-        text-align: center;
-
-        .reject {
-          color: $alizarin;
-        }
-
-        .core {
-          color: $green-sea
-        }
-
-        .accept {
-          color: $orange;
-        }
-
-        ul {
-          list-style: none;
-          -webkit-padding-start: 0;
-          padding-top: 5px;
-          li {
-            background-color: $midnight-blue;
-            padding: 4px 5px;
-            display: inline-block;
-            cursor: pointer;
-
-            &:first-child {
-              border-radius: 3px 0 0 3px;
-            }
-
-            &:last-child {
-              border-radius: 0 3px 3px 0;
-            }
-
-            &.core {
-              color: $blue-haze;
-              &.active {
-                background-color: $green-sea;
-                color: $midnight-blue;
-                font-weight: bolder;
-              }
-            }
-
-            &.reject {
-              color: $blue-haze;
-              &.active {
-                background-color: $alizarin;
-                color: $midnight-blue;
-                font-weight: bolder;
-              }
-            }
-
-            &.accept {
-              color: $blue-haze;
-              &.active {
-                background-color: $orange;
-                color: $midnight-blue;
-                font-weight: bolder;
-              }
-            }
-          }
-        }
-      }
-
       .institution-details {
         .current {
           color: white;
@@ -500,9 +436,90 @@ $hp_table_bg: #243547;
 
       .references {
         color: $blue-haze;
+
+        .reference-header {
+          padding: 10px;
+          border-bottom: 2px solid $midnight-blue;
+          font-weight: bolder;
+        }
+
+        .reference-body {
+          height: 300px;
+          overflow-y: auto;
+
+          .reference-row {
+
+            padding: 10px;
+            color: white;
+            border-bottom: 1px solid $midnight-blue;
+          }
+        }
+
       }
     }
   }
 
 }
 
+.decision {
+  text-align: center;
+
+  .reject {
+    color: $alizarin;
+  }
+
+  .core {
+    color: $green-sea
+  }
+
+  .accept {
+    color: $orange;
+  }
+
+  ul {
+    list-style: none;
+    -webkit-padding-start: 0;
+    padding-top: 5px;
+    li {
+      background-color: $midnight-blue;
+      padding: 4px 5px;
+      display: inline-block;
+      cursor: pointer;
+
+      &:first-child {
+        border-radius: 3px 0 0 3px;
+      }
+
+      &:last-child {
+        border-radius: 0 3px 3px 0;
+      }
+
+      &.core {
+        color: $blue-haze;
+        &.active {
+          background-color: $green-sea;
+          color: $midnight-blue;
+          font-weight: bolder;
+        }
+      }
+
+      &.reject {
+        color: $blue-haze;
+        &.active {
+          background-color: $alizarin;
+          color: $midnight-blue;
+          font-weight: bolder;
+        }
+      }
+
+      &.accept {
+        color: $blue-haze;
+        &.active {
+          background-color: $orange;
+          color: $midnight-blue;
+          font-weight: bolder;
+        }
+      }
+    }
+  }
+}
