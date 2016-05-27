@@ -38,6 +38,5 @@
     warnings: true,
     mangle: true
   },
-  mainConfigFile: ['./settings.js'],
-  wrapShim: true
+  mainConfigFile: ['./settings.js']
 })
