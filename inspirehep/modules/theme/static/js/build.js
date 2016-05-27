@@ -19,7 +19,7 @@
 
 ({
   preserveLicenseComments: false,
-  optimize: 'uglify2',
+  optimize: 'none',
   uglify2: {
     output: {
       beautify: false,
@@ -38,6 +38,5 @@
     warnings: true,
     mangle: true
   },
-  mainConfigFile: ['./settings.js'],
-  wrapShim: true
+  mainConfigFile: ['./settings.js']
 })

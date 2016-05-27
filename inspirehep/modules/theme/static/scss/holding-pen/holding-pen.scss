@@ -427,22 +427,29 @@ $hp_table_bg: #243547;
         }
       }
 
-      .subject-areas {
-        list-style: none;
-        -webkit-padding-start: 0;
+      .subject-area {
 
-        li {
-          background-color: $midnight-blue;
-          padding: 5px;
-          display: block;
-          margin-bottom: 5px;
-          border-radius: 3px;
-        }
+        padding: 7px;
+        display: block;
+        margin-bottom: 5px;
+        border-radius: 3px;
+        border-bottom: 1px solid $dark-blue;
 
         .scheme {
-          background-color: $hp_table_bg;
+          background-color: $dark-blue;
           padding: 3px 5px;
           font-size: .8em;
+        }
+      }
+
+      &.keywords {
+        .keyword-list {
+          height: 200px;
+          overflow-y: auto;
+        }
+        .row {
+          padding: 7px;
+          border-bottom: 1px solid $dark-blue;
         }
       }
 
@@ -466,8 +473,8 @@ $hp_table_bg: #243547;
             border-bottom: 1px solid $midnight-blue;
           }
         }
-
       }
+
     }
   }
 
@@ -488,10 +495,40 @@ $hp_table_bg: #243547;
     color: $orange;
   }
 
+  &.large {
+    li {
+      padding: 6px 9px;
+      font-size: 1.2em;
+    }
+  }
+
+
+  .decision-keywords {
+    p {
+      color: $blue-haze;
+      font-weight: bolder;
+    }
+
+    .label-success {
+      color: $midnight-blue;
+      font-size: 0.8em;
+    }
+
+    .list {
+      height: 140px;
+      overflow-y: auto;
+    }
+  }
+
+  .automatic-decision {
+    font-size: 1.1em;
+  }
+
   ul {
     list-style: none;
     -webkit-padding-start: 0;
     padding-top: 5px;
+
     li {
       background-color: $midnight-blue;
       padding: 4px 5px;
@@ -534,4 +571,72 @@ $hp_table_bg: #243547;
       }
     }
   }
+}
+
+/*on off switch*/
+
+.onoffswitch {
+  position: relative;
+  width: 44px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.onoffswitch-checkbox {
+  display: none;
+}
+
+.onoffswitch-label {
+  display: block;
+  overflow: hidden;
+  cursor: pointer;
+  height: 19px;
+  padding: 0;
+  line-height: 19px;
+  border: 0px solid $concrete;
+  border-radius: 11px;
+  background-color: $alizarin;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -ms-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.onoffswitch-label:before {
+  content: "";
+  display: block;
+  width: 11px;
+  margin: 4px;
+  background: #FFFFFF;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 21px;
+  border-radius: 11px;
+  box-shadow: 0 6px 12px 0px $midnight-blue;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -ms-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label {
+  background-color: $green-sea;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label, .onoffswitch-checkbox:checked + .onoffswitch-label:before {
+  border-color: $green-sea;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+  margin-left: 0;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label:before {
+  right: 0px;
+  background-color: #FFFFFF;
+  box-shadow: 3px 6px 18px 0px rgba(0, 0, 0, 0.2);
 }
