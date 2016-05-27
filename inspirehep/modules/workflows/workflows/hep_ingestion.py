@@ -40,6 +40,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     shall_push_remotely,
     shall_upload_record,
     reject_record,
+    is_experimental_paper,
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -47,7 +48,11 @@ from inspirehep.modules.workflows.tasks.classifier import (
     filter_core_keywords,
 )
 from inspirehep.modules.workflows.tasks.beard import guess_coreness
-
+from inspirehep.modules.workflows.tasks.magpie import (
+    guess_keywords,
+    guess_categories,
+    guess_experiments,
+)
 from inspirehep.modules.workflows.tasks.matching import(
     delete_self_and_stop_processing,
     stop_processing,
@@ -125,6 +130,11 @@ class HEPIngestion(object):
             with_author_keywords=True,
         ),
         filter_core_keywords,
+        guess_categories,
+        IF(is_experimental_paper, [
+            guess_experiments,
+        ]),
+        guess_keywords,
         # Predict action for a generic HEP paper based only on title
         # and abstract.
         guess_coreness,  # ("arxiv_skip_astro_title_abstract.pickle"),

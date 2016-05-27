@@ -21,6 +21,8 @@
 
 from dojson import Overdo
 
+from .utils import strip_empty_values
+
 
 class SchemaOverdo(Overdo):
 
@@ -31,4 +33,4 @@ class SchemaOverdo(Overdo):
     def do(self, blob, **kwargs):
         output = super(SchemaOverdo, self).do(blob, **kwargs)
         output['$schema'] = self.schema
-        return output
+        return strip_empty_values(output)

@@ -563,7 +563,7 @@ RECORDS_REST_FACETS = {
             },
             "author": {
                 "terms": {
-                    "field": "exactauthor.raw",
+                    "field": "facet_authors",
                     "size": 20
                 }
             },
@@ -807,7 +807,8 @@ LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 
 # Web services and APIs
 # =====================
-BEARD_API_URL = ""   # e.g. "http://beard.inspirehep.net/api"
+BEARD_API_URL = None   # e.g. "http://beard.inspirehep.net/api"
+MAGPIE_API_URL = None   # e.g. "http://magpie.inspirehep.net/api"
 
 # Workflows
 # =========
