@@ -226,7 +226,6 @@ def exists_in_holding_pen(obj, eng):
     from elasticsearch_dsl import Q
     from invenio_search import RecordsSearch
     from invenio_workflows_ui.utils import obj_or_import_string
-    from invenio_workflows_ui.search import default_query_factory
 
     config = current_app.config['WORKFLOWS_UI_REST_ENDPOINT']
     index = config.get('search_index')
