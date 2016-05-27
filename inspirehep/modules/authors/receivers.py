@@ -22,10 +22,30 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
+import uuid
 
 from invenio_indexer.signals import before_record_index
+from invenio_records.signals import (
+    before_record_insert,
+    before_record_update)
 
 from .utils import author_tokenize
+
+
+@before_record_insert.connect
+@before_record_update.connect
+def assign_uuid(sender, *args, **kwargs):
+    """Assign uuid to each signature.
+    The method assigns to each signature a universally unique
+    identifier based on Python's built-in uuid4. The identifier
+    is allocated during the insertion of a new record.
+    """
+    authors = sender.get('authors', [])
+
+    for author in authors:
+        # Skip if the author was already populated with a UUID.
+        if 'uuid' not in author:
+            author['uuid'] = str(uuid.uuid4())
 
 
 @before_record_index.connect
