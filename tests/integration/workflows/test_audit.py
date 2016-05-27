@@ -39,6 +39,7 @@ def test_audit(app):
         db.session.add(user)
 
         workflows_object = WorkflowObject.create_object()
+        workflows_object.data_type = 'hep'
         workflows_object.save()
 
         db.session.commit()
