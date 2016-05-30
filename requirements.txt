@@ -27,7 +27,7 @@
 
 # Packages where we need bleeding edge and are not yet available on PyPI
 -e git+https://github.com/inspirehep/invenio-pidstore.git#egg=invenio-pidstore
--e git+https://github.com/inveniosoftware/invenio-indexer.git#egg=invenio-indexer==1.0.0a5.dev20160502
+-e git+https://github.com/inveniosoftware/invenio-indexer.git#egg=invenio-indexer==1.0.0a6.dev20160525
 
 # Workflows and Holding Pen related dependencies
 -e git+https://github.com/inveniosoftware/invenio-oaiharvester.git#egg=invenio-oaiharvester

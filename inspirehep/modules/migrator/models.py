@@ -32,7 +32,6 @@ class InspireProdRecords(db.Model):
     recid = db.Column(db.Integer, primary_key=True, index=True)
     last_updated = db.Column(db.DateTime, default=datetime.now, nullable=False, index=True)
     _marcxml = db.Column('marcxml', db.LargeBinary, nullable=False)
-    successful = db.Column(db.Boolean, default=None, nullable=True, index=True)
     valid = db.Column(db.Boolean, default=None, nullable=True, index=True)
     errors = db.Column(db.Text(), nullable=True)
 
