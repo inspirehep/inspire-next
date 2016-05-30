@@ -24,6 +24,10 @@ $hp_table_bg: #243547;
     color: $pete-river;
   }
 
+  .text-muted {
+    color: $blue-haze;
+  }
+
   .main-container {
     width: 95%;
     margin: 0 auto;
@@ -321,10 +325,8 @@ $hp_table_bg: #243547;
         -webkit-padding-start: 0;
 
         li {
-          background-color: $midnight-blue;
-          padding: 3px 5px;
+          padding: 4px;
           display: inline-block;
-          margin: 2px;
         }
       }
 
@@ -356,16 +358,31 @@ $hp_table_bg: #243547;
     display: none;
   }
 
-  .alert-success {
-    background-color: $green-sea;
-    color: $midnight-blue;
+  .alert {
+    background-color: $midnight-blue;
+    color: white;
     font-weight: bolder;
     border: none;
     font-size: 1.2em;
     text-align: center;
+
+    &.alert-success {
+      background-color: $green-sea;
+      color: $midnight-blue;
+    }
+
+    &.alert-warning {
+      background-color: $sun-flower;
+      color: $midnight-blue;
+    }
+
+    &.alert-danger {
+      background-color: $alizarin;
+      color: $midnight-blue;
+    }
   }
 
-  .alert-danger {
+  .alert-danger-area {
     margin: 5px;
     background-color: $hp_table_bg;
     border: none;
@@ -395,6 +412,10 @@ $hp_table_bg: #243547;
 
   .detail-section {
     margin-bottom: 15px;
+
+    .panel-300 {
+      min-height: 300px;
+    }
     .detail-panel {
       margin: 5px;
       border-radius: 3px;
@@ -411,6 +432,7 @@ $hp_table_bg: #243547;
 
       .record-title {
         color: white;
+        font-size: 1.4em;
       }
       .record-abstract {
         color: $blue-haze;
@@ -429,11 +451,10 @@ $hp_table_bg: #243547;
 
       .subject-area {
 
-        padding: 7px;
+        padding: 5px;
         display: block;
         margin-bottom: 5px;
         border-radius: 3px;
-        border-bottom: 1px solid $dark-blue;
 
         .scheme {
           background-color: $dark-blue;
@@ -444,12 +465,14 @@ $hp_table_bg: #243547;
 
       &.keywords {
         .keyword-list {
-          height: 200px;
+          height: 230px;
           overflow-y: auto;
-        }
-        .row {
-          padding: 7px;
-          border-bottom: 1px solid $dark-blue;
+
+          .row {
+            padding: 5px;
+            line-height: 1.1em;
+          }
+
         }
       }
 
@@ -502,7 +525,6 @@ $hp_table_bg: #243547;
     }
   }
 
-
   .decision-keywords {
     p {
       color: $blue-haze;
@@ -517,6 +539,10 @@ $hp_table_bg: #243547;
     .list {
       height: 140px;
       overflow-y: auto;
+
+      .row {
+        padding: 4px;
+      }
     }
   }
 
@@ -591,9 +617,9 @@ $hp_table_bg: #243547;
   display: block;
   overflow: hidden;
   cursor: pointer;
-  height: 19px;
+  height: 16px;
   padding: 0;
-  line-height: 19px;
+  line-height: 16px;
   border: 0px solid $concrete;
   border-radius: 11px;
   background-color: $alizarin;
