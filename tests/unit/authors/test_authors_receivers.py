@@ -61,3 +61,22 @@ def test_name_variations():
             'John Richard Ellis',
             'R Ellis',
             'Richard Ellis'])
+
+
+def test_uuid_generation():
+    json_dict = {
+        "authors": [{
+            "full_name": "John Doe",
+            "uuid": "I am unique"
+        }, {
+            "full_name": "John Richard Ellis"
+        }]
+    }
+
+    receivers.assign_uuid(json_dict)
+
+    # Check if the author with existing UUID has still the same UUID.
+    assert(json_dict['authors'][0]['uuid'] == "I am unique")
+
+    # Check if the author with no UUID got one.
+    assert(json_dict['authors'][1]['uuid'] is not None)
