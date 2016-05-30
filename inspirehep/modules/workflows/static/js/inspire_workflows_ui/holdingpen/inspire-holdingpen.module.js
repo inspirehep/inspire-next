@@ -6,7 +6,7 @@
   var invenioHoldingPen = angular.module("invenioHoldingPen", []);
 
   /**
-   * HoldingPenRecordUpdateService allows for the update of a record server
+   * HoldingPenRecordService allows for the update of a record server
    * side through a post of the record JSON.
    */
   invenioHoldingPen.factory("HoldingPenRecordService", ["$http",
@@ -20,6 +20,7 @@
         getRecord: function (vm, workflowId) {
           $http.get('/api/holdingpen/' + workflowId).then(function (response) {
             vm.record = response.data;
+            $('#breadcrumb').html(vm.record.metadata.breadcrumb_title);
           }).catch(function (value) {
             vm.ingestion_complete = false;
             alert(value);
@@ -36,7 +37,7 @@
         },
 
         setDecision: function (vm, workflowId, decision) {
-          $http.post('/api/holdingpen/' + workflowId + '/action/edit', vm.record).then(function (response) {
+          $http.post('/api/holdingpen/' + workflowId + '/action/resolve', {'decision': decision}).then(function (response) {
             vm.ingestion_complete = true;
           }).catch(function (value) {
             vm.ingestion_complete = false;
@@ -45,13 +46,33 @@
         },
 
         deleteRecord: function (vm, workflowId) {
-          $http.delete('/api/holdingpen/' + workflowId + '/action/delete', vm.record).then(function (response) {
+          $http.delete('/api/holdingpen/' + workflowId, vm.record).then(function (response) {
+            vm.ingestion_complete = true;
+          }).catch(function (value) {
+            alert(value);
+            vm.ingestion_complete = false;
+          });
+        },
+
+        resumeWorkflow: function (vm, workflowId) {
+          $http.post('/api/holdingpen/' + workflowId + '/action/resume').then(function (response) {
+            vm.ingestion_complete = true;
+          }).catch(function (value) {
+            alert(value);
+            vm.ingestion_complete = false;
+          });
+        },
+
+        restartWorkflow: function (vm, workflowId) {
+          $http.post('/api/holdingpen/' + workflowId + '/action/restart').then(function (response) {
             vm.ingestion_complete = true;
           }).catch(function (value) {
             alert(value);
             vm.ingestion_complete = false;
           });
         }
+
+
       }
     }]
   );
@@ -83,6 +104,19 @@
 
           deleteRecord: function () {
             HoldingPenRecordService.deleteRecord($scope.vm, $scope.workflowId)
+          },
+
+          showHistory: function (url) {
+            alert('Showing history');
+
+          },
+
+          resumeWorkflow: function () {
+            HoldingPenRecordService.resumeWorkflow($scope.vm, $scope.workflowId)
+          },
+
+          restartWorkflow: function () {
+            HoldingPenRecordService.restartWorkflow($scope.vm, $scope.workflowId)
           }
         }
       }
