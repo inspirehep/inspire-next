@@ -371,6 +371,11 @@ $hp_table_bg: #243547;
       color: $midnight-blue;
     }
 
+    &.alert-info {
+      background-color: $silver;
+      color: $midnight-blue;
+    }
+
     &.alert-warning {
       background-color: $sun-flower;
       color: $midnight-blue;
@@ -544,6 +549,7 @@ $hp_table_bg: #243547;
         padding: 4px;
       }
     }
+
   }
 
   .automatic-decision {

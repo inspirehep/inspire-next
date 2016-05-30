@@ -10,9 +10,11 @@
         ng-repeat="item in vm.invenioSearchResults.aggregations[key].buckets | limitTo: facetResults"
         ng-click="handleClick(key, item.key)"
         ng-class="{'active' : handler[key].indexOf(item.key) > -1,
-              error: item.key === 'Error',
-              attention : item.key === 'Need action',
-              done: item.key === 'Done',
+              error: item.key === 'ERROR',
+              attention : item.key === 'HALTED',
+              inprogress : item.key === 'WAITING',
+              inprogress : item.key === 'RUNNING',
+              done: item.key === 'COMPLETED',
               arxiv: item.key === 'arXiv',
               literature: item.key === 'hep',
               authornew: item.key === 'authors',

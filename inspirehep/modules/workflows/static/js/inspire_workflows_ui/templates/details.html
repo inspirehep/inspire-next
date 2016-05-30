@@ -1,13 +1,16 @@
 <div class="row">
   <div class="col-md-12">
     <div class="alert"
-         ng-class="{'alert-warning': vm.record._workflow.status === 'HALTED', 'alert-danger': vm.record._workflow.status === 'ERROR', 'alert-success': vm.record._workflow.status === 'DONE'}">
+         ng-class="{'alert-warning': vm.record._workflow.status === 'HALTED', 'alert-danger': vm.record._workflow.status === 'ERROR', 'alert-success': vm.record._workflow.status === 'COMPLETED',
+         'alert-info': vm.record._workflow.status === 'WAITING'}">
 
-      <p ng-if="vm.record._workflow.status === 'DONE'">Record ingestion
-        complete. Visit the record <a ng-href="">here</a>.</p>
-      <p ng-if="vm.record._workflow.status !== 'DONE'">
+      <p ng-if="vm.record._workflow.status === 'COMPLETED'">Record ingestion
+        complete.</p>
+      <p ng-if="vm.record._workflow.status !== 'COMPLETED'">
+        <span ng-if="vm.record._workflow.status === 'WAITING'">Waiting to run...</span>
+        <span ng-if="vm.record._workflow.status === 'RUNNING'">Workflow in progress...</span>
         <span ng-repeat="item in vm.record._extra_data._task_history"
-              ng-bind="item.nicename" ng-if="$last"></span>
+              ng-bind="item.nicename" ng-if="(vm.record._workflow.status === 'HALTED' || vm.record._workflow.status === 'ERROR') && $last"></span>
       </p>
     </div>
   </div>
@@ -45,26 +48,26 @@
       </div>
 
 
-      <div class="col-md-12">
-        <div class="detail-panel">
-          <h4>Links</h4>
+      <!--<div class="col-md-12">-->
+      <!--<div class="detail-panel">-->
+      <!--<h4>Links</h4>-->
 
-          <div class="row">
-            <div
-              ng-repeat="external_system in vm.record.metadata.external_system_numbers">
-              <div class="col-md-3 col-sm-4">
-                <p class="font-bolder" ng-bind="external_system.institute"></p>
-              </div>
-              <div class="col-md-9 col-sm-8">
-                <a ng-href="Utils.get_url(external_system.value)"
-                   ng-bind="external_system.value"></a>
-              </div>
-            </div>
+      <!--<div class="row">-->
+      <!--<div-->
+      <!--ng-repeat="external_system in vm.record.metadata.external_system_numbers">-->
+      <!--<div class="col-md-3 col-sm-4">-->
+      <!--<p class="font-bolder" ng-bind="external_system.institute"></p>-->
+      <!--</div>-->
+      <!--<div class="col-md-9 col-sm-8">-->
+      <!--<a ng-href="Utils.get_url(external_system.value)"-->
+      <!--ng-bind="external_system.value"></a>-->
+      <!--</div>-->
+      <!--</div>-->
 
-          </div>
+      <!--</div>-->
 
-        </div>
-      </div>
+      <!--</div>-->
+      <!--</div>-->
 
 
       <div class="clearfix"></div>
@@ -176,12 +179,20 @@
             <p class="automatic-decision">Automatic Decision: <span
               class="reject">Reject</span></p>
 
-            <ul class="decision large">
-              <li class="reject">Reject</li>
-              <li class="accept">Accept</li>
-              <li class="core">Core</li>
-            </ul>
+            <div ng-if="vm.record._extra_data._action == 'hep_approval'">
+              <button class="btn btn-danger"
+                      ng-click="Utils.setDecision('reject')">Reject
+              </button>
+              <button class="btn btn-warning"
+                      ng-click="Utils.setDecision('accept')">Accept
+              </button>
+              <button class="btn btn-success"
+                      ng-click="Utils.setDecision('accept_core')">Core
+              </button>
+            </div>
 
+            <div class="clearfix"></div>
+            <br/>
             <div class="decision-keywords">
               <p>
                 {{Utils.keys(vm.record._extra_data.classifier_results.complete_output['Core keywords']).length}}
@@ -206,7 +217,7 @@
       </div>
 
       <!--Submission Info-->
-       <div class="col-md-12">
+      <div class="col-md-12">
         <div class="detail-panel">
           <h4>Submission</h4>
           <p class="text-center"
