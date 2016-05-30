@@ -37,7 +37,14 @@
         },
 
         setDecision: function (vm, workflowId, decision) {
-          $http.post('/api/holdingpen/' + workflowId + '/action/resolve', {'decision': decision}).then(function (response) {
+
+
+            var data = JSON.stringify({
+              'value': decision
+            })
+
+
+          $http.post('/api/holdingpen/' + workflowId + '/action/resolve', data).then(function (response) {
             vm.ingestion_complete = true;
           }).catch(function (value) {
             vm.ingestion_complete = false;
@@ -99,7 +106,7 @@
           },
 
           setDecision: function (decision) {
-            HoldingPenRecordService.setDecision($scope.workflowId, decision)
+            HoldingPenRecordService.setDecision($scope.vm, $scope.workflowId, decision)
           },
 
           deleteRecord: function () {
