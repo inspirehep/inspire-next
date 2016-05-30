@@ -85,6 +85,12 @@ CACHE_REDIS_URL = os.environ.get(
 CACHE_TYPE = "redis"
 ACCOUNTS_SESSION_REDIS_URL = "redis://localhost:6379/2"
 
+# Mathoid
+# =======
+MATHOID_SERVER = os.environ.get(
+    "MATHOID_SERVER",
+    "http://localhost:10044")
+
 # REST
 # ====
 REST_ENABLE_CORS = True

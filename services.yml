@@ -34,6 +34,10 @@ services:
       - POSTGRES_PASSWORD=dbpass123
       - POSTGRES_USER=inspirehep
       - PGDATA=/var/lib/postgresql/data/pgdata
+  mathoid:
+    image: wikitolearn/mathoid
+    environment:
+      - NUM_WORKERS=ncpu
   static:
     image: busybox
     volumes:
