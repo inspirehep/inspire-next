@@ -27,8 +27,6 @@ try:
 except ImportError:
     current_app = None
 
-from inspirehep.utils.dedupers import dedupe_list, dedupe_list_of_dicts
-
 
 def legacy_export_as_marc(json, tabsize=4):
     """Create the MARCXML representation using the producer rules."""
@@ -112,14 +110,6 @@ def strip_empty_values(obj):
         return type(obj)(new_obj)
     else:
         return obj
-
-
-def remove_duplicates_from_list(l):
-    return dedupe_list(l)
-
-
-def remove_duplicates_from_list_of_dicts(ld):
-    return dedupe_list_of_dicts(ld)
 
 
 def get_record_ref(recid, record_type='record'):

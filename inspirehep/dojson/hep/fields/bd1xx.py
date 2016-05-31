@@ -26,13 +26,10 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
+from inspirehep.utils.dedupers import dedupe_list
+
 from ..model import hep, hep2marc
-from ...utils import (
-    create_profile_url,
-    get_recid_from_ref,
-    get_record_ref,
-    remove_duplicates_from_list,
-)
+from ...utils import create_profile_url, get_recid_from_ref, get_record_ref
 
 
 @hep.over('authors', '^[17]00[103_].')
@@ -48,8 +45,7 @@ def authors(self, key, value):
                 recid = int(value.get('z'))
             except:
                 pass
-            affiliations = remove_duplicates_from_list(
-                utils.force_list(value.get('u')))
+            affiliations = dedupe_list(utils.force_list(value.get('u')))
             record = get_record_ref(recid, 'institutions')
             affiliations = [{'value': aff, 'record': record} for
                             aff in affiliations]

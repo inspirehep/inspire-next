@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,8 +26,9 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
+from inspirehep.utils.dedupers import dedupe_list_of_dicts
+
 from ..model import conferences
-from ...utils import remove_duplicates_from_list_of_dicts
 
 
 @conferences.over('acronym', '^111')
@@ -83,7 +84,7 @@ def keywords(self, key, value):
     keywords = self.get('keywords', [])
     for val in value:
         keywords.append(get_value(val))
-    return remove_duplicates_from_list_of_dicts(keywords)
+    return dedupe_list_of_dicts(keywords)
 
 
 @conferences.over('nonpublic_note', '^595')

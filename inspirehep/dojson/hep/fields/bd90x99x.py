@@ -26,13 +26,10 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
+from inspirehep.utils.dedupers import dedupe_list
+
 from ..model import hep, hep2marc
-from ...utils import (
-    get_recid_from_ref,
-    get_record_ref,
-    remove_duplicates_from_list,
-    strip_empty_values,
-)
+from ...utils import get_recid_from_ref, get_record_ref, strip_empty_values
 
 
 @hep.over('references', '^999C5')
@@ -83,7 +80,7 @@ def references(self, key, value):
     for val in value:
         references.append(get_value(val))
 
-    return remove_duplicates_from_list(strip_empty_values(references))
+    return dedupe_list(strip_empty_values(references))
 
 
 @hep2marc.over('999C5', 'references')

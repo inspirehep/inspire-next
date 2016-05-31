@@ -26,8 +26,9 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
+from inspirehep.utils.dedupers import dedupe_list
+
 from ..model import hep, hep2marc
-from ...utils import remove_duplicates_from_list
 
 
 @hep.over('title_variation', '^210[10_][0_]')
@@ -43,7 +44,7 @@ def title_variation(self, key, value):
     for element in value:
         title_variation_list.append(get_value(element))
 
-    return remove_duplicates_from_list(title_variation_list)
+    return dedupe_list(title_variation_list)
 
 
 @hep2marc.over('210', '^title_variation$')
@@ -94,7 +95,7 @@ def titles(self, key, value):
                 'source': val.get('9'),
             })
         cleaned_titles = existing + out
-        return remove_duplicates_from_list(cleaned_titles)
+        return dedupe_list(cleaned_titles)
 
     if 'titles' in self:
         titles = get_value(self['titles'])

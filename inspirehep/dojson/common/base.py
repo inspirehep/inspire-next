@@ -26,6 +26,8 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
+from inspirehep.utils.dedupers import dedupe_list_of_dicts
+
 from ..conferences.model import conferences
 from ..experiments.model import experiments
 from ..hep.model import hep, hep2marc
@@ -33,12 +35,7 @@ from ..hepnames.model import hepnames, hepnames2marc
 from ..institutions.model import institutions
 from ..jobs.model import jobs
 from ..journals.model import journals
-from ..utils import (
-    get_recid_from_ref,
-    get_record_ref,
-    remove_duplicates_from_list_of_dicts,
-    strip_empty_values
-)
+from ..utils import get_recid_from_ref, get_record_ref, strip_empty_values
 
 
 def self_url(index):
@@ -244,7 +241,7 @@ def collections(self, key, value):
     if contains_list:
         return strip_empty_values(collections)
     else:
-        return remove_duplicates_from_list_of_dicts(collections)
+        return dedupe_list_of_dicts(collections)
 
 
 @hep2marc.over('980', 'collections')

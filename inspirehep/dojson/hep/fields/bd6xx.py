@@ -26,8 +26,10 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
+from inspirehep.utils.dedupers import dedupe_list_of_dicts
+
 from ..model import hep, hep2marc
-from ...utils import get_record_ref, remove_duplicates_from_list_of_dicts
+from ...utils import get_record_ref
 
 
 @hep.over('subject_terms', '^650[1_][_7]')
@@ -46,7 +48,7 @@ def subject_terms(self, key, value):
     for val in value:
         subject_terms.append(get_value(val))
 
-    return remove_duplicates_from_list_of_dicts(subject_terms)
+    return dedupe_list_of_dicts(subject_terms)
 
 
 @hep2marc.over('65017', 'subject_terms')
@@ -76,7 +78,7 @@ def free_keywords(self, key, value):
     for val in value:
         free_keywords.append(get_value(val))
 
-    return remove_duplicates_from_list_of_dicts(free_keywords)
+    return dedupe_list_of_dicts(free_keywords)
 
 
 @hep2marc.over('653', 'free_keywords')
@@ -144,7 +146,7 @@ def thesaurus_terms(self, key, value):
     for element in value:
         thesaurus_terms.append(get_value(element))
 
-    return remove_duplicates_from_list_of_dicts(thesaurus_terms)
+    return dedupe_list_of_dicts(thesaurus_terms)
 
 
 @hep2marc.over('695', 'thesaurus_terms')
