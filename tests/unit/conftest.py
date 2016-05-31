@@ -20,6 +20,7 @@
 """Pytest configuration."""
 
 import os
+import httpretty
 import shutil
 import tempfile
 import pytest
@@ -242,3 +243,10 @@ def dummy_empty_response():
             "hits": []
         }
     }
+
+
+@pytest.yield_fixture
+def httppretty_mock():
+    httpretty.enable()
+    yield
+    httpretty.disable()
