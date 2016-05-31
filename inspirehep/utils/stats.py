@@ -20,7 +20,6 @@ import operator
 
 
 class Stats(object):
-
     """Stats is a class to calculate common metrics"""
 
     @staticmethod
@@ -33,13 +32,16 @@ class Stats(object):
         :return: h index for a given list of citations.
         """
         _record_citations = kwargs.pop('citations')
+        if not Stats.check_type_is_dict(_record_citations):
+            raise TypeError("citations should be a dict")
+
         _sorted = Stats.get_sorted_citations(_record_citations)
 
         h_index = 0
         print _sorted
         for _index, _val in enumerate(_sorted):
             if _val[1] > _index:
-                h_index = _index+1
+                h_index = _index + 1
             else:
                 break
 
@@ -55,11 +57,19 @@ class Stats(object):
         :param kwargs:
         :return: i10 index for a given list of citations.
         """
+
         _record_citations = kwargs.pop('citations')
+        if not Stats.check_type_is_dict(_record_citations):
+            raise TypeError("citations should be a dict")
+
         _sorted = Stats.get_sorted_citations(_record_citations)
-        _publications = filter(lambda x: x[1] >=10, _sorted)
+        _publications = filter(lambda x: x[1] >= 10, _sorted)
 
         return len(_publications)
+
+    @staticmethod
+    def check_type_is_dict(_record_citations):
+        return isinstance(_record_citations, dict)
 
     @staticmethod
     def get_sorted_citations(_record_citations):

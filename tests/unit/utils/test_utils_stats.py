@@ -38,6 +38,26 @@ def citations_h5():
 
 
 @pytest.fixture
+def citations_none():
+    return {
+        "123311": None,
+        "123113": 3,
+        "3424": 5,
+        "3423421": 7,
+        "3242346": 8,
+        "3426733": 12,
+        "1231432": None
+    }
+
+
+@pytest.fixture
+def citations_list():
+    return [
+        5, 4, 3, 6, 3, 2, 5, 7
+    ]
+
+
+@pytest.fixture
 def citations_h15i1019():
     return {
         "1": 411,
@@ -63,13 +83,35 @@ def citations_h15i1019():
     }
 
 
-def test_hindex(citations_h5, citations_h15i1019):
+def test_stats_hindex(citations_h5, citations_h15i1019):
     """Test h5 index calculation."""
     assert 5 == Stats.calculate_hindex(citations=citations_h5)
     assert 15 == Stats.calculate_hindex(citations=citations_h15i1019)
 
 
-def test_i10(citations_h5, citations_h15i1019):
+def test_stats_nones(citations_none):
+    assert 4 == Stats.calculate_hindex(citations=citations_none)
+    assert 1 == Stats.calculate_i10(citations=citations_none)
+
+
+def test_stats_list_hindex(citations_list):
+    try:
+        assert 4 == Stats.calculate_hindex(citations=citations_list)
+        assert 1 == Stats.calculate_i10(citations=citations_list)
+        assert False
+    except TypeError:
+        assert True
+
+
+def test_stats_list_i10(citations_list):
+    try:
+        assert 1 == Stats.calculate_i10(citations=citations_list)
+        assert False
+    except TypeError:
+        assert True
+
+
+def test_stats_i10(citations_h5, citations_h15i1019):
     """Test i10 index calculation."""
-    assert 1 == Stats.calculate_i10(citations=citations_h5)
+    assert 2 == Stats.calculate_i10(citations=citations_h5)
     assert 19 == Stats.calculate_i10(citations=citations_h15i1019)
