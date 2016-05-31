@@ -1,5 +1,7 @@
 @import "../base/variables";
 
+@import "../node_modules/angular-xeditable/dist/css/xeditable.css";
+
 html, body {
   background-color: $dark-blue !important;
 }
@@ -315,7 +317,7 @@ $hp_table_bg: #243547;
           color: white;
         }
 
-        .btn-warning{
+        .btn-warning {
           background-color: $orange;
           color: white;
         }
@@ -390,7 +392,7 @@ $hp_table_bg: #243547;
     font-size: 1.2em;
     text-align: center;
 
-    &.alert-success {
+    &.alert-success, &.alert-accept_core {
       background-color: $green-sea;
       color: $midnight-blue;
     }
@@ -400,12 +402,17 @@ $hp_table_bg: #243547;
       color: $midnight-blue;
     }
 
+    &.alert-accept {
+      background-color: $orange;
+      color: $midnight-blue;
+    }
+
     &.alert-warning {
       background-color: $sun-flower;
       color: $midnight-blue;
     }
 
-    &.alert-danger {
+    &.alert-danger, &.alert-reject {
       background-color: $alizarin;
       color: $midnight-blue;
     }
@@ -536,12 +543,40 @@ $hp_table_bg: #243547;
   color: $alizarin;
 }
 
-.core {
+.accept_core {
   color: $green-sea
 }
 
 .accept {
   color: $orange;
+}
+
+.hp-item {
+
+  .reject, .accept_core, .accept {
+    color: $blue-haze;
+    padding: 5px;
+    background-color: $midnight-blue;
+    border-radius: 3px;
+    font-weight: bolder;
+  }
+
+  &:hover {
+    .reject {
+      background-color: $midnight-blue;
+      color: $alizarin;
+    }
+
+    .accept_core {
+      background-color: $midnight-blue;
+      color: $green-sea;
+    }
+
+    .accept {
+      background-color: $midnight-blue;
+      color: $orange;
+    }
+  }
 }
 
 .decision {

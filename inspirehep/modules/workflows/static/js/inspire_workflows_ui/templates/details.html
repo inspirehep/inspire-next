@@ -1,19 +1,28 @@
 <div class="row">
   <div class="col-md-12">
-    <div class="alert"
+    <div
+      ng-if="vm.record._extra_data.user_action && vm.record._extra_data._action === null"
+      class="alert" ng-class="'alert-' + vm.record._extra_data.user_action">
+
+        <span ng-switch="vm.record._extra_data.user_action">
+                  <span ng-switch-when="reject">Rejected</span>
+                  <span ng-switch-when="accept">Accepted as Non-CORE</span>
+                  <span ng-switch-when="accept_core">Accepted as CORE</span>
+                </span>
+    </div>
+
+    <div class="alert" ng-if="vm.record._extra_data._action !== null"
          ng-class="{'alert-warning': vm.record._workflow.status === 'HALTED' && !vm.ingestion_complete, 'alert-danger': vm.record._workflow.status === 'ERROR' && !vm.ingestion_complete, 'alert-success': vm.record._workflow.status === 'COMPLETED' || vm.ingestion_complete,
          'alert-info': vm.record._workflow.status === 'WAITING'}">
-
       <p
-        ng-if="vm.record._workflow.status === 'COMPLETED' || vm.ingestion_complete">
-        Record ingestion
-        complete.</p>
+        ng-if="vm.record._workflow.status === 'COMPLETED'">
+        Record ingestion complete.</p>
       <p
         ng-if="vm.record._workflow.status !== 'COMPLETED' && !vm.ingestion_complete">
         <span ng-if="vm.record._workflow.status === 'WAITING'">Waiting to run...</span>
         <span ng-if="vm.record._workflow.status === 'RUNNING'">Workflow in progress...</span>
         <span ng-repeat="item in vm.record._extra_data._task_history"
-              ng-bind="item.nicename"
+              ng-bind="vm.record._workflow.status + ' on ' + item.nicename"
               ng-if="(vm.record._workflow.status === 'HALTED' || vm.record._workflow.status === 'ERROR') && $last"></span>
       </p>
     </div>
@@ -27,7 +36,7 @@
       <div class="col-md-12">
         <div class="detail-panel">
           <h4 class="record-title"
-              ng-bind="vm.record.metadata.titles[0].title"></h4>
+              ng-bind="vm.record.metadata.titles[0].title" editable-text="vm.record.metadata.titles[0].title"></h4>
           <ul class="record-authors">
             <li ng-repeat="author in vm.record.metadata.authors">
               <span ng-bind="author.full_name"></span><span
@@ -35,7 +44,7 @@
             </li>
           </ul>
           <p class="record-abstract"
-             ng-bind="vm.record.metadata.abstracts[0].value"></p>
+             ng-bind="vm.record.metadata.abstracts[0].value" editable-textarea="vm.record.metadata.abstracts[0].value"></p>
 
           <div class="row">
             <div class="col-md-2 col-sm-4">
@@ -239,70 +248,71 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <!--Submission Info-->
-    <div class="col-md-12">
-      <div class="detail-panel">
-        <h4>Submission</h4>
-        <p class="text-center"
-           ng-if="vm.record.metadata.acquisition_source[0]">
-          Harvested from <span class="font-bolder"
-                               ng-bind="vm.record.metadata.acquisition_source[0].source"></span>
+
+      <!--Submission Info-->
+      <div class="col-md-12">
+        <div class="detail-panel">
+          <h4>Submission</h4>
+          <p class="text-center"
+             ng-if="vm.record.metadata.acquisition_source[0]">
+            Harvested from <span class="font-bolder"
+                                 ng-bind="vm.record.metadata.acquisition_source[0].source"></span>
               <span ng-if="vm.record.metadata.acquisition_source[0].method"> using
                 <span class="font-bolder"
                       ng-bind="vm.record.metadata.acquisition_source[0].method"></span>
               </span>
-        </p>
+          </p>
+        </div>
       </div>
-    </div>
 
-    <!--Notes-->
-    <div class="col-md-12">
-      <div class="detail-panel">
-        <h4>Notes</h4>
+      <!--Notes-->
+      <div class="col-md-12">
+        <div class="detail-panel">
+          <h4>Notes</h4>
 
-        <div class="row" ng-repeat="note in vm.record.metadata.public_notes">
+          <div class="row" ng-repeat="note in vm.record.metadata.public_notes">
 
-          <div ng-if="note.source">
-            <div class="col-md-3 col-sm-4">
-              <p class="font-bolder" ng-bind="note.source"></p>
-            </div>
-            <div class="col-md-9 col-sm-8">
-              <p ng-bind="note.value"></p>
-            </div>
-          </div>
-          <div ng-if="!note.source">
-            <div class="col-md-12 text-center">
-              <div
-                ng-class="{'alert': note.value == '*Temporary entry*'}">
+            <div ng-if="note.source">
+              <div class="col-md-3 col-sm-4">
+                <p class="font-bolder" ng-bind="note.source"></p>
+              </div>
+              <div class="col-md-9 col-sm-8">
                 <p ng-bind="note.value"></p>
               </div>
             </div>
-          </div>
+            <div ng-if="!note.source">
+              <div class="col-md-12 text-center">
+                <div
+                  ng-class="{'alert': note.value == '*Temporary entry*'}">
+                  <p ng-bind="note.value"></p>
+                </div>
+              </div>
+            </div>
 
+          </div>
         </div>
       </div>
-    </div>
 
-    <!--Action Panel-->
-    <div class="col-md-12">
-      <div class="detail-panel">
-        <h4>Actions</h4>
+      <!--Action Panel-->
+      <div class="col-md-12">
+        <div class="detail-panel">
+          <h4>Actions</h4>
 
-        <div class="text-center">
-          <button class="btn btn-default" ng-click="Utils.showHistory()"><i
-            class="fa fa-history"></i> History
-          </button>
+          <div class="text-center">
+            <button class="btn btn-default" ng-click="Utils.showHistory()"><i
+              class="fa fa-history"></i> History
+            </button>
 
-          <button class="btn btn-default"
-                  ng-click="Utils.restartWorkflow()">
-            <i class="fa fa-repeat" aria-hidden="true"></i> Restart
-          </button>
-          <button class="btn btn-default"
-                  ng-click="Utils.resumeWorkflow()">
-            <i class="fa fa-play" aria-hidden="true"></i> Resume
-          </button>
+            <button class="btn btn-default"
+                    ng-click="Utils.restartWorkflow()">
+              <i class="fa fa-repeat" aria-hidden="true"></i> Restart
+            </button>
+            <button class="btn btn-default"
+                    ng-click="Utils.resumeWorkflow()">
+              <i class="fa fa-play" aria-hidden="true"></i> Resume
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -310,7 +320,6 @@
     <!--Danger area-->
 
   </div>
-</div>
 </div>
 
 <!--<div class="clearfix"></div>-->

@@ -3,8 +3,13 @@
  */
 
 (function (angular) {
-  var invenioHoldingPen = angular.module("invenioHoldingPen", []);
+  var invenioHoldingPen = angular.module("invenioHoldingPen", ['xeditable']);
 
+  invenioHoldingPen.run(function (editableOptions, editableThemes) {
+    editableThemes.bs3.inputClass = 'input-md';
+    editableThemes.bs3.buttonsClass = 'btn-md';
+    editableOptions.theme = 'bs3';
+  });
   /**
    * HoldingPenRecordService allows for the update of a record server
    * side through a post of the record JSON.
@@ -43,7 +48,7 @@
           $http.post('/api/holdingpen/' + workflowId + '/action/resolve', data).then(function (response) {
             vm.ingestion_complete = true;
             vm.record._extra_data.user_action = decision;
-
+            vm.record._extra_data._action = null;
           }).catch(function (value) {
             vm.error = value;
           });

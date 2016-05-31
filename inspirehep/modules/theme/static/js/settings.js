@@ -26,6 +26,7 @@ require.config({
   paths: {
     angular: 'node_modules/angular/angular',
     'angular-loading-bar': 'node_modules/angular-loading-bar/build/loading-bar',
+    'angular-xeditable': 'node_modules/angular-xeditable/dist/js/xeditable',
     'angular-sanitize': 'node_modules/angular-sanitize/angular-sanitize',
     'angular-ui-bootstrap': 'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls',
     'author': 'js/authors/author',
@@ -74,6 +75,9 @@ require.config({
     },
     'angular-ui-bootstrap': {
       deps: ['angular']
+    },
+    'angular-xeditable': {
+      deps: ['jquery', 'angular']
     },
     bootstrap: {
       deps: ['jquery', 'jquery.ui']

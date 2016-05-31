@@ -24,11 +24,12 @@
 require([
   'angular',
   'angular-loading-bar',
+  'angular-xeditable',
   'holding-pen'
   ], function() {
     // When the DOM is ready bootstrap the AngularJS modules
     angular.element(document).ready(function() {
       angular.bootstrap(
-        document.getElementById("holding-pen"), ['angular-loading-bar', 'invenioHoldingPen'])
+        document.getElementById("holding-pen-detail"), ['angular-loading-bar', 'invenioHoldingPen'])
     });
 });
