@@ -28,7 +28,6 @@ from __future__ import absolute_import, print_function
 
 import copy
 
-
 from flask import (
     abort,
     Blueprint,
@@ -36,7 +35,7 @@ from flask import (
     request,
     render_template,
     url_for,
-    jsonify
+    jsonify,
 )
 from flask_login import current_user, login_required
 
@@ -47,10 +46,7 @@ from inspirehep.modules.forms.form import DataExporter
 from invenio_db import db
 from invenio_workflows import WorkflowObject, start
 
-
 from .forms import LiteratureForm
-
-from .tasks import convert_data_to_model
 
 
 blueprint = Blueprint('inspirehep_literature_suggest',
@@ -87,7 +83,8 @@ def submit():
 
     workflow_object = WorkflowObject.create_object(
         id_user=current_user.get_id())
-    workflow_object.data = convert_data_to_model(workflow_object, visitor.data)
+    workflow_object.data_type = "hep"
+    workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
     workflow_object.save()
     db.session.commit()
 
