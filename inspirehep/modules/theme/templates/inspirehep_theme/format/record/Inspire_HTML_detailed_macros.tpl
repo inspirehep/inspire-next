@@ -52,7 +52,7 @@
 {% endmacro %}
 
 {% macro record_doi(record) %}
-  {% set filtered_doi = record.get('dois') | remove_duplicates_from_dict %}
+  {% set filtered_doi = record.get('dois') | remove_duplicates_from_list %}
   {% set comma = joiner() %}
   <b>DOI</b>
   {% for value in filtered_doi %}
