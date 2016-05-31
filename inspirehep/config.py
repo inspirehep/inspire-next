@@ -27,6 +27,7 @@
 from __future__ import absolute_import, print_function
 
 import os
+import sys
 
 from invenio_records_rest.facets import terms_filter
 
@@ -84,6 +85,10 @@ CACHE_REDIS_URL = os.environ.get(
     "redis://localhost:6379/0")
 CACHE_TYPE = "redis"
 ACCOUNTS_SESSION_REDIS_URL = "redis://localhost:6379/2"
+
+# Files
+# =====
+BASE_FILES_LOCATION = os.path.join(sys.prefix, 'var/data')
 
 # REST
 # ====
@@ -812,6 +817,9 @@ MAGPIE_API_URL = None   # e.g. "http://magpie.inspirehep.net/api"
 
 # Workflows
 # =========
+WORKFLOWS_DEFAULT_FILE_LOCATION_NAME = "holdingpen"
+"""Name of default workflow Location reference."""
+
 WORKFLOWS_UI_BASE_TEMPLATE = BASE_TEMPLATE
 WORKFLOWS_UI_LIST_TEMPLATE = "inspire_workflows/list.html"
 WORKFLOWS_UI_DETAILS_TEMPLATE = "inspire_workflows/details.html"

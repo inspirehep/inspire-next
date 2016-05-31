@@ -166,6 +166,7 @@ setup(
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
         ],
         'invenio_base.apps': [
+            'inspire_fixtures = inspirehep.modules.fixtures:INSPIREFixtures',
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_migrator = inspirehep.modules.migrator:INSPIREMigrator',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',

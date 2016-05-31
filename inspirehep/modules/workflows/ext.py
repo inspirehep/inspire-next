@@ -24,8 +24,6 @@
 import os
 import pkg_resources
 
-from flask_login import LoginManager
-
 from .views import blueprints
 
 
@@ -58,6 +56,10 @@ class INSPIREWorkflows(object):
         ))
         app.config["WORKFLOWS_STORAGEDIR"] = os.path.join(
             app.instance_path, "workflows", "storage"
+        )
+        app.config["WORKFLOWS_FILE_LOCATION"] = os.path.join(
+            app.config['BASE_FILES_LOCATION'],
+            "workflows", "files"
         )
         app.config['CLASSIFIER_WORKDIR'] = pkg_resources.resource_filename(
             'inspirehep', "taxonomies"
