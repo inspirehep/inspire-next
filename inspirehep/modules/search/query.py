@@ -42,8 +42,9 @@ def inspire_search_factory(self, search):
     from invenio_records_rest.sorter import default_sorter_factory
 
     query_string = request.values.get('q', '')
+    collection = request.values.get('cc', None)
     try:
-        search = search.query(IQ(query_string))
+        search = search.query(IQ(query_string, collection))
     except SyntaxError:
         current_app.logger.debug(
             "Failed parsing query: {0}".format(

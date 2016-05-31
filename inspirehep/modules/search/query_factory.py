@@ -33,6 +33,7 @@ from flask import current_app
 
 from elasticsearch_dsl import Q
 
+from invenio_collections.contrib.search.collection_filter import apply as collection_enhancer
 from invenio_query_parser.ast import MalformedQuery
 
 from .parser import Main
@@ -47,18 +48,17 @@ from .walkers.elasticsearch_no_keywords import QueryHasKeywords
 def inspire_query_factory():
     """Create a parser returning Elastic Search DSL query instance."""
 
-    def invenio_query(pattern):
+    def invenio_query(pattern, collection=None):
         walkers = [PypegConverter(), SpiresToInvenio()]
-
-        # Enhance query first
-        # for enhancer in query_enhancers():
-        #     enhancer(self, **kwargs)
 
         try:
             query = pypeg2.parse(pattern, Main, whitespace="")
 
             for walker in walkers:
                 query = query.accept(walker)
+
+            # Enhance query first
+            query = collection_enhancer(query, collection)
         except SyntaxError:
             query = MalformedQuery("")
 

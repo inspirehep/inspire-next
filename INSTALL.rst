@@ -23,7 +23,15 @@ Next, install and build assets:
    (inspirehep)$ inspirehep assets build   # NOTE: Might give an error about missing `minjs`, pip install it to fix.
 
 
-Next, create the database and database tables if you haven't already done so:
+Next, create the ElasticSearch Indices and Aliases (this should be done before database init for collection percolators to work):
+
+.. code-block:: console
+
+   (inspirehep)$ inspirehep index init
+
+**NOTE:** you have to install the analysis-icu plugin for this command to work.
+
+Next, create the database and database tables:
 
 .. code-block:: console
 
@@ -55,16 +63,6 @@ Start honcho
 And the site is now available on `http://localhost:5000`.
 
 **PS: Note the new port!**
-
-
-Create ElasticSearch Indices and Aliases
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: console
-
-   (inspirehep)$ inspirehep index init
-
-Note, that you have to install the analysis-icu plugin for this command to work.
 
 
 Add demo records

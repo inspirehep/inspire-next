@@ -50,14 +50,14 @@ def app(request):
     with app.app_context():
         # Imports must be local, otherwise tasks default to pickle serializer.
         from inspirehep.modules.migrator.tasks import add_citation_counts, migrate
-
-        db.drop_all()
-        db.create_all()
-
         sleep(10)  # Makes sure that ES is up.
         _es = app.extensions['invenio-search']
         list(_es.delete(ignore=[404]))
         list(_es.create(ignore=[400]))
+
+        db.drop_all()
+        db.create_all()
+
 
         migrate('./inspirehep/demosite/data/demo-records.xml.gz', wait_for_results=True)
         es.indices.refresh('records-hep')  # Makes sure that all HEP records were migrated.
