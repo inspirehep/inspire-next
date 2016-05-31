@@ -57,6 +57,7 @@ class HEPApproval(object):
         from inspirehep.modules.workflows.utils import log_workflows_action
 
         value = kwargs.get("request_data", {}).get("value", "")
+        reason = kwargs.get("request_data", {}).get("reason", "")
 
         # Audit logging
         prediction_results = obj.extra_data.get("relevance_prediction", {})
@@ -73,9 +74,12 @@ class HEPApproval(object):
         approved = value in ('accept', 'accept_core')
 
         obj.extra_data["approved"] = approved
+
         obj.remove_action()
+
+        obj.extra_data["user_action"] = value
         obj.extra_data["core"] = value == "accept_core"
-        obj.extra_data["reason"] = kwargs.get("text", "")
+        obj.extra_data["reason"] = reason
         obj.extra_data["pdf_upload"] = True if upload_pdf == "true" else False
         obj.status = ObjectStatus.WAITING
         obj.save()

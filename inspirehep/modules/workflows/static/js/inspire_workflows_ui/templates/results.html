@@ -27,7 +27,10 @@
   </div>
   <div class="row hp-item" ng-if="vm.invenioSearchResults.hits.total > 0"
        ng-repeat="record in vm.invenioSearchResults.hits.hits track by record._id"
-       ng-class="{hperror: record._source.metadata._workflow.status === 'Error', hpattention : record._source.metadata._workflow.status === 'Need action', hpdone: record._source.metadata._workflow.status === 'Done'}">
+       ng-class="{waiting: record._source._workflow.status === 'WAITING',
+        hperror: record._source._workflow.status === 'ERROR',
+        hpattention : record._source._workflow.status === 'HALTED',
+        hpdone: record._source._workflow.status === 'COMPLETED'}">
     <div class="col-md-12">
       <div class="row">
         <div class="col-md-1">

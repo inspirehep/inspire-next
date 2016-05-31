@@ -36,10 +36,10 @@
         </div>
 
          {% set status_items = [
-          {'type': 'New Author', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
-          {'type': 'New Author', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 0},
-          {'type': 'New Author', 'name': 'Need action', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 0},
-          {'type': 'New Author', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 2}
+          {'type': 'New Author', 'name': 'WAITING', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
+          {'type': 'New Author', 'name': 'ERROR', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 0},
+          {'type': 'New Author', 'name': 'HALTED', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 0},
+          {'type': 'New Author', 'name': 'COMPLETED', 'icon': 'fa-circle', 'color': 'done', 'count': 2}
         ] %}
         {% include "inspire_workflows/components/dashboard_status_widget.html" %}
 
@@ -57,10 +57,10 @@
 
 
         {% set status_items = [
-          {'type': 'Author Update', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
-          {'type': 'Author Update', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
-          {'type': 'Author Update', 'name': 'Need action', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
-          {'type': 'Author Update', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
+          {'type': 'Author Update', 'name': 'WAITING', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
+          {'type': 'Author Update', 'name': 'ERROR', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
+          {'type': 'Author Update', 'name': 'HALTED', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
+          {'type': 'Author Update', 'name': 'COMPLETED', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
         ] %}
         {% include "inspire_workflows/components/dashboard_status_widget.html" %}
 
@@ -77,10 +77,10 @@
         </div>
 
         {% set status_items = [
-          {'type': 'Literature Suggestion', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
-          {'type': 'Literature Suggestion', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
-          {'type': 'Literature Suggestion', 'name': 'Need action', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
-          {'type': 'Literature Suggestion', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
+          {'type': 'Literature Suggestion', 'name': 'WAITING', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
+          {'type': 'Literature Suggestion', 'name': 'ERROR', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
+          {'type': 'Literature Suggestion', 'name': 'HALTED', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
+          {'type': 'Literature Suggestion', 'name': 'COMPLETED', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
         ] %}
         {% include "inspire_workflows/components/dashboard_status_widget.html" %}
 
@@ -96,10 +96,10 @@
         </div>
 
           {% set status_items = [
-          {'type': 'arXiv', 'name': 'In Progress', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
-          {'type': 'arXiv', 'name': 'Error', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
-          {'type': 'arXiv', 'name': 'Need action', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
-          {'type': 'arXiv', 'name': 'Done', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
+          {'type': 'arXiv', 'name': 'WAITING', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
+          {'type': 'arXiv', 'name': 'ERROR', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
+          {'type': 'arXiv', 'name': 'HALTED', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
+          {'type': 'arXiv', 'name': 'COMPLETED', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
         ] %}
         {% include "inspire_workflows/components/dashboard_status_widget.html" %}
 

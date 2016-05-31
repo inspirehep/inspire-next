@@ -37,14 +37,15 @@
         },
 
         setDecision: function (vm, workflowId, decision) {
-            var data = JSON.stringify({
-              'value': decision
-            });
+          var data = JSON.stringify({
+            'value': decision
+          });
           $http.post('/api/holdingpen/' + workflowId + '/action/resolve', data).then(function (response) {
             vm.ingestion_complete = true;
+            vm.record._extra_data.user_action = decision;
+
           }).catch(function (value) {
-            vm.ingestion_complete = false;
-            alert(value);
+            vm.error = value;
           });
         },
 

@@ -244,8 +244,7 @@ $hp_table_bg: #243547;
     @include facet-colors($alizarin);
   }
 
-  .inprogress {
-
+  .inprogress, .waiting {
     @include facet-colors($concrete);
   }
 
@@ -281,6 +280,10 @@ $hp_table_bg: #243547;
         border-left: 4px solid $alizarin;
       }
 
+      &.waiting {
+        border-left: 4px solid $silver;
+      }
+
       &.hpattention {
         border-left: 4px solid $sun-flower;
       }
@@ -293,8 +296,29 @@ $hp_table_bg: #243547;
         margin-top: 0px;
       }
 
+      .btn-danger, .btn-success, .btn-warning {
+        background-color: $midnight-blue;
+        color: $blue-haze;
+        border-color: $midnight-blue;
+      }
+
       &:hover {
         background-color: $dark-blue;
+
+        .btn-danger {
+          background-color: $alizarin;
+          color: white;
+        }
+
+        .btn-success {
+          background-color: $green-sea;
+          color: white;
+        }
+
+        .btn-warning{
+          background-color: $orange;
+          color: white;
+        }
       }
 
       .workflow-type {
