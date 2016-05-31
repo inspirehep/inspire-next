@@ -51,13 +51,12 @@ from inspirehep.modules.workflows.tasks.submission import (
 )
 from inspirehep.modules.workflows.tasks.upload import store_record
 
-from ..forms import LiteratureForm
 from ..tasks import (
     curation_ticket_needed,
     reply_ticket_context,
     new_ticket_context,
     curation_ticket_context,
-    convert_data_to_model
+    formdata_to_model
 )
 
 
@@ -68,6 +67,7 @@ class Literature(object):
     data_type = "hep"
 
     workflow = [
+        formdata_to_model,
         create_ticket(template="literaturesuggest/tickets/curator_submitted.html",
                       queue="HEP_add_user",
                       context_factory=new_ticket_context,
