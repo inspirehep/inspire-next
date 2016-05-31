@@ -82,8 +82,8 @@ class ArXivIngestion(HEPIngestion):
     ] + HEPIngestion.match_processing
 
     before_halt_check = [
+        arxiv_fulltext_download,
         arxiv_plot_extract,
-        arxiv_fulltext_download(),
         arxiv_refextract,
         arxiv_author_list("authorlist2marcxml.xsl"),
         extract_journal_info,

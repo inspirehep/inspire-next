@@ -815,8 +815,11 @@ LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 BEARD_API_URL = None   # e.g. "http://beard.inspirehep.net/api"
 MAGPIE_API_URL = None   # e.g. "http://magpie.inspirehep.net/api"
 
-# Workflows
-# =========
+# Harvesting and Workflows
+# ========================
+ARXIV_PDF_URL = "http://arxiv.org/pdf/{arxiv_id}"
+ARXIV_TARBALL_URL = "http://arxiv.org/e-print/{arxiv_id}"
+
 WORKFLOWS_DEFAULT_FILE_LOCATION_NAME = "holdingpen"
 """Name of default workflow Location reference."""
 

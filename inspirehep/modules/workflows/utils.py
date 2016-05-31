@@ -21,7 +21,6 @@
 
 from __future__ import absolute_import, print_function
 
-import os
 import requests
 import json
 
@@ -53,20 +52,6 @@ def json_api_request(url, data, headers=None):
         raise
     if response.status_code == 200:
         return response.json()
-
-
-def get_storage_path(suffix=""):
-    """Return workflow storage path."""
-    storage_path = os.path.join(
-        current_app.config.get(
-            'WORKFLOWS_STORAGEDIR',
-            current_app.config.get('CFG_TMPSHAREDDIR')
-        ),
-        suffix
-    )
-    if not os.path.exists(storage_path):
-        os.makedirs(storage_path)
-    return storage_path
 
 
 def log_workflows_action(action, prediction_results,
