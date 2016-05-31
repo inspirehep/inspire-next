@@ -18,6 +18,7 @@
 #}
 {%- extends "forms/form.html" -%}
 {% set title = "New author information - INSPIRE Labs" if new else "Update author information - INSPIRE Labs" %}
+{% set is_update = False if new else True %}
 
 {% block global_bundles %}
   {{ super() }}
@@ -52,9 +53,9 @@ require(
 
     var config = {
       form: {
-        save_url: '{{ url_for("inspire_authors.validate") }}',
-        save_all_url: '{{ url_for("inspire_authors.validate", all='1') }}',
-        complete_url: '{{ url_for("inspire_authors.validate", submit='1') }}',
+        save_url: '{{ url_for("inspire_authors.validate", is_update=is_update) }}',
+        save_all_url: '{{ url_for("inspire_authors.validate", all='1', is_update=is_update) }}',
+        complete_url: '{{ url_for("inspire_authors.validate", submit='1', is_update=is_update) }}',
         autocomplete_url: '{{ url_for("inspire_authors.autocomplete", field_name="__FIELDNAME__") }}',
         datepicker_element: '.datepicker',
         datepicker_options: {

@@ -87,18 +87,30 @@ def does_exist_in_inspirehep(query, collection=None):
     return False
 
 
-def inspirehep_duplicated_validator(inspire_query, property_name):
+def inspirehep_duplicated_validator(inspire_query, property_name, collection=None):
     """Check if a record with the same doi already exists.
 
     Needs to be wrapped in a function with proper validator signature.
     """
-    if does_exist_in_inspirehep(inspire_query):
+    if does_exist_in_inspirehep(inspire_query, collection):
         url = "http://inspirehep.net/search?" + urlencode({'p': inspire_query})
+        if collection:
+            url += '&' + urlencode({'cc': collection})
         raise ValidationError(
             'There exists already an item with the same %s. '
             '<a target="_blank" href="%s">See the record.</a>'
             % (property_name, url)
         )
+
+
+def duplicated_orcid_validator(form, field):
+    """Check if a record with the same ORCID already exists."""
+    orcid = field.data
+    # TODO: local check for duplicates
+    if not orcid:
+        return
+    if cfg.get('PRODUCTION_MODE'):
+        inspirehep_duplicated_validator('035__a:' + orcid, 'ORCID', 'HepNames')
 
 
 def duplicated_doi_validator(form, field):
