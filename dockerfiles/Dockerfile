@@ -49,8 +49,8 @@ RUN apt-get update --fix-missing && \
       requirejs \
       uglify-js
 
-ADD . /code
-WORKDIR /code
+ADD . /code/
+WORKDIR /code/
 
 RUN virtualenv /tmpvenv && \
     . /tmpvenv/bin/activate && \

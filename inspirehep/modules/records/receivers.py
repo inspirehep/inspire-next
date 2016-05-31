@@ -27,6 +27,25 @@ from invenio_indexer.signals import before_record_index
 
 from inspirehep.utils.date import create_valid_date
 from inspirehep.dojson.utils import get_recid_from_ref
+from inspirehep.utils.record import get_title
+from inspirehep.utils.formulas import get_all_unicode_formula_tokens_from_text
+
+
+@before_record_index.connect
+def populate_formulas(recid, json, *args, **kwargs):
+    """
+    Extract all useful LaTeX/MathML formulas from title/abstract and add it
+    to the facet_formulas facet.
+    """
+    formulas = set()
+    for title in json.get('titles', []):
+        if 'title' in title:
+            formulas |= get_all_unicode_formula_tokens_from_text(get_title(json))
+    for abstract in json.get('abstracts', []):
+        if 'value' in abstract:
+            formulas |= get_all_unicode_formula_tokens_from_text(abstract['value'])
+    # formulas = [formula for formula in formulas if u'→' in formula and u'=' not in formula]
+    json['facet_formulas'] = list(formulas)
 
 
 @before_record_index.connect

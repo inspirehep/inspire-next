@@ -34,12 +34,13 @@ services:
       - CELERY_RESULT_BACKEND=amqp://guest:guest@rabbitmq:5672//
       - CACHE_REDIS_URL=redis://redis:6379/0
       - SEARCH_ELASTIC_HOSTS=indexer
+      - MATHOID_SERVER=http://mathoid:10044
 
   # Services using the inspirehep code.
   web:
     extends:
       service: service_base
-    command: inspirehep --debug run -h 0.0.0.0
+    command: inspirehep --debug run -h 0.0.0.0 --with-threads
     volumes_from:
       - static
     ports:
@@ -60,6 +61,7 @@ services:
       - indexer
       - rabbitmq
       - redis
+      - mathoid
 
   # Services needed for inspirehep to run.
   redis:
@@ -102,3 +104,9 @@ services:
     extends:
       file: services.yml
       service: static
+
+  # Mathoid server for LaTeX conversions
+  mathoid:
+    extends:
+      file: services.yml
+      service: mathoid

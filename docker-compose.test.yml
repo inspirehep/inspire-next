@@ -34,6 +34,7 @@ services:
       - CELERY_RESULT_BACKEND=amqp://guest:guest@rabbitmq:5672//
       - CACHE_REDIS_URL=redis://redis:6379/0
       - SEARCH_ELASTIC_HOSTS=indexer
+      - MATHOID_SERVER=http://mathoid:10044
 
   unit:
     extends:
@@ -41,6 +42,8 @@ services:
     volumes_from:
       - static
     command: ./run-tests.sh unit
+    links:
+      - mathoid
   integration:
     extends:
       service: service_base
@@ -52,6 +55,7 @@ services:
       - indexer
       - rabbitmq
       - redis
+      - mathoid
     depends_on:
       - worker
   worker:
@@ -66,6 +70,7 @@ services:
       - indexer
       - rabbitmq
       - redis
+      - mathoid
   redis:
     container_name: inspirehep-test-redis
     image: redis
@@ -87,3 +92,7 @@ services:
     extends:
       file: services.yml
       service: static
+  mathoid:
+    extends:
+      file: services.yml
+      service: mathoid
