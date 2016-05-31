@@ -53,13 +53,10 @@ class HEPApproval(object):
     @staticmethod
     def resolve(obj, *args, **kwargs):
         """Resolve the action taken in the approval action."""
-        from invenio_db import db
         from invenio_workflows import ObjectStatus
         from inspirehep.modules.workflows.utils import log_workflows_action
 
-        value = kwargs.get("value", "")
-        if value:
-            res = value[0]  # value was ['accept']
+        value = kwargs.get("request_data", {}).get("value", "")
 
         # Audit logging
         prediction_results = obj.extra_data.get("relevance_prediction", {})
@@ -69,21 +66,19 @@ class HEPApproval(object):
             object_id=obj.id,
             user_id=kwargs.get('id_user'),
             source="holdingpen",
-            user_action=res,
+            user_action=value,
         )
 
         upload_pdf = kwargs.get("pdf_submission", False)
-        approved = res in ('accept', 'accept_core')
+        approved = value in ('accept', 'accept_core')
 
         obj.extra_data["approved"] = approved
         obj.remove_action()
-        obj.extra_data["core"] = res == "accept_core"
+        obj.extra_data["core"] = value == "accept_core"
         obj.extra_data["reason"] = kwargs.get("text", "")
         obj.extra_data["pdf_upload"] = True if upload_pdf == "true" else False
         obj.status = ObjectStatus.WAITING
         obj.save()
-
-        db.session.commit()
 
         obj.continue_workflow(delayed=True)
         return approved

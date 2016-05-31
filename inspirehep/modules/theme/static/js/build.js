@@ -19,7 +19,7 @@
 
 ({
   preserveLicenseComments: false,
-  optimize: 'uglify2',
+  optimize: 'none',
   uglify2: {
     output: {
       beautify: false,

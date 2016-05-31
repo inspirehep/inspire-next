@@ -43,6 +43,7 @@ require.config({
     flight: 'node_modules/flightjs/build/flight',
     hgn: 'node_modules/requirejs-hogan-plugin/hgn',
     hogan: 'node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.amd',
+    'holding-pen': 'js/inspire_workflows_ui/holdingpen/inspire-holdingpen.module',
     inspirehep: 'node_modules/inspirehep-js/dist/inspirehep',
     'inspirehep-clipboard': 'js/inspire_clipboard',
     'impact-graphs': 'node_modules/impact-graphs/impact-graph',
@@ -88,6 +89,9 @@ require.config({
     'impact-graphs': {
       deps: ['d3wrapper'],
       exports: 'ImpactGraph'
+    },
+    'holding-pen': {
+      deps: ['angular']
     },
     'inspirehep': {
       deps: ['angular', 'angular-sanitize', 'angular-ui-bootstrap', 'ngclipboard']

@@ -1,0 +1,151 @@
+<div ng-controller="checkboxCtrl" id="hp-list">
+
+  <div class="row hp-header-row">
+
+    <div class="col-md-1">
+    </div>
+
+    <div class="col-md-4">
+      Details
+    </div>
+
+    <div class="col-md-2">
+      Submission Info
+    </div>
+
+    <div class="col-md-2">
+      Subject Areas
+    </div>
+
+    <div class="col-md-3">
+      Decision
+    </div>
+
+  </div>
+  <div class="row hp-item" ng-if="vm.invenioSearchResults.hits.total == 0">
+    Sorry, there's nothing to see here.
+  </div>
+  <div class="row hp-item" ng-if="vm.invenioSearchResults.hits.total > 0"
+       ng-repeat="record in vm.invenioSearchResults.hits.hits track by record._id"
+       ng-class="{hperror: record._source.metadata._workflow.status === 'Error', hpattention : record._source.metadata._workflow.status === 'Need action', hpdone: record._source.metadata._workflow.status === 'Done'}">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-1">
+                <span id='checkbox-parent'>
+                  <input type="checkbox" class="checkbox-results"
+                         ng-click="toggleId(record._id)"
+                         ng-checked="isChecked(record._id)"/>
+                </span>
+        </div>
+        <div class="col-md-4">
+          <h4 class="custom-h">
+            <a class="title" ng-if="record._source.metadata.titles"
+               ng-href="/holdingpen/{{record._id}}"
+               ng-bind='record._source.metadata.titles[0].title'></a>
+            <a class="title" ng-if="record._source.metadata.name"
+               ng-href="/holdingpen/{{record._id}}"
+               ng-bind='record.metadata.given_names + record._source.metadata.family_name'></a>
+          </h4>
+
+          <div class="authors" ng-if="record._source.metadata.authors">
+              <span ng-repeat="author in record._source.metadata.authors">
+                {{author.full_name}}<span ng-if="!$last">, </span>
+              </span>
+          </div>
+
+          <div class="institution-details"
+               ng-if="record.metadata.institution_history[0].name != ''">
+            <p
+              ng-repeat="institution in record._source.metadata.institution_history"
+              ng-class="{current: institution.current}"
+              ng-bind="{{institution.name}}">
+            </p>
+          </div>
+          <div class="institution-details"
+               ng-if="record.metadata.institution_history[0].name === ''
+               && record._source.metadata.institution_history.length === 1">
+            <p>No institution information supplied.
+            </p>
+          </div>
+
+
+          <div class="abstract"
+               ng-if='record._source.metadata.abstracts.length > 0'>
+            <a href="" ng-click='showAbstract=!showAbstract'>
+              {{ showAbstract ? 'Hide abstract' : 'Show abstract'
+              }}
+            </a>
+            <div ng-show='showAbstract'
+                 ng-bind-html='record._source.metadata.abstracts | abstract'
+                 class="col-md-12">
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-md-2 pad-top-10">
+          <p class="workflow-type"
+             ng-class="record._workflow.workflow_class"
+             ng-bind="record._workflow.workflow_name"></p>
+          <p ng-bind="record.metadata.acquisition_source.email"></p>
+          <p
+            ng-bind="record._source.metadata._workflow.created | date: ''"></p>
+        </div>
+
+        <div class="col-md-2 pad-top-10">
+          <ul class="subject-terms">
+            <li ng-repeat="subject in record._source.metadata.subject_terms"
+                ng-if="record._source.metadata.subject_terms">
+              {{subject.term}}
+            </li>
+            <li ng-repeat="field in record._source.metadata.field_categories"
+                ng-if="record._source.metadata.field_categories">
+              {{field}}
+            </li>
+          </ul>
+        </div>
+
+        <div class="col-md-3 decision">
+
+          <div class="automatic-decision">Automatic Decision:
+            <span ng-class="{'core': record._source._extra_data.relevance_prediction.decision == 'CORE',
+              'accept': record._source._extra_data.relevance_prediction.decision == 'Non-CORE',
+              'reject': record._source._extra_data.relevance_prediction.decision == 'Rejected'}">
+            <span class="font-bolder"
+                  ng-bind="record._source._extra_data.relevance_prediction.decision"></span>
+            <span
+              ng-bind="(record._source._extra_data.relevance_prediction.max_score | number : 2)"></span>
+              </span>
+          </div>
+
+          <div class="clearfix"></div>
+
+          <div>
+            <button class="btn btn-danger btn-sm"
+                    ng-click="Utils.setDecision('reject')">Reject
+            </button>
+            <button class="btn btn-warning btn-sm"
+                    ng-click="Utils.setDecision('accept')">Accept
+            </button>
+            <button class="btn btn-success btn-sm"
+                    ng-click="Utils.setDecision('accept_core')">Core
+            </button>
+          </div>
+
+          <div class="clearfix"></div>
+          <br/>
+
+          <p>Filtered keywords:</p>
+          <div class="small-text">
+            {{record._extra_data.classifier_results}}
+              <span
+                ng-repeat="(key,value) in record._source._extra_data.classifier_results.complete_output['Filtered Core keywords']">
+                  <span ng-bind="key"></span><span ng-if="!$last">,</span>
+              </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
