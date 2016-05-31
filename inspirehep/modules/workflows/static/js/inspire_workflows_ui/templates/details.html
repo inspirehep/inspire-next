@@ -177,7 +177,10 @@
           <div class="decision">
 
             <p class="automatic-decision">Automatic Decision: <span
-              class="reject">Reject</span></p>
+              ng-class="{'core': vm.record._extra_data.relevance_prediction.decision == 'CORE',
+              'accept': vm.record._extra_data.relevance_prediction.decision == 'Non-CORE',
+              'reject': vm.record._extra_data.relevance_prediction.decision == 'Rejected'}"
+              ng-bind="vm.record._extra_data.relevance_prediction.decision + ' ' + (vm.record._extra_data.relevance_prediction.max_score | number : 2)"></span></p>
 
             <div ng-if="vm.record._extra_data._action == 'hep_approval'">
               <button class="btn btn-danger"
@@ -191,12 +194,15 @@
               </button>
             </div>
 
+            <div ng-if="vm.record._extra_data._action == null" class="text-muted">
+              <p>No actions available</p>
+            </div>
+
             <div class="clearfix"></div>
             <br/>
             <div class="decision-keywords">
               <p>
-                {{Utils.keys(vm.record._extra_data.classifier_results.complete_output['Core keywords']).length}}
-                core keywords.
+                {{Utils.keys(vm.record._extra_data.classifier_results.complete_output['Core keywords']).length}} core keywords.
                 {{Utils.keys(vm.record._extra_data.classifier_results.complete_output['Filtered Core keywords']).length}} Filtered:
 
               <div class="list">
