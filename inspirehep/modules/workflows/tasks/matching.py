@@ -225,7 +225,6 @@ def exists_in_holding_pen(obj, eng):
     """Check if a record exists in HP by looking in given KB."""
     from elasticsearch_dsl import Q
     from invenio_search import RecordsSearch
-    from invenio_workflows_ui.utils import obj_or_import_string
 
     config = current_app.config['WORKFLOWS_UI_REST_ENDPOINT']
     index = config.get('search_index')

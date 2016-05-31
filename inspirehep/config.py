@@ -838,9 +838,17 @@ WORKFLOWS_UI_REST_ENDPOINT = dict(
         'application/json': ('invenio_workflows_ui.serializers'
                              ':json_action_serializer'),
     },
+    file_serializers={
+        'application/json': ('invenio_workflows_ui.serializers'
+                             ':json_file_serializer'),
+    },
     list_route='/holdingpen/',
     item_route='/holdingpen/<object_id>',
-    search_index="holdingpen",
+    file_list_route='/holdingpen/<object_id>/files',
+    file_item_route='/holdingpen/<object_id>/files/<path:key>',
+    search_index='holdingpen',
+    search_factory_imp=('inspirehep.modules.workflows.search'
+                        ':holdingpen_search_factory'),
     default_media_type='application/json',
     max_result_window=10000,
 )
