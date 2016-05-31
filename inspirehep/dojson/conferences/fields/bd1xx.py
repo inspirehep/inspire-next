@@ -22,11 +22,12 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
-
 from ..model import conferences
+from ...utils import remove_duplicates_from_list_of_dicts
 
 
 @conferences.over('acronym', '^111')
@@ -82,8 +83,7 @@ def keywords(self, key, value):
     keywords = self.get('keywords', [])
     for val in value:
         keywords.append(get_value(val))
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
-        keywords)
+    return remove_duplicates_from_list_of_dicts(keywords)
 
 
 @conferences.over('nonpublic_note', '^595')

@@ -22,11 +22,12 @@
 
 """MARC 21 model definition for HepNames records."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
-
 from ..model import hepnames, hepnames2marc
+from ...utils import get_record_ref, remove_duplicates_from_list_of_dicts
 
 
 @hepnames.over('acquisition_source', '^541[10_].')
@@ -242,8 +243,7 @@ def positions(self, key, value):
                 curated_relation = True
 
     inst = {'name': value.get('a'),
-            'record': inspire_dojson_utils.get_record_ref(recid,
-                                                          'institutions')}
+            'record': get_record_ref(recid, 'institutions')}
     return {
         'institution': inst if inst['name'] else None,
         'rank': value.get('r'),
@@ -329,8 +329,7 @@ def source(self, key, value):
     for val in value:
         source.append(get_value(val))
 
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
-        source)
+    return remove_duplicates_from_list_of_dicts(source)
 
 
 @hepnames2marc.over('670', '^source$')

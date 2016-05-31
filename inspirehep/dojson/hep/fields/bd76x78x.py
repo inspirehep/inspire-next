@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,11 +22,12 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
-
 from ..model import hep, hep2marc
+from ...utils import get_recid_from_ref, get_record_ref
 
 
 @hep.over('publication_info', '^773..')
@@ -46,12 +47,10 @@ def publication_info(self, key, value):
     parent_recid = get_int_value(value.get('0'))
     journal_recid = get_int_value(value.get('1'))
     conference_recid = get_int_value(value.get('2'))
-    parent_record = inspire_dojson_utils.get_record_ref(parent_recid,
-                                                        'literature')
-    conference_record = inspire_dojson_utils.get_record_ref(conference_recid,
-                                                            'conferences')
-    journal_record = inspire_dojson_utils.get_record_ref(journal_recid,
-                                                         'journals')
+    parent_record = get_record_ref(parent_recid, 'literature')
+    conference_record = get_record_ref(conference_recid, 'conferences')
+    journal_record = get_record_ref(journal_recid, 'journals')
+
     res = {
         'parent_record': parent_record,
         'conference_record': conference_record,
@@ -79,7 +78,7 @@ def publication_info(self, key, value):
 def publication_info2marc(self, key, value):
     """Publication info about record."""
     return {
-        '0': inspire_dojson_utils.get_recid_from_ref(
+        '0': get_recid_from_ref(
             value.get('parent_record')),
         'c': value.get('page_artid'),
         'n': value.get('journal_issue'),
@@ -105,8 +104,7 @@ def succeeding_entry(self, key, value):
 
     return {
         'relationship_code': value.get('r'),
-        'record': inspire_dojson_utils.get_record_ref(
-            value.get('w'), 'literature'),
+        'record': get_record_ref(value.get('w'), 'literature'),
         'isbn': value.get('z'),
     }
 
@@ -116,6 +114,6 @@ def succeeding_entry2marc(self, key, value):
     """Succeeding Entry."""
     return {
         'r': value.get('relationship_code'),
-        'w': inspire_dojson_utils.get_recid_from_ref(value.get('record')),
+        'w': get_recid_from_ref(value.get('record')),
         'z': value.get('isbn'),
     }

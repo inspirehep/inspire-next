@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,25 +22,30 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
-from inspirehep.dojson.utils import strip_empty_values
-
-from ..hep.model import hep, hep2marc
 from ..conferences.model import conferences
-from ..institutions.model import institutions
 from ..experiments.model import experiments
-from ..journals.model import journals
+from ..hep.model import hep, hep2marc
 from ..hepnames.model import hepnames, hepnames2marc
+from ..institutions.model import institutions
 from ..jobs.model import jobs
+from ..journals.model import journals
+from ..utils import (
+    get_recid_from_ref,
+    get_record_ref,
+    remove_duplicates_from_list_of_dicts,
+    strip_empty_values
+)
 
 
 def self_url(index):
     def _self_url(self, key, value):
         """Url of the record itself."""
         self['control_number'] = value
-        return inspire_dojson_utils.get_record_ref(value, index)
+        return get_record_ref(value, index)
     return _self_url
 
 institutions.over('self', '^001')(self_url('institutions'))
@@ -179,7 +184,7 @@ def spires_sysnos(self, key, value):
     if new_recid is not None:
         # FIXME we are currently using the default /record API. Which might
         # resolve to a 404 response.
-        self['new_record'] = inspire_dojson_utils.get_record_ref(new_recid)
+        self['new_record'] = get_record_ref(new_recid)
     return sysnos or None
 
 
@@ -195,8 +200,7 @@ def spires_sysnos2marc(self, key, value):
             [{'a': val} for val in value if val]
         )
     elif key == 'new_record':
-        val_recids = [inspire_dojson_utils.get_recid_from_ref(val)
-                      for val in value]
+        val_recids = [get_recid_from_ref(val) for val in value]
         existing_values.extend(
             [{'d': val} for val in val_recids if val]
         )
@@ -240,8 +244,7 @@ def collections(self, key, value):
     if contains_list:
         return strip_empty_values(collections)
     else:
-        return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
-            collections)
+        return remove_duplicates_from_list_of_dicts(collections)
 
 
 @hep2marc.over('980', 'collections')
@@ -270,7 +273,7 @@ def deleted_records(self, key, value):
     """Recid of deleted record this record is master for."""
     # FIXME we are currently using the default /record API. Which might
     # resolve to a 404 response.
-    return inspire_dojson_utils.get_record_ref(value.get('a'))
+    return get_record_ref(value.get('a'))
 
 
 @hep.over('fft', '^FFT..')
@@ -316,5 +319,5 @@ def fft2marc(self, key, value):
 def deleted_records2marc(self, key, value):
     """Deleted recids."""
     return {
-        'a': inspire_dojson_utils.get_recid_from_ref(value)
+        'a': get_recid_from_ref(value)
     }

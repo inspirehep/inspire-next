@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,11 +22,12 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
-
 from ..model import experiments
+from ...utils import get_record_ref
 
 
 @experiments.over('experiment_name', '^119..')
@@ -109,7 +110,7 @@ def related_experiments(self, key, value):
         recid = None
     return {
         'name': value.get('a'),
-        'record': inspire_dojson_utils.get_record_ref(recid, 'experiments')
+        'record': get_record_ref(recid, 'experiments')
     }
 
 

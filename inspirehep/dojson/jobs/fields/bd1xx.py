@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,11 +22,12 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
-
 from ..model import jobs
+from ...utils import get_record_ref
 
 
 @jobs.over('acquisition_source', '^(037|270)..')
@@ -109,7 +110,7 @@ def institution(self, key, value):
         recid = int(value.get('z'))
     return {
         'curated_relation': curated_relation,
-        'record': inspire_dojson_utils.get_record_ref(recid, 'isntitutions'),
+        'record': get_record_ref(recid, 'isntitutions'),
         'name': value.get('a'),
     }
 
