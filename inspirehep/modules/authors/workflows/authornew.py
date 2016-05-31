@@ -44,12 +44,12 @@ from inspirehep.modules.workflows.tasks.submission import (
 )
 
 from ..tasks import (
-    convert_data_to_model,
-    recreate_data,
     curation_ticket_needed,
     new_ticket_context,
     reply_ticket_context,
     curation_ticket_context,
+    formdata_to_model,
+    recreate_data
 )
 
 
@@ -60,7 +60,7 @@ class AuthorNew(WorkflowBase):
     data_type = "authors"
 
     workflow = [
-        convert_data_to_model,
+        formdata_to_model,
         create_ticket(
             template="authors/tickets/curator_new.html",
             queue="Authors_add_user",
@@ -73,7 +73,7 @@ class AuthorNew(WorkflowBase):
         IF_ELSE(shall_upload_record,
                 [
                     IF(recreate_data,
-                        [convert_data_to_model]),
+                        [formdata_to_model]),
                     send_robotupload(
                         marcxml_processor=hepnames2marc,
                         mode="insert"

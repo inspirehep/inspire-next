@@ -35,18 +35,16 @@ from inspirehep.utils.record import get_title, get_value
 from .dojson.model import literature
 
 
-def convert_data_to_model(obj, data):
+def formdata_to_model(obj, eng):
     """Manipulate form data to match literature data model."""
+    form_fields = copy.deepcopy(obj.extra_data["formdata"])
     filter_empty_elements(
-        data, ['authors', 'supervisors', 'report_numbers']
+        form_fields, ['authors', 'supervisors', 'report_numbers']
     )
 
-    # Save original form data for later access
-    form_fields = copy.deepcopy(data)
-    obj.extra_data["formdata"] = copy.deepcopy(form_fields)
     obj.extra_data["submission_data"] = {}
 
-    data = literature.do(data)
+    data = literature.do(form_fields)
 
     # Add extra fields that need to be computed or depend on other
     # fields.
@@ -206,7 +204,8 @@ def convert_data_to_model(obj, data):
     if 'pdf' in data:
         obj.extra_data["submission_data"]["pdf"] = data.pop("pdf")
 
-    return data
+    # Finally, set the converted data
+    obj.data = data
 
 
 def new_ticket_context(user, obj):

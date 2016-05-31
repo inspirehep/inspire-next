@@ -38,8 +38,8 @@ from inspirehep.modules.workflows.tasks.submission import (
 )
 
 from ..tasks import (
-    convert_data_to_model,
-    update_ticket_context
+    update_ticket_context,
+    formdata_to_model
 )
 
 
@@ -50,7 +50,7 @@ class AuthorUpdate(WorkflowBase):
     data_type = "authors"
 
     workflow = [
-        convert_data_to_model,
+        formdata_to_model,
         send_robotupload(
             marcxml_processor=hepnames2marc,
             mode="holdingpen"

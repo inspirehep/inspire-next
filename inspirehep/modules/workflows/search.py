@@ -39,8 +39,9 @@ def holdingpen_search_factory(self, search, **kwargs):
     """Override search factory."""
     search, urlkwargs = default_search_factory(self, search, **kwargs)
     includes = [
-        'titles', 'abstracts', '_workflow', 'subject_terms',
-        'authors', 'name', '_extra_data.relevance_prediction'
+        'metadata.titles', 'metadata.abstracts', 'metadata.subject_terms',
+        'metadata.authors', 'metadata.name',
+        '_workflow', '_extra_data.relevance_prediction'
     ]
     search = search.extra(_source={"include": includes})
     return search, urlkwargs

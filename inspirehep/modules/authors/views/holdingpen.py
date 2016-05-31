@@ -276,9 +276,11 @@ def submitupdate():
     form = AuthorUpdateForm(formdata=request.form)
     visitor = DataExporter()
     visitor.visit(form)
+
     workflow_object = WorkflowObject.create_object(
         id_user=current_user.get_id())
-    workflow_object.data = visitor.data
+    workflow_object.data_type = "authors"
+    workflow_object.extra_data['formdata'] = visitor.data
     workflow_object.save()
     db.session.commit()
 
@@ -302,7 +304,8 @@ def submitnew():
 
     workflow_object = WorkflowObject.create_object(
         id_user=current_user.get_id())
-    workflow_object.data = visitor.data
+    workflow_object.data_type = "authors"
+    workflow_object.extra_data['formdata'] = visitor.data
     workflow_object.save()
     db.session.commit()
 
@@ -354,9 +357,9 @@ def reviewhandler():
 
     workflow_object = WorkflowObject.query.get(objectid)
     workflow_object.extra_data["approved"] = True
-    workflow_object.extra_data["recreate_data"] = True
     workflow_object.extra_data["ticket"] = request.form.get('ticket') == "True"
-    workflow_object.data = visitor.data
+    workflow_object.extra_data['formdata'] = visitor.data
+    workflow_object.extra_data["recreate_data"] = True
     workflow_object.save()
     db.session.commit()
 

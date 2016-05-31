@@ -20,36 +20,30 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-import os
 import copy
+import os
 
 from datetime import date
-from functools import wraps
-from flask import current_app, render_template
 
-from invenio_accounts.models import User
-from workflow.errors import WorkflowError
+from flask import current_app
 
 from inspirehep.modules.forms.utils import filter_empty_elements
-from inspirehep.modules.workflows.tasks.submission import submit_rt_ticket
 
+from invenio_accounts.models import User
 
 from .dojson.model import updateform
 
 
-def convert_data_to_model(obj, eng):
-    """Manipulate form data to match author model keys."""
-    # Save original form data for later access
-    form_fields = copy.deepcopy(obj.data)
-    obj.extra_data["formdata"] = copy.deepcopy(form_fields)
+def formdata_to_model(obj, eng):
+    """Manipulate form data to match authors data model."""
+    form_fields = copy.deepcopy(obj.extra_data["formdata"])
 
     filter_empty_elements(
-        obj.data,
+        form_fields,
         ['institution_history', 'advisors',
          'websites', 'experiments']
     )
-    converted = updateform.do(obj.data)
-    obj.data.update(converted)
+    data = updateform.do(form_fields)
 
     author_name = ''
 
@@ -59,15 +53,15 @@ def convert_data_to_model(obj, eng):
         author_name += form_fields['given_names']
 
     if author_name:
-        obj.data.get('name', {})['value'] = author_name
+        data.get('name', {})['value'] = author_name
 
     # Add comments to extra data
     if "comments" in form_fields and form_fields["comments"]:
         obj.extra_data["comments"] = form_fields["comments"]
-        obj.data["_private_note"] = form_fields["comments"]
+        data["_private_note"] = form_fields["comments"]
 
     # Add HEPNAMES collection
-    obj.data["collections"] = [{
+    data["collections"] = [{
         "primary": "HEPNAMES"
     }]
 
@@ -79,13 +73,15 @@ def convert_data_to_model(obj, eng):
     except AttributeError:
         user_email = ''
     sources = ["{0}{1}".format('inspire:uid:', obj.id_user)]
-    obj.data['acquisition_source'] = dict(
+    data['acquisition_source'] = dict(
         source=sources,
         email=user_email,
         date=date.today().isoformat(),
         method="submission",
         submission_number=obj.id,
     )
+    # Finally, set data
+    obj.data = data
 
 
 def curation_ticket_needed(obj, eng):
