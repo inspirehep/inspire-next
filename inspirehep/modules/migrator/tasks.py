@@ -296,17 +296,18 @@ def add_citation_counts(chunk_size=500, request_timeout=40):
     index, doc_type = schema_to_index('records/hep.json')
 
     def get_records_to_update_generator(citation_lookup):
-        for recid, citation_count in citation_lookup.iteritems():
-            try:
-                uuid = PersistentIdentifier.query.filter(PersistentIdentifier.object_type == "rec", PersistentIdentifier.pid_value == str(recid)).one().object_uuid
-                yield {'_op_type': 'update',
-                       '_index': index,
-                       '_type': doc_type,
-                       '_id': str(uuid),
-                       'doc': {'citation_count': citation_count}
-                       }
-            except NoResultFound:
-                continue
+        with click.progressbar(citation_lookup.items()) as items:
+            for recid, citation_count in items:
+                try:
+                    uuid = PersistentIdentifier.query.filter(PersistentIdentifier.object_type == "rec", PersistentIdentifier.pid_value == str(recid)).one().object_uuid
+                    yield {'_op_type': 'update',
+                        '_index': index,
+                        '_type': doc_type,
+                        '_id': str(uuid),
+                        'doc': {'citation_count': citation_count}
+                        }
+                except NoResultFound:
+                    continue
 
     click.echo("Extracting all citations...")
 
