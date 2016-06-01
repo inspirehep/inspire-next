@@ -18,6 +18,7 @@
 #}
 {%- extends "forms/form.html" -%}
 {% set title = "New author information - INSPIRE Labs" if new else "Update author information - INSPIRE Labs" %}
+{% set is_update = False if new else True %}
 
 
 {% block form_title scoped %}
@@ -49,9 +50,9 @@ require(
 
     var config = {
       form: {
-        save_url: '{{ url_for("inspirehep_authors_holdingpen.validate") }}',
-        save_all_url: '{{ url_for("inspirehep_authors_holdingpen.validate", all='1') }}',
-        complete_url: '{{ url_for("inspirehep_authors_holdingpen.validate", submit='1') }}',
+        save_url: '{{ url_for("inspirehep_authors_holdingpen.validate", is_update=is_update) }}',
+        save_all_url: '{{ url_for("inspirehep_authors_holdingpen.validate", all='1', is_update=is_update) }}',
+        complete_url: '{{ url_for("inspirehep_authors_holdingpen.validate", submit='1', is_update=is_update) }}',
         datepicker_element: '.datepicker',
         datepicker_options: {
             useCurrent: false,
