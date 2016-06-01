@@ -29,12 +29,6 @@ from invenio_assets.filters import RequireJSFilter
 from inspirehep.modules.theme.bundles import js as _js
 
 
-actions_js = NpmBundle(
-    "js/inspire_workflows_ui/actions/init.js",
-    output="gen/inspire-workflows.actions.%(version)s.js",
-    filters=RequireJSFilter(exclude=[_js])
-)
-
 details_js = NpmBundle(
     "js/inspire_workflows_ui/holdingpen/app.js",
     output="gen/inspire-workflows.details.%(version)s.js",

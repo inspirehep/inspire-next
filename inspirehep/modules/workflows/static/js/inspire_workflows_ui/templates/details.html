@@ -1,7 +1,6 @@
 <div class="row">
   <div class="col-md-12">
-    <div
-      ng-if="vm.record._extra_data.user_action && vm.record._extra_data._action === null"
+    <div ng-if="vm.record._extra_data.user_action && vm.record._extra_data._action === null"
       class="alert" ng-class="'alert-' + vm.record._extra_data.user_action">
 
         <span ng-switch="vm.record._extra_data.user_action">
@@ -11,7 +10,12 @@
                 </span>
     </div>
 
-    <div class="alert" ng-if="vm.record._extra_data._action !== null"
+    <div ng-if="vm.workflow_flag">
+      <div class="alert" ng-bind="vm.workflow_flag"></div>
+    </div>
+
+
+    <div class="alert" ng-if="vm.record._extra_data._action !== null || vm.record._workflow.status === 'ERROR'"
          ng-class="{'alert-warning': vm.record._workflow.status === 'HALTED' && !vm.ingestion_complete, 'alert-danger': vm.record._workflow.status === 'ERROR' && !vm.ingestion_complete, 'alert-success': vm.record._workflow.status === 'COMPLETED' || vm.ingestion_complete,
          'alert-info': vm.record._workflow.status === 'WAITING'}">
       <p
@@ -230,9 +234,7 @@
               ng-if="vm.record._extra_data._action == null || vm.ingestion_complete"
               class="text-muted">
 
-                <span ng-class="{'core': vm.record._extra_data.user_action == 'accept_core',
-              'accept': vm.record._extra_data.user_action == 'accept',
-              'reject': vm.record._extra_data.user_action == 'reject'}"
+                <span ng-class="vm.record._extra_data.user_action"
                       ng-switch="vm.record._extra_data.user_action">
                   <span ng-switch-when="reject">Rejected</span>
                   <span ng-switch-when="accept">Accepted as Non-CORE</span>
@@ -247,10 +249,8 @@
           <br/>
           <div class="decision-keywords">
             <p>
-              {{Utils.keys(vm.record._extra_data.classifier_results.complete_output['Core
-              keywords']).length}} core keywords.
-              {{Utils.keys(vm.record._extra_data.classifier_results.complete_output['Filtered
-              Core keywords']).length}} Filtered:
+              {{Utils.keys(vm.record._extra_data.classifier_results.complete_output['Core keywords']).length}} core keywords.
+              {{Utils.keys(vm.record._extra_data.classifier_results.complete_output['Filtered Core keywords']).length}} Filtered:
 
             <div class="list">
               <div class="row"

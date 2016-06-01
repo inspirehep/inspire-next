@@ -1,4 +1,4 @@
-<div ng-controller="checkboxCtrl" id="hp-list">
+<div id="hp-list">
 
   <div class="row hp-header-row">
 
@@ -75,8 +75,7 @@
           <div class="abstract"
                ng-if='record._source.metadata.abstracts.length > 0'>
             <a href="" ng-click='showAbstract=!showAbstract'>
-              {{ showAbstract ? 'Hide abstract' : 'Show abstract'
-              }}
+              {{ showAbstract ? 'Hide abstract' : 'Show abstract'}}
             </a>
             <div ng-show='showAbstract'
                  ng-bind-html='record._source.metadata.abstracts | abstract'
@@ -110,7 +109,7 @@
 
         <div class="col-md-3 decision">
 
-          <div class="automatic-decision">Automatic Decision:
+          <div class="automatic-decision"><p class="small-text">Automatic Decision:
             <span ng-class="{'accept_core': record._source._extra_data.relevance_prediction.decision == 'CORE',
               'accept': record._source._extra_data.relevance_prediction.decision == 'Non-CORE',
               'reject': record._source._extra_data.relevance_prediction.decision == 'Rejected'}">
@@ -119,20 +118,13 @@
             <span
               ng-bind="(record._source._extra_data.relevance_prediction.max_score | number : 2)"></span>
               </span>
+            </p>
           </div>
 
-          <br/>
-
           <div ng-if="!record._source._extra_data.user_action">
-            <button class="btn btn-danger btn-sm"
-                    ng-click="Utils.setDecision('reject')">Reject
-            </button>
-            <button class="btn btn-warning btn-sm"
-                    ng-click="Utils.setDecision('accept')">Accept
-            </button>
-            <button class="btn btn-success btn-sm"
-                    ng-click="Utils.setDecision('accept_core')">Core
-            </button>
+            <holding-pen-decision record="record"
+                      template="/static/js/inspire_workflows_ui/templates/action-decision.html">
+            </holding-pen-decision>
           </div>
 
 
@@ -148,11 +140,12 @@
           <div class="clearfix"></div>
           <br/>
 
-          <p>Filtered keywords:</p>
+
+          <p>Filtered keywords include:</p>
           <div class="small-text">
             {{record._extra_data.classifier_results}}
               <span
-                ng-repeat="(key,value) in record._source._extra_data.classifier_results.complete_output['Filtered Core keywords']">
+                ng-repeat="(key,value) in record._source._extra_data.classifier_results.complete_output['Filtered Core keywords']" ng-if="$index < 4">
                   <span ng-bind="key"></span><span ng-if="!$last">,</span>
               </span>
           </div>

@@ -4,8 +4,7 @@
        ng-repeat="(key, title) in order" class="facet-container">
     <h4>Filter by {{ title }}</h4>
 
-    <ul class="list-unstyled" class="hp-facet-item"
-        ng-controller="FacetsShowMoreController">
+    <ul class="list-unstyled" class="hp-facet-item">
       <li
         ng-repeat="item in vm.invenioSearchResults.aggregations[key].buckets | limitTo: facetResults"
         ng-click="handleClick(key, item.key)"
@@ -26,10 +25,6 @@
                                               ng-if="handler[key].indexOf(item.key) > -1"></i> {{ item.key }}</span>
         <span class="facet-label label label-default pull-right">{{ item.doc_count }}</span>
       </li>
-      <div
-        ng-show="vm.invenioSearchResults.aggregations[key].buckets.length > facetResults">
-        <a ng-click="moreFacetResults()">Show {{calculateStep(key)}} more</a>
-      </div>
     </ul>
 
     <hr ng-if="!$last">

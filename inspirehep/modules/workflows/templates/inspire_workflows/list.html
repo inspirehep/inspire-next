@@ -30,10 +30,10 @@
 
 {% block javascript %}
 {{ super() }}
-{% assets "invenio_search_ui_search_js" %}
-<script src="{{ ASSET_URL }}"></script>{% endassets %}
-{% assets "inspire_workflows_ui_js_actions" %}
-<script src="{{ ASSET_URL }}"></script>{% endassets %}
+{% assets "inspirehep_holding_js" %}
+<script src="{{ ASSET_URL }}"></script>
+{% endassets %}
+
 {%- endblock javascript %}
 
 {% block page_banner %}
@@ -53,7 +53,7 @@
 {% endblock %}
 
 {%- block body -%}
-<div id="invenio-search">
+<div id="holding-pen">
   <invenio-search search-endpoint="/api/holdingpen"
                   search-extra-params='{"size": 25}'>
     <div class="clearfix"></div>

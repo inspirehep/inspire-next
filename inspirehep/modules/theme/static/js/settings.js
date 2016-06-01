@@ -44,7 +44,10 @@ require.config({
     flight: 'node_modules/flightjs/build/flight',
     hgn: 'node_modules/requirejs-hogan-plugin/hgn',
     hogan: 'node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.amd',
-    'holding-pen': 'js/inspire_workflows_ui/holdingpen/inspire-holdingpen.module',
+    'holding-pen-module': 'js/inspire_workflows_ui/holdingpen/holdingpen.module',
+    'holding-pen-directives': 'js/inspire_workflows_ui/holdingpen/holdingpen.directives',
+    'holding-pen-services': 'js/inspire_workflows_ui/holdingpen/holdingpen.services',
+    'holding-pen-filters': 'js/inspire_workflows_ui/holdingpen/holdingpen.filters',
     inspirehep: 'node_modules/inspirehep-js/dist/inspirehep',
     'inspirehep-clipboard': 'js/inspire_clipboard',
     'impact-graphs': 'node_modules/impact-graphs/impact-graph',
@@ -94,9 +97,24 @@ require.config({
       deps: ['d3wrapper'],
       exports: 'ImpactGraph'
     },
-    'holding-pen': {
+
+    'holding-pen-services': {
       deps: ['angular']
     },
+
+    'holding-pen-directives': {
+      deps: ['angular', 'holding-pen-services']
+    },
+
+    'holding-pen-filters': {
+      deps: ['angular']
+    },
+
+    'holding-pen-module': {
+      deps: ['angular', 'holding-pen-directives', 'holding-pen-filters', 'angular-sanitize']
+    },
+
+
     'inspirehep': {
       deps: ['angular', 'angular-sanitize', 'angular-ui-bootstrap', 'ngclipboard']
     },

@@ -41,7 +41,9 @@ def holdingpen_search_factory(self, search, **kwargs):
     includes = [
         'metadata.titles', 'metadata.abstracts', 'metadata.subject_terms',
         'metadata.authors', 'metadata.name',
-        '_workflow', '_extra_data.relevance_prediction', '_extra_data.user_action', '_extra_data.classifier_results.complete_output'
+        '_workflow', '_extra_data.relevance_prediction',
+        '_extra_data.user_action',
+        '_extra_data.classifier_results.complete_output'
     ]
     search = search.extra(_source={"include": includes})
     return search, urlkwargs
