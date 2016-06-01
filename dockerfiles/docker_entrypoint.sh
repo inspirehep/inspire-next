@@ -32,6 +32,6 @@ else
     source /virtualenv/bin/activate
 fi
 
-find \( -name __pycache__ -o -name '*.pyc' \) -delete
+find \( -name __pycache__ -o -name '*.pyc' \) | xargs rm -rf
 
 exec "$@"
