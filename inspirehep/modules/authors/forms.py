@@ -38,9 +38,11 @@ from invenio_deposit.field_widgets import ColumnInput, \
 from invenio_deposit.form import WebDepositForm
 from invenio_deposit import fields
 from inspirehep.modules.deposit.filters import clean_empty_list
+from inspirehep.modules.deposit.validators.simple_fields import duplicated_orcid_validator
 
 from inspirehep.modules.forms.validators import ORCIDValidator, \
     RegexpStopValidator
+
 
 
 def currentCheckboxWidget(field, **kwargs):
@@ -326,7 +328,8 @@ class AuthorUpdateForm(WebDepositForm):
                         "\d{4}-\d{4}-\d{4}-\d{3}[\dX]",
                         message="A valid ORCID iD consists of 16 digits separated by dashes.",
         ),
-            ORCIDValidator]
+            ORCIDValidator,
+            duplicated_orcid_validator]
     )
 
     status_options = [("active", _("Active")),
@@ -500,6 +503,10 @@ class AuthorUpdateForm(WebDepositForm):
     def __init__(self, is_review=False, *args, **kwargs):
         """Constructor."""
         super(AuthorUpdateForm, self).__init__(*args, **kwargs)
+        is_update = kwargs.pop('is_update', False)
+        if is_update:
+            self.orcid.widget = HiddenInput()
+            self.orcid.validators = []
         if is_review:
             self.bai.widget = TextInput()
             self.bai.widget_classes = "form-control"

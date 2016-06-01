@@ -67,7 +67,8 @@ def convert_for_form(data):
     if "name" in data:
         data["full_name"] = data["name"].get("value")
         try:
-            data["given_names"] = data["name"].get("value").split(",")[1].strip()
+            data["given_names"] = data["name"].get(
+                "value").split(",")[1].strip()
         except IndexError:
             data["given_names"] = ""
         data["family_name"] = data["name"].get("value").split(",")[0].strip()
@@ -146,9 +147,11 @@ def validate():
     """Validate form and return validation errors."""
     if request.method != 'POST':
         abort(400)
+
+    is_update = True if request.args.get('is_update') == 'True' else False
     data = request.json or MultiDict({})
     formdata = MultiDict(data or {})
-    form = AuthorUpdateForm(formdata=formdata)
+    form = AuthorUpdateForm(formdata=formdata, is_update=is_update)
     form.validate()
 
     result = {}
@@ -186,7 +189,7 @@ def update(recid):
         data["recid"] = recid
     else:
         return redirect(url_for("inspire_authors.new"))
-    form = AuthorUpdateForm(data=data)
+    form = AuthorUpdateForm(data=data, is_update=True)
     ctx = {
         "action": url_for('.submitupdate'),
         "name": "authorUpdateForm",
@@ -299,7 +302,7 @@ def submitupdate():
     from inspirehep.modules.forms.utils import DataExporter
     from invenio_workflows.models import BibWorkflowObject
     from flask.ext.login import current_user
-    form = AuthorUpdateForm(formdata=request.form)
+    form = AuthorUpdateForm(formdata=request.form, is_update=True)
     visitor = DataExporter()
     visitor.visit(form)
     myobj = BibWorkflowObject.create_object(id_user=current_user.get_id())
