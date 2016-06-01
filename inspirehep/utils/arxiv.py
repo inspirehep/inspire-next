@@ -22,29 +22,7 @@
 
 """Helpers for arXiv.org."""
 
-import os
-
-from werkzeug import secure_filename
-
-from .helpers import download_file
-
-
-def get_tarball(arxiv_id, output_directory):
-    """Make a robotupload request."""
-    output_file = os.path.join(
-        output_directory, secure_filename("{0}.tar.gz".format(arxiv_id))
-    )
-    url = "http://arxiv.org/e-print/{0}".format(arxiv_id)
-    return download_file(url, output_file)
-
-
-def get_pdf(arxiv_id, output_directory):
-    """Make a robotupload request."""
-    output_file = os.path.join(
-        output_directory, secure_filename("{0}.pdf".format(arxiv_id))
-    )
-    url = "http://arxiv.org/pdf/{0}".format(arxiv_id)
-    return download_file(url, output_file)
+from __future__ import absolute_import, division, print_function
 
 
 def get_clean_arXiv_id(record):

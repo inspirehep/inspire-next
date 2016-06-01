@@ -22,10 +22,14 @@
 
 """Various helpers for the overlay."""
 
+from __future__ import absolute_import, division, print_function
+
+from contextlib import closing
+
 import requests
 
 
-def download_file(url, output_file, chunk_size=1024):
+def download_file(url, output_file=None, chunk_size=1024):
     """Download a file to specified location."""
     r = requests.get(
         url=url,
@@ -36,6 +40,14 @@ def download_file(url, output_file, chunk_size=1024):
             for chunk in r.iter_content(chunk_size):
                 f.write(chunk)
     return output_file
+
+
+def download_file_to_record(record, name, url):
+    """Download a file to specified location."""
+    with closing(requests.get(url=url, stream=True)) as req:
+        if req.status_code == 200:
+            record.files[name] = req.raw
+            return record.files[name]
 
 
 def get_json_for_plots(plots):

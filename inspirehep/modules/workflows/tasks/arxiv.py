@@ -23,26 +23,21 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import os
 import re
-
-from flask import current_app
-
 from functools import wraps
 
 from dojson.contrib.marc21.utils import create_record
+from flask import current_app
+from six import BytesIO
+from werkzeug import secure_filename
 
 from inspirehep.dojson.hep import hep
-from inspirehep.utils.arxiv import (
-    get_clean_arXiv_id, get_pdf, get_tarball,
-)
-from inspirehep.utils.helpers import get_json_for_plots
-
 from inspirehep.modules.refextract.tasks import extract_references
-from inspirehep.modules.workflows.utils import get_storage_path
+from inspirehep.utils.arxiv import get_clean_arXiv_id
+from inspirehep.utils.helpers import download_file_to_record
 
-from plotextractor.errors import InvalidTarball
 from plotextractor.api import process_tarball
 from plotextractor.converter import untar
-
+from plotextractor.errors import InvalidTarball, NoTexFilesFound
 
 REGEXP_AUTHLIST = re.compile(
     "<collaborationauthorlist.*?>.*?</collaborationauthorlist>", re.DOTALL)
@@ -51,73 +46,51 @@ REGEXP_REFS = re.compile(
     re.DOTALL)
 
 
-def arxiv_fulltext_download(doctype='arXiv'):
+def arxiv_fulltext_download(obj, eng):
     """Perform the fulltext download step for arXiv records.
 
-    :param obj: Bibworkflow Object to process
-    :param eng: BibWorkflowEngine processing the object
+    :param obj: Workflow Object to process
+    :param eng: Workflow Engine processing the object
     """
-    @wraps(arxiv_fulltext_download)
-    def _arxiv_fulltext_download(obj, eng):
-        if "pdf" not in obj.extra_data:
-            arxiv_id = get_clean_arXiv_id(obj.data)
-            storage_path = get_storage_path(suffix=str(eng.uuid))
-
-            # We download it
-            pdf = get_pdf(arxiv_id, storage_path)
-
-            if not pdf:
-                obj.log.error("No arXiv pdf found!")
-                return
-            obj.extra_data["pdf"] = pdf
-        else:
-            pdf = obj.extra_data["pdf"]
-
-        if pdf and os.path.isfile(pdf):
-            if "fft" in obj.data:
-                obj.data["fft"].append({
-                    "url": pdf,
-                    "docfile_type": doctype
-                })
-            else:
-                new_dict_representation = {
-                    "fft": [
-                        {
-                            "url": pdf,
-                            "docfile_type": doctype
-                        }
-                    ]
-                }
-                obj.data.update(new_dict_representation)
-        else:
-            obj.log.error("No arXiv pdf found!")
-
-    return _arxiv_fulltext_download
+    arxiv_id = get_clean_arXiv_id(obj.data)
+    filename = secure_filename("{0}.pdf".format(arxiv_id))
+    if filename not in obj.files:
+        pdf = download_file_to_record(
+            record=obj,
+            name=filename,
+            url=current_app.config['ARXIV_PDF_URL'].format(
+                arxiv_id=arxiv_id
+            )
+        )
+        pdf['doctype'] = "arXiv"
 
 
 def arxiv_plot_extract(obj, eng):
-    """Extract plots from an arXiv archive."""
+    """Extract plots from an arXiv archive.
+
+    :param obj: Workflow Object to process
+    :param eng: Workflow Engine processing the object
+    """
     from wand.exceptions import DelegateError
 
-    if "tarball" not in obj.extra_data:
-        arxiv_id = get_clean_arXiv_id(obj.data)
-        storage_path = get_storage_path(suffix=str(eng.uuid))
-
-        # We download it
-        tarball = get_tarball(arxiv_id, storage_path)
-
-        if not tarball:
-            obj.log.error("No arXiv tarball found!")
-            return
-        obj.extra_data["tarball"] = tarball
+    arxiv_id = get_clean_arXiv_id(obj.data)
+    filename = secure_filename("{0}.tar.gz".format(arxiv_id))
+    if filename not in obj.files:
+        tarball = download_file_to_record(
+            record=obj,
+            name=filename,
+            url=current_app.config['ARXIV_TARBALL_URL'].format(
+                arxiv_id=arxiv_id
+            )
+        )
     else:
-        tarball = obj.extra_data["tarball"]
+        tarball = obj.files[filename]
 
     try:
-        plots = process_tarball(tarball)
-    except InvalidTarball:
+        plots = process_tarball(tarball.file.uri)
+    except (InvalidTarball, NoTexFilesFound):
         obj.log.error(
-            'Invalid tarball {0}'.format(tarball)
+            'Invalid tarball {0}'.format(tarball.file.uri)
         )
         return
     except DelegateError as err:
@@ -125,34 +98,35 @@ def arxiv_plot_extract(obj, eng):
         current_app.logger.exception(err)
         return
 
-    if plots:
-        json_plots = get_json_for_plots(plots)
-        obj.data.update(json_plots)
-        obj.log.info("Added {0} plots.".format(len(json_plots)))
+    for idx, plot in enumerate(plots):
+        obj.files[plot.get('name')] = BytesIO(open(plot.get('url')))
+        obj.files[plot.get('name')]["doctype"] = "Plot"
+        obj.files[plot.get('name')]["description"] = "{0:05d} {1}".format(
+            idx, "".join(plot.get('captions', []))
+        )
+    obj.log.info("Added {0} plots.".format(idx + 1))
 
 
 def arxiv_refextract(obj, eng):
-    """Perform the reference extraction step.
+    """Extract references from arXiv PDF.
 
-    :param obj: Bibworkflow Object to process
-    :param eng: BibWorkflowEngine processing the object
+    :param obj: Workflow Object to process
+    :param eng: Workflow Engine processing the object
     """
-    if "pdf" not in obj.extra_data:
-        arxiv_id = get_clean_arXiv_id(obj.data)
-        storage_path = get_storage_path(suffix=str(eng.uuid))
-
-        # We download it
-        pdf = get_pdf(arxiv_id, storage_path)
-
-        if not pdf:
-            obj.log.error("No arXiv pdf found!")
-            return
-        obj.extra_data["pdf"] = pdf
+    arxiv_id = get_clean_arXiv_id(obj.data)
+    filename = secure_filename("{0}.pdf".format(arxiv_id))
+    if filename not in obj.files:
+        pdf = download_file_to_record(
+            record=obj,
+            name=filename,
+            url=current_app.config['ARXIV_PDF_URL'].format(
+                arxiv_id=arxiv_id
+            )
+        )
     else:
-        pdf = obj.extra_data["pdf"]
-
-    if pdf and os.path.isfile(pdf):
-        mapped_references = extract_references(pdf)
+        pdf = obj.files[filename]
+    if pdf:
+        mapped_references = extract_references(pdf.file.uri)
         if mapped_references:
             # FIXME For now we do not add these references to the final record.
             if not current_app.config.get("PRODUCTION_MODE", False):
@@ -169,39 +143,38 @@ def arxiv_refextract(obj, eng):
 
 
 def arxiv_author_list(stylesheet="authorlist2marcxml.xsl"):
-    """Perform the special authorlist extraction step.
+    """Extract authors from any author XML found in the arXiv archive.
 
-    :param obj: Bibworkflow Object to process
-    :param eng: BibWorkflowEngine processing the object
+    :param obj: Workflow Object to process
+    :param eng: Workflow Engine processing the object
     """
     @wraps(arxiv_author_list)
     def _author_list(obj, eng):
         from inspirehep.modules.converter import convert
 
-        if "tarball" not in obj.extra_data:
-            arxiv_id = get_clean_arXiv_id(obj.data)
-            storage_path = get_storage_path(suffix=str(eng.uuid))
-
-            # We download it
-            tarball = get_tarball(arxiv_id, storage_path)
-
-            if not tarball:
-                obj.log.error("No arXiv tarball found!")
-                return
-            obj.extra_data["tarball"] = tarball
+        arxiv_id = get_clean_arXiv_id(obj.data)
+        filename = secure_filename("{0}.tar.gz".format(arxiv_id))
+        if filename not in obj.files:
+            tarball = download_file_to_record(
+                record=obj,
+                name=filename,
+                url=current_app.config['ARXIV_TARBALL_URL'].format(
+                    arxiv_id=arxiv_id
+                )
+            )
         else:
-            tarball = obj.extra_data["tarball"]
+            tarball = obj.files[filename]
 
-        sub_dir = os.path.abspath("{0}_files".format(tarball))
+        sub_dir = os.path.abspath("{0}_files".format(tarball.file.uri))
         try:
-            file_list = untar(tarball, sub_dir)
+            file_list = untar(tarball.file.uri, sub_dir)
         except InvalidTarball:
-            obj.log.error("Invalid tarball {0}".format(tarball))
+            obj.log.error("Invalid tarball {0}".format(tarball.file.uri))
             return
         obj.log.info("Extracted tarball to: {0}".format(sub_dir))
 
-        xml_files_list = [filename for filename in file_list
-                          if filename.endswith(".xml")]
+        xml_files_list = [path for path in file_list
+                          if path.endswith(".xml")]
         obj.log.info("Found xmlfiles: {0}".format(xml_files_list))
 
         for xml_file in xml_files_list:

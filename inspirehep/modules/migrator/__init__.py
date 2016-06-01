@@ -46,4 +46,5 @@ class INSPIREMigrator(object):
             'http://inspireheptest.cern.ch'
         )
 
+
 __all__ = ('INSPIREMigrator',)
