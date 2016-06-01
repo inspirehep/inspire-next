@@ -20,7 +20,7 @@
 
     function toggleSelection(id) {
       if (isChecked(id)) {
-        $scope.vm.selected_records.splice(getItemIdx(+id),1);
+        $scope.vm.selected_records.splice(getItemIdx(+id), 1);
       }
       else {
         $scope.vm.selected_records.push(+id);
@@ -30,16 +30,17 @@
     function toggleAll() {
 
       var remove_all = allChecked();
-      alert('All checked = ' + remove_all);
-      angular.forEach($scope.$parent.vm.invenioSearchResults.hits.hits,
-        function (record, key) {
-          if (remove_all) {
-            $scope.vm.selected_records = [];
-          } else {
-            if(!isChecked(record._id))
+      if (remove_all) {
+
+        $scope.vm.selected_records = [];
+      } else {
+        angular.forEach($scope.$parent.vm.invenioSearchResults.hits.hits,
+          function (record) {
+            if (!isChecked(record._id))
               $scope.vm.selected_records.push(+record._id);
-          }
-      });
+
+          });
+      }
     }
 
     function isChecked(id) {
@@ -50,8 +51,15 @@
       if (!$scope.$parent.vm.invenioSearchResults.hits) {
         return false;
       }
-      return $scope.vm.selected_records.length === $scope.$parent.vm.invenioSearchResults.hits.hits.length;
+      return $scope.vm.selected_records.length ===
+        $scope.$parent.vm.invenioSearchResults.hits.hits.length;
     }
+
+    function reset() {
+      $scope.vm.selected_records = [];
+    }
+
+    $scope.$on('invenio.search.success', reset);
   }
 
   HoldingPenSelectionCtrl.$inject = ['$scope'];
