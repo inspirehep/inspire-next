@@ -32,7 +32,26 @@ try:
 except ImportError:  # pragma: no cover
     current_app = None
 
-from inspirehep.config import INSPIRE_RANK_TYPES
+from inspirehep.config import (
+    ARXIV_TO_INSPIRE_CATEGORY_MAPPING,
+    INSPIRE_RANK_TYPES,
+)
+
+
+def classify_field(value):
+    """Classify value as a key of ARXIV_TO_INSPIRE_CATEGORY_MAPPING."""
+    if not value:
+        return None
+    elif not isinstance(value, six.string_types):
+        return None
+    else:
+        casted_value = value.upper()
+        for name, category in six.iteritems(ARXIV_TO_INSPIRE_CATEGORY_MAPPING):
+            if name.upper() == casted_value:
+                return category
+            elif category.upper() == casted_value:
+                return category
+        return 'Other'
 
 
 def classify_rank(value):

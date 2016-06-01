@@ -23,6 +23,7 @@
 import mock
 
 from inspirehep.dojson.utils import (
+    classify_field,
     classify_rank,
     create_profile_url,
     get_recid_from_ref,
@@ -30,6 +31,42 @@ from inspirehep.dojson.utils import (
     legacy_export_as_marc,
     strip_empty_values,
 )
+
+
+def test_classify_field_returns_none_on_falsy_value():
+    assert classify_field('') is None
+
+
+def test_classify_field_returns_none_on_non_string_value():
+    assert classify_field(0) is None
+
+
+def test_classify_field_returns_category_if_found_among_keys():
+    expected = 'Math and Math Physics'
+    result = classify_field('alg-geom')
+
+    assert expected == result
+
+
+def test_classify_field_returns_category_if_found_among_values():
+    expected = 'Astrophysics'
+    result = classify_field('Astrophysics')
+
+    assert expected == result
+
+
+def test_classify_field_ignores_case():
+    expected = 'Astrophysics'
+    result = classify_field('ASTRO-PH.CO')
+
+    assert expected == result
+
+
+def test_classify_field_falls_back_on_other():
+    expected = 'Other'
+    result = classify_field('FOO')
+
+    assert expected == result
 
 
 def test_classify_rank_returns_none_on_falsy_value():
