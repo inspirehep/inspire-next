@@ -1,0 +1,59 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "uniqueItems": true,
+    "items": {
+        "type": "object",
+        "properties": {
+            "term": {
+                "title": "INSPIRE term",
+                "enum": [
+                    "Accelerators",
+                    "Astrophysics",
+                    "Computing",
+                    "Experiment-HEP",
+                    "Experiment-Nucl",
+                    "General Physics",
+                    "Gravitation and Cosmology",
+                    "Instrumentation",
+                    "Lattice",
+                    "Math and Math Physics",
+                    "Other",
+                    "Phenomenology-HEP",
+                    "Theory-HEP",
+                    "Theory-Nucl"
+                ],
+                "type": "string"
+            },
+            "_term": {
+                "title": "Original term",
+                "type": "string"
+            },
+            "source": {
+                "enum": [
+                    "INSPIRE",
+                    "submitter",
+                    "curator",
+                    "publisher"
+                ],
+                "type": "string"
+            },
+            "scheme": {
+                "title": "INSPIRE",
+                "type": "string"
+            },
+            "_scheme": {
+                "title": "Original scheme",
+                "enum": [
+                    "INSPIRE",
+                    "arXiv",
+                    "APS",
+                    "PoS",
+                    "Elsevier"
+                ],
+                "type": "string"
+            }
+        }
+    },
+    "type": "array",
+    "title": "Research field categories."
+}
