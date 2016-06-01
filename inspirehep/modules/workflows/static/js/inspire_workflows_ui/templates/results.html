@@ -1,8 +1,11 @@
-<div id="hp-list">
+<div id="hp-list" ng-controller="HoldingPenSelectionCtrl">
 
   <div class="row hp-header-row">
 
     <div class="col-md-1">
+      <input type="checkbox" class="checkbox-results"
+                         ng-click="toggleAll()"
+                  ng-checked="allChecked()"/>
     </div>
 
     <div class="col-md-4">
@@ -36,8 +39,8 @@
         <div class="col-md-1">
                 <span id='checkbox-parent'>
                   <input type="checkbox" class="checkbox-results"
-                         ng-click="toggleId(record._id)"
-                         ng-checked="isChecked(record._id)"/>
+                         ng-click="toggleSelection(record._id)"
+                  ng-checked="isChecked(record._id)"/>
                 </span>
         </div>
         <div class="col-md-4">

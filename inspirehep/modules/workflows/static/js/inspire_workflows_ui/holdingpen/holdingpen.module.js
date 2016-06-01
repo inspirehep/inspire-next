@@ -7,6 +7,7 @@
   var invenioHoldingPen = angular.module("invenioHoldingPen", ['xeditable',
     'holdingpen.services',
     'holdingpen.directives',
+    'holdingpen.controllers',
     'holdingpen.filters.abstract']);
 
   invenioHoldingPen.run(function (editableOptions, editableThemes) {

@@ -45,6 +45,7 @@ require.config({
     hgn: 'node_modules/requirejs-hogan-plugin/hgn',
     hogan: 'node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.amd',
     'holding-pen-module': 'js/inspire_workflows_ui/holdingpen/holdingpen.module',
+    'holding-pen-controllers': 'js/inspire_workflows_ui/holdingpen/holdingpen.controllers',
     'holding-pen-directives': 'js/inspire_workflows_ui/holdingpen/holdingpen.directives',
     'holding-pen-services': 'js/inspire_workflows_ui/holdingpen/holdingpen.services',
     'holding-pen-filters': 'js/inspire_workflows_ui/holdingpen/holdingpen.filters',
@@ -102,6 +103,10 @@ require.config({
       deps: ['angular']
     },
 
+    'holding-pen-controllers': {
+      deps: ['angular']
+    },
+
     'holding-pen-directives': {
       deps: ['angular', 'holding-pen-services']
     },
@@ -111,7 +116,7 @@ require.config({
     },
 
     'holding-pen-module': {
-      deps: ['angular', 'holding-pen-directives', 'holding-pen-filters', 'angular-sanitize']
+      deps: ['angular', 'holding-pen-directives', 'holding-pen-controllers', 'holding-pen-filters', 'angular-sanitize']
     },
 
 

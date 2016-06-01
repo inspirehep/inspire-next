@@ -32,25 +32,6 @@ class HEPApproval(object):
     name = "Approve record"
 
     @staticmethod
-    def render_mini(obj):
-        """Method to render the minified action."""
-        return render_template(
-            'inspire_workflows/actions/hep_approval_mini.html',
-            message=obj.get_action_message(),
-            object=obj,
-        )
-
-    @staticmethod
-    def render(obj):
-        """Method to render the action."""
-        return {
-            "side": render_template('inspire_workflows/actions/hep_approval_side.html',
-                                    object=obj),
-            "main": render_template('inspire_workflows/actions/hep_approval_main.html',
-                                    object=obj)
-        }
-
-    @staticmethod
     def resolve(obj, *args, **kwargs):
         """Resolve the action taken in the approval action."""
         from invenio_workflows import ObjectStatus
@@ -74,7 +55,6 @@ class HEPApproval(object):
         approved = value in ('accept', 'accept_core')
 
         obj.extra_data["approved"] = approved
-
         obj.remove_action()
 
         obj.extra_data["user_action"] = value

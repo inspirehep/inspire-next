@@ -4,6 +4,31 @@
 
 (function (angular) {
 
+  function holdingPenBatchDecision() {
+
+    var controller = ["$scope", "HoldingPenRecordService",
+      function ($scope, HoldingPenRecordService) {
+
+        $scope.BatchUtils = {
+          setDecision: function (decision) {
+            HoldingPenRecordService.setBatchDecision($scope.vm.selected_records, decision)
+          }
+        }
+      }
+    ];
+
+    function templateUrl(element, attrs) {
+      return attrs.template;
+    }
+
+    return {
+      templateUrl: templateUrl,
+      restrict: 'AE',
+      scope: false,
+      controller: controller
+    };
+  }
+
   function holdingPenDecision() {
 
     var controller = ["$scope", "HoldingPenRecordService",
@@ -95,6 +120,7 @@
 
   angular.module('holdingpen.directives', [])
     .directive('holdingPenDecision', holdingPenDecision)
-    .directive('holdingPen', holdingPenDetail);
+    .directive('holdingPen', holdingPenDetail)
+    .directive('holdingPenBatchDecision', holdingPenBatchDecision);
 
 })(angular);
