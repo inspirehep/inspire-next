@@ -36,7 +36,9 @@
       <div class="col-md-12">
         <div class="detail-panel">
           <h4 class="record-title"
-              ng-bind="vm.record.metadata.titles[0].title" editable-text="vm.record.metadata.titles[0].title"></h4>
+              ng-bind="vm.record.metadata.titles[0].title"
+              editable-text="vm.record.metadata.titles[0].title"
+              e-ng-change="Utils.registerUpdateEvent()"></h4>
           <ul class="record-authors">
             <li ng-repeat="author in vm.record.metadata.authors">
               <span ng-bind="author.full_name"></span><span
@@ -44,7 +46,10 @@
             </li>
           </ul>
           <p class="record-abstract"
-             ng-bind="vm.record.metadata.abstracts[0].value" editable-textarea="vm.record.metadata.abstracts[0].value"></p>
+             ng-bind="vm.record.metadata.abstracts[0].value"
+             editable-textarea="vm.record.metadata.abstracts[0].value"
+             e-ng-change="Utils.registerUpdateEvent()">
+          </p>
 
           <div class="row">
             <div class="col-md-2 col-sm-4">
@@ -82,9 +87,7 @@
       <!--</div>-->
       <!--</div>-->
 
-
       <div class="clearfix"></div>
-
 
       <div class="col-md-6 col-sm-6">
         <div class="detail-panel panel-300">
@@ -182,6 +185,20 @@
 
     <div class="row">
 
+      <div id="save-panel" class="col-md-12 text-center" ng-if="vm.update_ready || vm.saved">
+        <div class="detail-panel">
+
+          <div id="hp-save" ng-if="vm.update_ready">
+            <button class="btn btn-success btn-lg" ng-click="Utils.updateRecord()">
+              Save changes
+            </button>
+          </div>
+
+          <p class="accept_core font-bolder" ng-if="vm.saved">Your changes have been saved!</p>
+        </div>
+      </div>
+
+
       <!--Osion Panel-->
       <div class="col-md-12">
         <div class="detail-panel">
@@ -230,8 +247,10 @@
           <br/>
           <div class="decision-keywords">
             <p>
-              {{Utils.keys(vm.record._extra_data.classifier_results.complete_output['Core keywords']).length}} core keywords.
-              {{Utils.keys(vm.record._extra_data.classifier_results.complete_output['Filtered Core keywords']).length}} Filtered:
+              {{Utils.keys(vm.record._extra_data.classifier_results.complete_output['Core
+              keywords']).length}} core keywords.
+              {{Utils.keys(vm.record._extra_data.classifier_results.complete_output['Filtered
+              Core keywords']).length}} Filtered:
 
             <div class="list">
               <div class="row"
@@ -360,4 +379,3 @@
 </div>
 
 <div class="clearfix"></div>
-

@@ -88,11 +88,11 @@
 
         <div class="col-md-2 pad-top-10">
           <p class="workflow-type"
-             ng-class="record._workflow.workflow_class"
-             ng-bind="record._workflow.workflow_name"></p>
-          <p ng-bind="record.metadata.acquisition_source.email"></p>
+             ng-class="record._source._workflow.workflow_class"
+             ng-bind="record._source._workflow.workflow_name"></p>
+          <p ng-bind="record._source.metadata.acquisition_source.email"></p>
           <p
-            ng-bind="record._source.metadata._workflow.created | date: ''"></p>
+            ng-bind="record._source._workflow.created | date: ''"></p>
         </div>
 
         <div class="col-md-2 pad-top-10">

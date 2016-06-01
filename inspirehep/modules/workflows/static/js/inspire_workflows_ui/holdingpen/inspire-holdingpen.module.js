@@ -34,10 +34,12 @@
 
         updateRecord: function (vm, workflowId) {
           $http.post('/api/holdingpen/' + workflowId + '/action/edit', vm.record).then(function (response) {
-            vm.ingestion_complete = true;
+            vm.saved = true;
+            vm.update_ready = false;
           }).catch(function (value) {
-            vm.ingestion_complete = false;
-            alert(value);
+            vm.saved = false;
+            vm.update_ready = true;
+            alert('Sorry, an error occurred when saving. Please try again.');
           });
         },
 
@@ -117,7 +119,12 @@
 
           showHistory: function (url) {
             alert('Showing history');
+          },
 
+          registerUpdateEvent: function() {
+            $scope.vm.update_ready = true;
+            $scope.vm.saved = false;
+            $scope.$emit();
           },
 
           resumeWorkflow: function () {
