@@ -22,14 +22,78 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
+import json
 import uuid
+
+from flask import current_app
+import requests
 
 from invenio_indexer.signals import before_record_index
 from invenio_records.signals import (
     before_record_insert,
-    before_record_update)
+    before_record_update,
+)
 
 from .utils import author_tokenize
+
+
+def _query_beard_api(full_names):
+    """Query Beard API.
+
+    This method allows for computation of phonetic blocks
+    from a given list of strings.
+    """
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+
+    text_endpoint = "{base_url}/text/phonetic_blocks".format(
+        base_url=current_app.config.get('BEARD_API_URL')
+    )
+
+    response = requests.post(
+        url=text_endpoint,
+        headers=headers,
+        data=json.dumps({'full_names': full_names})
+    )
+
+    return response.json()['phonetic_blocks']
+
+
+@before_record_insert.connect
+@before_record_update.connect
+def assign_phonetic_block(sender, *args, **kwargs):
+    """Assign phonetic block to each signature.
+
+    The method extends the given signature with a phonetic
+    notation of the author's full name, based on
+    nysiis algorithm. The phonetic block is assigned before
+    the signature is indexed by an Elasticsearch instance.
+    """
+    if current_app.config.get('BEARD_API_URL'):
+        authors = sender.get('authors', [])
+        authors_map = {}
+
+        for index, author in enumerate(authors):
+            if 'full_name' in author:
+                authors_map[author['full_name']] = index
+
+        # Call Beard API to generate phonetic blocks.
+        signatures_blocks = _query_beard_api(authors_map.keys())
+
+        # Add signature block to an author.
+        for full_name, signature_block in signatures_blocks.iteritems():
+            authors[authors_map[full_name]].update(
+                {"signature_block": signature_block})
+
+        # # For missing phonetic blocks (not valid full names) add None.
+        for full_name in list(
+                set(authors_map.keys()) - set(signatures_blocks.keys())):
+            authors[authors_map[full_name]].update(
+                {"signature_block": None})
 
 
 @before_record_insert.connect

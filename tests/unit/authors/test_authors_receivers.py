@@ -22,6 +22,11 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
+import mock
+import httpretty
+
 from inspirehep.modules.authors import receivers
 
 
@@ -61,6 +66,84 @@ def test_name_variations():
             'John Richard Ellis',
             'R Ellis',
             'Richard Ellis'])
+
+
+def test_phonetic_block_generation_ascii(httppretty_mock, app):
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+    }
+
+    with app.app_context():
+        with mock.patch.dict(app.config, extra_config):
+            httpretty.register_uri(
+                httpretty.POST,
+                "{base_url}/text/phonetic_blocks".format(
+                    base_url=app.config.get('BEARD_API_URL')),
+                content_type="application/json",
+                body='{"phonetic_blocks": {"John Richard Ellis": "ELj"}}',
+                status=200)
+
+            json_dict = {
+                "authors": [{
+                    "full_name": "John Richard Ellis"
+                }]
+            }
+
+            receivers.assign_phonetic_block(json_dict)
+
+            assert json_dict['authors'][0]['signature_block'] == "ELj"
+
+
+def test_phonetic_block_generation_broken(httppretty_mock, app):
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+    }
+
+    with app.app_context():
+        with mock.patch.dict(app.config, extra_config):
+            httpretty.register_uri(
+                httpretty.POST,
+                "{base_url}/text/phonetic_blocks".format(
+                    base_url=app.config.get('BEARD_API_URL')),
+                content_type="application/json",
+                body='{"phonetic_blocks": {}}',
+                status=200)
+
+            json_dict = {
+                "authors": [{
+                    "full_name": "** NOT VALID **"
+                }]
+            }
+
+            receivers.assign_phonetic_block(json_dict)
+
+            assert json_dict['authors'][0]['signature_block'] is None
+
+
+def test_phonetic_block_generation_unicode(httppretty_mock, app):
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+    }
+
+    with app.app_context():
+        with mock.patch.dict(app.config, extra_config):
+            httpretty.register_uri(
+                httpretty.POST,
+                "{base_url}/text/phonetic_blocks".format(
+                    base_url=app.config.get('BEARD_API_URL')),
+                content_type="application/json",
+                body=u'{"phonetic_blocks": {"Grzegorz Jacenków": "JACANCg"}}',
+                status=200)
+
+            json_dict = {
+                "authors": [{
+                    "full_name": u"Grzegorz Jacenków"
+                }]
+            }
+
+            receivers.assign_phonetic_block(json_dict)
+
+            assert json_dict['authors'][0]['signature_block'] == "JACANCg"
 
 
 def test_uuid_generation():
