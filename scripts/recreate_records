@@ -63,7 +63,7 @@ inspirehep db drop --yes-i-know
 inspirehep db create
 inspirehep index destroy --force --yes-i-know
 inspirehep index init
+inspirehep fixtures init
 
 inspirehep migrator populate -f inspirehep/demosite/data/demo-records.xml.gz --wait=true
 inspirehep migrator count_citations
-

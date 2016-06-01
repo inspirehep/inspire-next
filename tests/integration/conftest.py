@@ -50,9 +50,11 @@ def app(request):
     with app.app_context():
         # Imports must be local, otherwise tasks default to pickle serializer.
         from inspirehep.modules.migrator.tasks import add_citation_counts, migrate
+        from inspirehep.modules.fixtures.files import init_all_storage_paths
 
         db.drop_all()
         db.create_all()
+        init_all_storage_paths()
 
         sleep(10)  # Makes sure that ES is up.
         _es = app.extensions['invenio-search']
