@@ -161,28 +161,6 @@ def get_inspire_url(data):
     return url
 
 
-@blueprint.route(
-    '/<field_name>/',
-    methods=['GET', 'POST'])
-@login_required
-def autocomplete(field_name=None):
-    """Auto-complete a form field."""
-    term = request.args.get('term')  # value
-    limit = request.args.get('limit', 50, type=int)
-
-    form = AuthorUpdateForm()
-
-    result = form.autocomplete(field_name, term, limit=limit)
-    result = result if result is not None else []
-
-    # jsonify doesn't return lists as top-level items.
-    resp = make_response(
-        json.dumps(result, indent=None if request.is_xhr else 2)
-    )
-    resp.mimetype = "application/json"
-    return resp
-
-
 @blueprint.route('/validate', methods=['POST'])
 def validate():
     """Validate form and return validation errors.
@@ -192,9 +170,11 @@ def validate():
     """
     if request.method != 'POST':
         abort(400)
+
+    is_update = True if request.args.get('is_update') == 'True' else False
     data = request.json or MultiDict({})
     formdata = MultiDict(data or {})
-    form = AuthorUpdateForm(formdata=formdata)
+    form = AuthorUpdateForm(formdata=formdata, is_update=is_update)
     form.validate()
 
     result = {}
@@ -258,7 +238,7 @@ def update():
         data["recid"] = recid
     else:
         return redirect(url_for("inspirehep_authors.new"))
-    form = AuthorUpdateForm(data=data)
+    form = AuthorUpdateForm(data=data, is_update=True)
     ctx = {
         "action": url_for('.submitupdate'),
         "name": "authorUpdateForm",
@@ -273,7 +253,7 @@ def update():
 @login_required
 def submitupdate():
     """Form action handler for INSPIRE author update form."""
-    form = AuthorUpdateForm(formdata=request.form)
+    form = AuthorUpdateForm(formdata=request.form, is_update=True)
     visitor = DataExporter()
     visitor.visit(form)
 
