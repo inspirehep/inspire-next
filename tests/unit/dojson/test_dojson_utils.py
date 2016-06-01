@@ -23,12 +23,56 @@
 import mock
 
 from inspirehep.dojson.utils import (
+    classify_rank,
     create_profile_url,
     get_recid_from_ref,
     get_record_ref,
     legacy_export_as_marc,
     strip_empty_values,
 )
+
+
+def test_classify_rank_returns_none_on_falsy_value():
+    assert classify_rank('') is None
+
+
+def test_classify_rank_returns_none_on_non_string_value():
+    assert classify_rank(0) is None
+
+
+def test_classify_rank_returns_uppercase_value_if_found_in_rank_types():
+    expected = 'STAFF'
+    result = classify_rank('staff')
+
+    assert expected == result
+
+
+def test_classify_rank_ignores_periods_in_value():
+    expected = 'PHD'
+    result = classify_rank('Ph.D.')
+
+    assert expected == result
+
+
+def test_classify_rank_allows_alternative_names():
+    expected = 'VISITOR'
+    result = classify_rank('VISITING SCIENTIST')
+
+    assert expected == result
+
+
+def test_classify_rank_allows_abbreviations():
+    expected = 'POSTDOC'
+    result = classify_rank('PD')
+
+    assert expected == result
+
+
+def test_classify_rank_falls_back_on_other():
+    expected = 'OTHER'
+    result = classify_rank('FOO')
+
+    assert expected == result
 
 
 def test_create_profile_url_returns_link_when_given_an_int():

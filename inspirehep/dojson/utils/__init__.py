@@ -32,6 +32,32 @@ try:
 except ImportError:  # pragma: no cover
     current_app = None
 
+from inspirehep.config import INSPIRE_RANK_TYPES
+
+
+def classify_rank(value):
+    """Classify raw string as one of the keys in INSPIRE_RANK_TYPES."""
+    if not value:
+        return None
+    elif not isinstance(value, six.string_types):
+        return None
+    else:
+        casted_value = value.upper().replace('.', '')
+        for rank_name, rank_mapping in INSPIRE_RANK_TYPES.items():
+            if rank_name in casted_value:
+                return rank_name
+            else:
+                if rank_mapping.get('alternative_names'):
+                    for alternative in rank_mapping['alternative_names']:
+                        if alternative in casted_value:
+                            return rank_name
+                if rank_mapping.get('abbreviations'):
+                    for abbrev in rank_mapping['abbreviations']:
+                        if abbrev == casted_value:
+                            return rank_name
+
+        return 'OTHER'
+
 
 def create_profile_url(profile_id):
     """Create HEP author profile link based on the profile_id."""
