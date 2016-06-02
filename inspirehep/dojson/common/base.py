@@ -35,7 +35,12 @@ from ..hepnames.model import hepnames, hepnames2marc
 from ..institutions.model import institutions
 from ..jobs.model import jobs
 from ..journals.model import journals
-from ..utils import get_recid_from_ref, get_record_ref, strip_empty_values
+from ..utils import (
+    classify_field,
+    get_recid_from_ref,
+    get_record_ref,
+    strip_empty_values,
+)
 
 
 def self_url(index):
@@ -318,3 +323,43 @@ def deleted_records2marc(self, key, value):
     return {
         'a': get_recid_from_ref(value)
     }
+
+
+@conferences.over('field_categories', '^65017')
+@experiments.over('field_categories', '^65017')
+@hep.over('field_categories', '^650[1_][_7]')
+@hepnames.over('field_categories', '^65017')
+@institutions.over('field_categories', '^65017')
+@jobs.over('field_categories', '^65017')
+@utils.for_each_value
+def field_categories(self, key, value):
+    """Field categories."""
+    self.setdefault('field_categories', [])
+
+    _terms = utils.force_list(value.get('a'))
+
+    if _terms:
+        for _term in _terms:
+            term = classify_field(_term)
+
+            scheme = 'INSPIRE' if term else None
+
+            _scheme = value.get('2')
+            if isinstance(_scheme, (list, tuple)):
+                _scheme = _scheme[0]
+
+            source = value.get('9')
+            if source:
+                if 'automatically' in source:
+                    source = 'INSPIRE'
+
+            self['field_categories'].append({
+                'source': source,
+                '_scheme': _scheme,
+                'scheme': scheme,
+                '_term': _term,
+                'term': term,
+            })
+
+        self['field_categories'] = dedupe_list_of_dicts(
+            self['field_categories'])

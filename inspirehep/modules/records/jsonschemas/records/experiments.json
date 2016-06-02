@@ -73,21 +73,8 @@
             "title": "Description",
             "type": "array"
         },
-        "field_code": {
-            "items": {
-                "enum": [
-                    "usual",
-                    "arXiv",
-                    "list",
-                    "astro-ph",
-                    "physics",
-                    "ASTRO-PH"
-                ],
-                "type": "string"
-            },
-            "title": "Field code",
-            "type": "array",
-            "uniqueItems": true
+        "field_categories": {
+            "$ref": "elements/fields.json"
         },
         "free_keywords": {
             "items": {

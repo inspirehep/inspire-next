@@ -39,36 +39,8 @@
             "items": {"$ref": "elements/contact.json"},
             "uniqueItems": true
         },
-        "field_code": {
-            "items": {
-                "description": "FIXME: shall we normalize this to the usual arXiv?",
-                "properties": {
-                        "value": {
-                            "enum": [
-                                "Astrophysics",
-                                "Phenomenology-HEP",
-                                "hep-ex",
-                                "Math and Math Physics",
-                                "Experiment-HEP",
-                                "Computing",
-                                "hep-ph",
-                                "hep-th",
-                                "Gravitation and Cosmology",
-                                "Theory-HEP",
-                                "..."
-                            ],
-                            "title": "Field code",
-                            "type": "string"
-                        },
-                        "source": {
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                },
-            "title": "Field codes",
-            "type": "array",
-            "uniqueItems": true
+        "field_categories": {
+            "$ref": "elements/fields.json"
         },
         "keywords": {
             "properties": {

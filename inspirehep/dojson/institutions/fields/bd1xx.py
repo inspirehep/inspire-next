@@ -117,13 +117,6 @@ def name_variants(self, key, value):
     }
 
 
-@institutions.over('content_classification', '^65017')
-@utils.for_each_value
-def content_classification(self, key, value):
-    """Institution info."""
-    return value.get('a')
-
-
 @institutions.over('core', '^690C.')
 def core(self, key, value):
     """Check if it is a CORE institution."""

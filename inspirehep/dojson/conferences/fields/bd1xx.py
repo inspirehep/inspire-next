@@ -77,17 +77,6 @@ def contact_details(self, key, value):
     }
 
 
-@conferences.over('field_code', '^65017')
-@utils.for_each_value
-@utils.filter_values
-def field_code(self, key, value):
-    """Field code."""
-    return {
-        'value': value.get('a'),
-        'source': value.get('9')
-    }
-
-
 @conferences.over('keywords', '^6531')
 def keywords(self, key, value):
     """Field code."""

@@ -117,13 +117,6 @@ def position(self, key, value):
     return value.get('a')
 
 
-@jobs.over('research_area', '^65017')
-@utils.for_each_value
-def research_area(self, key, value):
-    """Contact person."""
-    return value.get('a')
-
-
 @jobs.over('rank', '^656..')
 @utils.for_each_value
 def rank(self, key, value):
