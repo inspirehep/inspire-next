@@ -16,21 +16,9 @@
             "title": "Date when the job was closed",
             "type": "string"
         },
-        "contact_email": {
-            "items": {
-                "format": "email",
-                "title": "Contact email",
-                "type": "string"
-            },
+        "contact_details": {
             "type": "array",
-            "uniqueItems": true
-        },
-        "contact_person": {
-            "items": {
-                "title": "Contact person",
-                "type": "string"
-            },
-            "type": "array",
+            "items": {"$ref": "elements/contact.json"},
             "uniqueItems": true
         },
         "continent": {

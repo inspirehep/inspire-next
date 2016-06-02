@@ -34,14 +34,10 @@
             "title": "Conference ID (CNUM)",
             "type": "string"
         },
-        "contact_person": {
-            "title": "Contact person",
-            "type": "array"
-        },
-        "contact_email": {
-            "format": "email",
-            "title": "Contact email",
-            "type": "string"
+        "contact_details": {
+            "type": "array",
+            "items": {"$ref": "elements/contact.json"},
+            "uniqueItems": true
         },
         "field_code": {
             "items": {

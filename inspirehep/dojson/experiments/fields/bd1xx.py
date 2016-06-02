@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import six
+
 from dojson import utils
 
 from ..model import experiments
@@ -41,13 +43,6 @@ def experiment_name(self, key, value):
     }
 
 
-@experiments.over('contact_email', '^270..')
-@utils.for_each_value
-def contact_email(self, key, value):
-    """Contact email of experiment."""
-    return value.get("m")
-
-
 @experiments.over('title', '^245[10_][0_]')
 @utils.for_each_value
 @utils.filter_values
@@ -58,6 +53,18 @@ def title(self, key, value):
         'title': value.get('a'),
         'subtitle': value.get('b'),
         'source': value.get('9'),
+    }
+
+
+@experiments.over('contact_details', '^270..')
+@utils.for_each_value
+def contact_details(self, key, value):
+    name = value.get('p')
+    email = value.get('m')
+
+    return {
+        'name': name if isinstance(name, six.string_types) else None,
+        'email': email if isinstance(email, six.string_types) else None,
     }
 
 

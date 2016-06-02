@@ -24,35 +24,12 @@
 
 from __future__ import absolute_import, division, print_function
 
+import six
+
 from dojson import utils
 
 from ..model import jobs
 from ...utils import get_record_ref
-
-
-@jobs.over('acquisition_source', '^(037|270)..')
-@utils.for_each_value
-def acquisition_source(self, key, value):
-    """Submission information aggregated from various sources."""
-    result = {
-        "method": "submission"
-    }
-    if key.startswith('037'):
-        if "JOBSUBMIT" in value.get('a'):
-            result["submission_number"] = value.get('a')
-    elif key.startswith('270'):
-        if value.get('m'):
-            result["email"] = value.get('m')
-        if value.get('p'):
-            self.setdefault('contact_person', [])
-            self['contact_person'].append(value.get('p'))
-        if value.get('m'):
-            self.setdefault('contact_email', [])
-            self['contact_email'].append(value.get('m'))
-        if value.get('o'):
-            self.setdefault('reference_email', [])
-            self['reference_email'].append(value.get('o'))
-    return result
 
 
 @jobs.over('date_closed', '^046..')
@@ -82,6 +59,18 @@ def date_closed(self, key, value):
     if deadline_date:
         self['deadline_date'] = deadline_date
     return closed_date
+
+
+@jobs.over('contact_details', '^270..')
+@utils.for_each_value
+def contact_details(self, key, value):
+    name = value.get('p')
+    email = value.get('m')
+
+    return {
+        'name': name if isinstance(name, six.string_types) else None,
+        'email': email if isinstance(email, six.string_types) else None,
+    }
 
 
 @jobs.over('continent', '^043..')

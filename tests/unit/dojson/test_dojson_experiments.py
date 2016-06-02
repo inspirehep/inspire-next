@@ -24,83 +24,8 @@ from __future__ import absolute_import, division, print_function
 
 from dojson.contrib.marc21.utils import create_record
 
-from inspirehep.dojson.conferences import conferences
+from inspirehep.dojson.experiments import experiments
 from inspirehep.dojson.utils import strip_empty_values
-
-
-def test_address_from_marcxml__111_c():
-    snippet = (
-        '<record>'
-        '  <datafield tag="111" ind1=" " ind2=" ">'
-        '    <subfield code="c">Austin, Tex.</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    expected = [
-        {
-            'country_code': 'US',
-            'state': 'US-TX',
-            'original_address': 'Austin, Tex.'
-        }
-    ]
-    result = strip_empty_values(conferences.do(create_record(snippet)))
-
-    assert expected == result['address']
-
-
-def test_address_from_multiple_marcxml__111_c():
-    snippet = (
-        '<record>'
-        '  <datafield tag="111" ind1=" " ind2=" ">'
-        '    <subfield code="c">Austin, Tex.</subfield>'
-        '  </datafield>'
-        '  <datafield tag="111" ind1=" " ind2=" ">'
-        '    <subfield code="c">Den Haag, Nederlands</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    expected = [
-        {
-            'country_code': 'US',
-            'state': 'US-TX',
-            'original_address': 'Austin, Tex.'
-        },
-        {
-            'country_code': 'NL',
-            'original_address': 'Den Haag, Nederlands'
-        },
-    ]
-    result = strip_empty_values(conferences.do(create_record(snippet)))
-
-    assert expected == result['address']
-
-
-def test_address_from_marcxml__111_multiple_c():
-    snippet = (
-        '<record>'
-        '  <datafield tag="111" ind1=" " ind2=" ">'
-        '    <subfield code="c">Austin, Tex.</subfield>'
-        '    <subfield code="c">Den Haag, Nederlands</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    expected = [
-        {
-            'country_code': 'US',
-            'state': 'US-TX',
-            'original_address': 'Austin, Tex.'
-        },
-        {
-            'country_code': 'NL',
-            'original_address': 'Den Haag, Nederlands'
-        }
-    ]
-    result = strip_empty_values(conferences.do(create_record(snippet)))
-
-    assert expected == result['address']
 
 
 def test_contact_details_from_marcxml_270_single_p_single_m():
@@ -119,7 +44,7 @@ def test_contact_details_from_marcxml_270_single_p_single_m():
             'email': 'lindner@mpi-hd.mpg.de',
         },
     ]
-    result = strip_empty_values(conferences.do(create_record(snippet)))
+    result = strip_empty_values(experiments.do(create_record(snippet)))
 
     assert expected == result['contact_details']
 
@@ -141,7 +66,7 @@ def test_contact_details_from_marcxml_270_double_p_single_m():
             'email': 'lindner@mpi-hd.mpg.de',
         },
     ]
-    result = strip_empty_values(conferences.do(create_record(snippet)))
+    result = strip_empty_values(experiments.do(create_record(snippet)))
 
     assert expected == result['contact_details']
 
@@ -163,7 +88,7 @@ def test_contact_details_from_marcxml_270_single_p_double_m():
             'name': 'Manfred Lindner'
         },
     ]
-    result = strip_empty_values(conferences.do(create_record(snippet)))
+    result = strip_empty_values(experiments.do(create_record(snippet)))
 
     assert expected == result['contact_details']
 
@@ -190,6 +115,6 @@ def test_contact_details_from_multiple_marcxml_270():
             'name': 'Wynton Marsalis',
         },
     ]
-    result = strip_empty_values(conferences.do(create_record(snippet)))
+    result = strip_empty_values(experiments.do(create_record(snippet)))
 
     assert expected == result['contact_details']

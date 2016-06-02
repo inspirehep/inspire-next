@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import six
+
 from dojson import utils
 
 from inspirehep.utils.dedupers import dedupe_list_of_dicts
@@ -62,13 +64,17 @@ def alternative_titles(self, key, value):
     return value.get('a')
 
 
-@conferences.over('contact_person', '^270')
+@conferences.over('contact_details', '^270')
 @utils.for_each_value
-def contact_person(self, key, value):
-    """Contact person."""
-    if value.get('m'):
-        self['contact_email'] = value.get('m')
-    return value.get('p')
+def contact_details(self, key, value):
+    """Contact details."""
+    name = value.get('p')
+    email = value.get('m')
+
+    return {
+        'name': name if isinstance(name, six.string_types) else None,
+        'email': email if isinstance(email, six.string_types) else None,
+    }
 
 
 @conferences.over('field_code', '^65017')
