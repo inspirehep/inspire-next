@@ -6,6 +6,11 @@
           "title": "Url of the record",
           "$ref": "json_reference.json"
         },
+        "address": {
+            "type": "array",
+            "items": {"$ref": "elements/address.json"},
+            "uniqueItems": true
+        },
         "closed_date": {
             "format": "date",
             "title": "Date when the job was closed",

@@ -29,6 +29,7 @@ from dojson import utils
 from inspirehep.utils.dedupers import dedupe_list_of_dicts
 
 from ..model import conferences
+from ...utils.geo import parse_conference_address
 
 
 @conferences.over('acronym', '^111')
@@ -38,10 +39,19 @@ def acronym(self, key, value):
     self['date'] = value.get('d')
     self['opening_date'] = value.get('x')
     self['closing_date'] = value.get('y')
+
     self['cnum'] = value.get('g')
-    self['place'] = value.get('c')
+
     self['subtitle'] = value.get('b')
     self['title'] = value.get('a')
+
+    if value.get('c'):
+        self.setdefault('address', [])
+        raw_addresses = utils.force_list(value.get('c'))
+        for raw_address in raw_addresses:
+            address = parse_conference_address(raw_address)
+            self['address'].append(address)
+
     return utils.force_list(value.get('e'))
 
 

@@ -12,40 +12,9 @@
             "type": "array"
         },
         "address": {
-            "items": {
-                "properties": {
-                    "address": {
-                        "description": "Street etc, city with postal code + additions (native language) FIXME: isn't postal code redundant?",
-                        "title": "Address",
-                        "type": "array"
-                    },
-                    "city": {
-                        "title": "City",
-                        "type": "string"
-                    },
-                    "state_province": {
-                        "title": "State or Province",
-                        "type": "string"
-                    },
-                    "country": {
-                        "description": "FIXME can't we derive this from country_code?",
-                        "string": "Country name",
-                        "type": "string"
-                    },
-                    "postal_code": {
-                        "title": "Postal code",
-                        "type": "array"
-                    },
-                    "country_code": {
-                        "title": "Country code",
-                        "type": "string"
-                    }
-                },
-                "title": "Address",
-                "type": "object"
-            },
-            "title": "Addresses",
-            "type": "array"
+            "type": "array",
+            "items": {"$ref": "elements/address.json"},
+            "uniqueItems": true
         },
         "content_classification": {
             "items": {

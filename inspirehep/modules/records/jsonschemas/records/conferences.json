@@ -10,6 +10,11 @@
             "title": "Conference acronym",
             "type": "array"
         },
+        "address": {
+            "type": "array",
+            "item": {"$ref": "elements/address.json"},
+            "uniqueItems": true
+        },
         "alternative_titles": {
             "items": {
                 "title": "Alternative title",
