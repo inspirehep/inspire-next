@@ -71,30 +71,31 @@
             });
           },
 
-          setBatchDecision: function (selected_records, decision) {
-
-            var object_ids = $.map(selected_records, function (record) {
-              return record["_id"];
-            });
-
-            alert(object_ids.length + ' records being ' + decision);
+          setBatchDecision: function (records, selected_record_ids, decision) {
 
             var data = JSON.stringify({
               'value': decision,
-              'object_ids': object_ids,
-              action: 'resolve'
+              'object_ids': selected_record_ids,
+              'action': 'resolve'
             });
 
             $http.post('/api/holdingpen/action/resolve', data).then(function (response) {
-              for (var record in selected_records) {
-                record._extra_data.user_action = decision;
-                record._extra_data._action = null;
+              // Should provide a quicker way to access the records
+              for (var record in records) {
+                if(selected_record_ids.indexOf(+records[record]._id) !== -1 ) {
+                  var record_obj = records[record]._source;
+                  record_obj._extra_data.user_action = decision;
+                  record_obj._extra_data._action = null;
+                }
               }
+
+              selected_record_ids = [];
 
             }).catch(function (value) {
               alert(value);
             });
           },
+
 
           deleteRecord: function (vm, workflowId) {
             $http.delete('/api/holdingpen/' + workflowId, vm.record).then(function (response) {

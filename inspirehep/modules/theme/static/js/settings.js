@@ -29,6 +29,7 @@ require.config({
     'angular-xeditable': 'node_modules/angular-xeditable/dist/js/xeditable',
     'angular-sanitize': 'node_modules/angular-sanitize/angular-sanitize',
     'angular-ui-bootstrap': 'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls',
+    'angular-hotkeys': 'node_modules/angular-hotkeys-light/angular-hotkeys-light',
     'author': 'js/authors/author',
     bootstrap: 'node_modules/bootstrap-sass/assets/javascripts/bootstrap',
     'bootstrap-datetimepicker': 'node_modules/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
@@ -83,6 +84,9 @@ require.config({
     'angular-xeditable': {
       deps: ['jquery', 'angular']
     },
+    'angular-hotkeys': {
+      deps: ['angular']
+    },
     bootstrap: {
       deps: ['jquery', 'jquery.ui']
     },
@@ -98,49 +102,42 @@ require.config({
       deps: ['d3wrapper'],
       exports: 'ImpactGraph'
     },
-
     'holding-pen-services': {
-      deps: ['angular']
+      deps: ['angular', 'holding-pen-controllers']
     },
-
     'holding-pen-controllers': {
       deps: ['angular']
     },
-
     'holding-pen-directives': {
       deps: ['angular', 'holding-pen-services']
     },
-
     'holding-pen-filters': {
       deps: ['angular']
     },
-
     'holding-pen-module': {
       deps: ['angular', 'holding-pen-directives', 'holding-pen-controllers', 'holding-pen-filters', 'angular-sanitize']
     },
-
-
     'inspirehep': {
       deps: ['angular', 'angular-sanitize', 'angular-ui-bootstrap', 'ngclipboard']
     },
     'inspirehep-search': {
-        deps: ['angular', 'angular-sanitize', 'angular-ui-bootstrap', 'ngclipboard']
+      deps: ['angular', 'angular-sanitize', 'angular-ui-bootstrap', 'ngclipboard']
     },
     'invenio-search': {
-        deps: ['angular']
+      deps: ['angular']
     },
     jquery: {
       exports: '$'
     },
     'ngclipboard': {
-        deps: ['angular', 'inspirehep-clipboard', 'clipboard']
+      deps: ['angular', 'inspirehep-clipboard', 'clipboard']
     },
     typeahead: {
       deps: ['jquery'],
       exports: 'Bloodhound'
     },
     'jquery.ui': {
-        deps: ['jquery']
+      deps: ['jquery']
     }
   }
 });

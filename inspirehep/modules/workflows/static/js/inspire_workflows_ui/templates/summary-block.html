@@ -1,0 +1,27 @@
+<div class="overview-item">
+  <div class="summary" ng-class="vm.class_name | lowercase">
+    <h4 ng-bind="vm.sectionTitle"></h4>
+    <h2 ng-bind="vm.total"></h2>
+  </div>
+
+  <ul class="statuses">
+    <li ng-repeat="(status,value) in vm.secondary_filters">
+      <a ng-href="/holdingpen/list/?workflow_name={{vm.primaryFilterValue}}&status={{status}}">
+        <div class="row-fluid" ng-class="status | lowercase">
+          <div class="col-md-1 col-sm-1">
+            <i class="fa" ng-class="{'fa-refresh': status === 'WAITING',
+          'fa-circle-o': status === 'HALTED',
+          'fa-exclamation-triangle': status === 'ERROR',
+          'fa-check': status === 'COMPLETED'}"></i>
+          </div>
+          <div class="col-md-8 col-sm-8 status-label" ng-bind="status | lowercase"></div>
+
+          <div class="col-md-2 col-sm-2" ng-bind="{{value}}">
+                {{added=true;""}}
+          </div>
+
+        </div>
+      </a>
+    </li>
+  </ul>
+</div>

@@ -29,7 +29,10 @@
 
         $scope.BatchUtils = {
           setDecision: function (decision) {
-            HoldingPenRecordService.setBatchDecision($scope.vm.selected_records, decision)
+            HoldingPenRecordService.setBatchDecision(
+              $scope.vm.invenioSearchResults.hits.hits,
+              $scope.vm.selected_records,
+              decision)
           }
         }
       }
@@ -53,7 +56,8 @@
       function ($scope, HoldingPenRecordService) {
         $scope.Utils = {
           setDecision: function (decision) {
-            HoldingPenRecordService.setDecision($scope.record._source, $scope.record._id, decision)
+            HoldingPenRecordService.setDecision($scope.record._source,
+              $scope.record._id, decision)
           }
         }
       }
@@ -136,9 +140,55 @@
     };
   }
 
+  function holdingPenDashboardItem() {
+
+    var controller = ["$scope", "$http",
+      function ($scope, $http) {
+        $http.get('/api/holdingpen/?' + $scope.primaryFilterKey + '=' + $scope.primaryFilterValue)
+          .then(function (response) {
+            $scope.vm = $scope;
+            $scope.vm.total = response.data.hits.total;
+            $scope.vm.secondary_filters = {
+              'WAITING': 0,
+              'ERROR': 0,
+              'HALTED': 0,
+              'COMPLETED': 0
+            };
+
+            for (var bucket_idx in response.data.aggregations[$scope.secondaryFilter].buckets) {
+              var bucket = response.data.aggregations[$scope.secondaryFilter].buckets[bucket_idx];
+              $scope.vm.secondary_filters[bucket.key] = +bucket.doc_count;
+            }
+
+            $scope.vm.class_name = $scope.primaryFilterValue.toLowerCase().replace(" ", "-")
+
+          }).catch(function (value) {
+          console.error("Problem occurred when getting " + $scope.primary_filter_key);
+        });
+      }
+    ];
+
+    function templateUrl(element, attrs) {
+      return attrs.template;
+    }
+
+    return {
+      templateUrl: templateUrl,
+      restrict: 'AE',
+      scope: {
+        sectionTitle: '@sectionTitle',
+        primaryFilterKey: '@primaryFilterKey',
+        primaryFilterValue: '@primaryFilterValue',
+        secondaryFilter: '@secondaryFilter'
+      },
+      controller: controller
+    };
+  }
+
   angular.module('holdingpen.directives', [])
     .directive('holdingPenDecision', holdingPenDecision)
     .directive('holdingPen', holdingPenDetail)
-    .directive('holdingPenBatchDecision', holdingPenBatchDecision);
+    .directive('holdingPenBatchDecision', holdingPenBatchDecision)
+    .directive('holdingPenDashboardItem', holdingPenDashboardItem);
 
 })(angular);

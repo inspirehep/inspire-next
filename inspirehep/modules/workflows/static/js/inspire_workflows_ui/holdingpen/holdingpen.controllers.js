@@ -23,7 +23,7 @@
 
 (function (angular) {
 
-  function HoldingPenSelectionCtrl($scope) {
+  function HoldingPenSelectionCtrl($scope, Hotkeys) {
 
     $scope.vm.selected_records = [];
 
@@ -31,7 +31,6 @@
     $scope.toggleAll = toggleAll;
     $scope.isChecked = isChecked;
     $scope.allChecked = allChecked;
-
 
     function getItemIdx(id) {
       return $scope.vm.selected_records.indexOf(+id);
@@ -78,10 +77,19 @@
       $scope.vm.selected_records = [];
     }
 
+    var hotkey = Hotkeys.createHotkey({
+      key: 'ctrl+a',
+      callback: function () {
+        toggleAll();
+      }
+    });
+
+    Hotkeys.registerHotkey(hotkey);
+
     $scope.$on('invenio.search.success', reset);
   }
 
-  HoldingPenSelectionCtrl.$inject = ['$scope'];
+  HoldingPenSelectionCtrl.$inject = ['$scope', 'Hotkeys'];
 
   angular.module('holdingpen.controllers', [])
     .controller('HoldingPenSelectionCtrl', HoldingPenSelectionCtrl);

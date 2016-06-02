@@ -24,6 +24,7 @@
 (function (angular) {
 
   var invenioHoldingPen = angular.module("invenioHoldingPen", ['xeditable',
+    'fps.hotkeys',
     'holdingpen.services',
     'holdingpen.directives',
     'holdingpen.controllers',

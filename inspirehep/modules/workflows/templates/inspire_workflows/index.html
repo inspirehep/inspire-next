@@ -7,6 +7,13 @@
 {% endassets %}
 {%- endblock css %}
 
+{% block javascript %}
+{{ super() }}
+{% assets "inspirehep_holding_js" %}
+<script src="{{ ASSET_URL }}"></script>
+{% endassets %}
+{% endblock javascript %}
+
 
 {% block page_banner %}
 <div class="holding-page-header">
@@ -20,91 +27,60 @@
 
 {%- block body -%}
 
-<div class="container-fluid">
+<div class="container-fluid" id="holding-pen">
   <h3 class="text-center header-text">
     OVERVIEW
   </h3>
 
   <div class="row overview-container">
     <div class="col-md-3 col-sm-6">
-      <div class="overview-item">
 
-        <div class="summary authors">
-          <h4>New Author Submissions</h4>
-          <h2>134</h2>
-          <p><i class="fa fa-caret-up"></i> 22% increase</p>
-        </div>
-
-         {% set status_items = [
-          {'type': 'New Author', 'name': 'WAITING', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
-          {'type': 'New Author', 'name': 'ERROR', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 0},
-          {'type': 'New Author', 'name': 'HALTED', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 0},
-          {'type': 'New Author', 'name': 'COMPLETED', 'icon': 'fa-circle', 'color': 'done', 'count': 2}
-        ] %}
-        {% include "inspire_workflows/components/dashboard_status_widget.html" %}
-
+      <holding-pen-dashboard-item
+        template="{{url_for('static', filename='js/inspire_workflows_ui/templates/summary-block.html')}}"
+        primary_filter_key="workflow_name"
+        primary_filter_value="New Author"
+        secondary_filter="status"
+        section-title="New Authors">
+      </holding-pen-dashboard-item>
 
       </div>
-    </div>
 
     <div class="col-md-3 col-sm-6">
-      <div class="overview-item">
-        <div class="summary authors-update">
-          <h4>New Author Updates</h4>
-          <h2>12</h2>
-          <p><i class="fa fa-caret-up"></i> 12% increase</p>
-        </div>
 
+      <holding-pen-dashboard-item
+        template="{{url_for('static', filename='js/inspire_workflows_ui/templates/summary-block.html')}}"
+        primary_filter_key="workflow_name"
+        primary_filter_value="Author Update"
+        secondary_filter="status"
+        section-title="New Author Updates">
+      </holding-pen-dashboard-item>
 
-        {% set status_items = [
-          {'type': 'Author Update', 'name': 'WAITING', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
-          {'type': 'Author Update', 'name': 'ERROR', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
-          {'type': 'Author Update', 'name': 'HALTED', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
-          {'type': 'Author Update', 'name': 'COMPLETED', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
-        ] %}
-        {% include "inspire_workflows/components/dashboard_status_widget.html" %}
-
-      </div>
     </div>
 
     <div class="col-md-3 col-sm-6">
       <div class="overview-item">
 
-        <div class="summary literature">
-          <h4>New Literature Submissions</h4>
-          <h2>134</h2>
-          <p><i class="fa fa-caret-up"></i> 22% increase</p>
-        </div>
-
-        {% set status_items = [
-          {'type': 'Literature Suggestion', 'name': 'WAITING', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
-          {'type': 'Literature Suggestion', 'name': 'ERROR', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
-          {'type': 'Literature Suggestion', 'name': 'HALTED', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
-          {'type': 'Literature Suggestion', 'name': 'COMPLETED', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
-        ] %}
-        {% include "inspire_workflows/components/dashboard_status_widget.html" %}
+      <holding-pen-dashboard-item
+        template="{{url_for('static', filename='js/inspire_workflows_ui/templates/summary-block.html')}}"
+        primary_filter_key="workflow_name"
+        primary_filter_value="Literature Suggestion"
+        secondary_filter="status"
+        section-title="New Literature Submissions">
+      </holding-pen-dashboard-item>
 
       </div>
     </div>
 
     <div class="col-md-3 col-sm-6">
-      <div class="overview-item">
-        <div class="summary arxiv">
-          <h4>New arXiv Submissions</h4>
-           <h2>2,134</h2>
-          <p><i class="fa fa-caret-up"></i> 42% increase</p>
-        </div>
 
-          {% set status_items = [
-          {'type': 'arXiv', 'name': 'WAITING', 'icon': 'fa-refresh', 'color': 'inprogress', 'count': 10},
-          {'type': 'arXiv', 'name': 'ERROR', 'icon': 'fa-exclamation-triangle', 'color': 'error', 'count': 10},
-          {'type': 'arXiv', 'name': 'HALTED', 'icon': 'fa-circle-o', 'color': 'attention', 'count': 10},
-          {'type': 'arXiv', 'name': 'COMPLETED', 'icon': 'fa-circle', 'color': 'done', 'count': 10}
-        ] %}
-        {% include "inspire_workflows/components/dashboard_status_widget.html" %}
+      <holding-pen-dashboard-item
+        template="{{url_for('static', filename='js/inspire_workflows_ui/templates/summary-block.html')}}"
+        primary_filter_key="workflow_name"
+        primary_filter_value="arXiv"
+        secondary_filter="status"
+        section-title="arxiv harvests">
+      </holding-pen-dashboard-item>
 
-      </div>
-    </div>
   </div>
 </div>
 <div class="clearfix"></div>

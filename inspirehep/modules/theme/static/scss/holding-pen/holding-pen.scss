@@ -1,5 +1,4 @@
 @import "../base/variables";
-
 @import "../node_modules/angular-xeditable/dist/css/xeditable.css";
 
 html, body {
@@ -128,11 +127,11 @@ $hp_table_bg: #243547;
         padding-left: 10px;
       }
 
-      &.authors {
+      &.new-author {
         background-color: $pete-river;
       }
 
-      &.authors-update {
+      &.author-update {
         background-color: $belize-hole;
       }
 
@@ -141,7 +140,7 @@ $hp_table_bg: #243547;
         color: $midnight-blue !important;
       }
 
-      &.literature {
+      &.literature-suggestion {
         background-color: $carrot;
       }
     }
@@ -151,6 +150,10 @@ $hp_table_bg: #243547;
 
       li {
         margin-bottom: 5px;
+      }
+
+      .status-label {
+        text-transform: capitalize;
       }
     }
   }
@@ -250,11 +253,11 @@ $hp_table_bg: #243547;
     @include facet-colors($concrete);
   }
 
-  .attention {
+  .attention, .halted {
     @include facet-colors($sun-flower);
   }
 
-  .done {
+  .done, .completed {
     @include facet-colors($green-sea);
   }
 

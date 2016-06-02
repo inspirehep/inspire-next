@@ -34,6 +34,7 @@ details_js = NpmBundle(
     output="gen/inspire-workflows.details.%(version)s.js",
     filters=RequireJSFilter(exclude=[_js]),
     npm={
-        "angular-xeditable": "~0.1.12"
+        "angular-xeditable": "~0.1.12",
+        "angular-hotkeys-light": "~1.1.0"
     }
 )
