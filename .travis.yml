@@ -42,6 +42,8 @@ python:
   - "2.7"
 
 before_install:
+  - sudo sh -c 'echo "deb [arch=amd64] https://apt.dockerproject.org/repo ubuntu-trusty main" >> /etc/apt/sources.list'
+  - sudo apt-get update
   - travis_retry pip install coveralls
   # List available docker versions.
   - apt-cache madison docker-engine
