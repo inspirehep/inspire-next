@@ -27,6 +27,10 @@ import re
 import zlib
 import click
 
+from jsonschema import ValidationError
+
+from six import text_type
+
 from celery.utils.log import get_task_logger
 
 from collections import Counter
@@ -47,19 +51,18 @@ from inspirehep.dojson.jobs import jobs
 from inspirehep.dojson.journals import journals
 from inspirehep.dojson.processors import _collection_in_record
 
-from celery import shared_task
+from celery import group, shared_task
 
-# from invenio_ext.es import es
 from invenio_db import db
 
+from invenio_indexer.api import RecordIndexer, _record_to_index
 from invenio_pidstore.models import PersistentIdentifier, NoResultFound
 from invenio_records import Record
 from invenio_search import current_search_client
 from invenio_search.utils import schema_to_index
 
-from six import text_type
-
 from .models import InspireProdRecords
+from ..pidstore.minters import inspire_recid_minter
 
 
 logger = get_task_logger(__name__)
@@ -122,8 +125,6 @@ def migrate_broken_records(broken_output=None, dry_run=False):
 @shared_task(ignore_result=True)
 def migrate(source, broken_output=None, dry_run=False, wait_for_results=False):
     """Main migration function."""
-    from celery.task.sets import TaskSet
-
     invenio_celery = current_app.extensions['invenio-celery']
 
     if source.endswith('.gz'):
@@ -137,7 +138,7 @@ def migrate(source, broken_output=None, dry_run=False, wait_for_results=False):
         # the migrate_chunk tasks to complete before it finishes).
         tasks = []
         migrate_chunk.ignore_result = False
-    # from invenio_celery.utils import disable_queue, enable_queue
+
     invenio_celery.disable_queue("celery")
 
     for i, chunk in enumerate(chunker(split_stream(fd), CHUNK_SIZE)):
@@ -151,7 +152,7 @@ def migrate(source, broken_output=None, dry_run=False, wait_for_results=False):
             migrate_chunk.delay(chunk, chunk_broken_output, dry_run)
 
     if wait_for_results:
-        job = TaskSet(tasks=tasks)
+        job = group(tasks)
         result = job.apply_async()
         invenio_celery.enable_queue("celery")
         result.join()
@@ -184,13 +185,15 @@ def continuous_migration():
                         errors, dummy = create_record(
                             record, force=True, validation=True
                         )
-                        logger.info("Successfully migrated record {}".format(recid))
+                        logger.info(
+                            "Successfully migrated record {}".format(recid))
                         prod_record.successful = True
                         prod_record.valid = not errors
                         prod_record.errors = errors
                         db.session.merge(prod_record)
                 except Exception as err:
-                    logger.error("Error when migrating record {}".format(recid))
+                    logger.error(
+                        "Error when migrating record {}".format(recid))
                     logger.exception(err)
                     prod_record.successful = False
                     db.session.merge(prod_record)
@@ -199,96 +202,65 @@ def continuous_migration():
         db.session.close()
 
 
-# @shared_task(ignore_result=False, compress='zlib', acks_late=True)
-# def migrate_chunk(chunk, broken_output=None, dry_run=False):
-#     from flask_sqlalchemy import models_committed
-#     from invenio_records.receivers import record_modification
-#     from invenio_records.tasks.index import get_record_index
-#     # from invenio.base.globals import cfg
-#     from elasticsearch.helpers import bulk as es_bulk
-#     # from inspirehep.modules.citations.receivers import (
-#     #     catch_citations_insert,
-#     #     add_citation_count_on_insert_or_update,
-#     #     catch_citations_update
-#     # )
-#     # from invenio_records.signals import before_record_index, after_record_insert
-#     # models_committed.disconnect(record_modification)
-#     # after_record_insert.disconnect(catch_citations_insert)
-#     # before_record_index.disconnect(add_citation_count_on_insert_or_update)
-#     # before_record_index.disconnect(catch_citations_update)
+def create_index_op(record):
+    index, doc_type = _record_to_index(record)
 
-#     records_to_index = []
-#     try:
-#         for raw_record in chunk:
-#             json = None
-#             record = marc_create_record(raw_record, keep_singletons=False)
-#             recid = int(record['001'][0])
-#             prod_record = InspireProdRecords(recid=recid)
-#             prod_record.marcxml = raw_record
-#             try:
-#                 with db.session.begin_nested():
-#                     errors, json = create_record(
-#                         record, force=True,
-#                         dry_run=dry_run, validation=True
-#                     )
-#                     prod_record.valid = not errors
-#                     prod_record.errors = errors
-#                     index = get_record_index(json) or \
-#                         cfg['SEARCH_ELASTIC_DEFAULT_INDEX']
-#                     before_record_index.send(recid, json=json, index=index)
-#                     json.update({'_index': index, '_type': 'record',
-#                                  '_id': recid, 'citation_count': 0})
-#                     records_to_index.append(json)
-#                     prod_record.successful = True
-#                     db.session.merge(prod_record)
-#             except Exception as err:
-#                 logger.error("ERROR with record {} and json {}".format(recid, json))
-#                 logger.exception(err)
-#                 prod_record.successful = False
-#                 db.session.merge(prod_record)
-#         logger.info("Committing chunk")
-#         db.session.commit()
-#         logger.info("Sending chunk to elasticsearch")
-#         es_bulk(es, records_to_index, request_timeout=60)
-#     finally:
-#         # models_committed.connect(record_modification)
-#         # after_record_insert.connect(catch_citations_insert)
-#         # before_record_index.connect(add_citation_count_on_insert_or_update)
-#         # before_record_index.connect(catch_citations_update)
-#         db.session.close()
+    return {
+        '_op_type': 'index',
+        '_index': index,
+        '_type': doc_type,
+        '_id': str(record.id),
+        '_version': record.revision_id,
+        '_version_type': 'external_gte',
+        '_source': RecordIndexer._prepare_record(record, index, doc_type),
+    }
+
 
 @shared_task(ignore_result=False, compress='zlib', acks_late=True)
 def migrate_chunk(chunk, broken_output=None, dry_run=False):
-    from invenio_indexer.api import RecordIndexer
-
-    from ..pidstore.minters import inspire_recid_minter
-
-    indexer = RecordIndexer()
-
     index_queue = []
-    for raw_record in chunk:
-        record = marc_create_record(raw_record, keep_singletons=False)
-        json_record = create_record(record)
-        if '$schema' in json_record:
-            json_record['$schema'] = url_for(
-                'invenio_jsonschemas.get_schema',
-                schema_path="records/{0}".format(json_record['$schema'])
-            )
-        rec_uuid = str(Record.create(json_record, id_=None).id)
+    try:
+        for raw_record in chunk:
+            record = marc_create_record(raw_record, keep_singletons=False)
+            recid = int(record['001'])
+            if not dry_run:
+                prod_record = InspireProdRecords(recid=recid)
+                prod_record.marcxml = raw_record
+            json_record = create_record(record)
+            if dry_run:
+                continue
+            with db.session.begin_nested():
+                try:
+                    record = Record.create(json_record, id_=None)
+                except ValidationError as e:
+                    # Invalid record, will not get indexed
+                    errors = "ValidationError: Record {0}: {1}".format(
+                        record.get('control_number'), e
+                    )
+                    current_app.logger.warning(errors)
+                    prod_record.valid = False
+                    prod_record.errors = errors
+                    db.session.merge(prod_record)
+                    continue
 
-        # Create persistent identifier.
-        pid = inspire_recid_minter(rec_uuid, json_record)
+                index_queue.append(create_index_op(record))
 
-        index_queue.append(pid.object_uuid)
+                # Create persistent identifier.
+                inspire_recid_minter(str(record.id), json_record)
 
+                prod_record.valid = True
+                db.session.merge(prod_record)
         db.session.commit()
+    finally:
+        db.session.close()
 
-    # Request record indexing
-    for i in index_queue:
-        indexer.index_by_id(i)
-
-    # Send task to migrate files.
-    return rec_uuid
+    req_timeout = current_app.config['INDEXER_BULK_REQUEST_TIMEOUT']
+    es_bulk(
+        current_search_client,
+        index_queue,
+        stats_only=True,
+        request_timeout=req_timeout,
+    )
 
 
 @shared_task()
@@ -298,7 +270,8 @@ def add_citation_counts(chunk_size=500, request_timeout=40):
     def get_records_to_update_generator(citation_lookup):
         for recid, citation_count in citation_lookup.iteritems():
             try:
-                uuid = PersistentIdentifier.query.filter(PersistentIdentifier.object_type == "rec", PersistentIdentifier.pid_value == str(recid)).one().object_uuid
+                uuid = PersistentIdentifier.query.filter(
+                    PersistentIdentifier.object_type == "rec", PersistentIdentifier.pid_value == str(recid)).one().object_uuid
                 yield {'_op_type': 'update',
                        '_index': index,
                        '_type': doc_type,
@@ -355,13 +328,12 @@ def add_citation_counts(chunk_size=500, request_timeout=40):
         raise_on_error=True,
         request_timeout=request_timeout,
         stats_only=True)
-    click.echo("... DONE: {} records updated with success. {} failures.".format(success, failed))
+    click.echo("... DONE: {} records updated with success. {} failures.".format(
+        success, failed))
 
 
 def create_record(record, force=True, dry_run=False):
     """Create record from marc21 model."""
-    errors = ""
-
     if _collection_in_record(record, 'institution'):
         json = institutions.do(record)
     elif _collection_in_record(record, 'experiment'):
@@ -378,8 +350,11 @@ def create_record(record, force=True, dry_run=False):
     else:
         json = hep.do(record)
 
-    if dry_run:
-        return errors, json
+    if '$schema' in json:
+        json['$schema'] = url_for(
+            'invenio_jsonschemas.get_schema',
+            schema_path="records/{0}".format(json['$schema'])
+        )
 
     return json
     # control_number = json.get('control_number', json.get('recid'))
