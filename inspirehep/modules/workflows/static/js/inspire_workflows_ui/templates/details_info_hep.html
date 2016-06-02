@@ -1,0 +1,29 @@
+<div class="detail-panel">
+  <h4 class="record-title"
+      ng-bind="record.metadata.titles[0].title"
+      editable-text="record.metadata.titles[0].title"
+      e-ng-change="Utils.registerUpdateEvent()"></h4>
+  <ul class="record-authors">
+    <li ng-repeat="author in record.metadata.authors">
+      <span ng-bind="author.full_name"></span><span
+      ng-if="!$last">, </span>
+    </li>
+  </ul>
+  <p class="record-abstract"
+     ng-bind="record.metadata.abstracts[0].value"
+     editable-textarea="record.metadata.abstracts[0].value"
+     e-ng-change="Utils.registerUpdateEvent()">
+  </p>
+
+  <div class="row">
+    <div class="col-md-2 col-sm-4">
+      <p class="font-bolder">License</p>
+    </div>
+    <div class="col-md-10 col-sm-8">
+      <span ng-bind="record.metadata.license[0].url"></span> <span
+      class="font-bolder text-muted"
+      ng-if="record.metadata.license[0].imposing"> imposed by
+          <span ng-bind="record.metadata.license[0].imposing"></span></span>
+    </div>
+  </div>
+</div>

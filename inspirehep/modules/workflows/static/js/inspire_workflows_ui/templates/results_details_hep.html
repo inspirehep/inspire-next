@@ -1,0 +1,24 @@
+<h4 class="custom-h">
+  <a class="title" ng-if="record._source.metadata.titles"
+     ng-href="/holdingpen/{{record._id}}"
+     ng-bind='record._source.metadata.titles[0].title'></a>
+  <a class="title" ng-if="record._source.metadata.name"
+     ng-href="/holdingpen/{{record._id}}"
+     ng-bind='record.metadata.given_names + record._source.metadata.family_name'></a>
+</h4>
+
+<div class="authors" ng-if="record._source.metadata.authors">
+    <span ng-repeat="author in record._source.metadata.authors">
+      {{author.full_name}}<span ng-if="!$last">, </span>
+    </span>
+</div>
+
+<div class="abstract" ng-if='record._source.metadata.abstracts.length > 0'>
+  <a href="" ng-click='showAbstract=!showAbstract'>
+    {{ showAbstract ? 'Hide abstract' : 'Show abstract'}}
+  </a>
+  <div ng-show='showAbstract'
+       ng-bind-html='record._source.metadata.abstracts | abstract'
+       class="col-md-12">
+  </div>
+</div>

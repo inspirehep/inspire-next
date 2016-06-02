@@ -1,0 +1,27 @@
+<div class="detail-panel">
+  <div class="references">
+    <h4>Insitution History</h4>
+
+    <div class="row reference-header">
+      <div class="col-md-4 col-sm-4">Insitution</div>
+      <div class="col-md-2 col-sm-3">Rank</div>
+      <div class="col-md-1 col-sm-1">Start Date</div>
+      <div class="col-md-3 col-sm-2">End Date</div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="reference-body">
+      <div class="row reference-row"
+           ng-repeat="position in record.metadata.positions">
+        <div class="col-md-4 col-sm-4"
+             ng-bind="position.institution.name"></div>
+        <div class="col-md-2 col-sm-3"
+             ng-bind="position.rank"></div>
+        <div class="col-md-1 col-sm-1"
+             ng-bind="position.start_date"></div>
+        <div class="col-md-3 col-sm-2"
+             ng-bind="position.end_date"></div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+<div class="detail-panel">
+  <div class="references">
+    <h4>References</h4>
+
+    <div class="row reference-header">
+      <div class="col-md-1 col-sm-1"></div>
+      <div class="col-md-4 col-sm-4">Authors</div>
+      <div class="col-md-2 col-sm-3">Journal Info</div>
+      <div class="col-md-1 col-sm-1">Year</div>
+      <div class="col-md-3 col-sm-2">Misc</div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="reference-body">
+      <div class="row reference-row"
+           ng-repeat="reference in record.metadata.references">
+        <div class="col-md-1 col-sm-1"
+             ng-bind="reference.number"></div>
+        <div class="col-md-4 col-sm-4"
+             ng-bind="reference.authors"></div>
+        <div class="col-md-2 col-sm-3"
+             ng-bind="reference.journal_pubnote"></div>
+        <div class="col-md-1 col-sm-1"
+             ng-bind="reference.year"></div>
+        <div class="col-md-3 col-sm-2"
+             ng-bind="reference.misc"></div>
+      </div>
+    </div>
+  </div>
+</div>

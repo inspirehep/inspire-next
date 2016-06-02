@@ -37,55 +37,25 @@
     <div class="col-md-12">
       <div class="row">
         <div class="col-md-1">
-                <span id='checkbox-parent'>
-                  <input type="checkbox" class="checkbox-results"
-                         ng-click="toggleSelection(record._id)"
-                  ng-checked="isChecked(record._id)"/>
-                </span>
+            <span id='checkbox-parent'>
+              <input type="checkbox" class="checkbox-results"
+                     ng-click="toggleSelection(record._id)"
+              ng-checked="isChecked(record._id)"/>
+            </span>
         </div>
-        <div class="col-md-4">
-          <h4 class="custom-h">
-            <a class="title" ng-if="record._source.metadata.titles"
-               ng-href="/holdingpen/{{record._id}}"
-               ng-bind='record._source.metadata.titles[0].title'></a>
-            <a class="title" ng-if="record._source.metadata.name"
-               ng-href="/holdingpen/{{record._id}}"
-               ng-bind='record.metadata.given_names + record._source.metadata.family_name'></a>
-          </h4>
 
-          <div class="authors" ng-if="record._source.metadata.authors">
-              <span ng-repeat="author in record._source.metadata.authors">
-                {{author.full_name}}<span ng-if="!$last">, </span>
-              </span>
-          </div>
+        <div class="col-md-4" ng-if="record._source._workflow.data_type !== 'authors'">
+          <holding-pen-template-handler
+            record="record"
+            template="/static/js/inspire_workflows_ui/templates/results_details_hep.html">
+          </holding-pen-template-handler>
+        </div>
 
-          <div class="institution-details"
-               ng-if="record.metadata.institution_history[0].name != ''">
-            <p
-              ng-repeat="institution in record._source.metadata.institution_history"
-              ng-class="{current: institution.current}"
-              ng-bind="{{institution.name}}">
-            </p>
-          </div>
-          <div class="institution-details"
-               ng-if="record.metadata.institution_history[0].name === ''
-               && record._source.metadata.institution_history.length === 1">
-            <p>No institution information supplied.
-            </p>
-          </div>
-
-
-          <div class="abstract"
-               ng-if='record._source.metadata.abstracts.length > 0'>
-            <a href="" ng-click='showAbstract=!showAbstract'>
-              {{ showAbstract ? 'Hide abstract' : 'Show abstract'}}
-            </a>
-            <div ng-show='showAbstract'
-                 ng-bind-html='record._source.metadata.abstracts | abstract'
-                 class="col-md-12">
-            </div>
-
-          </div>
+        <div class="col-md-4" ng-if="record._source._workflow.data_type === 'authors'">
+          <holding-pen-template-handler
+            record="record"
+            template="/static/js/inspire_workflows_ui/templates/results_details_authors.html">
+          </holding-pen-template-handler>
         </div>
 
         <div class="col-md-2 pad-top-10">
@@ -111,49 +81,18 @@
         </div>
 
         <div class="col-md-3 decision">
-
-          <div class="automatic-decision"><p class="small-text">Automatic Decision:
-            <span ng-class="{'accept_core': record._source._extra_data.relevance_prediction.decision == 'CORE',
-              'accept': record._source._extra_data.relevance_prediction.decision == 'Non-CORE',
-              'reject': record._source._extra_data.relevance_prediction.decision == 'Rejected'}">
-            <span class="font-bolder"
-                  ng-bind="record._source._extra_data.relevance_prediction.decision"></span>
-            <span
-              ng-bind="(record._source._extra_data.relevance_prediction.max_score | number : 2)"></span>
-              </span>
-            </p>
-          </div>
-
-          <div ng-if="!record._source._extra_data.user_action">
+          <div ng-if="record._source._workflow.data_type === 'hep'">
             <holding-pen-decision record="record"
-                      template="/static/js/inspire_workflows_ui/templates/action-decision.html">
+                      template="/static/js/inspire_workflows_ui/templates/results_decision_hep.html">
             </holding-pen-decision>
           </div>
 
-
-          <div ng-if="record._source._extra_data.user_action">
-            <span ng-class="record._source._extra_data.user_action"
-                      ng-switch="record._source._extra_data.user_action">
-                  <span ng-switch-when="reject">Rejected</span>
-                  <span ng-switch-when="accept">Accepted as Non-CORE</span>
-                  <span ng-switch-when="accept_core">Accepted as CORE</span>
-                </span>
-          </div>
-
-          <div class="clearfix"></div>
-          <br/>
-
-
-          <p>Filtered keywords include:</p>
-          <div class="small-text">
-            {{record._extra_data.classifier_results}}
-              <span
-                ng-repeat="(key,value) in record._source._extra_data.classifier_results.complete_output['Filtered Core keywords']" ng-if="$index < 4">
-                  <span ng-bind="key"></span><span ng-if="!$last">,</span>
-              </span>
+           <div ng-if="record._source._workflow.data_type === 'authors'">
+            <holding-pen-decision record="record"
+                      template="/static/js/inspire_workflows_ui/templates/results_decision_author.html">
+            </holding-pen-decision>
           </div>
         </div>
-
       </div>
     </div>
   </div>

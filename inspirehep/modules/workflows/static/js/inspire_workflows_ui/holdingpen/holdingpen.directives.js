@@ -109,6 +109,12 @@
             alert('Showing history');
           },
 
+          registerUpdateEvent: function () {
+            $scope.vm.update_ready = true;
+            $scope.vm.saved = false;
+            $scope.$emit();
+          },
+
           resumeWorkflow: function () {
             HoldingPenRecordService.resumeWorkflow($scope.vm, $scope.workflowId)
           },
@@ -131,6 +137,20 @@
         workflowId: '@workflowId'
       },
       controller: controller
+    };
+  }
+
+  function holdingPenTemplateHandler() {
+    function templateUrl(element, attrs) {
+      return attrs.template;
+    }
+
+    return {
+      templateUrl: templateUrl,
+      restrict: 'AE',
+      scope: {
+        record: '=record'
+      }
     };
   }
 
@@ -183,6 +203,7 @@
     .directive('holdingPenDecision', holdingPenDecision)
     .directive('holdingPen', holdingPenDetail)
     .directive('holdingPenBatchDecision', holdingPenBatchDecision)
-    .directive('holdingPenDashboardItem', holdingPenDashboardItem);
+    .directive('holdingPenDashboardItem', holdingPenDashboardItem)
+    .directive('holdingPenTemplateHandler', holdingPenTemplateHandler);
 
 })(angular);

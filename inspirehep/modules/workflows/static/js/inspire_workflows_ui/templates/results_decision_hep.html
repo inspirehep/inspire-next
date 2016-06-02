@@ -1,0 +1,47 @@
+<div class="automatic-decision"><p class="small-text">Automatic Decision:
+      <span ng-class="{'accept_core': record._source._extra_data.relevance_prediction.decision == 'CORE',
+        'accept': record._source._extra_data.relevance_prediction.decision == 'Non-CORE',
+        'reject': record._source._extra_data.relevance_prediction.decision == 'Rejected'}">
+      <span class="font-bolder"
+            ng-bind="record._source._extra_data.relevance_prediction.decision"></span>
+      <span
+        ng-bind="(record._source._extra_data.relevance_prediction.max_score | number : 2)"></span>
+      </span>
+</p>
+</div>
+
+<div ng-if="!record._source._extra_data.user_action">
+  <button class="btn btn-danger"
+          ng-click="Utils.setDecision('reject')">Reject
+  </button>
+  <button class="btn btn-warning"
+          ng-click="Utils.setDecision('accept')">Accept
+  </button>
+  <button class="btn btn-success"
+          ng-click="Utils.setDecision('accept_core')">Core
+  </button>
+</div>
+
+
+<div ng-if="record._source._extra_data.user_action">
+    <span ng-class="record._source._extra_data.user_action"
+          ng-switch="record._source._extra_data.user_action">
+    <span ng-switch-when="reject">Rejected</span>
+    <span ng-switch-when="accept">Accepted as Non-CORE</span>
+    <span ng-switch-when="accept_core">Accepted as CORE</span>
+    </span>
+</div>
+
+<div class="clearfix"></div>
+<br/>
+
+
+<p>Filtered keywords include:</p>
+<div class="small-text">
+  {{record._extra_data.classifier_results}}
+  <span
+    ng-repeat="(key,value) in record._source._extra_data.classifier_results.complete_output['Filtered Core keywords']"
+    ng-if="$index < 4">
+    <span ng-bind="key"></span><span ng-if="!$last">,</span>
+  </span>
+</div>

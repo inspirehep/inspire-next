@@ -1,0 +1,57 @@
+<p class="automatic-decision">Automatic Decision: <span
+  ng-class="{'core': record._extra_data.relevance_prediction.decision == 'CORE',
+              'accept': record._extra_data.relevance_prediction.decision == 'Non-CORE',
+              'reject': record._extra_data.relevance_prediction.decision == 'Rejected'}"
+  ng-bind="record._extra_data.relevance_prediction.decision + ' ' + (record._extra_data.relevance_prediction.max_score | number : 2)"></span>
+</p>
+
+<div
+  ng-if="record._extra_data._action == 'hep_approval' && !ingestion_complete">
+  <button class="btn btn-danger"
+          ng-click="Utils.setDecision('reject')">Reject
+  </button>
+  <button class="btn btn-warning"
+          ng-click="Utils.setDecision('accept')">Accept
+  </button>
+  <button class="btn btn-success"
+          ng-click="Utils.setDecision('accept_core')">Core
+  </button>
+</div>
+
+<div
+  ng-if="record._extra_data._action == null || ingestion_complete"
+  class="text-muted">
+
+                <span ng-class="record._extra_data.user_action"
+                      ng-switch="record._extra_data.user_action">
+                  <span ng-switch-when="reject">Rejected</span>
+                  <span ng-switch-when="accept">Accepted as Non-CORE</span>
+                  <span ng-switch-when="accept_core">Accepted as CORE</span>
+                </span>
+
+  <p>No further actions available</p>
+</div>
+</div>
+
+<div class="clearfix"></div>
+<br/>
+<div class="decision-keywords">
+  <p>
+    {{Utils.keys(record._extra_data.classifier_results.complete_output['Core
+    keywords']).length}} core keywords.
+    {{Utils.keys(record._extra_data.classifier_results.complete_output['Filtered
+    Core keywords']).length}} Filtered:
+
+  <div class="list">
+    <div class="row"
+         ng-repeat="(key,value) in record._extra_data.classifier_results.complete_output['Filtered Core keywords']">
+      <div class="col-md-9 col-sm-9 text-left"
+           ng-bind="key"></div>
+      <div class="col-md-3 col-sm-3 text-right"><span
+        class="label label-success"
+        ng-bind="value"></span>
+      </div>
+    </div>
+  </div>
+  </p>
+</div>

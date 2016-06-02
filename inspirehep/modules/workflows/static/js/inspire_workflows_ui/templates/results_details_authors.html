@@ -1,0 +1,19 @@
+<h4 class="custom-h">
+  <a class="title" ng-if="record._source.metadata.name"
+     ng-href="/holdingpen/{{record._id}}"
+     ng-bind='record._source.metadata.name.value'></a>
+</h4>
+
+<div class="institution-details">
+
+  <div class="row" ng-repeat="position in record._source.metadata.positions">
+    <div class="col-md-5">
+          <span ng-if="position.institution.name === ''">
+            No institution information supplied.
+          </span>
+      <span ng-bind="position.institution.name"></span>
+    </div>
+
+  </div>
+</div>
+

@@ -1,0 +1,22 @@
+<div class="detail-panel panel-300 keywords">
+  <h4>Keywords</h4>
+  <div class="keyword-list">
+    <div class="row"
+         ng-repeat="keyword in record._extra_data.keywords_prediction.keywords">
+      <div class="col-md-8 col-sm-8 keyword-name"
+           ng-bind="keyword[0]"></div>
+      <div class="col-md-2 col-sm-2 keyword-score"
+           ng-bind="keyword[1] | number : 4"></div>
+      <div class="col-md-2 col-sm-2 text-left">
+        <div class="onoffswitch">
+          <input type="checkbox" name="{{ keyword[0] }}"
+                 class="onoffswitch-checkbox"
+                 id="myonoffswitch-{{ $index }}"
+                 ng-checked="keyword[1] > 0.09">
+          <label class="onoffswitch-label"
+                 for="myonoffswitch-{{ $index }}"></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

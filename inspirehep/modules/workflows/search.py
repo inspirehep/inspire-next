@@ -40,8 +40,8 @@ def holdingpen_search_factory(self, search, **kwargs):
     search, urlkwargs = default_search_factory(self, search, **kwargs)
     includes = [
         'metadata.titles', 'metadata.abstracts', 'metadata.subject_terms',
-        'metadata.authors', 'metadata.name',
-        '_workflow', '_extra_data.relevance_prediction',
+        'metadata.authors', 'metadata.name', 'metadata.positions', 'metadata.acquisition_source',
+        'metadata.field_categories', '_workflow', '_extra_data.relevance_prediction',
         '_extra_data.user_action',
         '_extra_data.classifier_results.complete_output'
     ]
