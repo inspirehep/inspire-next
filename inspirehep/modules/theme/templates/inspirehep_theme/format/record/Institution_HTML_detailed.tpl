@@ -20,48 +20,31 @@
 {% extends "inspirehep_theme/format/record/Inspire_Default_HTML_detailed.tpl" %}
 
 {% block body %}
-  <div id="record-detailed-institution">
+<div id="record_content">
+<div class="record-detailed record-detailed-institution">
+  <div class="record-header record-header-institution">
     <div class="row">
       <div class="col-md-8" id="record-detailed-institution-information">
-        <h3>
-          {% if record['ICN'] %}
-            {% if record['ICN'] | is_list %}
-              {{ record['ICN'][0] }}
-              [Future INSPIRE ID:{{record['ICN'][0]}}]  
+        <h1 class='record-detailed-title'>
+          {% if record['institution'] %}
+            {% if record['institution'] | is_list %}
+              {{ record['institution'][0] }}
             {% else %}
-              {{ record['ICN'] }}
-              [Future INSPIRE ID:{{record['ICN']}}]  
+              {{ record['institution'] }}
             {% endif %}
           {% endif %}
-        </h3>
-
-        {% if record['institution'] | is_list %}
-             Institution: {{ record['institution'][0] }}
-        {% else %}
-             {{ record['institution'] }}
-        {% endif %}
-
-        {% if record['department'] | is_list %}
-             {{ record['department'][0] }}
-        {% else %}
-             {{ record['department']}}
-        {% endif %}
-        
-        {% if record['address'][0]['address'] | is_list %}
-          {{ record['address'][0]['address'] | join(', ') }},
-        {% else %}
-          {{ record['address'][0]['address'] }},
-        {% endif %}
-
-        {% for country in record['address'] %}
-          {% if 'country' in country %}
-           {{ country['country']}}
+        </h1>
+        <h2 class="record-detailed-subtitle">
+          {% if record['department'] | is_list %}
+            {{ record['department'][0] }}
           {% endif %}
-        {% endfor %}
+        </h2>
 
         {% if record['urls'] %}
           <div class="detailed-institution-information">
-            <a href="{{ record['urls'][0] }}">{{ record['urls'][0] }}</a>
+            {% for url in record['urls'] %}
+              <a href="{{ url['value'] }}">{{ url['value'] }}</a><br/>
+            {% endfor %}
           </div>
         {% endif %}
 
@@ -71,154 +54,229 @@
             {% for element in record['name_variants'] %}
               {% if 'source' not in element and 'value' in element %}
                 {% do name_var.append(element['value']) %}
-              {% endif %} 
-            {% endfor %}   
+              {% endif %}
+            {% endfor %}
             {% if name_var %}
-              <label>Name variants: </label>{{ name_var[0] | join(', ') }}
+              <label>Name variants:</label> {{ name_var[0] | join(', ') }}
             {% endif %}
-          </div>
-        {% endif %}
-
-        {% if record['historical_data'] %}
-          <div>
-            <label>Historical Data: </label>{{ record['historical_data'] | join(', ') }}
           </div>
         {% endif %}
 
         {% if record['public_notes'] %}
           <div class="row">
             <div class="col-md-12">
-              <label>Notes: </label>{{ record['public_notes'] | join(', ') }}
+              <label>Notes: </label> {{ record['public_notes'] | join(', ') }}
             </div>
           </div>
         {% endif %}
 
-        <div>
-          <label>Related Institution:</label><a href="#"> Related institution</a>
-        </div>
-
-        <div>
-          <label>Parent Institution:</label><a href="#"> Parent institution</a>
-        </div>
-
-        <div>
-          {% if record['ICN'] %}
-            {% if record['ICN'] | is_list %}
-              HEP list of<a href="#"> Ph.D. theses </a> at {{ record['ICN'][0] }}
-            {% else %}
-              HEP list of<a href="#"> Ph.D. theses </a> at {{ record['ICN'] }}
-            {% endif %}
-          {% endif %}
-        </div>
-
-        <div>
-          {% if record['ICN'] %}
-            {% if record['ICN'] | is_list %}
-              HEPNAMES list of<a href="#"> people</a> at {{ record['ICN'][0] }}
-            {% else %}
-              HEPNAMES list of<a href="#"> people</a> at {{ record['ICN'] }}
-            {% endif %}
-          {% endif %}
-        </div>
-
-        <div>
-          {% if record['ICN'] and record['institution'] %}
-            {% if record['ICN'] | is_list %}
-              EXPERIMENTS list of<a href="/search?p=affiliation:{{ record['institution'][0] }}&cc=Experiments"> experiments</a> performed <b>at</b> {{ record['ICN'][0] }}
-            {% else %}
-              EXPERIMENTS list of<a href="/search?p=affiliation:{{ record['institution'] }}&cc=Experiments"> experiments</a> performed <b>at</b> {{ record['ICN'] }}
-            {% endif %}
-          {% endif %}
-        </div>
-      
       </div>
 
-      <div class="col-md-3" id="record-detailed-institution-map">
-        <div id="institution-detailed-map">
-          {% block javascript %}
-          {{ super() }}
-            <script>
-              function initMap() {
-                var mapDiv = document.getElementById('institution-detailed-map');
-                var address = '{{ record['address'][0]['address'] | join(', ') }}';
-                var geocoder = new google.maps.Geocoder();
-                var map = new google.maps.Map(mapDiv, {
-                  zoom: 5,
-                  // Snazzy Map styling.
-                  styles: [{
-                      "featureType": "water",
-                      "elementType": "geometry",
-                      "stylers": [{"color": "#e9e9e9"}, {"lightness": 17}]
-                  }, {
-                      "featureType": "landscape",
-                      "elementType": "geometry",
-                      "stylers": [{"color": "#f5f5f5"}, {"lightness": 20}]
-                  }, {
-                      "featureType": "road.highway",
-                      "elementType": "geometry.fill",
-                      "stylers": [{"color": "#ffffff"}, {"lightness": 17}]
-                  }, {
-                      "featureType": "road.highway",
-                      "elementType": "geometry.stroke",
-                      "stylers": [{"color": "#ffffff"}, {"lightness": 29}, {"weight": 0.2}]
-                  }, {
-                      "featureType": "road.arterial",
-                      "elementType": "geometry",
-                      "stylers": [{"color": "#ffffff"}, {"lightness": 18}]
-                  }, {
-                      "featureType": "road.local",
-                      "elementType": "geometry",
-                      "stylers": [{"color": "#ffffff"}, {"lightness": 16}]
-                  }, {
-                      "featureType": "poi",
-                      "elementType": "geometry",
-                      "stylers": [{"color": "#f5f5f5"}, {"lightness": 21}]
-                  }, {
-                      "featureType": "poi.park",
-                      "elementType": "geometry",
-                      "stylers": [{"color": "#dedede"}, {"lightness": 21}]
-                  }, {
-                      "elementType": "labels.text.stroke",
-                      "stylers": [{"visibility": "on"}, {"color": "#ffffff"}, {"lightness": 16}]
-                  }, {
-                      "elementType": "labels.text.fill",
-                      "stylers": [{"saturation": 36}, {"color": "#333333"}, {"lightness": 40}]
-                  }, {"elementType": "labels.icon", "stylers": [{"visibility": "off"}]}, {
-                      "featureType": "transit",
-                      "elementType": "geometry",
-                      "stylers": [{"color": "#f2f2f2"}, {"lightness": 19}]
-                  }, {
-                      "featureType": "administrative",
-                      "elementType": "geometry.fill",
-                      "stylers": [{"color": "#fefefe"}, {"lightness": 20}]
-                  }, {
-                      "featureType": "administrative",
-                      "elementType": "geometry.stroke",
-                      "stylers": [{"color": "#fefefe"}, {"lightness": 17}, {"weight": 1.2}]
-                  }]
-                });
-                geocodeAddress(geocoder, map, address);
-              }
-              function geocodeAddress(geocoder, resultsMap, address) {
-                geocoder.geocode({'address': address}, function(results, status) {
-                  if (status === google.maps.GeocoderStatus.OK) {
-                    resultsMap.setCenter(results[0].geometry.location);
-                    var marker = new google.maps.Marker({
-                      map: resultsMap,
-                      position: results[0].geometry.location,
-                      icon: '/static/images/map/marker-conferences.svg'
-                    });
-                  } else {
-                    alert('Geocode was not successful for the following reason: ' + status);
-                  }
-                });
-              }
-            </script>
-            <script src="https://maps.googleapis.com/maps/api/js?callback=initMap"
-            async defer></script>
-          {% endblock %}
+      <div class="col-md-4" id="record-detailed-institution-map">
+        <div id="institution-detailed-map"></div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel" id="record-institution-papers">
+        <div class="panel-heading">
+          Papers
+        </div>
+
+        <div class="panel-body">
+          <div id="record-institution-papers-loading">
+            <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading papers from institution...
+          </div>
+          <div id="record-institution-papers-table-wrapper">
+            <table id="record-institution-papers-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Authors</th>
+                <th>Journal</th>
+                <th># Citations</th>
+                <th>Year</th>
+              </tr>
+            </thead>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel" id="record-institution-people">
+        <div class="panel-heading">
+          Authors
+        </div>
+        <div class="panel-body">
+          <div id="record-institution-people-loading">
+            <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading authors...
+          </div>
+          <div id="record-institution-people-table-wrapper">
+            <table id="record-institution-people-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th># Papers</th>
+              </tr>
+            </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="panel" id="record-institution-experiments">
+          <div class="panel-heading">
+            Experiments
+          </div>
+
+        <div class="panel-body">
+          <div id="record-institution-experiments-loading">
+            <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading experiments...
+          </div>
+          <div id="record-institution-experiments-table-wrapper">
+            <table id="record-institution-experiments-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th># Papers</th>
+              </tr>
+            </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}
+
+
+{% block additional_javascript %}
+  <script type="text/javascript" src="//maps.googleapis.com/maps/api/js"></script>
+  <script>
+    google.maps.event.addDomListener(window, 'load', init);
+
+    function init() {
+      var mapElement = document.getElementById('institution-detailed-map');
+      var doc = {{ record|json_dumps|safe }};
+      var address = doc['address'][0]['original_address'].join(', ');
+      if ( doc['address'][0]['city'] !== undefined ) {
+        address = address + ', ' + doc['address'][0]['city'];
+      }
+
+      if ( doc['address'][0]['country'] !== undefined ) {
+        address = address + ', ' + doc['address'][0]['country'];
+      }
+
+      var institution = doc['ICN'][0];
+      var department_html = "";
+      if (doc['department'] !== undefined) {
+        department_html = '<strong>' + doc['department'][0] + '</strong></br>'
+      }
+
+      var geocoder = new google.maps.Geocoder();
+      var mapOptions = {
+        zoom: 5,
+        mapTypeControl: false,
+        // Snazzy Map styling.
+        styles: [{
+            "featureType": "water",
+            "elementType": "geometry",
+            "stylers": [{"color": "#e9e9e9"}, {"lightness": 17}]
+        }, {
+            "featureType": "landscape",
+            "elementType": "geometry",
+            "stylers": [{"color": "#f5f5f5"}, {"lightness": 20}]
+        }, {
+            "featureType": "road.highway",
+            "elementType": "geometry.fill",
+            "stylers": [{"color": "#ffffff"}, {"lightness": 17}]
+        }, {
+            "featureType": "road.highway",
+            "elementType": "geometry.stroke",
+            "stylers": [{"color": "#ffffff"}, {"lightness": 29}, {"weight": 0.2}]
+        }, {
+            "featureType": "road.arterial",
+            "elementType": "geometry",
+            "stylers": [{"color": "#ffffff"}, {"lightness": 18}]
+        }, {
+            "featureType": "road.local",
+            "elementType": "geometry",
+            "stylers": [{"color": "#ffffff"}, {"lightness": 16}]
+        }, {
+            "featureType": "poi",
+            "elementType": "geometry",
+            "stylers": [{"color": "#f5f5f5"}, {"lightness": 21}]
+        }, {
+            "featureType": "poi.park",
+            "elementType": "geometry",
+            "stylers": [{"color": "#dedede"}, {"lightness": 21}]
+        }, {
+            "elementType": "labels.text.stroke",
+            "stylers": [{"visibility": "on"}, {"color": "#ffffff"}, {"lightness": 16}]
+        }, {
+            "elementType": "labels.text.fill",
+            "stylers": [{"saturation": 36}, {"color": "#333333"}, {"lightness": 40}]
+        }, {"elementType": "labels.icon", "stylers": [{"visibility": "off"}]}, {
+            "featureType": "transit",
+            "elementType": "geometry",
+            "stylers": [{"color": "#f2f2f2"}, {"lightness": 19}]
+        }, {
+            "featureType": "administrative",
+            "elementType": "geometry.fill",
+            "stylers": [{"color": "#fefefe"}, {"lightness": 20}]
+        }, {
+            "featureType": "administrative",
+            "elementType": "geometry.stroke",
+            "stylers": [{"color": "#fefefe"}, {"lightness": 17}, {"weight": 1.2}]
+        }]
+      };
+      var map = new google.maps.Map(mapElement, mapOptions);
+      var infowindow = new google.maps.InfoWindow({
+        pixelOffset: new google.maps.Size(0, -20)
+      });
+
+      geocodeAddress(address);
+
+    function geocodeAddress(address) {
+      geocoder.geocode({'address': address}, function(results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+          map.setCenter(results[0].geometry.location);
+          var marker = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location,
+            icon: '/static/images/map/marker-institutions.svg'
+          });
+
+          infowindow.setContent('<strong>' + institution + '</strong><br/>' +
+            department_html +
+            '<i>' + address + '</i>');
+          infowindow.setPosition(results[0].geometry.location);
+          infowindow.open(map);
+        } else {
+          console.error('Geocode was not successful for the following reason: ' + status);
+        }
+      });
+    }
+  }
+  </script>
+  <script type="text/javascript">
+    require(
+      [
+        "js/datatables",
+      ],
+      function(
+        DataTables
+      ) {
+        DataTables.attachTo(document, {
+          'recid': "{{ record.control_number }}"
+        });
+      });
+  </script>
 {% endblock %}

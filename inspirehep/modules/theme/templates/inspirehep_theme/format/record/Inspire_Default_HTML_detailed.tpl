@@ -27,9 +27,9 @@
   <div class="record-header" id="detailed-header">
     <div class="row">
       <div class="col-md-12" id="detailed-header-top">
-        <div id="record-title">
+        <h1 class="record-detailed-title">
           {{ render_record_title(record) }}
-        </div>
+        </h1>
         <div id="record-authors">
           {{ render_record_authors(record, is_brief=false, number_of_displayed_authors=25) }}
           <span id="record-date">

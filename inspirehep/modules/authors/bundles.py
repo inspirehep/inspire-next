@@ -40,10 +40,5 @@ js = NpmBundle(
         'js/authors/profile.js',
         'js/authors/publications.js'
     ),
-    output="gen/authors.%(version)s.js",
-    npm={
-        "d3": "~3.5.16",
-        "datatables.net": "~1.10.11",
-        "datatables.net-bs": "~1.10.11",
-    }
+    output="gen/authors.%(version)s.js"
 )

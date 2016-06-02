@@ -89,6 +89,7 @@ detailedjs = NpmBundle(
     filters='requirejs',
     output="gen/detailed_record.%(version)s.js",
     npm={
+        "d3": "~3.5.16",
         "datatables.net": "~1.10.11",
         "datatables.net-bs": "~1.10.11",
     }

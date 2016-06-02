@@ -113,8 +113,11 @@
                             "index": "not_analyzed"
                         }
                     }
+                },
+                "positions": {
+                    "type": "nested",
+                    "include_in_parent": true
                 }
-
             }
         }
     }
