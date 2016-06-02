@@ -105,11 +105,15 @@
 </div>
 {% endblock body %}
 
+
 {% block javascript %}
-  {{ super() }}
-  {%- assets "inspirehep_detailed_js" %}
+{{ super() }}
+{%- assets "inspirehep_detailed_js" %}
     <script src="{{ ASSET_URL }}"></script>
-  {%- endassets %}
+{%- endassets %}
+{% endblock javascript %}
+
+{% block additional_javascript %}
   {{ mathjax() | safe }}
   <script type="text/javascript">
     require(
@@ -135,7 +139,7 @@
       ImpactGraph
     ) {
         $(".impact-graph-container").append('<div id="impact_graph_chart_' + '{{record["control_number"]}}' + '"></div>');
-        ImpactGraph.load('/api/literature/{{record["control_number"]}}#impact_graph_chart_{{record["control_number"]}}',
+        ImpactGraph.draw_impact_graph('/api/literature/{{record["control_number"]}}#impact_graph_chart_{{record["control_number"]}}',
           '#impact_graph_chart_' + '{{record["control_number"]}}',
           {
             width: 940,
@@ -148,4 +152,4 @@
       }
   );
   </script>
-{% endblock javascript %}
+{% endblock additional_javascript %}
