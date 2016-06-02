@@ -109,12 +109,6 @@
             alert('Showing history');
           },
 
-          registerUpdateEvent: function () {
-            $scope.vm.update_ready = true;
-            $scope.vm.saved = false;
-            $scope.$emit();
-          },
-
           resumeWorkflow: function () {
             HoldingPenRecordService.resumeWorkflow($scope.vm, $scope.workflowId)
           },
