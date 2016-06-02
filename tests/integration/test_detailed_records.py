@@ -20,7 +20,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
 from invenio_records.models import RecordMetadata
+
+from inspirehep.modules.migrator.models import InspireProdRecords
 
 
 def test_all_records_were_loaded(app):
@@ -30,6 +34,13 @@ def test_all_records_were_loaded(app):
     result = len(records)
 
     assert expected == result
+
+
+def test_all_records_are_valid(app):
+    invalid = InspireProdRecords.query.filter(InspireProdRecords.valid == False)
+    recids = [el.recid for el in invalid]
+
+    assert recids == []
 
 
 def test_all_records_are_there(app):
