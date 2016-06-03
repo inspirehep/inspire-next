@@ -63,9 +63,41 @@
       <div class="col-md-6 col-sm-6" ng-if="vm.record.metadata.subject_terms">
         <holding-pen-template-handler
           record="vm.record"
-          template="/static/js/inspire_workflows_ui/templates/details_subject_areas.html">
+          template="/static/js/inspire_workflows_ui/templates/details_subject_areas_hep.html">
         </holding-pen-template-handler>
       </div>
+
+      <div class="col-md-3 col-sm-6"
+           ng-if="vm.record.metadata.field_categories">
+        <holding-pen-template-handler
+          record="vm.record"
+          template="/static/js/inspire_workflows_ui/templates/details_subject_areas_authors.html">
+        </holding-pen-template-handler>
+      </div>
+
+      <div class="col-md-4 col-sm-6"
+           ng-if="vm.record.metadata.phd_advisors">
+        <div class="detail-panel panel-200">
+          <h4>Advisors</h4>
+
+      <p class="advisors">
+
+        <div class="row" ng-repeat="advisor in vm.record.metadata.phd_advisors">
+
+          <div class="col-md-6 col-sm-6" ng-bind="advisor.name"></div>
+          <div class="col-md-6 col-sm-6" ng-bind="advisor.degree_type"></div>
+        </div>
+      </p>
+        </div>
+        </div>
+
+      <div class="col-md-5 col-sm-6" ng-if="vm.record.metadata.urls">
+        <holding-pen-template-handler
+          record="vm.record"
+          template="/static/js/inspire_workflows_ui/templates/details_links.html">
+        </holding-pen-template-handler>
+      </div>
+
 
       <div class="col-md-6 col-sm-6"
            ng-if="vm.record._extra_data.keywords_prediction.keywords">
@@ -77,14 +109,14 @@
 
       <div class="clearfix"></div>
 
-       <div class="col-md-12" ng-if="vm.record.positions">
+      <div class="col-md-12" ng-if="vm.record.metadata.positions">
         <holding-pen-template-handler
           record="vm.record"
           template="/static/js/inspire_workflows_ui/templates/details_positions.html">
         </holding-pen-template-handler>
       </div>
 
-      <div class="col-md-12" ng-if="vm.record.references">
+      <div class="col-md-12" ng-if="vm.record.metadata.references">
         <holding-pen-template-handler
           record="vm.record"
           template="/static/js/inspire_workflows_ui/templates/details_references.html">
@@ -114,8 +146,7 @@
 
     <div class="row">
 
-      <div id="save-panel" class="col-md-12 text-center"
-           ng-if="vm.update_ready || vm.saved">
+      <div id="save-panel" class="col-md-12 text-center" ng-if="vm.update_ready || vm.saved">
         <div class="detail-panel">
 
           <div id="hp-save" ng-if="vm.update_ready">
@@ -159,20 +190,24 @@
       <div class="col-md-12">
         <div class="detail-panel">
           <h4>Submission</h4>
-          <p class="text-center"
-             ng-if="vm.record.metadata.acquisition_source[0]">
-            Harvested from <span class="font-bolder"
-                                 ng-bind="vm.record.metadata.acquisition_source[0].source"></span>
-              <span ng-if="vm.record.metadata.acquisition_source[0].method"> using
+          <p class="text-center" ng-if="vm.record.metadata.acquisition_source">
+            <span ng-switch="vm.record.metadata.acquisition_source.method">
+              <span ng-switch-when="submission">
+                Submitted by {{vm.record.metadata.acquisition_source.email}} on {{vm.record.metadata.acquisition_source.date}}
+              </span>
+              <span ng-switch-when="oai">
+                Harvested from <span class="font-bolder"
+                                     ng-bind="vm.record.metadata.acquisition_source.source"></span> using
                 <span class="font-bolder"
                       ng-bind="vm.record.metadata.acquisition_source[0].method"></span>
               </span>
+            </span>
           </p>
         </div>
       </div>
 
       <!--Notes-->
-      <div class="col-md-12">
+      <div class="col-md-12" ng-if="vm.record.metadata.public_notes">
         <div class="detail-panel">
           <h4>Notes</h4>
 

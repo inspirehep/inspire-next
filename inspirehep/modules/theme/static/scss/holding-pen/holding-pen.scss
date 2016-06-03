@@ -349,16 +349,6 @@ $hp_table_bg: #243547;
         }
       }
 
-      .subject-terms {
-        list-style: none;
-        -webkit-padding-start: 0;
-
-        li {
-          padding: 4px;
-          display: inline-block;
-        }
-      }
-
       .institution-details {
         .current {
           color: white;
@@ -455,6 +445,15 @@ $hp_table_bg: #243547;
     .panel-300 {
       min-height: 300px;
     }
+
+    .panel-200 {
+      min-height: 200px;
+    }
+
+    .panel-100 {
+      min-height: 100px;
+    }
+
     .detail-panel {
       margin: 5px;
       border-radius: 3px;
@@ -488,6 +487,10 @@ $hp_table_bg: #243547;
         }
       }
 
+      .advisors {
+        font-size: 1.1em;
+      }
+
       .subject-area {
 
         padding: 5px;
@@ -515,20 +518,28 @@ $hp_table_bg: #243547;
         }
       }
 
-      .references {
+      .table-block {
         color: $blue-haze;
 
-        .reference-header {
+        .table-header {
           padding: 10px;
           border-bottom: 2px solid $midnight-blue;
           font-weight: bolder;
         }
 
-        .reference-body {
-          height: 300px;
+        .table-body {
+          height: 200px;
           overflow-y: auto;
 
-          .reference-row {
+          &.references {
+            height: 300px;
+          }
+
+          &.links {
+            height: 100px;
+          }
+
+          .table-row {
 
             padding: 10px;
             color: white;
@@ -536,10 +547,8 @@ $hp_table_bg: #243547;
           }
         }
       }
-
     }
   }
-
 }
 
 .reject {
@@ -617,6 +626,20 @@ $hp_table_bg: #243547;
   .automatic-decision {
     font-size: 1.1em;
     padding-bottom: 10px;
+  }
+}
+
+.subject-terms {
+  list-style: none;
+  -webkit-padding-start: 0;
+
+  li {
+    background-color: $midnight-blue;
+    border-radius: 3px;
+    margin: 2px;
+    padding: 4px 6px;
+    display: inline-block;
+
   }
 }
 

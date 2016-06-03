@@ -1,0 +1,18 @@
+<div class="detail-panel">
+  <div class="table-block">
+    <h4>Links</h4>
+
+    <div class="table-body links">
+      <div class="row table-row"
+           ng-repeat="url in record.metadata.urls">
+        <div class="col-md-6 col-sm-6">
+          <p ng-if="url.description === ''" class="text-muted">No description provided</p>
+          <p ng-bind="url.description"></p>
+        </div>
+        <div class="col-md-6 col-sm-6">
+          <a ng-bind="url.value" ng-href="url.value"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
