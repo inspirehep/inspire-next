@@ -568,8 +568,6 @@ $hp_table_bg: #243547;
   .reject, .accept_core, .accept {
     color: $blue-haze;
     padding: 5px;
-    background-color: $midnight-blue;
-    border-radius: 3px;
     font-weight: bolder;
   }
 
@@ -583,17 +581,14 @@ $hp_table_bg: #243547;
 
   &:hover {
     .reject {
-      background-color: $midnight-blue;
       color: $alizarin;
     }
 
     .accept_core {
-      background-color: $midnight-blue;
       color: $green-sea;
     }
 
     .accept {
-      background-color: $midnight-blue;
       color: $orange;
     }
   }
@@ -634,6 +629,10 @@ $hp_table_bg: #243547;
   .automatic-decision {
     font-size: 1.1em;
     padding-bottom: 10px;
+  }
+
+  .action-info {
+    padding-top: 20px;
   }
 }
 

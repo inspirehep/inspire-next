@@ -113,7 +113,7 @@
         </holding-pen-template-handler>
       </div>
 
-      <div class="col-md-4 col-sm-6"
+      <div class="col-md-3 col-sm-6"
            ng-if="vm.record.metadata.phd_advisors">
         <div class="detail-panel panel-200">
           <h4>Advisors</h4>
@@ -130,7 +130,7 @@
         </div>
       </div>
 
-      <div class="col-md-5 col-sm-6" ng-if="vm.record.metadata.urls">
+      <div class="col-md-6 col-sm-12" ng-if="vm.record.metadata.urls">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_links.html">
         </holding-pen-template-handler>
@@ -224,7 +224,7 @@
           <p class="text-center" ng-if="vm.record.metadata.acquisition_source">
             <span ng-switch="vm.record.metadata.acquisition_source.method">
               <span ng-switch-when="submission">
-                Submitted by {{vm.record.metadata.acquisition_source.email}} on {{vm.record.metadata.acquisition_source.date}}
+                Submitted by {{vm.record.metadata.acquisition_source.email}}<br/> on {{vm.record.metadata.acquisition_source.date}}
               </span>
               <span ng-switch-when="oai">
                 Harvested from
@@ -271,9 +271,6 @@
           <h4>Actions</h4>
 
           <div class="text-center">
-            <button class="btn btn-default" ng-click="Utils.showHistory()"><i
-              class="fa fa-history"></i> History
-            </button>
 
             <button class="btn btn-default"
                     ng-click="Utils.restartWorkflow()">

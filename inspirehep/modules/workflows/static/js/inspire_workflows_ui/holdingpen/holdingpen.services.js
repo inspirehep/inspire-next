@@ -37,7 +37,13 @@
           getRecord: function (vm, workflowId) {
             $http.get('/api/holdingpen/' + workflowId).then(function (response) {
               vm.record = response.data;
-              $('#breadcrumb').html(vm.record.metadata.breadcrumb_title);
+              if(vm.record._workflow.data_type == 'authors') {
+                $('#breadcrumb').html(vm.record.metadata.name.value);
+              } else {
+                $('#breadcrumb').html(vm.record.metadata.breadcrumb_title);
+              }
+
+
             }).catch(function (value) {
               vm.ingestion_complete = false;
               alert(value);
