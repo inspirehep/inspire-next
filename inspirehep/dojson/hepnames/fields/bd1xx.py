@@ -29,7 +29,7 @@ from dojson import utils
 from inspirehep.utils.dedupers import dedupe_list_of_dicts
 
 from ..model import hepnames, hepnames2marc
-from ...utils import get_record_ref
+from ...utils import classify_rank, get_record_ref
 
 
 @hepnames.over('acquisition_source', '^541[10_].')
@@ -219,16 +219,6 @@ setattr(hidden_notes2marc, '__extend__', True)
 def positions(self, key, value):
     """Position information.
 
-    Accepted values for 371__r:
-    + senior
-    + junior
-    + staff
-    + visitor
-    + postdoc
-    + phd
-    + masters
-    + undergrad
-
     In dates field you can put months in addition to years. In this case you
     have to follow the convention `mth-year`. For example: `10-2012`.
     """
@@ -244,11 +234,18 @@ def positions(self, key, value):
                 recid = val
                 curated_relation = True
 
-    inst = {'name': value.get('a'),
-            'record': get_record_ref(recid, 'institutions')}
+    inst = {
+        'name': value.get('a'),
+        'record': get_record_ref(recid, 'institutions')
+    }
+
+    _rank = value.get('r')
+    rank = classify_rank(_rank)
+
     return {
         'institution': inst if inst['name'] else None,
-        'rank': value.get('r'),
+        '_rank': _rank,
+        'rank': rank,
         'start_date': value.get('s'),
         'end_date': value.get('t'),
         'email': value.get('m'),
@@ -264,22 +261,12 @@ def positions(self, key, value):
 def positions2marc(self, key, value):
     """Position information.
 
-    Accepted values for 371__r:
-    + senior
-    + junior
-    + staff
-    + visitor
-    + postdoc
-    + phd
-    + masters
-    + undergrad
-
     In dates field you can put months in addition to years. In this case you
     have to follow the convention `mth-year`. For example: `10-2012`.
     """
     return {
         'a': value.get('institution', {}).get('name'),
-        'r': value.get('rank'),
+        'r': value.get('_rank'),
         's': value.get('start_date'),
         't': value.get('end_date'),
         'm': value.get('email'),

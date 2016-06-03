@@ -118,3 +118,55 @@ def test_contact_details_from_multiple_marcxml_270():
     result = strip_empty_values(jobs.do(create_record(snippet)))
 
     assert expected == result['contact_details']
+
+
+def test_ranks_from_marcxml_656_with_single_a():
+    """Two ranks inside one record."""
+    snippet = (
+        '<record>'
+        '  <datafield tag="656" ind1=" " ind2=" ">'
+        '    <subfield code="a">Senior</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    result = strip_empty_values(jobs.do(create_record(snippet)))
+
+    assert result['_ranks'] == ['Senior']
+    assert result['ranks'] == ['SENIOR']
+
+
+def test_ranks_from_marcxml_656_with_double_a():
+    """Two ranks inside one record."""
+    snippet = (
+        '<record>'
+        '  <datafield tag="656" ind1=" " ind2=" ">'
+        '    <subfield code="a">Senior</subfield>'
+        '    <subfield code="a">Junior</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    result = strip_empty_values(jobs.do(create_record(snippet)))
+
+    assert result['_ranks'] == ['Senior', 'Junior']
+    assert result['ranks'] == ['SENIOR', 'JUNIOR']
+
+
+def test_ranks_from_marcxml_double_656():
+    """Two ranks inside one record."""
+    snippet = (
+        '<record>'
+        '  <datafield tag="656" ind1=" " ind2=" ">'
+        '    <subfield code="a">Senior</subfield>'
+        '  </datafield>'
+        '  <datafield tag="656" ind1=" " ind2=" ">'
+        '    <subfield code="a">Junior</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    result = strip_empty_values(jobs.do(create_record(snippet)))
+
+    assert result['_ranks'] == ['Senior', 'Junior']
+    assert result["ranks"] == ['SENIOR', 'JUNIOR']

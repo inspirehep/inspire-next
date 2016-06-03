@@ -29,7 +29,7 @@ import six
 from dojson import utils
 
 from ..model import jobs
-from ...utils import get_record_ref
+from ...utils import classify_rank, get_record_ref
 
 
 @jobs.over('date_closed', '^046..')
@@ -117,11 +117,19 @@ def position(self, key, value):
     return value.get('a')
 
 
-@jobs.over('rank', '^656..')
+@jobs.over('ranks', '^656..')
 @utils.for_each_value
-def rank(self, key, value):
-    """Contact person."""
-    return value.get('a')
+def ranks(self, key, value):
+    """Ranks."""
+    self.setdefault('_ranks', [])
+    self.setdefault('ranks', [])
+
+    values = utils.force_list(value)
+    for el in values:
+        _ranks = utils.force_list(el.get('a'))
+        for _rank in _ranks:
+            self['_ranks'].append(_rank)
+            self['ranks'].append(classify_rank(_rank))
 
 
 @jobs.over('urls', '^856.[10_28]')

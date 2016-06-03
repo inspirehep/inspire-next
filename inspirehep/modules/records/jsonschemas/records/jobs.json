@@ -81,23 +81,19 @@
             "title": "Job position",
             "type": "string"
         },
-        "rank": {
+        "_ranks": {
+            "type": "array",
             "items": {
-                "description": "FIXME: should this be identical to hepnames rank? I would say so",
-                "enum": [
-                    "Postdc",
-                    "Postdoc",
-                    "Junior",
-                    "Student",
-                    "Senior",
-                    "Staff",
-                    "Visitor",
-                    "Visiting Scientist"
-                ],
-                "title": "Rank",
+                "description": "Raw values of MARC 656__a field",
                 "type": "string"
             },
+            "uniqueItems": true
+        },
+        "ranks": {
             "type": "array",
+            "items": {
+                "$ref": "elements/rank.json"
+            },
             "uniqueItems": true
         },
         "reference_email": {
