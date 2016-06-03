@@ -187,7 +187,7 @@ def record_exists(obj, eng):
             return True
     else:
         obj.log.warning("Remote match is deprecated.")
-        if match(obj, eng):
+        if match_legacy_inspire(obj, eng):
             obj.log.info("Record already exists in INSPIRE.")
             return True
     return False
