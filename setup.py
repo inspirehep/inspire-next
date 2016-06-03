@@ -43,7 +43,7 @@ install_requires = [
     'rt',
     'librabbitmq>=1.6.1',
     'invenio-jsonschemas==1.0.0a3',
-    'idutils>=0.1.1',
+    'idutils>=0.2.0',
     'invenio-access==1.0.0a5',
     'invenio-accounts==1.0.0a10',
     'invenio-admin==1.0.0a3',

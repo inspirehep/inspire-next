@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,19 +22,49 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
+from idutils import normalize_issn
 
 from ..model import journals
+from ...utils import strip_empty_values
 
 
 @journals.over('issn', '^022..')
 @utils.for_each_value
 @utils.filter_values
 def issn(self, key, value):
-    """ISSN Statement."""
+    """ISSN, its medium and an additional comment."""
+    try:
+        issn = normalize_issn(value['a'])
+    except KeyError:
+        return {}
+
+    b = value.get('b', '').lower()
+    if 'online' == b:
+        medium = 'online'
+        comment = ''
+    elif 'print' == b:
+        medium = 'print'
+        comment = ''
+    elif 'electronic' in b:
+        medium = 'online'
+        comment = 'electronic'
+    elif 'ebook' in b:
+        medium = 'online'
+        comment = 'ebook'
+    elif 'hardcover' in b:
+        medium = 'print'
+        comment = 'hardcover'
+    else:
+        medium = ''
+        comment = b
+
     return {
-        "value": value.get("a"),
-        "material": value.get("b")
+        'medium': medium,
+        'value': issn,
+        'comment': comment,
     }
 
 

@@ -24,7 +24,10 @@
 
 from __future__ import absolute_import, division, print_function
 
+from isbnlib._exceptions import NotValidISBNError
+
 from dojson import utils
+from idutils import normalize_isbn
 
 from inspirehep.utils.dedupers import dedupe_list_of_dicts
 
@@ -36,10 +39,36 @@ from ...utils import strip_empty_values
 @utils.for_each_value
 @utils.filter_values
 def isbns(self, key, value):
-    """Other Standard Identifier."""
+    "ISBN, its medium and an additional comment."""
+    try:
+        isbn = normalize_isbn(value['a'])
+    except (KeyError, NotValidISBNError):
+        return {}
+
+    b = value.get('b', '').lower()
+    if 'online' == b:
+        medium = 'online'
+        comment = ''
+    elif 'print' == b:
+        medium = 'print'
+        comment = ''
+    elif 'electronic' in b:
+        medium = 'online'
+        comment = 'electronic'
+    elif 'ebook' in b:
+        medium = 'online'
+        comment = 'ebook'
+    elif 'hardcover' in b:
+        medium = 'print'
+        comment = 'hardcover'
+    else:
+        medium = ''
+        comment = b
+
     return {
-        'value': value.get('a'),
-        'medium': value.get('b')
+        'medium': medium,
+        'value': isbn,
+        'comment': comment,
     }
 
 

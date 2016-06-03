@@ -24,7 +24,10 @@
 
 from __future__ import absolute_import, division, print_function
 
+from isbnlib._exceptions import NotValidISBNError
+
 from dojson import utils
+from idutils import normalize_isbn
 
 from inspirehep.utils.dedupers import dedupe_list
 
@@ -56,6 +59,12 @@ def references(self, key, value):
                 year = int(value.get('y'))
             except:
                 pass
+
+        try:
+            isbn = normalize_isbn(value['i'])
+        except (KeyError, NotValidISBNError):
+            isbn = ''
+
         return {
             'record': get_record_ref(recid, 'literature'),
             'texkey': value.get('1'),
@@ -65,7 +74,7 @@ def references(self, key, value):
             'authors': utils.force_list(value.get('h')),
             'misc': utils.force_list(value.get('m')),
             'number': number,
-            'isbn': value.get('i'),
+            'isbn': isbn,
             'publisher': utils.force_list(value.get('p')),
             'maintitle': value.get('q'),
             'report_number': utils.force_list(value.get('r')),

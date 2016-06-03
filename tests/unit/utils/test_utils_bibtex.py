@@ -1791,11 +1791,11 @@ def test_get_isbn_empty_isbns():
 def test_get_isbn_one_isbn_not_a_list():
     one_isbn_not_a_list = Record({
         'isbns': [
-            {'value': '9781424409228'}
+            {'value': '978-1-4244-0922-8'}
         ]
     })
 
-    expected = '9781424409228'
+    expected = '978-1-4244-0922-8'
     result = Bibtex(one_isbn_not_a_list)._get_isbn()
 
     assert expected == result

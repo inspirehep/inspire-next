@@ -34,39 +34,30 @@
             "title": "Funding information"
         },
         "isbns": {
-            "uniqueItems": true,
+            "type": "array",
             "items": {
-                "required": [
-                    "value"
-                ],
                 "type": "object",
                 "properties": {
                     "medium": {
-                        "enum": [
-                            "Print",
-                            "print",
-                            "Online",
-                            "online",
-                            "ebook",
-                            "hardcover",
-                            "paperback",
-                            "eBook"
-                        ],
+                        "description": "Medium (type) of the ISBN.",
                         "type": "string",
-                        "description": "FIXME: this really need to be an enum and cleaned up. What is Print?!",
-                        "title": "Medium"
+                        "enum": [
+                            "print",
+                            "online"
+                        ]
                     },
                     "value": {
-                        "title": "code",
                         "type": "string",
                         "format": "isbn"
+                    },
+                    "comment": {
+                        "description": "Further information about type.",
+                        "type": "string"
                     }
                 },
-                "title": "ISBN code"
+                "required": ["value"]
             },
-            "type": "array",
-            "description": "ISBN codes identifying the given book",
-            "title": "ISBN codes"
+            "uniqueItems": true
         },
         "report_numbers": {
             "uniqueItems": true,
