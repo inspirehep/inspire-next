@@ -28,13 +28,13 @@
     'holdingpen.services',
     'holdingpen.directives',
     'holdingpen.controllers',
-    'holdingpen.filters.abstract']);
+    'holdingpen.filters.abstract'
+  ]);
 
-  invenioHoldingPen.run(function (editableOptions, editableThemes) {
+  invenioHoldingPen.run(['editableOptions', 'editableThemes', function (editableOptions, editableThemes) {
     editableThemes.bs3.inputClass = 'input-md';
     editableThemes.bs3.buttonsClass = 'btn-md';
     editableOptions.theme = 'bs3';
-  });
-
+  }]);
 
 })(angular);

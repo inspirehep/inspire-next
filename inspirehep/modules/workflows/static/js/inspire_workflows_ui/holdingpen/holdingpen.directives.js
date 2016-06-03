@@ -112,6 +112,7 @@
           registerUpdateEvent: function () {
             $scope.vm.update_ready = true;
             $scope.vm.saved = false;
+            console.debug("Registering update event...")
             $scope.$emit();
           },
 

@@ -26,8 +26,8 @@ require([
   'angular-loading-bar',
   'invenio-search',
   'angular-xeditable',
-  'holding-pen-module',
-  'angular-hotkeys'
+  'angular-hotkeys',
+  'holding-pen-module'
   ], function() {
     // When the DOM is ready bootstrap the AngularJS modules
     angular.element(document).ready(function() {
