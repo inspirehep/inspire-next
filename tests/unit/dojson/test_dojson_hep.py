@@ -30,7 +30,7 @@ import pytest
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hep import hep, hep2marc
-from inspirehep.dojson.utils import get_recid_from_ref
+from inspirehep.dojson.utils import get_recid_from_ref, strip_empty_values
 
 
 @pytest.fixture
@@ -310,20 +310,6 @@ def test_licence(marcxml_to_json, json_to_marc):
             json_to_marc['540'][0]['3'])
 
 
-def test_acquisition_source(marcxml_to_json, json_to_marc):
-    """Test if acquisition_source is created correctly."""
-    assert (marcxml_to_json['acquisition_source'][0]['source'] ==
-            json_to_marc['541'][0]['a'])
-    assert (marcxml_to_json['acquisition_source'][0]['email'] ==
-            json_to_marc['541'][0]['b'])
-    assert (marcxml_to_json['acquisition_source'][0]['method'] ==
-            json_to_marc['541'][0]['c'])
-    assert (marcxml_to_json['acquisition_source'][0]['date'] ==
-            json_to_marc['541'][0]['d'])
-    assert (marcxml_to_json['acquisition_source'][0]['submission_number'] ==
-            json_to_marc['541'][0]['e'])
-
-
 def test_copyright(marcxml_to_json, json_to_marc):
     """Test if copyright is created correctly."""
     assert (marcxml_to_json['copyright'][0]['material'] ==
@@ -529,3 +515,50 @@ def test_book_link(marcxml_to_json_book):
     """Test if the link to the book recid is generated correctly."""
     assert (get_recid_from_ref(marcxml_to_json_book['book']['record']) ==
             1409249)
+
+
+def test_acquisition_source_field():
+    """Test acquisition_source."""
+    snippet = (
+        '<record>'
+        '   <datafield tag="541" ind1=" " ind2=" ">'
+        '       <subfield code="a">inspire:uid:50000</subfield>'
+        '       <subfield code="b">example@gmail.com</subfield>'
+        '       <subfield code="c">submission</subfield>'
+        '       <subfield code="d">2015-12-10</subfield>'
+        '       <subfield code="e">339830</subfield>'
+        '   </datafield>'
+        '</record>'
+    )
+
+    expected = {
+        'source': "inspire:uid:50000",
+        'email': "example@gmail.com",
+        'method': "submission",
+        'date': "2015-12-10",
+        'submission_number': "339830",
+    }
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['acquisition_source']
+
+
+def test_acquisition_source_field_marcxml():
+    """Test acquisition_source MARC output."""
+    expected = {
+        'a': 'inspire:uid:50000',
+        'c': 'submission',
+        'b': 'example@gmail.com',
+        'e': '339830',
+        'd': '2015-12-10'
+    }
+
+    record = {"acquisition_source": {
+        'source': "inspire:uid:50000",
+        'email': "example@gmail.com",
+        'method': "submission",
+        'date': "2015-12-10",
+        'submission_number': "339830",
+    }}
+    result = hep2marc.do(record)
+    assert expected == result['541']

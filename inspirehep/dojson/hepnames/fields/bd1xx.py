@@ -33,8 +33,6 @@ from ...utils import classify_rank, get_record_ref
 
 
 @hepnames.over('acquisition_source', '^541[10_].')
-@utils.for_each_value
-@utils.filter_values
 def acquisition_source(self, key, value):
     """Immediate Source of Acquisition Note."""
     return {
@@ -47,8 +45,6 @@ def acquisition_source(self, key, value):
 
 
 @hepnames2marc.over('541', 'acquisition_source')
-@utils.for_each_value
-@utils.filter_values
 def acquisition_source2marc(self, key, value):
     """Immediate Source of Acquisition Note."""
     return {

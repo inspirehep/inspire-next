@@ -199,8 +199,6 @@ def license2marc(self, key, value):
 
 
 @hep.over('acquisition_source', '^541[10_].')
-@utils.for_each_value
-@utils.filter_values
 def acquisition_source(self, key, value):
     """Immediate Source of Acquisition Note."""
     return {
@@ -213,8 +211,6 @@ def acquisition_source(self, key, value):
 
 
 @hep2marc.over('541', 'acquisition_source')
-@utils.for_each_value
-@utils.filter_values
 def acquisition_source2marc(self, key, value):
     """Immediate Source of Acquisition Note."""
     return {
