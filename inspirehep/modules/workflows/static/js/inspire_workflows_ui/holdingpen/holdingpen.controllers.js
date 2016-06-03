@@ -23,7 +23,7 @@
 
 (function (angular) {
 
-  function HoldingPenSelectionCtrl($scope, Hotkeys) {
+  function HoldingPenSelectionCtrl($scope, Hotkeys, HoldingPenRecordService) {
 
     $scope.vm.selected_records = [];
 
@@ -31,12 +31,27 @@
     $scope.toggleAll = toggleAll;
     $scope.isChecked = isChecked;
     $scope.allChecked = allChecked;
+    $scope.setDecision = setDecision;
 
     function getItemIdx(id) {
       return $scope.vm.selected_records.indexOf(+id);
     }
 
     function toggleSelection(id) {
+      if (isChecked(id)) {
+        $scope.vm.selected_records.splice(getItemIdx(+id), 1);
+      }
+      else {
+        $scope.vm.selected_records.push(+id);
+      }
+    }
+
+    function setDecision(id, decision) {
+      HoldingPenRecordService.setBatchDecision(
+        $scope.vm.invenioSearchResults.hits.hits, [+id], decision)
+    }
+
+    function utils() {
       if (isChecked(id)) {
         $scope.vm.selected_records.splice(getItemIdx(+id), 1);
       }
@@ -66,7 +81,7 @@
     }
 
     function allChecked() {
-      if (!$scope.$parent.vm.invenioSearchResults.hits ) {
+      if (!$scope.$parent.vm.invenioSearchResults.hits) {
         return false;
       }
       return $scope.vm.selected_records.length ===
@@ -89,7 +104,7 @@
     $scope.$on('invenio.search.success', reset);
   }
 
-  HoldingPenSelectionCtrl.$inject = ['$scope', 'Hotkeys'];
+  HoldingPenSelectionCtrl.$inject = ['$scope', 'Hotkeys', 'HoldingPenRecordService'];
 
   angular.module('holdingpen.controllers', [])
     .controller('HoldingPenSelectionCtrl', HoldingPenSelectionCtrl);

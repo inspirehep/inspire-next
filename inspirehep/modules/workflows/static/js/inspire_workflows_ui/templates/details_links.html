@@ -4,7 +4,7 @@
 
     <div class="table-body links">
       <div class="row table-row"
-           ng-repeat="url in record.metadata.urls">
+           ng-repeat="url in vm.record.metadata.urls">
         <div class="col-md-6 col-sm-6">
           <p ng-if="url.description === ''" class="text-muted">No description provided</p>
           <p ng-bind="url.description"></p>

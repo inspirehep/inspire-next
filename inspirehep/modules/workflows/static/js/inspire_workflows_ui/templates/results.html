@@ -4,8 +4,8 @@
 
     <div class="col-md-1">
       <input type="checkbox" class="checkbox-results"
-                         ng-click="toggleAll()"
-                  ng-checked="allChecked()"/>
+             ng-click="toggleAll()"
+             ng-checked="allChecked()"/>
     </div>
 
     <div class="col-md-4">
@@ -26,8 +26,10 @@
 
   </div>
 
-  <div class="row hp-item no-results" ng-if="vm.invenioSearchResults.hits.total == 0">
-    <p><i class="fa fa-frown-o" aria-hidden="true"></i> Sorry, there's nothing to see here.</p>
+  <div class="row hp-item no-results"
+       ng-if="vm.invenioSearchResults.hits.total == 0">
+    <p><i class="fa fa-frown-o" aria-hidden="true"></i> Sorry, there's nothing
+      to see here.</p>
   </div>
 
   <div class="row hp-item" ng-if="vm.invenioSearchResults.hits.total > 0"
@@ -42,20 +44,21 @@
             <span id='checkbox-parent'>
               <input type="checkbox" class="checkbox-results"
                      ng-click="toggleSelection(record._id)"
-              ng-checked="isChecked(record._id)"/>
+                     ng-checked="isChecked(record._id)"/>
             </span>
         </div>
 
-        <div class="col-md-4" ng-if="record._source._workflow.data_type !== 'authors'">
+        <div class="col-md-4"
+             ng-if="record._source._workflow.data_type !== 'authors'">
           <holding-pen-template-handler
-            record="record"
+
             template="/static/js/inspire_workflows_ui/templates/results_details_hep.html">
           </holding-pen-template-handler>
         </div>
 
-        <div class="col-md-4" ng-if="record._source._workflow.data_type === 'authors'">
+        <div class="col-md-4"
+             ng-if="record._source._workflow.data_type === 'authors'">
           <holding-pen-template-handler
-            record="record"
             template="/static/js/inspire_workflows_ui/templates/results_details_authors.html">
           </holding-pen-template-handler>
         </div>
@@ -83,16 +86,69 @@
         </div>
 
         <div class="col-md-3 decision">
-          <div ng-if="record._source._workflow.data_type === 'hep'">
-            <holding-pen-decision record="record"
-                      template="/static/js/inspire_workflows_ui/templates/results_decision_hep.html">
-            </holding-pen-decision>
+          <div ng-if="record._source._workflow.data_type === 'authors'">
+            <button class="btn btn-danger"
+                    ng-click="setDecision(record._id,'reject')">Reject
+            </button>
+            <button class="btn btn-warning"
+                    ng-click="setDecision(record._id,'accept_curate')">Curation
+            </button>
+            <button class="btn btn-success"
+                    ng-click="setDecision(record._id,'accept')">Accept
+            </button>
+
           </div>
 
-           <div ng-if="record._source._workflow.data_type === 'authors'">
-            <holding-pen-decision record="record"
-                      template="/static/js/inspire_workflows_ui/templates/results_decision_author.html">
-            </holding-pen-decision>
+          <div ng-if="record._source._workflow.data_type === 'hep'">
+            <div class="automatic-decision"><p class="small-text">Automatic
+              Decision:
+      <span ng-class="{'accept_core': record._source._extra_data.relevance_prediction.decision == 'CORE',
+        'accept': record._source._extra_data.relevance_prediction.decision == 'Non-CORE',
+        'reject': record._source._extra_data.relevance_prediction.decision == 'Rejected'}">
+      <span class="font-bolder"
+            ng-bind="record._source._extra_data.relevance_prediction.decision"></span>
+      <span
+        ng-bind="(record._source._extra_data.relevance_prediction.max_score | number : 2)"></span>
+      </span>
+            </p>
+            </div>
+
+            <div ng-if="!record._source._extra_data.user_action">
+              <button class="btn btn-danger"
+                      ng-click="setDecision(record._id, 'reject')">Reject
+              </button>
+              <button class="btn btn-warning"
+                      ng-click="setDecision(record._id,'accept')">Accept
+              </button>
+              <button class="btn btn-success"
+                      ng-click="setDecision(record._id,'accept_core')">Core
+              </button>
+            </div>
+
+
+            <div ng-if="record._source._extra_data.user_action">
+              <span ng-class="record._source._extra_data.user_action"
+                    ng-switch="record._source._extra_data.user_action">
+                <span ng-switch-when="reject">Rejected</span>
+                <span ng-switch-when="accept">Accepted as Non-CORE</span>
+                <span ng-switch-when="accept_core">Accepted as CORE</span>
+              </span>
+            </div>
+
+            <div class="clearfix"></div>
+            <br/>
+
+
+            <p>Filtered keywords include:</p>
+            <div class="small-text">
+              {{record._extra_data.classifier_results}}
+  <span
+    ng-repeat="(key,value) in record._source._extra_data.classifier_results.complete_output['Filtered Core keywords']"
+    ng-if="$index < 4">
+    <span ng-bind="key"></span><span ng-if="!$last">,</span>
+  </span>
+            </div>
+
           </div>
         </div>
       </div>

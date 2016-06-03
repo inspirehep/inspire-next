@@ -1,17 +1,17 @@
 <div class="detail-panel">
   <h4 class="record-title"
-      ng-bind="record.metadata.titles[0].title"
-      editable-text="record.metadata.titles[0].title"
+      ng-bind="vm.record.metadata.titles[0].title"
+      editable-text="vm.record.metadata.titles[0].title"
       e-ng-change="$rootscope.Utils.registerUpdateEvent()"></h4>
   <ul class="record-authors">
-    <li ng-repeat="author in record.metadata.authors">
+    <li ng-repeat="author in vm.record.metadata.authors">
       <span ng-bind="author.full_name"></span><span
       ng-if="!$last">, </span>
     </li>
   </ul>
   <p class="record-abstract"
-     ng-bind="record.metadata.abstracts[0].value"
-     editable-textarea="record.metadata.abstracts[0].value"
+     ng-bind="vm.record.metadata.abstracts[0].value"
+     editable-textarea="vm.record.metadata.abstracts[0].value"
      e-ng-change="$rootscope.Utils.registerUpdateEvent()">
   </p>
 
@@ -20,10 +20,10 @@
       <p class="font-bolder">License</p>
     </div>
     <div class="col-md-10 col-sm-8">
-      <span ng-bind="record.metadata.license[0].url"></span> <span
+      <span ng-bind="vm.record.metadata.license[0].url"></span> <span
       class="font-bolder text-muted"
-      ng-if="record.metadata.license[0].imposing"> imposed by
-          <span ng-bind="record.metadata.license[0].imposing"></span></span>
+      ng-if="vm.record.metadata.license[0].imposing"> imposed by
+          <span ng-bind="vm.record.metadata.license[0].imposing"></span></span>
     </div>
   </div>
 

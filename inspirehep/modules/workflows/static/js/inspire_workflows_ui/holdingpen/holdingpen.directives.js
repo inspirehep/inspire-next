@@ -50,32 +50,6 @@
     };
   }
 
-  function holdingPenDecision() {
-
-    var controller = ["$scope", "HoldingPenRecordService",
-      function ($scope, HoldingPenRecordService) {
-        $scope.Utils = {
-          setDecision: function (decision) {
-            HoldingPenRecordService.setDecision($scope.record._source,
-              $scope.record._id, decision)
-          }
-        }
-      }
-    ];
-
-    function templateUrl(element, attrs) {
-      return attrs.template;
-    }
-
-    return {
-      templateUrl: templateUrl,
-      restrict: 'AE',
-      scope: {
-        record: '=record'
-      },
-      controller: controller
-    };
-  }
 
   function holdingPenDetail() {
 
@@ -148,8 +122,21 @@
     return {
       templateUrl: templateUrl,
       restrict: 'AE',
+      scope: true
+    };
+  }
+
+  function holdingPenDecision() {
+    function templateUrl(element, attrs) {
+      return attrs.template;
+    }
+
+    return {
+      templateUrl: templateUrl,
+      restrict: 'AE',
       scope: {
-        record: '=record'
+        Utils: "=utils",
+        "record": "=record"
       }
     };
   }

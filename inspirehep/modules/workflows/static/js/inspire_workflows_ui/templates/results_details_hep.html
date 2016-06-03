@@ -1,10 +1,7 @@
 <h4 class="custom-h">
   <a class="title" ng-if="record._source.metadata.titles"
      ng-href="/holdingpen/{{record._id}}"
-     ng-bind='record._source.metadata.titles[0].title'></a>
-  <a class="title" ng-if="record._source.metadata.name"
-     ng-href="/holdingpen/{{record._id}}"
-     ng-bind='record.metadata.given_names + record._source.metadata.family_name'></a>
+     ng-bind-html='record._source.metadata.titles[0].title'></a>
 </h4>
 
 <div class="authors" ng-if="record._source.metadata.authors">
