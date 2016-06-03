@@ -5,41 +5,17 @@
 .. image:: https://travis-ci.org/inspirehep/inspire-next.svg?branch=master
     :target: https://travis-ci.org/inspirehep/inspire-next
 
-===============
-INSPIRE overlay
-===============
-
-This is the INSPIRE source code overlay for Invenio v.3.0. It installs on top of
-Invenio Digital Library platform source code. The overlay is currently used for `<http://labs.inspirehep.net>`_
-
-
-Latest news
+===========
+INSPIRE-HEP
 ===========
 
-*2015-11-24: ElasticSearch 2.0 now required!*
+INSPIRE is the leading information platform for High Energy Physics (HEP)
+literature which provides users with high quality, curated content covering
+the entire corpus of HEP literature and the fulltext of all such articles that
+are Open Access.
 
-Update your ElasticSearch installation and in order fetch updated packages you
-need to run:
+This is the INSPIRE source code overlay for Invenio v.3.0.x release series.
 
-``pip install -r requirements.txt``
+This code is currently hosted at `<http://labs.inspirehep.net>`_
 
-PS: This will override some invenio modules, so be sure to keep an eye on
-what is re-installed in case you have installed them in development mode.
-
-
-Installation
-============
-
-See the `install guide`_ here.
-
-.. _install guide: ./INSTALL.rst
-
-
-==============
-Happy hacking!
-==============
-
-| INSPIRE Development Team
-|   Email: admin@inspirehep.net
-|   Twitter: @inspirehep
-|   URL: http://inspirehep.net
+Full documentation here: http://pythonhosted.org/Inspirehep
