@@ -25,9 +25,11 @@
     </div>
 
   </div>
-  <div class="row hp-item" ng-if="vm.invenioSearchResults.hits.total == 0">
-    Sorry, there's nothing to see here.
+
+  <div class="row hp-item no-results" ng-if="vm.invenioSearchResults.hits.total == 0">
+    <p><i class="fa fa-frown-o" aria-hidden="true"></i> Sorry, there's nothing to see here.</p>
   </div>
+
   <div class="row hp-item" ng-if="vm.invenioSearchResults.hits.total > 0"
        ng-repeat="record in vm.invenioSearchResults.hits.hits track by record._id"
        ng-class="{waiting: record._source._workflow.status === 'WAITING',

@@ -66,7 +66,7 @@
     }
 
     function allChecked() {
-      if (!$scope.$parent.vm.invenioSearchResults.hits) {
+      if (!$scope.$parent.vm.invenioSearchResults.hits ) {
         return false;
       }
       return $scope.vm.selected_records.length ===

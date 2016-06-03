@@ -470,7 +470,7 @@ $hp_table_bg: #243547;
 
       .record-title {
         color: white;
-        font-size: 1.4em;
+        font-size: 1.7em;
       }
       .record-abstract {
         color: $blue-haze;
@@ -571,6 +571,14 @@ $hp_table_bg: #243547;
     background-color: $midnight-blue;
     border-radius: 3px;
     font-weight: bolder;
+  }
+
+  &.no-results {
+    padding: 50px !important;
+    font-size: 1.7em;
+    background-color: $dark-blue !important;
+    border-left: none !important;
+    text-align: center;
   }
 
   &:hover {

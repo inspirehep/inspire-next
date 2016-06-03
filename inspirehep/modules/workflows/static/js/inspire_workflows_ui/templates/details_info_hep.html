@@ -2,7 +2,7 @@
   <h4 class="record-title"
       ng-bind="record.metadata.titles[0].title"
       editable-text="record.metadata.titles[0].title"
-      e-ng-change="Utils.registerUpdateEvent()"></h4>
+      e-ng-change="$rootscope.Utils.registerUpdateEvent()"></h4>
   <ul class="record-authors">
     <li ng-repeat="author in record.metadata.authors">
       <span ng-bind="author.full_name"></span><span
@@ -12,7 +12,7 @@
   <p class="record-abstract"
      ng-bind="record.metadata.abstracts[0].value"
      editable-textarea="record.metadata.abstracts[0].value"
-     e-ng-change="Utils.registerUpdateEvent()">
+     e-ng-change="$rootscope.Utils.registerUpdateEvent()">
   </p>
 
   <div class="row">

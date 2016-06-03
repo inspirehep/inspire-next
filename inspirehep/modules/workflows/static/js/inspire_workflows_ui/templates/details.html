@@ -42,18 +42,57 @@
 
     <div class="row">
       <div class="col-md-12">
-        <div ng-if="vm.record._workflow.data_type === 'hep'">
-          <holding-pen-template-handler
-            record="vm.record"
-            template="/static/js/inspire_workflows_ui/templates/details_info_hep.html">
-          </holding-pen-template-handler>
-        </div>
+        <div class="detail-panel">
+          <div ng-if="vm.record._workflow.data_type === 'hep'">
 
-        <div ng-if="vm.record._workflow.data_type === 'authors'">
-          <holding-pen-template-handler
-            record="vm.record"
-            template="/static/js/inspire_workflows_ui/templates/details_info_authors.html">
-          </holding-pen-template-handler>
+            <h4 class="record-title"
+                ng-bind="vm.record.metadata.titles[0].title"
+                editable-text="vm.record.metadata.titles[0].title"
+                e-ng-change="Utils.registerUpdateEvent()"></h4>
+            <ul class="record-authors">
+              <li ng-repeat="author in vm.record.metadata.authors">
+                <span ng-bind="author.full_name"></span><span
+                ng-if="!$last">, </span>
+              </li>
+            </ul>
+            <p class="record-abstract"
+               ng-bind="vm.record.metadata.abstracts[0].value"
+               editable-textarea="vm.record.metadata.abstracts[0].value"
+               e-ng-change="Utils.registerUpdateEvent()">
+            </p>
+
+            <div class="row">
+              <div class="col-md-2 col-sm-4">
+                <p class="font-bolder">License</p>
+              </div>
+              <div class="col-md-10 col-sm-8">
+                <span ng-bind="vm.record.metadata.license[0].url"></span> <span
+                class="font-bolder text-muted"
+                ng-if="vm.record.metadata.license[0].imposing"> imposed by
+          <span ng-bind="vm.record.metadata.license[0].imposing"></span></span>
+              </div>
+            </div>
+
+
+          </div>
+
+
+          <div ng-if="vm.record._workflow.data_type === 'authors'">
+
+            <h4 class="record-title"
+                ng-bind="vm.record.metadata.name.value"
+                editable-text="vm.record.metadata.name.value"
+                e-ng-change="Utils.registerUpdateEvent()"></h4>
+
+            <p class="advisors" ng-if="vm.record.metadata.name.preferred_name">
+              <span class="text-muted">Preferred name:</span>
+              <span ng-bind="vm.record.metadata.name.preferred_name"
+                    editable-text="vm.record.metadata.name.preferred_name"
+                    e-ng-change="Utils.registerUpdateEvent()"></span>
+            </p>
+
+
+          </div>
         </div>
       </div>
 
@@ -80,16 +119,17 @@
         <div class="detail-panel panel-200">
           <h4>Advisors</h4>
 
-      <p class="advisors">
+          <div class="advisors">
+            <div class="row"
+                 ng-repeat="advisor in vm.record.metadata.phd_advisors">
+              <div class="col-md-6 col-sm-6" ng-bind="advisor.name"></div>
+              <div class="col-md-6 col-sm-6"
+                   ng-bind="advisor.degree_type"></div>
+            </div>
 
-        <div class="row" ng-repeat="advisor in vm.record.metadata.phd_advisors">
-
-          <div class="col-md-6 col-sm-6" ng-bind="advisor.name"></div>
-          <div class="col-md-6 col-sm-6" ng-bind="advisor.degree_type"></div>
+          </div>
         </div>
-      </p>
-        </div>
-        </div>
+      </div>
 
       <div class="col-md-5 col-sm-6" ng-if="vm.record.metadata.urls">
         <holding-pen-template-handler
@@ -146,7 +186,8 @@
 
     <div class="row">
 
-      <div id="save-panel" class="col-md-12 text-center" ng-if="vm.update_ready || vm.saved">
+      <div id="save-panel" class="col-md-12 text-center"
+           ng-if="vm.update_ready || vm.saved">
         <div class="detail-panel">
 
           <div id="hp-save" ng-if="vm.update_ready">
