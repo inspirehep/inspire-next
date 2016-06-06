@@ -203,41 +203,11 @@
             "type": "array"
         },
         "titles": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "type": "string"
-                    },
-                    "subtitle": {
-                        "type": "string"
-                    },
-                    "title": {
-                        "type": "string"
-                    }
-                }
-            },
-            "type": "array"
+            "$ref": "elements/titles.json"
         },
         "titles_old": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "type": "string"
-                    },
-                    "subtitle": {
-                        "type": "string"
-                    },
-                    "title": {
-                        "type": "string"
-                    }
-                }
-            },
-            "type": "array",
-            "description": "FIXME: Old 247, shall it still have its own field?"
+            "description": "FIXME: Old 247, shall it still have its own field?",
+            "$ref": "elements/titles.json"
         },
         "edition": {
             "uniqueItems": true,
@@ -586,12 +556,8 @@
             },
             "type": "array"
         },
-        "title_variation": {
-            "uniqueItems": true,
-            "items": {
-                "type": "string"
-            },
-            "type": "array"
+        "title_variations": {
+            "$ref": "elements/titles.json"
         },
         "free_keywords": {
             "uniqueItems": true,
@@ -1049,24 +1015,8 @@
             "type": "array",
             "title": "URLs"
         },
-        "title_translation": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "subtitle": {
-                        "type": "string",
-                        "title": "Subtitle"
-                    },
-                    "title": {
-                        "type": "string",
-                        "title": "Title"
-                    }
-                },
-                "title": "Title translation"
-            },
-            "type": "array",
-            "title": "Title translations"
+        "title_translations": {
+            "$ref": "elements/titles.json"
         },
         "corporate_author": {
             "uniqueItems": true,

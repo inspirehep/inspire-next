@@ -139,3 +139,107 @@ def test_multiple_issn_from_marcxml_022():
     result = strip_empty_values(journals.do(create_record(snippet)))
 
     assert expected == result['issn']
+
+
+
+def test_titles_from_marcxml_130_with_single_a():
+    snippet = (
+        '<record>'
+        '  <datafield tag="130" ind1=" " ind2=" ">'
+        '    <subfield code="a">Physical Review Special Topics - Accelerators and Beams</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'title': 'Physical Review Special Topics - Accelerators and Beams',
+        },
+    ]
+    result = strip_empty_values(journals.do(create_record(snippet)))
+
+    assert expected == result['titles']
+
+
+def test_titles_from_marcxml_130_with_a_and_b():
+    snippet = (
+        '<record>'
+        '  <datafield tag="130" ind1=" " ind2=" ">'
+        '    <subfield code="a">Humana Mente</subfield>'
+        '    <subfield code="b">Journal of Philosophical Studies</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'title': 'Humana Mente',
+            'subtitle': 'Journal of Philosophical Studies',
+        },
+    ]
+    result = strip_empty_values(journals.do(create_record(snippet)))
+
+    assert expected == result['titles']
+
+
+def test_short_titles_from_marcxml_711():
+    snippet = (
+        '<record>'
+        '  <datafield tag="711" ind1=" " ind2=" ">'
+        '    <subfield code="a">Phys.Rev.ST Accel.Beams</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'title': 'Phys.Rev.ST Accel.Beams',
+        },
+    ]
+    result = strip_empty_values(journals.do(create_record(snippet)))
+
+    assert expected == result['short_titles']
+
+
+def test_title_variants_from_marcxml_730():
+    snippet = (
+        '<record>'
+        '  <datafield tag="730" ind1=" " ind2=" ">'
+        '    <subfield code="a">PHYSICAL REVIEW SPECIAL TOPICS ACCELERATORS AND BEAMS</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'title': 'PHYSICAL REVIEW SPECIAL TOPICS ACCELERATORS AND BEAMS'
+        },
+    ]
+    result = strip_empty_values(journals.do(create_record(snippet)))
+
+    assert expected == result['title_variants']
+
+
+def test_multiple_title_variants_from_marcxml_730():
+    snippet = (
+        '<record>'
+        '  <datafield tag="730" ind1=" " ind2=" ">'
+        '    <subfield code="a">PHYS REV SPECIAL TOPICS ACCELERATORS BEAMS</subfield>'
+        '  </datafield>'
+        '  <datafield tag="730" ind1=" " ind2=" ">'
+        '    <subfield code="a">PHYSICS REVIEW ST ACCEL BEAMS</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'title': 'PHYS REV SPECIAL TOPICS ACCELERATORS BEAMS',
+        },
+        {
+            'title': 'PHYSICS REVIEW ST ACCEL BEAMS',
+        },
+    ]
+    result = strip_empty_values(journals.do(create_record(snippet)))
+
+    assert expected == result['title_variants']

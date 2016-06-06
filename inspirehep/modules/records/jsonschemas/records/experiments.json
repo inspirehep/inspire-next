@@ -89,23 +89,16 @@
             "title": "Hidden note",
             "type": "string"
         },
-        "name": {
-            "title": "Experiment name",
-            "type": "string"
+        "experiment_names": {
+            "$ref": "elements/titles.json"
         },
         "nonpublic_note": {
             "description": "FIXME: difference from hidden_note!?",
             "title": "Non public note",
             "type": "string"
         },
-        "other_names": {
-            "items": {
-                "title": "Other name",
-                "type": "string"
-            },
-            "title": "Other names",
-            "type": "array",
-            "uniqueItems": true
+        "other_experiment_names": {
+            "$ref": "elements/titles.json"
         },
         "public_note": {
             "title": "Public note",
@@ -182,21 +175,8 @@
             "type": "array",
             "uniqueItems": true
         },
-        "title": {
-            "type": "object",
-                "properties": {
-                    "title": {
-                        "type": "string"
-                    },
-                    "subtitle": {
-                        "type": "string"
-                    },
-                    "source": {
-                        "type": "string"
-                    }
-                },
-            "type":"array",
-            "title": "Title"
+        "titles": {
+            "$ref": "elements/titles.json"
         },
         "url": {
             "format": "url",

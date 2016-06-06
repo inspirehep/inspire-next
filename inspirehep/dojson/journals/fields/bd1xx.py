@@ -75,13 +75,6 @@ def coden(self, key, value):
     return value.get("a")
 
 
-@journals.over('title', '^130..')
-def title(self, key, value):
-    """Title Statement."""
-    self.setdefault('breadcrumb_title', value.get('a'))
-    return value.get('a')
-
-
 @journals.over('publisher', '^643..')
 @utils.for_each_value
 def publisher(self, key, value):
@@ -89,11 +82,32 @@ def publisher(self, key, value):
     return value.get('b')
 
 
-@journals.over('short_title', '^711..')
+@journals.over('titles', '^130..')
 @utils.for_each_value
-def short_title(self, key, value):
-    """Title Statement."""
-    return value.get('a')
+def titles(self, key, value):
+    """Titles."""
+    return {
+        'title': value.get('a'),
+        'subtitle': value.get('b'),
+    }
+
+
+@journals.over('short_titles', '^711..')
+@utils.for_each_value
+def short_titles(self, key, value):
+    """Short titles."""
+    return {
+        'title': value.get('a'),
+    }
+
+
+@journals.over('title_variants', '^730..')
+@utils.for_each_value
+def title_variants(self, key, value):
+    """Title variants."""
+    return {
+        'title': value.get('a'),
+    }
 
 
 @journals.over('name_variants', '^730..')

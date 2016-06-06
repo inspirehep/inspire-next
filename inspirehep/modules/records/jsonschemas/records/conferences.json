@@ -16,13 +16,7 @@
             "uniqueItems": true
         },
         "alternative_titles": {
-            "items": {
-                "title": "Alternative title",
-                "type": "string"
-            },
-            "title": "Alternative titles",
-            "type": "array",
-            "uniqueItems": true
+            "$ref": "elements/titles.json"
         },
         "closing_date": {
             "format": "date",
@@ -100,13 +94,8 @@
                 "type":"array",
                 "title": "Short description"
         },
-        "subtitle": {
-            "title": "Conference subtitle",
-            "type": "string"
-        },
-        "title": {
-            "title": "Conference title",
-            "type": "string"
+        "titles": {
+            "$ref": "elements/titles.json"
         },
         "transparencies": {
             "format": "url",

@@ -40,6 +40,7 @@ from inspirehep.utils.date import (
 )
 from inspirehep.utils.dedupers import dedupe_list
 from inspirehep.utils.jinja2 import render_template_to_string
+from inspirehep.utils.record import get_title
 from inspirehep.utils.search import perform_es_search
 from inspirehep.utils.template import render_macro_from_template
 
@@ -581,7 +582,7 @@ def publication_info(record):
                     ctx = {
                         "parent_recid": parent_recid,
                         "conference_recid": conference_recid,
-                        "conference_title": conference_rec['title']
+                        "conference_title": get_title(conference_rec)
                     }
                     if result:
                         result['conf_info'] = render_macro_from_template(
@@ -603,7 +604,7 @@ def publication_info(record):
                 try:
                     ctx = {
                         "conference_recid": conference_recid,
-                        "conference_title": conference_rec['title'],
+                        "conference_title": get_title(conference_rec),
                         "pub_info": bool(result.get('pub_info', ''))
                     }
                     result['conf_info'] = render_macro_from_template(

@@ -44,8 +44,16 @@ def acronym(self, key, value):
 
     self['cnum'] = value.get('g')
 
-    self['subtitle'] = value.get('b')
-    self['title'] = value.get('a')
+    if value.get('a'):
+        self.setdefault('titles', [])
+        raw_titles = utils.force_list(value.get('a'))
+        for raw_title in raw_titles:
+            title = {
+                'title': raw_title,
+                'subtitle': value.get('b'),
+                'source': value.get('9'),
+            }
+            self['titles'].append(title)
 
     if value.get('c'):
         self.setdefault('address', [])
@@ -60,8 +68,14 @@ def acronym(self, key, value):
 @conferences.over('alternative_titles', '^711')
 @utils.for_each_value
 def alternative_titles(self, key, value):
-    """Alternative title."""
-    return value.get('a')
+    """Alternative titles.
+
+    711__b is for indexing, and is not intended to be displayed.
+    """
+    return {
+        'title': value.get('a'),
+        'searchable_title': value.get('b'),
+    }
 
 
 @conferences.over('contact_details', '^270')

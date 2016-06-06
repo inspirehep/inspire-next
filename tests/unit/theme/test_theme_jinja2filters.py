@@ -52,7 +52,7 @@ def jinja_mock_env():
 def mock_replace_refs():
     def get_replace_refs_mock(title, control_numbers):
         control_numbers_map = {c[0]['$ref']: c[1] for c in control_numbers}
-        return lambda o, s: {'title': title,
+        return lambda o, s: {'titles': [{'title': title}],
                              'control_number': control_numbers_map[o['$ref']]}
     return get_replace_refs_mock
 

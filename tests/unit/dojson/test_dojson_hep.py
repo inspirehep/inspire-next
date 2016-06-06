@@ -3,23 +3,27 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2015, 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
-import pkg_resources
+from __future__ import absolute_import, division, print_function
 
 import os
+import pkg_resources
 
 import pytest
 
@@ -176,30 +180,24 @@ def test_corporate_author(marcxml_to_json, json_to_marc):
             json_to_marc['110'][0]['a'])
 
 
-def test_title_variation(marcxml_to_json, json_to_marc):
-    """Test if title_variation is created correctly."""
-    assert (marcxml_to_json['title_variation'][0] ==
-            json_to_marc['210'][0]['a'])
-
-
-def test_title_translation(marcxml_to_json, json_to_marc):
-    """Test if title_translation is created correctly."""
-    assert (marcxml_to_json['title_translation'][0]['title'] ==
-            json_to_marc['242'][0]['a'])
-    assert (marcxml_to_json['title_translation'][0]['subtitle'] ==
-            json_to_marc['242'][0]['b'])
-
-
-def test_title(marcxml_to_json, json_to_marc):
-    """Test if title is created correctly."""
+def test_titles(marcxml_to_json, json_to_marc):
+    """Test if titles is created correctly."""
     assert (marcxml_to_json['titles'][0]['title'] ==
             json_to_marc['245'][0]['a'])
 
 
-def test_breadcrumb_title(marcxml_to_json, json_to_marc):
-    """Test if breadcrumb title is created correctly."""
-    titles = [d.get('a') for d in json_to_marc['245']]
-    assert (marcxml_to_json['breadcrumb_title'] in titles)
+def test_title_variations(marcxml_to_json, json_to_marc):
+    """Test if title_variations is created correctly."""
+    assert (marcxml_to_json['title_variations'][0]['title'] ==
+            json_to_marc['210'][0]['a'])
+
+
+def test_title_translations(marcxml_to_json, json_to_marc):
+    """Test if title_translations is created correctly."""
+    assert (marcxml_to_json['title_translations'][0]['title'] ==
+            json_to_marc['242'][0]['a'])
+    assert (marcxml_to_json['title_translations'][0]['subtitle'] ==
+            json_to_marc['242'][0]['b'])
 
 
 def test_title_arxiv(marcxml_to_json, json_to_marc):

@@ -32,27 +32,39 @@ from ..model import experiments
 from ...utils import get_record_ref
 
 
-@experiments.over('experiment_name', '^119..')
-def experiment_name(self, key, value):
-    """Name of experiment."""
-    value = utils.force_list(value)
-    self.setdefault('affiliation', [v.get("u") for v in value if v.get('u')])
+@experiments.over('experiment_names', '^119..')
+@utils.for_each_value
+def experiment_names(self, key, value):
+    """Experiment names."""
+    if value.get('u'):
+        self.setdefault('affiliation', [])
+        raw_affiliations = utils.force_list(value.get('u'))
+        for raw_affiliation in raw_affiliations:
+            self['affiliation'].append(raw_affiliation)
+
     return {
-        'experiment': [v.get("a") for v in value if v.get('a')],
-        'wwwlab': [v.get("u") for v in value if v.get('u')]
+        'source': value.get('9'),
+        'subtitle': value.get('b'),
+        'title': value.get('a'),
     }
 
 
-@experiments.over('title', '^245[10_][0_]')
+@experiments.over('titles', '^245[10_][0_]')
 @utils.for_each_value
 @utils.filter_values
-def title(self, key, value):
-    """Title Statement."""
-    self.setdefault('breadcrumb_title', value.get('a'))
+def titles(self, key, value):
+    """Titles."""
     return {
         'title': value.get('a'),
-        'subtitle': value.get('b'),
-        'source': value.get('9'),
+    }
+
+
+@experiments.over('title_variants', '^419..')
+@utils.for_each_value
+def title_variants(self, key, value):
+    """Title variants."""
+    return {
+        'title': value.get('a')
     }
 
 
