@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,20 +22,45 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
+from inspirehep.dojson.utils import strip_empty_values
+
 from dojson import utils
+
+from idutils import normalize_issn
 
 from ..model import journals
 
 
 @journals.over('issn', '^022..')
 @utils.for_each_value
-@utils.filter_values
 def issn(self, key, value):
-    """ISSN Statement."""
-    return {
-        "value": value.get("a"),
-        "material": value.get("b")
-    }
+    """ISSN and its medium with additional comment."""
+    issn = {}
+    if 'a' in value:
+        issn['value'] = normalize_issn(value['a'])
+    else:
+        return None
+    if 'b' in value:
+        raw_medium = value.get('b', '').lower()
+        if 'print' in raw_medium:
+            issn['medium'] = 'print'
+        elif 'online' in raw_medium:
+            issn['medium'] = 'online'
+        elif 'electronic' in raw_medium:
+            issn['medium'] = 'online'
+        elif 'ebook' in raw_medium:
+            issn['medium'] = 'online'
+            issn['comment'] = raw_medium
+        elif 'hardcover' in raw_medium:
+            issn['medium'] = 'print'
+            issn['comment'] = raw_medium
+        else:
+            issn['medium'] = None
+            issn['comment'] = raw_medium
+
+    return issn
 
 
 @journals.over('coden', '^030..')
@@ -45,39 +70,36 @@ def coden(self, key, value):
     return value.get("a")
 
 
-@journals.over('title', '^130..')
-def title(self, key, value):
-    """Title Statement."""
-    self.setdefault('breadcrumb_title', value.get('a'))
-    return value.get('a')
-
-
 @journals.over('publisher', '^643..')
 @utils.for_each_value
 def publisher(self, key, value):
-    """Title used in breadcrum and html title."""
+    """Publisher."""
     return value.get('b')
 
 
-@journals.over('short_title', '^711..')
+@journals.over('titles', '^130..')
 @utils.for_each_value
-def short_title(self, key, value):
-    """Title Statement."""
-    return value.get('a')
-
-
-@journals.over('name_variants', '^730..')
-@utils.for_each_value
-def name_variants(self, key, value):
-    """Variants of the name."""
-    return value.get('a')
-
-
-@journals.over('urls', '^856.[10_28]')
-@utils.for_each_value
-def urls(self, key, value):
-    """URLs."""
+def titles(self, key, value):
+    """Title used in breadcrum and html title."""
     return {
-        'urls': value.get('u'),
-        'doc_string': value.get('w')
+        'title': value.get('a'),
+        'subtitle': value.get('b')
+    }
+
+
+@journals.over('short_titles', '^711..')
+@utils.for_each_value
+def titles_short(self, key, value):
+    """Short titles."""
+    return {
+        'title': value.get('a'),
+    }
+
+
+@journals.over('title_variants', '^730..')
+@utils.for_each_value
+def title_variants(self, key, value):
+    """Title variants."""
+    return {
+        'title': value.get('a'),
     }

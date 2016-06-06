@@ -16,62 +16,49 @@
             "type": "array",
             "uniqueItems": true
         },
-        "former_title": {
-            "items": {
-                "title": "Former title",
-                "type": "string"
-            },
-            "title": "Former titles",
-            "type": "array",
-            "uniqueItems": true
-        },
-        "history": {
-            "title": "History",
-            "type": "string"
-        },
-        "inspire_long_title": {
-            "title": "INSPIRE long title",
-            "type": "string"
-        },
-        "inspire_short_title": {
-            "title": "INSPIRE short title",
-            "type": "string"
+        "short_titles": {
+            "$ref": "elements/titles.json"
         },
         "issn": {
+            "uniqueItems": true,
             "items": {
-                "properties": {
-                    "material": {
-                        "description": "FIXME: so far it's not used!",
-                        "enum": [
-                            "electronic",
-                            "print"
-                        ],
-                        "title": "Material",
-                        "type": "string"
-                    },
-                    "value": {
-                        "pattern": "\\d{4}-\\d{3}[\\dX]",
-                        "title": "ISSN",
-                        "type": "string"
-                    }
-                },
                 "required": [
                     "value"
                 ],
-                "title": "ISSN",
-                "type": "object"
+                "type": "object",
+                "properties": {
+                    "medium": {
+                        "enum": [
+                            "online",
+                            "print"
+                        ],
+                        "title": "Medium",
+                        "type": "string",
+                        "description": "Medium (type) of the ISSN."
+                    },
+                    "value": {
+                        "title": "ISSN",
+                        "pattern": "\\d{4}-\\d{3}[\\dX]",
+                        "type": "string"
+                    },
+                    "comment": {
+                        "title": "comment",
+                        "type": "string",
+                        "description": "Type might be specified here, e.g. hardcover, ebook"
+                    }
+                },
+                "title": "ISSN code"
             },
-            "title": "ISSN",
+            "title": "ISSN codes",
             "type": "array",
-            "uniqueItems": true
+            "description": "ISSN codes identifying the given journal"
         },
         "journal_handling": {
             "title": "Journal handling",
             "type": "string"
         },
-        "journal_title": {
-            "title": "Journal title (from ZDB)",
-            "type": "string"
+        "titles": {
+            "$ref": "elements/titles.json"
         },
         "license": {
             "enum": [
@@ -83,10 +70,8 @@
             "title": "License",
             "type": "string"
         },
-        "license_url": {
-            "format": "url",
-            "title": "License URL",
-            "type": "string"
+        "license_urls": {
+            "$ref": "elements/urls.json"
         },
         "nonpublic_note": {
             "title": "Non public note",
@@ -137,18 +122,10 @@
             "type": "object"
         },
         "title_variants": {
-            "items": {
-                "title": "Title variant",
-                "type": "string"
-            },
-            "title": "Title variants",
-            "type": "array",
-            "uniqueItems": true
+            "$ref": "elements/titles.json"
         },
-        "url": {
-            "format": "url",
-            "title": "URL of the journal",
-            "type": "string"
+        "urls": {
+            "$ref": "elements/urls.json"
         }
     },
     "title": "Journal",

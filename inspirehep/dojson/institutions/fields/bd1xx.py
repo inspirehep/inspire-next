@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +21,10 @@
 # or submit itself to any jurisdiction.
 
 """MARC 21 model definition."""
+
+from __future__ import absolute_import, division, print_function
+
+from inspirehep.dojson.utils import parse_institution_address
 
 from dojson import utils
 
@@ -65,16 +69,15 @@ def name(self, key, value):
             self.setdefault(key, [])
             self[key].extend(val)
 
-    if value.get('a'):
-        self.setdefault('breadcrumb_title', value.get('a'))
-
     set_value('institution', value.get('a'))
     set_value('department', value.get('b'))
     set_value('ICN', value.get('u'))
     set_value('obsolete_ICN', value.get('x'))
     set_value('new_ICN', value.get('t'))
 
-    names = list(utils.force_list(value.get('a'))) or []
+    names = []
+    if value.get('a'):
+        names = list(utils.force_list(value.get('a'))) or []
     names.extend(utils.force_list(value.get('u')) or [])
     names.extend(utils.force_list(value.get('t')) or [])
     return names
@@ -85,42 +88,45 @@ def name(self, key, value):
 @utils.filter_values
 def address(self, key, value):
     """Address info."""
-    return {
-        'address': utils.force_list(value.get('a')),
-        'city': value.get('b'),
-        'state_province': value.get('c'),
-        'country': value.get('d'),
-        'postal_code': utils.force_list(value.get('e')),
-        'country_code': value.get('g'),
-    }
+    country_code = value.get('g')
+    if isinstance(country_code, (list, tuple)):
+        country_code = set(country_code)
+        if len(country_code) == 1:
+            country_code = country_code.pop()
+    return parse_institution_address(value.get('a'), value.get('b'),
+                                     value.get('c'), value.get('d'),
+                                     value.get('e'), country_code)
 
 
 @institutions.over('field_activity', '^372..')
 @utils.for_each_value
 def field_activity(self, key, value):
     """Field of activity."""
-    return value.get('a')
+    return value.get('a').upper()
 
 
 @institutions.over('name_variants', '^410..')
-@utils.for_each_value
-@utils.filter_values
 def name_variants(self, key, value):
     """Variants of the name."""
-    if value.get('g'):
-        self.setdefault('extra_words', [])
-        self['extra_words'].extend(utils.force_list(value.get('g')))
-    return {
-        "source": value.get('9'),
-        "value": utils.force_list(value.get('a'))
-    }
+    value = utils.force_list(value)
+    name_variants = []
+    for v in value:
+        if v.get('g'):
+            self.setdefault('extra_words', [])
+            extra_words = self.get('extra_words', [])
+            new_extra = utils.force_list(v.get('g'))
+            extras_to_append = list(set(new_extra) - set(extra_words))
+            self['extra_words'].extend(extras_to_append)
 
+        if v.get('a'):
+            name_variant = {
+                "source": v.get('9'),
+                "value": utils.force_list(v.get('a'))
+            }
+            if name_variant not in name_variants:
+                name_variants.append(name_variant)
 
-@institutions.over('content_classification', '^65017')
-@utils.for_each_value
-def content_classification(self, key, value):
-    """Institution info."""
-    return value.get('a')
+    return name_variants
 
 
 @institutions.over('core', '^690C.')
@@ -148,13 +154,6 @@ def hidden_notes(self, key, value):
 def public_notes(self, key, value):
     """Hidden note."""
     return value.get('i')
-
-
-@institutions.over('urls', '^856.[10_28]')
-@utils.for_each_value
-def urls(self, key, value):
-    """Contact person."""
-    return value.get('u')
 
 
 @institutions.over('historical_data', '^6781..')

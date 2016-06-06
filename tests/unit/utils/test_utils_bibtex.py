@@ -3,21 +3,26 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 """Unit tests for the BibTeX exporter."""
+
+from __future__ import absolute_import, division, print_function
 
 import mock
 import pytest
@@ -1523,10 +1528,10 @@ def test_get_url_empty_urls():
     assert expected == result
 
 
-def test_get_url_urls_without_url():
+def test_get_url_urls_without_value():
     urls_without_url = Record({
         'urls': [
-            {'not-url': 'foo'}
+            {'not-value': 'foo'}
         ]
     })
 
@@ -1536,10 +1541,10 @@ def test_get_url_urls_without_url():
     assert expected == result
 
 
-def test_get_url_one_url_not_a_list_to_an_image():
+def test_get_url_one_url_to_an_image():
     one_url_not_a_list_to_an_image = Record({
         'urls': [
-            {'url': 'foo.jpg'}
+            {'value': 'foo.jpg'}
         ]
     })
 
@@ -1549,10 +1554,10 @@ def test_get_url_one_url_not_a_list_to_an_image():
     assert expected == result
 
 
-def test_get_url_one_url_not_a_list_not_to_an_image():
+def test_get_url_one_url_not_to_an_image():
     one_url_not_a_list_not_to_an_image = Record({
         'urls': [
-            {'url': 'http://link.aps.org/abstract/PRL/V19/P1264'}
+            {'value': 'http://link.aps.org/abstract/PRL/V19/P1264'}
         ]
     })
 
@@ -1562,29 +1567,11 @@ def test_get_url_one_url_not_a_list_not_to_an_image():
     assert expected == result
 
 
-def test_get_url_one_url_a_list_one_to_an_image_one_not():
-    one_url_a_list_one_to_an_image = Record({
-        'urls': [
-            {
-                'url': [
-                    'foo.jpg',
-                    'http://link.aps.org/abstract/PRL/V19/P1264'
-                ]
-            }
-        ]
-    })
-
-    expected = ['foo.jpg', 'http://link.aps.org/abstract/PRL/V19/P1264']
-    result = Bibtex(one_url_a_list_one_to_an_image)._get_url()
-
-    assert expected == result
-
-
 def test_get_url_more_urls_selects_first():
     more_urls = Record({
         'urls': [
-            {'url': 'http://link.aps.org/abstract/PRL/V19/P1264'},
-            {'url': 'http://example.com'}
+            {'value': 'http://link.aps.org/abstract/PRL/V19/P1264'},
+            {'value': 'http://example.com'}
         ]
     })
 
@@ -1791,11 +1778,11 @@ def test_get_isbn_empty_isbns():
 def test_get_isbn_one_isbn_not_a_list():
     one_isbn_not_a_list = Record({
         'isbns': [
-            {'value': '9781424409228'}
+            {'value': '978-1-4244-0922-8'}
         ]
     })
 
-    expected = '9781424409228'
+    expected = '978-1-4244-0922-8'
     result = Bibtex(one_isbn_not_a_list)._get_isbn()
 
     assert expected == result

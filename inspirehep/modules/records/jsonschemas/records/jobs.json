@@ -6,24 +6,20 @@
           "title": "Url of the record",
           "$ref": "json_reference.json"
         },
+        "address": {
+          "items": {"$ref": "elements/address.json"},
+          "title": "Address of the job (usually one)(not supported yet by MarcXML)",
+          "type": "array",
+          "uniqueItems": true
+        },
         "closed_date": {
             "format": "date",
             "title": "Date when the job was closed",
             "type": "string"
         },
-        "contact_email": {
+        "contact_details": {
             "items": {
-                "format": "email",
-                "title": "Contact email",
-                "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
-        "contact_person": {
-            "items": {
-                "title": "Contact person",
-                "type": "string"
+                "$ref": "elements/contact.json"
             },
             "type": "array",
             "uniqueItems": true
@@ -88,28 +84,24 @@
             "title": "Job position",
             "type": "string"
         },
-        "rank": {
-            "items": {
-                "description": "FIXME: should this be identical to hepnames rank? I would say so",
-                "enum": [
-                    "Postdc",
-                    "Postdoc",
-                    "Junior",
-                    "Student",
-                    "Senior",
-                    "Staff",
-                    "Visitor",
-                    "Visiting Scientist"
-                ],
-                "title": "Rank",
-                "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
+        "_ranks": {
+          "items": {
+              "title": "Raw values of MARC 656__a field",
+              "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "ranks": {
+          "items": {
+              "$ref": "elements/rank.json"
+          },
+          "type": "array",
+          "uniqueItems": true
         },
         "reference_email": {
             "items": {
-                "description": "FIXME: what is the difference from contact_email!?",
+                "description": "E-mail address where applications should be sent (if different than contact e-mail)",
                 "format": "email",
                 "title": "Reference email",
                 "type": "string"
@@ -117,40 +109,10 @@
             "type": "array",
             "uniqueItems": true
         },
-        "research_area": {
-            "items": {
-                "enum": [
-                    "usual",
-                    "arXiv",
-                    "list",
-                    "physics.ins-det",
-                    "astro-ph",
-                    "nucl-th",
-                    "hep-lat",
-                    "physics",
-                    "hep-th",
-                    "hep-ex",
-                    "gr-qc",
-                    "hep-ph",
-                    "physics.acc-phys",
-                    "nucl-ex",
-                    "physics-other"
-                ],
-                "type": "string"
-            },
-            "title": "Research area",
-            "type": "array",
-            "uniqueItems": true
+        "field_categories": {
+            "$ref": "elements/field.json"
         },
-        "urls": {
-            "uniqueItems": true,
-            "items": {
-                "type": "string",
-                "format": "url"
-            },
-            "type": "array",
-            "description": "Contains links."
-        }
+        "urls": {"$ref": "elements/urls.json"}
     },
     "title": "HEP Job",
     "type": "object"

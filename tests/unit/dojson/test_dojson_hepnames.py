@@ -20,6 +20,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
 import os
 import pkg_resources
 
@@ -143,7 +145,7 @@ def test_positions(marcxml_to_json, json_to_marc):
     """Test if positions is created correctly."""
     assert (marcxml_to_json['positions'][0]['institution']['name'] ==
             json_to_marc['371'][0]['a'])
-    assert (marcxml_to_json['positions'][0]['rank'] ==
+    assert (marcxml_to_json['positions'][0]['_rank'] ==
             json_to_marc['371'][0]['r'])
     assert (marcxml_to_json['positions'][0]['start_date'] ==
             json_to_marc['371'][0]['s'])
