@@ -20,9 +20,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-import pytest
-
 from inspirehep.modules.search import IQ
+
+from flask import current_app
+
+import pytest
 
 
 def test_empty():
@@ -393,7 +395,8 @@ def test_author_colon_bai_with_double_quotes_and_collection_colon():
             ]
         }
     }
-    result = query.to_dict()
+    with current_app.test_request_context():
+        result = query.to_dict()
 
     assert expected == result
 
@@ -495,7 +498,8 @@ def test_author_colon_bai_with_double_quotes_and_collection_colon_and_cited_colo
             ]
         }
     }
-    result = query.to_dict()
+    with current_app.test_request_context():
+        result = query.to_dict()
 
     assert expected == result
 
@@ -779,7 +783,7 @@ def test_find_author_with_hash_wildcard():
                     'default_field': 'authors.alternative_name',
                     'query': 'chkv*'}}
             ]}
-        }
+    }
     result = query.to_dict()
 
     assert expected == result

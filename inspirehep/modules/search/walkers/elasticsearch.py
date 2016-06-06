@@ -29,8 +29,8 @@ from elasticsearch_dsl import Q
 
 from invenio_query_parser.ast import (AndOp, DoubleQuotedValue, EmptyQuery,
                                       GreaterEqualOp, GreaterOp, Keyword,
-                                      KeywordOp, LowerEqualOp, LowerOp, NotOp,
-                                      OrOp, RangeOp, RegexValue,
+                                      KeywordOp, LowerEqualOp, LowerOp, MalformedQuery,
+                                      NotOp, OrOp, RangeOp, RegexValue,
                                       SingleQuotedValue, Value,
                                       ValueQuery, WildcardQuery)
 from invenio_query_parser.visitor import make_visitor
@@ -58,6 +58,10 @@ class ElasticSearchDSL(object):
         return [field]
 
     # pylint: disable=W0613,E0102
+
+    @visitor(MalformedQuery)
+    def visit(self, op):
+        return Q('match_all')
 
     @visitor(FilterOp)
     def visit(self, node, left, right):

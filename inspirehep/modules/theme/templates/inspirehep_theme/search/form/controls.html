@@ -34,7 +34,10 @@
   placeholder="Search {{ collection_name }}"
   autofocus
 >
-<span class="input-group-btn">
+<inspire-search-suggestions
+template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/suggestions.html') }}">
+</inspire-search-suggestions>
+<span class="{{ landing_page }} input-group-btn">
   <button tabindex="2" type="submit" class="btn btn-primary btn-inline-icon-hide-sm {{ collection_name }}-search-button" id="search-form-button">
     <i class="glyphicon glyphicon-search"></i>
   </button>

@@ -26,11 +26,15 @@
 
 from __future__ import absolute_import, print_function
 
-from invenio_records_rest.serializers.json import JSONSerializer
+import json
+
+from flask import get_flashed_messages
 
 from inspirehep.modules.theme.jinja2filters import (
     format_date, publication_info
 )
+
+from invenio_records_rest.serializers.json import JSONSerializer
 
 
 def process_es_hit(record):
@@ -67,8 +71,38 @@ def get_display_fields(record):
     return display
 
 
+def get_all_warnings():
+    warnings = []
+    flashed_mesagges = dict(get_flashed_messages(
+        with_categories=True, category_filter=["query_suggestion"]))
+    if flashed_mesagges:
+        warnings.append(flashed_mesagges)
+    return warnings
+
+
 class JSONBriefSerializer(JSONSerializer):
     """JSON brief format serializer."""
+
+    def serialize_search(self, pid_fetcher, search_result, links=None,
+                         item_links_factory=None):
+        """Serialize a search result.
+        :param pid_fetcher: Persistent identifier fetcher.
+        :param search_result: Elasticsearch search result.
+        :param links: Dictionary of links to add to response.
+        """
+        return json.dumps(dict(
+            hits=dict(
+                hits=[self.transform_search_hit(
+                    pid_fetcher(hit['_id'], hit['_source']),
+                    hit,
+                    links_factory=item_links_factory,
+                ) for hit in search_result['hits']['hits']],
+                total=search_result['hits']['total'],
+            ),
+            links=links or {},
+            aggregations=search_result.get('aggregations', dict()),
+            warnings=get_all_warnings(),
+        ), **self._format_args())
 
     @staticmethod
     def preprocess_search_hit(pid, record_hit, links_factory=None):
