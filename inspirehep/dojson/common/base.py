@@ -363,3 +363,31 @@ def field_categories(self, key, value):
 
         self['field_categories'] = dedupe_list_of_dicts(
             self['field_categories'])
+
+
+@conferences.over('urls', '^8564')
+@experiments.over('urls', '^8564')
+@hep.over('urls', '^856.[10_28]')
+@hepnames.over('urls', '^856.[10_28]')
+@institutions.over('urls', '^856.[10_28]')
+@jobs.over('urls', '^856.[10_28]')
+@journals.over('urls', '^856.[10_28]')
+@utils.for_each_value
+def urls(self, key, value):
+    """URL to external resource."""
+    self.setdefault('urls', [])
+
+    description = value.get('y')
+    if isinstance(description, (list, tuple)):
+        description = description[0]
+
+    _urls = utils.force_list(value.get('u'))
+
+    if _urls:
+        for _url in _urls:
+            self['urls'].append({
+                'description': description,
+                'value': _url,
+            })
+
+        self['urls'] = dedupe_list_of_dicts(self['urls'])

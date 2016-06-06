@@ -110,13 +110,7 @@
             "$ref": "elements/fields.json"
         },
         "urls": {
-            "uniqueItems": true,
-            "items": {
-                "type": "string",
-                "format": "url"
-            },
-            "type": "array",
-            "description": "Contains links."
+            "$ref": "elements/urls.json"
         }
     },
     "title": "HEP Job",

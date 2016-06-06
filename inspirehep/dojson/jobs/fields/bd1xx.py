@@ -132,13 +132,6 @@ def ranks(self, key, value):
             self['ranks'].append(classify_rank(_rank))
 
 
-@jobs.over('urls', '^856.[10_28]')
-@utils.for_each_value
-def urls(self, key, value):
-    """Contact person."""
-    return value.get('u')
-
-
 @jobs.over('experiment', '^693..')
 @utils.for_each_value
 def experiment(self, key, value):

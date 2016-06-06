@@ -22,36 +22,11 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
 
 from ..model import hep, hep2marc
-
-
-@hep.over('urls', '^856.[10_28]')
-@utils.for_each_value
-@utils.filter_values
-def urls(self, key, value):
-    """URL to external resource."""
-    try:
-        size = int(value.get('s'))
-    except:
-        size = None
-    url = value.get('u')
-    if isinstance(url, (list, tuple)):
-        url = filter(None, url)
-        if len(url) != 1:
-            url = url[0]
-        else:
-            url = [x for x in url if x.startswith('http')][0]
-    return {
-        'url': url,
-        'doc_string': value.get('w'),
-        'description': value.get('y'),
-        'material_type': value.get('3'),
-        'comment': value.get('z'),
-        'name': value.get('f'),
-        'size': size,
-    }
 
 
 @hep2marc.over('8564', 'urls')
@@ -60,11 +35,6 @@ def urls(self, key, value):
 def urls2marc(self, key, value):
     """URL to external resource."""
     return {
-        'u': value.get('url'),
-        'w': value.get('doc_string'),
+        'u': value.get('value'),
         'y': value.get('description'),
-        '3': value.get('material_type'),
-        'z': value.get('comment'),
-        'f': value.get('name'),
-        's': value.get('size'),
     }

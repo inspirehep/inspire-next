@@ -199,3 +199,192 @@ def test_field_from_marcxml_650_with_no_a():
     result = strip_empty_values(hepnames.do(create_record(snippet)))
 
     assert 'field_categories' not in result
+
+
+def test_urls_from_marcxml_856_with_single_u_single_y():
+    snippet = (
+        '<record>'
+        '  <datafield tag="856" ind1="4" ind2=" ">'
+        '    <subfield code="u">http://www.physics.unlv.edu/labastro/</subfield>'
+        '    <subfield code="y">Conference web page</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'description': 'Conference web page',
+            'value': 'http://www.physics.unlv.edu/labastro/'
+        }
+    ]
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['urls']
+
+
+def test_urls_from_marcxml_856_with_single_u_two_y():
+    snippet = (
+        '<record>'
+        '  <datafield tag="856" ind1="4" ind2=" ">'
+        '    <subfield code="u">http://www.physics.unlv.edu/labastro/</subfield>'
+        '    <subfield code="y">Conference web page</subfield>'
+        '    <subfield code="y">Not really the web page</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'description': 'Conference web page',
+            'value': 'http://www.physics.unlv.edu/labastro/'
+        }
+    ]
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['urls']
+
+
+def test_urls_from_marcxml_856_with_single_u_no_y():
+    snippet = (
+        '<record>'
+        '  <datafield tag="856" ind1="4" ind2=" ">'
+        '    <subfield code="u">http://www.physics.unlv.edu/labastro/</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected= [
+        {
+            'value': 'http://www.physics.unlv.edu/labastro/',
+        },
+    ]
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['urls']
+
+
+def test_urls_from_marcxml_856_with_two_u_single_y():
+    snippet = (
+        '<record>'
+        '  <datafield tag="856" ind1="4" ind2=" ">'
+        '    <subfield code="u">http://www.physics.unlv.edu/labastro/</subfield>'
+        '    <subfield code="u">http://www.physics.unlv.edu/</subfield>'
+        '    <subfield code="y">Conference web page</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'description': 'Conference web page',
+            'value': 'http://www.physics.unlv.edu/labastro/',
+        },
+        {
+            'description': 'Conference web page',
+            'value': 'http://www.physics.unlv.edu/',
+         },
+    ]
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['urls']
+
+
+def test_urls_from_marcxml_856_with_two_u_duplicates_single_y():
+    snippet = (
+        '<record>'
+        '  <datafield tag="856" ind1="4" ind2=" ">'
+        '    <subfield code="u">http://www.physics.unlv.edu/labastro/</subfield>'
+        '    <subfield code="u">http://www.physics.unlv.edu/labastro/</subfield>'
+        '    <subfield code="y">Conference web page</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'description': 'Conference web page',
+            'value': 'http://www.physics.unlv.edu/labastro/',
+        },
+    ]
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['urls']
+
+
+def test_urls_from_marcxml_856_with_two_u_two_y():
+    snippet = (
+        '<record>'
+        '  <datafield tag="856" ind1="4" ind2=" ">'
+        '    <subfield code="u">http://www.physics.unlv.edu/labastro/</subfield>'
+        '    <subfield code="u">http://www.physics.unlv.edu/</subfield>'
+        '    <subfield code="y">Conference web page</subfield>'
+        '    <subfield code="y">Not a description</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'description': 'Conference web page',
+            'value': 'http://www.physics.unlv.edu/labastro/',
+        },
+        {
+            'description': 'Conference web page',
+            'value': 'http://www.physics.unlv.edu/',
+        },
+    ]
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['urls']
+
+
+def test_urls_from_marcxml_856_with_two_u_no_y():
+    snippet = (
+        '<record>'
+        '  <datafield tag="856" ind1="4" ind2=" ">'
+        '    <subfield code="u">http://www.physics.unlv.edu/labastro/</subfield>'
+        '    <subfield code="u">http://www.physics.unlv.edu/</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'value': 'http://www.physics.unlv.edu/labastro/',
+        },
+        {
+            'value': 'http://www.physics.unlv.edu/',
+        },
+    ]
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['urls']
+
+
+def test_urls_from_marcxml_multiple_8564():
+    snippet = (
+        '<record>'
+        '  <datafield tag="856" ind1="4" ind2="">'
+        '    <subfield code="u">http://www.physics.unlv.edu/labastro/</subfield>'
+        '    <subfield code="y">Conference web page</subfield>'
+        '  </datafield>'
+        '  <datafield tag="856" ind1="4" ind2="">'
+        '    <subfield code="u">http://www.cern.ch/</subfield>'
+        '    <subfield code="y">CERN web page</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'description': 'Conference web page',
+            'value': 'http://www.physics.unlv.edu/labastro/',
+        },
+        {
+            'description': 'CERN web page',
+            'value': 'http://www.cern.ch/',
+        },
+    ]
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['urls']

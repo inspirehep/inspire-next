@@ -178,10 +178,8 @@
         "titles": {
             "$ref": "elements/titles.json"
         },
-        "url": {
-            "format": "url",
-            "title": "Experiment web page",
-            "type": "string"
+        "urls": {
+            "$ref": "elements/urls.json"
         }
     },
     "title": "Experiment",

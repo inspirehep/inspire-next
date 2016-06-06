@@ -433,17 +433,6 @@ def phd_advisors2marc(self, key, value):
     }
 
 
-@hepnames.over('urls', '^856.[10_28]')
-@utils.for_each_value
-@utils.filter_values
-def urls(self, key, value):
-    """URL to external resource."""
-    return {
-        'value': value.get('u'),
-        'description': value.get('y'),
-    }
-
-
 @hepnames2marc.over('8564', 'url')
 @utils.for_each_value
 @utils.filter_values
