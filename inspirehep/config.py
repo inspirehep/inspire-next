@@ -733,6 +733,21 @@ RECORDS_REST_SORT_OPTIONS = {
 
         'date': {'fields': 'date', 'default_order': 'asc',
                  'order': 5, 'title': 'Publication Date'}
+    },
+
+    "records-jobs": {
+        "bestmatch": {
+            "title": 'Best match',
+            "fields": ['_score'],
+            "default_order": 'desc',
+            "order": 1,
+        },
+        "mostrecent": {
+            "title": 'Most recent',
+            "fields": ['earliest_date'],
+            "default_order": 'desc',
+            "order": 2,
+        },
     }
 }
 
@@ -745,6 +760,11 @@ RECORDS_REST_DEFAULT_SORT = {
     "records-data": {
         "query": "relevance",
         "noquery": "latest"
+    },
+
+    "records-jobs": {
+        "query": "bestmatch",
+        "noquery": "-mostrecent"
     }
 }
 

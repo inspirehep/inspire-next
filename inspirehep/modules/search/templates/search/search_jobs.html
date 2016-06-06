@@ -40,8 +40,24 @@
 {%- endblock search_results %}
 
 {%- block search_sort %}
-
-{%- endblock -%}
+{%- set sort_options = config.get('RECORDS_REST_SORT_OPTIONS', {}).get('records-jobs') %}
+{%- if sort_options %}
+<div class="col-md-3 col-sm-12 text-right">
+  {%- block search_sort_select scoped %}
+  Sort by:
+  <invenio-search-select-box
+    sort-key="sort"
+    default-option="{{ sort_options|default_sortoption }}"
+    available-options='{{ sort_options|format_sortoptions|safe }}'
+    template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/selectbox.html') }}"
+  >
+  </invenio-search-select-box>
+  {%- endblock search_sort_select %}
+  {%- block search_sort_order scoped %}
+  {%- endblock search_sort_order %}
+</div>
+{%- endif %}
+{%- endblock search_sort %}
 
 {%- block search_header_footer %}
   <div class="panel-footer">
