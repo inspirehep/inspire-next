@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -10,7 +10,7 @@
 #
 # INSPIRE is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
@@ -20,21 +20,28 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""MARC 21 model definition."""
-
 from __future__ import absolute_import, division, print_function
 
-from dojson import utils
-
-from ..model import hep, hep2marc
+from inspirehep.utils.dedupers import dedupe_list, dedupe_list_of_dicts
 
 
-@hep2marc.over('8564', 'urls')
-@utils.for_each_value
-@utils.filter_values
-def urls2marc(self, key, value):
-    """URL to external resource."""
-    return {
-        'u': value.get('value'),
-        'y': value.get('description'),
-    }
+def test_dedupe_list():
+    list_with_duplicates = ['foo', 'bar', 'foo']
+
+    expected = ['foo', 'bar']
+    result = dedupe_list(list_with_duplicates)
+
+    assert expected == result
+
+
+def test_dedupe_list_of_dicts():
+    list_of_dicts_with_duplicates = [
+        {'a': 123, 'b': 1234},
+        {'a': 3222, 'b': 1234},
+        {'a': 123, 'b':1234},
+    ]
+
+    expected = [{'a': 123, 'b': 1234}, {'a': 3222, 'b': 1234}]
+    result = dedupe_list_of_dicts(list_of_dicts_with_duplicates)
+
+    assert expected == result

@@ -12,55 +12,12 @@
             "type": "array"
         },
         "address": {
-            "items": {
-                "properties": {
-                    "address": {
-                        "description": "Street etc, city with postal code + additions (native language) FIXME: isn't postal code redundant?",
-                        "title": "Address",
-                        "type": "array"
-                    },
-                    "city": {
-                        "title": "City",
-                        "type": "string"
-                    },
-                    "state_province": {
-                        "title": "State or Province",
-                        "type": "string"
-                    },
-                    "country": {
-                        "description": "FIXME can't we derive this from country_code?",
-                        "string": "Country name",
-                        "type": "string"
-                    },
-                    "postal_code": {
-                        "title": "Postal code",
-                        "type": "array"
-                    },
-                    "country_code": {
-                        "title": "Country code",
-                        "type": "string"
-                    }
-                },
-                "title": "Address",
-                "type": "object"
-            },
-            "title": "Addresses",
-            "type": "array"
-        },
-        "content_classification": {
-            "items": {
-                "description": "FIXME: shall we normalize this to the usual arXiv?",
-                "enum": [
-                    "Astrophysics",
-                    "Phenomenology-HEP",
-                    "..."
-                ],
-                "title": "Content classification",
-                "type": "string"
-            },
-            "title": "Content classification",
             "type": "array",
+            "items": {"$ref": "elements/address.json"},
             "uniqueItems": true
+        },
+        "field_categories": {
+            "$ref": "elements/fields.json"
         },
         "department": {
             "description": "Subordinate unit in native language",
@@ -237,13 +194,7 @@
             "type": "string"
         },
         "urls": {
-            "uniqueItems": true,
-            "items": {
-                "type": "string",
-                "format": "url"
-            },
-            "type": "array",
-            "description": "Contains links."
+            "$ref": "elements/urls.json"
         }
     },
     "title": "Institution",

@@ -52,7 +52,7 @@ def jinja_mock_env():
 def mock_replace_refs():
     def get_replace_refs_mock(title, control_numbers):
         control_numbers_map = {c[0]['$ref']: c[1] for c in control_numbers}
-        return lambda o, s: {'title': title,
+        return lambda o, s: {'titles': [{'title': title}],
                              'control_number': control_numbers_map[o['$ref']]}
     return get_replace_refs_mock
 
@@ -349,16 +349,16 @@ def test_is_list_returns_none_for_something_not_a_list():
     assert is_list('foo') is None
 
 
-def test_remove_duplicates_returns_empty_list_on_empty_list():
+def test_remove_duplicates_from_list_returns_empty_list_on_empty_list():
     expected = []
-    result = remove_duplicates([])
+    result = remove_duplicates_from_list([])
 
     assert expected == result
 
 
-def test_remove_duplicates_removes_duplicates_from_list_with_elements():
+def test_remove_duplicates__from_list_removes_duplicates_from_non_empty_list():
     expected = ['foo', 'bar']
-    result = remove_duplicates(['foo', 'bar', 'foo', 'foo', 'bar'])
+    result = remove_duplicates_from_list(['foo', 'bar', 'foo', 'foo', 'bar'])
 
     assert expected == result
 
@@ -374,19 +374,6 @@ def test_has_space_returns_none_if_no_space():
 def test_count_words():
     expected = 3
     result = count_words('foo, bar baz')
-
-    assert expected == result
-
-
-def test_remove_duplicates_from_dict_removes_duplicates():
-    list_of_dicts_with_duplicates = [
-        {'a': 123, 'b': 1234},
-        {'a': 3222, 'b': 1234},
-        {'a': 123, 'b': 1234}
-    ]
-
-    expected = [{'a': 123, 'b': 1234}, {'a': 3222, 'b': 1234}]
-    result = remove_duplicates_from_dict(list_of_dicts_with_duplicates)
 
     assert expected == result
 

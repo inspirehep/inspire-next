@@ -22,11 +22,14 @@
 
 """MARC 21 model definition for HepNames records."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
+from inspirehep.utils.dedupers import dedupe_list_of_dicts
 
 from ..model import hepnames, hepnames2marc
+from ...utils import classify_rank, get_record_ref
 
 
 @hepnames.over('acquisition_source', '^541[10_].')
@@ -216,16 +219,6 @@ setattr(hidden_notes2marc, '__extend__', True)
 def positions(self, key, value):
     """Position information.
 
-    Accepted values for 371__r:
-    + senior
-    + junior
-    + staff
-    + visitor
-    + postdoc
-    + phd
-    + masters
-    + undergrad
-
     In dates field you can put months in addition to years. In this case you
     have to follow the convention `mth-year`. For example: `10-2012`.
     """
@@ -241,12 +234,18 @@ def positions(self, key, value):
                 recid = val
                 curated_relation = True
 
-    inst = {'name': value.get('a'),
-            'record': inspire_dojson_utils.get_record_ref(recid,
-                                                          'institutions')}
+    inst = {
+        'name': value.get('a'),
+        'record': get_record_ref(recid, 'institutions')
+    }
+
+    _rank = value.get('r')
+    rank = classify_rank(_rank)
+
     return {
         'institution': inst if inst['name'] else None,
-        'rank': value.get('r'),
+        '_rank': _rank,
+        'rank': rank,
         'start_date': value.get('s'),
         'end_date': value.get('t'),
         'email': value.get('m'),
@@ -262,48 +261,18 @@ def positions(self, key, value):
 def positions2marc(self, key, value):
     """Position information.
 
-    Accepted values for 371__r:
-    + senior
-    + junior
-    + staff
-    + visitor
-    + postdoc
-    + phd
-    + masters
-    + undergrad
-
     In dates field you can put months in addition to years. In this case you
     have to follow the convention `mth-year`. For example: `10-2012`.
     """
     return {
         'a': value.get('institution', {}).get('name'),
-        'r': value.get('rank'),
+        'r': value.get('_rank'),
         's': value.get('start_date'),
         't': value.get('end_date'),
         'm': value.get('email'),
         'o': value.get('old_email'),
         'z': value.get('status')
     }
-
-
-@hepnames.over('field_categories', '^65017')
-def field_categories(self, key, value):
-    """Field categories."""
-    def get_value(value):
-        if isinstance(value, dict):
-            name = value.get('a', '')
-        else:
-            name = value
-        return name
-
-    value = utils.force_list(value)
-    field_categories = self.get('field_categories', [])
-    for element in value:
-        if element.get('a'):
-            el = utils.force_list(element.get('a'))
-            for val in el:
-                field_categories.append(get_value(val))
-    return field_categories
 
 
 @hepnames2marc.over('65017', '^field_categories$')
@@ -329,8 +298,7 @@ def source(self, key, value):
     for val in value:
         source.append(get_value(val))
 
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
-        source)
+    return dedupe_list_of_dicts(source)
 
 
 @hepnames2marc.over('670', '^source$')
@@ -462,17 +430,6 @@ def phd_advisors2marc(self, key, value):
         'i': value.get("id"),
         'a': value.get("name"),
         'g': value.get("degree_type")
-    }
-
-
-@hepnames.over('urls', '^856.[10_28]')
-@utils.for_each_value
-@utils.filter_values
-def urls(self, key, value):
-    """URL to external resource."""
-    return {
-        'value': value.get('u'),
-        'description': value.get('y'),
     }
 
 

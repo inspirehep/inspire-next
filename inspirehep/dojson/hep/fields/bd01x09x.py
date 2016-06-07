@@ -22,23 +22,53 @@
 
 """MARC 21 model definition."""
 
-from dojson import utils
+from __future__ import absolute_import, division, print_function
 
-from inspirehep.dojson import utils as inspire_dojson_utils
+from isbnlib._exceptions import NotValidISBNError
+
+from dojson import utils
+from idutils import normalize_isbn
+
+from inspirehep.utils.dedupers import dedupe_list_of_dicts
 
 from ..model import hep, hep2marc
-
-from inspirehep.dojson.utils import strip_empty_values
+from ...utils import strip_empty_values
 
 
 @hep.over('isbns', '^020..')
 @utils.for_each_value
 @utils.filter_values
 def isbns(self, key, value):
-    """Other Standard Identifier."""
+    "ISBN, its medium and an additional comment."""
+    try:
+        isbn = normalize_isbn(value['a'])
+    except (KeyError, NotValidISBNError):
+        return {}
+
+    b = value.get('b', '').lower()
+    if 'online' == b:
+        medium = 'online'
+        comment = ''
+    elif 'print' == b:
+        medium = 'print'
+        comment = ''
+    elif 'electronic' in b:
+        medium = 'online'
+        comment = 'electronic'
+    elif 'ebook' in b:
+        medium = 'online'
+        comment = 'ebook'
+    elif 'hardcover' in b:
+        medium = 'print'
+        comment = 'hardcover'
+    else:
+        medium = ''
+        comment = b
+
     return {
-        'value': value.get('a'),
-        'medium': value.get('b')
+        'medium': medium,
+        'value': isbn,
+        'comment': comment,
     }
 
 
@@ -77,8 +107,8 @@ def persistent_identifiers(self, key, value):
                         'type': val.get('2')
                     })
     if dois:
-        self['dois'] = inspire_dojson_utils.remove_duplicates_from_list_of_dicts(dois)
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(persistent_identifiers)
+        self['dois'] = dedupe_list_of_dicts(dois)
+    return dedupe_list_of_dicts(persistent_identifiers)
 
 
 @hep2marc.over('024', '^(dois|persistent_identifiers)$')
@@ -115,8 +145,7 @@ def external_system_numbers(self, key, value):
 
     for val in value:
         external_system_numbers.append(get_value(val))
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
-        external_system_numbers)
+    return dedupe_list_of_dicts(external_system_numbers)
 
 
 @hep2marc.over('035', 'external_system_numbers')
@@ -156,8 +185,8 @@ def report_numbers(self, key, value):
         else:
             report_number.append(get_value(element))
 
-    self['arxiv_eprints'] = inspire_dojson_utils.remove_duplicates_from_list_of_dicts(arxiv_eprints)
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(report_number)
+    self['arxiv_eprints'] = dedupe_list_of_dicts(arxiv_eprints)
+    return dedupe_list_of_dicts(report_number)
 
 
 @hep2marc.over('037', '(arxiv_eprints|report_numbers)')

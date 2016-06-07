@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -10,7 +10,7 @@
 #
 # INSPIRE is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
@@ -20,21 +20,24 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""MARC 21 model definition."""
-
 from __future__ import absolute_import, division, print_function
 
-from dojson import utils
+import json
+import os
+import pkg_resources
 
-from ..model import hep, hep2marc
+from jsonschema import Draft4Validator
 
 
-@hep2marc.over('8564', 'urls')
-@utils.for_each_value
-@utils.filter_values
-def urls2marc(self, key, value):
-    """URL to external resource."""
-    return {
-        'u': value.get('value'),
-        'y': value.get('description'),
-    }
+def fetch_schema(path):
+    return json.loads(pkg_resources.resource_string('inspirehep', path))
+
+
+def test_schemas_are_valid():
+    root_dir = os.path.join(
+        'inspirehep', 'modules', 'records', 'jsonschemas', 'records')
+    for schemas_dir, _, schemas in os.walk(root_dir):
+        schemas_path = os.path.sep.join(schemas_dir.split(os.path.sep)[1:])
+        for schema in schemas:
+            schema_path = os.path.join(schemas_path, schema)
+            Draft4Validator.check_schema(fetch_schema(schema_path))

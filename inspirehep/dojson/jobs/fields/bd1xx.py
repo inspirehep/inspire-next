@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,36 +22,14 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
+import six
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
-
 from ..model import jobs
-
-
-@jobs.over('acquisition_source', '^(037|270)..')
-@utils.for_each_value
-def acquisition_source(self, key, value):
-    """Submission information aggregated from various sources."""
-    result = {
-        "method": "submission"
-    }
-    if key.startswith('037'):
-        if "JOBSUBMIT" in value.get('a'):
-            result["submission_number"] = value.get('a')
-    elif key.startswith('270'):
-        if value.get('m'):
-            result["email"] = value.get('m')
-        if value.get('p'):
-            self.setdefault('contact_person', [])
-            self['contact_person'].append(value.get('p'))
-        if value.get('m'):
-            self.setdefault('contact_email', [])
-            self['contact_email'].append(value.get('m'))
-        if value.get('o'):
-            self.setdefault('reference_email', [])
-            self['reference_email'].append(value.get('o'))
-    return result
+from ...utils import classify_rank, get_record_ref
 
 
 @jobs.over('date_closed', '^046..')
@@ -83,6 +61,18 @@ def date_closed(self, key, value):
     return closed_date
 
 
+@jobs.over('contact_details', '^270..')
+@utils.for_each_value
+def contact_details(self, key, value):
+    name = value.get('p')
+    email = value.get('m')
+
+    return {
+        'name': name if isinstance(name, six.string_types) else None,
+        'email': email if isinstance(email, six.string_types) else None,
+    }
+
+
 @jobs.over('continent', '^043..')
 @utils.for_each_value
 def continent(self, key, value):
@@ -109,7 +99,7 @@ def institution(self, key, value):
         recid = int(value.get('z'))
     return {
         'curated_relation': curated_relation,
-        'record': inspire_dojson_utils.get_record_ref(recid, 'isntitutions'),
+        'record': get_record_ref(recid, 'isntitutions'),
         'name': value.get('a'),
     }
 
@@ -127,25 +117,19 @@ def position(self, key, value):
     return value.get('a')
 
 
-@jobs.over('research_area', '^65017')
+@jobs.over('ranks', '^656..')
 @utils.for_each_value
-def research_area(self, key, value):
-    """Contact person."""
-    return value.get('a')
+def ranks(self, key, value):
+    """Ranks."""
+    self.setdefault('_ranks', [])
+    self.setdefault('ranks', [])
 
-
-@jobs.over('rank', '^656..')
-@utils.for_each_value
-def rank(self, key, value):
-    """Contact person."""
-    return value.get('a')
-
-
-@jobs.over('urls', '^856.[10_28]')
-@utils.for_each_value
-def urls(self, key, value):
-    """Contact person."""
-    return value.get('u')
+    values = utils.force_list(value)
+    for el in values:
+        _ranks = utils.force_list(el.get('a'))
+        for _rank in _ranks:
+            self['_ranks'].append(_rank)
+            self['ranks'].append(classify_rank(_rank))
 
 
 @jobs.over('experiment', '^693..')

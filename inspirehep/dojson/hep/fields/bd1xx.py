@@ -22,11 +22,14 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
+from inspirehep.utils.dedupers import dedupe_list
 
 from ..model import hep, hep2marc
+from ...utils import create_profile_url, get_recid_from_ref, get_record_ref
 
 
 @hep.over('authors', '^[17]00[103_].')
@@ -42,9 +45,8 @@ def authors(self, key, value):
                 recid = int(value.get('z'))
             except:
                 pass
-            affiliations = inspire_dojson_utils.remove_duplicates_from_list(
-                utils.force_list(value.get('u')))
-            record = inspire_dojson_utils.get_record_ref(recid, 'institutions')
+            affiliations = dedupe_list(utils.force_list(value.get('u')))
+            record = get_record_ref(recid, 'institutions')
             affiliations = [{'value': aff, 'record': record} for
                             aff in affiliations]
         person_recid = None
@@ -56,8 +58,7 @@ def authors(self, key, value):
         inspire_id = ''
         if value.get('i'):
             inspire_id = utils.force_list(value.get('i'))[0]
-        person_record = inspire_dojson_utils.get_record_ref(person_recid,
-                                                            'authors')
+        person_record = get_record_ref(person_recid, 'authors')
         ret = {
             'full_name': value.get('a'),
             'role': value.get('e'),
@@ -68,9 +69,7 @@ def authors(self, key, value):
             'record': person_record,
             'email': value.get('m'),
             'affiliations': affiliations,
-            'profile': {"__url__": inspire_dojson_utils.create_profile_url(
-                value.get('x')
-            )},
+            'profile': {"__url__": create_profile_url(value.get('x'))},
             'curated_relation': value.get('y', 0) == 1
         }
         # HACK: This is to workaround broken records where multiple authors
@@ -111,7 +110,7 @@ def authors2marc(self, key, value):
             'j': value.get('orcid'),
             'm': value.get('email'),
             'u': affiliations,
-            'x': inspire_dojson_utils.get_recid_from_ref(value.get('record')),
+            'x': get_recid_from_ref(value.get('record')),
             'y': value.get('curated_relation')
         }
 

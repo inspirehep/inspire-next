@@ -2,7 +2,7 @@
 <record>
   <datafield tag="020" ind1=" " ind2=" ">
     <subfield code="a">9783954501687</subfield>
-    <subfield code="b">mediumisbn</subfield>
+    <subfield code="b">online</subfield>
   </datafield>
   <datafield tag="024" ind1="7" ind2=" ">
     <subfield code="2">DOI</subfield>

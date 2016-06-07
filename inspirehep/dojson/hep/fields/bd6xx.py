@@ -22,40 +22,23 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
+from inspirehep.utils.dedupers import dedupe_list_of_dicts
 
 from ..model import hep, hep2marc
+from ...utils import get_record_ref
 
 
-@hep.over('subject_terms', '^650[1_][_7]')
-def subject_terms(self, key, value):
-    """Subject Added Entry-Topical Term."""
-    value = utils.force_list(value)
-
-    def get_value(value):
-        return {
-            'term': value.get('a'),
-            'scheme': value.get('2'),
-            'source': value.get('9'),
-        }
-    subject_terms = self.get('subject_terms', [])
-
-    for val in value:
-        subject_terms.append(get_value(val))
-
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
-        subject_terms)
-
-
-@hep2marc.over('65017', 'subject_terms')
+@hep2marc.over('65017', 'field_categories')
 @utils.for_each_value
 @utils.filter_values
-def subject_terms2marc(self, key, value):
-    """Subject Added Entry-Topical Term."""
+def field_categories2marc(self, key, value):
+    """Field categories."""
     return {
-        'a': value.get('term'),
+        'a': value.get('_term'),
         '2': value.get('scheme'),
         '9': value.get('source'),
     }
@@ -76,8 +59,7 @@ def free_keywords(self, key, value):
     for val in value:
         free_keywords.append(get_value(val))
 
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
-        free_keywords)
+    return dedupe_list_of_dicts(free_keywords)
 
 
 @hep2marc.over('653', 'free_keywords')
@@ -106,7 +88,7 @@ def accelerator_experiments(self, key, value):
     if recid:
         curated_relation = True
     return {
-        'record': inspire_dojson_utils.get_record_ref(recid, 'experiments'),
+        'record': get_record_ref(recid, 'experiments'),
         'accelerator': value.get('a'),
         'experiment': value.get('e'),
         'curated_relation': curated_relation
@@ -145,8 +127,7 @@ def thesaurus_terms(self, key, value):
     for element in value:
         thesaurus_terms.append(get_value(element))
 
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
-        thesaurus_terms)
+    return dedupe_list_of_dicts(thesaurus_terms)
 
 
 @hep2marc.over('695', 'thesaurus_terms')

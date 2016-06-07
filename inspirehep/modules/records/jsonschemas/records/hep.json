@@ -34,39 +34,30 @@
             "title": "Funding information"
         },
         "isbns": {
-            "uniqueItems": true,
+            "type": "array",
             "items": {
-                "required": [
-                    "value"
-                ],
                 "type": "object",
                 "properties": {
                     "medium": {
-                        "enum": [
-                            "Print",
-                            "print",
-                            "Online",
-                            "online",
-                            "ebook",
-                            "hardcover",
-                            "paperback",
-                            "eBook"
-                        ],
+                        "description": "Medium (type) of the ISBN.",
                         "type": "string",
-                        "description": "FIXME: this really need to be an enum and cleaned up. What is Print?!",
-                        "title": "Medium"
+                        "enum": [
+                            "print",
+                            "online"
+                        ]
                     },
                     "value": {
-                        "title": "code",
                         "type": "string",
                         "format": "isbn"
+                    },
+                    "comment": {
+                        "description": "Further information about type.",
+                        "type": "string"
                     }
                 },
-                "title": "ISBN code"
+                "required": ["value"]
             },
-            "type": "array",
-            "description": "ISBN codes identifying the given book",
-            "title": "ISBN codes"
+            "uniqueItems": true
         },
         "report_numbers": {
             "uniqueItems": true,
@@ -212,41 +203,11 @@
             "type": "array"
         },
         "titles": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "type": "string"
-                    },
-                    "subtitle": {
-                        "type": "string"
-                    },
-                    "title": {
-                        "type": "string"
-                    }
-                }
-            },
-            "type": "array"
+            "$ref": "elements/titles.json"
         },
         "titles_old": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "type": "string"
-                    },
-                    "subtitle": {
-                        "type": "string"
-                    },
-                    "title": {
-                        "type": "string"
-                    }
-                }
-            },
-            "type": "array",
-            "description": "FIXME: Old 247, shall it still have its own field?"
+            "description": "FIXME: Old 247, shall it still have its own field?",
+            "$ref": "elements/titles.json"
         },
         "edition": {
             "uniqueItems": true,
@@ -518,35 +479,8 @@
             },
             "type": "array"
         },
-        "subject_terms": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "enum": [
-                            "automatically added based on DCC, PPF, DK",
-                            "submitter",
-                            "INSPIRE"
-                        ],
-                        "type": "string"
-                    },
-                    "term": {
-                        "type": "string"
-                    },
-                    "scheme": {
-                        "enum": [
-                            "INSPIRE",
-                            "arXiv",
-                            "APS",
-                            "PoS",
-                            "Elsevier"
-                        ],
-                        "type": "string"
-                    }
-                }
-            },
-            "type": "array"
+        "field_categories": {
+            "$ref": "elements/fields.json"
         },
         "thesaurus_terms": {
             "uniqueItems": true,
@@ -622,12 +556,8 @@
             },
             "type": "array"
         },
-        "title_variation": {
-            "uniqueItems": true,
-            "items": {
-                "type": "string"
-            },
-            "type": "array"
+        "title_variations": {
+            "$ref": "elements/titles.json"
         },
         "free_keywords": {
             "uniqueItems": true,
@@ -869,17 +799,6 @@
                         "type": "string",
                         "format": "email"
                     },
-                    "profile": {
-                        "title": "Profile URL",
-                        "description": "Link to the author's profile.",
-                        "type": "object",
-                        "properties": {
-                            "__url__": {
-                                "type": "string",
-                                "format": "url"
-                            }
-                        }
-                    },
                     "signature_block": {
                         "title": "Phonetic name",
                         "description": "Phonetic notation of the author's name.",
@@ -1047,62 +966,10 @@
             }
         },
         "urls": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "doc_string": {
-                        "type": "string",
-                        "description": "FIXME: What is this!?",
-                        "title": "Doc String"
-                    },
-                    "url": {
-                        "title": "URL",
-                        "type": "string",
-                        "format": "url"
-                    },
-                    "material_type": {
-                        "type": "string",
-                        "title": "Type of material"
-                    },
-                    "description": {
-                        "type": "string",
-                        "title": "Description"
-                    },
-                    "size": {
-                        "type": "integer",
-                        "title": "Size"
-                    },
-                    "comment": {
-                        "type": "string"
-                    },
-                    "name": {
-                        "type": "string"
-                    }
-                },
-                "title": "URL"
-            },
-            "type": "array",
-            "title": "URLs"
+            "$ref": "elements/urls.json"
         },
-        "title_translation": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "subtitle": {
-                        "type": "string",
-                        "title": "Subtitle"
-                    },
-                    "title": {
-                        "type": "string",
-                        "title": "Title"
-                    }
-                },
-                "title": "Title translation"
-            },
-            "type": "array",
-            "title": "Title translations"
+        "title_translations": {
+            "$ref": "elements/titles.json"
         },
         "corporate_author": {
             "uniqueItems": true,

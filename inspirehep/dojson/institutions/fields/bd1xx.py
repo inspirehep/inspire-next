@@ -25,6 +25,7 @@
 from dojson import utils
 
 from ..model import institutions
+from ...utils.geo import parse_institution_address
 
 
 @institutions.over('location', '^034..')
@@ -85,14 +86,14 @@ def name(self, key, value):
 @utils.filter_values
 def address(self, key, value):
     """Address info."""
-    return {
-        'address': utils.force_list(value.get('a')),
-        'city': value.get('b'),
-        'state_province': value.get('c'),
-        'country': value.get('d'),
-        'postal_code': utils.force_list(value.get('e')),
-        'country_code': value.get('g'),
-    }
+    return parse_institution_address(
+        value.get('a'),
+        value.get('b'),
+        value.get('c'),
+        value.get('d'),
+        value.get('e'),
+        utils.force_list(value.get('g')),
+    )
 
 
 @institutions.over('field_activity', '^372..')
@@ -114,13 +115,6 @@ def name_variants(self, key, value):
         "source": value.get('9'),
         "value": utils.force_list(value.get('a'))
     }
-
-
-@institutions.over('content_classification', '^65017')
-@utils.for_each_value
-def content_classification(self, key, value):
-    """Institution info."""
-    return value.get('a')
 
 
 @institutions.over('core', '^690C.')
@@ -148,13 +142,6 @@ def hidden_notes(self, key, value):
 def public_notes(self, key, value):
     """Hidden note."""
     return value.get('i')
-
-
-@institutions.over('urls', '^856.[10_28]')
-@utils.for_each_value
-def urls(self, key, value):
-    """Contact person."""
-    return value.get('u')
 
 
 @institutions.over('historical_data', '^6781..')

@@ -35,9 +35,10 @@
             },
             "uniqueItems": true
         },
-        "contact_email": {
-            "title": "Contact email",
-            "type": "array"
+        "contact_details": {
+            "type": "array",
+            "items": {"$ref": "elements/contact.json"},
+            "uniqueItems": true
         },
         "curated_relation": {
             "title": "Curated relation",
@@ -72,21 +73,8 @@
             "title": "Description",
             "type": "array"
         },
-        "field_code": {
-            "items": {
-                "enum": [
-                    "usual",
-                    "arXiv",
-                    "list",
-                    "astro-ph",
-                    "physics",
-                    "ASTRO-PH"
-                ],
-                "type": "string"
-            },
-            "title": "Field code",
-            "type": "array",
-            "uniqueItems": true
+        "field_categories": {
+            "$ref": "elements/fields.json"
         },
         "free_keywords": {
             "items": {
@@ -101,23 +89,16 @@
             "title": "Hidden note",
             "type": "string"
         },
-        "name": {
-            "title": "Experiment name",
-            "type": "string"
+        "experiment_names": {
+            "$ref": "elements/titles.json"
         },
         "nonpublic_note": {
             "description": "FIXME: difference from hidden_note!?",
             "title": "Non public note",
             "type": "string"
         },
-        "other_names": {
-            "items": {
-                "title": "Other name",
-                "type": "string"
-            },
-            "title": "Other names",
-            "type": "array",
-            "uniqueItems": true
+        "other_experiment_names": {
+            "$ref": "elements/titles.json"
         },
         "public_note": {
             "title": "Public note",
@@ -194,26 +175,11 @@
             "type": "array",
             "uniqueItems": true
         },
-        "title": {
-            "type": "object",
-                "properties": {
-                    "title": {
-                        "type": "string"
-                    },
-                    "subtitle": {
-                        "type": "string"
-                    },
-                    "source": {
-                        "type": "string"
-                    }
-                },
-            "type":"array",
-            "title": "Title"
+        "titles": {
+            "$ref": "elements/titles.json"
         },
-        "url": {
-            "format": "url",
-            "title": "Experiment web page",
-            "type": "string"
+        "urls": {
+            "$ref": "elements/urls.json"
         }
     },
     "title": "Experiment",

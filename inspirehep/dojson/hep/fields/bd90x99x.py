@@ -22,12 +22,17 @@
 
 """MARC 21 model definition."""
 
-from dojson import utils
+from __future__ import absolute_import, division, print_function
 
-from inspirehep.dojson import utils as inspire_dojson_utils
-from inspirehep.dojson.utils import strip_empty_values
+from isbnlib._exceptions import NotValidISBNError
+
+from dojson import utils
+from idutils import normalize_isbn
+
+from inspirehep.utils.dedupers import dedupe_list
 
 from ..model import hep, hep2marc
+from ...utils import get_recid_from_ref, get_record_ref, strip_empty_values
 
 
 @hep.over('references', '^999C5')
@@ -54,8 +59,14 @@ def references(self, key, value):
                 year = int(value.get('y'))
             except:
                 pass
+
+        try:
+            isbn = normalize_isbn(value['i'])
+        except (KeyError, NotValidISBNError):
+            isbn = ''
+
         return {
-            'record': inspire_dojson_utils.get_record_ref(recid, 'literature'),
+            'record': get_record_ref(recid, 'literature'),
             'texkey': value.get('1'),
             'doi': value.get('a'),
             'collaboration': utils.force_list(value.get('c')),
@@ -63,12 +74,12 @@ def references(self, key, value):
             'authors': utils.force_list(value.get('h')),
             'misc': utils.force_list(value.get('m')),
             'number': number,
-            'isbn': value.get('i'),
+            'isbn': isbn,
             'publisher': utils.force_list(value.get('p')),
             'maintitle': value.get('q'),
             'report_number': utils.force_list(value.get('r')),
             'title': utils.force_list(value.get('t')),
-            'url': utils.force_list(value.get('u')),
+            'urls': utils.force_list(value.get('u')),
             'journal_pubnote': utils.force_list(value.get('s')),
             'raw_reference': utils.force_list(value.get('x')),
             'year': year,
@@ -78,8 +89,7 @@ def references(self, key, value):
     for val in value:
         references.append(get_value(val))
 
-    return inspire_dojson_utils.remove_duplicates_from_list(
-        strip_empty_values(references))
+    return dedupe_list(strip_empty_values(references))
 
 
 @hep2marc.over('999C5', 'references')
@@ -88,7 +98,7 @@ def references(self, key, value):
 def references2marc(self, key, value):
     """Produce list of references."""
     return {
-        '0': inspire_dojson_utils.get_recid_from_ref(value.get('record')),
+        '0': get_recid_from_ref(value.get('record')),
         '1': value.get('texkey'),
         'a': value.get('doi'),
         'c': value.get('collaboration'),
@@ -101,7 +111,7 @@ def references2marc(self, key, value):
         'q': value.get('maintitle'),
         'r': value.get('report_number'),
         't': value.get('title'),
-        'u': value.get('url'),
+        'u': value.get('urls'),
         's': value.get('journal_pubnote'),
         'x': value.get('raw_reference'),
         'y': value.get('year'),

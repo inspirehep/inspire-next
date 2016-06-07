@@ -6,26 +6,19 @@
           "title": "Url of the record",
           "$ref": "json_reference.json"
         },
+        "address": {
+            "type": "array",
+            "items": {"$ref": "elements/address.json"},
+            "uniqueItems": true
+        },
         "closed_date": {
             "format": "date",
             "title": "Date when the job was closed",
             "type": "string"
         },
-        "contact_email": {
-            "items": {
-                "format": "email",
-                "title": "Contact email",
-                "type": "string"
-            },
+        "contact_details": {
             "type": "array",
-            "uniqueItems": true
-        },
-        "contact_person": {
-            "items": {
-                "title": "Contact person",
-                "type": "string"
-            },
-            "type": "array",
+            "items": {"$ref": "elements/contact.json"},
             "uniqueItems": true
         },
         "continent": {
@@ -88,23 +81,19 @@
             "title": "Job position",
             "type": "string"
         },
-        "rank": {
+        "_ranks": {
+            "type": "array",
             "items": {
-                "description": "FIXME: should this be identical to hepnames rank? I would say so",
-                "enum": [
-                    "Postdc",
-                    "Postdoc",
-                    "Junior",
-                    "Student",
-                    "Senior",
-                    "Staff",
-                    "Visitor",
-                    "Visiting Scientist"
-                ],
-                "title": "Rank",
+                "description": "Raw values of MARC 656__a field",
                 "type": "string"
             },
+            "uniqueItems": true
+        },
+        "ranks": {
             "type": "array",
+            "items": {
+                "$ref": "elements/rank.json"
+            },
             "uniqueItems": true
         },
         "reference_email": {
@@ -117,39 +106,11 @@
             "type": "array",
             "uniqueItems": true
         },
-        "research_area": {
-            "items": {
-                "enum": [
-                    "usual",
-                    "arXiv",
-                    "list",
-                    "physics.ins-det",
-                    "astro-ph",
-                    "nucl-th",
-                    "hep-lat",
-                    "physics",
-                    "hep-th",
-                    "hep-ex",
-                    "gr-qc",
-                    "hep-ph",
-                    "physics.acc-phys",
-                    "nucl-ex",
-                    "physics-other"
-                ],
-                "type": "string"
-            },
-            "title": "Research area",
-            "type": "array",
-            "uniqueItems": true
+        "field_categories": {
+            "$ref": "elements/fields.json"
         },
         "urls": {
-            "uniqueItems": true,
-            "items": {
-                "type": "string",
-                "format": "url"
-            },
-            "type": "array",
-            "description": "Contains links."
+            "$ref": "elements/urls.json"
         }
     },
     "title": "HEP Job",

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,11 +22,16 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
+import six
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
+from inspirehep.utils.dedupers import dedupe_list_of_dicts
 
 from ..model import conferences
+from ...utils.geo import parse_conference_address
 
 
 @conferences.over('acronym', '^111')
@@ -36,37 +41,53 @@ def acronym(self, key, value):
     self['date'] = value.get('d')
     self['opening_date'] = value.get('x')
     self['closing_date'] = value.get('y')
+
     self['cnum'] = value.get('g')
-    self['place'] = value.get('c')
-    self['subtitle'] = value.get('b')
-    self['title'] = value.get('a')
+
+    if value.get('a'):
+        self.setdefault('titles', [])
+        raw_titles = utils.force_list(value.get('a'))
+        for raw_title in raw_titles:
+            title = {
+                'title': raw_title,
+                'subtitle': value.get('b'),
+                'source': value.get('9'),
+            }
+            self['titles'].append(title)
+
+    if value.get('c'):
+        self.setdefault('address', [])
+        raw_addresses = utils.force_list(value.get('c'))
+        for raw_address in raw_addresses:
+            address = parse_conference_address(raw_address)
+            self['address'].append(address)
+
     return utils.force_list(value.get('e'))
 
 
 @conferences.over('alternative_titles', '^711')
 @utils.for_each_value
 def alternative_titles(self, key, value):
-    """Alternative title."""
-    return value.get('a')
+    """Alternative titles.
 
-
-@conferences.over('contact_person', '^270')
-@utils.for_each_value
-def contact_person(self, key, value):
-    """Contact person."""
-    if value.get('m'):
-        self['contact_email'] = value.get('m')
-    return value.get('p')
-
-
-@conferences.over('field_code', '^65017')
-@utils.for_each_value
-@utils.filter_values
-def field_code(self, key, value):
-    """Field code."""
+    711__b is for indexing, and is not intended to be displayed.
+    """
     return {
-        'value': value.get('a'),
-        'source': value.get('9')
+        'title': value.get('a'),
+        'searchable_title': value.get('b'),
+    }
+
+
+@conferences.over('contact_details', '^270')
+@utils.for_each_value
+def contact_details(self, key, value):
+    """Contact details."""
+    name = value.get('p')
+    email = value.get('m')
+
+    return {
+        'name': name if isinstance(name, six.string_types) else None,
+        'email': email if isinstance(email, six.string_types) else None,
     }
 
 
@@ -82,8 +103,7 @@ def keywords(self, key, value):
     keywords = self.get('keywords', [])
     for val in value:
         keywords.append(get_value(val))
-    return inspire_dojson_utils.remove_duplicates_from_list_of_dicts(
-        keywords)
+    return dedupe_list_of_dicts(keywords)
 
 
 @conferences.over('nonpublic_note', '^595')
@@ -123,27 +143,6 @@ def short_description(self, key, value):
         'value': value.get('a'),
         'source': value.get('9')
     }
-
-
-@conferences.over('url', '^8564')
-def url(self, key, value):
-    """Conference transparencies."""
-    value = utils.force_list(value)
-    transparencies = []
-    sessions = []
-    urls = []
-    for val in value:
-        if val.get('y'):
-            description = utils.force_list(val.get('y'))
-            if 'transparencies' in [e.lower() for e in val['y']]:
-                transparencies.append(val.get('u'))
-        if val.get('t'):
-            sessions.extend(utils.force_list(val.get('t')))
-        if val.get('u'):
-            urls.append(utils.force_list(val.get('u')))
-    self['transparencies'] = transparencies
-    self['sessions'] = sessions
-    return urls
 
 
 @conferences.over('extra_place_info', '^270')

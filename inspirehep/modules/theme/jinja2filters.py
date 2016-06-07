@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -24,11 +24,7 @@
 
 """Jinja utilities for INSPIRE."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals)
+from __future__ import absolute_import, division, print_function
 
 import json
 import re
@@ -37,12 +33,14 @@ import time
 
 from flask import session, current_app
 from jinja2.filters import evalcontextfilter
-from inspirehep.utils.jinja2 import render_template_to_string
 
 from inspirehep.utils.date import (
     create_datestruct,
     convert_datestruct_to_dategui,
 )
+from inspirehep.utils.dedupers import dedupe_list
+from inspirehep.utils.jinja2 import render_template_to_string
+from inspirehep.utils.record import get_title
 from inspirehep.utils.search import perform_es_search
 from inspirehep.utils.template import render_macro_from_template
 
@@ -171,17 +169,8 @@ def is_list(value):
 
 
 @blueprint.app_template_filter()
-def remove_duplicates(value):
-    """Removes duplicate objects from a list and returns the list"""
-    if value:
-        seen = set()
-        uniq = []
-        for x in value:
-            if x not in seen:
-                uniq.append(x)
-                seen.add(x)
-        return uniq
-    return []
+def remove_duplicates_from_list(l):
+    return dedupe_list(l)
 
 
 @blueprint.app_template_filter()
@@ -202,22 +191,6 @@ def count_words(value):
         new_strs = r.sub(' ', value)
         words = len(new_strs.split())
     return words
-
-
-@blueprint.app_template_filter()
-def remove_duplicates_from_dict(value):
-    """Actually removed duplicates from a list.
-
-    Kept because other PRs might depend on it.
-    FIXME(jacquerie): remove or rename.
-    """
-    result = []
-
-    for d in value:
-        if d not in result:
-            result.append(d)
-
-    return result
 
 
 @blueprint.app_template_filter()
@@ -609,7 +582,7 @@ def publication_info(record):
                     ctx = {
                         "parent_recid": parent_recid,
                         "conference_recid": conference_recid,
-                        "conference_title": conference_rec['title']
+                        "conference_title": get_title(conference_rec)
                     }
                     if result:
                         result['conf_info'] = render_macro_from_template(
@@ -631,7 +604,7 @@ def publication_info(record):
                 try:
                     ctx = {
                         "conference_recid": conference_recid,
-                        "conference_title": conference_rec['title'],
+                        "conference_title": get_title(conference_rec),
                         "pub_info": bool(result.get('pub_info', ''))
                     }
                     result['conf_info'] = render_macro_from_template(

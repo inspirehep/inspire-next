@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,11 +22,12 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
-
 from ..model import hep, hep2marc
+from ...utils import get_record_ref
 
 
 @hep.over('public_notes', '^500..')
@@ -101,8 +102,7 @@ def thesis(self, key, value):
         'degree_type': value.get('b'),
         'university': value.get('c'),
         'date': value.get('d'),
-        'record': inspire_dojson_utils.get_record_ref(value.get('z'),
-                                                      'institutions'),
+        'record': get_record_ref(value.get('z'), 'institutions'),
         'curated_relation': curated_relation,
     }
 

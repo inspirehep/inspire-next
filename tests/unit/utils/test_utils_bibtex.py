@@ -1523,10 +1523,10 @@ def test_get_url_empty_urls():
     assert expected == result
 
 
-def test_get_url_urls_without_url():
+def test_get_url_urls_without_value():
     urls_without_url = Record({
         'urls': [
-            {'not-url': 'foo'}
+            {'not-value': 'foo'}
         ]
     })
 
@@ -1536,46 +1536,28 @@ def test_get_url_urls_without_url():
     assert expected == result
 
 
-def test_get_url_one_url_not_a_list_to_an_image():
-    one_url_not_a_list_to_an_image = Record({
+def test_get_url_one_url_to_an_image():
+    one_url_to_an_image = Record({
         'urls': [
-            {'url': 'foo.jpg'}
+            {'value': 'foo.jpg'}
         ]
     })
 
     expected = ''
-    result = Bibtex(one_url_not_a_list_to_an_image)._get_url()
+    result = Bibtex(one_url_to_an_image)._get_url()
 
     assert expected == result
 
 
-def test_get_url_one_url_not_a_list_not_to_an_image():
-    one_url_not_a_list_not_to_an_image = Record({
+def test_get_url_one_url_not_to_an_image():
+    one_url_not_to_an_image = Record({
         'urls': [
-            {'url': 'http://link.aps.org/abstract/PRL/V19/P1264'}
+            {'value': 'http://link.aps.org/abstract/PRL/V19/P1264'}
         ]
     })
 
     expected = 'http://link.aps.org/abstract/PRL/V19/P1264'
-    result = Bibtex(one_url_not_a_list_not_to_an_image)._get_url()
-
-    assert expected == result
-
-
-def test_get_url_one_url_a_list_one_to_an_image_one_not():
-    one_url_a_list_one_to_an_image = Record({
-        'urls': [
-            {
-                'url': [
-                    'foo.jpg',
-                    'http://link.aps.org/abstract/PRL/V19/P1264'
-                ]
-            }
-        ]
-    })
-
-    expected = ['foo.jpg', 'http://link.aps.org/abstract/PRL/V19/P1264']
-    result = Bibtex(one_url_a_list_one_to_an_image)._get_url()
+    result = Bibtex(one_url_not_to_an_image)._get_url()
 
     assert expected == result
 
@@ -1583,8 +1565,8 @@ def test_get_url_one_url_a_list_one_to_an_image_one_not():
 def test_get_url_more_urls_selects_first():
     more_urls = Record({
         'urls': [
-            {'url': 'http://link.aps.org/abstract/PRL/V19/P1264'},
-            {'url': 'http://example.com'}
+            {'value': 'http://link.aps.org/abstract/PRL/V19/P1264'},
+            {'value': 'http://example.com'}
         ]
     })
 
@@ -1791,11 +1773,11 @@ def test_get_isbn_empty_isbns():
 def test_get_isbn_one_isbn_not_a_list():
     one_isbn_not_a_list = Record({
         'isbns': [
-            {'value': '9781424409228'}
+            {'value': '978-1-4244-0922-8'}
         ]
     })
 
-    expected = '9781424409228'
+    expected = '978-1-4244-0922-8'
     result = Bibtex(one_isbn_not_a_list)._get_isbn()
 
     assert expected == result

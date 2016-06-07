@@ -22,12 +22,13 @@
 
 """HEP model definition."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import Overdo
 from dojson.utils import force_list
 
-from inspirehep.dojson import utils as inspire_dojson_utils
-
 from ..schema import SchemaOverdo
+from ..utils import get_record_ref
 
 
 def add_book_info(record, blob):
@@ -42,7 +43,7 @@ def add_book_info(record, blob):
             for pubinfo in pubinfos:
                 if pubinfo.get('0'):
                     record['book'] = {
-                        'record': inspire_dojson_utils.get_record_ref(
+                        'record': get_record_ref(
                             int(force_list(pubinfo.get('0'))[0]), 'literature')
                     }
 

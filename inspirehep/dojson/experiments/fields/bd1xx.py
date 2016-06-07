@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,41 +22,61 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
+import six
+
 from dojson import utils
 
-from inspirehep.dojson import utils as inspire_dojson_utils
-
 from ..model import experiments
+from ...utils import get_record_ref
 
 
-@experiments.over('experiment_name', '^119..')
-def experiment_name(self, key, value):
-    """Name of experiment."""
-    value = utils.force_list(value)
-    self.setdefault('affiliation', [v.get("u") for v in value if v.get('u')])
+@experiments.over('experiment_names', '^119..')
+@utils.for_each_value
+def experiment_names(self, key, value):
+    """Experiment names."""
+    if value.get('u'):
+        self.setdefault('affiliation', [])
+        raw_affiliations = utils.force_list(value.get('u'))
+        for raw_affiliation in raw_affiliations:
+            self['affiliation'].append(raw_affiliation)
+
     return {
-        'experiment': [v.get("a") for v in value if v.get('a')],
-        'wwwlab': [v.get("u") for v in value if v.get('u')]
+        'source': value.get('9'),
+        'subtitle': value.get('b'),
+        'title': value.get('a'),
     }
 
 
-@experiments.over('contact_email', '^270..')
-@utils.for_each_value
-def contact_email(self, key, value):
-    """Contact email of experiment."""
-    return value.get("m")
-
-
-@experiments.over('title', '^245[10_][0_]')
+@experiments.over('titles', '^245[10_][0_]')
 @utils.for_each_value
 @utils.filter_values
-def title(self, key, value):
-    """Title Statement."""
-    self.setdefault('breadcrumb_title', value.get('a'))
+def titles(self, key, value):
+    """Titles."""
     return {
         'title': value.get('a'),
-        'subtitle': value.get('b'),
-        'source': value.get('9'),
+    }
+
+
+@experiments.over('title_variants', '^419..')
+@utils.for_each_value
+def title_variants(self, key, value):
+    """Title variants."""
+    return {
+        'title': value.get('a')
+    }
+
+
+@experiments.over('contact_details', '^270..')
+@utils.for_each_value
+def contact_details(self, key, value):
+    name = value.get('p')
+    email = value.get('m')
+
+    return {
+        'name': name if isinstance(name, six.string_types) else None,
+        'email': email if isinstance(email, six.string_types) else None,
     }
 
 
@@ -92,13 +112,6 @@ def collaboration(self, key, value):
         return collaborations[0]
 
 
-@experiments.over('urls', '^856.[10_28]')
-@utils.for_each_value
-def urls(self, key, value):
-    """URLs."""
-    return value.get('u')
-
-
 @experiments.over('related_experiments', '^510')
 @utils.for_each_value
 def related_experiments(self, key, value):
@@ -109,7 +122,7 @@ def related_experiments(self, key, value):
         recid = None
     return {
         'name': value.get('a'),
-        'record': inspire_dojson_utils.get_record_ref(recid, 'experiments')
+        'record': get_record_ref(recid, 'experiments')
     }
 
 
@@ -124,13 +137,6 @@ def date_started(self, key, value):
         if val.get('s'):
             date_started = val.get('s')
     return date_started
-
-
-@experiments.over('field_code', '^65017')
-@utils.for_each_value
-def field_code(self, key, value):
-    """Field code."""
-    return value.get('a')
 
 
 @experiments.over('accelerator', '^693')
