@@ -1,4 +1,4 @@
-web: inspirehep --debug run
+web: gunicorn inspirehep.wsgi -c gunicorn.cfg
 cache: redis-server
 worker: celery worker -E -A inspirehep.celery --loglevel=INFO --workdir="${VIRTUAL_ENV}" --autoreload --pidfile="${VIRTUAL_ENV}/worker.pid" --purge
 workermon: flower --broker=amqp://guest:guest@localhost:5672//

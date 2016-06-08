@@ -102,6 +102,7 @@ extras_require = {
         'ipdb',
         'kwalitee',
         'honcho',
+        'gunicorn'
     ]
 }
 
