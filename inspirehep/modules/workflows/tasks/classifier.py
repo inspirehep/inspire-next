@@ -26,8 +26,9 @@ from ..proxies import antihep_keywords
 
 def filter_core_keywords(obj, eng):
     """Filter core keywords."""
-    result = obj.extra_data.get('classifier_results').get("complete_output")
-    if result is None:
+    try:
+        result = obj.extra_data['classifier_results']["complete_output"]
+    except KeyError:
         return
     filtered_core_keywords = {}
     for core_keyword, times_counted in result.get("Core keywords").items():
