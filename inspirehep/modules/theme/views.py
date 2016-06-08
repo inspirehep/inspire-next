@@ -50,6 +50,8 @@ from inspirehep.utils.date import datetime
 from inspirehep.utils.search import perform_es_search
 from inspirehep.utils.references import Reference
 from inspirehep.utils.citations import Citation
+from inspirehep.utils.other_conferences import \
+    render_conferences_in_the_same_series
 
 blueprint = Blueprint('inspirehep_theme', __name__,
                       url_prefix='',
@@ -273,3 +275,21 @@ def register_menu_items():
         current_menu.submenu("settings.oauthclient").hide()
 
     current_app.before_first_request_funcs.append(menu_fixup)
+
+
+#
+# Handlers for AJAX requests regarding other conferences in the series
+#
+
+@blueprint.route('/ajax/other-conferences', methods=['GET'])
+def ajax_other_conferences():
+    """Handler for other conferences in the series"""
+
+    recid = request.args.get('recid', '')
+    seriesname = request.args.get('seriesname', '')
+
+    return jsonify(
+        {
+            "data": render_conferences_in_the_same_series(recid, seriesname)
+        }
+    )
