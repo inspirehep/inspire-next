@@ -9,7 +9,7 @@
 INSPIRE overlay
 ===============
 
-This is the INSPIRE source code overlay for Invenio v.2.0. It installs on top of
+This is the INSPIRE source code overlay for Invenio v.3.0. It installs on top of
 Invenio Digital Library platform source code. The overlay is currently used for `<http://labs.inspirehep.net>`_
 
 
