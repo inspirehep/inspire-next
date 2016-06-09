@@ -3,30 +3,31 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it
-# and/or modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be
-# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the
-# Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
-# MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this license, CERN does not
-# waive the privileges and immunities granted to it by virtue of its status
-# as an Intergovernmental Organization or submit itself to any jurisdiction.
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 """Theme blueprint in order for template and static files to be loaded."""
+
+from __future__ import absolute_import, division, print_function
 
 from dateutil.relativedelta import relativedelta
 from flask import (
     Blueprint,
+    abort,
     current_app,
     jsonify,
     redirect,
@@ -36,6 +37,8 @@ from flask import (
 )
 
 from flask_login import current_user
+
+from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_mail.tasks import send_email
 
@@ -549,3 +552,19 @@ def register_menu_items():
         current_menu.submenu("settings.oauthclient").hide()
 
     current_app.before_first_request_funcs.append(menu_fixup)
+
+
+#
+# Redirect /record/N
+#
+
+@blueprint.route('/record/<control_number>')
+def record(control_number):
+    try:
+        pid = PersistentIdentifier.query.filter_by(
+            pid_value=control_number).one()
+    except NoResultFound:
+        abort(404)
+
+    return redirect('/{collection}/{control_number}'.format(
+        collection=pid.pid_type, control_number=control_number)), 301

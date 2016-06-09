@@ -70,3 +70,24 @@ def test_data_is_there(app):
 def test_ping_responds_ok(app):
     with app.test_client() as client:
         assert client.get('/ping').data == 'OK'
+
+
+def test_record_url_redirects_to_literature(app):
+    with app.test_client() as client:
+        response = client.get('/record/4328')
+
+        assert response.status_code == 301
+        assert response.location == 'http://localhost:5000/literature/4328'
+
+
+def test_record_url_redirects_to_authors(app):
+    with app.test_client() as client:
+        response = client.get('/record/993224')
+
+        assert response.status_code == 301
+        assert response.location == 'http://localhost:5000/authors/993224'
+
+
+def test_record_url_returns_404_when_there_is_no_corresponding_record(app):
+    with app.test_client() as client:
+        assert client.get('/record/0').status_code == 404
