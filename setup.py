@@ -165,6 +165,7 @@ setup(
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
+            'inspire_warnings = inspirehep.modules.warnings:INSPIREWarnings',
         ],
         'invenio_base.apps': [
             'inspire_fixtures = inspirehep.modules.fixtures:INSPIREFixtures',
@@ -175,6 +176,7 @@ setup(
             'inspire_literature_suggest = inspirehep.modules.literaturesuggest:INSPIRELiteratureSuggestion',
             'inspire_forms = inspirehep.modules.forms:INSPIREForms',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
+            'inspire_warnings = inspirehep.modules.warnings:INSPIREWarnings',
             'arxiv = inspirehep.modules.arxiv:Arxiv',
             'crossref = inspirehep.modules.crossref:CrossRef',
         ],
