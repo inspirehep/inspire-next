@@ -20,238 +20,185 @@
 {% extends "inspirehep_theme/format/record/Inspire_Default_HTML_detailed.tpl" %}
 
 {% block body %}
-  <div id="record-detailed-conference">
-    <div class="row" id="record-detailed-conference-information-map">
-      <div class="col-md-8" id="record-detailed-conference-information">
+<div id="record_content">
+  <div class="record-detailed record-detailed-conference">
+    <div class="record-header record-header-conference">
+    <div class="row row-with-map">
+          <div class="col-md-8">
+            <div id="record-detailed-conference-information">
+            <h1 class='record-detailed-title'>
+              {{ record['titles'][0]['title'] }}
+              {% if record['acronym'] %}
+              ({{ record['acronym'][0] }})
+              {% endif %}
+            </h1>
 
-        <h3>
-          {{ record['title'] }}
-        </h3>
+            <h2 class="record-detailed-subtitle">
+              {{ record | conference_date }}
+            </h2>
 
-        {% if record['acronym'] %}
-          {{ print_array(record, "acronym") }}
-        {% endif %}
-
-        {% if record['subtitle'] %}
-          {{ record['subtitle'] }}
-        {% endif %}
-
-        {% if record['alternative_titles'] %}
-          {{ print_array(record, 'alternative_titles') }}
-        {% endif %}
-        
-        {% if record['cnum'] %}
-          <div class="detailed-conference-information">CNUM: {{ record['cnum'] }}</div>
-        {% endif %}
-        
-        {% if record['url'] %}
-          {% set comma = joiner() %}
-          <div class="detailed-conference-information">
-            {% for url in record['url'] -%}
-              {{ comma() }} <a href="{{ url[0] }}">Go to conference website</a>
-            {%- endfor %}
-          </div>
-        {% endif %}
-
-        {% if record['transparencies'] %}
-          Record transparencies:
-          <a href="{{ record['transparencies'] }}">
-            {{ record['transparencies'] }}
-          </a>
-        {% endif %}
-
-        {% if record['contact_person'] or record['contact_email'] %}
-          <div class="detailed-conference-information">
-            {% if record['contact_person'] %}
-              Contact person:
-              {% set comma = joiner() %}
-              {% for contact in record['contact_person'] -%}
-                  {{ comma() }} {{ contact }}
-              {%- endfor %}
-            <br>
+            {% if record['urls'] %}
+              <div class="detailed-conference-information">
+                {% for url in record['urls'] %}
+                  <a href="{{ url['value'] }}">{{ url['value'] }}</a><br>
+                {% endfor %}
+              </div><br>
             {% endif %}
 
-            {% if record['contact_email'] %}
-              Contact email:
-              {{ record['contact_email'] | email_links | join_array(", ") }}
+            {% if record['contact_details'] %}
+              {% if record['contact_details'][0]['name'] %}
+                <div class="detailed-conference-information">
+                    <label>Contact person:</label> {{record['contact_details'][0]['name']}}<br>
+                </div>
+              {% endif %}
+
+              {% if record['contact_details'][0]['email'] %}
+                <div class="detailed-conference-information">
+                    <label>Contact email:</label> <a href="mailto:{{ record['contact_details'][0]['email'] }}">{{ record['contact_details'][0]['email'] }}</a><br>
+                </div>
+              {% endif %}
             {% endif %}
-          </div>
-        {% endif %}
 
-        {% if record['short_description'] %}
-          {% set comma = joiner() %}
-          <div class="detailed-conference-information">
-            Short description:
-            {% for description in record['short_description'] -%}
-              {{ comma() }} {{ description['value'][0] }}
-            {%- endfor %}
-          </div>
-        {% endif %}
-        
-        {% if record['note'] %}
-          {{ print_array(record, 'note') }}
-        {% endif %}
+            <hr>
 
-        {% if record['keywords'] %}
-          {% set comma = joiner('&nbsp') %}
-          <div class="detailed-conference-information">
-            Keywords:
-            {% for keyword in record['keywords'] -%}
-              {{ comma() }}
-              <span class="label label-default label-keyword">
-                <a href="/search?q=&cc=conferences&q={{ keyword['value'] }}">
-                  {{ keyword['value'] }}
+            {% if record['series'] %}
+              <div>
+                Part of the
+                <a href="/search?q=&cc=conferences&series={{ record['series'][0] }}">
+                  <strong>{{ record['series'][0] }}</strong>
                 </a>
-              </span>
-            {%- endfor %}
+                series
+              </div>
+            {% endif %}
+
           </div>
-        {% endif %}
-
-        {% if record['field_code'] %}
-          {% set comma = joiner('&nbsp') %}
-          <div class="detailed-conference-information">
-            Fields:
-            {% for field in record['field_code'] -%}
-              {{ comma() }}
-              <span class="label label-default label-keyword">
-                <a href="/search?q=&cc=conferences&q={{ field['value'] }}">
-                  {{ field['value'] }}
-                </a>
-              </span>
-            {%- endfor %}
-          </div>
-        {% endif %}
-
-        {% if record['series'] %}
-          <div class="detailed-conference-information">
-            Part of the
-            <a href="/search?q=&cc=conferences&series={{ record['series'][0] }}">
-              {{ record['series'][0] }}
-            </a>
-            series
-          </div>
-        {% endif %}
-
-      </div>
-
-      <div class="col-md-3" id="record-detailed-conference-map">
-
-        <div id="conference-detailed-map">
-          {% block javascript %}
-          {{ super() }}
-            <script>
-              function initMap() {
-                var mapDiv = document.getElementById('conference-detailed-map');
-                var address = '{{ record['place'] }}';
-                var geocoder = new google.maps.Geocoder();
-
-                var map = new google.maps.Map(mapDiv, {
-                  zoom: 5,
-                  // Snazzy Map styling.
-                  styles: [{
-                      "featureType": "water",
-                      "elementType": "geometry",
-                      "stylers": [{"color": "#e9e9e9"}, {"lightness": 17}]
-                  }, {
-                      "featureType": "landscape",
-                      "elementType": "geometry",
-                      "stylers": [{"color": "#f5f5f5"}, {"lightness": 20}]
-                  }, {
-                      "featureType": "road.highway",
-                      "elementType": "geometry.fill",
-                      "stylers": [{"color": "#ffffff"}, {"lightness": 17}]
-                  }, {
-                      "featureType": "road.highway",
-                      "elementType": "geometry.stroke",
-                      "stylers": [{"color": "#ffffff"}, {"lightness": 29}, {"weight": 0.2}]
-                  }, {
-                      "featureType": "road.arterial",
-                      "elementType": "geometry",
-                      "stylers": [{"color": "#ffffff"}, {"lightness": 18}]
-                  }, {
-                      "featureType": "road.local",
-                      "elementType": "geometry",
-                      "stylers": [{"color": "#ffffff"}, {"lightness": 16}]
-                  }, {
-                      "featureType": "poi",
-                      "elementType": "geometry",
-                      "stylers": [{"color": "#f5f5f5"}, {"lightness": 21}]
-                  }, {
-                      "featureType": "poi.park",
-                      "elementType": "geometry",
-                      "stylers": [{"color": "#dedede"}, {"lightness": 21}]
-                  }, {
-                      "elementType": "labels.text.stroke",
-                      "stylers": [{"visibility": "on"}, {"color": "#ffffff"}, {"lightness": 16}]
-                  }, {
-                      "elementType": "labels.text.fill",
-                      "stylers": [{"saturation": 36}, {"color": "#333333"}, {"lightness": 40}]
-                  }, {"elementType": "labels.icon", "stylers": [{"visibility": "off"}]}, {
-                      "featureType": "transit",
-                      "elementType": "geometry",
-                      "stylers": [{"color": "#f2f2f2"}, {"lightness": 19}]
-                  }, {
-                      "featureType": "administrative",
-                      "elementType": "geometry.fill",
-                      "stylers": [{"color": "#fefefe"}, {"lightness": 20}]
-                  }, {
-                      "featureType": "administrative",
-                      "elementType": "geometry.stroke",
-                      "stylers": [{"color": "#fefefe"}, {"lightness": 17}, {"weight": 1.2}]
-                  }]
-                });
-
-                geocodeAddress(geocoder, map, address);
-              }
-
-              function geocodeAddress(geocoder, resultsMap, address) {
-                geocoder.geocode({'address': address}, function(results, status) {
-                  if (status === google.maps.GeocoderStatus.OK) {
-                    resultsMap.setCenter(results[0].geometry.location);
-                    var marker = new google.maps.Marker({
-                      map: resultsMap,
-                      position: results[0].geometry.location,
-                      icon: '/static/images/map/marker-conferences.svg'
-                    });
-                  } else {
-                    alert('Geocode was not successful for the following reason: ' + status);
-                  }
-                });
-              }
-
-            </script>
-            <script src="https://maps.googleapis.com/maps/api/js?callback=initMap"
-            async defer></script>
-          {% endblock %}
         </div>
 
-        <h4 id="conference-detailed-map-place">
+      <div class="col-md-4 hidden-xs hidden-sm" id="record-detailed-conference-map">
+        <div id="conference-detailed-map">
+        </div>
+        <div class='map-address-label map-address-label-conference'>
           <i class="fa fa-map-marker"></i>
-          {{ record['place'] }}
-          <br/>
-          <br/>
-          <i class="fa fa-calendar"></i>
-          {{ record | conference_date }}.        
-        </h4>
-
+            {{ record['address'][0]['original_address'] }}
+        </div>
       </div>
-
+    </div>
     </div>
 
     <div class="row">
-        {% if record['series'] %}
-          <div class="panel" id="other-conferences">
-            <div class="panel-heading">
-              <div class="record-detailed-title">
-                {{ (record.get('conferences', '')) | count }} other conferences in this series
+      <div class="col-md-12">
+        <div class="panel" id="record-conference-more-info">
+          <div class="panel-body">
+            <div class="row">
+              {% if record['keywords'] %}
+                {% set details_class = "col-md-8" %}
+              {% else %}
+                {% set details_class = "col-md-12" %}
+              {% endif %}
+
+              <div class="{{details_class}}">
+                <div class="record-detailed-title">
+                  Details
+                </div>
+                {% if record['cnum'] %}
+                  <div class="detailed-conference-information"><label title="INSPIRE unique identifier for the conference">CNUM</label>: {{ record['cnum'] }}</div>
+                {% endif %}
+
+                {% if record['short_description'] %}
+                  {% set comma = joiner() %}
+                  <div class="detailed-conference-information">
+                    <label>Short description:</label>
+                    {% for description in record['short_description'] -%}
+                      {{ comma() }} {{ description['value']}}
+                    {%- endfor %}
+                  </div>
+                {% endif %}
+
+                {% if record['note'] %}
+                  {{ print_array(record, 'note') }}
+                {% endif %}
+
+                {% if record['field_categories'] %}
+                {% set comma = joiner('&nbsp') %}
+                <div class="detailed-conference-information">
+                  <label>Fields:</label>
+                  {% for field in record['field_categories'] -%}
+                      {{ comma() }}
+                      <span class="chip chip-conferences">
+                        <a href="/search?q=&cc=conferences&q={{ field['tern'] }}">
+                          {{ field['term'] }}
+                        </a>
+                      </span>
+                    {%- endfor %}
+                  </div>
+                  {% endif %}
               </div>
+              <div class="col-md-4">
+                {% if record['keywords'] %}
+                <div class="record-detailed-title">
+                  Keywords
+                </div>
+                {% set comma = joiner('&nbsp') %}
+                <div class="detailed-conference-information detailed-conference-information-keywords">
+                  {% for keyword in record['keywords'] -%}
+                    {{ comma() }}
+                    <span class="chip chip-conferences">
+                      <a href="/search?q=&cc=conferences&q={{ keyword['value'] }}">
+                        <i class="fa fa-tag" style="margin-right: 5px; display: inline;"></i>
+                        {{ keyword['value'] }}
+                      </a>
+                    </span>
+                    {%- endfor %}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel" id="record-conference-papers">
+          <div class="panel-heading">
+            Contributions
+          </div>
+
+          <div class="panel-body">
+            <div id="record-conference-papers-loading">
+              <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading contributions to the conference...
+            </div>
+            <div id="record-conference-papers-table-wrapper">
+              <table id="record-conference-papers-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Authors</th>
+                  <th>Journal</th>
+                  <th># Citations</th>
+                </tr>
+              </thead>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if record['series'] %}
+    <div class="row">
+      <div class="col-md-12">
+          <div class="panel" id="record-conference-series">
+            <div class="panel-heading">
+                Conferences in the series
             </div>
             <div class="panel-body">
-              <div id="record-other-conferences-loading">
+              <div id="record-conference-series-loading">
                 <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading conferences...
               </div>
-              <div id="record-other-conferences-table-wrapper">
-                <table id="record-other-conferences-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+              <div id="record-conference-series-table-wrapper">
+                <table id="record-conference-series-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -264,15 +211,17 @@
               </div>
             </div>
           </div>
-        {% endif %}
+        </div>
     </div>
+  {% endif %}
   </div>
+</div>
 {% endblock %}
 
 {% macro print_array(record, field, has_items=false) %}
   <div class="detailed-conference-information">
-    {{ field | capitalize }}:
-    {% set comma = joiner() %}
+    <label>{{ field | capitalize }}:</label>
+     {% set comma = joiner() %}
     {% if record[field] %}
       {% for field in record[field] -%}
         {% if has_items -%}
@@ -284,3 +233,119 @@
     {% endif %}
   </div>
 {% endmacro %}
+
+{% block additional_javascript %}
+<script>
+  function initMap() {
+    var mapDiv = document.getElementById('conference-detailed-map');
+    var doc = {{ record|json_dumps|safe }};
+    var address = doc['address'][0]['original_address'];
+    var geocoder = new google.maps.Geocoder();
+
+    var map = new google.maps.Map(mapDiv, {
+      zoom: 5,
+      mapTypeControl: false,
+      streetViewControl: false,
+      zoomControl: true,
+      zoomControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_TOP
+      },
+      // Snazzy Map styling.
+      styles: [{
+          "featureType": "water",
+          "elementType": "geometry",
+          "stylers": [{"color": "#e9e9e9"}, {"lightness": 17}]
+      }, {
+          "featureType": "landscape",
+          "elementType": "geometry",
+          "stylers": [{"color": "#f5f5f5"}, {"lightness": 20}]
+      }, {
+          "featureType": "road.highway",
+          "elementType": "geometry.fill",
+          "stylers": [{"color": "#ffffff"}, {"lightness": 17}]
+      }, {
+          "featureType": "road.highway",
+          "elementType": "geometry.stroke",
+          "stylers": [{"color": "#ffffff"}, {"lightness": 29}, {"weight": 0.2}]
+      }, {
+          "featureType": "road.arterial",
+          "elementType": "geometry",
+          "stylers": [{"color": "#ffffff"}, {"lightness": 18}]
+      }, {
+          "featureType": "road.local",
+          "elementType": "geometry",
+          "stylers": [{"color": "#ffffff"}, {"lightness": 16}]
+      }, {
+          "featureType": "poi",
+          "elementType": "geometry",
+          "stylers": [{"color": "#f5f5f5"}, {"lightness": 21}]
+      }, {
+          "featureType": "poi.park",
+          "elementType": "geometry",
+          "stylers": [{"color": "#dedede"}, {"lightness": 21}]
+      }, {
+          "elementType": "labels.text.stroke",
+          "stylers": [{"visibility": "on"}, {"color": "#ffffff"}, {"lightness": 16}]
+      }, {
+          "elementType": "labels.text.fill",
+          "stylers": [{"saturation": 36}, {"color": "#333333"}, {"lightness": 40}]
+      }, {"elementType": "labels.icon", "stylers": [{"visibility": "off"}]}, {
+          "featureType": "transit",
+          "elementType": "geometry",
+          "stylers": [{"color": "#f2f2f2"}, {"lightness": 19}]
+      }, {
+          "featureType": "administrative",
+          "elementType": "geometry.fill",
+          "stylers": [{"color": "#fefefe"}, {"lightness": 20}]
+      }, {
+          "featureType": "administrative",
+          "elementType": "geometry.stroke",
+          "stylers": [{"color": "#fefefe"}, {"lightness": 17}, {"weight": 1.2}]
+      }]
+    });
+
+    geocodeAddress(geocoder, map, address);
+  }
+
+  function geocodeAddress(geocoder, resultsMap, address) {
+    geocoder.geocode({'address': address}, function(results, status) {
+      if (status === google.maps.GeocoderStatus.OK) {
+        resultsMap.setCenter(results[0].geometry.location);
+        var image = {
+          url: '/static/images/map/marker-conferences.png',
+          scaledSize: new google.maps.Size(25, 25)
+        };
+        var marker = new google.maps.Marker({
+          map: resultsMap,
+          position: results[0].geometry.location,
+          icon: image
+        });
+      } else {
+        console.error('Geocode was not successful for the following reason: ' + status);
+      }
+    });
+  }
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?callback=initMap"
+async defer></script>
+<script type="text/javascript">
+  require(
+    [
+      "js/datatables",
+    ],
+    function(
+      DataTables
+    ) {
+      DataTables.attachTo(document, {
+        'recid': "{{ record.control_number }}",
+        {% if record['series'] %}
+        'seriesname': "{{record['series'][0]}}",
+        {% endif %}
+        {% if record['cnum'] %}
+        'cnum': "{{ record['cnum'] }}"
+        {% endif %}
+      });
+    });
+</script>
+{% endblock %}

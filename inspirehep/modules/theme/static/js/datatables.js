@@ -35,7 +35,8 @@
           recid: '',
           collection: '',
           citation_count: '',
-          seriesname: ''
+          seriesname: '',
+          cnum: ''
         });
 
         this.after('initialize', function() {
@@ -241,14 +242,14 @@
               "<'row'<'col-sm-12'p>>"
           });
 
-          $('#record-other-conferences-table').DataTable({
+          $('#record-conference-series-table').DataTable({
             language: {
               info: "Showing _START_ to _END_ of _TOTAL_ conferences",
               search: "_INPUT_",
               searchPlaceholder: "Filter conferences..."
             },
             "ajax": {
-              "url": "/ajax/other-conferences",
+              "url": "/ajax/conferences/series",
               "data": {
                 recid: that.attr.recid,
                 seriesname: that.attr.seriesname,
@@ -257,15 +258,69 @@
             },
             "fnInitComplete": function(oSettings, json) {
               if ( json.data.length > 0 ) {
-                $("#record-other-conferences-loading").hide();
-                $('#record-other-conferences-table-wrapper').show();
+                var total_text = json.total + " Conferences in the series";
+                if ( json.total > json.data.length ) {
+                  total_text = total_text + "<span class='record-panel-heading-muted'> Showing newest " + json.data.length + "</span>";
+                }
+                $('#record-conference-series .panel-heading').html(total_text);
+                $("#record-conference-series-loading").hide();
+                $('#record-conference-series-table-wrapper').show();
               }
               else {
-                $('#other-conferences .panel-body').text("There are no other conferences in this series.").show()
+                $('#record-conference-series .panel-body').text("There are no other conferences in this series.").show()
+              }
+            },
+            "aoColumns": [
+            { sWidth: '50%' },
+            { sWidth: '20%' },
+            { sWidth: '15%' },
+            { sWidth: '15%' }],
+            "aaSorting": [],
+            "autoWidth": false,
+            "bLengthChange": false,
+            "bInfo" : false,
+            "searching": false,
+            "bPaginate": false
+          });
+
+          $('#record-conference-papers-table').DataTable({
+            "bLengthChange": false,
+            "bInfo" : false,
+            "ajax": {
+              "url": "/ajax/conferences/contributions",
+              "data": {
+                recid: that.attr.recid,
+                cnum: that.attr.cnum
+              },
+              "method": "GET"
+            },
+            "fnInitComplete": function(oSettings, json) {
+              if ( json.data.length > 0 ) {
+                $("#record-conference-papers-loading").hide();
+                var total_text = json.total + " Contributions ";
+                if ( json.total > json.data.length ) {
+                  total_text = total_text + "<span class='record-panel-heading-muted'> Showing top " + json.data.length + "</span>";
+                }
+                $("#record-conference-papers .panel-heading").html(total_text);
+                $('#record-conference-papers-table-wrapper').show();
+              }
+              else {
+                $('#record-conference-papers .panel-body').text("There are no papers on INSPIRE associated with this conference.").show()
               }
             },
             "aaSorting": [],
-            "autoWidth": false
+            "aoColumns": [
+            { sWidth: '50%' },
+            { sWidth: '20%' },
+            { sWidth: '20%' },
+            { sWidth: '10%' }],
+            "autoWidth": false,
+            "paging": false,
+            "searching": false,
+            dom:
+              "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+              "<'row'<'col-sm-12'tr>>" +
+              "<'row'<'col-sm-12'p>>"
           });
       });
     }

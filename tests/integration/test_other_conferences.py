@@ -23,17 +23,17 @@
 def test_other_conferences(app):
     """Tests if citation datatables work for records."""
     with app.test_client() as client:
-        response = client.get('/ajax/other-conferences?recid=1331207&seriesname=Rencontres%20de%20Moriond')
+        response = client.get('/ajax/conferences/series?recid=1331207&seriesname=Rencontres%20de%20Moriond')
         assert response.status_code == 200
 
-        response = client.get('/ajax/other-conferences?recid=1346335&seriesname=EDS')
+        response = client.get('/ajax/conferences/series?recid=1346335&seriesname=EDS')
         assert response.status_code == 200
 
-        response = client.get('/ajax/other-conferences?recid=1320036&seriesname=Quarks')
+        response = client.get('/ajax/conferences/series?recid=1320036&seriesname=Quarks')
         assert response.status_code == 200
 
-        response = client.get('/ajax/other-conferences?recid=976391&seriesname=LCWS')
+        response = client.get('/ajax/conferences/series?recid=976391&seriesname=LCWS')
         assert response.status_code == 200
 
-        response = client.get('/ajax/other-conferences?recid=977661&seriesname=NSS')
+        response = client.get('/ajax/conferences/series?recid=977661&seriesname=NSS')
         assert response.status_code == 200
