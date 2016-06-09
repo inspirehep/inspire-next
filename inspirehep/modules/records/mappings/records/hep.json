@@ -225,7 +225,7 @@
                     "type": "string",
                     "index": "not_analyzed"
                 },
-                "subject_terms": {
+                "field_categories": {
                     "type": "object",
                     "properties": {
                         "source": {

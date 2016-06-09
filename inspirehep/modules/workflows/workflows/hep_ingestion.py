@@ -261,7 +261,7 @@ class HEPIngestion(object):
 
         # Get subject categories, adding main one first. Order matters here.
         record_categories = get_value(obj.data, "arxiv_eprints.categories", []) + \
-            get_value(obj.data, "subject_terms.term", [])
+            get_value(obj.data, "field_categories.term", [])
         for category_list in record_categories:
             if isinstance(category_list, list):
                 categories.extend(category_list)

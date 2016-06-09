@@ -91,10 +91,10 @@ def categories(self, key, value):
         "term": c,
         "scheme": "arXiv"
     } for c in value.split()]
-    if 'subject_terms' in self:
-        self['subject_terms'].extend(subject_list)
+    if 'field_categories' in self:
+        self['field_categories'].extend(subject_list)
     else:
-        self['subject_terms'] = subject_list
+        self['field_categories'] = subject_list
     if 'arxiv_eprints' in self:
         self['arxiv_eprints'][0]['categories'] = value.split()
     raise IgnoreKey
@@ -270,8 +270,8 @@ def report_numbers(self, key, value):
     raise IgnoreKey
 
 
-@literature.over('subject_terms', '^subject_term$')
-def subject_terms(self, key, value):
+@literature.over('field_categories', '^subject_term$')
+def field_categories(self, key, value):
     return [
         {
             "term": t,

@@ -57,9 +57,9 @@ def formdata_to_model(obj, eng):
     data['collections'] = [{'primary': "HEP"}]
     if form_fields['type_of_doc'] == 'thesis':
         data['collections'].append({'primary': "THESIS"})
-    if "subject_terms" in data:
+    if "field_categories" in data:
         # Check if it was imported from arXiv
-        if any([x["scheme"] == "arXiv" for x in data["subject_terms"]]):
+        if any([x["scheme"] == "arXiv" for x in data["field_categories"]]):
             data['collections'].extend([{'primary': "arXiv"},
                                         {'primary': "Citeable"}])
             # Add arXiv as source

@@ -156,7 +156,7 @@ def was_already_harvested(record):
     We use the following heuristic: if the record belongs to one of the
     CORE categories then it was probably ingested in some other way.
     """
-    categories = get_value(record, 'subject_terms.term', [])
+    categories = get_value(record, 'field_categories.term', [])
     for category in categories:
         if category.lower() in current_app.config.get('INSPIRE_ACCEPTED_CATEGORIES', []):
             return True
