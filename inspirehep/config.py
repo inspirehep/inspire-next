@@ -204,7 +204,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "caption": ["urls.description"],
     "country": ["authors.affiliations.value"],
     "firstauthor": ["authors.full_name", "authors.alternative_name"],
-    "fulltext": ["urls.url"],
+    "fulltext": ["urls.value"],
     "journal": ["publication_info.recid",
                 "publication_info.page_artid",
                 "publication_info.journal_issue",
