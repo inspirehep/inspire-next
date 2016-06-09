@@ -39,10 +39,12 @@ def test_conferences_is_there(app):
         assert client.get('/conferences').status_code == 200
 
 
-def test_jobs_redirects(app):
-    """/jobs redirects to /search?cc=jobs."""
+def test_jobs_redirects_to_search(app):
     with app.test_client() as client:
-        assert client.get('/jobs').status_code == 302
+        response = client.get('/jobs')
+
+        assert response.status_code == 302
+        assert response.location == 'http://localhost:5000/search?cc=jobs'
 
 
 def test_institutions_is_there(app):
