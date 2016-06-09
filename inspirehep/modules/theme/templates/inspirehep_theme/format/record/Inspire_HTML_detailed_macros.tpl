@@ -2,19 +2,22 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2015, 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 #}
 
 {% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title with context %}
@@ -185,9 +188,9 @@
 
   {% if record.get('urls') %}
     {% for url in record.get('urls') %}
-      {% if url is not none and url.get('url') | is_external_link and url is mapping %}
-        {% if url.get('url') != None %}
-          {% set actual_url = url.get('url') %}
+      {% if url is not none and url.get('value') | is_external_link and url is mapping %}
+        {% if url.get('value') != None %}
+          {% set actual_url = url.get('value') %}
           {% set isExternalUrl = actual_url | is_external_link %}
           {% if isExternalUrl and not viewInDisplayed %}
             View in
@@ -201,7 +204,7 @@
   {% endif %}
 
   {% if record.get('external_system_numbers') %}
-    {% for system_number in record.get('external_system_numbers') if system_number.get('obsolete') == False and system_number.get('institute') | is_institute %}
+    {% for system_number in record.get('external_system_numbers') if system_number.get('obsolete') == False and system_number.get('institute', '') | is_institute %}
       {% if not viewInDisplayed and not isExternalUrl %}
         View in
         {% do viewInDisplayed.append(1) %}
