@@ -36,6 +36,7 @@ from inspirehep.factory import create_app
 def app(request):
     """Flask application fixture."""
     app = create_app()
+    app.config.update({'DEBUG': True})
 
     def teardown():
         with app.app_context():
