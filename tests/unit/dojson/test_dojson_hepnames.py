@@ -20,8 +20,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
 import os
 import pkg_resources
+import pytest
+
 import pytest
 
 from dojson.contrib.marc21.utils import create_record
@@ -139,6 +143,53 @@ def test_positions(marcxml_to_json, json_to_marc):
             json_to_marc['371'][1]['t'])
     assert (marcxml_to_json['positions'][2]['old_email'] ==
             json_to_marc['371'][2]['o'])
+
+
+def test_positions_from_371__a():
+    snippet = (
+        '<datafield tag="371" ind1=" " ind2=" ">'
+        '  <subfield code="a">Aachen, Tech. Hochsch.</subfield>'
+        '</datafield>'
+    )  # record/997958
+
+    expected = [
+        {
+            'curated_relation': False,
+            'institution': {
+                'name': 'Aachen, Tech. Hochsch.',
+            },
+        },
+    ]
+    result = strip_empty_values(hepnames.do(create_record(snippet)))
+
+    assert expected == result['positions']
+
+
+def test_positions_from_371__a_m_r_z():
+    snippet = (
+        '<datafield tag="371" ind1=" " ind2=" ">'
+        '  <subfield code="a">Antwerp U.</subfield>'
+        '  <subfield code="m">pierre.vanmechelen@ua.ac.be</subfield>'
+        '  <subfield code="r">SENIOR</subfield>'
+        '  <subfield code="z">Current</subfield>'
+        '</datafield>'
+    )  # record/997958
+
+    expected = [
+        {
+            'curated_relation': False,
+            'email': 'pierre.vanmechelen@ua.ac.be',
+            'institution': {
+                'name': 'Antwerp U.',
+            },
+            'rank': 'SENIOR',
+            '_rank': 'SENIOR',
+            'status': 'Current',
+        },
+    ]
+    result = strip_empty_values(hepnames.do(create_record(snippet)))
+
+    assert expected == result['positions']
 
 
 def test_private_current_emails(marcxml_to_json, json_to_marc):
