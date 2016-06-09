@@ -74,8 +74,8 @@
 
         <div class="col-md-2 pad-top-10">
           <ul class="subject-terms">
-            <li ng-repeat="subject in record._source.metadata.subject_terms"
-                ng-if="record._source.metadata.subject_terms">
+            <li ng-repeat="subject in record._source.metadata.field_categories"
+                ng-if="record._source.metadata.field_categories">
               {{subject.term}}
             </li>
             <li ng-repeat="field in record._source.metadata.field_categories"
