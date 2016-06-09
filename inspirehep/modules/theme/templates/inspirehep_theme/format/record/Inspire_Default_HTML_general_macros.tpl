@@ -46,13 +46,13 @@
   </a>
 {% endmacro %}
 
-{% macro render_record_authors(record, is_brief, number_of_displayed_authors=10, show_affiliations=true) %}
-  {% set collaboration_displayed = false %}
+{% macro render_record_authors(record, is_brief, number_of_displayed_authors=10, show_affiliations=true, collaboration_only=false) %}
+  {% set collaboration_displayed = [] %}
   {% if record.collaboration and not record.get('corporate_author') %}
     {% for collaboration in record.collaboration %}
       {% if collaboration['value'] %}
       <a href="/search?p=collaboration:'{{ collaboration['value'] }}'">{{ collaboration['value'] }}</a>
-        {% set collaboration_displayed = true %}
+        {% do collaboration_displayed.append(1) %}
       {% endif %}
       {% if not loop.last %}
         and
@@ -67,7 +67,8 @@
     {% endfor %}
   {% endif %}
 
-  {% if record.authors %}
+
+  {% if record.authors and not (collaboration_displayed and collaboration_only) %}
     {% set sep = joiner("; ") %}
     {% set authors = record.authors %}
     {% if not collaboration_displayed %}

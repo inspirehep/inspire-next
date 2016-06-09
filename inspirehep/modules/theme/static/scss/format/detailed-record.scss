@@ -80,8 +80,17 @@ $darken: 8%;
     color: white;
 }
 
-#record_content .record-detailed .record-title {
+h1.record-detailed-title {
+    margin: 0px;
     font-size: x-large;
+    padding-bottom: 5px;
+    font-weight: bold;
+}
+
+h2.record-detailed-subtitle {
+    font-size: 17px;
+    margin-top: 7px;
+    margin-bottom: 25px;
 }
 
 .collection-primary {
@@ -121,11 +130,6 @@ $darken: 8%;
     color: $institutions-collection;
 }
 
-#record-title {
-    font-size: x-large;
-    padding-bottom: 5px;
-    font-weight: bold;
-}
 
 #detailed-header {
     padding: 20px 0 0 0 !important;
@@ -142,6 +146,7 @@ $darken: 8%;
     text-align: left;
     color: black;
     padding: 20px;
+    margin-bottom: 20px;
 
     #detailed-header-top {
         padding-left: 20px;
@@ -192,7 +197,7 @@ $darken: 8%;
     }
 }
 
-#record-title, #record-journal,
+h1.record-detailed-title, .record-header label, #record-journal,
 #external_links, #doi-eprint-experiment, {
     color: $blue-purple;
 }
@@ -222,6 +227,17 @@ $darken: 8%;
 	display: none;
 }
 
+.record-detailed .panel-heading {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.record-detailed .record-panel-heading-muted {
+    color: $grey;
+    font-weight: normal;
+    font-size: 0.7em;
+}
+
 #record-abstract-title, #record-keywords-title, #record-reference-title, #record-citation-title, #record-impact-graph {
     font-size: 18px;
     font-weight: 600;
@@ -235,7 +251,7 @@ $darken: 8%;
     padding-bottom: 50px;
 }
 
-#record-references-table-wrapper, #record-citations-table-wrapper {
+#record-references-table-wrapper, #record-citations-table-wrapper, #record-institution-people-table-wrapper, #record-institution-experiments-table-wrapper, #record-institution-papers-table-wrapper, #record-institution-phdtheses-table-wrapper {
     display: none;
 
     .col-sm-6 {
@@ -244,8 +260,20 @@ $darken: 8%;
     }
 }
 
-#record-references-loading, #record-citations-loading {
+#record-references-loading, #record-citations-loading, #record-institution-people-loading, #record-institution-experiments-loading, #record-institution-papers-loading, #record-institution-phdtheses-loading {
     text-align: center;
+}
+
+#record-institution-papers-table, #record-institution-phdtheses-table {
+    table-layout: fixed;
+
+    tbody > tr > td {
+        text-overflow: ellipsis;
+        width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 10px;
+    }
 }
 
 #record-references-table, #record-citations-table {
@@ -261,7 +289,13 @@ $darken: 8%;
     }
 }
 
-#references, #citations {
+#record-institution-people, #record-institution-experiments, #record-institution-papers, #record-institution-phdtheses {
+    .panel-heading {
+        padding: 10px 15px 0px 15px;
+    }
+}
+
+#references, #citations, #record-institution-people, #record-institution-experiments, #record-institution-papers, #record-institution-phdtheses {
 
     min-height: 200px;
 
@@ -287,15 +321,11 @@ $darken: 8%;
         }
     }
 
-    
+
 
 
 
     .panel-heading {
-
-        .references-citations-table {
-            margin-top: 15px;
-        }
 
         .references-citations-showing {
             font-weight: 500;
@@ -366,7 +396,6 @@ $darken: 8%;
 }
 
 #record_content .record-detailed .record-details {
-    padding-top: 30px;
     text-align: left;
     background-color: $page-background;
 }
@@ -588,6 +617,36 @@ $darken: 8%;
         @media (min-width: $screen-md-min) {
         float: right;
     }
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+.record-detailed-institution {
+
+    #institution-detailed-map {
+        height: 100%;
+        width: 100%;
+    }
+
+    .col-md-8, .col-md-3 {
+        background-color: white;
+    }
+
+
+    @media (min-width: $screen-md-min) {
+
+        #record-detailed-institution-information,
+        #record-detailed-institution-map {
+            height: 200px;
+        }
+    }
+
+    #record-detailed-institution-map {
+        @media (min-width: $screen-md-min) {
+            float: right;
+        }
+
         padding-left: 0;
         padding-right: 0;
     }

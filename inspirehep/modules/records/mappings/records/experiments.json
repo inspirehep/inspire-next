@@ -64,6 +64,10 @@
                     "type": "string",
                     "index": "not_analyzed"
                 },
+                "affiliation": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                },
                 "hidden_note": {
                     "type": "object",
                     "properties": {
@@ -85,19 +89,14 @@
                 "experimentautocomplete": {
                     "type": "string"
                 },
-                "experiment_name": {
+                "experiment_names": {
                     "type": "object",
                      "properties": {
-                        "experiment": {
+                        "title": {
                             "type": "string",
                             "index": "not_analyzed",
                             "copy_to": ["experimentautocomplete"]
-                        },
-                        "wwwlab": {
-                            "type": "string",
-                            "index": "not_analyzed"
                         }
-
                     }
                 },
                 "report_number": {

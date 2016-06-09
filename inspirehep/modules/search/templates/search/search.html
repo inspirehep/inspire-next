@@ -93,7 +93,7 @@
           {%- endblock search_sort %}
         </div>
         <hr>
-        {% if not request.args.get('cc') or request.args.get('cc') in ('hep', 'literature') %}
+        {% if not request.args.get('cc') or request.args.get('cc') | lower in ('hep', 'literature') %}
           <input ng-controller="checkboxCtrl" ng-checked="allChecked()" id="export-select-all" type="checkbox" ng-click="toggleAllIds()">&nbsp;&nbsp;
           <inspire-export-modal button-template="/static/node_modules/inspirehep-js/dist/templates/export/templates/button_multiple.html" body-template="/static/node_modules/inspirehep-js/dist/templates/export/templates/modalbody.html">
           </inspire-export-modal>

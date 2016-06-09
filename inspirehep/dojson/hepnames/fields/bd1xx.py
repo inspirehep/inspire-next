@@ -230,9 +230,12 @@ def positions(self, key, value):
         for val in recid_status:
             if val.lower() == 'current':
                 status = val
-            elif type(val) is int:
-                recid = val
-                curated_relation = True
+            else:
+                try:
+                    recid = int(val)
+                    curated_relation = True
+                except ValueError:
+                    pass
 
     inst = {
         'name': value.get('a'),
