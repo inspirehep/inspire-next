@@ -575,7 +575,8 @@ def publication_info(record):
                     conference_recid = conference_rec['control_number']
             if 'parent_record' in pub_info:
                 parent_rec = replace_refs(pub_info['parent_record'], 'es')
-                parent_recid = parent_rec['control_number']
+                if parent_rec and parent_rec.get('control_number'):
+                    parent_recid = parent_rec['control_number']
 
             if conference_recid and parent_recid:
                 try:
