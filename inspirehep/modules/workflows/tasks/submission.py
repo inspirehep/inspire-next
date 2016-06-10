@@ -226,14 +226,29 @@ def send_robotupload(url=None,
         )
         marc_json = marcxml_processor.do(obj.data)
         marcxml = legacy_export_as_marc(marc_json)
-        result = make_robotupload_marcxml(
-            url=url,
-            marcxml=marcxml,
-            callback_url=combined_callback_url,
-            mode=mode,
-            nonce=obj.id,
-            priority=5,
-        )
+
+        if not url and current_app.debug:
+            # Log what we would send
+            current_app.logger.debug(
+                "Going to robotupload {mode} to {url}:\n{marcxml}\n".format(
+                    url=url,
+                    marcxml=marcxml,
+                    callback_url=combined_callback_url,
+                    mode=mode,
+                    nonce=obj.id,
+                    priority=5,
+                )
+            )
+            return
+        else:
+            result = make_robotupload_marcxml(
+                url=url,
+                marcxml=marcxml,
+                callback_url=combined_callback_url,
+                mode=mode,
+                nonce=obj.id,
+                priority=5,
+            )
         if "[INFO]" not in result.text:
             if "cannot use the service" in result.text:
                 # IP not in the list
