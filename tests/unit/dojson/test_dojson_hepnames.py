@@ -32,10 +32,8 @@ from inspirehep.dojson.utils import strip_empty_values
 
 @pytest.fixture
 def marcxml_to_json():
-    marcxml = pkg_resources.resource_string('tests',
+    marcxml = pkg_resources.resource_string(__name__,
                                             os.path.join(
-                                                'unit',
-                                                'dojson',
                                                 'fixtures',
                                                 'test_hepnames_record.xml'
                                             ))
@@ -68,9 +66,9 @@ def test_experiments(marcxml_to_json, json_to_marc):
 
 def test_field_categories(marcxml_to_json, json_to_marc):
     """Test if field_categories is created correctly."""
-    assert (marcxml_to_json['field_categories'][0] ==
+    assert (marcxml_to_json['field_categories'][0]['term'] ==
             json_to_marc['65017'][0]['a'])
-    assert (marcxml_to_json['field_categories'][1] ==
+    assert (marcxml_to_json['field_categories'][1]['term'] ==
             json_to_marc['65017'][1]['a'])
     assert (json_to_marc['65017'][1]['2'] == 'INSPIRE')
 

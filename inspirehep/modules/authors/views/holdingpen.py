@@ -237,7 +237,7 @@ def update():
             pass
         data["recid"] = recid
     else:
-        return redirect(url_for("inspirehep_authors.new"))
+        return redirect(url_for("inspirehep_authors_holdingpen.new"))
     form = AuthorUpdateForm(data=data, is_update=True)
     ctx = {
         "action": url_for('.submitupdate'),

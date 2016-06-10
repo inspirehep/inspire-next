@@ -278,8 +278,8 @@ def positions2marc(self, key, value):
 @utils.for_each_value
 def field_categories2marc(self, key, value):
     return {
-        'a': value,
-        '2': 'INSPIRE',
+        'a': value.get('term'),
+        '2': value.get('source') or "INSPIRE",
     }
 
 
