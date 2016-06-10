@@ -40,5 +40,5 @@ def inspire_recid_minter(record_uuid, data):
     if 'control_number' in data:
         args['pid_value'] = data['control_number']
     provider = InspireRecordIdProvider.create(**args)
-    data['control_number'] = int(provider.pid.pid_value)
+    data['control_number'] = str(provider.pid.pid_value)
     return provider.pid
