@@ -1097,6 +1097,34 @@ def test_publication_info_with_pub_info_and_conf_info(r_r, mock_replace_refs):
 
 
 @mock.patch('inspirehep.modules.theme.jinja2filters.replace_refs')
+def test_publication_info_with_pub_info_and_conf_info_not_found(r_r):
+    conf_rec = {'$ref': 'http://x/y/976391'}
+    parent_rec = {'$ref': 'http://x/y/706120'}
+
+    r_r.return_value = None
+
+    with_pub_info_and_conf_info = Record({
+        'publication_info': [
+            {
+                'journal_title': 'eConf',
+                'journal_volume': 'C050318'
+            },
+            {
+                'conference_record': conf_rec,
+                'parent_record': parent_rec
+            }
+        ]
+    })
+
+    expected = {
+        'pub_info': ['<i>eConf</i> C050318']
+    }
+    result = publication_info(with_pub_info_and_conf_info)
+
+    assert expected == result
+
+
+@mock.patch('inspirehep.modules.theme.jinja2filters.replace_refs')
 def test_publication_info_from_conference_recid_and_not_parent_recid(r_r, mock_replace_refs):
     with_title = '20th International Workshop on Deep-Inelastic Scattering and Related Subjects'
     conf_rec = {'$ref': 'http://x/y/1086512'}
