@@ -26,6 +26,8 @@ import copy
 
 from datetime import date
 
+from flask import url_for
+
 from sqlalchemy.orm.exc import NoResultFound
 
 from idutils import is_arxiv_post_2007
@@ -51,6 +53,15 @@ def formdata_to_model(obj, eng):
     # Add extra fields that need to be computed or depend on other
     # fields.
     #
+    # ======
+    # Schema
+    # ======
+    if '$schema' in data and not data['$schema'].startswith('http'):
+        data['$schema'] = url_for(
+            'invenio_jsonschemas.get_schema',
+            schema_path="records/{0}".format(data['$schema'])
+        )
+
     # ============================
     # Collection
     # ============================

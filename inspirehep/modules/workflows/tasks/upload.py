@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, print_function
 
+from flask import url_for
+
 from invenio_db import db
 from invenio_indexer.api import RecordIndexer
 from invenio_records import Record
@@ -53,3 +55,17 @@ def store_record(obj, *args, **kwargs):
     # Index record
     indexer = RecordIndexer()
     indexer.index_by_id(pid.object_uuid)
+
+
+def set_schema(obj, eng):
+    """Make sure schema is set properly and resolve it."""
+    if '$schema' not in obj.data:
+        obj.data['$schema'] = "{data_type}.json".format(
+            data_type=obj.data_type or eng.workflow_definition.data_type
+        )
+
+    if not obj.data['$schema'].startswith('http'):
+        obj.data['$schema'] = url_for(
+            'invenio_jsonschemas.get_schema',
+            schema_path="records/{0}".format(obj.data['$schema'])
+        )
