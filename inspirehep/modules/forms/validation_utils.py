@@ -24,8 +24,10 @@ import re
 from flask import current_app
 
 import idutils
-
+import orcid
 import six
+
+from requests import RequestException
 
 from wtforms.validators import StopValidation, ValidationError
 
@@ -313,18 +315,17 @@ class PidValidator(object):
 
 def ORCIDValidator(form, field):
     """Validate that the given ORCID exists."""
-    from requests import RequestException
-    import orcid
     msg = u"The ORCID iD was not found in <a href='http://orcid.org' target='_blank'>orcid.org</a>. Please, make sure it is valid."
     orcid_id = field.data
-    api = orcid.MemberAPI(current_app.config["ORCID_APP_CREDENTIALS"]["consumer_key"],
-                          current_app.config["ORCID_APP_CREDENTIALS"]["consumer_secret"])
-    try:
-        result = api.search_member("orcid:" + orcid_id)
-        if result['orcid-search-results']["num-found"] == 0:
-            raise StopValidation(msg)
-    except RequestException:
-        return
+    if current_app.config.get("ORCID_APP_CREDENTIALS"):
+        api = orcid.MemberAPI(current_app.config["ORCID_APP_CREDENTIALS"]["consumer_key"],
+                              current_app.config["ORCID_APP_CREDENTIALS"]["consumer_secret"])
+        try:
+            result = api.search_member("orcid:" + orcid_id)
+            if result['orcid-search-results']["num-found"] == 0:
+                raise StopValidation(msg)
+        except RequestException:
+            return
 
 
 class RegexpStopValidator(object):
