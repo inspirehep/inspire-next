@@ -206,7 +206,7 @@ def acquisition_source(self, key, value):
         'email': value.get('b'),
         'method': value.get('c'),
         'date': value.get('d'),
-        'submission_number': value.get('e')
+        'submission_number': str(value.get('e'))
     }
 
 
