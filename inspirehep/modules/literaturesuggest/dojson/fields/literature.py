@@ -306,7 +306,7 @@ def titles(self, key, value):
         return get_value([])
 
 
-@literature.over('title_translation', '^title_translation$')
+@literature.over('title_translations', '^title_translation$')
 def title_translation(self, key, value):
     return [{
         "title": value
@@ -317,7 +317,7 @@ def title_translation(self, key, value):
 def urls(self, key, value):
     self['pdf'] = value  # will be removed later
     field = {
-        "url": value
+        "value": value
     }
     if 'urls' in self:
         self['urls'].append(field)
@@ -329,7 +329,7 @@ def urls(self, key, value):
 @literature.over('additional_url', '^additional_url$')
 def additional_url(self, key, value):
     field = {
-        "url": value
+        "value": value
     }
     if 'urls' in self:
         self['urls'].append(field)
