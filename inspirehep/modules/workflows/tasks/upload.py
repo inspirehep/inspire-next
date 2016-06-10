@@ -24,8 +24,6 @@
 
 from __future__ import absolute_import, print_function
 
-from flask import url_for
-
 from invenio_db import db
 from invenio_indexer.api import RecordIndexer
 from invenio_records import Record
@@ -35,16 +33,21 @@ from inspirehep.modules.pidstore.minters import inspire_recid_minter
 
 def store_record(obj, *args, **kwargs):
     """Create and index new record in main record space."""
-    if '$schema' in obj.data:
-        obj.data['$schema'] = url_for(
-            'invenio_jsonschemas.get_schema',
-            schema_path="records/{0}".format(obj.data['$schema'])
-        )
+    assert "$schema" in obj.data, "No $schema attribute found!"
+
     # Create record
-    rec_uuid = str(Record.create(obj.data, id_=None).id)
+    record = Record.create(obj.data, id_=None)
 
     # Create persistent identifier.
-    pid = inspire_recid_minter(rec_uuid, obj.data)
+    pid = inspire_recid_minter(str(record.id), record)
+
+    # Commit any changes to record
+    record.commit()
+
+    # Dump any changes to record
+    obj.data = record.dumps()
+
+    # Commit to DB before indexing
     db.session.commit()
 
     # Index record
