@@ -23,8 +23,7 @@
 
 """Our workflows."""
 
-from .hep_ingestion import HEPIngestion
-from .arxiv_ingestion import ArXivIngestion
+from .article import Article
 
 
-__all__ = ('HEPIngestion', 'ArXivIngestion')
+__all__ = ('Article')

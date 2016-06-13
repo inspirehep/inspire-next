@@ -24,7 +24,7 @@
 """Our workflows."""
 
 from .hep_approval import HEPApproval
-from .core_approval import CoreApproval
+from .merge_approval import MergeApproval
 
 
-__all__ = ('HEPApproval', 'CoreApproval')
+__all__ = ('HEPApproval', 'MergeApproval')

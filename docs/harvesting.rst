@@ -109,7 +109,7 @@ Via OAI-PMH:
 
 .. code-block:: bash
 
-    (inspire)$ inspirehep oaiharvester harvest -u http://export.arxiv.org/oai2 -m arXiv -i oai:arXiv.org:1604.05726 -a spider=arXiv -a workflow=arxiv_ingestion
+    (inspire)$ inspirehep oaiharvester harvest -u http://export.arxiv.org/oai2 -m arXiv -i oai:arXiv.org:1604.05726 -a spider=arXiv -a workflow=article
 
 Note the two extra arguments which tells which spider to use to harvest the source in `hepcrawl`, and workflow which says which ingestion workflow to run upon receiving harvested records from the crawler.
 

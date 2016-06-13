@@ -214,7 +214,8 @@ def close_ticket(ticket_id_key="ticket_id"):
 def send_robotupload(url=None,
                      marcxml_processor=None,
                      callback_url="callback/workflows/continue",
-                     mode="insert"):
+                     mode="insert",
+                     extra_data_key=None):
     """Get the MARCXML from the model and ship it."""
     @wraps(send_robotupload)
     def _send_robotupload(obj, eng):
@@ -227,7 +228,12 @@ def send_robotupload(url=None,
         )
         if not combined_callback_url.startswith('http'):
             combined_callback_url = "http://{0}".format(combined_callback_url)
-        marc_json = marcxml_processor.do(obj.data)
+
+        if extra_data_key is not None:
+            data = obj.extra_data.get(extra_data_key) or {}
+        else:
+            data = obj.data
+        marc_json = marcxml_processor.do(data)
         marcxml = legacy_export_as_marc(marc_json)
 
         if not url and current_app.debug:

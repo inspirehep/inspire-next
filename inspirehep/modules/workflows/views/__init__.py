@@ -20,9 +20,7 @@
 """View blueprints for Holding Pen."""
 
 from .callback import blueprint as holdingpen_blueprint
-from .holdingpen_edit import blueprint as settings_blueprint
 
 blueprints = [
     holdingpen_blueprint,
-    settings_blueprint,
 ]
