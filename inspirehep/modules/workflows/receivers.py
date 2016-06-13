@@ -50,7 +50,7 @@ def spawn_arXiv_workflow_from_oai_harvest(request, records, name, **kwargs):
         # Taken care of by inspire-crawler
         return
 
-    workflow = "arxiv_ingestion"
+    workflow = "article"
 
     if workflow not in workflows:
         current_app.logger.warning(

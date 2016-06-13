@@ -26,10 +26,27 @@ from functools import wraps
 
 from flask import current_app
 
+from inspirehep.utils.arxiv import get_clean_arXiv_id
 from inspirehep.utils.record import get_value
 
 
-def shall_upload_record(obj, *args, **kwargs):
+def mark(key, value):
+    """Mark a record by putting a value in a key in extra_data."""
+    @wraps(mark)
+    def _mark(obj, eng):
+        obj.extra_data[key] = value
+    return _mark
+
+
+def is_marked(key):
+    """Mark a record by putting a value in a key in extra_data."""
+    @wraps(mark)
+    def _mark(obj, eng):
+        return key in obj.extra_data and obj.extra_data[key]
+    return _mark
+
+
+def is_record_accepted(obj, *args, **kwargs):
     """Check if the record was approved."""
     return obj.extra_data.get("approved", False)
 
@@ -105,6 +122,10 @@ def reject_record(message):
 
 def is_record_relevant(obj, *args, **kwargs):
     """Shall we halt this workflow for potential acceptance or just reject?"""
+    # We do not auto-reject any user submissions
+    if is_submission(obj, *args, **kwargs):
+        return True
+
     prediction_results = obj.extra_data.get("prediction_results")
     classification_results = obj.extra_data.get('classifier_results')
 
@@ -133,3 +154,35 @@ def is_experimental_paper(obj, eng):
         if experimental_category in categories:
             return True
     return False
+
+
+def is_arxiv_paper(obj, *args, **kwargs):
+    """Check if the record is from arXiv."""
+    return bool(get_value(obj.data, "arxiv_eprints.categories", [[]])[0]) or \
+        get_clean_arXiv_id(obj.data)
+
+
+def is_submission(obj, eng):
+    """Is this a submission?"""
+    source = obj.data.get('acquisition_source')
+    if source:
+        return source.get('method') == "submission"
+    return False
+
+
+def emit_record_signals(obj, eng):
+    """Emit record signals to update record metadata."""
+    from invenio_records.signals import before_record_insert
+
+    before_record_insert.send(obj.data)
+
+
+def prepare_update_payload(extra_data_key="update_payload"):
+    @wraps(prepare_update_payload)
+    def _prepare_update_payload(obj, eng):
+        # TODO: Perform auto-merge if possible and update only necessary data
+        # See obj.extra_data["record_matches"] for data on matches
+
+        # FIXME: Just update entire record for now
+        obj.extra_data[extra_data_key] = obj.data
+    return _prepare_update_payload

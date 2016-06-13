@@ -47,6 +47,7 @@ from invenio_db import db
 from invenio_workflows import WorkflowObject, start
 
 from .forms import LiteratureForm
+from .tasks import formdata_to_model
 
 
 blueprint = Blueprint('inspirehep_literature_suggest',
@@ -85,12 +86,13 @@ def submit():
         id_user=current_user.get_id())
     workflow_object.data_type = "hep"
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
+    workflow_object.data = formdata_to_model(workflow_object, visitor.data)
     workflow_object.save()
     db.session.commit()
 
     # Start workflow. delayed=True will execute the workflow in the
     # background using, for example, Celery.
-    start.delay("literature", object_id=workflow_object.id)
+    start.delay("article", object_id=workflow_object.id)
 
     return redirect(url_for('.success'))
 

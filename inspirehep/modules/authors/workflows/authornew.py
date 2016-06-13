@@ -32,7 +32,7 @@ from workflow.patterns.controlflow import IF, IF_ELSE
 
 from inspirehep.dojson.hepnames import hepnames2marc
 from inspirehep.modules.workflows.tasks.actions import (
-    shall_upload_record,
+    is_record_accepted,
     halt_record,
 )
 
@@ -70,7 +70,7 @@ class AuthorNew(WorkflowBase):
                      keep_new=True),
         halt_record(action="author_approval",
                     message="Accept submission?"),
-        IF_ELSE(shall_upload_record,
+        IF_ELSE(is_record_accepted,
                 [
                     IF(recreate_data,
                         [formdata_to_model]),

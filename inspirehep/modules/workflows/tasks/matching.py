@@ -92,7 +92,7 @@ def match_legacy_inspire(obj, eng):
         set(match_by_arxiv_id(obj.data)) | set(match_by_doi(obj.data))
     )
 
-    base_url = current_app.config["SERVER_NAME"]
+    base_url = current_app.config["LEGACY_ROBOTUPLOAD_URL"]
     if not re.match('^https?://', base_url):
         base_url = 'http://{}'.format(base_url)
     obj.extra_data['record_matches'] = {
@@ -144,9 +144,10 @@ def match_with_invenio_matcher(queries=None, index="records-hep", doc_type="hep"
                 "score": matched_record.score
             })
 
-        obj.extra_data["record_matches"] = record_matches
-
-        return bool(record_matches['recids'])
+        if len(record_matches['recids']) > 0:
+            obj.extra_data["record_matches"] = record_matches
+            return True
+        return False
     return _match_with_invenio_matcher
 
 
@@ -180,11 +181,14 @@ def is_too_old(record, days_ago=5):
     return True
 
 
-def record_exists(obj, eng):
-    """Check if record exist in the system."""
+def article_exists(obj, eng):
+    """Check if an article exist in the system."""
+    # For efficiency check special mark key.
+    if obj.extra_data.get('match-found', False):
+        return True
     # Use matcher if not on production
     if not current_app.config.get('PRODUCTION_MODE'):
-        if match_with_invenio_matcher()(obj, eng):
+        if match_with_invenio_matcher(index="records-hep", doc_type="hep")(obj, eng):
             obj.log.info("Record already exists in INSPIRE (using matcher).")
             return True
     else:
@@ -209,7 +213,6 @@ def previously_rejected(days_ago=None):
     @wraps(previously_rejected)
     def _previously_rejected(obj, eng):
         if current_app.config.get('PRODUCTION_MODE'):
-
             if days_ago is None:
                 _days_ago = current_app.config.get('INSPIRE_ACCEPTANCE_TIMEOUT', 5)
             else:
@@ -223,10 +226,11 @@ def previously_rejected(days_ago=None):
     return _previously_rejected
 
 
-def exists_in_holding_pen(obj, eng):
+def pending_in_holding_pen(obj, eng):
     """Check if a record exists in HP by looking in given KB."""
     from elasticsearch_dsl import Q
     from invenio_search import RecordsSearch
+    from invenio_workflows import WorkflowObject, ObjectStatus
 
     config = current_app.config['WORKFLOWS_UI_REST_ENDPOINT']
     index = config.get('search_index')
@@ -248,12 +252,20 @@ def exists_in_holding_pen(obj, eng):
                                 allow_leading_wildcard=False))
         search_result = search.execute()
         id_list = [int(hit.id) for hit in search_result.hits]
-        if set(id_list) - set([obj.id]):
-            obj.log.info("Record already found in Holding Pen ({0})".format(
-                id_list
-            ))
-            obj.extra_data["holdingpen_ids"] = id_list
-            return True
+        matches_excluding_self = set(id_list) - set([obj.id])
+        if matches_excluding_self:
+            obj.extra_data["holdingpen_ids"] = list(matches_excluding_self)
+            pending_records = WorkflowObject.query.filter(
+                WorkflowObject.status != ObjectStatus.COMPLETED,
+                WorkflowObject.id.in_(matches_excluding_self)
+            ).all()
+            if pending_records:
+                pending_ids = [o.id for o in pending_records]
+                obj.extra_data['pending_holdingpen_ids'] = pending_ids
+                obj.log.info("Pending records already found in Holding Pen ({0})".format(
+                    pending_ids
+                ))
+                return True
     return False
 
 
@@ -272,13 +284,16 @@ def stop_processing(obj, eng):
 def update_old_object(obj, eng):
     """Update the data of the old object with the new data."""
     from invenio_workflows import WorkflowObject
+
     holdingpen_ids = obj.extra_data.get("holdingpen_ids", [])
-    if holdingpen_ids and len(holdingpen_ids) == 1:
-        old_object = WorkflowObject.query.get(holdingpen_ids[0])
-        if old_object.workflow.name == eng.name:
-            # Update record if part of the same workflow
-            old_object.set_data(obj.data)
-            old_object.save()
+    for matched_id in holdingpen_ids:
+        other_obj = WorkflowObject.query.get(matched_id)
+        if obj.data.get('acquisition_source') and other_obj.data.get('acquisition_source'):
+            if obj.data['acquisition_source'].get('method') == other_obj.data['acquisition_source'].get('method'):
+                # Method is the same, update obj
+                other_obj.data.update(obj.data)
+                other_obj.save()
+                break
     else:
         msg = "Cannot update old object, non valid ids: {0}".format(holdingpen_ids)
         obj.log.error(msg)

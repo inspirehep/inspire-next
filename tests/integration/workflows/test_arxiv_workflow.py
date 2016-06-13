@@ -259,7 +259,7 @@ def test_harvesting_arxiv_workflow_rejected(
     workflow_uuid = None
     with app.app_context():
         with mock.patch.dict(app.config, extra_config):
-            workflow_uuid = start('arxiv_ingestion', [record_json])
+            workflow_uuid = start('article', [record_json])
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = list(eng.objects)[0]
@@ -341,7 +341,7 @@ def test_harvesting_arxiv_workflow_accepted(
     record_json = hep.do(record_marc)
     workflow_uuid = None
     with db_only_app.app_context():
-        workflow_uuid = start('arxiv_ingestion', [record_json])
+        workflow_uuid = start('article', [record_json])
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = list(eng.objects)[0]
