@@ -170,10 +170,6 @@
         "metadata": {
           "type": "object",
           "properties": {
-            "source": {
-              "type": "string",
-              "index": "not_analyzed"
-            },
             "_collections": {
               "type": "string",
               "index": "not_analyzed"
@@ -199,9 +195,6 @@
                 }
               }
             },
-            "abstract": {
-              "type": "string"
-            },
             "accelerator_experiments": {
               "type": "object",
               "properties": {
@@ -217,13 +210,6 @@
                   "index": "not_analyzed"
                 }
               }
-            },
-            "experiment": {
-              "type": "string",
-              "index": "not_analyzed"
-            },
-            "experimentautocomplete": {
-              "type": "string"
             },
             "experiment_name": {
               "type": "string",
@@ -243,9 +229,21 @@
                 }
               }
             },
-            "doi": {
-              "type": "string",
-              "index": "not_analyzed"
+            "external_system_numbers": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "index": "not_analyzed",
+                  "copy_to": [
+                    "external_system_numbers"
+                  ]
+                },
+                "institute": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                }
+              }
             },
             "report_numbers": {
               "type": "object",
@@ -258,10 +256,6 @@
                   ]
                 }
               }
-            },
-            "reportnumber": {
-              "type": "string",
-              "index": "not_analyzed"
             },
             "arxiv_eprints": {
               "type": "object",
@@ -282,13 +276,6 @@
                   ]
                 }
               }
-            },
-            "arXiv": {
-              "type": "string"
-            },
-            "eprint": {
-              "type": "string",
-              "index": "not_analyzed"
             },
             "isbns": {
               "type": "object",
@@ -318,10 +305,6 @@
                 }
               }
             },
-            "subject": {
-              "type": "string",
-              "index": "not_analyzed"
-            },
             "collaboration": {
               "type": "object",
               "properties": {
@@ -334,6 +317,33 @@
                 },
                 "recid": {
                   "type": "integer"
+                }
+              }
+            },
+            "acquisition_source": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "index": "not_analyzed",
+                  "copy_to": [
+                    "source"
+                  ]
+                },
+                "method": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "email": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "date": {
+                  "type": "date"
+                },
+                "submission_number": {
+                  "type": "string",
+                  "index": "not_analyzed"
                 }
               }
             },
@@ -352,22 +362,6 @@
                   "index": "not_analyzed"
                 }
               }
-            },
-            "collection": {
-              "type": "string",
-              "analyzer": "tc_synonyms_analyzer"
-            },
-            "exactauthor": {
-              "type": "string",
-              "fields": {
-                "raw": {
-                  "type": "string",
-                  "index": "not_analyzed"
-                }
-              }
-            },
-            "affautocomplete": {
-              "type": "string"
             },
             "authors": {
               "type": "object",
@@ -405,12 +399,6 @@
                   "type": "string"
                 }
               }
-            },
-            "author": {
-              "type": "string"
-            },
-            "affiliation": {
-              "type": "string"
             },
             "citation_count": {
               "type": "integer"
@@ -452,9 +440,6 @@
                 }
               }
             },
-            "refersto": {
-              "type": "integer"
-            },
             "publication_info": {
               "type": "object",
               "properties": {
@@ -486,10 +471,6 @@
                   "type": "integer"
                 }
               }
-            },
-            "cnum": {
-              "type": "string",
-              "index": "not_analyzed"
             },
             "titles": {
               "type": "object",
@@ -536,6 +517,10 @@
         "title": {
           "type": "string"
         },
+        "source": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
         "isbn": {
           "type": "string",
           "index": "not_analyzed"
@@ -548,9 +533,6 @@
           "type": "string",
           "analyzer": "tc_synonyms_analyzer"
         },
-        "title": {
-          "type": "string"
-        },
         "doc_type": {
           "type": "string",
           "index": "not_analyzed"
@@ -560,6 +542,10 @@
           "index": "not_analyzed"
         },
         "experiment": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "external_system_numbers": {
           "type": "string",
           "index": "not_analyzed"
         },

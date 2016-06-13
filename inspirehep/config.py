@@ -921,7 +921,7 @@ WORKFLOWS_UI_REST_FACETS = {
     "holdingpen": {
         "filters": {
             "status": terms_filter('_workflow.status'),
-            "data_type": terms_filter('_workflow.data_type'),
+            "source": terms_filter('metadata.acquisition_source.source'),
             "workflow_name": terms_filter('_workflow.workflow_name'),
         },
         "aggs": {
@@ -931,9 +931,9 @@ WORKFLOWS_UI_REST_FACETS = {
                     "size": 20
                 }
             },
-            "data_type": {
+            "source": {
                 "terms": {
-                    "field": "_workflow.data_type",
+                    "field": "metadata.acquisition_source.source",
                     "size": 20
                 }
             },
