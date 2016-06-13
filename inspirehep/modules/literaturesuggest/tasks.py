@@ -24,6 +24,8 @@ from __future__ import absolute_import, print_function
 
 import copy
 
+from datetime import date
+
 from sqlalchemy.orm.exc import NoResultFound
 
 from idutils import is_arxiv_post_2007
@@ -170,8 +172,9 @@ def formdata_to_model(obj, eng):
     data['acquisition_source'] = dict(
         source=source,
         email=email,
+        date=date.today().isoformat(),
         method="submission",
-        submission_number=obj.id,
+        submission_number=str(obj.id),
     )
     # ==============
     # References

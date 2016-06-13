@@ -78,7 +78,7 @@ def formdata_to_model(obj, eng):
         email=user_email,
         date=date.today().isoformat(),
         method="submission",
-        submission_number=obj.id,
+        submission_number=str(obj.id),
     )
     # Finally, set data
     obj.data = data

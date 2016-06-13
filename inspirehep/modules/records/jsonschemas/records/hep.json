@@ -668,8 +668,7 @@
                     "type": "string",
                     "description": "Special submission ID"
                 }
-            },
-            "type": "array"
+            }
         },
         "collaboration": {
             "uniqueItems": true,
