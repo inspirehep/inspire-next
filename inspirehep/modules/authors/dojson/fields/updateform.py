@@ -20,14 +20,13 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""
-Author update/addition form JSON conversion.
-
+"""Author update/addition form JSON conversion.
 
 Converts keys in the user form to the keys needed by the HepNames data model
 in order to produce MARCXML.
-
 """
+
+from dojson import utils
 
 from ..model import updateform
 
@@ -147,8 +146,12 @@ def public_email(self, key, value):
 
 
 @updateform.over('field_categories', '^research_field$')
+@utils.for_each_value
 def field_categories(self, key, value):
-    return value
+    return {
+        "term": value,
+        "source": "submitter"
+    }
 
 
 @updateform.over('positions', '^institution_history$')
@@ -158,6 +161,10 @@ def institution_history(self, key, value):
                    key=lambda k: k["start_year"],
                    reverse=True)
     for position in value:
+        if not position["name"] and not position["start_year"] \
+                and not position["end_year"]:
+            # Empty values
+            continue
         positions.append({
             "institution": {'name': position["name"]},
             "status": "current" if position["current"] else "",

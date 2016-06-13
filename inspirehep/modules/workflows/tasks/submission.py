@@ -20,21 +20,27 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Contains INSPIRE specific submission tasks"""
+"""Contains INSPIRE specific submission tasks."""
+
+from __future__ import absolute_import, division, print_function
 
 import os
-
 from functools import wraps
-from flask import render_template, current_app
+
+from flask import current_app, render_template
 from invenio_accounts.models import User
 from retrying import retry
 
+from inspirehep.utils.tickets import get_instance, retry_if_connection_problems
 
-@retry(stop_max_attempt_number=5, wait_fixed=10000)
+
+@retry(
+    stop_max_attempt_number=5,
+    wait_fixed=10000,
+    retry_on_exception=retry_if_connection_problems
+)
 def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     """Submit ticket to RT with the given parameters."""
-    from inspirehep.utils.tickets import get_instance
-
     rt_instance = get_instance() if current_app.config.get("PRODUCTION_MODE") else None
     if not rt_instance:
         obj.log.error("No RT instance available. Skipping!")
@@ -52,17 +58,22 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     # Trick to prepare ticket body
     body = "\n ".join([line.strip() for line in body.split("\n")])
     rt_queue = current_app.config.get("BIBCATALOG_QUEUES") or queue
-    recid = obj.extra_data.get("recid", "")
-    if not recid:
-        recid = obj.data.get("recid", "")
 
-    ticket_id = rt_instance.create_ticket(
+    payload = dict(
         Queue=rt_queue,
         Subject=subject,
         Text=body,
-        Requestors=requestors,
-        CF_RecordID=recid
     )
+    recid = obj.extra_data.get("recid") or obj.data.get("control_number") \
+        or obj.data.get("recid")
+    if recid:
+        payload['CF_RecordID'] = recid
+
+    if requestors:
+        payload['requestors'] = requestors
+
+    ticket_id = rt_instance.create_ticket(**payload)
+
     obj.extra_data[ticket_id_key] = ticket_id
     obj.log.info("Ticket {0} created:\n{1}".format(
         ticket_id,
@@ -78,7 +89,8 @@ def create_ticket(template,
     """Create a ticket for the submission.
 
     Creates the ticket in the given queue and stores the ticket ID
-    in the extra_data key specified in ticket_id_key."""
+    in the extra_data key specified in ticket_id_key.
+    """
     @wraps(create_ticket)
     def _create_ticket(obj, eng):
         user = User.query.get(obj.id_user)
@@ -214,14 +226,29 @@ def send_robotupload(url=None,
         )
         marc_json = marcxml_processor.do(obj.data)
         marcxml = legacy_export_as_marc(marc_json)
-        result = make_robotupload_marcxml(
-            url=url,
-            marcxml=marcxml,
-            callback_url=combined_callback_url,
-            mode=mode,
-            nonce=obj.id,
-            priority=5,
-        )
+
+        if not url and current_app.debug:
+            # Log what we would send
+            current_app.logger.debug(
+                "Going to robotupload {mode} to {url}:\n{marcxml}\n".format(
+                    url=url,
+                    marcxml=marcxml,
+                    callback_url=combined_callback_url,
+                    mode=mode,
+                    nonce=obj.id,
+                    priority=5,
+                )
+            )
+            return
+        else:
+            result = make_robotupload_marcxml(
+                url=url,
+                marcxml=marcxml,
+                callback_url=combined_callback_url,
+                mode=mode,
+                nonce=obj.id,
+                priority=5,
+            )
         if "[INFO]" not in result.text:
             if "cannot use the service" in result.text:
                 # IP not in the list

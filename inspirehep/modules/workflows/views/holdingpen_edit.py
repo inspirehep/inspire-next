@@ -94,15 +94,17 @@ def edit_record_subject():
     obj = WorkflowObject.query.get(objectid)
 
     subject_dict = []
-    subject_dict.extend(obj.data.get("subject_terms"))
+    subject_dict.extend(obj.data.get("field_categories"))
 
     old_subjects_list = []
     for subj in subject_dict:
         old_subjects_list.append(subj["term"])
 
-    obj.data["subject_terms"] = revised_subjects_list(old_subjects_list,
-                                                      new_subjects_list,
-                                                      subject_dict)
+    obj.data["field_categories"] = revised_subjects_list(
+        old_subjects_list,
+        new_subjects_list,
+        subject_dict
+    )
     obj.save()
     db.session.commit()
     return json_success_message('subjects')

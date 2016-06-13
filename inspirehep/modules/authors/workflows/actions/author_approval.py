@@ -19,7 +19,9 @@
 
 """Author Approval action."""
 
-from flask import render_template, url_for
+from flask import render_template
+
+from invenio_db import db
 
 
 class AuthorApproval(object):
@@ -44,4 +46,14 @@ class AuthorApproval(object):
     @staticmethod
     def resolve(obj, *args, **kwargs):
         """Resolve the action taken in the approval action."""
-        pass
+        request_data = kwargs.get("request_data", {})
+        value = request_data.get("value", "")
+        approved = value in ('accept', 'accept_curate')
+        ticket = value == 'accept_curate'
+
+        obj.extra_data["approved"] = approved
+        obj.extra_data["ticket"] = ticket
+        obj.save()
+        db.session.commit()
+
+        obj.continue_workflow(delayed=True)

@@ -24,9 +24,44 @@ import six
 from flask import current_app
 
 from invenio_indexer.signals import before_record_index
+from invenio_records.signals import (
+    before_record_insert,
+    before_record_update,
+)
 
 from inspirehep.utils.date import create_valid_date
-from inspirehep.dojson.utils import get_recid_from_ref
+from inspirehep.dojson.utils import get_recid_from_ref, classify_field
+
+
+@before_record_insert.connect
+@before_record_update.connect
+def normalize_field_categories(sender, *args, **kwargs):
+    """Normalize field_categories."""
+    for idx, field in enumerate(sender.get('field_categories', [])):
+        if field.get('scheme') == "INSPIRE" or '_scheme' in field or '_term' in field:
+            # Already normalized form
+            continue
+        original_term = field.get('term')
+        normalized_term = classify_field(original_term)
+        scheme = 'INSPIRE' if normalized_term else None
+
+        original_scheme = field.get('scheme')
+        if isinstance(original_scheme, (list, tuple)):
+            original_scheme = original_scheme[0]
+
+        updated_field = {
+            '_scheme': original_scheme,
+            'scheme': scheme,
+            '_term': original_term,
+            'term': normalized_term,
+        }
+        source = field.get('source')
+        if source:
+            if 'automatically' in source:
+                source = 'INSPIRE'
+            updated_field['source'] = source
+
+        sender['field_categories'][idx].update(updated_field)
 
 
 @before_record_index.connect
@@ -36,7 +71,7 @@ def populate_inspire_subjects(recid, json, *args, **kwargs):
     Adds a field for faceting INSPIRE subjects
     """
     inspire_subjects = [
-        s['term'] for s in json.get('subject_terms', [])
+        s['term'] for s in json.get('field_categories', [])
         if s.get('scheme', '') == 'INSPIRE' and s.get('term')
     ]
     json['facet_inspire_subjects'] = inspire_subjects

@@ -26,6 +26,8 @@ import copy
 
 from datetime import date
 
+from flask import url_for
+
 from sqlalchemy.orm.exc import NoResultFound
 
 from idutils import is_arxiv_post_2007
@@ -51,15 +53,24 @@ def formdata_to_model(obj, eng):
     # Add extra fields that need to be computed or depend on other
     # fields.
     #
+    # ======
+    # Schema
+    # ======
+    if '$schema' in data and not data['$schema'].startswith('http'):
+        data['$schema'] = url_for(
+            'invenio_jsonschemas.get_schema',
+            schema_path="records/{0}".format(data['$schema'])
+        )
+
     # ============================
     # Collection
     # ============================
     data['collections'] = [{'primary': "HEP"}]
     if form_fields['type_of_doc'] == 'thesis':
         data['collections'].append({'primary': "THESIS"})
-    if "subject_terms" in data:
+    if "field_categories" in data:
         # Check if it was imported from arXiv
-        if any([x["scheme"] == "arXiv" for x in data["subject_terms"]]):
+        if any([x["scheme"] == "arXiv" for x in data["field_categories"]]):
             data['collections'].extend([{'primary': "arXiv"},
                                         {'primary': "Citeable"}])
             # Add arXiv as source

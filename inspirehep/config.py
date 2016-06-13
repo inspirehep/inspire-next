@@ -196,7 +196,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "037__c": ["arxiv_eprints.categories"],
     "246__a": ["titles.title"],
     "595": ["hidden_notes"],
-    "650__a": ["subject_terms.term"],
+    "650__a": ["field_categories.term"],
     "695__a": ["thesaurus_terms.keyword"],
     "773__y": ["publication_info.year"],
     "authorcount": ["authors.full_name"],
@@ -204,7 +204,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "caption": ["urls.description"],
     "country": ["authors.affiliations.value"],
     "firstauthor": ["authors.full_name", "authors.alternative_name"],
-    "fulltext": ["urls.url"],
+    "fulltext": ["urls.value"],
     "journal": ["publication_info.recid",
                 "publication_info.page_artid",
                 "publication_info.journal_issue",
@@ -225,7 +225,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "reference": ["references.doi", "references.report_number",
                   "references.journal_pubnote"
                   ],
-    "subject": ["subject_terms.term"],
+    "subject": ["field_categories.term"],
     "texkey": ["external_system_numbers.value",
                "external_system_numbers.obsolete"
                ],

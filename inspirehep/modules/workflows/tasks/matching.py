@@ -156,7 +156,7 @@ def was_already_harvested(record):
     We use the following heuristic: if the record belongs to one of the
     CORE categories then it was probably ingested in some other way.
     """
-    categories = get_value(record, 'subject_terms.term', [])
+    categories = get_value(record, 'field_categories.term', [])
     for category in categories:
         if category.lower() in current_app.config.get('INSPIRE_ACCEPTED_CATEGORIES', []):
             return True
@@ -171,11 +171,13 @@ def is_too_old(record, days_ago=5):
     earliest_date = record.get('earliest_date', '')
     if not earliest_date:
         earliest_date = record.get('preprint_date', '')
-    parsed_date = datetime.datetime.strptime(earliest_date, "%Y-%m-%d")
-    if date_older_than(parsed_date,
-                       datetime.datetime.now(),
-                       days=days_ago):
-        return True
+    if earliest_date:
+        parsed_date = datetime.datetime.strptime(earliest_date, "%Y-%m-%d")
+        if not date_older_than(parsed_date,
+                               datetime.datetime.now(),
+                               days=days_ago):
+            return False
+    return True
 
 
 def record_exists(obj, eng):
@@ -187,7 +189,7 @@ def record_exists(obj, eng):
             return True
     else:
         obj.log.warning("Remote match is deprecated.")
-        if match(obj, eng):
+        if match_legacy_inspire(obj, eng):
             obj.log.info("Record already exists in INSPIRE.")
             return True
     return False

@@ -36,6 +36,7 @@ FetchedPID = namedtuple('FetchedPID', ['provider', 'pid_type', 'pid_value'])
 def inspire_recid_fetcher(record_uuid, data):
     """Fetch a record's identifiers."""
     assert "$schema" in data
+    assert "control_number" in data
     return FetchedPID(
         provider=InspireRecordIdProvider,
         pid_type=InspireRecordIdProvider.schema_to_pid_type(data['$schema']),

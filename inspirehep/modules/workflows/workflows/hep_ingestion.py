@@ -60,7 +60,7 @@ from inspirehep.modules.workflows.tasks.matching import(
     record_exists,
     update_old_object,
 )
-from inspirehep.modules.workflows.tasks.upload import store_record
+from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
 from inspirehep.modules.workflows.tasks.submission import (
     send_robotupload,
 )
@@ -112,7 +112,7 @@ class HEPIngestion(object):
     name = "HEP"
     data_type = "hep"
 
-    initial_processing = []
+    initial_processing = [set_schema]
     match_processing = [
         IF(exists_in_holding_pen, [
             delete_self_and_stop_processing,
@@ -261,7 +261,7 @@ class HEPIngestion(object):
 
         # Get subject categories, adding main one first. Order matters here.
         record_categories = get_value(obj.data, "arxiv_eprints.categories", []) + \
-            get_value(obj.data, "subject_terms.term", [])
+            get_value(obj.data, "field_categories.term", [])
         for category_list in record_categories:
             if isinstance(category_list, list):
                 categories.extend(category_list)

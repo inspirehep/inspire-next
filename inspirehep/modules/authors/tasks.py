@@ -45,6 +45,15 @@ def formdata_to_model(obj, eng):
     )
     data = updateform.do(form_fields)
 
+    # ======
+    # Schema
+    # ======
+    if '$schema' in data and not data['$schema'].startswith('http'):
+        data['$schema'] = url_for(
+            'invenio_jsonschemas.get_schema',
+            schema_path="records/{0}".format(data['$schema'])
+        )
+
     author_name = ''
 
     if 'family_name' in form_fields and form_fields['family_name']:

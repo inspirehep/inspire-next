@@ -20,9 +20,12 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-import rt
+"""Functions related to the main INSPIRE-HEP ticketing system."""
+
+from __future__ import absolute_import, division, print_function
 
 from flask import current_app
+from rt import Rt, ConnectionError
 
 
 def get_instance():
@@ -32,10 +35,15 @@ def get_instance():
     password = current_app.config.get("CFG_BIBCATALOG_SYSTEM_RT_DEFAULT_PWD", "")
 
     if url:
-        tracker = rt.Rt(
+        tracker = Rt(
             url=url,
             default_login=login,
             default_password=password,
         )
         tracker.login()
         return tracker
+
+
+def retry_if_connection_problems(exception):
+    """Return True if exception is an ConnectionError in Rt."""
+    return isinstance(exception, ConnectionError)

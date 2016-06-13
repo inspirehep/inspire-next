@@ -24,41 +24,50 @@
 
 from refextract import extract_journal_reference, extract_references_from_file
 
+from inspirehep.utils.record import get_value
+
 # FIXME get journal mappings for refextract
 # from inspirehep.utils.knowledge import get_mappings_from_kbname
 
 
 def extract_journal_info(obj, eng):
     """Extract journal, volume etc. from any freetext publication info."""
-    publication_info = obj.data.get("publication_info")
+    publication_info = get_value(obj.data, "publication_info")
     if not publication_info:
         return
 
     new_publication_info = []
     for pubnote in publication_info:
+        if not pubnote:
+            continue
         freetext = pubnote.get("pubinfo_freetext")
-        if freetext:
-            extracted_publication_info = extract_journal_reference(
-                freetext,
-                # override_kbs_files={'journals': get_mappings_from_kbname(cfg['REFEXTRACT_KB_NAME'])}
-            )
-            if extracted_publication_info:
-                if "volume" in extracted_publication_info:
-                    pubnote["journal_volume"] = extracted_publication_info.get(
-                        "volume"
-                    )
-                if "title" in extracted_publication_info:
-                    pubnote["journal_title"] = extracted_publication_info.get(
-                        "title"
-                    )
-                if "year" in extracted_publication_info:
-                    pubnote["year"] = extracted_publication_info.get(
-                        "year"
-                    )
-                if "page" in extracted_publication_info:
-                    pubnote["page_artid"] = extracted_publication_info.get(
-                        "page"
-                    )
+        if not freetext:
+            continue
+        if isinstance(freetext, (list, tuple)):
+            freetext = ". ".join(freetext)
+        extracted_publication_info = extract_journal_reference(
+            freetext,
+            # override_kbs_files={
+            #    'journals': get_mappings_from_kbname(['REFEXTRACT_KB_NAME'])
+            # }
+        )
+        if extracted_publication_info:
+            if "volume" in extracted_publication_info:
+                pubnote["journal_volume"] = extracted_publication_info.get(
+                    "volume"
+                )
+            if "title" in extracted_publication_info:
+                pubnote["journal_title"] = extracted_publication_info.get(
+                    "title"
+                )
+            if "year" in extracted_publication_info:
+                pubnote["year"] = extracted_publication_info.get(
+                    "year"
+                )
+            if "page" in extracted_publication_info:
+                pubnote["page_artid"] = extracted_publication_info.get(
+                    "page"
+                )
         new_publication_info.append(pubnote)
 
     obj.data["publication_info"] = new_publication_info
@@ -69,7 +78,9 @@ def extract_references(filepath):
     references = extract_references_from_file(
         filepath,
         reference_format="{title},{volume},{page}",
-        # override_kbs_files={'journals': get_mappings_from_kbname(cfg['REFEXTRACT_KB_NAME'])}
+        # override_kbs_files={
+        #    'journals': get_mappings_from_kbname(['REFEXTRACT_KB_NAME'])
+        # }
     )
     mapped_references = []
     if references.get('references'):

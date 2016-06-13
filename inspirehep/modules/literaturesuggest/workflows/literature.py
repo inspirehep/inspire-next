@@ -202,7 +202,7 @@ class Literature(object):
                 identifiers.extend(["doi:{0}".format(d) for d in dois])
 
             categories = []
-            subjects = record.get("subject_terms", [])
+            subjects = record.get("field_categories", [])
             if subjects:
                 for subject in subjects:
                     if isinstance(subject, string_types):

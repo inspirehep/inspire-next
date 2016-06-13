@@ -35,18 +35,37 @@ from inspirehep.modules.pidstore.minters import inspire_recid_minter
 
 def store_record(obj, *args, **kwargs):
     """Create and index new record in main record space."""
-    if '$schema' in obj.data:
-        obj.data['$schema'] = url_for(
-            'invenio_jsonschemas.get_schema',
-            schema_path="records/{0}".format(obj.data['$schema'])
-        )
+    assert "$schema" in obj.data, "No $schema attribute found!"
+
     # Create record
-    rec_uuid = str(Record.create(obj.data, id_=None).id)
+    record = Record.create(obj.data, id_=None)
 
     # Create persistent identifier.
-    pid = inspire_recid_minter(rec_uuid, obj.data)
+    pid = inspire_recid_minter(str(record.id), record)
+
+    # Commit any changes to record
+    record.commit()
+
+    # Dump any changes to record
+    obj.data = record.dumps()
+
+    # Commit to DB before indexing
     db.session.commit()
 
     # Index record
     indexer = RecordIndexer()
     indexer.index_by_id(pid.object_uuid)
+
+
+def set_schema(obj, eng):
+    """Make sure schema is set properly and resolve it."""
+    if '$schema' not in obj.data:
+        obj.data['$schema'] = "{data_type}.json".format(
+            data_type=obj.data_type or eng.workflow_definition.data_type
+        )
+
+    if not obj.data['$schema'].startswith('http'):
+        obj.data['$schema'] = url_for(
+            'invenio_jsonschemas.get_schema',
+            schema_path="records/{0}".format(obj.data['$schema'])
+        )

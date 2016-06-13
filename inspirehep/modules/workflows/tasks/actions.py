@@ -41,7 +41,11 @@ def shall_halt_workflow(obj, *args, **kwargs):
 
 def shall_push_remotely(*args, **kwargs):
     """Check if the record shall be robotuploaded."""
-    return current_app.config.get("LEGACY_ROBOTUPLOAD_URL", False)
+    # If in debug mode, we do remote uploads or
+    # if LEGACY_ROBOTUPLOAD_URL is set
+    return current_app.debug or current_app.config.get(
+        "LEGACY_ROBOTUPLOAD_URL", False
+    )
 
 
 def add_core(obj, eng):
