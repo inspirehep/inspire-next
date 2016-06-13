@@ -69,7 +69,8 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     if recid:
         payload['CF_RecordID'] = recid
 
-    if requestors:
+    # Check if requests is set and also ignore admin due to RT mail loop
+    if requestors and "admin@inspirehep.net" not in requestors:
         payload['requestors'] = requestors
 
     ticket_id = rt_instance.create_ticket(**payload)
