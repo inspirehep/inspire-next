@@ -115,6 +115,67 @@ def test_external_system_numbers(marcxml_to_json, json_to_marc):
             json_to_marc['035'][0]['z'])
 
 
+def test_external_system_numbers_from_035__a():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="a">0248362CERCER</subfield>'
+        '</datafield>'
+    )  # record/1403324
+
+    expected = [
+        {
+            'value': '0248362CERCER',
+            'obsolete': False,
+        },
+    ]
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['external_system_numbers']
+
+
+def test_external_system_numbers_from_035__a_9():
+    snippet = (
+       '<datafield tag="035" ind1=" " ind2=" ">'
+       '  <subfield code="9">INSPIRETeX</subfield>'
+       '  <subfield code="a">Hagedorn:1963hdh</subfield>'
+       '</datafield>'
+    )  # record/1403324
+
+    expected = [
+        {
+            'value': 'Hagedorn:1963hdh',
+            'institute': 'INSPIRETeX',
+            'obsolete': False,
+        },
+    ]
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['external_system_numbers']
+
+
+def test_external_system_numbers_from_035__a_d_h_m_9():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">http://cds.cern.ch/oai2d</subfield>'
+        '  <subfield code="a">oai:cds.cern.ch:325030</subfield>'
+        '  <subfield code="d">2015-06-05T13:24:42Z</subfield>'
+        '  <subfield code="h">2015-11-09T16:22:48Z</subfield>'
+        '  <subfield code="m">marcxml</subfield>'
+        '</datafield>'
+    )  # record/1403324
+
+    expected = [
+        {
+            'value': 'oai:cds.cern.ch:325030',
+            'institute': 'http://cds.cern.ch/oai2d',
+            'obsolete': False,
+        }
+    ]
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['external_system_numbers']
+
+
 def test_report_numbers(marcxml_to_json, json_to_marc):
     """Test if report number is created correctly."""
     assert (marcxml_to_json['report_numbers'][0]['source'] in
