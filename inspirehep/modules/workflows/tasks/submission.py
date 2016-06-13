@@ -225,6 +225,8 @@ def send_robotupload(url=None,
             current_app.config["SERVER_NAME"],
             callback_url
         )
+        if not combined_callback_url.startswith('http'):
+            combined_callback_url = "http://{0}".format(combined_callback_url)
         marc_json = marcxml_processor.do(obj.data)
         marcxml = legacy_export_as_marc(marc_json)
 
