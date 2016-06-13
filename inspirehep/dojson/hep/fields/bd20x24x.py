@@ -113,8 +113,8 @@ def titles(self, key, value):
 @hep2marc.over('245', '^titles$')
 def titles2marc(self, key, value):
     """Title Statement for 245/246."""
-    title_245 = None
-    arxiv_246 = None
+    arxiv_246_title = None
+    titles = []
 
     for title in utils.force_list(value):
         transformed_title = {
@@ -123,10 +123,12 @@ def titles2marc(self, key, value):
             '9': title.get('source'),
         }
         if title.get('source', '').lower() == 'arxiv':
-            arxiv_246 = transformed_title
-        elif title_245 is None:
-            title_245 = transformed_title
+            arxiv_246_title = transformed_title
+        else:
+            titles.append(transformed_title)
 
-    if arxiv_246 is not None:
-        self['246'] = arxiv_246
-    return [title_245]
+    if len(titles) == 0 and arxiv_246_title is not None:
+        titles.append(arxiv_246_title)
+    if arxiv_246_title is not None:
+        self['246'] = arxiv_246_title
+    return titles
