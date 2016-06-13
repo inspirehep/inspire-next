@@ -19,15 +19,17 @@ import os
 import sys
 import shlex
 
-_html_theme = "default"
-_html_theme_path = []
-try:
-    import sphinx_rtd_theme
-    _html_theme = "sphinx_rtd_theme"
-    _html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-except ImportError:
-    print("Template `sphinx_rtd_theme` not found, pip install it",
-          file=sys.stderr)
+import sphinx.environment
+
+_warn_node_old = sphinx.environment.BuildEnvironment.warn_node
+
+
+def _warn_node(self, msg, *args, **kwargs):
+    """Do not warn on external images."""
+    if not msg.startswith('nonlocal image URI found:'):
+        _warn_node_old(self, msg, *args, **kwargs)
+
+sphinx.environment.BuildEnvironment.warn_node = _warn_node
 
 
 from mock import Mock as MagicMock
@@ -64,7 +66,11 @@ sys.path.append(os.path.abspath('../inspirehep'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    # 'sphinx.ext.autodoc',  # Enable this to allow docs from docstring
+    'sphinx.ext.autodoc',
+    'sphinx.ext.coverage',
+    'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.viewcode',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -141,16 +147,23 @@ todo_include_todos = True
 
 
 # -- Options for HTML output ----------------------------------------------
-
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-html_theme = _html_theme
-html_theme_path = _html_theme_path
+html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {
+    'description': 'INSPIRE-HEP source code repository built on top of Invenio Software.',
+    'github_user': 'inspirehep',
+    'github_repo': 'inspire-next',
+    'github_button': False,
+    'github_banner': True,
+    'show_powered_by': False,
+    'extra_nav_links': {
+        'inspirehep@GitHub': 'http://github.com/inspirehep/inspire-next',
+        'inspirehep@PyPI': 'http://pypi.python.org/pypi/inspirehep/',
+    }
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
@@ -174,7 +187,7 @@ html_theme_path = _html_theme_path
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# html_static_path = ['_static']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -190,7 +203,15 @@ html_static_path = ['_static']
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = {}
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html',
+        'donate.html',
+    ]
+}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -319,3 +340,6 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+# Example configuration for intersphinx: refer to the Python standard library.
+intersphinx_mapping = {'https://docs.python.org/': None}
