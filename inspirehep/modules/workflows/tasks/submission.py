@@ -69,7 +69,8 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     if recid:
         payload['CF_RecordID'] = recid
 
-    if requestors:
+    # Check if requests is set and also ignore admin due to RT mail loop
+    if requestors and "admin@inspirehep.net" not in requestors:
         payload['requestors'] = requestors
 
     ticket_id = rt_instance.create_ticket(**payload)
@@ -224,6 +225,8 @@ def send_robotupload(url=None,
             current_app.config["SERVER_NAME"],
             callback_url
         )
+        if not combined_callback_url.startswith('http'):
+            combined_callback_url = "http://{0}".format(combined_callback_url)
         marc_json = marcxml_processor.do(obj.data)
         marcxml = legacy_export_as_marc(marc_json)
 
