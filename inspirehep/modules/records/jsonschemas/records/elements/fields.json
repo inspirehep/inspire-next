@@ -33,7 +33,8 @@
                     "INSPIRE",
                     "submitter",
                     "curator",
-                    "publisher"
+                    "publisher",
+                    "magpie"
                 ],
                 "type": "string"
             },
