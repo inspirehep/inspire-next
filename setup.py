@@ -210,8 +210,7 @@ setup(
             'holdingpen = inspirehep.modules.workflows.mappings',
         ],
         'invenio_workflows.workflows': [
-            'authornew = inspirehep.modules.authors.workflows:AuthorNew',
-            'authorupdate = inspirehep.modules.authors.workflows:AuthorUpdate',
+            'author = inspirehep.modules.workflows.workflows:Author',
             'article = inspirehep.modules.workflows.workflows:Article',
         ],
         'invenio_pidstore.fetchers': [
@@ -221,7 +220,7 @@ setup(
             'inspire_recid_minter = inspirehep.modules.pidstore.minters:inspire_recid_minter',
         ],
         'invenio_workflows_ui.actions': [
-            'author_approval = inspirehep.modules.authors.workflows.actions.author_approval:AuthorApproval',
+            'author_approval = inspirehep.modules.workflows.actions.author_approval:AuthorApproval',
             'merge_approval = inspirehep.modules.workflows.actions.merge_approval:MergeApproval',
             'hep_approval = inspirehep.modules.workflows.actions.hep_approval:HEPApproval',
         ],

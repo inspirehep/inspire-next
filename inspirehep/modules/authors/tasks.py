@@ -34,9 +34,9 @@ from invenio_accounts.models import User
 from .dojson.model import updateform
 
 
-def formdata_to_model(obj, eng):
+def formdata_to_model(obj, formdata):
     """Manipulate form data to match authors data model."""
-    form_fields = copy.deepcopy(obj.extra_data["formdata"])
+    form_fields = copy.deepcopy(formdata)
 
     filter_empty_elements(
         form_fields,
@@ -90,7 +90,12 @@ def formdata_to_model(obj, eng):
         submission_number=str(obj.id),
     )
     # Finally, set data
-    obj.data = data
+    return data
+
+
+def update_data_from_form(obj, eng):
+    """Task to update data from formdata."""
+    obj.data = formdata_to_model(obj, obj.extra_data['formdata'])
 
 
 def curation_ticket_needed(obj, eng):

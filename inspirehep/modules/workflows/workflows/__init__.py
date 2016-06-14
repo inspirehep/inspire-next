@@ -24,6 +24,7 @@
 """Our workflows."""
 
 from .article import Article
+from .author import Author
 
 
-__all__ = ('Article')
+__all__ = ('Article', 'Author')

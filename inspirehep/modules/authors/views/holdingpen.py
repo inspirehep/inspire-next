@@ -33,7 +33,7 @@ from __future__ import (
 import os
 import re
 import requests
-import json
+import copy
 
 from flask_babelex import gettext as _
 
@@ -42,7 +42,6 @@ from flask import (
     Blueprint,
     current_app,
     jsonify,
-    make_response,
     render_template,
     request,
     url_for,
@@ -61,6 +60,7 @@ from inspirehep.dojson.utils import strip_empty_values
 from inspirehep.modules.forms.form import DataExporter
 
 from ..forms import AuthorUpdateForm
+from ..tasks import formdata_to_model
 
 
 blueprint = Blueprint('inspirehep_authors_holdingpen',
@@ -260,12 +260,14 @@ def submitupdate():
     workflow_object = WorkflowObject.create_object(
         id_user=current_user.get_id())
     workflow_object.data_type = "authors"
-    workflow_object.extra_data['formdata'] = visitor.data
+    workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
+    workflow_object.extra_data['is-update'] = True
+    workflow_object.data = formdata_to_model(workflow_object, visitor.data)
     workflow_object.save()
     db.session.commit()
 
     # Start workflow. delay will execute the workflow in the background
-    start.delay("authorupdate", object_id=workflow_object.id)
+    start.delay("author", object_id=workflow_object.id)
 
     ctx = {
         "inspire_url": get_inspire_url(visitor.data)
@@ -285,13 +287,14 @@ def submitnew():
     workflow_object = WorkflowObject.create_object(
         id_user=current_user.get_id())
     workflow_object.data_type = "authors"
-    workflow_object.extra_data['formdata'] = visitor.data
+    workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
+    workflow_object.data = formdata_to_model(workflow_object, visitor.data)
     workflow_object.save()
     db.session.commit()
 
     # Start workflow. delayed=True will execute the workflow in the
     # background using, for example, Celery.
-    start.delay("authornew", object_id=workflow_object.id)
+    start.delay("author", object_id=workflow_object.id)
 
     ctx = {
         "inspire_url": get_inspire_url(visitor.data)
@@ -339,7 +342,7 @@ def reviewhandler():
     workflow_object.extra_data["approved"] = True
     workflow_object.extra_data["ticket"] = request.form.get('ticket') == "True"
     workflow_object.extra_data['formdata'] = visitor.data
-    workflow_object.extra_data["recreate_data"] = True
+    workflow_object.data = formdata_to_model(workflow_object, visitor.data)
     workflow_object.save()
     db.session.commit()
 
