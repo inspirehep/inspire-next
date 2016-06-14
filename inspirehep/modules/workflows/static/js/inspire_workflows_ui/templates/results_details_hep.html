@@ -5,8 +5,8 @@
 </h4>
 
 <div class="authors" ng-if="record._source.metadata.authors">
-    <span ng-repeat="author in record._source.metadata.authors">
-      {{author.full_name}}<span ng-if="!$last">, </span>
+    <span ng-repeat="author in record._source.metadata.authors | limitTo:10">
+      {{author.full_name}}<span ng-if="!$last">; </span><span ng-if="$last && record._source.metadata.authors.length > 10">; et al. ({{ record._source.metadata.authors.length-10 }} more authors)</span>
     </span>
 </div>
 

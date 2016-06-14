@@ -23,6 +23,7 @@
 
 require([
   'angular',
+  'angular-filter',
   'angular-loading-bar',
   'invenio-search',
   'angular-xeditable',

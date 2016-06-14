@@ -28,7 +28,8 @@
     'holdingpen.services',
     'holdingpen.directives',
     'holdingpen.controllers',
-    'holdingpen.filters.abstract'
+    'holdingpen.filters.abstract',
+    'angular.filter'
   ]);
 
   invenioHoldingPen.run(['editableOptions', 'editableThemes', function (editableOptions, editableThemes) {

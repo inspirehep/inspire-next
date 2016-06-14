@@ -30,6 +30,7 @@ require.config({
     'angular-sanitize': 'node_modules/angular-sanitize/angular-sanitize',
     'angular-ui-bootstrap': 'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls',
     'angular-hotkeys': 'node_modules/angular-hotkeys-light/angular-hotkeys-light',
+    'angular-filter': 'node_modules/angular-filter/dist/angular-filter',
     'author': 'js/authors/author',
     bootstrap: 'node_modules/bootstrap-sass/assets/javascripts/bootstrap',
     'bootstrap-datetimepicker': 'node_modules/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
@@ -87,6 +88,9 @@ require.config({
     'angular-hotkeys': {
       deps: ['angular']
     },
+    'angular-filter': {
+      deps: ['angular']
+    },
     bootstrap: {
       deps: ['jquery', 'jquery.ui']
     },
@@ -115,7 +119,7 @@ require.config({
       deps: ['angular']
     },
     'holding-pen-module': {
-      deps: ['angular', 'holding-pen-directives', 'holding-pen-controllers', 'holding-pen-filters', 'angular-sanitize']
+      deps: ['angular', 'holding-pen-directives', 'holding-pen-controllers', 'holding-pen-filters', 'angular-sanitize', 'angular-filter']
     },
     'inspirehep': {
       deps: ['angular', 'angular-sanitize', 'angular-ui-bootstrap', 'ngclipboard']
