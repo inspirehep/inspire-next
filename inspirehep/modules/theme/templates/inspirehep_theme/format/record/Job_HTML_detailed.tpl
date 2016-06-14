@@ -23,10 +23,10 @@
   <div id="record-detailed-jobs">
     <div class="row" id="record-detailed-jobs-information-deadline">
       <div class="col-md-8" id="record-detailed-jobs-information">
-        
+
         <div id="jobs-detailed-header-top">
           <h3>{{ record.position }}</h3>
-          
+
           {% if record.rank %}
             {{ record.rank | join(', ') }}
           {% endif %}
@@ -161,10 +161,14 @@
                 geocoder.geocode({'address': address}, function(results, status) {
                   if (status === google.maps.GeocoderStatus.OK) {
                     resultsMap.setCenter(results[0].geometry.location);
+                    var image = {
+                      url: '/static/images/map/marker-institutions.png',
+                      scaledSize: new google.maps.Size(25, 25)
+                    };
                     var marker = new google.maps.Marker({
                       map: resultsMap,
                       position: results[0].geometry.location,
-                      icon: '/static/images/map/marker-conferences.svg'
+                      icon: image
                     });
                   } else {
                     alert('Geocode was not successful for the following reason: ' + status);

@@ -101,14 +101,17 @@
                 geocoder.geocode({'address': document.place}, function (results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
                         map.setCenter(results[0].geometry.location);
+                        var image = {
+                          url: '/static/images/map/marker-{{collection}}.png',
+                          scaledSize: new google.maps.Size(25, 25)
+                        };
                         var marker = new google.maps.Marker({
                             map: map,
                             position: results[0].geometry.location,
-                            icon: '/static/images/map/marker-{{collection}}.svg'
+                            icon: image
                         });
 
                         google.maps.event.addListener(marker, 'click', function () {
-
                             var date = document.important_info;
                             infowindow.setContent('<span class="date">' + date + '</span><br/>' +
                                     '<a href="/{{ collection }}/' + document.control_number + '">' +
