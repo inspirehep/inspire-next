@@ -18,18 +18,23 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
-$facet-gray: #7e8d8e;
 $facet-label-gray: #edf3f3;
 
-.custom-panel {
-  margin-bottom: 0px;
-  border: 0px;
+#search-results {
+
+  & > .col-md-3 {
+    width: 22%;
+  }
+
+  & > .col-md-9 {
+    width: 78%;
+  }
 }
 
 a.link-to-pdf, button.dropdown-cite, a#cite-all-format {
   background-color: $clouds;
   border: 0px;
-  color: $facet-gray;
+  color: $concrete;
   font-weight: 500;
 }
 
@@ -38,57 +43,100 @@ button.dropdown-cite:hover, a#cite-all-format:hover {
   color: white;
 }
 
-hr {
-  margin-top: 0px;
+h2.record-brief-title {
+  margin: 5px 0px 7px 0px;
+  font-size: 16px;
 }
 
-.mobile-title {
-  display: none;
+div.record-brief-subtitle {
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 400;
+  color: $concrete;
 }
 
-.custom-dropdown {
-  top: inherit;
+.record-brief-muted {
+  color: $concrete;
 }
 
-.left-column {
-  border-right: 1px solid $silver;
-
-  .col-md-1 {
-    width: 3%;
-  }
-
-  .col-md-11 {
-    width: 97%;
-  }
-
-  .custom-h {
-    margin-top: 0;
-    margin-bottom: 7px;
-    font-size: 16px;
-  }
-
-  .eprint, .authors {
-    margin-bottom: 10px;
-  }
-
-  .authors #record-date {
-    color: $facet-gray;
-  }
-
-  div {
-    padding: 0;
-    margin: 0;
-  }
-
-  .abstract {
-    color: $concrete;
-    margin-top: 10px;
-  }
+.record-brief-url {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
-.pointer {
-  cursor: pointer;
+article.search-result {
+  margin-bottom: 10px;
+  position: relative; // To absolute position some elements inside
+
+  .panel-body {
+    padding: 5px;
+  }
+
+  &.record-brief-authors, &.record-brief-jobs {
+    .left-column {
+      min-height: 100px !important;
+      padding: 15px 0px 10px 0px !important;
+    }
+  }
+
+  &.record-brief-literature, &.record-brief-authors, &.record-brief-jobs {
+
+    .left-column {
+      position: static;
+      width: 80%;
+      border-right: 1px solid $silver;
+      padding: 15px 0px 10px 20px;
+      min-height: 125px;
+
+      .abstract {
+        color: $concrete;
+        margin-top: 5px;
+        padding-right: 20px;
+      }
+    }
+
+    .right-column {
+      position: static;
+      padding-top: 15px;
+      width: 20%;
+    }
+
+    .panel-body {
+      padding: 0px 10px 0px 30px; // No padding to show separator
+    }
+
+    input.checkbox-results {
+      position: absolute;
+      left: 7px;
+      top: 15px;
+    }
+
+    .citations-references {
+      position: absolute;
+      bottom: 10px;
+      font-size: 13px;
+    }
+
+    .glyphicon, .fa {
+        color: $concrete;
+        font-size: 11px;
+    }
+
+    h2.record-brief-title {
+      margin-top: 0px;
+    }
+  }
+
 }
+
+.record-brief-details {
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 5px;
+}
+
+/* Mobile styles
+-------------------------------------------------- */
 
 @media only screen and (max-width: 992px) {
   .right-column {
@@ -96,8 +144,6 @@ hr {
   }
 }
 
-/* Mobile styles
--------------------------------------------------- */
 @media only screen and (max-width: $screen-md-min) {
 
   .abstract {
@@ -127,21 +173,8 @@ hr {
   }
 }
 
-@media screen and (min-width: $screen-sm-min) {
-  .brief-results-modal {
-    width: 900px;
-  }
-
-}
-
-.brief-results-modal {
-  width: 75%;
-}
-
-.record-brief-details {
-  font-size: 14px;
-  font-weight: 300;
-}
+/* Facet styles
+-------------------------------------------------- */
 
 #facetparent {
   border-top: 3px solid;
@@ -189,12 +222,19 @@ hr {
   }
 }
 
+.checkbox-facets {
+  position: relative;
+  display: block;
+  margin-top: 0px;
+  margin-bottom: 10px;
+}
+
 .facet-container {
-  color: $facet-gray;
+  color: $concrete;
 
   .facet-label {
     background-color: $facet-label-gray;
-    color: $facet-gray;
+    color: $concrete;
     letter-spacing: 0.04em;
   }
 
@@ -254,7 +294,7 @@ hr {
 }
 
 .facet-title-truncate {
-  width: 60% !important;
+  width: 80% !important;
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;
@@ -264,6 +304,13 @@ hr {
 .facet-label {
   margin-top: 2px;
 }
+
+/* End of Facet styles
+-------------------------------------------------- */
+
+
+/* Number of results box styles
+-------------------------------------------------- */
 
 .total-results {
   color: $orange;
@@ -277,26 +324,18 @@ hr {
   margin: 0px;
 }
 
-#spinner-download {
-  display: none;
-}
-
-.vcenter {
-  display: inline-block;
-  vertical-align: middle;
-  float: none;
-}
-
-#spinner-modal-download {
-  display: none;
-}
-
 #results-control-panel {
+  position: relative;
   border-top: 3px solid $concrete;
 }
 
-#results-control-panel, #results-bottom-panel {
+#results-control-panel {
   margin-bottom: 10px;
+
+  hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
 
   .panel-body {
     padding: 10px 15px;
@@ -309,49 +348,6 @@ hr {
     display: inline-block;
     width: auto;
   }
-}
-
-.fa-arrow-up {
-  display: none;
-}
-
-#checkbox-parent {
-  margin-right: 10px;
-}
-
-#panel-default-brief .panel-body {
-  padding: 0;
-
-  .left-column {
-    width: 80%;
-    padding: 10px 5px 10px 25px;
-  }
-
-  .right-column {
-    width: 20%;
-    padding: 10px;
-    height: 100%;
-    position: absolute;
-    right: 0;
-
-    .citations-references {
-      position: absolute;
-      bottom: 25px;
-      font-size: 13px;
-
-      .glyphicon, .fa {
-        color: $grey;
-      }
-    }
-  }
-
-  .fa {
-    font-size: 11px;
-  }
-}
-
-#search_results #results-panel {
-  margin-bottom: 0;
 }
 
 .total-results {
@@ -388,111 +384,15 @@ hr {
   }
 }
 
-.checkbox-facets {
-  position: relative;
-  display: block;
-  margin-top: 0px;
-  margin-bottom: 10px;
-}
 
-i.fa-chevron-down.facet-slider {
-  color: $asbestos;
-}
-
-i.fa-chevron-right.facet-slider {
-  color: $asbestos;
-}
-
-.no-results {
-  margin-left: -14px;
-}
-
-.text-prominent {
-  font-size: 18px;
-}
-
-@media screen and (min-width: $screen-sm-min) {
-  .cite-modal {
-    width: 900px;
-  }
-}
-
-#clear-facets-message {
-  color: $carrot;
-  text-decoration: none;
-}
-
-#clear-facets-info {
-  color: $concrete;
-}
-
-.modal-dialog-scrollable {
-  overflow-y: initial !important
-}
-
-.modal-body-scrollable {
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-.modal-content-cite-all {
-  min-height: 400px;
-}
-
-#editable-modal, #response-data {
-  min-height: 237px;
-}
-
-#spinner-modal-wait {
+#export-select-all {
   position: absolute;
-  display: none;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%);
-}
-
-#spinner-message {
-  margin-left: -20%;
-}
-
-.abstract label {
-  font-weight: 500;
-}
-
-.export-all-div {
-  padding-left: 9px;
+  left: 8px;
+  bottom: 20px;
 }
 
 .tooltip.bottom .tooltip-inner {
   padding: 5px;
-}
-
-.hep#clear-facets-message {
-  color: $literature-collection;
-}
-
-.institutions {
-
-  #clear-facets-message {
-    color: $institutions-collection;
-  }
-
-  color: $blue;
-
-  .department {
-    font-size: .9em;
-  }
-
-  .details {
-    padding-bottom: 10px;
-    .address {
-      color: $grey;
-      i {
-        font-size: 1em;
-      }
-    }
-  }
-
 }
 
 .journals {
@@ -503,48 +403,49 @@ i.fa-chevron-right.facet-slider {
     color: $journals-collection;
   }
 
-  .small-text {
-    color: $grey;
-  }
-
   .publisher {
     font-size: .9em;
   }
 }
 
-.experiments {
+/* End of Number of results box styles
+-------------------------------------------------- */
+
+
+/* Collection-specific results styles
+-------------------------------------------------- */
+
+.record-brief-experiments {
 
   #clear-facets-message {
     color: $experiments-collection;
   }
 
   .place {
-    color: $grey;
+    color: $concrete;
+    display: inline-block;
+    font-weight: 400;
   }
 
   .description {
-    color: $blue;
+    color: $concrete;
     display: -webkit-box;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: .8em;
     max-height: 48px;
     line-height: 17px;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
 
-  .small-text {
-    color: $grey !important;
+  .record-brief-experiment-subtitle {
+    color: $blue;
+    font-size: 14px;
   }
 }
 
-.jobs {
+.record-brief-jobs {
   color: $blue;
-
-  .title {
-    font-size: 1.1em;
-  }
 
   #clear-facets-message {
     color: $jobs-collection;
@@ -566,29 +467,11 @@ i.fa-chevron-right.facet-slider {
 
   .deadline-date {
     font-weight: bolder;
-    color: $grey;
+    color: $concrete;
 
     &.open {
       color: $blue;
     }
-  }
-
-  .details {
-    font-weight: bolder;
-    i {
-      font-size: 1em !important;
-    }
-
-    span {
-      margin-right: 10px;
-    }
-
-    .institution {
-      padding-top: 5px;
-      padding-bottom: 5px;
-      color: $grey !important;
-    }
-
   }
 
 }
@@ -612,7 +495,7 @@ i.fa-chevron-right.facet-slider {
   }
 }
 
-.conferences {
+.record-brief-conferences {
   color: $blue;
 
   #clear-facets-message {
@@ -620,34 +503,88 @@ i.fa-chevron-right.facet-slider {
   }
 
   .series {
-    color: $grey;
+    color: $concrete;
 
     a {
       font-weight: bolder;
     }
   }
 
-  .conf-place, .conf-date {
+  i {
+    color: $concrete;
+  }
 
-    padding: 2px 6px;
+  .conf-place, .conf-date {
     border-radius: 3px;
-    font-size: .7em;
     display: inline-block;
   }
 }
 
-.journals,
-.brief-record-details {
-  font-size: 13px;
+.record-brief-data {
+  a:after {
+    display: inline-block;
+  }
+  .data-table-count {
+    padding: 5px 0;
+    color: $concrete;
+  }
+
+  .data-brief {
+    padding-left: 20px;
+    padding-top: 5px;
+    font-size: 1em;
+  }
+
+  .hep-content {
+    padding-top: 65px;
+  }
+
+  .data-more {
+    padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  .facet-type {
+    margin-bottom: 30px;
+  }
+
+  .search-results {
+    padding-top: 80px;
+  }
+
+  .record-header {
+    font-weight: bolder;
+  }
+
+  .record-abstract {
+    color: $midnight-blue;
+  }
+
+  .truncated-record-abstract {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1em;
+    max-height: 48px; /* fallback */
+    line-height: 21px;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    color: $concrete;
+  }
+
 }
 
-.authors {
-  color: $grey;
-}
+/* End of Collection-specific results styles
+-------------------------------------------------- */
 
-.brief-results-sortby {
-  color: $grey;
-}
+
+/* Top search bar styles
+-------------------------------------------------- */
+
 
 @media (min-width: 600px) {
 
@@ -700,28 +637,5 @@ i.fa-chevron-right.facet-slider {
   }
 }
 
-div > .modal-dialog {
-  width: 70%;
-  overflow-y: initial !important
-}
-
-.modal-body-scrollable {
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-
-.cite-modal {
-  min-height:237px;
-}
-
-#search-results {
-
-  & > .col-md-3 {
-    width: 22%;
-  }
-
-  & > .col-md-9 {
-    width: 78%;
-  }
-}
+/* End of Top search bar styles
+-------------------------------------------------- */

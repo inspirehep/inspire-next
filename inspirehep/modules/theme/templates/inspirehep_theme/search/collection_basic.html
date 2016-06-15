@@ -20,6 +20,8 @@
 {%- extends "inspirehep_theme/page.html" -%}
 
 {% set collection_name = collection| sanitize_collection_name %}
+{% set title = collection_name | capitalize %}
+
 
 {% block body %}
   {% block search_bar %}

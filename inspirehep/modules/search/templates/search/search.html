@@ -25,6 +25,8 @@
 
 {% extends config.SEARCH_UI_BASE_TEMPLATE %}
 
+{% set title = request.args.get('cc') | capitalize ~ ' search' %}
+
 
 {%- block javascript %}
   {{ super() }}
