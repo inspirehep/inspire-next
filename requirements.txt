@@ -30,7 +30,6 @@
 -e git+https://github.com/inveniosoftware/invenio-indexer.git#egg=invenio-indexer==1.0.0a6.dev20160525
 
 # Workflows and Holding Pen related dependencies
--e git+https://github.com/inveniosoftware/invenio-oaiharvester.git#egg=invenio-oaiharvester
 -e git+https://github.com/inveniosoftware/invenio-classifier.git#egg=invenio-classifier
 -e git+https://github.com/inspirehep/invenio-matcher.git#egg=invenio-matcher
 -e git+https://github.com/inspirehep/workflow.git#egg=workflow==2.0.0.dev20160223

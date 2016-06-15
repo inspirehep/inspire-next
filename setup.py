@@ -63,9 +63,10 @@ install_requires = [
     'invenio-files-rest==1.0.0a3',
     'invenio-records-files==1.0.0a5',
     'invenio-userprofiles==1.0.0a3',
+    'invenio-oaiharvester==1.0.0a2',
     'invenio-utils==0.2.0',  # Not fully Invenio 3 ready
     'invenio>=3.0.0a1,<3.1.0',
-    'inspire-crawler>=0.2.0',
+    'inspire-crawler>=0.2.1',
     'dojson==1.2.1',
     'Flask-Admin==1.4.0',
     'Flask-Breadcrumbs>=0.3.0',
