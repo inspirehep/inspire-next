@@ -586,10 +586,30 @@ RECORDS_REST_FACETS = {
             }
         }
     },
+    "records-authors": {
+        "filters": {
+            "field_categories": terms_filter('field_categories.term'),
+            "institution": terms_filter('positions.institution.name')
+        },
+        "aggs": {
+            "field_categories": {
+                "terms": {
+                    "field": "field_categories.term",
+                    "size": 20
+                }
+            },
+            "institution": {
+                "terms": {
+                    "field": "positions.institution.name",
+                    "size": 20
+                }
+            }
+        }
+    },
     "records-conferences": {
         "filters": {
             "series": terms_filter('series'),
-            "conf_subject": terms_filter('field_code.value')
+            "field_categories": terms_filter('field_categories.term')
         },
         "aggs": {
             "series": {
@@ -598,9 +618,9 @@ RECORDS_REST_FACETS = {
                     "size": 20
                 }
             },
-            "conf_subject": {
+            "field_categories": {
                 "terms": {
-                    "field": "field_code.value",
+                    "field": "field_categories.term",
                     "size": 20
                 }
             },
@@ -617,8 +637,8 @@ RECORDS_REST_FACETS = {
     "records-experiments": {
         "filters": {
             "field_code": terms_filter('field_code'),
-            "wwwlab": terms_filter('experiment_name.wwwlab'),
-            "accelerator": terms_filter('accelerator')
+            "affiliation": terms_filter('affiliation'),
+            "collaboration": terms_filter('collaboration')
         },
         "aggs": {
             "field_code": {
@@ -627,15 +647,15 @@ RECORDS_REST_FACETS = {
                     "size": 20
                 }
             },
-            "wwwlab": {
+            "affiliation": {
                 "terms": {
-                    "field": "experiment_name.wwwlab",
+                    "field": "affiliation",
                     "size": 20
                 }
             },
-            "accelerator": {
+            "collaboration": {
                 "terms": {
-                    "field": "accelerator",
+                    "field": "collaboration",
                     "size": 20
                 }
             }
@@ -670,8 +690,8 @@ RECORDS_REST_FACETS = {
     "records-jobs": {
         "filters": {
             "continent": terms_filter('continent'),
-            "rank": terms_filter('rank'),
-            "research_area": terms_filter('research_area')
+            "ranks": terms_filter('ranks'),
+            "field_categories": terms_filter('field_categories.term')
         },
         "aggs": {
             "continent": {
@@ -680,15 +700,15 @@ RECORDS_REST_FACETS = {
                     "size": 20
                 }
             },
-            "rank": {
+            "ranks": {
                 "terms": {
-                    "field": "rank",
+                    "field": "ranks",
                     "size": 20
                 }
             },
-            "research_area": {
+            "field_categories": {
                 "terms": {
-                    "field": "research_area",
+                    "field": "field_categories.term",
                     "size": 20
                 }
             }
