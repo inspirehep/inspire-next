@@ -327,6 +327,81 @@ def test_hidden_notes(marcxml_to_json, json_to_marc):
             json_to_marc['595'][0]['9'])
 
 
+def test_hidden_notes_from_595__a_9():
+    snippet = (
+        '<datafield tag="595" ind1=" " ind2=" ">'
+        '  <subfield code="9">SPIRES-HIDDEN</subfield>'
+        '  <subfield code="a">Title changed from ALLCAPS</subfield>'
+        '</datafield>'
+    )  # record/109310
+
+    expected = [
+        {
+            'source': 'SPIRES-HIDDEN',
+            'value': 'Title changed from ALLCAPS',
+        },
+    ]
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['hidden_notes']
+
+
+def test_hidden_notes_from_595__double_a_9():
+    snippet = (
+        '<datafield tag="595" ind1=" " ind2=" ">'
+        '  <subfield code="9">SPIRES-HIDDEN</subfield>'
+        '  <subfield code="a">TeXtitle from script</subfield>'
+        '  <subfield code="a">no affiliation (not clear pn the fulltext)</subfield>'
+        '</datafield>'
+    )  # record/109310
+
+    expected = [
+        {
+            'source': 'SPIRES-HIDDEN',
+            'value': (
+                'TeXtitle from script',
+                'no affiliation (not clear pn the fulltext)',
+            ),
+        },
+    ]
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['hidden_notes']
+
+
+def test_hidden_notes_from_595__a_9_and_595__double_a_9():
+    snippet = (
+        '<record>'
+        '  <datafield tag="595" ind1=" " ind2=" ">'
+        '    <subfield code="9">SPIRES-HIDDEN</subfield>'
+        '    <subfield code="a">Title changed from ALLCAPS</subfield>'
+        '  </datafield>'
+        '  <datafield tag="595" ind1=" " ind2=" ">'
+        '    <subfield code="9">SPIRES-HIDDEN</subfield>'
+        '    <subfield code="a">TeXtitle from script</subfield>'
+        '    <subfield code="a">no affiliation (not clear pn the fulltext)</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/109310
+
+    expected = [
+        {
+            'source': 'SPIRES-HIDDEN',
+            'value': 'Title changed from ALLCAPS',
+        },
+        {
+            'source': 'SPIRES-HIDDEN',
+            'value': (
+                'TeXtitle from script',
+                'no affiliation (not clear pn the fulltext)',
+            ),
+        },
+    ]
+    result = strip_empty_values(hep.do(create_record(snippet)))
+
+    assert expected == result['hidden_notes']
+
+
 def test_thesis(marcxml_to_json, json_to_marc):
     """Test if thesis is created correctly."""
     assert (marcxml_to_json['thesis'][0]['degree_type'] ==
