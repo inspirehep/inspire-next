@@ -26,6 +26,8 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
+from inspirehep.utils.dedupers import dedupe_list_of_dicts
+
 from ..model import hep, hep2marc
 from ...utils import get_record_ref
 
@@ -55,9 +57,7 @@ def public_notes2marc(self, key, value):
 @hep.over('hidden_notes', '^595..')
 def hidden_notes(self, key, value):
     """Hidden notes."""
-    value = utils.force_list(value)
-
-    def get_value(value):
+    def _get_value(value):
         return {
             'value': value.get('a'),
             'cern_reference': value.get('b'),
@@ -65,15 +65,10 @@ def hidden_notes(self, key, value):
             'source': value.get('9'),
         }
 
-    hidden_note_list = self.get('hidden_notes', [])
-    for element in value:
-        hidden_note_list.append(get_value(element))
+    values = self.get('hidden_notes', [])
+    values.extend(_get_value(el) for el in utils.force_list(value))
 
-    hidden_note = []
-    for element in hidden_note_list:
-        if element not in hidden_note:
-            hidden_note.append(element)
-    return hidden_note
+    return dedupe_list_of_dicts(values)
 
 
 @hep2marc.over('595', 'hidden_notes')
