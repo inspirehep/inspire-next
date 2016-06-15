@@ -46,7 +46,8 @@
 
   <div class="pull-right">
     <form action="/holdingpen/list" class="hp-search-form">
-      <input type="text" name="q" placeholder="Search the holding pen">
+      <input type="text" name="q" placeholder="Search the holding pen"
+       {% if request.args.get('q') %}value="{{ request.args.get('q') }}" {% endif %}>
     </form>
   </div>
 </div>
@@ -102,5 +103,3 @@
   </invenio-search>
 </div>
 {%- endblock -%}
-
-
