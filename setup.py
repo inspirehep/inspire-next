@@ -68,7 +68,6 @@ install_requires = [
     'invenio>=3.0.0a1,<3.1.0',
     'inspire-crawler>=0.2.1',
     'dojson==1.2.1',
-    'Flask-Admin==1.4.0',
     'Flask-Breadcrumbs>=0.3.0',
     'Flask-Script>=2.0.5',
     'jsmin',
