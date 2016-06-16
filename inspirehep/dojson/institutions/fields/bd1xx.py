@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 # or submit itself to any jurisdiction.
 
 """MARC 21 model definition."""
+
+from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
@@ -144,8 +146,10 @@ def public_notes(self, key, value):
     return value.get('i')
 
 
-@institutions.over('historical_data', '^6781..')
-@utils.for_each_value
+@institutions.over('historical_data', '^6781.')
 def historical_data(self, key, value):
     """Historical data."""
-    return value.get('a')
+    values = self.get('historical_data', [])
+    values.extend(el for el in value.get('a'))
+
+    return values

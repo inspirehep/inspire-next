@@ -61,8 +61,8 @@
             "uniqueItems": true
         },
         "historical_data": {
-            "title": "Historical data",
-            "type": "string"
+            "type": "array",
+            "items": {"type": "string"}
         },
         "institution_acronym": {
             "description": "Corporate well-known acronym",
