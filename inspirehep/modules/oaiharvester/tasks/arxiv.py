@@ -43,7 +43,7 @@ from inspirehep.modules.refextract.tasks import extract_references
 
 from invenio_base.globals import cfg
 
-from plotextractor.errors import InvalidTarball
+from plotextractor.errors import InvalidTarball, NoTexFilesFound
 from plotextractor.api import process_tarball
 from plotextractor.converter import untar
 
@@ -167,9 +167,9 @@ def arxiv_plot_extract(obj, eng):
 
     try:
         plots = process_tarball(tarball)
-    except InvalidTarball:
+    except (InvalidTarball, NoTexFilesFound) as err:
         obj.log.error(
-            'Invalid tarball {0}'.format(tarball)
+            '{0}: Invalid tarball {1}'.format(str(err), tarball)
         )
         return
     except DelegateError as err:
