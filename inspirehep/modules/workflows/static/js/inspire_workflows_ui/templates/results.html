@@ -79,7 +79,7 @@
               {{subject.term}}
             </li>
             <li ng-repeat="subject in record._source.metadata.field_categories | limitTo:3"
-                ng-if="record._source.metadata.field_categories">
+                ng-if="subject._term">
               {{subject._term}}
             </li>
           </ul>

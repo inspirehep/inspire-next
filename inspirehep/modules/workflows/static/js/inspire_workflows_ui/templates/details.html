@@ -98,6 +98,11 @@
 
       <div class="clearfix"></div>
 
+      <div class="col-md-12 col-sm-12" ng-if="vm.record.metadata.urls">
+        <holding-pen-template-handler
+          template="/static/js/inspire_workflows_ui/templates/details_links.html">
+        </holding-pen-template-handler>
+      </div>
 
       <div class="col-md-6 col-sm-6" ng-if="vm.record.metadata.field_categories">
         <holding-pen-template-handler
@@ -106,15 +111,14 @@
       </div>
 
       <div class="col-md-3 col-sm-6"
-           ng-if="vm.record.metadata.field_categories">
+           ng-if="vm.record.metadata.field_categories && vm.record._workflow.data_type == 'authors'">
         <holding-pen-template-handler
-
-          template="/static/js/inspire_workflows_ui/templates/details_subject_areas_authors.html">
+          template="/static/js/inspire_workflows_ui/templates/details_subject_areas_hep.html">
         </holding-pen-template-handler>
       </div>
 
       <div class="col-md-3 col-sm-6"
-           ng-if="vm.record.metadata.phd_advisors">
+           ng-if="vm.record.metadata.phd_advisors && vm.record._workflow.data_type == 'authors'">
         <div class="detail-panel panel-200">
           <h4>Advisors</h4>
 
@@ -128,12 +132,6 @@
 
           </div>
         </div>
-      </div>
-
-      <div class="col-md-6 col-sm-12" ng-if="vm.record.metadata.urls">
-        <holding-pen-template-handler
-          template="/static/js/inspire_workflows_ui/templates/details_links.html">
-        </holding-pen-template-handler>
       </div>
 
 
@@ -226,10 +224,10 @@
               <span ng-switch-when="submission">
                 Submitted by {{vm.record.metadata.acquisition_source.email}}<br/> on {{vm.record.metadata.acquisition_source.date}}
               </span>
-              <span ng-switch-when="oai">
-                Harvested from
+              <span ng-switch-default>
+                Harvested on <span class="font-bolder" ng-bind="vm.record.metadata.acquisition_source.date"></span> from
                 <span class="font-bolder" ng-bind="vm.record.metadata.acquisition_source.source"></span> using
-                <span class="font-bolder" ng-bind="vm.record.metadata.acquisition_source[0].method"></span>
+                <span class="font-bolder" ng-bind="vm.record.metadata.acquisition_source.method"></span>
               </span>
             </span>
           </p>

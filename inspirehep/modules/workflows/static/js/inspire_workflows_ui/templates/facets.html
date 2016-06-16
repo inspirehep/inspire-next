@@ -1,5 +1,5 @@
 <div
-  ng-init="order={'status': 'Status', 'source': 'Source', 'workflow_name': 'Workflow Name'}">
+  ng-init="order={'status': 'Status', 'source': 'Source', 'workflow_name': 'Collection'}">
   <div ng-if="vm.invenioSearchResults.aggregations[key].buckets.length"
        ng-repeat="(key, title) in order" class="facet-container">
     <h4>Filter by {{ title }}</h4>
@@ -22,7 +22,12 @@
               authornew: item.key === 'New Author',
               authorupdate: item.key === 'Author Update'}">
         <span class="facet-title-truncate">
-          <i class="fa fa-times" ng-if="handler[key].indexOf(item.key) > -1"></i> {{ item.key }}</span>
+          <i class="fa fa-times" ng-if="handler[key].indexOf(item.key) > -1"></i>
+          <span ng-switch="item.key">
+            <span ng-switch-when="submission">User Suggestion</span>
+            <span ng-switch-default>{{ item.key }}</span>
+          </span>
+        </span>
         <span class="facet-label label label-default pull-right">{{ item.doc_count }}</span>
       </li>
     </ul>

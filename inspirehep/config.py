@@ -878,8 +878,6 @@ WORKFLOWS_UI_REST_ENDPOINT = dict(
                              ':json_serializer'),
     },
     search_serializers={
-        'application/vnd+inspire.brief+json': ('invenio_workflows_ui.serializers'
-                             ':json_search_serializer'),
         'application/json': ('invenio_workflows_ui.serializers'
                              ':json_search_serializer')
     },
@@ -921,7 +919,7 @@ WORKFLOWS_UI_REST_FACETS = {
     "holdingpen": {
         "filters": {
             "status": terms_filter('_workflow.status'),
-            "source": terms_filter('metadata.acquisition_source.source'),
+            "source": terms_filter('metadata.acquisition_source.method'),
             "workflow_name": terms_filter('_workflow.workflow_name'),
         },
         "aggs": {
@@ -933,7 +931,7 @@ WORKFLOWS_UI_REST_FACETS = {
             },
             "source": {
                 "terms": {
-                    "field": "metadata.acquisition_source.source",
+                    "field": "metadata.acquisition_source.method",
                     "size": 20
                 }
             },
