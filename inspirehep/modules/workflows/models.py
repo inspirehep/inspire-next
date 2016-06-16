@@ -57,9 +57,13 @@ class PayloadStorage(Storage):
 
     def __init__(self, payload_id):
         """Initialize storage."""
+        payload_hash = str(payload_id)
         self.fs_path = os.path.join(
             cfg['WORKFLOWS_STORAGEDIR'],
-            str(payload_id)
+            payload_hash[:2],
+            payload_hash[2:4],
+            payload_hash[4:6],
+            payload_hash
         )
 
 
