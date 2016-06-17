@@ -34,6 +34,7 @@ from operator import itemgetter
 from flask import current_app
 from jinja2.filters import do_join, evalcontextfilter
 
+from invenio_search import current_search_client as es
 from invenio_search.api import RecordsSearch
 
 from inspirehep.modules.records.json_ref_loader import replace_refs
@@ -364,7 +365,9 @@ def collection_select_current(collection_name, current_collection):
 def number_of_records(collection_name):
     """Returns number of records for the collection."""
     index = collection_to_index(collection_name)
-    return perform_es_search('', index).hits.total
+    result = es.count(index=index)
+
+    return result['count']
 
 
 @blueprint.app_template_filter()

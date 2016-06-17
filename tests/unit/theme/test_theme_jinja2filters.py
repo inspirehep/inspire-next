@@ -653,9 +653,16 @@ def test_collection_select_current_returns_empty_string_if_different():
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
-def test_number_of_records(c, mock_perform_es_search):
-    c.return_value = mock_perform_es_search
+@mock.patch('inspirehep.modules.theme.jinja2filters.es.count')
+def test_number_of_records(count):
+    count.return_value = {
+        "count" : 10,
+        "_shards" : {
+            "total" : 5,
+            "successful" : 5,
+            "failed" : 0
+        }
+    }
 
     expected = 10
     result = number_of_records('foo')
