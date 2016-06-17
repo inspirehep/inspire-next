@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from isbnlib._exceptions import NotValidISBNError
+from isbn import ISBNError
 
 from dojson import utils
 from idutils import normalize_isbn
@@ -42,7 +42,7 @@ def isbns(self, key, value):
     "ISBN, its medium and an additional comment."""
     try:
         isbn = normalize_isbn(value['a'])
-    except (KeyError, NotValidISBNError):
+    except (KeyError, ISBNError):
         return {}
 
     b = value.get('b', '').lower()
