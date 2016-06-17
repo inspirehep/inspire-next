@@ -183,7 +183,7 @@ def continuous_migration():
                 try:
                     with db.session.begin_nested():
                         errors, dummy = create_record(
-                            record, force=True, validation=True
+                            record, force=True
                         )
                         logger.info(
                             "Successfully migrated record {}".format(recid))
@@ -235,7 +235,7 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
                 except ValidationError as e:
                     # Invalid record, will not get indexed
                     errors = "ValidationError: Record {0}: {1}".format(
-                        record.get('control_number'), e
+                        recid, e
                     )
                     current_app.logger.warning(errors)
                     prod_record.valid = False

@@ -631,18 +631,6 @@ def test_references(marcxml_to_json, json_to_marc):
                     json_to_marc['999C5'][index]['y'])
 
 
-def test_refextract(marcxml_to_json, json_to_marc):
-    """Test if refextract is created correctly."""
-    assert (marcxml_to_json['refextract'][0]['time'] ==
-            json_to_marc['999C6'][0]['t'])
-    assert (marcxml_to_json['refextract'][0]['version'] ==
-            json_to_marc['999C6'][0]['v'])
-    assert (marcxml_to_json['refextract'][0]['comment'] ==
-            json_to_marc['999C6'][0]['c'])
-    assert (marcxml_to_json['refextract'][0]['source'] ==
-            json_to_marc['999C6'][0]['s'])
-
-
 def test_book_link(marcxml_to_json_book):
     """Test if the link to the book recid is generated correctly."""
     assert (get_recid_from_ref(marcxml_to_json_book['book']['record']) ==
