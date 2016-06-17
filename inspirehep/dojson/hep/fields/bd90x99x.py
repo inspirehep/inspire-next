@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 from isbnlib._exceptions import NotValidISBNError
 
 from dojson import utils
@@ -35,10 +37,24 @@ from ..model import hep, hep2marc
 from ...utils import get_recid_from_ref, get_record_ref, strip_empty_values
 
 
+RE_VALID_PUBNOTE = re.compile(".*,.*,.*(,.*)?")
+
+
 @hep.over('references', '^999C5')
 def references(self, key, value):
     """Produce list of references."""
     value = utils.force_list(value)
+
+    def get_valid_pubnotes(pubnotes):
+        valid_pubnotes = []
+        raw_references = []
+        if pubnotes:
+            for pubnote in pubnotes:
+                if RE_VALID_PUBNOTE.match(pubnote):
+                    valid_pubnotes.append(pubnote)
+                else:
+                    raw_references.append(pubnote)
+        return valid_pubnotes, raw_references
 
     def get_value(value):
         recid = None
@@ -65,6 +81,11 @@ def references(self, key, value):
         except (KeyError, NotValidISBNError):
             isbn = ''
 
+        valid_pubnotes, raw_references = get_valid_pubnotes(utils.force_list(value.get('s')))
+
+        if value.get('x'):
+            raw_references += list(utils.force_list(value.get('x')))
+
         return {
             'record': get_record_ref(recid, 'literature'),
             'texkey': value.get('1'),
@@ -80,8 +101,8 @@ def references(self, key, value):
             'report_number': utils.force_list(value.get('r')),
             'title': utils.force_list(value.get('t')),
             'urls': utils.force_list(value.get('u')),
-            'journal_pubnote': utils.force_list(value.get('s')),
-            'raw_reference': utils.force_list(value.get('x')),
+            'journal_pubnote': valid_pubnotes,
+            'raw_reference': raw_references,
             'year': year,
         }
     references = self.get('references', [])
@@ -115,30 +136,4 @@ def references2marc(self, key, value):
         's': value.get('journal_pubnote'),
         'x': value.get('raw_reference'),
         'y': value.get('year'),
-    }
-
-
-@hep.over('refextract', '^999C6')
-@utils.for_each_value
-@utils.filter_values
-def refextract(self, key, value):
-    """Contains info from refextract."""
-    return {
-        'comment': value.get('c'),
-        'time': value.get('t'),
-        'version': utils.force_list(value.get('v')),
-        'source': value.get('s'),
-    }
-
-
-@hep2marc.over('999C6', 'refextract')
-@utils.for_each_value
-@utils.filter_values
-def refextract2marc(self, key, value):
-    """Contains info from refextract."""
-    return {
-        'c': value.get('comment'),
-        't': value.get('time'),
-        'v': value.get('version'),
-        's': value.get('source'),
     }
