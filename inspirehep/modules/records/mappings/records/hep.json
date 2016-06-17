@@ -308,10 +308,16 @@
                                 }
                             }
                         },
-                        "name_variations":{
+                        "name_variations": {
                           "type": "string",
                           "analyzer": "no_tokenizing_analyzer",
                           "copy_to": ["global_fulltext", "author"]
+                        },
+                        "name_suggest": {
+                          "type" : "completion",
+                          "analyzer" : "simple",
+                          "search_analyzer" : "simple",
+                          "payloads" : true
                         },
                         "signature_block": {
                             "type": "string"

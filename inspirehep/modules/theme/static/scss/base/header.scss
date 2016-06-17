@@ -520,7 +520,12 @@ a.external-link::after {
         max-width: 850px;
     }
 
-    #search-form-input {
+    .input-group span.twitter-typeahead .tt-dropdown-menu {
+        margin-top: 1px !important;
+        border-radius: 0;
+    }
+
+    .twitter-typeahead > input, #search-form-input {
         border: 0;
         border-radius: 0;
         font-size: 17px;

@@ -125,4 +125,10 @@ def generate_name_variations(recid, json, *args, **kwargs):
         for author in authors:
             name = author.get("full_name")
             if name:
-                author.update({"name_variations": author_tokenize(name)})
+                name_variations = author_tokenize(name)
+                author.update({"name_variations": name_variations})
+                author.update({"name_suggest": {
+                    "input": name_variations,
+                    "output": name,
+                    "payload": {"bai": author.get("inspire_bai")}
+                }})
