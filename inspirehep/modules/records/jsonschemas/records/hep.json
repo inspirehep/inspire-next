@@ -331,7 +331,10 @@
                         "type": "string"
                     },
                     "cnum": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "note": {
                         "type": "string"
@@ -386,7 +389,10 @@
                 "type": "object",
                 "properties": {
                     "publisher": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "doi": {
                         "pattern": "(10\\.\\d+(\\.\\d+)?/.+)|(\\w+\\:\\d+\\/\\d+)",
@@ -400,20 +406,35 @@
                         "type": "string"
                     },
                     "report_number": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "url": {
                         "type": "array",
-                        "format": "url"
+                        "items": {
+                            "format": "url",
+                            "type": "string"
+                        }
                     },
                     "collaboration": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "title": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "misc": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "editors": {
                         "type": "array",
@@ -431,17 +452,26 @@
                         "type": "string"
                     },
                     "raw_reference": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "year": {
                         "type": "integer"
                     },
                     "authors": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "journal_pubnote": {
-                        "pattern": ".*,.*,.*",
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "pattern": ".*,.*,.*(,.*)?"
+                        }
                     },
                     "record": {
                         "$ref": "json_reference.json"
@@ -451,31 +481,27 @@
             "type": "array"
         },
         "copyright": {
-            "type": "object",
-            "properties": {
-                "url": {
-                    "type": "string",
-                    "format": "url"
-                },
-                "material": {
-                    "enum": [
-                        "Article"
-                    ],
-                    "type": "string"
-                },
-                "holder": {
-                    "enum": [
-                        "American Physical Society",
-                        "World Scientific Publishing Company",
-                        "authors",
-                        "CERN"
-                    ],
-                    "type": "string",
-                    "description": "Copyright holder. FIXME: should we restrict this to an enum, or not?"
-                },
-                "statement": {
-                    "type": "string",
-                    "description": "FIXME: What's that? there are all sorts of usages on production!"
+            "items": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "format": "url"
+                    },
+                    "material": {
+                        "enum": [
+                            "Article"
+                        ],
+                        "type": "string"
+                    },
+                    "holder": {
+                        "type": "string",
+                        "description": "Copyright holder. FIXME: should we restrict this to an enum, or not?"
+                    },
+                    "statement": {
+                        "type": "string",
+                        "description": "FIXME: What's that? there are all sorts of usages on production!"
+                    }
                 }
             },
             "type": "array"
@@ -580,38 +606,19 @@
             "description": "Whether this document is CORE and hence need special curation. NOTE: set this explicitly to false, in order to have real noncore."
         },
         "book_series": {
-            "type": "object",
-            "properties": {
-                "volume": {
-                    "type": "string",
-                    "description": "Specific volume number"
-                },
-                "title": {
-                    "type": "string",
-                    "description": "Title of the book series"
-                }
-            },
-            "type": "array"
-        },
-        "refextract": {
             "items": {
                 "type": "object",
                 "properties": {
-                    "comment": {
-                        "type": "string"
+                    "volume": {
+                        "type": "string",
+                        "description": "Specific volume number"
                     },
-                    "time": {
-                        "type": "string"
-                    },
-                    "version": {
-                        "type": "array"
-                    },
-                    "source": {
-                        "type": "string"
+                    "title": {
+                        "type": "string",
+                        "description": "Title of the book series"
                     }
                 }
             },
-            "description": "Technical information from a refextract run",
             "type": "array"
         },
         "oai_pmh": {
@@ -630,21 +637,19 @@
             "type": "array"
         },
         "succeeding_entry": {
-            "items": {
             "type": "object",
-                "properties": {
-                    "relationship_code": {
-                        "type": "string"
-                    },
-                    "isbn": {
-                        "type": "string"
-                    },
-                    "record": {
-                        "$ref": "json_reference.json"
-                    }
+            "properties": {
+                "relationship_code": {
+                    "type": "string"
                 },
-                "description": "Reference to previously merged records."
-            }
+                "isbn": {
+                    "type": "string"
+                },
+                "record": {
+                    "$ref": "json_reference.json"
+                }
+            },
+            "description": "Reference to previously merged records."
         },
         "acquisition_source": {
             "type": "object",
