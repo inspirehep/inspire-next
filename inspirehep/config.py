@@ -852,7 +852,7 @@ LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 # Web services and APIs
 # =====================
 BEARD_API_URL = None   # e.g. "http://beard.inspirehep.net/api"
-MAGPIE_API_URL = None   # e.g. "http://magpie.inspirehep.net/api"
+MAGPIE_API_URL = "http://magpie.inspirehep.net/api"
 
 # Harvesting and Workflows
 # ========================
@@ -863,6 +863,7 @@ WORKFLOWS_DEFAULT_FILE_LOCATION_NAME = "holdingpen"
 """Name of default workflow Location reference."""
 
 WORKFLOWS_UI_BASE_TEMPLATE = BASE_TEMPLATE
+WORKFLOWS_UI_INDEX_TEMPLATE = "inspire_workflows/index.html"
 WORKFLOWS_UI_LIST_TEMPLATE = "inspire_workflows/list.html"
 WORKFLOWS_UI_DETAILS_TEMPLATE = "inspire_workflows/details.html"
 WORKFLOWS_UI_LIST_ROW_TEMPLATE = "inspire_workflows/list_row.html"
@@ -878,7 +879,7 @@ WORKFLOWS_UI_REST_ENDPOINT = dict(
     },
     search_serializers={
         'application/json': ('invenio_workflows_ui.serializers'
-                             ':json_search_serializer'),
+                             ':json_search_serializer')
     },
     action_serializers={
         'application/json': ('invenio_workflows_ui.serializers'
@@ -918,7 +919,7 @@ WORKFLOWS_UI_REST_FACETS = {
     "holdingpen": {
         "filters": {
             "status": terms_filter('_workflow.status'),
-            "data_type": terms_filter('_workflow.data_type'),
+            "source": terms_filter('metadata.acquisition_source.method'),
             "workflow_name": terms_filter('_workflow.workflow_name'),
         },
         "aggs": {
@@ -928,9 +929,9 @@ WORKFLOWS_UI_REST_FACETS = {
                     "size": 20
                 }
             },
-            "data_type": {
+            "source": {
                 "terms": {
-                    "field": "_workflow.data_type",
+                    "field": "metadata.acquisition_source.method",
                     "size": 20
                 }
             },

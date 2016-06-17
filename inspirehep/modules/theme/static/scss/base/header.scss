@@ -808,10 +808,12 @@ a.external-link::after {
         left: 10px;
         right: 0;
         text-align:center;
-        background-color: #324A5D;
+        background-color: $midnight-blue;
 
         &:hover {
             text-decoration: none;
+            background-color: $dark-blue;
+          border: 2px solid $midnight-blue;
         }
 
         img {

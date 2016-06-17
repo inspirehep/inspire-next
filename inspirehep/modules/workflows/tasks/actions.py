@@ -60,7 +60,7 @@ def shall_push_remotely(*args, **kwargs):
     """Check if the record shall be robotuploaded."""
     # If in debug mode, we do remote uploads or
     # if LEGACY_ROBOTUPLOAD_URL is set
-    return current_app.debug or current_app.config.get(
+    return current_app.config.get(
         "LEGACY_ROBOTUPLOAD_URL", False
     )
 
