@@ -365,21 +365,6 @@ def test_remove_duplicates__from_list_removes_duplicates_from_non_empty_list():
     assert expected == result
 
 
-def test_has_space_returns_true_if_space():
-    assert has_space('foo bar')
-
-
-def test_has_space_returns_none_if_no_space():
-    assert has_space('foo') is None
-
-
-def test_count_words():
-    expected = 3
-    result = count_words('foo, bar baz')
-
-    assert expected == result
-
-
 def test_conference_date_returns_date_when_record_has_a_date():
     with_a_date = Record({'date': '26-30 Mar 2012'})
 
@@ -800,34 +785,6 @@ def test_citation_phrase_plural_with_more_citations():
     assert expected == result
 
 
-@mock.patch(
-    'inspirehep.modules.theme.jinja2filters.session',
-    {
-        'last-queryfoobar': {
-            'number_of_hits': 1337,
-            'timestamp': datetime.datetime(
-                1993, 2, 2, 5, 57, 0, 0)}})
-@mock.patch('inspirehep.modules.theme.jinja2filters.datetime')
-def test_number_of_search_results_fetches_from_session(mock_datetime):
-    mock_datetime.datetime.utcnow.return_value = datetime.datetime(1993, 2, 2, 6, 0, 0, 0)
-
-    expected = 1337
-    result = number_of_search_results('foo', 'bar')
-
-    assert expected == result
-
-
-@mock.patch('inspirehep.modules.theme.jinja2filters.session', {})
-@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
-def test_number_of_search_results_falls_back_to_query(c, mock_perform_es_search):
-    c.return_value = mock_perform_es_search
-
-    expected = 10
-    result = number_of_search_results('foo', 'bar')
-
-    assert expected == result
-
-
 def test_is_upper_returns_true_when_all_uppercase():
     assert is_upper('FOO')
 
@@ -836,9 +793,9 @@ def test_is_upper_returns_false_when_not_all_uppercase():
     assert not is_upper('foo')
 
 
-def test_split_author_name():
+def test_format_author_name():
     expected = 'baz bar foo'
-    result = split_author_name('foo,bar,baz')
+    result = format_author_name('foo,bar,baz')
 
     assert expected == result
 
