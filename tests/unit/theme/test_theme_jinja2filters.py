@@ -807,6 +807,13 @@ def test_strip_leading_number_plot_caption():
     assert expected == result
 
 
+def test_json_dumps():
+    expected = '{"foo": ["bar", "baz"]}'
+    result = json_dumps({'foo': ['bar', 'baz']})
+
+    assert expected == result
+
+
 def test_publication_info_returns_empty_dict_when_no_publication_info():
     without_publication_info = Record({})
 
@@ -1163,6 +1170,51 @@ def test_format_date_when_datestruct_has_three_elements(c_d, app):
         result = format_date('banana')
 
         assert expected == result
+
+
+def test_find_collection_from_url_conferences():
+    assert find_collection_from_url('http://localhost:5000/conferences') == 'conferences'
+    assert find_collection_from_url('http://localhost:5000/search?page=1&size=25&cc=conferences&q=') == 'conferences'
+
+
+def test_find_collection_from_url_jobs():
+    assert find_collection_from_url('http://localhost:5000/search?page=1&size=25&cc=jobs') == 'jobs'
+
+
+def test_find_collection_from_url_data():
+    assert find_collection_from_url('http://localhost:5000/data') == 'data'
+    assert find_collection_from_url('http://localhost:5000/search?page=1&size=25&cc=data&q=') == 'data'
+
+
+def test_find_collection_from_url_institutions():
+    assert find_collection_from_url('http://localhost:5000/institutions') == 'institutions'
+    assert find_collection_from_url('http://localhost:5000/search?page=1&size=25&cc=institutions&q=') == 'institutions'
+
+
+def test_find_collection_from_url_journals():
+    assert find_collection_from_url('http://localhost:5000/journals') == 'journals'
+    assert find_collection_from_url('http://localhost:5000/search?page=1&size=25&cc=journals&q=') == 'journals'
+
+
+def test_find_collection_from_url_experiments():
+    assert find_collection_from_url('http://localhost:5000/experiments') == 'experiments'
+    assert find_collection_from_url('http://localhost:5000/search?page=1&size=25&cc=experiments&q=') == 'experiments'
+
+
+def test_find_collection_from_url_authors():
+    assert find_collection_from_url('http://localhost:5000/authors') == 'authors'
+    assert find_collection_from_url('http://localhost:5000/search?page=1&size=25&cc=authors&q=') == 'authors'
+
+
+def test_find_collection_from_url_literature():
+    assert find_collection_from_url('http://localhost:5000') == 'literature'
+    assert find_collection_from_url('http://localhost:5000/literature') == 'literature'
+    assert find_collection_from_url('http://localhost:5000/search?page=1&size=25&cc=literature&q=') == 'literature'
+
+
+@pytest.mark.xfail(reason='missing spaces')
+def test_show_citations_number():
+    assert show_citations_number(100) == 'View all 100 citations'
 
 
 def test_is_external_link_when_link_is_external():
