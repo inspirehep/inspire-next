@@ -163,6 +163,7 @@ img.landing-page-flask {
           border: none;
           box-shadow: none;
           -webkit-box-shadow: none;
+          width: 100%;
         }
       }
 
@@ -391,3 +392,6 @@ img.landing-page-flask {
   }
 }
 
+#collection-search-bar .input-group span.twitter-typeahead .tt-dropdown-menu {
+  margin-top: 16px !important;
+}

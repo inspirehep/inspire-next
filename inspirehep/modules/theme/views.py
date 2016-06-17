@@ -65,6 +65,7 @@ blueprint = Blueprint('inspirehep_theme', __name__,
                       static_folder='static',
                       )
 
+
 #
 # Collections
 #
