@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
-
 from dojson.utils import GroupableOrderedDict
 
 from inspirehep.modules.literaturesuggest.dojson.model import literature
@@ -474,7 +472,6 @@ def test_accelerator_experiments_from_experiment():
     assert expected == result['accelerator_experiments']
 
 
-@pytest.mark.xfail(reason='also populates issue')
 def test_publication_info_issue_from_issue():
     form = GroupableOrderedDict([
         ('issue', 'foo'),
@@ -490,7 +487,6 @@ def test_publication_info_issue_from_issue():
     assert expected == result['publication_info']
 
 
-@pytest.mark.xfail(reason='populates issue instead')
 def test_publication_info_issue_from_multiple_issue_updates():
     form = GroupableOrderedDict([
         ('issue', 'foo'),
