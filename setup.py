@@ -203,6 +203,9 @@ setup(
             'inspirehep_holding_css = inspirehep.modules.theme.bundles:holding_pen_css',
             'inspirehep_holding_js = inspirehep.modules.workflows.bundles:details_js',
         ],
+        'invenio_migrator.things': [
+            'remoteaccount = inspirehep.modules.migrator.legacy.remoteaccount',
+        ],
         'invenio_jsonschemas.schemas': [
             'inspire_records = inspirehep.modules.records.jsonschemas',
         ],
