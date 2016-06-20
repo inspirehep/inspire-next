@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
 import logging
 import os
 import sys
@@ -35,13 +36,14 @@ from flask_cli import with_appcontext
 
 from invenio_db import db
 
-from .tasks import (
+from .tasks.records import (
     add_citation_counts,
     migrate,
     migrate_broken_records,
     migrate_chunk,
     split_blob,
 )
+from .tasks.workflows import import_holdingpen_record
 
 
 @click.group()
@@ -88,6 +90,29 @@ def count_citations():
     """Adds field citation_count to every record in 'HEP' and calculates its proper value."""
     click.echo("Adding citation_count to all records")
     add_citation_counts()
+
+
+@migrator.command()
+@click.argument('source', type=click.File('r'), default=sys.stdin)
+@with_appcontext
+def loadaudits():
+    """Load workflow Audit logs for workflows.models.Audit."""
+    # TODO implement
+    pass
+
+
+@migrator.command()
+@click.argument('source', type=click.File('r'), default=sys.stdin)
+@with_appcontext
+def loadworkflows(source):
+    """Load legacy workflow objects into Holding Pen."""
+    click.echo('Loading dump...')
+    data = json.load(source)
+
+    click.echo('Sending tasks to queue...')
+    with click.progressbar(data) as records:
+        for item in records:
+            import_holdingpen_record.delay(item['obj'], item['eng'])
 
 
 @migrator.command()

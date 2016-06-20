@@ -43,7 +43,7 @@ def app():
 
     with app.app_context():
         # Imports must be local, otherwise tasks default to pickle serializer.
-        from inspirehep.modules.migrator.tasks import add_citation_counts, migrate
+        from inspirehep.modules.migrator.tasks.records import add_citation_counts, migrate
         from inspirehep.modules.fixtures.files import init_all_storage_paths
         from inspirehep.modules.fixtures.users import init_users_and_permissions
 
