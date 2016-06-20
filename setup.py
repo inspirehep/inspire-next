@@ -166,6 +166,7 @@ setup(
         ],
         'invenio_migrator.things': [
             'remoteaccount = inspirehep.modules.migrator.legacy.remoteaccount',
+            'holdingpen = inspirehep.modules.migrator.legacy.workflows',
         ],
     },
     test_suite='tests',
