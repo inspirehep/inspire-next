@@ -61,8 +61,8 @@ from invenio_records import Record
 from invenio_search import current_search_client
 from invenio_search.utils import schema_to_index
 
-from .models import InspireProdRecords
-from ..pidstore.minters import inspire_recid_minter
+from inspirehep.modules.migrator.models import InspireProdRecords
+from inspirehep.modules.pidstore.minters import inspire_recid_minter
 
 
 logger = get_task_logger(__name__)
