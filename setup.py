@@ -108,6 +108,9 @@ extras_require = {
     'sqlite': [
         'invenio-db[versioning]>=1.0.0a6',
     ],
+    'migration': [
+        'invenio-migrator>=1.0.0a6',
+    ],
     'tests': tests_require,
     'development': [
         'Flask-DebugToolbar>=0.9',
@@ -211,6 +214,10 @@ setup(
             'invenio_search_ui_search_js = inspirehep.modules.search.bundles:js',
             'inspirehep_holding_css = inspirehep.modules.theme.bundles:holding_pen_css',
             'inspirehep_holding_js = inspirehep.modules.workflows.bundles:details_js',
+        ],
+        'invenio_migrator.things': [
+            'holdingpen = inspirehep.modules.migrator.legacy.workflows',
+            'audit = inspirehep.modules.migrator.legacy.audit',
         ],
         'invenio_jsonschemas.schemas': [
             'inspire_records = inspirehep.modules.records.jsonschemas',
