@@ -36,6 +36,7 @@ from .latexus_serializer import LATEXUSSerializer
 from .cvformatlatex_serializer import CVFORMATLATEXSerializer
 from .cvformathtml_serializer import CVFORMATHTMLSerializer
 from .cvformattext_serializer import CVFORMATTEXTSerializer
+from .orcid_serializer import ORCIDSerializer
 from .schemas.json import RecordSchemaJSONBRIEFV1
 
 from .response import record_responsify_nocache
@@ -50,6 +51,7 @@ latexus_v1 = LATEXUSSerializer()
 cvformatlatex_v1 = CVFORMATLATEXSerializer()
 cvformathtml_v1 = CVFORMATHTMLSerializer()
 cvformattext_v1 = CVFORMATTEXTSerializer()
+orcid = ORCIDSerializer()
 
 bibtex_v1_response = record_responsify_nocache(
     bibtex_v1, 'application/x-bibtex')
@@ -63,7 +65,7 @@ cvformathtml_v1_response = record_responsify_nocache(cvformathtml_v1,
                                                      'application/x-cvformathtml')
 cvformattext_v1_response = record_responsify_nocache(cvformattext_v1,
                                                      'application/x-cvformattext')
-
+orcid_response = record_responsify_nocache(orcid, 'application/x-orcid')
 
 bibtex_v1_search = search_responsify(bibtex_v1, 'application/x-bibtex')
 latexeu_v1_search = search_responsify(latexeu_v1, 'application/x-latexeu')
@@ -77,3 +79,4 @@ cvformattext_v1_search = search_responsify(cvformattext_v1,
 impactgraph_v1 = ImpactGraphSerializer()
 impactgraph_v1_response = record_responsify_nocache(impactgraph_v1,
                                                     'application/x-impact.graph+json')
+orcid_search = search_responsify(orcid, 'application/x-orcid')
