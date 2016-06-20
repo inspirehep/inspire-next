@@ -164,6 +164,9 @@ setup(
             'hepnames = inspirehep.dojson.hepnames:hepnames',
             'hepnames2marc = inspirehep.dojson.hepnames2marc:hepnames2marc',
         ],
+        'invenio_migrator.things': [
+            'remoteaccount = inspirehep.modules.migrator.legacy.remoteaccount',
+        ],
     },
     test_suite='tests',
     tests_require=test_requirements,
