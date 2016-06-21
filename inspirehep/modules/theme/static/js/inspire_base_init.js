@@ -25,7 +25,9 @@ require([
   "js/feedback_inspire",
   "js/header/header",
   "js/notification",
+  'inspirehep-typeahead',
+  'invenio_with_spires_typeahead_configuration'
 ], function() {
-  // loading all the libraries everywhere.
-  console.info("js/inspire_base_init is loaded");
+  // Loaded libraries that run on every page
+
 });

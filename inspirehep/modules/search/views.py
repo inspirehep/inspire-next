@@ -28,7 +28,9 @@ from __future__ import absolute_import, print_function
 
 import json
 
-from flask import Blueprint, current_app, request, render_template
+from flask import Blueprint, current_app, jsonify, request, render_template
+
+from invenio_search.api import RecordsSearch
 
 blueprint = Blueprint('inspirehep_search',
                       __name__,
@@ -67,6 +69,25 @@ def search():
     ctx['search_api'] = current_app.config['SEARCH_UI_SEARCH_API']
     return render_template(current_app.config['SEARCH_UI_SEARCH_TEMPLATE'],
                            **ctx)
+
+
+@blueprint.route('/search/suggest', methods=['GET'])
+def suggest():
+    """Power typeahead.js search bar suggestions."""
+    field = request.values.get('field')
+    query = request.values.get('query')
+
+    search = RecordsSearch(index='records-hep', doc_type='hep')
+    search = search.suggest(
+        'suggestions', query, completion={"field": field}
+    )
+    suggestions = search.execute_suggest()
+    return jsonify({
+        'results': [
+            {'value': s['text']}
+            for s in suggestions['suggestions'][0]['options']
+        ]
+    })
 
 
 def sorted_options(sort_options):

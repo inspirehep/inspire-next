@@ -55,8 +55,14 @@ require.config({
     'inspirehep-clipboard': 'js/inspire_clipboard',
     'impact-graphs': 'node_modules/impact-graphs/impact-graph',
     'inspirehep-search': 'node_modules/inspirehep-search-js/dist/inspirehep-search',
+    /* Typeahead JS config */
+    'inspirehep-typeahead': 'node_modules/inspirehep-typeahead-search-js/src/typeahead',
+    'default_typeahead_configuration': 'node_modules/inspirehep-typeahead-search-js/src/default_typeahead_configuration',
+    'search_parser': 'node_modules/inspirehep-typeahead-search-js/src/search_parser',
+    'invenio_with_spires_typeahead_configuration': 'node_modules/inspirehep-typeahead-search-js/src/invenio_with_spires_typeahead_configuration',
     'invenio-search': 'node_modules/invenio-search-js/dist/invenio-search-js',
     jquery: 'node_modules/jquery/jquery',
+    'jquery-caret': 'node_modules/jquery-plugin/dist/jquery.caret-1.5.0',
     'jquery.ui': 'node_modules/jquery-ui/jquery-ui',
     moment: 'node_modules/moment/moment',
     'ngclipboard': 'node_modules/ngclipboard/src/ngclipboard',
@@ -132,6 +138,10 @@ require.config({
     },
     jquery: {
       exports: '$'
+    },
+    'jquery-caret': {
+      deps: ['jquery'],
+      exports: '$.fn.caret'
     },
     'ngclipboard': {
       deps: ['angular', 'inspirehep-clipboard', 'clipboard']

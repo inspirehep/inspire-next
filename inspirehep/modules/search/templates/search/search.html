@@ -34,6 +34,10 @@
   {% assets "invenio_search_ui_search_js" %}<script src="{{ ASSET_URL }}"></script>{% endassets %}
 {%- endblock javascript %}
 
+{%- block additional_javascript -%}
+  {% include "inspirehep_theme/typeahead.html" %}
+{%- endblock additional_javascript -%}
+
 {%- block body_inner %}
 <div id="invenio-search">
   <invenio-search search-endpoint="{{ search_api }}" search-extra-params='{"size": 25}'>
@@ -41,7 +45,6 @@
   </invenio-search>
 </div>
 {%- endblock body_inner %}
-
 
 {%- block body %}
 <div class="row" id="search-results">
