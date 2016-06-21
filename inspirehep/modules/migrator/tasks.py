@@ -125,8 +125,6 @@ def migrate_broken_records(broken_output=None, dry_run=False):
 @shared_task(ignore_result=True)
 def migrate(source, broken_output=None, dry_run=False, wait_for_results=False):
     """Main migration function."""
-    invenio_celery = current_app.extensions['invenio-celery']
-
     if source.endswith('.gz'):
         fd = gzip.open(source)
     else:
@@ -138,8 +136,6 @@ def migrate(source, broken_output=None, dry_run=False, wait_for_results=False):
         # the migrate_chunk tasks to complete before it finishes).
         tasks = []
         migrate_chunk.ignore_result = False
-
-    invenio_celery.disable_queue("celery")
 
     for i, chunk in enumerate(chunker(split_stream(fd), CHUNK_SIZE)):
         print("Processed {} records".format(i * CHUNK_SIZE))
@@ -154,12 +150,9 @@ def migrate(source, broken_output=None, dry_run=False, wait_for_results=False):
     if wait_for_results:
         job = group(tasks)
         result = job.apply_async()
-        invenio_celery.enable_queue("celery")
         result.join()
         migrate_chunk.ignore_result = True
         print('All migration tasks have been completed.')
-    else:
-        invenio_celery.enable_queue("celery")
 
 
 @shared_task(ignore_result=True)
