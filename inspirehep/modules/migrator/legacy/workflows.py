@@ -25,7 +25,7 @@
 
 from __future__ import absolute_import, print_function
 
-import six
+import json
 
 
 WORKFLOWS_TO_KEEP = [
@@ -44,6 +44,18 @@ def _get_record(obj, model):
     if record:
         return record.dumps()
     return {}
+
+
+class ExtraDataEncoder(json.JSONEncoder):
+    """Encoder for extra_data attribute."""
+
+    def default(self, obj):
+        import numpy
+        if isinstance(obj, set):
+            return list(obj)
+        if isinstance(obj, numpy.ndarray):
+            return list(obj)
+        return json.JSONEncoder.default(self, obj)
 
 
 def get(*args, **kwargs):
@@ -95,19 +107,6 @@ def dump(item, from_date, with_json=True, latest_only=False, **kwargs):
     else:
         data = old_data
 
-    if extra_data:
-        # Fix issues with np.array being in the data and not serializable
-        guessing = extra_data.get(
-            '_tasks_results', {}
-        ).get(
-            'arxiv_guessing', {}
-        )
-        if guessing:
-            scores = guessing[0]['result'].get('all_scores', [])
-            extra_data['_tasks_results'][
-                'arxiv_guessing'
-            ][0]['result']['all_scores'] = list(scores)
-
     obj = dict(
         extra_data=extra_data,
         data=data,
@@ -120,7 +119,9 @@ def dump(item, from_date, with_json=True, latest_only=False, **kwargs):
         id_parent=item.id_parent,
         id_user=item.id_user,
     )
-    return dict(
+    # Very silly, but just for now to clean the data
+    dumps = json.dumps(dict(
         obj=obj,
         eng=eng
-    )
+    ), cls=ExtraDataEncoder)
+    return json.loads(dumps)
