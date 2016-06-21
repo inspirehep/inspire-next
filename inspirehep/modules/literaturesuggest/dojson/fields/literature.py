@@ -182,7 +182,7 @@ def issue(self, key, value):
     if 'publication_info' in self:
         self['publication_info'][0].update(dict(journal_issue=value))
     else:
-        self['publication_info'] = [dict(issue=value)]
+        self['publication_info'] = [dict(journal_issue=value)]
     raise IgnoreKey
 
 
