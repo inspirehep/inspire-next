@@ -52,21 +52,19 @@ def get(*args, **kwargs):
     :returns: count and list of items to dump.
     :rtype: tuple (count, list)
     """
+    from sqlalchemy.orm import joinedload
     from invenio_ext.sqlalchemy import db
     from invenio_workflows.models import BibWorkflowObject, Workflow
-    query = db.session.query(BibWorkflowObject).filter(
-        BibWorkflowObject.id_workflow == Workflow.uuid
-    ).filter(
-        Workflow.name.in_(WORKFLOWS_TO_KEEP)
-    ).limit(5)
-    all_obj = []
-    for obj in query:
-        if obj.workflow.name in WORKFLOWS_TO_KEEP:
-            all_obj.append(obj)
-    return len(all_obj), all_obj
+    query = db.session.query(BibWorkflowObject) \
+        .options(joinedload(BibWorkflowObject.workflow)) \
+        .filter(BibWorkflowObject.id_workflow == Workflow.uuid) \
+        .filter(Workflow.name.in_(WORKFLOWS_TO_KEEP)) \
+        .order_by(BibWorkflowObject.id.desc())
+    return 500, query.limit(500)
+    # return query.count(), query.limit(500)
 
 
-def dump(obj, from_date, with_json=True, latest_only=False, **kwargs):
+def dump(item, from_date, with_json=True, latest_only=False, **kwargs):
     """Dump the workflow object and associated workflow engine.
 
     :returns: User serialized to dictionary.
@@ -76,38 +74,51 @@ def dump(obj, from_date, with_json=True, latest_only=False, **kwargs):
     from invenio_deposit.models import Deposition
 
     eng = dict(
-        uuid=obj.workflow.uuid,
-        name=obj.workflow.name,
-        created=obj.workflow.created.isoformat(),
-        modified=obj.workflow.modified.isoformat(),
-        id_user=obj.workflow.id_user,
-        status=obj.workflow.status,
-        extra_data=obj.workflow.get_extra_data(),
+        uuid=item.workflow.uuid,
+        name=item.workflow.name,
+        created=item.workflow.created.isoformat(),
+        modified=item.workflow.modified.isoformat(),
+        id_user=item.workflow.id_user,
+        status=item.workflow.status,
+        extra_data=item.workflow.get_extra_data(),
     )
     data = {}
-    old_data = obj.get_data()
-    extra_data = obj.get_extra_data()
-    if obj.workflow.name == 'process_record_arxiv':
-        data = _get_record(obj, Payload)
+    old_data = item.get_data()
+    extra_data = item.get_extra_data()
+    if item.workflow.name == 'process_record_arxiv':
+        data = _get_record(item, Payload)
         data['files'] = old_data.get('files')
-    elif obj.workflow.name == 'literature':
-        data = _get_record(obj, Deposition)
+    elif item.workflow.name == 'literature':
+        data = _get_record(item, Deposition)
         data['files'] = old_data.get('files')
         extra_data['formdata'] = old_data['drafts']['default']['values']
     else:
         data = old_data
 
+    if extra_data:
+        # Fix issues with np.array being in the data and not serializable
+        guessing = extra_data.get(
+            '_tasks_results', {}
+        ).get(
+            'arxiv_guessing', {}
+        )
+        if guessing:
+            scores = guessing[0]['result'].get('all_scores', [])
+            extra_data['_tasks_results'][
+                'arxiv_guessing'
+            ][0]['result']['all_scores'] = list(scores)
+
     obj = dict(
         extra_data=extra_data,
         data=data,
-        id=obj.id,
-        created=obj.created.isoformat(),
-        modified=obj.modified.isoformat(),
-        status=obj.version,
-        data_type=obj.data_type,
-        id_workflow=obj.id_workflow,
-        id_parent=obj.id_parent,
-        id_user=obj.id_user,
+        id=item.id,
+        created=item.created.isoformat(),
+        modified=item.modified.isoformat(),
+        status=item.version,
+        data_type=item.data_type,
+        id_workflow=item.id_workflow,
+        id_parent=item.id_parent,
+        id_user=item.id_user,
     )
     return dict(
         obj=obj,
