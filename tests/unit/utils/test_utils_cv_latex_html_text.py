@@ -20,7 +20,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-import mock
 import pytest
 
 from invenio_records.api import Record
@@ -329,62 +328,16 @@ def test_get_publi_info_from_publication_info_an_empty_list():
     assert expected == result
 
 
-def test_get_publi_info_from_publication_info_with_journal_title_not_a_list():
-    journal_title_not_a_list = Record({
+def test_get_publi_info_from_publication_info_with_journal_title():
+    journal_title = Record({
         'publication_info': [
             {'journal_title': 'Nucl.Phys.'}
         ]
     })
     cv_latex_html_text = Cv_latex_html_text(
-        journal_title_not_a_list, 'cv_latex_html_text', ',')
+        journal_title, 'cv_latex_html_text', ',')
 
-    expected = ['Submitted to:Nucl.Phys.']
-    result = cv_latex_html_text._get_publi_info()
-
-    assert expected == result
-
-
-@pytest.mark.xfail(reason='IndexError when accessing last element')
-def test_get_publi_info_from_publication_info_with_journal_title_an_empty_list():
-    journal_title_an_empty_list = Record({
-        'publication_info': [
-            {'journal_title': []}
-        ]
-    })
-    cv_latex_html_text = Cv_latex_html_text(
-        journal_title_an_empty_list, 'cv_latex_html_text', ',')
-
-    expected = []
-    result = cv_latex_html_text._get_publi_info()
-
-    assert expected == result
-
-
-def test_get_publi_info_from_publication_info_with_journal_title_a_list_of_one_element():
-    journal_title_a_list_of_one_element = Record({
-        'publication_info': [
-            {'journal_title': ['foo']}
-        ]
-    })
-    cv_latex_html_text = Cv_latex_html_text(
-        journal_title_a_list_of_one_element, 'cv_latex_html_text', ',')
-
-    expected = ['Submitted to:foo']
-    result = cv_latex_html_text._get_publi_info()
-
-    assert expected == result
-
-
-def test_get_publi_info_from_publication_info_with_journal_title_a_list_of_two_elements():
-    journal_title_a_list_of_two_elements = Record({
-        'publication_info': [
-            {'journal_title': ['foo', 'bar']}
-        ]
-    })
-    cv_latex_html_text = Cv_latex_html_text(
-        journal_title_a_list_of_two_elements, 'cv_latex_html_text', ',')
-
-    expected = ['Submitted to:bar']
+    expected = ['Submitted to: Nucl.Phys.']
     result = cv_latex_html_text._get_publi_info()
 
     assert expected == result
@@ -420,13 +373,13 @@ def test_get_publi_info_from_publication_info_with_journal_volume_with_letter():
     cv_latex_html_text = Cv_latex_html_text(
         journal_volume_with_letter, 'cv_latex_html_text', ',')
 
-    expected = ['Eur.Phys.J. C73']
+    expected = ['Submitted to: Eur.Phys.J.']
     result = cv_latex_html_text._get_publi_info()
 
     assert expected == result
 
 
-def test_get_publi_info_from_publication_info_with_year_not_a_list():
+def test_get_publi_info_from_publication_info_with_year():
     year_not_a_list = Record({
         'publication_info': [
             {
@@ -438,62 +391,7 @@ def test_get_publi_info_from_publication_info_with_year_not_a_list():
     cv_latex_html_text = Cv_latex_html_text(
         year_not_a_list, 'cv_latex_html_text', ',')
 
-    expected = ['Submitted to:Phys.Lett. (1999)']
-    result = cv_latex_html_text._get_publi_info()
-
-    assert expected == result
-
-
-@pytest.mark.xfail(reason='IndexError when accessing last element')
-def test_get_publi_info_from_publication_info_with_year_an_empty_list():
-    year_an_empty_list = Record({
-        'publication_info': [
-            {
-                'journal_title': 'Phys.Rev.',
-                'year': []
-            }
-        ]
-    })
-    cv_latex_html_text = Cv_latex_html_text(
-        year_an_empty_list, 'cv_latex_html_text', ',')
-
-    expected = ['Submitted to:Phys.Rev.']
-    result = cv_latex_html_text._get_publi_info()
-
-    assert expected == result
-
-
-def test_get_publi_info_from_publication_info_with_year_a_list_of_one_element():
-    year_a_list_of_one_element = Record({
-        'publication_info': [
-            {
-                'journal_title': 'JHEP',
-                'year': ['1999']
-            }
-        ]
-    })
-    cv_latex_html_text = Cv_latex_html_text(
-        year_a_list_of_one_element, 'cv_latex_html_text', ',')
-
-    expected = ['Submitted to:JHEP (1999)']
-    result = cv_latex_html_text._get_publi_info()
-
-    assert expected == result
-
-
-def test_get_publi_info_from_publication_info_with_year_a_list_of_two_elements():
-    year_a_list_of_two_elements = Record({
-        'publication_info': [
-            {
-                'journal_title': 'Phys.Rev.Lett.',
-                'year': ['1999', '2000']
-            }
-        ]
-    })
-    cv_latex_html_text = Cv_latex_html_text(
-        year_a_list_of_two_elements, 'cv_latex_html_text', ',')
-
-    expected = ['Submitted to:Phys.Rev.Lett. (2000)']
+    expected = ['Submitted to: Phys.Lett. (1999)']
     result = cv_latex_html_text._get_publi_info()
 
     assert expected == result
@@ -511,82 +409,25 @@ def test_get_publi_info_from_publication_info_with_journal_issue():
     cv_latex_html_text = Cv_latex_html_text(
         journal_issue, 'cv_latex_html_text', ',')
 
-    expected = ['Class.Quant.Grav. 10,']
+    expected = ['Submitted to: Class.Quant.Grav.']
     result = cv_latex_html_text._get_publi_info()
 
     assert expected == result
 
 
-def test_get_publi_info_from_publication_info_with_page_artid_not_a_list():
-    page_artid_not_a_list = Record({
+def test_get_publi_info_from_publication_info_with_page_start():
+    page_start = Record({
         'publication_info': [
             {
                 'journal_title': 'JHEP',
-                'page_artid': '190'
+                'page_start': '190'
             }
         ]
     })
     cv_latex_html_text = Cv_latex_html_text(
-        page_artid_not_a_list, 'cv_latex_html_text', ',')
+        page_start, 'cv_latex_html_text', ',')
 
-    expected = ['JHEP 190']
-    result = cv_latex_html_text._get_publi_info()
-
-    assert expected == result
-
-
-def test_get_publi_info_from_publication_info_with_page_artid_an_empty_list():
-    page_artid_an_empty_list = Record({
-        'publication_info': [
-            {
-                'journal_title': 'Phys.Lett.',
-                'page_artid': []
-            }
-        ]
-    })
-    cv_latex_html_text = Cv_latex_html_text(
-        page_artid_an_empty_list, 'cv_latex_html_text', ',')
-
-    expected = ['Phys.Lett.']
-    result = cv_latex_html_text._get_publi_info()
-
-    assert expected == result
-
-
-def test_get_publi_info_from_publication_info_with_page_artid_a_list_of_one_element():
-    page_artid_a_list_of_one_element = Record({
-        'publication_info': [
-            {
-                'journal_title': 'Eur.Phys.J.',
-                'page_artid': ['2466']
-            }
-        ]
-    })
-    cv_latex_html_text = Cv_latex_html_text(
-        page_artid_a_list_of_one_element, 'cv_latex_html_text', ',')
-
-    expected = ['Eur.Phys.J. 2466']
-    result = cv_latex_html_text._get_publi_info()
-
-    assert expected == result
-
-
-def test_get_publi_info_from_publication_info_with_page_artid_a_list_of_two_elements():
-    page_artid_a_list_of_two_elements = Record({
-        'publication_info': [
-            {
-                'journal_title': 'Phys.Rev.Lett.',
-                'page_artid': [
-                    '321-323',
-                    '1-188'
-                ]
-            }
-        ]
-    })
-    cv_latex_html_text = Cv_latex_html_text(
-        page_artid_a_list_of_two_elements, 'cv_latex_html_text', ',')
-
-    expected = ['Phys.Rev.Lett. 1-188']
+    expected = ['Submitted to: JHEP']
     result = cv_latex_html_text._get_publi_info()
 
     assert expected == result
@@ -613,13 +454,15 @@ def test_get_publi_info_from_publication_info_a_list_of_two_elements():
             {
                 'journal_title': 'Int.J.Theor.Phys.',
                 'journal_volume': '38',
-                'page_artid': '1113-1133',
+                'page_start': '1113',
+                'page_end': '1133',
                 'year': 1999
             },
             {
                 'journal_title': 'Adv.Theor.Math.Phys.',
                 'journal_volume': '2',
-                'page_artid': '231-252',
+                'page_start': '231',
+                'page_end': '252',
                 'year': 1998
             }
         ]

@@ -365,9 +365,17 @@
                     "journal_issue": {
                         "type": "string"
                     },
-                    "page_artid": {
+                    "page_start": {
                         "type": "string",
-                        "description": "FIXME: for ejournals this could be the page index, but there is no realiable way to know whether something is a page index or a first page, does it?"
+                        "description": "First page"
+                    },
+                    "page_end": {
+                        "type": "string",
+                        "description": "Last page"
+                    },
+                    "artid": {
+                        "type": "string",
+                        "description": "Electronic Article ID"
                     },
                     "conf_acronym": {
                         "type": "string"

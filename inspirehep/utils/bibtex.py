@@ -28,6 +28,7 @@ from dojson.utils import force_list
 
 from inspirehep.utils import bibtex_booktitle
 from inspirehep.utils.record_getter import get_es_record
+from inspirehep.utils.record import is_submitted_but_not_published
 
 from .export import MissingRequiredFieldError, Export
 
@@ -167,7 +168,8 @@ class Bibtex(Export):
             pub_info = self.record['publication_info']
             for field in pub_info:
                 if 'journal_title' in field and 'journal_volume' in field \
-                        and 'page_artid' in field and 'year' in field:
+                        and ('page_start' in field or 'artid' in field) \
+                        and 'year' in field:
                     entry_type = 'article'
                     break
         return entry_type, original_entry
@@ -484,11 +486,12 @@ class Bibtex(Export):
             pub_info = self.record['publication_info']
             try:
                 journal = pub_info[0]
-                if 'page_artid' in journal:
-                    if isinstance(journal['page_artid'], list):
-                        pages = journal['page_artid'][-1]
-                    else:
-                        pages = journal['page_artid']
+                if 'page_start' in journal and 'page_end' in journal:
+                    pages = '{page_start}-{page_end}'.format(**journal)
+                elif 'page_start' in journal:
+                    pages = '{page_start}'.format(**journal)
+                elif 'artid' in journal:
+                    pages = '{artid}'.format(**journal)
             except IndexError:
                 pass
         return pages
@@ -507,30 +510,27 @@ class Bibtex(Export):
                             ('journal_title' in val or
                              'journal_volume' in val or
                              'journal_issue' in val or
-                             'page_artid' in val or
+                             'page_start' in val or
+                             'artid' in val or
                              'year' in val):
                             if 'journal_title' in val:
-                                if not ('journal_volume' in val or
-                                        'journal_issue' in val or
-                                        'page_artid' in val or
-                                        'doi' in self.record):
+                                if is_submitted_but_not_published(self.record):
                                     note += 'Submitted to: ' +\
                                             re.sub(r'\.([A-Z])', r'. \1',
                                                    val['journal_title'])
                                 else:
                                     note += re.sub(r'\.([A-Z])', r'. \1',
                                                    val['journal_title'])
-                            if 'journal_volume' in val:
-                                if note.find("JHEP") > -1:
-                                    note += re.sub(r'\d\d(\d\d)', r'\1',
-                                                   val['journal_volume'])
-                                else:
-                                    note += val['journal_volume']
-                            if 'journal_issue' in val:
-                                note += ',no.' + val['journal_issue']
-                            if 'page_artid' in val:
-                                note += ',' + \
-                                        val['page_artid'].split('-', 1)[0]
+                                    if 'journal_volume' in val:
+                                        if note.find("JHEP") > -1:
+                                            note += re.sub(r'\d\d(\d\d)', r'\1',
+                                                           val['journal_volume'])
+                                        else:
+                                            note += val['journal_volume']
+                                    if 'journal_issue' in val:
+                                        note += ',no.' + val['journal_issue']
+                                    if 'page_start' in val or 'artid' in val:
+                                        note += ',' + (val.get('page_start') or val['artid'])
                             if 'year' in val:
                                 note += "(" + str(val['year']) + ")"
                             elif 'preprint_date' in self.record:
@@ -551,9 +551,8 @@ class Bibtex(Export):
                                     note += val['journal_volume']
                             if 'journal_issue' in val:
                                 note += ',no.' + val['journal_issue']
-                            if 'page_artid' in val:
-                                note += ',' + \
-                                        val['page_artid'].split('-', 1)[0]
+                            if 'page_start' in val or 'artid' in val:
+                                note += ',' + (val.get('page_start') or val['artid'])
                             if 'year' in val:
                                 note += "(" + str(val['year']) + ")"
                             result = "[" + val['note'] + ": " + note + "]"
@@ -648,17 +647,8 @@ class Bibtex(Export):
                     journal = field['journal_title']
                 if 'journal_volume' in field:
                     volume = field['journal_volume']
-                if 'page_artid' in field:
-                    pages = field['page_artid']
-                    if pages:
-                        if isinstance(pages, list):
-                            for page in pages:
-                                dashpos = page.find('-')
-                                break
-                        else:
-                            dashpos = pages.find('-')
-                        if dashpos > -1:
-                            pages = pages.split('-')[0]
+                if 'page_start' in field or 'artid' in field:
+                    pages = field.get('page_start', '') or field.get('artid', '')
                 try:
                     if journal and (volume != '' or pages != ''):
                         recid = self.record['control_number', '']

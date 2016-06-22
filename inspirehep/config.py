@@ -207,7 +207,9 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "firstauthor": ["authors.full_name", "authors.alternative_name"],
     "fulltext": ["urls.value"],
     "journal": ["publication_info.recid",
-                "publication_info.page_artid",
+                "publication_info.page_start",
+                "publication_info.artid",
+                "publication_info.page_range",
                 "publication_info.journal_issue",
                 "publication_info.conf_acronym",
                 "publication_info.journal_title",
@@ -220,7 +222,9 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
                 "publication_info.isbn",
                 "publication_info.note"
                 ],
-    "journal_page": ["publication_info.page_artid"],
+    "journal_page": ["publication_info.page_start",
+                     "publication_info.page_range"
+                     "publication_info.artid"],
     "keyword": ["thesaurus_terms.keyword", "free_keywords.value"],
     "note": ["public_notes.value"],
     "reference": ["references.doi", "references.report_number",

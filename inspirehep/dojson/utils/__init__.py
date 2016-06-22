@@ -32,10 +32,15 @@ try:
 except ImportError:  # pragma: no cover
     current_app = None
 
+from dojson.utils import force_list
+
 from inspirehep.config import (
     ARXIV_TO_INSPIRE_CATEGORY_MAPPING,
     INSPIRE_RANK_TYPES,
 )
+
+
+_RE_2_CHARS = re.compile(r"[a-z].*[a-z]", re.I)
 
 
 def classify_field(value):
@@ -204,3 +209,29 @@ def strip_empty_values(obj):
         return type(obj)(new_obj)
     else:
         return obj
+
+
+def split_page_artid(page_artid):
+    """Split page_artid into page_start/end and artid."""
+    page_start = None
+    page_end = None
+    artid = None
+
+    for page_artid in force_list(page_artid) or []:
+        if page_artid:
+            if '-' in page_artid:
+                # if it has a dash it's a page range
+                page_start, page_end = page_artid.split('-')
+            elif _RE_2_CHARS.search(page_artid):
+                # if it it has 2 ore more letters it's an article ID
+                artid = page_artid
+            elif len(page_artid) >= 5:
+                # it it is longer than 5 digits it's an article ID
+                artid = page_artid
+            else:
+                if artid is None:
+                    artid = page_artid
+                if page_start is None:
+                    page_start = page_artid
+
+    return page_start, page_end, artid

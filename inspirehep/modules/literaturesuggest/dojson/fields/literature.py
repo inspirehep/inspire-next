@@ -34,6 +34,8 @@ from dojson import utils
 from dojson.errors import IgnoreKey
 from idutils import is_arxiv_post_2007
 
+from inspirehep.dojson.utils import split_page_artid
+
 from ..model import literature
 
 
@@ -215,10 +217,11 @@ def year(self, key, value):
 
 @literature.over('_page_range_article_id', '^page_range_article_id$')
 def page_range_article_id(self, key, value):
-    if 'publication_info' in self:
-        self['publication_info'][0].update(dict(page_artid=value))
-    else:
-        self['publication_info'] = [dict(page_artid=value)]
+    page_start, page_end, artid = split_page_artid(value)
+    self.setdefault('publication_info', [{}])[0].update(dict(
+        page_start=page_start,
+        page_end=page_end,
+        artid=artid))
     raise IgnoreKey
 
 

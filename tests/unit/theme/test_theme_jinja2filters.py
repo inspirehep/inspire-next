@@ -108,6 +108,7 @@ def mock_perform_es_search():
         }
     )
 
+
 @pytest.fixture
 def mock_perform_es_search_empty():
     return result.Response(
@@ -145,6 +146,7 @@ def mock_perform_es_search_onerecord():
             "took": 123
         }
     )
+
 
 @pytest.fixture
 def mock_perform_es_search_tworecord():
@@ -885,13 +887,13 @@ def test_publication_info_a_list_of_two_elements():
             {
                 'journal_volume': '8',
                 'journal_title': 'JINST',
-                'page_artid': 'P09009',
+                'artid': 'P09009',
                 'year': 2013
             },
             {
                 'journal_volume': '8',
                 'journal_title': 'JINST',
-                'page_artid': '9009',
+                'page_start': '9009',
                 'year': 2013
             }
         ]
@@ -973,7 +975,7 @@ def test_publication_info_from_journal_title_and_pages_artid():
         'publication_info': [
             {
                 'journal_title': 'Astrophys.J.',
-                'page_artid': '525'
+                'page_start': '525'
             }
         ]
     })
@@ -1047,7 +1049,8 @@ def test_publication_info_from_conference_recid_and_parent_recid_with_pages(r_r,
             {
                 'conference_record': conf_rec,
                 'parent_record': parent_rec,
-                'page_artid': '515-518'
+                'page_start': '515',
+                'page_end': '518'
             }
         ]
     })
@@ -1055,7 +1058,7 @@ def test_publication_info_from_conference_recid_and_parent_recid_with_pages(r_r,
     expected = {
         'conf_info': 'Published in <a href="/record/1402672">proceedings</a> '
                      'of <a href="/record/1331207">50th Rencontres de Moriond '
-                     'on EW Interactions and Unified Theories</a>, pages  \n  '
+                     'on EW Interactions and Unified Theories</a>, pages\n  '
                      '515-518'
     }
     result = publication_info(with_conference_recid_and_parent_recid_and_pages)

@@ -603,7 +603,7 @@ def test_publication_info_page_artid_from_page_range_article_id():
 
     expected = [
         {
-            'page_artid': 'foo',
+            'artid': 'foo',
         },
     ]
     result = literature.do(form)
@@ -619,7 +619,7 @@ def test_publication_info_page_artid_from_multiple_page_range_article_id_updates
 
     expected = [
         {
-            'page_artid': 'bar',
+            'artid': 'bar',
         },
     ]
     result = literature.do(form)

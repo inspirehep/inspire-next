@@ -25,6 +25,7 @@
 from refextract import extract_journal_reference, extract_references_from_file
 
 from inspirehep.utils.record import get_value
+from inspirehep.dojson.utils import split_page_artid
 
 # FIXME get journal mappings for refextract
 # from inspirehep.utils.knowledge import get_mappings_from_kbname
@@ -65,9 +66,14 @@ def extract_journal_info(obj, eng):
                     "year"
                 )
             if "page" in extracted_publication_info:
-                pubnote["page_artid"] = extracted_publication_info.get(
-                    "page"
-                )
+                page_start, page_end, artid = split_page_artid(
+                    extracted_publication_info.get("page"))
+                if page_start:
+                    pubnote["page_start"] = page_start
+                if page_end:
+                    pubnote["page_end"] = page_end
+                if artid:
+                    pubnote["artid"] = artid
         new_publication_info.append(pubnote)
 
     obj.data["publication_info"] = new_publication_info

@@ -144,7 +144,7 @@ def test_get_entry_type_no_collections_one_valid_pubinfo():
         'publication_info': {
             'journal_title': 'foo',
             'journal_volume': 'bar',
-            'page_artid': 'baz',
+            'page_start': 'baz',
             'year': 'quux'
         }
     })
@@ -173,7 +173,7 @@ def test_get_entry_type_no_collections_second_pubinfo_valid():
             {
                 'journal_title': 'foo',
                 'journal_volume': 'bar',
-                'page_artid': 'baz',
+                'page_start': 'baz',
                 'year': 'quux'
             }
         ]
@@ -192,7 +192,7 @@ def test_get_entry_type_one_collection_one_pubinfo():
             {
                 'journal_title': 'foo',
                 'journal_volume': 'bar',
-                'page_artid': 'baz',
+                'page_start': 'baz',
                 'year': 'quux'
             }
         ]
@@ -1147,7 +1147,8 @@ def test_get_pages_publication_info_an_empty_list():
 def test_get_pages_publication_info_one_page():
     publication_info_one_page = Record({
         'publication_info': [
-            {'page_artid': '585-587'}
+            {'page_start': '585',
+             'page_end': '587'}
         ]
     })
 
@@ -1157,29 +1158,13 @@ def test_get_pages_publication_info_one_page():
     assert expected == result
 
 
-def test_get_pages_publication_info_one_page_a_list():
-    publication_info_one_page_a_list = Record({
-        'publication_info': [
-            {
-                'page_artid': [
-                    '508-509',
-                    '585-587'
-                ]
-            }
-        ]
-    })
-
-    expected = '585-587'
-    result = Bibtex(publication_info_one_page_a_list)._get_pages()
-
-    assert expected == result
-
-
 def test_get_pages_publication_info_two_pages():
     publication_info_two_pages = Record({
         'publication_info': [
-            {'page_artid': '585-587'},
-            {'page_artid': '508-509'}
+            {'page_start': '585',
+             'page_end': '587'},
+            {'page_start': '508',
+             'page_end': '509'}
         ]
     })
 
@@ -1273,7 +1258,7 @@ def test_get_note_publication_info_a_list_not_a_note_with_volume():
         ]
     })
 
-    expected = '[D69]'
+    expected = '[]'
     result = Bibtex(publication_info_a_list_not_a_note_with_volume)._get_note()
 
     assert expected == result
@@ -1293,7 +1278,7 @@ def test_get_note_publication_info_a_list_not_a_note_with_volume_JHEP():
         ]
     })
 
-    expected = '[JHEP12]'
+    expected = '[Submitted to: JHEP]'
     result = Bibtex(publication_info_a_list_not_a_note_with_volume_JHEP)._get_note()
 
     assert expected == result
@@ -1307,7 +1292,7 @@ def test_get_note_publication_info_a_list_not_a_note_with_issue():
         ]
     })
 
-    expected = '[,no.11]'
+    expected = '[]'
     result = Bibtex(publication_info_a_list_not_a_note_with_issue)._get_note()
 
     assert expected == result
@@ -1316,12 +1301,14 @@ def test_get_note_publication_info_a_list_not_a_note_with_issue():
 def test_get_note_publication_info_a_list_not_a_note_with_pages():
     publication_info_a_list_not_a_note_with_pages = Record({
         'publication_info': [
-            {'page_artid': 'pp.2067-2414'},
-            {'page_artid': 'pp.2067-2414'}
+            {'page_start': 'pp.2067',
+             'page_end': '2414'},
+            {'page_start': 'pp.2067',
+             'page_end': '2414'}
         ]
     })
 
-    expected = '[,pp.2067]'
+    expected = '[]'
     result = Bibtex(publication_info_a_list_not_a_note_with_pages)._get_note()
 
     assert expected == result
@@ -1364,13 +1351,15 @@ def test_get_note_publication_info_a_list_not_a_note_with_everything():
                 'journal_title': 'Acta Phys.Polon.',
                 'journal_volume': 'B46',
                 'journal_issue': '11',
-                'page_artid': 'pp.2067-2414'
+                'page_start': 'pp.2067',
+                'page_end': '2414'
             },
             {
                 'journal_title': 'Acta Phys.Polon.',
                 'journal_volume': 'B46',
                 'journal_issue': '11',
-                'page_artid': 'pp.2067-2414'
+                'page_start': 'pp.2067',
+                'page_end': '2414'
             },
         ]
     })
@@ -1468,11 +1457,11 @@ def test_get_note_publication_info_a_list_a_note_with_pages():
         'publication_info': [
             {
                 'note': 'Reprint',
-                'page_artid': '019903'
+                'artid': '019903'
             },
             {
                 'note': 'Reprint',
-                'page_artid': '019903'
+                'artid': '019903'
             }
         ]
     })
@@ -1869,61 +1858,14 @@ def test_get_pubnote_publication_info_a_list_one_with_title_and_pages_not_a_list
         'publication_info': [
             {
                 'journal_title': 'Nucl.Phys.',
-                'page_artid': '579-588'
+                'page_start': '579',
+                'page_end': '588'
             }
         ]
     })
 
     expected = 'Nucl. Phys.,,579'
     result = Bibtex(publication_info_a_list_one_with_title_and_pages_not_a_list)._get_pubnote()
-
-    assert expected == result
-
-
-@pytest.mark.xfail
-@mock.patch('inspirehep.utils.bibtex.get_kbr_keys')
-def test_get_pubnote_publication_info_a_list_one_with_title_and_pages_a_list_first_without_dash(self, g_k_k):
-    # TODO: mock the actual invenio_knowledge API.
-    g_k_k.return_value = [['Nucl. Phys.']]
-
-    publication_info_a_list_one_with_title_and_pages_a_list = Record({
-        'publication_info': [
-            {
-                'journal_title': 'Nucl.Phys.',
-                'page_artid': [
-                    '550',
-                    '579-588'
-                ]
-            }
-        ]
-    })
-
-    expected = 'Nucl.Phys.,,550'
-    result = Bibtex(publication_info_a_list_one_with_title_and_pages_a_list)._get_pubnote()
-
-    assert expected == result
-
-
-@pytest.mark.xfail
-@mock.patch('inspirehep.utils.bibtex.get_kbr_keys')
-def test_get_pubnote_publication_info_a_list_one_with_title_and_pages_a_list_first_with_dash(self, g_k_k):
-    # TODO: mock the actual invenio_knowledge API.
-    g_k_k.return_value = [['Nucl. Phys.']]
-
-    publication_info_a_list_one_with_title_and_pages_a_list = Record({
-        'publication_info': [
-            {
-                'journal_title': 'Nucl.Phys.',
-                'page_artid': [
-                    '579-588',
-                    '550'
-                ]
-            }
-        ]
-    })
-
-    expected = 'Nucl.Phys.,,579'
-    result = Bibtex(publication_info_a_list_one_with_title_and_pages_a_list)._get_pubnote()
 
     assert expected == result
 
@@ -1939,7 +1881,8 @@ def test_get_pubnote_publication_info_a_list_one_with_everything(self, g_k_k):
             {
                 'journal_title': 'Nucl.Phys.',
                 'journal_volume': '22',
-                'page_artid': '579-588'
+                'page_start': '579',
+                'page_end': '588'
             }
         ]
     })
@@ -1961,7 +1904,8 @@ def test_get_pubnote_publication_info_a_list_get_kbr_keys_raises(self, g_k_k):
             {
                 'journal_title': 'Nucl.Phys.',
                 'journal_volume': '22',
-                'page_artid': '579-588'
+                'page_start': '579',
+                'page_end': '588'
             }
         ]
     })

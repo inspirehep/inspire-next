@@ -85,3 +85,32 @@ def get_value(record, key, default=None):
         except KeyError:
             return default
     return value
+
+
+def is_submitted_but_not_published(record):
+    """Return True if article is submitted to journal.
+
+    Returns True if and only an article is submitted to a journal but has not
+    yet been published (as far as we know).
+    """
+    def is_complete(publication_info):
+        return (('journal_issue' in publication_info or
+                 'journal_volume' in publication_info or
+                 'year' in publication_info) and
+                ('page_start' in publication_info or
+                 'artid' in publication_info))
+    if 'dois' in record:
+        # DOIs exist, hence it's already published
+        return False
+    had_at_least_one_journal_title = False
+    if 'publication_info' in record:
+        for publication_info in record['publication_info']:
+            if 'journal_title' in publication_info:
+                had_at_least_one_journal_title = True
+                if (publication_info['journal_title'].lower() in ('econf', ) and
+                        'journal_volume' in publication_info):
+                    # eConf are special
+                    return False
+                if is_complete(publication_info):
+                    return False
+    return had_at_least_one_journal_title

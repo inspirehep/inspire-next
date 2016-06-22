@@ -350,69 +350,18 @@ def test_get_publi_info_from_publication_info_with_journal_issue():
     assert expected == result
 
 
-def test_get_publi_info_from_publication_info_with_page_artid_not_a_list():
-    page_artid_not_a_list = Record({
+def test_get_publi_info_from_publication_info_with_page_start():
+    page_start = Record({
         'publication_info': [
             {
                 'journal_title': 'JHEP',
-                'page_artid': '190'
+                'page_start': '190'
             }
         ]
     })
 
     expected = ['JHEP, 190']
-    result = Cv_latex(page_artid_not_a_list)._get_publi_info()
-
-    assert expected == result
-
-
-def test_get_publi_info_from_publication_info_with_page_artid_an_empty_list():
-    page_artid_an_empty_list = Record({
-        'publication_info': [
-            {
-                'journal_title': 'Phys.Lett.',
-                'page_artid': []
-            }
-        ]
-    })
-
-    expected = ['Phys.\\ Lett.\\ ']
-    result = Cv_latex(page_artid_an_empty_list)._get_publi_info()
-
-    assert expected == result
-
-
-def test_get_publi_info_from_publication_info_with_page_artid_a_list_of_one_element():
-    page_artid_a_list_of_one_element = Record({
-        'publication_info': [
-            {
-                'journal_title': 'Eur.Phys.J.',
-                'page_artid': ['2466']
-            }
-        ]
-    })
-
-    expected = ['Eur.\\ Phys.\\ J.\\ , 2466']
-    result = Cv_latex(page_artid_a_list_of_one_element)._get_publi_info()
-
-    assert expected == result
-
-
-def test_get_publi_info_from_publication_info_with_page_artid_a_list_of_two_elements():
-    page_artid_a_list_of_two_elements = Record({
-        'publication_info': [
-            {
-                'journal_title': 'Phys.Rev.Lett.',
-                'page_artid': [
-                    '321-323',
-                    '1-188'
-                ]
-            }
-        ]
-    })
-
-    expected = ['Phys.\\ Rev.\\ Lett.\\ , 1']
-    result = Cv_latex(page_artid_a_list_of_two_elements)._get_publi_info()
+    result = Cv_latex(page_start)._get_publi_info()
 
     assert expected == result
 
@@ -425,7 +374,7 @@ def test_get_publi_info_from_pubinfo_freetext():
     })
 
     expected = 'Phys. Lett. 12 (1964) 132-133'
-    result = Cv_latex(pubinfo_freetext)._get_publi_info() 
+    result = Cv_latex(pubinfo_freetext)._get_publi_info()
 
     assert expected == result
 
@@ -436,13 +385,15 @@ def test_get_publi_info_from_publication_info_a_list_of_two_elements():
             {
                 'journal_title': 'Int.J.Theor.Phys.',
                 'journal_volume': '38',
-                'page_artid': '1113-1133',
+                'page_start': '1113',
+                'page_end': '1133',
                 'year': 1999
             },
             {
                 'journal_title': 'Adv.Theor.Math.Phys.',
                 'journal_volume': '2',
-                'page_artid': '231-252',
+                'page_start': '231',
+                'page_end': '252',
                 'year': 1998
             }
         ]
