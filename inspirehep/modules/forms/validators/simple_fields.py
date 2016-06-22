@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,17 +20,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-import six
+from __future__ import absolute_import, division, print_function
 
 from datetime import datetime
+from urllib import urlencode
 
 from flask import current_app
-
-from wtforms.validators import ValidationError, StopValidation
-
 from idutils import is_arxiv, is_isbn
-
-from urllib import urlencode
+from wtforms.validators import ValidationError, StopValidation
 
 
 def arxiv_syntax_validation(form, field):
@@ -166,33 +163,3 @@ def date_validator(form, field):
                 break
         else:
             raise StopValidation(message)
-
-
-class RequiredIfFiles(object):
-
-    """Require field if files."""
-
-    def __init__(self, filefield_name, message=None):
-        self.filefield_name = filefield_name
-        self.message = message
-
-    def __call__(self, form, field):
-        filefield_name = getattr(form, self.filefield_name)
-        if bool(len(form.files)):
-            # Field value is required - check the value
-            if not field.data or \
-                    isinstance(field.data, six.string_types) \
-                    and not field.data.strip():
-                if self.message is None:
-                    self.message = 'This field is required.'
-                field.errors[:] = []
-                raise StopValidation(self.message % {
-                    'filefield_name': filefield_name.label.text,
-                    'value': form.files
-                })
-
-
-#
-# Aliases
-#
-required_if_files = RequiredIfFiles
