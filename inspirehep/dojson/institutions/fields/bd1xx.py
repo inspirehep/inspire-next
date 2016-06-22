@@ -36,20 +36,15 @@ from ...utils.geo import parse_institution_address
 @utils.filter_values
 def location(self, key, value):
     """GPS location info."""
-    longitude, latitude = ('', '')
-    if value.get('d'):
+    def _get_float(value, c):
         try:
-            longitude = float(value.get('d'))
-        except:
-            pass
-    if value.get('f'):
-        try:
-            latitude = float(value.get('f'))
-        except:
-            pass
+            return float(value[c])
+        except (KeyError, ValueError):
+            return ''
+
     return {
-        'longitude': longitude,
-        'latitude': latitude
+        'longitude': _get_float(value, 'd'),
+        'latitude': _get_float(value, 'f'),
     }
 
 
