@@ -26,6 +26,8 @@ import re
 from .export import MissingRequiredFieldError, Export
 from inspirehep import config
 
+from inspirehep.utils.record import is_submitted_but_not_published
+
 
 class Cv_latex_html_text(Export):
 
@@ -202,41 +204,27 @@ class Cv_latex_html_text(Export):
             for field in self.record['publication_info']:
                 out = ''
                 if 'journal_title' in field:
-                    if isinstance(field['journal_title'], list):
-                        if not ('journal_volume' in field or
-                                'journal_issue' in field or
-                                'page_artid' in field or
-                                'doi' in self.record):
-                            journal_title = 'Submitted to:' +\
-                                field['journal_title'][-1]
-                        else:
-                            journal_title = field['journal_title'][-1]
-                    else:
-                        if not ('journal_volume' in field or
-                                'journal_issue' in field or
-                                'page_artid' in field or
-                                'doi' in self.record):
-                            journal_title = 'Submitted to:' +\
-                                field['journal_title']
-                        else:
-                            journal_title = field['journal_title']
-                    if 'journal_volume' in field:
-                        journal_volume = ' ' + field['journal_volume']
-                    if 'year' in field:
-                        if isinstance(field['year'], list):
-                            year = ' (' + str(field['year'][-1]) + ')'
-                        else:
+                    if is_submitted_but_not_published(self.record):
+                        journal_title = 'Submitted to: ' +\
+                            field['journal_title']
+                        if 'year' in field:
                             year = ' (' + str(field['year']) + ')'
-                    if 'journal_issue' in field:
-                        if field['journal_issue']:
-                            journal_issue = ' ' + \
-                                            field['journal_issue'] + ','
-                    if 'page_artid' in field:
-                        if field['page_artid']:
-                            if isinstance(field['page_artid'], list):
-                                pages = ' ' + field['page_artid'][-1]
-                            else:
-                                pages = ' ' + field['page_artid']
+                    else:
+                        journal_title = field['journal_title']
+                        if 'journal_volume' in field:
+                            journal_volume = ' ' + field['journal_volume']
+                        if 'year' in field:
+                            year = ' (' + str(field['year']) + ')'
+                        if 'journal_issue' in field:
+                            if field['journal_issue']:
+                                journal_issue = ' ' + \
+                                                field['journal_issue'] + ','
+                        if 'page_start' in field and 'page_end' in field:
+                            pages = ' {page_start}-{page_end}'.format(**field)
+                        elif 'page_start' in field:
+                            pages = ' {page_start}'.format(**field)
+                        elif 'artid' in field:
+                            pages = ' {artid}'.format(**field)
                     out += journal_title + journal_volume + year + \
                         journal_issue + pages
                     result.append(out)

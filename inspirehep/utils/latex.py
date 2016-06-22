@@ -241,26 +241,11 @@ class Latex(Export):
                             else:
                                 journal_issue = ', no. ' + \
                                                 field['journal_issue']
-                    if 'page_artid' in field:
-                        page_artid = ''
-                        if field['page_artid']:
-                            if isinstance(field['page_artid'], list):
-                                dashpos = field['page_artid'][-1].find('-')
-                                if dashpos > -1:
-                                    page_artid = field[
-                                        'page_artid'][-1][:dashpos]
-                                else:
-                                    page_artid = field['page_artid'][-1]
-                            else:
-                                dashpos = field['page_artid'].find('-')
-                                if dashpos > -1:
-                                    page_artid = field['page_artid'][:dashpos]
-                                else:
-                                    page_artid = field['page_artid']
-                            if self.latex_format == 'latex_eu':
-                                pages = ' ' + page_artid
-                            else:
-                                pages = ', ' + page_artid
+                    if 'page_start' in field or 'artid' in field:
+                        if self.latex_format == 'latex_eu':
+                            pages = ' ' + (field.get('page_start') or field['artid'])
+                        else:
+                            pages = ', ' + (field.get('page_start') or field['artid'])
                     if self.latex_format == 'latex_eu':
                         out += journal_title + journal_volume + year + \
                             journal_issue + pages
@@ -294,17 +279,8 @@ class Latex(Export):
                     journal = field['journal_title']
                 if 'journal_volume' in field:
                     volume = field['journal_volume']
-                if 'page_artid' in field:
-                    pages = field['page_artid']
-                    if pages:
-                        if isinstance(pages, list):
-                            for page in pages:
-                                dashpos = page.find('-')
-                                break
-                        else:
-                            dashpos = pages.find('-')
-                        if dashpos > -1:
-                            pages = pages[:dashpos]
+                if 'page_start' in field or 'artid' in field:
+                    pages = field.get('page_start') or field['artid']
                 try:
                     if journal and (volume != '' or pages != ''):
                         recid = self.record['control_number', '']

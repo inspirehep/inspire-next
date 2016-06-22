@@ -552,8 +552,12 @@ def publication_info(record):
                     year = ' (' + str(pub_info['year']) + ')'
                 if 'journal_issue' in pub_info:
                     journal_issue = ' ' + pub_info['journal_issue'] + ', '
-                if 'page_artid' in pub_info:
-                    pages = ' ' + pub_info['page_artid']
+                if 'page_start' in pub_info and 'page_end' in pub_info:
+                    pages = ' ' + '{page_start}-{page_end}'.format(**pub_info)
+                elif 'page_start' in pub_info:
+                    pages = ' ' + '{page_start}'.format(**pub_info)
+                elif 'artid' in pub_info:
+                    pages = ' ' + '{artid}'.format(**pub_info)
                 out.append(journal_title + journal_volume +
                            year + journal_issue + pages)
         if out:
@@ -592,8 +596,11 @@ def publication_info(record):
                             ctx=ctx)
                         break
                     else:
-                        if 'page_artid' in pub_info:
-                            ctx.update({"page_artid": pub_info['page_artid']})
+                        ctx.update(dict(
+                            page_start=pub_info.get('page_start'),
+                            page_end=pub_info.get('page_end'),
+                            artid=pub_info.get('artid')
+                        ))
                         result['conf_info'] = render_macro_from_template(
                             name="conf_without_pub_info",
                             template="inspirehep_theme/format/record/Conference_info_macros.tpl",

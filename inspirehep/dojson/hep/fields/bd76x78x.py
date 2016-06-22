@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import hep, hep2marc
-from ...utils import get_recid_from_ref, get_record_ref
+from ...utils import get_recid_from_ref, get_record_ref, split_page_artid
 
 
 @hep.over('publication_info', '^773..')
@@ -51,11 +51,15 @@ def publication_info(self, key, value):
     conference_record = get_record_ref(conference_recid, 'conferences')
     journal_record = get_record_ref(journal_recid, 'journals')
 
+    page_start, page_end, artid = split_page_artid(value.get('c'))
+
     res = {
         'parent_record': parent_record,
         'conference_record': conference_record,
         'journal_record': journal_record,
-        'page_artid': value.get('c'),
+        'page_start': page_start,
+        'page_end': page_end,
+        'artid': artid,
         'journal_issue': value.get('n'),
         'conf_acronym': value.get('o'),
         'journal_title': value.get('p'),
@@ -77,10 +81,17 @@ def publication_info(self, key, value):
 @utils.filter_values
 def publication_info2marc(self, key, value):
     """Publication info about record."""
+    page_artid = []
+    if value.get('page_start') and value.get('page_end'):
+        page_artid.append('{page_start}-{page_end}'.format(**value))
+    elif value.get('page_start'):
+        page_artid.append('{page_start}'.format(**value))
+    if value.get('artid'):
+        page_artid.append('{artid}'.format(**value))
     return {
         '0': get_recid_from_ref(
             value.get('parent_record')),
-        'c': value.get('page_artid'),
+        'c': page_artid,
         'n': value.get('journal_issue'),
         'o': value.get('conf_acronym'),
         'p': value.get('journal_title'),

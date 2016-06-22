@@ -83,7 +83,8 @@ def formdata_to_model(obj, formdata):
                 }]
     if "publication_info" in data:
         if all([key in data['publication_info'][0].keys() for key in
-               ('year', 'journal_issue', 'journal_volume', 'page_artid')]):
+               ('year', 'journal_issue', 'journal_volume', 'page_start',
+                'page_end', 'artid')]):
             # NOTE: Only peer reviewed journals should have this collection
             # we are adding it here but ideally should be manually added
             # by a curator.
@@ -147,16 +148,17 @@ def formdata_to_model(obj, formdata):
         data['collections'].extend([{'primary': "ConferencePaper"}])
 
     # ============================
-    # Page range
+    # Page number
     # ============================
     if 'page_nr' not in data:
-        if data.get("publication_info", [{}])[0].get("page_artid"):
-            pages = data['publication_info'][0]['page_artid'].split('-')
-            if len(pages) == 2:
-                try:
-                    data['page_nr'] = int(pages[1]) - int(pages[0]) + 1
-                except ValueError:
-                    pass
+        first_publication_info = data.get('publication_info', [{}])[0]
+
+        page_start = first_publication_info.get('page_start')
+        page_end = first_publication_info.get('page_end')
+
+        if page_start and page_end:
+            data['page_nr'] = page_end - page_start + 1
+
     # ============================
     # Language
     # ============================

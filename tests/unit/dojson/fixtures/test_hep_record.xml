@@ -183,6 +183,7 @@
   </datafield>
   <datafield tag="773" ind1=" " ind2=" ">
     <subfield code="c">026802</subfield>
+    <subfield code="c">123-456</subfield>
     <subfield code="n">2</subfield>
     <subfield code="p">Phys.Rev.Lett.</subfield>
     <subfield code="v">105</subfield>

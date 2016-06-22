@@ -235,23 +235,8 @@ class Cv_latex(Export):
                     if 'journal_issue' in field:
                         if field['journal_issue']:
                             journal_issue = ', no. ' + field['journal_issue']
-                    if 'page_artid' in field:
-                        page_artid = ''
-                        if field['page_artid']:
-                            if isinstance(field['page_artid'], list):
-                                dashpos = field['page_artid'][-1].find('-')
-                                if dashpos > -1:
-                                    page_artid = field[
-                                        'page_artid'][-1][:dashpos]
-                                else:
-                                    page_artid = field['page_artid'][-1]
-                            else:
-                                dashpos = field['page_artid'].find('-')
-                                if dashpos > -1:
-                                    page_artid = field['page_artid'][:dashpos]
-                                else:
-                                    page_artid = field['page_artid']
-                            pages = ', ' + page_artid
+                    if 'page_start' in field or 'artid' in field:
+                        pages = ', ' + (field.get('page_start') or field['artid'])
 
                     out += journal_title + journal_volume + journal_issue + \
                         pages + year

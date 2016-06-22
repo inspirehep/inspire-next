@@ -535,27 +535,15 @@ def test_find_author_with_hash_wildcard():
     assert expected == result
 
 
+@pytest.mark.xfail(reason='tracked in issue #1235')
 def test_find_journal():
     query = IQ('find j "Phys.Rev.Lett.,105*"')
 
     expected = {
-        'multi_match': {
+        'query_string': {
             'query': '"Phys.Rev.Lett.,105*"',
-            'fields': [
-                'publication_info.recid',
-                'publication_info.page_artid',
-                'publication_info.journal_issue',
-                'publication_info.conf_acronym',
-                'publication_info.journal_title',
-                'publication_info.reportnumber',
-                'publication_info.confpaper_info',
-                'publication_info.journal_volume',
-                'publication_info.cnum',
-                'publication_info.pubinfo_freetext',
-                'publication_info.year_raw',
-                'publication_info.isbn',
-                'publication_info.note'
-            ]
+            'default_field': 'publication_info.pubnote',
+            'analyze_wildcard': True
         }
     }
     result = query.to_dict()
@@ -759,7 +747,8 @@ def test_find_author_or_author():
                             {'match': {'authors.name_variations': 'von gersdorff, g'}}
                         ],
                         'should': [
-                            {'match': {'authors.full_name': 'von gersdorff, g'}}                            ]
+                            {'match': {'authors.full_name': 'von gersdorff, g'}}
+                        ]
                     }
                 }
             ]

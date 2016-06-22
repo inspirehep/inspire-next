@@ -23,24 +23,31 @@
   {{ conference_title }}</a>)
 {%- endmacro -%}
 
-{%- macro conf_without_pub_info(parent_recid, conference_recid, conference_title, page_artid='') -%}
+{%- macro conf_without_pub_info(parent_recid, conference_recid, conference_title, page_start='', page_end='', artid='') -%}
     Published in <a href="/record/{{ parent_recid }}">proceedings</a> of <a href="/record/{{ conference_recid }}">{{ conference_title }}</a>
-  {%- if page_artid -%}
-    , pages  
-  {{ page_artid }}
+  {%- if page_start and page_end -%}
+    , pages
+  {{ page_start }}-{{ page_end }}
+  {%- elif page_start -%}
+    , page
+  {{ page_start }}
+  {%- elif artid -%}
+    , article ID
+  {{ artid }}
   {%- endif -%}
+
 {%- endmacro -%}
 
-{%- macro conference_only(conference_recid, conference_title, pub_info = false) -%}
+{%- macro conference_only(conference_recid, conference_title, pub_info=false) -%}
   {%- if pub_info -%}
     <br/>
   {%- endif -%}
   Contribution to <a href="/record/{{ conference_recid }}">{{ conference_title }}</a>
 {%- endmacro -%}
 
-{%- macro proceedings_only(parent_recid, parent_title, pub_info = false) -%}
+{%- macro proceedings_only(parent_recid, parent_title, pub_info=false) -%}
   {%- if pub_info -%}
-    (<a href="/record/{{ parent_recid }}">Proceedings</a> of {{ parent_title }})   
+    (<a href="/record/{{ parent_recid }}">Proceedings</a> of {{ parent_title }})
   {%- else -%}
     Published in <a href="/record/{{ parent_recid }}">proceedings</a> of {{ parent_title }}
   {%- endif -%}

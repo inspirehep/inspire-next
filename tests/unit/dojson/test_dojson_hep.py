@@ -64,10 +64,12 @@ def test_schema_present(marcxml_to_json):
     """Test if $schema is created correctly."""
     assert marcxml_to_json['$schema']
 
+
 def test_control_number(marcxml_to_json_book):
     """"Test if control number and self present."""
     assert marcxml_to_json_book['control_number']
     assert marcxml_to_json_book['self']
+
 
 def test_isbns(marcxml_to_json, json_to_marc):
     """Test if isbns is created correctly."""
@@ -135,10 +137,10 @@ def test_external_system_numbers_from_035__a():
 
 def test_external_system_numbers_from_035__a_9():
     snippet = (
-       '<datafield tag="035" ind1=" " ind2=" ">'
-       '  <subfield code="9">INSPIRETeX</subfield>'
-       '  <subfield code="a">Hagedorn:1963hdh</subfield>'
-       '</datafield>'
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">INSPIRETeX</subfield>'
+        '  <subfield code="a">Hagedorn:1963hdh</subfield>'
+        '</datafield>'
     )  # record/1403324
 
     expected = [
@@ -510,8 +512,11 @@ def test_collaboration(marcxml_to_json, json_to_marc):
 
 def test_publication_info(marcxml_to_json, json_to_marc):
     """Test if publication info is created correctly."""
-    assert (marcxml_to_json['publication_info'][0]['page_artid'] ==
-            json_to_marc['773'][0]['c'])
+    assert marcxml_to_json['publication_info'][0]['artid'] == '026802'
+    assert marcxml_to_json['publication_info'][0]['page_start'] == '123'
+    assert marcxml_to_json['publication_info'][0]['page_end'] == '456'
+    assert '026802' in json_to_marc['773'][0]['c']
+    assert '123-456' in json_to_marc['773'][0]['c']
     assert (marcxml_to_json['publication_info'][0]['journal_issue'] ==
             json_to_marc['773'][0]['n'])
     assert (marcxml_to_json['publication_info'][0]['journal_title'] ==

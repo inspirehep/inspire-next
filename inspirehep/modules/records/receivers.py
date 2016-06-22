@@ -115,7 +115,8 @@ def populate_inspire_document_type(recid, json, *args, **kwargs):
             for field in json.get('publication_info', []):
                 for k, v in field.iteritems():
                     complete_pub_info.append(k)
-            if 'page_artid' not in complete_pub_info:
+            if ('page_start' not in complete_pub_info and
+                    'artid' not in 'complete_pub_info'):
                 inspire_doc_type.append('preprint')
         inspire_doc_type.extend([s['primary'].lower() for s in
                                  json.get('collections', []) if 'primary'
