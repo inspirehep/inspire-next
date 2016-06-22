@@ -104,8 +104,9 @@
                         "type": "string"
                     },
                     "value": {
-                        "title": "Name variant",
-                        "type": "array"
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "uniqueItems": true
                     }
                 },
                 "title": "Name variant",

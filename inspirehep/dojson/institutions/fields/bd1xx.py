@@ -26,6 +26,8 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
+from inspirehep.utils.dedupers import dedupe_list_of_dicts
+
 from ..model import institutions
 from ...utils.geo import parse_institution_address
 
@@ -106,17 +108,19 @@ def field_activity(self, key, value):
 
 
 @institutions.over('name_variants', '^410..')
-@utils.for_each_value
-@utils.filter_values
 def name_variants(self, key, value):
     """Variants of the name."""
     if value.get('g'):
         self.setdefault('extra_words', [])
         self['extra_words'].extend(utils.force_list(value.get('g')))
-    return {
-        "source": value.get('9'),
-        "value": utils.force_list(value.get('a'))
-    }
+
+    values = self.get('name_variants', [])
+    values.append({
+        'source': value.get('9'),
+        'value': utils.force_list(value.get('a', [])),
+    })
+
+    return dedupe_list_of_dicts(values)
 
 
 @institutions.over('core', '^690C.')
