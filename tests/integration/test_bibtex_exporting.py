@@ -20,6 +20,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
 from inspirehep.utils.bibtex import Bibtex
 from inspirehep.utils.record_getter import get_db_record
 
@@ -49,7 +51,7 @@ def test_format_inproceeding(app):
       author         = "Hu, Wayne",
       title          = "{CMB anisotropies: A Decadal survey}",
       url            = "http://alice.cern.ch/format/showfull?sysnb=2178340",
-      year           = "2",
+      year           = "2000",
       eprint         = "astro-ph/0002520",
       archivePrefix  = "arXiv",
       primaryClass   = "astro-ph",
@@ -67,7 +69,7 @@ def test_format_proceeding(app):
       author         = "Alekhin, S. and others",
       title          = "{HERA and the LHC: A Workshop on the implications of HERA for LHC physics: Proceedings Part A}",
       url            = "http://weblib.cern.ch/abstract?CERN-2005-014",
-      year           = "2",
+      year           = "2005",
       eprint         = "hep-ph/0601012",
       archivePrefix  = "arXiv",
       primaryClass   = "hep-ph",

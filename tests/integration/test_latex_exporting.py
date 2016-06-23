@@ -20,15 +20,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
 from datetime import date
 
 from inspirehep.utils.latex import Latex
 from inspirehep.utils.record_getter import get_db_record
 
-import pytest
 
-
-@pytest.mark.xfail(reason='wrong output')
 def test_format_latex_eu(app):
     article = get_db_record('literature', 4328)
     today = date.today().strftime('%d %b %Y')
@@ -46,7 +45,6 @@ def test_format_latex_eu(app):
     assert expected == result
 
 
-@pytest.mark.xfail(reason='wrong output')
 def test_format_latex_us(app):
     article = get_db_record('literature', 4328)
     today = date.today().strftime('%d %b %Y')
