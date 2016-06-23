@@ -54,7 +54,7 @@ from werkzeug.datastructures import MultiDict
 
 from invenio_db import db
 
-from invenio_workflows import WorkflowObject, start, resume
+from invenio_workflows import workflow_object_class, start, resume
 
 from inspirehep.dojson.utils import strip_empty_values
 from inspirehep.modules.forms.form import DataExporter
@@ -257,9 +257,11 @@ def submitupdate():
     visitor = DataExporter()
     visitor.visit(form)
 
-    workflow_object = WorkflowObject.create_object(
-        id_user=current_user.get_id())
-    workflow_object.data_type = "authors"
+    workflow_object = workflow_object_class.create(
+        data={},
+        id_user=current_user.get_id(),
+        data_type="authors"
+    )
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
     workflow_object.extra_data['is-update'] = True
     workflow_object.data = formdata_to_model(workflow_object, visitor.data)
@@ -284,9 +286,11 @@ def submitnew():
     visitor = DataExporter()
     visitor.visit(form)
 
-    workflow_object = WorkflowObject.create_object(
-        id_user=current_user.get_id())
-    workflow_object.data_type = "authors"
+    workflow_object = workflow_object_class.create(
+        data={},
+        id_user=current_user.get_id(),
+        data_type="authors"
+    )
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
     workflow_object.data = formdata_to_model(workflow_object, visitor.data)
     workflow_object.save()
@@ -311,7 +315,7 @@ def newreview():
     objectid = request.values.get('objectid', 0, type=int)
     if not objectid:
         abort(400)
-    workflow_object = WorkflowObject.query.get(objectid)
+    workflow_object = workflow_object_class.get(objectid)
 
     form = AuthorUpdateForm(
         data=workflow_object.extra_data["formdata"], is_review=True)
@@ -338,7 +342,7 @@ def reviewhandler():
     visitor = DataExporter()
     visitor.visit(form)
 
-    workflow_object = WorkflowObject.query.get(objectid)
+    workflow_object = workflow_object_class.get(objectid)
     workflow_object.extra_data["approved"] = True
     workflow_object.extra_data["ticket"] = request.form.get('ticket') == "True"
     workflow_object.extra_data['formdata'] = visitor.data
@@ -362,7 +366,7 @@ def holdingpenreview():
     ticket = request.values.get('ticket', False, type=bool)
     if not objectid:
         abort(400)
-    workflow_object = WorkflowObject.query.get(objectid)
+    workflow_object = workflow_object_class.get(objectid)
     workflow_object.extra_data["approved"] = approved
     workflow_object.extra_data["ticket"] = ticket
     workflow_object.save()

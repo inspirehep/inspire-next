@@ -857,6 +857,9 @@ ARXIV_TARBALL_URL = "http://arxiv.org/e-print/{arxiv_id}"
 WORKFLOWS_DEFAULT_FILE_LOCATION_NAME = "holdingpen"
 """Name of default workflow Location reference."""
 
+WORKFLOWS_OBJECT_CLASS = "invenio_workflows_files.api.WorkflowObject"
+"""Enable obj.files API."""
+
 WORKFLOWS_UI_BASE_TEMPLATE = BASE_TEMPLATE
 WORKFLOWS_UI_INDEX_TEMPLATE = "inspire_workflows/index.html"
 WORKFLOWS_UI_LIST_TEMPLATE = "inspire_workflows/list.html"

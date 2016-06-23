@@ -71,8 +71,8 @@ Via shell
 
 .. code-block:: python
 
-    from invenio_workflows import WorkflowObject
-    obj = WorkflowObject.query.get(1234)
+    from invenio_workflows import workflow_object_class
+    obj = workflow_object_class.get(1234)
     obj.data  #  Check data
     obj.extra_data   # Check extra data
     obj.status  # Check status

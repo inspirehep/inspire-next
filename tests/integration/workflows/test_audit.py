@@ -24,7 +24,7 @@ from __future__ import absolute_import, print_function
 from invenio_db import db
 
 from invenio_accounts.models import User
-from invenio_workflows import WorkflowObject
+from invenio_workflows import workflow_object_class
 
 from inspirehep.modules.workflows.models import WorkflowsAudit
 from inspirehep.modules.workflows.utils import log_workflows_action
@@ -38,11 +38,9 @@ def test_audit(app):
         user.password = "test"
         db.session.add(user)
 
-        workflows_object = WorkflowObject.create_object()
-        workflows_object.data_type = 'hep'
-        workflows_object.save()
-
+        workflows_object = workflow_object_class.create({}, data_type="hep")
         db.session.commit()
+
         user_id = user.id
         workflow_id = workflows_object.id
 
