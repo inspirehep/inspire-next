@@ -523,7 +523,6 @@ def test_hidden_notes_from_double_595__a():
     assert expected == result['hidden_notes']
 
 
-@pytest.mark.xfail(reason='duplicates are preserved')
 def test_hidden_notes_from_double_595__a_removes_duplicates():
     snippet = (
         '<record>'

@@ -26,7 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
-from inspirehep.utils.dedupers import dedupe_list_of_dicts
+from inspirehep.utils.dedupers import dedupe_list, dedupe_list_of_dicts
 
 from ..model import institutions
 from ...utils.geo import parse_institution_address
@@ -132,10 +132,12 @@ def non_public_notes(self, key, value):
 
 
 @institutions.over('hidden_notes', '^595..')
-@utils.for_each_value
 def hidden_notes(self, key, value):
     """Hidden note."""
-    return value.get('a')
+    values = self.get('hidden_notes', [])
+    values.extend(el for el in utils.force_list(value.get('a')))
+
+    return dedupe_list(values)
 
 
 @institutions.over('public_notes', '^680..')
