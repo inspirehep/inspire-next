@@ -523,7 +523,6 @@ def test_hidden_notes_from_double_595__a():
     assert expected == result['hidden_notes']
 
 
-@pytest.mark.xfail(reason='duplicates are preserved')
 def test_hidden_notes_from_double_595__a_removes_duplicates():
     snippet = (
         '<record>'
@@ -591,3 +590,170 @@ def test_historical_data_from_6781_a():
     result = strip_empty_values(institutions.do(create_record(snippet)))
 
     assert expected == result['historical_data']
+
+
+def test_related_institutes_from__510_a_w_0():
+    snippet = (
+        '<datafield tag="510" ind1=" " ind2=" ">'
+        '  <subfield code="0">1385404</subfield>'
+        '  <subfield code="a">U. Caen (main)</subfield>'
+        '  <subfield code="w">t</subfield>'
+        '</datafield>'
+    )  # record/1430106
+
+    expected = [
+        {
+            'curated_relation': True,
+            'name': 'U. Caen (main)',
+            'relation_type': 'parent',
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/1385404',
+            },
+        },
+    ]
+    result = strip_empty_values(institutions.do(create_record(snippet)))
+
+    assert expected == result['related_institutes']
+
+
+def test_related_institutes_from__double_510_a_w_0():
+    snippet = (
+        '<record>'
+        '  <datafield tag="510" ind1=" " ind2=" ">'
+        '    <subfield code="0">1385404</subfield>'
+        '    <subfield code="a">U. Caen (main)</subfield>'
+        '    <subfield code="w">t</subfield>'
+        '  </datafield>'
+        '  <datafield tag="510" ind1=" " ind2=" ">'
+        '    <subfield code="0">926589</subfield>'
+        '    <subfield code="a">CNRS, France</subfield>'
+        '    <subfield code="w">t</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1430106
+
+    expected = [
+        {
+            'curated_relation': True,
+            'name': 'U. Caen (main)',
+            'relation_type': 'parent',
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/1385404',
+            },
+        },
+        {
+            'curated_relation': True,
+            'name': 'CNRS, France',
+            'relation_type': 'parent',
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/926589',
+            },
+        },
+    ]
+    result = strip_empty_values(institutions.do(create_record(snippet)))
+
+    assert expected == result['related_institutes']
+
+
+def test_related_institutes_from__510_a_w_0_other():
+    snippet = (
+        '<datafield tag="510" ind1=" " ind2=" ">'
+        '  <subfield code="0">945696</subfield>'
+        '  <subfield code="a">UMass Amherst</subfield>'
+        '  <subfield code="w">r</subfield>'
+        '</datafield>'
+    )  # record/902971
+
+    expected = [
+        {
+            'curated_relation': True,
+            'name': 'UMass Amherst',
+            'relation_type': 'other',
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/945696',
+            },
+        },
+    ]
+    result = strip_empty_values(institutions.do(create_record(snippet)))
+
+    assert expected == result['related_institutes']
+
+
+def test_related_institutes_from__double_510_a_w_0_predecessor():
+    snippet = (
+        '<record>'
+        '  <datafield tag="510" ind1=" " ind2=" ">'
+        '    <subfield code="0">903276</subfield>'
+        '    <subfield code="a">INS, Tokyo</subfield>'
+        '    <subfield code="w">a</subfield>'
+        '  </datafield>'
+        '  <datafield tag="510" ind1=" " ind2=" ">'
+        '    <subfield code="0">905439</subfield>'
+        '    <subfield code="a">U. Tokyo, Meson Sci. Lab.</subfield>'
+        '    <subfield code="w">a</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/902916
+
+    expected = [
+        {
+            'curated_relation': True,
+            'name': 'INS, Tokyo',
+            'relation_type': 'predecessor',
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/903276',
+            },
+        },
+        {
+            'curated_relation': True,
+            'name': 'U. Tokyo, Meson Sci. Lab.',
+            'relation_type': 'predecessor',
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/905439',
+            },
+        },
+    ]
+    result = strip_empty_values(institutions.do(create_record(snippet)))
+
+    assert expected == result['related_institutes']
+
+
+def test_related_institutes_from__510_a_w_0_successor():
+    snippet = (
+        '<datafield tag="510" ind1=" " ind2=" ">'
+        '  <subfield code="0">911753</subfield>'
+        '  <subfield code="a">HZB, Berlin</subfield>'
+        '  <subfield code="w">b</subfield>'
+        '</datafield>'
+    )  # record/902831
+
+    expected = [
+        {
+            'curated_relation': True,
+            'name': 'HZB, Berlin',
+            'relation_type': 'successor',
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/911753',
+            },
+        },
+    ]
+    result = strip_empty_values(institutions.do(create_record(snippet)))
+
+    assert expected == result['related_institutes']
+
+
+def test_related_institutes_from__invalid_510__0():
+    snippet = (
+        '<datafield tag="510" ind1=" " ind2=" ">'
+        '  <subfield code="w">foo</subfield>'
+        '</datafield>'
+    )  # synthetic data
+
+    expected = [
+        {
+            'curated_relation': False,
+        },
+    ]
+    result = strip_empty_values(institutions.do(create_record(snippet)))
+
+    assert expected == result['related_institutes']
