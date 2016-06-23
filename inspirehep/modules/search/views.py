@@ -89,7 +89,7 @@ def suggest():
         for suggestion in suggestions['suggestions'][0]['options']:
             bai = suggestion['payload']['bai']
             if bai in bai_name_map:
-                bai_name_map[bai] = bai_name_map[bai].append(
+                bai_name_map[bai].append(
                     suggestion['text']
                 )
             else:
