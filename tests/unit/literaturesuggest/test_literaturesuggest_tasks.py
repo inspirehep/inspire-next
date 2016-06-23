@@ -385,7 +385,6 @@ def test_formdata_to_model_populates_collections_and_hidden_notes_from_conf_name
     }
 
 
-@pytest.mark.xfail(reason='page_nr is not populated')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
 def test_formdata_to_model_populates_page_nr_from_page_range_article_id(u, ui):
@@ -411,7 +410,6 @@ def test_formdata_to_model_populates_page_nr_from_page_range_article_id(u, ui):
     }
 
 
-@pytest.mark.xfail(reason='throws a TypeError')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
 def test_formdata_to_model_no_page_nr_when_invalid_page_range_article_id(u, ui):
