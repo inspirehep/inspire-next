@@ -821,6 +821,38 @@
                         "description": "URI for the person record",
                         "title": "URI for the person record",
                         "$ref": "json_reference.json"
+                    },
+                    "contributor_roles": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "value": {
+                                    "type": "string",
+                                    "enum": [
+                                        "Conceptualization",
+                                        "Data curation",
+                                        "Formal analysis",
+                                        "Funding acquisition",
+                                        "Investigation",
+                                        "Methodology",
+                                        "Project administration",
+                                        "Resources",
+                                        "Software",
+                                        "Supervision",
+                                        "Validation",
+                                        "Visualization",
+                                        "Writing – original draft",
+                                        "Writing – review & editing"
+                                    ]
+                                },
+                                "source": {
+                                    "type": "string",
+                                    "enum": ["CRediT"]
+                                }
+                            }
+                        }
                     }
                 },
                 "title": "Author"
