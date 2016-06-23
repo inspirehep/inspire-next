@@ -157,7 +157,10 @@ def formdata_to_model(obj, formdata):
         page_end = first_publication_info.get('page_end')
 
         if page_start and page_end:
-            data['page_nr'] = page_end - page_start + 1
+            try:
+                data['page_nr'] = page_end - page_start + 1
+            except (TypeError, ValueError):
+                pass
 
     # ============================
     # Language
