@@ -29,6 +29,7 @@ from dojson import utils
 from inspirehep.utils.dedupers import dedupe_list, dedupe_list_of_dicts
 
 from ..model import institutions
+from ...utils import get_record_ref
 from ...utils.geo import parse_institution_address
 
 
@@ -154,3 +155,27 @@ def historical_data(self, key, value):
     values.extend(el for el in value.get('a'))
 
     return values
+
+
+@institutions.over('related_institutes', '^510..')
+@utils.for_each_value
+def related_institutes(self, key, value):
+    """Related institutes."""
+    def _classify_relation_type(c):
+        if c == 'a':
+            return 'predecessor'
+        elif c == 'b':
+            return 'successor'
+        elif c == 't':
+            return 'parent'
+        elif c == 'r':
+            return 'other'
+        else:
+            return ''
+
+    return {
+        'curated_relation': bool(value.get('0')),
+        'name': value.get('a'),
+        'relation_type': _classify_relation_type(value.get('w')),
+        'record': get_record_ref(value.get('0'), record_type='institutions'),
+    }
