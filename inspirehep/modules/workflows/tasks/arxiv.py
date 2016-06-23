@@ -104,7 +104,7 @@ def arxiv_plot_extract(obj, eng):
         obj.files[plot.get('name')]["description"] = "{0:05d} {1}".format(
             idx, "".join(plot.get('captions', []))
         )
-    obj.log.info("Added {0} plots.".format(idx + 1))
+    obj.log.info("Added {0} plots.".format(len(plots)))
 
 
 def arxiv_refextract(obj, eng):
