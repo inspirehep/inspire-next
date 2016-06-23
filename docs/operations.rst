@@ -28,8 +28,6 @@ Operations
 
 INSPIRE operations manual.
 
-**IN DEVELOPMENT**
-
 Harvesting and Holding Pen
 ==========================
 
@@ -64,7 +62,8 @@ Via shell
 
 .. code-block:: python
 
-    # TODO Invenio 3 code
+    from invenio_workflows import workflow_object_class, ObjectStatus
+    errors = workflows_object_class.query(status=ObjectStatus.ERROR)
 
 
 3. Get a specific object:
@@ -76,12 +75,29 @@ Via shell
     obj.data  #  Check data
     obj.extra_data   # Check extra data
     obj.status  # Check status
-    obj.get_error_message()  # Get error traceback (if any)
     obj.callback_pos  # Position in current workflow
+
+
+4. See associated workflow definition:
+
+.. code-block:: python
 
     from invenio_workflows import workflows
     workflows[obj.workflow.name].workflow   # Associated workflow list of tasks
 
-    obj.continue_workflow("restart_task")  # Restart from current task and continue workflow
-    obj.continue_workflow()  # Skip current task and continue workflow
-    obj.continue_workflow("previous_task")  # Redo task before current one and continue workflow
+
+5. Manipulate position in the workflow
+
+.. code-block:: python
+
+    obj.callback_pos = [1, 2, 3]
+    obj.save()
+
+
+6. Restart workflow in various positions:
+
+.. code-block:: python
+
+    obj.restart_current()  # Restart from current task and continue workflow
+    obj.restart_next()  # Skip current task and continue workflow
+    obj.restart_previous()  # Redo task before current one and continue workflow
