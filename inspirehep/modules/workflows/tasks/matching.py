@@ -229,8 +229,9 @@ def previously_rejected(days_ago=None):
 def pending_in_holding_pen(obj, eng):
     """Check if a record exists in HP by looking in given KB."""
     from elasticsearch_dsl import Q
+    from invenio_db import db
     from invenio_search import RecordsSearch
-    from invenio_workflows import WorkflowObject, ObjectStatus
+    from invenio_workflows.models import WorkflowObjectModel, ObjectStatus
 
     config = current_app.config['WORKFLOWS_UI_REST_ENDPOINT']
     index = config.get('search_index')
@@ -255,12 +256,14 @@ def pending_in_holding_pen(obj, eng):
         matches_excluding_self = set(id_list) - set([obj.id])
         if matches_excluding_self:
             obj.extra_data["holdingpen_ids"] = list(matches_excluding_self)
-            pending_records = WorkflowObject.query.filter(
-                WorkflowObject.status != ObjectStatus.COMPLETED,
-                WorkflowObject.id.in_(matches_excluding_self)
+            pending_records = db.session.query(
+                WorkflowObjectModel
+            ).with_entities(WorkflowObjectModel.id).filter(
+                WorkflowObjectModel.status != ObjectStatus.COMPLETED,
+                WorkflowObjectModel.id.in_(matches_excluding_self)
             ).all()
             if pending_records:
-                pending_ids = [o.id for o in pending_records]
+                pending_ids = [o[0] for o in pending_records]
                 obj.extra_data['pending_holdingpen_ids'] = pending_ids
                 obj.log.info("Pending records already found in Holding Pen ({0})".format(
                     pending_ids
@@ -283,11 +286,11 @@ def stop_processing(obj, eng):
 
 def update_old_object(obj, eng):
     """Update the data of the old object with the new data."""
-    from invenio_workflows import WorkflowObject
+    from invenio_workflows import workflow_object_class
 
     holdingpen_ids = obj.extra_data.get("holdingpen_ids", [])
     for matched_id in holdingpen_ids:
-        other_obj = WorkflowObject.query.get(matched_id)
+        other_obj = workflow_object_class.get(matched_id)
         if obj.data.get('acquisition_source') and other_obj.data.get('acquisition_source'):
             if obj.data['acquisition_source'].get('method') == other_obj.data['acquisition_source'].get('method'):
                 # Method is the same, update obj

@@ -372,7 +372,7 @@ def record_upsert(json):
 @shared_task(ignore_result=True)
 def reindex_holdingpen_object(obj_id):
     from invenio_workflows.signals import workflow_object_after_save
-    from invenio_workflows import WorkflowObject
+    from invenio_workflows import workflow_object_class
 
-    obj = WorkflowObject.query.get(obj_id)
+    obj = workflow_object_class.get(obj_id)
     workflow_object_after_save.send(obj)

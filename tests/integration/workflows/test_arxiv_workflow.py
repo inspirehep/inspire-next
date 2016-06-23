@@ -246,7 +246,7 @@ def test_harvesting_arxiv_workflow_rejected(
     app, record_oai_arxiv_plots):
     """Test a full harvesting workflow."""
     from invenio_workflows import (
-        start, WorkflowEngine, ObjectStatus, WorkflowObject
+        start, WorkflowEngine, ObjectStatus, workflow_object_class
     )
     from dojson.contrib.marc21.utils import create_record
     from invenio_db import db
@@ -272,7 +272,7 @@ def test_harvesting_arxiv_workflow_rejected(
             workflow_uuid = start('article', [record_json])
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
-        obj = list(eng.objects)[0]
+        obj = eng.processed_objects[0]
 
         assert obj.status == ObjectStatus.HALTED
         assert obj.data_type == "hep"
@@ -321,11 +321,11 @@ def test_harvesting_arxiv_workflow_rejected(
 
     with app.app_context():
         eng = WorkflowEngine.from_uuid(workflow_uuid)
-        obj = list(eng.objects)[0]
+        obj = eng.processed_objects[0]
         obj_id = obj.id
         obj.continue_workflow()
 
-        obj = WorkflowObject.query.get(obj_id)
+        obj = workflow_object_class.get(obj_id)
         # It was rejected
         assert obj.status == ObjectStatus.COMPLETED
 
@@ -337,7 +337,7 @@ def test_harvesting_arxiv_workflow_accepted(
     mocked, db_only_app, record_oai_arxiv_plots):
     """Test a full harvesting workflow."""
     from invenio_workflows import (
-        start, WorkflowEngine, ObjectStatus, WorkflowObject
+        start, WorkflowEngine, ObjectStatus, workflow_object_class
     )
     from dojson.contrib.marc21.utils import create_record
     from invenio_db import db
@@ -356,7 +356,7 @@ def test_harvesting_arxiv_workflow_accepted(
         workflow_uuid = start('article', [record_json])
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
-        obj = list(eng.objects)[0]
+        obj = eng.processed_objects[0]
 
         assert obj.status == ObjectStatus.HALTED
         assert obj.data_type == "hep"
@@ -386,10 +386,10 @@ def test_harvesting_arxiv_workflow_accepted(
 
     with db_only_app.app_context():
         eng = WorkflowEngine.from_uuid(workflow_uuid)
-        obj = list(eng.objects)[0]
+        obj = eng.processed_objects[0]
         obj_id = obj.id
         obj.continue_workflow()
 
-        obj = WorkflowObject.query.get(obj_id)
+        obj = workflow_object_class.get(obj_id)
         # It was accepted
         assert obj.status == ObjectStatus.COMPLETED
