@@ -1,165 +1,234 @@
 {
-    "settings": {
-        "analysis": {
-            "filter": {
-                "asciifold_with_orig": {
-                    "type": "asciifolding",
-                    "preserve_original": true
-                },
-                "synonyms_kbr": {
-                    "type": "synonym",
-                    "synonyms": [
-                        "production => creation"
-                    ]
-                }
+  "mappings": {
+    "authors": {
+      "_all": {
+        "enabled": false
+      },
+      "date_detection": false,
+      "dynamic": "false",
+      "dynamic_templates": [
+        {
+          "default": {
+            "mapping": {
+              "analyzer": "basic_analyzer",
+              "copy_to": "global_default",
+              "type": "string"
             },
-            "analyzer": {
-                "natural_text": {
-                    "type": "custom",
-                    "tokenizer":  "standard",
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase",
-                        "synonyms_kbr"
-                    ]
-                },
-                "basic_analyzer": {
-                    "type": "custom",
-                    "tokenizer": "standard",
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase"
-                    ]
-                }
-            }
-        },
-        "index.percolator.map_unmapped_fields_as_string": true
-    },
-    "mappings": {
-        "authors": {
-            "_all": {"enabled": false},
-            "date_detection": false,
-            "numeric_detection": false,
-            "dynamic": "false",
-            "dynamic_templates": [
-                {"default": {
-                    "match_mapping_type": "string",
-                    "mapping": {
-                        "analyzer": "basic_analyzer",
-                        "type": "string",
-                        "copy_to": "global_default"
-                    }
-                }
-                }
-            ],
-            "properties": {
-                "_workflow": {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        },
-                        "data_type": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        },
-                        "created": {
-                            "type": "date"
-                        },
-                        "modified": {
-                            "type": "date"
-                        },
-                        "id_workflow": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        },
-                        "id_user": {
-                            "type": "integer",
-                            "index": "not_analyzed"
-                        },
-                        "id_parent": {
-                            "type": "integer",
-                            "index": "not_analyzed"
-                        },
-                        "workflow_class": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        },
-                        "workflow_name": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        },
-                        "workflow_position": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "global_fulltext": {
-                    "type": "string",
-                    "analyzer": "natural_text"
-                },
-                "global_default": {
-                    "type": "string",
-                    "analyzer": "basic_analyzer"
-                },
-                "_collections": {
-                    "type": "string",
-                    "index": "not_analyzed"
-                },
-                "collections": {
-                    "properties": {
-                        "primary": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        },
-                        "secondary": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "exactauthor": {
-                    "type": "string",
-                    "fields": {
-                        "raw": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "authorautocomplete": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "object",
-                    "properties": {
-                        "value": {
-                            "type": "string",
-                            "copy_to": ["authorautocomplete"]
-                        }
-                    }
-                },
-                "date_and_time_of_latest_transaction": {
-                    "type": "date",
-                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S"
-                },
-                "date": {
-                    "type": "date",
-                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S||dd MM yyyy||dd MMM yyyy||MMM yyyy||MMM yyyy?||yyyy ('repr'.1964.)"
-                },
-                "urls": {
-                    "type": "object",
-                    "properties": {
-                        "value": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                }
-
-            }
+            "match_mapping_type": "string"
+          }
         }
+      ],
+      "numeric_detection": false,
+      "properties": {
+        "_workflow": {
+          "properties": {
+            "status": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "data_type": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "created": {
+              "type": "date"
+            },
+            "modified": {
+              "type": "date"
+            },
+            "id_workflow": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "id_user": {
+              "type": "integer",
+              "index": "not_analyzed"
+            },
+            "id_parent": {
+              "type": "integer",
+              "index": "not_analyzed"
+            },
+            "workflow_class": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "workflow_name": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "workflow_position": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          },
+          "type": "object"
+        },
+        "global_default": {
+          "analyzer": "basic_analyzer",
+          "type": "string"
+        },
+        "global_fulltext": {
+          "analyzer": "natural_text",
+          "type": "string"
+        },
+        "metadata": {
+          "properties": {
+            "_collections": {
+              "index": "not_analyzed",
+              "type": "string"
+            },
+            "acquisition_source": {
+              "properties": {
+                "date": {
+                  "type": "date"
+                },
+                "email": {
+                  "index": "not_analyzed",
+                  "type": "string"
+                },
+                "method": {
+                  "index": "not_analyzed",
+                  "type": "string"
+                },
+                "source": {
+                  "copy_to": [
+                    "source"
+                  ],
+                  "index": "not_analyzed",
+                  "type": "string"
+                },
+                "submission_number": {
+                  "index": "not_analyzed",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "collaboration": {
+              "properties": {
+                "recid": {
+                  "type": "integer"
+                },
+                "value": {
+                  "copy_to": [
+                    "global_fulltext"
+                  ],
+                  "index": "not_analyzed",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "collections": {
+              "properties": {
+                "primary": {
+                  "copy_to": [
+                    "collection"
+                  ],
+                  "index": "not_analyzed",
+                  "type": "string"
+                },
+                "secondary": {
+                  "index": "not_analyzed",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "date": {
+              "format": "yyyy||yyyy-MM||yyyy-MM-dd",
+              "type": "date"
+            },
+            "date_and_time_of_latest_transaction": {
+              "format": "yyyyMMddHHmmss||yyyyMMddHHmmss.S",
+              "type": "date"
+            },
+            "division": {
+              "type": "string"
+            },
+            "experiment_name": {
+              "copy_to": [
+                "experimentautocomplete"
+              ],
+              "type": "string"
+            },
+            "field_categories": {
+              "properties": {
+                "scheme": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                },
+                "term": {
+                  "copy_to": [
+                    "subject"
+                  ],
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "hidden_notes": {
+              "properties": {
+                "cds": {
+                  "index": "not_analyzed",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "institution": {
+              "properties": {
+                "affiliation": {
+                  "copy_to": [
+                    "affautocomplete"
+                  ],
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        }
+      }
     }
+  },
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "basic_analyzer": {
+          "filter": [
+            "asciifold_with_orig",
+            "lowercase"
+          ],
+          "tokenizer": "standard",
+          "type": "custom"
+        },
+        "natural_text": {
+          "filter": [
+            "asciifold_with_orig",
+            "lowercase",
+            "synonyms_kbr"
+          ],
+          "tokenizer": "standard",
+          "type": "custom"
+        }
+      },
+      "filter": {
+        "asciifold_with_orig": {
+          "preserve_original": true,
+          "type": "asciifolding"
+        },
+        "synonyms_kbr": {
+          "synonyms": [
+            "production => creation"
+          ],
+          "type": "synonym"
+        }
+      }
+    },
+    "index.percolator.map_unmapped_fields_as_string": true
+  }
 }
