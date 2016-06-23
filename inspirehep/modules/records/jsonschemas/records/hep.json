@@ -40,11 +40,7 @@
                 "properties": {
                     "medium": {
                         "description": "Medium (type) of the ISBN.",
-                        "type": "string",
-                        "enum": [
-                            "print",
-                            "online"
-                        ]
+                        "type": "string"
                     },
                     "value": {
                         "type": "string",
@@ -98,61 +94,7 @@
                 "type": "object",
                 "properties": {
                     "source": {
-                        "enum": [
-                            "arXiv",
-                            "AIP",
-                            "APS",
-                            "Annual Reviews",
-                            "Astronomical Society of the Pacific",
-                            "Author",
-                            "Bulgarian Academy of Sciences",
-                            "CERN",
-                            "CERN/SLAC",
-                            "Cambridge University Press",
-                            "Canadian Center of Science and Education",
-                            "DESY",
-                            "DESY/SLAC",
-                            "EDP Sciences",
-                            "ELSEVIER",
-                            "Education and Upbringing",
-                            "Elsevier",
-                            "European Astronomical Society",
-                            "HEPDATA",
-                            "HINDAWI",
-                            "IEEE",
-                            "INDICO",
-                            "INSPIRE",
-                            "IOP",
-                            "IOS Press",
-                            "IPAP",
-                            "Indian National Science Academy",
-                            "International Press",
-                            "International Society for Optics and Photonics",
-                            "Internet Academy",
-                            "JACoW",
-                            "Kharkov Institute of Physics and Technology",
-                            "MDPI",
-                            "MPI Grav. Phys., Potsdam",
-                            "NRC Research Press",
-                            "National Academy of Sciences of Armenia",
-                            "Niscair",
-                            "Oxford Journals",
-                            "Oxford University Press",
-                            "Physical Society of Japan",
-                            "Polish Physical Society",
-                            "Publisher",
-                            "Royal Society",
-                            "SIGMA",
-                            "Springer",
-                            "Tomsk State Pedagogical University",
-                            "T\u00dcB\u0130TAK",
-                            "WILEY",
-                            "WS",
-                            "WSP",
-                            "World Scientific"
-                        ],
-                        "type": "string",
-                        "description": "FIXME: is there an enumerable list of sources?"
+                        "type": "string"
                     },
                     "value": {
                         "type": "string"
@@ -192,8 +134,7 @@
                         "format": "date"
                     },
                     "publisher": {
-                        "type": "string",
-                        "description": "FIXME: an enum?"
+                        "type": "string"
                     },
                     "place": {
                         "type": "string"
@@ -292,11 +233,6 @@
                 "type": "object",
                 "properties": {
                     "source": {
-                        "enum": [
-                            "SPIRES-HIDDEN",
-                            "CERN",
-                            "submitter"
-                        ],
                         "type": "string",
                         "description": "FIXME: What's the semantic of this source?"
                     },
@@ -497,14 +433,11 @@
                         "format": "url"
                     },
                     "material": {
-                        "enum": [
-                            "Article"
-                        ],
                         "type": "string"
                     },
                     "holder": {
                         "type": "string",
-                        "description": "Copyright holder. FIXME: should we restrict this to an enum, or not?"
+                        "description": "Copyright holder."
                     },
                     "statement": {
                         "type": "string",
@@ -523,10 +456,6 @@
                 "type": "object",
                 "properties": {
                     "classification_scheme": {
-                        "enum": [
-                            "INSPIRE",
-                            "JACoW"
-                        ],
                         "type": "string"
                     },
                     "keyword": {
@@ -798,11 +727,6 @@
                         "format": "orcid"
                     },
                     "role": {
-                        "enum": [
-                            "",
-                            "ed.",
-                            "Technical Associate"
-                        ],
                         "type": "string",
                         "description": "Role of the author within the paper. So far only Editor was captured.",
                         "title": "Role of the person"
@@ -872,10 +796,6 @@
                         "title": "Number"
                     },
                     "standard": {
-                        "enum": [
-                            "PACS",
-                            "PDG"
-                        ],
                         "type": "string",
                         "title": "Standard"
                     },
@@ -896,7 +816,7 @@
                 "properties": {
                     "source": {
                         "type": "string",
-                        "description": "Issuing of DOI. FIXME: should we have an enum",
+                        "description": "Issuing of DOI.",
                         "title": "DOI registrant"
                     },
                     "value": {
@@ -998,7 +918,6 @@
             "type": "array",
             "items": {
                 "type": "string",
-                "description": "FIXME: we shall provide the ISO enum",
                 "title": "Language"
             }
         },
