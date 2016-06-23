@@ -74,22 +74,31 @@
 
         <div class="col-md-2 pad-top-10">
           <ul class="subject-terms">
-            <li ng-repeat="subject in record._source.metadata.field_categories | unique:'term' | limitTo:3"
-                ng-if="record._source.metadata.field_categories">
+            <li
+              ng-repeat="subject in record._source.metadata.field_categories | unique:'term' | limitTo:3"
+              ng-if="record._source.metadata.field_categories">
               {{subject.term}}
             </li>
-            <li ng-repeat="subject in record._source.metadata.field_categories | limitTo:3"
-                ng-if="subject._term">
+            <li
+              ng-repeat="subject in record._source.metadata.field_categories | limitTo:3"
+              ng-if="subject._term">
               {{subject._term}}
             </li>
           </ul>
         </div>
 
+
         <div class="col-md-3 decision">
-          <div ng-if="record._source._workflow.data_type === 'authors'">
+
+          <!--Authors  Decision-->
+
+
+          <div
+            ng-if="record._source._extra_data && record._extra_data._action !== null && record._source._workflow.data_type === 'authors'">
             <button class="btn btn-danger"
                     ng-click="setDecision(record._id,'reject')">Reject
             </button>
+            a
             <button class="btn btn-warning"
                     ng-click="setDecision(record._id,'accept_curate')">Curation
             </button>
@@ -99,7 +108,9 @@
 
           </div>
 
-          <div ng-if="record._source._workflow.data_type === 'hep' && !record._source._extra_data.user_action">
+          <!--HEP Decision-->
+          <div
+            ng-if="record._source._extra_data && record._source._workflow.data_type === 'hep' && !record._source._extra_data.user_action">
             <div class="automatic-decision">
               <p class="small-text">Automatic Decision:
                 <span ng-class="{'accept_core': record._source._extra_data.relevance_prediction.decision == 'CORE',
@@ -113,7 +124,8 @@
               </p>
             </div>
 
-            <div ng-if="!record._source._extra_data.user_action">
+            <div
+              ng-if="record._source._extra_data && record._source._extra_data._action !== null">
               <button class="btn btn-danger"
                       ng-click="setDecision(record._id, 'reject')">Reject
               </button>
@@ -125,7 +137,7 @@
               </button>
             </div>
 
-
+            <br/>
             <p>Filtered keywords include:</p>
             <div class="small-text">
               {{record._extra_data.classifier_results}}
@@ -138,13 +150,28 @@
 
           </div>
 
-          <div ng-if="record._source._extra_data.user_action" class="action-info">
+          <div ng-if="record._source._extra_data.user_action"
+               class="action-info">
               <span ng-class="record._source._extra_data.user_action"
                     ng-switch="record._source._extra_data.user_action">
                 <span ng-switch-when="reject">Rejected</span>
                 <span ng-switch-when="accept">Accepted as Non-CORE</span>
                 <span ng-switch-when="accept_core">Accepted as CORE</span>
               </span>
+          </div>
+
+          <br/>
+
+          <div if="!record._extra_data">
+            <div ng-if="record._source._workflow.status === 'ERROR'">
+              <i class="fa fa-exclamation-triangle icon-large"></i>
+              <p class="small-text">
+                No further actions are possible for this record due to an
+                error. View
+                the
+                <a ng-href="/holdingpen/{{record._id}}">detailed record</a> for
+                more information.</p>
+            </div>
           </div>
 
 

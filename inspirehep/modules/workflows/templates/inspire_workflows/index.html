@@ -29,8 +29,9 @@
 
 <div class="container-fluid" id="holding-pen">
   <h3 class="text-center header-text">
-    OVERVIEW
+    OVERVIEW <a href="/holdingpen/list" class="btn btn-link" style="color: #3498db;">View all</a>
   </h3>
+
 
   <div class="row overview-container">
     <div class="col-md-3 col-sm-6">
@@ -63,7 +64,7 @@
       <holding-pen-dashboard-item
         template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
         primary_filter_key="workflow_name"
-        primary_filter_value="Literature Suggestion"
+        primary_filter_value="suggestion"
         secondary_filter="status"
         section_title="New Literature Submissions">
       </holding-pen-dashboard-item>
@@ -76,9 +77,9 @@
       <holding-pen-dashboard-item
         template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
         primary_filter_key="workflow_name"
-        primary_filter_value="arXiv"
+        primary_filter_value="HEP"
         secondary_filter="status"
-        section_title="arxiv harvests">
+        section_title="oai harvests">
       </holding-pen-dashboard-item>
 
   </div>

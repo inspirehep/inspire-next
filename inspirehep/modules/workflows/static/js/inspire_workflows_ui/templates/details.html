@@ -30,8 +30,9 @@
         <span ng-if="vm.record._workflow.status === 'WAITING'">Waiting to run...</span>
         <span ng-if="vm.record._workflow.status === 'RUNNING'">Workflow in progress...</span>
         <span ng-repeat="item in vm.record._extra_data._task_history"
-              ng-bind="vm.record._workflow.status + ' on ' + item.nicename"
-              ng-if="(vm.record._workflow.status === 'HALTED' || vm.record._workflow.status === 'ERROR') && $last"></span>
+              ng-if="(vm.record._workflow.status === 'HALTED' || vm.record._workflow.status === 'ERROR') && $last">
+          {{vm.record._workflow.status}} on {{item.nicename}} <a href="#errors" ng-if="vm.record._workflow.status === 'ERROR'" style="color: white">View log</a>
+        </span>
       </p>
     </div>
   </div>
@@ -98,27 +99,27 @@
 
       <div class="clearfix"></div>
 
-      <div class="col-md-12 col-sm-12" ng-if="vm.record.metadata.urls">
+      <div class="col-md-12 col-sm-12" ng-if="vm.record._workflow.data_type == 'authors'">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_links.html">
         </holding-pen-template-handler>
       </div>
 
-      <div class="col-md-6 col-sm-6" ng-if="vm.record.metadata.field_categories">
+      <div class="col-md-6 col-sm-6" ng-if="vm.record._workflow.data_type == 'hep'">
         <holding-pen-template-handler
-          template="/static/js/inspire_workflows_ui/templates/details_subject_areas_hep.html">
+          template="/static/js/inspire_workflows_ui/templates/details_subject_areas.html">
         </holding-pen-template-handler>
       </div>
 
       <div class="col-md-3 col-sm-6"
-           ng-if="vm.record.metadata.field_categories && vm.record._workflow.data_type == 'authors'">
+           ng-if="vm.record._workflow.data_type == 'authors'">
         <holding-pen-template-handler
-          template="/static/js/inspire_workflows_ui/templates/details_subject_areas_hep.html">
+          template="/static/js/inspire_workflows_ui/templates/details_subject_areas.html">
         </holding-pen-template-handler>
       </div>
 
       <div class="col-md-3 col-sm-6"
-           ng-if="vm.record.metadata.phd_advisors && vm.record._workflow.data_type == 'authors'">
+           ng-if="vm.record._workflow.data_type == 'authors'">
         <div class="detail-panel panel-200">
           <h4>Advisors</h4>
 
@@ -135,7 +136,7 @@
       </div>
 
 
-      <div class="col-md-6 col-sm-6" ng-if="vm.record._extra_data.keywords_prediction.keywords">
+      <div class="col-md-6 col-sm-6" ng-if="vm.record._workflow.data_type == 'hep'">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_keywords.html">
         </holding-pen-template-handler>
@@ -143,13 +144,13 @@
 
       <div class="clearfix"></div>
 
-      <div class="col-md-12" ng-if="vm.record.metadata.positions">
+      <div class="col-md-12" ng-if="vm.record._workflow.data_type == 'authors'">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_positions.html">
         </holding-pen-template-handler>
       </div>
 
-      <div class="col-md-12" ng-if="vm.record.metadata.references">
+      <div class="col-md-12" ng-if="vm.record._workflow.data_type == 'hep'">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_references.html">
         </holding-pen-template-handler>
@@ -157,15 +158,11 @@
 
       <div class="clearfix"></div>
 
-      <div class="col-md-6" ng-if="vm.record._extra_data.user_comments">
-        <holding-pen-template-handler
-          template="/static/js/inspire_workflows_ui/templates/details_comments.html">
-        </holding-pen-template-handler>
-      </div>
 
-      <div class="col-md-6" ng-if="vm.record._extra_data.logs">
+
+      <div class="col-md-12" id="errors" ng-if="vm.record._extra_data._error_msg">
         <holding-pen-template-handler
-          template="/static/js/inspire_workflows_ui/templates/details_logs.html">
+          template="/static/js/inspire_workflows_ui/templates/details_errors.html">
         </holding-pen-template-handler>
       </div>
     </div>
@@ -235,7 +232,7 @@
       </div>
 
       <!--Notes-->
-      <div class="col-md-12" ng-if="vm.record.metadata.public_notes">
+      <div class="col-md-12">
         <div class="detail-panel">
           <h4>Notes</h4>
 
@@ -261,6 +258,12 @@
 
           </div>
         </div>
+      </div>
+
+       <div class="col-md-12" ng-if="vm.record._workflow.data_type == 'hep'">
+        <holding-pen-template-handler
+          template="/static/js/inspire_workflows_ui/templates/details_comments.html">
+        </holding-pen-template-handler>
       </div>
 
       <!--Action Panel-->

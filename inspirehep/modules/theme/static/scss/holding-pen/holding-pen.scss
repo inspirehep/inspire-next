@@ -5,7 +5,7 @@ html, body {
   background-color: $dark-blue !important;
 }
 
-$hp_table_bg: #243547;
+$hp_table_bg: #233345;
 
 @mixin facet-colors($color) {
   color: $color !important;
@@ -17,6 +17,12 @@ $hp_table_bg: #243547;
 
 #collections-section {
   display: none;
+}
+
+.dark-input-bg {
+  background-color: $dark-blue;
+  border: none;
+  color: white;
 }
 
 .holding-pen {
@@ -147,9 +153,10 @@ $hp_table_bg: #243547;
 
     .statuses {
       -webkit-padding-start: 0px;
+      list-style: none;
 
       li {
-        margin-bottom: 5px;
+        margin-top: 10px;
       }
 
       .status-label {
@@ -493,7 +500,7 @@ $hp_table_bg: #243547;
 
       .subject-area {
 
-        padding: 5px;
+        padding: 2px;
         display: block;
         margin-bottom: 5px;
         border-radius: 3px;
@@ -505,8 +512,8 @@ $hp_table_bg: #243547;
         }
       }
 
-      &.keywords {
-        .keyword-list {
+      &.keywords, &.subject-areas {
+        .keyword-list, .subject-list {
           height: 230px;
           overflow-y: auto;
 
@@ -515,6 +522,21 @@ $hp_table_bg: #243547;
             line-height: 1.1em;
           }
 
+        }
+      }
+
+      .add-control {
+        padding:10px;
+      }
+
+      .error-data {
+        height: 400px;
+        overflow-y: scroll;
+
+        pre {
+          background-color: $hp_table_bg;
+          color: white;
+          border: none
         }
       }
 
@@ -713,7 +735,26 @@ $hp_table_bg: #243547;
 }
 
 .onoffswitch-checkbox:checked + .onoffswitch-label:before {
-  right: 0px;
+  right: 0;
   background-color: #FFFFFF;
-  box-shadow: 3px 6px 18px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 3px 6px 18px 0 rgba(0, 0, 0, 0.2);
+}
+
+.editable-wrap {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  .editable-controls {
+    width: 100%;
+
+    .editable-input {
+      width: 85%;
+    }
+
+    textarea {
+      height: 192px;
+    }
+  }
+
 }

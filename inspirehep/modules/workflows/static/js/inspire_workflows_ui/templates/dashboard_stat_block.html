@@ -8,16 +8,17 @@
     <li ng-repeat="(status,value) in vm.secondary_filters">
       <a ng-href="/holdingpen/list/?workflow_name={{vm.primaryFilterValue}}&status={{status}}">
         <div class="row-fluid" ng-class="status | lowercase">
-          <div class="col-md-1 col-sm-1">
+          <div class="col-md-1 col-sm-1 col-xs-1">
             <i class="fa" ng-class="{'fa-refresh': status === 'WAITING',
               'fa-circle-o': status === 'HALTED',
               'fa-exclamation-triangle': status === 'ERROR',
               'fa-check': status === 'COMPLETED'}">
             </i>
           </div>
-          <div class="col-md-8 col-sm-8 status-label" ng-bind="status | lowercase"></div>
-          <div class="col-md-2 col-sm-2" ng-bind="{{value}}"></div>
+          <div class="col-md-8 col-sm-8 col-xs-8 status-label" ng-bind="status | lowercase"></div>
+          <div class="col-md-2 col-sm-2 col-xs-2" ng-bind="{{value}}"></div>
         </div>
+        <div class="clearfix"></div>
       </a>
     </li>
   </ul>

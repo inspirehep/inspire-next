@@ -40,10 +40,8 @@
               if(vm.record._workflow.data_type == 'authors') {
                 $('#breadcrumb').html(vm.record.metadata.name.value);
               } else {
-                $('#breadcrumb').html(vm.record.metadata.breadcrumb_title);
+                $('#breadcrumb').html(vm.record.metadata.titles[0].title);
               }
-
-
             }).catch(function (value) {
               vm.ingestion_complete = false;
               alert(value);

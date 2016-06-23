@@ -45,8 +45,9 @@ def prepare_magpie_payload(record, corpus):
     titles = filter(None, get_value(record, "titles.title", []))
     abstracts = filter(None, get_value(record, "abstracts.value", []))
     payload["text"] = ". ".join([
-        part.encode('utf-8') for part in titles + abstracts
-    ])
+                                    part.encode('utf-8') for part in
+                                    titles + abstracts
+                                    ])
     return payload
 
 
@@ -55,7 +56,7 @@ def filter_magpie_response(labels, limit):
     filtered_labels = [
         (word, score) for word, score in labels
         if score >= limit
-    ]
+        ]
 
     # In the event that there are no labels with a high enough score,
     # we take only the top one
@@ -76,15 +77,17 @@ def guess_keywords(obj, eng):
     except requests.exceptions.RequestException:
         # We still continue even if there was an exception.
         pass
+
     if results:
         labels = results.get('labels', [])
         keywords = filter_magpie_response(labels, limit=0.01)
-        cutoff = 10
+
+        keywords = [{'label': k[0], 'score': k[1], 'accept': k[1] >= 0.09} for k in
+                    keywords]
         obj.extra_data["keywords_prediction"] = dict(
-            labels=labels,
-            keywords=keywords[:cutoff]
+            keywords=keywords
         )
-        current_app.logger.info("Keyword prediction (top 10): {0}".format(
+        current_app.logger.info("Keyword prediction: {0}".format(
             obj.extra_data["keywords_prediction"]["keywords"]
         ))
 
@@ -100,8 +103,11 @@ def guess_categories(obj, eng):
     if results:
         labels = results.get('labels', [])
         categories = filter_magpie_response(labels, limit=0.22)
+
+        categories = [{'label': c[0], 'score': c[1], 'accept': c[1] >= 0.25} for c in
+                    categories]
+
         obj.extra_data["categories_prediction"] = dict(
-            labels=labels,
             categories=categories
         )
         current_app.logger.info("Category prediction: {0}".format(

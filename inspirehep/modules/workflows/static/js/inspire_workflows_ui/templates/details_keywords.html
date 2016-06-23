@@ -4,19 +4,34 @@
     <div class="row"
          ng-repeat="keyword in vm.record._extra_data.keywords_prediction.keywords">
       <div class="col-md-8 col-sm-8 keyword-name"
-           ng-bind="keyword[0]"></div>
+           ng-bind="keyword.label"></div>
       <div class="col-md-2 col-sm-2 keyword-score"
-           ng-bind="keyword[1] | number : 4"></div>
+           ng-bind="keyword.score | number : 4"></div>
       <div class="col-md-2 col-sm-2 text-left">
         <div class="onoffswitch">
-          <input type="checkbox" name="{{ keyword[0] }}"
+          <input type="checkbox" name="keyword-{{$index}}"
                  class="onoffswitch-checkbox"
                  id="myonoffswitch-{{ $index }}"
-                 ng-checked="keyword[1] > 0.09">
+                 ng-checked="keyword.accept" ng-change="$rootscope.Utils.registerUpdateEvent()"
+                 ng-model="keyword.accept">
           <label class="onoffswitch-label"
                  for="myonoffswitch-{{ $index }}"></label>
         </div>
       </div>
     </div>
+    <div ng-if="vm.record._extra_data.keywords_prediction.length == 0">
+      <p>No keywords predicted. Please add some keywords using the box below.</p>
+    </div>
   </div>
+
+
+  <div class="row add-control">
+    <div class="col-md-9 col-sm-9 col-xs-9">
+      <input class="form-control dark-input-bg" placeholder="Add a keyword">
+    </div>
+    <div class="col-md-3 col-sm-3 col-xs-3">
+      <button class="btn btn-info"><i class="fa fa-plus"></i> Add</button>
+    </div>
+  </div>
+
 </div>

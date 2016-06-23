@@ -1,0 +1,34 @@
+<div class="detail-panel panel-300 subject-areas">
+  <h4>Subject Areas</h4>
+
+  <div class="subject-list">
+    <div class="row subject-area"
+         ng-repeat="subject_term in vm.record.metadata.field_categories">
+      <div class="col-md-8 col-sm-8 col-xs-7"
+           ng-bind="subject_term.term"></div>
+      <div class="col-md-2 col-sm-2 col-xs-3">
+        <span class="scheme" ng-bind="subject_term.scheme"></span>
+      </div>
+      <div class="col-md-2 col-sm-2 col-xs-2 text-left">
+        <div class="onoffswitch">
+          <input type="checkbox" name="{{ subject_term.term }}"
+                 class="onoffswitch-checkbox"
+                 id="subject-area-{{ $index }}" ng-model="subject_term.accept"
+                 ng-checked="subject_term.accept" ng-change="$rootscope.Utils.registerUpdateEvent()">
+          <label class="onoffswitch-label"
+                 for="subject-area-{{ $index }}"></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row add-control">
+    <div class="col-md-9 col-sm-9 col-xs-9">
+      <input class="form-control dark-input-bg" placeholder="Add a Subject Area">
+    </div>
+    <div class="col-md-3 col-sm-3 col-xs-3">
+      <button class="btn btn-info"><i class="fa fa-plus"></i> Add</button>
+    </div>
+  </div>
+
+</div>
