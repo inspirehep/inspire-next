@@ -1,0 +1,18 @@
+<div class="modal-header">
+  <h3 class="modal-title">Confirm Batch Core Acceptance</h3>
+</div>
+<div class="modal-body">
+  <p ng-if="data_type === 'hep'">Are you sure you want to accept all of the selected workflows as CORE?</p>
+  <p ng-if="data_type === 'authors'">Are you sure you want to accept all of the selected workflows?</p>
+</div>
+<div class="modal-footer">
+
+  <button ng-if="data_type === 'hep'" class="btn btn-success pull-right" type="button"
+          ng-click="BatchUtils.setDecision(data_type, 'accept_core')">Accept as CORE</button>
+
+  <button ng-if="data_type === 'authors'" class="btn btn-success pull-right" type="button"
+          ng-click="BatchUtils.setDecision(data_type, 'accept')">Accept</button>
+
+  <button class="btn btn-default pull-left" type="button"
+          ng-click="BatchUtils.hideConfirm()">Cancel</button>
+</div>

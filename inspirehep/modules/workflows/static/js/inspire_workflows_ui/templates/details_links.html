@@ -1,14 +1,15 @@
-<div class="detail-panel panel-200">
+<div class="detail-panel panel-100">
   <h4>Links</h4>
 
   <div class="row"
        ng-repeat="url in vm.record.metadata.urls">
     <div class="col-md-1 col-sm-1">
       <i class="fa"
-         ng-class="{'fa-twitter': url.description === 'TWITTER', 'fa-linkedin-square': url.description === 'LINKEDIN', 'fa-link': url.description === None}"></i>
+         ng-class="{'fa-twitter': url.description === 'TWITTER', 'fa-linkedin-square': url.description === 'LINKEDIN', 'fa-link': url.description === ''}"></i>
     </div>
     <div class="col-md-11 col-sm-11">
-      <a ng-bind="url.value" ng-href="{{url.value}}"></a>
+      <a ng-bind="url.value" ng-href="{{url.value}}" editable-text="url.value"
+      e-ng-change="Utils.registerUpdateEvent()"></a>
     </div>
   </div>
 </div>

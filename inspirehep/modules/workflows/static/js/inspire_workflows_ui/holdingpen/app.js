@@ -26,6 +26,7 @@ require([
   'angular-filter',
   'angular-loading-bar',
   'invenio-search',
+  'angular-ui-bootstrap',
   'angular-xeditable',
   'angular-hotkeys',
   'holding-pen-module'

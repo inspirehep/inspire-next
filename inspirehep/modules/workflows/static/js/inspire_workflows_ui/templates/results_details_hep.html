@@ -1,4 +1,27 @@
+<div ng-if="record._source._workflow.data_type"
+     class="action-info pull-left">
+  <span ng-switch="record._source._workflow.data_type">
+    <span ng-switch-when="hep">HEP</span>
+    <span ng-switch-when="institutions">Institution</span>
+    <span ng-switch-when="experiments">Experiment</span>
+    <span ng-switch-when="jobs">Job</span>
+  </span>
+</div>
+
+<div ng-if="record._source._extra_data.user_action"
+     class="action-info pull-left"
+     ng-class="record._source._extra_data.user_action">
+              <span
+                ng-switch="record._source._extra_data.user_action">
+                <span ng-switch-when="reject">Rejected</span>
+                <span ng-switch-when="accept">Non-Core</span>
+                <span ng-switch-when="accept_core">Core</span>
+                <span ng-switch-when="accept_curate">Accept Curate</span>
+              </span>
+</div>
+
 <h4 class="custom-h">
+
   <a class="title" ng-if="record._source.metadata.titles"
      ng-href="/holdingpen/{{record._id}}"
      ng-bind-html='record._source.metadata.titles[0].title'></a>
@@ -6,7 +29,8 @@
 
 <div class="authors" ng-if="record._source.metadata.authors">
     <span ng-repeat="author in record._source.metadata.authors | limitTo:10">
-      {{author.full_name}}<span ng-if="!$last">; </span><span ng-if="$last && record._source.metadata.authors.length > 10">; et al. ({{ record._source.metadata.authors.length-10 }} more authors)</span>
+      {{author.full_name}}<span ng-if="!$last">; </span><span
+      ng-if="$last && record._source.metadata.authors.length > 10">; et al. ({{ record._source.metadata.authors.length-10 }} more authors)</span>
     </span>
 </div>
 

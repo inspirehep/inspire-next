@@ -854,10 +854,9 @@ INSPIRELABS_FEEDBACK_EMAIL = "labsfeedback@inspirehep.net"
 # ==========
 LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 
-
 # Web services and APIs
 # =====================
-BEARD_API_URL = None   # e.g. "http://beard.inspirehep.net/api"
+BEARD_API_URL = None  # e.g. "http://beard.inspirehep.net/api"
 MAGPIE_API_URL = "http://magpie.inspirehep.net/api"
 
 # Harvesting and Workflows
@@ -873,7 +872,6 @@ WORKFLOWS_UI_INDEX_TEMPLATE = "inspire_workflows/index.html"
 WORKFLOWS_UI_LIST_TEMPLATE = "inspire_workflows/list.html"
 WORKFLOWS_UI_DETAILS_TEMPLATE = "inspire_workflows/details.html"
 WORKFLOWS_UI_LIST_ROW_TEMPLATE = "inspire_workflows/list_row.html"
-
 
 WORKFLOWS_UI_URL = "/holdingpen"
 WORKFLOWS_UI_API_URL = "/api/holdingpen/"
@@ -1199,3 +1197,9 @@ ARXIV_TO_INSPIRE_CATEGORY_MAPPING = {
     "stat.OT": "Other",
     "stat.TH": "Other"
 }
+
+# Import local config file if it is present.
+try:
+    from inspirehep.config_local import *
+except ImportError:
+    pass

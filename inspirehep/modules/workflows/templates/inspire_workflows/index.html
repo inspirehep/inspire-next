@@ -29,8 +29,10 @@
 
 <div class="container-fluid" id="holding-pen">
   <h3 class="text-center header-text">
-    OVERVIEW
+    OVERVIEW <a href="/holdingpen/list?size=10" class="btn btn-link"
+                style="color: #3498db;">View all</a>
   </h3>
+
 
   <div class="row overview-container">
     <div class="col-md-3 col-sm-6">
@@ -38,12 +40,12 @@
       <holding-pen-dashboard-item
         template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
         primary_filter_key="workflow_name"
-        primary_filter_value="New Author"
+        primary_filter_value="Author"
         secondary_filter="status"
         section_title="New Authors">
       </holding-pen-dashboard-item>
 
-      </div>
+    </div>
 
     <div class="col-md-3 col-sm-6">
 
@@ -60,13 +62,13 @@
     <div class="col-md-3 col-sm-6">
       <div class="overview-item">
 
-      <holding-pen-dashboard-item
-        template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
-        primary_filter_key="workflow_name"
-        primary_filter_value="Literature Suggestion"
-        secondary_filter="status"
-        section_title="New Literature Submissions">
-      </holding-pen-dashboard-item>
+        <holding-pen-dashboard-item
+          template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
+          primary_filter_key="source"
+          primary_filter_value="submission"
+          secondary_filter="status"
+          section_title="New Literature Submissions">
+        </holding-pen-dashboard-item>
 
       </div>
     </div>
@@ -75,12 +77,13 @@
 
       <holding-pen-dashboard-item
         template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
-        primary_filter_key="workflow_name"
+        primary_filter_key="source"
         primary_filter_value="arXiv"
         secondary_filter="status"
         section_title="arxiv harvests">
       </holding-pen-dashboard-item>
 
+    </div>
   </div>
 </div>
 <div class="clearfix"></div>

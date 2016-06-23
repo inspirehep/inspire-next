@@ -22,6 +22,8 @@
 
 """Workflow for processing single arXiv records harvested."""
 
+from __future__ import absolute_import, division, print_function
+
 from workflow.patterns.controlflow import IF, IF_ELSE
 
 from inspirehep.dojson.hep import hep2marc
@@ -75,8 +77,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     reply_ticket,
     add_note_entry,
     user_pdf_get,
-    close_ticket,
-)
+    close_ticket, filter_keywords)
 
 from inspirehep.modules.literaturesuggest.tasks import (
     curation_ticket_needed,
@@ -207,6 +208,7 @@ class Article(object):
             ]),
             add_core,
             add_note_entry,
+            filter_keywords,
             user_pdf_get,
             IF_ELSE(shall_push_remotely, [
                 IF_ELSE(article_exists, [

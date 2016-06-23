@@ -1,3 +1,4 @@
+<div ng-if="vm.record._extra_data._action === 'author_approval' && vm.record._workflow.status === 'HALTED'">
 <button class="btn btn-danger"
         ng-click="Utils.setDecision('reject')">Reject
 </button>
@@ -7,14 +8,14 @@
 <button class="btn btn-success"
         ng-click="Utils.setDecision('accept')">Accept
 </button>
+  </div>
 
-<div ng-if="vm.record._extra_data._action == null || ingestion_complete"
+<div ng-if="vm.record._extra_data._action === null || ingestion_complete"
   class="text-muted">
     <span ng-class="record._extra_data.user_action"
           ng-switch="record._extra_data.user_action">
       <span ng-switch-when="reject">Rejected</span>
-      <span ng-switch-when="accept">Accepted as Non-CORE</span>
-      <span ng-switch-when="accept_core">Accepted as CORE</span>
+      <span ng-switch-when="accept_curate">Accepted with Curation</span>
+      <span ng-switch-when="accept">Accepted</span>
     </span>
-  <p>No further actions available</p>
 </div>
