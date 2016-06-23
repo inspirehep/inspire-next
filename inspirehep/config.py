@@ -135,6 +135,20 @@ USERPROFILES_SETTINGS_TEMPLATE = 'inspirehep_theme/accounts/settings/profile.htm
 
 # Search
 # ======
+
+# Search Typeahead configuration
+
+SEARCH_TYPEAHEAD_INVENIO_KEYWORDS = ['author', 'title']
+SEARCH_TYPEAHEAD_SPIRES_KEYWORDS = ['a', 't', 'eprint', 'j']
+SEARCH_TYPEAHEAD_INVENIO_KEYWORD_TO_HINT = {
+    'author': 'authors.name_suggest'
+}
+SEARCH_TYPEAHEAD_SPIRES_KEYWORD_TO_HINT = {
+    'a': 'authors.name_suggest'
+}
+SEARCH_TYPEAHEAD_HINT_URL = 'http://localhost:5000/search/suggest?field=%TYPE&query=%QUERY'
+SEARCH_TYPEAHEAD_DEFAULT_SET = 'invenio'
+
 SEARCH_ELASTIC_HOSTS = os.environ.get(
     'SEARCH_ELASTIC_HOSTS',
     'localhost').split(';')
@@ -803,7 +817,7 @@ JSONSCHEMAS_HOST = "localhost:5000"
 INDEXER_DEFAULT_INDEX = "records-hep"
 INDEXER_DEFAULT_DOC_TYPE = "hep"
 INDEXER_REPLACE_REFS = False
-INDEXER_BULK_REQUEST_TIMEOUT = 60
+INDEXER_BULK_REQUEST_TIMEOUT = 120
 
 # OAuthclient
 # ===========

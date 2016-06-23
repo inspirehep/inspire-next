@@ -1,0 +1,75 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2014 CERN.
+##
+## INSPIRE is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+##
+## In applying this licence, CERN does not waive the privileges and immunities
+## granted to it by virtue of its status as an Intergovernmental Organization
+## or submit itself to any jurisdiction.
+#}
+
+<script type="text/javascript">
+require(
+  [
+    'jquery',
+    'inspirehep-typeahead',
+    'invenio_with_spires_typeahead_configuration',
+    'hogan'
+  ],
+
+  function(
+    $
+  ) {
+
+    $(function() {
+      var InvenioKeywords = {{config.get('SEARCH_TYPEAHEAD_INVENIO_KEYWORDS')|safe}};
+      var SpiresKeywords = {{config.get('SEARCH_TYPEAHEAD_SPIRES_KEYWORDS')|safe}};
+      var getParserConf = require('invenio_with_spires_typeahead_configuration');
+      var parser_config = getParserConf(InvenioKeywords, SpiresKeywords);
+
+      // Customize what will be passed in the remote call as %TYPE
+      parser_config.invenio.value_type_interpretation =
+        {{config.get('SEARCH_TYPEAHEAD_INVENIO_KEYWORD_TO_HINT')|safe}};
+      parser_config.spires.value_type_interpretation =
+        {{config.get('SEARCH_TYPEAHEAD_SPIRES_KEYWORD_TO_HINT')|safe}};
+
+      // For advanced usages, you can create a custom suggestion function
+      {% raw %}
+      var DefaultSuggestionTemplate = Hogan.compile(
+        '<strong>{{ value }}</strong>'
+      );
+
+      var AuthorSuggestionTemplate = Hogan.compile(
+        '<strong>{{ name }}</strong><br>' +
+        '<small class="text-muted">{{ value }}</small>'
+      );
+      {% endraw %}
+
+      var suggestion_fn = function(data) {
+        if (data.template === "author") {
+          return AuthorSuggestionTemplate.render.call(AuthorSuggestionTemplate, data);
+        }
+        return DefaultSuggestionTemplate.render.call(DefaultSuggestionTemplate, data);
+      }
+
+      $('form[name=search] input[name=q]').searchTypeahead({
+        value_hints_url: "{{config.get('SEARCH_TYPEAHEAD_HINT_URL')|safe}}",
+        options_sets: parser_config,
+        default_set: "{{config.get('SEARCH_TYPEAHEAD_DEFAULT_SET')}}",
+        suggestion_fn: suggestion_fn
+      });
+    });
+});
+</script>
