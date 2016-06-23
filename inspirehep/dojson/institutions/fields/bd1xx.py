@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,11 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
+
+from inspirehep.utils.dedupers import dedupe_list_of_dicts
 
 from ..model import institutions
 from ...utils.geo import parse_institution_address
@@ -32,20 +36,15 @@ from ...utils.geo import parse_institution_address
 @utils.filter_values
 def location(self, key, value):
     """GPS location info."""
-    longitude, latitude = ('', '')
-    if value.get('d'):
+    def _get_float(value, c):
         try:
-            longitude = float(value.get('d'))
-        except:
-            pass
-    if value.get('f'):
-        try:
-            latitude = float(value.get('f'))
-        except:
-            pass
+            return float(value[c])
+        except (KeyError, ValueError):
+            return ''
+
     return {
-        'longitude': longitude,
-        'latitude': latitude
+        'longitude': _get_float(value, 'd'),
+        'latitude': _get_float(value, 'f'),
     }
 
 
@@ -104,17 +103,19 @@ def field_activity(self, key, value):
 
 
 @institutions.over('name_variants', '^410..')
-@utils.for_each_value
-@utils.filter_values
 def name_variants(self, key, value):
     """Variants of the name."""
     if value.get('g'):
         self.setdefault('extra_words', [])
         self['extra_words'].extend(utils.force_list(value.get('g')))
-    return {
-        "source": value.get('9'),
-        "value": utils.force_list(value.get('a'))
-    }
+
+    values = self.get('name_variants', [])
+    values.append({
+        'source': value.get('9'),
+        'value': utils.force_list(value.get('a', [])),
+    })
+
+    return dedupe_list_of_dicts(values)
 
 
 @institutions.over('core', '^690C.')
@@ -144,8 +145,10 @@ def public_notes(self, key, value):
     return value.get('i')
 
 
-@institutions.over('historical_data', '^6781..')
-@utils.for_each_value
+@institutions.over('historical_data', '^6781.')
 def historical_data(self, key, value):
     """Historical data."""
-    return value.get('a')
+    values = self.get('historical_data', [])
+    values.extend(el for el in value.get('a'))
+
+    return values
