@@ -25,6 +25,7 @@ from __future__ import print_function
 import datetime
 import os
 import sys
+import json
 
 from flask import current_app
 from flask.ext.script import prompt_bool
@@ -127,6 +128,32 @@ def remove_legacy_tables():
     except Exception as err:  # noqa
         db.session.rollback()
         current_app.logger.exception(err)
+
+
+@manager.command
+def dump_legacy_holdingpen():
+    """Our own dumpter for legacy Holding Pen.
+
+    Due to problems with app context in invenio-migrator.legacy.cli.
+    """
+    from inspirehep.modules.migrator.legacy.workflows import dump, get
+    from invenio_migrator.utils import grouper
+
+    chunk_size = 1000
+    file_prefix = "holdingpen_dump"
+
+    count, items = get(None, None)
+
+    for i, chunk_ids in enumerate(grouper(items, chunk_size)):
+        with open('{0}_{1}.json'.format(file_prefix, i), 'w') as fp:
+            fp.write("[\n")
+            for _id in chunk_ids:
+                json.dump(dump(_id, None), fp)
+                fp.write(",")
+
+            # Strip trailing comma.
+            fp.seek(fp.tell()-1)
+            fp.write("\n]")
 
 
 @manager.command
