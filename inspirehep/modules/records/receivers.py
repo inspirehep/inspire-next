@@ -19,8 +19,6 @@
 
 """Pre-record receivers."""
 
-import six
-
 from flask import current_app
 
 from invenio_indexer.signals import before_record_index
@@ -31,6 +29,28 @@ from invenio_records.signals import (
 
 from inspirehep.utils.date import create_valid_date
 from inspirehep.dojson.utils import get_recid_from_ref, classify_field
+
+from inspirehep.dojson.utils import get_recid_from_ref
+
+from inspirehep.utils.date import create_valid_date
+
+from invenio_indexer.signals import before_record_index
+
+import six
+
+from .signals import after_record_enhanced
+
+
+@before_record_index.connect
+def enhance_record(sender, json, *args, **kwargs):
+    """Runs all the record enhancers and fires the after_record_enhanced signals
+       to allow receivers work with a fully populated record."""
+    populate_inspire_subjects(sender, json, *args, **kwargs)
+    populate_inspire_document_type(sender, json, *args, **kwargs)
+    match_valid_experiments(sender, json, *args, **kwargs)
+    dates_validator(sender, json, *args, **kwargs)
+    add_recids_and_validate(sender, json, *args, **kwargs)
+    after_record_enhanced.send(json)
 
 
 @before_record_insert.connect
@@ -64,7 +84,6 @@ def normalize_field_categories(sender, *args, **kwargs):
         sender['field_categories'][idx].update(updated_field)
 
 
-@before_record_index.connect
 def populate_inspire_subjects(recid, json, *args, **kwargs):
     """
     Populate a json record before indexing it to elastic.
@@ -77,7 +96,6 @@ def populate_inspire_subjects(recid, json, *args, **kwargs):
     json['facet_inspire_subjects'] = inspire_subjects
 
 
-@before_record_index.connect
 def populate_inspire_document_type(recid, json, *args, **kwargs):
     """ Populates a json record before indexing it to elastic.
         Adds a field for faceting INSPIRE document type
@@ -126,7 +144,6 @@ def populate_inspire_document_type(recid, json, *args, **kwargs):
     json['facet_inspire_doc_type'] = inspire_doc_type
 
 
-@before_record_index.connect
 def match_valid_experiments(recid, json, *args, **kwargs):
     """Matches misspelled experiment names with valid experiments.
        Tries to match with valid experiments by matching lowercased and
@@ -159,7 +176,6 @@ def match_valid_experiments(recid, json, *args, **kwargs):
                 exp.update({"facet_experiment": [facet_experiments_list]})
 
 
-@before_record_index.connect
 def dates_validator(recid, json, *args, **kwargs):
     """Find and assign the correct dates in a record."""
     dates_to_check = ['opening_date', 'closing_date', 'deadline_date']
@@ -237,8 +253,38 @@ def populate_recid_from_ref(recid, json, *args, **kwargs):
     _recusive_find_refs(json)
 
 
-@before_record_index.connect
 def add_recids_and_validate(recid, json, *args, **kwargs):
     """Ensure that recids are generated before being validated."""
     populate_recid_from_ref(recid, json, *args, **kwargs)
     references_validator(recid, json, *args, **kwargs)
+
+
+@before_record_insert.connect
+@before_record_update.connect
+def normalize_field_categories(sender, *args, **kwargs):
+    """Normalize field_categories."""
+    for idx, field in enumerate(sender.get('field_categories', [])):
+        if field.get('scheme') == "INSPIRE" or '_scheme' in field or '_term' in field:
+            # Already normalized form
+            continue
+        original_term = field.get('term')
+        normalized_term = classify_field(original_term)
+        scheme = 'INSPIRE' if normalized_term else None
+
+        original_scheme = field.get('scheme')
+        if isinstance(original_scheme, (list, tuple)):
+            original_scheme = original_scheme[0]
+
+        updated_field = {
+            '_scheme': original_scheme,
+            'scheme': scheme,
+            '_term': original_term,
+            'term': normalized_term,
+        }
+        source = field.get('source')
+        if source:
+            if 'automatically' in source:
+                source = 'INSPIRE'
+            updated_field['source'] = source
+
+        sender['field_categories'][idx].update(updated_field)
