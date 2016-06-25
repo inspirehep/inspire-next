@@ -80,14 +80,14 @@ def guess_keywords(obj, eng):
 
     if results:
         labels = results.get('labels', [])
-        keywords = filter_magpie_response(labels, limit=0.01)
+        keywords = labels[:10]
 
         keywords = [{'label': k[0], 'score': k[1], 'accept': k[1] >= 0.09} for k in
                     keywords]
         obj.extra_data["keywords_prediction"] = dict(
             keywords=keywords
         )
-        current_app.logger.info("Keyword prediction: {0}".format(
+        current_app.logger.info("Keyword prediction (top 10): {0}".format(
             obj.extra_data["keywords_prediction"]["keywords"]
         ))
 

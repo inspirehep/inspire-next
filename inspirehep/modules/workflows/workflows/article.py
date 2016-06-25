@@ -76,7 +76,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     add_note_entry,
     user_pdf_get,
     close_ticket,
-)
+    filter_field_categories, filter_keywords)
 
 from inspirehep.modules.literaturesuggest.tasks import (
     curation_ticket_needed,
@@ -207,6 +207,8 @@ class Article(object):
             ]),
             add_core,
             add_note_entry,
+            filter_field_categories,
+            filter_keywords,
             user_pdf_get,
             IF_ELSE(shall_push_remotely, [
                 IF_ELSE(article_exists, [

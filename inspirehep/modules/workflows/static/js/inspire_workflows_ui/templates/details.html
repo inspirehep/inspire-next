@@ -17,7 +17,7 @@
 
 
     <div class="alert"
-         ng-if="vm.record._extra_data._action !== null || vm.record._workflow.status === 'ERROR'"
+         ng-if="vm.record._extra_data._action || vm.record._workflow.status === 'ERROR'"
          ng-class="{'alert-warning': vm.record._workflow.status === 'HALTED' && !vm.ingestion_complete,
          'alert-danger': vm.record._workflow.status === 'ERROR' && !vm.ingestion_complete,
          'alert-success': vm.record._workflow.status === 'COMPLETED' || vm.ingestion_complete,
@@ -67,16 +67,13 @@
                 <p class="font-bolder">License</p>
               </div>
               <div class="col-md-10 col-sm-8">
-                <span ng-bind="vm.record.metadata.license[0].url"></span> <span
+                <span ng-bind="vm.record.metadata.license[0].url" ></span> <span
                 class="font-bolder text-muted"
                 ng-if="vm.record.metadata.license[0].imposing"> imposed by
           <span ng-bind="vm.record.metadata.license[0].imposing"></span></span>
               </div>
             </div>
-
-
           </div>
-
 
           <div ng-if="vm.record._workflow.data_type === 'authors'">
 
@@ -91,8 +88,6 @@
                     editable-text="vm.record.metadata.name.preferred_name"
                     e-ng-change="Utils.registerUpdateEvent()"></span>
             </p>
-
-
           </div>
         </div>
       </div>
@@ -111,24 +106,26 @@
         </holding-pen-template-handler>
       </div>
 
-      <div class="col-md-3 col-sm-6"
+      <div class="col-md-6 col-sm-6"
            ng-if="vm.record._workflow.data_type == 'authors'">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_subject_areas.html">
         </holding-pen-template-handler>
       </div>
 
-      <div class="col-md-3 col-sm-6"
+      <div class="col-md-6 col-sm-6"
            ng-if="vm.record._workflow.data_type == 'authors'">
-        <div class="detail-panel panel-200">
+        <div class="detail-panel panel-300">
           <h4>Advisors</h4>
 
           <div class="advisors">
             <div class="row"
                  ng-repeat="advisor in vm.record.metadata.phd_advisors">
-              <div class="col-md-6 col-sm-6" ng-bind="advisor.name"></div>
+              <div class="col-md-6 col-sm-6" ng-bind="advisor.name" editable-text="advisor.name"
+      e-ng-change="Utils.registerUpdateEvent()"></div>
               <div class="col-md-6 col-sm-6"
-                   ng-bind="advisor.degree_type"></div>
+                   ng-bind="advisor.degree_type" editable-select="advisor.degree_type"
+      e-ng-change="Utils.registerUpdateEvent()" e-ng-options="degree_type.value as degree_type.text for degree_type in degree_types"></div>
             </div>
 
           </div>

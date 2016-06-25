@@ -92,13 +92,12 @@
 
           <!--Authors  Decision-->
 
-
           <div
-            ng-if="record._source._extra_data && record._extra_data._action !== null && record._source._workflow.data_type === 'authors'">
+            ng-if="record._source._extra_data && record._source._extra_data._action === 'author_approval'">
             <button class="btn btn-danger"
                     ng-click="setDecision(record._id,'reject')">Reject
             </button>
-            a
+
             <button class="btn btn-warning"
                     ng-click="setDecision(record._id,'accept_curate')">Curation
             </button>

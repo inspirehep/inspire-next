@@ -103,7 +103,7 @@ $hp_table_bg: #233345;
   .overview-item {
 
     background-color: $midnight-blue;
-    height: 260px;
+    height: 285px;
     border-radius: 3px;
     margin-bottom: 10px;
 
@@ -118,7 +118,7 @@ $hp_table_bg: #233345;
 
         font-size: 2.6em;
         padding-left: 10px;
-        padding-bottom: 10px;
+        padding-bottom: 5px;
         margin: 0;
       }
 
@@ -133,12 +133,20 @@ $hp_table_bg: #233345;
         padding-left: 10px;
       }
 
-      &.new-author {
+      &.author {
         background-color: $pete-river;
+
+        a {
+          color: white;
+        }
       }
 
       &.author-update {
         background-color: $belize-hole;
+
+        a {
+          color: white;
+        }
       }
 
       &.arxiv {
@@ -146,8 +154,11 @@ $hp_table_bg: #233345;
         color: $midnight-blue !important;
       }
 
-      &.literature-suggestion {
+      &.submission {
         background-color: $carrot;
+        a {
+          color: white;
+        }
       }
     }
 
@@ -513,9 +524,23 @@ $hp_table_bg: #233345;
       }
 
       &.keywords, &.subject-areas {
+
+        .btn-delete {
+          padding: 0;
+          font-size: 14px;
+          line-height: 0;
+          border-radius: 0;
+        }
+
         .keyword-list, .subject-list {
-          height: 230px;
+          height: 180px;
           overflow-y: auto;
+
+          .list-header {
+            font-weight: bolder;
+            margin-bottom: 6px;
+            color: $blue-haze;
+          }
 
           .row {
             padding: 5px;
@@ -526,7 +551,7 @@ $hp_table_bg: #233345;
       }
 
       .add-control {
-        padding:10px;
+        padding: 10px;
       }
 
       .error-data {
@@ -757,4 +782,45 @@ $hp_table_bg: #233345;
     }
   }
 
+}
+
+.ui-menu {
+  background-color: white;
+
+  list-style: none;
+  padding: 5px;
+  margin: 0;
+  display: block;
+  float: left;
+}
+
+.ui-menu .ui-menu {
+  margin-top: -3px;
+}
+
+.ui-menu .ui-menu-item {
+  margin: 0;
+  padding: 0;
+  zoom: 1;
+  float: left;
+  clear: left;
+  width: 100%;
+}
+
+.ui-menu .ui-menu-item a {
+  text-decoration: none;
+  display: block;
+  padding: .2em .4em;
+  line-height: 1.5;
+  zoom: 1;
+}
+
+.ui-menu .ui-menu-item a.focus,
+.ui-menu .ui-menu-item a.active {
+  font-weight: bolder;
+  margin: -1px;
+}
+
+.ui-helper-hidden-accessible {
+  display: none;
 }

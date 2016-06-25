@@ -41,7 +41,8 @@ from inspirehep.utils.tickets import get_instance, retry_if_connection_problems
 )
 def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     """Submit ticket to RT with the given parameters."""
-    rt_instance = get_instance() if current_app.config.get("PRODUCTION_MODE") else None
+    rt_instance = get_instance() if current_app.config.get(
+        "PRODUCTION_MODE") else None
     if not rt_instance:
         obj.log.error("No RT instance available. Skipping!")
         obj.log.info(
@@ -65,7 +66,7 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
         Text=body,
     )
     recid = obj.extra_data.get("recid") or obj.data.get("control_number") \
-        or obj.data.get("recid")
+            or obj.data.get("recid")
     if recid:
         payload['CF_RecordID'] = recid
 
@@ -92,11 +93,14 @@ def create_ticket(template,
     Creates the ticket in the given queue and stores the ticket ID
     in the extra_data key specified in ticket_id_key.
     """
+
     @wraps(create_ticket)
     def _create_ticket(obj, eng):
         user = User.query.get(obj.id_user)
         if not user:
-            obj.log.error("No user found for object {0}, skipping ticket creation".format(obj.id))
+            obj.log.error(
+                "No user found for object {0}, skipping ticket creation".format(
+                    obj.id))
             return
         context = {}
         if context_factory:
@@ -112,6 +116,7 @@ def create_ticket(template,
                          body,
                          user.email,
                          ticket_id_key)
+
     return _create_ticket
 
 
@@ -119,6 +124,7 @@ def reply_ticket(template=None,
                  context_factory=None,
                  keep_new=False):
     """Reply to a ticket for the submission."""
+
     @wraps(reply_ticket)
     def _reply_ticket(obj, eng):
         from inspirehep.utils.tickets import get_instance
@@ -130,7 +136,9 @@ def reply_ticket(template=None,
 
         user = User.query.get(obj.id_user)
         if not user:
-            obj.log.error("No user found for object {0}, skipping ticket creation".format(obj.id))
+            obj.log.error(
+                "No user found for object {0}, skipping ticket creation".format(
+                    obj.id))
             return
 
         if template:
@@ -173,11 +181,13 @@ def reply_ticket(template=None,
                 ticket_id=ticket_id,
                 Status="new"
             )
+
     return _reply_ticket
 
 
 def close_ticket(ticket_id_key="ticket_id"):
     """Close the ticket associated with this record found in given key."""
+
     @wraps(close_ticket)
     def _close_ticket(obj, eng):
         from inspirehep.utils.tickets import get_instance
@@ -208,6 +218,7 @@ def close_ticket(ticket_id_key="ticket_id"):
             if ticket["Status"] != "resolved":
                 raise
             obj.log.warning("Ticket is already resolved.")
+
     return _close_ticket
 
 
@@ -217,6 +228,7 @@ def send_robotupload(url=None,
                      mode="insert",
                      extra_data_key=None):
     """Get the MARCXML from the model and ship it."""
+
     @wraps(send_robotupload)
     def _send_robotupload(obj, eng):
         from inspirehep.dojson.utils import legacy_export_as_marc
@@ -272,6 +284,7 @@ def send_robotupload(url=None,
             obj.log.info(result.text)
             eng.halt("Waiting for robotupload: {0}".format(result.text))
         obj.log.info("end of upload")
+
     return _send_robotupload
 
 
@@ -279,10 +292,26 @@ def add_note_entry(obj, eng):
     """Add note entry to metadata on approval."""
     entry = {'value': '*Temporary entry*'} if obj.extra_data.get("core") \
         else {'value': '*Brief entry*'}
-    if obj.data.get('public_notes') is None or not isinstance(obj.data.get("public_notes"), list):
+    if obj.data.get('public_notes') is None or not isinstance(
+        obj.data.get("public_notes"), list):
         obj.data['public_notes'] = [entry]
     else:
         obj.data['public_notes'].append(entry)
+
+
+def filter_field_categories(obj, eng):
+    """Removes non-accepted field categories from the metadata"""
+    field_categories = filter(lambda x: x['accept'],
+                              obj.data.get('field_categories', []))
+    obj.data['field_categories'] = field_categories
+
+
+def filter_keywords(obj, eng):
+    """Removes non-accepted keywords from the metadata"""
+    field_categories = filter(lambda x: x['accept'],
+                              obj.data.get('field_categories', []))
+    obj.data['field_categories'] = field_categories
+
 
 
 def user_pdf_get(obj, eng):

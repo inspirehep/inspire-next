@@ -28,6 +28,7 @@
   angular.module('holdingpen.services', [])
     .factory("HoldingPenRecordService", ["$http",
       function ($http) {
+
         return {
           /**
            * getRecord
@@ -40,7 +41,7 @@
               if(vm.record._workflow.data_type == 'authors') {
                 $('#breadcrumb').html(vm.record.metadata.name.value);
               } else {
-                $('#breadcrumb').html(vm.record.metadata.titles[0].title);
+                $('#breadcrumb').html(vm.record.metadata.titles[0].title.substring(0, 70) + '...');
               }
             }).catch(function (value) {
               vm.ingestion_complete = false;
@@ -96,7 +97,7 @@
               selected_record_ids = [];
 
             }).catch(function (value) {
-              alert(value);
+              alert(value.status + ': ' + value.statusText);
             });
           },
 

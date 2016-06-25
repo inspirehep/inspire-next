@@ -846,7 +846,7 @@ LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 
 # Web services and APIs
 # =====================
-BEARD_API_URL = None   # e.g. "http://beard.inspirehep.net/api"
+BEARD_API_URL = "http://beard.inspirehep.net/api"
 MAGPIE_API_URL = "http://magpie.inspirehep.net/api"
 
 # Harvesting and Workflows
@@ -1188,3 +1188,9 @@ ARXIV_TO_INSPIRE_CATEGORY_MAPPING = {
     "stat.OT": "Other",
     "stat.TH": "Other"
 }
+
+# Import local config file if it is present.
+try:
+    from inspirehep.config_local import *
+except ImportError:
+    pass

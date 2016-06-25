@@ -1,37 +1,59 @@
 <div class="detail-panel panel-300 keywords">
-  <h4>Keywords</h4>
+  <h4>Suggested Keywords</h4>
   <div class="keyword-list">
-    <div class="row"
-         ng-repeat="keyword in vm.record._extra_data.keywords_prediction.keywords">
-      <div class="col-md-8 col-sm-8 keyword-name"
-           ng-bind="keyword.label"></div>
-      <div class="col-md-2 col-sm-2 keyword-score"
-           ng-bind="keyword.score | number : 4"></div>
-      <div class="col-md-2 col-sm-2 text-left">
-        <div class="onoffswitch">
-          <input type="checkbox" name="keyword-{{$index}}"
-                 class="onoffswitch-checkbox"
-                 id="myonoffswitch-{{ $index }}"
-                 ng-checked="keyword.accept" ng-change="$rootscope.Utils.registerUpdateEvent()"
-                 ng-model="keyword.accept">
-          <label class="onoffswitch-label"
-                 for="myonoffswitch-{{ $index }}"></label>
+    <div class="container-fluid">
+      <div class="row list-header">
+        <div class="col-md-8 col-sm-8">
+        Name
+        </div>
+        <div class="col-md-2 col-sm-2">
+          Score
+        </div>
+        <div class="col-md-2 col-sm-2">
+          Accept
         </div>
       </div>
-    </div>
-    <div ng-if="vm.record._extra_data.keywords_prediction.length == 0">
-      <p>No keywords predicted. Please add some keywords using the box below.</p>
+      <div class="clearfix"></div>
+
+      <div class="row"
+           ng-repeat="keyword in vm.record._extra_data.keywords_prediction.keywords">
+        <div class="col-md-8 col-sm-8 keyword-name"
+             ng-bind="keyword.label"></div>
+        <div class="col-md-2 col-sm-2 keyword-score"
+             ng-bind="keyword.score | number : 4"></div>
+        <div class="col-md-2 col-sm-2 text-left">
+          <div class="onoffswitch">
+            <input type="checkbox" name="keyword-{{$index}}"
+                   class="onoffswitch-checkbox"
+                   id="myonoffswitch-{{ $index }}"
+                   ng-checked="keyword.accept"
+                   ng-change="Utils.registerUpdateEvent()"
+                   ng-model="keyword.accept">
+            <label class="onoffswitch-label"
+                   for="myonoffswitch-{{ $index }}"></label>
+          </div>
+        </div>
+      </div>
+      <div ng-if="vm.record._extra_data.keywords_prediction.length == 0">
+        <p>No keywords predicted. Please add some keywords using the box
+          below.</p>
+      </div>
     </div>
   </div>
 
 
   <div class="row add-control">
-    <div class="col-md-9 col-sm-9 col-xs-9">
-      <input class="form-control dark-input-bg" placeholder="Add a keyword">
-    </div>
-    <div class="col-md-3 col-sm-3 col-xs-3">
-      <button class="btn btn-info"><i class="fa fa-plus"></i> Add</button>
-    </div>
+    <form ng-submit="$event.preventDefault()">
+      <div class="col-md-9 col-sm-9 col-xs-9">
+        <input class="form-control dark-input-bg" id="new_keyword"
+               placeholder="Add a keyword" ng-model="vm.new_keyword">
+      </div>
+      <div class="col-md-3 col-sm-3 col-xs-3">
+        <button class="btn btn-info" ng-click="Utils.addKeyword()"><i
+          class="fa fa-plus"></i> Add
+        </button>
+      </div>
+    </form>
   </div>
 
 </div>

@@ -39,7 +39,7 @@
       <holding-pen-dashboard-item
         template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
         primary_filter_key="workflow_name"
-        primary_filter_value="New Author"
+        primary_filter_value="Author"
         secondary_filter="status"
         section_title="New Authors">
       </holding-pen-dashboard-item>
@@ -63,8 +63,8 @@
 
       <holding-pen-dashboard-item
         template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
-        primary_filter_key="workflow_name"
-        primary_filter_value="suggestion"
+        primary_filter_key="source"
+        primary_filter_value="submission"
         secondary_filter="status"
         section_title="New Literature Submissions">
       </holding-pen-dashboard-item>
@@ -76,10 +76,10 @@
 
       <holding-pen-dashboard-item
         template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
-        primary_filter_key="workflow_name"
-        primary_filter_value="HEP"
+        primary_filter_key="source"
+        primary_filter_value="arXiv"
         secondary_filter="status"
-        section_title="oai harvests">
+        section_title="arxiv harvests">
       </holding-pen-dashboard-item>
 
   </div>

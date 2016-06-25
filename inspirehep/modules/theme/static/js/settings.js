@@ -119,7 +119,7 @@ require.config({
       deps: ['angular']
     },
     'holding-pen-directives': {
-      deps: ['angular', 'holding-pen-services']
+      deps: ['angular', 'holding-pen-services', 'jquery', 'jquery.ui']
     },
     'holding-pen-filters': {
       deps: ['angular']
