@@ -24,8 +24,10 @@
 
   function holdingPenBatchDecision() {
 
-    var controller = ["$scope", "HoldingPenRecordService",
-      function ($scope, HoldingPenRecordService) {
+    var controller = ["$scope", "HoldingPenRecordService", "$uibModal",
+      function ($scope, HoldingPenRecordService, $uibModal) {
+
+        $scope.modal = undefined;
 
         $scope.BatchUtils = {
           setDecision: function (decision) {
@@ -35,26 +37,34 @@
               decision)
           },
 
-          restartWorkflows : function() {
-            for(var select_record_idx in $scope.vm.selected_records) {
+          showConfirm: function (type) {
+            $scope.modal = $uibModal.open({
+              templateUrl: '/static/js/inspire_workflows_ui/templates/modals/batch_' + type + '_modal.html'
+            });
+          },
+
+          hideConfirm: function() {
+            $scope.modal.dismiss('cancel')
+          },
+
+          restartWorkflows: function () {
+            for (var select_record_idx in $scope.vm.selected_records) {
               HoldingPenRecordService.restartWorkflow($scope.vm, $scope.vm.selected_records[select_record_idx]);
             }
-
             $scope.vm.batch_message = $scope.vm.selected_records.length + " workflows restarted."
           },
 
-          resumeWorkflows : function() {
-            for(var select_record_idx in $scope.vm.selected_records) {
+          resumeWorkflows: function () {
+            for (var select_record_idx in $scope.vm.selected_records) {
               HoldingPenRecordService.resumeWorkflow($scope.vm, $scope.vm.selected_records[select_record_idx]);
             }
             $scope.vm.batch_message = $scope.vm.selected_records.length + " workflows resumed."
           },
 
-          deleteWorkflows : function() {
-            for(var select_record_idx in $scope.vm.selected_records) {
+          deleteWorkflows: function () {
+            for (var select_record_idx in $scope.vm.selected_records) {
               HoldingPenRecordService.deleteRecord($scope.vm, $scope.vm.selected_records[select_record_idx], false);
             }
-
             window.location = '/holdingpen/list';
             $scope.vm.batch_message = $scope.vm.selected_records.length + " workflows deleted."
           }
@@ -77,12 +87,14 @@
 
   function holdingPenDetail() {
 
-    var controller = ["$scope", "HoldingPenRecordService",
-      function ($scope, HoldingPenRecordService) {
+    var controller = ["$scope", "HoldingPenRecordService", "$uibModal",
+      function ($scope, HoldingPenRecordService, $uibModal) {
         $scope.vm = {};
         $scope.vm.loading = true;
         $scope.vm.new_subject_area = '';
         $scope.vm.new_keyword = '';
+
+        $scope.vm.modal = undefined;
 
         $scope.vm.names = ["Astrophysics", "Computing", "Experiment-HEP", "Experiment-Nucl",
           "General Physics", "Gravitation and Cosmology", "Math and Math Physics", "Other", "Phenomenology-HEP", "Theory-HEP", "Theory-Nucl"];

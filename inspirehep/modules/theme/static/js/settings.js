@@ -125,7 +125,7 @@ require.config({
       deps: ['angular']
     },
     'holding-pen-module': {
-      deps: ['angular', 'holding-pen-directives', 'holding-pen-controllers', 'holding-pen-filters', 'angular-sanitize', 'angular-filter']
+      deps: ['angular', 'holding-pen-directives', 'holding-pen-controllers', 'holding-pen-filters', 'angular-sanitize', 'angular-filter', 'angular-ui-bootstrap']
     },
     'inspirehep': {
       deps: ['angular', 'angular-sanitize', 'angular-ui-bootstrap', 'ngclipboard']

@@ -22,13 +22,13 @@
       <div class="col-md-5 text-center" style="padding: 7px">
         <p class="text-muted">Decision</p>
         <button class="btn btn-danger"
-                ng-click="BatchUtils.setDecision('reject')">Reject
+                ng-click="BatchUtils.showConfirm('reject')">Reject
         </button>
         <button class="btn btn-warning"
-                ng-click="BatchUtils.setDecision('accept')">Accept
+                ng-click="BatchUtils.showConfirm('accept')">Accept
         </button>
         <button class="btn btn-success"
-                ng-click="BatchUtils.setDecision('accept_core')">Core
+                ng-click="BatchUtils.showConfirm('core')">Core
         </button>
 
         </div>
@@ -46,7 +46,7 @@
 
 
         <button class="btn btn-danger"
-                ng-click="BatchUtils.deleteWorkflows()"><i class="fa fa-trash" aria-hidden="true"></i> Delete
+                ng-click="BatchUtils.showConfirm('delete')"><i class="fa fa-trash" aria-hidden="true"></i> Delete
         </button>
 
       </div>

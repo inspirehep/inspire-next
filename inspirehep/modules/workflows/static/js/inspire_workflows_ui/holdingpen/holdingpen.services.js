@@ -77,7 +77,6 @@
           },
 
           setBatchDecision: function (records, selected_record_ids, decision) {
-
             var data = JSON.stringify({
               'value': decision,
               'object_ids': selected_record_ids,
@@ -93,14 +92,12 @@
                   record_obj._extra_data._action = null;
                 }
               }
-
               selected_record_ids = [];
-
             }).catch(function (value) {
+              console.debug(value);
               alert(value.status + ': ' + value.statusText);
             });
           },
-
 
           deleteRecord: function (vm, workflowId, reload) {
             $http.delete('/api/holdingpen/' + workflowId, vm.record).then(function (response) {
