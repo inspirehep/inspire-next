@@ -22,6 +22,7 @@
  */
 
 require([
+    'd3',
     'angular-loading-bar',
     'invenio-search',
     'inspirehep-search',
