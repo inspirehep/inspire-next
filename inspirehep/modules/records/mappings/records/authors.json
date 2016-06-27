@@ -117,6 +117,15 @@
                 "positions": {
                     "type": "nested",
                     "include_in_parent": true
+                },
+                "self":{
+                  "type": "object",
+                  "properties":{
+                    "$ref": {
+                      "type": "string",
+                      "index": "not_analyzed"
+                    }
+                  }
                 }
             }
         }

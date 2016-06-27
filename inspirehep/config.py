@@ -289,6 +289,8 @@ RECORDS_REST_ENDPOINTS = dict(
                                  ':json_v1_response'),
             'application/x-bibtex': ('inspirehep.modules.records.serializers'
                                      ':bibtex_v1_response'),
+            'application/x-orcid': ('inspirehep.modules.records.serializers'
+                                    ':orcid_response'),
             'application/x-latexeu': ('inspirehep.modules.records.serializers'
                                       ':latexeu_v1_response'),
             'application/x-latexus': ('inspirehep.modules.records.serializers'
@@ -316,6 +318,8 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
             'application/x-bibtex': ('inspirehep.modules.records.serializers'
                                      ':bibtex_v1_search'),
+            'application/x-orcid': ('inspirehep.modules.records.serializers'
+                                    ':orcid_search'),
             'application/x-latexeu': ('inspirehep.modules.records.serializers'
                                       ':latexeu_v1_search'),
             'application/x-latexus': ('inspirehep.modules.records.serializers'
@@ -821,6 +825,7 @@ INDEXER_BULK_REQUEST_TIMEOUT = 120
 
 # OAuthclient
 # ===========
+orcid.REMOTE_APP['params']['request_token_params'] = {'scope': '/orcid-profile/read-limited /activities/update /orcid-bio/update'}
 OAUTHCLIENT_REMOTE_APPS = dict(
     orcid=orcid.REMOTE_APP,
 )
@@ -829,6 +834,12 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
     consumer_secret="CHANGE_ME",
 )
 
+OAUTHCLIENT_SETTINGS_TEMPLATE = 'inspirehep_theme/page.html'
+
+ORCID_SYNCHRONIZATION_ENABLED = False
+
+# Error Pages
+# ========
 THEME_401_TEMPLATE = "inspirehep_theme/errors/401.html"
 THEME_403_TEMPLATE = "inspirehep_theme/errors/403.html"
 THEME_404_TEMPLATE = "inspirehep_theme/errors/404.html"

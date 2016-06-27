@@ -186,6 +186,7 @@ setup(
             'inspire_warnings = inspirehep.modules.warnings:INSPIREWarnings',
             'arxiv = inspirehep.modules.arxiv:Arxiv',
             'crossref = inspirehep.modules.crossref:CrossRef',
+            'inspire_orcid = inspirehep.modules.orcid:INSPIREOrcid',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
