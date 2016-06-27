@@ -44,10 +44,8 @@ def prepare_magpie_payload(record, corpus):
     payload = dict(text="", corpus=corpus)
     titles = filter(None, get_value(record, "titles.title", []))
     abstracts = filter(None, get_value(record, "abstracts.value", []))
-    payload["text"] = ". ".join([
-                                    part.encode('utf-8') for part in
-                                    titles + abstracts
-                                    ])
+    payload["text"] = ". ".join(
+        [part.encode('utf-8') for part in titles + abstracts])
     return payload
 
 
@@ -56,7 +54,7 @@ def filter_magpie_response(labels, limit):
     filtered_labels = [
         (word, score) for word, score in labels
         if score >= limit
-        ]
+    ]
 
     # In the event that there are no labels with a high enough score,
     # we take only the top one
@@ -82,7 +80,8 @@ def guess_keywords(obj, eng):
         labels = results.get('labels', [])
         keywords = labels[:10]
 
-        keywords = [{'label': k[0], 'score': k[1], 'accept': k[1] >= 0.09} for k in
+        keywords = [{'label': k[0], 'score': k[1], 'accept': k[1] >= 0.09} for
+                    k in
                     keywords]
         obj.extra_data["keywords_prediction"] = dict(
             keywords=keywords
@@ -104,8 +103,8 @@ def guess_categories(obj, eng):
         labels = results.get('labels', [])
         categories = filter_magpie_response(labels, limit=0.22)
 
-        categories = [{'label': c[0], 'score': c[1], 'accept': c[1] >= 0.25} for c in
-                    categories]
+        categories = [{'label': c[0], 'score': c[1],
+                       'accept': c[1] >= 0.25} for c in categories]
 
         obj.extra_data["categories_prediction"] = dict(
             categories=categories

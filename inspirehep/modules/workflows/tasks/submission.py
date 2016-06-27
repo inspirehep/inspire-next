@@ -66,7 +66,7 @@ def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
         Text=body,
     )
     recid = obj.extra_data.get("recid") or obj.data.get("control_number") \
-            or obj.data.get("recid")
+        or obj.data.get("recid")
     if recid:
         payload['CF_RecordID'] = recid
 
@@ -292,26 +292,21 @@ def add_note_entry(obj, eng):
     """Add note entry to metadata on approval."""
     entry = {'value': '*Temporary entry*'} if obj.extra_data.get("core") \
         else {'value': '*Brief entry*'}
-    if obj.data.get('public_notes') is None or not isinstance(
-        obj.data.get("public_notes"), list):
+    if obj.data.get('public_notes') is None or \
+            not isinstance(obj.data.get("public_notes"), list):
         obj.data['public_notes'] = [entry]
     else:
         obj.data['public_notes'].append(entry)
 
 
-def filter_field_categories(obj, eng):
-    """Removes non-accepted field categories from the metadata"""
-    field_categories = filter(lambda x: x['accept'],
-                              obj.data.get('field_categories', []))
-    obj.data['field_categories'] = field_categories
-
-
 def filter_keywords(obj, eng):
     """Removes non-accepted keywords from the metadata"""
-    field_categories = filter(lambda x: x['accept'],
-                              obj.data.get('field_categories', []))
-    obj.data['field_categories'] = field_categories
+    prediction = obj.extra_data.get('keywords_prediction', {})
+    if prediction:
+        keywords = prediction.get('keywords')
 
+        keywords = filter(lambda x: x['accept'], keywords)
+        obj.extra_data['keywords_prediction']['keywords'] = keywords
 
 
 def user_pdf_get(obj, eng):

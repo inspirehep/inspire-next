@@ -52,9 +52,10 @@
 
           deleteWorkflows : function() {
             for(var select_record_idx in $scope.vm.selected_records) {
-              HoldingPenRecordService.deleteRecord($scope.vm, $scope.vm.selected_records[select_record_idx]);
+              HoldingPenRecordService.deleteRecord($scope.vm, $scope.vm.selected_records[select_record_idx], false);
             }
 
+            window.location = '/holdingpen/list';
             $scope.vm.batch_message = $scope.vm.selected_records.length + " workflows deleted."
           }
 
@@ -154,7 +155,7 @@
           },
 
           deleteRecord: function () {
-            HoldingPenRecordService.deleteRecord($scope.vm, $scope.workflowId)
+            HoldingPenRecordService.deleteRecord($scope.vm, $scope.workflowId, true)
           },
 
           registerUpdateEvent: function () {

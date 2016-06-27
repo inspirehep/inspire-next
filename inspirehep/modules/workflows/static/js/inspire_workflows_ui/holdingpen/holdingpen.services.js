@@ -106,7 +106,7 @@
             $http.delete('/api/holdingpen/' + workflowId, vm.record).then(function (response) {
               vm.ingestion_complete = true;
               if (reload)
-                window.location = '/holdingpen/list'
+                window.location = '/holdingpen/list/'
             }).catch(function (value) {
               vm.ingestion_complete = false;
             });
