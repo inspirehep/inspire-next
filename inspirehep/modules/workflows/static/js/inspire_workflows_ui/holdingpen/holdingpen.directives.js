@@ -33,7 +33,31 @@
               $scope.vm.invenioSearchResults.hits.hits,
               $scope.vm.selected_records,
               decision)
+          },
+
+          restartWorkflows : function() {
+            for(var select_record_idx in $scope.vm.selected_records) {
+              HoldingPenRecordService.restartWorkflow($scope.vm, $scope.vm.selected_records[select_record_idx]);
+            }
+
+            $scope.vm.batch_message = $scope.vm.selected_records.length + " workflows restarted."
+          },
+
+          resumeWorkflows : function() {
+            for(var select_record_idx in $scope.vm.selected_records) {
+              HoldingPenRecordService.resumeWorkflow($scope.vm, $scope.vm.selected_records[select_record_idx]);
+            }
+            $scope.vm.batch_message = $scope.vm.selected_records.length + " workflows resumed."
+          },
+
+          deleteWorkflows : function() {
+            for(var select_record_idx in $scope.vm.selected_records) {
+              HoldingPenRecordService.deleteRecord($scope.vm, $scope.vm.selected_records[select_record_idx]);
+            }
+
+            $scope.vm.batch_message = $scope.vm.selected_records.length + " workflows deleted."
           }
+
         }
       }
     ];
@@ -59,8 +83,8 @@
         $scope.vm.new_subject_area = '';
         $scope.vm.new_keyword = '';
 
-        $scope.vm.names = ["Theory-HEP", "Gravitation and Cosmology", "Astrophysics", "Math and Math Physics",
-        "Phenomenology-HEP", "General Physics", "Experiment-HEP", "Other", "Experiment-Nucl", "Theory-Nucl" ];
+        $scope.vm.names = ["Astrophysics", "Computing", "Experiment-HEP", "Experiment-Nucl",
+          "General Physics", "Gravitation and Cosmology", "Math and Math Physics", "Other", "Phenomenology-HEP", "Theory-HEP", "Theory-Nucl"];
 
         $scope.degree_types = [
           {value: 'Bachelor', text: 'Bachelor'},
@@ -125,8 +149,8 @@
 
           deleteSubject: function (index) {
             if (index < $scope.vm.record.metadata.field_categories.length)
-              $scope.vm.record.metadata.field_categories.splice(index,1);
-              $scope.doUpdate();
+              $scope.vm.record.metadata.field_categories.splice(index, 1);
+            $scope.doUpdate();
           },
 
           deleteRecord: function () {

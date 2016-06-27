@@ -21,7 +21,7 @@
     </div>
 
     <div class="col-md-3">
-      Decision
+      Action
     </div>
 
   </div>
@@ -51,7 +51,6 @@
         <div class="col-md-4"
              ng-if="record._source._workflow.data_type !== 'authors'">
           <holding-pen-template-handler
-
             template="/static/js/inspire_workflows_ui/templates/results_details_hep.html">
           </holding-pen-template-handler>
         </div>
@@ -76,13 +75,11 @@
           <ul class="subject-terms">
             <li
               ng-repeat="subject in record._source.metadata.field_categories | unique:'term' | limitTo:3"
-              ng-if="record._source.metadata.field_categories">
-              {{subject.term}}
+              ng-if="record._source.metadata.field_categories">{{subject.term}}
             </li>
             <li
               ng-repeat="subject in record._source.metadata.field_categories | limitTo:3"
-              ng-if="subject._term">
-              {{subject._term}}
+              ng-if="subject._term">{{subject._term}}
             </li>
           </ul>
         </div>
@@ -149,29 +146,38 @@
 
           </div>
 
+          <div ng-if="record._source._workflow.status === 'ERROR'">
+            <br/>
+            <i class="fa fa-exclamation-triangle icon-large red-color"></i>
+            <p class="small-text">
+              This record is in error state. View
+              the <a ng-href="/holdingpen/{{record._id}}">detailed record</a>
+              for
+              more information.</p>
+          </div>
+
+          <div ng-if="record._source._workflow.status === 'INITIAL'">
+            <br/>
+            <i class="fa fa-circle-o icon-large"></i>
+            <p class="small-text">
+              This record has not been run through the workflow yet. View
+              the <a ng-href="/holdingpen/{{record._id}}">detailed record</a>
+              to start it.</p>
+          </div>
+
+
           <div ng-if="record._source._extra_data.user_action"
                class="action-info">
               <span ng-class="record._source._extra_data.user_action"
                     ng-switch="record._source._extra_data.user_action">
-                <span ng-switch-when="reject">Rejected</span>
-                <span ng-switch-when="accept">Accepted as Non-CORE</span>
-                <span ng-switch-when="accept_core">Accepted as CORE</span>
+                <span ng-switch-when="reject"><i class="fa fa-times"></i> Rejected</span>
+                <span ng-switch-when="accept"><i class="fa fa-check"></i> Accepted as Non-CORE</span>
+                <span ng-switch-when="accept_core"><i class="fa fa-check"></i> Accepted as CORE</span>
               </span>
           </div>
 
-          <br/>
 
-          <div if="!record._extra_data">
-            <div ng-if="record._source._workflow.status === 'ERROR'">
-              <i class="fa fa-exclamation-triangle icon-large"></i>
-              <p class="small-text">
-                No further actions are possible for this record due to an
-                error. View
-                the
-                <a ng-href="/holdingpen/{{record._id}}">detailed record</a> for
-                more information.</p>
-            </div>
-          </div>
+
 
 
         </div>

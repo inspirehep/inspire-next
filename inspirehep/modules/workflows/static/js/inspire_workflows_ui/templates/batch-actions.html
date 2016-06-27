@@ -4,15 +4,23 @@
   </div>
 </div>
 
+<div class="row detail-section" ng-show="vm.batch_message">
+  <div class="alert alert-info alert-dismissable">
+    <p><i class="fa fa-play"></i> {{vm.batch_message}}</p>
+  </div>
+</div>
+
+
 <div class="row detail-section" ng-show="vm.selected_records.length > 0">
   <div class="col-md-12">
     <div class="row detail-panel">
 
-      <div class="col-md-3">
+      <div class="col-md-3" style="padding-top: 10px">
         <h4>Perform batch operation on {{vm.selected_records.length}} selected
           records.</h4>
       </div>
-      <div class="col-md-9 text-right">
+      <div class="col-md-5 text-center" style="padding: 7px">
+        <p class="text-muted">Decision</p>
         <button class="btn btn-danger"
                 ng-click="BatchUtils.setDecision('reject')">Reject
         </button>
@@ -21,6 +29,24 @@
         </button>
         <button class="btn btn-success"
                 ng-click="BatchUtils.setDecision('accept_core')">Core
+        </button>
+
+        </div>
+
+
+      <div class="col-md-4 text-center" style="padding: 7px">
+        <p class="text-muted">Workflow Actions</p>
+        <button class="btn btn-default"
+                ng-click="BatchUtils.restartWorkflows()"><i class="fa fa-repeat" aria-hidden="true"></i> Restart
+        </button>
+
+        <button class="btn btn-default"
+                ng-click="BatchUtils.resumeWorkflows()"><i class="fa fa-play" aria-hidden="true"></i> Resume
+        </button>
+
+
+        <button class="btn btn-danger"
+                ng-click="BatchUtils.deleteWorkflows()"><i class="fa fa-trash" aria-hidden="true"></i> Delete
         </button>
 
       </div>

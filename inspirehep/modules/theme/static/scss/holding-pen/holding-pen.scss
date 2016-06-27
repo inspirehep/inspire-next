@@ -288,7 +288,7 @@ $hp_table_bg: #233345;
 
     .hp-item {
       background-color: $hp_table_bg;
-      margin-bottom: 3px;
+      margin-bottom: 6px;
       padding-bottom: 10px;
       padding-top: 10px;
       border-left: 4px solid $hp_table_bg;
@@ -691,7 +691,8 @@ $hp_table_bg: #233345;
     background-color: $midnight-blue;
     border-radius: 3px;
     margin: 2px;
-    padding: 4px 6px;
+    font-size: .9em;
+    padding: 3px 5px;
     display: inline-block;
 
   }
@@ -823,4 +824,8 @@ $hp_table_bg: #233345;
 
 .ui-helper-hidden-accessible {
   display: none;
+}
+
+.red-color {
+  color: $alizarin;
 }

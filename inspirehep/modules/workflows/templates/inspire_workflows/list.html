@@ -41,13 +41,14 @@
   <ul class="pull-left">
     <li>Holding Pen</li>
     <li><a href="/holdingpen">Dashboard</a></li>
-    <li class="active">List</li>
+    <li class="active">Search</li>
   </ul>
 
   <div class="pull-right">
     <form action="/holdingpen/list" class="hp-search-form">
       <input type="text" name="q" placeholder="Search the holding pen"
-       {% if request.args.get('q') %}value="{{ request.args.get('q') }}" {% endif %}>
+             {%if request.args.get('q') %}value="{{ request.args.get('q') }}"
+      {% endif %}>
     </form>
   </div>
 </div>
@@ -55,7 +56,8 @@
 
 {%- block body -%}
 <div id="holding-pen">
-  <holding-pen-batch-decision template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/batch-actions.html') }}">
+  <holding-pen-batch-decision
+    template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/batch-actions.html') }}">
   </holding-pen-batch-decision>
 
   <invenio-search search-endpoint="/api/holdingpen"
@@ -63,18 +65,26 @@
     <div class="clearfix"></div>
     <div class="row">
       <div class="col-md-2 hp-filters facet-container">
+
+        <h4>Results per page</h4>
+
+
+        <holding-pen-template-handler
+          template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/resultsize.html') }}">
+        </holding-pen-template-handler>
+
+
         <h4>Sort by</h4>
-
-
-        {%- set sort_options = config.get('WORKFLOWS_UI_REST_SORT_OPTIONS', {}).get('holdingpen') %}
-          {%- if sort_options %}
-            <invenio-search-select-box
-               sort-key="sort"
-               default-option="{{ sort_options|default_sortoption }}"
-               available-options='{{ sort_options|format_sortoptions|safe }}'
-               template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/selectbox.html') }}">
-            </invenio-search-select-box>
-          {%- endif %}
+        {%- set sort_options = config.get('WORKFLOWS_UI_REST_SORT_OPTIONS',
+        {}).get('holdingpen') %}
+        {%- if sort_options %}
+        <invenio-search-select-box
+          sort-key="sort"
+          default-option="{{ sort_options|default_sortoption }}"
+          available-options='{{ sort_options|format_sortoptions|safe }}'
+          template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/selectbox.html') }}">
+        </invenio-search-select-box>
+        {%- endif %}
 
 
         <invenio-search-facets
@@ -85,10 +95,18 @@
 
       <div class="col-md-10 result-list">
         <div id="help-bar" class="row">
-          <div class="pull-left">
-            <p class="text-muted">Ctrl+A: Select all, Esc: Deselect</p>
+
+          <div class="col-md-8 col-sm-8 col-xs-8 pull-left">
+            <p class="text-muted">Ctrl+A: Toggle Select all</p>
+          </div>
+
+          <div class="col-md-4 col-sm-4 col-xs-4 text-muted text-right">
+            <invenio-search-count
+              template="{{ url_for('static', filename='node_modules/invenio-search-js/dist/templates/count.html') }}">
+            </invenio-search-count>
           </div>
         </div>
+
 
         <invenio-search-results
           template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/results.html') }}">

@@ -846,7 +846,7 @@ LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 
 # Web services and APIs
 # =====================
-BEARD_API_URL = "http://beard.inspirehep.net/api"
+BEARD_API_URL = None # e.g. "http://beard.inspirehep.net/api"
 MAGPIE_API_URL = "http://magpie.inspirehep.net/api"
 
 # Harvesting and Workflows
