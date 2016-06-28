@@ -635,7 +635,7 @@ $hp_table_bg: #233345;
     color: $dark-blue;
   }
 
-  .accept {
+  .accept, .accept_curate {
     background-color: $orange;
     color: $dark-blue;
   }
@@ -686,6 +686,21 @@ $hp_table_bg: #233345;
   .automatic-decision {
     font-size: 1.1em;
     padding-bottom: 10px;
+
+    .reject {
+      background-color: transparent;
+      color: $alizarin;
+    }
+
+    .accept_core {
+      background-color: transparent;
+      color: $green-sea
+    }
+
+    .accept, .accept_curate {
+      background-color: transparent;
+      color: $orange;
+    }
   }
 
 }
