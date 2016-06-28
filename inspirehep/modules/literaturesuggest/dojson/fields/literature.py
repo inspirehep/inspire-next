@@ -138,9 +138,9 @@ def preprint_created(self, key, value):
 @utils.for_each_value
 def defense_date(self, key, value):
     if 'thesis' in self:
-        self['thesis'][0].update(dict(defense_date=value))
+        self['thesis'].update(dict(defense_date=value))
     else:
-        self['thesis'] = [dict(defense_date=value)]
+        self['thesis'] = dict(defense_date=value)
 
     defense_note = {'value': 'Presented on {0}'.format(value)}
     self.setdefault("public_notes", []).append(defense_note)
@@ -150,27 +150,27 @@ def defense_date(self, key, value):
 @literature.over('_degree_type', '^degree_type$')
 def degree_type(self, key, value):
     if 'thesis' in self:
-        self['thesis'][0].update(dict(degree_type=value))
+        self['thesis'].update(dict(degree_type=value))
     else:
-        self['thesis'] = [dict(degree_type=value)]
+        self['thesis'] = dict(degree_type=value)
     raise IgnoreKey
 
 
-@literature.over('_institution', '^institution$')
+@literature.over('_institutions', '^institution$')
 def institution(self, key, value):
     if 'thesis' in self:
-        self['thesis'][0].update(dict(university=value))
+        self['thesis'].update(dict(institutions=[{'name': value}]))
     else:
-        self['thesis'] = [dict(university=value)]
+        self['thesis'] = dict(institutions=[{'name': value}])
     raise IgnoreKey
 
 
 @literature.over('_thesis_date', '^thesis_date$')
 def thesis_date(self, key, value):
     if 'thesis' in self:
-        self['thesis'][0].update(dict(date=value))
+        self['thesis'].update(dict(date=value))
     else:
-        self['thesis'] = [dict(date=value)]
+        self['thesis'] = dict(date=value)
     raise IgnoreKey
 
 

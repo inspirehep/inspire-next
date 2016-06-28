@@ -38,11 +38,10 @@ def earliest_date(sender, *args, **kwargs):
         dates.append(sender['preprint_date'])
 
     if 'thesis' in sender:
-        for thesis_key in sender['thesis']:
-            if 'date' in thesis_key:
-                dates.append(thesis_key['date'])
-            if 'defense_date' in thesis_key:
-                dates.append(thesis_key['defense_date'])
+        if 'date' in sender['thesis']:
+            dates.append(sender['thesis']['date'])
+        if 'defense_date' in sender['thesis']:
+            dates.append(sender['thesis']['defense_date'])
 
     if 'publication_info' in sender:
         for publication_info_key in sender['publication_info']:

@@ -404,14 +404,40 @@ def test_hidden_notes_from_595__a_9_and_595__double_a_9():
     assert expected == result['hidden_notes']
 
 
-def test_thesis(marcxml_to_json, json_to_marc):
+def test_thesis_roundtrip(marcxml_to_json, json_to_marc):
     """Test if thesis is created correctly."""
-    assert (marcxml_to_json['thesis'][0]['degree_type'] ==
-            json_to_marc['502'][0]['b'])
-    assert (marcxml_to_json['thesis'][0]['university'] ==
-            json_to_marc['502'][0]['c'])
-    assert (marcxml_to_json['thesis'][0]['date'] ==
-            json_to_marc['502'][0]['d'])
+    assert (marcxml_to_json['thesis']['degree_type'] ==
+            json_to_marc['502']['b'])
+    assert (marcxml_to_json['thesis']['institutions'][0]['name'] ==
+            json_to_marc['502']['c'][0])
+    assert (marcxml_to_json['thesis']['date'] ==
+            json_to_marc['502']['d'])
+
+
+def test_thesis_multiple_institutions():
+    snippet = (
+        '<record>'
+        '  <datafield tag="502" ind1=" " ind2=" ">'
+        '    <subfield code="b">Thesis</subfield>'
+        '    <subfield code="c">Nice U.</subfield>'
+        '    <subfield code="c">Cote d\'Azur Observ., Nice</subfield>'
+        '    <subfield code="d">2014</subfield>'
+        '    <subfield code="z">903069</subfield>'
+        '    <subfield code="z">904125</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1385648
+    expected = [
+        {'name': 'Nice U.', 'recid': '903069'},
+        {'name': 'Cote d\'Azur Observ., Nice', 'recid': '904125'}
+    ]
+
+    result = hep.do(create_record(snippet))['thesis']['institutions']
+
+    assert len(result) == 2
+    for expected_inst, result_inst in zip(expected, result):
+        assert expected_inst['name'] == result_inst['name']
+        assert expected_inst['recid'] in result_inst['record']['$ref']
 
 
 def test_abstract(marcxml_to_json, json_to_marc):

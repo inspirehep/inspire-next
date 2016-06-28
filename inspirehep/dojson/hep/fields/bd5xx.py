@@ -85,32 +85,37 @@ def hidden_note2marc(self, key, value):
 
 
 @hep.over('thesis', '^502..')
-@utils.for_each_value
 @utils.filter_values
 def thesis(self, key, value):
     """Get Thesis Information."""
-    curated_relation = False
-    if value.get('z'):
-        curated_relation = True
-    return {
+    res = {
         'defense_date': value.get('a'),
         'degree_type': value.get('b'),
-        'university': value.get('c'),
         'date': value.get('d'),
-        'record': get_record_ref(value.get('z'), 'institutions'),
-        'curated_relation': curated_relation,
     }
+
+    inst_names = utils.force_list(value.get('c', []))
+    inst_recids = utils.force_list(value.get('z', []))
+    if len(inst_names) != len(inst_recids):
+        institutions = [{'name': name} for name in inst_names]
+    else:
+        institutions = [{'name': name,
+                         'record': get_record_ref(recid, 'institutions'),
+                         'curated_relation': True}
+                        for name, recid in zip(inst_names, inst_recids)]
+    if institutions:
+        res['institutions'] = institutions
+    return res
 
 
 @hep2marc.over('502', '^thesis$')
-@utils.for_each_value
 @utils.filter_values
 def thesis2marc(self, key, value):
     """Get Thesis Information."""
     return {
         'a': value.get('defense_date'),
         'b': value.get('degree_type'),
-        'c': value.get('university'),
+        'c': [inst['name'] for inst in value.get('institutions', [])],
         'd': value.get('date'),
     }
 

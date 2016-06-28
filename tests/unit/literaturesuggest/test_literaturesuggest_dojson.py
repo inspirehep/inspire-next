@@ -329,11 +329,9 @@ def test_thesis_defense_date_and_public_notes_from_defense_date():
 
     result = literature.do(form)
 
-    assert result['thesis'] == [
-        {
-            'defense_date': 'foo',
-        }
-    ]
+    assert result['thesis'] == {
+        'defense_date': 'foo',
+    }
     assert result['public_notes'] == [
         {
             'value': 'Presented on foo',
@@ -349,18 +347,16 @@ def test_thesis_defense_date_and_public_notes_from_multiple_defense_date_updates
 
     result = literature.do(form)
 
-    assert result['thesis'] == [
-        {
-            'defense_date': 'bar',
-        },
-    ]
+    assert result['thesis'] == {
+        'defense_date': 'bar',
+    }
     assert result['public_notes'] == [
         {
             'value': 'Presented on foo',
         },
         {
             'value': 'Presented on bar',
-        },
+        }
     ]
 
 
@@ -369,11 +365,9 @@ def test_thesis_degree_type_from_degree_type():
         ('degree_type', 'foo'),
     ])
 
-    expected = [
-        {
+    expected = {
             'degree_type': 'foo',
-        },
-    ]
+    }
     result = literature.do(form)
 
     assert expected == result['thesis']
@@ -385,11 +379,9 @@ def test_thesis_degree_type_from_multiple_degree_type_updates():
         ('degree_type', 'bar'),
     ])
 
-    expected = [
-        {
-            'degree_type': 'bar',
-        },
-    ]
+    expected = {
+        'degree_type': 'bar',
+    }
     result = literature.do(form)
 
     assert expected == result['thesis']
@@ -400,27 +392,23 @@ def test_thesis_university_from_institution():
         ('institution', 'foo'),
     ])
 
-    expected = [
-        {
-            'university': 'foo',
-        },
-    ]
+    expected = {
+        'institutions': [{'name': 'foo'}]
+    }
     result = literature.do(form)
 
     assert expected == result['thesis']
 
 
-def test_thesis_university_from_multiple_institution_updates():
+def test_thesis_institution_from_multiple_institution_updates():
     form = GroupableOrderedDict([
         ('institution', 'foo'),
         ('institution', 'bar'),
     ])
 
-    expected = [
-        {
-            'university': 'bar',
-        },
-    ]
+    expected = {
+        'institutions': [{'name': 'bar'}]
+    }
     result = literature.do(form)
 
     assert expected == result['thesis']
@@ -431,11 +419,9 @@ def test_thesis_date_from_thesis_date():
         ('thesis_date', 'foo'),
     ])
 
-    expected = [
-        {
-            'date': 'foo',
-        },
-    ]
+    expected = {
+        'date': 'foo'
+    }
     result = literature.do(form)
 
     assert expected == result['thesis']
@@ -447,11 +433,9 @@ def test_thesis_date_from_multiple_thesis_date_updates():
         ('thesis_date', 'bar'),
     ])
 
-    expected = [
-        {
-            'date': 'bar',
-        },
-    ]
+    expected = {
+        'date': 'bar'
+    }
     result = literature.do(form)
 
     assert expected == result['thesis']

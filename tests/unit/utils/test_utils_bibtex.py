@@ -758,9 +758,9 @@ def test_get_year_from_publication_info_a_list_from_preprint_date():
     assert expected == result
 
 
-def test_get_year_from_thesis_an_empty_list():
+def test_get_year_from_thesis_an_empty_obj():
     record = Record({
-        'thesis': []
+        'thesis': {}
     })
 
     thesis_an_empty_list = Bibtex(record)
@@ -772,10 +772,10 @@ def test_get_year_from_thesis_an_empty_list():
     assert expected == result
 
 
-def test_get_year_from_thesis_an_empty_list_but_preprint_date():
+def test_get_year_from_thesis_an_empty_obj_but_preprint_date():
     record = Record({
         'preprint_date': '1998-04-30',
-        'thesis': []
+        'thesis': {}
     })
 
     thesis_an_empty_list_but_preprint_date = Bibtex(record)
@@ -787,10 +787,10 @@ def test_get_year_from_thesis_an_empty_list_but_preprint_date():
     assert expected == result
 
 
-def test_get_year_from_thesis_an_empty_list_but_imprints():
+def test_get_year_from_thesis_an_empty_obj_but_imprints():
     record = Record({
         'imprints': [{'date': '2015-12-04'}],
-        'thesis': []
+        'thesis': {}
     })
 
     thesis_an_empty_list_but_imprints = Bibtex(record)
@@ -804,9 +804,7 @@ def test_get_year_from_thesis_an_empty_list_but_imprints():
 
 def test_get_year_from_thesis_one_date():
     record = Record({
-        'thesis': [
-            {'date': '2008'}
-        ]
+        'thesis': {'date': '2008'}
     })
 
     thesis_one_date = Bibtex(record)
@@ -814,23 +812,6 @@ def test_get_year_from_thesis_one_date():
 
     expected = '2008'
     result = thesis_one_date._get_year()
-
-    assert expected == result
-
-
-def test_get_year_from_thesis_two_dates():
-    record = Record({
-        'thesis': [
-            {'date': '2008'},
-            {'date': '2015'}
-        ]
-    })
-
-    thesis_two_dates = Bibtex(record)
-    thesis_two_dates.original_entry = 'thesis'
-
-    expected = '2015'
-    result = thesis_two_dates._get_year()
 
     assert expected == result
 
