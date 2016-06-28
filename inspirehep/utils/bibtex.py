@@ -98,16 +98,13 @@ class Bibtex(Export):
     def _format_thesis(self):
         """Format thesis entry type"""
         thesis = ''
-        if 'thesis' in self.record:
-            for type_of_thesis in self.record['thesis']:
-                if 'degree_type' in type_of_thesis:
-                    thesis = type_of_thesis['degree_type']
-            if thesis == 'Master':
+        name = 'phdthesis'
+
+        if 'thesis' in self.record and 'degree_type' in self.record['thesis']:
+            thesis_type = self.record['thesis']['degree_type']
+            if thesis_type == 'Master':
                 name = 'mastersthesis'
-            else:
-                name = 'phdthesis'
-        else:
-            name = 'phdthesis'
+
         required_fields = ['key', 'author', 'title', 'address',
                            'school', 'journal', 'volume']
         optional_fields = ['year', 'url', 'number', 'pages', 'doi', 'note',
@@ -399,9 +396,8 @@ class Bibtex(Export):
                 elif 'preprint_date' in self.record:
                     year = self.record['preprint_date'][0].split('-')[0]
         elif self.original_entry == 'thesis' and 'thesis' in self.record:
-            for date in self.record['thesis']:
-                if 'date' in date and date['date']:
-                    year = date['date']
+            if 'date' in self.record['thesis']:
+                year = self.record['thesis']['date']
             if not year:
                 if 'preprint_date' in self.record:
                     year = self.record['preprint_date'].split('-')[0]
