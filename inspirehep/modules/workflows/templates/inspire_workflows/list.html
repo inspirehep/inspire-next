@@ -61,13 +61,12 @@
   </holding-pen-batch-decision>
 
   <invenio-search search-endpoint="/api/holdingpen"
-                  search-extra-params='{"size": 25}'>
+                  search-extra-params='{"size": 10}'>
     <div class="clearfix"></div>
     <div class="row">
       <div class="col-md-2 hp-filters facet-container">
 
         <h4>Results per page</h4>
-
 
         <holding-pen-template-handler
           template="{{ url_for('static', filename='js/inspire_workflows_ui/templates/resultsize.html') }}">
@@ -104,6 +103,7 @@
             <invenio-search-count
               template="{{ url_for('static', filename='node_modules/invenio-search-js/dist/templates/count.html') }}">
             </invenio-search-count>
+
           </div>
         </div>
 

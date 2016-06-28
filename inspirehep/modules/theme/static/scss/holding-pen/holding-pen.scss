@@ -182,6 +182,7 @@ $hp_table_bg: #233345;
       border: none;
       padding: 7px 15px;
       margin-top: -8px;
+      border-radius: 3px;
       font-size: .9em;
     }
   }
@@ -425,7 +426,11 @@ $hp_table_bg: #233345;
 
     &.alert-danger, &.alert-reject {
       background-color: $alizarin;
-      color: $midnight-blue;
+      color: white;
+      font-weight: normal;
+      a {
+        text-decoration: underline;
+      }
     }
   }
 
@@ -612,12 +617,6 @@ $hp_table_bg: #233345;
 
 .hp-item {
 
-  .reject, .accept_core, .accept {
-    color: $blue-haze;
-    padding: 5px;
-    font-weight: bolder;
-  }
-
   &.no-results {
     padding: 50px !important;
     font-size: 1.7em;
@@ -626,19 +625,30 @@ $hp_table_bg: #233345;
     text-align: center;
   }
 
-  &:hover {
-    .reject {
-      color: $alizarin;
-    }
-
-    .accept_core {
-      color: $green-sea;
-    }
-
-    .accept {
-      color: $orange;
-    }
+  .reject {
+    background-color: $alizarin;
+    color: $dark-blue;
   }
+
+  .accept_core {
+    background-color: $green-sea;
+    color: $dark-blue;
+  }
+
+  .accept {
+    background-color: $orange;
+    color: $dark-blue;
+  }
+
+}
+
+.action-info {
+
+  background-color: $dark-blue;
+  display: inline-block;
+  padding: 4px 5px;
+  border-radius: 3px;
+  font-size: .6em;
 }
 
 .decision {
@@ -678,9 +688,6 @@ $hp_table_bg: #233345;
     padding-bottom: 10px;
   }
 
-  .action-info {
-    padding-top: 20px;
-  }
 }
 
 .subject-terms {
@@ -828,4 +835,8 @@ $hp_table_bg: #233345;
 
 .red-color {
   color: $alizarin;
+}
+
+.green-color {
+  color: $green-sea
 }

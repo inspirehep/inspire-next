@@ -94,7 +94,6 @@
               }
               selected_record_ids = [];
             }).catch(function (value) {
-              console.debug(value);
               alert(value.status + ': ' + value.statusText);
             });
           },

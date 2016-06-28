@@ -30,16 +30,22 @@
         $scope.modal = undefined;
 
         $scope.BatchUtils = {
-          setDecision: function (decision) {
+          setDecision: function (type, decision) {
+            console.debug($scope.vm.selected_record_decisions[type]);
             HoldingPenRecordService.setBatchDecision(
               $scope.vm.invenioSearchResults.hits.hits,
-              $scope.vm.selected_records,
+              $scope.vm.selected_record_decisions[type],
               decision)
+
+            $scope.modal.dismiss('cancel');
           },
 
-          showConfirm: function (type) {
+          showConfirm: function (data_type, operation) {
+            $scope.data_type = data_type;
+            $scope.operation = operation;
+
             $scope.modal = $uibModal.open({
-              templateUrl: '/static/js/inspire_workflows_ui/templates/modals/batch_' + type + '_modal.html'
+              templateUrl: '/static/js/inspire_workflows_ui/templates/modals/batch_' + operation + '_modal.html'
             });
           },
 
@@ -58,7 +64,8 @@
             for (var select_record_idx in $scope.vm.selected_records) {
               HoldingPenRecordService.resumeWorkflow($scope.vm, $scope.vm.selected_records[select_record_idx]);
             }
-            $scope.vm.batch_message = $scope.vm.selected_records.length + " workflows resumed."
+            $scope.vm.batch_message = $scope.vm.selected_records.length + " workflows resumed.";
+            $scope.modal.dismiss('cancel');
           },
 
           deleteWorkflows: function () {
@@ -66,7 +73,8 @@
               HoldingPenRecordService.deleteRecord($scope.vm, $scope.vm.selected_records[select_record_idx], false);
             }
             window.location = '/holdingpen/list';
-            $scope.vm.batch_message = $scope.vm.selected_records.length + " workflows deleted."
+            $scope.vm.batch_message = $scope.vm.selected_records.length + " workflows deleted.";
+            $scope.modal.dismiss('cancel');
           }
 
         }

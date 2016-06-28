@@ -31,7 +31,7 @@
         <span ng-if="vm.record._workflow.status === 'RUNNING'">Workflow in progress...</span>
         <span ng-repeat="item in vm.record._extra_data._task_history"
               ng-if="(vm.record._workflow.status === 'HALTED' || vm.record._workflow.status === 'ERROR') && $last">
-          {{vm.record._workflow.status}} on {{item.nicename}} <a href="#errors" ng-if="vm.record._workflow.status === 'ERROR'" style="color: white">View log</a>
+          {{vm.record._workflow.status}} on {{item.nicename}} <a href="#errors" ng-if="vm.record._workflow.status === 'ERROR'" style="color: white">View Stack Trace</a>
         </span>
       </p>
     </div>

@@ -10,7 +10,7 @@
       <a ng-href="/holdingpen/list/?{{vm.primaryFilterKey}}={{vm.primaryFilterValue}}&status={{status}}&size=10">
         <div class="row-fluid" ng-class="status | lowercase">
           <div class="col-md-1 col-sm-1 col-xs-1">
-            <i class="fa" ng-class="{'fa-refresh': status === 'WAITING',
+            <i class="fa" ng-class="{'fa-hourglass-half': status === 'WAITING',
               'fa-pause': status === 'HALTED',
               'fa-exclamation-triangle': status === 'ERROR',
               'fa-check': status === 'COMPLETED',

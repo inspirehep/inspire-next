@@ -21,7 +21,7 @@
     </div>
 
     <div class="col-md-3">
-      Action
+      Action & Status
     </div>
 
   </div>
@@ -29,21 +29,18 @@
   <div class="row hp-item no-results"
        ng-if="vm.invenioSearchResults.hits.total == 0">
     <p><i class="fa fa-frown-o" aria-hidden="true"></i> Sorry, there's nothing
-      to see here.</p>
+      to see here. <br/><br/>Perhaps you'd like to check out the <a href="/holdingpen">dashboard</a>.</p>
   </div>
 
   <div class="row hp-item" ng-if="vm.invenioSearchResults.hits.total > 0"
-       ng-repeat="record in vm.invenioSearchResults.hits.hits track by record._id"
-       ng-class="{waiting: record._source._workflow.status === 'WAITING',
-        hperror: record._source._workflow.status === 'ERROR',
-        hpattention : record._source._workflow.status === 'HALTED',
-        hpdone: record._source._workflow.status === 'COMPLETED'}">
+       ng-repeat="record in vm.invenioSearchResults.hits.hits track by record._id">
+
     <div class="col-md-12">
       <div class="row">
         <div class="col-md-1">
             <span id='checkbox-parent'>
               <input type="checkbox" class="checkbox-results"
-                     ng-click="toggleSelection(record._id)"
+                     ng-click="toggleSelection(record)"
                      ng-checked="isChecked(record._id)"/>
             </span>
         </div>
@@ -84,24 +81,20 @@
           </ul>
         </div>
 
-
         <div class="col-md-3 decision">
 
           <!--Authors  Decision-->
-
           <div
-            ng-if="record._source._extra_data && record._source._extra_data._action === 'author_approval'">
+            ng-if="record._source._workflow.data_type === 'authors' && !record._source._extra_data.user_action && record._source._workflow.status !== 'ERROR'">
             <button class="btn btn-danger"
                     ng-click="setDecision(record._id,'reject')">Reject
             </button>
-
             <button class="btn btn-warning"
                     ng-click="setDecision(record._id,'accept_curate')">Curation
             </button>
             <button class="btn btn-success"
                     ng-click="setDecision(record._id,'accept')">Accept
             </button>
-
           </div>
 
           <!--HEP Decision-->
@@ -148,7 +141,8 @@
 
           <div ng-if="record._source._workflow.status === 'ERROR'">
             <br/>
-            <i class="fa fa-exclamation-triangle icon-large red-color"></i>
+            <p class="red-color">
+            <i class="fa fa-exclamation-triangle icon-large"></i> Error</p>
             <p class="small-text">
               This record is in error state. View
               the <a ng-href="/holdingpen/{{record._id}}">detailed record</a>
@@ -158,7 +152,9 @@
 
           <div ng-if="record._source._workflow.status === 'INITIAL'">
             <br/>
-            <i class="fa fa-circle-o icon-large"></i>
+            <p>
+            <i class="fa fa-circle-o icon-large"></i> Preparing
+            </p>
             <p class="small-text">
               This record has not been run through the workflow yet. View
               the <a ng-href="/holdingpen/{{record._id}}">detailed record</a>
@@ -166,18 +162,24 @@
           </div>
 
 
-          <div ng-if="record._source._extra_data.user_action"
-               class="action-info">
-              <span ng-class="record._source._extra_data.user_action"
-                    ng-switch="record._source._extra_data.user_action">
-                <span ng-switch-when="reject"><i class="fa fa-times"></i> Rejected</span>
-                <span ng-switch-when="accept"><i class="fa fa-check"></i> Accepted as Non-CORE</span>
-                <span ng-switch-when="accept_core"><i class="fa fa-check"></i> Accepted as CORE</span>
-              </span>
+          <div ng-if="record._source._workflow.status === 'COMPLETED'">
+            <br/>
+            <p class="green-color">
+              <i class="fa fa-check icon-large"></i> Completed
+            </p>
+            <p class="small-text">
+              This workflow has been completed.</p>
           </div>
 
 
-
+          <div ng-if="record._source._workflow.status === 'WAITING'">
+            <br/>
+            <p>
+            <i class="fa fa-hourglass-half" aria-hidden="true"></i> Waiting
+            </p>
+            <p class="small-text">
+              This workflow is waiting to be run.</p>
+          </div>
 
 
         </div>
