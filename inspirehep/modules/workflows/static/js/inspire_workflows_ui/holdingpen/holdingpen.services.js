@@ -27,103 +27,110 @@
    */
   angular.module('holdingpen.services', [])
     .factory("HoldingPenRecordService", ["$http", "$location",
-      function ($http, $location) {
+        function ($http, $location) {
 
-        return {
-          /**
-           * getRecord
-           * @param vm
-           * @param workflowId
-           */
-          getRecord: function (vm, workflowId) {
-            $http.get('/api/holdingpen/' + workflowId).then(function (response) {
-              vm.record = response.data;
-              if (vm.record._workflow.data_type == 'authors') {
-                $('#breadcrumb').html(vm.record.metadata.name.value);
-              } else {
-                $('#breadcrumb').html(vm.record.metadata.titles[0].title.substring(0, 70) + '...');
-              }
-            }).catch(function (value) {
-              vm.ingestion_complete = false;
-              alert(value);
-            });
-          },
-
-          updateRecord: function (vm, workflowId) {
-            $http.post('/api/holdingpen/' + workflowId + '/action/edit', vm.record).then(function (response) {
-              vm.saved = true;
-              vm.update_ready = false;
-            }).catch(function (value) {
-              vm.saved = false;
-              vm.update_ready = true;
-              alert('Sorry, an error occurred when saving. Please try again.');
-            });
-          },
-
-          setDecision: function (vm, workflowId, decision) {
-            var data = JSON.stringify({
-              'value': decision
-            });
-            $http.post('/api/holdingpen/' + workflowId + '/action/resolve', data).then(function (response) {
-              vm.ingestion_complete = true;
-              var record = vm.record;
-              if (!record) record = vm;
-              record._extra_data.user_action = decision;
-              record._extra_data._action = null;
-
-            }).catch(function (value) {
-              vm.error = value;
-            });
-          },
-
-          setBatchDecision: function (records, selected_record_ids, decision) {
-            var data = JSON.stringify({
-              'value': decision,
-              'object_ids': selected_record_ids,
-              'action': 'resolve'
-            });
-
-            $http.post('/api/holdingpen/action/resolve', data).then(function (response) {
-              // Should provide a quicker way to access the records
-              for (var record in records) {
-                if (selected_record_ids.indexOf(+records[record]._id) !== -1) {
-                  var record_obj = records[record]._source;
-                  record_obj._extra_data.user_action = decision;
-                  record_obj._extra_data._action = null;
+          return {
+            /**
+             * getRecord
+             * @param vm
+             * @param workflowId
+             */
+            getRecord: function (vm, workflowId) {
+              $http.get('/api/holdingpen/' + workflowId).then(function (response) {
+                vm.record = response.data;
+                if (vm.record._workflow.data_type == 'authors') {
+                  $('#breadcrumb').html(vm.record.metadata.name.value);
+                } else {
+                  $('#breadcrumb').html(vm.record.metadata.titles[0].title.substring(0, 70) + '...');
                 }
+              }).catch(function (value) {
+                vm.ingestion_complete = false;
+                alert(value);
+              });
+            },
+
+            updateRecord: function (vm, workflowId) {
+              $http.post('/api/holdingpen/' + workflowId + '/action/edit', vm.record).then(function (response) {
+                vm.saved = true;
+                vm.update_ready = false;
+              }).catch(function (value) {
+                vm.saved = false;
+                vm.update_ready = true;
+                alert('Sorry, an error occurred when saving. Please try again.');
+              });
+            },
+
+            setDecision: function (vm, workflowId, decision) {
+              var data = JSON.stringify({
+                'value': decision
+              });
+              $http.post('/api/holdingpen/' + workflowId + '/action/resolve', data).then(function (response) {
+                vm.ingestion_complete = true;
+                var record = vm.record;
+                if (!record) record = vm;
+                record._extra_data.user_action = decision;
+                record._extra_data._action = null;
+
+              }).catch(function (value) {
+                vm.error = value;
+              });
+            },
+
+            setBatchDecision: function (records, selected_record_ids, decision) {
+
+              for (var record_idx in selected_record_ids) {
+
+                var _id = selected_record_ids[record_idx];
+                var _data = JSON.stringify({
+                  'value': decision,
+                  'id': _id
+                });
+
+                $http.post('/api/holdingpen/' + _id + '/action/resolve', _data).then(function (response) {
+                  var _data = JSON.parse(response.config.data);
+                  for (var record_idx in records) {
+                    if (+_data.id === +records[record_idx]._id) {
+                      var record_obj = records[record_idx]._source;
+                      record_obj._extra_data.user_action = decision;
+                      record_obj._workflow.status = 'WAITING';
+                    }
+                  }
+                });
+
               }
               selected_record_ids = [];
-            }).catch(function (value) {
-              alert(value.status + ': ' + value.statusText);
-            });
-          },
+            },
 
-          deleteRecord: function (vm, workflowId, reload) {
-            $http.delete('/api/holdingpen/' + workflowId, vm.record).then(function (response) {
-              vm.ingestion_complete = true;
-              if (reload)
-                window.location = '/holdingpen/list/'
-            }).catch(function (value) {
-              vm.ingestion_complete = false;
-            });
-          },
+            deleteRecord: function (vm, workflowId, reload) {
+              $http.delete('/api/holdingpen/' + workflowId, vm.record).then(function (response) {
+                vm.ingestion_complete = true;
+                if (reload)
+                  window.location = '/holdingpen/list/'
+              }).catch(function (value) {
+                vm.ingestion_complete = false;
+              });
+            }
+            ,
 
-          resumeWorkflow: function (vm, workflowId) {
-            $http.post('/api/holdingpen/' + workflowId + '/action/resume').then(function (response) {
-              vm.workflow_flag = 'Workflow resumed';
-            }).catch(function (value) {
-              vm.resumed = false;
-            });
-          },
+            resumeWorkflow: function (vm, workflowId) {
+              $http.post('/api/holdingpen/' + workflowId + '/action/resume').then(function (response) {
+                vm.workflow_flag = 'Workflow resumed';
+              }).catch(function (value) {
+                vm.resumed = false;
+              });
+            }
+            ,
 
-          restartWorkflow: function (vm, workflowId) {
-            $http.post('/api/holdingpen/' + workflowId + '/action/restart').then(function (response) {
-              vm.workflow_flag = 'Workflow restarted';
-            }).catch(function (value) {
-              vm.restarted = false;
-            });
+            restartWorkflow: function (vm, workflowId) {
+              $http.post('/api/holdingpen/' + workflowId + '/action/restart').then(function (response) {
+                vm.workflow_flag = 'Workflow restarted';
+              }).catch(function (value) {
+                vm.restarted = false;
+              });
+            }
           }
         }
-      }]
-    );
+      ]
+    )
+  ;
 }(angular));
