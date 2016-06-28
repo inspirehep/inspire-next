@@ -1,20 +1,23 @@
 {#
 # This file is part of INSPIRE.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 #}
 
 {%- extends "inspirehep_theme/search/collection_map.html" -%}
@@ -23,7 +26,7 @@
     <div id="landing-map"></div>
     <div id="landing-map-info" class="conferences">
         <p class="text-center">
-            {{ ctx.results|length }} Upcoming Conferences in the next 6 months.
+            {{ result | length }} Upcoming Conferences in the next 6 months.
         </p>
     </div>
 {% endblock %}
@@ -55,7 +58,7 @@
                 <div class="contents conference-series">
                     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
-                        {% for subject_area in ctx.conference_subject_areas %}
+                        {% for subject_area in conference_subject_areas %}
                             <div class="panel panel-default">
                                 <div class="panel-heading" role="tab" id="headingOne">
                                     <h4 class="panel-title">
@@ -85,50 +88,50 @@
         </div>
         <div class="col-md-6">
             <div class="collection-block">
-                <h4>{{ ctx.results|length }} Upcoming Conferences
+                <h4>{{ result | length }} Upcoming Conferences
                     <small>in the next 6 months</small>
                 </h4>
 
                 <div class="contents">
-                    {% for upcoming_conf in ctx.results %}
+                    {% for conference in result %}
                         <div class="upcoming-conference">
 
                             <div class="details">
-                                {% if upcoming_conf.acronym %}
-                                    <a class="acronym" href="/{{ collection }}/{{ upcoming_conf.control_number }}">
-                                        {{ upcoming_conf.acronym[0][0] }}
+                                {% if conference.acronym %}
+                                    <a class="acronym" href="/{{ collection }}/{{ conference.control_number }}">
+                                        {{ conference.acronym[0][0] }}
                                     </a>
                                 {% endif %}
 
                                 <span class="date">
                                     <i class="fa fa-calendar"></i>
-                                    {% if upcoming_conf.date %}
-                                        {{ upcoming_conf.date }}
+                                    {% if conference.date %}
+                                        {{ conference.date }}
                                     {% else %}
-                                        {{ upcoming_conf.opening_date }}
+                                        {{ conference.opening_date }}
                                     {% endif %}
                                 </span>
-                                <span class="place"><i class="fa fa-map-marker"></i> {{ upcoming_conf.place }}</span>
+                                <span class="place"><i class="fa fa-map-marker"></i> {{ conference.place }}</span>
                             </div>
 
 
                             <div class="title">
-                                <a href="/{{ collection }}/{{ upcoming_conf.control_number }}">
-                                    {{ upcoming_conf.title }}
+                                <a href="/{{ collection }}/{{ conference.control_number }}">
+                                    {{ conference.title }}
                                 </a>
                             </div>
 
                             <div>
-                                {% if upcoming_conf.series|length > 0 %}
+                                {% if conference.series | length %}
                                     <span class="series pull-left">
-                                    Part of the <a href="{{ upcoming_conf.series[0][0] }}">
-                                        {{ upcoming_conf.series[0] }}</a> series
+                                    Part of the <a href="{{ conference.series[0][0] }}">
+                                        {{ conference.series[0] }}</a> series
                                     </span>
                                 {% endif %}
 
-                                {% if upcoming_conf.url|length > 0 %}
+                                {% if conference.url | length %}
                                     <span class="url pull-right">
-                                        <a href="{{ upcoming_conf.url[0][0] }}" target="_new">Go to conference
+                                        <a href="{{ conference.url[0][0] }}" target="_new">Go to conference
                                             website</a>
                                     </span>
                                 {% endif %}
