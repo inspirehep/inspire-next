@@ -3,24 +3,22 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2015, 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it
-# and/or modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be
-# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the
-# Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
-# MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this license, CERN does not
-# waive the privileges and immunities granted to it by virtue of its status
-# as an Intergovernmental Organization or submit itself to any jurisdiction.
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 """Jinja utilities for INSPIRE."""
 
@@ -28,12 +26,18 @@ from __future__ import absolute_import, division, print_function
 
 import json
 import re
-import datetime
 import time
+from collections import Iterable
+from datetime import datetime
+from operator import itemgetter
 
-from flask import session, current_app
-from jinja2.filters import evalcontextfilter
+from flask import current_app
+from jinja2.filters import do_join, evalcontextfilter
 
+from invenio_search import current_search_client as es
+from invenio_search.api import RecordsSearch
+
+from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.utils.date import (
     create_datestruct,
     convert_datestruct_to_dategui,
@@ -46,24 +50,20 @@ from inspirehep.utils.template import render_macro_from_template
 
 from .views import blueprint
 
-from inspirehep.modules.records.json_ref_loader import replace_refs
-
-from invenio_search.api import RecordsSearch
-
 
 def apply_template_on_array(array, template_path, **common_context):
     """Render a template specified by 'template_path'.
+
     For every item in array, renders the template passing
-    the item as 'content' parameter. Additionally ataches
+    the item as 'content' parameter. Additionally attaches
     'common_context' as other rendering arguments.
+
     Returns list of rendered html strings.
+
     :param array: iterable with specific context
     :param template_path: path to the template
     :rtype: list of strings
     """
-
-    from collections import Iterable
-
     rendered = []
 
     if isinstance(array, basestring):
@@ -97,8 +97,6 @@ def collection_to_index(collection_name):
 @blueprint.app_template_filter()
 @evalcontextfilter
 def join_array(eval_ctx, value, separator):
-    from jinja2.filters import do_join
-
     if isinstance(value, basestring):
         value = [value]
     return do_join(eval_ctx, value, separator)
@@ -114,16 +112,14 @@ def new_line_after(text):
 
 @blueprint.app_template_filter()
 def email_links(value):
-    """Return array of links to record emails."""
-    return apply_template_on_array(value,
-                                   'inspirehep_theme/format/record/field_templates/email.tpl')
+    """Return array of rendered links to emails."""
+    return apply_template_on_array(
+        value, 'inspirehep_theme/format/record/field_templates/email.tpl')
 
 
 @blueprint.app_template_filter()
 def url_links(record):
-    """
-        returns array of links to record emails
-    """
+    """Return array of rendered links."""
     return apply_template_on_array(
         [url["value"] for url in record.get('urls', [])],
         'inspirehep_theme/format/record/field_templates/link.tpl')
@@ -131,9 +127,7 @@ def url_links(record):
 
 @blueprint.app_template_filter()
 def institutes_links(record):
-    """
-        returns array of links to record institutes
-    """
+    """Return array of rendered links to institutes."""
     return apply_template_on_array(
         record.get('institute', []),
         'inspirehep_theme/format/record/field_templates/institute.tpl')
@@ -141,9 +135,7 @@ def institutes_links(record):
 
 @blueprint.app_template_filter()
 def author_profile(record):
-    """
-        returns array of links to record profiles of authores
-    """
+    """Return array of rendered links to authors."""
     return apply_template_on_array(
         record.get('profile', []),
         'inspirehep_theme/format/record/field_templates/author_profile.tpl')
@@ -163,9 +155,8 @@ def words_to_end(value, limit, separator=' '):
 
 @blueprint.app_template_filter()
 def is_list(value):
-    """Checks if an object is a list"""
-    if isinstance(value, list):
-        return True
+    """Checks if an object is a list."""
+    return isinstance(value, list) or None
 
 
 @blueprint.app_template_filter()
@@ -174,30 +165,9 @@ def remove_duplicates_from_list(l):
 
 
 @blueprint.app_template_filter()
-def has_space(value):
-    """Checks if a string contains space"""
-    if ' ' in value:
-        return True
-
-
-@blueprint.app_template_filter()
-def count_words(value):
-    """Counts the amount of words in a string"""
-    import re
-    from string import punctuation
-    words = 0
-    if value:
-        r = re.compile(r'[{}]'.format(punctuation))
-        new_strs = r.sub(' ', value)
-        words = len(new_strs.split())
-    return words
-
-
-@blueprint.app_template_filter()
 def conference_date(record):
     if 'date' in record and record['date']:
         return record['date']
-    from datetime import datetime
     out = ''
     opening_date = record.get('opening_date', '')
     closing_date = record.get('closing_date', '')
@@ -395,7 +365,9 @@ def collection_select_current(collection_name, current_collection):
 def number_of_records(collection_name):
     """Returns number of records for the collection."""
     index = collection_to_index(collection_name)
-    return perform_es_search('', index).hits.total
+    result = es.count(index=index)
+
+    return result['count']
 
 
 @blueprint.app_template_filter()
@@ -409,7 +381,6 @@ def sanitize_arxiv_pdf(arxiv_value):
 
 @blueprint.app_template_filter()
 def sort_list_by_dict_val(l):
-    from operator import itemgetter
     newlist = sorted(l, key=itemgetter('doc_count'), reverse=True)
     return newlist
 
@@ -487,42 +458,13 @@ def citation_phrase(count):
 
 
 @blueprint.app_template_filter()
-def number_of_search_results(query, collection_name):
-    """
-    Filter used to show total number of results out of filtered ones.
-    """
-    session_key = 'last-query' + query + collection_name
-    if session.get(session_key):
-        query_timestamp = session[session_key]['timestamp']
-        seconds_since_query = (
-            datetime.datetime.utcnow() - query_timestamp).total_seconds()
-        if seconds_since_query < 300:
-            # Only use the session value if it is newer than 5 minutes
-            # This should allow for the common use case of navigating
-            # facets and avoid using an outdated value when using a direct
-            # link
-            return session[session_key][
-                "number_of_hits"
-            ]
-
-    index = collection_to_index(collection_name)
-    return perform_es_search(query, index).hits.total
-
-
-@blueprint.app_template_filter()
 def is_upper(s):
     return s.isupper()
 
 
 @blueprint.app_template_filter()
-def split_author_name(name):
-    new_name = name.split(',')
-    return ' '.join(reversed(new_name))
-
-
-@blueprint.app_template_filter()
-def long_timeout(timeout):
-    return 5184000  # 60 days
+def format_author_name(name):
+    return ' '.join(reversed(name.split(',')))
 
 
 @blueprint.app_template_filter()
@@ -704,17 +646,6 @@ def is_institute(institute):
 
 
 @blueprint.app_template_filter()
-def get_user_email(id_user):
-    """Checks if given string is an institute."""
-    from invenio_accounts.models import User
-    try:
-        email = User.query.get(id_user).email
-    except AttributeError:
-        email = ''
-    return email
-
-
-@blueprint.app_template_filter()
 def weblinks(description):
     """Renames external links based on the description given."""
     value = current_app.extensions.get('inspire-theme').weblinks.get(
@@ -728,7 +659,6 @@ def weblinks(description):
 
 @blueprint.app_template_filter()
 def jobs_similar(id):
-
     out = ''
 
     es_query = RecordsSearch(index='records-jobs', doc_type='jobs')

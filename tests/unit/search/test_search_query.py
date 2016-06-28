@@ -105,11 +105,48 @@ def test_author():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='BAI is not part of the mappings')
-def test_author_bai():
+@pytest.mark.xfail(reason='query is malformed, but user intent is clear')
+def test_author_bai_malformed():
     query = IQ('a r.j.hill.1')
 
     expected = {}
+    result = query.to_dict()
+
+    assert expected == result
+
+
+def test_author_bai():
+    query = IQ('find a r.j.hill.1')
+
+    expected = {
+        "bool": {
+            "must": [
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "match": {
+                        "authors.name_variations": "r.j.hill.1"
+                      }
+                    },
+                    {
+                      "term": {
+                        "authors.inspire_bai": "r.j.hill.1"
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "should": [
+              {
+                "match": {
+                  "authors.full_name": "r.j.hill.1"
+                }
+              }
+            ]
+        }
+    }
     result = query.to_dict()
 
     assert expected == result
@@ -186,10 +223,23 @@ def test_author_colon():
     query = IQ('author: vagenas')
 
     expected = {
-        'bool': {
-            'should': [
-                {'match': {'authors.name_variations': 'vagenas'}},
-                {'match': {'authors.full_name': 'vagenas'}}
+        "bool": {
+            "should": [
+              {
+                "match": {
+                  "authors.name_variations": "vagenas"
+                }
+              },
+              {
+                "match": {
+                  "authors.full_name": "vagenas"
+                }
+              },
+              {
+                "match": {
+                  "authors.inspire_bai": "vagenas"
+                }
+              }
             ]
         }
     }
@@ -202,12 +252,31 @@ def test_author_colon_with_double_quotes():
     query = IQ('author:"tachikawa, yuji"')
 
     expected = {
-        'bool': {
-            'must': [
-                {'match': {'authors.name_variations': 'tachikawa, yuji'}}
+        "bool": {
+            "must": [
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "match": {
+                        "authors.name_variations": "tachikawa, yuji"
+                      }
+                    },
+                    {
+                      "term": {
+                        "authors.inspire_bai": "tachikawa, yuji"
+                      }
+                    }
+                  ]
+                }
+              }
             ],
-            'should': [
-                {'match': {'authors.full_name': 'tachikawa, yuji'}}
+            "should": [
+              {
+                "match": {
+                  "authors.full_name": "tachikawa, yuji"
+                }
+              }
             ]
         }
     }
@@ -216,54 +285,216 @@ def test_author_colon_with_double_quotes():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_author_colon_bai():
     query = IQ('author:Y.Nomura.1')
 
-    expected = {}
+    expected = {
+        "bool": {
+            "should": [
+              {
+                "match": {
+                  "authors.name_variations": "Y.Nomura.1"
+                }
+              },
+              {
+                "match": {
+                  "authors.full_name": "Y.Nomura.1"
+                }
+              },
+              {
+                "match": {
+                  "authors.inspire_bai": "Y.Nomura.1"
+                }
+              }
+            ]
+        }
+    }
     result = query.to_dict()
 
     assert expected == result
 
 
-@pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_author_colon_bai_and_collection_colon():
     query = IQ(
         'author:E.Witten.1 AND collection:citeable')
 
-    expected = {}
+    expected = {
+        "bool": {
+            "should": [
+              {
+                "match": {
+                  "authors.name_variations": "E.Witten.1"
+                }
+              },
+              {
+                "match": {
+                  "authors.full_name": "E.Witten.1"
+                }
+              },
+              {
+                "match": {
+                  "authors.inspire_bai": "E.Witten.1"
+                }
+              }
+            ],
+            "must": [
+              {
+                "multi_match": {
+                  "query": "citeable",
+                  "fields": [
+                    "collections.primary"
+                  ]
+                }
+              }
+            ]
+        }
+    }
     result = query.to_dict()
-
     assert expected == result
 
 
-@pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_author_colon_bai_with_double_quotes_and_collection_colon():
     query = IQ('author:"E.Witten.1" AND collection:citeable')
 
-    expected = {}
+    expected = {
+        "bool": {
+            "should": [
+              {
+                "match": {
+                  "authors.full_name": "E.Witten.1"
+                }
+              }
+            ],
+            "must": [
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "match": {
+                        "authors.name_variations": "E.Witten.1"
+                      }
+                    },
+                    {
+                      "term": {
+                        "authors.inspire_bai": "E.Witten.1"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "multi_match": {
+                  "query": "citeable",
+                  "fields": [
+                    "collections.primary"
+                  ]
+                }
+              }
+            ]
+        }
+    }
     result = query.to_dict()
 
     assert expected == result
 
 
-@pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_author_colon_bai_and_collection_colon_and_cited_colon():
     query = IQ(
         'author:E.Witten.1 AND collection:citeable AND cited:500->1000000')
 
-    expected = {}
+    expected = {
+        "bool": {
+            "must": [
+              {
+                "multi_match": {
+                  "query": "citeable",
+                  "fields": [
+                    "collections.primary"
+                  ]
+                }
+              },
+              {
+                "range": {
+                  "citation_count": {
+                    "gte": "500",
+                    "lte": "1000000"
+                  }
+                }
+              }
+            ],
+            "should": [
+              {
+                "match": {
+                  "authors.name_variations": "E.Witten.1"
+                }
+              },
+              {
+                "match": {
+                  "authors.full_name": "E.Witten.1"
+                }
+              },
+              {
+                "match": {
+                  "authors.inspire_bai": "E.Witten.1"
+                }
+              }
+            ]
+        }
+    }
     result = query.to_dict()
 
     assert expected == result
 
 
-@pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_author_colon_bai_with_double_quotes_and_collection_colon_and_cited_colon():
     query = IQ(
         'author:"E.Witten.1" AND collection:citeable AND cited:500->1000000')
 
-    expected = {}
+    expected = {
+        "bool": {
+            "must": [
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "match": {
+                        "authors.name_variations": "E.Witten.1"
+                      }
+                    },
+                    {
+                      "term": {
+                        "authors.inspire_bai": "E.Witten.1"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "multi_match": {
+                  "query": "citeable",
+                  "fields": [
+                    "collections.primary"
+                  ]
+                }
+              },
+              {
+                "range": {
+                  "citation_count": {
+                    "gte": "500",
+                    "lte": "1000000"
+                  }
+                }
+              }
+            ],
+            "should": [
+              {
+                "match": {
+                  "authors.full_name": "E.Witten.1"
+                }
+              }
+            ]
+        }
+    }
     result = query.to_dict()
 
     assert expected == result
@@ -430,11 +661,20 @@ def test_exactauthor_colon_and_collection_colon():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_exactauthor_colon_bai():
     query = IQ('exactauthor:J.Serra.3')
 
-    expected = {}
+    expected = {
+        "multi_match": {
+            "query": "J.Serra.3",
+            "fields": [
+              "exactauthor.raw",
+              "authors.full_name",
+              "authors.alternative_name",
+              "authors.inspire_bai"
+            ]
+        }
+    }
     result = query.to_dict()
 
     assert expected == result
@@ -453,7 +693,17 @@ def test_field_code_colon():
 def test_or_of_exactauthor_colon_queries():
     query = IQ('exactauthor:X.Yin.1 or exactauthor:"Yin, Xi"')
 
-    expected = {}
+    expected = {
+        "multi_match": {
+            "query": "J.Serra.3",
+            "fields": [
+              "exactauthor.raw",
+              "authors.full_name",
+              "authors.alternative_name",
+              "authors.inspire_bai"
+            ]
+        }
+    }
     result = query.to_dict()
 
     assert expected == result
@@ -555,12 +805,13 @@ def test_find_exactauthor():
     query = IQ('find ea witten, edward')
 
     expected = {
-        'multi_match': {
-            'query': 'witten, edward',
-            'fields': [
-                'exactauthor.raw',
-                'authors.full_name',
-                'authors.alternative_name'
+        "multi_match": {
+            "query": "witten, edward",
+            "fields": [
+              "exactauthor.raw",
+              "authors.full_name",
+              "authors.alternative_name",
+              "authors.inspire_bai"
             ]
         }
     }
@@ -576,27 +827,28 @@ def test_find_exactauthor_not_affiliation_uppercase():
     expected = {
         "bool": {
             "must_not": [
-                {
-                    "multi_match": {
-                        "query": "SINCROTRONE TRIESTE",
-                        "fields": [
-                            "authors.affiliations.value",
-                            "corporate_author"
-                        ]
-                    }
+              {
+                "multi_match": {
+                  "query": "SINCROTRONE TRIESTE",
+                  "fields": [
+                    "authors.affiliations.value",
+                    "corporate_author"
+                  ]
                 }
+              }
             ],
             "must": [
-                {
-                    "multi_match": {
-                        "query": "RINALDI, MASSIMILIANO",
-                        "fields": [
-                            "exactauthor.raw",
-                            "authors.full_name",
-                            "authors.alternative_name"
-                        ]
-                    }
+              {
+                "multi_match": {
+                  "query": "RINALDI, MASSIMILIANO",
+                  "fields": [
+                    "exactauthor.raw",
+                    "authors.full_name",
+                    "authors.alternative_name",
+                    "authors.inspire_bai"
+                  ]
                 }
+              }
             ]
         }
     }
@@ -609,12 +861,31 @@ def test_find_author():
     query = IQ('find a polchinski')
 
     expected = {
-        'bool': {
-            'must': [
-                {'match': {'authors.name_variations': 'polchinski'}}
+        "bool": {
+            "must": [
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "match": {
+                        "authors.name_variations": "polchinski"
+                      }
+                    },
+                    {
+                      "term": {
+                        "authors.inspire_bai": "polchinski"
+                      }
+                    }
+                  ]
+                }
+              }
             ],
-            'should': [
-                {'match': {'authors.full_name': 'polchinski'}}
+            "should": [
+              {
+                "match": {
+                  "authors.full_name": "polchinski"
+                }
+              }
             ]
         }
     }
@@ -627,25 +898,34 @@ def test_find_author_uppercase():
     query = IQ('FIND A W F CHANG')
 
     expected = {
-        'bool': {
-            'must': [
-                {'match': {'authors.name_variations': 'W F CHANG'}}
+        "bool": {
+            "must": [
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "match": {
+                        "authors.name_variations": "W F CHANG"
+                      }
+                    },
+                    {
+                      "term": {
+                        "authors.inspire_bai": "W F CHANG"
+                      }
+                    }
+                  ]
+                }
+              }
             ],
-            'should': [
-                {'match': {'authors.full_name': 'W F CHANG'}}
+            "should": [
+              {
+                "match": {
+                  "authors.full_name": "W F CHANG"
+                }
+              }
             ]
         }
     }
-    result = query.to_dict()
-
-    assert expected == result
-
-
-@pytest.mark.xfail(reason='BAI is not part of the mappings')
-def test_find_author_bai():
-    query = IQ('find a B.R.Safdi.1')
-
-    expected = {}
     result = query.to_dict()
 
     assert expected == result
@@ -658,65 +938,76 @@ def test_find_author_and_date():
         "bool": {
             "minimum_should_match": 0,
             "should": [
-                {
-                    "match": {
-                        "authors.full_name": "hatta"
-                    }
+              {
+                "match": {
+                  "authors.full_name": "hatta"
                 }
+              }
             ],
             "must": [
-                {
-                    "match": {
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "match": {
                         "authors.name_variations": "hatta"
+                      }
+                    },
+                    {
+                      "term": {
+                        "authors.inspire_bai": "hatta"
+                      }
                     }
-                },
-                {
-                    "bool": {
-                        "minimum_should_match": 1,
-                        "should": [
-                            {
-                                "bool": {
-                                    "should": [
-                                        {
-                                            "bool": {
-                                                "should": [
-                                                    {
-                                                        "range": {
-                                                            "imprints.date": {
-                                                                "gt": "2000"
-                                                            }
-                                                        }
-                                                    },
-                                                    {
-                                                        "range": {
-                                                            "preprint_date": {
-                                                                "gt": "2000"
-                                                            }
-                                                        }
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        {
-                                            "range": {
-                                                "thesis.date": {
-                                                    "gt": "2000"
-                                                }
-                                            }
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "range": {
-                                    "publication_info.year": {
-                                        "gt": "2000"
-                                    }
-                                }
-                            }
-                        ]
-                    }
+                  ]
                 }
+              },
+              {
+                "bool": {
+                  "minimum_should_match": 1,
+                  "should": [
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "bool": {
+                              "should": [
+                                {
+                                  "range": {
+                                    "imprints.date": {
+                                      "gt": "2000"
+                                    }
+                                  }
+                                },
+                                {
+                                  "range": {
+                                    "preprint_date": {
+                                      "gt": "2000"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "range": {
+                              "thesis.date": {
+                                "gt": "2000"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "range": {
+                        "publication_info.year": {
+                          "gt": "2000"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
             ]
         }
     }
@@ -729,28 +1020,66 @@ def test_find_author_or_author():
     query = IQ('find a gersdorff, g or a von gersdorff, g')
 
     expected = {
-        'bool': {
-            'should': [
-                {
-                    'bool': {
-                        'must': [
-                            {'match': {'authors.name_variations': 'gersdorff, g'}}
-                        ],
-                        'should': [
-                            {'match': {'authors.full_name': 'gersdorff, g'}}
+        "bool": {
+            "should": [
+              {
+                "bool": {
+                  "must": [
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "match": {
+                              "authors.name_variations": "gersdorff, g"
+                            }
+                          },
+                          {
+                            "term": {
+                              "authors.inspire_bai": "gersdorff, g"
+                            }
+                          }
                         ]
+                      }
                     }
-                },
-                {
-                    'bool': {
-                        'must': [
-                            {'match': {'authors.name_variations': 'von gersdorff, g'}}
-                        ],
-                        'should': [
-                            {'match': {'authors.full_name': 'von gersdorff, g'}}
-                        ]
+                  ],
+                  "should": [
+                    {
+                      "match": {
+                        "authors.full_name": "gersdorff, g"
+                      }
                     }
+                  ]
                 }
+              },
+              {
+                "bool": {
+                  "must": [
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "match": {
+                              "authors.name_variations": "von gersdorff, g"
+                            }
+                          },
+                          {
+                            "term": {
+                              "authors.inspire_bai": "von gersdorff, g"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "should": [
+                    {
+                      "match": {
+                        "authors.full_name": "von gersdorff, g"
+                      }
+                    }
+                  ]
+                }
+              }
             ]
         }
     }
@@ -766,56 +1095,89 @@ def test_find_author_not_author_not_author():
         "bool": {
             "minimum_should_match": 0,
             "must": [
-                {
-                    "match": {
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "match": {
                         "authors.name_variations": "ostapchenko"
+                      }
+                    },
+                    {
+                      "term": {
+                        "authors.inspire_bai": "ostapchenko"
+                      }
                     }
+                  ]
                 }
+              }
             ],
             "must_not": [
-                {
-                    "bool": {
-                        "should": [
-                            {
-                                "match": {
-                                    "authors.full_name": "olinto"
-                                }
-                            }
-                        ],
-                        "must": [
-                            {
-                                "match": {
-                                    "authors.name_variations": "olinto"
-                                }
-                            }
-                        ]
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "match": {
+                        "authors.full_name": "olinto"
+                      }
                     }
-                },
-                {
-                    "bool": {
-                        "must": [
-                            {
-                                "match": {
-                                    "authors.name_variations": "haungs"
-                                }
-                            }
-                        ],
+                  ],
+                  "must": [
+                    {
+                      "bool": {
                         "should": [
-                            {
-                                "match": {
-                                    "authors.full_name": "haungs"
-                                }
+                          {
+                            "match": {
+                              "authors.name_variations": "olinto"
                             }
+                          },
+                          {
+                            "term": {
+                              "authors.inspire_bai": "olinto"
+                            }
+                          }
                         ]
+                      }
                     }
+                  ]
                 }
+              },
+              {
+                "bool": {
+                  "must": [
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "match": {
+                              "authors.name_variations": "haungs"
+                            }
+                          },
+                          {
+                            "term": {
+                              "authors.inspire_bai": "haungs"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "should": [
+                    {
+                      "match": {
+                        "authors.full_name": "haungs"
+                      }
+                    }
+                  ]
+                }
+              }
             ],
             "should": [
-                {
-                    "match": {
-                        "authors.full_name": "ostapchenko"
-                    }
+              {
+                "match": {
+                  "authors.full_name": "ostapchenko"
                 }
+              }
             ]
         }
     }

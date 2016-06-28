@@ -40,7 +40,7 @@
 
 {%- block body_inner %}
 <div id="invenio-search">
-  <invenio-search search-endpoint="{{ search_api }}" search-extra-params='{"size": 25}'>
+  <invenio-search search-endpoint="{{ search_api }}" search-headers='{"Accept": "application/vnd+inspire.brief+json"}' search-extra-params='{"size": 25}'>
   {{super()}}
   </invenio-search>
 </div>

@@ -118,12 +118,11 @@ class ElasticSearchDSL(object):
 
             fields = self.get_fields_for_keyword(keyword, mode='a')
             if fields == ['authors.full_name', 'authors.alternative_name']:
-                return Q({"bool":
-                          {"should": [
-                              {"match": {
-                                  "authors.name_variations": str(node.value)}},
-                              {"match": {"authors.full_name": str(node.value)}}]
-                           }})
+                return Q('bool', should=[
+                    Q("match", authors__name_variations=str(node.value)),
+                    Q("match", authors__full_name=str(node.value)),
+                    Q("match", authors__inspire_bai=str(node.value))
+                ])
             return Q({
                 'multi_match': {
                     'query': node.value,
@@ -145,12 +144,17 @@ class ElasticSearchDSL(object):
         def query(keyword):
             fields = self.get_fields_for_keyword(keyword, mode='e')
             if fields == ['authors.full_name', 'authors.alternative_name']:
-                return Q({"bool":
-                          {"must": [
-                              {"match": {"authors.name_variations": str(node.value)}}],
-                           "should": [
-                              {"match": {"authors.full_name": str(node.value)}}]
-                           }})
+                return Q(
+                    'bool',
+                    must=Q('bool', should=[
+                        Q("match", authors__name_variations=str(node.value)),
+                        Q("term", authors__inspire_bai=str(node.value))
+                    ]),
+                    should=[
+                        Q("match", authors__full_name=str(node.value))
+                    ]
+                )
+
             if (len(fields) > 1):
                 return Q({"bool":
                           {"should": [{"term": {k: str(node.value)}}
