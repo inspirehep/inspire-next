@@ -74,6 +74,16 @@
                         "trim"
                     ]
                 },
+                "authors_full_name_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "icu_tokenizer",
+                    "filter": [
+                        "asciifold_with_orig",
+                        "lowercase",
+                        "apostrophes_remove",
+                        "characters_remove"
+                    ]
+                },
                 "tc_synonyms_analyzer": {
                   "type": "custom",
                   "tokenizer": "keyword",
@@ -293,7 +303,7 @@
                     "properties": {
                         "full_name": {
                             "type": "string",
-                            "analyzer": "no_tokenizing_analyzer",
+                            "analyzer": "authors_full_name_analyzer",
                             "copy_to": ["exactauthor", "facet_authors"]
                         },
                         "affiliations": {
