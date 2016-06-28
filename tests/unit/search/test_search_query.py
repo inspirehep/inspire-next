@@ -120,12 +120,12 @@ def test_author_bai():
 
     expected = {
         "bool": {
-            "should": [
+            "must": [
               {
                 "bool": {
                   "should": [
                     {
-                      "term": {
+                      "match": {
                         "authors.name_variations": "r.j.hill.1"
                       }
                     },
@@ -136,7 +136,9 @@ def test_author_bai():
                     }
                   ]
                 }
-              },
+              }
+            ],
+            "should": [
               {
                 "match": {
                   "authors.full_name": "r.j.hill.1"
@@ -224,19 +226,13 @@ def test_author_colon():
         "bool": {
             "should": [
               {
-                "bool": {
-                  "should": [
-                    {
-                      "match": {
-                        "authors.name_variations": "vagenas"
-                      }
-                    },
-                    {
-                      "match": {
-                        "authors.full_name": "vagenas"
-                      }
-                    }
-                  ]
+                "match": {
+                  "authors.name_variations": "vagenas"
+                }
+              },
+              {
+                "match": {
+                  "authors.full_name": "vagenas"
                 }
               },
               {
@@ -257,12 +253,12 @@ def test_author_colon_with_double_quotes():
 
     expected = {
         "bool": {
-            "should": [
+            "must": [
               {
                 "bool": {
                   "should": [
                     {
-                      "term": {
+                      "match": {
                         "authors.name_variations": "tachikawa, yuji"
                       }
                     },
@@ -273,7 +269,9 @@ def test_author_colon_with_double_quotes():
                     }
                   ]
                 }
-              },
+              }
+            ],
+            "should": [
               {
                 "match": {
                   "authors.full_name": "tachikawa, yuji"
@@ -294,19 +292,13 @@ def test_author_colon_bai():
         "bool": {
             "should": [
               {
-                "bool": {
-                  "should": [
-                    {
-                      "match": {
-                        "authors.name_variations": "Y.Nomura.1"
-                      }
-                    },
-                    {
-                      "match": {
-                        "authors.full_name": "Y.Nomura.1"
-                      }
-                    }
-                  ]
+                "match": {
+                  "authors.name_variations": "Y.Nomura.1"
+                }
+              },
+              {
+                "match": {
+                  "authors.full_name": "Y.Nomura.1"
                 }
               },
               {
@@ -330,19 +322,13 @@ def test_author_colon_bai_and_collection_colon():
         "bool": {
             "should": [
               {
-                "bool": {
-                  "should": [
-                    {
-                      "match": {
-                        "authors.name_variations": "E.Witten.1"
-                      }
-                    },
-                    {
-                      "match": {
-                        "authors.full_name": "E.Witten.1"
-                      }
-                    }
-                  ]
+                "match": {
+                  "authors.name_variations": "E.Witten.1"
+                }
+              },
+              {
+                "match": {
+                  "authors.full_name": "E.Witten.1"
                 }
               },
               {
@@ -374,10 +360,17 @@ def test_author_colon_bai_with_double_quotes_and_collection_colon():
         "bool": {
             "should": [
               {
+                "match": {
+                  "authors.full_name": "E.Witten.1"
+                }
+              }
+            ],
+            "must": [
+              {
                 "bool": {
                   "should": [
                     {
-                      "term": {
+                      "match": {
                         "authors.name_variations": "E.Witten.1"
                       }
                     },
@@ -389,13 +382,6 @@ def test_author_colon_bai_with_double_quotes_and_collection_colon():
                   ]
                 }
               },
-              {
-                "match": {
-                  "authors.full_name": "E.Witten.1"
-                }
-              }
-            ],
-            "must": [
               {
                 "multi_match": {
                   "query": "citeable",
@@ -438,19 +424,13 @@ def test_author_colon_bai_and_collection_colon_and_cited_colon():
             ],
             "should": [
               {
-                "bool": {
-                  "should": [
-                    {
-                      "match": {
-                        "authors.name_variations": "E.Witten.1"
-                      }
-                    },
-                    {
-                      "match": {
-                        "authors.full_name": "E.Witten.1"
-                      }
-                    }
-                  ]
+                "match": {
+                  "authors.name_variations": "E.Witten.1"
+                }
+              },
+              {
+                "match": {
+                  "authors.full_name": "E.Witten.1"
                 }
               },
               {
@@ -474,6 +454,22 @@ def test_author_colon_bai_with_double_quotes_and_collection_colon_and_cited_colo
         "bool": {
             "must": [
               {
+                "bool": {
+                  "should": [
+                    {
+                      "match": {
+                        "authors.name_variations": "E.Witten.1"
+                      }
+                    },
+                    {
+                      "term": {
+                        "authors.inspire_bai": "E.Witten.1"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
                 "multi_match": {
                   "query": "citeable",
                   "fields": [
@@ -491,22 +487,6 @@ def test_author_colon_bai_with_double_quotes_and_collection_colon_and_cited_colo
               }
             ],
             "should": [
-              {
-                "bool": {
-                  "should": [
-                    {
-                      "term": {
-                        "authors.name_variations": "E.Witten.1"
-                      }
-                    },
-                    {
-                      "term": {
-                        "authors.inspire_bai": "E.Witten.1"
-                      }
-                    }
-                  ]
-                }
-              },
               {
                 "match": {
                   "authors.full_name": "E.Witten.1"
@@ -882,12 +862,12 @@ def test_find_author():
 
     expected = {
         "bool": {
-            "should": [
+            "must": [
               {
                 "bool": {
                   "should": [
                     {
-                      "term": {
+                      "match": {
                         "authors.name_variations": "polchinski"
                       }
                     },
@@ -898,7 +878,9 @@ def test_find_author():
                     }
                   ]
                 }
-              },
+              }
+            ],
+            "should": [
               {
                 "match": {
                   "authors.full_name": "polchinski"
@@ -917,12 +899,12 @@ def test_find_author_uppercase():
 
     expected = {
         "bool": {
-            "should": [
+            "must": [
               {
                 "bool": {
                   "should": [
                     {
-                      "term": {
+                      "match": {
                         "authors.name_variations": "W F CHANG"
                       }
                     },
@@ -933,7 +915,9 @@ def test_find_author_uppercase():
                     }
                   ]
                 }
-              },
+              }
+            ],
+            "should": [
               {
                 "match": {
                   "authors.full_name": "W F CHANG"
@@ -952,13 +936,20 @@ def test_find_author_and_date():
 
     expected = {
         "bool": {
-            "minimum_should_match": 1,
+            "minimum_should_match": 0,
             "should": [
+              {
+                "match": {
+                  "authors.full_name": "hatta"
+                }
+              }
+            ],
+            "must": [
               {
                 "bool": {
                   "should": [
                     {
-                      "term": {
+                      "match": {
                         "authors.name_variations": "hatta"
                       }
                     },
@@ -970,13 +961,6 @@ def test_find_author_and_date():
                   ]
                 }
               },
-              {
-                "match": {
-                  "authors.full_name": "hatta"
-                }
-              }
-            ],
-            "must": [
               {
                 "bool": {
                   "minimum_should_match": 1,
@@ -1040,12 +1024,12 @@ def test_find_author_or_author():
             "should": [
               {
                 "bool": {
-                  "should": [
+                  "must": [
                     {
                       "bool": {
                         "should": [
                           {
-                            "term": {
+                            "match": {
                               "authors.name_variations": "gersdorff, g"
                             }
                           },
@@ -1056,7 +1040,9 @@ def test_find_author_or_author():
                           }
                         ]
                       }
-                    },
+                    }
+                  ],
+                  "should": [
                     {
                       "match": {
                         "authors.full_name": "gersdorff, g"
@@ -1067,12 +1053,12 @@ def test_find_author_or_author():
               },
               {
                 "bool": {
-                  "should": [
+                  "must": [
                     {
                       "bool": {
                         "should": [
                           {
-                            "term": {
+                            "match": {
                               "authors.name_variations": "von gersdorff, g"
                             }
                           },
@@ -1083,7 +1069,9 @@ def test_find_author_or_author():
                           }
                         ]
                       }
-                    },
+                    }
+                  ],
+                  "should": [
                     {
                       "match": {
                         "authors.full_name": "von gersdorff, g"
@@ -1105,69 +1093,13 @@ def test_find_author_not_author_not_author():
 
     expected = {
         "bool": {
-            "minimum_should_match": 1,
-            "must_not": [
+            "minimum_should_match": 0,
+            "must": [
               {
                 "bool": {
                   "should": [
-                    {
-                      "bool": {
-                        "should": [
-                          {
-                            "term": {
-                              "authors.name_variations": "olinto"
-                            }
-                          },
-                          {
-                            "term": {
-                              "authors.inspire_bai": "olinto"
-                            }
-                          }
-                        ]
-                      }
-                    },
                     {
                       "match": {
-                        "authors.full_name": "olinto"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "bool": {
-                  "should": [
-                    {
-                      "bool": {
-                        "should": [
-                          {
-                            "term": {
-                              "authors.name_variations": "haungs"
-                            }
-                          },
-                          {
-                            "term": {
-                              "authors.inspire_bai": "haungs"
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "match": {
-                        "authors.full_name": "haungs"
-                      }
-                    }
-                  ]
-                }
-              }
-            ],
-            "should": [
-              {
-                "bool": {
-                  "should": [
-                    {
-                      "term": {
                         "authors.name_variations": "ostapchenko"
                       }
                     },
@@ -1178,7 +1110,69 @@ def test_find_author_not_author_not_author():
                     }
                   ]
                 }
+              }
+            ],
+            "must_not": [
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "match": {
+                        "authors.full_name": "olinto"
+                      }
+                    }
+                  ],
+                  "must": [
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "match": {
+                              "authors.name_variations": "olinto"
+                            }
+                          },
+                          {
+                            "term": {
+                              "authors.inspire_bai": "olinto"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
               },
+              {
+                "bool": {
+                  "must": [
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "match": {
+                              "authors.name_variations": "haungs"
+                            }
+                          },
+                          {
+                            "term": {
+                              "authors.inspire_bai": "haungs"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "should": [
+                    {
+                      "match": {
+                        "authors.full_name": "haungs"
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "should": [
               {
                 "match": {
                   "authors.full_name": "ostapchenko"
