@@ -75,7 +75,7 @@ def name(self, key, value):
     set_value('obsolete_ICN', value.get('x'))
     set_value('new_ICN', value.get('t'))
 
-    names = list(utils.force_list(value.get('a'))) or []
+    names = list(utils.force_list(value.get('a')) or [])
     names.extend(utils.force_list(value.get('u')) or [])
     names.extend(utils.force_list(value.get('t')) or [])
     return names
