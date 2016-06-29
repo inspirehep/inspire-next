@@ -1,25 +1,28 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of Invenio.
-# Copyright (C) 2012, 2013, 2014, 2015 CERN.
+# This file is part of INSPIRE.
+# Copyright (C) 2012, 2013, 2014, 2015, 2016 CERN.
 #
-# Invenio is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# Invenio is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Invenio; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 """Implement custom field widgets."""
 
-import json
+from __future__ import absolute_import, division, print_function
 
 from inspirehep.utils.template import render_macro_from_template
 
@@ -27,114 +30,6 @@ from werkzeug import MultiDict
 
 from wtforms.widgets import HiddenInput, HTMLString, Input, RadioInput, \
     TextInput, html_params
-
-
-def date_widget(field, **kwargs):
-    """Create datepicker widget."""
-    field_id = kwargs.pop('id', field.id)
-    html = [u'<div class="row"><div class="col-xs-5 col-sm-3">'
-            '<input class="datepicker form-control" %s type="text"></div></div'
-            % html_params(id=field_id, name=field_id, value=field.data or '')]
-    return HTMLString(u''.join(html))
-
-
-def bootstrap_submit(field, **dummy_kwargs):
-    """Create Bootstrap friendly submit button."""
-    html = u'<input %s >' % html_params(style="float:right; width: 250px;",
-                                        id="submitButton",
-                                        class_="btn btn-primary btn-large",
-                                        name="submitButton",
-                                        type="submit",
-                                        value=field.label.text,)
-    html = [u'<div style="float:right;" >' + html + u'</div>']
-    return HTMLString(u''.join(html))
-
-
-class PLUploadWidget(object):
-
-    """PLUpload widget implementation."""
-
-    def __init__(self, template=None):
-        """Initialize widget with custom template."""
-        self.template = template or "deposit/widget_plupload.html"
-
-    def __call__(self, field, **kwargs):
-        """Render PLUpload widget."""
-        field_id = kwargs.pop('id', field.id)
-        kwargs['class'] = u'plupload'
-
-        return HTMLString(
-            render_template_to_string(
-                self.template,
-                field=field,
-                field_id=field_id,
-                **kwargs
-            )
-        )
-
-plupload_widget = PLUploadWidget()
-
-
-class CKEditorWidget(object):
-
-    """CKEditor widget with possible custom configuration."""
-
-    def __init__(self, **kwargs):
-        """Initialize widget with custom config."""
-        self.config = json.dumps(kwargs) if kwargs else None
-
-    def __call__(self, field, **kwargs):
-        """Render CKEditor widget."""
-        attrs = {
-            'data-ckeditor': 1,
-        }
-        if self.config:
-            attrs['data-ckeditor-config'] = self.config
-
-        html = [u'<textarea %s >' % html_params(
-            id=field.name,
-            name=field.name,
-            **attrs
-        )]
-        html.append('%s</textarea>' % field.data or '')
-        return HTMLString(u''.join(html))
-
-ckeditor_widget = CKEditorWidget()
-"""
-Default CKEditor widget. Will use the application configuration by default.
-"""
-
-
-def dropbox_widget(field, **kwargs):
-    """Create Dropbox widget."""
-    field_id = kwargs.pop('id', field.id)
-    html = [u'<input type="dropbox-chooser"\
-            name="fileurl"\
-            style="visibility: hidden;"\
-            data-link-type="direct"\
-            id="db-chooser"/></br> \
-        <div class="pluploader" %s > \
-            <table id="file-table" class="table table-striped table-bordered" \
-                   style="display:none;">\
-                <thead>\
-                    <tr>\
-                    <th>Filename</th>\
-                    <th>Size</th>\
-                    <th>Status</th>\
-                    <td></td>\
-                    </tr>\
-                </thead>\
-                <tbody id="filelist">\
-                </tbody>\
-            </table>\
-            <a class="btn btn-success disabled" id="uploadfiles"> \
-                <i class="glyphicon glyphicon-upload"></i> Start upload</a>\
-            <a class="btn btn-danger" id="stopupload" style="display:none;">\
-                <i class="glyphicon glyphicon-stop"></i> Cancel upload</a>\
-            <span id="upload_speed" class="pull-right"></span>\
-            <div id="upload-errors"></div>\
-        </div>' % html_params(id=field_id)]
-    return HTMLString(u''.join(html))
 
 
 class ButtonWidget(object):
@@ -568,21 +463,3 @@ class BigIconRadioInput(RadioInput):
                 icon, field.label.text, html
             )
         return html
-
-
-class InlineListWidget(object):
-
-    """Implement inline list widget.
-
-    FIXME: Replace with ExtendedListWidget
-    """
-
-    def __call__(self, field, **kwargs):
-        """Render inline list widget."""
-        kwargs.setdefault('id', field.id)
-        html = [u'<ul class="list-inline">']
-        for subfield in field:
-            html.append(
-                u'<li class="col-md-2"><label>%s</label></li>' % (subfield()))
-        html.append(u'</ul>')
-        return HTMLString(u''.join(html))
