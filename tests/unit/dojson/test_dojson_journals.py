@@ -141,6 +141,100 @@ def test_multiple_issn_from_marcxml_022():
     assert expected == result['issn']
 
 
+def test_issn_from_022__a_b_electronic():
+    snippet = (
+        '<datafield tag="022" ind1=" " ind2=" ">'
+        '  <subfield code="a">2469-9888</subfield>'
+        '  <subfield code="b">electronic</subfield>'
+        '</datafield>'
+    )  # record/1415879
+
+    expected = [
+        {
+            'comment': 'electronic',
+            'medium': 'online',
+            'value': '2469-9888',
+        },
+    ]
+    result = strip_empty_values(journals.do(create_record(snippet)))
+
+    assert expected == result['issn']
+
+
+def test_coden_from_030__a_2():
+    snippet = (
+        '<datafield tag="030" ind1=" " ind2=" ">'
+        '  <subfield code="2">CODEN</subfield>'
+        '  <subfield code="a">HERAS</subfield>'
+        '</datafield>'
+    )  # record/1211568
+
+    expected = [
+        'HERAS',
+    ]
+    result = strip_empty_values(journals.do(create_record(snippet)))
+
+    assert expected == result['coden']
+
+
+def test_coden_from_double_030__a_2():
+    snippet = (
+        '<record>'
+        '  <datafield tag="030" ind1=" " ind2=" ">'
+        '    <subfield code="2">CODEN</subfield>'
+        '    <subfield code="a">00686</subfield>'
+        '  </datafield>'
+        '  <datafield tag="030" ind1=" " ind2=" ">'
+        '    <subfield code="2">CODEN</subfield>'
+        '    <subfield code="a">VLUFB</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        '00686',
+        'VLUFB',
+    ]
+    result = strip_empty_values(journals.do(create_record(snippet)))
+
+    assert expected == result['coden']
+
+
+def test_publisher_from_643__b():
+    snippet = (
+        '<datafield tag="643" ind1=" " ind2=" ">'
+        '  <subfield code="b">ANITA PUBLICATIONS, INDIA</subfield>'
+        '</datafield>'
+    )  # record/1211888
+
+    expected = [
+        'ANITA PUBLICATIONS, INDIA',
+    ]
+    result = strip_empty_values(journals.do(create_record(snippet)))
+
+    assert expected == result['publisher']
+
+
+def test_publisher_from_double_643__b():
+    snippet = (
+        '<record>'
+        '  <datafield tag="643" ind1=" " ind2=" ">'
+        '    <subfield code="b">Elsevier</subfield>'
+        '  </datafield>'
+        '  <datafield tag="643" ind1=" " ind2=" ">'
+        '    <subfield code="b">Science Press</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1212635
+
+    expected = [
+        'Elsevier',
+        'Science Press',
+    ]
+    result = strip_empty_values(journals.do(create_record(snippet)))
+
+    assert expected == result['publisher']
+
 
 def test_titles_from_marcxml_130_with_single_a():
     snippet = (

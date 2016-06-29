@@ -108,10 +108,3 @@ def title_variants(self, key, value):
     return {
         'title': value.get('a'),
     }
-
-
-@journals.over('name_variants', '^730..')
-@utils.for_each_value
-def name_variants(self, key, value):
-    """Variants of the name."""
-    return value.get('a')
