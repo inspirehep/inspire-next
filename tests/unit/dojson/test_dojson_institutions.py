@@ -103,7 +103,7 @@ def test_timezone_from_043__t():
     assert expected == result['timezone']
 
 
-def test_name_from_100__a():
+def test_name_from_110__a():
     snippet = (
         '<datafield tag="110" ind1=" " ind2=" ">'
         '  <subfield code="a">Mid-America Christian U.</subfield>'
@@ -116,7 +116,7 @@ def test_name_from_100__a():
     assert expected == result['name']
 
 
-def test_name_from_100__a_b_u():
+def test_name_from_110__a_b_u():
     snippet = (
         '<datafield tag="110" ind1=" " ind2=" ">'
         '  <subfield code="a">Fukushima University</subfield>'
@@ -131,7 +131,23 @@ def test_name_from_100__a_b_u():
     assert expected == result['name']
 
 
-def test_name_from_100__a_b_t_u():
+@pytest.mark.xfail(reason='TypeError when calling force_list on None')
+def test_name_from_110__b_t_u():
+    snippet = (
+        '<datafield tag="110" ind1=" " ind2=" ">'
+        '   <subfield code="b">Institute of Physics</subfield>'
+        '   <subfield code="t">Inst. Phys., Belgrade</subfield>'
+        '   <subfield code="u">Belgrade, Inst. Phys.</subfield>'
+        '</datafield>'
+    )   # record/903416
+
+    expected = [['Belgrade, Inst. Phys.', 'Inst. Phys., Belgrade']]
+    result = strip_empty_values(institutions.do(create_record(snippet)))
+
+    assert expected == result['name']
+
+
+def test_name_from_110__a_b_t_u():
     snippet = (
         '<datafield tag="110" ind1=" " ind2=" ">'
         '  <subfield code="a">Adelphi University</subfield>'
