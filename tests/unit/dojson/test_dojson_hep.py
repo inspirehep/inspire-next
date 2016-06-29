@@ -348,6 +348,7 @@ def test_hidden_notes_from_595__a_9():
     assert expected == result['hidden_notes']
 
 
+@pytest.mark.xfail(reason='value is not a list')
 def test_hidden_notes_from_595__double_a_9():
     snippet = (
         '<datafield tag="595" ind1=" " ind2=" ">'
@@ -360,10 +361,11 @@ def test_hidden_notes_from_595__double_a_9():
     expected = [
         {
             'source': 'SPIRES-HIDDEN',
-            'value': (
-                'TeXtitle from script',
-                'no affiliation (not clear pn the fulltext)',
-            ),
+            'value': 'TeXtitle from script',
+        },
+        {
+            'source': 'SPIRES-HIDDEN',
+            'value': 'no affiliation (not clear pn the fulltext)',
         },
     ]
     result = strip_empty_values(hep.do(create_record(snippet)))
@@ -371,6 +373,7 @@ def test_hidden_notes_from_595__double_a_9():
     assert expected == result['hidden_notes']
 
 
+@pytest.mark.xfail(reason='value is not a list')
 def test_hidden_notes_from_595__a_9_and_595__double_a_9():
     snippet = (
         '<record>'
@@ -393,10 +396,11 @@ def test_hidden_notes_from_595__a_9_and_595__double_a_9():
         },
         {
             'source': 'SPIRES-HIDDEN',
-            'value': (
-                'TeXtitle from script',
-                'no affiliation (not clear pn the fulltext)',
-            ),
+            'value': 'TeXtitle from script',
+        },
+        {
+            'source': 'SPIRES-HIDDEN',
+            'value': 'no affiliation (not clear pn the fulltext)',
         },
     ]
     result = strip_empty_values(hep.do(create_record(snippet)))
