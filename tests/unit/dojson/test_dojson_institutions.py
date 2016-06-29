@@ -90,6 +90,19 @@ def test_no_location_from_invalid_034__d_f():
     assert 'location' not in result
 
 
+def test_no_location_from_034__double_d():
+    snippet = (
+        '<datafield tag="034" ind1=" " ind2=" ">'
+        '   <subfield code="d">32.540776</subfield>'
+        '   <subfield code="d">15.561010</subfield>'
+        '</datafield>'
+    )  # record/1442294
+
+    result = clean_record(institutions.do(create_record(snippet)))
+
+    assert 'location' not in result
+
+
 def test_timezone_from_043__t():
     snippet = (
         '<datafield tag="043" ind1=" " ind2=" ">'
