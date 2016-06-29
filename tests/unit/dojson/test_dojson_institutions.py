@@ -131,7 +131,6 @@ def test_name_from_110__a_b_u():
     assert expected == result['name']
 
 
-@pytest.mark.xfail(reason='TypeError when calling force_list on None')
 def test_name_from_110__b_t_u():
     snippet = (
         '<datafield tag="110" ind1=" " ind2=" ">'
