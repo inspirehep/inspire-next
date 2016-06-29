@@ -549,7 +549,7 @@ def test_get_date_from_imprints_uses_first_date_found():
 
 def test_get_date_from_thesis_returns_none_when_no_date():
     thesis_without_a_date = Record({
-        'thesis': []
+        'thesis': {}
     })
 
     assert Cv_latex(thesis_without_a_date)._get_date() is None
@@ -557,10 +557,7 @@ def test_get_date_from_thesis_returns_none_when_no_date():
 
 def test_get_date_from_thesis_uses_first_date_found():
     thesis = Record({
-        'thesis': [
-            {},
-            {'date': '1966'}
-        ]
+        'thesis': {'date': '1966'}
     })
 
     expected = 1966

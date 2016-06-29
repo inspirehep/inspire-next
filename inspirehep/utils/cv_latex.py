@@ -306,15 +306,13 @@ class Cv_latex(Export):
             if datestruct:
                 return self._format_date(datestruct)
 
-        if 'thesis' in self.record:
-            for field in self.record['thesis']:
-                if 'date' in field:
-                    date = field['date']
-                    if date:
-                        datestruct = self.parse_date(str(date))
-                    break
+        if 'thesis' in self.record and 'date' in self.record['thesis']:
+            date = self.record['thesis']['date']
+            if date:
+                datestruct = self.parse_date(str(date))
             if datestruct:
                 return self._format_date(datestruct)
+
         return None
 
     def _format_date(self, datestruct):

@@ -246,45 +246,48 @@
             "type": "array"
         },
         "thesis": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "date": {
-                        "type": "string",
-                        "format": "date"
-                    },
-                    "defense_date": {
-                        "type": "string",
-                        "format": "date"
-                    },
-                    "curated_relation": {
-                        "type": "boolean"
-                    },
-                    "university": {
-                        "type": "string",
-                        "description": "FIXME: shall we match these with the insitution database? I guess so."
-                    },
-                    "degree_type": {
-                        "enum": [
-                            "PhD",
-                            "Master",
-                            "Bachelor",
-                            "Diploma",
-                            "Habilitation",
-                            "Laurea",
-                            "Thesis"
-                        ],
-                        "type": "string",
-                        "description": "FIXME: this enum must be reviewed"
-                    },
-                    "record": {
-                        "description": "URI of the matched insitution record.",
-                        "$ref": "json_reference.json"
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "format": "date"
+                },
+                "defense_date": {
+                    "type": "string",
+                    "format": "date"
+                },
+                "institutions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "record": {
+                                "description": "URI of the matched insitution record.",
+                                "$ref": "json_reference.json"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "curated_relation": {
+                                "type": "boolean"
+                            }
+                        }
                     }
+                },
+                "degree_type": {
+                    "enum": [
+                        "PhD",
+                        "Master",
+                        "Bachelor",
+                        "Diploma",
+                        "Habilitation",
+                        "Laurea",
+                        "Thesis"
+                    ],
+                    "type": "string",
+                    "description": "FIXME: this enum must be reviewed"
                 }
-            },
-            "type": "array"
+            }
         },
         "hidden_notes": {
             "uniqueItems": true,

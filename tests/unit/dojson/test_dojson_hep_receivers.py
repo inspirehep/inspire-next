@@ -37,9 +37,7 @@ def test_earliest_date_from_preprint_date():
 
 def test_earliest_date_from_thesis_date():
     with_thesis_date = Record({
-        'thesis': [
-            {'date': '2008'}
-        ]
+        'thesis': {'date': '2008'}
     })
     earliest_date(with_thesis_date)
 
@@ -51,9 +49,7 @@ def test_earliest_date_from_thesis_date():
 
 def test_earliest_date_from_thesis_defense_date():
     with_thesis_defense_date = Record({
-        'thesis': [
-            {'defense_date': '2012-06-01'}
-        ]
+        'thesis': {'defense_date': '2012-06-01'}
     })
     earliest_date(with_thesis_defense_date)
 
