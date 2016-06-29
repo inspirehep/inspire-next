@@ -28,7 +28,7 @@ import os
 import sys
 
 from flask import current_app
-from flask.ext.script import prompt_bool
+from flask_cli import with_appcontext
 
 from invenio_db import db
 
@@ -126,39 +126,53 @@ def remove_legacy_tables():
 
 
 @migrator.command()
+@with_appcontext
 def clean_records():
     """Truncate all the records from various tables."""
     from sqlalchemy.engine import reflection
+    from invenio_search import current_search, current_search_client
 
-    print('>>> Truncating all records.')
+    click.secho('>>> Truncating all records.')
 
     tables_to_truncate = [
-        "bibrec",
-        "record_json",
+        "records_metadata",
+        "records_metadata_version",
+        "inspire_prod_records",
+        "inspire_orcid_records",
+        "pidstore_pid",
     ]
     db.session.begin(subtransactions=True)
     try:
-        db.engine.execute("SET FOREIGN_KEY_CHECKS=0;")
-
-        # Grab any table with foreign keys to bibrec for truncating
+        # Grab any table with foreign keys to records_metadata for truncating
         inspector = reflection.Inspector.from_engine(db.engine)
         for table_name in inspector.get_table_names():
             for foreign_key in inspector.get_foreign_keys(table_name):
-                if foreign_key["referred_table"] == "bibrec":
+                if foreign_key["referred_table"] == "records_metadata":
                     tables_to_truncate.append(table_name)
 
-        if not prompt_bool("Going to truncate: {0}".format(
+        if not click.confirm("Going to truncate:\n{0}".format(
                 "\n".join(tables_to_truncate))):
             return
-        for table in tables_to_truncate:
-            db.engine.execute("TRUNCATE TABLE {0}".format(table))
-            print(">>> Truncated {0}".format(table))
 
-        db.engine.execute("DELETE FROM pidSTORE WHERE pid_type='recid'")
-        print(">>> Truncated pidSTORE WHERE pid_type='recid'")
+        click.secho('Truncating tables...', fg='red', bold=True,
+                    file=sys.stderr)
+        with click.progressbar(tables_to_truncate) as tables:
+            for table in tables:
+                db.engine.execute("TRUNCATE TABLE {0} RESTART IDENTITY CASCADE".format(table))
+                click.secho("\tTruncated {0}".format(table))
 
-        db.engine.execute("SET FOREIGN_KEY_CHECKS=1;")
         db.session.commit()
+
+        click.secho('Recreating ES indices...', fg='red', bold=True,
+                    file=sys.stderr)
+        with click.progressbar(current_search.mappings.keys()) as indices:
+            for index in indices:
+                if index.startswith('records'):
+                    current_search_client.indices.delete(
+                        index, ignore=[400, 404]
+                    )
+                    current_search_client.indices.create(index)
+                    click.secho("\tRecreated {0}".format(index))
     except Exception as err:  # noqa
         db.session.rollback()
         current_app.logger.exception(err)
