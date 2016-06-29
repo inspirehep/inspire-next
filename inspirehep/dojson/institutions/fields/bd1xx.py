@@ -40,7 +40,7 @@ def location(self, key, value):
     def _get_float(value, c):
         try:
             return float(value[c])
-        except (KeyError, ValueError):
+        except (TypeError, KeyError, ValueError):
             return ''
 
     return {
