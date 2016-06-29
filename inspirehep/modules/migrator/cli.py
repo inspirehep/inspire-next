@@ -49,32 +49,24 @@ def migrator():
               help='Specific collections to migrate.')
 @click.option('--remigrate', '-m', type=bool,
               default=False, help='Try to remigrate broken records')
-@click.option('--broken-output', '-b',
-              help='Where to write back records that were not possible to migrate')
-@click.option('--dry-run', '-d', type=bool, default=False,
-              help='Whether records should really be imported or not')
 @click.option('--wait', '-w', type=bool, default=False,
               help='Wait for migrator to complete.')
 def populate(file_input=None,
              remigrate=False,
-             broken_output=None,
-             dry_run=False,
              wait=False):
     """Populates the system with records from migrator files.
 
     Usage: inveniomanage migrator populate -f prodsync20151117173222.xml.gz
-        --broken-output=/tmp/broken.xml:
     """
     if remigrate:
         print("Remigrate broken records...")
-        migrate_broken_records.delay(broken_output=broken_output, dry_run=dry_run)
+        migrate_broken_records.delay()
     elif file_input and not os.path.isfile(file_input):
         print("{0} is not a file!".format(file_input), file=sys.stderr)
     elif file_input:
         print("Migrating records from file: {0}".format(file_input))
 
-        migrate(os.path.abspath(file_input), broken_output=broken_output,
-                dry_run=dry_run, wait_for_results=wait)
+        migrate(os.path.abspath(file_input), wait_for_results=wait)
 
 
 @migrator.command()
