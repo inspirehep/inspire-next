@@ -152,3 +152,26 @@ def test_parse_institution_address_preserves_the_original_address():
     result = parse_institution_address(**address)
 
     assert expected == result
+
+
+def test_parse_institution_address_handles_state_province_none():
+    address = {
+        'address': None,
+        'city': 'Beijing',
+        'state_province': None,
+        'country': None,
+        'postal_code': '123-CFG',
+        'country_code': None,
+    }
+
+    expected = {
+        'city': 'Beijing',
+        'country': None,
+        'country_code': None,
+        'original_address': None,
+        'postal_code': '123-CFG',
+        'state': None,
+    }
+    result = parse_institution_address(**address)
+
+    assert expected == result

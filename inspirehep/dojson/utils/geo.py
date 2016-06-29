@@ -563,7 +563,7 @@ def parse_institution_address(address, city, state_province,
     if not country_code and country:
         country_code = match_country_name_to_its_code(country)
 
-    if not country_code and state_province.startswith('US-'):
+    if not country_code and state_province and state_province.startswith('US-'):
         country_code = 'US'
 
     return {
