@@ -27,7 +27,7 @@ services:
     extends:
       file: services.yml
       service: base
-    command: pip-accel install -r requirements.txt --pre
+    command: pip-accel install -r requirements.txt --pre -e .[tests]
     volumes_from:
       - static
   assets:
