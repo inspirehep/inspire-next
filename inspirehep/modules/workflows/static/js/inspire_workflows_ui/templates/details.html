@@ -31,7 +31,10 @@
         <span ng-if="vm.record._workflow.status === 'RUNNING'">Workflow in progress...</span>
         <span ng-repeat="item in vm.record._extra_data._task_history"
               ng-if="(vm.record._workflow.status === 'HALTED' || vm.record._workflow.status === 'ERROR') && $last">
-          {{vm.record._workflow.status}} on {{item.nicename}} <a href="#errors" ng-if="vm.record._workflow.status === 'ERROR'" style="color: white">View Stack Trace</a>
+          {{vm.record._workflow.status}} on {{item.nicename}} <a href="#errors"
+                                                                 ng-if="vm.record._workflow.status === 'ERROR'"
+                                                                 style="color: white">View
+          Stack Trace</a>
         </span>
       </p>
     </div>
@@ -50,12 +53,26 @@
                 ng-bind-html="vm.record.metadata.titles[0].title"
                 editable-text="vm.record.metadata.titles[0].title"
                 e-ng-change="Utils.registerUpdateEvent()"></h4>
+
+            <div ng-if="vm.record.metadata.publication_info" class="text-bolder">
+              <p class="text-muted">{{vm.record.metadata.publication_info[0].journal_title}}, {{vm.record.metadata.publication_info[0].year}}</p>
+            </div>
+
             <ul class="record-authors">
-              <li ng-repeat="author in vm.record.metadata.authors">
-                <span ng-bind="author.full_name"></span><span
-                ng-if="!$last">, </span>
+              {{ limit = 10; ""}}
+              <li
+                ng-repeat="author in vm.record.metadata.authors | limitTo : limit">
+                <span ng-if="author.full_name !== 'undefined'"
+                      ng-bind="author.full_name"></span>
+                <span ng-if="author.affiliations" class="text-muted affiliation"> {{author.affiliations[0].value}}</span>
+                <span ng-if="!$last">,&nbsp;</span>
+              </li>
+              <li ng-if="vm.record.metadata.authors.length > limit">and
+                {{vm.record.metadata.authors.length - limit}} others.
               </li>
             </ul>
+
+
             <p class="record-abstract"
                ng-bind-html="vm.record.metadata.abstracts[0].value"
                editable-textarea="vm.record.metadata.abstracts[0].value"
@@ -67,12 +84,26 @@
                 <p class="font-bolder">License</p>
               </div>
               <div class="col-md-10 col-sm-8">
-                <span ng-bind="vm.record.metadata.license[0].url" ></span> <span
+                <span ng-bind="vm.record.metadata.license[0].url"></span> <span
                 class="font-bolder text-muted"
                 ng-if="vm.record.metadata.license[0].imposing"> imposed by
           <span ng-bind="vm.record.metadata.license[0].imposing"></span></span>
               </div>
             </div>
+
+            <div class="row">
+              <div class="col-md-2 col-sm-4">
+                <p class="font-bolder">DOI</p>
+              </div>
+              <div class="col-md-10 col-sm-8">
+                <div class="row" ng-repeat="doi in vm.record.metadata.dois">
+                  <div class="col-md-12"></div>
+                  <a href="http://dx.doi.org/{{doi.value}}" target="_new"
+                     ng-bind="doi.value"></a>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <div ng-if="vm.record._workflow.data_type === 'authors'">
@@ -94,13 +125,15 @@
 
       <div class="clearfix"></div>
 
-      <div class="col-md-12 col-sm-12" ng-if="vm.record._workflow.data_type == 'authors'">
+      <div class="col-md-12 col-sm-12"
+           ng-if="vm.record._workflow.data_type == 'authors'">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_links.html">
         </holding-pen-template-handler>
       </div>
 
-      <div class="col-md-6 col-sm-6" ng-if="vm.record._workflow.data_type == 'hep'">
+      <div class="col-md-6 col-sm-6"
+           ng-if="vm.record._workflow.data_type == 'hep'">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_subject_areas.html">
         </holding-pen-template-handler>
@@ -121,11 +154,14 @@
           <div class="advisors">
             <div class="row"
                  ng-repeat="advisor in vm.record.metadata.phd_advisors">
-              <div class="col-md-6 col-sm-6" ng-bind="advisor.name" editable-text="advisor.name"
-      e-ng-change="Utils.registerUpdateEvent()"></div>
+              <div class="col-md-6 col-sm-6" ng-bind="advisor.name"
+                   editable-text="advisor.name"
+                   e-ng-change="Utils.registerUpdateEvent()"></div>
               <div class="col-md-6 col-sm-6"
-                   ng-bind="advisor.degree_type" editable-select="advisor.degree_type"
-      e-ng-change="Utils.registerUpdateEvent()" e-ng-options="degree_type.value as degree_type.text for degree_type in degree_types"></div>
+                   ng-bind="advisor.degree_type"
+                   editable-select="advisor.degree_type"
+                   e-ng-change="Utils.registerUpdateEvent()"
+                   e-ng-options="degree_type.value as degree_type.text for degree_type in degree_types"></div>
             </div>
 
           </div>
@@ -133,7 +169,8 @@
       </div>
 
 
-      <div class="col-md-6 col-sm-6" ng-if="vm.record._workflow.data_type == 'hep'">
+      <div class="col-md-6 col-sm-6"
+           ng-if="vm.record._workflow.data_type == 'hep'">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_keywords.html">
         </holding-pen-template-handler>
@@ -141,7 +178,8 @@
 
       <div class="clearfix"></div>
 
-      <div class="col-md-12" ng-if="vm.record._workflow.data_type == 'authors'">
+      <div class="col-md-12"
+           ng-if="vm.record._workflow.data_type == 'authors'">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_positions.html">
         </holding-pen-template-handler>
@@ -156,8 +194,8 @@
       <div class="clearfix"></div>
 
 
-
-      <div class="col-md-12" id="errors" ng-if="vm.record._extra_data._error_msg">
+      <div class="col-md-12" id="errors"
+           ng-if="vm.record._extra_data._error_msg">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_errors.html">
         </holding-pen-template-handler>
@@ -219,9 +257,12 @@
                 Submitted by {{vm.record.metadata.acquisition_source.email}}<br/> on {{vm.record.metadata.acquisition_source.date}}
               </span>
               <span ng-switch-default>
-                Harvested on <span class="font-bolder" ng-bind="vm.record.metadata.acquisition_source.date"></span> from
-                <span class="font-bolder" ng-bind="vm.record.metadata.acquisition_source.source"></span> using
-                <span class="font-bolder" ng-bind="vm.record.metadata.acquisition_source.method"></span>
+                Harvested on <span class="font-bolder"
+                                   ng-bind="vm.record.metadata.acquisition_source.date"></span> from
+                <span class="font-bolder"
+                      ng-bind="vm.record.metadata.acquisition_source.source"></span> using
+                <span class="font-bolder"
+                      ng-bind="vm.record.metadata.acquisition_source.method"></span>
               </span>
             </span>
           </p>
@@ -257,7 +298,7 @@
         </div>
       </div>
 
-       <div class="col-md-12" ng-if="vm.record._workflow.data_type == 'hep'">
+      <div class="col-md-12" ng-if="vm.record._workflow.data_type == 'hep'">
         <holding-pen-template-handler
           template="/static/js/inspire_workflows_ui/templates/details_comments.html">
         </holding-pen-template-handler>

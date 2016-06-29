@@ -35,6 +35,10 @@ $hp_table_bg: #233345;
     color: $blue-haze;
   }
 
+  .text-bolder {
+    font-weight: bolder;
+  }
+
   .main-container {
     width: 95%;
     margin: 0 auto;
@@ -317,7 +321,8 @@ $hp_table_bg: #233345;
       }
 
       .custom-h {
-        margin-top: 0px;
+        margin-top: 0;
+        display: inline;
       }
 
       .btn-danger, .btn-success, .btn-warning {
@@ -643,12 +648,13 @@ $hp_table_bg: #233345;
 }
 
 .action-info {
-
   background-color: $dark-blue;
   display: inline-block;
-  padding: 4px 5px;
+  padding: 2px 4px;
   border-radius: 3px;
-  font-size: .6em;
+  font-size: .7em;
+  margin-right: 4px;
+  margin-top: 1px;
 }
 
 .decision {

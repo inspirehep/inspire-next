@@ -1,14 +1,27 @@
-<h4 class="custom-h">
-   <div ng-if="record._source._extra_data.user_action"
-         class="action-info" ng-class="record._source._extra_data.user_action">
+<div ng-if="record._source._workflow.data_type"
+     class="action-info pull-left">
+  <span ng-switch="record._source._workflow.data_type">
+    <span ng-switch-when="hep">Article</span>
+    <span ng-switch-when="institutions">Institution</span>
+    <span ng-switch-when="experiments">Experiment</span>
+    <span ng-switch-when="jobs">Job</span>
+  </span>
+</div>
+
+<div ng-if="record._source._extra_data.user_action"
+     class="action-info pull-left"
+     ng-class="record._source._extra_data.user_action">
               <span
-                    ng-switch="record._source._extra_data.user_action">
+                ng-switch="record._source._extra_data.user_action">
                 <span ng-switch-when="reject">Rejected</span>
-                <span ng-switch-when="accept">Non-CORE</span>
-                <span ng-switch-when="accept_core">CORE</span>
+                <span ng-switch-when="accept">Non-Core</span>
+                <span ng-switch-when="accept_core">Core</span>
                 <span ng-switch-when="accept_curate">Accept Curate</span>
               </span>
-          </div>
+</div>
+
+<h4 class="custom-h">
+
   <a class="title" ng-if="record._source.metadata.titles"
      ng-href="/holdingpen/{{record._id}}"
      ng-bind-html='record._source.metadata.titles[0].title'></a>

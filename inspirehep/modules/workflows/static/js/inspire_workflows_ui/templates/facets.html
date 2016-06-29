@@ -15,7 +15,7 @@
             <span ng-switch-when="ERROR" class="error"><i class="fa fa fa-exclamation-triangle"></i> Error</span>
             <span ng-switch-when="WAITING" class="inprogress"><i class="fa fa fa-hourglass-half"></i> Waiting</span>
             <span ng-switch-when="INITIAL" class="inprogress"><i class="fa fa fa-circle-o"></i> Preparing</span>
-            <span ng-switch-when="COMPLETED" class="completed"><i class="fa fa fa-tick"></i> Completed</span>
+            <span ng-switch-when="COMPLETED" class="completed"><i class="fa fa-check"></i> Completed</span>
             <span ng-switch-when="HALTED" class="halted"><i class="fa fa fa-pause"></i> Awaiting Decision</span>
             <span ng-switch-default>{{ item.key }}</span>
           </span>

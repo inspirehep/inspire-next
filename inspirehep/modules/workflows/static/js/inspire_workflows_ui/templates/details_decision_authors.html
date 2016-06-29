@@ -1,4 +1,4 @@
-<div ng-if="vm.record._extra_data._action == 'author_approval'">
+<div ng-if="vm.record._extra_data._action === 'author_approval' && vm.record._workflow.status === 'HALTED'">
 <button class="btn btn-danger"
         ng-click="Utils.setDecision('reject')">Reject
 </button>
@@ -10,7 +10,7 @@
 </button>
   </div>
 
-<div ng-if="vm.record._extra_data._action == null || ingestion_complete"
+<div ng-if="vm.record._extra_data._action === null || ingestion_complete"
   class="text-muted">
     <span ng-class="record._extra_data.user_action"
           ng-switch="record._extra_data.user_action">

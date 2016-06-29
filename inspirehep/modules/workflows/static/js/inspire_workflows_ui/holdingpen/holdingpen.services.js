@@ -22,19 +22,15 @@
  */
 (function (angular) {
   /**
-   * HoldingPenRecordService allows for the update of a record server
-   * side through a post of the record JSON.
+   * HoldingPenRecordService allows for the getting, update and resolution of
+   * workflow records.
    */
   angular.module('holdingpen.services', [])
-    .factory("HoldingPenRecordService", ["$http", "$location",
-        function ($http, $location) {
+    .factory("HoldingPenRecordService", ["$http",
+        function ($http) {
 
           return {
-            /**
-             * getRecord
-             * @param vm
-             * @param workflowId
-             */
+
             getRecord: function (vm, workflowId) {
               $http.get('/api/holdingpen/' + workflowId).then(function (response) {
                 vm.record = response.data;
@@ -61,13 +57,20 @@
             },
 
             setDecision: function (vm, workflowId, decision) {
+
               var data = JSON.stringify({
                 'value': decision
               });
+
               $http.post('/api/holdingpen/' + workflowId + '/action/resolve', data).then(function (response) {
                 vm.ingestion_complete = true;
                 var record = vm.record;
                 if (!record) record = vm;
+
+                if(!record._extra_data) {
+                  record._extra_data = {};
+                }
+
                 record._extra_data.user_action = decision;
                 record._extra_data._action = null;
 
@@ -91,12 +94,14 @@
                   for (var record_idx in records) {
                     if (+_data.id === +records[record_idx]._id) {
                       var record_obj = records[record_idx]._source;
+                      if(!record_obj._extra_data) {
+                        record_obj._extra_data = {};
+                      }
                       record_obj._extra_data.user_action = decision;
                       record_obj._workflow.status = 'WAITING';
                     }
                   }
                 });
-
               }
               selected_record_ids = [];
             },
@@ -109,8 +114,7 @@
               }).catch(function (value) {
                 vm.ingestion_complete = false;
               });
-            }
-            ,
+            },
 
             resumeWorkflow: function (vm, workflowId) {
               $http.post('/api/holdingpen/' + workflowId + '/action/resume').then(function (response) {
@@ -118,8 +122,7 @@
               }).catch(function (value) {
                 vm.resumed = false;
               });
-            }
-            ,
+            },
 
             restartWorkflow: function (vm, workflowId) {
               $http.post('/api/holdingpen/' + workflowId + '/action/restart').then(function (response) {
