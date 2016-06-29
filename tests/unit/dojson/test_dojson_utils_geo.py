@@ -21,8 +21,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
-
 from inspirehep.dojson.utils.geo import (
     match_country_name_to_its_code,
     parse_conference_address,
@@ -156,7 +154,6 @@ def test_parse_institution_address_preserves_the_original_address():
     assert expected == result
 
 
-@pytest.mark.xfail(reason='AttributeError when accessing state_province')
 def test_parse_institution_address_handles_state_province_none():
     address = {
         'address': None,
