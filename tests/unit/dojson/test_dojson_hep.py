@@ -348,7 +348,6 @@ def test_hidden_notes_from_595__a_9():
     assert expected == result['hidden_notes']
 
 
-@pytest.mark.xfail(reason='value is not a list')
 def test_hidden_notes_from_595__double_a_9():
     snippet = (
         '<datafield tag="595" ind1=" " ind2=" ">'
@@ -373,7 +372,6 @@ def test_hidden_notes_from_595__double_a_9():
     assert expected == result['hidden_notes']
 
 
-@pytest.mark.xfail(reason='value is not a list')
 def test_hidden_notes_from_595__a_9_and_595__double_a_9():
     snippet = (
         '<record>'

@@ -57,18 +57,24 @@ def public_notes2marc(self, key, value):
 @hep.over('hidden_notes', '^595..')
 def hidden_notes(self, key, value):
     """Hidden notes."""
-    def _get_value(value):
-        return {
-            'value': value.get('a'),
-            'cern_reference': value.get('b'),
-            'cds': value.get('c'),
-            'source': value.get('9'),
-        }
+    def _hidden_notes(value):
+        def _hidden_note(value, a=None):
+            return {
+                'value': a,
+                'cern_reference': value.get('b'),
+                'cds': value.get('c'),
+                'source': value.get('9'),
+            }
 
-    values = self.get('hidden_notes', [])
-    values.extend(_get_value(el) for el in utils.force_list(value))
+        if value.get('a'):
+            return [_hidden_note(value, a) for a in utils.force_list(value['a'])]
+        else:
+            return [_hidden_note(value)]
 
-    return dedupe_list_of_dicts(values)
+    hidden_notes = self.get('hidden_notes', [])
+    hidden_notes.extend(_hidden_notes(value))
+
+    return dedupe_list_of_dicts(hidden_notes)
 
 
 @hep2marc.over('595', 'hidden_notes')
