@@ -24,19 +24,23 @@ from __future__ import print_function
 
 
 import click
+import json
 import os
 import sys
 
 from flask import current_app
 from flask.ext.script import prompt_bool
+from flask_cli import with_appcontext
 
 from invenio_db import db
 
-from .tasks import (
+from .tasks.records import (
     add_citation_counts,
     migrate,
     migrate_broken_records,
 )
+
+from .tasks.remoteaccount import load_remoteacount
 
 
 @click.group()
@@ -82,6 +86,20 @@ def count_citations():
     """Adds field citation_count to every record in 'HEP' and calculates its proper value."""
     print("Adding citation_count to all records")
     add_citation_counts()
+
+
+@migrator.command()
+@click.argument('source', type=click.File('r'), default=sys.stdin)
+@with_appcontext
+def loadremoteaccount(source):
+    """Load legacy workflow objects into Holding Pen."""
+    click.echo('Loading dump...')
+    data = json.load(source)
+
+    click.echo('Sending tasks to queue...')
+    with click.progressbar(data) as records:
+        for item in records:
+            load_remoteacount.delay(item)
 
 
 @migrator.command()
