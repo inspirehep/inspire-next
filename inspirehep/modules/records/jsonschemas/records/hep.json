@@ -308,8 +308,7 @@
                         "description": "FIXME: Do we know what this is? do we care?"
                     },
                     "value": {
-                        "type": "array",
-                        "items": {"type": "string"}
+                        "type": "string"
                     },
                     "cds": {
                         "type": "string"

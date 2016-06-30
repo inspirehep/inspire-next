@@ -360,10 +360,11 @@ def test_hidden_notes_from_595__double_a_9():
     expected = [
         {
             'source': 'SPIRES-HIDDEN',
-            'value': (
-                'TeXtitle from script',
-                'no affiliation (not clear pn the fulltext)',
-            ),
+            'value': 'TeXtitle from script',
+        },
+        {
+            'source': 'SPIRES-HIDDEN',
+            'value': 'no affiliation (not clear pn the fulltext)',
         },
     ]
     result = strip_empty_values(hep.do(create_record(snippet)))
@@ -393,10 +394,11 @@ def test_hidden_notes_from_595__a_9_and_595__double_a_9():
         },
         {
             'source': 'SPIRES-HIDDEN',
-            'value': (
-                'TeXtitle from script',
-                'no affiliation (not clear pn the fulltext)',
-            ),
+            'value': 'TeXtitle from script',
+        },
+        {
+            'source': 'SPIRES-HIDDEN',
+            'value': 'no affiliation (not clear pn the fulltext)',
         },
     ]
     result = strip_empty_values(hep.do(create_record(snippet)))
