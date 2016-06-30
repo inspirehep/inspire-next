@@ -289,9 +289,6 @@
                         "$ref": "elements/json_reference.json",
                         "description": "URI for corresponding Conference"
                     },
-                    "reportnumber": {
-                        "type": "string"
-                    },
                     "year": {
                         "minimum": 1000,
                         "type": "integer",
@@ -319,9 +316,6 @@
                         "type": "string"
                     },
                     "confpaper_info": {
-                        "type": "string"
-                    },
-                    "isbn": {
                         "type": "string"
                     }
                 }
