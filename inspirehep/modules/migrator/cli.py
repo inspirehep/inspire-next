@@ -28,7 +28,7 @@ import os
 import sys
 
 from flask import current_app
-from flask.ext.script import prompt_bool
+from flask_cli import with_appcontext
 
 from invenio_db import db
 
@@ -49,32 +49,24 @@ def migrator():
               help='Specific collections to migrate.')
 @click.option('--remigrate', '-m', type=bool,
               default=False, help='Try to remigrate broken records')
-@click.option('--broken-output', '-b',
-              help='Where to write back records that were not possible to migrate')
-@click.option('--dry-run', '-d', type=bool, default=False,
-              help='Whether records should really be imported or not')
 @click.option('--wait', '-w', type=bool, default=False,
               help='Wait for migrator to complete.')
 def populate(file_input=None,
              remigrate=False,
-             broken_output=None,
-             dry_run=False,
              wait=False):
     """Populates the system with records from migrator files.
 
     Usage: inveniomanage migrator populate -f prodsync20151117173222.xml.gz
-        --broken-output=/tmp/broken.xml:
     """
     if remigrate:
         print("Remigrate broken records...")
-        migrate_broken_records.delay(broken_output=broken_output, dry_run=dry_run)
+        migrate_broken_records.delay()
     elif file_input and not os.path.isfile(file_input):
         print("{0} is not a file!".format(file_input), file=sys.stderr)
     elif file_input:
         print("Migrating records from file: {0}".format(file_input))
 
-        migrate(os.path.abspath(file_input), broken_output=broken_output,
-                dry_run=dry_run, wait_for_results=wait)
+        migrate(os.path.abspath(file_input), wait_for_results=wait)
 
 
 @migrator.command()
@@ -126,39 +118,53 @@ def remove_legacy_tables():
 
 
 @migrator.command()
+@with_appcontext
 def clean_records():
     """Truncate all the records from various tables."""
     from sqlalchemy.engine import reflection
+    from invenio_search import current_search, current_search_client
 
-    print('>>> Truncating all records.')
+    click.secho('>>> Truncating all records.')
 
     tables_to_truncate = [
-        "bibrec",
-        "record_json",
+        "records_metadata",
+        "records_metadata_version",
+        "inspire_prod_records",
+        "inspire_orcid_records",
+        "pidstore_pid",
     ]
     db.session.begin(subtransactions=True)
     try:
-        db.engine.execute("SET FOREIGN_KEY_CHECKS=0;")
-
-        # Grab any table with foreign keys to bibrec for truncating
+        # Grab any table with foreign keys to records_metadata for truncating
         inspector = reflection.Inspector.from_engine(db.engine)
         for table_name in inspector.get_table_names():
             for foreign_key in inspector.get_foreign_keys(table_name):
-                if foreign_key["referred_table"] == "bibrec":
+                if foreign_key["referred_table"] == "records_metadata":
                     tables_to_truncate.append(table_name)
 
-        if not prompt_bool("Going to truncate: {0}".format(
+        if not click.confirm("Going to truncate:\n{0}".format(
                 "\n".join(tables_to_truncate))):
             return
-        for table in tables_to_truncate:
-            db.engine.execute("TRUNCATE TABLE {0}".format(table))
-            print(">>> Truncated {0}".format(table))
 
-        db.engine.execute("DELETE FROM pidSTORE WHERE pid_type='recid'")
-        print(">>> Truncated pidSTORE WHERE pid_type='recid'")
+        click.secho('Truncating tables...', fg='red', bold=True,
+                    file=sys.stderr)
+        with click.progressbar(tables_to_truncate) as tables:
+            for table in tables:
+                db.engine.execute("TRUNCATE TABLE {0} RESTART IDENTITY CASCADE".format(table))
+                click.secho("\tTruncated {0}".format(table))
 
-        db.engine.execute("SET FOREIGN_KEY_CHECKS=1;")
         db.session.commit()
+
+        click.secho('Recreating ES indices...', fg='red', bold=True,
+                    file=sys.stderr)
+        with click.progressbar(current_search.mappings.keys()) as indices:
+            for index in indices:
+                if index.startswith('records'):
+                    current_search_client.indices.delete(
+                        index, ignore=[400, 404]
+                    )
+                    current_search_client.indices.create(index)
+                    click.secho("\tRecreated {0}".format(index))
     except Exception as err:  # noqa
         db.session.rollback()
         current_app.logger.exception(err)

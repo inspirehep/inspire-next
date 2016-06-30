@@ -30,6 +30,7 @@ import click
 from jsonschema import ValidationError
 
 from six import text_type
+from sqlalchemy.orm.exc import NoResultFound
 
 from celery.utils.log import get_task_logger
 
@@ -50,13 +51,16 @@ from inspirehep.dojson.institutions import institutions
 from inspirehep.dojson.jobs import jobs
 from inspirehep.dojson.journals import journals
 from inspirehep.dojson.processors import _collection_in_record
+from inspirehep.modules.pidstore.providers import InspireRecordIdProvider
+
 
 from celery import group, shared_task
 
 from invenio_db import db
 
 from invenio_indexer.api import RecordIndexer, _record_to_index
-from invenio_pidstore.models import PersistentIdentifier, NoResultFound
+from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_pidstore.models import PersistentIdentifier
 from invenio_records import Record
 from invenio_search import current_search_client
 from invenio_search.utils import schema_to_index
@@ -106,7 +110,7 @@ def split_stream(stream):
 
 
 @shared_task(ignore_result=True)
-def migrate_broken_records(broken_output=None, dry_run=False):
+def migrate_broken_records():
     """Migrate records declared as broken.
 
     Directly migrates the records declared as broken, e.g. if the dojson
@@ -114,16 +118,13 @@ def migrate_broken_records(broken_output=None, dry_run=False):
     """
     for i, chunk in enumerate(chunker(
             record.marcxml for record in
-            db.session.query(InspireProdRecords).filter_by(successful=False))):
+            db.session.query(InspireProdRecords).filter_by(valid=False))):
         logger.info("Processed {} records".format(i * CHUNK_SIZE))
-        chunk_broken_output = None
-        if broken_output:
-            chunk_broken_output = "{}-{}".format(broken_output, i)
-        migrate_chunk.delay(chunk, chunk_broken_output, dry_run)
+        migrate_chunk.delay(chunk)
 
 
 @shared_task(ignore_result=True)
-def migrate(source, broken_output=None, dry_run=False, wait_for_results=False):
+def migrate(source, wait_for_results=False):
     """Main migration function."""
     if source.endswith('.gz'):
         fd = gzip.open(source)
@@ -139,13 +140,10 @@ def migrate(source, broken_output=None, dry_run=False, wait_for_results=False):
 
     for i, chunk in enumerate(chunker(split_stream(fd), CHUNK_SIZE)):
         print("Processed {} records".format(i * CHUNK_SIZE))
-        chunk_broken_output = None
-        if broken_output:
-            chunk_broken_output = "{}-{}".format(broken_output, i)
         if wait_for_results:
-            tasks.append(migrate_chunk.s(chunk, chunk_broken_output, dry_run))
+            tasks.append(migrate_chunk.s(chunk))
         else:
-            migrate_chunk.delay(chunk, chunk_broken_output, dry_run)
+            migrate_chunk.delay(chunk)
 
     if wait_for_results:
         job = group(tasks)
@@ -159,6 +157,9 @@ def migrate(source, broken_output=None, dry_run=False, wait_for_results=False):
 def continuous_migration():
     """Task to continuously migrate what is pushed up by Legacy."""
     from redis import StrictRedis
+    from invenio_indexer.api import RecordIndexer
+
+    indexer = RecordIndexer()
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
 
@@ -173,23 +174,21 @@ def continuous_migration():
                 recid = int(record['001'][0])
                 prod_record = InspireProdRecords(recid=recid)
                 prod_record.marcxml = raw_record
-                try:
-                    with db.session.begin_nested():
-                        errors, dummy = create_record(
-                            record, force=True
+                json_record = create_record(record)
+                with db.session.begin_nested():
+                    try:
+                        record = record_upsert(json_record)
+                    except ValidationError as e:
+                        # Invalid record, will not get indexed
+                        errors = "ValidationError: Record {0}: {1}".format(
+                            recid, e
                         )
-                        logger.info(
-                            "Successfully migrated record {}".format(recid))
-                        prod_record.successful = True
-                        prod_record.valid = not errors
+                        current_app.logger.warning(errors)
+                        prod_record.valid = False
                         prod_record.errors = errors
                         db.session.merge(prod_record)
-                except Exception as err:
-                    logger.error(
-                        "Error when migrating record {}".format(recid))
-                    logger.exception(err)
-                    prod_record.successful = False
-                    db.session.merge(prod_record)
+                        continue
+                indexer.index_by_id(record.id)
     finally:
         db.session.commit()
         db.session.close()
@@ -210,21 +209,18 @@ def create_index_op(record):
 
 
 @shared_task(ignore_result=False, compress='zlib', acks_late=True)
-def migrate_chunk(chunk, broken_output=None, dry_run=False):
+def migrate_chunk(chunk):
     index_queue = []
     try:
         for raw_record in chunk:
             record = marc_create_record(raw_record, keep_singletons=False)
             recid = int(record['001'])
-            if not dry_run:
-                prod_record = InspireProdRecords(recid=recid)
-                prod_record.marcxml = raw_record
+            prod_record = InspireProdRecords(recid=recid)
+            prod_record.marcxml = raw_record
             json_record = create_record(record)
-            if dry_run:
-                continue
             with db.session.begin_nested():
                 try:
-                    record = Record.create(json_record, id_=None)
+                    record = record_upsert(json_record)
                 except ValidationError as e:
                     # Invalid record, will not get indexed
                     errors = "ValidationError: Record {0}: {1}".format(
@@ -237,9 +233,6 @@ def migrate_chunk(chunk, broken_output=None, dry_run=False):
                     continue
 
                 index_queue.append(create_index_op(record))
-
-                # Create persistent identifier.
-                inspire_recid_minter(str(record.id), json_record)
 
                 prod_record.valid = True
                 db.session.merge(prod_record)
@@ -326,11 +319,11 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
         raise_on_error=True,
         request_timeout=request_timeout,
         stats_only=True)
-    click.echo("... DONE: {} records updated with success. {} failures.".format(
+    click.echo("DONE: {} records updated with success. {} failures.".format(
         success, failed))
 
 
-def create_record(record, force=True, dry_run=False):
+def create_record(record):
     """Create record from marc21 model."""
     if _collection_in_record(record, 'institution'):
         json = institutions.do(record)
@@ -355,23 +348,25 @@ def create_record(record, force=True, dry_run=False):
         )
 
     return json
-    # control_number = json.get('control_number', json.get('recid'))
-    # if control_number:
-    #     control_number = int(control_number)
 
-    # if force and control_number:
-    #     # Searches if record already exists.
-    #     with db.session.begin_nested():
-    #         record = Record.get_record(control_number)
-    #         if record is None:
-    #             # Adds the record to the db session.
-    #             record = Record.create(json, _id=control_number)
-    #         else:
-    #             record.update(json)
-    #         record.commit()
-    #     db.session.commit()
-    #     logger.info("Elaborated record {}".format(control_number))
-    #     return errors, dict(record)
+
+def record_upsert(json):
+    """Insert or update a record."""
+    control_number = json.get('control_number', json.get('recid'))
+    if control_number:
+        control_number = int(control_number)
+        pid_type = InspireRecordIdProvider.schema_to_pid_type(json['$schema'])
+        try:
+            pid = PersistentIdentifier.get(pid_type, control_number)
+            record = Record.get_record(pid.object_uuid)
+            record.update(json)
+            record.commit()
+        except PIDDoesNotExistError:
+            record = Record.create(json, id_=None)
+            # Create persistent identifier.
+            inspire_recid_minter(str(record.id), json)
+
+        return record
 
 
 @shared_task(ignore_result=True)
