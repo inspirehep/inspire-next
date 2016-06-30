@@ -35,6 +35,8 @@ from elasticsearch_dsl import Q
 
 from invenio_query_parser.ast import MalformedQuery
 
+from .config import DEFAULT_FIELDS_BOOSTING
+
 from .parser import Main
 
 from .walkers.pypeg_to_ast import PypegConverter
@@ -47,7 +49,7 @@ from .walkers.elasticsearch_no_keywords import QueryHasKeywords
 def inspire_query_factory():
     """Create a parser returning Elastic Search DSL query instance."""
 
-    def invenio_query(pattern):
+    def invenio_query(pattern, index='records-hep'):
         walkers = [PypegConverter(), SpiresToInvenio()]
 
         # Enhance query first
@@ -65,18 +67,10 @@ def inspire_query_factory():
         try:
             search_walker = ElasticSearchNoKeywordsDSL()
             query.accept(search_walker)
-            query = Q('multi_match', query=pattern, fields=[
-                "title^3",
-                "title.raw^10",
-                "abstract^2",
-                "abstract.raw^4",
-                "author^10",
-                "author.raw^15",
-                "reportnumber^10",
-                "eprint^10",
-                "doi^10"],
-                zero_terms_query="all"
-            )
+            query = Q('multi_match',
+                      query=pattern,
+                      fields=DEFAULT_FIELDS_BOOSTING[index],
+                      zero_terms_query="all")
         except QueryHasKeywords:
             query = query.accept(ElasticSearchDSL(
                 current_app.config.get(
