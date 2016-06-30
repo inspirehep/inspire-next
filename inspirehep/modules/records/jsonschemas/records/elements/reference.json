@@ -1,0 +1,196 @@
+{
+    "description": "An article or thesis or book or...",
+    "title": "Publication",
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "texkey": {
+            "type": "string",
+            "description": "INSPIRE Provided texkey."
+        },
+        "number": {
+            "type": "integer",
+            "description": "Position within the reference list of a record (the number you find in brackets on the PDF)."
+        },
+        "raw_reference": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string"
+                    },
+                    "serialization": {
+                        "type": "string",
+                        "description": "E.g. refextract, text, JATS, Elsevier, BibTeX..."
+                    }
+                }
+            }
+        },
+        "record": {
+          "description": "Referred record",
+          "$ref": "json_reference.json"
+        },
+        "curated_relation": {
+            "type": "boolean"
+        },
+        "isbns": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "uniqueItems": true
+        },
+        "report_numbers": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "imprints": {
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "publisher": {
+                        "type": "string",
+                    },
+                    "place": {
+                        "type": "string"
+                    }
+                }
+            },
+            "type": "array"
+        },
+        "titles": {
+            "$ref": "elements/titles.json"
+        },
+        "publication_info": {
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "journal_title": {
+                        "type": "string"
+                    },
+                    "journal_volume": {
+                        "type": "string"
+                    },
+                    "note": {
+                        "type": "string"
+                    },
+                    "year": {
+                        "minimum": 1000,
+                        "type": "integer",
+                        "maximum": 2050
+                    },
+                    "journal_issue": {
+                        "type": "string"
+                    },
+                    "page_start": {
+                        "type": "string",
+                        "description": "First page"
+                    },
+                    "page_end": {
+                        "type": "string",
+                        "description": "Last page"
+                    },
+                    "artid": {
+                        "type": "string",
+                        "description": "Electronic Article ID"
+                    }
+                }
+            },
+            "type": "array",
+            "description": "FIXME: Shall we split conference information away? FIXME: shall we move the DOI and ISBN next to where it belongs? So that we can also align erratum and friends?"
+        },
+        "arxiv_eprints": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "pattern": "\\d{4}.\\d{4,5}|\\w+-\\w+/\\d+|\\w+/\\d+"
+            },
+            "type": "array"
+        },
+        "book_series": {
+            "items": {
+                "type": "object",
+                "properties": {
+                    "volume": {
+                        "type": "string",
+                        "description": "Specific volume number"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Title of the book series"
+                    }
+                }
+            },
+            "type": "array"
+        },
+        "collaboration": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "authors": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            },
+            "type": "array",
+            "description": "List with all the authors",
+            "title": "Authors"
+        },
+        "dois": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "pattern": "10\\.\\d+(\\.\\d+)?/.+",
+            },
+            "type": "array",
+            "title": "DOIs"
+        },
+        "document_type": {
+            "minItems": 1,
+            "items": {
+                "enum": [
+                    "Published",
+                    "arXiv",
+                    "ConferencePaper",
+                    "Thesis",
+                    "Review",
+                    "Lectures",
+                    "Note",
+                    "Proceedings",
+                    "Introductory",
+                    "Book",
+                    "BookChapter",
+                    "Report"
+                ],
+                "type": "string"
+            },
+            "uniqueItems": true,
+            "type": "array",
+            "title": "Document type"
+        },
+        "urls": {
+            "$ref": "elements/urls.json"
+        },
+        "persistent_identifiers": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+            },
+            "type": "array",
+            "title": "Persistent Identifiers"
+        }
+    }
+}
