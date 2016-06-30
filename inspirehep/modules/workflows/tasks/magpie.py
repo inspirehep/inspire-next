@@ -3,23 +3,26 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 """Set of workflow tasks for MagPie API."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 import requests
 
@@ -44,9 +47,8 @@ def prepare_magpie_payload(record, corpus):
     payload = dict(text="", corpus=corpus)
     titles = filter(None, get_value(record, "titles.title", []))
     abstracts = filter(None, get_value(record, "abstracts.value", []))
-    payload["text"] = ". ".join([
-        part.encode('utf-8') for part in titles + abstracts
-    ])
+    payload["text"] = ". ".join(
+        [part.encode('utf-8') for part in titles + abstracts])
     return payload
 
 
@@ -76,13 +78,16 @@ def guess_keywords(obj, eng):
     except requests.exceptions.RequestException:
         # We still continue even if there was an exception.
         pass
+
     if results:
         labels = results.get('labels', [])
-        keywords = filter_magpie_response(labels, limit=0.01)
-        cutoff = 10
+        keywords = labels[:10]
+
+        keywords = [{'label': k[0], 'score': k[1], 'accept': k[1] >= 0.09} for
+                    k in
+                    keywords]
         obj.extra_data["keywords_prediction"] = dict(
-            labels=labels,
-            keywords=keywords[:cutoff]
+            keywords=keywords
         )
         current_app.logger.info("Keyword prediction (top 10): {0}".format(
             obj.extra_data["keywords_prediction"]["keywords"]
@@ -100,8 +105,11 @@ def guess_categories(obj, eng):
     if results:
         labels = results.get('labels', [])
         categories = filter_magpie_response(labels, limit=0.22)
+
+        categories = [{'label': c[0], 'score': c[1],
+                       'accept': c[1] >= 0.25} for c in categories]
+
         obj.extra_data["categories_prediction"] = dict(
-            labels=labels,
             categories=categories
         )
         current_app.logger.info("Category prediction: {0}".format(

@@ -1,22 +1,100 @@
-<div class="row detail-section" ng-show="vm.selected_records.length > 0">
+<div class="row detail-section" ng-show="vm.error">
+  <div class="alert alert-danger alert-dismissable">
+    <p ng-bind="vm.error_message"></p>
+  </div>
+</div>
+
+<div class="row detail-section" ng-show="vm.batch_message">
+  <div class="alert alert-info alert-dismissable">
+    <p><i class="fa fa-play"></i> {{vm.batch_message}}</p>
+  </div>
+</div>
+
+
+<div ng-show="vm.selected_records.length > 0">
   <div class="col-md-12">
-    <div class="row detail-panel" >
+    <div class="row detail-section">
 
-      <div class="col-md-3">
-        <h4>Perform batch operation on {{vm.selected_records.length}} selected
-        records.</h4>
+      <div class="col-md-3 text-muted" style="padding-top: 10px">
+        <h4>Batch operations on {{vm.selected_records.length}} selected
+          records.</h4>
       </div>
-      <div class="col-md-9 text-right">
-        <button class="btn btn-danger"
-                ng-click="BatchUtils.setDecision('reject')">Reject
-        </button>
-        <button class="btn btn-warning"
-                ng-click="BatchUtils.setDecision('accept')">Accept
-        </button>
-        <button class="btn btn-success"
-                ng-click="BatchUtils.setDecision('accept_core')">Core
-        </button>
 
+      <div class="col-md-3 text-center" style="padding: 7px">
+        <div class="detail-panel">
+          <p class="text-muted">
+            <i class="fa fa-file-text-o" aria-hidden="true"></i> Article Decisions
+          </p>
+
+          <div ng-if="vm.selected_record_decisions['hep'] && vm.selected_record_decisions['hep'].length > 0">
+            <p class="text-muted">
+              {{vm.selected_record_decisions['hep'].length}} article workflows with
+              decisions to be made.</p>
+            <button class="btn btn-danger"
+                    ng-click="BatchUtils.showConfirm('hep', 'reject')">Reject
+            </button>
+            <button class="btn btn-warning"
+                    ng-click="BatchUtils.showConfirm('hep', 'accept')">Accept
+            </button>
+            <button class="btn btn-success"
+                    ng-click="BatchUtils.showConfirm('hep', 'core')">Core
+            </button>
+          </div>
+          <div ng-if="!vm.selected_record_decisions['hep'] || vm.selected_record_decisions['hep'].length == 0">
+            <p class="text-muted">No article workflows have decisions to be
+              made.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 text-center" style="padding: 7px">
+        <div class="detail-panel">
+          <p class="text-muted"><i class="fa fa-users" aria-hidden="true"></i>
+            Author Decisions</p>
+
+          <div ng-if="vm.selected_record_decisions['authors'].length > 0">
+            <p class="text-muted">
+              {{vm.selected_record_decisions['authors'].length}} author workflows with
+              decisions to be made.</p>
+            <button class="btn btn-danger"
+                    ng-click="BatchUtils.showConfirm('authors', 'reject')">Reject
+            </button>
+            <button class="btn btn-warning"
+                    ng-click="BatchUtils.showConfirm('authors', 'accept_curate')">Curation
+            </button>
+            <button class="btn btn-success"
+                    ng-click="BatchUtils.showConfirm('authors', 'accept')">Accept
+            </button>
+          </div>
+          <div ng-if="!vm.selected_record_decisions['authors'] || vm.selected_record_decisions['authors'] == 0">
+            <p class="text-muted">No author workflows have decisions to be made.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 text-center" style="padding: 7px">
+        <div class="detail-panel">
+          <p class="text-muted"><i class="fa fa-code-fork"
+                                   aria-hidden="true"></i> Workflow Actions</p>
+          <p class="text-muted">Perform operation on {{vm.selected_records.length}} workflows.</p>
+          <button class="btn btn-default"
+                  ng-click="BatchUtils.restartWorkflows()"><i
+            class="fa fa-repeat" aria-hidden="true"></i> Restart
+          </button>
+
+          <button class="btn btn-default"
+                  ng-click="BatchUtils.resumeWorkflows()"><i class="fa fa-play"
+                                                             aria-hidden="true"></i>
+            Resume
+          </button>
+
+
+          <button class="btn btn-danger"
+                  ng-click="BatchUtils.showConfirm('delete', 'delete')"><i
+            class="fa fa-trash" aria-hidden="true"></i> Delete
+          </button>
+
+        </div>
       </div>
     </div>
 

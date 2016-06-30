@@ -26,6 +26,7 @@
   function HoldingPenSelectionCtrl($scope, Hotkeys, HoldingPenRecordService) {
 
     $scope.vm.selected_records = [];
+    $scope.vm.selected_record_decisions = {};
 
     $scope.toggleSelection = toggleSelection;
     $scope.toggleAll = toggleAll;
@@ -37,12 +38,27 @@
       return $scope.vm.selected_records.indexOf(+id);
     }
 
-    function toggleSelection(id) {
-      if (isChecked(id)) {
-        $scope.vm.selected_records.splice(getItemIdx(+id), 1);
+    function toggleSelection(record) {
+      var _data_type = record._source._workflow.data_type;
+
+      if (isChecked(record._id)) {
+        $scope.vm.selected_records.splice(getItemIdx(+record._id), 1);
+        if (_data_type in $scope.vm.selected_record_decisions) {
+          $scope.vm.selected_record_decisions[_data_type]
+            .splice($scope.vm.selected_record_decisions[_data_type]
+              .indexOf(+record._id), 1);
+        }
       }
       else {
-        $scope.vm.selected_records.push(+id);
+        $scope.vm.selected_records.push(+record._id);
+        if (_data_type) {
+          if (!(_data_type in $scope.vm.selected_record_decisions)) {
+            $scope.vm.selected_record_decisions[_data_type] = [];
+          }
+          if(record._source._extra_data === undefined ||
+            record._source._extra_data.user_action == undefined)
+            $scope.vm.selected_record_decisions[_data_type].push(+record._id);
+        }
       }
     }
 
@@ -51,27 +67,29 @@
         $scope.vm.invenioSearchResults.hits.hits, [+id], decision)
     }
 
-    function utils() {
-      if (isChecked(id)) {
-        $scope.vm.selected_records.splice(getItemIdx(+id), 1);
-      }
-      else {
-        $scope.vm.selected_records.push(+id);
-      }
-    }
-
     function toggleAll() {
 
       var remove_all = allChecked();
       if (remove_all) {
-
         $scope.vm.selected_records = [];
+        $scope.vm.selected_record_decisions = {};
       } else {
         angular.forEach($scope.$parent.vm.invenioSearchResults.hits.hits,
           function (record) {
-            if (!isChecked(record._id))
+            if (!isChecked(record._id)) {
               $scope.vm.selected_records.push(+record._id);
+              if (record._source._workflow.data_type) {
+                if (!(record._source._workflow.data_type
+                  in $scope.vm.selected_record_decisions)) {
+                  $scope.vm.selected_record_decisions[
+                    record._source._workflow.data_type] = [];
+                }
 
+                if(record._source._extra_data === undefined || record._source._extra_data.user_action == undefined)
+                  $scope.vm.selected_record_decisions[record._source._workflow.data_type]
+                    .push(record._id);
+              }
+            }
           });
       }
     }

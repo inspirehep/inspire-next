@@ -1,0 +1,9 @@
+{{vm.invenioSearchArgs.size ? vm.invenioSearchArgs.size : 25; ""}}
+<select name="select-size" class="form-control"
+        ng-model="vm.invenioSearchArgs.size" ng-change="handleFieldChange()">
+  <option ng-repeat="option in [{'value': 10},{'value': 25}, {'value': 50}]"
+          value="{{ option.value }}"
+          ng-selected="option.value == vm.invenioSearchArgs.size ? true : option.value == 25 ? true : false">
+    {{ option.value }}
+  </option>
+</select>

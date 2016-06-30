@@ -1,3 +1,16 @@
+<div class="action-info pull-left">
+  <span>Author</span>
+</div>
+
+<div ng-if="record._source._extra_data.user_action" class="action-info pull-left"
+     ng-class="record._source._extra_data.user_action">
+    <span ng-switch="record._source._extra_data.user_action">
+      <span ng-switch-when="reject">Rejected</span>
+      <span ng-switch-when="accept">Accept</span>
+      <span ng-switch-when="accept_curate">Accept Curate</span>
+    </span>
+</div>
+
 <h4 class="custom-h">
   <a class="title" ng-if="record._source.metadata.name"
      ng-href="/holdingpen/{{record._id}}"
