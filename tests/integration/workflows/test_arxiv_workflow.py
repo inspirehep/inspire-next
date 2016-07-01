@@ -299,7 +299,7 @@ def test_harvesting_arxiv_workflow_rejected(
         experiments_prediction = obj.extra_data.get("experiments_prediction")
         assert experiments_prediction
         assert experiments_prediction['experiments'] == [
-            ('CMS', 0.7549515247344971)
+            ['CMS', 0.7549515247344971]
         ]
 
         keywords_prediction = obj.extra_data.get("keywords_prediction")
