@@ -31,7 +31,7 @@ from flask import Blueprint, jsonify, request, current_app
 
 from inspirehep.utils.cache import cache
 from invenio_db import db
-from invenio_workflows import WorkflowObject
+from invenio_workflows import workflow_object_class
 
 
 blueprint = Blueprint(
@@ -65,7 +65,7 @@ def continue_workflow_callback():
 
     if id_object:
         callback_results = request_data.get("results", {})
-        workflow_object = WorkflowObject.query.get(id_object)
+        workflow_object = workflow_object_class.get(id_object)
         if workflow_object:
             results = request_data.get("results", [])
             for result in results:
@@ -102,7 +102,7 @@ def webcoll_callback():
     for rid in recids:
         if rid in pending_records:
             objectid = pending_records[rid]
-            workflow_object = WorkflowObject.query.get(objectid)
+            workflow_object = workflow_object_class.get(objectid)
             base_url = _get_base_url()
             workflow_object.extra_data['url'] = join(
                 base_url, 'record', str(rid)

@@ -44,7 +44,7 @@ from werkzeug.datastructures import MultiDict
 from inspirehep.modules.forms.form import DataExporter
 
 from invenio_db import db
-from invenio_workflows import WorkflowObject, start
+from invenio_workflows import workflow_object_class, start
 
 from .forms import LiteratureForm
 from .tasks import formdata_to_model
@@ -82,9 +82,11 @@ def submit():
     visitor = DataExporter()
     visitor.visit(form)
 
-    workflow_object = WorkflowObject.create_object(
-        id_user=current_user.get_id())
-    workflow_object.data_type = "hep"
+    workflow_object = workflow_object_class.create(
+        data={},
+        id_user=current_user.get_id(),
+        data_type="hep"
+    )
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
     workflow_object.data = formdata_to_model(workflow_object, visitor.data)
     workflow_object.save()

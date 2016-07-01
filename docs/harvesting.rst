@@ -42,11 +42,15 @@ For example, on Ubuntu/Debian you could execute:
 
     (inspire)$ sudo aptitude install -y libblas-dev liblapack-dev gfortran imagemagick
 
-For guessing, you need to point to a Beard Web service.
+For guessing, you need to point to a Beard Web service with the config variable
+``BEARD_API_URL``.
 
-For keyword extraction using Magpie, you need to point to a Magpie Web service.
+For keyword extraction using Magpie, you need to point to a Magpie Web service with the config variable
+``MAGPIE_API_URL``.
 
 For hepcrawl crawling of sources via scrapy, you need to point to a scrapyd web service running `hepcrawl` project.
+
+More info at http://pythonhosted.org/hepcrawl/operations.html
 
 
 3. Quick start
@@ -87,11 +91,11 @@ You can now see from your Celery logs that tasks are started and workflows are e
 3.2. Getting records from other sources (hepcrawl)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For the full INSPIRE harvesting experience, you can use the hepcrawl service to get records into your system.
+For the full INSPIRE harvesting experience (tm), you can use the hepcrawl service to get records into your system.
 
 It works by scheduling crawls via certain triggers in `inspirehep` to a `scrapyd` service which then returns harvested records and ingestion workflows are triggered.
 
-First make sure you have setup a scrapyd service running hepcrawl (TODO add link) and flower (workermon) running (done automatic with `honcho`).
+First make sure you have setup a scrapyd service running hepcrawl (http://pythonhosted.org/hepcrawl/operations.html) and flower (workermon) running (done automatic with `honcho`).
 
 In your local config (`${VIRTUAL_ENV}/var/inspirehep-instance/inspirehep.cfg`) add the following configuration:
 
@@ -103,7 +107,7 @@ In your local config (`${VIRTUAL_ENV}/var/inspirehep-instance/inspirehep.cfg`) a
         "API_PIPELINE_TASK_ENDPOINT_DEFAULT": "inspire_crawler.tasks.submit_results"
     }
 
-Now you are ready to trigger harvests. There are two options on how to trigger harvests; `oaiharvester` like in 3.1 or trigger via shell/CLI (TODO).
+Now you are ready to trigger harvests. There are two options on how to trigger harvests; `oaiharvester` like in 3.1 (TODO: trigger via shell/CLI).
 
 Via OAI-PMH:
 
@@ -111,6 +115,14 @@ Via OAI-PMH:
 
     (inspire)$ inspirehep oaiharvester harvest -u http://export.arxiv.org/oai2 -m arXiv -i oai:arXiv.org:1604.05726 -a spider=arXiv -a workflow=article
 
+
 Note the two extra arguments which tells which spider to use to harvest the source in `hepcrawl`, and workflow which says which ingestion workflow to run upon receiving harvested records from the crawler.
 
 If your scrapyd service is running you should see output appear from it shortly after harvesting. You can also see from your Celery logs that tasks are started and workflows are executed. Visit the Holding Pen interface, at http://localhost:5000/holdingpen to find the records and to approve/reject them. Once approved, they are queued for upload into the system.
+
+Via shell:
+
+.. code-block:: python
+
+    from inspire_crawler.tasks import schedule_crawl
+    schedule_crawl(spider, workflow, **kwargs)
