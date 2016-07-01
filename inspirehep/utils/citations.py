@@ -27,7 +27,7 @@ from invenio_search import current_search_client as es
 from inspirehep.utils.record import get_title
 from inspirehep.modules.search import IQ
 
-from jinja2 import render_template_to_string
+from inspirehep.utils.jinja2 import render_template_to_string
 
 
 class Citation(object):

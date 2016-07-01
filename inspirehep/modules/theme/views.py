@@ -57,7 +57,8 @@ from inspirehep.utils.search import perform_es_search
 from inspirehep.utils.record import get_title
 from inspirehep.utils.references import Reference
 from inspirehep.utils.template import render_macro_from_template
-
+from inspirehep.utils.conferences import render_conferences_in_the_same_series
+from inspirehep.utils.conferences import render_conferences_contributions
 
 blueprint = Blueprint('inspirehep_theme', __name__,
                       url_prefix='',
@@ -568,3 +569,37 @@ def record(control_number):
 
     return redirect('/{collection}/{control_number}'.format(
         collection=pid.pid_type, control_number=control_number)), 301
+
+
+#
+# Handlers for AJAX requests regarding conferences detailed views
+#
+
+@blueprint.route('/ajax/conferences/series', methods=['GET'])
+def ajax_other_conferences():
+    """Handler for other conferences in the series"""
+    recid = request.args.get('recid', '')
+    seriesname = request.args.get('seriesname', '')
+
+    html, total = render_conferences_in_the_same_series(recid, seriesname)
+    return jsonify(
+        {
+            "data": html,
+            "total": total
+        }
+    )
+
+
+@blueprint.route('/ajax/conferences/contributions', methods=['GET'])
+def ajax_conference_contributions():
+    """Handler for other conference contributions"""
+    cnum = request.args.get('cnum', '')
+
+    html, total = render_conferences_contributions(cnum)
+
+    return jsonify(
+        {
+            "data": html,
+            "total": total
+        }
+    )

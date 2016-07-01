@@ -67,7 +67,7 @@
 
 {% macro detailed_record_abstract(record) %}
   <div id="record-abstract">
-    <div id="record-abstract-title">
+    <div id="record-abstract-title" class="record-detailed-title">
       Abstract
     </div>
     {{ record_abstract(record) }}
@@ -110,8 +110,8 @@
 {% endmacro %}
 
 {% macro record_keywords(record) %}
-  <div id="record-keywords">
-    <div id="record-keywords-title">
+  <div>
+    <div class="record-detailed-title">
       Keywords
     </div>
     {% set sep = joiner("; ") %}
@@ -283,7 +283,7 @@
 {% macro record_references(record) %}
   <div class="panel" id="references">
     <div class="panel-heading">
-      <div id="record-reference-title">References
+      <div class="record-detailed-title">References
         ({{ (record.get('references', '')) | count }})
       </div>
     </div>
@@ -323,7 +323,7 @@
 {% macro record_citations(record) %}
   <div class="panel" id="citations">
     <div class="panel-heading">
-      <span id="record-citation-title">Citations
+      <span class="record-detailed-title">Citations
         {% if record.get('citation_count', 0) > 0 %}
           ({{ record.get('citation_count', '')  }})
         {% endif %}
@@ -369,7 +369,7 @@
 {% macro impactgraph() %}
   <div class="panel" id="citations">
     <div class="panel-heading">
-      <span id="record-impact-graph">Publication Impact Graph
+      <span class="record-detailed-title">Publication Impact Graph
       </span>
     </div>
 

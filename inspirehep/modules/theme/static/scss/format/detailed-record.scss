@@ -80,7 +80,7 @@ $darken: 8%;
     color: white;
 }
 
-h1.record-detailed-title {
+h1.record-detailed-title, .record-title {
     margin: 0px;
     font-size: x-large;
     padding-bottom: 5px;
@@ -130,6 +130,11 @@ h2.record-detailed-subtitle {
     color: $institutions-collection;
 }
 
+.record-detailed {
+    hr {
+        margin-top: 10px
+    }
+}
 
 #detailed-header {
     padding: 20px 0 0 0 !important;
@@ -142,10 +147,8 @@ h2.record-detailed-subtitle {
 
 #record_content .record-detailed .record-header {
 
-    background-color: white;
     text-align: left;
     color: black;
-    padding: 20px;
     margin-bottom: 20px;
 
     #detailed-header-top {
@@ -198,7 +201,7 @@ h2.record-detailed-subtitle {
 }
 
 h1.record-detailed-title, .record-header label, #record-journal,
-#external_links, #doi-eprint-experiment, {
+#external_links, #doi-eprint-experiment, #record-conference-more-info label {
     color: $blue-purple;
 }
 
@@ -211,10 +214,9 @@ h1.record-detailed-title, .record-header label, #record-journal,
     background: white;
     margin-bottom: 20px;
     padding: 20px;
-    color: black;
 }
 
-#record-keywords .label-keyword {
+.label-keyword {
     background-color: #D3D3D3;
 
     a {
@@ -238,7 +240,8 @@ h1.record-detailed-title, .record-header label, #record-journal,
     font-size: 0.7em;
 }
 
-#record-abstract-title, #record-keywords-title, #record-reference-title, #record-citation-title, #record-impact-graph {
+#record-abstract-title,
+.record-detailed-title {
     font-size: 18px;
     font-weight: 600;
 }
@@ -251,7 +254,7 @@ h1.record-detailed-title, .record-header label, #record-journal,
     padding-bottom: 50px;
 }
 
-#record-references-table-wrapper, #record-citations-table-wrapper, #record-institution-people-table-wrapper, #record-institution-experiments-table-wrapper, #record-institution-papers-table-wrapper, #record-institution-phdtheses-table-wrapper {
+#record-references-table-wrapper, #record-citations-table-wrapper, #record-institution-people-table-wrapper, #record-institution-experiments-table-wrapper, #record-institution-papers-table-wrapper, #record-institution-phdtheses-table-wrapper, #record-conference-papers-table-wrapper, #record-conference-series-table-wrapper {
     display: none;
 
     .col-sm-6 {
@@ -260,11 +263,11 @@ h1.record-detailed-title, .record-header label, #record-journal,
     }
 }
 
-#record-references-loading, #record-citations-loading, #record-institution-people-loading, #record-institution-experiments-loading, #record-institution-papers-loading, #record-institution-phdtheses-loading {
+#record-references-loading, #record-citations-loading, #record-institution-people-loading, #record-institution-experiments-loading, #record-institution-papers-loading, #record-institution-phdtheses-loading, #record-conference-papers-loading, #record-conference-series-loading {
     text-align: center;
 }
 
-#record-institution-papers-table, #record-institution-phdtheses-table {
+#record-institution-papers-table, #record-institution-phdtheses-table, #record-conference-papers-table, #record-conference-series-table {
     table-layout: fixed;
 
     tbody > tr > td {
@@ -289,13 +292,13 @@ h1.record-detailed-title, .record-header label, #record-journal,
     }
 }
 
-#record-institution-people, #record-institution-experiments, #record-institution-papers, #record-institution-phdtheses {
+#record-institution-people, #record-institution-experiments, #record-institution-papers, #record-conference-papers, #record-conference-series, #record-institution-phdtheses {
     .panel-heading {
         padding: 10px 15px 0px 15px;
     }
 }
 
-#references, #citations, #record-institution-people, #record-institution-experiments, #record-institution-papers, #record-institution-phdtheses {
+#references, #citations, #record-institution-people, #record-institution-experiments, #record-institution-papers, #record-conference-papers, #record-conference-series, #record-institution-phdtheses {
 
     min-height: 200px;
 
@@ -615,10 +618,54 @@ h1.record-detailed-title, .record-header label, #record-journal,
     #record-detailed-jobs-sidebox,
     #record-detailed-jobs-deadline {
         @media (min-width: $screen-md-min) {
-        float: right;
-    }
+            float: right;
+        }
+
         padding-left: 0;
         padding-right: 0;
+    }
+}
+
+#record-conference-more-info {
+    .record-detailed-title {
+        margin-bottom: 20px;
+    }
+}
+
+.record-detailed-conference {
+
+    .record-detailed-subtitle {
+        color: $silver;
+    }
+
+    #record-detailed-conference-information, #record-detailed-jobs-deadline {
+        background-color: white;
+    }
+
+    #conference-detailed-map {
+        height: 100%;
+        width: 100%;
+    }
+
+    #conference-detailed-map-place {
+        text-align: center;
+    }
+
+    .detailed-conference-information {
+        padding-bottom: 10px;
+
+        &.detailed-conference-information-keywords {
+            vertical-align: middle;
+        }
+    }
+
+    #record-detailed-conference-map {
+        @media (min-width: $screen-md-min) {
+            float: right;
+        }
+
+        padding-left: 0;
+        padding-right: 12px;
     }
 }
 
@@ -636,9 +683,8 @@ h1.record-detailed-title, .record-header label, #record-journal,
 
     @media (min-width: $screen-md-min) {
 
-        #record-detailed-institution-information,
         #record-detailed-institution-map {
-            height: 200px;
+            height: 250px;
         }
     }
 
@@ -651,3 +697,36 @@ h1.record-detailed-title, .record-header label, #record-journal,
         padding-right: 0;
     }
 }
+
+.row-with-map {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.row-with-map > [class*='col-'] {
+  display: flex;
+  flex-direction: column;
+}
+
+#record-detailed-conference-information {
+    padding: 15px;
+}
+
+.map-address-label {
+    text-align: center;
+    color: white;
+    position: absolute;
+    bottom: 0;
+    width: 96%;
+    opacity: 0.9;
+    padding: 10px;
+    font-size: 17px;
+
+    &.map-address-label-conference {
+        background-color: #e4b622;
+    }
+}
+

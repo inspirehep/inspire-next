@@ -62,7 +62,7 @@ def acronym(self, key, value):
             address = parse_conference_address(raw_address)
             self['address'].append(address)
 
-    return utils.force_list(value.get('e'))
+    return value.get('e')
 
 
 @conferences.over('alternative_titles', '^711')

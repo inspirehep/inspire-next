@@ -17,7 +17,7 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from jinja2 import render_template_to_string
+from inspirehep.utils.jinja2 import render_template_to_string
 
 from invenio_records.api import Record
 from invenio_search import current_search_client
