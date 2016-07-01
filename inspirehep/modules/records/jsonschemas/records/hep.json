@@ -289,6 +289,9 @@
                         "$ref": "elements/json_reference.json",
                         "description": "URI for corresponding Conference"
                     },
+                    "reportnumber": {
+                        "type": "string"
+                    },
                     "year": {
                         "minimum": 1000,
                         "type": "integer",
@@ -317,6 +320,9 @@
                     },
                     "confpaper_info": {
                         "type": "string"
+                    },
+                    "isbn": {
+                        "type": "string"
                     }
                 }
             },
@@ -325,100 +331,10 @@
         },
         "references": {
             "uniqueItems": true,
+            "type": "array",
             "items": {
-                "type": "object",
-                "properties": {
-                    "publisher": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "doi": {
-                        "pattern": "(10\\.\\d+(\\.\\d+)?/.+)|(\\w+\\:\\d+\\/\\d+)",
-                        "type": "string"
-                    },
-                    "isbn": {
-                        "type": "string",
-                        "format": "isbn"
-                    },
-                    "texkey": {
-                        "type": "string"
-                    },
-                    "report_number": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "url": {
-                        "type": "array",
-                        "items": {
-                            "format": "url",
-                            "type": "string"
-                        }
-                    },
-                    "collaboration": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "title": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "misc": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "editors": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "number": {
-                        "type": "integer"
-                    },
-                    "curated_relation": {
-                        "type": "boolean"
-                    },
-                    "maintitle": {
-                        "type": "string"
-                    },
-                    "raw_reference": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "year": {
-                        "type": "integer"
-                    },
-                    "authors": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "journal_pubnote": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "pattern": ".*,.*,.*(,.*)?"
-                        }
-                    },
-                    "record": {
-                        "$ref": "json_reference.json"
-                    }
-                }
-            },
-            "type": "array"
+                "$ref": "elements/reference.json"
+            }
         },
         "copyright": {
             "items": {

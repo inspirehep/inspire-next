@@ -25,22 +25,23 @@
 from __future__ import absolute_import, division, print_function
 
 import re
+from functools import partial
+
+import idutils
 
 from isbn import ISBNError
 
 from dojson import utils
-from idutils import normalize_isbn
 
 from ..model import hep, hep2marc
 from ...utils import (
     force_force_list,
+    get_int_value,
     get_recid_from_ref,
     get_record_ref,
-    strip_empty_values,
 )
 
-
-RE_VALID_PUBNOTE = re.compile(".*,.*,.*(,.*)?")
+from inspirehep.modules.references.processors import ReferenceBuilder
 
 
 @hep.over('references', '^999C5')
@@ -48,73 +49,42 @@ def references(self, key, value):
     """Produce list of references."""
     value = force_force_list(value)
 
-    def get_valid_pubnotes(pubnotes):
-        valid_pubnotes = []
-        raw_references = []
-        if pubnotes:
-            for pubnote in pubnotes:
-                if RE_VALID_PUBNOTE.match(pubnote):
-                    valid_pubnotes.append(pubnote)
-                else:
-                    raw_references.append(pubnote)
-        return valid_pubnotes, raw_references
-
     def get_value(value):
-        recid = None
-        number = ''
-        year = ''
+        # Retrieve fields as described here:
+        # https://twiki.cern.ch/twiki/bin/view/Inspire/DevelopmentRecordMarkup.
+        rb = ReferenceBuilder()
+        mapping = [
+            ('o', rb.set_number),
+            ('m', rb.add_misc),
+            ('x', rb.add_raw_reference),
+            ('1', rb.set_texkey),
+            ('u', rb.add_url),
+            ('r', rb.add_report_number),
+            ('s', rb.set_pubnote),
+            ('p', rb.set_publisher),
+            ('y', rb.set_year),
+            ('i', rb.add_uid),
+            ('b', rb.add_uid),
+            ('a', rb.add_uid),
+            ('c', rb.add_collaboration),
+            ('q', rb.add_title),
+            ('t', rb.add_title),
+            ('h', rb.add_author),
+            ('e', partial(rb.add_author, role='ed.'))
+        ]
+        for field, method in mapping:
+            for element in force_force_list(value.get(field)):
+                if element:
+                    method(element)
+
         if '0' in value:
-            try:
-                recid = int(value.get('0'))
-            except:
-                pass
-        if 'o' in value:
-            try:
-                number = int(value.get('o'))
-            except:
-                pass
-        if 'y' in value:
-            try:
-                year = int(value.get('y'))
-            except:
-                pass
+            recid = get_int_value(value, '0')
+            rb.set_record(get_record_ref(recid, 'literature'))
 
-        try:
-            isbn = normalize_isbn(value['i'])
-        except (KeyError, ISBNError):
-            isbn = ''
+        return rb.obj
 
-        valid_pubnotes, raw_references = get_valid_pubnotes(force_force_list(value.get('s')))
-
-        if value.get('x'):
-            raw_references += list(force_force_list(value.get('x')))
-
-        return {
-            'record': get_record_ref(recid, 'literature'),
-            'texkey': value.get('1'),
-            'doi': value.get('a'),
-            'collaboration': force_force_list(value.get('c')),
-            'editors': value.get('e'),
-            'authors': force_force_list(value.get('h')),
-            'misc': force_force_list(value.get('m')),
-            'number': number,
-            'isbn': isbn,
-            'publisher': force_force_list(value.get('p')),
-            'maintitle': value.get('q'),
-            'report_number': force_force_list(value.get('r')),
-            'title': force_force_list(value.get('t')),
-            'urls': force_force_list(value.get('u')),
-            'journal_pubnote': valid_pubnotes,
-            'raw_reference': raw_references,
-            'year': year,
-        }
     references = self.get('references', [])
-
-    for val in value:
-        json_val = strip_empty_values(get_value(val))
-        if json_val not in references:
-            references.append(json_val)
-
+    references.extend(get_value(v) for v in value)
     return references
 
 

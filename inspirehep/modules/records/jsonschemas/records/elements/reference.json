@@ -1,6 +1,6 @@
 {
     "description": "An article or thesis or book or...",
-    "title": "Publication",
+    "title": "Reference",
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
     "properties": {
@@ -34,80 +34,74 @@
         "curated_relation": {
             "type": "boolean"
         },
-        "isbns": {
+        "misc": {
             "type": "array",
             "items": {
                 "type": "string"
-            },
-            "uniqueItems": true
+            }
         },
-        "report_numbers": {
-            "uniqueItems": true,
-            "items": {
-                "type": "string"
-            },
-            "type": "array"
-        },
-        "imprints": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "date": {
-                        "type": "string",
-                        "format": "date"
-                    },
-                    "publisher": {
-                        "type": "string",
-                    },
-                    "place": {
-                        "type": "string"
-                    }
+        "imprint": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "format": "date"
+                },
+                "publisher": {
+                    "type": "string"
+                },
+                "place": {
+                    "type": "string"
                 }
-            },
-            "type": "array"
+            }
         },
         "titles": {
-            "$ref": "elements/titles.json"
+            "$ref": "titles.json"
         },
         "publication_info": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "journal_title": {
-                        "type": "string"
-                    },
-                    "journal_volume": {
-                        "type": "string"
-                    },
-                    "note": {
-                        "type": "string"
-                    },
-                    "year": {
-                        "minimum": 1000,
-                        "type": "integer",
-                        "maximum": 2050
-                    },
-                    "journal_issue": {
-                        "type": "string"
-                    },
-                    "page_start": {
-                        "type": "string",
-                        "description": "First page"
-                    },
-                    "page_end": {
-                        "type": "string",
-                        "description": "Last page"
-                    },
-                    "artid": {
-                        "type": "string",
-                        "description": "Electronic Article ID"
-                    }
+            "type": "object",
+            "properties": {
+                "journal_title": {
+                    "type": "string"
+                },
+                "journal_volume": {
+                    "type": "string"
+                },
+                "year": {
+                    "minimum": 1000,
+                    "type": "integer",
+                    "maximum": 2050
+                },
+                "journal_issue": {
+                    "type": "string"
+                },
+                "page_start": {
+                    "type": "string",
+                    "description": "First page"
+                },
+                "page_end": {
+                    "type": "string",
+                    "description": "Last page"
+                },
+                "artid": {
+                    "type": "string",
+                    "description": "Electronic Article ID"
+                },
+                "isbn": {
+                    "type": "string",
+                    "description": "ISBN"
+                },
+                "reportnumber": {
+                    "type": "string"
+                },
+                "doi": {
+                    "type": "string",
+                    "pattern": "10\\.\\d+(\\.\\d+)?/.+"
+                },
+                "cnum": {
+                    "type": "string"
                 }
-            },
-            "type": "array",
-            "description": "FIXME: Shall we split conference information away? FIXME: shall we move the DOI and ISBN next to where it belongs? So that we can also align erratum and friends?"
+            }
         },
         "arxiv_eprints": {
             "uniqueItems": true,
@@ -118,20 +112,17 @@
             "type": "array"
         },
         "book_series": {
-            "items": {
-                "type": "object",
-                "properties": {
-                    "volume": {
-                        "type": "string",
-                        "description": "Specific volume number"
-                    },
-                    "title": {
-                        "type": "string",
-                        "description": "Title of the book series"
-                    }
+            "type": "object",
+            "properties": {
+                "volume": {
+                    "type": "string",
+                    "description": "Specific volume number"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "Title of the book series"
                 }
-            },
-            "type": "array"
+            }
         },
         "collaboration": {
             "uniqueItems": true,
@@ -142,52 +133,28 @@
         },
         "authors": {
             "uniqueItems": true,
-            "items": {
-                "type": "string"
-            },
             "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "full_name": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    }
+                }
+            },
             "description": "List with all the authors",
             "title": "Authors"
         },
-        "dois": {
-            "uniqueItems": true,
-            "items": {
-                "type": "string",
-                "pattern": "10\\.\\d+(\\.\\d+)?/.+",
-            },
-            "type": "array",
-            "title": "DOIs"
-        },
-        "document_type": {
-            "minItems": 1,
-            "items": {
-                "enum": [
-                    "Published",
-                    "arXiv",
-                    "ConferencePaper",
-                    "Thesis",
-                    "Review",
-                    "Lectures",
-                    "Note",
-                    "Proceedings",
-                    "Introductory",
-                    "Book",
-                    "BookChapter",
-                    "Report"
-                ],
-                "type": "string"
-            },
-            "uniqueItems": true,
-            "type": "array",
-            "title": "Document type"
-        },
         "urls": {
-            "$ref": "elements/urls.json"
+            "$ref": "urls.json"
         },
         "persistent_identifiers": {
             "uniqueItems": true,
             "items": {
-                "type": "string",
+                "type": "string"
             },
             "type": "array",
             "title": "Persistent Identifiers"
