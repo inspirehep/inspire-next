@@ -35,7 +35,4 @@
 -e git+https://github.com/inspirehep/invenio-workflows-ui.git@qa#egg=invenio-workflows-ui==1.0.0a1.dev20160624
 -e git+https://github.com/inspirehep/invenio-workflows-files.git@master#egg=invenio-workflows-files==0.1.0.dev20160000
 
-# Flask CLI with iPython integration
--e git+https://github.com/inspirehep/flask-cli.git@master#egg=flask-cli==0.3.1.dev20160518
-
 -e .[postgresql]
