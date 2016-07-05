@@ -113,4 +113,4 @@ def replace_refs(obj, source='db'):
         raise ValueError('source must be one of {}'.format(loaders.keys()))
 
     loader = loaders[source]
-    return JsonRef.replace_refs(obj, loader=loader)
+    return JsonRef.replace_refs(obj, loader=loader, load_on_repr=False)
