@@ -39,7 +39,7 @@ services:
   web:
     extends:
       service: service_base
-    command: inspirehep --debug run -h 0.0.0.0
+    command: inspirehep run -h 0.0.0.0
     volumes_from:
       - static
     ports:
@@ -88,7 +88,7 @@ services:
       service: service_base
     ports:
       - "5555:5555"
-    command: celery flower -A inspirehep.celery --broker=amqp://guest:guest@rabbitmq:5672//
+    command: flower -A inspirehep.celery --broker=amqp://guest:guest@rabbitmq:5672//
     volumes_from:
       - static
     links:
