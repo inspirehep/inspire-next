@@ -4,7 +4,7 @@
         "self": {
           "description": "Url of the record itself",
           "title": "Url of the record",
-          "$ref": "json_reference.json"
+          "$ref": "elements/json_reference.json"
         },
         "coden": {
             "items": {
@@ -107,7 +107,7 @@
                 },
                 "record": {
                     "title": "URI for the related record",
-                    "$ref": "json_reference.json"
+                    "$ref": "elements/json_reference.json"
                 }
             },
             "required": [

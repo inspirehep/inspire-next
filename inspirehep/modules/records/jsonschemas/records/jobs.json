@@ -4,7 +4,7 @@
         "self": {
           "description": "Url of the record itself",
           "title": "Url of the record",
-          "$ref": "json_reference.json"
+          "$ref": "elements/json_reference.json"
         },
         "address": {
             "type": "array",
@@ -59,7 +59,7 @@
                     },
                     "record": {
                         "title": "Institution Record URI",
-                        "$ref": "json_reference.json"
+                        "$ref": "elements/json_reference.json"
                     }
                 },
                 "title": "Institution",
