@@ -155,16 +155,28 @@ def clean_records():
 
         db.session.commit()
 
-        click.secho('Recreating ES indices...', fg='red', bold=True,
+        current_search.aliases = {
+            k: v for k, v in current_search.aliases.iteritems()
+            if k.startswith('records')
+        }
+        click.secho('Destroying indexes...',
+                    fg='red',
+                    bold=True,
                     file=sys.stderr)
-        with click.progressbar(current_search.mappings.keys()) as indices:
-            for index in indices:
-                if index.startswith('records'):
-                    current_search_client.indices.delete(
-                        index, ignore=[400, 404]
-                    )
-                    current_search_client.indices.create(index)
-                    click.secho("\tRecreated {0}".format(index))
+        with click.progressbar(
+                current_search.delete(ignore=[400, 404])) as bar:
+            for name, response in bar:
+                click.secho(name)
+
+        click.secho('Creating indexes...',
+                    fg='green',
+                    bold=True,
+                    file=sys.stderr)
+        with click.progressbar(
+                current_search.create(ignore=[400])) as bar:
+            for name, response in bar:
+                click.secho(name)
+
     except Exception as err:  # noqa
         db.session.rollback()
         current_app.logger.exception(err)
