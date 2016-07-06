@@ -22,10 +22,16 @@
 
 {% from "invenio_accounts/_macros.html" import render_field, form_errors %}
 {% set title = "Sign in" %}
+{% set form = login_user_form %}
 
 
 {%- block body -%}
 <div class="col-centered">
+  {% if config.DEBUG or request.args.get('local') %}
+  <p>
+    {{ form_errors(form) }}
+  </p>
+  {% endif %}
   <p class="lead text-center">
     {{ _('Please sign in to suggest content to INSPIRE') }}
   </p>
@@ -45,11 +51,9 @@
       </p>
       {% if config.DEBUG or request.args.get('local') %}
         <h3 align="center" id="login-header">&mdash; OR &mdash;</h3>
-        {%- with form = login_user_form %}
-        <form action="{{ url_for_security('login') }}"
+        <form action="{{ url_for_security('login', **request.args) }}"
                 method="POST" name="login_user_form">
               {{ form.hidden_tag() }}
-              {{ form_errors(form) }}
               {{ render_field(form.email, icon="fa fa-user", autofocus=True, errormsg=False) }}
               {{ render_field(form.password, icon="fa fa-lock", errormsg=False) }}
               <button type="submit"
@@ -57,18 +61,16 @@
                       class="fa fa-sign-in"></i> {{ _('Log In') }}
               </button>
           </form>
-          {%- endwith %}
-            {%- if security.recoverable %}
-            <p class="text-center"><small>
-              <a href="{{ url_for('security.forgot_password') }}">
-                {{ _('Lost your password?') }}
-              </a>
-            </small></p>
-            {%- endif %}
-      {% endif %}
+          {%- if security.recoverable %}
+          <p class="text-center"><small>
+            <a href="{{ url_for('security.forgot_password') }}">
+              {{ _('Lost your password?') }}
+            </a>
+          </small></p>
+          {%- endif %}
+        {%- endif %}
     </div>
   </div>
-</div>
 </div>
 {%- endblock body -%}
 
