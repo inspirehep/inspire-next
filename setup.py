@@ -42,6 +42,8 @@ requirements = [
     'retrying',
     'flower',
     'rt',
+    'Flask==0.10.1',
+    'Flask-Babel==0.9',
     'invenio-accounts==0.2.0',
     'invenio-base==0.3.1',
     'invenio-celery==0.1.1',
