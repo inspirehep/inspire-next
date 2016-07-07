@@ -32,7 +32,6 @@ from idutils import normalize_isbn
 from inspirehep.utils.dedupers import dedupe_list_of_dicts
 
 from ..model import hep, hep2marc
-from ...utils import strip_empty_values
 
 
 @hep.over('isbns', '^020..')
