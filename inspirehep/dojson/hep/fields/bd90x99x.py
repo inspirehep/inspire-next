@@ -31,8 +31,6 @@ from isbn import ISBNError
 from dojson import utils
 from idutils import normalize_isbn
 
-from inspirehep.utils.dedupers import dedupe_list
-
 from ..model import hep, hep2marc
 from ...utils import get_recid_from_ref, get_record_ref, strip_empty_values
 
@@ -108,9 +106,11 @@ def references(self, key, value):
     references = self.get('references', [])
 
     for val in value:
-        references.append(get_value(val))
+        json_val = strip_empty_values(get_value(val))
+        if json_val not in references:
+            references.append(json_val)
 
-    return dedupe_list(strip_empty_values(references))
+    return references
 
 
 @hep2marc.over('999C5', 'references')
