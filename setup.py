@@ -93,6 +93,8 @@ tests_require = [
 
 extras_require = {
     'docs': [
+        'six',
+        'mock',
         'Sphinx>=1.3',
     ],
     'postgresql': [
