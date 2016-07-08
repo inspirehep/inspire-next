@@ -100,6 +100,7 @@ detailedjs = NpmBundle(
 )
 
 holding_pen_css = NpmBundle(
+    "node_modules/angular-xeditable/dist/css/xeditable.css",
     "scss/holding-pen/holding-pen.scss",
     filters="scss, cleancss",
     output="gen/inspirehep.holding.%(version)s.css",
