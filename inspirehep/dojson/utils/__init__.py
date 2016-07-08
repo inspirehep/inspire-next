@@ -39,6 +39,8 @@ from inspirehep.config import (
     INSPIRE_RANK_TYPES,
 )
 
+from inspirehep.utils.dedupers import dedupe_list, dedupe_list_of_dicts
+
 
 _RE_2_CHARS = re.compile(r"[a-z].*[a-z]", re.I)
 
@@ -196,19 +198,48 @@ def legacy_export_as_marc(json, tabsize=4):
 def strip_empty_values(obj):
     """Recursively strips empty values."""
     if isinstance(obj, dict):
-        for key, value in obj.items():
-            value = strip_empty_values(value)
-            if value or value is False or value == 0:
-                obj[key] = value
+        for key, val in obj.items():
+            new_val = strip_empty_values(val)
+            # There are already lots of leaks in the callers of this function,
+            # there's no need to make it idempotent and double memory.
+            if new_val is not None:
+                obj[key] = new_val
             else:
                 del obj[key]
+        return obj or None
+    elif isinstance(obj, (list, tuple, set)):
+        new_obj = []
+        for val in obj:
+            new_val = strip_empty_values(val)
+            if new_val is not None:
+                new_obj.append(new_val)
+        return type(obj)(new_obj) or None
+    elif obj or obj is False or obj == 0:
+        return obj
+    else:
+        return None
+
+
+def dedupe_all_lists(obj):
+    """Recursively remove duplucates from all lists."""
+    squared_dedupe_len = 10
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            obj[key] = dedupe_all_lists(value)
         return obj
     elif isinstance(obj, (list, tuple, set)):
-        new_obj = [strip_empty_values(v) for v in obj]
-        new_obj = [v for v in new_obj if v or v is False or v == 0]
+        new_elements = [dedupe_all_lists(v) for v in obj]
+        if len(new_elements) < squared_dedupe_len:
+            new_obj = dedupe_list(new_elements)
+        else:
+            new_obj = dedupe_list_of_dicts(new_elements)
         return type(obj)(new_obj)
     else:
         return obj
+
+
+def clean_record(rec):
+    return dedupe_all_lists(strip_empty_values(rec))
 
 
 def split_page_artid(page_artid):

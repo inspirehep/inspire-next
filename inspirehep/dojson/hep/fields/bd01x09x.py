@@ -29,8 +29,6 @@ from isbn import ISBNError
 from dojson import utils
 from idutils import normalize_isbn
 
-from inspirehep.utils.dedupers import dedupe_list_of_dicts
-
 from ..model import hep, hep2marc
 
 
@@ -105,9 +103,8 @@ def persistent_identifiers(self, key, value):
                         'source': val.get('9'),
                         'type': val.get('2')
                     })
-    if dois:
-        self['dois'] = dedupe_list_of_dicts(dois)
-    return dedupe_list_of_dicts(persistent_identifiers)
+    self['dois'] = dois
+    return persistent_identifiers
 
 
 @hep2marc.over('024', '^(dois|persistent_identifiers)$')
@@ -144,7 +141,7 @@ def external_system_numbers(self, key, value):
 
     for val in value:
         external_system_numbers.append(get_value(val))
-    return dedupe_list_of_dicts(external_system_numbers)
+    return external_system_numbers
 
 
 @hep2marc.over('035', 'external_system_numbers')
@@ -184,8 +181,8 @@ def report_numbers(self, key, value):
         else:
             report_number.append(get_value(element))
 
-    self['arxiv_eprints'] = dedupe_list_of_dicts(arxiv_eprints)
-    return dedupe_list_of_dicts(report_number)
+    self['arxiv_eprints'] = arxiv_eprints
+    return report_number
 
 
 @hep2marc.over('037', '(arxiv_eprints|report_numbers)')

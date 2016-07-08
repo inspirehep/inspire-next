@@ -26,8 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
-from inspirehep.utils.dedupers import dedupe_list_of_dicts
-
 from ..model import hepnames, hepnames2marc
 from ...utils import classify_rank, get_record_ref
 
@@ -297,7 +295,7 @@ def source(self, key, value):
     for val in value:
         source.append(get_value(val))
 
-    return dedupe_list_of_dicts(source)
+    return source
 
 
 @hepnames2marc.over('670', '^source$')

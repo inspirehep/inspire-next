@@ -25,7 +25,6 @@
 from invenio_records.signals import before_record_insert, before_record_update
 
 from inspirehep.utils.date import create_earliest_date
-from inspirehep.utils.dedupers import dedupe_list_of_dicts
 
 
 @before_record_insert.connect
@@ -61,16 +60,3 @@ def earliest_date(sender, *args, **kwargs):
     earliest_date = create_earliest_date(dates)
     if earliest_date:
         sender['earliest_date'] = earliest_date
-
-
-@before_record_insert.connect
-@before_record_update.connect
-def remove_duplicate_authors(sender, *args, **kwargs):
-    """Remove duplicate authors.
-
-    Has to be done here rather than when importing the record
-    for performance reasons."""
-    try:
-        sender['authors'] = dedupe_list_of_dicts(sender['authors'])
-    except KeyError:
-        pass

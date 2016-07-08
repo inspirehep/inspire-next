@@ -43,14 +43,7 @@ from elasticsearch.helpers import scan as es_scan
 
 from flask import current_app, url_for
 
-from inspirehep.dojson.conferences import conferences
-from inspirehep.dojson.experiments import experiments
-from inspirehep.dojson.hep import hep
-from inspirehep.dojson.hepnames import hepnames
-from inspirehep.dojson.institutions import institutions
-from inspirehep.dojson.jobs import jobs
-from inspirehep.dojson.journals import journals
-from inspirehep.dojson.processors import _collection_in_record
+from inspirehep.dojson.processors import overdo_marc_dict
 from inspirehep.modules.pidstore.providers import InspireRecordIdProvider
 
 
@@ -325,21 +318,7 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
 
 def create_record(record):
     """Create record from marc21 model."""
-    if _collection_in_record(record, 'institution'):
-        json = institutions.do(record)
-    elif _collection_in_record(record, 'experiment'):
-        json = experiments.do(record)
-    elif _collection_in_record(record, 'journals'):
-        json = journals.do(record)
-    elif _collection_in_record(record, 'hepnames'):
-        json = hepnames.do(record)
-    elif _collection_in_record(record, 'job') or \
-            _collection_in_record(record, 'jobhidden'):
-        json = jobs.do(record)
-    elif _collection_in_record(record, 'conferences'):
-        json = conferences.do(record)
-    else:
-        json = hep.do(record)
+    json = overdo_marc_dict(record)
 
     if '$schema' in json:
         json['$schema'] = url_for(

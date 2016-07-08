@@ -26,8 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
-from inspirehep.utils.dedupers import dedupe_list
-
 from ..model import hep, hep2marc
 
 
@@ -74,7 +72,7 @@ def title_variations(self, key, value):
                 'source': val.get('9'),
             })
         cleaned_titles = existing + out
-        return dedupe_list(cleaned_titles)
+        return cleaned_titles
 
     if 'title_variations' in self:
         titles = get_value(self['title_variations'])
@@ -100,7 +98,7 @@ def titles(self, key, value):
                 'source': val.get('9'),
             })
         cleaned_titles = existing + out
-        return dedupe_list(cleaned_titles)
+        return cleaned_titles
 
     if 'titles' in self:
         titles = get_value(self['titles'])
