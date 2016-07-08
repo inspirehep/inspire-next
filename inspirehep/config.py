@@ -83,7 +83,9 @@ CACHE_REDIS_URL = os.environ.get(
     "CACHE_REDIS_URL",
     "redis://localhost:6379/0")
 CACHE_TYPE = "redis"
-ACCOUNTS_SESSION_REDIS_URL = "redis://localhost:6379/2"
+ACCOUNTS_SESSION_REDIS_URL = os.environ.get(
+    "ACCOUNTS_SESSION_REDIS_URL",
+    "redis://localhost:6379/2")
 
 # Files
 # =====
