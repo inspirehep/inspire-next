@@ -30,9 +30,25 @@ from invenio_base.globals import cfg
 
 from idutils import is_arxiv, is_isbn
 
+from invenio_accounts.models import User
 from invenio_deposit.validation_utils import RequiredIf
 
 from urllib import urlencode
+
+from flask.ext.login import current_user
+
+REJECT_MESSAGE = """
+Thanks for your suggestion.
+We regret to inform you that we cannot include it in our database as it is
+outside the focus of INSPIRE. For details please check our
+<a href='https://inspirehep.net/info/hep/collection-policy', target='_blank'>
+collection policy.</a>
+"""
+
+
+def _get_current_user_roles():
+    user = User.query.get(current_user.uid)
+    return [u.role.name for u in user.active_roles.all()]
 
 
 def arxiv_syntax_validation(form, field):
@@ -115,12 +131,26 @@ def duplicated_orcid_validator(form, field):
 
 def duplicated_doi_validator(form, field):
     """Check if a record with the same doi already exists."""
+
     doi = field.data
     # TODO: local check for duplicates
     if not doi:
         return
     if cfg.get('PRODUCTION_MODE'):
+        user_roles = _get_current_user_roles()
+
+        # First check in default collection
         inspirehep_duplicated_validator('doi:' + doi, 'DOI')
+
+        # And in Hal collection
+        try:
+            inspirehep_duplicated_validator('doi:' + doi, 'DOI', 'HAL Hidden')
+        except ValidationError:
+            if 'cataloger' not in user_roles:
+                raise ValidationError(REJECT_MESSAGE)
+            raise
+
+
 
 
 def duplicated_arxiv_id_validator(form, field):
@@ -130,9 +160,21 @@ def duplicated_arxiv_id_validator(form, field):
     if not arxiv_id:
         return
     if cfg.get('PRODUCTION_MODE'):
+        user_roles = _get_current_user_roles()
+
+        # First check in default collection
         inspirehep_duplicated_validator(
             '035__a:oai:arXiv.org:' + arxiv_id, 'arXiv ID')
 
+        # And in Hal collection
+        try:
+            inspirehep_duplicated_validator(
+                '035__a:oai:arXiv.org:' + arxiv_id, 'arXiv ID', 'HAL Hidden'
+            )
+        except ValidationError:
+            if 'cataloger' not in user_roles:
+                raise ValidationError(REJECT_MESSAGE)
+            raise
 
 def pdf_validator(form, field):
     """Validate that url points to PDF."""
