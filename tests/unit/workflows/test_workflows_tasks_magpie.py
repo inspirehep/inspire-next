@@ -23,7 +23,6 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
-import pytest
 import requests
 
 from invenio_records.api import Record
@@ -185,7 +184,6 @@ def test_guess_keywords_considers_only_first_ten(j_a_r, g_m_u):
     }
 
 
-@pytest.mark.xfail(reason='results is undefined')
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.get_magpie_url')
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request')
 def test_guess_keywords_does_not_fail_when_request_fails(j_a_r, g_m_u):
