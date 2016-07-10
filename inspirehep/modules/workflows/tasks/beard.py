@@ -53,7 +53,7 @@ def prepare_payload(record):
         payload['title'] = titles[0]
     abstracts = filter(None, get_value(record, "abstracts.value", []))
     if abstracts:
-        payload['abstracts'] = abstracts[0]
+        payload['abstract'] = abstracts[0]
     if arxiv_categories:
         payload['categories'] = arxiv_categories
     return payload

@@ -62,7 +62,6 @@ def test_get_beard_url_returns_none_when_not_in_configuration():
     assert get_beard_url() is None
 
 
-@pytest.mark.xfail(reason='abstracts is populated instead of abstract')
 def test_prepare_payload():
     record = Record({
         'titles': [
