@@ -3,31 +3,41 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 """Set of workflow tasks for beard API."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 import requests
-
 from flask import current_app
 
+from inspirehep.modules.workflows.utils import json_api_request
 from inspirehep.utils.record import get_value
 
-from inspirehep.modules.workflows.utils import json_api_request
+
+def get_beard_url():
+    """Return the BEARD URL endpoint, if any."""
+    base_url = current_app.config.get('BEARD_API_URL')
+    if not base_url:
+        return
+
+    return '{base_url}/predictor/coreness'.format(base_url=base_url)
 
 
 def prepare_payload(record):
@@ -51,13 +61,10 @@ def prepare_payload(record):
 
 def guess_coreness(obj, eng):
     """Workflow task to ask Beard API for a coreness assessment."""
-    base_url = current_app.config.get("BEARD_API_URL")
-    if not base_url:
-        # Skip task if no API URL set
+    predictor_url = get_beard_url()
+    if not predictor_url:
         return
-    predictor_url = "{base_url}/predictor/coreness".format(
-        base_url=base_url
-    )
+
     # FIXME: Have option to select different prediction models when
     # available in the API
     payload = prepare_payload(obj.data)
