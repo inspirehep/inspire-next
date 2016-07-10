@@ -23,7 +23,6 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
-import pytest
 import requests
 
 from invenio_records.api import Record
@@ -107,7 +106,6 @@ def test_guess_coreness_fails_without_a_beard_url(g_b_u):
     assert 'relevance_prediction' not in obj.extra_data
 
 
-@pytest.mark.xfail(reason='results is not defined')
 @mock.patch('inspirehep.modules.workflows.tasks.beard.get_beard_url')
 @mock.patch('inspirehep.modules.workflows.tasks.beard.json_api_request')
 def test_guess_coreness_does_not_fail_when_request_fails(j_a_r, g_b_u):

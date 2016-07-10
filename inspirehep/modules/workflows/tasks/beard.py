@@ -68,11 +68,12 @@ def guess_coreness(obj, eng):
     # FIXME: Have option to select different prediction models when
     # available in the API
     payload = prepare_payload(obj.data)
+
     try:
         results = json_api_request(predictor_url, payload)
     except requests.exceptions.RequestException:
-        # We still continue even if there was an exception.
-        pass
+        results = {}
+
     if results:
         scores = results.get('scores') or []
         max_score = max(scores)
