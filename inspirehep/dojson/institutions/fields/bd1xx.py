@@ -40,8 +40,8 @@ def location(self, key, value):
     def _get_float(value, c):
         try:
             return float(value[c])
-        except (KeyError, ValueError):
-            return ''
+        except (KeyError, ValueError, TypeError):
+            return None
 
     return {
         'longitude': _get_float(value, 'd'),
