@@ -252,7 +252,11 @@ def split_page_artid(page_artid):
         if page_artid:
             if '-' in page_artid:
                 # if it has a dash it's a page range
-                page_start, page_end = page_artid.split('-')
+                page_range = page_artid.split('-')
+                if len(page_range) == 2:
+                    page_start, page_end = page_range
+                else:
+                    artid = page_artid
             elif _RE_2_CHARS.search(page_artid):
                 # if it it has 2 ore more letters it's an article ID
                 artid = page_artid
