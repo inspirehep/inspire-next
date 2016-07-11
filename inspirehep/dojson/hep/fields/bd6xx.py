@@ -26,8 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
-from inspirehep.utils.dedupers import dedupe_list_of_dicts
-
 from ..model import hep, hep2marc
 from ...utils import get_record_ref
 
@@ -59,7 +57,7 @@ def free_keywords(self, key, value):
     for val in value:
         free_keywords.append(get_value(val))
 
-    return dedupe_list_of_dicts(free_keywords)
+    return free_keywords
 
 
 @hep2marc.over('653', 'free_keywords')
@@ -127,7 +125,7 @@ def thesaurus_terms(self, key, value):
     for element in value:
         thesaurus_terms.append(get_value(element))
 
-    return dedupe_list_of_dicts(thesaurus_terms)
+    return thesaurus_terms
 
 
 @hep2marc.over('695', 'thesaurus_terms')

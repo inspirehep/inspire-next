@@ -26,8 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
-from inspirehep.utils.dedupers import dedupe_list_of_dicts
-
 from ..model import hep, hep2marc
 from ...utils import get_record_ref
 
@@ -76,7 +74,7 @@ def collaboration(self, key, value):
         }
     collaboration = self.get('collaboration', [])
 
-    filtered_value = dedupe_list_of_dicts(value)
+    filtered_value = value
     for element in filtered_value:
         collaboration.append(get_value(element))
 

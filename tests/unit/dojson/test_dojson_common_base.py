@@ -27,7 +27,7 @@ from dojson.contrib.marc21.utils import create_record
 from inspirehep.dojson.hep import hep
 from inspirehep.dojson.hepnames import hepnames
 
-from inspirehep.dojson.utils import strip_empty_values
+from inspirehep.dojson.utils import clean_record
 
 
 def test_field_from_marcxml_650_with_single_a_and_9():
@@ -55,7 +55,7 @@ def test_field_from_marcxml_650_with_single_a_and_9():
             'term': 'Phenomenology-HEP',
         },
     ]
-    result = strip_empty_values(hepnames.do(create_record(snippet)))
+    result = clean_record(hepnames.do(create_record(snippet)))
 
     assert expected == result['field_categories']
 
@@ -89,7 +89,7 @@ def test_field_from_marcxml_650_with_two_a():
             'term': 'Gravitation and Cosmology',
         },
     ]
-    result = strip_empty_values(hepnames.do(create_record(snippet)))
+    result = clean_record(hepnames.do(create_record(snippet)))
 
     assert expected == result['field_categories']
 
@@ -117,7 +117,7 @@ def test_field_from_marcxml_650_with_two_2():
             'term': 'Experiment-HEP',
         },
     ]
-    result = strip_empty_values(hepnames.do(create_record(snippet)))
+    result = clean_record(hepnames.do(create_record(snippet)))
 
     assert expected == result['field_categories']
 
@@ -154,34 +154,7 @@ def test_field_from_multiple_marcxml_650():
             'term': 'Instrumentation',
         },
     ]
-    result = strip_empty_values(hepnames.do(create_record(snippet)))
-
-    assert expected == result['field_categories']
-
-
-def test_field_categories_from_duplicate_marcxml_650_is_deduped():
-    snippet = (
-        '<record>'
-        '  <datafield tag="650" ind1="1" ind2="7">'
-        '    <subfield code="2">INSPIRE</subfield>'
-        '    <subfield code="a">Experiment-Nucl</subfield>'
-        '  </datafield>'
-        '  <datafield tag="650" ind1="1" ind2="7">'
-        '    <subfield code="2">INSPIRE</subfield>'
-        '    <subfield code="a">Experiment-Nucl</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    expected = [
-        {
-            '_scheme': 'INSPIRE',
-            'scheme': 'INSPIRE',
-            '_term': 'Experiment-Nucl',
-            'term': 'Experiment-Nucl'
-        },
-    ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hepnames.do(create_record(snippet)))
 
     assert expected == result['field_categories']
 
@@ -196,7 +169,7 @@ def test_field_from_marcxml_650_with_no_a():
         '</record>'
     )
 
-    result = strip_empty_values(hepnames.do(create_record(snippet)))
+    result = clean_record(hepnames.do(create_record(snippet)))
 
     assert 'field_categories' not in result
 
@@ -217,7 +190,7 @@ def test_urls_from_marcxml_856_with_single_u_single_y():
             'value': 'http://www.physics.unlv.edu/labastro/'
         }
     ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['urls']
 
@@ -239,7 +212,7 @@ def test_urls_from_marcxml_856_with_single_u_two_y():
             'value': 'http://www.physics.unlv.edu/labastro/'
         }
     ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['urls']
 
@@ -258,7 +231,7 @@ def test_urls_from_marcxml_856_with_single_u_no_y():
             'value': 'http://www.physics.unlv.edu/labastro/',
         },
     ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['urls']
 
@@ -284,7 +257,7 @@ def test_urls_from_marcxml_856_with_two_u_single_y():
             'value': 'http://www.physics.unlv.edu/',
          },
     ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['urls']
 
@@ -306,7 +279,7 @@ def test_urls_from_marcxml_856_with_two_u_duplicates_single_y():
             'value': 'http://www.physics.unlv.edu/labastro/',
         },
     ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['urls']
 
@@ -333,7 +306,7 @@ def test_urls_from_marcxml_856_with_two_u_two_y():
             'value': 'http://www.physics.unlv.edu/',
         },
     ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['urls']
 
@@ -356,7 +329,7 @@ def test_urls_from_marcxml_856_with_two_u_no_y():
             'value': 'http://www.physics.unlv.edu/',
         },
     ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['urls']
 
@@ -385,6 +358,6 @@ def test_urls_from_marcxml_multiple_8564():
             'value': 'http://www.cern.ch/',
         },
     ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['urls']

@@ -30,7 +30,7 @@ from inspirehep.dojson.utils import (
     get_recid_from_ref,
     get_record_ref,
     legacy_export_as_marc,
-    strip_empty_values,
+    dedupe_all_lists,
 )
 
 
@@ -254,6 +254,18 @@ def test_legacy_export_as_marc_json_with_controlfield():
     result = legacy_export_as_marc(json_with_controlfield)
 
     assert expected == result
+
+
+def test_dedupe_all_lists():
+    obj = {'l0': range(10) + range(10),
+           'o1': [{'foo': 'bar'}] * 10,
+           'o2': [{'foo': [1, 2]}, {'foo': [1, 1, 2]}] * 10}
+
+    expected = {'l0': range(10),
+                'o1': [{'foo': 'bar'}],
+                'o2': [{'foo': [1, 2]}]}
+
+    assert dedupe_all_lists(obj) == expected
 
 
 # TODO: test legacy_export_as_marc

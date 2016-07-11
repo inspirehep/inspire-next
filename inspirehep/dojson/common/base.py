@@ -26,8 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
-from inspirehep.utils.dedupers import dedupe_list_of_dicts
-
 from ..conferences.model import conferences
 from ..experiments.model import experiments
 from ..hep.model import hep, hep2marc
@@ -39,7 +37,6 @@ from ..utils import (
     classify_field,
     get_recid_from_ref,
     get_record_ref,
-    strip_empty_values,
 )
 
 
@@ -237,16 +234,7 @@ def collections(self, key, value):
     for val in value:
         collections.append(get_value(val))
 
-    contains_list = False
-    for element in collections:
-        for k, v in enumerate(element):
-            if isinstance(element[v], list):
-                contains_list = True
-                break
-    if contains_list:
-        return strip_empty_values(collections)
-    else:
-        return dedupe_list_of_dicts(collections)
+    return collections
 
 
 @hep2marc.over('980', 'collections')
@@ -361,9 +349,6 @@ def field_categories(self, key, value):
                 'term': term,
             })
 
-        self['field_categories'] = dedupe_list_of_dicts(
-            self['field_categories'])
-
 
 @conferences.over('urls', '^8564')
 @experiments.over('urls', '^8564')
@@ -389,5 +374,3 @@ def urls(self, key, value):
                 'description': description,
                 'value': _url,
             })
-
-        self['urls'] = dedupe_list_of_dicts(self['urls'])

@@ -26,37 +26,33 @@ from __future__ import absolute_import, division, print_function
 
 from dojson.utils import force_list
 
+from inspirehep.dojson.conferences import conferences
+from inspirehep.dojson.experiments import experiments
+from inspirehep.dojson.hep import hep
+from inspirehep.dojson.hepnames import hepnames
+from inspirehep.dojson.institutions import institutions
+from inspirehep.dojson.jobs import jobs
+from inspirehep.dojson.journals import journals
+from inspirehep.dojson.utils import clean_record
 
-def convert_marcxml(source):
-    """Convert MARC XML to JSON."""
-    from dojson.contrib.marc21.utils import create_record, split_blob
 
-    from inspirehep.dojson.conferences import conferences
-    from inspirehep.dojson.experiments import experiments
-    from inspirehep.dojson.hep import hep
-    from inspirehep.dojson.hepnames import hepnames
-    from inspirehep.dojson.institutions import institutions
-    from inspirehep.dojson.jobs import jobs
-    from inspirehep.dojson.journals import journals
-    from inspirehep.dojson.utils import strip_empty_values
-
-    for data in split_blob(source.read()):
-        record = create_record(data)
-        if _collection_in_record(record, 'institution'):
-            yield strip_empty_values(institutions.do(record))
-        elif _collection_in_record(record, 'experiment'):
-            yield strip_empty_values(experiments.do(record))
-        elif _collection_in_record(record, 'journals'):
-            yield strip_empty_values(journals.do(record))
-        elif _collection_in_record(record, 'hepnames'):
-            yield strip_empty_values(hepnames.do(record))
-        elif _collection_in_record(record, 'job') or \
-                _collection_in_record(record, 'jobhidden'):
-            yield strip_empty_values(jobs.do(record))
-        elif _collection_in_record(record, 'conferences'):
-            yield strip_empty_values(conferences.do(record))
-        else:
-            yield strip_empty_values(hep.do(record))
+def overdo_marc_dict(record):
+    """Convert MARC Groupable Ordered Dict into JSON."""
+    if _collection_in_record(record, 'institution'):
+        return clean_record(institutions.do(record))
+    elif _collection_in_record(record, 'experiment'):
+        return clean_record(experiments.do(record))
+    elif _collection_in_record(record, 'journals'):
+        return clean_record(journals.do(record))
+    elif _collection_in_record(record, 'hepnames'):
+        return clean_record(hepnames.do(record))
+    elif _collection_in_record(record, 'job') or \
+            _collection_in_record(record, 'jobhidden'):
+        return clean_record(jobs.do(record))
+    elif _collection_in_record(record, 'conferences'):
+        return clean_record(conferences.do(record))
+    else:
+        return clean_record(hep.do(record))
 
 
 def _collection_in_record(record, collection):

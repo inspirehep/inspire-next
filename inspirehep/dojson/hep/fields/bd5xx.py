@@ -26,8 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
-from inspirehep.utils.dedupers import dedupe_list_of_dicts
-
 from ..model import hep, hep2marc
 from ...utils import get_record_ref
 
@@ -74,7 +72,7 @@ def hidden_notes(self, key, value):
     hidden_notes = self.get('hidden_notes', [])
     hidden_notes.extend(_hidden_notes(value))
 
-    return dedupe_list_of_dicts(hidden_notes)
+    return hidden_notes
 
 
 @hep2marc.over('595', 'hidden_notes')
