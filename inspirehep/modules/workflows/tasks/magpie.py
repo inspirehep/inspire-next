@@ -76,8 +76,7 @@ def guess_keywords(obj, eng):
     try:
         results = json_api_request(magpie_url, payload)
     except requests.exceptions.RequestException:
-        # We still continue even if there was an exception.
-        pass
+        results = {}
 
     if results:
         labels = results.get('labels', [])
