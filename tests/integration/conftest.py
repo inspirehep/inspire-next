@@ -22,6 +22,8 @@
 
 """Pytest configuration for integration tests."""
 
+from __future__ import absolute_import, division, print_function
+
 from time import sleep
 
 import pytest
@@ -37,16 +39,6 @@ def app(request):
     """Flask application fixture."""
     app = create_app()
     app.config.update({'DEBUG': True})
-
-    def teardown():
-        with app.app_context():
-            db.drop_all()
-
-            sleep(10)  # Makes sure that ES is up.
-            _es = app.extensions['invenio-search']
-            list(_es.delete(ignore=[404]))
-
-    request.addfinalizer(teardown)
 
     with app.app_context():
         # Imports must be local, otherwise tasks default to pickle serializer.
