@@ -56,7 +56,6 @@ def test_date_closed_from_046__l():
     assert expected == result['date_closed']
 
 
-@pytest.mark.xfail(reason='incorrect structure')
 def test_date_closed_from_046__i_l_an_url():
     snippet = (
         '<record>'

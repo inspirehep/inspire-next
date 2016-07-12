@@ -51,9 +51,9 @@ def date_closed(self, key, value):
             elif "www" in val.get('l') or "http" in val.get('l'):
                 # Its a URL
                 if "urls" in self:
-                    self["urls"].append(val.get('l'))
+                    self["urls"].append({'value': val.get('l')})
                 else:
-                    self["urls"] = [val.get('l')]
+                    self["urls"] = [{'value': val.get('l')}]
             else:
                 closed_date = val.get('l')
     if deadline_date:
