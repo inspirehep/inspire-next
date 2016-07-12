@@ -22,21 +22,16 @@
             "uniqueItems": true
         },
         "continent": {
-            "items": {
-                "enum": [
-                    "North America",
-                    "Europe",
-                    "Asia",
-                    "South America",
-                    "Africa",
-                    "Oceania"
-                ],
-                "title": "Continent",
-                "type": "string"
-            },
-            "title": "Continent",
-            "type": "array",
-            "uniqueItems": true
+            "type": "string",
+            "enum": [
+                "Africa",
+                "Antarctica",
+                "Asia",
+                "Europe",
+                "North America",
+                "Oceania",
+                "South America"
+            ]
         },
         "deadline_date": {
             "format": "date",
