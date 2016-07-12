@@ -130,9 +130,3 @@ def ranks(self, key, value):
         for _rank in _ranks:
             self['_ranks'].append(_rank)
             self['ranks'].append(classify_rank(_rank))
-
-
-@jobs.over('experiment', '^693..')
-@utils.for_each_value
-def experiment(self, key, value):
-    return value.get('e')
