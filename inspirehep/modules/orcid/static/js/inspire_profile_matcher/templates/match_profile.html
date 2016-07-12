@@ -1,0 +1,84 @@
+<form  ng-controller="inspireProfileMatcherCtrl" ng-submit="postMatches()">
+
+  <div id="collection-landing-page-text">
+    <div class="row">
+      <div class="col-xs-12">
+          <h3 class="text-center">
+            Please confirm your authorship of {{vm.invenioSearchResults.hits.hits.length}} papers.
+          </h3>
+          <br>
+          <p class="text-muted text-center">
+             Please deselect any papers not authored by you.<br>
+             This will help our algorithm get better at spotting your papers in the future.
+          </p>
+      </div>
+    </div>
+  </div>
+  <article class="panel panel-default profile-matching header record-brief-literature">
+   <div class="panel-body">
+      <div class="row">
+        <div class="col-md-9 text-muted">
+    <h2 class="record-brief-title">Publication Details</h2>
+    </div>
+    <div class='col-md-3'>
+        <h2 class="record-brief-title text-muted text-center">Are you the author?</h2>
+    </div>
+  </div>
+  </div>
+</article>
+  <article class="panel panel-default profile-matching record-brief-literature" ng-repeat="record in vm.invenioSearchResults.hits.hits track by $index">
+    <hr>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-9">
+          <h2 class="record-brief-title">
+            <a ng-href="/literature/{{record.id}}" ng-bind-html='record.metadata.titles[0] | title'>
+            </a>
+          </h2>
+          <div class="record-brief-subtitle">
+            <span ng-bind-html='record.metadata.collaboration | collaboration : record.metadata.corporate_author'></span>
+              <span ng-bind-html='record.metadata.authors | corporateAuthor : record.metadata.corporate_author'></span>
+              <authors-affiliation authors-template="/static/node_modules/inspirehep-search-js/dist/templates/authors/authors.html" authors="{{record.metadata.authors}}" collaboration="{{record.metadata.collaboration}}" number-of-authors={{record.display.number_of_authors}} control-number="{{record.metadata.control_number}}"></authors-affiliation>
+              <span class="record-brief-muted" ng-bind-html="record.display.date | date : record.metadata.authors : record.metadata.collaboration : record.metadata.corporate_author"></span>
+          </div>
+          <div class="record-brief-details">
+              <div ng-if="record.display.publication_info_line.pub_info && record.metadata.dois" >
+                <div ng-if="record.display.publication_info_line.pub_info.length == 1 && record.metadata.dois.length == 1">
+                  <div ng-bind-html='record.metadata.dois | publicationInfoDoi : record.display.publication_info_line'></div>
+                </div>
+                <div ng-if="record.display.publication_info_line.pub_info.length !== 1 || record.metadata.dois.length !== 1">
+                  <div ng-bind-html='record.display.publication_info_line | publicationInfo' ></div>
+                  <div ng-bind-html='record.metadata.dois | doi' ></div>
+                </div>
+              </div>
+              <div ng-if="record.display.publication_info_line && !(record.display.publication_info_line.pub_info && record.metadata.dois)">
+                <div ng-bind-html='record.display.publication_info_line | publicationInfo' ></div>
+              </div>
+              <div ng-if="record.metadata.dois && !(record.display.publication_info_line && record.display.publication_info_line.pub_info)">
+                <div ng-bind-html='record.metadata.dois | doi'></div>
+              </div>
+              <div ng-bind-html='record.metadata.arxiv_eprints | arxivInfo'></div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="onoffswitch col-centered">
+            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch{{$index}}"
+                  ng-model="record.matched"
+                  ng-change="changeState(record)"
+                  checked>
+            <label class="onoffswitch-label" for="myonoffswitch{{$index}}">
+              <span class="onoffswitch-inner"></span>
+              <span class="onoffswitch-switch"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+  </article>
+  </div>
+  <div class="profile-matching submition">
+    <h4 class = "profile-matching">
+      You have selected {{Matches.length}} of {{vm.invenioSearchResults.hits.hits.length}} papers as yours.
+    </h4>
+    <button type="submit" class="btn btn-primary profile-matching">Submit</button>
+  </div>
+</form>

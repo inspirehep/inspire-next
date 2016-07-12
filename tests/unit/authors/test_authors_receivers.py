@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
+
 import httpretty
 
 from inspirehep.modules.authors import receivers
@@ -32,6 +33,7 @@ from inspirehep.modules.authors import receivers
 
 def test_name_variations():
     json_dict = {
+        "$schema": "http://localhost:5000/schemas/records/authors.json",
         "authors": [{
             "full_name": "John Richard Ellis"
         }]

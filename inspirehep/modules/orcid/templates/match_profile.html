@@ -1,0 +1,32 @@
+
+{%- extends "inspirehep_theme/page.html" -%}
+
+
+
+{%- block css %}
+  {{ super() }}
+  {%- assets "inspirehep_profiles_match_css" %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet">
+  {%- endassets %}
+{%- endblock css %}
+
+
+{% block javascript %}
+{{ super() }}
+{% assets "inspirehep_profiles_match_js" %}
+<script src="{{ ASSET_URL }}"></script>
+{% endassets %}
+
+{%- endblock javascript %}
+
+
+{%- block body -%}
+
+<div id='inspire-record-matcher'>
+  <invenio-search search-endpoint="/search">
+    <invenio-search-results
+      template="{{ url_for('static', filename='js/inspire_profile_matcher/templates/match_profile.html') }}">
+    </invenio-search-results>
+  </invenio-search>
+</div>
+{%- endblock -%}

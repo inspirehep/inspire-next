@@ -134,7 +134,17 @@
                             "type": "string"
                         },
                         "signature_block": {
-                            "type": "string"
+                            "type": "string",
+                            "index": "not_analyzed"
+                        },
+                        "record": {
+                          "type": "object",
+                          "properties": {
+                            "$ref": {
+                              "type": "string",
+                              "index": "not_analyzed"
+                            }
+                          }
                         },
                         "uuid": {
                             "index": "not_analyzed",

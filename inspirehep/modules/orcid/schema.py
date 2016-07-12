@@ -20,11 +20,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from HTMLParser import HTMLParser
+from __future__ import (
+    absolute_import,
+    division,
+    print_function)
 
 import dojson
 
 from flask import current_app
+
+from HTMLParser import HTMLParser
 
 from inspirehep.utils.helpers import force_force_list
 
@@ -101,18 +106,18 @@ def date_rule(self, key, value):
         pass
 
 
-@orcid_overdo.over('work_external_identifier', 'arxiv_eprints|dois')
+@orcid_overdo.over('external-id', 'arxiv_eprints|dois')
 @dojson.utils.for_each_value
 def external_id_rule(self, key, value):
     if key == 'dois':
         return{
-            'external-identifier-type': 'DOI',
-            'external-identifier-id': value.get('value')
+            'external-id-type': 'doi',
+            'external-id-value': value.get('value')
         }
     if key == 'arxiv_eprints':
         return {
-            'external-identifier-type': 'ARXIV',
-            'external-identifier-id': value.get('value')
+            'external-id-type': 'arxiv',
+            'external-id-value': value.get('value')
         }
 
 

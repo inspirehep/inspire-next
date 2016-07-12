@@ -135,8 +135,8 @@ def test_successfull_conversion():
                                                                              'contributor-sequence': 'ADDITIONAL'},
                                                   'contributor-orcid': '',
                                                   'credit-name': 'Name2, Full'}]},
-                'external-identifiers': {'work-external-identifier': [{'external-identifier-id': 'arXiv:0000.00000',
-                                                                       'external-identifier-type': 'ARXIV'}]},
+                'external-ids': {'external-id': [{'external-id-type': 'arxiv',
+                                                  'external-id-value': 'arXiv:0000.00000'}]},
                 'journal-title': 'Nuovo Cim.',
                 'short-description': 'Abstract',
                 'title': {'subtitle': 'Subtitle', 'title': 'Title'},
@@ -265,8 +265,8 @@ def test_record():
 
     excepted = {'citation': {'citation': u'@article{,\n      key            = "0000000",\n      title          = "{Title}",\n      year           = "1961",\n      doi            = "00.0000/PhysRevD.00.000000",\n      SLACcitation   = "%%CITATION = INSPIRE-0000000;%%"\n}',
                              'citation-type': 'BIBTEX'},
-                'external-identifiers': {'work-external-identifier': [{'external-identifier-id': '00.0000/PhysRevD.00.000000',
-                                                                       'external-identifier-type': 'DOI'}]},
+                'external-ids': {'external-id': [{'external-id-type': 'doi',
+                                                  'external-id-value': '00.0000/PhysRevD.00.000000'}]},
                 'journal-title': None,
                 'publication-date': {'day': 14, 'month': 8, 'year': 2008},
                 'title': {'subtitle': '', 'title': 'Title'},
@@ -396,12 +396,13 @@ def test_record_with_more_than_20_authors_return_the_first_20_authors():
                                                                              'contributor-sequence': 'ADDITIONAL'},
                                                   'contributor-orcid': '0000-0000-0000',
                                                   'credit-name': 'Name, Full19'}]},
-                'external-identifiers': {'work-external-identifier': [{'external-identifier-id': '00.0000/PhysRevD.00.000000',
-                                                                       'external-identifier-type': 'DOI'}]},
+                'external-ids': {'external-id': [{'external-id-type': 'doi',
+                                                  'external-id-value': '00.0000/PhysRevD.00.000000'}]},
                 'journal-title': None,
                 'publication-date': {'day': 14, 'month': 8, 'year': 2008},
                 'title': {'subtitle': '', 'title': 'Title'},
                 'type': 'UNDEFINED'}
+
     result = convert_to_orcid(record)
 
     assert expected == result
@@ -456,8 +457,8 @@ def test_record_with_invalid_date():
 
     expected = {'citation': {'citation': u'@book{,\n      key            = "0000000",\n      title          = "{Title}",\n      doi            = "00.0000/PhysRevD.00.000000",\n      SLACcitation   = "%%CITATION = INSPIRE-0000000;%%"\n}',
                              'citation-type': 'BIBTEX'},
-                'external-identifiers': {'work-external-identifier': [{'external-identifier-id': '00.0000/PhysRevD.00.000000',
-                                                                       'external-identifier-type': 'DOI'}]},
+                'external-ids': {'external-id': [{'external-id-type': 'doi',
+                                                  'external-id-value': '00.0000/PhysRevD.00.000000'}]},
                 'publication-date': None,
                 'title': {'subtitle': '', 'title': 'Title'},
                 'type': 'BOOK'}
@@ -488,8 +489,8 @@ def test_record_without_primary_collection():
     }
     excepted = {'citation': {'citation': u'@article{,\n      key            = "0000000",\n      title          = "{Title}",\n      doi            = "00.0000/PhysRevD.00.000000",\n      SLACcitation   = "%%CITATION = INSPIRE-0000000;%%"\n}',
                              'citation-type': 'BIBTEX'},
-                'external-identifiers': {'work-external-identifier': [{'external-identifier-id': '00.0000/PhysRevD.00.000000',
-                                                                       'external-identifier-type': 'DOI'}]},
+                'external-ids': {'external-id': [{'external-id-type': 'doi',
+                                                  'external-id-value': '00.0000/PhysRevD.00.000000'}]},
                 'title': {'subtitle': '', 'title': 'Title'},
                 'type': None}
     result = convert_to_orcid(record)

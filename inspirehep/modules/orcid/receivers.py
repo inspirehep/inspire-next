@@ -20,13 +20,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
+
 from inspirehep.modules.records.signals import after_record_enhanced
+
+from invenio_oauthclient.signals import account_setup_received
 
 from invenio_records.signals import before_record_delete
 
 from invenio_orcid.tasks import delete_from_orcid, send_to_orcid
 
-from flask import current_app
+from .utils import match_profiles
+
+from flask import current_app, session, url_for
 
 
 @after_record_enhanced.connect
@@ -47,3 +54,14 @@ def delete_record_from_orcid(sender, *args, **kwargs):
     """
     if current_app.config.get('ORCID_SYNCHRONIZATION_ENABLED'):
         delete_from_orcid.delay(sender=sender)
+
+
+@account_setup_received.connect
+def identify_authors_profile(remote, token, response, account_setup):
+    if current_app.config.get('ORCID_PROFILE_MATCHING_ENABLED'):
+        session['users_orcid'] = response['orcid']
+        possible_profiles = match_profiles(token, response)
+        if len(possible_profiles) > 1:
+            session['oauth_possible_profiles'] = possible_profiles
+            session['oauth_token_orcid_next_url'] = url_for(
+                'inspire_oauthclient.match')

@@ -229,6 +229,8 @@ setup(
             'invenio_search_ui_search_js = inspirehep.modules.search.bundles:js',
             'inspirehep_holding_css = inspirehep.modules.theme.bundles:holding_pen_css',
             'inspirehep_holding_js = inspirehep.modules.workflows.bundles:details_js',
+            'inspirehep_profiles_match_js = inspirehep.modules.orcid.bundles:match_js',
+            'inspirehep_profiles_match_css = inspirehep.modules.orcid.bundles:match_css',
         ],
         'invenio_jsonschemas.schemas': [
             'inspire_records = inspire_schemas',
