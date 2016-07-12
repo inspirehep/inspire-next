@@ -42,6 +42,7 @@ from ...utils import (
 )
 
 from inspirehep.modules.references.processors import ReferenceBuilder
+from inspirehep.utils.record import get_value
 
 
 @hep.over('references', '^999C5')
@@ -93,22 +94,40 @@ def references(self, key, value):
 @utils.filter_values
 def references2marc(self, key, value):
     """Produce list of references."""
+    repnos = value.get('arxiv_eprints', [])
+    if 'reportnumber' in value.get('publication_info', {}):
+        repnos.append(value['publication_info']['reportnumber'])
+    j_title = value.get('publication_info', {}).get('journal_title')
+    j_vol = value.get('publication_info', {}).get('journal_volume')
+    j_pg_s = value.get('publication_info', {}).get('page_start')
+    j_pg_e = value.get('publication_info', {}).get('page_end')
+    j_artid = value.get('publication_info', {}).get('artid')
+    pubnote = ''
+    if j_title and j_vol:
+        pubnote = '{},{}'.format(j_title, j_vol)
+        if j_pg_s and j_pg_e:
+            pubnote += ',{}-{}'.format(j_pg_s, j_pg_e)
+        elif j_pg_s:
+            pubnote += ',{}'.format(j_pg_s)
+        if j_artid and j_artid != j_pg_s:
+            pubnote += ',{}'.format(j_artid)
     return {
         '0': get_recid_from_ref(value.get('record')),
-        '1': value.get('texkey'),
-        'a': value.get('doi'),
-        'c': value.get('collaboration'),
-        'e': value.get('editors'),
-        'h': value.get('authors'),
-        'm': value.get('misc'),
-        'o': value.get('number'),
-        'i': value.get('isbn'),
-        'p': value.get('publisher'),
-        'q': value.get('maintitle'),
-        'r': value.get('report_number'),
-        't': value.get('title'),
-        'u': value.get('urls'),
-        's': value.get('journal_pubnote'),
-        'x': value.get('raw_reference'),
-        'y': value.get('year'),
+        '1': get_value(value, 'texkey'),
+        'a': get_value(value, 'publication_info.doi'),
+        'c': get_value(value, 'collaboration'),
+        'e': [a.get('full_name') for a in value.get('authors', [])
+              if a.get('role') == 'ed.'],
+        'h': [a.get('full_name') for a in value.get('authors', [])
+              if a.get('role') != 'ed.'],
+        'm': get_value(value, 'misc'),
+        'o': get_value(value, 'number'),
+        'i': get_value(value, 'publication_info.isbn'),
+        'p': get_value(value, 'imprint.publisher'),
+        'r': repnos,
+        't': get_value(value, 'titles[:].value'),
+        'u': get_value(value, 'urls[:].value'),
+        's': pubnote,
+        'x': get_value(value, 'raw_reference[:].value'),
+        'y': get_value(value, 'publication_info.year')
     }

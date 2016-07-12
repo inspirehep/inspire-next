@@ -259,9 +259,8 @@
     <subfield code="u">url</subfield>
     <subfield code="t">title</subfield>
     <subfield code="r">report_number</subfield>
-    <subfield code="q">maintitle</subfield>
     <subfield code="p">publisher</subfield>
-    <subfield code="i">isbn</subfield>
+    <subfield code="i">978-3-16-148410-0</subfield>
     <subfield code="0">1000</subfield>
     <subfield code="m">misc</subfield>
     <subfield code="e">editors</subfield>
