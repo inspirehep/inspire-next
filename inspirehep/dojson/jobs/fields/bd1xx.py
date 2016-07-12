@@ -74,7 +74,6 @@ def contact_details(self, key, value):
 
 
 @jobs.over('continent', '^043..')
-@utils.for_each_value
 def continent(self, key, value):
     """Continent"""
     return value.get('a')

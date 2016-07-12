@@ -190,7 +190,6 @@ def test_contact_details_from_multiple_marcxml_270():
     assert expected == result['contact_details']
 
 
-@pytest.mark.xfail(reason='produces an array')
 def test_continent_from_043__a():
     snippet = (
         '<datafield tag="043" ind1=" " ind2=" ">'
