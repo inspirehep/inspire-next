@@ -36,6 +36,7 @@ Contents
    harvesting
    grobid
    tools
+   building_the_docs
 
 *Happy hacking!*
 
