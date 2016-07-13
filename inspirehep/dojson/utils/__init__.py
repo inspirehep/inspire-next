@@ -96,6 +96,14 @@ def create_profile_url(profile_id):
         return ''
 
 
+def force_single_element(obj):
+    """Force an object to a list and return the first element."""
+    lst = force_list(obj)
+    if lst:
+        return lst[0]
+    return None
+
+
 def get_int_value(d, k):
     """Get a value in a dict and cast it to int if possible."""
     try:

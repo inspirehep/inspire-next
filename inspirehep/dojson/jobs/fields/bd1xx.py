@@ -29,36 +29,41 @@ import six
 from dojson import utils
 
 from ..model import jobs
-from ...utils import classify_rank, get_record_ref
+from ...utils import classify_rank, force_single_element, get_record_ref
 
 
 @jobs.over('date_closed', '^046..')
 def date_closed(self, key, value):
     """Date the job was closed."""
-    value = utils.force_list(value)
-    closed_date = None
-    deadline_date = None
-    for val in value:
-        if val.get('i'):
-            deadline_date = val.get('i')
-        if val.get('l'):
-            if "@" in val.get('l'):
-                # Its an email
-                if "reference_email" in self:
-                    self["reference_email"].append(val.get('l'))
-                else:
-                    self["reference_email"] = [val.get('l')]
-            elif "www" in val.get('l') or "http" in val.get('l'):
-                # Its a URL
-                if "urls" in self:
-                    self["urls"].append(val.get('l'))
-                else:
-                    self["urls"] = [val.get('l')]
-            else:
-                closed_date = val.get('l')
+    def _contains_email(val):
+        return '@' in val
+
+    def _contains_url(val):
+        return 'www' in val or 'http' in val
+
+    el = force_single_element(value)
+
+    deadline_date = force_single_element(el.get('i'))
     if deadline_date:
         self['deadline_date'] = deadline_date
-    return closed_date
+
+    closing_date = None
+    closing_info = force_single_element(el.get('l'))
+    if closing_info:
+        if _contains_email(closing_info):
+            if 'reference_email' in self:
+                self['reference_email'].append(closing_info)
+            else:
+                self['reference_email'] = [closing_info]
+        elif _contains_url(closing_info):
+            if 'urls' in self:
+                self['urls'].append({'value': closing_info})
+            else:
+                self['urls'] = [{'value': closing_info}]
+        else:
+            closing_date = closing_info
+
+    return closing_date
 
 
 @jobs.over('contact_details', '^270..')
@@ -74,7 +79,6 @@ def contact_details(self, key, value):
 
 
 @jobs.over('continent', '^043..')
-@utils.for_each_value
 def continent(self, key, value):
     """Continent"""
     return value.get('a')
@@ -130,9 +134,3 @@ def ranks(self, key, value):
         for _rank in _ranks:
             self['_ranks'].append(_rank)
             self['ranks'].append(classify_rank(_rank))
-
-
-@jobs.over('experiment', '^693..')
-@utils.for_each_value
-def experiment(self, key, value):
-    return value.get('e')
