@@ -538,24 +538,6 @@ def test_hidden_notes_from_double_595__a():
     assert expected == result['hidden_notes']
 
 
-def test_hidden_notes_from_double_595__a_removes_duplicates():
-    snippet = (
-        '<record>'
-        '  <datafield tag="595" ind1=" " ind2=" ">'
-        '    <subfield code="a">error in 371_b</subfield>'
-        '  </datafield>'
-        '  <datafield tag="595" ind1=" " ind2=" ">'
-        '    <subfield code="a">error in 371_b</subfield>'
-        '  </datafield>'
-        '</record>'
-    )  # record/907275
-
-    expected = ['error in 371_b']
-    result = strip_empty_values(institutions.do(create_record(snippet)))
-
-    assert expected == result['hidden_notes']
-
-
 def test_public_notes_from_680__a():
     snippet = (
         '<datafield tag="680" ind1=" " ind2=" ">'

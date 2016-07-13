@@ -26,8 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
-from inspirehep.utils.dedupers import dedupe_list
-
 from ..model import hep, hep2marc
 from ...utils import create_profile_url, get_recid_from_ref, get_record_ref
 
@@ -45,7 +43,7 @@ def authors(self, key, value):
                 recid = int(value.get('z'))
             except:
                 pass
-            affiliations = dedupe_list(utils.force_list(value.get('u')))
+            affiliations = utils.force_list(value.get('u'))
             record = get_record_ref(recid, 'institutions')
             affiliations = [{'value': aff, 'record': record} for
                             aff in affiliations]

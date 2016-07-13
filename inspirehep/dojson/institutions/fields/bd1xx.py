@@ -26,8 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
-from inspirehep.utils.dedupers import dedupe_list, dedupe_list_of_dicts
-
 from ..model import institutions
 from ...utils import get_record_ref
 from ...utils.geo import parse_institution_address
@@ -116,7 +114,7 @@ def name_variants(self, key, value):
         'value': utils.force_list(value.get('a', [])),
     })
 
-    return dedupe_list_of_dicts(values)
+    return values
 
 
 @institutions.over('core', '^690C.')
@@ -138,7 +136,7 @@ def hidden_notes(self, key, value):
     values = self.get('hidden_notes', [])
     values.extend(el for el in utils.force_list(value.get('a')))
 
-    return dedupe_list(values)
+    return values
 
 
 @institutions.over('public_notes', '^680..')
