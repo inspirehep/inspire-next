@@ -28,8 +28,6 @@ import six
 
 from dojson import utils
 
-from inspirehep.utils.dedupers import dedupe_list_of_dicts
-
 from ..model import conferences
 from ...utils.geo import parse_conference_address
 
@@ -103,7 +101,7 @@ def keywords(self, key, value):
     keywords = self.get('keywords', [])
     for val in value:
         keywords.append(get_value(val))
-    return dedupe_list_of_dicts(keywords)
+    return keywords
 
 
 @conferences.over('nonpublic_note', '^595')
