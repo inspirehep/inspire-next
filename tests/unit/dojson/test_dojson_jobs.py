@@ -27,7 +27,8 @@ import pytest
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.jobs import jobs
-from inspirehep.dojson.utils import clean_record
+
+from inspirehep.dojson.utils import clean_record, get_recid_from_ref
 
 
 def test_date_closed_from_046__i():
@@ -203,46 +204,6 @@ def test_continent_from_043__a():
     assert expected == result['continent']
 
 
-def test_experiments_from_693__e():
-    snippet = (
-        '<datafield tag="693" ind1=" " ind2=" ">'
-        '  <subfield code="e">CERN-LHC-ATLAS</subfield>'
-        '</datafield>'
-    )  # record/1471772
-
-    expected = [
-        'CERN-LHC-ATLAS',
-    ]
-    result = clean_record(jobs.do(create_record(snippet)))
-
-    assert expected == result['experiments']
-
-
-def test_experiments_from_triple_693__e():
-    snippet = (
-        '<record>'
-        '  <datafield tag="693" ind1=" " ind2=" ">'
-        '    <subfield code="e">CERN-LHC-CMS</subfield>'
-        '  </datafield>'
-        '  <datafield tag="693" ind1=" " ind2=" ">'
-        '    <subfield code="e">CALICE</subfield>'
-        '  </datafield>'
-        '  <datafield tag="693" ind1=" " ind2=" ">'
-        '    <subfield code="e">ILC</subfield>'
-        '  </datafield>'
-        '</record>'
-    )  # record/1447878
-
-    expected = [
-        'CERN-LHC-CMS',
-        'CALICE',
-        'ILC',
-    ]
-    result = clean_record(jobs.do(create_record(snippet)))
-
-    assert expected == result['experiments']
-
-
 def test_institution_from_110__a():
     snippet = (
         '<datafield tag="110" ind1=" " ind2=" ">'
@@ -339,6 +300,113 @@ def test_position_from_245__a():
     result = clean_record(jobs.do(create_record(snippet)))
 
     assert expected == result['position']
+
+
+def test_experiments_from_marcxml_single_693_single_e_no_0():
+    snippet = (
+        '<record>'
+        '  <datafield tag="693" ind1=" " ind2=" ">'
+        '    <subfield code="e">CERN-LHC-ATLAS</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    result = clean_record(jobs.do(create_record(snippet)))
+
+    assert result['experiments'][0]['name'] == 'CERN-LHC-ATLAS'
+    assert result['experiments'][0]['curated_relation'] == False
+
+
+def test_experiments_from_marcxml_single_693_no_e_single_0():
+    snippet = (
+        '<record>'
+        '  <datafield tag="693" ind1=" " ind2=" ">'
+        '    <subfield code="0">1108541</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    result = clean_record(jobs.do(create_record(snippet)))
+
+    assert (get_recid_from_ref(result['experiments'][0]['record']) == 1108541)
+    assert result['experiments'][0]['curated_relation'] == True
+
+
+def test_experiments_from_marcxml_single_693_single_e_single_0():
+    snippet = (
+        '<record>'
+        '  <datafield tag="693" ind1=" " ind2=" ">'
+        '    <subfield code="e">CERN-LHC-ATLAS</subfield>'
+        '    <subfield code="0">1108541</subfield>'
+        '  </datafield>'
+        '</record>'
+    ) # record/1474741
+
+    result = clean_record(jobs.do(create_record(snippet)))
+
+    assert result['experiments'][0]['name'] == 'CERN-LHC-ATLAS'
+    assert (get_recid_from_ref(result['experiments'][0]['record']) == 1108541)
+    assert result['experiments'][0]['curated_relation'] == True
+
+
+def test_experiments_from_marcxml_double_693_single_e_single_0():
+    snippet = (
+        '<record>'
+        '   <datafield tag="693" ind1=" " ind2=" ">'
+        '       <subfield code="e">KEK-BF-BELLE-II</subfield>'
+        '       <subfield code="0">1108235</subfield>'
+        '   </datafield>'
+        '   <datafield tag="693" ind1=" " ind2=" ">'
+        '       <subfield code="e">KEK-BF-BELLE</subfield>'
+        '       <subfield code="0">1108579</subfield>'
+        '   </datafield>'
+        '/<record>'
+    ) # record/1447943
+
+    result = clean_record(jobs.do(create_record(snippet)))
+
+    expected_names = ['KEK-BF-BELLE-II', 'KEK-BF-BELLE']
+    expected_recids = [1108235, 1108579]
+    expected_curated = [True, True]
+
+    assert [experiment['name']
+            for experiment in result['experiments']] == expected_names
+    assert [get_recid_from_ref(experiment['record'])
+            for experiment in result['experiments']] == expected_recids
+    assert [experiment['curated_relation']
+            for experiment in result['experiments']] == expected_curated
+
+
+def test_experiments_from_marcxml_triple_693_single_e_single_0():
+    snippet = (
+        '<record>'
+        '   <datafield tag="693" ind1=" " ind2=" ">'
+        '       <subfield code="e">CERN-LHC-CMS</subfield>'
+        '       <subfield code="0">1108642</subfield>'
+        '   </datafield>'
+        '   <datafield tag="693" ind1=" " ind2=" ">'
+        '       <subfield code="e">CALICE</subfield>'
+        '       <subfield code="0">1235349</subfield>'
+        '   </datafield>'
+        '   <datafield tag="693" ind1=" " ind2=" ">'
+        '       <subfield code="e">ILC</subfield>'
+        '       <subfield code="0">1108216</subfield>'
+        '   </datafield>'
+        '/<record>'
+    ) # record/1447878
+
+    result = clean_record(jobs.do(create_record(snippet)))
+
+    expected_names = ['CERN-LHC-CMS', 'CALICE', 'ILC']
+    expected_recids = [1108642, 1235349, 1108216]
+    expected_curated = [True, True, True]
+
+    assert [experiment['name']
+            for experiment in result['experiments']] == expected_names
+    assert [get_recid_from_ref(experiment['record'])
+            for experiment in result['experiments']] == expected_recids
+    assert [experiment['curated_relation']
+            for experiment in result['experiments']] == expected_curated
 
 
 def test_ranks_from_marcxml_656_with_single_a():

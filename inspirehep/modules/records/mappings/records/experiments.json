@@ -65,8 +65,15 @@
                     "index": "not_analyzed"
                 },
                 "affiliation": {
-                    "type": "string",
-                    "index": "not_analyzed"
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "curated_relation": {
+                            "type": "boolean"
+                        }
+                    }
                 },
                 "hidden_note": {
                     "type": "object",

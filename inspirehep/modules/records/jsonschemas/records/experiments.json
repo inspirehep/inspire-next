@@ -14,13 +14,24 @@
             "type": "string"
         },
         "affiliation": {
-            "description": "Institution ICN",
-            "title": "Affiliation",
-            "type": "array"
-        },
-        "affiliation_record": {
-            "title": "Institution record URI",
-            "$ref": "json_reference.json"
+            "type": "array",
+            "items": {
+                "properties": {
+                    "curated_relation": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                        "title": "Name of the institution",
+                        "type": "string"
+                    },
+                    "record": {
+                        "title": "Institution's record URI",
+                        "$ref": "json_reference.json"
+                    }
+                },
+            "type": "object"
+            },
+            "uniqueItems": true
         },
         "collaboration": {
             "title": "Collaboration",

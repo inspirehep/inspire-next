@@ -25,7 +25,8 @@ from __future__ import absolute_import, division, print_function
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.experiments import experiments
-from inspirehep.dojson.utils import strip_empty_values
+from inspirehep.dojson.utils import (clean_record, get_recid_from_ref,
+                                     get_record_ref)
 
 
 def test_contact_details_from_marcxml_270_single_p_single_m():
@@ -44,7 +45,7 @@ def test_contact_details_from_marcxml_270_single_p_single_m():
             'email': 'lindner@mpi-hd.mpg.de',
         },
     ]
-    result = strip_empty_values(experiments.do(create_record(snippet)))
+    result = clean_record(experiments.do(create_record(snippet)))
 
     assert expected == result['contact_details']
 
@@ -66,7 +67,7 @@ def test_contact_details_from_marcxml_270_double_p_single_m():
             'email': 'lindner@mpi-hd.mpg.de',
         },
     ]
-    result = strip_empty_values(experiments.do(create_record(snippet)))
+    result = clean_record(experiments.do(create_record(snippet)))
 
     assert expected == result['contact_details']
 
@@ -88,7 +89,7 @@ def test_contact_details_from_marcxml_270_single_p_double_m():
             'name': 'Manfred Lindner'
         },
     ]
-    result = strip_empty_values(experiments.do(create_record(snippet)))
+    result = clean_record(experiments.do(create_record(snippet)))
 
     assert expected == result['contact_details']
 
@@ -115,7 +116,7 @@ def test_contact_details_from_multiple_marcxml_270():
             'name': 'Wynton Marsalis',
         },
     ]
-    result = strip_empty_values(experiments.do(create_record(snippet)))
+    result = clean_record(experiments.do(create_record(snippet)))
 
     assert expected == result['contact_details']
 
@@ -134,12 +135,12 @@ def test_experiment_names_from_marcxml_119():
             'title': 'CERN-ALPHA',
         },
     ]
-    result = strip_empty_values(experiments.do(create_record(snippet)))
+    result = clean_record(experiments.do(create_record(snippet)))
 
     assert expected == result['experiment_names']
 
 
-def test_experiment_names_and_affiliation_from_marcxml_119():
+def test_experiment_names_and_affiliation_from_marcxml_119_a_u():
     snippet = (
         '<record>'
         '  <datafield tag="119" ind1=" " ind2=" ">'
@@ -149,27 +150,81 @@ def test_experiment_names_and_affiliation_from_marcxml_119():
         '</record>'
     )
 
-    result = strip_empty_values(experiments.do(create_record(snippet)))
+    result = clean_record(experiments.do(create_record(snippet)))
 
-    assert result['affiliation'][0] == 'CERN'
+    assert result['affiliation'] == [
+        {
+            'name': 'CERN',
+            'curated_relation': False,
+        }
+    ]
+
     assert result['experiment_names'][0]['title'] == 'CERN-ALPHA'
 
 
-def test_experiment_names_and_affiliation_from_marcxml_119_two_u():
+def test_experiment_names_and_affiliation_from_marcxml_119_a_u_z():
     snippet = (
         '<record>'
         '  <datafield tag="119" ind1=" " ind2=" ">'
-        '    <subfield code="a">LATTICE-UKQCD</subfield>'
-        '    <subfield code="u">Cambridge U.</subfield>'
-        '    <subfield code="u">Edinburgh U.</subfield>'
+        '    <subfield code="a">CERN-ALPHA</subfield>'
+        '    <subfield code="u">CERN</subfield>'
+        '    <subfield code="z">902725</subfield>'
         '  </datafield>'
         '</record>'
     )
 
-    result = strip_empty_values(experiments.do(create_record(snippet)))
+    result = clean_record(experiments.do(create_record(snippet)))
 
-    assert result['affiliation'] == ['Cambridge U.', 'Edinburgh U.']
+    assert result['affiliation'] == [
+        {
+            'name': 'CERN',
+            'curated_relation': True,
+            'record': get_record_ref(902725, 'institutions')
+        }
+    ]
+
+    assert result['experiment_names'][0]['title'] == 'CERN-ALPHA'
+
+
+def test_experiment_names_and_affiliation_from_marcxml_multiple_119():
+    snippet = (
+        '<record>'
+        '   <datafield tag="119" ind1=" " ind2=" ">'
+        '       <subfield code="a">LATTICE-UKQCD</subfield>'
+        '   </datafield>'
+        '   <datafield tag="119" ind1=" " ind2=" ">'
+        '       <subfield code="u">Cambridge U.</subfield>'
+        '   </datafield>'
+        '   <datafield tag="119" ind1=" " ind2=" ">'
+        '       <subfield code="u">Edinburgh U.</subfield>'
+        '       <subfield code="z">902787</subfield>'
+        '   </datafield>'
+        '   <datafield tag="119" ind1=" " ind2=" ">'
+        '       <subfield code="u">Glasgow U.</subfield>'
+        '       <subfield code="z">902823</subfield>'
+        '   </datafield>'
+        '</record>'
+    ) # record/1228417
+
+    result = clean_record(experiments.do(create_record(snippet)))
     assert result['experiment_names'][0]['title'] == 'LATTICE-UKQCD'
+
+    assert result['affiliation'] == [
+        {
+            'name': 'Cambridge U.',
+            'curated_relation': False
+        },
+        {
+            'name': 'Edinburgh U.',
+            'curated_relation': True,
+            'record': get_record_ref(902787, 'institutions')
+        },
+        {
+            'name': 'Glasgow U.',
+            'curated_relation': True,
+            'record': get_record_ref(902823, 'institutions')
+        }
+    ]
 
 
 def test_titles_from_marcxml_245():
@@ -186,7 +241,7 @@ def test_titles_from_marcxml_245():
             'title': 'The ALPHA experiment',
         },
     ]
-    result = strip_empty_values(experiments.do(create_record(snippet)))
+    result = clean_record(experiments.do(create_record(snippet)))
 
     assert expected == result['titles']
 
@@ -205,7 +260,7 @@ def test_title_variants_from_marcxml_419():
             'title': 'ALPHA',
         },
     ]
-    result = strip_empty_values(experiments.do(create_record(snippet)))
+    result = clean_record(experiments.do(create_record(snippet)))
 
     assert expected == result['title_variants']
 
@@ -230,6 +285,6 @@ def test_multiple_title_variants_from_marcxml_419():
             'title': 'CERN-NA-048-3',
         },
     ]
-    result = strip_empty_values(experiments.do(create_record(snippet)))
+    result = clean_record(experiments.do(create_record(snippet)))
 
     assert expected == result['title_variants']

@@ -27,7 +27,9 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import hepnames, hepnames2marc
-from ...utils import classify_rank, force_force_list, get_record_ref
+
+from ...utils import (classify_rank, force_force_list,
+                      get_record_ref, get_recid_from_ref)
 
 
 @hepnames.over('acquisition_source', '^541[10_].')
@@ -411,10 +413,19 @@ def phd_advisors(self, key, value):
             degree_type_raw.lower(),
             degree_type_raw
         )
+
+    curated_relation = False
+    recid = None
+    if value.get('x') and value.get('x').isdigit():
+        curated_relation = True
+        recid = int(value.get('x'))
+
     return {
+        'curated_relation': curated_relation,
+        'degree_type': degree_type,
         'id': value.get("i"),
         'name': value.get("a"),
-        'degree_type': degree_type
+        'record': get_record_ref(recid, 'authors')
     }
 
 
@@ -425,7 +436,8 @@ def phd_advisors2marc(self, key, value):
     return {
         'i': value.get("id"),
         'a': value.get("name"),
-        'g': value.get("degree_type")
+        'g': value.get("degree_type"),
+        'x': get_recid_from_ref(value.get('record'))
     }
 
 

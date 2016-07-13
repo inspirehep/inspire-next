@@ -40,9 +40,21 @@
         },
         "experiments": {
             "items": {
-                "description": "FIXME: we can simply store here the ID of the experiment.",
-                "title": "Experiment associated with Job",
-                "type": "string"
+                "properties": {
+                    "curated_relation": {
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "title": "Experiment's name",
+                        "type": "string"
+                    },
+                    "record": {
+                        "title": "Experiment's record URI",
+                        "$ref": "json_reference.json"
+                    }
+                },
+                "title": "Experiments",
+                "type": "object"
             },
             "type": "array",
             "uniqueItems": true
