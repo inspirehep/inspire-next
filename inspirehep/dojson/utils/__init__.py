@@ -32,8 +32,6 @@ try:
 except ImportError:  # pragma: no cover
     current_app = None
 
-from dojson.utils import force_list
-
 from inspirehep.config import (
     ARXIV_TO_INSPIRE_CATEGORY_MAPPING,
     INSPIRE_RANK_TYPES,
@@ -113,7 +111,7 @@ def force_force_list(data):
 
 def force_single_element(obj):
     """Force an object to a list and return the first element."""
-    lst = force_list(obj)
+    lst = force_force_list(obj)
     if lst:
         return lst[0]
     return None
@@ -271,7 +269,7 @@ def split_page_artid(page_artid):
     page_end = None
     artid = None
 
-    for page_artid in force_list(page_artid) or []:
+    for page_artid in force_force_list(page_artid):
         if page_artid:
             if '-' in page_artid:
                 # if it has a dash it's a page range

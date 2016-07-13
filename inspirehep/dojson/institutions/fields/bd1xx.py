@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import institutions
-from ...utils import get_record_ref
+from ...utils import force_force_list, get_record_ref
 from ...utils.geo import parse_institution_address
 
 
@@ -59,7 +59,7 @@ def timezone(self, key, value):
 def name(self, key, value):
     """List of names."""
     def set_value(key, val):
-        val = utils.force_list(val) or []
+        val = force_force_list(val)
         if val:
             self.setdefault(key, [])
             self[key].extend(val)
@@ -73,9 +73,9 @@ def name(self, key, value):
     set_value('obsolete_ICN', value.get('x'))
     set_value('new_ICN', value.get('t'))
 
-    names = list(utils.force_list(value.get('a')) or [])
-    names.extend(utils.force_list(value.get('u')) or [])
-    names.extend(utils.force_list(value.get('t')) or [])
+    names = force_force_list(value.get('a'))
+    names.extend(force_force_list(value.get('u')))
+    names.extend(force_force_list(value.get('t')))
     return names
 
 
@@ -90,7 +90,7 @@ def address(self, key, value):
         value.get('c'),
         value.get('d'),
         value.get('e'),
-        utils.force_list(value.get('g')),
+        force_force_list(value.get('g')),
     )
 
 
@@ -106,12 +106,12 @@ def name_variants(self, key, value):
     """Variants of the name."""
     if value.get('g'):
         self.setdefault('extra_words', [])
-        self['extra_words'].extend(utils.force_list(value.get('g')))
+        self['extra_words'].extend(force_force_list(value.get('g')))
 
     values = self.get('name_variants', [])
     values.append({
         'source': value.get('9'),
-        'value': utils.force_list(value.get('a', [])),
+        'value': force_force_list(value.get('a', [])),
     })
 
     return values
@@ -134,7 +134,7 @@ def non_public_notes(self, key, value):
 def hidden_notes(self, key, value):
     """Hidden note."""
     values = self.get('hidden_notes', [])
-    values.extend(el for el in utils.force_list(value.get('a')))
+    values.extend(el for el in force_force_list(value.get('a')))
 
     return values
 

@@ -29,7 +29,12 @@ import six
 from dojson import utils
 
 from ..model import jobs
-from ...utils import classify_rank, force_single_element, get_record_ref
+from ...utils import (
+    classify_rank,
+    force_force_list,
+    force_single_element,
+    get_record_ref,
+)
 
 
 @jobs.over('date_closed', '^046..')
@@ -128,9 +133,9 @@ def ranks(self, key, value):
     self.setdefault('_ranks', [])
     self.setdefault('ranks', [])
 
-    values = utils.force_list(value)
+    values = force_force_list(value)
     for el in values:
-        _ranks = utils.force_list(el.get('a'))
+        _ranks = force_force_list(el.get('a'))
         for _rank in _ranks:
             self['_ranks'].append(_rank)
             self['ranks'].append(classify_rank(_rank))

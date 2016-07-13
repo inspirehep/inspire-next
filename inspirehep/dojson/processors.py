@@ -24,8 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from dojson.utils import force_list
-
 from inspirehep.dojson.conferences import conferences
 from inspirehep.dojson.experiments import experiments
 from inspirehep.dojson.hep import hep
@@ -33,7 +31,7 @@ from inspirehep.dojson.hepnames import hepnames
 from inspirehep.dojson.institutions import institutions
 from inspirehep.dojson.jobs import jobs
 from inspirehep.dojson.journals import journals
-from inspirehep.dojson.utils import clean_record
+from inspirehep.dojson.utils import clean_record, force_force_list
 
 
 def overdo_marc_dict(record):
@@ -57,9 +55,9 @@ def overdo_marc_dict(record):
 
 def _collection_in_record(record, collection):
     """Returns True if record is in collection"""
-    colls = force_list(record.get("980__", []))
+    colls = force_force_list(record.get("980__", []))
     for coll in colls:
-        coll = force_list(coll.get('a', []))
+        coll = force_force_list(coll.get('a', []))
         if collection in [c.lower() for c in coll]:
             return True
     return False

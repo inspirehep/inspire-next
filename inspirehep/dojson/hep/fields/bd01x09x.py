@@ -30,6 +30,7 @@ from dojson import utils
 from idutils import normalize_isbn
 
 from ..model import hep, hep2marc
+from ...utils import force_force_list
 
 
 @hep.over('isbns', '^020..')
@@ -83,13 +84,13 @@ def isbns2marc(self, key, value):
 @hep.over('persistent_identifiers', '^024..')
 def persistent_identifiers(self, key, value):
     """Persistent Standard Identifiers."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
 
     dois = self.get('dois', [])
     persistent_identifiers = self.get('persistent_identifiers', [])
     for val in value:
         if val:
-            items = utils.force_list(val.get('a'))
+            items = force_force_list(val.get('a'))
             if val.get("2") and val.get("2", '').lower() == "doi":
                 for v in items:
                     dois.append({
@@ -110,7 +111,7 @@ def persistent_identifiers(self, key, value):
 @hep2marc.over('024', '^(dois|persistent_identifiers)$')
 def dois2marc(self, key, value):
     """Other Standard Identifier."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
 
     def get_value(val):
         return {
@@ -128,7 +129,7 @@ def dois2marc(self, key, value):
 @hep.over('external_system_numbers', '^035..')
 def external_system_numbers(self, key, value):
     """System Control Number."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
 
     def get_value(value):
         return {
@@ -168,13 +169,13 @@ def report_numbers(self, key, value):
     def get_value_arxiv(value):
         return {
             'value': value.get('a'),
-            'categories': utils.force_list(value.get('c')),
+            'categories': force_force_list(value.get('c')),
         }
 
     report_number = self.get('report_numbers', [])
     arxiv_eprints = self.get('arxiv_eprints', [])
 
-    value = utils.force_list(value)
+    value = force_force_list(value)
     for element in value:
         if element.get('9') and element.get('9') == 'arXiv' and 'c' in element:
             arxiv_eprints.append(get_value_arxiv(element))
@@ -188,7 +189,7 @@ def report_numbers(self, key, value):
 @hep2marc.over('037', '(arxiv_eprints|report_numbers)')
 def report_numbers2marc(self, key, value):
     """Source of Acquisition."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
 
     def get_value(value):
         if key == "report_numbers":
@@ -212,7 +213,7 @@ def report_numbers2marc(self, key, value):
 @hep.over('languages', '^041[10_].')
 def languages(self, key, value):
     """Language Code."""
-    values = utils.force_list(value)
+    values = force_force_list(value)
     languages = self.get('languages', [])
     for value in values:
         if value.get('a'):

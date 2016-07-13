@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import hepnames, hepnames2marc
-from ...utils import classify_rank, get_record_ref
+from ...utils import classify_rank, force_force_list, get_record_ref
 
 
 @hepnames.over('acquisition_source', '^541[10_].')
@@ -77,7 +77,7 @@ def name(self, key, value):
     + Sr.
     + roman numbers (like VII)
     """
-    value = utils.force_list(value)
+    value = force_force_list(value)
     self.setdefault('breadcrumb_title', value[0].get('a'))
     self.setdefault('dates', value[0].get('d'))
     return {
@@ -219,17 +219,16 @@ def positions(self, key, value):
     curated_relation = False
     recid = None
     status = ''
-    recid_status = utils.force_list(value.get('z'))
-    if recid_status:
-        for val in recid_status:
-            if val.lower() == 'current':
-                status = val
-            else:
-                try:
-                    recid = int(val)
-                    curated_relation = True
-                except ValueError:
-                    pass
+    recid_status = force_force_list(value.get('z'))
+    for val in recid_status:
+        if val.lower() == 'current':
+            status = val
+        else:
+            try:
+                recid = int(val)
+                curated_relation = True
+            except ValueError:
+                pass
 
     inst = {
         'name': value.get('a'),
@@ -290,7 +289,7 @@ def source(self, key, value):
         }
     source = self.get('source', [])
 
-    value = utils.force_list(value)
+    value = force_force_list(value)
 
     for val in value:
         source.append(get_value(val))
@@ -407,7 +406,7 @@ def phd_advisors(self, key, value):
     }
     degree_type = None
     if value.get("g"):
-        degree_type_raw = utils.force_list(value.get('g'))[0]
+        degree_type_raw = force_force_list(value.get('g'))[0]
         degree_type = degree_type_map.get(
             degree_type_raw.lower(),
             degree_type_raw

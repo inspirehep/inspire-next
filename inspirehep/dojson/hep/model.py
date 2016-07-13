@@ -25,10 +25,9 @@
 from __future__ import absolute_import, division, print_function
 
 from dojson import Overdo
-from dojson.utils import force_list
 
 from ..schema import SchemaOverdo
-from ..utils import get_record_ref
+from ..utils import force_force_list, get_record_ref
 
 
 def add_book_info(record, blob):
@@ -39,12 +38,12 @@ def add_book_info(record, blob):
             if c.get('primary', ''):
                 collections.append(c.get('primary').lower())
         if 'bookchapter' in collections:
-            pubinfos = force_list(blob.get("773__", []))
+            pubinfos = force_force_list(blob.get("773__", []))
             for pubinfo in pubinfos:
                 if pubinfo.get('0'):
                     record['book'] = {
                         'record': get_record_ref(
-                            int(force_list(pubinfo.get('0'))[0]), 'literature')
+                            int(force_force_list(pubinfo.get('0'))[0]), 'literature')
                     }
 
 

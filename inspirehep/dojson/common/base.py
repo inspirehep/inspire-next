@@ -35,6 +35,7 @@ from ..jobs.model import jobs
 from ..journals.model import journals
 from ..utils import (
     classify_field,
+    force_force_list,
     get_recid_from_ref,
     get_record_ref,
 )
@@ -171,7 +172,7 @@ def creation_modification_date2marc(self, key, value):
 @utils.ignore_value
 def spires_sysnos(self, key, value):
     """Old SPIRES number and new_recid from 970."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
     sysnos = []
     new_recid = None
     for val in value:
@@ -191,7 +192,7 @@ def spires_sysnos(self, key, value):
 @hepnames2marc.over('970', '(spires_sysnos|new_record)')
 def spires_sysnos2marc(self, key, value):
     """970 SPIRES number and new recid."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
     existing_values = self.get('970', [])
 
     if key == 'spires_sysnos':
@@ -215,7 +216,7 @@ def spires_sysnos2marc(self, key, value):
 @jobs.over('collections', '^980..')
 def collections(self, key, value):
     """Collection this record belongs to."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
 
     def get_value(value):
         primary = ''
@@ -324,7 +325,7 @@ def field_categories(self, key, value):
     """Field categories."""
     self.setdefault('field_categories', [])
 
-    _terms = utils.force_list(value.get('a'))
+    _terms = force_force_list(value.get('a'))
 
     if _terms:
         for _term in _terms:
@@ -366,7 +367,7 @@ def urls(self, key, value):
     if isinstance(description, (list, tuple)):
         description = description[0]
 
-    _urls = utils.force_list(value.get('u'))
+    _urls = force_force_list(value.get('u'))
 
     if _urls:
         for _url in _urls:

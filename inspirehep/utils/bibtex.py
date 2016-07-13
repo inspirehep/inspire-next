@@ -24,8 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
-from dojson.utils import force_list
-
+from inspirehep.dojson.utils import force_force_list
 from inspirehep.utils import bibtex_booktitle
 from inspirehep.utils.record_getter import get_es_record
 from inspirehep.utils.record import is_submitted_but_not_published
@@ -300,7 +299,7 @@ class Bibtex(Export):
         """Return record titles"""
         record_title = ''
         if 'titles' in self.record:
-            titles = force_list(self.record['titles'])
+            titles = force_force_list(self.record['titles'])
             for title in titles:
                 if 'title' in title:
                     record_title = title['title']
