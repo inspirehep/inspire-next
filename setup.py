@@ -62,8 +62,8 @@ install_requires = [
     'invenio-search>=1.0.0a7',
     'invenio-records-rest>=1.0.0a15',
     'invenio-records-ui>=1.0.0a6',
-    'invenio-files-rest==1.0.0a3',
-    'invenio-records-files==1.0.0a5',
+    'invenio-files-rest>=1.0.0a3',
+    'invenio-records-files>=1.0.0a5',
     'invenio-userprofiles>=1.0.0a7',
     'invenio-oaiharvester==1.0.0a2',
     'invenio-utils==0.2.0',  # Not fully Invenio 3 ready
