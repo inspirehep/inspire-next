@@ -26,6 +26,7 @@ from inspirehep.dojson.utils import (
     classify_field,
     classify_rank,
     create_profile_url,
+    force_single_element,
     get_int_value,
     get_recid_from_ref,
     get_record_ref,
@@ -125,6 +126,24 @@ def test_create_profile_url_returns_empty_string_when_not_given_an_int():
     result = create_profile_url('foo')
 
     assert expected == result
+
+
+def test_force_single_element_returns_first_element_on_a_list():
+    expected = 'foo'
+    result = force_single_element(['foo', 'bar', 'baz'])
+
+    assert expected == result
+
+
+def test_force_single_element_returns_element_when_not_a_list():
+    expected = 'foo'
+    result = force_single_element('foo')
+
+    assert expected == result
+
+
+def test_force_single_element_returns_none_on_empty_list():
+    assert force_single_element([]) is None
 
 
 def test_get_int_value_returns_int_with_valid_input():
