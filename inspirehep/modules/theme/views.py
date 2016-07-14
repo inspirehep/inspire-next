@@ -46,6 +46,8 @@ from flask.ext.menu import current_menu
 
 from inspirehep.modules.records.conference_series import \
     CONFERENCE_CATEGORIES_TO_SERIES
+from inspirehep.modules.references.view_utils import \
+    Reference
 
 from invenio_search import current_search_client
 from invenio_search.api import RecordsSearch
@@ -55,7 +57,6 @@ from inspirehep.utils.citations import Citation
 from inspirehep.utils.date import datetime
 from inspirehep.utils.search import perform_es_search
 from inspirehep.utils.record import get_title
-from inspirehep.utils.references import Reference
 from inspirehep.utils.template import render_macro_from_template
 from inspirehep.utils.conferences import render_conferences_in_the_same_series
 from inspirehep.utils.conferences import render_conferences_contributions
