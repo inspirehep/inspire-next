@@ -300,3 +300,17 @@ def test_get_value_returns_empty_dic_when_there_are_no_titles():
     result = get_value(empty_titles, "foo")
 
     assert expected == result
+
+def test_get_value_returns_none_on_index_error():
+    single_title = Record({
+        "titles": [
+            {
+                "title": "Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia"
+            }
+        ],
+    })
+
+    expected = None
+    result = get_value(single_title, "titles.title[1]")
+    
+    assert expected is result
