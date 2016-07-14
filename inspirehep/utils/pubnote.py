@@ -52,7 +52,7 @@ def split_page_artid(page_artid):
                 else:
                     artid = page_artid
             elif _RE_2_CHARS.search(page_artid):
-                # if it it has 2 ore more letters it's an article ID
+                # if it has 2 ore more letters it's an article ID
                 artid = page_artid
             elif len(page_artid) >= 5:
                 # it it is longer than 5 digits it's an article ID
