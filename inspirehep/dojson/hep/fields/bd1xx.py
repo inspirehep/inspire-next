@@ -27,13 +27,18 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import hep, hep2marc
-from ...utils import create_profile_url, get_recid_from_ref, get_record_ref
+from ...utils import (
+    create_profile_url,
+    force_force_list,
+    get_recid_from_ref,
+    get_record_ref,
+)
 
 
 @hep.over('authors', '^[17]00[103_].')
 def authors(self, key, value):
     """Main Entry-Personal Name."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
 
     def get_value(value):
         affiliations = []
@@ -43,7 +48,7 @@ def authors(self, key, value):
                 recid = int(value.get('z'))
             except:
                 pass
-            affiliations = utils.force_list(value.get('u'))
+            affiliations = force_force_list(value.get('u'))
             record = get_record_ref(recid, 'institutions')
             affiliations = [{'value': aff, 'record': record} for
                             aff in affiliations]
@@ -55,7 +60,7 @@ def authors(self, key, value):
                 pass
         inspire_id = ''
         if value.get('i'):
-            inspire_id = utils.force_list(value.get('i'))[0]
+            inspire_id = force_force_list(value.get('i'))[0]
         person_record = get_record_ref(person_recid, 'authors')
         ret = {
             'full_name': value.get('a'),
@@ -94,7 +99,7 @@ def authors(self, key, value):
 @hep2marc.over('100', '^authors$')
 def authors2marc(self, key, value):
     """Main Entry-Personal Name."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
 
     def get_value(value):
         affiliations = [

@@ -27,6 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import hep, hep2marc
+from ...utils import force_force_list
 
 
 @hep.over('title_translations', '^242[10_][0_]')
@@ -114,7 +115,7 @@ def titles2marc(self, key, value):
     arxiv_246_title = None
     titles = []
 
-    for title in utils.force_list(value):
+    for title in force_force_list(value):
         transformed_title = {
             'a': title.get('title'),
             'b': title.get('subtitle'),

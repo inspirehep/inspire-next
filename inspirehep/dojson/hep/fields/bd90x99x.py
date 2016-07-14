@@ -32,7 +32,12 @@ from dojson import utils
 from idutils import normalize_isbn
 
 from ..model import hep, hep2marc
-from ...utils import get_recid_from_ref, get_record_ref, strip_empty_values
+from ...utils import (
+    force_force_list,
+    get_recid_from_ref,
+    get_record_ref,
+    strip_empty_values,
+)
 
 
 RE_VALID_PUBNOTE = re.compile(".*,.*,.*(,.*)?")
@@ -41,7 +46,7 @@ RE_VALID_PUBNOTE = re.compile(".*,.*,.*(,.*)?")
 @hep.over('references', '^999C5')
 def references(self, key, value):
     """Produce list of references."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
 
     def get_valid_pubnotes(pubnotes):
         valid_pubnotes = []
@@ -79,26 +84,26 @@ def references(self, key, value):
         except (KeyError, ISBNError):
             isbn = ''
 
-        valid_pubnotes, raw_references = get_valid_pubnotes(utils.force_list(value.get('s')))
+        valid_pubnotes, raw_references = get_valid_pubnotes(force_force_list(value.get('s')))
 
         if value.get('x'):
-            raw_references += list(utils.force_list(value.get('x')))
+            raw_references += list(force_force_list(value.get('x')))
 
         return {
             'record': get_record_ref(recid, 'literature'),
             'texkey': value.get('1'),
             'doi': value.get('a'),
-            'collaboration': utils.force_list(value.get('c')),
+            'collaboration': force_force_list(value.get('c')),
             'editors': value.get('e'),
-            'authors': utils.force_list(value.get('h')),
-            'misc': utils.force_list(value.get('m')),
+            'authors': force_force_list(value.get('h')),
+            'misc': force_force_list(value.get('m')),
             'number': number,
             'isbn': isbn,
-            'publisher': utils.force_list(value.get('p')),
+            'publisher': force_force_list(value.get('p')),
             'maintitle': value.get('q'),
-            'report_number': utils.force_list(value.get('r')),
-            'title': utils.force_list(value.get('t')),
-            'urls': utils.force_list(value.get('u')),
+            'report_number': force_force_list(value.get('r')),
+            'title': force_force_list(value.get('t')),
+            'urls': force_force_list(value.get('u')),
             'journal_pubnote': valid_pubnotes,
             'raw_reference': raw_references,
             'year': year,

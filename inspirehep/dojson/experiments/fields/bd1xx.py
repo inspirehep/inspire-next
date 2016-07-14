@@ -29,7 +29,7 @@ import six
 from dojson import utils
 
 from ..model import experiments
-from ...utils import get_record_ref
+from ...utils import force_force_list, get_record_ref
 
 
 @experiments.over('experiment_names', '^119..')
@@ -38,7 +38,7 @@ def experiment_names(self, key, value):
     """Experiment names."""
     if value.get('u'):
         self.setdefault('affiliation', [])
-        raw_affiliations = utils.force_list(value.get('u'))
+        raw_affiliations = force_force_list(value.get('u'))
         for raw_affiliation in raw_affiliations:
             self['affiliation'].append(raw_affiliation)
 
@@ -104,7 +104,7 @@ def spokesperson(self, key, value):
 @experiments.over('collaboration', '^710..')
 def collaboration(self, key, value):
     """Collaboration of experiment."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
     collaborations = sorted((elem["g"] for elem in value if 'g' in elem), key=lambda x: len(x))
     if len(collaborations) > 1:
         self['collaboration_alternative_names'] = collaborations[1:]
@@ -129,7 +129,7 @@ def related_experiments(self, key, value):
 @experiments.over('date_started', '^046..')
 def date_started(self, key, value):
     """Date started and completed."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
     date_started = None
     for val in value:
         if val.get('t'):

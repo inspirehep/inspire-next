@@ -29,6 +29,7 @@ import six
 from dojson import utils
 
 from ..model import conferences
+from ...utils import force_force_list
 from ...utils.geo import parse_conference_address
 
 
@@ -44,7 +45,7 @@ def acronym(self, key, value):
 
     if value.get('a'):
         self.setdefault('titles', [])
-        raw_titles = utils.force_list(value.get('a'))
+        raw_titles = force_force_list(value.get('a'))
         for raw_title in raw_titles:
             title = {
                 'title': raw_title,
@@ -55,7 +56,7 @@ def acronym(self, key, value):
 
     if value.get('c'):
         self.setdefault('address', [])
-        raw_addresses = utils.force_list(value.get('c'))
+        raw_addresses = force_force_list(value.get('c'))
         for raw_address in raw_addresses:
             address = parse_conference_address(raw_address)
             self['address'].append(address)
@@ -97,7 +98,7 @@ def keywords(self, key, value):
             'value': value.get('a'),
             'source': value.get('9')
         }
-    value = utils.force_list(value)
+    value = force_force_list(value)
     keywords = self.get('keywords', [])
     for val in value:
         keywords.append(get_value(val))

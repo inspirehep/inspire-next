@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import hep, hep2marc
-from ...utils import get_record_ref
+from ...utils import force_force_list, get_record_ref
 
 
 @hep2marc.over('65017', 'field_categories')
@@ -45,7 +45,7 @@ def field_categories2marc(self, key, value):
 @hep.over('free_keywords', '^653[10_2][_1032546]')
 def free_keywords(self, key, value):
     """Free keywords."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
 
     def get_value(value):
         return {
@@ -107,7 +107,7 @@ def accelerator_experiments2marc(self, key, value):
 @hep.over('thesaurus_terms', '^695..')
 def thesaurus_terms(self, key, value):
     """Controlled keywords."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
 
     def get_value(value):
         try:

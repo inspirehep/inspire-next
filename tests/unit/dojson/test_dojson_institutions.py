@@ -180,7 +180,9 @@ def test_address_from_marcxml_371__a_b_c_d_e_g():
             'country': 'Germany',
             'country_code': 'DE',
             'state': 'Baden-Wuerttemberg',
-            'original_address': ('Philosophenweg 16',),
+            'original_address': [
+                'Philosophenweg 16',
+            ],
             'postal_code': '69120',
         },
     ]
@@ -208,7 +210,10 @@ def test_address_from_marcxml_371__double_a_b_c_d_e_g():
             'country': 'Germany',
             'country_code': 'DE',
             'state': 'Baden-Wuerttemberg',
-            'original_address': ('Philosophenweg 16', 'Heidelberg'),
+            'original_address': [
+                'Philosophenweg 16',
+                'Heidelberg',
+            ],
             'postal_code': '69120',
         },
     ]
@@ -236,7 +241,9 @@ def test_address_from_marcxml_371__a_double_b_c_d_e_g():
             'country': 'Germany',
             'country_code': 'DE',
             'state': 'Baden-Wuerttemberg',
-            'original_address': ('Philosophenweg 16',),
+            'original_address': [
+                'Philosophenweg 16',
+            ],
             'postal_code': '69120',
         },
     ]
@@ -293,7 +300,9 @@ def test_address_from_marcxml_371__a_b_c_d_double_e_g():
             'country': 'Germany',
             'country_code': 'DE',
             'state': 'Baden-Wuerttemberg',
-            'original_address': ('Philosophenweg 16',),
+            'original_address': [
+                'Philosophenweg 16',
+            ],
             'postal_code': '69120, DE-119',
         }
     ]
@@ -321,7 +330,9 @@ def test_address_from_marcxml_371__a_b_c_d_e_double_g():
             "country": "Germany",
             "country_code": "DE",
             "state": "Baden-Wuerttemberg",
-            "original_address": ("Philosophenweg 16",),
+            "original_address": [
+                "Philosophenweg 16",
+            ],
             "postal_code": "69120",
         },
     ]
@@ -359,7 +370,9 @@ def test_address_from_multiple_marcxml_371__a_b_c_d_e_g():
             'country': 'Germany',
             'country_code': 'DE',
             'state': 'Baden-Wuerttemberg',
-            'original_address': ('Philosophenweg 16',),
+            'original_address': [
+                'Philosophenweg 16',
+            ],
             'postal_code': '69120'
         },
         {
@@ -367,10 +380,10 @@ def test_address_from_multiple_marcxml_371__a_b_c_d_e_g():
             'country': 'USA',
             'country_code': 'US',
             'state': 'US-NM',
-            'original_address': (
+            'original_address': [
                 'Physical Science Lab',
                 'Las Cruces, NM 88003',
-            ),
+            ],
             "postal_code": "88003"
         },
     ]
@@ -403,9 +416,9 @@ def test_name_variants_from_410__a_9():
     expected = [
         {
             'source': 'DESY',
-            'value': (
+            'value': [
                 'Aachen Tech. Hochsch.',
-            ),
+            ],
         },
     ]
     result = strip_empty_values(institutions.do(create_record(snippet)))
@@ -423,10 +436,10 @@ def test_name_variants_from_410__double_a():
 
     expected = [
         {
-            'value': (
+            'value': [
                 'Theoretische Teilchenphysik und Kosmologie',
                 'Elementarteilchenphysik',
-            ),
+            ],
         },
     ]
     result = strip_empty_values(institutions.do(create_record(snippet)))

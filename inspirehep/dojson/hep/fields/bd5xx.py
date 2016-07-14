@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import hep, hep2marc
-from ...utils import get_record_ref
+from ...utils import force_force_list, get_record_ref
 
 
 @hep.over('public_notes', '^500..')
@@ -65,7 +65,7 @@ def hidden_notes(self, key, value):
             }
 
         if value.get('a'):
-            return [_hidden_note(value, a) for a in utils.force_list(value['a'])]
+            return [_hidden_note(value, a) for a in force_force_list(value['a'])]
         else:
             return [_hidden_note(value)]
 
@@ -98,8 +98,8 @@ def thesis(self, key, value):
         'date': value.get('d'),
     }
 
-    inst_names = utils.force_list(value.get('c', []))
-    inst_recids = utils.force_list(value.get('z', []))
+    inst_names = force_force_list(value.get('c', []))
+    inst_recids = force_force_list(value.get('z', []))
     if len(inst_names) != len(inst_recids):
         institutions = [{'name': name} for name in inst_names]
     else:

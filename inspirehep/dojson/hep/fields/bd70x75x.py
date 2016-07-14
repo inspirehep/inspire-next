@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import hep, hep2marc
-from ...utils import get_record_ref
+from ...utils import force_force_list, get_record_ref
 
 
 @hep.over('thesis_supervisor', '^701..')
@@ -59,7 +59,7 @@ def thesis_supervisor2marc(self, key, value):
 @hep.over('collaboration', '^710[10_2][_2]')
 def collaboration(self, key, value):
     """Added Entry-Corporate Name."""
-    value = utils.force_list(value)
+    value = force_force_list(value)
 
     def get_value(value):
         recid = None

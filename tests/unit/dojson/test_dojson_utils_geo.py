@@ -122,7 +122,7 @@ def test_parse_institution_address_adds_country_code():
         'city': 'Beijing',
         'country': 'China',
         'country_code': 'CN',
-        'original_address': None,
+        'original_address': [],
         'postal_code': '123-CFG',
         'state': None,
     }
@@ -136,16 +136,18 @@ def test_parse_institution_address_preserves_the_original_address():
         'address': 'Tuscaloosa, AL 35487-0324',
         'city': 'Tuscaloosa',
         'state_province': 'AL',
-        'country': None,
+        'country': '',
         'postal_code': 'PO Box 870324',
         'country_code': None,
     }
 
     expected = {
         'city': 'Tuscaloosa',
-        'country': None,
+        'country': '',
         'country_code': 'US',
-        'original_address': ('Tuscaloosa, AL 35487-0324',),
+        'original_address': [
+            'Tuscaloosa, AL 35487-0324',
+        ],
         'postal_code': 'PO Box 870324',
         'state': 'US-AL',
     }
@@ -166,9 +168,9 @@ def test_parse_institution_address_handles_state_province_none():
 
     expected = {
         'city': 'Beijing',
-        'country': None,
+        'country': '',
         'country_code': None,
-        'original_address': None,
+        'original_address': [],
         'postal_code': '123-CFG',
         'state': None,
     }

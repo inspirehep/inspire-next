@@ -27,7 +27,12 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import hep, hep2marc
-from ...utils import get_recid_from_ref, get_record_ref, split_page_artid
+from ...utils import (
+    force_force_list,
+    get_recid_from_ref,
+    get_record_ref,
+    split_page_artid,
+)
 
 
 @hep.over('publication_info', '^773..')
@@ -37,7 +42,7 @@ def publication_info(self, key, value):
     """Publication info about record."""
     def get_int_value(val):
         if val:
-            out = utils.force_list(val)[0]
+            out = force_force_list(val)[0]
             if out.isdigit():
                 out = int(out)
                 return out
@@ -66,7 +71,7 @@ def publication_info(self, key, value):
         'reportnumber': value.get('r'),
         'confpaper_info': value.get('t'),
         'journal_volume': value.get('v'),
-        'cnum': utils.force_list(value.get('w')),
+        'cnum': force_force_list(value.get('w')),
         'pubinfo_freetext': value.get('x'),
         'year': year,
         'isbn': value.get('z'),
