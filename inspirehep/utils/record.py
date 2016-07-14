@@ -91,7 +91,7 @@ def get_value(record, key, default=None):
             >>> %timeit x = dd['a'][0]['b']
             1000000 loops, best of 3: 598 ns per loop
     """
-    def getitem(k, v):
+    def getitem(k, v, default):
         if isinstance(v, dict):
             return v[k]
         elif ']' in k:
@@ -99,6 +99,8 @@ def get_value(record, key, default=None):
             # Work around for list indexes and slices
             try:
                 return v[int(k)]
+            except IndexError:
+                return default
             except ValueError:
                 return v[slice(*map(
                     lambda x: int(x.strip()) if x.strip() else None,
@@ -108,7 +110,7 @@ def get_value(record, key, default=None):
             tmp = []
             for inner_v in v:
                 try:
-                    tmp.append(getitem(k, inner_v))
+                    tmp.append(getitem(k, inner_v, default))
                 except KeyError:
                     continue
             return tmp
@@ -123,7 +125,7 @@ def get_value(record, key, default=None):
     value = record
     for k in keys:
         try:
-            value = getitem(k, value)
+            value = getitem(k, value, default)
         except KeyError:
             return default
     return value
