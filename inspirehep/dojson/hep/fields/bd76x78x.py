@@ -31,8 +31,9 @@ from ...utils import (
     force_force_list,
     get_recid_from_ref,
     get_record_ref,
-    split_page_artid,
 )
+
+from inspirehep.utils.pubnote import split_page_artid
 
 
 @hep.over('publication_info', '^773..')

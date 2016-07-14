@@ -40,9 +40,6 @@ from inspirehep.config import (
 from inspirehep.utils.dedupers import dedupe_list, dedupe_list_of_dicts
 
 
-_RE_2_CHARS = re.compile(r"[a-z].*[a-z]", re.I)
-
-
 def classify_field(value):
     """Classify value as a key of ARXIV_TO_INSPIRE_CATEGORY_MAPPING."""
     if not value:
@@ -261,33 +258,3 @@ def dedupe_all_lists(obj):
 
 def clean_record(rec):
     return dedupe_all_lists(strip_empty_values(rec))
-
-
-def split_page_artid(page_artid):
-    """Split page_artid into page_start/end and artid."""
-    page_start = None
-    page_end = None
-    artid = None
-
-    for page_artid in force_force_list(page_artid):
-        if page_artid:
-            if '-' in page_artid:
-                # if it has a dash it's a page range
-                page_range = page_artid.split('-')
-                if len(page_range) == 2:
-                    page_start, page_end = page_range
-                else:
-                    artid = page_artid
-            elif _RE_2_CHARS.search(page_artid):
-                # if it it has 2 ore more letters it's an article ID
-                artid = page_artid
-            elif len(page_artid) >= 5:
-                # it it is longer than 5 digits it's an article ID
-                artid = page_artid
-            else:
-                if artid is None:
-                    artid = page_artid
-                if page_start is None:
-                    page_start = page_artid
-
-    return page_start, page_end, artid
