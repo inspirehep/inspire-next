@@ -34,7 +34,7 @@ from dojson import utils
 from dojson.errors import IgnoreKey
 from idutils import is_arxiv_post_2007
 
-from inspirehep.dojson.utils import split_page_artid
+from inspirehep.utils.pubnote import split_page_artid
 
 from ..model import literature
 

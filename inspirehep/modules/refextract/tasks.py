@@ -25,7 +25,7 @@
 from refextract import extract_journal_reference, extract_references_from_file
 
 from inspirehep.utils.record import get_value
-from inspirehep.dojson.utils import split_page_artid
+from inspirehep.utils.pubnote import split_page_artid
 
 # FIXME get journal mappings for refextract
 # from inspirehep.utils.knowledge import get_mappings_from_kbname
