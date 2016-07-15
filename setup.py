@@ -77,6 +77,7 @@ install_requires = [
     'jsmin',
     'pytest-runner>=2.7.0',
     'workflow>=2.0.0',
+    'html5lib<1.0b9',
 ]
 
 tests_require = [
