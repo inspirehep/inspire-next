@@ -106,13 +106,6 @@ def keywords(self, key, value):
     return keywords
 
 
-@conferences.over('nonpublic_note', '^595')
-@utils.for_each_value
-def nonpublic_note(self, key, value):
-    """Non public note."""
-    return value.get('a')
-
-
 @conferences.over('note', '^500')
 @utils.for_each_value
 def note(self, key, value):
