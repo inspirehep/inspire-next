@@ -241,6 +241,58 @@ def test_contact_details_from_multiple_marcxml_270():
     assert expected == result['contact_details']
 
 
+def test_address_from_270__b():
+    snippet = (
+        '<record>'
+        '  <datafield tag="270" ind1=" " ind2=" ">'
+        '    <subfield code="b">British Columbia</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'country_code': 'CA',
+            'original_address': 'British Columbia',
+        },
+    ]
+    result = clean_record(conferences.do(create_record(snippet)))
+
+    assert expected == result['address']
+
+
+def test_address_from_111__a_c_e_g_x_y_and_270__b():
+    snippet = (
+        '<record>'
+        '  <datafield tag="111" ind1=" " ind2=" ">'
+        '    <subfield code="a">2017 International Workshop on Baryon and Lepton Number Violation: From the Cosmos to the LHC</subfield>'
+        '    <subfield code="c">Cleveland, Ohio, USA</subfield>'
+        '    <subfield code="e">BLV 2017</subfield>'
+        '    <subfield code="g">C17-05-15</subfield>'
+        '    <subfield code="x">2017-05-15</subfield>'
+        '    <subfield code="y">2017-05-18</subfield>'
+        '  </datafield>'
+        '  <datafield tag="270" ind1=" " ind2=" ">'
+        '    <subfield code="b">Case Western Reserve University</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1353313
+
+    expected = [
+        {
+            'original_address': 'Cleveland, Ohio, USA',
+            'country_code': 'US',
+            'state': 'US-OH',
+        },
+        {
+            'original_address': 'Case Western Reserve University',
+        },
+    ]
+    result = clean_record(conferences.do(create_record(snippet)))
+
+    assert expected == result['address']
+
+
 def test_keywords_from_multiple_6531_a_9():
     snippet = (
         '<record>'
