@@ -83,6 +83,13 @@ class Reference(object):
                         row.append(ref_record.get('citation_count', ''))
                         out.append(row)
                 else:
+                    # Easier to use record macros over reference records.
+                    if 'publication_info' in reference:
+                        reference['publication_info'] = [reference['publication_info']]
+                    else:
+                        reference['publication_info'] = []
+                    reference = Record(reference)
+
                     row.append(render_template_to_string(
                         "inspirehep_theme/references.html",
                         reference=reference))

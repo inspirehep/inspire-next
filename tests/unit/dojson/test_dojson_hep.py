@@ -666,7 +666,7 @@ def test_references(marcxml_to_json, json_to_marc, marcxml_record):
             assert json_repnos.issubset(initial_repnos)
         if 't' in marc_init:
             initial_titles = _force_set(marc_init['t'])
-            json_titles = _force_set([t['value'] for t in json_val['titles']])
+            json_titles = _force_set([t['title'] for t in json_val['titles']])
             roundtrip_titles = _force_set(marc_val['t'])
             assert initial_titles == json_titles
             assert initial_titles == roundtrip_titles

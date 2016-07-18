@@ -40,13 +40,13 @@
   </inspire-export-modal>
 {% endmacro %}
 
-{% macro record_publication_info(record) %}
+{% macro record_publication_info(record, prepend_text='Published in') %}
   {% set pub_info = record|publication_info %}
   {% if pub_info['pub_info'] %}
     {% if pub_info['pub_info']|length == 1 %}
-      Published in <em>{{ pub_info['pub_info'][0] }}</em>
+      {{ prepend_text }} <em>{{ pub_info['pub_info'][0] }}</em>
     {% else %}
-      Published in <em>{{ pub_info['pub_info']|join(' and ') }}</em>
+      {{ prepend_text }} <em>{{ pub_info['pub_info']|join(' and ') }}</em>
     {% endif %}
   {% endif %}
   {% if pub_info['conf_info'] %}

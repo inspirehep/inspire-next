@@ -125,7 +125,7 @@ def references2marc(self, key, value):
         'i': get_value(value, 'publication_info.isbn'),
         'p': get_value(value, 'imprint.publisher'),
         'r': repnos,
-        't': get_value(value, 'titles[:].value'),
+        't': get_value(value, 'titles[:].title'),
         'u': get_value(value, 'urls[:].value'),
         's': pubnote,
         'x': get_value(value, 'raw_reference[:].value'),

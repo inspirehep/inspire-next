@@ -86,7 +86,7 @@ class ReferenceBuilder(object):
 
     def add_title(self, title):
         self._ensure_field('titles', [])
-        self.obj['titles'].append({'value': title})
+        self.obj['titles'].append({'title': title})
 
     def add_misc(self, misc):
         self._ensure_field('misc', [])

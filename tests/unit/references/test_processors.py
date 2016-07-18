@@ -51,7 +51,7 @@ def test_reference_builder_no_uids():
     expected = {
         'number': 1,
         'texkey': 'book',
-        'titles': [{'value': 'Awesome Paper'}],
+        'titles': [{'title': 'Awesome Paper'}],
         'raw_reference': [
             {'value': '[1] Awesome Paper', 'serialization': 'text'},
             {'value': 'BAD PUBNOTE', 'serialization': 'text'}
