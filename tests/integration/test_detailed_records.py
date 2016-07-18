@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
-
 from invenio_records.models import RecordMetadata
 
 from inspirehep.modules.migrator.models import InspireProdRecords
@@ -45,7 +43,6 @@ def test_all_records_are_valid(app):
     assert recids == []
 
 
-@pytest.mark.xfail(reason='302 is returned')
 def test_all_records_are_there(app):
     with app.test_client() as client:
         failed = []

@@ -539,43 +539,51 @@ RECORDS_UI_ENDPOINTS = dict(
         route='/literature/<pid_value>',
         template='inspirehep_theme/format/record/'
                  'Inspire_Default_HTML_detailed.tpl',
-        record_class='inspirehep.modules.records.es_record:ESRecord'
+        record_class='inspirehep.modules.records.es_record:ESRecord',
+        permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     authors=dict(
         pid_type='authors',
         route='/authors/<pid_value>',
         template='inspirehep_theme/format/record/'
-                 'authors/Author_HTML_detailed.html'
+                 'authors/Author_HTML_detailed.html',
+        permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     data=dict(
         pid_type='data',
         route='/data/<pid_value>',
-        template='inspirehep_theme/format/record/Data_HTML_detailed.tpl'
+        template='inspirehep_theme/format/record/Data_HTML_detailed.tpl',
+        permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     conferences=dict(
         pid_type='conferences',
         route='/conferences/<pid_value>',
-        template='inspirehep_theme/format/record/Conference_HTML_detailed.tpl'
+        template='inspirehep_theme/format/record/Conference_HTML_detailed.tpl',
+        permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     jobs=dict(
         pid_type='jobs',
         route='/jobs/<pid_value>',
-        template='inspirehep_theme/format/record/Job_HTML_detailed.tpl'
+        template='inspirehep_theme/format/record/Job_HTML_detailed.tpl',
+        permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     institutions=dict(
         pid_type='institutions',
         route='/institutions/<pid_value>',
-        template='inspirehep_theme/format/record/Institution_HTML_detailed.tpl'
+        template='inspirehep_theme/format/record/Institution_HTML_detailed.tpl',
+        permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     experiments=dict(
         pid_type='experiments',
         route='/experiments/<pid_value>',
-        template='inspirehep_theme/format/record/Experiment_HTML_detailed.tpl'
+        template='inspirehep_theme/format/record/Experiment_HTML_detailed.tpl',
+        permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     journals=dict(
         pid_type='journals',
         route='/journals/<pid_value>',
-        template='inspirehep_theme/format/record/Journal_HTML_detailed.tpl'
+        template='inspirehep_theme/format/record/Journal_HTML_detailed.tpl',
+        permission_factory_imp='invenio_records_rest.utils:allow_all',
     )
 )
 
