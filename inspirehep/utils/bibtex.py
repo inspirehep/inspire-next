@@ -24,10 +24,10 @@ from __future__ import absolute_import, division, print_function
 
 import re
 
-from inspirehep.dojson.utils import force_force_list
 from inspirehep.utils import bibtex_booktitle
-from inspirehep.utils.record_getter import get_es_record
+from inspirehep.utils.helpers import force_force_list
 from inspirehep.utils.record import is_submitted_but_not_published
+from inspirehep.utils.record_getter import get_es_record
 
 from .export import MissingRequiredFieldError, Export
 

@@ -28,11 +28,11 @@ from dojson import utils
 
 from ..model import hep, hep2marc
 from ...utils import (
-    force_force_list,
     get_recid_from_ref,
     get_record_ref,
 )
 
+from inspirehep.utils.helpers import force_force_list
 from inspirehep.utils.pubnote import split_page_artid
 
 

@@ -27,15 +27,10 @@ from __future__ import absolute_import, division, print_function
 import re
 from functools import partial
 
-import idutils
-
-from isbn import ISBNError
-
 from dojson import utils
 
 from ..model import hep, hep2marc
 from ...utils import (
-    force_force_list,
     get_int_value,
     get_recid_from_ref,
     get_record_ref,
@@ -44,6 +39,10 @@ from ...utils import (
 from inspirehep.modules.references.processors import ReferenceBuilder
 from inspirehep.utils.pubnote import build_pubnote
 from inspirehep.utils.record import get_value
+from inspirehep.utils.helpers import force_force_list
+
+
+RE_VALID_PUBNOTE = re.compile(".*,.*,.*(,.*)?")
 
 
 @hep.over('references', '^999C5')

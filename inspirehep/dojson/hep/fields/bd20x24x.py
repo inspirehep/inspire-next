@@ -27,7 +27,8 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import hep, hep2marc
-from ...utils import force_force_list
+
+from inspirehep.utils.helpers import force_force_list
 
 
 @hep.over('title_translations', '^242[10_][0_]')
