@@ -31,10 +31,11 @@ from dojson import utils
 from ..model import jobs
 from ...utils import (
     classify_rank,
-    force_force_list,
     force_single_element,
     get_record_ref,
 )
+
+from inspirehep.utils.helpers import force_force_list
 
 
 @jobs.over('date_closed', '^046..')

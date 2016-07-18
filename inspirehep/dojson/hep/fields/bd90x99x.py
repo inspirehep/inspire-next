@@ -33,11 +33,12 @@ from idutils import normalize_isbn
 
 from ..model import hep, hep2marc
 from ...utils import (
-    force_force_list,
     get_recid_from_ref,
     get_record_ref,
     strip_empty_values,
 )
+
+from inspirehep.utils.helpers import force_force_list
 
 
 RE_VALID_PUBNOTE = re.compile(".*,.*,.*(,.*)?")

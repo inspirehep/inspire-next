@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import six
 
-from . import force_force_list
+from inspirehep.utils.helpers import force_force_list
 
 
 country_to_iso_code = {

@@ -23,7 +23,6 @@
 import mock
 
 from inspirehep.dojson.utils import (
-    force_force_list,
     classify_field,
     classify_rank,
     create_profile_url,
@@ -34,27 +33,6 @@ from inspirehep.dojson.utils import (
     legacy_export_as_marc,
     dedupe_all_lists,
 )
-
-
-def test_force_force_list_returns_empty_list_on_none():
-    expected = []
-    result = force_force_list(None)
-
-    assert expected == result
-
-
-def test_force_force_list_wraps_strings_in_a_list():
-    expected = ['foo']
-    result = force_force_list('foo')
-
-    assert expected == result
-
-
-def test_force_force_list_converts_tuples_to_lists():
-    expected = ['foo', 'bar', 'baz']
-    result = force_force_list(('foo', 'bar', 'baz'))
-
-    assert expected == result
 
 
 def test_classify_field_returns_none_on_falsy_value():

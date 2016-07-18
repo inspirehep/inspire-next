@@ -24,7 +24,8 @@ from HTMLParser import HTMLParser
 
 import dojson
 
-from inspirehep.dojson.utils import force_force_list
+from inspirehep.utils.helpers import force_force_list
+
 from inspirehep.utils.record import get_abstract, get_subtitle, get_title
 
 from .config import ORCID_WORK_TYPES

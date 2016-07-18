@@ -27,8 +27,10 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import institutions
-from ...utils import force_force_list, get_record_ref
+from ...utils import get_record_ref
 from ...utils.geo import parse_institution_address
+
+from inspirehep.utils.helpers import force_force_list
 
 
 @institutions.over('location', '^034..')
