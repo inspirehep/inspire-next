@@ -22,6 +22,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
+
 from invenio_records.models import RecordMetadata
 
 from inspirehep.modules.migrator.models import InspireProdRecords
@@ -43,6 +45,7 @@ def test_all_records_are_valid(app):
     assert recids == []
 
 
+@pytest.mark.xfail(reason='302 is returned')
 def test_all_records_are_there(app):
     with app.test_client() as client:
         failed = []
@@ -51,7 +54,9 @@ def test_all_records_are_there(app):
             try:
                 absolute_url = record['self']['$ref']
                 relative_url = absolute_url.partition('api')[2]
-                client.get(relative_url)
+                response = client.get(relative_url)
+
+                assert response.status_code == 200
             except Exception:
                 failed.append(record['control_number'])
 
