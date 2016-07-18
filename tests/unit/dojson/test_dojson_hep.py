@@ -578,7 +578,7 @@ def test_succeeding_entry(marcxml_to_json, json_to_marc):
             ['relationship_code'] ==
             json_to_marc['785']['r'])
     assert (get_recid_from_ref(
-                marcxml_to_json['succeeding_entry']['record']) ==
+            marcxml_to_json['succeeding_entry']['record']) ==
             json_to_marc['785']['w'])
     assert (marcxml_to_json['succeeding_entry']['isbn'] ==
             json_to_marc['785']['z'])
@@ -590,14 +590,6 @@ def test_url(marcxml_to_json, json_to_marc):
             json_to_marc['8564'][0]['u'])
     assert (marcxml_to_json['urls'][0]['description'] ==
             json_to_marc['8564'][0]['y'])
-
-
-def test_oai_pmh(marcxml_to_json, json_to_marc):
-    """Test if oal_pmh is created correctly."""
-    assert (marcxml_to_json['oai_pmh'][0]['id'] ==
-            json_to_marc['909CO'][0]['o'])
-    assert (marcxml_to_json['oai_pmh'][0]['set'] ==
-            json_to_marc['909CO'][0]['p'])
 
 
 def test_collections(marcxml_to_json, json_to_marc):

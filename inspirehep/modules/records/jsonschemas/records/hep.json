@@ -518,7 +518,8 @@
                         },
                         "type": "array"
                     }
-                }
+                },
+                "type": "object"
             },
             "type": "array"
         },
@@ -557,21 +558,6 @@
                         "description": "Title of the book series"
                     }
                 }
-            },
-            "type": "array"
-        },
-        "oai_pmh": {
-            "items": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "string"
-                    },
-                    "previous_set": {
-                        "type": "string"
-                    }
-                },
-                "description": "Local OAI-PMH information"
             },
             "type": "array"
         },

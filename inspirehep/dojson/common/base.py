@@ -102,37 +102,6 @@ def date_and_time_of_latest_transaction2marc(self, key, value):
     return value
 
 
-@hep.over('oai_pmh', '^909CO')
-@conferences.over('oai_pmh', '^909CO')
-@institutions.over('oai_pmh', '^909CO')
-@experiments.over('oai_pmh', '^909CO')
-@journals.over('oai_pmh', '^909CO')
-@hepnames.over('oai_pmh', '^909CO')
-@jobs.over('oai_pmh', '^909CO')
-@utils.for_each_value
-@utils.filter_values
-def oai_pmh(self, key, value):
-    """Local OAI-PMH record information."""
-    return {
-        'id': value.get('o'),
-        'set': value.get('p'),
-        'previous_set': value.get('q'),
-    }
-
-
-@hep2marc.over('909CO', 'oai_pmh')
-@hepnames2marc.over('909CO', 'oai_pmh')
-@utils.for_each_value
-@utils.filter_values
-def oai_pmh2marc(self, key, value):
-    """Local OAI-PMH record information."""
-    return {
-        'o': value.get('id'),
-        'p': value.get('set'),
-        'q': value.get('previous_set')
-    }
-
-
 @hep.over('creation_modification_date', '^961..')
 @conferences.over('creation_modification_date', '^961..')
 @institutions.over('creation_modification_date', '^961..')
