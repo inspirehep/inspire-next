@@ -29,18 +29,34 @@ import six
 from dojson import utils
 
 from ..model import experiments
-from ...utils import force_force_list, get_record_ref
+from ...utils import clean_record, force_force_list, get_record_ref
 
 
 @experiments.over('experiment_names', '^119..')
 @utils.for_each_value
 def experiment_names(self, key, value):
     """Experiment names."""
-    if value.get('u'):
+
+    name = value.get('u')
+
+    if name or value.get('z'):
         self.setdefault('affiliation', [])
-        raw_affiliations = force_force_list(value.get('u'))
-        for raw_affiliation in raw_affiliations:
-            self['affiliation'].append(raw_affiliation)
+
+        curated_relation = False
+        recid = None
+        z_val = value.get('z', '')
+        if isinstance(z_val, six.string_types) and z_val.isdigit():
+            curated_relation = True
+            recid = int(z_val)
+
+        if name or recid:
+            self['affiliation'].append(
+                {
+                    'curated_relation': curated_relation,
+                    'record': get_record_ref(recid, 'institutions'),
+                    'name': name
+                }
+            )
 
     return {
         'source': value.get('9'),
@@ -104,8 +120,10 @@ def spokesperson(self, key, value):
 @experiments.over('collaboration', '^710..')
 def collaboration(self, key, value):
     """Collaboration of experiment."""
+
     value = force_force_list(value)
     collaborations = sorted((elem["g"] for elem in value if 'g' in elem), key=lambda x: len(x))
+
     if len(collaborations) > 1:
         self['collaboration_alternative_names'] = collaborations[1:]
     if collaborations:

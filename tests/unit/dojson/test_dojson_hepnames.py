@@ -31,7 +31,7 @@ import pytest
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hepnames import hepnames2marc, hepnames
-from inspirehep.dojson.utils import strip_empty_values
+from inspirehep.dojson.utils import get_recid_from_ref, strip_empty_values
 
 
 @pytest.fixture
@@ -125,6 +125,9 @@ def test_phd_advisors(marcxml_to_json, json_to_marc):
             json_to_marc['701'][0]['a'])
     assert (marcxml_to_json['phd_advisors'][0]['degree_type'] ==
             json_to_marc['701'][0]['g'])
+    assert (get_recid_from_ref(
+        marcxml_to_json['phd_advisors'][0]['record']) ==
+            json_to_marc['701'][0]['x'])
 
 
 def test_positions(marcxml_to_json, json_to_marc):

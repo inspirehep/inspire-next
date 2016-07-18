@@ -27,7 +27,7 @@ import pytest
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.institutions import institutions
-from inspirehep.dojson.utils import strip_empty_values
+from inspirehep.dojson.utils import clean_record
 
 
 def test_location_from_034__d_f():
@@ -42,7 +42,7 @@ def test_location_from_034__d_f():
         'longitude': 6.07532,
         'latitude': 50.7736,
     }
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['location']
 
@@ -57,7 +57,7 @@ def test_location_from_034__d():
     expected = {
         'longitude': 6.07532,
     }
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['location']
 
@@ -72,7 +72,7 @@ def test_location_from_034__f():
     expected = {
         'latitude': 50.7736,
     }
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['location']
 
@@ -85,7 +85,7 @@ def test_no_location_from_invalid_034__d_f():
         '</datafield>'
     )  # synthetic data
 
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert 'location' not in result
 
@@ -98,7 +98,7 @@ def test_timezone_from_043__t():
     )  # record/902635
 
     expected = ['+05']
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['timezone']
 
@@ -111,7 +111,7 @@ def test_name_from_110__a():
     )  # record/1439728
 
     expected = [['Mid-America Christian U.']]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['name']
 
@@ -126,7 +126,7 @@ def test_name_from_110__a_b_u():
     )  # record/902812
 
     expected = [['Fukushima University', 'Fukushima U.']]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['name']
 
@@ -141,7 +141,7 @@ def test_name_from_110__b_t_u():
     )   # record/903416
 
     expected = [['Belgrade, Inst. Phys.', 'Inst. Phys., Belgrade']]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['name']
 
@@ -157,7 +157,7 @@ def test_name_from_110__a_b_t_u():
     )  # record/902628
 
     expected = [['Adelphi University', 'Adelphi U.', 'Adelphi U., Dept. Phys.']]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['name']
 
@@ -186,7 +186,7 @@ def test_address_from_marcxml_371__a_b_c_d_e_g():
             'postal_code': '69120',
         },
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['address']
 
@@ -217,7 +217,7 @@ def test_address_from_marcxml_371__double_a_b_c_d_e_g():
             'postal_code': '69120',
         },
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['address']
 
@@ -247,7 +247,7 @@ def test_address_from_marcxml_371__a_double_b_c_d_e_g():
             'postal_code': '69120',
         },
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['address']
 
@@ -276,7 +276,7 @@ def test_address_from_marcxml_371__a_b_c_double_d_e_g():
             'postal_code': '69120',
         },
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['address']
 
@@ -306,7 +306,7 @@ def test_address_from_marcxml_371__a_b_c_d_double_e_g():
             'postal_code': '69120, DE-119',
         }
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['address']
 
@@ -336,7 +336,7 @@ def test_address_from_marcxml_371__a_b_c_d_e_double_g():
             "postal_code": "69120",
         },
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['address']
 
@@ -387,7 +387,7 @@ def test_address_from_multiple_marcxml_371__a_b_c_d_e_g():
             "postal_code": "88003"
         },
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['address']
 
@@ -400,7 +400,7 @@ def test_field_activity_from_372__a():
     )
 
     expected = ['Research center']
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['field_activity']
 
@@ -421,7 +421,7 @@ def test_name_variants_from_410__a_9():
             ],
         },
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['name_variants']
 
@@ -442,7 +442,7 @@ def test_name_variants_from_410__double_a():
             ],
         },
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['name_variants']
 
@@ -475,7 +475,7 @@ def test_extra_words_from_410__decuple_g():
         'phys',
         'I. Physikalisches Institut',
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['extra_words']
 
@@ -487,7 +487,7 @@ def test_core_from_690c_a_core():
         '</datafield>'
     )  # record/902645
 
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert result['core']
 
@@ -499,7 +499,7 @@ def test_core_from_690c_a_noncore():
         '</datafield>'
     )  # record/916025
 
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert not result['core']
 
@@ -512,7 +512,7 @@ def test_non_public_notes_from_667__a():
     )  # record/902663
 
     expected = ['Former ICN = Negev U.']
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['non_public_notes']
 
@@ -525,7 +525,7 @@ def test_hidden_notes_from_595__a():
     )  # record/902879
 
     expected = [u'The Division is located inside the Department of Physics and Astronomy of the University of Catania Scientific Campus ("Città Universitaria" or "Cittadella"). Via Santa Sofia 64 95123 CATANIA']
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['hidden_notes']
 
@@ -546,7 +546,7 @@ def test_hidden_notes_from_double_595__a():
         u'The Roma II Structure was established in 1989 at the University of Rome “Tor Vergata” - cc',
         u'REDACTED thinks we don\'t have to write 110__t: "INFN, Rome 2" because Rome 2 is only in the url but not in the site. She\'ll ask to REDACTED (from INFN) to have her feedback.',
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['hidden_notes']
 
@@ -561,7 +561,7 @@ def test_public_notes_from_680__a():
     expected = [
         u'2nd address: Organisation Européenne pour la Recherche Nucléaire (CERN), F-01631 Prévessin Cedex, France'
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['public_notes']
 
@@ -576,7 +576,7 @@ def test_historical_data_from_6781_a():
     expected = [
         'Became IFH (Inst for Hochenergiephysik)in 1968. Since 1992 the official name of the Inst. is simply DESY Zeuthen. Changed 1/26/99 AMR'
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['historical_data']
 
@@ -597,7 +597,7 @@ def test_historical_data_from_6781_a():
         u'Sub title: Laboratoire européen pour la Physique des Particules (1984-now)',
         u'Sub title: European Laboratory for Particle Physics (1984-now)',
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['historical_data']
 
@@ -621,7 +621,7 @@ def test_related_institutes_from__510_a_w_0():
             },
         },
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['related_institutes']
 
@@ -660,7 +660,7 @@ def test_related_institutes_from__double_510_a_w_0():
             },
         },
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['related_institutes']
 
@@ -684,7 +684,7 @@ def test_related_institutes_from__510_a_w_0_other():
             },
         },
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['related_institutes']
 
@@ -723,7 +723,7 @@ def test_related_institutes_from__double_510_a_w_0_predecessor():
             },
         },
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['related_institutes']
 
@@ -747,7 +747,7 @@ def test_related_institutes_from__510_a_w_0_successor():
             },
         },
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['related_institutes']
 
@@ -764,6 +764,6 @@ def test_related_institutes_from__invalid_510__0():
             'curated_relation': False,
         },
     ]
-    result = strip_empty_values(institutions.do(create_record(snippet)))
+    result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['related_institutes']

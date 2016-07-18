@@ -92,8 +92,18 @@ def continent(self, key, value):
 @jobs.over('experiments', '^693..')
 @utils.for_each_value
 def experiments(self, key, value):
-    """Contact person."""
-    return value.get('e')
+    """Experiment."""
+    curated_relation = False
+    recid = None
+    name = value.get('e')
+    if value.get('0') and value.get('0').isdigit():
+        curated_relation = True
+        recid = int(value.get('0'))
+    return {
+        'curated_relation': curated_relation,
+        'record': get_record_ref(recid, 'experiments'),
+        'name': name,
+    }
 
 
 @jobs.over('institution', '^110..')
@@ -108,14 +118,14 @@ def institution(self, key, value):
         recid = int(value.get('z'))
     return {
         'curated_relation': curated_relation,
-        'record': get_record_ref(recid, 'isntitutions'),
+        'record': get_record_ref(recid, 'institutions'),
         'name': value.get('a'),
     }
 
 
 @jobs.over('description', '^520..')
 def description(self, key, value):
-    """Contact person."""
+    """Job description."""
     return value.get('a')
 
 
