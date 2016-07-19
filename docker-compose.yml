@@ -40,7 +40,7 @@ services:
   web:
     extends:
       service: service_base
-    command: inspirehep run -h 0.0.0.0
+    command: inspirehep run -h 0.0.0.0 --debugger --reload
     volumes_from:
       - static
     ports:

@@ -4,7 +4,7 @@
         "self": {
           "description": "Url of the record itself",
           "title": "Url of the record",
-          "$ref": "json_reference.json"
+          "$ref": "elements/json_reference.json"
         },
         "accelerator": {
             "enum": [
@@ -20,7 +20,7 @@
         },
         "affiliation_record": {
             "title": "Institution record URI",
-            "$ref": "json_reference.json"
+            "$ref": "elements/json_reference.json"
         },
         "collaboration": {
             "title": "Collaboration",
@@ -126,7 +126,7 @@
                     },
                     "record": {
                         "title": "URI for the related experiment record",
-                        "$ref": "json_reference.json"
+                        "$ref": "elements/json_reference.json"
                     }
                 },
                 "type": "object"
@@ -162,7 +162,7 @@
                     },
                     "record": {
                         "title": "URI for the person record",
-                        "$ref": "json_reference.json"
+                        "$ref": "elements/json_reference.json"
                     }
                 },
                 "required": [

@@ -38,6 +38,9 @@ def store_record(obj, *args, **kwargs):
     assert "$schema" in obj.data, "No $schema attribute found!"
 
     # Create record
+    # FIXME: Do some preprocessing of obj.data before creating a record so that
+    # we're sure that the schema will be validated without touching the full
+    # holdingpen stack.
     record = Record.create(obj.data, id_=None)
 
     # Create persistent identifier.

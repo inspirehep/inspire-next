@@ -24,74 +24,30 @@
 <div class="reference-record">
   {% if record %}
       <div class="reference-title">
-        {% if reference['number'] %}
-          [{{ reference['number'] }}]
+        {% if reference.number %}
+          [{{ reference.number }}]
         {% endif %}
-        <a href="/literature/{{record['control_number']}}">{{ render_record_title(record) }}</a>
+        <a href="/literature/{{record.control_number}}">{{ render_record_title(record) }}</a>
       </div>
       <div class="reference-authors">{{ render_record_authors(record, is_brief=true, show_affiliations=false, number_of_displayed_authors=1) | safe }}</div>
       <div class="reference-journal">{{ record_publication_info(record) | safe }}</div>
   {% else %}
     <div class="reference-title">
-      {% if reference['number'] %}
-        [{{ reference['number'] }}]
+      {% if reference.number %}
+        [{{ reference.number }}]
       {% endif %}
-      {% if reference['title'] %}
-        {{ reference['title'] | join_array(", ") }}
-      {% elif reference['misc'] %}
-        {{ reference['misc'] | join_array(", ") }}
-        {% set misc_displayed = true %}
-      {% elif reference['collaboration'] %}
-        {{ reference['collaboration'] | join_array(", ") }}
-        {% set collaboration_displayed = true %}
-      {% elif reference['journal_pubnote'] %}
-        {{ reference['journal_pubnote'] | join_array(", ")}}
-        {% set journal_displayed = true %}
-      {% elif reference['report_number'] %}
-        {{ reference['report_number'] | join_array(", ") }}
-        {% if reference['year'] %}
-          , {{ reference['year'] }}
-        {% endif %}
-        {% set report_displayed = true %}
+      {% if reference.titles %}
+        {{ render_record_title(reference) }}
+      {% else %}
+        {{ record_publication_info(reference, prepend_text='') | safe }}
+      {% endif %}
+      {% if reference.misc %}
+        {{ reference.misc | join_array(", ") }}
       {% endif %}
     </div>
-    <div class="reference-subtitle">
-      {% if reference['authors'] %}
-        <span class="reference-detail">{{ reference['authors'] | join_array(", ") }}</span>
-      {% endif %}
-      {% if not journal_displayed and reference['journal_pubnote'] %}
-        <span class="reference-detail">{{ reference['journal_pubnote'] | join_array(", ") }}</span>
-      {% endif %}
-      {% if not collaboration_displayed and reference['collaboration']%}
-        <span class="reference-detail">{{ reference['collaboration'] | join_array(", ") }}</span>
-      {% endif %}
-      {% if not report_displayed and reference['report_number'] %}
-        <span class="reference-detail">{{ reference['report_number'] | join_array(", ") }}</span>
-          {% if reference['year'] %}
-            <span class="reference-detail">{{ reference['year'] }}</span>
-            {% set year_displayed = true %}
-          {% endif %}
-      {% endif %}
-      {% if not year_displayed and reference['year'] %}
-        <span class="reference-detail">{{ reference['year'] }}</span>
-      {% endif %}
-      {% if reference['publisher'] %}
-        <span class="reference-detail">{{ reference['publisher'] | join_array(", ") }}</span>
-      {% endif %}
-      {% if not misc_displayed and reference['misc'] %}
-        <span class="reference-detail">{{ reference['misc'] | join_array(", ") }}</span>
-      {% endif %}
-      {% if reference['doi'] %}
-        <span class="reference-detail">{{ reference['doi'] }}</span>
-      {% endif %}
-      {% if reference['url'] %}
-        <span class="reference-detail">
-          <a href={{ reference['url'] }}>{{ reference['url'] | join_array(", ") }}</a>
-        </span>
-      {% endif %}
-      {% if reference['isbn'] %}
-        <span class="reference-detail">{{ reference['isbn'] }}</span>
-      {% endif %}
-    </div>
+    <div class="reference-authors">{{ render_record_authors(reference, is_brief=true, show_affiliations=false, number_of_displayed_authors=1) | safe }}</div>
+    {% if reference.titles %}
+      <div class="reference-journal">{{ record_publication_info(reference) | safe }}</div>
+    {% endif %}
   {% endif %}
 </div>

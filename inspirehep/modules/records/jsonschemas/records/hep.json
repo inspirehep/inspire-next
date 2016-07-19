@@ -7,7 +7,7 @@
         "self": {
           "description": "Url of the record itself",
           "title": "Url of the record",
-          "$ref": "json_reference.json"
+          "$ref": "elements/json_reference.json"
         },
         "funding_info": {
             "uniqueItems": true,
@@ -180,7 +180,7 @@
                         "type": "boolean"
                     },
                     "record": {
-                        "$ref": "json_reference.json"
+                        "$ref": "elements/json_reference.json"
                     }
                 }
             },
@@ -204,7 +204,7 @@
                         "properties": {
                             "record": {
                                 "description": "URI of the matched insitution record.",
-                                "$ref": "json_reference.json"
+                                "$ref": "elements/json_reference.json"
                             },
                             "name": {
                                 "type": "string"
@@ -278,15 +278,15 @@
                         "type": "string"
                     },
                     "parent_record": {
-                        "$ref": "json_reference.json",
+                        "$ref": "elements/json_reference.json",
                         "description": "URI for the parent this record is part of"
                     },
                     "journal_record": {
-                        "$ref": "json_reference.json",
+                        "$ref": "elements/json_reference.json",
                         "description": "URI for corresponding Journal"
                     },
                     "conference_record": {
-                        "$ref": "json_reference.json",
+                        "$ref": "elements/json_reference.json",
                         "description": "URI for corresponding Conference"
                     },
                     "reportnumber": {
@@ -331,100 +331,10 @@
         },
         "references": {
             "uniqueItems": true,
+            "type": "array",
             "items": {
-                "type": "object",
-                "properties": {
-                    "publisher": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "doi": {
-                        "pattern": "(10\\.\\d+(\\.\\d+)?/.+)|(\\w+\\:\\d+\\/\\d+)",
-                        "type": "string"
-                    },
-                    "isbn": {
-                        "type": "string",
-                        "format": "isbn"
-                    },
-                    "texkey": {
-                        "type": "string"
-                    },
-                    "report_number": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "url": {
-                        "type": "array",
-                        "items": {
-                            "format": "url",
-                            "type": "string"
-                        }
-                    },
-                    "collaboration": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "title": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "misc": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "editors": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "number": {
-                        "type": "integer"
-                    },
-                    "curated_relation": {
-                        "type": "boolean"
-                    },
-                    "maintitle": {
-                        "type": "string"
-                    },
-                    "raw_reference": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "year": {
-                        "type": "integer"
-                    },
-                    "authors": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "journal_pubnote": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "pattern": ".*,.*,.*(,.*)?"
-                        }
-                    },
-                    "record": {
-                        "$ref": "json_reference.json"
-                    }
-                }
-            },
-            "type": "array"
+                "$ref": "elements/reference.json"
+            }
         },
         "copyright": {
             "items": {
@@ -498,7 +408,7 @@
                     },
                     "record": {
                         "description": "URI for the corresponding experiment record.",
-                        "$ref": "json_reference.json"
+                        "$ref": "elements/json_reference.json"
                     }
                 }
             },
@@ -571,7 +481,7 @@
                     "type": "string"
                 },
                 "record": {
-                    "$ref": "json_reference.json"
+                    "$ref": "elements/json_reference.json"
                 }
             },
             "description": "Reference to previously merged records."
@@ -610,7 +520,7 @@
                         "type": "string"
                     },
                     "record": {
-                        "$ref": "json_reference.json"
+                        "$ref": "elements/json_reference.json"
                     }
                 }
             },
@@ -681,7 +591,7 @@
                                 "record": {
                                     "description": "URI for the Institution collection record",
                                     "title": "URI for the Institution collection record",
-                                    "$ref": "json_reference.json"
+                                    "$ref": "elements/json_reference.json"
                                 }
                             },
                             "title": "Affiliation"
@@ -732,7 +642,7 @@
                     "record": {
                         "description": "URI for the person record",
                         "title": "URI for the person record",
-                        "$ref": "json_reference.json"
+                        "$ref": "elements/json_reference.json"
                     },
                     "contributor_roles": {
                         "type": "array",
@@ -863,13 +773,13 @@
         "deleted_records": {
             "type": "array",
             "items": {
-                "$ref": "json_reference.json"
+                "$ref": "elements/json_reference.json"
             },
             "description": "List of deleted records referring to this record",
             "title": "Deleted Records"
         },
         "new_record": {
-            "$ref": "json_reference.json",
+            "$ref": "elements/json_reference.json",
             "description": "Master record that replaces this record",
             "title": "New record"
         },

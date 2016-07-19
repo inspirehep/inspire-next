@@ -1,0 +1,167 @@
+{
+    "description": "record-like Schema for a Publication's reference",
+    "title": "Reference",
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "texkey": {
+            "type": "string",
+            "description": "INSPIRE Provided texkey."
+        },
+        "number": {
+            "type": "integer",
+            "description": "Position within the reference list of a record (the number you find in brackets on the PDF)."
+        },
+        "raw_reference": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string"
+                    },
+                    "source": {
+                        "type": "string",
+                        "description": "E.g. refextract, JATS, Elsevier"
+                    },
+                    "format": {
+                        "type": "string",
+                        "description": "E.g. text, json, xml, bibtex"
+                    }
+                }
+            }
+        },
+        "record": {
+          "description": "Referred record",
+          "$ref": "json_reference.json"
+        },
+        "curated_relation": {
+            "type": "boolean"
+        },
+        "misc": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "imprint": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "format": "date"
+                },
+                "publisher": {
+                    "type": "string"
+                },
+                "place": {
+                    "type": "string"
+                }
+            }
+        },
+        "titles": {
+            "$ref": "titles.json"
+        },
+        "publication_info": {
+            "type": "object",
+            "properties": {
+                "journal_title": {
+                    "type": "string"
+                },
+                "journal_volume": {
+                    "type": "string"
+                },
+                "year": {
+                    "minimum": 1000,
+                    "type": "integer",
+                    "maximum": 2050
+                },
+                "journal_issue": {
+                    "type": "string"
+                },
+                "page_start": {
+                    "type": "string",
+                    "description": "First page"
+                },
+                "page_end": {
+                    "type": "string",
+                    "description": "Last page"
+                },
+                "artid": {
+                    "type": "string",
+                    "description": "Electronic Article ID"
+                },
+                "isbn": {
+                    "type": "string",
+                    "description": "ISBN"
+                },
+                "reportnumber": {
+                    "type": "string"
+                },
+                "doi": {
+                    "type": "string",
+                    "pattern": "10\\.\\d+(\\.\\d+)?/.+"
+                },
+                "cnum": {
+                    "type": "string"
+                }
+            }
+        },
+        "arxiv_eprints": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "pattern": "\\d{4}.\\d{4,5}|\\w+-\\w+/\\d+|\\w+/\\d+"
+            },
+            "type": "array"
+        },
+        "book_series": {
+            "type": "object",
+            "properties": {
+                "volume": {
+                    "type": "string",
+                    "description": "Specific volume number"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "Title of the book series"
+                }
+            }
+        },
+        "collaboration": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "authors": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "full_name": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    }
+                }
+            },
+            "description": "List with all the authors",
+            "title": "Authors"
+        },
+        "urls": {
+            "$ref": "urls.json"
+        },
+        "persistent_identifiers": {
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            },
+            "type": "array",
+            "title": "Persistent Identifiers"
+        }
+    }
+}

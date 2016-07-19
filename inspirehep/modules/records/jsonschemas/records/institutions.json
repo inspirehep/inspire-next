@@ -4,7 +4,7 @@
        "self": {
           "description": "Url of the record itself",
           "title": "Url of the record",
-          "$ref": "json_reference.json"
+          "$ref": "elements/json_reference.json"
         },
         "ICN": {
             "description": "HEP affiliation following new standards",
@@ -124,7 +124,7 @@
         "obsolete_record": {
             "description": "record URI of obsolete inst for which this inst should be used instead",
             "title": "Obsolete record URI",
-            "$ref": "json_reference.json"
+            "$ref": "elements/json_reference.json"
         },
         "old_ICN": {
             "description": "HEP affiliation (spires name)",
@@ -174,7 +174,7 @@
                     },
                     "record": {
                         "title": "URI for the related institute record",
-                        "$ref": "json_reference.json"
+                        "$ref": "elements/json_reference.json"
                     }
                 },
                 "title": "Related institute",

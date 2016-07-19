@@ -4,7 +4,7 @@
         "self": {
           "description": "Url of the record itself",
           "title": "Url of the record",
-          "$ref": "json_reference.json"
+          "$ref": "elements/json_reference.json"
         },
         "acronym": {
             "title": "Conference acronym",

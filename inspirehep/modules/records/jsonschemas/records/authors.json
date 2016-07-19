@@ -8,7 +8,7 @@
         "self": {
           "description": "Url of the record itself",
           "title": "Url of the record",
-          "$ref": "json_reference.json"
+          "$ref": "elements/json_reference.json"
         },
         "phd_advisors": {
             "uniqueItems": true,
@@ -30,7 +30,7 @@
                         "type": "boolean"
                     },
                     "record": {
-                        "$ref": "json_reference.json"
+                        "$ref": "elements/json_reference.json"
                     }
                 }
             },
@@ -67,7 +67,7 @@
         "conferences": {
             "uniqueItems": true,
             "items": {
-                "$ref": "json_reference.json"
+                "$ref": "elements/json_reference.json"
             },
             "type": "array",
             "description": "Contains information about attended conferences. (their record URIs)"
@@ -105,7 +105,7 @@
                             },
                             "record": {
                                 "description": "Corresponding URI for the institution record",
-                                "$ref": "json_reference.json"
+                                "$ref": "elements/json_reference.json"
                             }
                         }
                     },
@@ -258,7 +258,7 @@
                     },
                     "record": {
                         "description": "URI for the experiment record",
-                        "$ref": "json_reference.json"
+                        "$ref": "elements/json_reference.json"
                     }
                 }
             },
