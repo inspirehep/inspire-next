@@ -346,16 +346,9 @@ h1.record-detailed-title, .record-header label, #record-journal,
 
         .reference-record {
 
-            .reference-authors, .reference-subtitle {
+            .reference-authors {
                 font-size: 12px;
                 color: $grey;
-
-                .reference-detail:after {
-                    content: ';';
-                }
-                .reference-detail:last-child:after {
-                    content: '';
-                }
             }
 
             .reference-journal {
@@ -367,10 +360,6 @@ h1.record-detailed-title, .record-header label, #record-journal,
             color: $blue;
             width: 90%;
             font-weight: 500;
-        }
-
-        .reference-subtitle {
-            width: 90%;
         }
 
         .reference-journal {
