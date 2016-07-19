@@ -77,3 +77,18 @@ def split_pubnote(pubnote_str):
         page_start, page_end, artid = split_page_artid(parts[2:])
 
     return title, volume, page_start, page_end, artid
+
+
+def build_pubnote(title, volume, page_start, page_end, artid):
+    """Build pubnite string from parts (reverse of split_pubnote)."""
+    pubnote = None
+    if title and volume:
+        pubnote = '{},{}'.format(title, volume)
+        if page_start and page_end:
+            pubnote += ',{}-{}'.format(page_start, page_end)
+        elif page_start:
+            pubnote += ',{}'.format(page_start)
+        if artid and artid != page_start:
+            pubnote += ',{}'.format(artid)
+
+    return pubnote

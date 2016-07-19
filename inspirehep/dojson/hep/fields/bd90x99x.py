@@ -42,6 +42,7 @@ from ...utils import (
 )
 
 from inspirehep.modules.references.processors import ReferenceBuilder
+from inspirehep.utils.pubnote import build_pubnote
 from inspirehep.utils.record import get_value
 
 
@@ -91,26 +92,18 @@ def references(self, key, value):
 
 @hep2marc.over('999C5', 'references')
 @utils.for_each_value
-@utils.filter_values
 def references2marc(self, key, value):
     """Produce list of references."""
     repnos = value.get('arxiv_eprints', [])
-    if 'reportnumber' in value.get('publication_info', {}):
-        repnos.append(value['publication_info']['reportnumber'])
-    j_title = value.get('publication_info', {}).get('journal_title')
-    j_vol = value.get('publication_info', {}).get('journal_volume')
-    j_pg_s = value.get('publication_info', {}).get('page_start')
-    j_pg_e = value.get('publication_info', {}).get('page_end')
-    j_artid = value.get('publication_info', {}).get('artid')
-    pubnote = ''
-    if j_title and j_vol:
-        pubnote = '{},{}'.format(j_title, j_vol)
-        if j_pg_s and j_pg_e:
-            pubnote += ',{}-{}'.format(j_pg_s, j_pg_e)
-        elif j_pg_s:
-            pubnote += ',{}'.format(j_pg_s)
-        if j_artid and j_artid != j_pg_s:
-            pubnote += ',{}'.format(j_artid)
+    # If not found it will be filtered anyway.
+    repnos.append(get_value(value, 'publication_info.reportnumber'))
+    journal_title = get_value(value, 'publication_info.journal_title')
+    journal_volume = get_value(value, 'publication_info.journal_volume')
+    journal_pg_start = get_value(value, 'publication_info.page_start')
+    journal_pg_end = get_value(value, 'publication_info.page_end')
+    journal_artid = get_value(value, 'publication_info.artid')
+    pubnote = build_pubnote(journal_title, journal_volume, journal_pg_start,
+                            journal_pg_end, journal_artid)
     return {
         '0': get_recid_from_ref(value.get('record')),
         '1': get_value(value, 'texkey'),
