@@ -383,7 +383,6 @@ def test_collaboration_from_double_710__g():
     assert result['collaboration_alternative_names'] == ['MiniBooNE']
 
 
-@pytest.mark.xfail(reason='curated_relation is missing')
 def test_related_experiments_from_510__a_w_0():
     snippet = (
         '<datafield tag="510" ind1=" " ind2=" ">'
@@ -406,7 +405,6 @@ def test_related_experiments_from_510__a_w_0():
     assert expected == result['related_experiments']
 
 
-@pytest.mark.xfail(reason='curated_relation is missing')
 def test_related_experiments_from_double_510__a_w_0():
     snippet = (
         '<record>'

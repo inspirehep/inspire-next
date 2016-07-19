@@ -139,13 +139,25 @@ def collaboration(self, key, value):
 @utils.for_each_value
 def related_experiments(self, key, value):
     """Related experiments."""
-    try:
-        recid = int(value.get('0'))
-    except (TypeError, ValueError):
-        recid = None
+    def _get_record(zero_values):
+        zero_value = force_single_element(zero_values)
+        try:
+            recid = int(zero_value)
+            return get_record_ref(recid, 'experiments')
+        except (TypeError, ValueError):
+            return None
+
+    def _classify_relation_type(w_values):
+        w_value = force_single_element(w_values)
+        return {'a': 'predecessor', 'b': 'successor'}.get(w_value, '')
+
+    record = _get_record(value.get('0'))
+
     return {
-        'name': value.get('a'),
-        'record': get_record_ref(recid, 'experiments')
+        'name': force_single_element(value.get('a')),
+        'record': record,
+        'relation': _classify_relation_type(value.get('w')),
+        'curated_relation': record is not None,
     }
 
 
