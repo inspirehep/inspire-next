@@ -364,7 +364,6 @@ def test_collaboration_from_710__g():
     assert 'collaboration_alternative_names' not in result
 
 
-@pytest.mark.xfail(reason='collaboration_alternative_names is not populated')
 def test_collaboration_from_double_710__g():
     snippet = (
         '<record>'

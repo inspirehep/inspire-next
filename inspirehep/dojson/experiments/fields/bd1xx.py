@@ -127,8 +127,11 @@ def spokespersons(self, key, value):
 @experiments.over('collaboration', '^710..')
 def collaboration(self, key, value):
     """Collaboration of experiment."""
-    value = force_force_list(value)
-    collaborations = sorted((elem["g"] for elem in value if 'g' in elem), key=lambda x: len(x))
+    values = force_force_list(self.get('collaboration'))
+    values.extend(self.get('collaboration_alternative_names', []))
+    values.extend(el.get('g') for el in force_force_list(value))
+
+    collaborations = sorted(values, key=len)
     if len(collaborations) > 1:
         self['collaboration_alternative_names'] = collaborations[1:]
     if collaborations:
