@@ -1,11 +1,37 @@
 {
     "$schema": "http://json-schema.org/schema#",
-    "uniqueItems": true,
     "items": {
-        "type": "object",
         "properties": {
+            "_scheme": {
+                "enum": [
+                    "INSPIRE",
+                    "arXiv",
+                    "APS",
+                    "PoS",
+                    "Elsevier"
+                ],
+                "title": "Original scheme",
+                "type": "string"
+            },
+            "_term": {
+                "title": "Original term",
+                "type": "string"
+            },
+            "scheme": {
+                "title": "INSPIRE",
+                "type": "string"
+            },
+            "source": {
+                "enum": [
+                    "INSPIRE",
+                    "submitter",
+                    "curator",
+                    "publisher",
+                    "magpie"
+                ],
+                "type": "string"
+            },
             "term": {
-                "title": "INSPIRE term",
                 "enum": [
                     "Accelerators",
                     "Astrophysics",
@@ -22,39 +48,13 @@
                     "Theory-HEP",
                     "Theory-Nucl"
                 ],
-                "type": "string"
-            },
-            "_term": {
-                "title": "Original term",
-                "type": "string"
-            },
-            "source": {
-                "enum": [
-                    "INSPIRE",
-                    "submitter",
-                    "curator",
-                    "publisher",
-                    "magpie"
-                ],
-                "type": "string"
-            },
-            "scheme": {
-                "title": "INSPIRE",
-                "type": "string"
-            },
-            "_scheme": {
-                "title": "Original scheme",
-                "enum": [
-                    "INSPIRE",
-                    "arXiv",
-                    "APS",
-                    "PoS",
-                    "Elsevier"
-                ],
+                "title": "INSPIRE term",
                 "type": "string"
             }
-        }
+        },
+        "type": "object"
     },
+    "title": "Research field categories.",
     "type": "array",
-    "title": "Research field categories."
+    "uniqueItems": true
 }

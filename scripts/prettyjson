@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-#
+#!/bin/bash
+
 # This file is part of INSPIRE.
 # Copyright (C) 2016 CERN.
 #
@@ -20,25 +20,13 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from __future__ import absolute_import, division, print_function
+# Reformat all JSONs in the source tree
 
-import json
-import os
-import pkg_resources
-
-from jsonschema import Draft4Validator
-
-
-def fetch_schema(path):
-    return json.loads(pkg_resources.resource_string('inspirehep', path))
-
-
-def test_schemas_are_valid():
-    root_dir = os.path.join(
-        'inspirehep', 'modules', 'records', 'jsonschemas', 'records')
-    for schemas_dir, _, schemas in os.walk(root_dir):
-        schemas_path = os.path.sep.join(schemas_dir.split(os.path.sep)[1:])
-        for schema in schemas:
-            if schema.endswith(".json"):
-                schema_path = os.path.join(schemas_path, schema)
-                Draft4Validator.check_schema(fetch_schema(schema_path))
+for basedir in inspirehep/modules/records/jsonschemas/ \
+        inspirehep/modules/workflows/mappings/ \
+        inspirehep/modules/records/mappings/; do
+    for name in `find $basedir -name *.json`; do
+        echo Cleaning $name
+        python -c "import json; input = json.load(open('${name}')); output = json.dumps(input, indent=4, sort_keys=True); open('${name}', 'w').write(output.replace(', \n', ',\n') + '\n')"
+    done
+done

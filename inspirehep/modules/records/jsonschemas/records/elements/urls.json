@@ -1,21 +1,21 @@
 {
     "$schema": "http://json-schema.org/schema#",
-    "uniqueItems": true,
     "items": {
-        "type": "object",
         "properties": {
-            "value": {
-                "title": "URL",
-                "type": "string",
-                "format": "url"
-            },
             "description": {
-                "type": "string",
-                "title": "Description from 8564_y field"
+                "title": "Description from 8564_y field",
+                "type": "string"
+            },
+            "value": {
+                "format": "url",
+                "title": "URL",
+                "type": "string"
             }
         },
-        "title": "URL"
+        "title": "URL",
+        "type": "object"
     },
+    "title": "URLs",
     "type": "array",
-    "title": "URLs"
+    "uniqueItems": true
 }

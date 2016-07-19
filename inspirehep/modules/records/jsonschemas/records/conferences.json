@@ -1,18 +1,15 @@
 {
     "$schema": "http://json-schema.org/schema#",
     "properties": {
-        "self": {
-          "description": "Url of the record itself",
-          "title": "Url of the record",
-          "$ref": "elements/json_reference.json"
-        },
         "acronym": {
             "title": "Conference acronym",
             "type": "array"
         },
         "address": {
+            "item": {
+                "$ref": "elements/address.json"
+            },
             "type": "array",
-            "item": {"$ref": "elements/address.json"},
             "uniqueItems": true
         },
         "alternative_titles": {
@@ -29,8 +26,10 @@
             "type": "string"
         },
         "contact_details": {
+            "items": {
+                "$ref": "elements/contact.json"
+            },
             "type": "array",
-            "items": {"$ref": "elements/contact.json"},
             "uniqueItems": true
         },
         "field_categories": {
@@ -38,10 +37,10 @@
         },
         "keywords": {
             "properties": {
-                "value": {
+                "source": {
                     "type": "string"
                 },
-                "source": {
+                "value": {
                     "type": "string"
                 }
             },
@@ -67,6 +66,11 @@
             "title": "Conference place",
             "type": "string"
         },
+        "self": {
+            "$ref": "elements/json_reference.json",
+            "description": "Url of the record itself",
+            "title": "Url of the record"
+        },
         "series": {
             "title": "Conference series",
             "type": "array"
@@ -76,17 +80,16 @@
             "type": "integer"
         },
         "short_description": {
-            "type": "object",
-                "properties": {
-                    "value": {
-                        "type": "string"
-                    },
-                    "source": {
-                        "type": "string"
-                    }
+            "properties": {
+                "source": {
+                    "type": "string"
                 },
-                "type":"array",
-                "title": "Short description"
+                "value": {
+                    "type": "string"
+                }
+            },
+            "title": "Short description",
+            "type": "array"
         },
         "titles": {
             "$ref": "elements/titles.json"
