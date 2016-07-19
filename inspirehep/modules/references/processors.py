@@ -92,11 +92,13 @@ class ReferenceBuilder(object):
         self._ensure_field('misc', [])
         self.obj['misc'].append(misc)
 
-    def add_raw_reference(self, raw_reference, serialization='text'):
+    def add_raw_reference(self, raw_reference, source='reference_builder',
+                          ref_format='text'):
         self._ensure_field('raw_reference', [])
         self.obj['raw_reference'].append({
             'value': raw_reference,
-            'serialization': serialization})
+            'source': source,
+            'format': ref_format})
 
     def set_year(self, year):
         try:

@@ -28,7 +28,7 @@ def test_reference_builder_no_uids():
     rb.set_number('1')
     rb.set_texkey('book')
     rb.add_title('Awesome Paper')
-    rb.add_raw_reference('[1] Awesome Paper')
+    rb.add_raw_reference('[1] Awesome Paper', 'arXiv')
     rb.add_misc('misc 0')
     rb.add_misc('misc 1')
     rb.add_author('Cox, Brian')
@@ -53,8 +53,10 @@ def test_reference_builder_no_uids():
         'texkey': 'book',
         'titles': [{'title': 'Awesome Paper'}],
         'raw_reference': [
-            {'value': '[1] Awesome Paper', 'serialization': 'text'},
-            {'value': 'BAD PUBNOTE', 'serialization': 'text'}
+            {'value': '[1] Awesome Paper', 'format': 'text',
+             'source': 'arXiv'},
+            {'value': 'BAD PUBNOTE', 'format': 'text',
+             'source': 'reference_builder'}
         ],
         'misc': ['misc 0', 'misc 1'],
         'authors': [{'full_name': 'Cox, Brian'},

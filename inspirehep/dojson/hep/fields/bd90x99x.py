@@ -58,7 +58,7 @@ def references(self, key, value):
         mapping = [
             ('o', rb.set_number),
             ('m', rb.add_misc),
-            ('x', rb.add_raw_reference),
+            ('x', partial(rb.add_raw_reference, source='dojson')),
             ('1', rb.set_texkey),
             ('u', rb.add_url),
             ('r', rb.add_report_number),
@@ -74,6 +74,7 @@ def references(self, key, value):
             ('h', rb.add_author),
             ('e', partial(rb.add_author, role='ed.'))
         ]
+
         for field, method in mapping:
             for element in force_force_list(value.get(field)):
                 if element:

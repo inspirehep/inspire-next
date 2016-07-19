@@ -1,5 +1,5 @@
 {
-    "description": "An article or thesis or book or...",
+    "description": "record-like Schema for a Publication's reference",
     "title": "Reference",
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
@@ -20,9 +20,13 @@
                     "value": {
                         "type": "string"
                     },
-                    "serialization": {
+                    "source": {
                         "type": "string",
-                        "description": "E.g. refextract, text, JATS, Elsevier, BibTeX..."
+                        "description": "E.g. refextract, JATS, Elsevier"
+                    },
+                    "format": {
+                        "type": "string",
+                        "description": "E.g. text, json, xml, bibtex"
                     }
                 }
             }
