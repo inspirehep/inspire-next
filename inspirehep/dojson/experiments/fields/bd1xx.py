@@ -29,7 +29,7 @@ import six
 from dojson import utils
 
 from ..model import experiments
-from ...utils import get_record_ref
+from ...utils import force_single_element, get_record_ref
 
 from inspirehep.utils.helpers import force_force_list
 
@@ -89,11 +89,39 @@ def description(self, key, value):
     return value.get("a")
 
 
-@experiments.over('spokesperson', '^702..')
+@experiments.over('spokepersons', '^702..')
 @utils.for_each_value
-def spokesperson(self, key, value):
-    """Spokesperson of experiment."""
-    return value.get("a")
+def spokespersons(self, key, value):
+    """Spokepersons of the experiment."""
+    def _get_inspire_id(i_values):
+        i_value = force_single_element(i_values)
+        if i_value:
+            return [
+                {
+                    'type': 'INSPIRE',
+                    'value': i_value,
+                },
+            ]
+
+    def _is_current(z_values):
+        z_value = force_single_element(z_values)
+        if z_value and isinstance(z_value, six.string_types):
+            return z_value.lower() == 'current'
+
+    def _get_record(x_values):
+        x_value = force_single_element(x_values)
+        if x_value:
+            return get_record_ref(x_value, 'authors')
+
+    record = _get_record(value.get('x'))
+
+    return {
+        'current': _is_current(value.get('z')),
+        'ids': _get_inspire_id(value.get('i')),
+        'name': force_single_element(value.get('a')),
+        'record': record,
+        'curated_relation': record is not None,
+    }
 
 
 @experiments.over('collaboration', '^710..')

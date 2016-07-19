@@ -153,6 +153,34 @@
                         "title": "End date",
                         "type": "string"
                     },
+                    "ids": {
+                        "items": {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "DESY",
+                                        "arXiv",
+                                        "INSPIRE",
+                                        "BAI",
+                                        "CERN",
+                                        "ORCID",
+                                        "SLAC",
+                                        "JACOW",
+                                        "GoogleScholar",
+                                        "RESEARCHERID",
+                                        "SCOPUS",
+                                        "WIKIPEDIA"
+                                    ]
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "type": "array",
+                        "uniqueItems": true
+                    },
                     "name": {
                         "title": "Name",
                         "type": "string"

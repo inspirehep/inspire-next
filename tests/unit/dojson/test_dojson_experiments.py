@@ -281,7 +281,6 @@ def test_description_from_multiple_520__a():
     assert expected == result['description']
 
 
-@pytest.mark.xfail(reason='spokeperson is populated instead')
 def test_spokepersons_from_702__a_i_z():
     snippet = (
         '<datafield tag="702" ind1=" " ind2=" ">'
@@ -309,7 +308,6 @@ def test_spokepersons_from_702__a_i_z():
     assert expected == result['spokepersons']
 
 
-@pytest.mark.xfail(reason='spokeperson is populated instead')
 def test_spokepersons_from_double_702__a_i():
     snippet = (
         '<record>'
