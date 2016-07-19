@@ -27,6 +27,7 @@ from __future__ import absolute_import, division, print_function
 import six
 
 from dojson import utils
+from dojson.errors import IgnoreKey
 
 from ..model import experiments
 from ...utils import force_single_element, get_record_ref
@@ -164,17 +165,18 @@ def related_experiments(self, key, value):
     }
 
 
-@experiments.over('date_started', '^046..')
+@experiments.over('_date_started', '^046..')
 def date_started(self, key, value):
     """Date started and completed."""
-    value = force_force_list(value)
-    date_started = None
-    for val in value:
-        if val.get('t'):
-            self.setdefault('date_completed', val.get('t'))
+    values = force_force_list(value)
+
+    for val in values:
         if val.get('s'):
-            date_started = val.get('s')
-    return date_started
+            self['date_started'] = val.get('s')
+        if val.get('t'):
+            self['date_completed'] = val.get('t')
+
+    raise IgnoreKey
 
 
 @experiments.over('accelerator', '^693')

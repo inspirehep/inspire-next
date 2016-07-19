@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
-
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.experiments import experiments
@@ -439,7 +437,6 @@ def test_related_experiments_from_double_510__a_w_0():
     assert expected == result['related_experiments']
 
 
-@pytest.mark.xfail(reason='overwrites with None')
 def test_date_started_from_046__q_s_and_046__r():
     snippet = (
         '<record>'
@@ -479,7 +476,6 @@ def test_date_started_from_046__q_and_046__r_and_046__x():
     assert 'date_started' not in result
 
 
-@pytest.mark.xfail(reason='overwrites with None')
 def test_date_started_and_date_completed_from_046():
     snippet = (
         '<record>'
