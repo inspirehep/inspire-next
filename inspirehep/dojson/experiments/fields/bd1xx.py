@@ -82,13 +82,6 @@ def contact_details(self, key, value):
     }
 
 
-@experiments.over('name_variants', '^419..')
-@utils.for_each_value
-def name_variants(self, key, value):
-    """Variants of the name."""
-    return value.get('a')
-
-
 @experiments.over('description', '^520..')
 @utils.for_each_value
 def description(self, key, value):
