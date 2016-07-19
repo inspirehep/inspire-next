@@ -29,8 +29,9 @@ import six
 from dojson import utils
 
 from ..model import conferences
-from ...utils import force_force_list
 from ...utils.geo import parse_conference_address
+
+from inspirehep.utils.helpers import force_force_list
 
 
 @conferences.over('acronym', '^111')

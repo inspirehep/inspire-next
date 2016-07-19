@@ -27,7 +27,9 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import hepnames, hepnames2marc
-from ...utils import classify_rank, force_force_list, get_record_ref
+from ...utils import classify_rank, get_record_ref
+
+from inspirehep.utils.helpers import force_force_list
 
 
 @hepnames.over('acquisition_source', '^541[10_].')

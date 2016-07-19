@@ -29,10 +29,11 @@ from dojson import utils
 from ..model import hep, hep2marc
 from ...utils import (
     create_profile_url,
-    force_force_list,
     get_recid_from_ref,
     get_record_ref,
 )
+
+from inspirehep.utils.helpers import force_force_list
 
 
 @hep.over('authors', '^[17]00[103_].')

@@ -35,10 +35,11 @@ from ..jobs.model import jobs
 from ..journals.model import journals
 from ..utils import (
     classify_field,
-    force_force_list,
     get_recid_from_ref,
     get_record_ref,
 )
+
+from inspirehep.utils.helpers import force_force_list
 
 
 def self_url(index):

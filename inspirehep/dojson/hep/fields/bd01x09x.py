@@ -30,7 +30,8 @@ from dojson import utils
 from idutils import normalize_isbn
 
 from ..model import hep, hep2marc
-from ...utils import force_force_list
+
+from inspirehep.utils.helpers import force_force_list
 
 
 @hep.over('isbns', '^020..')

@@ -31,7 +31,9 @@ from inspirehep.dojson.hepnames import hepnames
 from inspirehep.dojson.institutions import institutions
 from inspirehep.dojson.jobs import jobs
 from inspirehep.dojson.journals import journals
-from inspirehep.dojson.utils import clean_record, force_force_list
+from inspirehep.dojson.utils import clean_record
+
+from inspirehep.utils.helpers import force_force_list
 
 
 def overdo_marc_dict(record):
