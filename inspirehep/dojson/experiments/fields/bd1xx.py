@@ -29,7 +29,9 @@ import six
 from dojson import utils
 
 from ..model import experiments
-from ...utils import force_force_list, get_record_ref
+from ...utils import get_record_ref
+
+from inspirehep.utils.helpers import force_force_list
 
 
 @experiments.over('experiment_names', '^119..')

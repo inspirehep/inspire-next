@@ -24,6 +24,7 @@
 
 import re
 
+from inspirehep.utils.helpers import force_force_list
 
 _RE_2_CHARS = re.compile(r'[a-z].*[a-z]', re.I)
 
@@ -38,9 +39,7 @@ def split_page_artid(page_artid):
         return None, None, None
 
     # TODO use force_force_list when it's in inspirehep.utils.
-    page_artid_l = page_artid
-    if not isinstance(page_artid_l, (list, tuple)):
-        page_artid_l = [page_artid]
+    page_artid_l = force_force_list(page_artid)
 
     for page_artid in page_artid_l:
         if page_artid:

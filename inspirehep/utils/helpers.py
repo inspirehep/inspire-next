@@ -63,3 +63,18 @@ def get_json_for_plots(plots):
         ))
         index += 1
     return dict(fft=output_records)
+
+
+def force_force_list(data):
+    """Wrap data in list.
+
+    We need to define this awkardly named method because DoJSON's method
+    force_list returns tuples or None instead of lists.
+    """
+    if data is None:
+        return []
+    elif not isinstance(data, (list, tuple, set)):
+        return [data]
+    elif isinstance(data, (tuple, set)):
+        return list(data)
+    return data
