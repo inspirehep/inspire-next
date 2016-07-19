@@ -1,657 +1,143 @@
 {
-    "description": "An article or thesis or book or...",
-    "title": "Publication",
     "$schema": "http://json-schema.org/schema#",
-    "type": "object",
+    "description": "An article or thesis or book or...",
     "properties": {
-        "self": {
-          "description": "Url of the record itself",
-          "title": "Url of the record",
-          "$ref": "elements/json_reference.json"
-        },
-        "funding_info": {
-            "uniqueItems": true,
+        "abstracts": {
             "items": {
-                "type": "object",
                 "properties": {
-                    "grant_number": {
-                        "type": "string",
-                        "title": "Grant number"
-                    },
-                    "agency": {
-                        "type": "string",
-                        "title": "Agency"
-                    },
-                    "project_number": {
-                        "type": "string",
-                        "title": "Project number"
-                    }
-                },
-                "title": "Grant information"
-            },
-            "type": "array",
-            "description": "Information related to funding. FIXME: Do we care about this? So far only 349 records were tagged and all for a single EU project.",
-            "title": "Funding information"
-        },
-        "isbns": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "medium": {
-                        "description": "Medium (type) of the ISBN.",
+                    "source": {
                         "type": "string"
                     },
                     "value": {
-                        "type": "string",
-                        "format": "isbn"
-                    },
-                    "comment": {
-                        "description": "Further information about type.",
                         "type": "string"
                     }
                 },
-                "required": ["value"]
+                "type": "object"
             },
+            "type": "array",
             "uniqueItems": true
         },
-        "report_numbers": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "type": "string"
-                    },
-                    "value": {
-                        "type": "string"
-                    }
-                }
-            },
-            "type": "array"
-        },
-        "public_notes": {
-            "uniqueItems": true,
-            "items": {
-                "required": [
-                    "value"
-                ],
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "type": "string"
-                    },
-                    "value": {
-                        "type": "string"
-                    }
-                }
-            },
-            "type": "array"
-        },
-        "abstracts": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "type": "string"
-                    },
-                    "value": {
-                        "type": "string"
-                    }
-                }
-            },
-            "type": "array"
-        },
-        "spires_sysnos": {
-            "uniqueItems": true,
-            "items": {
-                "type": "string"
-            },
-            "type": "array",
-            "description": "List of associated legacy SPIRES IDs"
-        },
-        "earliest_date": {
-            "type": "string",
-            "format": "date",
-            "description": "The earliest date of this record among all types of dates"
-        },
-        "breadcrumb_title": {
-            "type": "string",
-            "description": "The title shown in all page breadcrumbs"
-        },
-        "preprint_date": {
-            "type": "string",
-            "format": "date"
-        },
-        "imprints": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "date": {
-                        "type": "string",
-                        "format": "date"
-                    },
-                    "publisher": {
-                        "type": "string"
-                    },
-                    "place": {
-                        "type": "string"
-                    }
-                }
-            },
-            "type": "array"
-        },
-        "titles": {
-            "$ref": "elements/titles.json"
-        },
-        "titles_old": {
-            "description": "FIXME: Old 247, shall it still have its own field?",
-            "$ref": "elements/titles.json"
-        },
-        "edition": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "edition": {
-                        "type": "string"
-                    }
-                }
-            },
-            "type": "array"
-        },
-        "thesis_supervisor": {
-            "uniqueItems": true,
-            "items": {
-                "required": [
-                    "full_name"
-                ],
-                "type": "object",
-                "properties": {
-                    "affiliation": {
-                        "type": "string"
-                    },
-                    "full_name": {
-                        "type": "string"
-                    },
-                    "curated_relation": {
-                        "type": "boolean"
-                    },
-                    "record": {
-                        "$ref": "elements/json_reference.json"
-                    }
-                }
-            },
-            "type": "array"
-        },
-        "thesis": {
-            "type": "object",
-            "properties": {
-                "date": {
-                    "type": "string",
-                    "format": "date"
-                },
-                "defense_date": {
-                    "type": "string",
-                    "format": "date"
-                },
-                "institutions": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "record": {
-                                "description": "URI of the matched insitution record.",
-                                "$ref": "elements/json_reference.json"
-                            },
-                            "name": {
-                                "type": "string"
-                            },
-                            "curated_relation": {
-                                "type": "boolean"
-                            }
-                        }
-                    }
-                },
-                "degree_type": {
-                    "enum": [
-                        "PhD",
-                        "Master",
-                        "Bachelor",
-                        "Diploma",
-                        "Habilitation",
-                        "Laurea",
-                        "Thesis"
-                    ],
-                    "type": "string",
-                    "description": "FIXME: this enum must be reviewed"
-                }
-            }
-        },
-        "hidden_notes": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "type": "string",
-                        "description": "FIXME: What's the semantic of this source?"
-                    },
-                    "cern_reference": {
-                        "type": "string",
-                        "description": "FIXME: Do we know what this is? do we care?"
-                    },
-                    "value": {
-                        "type": "string"
-                    },
-                    "cds": {
-                        "type": "string"
-                    }
-                }
-            },
-            "type": "array",
-            "description": "FIXME: what about 595__d??"
-        },
-        "publication_info": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "journal_title": {
-                        "type": "string"
-                    },
-                    "pubinfo_freetext": {
-                        "type": "string"
-                    },
-                    "journal_volume": {
-                        "type": "string"
-                    },
-                    "cnum": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "note": {
-                        "type": "string"
-                    },
-                    "parent_record": {
-                        "$ref": "elements/json_reference.json",
-                        "description": "URI for the parent this record is part of"
-                    },
-                    "journal_record": {
-                        "$ref": "elements/json_reference.json",
-                        "description": "URI for corresponding Journal"
-                    },
-                    "conference_record": {
-                        "$ref": "elements/json_reference.json",
-                        "description": "URI for corresponding Conference"
-                    },
-                    "reportnumber": {
-                        "type": "string"
-                    },
-                    "year": {
-                        "minimum": 1000,
-                        "type": "integer",
-                        "maximum": 2050
-                    },
-                    "curated_relation": {
-                        "type": "boolean"
-                    },
-                    "journal_issue": {
-                        "type": "string"
-                    },
-                    "page_start": {
-                        "type": "string",
-                        "description": "First page"
-                    },
-                    "page_end": {
-                        "type": "string",
-                        "description": "Last page"
-                    },
-                    "artid": {
-                        "type": "string",
-                        "description": "Electronic Article ID"
-                    },
-                    "conf_acronym": {
-                        "type": "string"
-                    },
-                    "confpaper_info": {
-                        "type": "string"
-                    },
-                    "isbn": {
-                        "type": "string"
-                    }
-                }
-            },
-            "type": "array",
-            "description": "FIXME: Shall we split conference information away? FIXME: shall we move the DOI and ISBN next to where it belongs? So that we can also align erratum and friends?"
-        },
-        "references": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-                "$ref": "elements/reference.json"
-            }
-        },
-        "copyright": {
-            "items": {
-                "type": "object",
-                "properties": {
-                    "url": {
-                        "type": "string",
-                        "format": "url"
-                    },
-                    "material": {
-                        "type": "string"
-                    },
-                    "holder": {
-                        "type": "string",
-                        "description": "Copyright holder."
-                    },
-                    "statement": {
-                        "type": "string",
-                        "description": "FIXME: What's that? there are all sorts of usages on production!"
-                    }
-                }
-            },
-            "type": "array"
-        },
-        "field_categories": {
-            "$ref": "elements/fields.json"
-        },
-        "thesaurus_terms": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "classification_scheme": {
-                        "type": "string"
-                    },
-                    "keyword": {
-                        "type": "string"
-                    },
-                    "energy_range": {
-                        "minimum": 0,
-                        "type": "integer",
-                        "description": "FIXME: What... is... that!?",
-                        "maximum": 9
-                    }
-                }
-            },
-            "type": "array"
-        },
         "accelerator_experiments": {
-            "uniqueItems": true,
             "items": {
-                "type": "object",
                 "properties": {
+                    "accelerator": {
+                        "type": "string"
+                    },
                     "curated_relation": {
                         "default": false,
-                        "type": "boolean",
-                        "description": "Was the experiment actually proofchecked by a cataloguer?"
+                        "description": "Was the experiment actually proofchecked by a cataloguer?",
+                        "type": "boolean"
                     },
                     "experiment": {
                         "type": "string"
                     },
                     "facets_experiment": {
-                        "type": "string",
-                        "description": "Experiment name to be used on facets."
-                    },
-                    "accelerator": {
+                        "description": "Experiment name to be used on facets.",
                         "type": "string"
                     },
                     "institution": {
                         "type": "string"
                     },
                     "record": {
-                        "description": "URI for the corresponding experiment record.",
-                        "$ref": "elements/json_reference.json"
+                        "$ref": "elements/json_reference.json",
+                        "description": "URI for the corresponding experiment record."
                     }
+                },
+                "type": "object"
+            },
+            "type": "array",
+            "uniqueItems": true
+        },
+        "acquisition_source": {
+            "properties": {
+                "date": {
+                    "description": "Date of acquisition",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "Email of acquisition contact",
+                    "type": "string"
+                },
+                "method": {
+                    "description": "Method of acquisition",
+                    "type": "string"
+                },
+                "source": {
+                    "description": "Source of acquisition",
+                    "type": "string"
+                },
+                "submission_number": {
+                    "description": "Special submission ID",
+                    "type": "string"
                 }
             },
-            "type": "array"
+            "type": "object"
         },
         "arxiv_eprints": {
-            "uniqueItems": true,
             "items": {
                 "properties": {
-                    "value": {
-                        "type": "string",
-                        "pattern": "\\d{4}.\\d{4,5}|\\w+-\\w+/\\d+|\\w+/\\d+"
-                    },
                     "categories": {
                         "items": {
                             "type": "string"
                         },
                         "type": "array"
+                    },
+                    "value": {
+                        "pattern": "\\d{4}.\\d{4,5}|\\w+-\\w+/\\d+|\\w+/\\d+",
+                        "type": "string"
                     }
                 },
                 "type": "object"
             },
-            "type": "array"
-        },
-        "title_variations": {
-            "$ref": "elements/titles.json"
-        },
-        "free_keywords": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "type": "string"
-                    },
-                    "value": {
-                        "type": "string"
-                    }
-                }
-            },
-            "type": "array"
-        },
-        "core": {
-            "type": "boolean",
-            "description": "Whether this document is CORE and hence need special curation. NOTE: set this explicitly to false, in order to have real noncore."
-        },
-        "book_series": {
-            "items": {
-                "type": "object",
-                "properties": {
-                    "volume": {
-                        "type": "string",
-                        "description": "Specific volume number"
-                    },
-                    "title": {
-                        "type": "string",
-                        "description": "Title of the book series"
-                    }
-                }
-            },
-            "type": "array"
-        },
-        "succeeding_entry": {
-            "type": "object",
-            "properties": {
-                "relationship_code": {
-                    "type": "string"
-                },
-                "isbn": {
-                    "type": "string"
-                },
-                "record": {
-                    "$ref": "elements/json_reference.json"
-                }
-            },
-            "description": "Reference to previously merged records."
-        },
-        "acquisition_source": {
-            "type": "object",
-            "properties": {
-                "source": {
-                    "type": "string",
-                    "description": "Source of acquisition"
-                },
-                "email": {
-                    "type": "string",
-                    "description": "Email of acquisition contact"
-                },
-                "method": {
-                    "type": "string",
-                    "description": "Method of acquisition"
-                },
-                "date": {
-                    "type": "string",
-                    "description": "Date of acquisition"
-                },
-                "submission_number": {
-                    "type": "string",
-                    "description": "Special submission ID"
-                }
-            }
-        },
-        "collaboration": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "value": {
-                        "type": "string"
-                    },
-                    "record": {
-                        "$ref": "elements/json_reference.json"
-                    }
-                }
-            },
-            "type": "array"
+            "type": "array",
+            "uniqueItems": true
         },
         "authors": {
-            "uniqueItems": true,
+            "description": "List with all the authors",
             "items": {
-                "type": "object",
                 "properties": {
-                    "other_ids": {
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "source": {
-                                    "type": "string",
-                                    "title": "Source of ID"
-                                },
-                                "value": {
-                                    "type": "string",
-                                    "title": "ID"
-                                }
-                            },
-                            "title": "ID"
-                        },
-                        "type": "array",
-                        "description": "Just in case...",
-                        "title": "Other IDs"
-                    },
-                    "uuid": {
-                        "title": "UUID",
-                        "description": "Universally unique identifier of the author.",
-                        "type": "string",
-                        "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
-                    },
-                    "full_name": {
-                        "title": "Author name",
-                        "type": "string",
-                        "description": "author name as it appears in the paper",
-                        "format": ".+, .+"
-                    },
-                    "alternative_name": {
-                        "title": "Alternative author name",
-                        "type": "string",
-                        "description": "FIXME: needed for import only",
-                        "format": ".+, .+"
-                    },
-                    "name_variations": {
-                        "title": "Author name variations",
-                        "type": "string",
-                        "description": "All possible variations of the authors full name."
-                    },
                     "affiliations": {
-                        "uniqueItems": true,
                         "items": {
-                            "type": "object",
                             "properties": {
                                 "curated_relation": {
-                                    "type": "boolean",
                                     "description": "Did a cataloguer proof-checked the recid?",
-                                    "title": "The affiliation is curated?"
-                                },
-                                "value": {
-                                    "type": "string",
-                                    "description": "The affiliation as it appears on the paper",
-                                    "title": "Name of institution"
+                                    "title": "The affiliation is curated?",
+                                    "type": "boolean"
                                 },
                                 "record": {
+                                    "$ref": "elements/json_reference.json",
                                     "description": "URI for the Institution collection record",
-                                    "title": "URI for the Institution collection record",
-                                    "$ref": "elements/json_reference.json"
+                                    "title": "URI for the Institution collection record"
+                                },
+                                "value": {
+                                    "description": "The affiliation as it appears on the paper",
+                                    "title": "Name of institution",
+                                    "type": "string"
                                 }
                             },
-                            "title": "Affiliation"
+                            "title": "Affiliation",
+                            "type": "object"
                         },
+                        "title": "Affiliations",
                         "type": "array",
-                        "title": "Affiliations"
+                        "uniqueItems": true
                     },
-                    "inspire_id": {
-                        "pattern": "INSPIRE-\\d+",
-                        "type": "string",
-                        "description": "Legacy INSPIRE ID when available",
-                        "title": "INSPIRE ID"
-                    },
-                    "inspire_bai": {
-                        "pattern": "(\\w+\\.)+\\d+",
-                        "type": "string",
-                        "description": "INSPIRE BAI when available",
-                        "title": "INSPIRE BibAuthorID"
-                    },
-                    "curated_relation": {
-                        "default": false,
-                        "type": "boolean",
-                        "description": "Was this signature actually claimed or proof-checked by cataloguer?",
-                        "title": "The relation is curated?"
-                    },
-                    "orcid": {
-                        "pattern": "\\d{4}-\\d{4}-\\d{4}-\\d{4}",
-                        "title": "ORCID ID",
-                        "type": "string",
-                        "description": "ORCID Id when available",
-                        "format": "orcid"
-                    },
-                    "role": {
-                        "type": "string",
-                        "description": "Role of the author within the paper. So far only Editor was captured.",
-                        "title": "Role of the person"
-                    },
-                    "email": {
-                        "title": "Email",
-                        "type": "string",
-                        "format": "email"
-                    },
-                    "signature_block": {
-                        "title": "Phonetic name",
-                        "description": "Phonetic notation of the author's name.",
+                    "alternative_name": {
+                        "description": "FIXME: needed for import only",
+                        "format": ".+, .+",
+                        "title": "Alternative author name",
                         "type": "string"
                     },
-                    "record": {
-                        "description": "URI for the person record",
-                        "title": "URI for the person record",
-                        "$ref": "elements/json_reference.json"
-                    },
                     "contributor_roles": {
-                        "type": "array",
-                        "uniqueItems": true,
                         "items": {
-                            "type": "object",
                             "properties": {
+                                "source": {
+                                    "enum": [
+                                        "CRediT"
+                                    ],
+                                    "type": "string"
+                                },
                                 "value": {
-                                    "type": "string",
                                     "enum": [
                                         "Conceptualization",
                                         "Data curation",
@@ -665,71 +151,229 @@
                                         "Supervision",
                                         "Validation",
                                         "Visualization",
-                                        "Writing – original draft",
-                                        "Writing – review & editing"
-                                    ]
-                                },
-                                "source": {
-                                    "type": "string",
-                                    "enum": ["CRediT"]
+                                        "Writing \u2013 original draft",
+                                        "Writing \u2013 review & editing"
+                                    ],
+                                    "type": "string"
                                 }
-                            }
-                        }
+                            },
+                            "type": "object"
+                        },
+                        "type": "array",
+                        "uniqueItems": true
+                    },
+                    "curated_relation": {
+                        "default": false,
+                        "description": "Was this signature actually claimed or proof-checked by cataloguer?",
+                        "title": "The relation is curated?",
+                        "type": "boolean"
+                    },
+                    "email": {
+                        "format": "email",
+                        "title": "Email",
+                        "type": "string"
+                    },
+                    "full_name": {
+                        "description": "author name as it appears in the paper",
+                        "format": ".+, .+",
+                        "title": "Author name",
+                        "type": "string"
+                    },
+                    "inspire_bai": {
+                        "description": "INSPIRE BAI when available",
+                        "pattern": "(\\w+\\.)+\\d+",
+                        "title": "INSPIRE BibAuthorID",
+                        "type": "string"
+                    },
+                    "inspire_id": {
+                        "description": "Legacy INSPIRE ID when available",
+                        "pattern": "INSPIRE-\\d+",
+                        "title": "INSPIRE ID",
+                        "type": "string"
+                    },
+                    "name_variations": {
+                        "description": "All possible variations of the authors full name.",
+                        "title": "Author name variations",
+                        "type": "string"
+                    },
+                    "orcid": {
+                        "description": "ORCID Id when available",
+                        "format": "orcid",
+                        "pattern": "\\d{4}-\\d{4}-\\d{4}-\\d{4}",
+                        "title": "ORCID ID",
+                        "type": "string"
+                    },
+                    "other_ids": {
+                        "description": "Just in case...",
+                        "items": {
+                            "properties": {
+                                "source": {
+                                    "title": "Source of ID",
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "title": "ID",
+                                    "type": "string"
+                                }
+                            },
+                            "title": "ID",
+                            "type": "object"
+                        },
+                        "title": "Other IDs",
+                        "type": "array"
+                    },
+                    "record": {
+                        "$ref": "elements/json_reference.json",
+                        "description": "URI for the person record",
+                        "title": "URI for the person record"
+                    },
+                    "role": {
+                        "description": "Role of the author within the paper. So far only Editor was captured.",
+                        "title": "Role of the person",
+                        "type": "string"
+                    },
+                    "signature_block": {
+                        "description": "Phonetic notation of the author's name.",
+                        "title": "Phonetic name",
+                        "type": "string"
+                    },
+                    "uuid": {
+                        "description": "Universally unique identifier of the author.",
+                        "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+                        "title": "UUID",
+                        "type": "string"
                     }
                 },
-                "title": "Author"
+                "title": "Author",
+                "type": "object"
             },
+            "title": "Authors",
             "type": "array",
-            "description": "List with all the authors",
-            "title": "Authors"
+            "uniqueItems": true
+        },
+        "book_series": {
+            "items": {
+                "properties": {
+                    "title": {
+                        "description": "Title of the book series",
+                        "type": "string"
+                    },
+                    "volume": {
+                        "description": "Specific volume number",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "type": "array"
+        },
+        "breadcrumb_title": {
+            "description": "The title shown in all page breadcrumbs",
+            "type": "string"
+        },
+        "citeable": {
+            "description": "Whether this document can be cited. FIXME: can this be derived from other properties?",
+            "title": "Citeable?",
+            "type": "boolean"
         },
         "classification_number": {
-            "uniqueItems": true,
             "items": {
-                "type": "object",
                 "properties": {
-                    "value": {
-                        "type": "string",
-                        "description": "PACS or PDG codes. FIXME: What about better separating these into a PACS field and a PDG field?",
-                        "title": "Number"
+                    "source": {
+                        "title": "Source",
+                        "type": "string"
                     },
                     "standard": {
-                        "type": "string",
-                        "title": "Standard"
-                    },
-                    "source": {
-                        "type": "string",
-                        "title": "Source"
-                    }
-                },
-                "title": "Classification number"
-            },
-            "type": "array",
-            "title": "Classification numbers"
-        },
-        "dois": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "type": "string",
-                        "description": "Issuing of DOI.",
-                        "title": "DOI registrant"
+                        "title": "Standard",
+                        "type": "string"
                     },
                     "value": {
-                        "pattern": "10\\.\\d+(\\.\\d+)?/.+",
-                        "type": "string",
-                        "title": "DOI"
+                        "description": "PACS or PDG codes. FIXME: What about better separating these into a PACS field and a PDG field?",
+                        "title": "Number",
+                        "type": "string"
                     }
                 },
-                "title": "DOI"
+                "title": "Classification number",
+                "type": "object"
+            },
+            "title": "Classification numbers",
+            "type": "array",
+            "uniqueItems": true
+        },
+        "collaboration": {
+            "items": {
+                "properties": {
+                    "record": {
+                        "$ref": "elements/json_reference.json"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
             },
             "type": "array",
-            "title": "DOIs"
+            "uniqueItems": true
+        },
+        "collections": {
+            "items": {
+                "properties": {
+                    "primary": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "minItems": 1,
+            "title": "Collection",
+            "type": "array",
+            "uniqueItems": true
+        },
+        "copyright": {
+            "items": {
+                "properties": {
+                    "holder": {
+                        "description": "Copyright holder.",
+                        "type": "string"
+                    },
+                    "material": {
+                        "type": "string"
+                    },
+                    "statement": {
+                        "description": "FIXME: What's that? there are all sorts of usages on production!",
+                        "type": "string"
+                    },
+                    "url": {
+                        "format": "url",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "type": "array"
+        },
+        "core": {
+            "description": "Whether this document is CORE and hence need special curation. NOTE: set this explicitly to false, in order to have real noncore.",
+            "type": "boolean"
+        },
+        "corporate_author": {
+            "items": {
+                "title": "Corporate author",
+                "type": "string"
+            },
+            "title": "Corporate authors",
+            "type": "array",
+            "uniqueItems": true
+        },
+        "deleted_records": {
+            "description": "List of deleted records referring to this record",
+            "items": {
+                "$ref": "elements/json_reference.json"
+            },
+            "title": "Deleted Records",
+            "type": "array"
         },
         "document_type": {
-            "minItems": 1,
             "items": {
                 "enum": [
                     "Published",
@@ -747,146 +391,506 @@
                 ],
                 "type": "string"
             },
-            "uniqueItems": true,
-            "type": "array",
-            "title": "Document type"
-        },
-        "collections": {
             "minItems": 1,
+            "title": "Document type",
+            "type": "array",
+            "uniqueItems": true
+        },
+        "dois": {
             "items": {
-                "type": "object",
                 "properties": {
-                    "primary": {
+                    "source": {
+                        "description": "Issuing of DOI.",
+                        "title": "DOI registrant",
+                        "type": "string"
+                    },
+                    "value": {
+                        "pattern": "10\\.\\d+(\\.\\d+)?/.+",
+                        "title": "DOI",
                         "type": "string"
                     }
-                }
+                },
+                "title": "DOI",
+                "type": "object"
             },
-            "uniqueItems": true,
+            "title": "DOIs",
             "type": "array",
-            "title": "Collection"
+            "uniqueItems": true
         },
-        "citeable": {
-            "type": "boolean",
-            "description": "Whether this document can be cited. FIXME: can this be derived from other properties?",
-            "title": "Citeable?"
+        "earliest_date": {
+            "description": "The earliest date of this record among all types of dates",
+            "format": "date",
+            "type": "string"
         },
-        "deleted_records": {
-            "type": "array",
+        "edition": {
             "items": {
-                "$ref": "elements/json_reference.json"
+                "properties": {
+                    "edition": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
             },
-            "description": "List of deleted records referring to this record",
-            "title": "Deleted Records"
+            "type": "array",
+            "uniqueItems": true
+        },
+        "external_system_numbers": {
+            "items": {
+                "properties": {
+                    "institute": {
+                        "title": "Institute",
+                        "type": "string"
+                    },
+                    "obsolete": {
+                        "title": "Obsolete?",
+                        "type": "boolean"
+                    },
+                    "value": {
+                        "title": "Number",
+                        "type": "string"
+                    }
+                },
+                "title": "External system number",
+                "type": "object"
+            },
+            "title": "External system numbers",
+            "type": "array",
+            "uniqueItems": true
+        },
+        "field_categories": {
+            "$ref": "elements/fields.json"
+        },
+        "free_keywords": {
+            "items": {
+                "properties": {
+                    "source": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "type": "array",
+            "uniqueItems": true
+        },
+        "funding_info": {
+            "description": "Information related to funding. FIXME: Do we care about this? So far only 349 records were tagged and all for a single EU project.",
+            "items": {
+                "properties": {
+                    "agency": {
+                        "title": "Agency",
+                        "type": "string"
+                    },
+                    "grant_number": {
+                        "title": "Grant number",
+                        "type": "string"
+                    },
+                    "project_number": {
+                        "title": "Project number",
+                        "type": "string"
+                    }
+                },
+                "title": "Grant information",
+                "type": "object"
+            },
+            "title": "Funding information",
+            "type": "array",
+            "uniqueItems": true
+        },
+        "hidden_notes": {
+            "description": "FIXME: what about 595__d??",
+            "items": {
+                "properties": {
+                    "cds": {
+                        "type": "string"
+                    },
+                    "cern_reference": {
+                        "description": "FIXME: Do we know what this is? do we care?",
+                        "type": "string"
+                    },
+                    "source": {
+                        "description": "FIXME: What's the semantic of this source?",
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "type": "array",
+            "uniqueItems": true
+        },
+        "imprints": {
+            "items": {
+                "properties": {
+                    "date": {
+                        "format": "date",
+                        "type": "string"
+                    },
+                    "place": {
+                        "type": "string"
+                    },
+                    "publisher": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "type": "array",
+            "uniqueItems": true
+        },
+        "isbns": {
+            "items": {
+                "properties": {
+                    "comment": {
+                        "description": "Further information about type.",
+                        "type": "string"
+                    },
+                    "medium": {
+                        "description": "Medium (type) of the ISBN.",
+                        "type": "string"
+                    },
+                    "value": {
+                        "format": "isbn",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "value"
+                ],
+                "type": "object"
+            },
+            "type": "array",
+            "uniqueItems": true
+        },
+        "languages": {
+            "items": {
+                "title": "Language",
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "license": {
+            "items": {
+                "properties": {
+                    "imposing": {
+                        "description": "FIXME: what is this!?",
+                        "title": "Imposing",
+                        "type": "string"
+                    },
+                    "license": {
+                        "title": "License name",
+                        "type": "string"
+                    },
+                    "material": {
+                        "title": "Material referred by the license",
+                        "type": "string"
+                    },
+                    "url": {
+                        "format": "url",
+                        "title": "URL of the license",
+                        "type": "string"
+                    }
+                },
+                "title": "License",
+                "type": "object"
+            },
+            "title": "License information",
+            "type": "array",
+            "uniqueItems": true
         },
         "new_record": {
             "$ref": "elements/json_reference.json",
             "description": "Master record that replaces this record",
             "title": "New record"
         },
-        "license": {
-            "uniqueItems": true,
+        "page_nr": {
             "items": {
-                "type": "object",
+                "description": "FIXME: shall it be integer perhaps?",
+                "title": "Number of pages",
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "persistent_identifiers": {
+            "items": {
                 "properties": {
-                    "imposing": {
-                        "type": "string",
-                        "description": "FIXME: what is this!?",
-                        "title": "Imposing"
+                    "source": {
+                        "description": "Provenance of the persistent identifier",
+                        "type": "string"
                     },
-                    "url": {
-                        "title": "URL of the license",
-                        "type": "string",
-                        "format": "url"
+                    "type": {
+                        "title": "Type of persistent identifier",
+                        "type": "string"
                     },
-                    "material": {
-                        "type": "string",
-                        "title": "Material referred by the license"
-                    },
-                    "license": {
-                        "type": "string",
-                        "title": "License name"
+                    "value": {
+                        "title": "Value of the persistent identifier",
+                        "type": "string"
                     }
                 },
-                "title": "License"
+                "title": "Persistent Identifier",
+                "type": "object"
+            },
+            "title": "Persistent Identifiers",
+            "type": "array",
+            "uniqueItems": true
+        },
+        "preprint_date": {
+            "format": "date",
+            "type": "string"
+        },
+        "public_notes": {
+            "items": {
+                "properties": {
+                    "source": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "value"
+                ],
+                "type": "object"
             },
             "type": "array",
-            "title": "License information"
+            "uniqueItems": true
         },
-        "languages": {
-            "type": "array",
+        "publication_info": {
+            "description": "FIXME: Shall we split conference information away? FIXME: shall we move the DOI and ISBN next to where it belongs? So that we can also align erratum and friends?",
             "items": {
-                "type": "string",
-                "title": "Language"
-            }
-        },
-        "page_nr": {
+                "properties": {
+                    "artid": {
+                        "description": "Electronic Article ID",
+                        "type": "string"
+                    },
+                    "cnum": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "conf_acronym": {
+                        "type": "string"
+                    },
+                    "conference_record": {
+                        "$ref": "elements/json_reference.json",
+                        "description": "URI for corresponding Conference"
+                    },
+                    "confpaper_info": {
+                        "type": "string"
+                    },
+                    "curated_relation": {
+                        "type": "boolean"
+                    },
+                    "isbn": {
+                        "type": "string"
+                    },
+                    "journal_issue": {
+                        "type": "string"
+                    },
+                    "journal_record": {
+                        "$ref": "elements/json_reference.json",
+                        "description": "URI for corresponding Journal"
+                    },
+                    "journal_title": {
+                        "type": "string"
+                    },
+                    "journal_volume": {
+                        "type": "string"
+                    },
+                    "note": {
+                        "type": "string"
+                    },
+                    "page_end": {
+                        "description": "Last page",
+                        "type": "string"
+                    },
+                    "page_start": {
+                        "description": "First page",
+                        "type": "string"
+                    },
+                    "parent_record": {
+                        "$ref": "elements/json_reference.json",
+                        "description": "URI for the parent this record is part of"
+                    },
+                    "pubinfo_freetext": {
+                        "type": "string"
+                    },
+                    "reportnumber": {
+                        "type": "string"
+                    },
+                    "year": {
+                        "maximum": 2050,
+                        "minimum": 1000,
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
             "type": "array",
-            "items": {
-                "type": "string",
-                "description": "FIXME: shall it be integer perhaps?",
-                "title": "Number of pages"
-            }
+            "uniqueItems": true
         },
-        "urls": {
-            "$ref": "elements/urls.json"
+        "references": {
+            "items": {
+                "$ref": "elements/reference.json"
+            },
+            "type": "array",
+            "uniqueItems": true
+        },
+        "report_numbers": {
+            "items": {
+                "properties": {
+                    "source": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "type": "array",
+            "uniqueItems": true
+        },
+        "self": {
+            "$ref": "elements/json_reference.json",
+            "description": "Url of the record itself",
+            "title": "Url of the record"
+        },
+        "spires_sysnos": {
+            "description": "List of associated legacy SPIRES IDs",
+            "items": {
+                "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+        },
+        "succeeding_entry": {
+            "description": "Reference to previously merged records.",
+            "properties": {
+                "isbn": {
+                    "type": "string"
+                },
+                "record": {
+                    "$ref": "elements/json_reference.json"
+                },
+                "relationship_code": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "thesaurus_terms": {
+            "items": {
+                "properties": {
+                    "classification_scheme": {
+                        "type": "string"
+                    },
+                    "energy_range": {
+                        "description": "FIXME: What... is... that!?",
+                        "maximum": 9,
+                        "minimum": 0,
+                        "type": "integer"
+                    },
+                    "keyword": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "type": "array",
+            "uniqueItems": true
+        },
+        "thesis": {
+            "properties": {
+                "date": {
+                    "format": "date",
+                    "type": "string"
+                },
+                "defense_date": {
+                    "format": "date",
+                    "type": "string"
+                },
+                "degree_type": {
+                    "description": "FIXME: this enum must be reviewed",
+                    "enum": [
+                        "PhD",
+                        "Master",
+                        "Bachelor",
+                        "Diploma",
+                        "Habilitation",
+                        "Laurea",
+                        "Thesis"
+                    ],
+                    "type": "string"
+                },
+                "institutions": {
+                    "items": {
+                        "properties": {
+                            "curated_relation": {
+                                "type": "boolean"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "record": {
+                                "$ref": "elements/json_reference.json",
+                                "description": "URI of the matched insitution record."
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "thesis_supervisor": {
+            "items": {
+                "properties": {
+                    "affiliation": {
+                        "type": "string"
+                    },
+                    "curated_relation": {
+                        "type": "boolean"
+                    },
+                    "full_name": {
+                        "type": "string"
+                    },
+                    "record": {
+                        "$ref": "elements/json_reference.json"
+                    }
+                },
+                "required": [
+                    "full_name"
+                ],
+                "type": "object"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "title_translations": {
             "$ref": "elements/titles.json"
         },
-        "corporate_author": {
-            "uniqueItems": true,
-            "items": {
-                "type": "string",
-                "title": "Corporate author"
-            },
-            "type": "array",
-            "title": "Corporate authors"
+        "title_variations": {
+            "$ref": "elements/titles.json"
         },
-        "external_system_numbers": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "institute": {
-                        "type": "string",
-                        "title": "Institute"
-                    },
-                    "obsolete": {
-                        "type": "boolean",
-                        "title": "Obsolete?"
-                    },
-                    "value": {
-                        "type": "string",
-                        "title": "Number"
-                    }
-                },
-                "title": "External system number"
-            },
-            "type": "array",
-            "title": "External system numbers"
+        "titles": {
+            "$ref": "elements/titles.json"
         },
-        "persistent_identifiers": {
-            "uniqueItems": true,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "source": {
-                        "type": "string",
-                        "description": "Provenance of the persistent identifier"
-                    },
-                    "type": {
-                        "type": "string",
-                        "title": "Type of persistent identifier"
-                    },
-                    "value": {
-                        "type": "string",
-                        "title": "Value of the persistent identifier"
-                    }
-                },
-                "title": "Persistent Identifier"
-            },
-            "type": "array",
-            "title": "Persistent Identifiers"
+        "titles_old": {
+            "$ref": "elements/titles.json",
+            "description": "FIXME: Old 247, shall it still have its own field?"
+        },
+        "urls": {
+            "$ref": "elements/urls.json"
         }
-    }
+    },
+    "title": "Publication",
+    "type": "object"
 }

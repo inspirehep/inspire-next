@@ -3,10 +3,12 @@
     "properties": {
         "$ref": {
             "description": "URL to the referenced resource",
-            "type": "string",
-            "format": "url"
+            "format": "url",
+            "type": "string"
         }
     },
-    "required": ["$ref"],
+    "required": [
+        "$ref"
+    ],
     "type": "object"
 }

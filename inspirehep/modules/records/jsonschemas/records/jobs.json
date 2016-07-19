@@ -1,14 +1,19 @@
 {
     "$schema": "http://json-schema.org/schema#",
     "properties": {
-        "self": {
-          "description": "Url of the record itself",
-          "title": "Url of the record",
-          "$ref": "elements/json_reference.json"
+        "_ranks": {
+            "items": {
+                "description": "Raw values of MARC 656__a field",
+                "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "address": {
+            "items": {
+                "$ref": "elements/address.json"
+            },
             "type": "array",
-            "items": {"$ref": "elements/address.json"},
             "uniqueItems": true
         },
         "closed_date": {
@@ -17,12 +22,13 @@
             "type": "string"
         },
         "contact_details": {
+            "items": {
+                "$ref": "elements/contact.json"
+            },
             "type": "array",
-            "items": {"$ref": "elements/contact.json"},
             "uniqueItems": true
         },
         "continent": {
-            "type": "string",
             "enum": [
                 "Africa",
                 "Antarctica",
@@ -31,11 +37,16 @@
                 "North America",
                 "Oceania",
                 "South America"
-            ]
+            ],
+            "type": "string"
         },
         "deadline_date": {
             "format": "date",
             "title": "Application deadline",
+            "type": "string"
+        },
+        "description": {
+            "title": "Job description",
             "type": "string"
         },
         "experiments": {
@@ -46,6 +57,9 @@
             },
             "type": "array",
             "uniqueItems": true
+        },
+        "field_categories": {
+            "$ref": "elements/fields.json"
         },
         "institution": {
             "items": {
@@ -58,8 +72,8 @@
                         "type": "string"
                     },
                     "record": {
-                        "title": "Institution Record URI",
-                        "$ref": "elements/json_reference.json"
+                        "$ref": "elements/json_reference.json",
+                        "title": "Institution Record URI"
                     }
                 },
                 "title": "Institution",
@@ -68,27 +82,15 @@
             "type": "array",
             "uniqueItems": true
         },
-        "description": {
-            "title": "Job description",
-            "type": "string"
-        },
         "position": {
             "title": "Job position",
             "type": "string"
         },
-        "_ranks": {
-            "type": "array",
-            "items": {
-                "description": "Raw values of MARC 656__a field",
-                "type": "string"
-            },
-            "uniqueItems": true
-        },
         "ranks": {
-            "type": "array",
             "items": {
                 "$ref": "elements/rank.json"
             },
+            "type": "array",
             "uniqueItems": true
         },
         "reference_email": {
@@ -101,8 +103,10 @@
             "type": "array",
             "uniqueItems": true
         },
-        "field_categories": {
-            "$ref": "elements/fields.json"
+        "self": {
+            "$ref": "elements/json_reference.json",
+            "description": "Url of the record itself",
+            "title": "Url of the record"
         },
         "urls": {
             "$ref": "elements/urls.json"
