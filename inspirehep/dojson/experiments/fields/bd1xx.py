@@ -135,7 +135,6 @@ def date_started(self, key, value):
 
 
 @experiments.over('accelerator', '^693')
-@utils.for_each_value
 def accelerator(self, key, value):
     """Field code."""
     return value.get('a')

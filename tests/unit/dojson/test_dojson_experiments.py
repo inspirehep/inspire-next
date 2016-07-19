@@ -506,7 +506,6 @@ def test_date_started_and_date_completed_from_046():
     assert result['date_completed'] == '2002'
 
 
-@pytest.mark.xfail(reason='a list is returned')
 def test_accelerator_from_693__a():
     snippet = (
         '<datafield tag="693" ind1=" " ind2=" ">'
