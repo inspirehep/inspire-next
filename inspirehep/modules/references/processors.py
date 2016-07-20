@@ -23,11 +23,64 @@
 """References Processors."""
 
 import re
+import six
 
 import idutils
 from isbn import ISBNError
 
 from inspirehep.utils.pubnote import split_pubnote
+
+
+# Matches any separators for author enumerations.
+RE_SPLIT_AUTH = re.compile(r',?\s+and\s|,?\s*&|,|et al\.?|\(?eds?\.\)?',
+                           re.I | re.U)
+# Matches any stream of initials (A. B C D. -E F).
+RE_INITIALS_ONLY = re.compile(r'^\s*-?[A-Z]((\.|\s)\s*-?[A-Z])*\.?\s*$',
+                              re.U)
+
+
+def _split_refextract_authors_str(authors_str):
+    """Extract author names out of refextract authors output."""
+    author_seq = (x.strip() for x in RE_SPLIT_AUTH.split(authors_str) if x)
+    res = []
+
+    current = ''
+    for author in author_seq:
+        if not isinstance(author, six.text_type):
+            author = six.text_type(author.decode('utf8', 'ignore'))
+
+        # First clean the token.
+        author = re.sub(r'\(|\)', '', author, re.U)
+        # Names usually start with characters.
+        author = re.sub(r'^[\W\d]+', '', author, re.U)
+        # Names should end with characters or dot.
+        author = re.sub(r'[^.\w]+$', '', author, re.U)
+
+        # If we have initials join them with the previous token.
+        if RE_INITIALS_ONLY.match(author):
+            current += ', ' + author.strip()
+        else:
+            if current:
+                res.append(current)
+            current = author
+
+    # Add last element.
+    if current:
+        res.append(current)
+
+    # Manual filterings that we don't want to add in regular expressions since
+    # it would make them more complex.
+    #  * ed might sneak in
+    #  * many legacy refs look like 'X. and Somebody E.'
+    #  * might miss lowercase initials
+    filters = [
+        lambda a: a == 'ed',
+        lambda a: a.startswith(','),
+        lambda a: len(a) == 1
+    ]
+    res = [r for r in res if all(not f(r) for f in filters)]
+
+    return res
 
 
 def _is_arxiv(obj):
@@ -112,6 +165,16 @@ class ReferenceBuilder(object):
     def add_url(self, url):
         self._ensure_field('urls', [])
         self.obj['urls'].append({'value': url})
+
+    def add_refextract_authors_str(self, authors_str):
+        """Parses individual authors from refextracted authors string.
+
+        Refextract extracts all authors from a given citation, we cheaply
+        extract individual ones here for improving the quality of the
+        migration.
+        """
+        for author in _split_refextract_authors_str(authors_str):
+            self.add_author(author)
 
     def add_author(self, full_name, role=None):
         self._ensure_field('authors', [])
