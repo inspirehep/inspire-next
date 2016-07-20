@@ -1,122 +1,134 @@
 {
-    "settings": {
-        "analysis": {
-            "filter": {
-                "asciifold_with_orig": {
-                    "type": "asciifolding",
-                    "preserve_original": true
-                },
-                "synonyms_kbr": {
-                    "type": "synonym",
-                    "synonyms": [
-                        "production => creation"
-                    ]
-                }
-            },
-            "analyzer": {
-                "natural_text": {
-                    "type": "custom",
-                    "tokenizer":  "standard",
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase",
-                        "synonyms_kbr"
-                    ]
-                },
-                "basic_analyzer": {
-                    "type": "custom",
-                    "tokenizer": "standard",
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase"
-                    ]
-                }
-            }
-        },
-        "index.percolator.map_unmapped_fields_as_string": true
-    },
     "mappings": {
         "institutions": {
-            "_all": {"enabled": true},
+            "_all": {
+                "enabled": true
+            },
             "date_detection": false,
-            "numeric_detection": false,
-            "dynamic_templates": [{
-                "default": {
-                    "match_mapping_type": "string",
-                    "mapping": {
-                        "analyzer": "basic_analyzer",
-                        "type": "string",
-                        "copy_to": "global_default"
+            "dynamic_templates": [
+                {
+                    "default": {
+                        "mapping": {
+                            "analyzer": "basic_analyzer",
+                            "copy_to": "global_default",
+                            "type": "string"
+                        },
+                        "match_mapping_type": "string"
                     }
                 }
-            }],
+            ],
+            "numeric_detection": false,
             "properties": {
-                "global_fulltext": {
-                    "type": "string",
-                    "analyzer": "natural_text"
-                },
-                "global_default": {
-                    "type": "string",
-                    "analyzer": "basic_analyzer"
-                },
-                "_collections": {
-                    "type": "string",
-                    "index": "not_analyzed"
-                },
-                "collections": {
-                    "properties": {
-                        "primary": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        },
-                        "secondary": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "date_and_time_of_latest_transaction": {
-                    "type": "date",
-                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S"
-                },
-                "affautocomplete": {
+                "ICN": {
+                    "copy_to": [
+                        "affautocomplete"
+                    ],
                     "type": "string"
                 },
-                "institution": {
-                    "type": "string",
-                    "copy_to": ["affautocomplete"]
-                },
-                "name": {
-                    "type": "string",
-                    "copy_to": ["affautocomplete"]
-                },
-                "name_variants": {
-                    "type": "object",
-                    "properties": {
-                        "value": {
-                            "type": "string",
-                            "copy_to": ["affautocomplete"]
-                        }
-                    }
-                },
-                "ICN": {
-                    "type": "string",
-                    "copy_to": ["affautocomplete"]
+                "_collections": {
+                    "index": "not_analyzed",
+                    "type": "string"
                 },
                 "address": {
                     "properties": {
                         "country": {
-                            "type": "string",
                             "fields": {
                                 "raw": {
-                                    "type": "string",
-                                    "index": "not_analyzed"
+                                    "index": "not_analyzed",
+                                    "type": "string"
                                 }
-                            }
+                            },
+                            "type": "string"
                         }
                     }
+                },
+                "affautocomplete": {
+                    "type": "string"
+                },
+                "collections": {
+                    "properties": {
+                        "primary": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
+                        "secondary": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        }
+                    }
+                },
+                "date_and_time_of_latest_transaction": {
+                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S",
+                    "type": "date"
+                },
+                "global_default": {
+                    "analyzer": "basic_analyzer",
+                    "type": "string"
+                },
+                "global_fulltext": {
+                    "analyzer": "natural_text",
+                    "type": "string"
+                },
+                "institution": {
+                    "copy_to": [
+                        "affautocomplete"
+                    ],
+                    "type": "string"
+                },
+                "name": {
+                    "copy_to": [
+                        "affautocomplete"
+                    ],
+                    "type": "string"
+                },
+                "name_variants": {
+                    "properties": {
+                        "value": {
+                            "copy_to": [
+                                "affautocomplete"
+                            ],
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 }
             }
         }
+    },
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "basic_analyzer": {
+                    "filter": [
+                        "asciifold_with_orig",
+                        "lowercase"
+                    ],
+                    "tokenizer": "standard",
+                    "type": "custom"
+                },
+                "natural_text": {
+                    "filter": [
+                        "asciifold_with_orig",
+                        "lowercase",
+                        "synonyms_kbr"
+                    ],
+                    "tokenizer": "standard",
+                    "type": "custom"
+                }
+            },
+            "filter": {
+                "asciifold_with_orig": {
+                    "preserve_original": true,
+                    "type": "asciifolding"
+                },
+                "synonyms_kbr": {
+                    "synonyms": [
+                        "production => creation"
+                    ],
+                    "type": "synonym"
+                }
+            }
+        },
+        "index.percolator.map_unmapped_fields_as_string": true
     }
 }

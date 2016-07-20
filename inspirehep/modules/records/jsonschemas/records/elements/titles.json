@@ -1,8 +1,6 @@
 {
     "$schema": "http://json-schema.org/schema#",
-    "uniqueItems": true,
     "items": {
-        "type": "object",
         "properties": {
             "source": {
                 "type": "string"
@@ -14,7 +12,9 @@
                 "type": "string"
             }
         },
-        "title": "Title (and subtitle)"
+        "title": "Title (and subtitle)",
+        "type": "object"
     },
-    "type": "array"
+    "type": "array",
+    "uniqueItems": true
 }

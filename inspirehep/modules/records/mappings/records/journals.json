@@ -1,211 +1,224 @@
 {
-    "settings": {
-        "analysis": {
-            "filter": {
-                "asciifold_with_orig": {
-                    "type": "asciifolding",
-                    "preserve_original": true
-                },
-                "synonyms_kbr": {
-                    "type": "synonym",
-                    "synonyms": [
-                        "production => creation"
-                    ]
-                }
-            },
-            "analyzer": {
-                "natural_text": {
-                    "type": "custom",
-                    "tokenizer":  "standard",
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase",
-                        "synonyms_kbr"
-                    ]
-                },
-                "basic_analyzer": {
-                    "type": "custom",
-                    "tokenizer": "standard",
-                    "filter": [
-                        "asciifold_with_orig",
-                        "lowercase"
-                    ]
-                }
-            }
-        },
-        "index.percolator.map_unmapped_fields_as_string": true
-    },
     "mappings": {
         "journals": {
-            "_all": {"enabled": false},
+            "_all": {
+                "enabled": false
+            },
             "date_detection": false,
-            "numeric_detection": false,
             "dynamic_templates": [
-                {"default": {
-                    "match_mapping_type": "string",
-                    "mapping": {
-                        "analyzer": "basic_analyzer",
-                        "type": "string",
-                        "copy_to": "global_default"
+                {
+                    "default": {
+                        "mapping": {
+                            "analyzer": "basic_analyzer",
+                            "copy_to": "global_default",
+                            "type": "string"
+                        },
+                        "match_mapping_type": "string"
                     }
-                }
                 }
             ],
+            "numeric_detection": false,
             "properties": {
-                "global_fulltext": {
-                    "type": "string",
-                    "analyzer": "natural_text"
-                },
-                "global_default": {
-                    "type": "string",
-                    "analyzer": "basic_analyzer"
-                },
                 "_collections": {
-                    "type": "string",
-                    "index": "not_analyzed"
-                },
-                "hidden_note": {
-                    "type": "object",
-                    "properties": {
-                        "cds": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "issn": {
-                    "type": "object",
-                    "properties": {
-                        "value": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        },
-                        "material": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "accelerator_experiment": {
-                    "type": "object",
-                    "properties": {
-                        "experiment": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "experimentautocomplete": {
+                    "index": "not_analyzed",
                     "type": "string"
                 },
-                "experiment_name": {
-                    "type": "string",
-                    "copy_to": ["experimentautocomplete"]
-                },
-                "report_number": {
-                    "type": "object",
+                "accelerator_experiment": {
                     "properties": {
-                        "primary": {
-                            "type": "string",
-                            "index": "not_analyzed"
+                        "experiment": {
+                            "index": "not_analyzed",
+                            "type": "string"
                         }
-                    }
-                },
-                "collaboration": {
-                    "type": "object",
-                    "properties": {
-                        "collaboration": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "collections": {
-                    "properties": {
-                        "primary": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        },
-                        "secondary": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
-                },
-                "exactauthor": {
-                    "type": "string",
-                    "fields": {
-                        "raw": {
-                            "type": "string",
-                            "index": "not_analyzed"
-                        }
-                    }
+                    },
+                    "type": "object"
                 },
                 "affautocomplete": {
                     "type": "string"
                 },
                 "authors": {
-                    "type": "object",
                     "properties": {
-                        "full_name": {
-                            "type": "string",
-                            "copy_to": ["exactauthor"],
-                            "analyzer": "natural_text"
-                        },
                         "affiliation": {
+                            "type": "string"
+                        },
+                        "full_name": {
+                            "analyzer": "natural_text",
+                            "copy_to": [
+                                "exactauthor"
+                            ],
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "collaboration": {
+                    "properties": {
+                        "collaboration": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "collections": {
+                    "properties": {
+                        "primary": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
+                        "secondary": {
+                            "index": "not_analyzed",
                             "type": "string"
                         }
                     }
                 },
+                "date": {
+                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S||dd MM yyyy||dd MMM yyyy||MMM yyyy||MMM yyyy?||yyyy ('repr'.1964.)",
+                    "type": "date"
+                },
+                "date_and_time_of_latest_transaction": {
+                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S",
+                    "type": "date"
+                },
                 "division": {
                     "type": "string"
                 },
-                "date_and_time_of_latest_transaction": {
-                    "type": "date",
-                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S"
+                "exactauthor": {
+                    "fields": {
+                        "raw": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        }
+                    },
+                    "type": "string"
                 },
-                "date": {
-                    "type": "date",
-                    "format": "yyyy||yyyyMM||yyyyMMdd||yyyyMMddHHmmss||yyyyMMddHHmmss.S||dd MM yyyy||dd MMM yyyy||MMM yyyy||MMM yyyy?||yyyy ('repr'.1964.)"
+                "experiment_name": {
+                    "copy_to": [
+                        "experimentautocomplete"
+                    ],
+                    "type": "string"
+                },
+                "experimentautocomplete": {
+                    "type": "string"
+                },
+                "global_default": {
+                    "analyzer": "basic_analyzer",
+                    "type": "string"
+                },
+                "global_fulltext": {
+                    "analyzer": "natural_text",
+                    "type": "string"
+                },
+                "hidden_note": {
+                    "properties": {
+                        "cds": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 },
                 "institution": {
-                    "type": "object",
                     "properties": {
                         "affiliation": {
-                            "type": "string",
-                            "copy_to": ["affautocomplete"]
+                            "copy_to": [
+                                "affautocomplete"
+                            ],
+                            "type": "string"
                         }
-                    }
+                    },
+                    "type": "object"
                 },
-                "publication_info": {
-                    "type": "object",
+                "issn": {
                     "properties": {
-                        "journal_volume": {
-                            "type": "string",
-                            "index": "not_analyzed"
+                        "material": {
+                            "index": "not_analyzed",
+                            "type": "string"
                         },
-                        "year": {
-                            "type": "date",
-                            "format": "yyyy"
+                        "value": {
+                            "index": "not_analyzed",
+                            "type": "string"
                         }
-                    }
+                    },
+                    "type": "object"
                 },
                 "journalautocomplete": {
                     "type": "string"
                 },
-                "title": {
-                    "type": "string",
-                    "copy_to": ["journalautocomplete"]
-                },
-                "short_title": {
-                    "type": "string",
-                    "copy_to": ["journalautocomplete"]
+                "publication_info": {
+                    "properties": {
+                        "journal_volume": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
+                        "year": {
+                            "format": "yyyy",
+                            "type": "date"
+                        }
+                    },
+                    "type": "object"
                 },
                 "publisher": {
-                    "type": "string",
-                    "index": "not_analyzed"
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "report_number": {
+                    "properties": {
+                        "primary": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
+                "short_title": {
+                    "copy_to": [
+                        "journalautocomplete"
+                    ],
+                    "type": "string"
+                },
+                "title": {
+                    "copy_to": [
+                        "journalautocomplete"
+                    ],
+                    "type": "string"
                 }
             }
         }
+    },
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "basic_analyzer": {
+                    "filter": [
+                        "asciifold_with_orig",
+                        "lowercase"
+                    ],
+                    "tokenizer": "standard",
+                    "type": "custom"
+                },
+                "natural_text": {
+                    "filter": [
+                        "asciifold_with_orig",
+                        "lowercase",
+                        "synonyms_kbr"
+                    ],
+                    "tokenizer": "standard",
+                    "type": "custom"
+                }
+            },
+            "filter": {
+                "asciifold_with_orig": {
+                    "preserve_original": true,
+                    "type": "asciifolding"
+                },
+                "synonyms_kbr": {
+                    "synonyms": [
+                        "production => creation"
+                    ],
+                    "type": "synonym"
+                }
+            }
+        },
+        "index.percolator.map_unmapped_fields_as_string": true
     }
 }

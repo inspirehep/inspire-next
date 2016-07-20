@@ -1,11 +1,6 @@
 {
     "$schema": "http://json-schema.org/schema#",
     "properties": {
-        "self": {
-          "description": "Url of the record itself",
-          "title": "Url of the record",
-          "$ref": "elements/json_reference.json"
-        },
         "accelerator": {
             "enum": [
                 "We need one"
@@ -19,25 +14,27 @@
             "type": "array"
         },
         "affiliation_record": {
-            "title": "Institution record URI",
-            "$ref": "elements/json_reference.json"
+            "$ref": "elements/json_reference.json",
+            "title": "Institution record URI"
         },
         "collaboration": {
             "title": "Collaboration",
             "type": "string"
         },
         "collaboration_alternative_names": {
-            "title": "Collaboration alternative names",
-            "type": "array",
             "items": {
                 "title": "Collaboration alternative name",
                 "type": "string"
             },
+            "title": "Collaboration alternative names",
+            "type": "array",
             "uniqueItems": true
         },
         "contact_details": {
+            "items": {
+                "$ref": "elements/contact.json"
+            },
             "type": "array",
-            "items": {"$ref": "elements/contact.json"},
             "uniqueItems": true
         },
         "curated_relation": {
@@ -73,6 +70,9 @@
             "title": "Description",
             "type": "array"
         },
+        "experiment_names": {
+            "$ref": "elements/titles.json"
+        },
         "field_categories": {
             "$ref": "elements/fields.json"
         },
@@ -88,9 +88,6 @@
         "hidden_note": {
             "title": "Hidden note",
             "type": "string"
-        },
-        "experiment_names": {
-            "$ref": "elements/titles.json"
         },
         "nonpublic_note": {
             "description": "FIXME: difference from hidden_note!?",
@@ -115,6 +112,10 @@
                         "title": "Name of related experiment",
                         "type": "string"
                     },
+                    "record": {
+                        "$ref": "elements/json_reference.json",
+                        "title": "URI for the related experiment record"
+                    },
                     "relation": {
                         "description": "FIXME: shall we simply store preceeding experiment and generate the symmetric relation automatically?",
                         "enum": [
@@ -123,10 +124,6 @@
                         ],
                         "title": "Type of relation",
                         "type": "string"
-                    },
-                    "record": {
-                        "title": "URI for the related experiment record",
-                        "$ref": "elements/json_reference.json"
                     }
                 },
                 "type": "object"
@@ -134,6 +131,11 @@
             "title": "Related experiments",
             "type": "array",
             "uniqueItems": true
+        },
+        "self": {
+            "$ref": "elements/json_reference.json",
+            "description": "Url of the record itself",
+            "title": "Url of the record"
         },
         "spokespersons": {
             "items": {
@@ -155,14 +157,14 @@
                         "title": "Name",
                         "type": "string"
                     },
+                    "record": {
+                        "$ref": "elements/json_reference.json",
+                        "title": "URI for the person record"
+                    },
                     "start_date": {
                         "format": "date",
                         "title": "Start date",
                         "type": "string"
-                    },
-                    "record": {
-                        "title": "URI for the person record",
-                        "$ref": "elements/json_reference.json"
                     }
                 },
                 "required": [
