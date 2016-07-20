@@ -39,5 +39,6 @@ def test_schemas_are_valid():
     for schemas_dir, _, schemas in os.walk(root_dir):
         schemas_path = os.path.sep.join(schemas_dir.split(os.path.sep)[1:])
         for schema in schemas:
-            schema_path = os.path.join(schemas_path, schema)
-            Draft4Validator.check_schema(fetch_schema(schema_path))
+            if schema.endswith('.json'):
+                schema_path = os.path.join(schemas_path, schema)
+                Draft4Validator.check_schema(fetch_schema(schema_path))
