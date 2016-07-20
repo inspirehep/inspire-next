@@ -1,16 +1,16 @@
 {
     "$schema": "http://json-schema.org/schema#",
+    "description": "Contact person's data",
     "properties": {
-        "name": {
-            "type": "string",
-            "description": "Contact person's name"
-        },
         "email": {
-            "type": "string",
+            "description": "Contact person's e-mail",
             "format": "email",
-            "description": "Contact person's e-mail"
+            "type": "string"
+        },
+        "name": {
+            "description": "Contact person's name",
+            "type": "string"
         }
     },
-    "type": "object",
-    "description": "Contact person's data"
+    "type": "object"
 }

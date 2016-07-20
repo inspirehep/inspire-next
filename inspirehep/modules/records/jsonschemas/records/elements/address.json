@@ -1,34 +1,34 @@
 {
     "$schema": "http://json-schema.org/schema#",
+    "description": "Address",
     "properties": {
-        "original address": {
-          "type": "string",
-          "description": "Original address, entities separeted with a comma"
-        },
         "city": {
-            "type": "string",
-            "description": "City"
-        },
-        "state": {
-            "type": "string",
-            "description": "State or province"
+            "description": "City",
+            "type": "string"
         },
         "country_code": {
             "$ref": "country_code.json"
         },
-        "postal_code": {
-            "type": "string",
-            "description": "Postal code"
+        "latitude": {
+            "description": "Latitude of the place",
+            "type": "number"
         },
         "longitude": {
-            "type": "number",
-            "description": "Longitude of the place"
+            "description": "Longitude of the place",
+            "type": "number"
         },
-        "latitude": {
-          "type": "number",
-          "description": "Latitude of the place"
+        "original address": {
+            "description": "Original address, entities separeted with a comma",
+            "type": "string"
+        },
+        "postal_code": {
+            "description": "Postal code",
+            "type": "string"
+        },
+        "state": {
+            "description": "State or province",
+            "type": "string"
         }
     },
-    "type": "object",
-    "description": "Address"
+    "type": "object"
 }
