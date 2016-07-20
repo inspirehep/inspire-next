@@ -117,8 +117,8 @@ def test_reference_builder_add_uid():
         'publication_info': {
             'isbn': '978-1-4493-4485-6',
             'cnum': 'C87-11-11',
-            'doi': '10.3972/water973.0145.db'
         },
+        'dois': ['10.3972/water973.0145.db'],
         'persistent_identifiers': ['hdl:10443/1646']
     }
 

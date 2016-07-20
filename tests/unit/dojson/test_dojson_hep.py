@@ -624,8 +624,8 @@ def test_references(marcxml_to_json, json_to_marc, marcxml_record):
             assert 'texkey' in json_val and '1' in marc_val
             assert json_val['texkey'] == marc_val['1']
         if 'a' in marc_init:
-            assert 'doi' in json_val_pub and 'a' in marc_val
-            assert json_val_pub['doi'] == marc_val['a']
+            assert 'dois' in json_val and 'a' in marc_val
+            assert json_val['dois'][0] == marc_val['a']
         if 'c' in marc_init:
             assert 'collaboration' in json_val and 'c' in marc_val
             assert json_val['collaboration'] == marc_val['c']

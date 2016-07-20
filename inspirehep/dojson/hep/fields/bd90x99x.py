@@ -107,7 +107,7 @@ def references2marc(self, key, value):
     return {
         '0': get_recid_from_ref(value.get('record')),
         '1': get_value(value, 'texkey'),
-        'a': get_value(value, 'publication_info.doi'),
+        'a': get_value(value, 'dois[0]'),
         'c': get_value(value, 'collaboration'),
         'e': [a.get('full_name') for a in value.get('authors', [])
               if a.get('role') == 'ed.'],
