@@ -48,10 +48,23 @@ services:
     volumes_from:
       - static
     command: python setup.py test --addopts="tests/unit"
+  disambiguation:
+    extends:
+      service: service_base
+    command: python setup.py test --addopts="tests/integration/disambiguation"
+    volumes_from:
+      - static
+    links:
+      - database
+      - indexer
+      - rabbitmq
+      - redis
+    depends_on:
+      - worker
   integration:
     extends:
       service: service_base
-    command: python setup.py test --addopts="tests/integration"
+    command: python setup.py test --addopts="tests/integration --ignore tests/integration/disambiguation"
     volumes_from:
       - static
     links:

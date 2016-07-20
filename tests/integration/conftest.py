@@ -64,3 +64,34 @@ def app(request):
         es.indices.refresh('records-hep')  # Makes sure that all citation counts were added.
 
         yield app
+
+
+@pytest.yield_fixture(scope='module')
+def small_app(request):
+    """Flask application fixture."""
+    app = create_app()
+    app.config.update({'DEBUG': True})
+
+    with app.app_context():
+        # Imports must be local, otherwise tasks default to pickle serializer.
+        from inspirehep.modules.migrator.tasks import migrate
+        from inspirehep.modules.fixtures.files import init_all_storage_paths
+        from inspirehep.modules.fixtures.users import \
+            init_users_and_permissions
+
+        db.drop_all()
+        db.create_all()
+
+        sleep(10)
+        _es = app.extensions['invenio-search']
+        list(_es.delete(ignore=[404]))
+        list(_es.create(ignore=[400]))
+
+        init_all_storage_paths()
+        init_users_and_permissions()
+
+        migrate('./inspirehep/demosite/data/demo-records-small.xml',
+                wait_for_results=True)
+        es.indices.refresh('records-hep')
+
+        yield app

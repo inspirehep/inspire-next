@@ -38,6 +38,7 @@ env:
   matrix:
     - SUITE=pep8
     - SUITE=unit
+    - SUITE=disambiguation
     - SUITE=integration
 
 python:

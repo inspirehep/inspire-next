@@ -196,6 +196,7 @@ setup(
             'arxiv = inspirehep.modules.arxiv:Arxiv',
             'crossref = inspirehep.modules.crossref:CrossRef',
             'inspire_orcid = inspirehep.modules.orcid:INSPIREOrcid',
+            'inspire_disambiguation = inspirehep.modules.disambiguation:InspireDisambiguation',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
@@ -236,6 +237,7 @@ setup(
         ],
         'invenio_db.models': [
             'inspire_workflows_audit = inspirehep.modules.workflows.models',
+            'inspire_disambiguation = inspirehep.modules.disambiguation.models',
         ],
     },
     tests_require=tests_require,
