@@ -20,7 +20,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from inspirehep.modules.references.processors import ReferenceBuilder
+import six
+
+from inspirehep.modules.references.processors import (
+    _split_refextract_authors_str, ReferenceBuilder)
 
 def test_reference_builder_no_uids():
     rb = ReferenceBuilder()
@@ -120,3 +123,31 @@ def test_reference_builder_add_uid():
     }
 
     assert expected == rb.obj
+
+
+def test_refextract_authors():
+    author_strings = [
+        'Butler, D., Demarque, P., & Smith, H. A.',
+        'Cenko, S. B., Kasliwal, M. M., Perley, D. A., et al.',
+        'J. Kätlne et al.', # Also test some unicode cases.
+        u'J. Kätlne et al.',
+        'Hoaglin D. C., Mostellar F., Tukey J. W.',
+        'V.M. Zhuravlev, S.V. Chervon, and V.K. Shchigolev',
+        'Gómez R, Reilly P, Winicour J and Isaacson R'
+    ]
+
+    expected = [
+        ['Butler, D.', 'Demarque, P.', 'Smith, H. A.'],
+        ['Cenko, S. B.', 'Kasliwal, M. M.', 'Perley, D. A.'],
+        ['J. Kätlne'],
+        ['J. Kätlne'],
+        ['Hoaglin D. C.', 'Mostellar F.', 'Tukey J. W.'],
+        ['V.M. Zhuravlev', 'S.V. Chervon', 'V.K. Shchigolev'],
+        ['Gómez R', 'Reilly P', 'Winicour J', 'Isaacson R']
+    ]
+
+    for idx, authors_str in enumerate(author_strings):
+        # Expect that the function returns correct unicode representations.
+        expected_authors = [six.text_type(e.decode('utf8'))
+                            for e in expected[idx]]
+        assert _split_refextract_authors_str(authors_str) == expected_authors

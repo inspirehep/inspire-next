@@ -633,12 +633,12 @@ def test_references(marcxml_to_json, json_to_marc, marcxml_record):
             assert _force_set(marc_val['e']) == _force_set(marc_init['e'])
         if 'h' in marc_init:
             assert 'authors' in json_val and 'h' in marc_val
-            initial_name_set = _force_set(marc_init['h'])
             json_names = _force_set([a['full_name']
                                      for a in json_val['authors']])
             roundtrip_names = _force_set(marc_val['h'])
-            assert initial_name_set == roundtrip_names
-            assert initial_name_set.issubset(json_names)
+            roundtrip_editors = _force_set(marc_val.get('e', []))
+            assert json_names and roundtrip_names
+            assert json_names.difference(roundtrip_editors) == roundtrip_names
         if 'm' in marc_init:
             assert 'misc' in json_val and 'm' in marc_val
             assert _force_set(json_val['misc']) == _force_set(marc_val['m'])

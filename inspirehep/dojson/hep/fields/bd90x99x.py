@@ -70,7 +70,7 @@ def references(self, key, value):
             ('c', rb.add_collaboration),
             ('q', rb.add_title),
             ('t', rb.add_title),
-            ('h', rb.add_author),
+            ('h', rb.add_refextract_authors_str),
             ('e', partial(rb.add_author, role='ed.'))
         ]
 
