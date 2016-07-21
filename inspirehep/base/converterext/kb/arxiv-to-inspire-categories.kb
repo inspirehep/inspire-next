@@ -1,130 +1,128 @@
+
 astro-ph---Astrophysics
-cond-mat---General Physics
-cs---Computing
-gr-qc---Gravitation and Cosmology
-hep-ex---Experiment-HEP
-hep-lat---Lattice
-hep-ph---Phenomenology-HEP
-hep-th---Theory-HEP
-math---Math and Math Physics
-nlin---General Physics
-nucl-ex---Experiment-Nucl
-nucl-th---Theory-Nucl
-physics.acc-phys---Accelerators
-physics.data-an---Instrumentation
-physics.ins-det---Instrumentation
-physics---General Physics
-quant-ph---General Physics
 astro-ph.CO---Astrophysics
 astro-ph.EP---Astrophysics
 astro-ph.GA---Astrophysics
 astro-ph.HE---Astrophysics
 astro-ph.IM---Instrumentation
 astro-ph.SR---Astrophysics
-physics.ao-ph---General Physics
-physics.atom-ph---General Physics
-physics.atm-clus---General Physics 
-physics.bio-ph---Other
-physics.chem-ph---Other
-physics.class-ph---General Physics
-physics.comp-ph---Computing
-physics.data-an---Computing
-physics.flu-dyn---General Physics
-physics.gen-ph---General Physics
-physics.geo-ph---General Physics
-physics.hist-ph---Other
-physics.med-ph---Other
-physics.optics---General Physics
-physics.ed-ph---Other
-physics.soc-ph---Other
-physics.plasm-ph---General Physics
-physics.pop-ph---Other
-physics.space-ph---Astrophysics
-math.AG---Math and Math Physics
-math.AT---Math and Math Physics
-math.AP---Math and Math Physics
-math.CT---Math and Math Physics
-math.CA---Math and Math Physics
-math.CO---Math and Math Physics
-math.AC---Math and Math Physics
-math.CV---Math and Math Physics
-math.DG---Math and Math Physics
-math.DS---Math and Math Physics
-math.FA---Math and Math Physics
-math.GM---Math and Math Physics
-math.GN---Math and Math Physics
-math.GT---Math and Math Physics
-math.GR---Math and Math Physics
-math.HO---Math and Math Physics
-math.IT---Math and Math Physics
-math.IT---Math and Math Physics
-math.KT---Math and Math Physics
-math.LO---Math and Math Physics
-math.MP---Math and Math Physics
-math.MG---Math and Math Physics
-math.NT---Math and Math Physics
-math.NA---Math and Math Physics
-math.OA---Math and Math Physics
-math.OC---Math and Math Physics
-math.PR---Math and Math Physics
-math.QA---Math and Math Physics
-math.RT---Math and Math Physics
-math.RA---Math and Math Physics
-math.SP---Math and Math Physics
-math.ST---Math and Math Physics
-math.ST---Math and Math Physics
-math.SG---Math and Math Physics
+cond-mat---General Physics
 cond-mat.dis-nn---General Physics
-cond-mat.mtrl-sci---General Physics
 cond-mat.mes-hall---General Physics
+cond-mat.mtrl-sci---General Physics
 cond-mat.other---General Physics
 cond-mat.quant-gas---General Physics
 cond-mat.soft---General Physics
 cond-mat.stat-mech---General Physics
 cond-mat.str-el---General Physics
 cond-mat.supr-con---General Physics
-nlin.AO---General Physics
-nlin.CG---General Physics
-nlin.CD---General Physics
-nlin.SI---Math and Math Physics
-nlin.PS---Math and Math Physics
+cs---Computing
 cs.AI---Computing
+cs.AR---Computing
 cs.CC---Computing
-cs.CG---Computing
 cs.CE---Computing
+cs.CG---Computing
 cs.CL---Computing
+cs.CR---Computing
 cs.CV---Computing
 cs.CY---Computing
-cs.CR---Computing
 cs.DB---Computing
-cs.DS---Computing
+cs.DC---Computing
 cs.DL---Computing
 cs.DM---Computing
-cs.DC---Computing
+cs.DS---Computing
 cs.ET---Computing
 cs.FL---Computing
-cs.GT---Computing
 cs.GL---Computing
 cs.GR---Computing
-cs.AR---Computing
+cs.GT---Computing
 cs.HC---Computing
 cs.IR---Computing
 cs.IT---Computing
 cs.LG---Computing
 cs.LO---Computing
-cs.MS---Computing
 cs.MA---Computing
 cs.MM---Computing
-cs.NI---Computing
-cs.NE---Computing
+cs.MS---Computing
 cs.NA---Computing
-cs.OS---Computing
+cs.NE---Computing
+cs.NI---Computing
 cs.OH---Computing
+cs.OS---Computing
 cs.PF---Computing
 cs.PL---Computing
 cs.RO---Computing
-cs.SI---Computing
-cs.SE---Computing
-cs.SD---Computing
 cs.SC---Computing
+cs.SD---Computing
+cs.SE---Computing
+cs.SI---Computing
 cs.SY---Computing
+gr-qc---Gravitation and Cosmology
+hep-ex---Experiment-HEP
+hep-lat---Lattice
+hep-ph---Phenomenology-HEP
+hep-th---Theory-HEP
+math---Math and Math Physics
+math.AC---Math and Math Physics
+math.AG---Math and Math Physics
+math.AP---Math and Math Physics
+math.AT---Math and Math Physics
+math.CA---Math and Math Physics
+math.CO---Math and Math Physics
+math.CT---Math and Math Physics
+math.CV---Math and Math Physics
+math.DG---Math and Math Physics
+math.DS---Math and Math Physics
+math.FA---Math and Math Physics
+math.GM---Math and Math Physics
+math.GN---Math and Math Physics
+math.GR---Math and Math Physics
+math.GT---Math and Math Physics
+math.HO---Math and Math Physics
+math.IT---Math and Math Physics
+math.KT---Math and Math Physics
+math.LO---Math and Math Physics
+math.MG---Math and Math Physics
+math.MP---Math and Math Physics
+math.NA---Math and Math Physics
+math.NT---Math and Math Physics
+math.OA---Math and Math Physics
+math.OC---Math and Math Physics
+math.PR---Math and Math Physics
+math.QA---Math and Math Physics
+math.RA---Math and Math Physics
+math.RT---Math and Math Physics
+math.SG---Math and Math Physics
+math.SP---Math and Math Physics
+math.ST---Math and Math Physics
+nlin---General Physics
+nlin.AO---General Physics
+nlin.CD---General Physics
+nlin.CG---General Physics
+nlin.PS---Math and Math Physics
+nlin.SI---Math and Math Physics
+nucl-ex---Experiment-Nucl
+nucl-th---Theory-Nucl
+physics---General Physics
+physics.acc-phys---Accelerators
+physics.ao-ph---General Physics
+physics.atm-clus---General Physics
+physics.atom-ph---General Physics
+physics.bio-ph---Other
+physics.chem-ph---Other
+physics.class-ph---General Physics
+physics.comp-ph---Computing
+physics.data-an---Data Analysis and Statistics
+physics.ed-ph---Other
+physics.flu-dyn---General Physics
+physics.gen-ph---General Physics
+physics.geo-ph---General Physics
+physics.hist-ph---Other
+physics.ins-det---Instrumentation
+physics.med-ph---Other
+physics.optics---General Physics
+physics.plasm-ph---General Physics
+physics.pop-ph---Other
+physics.soc-ph---Other
+physics.space-ph---Astrophysics
+quant-ph---General Physics
