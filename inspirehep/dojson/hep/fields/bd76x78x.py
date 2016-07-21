@@ -78,6 +78,7 @@ def publication_info(self, key, value):
         'year': year,
         'isbn': force_single_element(value.get('z')),
         'notes': dedupe_list(force_force_list(value.get('m'))),
+        'hidden': key[3:4] == '1' or None,  # ind1="1" means hidden
     }
 
     return res
@@ -94,9 +95,8 @@ def publication_info2marc(self, key, value):
         page_artid.append('{page_start}'.format(**value))
     if value.get('artid'):
         page_artid.append('{artid}'.format(**value))
-    return {
-        '0': get_recid_from_ref(
-            value.get('parent_record')),
+    ret = {
+        '0': get_recid_from_ref(value.get('parent_record')),
         'c': page_artid,
         'n': value.get('journal_issue'),
         'o': value.get('conf_acronym'),
@@ -110,6 +110,10 @@ def publication_info2marc(self, key, value):
         'z': value.get('isbn'),
         'm': value.get('notes')
     }
+    if value.get('hidden'):
+        self.setdefault('7731_', []).append(ret)
+        return {}
+    return ret
 
 
 @hep.over('succeeding_entry', '^785..')
