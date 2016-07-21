@@ -124,7 +124,6 @@
                     },
                     "alternative_name": {
                         "description": "FIXME: needed for import only",
-                        "format": ".+, .+",
                         "title": "Alternative author name",
                         "type": "string"
                     },
@@ -175,7 +174,6 @@
                     },
                     "full_name": {
                         "description": "author name as it appears in the paper",
-                        "format": ".+, .+",
                         "title": "Author name",
                         "type": "string"
                     },
