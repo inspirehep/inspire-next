@@ -82,6 +82,11 @@ def alternative_titles(self, key, value):
 @utils.for_each_value
 def contact_details(self, key, value):
     """Contact details."""
+    extra_place_info = value.get('b')
+    if extra_place_info:
+        address = parse_conference_address(extra_place_info)
+        self.setdefault('address', []).append(address)
+
     name = value.get('p')
     email = value.get('m')
 
@@ -104,13 +109,6 @@ def keywords(self, key, value):
     for val in value:
         keywords.append(get_value(val))
     return keywords
-
-
-@conferences.over('nonpublic_note', '^595')
-@utils.for_each_value
-def nonpublic_note(self, key, value):
-    """Non public note."""
-    return value.get('a')
 
 
 @conferences.over('note', '^500')
@@ -143,10 +141,3 @@ def short_description(self, key, value):
         'value': value.get('a'),
         'source': value.get('9')
     }
-
-
-@conferences.over('extra_place_info', '^270')
-@utils.for_each_value
-def extra_place_info(self, key, value):
-    """Conference extra place info."""
-    return value.get('b')
