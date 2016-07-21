@@ -61,11 +61,11 @@ def mock_user(app, request):
 
     def teardown(app):
         with app.app_context():
-            user = User.query.filter_by(id=1).first()
+            user = User.query.filter_by(id=2).first()
             token = RemoteToken.query.filter_by(access_token='123').first()
             user_identity = UserIdentity.query.filter_by(
                 id='0000-0001-9412-8627', method='orcid').first()
-            remote_account = RemoteAccount.query.filter_by(user_id=1).first()
+            remote_account = RemoteAccount.query.filter_by(user_id=2).first()
             with db.session.begin_nested():
                 db.session.delete(user_identity)
                 db.session.delete(remote_account)
@@ -76,17 +76,17 @@ def mock_user(app, request):
     request.addfinalizer(lambda: teardown(app))
 
     user = User(
-        id=1
+        id=2,
     )
     token = RemoteToken(
         access_token='123'
     )
     user_identity = UserIdentity(
         id='0000-0001-9412-8627',
-        id_user='1',
+        id_user='2',
         method='orcid')
     remote_account = RemoteAccount(
-        user_id=1,
+        user_id=2,
         extra_data={},
         client_id=1,
         user=user,
