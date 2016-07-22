@@ -27,9 +27,10 @@ from __future__ import absolute_import, division, print_function
 import six
 
 from dojson import utils
+from dojson.errors import IgnoreKey
 
 from ..model import experiments
-from ...utils import get_record_ref
+from ...utils import force_single_element, get_record_ref
 
 from inspirehep.utils.helpers import force_force_list
 
@@ -82,13 +83,6 @@ def contact_details(self, key, value):
     }
 
 
-@experiments.over('name_variants', '^419..')
-@utils.for_each_value
-def name_variants(self, key, value):
-    """Variants of the name."""
-    return value.get('a')
-
-
 @experiments.over('description', '^520..')
 @utils.for_each_value
 def description(self, key, value):
@@ -96,18 +90,49 @@ def description(self, key, value):
     return value.get("a")
 
 
-@experiments.over('spokesperson', '^702..')
+@experiments.over('spokepersons', '^702..')
 @utils.for_each_value
-def spokesperson(self, key, value):
-    """Spokesperson of experiment."""
-    return value.get("a")
+def spokespersons(self, key, value):
+    """Spokepersons of the experiment."""
+    def _get_inspire_id(i_values):
+        i_value = force_single_element(i_values)
+        if i_value:
+            return [
+                {
+                    'type': 'INSPIRE',
+                    'value': i_value,
+                },
+            ]
+
+    def _is_current(z_values):
+        z_value = force_single_element(z_values)
+        if z_value and isinstance(z_value, six.string_types):
+            return z_value.lower() == 'current'
+
+    def _get_record(x_values):
+        x_value = force_single_element(x_values)
+        if x_value:
+            return get_record_ref(x_value, 'authors')
+
+    record = _get_record(value.get('x'))
+
+    return {
+        'current': _is_current(value.get('z')),
+        'ids': _get_inspire_id(value.get('i')),
+        'name': force_single_element(value.get('a')),
+        'record': record,
+        'curated_relation': record is not None,
+    }
 
 
 @experiments.over('collaboration', '^710..')
 def collaboration(self, key, value):
     """Collaboration of experiment."""
-    value = force_force_list(value)
-    collaborations = sorted((elem["g"] for elem in value if 'g' in elem), key=lambda x: len(x))
+    values = force_force_list(self.get('collaboration'))
+    values.extend(self.get('collaboration_alternative_names', []))
+    values.extend(el.get('g') for el in force_force_list(value))
+
+    collaborations = sorted(values, key=len)
     if len(collaborations) > 1:
         self['collaboration_alternative_names'] = collaborations[1:]
     if collaborations:
@@ -118,31 +143,43 @@ def collaboration(self, key, value):
 @utils.for_each_value
 def related_experiments(self, key, value):
     """Related experiments."""
-    try:
-        recid = int(value.get('0'))
-    except (TypeError, ValueError):
-        recid = None
+    def _get_record(zero_values):
+        zero_value = force_single_element(zero_values)
+        try:
+            recid = int(zero_value)
+            return get_record_ref(recid, 'experiments')
+        except (TypeError, ValueError):
+            return None
+
+    def _classify_relation_type(w_values):
+        w_value = force_single_element(w_values)
+        return {'a': 'predecessor', 'b': 'successor'}.get(w_value, '')
+
+    record = _get_record(value.get('0'))
+
     return {
-        'name': value.get('a'),
-        'record': get_record_ref(recid, 'experiments')
+        'name': force_single_element(value.get('a')),
+        'record': record,
+        'relation': _classify_relation_type(value.get('w')),
+        'curated_relation': record is not None,
     }
 
 
-@experiments.over('date_started', '^046..')
+@experiments.over('_date_started', '^046..')
 def date_started(self, key, value):
     """Date started and completed."""
-    value = force_force_list(value)
-    date_started = None
-    for val in value:
-        if val.get('t'):
-            self.setdefault('date_completed', val.get('t'))
+    values = force_force_list(value)
+
+    for val in values:
         if val.get('s'):
-            date_started = val.get('s')
-    return date_started
+            self['date_started'] = val.get('s')
+        if val.get('t'):
+            self['date_completed'] = val.get('t')
+
+    raise IgnoreKey
 
 
 @experiments.over('accelerator', '^693')
-@utils.for_each_value
 def accelerator(self, key, value):
     """Field code."""
     return value.get('a')
