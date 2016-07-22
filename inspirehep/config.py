@@ -1187,7 +1187,7 @@ ARXIV_TO_INSPIRE_CATEGORY_MAPPING = {
     "physics.chem-ph": "Other",
     "physics.class-ph": "General Physics",
     "physics.comp-ph": "Computing",
-    "physics.data-an": "Computing",
+    "physics.data-an": "Data Analysis and Statistics",
     "physics.ed-ph": "Other",
     "physics.flu-dyn": "General Physics",
     "physics.gen-ph": "General Physics",
