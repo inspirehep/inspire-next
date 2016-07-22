@@ -22,40 +22,32 @@
 
 """Contains signal receivers for HEP dojson processing."""
 
+from __future__ import absolute_import, division, print_function
+
+from itertools import chain
+
 from invenio_records.signals import before_record_insert, before_record_update
 
 from inspirehep.utils.date import create_earliest_date
+from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.record import get_value
 
 
 @before_record_insert.connect
 @before_record_update.connect
 def earliest_date(sender, *args, **kwargs):
     """Find and assign the earliest date to a HEP paper."""
-    dates = []
+    date_paths = [
+        'preprint_date',
+        'thesis.date',
+        'thesis.defense_date',
+        'publication_info.year',
+        'creation_modification_date.creation_date',
+        'imprints.date',
+    ]
 
-    if 'preprint_date' in sender:
-        dates.append(sender['preprint_date'])
-
-    if 'thesis' in sender:
-        if 'date' in sender['thesis']:
-            dates.append(sender['thesis']['date'])
-        if 'defense_date' in sender['thesis']:
-            dates.append(sender['thesis']['defense_date'])
-
-    if 'publication_info' in sender:
-        for publication_info_key in sender['publication_info']:
-            if 'year' in publication_info_key:
-                dates.append(publication_info_key['year'])
-
-    if 'creation_modification_date' in sender:
-        for date in sender['creation_modification_date']:
-            if 'creation_date' in date:
-                dates.append(date['creation_date'])
-
-    if 'imprints' in sender:
-        for imprint in sender['imprints']:
-            if 'date' in imprint:
-                dates.append(imprint['date'])
+    dates = list(chain.from_iterable(
+        [force_force_list(get_value(sender, path)) for path in date_paths]))
 
     earliest_date = create_earliest_date(dates)
     if earliest_date:
