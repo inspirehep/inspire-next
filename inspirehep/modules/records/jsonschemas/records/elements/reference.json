@@ -50,6 +50,14 @@
         "curated_relation": {
             "type": "boolean"
         },
+        "dois": {
+            "items": {
+                "pattern": "10\\.\\d+(\\.\\d+)?/.+",
+                "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+        },
         "imprint": {
             "properties": {
                 "date": {
@@ -90,10 +98,6 @@
                     "type": "string"
                 },
                 "cnum": {
-                    "type": "string"
-                },
-                "doi": {
-                    "pattern": "10\\.\\d+(\\.\\d+)?/.+",
                     "type": "string"
                 },
                 "isbn": {

@@ -222,8 +222,8 @@ class ReferenceBuilder(object):
             self._ensure_field('arxiv_eprints', [])
             self.obj['arxiv_eprints'].append(_normalize_arxiv(uid))
         elif idutils.is_doi(uid):
-            self._ensure_field('publication_info', {})
-            self.obj['publication_info']['doi'] = idutils.normalize_doi(uid)
+            self._ensure_field('dois', [])
+            self.obj['dois'].append(idutils.normalize_doi(uid))
         elif idutils.is_handle(uid):
             self._ensure_field('persistent_identifiers', [])
             value = idutils.normalize_handle(uid)
