@@ -635,32 +635,3 @@ def weblinks(description):
     if description:
         return 'Link to ' + description
     return 'Link to fulltext'
-
-
-@blueprint.app_template_filter()
-def jobs_similar(id):
-    out = ''
-
-    es_query = RecordsSearch(index='records-jobs', doc_type='jobs')
-    es_query = es_query.query(
-        {
-            "more_like_this": {
-                "docs": [
-                    {
-                        "_id": id
-                    }
-                ],
-                "min_term_freq": 0,
-                "min_doc_freq": 0,
-            }
-        }
-    )[0:2]
-
-    similar_jobs = es_query.execute()
-
-    for job in similar_jobs:
-        out = out + (render_template_to_string(
-            "inspirehep_theme/similar_jobs.html",
-            record=job))
-
-    return out
