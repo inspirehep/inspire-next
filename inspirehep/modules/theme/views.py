@@ -56,7 +56,7 @@ from invenio_search.api import RecordsSearch
 from invenio_pidstore.models import PersistentIdentifier
 
 from inspirehep.utils.citations import Citation
-from inspirehep.utils.search import perform_es_search
+from inspirehep.utils.search import get_number_of_records, perform_es_search
 from inspirehep.utils.record import get_title
 from inspirehep.utils.template import render_macro_from_template
 from inspirehep.utils.conferences import render_conferences_in_the_same_series
@@ -80,9 +80,12 @@ blueprint = Blueprint(
 @blueprint.route('/', methods=['GET', ])
 def index():
     """View for literature collection landing page."""
+    number_of_records = get_number_of_records('hep')
+
     return render_template(
         'inspirehep_theme/search/collection_literature.html',
         collection='hep',
+        number_of_records=number_of_records,
     )
 
 
@@ -90,21 +93,26 @@ def index():
 @blueprint.route('/collection/authors', methods=['GET', ])
 def hepnames():
     """View for authors collection landing page."""
+    number_of_records = get_number_of_records('authors')
+
     return render_template(
         'inspirehep_theme/search/collection_authors.html',
         collection='authors',
+        number_of_records=number_of_records,
     )
 
 
 @blueprint.route('/conferences', methods=['GET', ])
 def conferences():
     """View for conferences collection landing page."""
+    number_of_records = get_number_of_records('conferences')
     upcoming_conferences = _get_upcoming_conferences()
 
     return render_template(
         'inspirehep_theme/search/collection_conferences.html',
         collection='conferences',
         conferences_subject_areas=CONFERENCE_CATEGORIES_TO_SERIES,
+        number_of_records=number_of_records,
         result=upcoming_conferences,
     )
 
@@ -118,11 +126,13 @@ def jobs():
 @blueprint.route('/institutions', methods=['GET', ])
 def institutions():
     """View for institutions collection landing page."""
+    number_of_records = get_number_of_records('institutions')
     some_institutions = _get_some_institutions()
 
     return render_template(
         'inspirehep_theme/search/collection_institutions.html',
         collection='institutions',
+        number_of_records=number_of_records,
         result=some_institutions,
     )
 
@@ -130,27 +140,36 @@ def institutions():
 @blueprint.route('/experiments', methods=['GET', ])
 def experiments():
     """View for experiments collection landing page."""
+    number_of_records = get_number_of_records('experiments')
+
     return render_template(
         'inspirehep_theme/search/collection_experiments.html',
         collection='experiments',
+        number_of_records=number_of_records,
     )
 
 
 @blueprint.route('/journals', methods=['GET', ])
 def journals():
     """View for journals collection landing page."""
+    number_of_records = get_number_of_records('journals')
+
     return render_template(
         'inspirehep_theme/search/collection_journals.html',
         collection='journals',
+        number_of_records=number_of_records,
     )
 
 
 @blueprint.route('/data', methods=['GET', ])
 def data():
     """View for data collection landing page."""
+    number_of_records = get_number_of_records('data')
+
     return render_template(
         'inspirehep_theme/search/collection_data.html',
         collection='data',
+        number_of_records=number_of_records,
     )
 
 

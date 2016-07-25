@@ -83,17 +83,6 @@ def apply_template_on_array(array, template_path, **common_context):
     return rendered
 
 
-def collection_to_index(collection_name):
-    """Translates a collection name to the corresponding index."""
-    try:
-        mapping = current_app.config['SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING']
-        index = mapping[collection_name.lower()]
-    except KeyError:
-        index = 'records-hep'
-
-    return index
-
-
 @blueprint.app_template_filter()
 @evalcontextfilter
 def join_array(eval_ctx, value, separator):
@@ -359,15 +348,6 @@ def collection_select_current(collection_name, current_collection):
         return "active"
     else:
         return ""
-
-
-@blueprint.app_template_filter()
-def number_of_records(collection_name):
-    """Returns number of records for the collection."""
-    index = collection_to_index(collection_name)
-    result = es.count(index=index)
-
-    return result['count']
 
 
 @blueprint.app_template_filter()

@@ -35,7 +35,7 @@
     {% block collection_header %}
         <div id="collection-search-bar" class="conferences-collection-search-bar">
             <div class="title" id="conferences-search-bar">
-                Search {{ "Conferences" | number_of_records }} conferences
+                Search {{ number_of_records }} conferences
             </div>
             {% block search_bar %}
                 {{ super() }}

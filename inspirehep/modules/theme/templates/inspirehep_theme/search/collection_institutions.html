@@ -26,7 +26,7 @@
     <div id="landing-map"></div>
     <div id="landing-map-info" class="institutions">
         <p class="text-center">
-            Search on {{ "Institutions" | number_of_records }} Institutions all around the world.
+            Search on {{ number_of_records }} Institutions all around the world.
         </p>
     </div>
 {% endblock %}
@@ -36,7 +36,7 @@
     {% block collection_header %}
         <div id="collection-search-bar" class="institutions-collection-search-bar">
             <div class="title" id="institutions-search-bar">
-                Search {{ "Institutions" | number_of_records }} institutions
+                Search {{ number_of_records }} institutions
             </div>
             {% block search_bar %}
                 {{ super() }}
