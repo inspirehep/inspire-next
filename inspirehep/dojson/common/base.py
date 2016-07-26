@@ -35,6 +35,7 @@ from ..jobs.model import jobs
 from ..journals.model import journals
 from ..utils import (
     classify_field,
+    force_single_element,
     get_recid_from_ref,
     get_record_ref,
 )
@@ -189,11 +190,7 @@ def collections(self, key, value):
     value = force_force_list(value)
 
     def get_value(value):
-        primary = ''
-        if isinstance(value.get('a'), list):
-            primary = value.get('a')[0]
-        else:
-            primary = value.get('a')
+        primary = force_single_element(value.get('a'))
         return {
             'primary': primary,
             'secondary': value.get('b'),
