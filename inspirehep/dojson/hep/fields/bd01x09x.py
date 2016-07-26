@@ -97,7 +97,8 @@ def persistent_identifiers(self, key, value):
     for val in value:
         if val:
             items = force_force_list(val.get('a'))
-            if val.get("2") and val.get("2", '').lower() == "doi":
+            items_type = force_single_element(val.get('2'))
+            if items_type and items_type.lower() == 'doi':
                 for v in items:
                     dois.append({
                         'value': v,
