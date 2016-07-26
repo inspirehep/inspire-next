@@ -22,11 +22,6 @@
 
 {% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title with context %}
 
-{% macro record_collection_heading() %}
-  <span id="search-title">Search literature &#62;</span>
-  <span id="title">{{ render_record_title() }}</span>
-{% endmacro %}
-
 {% macro record_buttons(record) %}
   {% if record.get('arxiv_eprints') %}
     {% if record.get('arxiv_eprints') | is_list() %}
@@ -67,7 +62,7 @@
 
 {% macro detailed_record_abstract(record) %}
   <div id="record-abstract">
-    <div id="record-abstract-title" class="record-detailed-title">
+    <div class="record-detailed-title">
       Abstract
     </div>
     {{ record_abstract(record) }}
@@ -289,10 +284,10 @@
     </div>
 
     <div class="panel-body">
-      <div id="record-references-loading">
+      <div class="datatables-loading">
         <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading references...
       </div>
-      <div id="record-references-table-wrapper">
+      <div class="datatables-wrapper">
         <table id="record-references-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
@@ -331,10 +326,10 @@
     </div>
 
     <div class="panel-body">
-      <div id="record-citations-loading">
+      <div class="datatables-loading">
         <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading citations...
       </div>
-      <div id="record-citations-table-wrapper">
+      <div class="datatables-wrapper">
         <table id="record-citations-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>

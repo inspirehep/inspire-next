@@ -20,6 +20,7 @@
 
 
 $reference-journal: #293E51;
+$action-bar-background: #E6E6E6;
 $darken: 8%;
 
 /* Mobile styles
@@ -76,11 +77,7 @@ $darken: 8%;
     }
 }
 
-#collections, .collection-header {
-    color: white;
-}
-
-h1.record-detailed-title, .record-title {
+h1.record-detailed-title {
     margin: 0px;
     font-size: x-large;
     padding-bottom: 5px;
@@ -93,47 +90,27 @@ h2.record-detailed-subtitle {
     margin-bottom: 25px;
 }
 
-.collection-primary {
-    margin-left: 5px;
-}
-
-#search-title {
-    font-weight: 500;
-    font-size: 110%;
-}
-
-#hep-collection #search-title {
-    color: $literature-collection;
-}
-
-#authors-collection #search-title {
-    color: $literature-collection;
-}
-
-#conferences-collection #search-title {
-    color: $conferences-collection;
-}
-
-#jobs-collection #search-title {
-    color: $jobs-collection;
-}
-
-#data-collection #search-title {
-    color: $data-collection;
-}
-
-#experiments-collection #search-title {
-    color: $experiments-collection;
-}
-
-#institutions-collection #search-title {
-    color: $institutions-collection;
-}
-
 .record-detailed {
+
+    .panel label {
+        color: $blue-purple;
+    }
+
+    .panel-heading {
+        font-size: 18px;
+        font-weight: 600;
+        padding: 10px 15px 0px 15px;
+    }
+
     hr {
         margin-top: 10px
     }
+
+    .detailed-map {
+        height: 100%;
+        width: 100%;
+    }
+
 }
 
 #detailed-header {
@@ -145,22 +122,29 @@ h2.record-detailed-subtitle {
     }
 }
 
-#record_content .record-detailed .record-header {
+.detailed-action-bar {
+    padding: 10px;
+    padding-left: 14px;
+    background-color: $action-bar-background;
+}
+
+.record-header {
 
     text-align: left;
     color: black;
     margin-bottom: 20px;
 
-    #detailed-header-top {
+    #detailed-header-top { // HEP - not necessary ?
         padding-left: 20px;
         padding-right: 20px;
     }
 
-    #cite-pdf-buttons {
-        padding: 10px;
-        padding-left: 20px;
+    #cite-pdf-buttons { // HEP - not necessary ?
         margin-top: 25px;
-        background-color: #E6E6E6;
+    }
+
+    &.record-header-literature {
+        background-color: white;
     }
 }
 
@@ -181,27 +165,8 @@ h2.record-detailed-subtitle {
     background-color: $blue-purple;
 }
 
-@media screen and (min-width: $screen-sm-min) {
-    .cite-modal {
-        width: 900px;
-    }
-}
-
-.cite-modal {
-    font-weight: normal;
-    text-align: left;
-
-    #citeModalLabel {
-        margin-bottom: 10px;
-    }
-
-    .pointer {
-        cursor:pointer;
-    }
-}
-
 h1.record-detailed-title, .record-header label, #record-journal,
-#external_links, #doi-eprint-experiment, #record-conference-more-info label {
+#external_links, #doi-eprint-experiment {
     color: $blue-purple;
 }
 
@@ -229,32 +194,18 @@ h1.record-detailed-title, .record-header label, #record-journal,
 	display: none;
 }
 
-.record-detailed .panel-heading {
-    font-size: 18px;
-    font-weight: 600;
-}
-
 .record-detailed .record-panel-heading-muted {
     color: $grey;
     font-weight: normal;
     font-size: 0.7em;
 }
 
-#record-abstract-title,
-.record-detailed-title {
-    font-size: 18px;
-    font-weight: 600;
-}
-
-#record-abstract-title, #record-keywords-title {
-    margin-bottom: 20px;
-}
 
 #citations .panel-footer {
     padding-bottom: 50px;
 }
 
-#record-references-table-wrapper, #record-citations-table-wrapper, #record-institution-people-table-wrapper, #record-institution-experiments-table-wrapper, #record-institution-papers-table-wrapper, #record-institution-phdtheses-table-wrapper, #record-conference-papers-table-wrapper, #record-conference-series-table-wrapper {
+.datatables-wrapper {
     display: none;
 
     .col-sm-6 {
@@ -263,11 +214,12 @@ h1.record-detailed-title, .record-header label, #record-journal,
     }
 }
 
-#record-references-loading, #record-citations-loading, #record-institution-people-loading, #record-institution-experiments-loading, #record-institution-papers-loading, #record-institution-phdtheses-loading, #record-conference-papers-loading, #record-conference-series-loading {
+.datatables-loading {
     text-align: center;
 }
 
-#record-institution-papers-table, #record-institution-phdtheses-table, #record-conference-papers-table, #record-conference-series-table {
+
+.table-with-ellipsis {
     table-layout: fixed;
 
     tbody > tr > td {
@@ -292,13 +244,7 @@ h1.record-detailed-title, .record-header label, #record-journal,
     }
 }
 
-#record-institution-people, #record-institution-experiments, #record-institution-papers, #record-conference-papers, #record-conference-series, #record-institution-phdtheses {
-    .panel-heading {
-        padding: 10px 15px 0px 15px;
-    }
-}
-
-#references, #citations, #record-institution-people, #record-institution-experiments, #record-institution-papers, #record-conference-papers, #record-conference-series, #record-institution-phdtheses {
+#references, #citations, #record-institution-people, #record-institution-experiments, #record-institution-papers, #record-conference-papers, #record-conference-series {
 
     min-height: 200px;
 
@@ -321,22 +267,6 @@ h1.record-detailed-title, .record-header label, #record-journal,
 
         tbody > tr > td {
             border: 0px;
-        }
-    }
-
-
-
-
-
-    .panel-heading {
-
-        .references-citations-showing {
-            font-weight: 500;
-            font-size: larger;
-        }
-
-        .references-citations-cited-by {
-            color: $grey;
         }
     }
 
@@ -405,18 +335,18 @@ h1.record-detailed-title, .record-header label, #record-journal,
     Record plots
 ============================================================ */
 
-#record-plots {
-    @extend #record-abstract-keywords;
+// #record-plots {
+//     @extend #record-abstract-keywords;
 
-    #record-plots-title {
-        @extend #record-abstract-title;
-    }
-}
+//     #record-plots-title {
+//         @extend #record-abstract-title;
+//     }
+// }
 
 .hide-bullets {
-  list-style:none;
+  list-style: none;
   margin-left: -40px;
-  margin-top:20px;
+  margin-top: 20px;
 }
 
 .img-responsive,
@@ -467,11 +397,8 @@ h1.record-detailed-title, .record-header label, #record-journal,
     max-height: 300px;
     overflow-y: auto;
 }
-// End of record plots
 
-#record_content > div.row {
-	display: none;
-}
+// End of record plots
 
 .authors-modal {
     font-size: 13.5px;
@@ -510,115 +437,32 @@ h1.record-detailed-title, .record-header label, #record-journal,
     max-width: inherit;
 }
 
-#record-detailed-jobs > .row {
+.record-detailed-jobs {
 
-    &#record-detailed-jobs-information-deadline {
-        margin-bottom: 50px;
-
-        #record-detailed-jobs-information, #record-detailed-jobs-deadline {
-            background-color: white;
-        }
-    }
-
-    .detailed-jobs-information {
-        padding-top: 5px;
-        padding-bottom: 5px;
-        overflow: hidden;
-    }
-
-    #jobs-detailed-header-top {
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-
-    #detailed-jobs-deadline-alert {
-        margin-left: 20px;
-        margin-right: 20px;
-    }
-
-    #record-detailed-similar-jobs {
-        & :nth-child(2) {
-            padding-bottom: 20px;
-            border-bottom: 1px solid gray;
-        }
-
-        & :nth-child(3) {
-            padding-top: 10px;
-        }
-    }
-
-    #similar-jobs {
-        margin-top: 10px;
+    .similar-jobs {
         margin-bottom: 10px;
-    }
-
-    #record-detailed-jobs-description,
-    #record-detailed-jobs-applications,
-    #record-detailed-similar-jobs {
-        background-color: white;
-    }
-
-    @media (min-width: $screen-md-min) {
-
-        #record-detailed-jobs-information,
-        #record-detailed-jobs-deadline {
-            min-height: 375px;
-        }
-
-        #record-detailed-jobs-description.col-md-8,
-        #record-detailed-jobs-information.col-md-8 {
-            width: 73%;
-            padding: 0;
-        }
-
-        #record-detailed-jobs-description {
-            min-height: 500px;
-        }
-    }
-
-    @media (max-width: $screen-md-min) {
-        #record-detailed-jobs-information {
-            margin-bottom: 50px;
-        }
-    }
-
-    #job-remove-this-listing {
-        padding: 10px;
-        padding-left: 20px;
-        background-color: #E6E6E6;
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-    }
-
-    #record-detailed-jobs-description.col-md-8,
-    #record-detailed-jobs-applications,
-    #record-detailed-similar-jobs,
-    #record-detailed-jobs-deadline {
-        padding: 10px 20px 20px 20px;
-    }
-
-    #job-detailed-map {
-        height: 250px;
-        width: 250px;
-        margin: 0 auto;
-    }
-
-    #record-detailed-jobs-sidebox,
-    #record-detailed-jobs-deadline {
-        @media (min-width: $screen-md-min) {
-            float: right;
-        }
-
-        padding-left: 0;
-        padding-right: 0;
     }
 }
 
-#record-conference-more-info {
-    .record-detailed-title {
-        margin-bottom: 20px;
+.detailed-record-field {
+     padding-bottom: 10px;
+
+    &.detailed-record-field-valigned {
+        vertical-align: middle;
     }
+}
+
+
+.record-detailed-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.row-with-map .record-detailed-information {
+    padding: 15px;
+    background-color: white;
+    min-height: 250px;
 }
 
 .record-detailed-conference {
@@ -627,63 +471,8 @@ h1.record-detailed-title, .record-header label, #record-journal,
         color: $silver;
     }
 
-    #record-detailed-conference-information, #record-detailed-jobs-deadline {
-        background-color: white;
-    }
-
-    #conference-detailed-map {
-        height: 100%;
-        width: 100%;
-    }
-
     #conference-detailed-map-place {
         text-align: center;
-    }
-
-    .detailed-conference-information {
-        padding-bottom: 10px;
-
-        &.detailed-conference-information-keywords {
-            vertical-align: middle;
-        }
-    }
-
-    #record-detailed-conference-map {
-        @media (min-width: $screen-md-min) {
-            float: right;
-        }
-
-        padding-left: 0;
-        padding-right: 12px;
-    }
-}
-
-.record-detailed-institution {
-
-    #institution-detailed-map {
-        height: 100%;
-        width: 100%;
-    }
-
-    .col-md-8, .col-md-3 {
-        background-color: white;
-    }
-
-
-    @media (min-width: $screen-md-min) {
-
-        #record-detailed-institution-map {
-            height: 250px;
-        }
-    }
-
-    #record-detailed-institution-map {
-        @media (min-width: $screen-md-min) {
-            float: right;
-        }
-
-        padding-left: 0;
-        padding-right: 0;
     }
 }
 
@@ -700,8 +489,15 @@ h1.record-detailed-title, .record-header label, #record-journal,
   flex-direction: column;
 }
 
-#record-detailed-conference-information {
-    padding: 15px;
+.row-with-map > [class*='col-md-4'] {
+    @media (min-width: $screen-md-min) {
+        float: right;
+    }
+
+    &.col-md-4-with-padding {
+        padding-left: 0;
+        padding-right: 12px;
+    }
 }
 
 .map-address-label {
@@ -709,7 +505,7 @@ h1.record-detailed-title, .record-header label, #record-journal,
     color: white;
     position: absolute;
     bottom: 0;
-    width: 96%;
+    width: 92%;
     opacity: 0.9;
     padding: 10px;
     font-size: 17px;

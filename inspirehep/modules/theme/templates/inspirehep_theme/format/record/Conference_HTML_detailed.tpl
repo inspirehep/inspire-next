@@ -25,7 +25,7 @@
     <div class="record-header record-header-conference">
     <div class="row row-with-map">
           <div class="col-md-8">
-            <div id="record-detailed-conference-information">
+            <div class="record-detailed-information">
             <h1 class='record-detailed-title'>
               {{ record['titles'][0]['title'] }}
               {% if record['acronym'] %}
@@ -38,7 +38,7 @@
             </h2>
 
             {% if record['urls'] %}
-              <div class="detailed-conference-information">
+              <div class="detailed-record-field">
                 {% for url in record['urls'] %}
                   <a href="{{ url['value'] }}">{{ url['value'] }}</a><br>
                 {% endfor %}
@@ -47,13 +47,13 @@
 
             {% if record['contact_details'] %}
               {% if record['contact_details'][0]['name'] %}
-                <div class="detailed-conference-information">
+                <div class="detailed-record-field">
                     <label>Contact person:</label> {{record['contact_details'][0]['name']}}<br>
                 </div>
               {% endif %}
 
               {% if record['contact_details'][0]['email'] %}
-                <div class="detailed-conference-information">
+                <div class="detailed-record-field">
                     <label>Contact email:</label> <a href="mailto:{{ record['contact_details'][0]['email'] }}">{{ record['contact_details'][0]['email'] }}</a><br>
                 </div>
               {% endif %}
@@ -74,8 +74,8 @@
           </div>
         </div>
 
-      <div class="col-md-4 hidden-xs hidden-sm" id="record-detailed-conference-map">
-        <div id="conference-detailed-map">
+      <div class="col-md-4 hidden-xs hidden-sm">
+        <div class="detailed-map" id="conference-detailed-map">
         </div>
         <div class='map-address-label map-address-label-conference'>
           <i class="fa fa-map-marker"></i>
@@ -86,27 +86,26 @@
     </div>
 
     <div class="row">
-      <div class="col-md-12">
-        <div class="panel" id="record-conference-more-info">
+      {% if record['keywords'] %}
+        {% set details_class = "col-md-8" %}
+      {% else %}
+        {% set details_class = "col-md-12" %}
+      {% endif %}
+      <div class="{{details_class}}">
+        <div class="panel">
+          <div class="panel-heading">
+            Details
+          </div>
           <div class="panel-body">
-            <div class="row">
-              {% if record['keywords'] %}
-                {% set details_class = "col-md-8" %}
-              {% else %}
-                {% set details_class = "col-md-12" %}
-              {% endif %}
-
-              <div class="{{details_class}}">
-                <div class="record-detailed-title">
-                  Details
-                </div>
+              <div class="row">
+              <div class="col-md-12">
                 {% if record['cnum'] %}
-                  <div class="detailed-conference-information"><label title="INSPIRE unique identifier for the conference">CNUM</label>: {{ record['cnum'] }}</div>
+                  <div class="detailed-record-field"><label title="INSPIRE unique identifier for the conference">CNUM</label>: {{ record['cnum'] }}</div>
                 {% endif %}
 
                 {% if record['short_description'] %}
                   {% set comma = joiner() %}
-                  <div class="detailed-conference-information">
+                  <div class="detailed-record-field">
                     <label>Short description:</label>
                     {% for description in record['short_description'] -%}
                       {{ comma() }} {{ description['value']}}
@@ -120,7 +119,7 @@
 
                 {% if record['field_categories'] %}
                 {% set comma = joiner('&nbsp') %}
-                <div class="detailed-conference-information">
+                <div class="detailed-record-field">
                   <label>Fields:</label>
                   {% for field in record['field_categories'] -%}
                       {{ comma() }}
@@ -133,29 +132,33 @@
                   </div>
                   {% endif %}
               </div>
-              <div class="col-md-4">
-                {% if record['keywords'] %}
-                <div class="record-detailed-title">
-                  Keywords
-                </div>
-                {% set comma = joiner('&nbsp') %}
-                <div class="detailed-conference-information detailed-conference-information-keywords">
-                  {% for keyword in record['keywords'] -%}
-                    {{ comma() }}
-                    <span class="chip chip-conferences">
-                      <a href="/search?q=&cc=conferences&q={{ keyword['value'] }}">
-                        <i class="fa fa-tag" style="margin-right: 5px; display: inline;"></i>
-                        {{ keyword['value'] }}
-                      </a>
-                    </span>
-                    {%- endfor %}
-                  </div>
-                  {% endif %}
-                </div>
               </div>
           </div>
         </div>
       </div>
+        {% if record['keywords'] %}
+        <div class="col-md-4">
+          <div class="panel">
+          <div class="panel-heading">
+            Keywords
+          </div>
+          <div class="panel-body">
+          {% set comma = joiner('&nbsp') %}
+          <div class="detailed-record-field detailed-record-field-valigned">
+            {% for keyword in record['keywords'] -%}
+              {{ comma() }}
+              <span class="chip chip-conferences">
+                <a href="/search?q=&cc=conferences&q={{ keyword['value'] }}">
+                  <i class="fa fa-tag" style="margin-right: 5px; display: inline;"></i>
+                  {{ keyword['value'] }}
+                </a>
+              </span>
+              {%- endfor %}
+            </div>
+          </div>
+          </div>
+          </div>
+        {% endif %}
     </div>
 
     <div class="row">
@@ -166,11 +169,11 @@
           </div>
 
           <div class="panel-body">
-            <div id="record-conference-papers-loading">
+            <div class="datatables-loading">
               <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading contributions to the conference...
             </div>
-            <div id="record-conference-papers-table-wrapper">
-              <table id="record-conference-papers-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <div class="datatables-wrapper">
+              <table id="record-conference-papers-table" class="table table-striped table-bordered table-with-ellipsis" cellspacing="0" width="100%">
               <thead>
                 <tr>
                   <th>Title</th>
@@ -194,11 +197,11 @@
                 Conferences in the series
             </div>
             <div class="panel-body">
-              <div id="record-conference-series-loading">
+              <div class="datatables-loading">
                 <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading conferences...
               </div>
-              <div id="record-conference-series-table-wrapper">
-                <table id="record-conference-series-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+              <div class="datatables-wrapper">
+                <table id="record-conference-series-table" class="table table-striped table-bordered table-with-ellipsis" cellspacing="0" width="100%">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -219,7 +222,7 @@
 {% endblock %}
 
 {% macro print_array(record, field, has_items=false) %}
-  <div class="detailed-conference-information">
+  <div class="detailed-record-field">
     <label>{{ field | capitalize }}:</label>
      {% set comma = joiner() %}
     {% if record[field] %}
