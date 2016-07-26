@@ -231,7 +231,7 @@ class ReferenceBuilder(object):
             if not value.startswith('hdl:'):
                 # Prone to the day in which normalize_handle might prepend
                 # 'hdl:'.
-                value = 'hdl:{}'.format(value)
+                value = u'hdl:{}'.format(value)
             self.obj['persistent_identifiers'].append(value)
         elif self.RE_VALID_CNUM.match(uid):
             self._ensure_field('publication_info', {})
