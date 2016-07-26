@@ -24,14 +24,13 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import pkg_resources
-import pytest
 
 import pytest
 
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hepnames import hepnames2marc, hepnames
-from inspirehep.dojson.utils import strip_empty_values
+from inspirehep.dojson.utils import clean_record
 
 
 @pytest.fixture
@@ -160,7 +159,7 @@ def test_positions_from_371__a():
             },
         },
     ]
-    result = strip_empty_values(hepnames.do(create_record(snippet)))
+    result = clean_record(hepnames.do(create_record(snippet)))
 
     assert expected == result['positions']
 
@@ -187,7 +186,7 @@ def test_positions_from_371__a_m_r_z():
             'status': 'Current',
         },
     ]
-    result = strip_empty_values(hepnames.do(create_record(snippet)))
+    result = clean_record(hepnames.do(create_record(snippet)))
 
     assert expected == result['positions']
 
@@ -253,7 +252,7 @@ def test_acquisition_source_field():
         'date': "2015-12-10",
         'submission_number': "339830",
     }
-    result = strip_empty_values(hepnames.do(create_record(snippet)))
+    result = clean_record(hepnames.do(create_record(snippet)))
 
     assert expected == result['acquisition_source']
 

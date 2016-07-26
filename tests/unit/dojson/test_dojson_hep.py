@@ -31,7 +31,7 @@ from dojson import utils
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hep import hep, hep2marc
-from inspirehep.dojson.utils import get_recid_from_ref, strip_empty_values
+from inspirehep.dojson.utils import clean_record, get_recid_from_ref
 
 
 @pytest.fixture
@@ -135,7 +135,7 @@ def test_external_system_numbers_from_035__a():
             'obsolete': False,
         },
     ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['external_system_numbers']
 
@@ -155,7 +155,7 @@ def test_external_system_numbers_from_035__a_9():
             'obsolete': False,
         },
     ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['external_system_numbers']
 
@@ -178,7 +178,7 @@ def test_external_system_numbers_from_035__a_d_h_m_9():
             'obsolete': False,
         }
     ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['external_system_numbers']
 
@@ -348,7 +348,7 @@ def test_hidden_notes_from_595__a_9():
             'value': 'Title changed from ALLCAPS',
         },
     ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['hidden_notes']
 
@@ -372,7 +372,7 @@ def test_hidden_notes_from_595__double_a_9():
             'value': 'no affiliation (not clear pn the fulltext)',
         },
     ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['hidden_notes']
 
@@ -406,7 +406,7 @@ def test_hidden_notes_from_595__a_9_and_595__double_a_9():
             'value': 'no affiliation (not clear pn the fulltext)',
         },
     ]
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['hidden_notes']
 
@@ -718,7 +718,7 @@ def test_acquisition_source_field():
         'date': "2015-12-10",
         'submission_number': "339830",
     }
-    result = strip_empty_values(hep.do(create_record(snippet)))
+    result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['acquisition_source']
 

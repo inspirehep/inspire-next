@@ -28,7 +28,6 @@ from dojson import utils
 from idutils import normalize_issn
 
 from ..model import journals
-from ...utils import strip_empty_values
 
 
 @journals.over('issn', '^022..')
