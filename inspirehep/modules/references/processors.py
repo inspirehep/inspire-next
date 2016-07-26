@@ -27,6 +27,7 @@ import six
 
 import idutils
 from isbn import ISBNError
+from isbn.hyphen import ISBNRangeError
 
 from inspirehep.utils.pubnote import split_pubnote
 
@@ -242,7 +243,10 @@ class ReferenceBuilder(object):
                 isbn = idutils.normalize_isbn(uid)
                 self._ensure_field('publication_info', {})
                 self.obj['publication_info']['isbn'] = isbn
-            except ISBNError:
+            # See https://github.com/nekobcn/isbnid/issues/2 and
+            # https://github.com/nekobcn/isbnid/issues/3 for understanding the
+            # long exception list.
+            except (ISBNError, ISBNRangeError, UnicodeEncodeError):
                 pass
 
     def add_collaboration(self, collaboration):
