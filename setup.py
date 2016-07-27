@@ -54,7 +54,7 @@ install_requires = [
     'invenio-config>=1.0.0a1',
     'invenio-i18n==1.0.0a4',
     'invenio-indexer>=1.0.0a6',
-    'invenio-logging>=1.0.0a2',
+    'invenio-logging>=1.0.0a3',
     'invenio-mail>=1.0.0a4',
     'invenio-oauthclient>=1.0.0a6',
     'invenio-records>=1.0.0a16',  # Add [versioning] in the future
