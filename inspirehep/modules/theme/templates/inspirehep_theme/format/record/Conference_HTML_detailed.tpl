@@ -23,9 +23,9 @@
 <div id="record_content">
   <div class="record-detailed record-detailed-conference">
     <div class="record-header record-header-conference">
-    <div class="row row-with-map">
-          <div class="col-md-8">
-            <div class="record-detailed-information">
+      <div class="row row-with-map">
+        <div class="col-md-8">
+          <div class="record-detailed-information">
             <h1 class='record-detailed-title'>
               {{ record['titles'][0]['title'] }}
               {% if record['acronym'] %}
@@ -33,56 +33,49 @@
               {% endif %}
             </h1>
 
-            <h2 class="record-detailed-subtitle">
-              {{ record | conference_date }}
-            </h2>
-
+            <h2 class="record-detailed-subtitle">{{ record | conference_date }}</h2>
             {% if record['urls'] %}
-              <div class="detailed-record-field">
-                {% for url in record['urls'] %}
-                  <a href="{{ url['value'] }}">{{ url['value'] }}</a><br>
-                {% endfor %}
-              </div><br>
+            <div class="detailed-record-field">
+              {% for url in record['urls'] %}
+              <a href="{{ url['value'] }}">{{ url['value'] }}</a>
+              <br>{% endfor %}</div>
+            <br>
             {% endif %}
 
             {% if record['contact_details'] %}
               {% if record['contact_details'][0]['name'] %}
-                <div class="detailed-record-field">
-                    <label>Contact person:</label> {{record['contact_details'][0]['name']}}<br>
-                </div>
-              {% endif %}
+            <div class="detailed-record-field">
+              <label>Contact person:</label>
+              {{record['contact_details'][0]['name']}}
+              <br></div>
+            {% endif %}
 
               {% if record['contact_details'][0]['email'] %}
-                <div class="detailed-record-field">
-                    <label>Contact email:</label> <a href="mailto:{{ record['contact_details'][0]['email'] }}">{{ record['contact_details'][0]['email'] }}</a><br>
-                </div>
-              {% endif %}
+            <div class="detailed-record-field">
+              <label>Contact email:</label>
+              <a href="mailto:{{ record['contact_details'][0]['email'] }}">{{ record['contact_details'][0]['email'] }}</a>
+              <br></div>
             {% endif %}
-
+            {% endif %}
             <hr>
-
             {% if record['series'] %}
-              <div>
-                Part of the
-                <a href="/search?q=&cc=conferences&series={{ record['series'][0] }}">
-                  <strong>{{ record['series'][0] }}</strong>
-                </a>
-                series
-              </div>
+            <div>
+              Part of the
+              <a href="/search?q=&cc=conferences&series={{ record['series'][0] }}"> <strong>{{ record['series'][0] }}</strong>
+              </a>
+              series
+            </div>
             {% endif %}
-
           </div>
         </div>
 
-      <div class="col-md-4 hidden-xs hidden-sm">
-        <div class="detailed-map" id="conference-detailed-map">
-        </div>
-        <div class='map-address-label map-address-label-conference'>
-          <i class="fa fa-map-marker"></i>
+        <div class="col-md-4 hidden-xs hidden-sm">
+          <div class="detailed-map" id="conference-detailed-map"></div>
+          <div class='map-address-label map-address-label-conference'> <i class="fa fa-map-marker"></i>
             {{ record['address'][0]['original_address'] }}
+          </div>
         </div>
       </div>
-    </div>
     </div>
 
     <div class="row">
@@ -93,24 +86,25 @@
       {% endif %}
       <div class="{{details_class}}">
         <div class="panel">
-          <div class="panel-heading">
-            Details
-          </div>
+          <div class="panel-heading">Details</div>
           <div class="panel-body">
-              <div class="row">
+            <div class="row">
               <div class="col-md-12">
                 {% if record['cnum'] %}
-                  <div class="detailed-record-field"><label title="INSPIRE unique identifier for the conference">CNUM</label>: {{ record['cnum'] }}</div>
+                <div class="detailed-record-field">
+                  <label title="INSPIRE unique identifier for the conference">CNUM</label>
+                  : {{ record['cnum'] }}
+                </div>
                 {% endif %}
 
                 {% if record['short_description'] %}
                   {% set comma = joiner() %}
-                  <div class="detailed-record-field">
-                    <label>Short description:</label>
-                    {% for description in record['short_description'] -%}
+                <div class="detailed-record-field">
+                  <label>Short description:</label>
+                  {% for description in record['short_description'] -%}
                       {{ comma() }} {{ description['value']}}
                     {%- endfor %}
-                  </div>
+                </div>
                 {% endif %}
 
                 {% if record['note'] %}
@@ -123,108 +117,98 @@
                   <label>Fields:</label>
                   {% for field in record['field_categories'] -%}
                       {{ comma() }}
-                      <span class="chip chip-conferences">
-                        <a href="/search?q=&cc=conferences&q={{ field['tern'] }}">
-                          {{ field['term'] }}
-                        </a>
-                      </span>
-                    {%- endfor %}
-                  </div>
-                  {% endif %}
+                  <span class="chip chip-conferences">
+                    <a href="/search?q=&cc=conferences&q={{ field['tern'] }}">{{ field['term'] }}</a>
+                  </span>
+                  {%- endfor %}
+                </div>
+                {% endif %}
               </div>
-              </div>
+            </div>
           </div>
         </div>
       </div>
-        {% if record['keywords'] %}
-        <div class="col-md-4">
-          <div class="panel">
-          <div class="panel-heading">
-            Keywords
-          </div>
+      {% if record['keywords'] %}
+      <div class="col-md-4">
+        <div class="panel">
+          <div class="panel-heading">Keywords</div>
           <div class="panel-body">
-          {% set comma = joiner('&nbsp') %}
-          <div class="detailed-record-field detailed-record-field-valigned">
-            {% for keyword in record['keywords'] -%}
+            {% set comma = joiner('&nbsp') %}
+            <div class="detailed-record-field detailed-record-field-valigned">
+              {% for keyword in record['keywords'] -%}
               {{ comma() }}
               <span class="chip chip-conferences">
-                <a href="/search?q=&cc=conferences&q={{ keyword['value'] }}">
-                  <i class="fa fa-tag" style="margin-right: 5px; display: inline;"></i>
+                <a href="/search?q=&cc=conferences&q={{ keyword['value'] }}"> <i class="fa fa-tag" style="margin-right: 5px; display: inline;"></i>
                   {{ keyword['value'] }}
                 </a>
               </span>
               {%- endfor %}
             </div>
           </div>
-          </div>
-          </div>
-        {% endif %}
+        </div>
+      </div>
+      {% endif %}
     </div>
 
     <div class="row">
       <div class="col-md-12">
         <div class="panel" id="record-conference-papers">
-          <div class="panel-heading">
-            Contributions
-          </div>
+          <div class="panel-heading">Contributions</div>
 
           <div class="panel-body">
             <div class="datatables-loading">
-              <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading contributions to the conference...
-            </div>
+              <i class="fa fa-spinner fa-spin fa-lg" ></i>
+              <br>Loading contributions to the conference...</div>
             <div class="datatables-wrapper">
               <table id="record-conference-papers-table" class="table table-striped table-bordered table-with-ellipsis" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Authors</th>
-                  <th>Journal</th>
-                  <th># Citations</th>
-                </tr>
-              </thead>
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Authors</th>
+                    <th>Journal</th>
+                    <th># Citations</th>
+                  </tr>
+                </thead>
               </table>
             </div>
           </div>
         </div>
       </div>
     </div>
-
     {% if record['series'] %}
     <div class="row">
       <div class="col-md-12">
-          <div class="panel" id="record-conference-series">
-            <div class="panel-heading">
-                Conferences in the series
-            </div>
-            <div class="panel-body">
-              <div class="datatables-loading">
-                <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading conferences...
-              </div>
-              <div class="datatables-wrapper">
-                <table id="record-conference-series-table" class="table table-striped table-bordered table-with-ellipsis" cellspacing="0" width="100%">
+        <div class="panel" id="record-conference-series">
+          <div class="panel-heading">Conferences in the series</div>
+          <div class="panel-body">
+            <div class="datatables-loading">
+              <i class="fa fa-spinner fa-spin fa-lg" ></i>
+              <br>Loading conferences...</div>
+            <div class="datatables-wrapper">
+              <table id="record-conference-series-table" class="table table-striped table-bordered table-with-ellipsis" cellspacing="0" width="100%">
                 <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th>Contributions</th>
-                        <th>Date</th>
-                    </tr>
+                  <tr>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Contributions</th>
+                    <th>Date</th>
+                  </tr>
                 </thead>
-                </table>
-              </div>
+              </table>
             </div>
           </div>
         </div>
+      </div>
     </div>
-  {% endif %}
+    {% endif %}
   </div>
 </div>
 {% endblock %}
 
 {% macro print_array(record, field, has_items=false) %}
-  <div class="detailed-record-field">
-    <label>{{ field | capitalize }}:</label>
-     {% set comma = joiner() %}
+<div class="detailed-record-field">
+  <label>{{ field | capitalize }}:</label>
+  {% set comma = joiner() %}
     {% if record[field] %}
       {% for field in record[field] -%}
         {% if has_items -%}
@@ -234,7 +218,7 @@
         {% endif %}
       {%- endfor %}
     {% endif %}
-  </div>
+</div>
 {% endmacro %}
 
 {% block additional_javascript %}

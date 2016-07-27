@@ -381,10 +381,9 @@
   {% set plotExists = [] %}
   {% set plotsCount = [0] %}
   {% if record.urls %}
-    {% for url in record.get('urls') %}
-       {% if url is not none and url is mapping and url.get('url') is not none %}
-
-          {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+    {% for url in record.urls %}
+       {% if url.value %}
+          {% if url.value.endswith(".png") or url.value.endswith(".jpg") %}
             {% do plotExists.append(1) %}
             {# increment plotsCount by 1 #}
             {% if plotsCount.append(plotsCount.pop() + 1) %}{% endif %}
@@ -407,12 +406,12 @@
               <!-- Left switcher of slider -->
               <ul class="hide-bullets">
                 {% set count = 0 %}
-                {% for url in record.get('urls') %}
-                   {% if url is not none and url is mapping %}
-                    {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+                {% for url in record.urls %}
+                   {% if url.value %}
+                    {% if url.value.endswith(".png") or url.value.endswith(".jpg") %}
                       <li class="col-sm-12 show-plots-thumbnails">
                         <a class="thumbnail" id="carousel-selector-{{ count }}">
-                          <img width="100" height="100" src="{{ url.get('url') }}">
+                          <img width="100" height="100" src="{{ url.value }}">
                         </a>
                       </li>
                       {% set count = count + 1 %}
@@ -427,12 +426,12 @@
                 <!-- Carousel items -->
                 <div class="carousel-inner">
                   {% set count = 0 %}
-                  {% for url in record.get('urls')  %}
-                    {% if url is not none and url is mapping %}
-                      {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+                  {% for url in record.urls  %}
+                    {% if url.value %}
+                      {% if url.value.endswith(".png") or url.value.endswith(".jpg") %}
                         <div class=" item {% if count == 0 %} active {% endif %}"
                              data-slide-number="{{ count }}">
-                          <img src="{{ url.get('url') }}">
+                          <img src="{{ url.value }}">
                         </div>
                         {% set count = count + 1 %}
                       {% endif %}
@@ -452,9 +451,9 @@
 
             <div id="slide-content" style="display: none;">
               {% set count = 0 %}
-              {% for url in record.get('urls') %}
-                 {% if url is not none and url is mapping %}
-                      {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
+              {% for url in record.urls %}
+                 {% if url.value %}
+                      {% if url.value.endswith(".png") or url.value.endswith(".jpg") %}
                          <div id="slide-content-{{ count }}">
                             <span>{{ url.get('description')|strip_leading_number_plot_caption }}</span>
                          </div>
