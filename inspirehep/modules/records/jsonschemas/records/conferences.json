@@ -37,7 +37,11 @@
             "uniqueItems": true
         },
         "field_categories": {
-            "$ref": "elements/fields.json"
+            "items": {
+                "$ref": "elements/field.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "keywords": {
             "properties": {
