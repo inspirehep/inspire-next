@@ -160,6 +160,7 @@ def continuous_migration():
         while r.llen('legacy_records'):
             raw_record = r.lpop('legacy_records')
             if raw_record:
+                # FIXME use migrate_and_insert_record(raw_record)
                 # The record might be None, in case a parallel
                 # continuous_migration task has already consumed the queue.
                 raw_record = zlib.decompress(raw_record)
@@ -176,7 +177,6 @@ def continuous_migration():
                         errors = "ValidationError: Record {0}: {1}".format(
                             recid, e
                         )
-                        current_app.logger.warning(errors)
                         prod_record.valid = False
                         prod_record.errors = errors
                         db.session.merge(prod_record)
@@ -204,31 +204,13 @@ def create_index_op(record):
 @shared_task(ignore_result=False, compress='zlib', acks_late=True)
 def migrate_chunk(chunk):
     index_queue = []
+
     try:
         for raw_record in chunk:
-            record = marc_create_record(raw_record, keep_singletons=False)
-            recid = int(record['001'])
-            prod_record = InspireProdRecords(recid=recid)
-            prod_record.marcxml = raw_record
-            json_record = create_record(record)
             with db.session.begin_nested():
-                try:
-                    record = record_upsert(json_record)
-                except ValidationError as e:
-                    # Invalid record, will not get indexed
-                    errors = "ValidationError: Record {0}: {1}".format(
-                        recid, e
-                    )
-                    current_app.logger.warning(errors)
-                    prod_record.valid = False
-                    prod_record.errors = errors
-                    db.session.merge(prod_record)
-                    continue
-
-                index_queue.append(create_index_op(record))
-
-                prod_record.valid = True
-                db.session.merge(prod_record)
+                record = migrate_and_insert_record(raw_record)
+                if record:
+                    index_queue.append(create_index_op(record))
         db.session.commit()
     finally:
         db.session.close()
@@ -345,6 +327,49 @@ def record_upsert(json):
             # Create persistent identifier.
             inspire_recid_minter(str(record.id), json)
 
+        return record
+
+
+def migrate_and_insert_record(raw_record):
+    """Convert a marc21 record to JSON and insert it into the DB."""
+    try:
+        record = marc_create_record(raw_record, keep_singletons=False)
+    except Exception as e:
+        logger.exception('Migrator MARC 21 read Error')
+        return None
+
+    recid = int(record['001'])
+    prod_record = InspireProdRecords(recid=recid)
+    prod_record.marcxml = raw_record
+    error = None
+
+    try:
+        json_record = create_record(record)
+    except Exception as e:
+        logger.exception('Migrator DoJSON Error')
+        error = e
+
+    try:
+        if not error:
+            record = record_upsert(json_record)
+    except ValidationError as e:
+        # Aggregate logs by part of schema being validated.
+        pattern = u'Migrator Validation Error: {} on {}: Value: %r, Record: %r'
+        logger.error(pattern.format('.'.join(e.schema_path),
+                                    e.validator_value),
+                     e.instance, recid)
+        error = e
+
+    if error:
+        # Invalid record, will not get indexed.
+        error_str = u'{0}: Record {1}: {2}'.format(type(error), recid, e)
+        prod_record.valid = False
+        prod_record.errors = error_str
+        db.session.merge(prod_record)
+        return None
+    else:
+        prod_record.valid = True
+        db.session.merge(prod_record)
         return record
 
 
