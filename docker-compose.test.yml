@@ -36,16 +36,22 @@ services:
       - ACCOUNTS_SESSION_REDIS_URL=redis://redis:6379/2
       - SEARCH_ELASTIC_HOSTS=indexer
 
+  pep8:
+    extends:
+      service: service_base
+    volumes_from:
+      - static
+    command: python setup.py test --addopts="inspirehep"
   unit:
     extends:
       service: service_base
     volumes_from:
       - static
-    command: ./run-tests.sh unit
+    command: python setup.py test --addopts="tests/unit"
   integration:
     extends:
       service: service_base
-    command: ./run-tests.sh integration
+    command: python setup.py test --addopts="tests/integration"
     volumes_from:
       - static
     links:
