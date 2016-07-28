@@ -202,7 +202,11 @@
             "type": "string"
         },
         "urls": {
-            "$ref": "elements/urls.json"
+            "items": {
+                "$ref": "elements/url.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         }
     },
     "title": "Institution",

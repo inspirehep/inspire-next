@@ -163,7 +163,11 @@
             "$ref": "titles.json"
         },
         "urls": {
-            "$ref": "urls.json"
+            "items": {
+                "$ref": "url.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         }
     },
     "title": "Reference",

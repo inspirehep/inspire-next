@@ -196,7 +196,11 @@
             "$ref": "elements/titles.json"
         },
         "urls": {
-            "$ref": "elements/urls.json"
+            "items": {
+                "$ref": "elements/url.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         }
     },
     "title": "Experiment",

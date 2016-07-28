@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "properties": {
+        "description": {
+            "type": "string"
+        },
+        "value": {
+            "format": "url",
+            "type": "string"
+        }
+    },
+    "type": "object"
+}

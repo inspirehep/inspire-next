@@ -109,7 +109,11 @@
             "title": "Url of the record"
         },
         "urls": {
-            "$ref": "elements/urls.json"
+            "items": {
+                "$ref": "elements/url.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         }
     },
     "title": "HEP Job",
