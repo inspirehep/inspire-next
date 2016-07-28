@@ -265,10 +265,6 @@
             },
             "type": "array"
         },
-        "breadcrumb_title": {
-            "description": "The title shown in all page breadcrumbs",
-            "type": "string"
-        },
         "citeable": {
             "description": "Whether this document can be cited. FIXME: can this be derived from other properties?",
             "title": "Citeable?",
