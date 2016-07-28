@@ -16,24 +16,32 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this license, CERN does not waive the privileges and immunities
+# In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Tests for Impact Graph API."""
+"""Tests for the Authors API.
+
+The Authors API has a single endpoint:
+    /api/authors/<N>
+
+TODO
+"""
+
+from __future__ import absolute_import, division, print_function
 
 import json
 
+import requests
 
-def test_impact_graphs_api(app):
-    """Test response of impact graph API."""
-    with app.test_client() as client:
-        result = client.get(
-            "/api/literature/613135",
-            headers={"Accept": "application/x-impact.graph+json"}
-        )
 
-        result = json.loads(result.data)
-        assert result['title'] == u'First year Wilkinson Microwave Anisotropy Probe (WMAP) observations: Determination of cosmological parameters'
-        assert result['year'] == u'2003'
-        assert len(result['citations']) == 14
+def test_api_authors_json(live_server):
+    response = requests.get(
+        '/api/authors/984519',
+        headers={'Accept': 'application/json'},
+    )
+
+    expected = 'Vogel, Helmut'
+    result = json.loads(response.data)
+
+    assert expected == result['name']['value']
