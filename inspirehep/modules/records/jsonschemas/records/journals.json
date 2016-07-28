@@ -48,7 +48,11 @@
             "type": "string"
         },
         "journal_titles": {
-            "$ref": "elements/titles.json"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "license": {
             "enum": [
@@ -121,10 +125,18 @@
             "title": "Url of the record"
         },
         "short_titles": {
-            "$ref": "elements/titles.json"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "title_variants": {
-            "$ref": "elements/titles.json"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "urls": {
             "items": {

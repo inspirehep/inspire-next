@@ -71,7 +71,11 @@
             "type": "array"
         },
         "experiment_names": {
-            "$ref": "elements/titles.json"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "field_categories": {
             "$ref": "elements/fields.json"
@@ -95,7 +99,11 @@
             "type": "string"
         },
         "other_experiment_names": {
-            "$ref": "elements/titles.json"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "public_note": {
             "title": "Public note",
@@ -193,7 +201,11 @@
             "uniqueItems": true
         },
         "titles": {
-            "$ref": "elements/titles.json"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "urls": {
             "items": {

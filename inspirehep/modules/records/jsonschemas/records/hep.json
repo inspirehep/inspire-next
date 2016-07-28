@@ -873,17 +873,32 @@
             "uniqueItems": true
         },
         "title_translations": {
-            "$ref": "elements/titles.json"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "title_variations": {
-            "$ref": "elements/titles.json"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "titles": {
-            "$ref": "elements/titles.json"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "titles_old": {
-            "$ref": "elements/titles.json",
-            "description": "FIXME: Old 247, shall it still have its own field?"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "urls": {
             "items": {

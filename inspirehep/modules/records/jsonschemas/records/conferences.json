@@ -13,7 +13,11 @@
             "uniqueItems": true
         },
         "alternative_titles": {
-            "$ref": "elements/titles.json"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "closing_date": {
             "format": "date",
@@ -92,7 +96,11 @@
             "type": "array"
         },
         "titles": {
-            "$ref": "elements/titles.json"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "urls": {
             "items": {
