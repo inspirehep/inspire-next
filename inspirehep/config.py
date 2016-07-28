@@ -565,6 +565,7 @@ RECORDS_UI_ENDPOINTS = dict(
         pid_type='jobs',
         route='/jobs/<pid_value>',
         template='inspirehep_theme/format/record/Job_HTML_detailed.tpl',
+        record_class='inspirehep.modules.records.wrappers:JobsRecord',
         permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     institutions=dict(

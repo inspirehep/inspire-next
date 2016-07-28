@@ -20,9 +20,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Theme blueprint in order for template and static files to be loaded."""
+"""Theme views."""
 
 from __future__ import absolute_import, division, print_function
+
+from datetime import date
 
 from dateutil.relativedelta import relativedelta
 from flask import (
@@ -54,64 +56,65 @@ from invenio_search.api import RecordsSearch
 from invenio_pidstore.models import PersistentIdentifier
 
 from inspirehep.utils.citations import Citation
-from inspirehep.utils.date import datetime
-from inspirehep.utils.search import perform_es_search
+from inspirehep.utils.search import get_number_of_records, perform_es_search
 from inspirehep.utils.record import get_title
 from inspirehep.utils.template import render_macro_from_template
 from inspirehep.utils.conferences import render_conferences_in_the_same_series
 from inspirehep.utils.conferences import render_conferences_contributions
 
-blueprint = Blueprint('inspirehep_theme', __name__,
-                      url_prefix='',
-                      template_folder='templates',
-                      static_folder='static',
-                      )
+blueprint = Blueprint(
+    'inspirehep_theme',
+    __name__,
+    url_prefix='',
+    template_folder='templates',
+    static_folder='static',
+)
+
 
 #
 # Collections
 #
 
-
 @blueprint.route('/literature', methods=['GET', ])
 @blueprint.route('/collection/literature', methods=['GET', ])
-@blueprint.route('/', methods=['GET', 'POST'])
+@blueprint.route('/', methods=['GET', ])
 def index():
     """View for literature collection landing page."""
+    number_of_records = get_number_of_records('hep')
+
     return render_template(
         'inspirehep_theme/search/collection_literature.html',
-        collection='hep')
+        collection='hep',
+        number_of_records=number_of_records,
+    )
 
 
 @blueprint.route('/authors', methods=['GET', ])
 @blueprint.route('/collection/authors', methods=['GET', ])
 def hepnames():
     """View for authors collection landing page."""
-    # collection = {'name': 'hepnames'}
-    return render_template('inspirehep_theme/search/collection_authors.html',
-                           collection='authors')
+    number_of_records = get_number_of_records('authors')
+
+    return render_template(
+        'inspirehep_theme/search/collection_authors.html',
+        collection='authors',
+        number_of_records=number_of_records,
+    )
 
 
 @blueprint.route('/conferences', methods=['GET', ])
 def conferences():
     """View for conferences collection landing page."""
-
-    today = datetime.today()
-    today_str = today.strftime('%Y-%m-%d')
-
-    six_months_str = (today + relativedelta(months=+6)).strftime('%Y-%m-%d')
-
-    upcoming_conferences = perform_es_search(
-        'opening_date:{0}->{1}'.format(today_str, six_months_str),
-        'records-conferences', 1, 100, {'opening_date': 'asc'})
-
-    results = [hit['_source']
-               for hit in upcoming_conferences.to_dict()['hits']['hits']]
+    number_of_records = get_number_of_records('conferences')
+    upcoming_conferences = _get_upcoming_conferences()
 
     return render_template(
         'inspirehep_theme/search/collection_conferences.html',
-        ctx={'conference_subject_areas': CONFERENCE_CATEGORIES_TO_SERIES,
-             'results': results},
-        collection='conferences')
+        collection='conferences',
+        conferences_subject_areas=CONFERENCE_CATEGORIES_TO_SERIES,
+        number_of_records=number_of_records,
+        result=upcoming_conferences,
+    )
 
 
 @blueprint.route('/jobs', methods=['GET', ])
@@ -123,39 +126,56 @@ def jobs():
 @blueprint.route('/institutions', methods=['GET', ])
 def institutions():
     """View for institutions collection landing page."""
-    institutions_list = perform_es_search('', 'records-institutions', 0, 250)
-
-    results = [hit['_source']
-               for hit in institutions_list.to_dict()['hits']['hits']]
+    number_of_records = get_number_of_records('institutions')
+    some_institutions = _get_some_institutions()
 
     return render_template(
         'inspirehep_theme/search/collection_institutions.html',
-        ctx={'results': results}, collection='institutions')
+        collection='institutions',
+        number_of_records=number_of_records,
+        result=some_institutions,
+    )
 
 
 @blueprint.route('/experiments', methods=['GET', ])
 def experiments():
     """View for experiments collection landing page."""
+    number_of_records = get_number_of_records('experiments')
+
     return render_template(
         'inspirehep_theme/search/collection_experiments.html',
-        collection='experiments')
+        collection='experiments',
+        number_of_records=number_of_records,
+    )
 
 
 @blueprint.route('/journals', methods=['GET', ])
 def journals():
     """View for journals collection landing page."""
+    number_of_records = get_number_of_records('journals')
+
     return render_template(
         'inspirehep_theme/search/collection_journals.html',
-        collection='journals')
+        collection='journals',
+        number_of_records=number_of_records,
+    )
 
 
 @blueprint.route('/data', methods=['GET', ])
 def data():
     """View for data collection landing page."""
+    number_of_records = get_number_of_records('data')
+
     return render_template(
         'inspirehep_theme/search/collection_data.html',
-        collection='data')
+        collection='data',
+        number_of_records=number_of_records,
+    )
 
+
+#
+# Error handlers
+#
 
 def unauthorized(e):
     """Error handler to show a 401.html page in case of a 401 error."""
@@ -185,10 +205,10 @@ def internal_error(e):
 def ping():
     return 'OK'
 
+
 #
 # Handlers for AJAX requests regarding references and citations
 #
-
 
 @blueprint.route('/ajax/references', methods=['GET'])
 def ajax_references():
@@ -501,9 +521,8 @@ def ajax_institutions_papers():
 
 
 #
-# Feedback
+# Feedback handler
 #
-
 
 @blueprint.route('/postfeedback', methods=['POST', ])
 def postfeedback():
@@ -604,3 +623,24 @@ def ajax_conference_contributions():
             "total": total
         }
     )
+
+
+#
+# Helpers
+#
+
+def _get_some_institutions():
+    some_institutions = perform_es_search('', 'records-institutions', 0, 250)
+
+    return [hit['_source'] for hit in some_institutions.to_dict()['hits']['hits']]
+
+
+def _get_upcoming_conferences():
+    today = date.today()
+    in_six_months = today + relativedelta(months=+6)
+
+    upcoming_conferences = perform_es_search(
+        'opening_date:{0}->{1}'.format(str(today), str(in_six_months)),
+        'records-conferences', 1, 100, {'opening_date': 'asc'})
+
+    return [hit['_source'] for hit in upcoming_conferences.to_dict()['hits']['hits']]

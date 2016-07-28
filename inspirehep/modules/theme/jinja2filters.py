@@ -83,17 +83,6 @@ def apply_template_on_array(array, template_path, **common_context):
     return rendered
 
 
-def collection_to_index(collection_name):
-    """Translates a collection name to the corresponding index."""
-    try:
-        mapping = current_app.config['SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING']
-        index = mapping[collection_name.lower()]
-    except KeyError:
-        index = 'records-hep'
-
-    return index
-
-
 @blueprint.app_template_filter()
 @evalcontextfilter
 def join_array(eval_ctx, value, separator):
@@ -359,15 +348,6 @@ def collection_select_current(collection_name, current_collection):
         return "active"
     else:
         return ""
-
-
-@blueprint.app_template_filter()
-def number_of_records(collection_name):
-    """Returns number of records for the collection."""
-    index = collection_to_index(collection_name)
-    result = es.count(index=index)
-
-    return result['count']
 
 
 @blueprint.app_template_filter()
@@ -655,32 +635,3 @@ def weblinks(description):
     if description:
         return 'Link to ' + description
     return 'Link to fulltext'
-
-
-@blueprint.app_template_filter()
-def jobs_similar(id):
-    out = ''
-
-    es_query = RecordsSearch(index='records-jobs', doc_type='jobs')
-    es_query = es_query.query(
-        {
-            "more_like_this": {
-                "docs": [
-                    {
-                        "_id": id
-                    }
-                ],
-                "min_term_freq": 0,
-                "min_doc_freq": 0,
-            }
-        }
-    )[0:2]
-
-    similar_jobs = es_query.execute()
-
-    for job in similar_jobs:
-        out = out + (render_template_to_string(
-            "inspirehep_theme/similar_jobs.html",
-            record=job))
-
-    return out

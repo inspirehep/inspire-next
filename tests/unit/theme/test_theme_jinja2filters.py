@@ -188,34 +188,6 @@ def mock_perform_es_search_tworecord():
     )
 
 
-@mock.patch(
-    'inspirehep.modules.theme.jinja2filters.current_app.config',
-    {'SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING': {'foo': 'bar'}})
-def test_collection_to_index_fetches_from_mapping():
-    expected = 'bar'
-    result = collection_to_index('foo')
-
-    assert expected == result
-
-
-@mock.patch(
-    'inspirehep.modules.theme.jinja2filters.current_app.config',
-    {'SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING': {'foo': 'bar'}})
-def test_collection_to_index_falls_back_to_records_hep_if_no_key():
-    expected = 'records-hep'
-    result = collection_to_index('baz')
-
-    assert expected == result
-
-
-@mock.patch('inspirehep.modules.theme.jinja2filters.current_app.config', {})
-def test_collection_to_index_falls_back_to_records_hep_if_no_mapping():
-    expected = 'records-hep'
-    result = collection_to_index('foo')
-
-    assert expected == result
-
-
 @mock.patch('inspirehep.modules.theme.jinja2filters.current_app.jinja_env.get_template')
 def test_apply_template_on_array_returns_empty_list_on_empty_list(g_t, jinja_env):
     g_t.return_value = jinja_env.from_string('{{ content }}')
@@ -649,23 +621,6 @@ def test_collection_select_current_returns_active_if_equal():
 def test_collection_select_current_returns_empty_string_if_different():
     expected = ''
     result = collection_select_current('foo', 'bar')
-
-    assert expected == result
-
-
-@mock.patch('inspirehep.modules.theme.jinja2filters.es.count')
-def test_number_of_records(count):
-    count.return_value = {
-        "count" : 10,
-        "_shards" : {
-            "total" : 5,
-            "successful" : 5,
-            "failed" : 0
-        }
-    }
-
-    expected = 10
-    result = number_of_records('foo')
 
     assert expected == result
 

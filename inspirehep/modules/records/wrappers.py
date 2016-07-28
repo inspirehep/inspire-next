@@ -1,4 +1,3 @@
-{#
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
@@ -19,16 +18,35 @@
 #
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
-#}
+# or submit itself to any jurisdiction.
 
-<div id="similar-jobs">
-  {% if record.rank %}
-    <b>{{ record.rank[0] }}</b>
-  {% endif %}
-  <br>
-  <a href="/jobs/{{record.control_number}}">{{ record.position }}</a>
-  <br>
-  {{ record.institution[0].name }}
-  <br>
-  Deadline: {{ record.deadline_date | format_date }}
-</div>
+from __future__ import absolute_import, division, print_function
+
+from invenio_records.api import Record
+from invenio_search.api import RecordsSearch
+
+
+class JobsRecord(Record):
+
+    """Record class specialized for job records."""
+
+    @property
+    def similar(self):
+        def _build_query(id_):
+            result = RecordsSearch(index='records-jobs', doc_type='jobs')
+            return result.query({
+                'more_like_this': {
+                    'docs': [
+                        {
+                            '_id': id_,
+                        },
+                    ],
+                    'min_term_freq': 0,
+                    'min_doc_freq': 0,
+                }
+            })[0:2]
+
+        query = _build_query(self.id)
+        result = query.execute()
+
+        return result
