@@ -19,14 +19,15 @@
 {%- extends "inspirehep_theme/page.html" -%}
 
 {% from "inspirehep_theme/format/record/Inspire_HTML_detailed_macros.tpl" import record_buttons, record_collections, record_publication_info, record_doi, record_links, detailed_record_abstract, record_keywords, record_references, record_citations, record_plots, record_doi, impactgraph with context %}
+
 {% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax, render_record_title, render_record_authors, record_arxiv, record_report_numbers with context %}
 
 {% block body %}
 <div id="record_content">
-  <div class="record-detailed">
-    <div class="record-header record-header-literature" id="detailed-header">
+  <div class="record-detailed record-detailed-literature">
+    <div class="record-header record-header-literature">
       <div class="row">
-        <div class="col-md-12" id="detailed-header-top">
+        <div class="col-md-12">
           <h1 class="record-detailed-title">{{ render_record_title(record) }}</h1>
           <div id="record-authors">
             {{ render_record_authors(record, is_brief=false, number_of_displayed_authors=25) }}
@@ -60,17 +61,35 @@
       </div>
     </div>
 
-    <div class="record-details">
-      <div id="record-abstract-keywords">
-        <div>
-          <div class="row">
-            <div class="col-xs-12 col-sm-9">{{ detailed_record_abstract(record) }}</div>
-            <div class="clearfix col-sm-3">{{ record_keywords(record) }}</div>
+    <div class="row">
+      <div class="col-md-8">
+        <div class="panel">
+          <div class="panel-heading">Abstract</div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-12">{{ detailed_record_abstract(record) }}</div>
+            </div>
           </div>
         </div>
       </div>
+      <div class="col-md-4">
+        <div class="panel">
+          <div class="panel-heading">Keywords</div>
+          <div class="panel-body">{{ record_keywords(record) }}</div>
+        </div>
+      </div>
     </div>
-    {{ record_plots(record) }}
+    {% set plot_count = record | count_plots %}
+    {% if plot_count %}
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel">
+            <div class="panel-heading">Plots ({{plot_count}})</div>
+            <div class="panel-body">{{ record_plots(record) }}</div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
     <div class="row">
       <div class="col-md-12">{{ record_references(record) }}</div>
     </div>
@@ -94,7 +113,7 @@
 
 {% block additional_javascript %}
   {{ mathjax() | safe }}
-  <script type="text/javascript">
+<script type="text/javascript">
     require(
       [
         "js/datatables",
@@ -111,7 +130,7 @@
         });
       });
   </script>
-  <script>
+<script>
     require(
       [
         "impact-graphs",

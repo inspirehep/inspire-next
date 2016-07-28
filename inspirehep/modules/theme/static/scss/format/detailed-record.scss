@@ -113,7 +113,7 @@ h2.record-detailed-subtitle {
 
 }
 
-#detailed-header {
+.record-header-literature {
     padding: 20px 0 0 0 !important;
 
     & .row {
@@ -133,11 +133,6 @@ h2.record-detailed-subtitle {
     text-align: left;
     color: black;
     margin-bottom: 20px;
-
-    #detailed-header-top { // HEP - not necessary ?
-        padding-left: 20px;
-        padding-right: 20px;
-    }
 
     #cite-pdf-buttons { // HEP - not necessary ?
         margin-top: 25px;
@@ -190,10 +185,6 @@ h1.record-detailed-title, .record-header label, #record-journal,
     }
 }
 
-.record-abstract {
-	display: none;
-}
-
 .record-detailed .record-panel-heading-muted {
     color: $grey;
     font-weight: normal;
@@ -235,6 +226,10 @@ h1.record-detailed-title, .record-header label, #record-journal,
     td:nth-child(2) {
         width: 20px;
     }
+}
+
+#record-references-table_filter {
+    float: right;
 }
 
 #record-references-table, #record-citations-table {
