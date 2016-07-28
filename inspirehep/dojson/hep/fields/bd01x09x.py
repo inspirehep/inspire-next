@@ -25,11 +25,13 @@
 from __future__ import absolute_import, division, print_function
 
 from isbn import ISBNError
+from isbn.hyphen import ISBNRangeError
 
 from dojson import utils
 from idutils import normalize_isbn
 
 from ..model import hep, hep2marc
+from ...utils import force_single_element
 
 from inspirehep.utils.helpers import force_force_list
 
@@ -40,8 +42,11 @@ from inspirehep.utils.helpers import force_force_list
 def isbns(self, key, value):
     "ISBN, its medium and an additional comment."""
     try:
-        isbn = normalize_isbn(value['a'])
-    except (KeyError, ISBNError):
+        isbn = normalize_isbn(force_single_element(value['a']))
+    # See https://github.com/nekobcn/isbnid/issues/2 and
+    # https://github.com/nekobcn/isbnid/issues/3 for understanding the long
+    # exception list.
+    except (KeyError, ISBNError, ISBNRangeError, UnicodeEncodeError):
         return {}
 
     b = value.get('b', '').lower()
@@ -92,7 +97,8 @@ def persistent_identifiers(self, key, value):
     for val in value:
         if val:
             items = force_force_list(val.get('a'))
-            if val.get("2") and val.get("2", '').lower() == "doi":
+            items_type = force_single_element(val.get('2'))
+            if items_type and items_type.lower() == 'doi':
                 for v in items:
                     dois.append({
                         'value': v,

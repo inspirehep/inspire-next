@@ -133,7 +133,7 @@ def abstracts(self, key, value):
     """Summary, Etc.."""
     if isinstance(value.get('a'), (list, tuple)):
         import warnings
-        warnings.warn("Record with double abstract! Taking first abstract: {}".format(value.get('a')[0]))
+        warnings.warn(u'Record with double abstract! Taking first abstract: {}'.format(value.get('a')[0]))
         abstract = value.get('a')[0]
     else:
         abstract = value.get('a')

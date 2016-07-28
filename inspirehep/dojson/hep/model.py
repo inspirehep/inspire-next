@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import Overdo
 
 from ..schema import SchemaOverdo
-from ..utils import get_record_ref
+from ..utils import force_single_element, get_record_ref
 
 from inspirehep.utils.helpers import force_force_list
 
@@ -42,11 +42,13 @@ def add_book_info(record, blob):
         if 'bookchapter' in collections:
             pubinfos = force_force_list(blob.get("773__", []))
             for pubinfo in pubinfos:
-                if pubinfo.get('0'):
-                    record['book'] = {
-                        'record': get_record_ref(
-                            int(force_force_list(pubinfo.get('0'))[0]), 'literature')
-                    }
+                recid = force_single_element(pubinfo.get('0'))
+                try:
+                    recid = int(recid)
+                    record['book'] = {'record':
+                                      get_record_ref(recid, 'literature')}
+                except (ValueError, TypeError):
+                    pass
 
 
 class Publication(SchemaOverdo):
