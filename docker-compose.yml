@@ -40,7 +40,7 @@ services:
   web:
     extends:
       service: service_base
-    command: inspirehep run -h 0.0.0.0 --debugger --reload
+    command: gunicorn -b 0.0.0.0:5000 -t 3600 inspirehep.wsgi
     volumes_from:
       - static
     ports:
