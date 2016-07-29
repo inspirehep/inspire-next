@@ -28,7 +28,7 @@
     <h3>
     {% for collection in record['collections'] %}
       {% if 'primary' in collection %}
-        <span class="label label-default pull-left {% if not loop.first %} collection-primary {% endif %}">
+        <span class="label label-default pull-left">
         {{ collection['primary'] }}</span>
       {% endif %}
     {% endfor %}
@@ -63,7 +63,7 @@
 <div class="row">
   <div class="col-md-12">
     <div class="pull-left">
-      {{ url['urls']|urlize }} 
+      {{ url['urls']|urlize }}
       {% if url['doc_string'] %}
         ({{ url['doc_string']}})
       {% endif %}

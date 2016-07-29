@@ -21,145 +21,139 @@
 
 {% block body %}
 <div id="record_content">
-<div class="record-detailed record-detailed-institution">
-  <div class="record-header record-header-institution">
-    <div class="row">
-      <div class="col-md-8" id="record-detailed-institution-information">
-        <h1 class='record-detailed-title'>
-          {% if record['institution'] %}
-            {% if record['institution'] | is_list %}
-              {{ record['institution'][0] }}
-            {% else %}
-              {{ record['institution'] }}
-            {% endif %}
-          {% endif %}
-        </h1>
-        <h2 class="record-detailed-subtitle">
-          {% if record['department'] | is_list %}
-            {{ record['department'][0] }}
-          {% endif %}
-        </h2>
-
-        {% if record['urls'] %}
-          <div class="detailed-institution-information">
-            {% for url in record['urls'] %}
-              <a href="{{ url['value'] }}">{{ url['value'] }}</a><br/>
-            {% endfor %}
-          </div>
-        {% endif %}
-
-        {% if record['name_variants'] %}
-          <div>
-            {% set name_var = [] %}
-            {% for element in record['name_variants'] %}
-              {% if 'source' not in element and 'value' in element %}
-                {% do name_var.append(element['value']) %}
+  <div class="record-detailed record-detailed-institution">
+    <div class="record-header record-header-institution">
+      <div class="row row-with-map">
+        <div class="col-md-8">
+          <div class="record-detailed-information">
+            <h1 class='record-detailed-title'>
+              {% if record['institution'] %}
+                {% if record['institution'] | is_list %}
+                  {{ record['institution'][0] }}
+                {% else %}
+                  {{ record['institution'] }}
+                {% endif %}
               {% endif %}
-            {% endfor %}
-            {% if name_var %}
-              <label>Name variants:</label> {{ name_var[0] | join(', ') }}
+            </h1>
+            <h2 class="record-detailed-subtitle">
+              {% if record['department'] | is_list %}
+                {{ record['department'][0] }}
+              {% endif %}
+            </h2>
+            {% if record['urls'] %}
+            <div class="detailed-record-field">
+              {% for url in record['urls'] %}
+                <a href="{{ url['value'] }}">{{ url['value'] }}</a>
+                <br>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if record['name_variants'] %}
+              <div class="detailed-record-field">
+                {% set name_var = [] %}
+                {% for element in record['name_variants'] %}
+                  {% if 'source' not in element and 'value' in element %}
+                    {% do name_var.append(element['value']) %}
+                  {% endif %}
+                {% endfor %}
+                {% if name_var %}
+                  <label>Name variants:</label>
+                  {{ name_var[0] | join(', ') }}
+                {% endif %}
+              </div>
+            {% endif %}
+
+            {% if record['public_notes'] %}
+              <div class="detailed-record-field">
+                <label>Notes:</label>
+                {{ record['public_notes'] | join(', ') }}
+              </div>
             {% endif %}
           </div>
-        {% endif %}
+        </div>
 
-        {% if record['public_notes'] %}
-          <div class="row">
-            <div class="col-md-12">
-              <label>Notes: </label> {{ record['public_notes'] | join(', ') }}
+        <div class="col-md-4 hidden-xs hidden-sm" id="record-detailed-institution-map">
+          <div class="detailed-map" id="institution-detailed-map"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel" id="record-institution-papers">
+          <div class="panel-heading">Papers</div>
+
+          <div class="panel-body">
+            <div class="datatables-loading"> <i class="fa fa-spinner fa-spin fa-lg" ></i>
+              <br>Loading papers from institution...</div>
+            <div class="datatables-wrapper">
+              <table id="record-institution-papers-table" class="table table-striped table-bordered table-with-ellipsis" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Authors</th>
+                    <th>Journal</th>
+                    <th># Citations</th>
+                    <th>Year</th>
+                  </tr>
+                </thead>
+              </table>
             </div>
           </div>
-        {% endif %}
-
-      </div>
-
-      <div class="col-md-4" id="record-detailed-institution-map">
-        <div id="institution-detailed-map"></div>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <div class="panel" id="record-institution-papers">
-        <div class="panel-heading">
-          Papers
-        </div>
-
-        <div class="panel-body">
-          <div id="record-institution-papers-loading">
-            <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading papers from institution...
-          </div>
-          <div id="record-institution-papers-table-wrapper">
-            <table id="record-institution-papers-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Authors</th>
-                <th>Journal</th>
-                <th># Citations</th>
-                <th>Year</th>
-              </tr>
-            </thead>
-            </table>
-          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="panel" id="record-institution-people">
-        <div class="panel-heading">
-          Authors
-        </div>
-        <div class="panel-body">
-          <div id="record-institution-people-loading">
-            <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading authors...
-          </div>
-          <div id="record-institution-people-table-wrapper">
-            <table id="record-institution-people-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th># Papers</th>
-              </tr>
-            </thead>
-            </table>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="panel" id="record-institution-people">
+          <div class="panel-heading">Authors</div>
+          <div class="panel-body">
+            <div class="datatables-loading"> <i class="fa fa-spinner fa-spin fa-lg" ></i>
+              <br>Loading authors...</div>
+            <div class="datatables-wrapper">
+              <table id="record-institution-people-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th># Papers</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="col-md-6">
-      <div class="panel" id="record-institution-experiments">
-          <div class="panel-heading">
-            Experiments
-          </div>
+      <div class="col-md-6">
+        <div class="panel" id="record-institution-experiments">
+          <div class="panel-heading">Experiments</div>
 
-        <div class="panel-body">
-          <div id="record-institution-experiments-loading">
-            <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading experiments...
-          </div>
-          <div id="record-institution-experiments-table-wrapper">
-            <table id="record-institution-experiments-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th># Papers</th>
-              </tr>
-            </thead>
-            </table>
+          <div class="panel-body">
+            <div class="datatables-loading">
+              <i class="fa fa-spinner fa-spin fa-lg" ></i>
+              <br>Loading experiments...</div>
+            <div class="datatables-wrapper">
+              <table id="record-institution-experiments-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th># Papers</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 </div>
 {% endblock %}
 
 
 {% block additional_javascript %}
-  <script type="text/javascript" src="//maps.googleapis.com/maps/api/js"></script>
-  <script>
+<script type="text/javascript" src="//maps.googleapis.com/maps/api/js"></script>
+<script>
     google.maps.event.addDomListener(window, 'load', init);
 
     function init() {
@@ -248,10 +242,14 @@
       geocoder.geocode({'address': address}, function(results, status) {
         if (status === google.maps.GeocoderStatus.OK) {
           map.setCenter(results[0].geometry.location);
+          var image = {
+            url: '/static/images/map/marker-institutions.png',
+            scaledSize: new google.maps.Size(25, 25)
+          };
           var marker = new google.maps.Marker({
             map: map,
             position: results[0].geometry.location,
-            icon: '/static/images/map/marker-institutions.svg'
+            icon: image
           });
 
           infowindow.setContent('<strong>' + institution + '</strong><br/>' +
@@ -266,7 +264,7 @@
     }
   }
   </script>
-  <script type="text/javascript">
+<script type="text/javascript">
     require(
       [
         "js/datatables",

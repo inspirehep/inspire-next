@@ -23,51 +23,54 @@
 {% extends "inspirehep_theme/format/record/Inspire_Default_HTML_detailed.tpl" %}
 
 {% block body %}
-  <div id="record-detailed-jobs">
-    <div class="row" id="record-detailed-jobs-information-deadline">
-      <div class="col-md-8" id="record-detailed-jobs-information">
+<div id="record_content">
+  <div class="record-detailed record-detailed-jobs">
+    <div class="record-header record-header-conference">
+    <div class="row row-with-map">
+      <div class="col-md-8">
+        <div class="record-detailed-information">
+          <h1 class='record-detailed-title'>
+            {{ record.position }}
+          </h1>
 
-        <div id="jobs-detailed-header-top">
-          <h3>{{ record.position }}</h3>
+          <h2 class="record-detailed-subtitle">
+            {% if record.rank %}
+              {{ record.rank | join(', ') }}
+            {% endif %}
 
-          {% if record.rank %}
-            {{ record.rank | join(', ') }}
-          {% endif %}
-          {% if record.institution %}
-            {% for institution in record.institution %}
-              <a href="/search?p=department_acronym:{{ institution }}&cc=Institutions">
-                {{ institution.name }}
-              </a>
-            {% endfor %}
-          {% endif%}
+            {% if record.institution %}
+              {% for institution in record.institution %}
+                <a href="/search?p=department_acronym:{{ institution }}&cc=Institutions">
+                  {{ institution.name }}
+                </a>
+              {% endfor %}
+            {% endif%}
+          </h2>
 
           {% if record.research_area %}
-            <div class="detailed-jobs-information">
-              Field of interest:
-              {{ record.research_area | join(', ') }}
+            <div class="detailed-record-field">
+              <label>Field of interest:</label> {{ record.research_area | join(', ') }} <br>
             </div>
           {% endif %}
 
           {% if record.experiments %}
-            <div class="detailed-jobs-information">
-              Experiment:
-              {{ record.experiments | join(', ') }}
+            <div class="detailed-record-field">
+              <label>Experiment:</label> {{ record.experiments | join(', ') }}<br>
             </div>
           {% endif %}
 
           {% if record.continent %}
-            <div class="detailed-jobs-information">
-              Region:
-              {{ record.continent | join(', ') }}
+            <div class="detailed-record-field">
+              <label>Region:</label> {{ record.continent }}<br>
             </div>
           {% endif %}
 
           {% if record.urls %}
-            <div class="detailed-jobs-information">
-              More information:
+            <div class="detailed-record-field">
+              <label>More information:</label>
               {% for url in record.urls %}
-                <a href="{{ url }}">
-                  {{ url }}
+                <a href="{{ url['value'] }}">
+                  {{ url['value'] }}
                 </a>
               {% endfor %}
             </div>
@@ -75,29 +78,24 @@
 
           {% if record.creation_modification_date %}
             {% if record.creation_modification_date[0] %}
-              <div class="detailed-jobs-information">
-                Date added: {{ record.creation_modification_date[0].creation_date | format_date }}
+              <div class="detailed-record-field">
+                <label>Date added:</label> {{ record.creation_modification_date[0].creation_date | format_date }}
               </div>
             {% endif %}
           {% endif %}
-        </div>
 
-        <div class="detailed-jobs-information" id="job-remove-this-listing">
-          <a class="btn custom-btn btn-warning pdf-btn no-external-icon" href="mailto:jobs@inspirehep.net?subject=Remove-listing-{% if record['acquisition_source'] %}{{ record['acquisition_source'][0]['submission_number']}} {% endif %}&body=Please remove listing {% if record['acquisition_source'] %}{{ record['acquisition_source'][0]['submission_number']}} {% endif %} https://inspirehep.net/jobs/{{ record['control_number'] }}/edit" role="button" title="Remove this listing">Remove this listing</a>
-        </div>
       </div>
 
-      <div class="col-md-3" id="record-detailed-jobs-deadline">
-        {% if record.deadline_date %}
-          <div class="detailed-jobs-information">
-            <div class="alert alert-info" id="detailed-jobs-deadline-alert" role="alert">
-              Deadline: {{ record.deadline_date | format_date }}
-            </div>
-          </div>
-        {% endif %}
 
+      <div class="detailed-action-bar btn-group">
+      <a class="btn custom-btn btn-warning pdf-btn no-external-icon" href="mailto:jobs@inspirehep.net?subject=Remove-listing-{% if record['acquisition_source'] %}{{ record['acquisition_source'][0]['submission_number']}} {% endif %}&body=Please remove listing {% if record['acquisition_source'] %}{{ record['acquisition_source'][0]['submission_number']}} {% endif %} https://inspirehep.net/jobs/{{ record['control_number'] }}/edit" role="button" title="Remove this listing">Remove this listing</a>
+      </div>
+
+      </div>
+
+      <div class="col-md-4 hidden-xs hidden-sm" id="record-detailed-jobs-deadline">
         {% if record.institution[0].name %}
-          <div id="job-detailed-map">
+          <div class="detailed-map" id="job-detailed-map">
             <script>
               function initMap() {
                 var mapDiv = document.getElementById('job-detailed-map');
@@ -174,7 +172,7 @@
                       icon: image
                     });
                   } else {
-                    alert('Geocode was not successful for the following reason: ' + status);
+                    console.error('Geocode was not successful for the following reason: ' + status);
                   }
                 });
               }
@@ -190,29 +188,44 @@
         </div>
       {% endif %}
     </div>
-
+  </div>
     <div class="row">
       <div class="col-md-8" id="record-detailed-jobs-description">
-        {% if record.description %}
-          <h3>Job description</h3>
-          <div class="detailed-jobs-information">
-            {{ record.description }}
+        <div class="panel">
+          <div class="panel-heading">
+            Job description
           </div>
-        {% endif %}
+          <div class="panel-body">
+            {% if record.description %}
+              <div class="detailed-jobs-information">
+                {{ record.description }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
       </div>
-      <div class="col-md-3" id="record-detailed-jobs-sidebox">
+      <div class="col-md-4" id="record-detailed-jobs-sidebox">
+        <div class="panel">
+        <div class="panel-body">
         <div id="record-detailed-jobs-applications">
-          <h3>
+          <div class="record-detailed-title">
             Applications
-          </h3>
-          {% if record.contact_person %}
+          </div>
+          {% if record.deadline_date %}
+          <div class="detailed-record-field">
+            <div class="alert alert-info" id="detailed-jobs-deadline-alert" role="alert">
+              Deadline: {{ record.deadline_date | format_date }}
+            </div>
+          </div>
+          {% endif %}
+          {% if record.contact_details %}
             <div class="detailed-jobs-information">
-              Contact: {{ record.contact_person | join(', ') }}
+              Contact: {{ record.contact_details[0].name }}
             </div>
           {% endif %}
-          {% if record.contact_email %}
+          {% if record.contact_details %}
             <div class="detailed-jobs-information">
-              Email: {{ record.contact_email | email_links | join(', ') }}
+              Email: {{ record.contact_details[0].email | email_links | join(', ') }}
             </div>
           {% endif %}
           {% if record.reference_email %}
@@ -223,14 +236,17 @@
           {% endif %}
         </div>
 
-        <hr/>
+      </div>
+      </div>
 
+      <div class="panel">
+        <div class="panel-body">
         <div id="record-detailed-similar-jobs">
-          <h3>
+          <div class="record-detailed-title">
             Similar Jobs
-          </h3>
+          </div>
           {% for job in record.similar %}
-            <div id="similar-jobs">
+            <div class="similar-jobs">
               {% if job.ranks %}
                 <b>{{ job.ranks[0] }}</b>
               {% endif %}
@@ -243,8 +259,13 @@
             </div>
           {% endfor %}
         </div>
+
+      </div>
+      </div>
+
       </div>
 
     </div>
   </div>
+</div>
 {% endblock %}

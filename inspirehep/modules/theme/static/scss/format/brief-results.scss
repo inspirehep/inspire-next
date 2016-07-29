@@ -232,16 +232,29 @@ article.search-result {
 .facet-container {
   color: $concrete;
 
+
   .facet-label {
-    background-color: $facet-label-gray;
     color: $concrete;
     letter-spacing: 0.04em;
+    width: 30%;
+    margin-top: 2px;
   }
 
-  .facet-label.label-primary {
-    background-color: $wet-asphalt;
-    color: #fff;
-    letter-spacing: 0.04em;
+  .facet-count {
+    background-color: $facet-label-gray;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    display: inline-block;
+    overflow: hidden;
+    width: 20%;
+  }
+
+  .facet-title-truncate {
+    width: 65% !important;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   label {
@@ -293,17 +306,6 @@ article.search-result {
   }
 }
 
-.facet-title-truncate {
-  width: 80% !important;
-  display: inline-block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.facet-label {
-  margin-top: 2px;
-}
 
 /* End of Facet styles
 -------------------------------------------------- */

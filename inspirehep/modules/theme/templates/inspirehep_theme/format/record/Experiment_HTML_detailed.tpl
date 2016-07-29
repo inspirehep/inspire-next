@@ -28,7 +28,7 @@
       <h3>
       {% for collection in record['collections'] %}
         {% if 'primary' in collection %}
-          <span class="label label-default pull-left {% if not loop.first %} collection-primary {% endif %}">
+          <span class="label label-default pull-left">
           {{ collection['primary'] }}</span>
         {% endif %}
       {% endfor %}

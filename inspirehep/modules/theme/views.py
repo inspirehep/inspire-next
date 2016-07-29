@@ -436,7 +436,7 @@ def get_institution_papers_datatables_rows(hits):
         row.append(
             title_html.format(
                 id=hit.control_number,
-                name=get_title(hit.to_dict())
+                name=get_title(hit.to_dict()).encode('utf8')
             )
         )
         ctx = {

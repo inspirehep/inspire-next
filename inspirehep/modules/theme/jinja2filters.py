@@ -453,6 +453,14 @@ def strip_leading_number_plot_caption(text):
 
 
 @blueprint.app_template_filter()
+def count_plots(record):
+    return len(
+        [url for url in record.get('urls', []) if
+            url.get("value").endswith(('.png', '.jpg'))]
+    )
+
+
+@blueprint.app_template_filter()
 def json_dumps(data):
     return json.dumps(data)
 

@@ -136,6 +136,10 @@ a[ng-click] {
       background-color: $conferences-collection;
     }
 
+    &.chip-literature {
+      background-color: $literature-collection;
+    }
+
     a {
       color: white;
     }

@@ -22,11 +22,6 @@
 
 {% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import render_record_title with context %}
 
-{% macro record_collection_heading() %}
-  <span id="search-title">Search literature &#62;</span>
-  <span id="title">{{ render_record_title() }}</span>
-{% endmacro %}
-
 {% macro record_buttons(record) %}
   {% if record.get('arxiv_eprints') %}
     {% if record.get('arxiv_eprints') | is_list() %}
@@ -67,35 +62,34 @@
 
 {% macro detailed_record_abstract(record) %}
   <div id="record-abstract">
-    <div id="record-abstract-title" class="record-detailed-title">
-      Abstract
-    </div>
     {{ record_abstract(record) }}
   </div>
 {% endmacro %}
 
 {% macro record_abstract(record) %}
-  {% set isAbstractDisplayed = [] %}
+  {% set abstract_list = [] %}
+
   {% if record.get('abstracts') %}
     {% for abstract in record.get('abstracts') %}
-      {% if abstract.get('value') and not isAbstractDisplayed %}
+      {% if abstract.get('value') %}
         {% if not abstract.get('source') == 'arXiv' %}
-          {% do isAbstractDisplayed.append(1) %}
-          {{ display_abstract(record, abstract.get('value')) }}
-        {% else %}
-          {% do isAbstractDisplayed.append(1) %}
-          {{ display_abstract(record, abstract.get('value')) }}
+          {% do abstract_list.append(abstract.value) %}
+        {% elif not abstract_list %}
+          {% do abstract_list.append(abstract.value) %}
         {% endif %}
       {% endif %}
     {% endfor %}
   {% endif %}
 
-  {% if not isAbstractDisplayed %}
+  {% if abstract_list %}
+    {{ abstract_list[0] }}
+  {% else %}
     No abstract available for this record.
   {% endif %}
+
 {% endmacro %}
 
-{% macro display_abstract(record, abstract) %}
+{% macro display_abstract(record, abstract, is_detailed=False) %}
   {% set number_of_sentences = 2 %}
   <div class="abstract">
     <input type="checkbox" class="read-more-state" id="abstract-input-{{ record.get('control_number') }}" />
@@ -111,17 +105,14 @@
 
 {% macro record_keywords(record) %}
   <div>
-    <div class="record-detailed-title">
-      Keywords
-    </div>
     {% set sep = joiner("; ") %}
 
     {% if record.thesaurus_terms %}
       {% for keywords in record.thesaurus_terms %}
-        {% if (loop.index < 10) %}
+        {% if (loop.index < 11) %}
           {% if 'keyword' in keywords.keys() %}
-            <span class="label label-default label-keyword">
-              <a href='/search?p=keyword:"{{ keywords.get('keyword') }}"'>{{ keywords.get('keyword') | trim }}</a>
+            <span class="chip chip-literature">
+              <a href='/search?q=keyword:"{{ keywords.get('keyword') }}"'>{{ keywords.get('keyword') | trim }}</a>
             </span>
             &nbsp;
           {% endif %}
@@ -151,8 +142,8 @@
               {% if record.get('thesaurus_terms') %}
                 {% for keywords in record.get('thesaurus_terms') %}
                   {% if 'keyword' in keywords.keys() %}
-                    <span class="label label-default label-keyword">
-                      <a href='/search?p=keyword:{{ keywords.get('keyword') }}'>{{ keywords.get('keyword') }}</a>
+                    <span class="chip chip-literature">
+                      <a href='/search?q=keyword:{{ keywords.get('keyword') }}'>{{ keywords.get('keyword') }}</a>
                     </span>
                     &nbsp;
                   {% endif %}
@@ -163,8 +154,8 @@
                 <h4>Author supplied keywords</h4>
                 {% for keywords in record.get('free_keywords') %}
                   {% if 'value' in keywords.keys() %}
-                    <span class="label label-default label-keyword">
-                      <a href='/search?p=keyword:{{ keywords.get('value') }}'>{{ keywords.get('value') }}</a>
+                    <span class="chip chip-literature">
+                      <a href='/search?q=keyword:{{ keywords.get('value') }}'>{{ keywords.get('value') }}</a>
                     </span>
                     &nbsp;
                   {% endif %}
@@ -289,10 +280,10 @@
     </div>
 
     <div class="panel-body">
-      <div id="record-references-loading">
+      <div class="datatables-loading">
         <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading references...
       </div>
-      <div id="record-references-table-wrapper">
+      <div class="datatables-wrapper">
         <table id="record-references-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
@@ -331,10 +322,10 @@
     </div>
 
     <div class="panel-body">
-      <div id="record-citations-loading">
+      <div class="datatables-loading">
         <i class="fa fa-spinner fa-spin fa-lg" ></i><br>Loading citations...
       </div>
-      <div id="record-citations-table-wrapper">
+      <div class="datatables-wrapper">
         <table id="record-citations-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr>
@@ -357,7 +348,7 @@
         </ul>
       </div> -->
         {% if record.get('citation_count', 0) > 0  %}
-          <a class="btn btn-default pull-right" href="/search?p=refersto:{{record['control_number']}}&cc=HEP">
+          <a class="btn btn-default pull-right" href="/search?q=refersto:{{record['control_number']}}&cc=HEP">
             {% set citation_count = record.get('citation_count', 0) | show_citations_number %}
           </a>
         {% endif %}
@@ -383,94 +374,75 @@
 {% endmacro %}
 
 {% macro record_plots(record) %}
-  {% set plotExists = [] %}
-  {% set plotsCount = [0] %}
-  {% if record.urls %}
-    {% for url in record.get('urls') %}
-       {% if url is not none and url is mapping and url.get('url') is not none %}
+  <div id="record-plots">
+    <!-- Slider -->
+    <div class="row">
+      <div class="col-xs-12" id="slider">
+        <!-- Top part of the slider -->
+        <div class="row">
 
-          {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
-            {% do plotExists.append(1) %}
-            {# increment plotsCount by 1 #}
-            {% if plotsCount.append(plotsCount.pop() + 1) %}{% endif %}
-          {% endif %}
-      {% endif %}
-    {% endfor %}
-  {% endif %}
+          <div class="col-md-2 hidden-sm hidden-xs" id="slider-thumbs">
+            <!-- Left switcher of slider -->
+            <ul class="hide-bullets">
+              {% set count = 0 %}
+              {% for url in record.urls %}
+                 {% if url.value %}
+                  {% if url.value.endswith(".png") or url.value.endswith(".jpg") %}
+                    <li class="col-sm-12 show-plots-thumbnails">
+                      <a class="thumbnail" id="carousel-selector-{{ count }}">
+                        <img width="100" height="100" src="{{ url.value }}">
+                      </a>
+                    </li>
+                    {% set count = count + 1 %}
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
 
-  {% if plotExists %}
-
-    <div id="record-plots">
-      <div id="record-plots-title">Plots ({{ plotsCount[0] }})</div>
-      <!-- Slider -->
-      <div class="row">
-        <div class="col-xs-12" id="slider">
-          <!-- Top part of the slider -->
-          <div class="row">
-
-            <div class="col-md-2 hidden-sm hidden-xs" id="slider-thumbs">
-              <!-- Left switcher of slider -->
-              <ul class="hide-bullets">
+          <div class="col-md-7 col-xs-12" id="carousel-bounding-box">
+            <div class="carousel slide" id="plotsCarousel" data-interval="false">
+              <!-- Carousel items -->
+              <div class="carousel-inner">
                 {% set count = 0 %}
-                {% for url in record.get('urls') %}
-                   {% if url is not none and url is mapping %}
-                    {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
-                      <li class="col-sm-12 show-plots-thumbnails">
-                        <a class="thumbnail" id="carousel-selector-{{ count }}">
-                          <img width="100" height="100" src="{{ url.get('url') }}">
-                        </a>
-                      </li>
+                {% for url in record.urls  %}
+                  {% if url.value %}
+                    {% if url.value.endswith(".png") or url.value.endswith(".jpg") %}
+                      <div class=" item {% if count == 0 %} active {% endif %}"
+                           data-slide-number="{{ count }}">
+                        <img src="{{ url.value }}">
+                      </div>
                       {% set count = count + 1 %}
                     {% endif %}
                   {% endif %}
                 {% endfor %}
-              </ul>
-            </div>
-
-            <div class="col-md-7 col-xs-12" id="carousel-bounding-box">
-              <div class="carousel slide" id="plotsCarousel" data-interval="false">
-                <!-- Carousel items -->
-                <div class="carousel-inner">
-                  {% set count = 0 %}
-                  {% for url in record.get('urls')  %}
-                    {% if url is not none and url is mapping %}
-                      {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
-                        <div class=" item {% if count == 0 %} active {% endif %}"
-                             data-slide-number="{{ count }}">
-                          <img src="{{ url.get('url') }}">
-                        </div>
-                        {% set count = count + 1 %}
-                      {% endif %}
-                    {% endif %}
-                  {% endfor %}
-                </div><!-- Carousel nav -->
-                <a class="left carousel-control" href="#plotsCarousel" role="button" data-slide="prev">
-                  <span class="glyphicon glyphicon-chevron-left"></span>
-                </a>
-                <a class="right carousel-control" href="#plotsCarousel" role="button" data-slide="next">
-                  <span class="glyphicon glyphicon-chevron-right"></span>
-                </a>
-              </div>
-            </div>
-
-            <div class="col-md-3 col-xs-12" id="carousel-text"></div>
-
-            <div id="slide-content" style="display: none;">
-              {% set count = 0 %}
-              {% for url in record.get('urls') %}
-                 {% if url is not none and url is mapping %}
-                      {% if url.get('url').endswith(".png") or url.get('url').endswith(".jpg") %}
-                         <div id="slide-content-{{ count }}">
-                            <span>{{ url.get('description')|strip_leading_number_plot_caption }}</span>
-                         </div>
-                         {% set count = count + 1 %}
-                      {% endif %}
-                {% endif %}
-              {% endfor %}
+              </div><!-- Carousel nav -->
+              <a class="left carousel-control" href="#plotsCarousel" role="button" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+              </a>
+              <a class="right carousel-control" href="#plotsCarousel" role="button" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+              </a>
             </div>
           </div>
+
+          <div class="col-md-3 col-xs-12" id="carousel-text"></div>
+
+          <div id="slide-content" style="display: none;">
+            {% set count = 0 %}
+            {% for url in record.urls %}
+               {% if url.value %}
+                    {% if url.value.endswith(".png") or url.value.endswith(".jpg") %}
+                       <div id="slide-content-{{ count }}">
+                          <span>{{ url.get('description')|strip_leading_number_plot_caption }}</span>
+                       </div>
+                       {% set count = count + 1 %}
+                    {% endif %}
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
-      </div><!--/Slider-->
-    </div>
-  {% endif %}
+      </div>
+    </div><!--/Slider-->
+  </div>
 {% endmacro %}
