@@ -90,10 +90,10 @@ def description(self, key, value):
     return value.get("a")
 
 
-@experiments.over('spokepersons', '^702..')
+@experiments.over('spokespersons', '^702..')
 @utils.for_each_value
 def spokespersons(self, key, value):
-    """Spokepersons of the experiment."""
+    """Spokespersons of the experiment."""
     def _get_inspire_id(i_values):
         i_value = force_single_element(i_values)
         if i_value:
@@ -171,10 +171,10 @@ def date_started(self, key, value):
     values = force_force_list(value)
 
     for val in values:
-        if val.get('s'):
-            self['date_started'] = val.get('s')
-        if val.get('t'):
-            self['date_completed'] = val.get('t')
+        self['date_proposed'] = val.get('q')
+        self['date_approved'] = val.get('r')
+        self['date_started'] = val.get('s')
+        self['date_completed'] = val.get('t')
 
     raise IgnoreKey
 

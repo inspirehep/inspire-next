@@ -36,7 +36,8 @@
           collection: '',
           citation_count: '',
           seriesname: '',
-          cnum: ''
+          cnum: '',
+          experiment_name: ''
         });
 
         this.after('initialize', function() {
@@ -285,6 +286,78 @@
               "<'row'<'col-sm-12'tr>>" +
               "<'row'<'col-sm-12'p>>"
           });
-      });
-    }
-});
+
+          $('#record-experiment-papers-table').DataTable({
+            "bLengthChange": false,
+            "bInfo" : false,
+            "ajax": {
+              "url": "/ajax/experiments/contributions",
+              "data": {
+                recid: that.attr.recid,
+                experiment_name: that.attr.experiment_name
+              },
+              "method": "GET"
+            },
+            "fnInitComplete": function(oSettings, json) {
+              if ( json.data.length > 0 ) {
+                $("#record-experiment-papers .datatables-loading").hide();
+                var total_text = json.total + " Papers associated with " + that.attr.experiment_name;
+                if ( json.total > json.data.length ) {
+                  total_text = total_text + "<span class='record-panel-heading-muted'> Showing top " + json.data.length + "</span>";
+                }
+                $("#record-experiment-papers .panel-heading").html(total_text);
+                $('#record-experiment-papers .datatables-wrapper').show();
+              }
+              else {
+                $('#record-experiment-papers .panel-body').text("There are no papers on INSPIRE associated with this experiment.").show()
+              }
+            },
+            "aaSorting": [],
+            "aoColumns": [
+            { sWidth: '50%' },
+            { sWidth: '20%' },
+            { sWidth: '20%' },
+            { sWidth: '10%' }],
+            "autoWidth": false,
+            "paging": true,
+            "searching": false,
+            dom:
+              "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+              "<'row'<'col-sm-12'tr>>" +
+              "<'row'<'col-sm-12'p>>"
+          });
+
+          $('#record-experiment-people-table').DataTable({
+        "bLengthChange": false,
+        "bInfo" : false,
+        "ajax": {
+          "url": "/ajax/experiments/people",
+          "data": {
+            experiment_name: that.attr.experiment_name
+          },
+          "method": "GET"
+        },
+        "fnInitComplete": function(oSettings, json) {
+          if ( json.data.length > 0 ) {
+            $("#record-experiment-people .datatables-loading").hide();
+            $("#datatables-wrapper ul.pagination").addClass("pagination-sm");
+            var total_text = json.data.length + " Collaboration members";
+            $("#record-experiment-people .panel-heading").html(total_text);
+            $('#record-experiment-people .datatables-wrapper').show();
+          }
+          else {
+            $('#record-experiment-people .panel-body').text("There are no authors on INSPIRE associated with this experiment.").show()
+          }
+        },
+        "aaSorting": [],
+        "autoWidth": false,
+        // "paging": false,
+        "searching": false,
+        dom:
+          "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+          "<'row'<'col-sm-12'tr>>" +
+          "<'row'<'col-sm-12'p>>"
+    });
+  });
+
+}});

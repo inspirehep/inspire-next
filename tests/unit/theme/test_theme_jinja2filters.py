@@ -274,6 +274,14 @@ def test_email_links_returns_email_link_on_list_of_one_element():
     assert expected == result
 
 
+def test_email_link_returns_email_link_on_element(app):
+    with app.test_request_context('/'):
+        expected = '\n\n<a href="mailto:foo@example.com">foo@example.com</a>'
+        result = email_link('foo@example.com')
+
+        assert expected == result
+
+
 def test_url_links_returns_url_link_on_list_of_one_element():
     record_with_urls = Record({'urls': [{'value': 'http://www.example.com'}]})
 
@@ -434,6 +442,22 @@ def test_experiment_date_returns_started_with_date_started():
     with_date_started = Record({'date_started': '1993'})
 
     expected = 'Started: 1993'
+    result = experiment_date(with_date_started)
+
+    assert expected == result
+
+def test_experiment_date_returns_proposed_with_date_started():
+    with_date_started = Record({'date_proposed': '1993'})
+
+    expected = 'Proposed: 1993'
+    result = experiment_date(with_date_started)
+
+    assert expected == result
+
+def test_experiment_date_returns_approved_with_date_started():
+    with_date_started = Record({'date_approved': '1993'})
+
+    expected = 'Approved: 1993'
     result = experiment_date(with_date_started)
 
     assert expected == result
