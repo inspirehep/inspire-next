@@ -20,6 +20,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
 from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
 from inspirehep.utils.record_getter import get_db_record
 
@@ -32,5 +34,14 @@ def test_format_cv_latex_html(app):
         '</a>,By S.L. Glashow.,<a href="http://dx.doi.org/10.1016/0029-5582(61)90469-2"'
         '>10.1016/0029-5582(61)90469-2</a>.,Nucl.Phys. 22 (1961) 579-588.,,')
     result = Cv_latex_html_text(record, 'cv_latex_html', ',').format()
+
+    assert expected == result
+
+
+def test_format_cv_latex_html_text(app):
+    record = get_db_record('literature', 4328)
+
+    expected = ''
+    result = Cv_latex_html_text(record, 'cv_latex_html_text', ',').format()
 
     assert expected == result
