@@ -93,7 +93,7 @@ def index():
 @blueprint.route('/collection/authors', methods=['GET', ])
 def hepnames():
     """View for authors collection landing page."""
-    number_of_records = get_number_of_records('authors')
+    number_of_records = get_number_of_records('hepnames')
 
     return render_template(
         'inspirehep_theme/search/collection_authors.html',
