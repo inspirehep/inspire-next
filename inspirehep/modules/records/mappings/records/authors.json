@@ -74,6 +74,15 @@
                     },
                     "type": "object"
                 },
+                "experiments": {
+                    "properties": {
+                        "name": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
                 "positions": {
                     "include_in_parent": true,
                     "type": "nested"
