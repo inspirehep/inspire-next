@@ -359,6 +359,11 @@ def migrate_and_insert_record(raw_record):
                                     e.validator_value),
                      e.instance, recid)
         error = e
+    except Exception as e:
+        # Receivers can always cause exceptions and we could dump the entire
+        # chunk because of a single broken record.
+        logging.exception('Migrator Record Insert Error')
+        error = e
 
     if error:
         # Invalid record, will not get indexed.
