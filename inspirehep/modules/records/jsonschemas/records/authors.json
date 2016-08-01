@@ -65,24 +65,9 @@
             "$ref": "elements/fields.json"
         },
         "ids": {
-            "description": "Contains all identifiers, both internal and external. FIXME: guess we should privilege nowadays, BAI, INSPIRE and ORCID",
             "items": {
                 "properties": {
                     "type": {
-                        "enum": [
-                            "DESY",
-                            "arXiv",
-                            "INSPIRE",
-                            "BAI",
-                            "CERN",
-                            "ORCID",
-                            "SLAC",
-                            "JACOW",
-                            "GoogleScholar",
-                            "RESEARCHERID",
-                            "SCOPUS",
-                            "WIKIPEDIA"
-                        ],
                         "type": "string"
                     },
                     "value": {
