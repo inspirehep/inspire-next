@@ -3,22 +3,12 @@
     "items": {
         "properties": {
             "_scheme": {
-                "enum": [
-                    "INSPIRE",
-                    "arXiv",
-                    "APS",
-                    "PoS",
-                    "Elsevier"
-                ],
-                "title": "Original scheme",
                 "type": "string"
             },
             "_term": {
-                "title": "Original term",
                 "type": "string"
             },
             "scheme": {
-                "title": "INSPIRE",
                 "type": "string"
             },
             "source": {
@@ -49,13 +39,11 @@
                     "Theory-HEP",
                     "Theory-Nucl"
                 ],
-                "title": "INSPIRE term",
                 "type": "string"
             }
         },
         "type": "object"
     },
-    "title": "Research field categories.",
     "type": "array",
     "uniqueItems": true
 }

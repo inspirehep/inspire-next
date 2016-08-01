@@ -174,6 +174,27 @@ def test_field_from_marcxml_650_with_no_a():
     assert 'field_categories' not in result
 
 
+def test_field_categories_from_650__a_2():
+    snippet = (
+        '<datafield tag="650" ind1="1" ind2="7">'
+        '  <subfield code="2">Inspire</subfield>'
+        '  <subfield code="a">Experiment-HEP</subfield>'
+        '</datafield>'
+    )  # record/1426196
+
+    expected = [
+        {
+            '_scheme': 'Inspire',
+            'scheme': 'INSPIRE',
+            '_term': 'Experiment-HEP',
+            'term': 'Experiment-HEP',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['field_categories']
+
+
 def test_urls_from_marcxml_856_with_single_u_single_y():
     snippet = (
         '<record>'
