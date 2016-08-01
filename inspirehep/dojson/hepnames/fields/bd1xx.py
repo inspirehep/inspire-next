@@ -263,65 +263,58 @@ setattr(hidden_notes2marc, '__extend__', True)
 
 @hepnames.over('positions', '^371..')
 @utils.for_each_value
-@utils.filter_values
 def positions(self, key, value):
-    """Position information.
-
-    In dates field you can put months in addition to years. In this case you
-    have to follow the convention `mth-year`. For example: `10-2012`.
-    """
-    curated_relation = False
+    """Positions that an author held during their career."""
+    curated = False
+    current = False
     recid = None
-    status = ''
-    recid_status = force_force_list(value.get('z'))
-    for val in recid_status:
-        if val.lower() == 'current':
-            status = val
-        else:
-            try:
-                recid = int(val)
-                curated_relation = True
-            except ValueError:
-                pass
 
-    inst = {
+    recid_or_status = force_force_list(value.get('z'))
+    for el in recid_or_status:
+        if el.lower() == 'current':
+            current = True
+        else:
+            curated = el.isdigit()
+            if curated:
+                recid = int(el)
+
+    institution = {
         'name': value.get('a'),
-        'record': get_record_ref(recid, 'institutions')
+        'record': get_record_ref(recid, 'institutions'),
+        'curated_relation': curated,
     }
+
+    emails = [el for el in force_force_list(value.get('m'))]
+    emails.extend([el for el in force_force_list(value.get('o'))])
 
     _rank = value.get('r')
     rank = classify_rank(_rank)
 
     return {
-        'institution': inst if inst['name'] else None,
+        'institution': institution if institution['name'] else None,
+        'emails': emails,
         '_rank': _rank,
         'rank': rank,
         'start_date': value.get('s'),
         'end_date': value.get('t'),
-        'email': value.get('m'),
-        'old_email': value.get('o'),
-        'status': status,
-        'curated_relation': curated_relation,
+        'current': current,
     }
 
 
 @hepnames2marc.over('371', '^positions$')
 @utils.for_each_value
-@utils.filter_values
 def positions2marc(self, key, value):
-    """Position information.
+    """Positions that an author held during their career."""
+    emails = value.get('emails')
 
-    In dates field you can put months in addition to years. In this case you
-    have to follow the convention `mth-year`. For example: `10-2012`.
-    """
     return {
         'a': value.get('institution', {}).get('name'),
         'r': value.get('_rank'),
         's': value.get('start_date'),
         't': value.get('end_date'),
-        'm': value.get('email'),
-        'o': value.get('old_email'),
-        'z': value.get('status')
+        'm': emails[0] if emails else None,
+        'o': emails[1:] if emails else None,
+        'z': value.get('current'),
     }
 
 

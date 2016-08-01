@@ -159,17 +159,17 @@
             "uniqueItems": true
         },
         "positions": {
-            "description": "Contains position information.",
             "items": {
                 "properties": {
                     "current": {
-                        "description": "FIXME: do we need other states?",
                         "type": "boolean"
                     },
-                    "email": {
-                        "description": "FIXME: this is redundant?",
-                        "format": "email",
-                        "type": "string"
+                    "emails": {
+                        "items": {
+                            "format": "email",
+                            "type": "string"
+                        },
+                        "type": "array"
                     },
                     "end_date": {
                         "format": "date",
@@ -181,20 +181,13 @@
                                 "type": "boolean"
                             },
                             "name": {
-                                "description": "The raw institution name",
                                 "type": "string"
                             },
                             "record": {
-                                "$ref": "elements/json_reference.json",
-                                "description": "Corresponding URI for the institution record"
+                                "$ref": "elements/json_reference.json"
                             }
                         },
                         "type": "object"
-                    },
-                    "old_email": {
-                        "description": "FIXME: this is redundant?",
-                        "format": "email",
-                        "type": "string"
                     },
                     "rank": {
                         "$ref": "elements/rank.json"

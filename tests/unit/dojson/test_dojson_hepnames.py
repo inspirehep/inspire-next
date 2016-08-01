@@ -489,14 +489,10 @@ def test_positions(marcxml_to_json, json_to_marc):
             json_to_marc['371'][0]['r'])
     assert (marcxml_to_json['positions'][0]['start_date'] ==
             json_to_marc['371'][0]['s'])
-    assert (marcxml_to_json['positions'][0]['email'] ==
-            json_to_marc['371'][0]['m'])
-    assert (marcxml_to_json['positions'][0]['status'] ==
+    assert (marcxml_to_json['positions'][0]['current'] ==
             json_to_marc['371'][0]['z'])
     assert (marcxml_to_json['positions'][1]['end_date'] ==
             json_to_marc['371'][1]['t'])
-    assert (marcxml_to_json['positions'][2]['old_email'] ==
-            json_to_marc['371'][2]['o'])
 
 
 def test_positions_from_371__a():
@@ -508,11 +504,40 @@ def test_positions_from_371__a():
 
     expected = [
         {
-            'curated_relation': False,
+            'current': False,
             'institution': {
+                'curated_relation': False,
                 'name': 'Aachen, Tech. Hochsch.',
             },
         },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['positions']
+
+
+def test_positions_from_371__a_double_m_z():
+    snippet = (
+        '<datafield tag="371" ind1=" " ind2=" ">'
+        '  <subfield code="a">Argonne</subfield>'
+        '  <subfield code="m">rcyoung@anl.gov</subfield>'
+        '  <subfield code="m">rcyoung@hep.anl.gov</subfield>'
+        '  <subfield code="z">current</subfield>'
+        '</datafield>'
+    )  # record/1408378
+
+    expected = [
+        {
+            'current': True,
+            'emails': [
+                'rcyoung@anl.gov',
+                'rcyoung@hep.anl.gov',
+            ],
+            'institution': {
+                'curated_relation': False,
+                'name': 'Argonne',
+            },
+        }
     ]
     result = clean_record(hepnames.do(create_record(snippet)))
 
@@ -531,14 +556,16 @@ def test_positions_from_371__a_m_r_z():
 
     expected = [
         {
-            'curated_relation': False,
-            'email': 'pierre.vanmechelen@ua.ac.be',
+            'current': True,
+            'emails': [
+                'pierre.vanmechelen@ua.ac.be',
+            ],
             'institution': {
+                'curated_relation': False,
                 'name': 'Antwerp U.',
             },
             'rank': 'SENIOR',
             '_rank': 'SENIOR',
-            'status': 'Current',
         },
     ]
     result = clean_record(hepnames.do(create_record(snippet)))
