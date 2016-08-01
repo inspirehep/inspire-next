@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import hepnames, hepnames2marc
-from ...utils import classify_rank, get_record_ref
+from ...utils import classify_rank, force_single_element, get_record_ref
 
 from inspirehep.utils.helpers import force_force_list
 
@@ -392,36 +392,40 @@ def experiments2marc(self, key, value):
     }
 
 
-@hepnames.over('phd_advisors', '^701..')
+@hepnames.over('advisors', '^701..')
 @utils.for_each_value
-@utils.filter_values
-def phd_advisors(self, key, value):
-    degree_type_map = {
-        "phd": "PhD",
-        "master": "Master"
+def advisors(self, key, value):
+    """The advisors for all types of degrees.
+
+    FIXME: handle identifier in 701__i.
+    """
+    DEGREE_TYPES_MAP = {
+        'Bachelor': 'Bachelor',
+        'UG': 'Bachelor',
+        'MAS': 'Master',
+        'master': 'Master',
+        'Master': 'Master',
+        'PhD': 'PhD',
+        'PHD': 'PhD',
     }
-    degree_type = None
-    if value.get("g"):
-        degree_type_raw = force_force_list(value.get('g'))[0]
-        degree_type = degree_type_map.get(
-            degree_type_raw.lower(),
-            degree_type_raw
-        )
+
+    _degree_type = force_single_element(value.get('g'))
+    degree_type = DEGREE_TYPES_MAP.get(_degree_type, 'Other')
+
     return {
-        'id': value.get("i"),
-        'name': value.get("a"),
-        'degree_type': degree_type
+        'name': value.get('a'),
+        'degree_type': degree_type,
+        '_degree_type': _degree_type,
     }
 
 
-@hepnames2marc.over('701', '^phd_advisors$')
+@hepnames2marc.over('701', '^advisors$')
 @utils.for_each_value
-@utils.filter_values
-def phd_advisors2marc(self, key, value):
+def advisors2marc(self, key, value):
+    """The advisors for all types of degrees."""
     return {
-        'i': value.get("id"),
-        'a': value.get("name"),
-        'g': value.get("degree_type")
+        'a': value.get('name'),
+        'g': value.get('_degree_type')
     }
 
 

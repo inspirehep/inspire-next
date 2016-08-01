@@ -116,14 +116,32 @@ def test_other_names(marcxml_to_json, json_to_marc):
             json_to_marc['400'][1]['a'])
 
 
-def test_phd_advisors(marcxml_to_json, json_to_marc):
-    """Test if phd_advisors is created correctly."""
-    assert (marcxml_to_json['phd_advisors'][0]['id'] ==
-            json_to_marc['701'][0]['i'])
-    assert (marcxml_to_json['phd_advisors'][0]['name'] ==
+def test_advisors(marcxml_to_json, json_to_marc):
+    assert (marcxml_to_json['advisors'][0]['name'] ==
             json_to_marc['701'][0]['a'])
-    assert (marcxml_to_json['phd_advisors'][0]['degree_type'] ==
+    assert (marcxml_to_json['advisors'][0]['_degree_type'] ==
             json_to_marc['701'][0]['g'])
+
+
+def test_advisors_from_701__a_g_i():
+    snippet = (
+        '<datafield tag="701" ind1=" " ind2=" ">'
+        '  <subfield code="a">Rivelles, Victor O.</subfield>'
+        '  <subfield code="g">PhD</subfield>'
+        '  <subfield code="i">INSPIRE-00120420</subfield>'
+        '</datafield>'
+    )  # record/1474091
+
+    expected = [
+        {
+            'name': 'Rivelles, Victor O.',
+            'degree_type': 'PhD',
+            '_degree_type': 'PhD',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['advisors']
 
 
 def test_positions(marcxml_to_json, json_to_marc):

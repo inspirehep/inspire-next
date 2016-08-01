@@ -195,7 +195,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "wwwlab": ["experiment_name.wwwlab"],
     "fc": ["field_code"],
     "subject": ["field_code.value"],
-    "phd_advisors": ["phd_advisors.name"],
+    "advisors": ["advisors.name"],
     "title": ["titles.title", "titles.title.raw^2",
               "title_translation.title", "title_variation",
               "title_translation.subtitle", "titles.subtitle"],
