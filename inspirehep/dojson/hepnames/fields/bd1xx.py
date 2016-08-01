@@ -125,21 +125,16 @@ def name2marc(self, key, value):
 
 @hepnames.over('ids', '^035..')
 @utils.for_each_value
-@utils.filter_values
 def ids(self, key, value):
     """All identifiers, both internal and external."""
-    id_type = value.get('9')
-    if id_type and id_type not in ('arXiv', 'GoogleScholar'):
-        id_type = id_type.upper()
     return {
         'value': value.get('a'),
-        'type': id_type,
+        'type': value.get('9'),
     }
 
 
 @hepnames2marc.over('035', '^ids$')
 @utils.for_each_value
-@utils.filter_values
 def ids2marc(self, key, value):
     """All identifiers, both internal and external."""
     return {

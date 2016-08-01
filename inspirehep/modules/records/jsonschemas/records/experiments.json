@@ -157,20 +157,7 @@
                         "items": {
                             "properties": {
                                 "type": {
-                                    "enum": [
-                                        "DESY",
-                                        "arXiv",
-                                        "INSPIRE",
-                                        "BAI",
-                                        "CERN",
-                                        "ORCID",
-                                        "SLAC",
-                                        "JACOW",
-                                        "GoogleScholar",
-                                        "RESEARCHERID",
-                                        "SCOPUS",
-                                        "WIKIPEDIA"
-                                    ]
+                                    "type": "string"
                                 },
                                 "value": {
                                     "type": "string"
