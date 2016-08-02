@@ -123,7 +123,6 @@ def description(self, key, value):
 @jobs.over('position', '^245..')
 def position(self, key, value):
     """Contact person."""
-    self.setdefault('breadcrumb_title', value.get('a'))
     return value.get('a')
 
 

@@ -160,10 +160,18 @@
             "type": "string"
         },
         "titles": {
-            "$ref": "titles.json"
+            "items": {
+                "$ref": "title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "urls": {
-            "$ref": "urls.json"
+            "items": {
+                "$ref": "url.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         }
     },
     "title": "Reference",

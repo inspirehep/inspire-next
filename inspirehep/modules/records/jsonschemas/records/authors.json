@@ -62,7 +62,11 @@
             "uniqueItems": true
         },
         "field_categories": {
-            "$ref": "elements/fields.json"
+            "items": {
+                "$ref": "elements/field.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "ids": {
             "items": {
@@ -166,10 +170,6 @@
             "description": "Contains position information.",
             "items": {
                 "properties": {
-                    "_rank": {
-                        "description": "Raw value of MARC 371__r field.",
-                        "type": "string"
-                    },
                     "current": {
                         "description": "FIXME: do we need other states?",
                         "type": "boolean"
@@ -267,25 +267,8 @@
             "type": "string"
         },
         "urls": {
-            "description": "Contains links.",
             "items": {
-                "description": "FIXME: actually, Twitter and linkedin URLs should be better recognized and set as IDs",
-                "properties": {
-                    "description": {
-                        "enum": [
-                            "TWITTER",
-                            "BLOG",
-                            "LINKEDIN",
-                            ""
-                        ],
-                        "type": "string"
-                    },
-                    "value": {
-                        "format": "url",
-                        "type": "string"
-                    }
-                },
-                "type": "object"
+                "$ref": "elements/url.json"
             },
             "type": "array",
             "uniqueItems": true

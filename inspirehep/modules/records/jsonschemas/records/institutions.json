@@ -46,7 +46,11 @@
             "type": "array"
         },
         "field_categories": {
-            "$ref": "elements/fields.json"
+            "items": {
+                "$ref": "elements/field.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "hidden_notes": {
             "items": {
@@ -202,7 +206,11 @@
             "type": "string"
         },
         "urls": {
-            "$ref": "elements/urls.json"
+            "items": {
+                "$ref": "elements/url.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         }
     },
     "title": "Institution",

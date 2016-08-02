@@ -1,14 +1,6 @@
 {
     "$schema": "http://json-schema.org/schema#",
     "properties": {
-        "_ranks": {
-            "items": {
-                "description": "Raw values of MARC 656__a field",
-                "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
         "address": {
             "items": {
                 "$ref": "elements/address.json"
@@ -59,7 +51,11 @@
             "uniqueItems": true
         },
         "field_categories": {
-            "$ref": "elements/fields.json"
+            "items": {
+                "$ref": "elements/field.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "institution": {
             "items": {
@@ -109,7 +105,11 @@
             "title": "Url of the record"
         },
         "urls": {
-            "$ref": "elements/urls.json"
+            "items": {
+                "$ref": "elements/url.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         }
     },
     "title": "HEP Job",

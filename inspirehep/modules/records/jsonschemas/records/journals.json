@@ -48,7 +48,11 @@
             "type": "string"
         },
         "journal_titles": {
-            "$ref": "elements/titles.json"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "license": {
             "enum": [
@@ -61,7 +65,11 @@
             "type": "string"
         },
         "license_urls": {
-            "$ref": "elements/urls.json"
+            "items": {
+                "$ref": "elements/url.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "nonpublic_note": {
             "title": "Non public note",
@@ -117,13 +125,25 @@
             "title": "Url of the record"
         },
         "short_titles": {
-            "$ref": "elements/titles.json"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "title_variants": {
-            "$ref": "elements/titles.json"
+            "items": {
+                "$ref": "elements/title.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         },
         "urls": {
-            "$ref": "elements/urls.json"
+            "items": {
+                "$ref": "elements/url.json"
+            },
+            "type": "array",
+            "uniqueItems": true
         }
     },
     "title": "Journal",
