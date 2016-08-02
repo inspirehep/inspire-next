@@ -2,12 +2,12 @@
   <div class="summary" ng-class="vm.class_name | lowercase">
     <h4 ng-bind="vm.sectionTitle"></h4>
     <h2 ng-bind="vm.total"></h2>
-    <h4><a ng-href="/holdingpen/list/?{{vm.primaryFilterKey}}={{vm.primaryFilterValue}}&size=10">View all</a></h4>
+    <h4><a ng-href="/holdingpen/list/{{vm.get_filter_string('size=10')}}">View all</a></h4>
   </div>
 
   <ul class="statuses">
     <li ng-repeat="(status,value) in vm.secondary_filters">
-      <a ng-href="/holdingpen/list/?{{vm.primaryFilterKey}}={{vm.primaryFilterValue}}&status={{status}}&size=10">
+      <a ng-href="/holdingpen/list/{{vm.get_filter_string('size=10')}}">
         <div class="row-fluid" ng-class="status | lowercase">
           <div class="col-md-1 col-sm-1 col-xs-1">
             <i class="fa" ng-class="{'fa-hourglass-half': status === 'WAITING',

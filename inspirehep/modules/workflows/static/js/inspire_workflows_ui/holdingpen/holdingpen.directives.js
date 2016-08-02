@@ -238,7 +238,23 @@
 
     var controller = ["$scope", "$http",
       function ($scope, $http) {
-        $http.get('/api/holdingpen/?' + $scope.primaryFilterKey + '=' + $scope.primaryFilterValue)
+        $scope.get_filter_string = function (extra_params = ''){
+          if (extra_params != '') {
+            extra_params = '?' + extra_params
+            if ($scope.primaryFilterValue == '') {
+                return extra_params
+            } else {
+              return extra_params + '&' + $scope.primaryFilterKey + '=' + $scope.primaryFilterValue
+            }
+          } else {
+            if ($scope.primaryFilterValue == '') {
+                return ''
+            } else {
+              return '?' + $scope.primaryFilterKey + '=' + $scope.primaryFilterValue
+            }
+          }
+        }
+        $http.get('/api/holdingpen/' + $scope.get_filter_string())
           .then(function (response) {
             $scope.vm = $scope;
             $scope.vm.total = response.data.hits.total;
