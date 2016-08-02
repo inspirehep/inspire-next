@@ -84,6 +84,30 @@
       </holding-pen-dashboard-item>
 
     </div>
+
+    <div class="col-md-3 col-sm-6">
+
+      <holding-pen-dashboard-item
+        template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
+        primary_filter_key="source"
+        primary_filter_value="Alpha experiment"
+        secondary_filter="status"
+        section_title="Alpha experiment">
+      </holding-pen-dashboard-item>
+
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+
+      <holding-pen-dashboard-item
+        template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
+        primary_filter_key="source"
+        primary_filter_value=""
+        secondary_filter="status"
+        section_title="all harvests">
+      </holding-pen-dashboard-item>
+
+    </div>
   </div>
 </div>
 <div class="clearfix"></div>
