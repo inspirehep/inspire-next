@@ -24,7 +24,7 @@ from inspirehep.modules.orcid.utils import convert_to_orcid
 import pytest
 
 
-def test_succesfull_conversion():
+def test_successfull_conversion():
 
     record = {
         "$schema": "http://localhost:5000/schemas/records/hep.json",

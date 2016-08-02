@@ -56,7 +56,7 @@ install_requires = [
     'invenio-indexer>=1.0.0a6',
     'invenio-logging>=1.0.0a3',
     'invenio-mail>=1.0.0a4',
-    'invenio-oauthclient==1.0.0a7',
+    'invenio-oauthclient>=1.0.0a8',
     'invenio-records>=1.0.0a16',  # Add [versioning] in the future
     'invenio-rest[cors]>=1.0.0a7',
     'invenio-search>=1.0.0a7',
@@ -78,6 +78,7 @@ install_requires = [
     'pytest-runner>=2.7.0',
     'workflow>=2.0.0',
     'html5lib<1.0b9',
+    'SQLAlchemy>=1.0.14,<1.1'
 ]
 
 tests_require = [

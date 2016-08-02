@@ -20,9 +20,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from inspirehep.utils.bibtex import Bibtex
+from invenio_oauthclient.models import RemoteAccount, RemoteToken, UserIdentity
 
-from invenio_oauthclient.models import RemoteAccount, UserIdentity
+from inspirehep.utils.bibtex import Bibtex
 
 from .schema import orcid_overdo
 
@@ -50,6 +50,7 @@ def get_authors_credentials(author):
             author_orcid = orcid_id['value']
     raw_user = UserIdentity.query.filter_by(
         id=author_orcid, method='orcid').first()
-    user = RemoteAccount.query.filter_by(user_id=raw_user.id_user).first()
-    token = user.tokens[0].access_token
+    remote_user = RemoteAccount.query.filter_by(user_id=raw_user.id_user).first()
+    token = RemoteToken.query.filter_by(
+        id_remote_account=remote_user.id).first().access_token
     return (token, author_orcid)

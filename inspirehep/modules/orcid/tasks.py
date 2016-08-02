@@ -27,7 +27,7 @@ from flask import current_app
 
 from invenio_db import db
 
-from invenio_oauthclient.models import RemoteAccount, UserIdentity
+from invenio_oauthclient.models import RemoteAccount, RemoteToken, UserIdentity
 
 from invenio_pidstore.resolver import Resolver
 
@@ -84,8 +84,9 @@ def delete_from_orcid(sender, api=None):
     for record in records:
         raw_user = UserIdentity.query.filter_by(
             id=record.orcid, method='orcid').first()
-        user = RemoteAccount.query.filter_by(user_id=raw_user.id_user).first()
-        token = user.tokens[0].access_token
+        remote_user = RemoteAccount.query.filter_by(user_id=raw_user.id_user).first()
+        token = RemoteToken.query.filter_by(
+            id_remote_account=remote_user.id).first().access_token
         api.remove_record(record.orcid, token, 'work', record.put_code)
         with db.session.begin_nested():
             db.session.delete(record)
@@ -107,12 +108,8 @@ def send_to_orcid(sender, api=None):
                 api = current_app.extensions['inspire-orcid'].orcid_api
             orcid_json = convert_to_orcid(sender)
             authors = prepare_authors_data_for_pushing_to_orcid(sender)
-            for author in authors:
+            for put_code, token, author_orcid, record_id in authors:
                 try:
-                    put_code = author[0]
-                    token = author[1]
-                    author_orcid = author[2]
-                    record_id = author[3]
                     if not put_code:
                         put_code = api.add_record(  # try-continue
                             author_orcid, token, 'work', orcid_json)
@@ -126,16 +123,15 @@ def send_to_orcid(sender, api=None):
                     else:
                         api.update_record(author_orcid, token,
                                           'work', orcid_json, str(put_code))
-                    logger.info("Succersfully sent " +
-                                sender.get('control_number') + " to orcid.")
+                    logger.info("Successfully sent to orcid: ",
+                                sender.get('control_number'))
                 except RequestException as e:
                     print(e.response.text, sender['control_number'])
                     logger.info("Failed to push " +
                                 sender.get('control_number') + " to orcid.")
                     continue
         except (KeyError, AttributeError, TypeError) as e:
-            logger.info("Failed to convert " +
-                        sender.get('control_number') + " to orcid.")
+            logger.warning("Failed to convert: ", sender.get('control_number'))
 
 
 def get_author_collection_records_from_valid_authors(authors_refs):
