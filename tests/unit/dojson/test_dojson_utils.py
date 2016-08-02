@@ -20,6 +20,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
 import mock
 
 from inspirehep.dojson.utils import (
@@ -32,6 +34,7 @@ from inspirehep.dojson.utils import (
     get_record_ref,
     legacy_export_as_marc,
     dedupe_all_lists,
+    strip_empty_values,
 )
 
 
@@ -290,4 +293,31 @@ def test_dedupe_all_lists():
 # TODO: test legacy_export_as_marc
 
 
-# TODO: test strip_empty_values
+def test_strip_empty_values():
+    obj = {
+        '_foo': (),
+        'foo': (1, 2, 3),
+        '_bar': [],
+        'bar': [1, 2, 3],
+        '_baz': set(),
+        'baz': set([1, 2, 3]),
+        'qux': True,
+        'quux': False,
+        'plugh': 0,
+    }
+
+    expected = {
+        'foo': (1, 2, 3),
+        'bar': [1, 2, 3],
+        'baz': set([1, 2, 3]),
+        'qux': True,
+        'quux': False,
+        'plugh': 0,
+    }
+    result = strip_empty_values(obj)
+
+    assert expected == result
+
+
+def test_strip_empty_values_returns_none_on_none():
+    assert strip_empty_values(None) is None
