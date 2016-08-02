@@ -37,8 +37,9 @@
             "items": {
                 "enum": [
                     "University",
-                    "Research center",
-                    "Company"
+                    "Research Center",
+                    "Company",
+                    "Other"
                 ],
                 "type": "string"
             },

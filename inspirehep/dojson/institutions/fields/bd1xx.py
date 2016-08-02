@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import institutions
-from ...utils import get_record_ref
+from ...utils import force_single_element, get_record_ref
 from ...utils.geo import parse_institution_address
 
 from inspirehep.utils.helpers import force_force_list
@@ -97,7 +97,21 @@ def address(self, key, value):
 @utils.for_each_value
 def field_activity(self, key, value):
     """Field of activity."""
-    return value.get('a')
+    FIELD_ACTIVITIES_MAP = {
+        'Company': 'Company',
+        'Research center': 'Research Center',
+        'Research Center': 'Research Center',
+        'Research center/': 'Research Center',
+        'Research Center-microelectronics': 'Research Center',
+        'university': 'University',
+        'Univesity': 'University',
+        'University': 'University',
+    }
+
+    _field_activity = force_single_element(value.get('a'))
+    field_activity = FIELD_ACTIVITIES_MAP.get(_field_activity, 'Other')
+
+    return field_activity
 
 
 @institutions.over('name_variants', '^410..')

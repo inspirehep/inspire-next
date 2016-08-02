@@ -399,7 +399,7 @@ def test_field_activity_from_372__a():
         '</datafield>'
     )
 
-    expected = ['Research center']
+    expected = ['Research Center']
     result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['field_activity']
