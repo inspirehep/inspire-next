@@ -99,7 +99,7 @@ def spokespersons(self, key, value):
         if i_value:
             return [
                 {
-                    'type': 'INSPIRE',
+                    'type': 'INSPIRE ID',
                     'value': i_value,
                 },
             ]

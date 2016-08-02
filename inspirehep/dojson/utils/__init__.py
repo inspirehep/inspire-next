@@ -81,17 +81,6 @@ def classify_rank(value):
         return 'OTHER'
 
 
-def create_profile_url(profile_id):
-    """Create HEP author profile link based on the profile_id."""
-    base_url = 'http://inspirehep.net/record/'
-
-    try:
-        int(profile_id)
-        return base_url + str(profile_id)
-    except (TypeError, ValueError):
-        return ''
-
-
 def force_single_element(obj):
     """Force an object to a list and return the first element."""
     lst = force_force_list(obj)

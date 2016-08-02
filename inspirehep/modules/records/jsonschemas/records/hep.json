@@ -173,43 +173,12 @@
                         "title": "Author name",
                         "type": "string"
                     },
-                    "inspire_bai": {
-                        "description": "INSPIRE BAI when available",
-                        "pattern": "(\\w+\\.)+\\d+",
-                        "title": "INSPIRE BibAuthorID",
-                        "type": "string"
-                    },
-                    "inspire_id": {
-                        "description": "Legacy INSPIRE ID when available",
-                        "pattern": "INSPIRE-\\d+",
-                        "title": "INSPIRE ID",
-                        "type": "string"
-                    },
-                    "orcid": {
-                        "description": "ORCID Id when available",
-                        "format": "orcid",
-                        "pattern": "\\d{4}-\\d{4}-\\d{4}-\\d{4}",
-                        "title": "ORCID ID",
-                        "type": "string"
-                    },
-                    "other_ids": {
-                        "description": "Just in case...",
+                    "ids": {
                         "items": {
-                            "properties": {
-                                "source": {
-                                    "title": "Source of ID",
-                                    "type": "string"
-                                },
-                                "value": {
-                                    "title": "ID",
-                                    "type": "string"
-                                }
-                            },
-                            "title": "ID",
-                            "type": "object"
+                            "$ref": "elements/id.json"
                         },
-                        "title": "Other IDs",
-                        "type": "array"
+                        "type": "array",
+                        "uniqueItems": true
                     },
                     "record": {
                         "$ref": "elements/json_reference.json",
