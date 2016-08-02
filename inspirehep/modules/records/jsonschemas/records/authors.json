@@ -66,15 +66,7 @@
         },
         "ids": {
             "items": {
-                "properties": {
-                    "type": {
-                        "type": "string"
-                    },
-                    "value": {
-                        "type": "string"
-                    }
-                },
-                "type": "object"
+                "$ref": "elements/id.json"
             },
             "type": "array",
             "uniqueItems": true

@@ -1,0 +1,94 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "anyOf": [
+        {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "INSPIRE ID"
+                    ],
+                    "type": "string"
+                },
+                "value": {
+                    "pattern": "INSPIRE-\\d+",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "INSPIRE BAI"
+                    ],
+                    "type": "string"
+                },
+                "value": {
+                    "pattern": "(\\w+\\.)+\\d+",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "ORCID"
+                    ],
+                    "type": "string"
+                },
+                "value": {
+                    "pattern": "\\d{4}-\\d{4}-\\d{4}-\\d{4}",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "JACOW"
+                    ],
+                    "type": "string"
+                },
+                "value": {
+                    "pattern": "JACoW-\\d+",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "HAL"
+                    ],
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        {
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    ],
+    "required": [
+        "type",
+        "value"
+    ]
+}
