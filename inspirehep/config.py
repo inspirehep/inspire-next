@@ -148,7 +148,7 @@ SEARCH_TYPEAHEAD_INVENIO_KEYWORD_TO_HINT = {
 SEARCH_TYPEAHEAD_SPIRES_KEYWORD_TO_HINT = {
     'a': 'authors.name_suggest'
 }
-SEARCH_TYPEAHEAD_HINT_URL = 'http://localhost:5000/search/suggest?field=%TYPE&query=%QUERY'
+SEARCH_TYPEAHEAD_HINT_URL = '/search/suggest?field=%TYPE&query=%QUERY'
 SEARCH_TYPEAHEAD_DEFAULT_SET = 'invenio'
 
 SEARCH_ELASTIC_HOSTS = os.environ.get(
