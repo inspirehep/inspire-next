@@ -1,21 +1,6 @@
 {
     "$schema": "http://json-schema.org/schema#",
     "properties": {
-        "_scheme": {
-            "enum": [
-                "INSPIRE",
-                "arXiv",
-                "APS",
-                "PoS",
-                "Elsevier"
-            ],
-            "title": "Original scheme",
-            "type": "string"
-        },
-        "_term": {
-            "title": "Original term",
-            "type": "string"
-        },
         "scheme": {
             "title": "INSPIRE",
             "type": "string"

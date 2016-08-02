@@ -170,10 +170,6 @@
             "description": "Contains position information.",
             "items": {
                 "properties": {
-                    "_rank": {
-                        "description": "Raw value of MARC 371__r field.",
-                        "type": "string"
-                    },
                     "current": {
                         "description": "FIXME: do we need other states?",
                         "type": "boolean"

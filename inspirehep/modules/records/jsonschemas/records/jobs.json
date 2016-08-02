@@ -1,14 +1,6 @@
 {
     "$schema": "http://json-schema.org/schema#",
     "properties": {
-        "_ranks": {
-            "items": {
-                "description": "Raw values of MARC 656__a field",
-                "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
         "address": {
             "items": {
                 "$ref": "elements/address.json"
