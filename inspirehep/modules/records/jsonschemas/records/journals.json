@@ -25,7 +25,7 @@
                     "medium": {
                         "description": "Medium (type) of the ISSN.",
                         "enum": [
-                            "electronic",
+                            "online",
                             "print"
                         ],
                         "type": "string"
