@@ -81,7 +81,7 @@
 
     <div class="row">
       <div class="col-md-12">
-        <div class="panel" id="record-institution-papers">
+        <div class="panel panel-datatables" id="record-institution-papers">
           <div class="panel-heading">Papers</div>
 
           <div class="panel-body">
@@ -106,7 +106,7 @@
     </div>
     <div class="row">
       <div class="col-md-6">
-        <div class="panel" id="record-institution-people">
+        <div class="panel panel-datatables" id="record-institution-people">
           <div class="panel-heading">Authors</div>
           <div class="panel-body">
             <div class="datatables-loading"> <i class="fa fa-spinner fa-spin fa-lg" ></i>
@@ -125,7 +125,7 @@
         </div>
       </div>
       <div class="col-md-6">
-        <div class="panel" id="record-institution-experiments">
+        <div class="panel panel-datatables" id="record-institution-experiments">
           <div class="panel-heading">Experiments</div>
 
           <div class="panel-body">

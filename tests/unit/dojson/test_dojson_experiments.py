@@ -279,7 +279,7 @@ def test_description_from_multiple_520__a():
     assert expected == result['description']
 
 
-def test_spokepersons_from_702__a_i_z():
+def test_spokespersons_from_702__a_i_z():
     snippet = (
         '<datafield tag="702" ind1=" " ind2=" ">'
         '  <subfield code="a">Hogan, Craig J.</subfield>'
@@ -303,10 +303,10 @@ def test_spokepersons_from_702__a_i_z():
     ]
     result = clean_record(experiments.do(create_record(snippet)))
 
-    assert expected == result['spokepersons']
+    assert expected == result['spokespersons']
 
 
-def test_spokepersons_from_double_702__a_i():
+def test_spokespersons_from_double_702__a_i():
     snippet = (
         '<record>'
         '  <datafield tag="702" ind1=" " ind2=" ">'
@@ -346,7 +346,7 @@ def test_spokepersons_from_double_702__a_i():
     ]
     result = clean_record(experiments.do(create_record(snippet)))
 
-    assert expected == result['spokepersons']
+    assert expected == result['spokespersons']
 
 
 def test_collaboration_from_710__g():

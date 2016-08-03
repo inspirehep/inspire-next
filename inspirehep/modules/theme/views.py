@@ -61,6 +61,8 @@ from inspirehep.utils.record import get_title
 from inspirehep.utils.template import render_macro_from_template
 from inspirehep.utils.conferences import render_conferences_in_the_same_series
 from inspirehep.utils.conferences import render_conferences_contributions
+from inspirehep.utils.experiments import render_experiment_contributions
+from inspirehep.utils.experiments import render_experiment_people
 
 blueprint = Blueprint(
     'inspirehep_theme',
@@ -616,6 +618,36 @@ def ajax_conference_contributions():
     cnum = request.args.get('cnum', '')
 
     html, total = render_conferences_contributions(cnum)
+
+    return jsonify(
+        {
+            "data": html,
+            "total": total
+        }
+    )
+
+
+@blueprint.route('/ajax/experiments/contributions', methods=['GET'])
+def ajax_experiment_contributions():
+    """Handler for experiment contributions"""
+    experiment_name = request.args.get('experiment_name', '')
+
+    html, total = render_experiment_contributions(experiment_name)
+
+    return jsonify(
+        {
+            "data": html,
+            "total": total
+        }
+    )
+
+
+@blueprint.route('/ajax/experiments/people', methods=['GET'])
+def ajax_experiments_people():
+    """Datatable handler to get people working in an experiment."""
+    experiment_name = request.args.get('experiment_name', '')
+
+    html, total = render_experiment_people(experiment_name)
 
     return jsonify(
         {

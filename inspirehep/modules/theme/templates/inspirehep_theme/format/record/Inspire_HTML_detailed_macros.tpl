@@ -272,7 +272,7 @@
 {% endmacro %}
 
 {% macro record_references(record) %}
-  <div class="panel" id="references">
+  <div class="panel panel-datatables" id="references">
     <div class="panel-heading">
       <div class="record-detailed-title">References
         ({{ (record.get('references', '')) | count }})
@@ -312,7 +312,7 @@
 {% endmacro %}
 
 {% macro record_citations(record) %}
-  <div class="panel" id="citations">
+  <div class="panel panel-datatables" id="citations">
     <div class="panel-heading">
       <span class="record-detailed-title">Citations
         {% if record.get('citation_count', 0) > 0 %}
@@ -358,7 +358,7 @@
 {% endmacro %}
 
 {% macro impactgraph() %}
-  <div class="panel" id="citations">
+  <div class="panel">
     <div class="panel-heading">
       <span class="record-detailed-title">Publication Impact Graph
       </span>
@@ -367,8 +367,6 @@
     <div class="panel-body">
       <div class="impact-graph-container">
       </div>
-    </div>
-    <div class="panel-footer">
     </div>
   </div>
 {% endmacro %}
