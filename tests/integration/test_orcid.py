@@ -67,9 +67,9 @@ def mock_user(app, request):
                 id='0000-0001-9412-8627', method='orcid').first()
             remote_account = RemoteAccount.query.filter_by(user_id=2).first()
             with db.session.begin_nested():
+                db.session.delete(token)
                 db.session.delete(user_identity)
                 db.session.delete(remote_account)
-                db.session.delete(token)
                 db.session.delete(user)
             db.session.commit()
 
@@ -79,6 +79,7 @@ def mock_user(app, request):
         id=2,
     )
     token = RemoteToken(
+        id_remote_account=1,
         access_token='123'
     )
     user_identity = UserIdentity(
@@ -86,17 +87,17 @@ def mock_user(app, request):
         id_user='2',
         method='orcid')
     remote_account = RemoteAccount(
+        id=1,
         user_id=2,
         extra_data={},
         client_id=1,
-        user=user,
-        tokens=[token])
+        user=user)
     with app.app_context():
         with db.session.begin_nested():
             db.session.add(user)
-            db.session.add(token)
             db.session.add(user_identity)
             db.session.add(remote_account)
+            db.session.add(token)
         db.session.commit()
     return MockUser(app)
 
