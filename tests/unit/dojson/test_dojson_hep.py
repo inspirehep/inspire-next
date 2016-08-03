@@ -525,16 +525,188 @@ def test_thesaurus_terms(marcxml_to_json, json_to_marc):
             json_to_marc['695'][0]['a'])
 
 
-def test_thesis_supervisor(marcxml_to_json, json_to_marc):
-    """Test if thesis_supervisor is created correctly."""
-    assert (marcxml_to_json['thesis_supervisor'][0]['full_name'] ==
-            json_to_marc['701'][0]['a'])
-    assert (marcxml_to_json['thesis_supervisor'][0]['INSPIRE_id'] ==
-            json_to_marc['701'][0]['g'])
-    assert (marcxml_to_json['thesis_supervisor'][0]['external_id'] ==
-            json_to_marc['701'][0]['j'])
-    assert (marcxml_to_json['thesis_supervisor'][0]['affiliation'] ==
-            json_to_marc['701'][0]['u'])
+def test_thesis_supervisors_from_701__a_u():
+    snippet = (
+        '<datafield tag="701" ind1=" " ind2=" ">'
+        '  <subfield code="a">Garutti, Erika</subfield>'
+        '  <subfield code="u">U. Hamburg (main)</subfield>'
+        '</datafield>'
+    )  # record/1462486
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'curated_relation': False,
+                    'value': 'U. Hamburg (main)',
+                }
+            ],
+            'full_name': 'Garutti, Erika',
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['thesis_supervisors']
+
+
+def test_thesis_supervisors_from_701__a_double_u():
+    snippet = (
+        '<datafield tag="701" ind1=" " ind2=" ">'
+        '  <subfield code="a">Mnich, Joachim</subfield>'
+        '  <subfield code="u">DESY</subfield>'
+        '  <subfield code="u">U. Hamburg (main)</subfield>'
+        '</datafield>'
+    )  # record/1462486
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'curated_relation': False,
+                    'value': 'DESY',
+                },
+                {
+                    'curated_relation': False,
+                    'value': 'U. Hamburg (main)',
+                },
+            ],
+            'full_name': 'Mnich, Joachim',
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['thesis_supervisors']
+
+
+def test_thesis_supervisors_from_multiple_701():
+    snippet = (
+        '<record>'
+        '  <datafield tag="701" ind1=" " ind2=" ">'
+        '    <subfield code="a">Garutti, Erika</subfield>'
+        '    <subfield code="u">U. Hamburg (main)</subfield>'
+        '  </datafield>'
+        '  <datafield tag="701" ind1=" " ind2=" ">'
+        '    <subfield code="a">Mnich, Joachim</subfield>'
+        '    <subfield code="u">DESY</subfield>'
+        '    <subfield code="u">U. Hamburg (main)</subfield>'
+        '  </datafield>'
+        '  <datafield tag="701" ind1=" " ind2=" ">'
+        '    <subfield code="a">Pohl, Martin</subfield>'
+        '    <subfield code="u">U. Geneva (main)</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1462486
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'curated_relation': False,
+                    'value': 'U. Hamburg (main)',
+                },
+            ],
+            'full_name': 'Garutti, Erika',
+        },
+        {
+            'affiliations': [
+                {
+                    'curated_relation': False,
+                    'value': 'DESY',
+                },
+                {
+                    'curated_relation': False,
+                    'value': 'U. Hamburg (main)',
+                },
+            ],
+            'full_name': 'Mnich, Joachim',
+        },
+        {
+            'affiliations': [
+                {
+                    'curated_relation': False,
+                    'value': 'U. Geneva (main)',
+                },
+            ],
+            'full_name': 'Pohl, Martin',
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['thesis_supervisors']
+
+
+def test_thesis_supervisors_from_multiple_701_with_z():
+    snippet = (
+        '<record>'
+        '  <datafield tag="701" ind1=" " ind2=" ">'
+        '    <subfield code="a">Garutti, Erika</subfield>'
+        '    <subfield code="u">U. Hamburg (main)</subfield>'
+        '    <subfield code="z">924289</subfield>'
+        '  </datafield>'
+        '  <datafield tag="701" ind1=" " ind2=" ">'
+        '    <subfield code="a">Mnich, Joachim</subfield>'
+        '    <subfield code="u">DESY</subfield>'
+        '    <subfield code="u">U. Hamburg (main)</subfield>'
+        '    <subfield code="z">902770</subfield>'
+        '    <subfield code="z">924289</subfield>'
+        '  </datafield>'
+        '  <datafield tag="701" ind1=" " ind2=" ">'
+        '    <subfield code="a">Pohl, Martin</subfield>'
+        '    <subfield code="u">U. Geneva (main)</subfield>'
+        '    <subfield code="z">913279</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1462486/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'curated_relation': True,
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/924289',
+                    },
+                    'value': 'U. Hamburg (main)',
+                },
+            ],
+            'full_name': 'Garutti, Erika',
+        },
+        {
+            'affiliations': [
+                {
+                    'curated_relation': True,
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/902770',
+                    },
+                    'value': 'DESY',
+                },
+                {
+                    'curated_relation': True,
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/924289',
+                    },
+                    'value': 'U. Hamburg (main)',
+                },
+            ],
+            'full_name': 'Mnich, Joachim',
+        },
+        {
+            'affiliations': [
+                {
+                    'curated_relation': True,
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/913279',
+                    },
+                    'value': 'U. Geneva (main)',
+                },
+            ],
+            'full_name': 'Pohl, Martin',
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['thesis_supervisors']
+
 
 
 def test_collaboration(marcxml_to_json, json_to_marc):

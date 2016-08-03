@@ -848,20 +848,28 @@
             },
             "type": "object"
         },
-        "thesis_supervisor": {
+        "thesis_supervisors": {
             "items": {
                 "properties": {
-                    "affiliation": {
-                        "type": "string"
-                    },
-                    "curated_relation": {
-                        "type": "boolean"
+                    "affiliations": {
+                        "items": {
+                            "properties": {
+                                "curated_relation": {
+                                    "type": "boolean"
+                                },
+                                "record": {
+                                    "$ref": "elements/json_reference.json"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "type": "array"
                     },
                     "full_name": {
                         "type": "string"
-                    },
-                    "record": {
-                        "$ref": "elements/json_reference.json"
                     }
                 },
                 "required": [
