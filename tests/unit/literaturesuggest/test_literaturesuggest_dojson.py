@@ -746,7 +746,7 @@ def test_field_categories_from_subject_term():
     assert expected == result['field_categories']
 
 
-def test_thesis_supervisor_from_supervisors():
+def test_thesis_supervisors_from_supervisors():
     form = GroupableOrderedDict([
         ('supervisors', 'foo'),
     ])
@@ -754,7 +754,7 @@ def test_thesis_supervisor_from_supervisors():
     expected = 'foo'
     result = literature.do(form)
 
-    assert expected == result['thesis_supervisor']
+    assert expected == result['thesis_supervisors']
 
 
 def test_titles_from_title():

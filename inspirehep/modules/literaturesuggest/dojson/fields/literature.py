@@ -284,8 +284,8 @@ def field_categories(self, key, value):
         for t in value]
 
 
-@literature.over('thesis_supervisor', '^supervisors$')
-def thesis_supervisor(self, key, value):
+@literature.over('thesis_supervisors', '^supervisors$')
+def thesis_supervisors(self, key, value):
     return value
 
 

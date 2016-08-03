@@ -24,37 +24,59 @@
 
 from __future__ import absolute_import, division, print_function
 
+from six.moves import zip_longest
+
 from dojson import utils
+
+from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.record import get_value
 
 from ..model import hep, hep2marc
 from ...utils import get_record_ref
 
-from inspirehep.utils.helpers import force_force_list
 
-
-@hep.over('thesis_supervisor', '^701..')
+@hep.over('thesis_supervisors', '^701..')
 @utils.for_each_value
-@utils.filter_values
-def thesis_supervisor(self, key, value):
-    """The thesis supervisor."""
+def thesis_supervisors(self, key, value):
+    """Thesis supervisors.
+
+    FIXME: handle the presence of multiple 700__a.
+    FIXME: handle identifiers from 701__i and 701__j."""
+    def _get_affiliations(value):
+        result = []
+
+        institutions = force_force_list(value.get('u'))
+        recids = force_force_list(value.get('z'))
+
+        for value, recid in zip_longest(institutions, recids):
+            try:
+                record = get_record_ref(int(recid), 'institutions')
+            except (TypeError, ValueError):
+                record = None
+
+            result.append({
+                'curated_relation': record is not None,
+                'record': record,
+                'value': value,
+            })
+
+        return result
+
     return {
         'full_name': value.get('a'),
-        'INSPIRE_id': value.get('g'),
-        'external_id': value.get('j'),
-        'affiliation': value.get('u')
+        'affiliations': _get_affiliations(value),
     }
 
 
-@hep2marc.over('701', 'thesis_supervisor')
+@hep2marc.over('701', 'thesis_supervisors')
 @utils.for_each_value
-@utils.filter_values
-def thesis_supervisor2marc(self, key, value):
-    """The thesis supervisor."""
+def thesis_supervisors2marc(self, key, value):
+    """Thesis supervisors.
+
+    FIXME: handle recids to 701__z."""
     return {
         'a': value.get('full_name'),
-        'g': value.get('INSPIRE_id'),
-        'j': value.get('external_id'),
-        'u': value.get('affiliation'),
+        'u': get_value(value, 'affiliations.value'),
     }
 
 
