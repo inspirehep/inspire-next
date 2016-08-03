@@ -20,13 +20,14 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""inspirehep base Invenio configuration."""
+"""INSPIREHEP Celery app instantiation."""
 
 from __future__ import absolute_import, division, print_function
 
 from flask_celeryext import create_celery_app
 
 from .factory import create_app
+
 
 celery = create_celery_app(create_app())
 # Trigger an app log message upon import. Somehow this makes Sentry logging
