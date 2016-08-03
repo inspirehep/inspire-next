@@ -102,7 +102,7 @@ def doc_type_should_be_sent_to_orcid(record):
 def send_to_orcid(sender, api=None):
     """Sends records to orcid."""
     if doc_type_should_be_sent_to_orcid(sender):
-        logger.info("Sending " + sender.get('control_number') + " to orcid.")
+        logger.info("Sending to orcid: ", sender.get('control_number'))
         try:
             if not api:
                 api = current_app.extensions['inspire-orcid'].orcid_api
@@ -127,8 +127,8 @@ def send_to_orcid(sender, api=None):
                                 sender.get('control_number'))
                 except RequestException as e:
                     print(e.response.text, sender['control_number'])
-                    logger.info("Failed to push " +
-                                sender.get('control_number') + " to orcid.")
+                    logger.error("Failed to push to orcid: ",
+                                 sender.get('control_number'))
                     continue
         except (KeyError, AttributeError, TypeError) as e:
             logger.warning("Failed to convert: ", sender.get('control_number'))
