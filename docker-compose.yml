@@ -40,7 +40,7 @@ services:
   web:
     extends:
       service: service_base
-    command: gunicorn -b 0.0.0.0:5000 -t 3600 inspirehep.wsgi
+    command: gunicorn -b 0.0.0.0:5000 -t 3600 --access-logfile "-" inspirehep.wsgi
     volumes_from:
       - static
     ports:
