@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 import six
 
 from dojson import utils
@@ -36,6 +38,9 @@ from ...utils import (
 )
 
 from inspirehep.utils.helpers import force_force_list
+
+
+COMMA_OR_SLASH = re.compile('\s*[/,]\s*')
 
 
 @jobs.over('date_closed', '^046..')
@@ -84,10 +89,33 @@ def contact_details(self, key, value):
     }
 
 
-@jobs.over('continent', '^043..')
-def continent(self, key, value):
-    """Continent"""
-    return value.get('a')
+@jobs.over('regions', '^043..')
+def regions(self, key, value):
+    """Regions."""
+    REGIONS_MAP = {
+        'AF': 'Africa',
+        'Africa': 'Africa',
+        'Asia': 'Asia',
+        'Australia': 'Australia',
+        'Australasia': 'Australasia',
+        'eu': 'Europe',
+        'Europe': 'Europe',
+        'Middle East': 'Middle East',
+        'na': 'North America',
+        'United States': 'North America',
+        'Noth America': 'North America',
+        'North America': 'North America',
+        'North Americsa': 'North America',
+        'South America': 'South America',
+    }
+
+    result = []
+
+    for el in force_force_list(value.get('a')):
+        for region in COMMA_OR_SLASH.split(el):
+            result.append(REGIONS_MAP.get(region))
+
+    return result
 
 
 @jobs.over('experiments', '^693..')

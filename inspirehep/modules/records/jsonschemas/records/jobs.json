@@ -20,18 +20,6 @@
             "type": "array",
             "uniqueItems": true
         },
-        "continent": {
-            "enum": [
-                "Africa",
-                "Antarctica",
-                "Asia",
-                "Europe",
-                "North America",
-                "Oceania",
-                "South America"
-            ],
-            "type": "string"
-        },
         "deadline_date": {
             "format": "date",
             "title": "Application deadline",
@@ -98,6 +86,22 @@
             },
             "type": "array",
             "uniqueItems": true
+        },
+        "regions": {
+            "items": {
+                "enum": [
+                    "Africa",
+                    "Australasia",
+                    "Australia",
+                    "Asia",
+                    "Europe",
+                    "Middle East",
+                    "North America",
+                    "South America"
+                ],
+                "type": "string"
+            },
+            "type": "array"
         },
         "self": {
             "$ref": "elements/json_reference.json",

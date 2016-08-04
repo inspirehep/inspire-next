@@ -48,10 +48,6 @@
                         }
                     }
                 },
-                "continent": {
-                    "index": "not_analyzed",
-                    "type": "string"
-                },
                 "date_and_time_of_latest_transaction": {
                     "format": "yyyyMMddHHmmss||yyyyMMddHHmmss.S",
                     "type": "date"
@@ -81,6 +77,10 @@
                     "type": "object"
                 },
                 "rank": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "regions": {
                     "index": "not_analyzed",
                     "type": "string"
                 },

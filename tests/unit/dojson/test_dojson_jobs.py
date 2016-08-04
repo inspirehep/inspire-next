@@ -190,17 +190,43 @@ def test_contact_details_from_multiple_marcxml_270():
     assert expected == result['contact_details']
 
 
-def test_continent_from_043__a():
+def test_regions_from_043__a():
     snippet = (
         '<datafield tag="043" ind1=" " ind2=" ">'
         '  <subfield code="a">Asia</subfield>'
         '</datafield>'
     )
 
-    expected = 'Asia'
+    expected = ['Asia']
     result = clean_record(jobs.do(create_record(snippet)))
 
-    assert expected == result['continent']
+    assert expected == result['regions']
+
+
+def test_regions_from_043__a_corrects_misspellings():
+    snippet = (
+        '<datafield tag="043" ind1=" " ind2=" ">'
+        '  <subfield code="a">United States</subfield>'
+        '</datafield>'
+    )
+
+    expected = ['North America']
+    result = clean_record(jobs.do(create_record(snippet)))
+
+    assert expected == result['regions']
+
+
+def test_regions_from_043__a_splits_on_commas():
+    snippet = (
+        '<datafield tag="043" ind1=" " ind2=" ">'
+        '  <subfield code="a">Asia, North America</subfield>'
+        '</datafield>'
+    )
+
+    expected = ['Asia', 'North America']
+    result = clean_record(jobs.do(create_record(snippet)))
+
+    assert expected == result['regions']
 
 
 def test_experiments_from_693__e():
