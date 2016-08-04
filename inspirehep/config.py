@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIREHep default application configuration."""
+"""INSPIREHEP app configuration."""
 
 from __future__ import absolute_import, division, print_function
 
