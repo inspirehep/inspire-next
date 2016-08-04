@@ -294,15 +294,6 @@
                 "global_fulltext": {
                     "type": "string"
                 },
-                "hidden_notes": {
-                    "properties": {
-                        "cds": {
-                            "index": "not_analyzed",
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                },
                 "institution": {
                     "properties": {
                         "affiliation": {

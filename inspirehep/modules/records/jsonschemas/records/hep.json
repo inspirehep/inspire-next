@@ -31,10 +31,6 @@
                     "experiment": {
                         "type": "string"
                     },
-                    "facets_experiment": {
-                        "description": "Experiment name to be used on facets.",
-                        "type": "string"
-                    },
                     "institution": {
                         "type": "string"
                     },
@@ -189,11 +185,6 @@
                         "title": "INSPIRE ID",
                         "type": "string"
                     },
-                    "name_variations": {
-                        "description": "All possible variations of the authors full name.",
-                        "title": "Author name variations",
-                        "type": "string"
-                    },
                     "orcid": {
                         "description": "ORCID Id when available",
                         "format": "orcid",
@@ -228,11 +219,6 @@
                     "role": {
                         "description": "Role of the author within the paper. So far only Editor was captured.",
                         "title": "Role of the person",
-                        "type": "string"
-                    },
-                    "signature_block": {
-                        "description": "Phonetic notation of the author's name.",
-                        "title": "Phonetic name",
                         "type": "string"
                     },
                     "uuid": {
@@ -412,11 +398,6 @@
             "type": "array",
             "uniqueItems": true
         },
-        "earliest_date": {
-            "description": "The earliest date of this record among all types of dates",
-            "format": "date",
-            "type": "string"
-        },
         "edition": {
             "items": {
                 "properties": {
@@ -502,13 +483,6 @@
             "description": "FIXME: what about 595__d??",
             "items": {
                 "properties": {
-                    "cds": {
-                        "type": "string"
-                    },
-                    "cern_reference": {
-                        "description": "FIXME: Do we know what this is? do we care?",
-                        "type": "string"
-                    },
                     "source": {
                         "description": "FIXME: What's the semantic of this source?",
                         "type": "string"
@@ -760,14 +734,6 @@
             "$ref": "elements/json_reference.json",
             "description": "Url of the record itself",
             "title": "Url of the record"
-        },
-        "spires_sysnos": {
-            "description": "List of associated legacy SPIRES IDs",
-            "items": {
-                "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
         },
         "succeeding_entry": {
             "description": "Reference to previously merged records.",

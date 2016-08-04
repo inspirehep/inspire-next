@@ -88,12 +88,6 @@ def test_dois(marcxml_to_json, json_to_marc):
             [p.get('a') for p in json_to_marc['024'] if 'a' in p])
 
 
-def test_spires_sysnos(marcxml_to_json, json_to_marc):
-    """Test if spires_sysnos is created correctly."""
-    assert (marcxml_to_json['spires_sysnos'][0] in
-            [p.get('a') for p in json_to_marc['970'] if 'a' in p])
-
-
 def test_deleted_records(marcxml_to_json, json_to_marc):
     """Test if deleted_recids is created correctly."""
     assert (get_recid_from_ref(marcxml_to_json['deleted_records'][0]) in
@@ -324,12 +318,9 @@ def test_public_notes(marcxml_to_json, json_to_marc):
 
 def test_hidden_notes(marcxml_to_json, json_to_marc):
     """Test if hidden_notes is created correctly."""
+    assert marcxml_to_json['hidden_notes'][0]['source'] == "CDS"
     assert (marcxml_to_json['hidden_notes'][0]['value'] ==
             json_to_marc['595'][0]['a'])
-    assert (marcxml_to_json['hidden_notes'][0]['cern_reference'] ==
-            json_to_marc['595'][0]['b'])
-    assert (marcxml_to_json['hidden_notes'][0]['cds'] ==
-            json_to_marc['595'][0]['c'])
     assert (marcxml_to_json['hidden_notes'][0]['source'] ==
             json_to_marc['595'][0]['9'])
 

@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 from dojson import utils
+from dojson.errors import IgnoreKey
 
 from ..conferences.model import conferences
 from ..experiments.model import experiments
@@ -143,38 +144,37 @@ def creation_modification_date2marc(self, key, value):
 @utils.ignore_value
 def spires_sysnos(self, key, value):
     """Old SPIRES number and new_recid from 970."""
+    external_system_numbers = self.get('external_system_numbers', [])
     value = force_force_list(value)
-    sysnos = []
     new_recid = None
     for val in value:
         if 'a' in val:
-            # Only append if there is something
-            sysnos.append(val.get('a'))
+            external_system_numbers.append(
+                {
+                    "institute": "SPIRES",
+                    "value": val.get('a'),
+                    "obsolete": True
+                }
+            )
         elif 'd' in val:
             new_recid = val.get('d')
     if new_recid is not None:
-        # FIXME we are currently using the default /record API. Which might
-        # resolve to a 404 response.
         self['new_record'] = get_record_ref(new_recid)
-    return sysnos or None
+
+    self['external_system_numbers'] = external_system_numbers
 
 
-@hep2marc.over('970', '(spires_sysnos|new_record)')
-@hepnames2marc.over('970', '(spires_sysnos|new_record)')
+@hep2marc.over('970', 'new_record')
+@hepnames2marc.over('970', 'new_record')
 def spires_sysnos2marc(self, key, value):
     """970 SPIRES number and new recid."""
     value = force_force_list(value)
     existing_values = self.get('970', [])
 
-    if key == 'spires_sysnos':
-        existing_values.extend(
-            [{'a': val} for val in value if val]
-        )
-    elif key == 'new_record':
-        val_recids = [get_recid_from_ref(val) for val in value]
-        existing_values.extend(
-            [{'d': val} for val in val_recids if val]
-        )
+    val_recids = [get_recid_from_ref(val) for val in value]
+    existing_values.extend(
+        [{'d': val} for val in val_recids if val]
+    )
     return existing_values
 
 
