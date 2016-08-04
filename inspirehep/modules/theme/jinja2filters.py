@@ -26,6 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 import json
 import re
+import six
 import time
 from collections import Iterable
 from datetime import datetime
@@ -33,9 +34,6 @@ from operator import itemgetter
 
 from flask import current_app
 from jinja2.filters import do_join, evalcontextfilter
-
-from invenio_search import current_search_client as es
-from invenio_search.api import RecordsSearch
 
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.utils.date import (
@@ -66,7 +64,7 @@ def apply_template_on_array(array, template_path, **common_context):
     """
     rendered = []
 
-    if isinstance(array, basestring):
+    if isinstance(array, six.string_types):
         array = [array]
 
     if not isinstance(array, Iterable):
@@ -104,6 +102,12 @@ def email_links(value):
     """Return array of rendered links to emails."""
     return apply_template_on_array(
         value, 'inspirehep_theme/format/record/field_templates/email.tpl')
+
+
+@blueprint.app_template_filter()
+def email_link(value):
+    """Return single email rendered (mailto)."""
+    return render_template_to_string('inspirehep_theme/format/record/field_templates/email.tpl', content=value)
 
 
 @blueprint.app_template_filter()
@@ -198,6 +202,10 @@ def search_for_experiments(value):
 @blueprint.app_template_filter()
 def experiment_date(record):
     result = []
+    if 'date_proposed' in record:
+        result.append('Proposed: ' + record['date_proposed'])
+    if 'date_approved' in record:
+        result.append('Approved: ' + record['date_approved'])
     if 'date_started' in record:
         result.append('Started: ' + record['date_started'])
     if 'date_completed' in record:

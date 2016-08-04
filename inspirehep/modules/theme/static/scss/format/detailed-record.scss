@@ -88,6 +88,11 @@ h2.record-detailed-subtitle {
     font-size: 17px;
     margin-top: 7px;
     margin-bottom: 25px;
+
+    &.record-detailed-subtitle-experiments {
+        margin-bottom: 5px;
+    }
+
 }
 
 .record-detailed {
@@ -113,15 +118,6 @@ h2.record-detailed-subtitle {
 
 }
 
-.record-header-literature {
-    padding: 20px 0 0 0 !important;
-
-    & .row {
-        margin-left: 0;
-        margin-right: 0;
-    }
-}
-
 .detailed-action-bar {
     padding: 10px;
     padding-left: 14px;
@@ -138,8 +134,14 @@ h2.record-detailed-subtitle {
         margin-top: 25px;
     }
 
-    &.record-header-literature {
+    &.record-header-literature, &.record-header-experiment {
+        padding: 20px 0 0 0 !important;
         background-color: white;
+
+        & .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
     }
 }
 
@@ -239,7 +241,7 @@ h1.record-detailed-title, .record-header label, #record-journal,
     }
 }
 
-#references, #citations, #record-institution-people, #record-institution-experiments, #record-institution-papers, #record-conference-papers, #record-conference-series {
+.panel-datatables {
 
     min-height: 200px;
 
@@ -329,14 +331,6 @@ h1.record-detailed-title, .record-header label, #record-journal,
 /* ===========================================================
     Record plots
 ============================================================ */
-
-// #record-plots {
-//     @extend #record-abstract-keywords;
-
-//     #record-plots-title {
-//         @extend #record-abstract-title;
-//     }
-// }
 
 .hide-bullets {
   list-style: none;

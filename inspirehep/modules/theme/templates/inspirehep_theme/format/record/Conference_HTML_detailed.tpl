@@ -152,13 +152,14 @@
 
     <div class="row">
       <div class="col-md-12">
-        <div class="panel" id="record-conference-papers">
+        <div class="panel panel-datatables" id="record-conference-papers">
           <div class="panel-heading">Contributions</div>
 
           <div class="panel-body">
             <div class="datatables-loading">
               <i class="fa fa-spinner fa-spin fa-lg" ></i>
-              <br>Loading contributions to the conference...</div>
+              <br>Loading contributions to the conference...
+            </div>
             <div class="datatables-wrapper">
               <table id="record-conference-papers-table" class="table table-striped table-bordered table-with-ellipsis" cellspacing="0" width="100%">
                 <thead>
@@ -178,7 +179,7 @@
     {% if record['series'] %}
     <div class="row">
       <div class="col-md-12">
-        <div class="panel" id="record-conference-series">
+        <div class="panel panel-datatables" id="record-conference-series">
           <div class="panel-heading">Conferences in the series</div>
           <div class="panel-body">
             <div class="datatables-loading">
