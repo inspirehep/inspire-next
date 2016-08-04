@@ -1006,6 +1006,23 @@ WORKFLOWS_UI_REST_DEFAULT_SORT = {
     }
 }
 
+# Crawling
+# ========
+
+CRAWLER_HOST_URL = os.environ.get(
+    "CRAWLER_HOST_URL",
+    "http://localhost:6800")
+
+CRAWLER_SETTINGS = {
+    # URL to your flower instance
+    "API_PIPELINE_URL": os.environ.get(
+        "CRAWLER_API_PIPELINE_URL",
+        "http://localhost:5555/api/task/async-apply"),
+    "API_PIPELINE_TASK_ENDPOINT_DEFAULT": os.environ.get(
+        "CRAWLER_API_PIPELINE_TASK_ENDPOINT_DEFAULT",
+        "inspire_crawler.tasks.submit_results"),
+}
+
 # Inspire mappings
 # ================
 
