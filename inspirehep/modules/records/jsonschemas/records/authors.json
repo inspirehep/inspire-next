@@ -1,6 +1,33 @@
 {
     "$schema": "http://json-schema.org/schema#",
     "properties": {
+        "advisors": {
+            "items": {
+                "properties": {
+                    "curated_relation": {
+                        "type": "boolean"
+                    },
+                    "degree_type": {
+                        "enum": [
+                            "PhD",
+                            "Master",
+                            "Bachelor",
+                            "Other"
+                        ],
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "record": {
+                        "$ref": "elements/json_reference.json"
+                    }
+                },
+                "type": "object"
+            },
+            "type": "array",
+            "uniqueItems": true
+        },
         "author_note": {
             "description": "Contains public note.",
             "type": "string"
@@ -135,33 +162,6 @@
             "items": {
                 "format": "email",
                 "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
-        "phd_advisors": {
-            "description": "Contains a links to the advisors in form of record ids.",
-            "items": {
-                "properties": {
-                    "curated_relation": {
-                        "type": "boolean"
-                    },
-                    "degree_type": {
-                        "description": "FIXME: better enum",
-                        "enum": [
-                            "PhD",
-                            "Master"
-                        ],
-                        "type": "string"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "record": {
-                        "$ref": "elements/json_reference.json"
-                    }
-                },
-                "type": "object"
             },
             "type": "array",
             "uniqueItems": true

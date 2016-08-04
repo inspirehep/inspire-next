@@ -120,10 +120,10 @@ def convert_for_form(data):
                     data["public_email"] = position.get("email")
             data["institution_history"].append(pos)
         data["institution_history"].reverse()
-    if "phd_advisors" in data:
-        phd_advisors = data["phd_advisors"]
-        data["advisors"] = []
-        for advisor in phd_advisors:
+    if 'advisors' in data:
+        advisors = data['advisors']
+        data['advisors'] = []
+        for advisor in advisors:
             adv = {}
             adv["name"] = advisor.get("name", "")
             adv["degree_type"] = advisor.get("degree_type", "")

@@ -425,7 +425,7 @@ def test_positions_from_institutions_history():
     assert expected == result['positions']
 
 
-def test_phd_advisors_from_advisors():
+def test_advisors_from_advisors():
     form = {
         'advisors': [
             {
@@ -447,7 +447,7 @@ def test_phd_advisors_from_advisors():
     ]
     result = updateform.do(form)
 
-    assert expected == result['phd_advisors']
+    assert expected == result['advisors']
 
 
 def test_experiments_from_experiments():

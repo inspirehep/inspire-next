@@ -178,7 +178,7 @@ def institution_history(self, key, value):
     return positions
 
 
-@updateform.over('phd_advisors', '^advisors$')
+@updateform.over('advisors', '^advisors$')
 def advisors(self, key, value):
     advisors = []
     for advisor in value:
