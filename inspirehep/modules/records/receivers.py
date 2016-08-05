@@ -128,6 +128,9 @@ def populate_inspire_document_type(recid, json, *args, **kwargs):
                 elif element['primary'].lower() == 'report':
                     inspire_doc_type.append(element['primary'].lower())
                     break
+                elif element['primary'].lower() == 'activityreport':
+                    inspire_doc_type.append('activity report')
+                    break
         complete_pub_info = []
         if not inspire_doc_type:
             for field in json.get('publication_info', []):
