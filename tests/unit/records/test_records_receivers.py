@@ -23,7 +23,6 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
-import pytest
 
 from inspirehep.modules.records.receivers import (
     dates_validator,
@@ -50,7 +49,6 @@ def test_dates_validator_does_nothing_when_dates_are_valid():
     assert json_dict['deadline_date'] == '1993-02-02'
 
 
-@pytest.mark.xfail(reason='wrong call to format')
 @mock.patch('inspirehep.modules.records.receivers.current_app.logger.warning')
 def test_dates_validator_warns_when_date_is_invalid(warning):
     json_dict = {
@@ -280,7 +278,6 @@ def test_normalize_field_categories_selects_first_scheme():
     ]
 
 
-@pytest.mark.xfail(reason='classify_field returns Other, not None')
 def test_normalize_field_categories_ignores_unknown_terms_from_unknown_schemes():
     json_dict = {
         'field_categories': [
@@ -513,7 +510,6 @@ def test_populate_inspire_document_type_with_page_start_without_artid():
     assert json_dict['facet_inspire_doc_type'] == []
 
 
-@pytest.mark.xfail(reason='condition on artid is always True')
 def test_populate_inspire_document_type_without_page_start_with_artid():
     json_dict = {
         'collections': [],
@@ -720,7 +716,6 @@ def test_references_validator_does_nothing_on_numerical_recids():
     ]
 
 
-@pytest.mark.xfail(reason='wrong log message')
 @mock.patch('inspirehep.modules.records.receivers.current_app.logger.warning')
 def test_references_validator_removes_and_warns_on_non_numerical_recids(warning):
     json_dict = {
