@@ -91,12 +91,29 @@ def hidden_note2marc(self, key, value):
 
 
 @hep.over('thesis', '^502..')
-@utils.filter_values
 def thesis(self, key, value):
     """Get Thesis Information."""
+    DEGREE_TYPES_MAP = {
+        'RAPPORT DE STAGE': 'Internship Report',
+        'INTERNSHIP REPORT': 'Internship Report',
+        'DIPLOMA': 'Diploma',
+        'BACHELOR': 'Bachelor',
+        'LAUREA': 'Laurea',
+        'MASTER': 'Master',
+        'THESIS': 'Thesis',
+        'PHD': 'PhD',
+        'PDF': 'PhD',
+        'PH.D. THESIS': 'PhD',
+        'HABILITATION': 'Habilitation',
+    }
+
+    _degree_type = value.get('b')
+    degree_type = DEGREE_TYPES_MAP.get(_degree_type.upper(), 'Other')
+
     res = {
+        '_degree_type': _degree_type,
         'defense_date': value.get('a'),
-        'degree_type': value.get('b'),
+        'degree_type': degree_type,
         'date': value.get('d'),
     }
 
@@ -115,12 +132,11 @@ def thesis(self, key, value):
 
 
 @hep2marc.over('502', '^thesis$')
-@utils.filter_values
 def thesis2marc(self, key, value):
     """Get Thesis Information."""
     return {
         'a': value.get('defense_date'),
-        'b': value.get('degree_type'),
+        'b': value.get('_degree_type'),
         'c': [inst['name'] for inst in value.get('institutions', [])],
         'd': value.get('date'),
     }

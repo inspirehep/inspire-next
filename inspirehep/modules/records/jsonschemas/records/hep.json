@@ -816,15 +816,16 @@
                     "type": "string"
                 },
                 "degree_type": {
-                    "description": "FIXME: this enum must be reviewed",
                     "enum": [
-                        "PhD",
-                        "Master",
-                        "Bachelor",
+                        "Other",
+                        "Internship Report",
                         "Diploma",
-                        "Habilitation",
+                        "Bachelor",
                         "Laurea",
-                        "Thesis"
+                        "Master",
+                        "Thesis",
+                        "PhD",
+                        "Habilitation"
                     ],
                     "type": "string"
                 },
