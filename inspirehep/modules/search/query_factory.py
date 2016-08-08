@@ -28,19 +28,22 @@ from __future__ import absolute_import, print_function
 
 import json
 
+import pypeg2
+
+from flask import current_app, flash
+
 from elasticsearch_dsl import Q
 
-from flask import current_app
-
 from invenio_query_parser.ast import MalformedQuery
-
-import pypeg2
 
 from .parser import Main
 
 from .walkers.elasticsearch import ElasticSearchDSL
 from .walkers.elasticsearch_no_keywords import ElasticSearchNoKeywordsDSL
 from .walkers.elasticsearch_no_keywords import QueryHasKeywords
+from .walkers.elasticsearch_validation import ElasticSearchValidationDSL
+from .walkers.elasticsearch_validation import SuggestionMessage
+
 from .walkers.pypeg_to_ast import PypegConverter
 from .walkers.spires_to_invenio import SpiresToInvenio
 
@@ -103,11 +106,17 @@ def inspire_query_factory():
                       fields=get_fields_by_index(index),
                       zero_terms_query="all")
         except QueryHasKeywords:
-            query = query.accept(ElasticSearchDSL(
-                current_app.config.get(
-                    "SEARCH_ELASTIC_KEYWORD_MAPPING", {}
-                )
-            ))
+            try:
+                original_query = query
+                query = query.accept(ElasticSearchDSL(
+                    current_app.config.get(
+                        "SEARCH_ELASTIC_KEYWORD_MAPPING", {}
+                    )
+                ))
+                search_walker = ElasticSearchValidationDSL()
+                original_query.accept(search_walker)
+            except SuggestionMessage as e:
+                flash(e.message, "query_suggestion")
         finally:
             if current_app.debug:
                 current_app.logger.info(json.dumps(query.to_dict(), indent=4))

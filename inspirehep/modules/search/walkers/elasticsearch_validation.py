@@ -30,11 +30,13 @@ from invenio_query_parser.ast import (
 from invenio_query_parser.visitor import make_visitor
 
 
-class QueryHasKeywords(Exception):
-    pass
+class SuggestionMessage(Exception):
+
+    def __init__(self, message):
+        self.message = message
 
 
-class ElasticSearchNoKeywordsDSL(object):
+class ElasticSearchValidationDSL(object):
 
     """Implement visitor to create Elastic Search DSL for queries that don't include keywords."""
 
@@ -42,15 +44,18 @@ class ElasticSearchNoKeywordsDSL(object):
 
     @visitor(KeywordOp)
     def visit(self, node, left, right):
-        raise QueryHasKeywords()
+        if str(node.left.value) == 'refersto' or str(node.left.value) == 'citedby':
+            raise SuggestionMessage(
+                'keyword {} is currently unsupported'.format(str(node.left.value)))
 
     @visitor(MalformedQuery)
     def visit(self, op):
-        raise QueryHasKeywords()
+        raise SuggestionMessage('MalformedQuery')
 
     @visitor(AndOp)
     def visit(self, node, left, right):
-        return
+        if type(node.right) is ValueQuery:
+            raise SuggestionMessage('Extra Keyword')
 
     @visitor(OrOp)
     def visit(self, node, left, right):

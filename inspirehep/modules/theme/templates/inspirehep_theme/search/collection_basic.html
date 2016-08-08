@@ -26,6 +26,7 @@
 {% block body %}
   {% block search_bar %}
     <div id="search-bar" class="{{collection_name}}">
+      {% set landing_page = 'landing_page' %}
       {% include 'inspirehep_theme/search/form/index.html' %}
     </div>
   {% endblock %}

@@ -662,6 +662,53 @@ a.external-link::after {
     }
 }
 
+/* Suggestion messages
+-------------------------------------------------- */
+.input-group-btn{
+    width: 1px !important;
+}
+
+.input-group-btn.landing_page{
+    width: 1% !important;
+}
+
+.suggestion_tooltip {
+  width: 250px;
+  opacity: 1 !important;
+}
+
+.suggestion_icon {
+    position: absolute;
+    right: 100px;
+    bottom: 4px;
+    z-index: 3;
+}
+
+.suggestion_icon#literature {
+    color: $literature-collection;
+}
+.suggestion_icon#authors {
+    color: $authors-collection;
+}
+.suggestion_icon#data {
+    color: $data-collection;
+}
+.suggestion_icon#conferences {
+    color: $conferences-collection;
+}
+.suggestion_icon#jobs {
+    color: $jobs-collection;
+}
+.suggestion_icon#institutions {
+    color: $institutions-collection;
+}
+.suggestion_icon#experiments {
+    color: $experiments-collection;
+}
+.suggestion_icon#journals {
+    color: $journals-collection;
+}
+
 /* Mobile styles
 -------------------------------------------------- */
 @media only screen and (max-width : $screen-md-min) {
