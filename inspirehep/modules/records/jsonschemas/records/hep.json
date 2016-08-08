@@ -197,7 +197,7 @@
                     "orcid": {
                         "description": "ORCID Id when available",
                         "format": "orcid",
-                        "pattern": "\\d{4}-\\d{4}-\\d{4}-\\d{4}",
+                        "pattern": "\\d{4}-\\d{4}-\\d{4}-\\d{3}[\\dX]",
                         "title": "ORCID ID",
                         "type": "string"
                     },
