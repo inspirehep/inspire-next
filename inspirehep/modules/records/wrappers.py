@@ -23,7 +23,8 @@
 from __future__ import absolute_import, division, print_function
 
 from invenio_records.api import Record
-from invenio_search.api import RecordsSearch
+
+from inspirehep.modules.search import JobsSearch
 
 
 class JobsRecord(Record):
@@ -33,7 +34,7 @@ class JobsRecord(Record):
     @property
     def similar(self):
         def _build_query(id_):
-            result = RecordsSearch(index='records-jobs', doc_type='jobs')
+            result = JobsSearch()
             return result.query({
                 'more_like_this': {
                     'docs': [

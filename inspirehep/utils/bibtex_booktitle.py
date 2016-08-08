@@ -20,7 +20,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from inspirehep.utils.search import perform_es_search
+from __future__ import absolute_import, division, print_function
+
+from inspirehep.modules.search import LiteratureSearch
 
 
 def traverse(o, tree_types=(list, tuple)):
@@ -45,10 +47,9 @@ def generate_booktitle(record):
                     if acronym:
                         booktitle = "%s: %s" % (rn, acronym, )
                     else:
-                        records = perform_es_search(
-                            "reportnumber:%s" % (rn,),
-                            "records-hep"
-                        )
+                        records = LiteratureSearch().query_from_iq(
+                            "reportnumber:%s" % (rn,)
+                        ).execute()
                         if records:
                             rec = records.hits[0]
                             for title in rec['titles']:

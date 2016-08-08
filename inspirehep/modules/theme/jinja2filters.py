@@ -26,16 +26,17 @@ from __future__ import absolute_import, division, print_function
 
 import json
 import re
-import six
 import time
 from collections import Iterable
 from datetime import datetime
 from operator import itemgetter
 
+import six
 from flask import current_app
 from jinja2.filters import do_join, evalcontextfilter
 
 from inspirehep.modules.records.json_ref_loader import replace_refs
+from inspirehep.modules.search import InstitutionsSearch, LiteratureSearch
 from inspirehep.utils.date import (
     create_datestruct,
     convert_datestruct_to_dategui,
@@ -43,7 +44,6 @@ from inspirehep.utils.date import (
 from inspirehep.utils.dedupers import dedupe_list
 from inspirehep.utils.jinja2 import render_template_to_string
 from inspirehep.utils.record import get_title
-from inspirehep.utils.search import perform_es_search
 from inspirehep.utils.template import render_macro_from_template
 
 from .views import blueprint
@@ -224,8 +224,9 @@ def proceedings_link(record):
     if not cnum:
         return out
 
-    records = perform_es_search(
-        'cnum:%s and 980__a:proceedings' % cnum, 'records-hep')
+    records = LiteratureSearch().query_from_iq(
+        'cnum:%s and 980__a:proceedings' % cnum
+    ).execute()
 
     if len(records):
         if len(records) > 1:
@@ -314,7 +315,9 @@ def link_to_hep_affiliation(record):
     except KeyError:
         return ''
 
-    records = perform_es_search('affiliation:%s' % icn, 'records-institutions')
+    records = InstitutionsSearch().query_from_iq(
+        'affiliation:%s' % icn
+    ).execute()
     results = records.hits.total
 
     if results:

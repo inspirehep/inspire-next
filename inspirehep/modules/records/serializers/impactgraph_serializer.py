@@ -3,35 +3,31 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it
-# and/or modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be
-# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the
-# Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
-# MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this license, CERN does not
-# waive the privileges and immunities granted to it by virtue of its status
-# as an Intergovernmental Organization or submit itself to any jurisdiction.
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 """Impact Graph serializer for records."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 import json
 
-from invenio_search import current_search_client
-
 from inspirehep.utils.record import get_title
-from inspirehep.modules.search import IQ
+from inspirehep.modules.search import LiteratureSearch
 
 
 class ImpactGraphSerializer(object):
@@ -57,11 +53,9 @@ class ImpactGraphSerializer(object):
         # Get citations
         citations = []
 
-        es_query = IQ('refersto:' + record['control_number'])
-        record_citations = current_search_client.search(
-            index='records-hep',
-            doc_type='hep',
-            body={"query": es_query.to_dict()},
+        record_citations = LiteratureSearch().query_from_iq(
+            'refersto:' + record['control_number']
+        ).params(
             size=9999,
             _source=[
                 'control_number',
@@ -69,13 +63,17 @@ class ImpactGraphSerializer(object):
                 'titles',
                 'earliest_date'
             ]
-        )['hits']['hits']
+        ).execute().hits
+
         for citation in record_citations:
-            citation = citation['_source']
+            try:
+                citation_count = citation.citation_count
+            except AttributeError:
+                citation_count = 0
             citations.append({
                 "inspire_id": citation['control_number'],
-                "citation_count": citation.get('citation_count', 0),
-                "title": get_title(citation),
+                "citation_count": citation_count,
+                "title": get_title(citation.to_dict()),
                 "year": citation['earliest_date'].split('-')[0]
             })
 
@@ -90,29 +88,27 @@ class ImpactGraphSerializer(object):
         ]
 
         if reference_recids:
-            query = IQ(' OR '.join('recid:' + str(ref)
-                                   for ref in reference_recids))
-
-            record_references = current_search_client.search(
-                index='records-hep',
-                doc_type='hep',
-                body={"query": query.to_dict()},
+            record_references = LiteratureSearch().query_from_iq(
+                ' OR '.join('recid:' + str(ref) for ref in reference_recids)
+            ).params(
                 _source=[
                     'control_number',
                     'citation_count',
                     'titles',
                     'earliest_date'
                 ]
-            )
+            ).execute().hits
 
-            for reference in record_references['hits']['hits']:
-                ref_info = reference["_source"]
-
+            for reference in record_references:
+                try:
+                    citation_count = reference.citation_count
+                except AttributeError:
+                    citation_count = 0
                 references.append({
-                    "inspire_id": ref_info['control_number'],
-                    "citation_count": ref_info.get('citation_count', 0),
-                    "title": get_title(ref_info),
-                    "year": ref_info['earliest_date'].split('-')[0]
+                    "inspire_id": reference['control_number'],
+                    "citation_count": citation_count,
+                    "title": get_title(reference.to_dict()),
+                    "year": reference['earliest_date'].split('-')[0]
                 })
 
         out['references'] = references
