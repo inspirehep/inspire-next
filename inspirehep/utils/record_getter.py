@@ -27,10 +27,10 @@ from __future__ import absolute_import, division, print_function
 from functools import wraps
 
 from flask import current_app
+from werkzeug.utils import import_string
 
-from invenio_records.api import Record
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_search import current_search_client as es
+from invenio_records.api import Record
 
 
 class RecordGetterError(Exception):
@@ -65,22 +65,16 @@ def raise_record_getter_error_and_log(f):
 def get_es_record(record_type, recid):
     pid = PersistentIdentifier.get(record_type, recid)
     search_conf = current_app.config['RECORDS_REST_ENDPOINTS'][record_type]
-
-    return es.get_source(
-        index=search_conf['search_index'],
-        id=str(pid.object_uuid),
-        doc_type=search_conf['search_type'])
+    search_class = import_string(search_conf['search_class'])()
+    return search_class.get_source(pid.object_uuid)
 
 
 @raise_record_getter_error_and_log
 def get_es_record_by_uuid(uuid):
     pid = PersistentIdentifier.query.filter_by(object_uuid=uuid).one()
     search_conf = current_app.config['RECORDS_REST_ENDPOINTS'][pid.pid_type]
-
-    return es.get_source(
-        index=search_conf['search_index'],
-        id=str(uuid),
-        doc_type=search_conf['search_type'])
+    search_class = import_string(search_conf['search_class'])()
+    return search_class.get_source(uuid)
 
 
 @raise_record_getter_error_and_log

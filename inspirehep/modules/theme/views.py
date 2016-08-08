@@ -37,32 +37,39 @@ from flask import (
     request,
     url_for,
 )
-
 from flask_login import current_user
-
+from flask_menu import current_menu
 from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_mail.tasks import send_email
-
-from flask.ext.menu import current_menu
-
-from inspirehep.modules.records.conference_series import \
-    CONFERENCE_CATEGORIES_TO_SERIES
-from inspirehep.modules.references.view_utils import \
-    Reference
-
-from invenio_search import current_search_client
-from invenio_search.api import RecordsSearch
 from invenio_pidstore.models import PersistentIdentifier
+from invenio_search import current_search_client
 
+from inspirehep.modules.records.conference_series import (
+    CONFERENCE_CATEGORIES_TO_SERIES,
+)
+from inspirehep.modules.references.view_utils import Reference
+from inspirehep.modules.search import (
+    AuthorsSearch,
+    ConferencesSearch,
+    DataSearch,
+    ExperimentsSearch,
+    InstitutionsSearch,
+    JournalsSearch,
+    LiteratureSearch
+)
 from inspirehep.utils.citations import Citation
-from inspirehep.utils.search import get_number_of_records, perform_es_search
+from inspirehep.utils.conferences import (
+    render_conferences_contributions,
+    render_conferences_in_the_same_series,
+)
+from inspirehep.utils.experiments import (
+    render_experiment_contributions,
+    render_experiment_people,
+)
 from inspirehep.utils.record import get_title
 from inspirehep.utils.template import render_macro_from_template
-from inspirehep.utils.conferences import render_conferences_in_the_same_series
-from inspirehep.utils.conferences import render_conferences_contributions
-from inspirehep.utils.experiments import render_experiment_contributions
-from inspirehep.utils.experiments import render_experiment_people
+
 
 blueprint = Blueprint(
     'inspirehep_theme',
@@ -82,7 +89,7 @@ blueprint = Blueprint(
 @blueprint.route('/', methods=['GET', ])
 def index():
     """View for literature collection landing page."""
-    number_of_records = get_number_of_records('hep')
+    number_of_records = LiteratureSearch().count()
 
     return render_template(
         'inspirehep_theme/search/collection_literature.html',
@@ -95,7 +102,7 @@ def index():
 @blueprint.route('/collection/authors', methods=['GET', ])
 def hepnames():
     """View for authors collection landing page."""
-    number_of_records = get_number_of_records('hepnames')
+    number_of_records = AuthorsSearch().count()
 
     return render_template(
         'inspirehep_theme/search/collection_authors.html',
@@ -107,7 +114,7 @@ def hepnames():
 @blueprint.route('/conferences', methods=['GET', ])
 def conferences():
     """View for conferences collection landing page."""
-    number_of_records = get_number_of_records('conferences')
+    number_of_records = ConferencesSearch().count()
     upcoming_conferences = _get_upcoming_conferences()
 
     return render_template(
@@ -128,7 +135,7 @@ def jobs():
 @blueprint.route('/institutions', methods=['GET', ])
 def institutions():
     """View for institutions collection landing page."""
-    number_of_records = get_number_of_records('institutions')
+    number_of_records = InstitutionsSearch().count()
     some_institutions = _get_some_institutions()
 
     return render_template(
@@ -142,7 +149,7 @@ def institutions():
 @blueprint.route('/experiments', methods=['GET', ])
 def experiments():
     """View for experiments collection landing page."""
-    number_of_records = get_number_of_records('experiments')
+    number_of_records = ExperimentsSearch().count()
 
     return render_template(
         'inspirehep_theme/search/collection_experiments.html',
@@ -154,7 +161,7 @@ def experiments():
 @blueprint.route('/journals', methods=['GET', ])
 def journals():
     """View for journals collection landing page."""
-    number_of_records = get_number_of_records('journals')
+    number_of_records = JournalsSearch().count()
 
     return render_template(
         'inspirehep_theme/search/collection_journals.html',
@@ -166,7 +173,7 @@ def journals():
 @blueprint.route('/data', methods=['GET', ])
 def data():
     """View for data collection landing page."""
-    number_of_records = get_number_of_records('data')
+    number_of_records = DataSearch().count()
 
     return render_template(
         'inspirehep_theme/search/collection_data.html',
@@ -221,10 +228,7 @@ def ajax_references():
 
     pid = PersistentIdentifier.get(collection, recid)
 
-    record = current_search_client.get_source(index='records-hep',
-                                              id=pid.object_uuid,
-                                              doc_type='hep',
-                                              ignore=404)
+    record = LiteratureSearch().get_source(pid.object_uuid)
 
     return jsonify(
         {
@@ -242,10 +246,7 @@ def ajax_citations():
 
     pid = PersistentIdentifier.get(collection, recid)
 
-    record = current_search_client.get_source(index='records-hep',
-                                              id=pid.object_uuid,
-                                              doc_type='hep',
-                                              ignore=404)
+    record = LiteratureSearch().get_source(pid.object_uuid)
 
     return jsonify(
         {
@@ -270,7 +271,7 @@ def get_institution_experiments_from_es(icn):
     query = {
         "term": {"affiliation": icn}
     }
-    search = RecordsSearch(index="records-experiments").query(query)[:100]
+    search = ExperimentsSearch().query(query)[:100]
     search = search.sort('-earliest_date')
 
     return search.execute().hits
@@ -283,13 +284,13 @@ def get_institution_papers_from_es(recid):
     :param recid: id of the institution.
     :type recid: string
     """
-    query = "authors.affiliations.recid:{}".format(recid)
-    return perform_es_search(
-        query,
-        'records-hep',
-        sort='-earliest_date',
+    return LiteratureSearch().query_from_iq(
+        'authors.affiliations.recid:{}'.format(recid)
+    ).sort(
+        '-earliest_date'
+    ).params(
         size=100,
-        fields=[
+        _source=[
             'control_number',
             'earliest_date',
             'titles',
@@ -298,7 +299,7 @@ def get_institution_papers_from_es(recid):
             'citation_count',
             'collaboration'
         ]
-    ).hits
+    ).execute().hits
 
 
 def get_experiment_publications(experiment_name):
@@ -311,7 +312,7 @@ def get_experiment_publications(experiment_name):
     query = {
         "term": {"accelerator_experiments.experiment": experiment_name}
     }
-    search = RecordsSearch(index="records-hep").query(query)
+    search = LiteratureSearch().query(query)
     search = search.params(search_type="count")
     return search.execute().hits.total
 
@@ -323,41 +324,19 @@ def get_institution_people_datatables_rows(recid):
     :param recid: id of the institution.
     :type recid: string
     """
-    query = {
-        "query": {
-            "term": {
-                "authors.affiliations.recid": recid
-            }
-        },
-        "aggs": {
-            "authors": {
-                "nested": {
-                    "path": "authors"
-                },
-                "aggs": {
-                    "affiliated": {
-                        "filter": {
-                            "term": {"authors.affiliations.recid": recid}
-                        },
-                        "aggs": {
-                            "byrecid": {
-                                "terms": {
-                                    "field": "authors.recid"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    records_from_es = current_search_client.search(
-        index='records-hep',
-        doc_type='hep',
-        body=query,
-        search_type='count'
+    query = LiteratureSearch().query(
+        "term",
+        authors__affiliations__recid=recid
     )
+    query = query.params(search_type="count")
+
+    query.aggs.bucket("authors", "nested", path="authors")\
+        .bucket("affiliated", "filter", term={
+            "authors.affiliations.recid": recid
+        })\
+        .bucket('byrecid', 'terms', field='authors.recid')
+
+    records_from_es = query.execute().to_dict()
 
     # Extract all the record ids from the aggregation
     papers_per_author = records_from_es[
@@ -372,15 +351,19 @@ def get_institution_people_datatables_rows(recid):
         if i != len(recids) - 1:
             query += " OR "
 
-    results = perform_es_search(
-        query, 'records-authors', size=9999, fields=['control_number', 'name']
-    )
+    results = AuthorsSearch().query_from_iq(
+        query
+    ).params(
+        size=9999,
+        _source=['control_number', 'name']
+    ).execute()
+
     recid_map = dict(
         [(int(result.control_number), result.name) for result in results]
     )
 
     result = []
-    author_html_link = "<a href='/authors/{recid}'>{name}</a>"
+    author_html_link = u"<a href='/authors/{recid}'>{name}</a>"
     for author in papers_per_author:
         row = []
         try:
@@ -490,10 +473,7 @@ def ajax_institutions_experiments():
 
     pid = PersistentIdentifier.get('institutions', recid)
 
-    record = current_search_client.get_source(index='records-institutions',
-                                              id=pid.object_uuid,
-                                              doc_type='institutions',
-                                              ignore=404)
+    record = InstitutionsSearch().get_source(pid.object_uuid)
     try:
         icn = record.get('ICN', [])[0]
     except KeyError:
@@ -662,7 +642,9 @@ def ajax_experiments_people():
 #
 
 def _get_some_institutions():
-    some_institutions = perform_es_search('', 'records-institutions', 0, 250)
+    some_institutions = InstitutionsSearch().query_from_iq(
+        ''
+    )[:250].execute()
 
     return [hit['_source'] for hit in some_institutions.to_dict()['hits']['hits']]
 
@@ -671,8 +653,10 @@ def _get_upcoming_conferences():
     today = date.today()
     in_six_months = today + relativedelta(months=+6)
 
-    upcoming_conferences = perform_es_search(
-        'opening_date:{0}->{1}'.format(str(today), str(in_six_months)),
-        'records-conferences', 1, 100, {'opening_date': 'asc'})
+    upcoming_conferences = ConferencesSearch().query_from_iq(
+        'opening_date:{0}->{1}'.format(str(today), str(in_six_months))
+    ).sort(
+        {'opening_date': 'asc'}
+    )[1:100].execute()
 
     return [hit['_source'] for hit in upcoming_conferences.to_dict()['hits']['hits']]

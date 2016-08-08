@@ -20,17 +20,18 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
 import datetime
 
 import jinja2
 import mock
 import pytest
-
 from elasticsearch_dsl import result
 
-from inspirehep.modules.theme.jinja2filters import *
-
 from invenio_records.api import Record
+
+from inspirehep.modules.theme.jinja2filters import *
 
 
 @pytest.fixture
@@ -490,7 +491,7 @@ def test_proceedings_link_returns_empty_string_without_cnum():
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
+@mock.patch('inspirehep.modules.theme.jinja2filters.LiteratureSearch.execute')
 def test_proceedings_link_returns_empty_string_with_zero_search_results(c, mock_perform_es_search_empty):
     c.return_value = mock_perform_es_search_empty
 
@@ -502,7 +503,7 @@ def test_proceedings_link_returns_empty_string_with_zero_search_results(c, mock_
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
+@mock.patch('inspirehep.modules.theme.jinja2filters.LiteratureSearch.execute')
 def test_proceedings_link_returns_a_link_with_one_search_result(c, mock_perform_es_search_onerecord):
     c.return_value = mock_perform_es_search_onerecord
 
@@ -514,7 +515,7 @@ def test_proceedings_link_returns_a_link_with_one_search_result(c, mock_perform_
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
+@mock.patch('inspirehep.modules.theme.jinja2filters.LiteratureSearch.execute')
 def test_proceedings_link_joins_with_a_comma_and_a_space(s, mock_perform_es_search_tworecord):
     s.return_value = mock_perform_es_search_tworecord
 
@@ -574,7 +575,7 @@ def test_link_to_hep_affiliation_returns_empty_string_when_record_has_no_ICN():
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
+@mock.patch('inspirehep.modules.theme.jinja2filters.InstitutionsSearch.execute')
 def test_link_to_hep_affiliation_returns_empty_string_when_empty_results(s, mock_perform_es_search_empty):
     s.return_value = mock_perform_es_search_empty
 
@@ -586,7 +587,7 @@ def test_link_to_hep_affiliation_returns_empty_string_when_empty_results(s, mock
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
+@mock.patch('inspirehep.modules.theme.jinja2filters.InstitutionsSearch.execute')
 def test_link_to_hep_affiliation_singular_when_one_result(s, mock_perform_es_search_onerecord):
     s.return_value = mock_perform_es_search_onerecord
 
@@ -598,7 +599,7 @@ def test_link_to_hep_affiliation_singular_when_one_result(s, mock_perform_es_sea
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.perform_es_search')
+@mock.patch('inspirehep.modules.theme.jinja2filters.InstitutionsSearch.execute')
 def test_link_to_hep_affiliation_plural_when_more_results(s, mock_perform_es_search_tworecord):
     s.return_value = mock_perform_es_search_tworecord
 
