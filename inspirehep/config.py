@@ -159,17 +159,6 @@ SEARCH_UI_SEARCH_TEMPLATE = 'search/search.html'
 SEARCH_UI_SEARCH_API = '/api/literature/'
 SEARCH_UI_SEARCH_INDEX = 'records-hep'
 
-SEARCH_QUERY_PARSER = 'inspirehep.modules.search.parser:Main'
-
-SEARCH_QUERY_WALKERS = [
-    'inspirehep.modules.search.walkers.pypeg_to_ast:PypegConverter',
-    'inspirehep.modules.search.walkers.spires_to_invenio:SpiresToInvenio'
-]
-
-SEARCH_WALKERS = [
-    'inspirehep.modules.search.walkers.elasticsearch:ElasticSearchDSL'
-]
-
 # SEARCH_ELASTIC_KEYWORD_MAPPING -- this variable holds a dictionary to map
 # invenio keywords to elasticsearch fields
 SEARCH_ELASTIC_KEYWORD_MAPPING = {
