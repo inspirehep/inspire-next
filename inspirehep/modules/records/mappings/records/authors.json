@@ -55,6 +55,15 @@
                     },
                     "type": "string"
                 },
+                "experiments": {
+                    "properties": {
+                        "name": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
+                },
                 "global_default": {
                     "analyzer": "basic_analyzer",
                     "type": "string"
@@ -69,15 +78,6 @@
                             "copy_to": [
                                 "authorautocomplete"
                             ],
-                            "type": "string"
-                        }
-                    },
-                    "type": "object"
-                },
-                "experiments": {
-                    "properties": {
-                        "name": {
-                            "index": "not_analyzed",
                             "type": "string"
                         }
                     },

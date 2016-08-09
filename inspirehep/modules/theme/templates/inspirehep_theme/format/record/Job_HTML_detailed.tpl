@@ -59,9 +59,9 @@
             </div>
           {% endif %}
 
-          {% if record.continent %}
+          {% if record.regions %}
             <div class="detailed-record-field">
-              <label>Region:</label> {{ record.continent }}<br>
+              <label>Region:</label> {{ record.regions | join(', ') }}<br>
             </div>
           {% endif %}
 

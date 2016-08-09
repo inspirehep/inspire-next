@@ -742,7 +742,7 @@ RECORDS_REST_FACETS = {
     },
     "records-jobs": {
         "filters": {
-            "continent": terms_filter('continent'),
+            "regions": terms_filter('regions'),
             "ranks": terms_filter('ranks'),
             "field_categories": terms_filter('field_categories.term')
         },

@@ -195,8 +195,8 @@ SPIRES_KEYWORDS = {
     # jobs specific codes
     'job': 'title',
     'position': 'title',
-    'region': 'region',
-    'continent': 'region',
+    'region': 'regions',
+    'continent': 'regions',
     'deadline': '046__a',
     'rank': 'rank',
     # cataloguer
