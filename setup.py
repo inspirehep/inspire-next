@@ -196,6 +196,7 @@ setup(
             'arxiv = inspirehep.modules.arxiv:Arxiv',
             'crossref = inspirehep.modules.crossref:CrossRef',
             'inspire_orcid = inspirehep.modules.orcid:INSPIREOrcid',
+            'invenio_record_editor = inspirehep.modules.invenio_record_editor:InvenioRecordEditor',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
@@ -211,6 +212,7 @@ setup(
             'invenio_search_ui_search_js = inspirehep.modules.search.bundles:js',
             'inspirehep_holding_css = inspirehep.modules.theme.bundles:holding_pen_css',
             'inspirehep_holding_js = inspirehep.modules.workflows.bundles:details_js',
+            'invenio_record_editor_js = inspirehep.modules.invenio_record_editor.bundles:js',
         ],
         'invenio_jsonschemas.schemas': [
             'inspire_records = inspirehep.modules.records.jsonschemas',
