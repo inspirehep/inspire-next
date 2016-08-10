@@ -1,28 +1,31 @@
+# -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
 # Copyright (C) 2015, 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
-from inspirehep.utils.jinja2 import render_template_to_string
+from __future__ import absolute_import, division, print_function
 
 from invenio_records.api import Record
-from invenio_search import current_search_client
 
-from inspirehep.modules.search import IQ
+from inspirehep.utils.jinja2 import render_template_to_string
+from inspirehep.modules.search import LiteratureSearch
 
 
 class Reference(object):
@@ -45,12 +48,10 @@ class Reference(object):
             refs_to_get_from_es = [
                 ref['recid'] for ref in references if ref.get('recid')
             ]
-            query = IQ(' OR '.join('recid:' + str(ref)
-                                   for ref in refs_to_get_from_es))
-            records_from_es = current_search_client.search(
-                index='records-hep',
-                doc_type='hep',
-                body={"query": query.to_dict()},
+            records_from_es = LiteratureSearch().query_from_iq(
+                ' OR '.join('recid:' + str(ref)
+                            for ref in refs_to_get_from_es)
+            ).params(
                 size=9999,
                 _source=[
                     'control_number',
@@ -62,7 +63,7 @@ class Reference(object):
                     'corporate_author',
                     'publication_info'
                 ]
-            )['hits']['hits']
+            ).execute().to_dict()['hits']['hits']
 
             refs_from_es = {
                 str(ref['_source']['control_number']): ref['_source'] for ref in records_from_es
@@ -85,7 +86,8 @@ class Reference(object):
                 else:
                     # Easier to use record macros over reference records.
                     if 'publication_info' in reference:
-                        reference['publication_info'] = [reference['publication_info']]
+                        reference['publication_info'] = [
+                            reference['publication_info']]
                     else:
                         reference['publication_info'] = []
                     reference = Record(reference)

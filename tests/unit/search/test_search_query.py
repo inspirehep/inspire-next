@@ -20,13 +20,15 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
 import pytest
 
-from inspirehep.modules.search import IQ
+from inspirehep.modules.search import IQ, LiteratureSearch
 
 
 def test_empty():
-    query = IQ('')
+    query = IQ('', LiteratureSearch())
 
     expected = {
         'multi_match': {
@@ -51,7 +53,7 @@ def test_empty():
 
 
 def test_google_style():
-    query = IQ('kudenko')
+    query = IQ('kudenko', LiteratureSearch())
 
     expected = {
         'multi_match': {
@@ -77,7 +79,7 @@ def test_google_style():
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_google_style_or_google_style():
-    query = IQ('sungtae cho or 1301.7261')
+    query = IQ('sungtae cho or 1301.7261', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -87,7 +89,7 @@ def test_google_style_or_google_style():
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_google_style_and_not_collaboration():
-    query = IQ("raffaele d'agnolo and not cn cms")
+    query = IQ("raffaele d'agnolo and not cn cms", LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -97,7 +99,7 @@ def test_google_style_and_not_collaboration():
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_author():
-    query = IQ('a kondrashuk')
+    query = IQ('a kondrashuk', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -107,7 +109,7 @@ def test_author():
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_author_bai_malformed():
-    query = IQ('a r.j.hill.1')
+    query = IQ('a r.j.hill.1', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -116,7 +118,7 @@ def test_author_bai_malformed():
 
 
 def test_author_bai():
-    query = IQ('find a r.j.hill.1')
+    query = IQ('find a r.j.hill.1', LiteratureSearch())
 
     expected = {
         "bool": {
@@ -154,7 +156,7 @@ def test_author_bai():
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_author_or_author():
-    query = IQ('a fileviez perez,p or p. f. perez')
+    query = IQ('a fileviez perez,p or p. f. perez', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -164,7 +166,7 @@ def test_author_or_author():
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_author_and_not_author():
-    query = IQ('a espinosa,jose r and not a rodriguez espinosa')
+    query = IQ('a espinosa,jose r and not a rodriguez espinosa', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -174,7 +176,7 @@ def test_author_and_not_author():
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_author_and_not_type_code():
-    query = IQ('a nilles,h and not tc I')
+    query = IQ('a nilles,h and not tc I', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -186,7 +188,7 @@ def test_author_and_not_type_code():
 def author_or_author_and_not_collaborations_and_not_title_and_not_type_code():
     query = IQ(
         'a rojo,j. or rojo-chacon,j. and not collaboration pierre auger '
-        'and not collaboration auger and not t auger and tc p')
+        'and not collaboration auger and not t auger and tc p', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -205,7 +207,7 @@ def test_exactauthor():
 
 
 def test_abstract_colon_with_star_wildcard():
-    query = IQ('abstract: part*')
+    query = IQ('abstract: part*', LiteratureSearch())
 
     expected = {
         'query_string': {
@@ -220,7 +222,7 @@ def test_abstract_colon_with_star_wildcard():
 
 
 def test_author_colon():
-    query = IQ('author: vagenas')
+    query = IQ('author: vagenas', LiteratureSearch())
 
     expected = {
         "bool": {
@@ -249,7 +251,7 @@ def test_author_colon():
 
 
 def test_author_colon_with_double_quotes():
-    query = IQ('author:"tachikawa, yuji"')
+    query = IQ('author:"tachikawa, yuji"', LiteratureSearch())
 
     expected = {
         "bool": {
@@ -286,7 +288,7 @@ def test_author_colon_with_double_quotes():
 
 
 def test_author_colon_bai():
-    query = IQ('author:Y.Nomura.1')
+    query = IQ('author:Y.Nomura.1', LiteratureSearch())
 
     expected = {
         "bool": {
@@ -316,7 +318,7 @@ def test_author_colon_bai():
 
 def test_author_colon_bai_and_collection_colon():
     query = IQ(
-        'author:E.Witten.1 AND collection:citeable')
+        'author:E.Witten.1 AND collection:citeable', LiteratureSearch())
 
     expected = {
         "bool": {
@@ -354,7 +356,7 @@ def test_author_colon_bai_and_collection_colon():
 
 
 def test_author_colon_bai_with_double_quotes_and_collection_colon():
-    query = IQ('author:"E.Witten.1" AND collection:citeable')
+    query = IQ('author:"E.Witten.1" AND collection:citeable', LiteratureSearch())
 
     expected = {
         "bool": {
@@ -400,7 +402,9 @@ def test_author_colon_bai_with_double_quotes_and_collection_colon():
 
 def test_author_colon_bai_and_collection_colon_and_cited_colon():
     query = IQ(
-        'author:E.Witten.1 AND collection:citeable AND cited:500->1000000')
+        'author:E.Witten.1 AND collection:citeable AND cited:500->1000000',
+        LiteratureSearch()
+        )
 
     expected = {
         "bool": {
@@ -448,7 +452,9 @@ def test_author_colon_bai_and_collection_colon_and_cited_colon():
 
 def test_author_colon_bai_with_double_quotes_and_collection_colon_and_cited_colon():
     query = IQ(
-        'author:"E.Witten.1" AND collection:citeable AND cited:500->1000000')
+        'author:"E.Witten.1" AND collection:citeable AND cited:500->1000000',
+        LiteratureSearch()
+    )
 
     expected = {
         "bool": {
@@ -502,7 +508,10 @@ def test_author_colon_bai_with_double_quotes_and_collection_colon_and_cited_colo
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_author_colon_or_eprint_without_keyword():
-    query = IQ('author:"Takayanagi, Tadashi" or hep-th/0010101')
+    query = IQ(
+        'author:"Takayanagi, Tadashi" or hep-th/0010101',
+        LiteratureSearch()
+    )
 
     expected = {}
     result = query.to_dict()
@@ -514,7 +523,9 @@ def test_author_colon_or_author_colon_or_title_colon_or_title_colon():
     query = IQ(
         "(author:'Hiroshi Okada' OR (author:'H Okada' hep-ph) OR "
         "title: 'Dark matter in supersymmetric U(1(B-L) model' OR "
-        "title: 'Non-Abelian discrete symmetry for flavors')")
+        "title: 'Non-Abelian discrete symmetry for flavors')",
+        LiteratureSearch()
+        )
 
     expected = {
         'bool': {
@@ -603,7 +614,7 @@ def test_author_colon_or_author_colon_or_title_colon_or_title_colon():
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_citedby_colon():
-    query = IQ('citedby:foobar')
+    query = IQ('citedby:foobar', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -613,7 +624,7 @@ def test_citedby_colon():
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_citedby_colon_recid_colon():
-    query = IQ('citedby:recid:902780')
+    query = IQ('citedby:recid:902780', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -623,7 +634,7 @@ def test_citedby_colon_recid_colon():
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_eprint_colon_with_arxiv():
-    query = IQ('eprint:arxiv:TODO')
+    query = IQ('eprint:arxiv:TODO', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -633,7 +644,7 @@ def test_eprint_colon_with_arxiv():
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_eprint_colon_without_arxiv():
-    query = IQ('eprint:TODO')
+    query = IQ('eprint:TODO', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -643,7 +654,7 @@ def test_eprint_colon_without_arxiv():
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_exactauthor_colon():
-    query = IQ('ea:matt visser')
+    query = IQ('ea:matt visser', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -653,7 +664,7 @@ def test_exactauthor_colon():
 
 @pytest.mark.xfail(reason='query is malformed, but user intent is clear')
 def test_exactauthor_colon_and_collection_colon():
-    query = IQ('ea: matt visser AND collection:citeable')
+    query = IQ('ea: matt visser AND collection:citeable', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -662,7 +673,7 @@ def test_exactauthor_colon_and_collection_colon():
 
 
 def test_exactauthor_colon_bai():
-    query = IQ('exactauthor:J.Serra.3')
+    query = IQ('exactauthor:J.Serra.3', LiteratureSearch())
 
     expected = {
         "multi_match": {
@@ -681,7 +692,7 @@ def test_exactauthor_colon_bai():
 
 
 def test_field_code_colon():
-    query = IQ('fc: a')
+    query = IQ('fc: a', LiteratureSearch())
 
     expected = {'multi_match': {'query': 'a', 'fields': ['field_code']}}
     result = query.to_dict()
@@ -691,7 +702,7 @@ def test_field_code_colon():
 
 @pytest.mark.xfail(reason='BAI is not part of the mappings')
 def test_or_of_exactauthor_colon_queries():
-    query = IQ('exactauthor:X.Yin.1 or exactauthor:"Yin, Xi"')
+    query = IQ('exactauthor:X.Yin.1 or exactauthor:"Yin, Xi"', LiteratureSearch())
 
     expected = {
         "multi_match": {
@@ -711,7 +722,7 @@ def test_or_of_exactauthor_colon_queries():
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_fulltext_colon():
-    query = IQ('fulltext:TODO')
+    query = IQ('fulltext:TODO', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -721,7 +732,7 @@ def test_fulltext_colon():
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_journal_colon():
-    query = IQ('journal:TODO')
+    query = IQ('journal:TODO', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -730,7 +741,7 @@ def test_journal_colon():
 
 
 def test_refersto_colon_recid_colon():
-    query = IQ('refersto:recid:1286113')
+    query = IQ('refersto:recid:1286113', LiteratureSearch())
 
     expected = {
         'multi_match': {
@@ -747,7 +758,7 @@ def test_refersto_colon_recid_colon():
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_topcite_colon():
-    query = IQ('topcite:200+')
+    query = IQ('topcite:200+', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -756,7 +767,7 @@ def test_topcite_colon():
 
 
 def test_type_code_colon():
-    query = IQ('tc: l')
+    query = IQ('tc: l', LiteratureSearch())
 
     expected = {'multi_match': {'query': 'l', 'fields': ['collection']}}
     result = query.to_dict()
@@ -765,7 +776,7 @@ def test_type_code_colon():
 
 
 def test_find_author_with_hash_wildcard():
-    query = IQ('find a chkv#')
+    query = IQ('find a chkv#', LiteratureSearch())
 
     expected = {
         'bool': {
@@ -787,7 +798,7 @@ def test_find_author_with_hash_wildcard():
 
 @pytest.mark.xfail(reason='tracked in issue #1235')
 def test_find_journal():
-    query = IQ('find j "Phys.Rev.Lett.,105*"')
+    query = IQ('find j "Phys.Rev.Lett.,105*"', LiteratureSearch())
 
     expected = {
         'query_string': {
@@ -802,7 +813,7 @@ def test_find_journal():
 
 
 def test_find_exactauthor():
-    query = IQ('find ea witten, edward')
+    query = IQ('find ea witten, edward', LiteratureSearch())
 
     expected = {
         "multi_match": {
@@ -822,7 +833,7 @@ def test_find_exactauthor():
 
 def test_find_exactauthor_not_affiliation_uppercase():
     query = IQ(
-        'FIND EA RINALDI, MASSIMILIANO NOT AFF SINCROTRONE TRIESTE')
+        'FIND EA RINALDI, MASSIMILIANO NOT AFF SINCROTRONE TRIESTE', LiteratureSearch())
 
     expected = {
         "bool": {
@@ -858,7 +869,7 @@ def test_find_exactauthor_not_affiliation_uppercase():
 
 
 def test_find_author():
-    query = IQ('find a polchinski')
+    query = IQ('find a polchinski', LiteratureSearch())
 
     expected = {
         "bool": {
@@ -895,7 +906,7 @@ def test_find_author():
 
 
 def test_find_author_uppercase():
-    query = IQ('FIND A W F CHANG')
+    query = IQ('FIND A W F CHANG', LiteratureSearch())
 
     expected = {
         "bool": {
@@ -932,7 +943,7 @@ def test_find_author_uppercase():
 
 
 def test_find_author_and_date():
-    query = IQ('find a hatta and date after 2000')
+    query = IQ('find a hatta and date after 2000', LiteratureSearch())
 
     expected = {
         "bool": {
@@ -1017,7 +1028,7 @@ def test_find_author_and_date():
 
 
 def test_find_author_or_author():
-    query = IQ('find a gersdorff, g or a von gersdorff, g')
+    query = IQ('find a gersdorff, g or a von gersdorff, g', LiteratureSearch())
 
     expected = {
         "bool": {
@@ -1089,7 +1100,7 @@ def test_find_author_or_author():
 
 
 def test_find_author_not_author_not_author():
-    query = IQ('f a ostapchenko not olinto not haungs')
+    query = IQ('f a ostapchenko not olinto not haungs', LiteratureSearch())
 
     expected = {
         "bool": {
@@ -1188,7 +1199,7 @@ def test_find_author_not_author_not_author():
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_find_caption():
-    query = IQ('Diagram for the fermion flow violating process')
+    query = IQ('Diagram for the fermion flow violating process', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -1198,7 +1209,7 @@ def test_find_caption():
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_find_country_code():
-    query = IQ('find cc italy')
+    query = IQ('find cc italy', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -1208,7 +1219,7 @@ def test_find_country_code():
 
 @pytest.mark.xfail(reason='today must be converted to an actual date')
 def test_find_date():
-    query = IQ('fin date > today')
+    query = IQ('fin date > today', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -1217,7 +1228,7 @@ def test_find_date():
 
 
 def test_find_field_code():
-    query = IQ('find fc a')
+    query = IQ('find fc a', LiteratureSearch())
 
     expected = {'multi_match': {'query': 'a', 'fields': ['field_code']}}
     result = query.to_dict()
@@ -1227,7 +1238,7 @@ def test_find_field_code():
 
 @pytest.mark.xfail(reason='tracked in issue #817')
 def test_find_report():
-    query = IQ('find r atlas-conf-*')
+    query = IQ('find r atlas-conf-*', LiteratureSearch())
 
     expected = {}
     result = query.to_dict()
@@ -1236,7 +1247,7 @@ def test_find_report():
 
 
 def test_find_type_code():
-    query = IQ('find tc book')
+    query = IQ('find tc book', LiteratureSearch())
 
     expected = {'multi_match': {'query': 'book', 'fields': ['collection']}}
     result = query.to_dict()

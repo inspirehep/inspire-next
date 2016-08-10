@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
 # Copyright (C) 2016 CERN.
@@ -10,7 +10,7 @@
 #
 # INSPIRE is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
@@ -22,10 +22,9 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspirehep.modules.search import ConferencesSearch, LiteratureSearch
 from inspirehep.utils.jinja2 import render_template_to_string
-
 from inspirehep.utils.record import get_title
-from inspirehep.utils.search import perform_es_search
 from inspirehep.utils.template import render_macro_from_template
 
 
@@ -55,27 +54,27 @@ def render_conferences_contributions(cnum):
 def conferences_in_the_same_series_from_es(seriesname):
     """Query ES for conferences in the same series."""
     query = 'series:"{}"'.format(seriesname)
-    return perform_es_search(query, 'records-conferences',
-                             sort="-opening_date",
-                             fields=[
-                                 'control_number',
-                                 'titles',
-                                 'address',
-                                 'opening_date',
-                                 'closing_date'
-                             ]
-                             ).hits
+    return ConferencesSearch().query_from_iq(
+        query
+    ).params(
+        _source=[
+            'control_number',
+            'titles',
+            'address',
+            'opening_date',
+            'closing_date'
+        ]
+    ).sort("-opening_date").execute().hits
 
 
 def conferences_contributions_from_es(cnum):
     """Query ES for conferences in the same series."""
     query = 'cnum:"{}"'.format(cnum)
-    return perform_es_search(
-        query,
-        'records-hep',
-        sort='-citation_count',
+    return LiteratureSearch().query_from_iq(
+        query
+    ).params(
         size=100,
-        fields=[
+        _source=[
             'control_number',
             'earliest_date',
             'titles',
@@ -84,7 +83,7 @@ def conferences_contributions_from_es(cnum):
             'citation_count',
             'collaboration'
         ]
-    ).hits
+    ).sort('-citation_count').execute().hits
 
 
 def render_conferences(recid, conferences):

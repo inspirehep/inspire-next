@@ -24,15 +24,13 @@
 
 from __future__ import absolute_import, division, print_function
 
-from elasticsearch.helpers import scan
 from flask import (
     Blueprint,
     jsonify,
     request,
 )
 
-from invenio_search import current_search_client
-
+from inspirehep.modules.search import LiteratureSearch
 from inspirehep.utils.record import get_title
 
 
@@ -53,24 +51,22 @@ def get_publications():
     collaborations = set()
     keywords = set()
 
-    for result in scan(
-            current_search_client,
-            query={
-                '_source': ['accelerator_experiments',
-                            'control_number',
-                            'earliest_date',
-                            'facet_inspire_doc_type',
-                            'publication_info',
-                            'titles',
-                            'thesaurus_terms'
-                            ],
-                'query': {"match": {"authors.recid": recid}}
-            },
-            index='records-hep',
-            doc_type='hep'):
-
+    search = LiteratureSearch().query(
+        {"match": {"authors.recid": recid}}
+    ).params(
+        _source=[
+            'accelerator_experiments',
+            'control_number',
+            'earliest_date',
+            'facet_inspire_doc_type',
+            'publication_info',
+            'titles',
+            'thesaurus_terms'
+        ]
+    )
+    for result in search.scan():
         try:
-            result_source = result['_source']
+            result_source = result.to_dict()
             publication = {}
 
             # Get publication title (required).
