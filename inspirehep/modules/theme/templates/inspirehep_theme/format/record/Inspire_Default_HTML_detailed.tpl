@@ -153,4 +153,5 @@
         }
     );
   </script>
+  {% include "inspirehep_theme/typeahead.html" %}
 {% endblock additional_javascript %}

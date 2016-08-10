@@ -27,12 +27,5 @@ require([
     'inspirehep-search',
     'inspirehep'
   ], function() {
-    // When the DOM is ready bootstrap the AngularJS modules
-    angular.element(document).ready(function() {
-      angular.bootstrap(
-        document.getElementById("invenio-search"), ['angular-loading-bar',
-                                                    'inspirehepSearch',
-                                                    'inspirehep']
-      );
-    });
+    // Requirements are needed in order to create the search bundle JS
 });

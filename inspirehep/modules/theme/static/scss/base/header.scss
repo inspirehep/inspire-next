@@ -497,7 +497,7 @@ a.external-link::after {
     padding: 0;
     height: 40px;
 
-    #searchform-input-group #search-form-input,
+    #searchform-input-group #search,
     .navbar-form .input-group .form-control {
         width: 100%;
     }
@@ -525,7 +525,7 @@ a.external-link::after {
         border-radius: 0;
     }
 
-    .twitter-typeahead > input, #search-form-input {
+    .twitter-typeahead > input, #search {
         border: 0;
         border-radius: 0;
         font-size: 17px;

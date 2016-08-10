@@ -26,7 +26,11 @@ require(
     'jquery',
     'inspirehep-typeahead',
     'invenio_with_spires_typeahead_configuration',
-    'hogan'
+    'hogan',
+    {% if request.endpoint in ['inspirehep_search.search'] %}
+    'angular',
+    'invenio-search'
+    {% endif %}
   ],
 
   function(
@@ -64,12 +68,48 @@ require(
         return DefaultSuggestionTemplate.render.call(DefaultSuggestionTemplate, data);
       }
 
-      $('form[name=search] input[name=q]').searchTypeahead({
-        value_hints_url: "{{config.get('SEARCH_TYPEAHEAD_HINT_URL')|safe}}",
-        options_sets: parser_config,
-        default_set: "{{config.get('SEARCH_TYPEAHEAD_DEFAULT_SET')}}",
-        suggestion_fn: suggestion_fn
-      });
+      {% if request.endpoint in ['inspirehep_search.search'] %}
+        angular.module('invenioSearchAutocomplete', [])
+        .directive('invenioSearchAutocompleteBar', function() {
+            function link(scope, element, attrs, vm) {
+              function updateQuery() {
+                vm.invenioSearchArgs.q = vm.userQuery;
+              }
+              scope.placeholder = attrs.placeholder;
+              scope.updateQuery = updateQuery;
+              scope.collection = attrs.collection;
+
+              $("#search").searchTypeahead({
+                // A server returning a list of values is needed
+                // Also CORS needs to be enabled, e.g with a browser extension
+                value_hints_url: "{{config.get('SEARCH_TYPEAHEAD_HINT_URL')|safe}}",
+                options_sets: parser_config,
+                default_set: "{{config.get('SEARCH_TYPEAHEAD_DEFAULT_SET')}}",
+                suggestion_fn: suggestion_fn
+              });
+            }
+            function templateUrl(element, attrs) {
+              return attrs.template;
+            }
+            return {
+              restrict: 'AE',
+              require: '^invenioSearch',
+              scope: false,
+              templateUrl: templateUrl,
+              link: link,
+            };
+        });
+      {% else %}
+        $("#search").searchTypeahead({
+          // A server returning a list of values is needed
+          // Also CORS needs to be enabled, e.g with a browser extension
+          value_hints_url: "{{config.get('SEARCH_TYPEAHEAD_HINT_URL')|safe}}",
+          options_sets: parser_config,
+          default_set: "{{config.get('SEARCH_TYPEAHEAD_DEFAULT_SET')}}",
+          suggestion_fn: suggestion_fn
+        });
+      {% endif %}
+
     });
 });
 </script>
