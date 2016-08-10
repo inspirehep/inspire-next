@@ -23,8 +23,9 @@
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.utils.record import get_title
-from inspirehep.utils.search import perform_es_search
 from inspirehep.utils.template import render_macro_from_template
+
+from inspirehep.modules.search import AuthorsSearch, LiteratureSearch
 
 
 def render_experiment_contributions(experiment_name):
@@ -54,12 +55,11 @@ def render_experiment_people(experiment_name):
 def experiment_contributions_from_es(experiment_name):
     """Query ES for conferences in the same series."""
     query = 'accelerator_experiments.experiment:"{}"'.format(experiment_name)
-    return perform_es_search(
-        query,
-        'records-hep',
-        sort='-citation_count',
+    return LiteratureSearch().query_from_iq(
+        query
+    ).params(
         size=100,
-        fields=[
+        _source=[
             'control_number',
             'earliest_date',
             'titles',
@@ -68,16 +68,15 @@ def experiment_contributions_from_es(experiment_name):
             'citation_count',
             'collaboration'
         ]
-    ).hits
+    ).sort('-citation_count').execute().hits
 
 
 def experiment_people_from_es(experiment_name):
     """Query ES for conferences in the same series."""
     query = 'experiments.name:"{}"'.format(experiment_name)
-    return perform_es_search(
-        query,
-        'records-authors'
-    ).hits
+    return AuthorsSearch().query_from_iq(
+        query
+    ).execute().hits
 
 
 def render_people(hits):

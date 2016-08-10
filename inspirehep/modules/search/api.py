@@ -1,0 +1,165 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of INSPIRE.
+# Copyright (C) 2016 CERN.
+#
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
+
+from __future__ import absolute_import, division, print_function
+
+from invenio_search.api import RecordsSearch
+
+from .query_factory import inspire_query_factory
+
+
+IQ = inspire_query_factory()
+
+
+class SearchMixin(object):
+    """Mixin that adds helper functions to ElasticSearch DSL classes."""
+
+    def query_from_iq(self, query_string):
+        """Initialize ES DSL object using INSPIRE query parser.
+
+        :param query_string: Query string as a user would input in INSPIRE's
+        search box.
+        :type query_string: string
+        :returns: Elasticsearch DSL search class
+        """
+        return self.query(IQ(query_string, self))
+
+    def get_source(self, uuid):
+        """Get source from a given uuid.
+
+        This function mimics the behaviour from the low level ES library
+        get_source function.
+
+        :param uuid: uuid of document to be retrieved.
+        :type uuid: UUID
+        :returns: dict
+        """
+        try:
+            return self.get_record(uuid).execute().hits[0].to_dict()
+        except IndexError:
+            return {}
+
+
+class LiteratureSearch(RecordsSearch, SearchMixin):
+    """Elasticsearch-dsl specialized class to search in Literature database."""
+
+    class Meta:
+        index = 'records-hep'
+        doc_types = 'hep'
+
+    def default_fields(self):
+        """What fields to use when no keyword is specified."""
+        return [
+            "title^3",
+            "title.raw^10",
+            "abstract^2",
+            "abstract.raw^4",
+            "author^10",
+            "author.raw^15",
+            "reportnumber^10",
+            "eprint^10",
+            "doi^10"
+        ]
+
+
+class AuthorsSearch(RecordsSearch, SearchMixin):
+    """Elasticsearch-dsl specialized class to search in Authors database."""
+
+    class Meta:
+        index = 'records-authors'
+        doc_types = 'authors'
+
+    def default_fields(self):
+        """What fields to use when no keyword is specified."""
+        return ['global_fulltext']
+
+
+class DataSearch(RecordsSearch, SearchMixin):
+    """Elasticsearch-dsl specialized class to search in Data database."""
+
+    class Meta:
+        index = 'records-data'
+        doc_types = 'data'
+
+    def default_fields(self):
+        """What fields to use when no keyword is specified."""
+        return ['global_fulltext']
+
+
+class ConferencesSearch(RecordsSearch, SearchMixin):
+    """Elasticsearch-dsl specialized class to search in Conferences database."""
+
+    class Meta:
+        index = 'records-conferences'
+        doc_types = 'conferences'
+
+    def default_fields(self):
+        """What fields to use when no keyword is specified."""
+        return ['global_fulltext']
+
+
+class JobsSearch(RecordsSearch, SearchMixin):
+    """Elasticsearch-dsl specialized class to search in Jobs database."""
+
+    class Meta:
+        index = 'records-jobs'
+        doc_types = 'jobs'
+
+    def default_fields(self):
+        """What fields to use when no keyword is specified."""
+        return ['global_fulltext']
+
+
+class InstitutionsSearch(RecordsSearch, SearchMixin):
+    """Elasticsearch-dsl specialized class to search in Institutions database."""
+
+    class Meta:
+        index = 'records-institutions'
+        doc_types = 'institutions'
+
+    def default_fields(self):
+        """What fields to use when no keyword is specified."""
+        return ['global_fulltext']
+
+
+class ExperimentsSearch(RecordsSearch, SearchMixin):
+    """Elasticsearch-dsl specialized class to search in Experiments database."""
+
+    class Meta:
+        index = 'records-experiments'
+        doc_types = 'experiments'
+
+    def default_fields(self):
+        """What fields to use when no keyword is specified."""
+        return ['global_fulltext']
+
+
+class JournalsSearch(RecordsSearch, SearchMixin):
+    """Elasticsearch-dsl specialized class to search in Journals database."""
+
+    class Meta:
+        index = 'records-journals'
+        doc_types = 'journals'
+
+    def default_fields(self):
+        """What fields to use when no keyword is specified."""
+        return ['global_fulltext']

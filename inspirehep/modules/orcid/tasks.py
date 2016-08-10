@@ -20,21 +20,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
 from celery import shared_task
 from celery.utils.log import get_task_logger
-
 from flask import current_app
+from requests import RequestException
 
 from invenio_db import db
-
 from invenio_oauthclient.models import RemoteAccount, RemoteToken, UserIdentity
-
 from invenio_pidstore.resolver import Resolver
-
-from invenio_search import current_search_client
 from invenio_search.utils import schema_to_index
 
-from requests import RequestException
+from inspirehep.modules.search import AuthorsSearch
 
 from .models import InspireOrcidRecords
 from .utils import convert_to_orcid, get_authors_credentials
@@ -56,7 +54,7 @@ def prepare_authors_data_for_pushing_to_orcid(json):
     authors_with_orcid_credentials = []
     for author in authors:
         try:
-            token, author_orcid = get_authors_credentials(author['_source'])
+            token, author_orcid = get_authors_credentials(author)
         except AttributeError:
             continue
         try:
@@ -138,23 +136,18 @@ def get_author_collection_records_from_valid_authors(authors_refs):
     """ Queries elasticsearch for the author-records of the given authors references.
     """
     es_query = {
-        "filter": {
-            "bool": {
-                "must": [
-                    {"terms": {
-                        "self.$ref": authors_refs
-                    }}, {"match": {
-                        "ids.type": "ORCID"
-                    }}
-                ]
-            }
+        "bool": {
+            "must": [
+                {"terms": {
+                    "self.$ref": authors_refs
+                }}, {"match": {
+                    "ids.type": "ORCID"
+                }}
+            ]
         }
     }
-    authors = current_search_client.search(
-        index='records-authors',
-        doc_type='authors',
-        body=es_query
-    )['hits']['hits']
+    authors = AuthorsSearch().filter(es_query).execute().hits
+
     return authors
 
 

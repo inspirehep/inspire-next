@@ -265,18 +265,6 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "topcite": ["citation_count"]
 }
 
-SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING = {
-    "hep": "records-hep",
-    "cdf internal notes": "records-hep",
-    "conferences": "records-conferences",
-    "institutions": "records-institutions",
-    "experiments": "records-experiments",
-    "jobs": "records-jobs",
-    "jobs hidden": "records-jobs",
-    "journals": "records-journals",
-    "hepnames": "records-authors",
-    "data": "records-data"
-}
 # Records
 # =======
 RECORDS_REST_ENDPOINTS = dict(
@@ -284,8 +272,7 @@ RECORDS_REST_ENDPOINTS = dict(
         pid_type='literature',
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
-        search_index='records-hep',
-        search_type='hep',
+        search_class='inspirehep.modules.search:LiteratureSearch',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
@@ -347,8 +334,7 @@ RECORDS_REST_ENDPOINTS = dict(
     ),
     literature_db=dict(
         pid_type='literature',
-        search_index='records-hep',
-        search_type='hep',
+        search_class='inspirehep.modules.search:LiteratureSearch',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response')
@@ -367,8 +353,7 @@ RECORDS_REST_ENDPOINTS = dict(
         pid_type='authors',
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
-        search_index='records-authors',
-        search_type='authors',
+        search_class='inspirehep.modules.search:AuthorsSearch',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
@@ -391,8 +376,7 @@ RECORDS_REST_ENDPOINTS = dict(
         pid_type='data',
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
-        search_index='records-data',
-        search_type='data',
+        search_class='inspirehep.modules.search:DataSearch',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
@@ -415,8 +399,7 @@ RECORDS_REST_ENDPOINTS = dict(
         pid_type='conferences',
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
-        search_index='records-conferences',
-        search_type='conferences',
+        search_class='inspirehep.modules.search:ConferencesSearch',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
@@ -439,8 +422,7 @@ RECORDS_REST_ENDPOINTS = dict(
         pid_type='jobs',
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
-        search_index='records-jobs',
-        search_type='jobs',
+        search_class='inspirehep.modules.search:JobsSearch',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
@@ -463,8 +445,7 @@ RECORDS_REST_ENDPOINTS = dict(
         pid_type='institutions',
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
-        search_index='records-institutions',
-        search_type='institutions',
+        search_class='inspirehep.modules.search:InstitutionsSearch',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
@@ -487,8 +468,7 @@ RECORDS_REST_ENDPOINTS = dict(
         pid_type='experiments',
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
-        search_index='records-experiments',
-        search_type='experiments',
+        search_class='inspirehep.modules.search:ExperimentsSearch',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
@@ -511,8 +491,7 @@ RECORDS_REST_ENDPOINTS = dict(
         pid_type='journals',
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
-        search_index='records-journals',
-        search_type='journals',
+        search_class='inspirehep.modules.search:JournalsSearch',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
