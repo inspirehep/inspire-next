@@ -29,7 +29,7 @@ from inspirehep.dojson.hep.receivers import earliest_date
 
 def test_earliest_date_from_preprint_date():
     with_preprint_date = Record({'preprint_date': '2014-05-29'})
-    earliest_date(with_preprint_date)
+    earliest_date(None, with_preprint_date)
 
     expected = '2014-05-29'
     result = with_preprint_date['earliest_date']
@@ -41,7 +41,7 @@ def test_earliest_date_from_thesis_date():
     with_thesis_date = Record({
         'thesis': {'date': '2008'}
     })
-    earliest_date(with_thesis_date)
+    earliest_date(None, with_thesis_date)
 
     expected = '2008'
     result = with_thesis_date['earliest_date']
@@ -53,7 +53,7 @@ def test_earliest_date_from_thesis_defense_date():
     with_thesis_defense_date = Record({
         'thesis': {'defense_date': '2012-06-01'}
     })
-    earliest_date(with_thesis_defense_date)
+    earliest_date(None, with_thesis_defense_date)
 
     expected = '2012-06-01'
     result = with_thesis_defense_date['earliest_date']
@@ -67,7 +67,7 @@ def test_earliest_date_from_publication_info_year():
             {'year': '2014'}
         ]
     })
-    earliest_date(with_publication_info_year)
+    earliest_date(None, with_publication_info_year)
 
     expected = '2014'
     result = with_publication_info_year['earliest_date']
@@ -81,7 +81,7 @@ def test_earliest_date_from_creation_modification_date_creation_date():
             {'creation_date': '2015-11-04'}
         ]
     })
-    earliest_date(with_creation_modification_date_creation_date)
+    earliest_date(None, with_creation_modification_date_creation_date)
 
     expected = '2015-11-04'
     result = with_creation_modification_date_creation_date['earliest_date']
@@ -95,7 +95,7 @@ def test_earliest_date_from_imprints_date():
             {'date': '2014-09-26'}
         ]
     })
-    earliest_date(with_imprints_date)
+    earliest_date(None, with_imprints_date)
 
     expected = '2014-09-26'
     result = with_imprints_date['earliest_date']

@@ -26,16 +26,15 @@ from __future__ import absolute_import, division, print_function
 
 from itertools import chain
 
-from invenio_records.signals import before_record_insert, before_record_update
+from invenio_indexer.signals import before_record_index
 
 from inspirehep.utils.date import create_earliest_date
 from inspirehep.utils.helpers import force_force_list
 from inspirehep.utils.record import get_value
 
 
-@before_record_insert.connect
-@before_record_update.connect
-def earliest_date(sender, *args, **kwargs):
+@before_record_index.connect
+def earliest_date(sender, json, *args, **kwargs):
     """Find and assign the earliest date to a HEP paper."""
     date_paths = [
         'preprint_date',
@@ -47,8 +46,8 @@ def earliest_date(sender, *args, **kwargs):
     ]
 
     dates = list(chain.from_iterable(
-        [force_force_list(get_value(sender, path)) for path in date_paths]))
+        [force_force_list(get_value(json, path)) for path in date_paths]))
 
     earliest_date = create_earliest_date(dates)
     if earliest_date:
-        sender['earliest_date'] = earliest_date
+        json['earliest_date'] = earliest_date
