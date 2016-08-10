@@ -51,3 +51,42 @@ class JobsRecord(Record):
         result = query.execute()
 
         return result
+
+
+class JournalsRecord(Record):
+    """Record class specialized for journal records."""
+
+    @property
+    def title(self):
+        """."""
+        titles = self.get('titles', [])
+        if titles:
+            return titles[0].get('title', '')
+
+    @property
+    def short_title(self):
+        """."""
+        short_titles = self.get('short_titles', [])
+        if short_titles:
+            return short_titles[0].get('title', '')
+
+    @property
+    def publisher(self):
+        """."""
+        publisher = self.get('publisher', [])
+        if publisher:
+            return publisher[0]
+
+    @property
+    def urls(self):
+        """."""
+        urls = self.get('urls', [])
+        if urls:
+            return [url.get('value', '') for url in urls]
+
+    @property
+    def name_variants(self):
+        """."""
+        name_variants = self.get('title_variants', [])
+        if name_variants:
+            return [name.get('title', '') for name in name_variants]

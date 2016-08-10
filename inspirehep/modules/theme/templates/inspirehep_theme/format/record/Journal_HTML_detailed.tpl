@@ -22,89 +22,58 @@
 
 {% extends "inspirehep_theme/format/record/Inspire_Default_HTML_detailed.tpl" %}
 
+{% set title=record.title %}
+
 {% block body %}
-<div class="row">
-  <div class="col-md-12">
-    <h3>
-    {% for collection in record['collections'] %}
-      {% if 'primary' in collection %}
-        <span class="label label-default pull-left">
-        {{ collection['primary'] }}</span>
-      {% endif %}
-    {% endfor %}
-    </h3>
-  </div>
-</div>
-<div class="row"><div class="col-md-12"><p></p></div></div>
-<div class="row">
-  <div class="col-md-12">
-    <div class="pull-left">
-      <b>
-      {{ record['title'] }}
-      </b>
+<div id="record_content">
+  <div class="record-detailed record-detailed-journals">
+      <div class="panel">
+      <div class="panel-heading">
+        <h1 class="record-detailed-title">
+          {{ record.title }}
+        </h1>
+        {% if record.short_title %}
+          <h2 class="record-detailed-subtitle record-detailed-subtitle-experiments">{{ record.short_title }}</h2>
+        {% endif %}
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-12">
+            {% if record.publisher %}
+              <div class="detailed-record-field">
+              <label>Published by:</label>
+              {{ record.publisher }}
+              <br>
+            </div>
+            {% endif %}
+            {% if record.urls %}
+            <div class="detailed-record-field">
+              {% for url in record.urls %}
+                <a href="{{ url }}">{{ url }}</a><br>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if record.title_variants %}
+              <div class="detailed-record-field">
+                <a type="button" class="btn btn-default pull-left" data-toggle="modal" data-target="#showNameVariants">
+                  Show name variants
+                </a><br>
+              </div>
+            {% endif %}
+            <hr>
+            <div>
+              {% if record.short_title %}
+                <a href="/search?q=journal_title:{{ record.short_title }}&cc=Hep">Articles in HEP</a><br>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-{% if record['short_title']|is_list() %}
-  <div class="row">
-    <div class="col-md-12 record-brief-details">
-     {{ record['short_title'][0] }}
-    </div>
-  </div>
-  {% else %}
-  <div class="row">
-    <div class="col-md-12 record-brief-details">
-     {{ record['short_title'] }}
-    </div>
-  </div>
-  {% endif %}
-{% if record['urls'] %}
-{% for url in record['urls'] %}
-<div class="row">
-  <div class="col-md-12">
-    <div class="pull-left">
-      {{ url['urls']|urlize }}
-      {% if url['doc_string'] %}
-        ({{ url['doc_string']}})
-      {% endif %}
-   </div>
-  </div>
-</div>
-{% endfor %}
-{% endif %}
-<div class="row"><div class="col-md-12"><p></p></div></div>
-<div class="row"><div class="col-md-12"><p></p></div></div>
-<div class="row">
-  <div class="col-md-12">
-    <div class="pull-left">
-      <a href="/search?p=journal_title:{{ record['short_title'] }}&cc=Hep">Articles in HEP</a>
-   </div>
-  </div>
-</div>
-<div class="row"><div class="col-md-12"><p></p></div></div>
-<div class="row"><div class="col-md-12"><p></p></div></div>
-{% if record['coden']|is_list() %}
-<div class="row">
-  <div class="col-md-12">
-    <div class="pull-left">
-      {{ record['coden'][0] }}
-   </div>
-  </div>
-</div>
-{% else %}
-<div class="row">
-  <div class="col-md-12">
-    <div class="pull-left">
-      {{ record['coden'] }}
-   </div>
-  </div>
-</div>
-{% endif %}
-{% if record['title_variants'] %}
-<button type="button" class="btn btn-default pull-left" data-toggle="modal" data-target="#showNameVariants">
-  Show name variants
-</button>
-{% endif %}
+
 <!-- Modal -->
 <div class="modal fade" id="showNameVariants" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
@@ -115,7 +84,11 @@
       </div>
       <div class="modal-body">
         <div style="text-align:left;">
-        {{ record['title_variants']|join(', ')}}
+          {% if record.name_variants %}
+            {% for variant in record.name_variants %}
+              {{ variant }}<br>
+            {% endfor %}
+          {% endif %}
         </div>
       </div>
       <div class="modal-footer">
@@ -123,6 +96,4 @@
     </div>
   </div>
 </div>
-{% endblock %}
-{% block details %}
 {% endblock %}
