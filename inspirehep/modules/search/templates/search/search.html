@@ -31,11 +31,31 @@
 {%- block javascript %}
   {{ super() }}
   {{ mathjax() | safe }}
-  {% assets "invenio_search_ui_search_js" %}<script src="{{ ASSET_URL }}"></script>{% endassets %}
+  {% assets "invenio_search_ui_search_js" %}
+    <script src="{{ ASSET_URL }}"></script>
+  {% endassets %}
 {%- endblock javascript %}
 
 {%- block additional_javascript -%}
   {% include "inspirehep_theme/typeahead.html" %}
+  <script>
+    require([
+      'angular-loading-bar',
+      'invenio-search',
+      'inspirehep-search',
+      'inspirehep'
+    ], function() {
+      // When the DOM is ready bootstrap the AngularJS modules
+      angular.element(document).ready(function() {
+        angular.bootstrap(
+          document.getElementById("invenio-search"), ['angular-loading-bar',
+                                                      'inspirehepSearch',
+                                                      'inspirehep',
+                                                      'invenioSearchAutocomplete']
+        );
+      });
+    });
+  </script>
 {%- endblock additional_javascript -%}
 
 {%- block body_inner %}
