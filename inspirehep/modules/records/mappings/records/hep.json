@@ -135,6 +135,10 @@
                         },
                         "signature_block": {
                             "type": "string"
+                        },
+                        "uuid": {
+                            "index": "not_analyzed",
+                            "type": "string"
                         }
                     },
                     "type": "nested"
