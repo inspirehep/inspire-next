@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 from invenio_search.api import RecordsSearch
+from invenio_search import current_search_client
 
 from .query_factory import inspire_query_factory
 
@@ -43,7 +44,7 @@ class SearchMixin(object):
         """
         return self.query(IQ(query_string, self))
 
-    def get_source(self, uuid):
+    def get_source(self, uuid, **kwargs):
         """Get source from a given uuid.
 
         This function mimics the behaviour from the low level ES library
@@ -54,9 +55,26 @@ class SearchMixin(object):
         :returns: dict
         """
         try:
-            return self.get_record(uuid).execute().hits[0].to_dict()
+            return self.get_record(uuid).params(**kwargs)\
+                .execute().hits[0].to_dict()
         except IndexError:
             return {}
+
+    def mget(self, uuids, **kwargs):
+        """Get source from a list of uuids.
+
+        :param uuids: uuids of documents to be retrieved.
+        :type uuids: list of strings representing uuids
+        :returns: list of JSON documents
+        """
+        documents = current_search_client.mget(
+            index=self.Meta.index,
+            doc_type=self.Meta.doc_types,
+            body={'ids': uuids},
+            **kwargs
+        )
+
+        return [document['_source'] for document in documents['docs']]
 
 
 class LiteratureSearch(RecordsSearch, SearchMixin):
