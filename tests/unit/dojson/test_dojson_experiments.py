@@ -292,7 +292,7 @@ def test_spokespersons_from_702__a_i_z():
         {
             'ids': [
                 {
-                    'type': 'INSPIRE',
+                    'type': 'INSPIRE ID',
                     'value': 'INSPIRE-00090662',
                 },
             ],
@@ -325,7 +325,7 @@ def test_spokespersons_from_double_702__a_i():
         {
             'ids': [
                 {
-                    'type': 'INSPIRE',
+                    'type': 'INSPIRE ID',
                     'value': 'INSPIRE-00080677',
                 },
             ],
@@ -336,7 +336,7 @@ def test_spokespersons_from_double_702__a_i():
         {
             'ids': [
                 {
-                    'type': 'INSPIRE',
+                    'type': 'INSPIRE ID',
                     'value': 'INSPIRE-00107105',
                 },
             ],

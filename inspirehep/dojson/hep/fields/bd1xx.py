@@ -24,11 +24,16 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
+from flask import current_app
+from six.moves import zip_longest
+
 from dojson import utils
 
 from ..model import hep, hep2marc
 from ...utils import (
-    create_profile_url,
+    force_single_element,
     get_recid_from_ref,
     get_record_ref,
 )
@@ -36,64 +41,125 @@ from ...utils import (
 from inspirehep.utils.helpers import force_force_list
 
 
+ORCID = re.compile('\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]')
+
+
 @hep.over('authors', '^[17]00[103_].')
 def authors(self, key, value):
-    """Main Entry-Personal Name."""
-    value = force_force_list(value)
+    """Authors.
 
-    def get_value(value):
-        affiliations = []
-        if value.get('u'):
-            recid = None
-            try:
-                recid = int(value.get('z'))
-            except:
-                pass
-            affiliations = force_force_list(value.get('u'))
-            record = get_record_ref(recid, 'institutions')
-            affiliations = [{'value': aff, 'record': record} for
-                            aff in affiliations]
-        person_recid = None
-        if value.get('x'):
-            try:
-                person_recid = int(value.get('x'))
-            except:
-                pass
-        inspire_id = ''
-        if value.get('i'):
-            inspire_id = force_force_list(value.get('i'))[0]
-        person_record = get_record_ref(person_recid, 'authors')
-        ret = {
-            'full_name': value.get('a'),
-            'role': value.get('e'),
+    FIXME: currently not handling 100__v.
+    """
+    def _get_author(value):
+        def _get_affiliations(value):
+            result = []
+
+            u_values = force_force_list(value.get('u'))
+            z_values = force_force_list(value.get('z'))
+
+            if len(u_values) >= len(z_values):
+                for u_value, z_value in zip_longest(u_values, z_values):
+                    result.append({
+                        'record': get_record_ref(z_value, 'institutions'),
+                        'value': u_value,
+                    })
+
+                if len(u_values) > len(z_values):
+                    current_app.logger.error(
+                        'Mismatched number of 100__u and 100__z: %d %d',
+                        len(u_values), len(z_values))
+
+            return result
+
+        def _get_full_name(value):
+            a_values = force_force_list(value.get('a'))
+            if a_values:
+                if len(a_values) > 1:
+                    current_app.logger.error(
+                        'Record with mashed up authors list. '
+                        'Taking first author: %s', a_values[0]
+                    )
+
+                return a_values[0]
+
+        def _get_ids(value):
+            def _is_jacow(j_value):
+                return j_value.upper().startswith('JACOW-')
+
+            def _is_orcid(j_value):
+                return j_value.upper().startswith('ORCID:') and len(j_value) > 6
+
+            def _is_naked_orcid(j_value):
+                return ORCID.match(j_value)
+
+            def _is_cern(j_value):
+                return j_value.startswith('CCID-')
+
+            result = []
+
+            i_values = force_force_list(value.get('i'))
+            for i_value in i_values:
+                result.append({
+                    'type': 'INSPIRE ID',
+                    'value': i_value,
+                })
+
+            j_values = force_force_list(value.get('j'))
+            for j_value in j_values:
+                if _is_jacow(j_value):
+                    result.append({
+                        'type': 'JACOW',
+                        'value': j_value[6:],
+                    })
+                elif _is_orcid(j_value):
+                    result.append({
+                        'type': 'ORCID',
+                        'value': j_value[6:],
+                    })
+                elif _is_naked_orcid(j_value):
+                    result.append({
+                        'type': 'ORCID',
+                        'value': j_value,
+                    })
+                elif _is_cern(j_value):
+                    result.append({
+                        'type': 'CERN',
+                        'value': j_value,
+                    })
+
+            w_values = force_force_list(value.get('w'))
+            for w_value in w_values:
+                result.append({
+                    'type': 'INSPIRE BAI',
+                    'value': w_value,
+                })
+
+            return result
+
+        def _get_record(value):
+            x_value = force_single_element(value.get('x'))
+            return get_record_ref(x_value, 'authors')
+
+        return {
+            'affiliations': _get_affiliations(value),
             'alternative_name': value.get('q'),
-            'inspire_id': inspire_id,
-            'inspire_bai': value.get('w'),
-            'orcid': value.get('j'),
-            'record': person_record,
+            'curated_relation': value.get('y') == '1',
             'email': value.get('m'),
-            'affiliations': affiliations,
-            'profile': {"__url__": create_profile_url(value.get('x'))},
-            'curated_relation': value.get('y', 0) == 1
+            'full_name': _get_full_name(value),
+            'ids': _get_ids(value),
+            'record': _get_record(value),
+            'role': value.get('e'),
         }
-        # HACK: This is to workaround broken records where multiple authors
-        # got meshed up together.
-        if isinstance(ret['full_name'], (list, tuple)):
-            import warnings
-            warnings.warn("Record with mashed-up author list! Taking first author: {}".format(value))
-            ret['full_name'] = ret['full_name'][0]
-        return ret
 
     authors = self.get('authors', [])
 
-    if key.startswith('100'):
-        authors.insert(0, get_value(value[0]))
-    else:
-        for single_value in value:
-            authors.append(get_value(single_value))
+    values = force_force_list(value)
+    for value in values:
+        if key.startswith('100'):
+            authors.insert(0, _get_author(value))
+        else:
+            authors.append(_get_author(value))
 
-    # XXX: duplicates are not stripped here, because this is an expensive
-    #      operation that would be repeated one time per field.
     return authors
 
 

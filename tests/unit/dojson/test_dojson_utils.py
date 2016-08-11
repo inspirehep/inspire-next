@@ -27,7 +27,6 @@ import mock
 from inspirehep.dojson.utils import (
     classify_field,
     classify_rank,
-    create_profile_url,
     force_single_element,
     get_int_value,
     get_recid_from_ref,
@@ -113,20 +112,6 @@ def test_classify_rank_allows_abbreviations():
 def test_classify_rank_falls_back_on_other():
     expected = 'OTHER'
     result = classify_rank('FOO')
-
-    assert expected == result
-
-
-def test_create_profile_url_returns_link_when_given_an_int():
-    expected = 'http://inspirehep.net/record/1010819'
-    result = create_profile_url('1010819')
-
-    assert expected == result
-
-
-def test_create_profile_url_returns_empty_string_when_not_given_an_int():
-    expected = ''
-    result = create_profile_url('foo')
 
     assert expected == result
 

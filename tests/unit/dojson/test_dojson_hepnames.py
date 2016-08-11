@@ -88,6 +88,149 @@ def test_ids(marcxml_to_json, json_to_marc):
             json_to_marc['035'][1]['9'])
 
 
+def test_ids_from_double_035__a_9():
+    snippet = (
+        '<record>'
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="a">INSPIRE-00134135</subfield>'
+        '    <subfield code="9">INSPIRE</subfield>'
+        '  </datafield>'
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="a">H.Vogel.1</subfield>'
+        '    <subfield code="9">BAI</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'type': 'INSPIRE ID',
+            'value': 'INSPIRE-00134135',
+        },
+        {
+            'type': 'INSPIRE BAI',
+            'value': 'H.Vogel.1',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
+def test_ids_from_035__a_9_with_orcid():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">ORCID</subfield>'
+        '  <subfield code="a">0000-0001-6771-2174</subfield>'
+        '</datafield>'
+    )
+
+    expected = [
+        {
+            'type': 'ORCID',
+            'value': '0000-0001-6771-2174',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
+def test_ids_from_035__a_9_with_cern():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">CERN</subfield>'
+        '  <subfield code="a">CERN-622961</subfield>'
+        '</datafield>'
+    )  # record/1064570/export/xme
+
+    expected = [
+        {
+            'type': 'CERN',
+            'value': 'CERN-622961',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
+def test_ids_from_035__a_9_with_malformed_cern():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">CERN</subfield>'
+        '  <subfield code="a">CERN-CERN-645257</subfield>'
+        '</datafield>'
+    )  # record/1030771/export/xme
+
+    expected = [
+        {
+            'type': 'CERN',
+            'value': 'CERN-645257',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
+def test_ids_from_035__a_9_with_desy():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="a">DESY-1001805</subfield>'
+        '  <subfield code="9">DESY</subfield>'
+        '</datafield>'
+    )  # record/993224/export/xme
+
+    expected = [
+        {
+            'type': 'DESY',
+            'value': 'DESY-1001805',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
+def test_ids_from_035__a_9_with_wikipedia():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">Wikipedia</subfield>'
+        '  <subfield code="a">Guido_Tonelli</subfield>'
+        '</datafield>'
+    )  # record/985898/export/xme
+
+    expected = [
+        {
+            'type': 'WIKIPEDIA',
+            'value': 'Guido_Tonelli',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
+def test_ids_from_035__a_9_with_slac():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">SLAC</subfield>'
+        '  <subfield code="a">SLAC-218626</subfield>'
+        '</datafield>'
+    )  # record/1028379/export/xme
+
+    expected = [
+        {
+            'type': 'SLAC',
+            'value': 'SLAC-218626',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
 def test_name(marcxml_to_json, json_to_marc):
     """Test if name is created correctly."""
     assert (marcxml_to_json['name']['value'] ==

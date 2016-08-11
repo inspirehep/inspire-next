@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 import os
 import pkg_resources
 
+import mock
 import pytest
 
 from dojson import utils
@@ -218,10 +219,6 @@ def test_authors(marcxml_to_json, json_to_marc):
             json_to_marc['100']['e'])
     assert (marcxml_to_json['authors'][0]['alternative_name'] ==
             json_to_marc['100']['q'])
-    assert (marcxml_to_json['authors'][0]['inspire_id'] ==
-            json_to_marc['100']['i'])
-    assert (marcxml_to_json['authors'][0]['orcid'] ==
-            json_to_marc['100']['j'])
     assert (marcxml_to_json['authors'][0]['email'] ==
             json_to_marc['100']['m'])
     assert (marcxml_to_json['authors'][0]['affiliations'][0]['value'] ==
@@ -230,6 +227,468 @@ def test_authors(marcxml_to_json, json_to_marc):
             json_to_marc['100']['x'])
     assert (marcxml_to_json['authors'][0]['curated_relation'] ==
             json_to_marc['100']['y'])
+
+
+def test_authors_from_100__a_i_u_x_y():
+    snippet = (
+        '<datafield tag="100" ind1=" " ind2=" ">'
+        '  <subfield code="a">Glashow, S.L.</subfield>'
+        '  <subfield code="i">INSPIRE-00085173</subfield>'
+        '  <subfield code="u">Copenhagen U.</subfield>'
+        '  <subfield code="x">1008235</subfield>'
+        '  <subfield code="y">1</subfield>'
+        '</datafield>'
+    )  # record/4328/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'value': 'Copenhagen U.',
+                },
+            ],
+            'curated_relation': True,
+            'full_name': 'Glashow, S.L.',
+            'ids': [
+                {
+                    'type': 'INSPIRE ID',
+                    'value': 'INSPIRE-00085173',
+                },
+            ],
+            'record': {
+                '$ref': 'http://localhost:5000/api/authors/1008235',
+            },
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['authors']
+
+
+def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
+    snippet = (
+        '<record>'
+        '  <datafield tag="100" ind1=" " ind2=" ">'
+        '    <subfield code="a">Kobayashi, Makoto</subfield>'
+        '    <subfield code="u">Kyoto U.</subfield>'
+        '    <subfield code="w">M.Kobayashi.5</subfield>'
+        '    <subfield code="y">0</subfield>'
+        '  </datafield>'
+        '  <datafield tag="700" ind1=" " ind2=" ">'
+        '    <subfield code="a">Maskawa, Toshihide</subfield>'
+        '    <subfield code="u">Kyoto U.</subfield>'
+        '    <subfield code="w">T.Maskawa.1</subfield>'
+        '    <subfield code="x">998493</subfield>'
+        '    <subfield code="y">1</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/81350/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'value': 'Kyoto U.',
+                },
+            ],
+            'curated_relation': False,
+            'full_name': 'Kobayashi, Makoto',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'M.Kobayashi.5',
+                },
+            ],
+        },
+        {
+            'affiliations': [
+                {
+                    'value': 'Kyoto U.',
+                },
+            ],
+            'curated_relation': True,
+            'full_name': 'Maskawa, Toshihide',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'T.Maskawa.1',
+                },
+            ],
+            'record': {
+                '$ref': 'http://localhost:5000/api/authors/998493',
+            },
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['authors']
+
+
+def test_authors_from_100__a_i_u_x_y_z_and_double_700__a_u_w_x_y_z():
+    snippet = (
+        '<record>'
+        '  <datafield tag="100" ind1=" " ind2=" ">'
+        '    <subfield code="a">Sjostrand, Torbjorn</subfield>'
+        '    <subfield code="i">INSPIRE-00126851</subfield>'
+        '    <subfield code="u">Lund U., Dept. Theor. Phys.</subfield>'
+        '    <subfield code="x">988491</subfield>'
+        '    <subfield code="y">1</subfield>'
+        '    <subfield code="z">908554</subfield>'
+        '  </datafield>'
+        '  <datafield tag="700" ind1=" " ind2=" ">'
+        '    <subfield code="a">Mrenna, Stephen</subfield>'
+        '    <subfield code="u">Fermilab</subfield>'
+        '    <subfield code="w">S.Mrenna.1</subfield>'
+        '    <subfield code="x">996606</subfield>'
+        '    <subfield code="y">1</subfield>'
+        '    <subfield code="z">902796</subfield>'
+        '  </datafield>'
+        '  <datafield tag="700" ind1=" " ind2=" ">'
+        '    <subfield code="a">Skands, Peter Z.</subfield>'
+        '    <subfield code="u">Fermilab</subfield>'
+        '    <subfield code="w">P.Z.Skands.1</subfield>'
+        '    <subfield code="x">988480</subfield>'
+        '    <subfield code="y">1</subfield>'
+        '    <subfield code="z">902796</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/712925/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/908554',
+                    },
+                    'value': 'Lund U., Dept. Theor. Phys.',
+                },
+            ],
+            'curated_relation': True,
+            'full_name': 'Sjostrand, Torbjorn',
+            'ids': [
+                {
+                    'type': 'INSPIRE ID',
+                    'value': 'INSPIRE-00126851',
+                },
+            ],
+            'record': {
+                '$ref': 'http://localhost:5000/api/authors/988491',
+            },
+        },
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/902796',
+                    },
+                    'value': 'Fermilab',
+                },
+            ],
+            'curated_relation': True,
+            'full_name': 'Mrenna, Stephen',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'S.Mrenna.1',
+                },
+            ],
+            'record': {
+                '$ref': 'http://localhost:5000/api/authors/996606',
+            },
+        },
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/902796',
+                    },
+                    'value': 'Fermilab',
+                },
+            ],
+            'curated_relation': True,
+            'full_name': 'Skands, Peter Z.',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'P.Z.Skands.1',
+                },
+            ],
+            'record': {
+                '$ref': 'http://localhost:5000/api/authors/988480',
+            },
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['authors']
+
+
+def test_authors_from_100__a_v_m_w_y():
+    snippet = (
+        '<datafield tag="100" ind1=" " ind2=" ">'
+        '  <subfield code="a">Gao, Xu</subfield>'
+        '  <subfield code="v">Chern Institute of Mathematics and LPMC, Nankai University, Tianjin, 300071, China</subfield>'
+        '  <subfield code="m">gausyu@gmail.com</subfield>'
+        '  <subfield code="w">X.Gao.11</subfield>'
+        '  <subfield code="y">0</subfield>'
+        '</datafield>'
+    )  # record/1475380/export/xme
+
+    expected = [
+        {
+            'curated_relation': False,
+            'email': 'gausyu@gmail.com',
+            'full_name': 'Gao, Xu',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'X.Gao.11',
+                },
+            ],
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['authors']
+
+
+def test_authors_from_700__a_j_v_m_w_y():
+    snippet = (
+        '<datafield tag="700" ind1=" " ind2=" ">'
+        '  <subfield code="a">Liu, Ming</subfield>'
+        '  <subfield code="j">ORCID:0000-0002-3413-183X</subfield>'
+        '  <subfield code="v">School of Mathematics, South China University of Technology, Guangdong, Guangzhou, 510640, China</subfield>'
+        '  <subfield code="m">ming.l1984@gmail.com</subfield>'
+        '  <subfield code="w">M.Liu.16</subfield>'
+        '  <subfield code="y">0</subfield>'
+        '</datafield>'
+    )  # record/1475380/export/xme
+
+    expected = [
+        {
+            'curated_relation': False,
+            'email': 'ming.l1984@gmail.com',
+            'full_name': 'Liu, Ming',
+            'ids': [
+                {
+                    'type': 'ORCID',
+                    'value': '0000-0002-3413-183X',
+                },
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'M.Liu.16',
+                },
+            ],
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['authors']
+
+
+@mock.patch('inspirehep.dojson.hep.fields.bd1xx.current_app.logger.error')
+def test_authors_from_700__double_a_u_w_x_y_z(error):
+    snippet = (
+        '<datafield tag="700" ind1=" " ind2=" ">'
+        '  <subfield code="a">Gumplinger, P.</subfield>'
+        '  <subfield code="a">Hadley, D.R.</subfield>'
+        '  <subfield code="u">Warwick U.</subfield>'
+        '  <subfield code="w">D.R.Hadley.2</subfield>'
+        '  <subfield code="x">1066999</subfield>'
+        '  <subfield code="y">0</subfield>'
+        '  <subfield code="z">903734</subfield>'
+        '</datafield>'
+    )  # record/1345256/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/903734',
+                    },
+                    'value': 'Warwick U.',
+                },
+            ],
+            'curated_relation': False,
+            'full_name': 'Gumplinger, P.',  # XXX: wrong, but the best we can do.
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'D.R.Hadley.2',
+                },
+            ],
+            'record': {
+                '$ref': 'http://localhost:5000/api/authors/1066999',
+            },
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['authors']
+    error.assert_called_with(
+        'Record with mashed up authors list. Taking first author: %s',
+        'Gumplinger, P.',
+    )
+
+
+def test_authors_from_700__double_u():
+    snippet = (
+        '<datafield tag="700" ind1=" " ind2=" ">'
+        '  <subfield code="u">Jamia Millia Islamia</subfield>'
+        '  <subfield code="u">IUCAA, Pune</subfield>'
+        '  <subfield code="z">904738</subfield>'
+        '  <subfield code="z">905919</subfield>'
+        '</datafield>'
+    )  # record/1407917/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/904738',
+                    },
+                    'value': 'Jamia Millia Islamia',
+                },
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/905919',
+                    },
+                    'value': 'IUCAA, Pune',
+                },
+            ],
+            'curated_relation': False,
+        }
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['authors']
+
+
+def test_authors_from_100__a_j_m_u_w_y_z():
+    snippet = (
+        '<datafield tag="100" ind1=" " ind2=" ">'
+        '  <subfield code="a">Martins, Ricardo S.</subfield>'
+        '  <subfield code="j">ORCID:</subfield>'
+        '  <subfield code="m">ricardomartins@iftm.edu.b</subfield>'
+        '  <subfield code="u">Unlisted</subfield>'
+        '  <subfield code="w">R.S.Martins.1</subfield>'
+        '  <subfield code="y">0</subfield>'
+        '  <subfield code="z">910325</subfield>'
+        '</datafield>'
+    )
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/910325',
+                    },
+                    'value': 'Unlisted',
+                },
+            ],
+            'curated_relation': False,
+            'email': 'ricardomartins@iftm.edu.b',
+            'full_name': 'Martins, Ricardo S.',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'R.S.Martins.1',
+                },
+            ],
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['authors']
+
+
+@pytest.mark.xfail(reason='authors added in the wrong order')
+def test_authors_from_100__a_v_w_x_y_and_100_a_v_w_y():
+    snippet = (
+        '<record>'
+        '  <datafield tag="100" ind1=" " ind2=" ">'
+        '    <subfield code="a">Tojyo, E.</subfield>'
+        '    <subfield code="v">University of Tokyo, Tokyo, Japan</subfield>'
+        '    <subfield code="w">Eiki.Tojyo.1</subfield>'
+        '    <subfield code="x">1477256</subfield>'
+        '    <subfield code="y">0</subfield>'
+        '  </datafield>'
+        '  <datafield tag="100" ind1=" " ind2=" ">'
+        '    <subfield code="a">Hattori, T.</subfield>'
+        '    <subfield code="v">Tokyo Institute of Technology, Tokyo, Japan</subfield>'
+        '    <subfield code="w">T.Hattori.1</subfield>'
+        '    <subfield code="y">0</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = [
+        {
+            'curated_relation': False,
+            'full_name': 'Tojyo, E.',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'Eiki.Tojyo.1',
+                },
+            ],
+            'record': {
+                '$ref': 'http://localhost:5000/api/authors/1477256',
+            },
+        },
+        {
+            'curated_relation': False,
+            'full_name': 'Hattori, T.',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'T.Hattori.1',
+                },
+            ],
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['authors']
+
+
+@mock.patch('inspirehep.dojson.hep.fields.bd1xx.current_app.logger.error')
+def test_authors_from_100__a_u_w_y(error):
+    snippet = (
+        '<datafield tag="100" ind1=" " ind2=" ">'
+        '  <subfield code="a">Kobayashi, Makoto</subfield>'
+        '  <subfield code="u">Kyoto U.</subfield>'
+        '  <subfield code="w">M.Kobayashi.5</subfield>'
+        '  <subfield code="y">0</subfield>'
+        '</datafield>'
+    )  # record/81350/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'value': 'Kyoto U.',
+                },
+            ],
+            'curated_relation': False,
+            'full_name': 'Kobayashi, Makoto',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'M.Kobayashi.5',
+                },
+            ],
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['authors']
+    error.assert_called_with(
+        'Mismatched number of 100__u and 100__z: %d %d', 1, 0)
 
 
 def test_corporate_author(marcxml_to_json, json_to_marc):
