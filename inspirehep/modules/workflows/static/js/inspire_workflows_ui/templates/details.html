@@ -320,6 +320,7 @@
               <i class="fa fa-repeat" aria-hidden="true"></i> Restart
             </button>
             <button class="btn btn-default"
+                    ng-if="vm.record._workflow.status !== 'HALTED'"
                     ng-click="Utils.resumeWorkflow()">
               <i class="fa fa-play" aria-hidden="true"></i> Resume
             </button>
