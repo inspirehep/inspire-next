@@ -194,7 +194,6 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
         "collections.secondary",
         "collections.deleted",
     ],
-    "595__c": ["hidden_notes.cds"],
     "980__a": ["collections.primary"],
     "980__b": ["collections.secondary"],
     "542__l": ["information_relating_to_copyright_status.copyright_status"],

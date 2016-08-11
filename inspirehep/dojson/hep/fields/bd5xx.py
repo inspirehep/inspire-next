@@ -59,11 +59,12 @@ def hidden_notes(self, key, value):
     """Hidden notes."""
     def _hidden_notes(value):
         def _hidden_note(value, a=None):
+            source = value.get('9')
+            if value.get('c'):
+                source = "CDS"
             return {
-                'value': a,
-                'cern_reference': value.get('b'),
-                'cds': value.get('c'),
-                'source': value.get('9'),
+                'value': a if a else value.get('b'),
+                'source': source,
             }
 
         if value.get('a'):
@@ -84,8 +85,6 @@ def hidden_note2marc(self, key, value):
     """Hidden note."""
     return {
         'a': value.get('value'),
-        'b': value.get('cern_reference'),
-        'c': value.get('cds'),
         '9': value.get('source'),
     }
 
