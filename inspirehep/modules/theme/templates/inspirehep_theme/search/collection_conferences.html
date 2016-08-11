@@ -99,7 +99,7 @@
                             <div class="details">
                                 {% if conference.acronym %}
                                     <a class="acronym" href="/{{ collection }}/{{ conference.control_number }}">
-                                        {{ conference.acronym[0][0] }}
+                                        {{ conference.acronym[0] }}
                                     </a>
                                 {% endif %}
 
@@ -111,7 +111,9 @@
                                         {{ conference.opening_date }}
                                     {% endif %}
                                 </span>
-                                <span class="place"><i class="fa fa-map-marker"></i> {{ conference.place }}</span>
+                                {% if conference.address | length %}
+                                  <span class="place"><i class="fa fa-map-marker"></i> {{ conference.address[0].original_address }}</span>
+                                {% endif %}
                             </div>
 
 
@@ -129,9 +131,9 @@
                                     </span>
                                 {% endif %}
 
-                                {% if conference.url | length %}
+                                {% if conference.urls | length %}
                                     <span class="url pull-right">
-                                        <a href="{{ conference.url[0][0] }}" target="_new">Go to conference
+                                        <a href="{{ conference.urls[0]['value'] }}" target="_new">Go to conference
                                             website</a>
                                     </span>
                                 {% endif %}
