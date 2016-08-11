@@ -34,6 +34,7 @@ from ...utils import classify_rank, force_single_element, get_record_ref
 from inspirehep.utils.helpers import force_force_list
 
 
+INSPIRE_BAI = re.compile('(\w+\.)+\d+')
 NON_DIGIT = re.compile('[^\d]+')
 
 
@@ -131,20 +132,30 @@ def name2marc(self, key, value):
 @utils.for_each_value
 def ids(self, key, value):
     """All identifiers, both internal and external."""
-    IDS_MAP = {
-        'ARXIV': 'ARXIV',
-        'BAI': 'INSPIRE BAI',
-        'CERN': 'CERN',
-        'DESY': 'DESY',
-        'INSPIRE': 'INSPIRE ID',
-        'KAKEN': 'KAKEN',
-        'ORCID': 'ORCID',
-        'SLAC': 'SLAC',
-        'WIKIPEDIA': 'WIKIPEDIA',
-    }
+    def _get_type(value):
+        IDS_MAP = {
+            'ARXIV': 'ARXIV',
+            'BAI': 'INSPIRE BAI',
+            'CERN': 'CERN',
+            'DESY': 'DESY',
+            'INSPIRE': 'INSPIRE ID',
+            'KAKEN': 'KAKEN',
+            'ORCID': 'ORCID',
+            'SLAC': 'SLAC',
+            'WIKIPEDIA': 'WIKIPEDIA',
+        }
 
-    type_ = IDS_MAP.get(value.get('9').upper())
-    a_value = value.get('a')
+        return IDS_MAP.get(value.get('9', '').upper())
+
+    def _guess_type_from_value(a_value):
+        if INSPIRE_BAI.match(a_value):
+            return 'INSPIRE BAI'
+
+    a_value = force_single_element(value.get('a'))
+
+    type_ = _get_type(value)
+    if type_ is None:
+        type_ = _guess_type_from_value(a_value)
 
     if type_ == 'CERN' and a_value.startswith('CERN-'):
         a_value = 'CERN-' + NON_DIGIT.sub('', a_value)

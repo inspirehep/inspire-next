@@ -57,17 +57,11 @@ def authors(self, key, value):
             u_values = force_force_list(value.get('u'))
             z_values = force_force_list(value.get('z'))
 
-            if len(u_values) >= len(z_values):
-                for u_value, z_value in zip_longest(u_values, z_values):
-                    result.append({
-                        'record': get_record_ref(z_value, 'institutions'),
-                        'value': u_value,
-                    })
-
-                if len(u_values) > len(z_values):
-                    current_app.logger.error(
-                        'Mismatched number of 100__u and 100__z: %d %d',
-                        len(u_values), len(z_values))
+            for u_value, z_value in zip_longest(u_values, z_values):
+                result.append({
+                    'record': get_record_ref(z_value, 'institutions'),
+                    'value': u_value,
+                })
 
             return result
 
