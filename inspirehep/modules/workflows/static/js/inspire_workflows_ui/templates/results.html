@@ -85,7 +85,7 @@
 
           <!--Authors  Decision-->
           <div
-            ng-if="record._source._workflow.data_type === 'authors' && !record._source._extra_data.user_action && record._source._workflow.status !== 'ERROR'">
+            ng-if="record._source._workflow.data_type === 'authors' && !record._source._extra_data.user_action && record._source._workflow.status === 'HALTED'">
             <button class="btn btn-danger"
                     ng-click="setDecision(record._id,'reject')">Reject
             </button>
@@ -114,7 +114,7 @@
             </div>
 
             <div
-              ng-if="record._source._extra_data && record._source._extra_data._action !== null">
+              ng-if="record._source._workflow.data_type === 'hep' && !record._source._extra_data.user_action && record._source._workflow.status === 'HALTED'">
               <button class="btn btn-danger"
                       ng-click="setDecision(record._id, 'reject')">Reject
               </button>
