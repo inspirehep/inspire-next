@@ -656,41 +656,6 @@ def test_authors_from_100__a_v_w_x_y_and_100_a_v_w_y():
     assert expected == result['authors']
 
 
-@mock.patch('inspirehep.dojson.hep.fields.bd1xx.current_app.logger.error')
-def test_authors_from_100__a_u_w_y(error):
-    snippet = (
-        '<datafield tag="100" ind1=" " ind2=" ">'
-        '  <subfield code="a">Kobayashi, Makoto</subfield>'
-        '  <subfield code="u">Kyoto U.</subfield>'
-        '  <subfield code="w">M.Kobayashi.5</subfield>'
-        '  <subfield code="y">0</subfield>'
-        '</datafield>'
-    )  # record/81350/export/xme
-
-    expected = [
-        {
-            'affiliations': [
-                {
-                    'value': 'Kyoto U.',
-                },
-            ],
-            'curated_relation': False,
-            'full_name': 'Kobayashi, Makoto',
-            'ids': [
-                {
-                    'type': 'INSPIRE BAI',
-                    'value': 'M.Kobayashi.5',
-                },
-            ],
-        },
-    ]
-    result = clean_record(hep.do(create_record(snippet)))
-
-    assert expected == result['authors']
-    error.assert_called_with(
-        'Mismatched number of 100__u and 100__z: %d %d', 1, 0)
-
-
 def test_corporate_author(marcxml_to_json, json_to_marc):
     """Test if corporate_author is created correctly."""
     assert (marcxml_to_json['corporate_author'][0] ==

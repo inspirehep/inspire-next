@@ -231,6 +231,53 @@ def test_ids_from_035__a_9_with_slac():
     assert expected == result['ids']
 
 
+def test_ids_from_035__a_with_bai():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="a">Jian.Long.Han.1</subfield>'
+        '</datafield>'
+    )  # record/1464894/export/xme
+
+    expected = [
+        {
+            'type': 'INSPIRE BAI',
+            'value': 'Jian.Long.Han.1',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
+def test_ids_from_double_035__a_9_with_kaken():
+    snippet = (
+        '<record>'
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">BAI</subfield>'
+        '    <subfield code="a">Toshio.Suzuki.2</subfield>'
+        '  </datafield>'
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">KAKEN</subfield>'
+        '    <subfield code="a">70139070</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1474271/export/xme
+
+    expected = [
+        {
+            'type': 'INSPIRE BAI',
+            'value': 'Toshio.Suzuki.2',
+        },
+        {
+            'type': 'KAKEN',
+            'value': 'KAKEN-70139070',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
 def test_name(marcxml_to_json, json_to_marc):
     """Test if name is created correctly."""
     assert (marcxml_to_json['name']['value'] ==
