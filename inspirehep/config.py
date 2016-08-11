@@ -552,6 +552,7 @@ RECORDS_UI_ENDPOINTS = dict(
         pid_type='journals',
         route='/journals/<pid_value>',
         template='inspirehep_theme/format/record/Journal_HTML_detailed.tpl',
+        record_class='inspirehep.modules.records.wrappers:JournalsRecord',
         permission_factory_imp='invenio_records_rest.utils:allow_all',
     )
 )
