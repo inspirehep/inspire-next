@@ -309,7 +309,11 @@
         <div class="detail-panel">
           <h4>Actions</h4>
 
-          <div class="text-center">
+          <div class="text-center" ng-if="vm.record._workflow.status==='COMPLETED'">
+            <p class="text-muted">Workflow completed, no further actions available</p>
+          </div>
+
+          <div class="text-center" ng-if="vm.record._workflow.status!=='COMPLETED'">
 
             <button class="btn btn-default"
                     ng-click="Utils.restartWorkflow()">
