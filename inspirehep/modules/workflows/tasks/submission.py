@@ -261,7 +261,7 @@ def send_robotupload(url=None,
                 )
             )
 
-        if in_production_mode():
+        if not in_production_mode():
             return
 
         result = make_robotupload_marcxml(
