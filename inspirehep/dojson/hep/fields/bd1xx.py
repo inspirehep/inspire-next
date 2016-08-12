@@ -103,7 +103,7 @@ def authors(self, key, value):
                 if _is_jacow(j_value):
                     result.append({
                         'type': 'JACOW',
-                        'value': j_value[6:],
+                        'value': 'JACoW-' + j_value[6:],
                     })
                 elif _is_orcid(j_value):
                     result.append({
@@ -118,7 +118,7 @@ def authors(self, key, value):
                 elif _is_cern(j_value):
                     result.append({
                         'type': 'CERN',
-                        'value': j_value,
+                        'value': 'CERN-' + j_value[5:],
                     })
 
             w_values = force_force_list(value.get('w'))

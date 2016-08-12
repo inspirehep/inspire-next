@@ -278,6 +278,18 @@ def test_ids_from_double_035__a_9_with_kaken():
     assert expected == result['ids']
 
 
+def test_ids_from_035__9_malformed_with_value():
+    snippet = (
+        '<datafield>'
+        '  <subfield code="9">E.Giro.1</subfield>'
+        '</datafield>'
+    )  # record/1031883/export/xme
+
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert 'ids' not in result
+
+
 def test_name(marcxml_to_json, json_to_marc):
     """Test if name is created correctly."""
     assert (marcxml_to_json['name']['value'] ==
