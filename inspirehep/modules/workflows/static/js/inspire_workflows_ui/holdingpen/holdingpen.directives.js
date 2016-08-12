@@ -238,23 +238,19 @@
 
     var controller = ["$scope", "$http",
       function ($scope, $http) {
-        $scope.get_filter_string = function (extra_params = ''){
-          if (extra_params != '') {
-            extra_params = '?' + extra_params
-            if ($scope.primaryFilterValue == '') {
-                return extra_params
-            } else {
-              return extra_params + '&' + $scope.primaryFilterKey + '=' + $scope.primaryFilterValue
-            }
-          } else {
-            if ($scope.primaryFilterValue == '') {
-                return ''
-            } else {
-              return '?' + $scope.primaryFilterKey + '=' + $scope.primaryFilterValue
-            }
+        $scope.get_filter_string = function (extra_string=''){
+          var query_string = ''
+          if (extra_string !== '') {
+              query_string = '?'
           }
+          if ($scope.filterString !== undefined) {
+              query_string = '?' + $scope.filterString + '&'
+          }
+          query_string += extra_string
+          return query_string
         }
-        $http.get('/api/holdingpen/' + $scope.get_filter_string())
+        $http.get('/api/holdingpen/'
+                  + $scope.get_filter_string($scope.filterString))
           .then(function (response) {
             $scope.vm = $scope;
             $scope.vm.total = response.data.hits.total;
@@ -287,8 +283,7 @@
       restrict: 'AE',
       scope: {
         sectionTitle: '@sectionTitle',
-        primaryFilterKey: '@primaryFilterKey',
-        primaryFilterValue: '@primaryFilterValue',
+        filterString: '@filterString',
         secondaryFilter: '@secondaryFilter'
       },
       controller: controller

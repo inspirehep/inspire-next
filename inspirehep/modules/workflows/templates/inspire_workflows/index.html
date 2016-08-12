@@ -39,8 +39,7 @@
 
       <holding-pen-dashboard-item
         template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
-        primary_filter_key="workflow_name"
-        primary_filter_value="Author"
+        filter_string="workflow_name=Author"
         secondary_filter="status"
         section_title="New Authors">
       </holding-pen-dashboard-item>
@@ -51,8 +50,7 @@
 
       <holding-pen-dashboard-item
         template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
-        primary_filter_key="workflow_name"
-        primary_filter_value="Author Update"
+        filter_string="workflow_name=Author Update"
         secondary_filter="status"
         section_title="New Author Updates">
       </holding-pen-dashboard-item>
@@ -64,8 +62,7 @@
 
         <holding-pen-dashboard-item
           template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
-          primary_filter_key="source"
-          primary_filter_value="submission"
+          filter_string="source=submission&workflow_name=HEP"
           secondary_filter="status"
           section_title="New Literature Submissions">
         </holding-pen-dashboard-item>
@@ -77,8 +74,7 @@
 
       <holding-pen-dashboard-item
         template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
-        primary_filter_key="source"
-        primary_filter_value="arXiv"
+        filter_string="source=arXiv"
         secondary_filter="status"
         section_title="arxiv harvests">
       </holding-pen-dashboard-item>
@@ -89,8 +85,7 @@
 
       <holding-pen-dashboard-item
         template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
-        primary_filter_key="source"
-        primary_filter_value="Alpha experiment"
+        filter_string="source=Alpha experiment"
         secondary_filter="status"
         section_title="Alpha experiment">
       </holding-pen-dashboard-item>
@@ -101,8 +96,7 @@
 
       <holding-pen-dashboard-item
         template="{{url_for('static', filename='js/inspire_workflows_ui/templates/dashboard_stat_block.html')}}"
-        primary_filter_key="source"
-        primary_filter_value=""
+        filter_string=""
         secondary_filter="status"
         section_title="all harvests">
       </holding-pen-dashboard-item>
