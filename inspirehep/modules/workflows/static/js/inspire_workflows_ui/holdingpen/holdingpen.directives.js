@@ -266,7 +266,7 @@
               $scope.vm.secondary_filters[bucket.key] = +bucket.doc_count;
             }
 
-            $scope.vm.class_name = $scope.primaryFilterValue.toLowerCase().replace(" ", "-")
+            $scope.vm.class_name = $scope.sectionTitle.toLowerCase().replace(/ /g, "-")
 
           }).catch(function (value) {
           console.error("Problem occurred when getting " + $scope.primary_filter_key);
