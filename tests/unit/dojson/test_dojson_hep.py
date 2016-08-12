@@ -656,6 +656,46 @@ def test_authors_from_100__a_v_w_x_y_and_100_a_v_w_y():
     assert expected == result['authors']
 
 
+def test_authors_from_100__a_j_m_u_v_w_y():
+    snippet = (
+        '<datafield tag="100" ind1=" " ind2=" ">'
+        '  <subfield code="a">MacNair, David</subfield>'
+        '  <subfield code="j">JACoW-00009522</subfield>'
+        '  <subfield code="m">macnair@slac.stanford.edu</subfield>'
+        '  <subfield code="u">SLAC</subfield>'
+        '  <subfield code="v">SLAC, Menlo Park, California, USA</subfield>'
+        '  <subfield code="w">D.Macnair.2</subfield>'
+        '  <subfield code="y">0</subfield>'
+        '</datafield>'
+    )
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'value': 'SLAC',
+                },
+            ],
+            'curated_relation': False,
+            'email': 'macnair@slac.stanford.edu',
+            'full_name': 'MacNair, David',
+            'ids': [
+                {
+                    'type': 'JACOW',
+                    'value': 'JACoW-00009522',
+                },
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'D.Macnair.2',
+                },
+            ],
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['authors']
+
+
 def test_corporate_author(marcxml_to_json, json_to_marc):
     """Test if corporate_author is created correctly."""
     assert (marcxml_to_json['corporate_author'][0] ==
