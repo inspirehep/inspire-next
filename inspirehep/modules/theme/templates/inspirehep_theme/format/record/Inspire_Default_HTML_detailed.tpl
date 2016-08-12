@@ -22,6 +22,8 @@
 
 {% from "inspirehep_theme/format/record/Inspire_Default_HTML_general_macros.tpl" import mathjax, render_record_title, render_record_authors, record_arxiv, record_report_numbers with context %}
 
+{% set title=record.title %}
+
 {% block body %}
 <div id="record_content">
   <div class="record-detailed record-detailed-literature">

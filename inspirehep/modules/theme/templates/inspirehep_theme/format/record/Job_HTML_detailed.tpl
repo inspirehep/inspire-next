@@ -22,6 +22,8 @@
 
 {% extends "inspirehep_theme/format/record/Inspire_Default_HTML_detailed.tpl" %}
 
+{% set title=record.title %}
+
 {% block body %}
 <div id="record_content">
   <div class="record-detailed record-detailed-jobs">

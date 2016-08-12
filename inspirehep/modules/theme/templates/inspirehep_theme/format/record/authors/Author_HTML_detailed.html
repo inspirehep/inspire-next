@@ -24,6 +24,9 @@
 
 {% extends config.SEARCH_UI_BASE_TEMPLATE %}
 
+{% set title=record.title %}
+
+
 {%- block javascript %}
   {{ super() }}
   {{ mathjax() | safe }}
