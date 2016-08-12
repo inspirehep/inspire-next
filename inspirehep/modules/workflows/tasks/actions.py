@@ -56,12 +56,10 @@ def shall_halt_workflow(obj, *args, **kwargs):
     return obj.extra_data.get("halt_workflow", False)
 
 
-def shall_push_remotely(*args, **kwargs):
-    """Check if the record shall be robotuploaded."""
-    # If in debug mode, we do remote uploads or
-    # if LEGACY_ROBOTUPLOAD_URL is set
+def in_production_mode(*args, **kwargs):
+    """Check if we are in production mode"""
     return current_app.config.get(
-        "LEGACY_ROBOTUPLOAD_URL", False
+        "PRODUCTION_MODE", False
     )
 
 

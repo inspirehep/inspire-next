@@ -39,7 +39,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     add_core,
     halt_record,
     is_record_relevant,
-    shall_push_remotely,
+    in_production_mode,
     is_record_accepted,
     reject_record,
     is_experimental_paper,
@@ -210,23 +210,18 @@ class Article(object):
             add_note_entry,
             filter_keywords,
             user_pdf_get,
-            IF_ELSE(shall_push_remotely, [
-                IF_ELSE(article_exists, [
-                    prepare_update_payload(extra_data_key="update_payload"),
-                    send_robotupload(
-                        marcxml_processor=hep2marc,
-                        mode="correct",
-                        extra_data_key="update_payload"
-                    ),
-                ], [
-                    send_robotupload(
-                        marcxml_processor=hep2marc,
-                        mode="insert"
-                    ),
-                ])
-
+            IF_ELSE(article_exists, [
+                prepare_update_payload(extra_data_key="update_payload"),
+                send_robotupload(
+                    marcxml_processor=hep2marc,
+                    mode="correct",
+                    extra_data_key="update_payload"
+                ),
             ], [
-                store_record
+                send_robotupload(
+                    marcxml_processor=hep2marc,
+                    mode="insert"
+                ),
             ]),
             IF(is_submission, [
                 IF(curation_ticket_needed, [
@@ -235,12 +230,12 @@ class Article(object):
                         queue="HEP_curation",
                         context_factory=curation_ticket_context,
                         ticket_id_key="curation_ticket_id"
-                    )
-                ]),
+                    )]
+                ),
                 reply_ticket(
                     template="literaturesuggest/tickets/user_accepted.html",
                     context_factory=reply_ticket_context
-                ),
+                )
             ]),
         ], [
             IF(is_submission, [
