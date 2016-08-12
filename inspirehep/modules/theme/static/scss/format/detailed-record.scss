@@ -504,3 +504,12 @@ h1.record-detailed-title, .record-header label, #record-journal,
     }
 }
 
+.detailed-record-breadcrumb {
+    font-size: 13px;
+    margin-bottom: 0px;
+
+    .fa {
+        font-size: 10px;
+        color: $link-color;
+    }
+}

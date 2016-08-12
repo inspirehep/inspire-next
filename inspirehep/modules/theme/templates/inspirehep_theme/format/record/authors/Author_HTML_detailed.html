@@ -26,7 +26,6 @@
 
 {% set title=record.title %}
 
-
 {%- block javascript %}
   {{ super() }}
   {{ mathjax() | safe }}
@@ -34,6 +33,12 @@
 {%- endblock javascript %}
 
 {% block body %}
+<ul class="breadcrumb detailed-record-breadcrumb">
+<li>
+  <span class="fa fa-chevron-left"></span>
+  {{ request.headers.get('referer', '')|back_to_search_link("authors")|safe }}
+</li>
+</ul>
 <div id="record_content" profile-init record='{{ record|tojson|safe }}'>
   <div class="profile-detailed">
     <div class="record-header" id="detailed-header">

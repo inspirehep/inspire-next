@@ -32,8 +32,9 @@ from datetime import datetime
 from operator import itemgetter
 
 import six
-from flask import current_app
+from flask import current_app, url_for
 from jinja2.filters import do_join, evalcontextfilter
+from werkzeug.urls import url_decode
 
 from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.search import InstitutionsSearch, LiteratureSearch
@@ -654,3 +655,19 @@ def weblinks(description):
     if description:
         return 'Link to ' + description
     return 'Link to fulltext'
+
+
+@blueprint.app_template_filter()
+def back_to_search_link(referer, collection):
+    """Creates link to go back to search results in detailed pages."""
+
+    url_map = url_decode(referer)
+    text = "Back to {} search results".format(collection.capitalize())
+    url = url_for('inspirehep_search.search', cc=collection)
+    if referer and url_map.get('q'):
+        url = url_for(
+            'inspirehep_search.search', cc=collection, q=url_map['q']
+        )
+        text = "Back to search results for \"{}\"".format(url_map['q'])
+    url_html = '<a href="{}">{}</a>'.format(url, text)
+    return url_html
