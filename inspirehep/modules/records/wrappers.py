@@ -22,14 +22,45 @@
 
 from __future__ import absolute_import, division, print_function
 
-from invenio_records.api import Record
-
+from inspirehep.utils.record import get_title
+from inspirehep.modules.records.es_record import ESRecord
 from inspirehep.modules.search import JobsSearch
 
 
-class JobsRecord(Record):
+class LiteratureRecord(ESRecord):
+    """Record class specialized for literature records."""
 
+    @property
+    def title(self):
+        """Get preferred title."""
+        return get_title(self)
+
+
+class AuthorsRecord(ESRecord):
+    """Record class specialized for author records."""
+
+    @property
+    def title(self):
+        """Get preferred title."""
+        return self.get('name', {}).get('preferred_name')
+
+
+class ConferencesRecord(ESRecord):
+    """Record class specialized for conference records."""
+
+    @property
+    def title(self):
+        """Get preferred title."""
+        return get_title(self)
+
+
+class JobsRecord(ESRecord):
     """Record class specialized for job records."""
+
+    @property
+    def title(self):
+        """Get preferred title."""
+        return self.get('position')
 
     @property
     def similar(self):
@@ -47,46 +78,66 @@ class JobsRecord(Record):
                 }
             })[0:2]
 
-        query = _build_query(self.id)
+        query = _build_query(self.get('control_number'))
         result = query.execute()
 
         return result
 
 
-class JournalsRecord(Record):
+class InstitutionsRecord(ESRecord):
+    """Record class specialized for institution records."""
+
+    @property
+    def title(self):
+        """Get preferred title."""
+        institution = self.get('institution')
+        if institution:
+            return institution[0]
+
+
+class ExperimentsRecord(ESRecord):
+    """Record class specialized for experiment records."""
+
+    @property
+    def title(self):
+        """Get preferred title."""
+        experiment_names = self.get('experiment_names')
+        if experiment_names:
+            return experiment_names[0].get('title')
+
+
+class JournalsRecord(ESRecord):
     """Record class specialized for journal records."""
 
     @property
     def title(self):
-        """."""
-        titles = self.get('titles', [])
-        if titles:
-            return titles[0].get('title', '')
+        """Get preferred title."""
+        return get_title(self)
 
     @property
     def short_title(self):
-        """."""
+        """Get preferred title."""
         short_titles = self.get('short_titles', [])
         if short_titles:
             return short_titles[0].get('title', '')
 
     @property
     def publisher(self):
-        """."""
+        """Get preferred title."""
         publisher = self.get('publisher', [])
         if publisher:
             return publisher[0]
 
     @property
     def urls(self):
-        """."""
+        """Get urls."""
         urls = self.get('urls', [])
         if urls:
             return [url.get('value', '') for url in urls]
 
     @property
     def name_variants(self):
-        """."""
+        """Get name variations."""
         name_variants = self.get('title_variants', [])
         if name_variants:
             return [name.get('title', '') for name in name_variants]
