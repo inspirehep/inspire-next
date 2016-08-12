@@ -148,6 +148,9 @@ def ids(self, key, value):
         return IDS_MAP.get(value.get('9', '').upper())
 
     def _guess_type_from_value(a_value):
+        if a_value is None:
+            return
+
         if INSPIRE_BAI.match(a_value):
             return 'INSPIRE BAI'
 
