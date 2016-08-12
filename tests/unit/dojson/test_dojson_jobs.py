@@ -269,7 +269,7 @@ def test_experiments_from_triple_693__e():
     assert expected == result['experiments']
 
 
-def test_institution_from_110__a():
+def test_institutions_from_110__a():
     snippet = (
         '<datafield tag="110" ind1=" " ind2=" ">'
         '  <subfield code="a">Coll. William and Mary</subfield>'
@@ -284,10 +284,10 @@ def test_institution_from_110__a():
     ]
     result = clean_record(jobs.do(create_record(snippet)))
 
-    assert expected == result['institution']
+    assert expected == result['institutions']
 
 
-def test_institution_from_double_110__a():
+def test_institutions_from_double_110__a():
     snippet = (
         '<record>'
         '  <datafield tag="110" ind1=" " ind2=" ">'
@@ -311,34 +311,38 @@ def test_institution_from_double_110__a():
     ]
     result = clean_record(jobs.do(create_record(snippet)))
 
-    assert expected == result['institution']
+    assert expected == result['institutions']
 
 
-@pytest.mark.xfail(reason='institution has length one')
-def test_institution_from_100__double_a():
+def test_institutions_from_110__double_a_z():
     snippet = (
         '<datafield tag="110" ind1=" " ind2=" ">'
         '  <subfield code="a">Indiana U.</subfield>'
         '  <subfield code="a">NIST, Wash., D.C.</subfield>'
+        '  <subfield code="z">902874</subfield>'
+        '  <subfield code="z">903056</subfield>'
         '</datafield>'
-    )  # record/1328021
+    )  # record/1328021/export/xme
 
     expected = [
         {
-            'curated_relation': False,
+            'curated_relation': True,
             'name': 'Indiana U.',
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/902874',
+            },
         },
         {
-            'curated_relation': False,
+            'curated_relation': True,
             'name': 'NIST, Wash., D.C.',
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/903056',
+            },
         },
     ]
     result = clean_record(jobs.do(create_record(snippet)))
 
-    assert expected == result['institution']
-
-
-# XXX: no record has a 110__z field.
+    assert expected == result['institutions']
 
 
 def test_description_from_520__a():
