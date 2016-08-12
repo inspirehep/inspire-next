@@ -41,6 +41,7 @@ class AuthorApproval(object):
 
         obj.extra_data["approved"] = approved
         obj.extra_data["ticket"] = ticket
+        obj.extra_data["user_action"] = value
         obj.save()
         db.session.commit()
 
