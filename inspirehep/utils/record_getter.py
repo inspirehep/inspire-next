@@ -51,9 +51,9 @@ class RecordGetterError(Exception):
 
 def raise_record_getter_error_and_log(f):
     @wraps(f)
-    def wrapper(*args):
+    def wrapper(*args, **kwargs):
         try:
-            return f(*args)
+            return f(*args, **kwargs)
         except Exception as e:
             current_app.logger.exception("Can't load recid %s", args)
             raise RecordGetterError(e.message, e)
@@ -62,11 +62,30 @@ def raise_record_getter_error_and_log(f):
 
 
 @raise_record_getter_error_and_log
-def get_es_record(record_type, recid):
+def get_es_record(record_type, recid, **kwargs):
     pid = PersistentIdentifier.get(record_type, recid)
     search_conf = current_app.config['RECORDS_REST_ENDPOINTS'][record_type]
     search_class = import_string(search_conf['search_class'])()
-    return search_class.get_source(pid.object_uuid)
+    return search_class.get_source(pid.object_uuid, **kwargs)
+
+
+def get_es_records(record_type, recids, **kwargs):
+    """Get a list of recids from ElasticSearch.
+
+    :param record_type: pid type of recids.
+    :type record_type: string.
+    :param recids: list of recids to retrieve.
+    :type recids: list of strings.
+    :returns: list of dictionaries with ES results
+    """
+    uuids = PersistentIdentifier.query.filter(
+        PersistentIdentifier.pid_value.in_(recids),
+        PersistentIdentifier.pid_type == record_type
+    ).all()
+    uuids = [str(uuid.object_uuid) for uuid in uuids]
+    search_conf = current_app.config['RECORDS_REST_ENDPOINTS'][record_type]
+    search_class = import_string(search_conf['search_class'])()
+    return search_class.mget(uuids, **kwargs)
 
 
 @raise_record_getter_error_and_log
