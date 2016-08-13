@@ -132,7 +132,8 @@ def authors(self, key, value):
 
         def _get_record(value):
             x_value = force_single_element(value.get('x'))
-            return get_record_ref(x_value, 'authors')
+            if x_value and x_value.isdigit():
+                return get_record_ref(x_value, 'authors')
 
         return {
             'affiliations': _get_affiliations(value),
