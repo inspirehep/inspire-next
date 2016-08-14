@@ -696,6 +696,43 @@ def test_authors_from_100__a_j_m_u_v_w_y():
     assert expected == result['authors']
 
 
+def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
+    snippet = (
+        '<datafield tag="100" ind1=" " ind2=" ">'
+        '  <subfield code="a">Bakhrushin, Iu.P.</subfield>'
+        '  <subfield code="u">NIIEFA, St. Petersburg</subfield>'
+        '  <subfield code="x">БАХРУШИН, Ю.П.</subfield>'
+        '  <subfield code="w">I.P.Bakhrushin.1</subfield>'
+        '  <subfield code="y">0</subfield>'
+        '  <subfield code="z">903073</subfield>'
+        '</datafield>'
+    )  # record/931310/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/903073',
+                    },
+                    'value': 'NIIEFA, St. Petersburg',
+                },
+            ],
+            'curated_relation': False,
+            'full_name': 'Bakhrushin, Iu.P.',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'I.P.Bakhrushin.1',
+                },
+            ],
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['authors']
+
+
 def test_corporate_author(marcxml_to_json, json_to_marc):
     """Test if corporate_author is created correctly."""
     assert (marcxml_to_json['corporate_author'][0] ==
