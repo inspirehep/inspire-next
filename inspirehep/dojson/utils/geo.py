@@ -518,7 +518,7 @@ def parse_conference_address(address_string):
     # Try to match the country
     country_code = match_country_name_to_its_code(country_name, city)
 
-    if country_code == 'US':
+    if country_code == 'US' and len(geo_elements) > 1:
         us_state = match_us_state(geo_elements[-2].upper().strip()
                                   .replace('.', ''))
 
