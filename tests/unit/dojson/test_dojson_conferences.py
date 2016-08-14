@@ -149,6 +149,29 @@ def test_address_from_marcxml__111_multiple_c():
     assert expected == result['address']
 
 
+def test_address_from_111__a_c_d_g_x_y():
+    snippet = (
+        '<datafield tag="111" ind1=" " ind2=" ">'
+        '  <subfield code="a">Twentieth Power Modulator Symposium, 1992</subfield>'
+        '  <subfield code="d">23-25 Jun 1992</subfield>'
+        '  <subfield code="x">1992-06-23</subfield>'
+        '  <subfield code="c">UNITED STATES</subfield>'
+        '  <subfield code="g">C92-06-23.1</subfield>'
+        '  <subfield code="y">1992-06-25</subfield>'
+        '</datafield>'
+    )
+
+    expected = [
+        {
+            'country_code': 'US',
+            'original_address': 'UNITED STATES',
+        },
+    ]
+    result = clean_record(conferences.do(create_record(snippet)))
+
+    assert expected == result['address']
+
+
 def test_contact_details_from_marcxml_270_single_p_single_m():
     snippet = (
         '<record> '
