@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 
 from ..model import hep, hep2marc
-from ...utils import get_record_ref
+from ...utils import force_single_element, get_record_ref
 
 from inspirehep.utils.helpers import force_force_list
 
@@ -106,8 +106,11 @@ def thesis(self, key, value):
         'HABILITATION': 'Habilitation',
     }
 
-    _degree_type = value.get('b')
-    degree_type = DEGREE_TYPES_MAP.get(_degree_type.upper(), 'Other')
+    _degree_type = force_single_element(value.get('b'))
+    if _degree_type:
+        degree_type = DEGREE_TYPES_MAP.get(_degree_type.upper(), 'Other')
+    else:
+        degree_type = None
 
     res = {
         '_degree_type': _degree_type,

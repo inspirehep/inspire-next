@@ -939,6 +939,34 @@ def test_thesis_multiple_institutions():
         assert expected_inst['recid'] in result_inst['record']['$ref']
 
 
+def test_thesis_from_502__a_c_d_z():
+    snippet = (
+        '<datafield tag="502" ind1=" " ind2=" ">'
+        '  <subfield code="a">PhD</subfield>'
+        '  <subfield code="c">IIT, Roorkee</subfield>'
+        '  <subfield code="d">2011</subfield>'
+        '  <subfield code="z">909554</subfield>'
+        '</datafield>'
+    )  # record/897773/export/xme
+
+    expected = {
+        'date': '2011',
+        'defense_date': 'PhD',  # XXX: obviously wrong.
+        'institutions': [
+            {
+                'curated_relation': True,
+                'record': {
+                    '$ref': 'http://localhost:5000/api/institutions/909554',
+                },
+                'name': 'IIT, Roorkee',
+            },
+        ],
+    }
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['thesis']
+
+
 def test_abstract(marcxml_to_json, json_to_marc):
     """Test if abstract is created correctly."""
     assert (marcxml_to_json['abstracts'][0]['value'] ==
