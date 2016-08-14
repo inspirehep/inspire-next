@@ -45,7 +45,7 @@
             "type": "array",
             "uniqueItems": true
         },
-        "institution": {
+        "institutions": {
             "items": {
                 "properties": {
                     "curated_relation": {

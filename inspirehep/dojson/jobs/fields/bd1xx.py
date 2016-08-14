@@ -30,14 +30,14 @@ import six
 
 from dojson import utils
 
+from inspirehep.utils.helpers import force_force_list
+
 from ..model import jobs
 from ...utils import (
     classify_rank,
     force_single_element,
     get_record_ref,
 )
-
-from inspirehep.utils.helpers import force_force_list
 
 
 COMMA_OR_SLASH = re.compile('\s*[/,]\s*')
@@ -125,21 +125,23 @@ def experiments(self, key, value):
     return value.get('e')
 
 
-@jobs.over('institution', '^110..')
-@utils.for_each_value
-@utils.filter_values
-def institution(self, key, value):
-    """Institution info."""
-    curated_relation = False
-    recid = None
-    if value.get('z') and value.get('z').isdigit():
-        curated_relation = True
-        recid = int(value.get('z'))
-    return {
-        'curated_relation': curated_relation,
-        'record': get_record_ref(recid, 'isntitutions'),
-        'name': value.get('a'),
-    }
+@jobs.over('institutions', '^110..')
+def institutions(self, key, value):
+    """Institutions info."""
+    institutions = self.get('institutions', [])
+
+    a_values = force_force_list(value.get('a'))
+    z_values = force_force_list(value.get('z'))
+
+    for a_value, z_value in six.moves.zip_longest(a_values, z_values):
+        record = get_record_ref(z_value, 'institutions')
+        institutions.append({
+            'curated_relation': record is not None,
+            'name': a_value,
+            'record': record,
+        })
+
+    return institutions
 
 
 @jobs.over('description', '^520..')

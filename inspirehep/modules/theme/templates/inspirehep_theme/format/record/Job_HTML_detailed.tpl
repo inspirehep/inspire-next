@@ -38,8 +38,8 @@
               {{ record.rank | join(', ') }}
             {% endif %}
 
-            {% if record.institution %}
-              {% for institution in record.institution %}
+            {% if record.institutions %}
+              {% for institution in record.institutions %}
                 <a href="/search?p=department_acronym:{{ institution }}&cc=Institutions">
                   {{ institution.name }}
                 </a>
@@ -94,12 +94,12 @@
       </div>
 
       <div class="col-md-4 hidden-xs hidden-sm" id="record-detailed-jobs-deadline">
-        {% if record.institution[0].name %}
+        {% if record.institutions[0].name %}
           <div class="detailed-map" id="job-detailed-map">
             <script>
               function initMap() {
                 var mapDiv = document.getElementById('job-detailed-map');
-                var address = '{{ record.institution[0].name }}';
+                var address = '{{ record.institutions[0].name }}';
                 var geocoder = new google.maps.Geocoder();
                 var map = new google.maps.Map(mapDiv, {
                   zoom: 5,
@@ -253,7 +253,7 @@
               <br/>
               <a href="/jobs/{{ job.control_number }}">{{ job.position }}</a>
               <br/>
-              {{ record.institution[0].name }}
+              {{ record.institutions[0].name }}
               <br/>
               Deadline: {{ job.deadline_date | format_date }}
             </div>
