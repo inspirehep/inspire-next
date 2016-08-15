@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import logging
 from functools import wraps
 
 from flask import current_app, render_template
@@ -33,6 +34,9 @@ from retrying import retry
 
 from ....utils.tickets import get_instance, retry_if_connection_problems
 from .actions import in_production_mode
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 @retry(
@@ -250,15 +254,11 @@ def send_robotupload(url=None,
 
         if current_app.debug:
             # Log what we are sending
-            current_app.logger.debug(
-                "Going to robotupload {mode} to {url}:\n{marcxml}\n".format(
-                    url=url,
-                    marcxml=marcxml,
-                    callback_url=combined_callback_url,
-                    mode=mode,
-                    nonce=obj.id,
-                    priority=5,
-                )
+            LOGGER.debug(
+                "Going to robotupload %s to %s:\n%s\n",
+                mode=mode,
+                url=url,
+                marcxml=marcxml,
             )
 
         if not in_production_mode():
