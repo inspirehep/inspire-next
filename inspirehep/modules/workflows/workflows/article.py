@@ -198,7 +198,10 @@ class Article(object):
                     reject_record('Article was already found on INSPIRE'),
                     stop_processing,
                     reply_ticket(
-                        template="literaturesuggest/tickets/user_rejected_exists.html",
+                        template=(
+                            "literaturesuggest/tickets/"
+                            "user_rejected_exists.html"
+                        ),
                         context_factory=reply_ticket_context
                     ),
                     close_ticket(ticket_id_key="ticket_id"),
@@ -226,12 +229,14 @@ class Article(object):
             IF(is_submission, [
                 IF(curation_ticket_needed, [
                     create_ticket(
-                        template="literaturesuggest/tickets/curation_core.html",
+                        template=(
+                            "literaturesuggest/tickets/curation_core.html"
+                        ),
                         queue="HEP_curation",
                         context_factory=curation_ticket_context,
                         ticket_id_key="curation_ticket_id"
-                    )]
-                ),
+                    )
+                ]),
                 reply_ticket(
                     template="literaturesuggest/tickets/user_accepted.html",
                     context_factory=reply_ticket_context
