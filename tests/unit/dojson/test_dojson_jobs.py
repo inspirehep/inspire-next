@@ -231,38 +231,119 @@ def test_regions_from_043__a_splits_on_commas():
 
 def test_experiments_from_693__e():
     snippet = (
-        '<datafield tag="693" ind1=" " ind2=" ">'
-        '  <subfield code="e">CERN-LHC-ATLAS</subfield>'
-        '</datafield>'
-    )  # record/1471772
+        '<record>'
+        '  <datafield tag="693" ind1=" " ind2=" ">'
+        '    <subfield code="e">ALIGO</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1375852
 
     expected = [
-        'CERN-LHC-ATLAS',
+        {
+            'curated_relation': False,
+            'name': 'ALIGO',
+        },
     ]
     result = clean_record(jobs.do(create_record(snippet)))
 
     assert expected == result['experiments']
 
 
-def test_experiments_from_triple_693__e():
+def test_experiments_from_693__e__0():
     snippet = (
         '<record>'
         '  <datafield tag="693" ind1=" " ind2=" ">'
-        '    <subfield code="e">CERN-LHC-CMS</subfield>'
-        '  </datafield>'
-        '  <datafield tag="693" ind1=" " ind2=" ">'
-        '    <subfield code="e">CALICE</subfield>'
-        '  </datafield>'
-        '  <datafield tag="693" ind1=" " ind2=" ">'
-        '    <subfield code="e">ILC</subfield>'
+        '    <subfield code="e">CERN-LHC-ATLAS</subfield>'
+        '    <subfield code="0">1108541</subfield>'
         '  </datafield>'
         '</record>'
-    )  # record/1447878
+    )  # record/1332138
 
     expected = [
-        'CERN-LHC-CMS',
-        'CALICE',
-        'ILC',
+        {
+            'curated_relation': True,
+            'name': 'CERN-LHC-ATLAS',
+            'record': {
+                '$ref': 'http://localhost:5000/api/experiments/1108541',
+            },
+        },
+    ]
+    result = clean_record(jobs.do(create_record(snippet)))
+
+    assert expected == result['experiments']
+
+
+def test_experiments_from_693__e__0_and_e():
+    snippet = (
+        '<record>'
+        '  <datafield tag="693" ind1=" " ind2=" ">'
+        '    <subfield code="e">CERN-LHC-ATLAS</subfield>'
+        '    <subfield code="0">1108541</subfield>'
+        '  </datafield>'
+        '  <datafield tag="693" ind1=" " ind2=" ">'
+        '    <subfield code="e">IHEP-CEPC</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1393583 /export/xme
+
+    expected = [
+        {
+            'curated_relation': True,
+            'name': 'CERN-LHC-ATLAS',
+            'record': {
+                '$ref': 'http://localhost:5000/api/experiments/1108541',
+            },
+        },
+        {
+            'curated_relation': False,
+            'name': 'IHEP-CEPC'
+        }
+    ]
+    result = clean_record(jobs.do(create_record(snippet)))
+
+    assert expected == result['experiments']
+
+
+def test_experiments_from_triple_693__e__0():
+    snippet = (
+        '<record>'
+        '  <datafield tag="693" ind1=" " ind2=" ">'
+        '    <subfield code="e">CERN-NA-049</subfield>'
+        '    <subfield code="0">1110308</subfield>'
+        '  </datafield>'
+        '  <datafield tag="693" ind1=" " ind2=" ">'
+        '    <subfield code="e">CERN-NA-061</subfield>'
+        '    <subfield code="0">1108234</subfield>'
+        '  </datafield>'
+        '  <datafield tag="693" ind1=" " ind2=" ">'
+        '    <subfield code="e">CERN-LHC-ALICE</subfield>'
+        '    <subfield code="0">1110642</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1469159
+
+    expected = [
+        {
+            'curated_relation': True,
+            'name': 'CERN-NA-049',
+            'record': {
+                '$ref': 'http://localhost:5000/api/experiments/1110308',
+            },
+        },
+        {
+            'curated_relation': True,
+            'name': 'CERN-NA-061',
+            'record': {
+                '$ref': 'http://localhost:5000/api/experiments/1108234',
+            },
+        },
+        {
+            'curated_relation': True,
+            'name': 'CERN-LHC-ALICE',
+            'record': {
+                '$ref': 'http://localhost:5000/api/experiments/1110642',
+            },
+        }
     ]
     result = clean_record(jobs.do(create_record(snippet)))
 
