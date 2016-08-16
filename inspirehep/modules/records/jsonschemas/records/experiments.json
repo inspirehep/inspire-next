@@ -5,14 +5,26 @@
             "title": "Accelerator",
             "type": "string"
         },
-        "affiliation": {
-            "description": "Institution ICN",
-            "title": "Affiliation",
-            "type": "array"
-        },
-        "affiliation_record": {
-            "$ref": "elements/json_reference.json",
-            "title": "Institution record URI"
+        "affiliations": {
+            "items": {
+                "properties": {
+                    "curated_relation": {
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "title": "Name of the institution",
+                        "type": "string"
+                    },
+                    "record": {
+                        "$ref": "elements/json_reference.json",
+                        "title": "Record URI of the institution."
+                    }
+                },
+                "type": "object"
+            },
+            "title": "Institutions with which experiment is affiliated.",
+            "type": "array",
+            "uniqueItems": true
         },
         "collaboration": {
             "title": "Collaboration",
