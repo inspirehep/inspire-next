@@ -26,7 +26,7 @@ import copy
 
 from datetime import date
 
-from flask import url_for
+from flask import current_app
 
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -57,10 +57,9 @@ def formdata_to_model(obj, formdata):
     # Schema
     # ======
     if '$schema' in data and not data['$schema'].startswith('http'):
-        data['$schema'] = url_for(
-            'invenio_jsonschemas.get_schema',
-            schema_path="records/{0}".format(data['$schema'])
-        )
+        jsonschemas_ext = current_app.extensions.get('invenio-jsonschemas')
+        data['$schema'] = jsonschemas_ext.path_to_url(
+            "records/{0}".format(data['$schema']))
 
     # ============================
     # Collection

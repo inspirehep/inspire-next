@@ -24,7 +24,11 @@
 
 from __future__ import absolute_import, division, print_function
 
-from workflow.patterns.controlflow import IF, IF_ELSE
+from workflow.patterns.controlflow import (
+    IF,
+    IF_ELSE,
+    IF_NOT,
+)
 
 from inspirehep.dojson.hep import hep2marc
 
@@ -241,6 +245,10 @@ class Article(object):
                     template="literaturesuggest/tickets/user_accepted.html",
                     context_factory=reply_ticket_context
                 )
+            ]),
+            IF_NOT(in_production_mode, [
+                # TODO: once legacy is out, this should replace robotupload
+                store_record,
             ]),
         ], [
             IF(is_submission, [
