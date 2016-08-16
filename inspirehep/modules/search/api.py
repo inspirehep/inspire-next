@@ -108,7 +108,7 @@ class AuthorsSearch(RecordsSearch, SearchMixin):
 
     def default_fields(self):
         """What fields to use when no keyword is specified."""
-        return ['global_fulltext']
+        return ['_all']
 
 
 class DataSearch(RecordsSearch, SearchMixin):
@@ -132,7 +132,7 @@ class ConferencesSearch(RecordsSearch, SearchMixin):
 
     def default_fields(self):
         """What fields to use when no keyword is specified."""
-        return ['global_fulltext']
+        return ['_all']
 
 
 class JobsSearch(RecordsSearch, SearchMixin):
@@ -144,7 +144,7 @@ class JobsSearch(RecordsSearch, SearchMixin):
 
     def default_fields(self):
         """What fields to use when no keyword is specified."""
-        return ['global_fulltext']
+        return ['_all']
 
 
 class InstitutionsSearch(RecordsSearch, SearchMixin):
@@ -156,7 +156,7 @@ class InstitutionsSearch(RecordsSearch, SearchMixin):
 
     def default_fields(self):
         """What fields to use when no keyword is specified."""
-        return ['global_fulltext']
+        return ['_all']
 
 
 class ExperimentsSearch(RecordsSearch, SearchMixin):
@@ -168,7 +168,7 @@ class ExperimentsSearch(RecordsSearch, SearchMixin):
 
     def default_fields(self):
         """What fields to use when no keyword is specified."""
-        return ['global_fulltext']
+        return ['_all']
 
 
 class JournalsSearch(RecordsSearch, SearchMixin):
@@ -180,4 +180,4 @@ class JournalsSearch(RecordsSearch, SearchMixin):
 
     def default_fields(self):
         """What fields to use when no keyword is specified."""
-        return ['global_fulltext']
+        return ['_all']
