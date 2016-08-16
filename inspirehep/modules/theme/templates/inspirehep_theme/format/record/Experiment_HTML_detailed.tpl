@@ -26,8 +26,8 @@
       <div class="panel-heading">
         <h1 class="record-detailed-title">
           {{ record['experiment_names'][0].title }}
-            {% if record['affiliation'] %}
-              ({{ record['affiliation'][0] }})
+            {% if record['affiliations'] %}
+              ({{ record['affiliations'][0]['name'] }})
             {% endif %}
         </h1>
         {% if record['titles'] %}
