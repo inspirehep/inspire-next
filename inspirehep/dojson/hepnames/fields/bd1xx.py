@@ -43,30 +43,6 @@ INSPIRE_BAI = re.compile('(\w+\.)+\d+')
 NON_DIGIT = re.compile('[^\d]+')
 
 
-@hepnames.over('acquisition_source', '^541[10_].')
-def acquisition_source(self, key, value):
-    """Immediate Source of Acquisition Note."""
-    return {
-        'source': value.get('a'),
-        'email': value.get('b'),
-        'method': value.get('c'),
-        'date': value.get('d'),
-        'submission_number': str(value.get('e'))
-    }
-
-
-@hepnames2marc.over('541', 'acquisition_source')
-def acquisition_source2marc(self, key, value):
-    """Immediate Source of Acquisition Note."""
-    return {
-        'a': value.get('source'),
-        'b': value.get('email'),
-        'c': value.get('method'),
-        'd': value.get('date'),
-        'e': value.get('submission_number'),
-    }
-
-
 @hepnames.over('name', '^100..')
 @utils.filter_values
 def name(self, key, value):
@@ -223,30 +199,6 @@ def native_name2marc(self, key, value):
     }
 
 
-@hepnames.over('private_current_emails', '^595..')
-@utils.for_each_value
-def private_current_emails(self, key, value):
-    """Hidden information."""
-    if 'o' in value:
-        self.setdefault('private_old_emails', []).append(value['o'])
-    if 'a' in value:
-        self.setdefault('_private_note', []).append(value['a'])
-    return value.get('m')
-
-
-@hepnames2marc.over('595', '^(private_current_emails|_private_note|private_old_emails)$')
-@utils.for_each_value
-@utils.filter_values
-def hidden_notes2marc(self, key, value):
-    return {
-        'a': value if key == '_private_note' else None,
-        'm': value if key == 'private_current_emails' else None,
-        'o': value if key == 'private_old_emails' else None,
-    }
-
-setattr(hidden_notes2marc, '__extend__', True)
-
-
 @hepnames.over('positions', '^371..')
 @utils.for_each_value
 @utils.filter_values
@@ -356,34 +308,6 @@ def prizes(self, key, value):
 @hepnames2marc.over('678', '^prizes$')
 @utils.for_each_value
 def prizes2marc(self, key, value):
-    return {
-        'a': value
-    }
-
-
-@hepnames.over('_public_note', '^680..')
-@utils.for_each_value
-def _public_note(self, key, value):
-    return value.get('i')
-
-
-@hepnames2marc.over('680', '^_public_note$')
-@utils.for_each_value
-def _public_note2marc(self, key, value):
-    return {
-        'i': value
-    }
-
-
-@hepnames.over('_curators_note', '^667..')
-@utils.for_each_value
-def _curators_note(self, key, value):
-    return value.get('a')
-
-
-@hepnames2marc.over('667', '^_curators_note$')
-@utils.for_each_value
-def _curators_note2marc(self, key, value):
     return {
         'a': value
     }
