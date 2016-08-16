@@ -145,30 +145,63 @@ def test_experiment_names_and_affiliation_from_marcxml_119():
         '  <datafield tag="119" ind1=" " ind2=" ">'
         '    <subfield code="a">CERN-ALPHA</subfield>'
         '    <subfield code="u">CERN</subfield>'
+        '    <subfield code="z">902725</subfield>'
         '  </datafield>'
         '</record>'
-    )
+    )  # record/1108206
 
     result = clean_record(experiments.do(create_record(snippet)))
 
-    assert result['affiliation'][0] == 'CERN'
-    assert result['experiment_names'][0]['title'] == 'CERN-ALPHA'
+    assert result['affiliations'] == [
+        {
+            'curated_relation': True,
+            'name': 'CERN',
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/902725',
+            },
+        },
+    ]
+    assert result['experiment_names'] == [{'title': 'CERN-ALPHA'}]
 
 
-def test_experiment_names_and_affiliation_from_marcxml_119_two_u():
+def test_experiment_names_and_affiliation_from_marcxml_multiple_119():
     snippet = (
         '<record>'
         '  <datafield tag="119" ind1=" " ind2=" ">'
         '    <subfield code="a">LATTICE-UKQCD</subfield>'
+        '  </datafield>'
+        '  <datafield tag="119" ind1=" " ind2=" ">'
         '    <subfield code="u">Cambridge U.</subfield>'
+        '  </datafield>'
+        '  <datafield tag="119" ind1=" " ind2=" ">'
         '    <subfield code="u">Edinburgh U.</subfield>'
+        '    <subfield code="z">902787</subfield>'
+        '  </datafield>'
+        '  <datafield tag="119" ind1=" " ind2=" ">'
+        '    <subfield code="u">Swansea U.</subfield>'
         '  </datafield>'
         '</record>'
-    )
+    )  # record/1228417
 
     result = clean_record(experiments.do(create_record(snippet)))
-
-    assert result['affiliation'] == ['Cambridge U.', 'Edinburgh U.']
+    expected_affiliations = [
+        {
+            'curated_relation': False,
+            'name': 'Cambridge U.'
+        },
+        {
+            'curated_relation': True,
+            'name': 'Edinburgh U.',
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/902787',
+            },
+        },
+        {
+            'curated_relation': False,
+            'name': 'Swansea U.'
+        }
+    ]
+    assert result['affiliations'] == expected_affiliations
     assert result['experiment_names'][0]['title'] == 'LATTICE-UKQCD'
 
 

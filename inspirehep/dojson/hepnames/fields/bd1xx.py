@@ -29,7 +29,12 @@ import re
 from dojson import utils
 
 from ..model import hepnames, hepnames2marc
-from ...utils import classify_rank, force_single_element, get_record_ref
+from ...utils import (
+    classify_rank,
+    force_single_element,
+    get_record_ref,
+    get_recid_from_ref
+)
 
 from inspirehep.utils.helpers import force_force_list
 
@@ -451,10 +456,15 @@ def advisors(self, key, value):
     _degree_type = force_single_element(value.get('g'))
     degree_type = DEGREE_TYPES_MAP.get(_degree_type, 'Other')
 
+    recid = force_single_element(value.get('x'))
+    record = get_record_ref(recid, 'authors')
+
     return {
         'name': value.get('a'),
         'degree_type': degree_type,
         '_degree_type': _degree_type,
+        'record': record,
+        'curated_relation': value.get('y') == '1'
     }
 
 
@@ -464,7 +474,9 @@ def advisors2marc(self, key, value):
     """The advisors for all types of degrees."""
     return {
         'a': value.get('name'),
-        'g': value.get('_degree_type')
+        'g': value.get('_degree_type'),
+        'x': get_recid_from_ref(value.get('record')),
+        'y': '1' if value.get('curated_relation') else None
     }
 
 

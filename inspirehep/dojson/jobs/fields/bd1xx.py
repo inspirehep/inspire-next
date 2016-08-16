@@ -119,10 +119,21 @@ def regions(self, key, value):
 
 
 @jobs.over('experiments', '^693..')
-@utils.for_each_value
 def experiments(self, key, value):
-    """Contact person."""
-    return value.get('e')
+    """Experiments associated with Job."""
+    experiments = self.get('experiments', [])
+
+    name = value.get('e')
+    recid = value.get('0')
+    record = get_record_ref(recid, 'experiments')
+
+    experiments.append({
+        'curated_relation': record is not None,
+        'name': name,
+        'record': record
+    })
+
+    return experiments
 
 
 @jobs.over('institutions', '^110..')

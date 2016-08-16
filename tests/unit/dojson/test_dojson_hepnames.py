@@ -30,7 +30,7 @@ import pytest
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hepnames import hepnames2marc, hepnames
-from inspirehep.dojson.utils import clean_record
+from inspirehep.dojson.utils import clean_record, get_recid_from_ref
 
 
 @pytest.fixture
@@ -331,6 +331,8 @@ def test_advisors_from_701__a_g_i():
         '  <subfield code="a">Rivelles, Victor O.</subfield>'
         '  <subfield code="g">PhD</subfield>'
         '  <subfield code="i">INSPIRE-00120420</subfield>'
+        '  <subfield code="x">991627</subfield>'
+        '  <subfield code="y">1</subfield>'
         '</datafield>'
     )  # record/1474091
 
@@ -339,6 +341,10 @@ def test_advisors_from_701__a_g_i():
             'name': 'Rivelles, Victor O.',
             'degree_type': 'PhD',
             '_degree_type': 'PhD',
+            'record': {
+                '$ref': 'http://localhost:5000/api/authors/991627',
+            },
+            'curated_relation': True
         },
     ]
     result = clean_record(hepnames.do(create_record(snippet)))
