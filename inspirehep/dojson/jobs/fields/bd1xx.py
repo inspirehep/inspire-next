@@ -96,7 +96,7 @@ def regions(self, key, value):
         'AF': 'Africa',
         'Africa': 'Africa',
         'Asia': 'Asia',
-        'Australia': 'Australia',
+        'Australia': 'Australasia',
         'Australasia': 'Australasia',
         'eu': 'Europe',
         'Europe': 'Europe',
