@@ -2,9 +2,6 @@
     "$schema": "http://json-schema.org/schema#",
     "properties": {
         "accelerator": {
-            "enum": [
-                "We need one"
-            ],
             "title": "Accelerator",
             "type": "string"
         },
