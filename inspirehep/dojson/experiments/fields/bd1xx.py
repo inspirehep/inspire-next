@@ -40,10 +40,17 @@ from inspirehep.utils.helpers import force_force_list
 def experiment_names(self, key, value):
     """Experiment names."""
     if value.get('u'):
-        self.setdefault('affiliation', [])
-        raw_affiliations = force_force_list(value.get('u'))
-        for raw_affiliation in raw_affiliations:
-            self['affiliation'].append(raw_affiliation)
+        self.setdefault('affiliations', [])
+
+        name = value.get('u')
+        recid = value.get('z')
+        record = get_record_ref(recid, 'institutions')
+
+        self['affiliations'].append({
+            'curated_relation': record is not None,
+            'name': name,
+            'record': record
+        })
 
     return {
         'source': value.get('9'),
