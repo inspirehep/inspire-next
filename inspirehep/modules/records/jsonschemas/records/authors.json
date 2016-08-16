@@ -28,32 +28,6 @@
             "type": "array",
             "uniqueItems": true
         },
-        "author_note": {
-            "type": "string"
-        },
-        "birth_date": {
-            "format": "date",
-            "type": "string"
-        },
-        "conferences": {
-            "items": {
-                "$ref": "elements/json_reference.json"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
-        "death_date": {
-            "format": "date",
-            "type": "string"
-        },
-        "email_addresses": {
-            "items": {
-                "format": "email",
-                "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
         "experiments": {
             "items": {
                 "properties": {
@@ -139,14 +113,6 @@
             "type": "array",
             "uniqueItems": true
         },
-        "past_emails_addresses": {
-            "items": {
-                "format": "email",
-                "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
         "positions": {
             "items": {
                 "properties": {
@@ -192,13 +158,6 @@
             "type": "array",
             "uniqueItems": true
         },
-        "previous_names": {
-            "items": {
-                "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
         "prizes": {
             "items": {
                 "type": "string"
@@ -224,15 +183,6 @@
             },
             "type": "array",
             "uniqueItems": true
-        },
-        "status": {
-            "enum": [
-                "active",
-                "deceased",
-                "departed",
-                "retired"
-            ],
-            "type": "string"
         },
         "urls": {
             "items": {
