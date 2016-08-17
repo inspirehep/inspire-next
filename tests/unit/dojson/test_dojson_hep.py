@@ -487,8 +487,8 @@ def test_authors_from_700__a_j_v_m_w_y():
     assert expected == result['authors']
 
 
-@mock.patch('inspirehep.dojson.hep.fields.bd1xx.current_app.logger.error')
-def test_authors_from_700__double_a_u_w_x_y_z(error):
+@mock.patch('inspirehep.dojson.hep.fields.bd1xx.logger.warning')
+def test_authors_from_700__double_a_u_w_x_y_z(warning):
     snippet = (
         '<datafield tag="700" ind1=" " ind2=" ">'
         '  <subfield code="a">Gumplinger, P.</subfield>'
@@ -527,7 +527,7 @@ def test_authors_from_700__double_a_u_w_x_y_z(error):
     result = clean_record(hep.do(create_record(snippet)))
 
     assert expected == result['authors']
-    error.assert_called_with(
+    warning.assert_called_with(
         'Record with mashed up authors list. Taking first author: %s',
         'Gumplinger, P.',
     )

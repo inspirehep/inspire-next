@@ -24,9 +24,9 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
 import re
 
-from flask import current_app
 from six.moves import zip_longest
 
 from dojson import utils
@@ -40,6 +40,8 @@ from ...utils import (
 
 from inspirehep.utils.helpers import force_force_list
 
+
+logger = logging.getLogger(__name__)
 
 ORCID = re.compile('\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]')
 
@@ -69,7 +71,7 @@ def authors(self, key, value):
             a_values = force_force_list(value.get('a'))
             if a_values:
                 if len(a_values) > 1:
-                    current_app.logger.error(
+                    logger.warning(
                         'Record with mashed up authors list. '
                         'Taking first author: %s', a_values[0]
                     )
