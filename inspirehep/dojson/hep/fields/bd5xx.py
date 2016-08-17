@@ -24,12 +24,17 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
+
 from dojson import utils
 
 from ..model import hep, hep2marc
 from ...utils import force_single_element, get_record_ref
 
 from inspirehep.utils.helpers import force_force_list
+
+
+logger = logging.getLogger(__name__)
 
 
 @hep.over('public_notes', '^500..')
@@ -150,11 +155,14 @@ def thesis2marc(self, key, value):
 def abstracts(self, key, value):
     """Summary, Etc.."""
     if isinstance(value.get('a'), (list, tuple)):
-        import warnings
-        warnings.warn(u'Record with double abstract! Taking first abstract: {}'.format(value.get('a')[0]))
+        logger.warning(
+            'Record with double abstract. '
+            'Taking first abstract: %s', value.get('a')
+        )
         abstract = value.get('a')[0]
     else:
         abstract = value.get('a')
+
     return {
         'value': abstract,
         'source': value.get('9'),
