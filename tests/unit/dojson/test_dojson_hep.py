@@ -1272,6 +1272,46 @@ def test_thesis_supervisors_from_multiple_701_with_z():
     assert expected == result['thesis_supervisors']
 
 
+def test_thesis_supervisors_from_701__double_a_u_z():
+    snippet = (
+        '<datafield tag="701" ind1=" " ind2=" ">'
+        '  <subfield code="a">Poling, Ron</subfield>'
+        '  <subfield code="a">Kubota, Yuichi</subfield>'
+        '  <subfield code="u">Minnesota U.</subfield>'
+        '  <subfield code="z">903010</subfield>'
+        '</datafield>'
+    )  # record/776962/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'curated_relation': True,
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/903010',
+                    },
+                    'value': 'Minnesota U.',
+                },
+            ],
+            'full_name': 'Poling, Ron',
+        },
+        {
+            'affiliations': [
+                {
+                    'curated_relation': True,
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/903010',
+                    },
+                    'value': 'Minnesota U.',
+                },
+            ],
+            'full_name': 'Kubota, Yuichi',
+        }
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['thesis_supervisors']
+
 
 def test_collaboration(marcxml_to_json, json_to_marc):
     """Test if collaboration is created correctly."""

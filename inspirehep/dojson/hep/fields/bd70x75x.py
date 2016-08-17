@@ -36,12 +36,16 @@ from ...utils import get_record_ref
 
 
 @hep.over('thesis_supervisors', '^701..')
-@utils.for_each_value
 def thesis_supervisors(self, key, value):
     """Thesis supervisors.
 
-    FIXME: handle the presence of multiple 700__a.
     FIXME: handle identifiers from 701__i and 701__j."""
+    def _get_thesis_supervisor(a_value, value):
+        return {
+            'affiliations': _get_affiliations(value),
+            'full_name': a_value,
+        }
+
     def _get_affiliations(value):
         result = []
 
@@ -62,10 +66,13 @@ def thesis_supervisors(self, key, value):
 
         return result
 
-    return {
-        'full_name': value.get('a'),
-        'affiliations': _get_affiliations(value),
-    }
+    thesis_supervisors = self.get('thesis_supervisors', [])
+
+    a_values = force_force_list(value.get('a'))
+    for a_value in a_values:
+        thesis_supervisors.append(_get_thesis_supervisor(a_value, value))
+
+    return thesis_supervisors
 
 
 @hep2marc.over('701', 'thesis_supervisors')
