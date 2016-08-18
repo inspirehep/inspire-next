@@ -341,25 +341,6 @@ def test_get_author_one_author_without_full_name():
     assert expected == result
 
 
-def test_get_author_one_author_with_full_name_a_list():
-    one_author_with_full_name_a_list = Record({
-        'authors': [
-            {
-                'full_name': [
-                    'Goldstone, Jeffrey',
-                    'Salam, Abdus',
-                    'Weinberg, Steven'
-                ]
-            }
-        ]
-    })
-
-    expected = ['Goldstone, Jeffreyand Salam, Abdusand Weinberg, Steven']
-    result = Bibtex(one_author_with_full_name_a_list)._get_author()
-
-    assert expected == result
-
-
 def test_get_author_one_author_with_one_fullname():
     one_author_with_one_fullname = Record({
         'authors': [
@@ -383,6 +364,28 @@ def test_get_author_two_authors_with_fullnames():
 
     expected = ['Englert, F.', 'Brout, R.']
     result = Bibtex(two_authors_with_fullnames)._get_author()
+
+    assert expected == result
+
+
+def test_get_author_two_authors_one_a_supervisor():
+    two_authors_one_a_supervisor = Record({
+        'authors': [
+            {'full_name': 'Mankuzhiyil, Nijil'},
+            {
+                'contributor_roles': [
+                    {
+                        'source': 'CRediT',
+                        'value': 'Supervision',
+                    },
+                ],
+                'full_name': 'de Angelis, Alessandro',
+            },
+        ],
+    })
+
+    expected = ['Mankuzhiyil, Nijil']
+    result = Bibtex(two_authors_one_a_supervisor)._get_author()
 
     assert expected == result
 

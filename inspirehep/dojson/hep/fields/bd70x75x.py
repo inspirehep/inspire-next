@@ -35,13 +35,23 @@ from ..model import hep, hep2marc
 from ...utils import get_record_ref
 
 
-@hep.over('thesis_supervisors', '^701..')
-@utils.for_each_value
+@hep.over('authors', '^701..')
 def thesis_supervisors(self, key, value):
     """Thesis supervisors.
 
-    FIXME: handle the presence of multiple 700__a.
     FIXME: handle identifiers from 701__i and 701__j."""
+    def _get_thesis_supervisor(a_value, value):
+        return {
+            'affiliations': _get_affiliations(value),
+            'contributor_roles': [
+                {
+                    'source': 'CRediT',
+                    'value': 'Supervision',
+                },
+            ],
+            'full_name': a_value,
+        }
+
     def _get_affiliations(value):
         result = []
 
@@ -62,22 +72,28 @@ def thesis_supervisors(self, key, value):
 
         return result
 
-    return {
-        'full_name': value.get('a'),
-        'affiliations': _get_affiliations(value),
-    }
+    authors = self.get('authors', [])
+
+    a_values = force_force_list(value.get('a'))
+    for a_value in a_values:
+        authors.append(_get_thesis_supervisor(a_value, value))
+
+    return authors
 
 
-@hep2marc.over('701', 'thesis_supervisors')
+@hep2marc.over('701', 'authors')
 @utils.for_each_value
 def thesis_supervisors2marc(self, key, value):
     """Thesis supervisors.
 
     FIXME: handle recids to 701__z."""
-    return {
-        'a': value.get('full_name'),
-        'u': get_value(value, 'affiliations.value'),
-    }
+    _is_supervisor = 'Supervision' in value.get('contributor_roles', [])
+
+    if _is_supervisor:
+        return {
+            'a': value.get('full_name'),
+            'u': get_value(value, 'affiliations.value'),
+        }
 
 
 @hep.over('collaboration', '^710[10_2][_2]')
