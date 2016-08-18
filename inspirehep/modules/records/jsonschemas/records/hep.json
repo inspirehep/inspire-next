@@ -146,8 +146,8 @@
                                         "Supervision",
                                         "Validation",
                                         "Visualization",
-                                        "Writing \u2013 original draft",
-                                        "Writing \u2013 review & editing"
+                                        "Writing - original draft",
+                                        "Writing - review & editing"
                                     ],
                                     "type": "string"
                                 }
