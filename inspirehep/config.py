@@ -164,9 +164,9 @@ SEARCH_UI_SEARCH_INDEX = 'records-hep'
 SEARCH_ELASTIC_KEYWORD_MAPPING = {
     None: ['global_fulltext'],
     "control_number": ["control_number"],
-    "author": ["authors.full_name", "authors.alternative_name"],
+    "author": ["authors.full_name", "authors.alternative_names"],
     "exactauthor": ["exactauthor.raw", "authors.full_name",
-                    "authors.alternative_name", "authors.inspire_bai"
+                    "authors.alternative_names", "authors.inspire_bai"
                     ],
     "abstract": ["abstracts.value"],
     "collaboration": ["collaboration.value", "collaboration.raw^2"],
@@ -208,7 +208,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "arxiv": ["arxiv_eprints.value"],
     "caption": ["urls.description"],
     "country": ["authors.affiliations.value"],
-    "firstauthor": ["authors.full_name", "authors.alternative_name"],
+    "firstauthor": ["authors.full_name", "authors.alternative_names"],
     "fulltext": ["urls.value"],
     "journal": ["publication_info.recid",
                 "publication_info.page_start",

@@ -217,8 +217,8 @@ def test_authors(marcxml_to_json, json_to_marc):
             json_to_marc['100']['a'])
     assert (marcxml_to_json['authors'][0]['role'] ==
             json_to_marc['100']['e'])
-    assert (marcxml_to_json['authors'][0]['alternative_name'] ==
-            json_to_marc['100']['q'])
+    assert (marcxml_to_json['authors'][0]['alternative_names'][0] ==
+            json_to_marc['100']['q'][0])
     assert (marcxml_to_json['authors'][0]['email'] ==
             json_to_marc['100']['m'])
     assert (marcxml_to_json['authors'][0]['affiliations'][0]['value'] ==
@@ -444,6 +444,50 @@ def test_authors_from_100__a_v_m_w_y():
                 {
                     'type': 'INSPIRE BAI',
                     'value': 'X.Gao.11',
+                },
+            ],
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['authors']
+
+
+def test_authors_from_100__a_():
+    snippet = (
+        '<datafield tag="100" ind1=" " ind2=" ">'
+        '  <subfield code="a">Dineykhan, M.</subfield>'
+        '  <subfield code="q">Dineĭkhan, M.</subfield>'
+        '  <subfield code="q">Dineikhan, M.</subfield>'
+        '  <subfield code="q">Динейхан, М.</subfield>'
+        '  <subfield code="u">Dubna, JINR</subfield>'
+        '  <subfield code="w">M.Dineykhan.1</subfield>'
+        '  <subfield code="y">0</subfield>'
+        '  <subfield code="z">902780</subfield>'
+        '</datafield>'
+    )  # record/144579/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/institutions/902780',
+                    },
+                    'value': 'Dubna, JINR',
+                },
+            ],
+            'alternative_names': [
+                u'Dineĭkhan, M.',
+                u'Dineikhan, M.',
+                u'Динейхан, М.',
+            ],
+            'curated_relation': False,
+            'full_name': 'Dineykhan, M.',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'M.Dineykhan.1',
                 },
             ],
         },

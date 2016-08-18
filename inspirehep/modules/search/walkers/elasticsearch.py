@@ -117,7 +117,7 @@ class ElasticSearchDSL(object):
                 node.value = node.value[len('recid:'):]
 
             fields = self.get_fields_for_keyword(keyword, mode='a')
-            if fields == ['authors.full_name', 'authors.alternative_name']:
+            if fields == ['authors.full_name', 'authors.alternative_names']:
                 return Q('bool', should=[
                     Q("match", authors__name_variations=str(node.value)),
                     Q("match", authors__full_name=str(node.value)),
@@ -143,7 +143,7 @@ class ElasticSearchDSL(object):
     def visit(self, node):
         def query(keyword):
             fields = self.get_fields_for_keyword(keyword, mode='e')
-            if fields == ['authors.full_name', 'authors.alternative_name']:
+            if fields == ['authors.full_name', 'authors.alternative_names']:
                 return Q(
                     'bool',
                     must=Q('bool', should=[

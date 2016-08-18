@@ -545,7 +545,7 @@ def test_author_colon_or_author_colon_or_title_colon_or_title_colon():
                                                             'type': 'phrase',
                                                             'fields': [
                                                                 'authors.full_name',
-                                                                'authors.alternative_name'
+                                                                'authors.alternative_names'
                                                             ]
                                                         }
                                                     },
@@ -566,7 +566,7 @@ def test_author_colon_or_author_colon_or_title_colon_or_title_colon():
                                                 'type': 'phrase',
                                                 'fields': [
                                                     'authors.full_name',
-                                                    'authors.alternative_name'
+                                                    'authors.alternative_names'
                                                 ],
                                             }
                                         }
@@ -681,7 +681,7 @@ def test_exactauthor_colon_bai():
             "fields": [
               "exactauthor.raw",
               "authors.full_name",
-              "authors.alternative_name",
+              "authors.alternative_names",
               "authors.inspire_bai"
             ]
         }
@@ -710,7 +710,7 @@ def test_or_of_exactauthor_colon_queries():
             "fields": [
               "exactauthor.raw",
               "authors.full_name",
-              "authors.alternative_name",
+              "authors.alternative_names",
               "authors.inspire_bai"
             ]
         }
@@ -787,7 +787,7 @@ def test_find_author_with_hash_wildcard():
                     'query': 'chkv*'}}, {
                 'query_string': {
                     'analyze_wildcard': True,
-                    'default_field': 'authors.alternative_name',
+                    'default_field': 'authors.alternative_names',
                     'query': 'chkv*'}}
             ]}
         }
@@ -821,7 +821,7 @@ def test_find_exactauthor():
             "fields": [
               "exactauthor.raw",
               "authors.full_name",
-              "authors.alternative_name",
+              "authors.alternative_names",
               "authors.inspire_bai"
             ]
         }
@@ -855,7 +855,7 @@ def test_find_exactauthor_not_affiliation_uppercase():
                   "fields": [
                     "exactauthor.raw",
                     "authors.full_name",
-                    "authors.alternative_name",
+                    "authors.alternative_names",
                     "authors.inspire_bai"
                   ]
                 }
