@@ -360,6 +360,102 @@ RECORDS_REST_ENDPOINTS = dict(
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
+    authors_citations=dict(
+        pid_type='authors',
+        pid_minter='inspire_recid_minter',
+        pid_fetcher='inspire_recid_fetcher',
+        search_class='inspirehep.modules.search:AuthorsSearch',
+        record_serializers={
+            'application/json': ('inspirehep.modules.authors.rest'
+                                 ':citations_v1_response'),
+        },
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'inspirehep.modules.records.serializers'
+                ':json_brief_v1_search'
+            ),
+        },
+        list_route='/authors/',
+        item_route='/authors/<pidpath(authors):pid_value>/citations',
+        default_media_type='application/json',
+        max_result_window=10000,
+        search_factory_imp=('inspirehep.modules.search.query'
+                            ':inspire_search_factory'),
+    ),
+    authors_coauthors=dict(
+        pid_type='authors',
+        pid_minter='inspire_recid_minter',
+        pid_fetcher='inspire_recid_fetcher',
+        search_class='inspirehep.modules.search:AuthorsSearch',
+        record_serializers={
+            'application/json': ('inspirehep.modules.authors.rest'
+                                 ':coauthors_v1_response'),
+        },
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'inspirehep.modules.records.serializers'
+                ':json_brief_v1_search'
+            ),
+        },
+        list_route='/authors/',
+        item_route='/authors/<pidpath(authors):pid_value>/coauthors',
+        default_media_type='application/json',
+        max_result_window=10000,
+        search_factory_imp=('inspirehep.modules.search.query'
+                            ':inspire_search_factory'),
+    ),
+    authors_publications=dict(
+        pid_type='authors',
+        pid_minter='inspire_recid_minter',
+        pid_fetcher='inspire_recid_fetcher',
+        search_class='inspirehep.modules.search:AuthorsSearch',
+        record_serializers={
+            'application/json': ('inspirehep.modules.authors.rest'
+                                 ':publications_v1_response'),
+        },
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'inspirehep.modules.records.serializers'
+                ':json_brief_v1_search'
+            ),
+        },
+        list_route='/authors/',
+        item_route='/authors/<pidpath(authors):pid_value>/publications',
+        default_media_type='application/json',
+        max_result_window=10000,
+        search_factory_imp=('inspirehep.modules.search.query'
+                            ':inspire_search_factory'),
+    ),
+    authors_stats=dict(
+        pid_type='authors',
+        pid_minter='inspire_recid_minter',
+        pid_fetcher='inspire_recid_fetcher',
+        search_class='inspirehep.modules.search:AuthorsSearch',
+        record_serializers={
+            'application/json': ('inspirehep.modules.authors.rest'
+                                 ':stats_v1_response'),
+        },
+        search_serializers={
+            'application/json': ('invenio_records_rest.serializers'
+                                 ':json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'inspirehep.modules.records.serializers'
+                ':json_brief_v1_search'
+            ),
+        },
+        list_route='/authors/',
+        item_route='/authors/<pidpath(authors):pid_value>/stats',
+        default_media_type='application/json',
+        max_result_window=10000,
+        search_factory_imp=('inspirehep.modules.search.query'
+                            ':inspire_search_factory'),
+    ),
     data=dict(
         pid_type='data',
         pid_minter='inspire_recid_minter',
