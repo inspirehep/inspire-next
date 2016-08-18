@@ -318,6 +318,25 @@ def test_other_names(marcxml_to_json, json_to_marc):
             json_to_marc['400'][1]['a'])
 
 
+def test_other_names_from_400__triple_a():
+    snippet = (
+        '<datafield tag="400" ind1=" " ind2=" ">'
+        '  <subfield code="a">Yosef Cohen, Hadar</subfield>'
+        '  <subfield code="a">Josef Cohen, Hadar</subfield>'
+        '  <subfield code="a">Cohen, Hadar Josef</subfield>'
+        '</datafield>'
+    )  # record/1292399/export/xme
+
+    expected = [
+        'Yosef Cohen, Hadar',
+        'Josef Cohen, Hadar',
+        'Cohen, Hadar Josef',
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['other_names']
+
+
 def test_advisors(marcxml_to_json, json_to_marc):
     assert (marcxml_to_json['advisors'][0]['name'] ==
             json_to_marc['701'][0]['a'])

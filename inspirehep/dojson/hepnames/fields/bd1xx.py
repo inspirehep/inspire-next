@@ -187,13 +187,15 @@ def ids2marc(self, key, value):
 
 
 @hepnames.over('other_names', '^400..')
-@utils.for_each_value
 def other_names(self, key, value):
     """Other variation of names.
 
     Usually a different form of writing the primary name.
     """
-    return value.get('a')
+    other_names = self.get('other_names', [])
+    other_names.extend(force_force_list(value.get('a')))
+
+    return other_names
 
 
 @hepnames2marc.over('400', '^other_names$')
