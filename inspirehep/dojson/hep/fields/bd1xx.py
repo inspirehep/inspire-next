@@ -145,7 +145,7 @@ def authors(self, key, value):
             'affiliations': _get_affiliations(value),
             'alternative_names': force_force_list(value.get('q')),
             'curated_relation': value.get('y') == '1',
-            'email': value.get('m'),
+            'emails': force_force_list(value.get('m')),
             'full_name': _get_full_name(value),
             'ids': _get_ids(value),
             'record': _get_record(value),
@@ -179,7 +179,7 @@ def authors2marc(self, key, value):
             'q': value.get('alternative_names'),
             'i': value.get('inspire_id'),
             'j': value.get('orcid'),
-            'm': value.get('email'),
+            'm': value.get('emails'),
             'u': affiliations,
             'x': get_recid_from_ref(value.get('record')),
             'y': value.get('curated_relation')
