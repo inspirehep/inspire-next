@@ -35,7 +35,7 @@ from ..model import hep, hep2marc
 from ...utils import get_record_ref
 
 
-@hep.over('thesis_supervisors', '^701..')
+@hep.over('authors', '^701..')
 def thesis_supervisors(self, key, value):
     """Thesis supervisors.
 
@@ -43,6 +43,12 @@ def thesis_supervisors(self, key, value):
     def _get_thesis_supervisor(a_value, value):
         return {
             'affiliations': _get_affiliations(value),
+            'contributor_roles': [
+                {
+                    'source': 'CRediT',
+                    'value': 'Supervision',
+                },
+            ],
             'full_name': a_value,
         }
 
@@ -66,25 +72,28 @@ def thesis_supervisors(self, key, value):
 
         return result
 
-    thesis_supervisors = self.get('thesis_supervisors', [])
+    authors = self.get('authors', [])
 
     a_values = force_force_list(value.get('a'))
     for a_value in a_values:
-        thesis_supervisors.append(_get_thesis_supervisor(a_value, value))
+        authors.append(_get_thesis_supervisor(a_value, value))
 
-    return thesis_supervisors
+    return authors
 
 
-@hep2marc.over('701', 'thesis_supervisors')
+@hep2marc.over('701', 'authors')
 @utils.for_each_value
 def thesis_supervisors2marc(self, key, value):
     """Thesis supervisors.
 
     FIXME: handle recids to 701__z."""
-    return {
-        'a': value.get('full_name'),
-        'u': get_value(value, 'affiliations.value'),
-    }
+    _is_supervisor = 'Supervision' in value.get('contributor_roles', [])
+
+    if _is_supervisor:
+        return {
+            'a': value.get('full_name'),
+            'u': get_value(value, 'affiliations.value'),
+        }
 
 
 @hep.over('collaboration', '^710[10_2][_2]')

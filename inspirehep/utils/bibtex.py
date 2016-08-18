@@ -26,7 +26,7 @@ import re
 
 from inspirehep.utils import bibtex_booktitle
 from inspirehep.utils.helpers import force_force_list
-from inspirehep.utils.record import is_submitted_but_not_published
+from inspirehep.utils.record import get_value, is_submitted_but_not_published
 from inspirehep.utils.record_getter import get_es_record
 
 from .export import MissingRequiredFieldError, Export
@@ -263,24 +263,24 @@ class Bibtex(Export):
 
     def _get_author(self):
         """Return list of name(s) of the author(s)."""
+        def _is_supervisor(author):
+            contributor_roles = force_force_list(
+                get_value(author, 'contributor_roles.value'))
+            return 'Supervision' in contributor_roles
+
         result = []
         spacinginitials = re.compile(r'([A-Z][a-z]{0,1}[}]?\.)(\b|[-\{])')
-        if 'authors' in self.record:
-            for author in self.record['authors']:
-                if 'full_name' in author and author['full_name']:
-                    if isinstance(author['full_name'], list):
-                        author_full_name = 'and '.join(full_name for full_name
-                                                       in author['full_name'])
-                        result.append(spacinginitials.sub(
-                            r'\1 \2', author_full_name))
-                    else:
-                        author_full_name = spacinginitials.sub(
-                            r'\1 \2', author['full_name'])
-                        result.append(author_full_name)
-        elif 'corporate_author' in self.record:
-            for corp_author in self.record['corporate_author']:
-                if corp_author:
-                    result.append(corp_author)
+
+        authors = force_force_list(get_value(self.record, 'authors'))
+        non_supervisors = [el for el in authors if not _is_supervisor(el)]
+        result.extend(
+            [spacinginitials.sub(r'\1 \2', el['full_name'])
+                for el in non_supervisors if 'full_name' in el])
+
+        corporate_authors = force_force_list(
+            get_value(self.record, 'corporate_author'))
+        result.extend(corporate_authors)
+
         return result
 
     def _get_editor(self):

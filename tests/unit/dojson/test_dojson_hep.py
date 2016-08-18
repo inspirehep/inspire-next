@@ -1089,7 +1089,7 @@ def test_thesaurus_terms(marcxml_to_json, json_to_marc):
             json_to_marc['695'][0]['a'])
 
 
-def test_thesis_supervisors_from_701__a_u():
+def test_authors_supervisors_from_701__a_u():
     snippet = (
         '<datafield tag="701" ind1=" " ind2=" ">'
         '  <subfield code="a">Garutti, Erika</subfield>'
@@ -1105,15 +1105,21 @@ def test_thesis_supervisors_from_701__a_u():
                     'value': 'U. Hamburg (main)',
                 }
             ],
+            'contributor_roles': [
+                {
+                    'source': 'CRediT',
+                    'value': 'Supervision',
+                },
+            ],
             'full_name': 'Garutti, Erika',
         },
     ]
     result = clean_record(hep.do(create_record(snippet)))
 
-    assert expected == result['thesis_supervisors']
+    assert expected == result['authors']
 
 
-def test_thesis_supervisors_from_701__a_double_u():
+def test_authors_supervisors_from_701__a_double_u():
     snippet = (
         '<datafield tag="701" ind1=" " ind2=" ">'
         '  <subfield code="a">Mnich, Joachim</subfield>'
@@ -1134,15 +1140,21 @@ def test_thesis_supervisors_from_701__a_double_u():
                     'value': 'U. Hamburg (main)',
                 },
             ],
+            'contributor_roles': [
+                {
+                    'source': 'CRediT',
+                    'value': 'Supervision',
+                },
+            ],
             'full_name': 'Mnich, Joachim',
         },
     ]
     result = clean_record(hep.do(create_record(snippet)))
 
-    assert expected == result['thesis_supervisors']
+    assert expected == result['authors']
 
 
-def test_thesis_supervisors_from_multiple_701():
+def test_authors_supervisors_from_multiple_701():
     snippet = (
         '<record>'
         '  <datafield tag="701" ind1=" " ind2=" ">'
@@ -1169,6 +1181,12 @@ def test_thesis_supervisors_from_multiple_701():
                     'value': 'U. Hamburg (main)',
                 },
             ],
+            'contributor_roles': [
+                {
+                    'source': 'CRediT',
+                    'value': 'Supervision',
+                },
+            ],
             'full_name': 'Garutti, Erika',
         },
         {
@@ -1182,6 +1200,12 @@ def test_thesis_supervisors_from_multiple_701():
                     'value': 'U. Hamburg (main)',
                 },
             ],
+            'contributor_roles': [
+                {
+                    'source': 'CRediT',
+                    'value': 'Supervision',
+                },
+            ],
             'full_name': 'Mnich, Joachim',
         },
         {
@@ -1191,15 +1215,21 @@ def test_thesis_supervisors_from_multiple_701():
                     'value': 'U. Geneva (main)',
                 },
             ],
+            'contributor_roles': [
+                {
+                    'source': 'CRediT',
+                    'value': 'Supervision',
+                },
+            ],
             'full_name': 'Pohl, Martin',
         },
     ]
     result = clean_record(hep.do(create_record(snippet)))
 
-    assert expected == result['thesis_supervisors']
+    assert expected == result['authors']
 
 
-def test_thesis_supervisors_from_multiple_701_with_z():
+def test_authors_supervisors_from_multiple_701_with_z():
     snippet = (
         '<record>'
         '  <datafield tag="701" ind1=" " ind2=" ">'
@@ -1233,6 +1263,12 @@ def test_thesis_supervisors_from_multiple_701_with_z():
                     'value': 'U. Hamburg (main)',
                 },
             ],
+            'contributor_roles': [
+                {
+                    'source': 'CRediT',
+                    'value': 'Supervision',
+                },
+            ],
             'full_name': 'Garutti, Erika',
         },
         {
@@ -1252,6 +1288,12 @@ def test_thesis_supervisors_from_multiple_701_with_z():
                     'value': 'U. Hamburg (main)',
                 },
             ],
+            'contributor_roles': [
+                {
+                    'source': 'CRediT',
+                    'value': 'Supervision',
+                },
+            ],
             'full_name': 'Mnich, Joachim',
         },
         {
@@ -1264,15 +1306,21 @@ def test_thesis_supervisors_from_multiple_701_with_z():
                     'value': 'U. Geneva (main)',
                 },
             ],
+            'contributor_roles': [
+                {
+                    'source': 'CRediT',
+                    'value': 'Supervision',
+                },
+            ],
             'full_name': 'Pohl, Martin',
         },
     ]
     result = clean_record(hep.do(create_record(snippet)))
 
-    assert expected == result['thesis_supervisors']
+    assert expected == result['authors']
 
 
-def test_thesis_supervisors_from_701__double_a_u_z():
+def test_authors_supervisors_from_701__double_a_u_z():
     snippet = (
         '<datafield tag="701" ind1=" " ind2=" ">'
         '  <subfield code="a">Poling, Ron</subfield>'
@@ -1293,6 +1341,12 @@ def test_thesis_supervisors_from_701__double_a_u_z():
                     'value': 'Minnesota U.',
                 },
             ],
+            'contributor_roles': [
+                {
+                    'source': 'CRediT',
+                    'value': 'Supervision',
+                },
+            ],
             'full_name': 'Poling, Ron',
         },
         {
@@ -1305,12 +1359,18 @@ def test_thesis_supervisors_from_701__double_a_u_z():
                     'value': 'Minnesota U.',
                 },
             ],
+            'contributor_roles': [
+                {
+                    'source': 'CRediT',
+                    'value': 'Supervision',
+                },
+            ],
             'full_name': 'Kubota, Yuichi',
         }
     ]
     result = clean_record(hep.do(create_record(snippet)))
 
-    assert expected == result['thesis_supervisors']
+    assert expected == result['authors']
 
 
 def test_collaboration(marcxml_to_json, json_to_marc):
