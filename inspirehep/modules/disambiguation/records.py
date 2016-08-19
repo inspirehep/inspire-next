@@ -22,11 +22,7 @@
 
 """Set of methods to create and update records."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-)
+from __future__ import absolute_import, division, print_function
 
 from celery.utils.log import get_task_logger
 from flask import current_app, url_for

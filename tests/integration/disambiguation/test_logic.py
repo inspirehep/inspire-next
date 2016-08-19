@@ -20,17 +20,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-)
+from __future__ import absolute_import, division, print_function
 
 from invenio_pidstore.models import PersistentIdentifier
 
-from inspirehep.modules.disambiguation.logic import (
-    _create_distance_signature,
-)
+from inspirehep.modules.disambiguation.logic import _create_distance_signature
 
 
 def test_create_distance_signature_method(small_app):

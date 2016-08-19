@@ -22,11 +22,7 @@
 
 """Set of methods to query Elasticsearch instance."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-)
+from __future__ import absolute_import, division, print_function
 
 from dateutil.parser import parse
 

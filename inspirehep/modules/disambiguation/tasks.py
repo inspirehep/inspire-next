@@ -22,11 +22,7 @@
 
 """Celery tasks provided by Disambiguation module."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-)
+from __future__ import absolute_import, division, print_function
 
 from celery import current_app, shared_task
 from celery.utils.log import get_task_logger
@@ -41,14 +37,14 @@ from invenio_records import Record
 from inspirehep.modules.disambiguation.beard import make_beard_clusters
 from inspirehep.modules.disambiguation.logic import process_clusters
 from inspirehep.modules.disambiguation.models import DisambiguationRecord
+from inspirehep.modules.disambiguation.receivers import (
+    append_updated_record_to_queue,
+)
 from inspirehep.modules.disambiguation.search import (
     create_beard_record,
     create_beard_signatures,
     get_blocks_from_record,
     get_records_from_block,
-)
-from inspirehep.modules.disambiguation.receivers import (
-    append_updated_record_to_queue,
 )
 
 logger = get_task_logger(__name__)

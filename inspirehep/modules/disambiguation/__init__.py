@@ -22,13 +22,10 @@
 
 """Inspire wrapper for Beard author disambiguation service."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-)
+from __future__ import absolute_import, division, print_function
 
 from .ext import InspireDisambiguation
 from .tasks import disambiguation_daemon
+
 
 __all__ = ('InspireDisambiguation', 'disambiguation_daemon')
