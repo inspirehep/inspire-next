@@ -202,7 +202,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "246__a": ["titles.title"],
     "595": ["hidden_notes"],
     "650__a": ["field_categories.term"],
-    "695__a": ["thesaurus_terms.keyword"],
+    "695__a": ["keywords.keyword"],
     "773__y": ["publication_info.year"],
     "authorcount": ["authors.full_name"],
     "arxiv": ["arxiv_eprints.value"],
@@ -229,7 +229,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "journal_page": ["publication_info.page_start",
                      "publication_info.page_range"
                      "publication_info.artid"],
-    "keyword": ["thesaurus_terms.keyword", "free_keywords.value"],
+    "keyword": ["keywords.keyword"],
     "note": ["public_notes.value"],
     "reference": ["references.doi", "references.report_number",
                   "references.journal_pubnote"

@@ -61,7 +61,7 @@ def get_publications():
             'facet_inspire_doc_type',
             'publication_info',
             'titles',
-            'thesaurus_terms'
+            'keywords'
         ]
     )
     for result in search.scan():
@@ -106,7 +106,7 @@ def get_publications():
             pass
 
         # Get keywords.
-        for keyword in result_source.get('thesaurus_terms', []):
+        for keyword in result_source.get('keywords', []):
             if keyword.get('keyword') is not "* Automatic Keywords *" \
                     and keyword.get('keyword'):
                 keywords.add(keyword.get('keyword'))

@@ -107,8 +107,8 @@
   <div>
     {% set sep = joiner("; ") %}
 
-    {% if record.thesaurus_terms %}
-      {% for keywords in record.thesaurus_terms %}
+    {% if record.keywords %}
+      {% for keywords in record.keywords %}
         {% if (loop.index < 11) %}
           {% if 'keyword' in keywords.keys() %}
             <span class="chip chip-literature">
@@ -119,14 +119,11 @@
         {% endif %}
     {% endfor %}
 
-    {% if record.free_keywords or record.thesaurus_terms|length > 10 %}
+    {% if record.free_keywords or record.keywords|length > 10 %}
       <div>
         <a href="" class="text-muted" data-toggle="modal" data-target="#keywordsFull">
           <small>
-            Show all {{ record.thesaurus_terms|length }} keywords
-            {% if record.get('free_keywords') %}
-              plus author supplied keywords
-            {% endif %}
+            Show all {{ record.keywords|length }} keywords
           </small>
         </a>
       </div>
@@ -139,23 +136,11 @@
             </div>
             <div class="modal-body">
             <h4>INSPIRE keywords</h4>
-              {% if record.get('thesaurus_terms') %}
-                {% for keywords in record.get('thesaurus_terms') %}
+              {% if record.get('keywords') %}
+                {% for keywords in record.get('keywords') %}
                   {% if 'keyword' in keywords.keys() %}
                     <span class="chip chip-literature">
                       <a href='/search?q=keyword:{{ keywords.get('keyword') }}'>{{ keywords.get('keyword') }}</a>
-                    </span>
-                    &nbsp;
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
-
-              {% if record.get('free_keywords') %}
-                <h4>Author supplied keywords</h4>
-                {% for keywords in record.get('free_keywords') %}
-                  {% if 'value' in keywords.keys() %}
-                    <span class="chip chip-literature">
-                      <a href='/search?q=keyword:{{ keywords.get('value') }}'>{{ keywords.get('value') }}</a>
                     </span>
                     &nbsp;
                   {% endif %}

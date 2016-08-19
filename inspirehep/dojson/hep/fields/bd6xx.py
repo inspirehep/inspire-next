@@ -44,35 +44,6 @@ def field_categories2marc(self, key, value):
     }
 
 
-@hep.over('free_keywords', '^653[10_2][_1032546]')
-def free_keywords(self, key, value):
-    """Free keywords."""
-    value = force_force_list(value)
-
-    def get_value(value):
-        return {
-            'value': value.get('a'),
-            'source': value.get('9'),
-        }
-
-    free_keywords = self.get('free_keywords', [])
-    for val in value:
-        free_keywords.append(get_value(val))
-
-    return free_keywords
-
-
-@hep2marc.over('653', 'free_keywords')
-@utils.for_each_value
-@utils.filter_values
-def free_keywords2marc(self, key, value):
-    """Free keywords."""
-    return {
-        'a': value.get('value'),
-        '9': value.get('source'),
-    }
-
-
 @hep.over('accelerator_experiments', '^693..')
 @utils.for_each_value
 @utils.filter_values
@@ -106,37 +77,97 @@ def accelerator_experiments2marc(self, key, value):
     }
 
 
-@hep.over('thesaurus_terms', '^695..')
-def thesaurus_terms(self, key, value):
+@hep.over('keywords', '^695..')
+@hep.over('keywords', '^653[10_2][_1032546]')
+@utils.for_each_value
+def keywords(self, key, value):
     """Controlled keywords."""
-    value = force_force_list(value)
+    def _is_thesaurus(value):
+        return '9' not in value
 
-    def get_value(value):
-        try:
-            energy_range = int(value.get('e'))
-        except (TypeError, ValueError):
-            energy_range = None
+    def _is_energy(value):
+        return 'e' in value
+
+    def _get_marc_dict(elem):
+        if _is_thesaurus(elem) and elem.get('a'):
+            return {
+                'keyword': elem.get('a'),
+                'classification_scheme': elem.get('2'),
+                'source': '',
+            }
+        elif _is_energy(elem):
+            return {}
+        else:
+            return {
+                'keyword': elem.get('a'),
+                'classification_scheme': '',
+                'source': elem.get('9'),
+            }
+
+    if _is_energy(value):
+        if 'energy_ranges' not in self:
+            self['energy_ranges'] = list()
+
+        self['energy_ranges'].append(int(value.get('e')))
+        self['energy_ranges'].sort()
+
+    return _get_marc_dict(value)
+
+
+@hep2marc.over('695', 'keywords')
+def keywords2marc(self, key, values):
+    """Keywords."""
+
+    values = force_force_list(values)
+
+    def _is_thesaurus(elem):
+        return elem.get('classification_scheme', '') is not ''
+
+    def _thesaurus_to_marc_dict(elem):
         return {
-            'keyword': value.get('a'),
-            'energy_range': energy_range,
-            'classification_scheme': value.get('2'),
+            'a': elem.get('keyword'),
+            '2': elem.get('classification_scheme'),
         }
 
-    thesaurus_terms = self.get('thesaurus_terms', [])
+    def _freekey_to_marc_dict(elem):
+        return {
+            'a': elem.get('keyword'),
+            '9': elem.get('source'),
+        }
 
-    for element in value:
-        thesaurus_terms.append(get_value(element))
+    thesaurus_terms = self.get('695', [])
+
+    for value in values:
+        if _is_thesaurus(value):
+            marc_dict = _thesaurus_to_marc_dict(value)
+            thesaurus_terms.append(marc_dict)
+        else:
+            marc_dict = _freekey_to_marc_dict(value)
+            if '653' not in self:
+                self['653'] = []
+
+            self['653'].append(marc_dict)
+            continue
 
     return thesaurus_terms
 
 
-@hep2marc.over('695', 'thesaurus_terms')
-@utils.for_each_value
-@utils.filter_values
-def thesaurus_terms2marc(self, key, value):
-    """Controlled keywords."""
-    return {
-        'a': value.get('keyword'),
-        'e': value.get('energy_range'),
-        '2': value.get('classification_scheme'),
-    }
+@hep2marc.over('_energy_ranges', 'energy_ranges')
+@utils.ignore_value
+def energy_ranges2marc(self, key, values):
+    """Energy ranges addition to the keywords."""
+    values = force_force_list(values)
+
+    def _energy_to_marc_dict(energy_range):
+        return {
+            'e': energy_range,
+            '2': 'INSPIRE',
+        }
+
+    thesaurus_terms = self.get('695', [])
+
+    for value in values:
+        marc_dict = _energy_to_marc_dict(value)
+        thesaurus_terms.append(marc_dict)
+
+    self['695'] = thesaurus_terms
