@@ -94,3 +94,6 @@ dump.rdb
 # KDevelop4
 .kdev4/
 *.kdev4
+
+# Vim swapfiles
+.*.sw?
