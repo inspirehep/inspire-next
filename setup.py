@@ -78,7 +78,8 @@ install_requires = [
     'pytest-runner>=2.7.0',
     'workflow>=2.0.0',
     'html5lib<1.0b9',
-    'SQLAlchemy>=1.0.14,<1.1'
+    'SQLAlchemy>=1.0.14,<1.1',
+    'webassets>=0.11.1,<0.12',
 ]
 
 tests_require = [
