@@ -65,7 +65,7 @@ from ..pidstore.minters import inspire_recid_minter
 logger = get_task_logger(__name__)
 
 CHUNK_SIZE = 100
-LARGE_CHUNK_SIZE = 10000
+LARGE_CHUNK_SIZE = 2000
 
 split_marc = re.compile('<record.*?>.*?</record>', re.DOTALL)
 
