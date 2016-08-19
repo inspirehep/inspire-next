@@ -169,8 +169,12 @@
   </datafield>
   <datafield tag="695" ind1=" " ind2=" ">
     <subfield code="2">INSPIRE</subfield>
-    <subfield code="e">8</subfield>
     <subfield code="a">Monte Carlo</subfield>
+    <subfield code="e">8</subfield>
+  </datafield>
+  <datafield tag="695" ind1=" " ind2=" ">
+    <subfield code="2">INSPIRE</subfield>
+    <subfield code="e">7</subfield>
   </datafield>
   <datafield tag="701" ind1=" " ind2=" ">
     <subfield code="a">Weiglein, Georg</subfield>
