@@ -29,36 +29,12 @@ SPLIT_KEY_PATTERN = re.compile('\.|\[')
 
 def get_title(record):
     """Get preferred title from record."""
-    chosen_title = ""
-
-    for title in record.get('titles', []):
-        if 'source' in title and title.get('source') != 'arXiv':
-            return title.get('title')
-        elif 'source' in title and title.get('source') == 'arXiv':
-            pass
-        else:
-            chosen_title = title.get('title')
-
-    if not chosen_title and len(record.get('titles', [])) > 0:
-        chosen_title = record['titles'][0]['title']
-
-    return chosen_title
+    return get_value(record, 'titles[0].title', default='')
 
 
 def get_subtitle(record):
     """Get preferred subtitle from record."""
-    chosen_subtitle = ""
-
-    for title in record.get('titles', []):
-        if 'source' in title and 'subtitle' in title and title.get('source') != 'arXiv':
-            return title.get('subtitle')
-        elif 'source' in title and 'subtitle' in title and title.get('source') == 'arXiv':
-            if not chosen_subtitle:
-                chosen_subtitle = title.get('subtitle')
-        else:
-            if 'subtitle' in title:
-                chosen_subtitle = title.get('subtitle')
-    return chosen_subtitle
+    return get_value(record, 'titles[0].subtitle', default='')
 
 
 def get_abstract(record):

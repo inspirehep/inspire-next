@@ -42,6 +42,7 @@ install_requires = [
     'retrying',
     'flower',
     'rt',
+    'langdetect>=1.0.6',
     'librabbitmq>=1.6.1',
     'idutils>=0.2.1',
     'invenio-jsonschemas>=1.0.0a3',
