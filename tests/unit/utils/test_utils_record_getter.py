@@ -21,6 +21,7 @@
 # or submit itself to any jurisdiction.
 
 import pytest
+from elasticsearch import RequestError
 
 from inspirehep.utils import record_getter
 
@@ -38,3 +39,10 @@ def test_error_decorator():
 
     with pytest.raises(record_getter.RecordGetterError):
         badfn(None, None)
+
+
+def test_get_empty_recid_list():
+    recids = []
+
+    with pytest.raises(RequestError):
+        record_getter.get_es_records("literature", recids)
