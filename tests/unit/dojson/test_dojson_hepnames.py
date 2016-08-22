@@ -155,18 +155,52 @@ def test_ids_from_035__a_9_with_cern():
     assert expected == result['ids']
 
 
-def test_ids_from_035__a_9_with_malformed_cern():
+def test_ids_from_035__a_9_with_cern_malformed():
     snippet = (
-        '<datafield tag="035" ind1=" " ind2=" ">'
-        '  <subfield code="9">CERN</subfield>'
-        '  <subfield code="a">CERN-CERN-645257</subfield>'
-        '</datafield>'
-    )  # record/1030771/export/xme
+        '<record>'
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">CERN</subfield>'
+        '    <subfield code="a">CERN-CERN-645257</subfield>'
+        '  </datafield>'  # record/1030771/export/xme
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">CERN</subfield>'
+        '    <subfield code="a">cern-783683</subfield>'
+        '  </datafield>'  # record/1408145/export/xme
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">CERN</subfield>'
+        '    <subfield code="a">CERM-724319</subfield>'
+        '  </datafield>'  # record/1244430/export/xme
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">CERN</subfield>'
+        '    <subfield code="a">CNER-727986</subfield>'
+        '  </datafield>'  # record/1068077/export/xme
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">CERN</subfield>'
+        '    <subfield code="a">CVERN-765559</subfield>'
+        '  </datafield>'  # record/1340631/export/xme
+        '</record>'
+    )
 
     expected = [
         {
             'type': 'CERN',
             'value': 'CERN-645257',
+        },
+        {
+            'type': 'CERN',
+            'value': 'CERN-783683',
+        },
+        {
+            'type': 'CERN',
+            'value': 'CERN-724319',
+        },
+        {
+            'type': 'CERN',
+            'value': 'CERN-727986',
+        },
+        {
+            'type': 'CERN',
+            'value': 'CERN-765559',
         },
     ]
     result = clean_record(hepnames.do(create_record(snippet)))

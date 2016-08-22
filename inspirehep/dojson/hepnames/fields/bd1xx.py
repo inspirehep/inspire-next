@@ -40,6 +40,7 @@ from inspirehep.utils.helpers import force_force_list
 
 
 INSPIRE_BAI = re.compile('(\w+\.)+\d+')
+LOOKS_LIKE_CERN = re.compile('^\d+$|^CER[MN]?-|^CNER-|^CVERN-', re.I)
 NON_DIGIT = re.compile('[^\d]+')
 
 
@@ -160,7 +161,7 @@ def ids(self, key, value):
             return 'INSPIRE BAI'
 
     def _try_to_correct_value(type_, a_value):
-        if type_ == 'CERN' and a_value.startswith('CERN-'):
+        if type_ == 'CERN' and LOOKS_LIKE_CERN.match(a_value):
             return 'CERN-' + NON_DIGIT.sub('', a_value)
         elif type_ == 'KAKEN':
             return 'KAKEN-' + a_value
