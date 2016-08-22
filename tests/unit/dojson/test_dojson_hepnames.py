@@ -278,12 +278,12 @@ def test_ids_from_double_035__a_9_with_kaken():
     assert expected == result['ids']
 
 
-def test_ids_from_035__9_malformed_with_value():
+def test_ids_from_035__9():
     snippet = (
-        '<datafield>'
-        '  <subfield code="9">E.Giro.1</subfield>'
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">INSPIRE</subfield>'
         '</datafield>'
-    )  # record/1031883/export/xme
+    )  # record/edit/?ln=en#state=edit&recid=1474355&recrev=20160707223728
 
     result = clean_record(hepnames.do(create_record(snippet)))
 

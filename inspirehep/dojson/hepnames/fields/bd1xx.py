@@ -175,10 +175,11 @@ def ids(self, key, value):
 
     a_value = _try_to_correct_value(type_, a_value)
 
-    return {
-        'type': type_,
-        'value': a_value,
-    }
+    if type_ and a_value:
+        return {
+            'type': type_,
+            'value': a_value,
+        }
 
 
 @hepnames2marc.over('035', '^ids$')
