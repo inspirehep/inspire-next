@@ -362,7 +362,7 @@ def migrate_and_insert_record(raw_record):
     except Exception as e:
         # Receivers can always cause exceptions and we could dump the entire
         # chunk because of a single broken record.
-        logging.exception('Migrator Record Insert Error')
+        logger.exception('Migrator Record Insert Error')
         error = e
 
     if error:
