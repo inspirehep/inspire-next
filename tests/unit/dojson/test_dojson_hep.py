@@ -1205,17 +1205,24 @@ def test_keywords_thesaurus(marcxml_to_json, json_to_marc):
 def test_keywords_manually_introduced(marcxml_to_json, json_to_marc):
     """Test if keywords manually introduced are created correctly."""
     marc_keywords = {
-        keyword['a']: keyword['9']
+        keyword['a']: keyword.get('9', '')
         for keyword in json_to_marc['653']
-        if 'a' in keyword and '9' in keyword
+        if 'a' in keyword and '2' not in keyword
     }
     json_keywords = {
-        keyword['keyword']: keyword['source']
+        keyword['keyword']: keyword.get('source', '')
         for keyword in marcxml_to_json['keywords']
-        if keyword.get('source', None)
+        if not keyword.get('classification_scheme', None)
+    }
+    expected_keywords = {
+        'Fancyvalue3': '',
+        'dummyvalue': 'dummysource',
+        'fancyValue2': '',
+        'fancyvalue': 'author',
     }
 
-    assert marc_keywords == json_keywords
+    assert expected_keywords == marc_keywords
+    assert expected_keywords == json_keywords
 
 
 def test_energy_ranges(marcxml_to_json, json_to_marc):
@@ -1224,10 +1231,9 @@ def test_energy_ranges(marcxml_to_json, json_to_marc):
         range_value['e'] for range_value in json_to_marc['695']
         if 'e' in range_value
     ]
+    marc_ranges.sort()
 
-    assert len(marc_ranges) == len(marcxml_to_json['energy_ranges'])
-    for energy_range in marcxml_to_json['energy_ranges']:
-        assert energy_range in marc_ranges
+    assert marc_ranges == marcxml_to_json['energy_ranges']
 
 
 def test_authors_supervisors_from_701__a_u():

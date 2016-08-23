@@ -160,8 +160,23 @@
     <subfield code="9">submitter</subfield>
   </datafield>
   <datafield tag="653" ind1="1" ind2=" ">
-    <subfield code="9">source</subfield>
-    <subfield code="a">value</subfield>
+    <subfield code="9">dummysource</subfield>
+    <subfield code="a">dummyvalue</subfield>
+  </datafield>
+  <datafield tag="653" ind1="1" ind2=" ">
+    <subfield code="9">aUthor</subfield>
+    <subfield code="9">customSource</subfield>
+    <subfield code="a">fancyvalue</subfield>
+  </datafield>
+  <datafield tag="653" ind1="1" ind2=" ">
+    <subfield code="9">Conference</subfield>
+    <subfield code="9">auThor</subfield>
+    <subfield code="a">fancyValue2</subfield>
+  </datafield>
+  <datafield tag="653" ind1="1" ind2=" ">
+    <subfield code="9">shrubbery</subfield>
+    <subfield code="9">ni!</subfield>
+    <subfield code="a">Fancyvalue3</subfield>
   </datafield>
   <datafield tag="693" ind1=" " ind2=" ">
     <subfield code="e">CERN-LHC-ATLAS</subfield>
