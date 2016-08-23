@@ -38,5 +38,5 @@ def test_author_publications_returns_the_right_data(app):
 
         # FIXME: Asserts should be more specific.
         assert len(response['collaborations']) == 4
-        assert len(response['keywords']) == 218
+        assert len(response['keywords']) == 234
         assert len(response['publications']) == 30
