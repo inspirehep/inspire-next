@@ -24,8 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from six.moves import zip_longest
-
 from dojson import utils
 
 from inspirehep.utils.helpers import force_force_list
@@ -58,17 +56,26 @@ def thesis_supervisors(self, key, value):
         institutions = force_force_list(value.get('u'))
         recids = force_force_list(value.get('z'))
 
-        for value, recid in zip_longest(institutions, recids):
-            try:
-                record = get_record_ref(int(recid), 'institutions')
-            except (TypeError, ValueError):
-                record = None
+        # XXX: we zip only when they have the same length, otherwise
+        #      we might match a value with the wrong recid.
+        if len(institutions) == len(recids):
+            for value, recid in zip(institutions, recids):
+                try:
+                    record = get_record_ref(int(recid), 'institutions')
+                except (TypeError, ValueError):
+                    record = None
 
-            result.append({
-                'curated_relation': record is not None,
-                'record': record,
-                'value': value,
-            })
+                result.append({
+                    'curated_relation': record is not None,
+                    'record': record,
+                    'value': value,
+                })
+        else:
+            for value in institutions:
+                result.append({
+                    'curated_relation': False,
+                    'value': value,
+                })
 
         return result
 

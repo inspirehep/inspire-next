@@ -219,8 +219,8 @@ def test_authors(marcxml_to_json, json_to_marc):
             json_to_marc['100']['e'])
     assert (marcxml_to_json['authors'][0]['alternative_names'][0] ==
             json_to_marc['100']['q'][0])
-    assert (marcxml_to_json['authors'][0]['email'] ==
-            json_to_marc['100']['m'])
+    assert (marcxml_to_json['authors'][0]['emails'][0] ==
+            json_to_marc['100']['m'][0])
     assert (marcxml_to_json['authors'][0]['affiliations'][0]['value'] ==
             json_to_marc['100']['u'][0])
     assert (get_recid_from_ref(marcxml_to_json['authors'][0]['record']) ==
@@ -438,7 +438,7 @@ def test_authors_from_100__a_v_m_w_y():
     expected = [
         {
             'curated_relation': False,
-            'email': 'gausyu@gmail.com',
+            'emails': ['gausyu@gmail.com'],
             'full_name': 'Gao, Xu',
             'ids': [
                 {
@@ -512,7 +512,7 @@ def test_authors_from_700__a_j_v_m_w_y():
     expected = [
         {
             'curated_relation': False,
-            'email': 'ming.l1984@gmail.com',
+            'emails': ['ming.l1984@gmail.com'],
             'full_name': 'Liu, Ming',
             'ids': [
                 {
@@ -635,7 +635,7 @@ def test_authors_from_100__a_j_m_u_w_y_z():
                 },
             ],
             'curated_relation': False,
-            'email': 'ricardomartins@iftm.edu.b',
+            'emails': ['ricardomartins@iftm.edu.b'],
             'full_name': 'Martins, Ricardo S.',
             'ids': [
                 {
@@ -721,7 +721,7 @@ def test_authors_from_100__a_j_m_u_v_w_y():
                 },
             ],
             'curated_relation': False,
-            'email': 'macnair@slac.stanford.edu',
+            'emails': ['macnair@slac.stanford.edu'],
             'full_name': 'MacNair, David',
             'ids': [
                 {
@@ -768,6 +768,49 @@ def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
                 {
                     'type': 'INSPIRE BAI',
                     'value': 'I.P.Bakhrushin.1',
+                },
+            ],
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['authors']
+
+
+def test_authors_from_100__a_double_m_double_u_w_y_z():
+    snippet = (
+        '<datafield tag="100" ind1=" " ind2=" ">'
+        '  <subfield code="a">Puy, Denis</subfield>'
+        '  <subfield code="m">puy@tsmi19.sissa.it</subfield>'
+        '  <subfield code="m">puy@mesioa.obspm.fr</subfield>'
+        '  <subfield code="u">SISSA, Trieste</subfield>'
+        '  <subfield code="u">Meudon Observ.</subfield>'
+        '  <subfield code="w">D.Puy.2</subfield>'
+        '  <subfield code="y">0</subfield>'
+        '  <subfield code="z">903393</subfield>'
+        '</datafield>'
+    )  # record/413614/export/xme
+
+    expected = [
+        {
+            'affiliations': [
+                {
+                    'value': 'SISSA, Trieste',
+                },
+                {
+                    'value': 'Meudon Observ.',
+                },
+            ],
+            'curated_relation': False,
+            'emails': [
+                'puy@tsmi19.sissa.it',
+                'puy@mesioa.obspm.fr',
+            ],
+            'full_name': 'Puy, Denis',
+            'ids': [
+                {
+                    'type': 'INSPIRE BAI',
+                    'value': 'D.Puy.2',
                 },
             ],
         },

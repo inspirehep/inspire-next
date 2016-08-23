@@ -144,13 +144,22 @@ def institutions(self, key, value):
     a_values = force_force_list(value.get('a'))
     z_values = force_force_list(value.get('z'))
 
-    for a_value, z_value in six.moves.zip_longest(a_values, z_values):
-        record = get_record_ref(z_value, 'institutions')
-        institutions.append({
-            'curated_relation': record is not None,
-            'name': a_value,
-            'record': record,
-        })
+    # XXX: we zip only when they have the same length, otherwise
+    #      we might match a value with the wrong recid.
+    if len(a_values) == len(z_values):
+        for a_value, z_value in zip(a_values, z_values):
+            record = get_record_ref(z_value, 'institutions')
+            institutions.append({
+                'curated_relation': record is not None,
+                'name': a_value,
+                'record': record,
+            })
+    else:
+        for a_value in a_values:
+            institutions.append({
+                'curated_relation': False,
+                'name': a_value,
+            })
 
     return institutions
 
