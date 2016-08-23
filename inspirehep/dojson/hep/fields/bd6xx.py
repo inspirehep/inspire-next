@@ -81,14 +81,46 @@ def accelerator_experiments2marc(self, key, value):
 @hep.over('keywords', '^653[10_2][_1032546]')
 @utils.for_each_value
 def keywords(self, key, value):
-    """Controlled keywords."""
+    """Parse keywords.
+
+    We have 2 types of keywords from marc, the 'thesaurus_terms' and
+    'freekeys', and we want to merge them for json into a big 'keywords' and
+    extract the 'energy_ranges' too that is represented in marc as special
+    value of some keywords.
+    """
     def _is_thesaurus(value):
         return '9' not in value
 
     def _is_energy(value):
         return 'e' in value
 
-    def _get_marc_dict(elem):
+    def _freekey_get_source(source_value):
+        if not isinstance(source_value, (list, tuple, set)):
+            return source_value
+
+        source_value = [source.lower() for source in source_value]
+        if 'conference' in source_value:
+            return ''
+
+        for source in source_value:
+            if source in ['author', 'publisher']:
+                return source
+
+        return ''
+
+    def _freekey_get_dict(elem):
+        keyword = {
+            'keyword': elem.get('a'),
+            'classification_scheme': '',
+        }
+
+        source = _freekey_get_source(elem.get('9'))
+        if source:
+            keyword['source'] = source
+
+        return keyword
+
+    def _get_keyword_dict(elem):
         if _is_thesaurus(elem) and elem.get('a'):
             return {
                 'keyword': elem.get('a'),
@@ -98,11 +130,7 @@ def keywords(self, key, value):
         elif _is_energy(elem):
             return {}
         else:
-            return {
-                'keyword': elem.get('a'),
-                'classification_scheme': '',
-                'source': elem.get('9'),
-            }
+            return _freekey_get_dict(elem)
 
     if _is_energy(value):
         if 'energy_ranges' not in self:
@@ -111,7 +139,7 @@ def keywords(self, key, value):
         self['energy_ranges'].append(int(value.get('e')))
         self['energy_ranges'].sort()
 
-    return _get_marc_dict(value)
+    return _get_keyword_dict(value)
 
 
 @hep2marc.over('695', 'keywords')
@@ -132,7 +160,7 @@ def keywords2marc(self, key, values):
     def _freekey_to_marc_dict(elem):
         return {
             'a': elem.get('keyword'),
-            '9': elem.get('source'),
+            '9': elem.get('source', ''),
         }
 
     thesaurus_terms = self.get('695', [])
