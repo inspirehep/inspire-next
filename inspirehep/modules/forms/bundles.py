@@ -47,7 +47,7 @@ css = NpmBundle(
     "node_modules/bootstrap-multiselect/dist/css/bootstrap-multiselect.css",
     output='gen/inspire-form.%(version)s.css',
     depends='scss/forms/*.scss',
-    filters="scss, cleancss",
+    filters="node-scss, cleancss",
     npm={
         "typeahead.js-bootstrap-css": "~1.2.1"
     }

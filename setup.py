@@ -48,7 +48,7 @@ install_requires = [
     'invenio-access>=1.0.0a7',
     'invenio-accounts>=1.0.0a12',
     'invenio-admin>=1.0.0a3',
-    'invenio-assets>=1.0.0a4',
+    'invenio-assets>=1.0.0b2',
     'invenio-base>=1.0.0a11',
     'invenio-celery>=1.0.0a4',
     'invenio-config>=1.0.0a1',
@@ -79,7 +79,6 @@ install_requires = [
     'workflow>=2.0.0',
     'html5lib<1.0b9',
     'SQLAlchemy>=1.0.14,<1.1',
-    'webassets>=0.11.1,<0.12',
 ]
 
 tests_require = [

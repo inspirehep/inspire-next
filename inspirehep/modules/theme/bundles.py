@@ -79,7 +79,7 @@ detailedjs = NpmBundle(
 
 css = NpmBundle(
     "scss/inspirehep.scss",
-    filters="scss, cleancss",
+    filters="node-scss, cleancss",
     output="gen/inspirehep.%(version)s.css",
     depends="scss/**/*.scss",
     npm={
@@ -102,7 +102,7 @@ detailedjs = NpmBundle(
 holding_pen_css = NpmBundle(
     "node_modules/angular-xeditable/dist/css/xeditable.css",
     "scss/holding-pen/holding-pen.scss",
-    filters="scss, cleancss",
+    filters="node-scss, cleancss",
     output="gen/inspirehep.holding.%(version)s.css",
     depends="scss/**/*.scss"
 )

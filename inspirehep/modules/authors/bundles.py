@@ -29,7 +29,7 @@ update_css = Bundle(
     "scss/authors/authors-update-form.scss",
     output='gen/inspire-author-update.%(version)s.css',
     depends='scss/forms/*.scss',
-    filters="scss, cleancss"
+    filters="node-scss, cleancss"
 )
 
 js = NpmBundle(
