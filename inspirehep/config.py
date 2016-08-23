@@ -203,6 +203,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "595": ["hidden_notes"],
     "650__a": ["field_categories.term"],
     "695__a": ["keywords.keyword"],
+    "695__e": ["energy_ranges"],
     "773__y": ["publication_info.year"],
     "authorcount": ["authors.full_name"],
     "arxiv": ["arxiv_eprints.value"],
