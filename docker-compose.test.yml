@@ -47,11 +47,11 @@ services:
       service: service_base
     volumes_from:
       - static
-    command: python setup.py test --addopts="tests/unit"
+    command: python setup.py test --addopts="tests/unit --durations=0"
   disambiguation:
     extends:
       service: service_base
-    command: python setup.py test --addopts="tests/integration/disambiguation"
+    command: python setup.py test --addopts="tests/integration/disambiguation --durations=0"
     volumes_from:
       - static
     links:
@@ -64,7 +64,7 @@ services:
   integration:
     extends:
       service: service_base
-    command: python setup.py test --addopts="tests/integration --ignore tests/integration/disambiguation"
+    command: python setup.py test --addopts="tests/integration --ignore tests/integration/disambiguation --durations=0"
     volumes_from:
       - static
     links:
