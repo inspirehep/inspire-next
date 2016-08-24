@@ -151,6 +151,7 @@ def ids(self, key, value):
             'RESEARCHID': 'RESEARCHERID',
             'RESEARCHERID': 'RESEARCHERID',
             'SLAC': 'SLAC',
+            'SCOPUS': 'SCOPUS',
             'VIAF': 'VIAF',
             'WIKIPEDIA': 'WIKIPEDIA',
         }

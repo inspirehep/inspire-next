@@ -162,6 +162,19 @@
             "properties": {
                 "type": {
                     "enum": [
+                        "SCOPUS"
+                    ]
+                },
+                "value": {
+                    "pattern": "\\d{10,11}",
+                    "type": "string"
+                }
+            }
+        },
+        {
+            "properties": {
+                "type": {
+                    "enum": [
                         "WIKIPEDIA"
                     ],
                     "type": "string"
