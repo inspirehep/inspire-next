@@ -61,10 +61,23 @@ services:
       - redis
     depends_on:
       - worker
+  workflows:
+    extends:
+      service: service_base
+    command: python setup.py test --addopts="tests/integration/workflows"
+    volumes_from:
+      - static
+    links:
+      - database
+      - indexer
+      - rabbitmq
+      - redis
+    depends_on:
+      - worker
   integration:
     extends:
       service: service_base
-    command: python setup.py test --addopts="tests/integration --ignore tests/integration/disambiguation"
+    command: python setup.py test --addopts="tests/integration --ignore tests/integration/disambiguation --ignore tests/integration/workflows"
     volumes_from:
       - static
     links:
