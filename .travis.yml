@@ -39,6 +39,7 @@ env:
     - SUITE=pep8
     - SUITE=unit
     - SUITE=disambiguation
+    - SUITE=workflows
     - SUITE=integration
 
 python:

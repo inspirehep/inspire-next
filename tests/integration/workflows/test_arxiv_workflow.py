@@ -243,7 +243,7 @@ def fake_magpie_api_request(url, data):
 def test_harvesting_arxiv_workflow_rejected(
     mocked_api_request_beard_block, mocked_api_request_magpie,
     mocked_api_request_beard, mocked_download,
-    app, record_oai_arxiv_plots):
+    small_app, record_oai_arxiv_plots):
     """Test a full harvesting workflow."""
     from invenio_workflows import (
         start, WorkflowEngine, ObjectStatus, workflow_object_class
@@ -267,8 +267,8 @@ def test_harvesting_arxiv_workflow_rejected(
     }
 
     workflow_uuid = None
-    with app.app_context():
-        with mock.patch.dict(app.config, extra_config):
+    with small_app.app_context():
+        with mock.patch.dict(small_app.config, extra_config):
             workflow_uuid = start('article', [record_json])
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
@@ -319,7 +319,7 @@ def test_harvesting_arxiv_workflow_rejected(
 
         db.session.commit()
 
-    with app.app_context():
+    with small_app.app_context():
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
         obj_id = obj.id
@@ -334,7 +334,7 @@ def test_harvesting_arxiv_workflow_rejected(
 @mock.patch('inspirehep.utils.arxiv.download_file_to_record',
             side_effect=fake_download_file)
 def test_harvesting_arxiv_workflow_accepted(
-    mocked, db_only_app, record_oai_arxiv_plots):
+    mocked, small_app, record_oai_arxiv_plots):
     """Test a full harvesting workflow."""
     from invenio_workflows import (
         start, WorkflowEngine, ObjectStatus, workflow_object_class
@@ -352,7 +352,7 @@ def test_harvesting_arxiv_workflow_accepted(
     record_marc = create_record(record_oai_arxiv_plots_marcxml)
     record_json = hep.do(record_marc)
     workflow_uuid = None
-    with db_only_app.app_context():
+    with small_app.app_context():
         workflow_uuid = start('article', [record_json])
 
         eng = WorkflowEngine.from_uuid(workflow_uuid)
@@ -384,7 +384,7 @@ def test_harvesting_arxiv_workflow_accepted(
 
         db.session.commit()
 
-    with db_only_app.app_context():
+    with small_app.app_context():
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
         obj_id = obj.id
