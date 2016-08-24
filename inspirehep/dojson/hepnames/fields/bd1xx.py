@@ -144,6 +144,7 @@ def ids(self, key, value):
             'BAI': 'INSPIRE BAI',
             'CERN': 'CERN',
             'DESY': 'DESY',
+            'GOOGLESCHOLAR': 'GOOGLESCHOLAR',
             'INSPIRE': 'INSPIRE ID',
             'KAKEN': 'KAKEN',
             'ORCID': 'ORCID',

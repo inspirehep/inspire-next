@@ -123,6 +123,19 @@
             "properties": {
                 "type": {
                     "enum": [
+                        "GOOGLESCHOLAR"
+                    ]
+                },
+                "value": {
+                    "pattern": "\\w{12}",
+                    "type": "string"
+                }
+            }
+        },
+        {
+            "properties": {
+                "type": {
+                    "enum": [
                         "WIKIPEDIA"
                     ],
                     "type": "string"
