@@ -136,6 +136,19 @@
             "properties": {
                 "type": {
                     "enum": [
+                        "VIAF"
+                    ]
+                },
+                "value": {
+                    "pattern": "\\d{7,9}",
+                    "type": "string"
+                }
+            }
+        },
+        {
+            "properties": {
+                "type": {
+                    "enum": [
                         "WIKIPEDIA"
                     ],
                     "type": "string"

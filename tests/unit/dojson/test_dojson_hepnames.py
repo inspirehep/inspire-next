@@ -331,6 +331,25 @@ def test_ids_from_035__a_9_with_googlescholar():
     assert expected == result['ids']
 
 
+def test_ids_from_035__a_9_with_viaf():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">VIAF</subfield>'
+        '  <subfield code="a">34517183</subfield>'
+        '</datafield>'
+    )  # record/1008109/export/xme
+
+    expected = [
+        {
+            'type': 'VIAF',
+            'value': '34517183',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
 def test_ids_from_035__9():
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'

@@ -149,6 +149,7 @@ def ids(self, key, value):
             'KAKEN': 'KAKEN',
             'ORCID': 'ORCID',
             'SLAC': 'SLAC',
+            'VIAF': 'VIAF',
             'WIKIPEDIA': 'WIKIPEDIA',
         }
 
