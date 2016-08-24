@@ -148,6 +148,8 @@ def ids(self, key, value):
             'INSPIRE': 'INSPIRE ID',
             'KAKEN': 'KAKEN',
             'ORCID': 'ORCID',
+            'RESEARCHID': 'RESEARCHERID',
+            'RESEARCHERID': 'RESEARCHERID',
             'SLAC': 'SLAC',
             'VIAF': 'VIAF',
             'WIKIPEDIA': 'WIKIPEDIA',

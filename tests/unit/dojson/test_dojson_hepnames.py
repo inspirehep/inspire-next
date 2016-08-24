@@ -350,6 +350,25 @@ def test_ids_from_035__a_9_with_viaf():
     assert expected == result['ids']
 
 
+def test_ids_from_035__a_9_with_researcherid():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">RESEARCHERID</subfield>'
+        '  <subfield code="a">B-4717-2008</subfield>'
+        '</datafield>'
+    )  # record/1051026/export/xme
+
+    expected = [
+        {
+            'type': 'RESEARCHERID',
+            'value': 'B-4717-2008',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
 def test_ids_from_035__9():
     snippet = (
         '<datafield tag="035" ind1=" " ind2=" ">'

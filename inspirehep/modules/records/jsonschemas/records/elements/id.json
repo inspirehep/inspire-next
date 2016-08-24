@@ -149,6 +149,19 @@
             "properties": {
                 "type": {
                     "enum": [
+                        "RESEARCHERID"
+                    ]
+                },
+                "value": {
+                    "pattern": "[A-z]-\\d{4}-\\d{4}",
+                    "type": "string"
+                }
+            }
+        },
+        {
+            "properties": {
+                "type": {
+                    "enum": [
                         "WIKIPEDIA"
                     ],
                     "type": "string"
