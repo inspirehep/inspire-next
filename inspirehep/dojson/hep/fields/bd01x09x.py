@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import re
+
 from isbn import ISBNError
 from isbn.hyphen import ISBNRangeError
 
@@ -34,6 +36,41 @@ from ..model import hep, hep2marc
 from ...utils import force_single_element
 
 from inspirehep.utils.helpers import force_force_list
+
+
+LANGUAGE_MAPPING = {
+    "bulgarian": "bg",
+    "chinese": "zh",
+    "czech": "cs",
+    "dutch": "nl",
+    "english": "en",
+    "esperanto": "eo",
+    "finnish": "fi",
+    "french": "fr",
+    "italian": "it",
+    "german": "de",
+    "greek": "el",
+    "hungarian": "hu",
+    "indonesian": "id",
+    "japanese": "ja",
+    "korean": "ko",
+    "latin": "la",
+    "norwegian": "no",
+    "persian": "fa",
+    "polish": "pl",
+    "portuguese": "pt",
+    "romanian": "ro",
+    "russian": "ru",
+    "slovak": "sk",
+    "spanish": "es",
+    "swedish": "sv",
+    "ukrainian": "uk",
+    "turkish": "tr",
+}
+
+REVERSE_LANGUAGE_MAPPING = {v: k for k, v in LANGUAGE_MAPPING.iteritems()}
+
+RE_SPLIT_LANGUAGES = re.compile("\/| or | and |,|=")
 
 
 @hep.over('isbns', '^020..')
@@ -220,21 +257,26 @@ def report_numbers2marc(self, key, value):
 @hep.over('languages', '^041[10_].')
 def languages(self, key, value):
     """Language Code."""
-    values = force_force_list(value)
-    languages = self.get('languages', [])
-    for value in values:
-        if value.get('a'):
-            languages.append(value.get('a'))
+    def split_languages(value):
+        values = RE_SPLIT_LANGUAGES.split(value)
+        return [v.strip().lower() for v in values if v.strip()]
+
+    languages = self.setdefault("languages", [])
+    potential_languages = force_force_list(value.get('a'))
+    for potential_language in potential_languages:
+        for language in split_languages(potential_language):
+            iso_language = LANGUAGE_MAPPING.get(language)
+            if iso_language:
+                languages.append(iso_language)
     return languages
 
 
 @hep2marc.over('041', 'languages')
 @utils.for_each_value
-@utils.filter_values
 def languages2marc(self, key, value):
     """Language Code."""
     return {
-        'a': value,
+        'a': REVERSE_LANGUAGE_MAPPING.get(value),
     }
 
 
