@@ -116,6 +116,77 @@ def test_external_system_numbers(marcxml_to_json, json_to_marc):
     assert (marcxml_to_json['external_system_numbers'][0]['obsolete'] ==
             json_to_marc['035'][0]['z'])
 
+def test_simple_language():
+    snippet = (
+        '<datafield tag="041" ind1=" " ind2=" ">'
+        '  <subfield code="a">Italian</subfield>'
+        '</datafield>'
+    )
+
+    expected = ["it"]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['languages']
+
+
+def test_multiple_languages_same_field():
+    snippet = (
+        '<datafield tag="041" ind1=" " ind2=" ">'
+        '  <subfield code="a">Italian</subfield>'
+        '  <subfield code="a">English</subfield>'
+        '</datafield>'
+    )
+
+    expected = ["it", "en"]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['languages']
+
+
+def test_multiple_languages():
+    snippet = (
+        '<record>'
+        '  <datafield tag="041" ind1=" " ind2=" ">'
+        '    <subfield code="a">Italian</subfield>'
+        '  </datafield>'
+        '  <datafield tag="041" ind1=" " ind2=" ">'
+        '    <subfield code="a">English</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected = ["it", "en"]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['languages']
+
+
+def test_crappy_language():
+    snippet = (
+        '<datafield tag="041" ind1=" " ind2=" ">'
+        '  <subfield code="a">Yadernaya Fiz.</subfield>'
+        '</datafield>'
+    )
+
+    expected = []
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result.get('languages', [])
+
+
+def test_languages_single_value():
+    snippet = (
+        '<datafield tag="041" ind1=" " ind2=" ">'
+        '  <subfield code="a">Russian / English</subfield>'
+        '</datafield>'
+    )
+
+    expected = ['ru', 'en']
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['languages']
+
+
 
 def test_external_system_numbers_from_035__a():
     snippet = (
@@ -196,7 +267,8 @@ def test_arxiv_eprints(marcxml_to_json, json_to_marc):
 
 def test_languages(marcxml_to_json, json_to_marc):
     """Test if languages is created correctly."""
-    assert marcxml_to_json['languages'][0] == json_to_marc['041'][0]['a']
+    assert marcxml_to_json['languages'][0] == "es"
+    assert json_to_marc['041'][0]['a'] == "spanish"
 
 
 def test_classification_number(marcxml_to_json, json_to_marc):
