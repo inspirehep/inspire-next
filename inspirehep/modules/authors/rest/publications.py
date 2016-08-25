@@ -98,8 +98,10 @@ class AuthorAPIPublications(object):
                 publication['journal']['title'] = result_source.get(
                     'publication_info', [])[0]['journal_title']
 
-                # Get journal $self.
+                # Get journal id and $self.
                 try:
+                    publication['journal']['id'] = result_source.get(
+                        'publication_info', [])[0]['journal_recid']
                     publication['journal']['record'] = result_source.get(
                         'publication_info', [])[0]['journal_record']
                 except KeyError:

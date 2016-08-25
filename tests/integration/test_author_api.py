@@ -42,35 +42,45 @@ def test_api_authors_root(app):
 def test_api_authors_citations(app):
     schema = {
         'items': {
+            'type': 'object',
             'properties': {
                 'citee': {
+                    'type': 'object',
                     'properties': {
                         'record': {
+                            'type': 'object',
                             'properties': {'$ref': {'type': 'string'}},
-                            'type': 'object'
+                        },
+                        'id': {'type': 'integer'}
+                    }
+                },
+                'citers': {
+                    'type': 'array',
+                    'items': {
+                        'type': 'object',
+                        'properties': {
+                            'date': {'type': 'string'},
+                            'self_citation': {'type': 'boolean'},
+                            'citer': {
+                                'type': 'object',
+                                'properties': {
+                                    'record': {
+                                        'type': 'object',
+                                        'properties': {
+                                            '$ref': {'type': 'string'}
+                                        }
+                                    },
+                                    'id': {'type': 'integer'}
+                                }
+                            },
+                            'published_paper': {
+                                'type': 'boolean'
+                            }
                         }
-                    },
-                    'type': 'object'
-                },
-                'citer': {
-                    'properties': {
-                        'record': {
-                            'properties': {'$ref': {'type': 'string'}},
-                            'type': 'object'
-                        }
-                    },
-                    'type': 'object'
-                },
-                'date': {
-                    'format': 'date',
-                    'type': 'string'
-                },
-                'published_paper': {'type': 'boolean'},
-                'self_citation': {'type': 'boolean'}
-            },
-            'type': 'object'
-        },
-        'type': 'array'
+                    }
+                }
+            }
+        }
     }
 
     with app.test_client() as client:
@@ -81,7 +91,7 @@ def test_api_authors_citations(app):
         response_json = json.loads(response.data)
 
         assert validate(response_json, schema) is None
-        assert len(response_json) == 197
+        assert len(response_json) == 30
 
 
 def test_api_authors_coauthors(app):
@@ -126,12 +136,14 @@ def test_api_authors_publications(app):
                     'type': 'string'
                 },
                 'id': {'type': 'integer'},
-                'journals': {
+                'journal': {
                     'properties': {
+                        'id': {'type': 'integer'},
                         'record': {
                             'properties': {'$ref': {'type': 'string'}},
                             'type': 'object'
-                        }
+                        },
+                        'title': {'type': 'string'}
                     },
                     'type': 'object'
                 },
