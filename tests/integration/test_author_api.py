@@ -45,6 +45,7 @@ def test_api_authors_citations(app):
             'properties': {
                 'citee': {
                     'properties': {
+                        'id': {'type': 'integer'},
                         'record': {
                             'properties': {'$ref': {'type': 'string'}},
                             'type': 'object'
@@ -52,21 +53,30 @@ def test_api_authors_citations(app):
                     },
                     'type': 'object'
                 },
-                'citer': {
-                    'properties': {
-                        'record': {
-                            'properties': {'$ref': {'type': 'string'}},
-                            'type': 'object'
-                        }
+                'citers': {
+                    'items': {
+                        'properties': {
+                            'citer': {
+                                'properties': {
+                                    'id': {'type': 'integer'},
+                                    'record': {
+                                        'properties': {'$ref': {'type': 'string'}},
+                                        'type': 'object'
+                                    }
+                                },
+                                'type': 'object'
+                            },
+                            'date': {
+                                'format': 'date',
+                                'type': 'string'
+                            },
+                            'published_paper': {'type': 'boolean'},
+                            'self_citation': {'type': 'boolean'}
+                        },
+                        'type': 'object'
                     },
-                    'type': 'object'
-                },
-                'date': {
-                    'format': 'date',
-                    'type': 'string'
-                },
-                'published_paper': {'type': 'boolean'},
-                'self_citation': {'type': 'boolean'}
+                    'type': 'array'
+                }
             },
             'type': 'object'
         },
@@ -81,7 +91,7 @@ def test_api_authors_citations(app):
         response_json = json.loads(response.data)
 
         assert validate(response_json, schema) is None
-        assert len(response_json) == 197
+        assert len(response_json) == 30
 
 
 def test_api_authors_coauthors(app):
@@ -126,12 +136,14 @@ def test_api_authors_publications(app):
                     'type': 'string'
                 },
                 'id': {'type': 'integer'},
-                'journals': {
+                'journal': {
                     'properties': {
+                        'id': {'type': 'integer'},
                         'record': {
                             'properties': {'$ref': {'type': 'string'}},
                             'type': 'object'
-                        }
+                        },
+                        'title': {'type': 'string'}
                     },
                     'type': 'object'
                 },
