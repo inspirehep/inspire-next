@@ -44,7 +44,7 @@ class AuthorAPICitations(object):
             the response.
         """
         author_pid = pid.pid_value
-        citations = []
+        citations = {}
 
         search = LiteratureSearch().query({
             "match": {
@@ -61,11 +61,14 @@ class AuthorAPICitations(object):
         # For each publication co-authored by a given author...
         for result in search.scan():
             result_source = result.to_dict()
+
+            recid = int(result_source['control_number'])
             authors = set([i['recid'] for i in result_source['authors']])
+            citations[recid] = {}
 
             nested_search = LiteratureSearch().query({
                 "match": {
-                    "references.recid": result_source['control_number']
+                    "references.recid": recid
                 }
             }).params(
                 _source=[
@@ -78,7 +81,11 @@ class AuthorAPICitations(object):
             )
 
             # The source record that is being cited.
-            citee = result_source['self']
+            citations[recid]['citee'] = dict(
+                id=recid,
+                record=result_source['self'],
+            )
+            citations[recid]['citers'] = []
 
             # Check all publications, which cite the parent record.
             for nested_result in nested_search.scan():
@@ -92,12 +99,14 @@ class AuthorAPICitations(object):
                 except KeyError:
                     nested_authors = set()
 
-                citation = {}
-                citation['citee'] = {'record': citee}
-                citation['citer'] = {'record': nested_result_source['self']}
-
-                # If at least one author is shared, it's a self-citation.
-                citation['self_citation'] = len(authors & nested_authors) > 0
+                citation = dict(
+                    citer=dict(
+                        id=int(nested_result_source['control_number']),
+                        record=nested_result_source['self']
+                    ),
+                    # If at least one author is shared, it's a self-citation.
+                    self_citation=len(authors & nested_authors) > 0,
+                )
 
                 # Get the earliest date of a citer.
                 try:
@@ -115,6 +124,6 @@ class AuthorAPICitations(object):
                 except KeyError:
                     citation['published_paper'] = False
 
-                citations.append(citation)
+                citations[recid]['citers'].append(citation)
 
-        return json.dumps(citations)
+        return json.dumps(citations.values())
