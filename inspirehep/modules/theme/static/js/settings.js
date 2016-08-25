@@ -73,6 +73,7 @@ require.config({
     toastr: 'node_modules/toastr/toastr',
     typeahead: 'node_modules/typeahead.js/dist/typeahead.bundle',
     sifter: 'node_modules/sifter/sifter',
+    'statistics': 'js/authors/statistics',
     microplugin: 'node_modules/microplugin/src/microplugin'
   },
   shim: {

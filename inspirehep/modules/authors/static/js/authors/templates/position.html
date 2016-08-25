@@ -1,11 +1,16 @@
-<div>
-  <table class="table no-table-line" id="author-position">
-    <tbody>
-      <tr ng-repeat="position in positions">
-        <td class="left">{{ position.date }}</td>
-        <td class="center">{{ position.rank }}</td>
-        <td class="right" align="right">{{ position.institution }}</td>
-      </tr>
-    </tbody>
-  </table>
+<div class="col-md-12 box">
+  <div class="pull-left">
+    <h4><i class="fa fa-{{ icon }}"></i> Work</h4>
+  </div>
+  <div>
+    <table class="table no-table-line" id="author-position">
+      <tbody>
+        <tr ng-repeat="position in positions">
+          <td class="left">{{ position.date }}</td>
+          <td class="center">{{ position.rank }}</td>
+          <td class="right" align="right">{{ position.institution }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

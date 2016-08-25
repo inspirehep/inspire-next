@@ -1,29 +1,41 @@
 <div>
   <table class="table no-table-line" id="publications-table">
-      <thead>
+    <thead>
       <tr>
         <th>Title</th>
         <th>Journal</th>
+        <th>Citations</th>
+        <th>Impact Graph</th>
         <th>Year</th>
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="publication in publicationsList">
+      <tr ng-repeat="publication in publications">
         <td width="50%">
-          <a href="/literature/{{ publication.recid }}">
+          <a href="/literature/{{ publication.id }}">
             {{ publication.title | limitTo: 120 }}
           </a>
           <span ng-if="publication.title.length > 120">...</span>
         </td>
-        <td ng-if="publication.journal_recid !== undefined">
-          <a href="/journals/{{ publication.journal_recid }}">
-            {{ publication.journal_title }}
+        <td ng-if="publication.journal.id !== undefined">
+          <a href="/journals/{{ publication.journal.id }}">
+            {{ publication.journal.title }}
           </a>
         </td>
-        <td ng-if="publication.journal_recid === undefined">
-          {{ publication.journal_title }}
+        <td ng-if="publication.journal.id === undefined">
+          {{ publication.journal.title }}
         </td>
-        <td>{{ publication.year }}</td>
+        <td ng-if="publication.citations !== undefined">
+          {{ publication.citations}}
+        </td>
+        <td ng-if="publication.citations === undefined">
+          0
+        </td>
+        <td>
+          <impact-graph publication="{{ publication.id }}">
+          </impact-graph>
+        </td>
+        <td>{{ publication.date | limitTo:4 }}</td>
       </tr>
     </tbody>
   </table>

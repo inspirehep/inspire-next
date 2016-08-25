@@ -52,6 +52,14 @@ define(['author'], function(Author) {
     };
   });
 
+  app.directive('authorCollaborators', function() {
+    return {
+      require: '^profileInit',
+      restrict: 'E',
+      templateUrl: '/static/js/authors/templates/collaborators.html',
+    };
+  });
+
   app.directive('authorEmail', function() {
     return {
       require: '^profileInit',
@@ -88,6 +96,7 @@ define(['author'], function(Author) {
       scope: true,
       link: function(scope) {
         scope.positions = scope.education;
+        scope.icon = 'university';
       }
     };
   });
@@ -97,23 +106,9 @@ define(['author'], function(Author) {
       require: '^profileInit',
       restrict: 'E',
       template: '<ul class="research-area">' +
-                '<li ng-repeat="field in authorFields">' +
+                '<li ng-repeat="field in statistics.fields">' +
                 '<a href="/search?subject={{ field }}"> {{ field }}' +
-                '</a></li></ul>',
-      scope: true,
-      link: function(scope, element, attrs) {
-        if ('field_categories' in scope.record) {
-          var fields = [];
-          var fieldCategories = JSON.parse(attrs.fields);
-          var fieldsObject = scope.record.field_categories;
-
-          angular.forEach(fieldsObject, function(field) {
-            fields.push(fieldCategories[field.toLowerCase()]);
-          });
-
-          scope.authorFields = fields;
-        }
-      }
+                '</a></li></ul>'
     };
   });
 
@@ -137,10 +132,23 @@ define(['author'], function(Author) {
     };
   });
 
+  app.directive('authorKeywords', function() {
+    return {
+      require: '^profileInit',
+      restrict: 'E',
+      template: '<p ng-repeat="keyword in statistics.keywords">' +
+                '<a href="/search?keyword={{ keyword.keyword }}">' +
+                '{{ keyword.keyword }}</a></p>'
+    };
+  });
+
   app.directive('authorPositions', function() {
     return {
       require: '^profileInit',
-      restrict: 'A',
+      restrict: 'E',
+      template: '<author-work ng-show="work.length"></author-work>' +
+                '<author-education ng-show="education.length">' +
+                '</author-education>',
       scope: true,
       link: function(scope) {
         if ('positions' in scope.record) {
@@ -149,7 +157,6 @@ define(['author'], function(Author) {
           scope.work = [];
 
           var spaces = '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0';
-          // TODO: Maybe move this part to config.py
           var ranks = {
             UG: 'Undergraduate',
             MAS: 'Master',
@@ -211,6 +218,7 @@ define(['author'], function(Author) {
       scope: true,
       link: function(scope) {
         scope.positions = scope.work;
+        scope.icon = 'suitcase';
       }
     };
   });

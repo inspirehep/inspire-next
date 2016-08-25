@@ -24,13 +24,16 @@ require(['angular',
          'd3',
          'datatables',
          'author',
+         'impact-graphs',
          'profile',
-         'publications'], function() {
+         'publications',
+         'statistics'], function() {
   angular.element(document).ready(function() {
     angular.bootstrap(
       document.getElementById("record_content"), [
         'author',
-        'publications'
+        'publications',
+        'statistics'
       ]
     );
   });
