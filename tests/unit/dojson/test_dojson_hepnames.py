@@ -155,18 +155,52 @@ def test_ids_from_035__a_9_with_cern():
     assert expected == result['ids']
 
 
-def test_ids_from_035__a_9_with_malformed_cern():
+def test_ids_from_035__a_9_with_cern_malformed():
     snippet = (
-        '<datafield tag="035" ind1=" " ind2=" ">'
-        '  <subfield code="9">CERN</subfield>'
-        '  <subfield code="a">CERN-CERN-645257</subfield>'
-        '</datafield>'
-    )  # record/1030771/export/xme
+        '<record>'
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">CERN</subfield>'
+        '    <subfield code="a">CERN-CERN-645257</subfield>'
+        '  </datafield>'  # record/1030771/export/xme
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">CERN</subfield>'
+        '    <subfield code="a">cern-783683</subfield>'
+        '  </datafield>'  # record/1408145/export/xme
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">CERN</subfield>'
+        '    <subfield code="a">CERM-724319</subfield>'
+        '  </datafield>'  # record/1244430/export/xme
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">CERN</subfield>'
+        '    <subfield code="a">CNER-727986</subfield>'
+        '  </datafield>'  # record/1068077/export/xme
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">CERN</subfield>'
+        '    <subfield code="a">CVERN-765559</subfield>'
+        '  </datafield>'  # record/1340631/export/xme
+        '</record>'
+    )
 
     expected = [
         {
             'type': 'CERN',
             'value': 'CERN-645257',
+        },
+        {
+            'type': 'CERN',
+            'value': 'CERN-783683',
+        },
+        {
+            'type': 'CERN',
+            'value': 'CERN-724319',
+        },
+        {
+            'type': 'CERN',
+            'value': 'CERN-727986',
+        },
+        {
+            'type': 'CERN',
+            'value': 'CERN-765559',
         },
     ]
     result = clean_record(hepnames.do(create_record(snippet)))
@@ -278,12 +312,88 @@ def test_ids_from_double_035__a_9_with_kaken():
     assert expected == result['ids']
 
 
-def test_ids_from_035__9_malformed_with_value():
+def test_ids_from_035__a_9_with_googlescholar():
     snippet = (
-        '<datafield>'
-        '  <subfield code="9">E.Giro.1</subfield>'
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">GoogleScholar</subfield>'
+        '  <subfield code="a">Tnl-9KoAAAAJ</subfield>'
         '</datafield>'
-    )  # record/1031883/export/xme
+    )  # record/1467553/export/xme
+
+    expected = [
+        {
+            'type': 'GOOGLESCHOLAR',
+            'value': 'Tnl-9KoAAAAJ',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
+def test_ids_from_035__a_9_with_viaf():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">VIAF</subfield>'
+        '  <subfield code="a">34517183</subfield>'
+        '</datafield>'
+    )  # record/1008109/export/xme
+
+    expected = [
+        {
+            'type': 'VIAF',
+            'value': '34517183',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
+def test_ids_from_035__a_9_with_researcherid():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">RESEARCHERID</subfield>'
+        '  <subfield code="a">B-4717-2008</subfield>'
+        '</datafield>'
+    )  # record/1051026/export/xme
+
+    expected = [
+        {
+            'type': 'RESEARCHERID',
+            'value': 'B-4717-2008',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
+def test_ids_from_035__a_9_with_scopus():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">SCOPUS</subfield>'
+        '  <subfield code="a">7103280792</subfield>'
+        '</datafield>'
+    )  # record/1017182/export/xme
+
+    expected = [
+        {
+            'type': 'SCOPUS',
+            'value': '7103280792',
+        },
+    ]
+    result = clean_record(hepnames.do(create_record(snippet)))
+
+    assert expected == result['ids']
+
+
+def test_ids_from_035__9():
+    snippet = (
+        '<datafield tag="035" ind1=" " ind2=" ">'
+        '  <subfield code="9">INSPIRE</subfield>'
+        '</datafield>'
+    )  # record/edit/?ln=en#state=edit&recid=1474355&recrev=20160707223728
 
     result = clean_record(hepnames.do(create_record(snippet)))
 

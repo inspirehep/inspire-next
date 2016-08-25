@@ -123,6 +123,58 @@
             "properties": {
                 "type": {
                     "enum": [
+                        "GOOGLESCHOLAR"
+                    ]
+                },
+                "value": {
+                    "pattern": "\\w{12}",
+                    "type": "string"
+                }
+            }
+        },
+        {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "VIAF"
+                    ]
+                },
+                "value": {
+                    "pattern": "\\d{7,9}",
+                    "type": "string"
+                }
+            }
+        },
+        {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "RESEARCHERID"
+                    ]
+                },
+                "value": {
+                    "pattern": "[A-z]-\\d{4}-\\d{4}",
+                    "type": "string"
+                }
+            }
+        },
+        {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "SCOPUS"
+                    ]
+                },
+                "value": {
+                    "pattern": "\\d{10,11}",
+                    "type": "string"
+                }
+            }
+        },
+        {
+            "properties": {
+                "type": {
+                    "enum": [
                         "WIKIPEDIA"
                     ],
                     "type": "string"

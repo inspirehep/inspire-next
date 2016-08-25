@@ -40,6 +40,7 @@ from inspirehep.utils.helpers import force_force_list
 
 
 INSPIRE_BAI = re.compile('(\w+\.)+\d+')
+LOOKS_LIKE_CERN = re.compile('^\d+$|^CER[MN]?-|^CNER-|^CVERN-', re.I)
 NON_DIGIT = re.compile('[^\d]+')
 
 
@@ -143,10 +144,15 @@ def ids(self, key, value):
             'BAI': 'INSPIRE BAI',
             'CERN': 'CERN',
             'DESY': 'DESY',
+            'GOOGLESCHOLAR': 'GOOGLESCHOLAR',
             'INSPIRE': 'INSPIRE ID',
             'KAKEN': 'KAKEN',
             'ORCID': 'ORCID',
+            'RESEARCHID': 'RESEARCHERID',
+            'RESEARCHERID': 'RESEARCHERID',
             'SLAC': 'SLAC',
+            'SCOPUS': 'SCOPUS',
+            'VIAF': 'VIAF',
             'WIKIPEDIA': 'WIKIPEDIA',
         }
 
@@ -159,21 +165,27 @@ def ids(self, key, value):
         if INSPIRE_BAI.match(a_value):
             return 'INSPIRE BAI'
 
+    def _try_to_correct_value(type_, a_value):
+        if type_ == 'CERN' and LOOKS_LIKE_CERN.match(a_value):
+            return 'CERN-' + NON_DIGIT.sub('', a_value)
+        elif type_ == 'KAKEN':
+            return 'KAKEN-' + a_value
+        else:
+            return a_value
+
     a_value = force_single_element(value.get('a'))
 
     type_ = _get_type(value)
     if type_ is None:
         type_ = _guess_type_from_value(a_value)
 
-    if type_ == 'CERN' and a_value.startswith('CERN-'):
-        a_value = 'CERN-' + NON_DIGIT.sub('', a_value)
-    elif type_ == 'KAKEN':
-        a_value = 'KAKEN-' + a_value
+    a_value = _try_to_correct_value(type_, a_value)
 
-    return {
-        'type': type_,
-        'value': a_value,
-    }
+    if type_ and a_value:
+        return {
+            'type': type_,
+            'value': a_value,
+        }
 
 
 @hepnames2marc.over('035', '^ids$')
