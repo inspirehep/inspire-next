@@ -101,6 +101,11 @@ $white: #ffffff;
 
 #author-biography {
   padding-top: 8px;
+
+  p {
+    display: inline;
+    padding-right: 8px;
+  }
 }
 
 #author-collaborators, #author-position {
@@ -165,7 +170,7 @@ $white: #ffffff;
 }
 
 // Statistics graph.
-#plot {
+#statistics-plot {
   margin-top: -30px;
 
   .axis path, .axis line {
@@ -175,7 +180,7 @@ $white: #ffffff;
   }
 
   .axis {
-    font-size: 0.75em;
+    font-size: 1em;
   }
 
   .xAxis text {
@@ -183,15 +188,25 @@ $white: #ffffff;
     text-anchor: start;
   }
 
-  .yAxis text, .publicationsLabel {
+  .citationsAxis text, .citationsAxis {
+    fill: $dark-blue;
+  }
+
+  .publicationsLabel {
+    font-size: 0.9em;
     fill: $light-blue;
   }
 
   .citationsLabel {
+    font-size: 0.9em;
     fill: $dark-blue;
   }
 
-  .yAxis path, .yAxis line {
+  .citationsAxis path, .citationsAxis line {
+    stroke: $dark-blue !important;
+  }
+
+  .publicationsAxis path, .publicationsAxis line {
     stroke: $light-blue !important;
   }
 }

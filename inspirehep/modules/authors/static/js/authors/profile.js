@@ -26,57 +26,36 @@ define(['profile'], function(Profile) {
   app.controller('ProfileController', ['$http', '$scope', '$element', '$attrs',
       function($http, $scope, $element, $attrs) {
 
-    // Initialise data variables.
-    $scope.publications = {
-      collaborations: [],
-      keywords: [],
-      publications: []
-    };
+    $scope.citations = []
+    $scope.coauthors = []
+    $scope.publications = []
+    $scope.statistics = {}
 
-    // Author profile object.
+    // Author profile object from Jinja.
     $scope.record = JSON.parse($attrs.record);
-
-    // Publications per year, total publications, count of different types.
-    $scope.statistics = [[], 0, {}];
-
-    var countPublications = function(data) {
-      var publications = data.publications,
-          publicationsCountMap = {},
-          publicationsDataToPlot = [],
-          researchWorksCount = publications.length,
-          researchWorksTypes = {};
-
-      angular.forEach(publications, function(publication) {
-        if (publication.year in publicationsCountMap) {
-          publicationsCountMap[publication.year]++;
-        } else {
-          publicationsCountMap[publication.year] = 1;
-        }
-
-        if (publication.type in researchWorksTypes) {
-          researchWorksTypes[publication.type]++;
-        } else {
-          researchWorksTypes[publication.type] = 1;
-        }
-      });
-
-      angular.forEach(publicationsCountMap, function(count, year) {
-        publicationsDataToPlot.push({
-          year: parseInt(year),
-          publications: count
-        });
-      });      
-
-      return [publicationsDataToPlot, researchWorksCount, researchWorksTypes];
-    };
-
     var recid = $scope.record.control_number;
-    $http.get("/author/publications?recid=" + recid)
+
+    // Collect data from /authors API.
+    $http.get("/api/authors/" + recid + "/citations")
+      .success(function(data) {
+        $scope.citations = data;
+    });
+
+    $http.get("/api/authors/" + recid + "/coauthors")
+      .success(function(data) {
+        $scope.coauthors = data;
+    });
+
+    $http.get("/api/authors/" + recid + "/publications")
       .success(function(data) {
         $scope.publications = data;
-        $scope.statistics = countPublications(data);
-      });
-    }]);
+    });
+
+    $http.get("/api/authors/" + recid + "/stats")
+      .success(function(data) {
+        $scope.statistics = data;
+    });
+  }]);
 
   app.directive('profileInit', function() {
     return {
