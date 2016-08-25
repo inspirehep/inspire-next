@@ -136,12 +136,14 @@ def test_api_authors_publications(app):
                     'type': 'string'
                 },
                 'id': {'type': 'integer'},
-                'journals': {
+                'journal': {
                     'properties': {
+                        'id': {'type': 'integer'},
                         'record': {
                             'properties': {'$ref': {'type': 'string'}},
                             'type': 'object'
-                        }
+                        },
+                        'title': {'type': 'string'}
                     },
                     'type': 'object'
                 },
