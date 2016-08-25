@@ -28,39 +28,7 @@
             "type": "array",
             "uniqueItems": true
         },
-        "author_note": {
-            "description": "Contains public note.",
-            "type": "string"
-        },
-        "birth_date": {
-            "description": "Stores birth date",
-            "format": "date",
-            "type": "string"
-        },
-        "conferences": {
-            "description": "Contains information about attended conferences. (their record URIs)",
-            "items": {
-                "$ref": "elements/json_reference.json"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
-        "death_date": {
-            "description": "Stores death date (if any)",
-            "format": "date",
-            "type": "string"
-        },
-        "email_addresses": {
-            "description": "Contains current email addresses",
-            "items": {
-                "format": "email",
-                "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
         "experiments": {
-            "description": "Contains information about experiments.",
             "items": {
                 "properties": {
                     "curated_relation": {
@@ -76,8 +44,7 @@
                         "type": "string"
                     },
                     "record": {
-                        "$ref": "elements/json_reference.json",
-                        "description": "URI for the experiment record"
+                        "$ref": "elements/json_reference.json"
                     },
                     "start_year": {
                         "type": "integer"
@@ -103,7 +70,6 @@
             "uniqueItems": true
         },
         "name": {
-            "description": "Contains name information.",
             "properties": {
                 "numeration": {
                     "enum": [
@@ -138,36 +104,22 @@
             "type": "object"
         },
         "native_name": {
-            "description": "Stores name in native form.",
             "type": "array"
         },
         "other_names": {
-            "description": "Contains other variation of names. Usually a different form of writing the primary name.",
             "items": {
-                "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
-        "past_emails_addresses": {
-            "description": "Contains past email addresses",
-            "items": {
-                "format": "email",
                 "type": "string"
             },
             "type": "array",
             "uniqueItems": true
         },
         "positions": {
-            "description": "Contains position information.",
             "items": {
                 "properties": {
                     "current": {
-                        "description": "FIXME: do we need other states?",
                         "type": "boolean"
                     },
                     "email": {
-                        "description": "FIXME: this is redundant?",
                         "format": "email",
                         "type": "string"
                     },
@@ -181,18 +133,15 @@
                                 "type": "boolean"
                             },
                             "name": {
-                                "description": "The raw institution name",
                                 "type": "string"
                             },
                             "record": {
-                                "$ref": "elements/json_reference.json",
-                                "description": "Corresponding URI for the institution record"
+                                "$ref": "elements/json_reference.json"
                             }
                         },
                         "type": "object"
                     },
                     "old_email": {
-                        "description": "FIXME: this is redundant?",
                         "format": "email",
                         "type": "string"
                     },
@@ -209,30 +158,17 @@
             "type": "array",
             "uniqueItems": true
         },
-        "previous_names": {
-            "description": "Contains a previous name. For example, it can be a maiden's name.",
-            "items": {
-                "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
         "prizes": {
-            "description": "Contains prize name.t",
             "items": {
-                "description": "E.g. Nobel Prize Physics 1977, Shaw Prize 2006, Sakurai Prize 1985 FIXME: shall we separate the year?",
                 "type": "string"
             },
             "type": "array",
             "uniqueItems": true
         },
         "self": {
-            "$ref": "elements/json_reference.json",
-            "description": "Url of the record itself",
-            "title": "Url of the record"
+            "$ref": "elements/json_reference.json"
         },
         "source": {
-            "description": "This is the source of informatio. It is currently a mixed bags of user IDs or provenance information, e.g. arXiv etc. FIXME: we should really discuss about it. E.g. eprint, webform, Rachel.Lumpkin@durham.ac.uk(96), Fermilab, C09-05-04, KYOTOU...",
             "items": {
                 "date_verified": {
                     "format": "date",
@@ -247,16 +183,6 @@
             },
             "type": "array",
             "uniqueItems": true
-        },
-        "status": {
-            "description": "The person's status",
-            "enum": [
-                "active",
-                "deceased",
-                "departed",
-                "retired"
-            ],
-            "type": "string"
         },
         "urls": {
             "items": {
