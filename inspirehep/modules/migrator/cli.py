@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
 import os
 import sys
 
@@ -43,6 +44,7 @@ from .tasks import (
 @click.group()
 def migrator():
     """Command related to migrating INSPIRE data."""
+    logging.basicConfig()
 
 
 @migrator.command()
