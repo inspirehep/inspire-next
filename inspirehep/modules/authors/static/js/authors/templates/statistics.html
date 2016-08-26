@@ -3,17 +3,17 @@
     <tbody>
       <tr>
         <td>HEP Index</td>
-        <td align="right">NaN</td>
+        <td align="right">{{ statistics.hindex }}</td>
       </tr>
       <tr>
         <td>Citations</td>
-        <td align="right">NaN</td>
+        <td align="right">{{ statistics.citations }}</td>
       </tr>
       <tr class="blue">
         <td>Research works</td>
-        <td align="right">{{ count }}</td>
+        <td align="right">{{ statistics.publications }}</td>
       </tr>
-      <tr ng-repeat="(type, typeCount) in researchWorks" class="blue sub">
+      <tr ng-repeat="(type, typeCount) in statistics.types" class="blue sub">
         <td>{{ type.charAt(0) | uppercase }}{{ type.substr(1) }}</td>
         <td align="right"> {{ typeCount }}</td>
       </tr>

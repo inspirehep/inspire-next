@@ -38,7 +38,8 @@ js = NpmBundle(
     depends=(
         'js/authors/author.js',
         'js/authors/profile.js',
-        'js/authors/publications.js'
+        'js/authors/publications.js',
+        'js/authors/statistics.js'
     ),
     output="gen/authors.%(version)s.js"
 )

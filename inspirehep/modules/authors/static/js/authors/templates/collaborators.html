@@ -1,8 +1,9 @@
 <div>
   <table class="table no-table-line" id="author-collaborators">
     <tbody>
-      <tr ng-repeat="collaboration in publications.collaborations">
-        <td><a href="/search?experiment={{ collaboration }}">{{ collaboration }}</a></td>
+      <tr ng-repeat="coauthor in coauthors | orderBy:'-count' | limitTo:5">
+        <td><a href="/authors/{{ coauthor.id }}">{{ coauthor.full_name }}</a></td>
+        <td>{{ coauthor.count }}</td>
       </tr>
     </tbody>
   </table>
