@@ -29,6 +29,7 @@ import os
 import sys
 
 import click
+import requests
 from flask import current_app
 from flask_cli import with_appcontext
 
@@ -38,6 +39,8 @@ from .tasks import (
     add_citation_counts,
     migrate,
     migrate_broken_records,
+    migrate_chunk,
+    split_blob,
 )
 
 
@@ -45,6 +48,7 @@ from .tasks import (
 def migrator():
     """Command related to migrating INSPIRE data."""
     logging.basicConfig()
+
 
 @migrator.command()
 @click.option('--file-input', '-f',
@@ -69,6 +73,14 @@ def populate(file_input=None,
         click.echo("Migrating records from file: {0}".format(file_input))
 
         migrate(os.path.abspath(file_input), wait_for_results=wait)
+
+
+@migrator.command()
+@click.option('--recid', '-r', type=int, help="recid on INSPIRE")
+def one(recid):
+    click.echo("Migrating record {recid} from INSPIRE legacy".format(recid=recid))
+    raw_record = requests.get("http://inspirehep.net/record/{recid}/export/xme".format(recid=recid)).content
+    migrate_chunk(split_blob(raw_record))
 
 
 @migrator.command()
