@@ -26,6 +26,7 @@ import json
 from collections import Counter
 
 from inspirehep.modules.search import LiteratureSearch
+from inspirehep.utils.helpers import force_force_list
 from inspirehep.utils.record import get_value
 from inspirehep.utils.stats import calculate_h_index, calculate_i10_index
 
@@ -104,7 +105,8 @@ class AuthorAPIStats(object):
 
             # Get keywords.
             keywords.extend([
-                k for k in get_value(result_source, 'thesaurus_terms.keyword')
+                k for k in force_force_list(
+                    get_value(result_source, 'thesaurus_terms.keyword'))
                 if k != '* Automatic Keywords *'])
 
         # Calculate h-index together with i10-index.
