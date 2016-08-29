@@ -28,6 +28,7 @@ import gzip
 import re
 import zlib
 from collections import Counter
+from itertools import chain
 
 import click
 from celery import group, shared_task
@@ -50,6 +51,9 @@ from invenio_search.utils import schema_to_index
 
 from inspirehep.dojson.processors import overdo_marc_dict
 from inspirehep.modules.pidstore.providers import InspireRecordIdProvider
+from inspirehep.utils.dedupers import dedupe_list
+from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.record import get_value
 
 from .models import InspireProdRecords
 from ..pidstore.minters import inspire_recid_minter
@@ -216,19 +220,19 @@ def migrate_chunk(chunk):
 
 @shared_task()
 def add_citation_counts(chunk_size=500, request_timeout=120):
-    index, doc_type = schema_to_index('records/hep.json')
+    def _build_recid_to_uuid_map(citations_lookup):
+        pids = PersistentIdentifier.query.filter(
+            PersistentIdentifier.object_type == 'rec').yield_per(1000)
 
-    def build_recid_2_uuid_map(citation_lookup):
-        uuid_citation_lookup = {}
-        pids = PersistentIdentifier.query.filter(PersistentIdentifier.object_type == 'rec').yield_per(1000)
         with click.progressbar(pids) as bar:
-            return {pid.object_uuid: citation_lookup[int(pid.pid_value)]
-                    for pid in bar
-                    if int(pid.pid_value) in citation_lookup}
+            return {
+                pid.object_uuid: citations_lookup[int(pid.pid_value)]
+                for pid in bar if int(pid.pid_value) in citations_lookup
+            }
 
-    def get_records_to_update_generator(citation_lookup):
-        with click.progressbar(citation_lookup.iteritems()) as items:
-            for uuid, citation_count in items:
+    def _get_records_to_update_generator(citations_lookup):
+        with click.progressbar(citations_lookup.iteritems()) as bar:
+            for uuid, citation_count in bar:
                 yield {
                     '_op_type': 'update',
                     '_index': index,
@@ -237,58 +241,47 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
                     'doc': {'citation_count': citation_count}
                 }
 
-    click.echo("Extracting all citations...")
-
-    # lookup dictionary where key: recid of the record
-    # and value: number of records that cite that record
+    index, doc_type = schema_to_index('records/hep.json')
     citations_lookup = Counter()
+
+    click.echo('Extracting all citations...')
     with click.progressbar(es_scan(
             current_search_client,
             query={
-                "_source": "references.recid",
-                "filter": {
-                    "exists": {
-                        "field": "references.recid"
+                '_source': 'references.recid',
+                'filter': {
+                    'exists': {
+                        'field': 'references.recid'
                     }
                 },
-                "size": LARGE_CHUNK_SIZE
+                'size': LARGE_CHUNK_SIZE
             },
             scroll=u'2m',
             index=index,
             doc_type=doc_type)) as records:
         for record in records:
-            # update lookup dictionary based on references of the record
-            if 'references' in record['_source']:
-                unique_refs_ids = set()
-                references = record['_source']['references']
-                for reference in references:
-                    recid = reference.get('recid')
-                    if recid:
-                        if isinstance(recid, list):
-                            # Sometimes there is more than one recid in the
-                            # reference.
-                            recid = recid.pop()
-                        unique_refs_ids.add(recid)
+            unique_refs_ids = dedupe_list(list(chain.from_iterable(map(
+                force_force_list, get_value(record, '_source.references.recid')))))
 
             for unique_refs_id in unique_refs_ids:
                 citations_lookup[unique_refs_id] += 1
-    click.echo("... DONE.")
-    click.echo(citations_lookup)
+    click.echo('... DONE.')
 
-    click.echo("Mapping RECIDs into UUIDs...")
-    citations_lookup = build_recid_2_uuid_map(citations_lookup)
-    click.echo("... DONE.")
+    click.echo('Mapping recids to UUIDs...')
+    citations_lookup = _build_recid_to_uuid_map(citations_lookup)
+    click.echo('... DONE.')
 
-    click.echo("Adding citation numbers...")
+    click.echo('Adding citation numbers...')
     success, failed = es_bulk(
         current_search_client,
-        get_records_to_update_generator(citations_lookup),
+        _get_records_to_update_generator(citations_lookup),
         chunk_size=chunk_size,
         raise_on_exception=True,
         raise_on_error=True,
         request_timeout=request_timeout,
-        stats_only=True)
-    click.echo("DONE: {} records updated with success. {} failures.".format(
+        stats_only=True,
+    )
+    click.echo('... DONE: {} records updated with success. {} failures.'.format(
         success, failed))
 
 
