@@ -189,6 +189,9 @@
     <subfield code="v">105</subfield>
     <subfield code="y">2010</subfield>
     <subfield code="m">note</subfield>
+    <!-- repeated note value should be automatically removed on parsing -->
+    <subfield code="m">note</subfield>
+    <subfield code="m">extranote</subfield>
     <subfield code="z">isbn</subfield>
     <subfield code="x">pubinfo_freetext</subfield>
     <subfield code="w">cnum</subfield>

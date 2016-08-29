@@ -650,8 +650,12 @@
                     "journal_volume": {
                         "type": "string"
                     },
-                    "note": {
-                        "type": "string"
+                    "notes": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "uniqueItems": true
                     },
                     "page_end": {
                         "description": "Last page",
