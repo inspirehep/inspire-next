@@ -28,9 +28,28 @@ from __future__ import absolute_import, print_function
 
 import os
 
+import requests
+from flask import current_app
+
 from invenio_pidstore.models import PIDStatus, RecordIdentifier
 
 from invenio_pidstore.providers.base import BaseProvider
+
+
+def _get_next_pid_from_legacy():
+    """Reserve the next pid on legacy.
+
+    Sends a request to a legacy instance to reserve the next available
+    identifier, and returns it to the caller.
+    """
+    headers = {
+        'User-Agent': 'invenio_webupload'
+    }
+
+    url = current_app.config.get('LEGACY_PID_PROVIDER')
+    next_pid = requests.get(url, headers=headers).json()
+
+    return str(next_pid)
 
 
 class InspireRecordIdProvider(BaseProvider):
@@ -53,7 +72,10 @@ class InspireRecordIdProvider(BaseProvider):
         """Create a new record identifier."""
         # Request next integer in recid sequence.
         if 'pid_value' not in kwargs:
-            kwargs['pid_value'] = str(RecordIdentifier.next())
+            if current_app.config.get('LEGACY_PID_PROVIDER'):
+                kwargs['pid_value'] = _get_next_pid_from_legacy()
+            else:
+                kwargs['pid_value'] = str(RecordIdentifier.next())
         kwargs.setdefault('status', cls.default_status)
         if object_type and object_uuid:
             kwargs['status'] = PIDStatus.REGISTERED
