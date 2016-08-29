@@ -1149,6 +1149,10 @@ INSPIRE_RANK_TYPES = {
     }
 }
 
+# Legacy PID provider
+# ===================
+LEGACY_PID_PROVIDER = None  # e.g. "http://example.org/batchuploader/allocaterecord"
+
 # Inspire subject translation
 # ===========================
 ARXIV_TO_INSPIRE_CATEGORY_MAPPING = {
