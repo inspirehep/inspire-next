@@ -40,27 +40,36 @@ from inspirehep.utils.helpers import force_force_list
 
 LANGUAGE_MAPPING = {
     "bulgarian": "bg",
+    "catalan": "ca",
     "chinese": "zh",
+    "croatian": "hr",
     "czech": "cs",
+    "danish": "da",
     "dutch": "nl",
     "english": "en",
     "esperanto": "eo",
     "finnish": "fi",
     "french": "fr",
     "italian": "it",
+    "galician": "gl",
     "german": "de",
     "greek": "el",
+    "hebrew": "he",
     "hungarian": "hu",
     "indonesian": "id",
     "japanese": "ja",
+    "kazakh": "kk",
     "korean": "ko",
     "latin": "la",
+    "lithuanian": "lt",
+    "malay": "ms",
     "norwegian": "no",
     "persian": "fa",
     "polish": "pl",
     "portuguese": "pt",
     "romanian": "ro",
     "russian": "ru",
+    "serbian": "sr",
     "slovak": "sk",
     "spanish": "es",
     "swedish": "sv",
@@ -70,7 +79,7 @@ LANGUAGE_MAPPING = {
 
 REVERSE_LANGUAGE_MAPPING = {v: k for k, v in LANGUAGE_MAPPING.iteritems()}
 
-RE_SPLIT_LANGUAGES = re.compile("\/| or | and |,|=")
+RE_SPLIT_LANGUAGES = re.compile("\/| or | and |,|=|\s+")
 
 
 @hep.over('isbns', '^020..')
