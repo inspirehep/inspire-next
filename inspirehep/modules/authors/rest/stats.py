@@ -69,7 +69,7 @@ class AuthorAPIStats(object):
                 "control_number",
                 "facet_inspire_doc_type",
                 "facet_inspire_subjects",
-                "thesaurus_terms",
+                "keywords",
             ]
         )
 
@@ -106,7 +106,7 @@ class AuthorAPIStats(object):
             # Get keywords.
             keywords.extend([
                 k for k in force_force_list(
-                    get_value(result_source, 'thesaurus_terms.keyword'))
+                    get_value(result_source, 'keywords.keyword'))
                 if k != '* Automatic Keywords *'])
 
         # Calculate h-index together with i10-index.

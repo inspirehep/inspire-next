@@ -119,7 +119,7 @@
         {% endif %}
     {% endfor %}
 
-    {% if record.free_keywords or record.keywords|length > 10 %}
+    {% if record.keywords|length > 10 %}
       <div>
         <a href="" class="text-muted" data-toggle="modal" data-target="#keywordsFull">
           <small>
