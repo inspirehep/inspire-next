@@ -26,6 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 from time import sleep
 
+import httpretty
 import pytest
 
 from invenio_db import db
@@ -95,3 +96,10 @@ def small_app(request):
         es.indices.refresh('records-hep')
 
         yield app
+
+
+@pytest.yield_fixture
+def httpretty_mock():
+    httpretty.enable()
+    yield
+    httpretty.disable()
