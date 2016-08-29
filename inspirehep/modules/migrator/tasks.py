@@ -220,24 +220,24 @@ def migrate_chunk(chunk):
 def add_citation_counts(chunk_size=500, request_timeout=120):
     index, doc_type = schema_to_index('records/hep.json')
 
-    def get_records_to_update_generator(citation_lookup):
-        with click.progressbar(citation_lookup.items()) as items:
-            for recid, citation_count in items:
-                try:
-                    uuid = PersistentIdentifier.query.filter(
-                        PersistentIdentifier.object_type == "rec",
-                        PersistentIdentifier.pid_value == str(recid)
-                    ).one().object_uuid
+    def build_recid_2_uuid_map(citation_lookup):
+        uuid_citation_lookup = {}
+        pids = PersistentIdentifier.query.filter(PersistentIdentifier.object_type == 'rec').yield_per(1000)
+        with click.progressbar(pids) as bar:
+            return {pid.object_uuid: citation_lookup[int(pid.pid_value)]
+                    for pid in bar
+                    if int(pid.pid_value) in citation_lookup}
 
-                    yield {
-                        '_op_type': 'update',
-                        '_index': index,
-                        '_type': doc_type,
-                        '_id': str(uuid),
-                        'doc': {'citation_count': citation_count}
-                    }
-                except NoResultFound:
-                    continue
+    def get_records_to_update_generator(citation_lookup):
+        with click.progressbar(citation_lookup.iteritems()) as items:
+            for uuid, citation_count in items:
+                yield {
+                    '_op_type': 'update',
+                    '_index': index,
+                    '_type': doc_type,
+                    '_id': str(uuid),
+                    'doc': {'citation_count': citation_count}
+                }
 
     click.echo("Extracting all citations...")
 
@@ -274,10 +274,14 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
 
             for unique_refs_id in unique_refs_ids:
                 citations_lookup[unique_refs_id] += 1
-
     click.echo("... DONE.")
-    click.echo("Adding citation numbers...")
+    click.echo(citations_lookup)
 
+    click.echo("Mapping RECIDs into UUIDs...")
+    citations_lookup = build_recid_2_uuid_map(citations_lookup)
+    click.echo("... DONE.")
+
+    click.echo("Adding citation numbers...")
     success, failed = es_bulk(
         current_search_client,
         get_records_to_update_generator(citations_lookup),
