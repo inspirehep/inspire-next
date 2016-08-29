@@ -1524,7 +1524,9 @@ def test_publication_info(marcxml_to_json, json_to_marc):
             json_to_marc['773'][0]['x'])
     assert (marcxml_to_json['publication_info'][0]['isbn'] ==
             json_to_marc['773'][0]['z'])
-    assert (marcxml_to_json['publication_info'][0]['note'] ==
+    assert (marcxml_to_json['publication_info'][0]['notes'] ==
+            ['note', 'extranote'])
+    assert (marcxml_to_json['publication_info'][0]['notes'] ==
             json_to_marc['773'][0]['m'])
 
 

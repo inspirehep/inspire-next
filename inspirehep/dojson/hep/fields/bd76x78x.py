@@ -26,14 +26,15 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import utils
 
+from inspirehep.utils.dedupers import dedupe_list
+from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.pubnote import split_page_artid
+
 from ..model import hep, hep2marc
 from ...utils import (
     get_recid_from_ref,
     get_record_ref,
 )
-
-from inspirehep.utils.helpers import force_force_list
-from inspirehep.utils.pubnote import split_page_artid
 
 
 @hep.over('publication_info', '^773..')
@@ -76,7 +77,7 @@ def publication_info(self, key, value):
         'pubinfo_freetext': value.get('x'),
         'year': year,
         'isbn': value.get('z'),
-        'note': value.get('m'),
+        'notes': dedupe_list(force_force_list(value.get('m'))),
     }
 
     return res
@@ -108,7 +109,7 @@ def publication_info2marc(self, key, value):
         'x': value.get('pubinfo_freetext'),
         'y': value.get('year'),
         'z': value.get('isbn'),
-        'm': value.get('note')
+        'm': value.get('notes')
     }
 
 
