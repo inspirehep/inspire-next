@@ -34,19 +34,22 @@ from inspirehep.utils.helpers import force_force_list
 
 
 @institutions.over('location', '^034..')
-@utils.filter_values
 def location(self, key, value):
     """GPS location info."""
     def _get_float(value, c):
         try:
             return float(value[c])
-        except (KeyError, ValueError):
+        except (TypeError, KeyError, ValueError):
             return ''
 
-    return {
-        'longitude': _get_float(value, 'd'),
-        'latitude': _get_float(value, 'f'),
-    }
+    latitude = _get_float(value, 'f')
+    longitude = _get_float(value, 'd')
+
+    if latitude and longitude:
+        return {
+            'latitude': latitude,
+            'longitude': longitude,
+        }
 
 
 @institutions.over('timezone', '^043..')

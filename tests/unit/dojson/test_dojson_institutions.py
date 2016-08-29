@@ -47,34 +47,28 @@ def test_location_from_034__d_f():
     assert expected == result['location']
 
 
-def test_location_from_034__d():
+def test_no_location_from_034__d():
     snippet = (
         '<datafield tag="034" ind1=" " ind2=" ">'
         '  <subfield code="d">6.07532</subfield>'
         '</datafield>'
     )  # synthetic data
 
-    expected = {
-        'longitude': 6.07532,
-    }
     result = clean_record(institutions.do(create_record(snippet)))
 
-    assert expected == result['location']
+    assert 'location' not in result
 
 
-def test_location_from_034__f():
+def test_no_location_from_034__f():
     snippet = (
         '<datafield tag="034" ind1=" " ind2=" ">'
         '  <subfield code="f">50.7736</subfield>'
         '</datafield>'
     )  # synthetic data
 
-    expected = {
-        'latitude': 50.7736,
-    }
     result = clean_record(institutions.do(create_record(snippet)))
 
-    assert expected == result['location']
+    assert 'location' not in result
 
 
 def test_no_location_from_invalid_034__d_f():
@@ -84,6 +78,19 @@ def test_no_location_from_invalid_034__d_f():
         '  <subfield code="f">bar</subfield>'
         '</datafield>'
     )  # synthetic data
+
+    result = clean_record(institutions.do(create_record(snippet)))
+
+    assert 'location' not in result
+
+
+def test_no_location_from_034__double_d():
+    snippet = (
+        '<datafield tag="034" ind1=" " ind2=" ">'
+        '   <subfield code="d">32.540776</subfield>'
+        '   <subfield code="d">15.561010</subfield>'
+        '</datafield>'
+    )  # record/1442294
 
     result = clean_record(institutions.do(create_record(snippet)))
 
