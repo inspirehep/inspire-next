@@ -47,8 +47,6 @@ from invenio_pidstore.models import PersistentIdentifier
 from invenio_records import Record
 from invenio_search import current_search_client
 from invenio_search.utils import schema_to_index
-from invenio_workflows import workflow_object_class
-from invenio_workflows.signals import workflow_object_after_save
 
 from inspirehep.dojson.processors import overdo_marc_dict
 from inspirehep.modules.pidstore.providers import InspireRecordIdProvider
@@ -372,9 +370,3 @@ def migrate_and_insert_record(raw_record):
         prod_record.valid = True
         db.session.merge(prod_record)
         return record
-
-
-@shared_task(ignore_result=True)
-def reindex_holdingpen_object(obj_id):
-    obj = workflow_object_class.get(obj_id)
-    workflow_object_after_save.send(obj)
