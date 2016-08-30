@@ -134,39 +134,27 @@ def creation_modification_date2marc(self, key, value):
     }
 
 
-@hep.over('spires_sysnos', '^970..')
-@conferences.over('spires_sysnos', '^970..')
-@institutions.over('spires_sysnos', '^970..')
-@experiments.over('spires_sysnos', '^970..')
-@journals.over('spires_sysnos', '^970..')
-@hepnames.over('spires_sysnos', '^970..')
-@jobs.over('spires_sysnos', '^970..')
+@hep.over('new_record', '^970..')
+@conferences.over('new_record', '^970..')
+@institutions.over('new_record', '^970..')
+@experiments.over('new_record', '^970..')
+@journals.over('new_record', '^970..')
+@hepnames.over('new_record', '^970..')
+@jobs.over('new_record', '^970..')
 @utils.ignore_value
-def spires_sysnos(self, key, value):
-    """Old SPIRES number and new_recid from 970."""
-    external_system_numbers = self.get('external_system_numbers', [])
+def new_record(self, key, value):
+    """ID of merged record"""
     value = force_force_list(value)
     new_recid = None
     for val in value:
-        if 'a' in val:
-            external_system_numbers.append(
-                {
-                    "institute": "SPIRES",
-                    "value": val.get('a'),
-                    "obsolete": True
-                }
-            )
-        elif 'd' in val:
+        if 'd' in val:
             new_recid = val.get('d')
     if new_recid is not None:
-        self['new_record'] = get_record_ref(new_recid)
-
-    self['external_system_numbers'] = external_system_numbers
-
+        return get_record_ref(new_recid)
 
 @hep2marc.over('970', 'new_record')
 @hepnames2marc.over('970', 'new_record')
-def spires_sysnos2marc(self, key, value):
+def new_record2marc(self, key, value):
     """970 SPIRES number and new recid."""
     value = force_force_list(value)
     existing_values = self.get('970', [])
