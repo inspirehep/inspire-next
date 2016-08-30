@@ -131,21 +131,6 @@
             "type": "array",
             "uniqueItems": true
         },
-        "obsolete_ICN": {
-            "description": "ICN of obsolete inst for which this inst should be used instead",
-            "title": "Obsolete ICN",
-            "type": "string"
-        },
-        "obsolete_record": {
-            "$ref": "elements/json_reference.json",
-            "description": "record URI of obsolete inst for which this inst should be used instead",
-            "title": "Obsolete record URI"
-        },
-        "old_ICN": {
-            "description": "HEP affiliation (spires name)",
-            "title": "Old SPIRES control number",
-            "type": "string"
-        },
         "public_notes": {
             "items": {
                 "title": "Public note",
@@ -157,7 +142,6 @@
         },
         "related_institutes": {
             "items": {
-                "description": "FIXME: Shall we rather separate in two fields? predecessors and parents?",
                 "properties": {
                     "curated_relation": {
                         "title": "Is the relation curated?",
@@ -172,11 +156,11 @@
                         "title": "URI for the related institute record"
                     },
                     "relation_type": {
-                        "description": "FIXME: do we actually need 'successor' at all? Can't we derive it from predecessor?",
                         "enum": [
                             "predecessor",
                             "successor",
                             "parent",
+                            "superseded",
                             "other"
                         ],
                         "title": "Relation type",

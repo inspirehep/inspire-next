@@ -72,8 +72,27 @@ def name(self, key, value):
     set_value('institution', value.get('a'))
     set_value('department', value.get('b'))
     set_value('ICN', value.get('u'))
-    set_value('obsolete_ICN', value.get('x'))
     set_value('new_ICN', value.get('t'))
+
+    superseded_icns = force_force_list(value.get('x'))
+    superseded_recids = force_force_list(value.get('z'))
+    related_institutes = []
+    if len(superseded_icns) == len(superseded_recids):
+        for icn, recid in zip(superseded_icns, superseded_recids):
+            related_institutes.append({
+                'curated_relation': True,
+                'name': icn,
+                'record': get_record_ref(recid, record_type='institutions'),
+                'relation_type': 'superseded',
+            })
+    else:
+        for icn in superseded_icns:
+            related_institutes.append({
+                'curated_relation': False,
+                'name': icn,
+                'relation_type': 'superseded',
+            })
+    set_value('related_institutes', related_institutes)
 
     names = force_force_list(value.get('a'))
     names.extend(force_force_list(value.get('u')))
