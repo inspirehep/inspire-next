@@ -1,5 +1,6 @@
 {
     "$schema": "http://json-schema.org/schema#",
+    "additionalProperties": false,
     "properties": {
         "acronym": {
             "title": "Conference acronym",
@@ -44,6 +45,7 @@
             "uniqueItems": true
         },
         "keywords": {
+            "additionalProperties": false,
             "properties": {
                 "source": {
                     "type": "string"
@@ -99,6 +101,7 @@
             "uniqueItems": true
         },
         "short_description": {
+            "additionalProperties": false,
             "properties": {
                 "source": {
                     "type": "string"

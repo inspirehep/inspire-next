@@ -1,9 +1,11 @@
 {
     "$schema": "http://json-schema.org/schema#",
+    "additionalProperties": false,
     "description": "An article or thesis or book or...",
     "properties": {
         "abstracts": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "source": {
                         "type": "string"
@@ -19,6 +21,7 @@
         },
         "accelerator_experiments": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "accelerator": {
                         "type": "string"
@@ -45,6 +48,7 @@
             "uniqueItems": true
         },
         "acquisition_source": {
+            "additionalProperties": false,
             "properties": {
                 "date": {
                     "description": "Date of acquisition",
@@ -71,6 +75,7 @@
         },
         "arxiv_eprints": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "categories": {
                         "items": {
@@ -91,9 +96,11 @@
         "authors": {
             "description": "List with all the authors",
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "affiliations": {
                         "items": {
+                            "additionalProperties": false,
                             "properties": {
                                 "curated_relation": {
                                     "description": "Did a cataloguer proof-checked the recid?",
@@ -126,6 +133,7 @@
                     },
                     "contributor_roles": {
                         "items": {
+                            "additionalProperties": false,
                             "properties": {
                                 "schema": {
                                     "enum": [
@@ -204,6 +212,7 @@
         },
         "book_series": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "title": {
                         "description": "Title of the book series",
@@ -225,6 +234,7 @@
         },
         "classification_number": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "source": {
                         "title": "Source",
@@ -249,6 +259,7 @@
         },
         "collaboration": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "record": {
                         "$ref": "elements/json_reference.json"
@@ -264,6 +275,7 @@
         },
         "collections": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "primary": {
                         "type": "string"
@@ -278,6 +290,7 @@
         },
         "copyright": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "holder": {
                         "description": "Copyright holder.",
@@ -346,6 +359,7 @@
         },
         "dois": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "source": {
                         "description": "Issuing of DOI.",
@@ -367,6 +381,7 @@
         },
         "edition": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "edition": {
                         "type": "string"
@@ -379,6 +394,7 @@
         },
         "external_system_numbers": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "institute": {
                         "title": "Institute",
@@ -410,6 +426,7 @@
         "funding_info": {
             "description": "Information related to funding. FIXME: Do we care about this? So far only 349 records were tagged and all for a single EU project.",
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "agency": {
                         "title": "Agency",
@@ -434,6 +451,7 @@
         "hidden_notes": {
             "description": "FIXME: what about 595__d??",
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "source": {
                         "description": "FIXME: What's the semantic of this source?",
@@ -450,6 +468,7 @@
         },
         "imprints": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "date": {
                         "format": "date",
@@ -469,6 +488,7 @@
         },
         "isbns": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "comment": {
                         "description": "Further information about type.",
@@ -502,6 +522,7 @@
         },
         "license": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "imposing": {
                         "description": "FIXME: what is this!?",
@@ -544,6 +565,7 @@
         },
         "persistent_identifiers": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "source": {
                         "description": "Provenance of the persistent identifier",
@@ -571,6 +593,7 @@
         },
         "public_notes": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "source": {
                         "type": "string"
@@ -590,6 +613,7 @@
         "publication_info": {
             "description": "FIXME: Shall we split conference information away? FIXME: shall we move the DOI and ISBN next to where it belongs? So that we can also align erratum and friends?",
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "artid": {
                         "description": "Electronic Article ID",
@@ -709,6 +733,7 @@
         },
         "report_numbers": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "source": {
                         "type": "string"
@@ -728,6 +753,7 @@
             "title": "Url of the record"
         },
         "succeeding_entry": {
+            "additionalProperties": false,
             "description": "Reference to previously merged records.",
             "properties": {
                 "isbn": {
@@ -752,6 +778,7 @@
         },
         "keywords": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "classification_scheme": {
                         "type": "string"
@@ -769,6 +796,7 @@
             "uniqueItems": true
         },
         "thesis": {
+            "additionalProperties": false,
             "properties": {
                 "date": {
                     "format": "date",
@@ -794,6 +822,7 @@
                 },
                 "institutions": {
                     "items": {
+                        "additionalProperties": false,
                         "properties": {
                             "curated_relation": {
                                 "type": "boolean"
@@ -815,9 +844,11 @@
         },
         "thesis_supervisors": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "affiliations": {
                         "items": {
+                            "additionalProperties": false,
                             "properties": {
                                 "curated_relation": {
                                     "type": "boolean"

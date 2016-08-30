@@ -1,8 +1,10 @@
 {
     "$schema": "http://json-schema.org/schema#",
+    "additionalProperties": false,
     "properties": {
         "advisors": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "curated_relation": {
                         "type": "boolean"
@@ -62,6 +64,7 @@
         "experiments": {
             "description": "Contains information about experiments.",
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "curated_relation": {
                         "type": "boolean"
@@ -103,6 +106,7 @@
             "uniqueItems": true
         },
         "name": {
+            "additionalProperties": false,
             "description": "Contains name information.",
             "properties": {
                 "numeration": {
@@ -160,6 +164,7 @@
         },
         "positions": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "current": {
                         "type": "boolean"
@@ -176,6 +181,7 @@
                         "type": "string"
                     },
                     "institution": {
+                        "additionalProperties": false,
                         "properties": {
                             "curated_relation": {
                                 "type": "boolean"
@@ -227,6 +233,7 @@
         "source": {
             "description": "This is the source of informatio. It is currently a mixed bags of user IDs or provenance information, e.g. arXiv etc. FIXME: we should really discuss about it. E.g. eprint, webform, Rachel.Lumpkin@durham.ac.uk(96), Fermilab, C09-05-04, KYOTOU...",
             "items": {
+                "additionalProperties": false,
                 "date_verified": {
                     "format": "date",
                     "type": "string"
