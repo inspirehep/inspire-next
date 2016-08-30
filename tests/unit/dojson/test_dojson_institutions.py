@@ -110,6 +110,41 @@ def test_timezone_from_043__t():
     assert expected == result['timezone']
 
 
+def test_superseded_institutions_from_110__x_z():
+    snippet = (
+        '<datafield tag="110" ind1=" " ind2=" ">'
+        '  <subfield code="a">University of Pittsburgh</subfield>'
+        '  <subfield code="t">U. Pittsburgh</subfield>'
+        '  <subfield code="u">U. Pittsburgh (main)</subfield>'
+        '  <subfield code="x">Pittsburgh U., Dept. Phil.</subfield>'
+        '  <subfield code="x">Pittsburgh U., Med. School</subfield>'
+        '  <subfield code="z">908047</subfield>'
+        '  <subfield code="z">905042</subfield>'
+        '</datafield>'
+    ) # record/1272953
+    expected = [
+        {
+            'curated_relation': True,
+            'name': 'Pittsburgh U., Dept. Phil.',
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/908047',
+            },
+            'relation_type': 'superseded',
+        },
+        {
+            'curated_relation': True,
+            'name': 'Pittsburgh U., Med. School',
+            'record': {
+                '$ref': 'http://localhost:5000/api/institutions/905042',
+            },
+            'relation_type': 'superseded',
+        },
+    ]
+    result = clean_record(institutions.do(create_record(snippet)))
+
+    assert expected == result['related_institutes']
+
+
 def test_name_from_110__a():
     snippet = (
         '<datafield tag="110" ind1=" " ind2=" ">'
