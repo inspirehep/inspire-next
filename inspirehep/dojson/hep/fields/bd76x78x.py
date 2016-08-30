@@ -32,6 +32,7 @@ from inspirehep.utils.pubnote import split_page_artid
 
 from ..model import hep, hep2marc
 from ...utils import (
+    force_single_element,
     get_recid_from_ref,
     get_record_ref,
 )
@@ -39,7 +40,6 @@ from ...utils import (
 
 @hep.over('publication_info', '^773..')
 @utils.for_each_value
-@utils.filter_values
 def publication_info(self, key, value):
     """Publication info about record."""
     def get_int_value(val):
@@ -67,16 +67,16 @@ def publication_info(self, key, value):
         'page_start': page_start,
         'page_end': page_end,
         'artid': artid,
-        'journal_issue': value.get('n'),
-        'conf_acronym': value.get('o'),
-        'journal_title': value.get('p'),
-        'reportnumber': value.get('r'),
-        'confpaper_info': value.get('t'),
-        'journal_volume': value.get('v'),
-        'cnum': force_force_list(value.get('w')),
-        'pubinfo_freetext': value.get('x'),
+        'journal_issue': force_single_element(value.get('n')),
+        'conf_acronym': force_single_element(value.get('o')),
+        'journal_title': force_single_element(value.get('p')),
+        'reportnumber': force_single_element(value.get('r')),
+        'confpaper_info': force_single_element(value.get('t')),
+        'journal_volume': force_single_element(value.get('v')),
+        'cnum': force_single_element(value.get('w')),
+        'pubinfo_freetext': force_single_element(value.get('x')),
         'year': year,
-        'isbn': value.get('z'),
+        'isbn': force_single_element(value.get('z')),
         'notes': dedupe_list(force_force_list(value.get('m'))),
     }
 
