@@ -88,8 +88,8 @@ def keywords(self, key, value):
     extract the 'energy_ranges' too that is represented in marc as special
     value of some keywords.
     """
-    def _is_thesaurus(value):
-        return '9' not in value
+    def _is_thesaurus(key):
+        return key.startswith('695')
 
     def _is_energy(value):
         return 'e' in value
@@ -120,12 +120,12 @@ def keywords(self, key, value):
 
         return keyword
 
-    def _get_keyword_dict(elem):
-        if _is_thesaurus(elem) and elem.get('a'):
+    def _get_keyword_dict(key, elem):
+        if _is_thesaurus(key) and elem.get('a'):
             return {
                 'keyword': elem.get('a'),
-                'classification_scheme': elem.get('2'),
-                'source': '',
+                'classification_scheme': elem.get('2', 'INSPIRE'),
+                'source': elem.get('9', ''),
             }
         elif _is_energy(elem):
             return {}
@@ -139,7 +139,7 @@ def keywords(self, key, value):
         self['energy_ranges'].append(int(value.get('e')))
         self['energy_ranges'].sort()
 
-    return _get_keyword_dict(value)
+    return _get_keyword_dict(key, value)
 
 
 @hep2marc.over('695', 'keywords')
@@ -152,10 +152,15 @@ def keywords2marc(self, key, values):
         return elem.get('classification_scheme', '') is not ''
 
     def _thesaurus_to_marc_dict(elem):
-        return {
+        result = {
             'a': elem.get('keyword'),
             '2': elem.get('classification_scheme'),
         }
+        source = elem.get('source', None)
+        if source:
+            result['9'] = elem.get('source')
+
+        return result
 
     def _freekey_to_marc_dict(elem):
         return {

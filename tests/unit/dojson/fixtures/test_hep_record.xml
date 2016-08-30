@@ -191,6 +191,12 @@
     <subfield code="2">INSPIRE</subfield>
     <subfield code="e">7</subfield>
   </datafield>
+  <!-- the schema should be autopopulated if not there for thesaurus -->
+  <datafield tag="695" ind1="" ind2="">
+    <subfield code="2">INSPIRE</subfield>
+    <subfield code="a">Fantastic thesaurus keyword</subfield>
+    <subfield code="9">submitter</subfield>
+  </datafield>
   <datafield tag="701" ind1=" " ind2=" ">
     <subfield code="a">Weiglein, Georg</subfield>
     <subfield code="g">Inspire_id</subfield>

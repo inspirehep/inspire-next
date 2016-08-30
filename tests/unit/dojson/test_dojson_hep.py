@@ -1188,18 +1188,26 @@ def test_accelerator_experiments(marcxml_to_json, json_to_marc):
 
 def test_keywords_thesaurus(marcxml_to_json, json_to_marc):
     """Test if keywords from a thesaurus are created correctly."""
+    expected_keywords = {
+        'Fantastic thesaurus keyword': ['INSPIRE', 'submitter'],
+        'Monte Carlo': ['INSPIRE', None],
+    }
     marc_keywords = {
-        keyword['a']: keyword['2']
+        keyword['a']: [keyword.get('2', None), keyword.get('9', None)]
         for keyword in json_to_marc['695']
-        if 'a' in keyword and '2' in keyword
+        if 'a' in keyword
     }
     json_keywords = {
-        keyword['keyword']: keyword['classification_scheme']
+        keyword['keyword']: [
+            keyword.get('classification_scheme'),
+            keyword.get('source', None),
+        ]
         for keyword in marcxml_to_json['keywords']
         if keyword.get('classification_scheme', None)
     }
 
     assert marc_keywords == json_keywords
+    assert marc_keywords == expected_keywords
 
 
 def test_keywords_manually_introduced(marcxml_to_json, json_to_marc):
