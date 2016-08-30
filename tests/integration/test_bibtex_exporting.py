@@ -20,6 +20,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+import pytest
+
 from inspirehep.utils.bibtex import Bibtex
 from inspirehep.utils.record_getter import get_db_record
 
@@ -135,3 +137,13 @@ def test_format_inbook(app):
     result = Bibtex(inbook).format()
 
     assert expected == result
+
+
+@pytest.mark.xfail
+def test_format_single_note(app):
+    assert False
+
+
+@pytest.mark.xfail
+def test_format_multiple_note(app):
+    assert False

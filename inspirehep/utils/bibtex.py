@@ -203,7 +203,7 @@ class Bibtex(Export):
             'primaryClass': self._get_primary_class,
             'reportNumber': self._get_report_number,
             'doi': self._get_doi,
-            'note': self._get_note,
+            'notes': self._get_notes,
             'series': self._get_series,
             'ISBN': self._get_isbn,
             'SLACcitation': self._get_slac_citation,
@@ -491,70 +491,99 @@ class Bibtex(Export):
                 pass
         return pages
 
-    def _get_note(self):
-        """Return record note"""
-        if self.entry_type in ('article', 'inproceedings'):
-            if 'publication_info' in self.record:
-                pub_info = self.record['publication_info']
-                result = ''
-                note_list = []
-                for index, val in enumerate(pub_info):
-                    if index >= 1:
-                        note = ''
-                        if 'note' not in val and \
-                            ('journal_title' in val or
-                             'journal_volume' in val or
-                             'journal_issue' in val or
-                             'page_start' in val or
-                             'artid' in val or
-                             'year' in val):
-                            if 'journal_title' in val:
-                                if is_submitted_but_not_published(self.record):
-                                    note += 'Submitted to: ' +\
-                                            re.sub(r'\.([A-Z])', r'. \1',
-                                                   val['journal_title'])
-                                else:
-                                    note += re.sub(r'\.([A-Z])', r'. \1',
-                                                   val['journal_title'])
-                                    if 'journal_volume' in val:
-                                        if note.find("JHEP") > -1:
-                                            note += re.sub(r'\d\d(\d\d)', r'\1',
-                                                           val['journal_volume'])
-                                        else:
-                                            note += val['journal_volume']
-                                    if 'journal_issue' in val:
-                                        note += ',no.' + val['journal_issue']
-                                    if 'page_start' in val or 'artid' in val:
-                                        note += ',' + (val.get('page_start') or val['artid'])
-                            if 'year' in val:
-                                note += "(" + str(val['year']) + ")"
-                            elif 'preprint_date' in self.record:
-                                note += "(" + str(self.record['preprint_date'].split('-')[0]) + ")"
-                            result = '[' + note + ']'
-                            note_list.append(result)
-                        elif 'note' in val and \
-                            (val['note'] in ('Erratum', 'Addendum',
-                                             'Corrigendum', 'Reprint')):
-                            if 'journal_title' in val:
-                                note += re.sub(r'\.([A-Z])', r'. \1',
-                                               val['journal_title'])
-                            if 'journal_volume' in val:
-                                if note.find("JHEP") > -1:
-                                    note += re.sub(r'\d\d(\d\d)', r'\1',
-                                                   val['journal_volume'])
-                                else:
-                                    note += val['journal_volume']
-                            if 'journal_issue' in val:
-                                note += ',no.' + val['journal_issue']
-                            if 'page_start' in val or 'artid' in val:
-                                note += ',' + (val.get('page_start') or val['artid'])
-                            if 'year' in val:
-                                note += "(" + str(val['year']) + ")"
-                            result = "[" + val['note'] + ": " + note + "]"
-                            note_list.append(result)
-                if note_list:
-                    return note_list[-1]
-                return ''
+    def _get_notes(self):
+        """Return record notes"""
+        def _has_valid_notes(pub_info):
+            return 'notes' in pub_info and any(
+                True for note in pub_info['notes']
+                if note in ('Erratum', 'Addendum', 'Corrigendum', 'Reprint')
+            )
+
+        def _has_no_valid_notes_but_some_info(pub_info):
+            return (
+                'notes' not in pub_info and (
+                    'journal_title' in pub_info or
+                    'journal_volume' in pub_info or
+                    'journal_issue' in pub_info or
+                    'page_start' in pub_info or
+                    'artid' in pub_info or
+                    'year' in pub_info
+                )
+            )
+
+        def _get_journal_info(pub_info):
+            note = ''
+            if 'journal_title' in pub_info:
+                note += re.sub(
+                    r'\.([A-Z])',
+                    r'. \1',
+                    pub_info['journal_title']
+                )
+            if 'journal_volume' in pub_info:
+                if note.find("JHEP") > -1:
+                    note += re.sub(r'\d\d(\d\d)', r'\1',
+                                   pub_info['journal_volume'])
+                else:
+                    note += pub_info['journal_volume']
+            if 'journal_issue' in pub_info:
+                note += ',no.' + pub_info['journal_issue']
+            if 'page_start' in pub_info or 'artid' in pub_info:
+                note += ',' + (pub_info.get('page_start') or pub_info['artid'])
+            if 'year' in pub_info:
+                note += "(" + str(pub_info['year']) + ")"
+
+            return note
+
+        def _get_prepublished_info(pub_info):
+            note = 'Submitted to: ' + re.sub(
+                r'\.([A-Z])',
+                r'. \1',
+                pub_info['journal_title']
+            )
+            if 'year' in pub_info:
+                note += "(" + str(pub_info['year']) + ")"
+            elif 'preprint_date' in self.record:
+                note += (
+                    "(%s)" % str(self.record['preprint_date'].split('-')[0])
+                )
+
+            return note
+
+        def _extract_info(pub_info):
+            if 'journal_title' in pub_info:
+                if is_submitted_but_not_published(self.record):
+                    note = _get_prepublished_info(pub_info)
+                else:
+                    note = _get_journal_info(pub_info)
+
+            note = '[' + note + ']'
+            return note
+
+        def _extract_notes(pub_info):
+            note = _get_journal_info(pub_info)
+            note = "[" + ', '.join(pub_info['notes']) + ": " + note + "]"
+            return note
+
+        def _has_publication_info(self):
+            return (
+                self.entry_type not in ('article', 'inproceedings') or
+                'publication_info' not in self.record
+            )
+
+        if not _has_publication_info(self):
+            return
+
+        pub_infos = self.record['publication_info'] or ['dummy']
+        result = ''
+        for pub_info in reversed(pub_infos[1:]):
+            if _has_no_valid_notes_but_some_info(pub_info):
+                result = _extract_info(pub_info)
+            elif _has_valid_notes(pub_info):
+                result = _extract_notes(pub_info)
+            if result:
+                break
+
+        return result
 
     def _get_url(self):
         """Return url of the record"""
