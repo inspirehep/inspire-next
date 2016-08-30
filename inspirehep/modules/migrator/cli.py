@@ -24,10 +24,12 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
 import os
 import sys
 
 import click
+import requests
 from flask import current_app
 from flask_cli import with_appcontext
 
@@ -37,12 +39,15 @@ from .tasks import (
     add_citation_counts,
     migrate,
     migrate_broken_records,
+    migrate_chunk,
+    split_blob,
 )
 
 
 @click.group()
 def migrator():
     """Command related to migrating INSPIRE data."""
+    logging.basicConfig()
 
 
 @migrator.command()
@@ -60,20 +65,28 @@ def populate(file_input=None,
     Usage: inveniomanage migrator populate -f prodsync20151117173222.xml.gz
     """
     if remigrate:
-        print("Remigrate broken records...")
+        click.echo("Remigrate broken records...")
         migrate_broken_records.delay()
     elif file_input and not os.path.isfile(file_input):
-        print("{0} is not a file!".format(file_input), file=sys.stderr)
+        click.echo("{0} is not a file!".format(file_input), err=True)
     elif file_input:
-        print("Migrating records from file: {0}".format(file_input))
+        click.echo("Migrating records from file: {0}".format(file_input))
 
         migrate(os.path.abspath(file_input), wait_for_results=wait)
 
 
 @migrator.command()
+@click.option('--recid', '-r', type=int, help="recid on INSPIRE")
+def one(recid):
+    click.echo("Migrating record {recid} from INSPIRE legacy".format(recid=recid))
+    raw_record = requests.get("http://inspirehep.net/record/{recid}/export/xme".format(recid=recid)).content
+    migrate_chunk(split_blob(raw_record))
+
+
+@migrator.command()
 def count_citations():
     """Adds field citation_count to every record in 'HEP' and calculates its proper value."""
-    print("Adding citation_count to all records")
+    click.echo("Adding citation_count to all records")
     add_citation_counts()
 
 
@@ -148,7 +161,7 @@ def clean_records():
             return
 
         click.secho('Truncating tables...', fg='red', bold=True,
-                    file=sys.stderr)
+                    err=True)
         with click.progressbar(tables_to_truncate) as tables:
             for table in tables:
                 db.engine.execute("TRUNCATE TABLE {0} RESTART IDENTITY CASCADE".format(table))
@@ -163,7 +176,7 @@ def clean_records():
         click.secho('Destroying indexes...',
                     fg='red',
                     bold=True,
-                    file=sys.stderr)
+                    err=True)
         with click.progressbar(
                 current_search.delete(ignore=[400, 404])) as bar:
             for name, response in bar:
@@ -172,7 +185,7 @@ def clean_records():
         click.secho('Creating indexes...',
                     fg='green',
                     bold=True,
-                    file=sys.stderr)
+                    err=True)
         with click.progressbar(
                 current_search.create(ignore=[400])) as bar:
             for name, response in bar:
@@ -196,5 +209,5 @@ def drop_tables(table_filter):
     ).fetchall()
     for table in table_names:
         db.engine.execute("DROP TABLE {0}".format(table[0]))
-        print(">>> Dropped {0}.".format(table[0]))
-    print(">>> Removed {0} tables.".format(len(table_names)))
+        click.echo(">>> Dropped {0}.".format(table[0]))
+    click.echo(">>> Removed {0} tables.".format(len(table_names)))
