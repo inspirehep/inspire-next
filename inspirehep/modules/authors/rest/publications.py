@@ -54,6 +54,8 @@ class AuthorAPIPublications(object):
         }).params(
             _source=[
                 "accelerator_experiments",
+                "authors.affiliations",
+                "authors.recid",
                 "earliest_date",
                 "citation_count",
                 "control_number",
@@ -72,6 +74,29 @@ class AuthorAPIPublications(object):
             publication['id'] = int(result_source['control_number'])
             publication['record'] = result_source['self']
             publication['title'] = get_title(result_source)
+
+            # Get author's affiliation.
+            for author in result_source['authors']:
+                try:
+                    if author['recid'] == int(author_pid):
+                        publication['affiliation'] = {}
+                        try:
+                            publication['affiliation']['name'] = author[
+                                'affiliations'][0]['value']
+                        # In case of missing affiliations, broken array or name
+                        # from the source, don't attach it to a publication.
+                        except (IndexError, KeyError):
+                            del publication['affiliation']
+                            continue
+                        try:
+                            publication['affiliation']['id'] = author[
+                                'affiliations'][0]['recid']
+                        # However just missing recid of affiliation is fine.
+                        except KeyError:
+                            pass
+                # Missing recid key.
+                except KeyError:
+                    continue
 
             # Get the earliest date.
             try:

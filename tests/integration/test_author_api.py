@@ -126,6 +126,13 @@ def test_api_authors_publications(app):
     schema = {
         'items': {
             'properties': {
+                'affiliation': {
+                    'properties': {
+                        'id': {'type': 'integer'},
+                        'name': {'type': 'string'}
+                    },
+                    'type': 'object'
+                },
                 'collaborations': {
                     'items': {'type': 'string'},
                     'type': 'array'
