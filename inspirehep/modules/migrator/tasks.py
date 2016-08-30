@@ -276,8 +276,8 @@ def add_citation_counts(chunk_size=500, request_timeout=120):
         current_search_client,
         _get_records_to_update_generator(citations_lookup),
         chunk_size=chunk_size,
-        raise_on_exception=True,
-        raise_on_error=True,
+        raise_on_exception=False,
+        raise_on_error=False,
         request_timeout=request_timeout,
         stats_only=True,
     )
