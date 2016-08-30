@@ -1488,6 +1488,44 @@ def test_authors_supervisors_from_701__double_a_u_z():
     assert expected == result['authors']
 
 
+def test_mashed_publication_info_from_773():
+    snippet = (
+        '<datafield tag="773" ind1=" " ind2=" ">'
+        '  <subfield code="p">IAU Symp.</subfield>'
+        '  <subfield code="w">C08-06-09</subfield>'
+        '  <subfield code="v">354</subfield>'
+        '  <subfield code="y">2008</subfield>'
+        '  <subfield code="v">254</subfield>'
+        '  <subfield code="y">2009</subfield>'
+        '  <subfield code="c">45</subfield>'
+        '  <subfield code="1">1212883</subfield>'
+        '  <subfield code="2">978924</subfield>'
+        '  <subfield code="0">1408366</subfield>'
+        '</datafield>'
+    ) # record/820763/export/xme
+
+    expected = {
+        'journal_title': 'IAU Symp.',
+        'cnum': 'C08-06-09',
+        'journal_volume': '354',
+        'year': 2008,
+        'artid': '45',
+        'page_start': '45',
+        'journal_record': {
+            '$ref': 'http://localhost:5000/api/journals/1212883',
+        },
+        'parent_record': {
+            '$ref': 'http://localhost:5000/api/literature/1408366',
+        },
+        'conference_record': {
+            '$ref': 'http://localhost:5000/api/conferences/978924',
+        },
+    }
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['publication_info'][0]
+
+
 def test_collaboration(marcxml_to_json, json_to_marc):
     """Test if collaboration is created correctly."""
     assert (marcxml_to_json['collaboration'][0] ==

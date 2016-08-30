@@ -616,10 +616,7 @@
                         "type": "string"
                     },
                     "cnum": {
-                        "items": {
-                            "type": "string"
-                        },
-                        "type": "array"
+                        "type": "string"
                     },
                     "conf_acronym": {
                         "type": "string"
