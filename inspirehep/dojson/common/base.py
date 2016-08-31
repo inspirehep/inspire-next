@@ -148,15 +148,16 @@ def spires_sysnos(self, key, value):
     value = force_force_list(value)
     new_recid = None
     for val in value:
-        if 'a' in val:
-            external_system_numbers.append(
-                {
-                    "institute": "SPIRES",
-                    "value": val.get('a'),
-                    "obsolete": True
-                }
-            )
-        elif 'd' in val:
+        for sysno in force_force_list(val.get('a')):
+            if sysno:
+                external_system_numbers.append(
+                    {
+                        "institute": "SPIRES",
+                        "value": sysno,
+                        "obsolete": True
+                    }
+                )
+        if 'd' in val:
             new_recid = val.get('d')
     if new_recid is not None:
         self['new_record'] = get_record_ref(new_recid)
