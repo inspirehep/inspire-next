@@ -80,12 +80,23 @@
             "title": "Url of the record"
         },
         "series": {
-            "title": "Conference series",
-            "type": "array"
-        },
-        "series_number": {
-            "title": "Conference series number",
-            "type": "integer"
+            "items": {
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "number": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "name"
+                ],
+                "type": "object"
+            },
+            "title": "Conference series to which a conference belongs.",
+            "type": "array",
+            "uniqueItems": true
         },
         "short_description": {
             "properties": {
