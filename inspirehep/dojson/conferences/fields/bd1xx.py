@@ -119,17 +119,37 @@ def note(self, key, value):
 
 
 @conferences.over('series', '^411')
-@utils.for_each_value
 def series(self, key, value):
     """Conference series."""
-    if value.get('n'):
-        series_number = ''
-        try:
-            series_number = int(value.get('n'))
-            self['series_number'] = series_number
-        except:
-            pass
-    return value.get('a')
+    series = self.setdefault('series', [])
+
+    n_value = value.get('n', '')
+    a_value = value.get('a')
+    series_number = int(n_value) if n_value.isdigit() else None
+
+    if (series_number and not a_value) or (not series_number and a_value):
+        """The code below is only a workaround.
+        Using doJSON, you cannot get all 411s of an XML in one go
+        (only one at a time) which makes it hard to couple `a` and `n`
+        refering to the same series but stored inside two 411s.
+        """
+
+        if series:
+            last_series = series[-1]
+
+            if series_number and not last_series.get('number'):
+                last_series['number'] = series_number
+                return series
+            elif a_value and not last_series.get('name'):
+                last_series['name'] = a_value
+                return series
+
+    series.append({
+        'name': a_value,
+        'number': series_number
+    })
+
+    return series
 
 
 @conferences.over('short_description', '^520')
