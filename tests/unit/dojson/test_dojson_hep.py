@@ -187,6 +187,24 @@ def test_languages_single_value():
     assert expected == result['languages']
 
 
+def test_ignore_curator_from_0247_a():
+    snippet = (
+        '<datafield tag="024" ind1="7" ind2=" ">'
+        '  <subfield code="2">DOI</subfield>'
+        '  <subfield code="9">bibcheck</subfield>'
+        '  <subfield code="9">CURATOR</subfield>'
+        '  <subfield code="a">10.1590/S1806-11172008005000006</subfield>'
+        '</datafield>'
+    )
+
+    expected = [{
+        'source': 'bibcheck',
+        'value': '10.1590/S1806-11172008005000006',
+    }]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['dois']
+
 
 def test_external_system_numbers_from_035__a():
     snippet = (
