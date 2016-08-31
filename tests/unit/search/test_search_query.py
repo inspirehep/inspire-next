@@ -133,7 +133,7 @@ def test_author_bai():
                     },
                     {
                       "term": {
-                        "authors.inspire_bai": "r.j.hill.1"
+                        "authors.ids.value": "r.j.hill.1"
                       }
                     }
                   ]
@@ -225,26 +225,34 @@ def test_author_colon():
     query = IQ('author: vagenas', LiteratureSearch())
 
     expected = {
-        "bool": {
-            "should": [
+          'bool': {
+            'must': [
               {
-                "match": {
-                  "authors.name_variations": "vagenas"
+                'bool': {
+                  'should': [
+                    {
+                      'match': {
+                        u'authors.name_variations': 'vagenas'
+                      }
+                    },
+                    {
+                      'term': {
+                        u'authors.ids.value': 'vagenas'
+                      }
+                    }
+                  ]
                 }
-              },
+              }
+            ],
+            'should': [
               {
-                "match": {
-                  "authors.full_name": "vagenas"
-                }
-              },
-              {
-                "match": {
-                  "authors.inspire_bai": "vagenas"
+                'match': {
+                  u'authors.full_name': 'vagenas'
                 }
               }
             ]
+          }
         }
-    }
     result = query.to_dict()
 
     assert expected == result
@@ -266,7 +274,7 @@ def test_author_colon_with_double_quotes():
                     },
                     {
                       "term": {
-                        "authors.inspire_bai": "tachikawa, yuji"
+                        "authors.ids.value": "tachikawa, yuji"
                       }
                     }
                   ]
@@ -291,26 +299,34 @@ def test_author_colon_bai():
     query = IQ('author:Y.Nomura.1', LiteratureSearch())
 
     expected = {
-        "bool": {
-            "should": [
+          'bool': {
+            'must': [
               {
-                "match": {
-                  "authors.name_variations": "Y.Nomura.1"
+                'bool': {
+                  'should': [
+                    {
+                      'match': {
+                        u'authors.name_variations': 'Y.Nomura.1'
+                      }
+                    },
+                    {
+                      'term': {
+                        u'authors.ids.value': 'Y.Nomura.1'
+                      }
+                    }
+                  ]
                 }
-              },
+              }
+            ],
+            'should': [
               {
-                "match": {
-                  "authors.full_name": "Y.Nomura.1"
-                }
-              },
-              {
-                "match": {
-                  "authors.inspire_bai": "Y.Nomura.1"
+                'match': {
+                  u'authors.full_name': 'Y.Nomura.1'
                 }
               }
             ]
+          }
         }
-    }
     result = query.to_dict()
 
     assert expected == result
@@ -321,36 +337,42 @@ def test_author_colon_bai_and_collection_colon():
         'author:E.Witten.1 AND collection:citeable', LiteratureSearch())
 
     expected = {
-        "bool": {
-            "should": [
+          'bool': {
+            'must': [
               {
-                "match": {
-                  "authors.name_variations": "E.Witten.1"
+                'bool': {
+                  'should': [
+                    {
+                      'match': {
+                        u'authors.name_variations': 'E.Witten.1'
+                      }
+                    },
+                    {
+                      'term': {
+                        u'authors.ids.value': 'E.Witten.1'
+                      }
+                    }
+                  ]
                 }
               },
               {
-                "match": {
-                  "authors.full_name": "E.Witten.1"
-                }
-              },
-              {
-                "match": {
-                  "authors.inspire_bai": "E.Witten.1"
+                'multi_match': {
+                  'fields': [
+                    'collections.primary'
+                  ],
+                  'query': 'citeable'
                 }
               }
             ],
-            "must": [
+            'should': [
               {
-                "multi_match": {
-                  "query": "citeable",
-                  "fields": [
-                    "collections.primary"
-                  ]
+                'match': {
+                  u'authors.full_name': 'E.Witten.1'
                 }
               }
             ]
+          }
         }
-    }
     result = query.to_dict()
     assert expected == result
 
@@ -359,42 +381,43 @@ def test_author_colon_bai_with_double_quotes_and_collection_colon():
     query = IQ('author:"E.Witten.1" AND collection:citeable', LiteratureSearch())
 
     expected = {
-        "bool": {
-            "should": [
+          'bool': {
+            'must': [
               {
-                "match": {
-                  "authors.full_name": "E.Witten.1"
-                }
-              }
-            ],
-            "must": [
-              {
-                "bool": {
-                  "should": [
+                'bool': {
+                  'should': [
                     {
-                      "match": {
-                        "authors.name_variations": "E.Witten.1"
+                      'match': {
+                        u'authors.name_variations': 'E.Witten.1'
                       }
                     },
                     {
-                      "term": {
-                        "authors.inspire_bai": "E.Witten.1"
+                      'term': {
+                        u'authors.ids.value': 'E.Witten.1'
                       }
                     }
                   ]
                 }
               },
               {
-                "multi_match": {
-                  "query": "citeable",
-                  "fields": [
-                    "collections.primary"
-                  ]
+                'multi_match': {
+                  'fields': [
+                    'collections.primary'
+                  ],
+                  'query': 'citeable'
+                }
+              }
+            ],
+            'should': [
+              {
+                'match': {
+                  u'authors.full_name': 'E.Witten.1'
                 }
               }
             ]
+          }
         }
-    }
+
     result = query.to_dict()
 
     assert expected == result
@@ -407,44 +430,50 @@ def test_author_colon_bai_and_collection_colon_and_cited_colon():
         )
 
     expected = {
-        "bool": {
-            "must": [
+          'bool': {
+            'must': [
               {
-                "multi_match": {
-                  "query": "citeable",
-                  "fields": [
-                    "collections.primary"
+                'bool': {
+                  'should': [
+                    {
+                      'match': {
+                        u'authors.name_variations': 'E.Witten.1'
+                      }
+                    },
+                    {
+                      'term': {
+                        u'authors.ids.value': 'E.Witten.1'
+                      }
+                    }
                   ]
                 }
               },
               {
-                "range": {
-                  "citation_count": {
-                    "gte": "500",
-                    "lte": "1000000"
+                'multi_match': {
+                  'fields': [
+                    'collections.primary'
+                  ],
+                  'query': 'citeable'
+                }
+              },
+              {
+                'range': {
+                  'citation_count': {
+                    'gte': '500',
+                    'lte': '1000000'
                   }
                 }
               }
             ],
-            "should": [
+            'should': [
               {
-                "match": {
-                  "authors.name_variations": "E.Witten.1"
-                }
-              },
-              {
-                "match": {
-                  "authors.full_name": "E.Witten.1"
-                }
-              },
-              {
-                "match": {
-                  "authors.inspire_bai": "E.Witten.1"
+                'match': {
+                  u'authors.full_name': 'E.Witten.1'
                 }
               }
             ]
+          }
         }
-    }
     result = query.to_dict()
 
     assert expected == result
@@ -457,50 +486,50 @@ def test_author_colon_bai_with_double_quotes_and_collection_colon_and_cited_colo
     )
 
     expected = {
-        "bool": {
-            "must": [
+          'bool': {
+            'must': [
               {
-                "bool": {
-                  "should": [
+                'bool': {
+                  'should': [
                     {
-                      "match": {
-                        "authors.name_variations": "E.Witten.1"
+                      'match': {
+                        u'authors.name_variations': 'E.Witten.1'
                       }
                     },
                     {
-                      "term": {
-                        "authors.inspire_bai": "E.Witten.1"
+                      'term': {
+                        u'authors.ids.value': 'E.Witten.1'
                       }
                     }
                   ]
                 }
               },
               {
-                "multi_match": {
-                  "query": "citeable",
-                  "fields": [
-                    "collections.primary"
-                  ]
+                'multi_match': {
+                  'fields': [
+                    'collections.primary'
+                  ],
+                  'query': 'citeable'
                 }
               },
               {
-                "range": {
-                  "citation_count": {
-                    "gte": "500",
-                    "lte": "1000000"
+                'range': {
+                  'citation_count': {
+                    'gte': '500',
+                    'lte': '1000000'
                   }
                 }
               }
             ],
-            "should": [
+            'should': [
               {
-                "match": {
-                  "authors.full_name": "E.Witten.1"
+                'match': {
+                  u'authors.full_name': 'E.Witten.1'
                 }
               }
             ]
+          }
         }
-    }
     result = query.to_dict()
 
     assert expected == result
@@ -682,7 +711,7 @@ def test_exactauthor_colon_bai():
               "exactauthor.raw",
               "authors.full_name",
               "authors.alternative_names",
-              "authors.inspire_bai"
+              "authors.ids.value"
             ]
         }
     }
@@ -711,7 +740,7 @@ def test_or_of_exactauthor_colon_queries():
               "exactauthor.raw",
               "authors.full_name",
               "authors.alternative_names",
-              "authors.inspire_bai"
+              "authors.ids.value"
             ]
         }
     }
@@ -822,7 +851,7 @@ def test_find_exactauthor():
               "exactauthor.raw",
               "authors.full_name",
               "authors.alternative_names",
-              "authors.inspire_bai"
+              "authors.ids.value"
             ]
         }
     }
@@ -856,7 +885,7 @@ def test_find_exactauthor_not_affiliation_uppercase():
                     "exactauthor.raw",
                     "authors.full_name",
                     "authors.alternative_names",
-                    "authors.inspire_bai"
+                    "authors.ids.value"
                   ]
                 }
               }
@@ -884,7 +913,7 @@ def test_find_author():
                     },
                     {
                       "term": {
-                        "authors.inspire_bai": "polchinski"
+                        "authors.ids.value": "polchinski"
                       }
                     }
                   ]
@@ -921,7 +950,7 @@ def test_find_author_uppercase():
                     },
                     {
                       "term": {
-                        "authors.inspire_bai": "W F CHANG"
+                        "authors.ids.value": "W F CHANG"
                       }
                     }
                   ]
@@ -966,7 +995,7 @@ def test_find_author_and_date():
                     },
                     {
                       "term": {
-                        "authors.inspire_bai": "hatta"
+                        "authors.ids.value": "hatta"
                       }
                     }
                   ]
@@ -1046,7 +1075,7 @@ def test_find_author_or_author():
                           },
                           {
                             "term": {
-                              "authors.inspire_bai": "gersdorff, g"
+                              "authors.ids.value": "gersdorff, g"
                             }
                           }
                         ]
@@ -1075,7 +1104,7 @@ def test_find_author_or_author():
                           },
                           {
                             "term": {
-                              "authors.inspire_bai": "von gersdorff, g"
+                              "authors.ids.value": "von gersdorff, g"
                             }
                           }
                         ]
@@ -1116,7 +1145,7 @@ def test_find_author_not_author_not_author():
                     },
                     {
                       "term": {
-                        "authors.inspire_bai": "ostapchenko"
+                        "authors.ids.value": "ostapchenko"
                       }
                     }
                   ]
@@ -1144,7 +1173,7 @@ def test_find_author_not_author_not_author():
                           },
                           {
                             "term": {
-                              "authors.inspire_bai": "olinto"
+                              "authors.ids.value": "olinto"
                             }
                           }
                         ]
@@ -1166,7 +1195,7 @@ def test_find_author_not_author_not_author():
                           },
                           {
                             "term": {
-                              "authors.inspire_bai": "haungs"
+                              "authors.ids.value": "haungs"
                             }
                           }
                         ]
