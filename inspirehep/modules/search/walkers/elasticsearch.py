@@ -26,6 +26,7 @@
 from operator import or_
 
 from elasticsearch_dsl import Q
+from flask import current_app
 
 from invenio_query_parser.ast import (AndOp, DoubleQuotedValue, EmptyQuery,
                                       GreaterEqualOp, GreaterOp, Keyword,
@@ -117,12 +118,17 @@ class ElasticSearchDSL(object):
                 node.value = node.value[len('recid:'):]
 
             fields = self.get_fields_for_keyword(keyword, mode='a')
-            if fields == ['authors.full_name', 'authors.alternative_names']:
-                return Q('bool', should=[
-                    Q("match", authors__name_variations=str(node.value)),
-                    Q("match", authors__full_name=str(node.value)),
-                    Q("match", authors__inspire_bai=str(node.value))
-                ])
+            if fields == current_app.config['SEARCH_ELASTIC_KEYWORD_MAPPING']['author']:
+                return Q(
+                    'bool',
+                    must=Q('bool', should=[
+                        Q("match", authors__name_variations=str(node.value)),
+                        Q("term", authors__ids__value=str(node.value))
+                    ]),
+                    should=[
+                        Q("match", authors__full_name=str(node.value))
+                    ]
+                )
             return Q({
                 'multi_match': {
                     'query': node.value,
@@ -143,12 +149,12 @@ class ElasticSearchDSL(object):
     def visit(self, node):
         def query(keyword):
             fields = self.get_fields_for_keyword(keyword, mode='e')
-            if fields == ['authors.full_name', 'authors.alternative_names']:
+            if fields == current_app.config['SEARCH_ELASTIC_KEYWORD_MAPPING']['author']:
                 return Q(
                     'bool',
                     must=Q('bool', should=[
                         Q("match", authors__name_variations=str(node.value)),
-                        Q("term", authors__inspire_bai=str(node.value))
+                        Q("term", authors__ids__value=str(node.value))
                     ]),
                     should=[
                         Q("match", authors__full_name=str(node.value))
