@@ -107,7 +107,7 @@
     <div class="row hp-horizonal-delimiter"></div>
     {% endif %}
 
-    {% if record.free_keywords %}
+    {% if record.keywords %}
     <div class="row">
       <div class="col-sm-3">
         {{ record_keywords(record) }}

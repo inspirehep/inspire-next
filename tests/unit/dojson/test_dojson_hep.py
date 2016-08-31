@@ -1178,14 +1178,6 @@ def test_field_categories(marcxml_to_json, json_to_marc):
             json_to_marc['65017'][0]['9'])
 
 
-def test_free_keywords(marcxml_to_json, json_to_marc):
-    """Test if free_keywords is created correctly."""
-    assert (marcxml_to_json['free_keywords'][0]['value'] ==
-            json_to_marc['653'][0]['a'])
-    assert (marcxml_to_json['free_keywords'][0]['source'] ==
-            json_to_marc['653'][0]['9'])
-
-
 def test_accelerator_experiments(marcxml_to_json, json_to_marc):
     """Test if accelerator_experiment is created correctly."""
     assert (marcxml_to_json['accelerator_experiments'][0]['accelerator'] ==
@@ -1194,14 +1186,62 @@ def test_accelerator_experiments(marcxml_to_json, json_to_marc):
             json_to_marc['693'][0]['e'])
 
 
-def test_thesaurus_terms(marcxml_to_json, json_to_marc):
-    """Test if thesaurus_terms is created correctly."""
-    assert (marcxml_to_json['thesaurus_terms'][0]['classification_scheme'] ==
-            json_to_marc['695'][0]['2'])
-    assert (marcxml_to_json['thesaurus_terms'][0]['energy_range'] ==
-            json_to_marc['695'][0]['e'])
-    assert (marcxml_to_json['thesaurus_terms'][0]['keyword'] ==
-            json_to_marc['695'][0]['a'])
+def test_keywords_thesaurus(marcxml_to_json, json_to_marc):
+    """Test if keywords from a thesaurus are created correctly."""
+    expected_keywords = {
+        'Fantastic thesaurus keyword': ['INSPIRE', 'submitter'],
+        'Monte Carlo': ['INSPIRE', None],
+    }
+    marc_keywords = {
+        keyword['a']: [keyword.get('2', None), keyword.get('9', None)]
+        for keyword in json_to_marc['695']
+        if 'a' in keyword
+    }
+    json_keywords = {
+        keyword['keyword']: [
+            keyword.get('classification_scheme'),
+            keyword.get('source', None),
+        ]
+        for keyword in marcxml_to_json['keywords']
+        if keyword.get('classification_scheme', None)
+    }
+
+    assert marc_keywords == json_keywords
+    assert marc_keywords == expected_keywords
+
+
+def test_keywords_manually_introduced(marcxml_to_json, json_to_marc):
+    """Test if keywords manually introduced are created correctly."""
+    marc_keywords = {
+        keyword['a']: keyword.get('9', '')
+        for keyword in json_to_marc['653']
+        if 'a' in keyword and '2' not in keyword
+    }
+    json_keywords = {
+        keyword['keyword']: keyword.get('source', '')
+        for keyword in marcxml_to_json['keywords']
+        if not keyword.get('classification_scheme', None)
+    }
+    expected_keywords = {
+        'Fancyvalue3': '',
+        'dummyvalue': 'dummysource',
+        'fancyValue2': '',
+        'fancyvalue': 'author',
+    }
+
+    assert expected_keywords == marc_keywords
+    assert expected_keywords == json_keywords
+
+
+def test_energy_ranges(marcxml_to_json, json_to_marc):
+    """Test that the energy ranges are parsed correctly."""
+    marc_ranges = [
+        range_value['e'] for range_value in json_to_marc['695']
+        if 'e' in range_value
+    ]
+    marc_ranges.sort()
+
+    assert marc_ranges == marcxml_to_json['energy_ranges']
 
 
 def test_authors_supervisors_from_701__a_u():

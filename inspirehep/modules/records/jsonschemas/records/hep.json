@@ -412,21 +412,6 @@
             "type": "array",
             "uniqueItems": true
         },
-        "free_keywords": {
-            "items": {
-                "properties": {
-                    "source": {
-                        "type": "string"
-                    },
-                    "value": {
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
         "funding_info": {
             "description": "Information related to funding. FIXME: Do we care about this? So far only 349 records were tagged and all for a single EU project.",
             "items": {
@@ -725,17 +710,22 @@
             },
             "type": "object"
         },
-        "thesaurus_terms": {
+        "energy_ranges": {
+            "description": "Ranges of energies the record refers to",
+            "items": {
+                "minimum": 0,
+                "type": "integer"
+            },
+            "type": "array"
+        },
+        "keywords": {
             "items": {
                 "properties": {
                     "classification_scheme": {
                         "type": "string"
                     },
-                    "energy_range": {
-                        "description": "FIXME: What... is... that!?",
-                        "maximum": 9,
-                        "minimum": 0,
-                        "type": "integer"
+                    "source": {
+                        "type": "string"
                     },
                     "keyword": {
                         "type": "string"

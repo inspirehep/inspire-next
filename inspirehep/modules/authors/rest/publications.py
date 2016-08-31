@@ -60,7 +60,7 @@ class AuthorAPIPublications(object):
                 "facet_inspire_doc_type",
                 "publication_info",
                 "self",
-                "thesaurus_terms",
+                "keywords",
                 "titles",
             ]
         )
