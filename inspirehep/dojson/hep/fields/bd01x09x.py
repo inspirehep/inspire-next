@@ -30,7 +30,12 @@ from isbn import ISBNError
 from isbn.hyphen import ISBNRangeError
 
 from dojson import utils
-from idutils import normalize_isbn
+from idutils import (
+    is_doi,
+    is_handle,
+    normalize_doi,
+    normalize_isbn,
+)
 
 from ..model import hep, hep2marc
 from ...utils import force_single_element
@@ -142,8 +147,11 @@ def persistent_identifiers(self, key, value):
 
         return force_single_element(without_curator)
 
-    def _is_doi(type_):
-        return type_ and type_.upper() == 'DOI'
+    def _is_doi(type_, id_):
+        return (not type_ or type_.upper() == 'DOI') and is_doi(id_)
+
+    def _is_handle(type_, id_):
+        return (not type_ or type_.upper() in ('DOI', 'HDL')) and is_handle(id_)
 
     dois = self.get('dois', [])
     persistent_identifiers = self.get('persistent_identifiers', [])
@@ -154,18 +162,20 @@ def persistent_identifiers(self, key, value):
             ids = force_force_list(value.get('a'))
             type_ = force_single_element(value.get('2'))
             source = _first_non_curator_source(value.get('9'))
-
-            if _is_doi(type_):
-                dois.extend([{
-                    'source': source,
-                    'value': id_,
-                } for id_ in ids])
-            else:
-                persistent_identifiers.extend([{
-                    'source': source,
-                    'type': type_,
-                    'value': id_,
-                } for id_ in ids])
+            for id_ in ids:
+                if _is_doi(type_, id_):
+                    dois.append({
+                        'source': source,
+                        'value': normalize_doi(id_),
+                    })
+                else:
+                    if _is_handle(type_, id_):
+                        type_ = 'HDL'
+                    persistent_identifiers.append({
+                        'source': source,
+                        'type': type_,
+                        'value': id_,
+                    })
 
     self['dois'] = dois
     return persistent_identifiers
