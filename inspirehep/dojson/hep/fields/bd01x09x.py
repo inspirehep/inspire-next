@@ -136,27 +136,37 @@ def isbns2marc(self, key, value):
 @hep.over('persistent_identifiers', '^024..')
 def persistent_identifiers(self, key, value):
     """Persistent Standard Identifiers."""
-    value = force_force_list(value)
+    def _first_non_curator_source(sources):
+        sources = force_force_list(sources)
+        without_curator = filter(lambda el: el.upper() != 'CURATOR', sources)
+
+        return force_single_element(without_curator)
+
+    def _is_doi(type_):
+        return type_ and type_.upper() == 'DOI'
 
     dois = self.get('dois', [])
     persistent_identifiers = self.get('persistent_identifiers', [])
-    for val in value:
-        if val:
-            items = force_force_list(val.get('a'))
-            items_type = force_single_element(val.get('2'))
-            if items_type and items_type.lower() == 'doi':
-                for v in items:
-                    dois.append({
-                        'value': v,
-                        'source': val.get('9')
-                    })
+
+    values = force_force_list(value)
+    for value in values:
+        if value:
+            ids = force_force_list(value.get('a'))
+            type_ = force_single_element(value.get('2'))
+            source = _first_non_curator_source(value.get('9'))
+
+            if _is_doi(type_):
+                dois.extend([{
+                    'source': source,
+                    'value': id_,
+                } for id_ in ids])
             else:
-                for v in items:
-                    persistent_identifiers.append({
-                        'value': v,
-                        'source': val.get('9'),
-                        'type': val.get('2')
-                    })
+                persistent_identifiers.extend([{
+                    'source': source,
+                    'type': type_,
+                    'value': id_,
+                } for id_ in ids])
+
     self['dois'] = dois
     return persistent_identifiers
 
