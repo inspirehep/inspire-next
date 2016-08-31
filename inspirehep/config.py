@@ -603,7 +603,7 @@ RECORDS_UI_ENDPOINTS = dict(
         route='/literature/<pid_value>',
         template='inspirehep_theme/format/record/'
                  'Inspire_Default_HTML_detailed.tpl',
-        record_class='inspirehep.modules.records.es_record:ESRecord',
+        record_class='inspirehep.modules.records.wrappers:LiteratureRecord',
         permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     authors=dict(
@@ -611,6 +611,7 @@ RECORDS_UI_ENDPOINTS = dict(
         route='/authors/<pid_value>',
         template='inspirehep_theme/format/record/'
                  'authors/Author_HTML_detailed.html',
+        record_class='inspirehep.modules.records.wrappers:AuthorsRecord',
         permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     data=dict(
@@ -623,6 +624,7 @@ RECORDS_UI_ENDPOINTS = dict(
         pid_type='conferences',
         route='/conferences/<pid_value>',
         template='inspirehep_theme/format/record/Conference_HTML_detailed.tpl',
+        record_class='inspirehep.modules.records.wrappers:ConferencesRecord',
         permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     jobs=dict(
@@ -636,12 +638,14 @@ RECORDS_UI_ENDPOINTS = dict(
         pid_type='institutions',
         route='/institutions/<pid_value>',
         template='inspirehep_theme/format/record/Institution_HTML_detailed.tpl',
+        record_class='inspirehep.modules.records.wrappers:InstitutionsRecord',
         permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     experiments=dict(
         pid_type='experiments',
         route='/experiments/<pid_value>',
         template='inspirehep_theme/format/record/Experiment_HTML_detailed.tpl',
+        record_class='inspirehep.modules.records.wrappers:ExperimentsRecord',
         permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     journals=dict(

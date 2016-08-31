@@ -19,7 +19,15 @@
 
 {% extends "inspirehep_theme/format/record/Inspire_Default_HTML_detailed.tpl" %}
 
+{% set title=record.title %}
+
 {% block body %}
+<ul class="breadcrumb detailed-record-breadcrumb">
+<li>
+  <span class="fa fa-chevron-left"></span>
+  {{ request.headers.get('referer', '')|back_to_search_link("institutions") }}
+</li>
+</ul>
 <div id="record_content">
   <div class="record-detailed record-detailed-institution">
     <div class="record-header record-header-institution">
