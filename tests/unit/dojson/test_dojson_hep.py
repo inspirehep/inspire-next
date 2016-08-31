@@ -116,6 +116,32 @@ def test_external_system_numbers(marcxml_to_json, json_to_marc):
     assert (marcxml_to_json['external_system_numbers'][0]['obsolete'] ==
             json_to_marc['035'][0]['z'])
 
+
+def test_external_system_numbers_from_970__double_a():
+    snippet = (
+        '<datafield tag="970" ind1=" " ind2=" ">'
+        '  <subfield code="a">SPIRES-9663061</subfield>'
+        '  <subfield code="a">SPIRES-9949933</subfield>'
+        '</datafield>'
+    )  # record/1217763
+
+    expected = [
+        {
+            'institute': 'SPIRES',
+            'obsolete': True,
+            'value': 'SPIRES-9663061',
+        },
+        {
+            'institute': 'SPIRES',
+            'obsolete': True,
+            'value': 'SPIRES-9949933',
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['external_system_numbers']
+
+
 def test_simple_language():
     snippet = (
         '<datafield tag="041" ind1=" " ind2=" ">'
