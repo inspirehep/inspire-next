@@ -3,29 +3,31 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2015, 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
 # INSPIRE is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
-# 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this license, CERN does not waive the privileges and immunities
+# In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
 """Implement AST convertor to Elastic Search DSL."""
 
+from __future__ import absolute_import, division, print_function
+
 from operator import or_
 
 from elasticsearch_dsl import Q
+from flask import current_app
 
 from invenio_query_parser.ast import (AndOp, DoubleQuotedValue, EmptyQuery,
                                       GreaterEqualOp, GreaterOp, Keyword,
@@ -117,12 +119,17 @@ class ElasticSearchDSL(object):
                 node.value = node.value[len('recid:'):]
 
             fields = self.get_fields_for_keyword(keyword, mode='a')
-            if fields == ['authors.full_name', 'authors.alternative_names']:
-                return Q('bool', should=[
-                    Q("match", authors__name_variations=str(node.value)),
-                    Q("match", authors__full_name=str(node.value)),
-                    Q("match", authors__inspire_bai=str(node.value))
-                ])
+            if fields == current_app.config['SEARCH_ELASTIC_KEYWORD_MAPPING']['author']:
+                return Q(
+                    'bool',
+                    must=Q('bool', should=[
+                        Q("match", authors__name_variations=str(node.value)),
+                        Q("term", authors__ids__value=str(node.value))
+                    ]),
+                    should=[
+                        Q("match", authors__full_name=str(node.value))
+                    ]
+                )
             return Q({
                 'multi_match': {
                     'query': node.value,
@@ -143,12 +150,12 @@ class ElasticSearchDSL(object):
     def visit(self, node):
         def query(keyword):
             fields = self.get_fields_for_keyword(keyword, mode='e')
-            if fields == ['authors.full_name', 'authors.alternative_names']:
+            if fields == current_app.config['SEARCH_ELASTIC_KEYWORD_MAPPING']['author']:
                 return Q(
                     'bool',
                     must=Q('bool', should=[
                         Q("match", authors__name_variations=str(node.value)),
-                        Q("term", authors__inspire_bai=str(node.value))
+                        Q("term", authors__ids__value=str(node.value))
                     ]),
                     should=[
                         Q("match", authors__full_name=str(node.value))

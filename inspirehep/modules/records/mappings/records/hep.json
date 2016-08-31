@@ -111,13 +111,13 @@
                             ],
                             "type": "string"
                         },
-                        "inspire_bai": {
-                            "copy_to": [
-                                "author",
-                                "exactauthor"
-                            ],
-                            "index": "not_analyzed",
-                            "type": "string"
+                        "ids": {
+                            "properties": {
+                                "value": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            }
                         },
                         "name_suggest": {
                             "analyzer": "simple",

@@ -166,7 +166,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "control_number": ["control_number"],
     "author": ["authors.full_name", "authors.alternative_names"],
     "exactauthor": ["exactauthor.raw", "authors.full_name",
-                    "authors.alternative_names", "authors.inspire_bai"
+                    "authors.alternative_names", "authors.ids.value"
                     ],
     "abstract": ["abstracts.value"],
     "collaboration": ["collaboration.value", "collaboration.raw^2"],
