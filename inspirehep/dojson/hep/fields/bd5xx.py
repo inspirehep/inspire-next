@@ -209,8 +209,12 @@ def funding_info2marc(self, key, value):
 @utils.filter_values
 def license(self, key, value):
     """Add Terms Governing Use and Reproduction Note."""
+    license_value = force_force_list(value.get('a'))
+    # We strip away redundant 'Open Access' string
+    license_value = [val for val in license_value if license_value != 'Open Access']
+    license_value = force_single_element(license_value)
     return {
-        'license': value.get('a'),
+        'license': license_value,
         'imposing': value.get('b'),
         'url': value.get('u'),
         'material': value.get('3')
