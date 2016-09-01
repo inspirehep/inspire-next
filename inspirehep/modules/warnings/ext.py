@@ -20,10 +20,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Warnings extension that removes deprecation warnings.
+"""Extension that suppresses warnings.
 
-Invenio-Base enables deprecation warnings and this extension removes
-this setting unless ``DEBUG_SHOW_DEPRECATION_WARNINGS`` is set to True.
+By default Invenio-Base enables deprecation warnings. This extension
+disables them, unless ``DEBUG_SHOW_DEPRECATION_WARNINGS`` is ``True``.
 """
 
 from __future__ import absolute_import, division, print_function
@@ -32,22 +32,23 @@ import warnings
 
 
 class INSPIREWarnings(object):
-    """INSPIREWarnings extension implementation."""
+
+    """Extension that suppresses warnings."""
 
     def __init__(self, app=None):
-        """Initialize extension."""
-        self.app = app
-        if app is not None:
+        """Initialize the extension."""
+        if app:
             self.init_app(app)
 
     def init_app(self, app):
-        """Initialize a Flask application."""
-        app.config.setdefault("DEBUG_SHOW_DEPRECATION_WARNINGS",
-                              False)
+        """Initialize the application."""
+        self.init_config(app)
 
         if not app.config['DEBUG_SHOW_DEPRECATION_WARNINGS']:
-            warnings.filterwarnings(
-                'ignore',
-                category=DeprecationWarning
-            )
-        app.extensions["inspire-warnings"] = self
+            warnings.filterwarnings('ignore', category=DeprecationWarning)
+
+        app.extensions['inspire-warnings'] = self
+
+    def init_config(self, app):
+        """Initialize the configuration."""
+        app.config.setdefault('DEBUG_SHOW_DEPRECATION_WARNINGS', False)
