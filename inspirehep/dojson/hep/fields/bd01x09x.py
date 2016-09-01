@@ -144,17 +144,21 @@ def persistent_identifiers(self, key, value):
         if val:
             items = force_force_list(val.get('a'))
             items_type = force_single_element(val.get('2'))
+            # We don't support more than one source and 'CURATOR' is really not used.
+            sources = force_force_list(val.get('9'))
+            sources = [source for source in sources if source.upper() != 'CURATOR']
+            source = force_single_element(sources)
             if items_type and items_type.lower() == 'doi':
                 for v in items:
                     dois.append({
                         'value': v,
-                        'source': val.get('9')
+                        'source': source
                     })
             else:
                 for v in items:
                     persistent_identifiers.append({
                         'value': v,
-                        'source': val.get('9'),
+                        'source': source,
                         'type': val.get('2')
                     })
     self['dois'] = dois
