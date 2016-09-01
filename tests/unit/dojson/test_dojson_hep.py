@@ -89,6 +89,27 @@ def test_dois(marcxml_to_json, json_to_marc):
             [p.get('a') for p in json_to_marc['024'] if 'a' in p])
 
 
+def test_dois_from_0247__a_ignores_curator_source():
+    snippet = (
+        '<datafield tag="024" ind1="7" ind2=" ">'
+        '  <subfield code="2">DOI</subfield>'
+        '  <subfield code="9">bibcheck</subfield>'
+        '  <subfield code="9">CURATOR</subfield>'
+        '  <subfield code="a">10.1590/S1806-11172008005000006</subfield>'
+        '</datafield>'
+    )  # record/1117362
+
+    expected = [
+        {
+            'source': 'bibcheck',
+            'value': '10.1590/S1806-11172008005000006',
+        },
+    ]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert expected == result['dois']
+
+
 def test_deleted_records(marcxml_to_json, json_to_marc):
     """Test if deleted_recids is created correctly."""
     assert (get_recid_from_ref(marcxml_to_json['deleted_records'][0]) in
