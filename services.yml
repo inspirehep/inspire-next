@@ -28,6 +28,8 @@ services:
   indexer:
     image: inspirehep/elasticsearch
     command: elasticsearch -Dcluster.name="inspire" -Ddiscovery.zen.ping.multicast.enabled=false
+    environment:
+      - ES_HEAP_SIZE=2g
   database:
     image: postgres
     environment:
