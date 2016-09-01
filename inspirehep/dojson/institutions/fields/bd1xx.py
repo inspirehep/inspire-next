@@ -139,6 +139,14 @@ def field_activity(self, key, value):
 @institutions.over('name_variants', '^410..')
 def name_variants(self, key, value):
     """Variants of the name."""
+    valid_sources = [
+        "DESY_AFF",
+        "ADS",
+        "INSPIRE"
+    ]
+    if value.get('9') and value.get('9') not in valid_sources:
+        return self.get('name_variants', [])
+
     if value.get('g'):
         self.setdefault('extra_words', [])
         self['extra_words'].extend(force_force_list(value.get('g')))

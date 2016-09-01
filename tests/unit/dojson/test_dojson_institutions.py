@@ -450,14 +450,14 @@ def test_field_activity_from_372__a():
 def test_name_variants_from_410__a_9():
     snippet = (
         '<datafield tag="410" ind1=" " ind2=" ">'
-        '  <subfield code="9">DESY</subfield>'
+        '  <subfield code="9">INSPIRE</subfield>'
         '  <subfield code="a">Aachen Tech. Hochsch.</subfield>'
         '</datafield>'
     )  # record/902624
 
     expected = [
         {
-            'source': 'DESY',
+            'source': 'INSPIRE',
             'value': [
                 'Aachen Tech. Hochsch.',
             ],
@@ -466,6 +466,22 @@ def test_name_variants_from_410__a_9():
     result = clean_record(institutions.do(create_record(snippet)))
 
     assert expected == result['name_variants']
+
+
+def test_name_variants_from_410__9_with_invalid_source():
+    snippet = (
+        '<datafield tag="410" ind1=" " ind2=" ">'
+            '<subfield code="9">Tech</subfield>'
+            '<subfield code="a">CIIT</subfield>'
+            '<subfield code="g">Inst</subfield>'
+        '</datafield>'
+    ) #record 1338296
+
+    expected = {}
+
+    result = clean_record(institutions.do(create_record(snippet)))
+
+    assert expected == result.get('name_variants', {})
 
 
 def test_name_variants_from_410__double_a():
