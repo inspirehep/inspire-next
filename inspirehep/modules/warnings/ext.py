@@ -20,11 +20,34 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIREWarnings module."""
+"""Warnings extension that removes deprecation warnings.
+
+Invenio-Base enables deprecation warnings and this extension removes
+this setting unless ``DEBUG_SHOW_DEPRECATION_WARNINGS`` is set to True.
+"""
 
 from __future__ import absolute_import, division, print_function
 
-from .ext import INSPIREWarnings
+import warnings
 
 
-__all__ = ("INSPIREWarnings", )
+class INSPIREWarnings(object):
+    """INSPIREWarnings extension implementation."""
+
+    def __init__(self, app=None):
+        """Initialize extension."""
+        self.app = app
+        if app is not None:
+            self.init_app(app)
+
+    def init_app(self, app):
+        """Initialize a Flask application."""
+        app.config.setdefault("DEBUG_SHOW_DEPRECATION_WARNINGS",
+                              False)
+
+        if not app.config['DEBUG_SHOW_DEPRECATION_WARNINGS']:
+            warnings.filterwarnings(
+                'ignore',
+                category=DeprecationWarning
+            )
+        app.extensions["inspire-warnings"] = self
