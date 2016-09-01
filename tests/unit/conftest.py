@@ -49,12 +49,13 @@ def email_app():
         CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
         MAIL_SUPPRESS_SEND=True,
     )
+
     FlaskCeleryExt(app)
 
     InvenioMail(app, StringIO())
 
     with app.app_context():
-        yield app
+        return app
 
 
 @pytest.fixture(scope='session', autouse=True)
