@@ -53,7 +53,7 @@ install_requires = [
     'invenio-celery>=1.0.0a4',
     'invenio-config>=1.0.0a1',
     'invenio-i18n==1.0.0a4',
-    'invenio-indexer>=1.0.0a6',
+    'invenio-indexer>=1.0.0a7',
     'invenio-logging>=1.0.0a3',
     'invenio-mail>=1.0.0a4',
     'invenio-oauthclient>=1.0.0a8',

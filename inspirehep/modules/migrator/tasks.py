@@ -42,7 +42,7 @@ from six import text_type
 
 from dojson.contrib.marc21.utils import create_record as marc_create_record
 from invenio_db import db
-from invenio_indexer.api import RecordIndexer, _record_to_index
+from invenio_indexer.api import RecordIndexer, current_record_to_index
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records import Record
@@ -182,7 +182,7 @@ def continuous_migration():
 
 
 def create_index_op(record):
-    index, doc_type = _record_to_index(record)
+    index, doc_type = current_record_to_index(record)
 
     return {
         '_op_type': 'index',
