@@ -40,6 +40,10 @@ from .experiments import EXPERIMENTS_MAP
 from .signals import after_record_enhanced
 
 
+#
+# before_record_index
+#
+
 @before_record_index.connect
 def enhance_record(sender, json, *args, **kwargs):
     """Runs all the record enhancers and fires the after_record_enhanced signals
@@ -50,55 +54,6 @@ def enhance_record(sender, json, *args, **kwargs):
     dates_validator(sender, json, *args, **kwargs)
     add_recids_and_validate(sender, json, *args, **kwargs)
     after_record_enhanced.send(json)
-
-
-@before_record_insert.connect
-@before_record_update.connect
-def normalize_field_categories(sender, *args, **kwargs):
-    """Normalize the content of the `field_categories` key.
-
-    We use the heuristic that a field is normalized if its scheme is 'INSPIRE'
-    or if it contains either the `_scheme` key or the `_term` key.
-
-    If the field wasn't normalized we use some mapping defined in the
-    configuration to output a `term` belonging to a known set of values.
-
-    We also use the heuristic that the source is 'INSPIRE' if it contains the
-    word 'automatically', otherwise we preserve it.
-    """
-    def _is_normalized(field):
-        scheme_is_inspire = field.get('scheme') == 'INSPIRE'
-        return scheme_is_inspire or '_scheme' in field or '_term' in field
-
-    def _is_from_inspire(term):
-        return term and term != 'Other'
-
-    for i, field in enumerate(sender.get('field_categories', [])):
-        if _is_normalized(field):
-            continue
-
-        original_term = field.get('term')
-        normalized_term = classify_field(original_term)
-        scheme = 'INSPIRE' if _is_from_inspire(normalized_term) else None
-
-        original_scheme = field.get('scheme')
-        if isinstance(original_scheme, (list, tuple)):
-            original_scheme = original_scheme[0]
-
-        updated_field = {
-            '_scheme': original_scheme,
-            'scheme': scheme,
-            '_term': original_term,
-            'term': normalized_term,
-        }
-
-        source = field.get('source')
-        if source:
-            if 'automatically' in source:
-                source = 'INSPIRE'
-            updated_field['source'] = source
-
-        sender['field_categories'][i].update(updated_field)
 
 
 def populate_inspire_subjects(sender, json, *args, **kwargs):
@@ -260,23 +215,10 @@ def dates_validator(sender, json, *args, **kwargs):
             json[date_key] = valid_date
 
 
-def references_validator(sender, json, *args, **kwargs):
-    """Validate the recids in references before indexing.
-
-    Logs a warning if the value corresponding to a `recid` key in `references`
-    is not composed uniquely of digits. If it wasn't, it is also removed from
-    its reference.
-    """
-    def _is_not_made_of_digits(recid):
-        return not six.text_type(recid).isdigit()
-
-    for reference in json.get('references', []):
-        recid = reference.get('recid')
-        if recid and _is_not_made_of_digits(recid):
-            current_app.logger.warning(
-                'MALFORMED: recid value found in references of %s: %s',
-                json['control_number'], recid)
-            del reference['recid']
+def add_recids_and_validate(sender, json, *args, **kwargs):
+    """Ensure that recids are generated before being validated."""
+    populate_recid_from_ref(sender, json, *args, **kwargs)
+    references_validator(sender, json, *args, **kwargs)
 
 
 def populate_recid_from_ref(sender, json, *args, **kwargs):
@@ -331,11 +273,28 @@ def populate_recid_from_ref(sender, json, *args, **kwargs):
     _recusive_find_refs(json)
 
 
-def add_recids_and_validate(sender, json, *args, **kwargs):
-    """Ensure that recids are generated before being validated."""
-    populate_recid_from_ref(sender, json, *args, **kwargs)
-    references_validator(sender, json, *args, **kwargs)
+def references_validator(sender, json, *args, **kwargs):
+    """Validate the recids in references before indexing.
 
+    Logs a warning if the value corresponding to a `recid` key in `references`
+    is not composed uniquely of digits. If it wasn't, it is also removed from
+    its reference.
+    """
+    def _is_not_made_of_digits(recid):
+        return not six.text_type(recid).isdigit()
+
+    for reference in json.get('references', []):
+        recid = reference.get('recid')
+        if recid and _is_not_made_of_digits(recid):
+            current_app.logger.warning(
+                'MALFORMED: recid value found in references of %s: %s',
+                json['control_number'], recid)
+            del reference['recid']
+
+
+#
+# before_record_update
+#
 
 @before_record_update.connect
 def check_if_record_is_going_to_be_deleted(sender, *args, **kwargs):
@@ -347,3 +306,56 @@ def check_if_record_is_going_to_be_deleted(sender, *args, **kwargs):
     if sender.get('deleted'):
         record = get_db_record('literature', int(sender.get('control_number')))
         soft_delete_pidstore_for_record(record.id)
+
+
+#
+# before_record_update & before_record_insert
+#
+
+@before_record_insert.connect
+@before_record_update.connect
+def normalize_field_categories(sender, *args, **kwargs):
+    """Normalize the content of the `field_categories` key.
+
+    We use the heuristic that a field is normalized if its scheme is 'INSPIRE'
+    or if it contains either the `_scheme` key or the `_term` key.
+
+    If the field wasn't normalized we use some mapping defined in the
+    configuration to output a `term` belonging to a known set of values.
+
+    We also use the heuristic that the source is 'INSPIRE' if it contains the
+    word 'automatically', otherwise we preserve it.
+    """
+    def _is_normalized(field):
+        scheme_is_inspire = field.get('scheme') == 'INSPIRE'
+        return scheme_is_inspire or '_scheme' in field or '_term' in field
+
+    def _is_from_inspire(term):
+        return term and term != 'Other'
+
+    for i, field in enumerate(sender.get('field_categories', [])):
+        if _is_normalized(field):
+            continue
+
+        original_term = field.get('term')
+        normalized_term = classify_field(original_term)
+        scheme = 'INSPIRE' if _is_from_inspire(normalized_term) else None
+
+        original_scheme = field.get('scheme')
+        if isinstance(original_scheme, (list, tuple)):
+            original_scheme = original_scheme[0]
+
+        updated_field = {
+            '_scheme': original_scheme,
+            'scheme': scheme,
+            '_term': original_term,
+            'term': normalized_term,
+        }
+
+        source = field.get('source')
+        if source:
+            if 'automatically' in source:
+                source = 'INSPIRE'
+            updated_field['source'] = source
+
+        sender['field_categories'][i].update(updated_field)
