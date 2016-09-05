@@ -139,7 +139,7 @@ def test_successfull_conversion():
                                                                        'external-identifier-type': 'ARXIV'}]},
                 'journal-title': 'Nuovo Cim.',
                 'short-description': 'Abstract',
-                'title': {'subtitle': 'Subtitle', 'title': 'Title3'},
+                'title': {'subtitle': 'Subtitle', 'title': 'Title'},
                 'type': 'REPORT'}
     result = convert_to_orcid(record)
     assert expected == result

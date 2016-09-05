@@ -55,24 +55,6 @@ def test_get_abstract_returns_empty_string_when_no_titles():
     assert expected == result
 
 
-def test_get_title_returns_empty_string_when_titles_is_empty():
-    empty_titles = Record({'titles': []})
-
-    expected = ''
-    result = get_title(empty_titles)
-
-    assert expected == result
-
-
-def test_get_subtitle_returns_empty_string_when_titles_is_empty():
-    empty_titles = Record({'titles': []})
-
-    expected = ''
-    result = get_subtitle(empty_titles)
-
-    assert expected == result
-
-
 def test_get_abstract_returns_empty_string_when_abstracts_is_empty():
     empty_abstracts = Record({'abstracts': []})
 

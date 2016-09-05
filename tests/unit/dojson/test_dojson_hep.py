@@ -980,13 +980,10 @@ def test_corporate_author(marcxml_to_json, json_to_marc):
 def test_titles(marcxml_to_json, json_to_marc):
     """Test if titles is created correctly."""
     assert (marcxml_to_json['titles'][0]['title'] ==
+            'S-Duality Constraints on 1D Patterns Associated with Fractional '
+            'Quantum Hall States')
+    assert (marcxml_to_json['titles'][0]['title'] ==
             json_to_marc['245'][0]['a'])
-
-
-def test_title_variations(marcxml_to_json, json_to_marc):
-    """Test if title_variations is created correctly."""
-    assert (marcxml_to_json['title_variations'][0]['title'] ==
-            json_to_marc['210'][0]['a'])
 
 
 def test_title_translations(marcxml_to_json, json_to_marc):
@@ -995,26 +992,22 @@ def test_title_translations(marcxml_to_json, json_to_marc):
             json_to_marc['242'][0]['a'])
     assert (marcxml_to_json['title_translations'][0]['subtitle'] ==
             json_to_marc['242'][0]['b'])
+    assert (marcxml_to_json['title_translations'][0]['language'] == 'en')
 
 
-def test_title_arxiv(marcxml_to_json, json_to_marc):
+def test_title_variations(marcxml_to_json, json_to_marc):
     """Test if title arxiv is created correctly."""
-    def get(key):
-        return [d.get(key) for d in marcxml_to_json['titles']]
+    def build_candidate(candidate, key, value):
+        if value:
+            candidate[key] = value
 
-    assert (json_to_marc['246']['9'] in get('source'))
-    assert (json_to_marc['246']['b'] in get('subtitle'))
-    assert (json_to_marc['246']['a'] in get('title'))
-
-
-def test_titles_old(marcxml_to_json, json_to_marc):
-    """Test if titles_old is created correctly."""
-    assert (marcxml_to_json['titles_old'][0]['source'] ==
-            json_to_marc['247'][0]['9'])
-    assert (marcxml_to_json['titles_old'][0]['subtitle'] ==
-            json_to_marc['247'][0]['b'])
-    assert (marcxml_to_json['titles_old'][0]['title'] ==
-            json_to_marc['247'][0]['a'])
+    title_variations = marcxml_to_json['titles'][1:]
+    for variation in json_to_marc['246']:
+        candidate = {}
+        build_candidate(candidate, 'source', variation.get('9'))
+        build_candidate(candidate, 'title', variation.get('a'))
+        build_candidate(candidate, 'subtitle', variation.get('b'))
+        assert candidate in title_variations
 
 
 def test_imprints(marcxml_to_json, json_to_marc):

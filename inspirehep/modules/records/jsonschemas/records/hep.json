@@ -498,10 +498,10 @@
         },
         "languages": {
             "items": {
-                "title": "Language",
-                "type": "string",
+                "format": "ISO 639-1",
                 "pattern": "\\w{2}",
-                "format": "ISO 639-1"
+                "title": "Language",
+                "type": "string"
             },
             "type": "array"
         },
@@ -815,26 +815,28 @@
         },
         "title_translations": {
             "items": {
-                "$ref": "elements/title.json"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
-        "title_variations": {
-            "items": {
-                "$ref": "elements/title.json"
+                "properties": {
+                    "language": {
+                        "format": "ISO 639-1",
+                        "pattern": "\\w{2}",
+                        "type": "string"
+                    },
+                    "source": {
+                        "type": "string"
+                    },
+                    "subtitle": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
             },
             "type": "array",
             "uniqueItems": true
         },
         "titles": {
-            "items": {
-                "$ref": "elements/title.json"
-            },
-            "type": "array",
-            "uniqueItems": true
-        },
-        "titles_old": {
             "items": {
                 "$ref": "elements/title.json"
             },
