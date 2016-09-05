@@ -35,6 +35,7 @@ services:
       - CACHE_REDIS_URL=redis://redis:6379/0
       - ACCOUNTS_SESSION_REDIS_URL=redis://redis:6379/2
       - SEARCH_ELASTIC_HOSTS=indexer
+      - ES_BULK_TIMEOUT=240
 
   # Services using the inspirehep code.
   web:
