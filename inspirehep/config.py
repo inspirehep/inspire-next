@@ -39,7 +39,7 @@ def _(x):
 # Debug
 # =====
 DEBUG_TB_INTERCEPT_REDIRECTS = False
-SERVER_NAME = "localhost:5000"
+SERVER_NAME = os.environ.get('SERVER_NAME', 'localhost:5000')
 
 # Default language and timezone
 # =============================

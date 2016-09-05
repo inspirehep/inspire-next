@@ -41,6 +41,7 @@ env:
     - SUITE=disambiguation
     - SUITE=workflows
     - SUITE=integration
+    - SUITE=acceptance
 
 matrix:
   fast_finish: true
@@ -61,19 +62,22 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
 
 install:
-  - "travis_retry docker-compose pull"
-  - "travis_retry docker-compose build"
-  - "travis_retry docker-compose -f docker-compose.deps.yml run --rm pip"
-  - "docker-compose -f docker-compose.deps.yml run --rm assets"
+  - travis_retry docker-compose pull
+  - travis_retry docker-compose build
+  - travis_retry docker-compose -f docker-compose.deps.yml run --rm pip
+  - docker-compose -f docker-compose.deps.yml run --rm assets
 
 script:
   - "docker-compose -f docker-compose.test.yml run --rm ${SUITE}"
 
 after_script:
-  - "docker-compose -f docker-compose.test.yml kill"
+  # Killing via SIGTERM in order to trigger atexit and dump coverage information in WSGI
+  - "docker-compose -f docker-compose.test.yml kill -s SIGTERM"
   - "docker-compose -f docker-compose.test.yml rm -f"
 
 after_success:
+  - mv .coverage .coverage.tests
+  - coverage combine
   # Coverage report contains Docker paths. We replace them, so that we can run Coveralls.
   - sed -i 's@\"/code/@'"\"$(pwd)/"'@g' .coverage
   - coveralls

@@ -20,9 +20,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-[run]
-omit =
-  inspirehep/celery.py
-  inspirehep/cli.py
-  inspirehep/wsgi.py
-  inspirehep/wsgi_with_coverage.py
+from __future__ import absolute_import, division, print_function
+
+import os
+
+
+def test_login(selenium, small_app):
+    sign_in = selenium.find_element_by_link_text('Sign in')
+    assert sign_in
+    sign_in.click()
+    assert 'Please sign in to suggest content to INSPIRE' in selenium.page_source
+    selenium.get(os.environ['SERVER_NAME'] + '/login/?local=1')
+    email = selenium.find_element_by_id('email')
+    email.send_keys('admin@inspirehep.net')
+    password = selenium.find_element_by_id('password')
+    password.send_keys('123456')
+

@@ -94,6 +94,11 @@ dump.rdb
 # KDevelop4
 .kdev4/
 *.kdev4
+*.kate-swp
 
 # Vim swapfiles
 .*.sw?
+
+# Selenium report
+assets
+selenium-report.html
