@@ -83,6 +83,38 @@ def test_isbns(marcxml_to_json, json_to_marc):
     assert marcxml_to_json['isbns'][0]['medium'] == json_to_marc['020'][0]['b']
 
 
+def test_doi_but_should_be_hdl_from_0247_a():
+    snippet = (
+        '<datafield tag="024" ind1="7" ind2=" ">'
+        '  <subfield code="2">DOI</subfield>'
+        '  <subfield code="a">2027.42/97915</subfield>'
+        '</datafield>'
+    ) # 1429523
+
+    expected = [{
+        'value': '2027.42/97915',
+        'type': 'HDL',
+    }]
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert result.get('persistent_identifiers', []) == expected
+    assert result.get('dois', []) == []
+
+
+def test_invalid_doi_but_should_be_hdl_from_0247_a():
+    snippet = (
+        '<datafield tag="024" ind1="7" ind2=" ">'
+        '  <subfield code="2">DOI</subfield>'
+        '  <subfield code="a">blablabla</subfield>'
+        '</datafield>'
+    )
+
+    expected = []
+    result = clean_record(hep.do(create_record(snippet)))
+
+    assert result.get('dois', []) == expected
+
+
 def test_dois(marcxml_to_json, json_to_marc):
     """Test if dois is created correctly."""
     assert (marcxml_to_json['dois'][0]['value'] in
