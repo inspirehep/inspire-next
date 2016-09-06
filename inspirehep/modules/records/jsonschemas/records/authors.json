@@ -126,7 +126,8 @@
                 "title": {
                     "enum": [
                         "",
-                        "Sir"
+                        "Sir",
+                        "Mrs."
                     ],
                     "type": "string"
                 },
