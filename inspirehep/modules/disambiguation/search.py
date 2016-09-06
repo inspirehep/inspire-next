@@ -349,7 +349,7 @@ def get_signature(uuid):
             "authors.orcid",
             "authors.profile",
             "authors.recid",
-            "authors.role",
+            "authors.contributor_roles.value",
             "authors.uuid"
         ],
         "query": {

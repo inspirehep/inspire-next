@@ -43,7 +43,7 @@ def thesis_supervisors(self, key, value):
             'affiliations': _get_affiliations(value),
             'contributor_roles': [
                 {
-                    'source': 'CRediT',
+                    'schema': 'CRediT',
                     'value': 'Supervision',
                 },
             ],

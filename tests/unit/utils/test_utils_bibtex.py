@@ -375,7 +375,7 @@ def test_get_author_two_authors_one_a_supervisor():
             {
                 'contributor_roles': [
                     {
-                        'source': 'CRediT',
+                        'schema': 'CRediT',
                         'value': 'Supervision',
                     },
                 ],
