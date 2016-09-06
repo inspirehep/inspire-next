@@ -1095,6 +1095,25 @@ CRAWLER_SETTINGS = {
 # Inspire mappings
 # ================
 
+INSPIRE_LEGACY_ROLES = {
+    'editing': [
+        'ed.',
+        'eds.',
+        'ed,,',
+        'eds',
+        'ed,',
+        'ed. et al.'
+    ],
+    'administration': [
+        'task force leader',
+        'resource manager',
+        'scientific coordinator',
+        'chairman',
+        'chair',
+        'workshop chair'
+    ]
+}
+
 INSPIRE_CATEGORIES = [
     'Accelerators',
     'Astrophysics',

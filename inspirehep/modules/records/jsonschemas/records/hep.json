@@ -127,7 +127,7 @@
                     "contributor_roles": {
                         "items": {
                             "properties": {
-                                "source": {
+                                "schema": {
                                     "enum": [
                                         "CRediT"
                                     ],
@@ -187,11 +187,6 @@
                         "$ref": "elements/json_reference.json",
                         "description": "URI for the person record",
                         "title": "URI for the person record"
-                    },
-                    "role": {
-                        "description": "Role of the author within the paper. So far only Editor was captured.",
-                        "title": "Role of the person",
-                        "type": "string"
                     },
                     "uuid": {
                         "description": "Universally unique identifier of the author.",

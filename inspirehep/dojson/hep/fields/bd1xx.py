@@ -24,10 +24,16 @@
 
 from __future__ import absolute_import, division, print_function
 
+import six
 import logging
 import re
 
 from dojson import utils
+
+from flask import current_app
+
+from inspirehep.utils.record import get_value as utils_get_value
+from inspirehep.utils.helpers import force_force_list
 
 from ..model import hep, hep2marc
 from ...utils import (
@@ -141,6 +147,34 @@ def authors(self, key, value):
             if x_value and x_value.isdigit():
                 return get_record_ref(x_value, 'authors')
 
+        def _get_contributor_role(value):
+            if not value:
+                return None
+
+            if not isinstance(value, six.string_types):
+                value = set(value)
+
+            values = force_force_list(value)
+
+            contributor_roles = []
+            for value in values:
+                value = value.lower()
+                if value in current_app.config['INSPIRE_LEGACY_ROLES']['editing']:
+                    contributor_roles.append(
+                        {
+                            'schema': 'CRediT',
+                            'value': 'Writing - review & editing'
+                        }
+                    )
+                if value in current_app.config['INSPIRE_LEGACY_ROLES']['administration']:
+                    contributor_roles.append(
+                        {
+                            'schema': 'CRediT',
+                            'value': 'Project administration'
+                        }
+                    )
+            return contributor_roles
+
         return {
             'affiliations': _get_affiliations(value),
             'alternative_names': force_force_list(value.get('q')),
@@ -149,7 +183,7 @@ def authors(self, key, value):
             'full_name': _get_full_name(value),
             'ids': _get_ids(value),
             'record': _get_record(value),
-            'role': value.get('e'),
+            'contributor_roles': _get_contributor_role(value.get('e')),
         }
 
     authors = self.get('authors', [])
@@ -175,7 +209,7 @@ def authors2marc(self, key, value):
         ]
         return {
             'a': value.get('full_name'),
-            'e': value.get('role'),
+            'e': utils_get_value(value, 'contributor_roles.value'),
             'q': value.get('alternative_names'),
             'i': value.get('inspire_id'),
             'j': value.get('orcid'),

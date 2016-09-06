@@ -366,8 +366,8 @@ def test_authors(marcxml_to_json, json_to_marc):
     """Test if authors are created correctly."""
     assert (marcxml_to_json['authors'][0]['full_name'] ==
             json_to_marc['100']['a'])
-    assert (marcxml_to_json['authors'][0]['role'] ==
-            json_to_marc['100']['e'])
+    assert (marcxml_to_json['authors'][0]['contributor_roles'][0]['value'] ==
+            json_to_marc['100']['e'][0])
     assert (marcxml_to_json['authors'][0]['alternative_names'][0] ==
             json_to_marc['100']['q'][0])
     assert (marcxml_to_json['authors'][0]['emails'][0] ==
@@ -1334,7 +1334,7 @@ def test_authors_supervisors_from_701__a_u():
             ],
             'contributor_roles': [
                 {
-                    'source': 'CRediT',
+                    'schema': 'CRediT',
                     'value': 'Supervision',
                 },
             ],
@@ -1369,7 +1369,7 @@ def test_authors_supervisors_from_701__a_double_u():
             ],
             'contributor_roles': [
                 {
-                    'source': 'CRediT',
+                    'schema': 'CRediT',
                     'value': 'Supervision',
                 },
             ],
@@ -1410,7 +1410,7 @@ def test_authors_supervisors_from_multiple_701():
             ],
             'contributor_roles': [
                 {
-                    'source': 'CRediT',
+                    'schema': 'CRediT',
                     'value': 'Supervision',
                 },
             ],
@@ -1429,7 +1429,7 @@ def test_authors_supervisors_from_multiple_701():
             ],
             'contributor_roles': [
                 {
-                    'source': 'CRediT',
+                    'schema': 'CRediT',
                     'value': 'Supervision',
                 },
             ],
@@ -1444,7 +1444,7 @@ def test_authors_supervisors_from_multiple_701():
             ],
             'contributor_roles': [
                 {
-                    'source': 'CRediT',
+                    'schema': 'CRediT',
                     'value': 'Supervision',
                 },
             ],
@@ -1492,7 +1492,7 @@ def test_authors_supervisors_from_multiple_701_with_z():
             ],
             'contributor_roles': [
                 {
-                    'source': 'CRediT',
+                    'schema': 'CRediT',
                     'value': 'Supervision',
                 },
             ],
@@ -1517,7 +1517,7 @@ def test_authors_supervisors_from_multiple_701_with_z():
             ],
             'contributor_roles': [
                 {
-                    'source': 'CRediT',
+                    'schema': 'CRediT',
                     'value': 'Supervision',
                 },
             ],
@@ -1535,7 +1535,7 @@ def test_authors_supervisors_from_multiple_701_with_z():
             ],
             'contributor_roles': [
                 {
-                    'source': 'CRediT',
+                    'schema': 'CRediT',
                     'value': 'Supervision',
                 },
             ],
@@ -1570,7 +1570,7 @@ def test_authors_supervisors_from_701__double_a_u_z():
             ],
             'contributor_roles': [
                 {
-                    'source': 'CRediT',
+                    'schema': 'CRediT',
                     'value': 'Supervision',
                 },
             ],
@@ -1588,7 +1588,7 @@ def test_authors_supervisors_from_701__double_a_u_z():
             ],
             'contributor_roles': [
                 {
-                    'source': 'CRediT',
+                    'schema': 'CRediT',
                     'value': 'Supervision',
                 },
             ],
