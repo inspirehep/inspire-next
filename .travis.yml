@@ -42,6 +42,9 @@ env:
     - SUITE=workflows
     - SUITE=integration
 
+matrix:
+  fast_finish: true
+
 python:
   - "2.7"
 
