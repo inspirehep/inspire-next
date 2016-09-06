@@ -39,6 +39,11 @@ def status(self, key, value):
         self['name'] = dict(status=value)
 
 
+@updateform.over('native_name', '^native_name$')
+def native_name(self, key, value):
+    return value
+
+
 @updateform.over('_display_name', '^display_name$')
 def display_name(self, key, value):
     if 'name' in self:

@@ -43,9 +43,12 @@ from flask_babelex import gettext as _
 from flask_breadcrumbs import register_breadcrumb
 from flask_login import login_required, current_user
 from werkzeug.datastructures import MultiDict
+from wtforms.widgets import HiddenInput
 
 from invenio_db import db
+
 from invenio_workflows import workflow_object_class, start, resume
+from invenio_workflows_ui.api import WorkflowUIRecord
 
 from inspirehep.dojson.utils import strip_empty_values
 from inspirehep.modules.forms.form import DataExporter
@@ -82,7 +85,7 @@ def convert_for_form(data):
     if "urls" in data:
         data["websites"] = []
         for url in data["urls"]:
-            if "description" not in url:
+            if not url.get('description'):
                 data["websites"].append({"webpage": url["value"]})
             else:
                 if url["description"].lower() == "twitter":
@@ -195,6 +198,7 @@ def new():
         data["bai"] = bai
 
     form = AuthorUpdateForm(data=data)
+
     ctx = {
         "action": url_for('.submitnew'),
         "name": "authorUpdateForm",
@@ -310,11 +314,20 @@ def newreview():
     objectid = request.values.get('objectid', 0, type=int)
     if not objectid:
         abort(400)
-    workflow_object = workflow_object_class.get(objectid)
-    workflow_object.extra_data['is-update'] = True
+    workflow_metadata.extra_data['is-update'] = True
+    workflow_metadata = WorkflowUIRecord.get_record(objectid)['metadata']
+
+    # Converting json to populate form
+    convert_for_form(workflow_metadata)
+    workflow_metadata['comments'] = workflow_metadata['_private_note']
+    research_fields = workflow_metadata.pop('research_field')
+    final_research_fields = []
+    for field in research_fields:
+        final_research_fields.append(field['_term'])
+    workflow_metadata['research_field'] = final_research_fields
 
     form = AuthorUpdateForm(
-        data=workflow_object.extra_data["formdata"], is_review=True)
+        data=workflow_metadata, is_review=True)
     ctx = {
         "action": url_for('.reviewhandler', objectid=objectid),
         "name": "authorUpdateForm",

@@ -23,6 +23,7 @@
 from flask_babelex import gettext as _
 
 from wtforms import validators
+from wtforms.fields import Flags
 from wtforms.widgets import html_params, \
     HiddenInput, \
     HTMLString, \
@@ -274,13 +275,28 @@ class AuthorUpdateForm(INSPIREForm):
 
     """Author update form."""
 
-    # Hidden field to hold author id information
     bai = fields.StringField(
-        widget=HiddenInput()
+        label=_('Bai'),
+        description=u'e.g. M.Santos.1',
+        widget=HiddenInput(),
+        widget_classes="form-control",
+        validators=[validators.Optional(),
+                    RegexpStopValidator(
+                        "(\\w+\\.)+\\d+",
+                        message="A valid Bai is in the form of 'M.Santos.1'.",
+        )]
     )
 
     inspireid = fields.StringField(
-        widget=HiddenInput()
+        label=_('Inspireid'),
+        description=u'e.g. INSPIRE-0000000',
+        widget=HiddenInput(),
+        widget_classes="form-control",
+        validators=[validators.Optional(),
+                    RegexpStopValidator(
+                        "INSPIRE-\\d{8}",
+                        message="A valid Inspireid is in the form of 'INSPIRE-0000000'.",
+        )]
     )
 
     # Hidden field to hold record id information
@@ -519,6 +535,6 @@ class AuthorUpdateForm(INSPIREForm):
             self.orcid.validators = []
         if is_review:
             self.bai.widget = TextInput()
-            self.bai.widget_classes = "form-control"
+            self.bai.flags = Flags()
             self.inspireid.widget = TextInput()
-            self.inspireid.widget_classes = "form-control"
+            self.inspireid.flags = Flags()

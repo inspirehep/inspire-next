@@ -95,8 +95,8 @@
 
   function holdingPenDetail() {
 
-    var controller = ["$scope", "HoldingPenRecordService", "$uibModal",
-      function ($scope, HoldingPenRecordService, $uibModal) {
+    var controller = ["$scope", "HoldingPenRecordService", "$uibModal",  "$window",
+      function ($scope, HoldingPenRecordService, $uibModal, $window) {
         $scope.vm = {};
         $scope.vm.loading = true;
         $scope.vm.new_subject_area = '';
@@ -138,6 +138,10 @@
 
           setDecision: function (decision) {
             HoldingPenRecordService.setDecision($scope.vm, $scope.workflowId, decision)
+          },
+
+          redirect: function (url) {
+            $window.location = url;
           },
 
           addSubjectArea: function () {
