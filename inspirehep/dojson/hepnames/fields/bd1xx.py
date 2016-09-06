@@ -83,8 +83,8 @@ def name(self, key, value):
     + retired
     + deceased
 
-    The only accepted value in `100__c` field is:
-    + Sir
+    The only accepted values in `100__c` field are:
+    + Sir and Mrs.
 
     Values accepted for `100__b:
     + Jr.
@@ -117,8 +117,8 @@ def name2marc(self, key, value):
     + retired
     + deceased
 
-    The only accepted value in `100__c` field is:
-    + Sir
+    The only accepted values in `100__c` field are:
+    + Sir and Mrs.
 
     Values accepted for `100__b:
     + Jr.
