@@ -136,7 +136,7 @@ $hp_table_bg: #233345;
         padding-left: 10px;
       }
 
-      &.author {
+      &.new-authors {
         background-color: $pete-river;
 
         a {
@@ -144,7 +144,7 @@ $hp_table_bg: #233345;
         }
       }
 
-      &.author-update {
+      &.new-authors-updates {
         background-color: $belize-hole;
 
         a {
@@ -152,12 +152,12 @@ $hp_table_bg: #233345;
         }
       }
 
-      &.arxiv {
+      &.arxiv-harvests {
         background-color: white;
         color: $midnight-blue !important;
       }
 
-      &.submission {
+      &.new-literature-submissions {
         background-color: $carrot;
         a {
           color: white;
@@ -239,7 +239,7 @@ $hp_table_bg: #233345;
       color: $midnight-blue;
     }
 
-    .arxiv {
+    .arxiv-harvests {
       color: white !important;
 
       &.active {
@@ -248,20 +248,20 @@ $hp_table_bg: #233345;
       }
     }
 
-    .oai-harvest {
+    .alpha-experiment {
 
       @include facet-colors($concrete);
     }
 
-    .literature {
+    .new-literature-submissions {
       @include facet-colors($carrot);
     }
 
-    .authornew {
+    .new-authors {
       @include facet-colors($pete-river);
     }
 
-    .authorupdate {
+    .new-author-updates {
       @include facet-colors($belize-hole);
     }
 
@@ -351,23 +351,23 @@ $hp_table_bg: #233345;
 
       .workflow-type {
         font-size: 1em;
-        &.authornew {
+        &.new-authors {
           color: $pete-river;
         }
 
-        &.authorsupdate {
+        &.new-author-updates {
           color: $belize-hole;
         }
 
-        &.arxiv_ingestion {
+        &.arxiv-harvests {
           color: white;
         }
 
-        &.literature {
+        &.new-literature-submissions {
           color: $carrot;
         }
 
-        &.oai-harvest {
+        &.alpha-experiment {
           color: $concrete;
         }
       }

@@ -25,13 +25,18 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import logging
 from functools import wraps
 
 from flask import current_app, render_template
 from invenio_accounts.models import User
 from retrying import retry
 
-from inspirehep.utils.tickets import get_instance, retry_if_connection_problems
+from ....utils.tickets import get_instance, retry_if_connection_problems
+from .actions import in_production_mode
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 @retry(
@@ -41,8 +46,7 @@ from inspirehep.utils.tickets import get_instance, retry_if_connection_problems
 )
 def submit_rt_ticket(obj, queue, subject, body, requestors, ticket_id_key):
     """Submit ticket to RT with the given parameters."""
-    rt_instance = get_instance() if current_app.config.get(
-        "PRODUCTION_MODE") else None
+    rt_instance = get_instance() if in_production_mode() else None
     if not rt_instance:
         obj.log.error("No RT instance available. Skipping!")
         obj.log.info(
@@ -248,28 +252,26 @@ def send_robotupload(url=None,
         marc_json = marcxml_processor.do(data)
         marcxml = legacy_export_as_marc(marc_json)
 
-        if not url and current_app.debug:
-            # Log what we would send
-            current_app.logger.debug(
-                "Going to robotupload {mode} to {url}:\n{marcxml}\n".format(
-                    url=url,
-                    marcxml=marcxml,
-                    callback_url=combined_callback_url,
-                    mode=mode,
-                    nonce=obj.id,
-                    priority=5,
-                )
-            )
-            return
-        else:
-            result = make_robotupload_marcxml(
+        if current_app.debug:
+            # Log what we are sending
+            LOGGER.debug(
+                "Going to robotupload %s to %s:\n%s\n",
+                mode=mode,
                 url=url,
                 marcxml=marcxml,
-                callback_url=combined_callback_url,
-                mode=mode,
-                nonce=obj.id,
-                priority=5,
             )
+
+        if not in_production_mode():
+            return
+
+        result = make_robotupload_marcxml(
+            url=url,
+            marcxml=marcxml,
+            callback_url=combined_callback_url,
+            mode=mode,
+            nonce=obj.id,
+            priority=5,
+        )
         if "[INFO]" not in result.text:
             if "cannot use the service" in result.text:
                 # IP not in the list

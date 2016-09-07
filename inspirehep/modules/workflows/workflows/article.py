@@ -24,7 +24,11 @@
 
 from __future__ import absolute_import, division, print_function
 
-from workflow.patterns.controlflow import IF, IF_ELSE
+from workflow.patterns.controlflow import (
+    IF,
+    IF_ELSE,
+    IF_NOT,
+)
 
 from inspirehep.dojson.hep import hep2marc
 
@@ -39,7 +43,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     add_core,
     halt_record,
     is_record_relevant,
-    shall_push_remotely,
+    in_production_mode,
     is_record_accepted,
     reject_record,
     is_experimental_paper,
@@ -198,7 +202,10 @@ class Article(object):
                     reject_record('Article was already found on INSPIRE'),
                     stop_processing,
                     reply_ticket(
-                        template="literaturesuggest/tickets/user_rejected_exists.html",
+                        template=(
+                            "literaturesuggest/tickets/"
+                            "user_rejected_exists.html"
+                        ),
                         context_factory=reply_ticket_context
                     ),
                     close_ticket(ticket_id_key="ticket_id"),
@@ -210,28 +217,25 @@ class Article(object):
             add_note_entry,
             filter_keywords,
             user_pdf_get,
-            IF_ELSE(shall_push_remotely, [
-                IF_ELSE(article_exists, [
-                    prepare_update_payload(extra_data_key="update_payload"),
-                    send_robotupload(
-                        marcxml_processor=hep2marc,
-                        mode="correct",
-                        extra_data_key="update_payload"
-                    ),
-                ], [
-                    send_robotupload(
-                        marcxml_processor=hep2marc,
-                        mode="insert"
-                    ),
-                ])
-
+            IF_ELSE(article_exists, [
+                prepare_update_payload(extra_data_key="update_payload"),
+                send_robotupload(
+                    marcxml_processor=hep2marc,
+                    mode="correct",
+                    extra_data_key="update_payload"
+                ),
             ], [
-                store_record
+                send_robotupload(
+                    marcxml_processor=hep2marc,
+                    mode="insert"
+                ),
             ]),
             IF(is_submission, [
                 IF(curation_ticket_needed, [
                     create_ticket(
-                        template="literaturesuggest/tickets/curation_core.html",
+                        template=(
+                            "literaturesuggest/tickets/curation_core.html"
+                        ),
                         queue="HEP_curation",
                         context_factory=curation_ticket_context,
                         ticket_id_key="curation_ticket_id"
@@ -240,7 +244,11 @@ class Article(object):
                 reply_ticket(
                     template="literaturesuggest/tickets/user_accepted.html",
                     context_factory=reply_ticket_context
-                ),
+                )
+            ]),
+            IF_NOT(in_production_mode, [
+                # TODO: once legacy is out, this should replace robotupload
+                store_record,
             ]),
         ], [
             IF(is_submission, [

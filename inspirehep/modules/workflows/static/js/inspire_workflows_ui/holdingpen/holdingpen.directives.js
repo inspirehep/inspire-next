@@ -238,7 +238,19 @@
 
     var controller = ["$scope", "$http",
       function ($scope, $http) {
-        $http.get('/api/holdingpen/?' + $scope.primaryFilterKey + '=' + $scope.primaryFilterValue)
+        $scope.get_filter_string = function (extra_string=''){
+          var query_string = ''
+          if (extra_string !== '') {
+              query_string = '?'
+          }
+          if ($scope.filterString !== undefined) {
+              query_string = '?' + $scope.filterString + '&'
+          }
+          query_string += extra_string
+          return query_string
+        }
+        $http.get('/api/holdingpen/'
+                  + $scope.get_filter_string($scope.filterString))
           .then(function (response) {
             $scope.vm = $scope;
             $scope.vm.total = response.data.hits.total;
@@ -254,7 +266,7 @@
               $scope.vm.secondary_filters[bucket.key] = +bucket.doc_count;
             }
 
-            $scope.vm.class_name = $scope.primaryFilterValue.toLowerCase().replace(" ", "-")
+            $scope.vm.class_name = $scope.sectionTitle.toLowerCase().replace(/ /g, "-")
 
           }).catch(function (value) {
           console.error("Problem occurred when getting " + $scope.primary_filter_key);
@@ -271,8 +283,7 @@
       restrict: 'AE',
       scope: {
         sectionTitle: '@sectionTitle',
-        primaryFilterKey: '@primaryFilterKey',
-        primaryFilterValue: '@primaryFilterValue',
+        filterString: '@filterString',
         secondaryFilter: '@secondaryFilter'
       },
       controller: controller
