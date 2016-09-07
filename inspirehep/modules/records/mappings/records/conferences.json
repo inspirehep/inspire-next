@@ -71,8 +71,17 @@
                     "type": "string"
                 },
                 "series": {
-                    "index": "not_analyzed",
-                    "type": "string"
+                    "properties": {
+                        "name": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
+                        "number": {
+                            "index": "not_analyzed",
+                            "type": "integer"
+                        }
+                    },
+                    "type": "object"
                 },
                 "title": {
                     "copy_to": [

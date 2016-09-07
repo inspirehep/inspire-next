@@ -565,12 +565,14 @@ def test_series_from_411__a():
         '</datafield>'
     )  # record/1430017
 
-    expected = [
-        'DPF Series',
-    ]
     result = clean_record(conferences.do(create_record(snippet)))
 
-    assert expected == result['series']
+    expected = [
+        {
+            'name': 'DPF Series'
+        },
+    ]
+    assert result['series'] == expected
 
 
 def test_series_number_from_411__n():
@@ -580,26 +582,35 @@ def test_series_number_from_411__n():
         '</datafield>'
     )  # record/1447029
 
-    expected = 7
     result = clean_record(conferences.do(create_record(snippet)))
 
-    assert expected == result['series_number']
+    expected = [
+        {
+            'number': 7
+        },
+    ]
+    assert result['series'] == expected
 
 
 def test_series_and_series_number_from_411__a_n():
     snippet = (
-        '<datafield tag="411" ind1=" " ind2=" ">'
-        '  <subfield code="a">FPCP</subfield>'
-        '  <subfield code="n">16</subfield>'
-        '</datafield>'
+        '<record>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '    <subfield code="a">FPCP</subfield>'
+        '    <subfield code="n">16</subfield>'
+        '  </datafield>'
+        '</record>'
     )  # record/1468357
 
     result = clean_record(conferences.do(create_record(snippet)))
 
-    assert result['series_number'] == 16
-    assert result['series'] == [
-        'FPCP',
+    expected = [
+        {
+            'name': 'FPCP',
+            'number': 16
+        },
     ]
+    assert result['series'] ==  expected
 
 
 def test_series_and_series_number_from_411__a_n_and_411_a():
@@ -617,29 +628,196 @@ def test_series_and_series_number_from_411__a_n_and_411_a():
 
     result = clean_record(conferences.do(create_record(snippet)))
 
-    assert result['series_number'] == 51
-    assert result['series'] == [
-        'Rencontres de Moriond',
-        'Moriond EW',
-    ]
-
-
-@pytest.mark.xfail(reason='tuple is not unpacked')
-def test_series_from_double_411__a():
-    snippet = (
-        '<datafield tag="411" ind1=" " ind2=" ">'
-        '  <subfield code="a">Tamm Theory Department</subfield>'
-        '  <subfield code="a">Sakharov</subfield>'
-        '</datafield>'
-    )  # record/969879
-
     expected = [
-        'Tamm Theory Department',
-        'Sakharov',
+        {
+            'name': 'Rencontres de Moriond',
+            'number': 51
+        },
+        {
+            'name': 'Moriond EW'
+        },
     ]
+    assert result['series'] == expected
+
+
+def test_series_and_series_number_from_411__a_n_and_411_n():
+    snippet = (
+        '<record>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '    <subfield code="a">SSI</subfield>'
+        '    <subfield code="n">x</subfield>'
+        '  </datafield>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '    <subfield code="n">2</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/963769
+
     result = clean_record(conferences.do(create_record(snippet)))
 
-    assert expected == result['series']
+    expected = [
+        {
+            'name': 'SSI',
+            'number': 2
+        }
+    ]
+    assert result['series'] == expected
+
+
+def test_series_and_series_number_from_double_411_a_n():
+    snippet = (
+        '<record>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '    <subfield code="a">ICHEP</subfield>'
+        '    <subfield code="n">5</subfield>'
+        '  </datafield>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '    <subfield code="a">Rochester</subfield>'
+        '    <subfield code="n">5</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/974856
+
+    result = clean_record(conferences.do(create_record(snippet)))
+
+    expected = [
+        {
+            'name': 'ICHEP',
+            'number': 5
+        },
+        {
+            'name': 'Rochester',
+            'number': 5
+        }
+    ]
+    assert result['series'] == expected
+
+
+@pytest.mark.xfail(reason='No support in DoJSON for post-processing functions')
+def test_series_and_series_number_from_411_n_and_411_a_n():
+    snippet = (
+        '<record>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '    <subfield code="n">3</subfield>'
+        '  </datafield>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '    <subfield code="a">WIN</subfield>'
+        '    <subfield code="n">3</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/963914
+
+    result = clean_record(conferences.do(create_record(snippet)))
+
+    expected = [
+        {
+            'name': 'WIN',
+            'number': 3
+        }
+    ]
+    assert result['series'] == expected
+
+
+def test_series_and_series_number_from_411_n_and_411_a():
+    snippet = (
+        '<record>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '    <subfield code="n">3</subfield>'
+        '  </datafield>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '    <subfield code="a">Gordon</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/972145
+
+    result = clean_record(conferences.do(create_record(snippet)))
+
+    expected = [
+        {
+            'name': 'Gordon',
+            'number': 3
+        }
+    ]
+    assert result['series'] == expected
+
+
+def test_series_from_double_411__a():
+    snippet = (
+        '<record>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '    <subfield code="a">SNPS</subfield>'
+        '  </datafield>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '    <subfield code="a">NSS</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/964177
+
+    result = clean_record(conferences.do(create_record(snippet)))
+
+    expected = [
+        {
+            'name': 'SNPS',
+        },
+        {
+            'name': 'NSS'
+        }
+    ]
+    assert result['series'] == expected
+
+
+def test_series_and_series_number_from_411_a_and_411_a_n():
+    snippet = (
+        '<record>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '    <subfield code="a">CEC</subfield>'
+        '  </datafield>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '    <subfield code="a">ICMC</subfield>'
+        '    <subfield code="n">2</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/964448
+
+    result = clean_record(conferences.do(create_record(snippet)))
+
+    expected = [
+        {
+            'name': 'CEC',
+        },
+        {
+            'name': 'ICMC',
+            'number': 2
+        }
+    ]
+    assert result['series'] == expected
+
+
+def test_series_and_series_number_from_411__a_n_and_411_a():
+    snippet = (
+        '<record>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '    <subfield code="a">EDS</subfield>'
+        '    <subfield code="n">13</subfield>'
+        '  </datafield>'
+        '  <datafield tag="411" ind1=" " ind2=" ">'
+        '     <subfield code="a">BLOIS</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/980229
+
+    result = clean_record(conferences.do(create_record(snippet)))
+
+    expected = [
+        {
+            'name': 'EDS',
+            'number': 13
+        },
+        {
+            'name': 'BLOIS'
+        }
+    ]
+    assert result['series'] == expected
 
 
 def test_short_description_from_520__a():
