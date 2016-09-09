@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.utils.record import get_title
+from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.records.es_record import ESRecord
 from inspirehep.modules.search import JobsSearch
 
@@ -34,6 +35,72 @@ class LiteratureRecord(ESRecord):
     def title(self):
         """Get preferred title."""
         return get_title(self)
+
+    @property
+    def conference_information(self):
+        """Conference information.
+
+        Returns a list with information about conferences related to the
+        record.
+        """
+        conf_info = []
+        for pub_info in self['publication_info']:
+            conference_recid = None
+            parent_recid = None
+            parent_rec = {}
+            conference_rec = {}
+            if 'conference_record' in pub_info:
+                conference_rec = replace_refs(pub_info['conference_record'],
+                                              'es')
+                if conference_rec and conference_rec.get('control_number'):
+                    conference_recid = conference_rec['control_number']
+                else:
+                    conference_rec = {}
+            if 'parent_record' in pub_info:
+                parent_rec = replace_refs(pub_info['parent_record'], 'es')
+                if parent_rec and parent_rec.get('control_number'):
+                    parent_recid = parent_rec['control_number']
+                else:
+                    parent_rec = {}
+            conf_info.append(
+                {
+                    "conference_recid": conference_recid,
+                    "conference_title": get_title(conference_rec),
+                    "parent_recid": parent_recid,
+                    "parent_title":
+                        get_title(parent_rec).replace(
+                            "Proceedings, ", "", 1
+                    ),
+                    "page_start": pub_info.get('page_start'),
+                    "page_end": pub_info.get('page_end'),
+                    "artid": pub_info.get('artid'),
+                }
+            )
+
+        return conf_info
+
+    @property
+    def publication_information(self):
+        """Publication information.
+
+        Returns a list with information about each publication note in
+        the record.
+        """
+        pub_info_list = []
+        for pub_info in self['publication_info']:
+            if pub_info.get('journal_title', '') or pub_info.get('pubinfo_freetext', ''):
+                pub_info_list.append({
+                    'journal_title': pub_info.get('journal_title', ''),
+                    'journal_volume': pub_info.get('journal_volume', ''),
+                    'year': str(pub_info.get('year', '')),
+                    'journal_issue': pub_info.get('journal_issue', ''),
+                    'page_start': str(pub_info.get('page_start', '')),
+                    'page_end': str(pub_info.get('page_end', '')),
+                    'artid': pub_info.get('artid', ''),
+                    'pubinfo_freetext': pub_info.get('pubinfo_freetext', '')
+                })
+
+        return pub_info_list
 
 
 class AuthorsRecord(ESRecord):

@@ -292,7 +292,7 @@ RECORDS_REST_ENDPOINTS = dict(
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
                 'inspirehep.modules.records.serializers'
-                ':json_brief_v1_search'
+                ':json_literature_brief_v1_search'
             ),
             'application/x-bibtex': ('inspirehep.modules.records.serializers'
                                      ':bibtex_v1_search'),
@@ -351,8 +351,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'inspirehep.modules.records.serializers'
-                ':json_brief_v1_search'
+                'invenio_records_rest.serializers'
+                ':json_v1_search'
             ),
         },
         list_route='/authors/',
@@ -374,8 +374,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'inspirehep.modules.records.serializers'
-                ':json_brief_v1_search'
+                'invenio_records_rest.serializers'
+                ':json_v1_search'
             ),
         },
         list_route='/authors/',
@@ -398,8 +398,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'inspirehep.modules.records.serializers'
-                ':json_brief_v1_search'
+                'invenio_records_rest.serializers'
+                ':json_v1_search'
             ),
         },
         list_route='/authors/',
@@ -422,8 +422,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'inspirehep.modules.records.serializers'
-                ':json_brief_v1_search'
+                'invenio_records_rest.serializers'
+                ':json_v1_search'
             ),
         },
         list_route='/authors/',
@@ -446,8 +446,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'inspirehep.modules.records.serializers'
-                ':json_brief_v1_search'
+                'invenio_records_rest.serializers'
+                ':json_v1_search'
             ),
         },
         list_route='/authors/',
@@ -470,8 +470,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'inspirehep.modules.records.serializers'
-                ':json_brief_v1_search'
+                'invenio_records_rest.serializers'
+                ':json_v1_search'
             ),
         },
         list_route='/data/',
@@ -493,8 +493,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'inspirehep.modules.records.serializers'
-                ':json_brief_v1_search'
+                'invenio_records_rest.serializers'
+                ':json_v1_search'
             ),
         },
         list_route='/conferences/',
@@ -516,8 +516,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'inspirehep.modules.records.serializers'
-                ':json_brief_v1_search'
+                'invenio_records_rest.serializers'
+                ':json_v1_search'
             ),
         },
         list_route='/jobs/',
@@ -539,8 +539,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'inspirehep.modules.records.serializers'
-                ':json_brief_v1_search'
+                'invenio_records_rest.serializers'
+                ':json_v1_search'
             ),
         },
         list_route='/institutions/',
@@ -562,8 +562,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'inspirehep.modules.records.serializers'
-                ':json_brief_v1_search'
+                'invenio_records_rest.serializers'
+                ':json_v1_search'
             ),
         },
         list_route='/experiments/',
@@ -585,8 +585,8 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
             'application/vnd+inspire.brief+json': (
-                'inspirehep.modules.records.serializers'
-                ':json_brief_v1_search'
+                'invenio_records_rest.serializers'
+                ':json_v1_search'
             ),
         },
         list_route='/journals/',

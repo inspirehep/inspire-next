@@ -28,9 +28,8 @@ from __future__ import absolute_import, print_function
 
 from invenio_records_rest.serializers.json import JSONSerializer
 
-from inspirehep.modules.theme.jinja2filters import (
-    format_date, publication_info
-)
+from inspirehep.modules.records.wrappers import LiteratureRecord
+from inspirehep.modules.theme.jinja2filters import format_date
 
 
 def process_es_hit(record):
@@ -55,19 +54,21 @@ def get_display_fields(record):
     Jinja2 filters can be applied here to format certain fields.
     """
     display = {}
+    record = LiteratureRecord(record)
     if 'references' in record:
         display['number_of_references'] = len(record['references'])
     if 'earliest_date' in record:
         display['date'] = format_date(record['earliest_date'])
     if 'publication_info' in record:
-        display['publication_info_line'] = publication_info(record)
+        display['publication_info'] = record.publication_information
+        display['conference_info'] = record.conference_information
     if 'authors' in record:
         display['number_of_authors'] = len(record['authors'])
 
     return display
 
 
-class JSONBriefSerializer(JSONSerializer):
+class LiteratureJSONBriefSerializer(JSONSerializer):
     """JSON brief format serializer."""
 
     @staticmethod
