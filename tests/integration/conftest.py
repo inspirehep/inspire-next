@@ -35,8 +35,8 @@ from invenio_search import current_search_client as es
 from inspirehep.factory import create_app
 
 
-@pytest.yield_fixture(scope='session')
-def app(request):
+@pytest.fixture(scope='session')
+def app():
     """Flask application fixture."""
     app = create_app()
     app.config.update({'DEBUG': True})
@@ -67,8 +67,8 @@ def app(request):
         yield app
 
 
-@pytest.yield_fixture(scope='module')
-def small_app(request):
+@pytest.fixture(scope='module')
+def small_app():
     """Flask application fixture."""
     app = create_app()
     app.config.update({'DEBUG': True})
@@ -98,7 +98,7 @@ def small_app(request):
         yield app
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def httpretty_mock():
     httpretty.enable()
     yield
