@@ -37,8 +37,8 @@ else:
     from io import StringIO
 
 
-@pytest.yield_fixture(scope='session', autouse=True)
-def email_app(request):
+@pytest.fixture(scope='session', autouse=True)
+def email_app():
     """Email-aware Flask application fixture."""
     app = create_app(
         CFG_SITE_SUPPORT_EMAIL='admin@inspirehep.net',
@@ -57,8 +57,8 @@ def email_app(request):
         yield app
 
 
-@pytest.yield_fixture(scope='session', autouse=True)
-def app(request):
+@pytest.fixture(scope='session', autouse=True)
+def app():
     """Flask application fixture."""
     instance_path = tempfile.mkdtemp()
 
@@ -74,13 +74,10 @@ def app(request):
         TESTING=True,
     )
 
-    def teardown():
-        shutil.rmtree(instance_path)
-
-    request.addfinalizer(teardown)
-
     with app.app_context():
         yield app
+
+    shutil.rmtree(instance_path)
 
 
 @pytest.fixture
@@ -245,7 +242,7 @@ def dummy_empty_response():
     }
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def httppretty_mock():
     httpretty.enable()
     yield
