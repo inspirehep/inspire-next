@@ -178,11 +178,12 @@ def is_too_old(record, days_ago=5):
     earliest_date = record.get('earliest_date', '')
     if not earliest_date:
         earliest_date = record.get('preprint_date', '')
-    parsed_date = datetime.datetime.strptime(earliest_date, "%Y-%m-%d")
-    if date_older_than(parsed_date,
-                       datetime.datetime.now(),
-                       days=days_ago):
-        return True
+    if earliest_date:
+        parsed_date = datetime.datetime.strptime(earliest_date, "%Y-%m-%d")
+        if date_older_than(parsed_date,
+                        datetime.datetime.now(),
+                        days=days_ago):
+            return True
 
 
 def record_exists(obj, eng):
