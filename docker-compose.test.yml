@@ -35,7 +35,6 @@ services:
       - CACHE_REDIS_URL=redis://redis:6379/0
       - ACCOUNTS_SESSION_REDIS_URL=redis://redis:6379/2
       - SEARCH_ELASTIC_HOSTS=indexer
-
   pep8:
     extends:
       service: service_base
@@ -87,6 +86,36 @@ services:
       - redis
     depends_on:
       - worker
+  acceptance:
+    extends:
+      service: service_base
+    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance
+    volumes_from:
+      - static
+    links:
+      - database
+      - indexer
+      - rabbitmq
+      - redis
+      - selenium
+    depends_on:
+      - web
+      - worker
+    environment:
+      - SERVER_NAME=web:5000
+  web:
+    extends:
+      service: service_base
+    command: gunicorn -b 0.0.0.0:5000 -t 3600 --access-logfile "-" inspirehep.wsgi_with_coverage
+    volumes_from:
+      - static
+    links:
+      - database
+      - indexer
+      - rabbitmq
+      - redis
+    environment:
+      - SERVER_NAME=web:5000
   worker:
     container_name: inspirehep-test-worker
     extends:
@@ -115,6 +144,8 @@ services:
     extends:
       file: services.yml
       service: database
+  selenium:
+    image: selenium/standalone-firefox
   static:
     container_name: inspirehep-test-static
     extends:
