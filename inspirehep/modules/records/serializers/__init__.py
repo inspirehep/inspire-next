@@ -29,7 +29,7 @@ from __future__ import absolute_import, print_function
 from invenio_records_rest.serializers.response import search_responsify
 
 from .impactgraph_serializer import ImpactGraphSerializer
-from .json import JSONBriefSerializer
+from .json_literature import LiteratureJSONBriefSerializer
 from .bibtex_serializer import BIBTEXSerializer
 from .latexeu_serializer import LATEXEUSerializer
 from .latexus_serializer import LATEXUSSerializer
@@ -41,9 +41,14 @@ from .schemas.json import RecordSchemaJSONBRIEFV1
 
 from .response import record_responsify_nocache
 
-json_brief_v1 = JSONBriefSerializer(RecordSchemaJSONBRIEFV1)
-json_brief_v1_search = search_responsify(json_brief_v1,
-                                         'application/vnd+inspire.brief+json')
+json_literature_brief_v1 = LiteratureJSONBriefSerializer(
+    RecordSchemaJSONBRIEFV1
+)
+json_literature_brief_v1_search = search_responsify(
+    json_literature_brief_v1,
+    'application/vnd+inspire.brief+json'
+)
+
 
 bibtex_v1 = BIBTEXSerializer()
 latexeu_v1 = LATEXEUSerializer()

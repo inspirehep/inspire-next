@@ -180,7 +180,6 @@ setup(
             'hepnames2marc = inspirehep.dojson.hepnames2marc:hepnames2marc',
         ],
         'invenio_base.api_apps': [
-            'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'inspire_warnings = inspirehep.modules.warnings:INSPIREWarnings',

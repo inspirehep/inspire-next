@@ -36,7 +36,7 @@ from flask import current_app, url_for
 from jinja2.filters import do_join, evalcontextfilter
 from werkzeug.urls import url_decode
 
-from inspirehep.modules.records.json_ref_loader import replace_refs
+from inspirehep.modules.records.wrappers import LiteratureRecord
 from inspirehep.modules.search import InstitutionsSearch, LiteratureSearch
 from inspirehep.utils.date import (
     create_datestruct,
@@ -44,7 +44,6 @@ from inspirehep.utils.date import (
 )
 from inspirehep.utils.dedupers import dedupe_list
 from inspirehep.utils.jinja2 import render_template_to_string
-from inspirehep.utils.record import get_title
 from inspirehep.utils.template import render_macro_from_template
 
 from .views import blueprint
@@ -479,105 +478,76 @@ def json_dumps(data):
 
 @blueprint.app_template_filter()
 def publication_info(record):
-    """Displays inline publication and conference information"""
-    result = {}
-    out = []
-    if 'publication_info' in record:
-        journal_title, journal_volume, year, journal_issue, pages = \
-            ('', '', '', '', '')
-        for pub_info in record['publication_info']:
-            if 'journal_title' in pub_info:
-                journal_title = '<i>' + pub_info['journal_title'] + '</i>'
-                if 'journal_volume' in pub_info:
-                    journal_volume = ' ' + pub_info['journal_volume']
-                if 'year' in pub_info:
-                    year = ' (' + str(pub_info['year']) + ')'
-                if 'journal_issue' in pub_info:
-                    journal_issue = ' ' + pub_info['journal_issue'] + ', '
-                if 'page_start' in pub_info and 'page_end' in pub_info:
-                    pages = ' ' + '{page_start}-{page_end}'.format(**pub_info)
-                elif 'page_start' in pub_info:
-                    pages = ' ' + '{page_start}'.format(**pub_info)
-                elif 'artid' in pub_info:
-                    pages = ' ' + '{artid}'.format(**pub_info)
-                out.append(journal_title + journal_volume +
-                           year + journal_issue + pages)
-        if out:
-            result['pub_info'] = out
-        if not result:
-            for field in record['publication_info']:
-                if 'pubinfo_freetext' in field:
-                    out.append(field['pubinfo_freetext'])
-                    result['pub_info'] = out
-                    break
-        # Conference info line
-        for pub_info in record['publication_info']:
-            conference_recid = None
-            parent_recid = None
-            if 'conference_record' in pub_info:
-                conference_rec = replace_refs(pub_info['conference_record'],
-                                              'es')
-                if conference_rec and conference_rec.get('control_number'):
-                    conference_recid = conference_rec['control_number']
-            if 'parent_record' in pub_info:
-                parent_rec = replace_refs(pub_info['parent_record'], 'es')
-                if parent_rec and parent_rec.get('control_number'):
-                    parent_recid = parent_rec['control_number']
+    """Display inline publication and conference information.
 
-            if conference_recid and parent_recid:
-                try:
-                    ctx = {
-                        "parent_recid": parent_recid,
-                        "conference_recid": conference_recid,
-                        "conference_title": get_title(conference_rec)
-                    }
-                    if result:
-                        result['conf_info'] = render_macro_from_template(
-                            name="conf_with_pub_info",
-                            template="inspirehep_theme/format/record/Conference_info_macros.tpl",
-                            ctx=ctx)
-                        break
-                    else:
-                        ctx.update(dict(
-                            page_start=pub_info.get('page_start'),
-                            page_end=pub_info.get('page_end'),
-                            artid=pub_info.get('artid')
-                        ))
-                        result['conf_info'] = render_macro_from_template(
-                            name="conf_without_pub_info",
-                            template="inspirehep_theme/format/record/Conference_info_macros.tpl",
-                            ctx=ctx)
-                        break
-                except TypeError:
-                    pass
-            elif conference_recid and not parent_recid:
-                try:
-                    ctx = {
-                        "conference_recid": conference_recid,
-                        "conference_title": get_title(conference_rec),
-                        "pub_info": bool(result.get('pub_info', ''))
-                    }
+    The record is a LiteratureRecord instance
+    """
+    if not isinstance(record, LiteratureRecord):
+        record = LiteratureRecord(record)
+    result = {}
+    pub_infos = []
+    if 'publication_info' in record:
+        for pub_info in record.publication_information:
+            pub_info_html = render_macro_from_template(
+                name="pub_info",
+                template="inspirehep_theme/format/record/Publication_info.tpl",
+                ctx=pub_info
+            )
+            if pub_info_html:
+                pub_infos.append(pub_info_html)
+
+        if pub_infos:
+            result['pub_info'] = pub_infos
+
+        # Conference info line
+        for conf_info in record.conference_information:
+            if conf_info.get('conference_recid') and conf_info.get('parent_recid'):
+                if result:
                     result['conf_info'] = render_macro_from_template(
-                        name="conference_only",
+                        name="conf_with_pub_info",
                         template="inspirehep_theme/format/record/Conference_info_macros.tpl",
-                        ctx=ctx)
-                except TypeError:
-                    pass
-            elif parent_recid and not conference_recid:
-                try:
-                    ctx = {
-                        "parent_recid": parent_recid,
-                        "parent_title":
-                            parent_rec['titles'][0]['title'].replace(
-                                "Proceedings, ", "", 1),
-                        "pub_info": bool(result.get('pub_info', ''))
-                    }
+                        ctx={
+                            'parent_recid': conf_info.get('parent_recid'),
+                            'conference_recid': conf_info.get('conference_recid'),
+                            'conference_title': conf_info.get('conference_title'),
+                        }
+                    )
+                    break
+                else:
                     result['conf_info'] = render_macro_from_template(
-                        name="proceedings_only",
+                        name="conf_without_pub_info",
                         template="inspirehep_theme/format/record/Conference_info_macros.tpl",
-                        ctx=ctx)
-                except TypeError:
-                    pass
+                        ctx={
+                            'parent_recid': conf_info.get('parent_recid'),
+                            'conference_recid': conf_info.get('conference_recid'),
+                            'conference_title': conf_info.get('conference_title'),
+                            'page_start': conf_info.get('page_start'),
+                            'page_end': conf_info.get('page_end'),
+                            'artid': conf_info.get('artid'),
+                        }
+                    )
+                    break
+            elif conf_info.get('conference_recid') and not conf_info.get('parent_recid'):
+                result['conf_info'] = render_macro_from_template(
+                    name="conference_only",
+                    template="inspirehep_theme/format/record/Conference_info_macros.tpl",
+                    ctx={
+                        'conference_recid': conf_info.get('conference_recid'),
+                        'conference_title': conf_info.get('conference_title'),
+                        'pub_info': bool(result.get('pub_info')),
+                    }
+                )
+            elif conf_info.get('parent_recid') and not conf_info.get('conference_recid'):
+                result['conf_info'] = render_macro_from_template(
+                    name="proceedings_only",
+                    template="inspirehep_theme/format/record/Conference_info_macros.tpl",
+                    ctx={
+                        'parent_recid': conf_info.get('parent_recid'),
+                        'parent_title': conf_info.get('parent_title'),
+                        'pub_info': bool(result.get('pub_info')),
+                    }
+                )
+
     return result
 
 

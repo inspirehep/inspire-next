@@ -31,6 +31,7 @@ from elasticsearch_dsl import result
 
 from invenio_records.api import Record
 
+from inspirehep.modules.records.wrappers import LiteratureRecord
 from inspirehep.modules.theme.jinja2filters import *
 
 
@@ -811,7 +812,7 @@ def test_publication_info_returns_empty_dict_when_no_publication_info():
 
 
 def test_publication_info_an_empty_list():
-    an_empty_list = Record({'publication_info': []})
+    an_empty_list = LiteratureRecord({'publication_info': []})
 
     expected = {}
     result = publication_info(an_empty_list)
@@ -820,7 +821,7 @@ def test_publication_info_an_empty_list():
 
 
 def test_publication_info_a_list_of_one_element():
-    a_list_of_one_element = Record({
+    a_list_of_one_element = LiteratureRecord({
         'publication_info': [
             {'journal_title': 'Int.J.Mod.Phys.'}
         ]
@@ -833,7 +834,7 @@ def test_publication_info_a_list_of_one_element():
 
 
 def test_publication_info_a_list_of_two_elements():
-    a_list_of_two_elements = Record({
+    a_list_of_two_elements = LiteratureRecord({
         'publication_info': [
             {
                 'journal_volume': '8',
@@ -862,7 +863,7 @@ def test_publication_info_a_list_of_two_elements():
 
 
 def test_publication_info_from_journal_title_and_journal_volume():
-    with_journal_title_and_journal_volume = Record({
+    with_journal_title_and_journal_volume = LiteratureRecord({
         'publication_info': [
             {
                 'journal_title': 'JHEP',
@@ -882,7 +883,7 @@ def test_publication_info_from_journal_title_and_journal_volume():
 
 
 def test_publication_info_from_journal_title_and_year():
-    with_journal_title_and_year = Record({
+    with_journal_title_and_year = LiteratureRecord({
         'publication_info': [
             {
                 'journal_title': 'Eur.Phys.J.',
@@ -902,7 +903,7 @@ def test_publication_info_from_journal_title_and_year():
 
 
 def test_publication_info_from_journal_title_and_journal_issue():
-    with_journal_title_and_journal_issue = Record({
+    with_journal_title_and_journal_issue = LiteratureRecord({
         'publication_info': [
             {
                 'journal_title': 'JINST',
@@ -922,7 +923,7 @@ def test_publication_info_from_journal_title_and_journal_issue():
 
 
 def test_publication_info_from_journal_title_and_pages_artid():
-    with_journal_title_and_pages_artid = Record({
+    with_journal_title_and_pages_artid = LiteratureRecord({
         'publication_info': [
             {
                 'journal_title': 'Astrophys.J.',
@@ -942,7 +943,7 @@ def test_publication_info_from_journal_title_and_pages_artid():
 
 
 def test_publication_info_from_pubinfo_freetext():
-    with_pubinfo_freetext = Record({
+    with_pubinfo_freetext = LiteratureRecord({
         'publication_info': [
             {'pubinfo_freetext': 'Phys. Rev. 127 (1962) 965-970'}
         ]
@@ -958,7 +959,7 @@ def test_publication_info_from_pubinfo_freetext():
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.replace_refs')
+@mock.patch('inspirehep.modules.records.wrappers.replace_refs')
 def test_publication_info_from_conference_recid_and_parent_recid(r_r, mock_replace_refs):
     conf_rec = {'$ref': 'http://x/y/976391'}
     parent_rec = {'$ref': 'http://x/y/1402672'}
@@ -967,7 +968,7 @@ def test_publication_info_from_conference_recid_and_parent_recid(r_r, mock_repla
     r_r.side_effect = mock_replace_refs(with_title, [(conf_rec, 976391),
                                                      (parent_rec, 1402672)])
 
-    with_conference_recid_and_parent_recid = Record({
+    with_conference_recid_and_parent_recid = LiteratureRecord({
         'publication_info': [
             {
                 'conference_record': conf_rec,
@@ -986,7 +987,7 @@ def test_publication_info_from_conference_recid_and_parent_recid(r_r, mock_repla
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.replace_refs')
+@mock.patch('inspirehep.modules.records.wrappers.replace_refs')
 def test_publication_info_from_conference_recid_and_parent_recid_with_pages(r_r, mock_replace_refs):
     with_title = '50th Rencontres de Moriond on EW Interactions and Unified Theories'
     conf_rec = {'$ref': 'http://x/y/1331207'}
@@ -995,7 +996,7 @@ def test_publication_info_from_conference_recid_and_parent_recid_with_pages(r_r,
     r_r.side_effect = mock_replace_refs(with_title, [(conf_rec, 1331207),
                                                      (parent_rec, 1402672)])
 
-    with_conference_recid_and_parent_recid_and_pages = Record({
+    with_conference_recid_and_parent_recid_and_pages = LiteratureRecord({
         'publication_info': [
             {
                 'conference_record': conf_rec,
@@ -1017,7 +1018,7 @@ def test_publication_info_from_conference_recid_and_parent_recid_with_pages(r_r,
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.replace_refs')
+@mock.patch('inspirehep.modules.records.wrappers.replace_refs')
 def test_publication_info_with_pub_info_and_conf_info(r_r, mock_replace_refs):
     with_title = '2005 International Linear Collider Workshop (LCWS 2005)'
     conf_rec = {'$ref': 'http://x/y/976391'}
@@ -1026,7 +1027,7 @@ def test_publication_info_with_pub_info_and_conf_info(r_r, mock_replace_refs):
     r_r.side_effect = mock_replace_refs(with_title, [(conf_rec, 976391),
                                                      (parent_rec, 706120)])
 
-    with_pub_info_and_conf_info = Record({
+    with_pub_info_and_conf_info = LiteratureRecord({
         'publication_info': [
             {
                 'journal_title': 'eConf',
@@ -1050,14 +1051,14 @@ def test_publication_info_with_pub_info_and_conf_info(r_r, mock_replace_refs):
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.replace_refs')
+@mock.patch('inspirehep.modules.records.wrappers.replace_refs')
 def test_publication_info_with_pub_info_and_conf_info_not_found(r_r):
     conf_rec = {'$ref': 'http://x/y/976391'}
     parent_rec = {'$ref': 'http://x/y/706120'}
 
     r_r.return_value = None
 
-    with_pub_info_and_conf_info = Record({
+    with_pub_info_and_conf_info = LiteratureRecord({
         'publication_info': [
             {
                 'journal_title': 'eConf',
@@ -1078,14 +1079,14 @@ def test_publication_info_with_pub_info_and_conf_info_not_found(r_r):
     assert expected == result
 
 
-@mock.patch('inspirehep.modules.theme.jinja2filters.replace_refs')
+@mock.patch('inspirehep.modules.records.wrappers.replace_refs')
 def test_publication_info_from_conference_recid_and_not_parent_recid(r_r, mock_replace_refs):
     with_title = '20th International Workshop on Deep-Inelastic Scattering and Related Subjects'
     conf_rec = {'$ref': 'http://x/y/1086512'}
 
     r_r.side_effect = mock_replace_refs(with_title, [(conf_rec, 1086512)])
 
-    with_conference_recid_without_parent_recid = Record({
+    with_conference_recid_without_parent_recid = LiteratureRecord({
         'publication_info': [
             {'conference_record': conf_rec}
         ]
@@ -1103,7 +1104,7 @@ def test_publication_info_from_conference_recid_and_not_parent_recid(r_r, mock_r
 
 @pytest.mark.xfail(reason='pid searched in the wrong collection')
 def test_publication_info_from_not_conference_recid_and_parent_recid():
-    without_conference_recid_with_parent_recid = Record({
+    without_conference_recid_with_parent_recid = LiteratureRecord({
         'publication_info': [
             {'parent_record': {'$ref': 'http://x/y/720114'}}
         ]
