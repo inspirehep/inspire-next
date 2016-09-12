@@ -127,8 +127,12 @@ def generate_name_variations(recid, json, *args, **kwargs):
             if name:
                 name_variations = author_tokenize(name)
                 author.update({"name_variations": name_variations})
+                bai = [
+                    item['value'] for item in author.get('ids', [])
+                    if item['type'] == 'INSPIRE BAI'
+                ]
                 author.update({"name_suggest": {
                     "input": name_variations,
                     "output": name,
-                    "payload": {"bai": author.get("inspire_bai")}
+                    "payload": {"bai": bai[0] if bai else None}
                 }})

@@ -73,7 +73,9 @@ require(
         .directive('invenioSearchAutocompleteBar', function() {
             function link(scope, element, attrs, vm) {
               function updateQuery() {
-                vm.invenioSearchArgs.q = vm.userQuery;
+                var e = document.getElementById("search");
+                var $e = angular.element(e);
+                vm.invenioSearchArgs.q = $e.val();
               }
               scope.placeholder = attrs.placeholder;
               scope.updateQuery = updateQuery;
