@@ -92,8 +92,10 @@ def convert_for_form(data):
                 elif url["description"].lower() == "linkedin":
                     data["linkedin_url"] = url["value"]
         del data["urls"]
-    if "field_categories" in data:
-        data["research_field"] = data['field_categories']
+    if 'field_categories' in data:
+        data["research_field"] = []
+        for category in data.get('field_categories', []):
+            data["research_field"].append(category.get('_term'))
     if "positions" in data:
         data["institution_history"] = []
         for position in data["positions"]:
@@ -103,9 +105,9 @@ def convert_for_form(data):
                                                 'start_year', 'end_year')
                 ]
             ):
-                if 'email' in position:
+                if 'emails' in position:
                     # Only email available, take as public_email
-                    data["public_email"] = position.get("email")
+                    data["public_email"] = position.get("emails")[0]
                 continue
             pos = {}
             pos["name"] = position.get("institution", {}).get("name")
@@ -133,9 +135,9 @@ def convert_for_form(data):
             try:
                 if id["type"] == "ORCID":
                     data["orcid"] = id["value"]
-                elif id["type"] == "BAI":
+                elif id["type"] == "INSPIRE BAI":
                     data["bai"] = id["value"]
-                elif id["type"] == "INSPIRE":
+                elif id["type"] == "INSPIRE ID":
                     data["inspireid"] = id["value"]
             except KeyError:
                 # Protect against cases when there is no value in metadata
@@ -284,6 +286,7 @@ def submitnew():
         data_type="authors"
     )
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
+    workflow_object.extra_data['is-update'] = False
     workflow_object.data = formdata_to_model(workflow_object, visitor.data)
     workflow_object.save()
     db.session.commit()
@@ -308,6 +311,7 @@ def newreview():
     if not objectid:
         abort(400)
     workflow_object = workflow_object_class.get(objectid)
+    workflow_object.extra_data['is-update'] = True
 
     form = AuthorUpdateForm(
         data=workflow_object.extra_data["formdata"], is_review=True)
@@ -361,6 +365,7 @@ def holdingpenreview():
     workflow_object = workflow_object_class.get(objectid)
     workflow_object.extra_data["approved"] = approved
     workflow_object.extra_data["ticket"] = ticket
+    workflow_object.extra_data['is-update'] = False
     workflow_object.save()
     db.session.commit()
 

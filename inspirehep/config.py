@@ -1027,6 +1027,7 @@ WORKFLOWS_UI_REST_FACETS = {
             "status": terms_filter('_workflow.status'),
             "source": terms_filter('metadata.acquisition_source.method'),
             "workflow_name": terms_filter('_workflow.workflow_name'),
+            "is-update": terms_filter('_extra_data.is-update'),
         },
         "aggs": {
             "status": {
@@ -1074,6 +1075,8 @@ WORKFLOWS_UI_REST_DEFAULT_SORT = {
         "noquery": "-mostrecent"
     }
 }
+
+AUTHORS_UPDATE_BASE_URL = "http://inspirehep.net"
 
 # Crawling
 # ========
