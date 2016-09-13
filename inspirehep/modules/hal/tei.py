@@ -32,9 +32,10 @@ from inspirehep.utils.record import get_value
 from inspirehep.utils.record_getter import get_es_records
 
 from .templates import template
+from .typology import hal_doctype, doctype_fallback
 
 
-def tei_response(record):
+def tei_response(record, has_attachment=False):
     """Returns the record formatted in XML+TEI per HAL's specification.
 
     :param record: the record to convert
@@ -60,6 +61,7 @@ def tei_response(record):
         'reviewed': reviewed,
         'domains': domains,
         'typology': typology,
+        'has_attachment': has_attachment,
     }
 
     return template.render(**context).encode('utf-8')
@@ -74,29 +76,9 @@ def _get_domains(record):
 def _get_typology(record):
     collections = [entry['primary'].lower()
                    for entry in record.get('collections', [])]
-    inspire_to_hal = {
-        'conferencepaper': "COMM",
-        # Communication dans un congrès / Conference communication
-        'thesis': "THESE",
-        # Thèse / Thesis
-        'proceedings': "DOUV",
-        # Direction d'ouvrage, Proceedings / Directions of work, Proceedings
-        'book': "OUV",
-        # Ouvrage (y compris édition critique et traduction) /
-        # Book (includes scholarly edition and translation)
-        'bookchapter': "COUV",
-        # Chapitre d'ouvrage / Book chapter
-        'review': "NOTE",
-        # Note de lecture / Book review
-        'published': "ART",
-        # Article dans une revue / Journal article
-        'lectures': "LECTURE",
-        # Cours / Course
-    }
-
     typology = next(
-        (inspire_to_hal[c] for c in collections if c in inspire_to_hal),
-        "OTHER"  # Fallback: Autre publication / Other publication
+        (hal_doctype[c] for c in collections if c in hal_doctype),
+        doctype_fallback
     )
     return typology
 
@@ -201,8 +183,8 @@ def _journal_data(pub_info):
 
 def _structure_data(struct):
     return {
-        'type': get_value(struct, "collections[1].primary", "").lower(),
-        # ^^ FIXME: This may not be one of the HAL accepted values:
+        'type': "institution",
+        # ^^ FIXME: Needs to choose from the HAL accepted values:
         # institution, department, laboratory or researchteam
         'name': get_value(struct, "institution[0]", ""),
         'address': get_value(struct, "address[0].original_address", []),
