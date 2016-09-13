@@ -80,6 +80,7 @@ install_requires = [
     'workflow>=2.0.0',
     'html5lib<1.0b9',
     'SQLAlchemy>=1.0.14,<1.1',
+    'nameparser>=0.4.0',
 ]
 
 tests_require = [

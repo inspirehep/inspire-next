@@ -1,0 +1,32 @@
+{% macro author_data(author) %}
+  {% if author.role and author.role == "Editor" %}
+  <author role="edt">
+  {% else %}
+  <author role="aut">
+  {% endif %}
+    <persName>
+      {% if author.parsed_name.first %}
+        <forename type="first">{{ author.parsed_name.first }}</forename>
+      {% endif %}
+      {% if author.parsed_name.middle %}
+        <forename type="middle">{{ author.parsed_name.middle }}</forename>
+      {% endif %}
+
+      {% if author.parsed_name.last and author.parsed_name.suffix %}
+        <surname>{{ author.parsed_name.last }} {{ author.parsed_name.suffix }}</surname>
+      {% elif author.parsed_name.last %}
+        <surname>{{ author.parsed_name.last }}</surname>
+      {% elif author.parsed_name.suffix %}
+        <surname>{{ author.parsed_name.suffix }}</surname>
+      {% endif %}
+    </persName>
+
+    {% if author.affiliations %}
+      {% for affiliation in author.affiliations %}
+        {% if affiliation.recid %}
+          <affiliation ref="#localStruct-{{ affiliation.recid }}"/>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  </author>
+{% endmacro %}
