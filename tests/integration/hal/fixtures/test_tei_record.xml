@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:hal="http://hal.archives-ouvertes.fr/">
+  <text>
+    <body>
+      <listBibl>
+        <biblFull>
+            <titleStmt>
+                                  <title xml:lang="en">Production of electroweak bosons at hadron colliders: theoretical aspects</title>
+
+                  <author role="aut">
+    <persName>
+        <forename type="first">Michelangelo</forename>
+        <forename type="middle">L.</forename>
+
+        <surname>Mangano</surname>
+    </persName>
+
+          <affiliation ref="#localStruct-902725"/>
+  </author>
+
+            </titleStmt>
+
+          <notesStmt>
+            <note type="audience" n="1"/>
+            <note type="popular" n="0"/>
+            <note type="peer" n="0"/>
+          </notesStmt>
+
+          <sourceDesc>
+            <biblStruct>
+              <analytic>
+                    <title xml:lang="en">Production of electroweak bosons at hadron colliders: theoretical aspects</title>
+
+                    <author role="aut">
+    <persName>
+        <forename type="first">Michelangelo</forename>
+        <forename type="middle">L.</forename>
+
+        <surname>Mangano</surname>
+    </persName>
+
+          <affiliation ref="#localStruct-902725"/>
+  </author>
+
+              </analytic>
+
+
+            </biblStruct>
+          </sourceDesc>
+          <profileDesc>
+            <langUsage>
+              <language ident="en"/>
+            </langUsage>
+            <textClass>
+              <classCode scheme="halDomain" n="phys.phys.phys-gen-ph"/><!-- FIXME -->
+              <classCode scheme="halTypology" n="NOTE"/>
+            </textClass>
+          </profileDesc>
+        </biblFull>
+      </listBibl>
+    </body>
+      <back>
+        <listOrg type="structures">
+            <org type="institution" xml:id="localStruct-902725">
+
+                <orgName>European Organization for Nuclear Research (CERN)</orgName>
+                <desc>
+                  <address>
+                    <country key="CH"/>
+                  </address>
+                </desc>
+
+            </org>
+        </listOrg>
+      </back>
+  </text>
+</TEI>

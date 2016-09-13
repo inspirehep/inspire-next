@@ -1,0 +1,141 @@
+{# Jinja2 template for use with the HAL TEI exporter. -#}
+
+{% from "macros.xml" import author_data with context -%}
+
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:hal="http://hal.archives-ouvertes.fr/">
+  <text>
+    <body>
+      <listBibl>
+        <biblFull>
+          {% if titles %}
+            <titleStmt>
+              {% for title in titles %}
+                {%+ if title.title %}
+                  <title xml:lang="en">{{ title.title }}</title>
+                {% endif %}
+                {% if title.subtitle %}
+                  <title type="sub" xml:lang="en">{{ title.subtitle }}</title>
+                {% endif %}
+              {% endfor %}
+
+              {% for author in authors %}
+                {{ author_data(author) }}
+              {% endfor %}
+            </titleStmt>
+          {% endif %}
+
+          <notesStmt>
+            <note type="audience" n="1"/>
+            <note type="popular" n="0"/>
+            <note type="peer" n="{{ 1 if reviewed else 0 }}"/>
+          </notesStmt>
+
+          <sourceDesc>
+            <biblStruct>
+              <analytic>
+                {% for title in titles %}
+                  {% if title.title %}
+                    <title xml:lang="en">{{ title.title }}</title>
+                  {% endif %}
+                  {% if title.subtitle %}
+                    <title type="sub" xml:lang="en">{{ title.subtitle }}</title>
+                  {% endif %}
+                {% endfor %}
+
+                {% for author in authors %}
+                  {{ author_data(author) }}
+                {% endfor %}
+              </analytic>
+
+              {% if publication %}
+                <monogr>
+                  {% if publication.type == "journal" %}
+                    {% if publication.name %}
+                      <title level="j">{{ publication.name }}</title>
+                    {% endif %}
+                    <imprint>
+                      {% if publication.volume %}
+                        <biblScope unit="volume">{{ publication.volume }}</biblScope>
+                      {% endif %}
+                      {% if publication.issue %}
+                        <biblScope unit="issue">{{ publication.issue }}</biblScope>
+                      {% endif %}
+                      {% if publication.pp %}
+                        <biblScope unit="pp">{{ publication.pp }}</biblScope>
+                      {% endif %}
+                      {% if publication.year %}
+                        <date type="datePub">{{ publication.year}}</date>
+                      {% endif %}
+                    </imprint>
+                  {% endif %}
+                  {% if publication.type == "conference" %}
+                    <meeting>
+                      {% if publication.name or publication.acronym %}
+                        <title>
+                          {% if publication.name and publication.acronym %}
+                            {{ publication.name }} ({{ publication.acronym }})
+                          {% elif publication.name %}
+                            {{ publication.name }}
+                          {% elif publication.acronym %}
+                            {{ publication.acronym }}
+                          {% endif %}
+                        </title>
+                      {% endif %}
+                      {% if publication.opening_date %}
+                        <date type="start">{{ publication.opening_date }}</date>
+                      {% endif %}
+                      {% if publication.closing_date %}
+                        <date type="end">{{ publication.closing_date }}</date>
+                      {% endif %}
+                    </meeting>
+                  {% endif %}
+                </monogr>
+              {% endif %}
+
+              {% if doi %}
+                <idno type="doi">{{ doi }}</idno>
+              {% endif %}
+            </biblStruct>
+          </sourceDesc>
+          <profileDesc>
+            <langUsage>
+              <language ident="en"/>
+            </langUsage>
+            <textClass>
+              <classCode scheme="halDomain" n="phys.phys.phys-gen-ph"/><!-- FIXME -->
+              {#{% for domain in domains %}
+                <classCode scheme="halDomain" n="{{ domain }}"/>
+              {% endfor %}#}
+              <classCode scheme="halTypology" n="{{ typology }}"/>
+            </textClass>
+          </profileDesc>
+        </biblFull>
+      </listBibl>
+    </body>
+    {% if structures %}
+      <back>
+        <listOrg type="structures">
+          {% for structure in structures %}
+            <org type="{{ structure.type }}" xml:id="localStruct-{{ structure.recid }}">
+
+              {% if structure.name %}
+                <orgName>{{ structure.name }}</orgName>
+              {% endif %}
+              {% if structure.address %}
+                <desc>
+                  <address>
+                  {% if structure.country %}
+                    <country key="{{ structure.country }}"/>
+                  {% endif %}
+                  </address>
+                </desc>
+              {% endif %}
+
+            </org>
+          {% endfor %}
+        </listOrg>
+      </back>
+    {% endif %}
+  </text>
+</TEI>
