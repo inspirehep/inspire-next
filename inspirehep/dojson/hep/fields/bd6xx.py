@@ -24,10 +24,12 @@
 
 from __future__ import absolute_import, division, print_function
 
+from itertools import izip_longest
+
 from dojson import utils
 
 from ..model import hep, hep2marc
-from ...utils import get_record_ref
+from ...utils import get_record_ref, get_recid_from_ref
 
 from inspirehep.utils.helpers import force_force_list
 
@@ -45,25 +47,37 @@ def field_categories2marc(self, key, value):
 
 
 @hep.over('accelerator_experiments', '^693..')
-@utils.for_each_value
-@utils.filter_values
-def accelerator_experiments(self, key, value):
+def accelerator_experiments(self, key, acc_exps_data):
     """The accelerator/experiment related to this record."""
-    recid = None
-    curated_relation = False
-    if '0' in value:
-        try:
-            recid = int(value.get('0'))
-        except (TypeError, ValueError, AttributeError):
-            pass
-    if recid:
-        curated_relation = True
-    return {
-        'record': get_record_ref(recid, 'experiments'),
-        'accelerator': value.get('a'),
-        'experiment': value.get('e'),
-        'curated_relation': curated_relation
-    }
+    def _get_acc_exp_json(acc_exp_data):
+        recids = []
+        if '0' in acc_exp_data:
+            try:
+                recids = [
+                    int(recid) for recid
+                    in force_force_list(acc_exp_data.get('0'))
+                ]
+            except (TypeError, ValueError, AttributeError):
+                pass
+
+        experiment_names = force_force_list(acc_exp_data.get('e'))
+
+        for recid, experiment_name in izip_longest(recids, experiment_names):
+            curated_relation = False
+            if recid:
+                curated_relation = True
+            yield {
+                'record': get_record_ref(recid, 'experiments'),
+                'accelerator': acc_exp_data.get('a'),
+                'experiment': experiment_name,
+                'curated_relation': curated_relation
+            }
+
+    acc_exps_json = self.get('accelerator_experiments', [])
+    for acc_exp_data in force_force_list(acc_exps_data):
+        acc_exps_json.extend(_get_acc_exp_json(acc_exp_data))
+
+    return acc_exps_json
 
 
 @hep2marc.over('693', 'accelerator_experiments')
@@ -71,10 +85,16 @@ def accelerator_experiments(self, key, value):
 @utils.filter_values
 def accelerator_experiments2marc(self, key, value):
     """The accelerator/experiment related to this record."""
-    return {
+    res = {
         'a': value.get('accelerator'),
         'e': value.get('experiment'),
     }
+    recid = get_recid_from_ref(value.get('record', None))
+
+    if recid:
+        res['0'] = recid
+
+    return res
 
 
 @hep.over('keywords', '^695..')
