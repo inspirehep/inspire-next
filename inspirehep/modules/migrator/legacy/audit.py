@@ -24,3 +24,32 @@
 """INSPIRE migrator load/dump audit."""
 
 from __future__ import absolute_import, print_function
+
+import json
+
+from sqlalchemy.orm.exc import NoResultFound
+
+from inspirehep.modules.audit.models import Audit
+
+
+def date_handler(obj):
+    return obj.isoformat() if hasattr(obj, 'isoformat') else obj
+
+
+def get(*args, **kwargs):
+    """Get audits."""
+    q = Audit.query
+    return q.count(), q.all()
+
+
+def dump(record, from_date, **kwargs):
+    """Dump the audits as a list of dictionaries."""
+    return dict(id=record.id,
+                created=json.dumps(record.created, default=date_handler),
+                user_id=record.user_id,
+                object_id=record.object_id,
+                score=record.score,
+                user_action=record.user_action,
+                decision=record.decision,
+                source=record.source,
+                action=record.action)
