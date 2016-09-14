@@ -32,7 +32,6 @@ from ..model import journals
 
 @journals.over('issn', '^022..')
 @utils.for_each_value
-@utils.filter_values
 def issn(self, key, value):
     """ISSN, its medium and an additional comment."""
     try:

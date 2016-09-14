@@ -85,7 +85,6 @@ def publication_info(self, key, value):
 
 @hep2marc.over('773', 'publication_info')
 @utils.for_each_value
-@utils.filter_values
 def publication_info2marc(self, key, value):
     """Publication info about record."""
     page_artid = []

@@ -102,7 +102,6 @@ def name(self, key, value):
 
 @institutions.over('address', '^371..')
 @utils.for_each_value
-@utils.filter_values
 def address(self, key, value):
     """Address info."""
     return parse_institution_address(

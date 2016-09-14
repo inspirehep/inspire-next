@@ -130,7 +130,6 @@ def collaboration(self, key, value):
 
 @hep2marc.over('710', 'collaboration')
 @utils.for_each_value
-@utils.filter_values
 def collaboration2marc(self, key, value):
     """Added Entry-Corporate Name."""
     return {

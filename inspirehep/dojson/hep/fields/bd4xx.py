@@ -29,7 +29,6 @@ from ..model import hep, hep2marc
 
 @hep.over('book_series', '^490[10_].')
 @utils.for_each_value
-@utils.filter_values
 def book_series(self, key, value):
     """Book Series."""
     return {
@@ -40,7 +39,6 @@ def book_series(self, key, value):
 
 @hep2marc.over('490', 'book_series')
 @utils.for_each_value
-@utils.filter_values
 def book_series2marc(self, key, value):
     """Book Series."""
     return {

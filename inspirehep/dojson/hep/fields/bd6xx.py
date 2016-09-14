@@ -34,7 +34,6 @@ from inspirehep.utils.helpers import force_force_list
 
 @hep2marc.over('65017', 'field_categories')
 @utils.for_each_value
-@utils.filter_values
 def field_categories2marc(self, key, value):
     """Field categories."""
     return {
@@ -46,7 +45,6 @@ def field_categories2marc(self, key, value):
 
 @hep.over('accelerator_experiments', '^693..')
 @utils.for_each_value
-@utils.filter_values
 def accelerator_experiments(self, key, value):
     """The accelerator/experiment related to this record."""
     recid = None
@@ -68,7 +66,6 @@ def accelerator_experiments(self, key, value):
 
 @hep2marc.over('693', 'accelerator_experiments')
 @utils.for_each_value
-@utils.filter_values
 def accelerator_experiments2marc(self, key, value):
     """The accelerator/experiment related to this record."""
     return {

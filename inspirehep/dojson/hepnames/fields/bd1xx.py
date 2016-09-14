@@ -69,7 +69,6 @@ def acquisition_source2marc(self, key, value):
 
 
 @hepnames.over('name', '^100..')
-@utils.filter_values
 def name(self, key, value):
     """Name information.
 
@@ -103,7 +102,6 @@ def name(self, key, value):
 
 
 @hepnames2marc.over('100', '^name$')
-@utils.filter_values
 def name2marc(self, key, value):
     """Name information.
 
@@ -250,7 +248,6 @@ def private_current_emails(self, key, value):
 
 @hepnames2marc.over('595', '^(private_current_emails|_private_note|private_old_emails)$')
 @utils.for_each_value
-@utils.filter_values
 def hidden_notes2marc(self, key, value):
     return {
         'a': value if key == '_private_note' else None,
@@ -346,7 +343,6 @@ def source(self, key, value):
 
 @hepnames2marc.over('670', '^source$')
 @utils.for_each_value
-@utils.filter_values
 def source2marc(self, key, value):
     return {
         'a': value.get('name'),
@@ -398,7 +394,6 @@ def _curators_note2marc(self, key, value):
 
 @hepnames.over('experiments', '^693..')
 @utils.for_each_value
-@utils.filter_values
 def experiments(self, key, value):
     """Information about experiments.
 
@@ -426,7 +421,6 @@ def experiments(self, key, value):
 
 @hepnames2marc.over('693', '^experiments$')
 @utils.for_each_value
-@utils.filter_values
 def experiments2marc(self, key, value):
     """Information about experiments.
 
@@ -489,7 +483,6 @@ def advisors2marc(self, key, value):
 
 @hepnames2marc.over('8564', 'url')
 @utils.for_each_value
-@utils.filter_values
 def url2marc(self, key, value):
     """URL to external resource."""
     return {

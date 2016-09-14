@@ -31,7 +31,6 @@ from ..model import hep, hep2marc
 
 @hep2marc.over('8564', 'urls')
 @utils.for_each_value
-@utils.filter_values
 def urls2marc(self, key, value):
     """URL to external resource."""
     return {
