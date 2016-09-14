@@ -47,9 +47,6 @@
             "type": "array",
             "uniqueItems": true
         },
-        "curated_relation": {
-            "type": "boolean"
-        },
         "dois": {
             "items": {
                 "pattern": "10\\.\\d+(\\.\\d+)?/.+",
@@ -131,29 +128,6 @@
                 }
             },
             "type": "object"
-        },
-        "raw_reference": {
-            "items": {
-                "properties": {
-                    "format": {
-                        "description": "E.g. text, json, xml, bibtex",
-                        "type": "string"
-                    },
-                    "source": {
-                        "description": "E.g. refextract, JATS, Elsevier",
-                        "type": "string"
-                    },
-                    "value": {
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "type": "array"
-        },
-        "record": {
-            "$ref": "json_reference.json",
-            "description": "Referred record"
         },
         "texkey": {
             "description": "INSPIRE Provided texkey.",

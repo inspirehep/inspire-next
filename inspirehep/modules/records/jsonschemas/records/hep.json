@@ -665,7 +665,44 @@
         },
         "references": {
             "items": {
-                "$ref": "elements/reference.json"
+                "properties": {
+                    "curated_relation": {
+                        "type": "boolean"
+                    },
+                    "raw_refs": {
+                        "items": {
+                            "properties": {
+                                "position": {
+                                    "description": "The position of the reference as it appears on the document",
+                                    "type": "string"
+                                },
+                                "schema": {
+                                    "description": "E.g. text, or Elsevier XML, or refexract",
+                                    "type": "string"
+                                },
+                                "source": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "value",
+                                "schema"
+                            ],
+                            "type": "object"
+                        },
+                        "type": "array"
+                    },
+                    "record": {
+                        "$ref": "elements/json_reference.json"
+                    },
+                    "reference": {
+                        "$ref": "elements/reference.json"
+                    }
+                },
+                "type": "object"
             },
             "type": "array",
             "uniqueItems": true
