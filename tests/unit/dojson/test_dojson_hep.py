@@ -1653,8 +1653,11 @@ def test_publication_info(marcxml_to_json, json_to_marc):
     assert marcxml_to_json['publication_info'][0]['artid'] == '026802'
     assert marcxml_to_json['publication_info'][0]['page_start'] == '123'
     assert marcxml_to_json['publication_info'][0]['page_end'] == '456'
+    assert marcxml_to_json['publication_info'][1]['artid'] == 'R123'
+    assert marcxml_to_json['publication_info'][1]['hidden']
     assert '026802' in json_to_marc['773'][0]['c']
     assert '123-456' in json_to_marc['773'][0]['c']
+    assert 'R123' in json_to_marc['7731_'][0]['c']
     assert (marcxml_to_json['publication_info'][0]['journal_issue'] ==
             json_to_marc['773'][0]['n'])
     assert (marcxml_to_json['publication_info'][0]['journal_title'] ==

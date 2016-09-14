@@ -488,6 +488,8 @@ def publication_info(record):
     pub_infos = []
     if 'publication_info' in record:
         for pub_info in record.publication_information:
+            if pub_info.get('hidden'):
+                continue
             pub_info_html = render_macro_from_template(
                 name="pub_info",
                 template="inspirehep_theme/format/record/Publication_info.tpl",

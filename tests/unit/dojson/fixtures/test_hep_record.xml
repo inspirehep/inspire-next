@@ -225,6 +225,21 @@
     <subfield code="o">ConfAcr</subfield>
     <subfield code="0">1</subfield>
   </datafield>
+  <datafield tag="773" ind1="1" ind2=" ">
+    <subfield code="c">R123</subfield>
+    <subfield code="n">2</subfield>
+    <subfield code="p">Phys.Rev.Lett.</subfield>
+    <subfield code="v">105</subfield>
+    <subfield code="y">2010</subfield>
+    <subfield code="m">note</subfield>
+    <subfield code="z">isbn</subfield>
+    <subfield code="x">pubinfo_freetext</subfield>
+    <subfield code="w">cnum</subfield>
+    <subfield code="t">confpaper_info</subfield>
+    <subfield code="r">reportNumber</subfield>
+    <subfield code="o">ConfAcr</subfield>
+    <subfield code="0">1</subfield>
+  </datafield>
   <datafield tag="785" ind1="0" ind2="2">
     <subfield code="r">CERN-PH-EP-2014-262</subfield>
     <subfield code="w">recid</subfield>
