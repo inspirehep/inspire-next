@@ -127,22 +127,26 @@ def series(self, key, value):
     a_value = value.get('a')
     series_number = int(n_value) if n_value.isdigit() else None
 
-    if (series_number and not a_value) or (not series_number and a_value):
+    if bool(series_number) ^ bool(a_value):
         """The code below is only a workaround.
         Using doJSON, you cannot get all 411s of an XML in one go
         (only one at a time) which makes it hard to couple `a` and `n`
         refering to the same series but stored inside two 411s.
         """
 
-        if series:
-            last_series = series[-1]
+        lonely_series_numbers = self.setdefault('__lonely_series_numbers', [])
 
-            if series_number and not last_series.get('number'):
+        if series_number:
+            last_series = series[-1] if series else None
+            if last_series and not last_series.get('number'):
                 last_series['number'] = series_number
-                return series
-            elif a_value and not last_series.get('name'):
-                last_series['name'] = a_value
-                return series
+            else:
+                lonely_series_numbers.append(series_number)
+
+            return series
+
+        elif a_value and lonely_series_numbers:
+            series_number = lonely_series_numbers.pop()
 
     series.append({
         'name': a_value,

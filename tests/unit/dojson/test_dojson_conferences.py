@@ -584,12 +584,7 @@ def test_series_number_from_411__n():
 
     result = clean_record(conferences.do(create_record(snippet)))
 
-    expected = [
-        {
-            'number': 7
-        },
-    ]
-    assert result['series'] == expected
+    assert 'series' not in result
 
 
 def test_series_and_series_number_from_411__a_n():
