@@ -154,7 +154,6 @@ def series(self, key, value):
 
 @conferences.over('short_description', '^520')
 @utils.for_each_value
-@utils.filter_values
 def short_description(self, key, value):
     """Conference short_description."""
     return {

@@ -113,7 +113,6 @@ def date_and_time_of_latest_transaction2marc(self, key, value):
 @hepnames.over('creation_modification_date', '^961..')
 @jobs.over('creation_modification_date', '^961..')
 @utils.for_each_value
-@utils.filter_values
 def creation_modification_date(self, key, value):
     """Original creation and modification date."""
     return {
@@ -125,7 +124,6 @@ def creation_modification_date(self, key, value):
 @hep2marc.over('961', 'creation_modification_date')
 @hepnames2marc.over('961', 'creation_modification_date')
 @utils.for_each_value
-@utils.filter_values
 def creation_modification_date2marc(self, key, value):
     """Original creation and modification date."""
     return {
@@ -209,7 +207,6 @@ def collections(self, key, value):
 @hep2marc.over('980', 'collections')
 @hepnames2marc.over('980', 'collections')
 @utils.for_each_value
-@utils.filter_values
 def collections2marc(self, key, value):
     """Collection this record belongs to."""
     return {
@@ -241,7 +238,6 @@ def deleted_records(self, key, value):
 @experiments.over('fft', '^FFT..')
 @journals.over('fft', '^FFT..')
 @utils.for_each_value
-@utils.filter_values
 def fft(self, key, value):
     """Collection this record belongs to."""
     return {
@@ -259,7 +255,6 @@ def fft(self, key, value):
 @experiments.over('FFT', 'fft')
 @journals.over('FFT', 'fft')
 @utils.for_each_value
-@utils.filter_values
 def fft2marc(self, key, value):
     """Collection this record belongs to."""
     return {
@@ -274,7 +269,6 @@ def fft2marc(self, key, value):
 @hep2marc.over('981', 'deleted_records')
 @hepnames2marc.over('981', 'deleted_records')
 @utils.for_each_value
-@utils.filter_values
 def deleted_records2marc(self, key, value):
     """Deleted recids."""
     return {

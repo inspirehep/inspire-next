@@ -29,7 +29,6 @@ from ..model import hep, hep2marc
 
 @hep.over('edition', '^250..')
 @utils.for_each_value
-@utils.filter_values
 def edition(self, key, value):
     """Edition Statement."""
     return {
@@ -39,7 +38,6 @@ def edition(self, key, value):
 
 @hep2marc.over('250', 'edition')
 @utils.for_each_value
-@utils.filter_values
 def edition2marc(self, key, value):
     """Edition Statement."""
     return {
@@ -49,7 +47,6 @@ def edition2marc(self, key, value):
 
 @hep.over('imprints', '^260[_23].')
 @utils.for_each_value
-@utils.filter_values
 def imprints(self, key, value):
     """Publication, Distribution, etc. (Imprint)."""
     return {
@@ -61,7 +58,6 @@ def imprints(self, key, value):
 
 @hep2marc.over('260', 'imprints')
 @utils.for_each_value
-@utils.filter_values
 def imprints2marc(self, key, value):
     """Publication, Distribution, etc. (Imprint)."""
     return {
@@ -81,7 +77,6 @@ def preprint_date(self, key, value):
 
 @hep2marc.over('269', 'preprint_date')
 @utils.for_each_value
-@utils.filter_values
 def preprint_date2marc(self, key, value):
     """Preprint info."""
     return {

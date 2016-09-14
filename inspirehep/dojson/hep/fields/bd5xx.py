@@ -39,7 +39,6 @@ logger = logging.getLogger(__name__)
 
 @hep.over('public_notes', '^500..')
 @utils.for_each_value
-@utils.filter_values
 def public_notes(self, key, value):
     """General Note."""
     return {
@@ -50,7 +49,6 @@ def public_notes(self, key, value):
 
 @hep2marc.over('500', 'public_notes')
 @utils.for_each_value
-@utils.filter_values
 def public_notes2marc(self, key, value):
     """General Note."""
     return {
@@ -85,7 +83,6 @@ def hidden_notes(self, key, value):
 
 @hep2marc.over('595', 'hidden_notes')
 @utils.for_each_value
-@utils.filter_values
 def hidden_note2marc(self, key, value):
     """Hidden note."""
     return {
@@ -151,7 +148,6 @@ def thesis2marc(self, key, value):
 
 @hep.over('abstracts', '^520[10_2483].')
 @utils.for_each_value
-@utils.filter_values
 def abstracts(self, key, value):
     """Summary, Etc.."""
     if isinstance(value.get('a'), (list, tuple)):
@@ -171,7 +167,6 @@ def abstracts(self, key, value):
 
 @hep2marc.over('520', 'abstracts')
 @utils.for_each_value
-@utils.filter_values
 def abstract2marc(self, key, value):
     """Summary, Etc.."""
     return {
@@ -182,7 +177,6 @@ def abstract2marc(self, key, value):
 
 @hep.over('funding_info', '^536..')
 @utils.for_each_value
-@utils.filter_values
 def funding_info(self, key, value):
     """Funding Information Note."""
     return {
@@ -194,7 +188,6 @@ def funding_info(self, key, value):
 
 @hep2marc.over('536', 'funding_info')
 @utils.for_each_value
-@utils.filter_values
 def funding_info2marc(self, key, value):
     """Funding Information Note."""
     return {
@@ -206,7 +199,6 @@ def funding_info2marc(self, key, value):
 
 @hep.over('license', '^540..')
 @utils.for_each_value
-@utils.filter_values
 def license(self, key, value):
     """Add Terms Governing Use and Reproduction Note."""
     license_value = force_force_list(value.get('a'))
@@ -223,7 +215,6 @@ def license(self, key, value):
 
 @hep2marc.over('540', '^license$')
 @utils.for_each_value
-@utils.filter_values
 def license2marc(self, key, value):
     """Add Terms Governing Use and Reproduction Note."""
     return {
@@ -260,7 +251,6 @@ def acquisition_source2marc(self, key, value):
 
 @hep.over('copyright', '^542[10_].')
 @utils.for_each_value
-@utils.filter_values
 def copyright(self, key, value):
     """Information Relating to Copyright Status."""
     return {
@@ -273,7 +263,6 @@ def copyright(self, key, value):
 
 @hep2marc.over('542', 'copyright')
 @utils.for_each_value
-@utils.filter_values
 def copyright2marc(self, key, value):
     """Information Relating to Copyright Status."""
     return {

@@ -89,7 +89,6 @@ RE_SPLIT_LANGUAGES = re.compile("\/| or | and |,|=|\s+")
 
 @hep.over('isbns', '^020..')
 @utils.for_each_value
-@utils.filter_values
 def isbns(self, key, value):
     "ISBN, its medium and an additional comment."""
     try:
@@ -129,7 +128,6 @@ def isbns(self, key, value):
 
 @hep2marc.over('020', 'isbns')
 @utils.for_each_value
-@utils.filter_values
 def isbns2marc(self, key, value):
     """Other Standard Identifier."""
     return {
@@ -220,7 +218,6 @@ def external_system_numbers(self, key, value):
 
 @hep2marc.over('035', 'external_system_numbers')
 @utils.for_each_value
-@utils.filter_values
 def external_system_numbers2marc(self, key, value):
     """System Control Number."""
     return {
@@ -311,7 +308,6 @@ def languages2marc(self, key, value):
 
 @hep.over('classification_number', '^084..')
 @utils.for_each_value
-@utils.filter_values
 def classification_number(self, key, value):
     """Other Classification Number."""
     return {
@@ -323,7 +319,6 @@ def classification_number(self, key, value):
 
 @hep2marc.over('084', 'classification_number')
 @utils.for_each_value
-@utils.filter_values
 def classification_number2marc(self, key, value):
     """Other Classification Number."""
     return {

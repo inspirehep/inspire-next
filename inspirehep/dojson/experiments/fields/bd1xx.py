@@ -61,7 +61,6 @@ def experiment_names(self, key, value):
 
 @experiments.over('titles', '^245[10_][0_]')
 @utils.for_each_value
-@utils.filter_values
 def titles(self, key, value):
     """Titles."""
     return {
