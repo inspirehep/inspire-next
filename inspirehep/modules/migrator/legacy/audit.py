@@ -31,6 +31,8 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from inspirehep.modules.audit.models import Audit
 
+from .workflows import WORKFLOWS_TO_KEEP
+
 
 def date_handler(obj):
     return obj.isoformat() if hasattr(obj, 'isoformat') else obj
@@ -44,12 +46,16 @@ def get(*args, **kwargs):
 
 def dump(record, from_date, **kwargs):
     """Dump the audits as a list of dictionaries."""
-    return dict(id=record.id,
-                created=json.dumps(record.created, default=date_handler),
-                user_id=record.user_id,
-                object_id=record.object_id,
-                score=record.score,
-                user_action=record.user_action,
-                decision=record.decision,
-                source=record.source,
-                action=record.action)
+    from invenio_workflows.models import BibWorkflowObject
+    associated_object = BibWorkflowObject.query.filter_by(id=record.object_id).first()
+
+    if associated_object.name in WORKFLOWS_TO_KEEP:
+        return dict(id=record.id,
+                    created=json.dumps(record.created, default=date_handler),
+                    user_id=record.user_id,
+                    object_id=record.object_id,
+                    score=record.score,
+                    user_action=record.user_action,
+                    decision=record.decision,
+                    source=record.source,
+                    action=record.action)
