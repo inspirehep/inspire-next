@@ -37,6 +37,10 @@ from inspirehep.dojson.utils import clean_record, get_recid_from_ref
 
 @pytest.fixture
 def marcxml_record():
+    # To enforce consistent results in langdetect
+    from langdetect import DetectorFactory
+    DetectorFactory.seed = 0
+
     marcxml = pkg_resources.resource_string(__name__,
                                             os.path.join(
                                                 'fixtures',
