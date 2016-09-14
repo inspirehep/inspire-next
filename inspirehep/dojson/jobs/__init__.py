@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,10 +20,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from .fields import (
-    bd1xx,
-)
+"""DoJSON rules for jobs."""
 
+from __future__ import absolute_import, division, print_function
+
+from .fields import bd1xx
 from .model import jobs
-
-__all__ = ('jobs',)

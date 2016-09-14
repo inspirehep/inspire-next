@@ -20,16 +20,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""HEP model definition."""
+"""DoJSON model definition for HEP."""
 
 from __future__ import absolute_import, division, print_function
 
 from dojson import Overdo
 
+from inspirehep.utils.helpers import force_force_list
+
 from ..schema import SchemaOverdo
 from ..utils import force_single_element, get_record_ref
-
-from inspirehep.utils.helpers import force_force_list
 
 
 def add_book_info(record, blob):
@@ -57,6 +57,7 @@ class Publication(SchemaOverdo):
         output = super(Publication, self).do(blob, **kwargs)
         add_book_info(output, blob)
         return output
+
 
 hep = Publication(schema="hep.json", entry_point_group="inspirehep.dojson.hep")
 hep2marc = Overdo(entry_point_group="inspirehep.dojson.hep2marc")
