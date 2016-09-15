@@ -21,7 +21,12 @@
 
 from __future__ import absolute_import, print_function
 
-from inspirehep.utils.record import get_abstract, get_subtitle, get_title, get_value
+from inspirehep.utils.record import (
+    get_abstract,
+    get_record_type,
+    get_subtitle,
+    get_title,
+    get_value,)
 
 from invenio_records.api import Record
 
@@ -294,3 +299,29 @@ def test_get_value_returns_none_on_index_error():
     })
 
     assert get_value(single_title, 'titles.title[1]') is None
+
+
+def test_get_record_type_returns_type_for_existing_schema():
+    record = Record({
+        '$schema': 'http://localhost:5000/schemas/records/jobs.json'
+    })
+
+    assert get_record_type(record) == 'jobs'
+
+
+@pytest.mark.xfail(reason="No information available \
+                   about existing and non-existing schemas.")
+def test_get_record_type_raises_error_for_nonexisting_schema():
+    record = Record({
+        '$schema': 'does-not-exist.json'
+    })
+
+    with pytest.raises(TypeError):
+        get_record_type(record) is None
+
+
+def test_get_record_type_raises_error_when_no_type():
+    record = Record({})
+
+    with pytest.raises(TypeError):
+        get_record_type(record) is None
