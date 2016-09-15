@@ -25,7 +25,6 @@ from __future__ import absolute_import, division, print_function
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.journals import journals
-from inspirehep.dojson.utils import clean_record
 
 
 def test_issn_from_marcxml_022_with_a():
@@ -43,7 +42,7 @@ def test_issn_from_marcxml_022_with_a():
             'value': '2213-1337',
         },
     ]
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert expected == result['issn']
 
@@ -65,7 +64,7 @@ def test_issn_from_marcxml_022_with_a_and_b():
             'value': '2213-1337',
         },
     ]
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert expected == result['issn']
 
@@ -91,7 +90,7 @@ def test_issn_from_marcxml_022_with_a_and_b_and_comment():
             'comment': 'ebook',
         },
     ]
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert expected == result['issn']
 
@@ -106,7 +105,7 @@ def test_issn_from_marcxml_022_with_b_no_a():
         '</record>'
     )
 
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert 'issn' not in result
 
@@ -136,7 +135,7 @@ def test_multiple_issn_from_marcxml_022():
             'value': '2349-6088',
         },
     ]
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert expected == result['issn']
 
@@ -156,7 +155,7 @@ def test_issn_from_022__a_b_electronic():
             'value': '2469-9888',
         },
     ]
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert expected == result['issn']
 
@@ -172,7 +171,7 @@ def test_coden_from_030__a_2():
     expected = [
         'HERAS',
     ]
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert expected == result['coden']
 
@@ -195,7 +194,7 @@ def test_coden_from_double_030__a_2():
         '00686',
         'VLUFB',
     ]
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert expected == result['coden']
 
@@ -210,7 +209,7 @@ def test_publisher_from_643__b():
     expected = [
         'ANITA PUBLICATIONS, INDIA',
     ]
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert expected == result['publisher']
 
@@ -231,7 +230,7 @@ def test_publisher_from_double_643__b():
         'Elsevier',
         'Science Press',
     ]
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert expected == result['publisher']
 
@@ -250,7 +249,7 @@ def test_titles_from_marcxml_130_with_single_a():
             'title': 'Physical Review Special Topics - Accelerators and Beams',
         },
     ]
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert expected == result['titles']
 
@@ -271,7 +270,7 @@ def test_titles_from_marcxml_130_with_a_and_b():
             'subtitle': 'Journal of Philosophical Studies',
         },
     ]
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert expected == result['titles']
 
@@ -290,7 +289,7 @@ def test_short_titles_from_marcxml_711():
             'title': 'Phys.Rev.ST Accel.Beams',
         },
     ]
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert expected == result['short_titles']
 
@@ -309,7 +308,7 @@ def test_title_variants_from_marcxml_730():
             'title': 'PHYSICAL REVIEW SPECIAL TOPICS ACCELERATORS AND BEAMS'
         },
     ]
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert expected == result['title_variants']
 
@@ -334,6 +333,6 @@ def test_multiple_title_variants_from_marcxml_730():
             'title': 'PHYSICS REVIEW ST ACCEL BEAMS',
         },
     ]
-    result = clean_record(journals.do(create_record(snippet)))
+    result = journals.do(create_record(snippet))
 
     assert expected == result['title_variants']

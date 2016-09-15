@@ -26,8 +26,13 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import Overdo
 
-from ..model import SchemaOverdo
+from ..model import FilterOverdo, add_schema, clean_record
 
 
-hepnames = SchemaOverdo(schema="authors.json")
+filters = [
+    add_schema('authors.json'),
+    clean_record,
+]
+
+hepnames = FilterOverdo(filters=filters)
 hepnames2marc = Overdo()

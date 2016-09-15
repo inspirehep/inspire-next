@@ -28,7 +28,7 @@ from dojson import Overdo
 
 from inspirehep.utils.helpers import force_force_list
 
-from ..model import SchemaOverdo
+from ..model import FilterOverdo, add_schema, clean_record
 from ..utils import force_single_element, get_record_ref
 
 
@@ -50,14 +50,14 @@ def add_book_info(record, blob):
                 except (ValueError, TypeError):
                     pass
 
-
-class Publication(SchemaOverdo):
-
-    def do(self, blob, **kwargs):
-        output = super(Publication, self).do(blob, **kwargs)
-        add_book_info(output, blob)
-        return output
+    return record
 
 
-hep = Publication(schema="hep.json", entry_point_group="inspirehep.dojson.hep")
+filters = [
+    add_schema('hep.json'),
+    add_book_info,
+    clean_record,
+]
+
+hep = FilterOverdo(filters=filters)
 hep2marc = Overdo(entry_point_group="inspirehep.dojson.hep2marc")

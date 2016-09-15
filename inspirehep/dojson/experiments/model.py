@@ -24,7 +24,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-from ..model import SchemaOverdo
+from ..model import FilterOverdo, add_schema, clean_record
 
 
-experiments = SchemaOverdo(schema="experiments.json")
+filters = [
+    add_schema('experiments.json'),
+    clean_record,
+]
+
+experiments = FilterOverdo(filters=filters)

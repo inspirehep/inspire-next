@@ -20,22 +20,41 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Schema-aware subclass of DoJSON's Overdo."""
+"""Filter-aware subclass of DoJSON's Overdo.
+
+Allows for a list of filters to be passed during instantiation,
+which are applied in succession to the result of the DoJSON rules.
+"""
 
 from __future__ import absolute_import, division, print_function
 
 from dojson import Overdo
 
-from .utils import strip_empty_values
+from .utils import dedupe_all_lists, strip_empty_values
 
 
-class SchemaOverdo(Overdo):
+class FilterOverdo(Overdo):
 
-    def __init__(self, schema=None, *args, **kwargs):
-        super(SchemaOverdo, self).__init__(*args, **kwargs)
-        self.schema = schema
+    def __init__(self, filters=None, *args, **kwargs):
+        super(FilterOverdo, self).__init__(*args, **kwargs)
+        self.filters = filters
 
     def do(self, blob, **kwargs):
-        output = super(SchemaOverdo, self).do(blob, **kwargs)
-        output['$schema'] = self.schema
-        return strip_empty_values(output)
+        result = super(FilterOverdo, self).do(blob, **kwargs)
+
+        for filter_ in self.filters:
+            result = filter_(result, blob)
+
+        return result
+
+
+def add_schema(schema):
+    def _add_schema(record, blob):
+        record['$schema'] = schema
+        return record
+
+    return _add_schema
+
+
+def clean_record(record, blob):
+    return dedupe_all_lists(strip_empty_values(record))

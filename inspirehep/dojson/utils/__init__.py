@@ -229,7 +229,3 @@ def dedupe_all_lists(obj):
         return type(obj)(new_obj)
     else:
         return obj
-
-
-def clean_record(rec):
-    return dedupe_all_lists(strip_empty_values(rec))

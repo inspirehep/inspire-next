@@ -25,7 +25,6 @@ from __future__ import absolute_import, division, print_function
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hep import hep
-from inspirehep.dojson.utils import clean_record
 
 
 def test_dois_from_0247_a_2():
@@ -43,7 +42,7 @@ def test_dois_from_0247_a_2():
             'value': '10.1088/0264-9381/31/24/245004',
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['dois']
 
@@ -72,7 +71,7 @@ def test_dois_from_0247_a_2_and_0247_a_2_9():
             'value': '10.1088/1475-7516/2015/03/044',
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['dois']
 
@@ -101,6 +100,6 @@ def test_dois_from_2472_a_2_and_247_a_2_9():
             'value': '10.1103/PhysRevD.91.019903',
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['dois']

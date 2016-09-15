@@ -27,7 +27,6 @@ import pytest
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.conferences import conferences
-from inspirehep.dojson.utils import clean_record
 
 
 def test_acronym_from_111__e():
@@ -45,7 +44,7 @@ def test_acronym_from_111__e():
     expected = [
         'FPCP 2018',
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['acronym']
 
@@ -69,7 +68,7 @@ def test_acronym_from_111__e_e():
         'IVC-11',
         'ICSS-7',
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['acronym']
 
@@ -90,7 +89,7 @@ def test_address_from_marcxml__111_c():
             'original_address': 'Austin, Tex.'
         }
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['address']
 
@@ -118,7 +117,7 @@ def test_address_from_multiple_marcxml__111_c():
             'original_address': 'Den Haag, Nederlands'
         },
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['address']
 
@@ -144,7 +143,7 @@ def test_address_from_marcxml__111_multiple_c():
             'original_address': 'Den Haag, Nederlands'
         }
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['address']
 
@@ -167,7 +166,7 @@ def test_address_from_111__a_c_d_g_x_y():
             'original_address': 'UNITED STATES',
         },
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['address']
 
@@ -188,7 +187,7 @@ def test_contact_details_from_marcxml_270_single_p_single_m():
             'email': 'lindner@mpi-hd.mpg.de',
         },
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['contact_details']
 
@@ -210,7 +209,7 @@ def test_contact_details_from_marcxml_270_double_p_single_m():
             'email': 'lindner@mpi-hd.mpg.de',
         },
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['contact_details']
 
@@ -232,7 +231,7 @@ def test_contact_details_from_marcxml_270_single_p_double_m():
             'name': 'Manfred Lindner'
         },
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['contact_details']
 
@@ -259,7 +258,7 @@ def test_contact_details_from_multiple_marcxml_270():
             'name': 'Wynton Marsalis',
         },
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['contact_details']
 
@@ -279,7 +278,7 @@ def test_address_from_270__b():
             'original_address': 'British Columbia',
         },
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['address']
 
@@ -311,7 +310,7 @@ def test_address_from_111__a_c_e_g_x_y_and_270__b():
             'original_address': 'Case Western Reserve University',
         },
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['address']
 
@@ -380,7 +379,7 @@ def test_keywords_from_multiple_6531_a_9():
             'value': 'High energy physics',
         },
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['keywords']
 
@@ -404,7 +403,7 @@ def test_titles_from_marcxml_111():
             'title': 'NASA Laboratory Astrophysics Workshop',
         },
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['titles']
 
@@ -430,7 +429,7 @@ def test_titles_from_marcxml_111_with_two_a():
             'subtitle': 'The origin of the Hubble sequence',
         },
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['titles']
 
@@ -449,7 +448,7 @@ def test_alternative_titles_from_marcxml_711():
             'title': 'GCACSE16',
         },
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['alternative_titles']
 
@@ -474,7 +473,7 @@ def test_alternative_titles_from_multiple_marcxml_711():
             'title': 'GCACSE 2016',
         },
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['alternative_titles']
 
@@ -495,7 +494,7 @@ def test_alternative_titles_marcxml_711_with_b():
             'searchable_title': 'Padova',
         },
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['alternative_titles']
 
@@ -510,7 +509,7 @@ def test_note_from__500_a():
     expected = [
         'Same conf. as Kyoto 1975: none in intervening years',
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['note']
 
@@ -531,7 +530,7 @@ def test_note_from__double_500_a():
         'Marion White, PhD (Argonne) Conference Chair Vladimir Shiltsev, PhD (FNAL) Scientific Program Chair Maria Power (Argonne) Conference Editor/Scientific Secretariat',
         'Will be published in: JACoW',
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['note']
 
@@ -553,7 +552,7 @@ def test_note_from_500__multiple_a():
         '(JW2011) Scientific and Human Legacy of Julius Wess: 27-28 August, 2011',
         '(BW2011) Particle Physcs from TeV to Plank Scale: 28 August - 1 September, 2011',
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['note']
 
@@ -565,7 +564,7 @@ def test_series_from_411__a():
         '</datafield>'
     )  # record/1430017
 
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     expected = [
         {
@@ -582,7 +581,7 @@ def test_series_number_from_411__n():
         '</datafield>'
     )  # record/1447029
 
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     expected = [
         {
@@ -602,7 +601,7 @@ def test_series_and_series_number_from_411__a_n():
         '</record>'
     )  # record/1468357
 
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     expected = [
         {
@@ -626,7 +625,7 @@ def test_series_and_series_number_from_411__a_n_and_411_a():
         '</record>'
     )  # record/1404073
 
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     expected = [
         {
@@ -653,7 +652,7 @@ def test_series_and_series_number_from_411__a_n_and_411_n():
         '</record>'
     )  # record/963769
 
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     expected = [
         {
@@ -678,7 +677,7 @@ def test_series_and_series_number_from_double_411_a_n():
         '</record>'
     )  # record/974856
 
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     expected = [
         {
@@ -707,7 +706,7 @@ def test_series_and_series_number_from_411_n_and_411_a_n():
         '</record>'
     )  # record/963914
 
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     expected = [
         {
@@ -730,7 +729,7 @@ def test_series_and_series_number_from_411_n_and_411_a():
         '</record>'
     )  # record/972145
 
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     expected = [
         {
@@ -753,7 +752,7 @@ def test_series_from_double_411__a():
         '</record>'
     )  # record/964177
 
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     expected = [
         {
@@ -779,7 +778,7 @@ def test_series_and_series_number_from_411_a_and_411_a_n():
         '</record>'
     )  # record/964448
 
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     expected = [
         {
@@ -806,7 +805,7 @@ def test_series_and_series_number_from_411__a_n_and_411_a():
         '</record>'
     )  # record/980229
 
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     expected = [
         {
@@ -832,6 +831,6 @@ def test_short_description_from_520__a():
             'value': u'QNP2015 is the Seventh International Conference on Quarks and Nuclear Physics. It is anticipated that QCD practitioners, both experimentalists and theorists, will gather at the Universidad Técnica Federico Santa María, in Valparaíso, Chile during the week of March 2, 2015 to present and discuss the latest advances in the field. The following topics will be covered: quarks and gluons content of nucleons and nuclei, hadron spectroscopy, non-perturbative methods in QCD (including lattice calculations), effective field theories, nuclear matter under extreme conditions and nuclear medium. Participants should register at the conference website https://indico.cern.ch/event/304663/',
         }
     ]
-    result = clean_record(conferences.do(create_record(snippet)))
+    result = conferences.do(create_record(snippet))
 
     assert expected == result['short_description']
