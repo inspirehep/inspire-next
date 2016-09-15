@@ -28,6 +28,7 @@ import json
 
 from inspirehep.utils.record import get_title
 from inspirehep.modules.search import LiteratureSearch
+from inspirehep.modules.relations.api import LiteratureRelationsSearch
 
 
 class ImpactGraphSerializer(object):
@@ -43,74 +44,15 @@ class ImpactGraphSerializer(object):
         :param links_factory: Factory function for the link generation,
                               which are added to the response.
         """
-        out = {}
+
+        # Get reference and citation info
+        summary = LiteratureRelationsSearch.get_impact_graph_summary(
+            record['control_number']
+        )
 
         # Add information about current record
-        out['inspire_id'] = record['control_number']
-        out['title'] = get_title(record)
-        out['year'] = record['earliest_date'].split('-')[0]
+        summary['inspire_id'] = record['control_number']
+        summary['title'] = get_title(record)
+        summary['year'] = record['earliest_date'].split('-')[0]
 
-        # Get citations
-        citations = []
-
-        record_citations = LiteratureSearch().query_from_iq(
-            'refersto:' + record['control_number']
-        ).params(
-            size=9999,
-            _source=[
-                'control_number',
-                'citation_count',
-                'titles',
-                'earliest_date'
-            ]
-        ).execute().hits
-
-        for citation in record_citations:
-            try:
-                citation_count = citation.citation_count
-            except AttributeError:
-                citation_count = 0
-            citations.append({
-                "inspire_id": citation['control_number'],
-                "citation_count": citation_count,
-                "title": get_title(citation.to_dict()),
-                "year": citation['earliest_date'].split('-')[0]
-            })
-
-        out['citations'] = citations
-
-        # Get references
-        record_references = record.get('references', [])
-        references = []
-
-        reference_recids = [
-            ref['recid'] for ref in record_references if ref.get('recid')
-        ]
-
-        if reference_recids:
-            record_references = LiteratureSearch().query_from_iq(
-                ' OR '.join('recid:' + str(ref) for ref in reference_recids)
-            ).params(
-                _source=[
-                    'control_number',
-                    'citation_count',
-                    'titles',
-                    'earliest_date'
-                ]
-            ).execute().hits
-
-            for reference in record_references:
-                try:
-                    citation_count = reference.citation_count
-                except AttributeError:
-                    citation_count = 0
-                references.append({
-                    "inspire_id": reference['control_number'],
-                    "citation_count": citation_count,
-                    "title": get_title(reference.to_dict()),
-                    "year": reference['earliest_date'].split('-')[0]
-                })
-
-        out['references'] = references
-
-        return json.dumps(out)
+        return json.dumps(summary)

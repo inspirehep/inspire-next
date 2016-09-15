@@ -81,7 +81,9 @@ install_requires = [
     'html5lib<1.0b9',
     'SQLAlchemy>=1.0.14,<1.1',
     'nameparser>=0.4.0',
-    'iso8601>=0.1.11'
+    'iso8601>=0.1.11',
+    'neo4j-driver',
+    'frozendict',
 ]
 
 tests_require = [
@@ -188,6 +190,7 @@ setup(
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'inspire_warnings = inspirehep.modules.warnings:INSPIREWarnings',
+            'relations = inspirehep.modules.relations:INSPIRERelations'
         ],
         'invenio_base.apps': [
             'inspire_fixtures = inspirehep.modules.fixtures:INSPIREFixtures',
@@ -203,6 +206,7 @@ setup(
             'crossref = inspirehep.modules.crossref:CrossRef',
             'inspire_orcid = inspirehep.modules.orcid:INSPIREOrcid',
             'inspire_disambiguation = inspirehep.modules.disambiguation:InspireDisambiguation',
+            'relations = inspirehep.modules.relations:INSPIRERelations'
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
