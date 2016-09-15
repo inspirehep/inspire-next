@@ -25,12 +25,13 @@ from __future__ import absolute_import, division, print_function
 import os
 import pkg_resources
 
+import mock
 import pytest
 
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hepnames import hepnames2marc, hepnames
-from inspirehep.dojson.utils import clean_record, get_recid_from_ref
+from inspirehep.dojson.utils import clean_record
 
 
 @pytest.fixture
@@ -55,16 +56,196 @@ def test_dates(marcxml_to_json, json_to_marc):
     pass
 
 
-def test_experiments(marcxml_to_json, json_to_marc):
+EXPERIMENTS_DATA = [
+    [
+        'current_curated',
+        '''
+        <datafield tag="693" ind1=" " ind2=" ">
+            <subfield code="d">2020</subfield>
+            <subfield code="e">CERN-ALPHA</subfield>
+            <subfield code="0">00001</subfield>
+            <subfield code="s">2014</subfield>
+            <subfield code="z">current</subfield>
+        </datafield>
+        ''',
+        [{
+            'curated_relation': True,
+            'current': True,
+            'end_year': 2020,
+            'name': 'CERN-ALPHA',
+            'record': 'mocked_recid_00001',
+            'start_year': 2014,
+        }],
+        [{
+            '0': 1,
+            'd': 2020,
+            'e': 'CERN-ALPHA',
+            's': 2014,
+            'z': 'current',
+        }],
+    ],
+    [
+        'notcurrent_curated',
+        '''
+        <datafield tag="693" ind1=" " ind2=" ">
+            <subfield code="e">SDSS</subfield>
+            <subfield code="0">00003</subfield>
+        </datafield>
+        ''',
+        [{
+            'curated_relation': True,
+            'current': False,
+            'name': 'SDSS',
+            'record': 'mocked_recid_00003',
+        }],
+        [{
+            '0': 3,
+            'd': None,
+            'e': 'SDSS',
+            's': None,
+        }],
+    ],
+    [
+        'notcurrent_notcurated',
+        '''
+        <datafield tag="693" ind1=" " ind2=" ">
+            <subfield code="e">NOTCURATED</subfield>
+        </datafield>
+        ''',
+        [{
+            'name': 'NOTCURATED',
+            'curated_relation': False,
+            'current': False,
+        }],
+        [{
+            'd': None,
+            'e': 'NOTCURATED',
+            's': None,
+        }],
+    ],
+    [
+        'repeated_experiment',
+        '''
+        <datafield tag="693" ind1=" " ind2=" ">
+            <subfield code="d">2020</subfield>
+            <subfield code="e">CERN-ALPHA</subfield>
+            <subfield code="0">00001</subfield>
+            <subfield code="s">2014</subfield>
+            <subfield code="z">current</subfield>
+        </datafield>
+        <datafield tag="693" ind1=" " ind2=" ">
+            <subfield code="d">2012</subfield>
+            <subfield code="e">CERN-ALPHA</subfield>
+            <subfield code="0">00001</subfield>
+            <subfield code="s">2010</subfield>
+        </datafield>
+        ''',
+        [
+            {
+                'curated_relation': True,
+                'current': True,
+                'end_year': 2020,
+                'name': 'CERN-ALPHA',
+                'record': 'mocked_recid_00001',
+                'start_year': 2014,
+            },
+            {
+                'curated_relation': True,
+                'current': False,
+                'end_year': 2012,
+                'name': 'CERN-ALPHA',
+                'record': 'mocked_recid_00001',
+                'start_year': 2010,
+            },
+        ],
+        [
+            {
+                '0': 1,
+                'd': 2020,
+                'e': 'CERN-ALPHA',
+                's': 2014,
+                'z': 'current',
+            },
+            {
+                '0': 1,
+                'd': 2012,
+                'e': 'CERN-ALPHA',
+                's': 2010,
+            },
+        ],
+    ],
+    [
+        'simultaneous_experiments',
+        '''
+        <datafield tag="693" ind1=" " ind2=" ">
+            <subfield code="d">2013</subfield>
+            <subfield code="e">FIRST-SIMULTANEOUS</subfield>
+            <subfield code="e">SECOND-SIMULTANEOUS</subfield>
+            <subfield code="0">00001</subfield>
+            <subfield code="0">00002</subfield>
+            <subfield code="s">2015</subfield>
+        </datafield>
+        ''',
+        [
+            {
+                'curated_relation': True,
+                'current': False,
+                'end_year': 2013,
+                'name': 'FIRST-SIMULTANEOUS',
+                'record': 'mocked_recid_00001',
+                'start_year': 2015,
+            },
+            {
+                'curated_relation': True,
+                'current': False,
+                'end_year': 2013,
+                'name': 'SECOND-SIMULTANEOUS',
+                'record': 'mocked_recid_00002',
+                'start_year': 2015
+            },
+        ],
+        [
+            {
+                '0': 1,
+                'd': 2013,
+                'e': 'FIRST-SIMULTANEOUS',
+                's': 2015,
+            },
+            {
+                '0': 2,
+                'd': 2013,
+                'e': 'SECOND-SIMULTANEOUS',
+                's': 2015,
+            },
+        ],
+    ],
+]
+
+
+@pytest.mark.parametrize(
+    'test_name,xml_snippet,expected_json,expected_marc',
+    EXPERIMENTS_DATA,
+    ids=[test_data[0] for test_data in EXPERIMENTS_DATA],
+)
+@mock.patch('inspirehep.dojson.hepnames.fields.bd1xx.get_recid_from_ref')
+@mock.patch('inspirehep.dojson.hepnames.fields.bd1xx.get_record_ref')
+def test_experiments(mock_get_record_ref, mock_get_recid_from_ref, test_name,
+                     xml_snippet, expected_json, expected_marc):
     """Test if experiments is created correctly."""
-    assert (marcxml_to_json['experiments'][1]['name'] ==
-            json_to_marc['693'][1]['e'])
-    assert (marcxml_to_json['experiments'][1]['start_year'] ==
-            json_to_marc['693'][1]['s'])
-    assert (marcxml_to_json['experiments'][1]['end_year'] ==
-            json_to_marc['693'][1]['d'])
-    assert (marcxml_to_json['experiments'][1]['status'] ==
-            json_to_marc['693'][1]['z'])
+    mock_get_record_ref.side_effect = \
+        lambda x, *_: x and 'mocked_recid_%s' % x
+    mock_get_recid_from_ref.side_effect = \
+        lambda x, *_: x and int(x.rsplit('_')[-1])
+
+    if not xml_snippet.strip().startswith('<record>'):
+        xml_snippet = '<record>%s</record>' % xml_snippet
+
+    json_data = clean_record(hepnames.do(create_record(xml_snippet)))
+    json_experiments = json_data['experiments']
+    marc_experiments = hepnames2marc.do(json_data)['693']
+
+    assert marc_experiments == expected_marc
+    assert json_experiments == expected_json
 
 
 def test_field_categories(marcxml_to_json, json_to_marc):

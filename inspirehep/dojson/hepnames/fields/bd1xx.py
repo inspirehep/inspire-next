@@ -393,48 +393,85 @@ def _curators_note2marc(self, key, value):
 
 
 @hepnames.over('experiments', '^693..')
-@utils.for_each_value
-def experiments(self, key, value):
+def experiments(self, key, values):
     """Information about experiments.
 
     Currently the ``id`` subfield stores the name of the experiment. It should
     be moved to storing id of the experiment as soon as experiments are
     available as records.
     """
-    try:
-        start_year = int(value.get('s'))
-    except (TypeError, ValueError):
-        start_year = None
-    try:
-        end_year = int(value.get('d'))
-    except (TypeError, ValueError):
-        end_year = None
+    # FIXME: change to use the flatten decorator once the new dojson version is
+    # out
 
-    return {
-        'id': value.get('i'),
-        'name': value.get('e'),
-        'start_year': start_year,
-        'end_year': end_year,
-        'status': value.get('z')
-    }
+    def _int_or_none(maybe_int):
+        try:
+            return int(maybe_int)
+        except (TypeError, ValueError):
+            return None
+
+    def _get_json_experiments(marc_dict):
+        start_year = _int_or_none(marc_dict.get('s'))
+        end_year = _int_or_none(marc_dict.get('d'))
+
+        names = force_force_list(marc_dict.get('e'))
+        recids = force_force_list(marc_dict.get('0'))
+        name_recs = zip(names, recids or [None] * len(names))
+
+        for name, recid in name_recs:
+            record = get_record_ref(recid, 'experiments')
+            yield {
+                'curated_relation': record is not None,
+                'current': (
+                    True if marc_dict.get('z', '').lower() == 'current'
+                    else False
+                ),
+                'end_year': end_year,
+                'name': name,
+                'record': record,
+                'start_year': start_year,
+            }
+
+    values = force_force_list(values)
+    json_experiments = self.get('experiments', [])
+    for experiment in values:
+        if experiment:
+            json_experiments.extend(_get_json_experiments(experiment))
+
+    return json_experiments
 
 
 @hepnames2marc.over('693', '^experiments$')
-@utils.for_each_value
-def experiments2marc(self, key, value):
+def experiments2marc(self, key, values):
     """Information about experiments.
 
     Currently the ``id`` subfield stores the name of the experiment. It should
     be moved to storing id of the experiment as soon as experiments are
     available as records.
     """
-    return {
-        'i': value.get('id'),
-        'e': value.get('name'),
-        's': value.get('start_year'),
-        'd': value.get('end_year'),
-        'z': value.get('status')
-    }
+    # FIXME: change to use the flatten decorator once the new dojson version is
+    # out
+
+    def _get_marc_experiment(json_dict):
+        marc = {
+            'e': json_dict.get('name'),
+            's': json_dict.get('start_year'),
+            'd': json_dict.get('end_year'),
+        }
+        status = 'current' if json_dict.get('current') else None
+        if status:
+            marc['z'] = status
+        recid = get_recid_from_ref(json_dict.get('record', None))
+        if recid:
+            marc['0'] = recid
+        return marc
+
+    marc_experiments = self.get('693', [])
+    values = force_force_list(values)
+    for experiment in values:
+        if experiment:
+            marc_experiments.append(_get_marc_experiment(experiment))
+
+    return marc_experiments
 
 
 @hepnames.over('advisors', '^701..')
