@@ -26,7 +26,7 @@ from __future__ import absolute_import, division, print_function
 
 from dojson import Overdo
 
-from ..schema import SchemaOverdo
+from ..model import SchemaOverdo
 
 
 hepnames = SchemaOverdo(schema="authors.json")

@@ -22,6 +22,6 @@
 
 """Models related to INSPIRE depositions."""
 
-from inspirehep.dojson.schema import SchemaOverdo
+from inspirehep.dojson.model import SchemaOverdo
 
 literature = SchemaOverdo(schema="hep.json")

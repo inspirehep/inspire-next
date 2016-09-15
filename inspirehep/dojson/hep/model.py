@@ -28,7 +28,7 @@ from dojson import Overdo
 
 from inspirehep.utils.helpers import force_force_list
 
-from ..schema import SchemaOverdo
+from ..model import SchemaOverdo
 from ..utils import force_single_element, get_record_ref
 
 

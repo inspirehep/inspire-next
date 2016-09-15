@@ -24,7 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from ..schema import SchemaOverdo
+from ..model import SchemaOverdo
 
 
 jobs = SchemaOverdo(schema="jobs.json")
