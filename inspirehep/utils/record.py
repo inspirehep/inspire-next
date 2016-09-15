@@ -26,6 +26,8 @@ import re
 
 from invenio_pidstore.models import PersistentIdentifier
 
+from inspirehep.modules.pidstore.providers import InspireRecordIdProvider
+
 SPLIT_KEY_PATTERN = re.compile('\.|\[')
 
 
@@ -107,6 +109,19 @@ def get_value(record, key, default=None):
         except KeyError:
             return default
     return value
+
+
+def get_record_pid_type(record):
+    """Get the record's ``pid_type``.
+
+    Return the record's ``pid_type`` (e.g. literature or jobs)
+    from the record's ``$schema``.
+    """
+    schema = record.get('$schema')
+    if schema:
+        return InspireRecordIdProvider.schema_to_pid_type(schema)
+
+    raise TypeError('This record has no schema.')
 
 
 def is_submitted_but_not_published(record):
