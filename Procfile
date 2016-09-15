@@ -26,3 +26,4 @@ worker: celery worker -E -A inspirehep.celery --loglevel=INFO --workdir="${VIRTU
 workermon: celery flower -A inspirehep.celery
 # mathoid: node_modules/mathoid/server.js -c mathoid.config.yaml
 indexer: elasticsearch -Dcluster.name="inspire" -Ddiscovery.zen.ping.multicast.enabled=false -Dpath.data="$VIRTUAL_ENV/var/data/elasticsearch"  -Dpath.logs="$VIRTUAL_ENV/var/log/elasticsearch"
+graph_db: neo4j console

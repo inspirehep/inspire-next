@@ -28,6 +28,7 @@ from __future__ import absolute_import, print_function
 
 from invenio_records_rest.serializers.response import search_responsify
 
+from .citationsummary_serializer import CitationSummarySerializer
 from .impactgraph_serializer import ImpactGraphSerializer
 from .json_literature import LiteratureJSONBriefSerializer
 from .bibtex_serializer import BIBTEXSerializer
@@ -81,3 +82,13 @@ cvformattext_v1_search = search_responsify(cvformattext_v1,
 impactgraph_v1 = ImpactGraphSerializer()
 impactgraph_v1_response = record_responsify_nocache(impactgraph_v1,
                                                     'application/x-impact.graph+json')
+
+citationsummaryconferences_v1 = CitationSummarySerializer('conferences')
+citationsummaryconferences_v1_response = record_responsify_nocache(
+        citationsummaryconferences_v1, 'application/x-citation.summary+json')
+citationsummaryinstitutions_v1 = CitationSummarySerializer('institutions')
+citationsummaryinstitutions_v1_response = record_responsify_nocache(
+        citationsummaryinstitutions_v1, 'application/x-citation.summary+json')
+citationsummaryauthors_v1 = CitationSummarySerializer('authors')
+citationsummaryauthors_v1_response = record_responsify_nocache(
+        citationsummaryauthors_v1, 'application/x-citation.summary+json')
