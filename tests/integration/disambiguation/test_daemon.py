@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
 from mock import patch
 
 from invenio_pidstore.models import PersistentIdentifier
@@ -31,6 +32,7 @@ from inspirehep.modules.disambiguation.models import DisambiguationRecord
 from inspirehep.utils.record_getter import get_es_record_by_uuid
 
 
+@pytest.mark.xfail(reason='receivers were detached from signals')
 def test_count_phonetic_block_dispatched(small_app):
     """Count if two phonetic blocks were dispatched."""
     from inspirehep.modules.disambiguation.tasks import disambiguation_daemon
