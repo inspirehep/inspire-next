@@ -22,11 +22,7 @@
 
 """Receivers to catch new publications and record updates."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-)
+from __future__ import absolute_import, division, print_function
 
 from invenio_indexer.signals import before_record_index
 from invenio_records.signals import after_record_insert
@@ -92,7 +88,6 @@ def _needs_beard_reprocessing(authors_before, authors_after):
         return True
 
 
-@after_record_insert.connect
 def append_new_record_to_queue(sender, *args, **kwargs):
     """Append a new record to the queue.
 
@@ -108,7 +103,6 @@ def append_new_record_to_queue(sender, *args, **kwargs):
         beard_record.save()
 
 
-@before_record_index.connect
 def append_updated_record_to_queue(sender, json, record, index, doc_type):
     """Append record after an update to the queue.
 

@@ -22,11 +22,7 @@
 
 """Test *helpers* (_method_name(foo, bar):) from logic.py"""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-)
+from __future__ import absolute_import, division, print_function
 
 from inspirehep.modules.disambiguation.logic import (
     _check_if_claimed,

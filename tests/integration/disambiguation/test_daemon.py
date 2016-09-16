@@ -20,28 +20,22 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-)
+from __future__ import absolute_import, division, print_function
 
+import pytest
 from mock import patch
 
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client as es
 
-from inspirehep.modules.disambiguation.models import (
-    DisambiguationRecord,
-)
+from inspirehep.modules.disambiguation.models import DisambiguationRecord
 from inspirehep.utils.record_getter import get_es_record_by_uuid
 
 
+@pytest.mark.xfail(reason='receivers were detached from signals')
 def test_count_phonetic_block_dispatched(small_app):
     """Count if two phonetic blocks were dispatched."""
-    from inspirehep.modules.disambiguation.tasks import (
-        disambiguation_daemon,
-    )
+    from inspirehep.modules.disambiguation.tasks import disambiguation_daemon
 
     # Check if the queue has three records.
     assert DisambiguationRecord.query.count() == 3
@@ -87,9 +81,7 @@ def test_count_phonetic_block_dispatched(small_app):
 
 def test_check_if_daemon_has_cleaned_the_queue(small_app):
     """Check if the daemon has cleaned up the queue."""
-    from inspirehep.modules.disambiguation.tasks import (
-        disambiguation_daemon,
-    )
+    from inspirehep.modules.disambiguation.tasks import disambiguation_daemon
 
     disambiguation_daemon()
 

@@ -77,8 +77,7 @@ def small_app():
         # Imports must be local, otherwise tasks default to pickle serializer.
         from inspirehep.modules.migrator.tasks import migrate
         from inspirehep.modules.fixtures.files import init_all_storage_paths
-        from inspirehep.modules.fixtures.users import \
-            init_users_and_permissions
+        from inspirehep.modules.fixtures.users import init_users_and_permissions
 
         db.drop_all()
         db.create_all()
@@ -91,8 +90,7 @@ def small_app():
         init_all_storage_paths()
         init_users_and_permissions()
 
-        migrate('./inspirehep/demosite/data/demo-records-small.xml',
-                wait_for_results=True)
+        migrate('./inspirehep/demosite/data/demo-records-small.xml', wait_for_results=True)
         es.indices.refresh('records-hep')
 
         yield app
