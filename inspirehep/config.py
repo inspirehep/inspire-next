@@ -284,8 +284,10 @@ RECORDS_REST_ENDPOINTS = dict(
                 ':cvformattext_v1_response'),
             'application/x-impact.graph+json': (
                 'inspirehep.modules.records.serializers'
-                ':impactgraph_v1_response'
-            ),
+                ':impactgraph_v1_response'),
+            'text/x-citesummary+csv': (
+                'inspirehep.modules.records.serializers'
+                ':citesummary_response'),
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
