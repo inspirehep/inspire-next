@@ -106,32 +106,15 @@
             "description": "Contains name information.",
             "properties": {
                 "numeration": {
-                    "enum": [
-                        "",
-                        "Jr.",
-                        "Sr.",
-                        "I",
-                        "II",
-                        "III",
-                        "IV",
-                        "VI",
-                        "VII",
-                        "VIII"
-                    ],
                     "type": "string"
                 },
                 "preferred_name": {
                     "type": "string"
                 },
                 "title": {
-                    "enum": [
-                        "",
-                        "Sir"
-                    ],
                     "type": "string"
                 },
                 "value": {
-                    "format": ".+, .+",
                     "type": "string"
                 }
             },
