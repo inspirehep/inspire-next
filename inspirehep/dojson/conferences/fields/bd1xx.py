@@ -29,6 +29,7 @@ import six
 from dojson import utils
 
 from ..model import conferences
+from ...utils import force_single_element
 from ...utils.geo import parse_conference_address
 
 from inspirehep.utils.helpers import force_force_list
@@ -121,33 +122,31 @@ def note(self, key, value):
 @conferences.over('series', '^411')
 def series(self, key, value):
     """Conference series."""
-    series = self.setdefault('series', [])
+    def _get_name(value):
+        return force_single_element(value.get('a'))
 
-    n_value = value.get('n', '')
-    a_value = value.get('a')
-    series_number = int(n_value) if n_value.isdigit() else None
+    def _get_number(value):
+        n_value = force_single_element(value.get('n'))
+        if n_value and n_value.isdigit():
+            return int(n_value)
 
-    if (series_number and not a_value) or (not series_number and a_value):
-        """The code below is only a workaround.
-        Using doJSON, you cannot get all 411s of an XML in one go
-        (only one at a time) which makes it hard to couple `a` and `n`
-        refering to the same series but stored inside two 411s.
-        """
+    def _last_is_incomplete(series, key):
+        return series and not series[-1].get(key)
 
-        if series:
-            last_series = series[-1]
+    series = self.get('series', [])
 
-            if series_number and not last_series.get('number'):
-                last_series['number'] = series_number
-                return series
-            elif a_value and not last_series.get('name'):
-                last_series['name'] = a_value
-                return series
+    name = _get_name(value)
+    number = _get_number(value)
 
-    series.append({
-        'name': a_value,
-        'number': series_number
-    })
+    if name and number is None and _last_is_incomplete(series, 'name'):
+        series[-1]['name'] = name
+    elif number and name is None and _last_is_incomplete(series, 'number'):
+        series[-1]['number'] = number
+    else:
+        series.append({
+            'name': name,
+            'number': number,
+        })
 
     return series
 

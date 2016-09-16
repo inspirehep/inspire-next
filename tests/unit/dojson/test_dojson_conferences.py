@@ -581,14 +581,9 @@ def test_series_number_from_411__n():
         '</datafield>'
     )  # record/1447029
 
-    expected = [
-        {
-            'number': 7,
-        },
-    ]
     result = conferences.do(create_record(snippet))
 
-    assert expected == result['series']
+    assert 'series' not in result
 
 
 def test_series_name_and_number_from_411__a_n():
@@ -690,7 +685,6 @@ def test_double_series_name_and_number_from_double_411__a_n():
     assert expected == result['series']
 
 
-@pytest.mark.xfail(reason='No support in DoJSON for post-processing functions')
 def test_series_name_and_number_from_411__n_and_411__a_n():
     snippet = (
         '<record>'
