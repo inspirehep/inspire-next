@@ -31,7 +31,6 @@ from inspirehep.dojson.hepnames import hepnames
 from inspirehep.dojson.institutions import institutions
 from inspirehep.dojson.jobs import jobs
 from inspirehep.dojson.journals import journals
-from inspirehep.dojson.utils import clean_record
 
 from inspirehep.utils.helpers import force_force_list
 
@@ -39,20 +38,20 @@ from inspirehep.utils.helpers import force_force_list
 def overdo_marc_dict(record):
     """Convert MARC Groupable Ordered Dict into JSON."""
     if _collection_in_record(record, 'institution'):
-        return clean_record(institutions.do(record))
+        return institutions.do(record)
     elif _collection_in_record(record, 'experiment'):
-        return clean_record(experiments.do(record))
+        return experiments.do(record)
     elif _collection_in_record(record, 'journals'):
-        return clean_record(journals.do(record))
+        return journals.do(record)
     elif _collection_in_record(record, 'hepnames'):
-        return clean_record(hepnames.do(record))
+        return hepnames.do(record)
     elif _collection_in_record(record, 'job') or \
             _collection_in_record(record, 'jobhidden'):
-        return clean_record(jobs.do(record))
+        return jobs.do(record)
     elif _collection_in_record(record, 'conferences'):
-        return clean_record(conferences.do(record))
+        return conferences.do(record)
     else:
-        return clean_record(hep.do(record))
+        return hep.do(record)
 
 
 def _collection_in_record(record, collection):

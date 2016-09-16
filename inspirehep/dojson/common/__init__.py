@@ -20,4 +20,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+"""DoJSON common rules."""
+
 from __future__ import absolute_import, division, print_function

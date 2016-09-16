@@ -223,8 +223,7 @@ def update():
                 r"\<record\>.*\<\/record\>", re.MULTILINE + re.DOTALL)
             xml_content = record_regex.search(xml.content).group()
 
-            data = strip_empty_values(
-                hepnames.do(create_record(xml_content)))  # .encode("utf-8")
+            data = hepnames.do(create_record(xml_content))  # .encode("utf-8")
             convert_for_form(data)
         except requests.exceptions.RequestException:
             pass

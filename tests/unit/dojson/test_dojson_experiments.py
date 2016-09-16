@@ -25,7 +25,6 @@ from __future__ import absolute_import, division, print_function
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.experiments import experiments
-from inspirehep.dojson.utils import clean_record
 
 
 def test_contact_details_from_marcxml_270_single_p_single_m():
@@ -44,7 +43,7 @@ def test_contact_details_from_marcxml_270_single_p_single_m():
             'email': 'lindner@mpi-hd.mpg.de',
         },
     ]
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['contact_details']
 
@@ -66,7 +65,7 @@ def test_contact_details_from_marcxml_270_double_p_single_m():
             'email': 'lindner@mpi-hd.mpg.de',
         },
     ]
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['contact_details']
 
@@ -88,7 +87,7 @@ def test_contact_details_from_marcxml_270_single_p_double_m():
             'name': 'Manfred Lindner'
         },
     ]
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['contact_details']
 
@@ -115,7 +114,7 @@ def test_contact_details_from_multiple_marcxml_270():
             'name': 'Wynton Marsalis',
         },
     ]
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['contact_details']
 
@@ -134,7 +133,7 @@ def test_experiment_names_from_marcxml_119():
             'title': 'CERN-ALPHA',
         },
     ]
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['experiment_names']
 
@@ -150,7 +149,7 @@ def test_experiment_names_and_affiliations_from_marcxml_119():
         '</record>'
     )  # record/1108206
 
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert result['experiment_names'] == [{'title': 'CERN-ALPHA'}]
     assert result['affiliations'] == [
@@ -183,7 +182,7 @@ def test_experiment_names_and_affiliations_from_marcxml_multiple_119():
         '</record>'
     )  # record/1228417
 
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert result['experiment_names'] == [{'title': 'LATTICE-UKQCD'}]
     assert result['affiliations'] == [
@@ -219,7 +218,7 @@ def test_titles_from_marcxml_245():
             'title': 'The ALPHA experiment',
         },
     ]
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['titles']
 
@@ -238,7 +237,7 @@ def test_title_variants_from_marcxml_419():
             'title': 'ALPHA',
         },
     ]
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['title_variants']
 
@@ -263,7 +262,7 @@ def test_multiple_title_variants_from_marcxml_419():
             'title': 'CERN-NA-048-3',
         },
     ]
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['title_variants']
 
@@ -278,7 +277,7 @@ def test_description_from_520__a():
     expected = [
         'The Muon Accelerator Program (MAP) was created in 2010 to unify the DOE supported R&D in the U.S. aimed at developing the concepts and technologies required for Muon Colliders and Neutrino Factories. These muon based facilities have the potential to discover and explore new exciting fundamental physics, but will require the development of demanding technologies and innovative concepts. The MAP aspires to prove the feasibility of a Muon Collider within a few years, and to make significant contributions to the international effort devoted to developing Neutrino Factories. MAP was formally approved on March 18, 2011.'
     ]
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['description']
 
@@ -307,7 +306,7 @@ def test_description_from_multiple_520__a():
         'iii) DAMA/R&D, devoted to tests on prototypes and to small scale experiments, mainly on the investigations of double beta decay modes in various isotopes. iv) the second generation DAMA/LIBRA set-up (about 250 kg highly radiopure NaI(Tl)) in operation since March 2003',
         'v) the low background DAMA/Ge detector mainly devoted to sample measurements: in some measurements on rare processes the low-background Germanium detectors of the LNGS facility are also used. Moreover, a third generation R&D is in progress towards a possible 1 ton set-up, DAMA proposed in 1996. In particular, the DAMA/NaI and the DAMA/LIBRA set-ups have investigated the presence of Dark Matter particles in the galactic halo by exploiting the Dark Matter annual modulation signature.',
     ]
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['description']
 
@@ -334,7 +333,7 @@ def test_spokespersons_from_702__a_i_z():
             'curated_relation': False,
         },
     ]
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['spokespersons']
 
@@ -377,7 +376,7 @@ def test_spokespersons_from_double_702__a_i():
             'curated_relation': False,
         },
     ]
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['spokespersons']
 
@@ -389,7 +388,7 @@ def test_collaboration_from_710__g():
         '</datafield>'
     )  # record/1108199
 
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert result['collaboration'] == 'DarkSide'
     assert 'collaboration_alternative_names' not in result
@@ -407,7 +406,7 @@ def test_collaboration_from_double_710__g():
         '</record>'
     )  # record/1110641
 
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert result['collaboration'] == 'BooNE'
     assert result['collaboration_alternative_names'] == ['MiniBooNE']
@@ -430,7 +429,7 @@ def test_related_experiments_from_510__a_w_0():
             'curated_relation': True,
         },
     ]
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['related_experiments']
 
@@ -465,7 +464,7 @@ def test_related_experiments_from_double_510__a_w_0():
             'curated_relation': True,
         },
     ]
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['related_experiments']
 
@@ -484,7 +483,7 @@ def test_date_started_from_046__q_s_and_046__r():
     )  # record/1318099
 
     expected = '2009-11-30'
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['date_started']
 
@@ -504,7 +503,7 @@ def test_date_started_from_046__q_and_046__r_and_046__x():
         '</record>'
     )  # record/1108188
 
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert 'date_started' not in result
 
@@ -524,7 +523,7 @@ def test_date_started_and_date_completed_from_046():
         '</record>'
     )  # record/1108324
 
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert result['date_started'] == '1996'
     assert result['date_completed'] == '2002'
@@ -538,6 +537,6 @@ def test_accelerator_from_693__a():
     )  # record/1108206
 
     expected = 'AD'
-    result = clean_record(experiments.do(create_record(snippet)))
+    result = experiments.do(create_record(snippet))
 
     assert expected == result['accelerator']

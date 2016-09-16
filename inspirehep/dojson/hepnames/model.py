@@ -20,11 +20,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""institutions model definition."""
+"""DoJSON model definition for HEPNames."""
+
+from __future__ import absolute_import, division, print_function
 
 from dojson import Overdo
 
-from ..schema import SchemaOverdo
+from ..model import FilterOverdo, add_schema, clean_record
 
-hepnames = SchemaOverdo(schema="authors.json")
+
+filters = [
+    add_schema('authors.json'),
+    clean_record,
+]
+
+hepnames = FilterOverdo(filters=filters)
 hepnames2marc = Overdo()

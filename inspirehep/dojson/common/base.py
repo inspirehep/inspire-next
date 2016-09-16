@@ -27,6 +27,8 @@ from __future__ import absolute_import, division, print_function
 from dojson import utils
 from dojson.errors import IgnoreKey
 
+from inspirehep.utils.helpers import force_force_list
+
 from ..conferences.model import conferences
 from ..experiments.model import experiments
 from ..hep.model import hep, hep2marc
@@ -40,8 +42,6 @@ from ..utils import (
     get_recid_from_ref,
     get_record_ref,
 )
-
-from inspirehep.utils.helpers import force_force_list
 
 
 def self_url(index):

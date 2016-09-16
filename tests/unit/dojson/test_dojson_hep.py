@@ -32,7 +32,7 @@ from dojson import utils
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hep import hep, hep2marc
-from inspirehep.dojson.utils import clean_record, get_recid_from_ref
+from inspirehep.dojson.utils import get_recid_from_ref
 
 
 @pytest.fixture
@@ -99,7 +99,7 @@ def test_doi_but_should_be_hdl_from_0247_a():
         'value': '2027.42/97915',
         'type': 'HDL',
     }]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert result.get('persistent_identifiers', []) == expected
     assert result.get('dois', []) == []
@@ -114,7 +114,7 @@ def test_invalid_doi_but_should_be_hdl_from_0247_a():
     )
 
     expected = []
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert result.get('dois', []) == expected
 
@@ -141,7 +141,7 @@ def test_dois_from_0247__a_ignores_curator_source():
             'value': '10.1590/S1806-11172008005000006',
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['dois']
 
@@ -194,7 +194,7 @@ def test_external_system_numbers_from_970__double_a():
             'value': 'SPIRES-9949933',
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['external_system_numbers']
 
@@ -207,7 +207,7 @@ def test_simple_language():
     )
 
     expected = ["it"]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['languages']
 
@@ -221,7 +221,7 @@ def test_multiple_languages_same_field():
     )
 
     expected = ["it", "en"]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['languages']
 
@@ -239,7 +239,7 @@ def test_multiple_languages():
     )
 
     expected = ["it", "en"]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['languages']
 
@@ -252,7 +252,7 @@ def test_crappy_language():
     )
 
     expected = []
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result.get('languages', [])
 
@@ -265,7 +265,7 @@ def test_languages_single_value():
     )
 
     expected = ['ru', 'en']
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['languages']
 
@@ -284,7 +284,7 @@ def test_external_system_numbers_from_035__a():
             'obsolete': False,
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['external_system_numbers']
 
@@ -304,7 +304,7 @@ def test_external_system_numbers_from_035__a_9():
             'obsolete': False,
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['external_system_numbers']
 
@@ -327,7 +327,7 @@ def test_external_system_numbers_from_035__a_d_h_m_9():
             'obsolete': False,
         }
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['external_system_numbers']
 
@@ -415,7 +415,7 @@ def test_authors_from_100__a_i_u_x_y():
             },
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -474,7 +474,7 @@ def test_authors_from_100__a_u_w_y_and_700_a_u_w_x_y():
             },
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -574,7 +574,7 @@ def test_authors_from_100__a_i_u_x_y_z_and_double_700__a_u_w_x_y_z():
             },
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -603,7 +603,7 @@ def test_authors_from_100__a_v_m_w_y():
             ],
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -647,7 +647,7 @@ def test_authors_from_100__a_():
             ],
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -681,7 +681,7 @@ def test_authors_from_700__a_j_v_m_w_y():
             ],
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -723,7 +723,7 @@ def test_authors_from_700__double_a_u_w_x_y_z(warning):
             },
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
     warning.assert_called_with(
@@ -761,7 +761,7 @@ def test_authors_from_700__double_u():
             'curated_relation': False,
         }
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -800,7 +800,7 @@ def test_authors_from_100__a_j_m_u_w_y_z():
             ],
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -850,7 +850,7 @@ def test_authors_from_100__a_v_w_x_y_and_100_a_v_w_y():
             ],
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -890,7 +890,7 @@ def test_authors_from_100__a_j_m_u_v_w_y():
             ],
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -927,7 +927,7 @@ def test_authors_from_100__a_u_x_w_y_z_with_malformed_x():
             ],
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -970,7 +970,7 @@ def test_authors_from_100__a_double_m_double_u_w_y_z():
             ],
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -1075,7 +1075,7 @@ def test_hidden_notes_from_595__a_9():
             'value': 'Title changed from ALLCAPS',
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['hidden_notes']
 
@@ -1099,7 +1099,7 @@ def test_hidden_notes_from_595__double_a_9():
             'value': 'no affiliation (not clear pn the fulltext)',
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['hidden_notes']
 
@@ -1133,7 +1133,7 @@ def test_hidden_notes_from_595__a_9_and_595__double_a_9():
             'value': 'no affiliation (not clear pn the fulltext)',
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['hidden_notes']
 
@@ -1197,7 +1197,7 @@ def test_thesis_from_502__a_c_d_z():
             },
         ],
     }
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['thesis']
 
@@ -1449,7 +1449,7 @@ def test_accelerator_experiments(mock_get_record_ref, mock_get_recid_from_ref,
     if not xml_snippet.strip().startswith('<record>'):
         xml_snippet = '<record>%s</record>' % xml_snippet
 
-    json_data = clean_record(hep.do(create_record(xml_snippet)))
+    json_data = hep.do(create_record(xml_snippet))
     json_experiments = json_data['accelerator_experiments']
     marc_experiments = hep2marc.do(json_data)['693']
 
@@ -1540,7 +1540,7 @@ def test_authors_supervisors_from_701__a_u():
             'full_name': 'Garutti, Erika',
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -1575,7 +1575,7 @@ def test_authors_supervisors_from_701__a_double_u():
             'full_name': 'Mnich, Joachim',
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -1650,7 +1650,7 @@ def test_authors_supervisors_from_multiple_701():
             'full_name': 'Pohl, Martin',
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -1741,7 +1741,7 @@ def test_authors_supervisors_from_multiple_701_with_z():
             'full_name': 'Pohl, Martin',
         },
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -1794,7 +1794,7 @@ def test_authors_supervisors_from_701__double_a_u_z():
             'full_name': 'Kubota, Yuichi',
         }
     ]
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['authors']
 
@@ -1832,7 +1832,7 @@ def test_mashed_publication_info_from_773():
             '$ref': 'http://localhost:5000/api/conferences/978924',
         },
     }
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['publication_info'][0]
 
@@ -2020,7 +2020,7 @@ def test_acquisition_source_field():
         'date': "2015-12-10",
         'submission_number': "339830",
     }
-    result = clean_record(hep.do(create_record(snippet)))
+    result = hep.do(create_record(snippet))
 
     assert expected == result['acquisition_source']
 

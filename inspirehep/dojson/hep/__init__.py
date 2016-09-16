@@ -20,6 +20,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+"""DoJSON rules for HEP."""
+
+from __future__ import absolute_import, division, print_function
+
 from .fields import (
     bd01x09x,
     bd1xx,
@@ -34,8 +38,5 @@ from .fields import (
     bd84188x,
     bd90x99x,
 )
-
 from .model import hep, hep2marc
 from .receivers import *
-
-__all__ = ('hep', 'hep2marc')

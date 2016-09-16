@@ -22,6 +22,12 @@
 
 """Models related to INSPIRE depositions."""
 
-from inspirehep.dojson.schema import SchemaOverdo
+from inspirehep.dojson.model import FilterOverdo, add_schema, clean_record
 
-literature = SchemaOverdo(schema="hep.json")
+
+filters = [
+    add_schema('hep.json'),
+    clean_record,
+]
+
+literature = FilterOverdo(filters=filters)

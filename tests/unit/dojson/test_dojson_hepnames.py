@@ -30,7 +30,7 @@ import pytest
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hepnames import hepnames2marc, hepnames
-from inspirehep.dojson.utils import clean_record, get_recid_from_ref
+from inspirehep.dojson.utils import get_recid_from_ref
 
 
 @pytest.fixture
@@ -112,7 +112,7 @@ def test_ids_from_double_035__a_9():
             'value': 'H.Vogel.1',
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['ids']
 
@@ -131,7 +131,7 @@ def test_ids_from_035__a_9_with_orcid():
             'value': '0000-0001-6771-2174',
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['ids']
 
@@ -150,7 +150,7 @@ def test_ids_from_035__a_9_with_cern():
             'value': 'CERN-622961',
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['ids']
 
@@ -203,7 +203,7 @@ def test_ids_from_035__a_9_with_cern_malformed():
             'value': 'CERN-765559',
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['ids']
 
@@ -222,7 +222,7 @@ def test_ids_from_035__a_9_with_desy():
             'value': 'DESY-1001805',
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['ids']
 
@@ -241,7 +241,7 @@ def test_ids_from_035__a_9_with_wikipedia():
             'value': 'Guido_Tonelli',
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['ids']
 
@@ -260,7 +260,7 @@ def test_ids_from_035__a_9_with_slac():
             'value': 'SLAC-218626',
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['ids']
 
@@ -278,7 +278,7 @@ def test_ids_from_035__a_with_bai():
             'value': 'Jian.Long.Han.1',
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['ids']
 
@@ -307,7 +307,7 @@ def test_ids_from_double_035__a_9_with_kaken():
             'value': 'KAKEN-70139070',
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['ids']
 
@@ -326,7 +326,7 @@ def test_ids_from_035__a_9_with_googlescholar():
             'value': 'Tnl-9KoAAAAJ',
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['ids']
 
@@ -345,7 +345,7 @@ def test_ids_from_035__a_9_with_viaf():
             'value': '34517183',
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['ids']
 
@@ -364,7 +364,7 @@ def test_ids_from_035__a_9_with_researcherid():
             'value': 'B-4717-2008',
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['ids']
 
@@ -383,7 +383,7 @@ def test_ids_from_035__a_9_with_scopus():
             'value': '7103280792',
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['ids']
 
@@ -395,7 +395,7 @@ def test_ids_from_035__9():
         '</datafield>'
     )  # record/edit/?ln=en#state=edit&recid=1474355&recrev=20160707223728
 
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert 'ids' not in result
 
@@ -442,7 +442,7 @@ def test_other_names_from_400__triple_a():
         'Josef Cohen, Hadar',
         'Cohen, Hadar Josef',
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['other_names']
 
@@ -476,7 +476,7 @@ def test_advisors_from_701__a_g_i():
             'curated_relation': True
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['advisors']
 
@@ -511,7 +511,7 @@ def test_positions_from_371__a():
             },
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['positions']
 
@@ -539,7 +539,7 @@ def test_positions_from_371__a_double_m_z():
             },
         }
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['positions']
 
@@ -568,7 +568,7 @@ def test_positions_from_371__a_m_r_z():
             '_rank': 'SENIOR',
         },
     ]
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['positions']
 
@@ -634,7 +634,7 @@ def test_acquisition_source_field():
         'date': "2015-12-10",
         'submission_number': "339830",
     }
-    result = clean_record(hepnames.do(create_record(snippet)))
+    result = hepnames.do(create_record(snippet))
 
     assert expected == result['acquisition_source']
 

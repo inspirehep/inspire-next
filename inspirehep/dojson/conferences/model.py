@@ -20,8 +20,16 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Conferences model definition."""
+"""DoJSON model definition for conferences."""
 
-from ..schema import SchemaOverdo
+from __future__ import absolute_import, division, print_function
 
-conferences = SchemaOverdo(schema="conferences.json")
+from ..model import FilterOverdo, add_schema, clean_record
+
+
+filters = [
+    add_schema('conferences.json'),
+    clean_record,
+]
+
+conferences = FilterOverdo(filters=filters)

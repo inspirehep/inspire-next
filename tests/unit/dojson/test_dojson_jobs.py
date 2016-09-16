@@ -27,7 +27,6 @@ import pytest
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.jobs import jobs
-from inspirehep.dojson.utils import clean_record
 
 
 def test_date_closed_from_046__i():
@@ -38,7 +37,7 @@ def test_date_closed_from_046__i():
     )  # record/1310294
 
     expected = '2015-12-15'
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['deadline_date']
 
@@ -51,7 +50,7 @@ def test_date_closed_from_046__l():
     )  # record/934304
 
     expected = '2008-02-11'
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['date_closed']
 
@@ -68,7 +67,7 @@ def test_date_closed_from_046__i_l_an_url():
         '</record>'
     )  # record/963314
 
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert result['deadline_date'] == '2012-06-01'
     assert result['urls'] == [
@@ -90,7 +89,7 @@ def test_date_closed_from_046_i_l_an_email():
         '</record>'
     )  # record/1089529
 
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert result['deadline_date'] == '8888'
     assert result['reference_email'] == [
@@ -114,7 +113,7 @@ def test_contact_details_from_marcxml_270_single_p_single_m():
             'email': 'lindner@mpi-hd.mpg.de',
         },
     ]
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['contact_details']
 
@@ -136,7 +135,7 @@ def test_contact_details_from_marcxml_270_double_p_single_m():
             'email': 'lindner@mpi-hd.mpg.de',
         },
     ]
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['contact_details']
 
@@ -158,7 +157,7 @@ def test_contact_details_from_marcxml_270_single_p_double_m():
             'name': 'Manfred Lindner'
         },
     ]
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['contact_details']
 
@@ -185,7 +184,7 @@ def test_contact_details_from_multiple_marcxml_270():
             'name': 'Wynton Marsalis',
         },
     ]
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['contact_details']
 
@@ -198,7 +197,7 @@ def test_regions_from_043__a():
     )
 
     expected = ['Asia']
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['regions']
 
@@ -211,7 +210,7 @@ def test_regions_from_043__a_corrects_misspellings():
     )
 
     expected = ['North America']
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['regions']
 
@@ -224,7 +223,7 @@ def test_regions_from_043__a_splits_on_commas():
     )
 
     expected = ['Asia', 'North America']
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['regions']
 
@@ -244,7 +243,7 @@ def test_experiments_from_693__e():
             'name': 'ALIGO',
         },
     ]
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['experiments']
 
@@ -268,7 +267,7 @@ def test_experiments_from_693__e__0():
             },
         },
     ]
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['experiments']
 
@@ -299,7 +298,7 @@ def test_experiments_from_693__e__0_and_e():
             'name': 'IHEP-CEPC'
         }
     ]
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['experiments']
 
@@ -345,7 +344,7 @@ def test_experiments_from_triple_693__e__0():
             },
         }
     ]
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['experiments']
 
@@ -363,7 +362,7 @@ def test_institutions_from_110__a():
             'name': 'Coll. William and Mary',
         },
     ]
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['institutions']
 
@@ -390,7 +389,7 @@ def test_institutions_from_double_110__a():
             'name': 'Jefferson Lab',
         },
     ]
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['institutions']
 
@@ -421,7 +420,7 @@ def test_institutions_from_110__double_a_z():
             },
         },
     ]
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['institutions']
 
@@ -434,7 +433,7 @@ def test_description_from_520__a():
     )  # record/1239755
 
     expected = '(1) Conduct independent research in string theory related theoretical sciences;<br /> <br /> (2) Advising graduate students in their research;<br /> <br /> (3) A very small amount of teaching of undergraduate courses.&nbsp;'
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['description']
 
@@ -447,7 +446,7 @@ def test_position_from_245__a():
     )  # record/1467312
 
     expected = 'Neutrino Physics'
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert expected == result['position']
 
@@ -462,7 +461,7 @@ def test_ranks_from_marcxml_656_with_single_a():
         '</record>'
     )
 
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert result['_ranks'] == ['Senior']
     assert result['ranks'] == ['SENIOR']
@@ -479,7 +478,7 @@ def test_ranks_from_marcxml_656_with_double_a():
         '</record>'
     )
 
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert result['_ranks'] == ['Senior', 'Junior']
     assert result['ranks'] == ['SENIOR', 'JUNIOR']
@@ -498,7 +497,7 @@ def test_ranks_from_marcxml_double_656():
         '</record>'
     )
 
-    result = clean_record(jobs.do(create_record(snippet)))
+    result = jobs.do(create_record(snippet))
 
     assert result['_ranks'] == ['Senior', 'Junior']
     assert result["ranks"] == ['SENIOR', 'JUNIOR']
