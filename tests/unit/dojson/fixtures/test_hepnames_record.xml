@@ -114,15 +114,6 @@
     <datafield tag="678" ind1=" " ind2=" ">
         <subfield code="a">Nobel Prize Physics 2003</subfield>
     </datafield>
-    <datafield tag="693" ind1=" " ind2=" ">
-        <subfield code="e">SDSS</subfield>
-    </datafield>
-    <datafield tag="693" ind1=" " ind2=" ">
-        <subfield code="d">2020</subfield>
-        <subfield code="e">CERN-ALPHA</subfield>
-        <subfield code="s">2014</subfield>
-        <subfield code="z">current</subfield>
-    </datafield>
     <datafield tag="701" ind1=" " ind2=" ">
         <subfield code="a">Fuller, George M.</subfield>
         <subfield code="g">PHD</subfield>
