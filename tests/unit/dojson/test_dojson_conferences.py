@@ -557,21 +557,21 @@ def test_note_from_500__multiple_a():
     assert expected == result['note']
 
 
-def test_series_from_411__a():
+def test_series_name_from_411__a():
     snippet = (
         '<datafield tag="411" ind1=" " ind2=" ">'
         '  <subfield code="a">DPF Series</subfield>'
         '</datafield>'
     )  # record/1430017
 
-    result = conferences.do(create_record(snippet))
-
     expected = [
         {
-            'name': 'DPF Series'
+            'name': 'DPF Series',
         },
     ]
-    assert result['series'] == expected
+    result = conferences.do(create_record(snippet))
+
+    assert expected == result['series']
 
 
 def test_series_number_from_411__n():
@@ -583,36 +583,29 @@ def test_series_number_from_411__n():
 
     result = conferences.do(create_record(snippet))
 
-    expected = [
-        {
-            'number': 7
-        },
-    ]
-    assert result['series'] == expected
+    assert 'series' not in result
 
 
-def test_series_and_series_number_from_411__a_n():
+def test_series_name_and_number_from_411__a_n():
     snippet = (
-        '<record>'
-        '  <datafield tag="411" ind1=" " ind2=" ">'
-        '    <subfield code="a">FPCP</subfield>'
-        '    <subfield code="n">16</subfield>'
-        '  </datafield>'
-        '</record>'
+        '<datafield tag="411" ind1=" " ind2=" ">'
+        '  <subfield code="a">FPCP</subfield>'
+        '  <subfield code="n">16</subfield>'
+        '</datafield>'
     )  # record/1468357
-
-    result = conferences.do(create_record(snippet))
 
     expected = [
         {
             'name': 'FPCP',
-            'number': 16
+            'number': 16,
         },
     ]
-    assert result['series'] ==  expected
+    result = conferences.do(create_record(snippet))
+
+    assert expected == result['series']
 
 
-def test_series_and_series_number_from_411__a_n_and_411_a():
+def test_series_name_and_number_and_series_name_from_411__a_n_and_411__a():
     snippet = (
         '<record>'
         '  <datafield tag="411" ind1=" " ind2=" ">'
@@ -625,21 +618,21 @@ def test_series_and_series_number_from_411__a_n_and_411_a():
         '</record>'
     )  # record/1404073
 
-    result = conferences.do(create_record(snippet))
-
     expected = [
         {
             'name': 'Rencontres de Moriond',
-            'number': 51
+            'number': 51,
         },
         {
-            'name': 'Moriond EW'
+            'name': 'Moriond EW',
         },
     ]
-    assert result['series'] == expected
+    result = conferences.do(create_record(snippet))
+
+    assert expected == result['series']
 
 
-def test_series_and_series_number_from_411__a_n_and_411_n():
+def test_series_name_and_number_and_series_number_from_411__a_n_and_411__n():
     snippet = (
         '<record>'
         '  <datafield tag="411" ind1=" " ind2=" ">'
@@ -652,18 +645,18 @@ def test_series_and_series_number_from_411__a_n_and_411_n():
         '</record>'
     )  # record/963769
 
-    result = conferences.do(create_record(snippet))
-
     expected = [
         {
             'name': 'SSI',
-            'number': 2
+            'number': 2,
         }
     ]
-    assert result['series'] == expected
+    result = conferences.do(create_record(snippet))
+
+    assert expected == result['series']
 
 
-def test_series_and_series_number_from_double_411_a_n():
+def test_double_series_name_and_number_from_double_411__a_n():
     snippet = (
         '<record>'
         '  <datafield tag="411" ind1=" " ind2=" ">'
@@ -677,23 +670,22 @@ def test_series_and_series_number_from_double_411_a_n():
         '</record>'
     )  # record/974856
 
-    result = conferences.do(create_record(snippet))
-
     expected = [
         {
             'name': 'ICHEP',
-            'number': 5
+            'number': 5,
         },
         {
             'name': 'Rochester',
-            'number': 5
+            'number': 5,
         }
     ]
-    assert result['series'] == expected
+    result = conferences.do(create_record(snippet))
+
+    assert expected == result['series']
 
 
-@pytest.mark.xfail(reason='No support in DoJSON for post-processing functions')
-def test_series_and_series_number_from_411_n_and_411_a_n():
+def test_series_name_and_number_from_411__n_and_411__a_n():
     snippet = (
         '<record>'
         '  <datafield tag="411" ind1=" " ind2=" ">'
@@ -706,18 +698,18 @@ def test_series_and_series_number_from_411_n_and_411_a_n():
         '</record>'
     )  # record/963914
 
-    result = conferences.do(create_record(snippet))
-
     expected = [
         {
             'name': 'WIN',
-            'number': 3
+            'number': 3,
         }
     ]
-    assert result['series'] == expected
+    result = conferences.do(create_record(snippet))
+
+    assert expected == result['series']
 
 
-def test_series_and_series_number_from_411_n_and_411_a():
+def test_series_name_and_number_from_411__n_and_411__a():
     snippet = (
         '<record>'
         '  <datafield tag="411" ind1=" " ind2=" ">'
@@ -729,18 +721,18 @@ def test_series_and_series_number_from_411_n_and_411_a():
         '</record>'
     )  # record/972145
 
-    result = conferences.do(create_record(snippet))
-
     expected = [
         {
             'name': 'Gordon',
-            'number': 3
-        }
+            'number': 3,
+        },
     ]
-    assert result['series'] == expected
+    result = conferences.do(create_record(snippet))
+
+    assert expected == result['series']
 
 
-def test_series_from_double_411__a():
+def test_double_series_name_from_double_411__a():
     snippet = (
         '<record>'
         '  <datafield tag="411" ind1=" " ind2=" ">'
@@ -752,20 +744,20 @@ def test_series_from_double_411__a():
         '</record>'
     )  # record/964177
 
-    result = conferences.do(create_record(snippet))
-
     expected = [
         {
             'name': 'SNPS',
         },
         {
-            'name': 'NSS'
-        }
+            'name': 'NSS',
+        },
     ]
-    assert result['series'] == expected
+    result = conferences.do(create_record(snippet))
+
+    assert expected == result['series']
 
 
-def test_series_and_series_number_from_411_a_and_411_a_n():
+def test_series_and_series_name_and_number_from_411__a_and_411__a_n():
     snippet = (
         '<record>'
         '  <datafield tag="411" ind1=" " ind2=" ">'
@@ -778,21 +770,21 @@ def test_series_and_series_number_from_411_a_and_411_a_n():
         '</record>'
     )  # record/964448
 
-    result = conferences.do(create_record(snippet))
-
     expected = [
         {
             'name': 'CEC',
         },
         {
             'name': 'ICMC',
-            'number': 2
-        }
+            'number': 2,
+        },
     ]
-    assert result['series'] == expected
+    result = conferences.do(create_record(snippet))
+
+    assert expected == result['series']
 
 
-def test_series_and_series_number_from_411__a_n_and_411_a():
+def test_series_name_and_number_and_series_number_from_411__a_n_and_411__a():
     snippet = (
         '<record>'
         '  <datafield tag="411" ind1=" " ind2=" ">'
@@ -805,18 +797,18 @@ def test_series_and_series_number_from_411__a_n_and_411_a():
         '</record>'
     )  # record/980229
 
-    result = conferences.do(create_record(snippet))
-
     expected = [
         {
             'name': 'EDS',
-            'number': 13
+            'number': 13,
         },
         {
-            'name': 'BLOIS'
-        }
+            'name': 'BLOIS',
+        },
     ]
-    assert result['series'] == expected
+    result = conferences.do(create_record(snippet))
+
+    assert expected == result['series']
 
 
 def test_short_description_from_520__a():

@@ -27,8 +27,18 @@ from __future__ import absolute_import, division, print_function
 from ..model import FilterOverdo, add_schema, clean_record
 
 
+def remove_lone_series_number(record, blob):
+    def _valid(series):
+        return series.get('name')
+
+    record['series'] = filter(_valid, record.get('series', []))
+
+    return record
+
+
 filters = [
     add_schema('conferences.json'),
+    remove_lone_series_number,
     clean_record,
 ]
 
