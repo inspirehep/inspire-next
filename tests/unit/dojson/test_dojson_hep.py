@@ -1052,6 +1052,76 @@ def test_public_notes(marcxml_to_json, json_to_marc):
             json_to_marc['500'][0]['9'])
 
 
+def test_public_notes_from_500__a_9():
+    snippet = (
+        '<datafield tag="500" ind1=" " ind2=" ">'
+        '  <subfield code="9">arXiv</subfield>'
+        '  <subfield code="a">5 pages</subfield>'
+        '</datafield>'
+    )  # record/1450044
+
+    expected = [
+        {
+            'source': 'arXiv',
+            'value': '5 pages',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert expected == result['public_notes']
+
+
+def test_public_notes_from_500__double_a_9():
+    snippet = (
+        '<datafield tag="500" ind1=" " ind2=" ">'
+        '  <subfield code="9">arXiv</subfield>'
+        '  <subfield code="a">11 pages, 8 figures. Submitted to MNRAS</subfield>'
+        '  <subfield code="a">preliminary entry</subfield>'
+        '</datafield>'
+    )  # record/1380257
+
+    expected = [
+        {
+            'source': 'arXiv',
+            'value': '11 pages, 8 figures. Submitted to MNRAS',
+        },
+        {
+            'source': 'arXiv',
+            'value': 'preliminary entry',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert expected == result['public_notes']
+
+
+def test_public_notes_from_500__a_and_500__a_9():
+    snippet = (
+        '<record>'
+        '  <datafield tag="500" ind1=" " ind2=" ">'
+        '    <subfield code="a">*Brief entry*</subfield>'
+        '  </datafield>'
+        '  <datafield tag="500" ind1=" " ind2=" ">'
+        '    <subfield code="a">11 pages, 5 figures</subfield>'
+        '    <subfield code="9">arXiv</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1450045
+
+    expected = [
+        {
+            'value': '*Brief entry*',
+        },
+        {
+            'source': 'arXiv',
+            'value': '11 pages, 5 figures',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert expected == result['public_notes']
+
+
 def test_hidden_notes(marcxml_to_json, json_to_marc):
     """Test if hidden_notes is created correctly."""
     assert marcxml_to_json['hidden_notes'][0]['source'] == "CDS"
