@@ -193,6 +193,29 @@ def test_field_categories_from_650__a_2():
     assert expected == result['field_categories']
 
 
+def test_field_categories_from_65017_a_2_9_with_conference():
+    snippet = (
+        '<datafield tag="650" ind1="1" ind2="7">'
+        '  <subfield code="2">INSPIRE</subfield>'
+        '  <subfield code="9">conference</subfield>'
+        '  <subfield code="a">Accelerators</subfield>'
+        '</datafield>'
+    )  # record/1479228
+
+    expected = [
+        {
+            '_scheme': 'INSPIRE',
+            'scheme': 'INSPIRE',
+            'source': 'conference',
+            '_term': 'Accelerators',
+            'term': 'Accelerators',
+        },
+    ]
+    result = hepnames.do(create_record(snippet))
+
+    assert expected == result['field_categories']
+
+
 def test_urls_from_marcxml_856_with_single_u_single_y():
     snippet = (
         '<record>'
