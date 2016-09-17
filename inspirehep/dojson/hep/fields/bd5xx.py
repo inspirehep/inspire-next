@@ -38,13 +38,20 @@ logger = logging.getLogger(__name__)
 
 
 @hep.over('public_notes', '^500..')
-@utils.for_each_value
 def public_notes(self, key, value):
     """General Note."""
-    return {
-        'value': value.get('a'),
-        'source': value.get('9'),
-    }
+    public_notes = self.get('public_notes', [])
+
+    source = force_single_element(value.get('9'))
+    notes = force_force_list(value.get('a'))
+
+    for note in notes:
+        public_notes.append({
+            'source': source,
+            'value': note,
+        })
+
+    return public_notes
 
 
 @hep2marc.over('500', 'public_notes')
