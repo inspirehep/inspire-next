@@ -9,6 +9,7 @@
             "enum": [
                 "INSPIRE",
                 "submitter",
+                "conference",
                 "curator",
                 "publisher",
                 "magpie"
