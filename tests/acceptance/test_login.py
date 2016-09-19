@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 import os
 
 
-def test_login(selenium, small_app):
+def test_login(selenium):
     sign_in = selenium.find_element_by_link_text('Sign in')
     assert sign_in
     sign_in.click()
