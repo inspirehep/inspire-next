@@ -32,10 +32,10 @@ from inspirehep.utils.record import get_value
 from inspirehep.utils.record_getter import get_es_records
 
 from .templates import template
-from .typology import hal_doctype, doctype_fallback
+from .config import INSPIRE_HAL_DOCTYPE_MAP, DOCTYPE_FALLBACK
 
 
-def tei_response(record, has_attachment=False):
+def convert_record_to_hal(record, has_document=False):
     """Returns the record formatted in XML+TEI per HAL's specification.
 
     :param record: the record to convert
@@ -61,7 +61,7 @@ def tei_response(record, has_attachment=False):
         'reviewed': reviewed,
         'domains': domains,
         'typology': typology,
-        'has_attachment': has_attachment,
+        'has_document': has_document,
     }
 
     return template.render(**context).encode('utf-8')
@@ -77,8 +77,9 @@ def _get_typology(record):
     collections = [entry['primary'].lower()
                    for entry in record.get('collections', [])]
     typology = next(
-        (hal_doctype[c] for c in collections if c in hal_doctype),
-        doctype_fallback
+        (INSPIRE_HAL_DOCTYPE_MAP[c] for c in collections
+            if c in INSPIRE_HAL_DOCTYPE_MAP),
+        DOCTYPE_FALLBACK
     )
     return typology
 

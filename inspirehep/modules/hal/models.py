@@ -29,6 +29,6 @@ class InspireHalRecords(db.Model):
     __tablename__ = 'inspire_hal_records'
 
     inspire_id = db.Column(db.String(160), primary_key=True)
-    hal_id = db.Column(db.String(160), primary_key=True)
+    hal_id = db.Column(db.String(160), unique=True)
     version = db.Column(db.Integer)
-    date = db.Column(db.DateTime)
+    timestamp = db.Column(db.DateTime)

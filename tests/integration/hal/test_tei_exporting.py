@@ -38,6 +38,6 @@ def test_format_tei(app):
         __name__, os.path.join('fixtures', 'test_tei_record.xml'))
 
     record = get_db_record('literature', 1407506)
-    result = tei.tei_response(record)
+    result = tei.convert_record_to_hal(record)
 
     assert result == expected

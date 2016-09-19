@@ -39,4 +39,4 @@ class TEISerializer(object):
         :param links_factory: Factory function for the link generation,
                               which are added to the response.
         """
-        return tei.tei_response(record)
+        return tei.convert_record_to_hal(record)

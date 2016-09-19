@@ -27,7 +27,7 @@ from flask import current_app
 
 from invenio_db import db
 from inspirehep.utils.record import get_value
-from inspirehep.modules.hal.tei import tei_response
+from inspirehep.modules.hal import tei
 from inspirehep.modules.hal import hal_api
 
 from .models import InspireHalRecords
@@ -40,23 +40,25 @@ DATE_FORMAT = "%a, %d %b %Y %X %Z"
 
 def doc_type_should_be_sent_to_hal(record):
     """If the record has at least one institution with a halID, return True."""
-    # FIXME: Figure out how to check if institutions are in HAL
-    return False
+    # FIXME: Check the for_hal flag in the schema
+    return True
 
 
-#@shared_task(ignore_result=True)
-def send_to_hal(sender, inspire_id, attachment=None):
+# @shared_task(ignore_result=True)
+def send_to_hal(sender, inspire_id, document=None):
     """Sends records to hal."""
-    if True:#doc_type_should_be_sent_to_hal(sender):
+    if doc_type_should_be_sent_to_hal(sender):
         logger.info("Sending to hal: ", inspire_id)
         try:
-            hal_tei = tei_response(sender, attachment)
-            receipt = hal_api.add_record(hal_tei, attachment)
+            hal_tei = tei.convert_record_to_hal(sender, document)
+            receipt = hal_api.add_record(hal_tei, document, True)
             hal_log_record = InspireHalRecords(
-                inspire_id = inspire_id,
-                hal_id = receipt.id,
-                version = 1,
-                date = datetime.strptime(receipt.response_headers['date'], DATE_FORMAT)
+                inspire_id=inspire_id,
+                hal_id=receipt.id,
+                version=1,
+                timestamp=datetime.strptime(
+                    receipt.response_headers['date'], DATE_FORMAT
+                )
             )
             with db.session.begin_nested():
                 db.session.add(hal_log_record)
@@ -64,6 +66,5 @@ def send_to_hal(sender, inspire_id, attachment=None):
             logger.info("Successfully sent to hal: ",
                         receipt.id)
         except Exception as e:
-            print e.response.text, id
-            logger.error("Failed to push to hal: ", id)
-
+            print e.response.text, inspire_id
+            logger.error("Failed to push to hal: ", inspire_id)

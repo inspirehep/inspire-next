@@ -117,7 +117,7 @@
               {% endfor %}#}
               <classCode scheme="halTypology" n="{{ typology }}"/>
             </textClass>
-            <abstract xml:lang="en">Test</abstract>
+            <abstract xml:lang="en"></abstract><!-- FIXME: Confirm when this is required for submission -->
           </profileDesc>
         </biblFull>
       </listBibl>

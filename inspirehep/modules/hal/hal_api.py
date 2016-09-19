@@ -20,39 +20,30 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
+import httplib2
 from tempfile import TemporaryFile
 import zipfile
 
 from sword2 import Connection
 from sword2 import http_layer
-import httplib2
+from sword2.http_layer import HttpLib2Layer
 
-from settings import HAL_USER, HAL_PASSWORD
-
-COL_IRI = "https://api-preprod.archives-ouvertes.fr/sword/hal"
-PREPROD = "https://api-preprod.archives-ouvertes.fr/sword/"
+from .config import HAL_USER, HAL_PASSWORD, COL_IRI, EDIT_IRI, IGNORE_CERT
 
 
-def add_record(tei, document=None):
-    c = Connection("", user_name=HAL_USER,
-                   user_pass=HAL_PASSWORD,
-                   http_impl=HttpLib2Layer_IgnoreCert(".cache"))
+def add_record(tei, doc_file=None):
+    """Submit the first version of the record to HAL.
 
-    if document:
-        tempFile = TemporaryFile()
-        with zipfile.ZipFile(tempFile,
-                             mode='w',
-                             compression=zipfile.ZIP_DEFLATED) as zf:
-            zf.writestr('meta.xml', tei)
-            zf.writestr('doc.pdf', document)
-        tempFile.seek(0)
-        payload = tempFile.read()
-        mimetype = "application/zip"
-        filename = "meta.xml"
-    else:
-        payload = tei
-        mimetype = "text/xml"
-        filename = "meta.xml"
+    :param tei: the XML+TEI data describing the record
+    :type tei: str
+    :param doc_file: the full path to the file to be submitted
+    :type doc_file: str
+    :return: the connection receipt
+    :rtype: sword2.deposit_receipt.Deposit_Receipt
+    """
+    c, payload, mimetype, filename = _set_up_payload(tei, doc_file)
 
     receipt = c.create(col_iri=COL_IRI,
                        payload=payload,
@@ -63,28 +54,22 @@ def add_record(tei, document=None):
     return receipt
 
 
-def update_record(hal_id, tei, document=None):
-    c = Connection("", user_name=HAL_USER,
-                   user_pass=HAL_PASSWORD,
-                   http_impl=HttpLib2Layer_IgnoreCert(".cache"))
-    if document:
-        tempFile = TemporaryFile()
-        with zipfile.ZipFile(tempFile,
-                             mode='w',
-                             compression=zipfile.ZIP_DEFLATED) as zf:
-            zf.writestr('meta.xml', tei)
-            zf.writestr('doc.pdf', document)
-        tempFile.seek(0)
-        payload = tempFile.read()
-        mimetype = "application/zip"
-        filename = "meta.xml"
-    else:
-        payload = tei
-        mimetype = "text/xml"
-        filename = "meta.xml"
+def update_record(hal_id, tei, doc_file=None):
+    """Update an existing record on HAL.
 
-    receipt = c.update(edit_iri=PREPROD + hal_id,
-                       edit_media_iri=PREPROD + hal_id,
+    :param hal_id: the HAL id returned in the original submission receipt
+    :type hal_id: str
+    :param tei: the (updated) XML+TEI data describing the record
+    :type tei: str
+    :param doc_file: the full path to the (updated) file to be submitted
+    :type doc_file: str
+    :return: the connection receipt
+    :rtype: sword2.deposit_receipt.Deposit_Receipt
+    """
+    c, payload, mimetype, filename = _set_up_payload(tei, doc_file)
+
+    receipt = c.update(edit_iri=EDIT_IRI + hal_id,
+                       edit_media_iri=EDIT_IRI + hal_id,
                        payload=payload,
                        mimetype=mimetype,
                        filename=filename,
@@ -93,7 +78,36 @@ def update_record(hal_id, tei, document=None):
     return receipt
 
 
-class HttpLib2Layer_IgnoreCert(http_layer.HttpLib2Layer):
+def _set_up_payload(tei, doc_file=None, ignore_cert=False):
+    c = Connection("",
+                   user_name=HAL_USER,
+                   user_pass=HAL_PASSWORD,
+                   http_impl=(
+                       HttpLib2Layer_IgnoreCert(".cache")
+                       if IGNORE_CERT
+                       else HttpLib2Layer(".cache")
+                    )
+                   )
+    if doc_file:
+        tempFile = TemporaryFile()
+        with zipfile.ZipFile(tempFile,
+                             mode='w',
+                             compression=zipfile.ZIP_DEFLATED) as zf:
+            zf.writestr('meta.xml', tei)
+            zf.write(doc_file, 'doc.pdf')
+        tempFile.seek(0)
+        payload = tempFile
+        mimetype = "application/zip"
+        filename = "meta.xml"
+    else:
+        payload = tei
+        mimetype = "text/xml"
+        filename = "meta.xml"
+
+    return c, payload, mimetype, filename
+
+
+class HttpLib2Layer_IgnoreCert(HttpLib2Layer):
     def __init__(self, cache_dir):
         self.h = httplib2.Http(cache_dir,
                                timeout=30.0,
