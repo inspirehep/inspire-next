@@ -35,4 +35,4 @@ def test_login(selenium):
     email.send_keys('admin@inspirehep.net')
     password = selenium.find_element_by_id('password')
     password.send_keys('123456')
-
+    selenium.find_element_by_xpath("//button[@type='submit']").click()
