@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 import os
 
 
-def test_login(selenium, small_app):
+def test_login(selenium):
     sign_in = selenium.find_element_by_link_text('Sign in')
     assert sign_in
     sign_in.click()
@@ -35,4 +35,4 @@ def test_login(selenium, small_app):
     email.send_keys('admin@inspirehep.net')
     password = selenium.find_element_by_id('password')
     password.send_keys('123456')
-
+    selenium.find_element_by_xpath("//button[@type='submit']").click()
