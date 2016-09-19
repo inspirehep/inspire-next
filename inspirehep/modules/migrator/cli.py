@@ -28,6 +28,7 @@ import json
 import logging
 import os
 import sys
+import json
 
 import click
 import requests
@@ -44,6 +45,8 @@ from .tasks.records import (
     split_blob,
 )
 from .tasks.workflows import import_holdingpen_record
+
+from .tasks.workflows import import_audit_record
 
 
 @click.group()
@@ -97,10 +100,15 @@ def count_citations():
 @migrator.command()
 @click.argument('source', type=click.File('r'), default=sys.stdin)
 @with_appcontext
-def loadaudits():
+def loadaudits(source):
     """Load workflow Audit logs for workflows.models.Audit."""
-    # TODO implement
-    pass
+    click.echo('Loading dump...')
+    data = json.load(source)
+
+    click.echo('Sending tasks to queue...')
+    with click.progressbar(data) as records:
+        for item in records:
+            import_audit_record.delay(item)
 
 
 @migrator.command()
