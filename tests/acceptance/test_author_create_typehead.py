@@ -42,7 +42,15 @@ def test_experiments_typehead(selenium, login):
     experiment_field = selenium.find_element_by_id("experiments-0-name")
     force_autocomplete_event(experiment_field, "ATL")
     assert 'ATLAS' in experiment_field.get_attribute("value")
-    
+
+
+def test_advisors_typehead(selenium, login):
+    """"Test the suggestions in the advisors field"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/author/create')
+    advisor_field = selenium.find_element_by_id("advisors-0-name")
+    force_autocomplete_event(advisor_field, "alexe")
+    assert 'Vorobyev, Alexey' in advisor_field.get_attribute("value")
+
 
 def force_autocomplete_event(field, chunk_text):
     """Performs selection in a html text field"""
