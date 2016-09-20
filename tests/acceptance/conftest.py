@@ -37,7 +37,7 @@ from inspirehep.config import SERVER_NAME
 from inspirehep.factory import create_app
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='session')
 def small_app(request):
     """Flask application fixture."""
     app = create_app()
