@@ -73,3 +73,15 @@ def selenium(selenium, small_app):
     selenium.maximize_window()
     selenium.get(environ['SERVER_NAME'])
     return selenium
+
+
+@pytest.fixture
+def login(selenium):
+    selenium.find_element_by_link_text('Sign in').click()
+    selenium.get(environ['SERVER_NAME'] + '/login/?local=1')
+    selenium.find_element_by_id('email').send_keys('admin@inspirehep.net')
+    selenium.find_element_by_id('password').send_keys('123456')
+    selenium.find_element_by_xpath("//button[@type='submit']").click()
+    yield
+    selenium.find_element_by_id('user-info').click()
+    selenium.find_element_by_xpath("(//button[@type='button'])[2]").click()
