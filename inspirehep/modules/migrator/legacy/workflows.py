@@ -32,7 +32,6 @@ WORKFLOWS_TO_KEEP = [
     'literature',
     'authornew',
     'authorupdate',
-    'process_record_arxiv'
 ]
 
 
@@ -51,10 +50,13 @@ class ExtraDataEncoder(json.JSONEncoder):
 
     def default(self, obj):
         import numpy
+        import datetime
         if isinstance(obj, set):
             return list(obj)
-        if isinstance(obj, numpy.ndarray):
-            return list(obj)
+        elif isinstance(obj, numpy.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, datetime.date):
+            return obj.isoformat()
         return json.JSONEncoder.default(self, obj)
 
 
@@ -72,8 +74,7 @@ def get(*args, **kwargs):
         .filter(BibWorkflowObject.id_workflow == Workflow.uuid) \
         .filter(Workflow.name.in_(WORKFLOWS_TO_KEEP)) \
         .order_by(BibWorkflowObject.id.desc())
-    return 500, query.limit(500)
-    # return query.count(), query.limit(500)
+    return query.count(), query
 
 
 def dump(item, from_date, with_json=True, latest_only=False, **kwargs):
@@ -84,6 +85,7 @@ def dump(item, from_date, with_json=True, latest_only=False, **kwargs):
     """
     from inspirehep.modules.workflows.models import Payload
     from invenio_deposit.models import Deposition
+    from invenio_workflows.models import BibWorkflowObject
 
     eng = dict(
         uuid=item.workflow.uuid,
@@ -119,8 +121,40 @@ def dump(item, from_date, with_json=True, latest_only=False, **kwargs):
         id_parent=item.id_parent,
         id_user=item.id_user,
     )
+    # Retrieve parent objects (if any)
+    parent_objs = []
+    if item.id_parent:
+        while item.id_parent:
+            parent = BibWorkflowObject.query.get(item.id_parent)
+            data = {}
+            old_data = parent.get_data()
+            extra_data = parent.get_extra_data()
+            if parent.workflow.name == 'process_record_arxiv':
+                data = _get_record(parent, Payload)
+                data['files'] = old_data.get('files')
+            elif parent.workflow.name == 'literature':
+                data = _get_record(parent, Deposition)
+                data['files'] = old_data.get('files')
+                extra_data['formdata'] = old_data['drafts']['default']['values']
+            else:
+                data = old_data
+            parent_objs.append(dict(
+                extra_data=extra_data,
+                data=data,
+                id=parent.id,
+                created=parent.created.isoformat(),
+                modified=parent.modified.isoformat(),
+                status=parent.version,
+                data_type=parent.data_type,
+                id_workflow=parent.id_workflow,
+                id_parent=parent.id_parent,
+                id_user=parent.id_user
+            ))
+
+            item = parent
     # Very silly, but just for now to clean the data
     dumps = json.dumps(dict(
+        parent_objs=parent_objs,
         obj=obj,
         eng=eng
     ), cls=ExtraDataEncoder)
