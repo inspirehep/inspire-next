@@ -75,7 +75,7 @@ def small_app():
 
     with app.app_context():
         # Imports must be local, otherwise tasks default to pickle serializer.
-        from inspirehep.modules.migrator.tasks import migrate
+        from inspirehep.modules.migrator.tasks.records import migrate
         from inspirehep.modules.fixtures.files import init_all_storage_paths
         from inspirehep.modules.fixtures.users import init_users_and_permissions
 

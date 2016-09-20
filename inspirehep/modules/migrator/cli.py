@@ -80,8 +80,10 @@ def populate(file_input=None,
 @migrator.command()
 @click.option('--recid', '-r', type=int, help="recid on INSPIRE")
 def one(recid):
-    click.echo("Migrating record {recid} from INSPIRE legacy".format(recid=recid))
-    raw_record = requests.get("http://inspirehep.net/record/{recid}/export/xme".format(recid=recid)).content
+    click.echo(
+        "Migrating record {recid} from INSPIRE legacy".format(recid=recid))
+    raw_record = requests.get(
+        "http://inspirehep.net/record/{recid}/export/xme".format(recid=recid)).content
     migrate_chunk(split_blob(raw_record))
 
 
@@ -112,7 +114,9 @@ def loadworkflows(source):
     click.echo('Sending tasks to queue...')
     with click.progressbar(data) as records:
         for item in records:
-            import_holdingpen_record.delay(item['obj'], item['eng'])
+            import_holdingpen_record.delay(
+                item['parent_objs'], item['obj'], item['eng']
+            )
 
 
 @migrator.command()
@@ -189,7 +193,8 @@ def clean_records():
                     err=True)
         with click.progressbar(tables_to_truncate) as tables:
             for table in tables:
-                db.engine.execute("TRUNCATE TABLE {0} RESTART IDENTITY CASCADE".format(table))
+                db.engine.execute(
+                    "TRUNCATE TABLE {0} RESTART IDENTITY CASCADE".format(table))
                 click.secho("\tTruncated {0}".format(table))
 
         db.session.commit()
