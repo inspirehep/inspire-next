@@ -36,6 +36,14 @@ def test_institutions_typehead(selenium, login):
     assert 'CERN' in institution_field.get_attribute("value")
 
 
+def test_experiments_typehead(selenium, login):
+    """"Test the suggestions in the experiments field"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/author/create')
+    experiment_field = selenium.find_element_by_id("experiments-0-name")
+    force_autocomplete_event(experiment_field, "ATL")
+    assert 'ATLAS' in experiment_field.get_attribute("value")
+    
+
 def force_autocomplete_event(field, chunk_text):
     """Performs selection in a html text field"""
     field.send_keys(chunk_text)
