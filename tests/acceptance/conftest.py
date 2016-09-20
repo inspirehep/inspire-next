@@ -37,8 +37,8 @@ from inspirehep.config import SERVER_NAME
 from inspirehep.factory import create_app
 
 
-@pytest.fixture(scope='module')
-def small_app(request):
+@pytest.fixture(scope='session')
+def app(request):
     """Flask application fixture."""
     app = create_app()
     app.config.update({'DEBUG': True})
@@ -60,7 +60,7 @@ def small_app(request):
         init_all_storage_paths()
         init_users_and_permissions()
 
-        migrate('./inspirehep/demosite/data/demo-records-small.xml',
+        migrate('./inspirehep/demosite/data/demo-records.xml.gz',
                 wait_for_results=True)
         es.indices.refresh('records-hep')
 
@@ -68,7 +68,7 @@ def small_app(request):
 
 
 @pytest.fixture
-def selenium(selenium, small_app):
+def selenium(selenium, app):
     selenium.implicitly_wait(10)
     selenium.maximize_window()
     selenium.get(environ['SERVER_NAME'])
