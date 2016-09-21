@@ -81,6 +81,7 @@ install_requires = [
     'html5lib<1.0b9',
     'SQLAlchemy>=1.0.14,<1.1',
     'nameparser>=0.4.0',
+    'iso8601>=0.1.11'
 ]
 
 tests_require = [
@@ -110,6 +111,9 @@ extras_require = {
     ],
     'sqlite': [
         'invenio-db[versioning]>=1.0.0a6',
+    ],
+    'migration': [
+        'invenio-migrator>=1.0.0a6',
     ],
     'tests': tests_require,
     'development': [
@@ -240,6 +244,9 @@ setup(
         'invenio_db.models': [
             'inspire_workflows_audit = inspirehep.modules.workflows.models',
             'inspire_disambiguation = inspirehep.modules.disambiguation.models',
+        ],
+        'invenio_migrator.things': [
+            'holdingpen = inspirehep.modules.migrator.legacy.workflows',
         ],
     },
     tests_require=tests_require,

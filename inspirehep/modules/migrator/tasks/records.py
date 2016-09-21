@@ -27,6 +27,7 @@ from __future__ import absolute_import, division, print_function
 import gzip
 import re
 import zlib
+
 from collections import Counter
 from itertools import chain
 
@@ -51,12 +52,12 @@ from invenio_search.utils import schema_to_index
 
 from inspirehep.dojson.processors import overdo_marc_dict
 from inspirehep.modules.pidstore.providers import InspireRecordIdProvider
+from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.utils.dedupers import dedupe_list
 from inspirehep.utils.helpers import force_force_list
 from inspirehep.utils.record import get_value
 
-from .models import InspireProdRecords
-from ..pidstore.minters import inspire_recid_minter
+from ..models import InspireProdRecords
 
 
 logger = get_task_logger(__name__)

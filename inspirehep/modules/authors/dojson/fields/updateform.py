@@ -170,8 +170,8 @@ def institution_history(self, key, value):
             "status": "current" if position["current"] else "",
             "start_date": position["start_year"],
             "end_date": position["end_year"],
-            "email": position["email"],
-            "old_email": position["old_email"],
+            "email": position.get("email", ""),
+            "old_email": position.get("old_email", ""),
             "rank": position["rank"] if position["rank"] != "rank" else ""
         })
 

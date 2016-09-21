@@ -24,6 +24,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
 import logging
 import os
 import sys
@@ -35,13 +36,14 @@ from flask_cli import with_appcontext
 
 from invenio_db import db
 
-from .tasks import (
+from .tasks.records import (
     add_citation_counts,
     migrate,
     migrate_broken_records,
     migrate_chunk,
     split_blob,
 )
+from .tasks.workflows import import_holdingpen_record
 
 
 @click.group()
@@ -78,8 +80,10 @@ def populate(file_input=None,
 @migrator.command()
 @click.option('--recid', '-r', type=int, help="recid on INSPIRE")
 def one(recid):
-    click.echo("Migrating record {recid} from INSPIRE legacy".format(recid=recid))
-    raw_record = requests.get("http://inspirehep.net/record/{recid}/export/xme".format(recid=recid)).content
+    click.echo(
+        "Migrating record {recid} from INSPIRE legacy".format(recid=recid))
+    raw_record = requests.get(
+        "http://inspirehep.net/record/{recid}/export/xme".format(recid=recid)).content
     migrate_chunk(split_blob(raw_record))
 
 
@@ -88,6 +92,31 @@ def count_citations():
     """Adds field citation_count to every record in 'HEP' and calculates its proper value."""
     click.echo("Adding citation_count to all records")
     add_citation_counts()
+
+
+@migrator.command()
+@click.argument('source', type=click.File('r'), default=sys.stdin)
+@with_appcontext
+def loadaudits():
+    """Load workflow Audit logs for workflows.models.Audit."""
+    # TODO implement
+    pass
+
+
+@migrator.command()
+@click.argument('source', type=click.File('r'), default=sys.stdin)
+@with_appcontext
+def loadworkflows(source):
+    """Load legacy workflow objects into Holding Pen."""
+    click.echo('Loading dump...')
+    data = json.load(source)
+
+    click.echo('Sending tasks to queue...')
+    with click.progressbar(data) as records:
+        for item in records:
+            import_holdingpen_record.delay(
+                item['parent_objs'], item['obj'], item['eng']
+            )
 
 
 @migrator.command()
@@ -164,7 +193,8 @@ def clean_records():
                     err=True)
         with click.progressbar(tables_to_truncate) as tables:
             for table in tables:
-                db.engine.execute("TRUNCATE TABLE {0} RESTART IDENTITY CASCADE".format(table))
+                db.engine.execute(
+                    "TRUNCATE TABLE {0} RESTART IDENTITY CASCADE".format(table))
                 click.secho("\tTruncated {0}".format(table))
 
         db.session.commit()
