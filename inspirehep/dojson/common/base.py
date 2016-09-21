@@ -202,8 +202,8 @@ def collections(self, key, value):
     return collections
 
 
-@hep2marc.over('980', 'collections')
-@hepnames2marc.over('980', 'collections')
+@hep2marc.over('980', '^collections$')
+@hepnames2marc.over('980', '^collections$')
 @utils.for_each_value
 def collections2marc(self, key, value):
     """Collection this record belongs to."""
