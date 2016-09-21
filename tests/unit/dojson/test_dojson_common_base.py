@@ -268,7 +268,7 @@ def test_urls_from_marcxml_856_with_single_u_no_y():
         '</record>'
     )
 
-    expected= [
+    expected = [
         {
             'value': 'http://www.physics.unlv.edu/labastro/',
         },
@@ -297,7 +297,7 @@ def test_urls_from_marcxml_856_with_two_u_single_y():
         {
             'description': 'Conference web page',
             'value': 'http://www.physics.unlv.edu/',
-         },
+        },
     ]
     result = hep.do(create_record(snippet))
 
