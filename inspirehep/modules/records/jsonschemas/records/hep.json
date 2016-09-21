@@ -377,6 +377,14 @@
             "type": "array",
             "uniqueItems": true
         },
+        "energy_ranges": {
+            "description": "Ranges of energies the record refers to",
+            "items": {
+                "minimum": 0,
+                "type": "integer"
+            },
+            "type": "array"
+        },
         "external_system_numbers": {
             "items": {
                 "properties": {
@@ -486,6 +494,24 @@
                 "required": [
                     "value"
                 ],
+                "type": "object"
+            },
+            "type": "array",
+            "uniqueItems": true
+        },
+        "keywords": {
+            "items": {
+                "properties": {
+                    "classification_scheme": {
+                        "type": "string"
+                    },
+                    "keyword": {
+                        "type": "string"
+                    },
+                    "source": {
+                        "type": "string"
+                    }
+                },
                 "type": "object"
             },
             "type": "array",
@@ -741,32 +767,6 @@
                 }
             },
             "type": "object"
-        },
-        "energy_ranges": {
-            "description": "Ranges of energies the record refers to",
-            "items": {
-                "minimum": 0,
-                "type": "integer"
-            },
-            "type": "array"
-        },
-        "keywords": {
-            "items": {
-                "properties": {
-                    "classification_scheme": {
-                        "type": "string"
-                    },
-                    "source": {
-                        "type": "string"
-                    },
-                    "keyword": {
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "type": "array",
-            "uniqueItems": true
         },
         "thesis": {
             "properties": {
