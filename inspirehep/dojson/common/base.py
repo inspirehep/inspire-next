@@ -186,20 +186,18 @@ def spires_sysnos2marc(self, key, value):
 @jobs.over('collections', '^980..')
 def collections(self, key, value):
     """Collection this record belongs to."""
-    value = force_force_list(value)
-
-    def get_value(value):
-        primary = force_single_element(value.get('a'))
+    def _get_collection(value):
         return {
-            'primary': primary,
-            'secondary': value.get('b'),
+            'primary': force_single_element(value.get('a')),
+            'secondary': force_force_list(value.get('b')),
             'deleted': value.get('c'),
         }
 
     collections = self.get('collections', [])
 
-    for val in value:
-        collections.append(get_value(val))
+    values = force_force_list(value)
+    for value in values:
+        collections.append(_get_collection(value))
 
     return collections
 

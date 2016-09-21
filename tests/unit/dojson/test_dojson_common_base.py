@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 from dojson.contrib.marc21.utils import create_record
 
 from inspirehep.dojson.hep import hep
-from inspirehep.dojson.hepnames import hepnames
+from inspirehep.dojson.hepnames import hepnames, hepnames2marc
 
 
 def test_field_from_marcxml_650_with_single_a_and_9():
@@ -403,3 +403,49 @@ def test_urls_from_marcxml_multiple_8564():
     result = hep.do(create_record(snippet))
 
     assert expected == result['urls']
+
+
+def test_collections_from_980__double_a_double_b():
+    snippet = (
+        '<record>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">Test_a1</subfield>'
+        '    <subfield code="a">Test_a2</subfield>'
+        '    <subfield code="b">Something</subfield>'
+        '    <subfield code="b">Something else</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    expected_json = {
+        'collections': [
+            {
+                'primary': 'Test_a1',
+                'secondary': [
+                    'Something',
+                    'Something else',
+                ],
+            },
+        ],
+    }
+
+    expected_marc = [
+        {
+            'a': 'Test_a1',
+            'b': [
+                'Something',
+                'Something else',
+            ],
+            'c': None,
+        },
+    ]
+
+    json_result = hepnames.do(create_record(snippet))
+    marc_result = hepnames2marc.do(json_result)
+
+    assert expected_json['collections'] == json_result['collections']
+
+    expected_marc.sort()
+    marc_result['980'].sort()
+
+    assert expected_marc == marc_result['980']
