@@ -1,5 +1,6 @@
 {
     "$schema": "http://json-schema.org/schema#",
+    "additionalProperties": false,
     "properties": {
         "ICN": {
             "description": "HEP affiliation following new standards",
@@ -79,6 +80,7 @@
             "type": "string"
         },
         "location": {
+            "additionalProperties": false,
             "properties": {
                 "latitude": {
                     "description": "FIXME: we can populate this programmatically with Google APIs",
@@ -96,6 +98,7 @@
         },
         "name_variants": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "source": {
                         "description": "FIXME: Do we really care about the source?",
@@ -143,6 +146,7 @@
         },
         "related_institutes": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "curated_relation": {
                         "title": "Is the relation curated?",

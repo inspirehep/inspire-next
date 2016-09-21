@@ -1,5 +1,6 @@
 {
     "$schema": "http://json-schema.org/schema#",
+    "additionalProperties": false,
     "properties": {
         "accelerator": {
             "title": "Accelerator",
@@ -7,6 +8,7 @@
         },
         "affiliations": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "curated_relation": {
                         "type": "boolean"
@@ -124,6 +126,7 @@
         },
         "related_experiments": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "curated_relation": {
                         "title": "Is the relation curated?",
@@ -160,6 +163,7 @@
         },
         "spokespersons": {
             "items": {
+                "additionalProperties": false,
                 "properties": {
                     "curated_relation": {
                         "title": "Is the relation curated?",
