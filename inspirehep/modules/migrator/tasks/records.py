@@ -55,7 +55,7 @@ from inspirehep.modules.pidstore.providers import InspireRecordIdProvider
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.utils.dedupers import dedupe_list
 from inspirehep.utils.helpers import force_force_list
-from inspirehep.utils.record import get_value
+from inspirehep.utils.record import get_value, soft_delete_pidstore_for_record
 
 from ..models import InspireProdRecords
 
@@ -314,6 +314,9 @@ def record_upsert(json):
             record = Record.create(json, id_=None)
             # Create persistent identifier.
             inspire_recid_minter(str(record.id), json)
+
+        if json.get('deleted'):
+            soft_delete_pidstore_for_record(record.id)
 
         return record
 

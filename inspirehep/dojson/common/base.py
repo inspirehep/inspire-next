@@ -190,13 +190,18 @@ def collections(self, key, value):
         return {
             'primary': force_single_element(value.get('a')),
             'secondary': force_force_list(value.get('b')),
-            'deleted': value.get('c'),
         }
+
+    def _is_deleted(value):
+        return value and value.lower() == 'deleted'
 
     collections = self.get('collections', [])
 
     values = force_force_list(value)
     for value in values:
+        if _is_deleted(value.get('c')):
+            self['deleted'] = True
+
         collections.append(_get_collection(value))
 
     return collections
@@ -210,8 +215,18 @@ def collections2marc(self, key, value):
     return {
         'a': value.get('primary'),
         'b': value.get('secondary'),
-        'c': value.get('deleted')
     }
+
+
+@hep2marc.over('980', '^deleted$')
+@hepnames2marc.over('980', '^deleted$')
+@utils.for_each_value
+def deleted2marc(self, key, value):
+    """Set Deleted value to marc xml."""
+    if value:
+        return {
+            'c': 'DELETED',
+        }
 
 
 @hep.over('deleted_records', '^981..')

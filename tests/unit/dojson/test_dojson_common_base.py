@@ -436,7 +436,6 @@ def test_collections_from_980__double_a_double_b():
                 'Something',
                 'Something else',
             ],
-            'c': None,
         },
     ]
 

@@ -50,6 +50,9 @@
             "format": "date",
             "type": "string"
         },
+        "deleted": {
+            "type": "boolean"
+        },
         "email_addresses": {
             "description": "Contains current email addresses",
             "items": {

@@ -75,6 +75,9 @@
             "title": "Date started",
             "type": "string"
         },
+        "deleted": {
+            "type": "boolean"
+        },
         "description": {
             "title": "Description",
             "type": "array"
