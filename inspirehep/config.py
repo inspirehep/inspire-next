@@ -125,6 +125,114 @@ scripts
 USERPROFILES_EXTEND_SECURITY_FORMS = False
 USERPROFILES_SETTINGS_TEMPLATE = 'inspirehep_theme/accounts/settings/profile.html'
 
+# Collections
+# ===========
+COLLECTIONS_DELETED_RECORDS = '{dbquery} AND NOT deleted:True'
+"""Enhance collection query to exclude deleted records."""
+
+COLLECTIONS_QUERY_PARSER = 'inspirehep.modules.search.parser:Main'
+"""User search query lexical parser."""
+
+COLLECTIONS_QUERY_WALKERS = [
+    'inspirehep.modules.search.walkers.pypeg_to_ast:PypegConverter',
+]
+"""Modules to create the query AST."""
+COLLECTIONS_USE_PERCOLATOR = False
+"""Define which percolator you want to use.
+
+Default value is `False` to use the internal percolator.
+You can also set True to use elasticsearch to provide percolator resolver.
+NOTE that ES percolator uses high memory and there might be some problems
+when creating records.
+"""
+
+INSPIRE_COLLECTIONS_DEFINITION = [
+    {
+        "query": "collections.primary:HEP",
+        "name": "Literature"
+    },
+    {
+        "query": "collections.primary:H1-INTERNAL-NOTE",
+        "name": "H1 Internal Notes"
+    },
+    {
+        "query": "collections.primary:INSTITUTION",
+        "name": "Institutions"
+    },
+    {
+        "query": "collections.primary:HERMES-INTERNAL-NOTE",
+        "name": "HERMES Internal Notes"
+    },
+    {
+        "query": "collections.primary:ZEUS-INTERNAL-NOTE",
+        "name": "ZEUS Internal Notes"
+    },
+    {
+        "query": "collections.primary:JOB",
+        "name": "Jobs"
+    },
+    {
+        "query": "collections.primary:JOBHIDDEN",
+        "name": "Jobs Hidden"
+    },
+    {
+        "query": "collections.primary:CONFERENCES",
+        "name": "Conferences"
+    },
+    {
+        "query": "collections.primary:D0-INTERNAL-NOTE",
+        "name": "D0 Internal Notes"
+    },
+    {
+        "query": "collections.primary:EXPERIMENT",
+        "name": "Experiments"
+    },
+    {
+        "query": "collections.primary:DATA",
+        "name": "Data"
+    },
+    {
+        "query": "collections.primary:ZEUS-PRELIMINARY-NOTE",
+        "name": "ZEUS Preliminary Notes"
+    },
+    {
+        "query": "collections.primary:JOURNALS",
+        "name": "Journals"
+    },
+    {
+        "query": "collections.primary:H1-PRELIMINARY-NOTE",
+        "name": "H1 Preliminary Notes"
+    },
+    {
+        "query": "collections.primary:D0-PRELIMINARY-NOTE",
+        "name": "D0 Preliminary Notes"
+    },
+    {
+        "query": "595__c:CDS collections.primary:HEP",
+        "name": "For CDS"
+    },
+    {
+        "query": "collections.primary:CDF-INTERNAL-NOTE",
+        "name": "CDF Internal Notes"
+    },
+    {
+        "query": "collections.primary:HIDDEN",
+        "name": "HIDDEN"
+    },
+    {
+        "query": "collections.primary:CDF-NOTE",
+        "name": "CDF Notes"
+    },
+    {
+        "query": "collections.primary:HEPNAMES",
+        "name": "Authors"
+    },
+    {
+        "query": "collections.primary:HALhidden",
+        "name": "HAL Hidden"
+    }
+]
+
 # Search
 # ======
 
