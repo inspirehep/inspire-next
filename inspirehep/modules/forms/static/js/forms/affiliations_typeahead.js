@@ -39,18 +39,13 @@ define([
             if (index != 0) {
               pattern = pattern + " AND ";
             }
-            pattern = pattern + "affautocomplete:" + "/" + this + ".*/";
+            pattern = pattern + "affautocomplete:" + "/" + encodeURIComponent(this) + ".*/";
           })
 
-          return '/search?cc=Institutions&p=' + pattern + '&of=recjson&rg=100'
+          return '/api/institutions?q=' + pattern
         },
         filter: function(response) {
-
-          return response.sort(function(a, b) {
-            if (a.ICN < b.ICN) return -1;
-            if (a.ICN > b.ICN) return 1;
-            return 0;
-          })
+          return $.map(response.hits.hits, function(el) { return el });
         }
       },
       datumTokenizer: function() {},
@@ -84,7 +79,9 @@ define([
           callback(suggestions);
         }.bind(this));
       }.bind(this),
-      displayKey: 'ICN',
+      displayKey: function(data) {
+        return data.metadata.ICN[0];
+      },
       templates: {
         empty: function(data) {
           return 'Cannot find this affiliation in our database.';
@@ -93,7 +90,7 @@ define([
           if (data.new_ICN != data.ICN) {
             data.show_future_name = true;
           }
-          return suggestionTemplate.render.call(suggestionTemplate, data);
+          return suggestionTemplate.render.call(suggestionTemplate, data.metadata);
         }.bind(this)
       }
     });
