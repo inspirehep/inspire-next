@@ -81,7 +81,6 @@ def test_541__a_b_c_e_from_acquisition_source():
         'a': 'orcid:0000-0002-1048-661X',
         'b': 'oliver.schlotterer@web.de',
         'c': 'submission',
-        'd': None,
         'e': '504296',
     }
     result = hep2marc.do(record)

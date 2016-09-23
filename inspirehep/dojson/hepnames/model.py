@@ -29,10 +29,14 @@ from dojson import Overdo
 from ..model import FilterOverdo, add_schema, clean_record
 
 
-filters = [
+hepnames_filters = [
     add_schema('authors.json'),
     clean_record,
 ]
 
-hepnames = FilterOverdo(filters=filters)
-hepnames2marc = Overdo()
+hepnames2marc_filters = [
+    clean_record,
+]
+
+hepnames = FilterOverdo(filters=hepnames_filters)
+hepnames2marc = FilterOverdo(filters=hepnames2marc_filters)

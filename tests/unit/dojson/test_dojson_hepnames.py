@@ -100,9 +100,7 @@ EXPERIMENTS_DATA = [
         }],
         [{
             '0': 3,
-            'd': None,
             'e': 'SDSS',
-            's': None,
         }],
     ],
     [
@@ -118,9 +116,7 @@ EXPERIMENTS_DATA = [
             'current': False,
         }],
         [{
-            'd': None,
             'e': 'NOTCURATED',
-            's': None,
         }],
     ],
     [
