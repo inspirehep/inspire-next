@@ -25,7 +25,7 @@ import os
 
 from datetime import date
 
-from flask import current_app
+from flask import current_app, url_for
 
 from inspirehep.modules.forms.utils import filter_empty_elements
 
@@ -68,6 +68,11 @@ def formdata_to_model(obj, formdata):
     if "comments" in form_fields and form_fields["comments"]:
         obj.extra_data["comments"] = form_fields["comments"]
         data["_private_note"] = form_fields["comments"]
+
+    # Add email to extra data
+    if "public_email" in form_fields and form_fields["public_email"]:
+        obj.extra_data["public_email"] = form_fields["public_email"]
+        data["public_email"] = form_fields["public_email"]
 
     # Add HEPNAMES collection
     data["collections"] = [{

@@ -1,4 +1,7 @@
 <div ng-if="vm.record._extra_data._action === 'author_approval' && vm.record._workflow.status === 'HALTED'">
+<button class="btn btn-info"
+        ng-click="Utils.redirect('/submit/author/newreview?objectid={{vm.record.id}}')">Review Submission
+</button>
 <button class="btn btn-danger"
         ng-click="Utils.setDecision('reject')">Reject
 </button>

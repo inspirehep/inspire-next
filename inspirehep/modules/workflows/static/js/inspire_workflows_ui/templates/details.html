@@ -118,6 +118,33 @@
               <span ng-bind="vm.record.metadata.name.preferred_name"
                     editable-text="vm.record.metadata.name.preferred_name"
                     e-ng-change="Utils.registerUpdateEvent()"></span>
+              <br>
+              <span class="text-muted" ng-if="vm.record.metadata.native_name">Native name:</span>
+              <span ng-if="vm.record.metadata.native_name" ng-bind="vm.record.metadata.native_name"
+                    editable-text="vm.record.metadata.native_name"
+                    e-ng-change="Utils.registerUpdateEvent()"></span>
+              <br ng-if="vm.record.metadata.native_name">
+              <span class="text-muted">Email address:</span>
+              <span ng-bind="vm.record.metadata.public_email"
+                    editable-text="vm.record.metadata.public_email"
+                    e-ng-change="Utils.registerUpdateEvent()"></span>
+
+              <div ng-repeat="experiment in vm.record.metadata.experiments">
+              <span class="text-muted">Experiment:</span>
+              <span ng-bind="experiment.name"
+                    editable-text="experiment.name"
+                    e-ng-change="Utils.registerUpdateEvent()"></span>
+              <span class="text-muted"> - From:</span>
+              <span ng-bind="experiment.start_year"
+                    editable-text="experiment.start_year"
+                    e-ng-change="Utils.registerUpdateEvent()"></span>
+              <span class="text-muted">To:</span>
+              <span ng-bind="experiment.end_year"
+                    editable-text="experiment.end_year"
+                    e-ng-change="Utils.registerUpdateEvent()"></span>
+              <br>
+              </div>
+
             </p>
           </div>
         </div>
@@ -274,26 +301,13 @@
         <div class="detail-panel">
           <h4>Notes</h4>
 
-          <div class="row"
-               ng-repeat="note in vm.record.metadata.public_notes">
-
-            <div ng-if="note.source">
-              <div class="col-md-3 col-sm-4">
-                <p class="font-bolder" ng-bind="note.source"></p>
-              </div>
-              <div class="col-md-9 col-sm-8">
-                <p ng-bind="note.value"></p>
-              </div>
-            </div>
-            <div ng-if="!note.source">
+          <div class="row">
               <div class="col-md-12 text-center">
                 <div
-                  ng-class="{'alert': note.value == '*Temporary entry*'}">
-                  <p ng-bind="note.value"></p>
+                  ng-class="{'alert': vm.record.metadata._private_note == '*Temporary entry*'}">
+                  <p ng-bind="vm.record.metadata._private_note"></p>
                 </div>
               </div>
-            </div>
-
           </div>
         </div>
       </div>
