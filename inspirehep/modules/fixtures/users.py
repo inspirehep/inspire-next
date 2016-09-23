@@ -46,5 +46,9 @@ def init_users_and_permissions():
             action='superuser-access',
             role=superuser_role
         ))
-        db.session.add(ActionRoles(action='admin-access', role=superuser_role))
+        db.session.add(ActionRoles(
+            action='admin-access',
+            role=superuser_role)
+        )
+
     db.session.commit()

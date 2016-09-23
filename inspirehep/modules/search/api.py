@@ -22,7 +22,13 @@
 
 from __future__ import absolute_import, division, print_function
 
-from invenio_search.api import RecordsSearch
+from flask import request
+from flask_security import current_user
+
+from elasticsearch_dsl.query import Q
+
+from invenio_access.models import ActionUsers
+from invenio_search.api import DefaultFilter, RecordsSearch
 from invenio_search import current_search_client
 
 from .query_factory import inspire_query_factory
@@ -77,12 +83,41 @@ class SearchMixin(object):
         return [document['_source'] for document in documents['docs']]
 
 
+def inspire_filter():
+    """Filter applied to all queries."""
+    if request:
+        collection = request.values.get('cc', 'Literature')
+
+        all_restricted_collections = set(
+            [a.argument for a in ActionUsers.query.filter_by(
+                action='view-restricted-collection').all()]
+        )
+
+        user_roles = [r.name for r in current_user.roles]
+        if 'superuser' in user_roles:
+            user_collections = all_restricted_collections
+        else:
+            user_collections = set(
+                [a.argument for a in ActionUsers.query.filter_by(
+                    action='view-restricted-collection',
+                    user_id=current_user.get_id()).all()]
+            )
+
+        query = Q('match', _collections=collection)
+
+        for collection in list(all_restricted_collections - user_collections):
+            query = query & ~Q('match', _collections=collection)
+
+        return query
+
+
 class LiteratureSearch(RecordsSearch, SearchMixin):
     """Elasticsearch-dsl specialized class to search in Literature database."""
 
     class Meta:
         index = 'records-hep'
         doc_types = 'hep'
+        default_filter = DefaultFilter(inspire_filter)
 
     def default_fields(self):
         """What fields to use when no keyword is specified."""

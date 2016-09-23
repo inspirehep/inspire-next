@@ -188,6 +188,11 @@ setup(
             'hepnames = inspirehep.dojson.hepnames:hepnames',
             'hepnames2marc = inspirehep.dojson.hepnames2marc:hepnames2marc',
         ],
+        'invenio_access.actions': [
+            'view_restricted_collection'
+            ' = inspirehep.modules.records.permissions:'
+            'action_view_restricted_collection',
+        ],
         'invenio_base.api_apps': [
             'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
