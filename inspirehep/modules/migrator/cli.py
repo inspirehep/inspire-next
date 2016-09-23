@@ -36,6 +36,7 @@ from flask_cli import with_appcontext
 
 from invenio_db import db
 
+from .tasks.access import import_access, import_userrole
 from .tasks.records import (
     add_citation_counts,
     migrate,
@@ -101,6 +102,30 @@ def loadaudits():
     """Load workflow Audit logs for workflows.models.Audit."""
     # TODO implement
     pass
+
+
+@migrator.command()
+@click.argument('source', type=click.File('r'), default=sys.stdin)
+@with_appcontext
+def loadaccess(source):
+    click.echo('Loading dump...')
+    data = json.load(source)
+    click.echo('Sending tasks to queue...')
+    with click.progressbar(data) as records:
+        for item in records:
+            import_access.delay(item)
+
+
+@migrator.command()
+@click.argument('source', type=click.File('r'), default=sys.stdin)
+@with_appcontext
+def loaduserroles(source):
+    click.echo('Loading dump...')
+    data = json.load(source)
+    click.echo('Sending tasks to queue...')
+    with click.progressbar(data) as records:
+        for item in records:
+            import_userrole.delay(item)
 
 
 @migrator.command()
