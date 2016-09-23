@@ -32,7 +32,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_record_accepted,
     halt_record,
     is_marked,
-    emit_record_signals
 )
 
 from inspirehep.modules.workflows.tasks.submission import (
@@ -41,7 +40,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     close_ticket,
     send_robotupload
 )
-from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
+from inspirehep.modules.workflows.tasks.upload import set_schema
 
 from inspirehep.modules.authors.tasks import (
     update_ticket_context,
@@ -60,8 +59,6 @@ class Author(object):
     workflow = [
         # Make sure schema is set for proper indexing in Holding Pen
         set_schema,
-        # Emit record signals to receive metadata enrichment
-        emit_record_signals,
         IF_ELSE(is_marked('is-update'), [
             send_robotupload(
                 marcxml_processor=hepnames2marc,

@@ -51,7 +51,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     is_submission,
     is_arxiv_paper,
     mark,
-    emit_record_signals,
     prepare_update_payload
 )
 
@@ -99,8 +98,6 @@ class Article(object):
     workflow = [
         # Make sure schema is set for proper indexing in Holding Pen
         set_schema,
-        # Emit record signals to receive metadata enrichment
-        emit_record_signals,
         # Query locally or via legacy search API to see if article
         # is already ingested and this is an update
         IF(article_exists, [
