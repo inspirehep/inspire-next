@@ -18,6 +18,9 @@
             "title": "CORE",
             "type": "boolean"
         },
+        "deleted": {
+            "type": "boolean"
+        },
         "department": {
             "description": "Subordinate unit in native language",
             "title": "Department",

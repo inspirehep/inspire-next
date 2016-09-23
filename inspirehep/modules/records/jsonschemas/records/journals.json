@@ -11,6 +11,9 @@
             "type": "array",
             "uniqueItems": true
         },
+        "deleted": {
+            "type": "boolean"
+        },
         "history": {
             "title": "History",
             "type": "string"

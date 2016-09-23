@@ -186,34 +186,47 @@ def spires_sysnos2marc(self, key, value):
 @jobs.over('collections', '^980..')
 def collections(self, key, value):
     """Collection this record belongs to."""
-    value = force_force_list(value)
-
-    def get_value(value):
-        primary = force_single_element(value.get('a'))
+    def _get_collection(value):
         return {
-            'primary': primary,
-            'secondary': value.get('b'),
-            'deleted': value.get('c'),
+            'primary': force_single_element(value.get('a')),
+            'secondary': force_force_list(value.get('b')),
         }
+
+    def _is_deleted(value):
+        return value and value.lower() == 'deleted'
 
     collections = self.get('collections', [])
 
-    for val in value:
-        collections.append(get_value(val))
+    values = force_force_list(value)
+    for value in values:
+        if _is_deleted(value.get('c')):
+            self['deleted'] = True
+
+        collections.append(_get_collection(value))
 
     return collections
 
 
-@hep2marc.over('980', 'collections')
-@hepnames2marc.over('980', 'collections')
+@hep2marc.over('980', '^collections$')
+@hepnames2marc.over('980', '^collections$')
 @utils.for_each_value
 def collections2marc(self, key, value):
     """Collection this record belongs to."""
     return {
         'a': value.get('primary'),
         'b': value.get('secondary'),
-        'c': value.get('deleted')
     }
+
+
+@hep2marc.over('980', '^deleted$')
+@hepnames2marc.over('980', '^deleted$')
+@utils.for_each_value
+def deleted2marc(self, key, value):
+    """Set Deleted value to marc xml."""
+    if value:
+        return {
+            'c': 'DELETED',
+        }
 
 
 @hep.over('deleted_records', '^981..')

@@ -33,7 +33,8 @@ from invenio_records.signals import before_record_insert, before_record_update
 from inspirehep.dojson.utils import classify_field, get_recid_from_ref
 from inspirehep.utils.date import create_valid_date
 from inspirehep.utils.helpers import force_force_list
-from inspirehep.utils.record import get_value
+from inspirehep.utils.record_getter import get_db_record
+from inspirehep.utils.record import get_value, soft_delete_pidstore_for_record
 
 from .experiments import EXPERIMENTS_MAP
 from .signals import after_record_enhanced
@@ -334,3 +335,15 @@ def add_recids_and_validate(sender, json, *args, **kwargs):
     """Ensure that recids are generated before being validated."""
     populate_recid_from_ref(sender, json, *args, **kwargs)
     references_validator(sender, json, *args, **kwargs)
+
+
+@before_record_update.connect
+def check_if_record_is_going_to_be_deleted(sender, *args, **kwargs):
+    """Checks if 'deleted' field is set as True before updating.
+
+    If 'deleted' field exists and its value is True, before update,
+    then delete all the record's pidstores.
+    """
+    if sender.get('deleted'):
+        record = get_db_record('literature', int(sender.get('control_number')))
+        soft_delete_pidstore_for_record(record.id)

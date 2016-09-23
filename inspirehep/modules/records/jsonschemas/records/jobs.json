@@ -25,6 +25,9 @@
             "title": "Application deadline",
             "type": "string"
         },
+        "deleted": {
+            "type": "boolean"
+        },
         "description": {
             "title": "Job description",
             "type": "string"
