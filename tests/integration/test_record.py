@@ -65,18 +65,7 @@ def record_already_deleted_in_marcxml(app):
     yield
 
     with app.app_context():
-        ri = RecordIndexer()
-
-        record = get_db_record('literature', 222)
-        ri.delete(record)
-        record.delete(force=True)
-
-        pid = PersistentIdentifier.get('literature', 222)
-        PersistentIdentifier.delete(pid)
-
-        object_uuid = pid.object_uuid
-        PersistentIdentifier.query.filter(object_uuid == PersistentIdentifier.object_uuid).delete()
-        db.session.commit()
+        delete_record_from_everywhere('literature', 222)
 
 
 @pytest.fixture(scope='function')
@@ -107,18 +96,52 @@ def record_not_yet_deleted(app):
     yield
 
     with app.app_context():
-        record = get_db_record('literature', 333)
+        delete_record_from_everywhere('literature', 333)
 
-        ri = RecordIndexer()
-        ri.delete(record)
-        record.delete(force=True)
 
-        pid = PersistentIdentifier.get('literature', 333)
-        PersistentIdentifier.delete(pid)
+@pytest.fixture(scope='function')
+def record_not_es_refreshed(app):
+    snippet = (
+        '<record>'
+        '  <controlfield tag="001">444</controlfield>'
+        '  <controlfield tag="005">20160913214552.0</controlfield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">HEP</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
 
-        object_uuid = pid.object_uuid
-        PersistentIdentifier.query.filter(object_uuid == PersistentIdentifier.object_uuid).delete()
+    with app.app_context():
+        json_record = hep.do(create_record(snippet))
+        json_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
+
+        with db.session.begin_nested():
+            record = record_upsert(json_record)
+            if record:
+                ri = RecordIndexer()
+                ri.index(record)
+
         db.session.commit()
+
+    yield
+
+    with app.app_context():
+        delete_record_from_everywhere('literature', 444)
+
+
+def delete_record_from_everywhere(collection, record_control_number):
+    record = get_db_record(collection, record_control_number)
+
+    ri = RecordIndexer()
+    ri.delete(record)
+    record.delete(force=True)
+
+    pid = PersistentIdentifier.get(collection, record_control_number)
+    PersistentIdentifier.delete(pid)
+
+    object_uuid = pid.object_uuid
+    PersistentIdentifier.query.filter(object_uuid == PersistentIdentifier.object_uuid).delete()
+    db.session.commit()
 
 
 def test_deleted_record_stays_deleted(app, record_already_deleted_in_marcxml):
@@ -139,3 +162,8 @@ def test_record_can_be_deleted(app, record_not_yet_deleted):
         db.session.commit()
 
         assert client.get('/api/literature/333').status_code == 410
+
+
+def test_record_can_be_immediately_es_updated(app, record_not_es_refreshed):
+    with app.test_client() as client:
+        assert client.get('/api/literature/444').status_code == 200
