@@ -442,6 +442,10 @@
                     "tokenizer": "keyword",
                     "type": "custom"
                 },
+                "lowercase_analyzer": {
+                    "filter": "lowercase",
+                    "tokenizer": "keyword"
+                },
                 "no_tokenizing_analyzer": {
                     "filter": [
                         "asciifold_with_orig",
@@ -461,10 +465,6 @@
                     ],
                     "tokenizer": "keyword",
                     "type": "custom"
-                },
-                "lowercase_analyzer": {
-                    "filter": "lowercase",
-                    "tokenizer": "keyword"
                 }
             },
             "filter": {
