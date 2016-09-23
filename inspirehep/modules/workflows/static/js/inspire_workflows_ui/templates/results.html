@@ -86,6 +86,9 @@
           <!--Authors  Decision-->
           <div
             ng-if="record._source._workflow.data_type === 'authors' && !record._source._extra_data.user_action && record._source._workflow.status === 'HALTED'">
+            <button class="btn btn-info"
+                    ng-click="redirect('/submit/author/newreview?objectid=' + record._id)">Review Submission
+            </button>
             <button class="btn btn-danger"
                     ng-click="setDecision(record._id,'reject')">Reject
             </button>
