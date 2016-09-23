@@ -570,10 +570,18 @@ def test_ids_from_035__a_9_with_scopus():
 
 def test_ids_from_035__9():
     snippet = (
-        '<datafield tag="035" ind1=" " ind2=" ">'
-        '  <subfield code="9">INSPIRE</subfield>'
-        '</datafield>'
-    )  # record/edit/?ln=en#state=edit&recid=1474355&recrev=20160707223728
+        '<record>'
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">INSPIRE</subfield>'
+        '  </datafield>'  # record/edit/?ln=en#state=edit&recid=1474355&recrev=20160707223728
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">CERN</subfield>'
+        '  </datafield>'  # record/1364570/export/xme
+        '  <datafield tag="035" ind1=" " ind2=" ">'
+        '    <subfield code="9">KAKEN</subfield>'
+        '  </datafield>'  # record/1480252/export/xme
+        '</record>'
+    )
 
     result = hepnames.do(create_record(snippet))
 
