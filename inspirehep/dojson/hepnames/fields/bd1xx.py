@@ -44,30 +44,6 @@ LOOKS_LIKE_CERN = re.compile('^\d+$|^CER[MN]?-|^CNER-|^CVERN-', re.I)
 NON_DIGIT = re.compile('[^\d]+')
 
 
-@hepnames.over('acquisition_source', '^541[10_].')
-def acquisition_source(self, key, value):
-    """Immediate Source of Acquisition Note."""
-    return {
-        'source': value.get('a'),
-        'email': value.get('b'),
-        'method': value.get('c'),
-        'date': value.get('d'),
-        'submission_number': str(value.get('e'))
-    }
-
-
-@hepnames2marc.over('541', 'acquisition_source')
-def acquisition_source2marc(self, key, value):
-    """Immediate Source of Acquisition Note."""
-    return {
-        'a': value.get('source'),
-        'b': value.get('email'),
-        'c': value.get('method'),
-        'd': value.get('date'),
-        'e': value.get('submission_number'),
-    }
-
-
 @hepnames.over('name', '^100..')
 def name(self, key, value):
     """Name information.
