@@ -37,7 +37,7 @@ from inspirehep.config import SERVER_NAME
 from inspirehep.factory import create_app
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='session')
 def small_app(request):
     """Flask application fixture."""
     app = create_app()
@@ -60,7 +60,7 @@ def small_app(request):
         init_all_storage_paths()
         init_users_and_permissions()
 
-        migrate('./inspirehep/demosite/data/demo-records-small.xml',
+        migrate('./inspirehep/demosite/data/demo-records.xml.gz',
                 wait_for_results=True)
         es.indices.refresh('records-hep')
 
@@ -73,3 +73,15 @@ def selenium(selenium, small_app):
     selenium.maximize_window()
     selenium.get(environ['SERVER_NAME'])
     return selenium
+
+
+@pytest.fixture
+def login(selenium):
+    selenium.find_element_by_link_text('Sign in').click()
+    selenium.get(environ['SERVER_NAME'] + '/login/?local=1')
+    selenium.find_element_by_id('email').send_keys('admin@inspirehep.net')
+    selenium.find_element_by_id('password').send_keys('123456')
+    selenium.find_element_by_xpath("//button[@type='submit']").click()
+    yield
+    selenium.find_element_by_id('user-info').click()
+    selenium.find_element_by_xpath("(//button[@type='button'])[2]").click()

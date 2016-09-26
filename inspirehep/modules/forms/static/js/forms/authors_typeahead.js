@@ -38,17 +38,13 @@ define([
             if (index != 0) {
               pattern = pattern + " AND ";
             }
-            pattern = pattern + "authorautocomplete:" + "/" + this + ".*/";
+            pattern = pattern + "authorautocomplete:" + "/" + encodeURIComponent(this) + ".*/";
           })
 
-          return '/search?cc=HepNames&p=' + pattern + '&of=recjson&rg=100'
+          return '/api/authors?q=' + pattern
         },
         filter: function(response) {
-          return response.sort(function(a, b) {
-            if (a.name.value < b.name.value) return -1;
-            if (a.name.value > b.name.value) return 1;
-            return 0;
-          })
+          return $.map(response.hits.hits, function(el) { return el });
         }
       },
       datumTokenizer: function() {},
@@ -81,24 +77,24 @@ define([
         }.bind(this));
       }.bind(this),
       displayKey: function(data) {
-        return data.name.value;
+        return data.metadata.name.value;
       },
       templates: {
         empty: function(data) {
           return 'Cannot find this author in our database.';
         },
         suggestion: function(data) {
-          data.affiliation = null;
-          if (data.positions) {
-            var currentPosition = $.map(data.positions, function(item, idx) {
+          data.metadata.affiliation = null;
+          if (data.metadata.positions) {
+            var currentPosition = $.map(data.metadata.positions, function(item, idx) {
               if ('status' in item && 'institution' in item) {
                 if (item.status.toLowerCase() === "current") {
-                  data.affiliation = item.institution.name;
+                  data.metadata.affiliation = item.institution.name;
                 }
               }
             });
           }
-          return suggestionTemplate.render.call(suggestionTemplate, data);
+          return suggestionTemplate.render.call(suggestionTemplate, data.metadata);
         }.bind(this)
       }
     });
