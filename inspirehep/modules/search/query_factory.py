@@ -72,7 +72,9 @@ def inspire_query_factory():
             ))
         finally:
             if current_app.debug:
-                current_app.logger.debug(json.dumps(query.to_dict(), indent=4))
+                current_app.logger.debug(
+                    json.dumps(search.to_dict(), indent=4)
+                )
 
             return query
 
