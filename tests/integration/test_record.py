@@ -65,18 +65,7 @@ def record_already_deleted_in_marcxml(app):
     yield
 
     with app.app_context():
-        ri = RecordIndexer()
-
-        record = get_db_record('literature', 222)
-        ri.delete(record)
-        record.delete(force=True)
-
-        pid = PersistentIdentifier.get('literature', 222)
-        PersistentIdentifier.delete(pid)
-
-        object_uuid = pid.object_uuid
-        PersistentIdentifier.query.filter(object_uuid == PersistentIdentifier.object_uuid).delete()
-        db.session.commit()
+        delete_record_from_everywhere('literature', 222)
 
 
 @pytest.fixture(scope='function')
@@ -107,18 +96,7 @@ def record_not_yet_deleted(app):
     yield
 
     with app.app_context():
-        record = get_db_record('literature', 333)
-
-        ri = RecordIndexer()
-        ri.delete(record)
-        record.delete(force=True)
-
-        pid = PersistentIdentifier.get('literature', 333)
-        PersistentIdentifier.delete(pid)
-
-        object_uuid = pid.object_uuid
-        PersistentIdentifier.query.filter(object_uuid == PersistentIdentifier.object_uuid).delete()
-        db.session.commit()
+        delete_record_from_everywhere('literature', 333)
 
 
 @pytest.fixture(scope='function')
@@ -148,18 +126,22 @@ def record_not_es_refreshed(app):
     yield
 
     with app.app_context():
-        record = get_db_record('literature', 444)
+        delete_record_from_everywhere('literature', 444)
 
-        ri = RecordIndexer()
-        ri.delete(record)
-        record.delete(force=True)
 
-        pid = PersistentIdentifier.get('literature', 444)
-        PersistentIdentifier.delete(pid)
+def delete_record_from_everywhere(collection, record_control_number):
+    record = get_db_record(collection, record_control_number)
 
-        object_uuid = pid.object_uuid
-        PersistentIdentifier.query.filter(object_uuid == PersistentIdentifier.object_uuid).delete()
-        db.session.commit()
+    ri = RecordIndexer()
+    ri.delete(record)
+    record.delete(force=True)
+
+    pid = PersistentIdentifier.get(collection, record_control_number)
+    PersistentIdentifier.delete(pid)
+
+    object_uuid = pid.object_uuid
+    PersistentIdentifier.query.filter(object_uuid == PersistentIdentifier.object_uuid).delete()
+    db.session.commit()
 
 
 def test_deleted_record_stays_deleted(app, record_already_deleted_in_marcxml):
