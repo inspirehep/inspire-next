@@ -101,7 +101,6 @@ def record_not_yet_deleted(app):
                 ri = RecordIndexer()
                 ri.index(record)
 
-        es.indices.refresh('records-hep')
         db.session.commit()
 
     yield

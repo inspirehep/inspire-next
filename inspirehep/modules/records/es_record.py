@@ -58,4 +58,7 @@ class ESRecord(Record):
     @property
     def updated(self):
         """Get last updated timestamp."""
-        return arrow.get(self['_updated']).naive
+        if self.get('_updated'):
+            return arrow.get(self['_updated']).naive
+        else:
+            return datetime.now()
