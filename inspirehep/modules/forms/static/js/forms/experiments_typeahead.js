@@ -41,17 +41,13 @@ define([
             if (index != 0) {
               pattern = pattern + " AND ";
             }
-            pattern = pattern + "experimentautocomplete:" + "/" + this + ".*/";
+            pattern = pattern + "experimentautocomplete:" + "/" + encodeURIComponent(this) + ".*/";
           })
 
-          return '/search?cc=Experiments&p=' + pattern + '&of=recjson&rg=100'
+          return '/api/experiments?q=' + pattern
         },
         filter: function(response) {
-          return response.sort(function(a, b) {
-            if (a.experiment_name.experiment[0] < b.experiment_name.experiment[0]) return -1;
-            if (a.experiment_name.experiment[0] > b.experiment_name.experiment[0]) return 1;
-            return 0;
-          })
+          return $.map(response.hits.hits, function(el) { return el });
         }
       },
       datumTokenizer: function() {},
@@ -81,15 +77,15 @@ define([
         }.bind(this));
       }.bind(this),
       displayKey: function(data) {
-        return data.experiment_name.experiment[0];
+        return data.metadata.experiment_names[0].title;
       },
       templates: {
         empty: function(data) {
           return 'Cannot find this experiment in our database.';
         },
         suggestion: function(data) {
-          data.display_name = data.experiment_name.experiment[0];
-          return suggestionTemplate.render.call(suggestionTemplate, data);
+          data.metadata.display_name = data.metadata.experiment_names[0].title;
+          return suggestionTemplate.render.call(suggestionTemplate, data.metadata);
         }.bind(this)
       }
     });
