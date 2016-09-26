@@ -28,6 +28,8 @@ from __future__ import absolute_import, division, print_function
 
 import arrow
 
+from datetime import datetime
+
 from elasticsearch.exceptions import NotFoundError
 
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -59,4 +61,4 @@ class ESRecord(Record):
     @property
     def updated(self):
         """Get last updated timestamp."""
-        return arrow.get(self['_updated']).naive
+        return arrow.get(self['_updated']).naive if self.get('_updated') else datetime.now()

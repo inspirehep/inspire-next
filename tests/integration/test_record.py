@@ -121,6 +121,47 @@ def record_not_yet_deleted(app):
         db.session.commit()
 
 
+@pytest.fixture(scope='function')
+def record_not_es_refreshed(app):
+    snippet = (
+        '<record>'
+        '  <controlfield tag="001">444</controlfield>'
+        '  <controlfield tag="005">20160913214552.0</controlfield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="a">HEP</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    with app.app_context():
+        json_record = hep.do(create_record(snippet))
+        json_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
+
+        with db.session.begin_nested():
+            record = record_upsert(json_record)
+            if record:
+                ri = RecordIndexer()
+                ri.index(record)
+
+        db.session.commit()
+
+    yield
+
+    with app.app_context():
+        record = get_db_record('literature', 444)
+
+        ri = RecordIndexer()
+        ri.delete(record)
+        record.delete(force=True)
+
+        pid = PersistentIdentifier.get('literature', 444)
+        PersistentIdentifier.delete(pid)
+
+        object_uuid = pid.object_uuid
+        PersistentIdentifier.query.filter(object_uuid == PersistentIdentifier.object_uuid).delete()
+        db.session.commit()
+
+
 def test_deleted_record_stays_deleted(app, record_already_deleted_in_marcxml):
     with app.test_client() as client:
         assert client.get('/api/literature/222').status_code == 410
@@ -139,3 +180,8 @@ def test_record_can_be_deleted(app, record_not_yet_deleted):
         db.session.commit()
 
         assert client.get('/api/literature/333').status_code == 410
+
+
+def test_record_can_be_immediately_es_updated(app, record_not_es_refreshed):
+    with app.test_client() as client:
+        assert client.get('/api/literature/444').status_code == 200
