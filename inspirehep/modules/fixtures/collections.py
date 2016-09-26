@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Functions for searching ES and returning the results."""
+"""Fixtures for collection definitions."""
 
 from __future__ import absolute_import, division, print_function
 
