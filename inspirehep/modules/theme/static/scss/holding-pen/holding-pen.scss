@@ -324,7 +324,7 @@ $hp_table_bg: #233345;
         display: inline;
       }
 
-      .btn-danger, .btn-success, .btn-warning {
+      .btn-danger, .btn-success, .btn-warning, .btn-info{
         background-color: $midnight-blue;
         color: $blue-haze;
         border-color: $midnight-blue;
@@ -345,6 +345,11 @@ $hp_table_bg: #233345;
 
         .btn-warning {
           background-color: $orange;
+          color: white;
+        }
+
+        .btn-info {
+          background-color: $belize-hole;
           color: white;
         }
       }
