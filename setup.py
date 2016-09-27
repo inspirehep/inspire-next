@@ -70,6 +70,7 @@ install_requires = [
     'invenio-utils==0.2.0',  # Not fully Invenio 3 ready
     'invenio>=3.0.0a1,<3.1.0',
     'inspire-crawler>=0.2.1',
+    'inspire-schemas~=0.1',
     'dojson==1.2.1',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',
@@ -220,7 +221,7 @@ setup(
             'inspirehep_holding_js = inspirehep.modules.workflows.bundles:details_js',
         ],
         'invenio_jsonschemas.schemas': [
-            'inspire_records = inspirehep.modules.records.jsonschemas',
+            'inspire_records = inspire_schemas',
         ],
         'invenio_search.mappings': [
             'records = inspirehep.modules.records.mappings',
