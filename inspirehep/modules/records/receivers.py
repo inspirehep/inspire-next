@@ -24,20 +24,56 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
+import uuid
+
+import requests
 import six
 from flask import current_app
+from itertools import chain
 
 from invenio_indexer.signals import before_record_index
-from invenio_records.signals import before_record_insert, before_record_update
+from invenio_records.signals import (
+    after_record_insert,
+    before_record_delete,
+    before_record_insert,
+    before_record_update,
+)
 
 from inspirehep.dojson.utils import classify_field, get_recid_from_ref
-from inspirehep.utils.date import create_valid_date
+from inspirehep.modules.authors.utils import author_tokenize
+from inspirehep.modules.disambiguation.models import DisambiguationRecord
+from inspirehep.utils.date import create_earliest_date, create_valid_date
 from inspirehep.utils.helpers import force_force_list
 from inspirehep.utils.record_getter import get_db_record
 from inspirehep.utils.record import get_value, soft_delete_pidstore_for_record
 
 from .experiments import EXPERIMENTS_MAP
 from .signals import after_record_enhanced
+
+
+#
+# before_record_index
+#
+
+@before_record_index.connect
+def earliest_date(sender, json, *args, **kwargs):
+    """Find and assign the earliest date to a HEP paper."""
+    date_paths = [
+        'preprint_date',
+        'thesis.date',
+        'thesis.defense_date',
+        'publication_info.year',
+        'creation_modification_date.creation_date',
+        'imprints.date',
+    ]
+
+    dates = list(chain.from_iterable(
+        [force_force_list(get_value(json, path)) for path in date_paths]))
+
+    earliest_date = create_earliest_date(dates)
+    if earliest_date:
+        json['earliest_date'] = earliest_date
 
 
 @before_record_index.connect
@@ -50,55 +86,6 @@ def enhance_record(sender, json, *args, **kwargs):
     dates_validator(sender, json, *args, **kwargs)
     add_recids_and_validate(sender, json, *args, **kwargs)
     after_record_enhanced.send(json)
-
-
-@before_record_insert.connect
-@before_record_update.connect
-def normalize_field_categories(sender, *args, **kwargs):
-    """Normalize the content of the `field_categories` key.
-
-    We use the heuristic that a field is normalized if its scheme is 'INSPIRE'
-    or if it contains either the `_scheme` key or the `_term` key.
-
-    If the field wasn't normalized we use some mapping defined in the
-    configuration to output a `term` belonging to a known set of values.
-
-    We also use the heuristic that the source is 'INSPIRE' if it contains the
-    word 'automatically', otherwise we preserve it.
-    """
-    def _is_normalized(field):
-        scheme_is_inspire = field.get('scheme') == 'INSPIRE'
-        return scheme_is_inspire or '_scheme' in field or '_term' in field
-
-    def _is_from_inspire(term):
-        return term and term != 'Other'
-
-    for i, field in enumerate(sender.get('field_categories', [])):
-        if _is_normalized(field):
-            continue
-
-        original_term = field.get('term')
-        normalized_term = classify_field(original_term)
-        scheme = 'INSPIRE' if _is_from_inspire(normalized_term) else None
-
-        original_scheme = field.get('scheme')
-        if isinstance(original_scheme, (list, tuple)):
-            original_scheme = original_scheme[0]
-
-        updated_field = {
-            '_scheme': original_scheme,
-            'scheme': scheme,
-            '_term': original_term,
-            'term': normalized_term,
-        }
-
-        source = field.get('source')
-        if source:
-            if 'automatically' in source:
-                source = 'INSPIRE'
-            updated_field['source'] = source
-
-        sender['field_categories'][i].update(updated_field)
 
 
 def populate_inspire_subjects(sender, json, *args, **kwargs):
@@ -260,23 +247,10 @@ def dates_validator(sender, json, *args, **kwargs):
             json[date_key] = valid_date
 
 
-def references_validator(sender, json, *args, **kwargs):
-    """Validate the recids in references before indexing.
-
-    Logs a warning if the value corresponding to a `recid` key in `references`
-    is not composed uniquely of digits. If it wasn't, it is also removed from
-    its reference.
-    """
-    def _is_not_made_of_digits(recid):
-        return not six.text_type(recid).isdigit()
-
-    for reference in json.get('references', []):
-        recid = reference.get('recid')
-        if recid and _is_not_made_of_digits(recid):
-            current_app.logger.warning(
-                'MALFORMED: recid value found in references of %s: %s',
-                json['control_number'], recid)
-            del reference['recid']
+def add_recids_and_validate(sender, json, *args, **kwargs):
+    """Ensure that recids are generated before being validated."""
+    populate_recid_from_ref(sender, json, *args, **kwargs)
+    references_validator(sender, json, *args, **kwargs)
 
 
 def populate_recid_from_ref(sender, json, *args, **kwargs):
@@ -331,11 +305,154 @@ def populate_recid_from_ref(sender, json, *args, **kwargs):
     _recusive_find_refs(json)
 
 
-def add_recids_and_validate(sender, json, *args, **kwargs):
-    """Ensure that recids are generated before being validated."""
-    populate_recid_from_ref(sender, json, *args, **kwargs)
-    references_validator(sender, json, *args, **kwargs)
+def references_validator(sender, json, *args, **kwargs):
+    """Validate the recids in references before indexing.
 
+    Logs a warning if the value corresponding to a `recid` key in `references`
+    is not composed uniquely of digits. If it wasn't, it is also removed from
+    its reference.
+    """
+    def _is_not_made_of_digits(recid):
+        return not six.text_type(recid).isdigit()
+
+    for reference in json.get('references', []):
+        recid = reference.get('recid')
+        if recid and _is_not_made_of_digits(recid):
+            current_app.logger.warning(
+                'MALFORMED: recid value found in references of %s: %s',
+                json['control_number'], recid)
+            del reference['recid']
+
+
+@before_record_index.connect
+def generate_name_variations(recid, json, *args, **kwargs):
+    """Adds a field with all the possible variations of an authors name.
+
+    :param recid: The id of the record that is going to be indexed.
+    :param json: The json representation of the record that is going to be
+                 indexed.
+    """
+    authors = json.get("authors")
+    if authors:
+        for author in authors:
+            name = author.get("full_name")
+            if name:
+                name_variations = author_tokenize(name)
+                author.update({"name_variations": name_variations})
+                bai = [
+                    item['value'] for item in author.get('ids', [])
+                    if item['type'] == 'INSPIRE BAI'
+                ]
+                author.update({"name_suggest": {
+                    "input": name_variations,
+                    "output": name,
+                    "payload": {"bai": bai[0] if bai else None}
+                }})
+
+
+def append_updated_record_to_queue(sender, json, record, index, doc_type):
+    """Append record after an update to the queue.
+
+    The method receives a record on before_record_index signal and
+    decides if the updates made are essential to append the record
+    to the queue of records to be processed by Beard.
+    """
+    # FIXME: Use a dedicated method when #1355 will be resolved.
+    if "hep.json" in json['$schema']:
+        from invenio_search import current_search_client as es
+        from elasticsearch.exceptions import NotFoundError
+
+        try:
+            before_json = es.get_source(
+                index=index, id=record.id, doc_type=doc_type)
+        except (ValueError, NotFoundError):
+            # The record in not available in the Elasticsearch instance.
+            # This will be caught by append_new_record_to_queue method.
+            return
+
+        if _needs_beard_reprocessing(before_json['authors'], json['authors']):
+            record_arguments = {'record_id': record.id}
+
+            beard_record = DisambiguationRecord(**record_arguments)
+            beard_record.save()
+
+
+def _needs_beard_reprocessing(authors_before, authors_after):
+    """Check if the update affected authors or affiliation(s).
+
+    The method receives a list of authors of a record before
+    and after the update was made. Then it compares full names
+    of the authors together with affiliations to decide
+    if the record should be processed by Beard.
+
+    The Beard model is trained against full names and affiliations
+    If any of these fields were changes, then the HEP paper should
+    be processed.
+
+    :param authors_before:
+        A list of authors of a particular HEP paper.
+
+        Example:
+            authors_before = [{
+                u'full_name': u'Mukherjee, Anirbit',
+                u'uuid': u'76f5e291-b709-4aa9-ae7c-99f361bae591'
+            }]
+
+    :param authors_before:
+        A list of authors of a particular HEP paper.
+
+        Example:
+            authors_after = [{
+                u'full_name': u'Mukherjee, Anirbit',
+                u'affiliations': [{'value': 'Perimeter Inst. Theor. Phys.'}],
+                u'uuid': u'76f5e291-b709-4aa9-ae7c-99f361bae591'
+            }]
+
+    :return:
+        Boolean value if the HEP paper should be processed by Beard or not.
+
+        Example:
+            True
+    """
+    if len(authors_before) == len(authors_after):
+        for index, author_before in enumerate(authors_before):
+            # Not every author has an affiliation.
+            before_affiliations = author_before.get(
+                'affiliations', [])
+
+            # We don't iterate over authors_after, we take the index.
+            after_affiliations = authors_after[index].get(
+                'affiliations', [])
+
+            before = (author_before['full_name'], before_affiliations)
+            after = (authors_after[index]['full_name'], after_affiliations)
+
+            if before != after:
+                return True
+
+        return False
+    else:
+        return True
+
+
+#
+# after_record_enhanced
+#
+
+@after_record_enhanced.connect
+def send_records_to_orcid(sender, *args, **kwargs):
+    """ Schedules a Celery task that sends every new/updated record to orcid.
+
+        :param sender: The record to be sented to orcid (in json format).
+    """
+    if current_app.config.get('ORCID_SYNCHRONIZATION_ENABLED'):
+        from inspirehep.modules.orcid.tasks import send_to_orcid
+        send_to_orcid.delay(sender=sender)
+
+
+#
+# before_record_update
+#
 
 @before_record_update.connect
 def check_if_record_is_going_to_be_deleted(sender, *args, **kwargs):
@@ -347,3 +464,163 @@ def check_if_record_is_going_to_be_deleted(sender, *args, **kwargs):
     if sender.get('deleted'):
         record = get_db_record('literature', int(sender.get('control_number')))
         soft_delete_pidstore_for_record(record.id)
+
+
+#
+# before_record_update & before_record_insert
+#
+
+@before_record_insert.connect
+@before_record_update.connect
+def normalize_field_categories(sender, *args, **kwargs):
+    """Normalize the content of the `field_categories` key.
+
+    We use the heuristic that a field is normalized if its scheme is 'INSPIRE'
+    or if it contains either the `_scheme` key or the `_term` key.
+
+    If the field wasn't normalized we use some mapping defined in the
+    configuration to output a `term` belonging to a known set of values.
+
+    We also use the heuristic that the source is 'INSPIRE' if it contains the
+    word 'automatically', otherwise we preserve it.
+    """
+    def _is_normalized(field):
+        scheme_is_inspire = field.get('scheme') == 'INSPIRE'
+        return scheme_is_inspire or '_scheme' in field or '_term' in field
+
+    def _is_from_inspire(term):
+        return term and term != 'Other'
+
+    for i, field in enumerate(sender.get('field_categories', [])):
+        if _is_normalized(field):
+            continue
+
+        original_term = field.get('term')
+        normalized_term = classify_field(original_term)
+        scheme = 'INSPIRE' if _is_from_inspire(normalized_term) else None
+
+        original_scheme = field.get('scheme')
+        if isinstance(original_scheme, (list, tuple)):
+            original_scheme = original_scheme[0]
+
+        updated_field = {
+            '_scheme': original_scheme,
+            'scheme': scheme,
+            '_term': original_term,
+            'term': normalized_term,
+        }
+
+        source = field.get('source')
+        if source:
+            if 'automatically' in source:
+                source = 'INSPIRE'
+            updated_field['source'] = source
+
+        sender['field_categories'][i].update(updated_field)
+
+
+@before_record_insert.connect
+@before_record_update.connect
+def assign_phonetic_block(sender, *args, **kwargs):
+    """Assign phonetic block to each signature.
+
+    The method extends the given signature with a phonetic
+    notation of the author's full name, based on
+    nysiis algorithm. The phonetic block is assigned before
+    the signature is indexed by an Elasticsearch instance.
+    """
+    if current_app.config.get('BEARD_API_URL'):
+        authors = sender.get('authors', [])
+        authors_map = {}
+
+        for index, author in enumerate(authors):
+            if 'full_name' in author:
+                authors_map[author['full_name']] = index
+
+        # Call Beard API to generate phonetic blocks.
+        signatures_blocks = _query_beard_api(authors_map.keys())
+
+        # Add signature block to an author.
+        for full_name, signature_block in signatures_blocks.iteritems():
+            authors[authors_map[full_name]].update(
+                {"signature_block": signature_block})
+
+        # # For missing phonetic blocks (not valid full names) add None.
+        for full_name in list(
+                set(authors_map.keys()) - set(signatures_blocks.keys())):
+            authors[authors_map[full_name]].update(
+                {"signature_block": None})
+
+
+def _query_beard_api(full_names):
+    """Query Beard API.
+
+    This method allows for computation of phonetic blocks
+    from a given list of strings.
+    """
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+
+    text_endpoint = "{base_url}/text/phonetic_blocks".format(
+        base_url=current_app.config.get('BEARD_API_URL')
+    )
+
+    response = requests.post(
+        url=text_endpoint,
+        headers=headers,
+        data=json.dumps({'full_names': full_names})
+    )
+
+    return response.json()['phonetic_blocks']
+
+
+@before_record_insert.connect
+@before_record_update.connect
+def assign_uuid(sender, *args, **kwargs):
+    """Assign uuid to each signature.
+    The method assigns to each signature a universally unique
+    identifier based on Python's built-in uuid4. The identifier
+    is allocated during the insertion of a new record.
+    """
+    authors = sender.get('authors', [])
+
+    for author in authors:
+        # Skip if the author was already populated with a UUID.
+        if 'uuid' not in author:
+            author['uuid'] = str(uuid.uuid4())
+
+
+#
+# after_record_insert
+#
+
+def append_new_record_to_queue(sender, *args, **kwargs):
+    """Append a new record to the queue.
+
+    The method receives a record on after_record_insert signal and
+    appends the given record UUID to the queue of records to be
+    processed by Beard.
+    """
+    # FIXME: Use a dedicated method when #1355 will be resolved.
+    if "hep.json" in sender['$schema']:
+        record_arguments = {'record_id': sender.id}
+
+        beard_record = DisambiguationRecord(**record_arguments)
+        beard_record.save()
+
+
+#
+# before_record_delete
+#
+
+@before_record_delete.connect
+def delete_record_from_orcid(sender, *args, **kwargs):
+    """ Schedules a Celery task that removes records from orcid.
+
+        :param sender: The record to be deleted from orcid (in json format).
+    """
+    if current_app.config.get('ORCID_SYNCHRONIZATION_ENABLED'):
+        from inspirehep.modules.orcid.tasks import delete_from_orcid
+        delete_from_orcid.delay(sender=sender)

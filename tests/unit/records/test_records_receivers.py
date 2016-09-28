@@ -23,9 +23,17 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
+import httpretty
+
+from invenio_records.api import Record
 
 from inspirehep.modules.records.receivers import (
+    _needs_beard_reprocessing,
+    assign_phonetic_block,
+    assign_uuid,
     dates_validator,
+    earliest_date,
+    generate_name_variations,
     match_valid_experiments,
     normalize_field_categories,
     populate_inspire_document_type,
@@ -33,6 +41,237 @@ from inspirehep.modules.records.receivers import (
     populate_recid_from_ref,
     references_validator,
 )
+
+
+def test_check_if_record_eligible_method():
+    """Check if the method will correctly qualify updates to authors."""
+    base_author = [{
+        "uuid": "819695a8-6aef-4ce2-979e-20eb0eccfd8c",
+        "affiliations": [{
+            "record": {
+                "$ref": "http://localhost:5000/api/institutions/902770"
+            },
+            "recid": 902770,
+            "value": "DESY"
+        }],
+        "full_name": "Schörner-Sadenius, Thomas",
+    }]
+
+    author_new_affiliation = [{
+        "uuid": "819695a8-6aef-4ce2-979e-20eb0eccfd8c",
+        "affiliations": [{
+            "value": "CERN"
+        }],
+        "full_name": "Schörner-Sadenius, Thomas",
+    }]
+
+    author_new_name = [{
+        "uuid": "819695a8-6aef-4ce2-979e-20eb0eccfd8c",
+        "affiliations": [{
+            "record": {
+                "$ref": "http://localhost:5000/api/institutions/902770"
+            },
+            "recid": 902770,
+            "value": "DESY"
+        }],
+        "full_name": "Schörner-Sadenius, T",
+    }]
+
+    new_author = [{
+        "uuid": "819695a8-6aef-4ce2-979e-20eb0eccfd8c",
+        "affiliations": [{
+            "record": {
+                "$ref": "http://localhost:5000/api/institutions/902770"
+            },
+            "recid": 902770,
+            "value": "DESY"
+        }],
+        "full_name": "Schörner-Sadenius, Thomas",
+    }, {
+        "uuid": "e24251bc-e75b-45ef-9e71-7181ed3a7fb5",
+        "affiliations": [{
+            "value": "CERN"
+        }],
+        "full_name": "Grzegorz Jacenków"
+    }]
+
+    assert not _needs_beard_reprocessing(base_author, base_author)
+    assert _needs_beard_reprocessing(base_author, author_new_affiliation)
+    assert _needs_beard_reprocessing(base_author, author_new_name)
+    assert _needs_beard_reprocessing(base_author, new_author)
+
+
+def test_phonetic_block_generation_ascii(httppretty_mock, app):
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+    }
+
+    with app.app_context():
+        with mock.patch.dict(app.config, extra_config):
+            httpretty.register_uri(
+                httpretty.POST,
+                "{base_url}/text/phonetic_blocks".format(
+                    base_url=app.config.get('BEARD_API_URL')),
+                content_type="application/json",
+                body='{"phonetic_blocks": {"John Richard Ellis": "ELj"}}',
+                status=200)
+
+            json_dict = {
+                "authors": [{
+                    "full_name": "John Richard Ellis"
+                }]
+            }
+
+            assign_phonetic_block(json_dict)
+
+            assert json_dict['authors'][0]['signature_block'] == "ELj"
+
+
+def test_phonetic_block_generation_broken(httppretty_mock, app):
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+    }
+
+    with app.app_context():
+        with mock.patch.dict(app.config, extra_config):
+            httpretty.register_uri(
+                httpretty.POST,
+                "{base_url}/text/phonetic_blocks".format(
+                    base_url=app.config.get('BEARD_API_URL')),
+                content_type="application/json",
+                body='{"phonetic_blocks": {}}',
+                status=200)
+
+            json_dict = {
+                "authors": [{
+                    "full_name": "** NOT VALID **"
+                }]
+            }
+
+            assign_phonetic_block(json_dict)
+
+            assert json_dict['authors'][0]['signature_block'] is None
+
+
+def test_phonetic_block_generation_unicode(httppretty_mock, app):
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+    }
+
+    with app.app_context():
+        with mock.patch.dict(app.config, extra_config):
+            httpretty.register_uri(
+                httpretty.POST,
+                "{base_url}/text/phonetic_blocks".format(
+                    base_url=app.config.get('BEARD_API_URL')),
+                content_type="application/json",
+                body=u'{"phonetic_blocks": {"Grzegorz Jacenków": "JACANCg"}}',
+                status=200)
+
+            json_dict = {
+                "authors": [{
+                    "full_name": u"Grzegorz Jacenków"
+                }]
+            }
+
+            assign_phonetic_block(json_dict)
+
+            assert json_dict['authors'][0]['signature_block'] == "JACANCg"
+
+
+def test_uuid_generation():
+    json_dict = {
+        "authors": [{
+            "full_name": "John Doe",
+            "uuid": "I am unique"
+        }, {
+            "full_name": "John Richard Ellis"
+        }]
+    }
+
+    assign_uuid(json_dict)
+
+    # Check if the author with existing UUID has still the same UUID.
+    assert(json_dict['authors'][0]['uuid'] == "I am unique")
+
+    # Check if the author with no UUID got one.
+    assert(json_dict['authors'][1]['uuid'] is not None)
+
+
+def test_earliest_date_from_preprint_date():
+    with_preprint_date = Record({'preprint_date': '2014-05-29'})
+    earliest_date(None, with_preprint_date)
+
+    expected = '2014-05-29'
+    result = with_preprint_date['earliest_date']
+
+    assert expected == result
+
+
+def test_earliest_date_from_thesis_date():
+    with_thesis_date = Record({
+        'thesis': {'date': '2008'}
+    })
+    earliest_date(None, with_thesis_date)
+
+    expected = '2008'
+    result = with_thesis_date['earliest_date']
+
+    assert expected == result
+
+
+def test_earliest_date_from_thesis_defense_date():
+    with_thesis_defense_date = Record({
+        'thesis': {'defense_date': '2012-06-01'}
+    })
+    earliest_date(None, with_thesis_defense_date)
+
+    expected = '2012-06-01'
+    result = with_thesis_defense_date['earliest_date']
+
+    assert expected == result
+
+
+def test_earliest_date_from_publication_info_year():
+    with_publication_info_year = Record({
+        'publication_info': [
+            {'year': '2014'}
+        ]
+    })
+    earliest_date(None, with_publication_info_year)
+
+    expected = '2014'
+    result = with_publication_info_year['earliest_date']
+
+    assert expected == result
+
+
+def test_earliest_date_from_creation_modification_date_creation_date():
+    with_creation_modification_date_creation_date = Record({
+        'creation_modification_date': [
+            {'creation_date': '2015-11-04'}
+        ]
+    })
+    earliest_date(None, with_creation_modification_date_creation_date)
+
+    expected = '2015-11-04'
+    result = with_creation_modification_date_creation_date['earliest_date']
+
+    assert expected == result
+
+
+def test_earliest_date_from_imprints_date():
+    with_imprints_date = Record({
+        'imprints': [
+            {'date': '2014-09-26'}
+        ]
+    })
+    earliest_date(None, with_imprints_date)
+
+    expected = '2014-09-26'
+    result = with_imprints_date['earliest_date']
+
+    assert expected == result
 
 
 def test_dates_validator_does_nothing_when_dates_are_valid():
@@ -60,6 +299,44 @@ def test_dates_validator_warns_when_date_is_invalid(warning):
 
     warning.assert_called_once_with(
         'MALFORMED: %s value in %s: %s', 'opening_date', 'foo', 'bar')
+
+
+def test_name_variations():
+    json_dict = {
+        "authors": [{
+            "full_name": "John Richard Ellis"
+        }]
+    }
+
+    generate_name_variations(None, json_dict)
+
+    assert(
+        json_dict['authors'][0]['name_variations'] == [
+            'Ellis',
+            'Ellis J',
+            'Ellis J R',
+            'Ellis J Richard',
+            'Ellis John',
+            'Ellis John R',
+            'Ellis John Richard',
+            'Ellis R',
+            'Ellis Richard',
+            'Ellis, J',
+            'Ellis, J R',
+            'Ellis, J Richard',
+            'Ellis, John',
+            'Ellis, John R',
+            'Ellis, John Richard',
+            'Ellis, R',
+            'Ellis, Richard',
+            'J Ellis',
+            'J R Ellis',
+            'J Richard Ellis',
+            'John Ellis',
+            'John R Ellis',
+            'John Richard Ellis',
+            'R Ellis',
+            'Richard Ellis'])
 
 
 def test_match_valid_experiments_adds_facet_experiment():

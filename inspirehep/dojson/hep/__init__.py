@@ -39,4 +39,3 @@ from .fields import (
     bd90x99x,
 )
 from .model import hep, hep2marc
-from .receivers import *
