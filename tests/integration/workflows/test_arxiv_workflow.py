@@ -238,7 +238,7 @@ def fake_magpie_api_request(url, data):
             side_effect=fake_beard_api_request)
 @mock.patch('inspirehep.modules.workflows.tasks.magpie.json_api_request',
             side_effect=fake_magpie_api_request)
-@mock.patch('inspirehep.modules.authors.receivers._query_beard_api',
+@mock.patch('inspirehep.modules.records.receivers._query_beard_api',
             side_effect=fake_beard_api_block_request)
 def test_harvesting_arxiv_workflow_rejected(
     mocked_api_request_beard_block, mocked_api_request_magpie,

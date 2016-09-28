@@ -23,12 +23,16 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
+import httpretty
 
 from invenio_records.api import Record
 
 from inspirehep.modules.records.receivers import (
+    assign_phonetic_block,
+    assign_uuid,
     dates_validator,
     earliest_date,
+    generate_name_variations,
     match_valid_experiments,
     normalize_field_categories,
     populate_inspire_document_type,
@@ -36,6 +40,103 @@ from inspirehep.modules.records.receivers import (
     populate_recid_from_ref,
     references_validator,
 )
+
+
+def test_phonetic_block_generation_ascii(httppretty_mock, app):
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+    }
+
+    with app.app_context():
+        with mock.patch.dict(app.config, extra_config):
+            httpretty.register_uri(
+                httpretty.POST,
+                "{base_url}/text/phonetic_blocks".format(
+                    base_url=app.config.get('BEARD_API_URL')),
+                content_type="application/json",
+                body='{"phonetic_blocks": {"John Richard Ellis": "ELj"}}',
+                status=200)
+
+            json_dict = {
+                "authors": [{
+                    "full_name": "John Richard Ellis"
+                }]
+            }
+
+            assign_phonetic_block(json_dict)
+
+            assert json_dict['authors'][0]['signature_block'] == "ELj"
+
+
+def test_phonetic_block_generation_broken(httppretty_mock, app):
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+    }
+
+    with app.app_context():
+        with mock.patch.dict(app.config, extra_config):
+            httpretty.register_uri(
+                httpretty.POST,
+                "{base_url}/text/phonetic_blocks".format(
+                    base_url=app.config.get('BEARD_API_URL')),
+                content_type="application/json",
+                body='{"phonetic_blocks": {}}',
+                status=200)
+
+            json_dict = {
+                "authors": [{
+                    "full_name": "** NOT VALID **"
+                }]
+            }
+
+            assign_phonetic_block(json_dict)
+
+            assert json_dict['authors'][0]['signature_block'] is None
+
+
+def test_phonetic_block_generation_unicode(httppretty_mock, app):
+    extra_config = {
+        "BEARD_API_URL": "http://example.com/beard",
+    }
+
+    with app.app_context():
+        with mock.patch.dict(app.config, extra_config):
+            httpretty.register_uri(
+                httpretty.POST,
+                "{base_url}/text/phonetic_blocks".format(
+                    base_url=app.config.get('BEARD_API_URL')),
+                content_type="application/json",
+                body=u'{"phonetic_blocks": {"Grzegorz Jacenków": "JACANCg"}}',
+                status=200)
+
+            json_dict = {
+                "authors": [{
+                    "full_name": u"Grzegorz Jacenków"
+                }]
+            }
+
+            assign_phonetic_block(json_dict)
+
+            assert json_dict['authors'][0]['signature_block'] == "JACANCg"
+
+
+def test_uuid_generation():
+    json_dict = {
+        "authors": [{
+            "full_name": "John Doe",
+            "uuid": "I am unique"
+        }, {
+            "full_name": "John Richard Ellis"
+        }]
+    }
+
+    assign_uuid(json_dict)
+
+    # Check if the author with existing UUID has still the same UUID.
+    assert(json_dict['authors'][0]['uuid'] == "I am unique")
+
+    # Check if the author with no UUID got one.
+    assert(json_dict['authors'][1]['uuid'] is not None)
 
 
 def test_earliest_date_from_preprint_date():
@@ -139,6 +240,44 @@ def test_dates_validator_warns_when_date_is_invalid(warning):
 
     warning.assert_called_once_with(
         'MALFORMED: %s value in %s: %s', 'opening_date', 'foo', 'bar')
+
+
+def test_name_variations():
+    json_dict = {
+        "authors": [{
+            "full_name": "John Richard Ellis"
+        }]
+    }
+
+    generate_name_variations(None, json_dict)
+
+    assert(
+        json_dict['authors'][0]['name_variations'] == [
+            'Ellis',
+            'Ellis J',
+            'Ellis J R',
+            'Ellis J Richard',
+            'Ellis John',
+            'Ellis John R',
+            'Ellis John Richard',
+            'Ellis R',
+            'Ellis Richard',
+            'Ellis, J',
+            'Ellis, J R',
+            'Ellis, J Richard',
+            'Ellis, John',
+            'Ellis, John R',
+            'Ellis, John Richard',
+            'Ellis, R',
+            'Ellis, Richard',
+            'J Ellis',
+            'J R Ellis',
+            'J Richard Ellis',
+            'John Ellis',
+            'John R Ellis',
+            'John Richard Ellis',
+            'R Ellis',
+            'Richard Ellis'])
 
 
 def test_match_valid_experiments_adds_facet_experiment():
