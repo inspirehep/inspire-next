@@ -37,10 +37,6 @@ from invenio_records.signals import after_record_insert
 from inspirehep.dojson import utils as inspire_dojson_utils
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 
-from inspirehep.modules.disambiguation.receivers import (
-    append_new_record_to_queue,
-)
-
 logger = get_task_logger(__name__)
 
 
@@ -124,6 +120,7 @@ def create_author(profile):
     #        etc.
 
     # Disconnect the signal on insert of a new record.
+    from inspirehep.modules.records.receivers import append_new_record_to_queue
     after_record_insert.disconnect(append_new_record_to_queue)
 
     # Create a new author profile.

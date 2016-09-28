@@ -28,6 +28,7 @@ import httpretty
 from invenio_records.api import Record
 
 from inspirehep.modules.records.receivers import (
+    _needs_beard_reprocessing,
     assign_phonetic_block,
     assign_uuid,
     dates_validator,
@@ -40,6 +41,64 @@ from inspirehep.modules.records.receivers import (
     populate_recid_from_ref,
     references_validator,
 )
+
+
+def test_check_if_record_eligible_method():
+    """Check if the method will correctly qualify updates to authors."""
+    base_author = [{
+        "uuid": "819695a8-6aef-4ce2-979e-20eb0eccfd8c",
+        "affiliations": [{
+            "record": {
+                "$ref": "http://localhost:5000/api/institutions/902770"
+            },
+            "recid": 902770,
+            "value": "DESY"
+        }],
+        "full_name": "Schörner-Sadenius, Thomas",
+    }]
+
+    author_new_affiliation = [{
+        "uuid": "819695a8-6aef-4ce2-979e-20eb0eccfd8c",
+        "affiliations": [{
+            "value": "CERN"
+        }],
+        "full_name": "Schörner-Sadenius, Thomas",
+    }]
+
+    author_new_name = [{
+        "uuid": "819695a8-6aef-4ce2-979e-20eb0eccfd8c",
+        "affiliations": [{
+            "record": {
+                "$ref": "http://localhost:5000/api/institutions/902770"
+            },
+            "recid": 902770,
+            "value": "DESY"
+        }],
+        "full_name": "Schörner-Sadenius, T",
+    }]
+
+    new_author = [{
+        "uuid": "819695a8-6aef-4ce2-979e-20eb0eccfd8c",
+        "affiliations": [{
+            "record": {
+                "$ref": "http://localhost:5000/api/institutions/902770"
+            },
+            "recid": 902770,
+            "value": "DESY"
+        }],
+        "full_name": "Schörner-Sadenius, Thomas",
+    }, {
+        "uuid": "e24251bc-e75b-45ef-9e71-7181ed3a7fb5",
+        "affiliations": [{
+            "value": "CERN"
+        }],
+        "full_name": "Grzegorz Jacenków"
+    }]
+
+    assert not _needs_beard_reprocessing(base_author, base_author)
+    assert _needs_beard_reprocessing(base_author, author_new_affiliation)
+    assert _needs_beard_reprocessing(base_author, author_new_name)
+    assert _needs_beard_reprocessing(base_author, new_author)
 
 
 def test_phonetic_block_generation_ascii(httppretty_mock, app):

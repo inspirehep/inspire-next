@@ -37,9 +37,6 @@ from invenio_records import Record
 from inspirehep.modules.disambiguation.beard import make_beard_clusters
 from inspirehep.modules.disambiguation.logic import process_clusters
 from inspirehep.modules.disambiguation.models import DisambiguationRecord
-from inspirehep.modules.disambiguation.receivers import (
-    append_updated_record_to_queue,
-)
 from inspirehep.modules.disambiguation.search import (
     create_beard_record,
     create_beard_signatures,
@@ -170,6 +167,7 @@ def update_authors_recid(record_id, uuid, profile_recid):
 
         if update_flag:
             # Disconnect the signal on insert of a new record.
+            from inspirehep.modules.records.receivers import append_updated_record_to_queue
             before_record_index.disconnect(append_updated_record_to_queue)
 
             # Update the record in the database.

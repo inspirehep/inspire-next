@@ -31,7 +31,7 @@ from invenio_pidstore.models import PersistentIdentifier
 from invenio_records.api import Record
 
 from inspirehep.modules.disambiguation.models import DisambiguationRecord
-from inspirehep.modules.disambiguation.receivers import (
+from inspirehep.modules.records.receivers import (
     append_new_record_to_queue,
     append_updated_record_to_queue,
 )
@@ -48,7 +48,7 @@ class _IdDict(dict):
         return self._id
 
 
-def test_append_new_record_to_queue_method(small_app):
+def test_append_new_record_to_queue_method(app):
     """Test the receiver responsible for queuing new HEP records."""
     sample_hep_record = _IdDict({
         '$schema': 'http://localhost:5000/schemas/records/hep.json',
@@ -74,7 +74,7 @@ def test_append_new_record_to_queue_method(small_app):
         DisambiguationRecord.query.order_by(desc("id")).first().record_id
 
 
-def test_append_new_record_to_queue_method_not_hep_record(small_app):
+def test_append_new_record_to_queue_method_not_hep_record(app):
     """Test if the receiver will skip a new publication, not HEP."""
     sample_author_record = _IdDict({
         '$schema': 'http://localhost:5000/schemas/records/authors.json',
@@ -90,7 +90,7 @@ def test_append_new_record_to_queue_method_not_hep_record(small_app):
         DisambiguationRecord.query.order_by(desc("id")).first().record_id
 
 
-def test_append_updated_record_to_queue(small_app):
+def test_append_updated_record_to_queue(app):
     """Test the receiver responsible for queuing updated HEP records."""
     pid = PersistentIdentifier.get("literature", 4328)
     publication_id = str(pid.object_uuid)
@@ -106,7 +106,7 @@ def test_append_updated_record_to_queue(small_app):
         DisambiguationRecord.query.order_by(desc("id")).first().record_id
 
 
-def test_append_updated_record_to_queue_new_record(small_app):
+def test_append_updated_record_to_queue_new_record(app):
     """Test if the receiver will return None, since the record will
     not be found in the Elasticsearch instance.
 
@@ -139,7 +139,7 @@ def test_append_updated_record_to_queue_new_record(small_app):
         DisambiguationRecord.query.order_by(desc("id")).first().record_id
 
 
-def test_append_updated_record_to_queue_not_hep_record(small_app):
+def test_append_updated_record_to_queue_not_hep_record(app):
     """Test if the receiver will skip an updated publication, not HEP."""
     sample_author_record = _IdDict({
         '$schema': 'http://localhost:5000/schemas/records/authors.json',
@@ -157,7 +157,7 @@ def test_append_updated_record_to_queue_not_hep_record(small_app):
         DisambiguationRecord.query.order_by(desc("id")).first().record_id
 
 
-def test_append_updated_record_to_queue_same_data(small_app):
+def test_append_updated_record_to_queue_same_data(app):
     """Check if for the same record, the receiver will skip the publication."""
     pid = PersistentIdentifier.get("literature", 11883)
     publication_id = str(pid.object_uuid)
