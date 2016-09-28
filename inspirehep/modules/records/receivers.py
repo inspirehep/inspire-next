@@ -35,6 +35,7 @@ from itertools import chain
 from invenio_indexer.signals import before_record_index
 from invenio_records.signals import (
     after_record_insert,
+    before_record_delete,
     before_record_insert,
     before_record_update,
 )
@@ -435,6 +436,21 @@ def _needs_beard_reprocessing(authors_before, authors_after):
 
 
 #
+# after_record_enhanced
+#
+
+@after_record_enhanced.connect
+def send_records_to_orcid(sender, *args, **kwargs):
+    """ Schedules a Celery task that sends every new/updated record to orcid.
+
+        :param sender: The record to be sented to orcid (in json format).
+    """
+    if current_app.config.get('ORCID_SYNCHRONIZATION_ENABLED'):
+        from inspirehep.modules.orcid.tasks import send_to_orcid
+        send_to_orcid.delay(sender=sender)
+
+
+#
 # before_record_update
 #
 
@@ -593,3 +609,18 @@ def append_new_record_to_queue(sender, *args, **kwargs):
 
         beard_record = DisambiguationRecord(**record_arguments)
         beard_record.save()
+
+
+#
+# before_record_delete
+#
+
+@before_record_delete.connect
+def delete_record_from_orcid(sender, *args, **kwargs):
+    """ Schedules a Celery task that removes records from orcid.
+
+        :param sender: The record to be deleted from orcid (in json format).
+    """
+    if current_app.config.get('ORCID_SYNCHRONIZATION_ENABLED'):
+        from inspirehep.modules.orcid.tasks import delete_from_orcid
+        delete_from_orcid.delay(sender=sender)

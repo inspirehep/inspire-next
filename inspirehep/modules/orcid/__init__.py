@@ -27,6 +27,4 @@ from __future__ import (
 
 from .ext import INSPIREOrcid
 
-from .receivers import *
-
 __all__ = ('INSPIREOrcid',)
