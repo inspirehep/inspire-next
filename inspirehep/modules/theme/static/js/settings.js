@@ -57,6 +57,9 @@ require.config({
     'inspirehep-search': 'node_modules/inspirehep-search-js/dist/inspirehep-search',
     'inspirehep-typeahead': 'node_modules/inspirehep-typeahead-search-js/src/typeahead',
     'invenio-search': 'node_modules/invenio-search-js/dist/invenio-search-js',
+    'invenio-trends-directives': 'js/invenio_trends_ui/trends.directives',
+    'invenio-trends-module': 'js/invenio_trends_ui/trends.module',
+    'invenio-trends-services': 'js/invenio_trends_ui/trends.services',
     'invenio_with_spires_typeahead_configuration': 'node_modules/inspirehep-typeahead-search-js/src/invenio_with_spires_typeahead_configuration',
     'jquery': 'node_modules/jquery/jquery',
     'jquery-caret': 'node_modules/jquery-plugin/dist/jquery.caret-1.5.0',
@@ -187,6 +190,26 @@ require.config({
       ],
     },
     'invenio-search': {
+      deps: [
+        'angular',
+      ],
+    },
+    'invenio-trends-directives': {
+      deps: [
+        'angular',
+      ],
+    },
+    'invenio-trends-module': {
+      deps: [
+        'angular',
+        'angular-ui-bootstrap',
+        'd3',
+        'd3-tip',
+        'invenio-trends-directives',
+        'invenio-trends-services',
+      ],
+    },
+    'invenio-trends-services': {
       deps: [
         'angular',
       ],
