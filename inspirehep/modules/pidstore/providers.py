@@ -31,9 +31,16 @@ import os
 import requests
 from flask import current_app
 
+from invenio_records_rest.proxies import current_records_rest
 from invenio_pidstore.models import PIDStatus, RecordIdentifier
-
 from invenio_pidstore.providers.base import BaseProvider
+
+from inspirehep.config import RECORDS_UI_ENDPOINTS
+
+
+_PID_TYPE_TO_ENDPOINT = {value['pid_type']: key
+                         for key, value in RECORDS_UI_ENDPOINTS.items()
+                         if '_' not in key}
 
 
 def _get_next_pid_from_legacy():
@@ -84,8 +91,18 @@ class InspireRecordIdProvider(BaseProvider):
 
     @staticmethod
     def schema_to_pid_type(schema):
-        pid_type = os.path.splitext(os.path.basename(schema))[0]
-        if pid_type == 'hep':
+        endpoint = os.path.splitext(os.path.basename(schema))[0]
+        if endpoint == 'hep':
             # FIXME: temp hack until we rename hep.json to literature.json
-            return 'literature'
-        return pid_type
+            endpoint = 'literature'
+        return get_pid_type_for(endpoint)
+
+
+def get_pid_type_for(endpoint):
+    """Get the pid_type code corresponding to the recid of the given endpoint."""
+    return RECORDS_UI_ENDPOINTS[endpoint]['pid_type']
+
+
+def get_endpoint_from_pid_type(pid_type):
+    """Return the endpoint corresponding to the given pid_type."""
+    return current_records_rest.default_endpoint_prefixes[pid_type]

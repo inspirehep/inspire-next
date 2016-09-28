@@ -60,10 +60,12 @@ install_requires = [
     'invenio-mail>=1.0.0a4',
     'invenio-oauthclient>=1.0.0a8',
     'invenio-orcid>=1.0.0a1',
+    'invenio-pidstore>=1.0.0a9',
     'invenio-records>=1.0.0a16',  # Add [versioning] in the future
+    'invenio-records-rest>=1.0.0a16',
     'invenio-rest[cors]>=1.0.0a7',
     'invenio-search>=1.0.0a7',
-    'invenio-records-rest>=1.0.0a15',
+    'invenio-records-rest>=1.0.0a16',
     'invenio-records-ui>=1.0.0a6',
     'invenio-files-rest>=1.0.0a3',
     'invenio-records-files>=1.0.0a5',
@@ -215,6 +217,7 @@ setup(
             'crossref = inspirehep.modules.crossref:CrossRef',
             'inspire_orcid = inspirehep.modules.orcid:INSPIREOrcid',
             'inspire_disambiguation = inspirehep.modules.disambiguation:InspireDisambiguation',
+            'invenio_records_rest = invenio_records_rest:InvenioRecordsREST',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',

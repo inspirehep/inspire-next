@@ -32,6 +32,7 @@ from invenio_search import current_search_client as es
 
 from inspirehep.dojson.hep import hep
 from inspirehep.modules.migrator.tasks.records import record_upsert
+from inspirehep.modules.pidstore.providers import get_pid_type_for
 from inspirehep.utils.record_getter import get_db_record
 
 
@@ -105,7 +106,7 @@ def _delete_record_from_everywhere(collection, record_control_number):
     ri.delete(record)
     record.delete(force=True)
 
-    pid = PersistentIdentifier.get(collection, record_control_number)
+    pid = PersistentIdentifier.get(get_pid_type_for(collection), record_control_number)
     PersistentIdentifier.delete(pid)
 
     object_uuid = pid.object_uuid

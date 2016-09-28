@@ -29,6 +29,7 @@ from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client as es
 
 from inspirehep.modules.disambiguation.models import DisambiguationRecord
+from inspirehep.modules.pidstore.providers import get_pid_type_for
 from inspirehep.utils.record_getter import get_es_record_by_uuid
 
 
@@ -42,7 +43,7 @@ def test_count_phonetic_block_dispatched(small_app):
 
     # Signature #1.
     glashow_record_id = str(PersistentIdentifier.get(
-        "literature", 4328).object_uuid)
+        get_pid_type_for("literature"), 4328).object_uuid)
     glashow_record = get_es_record_by_uuid(glashow_record_id)
 
     # Add phonetic block to the record.
@@ -53,7 +54,7 @@ def test_count_phonetic_block_dispatched(small_app):
 
     # Signature #2.
     higgs_record_id_first = str(PersistentIdentifier.get(
-        "literature", 1358492).object_uuid)
+        get_pid_type_for("literature"), 1358492).object_uuid)
     higgs_record_first = get_es_record_by_uuid(higgs_record_id_first)
 
     # Add phonetic block to the record.
@@ -64,7 +65,7 @@ def test_count_phonetic_block_dispatched(small_app):
 
     # Signature #3.
     higgs_record_id_second = str(PersistentIdentifier.get(
-        "literature", 11883).object_uuid)
+        get_pid_type_for("literature"), 11883).object_uuid)
     higgs_record_second = get_es_record_by_uuid(higgs_record_id_second)
 
     # Add phonetic block to the record.

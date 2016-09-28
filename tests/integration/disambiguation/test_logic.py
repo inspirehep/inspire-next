@@ -25,11 +25,12 @@ from __future__ import absolute_import, division, print_function
 from invenio_pidstore.models import PersistentIdentifier
 
 from inspirehep.modules.disambiguation.logic import _create_distance_signature
+from inspirehep.modules.pidstore.providers import get_pid_type_for
 
 
 def test_create_distance_signature_method(small_app):
     """Test the method responsible for creating data in Beard format."""
-    pid = PersistentIdentifier.get("literature", 4328)
+    pid = PersistentIdentifier.get(get_pid_type_for("literature"), 4328)
     publication_id = str(pid.object_uuid)
 
     signatures_map = {
