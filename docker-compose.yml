@@ -36,6 +36,10 @@ services:
       - ACCOUNTS_SESSION_REDIS_URL=redis://redis:6379/2
       - SEARCH_ELASTIC_HOSTS=indexer
       - ES_BULK_TIMEOUT=240
+      - RELATIONS_NEO4J_HOST=graphdb:7687
+      - RELATIONS_NEO4J_USER=neo4j
+      - RELATIONS_NEO4J_PASSWORD=123456
+      - RELATIONS_STORAGEDIR=/virtualenv/neo4j
 
   # Services using the inspirehep code.
   web:
@@ -49,6 +53,7 @@ services:
     links:
       - database
       - indexer
+      - graphdb
       - rabbitmq
       - redis
   worker:
@@ -60,6 +65,7 @@ services:
     links:
       - database
       - indexer
+      - graphdb
       - rabbitmq
       - redis
 
@@ -75,6 +81,16 @@ services:
     volumes:
       - "${DOCKER_DATA}/tmp/inspirehep_elastic/data:/usr/share/elasticsearch/data"
       - "${DOCKER_DATA}/tmp/inspirehep_elastic/log:/usr/share/elasticsearch/log"
+  graphdb:
+    extends:
+      service: service_base
+    image: neo4j
+    volumes_from:
+      - static
+    volumes:
+      - $HOME/neo4j/conf:/var/lib/neo4j/conf
+    ports:
+      - "7474:7474"
   rabbitmq:
     image: rabbitmq
   database:
