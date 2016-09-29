@@ -20,11 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Extension that suppresses warnings.
-
-By default Invenio-Base enables deprecation warnings. This extension
-disables them, unless ``DEBUG_SHOW_DEPRECATION_WARNINGS`` is ``True``.
-"""
+"""Extension that suppresses warnings."""
 
 from __future__ import absolute_import, division, print_function
 
@@ -44,11 +40,7 @@ class INSPIREWarnings(object):
         """Initialize the application."""
         self.init_config(app)
 
-        if not app.config['DEBUG_SHOW_DEPRECATION_WARNINGS']:
-            warnings.filterwarnings('ignore', category=DeprecationWarning)
-
         app.extensions['inspire-warnings'] = self
 
     def init_config(self, app):
         """Initialize the configuration."""
-        app.config.setdefault('DEBUG_SHOW_DEPRECATION_WARNINGS', False)
