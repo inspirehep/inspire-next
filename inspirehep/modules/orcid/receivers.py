@@ -24,7 +24,7 @@ from inspirehep.modules.records.signals import after_record_enhanced
 
 from invenio_records.signals import before_record_delete
 
-from .tasks import delete_from_orcid, send_to_orcid
+from invenio_orcid.tasks import delete_from_orcid, send_to_orcid
 
 from flask import current_app
 

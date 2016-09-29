@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from inspirehep.modules.orcid.models import InspireOrcidRecords
+from invenio_orcid.models import ORCIDRecords
 
 from inspirehep.utils.record_getter import get_db_record
 
@@ -148,11 +148,11 @@ def orcid_test(mock_user, request):
 def test_record_is_sent_to_orcid(app, orcid_test):
     mock_orcid_api, record = orcid_test
     with app.app_context():
-        from inspirehep.modules.orcid.tasks import send_to_orcid
+        from invenio_orcid.tasks import send_to_orcid
         send_to_orcid(record, api=mock_orcid_api)
 
         expected = 1
-        result = len(InspireOrcidRecords.query.all())
+        result = len(ORCIDRecords.query.all())
 
         assert result == expected
 
@@ -160,11 +160,11 @@ def test_record_is_sent_to_orcid(app, orcid_test):
 def test_record_is_deleted_from_orcid(app, orcid_test):
     mock_orcid_api, record = orcid_test
     with app.app_context():
-        from inspirehep.modules.orcid.tasks import delete_from_orcid, send_to_orcid
+        from invenio_orcid.tasks import delete_from_orcid, send_to_orcid
         send_to_orcid(record, api=mock_orcid_api)
         delete_from_orcid(record, api=mock_orcid_api)
 
         expected = 0
-        result = len(InspireOrcidRecords.query.all())
+        result = len(ORCIDRecords.query.all())
 
         assert result == expected
