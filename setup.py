@@ -244,6 +244,7 @@ setup(
         'invenio_db.models': [
             'inspire_workflows_audit = inspirehep.modules.workflows.models',
             'inspire_disambiguation = inspirehep.modules.disambiguation.models',
+            'inspire_relations = inspirehep.modules.relations.models',
         ],
         'invenio_migrator.things': [
             'holdingpen = inspirehep.modules.migrator.legacy.workflows',
