@@ -32,11 +32,6 @@ try:
 except ImportError:  # pragma: no cover
     current_app = None
 
-from inspirehep.config import (
-    ARXIV_TO_INSPIRE_CATEGORY_MAPPING,
-    INSPIRE_RANK_TYPES,
-)
-
 from inspirehep.utils.dedupers import dedupe_list, dedupe_list_of_dicts
 from inspirehep.utils.helpers import force_force_list
 
@@ -49,7 +44,7 @@ def classify_field(value):
         return None
     else:
         casted_value = value.upper()
-        for name, category in six.iteritems(ARXIV_TO_INSPIRE_CATEGORY_MAPPING):
+        for name, category in six.iteritems(current_app.config['ARXIV_TO_INSPIRE_CATEGORY_MAPPING']):
             if name.upper() == casted_value:
                 return category
             elif category.upper() == casted_value:
@@ -65,7 +60,7 @@ def classify_rank(value):
         return None
     else:
         casted_value = value.upper().replace('.', '')
-        for rank_name, rank_mapping in INSPIRE_RANK_TYPES.items():
+        for rank_name, rank_mapping in current_app.config['INSPIRE_RANK_TYPES'].items():
             if rank_name in casted_value:
                 return rank_name
             else:
