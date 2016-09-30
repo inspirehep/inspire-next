@@ -100,6 +100,20 @@ def small_app():
         yield app
 
 
+
+@pytest.yield_fixture(scope='session')
+def api(app):
+    """Flask application fixture."""
+    yield app.wsgi_app.mounts['/api']
+
+
+@pytest.yield_fixture()
+def api_client(api):
+    """Flask test client for API app."""
+    with api.test_client() as client:
+        yield client
+
+
 @pytest.fixture
 def httpretty_mock():
     httpretty.enable()
