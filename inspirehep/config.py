@@ -415,6 +415,7 @@ RECORDS_REST_ENDPOINTS = dict(
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        read_permission_factory_imp="inspirehep.modules.records.permissions:record_read_permission_factory",
         record_class='inspirehep.modules.records.es_record:ESRecord'
     ),
     literature_db=dict(
