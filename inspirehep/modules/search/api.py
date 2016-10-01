@@ -60,11 +60,12 @@ class SearchMixin(object):
         :type uuid: UUID
         :returns: dict
         """
-        try:
-            return self.get_record(uuid).params(**kwargs)\
-                .execute().hits[0].to_dict()
-        except IndexError:
-            return {}
+        return current_search_client.get_source(
+            index=self.Meta.index,
+            doc_type=self.Meta.doc_types,
+            id=uuid,
+            **kwargs
+        )
 
     def mget(self, uuids, **kwargs):
         """Get source from a list of uuids.
