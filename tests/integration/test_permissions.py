@@ -25,10 +25,9 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 
-from helpers import login_user_via_session
-
 from invenio_access.models import ActionUsers
 from invenio_accounts.models import User
+from invenio_accounts.testutils import login_user_via_session
 from invenio_collections.models import Collection
 from invenio_db import db
 from invenio_indexer.api import RecordIndexer
@@ -38,6 +37,7 @@ from invenio_search import current_search_client as es
 
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.search.api import LiteratureSearch
+from inspirehep.modules.cache import current_cache
 
 
 def _create_and_index_record(record):
@@ -197,6 +197,19 @@ def users(app):
     User.query.filter_by(email='partially_allowed@inspirehep.net').delete()
     User.query.filter_by(email='allowed@inspirehep.net').delete()
     db.session.commit()
+
+
+def test_all_collections_are_cached(app, users, sample_record):
+    """Test that collection info gets cached."""
+    with app.test_client() as client:
+        # Remove collection cache key
+        current_cache.delete('restricted_collections')
+
+        client.get("/literature/123")
+
+        # Check that cache key has been correctly filled
+        assert current_cache.get('restricted_collections') == \
+            set([u'Another Restricted Collection', u'Restricted Collection'])
 
 
 @pytest.mark.parametrize('user_info,status', [

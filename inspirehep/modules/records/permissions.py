@@ -22,16 +22,43 @@
 
 from __future__ import absolute_import, division, print_function
 
+from flask import current_app
 from flask_security import current_user
+from werkzeug.local import LocalProxy
 
 from invenio_access.models import ActionUsers
 from invenio_access.permissions import (DynamicPermission,
                                         ParameterizedActionNeed)
 
+from inspirehep.modules.cache import current_cache
+
 
 action_view_restricted_collection = ParameterizedActionNeed(
     'view-restricted-collection', argument=None
 )
+
+all_restricted_collections = LocalProxy(lambda: load_restricted_collections())
+
+
+def load_restricted_collections():
+    restricted_collections = current_cache.get('restricted_collections')
+    if restricted_collections:
+        return restricted_collections
+    else:
+        restricted_collections = set(
+            [
+                a.argument for a in ActionUsers.query.filter_by(
+                    action='view-restricted-collection').all()
+            ]
+        )
+        if restricted_collections:
+            current_cache.set(
+                'restricted_collections',
+                restricted_collections,
+                timeout=current_app.config.get(
+                    'INSPIRE_COLLECTIONS_RESTRICTED_CACHE_TIMEOUT', 120)
+            )
+        return restricted_collections
 
 
 def record_read_permission_factory(record=None):
@@ -72,13 +99,6 @@ def has_read_permission(user, record):
     user_roles = [r.name for r in current_user.roles]
     if 'superuser' in user_roles:
         return True
-
-    all_restricted_collections = set(
-        [
-            a.argument for a in ActionUsers.query.filter_by(
-                action='view-restricted-collection').all()
-        ]
-    )
 
     if '_collections' in record:
         record_collections = set(record['_collections'])

@@ -31,6 +31,8 @@ from invenio_access.models import ActionUsers
 from invenio_search.api import DefaultFilter, RecordsSearch
 from invenio_search import current_search_client
 
+from inspirehep.modules.records.permissions import all_restricted_collections
+
 from .query_factory import inspire_query_factory
 
 
@@ -88,11 +90,6 @@ def inspire_filter():
     """Filter applied to all queries."""
     if request:
         collection = request.values.get('cc', 'Literature')
-
-        all_restricted_collections = set(
-            [a.argument for a in ActionUsers.query.filter_by(
-                action='view-restricted-collection').all()]
-        )
 
         user_roles = [r.name for r in current_user.roles]
         if 'superuser' in user_roles:
