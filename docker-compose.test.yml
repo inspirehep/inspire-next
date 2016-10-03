@@ -29,12 +29,12 @@ services:
       file: services.yml
       service: base
     environment:
-      - SQLALCHEMY_DATABASE_URI=postgresql+psycopg2://inspirehep:dbpass123@database:5432/inspirehep
-      - BROKER_URL=amqp://guest:guest@rabbitmq:5672//
-      - CELERY_RESULT_BACKEND=amqp://guest:guest@rabbitmq:5672//
-      - CACHE_REDIS_URL=redis://redis:6379/0
-      - ACCOUNTS_SESSION_REDIS_URL=redis://redis:6379/2
-      - SEARCH_ELASTIC_HOSTS=indexer
+      - APP_SQLALCHEMY_DATABASE_URI=postgresql+psycopg2://inspirehep:dbpass123@database:5432/inspirehep
+      - APP_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - APP_CELERY_RESULT_BACKEND=amqp://guest:guest@rabbitmq:5672//
+      - APP_CACHE_REDIS_URL=redis://redis:6379/0
+      - APP_ACCOUNTS_SESSION_REDIS_URL=redis://redis:6379/2
+      - APP_SEARCH_ELASTIC_HOSTS=indexer
   pep8:
     extends:
       service: service_base
@@ -115,7 +115,7 @@ services:
       - rabbitmq
       - redis
     environment:
-      - SERVER_NAME=web:5000
+      - APP_SERVER_NAME=web:5000
   worker:
     container_name: inspirehep-test-worker
     extends:
