@@ -25,9 +25,12 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 
+from flask_security.utils import encrypt_password
+
 from invenio_access.models import ActionUsers
-from invenio_accounts.models import User
+from invenio_accounts.models import SessionActivity, User
 from invenio_accounts.testutils import login_user_via_session
+from invenio_accounts.testutils import login_user_via_view
 from invenio_collections.models import Collection
 from invenio_db import db
 from invenio_indexer.api import RecordIndexer
@@ -38,6 +41,7 @@ from invenio_search import current_search_client as es
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.search.api import LiteratureSearch
 from inspirehep.modules.cache import current_cache
+
 
 
 def _create_and_index_record(record):
@@ -147,14 +151,21 @@ def restricted_record(app):
 @pytest.fixture(scope='function')
 def users(app):
     # Create test users
-    user = User(email='user@inspirehep.net')
+    encrypted_password = encrypt_password('123456')
+    user = User(
+        email='user@inspirehep.net',
+        password=encrypted_password,
+        active=True
+    )
     user_partially_allowed = User(
         email='partially_allowed@inspirehep.net',
-        password='123456'
+        password=encrypted_password,
+        active=True,
     )
     user_allowed = User(
         email='allowed@inspirehep.net',
-        password='123456'
+        password=encrypted_password,
+        active=True,
     )
 
     db.session.add_all(
@@ -192,6 +203,7 @@ def users(app):
 
     yield
 
+    SessionActivity.query.delete()
     ActionUsers.query.filter_by(action='view-restricted-collection').delete()
     User.query.filter_by(email='user@inspirehep.net').delete()
     User.query.filter_by(email='partially_allowed@inspirehep.net').delete()
@@ -302,20 +314,20 @@ def test_record_restricted_api_read(app, api_client, restricted_record, users, u
     # anonymous user
     (None, 426, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}, {'match': {'_collections': u'Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
     # Logged in user without permissions assigned
-    (dict(email='user@inspirehep.net'), 426, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}, {'match': {'_collections': u'Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
+    (dict(email='user@inspirehep.net', password='123456'), 426, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}, {'match': {'_collections': u'Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
     # Logged in user not allowed in all collections
-    (dict(email='partially_allowed@inspirehep.net'), 426, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
+    (dict(email='partially_allowed@inspirehep.net', password='123456'), 426, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
     # Logged in user with permissions assigned
-    (dict(email='allowed@inspirehep.net'), 427, [{'match': {'_collections': 'Literature'}}]),
+    (dict(email='allowed@inspirehep.net', password='123456'), 427, [{'match': {'_collections': 'Literature'}}]),
     # admin user
-    (dict(email='admin@inspirehep.net'), 427, [{'match': {'_collections': 'Literature'}}]),
+    (dict(email='admin@inspirehep.net', password='123456'), 427, [{'match': {'_collections': 'Literature'}}]),
 ])
 def test_inspire_search_filter(app, restricted_record, users, user_info, total_count, es_filter):
     """Test default inspire search filter."""
 
     with app.test_client() as client:
         if user_info:
-            login_user_via_session(client, email=user_info['email'])
+            login_user_via_view(client, email=user_info['email'], password=user_info['password'], login_url='/login/?local=1')
 
         # Doing a client request creates a request context that allows the
         # assert to correctly use the logged in user.

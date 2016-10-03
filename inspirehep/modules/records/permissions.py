@@ -22,7 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from flask import current_app
+from flask import current_app, session
 from flask_security import current_user
 from werkzeug.local import LocalProxy
 
@@ -38,6 +38,26 @@ action_view_restricted_collection = ParameterizedActionNeed(
 )
 
 all_restricted_collections = LocalProxy(lambda: load_restricted_collections())
+
+user_collections = LocalProxy(lambda: get_user_collections())
+
+
+def get_user_collections():
+    """Get user restricted collections."""
+    return session.get('restricted_collections', set())
+
+
+def load_user_collections(app, user):
+    """Load user restricted collections upon login.
+
+    Receiver for flask_login.user_logged_in
+    """
+    user_collections = set(
+        [a.argument for a in ActionUsers.query.filter_by(
+            action='view-restricted-collection',
+            user_id=current_user.get_id()).all()]
+    )
+    session['restricted_collections'] = user_collections
 
 
 def load_restricted_collections():

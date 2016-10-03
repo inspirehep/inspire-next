@@ -39,7 +39,12 @@ from inspirehep.factory import create_app
 def app():
     """Flask application fixture."""
     app = create_app()
-    app.config.update({'DEBUG': True})
+    app.config.update(
+        {
+            'DEBUG': True,
+            'WTF_CSRF_ENABLED': False
+        }
+    )
 
     with app.app_context():
         # Imports must be local, otherwise tasks default to pickle serializer.

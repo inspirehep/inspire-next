@@ -31,7 +31,10 @@ from invenio_access.models import ActionUsers
 from invenio_search.api import DefaultFilter, RecordsSearch
 from invenio_search import current_search_client
 
-from inspirehep.modules.records.permissions import all_restricted_collections
+from inspirehep.modules.records.permissions import (
+    all_restricted_collections,
+    user_collections
+)
 
 from .query_factory import inspire_query_factory
 
@@ -93,17 +96,13 @@ def inspire_filter():
 
         user_roles = [r.name for r in current_user.roles]
         if 'superuser' in user_roles:
-            user_collections = all_restricted_collections
+            user_coll = all_restricted_collections
         else:
-            user_collections = set(
-                [a.argument for a in ActionUsers.query.filter_by(
-                    action='view-restricted-collection',
-                    user_id=current_user.get_id()).all()]
-            )
+            user_coll = user_collections
 
         query = Q('match', _collections=collection)
 
-        for collection in list(all_restricted_collections - user_collections):
+        for collection in list(all_restricted_collections - user_coll):
             query = query & ~Q('match', _collections=collection)
 
         return query
