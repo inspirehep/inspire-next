@@ -42,6 +42,7 @@ require.config({
     'd3wrapper': 'js/d3-wrapper',
     datatables: 'node_modules/datatables.net-bs/js/dataTables.bootstrap',
     'datatables.net': 'node_modules/datatables.net/js/jquery.dataTables',
+    'default_typeahead_configuration': 'node_modules/inspirehep-typeahead-search-js/src/default_typeahead_configuration',
     feedback: 'js/feedback/feedback',
     flight: 'node_modules/flightjs/build/flight',
     hgn: 'node_modules/requirejs-hogan-plugin/hgn',
@@ -51,16 +52,17 @@ require.config({
     'holding-pen-directives': 'js/inspire_workflows_ui/holdingpen/holdingpen.directives',
     'holding-pen-services': 'js/inspire_workflows_ui/holdingpen/holdingpen.services',
     'holding-pen-filters': 'js/inspire_workflows_ui/holdingpen/holdingpen.filters',
-    inspirehep: 'node_modules/inspirehep-js/dist/inspirehep',
+    'inspirehep': 'node_modules/inspirehep-js/dist/inspirehep',
     'inspirehep-clipboard': 'js/inspire_clipboard',
     'impact-graphs': 'node_modules/impact-graphs/impact-graph',
     'inspirehep-search': 'node_modules/inspirehep-search-js/dist/inspirehep-search',
     /* Typeahead JS config */
     'inspirehep-typeahead': 'node_modules/inspirehep-typeahead-search-js/src/typeahead',
-    'default_typeahead_configuration': 'node_modules/inspirehep-typeahead-search-js/src/default_typeahead_configuration',
-    'search_parser': 'node_modules/inspirehep-typeahead-search-js/src/search_parser',
     'invenio_with_spires_typeahead_configuration': 'node_modules/inspirehep-typeahead-search-js/src/invenio_with_spires_typeahead_configuration',
     'invenio-search': 'node_modules/invenio-search-js/dist/invenio-search-js',
+    'invenio-trends-module': 'js/invenio_trends_ui/trends.module',
+    'invenio-trends-directives': 'js/invenio_trends_ui/trends.directives',
+    'invenio-trends-services': 'js/invenio_trends_ui/trends.services',
     jquery: 'node_modules/jquery/jquery',
     'jquery-caret': 'node_modules/jquery-plugin/dist/jquery.caret-1.5.0',
     'jquery.ui': 'node_modules/jquery-ui/jquery-ui',
@@ -69,6 +71,7 @@ require.config({
     'profile': 'js/authors/profile',
     'publications': 'js/authors/publications',
     'readmore': 'node_modules/readmore-js/readmore',
+    'search_parser': 'node_modules/inspirehep-typeahead-search-js/src/search_parser',
     text: 'node_modules/requirejs-hogan-plugin/text',
     toastr: 'node_modules/toastr/toastr',
     typeahead: 'node_modules/typeahead.js/dist/typeahead.bundle',
@@ -126,8 +129,24 @@ require.config({
       deps: ['angular']
     },
     'holding-pen-module': {
-      deps: ['angular', 'holding-pen-directives', 'holding-pen-controllers', 'holding-pen-filters', 'angular-sanitize', 'angular-filter', 'angular-ui-bootstrap']
+      deps: ['angular', 'holding-pen-directives', 'holding-pen-controllers',
+        'holding-pen-filters', 'angular-sanitize',
+        'angular-filter', 'angular-ui-bootstrap']
     },
+
+    'invenio-trends-directives': {
+      deps: ['angular']
+    },
+
+    'invenio-trends-services': {
+      deps: ['angular']
+    },
+
+    'invenio-trends-module': {
+      deps: ['angular',  'd3', 'd3-tip', 'invenio-trends-services',
+        'invenio-trends-directives', 'angular-ui-bootstrap']
+    },
+
     'inspirehep': {
       deps: ['angular', 'angular-sanitize', 'angular-ui-bootstrap', 'ngclipboard']
     },
