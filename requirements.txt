@@ -20,9 +20,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-# FIXME temporary branch for testing
--e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3-inspire#egg=invenio-query-parser==0.6.0
-
 # INSPIRE forks of Invenio packages
 -e git+https://github.com/inspirehep/invenio-pidstore.git#egg=invenio-pidstore
 

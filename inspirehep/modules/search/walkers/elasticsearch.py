@@ -37,8 +37,6 @@ from invenio_query_parser.ast import (AndOp, DoubleQuotedValue, EmptyQuery,
                                       ValueQuery, WildcardQuery)
 from invenio_query_parser.visitor import make_visitor
 
-from ..ast import FilterOp
-
 
 class ElasticSearchDSL(object):
 
@@ -60,11 +58,7 @@ class ElasticSearchDSL(object):
         return [field]
 
     # pylint: disable=W0613,E0102
-
-    @visitor(FilterOp)
-    def visit(self, node, left, right):
-        return Q({'filtered': {'query': [left], "filter": [right]}})
-
+    
     @visitor(AndOp)
     def visit(self, node, left, right):
         return left & right

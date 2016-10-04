@@ -27,7 +27,7 @@ from invenio_query_parser.visitor import make_visitor
 from invenio_query_parser.walkers import repr_printer
 
 from .. import parser
-from ..ast import SpiresOp
+from invenio_query_parser.contrib.spires.ast import SpiresOp
 
 
 class TreeRepr(repr_printer.TreeRepr):
