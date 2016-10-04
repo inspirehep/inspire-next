@@ -26,7 +26,7 @@
 from invenio_query_parser import ast
 from invenio_query_parser.visitor import make_visitor
 
-from ..ast import SpiresOp
+from invenio_query_parser.contrib.spires.ast import SpiresOp
 from ..config import SPIRES_KEYWORDS
 
 
