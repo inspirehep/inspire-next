@@ -29,7 +29,7 @@ import re
 from os.path import join
 from flask import Blueprint, jsonify, request, current_app
 
-from inspirehep.utils.cache import cache
+from inspirehep.modules.cache import current_cache
 from invenio_db import db
 from invenio_workflows import workflow_object_class
 
@@ -98,7 +98,7 @@ def webcoll_callback():
     recids field.
     """
     recids = dict(request.form).get('recids', [])
-    pending_records = cache.get("pending_records") or dict()
+    pending_records = current_cache.get("pending_records") or dict()
     for rid in recids:
         if rid in pending_records:
             objectid = pending_records[rid]
@@ -112,8 +112,11 @@ def webcoll_callback():
             db.session.commit()
             workflow_object.continue_workflow(delayed=True)
             del pending_records[rid]
-            cache.set("pending_records", pending_records,
-                      timeout=current_app.config["PENDING_RECORDS_CACHE_TIMEOUT"])
+            current_cache.set(
+                "pending_records",
+                pending_records,
+                timeout=current_app.config["PENDING_RECORDS_CACHE_TIMEOUT"]
+            )
     return jsonify({"result": "success"})
 
 
@@ -135,10 +138,13 @@ def robotupload_callback():
         status = result.get('success', False)
         if status:
             recid = result.get('recid')
-            pending_records = cache.get("pending_records") or dict()
+            pending_records = current_cache.get("pending_records") or dict()
             pending_records[str(recid)] = str(id_object)
-            cache.set("pending_records", pending_records,
-                      timeout=current_app.config["PENDING_RECORDS_CACHE_TIMEOUT"])
+            current_cache.set(
+                "pending_records",
+                pending_records,
+                timeout=current_app.config["PENDING_RECORDS_CACHE_TIMEOUT"]
+            )
         else:
             from invenio_mail.tasks import send_email
 
