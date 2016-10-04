@@ -18,4 +18,4 @@ This is the INSPIRE source code overlay for Invenio v3.0.x release series.
 
 This code is currently hosted at `<http://labs.inspirehep.net>`_
 
-Full documentation here: http://pythonhosted.org/Inspirehep
+Full documentation here: http://inspirehep.readthedocs.io
