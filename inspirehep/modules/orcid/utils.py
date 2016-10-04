@@ -20,8 +20,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from invenio_oauthclient.models import RemoteAccount, RemoteToken, UserIdentity
-
 from inspirehep.utils.bibtex import Bibtex
 
 from .schema import orcid_overdo
@@ -42,15 +40,11 @@ def convert_to_orcid(record):
     return orcid_json
 
 
-def get_authors_credentials(author):
-    """Returns the orcid-id and the orcid-token for a specific author (if available)."""
-    author_orcid = ''
+def get_orcid_id(author):
+    """Return the Orcid Id of a given author record.
+
+    :param author: An author record.
+    """
     for orcid_id in author['ids']:
         if orcid_id['type'] == 'ORCID':
-            author_orcid = orcid_id['value']
-    raw_user = UserIdentity.query.filter_by(
-        id=author_orcid, method='orcid').first()
-    remote_user = RemoteAccount.query.filter_by(user_id=raw_user.id_user).first()
-    token = RemoteToken.query.filter_by(
-        id_remote_account=remote_user.id).first().access_token
-    return (token, author_orcid)
+            return orcid_id['value']

@@ -24,11 +24,12 @@ from HTMLParser import HTMLParser
 
 import dojson
 
+from flask import current_app
+
 from inspirehep.utils.helpers import force_force_list
 
 from inspirehep.utils.record import get_abstract, get_subtitle, get_title
 
-from .config import ORCID_WORK_TYPES
 
 orcid_overdo = dojson.Overdo()
 
@@ -136,11 +137,12 @@ def authors_rule(self, key, value):
 
 @orcid_overdo.over('type', 'collections')
 def work_type_rule(self, key, value):
+    work_types = current_app.config.get('ORCID_WORK_TYPES')
     work_type = ''
     try:
         for val in value:
-            if val['primary'].lower() in ORCID_WORK_TYPES:
-                return ORCID_WORK_TYPES[val['primary'].lower()]
+            if val['primary'].lower() in work_types:
+                return work_types[val['primary'].lower()]
             else:
                 work_type = 'UNDEFINED'
         return work_type

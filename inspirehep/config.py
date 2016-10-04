@@ -255,7 +255,7 @@ RECORDS_REST_ENDPOINTS = dict(
                                  ':json_v1_response'),
             'application/x-bibtex': ('inspirehep.modules.records.serializers'
                                      ':bibtex_v1_response'),
-            'application/x-orcid': ('inspirehep.modules.records.serializers'
+            'application/x-orcid': ('invenio_orcid.serializers'
                                     ':orcid_response'),
             'application/x-latexeu': ('inspirehep.modules.records.serializers'
                                       ':latexeu_v1_response'),
@@ -284,7 +284,7 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
             'application/x-bibtex': ('inspirehep.modules.records.serializers'
                                      ':bibtex_v1_search'),
-            'application/x-orcid': ('inspirehep.modules.records.serializers'
+            'application/x-orcid': ('invenio_orcid.serializers'
                                     ':orcid_search'),
             'application/x-latexeu': ('inspirehep.modules.records.serializers'
                                       ':latexeu_v1_search'),
@@ -1076,6 +1076,32 @@ CRAWLER_SETTINGS = {
     "API_PIPELINE_URL": "http://localhost:5555/api/task/async-apply",
     "API_PIPELINE_TASK_ENDPOINT_DEFAULT": "inspire_crawler.tasks.submit_results",
 }
+
+# OrcID configuration
+# ================
+
+ORCID_JSON_CONVERTER_MODULE = 'inspirehep.modules.orcid.utils:convert_to_orcid'
+ORCID_ID_FETCHER = 'inspirehep.modules.orcid.utils:get_orcid_id'
+
+ORCID_AUTHORS_SEARCH_CLASS = 'inspirehep.modules.search:AuthorsSearch'
+
+ORCID_RECORDS_PID_TYPE = 'literature'
+ORCID_RECORDS_DOC_TYPE = 'hep'
+ORCID_RECORDS_PID_FETCHER = 'inspire_recid_fetcher'
+
+ORCID_WORK_TYPES = {
+    "book": "BOOK",
+    "conferencepaper": "CONFERENCE_PAPER",
+    "proceedings": "BOOK",
+    "preprint": "WORKING_PAPER",
+    "note": "WORKING_PAPER",
+    "published": "JOURNAL_ARTICLE",
+    "thesis": "DISSERTATION",
+    "lectures": "LECTURE_SPEECH",
+    "bookchapter": "BOOK_CHAPTER",
+    "report": "REPORT"
+}
+
 
 # Inspire mappings
 # ================

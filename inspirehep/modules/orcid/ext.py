@@ -25,8 +25,6 @@ from __future__ import (
     division,
     print_function)
 
-import orcid
-
 
 class INSPIREOrcid(object):
     """INSPIRE orcid extension."""
@@ -40,15 +38,3 @@ class INSPIREOrcid(object):
     def init_app(self, app, **kwargs):
         """Initialize application object."""
         app.extensions['inspire-orcid'] = self
-
-        orcid_base_url = app.config['OAUTHCLIENT_REMOTE_APPS'][
-            'orcid']['params']['base_url']
-        orcid_consumer_secret = app.config[
-            'OAUTHCLIENT_ORCID_CREDENTIALS']['consumer_secret']
-        orcid_consumer_key = app.config[
-            'OAUTHCLIENT_ORCID_CREDENTIALS']['consumer_key']
-
-        self.sandbox = (orcid_base_url == 'https://pub.sandbox.orcid.org/')
-
-        self.orcid_api = orcid.MemberAPI(
-            orcid_consumer_secret, orcid_consumer_key, sandbox=self.sandbox)
