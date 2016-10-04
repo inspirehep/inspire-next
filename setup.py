@@ -74,6 +74,7 @@ install_requires = [
     'dojson==1.2.1',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',
+    'Flask-Cache>=0.13.1',
     'Flask-Script>=2.0.5',
     'flask-shell-ipython>=0.2.2',
     'jsmin',
@@ -186,11 +187,13 @@ setup(
             'hepnames2marc = inspirehep.dojson.hepnames2marc:hepnames2marc',
         ],
         'invenio_base.api_apps': [
+            'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
             'inspire_warnings = inspirehep.modules.warnings:INSPIREWarnings',
         ],
         'invenio_base.apps': [
+            'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
             'inspire_fixtures = inspirehep.modules.fixtures:INSPIREFixtures',
             'inspire_theme = inspirehep.modules.theme:INSPIRETheme',
             'inspire_migrator = inspirehep.modules.migrator:INSPIREMigrator',
