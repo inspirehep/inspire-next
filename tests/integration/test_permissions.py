@@ -24,7 +24,6 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
-
 from flask_security.utils import encrypt_password
 
 from invenio_access.models import ActionUsers
@@ -41,7 +40,6 @@ from invenio_search import current_search_client as es
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.search.api import LiteratureSearch
 from inspirehep.modules.cache import current_cache
-
 
 
 def _create_and_index_record(record):
@@ -91,7 +89,6 @@ def sample_record(app):
 
 @pytest.fixture(scope='function')
 def restricted_record(app):
-    # Create a restricted collection
     restricted_collection = Collection(
         name='Restricted Collection',
         dbquery='collections.primary:"Restricted Collection"',
@@ -241,8 +238,7 @@ def test_record_public_detailed_read(app, sample_record, users, user_info, statu
             # Login as user
             login_user_via_session(client, email=user_info['email'])
 
-        result = client.get("/literature/123")
-        assert result.status_code == status
+        assert client.get("/literature/123").status_code == status
 
 
 @pytest.mark.parametrize('user_info,status', [
@@ -261,8 +257,7 @@ def test_record_public_api_read(app, api_client, sample_record, users, user_info
         # Login as user
         login_user_via_session(api_client, email=user_info['email'])
 
-    result = api_client.get("/literature/123")
-    assert result.status_code == status
+    assert api_client.get("/literature/123").status_code == status
 
 
 @pytest.mark.parametrize('user_info,status', [
@@ -285,8 +280,7 @@ def test_record_restricted_detailed_read(app, restricted_record, users, user_inf
             # Login as user
             login_user_via_session(client, email=user_info['email'])
 
-        result = client.get("/literature/222")
-        assert result.status_code == status
+        assert client.get("/literature/222").status_code == status
 
 
 @pytest.mark.parametrize('user_info,status', [
@@ -306,8 +300,7 @@ def test_record_restricted_api_read(app, api_client, restricted_record, users, u
 
     if user_info:
         login_user_via_session(api_client, email=user_info['email'])
-    result = api_client.get("/literature/222")
-    assert result.status_code == status
+    assert api_client.get("/literature/222").status_code == status
 
 
 @pytest.mark.parametrize('user_info,total_count,es_filter', [

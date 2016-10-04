@@ -116,6 +116,12 @@ class RecordPermission(object):
 
 def has_read_permission(user, record):
     """Check if user has read access to the record."""
+    def _cant_view(collection):
+        return not DynamicPermission(
+            ParameterizedActionNeed(
+                'view-restricted-collection',
+                collection)).can()
+
     user_roles = [r.name for r in current_user.roles]
     if 'superuser' in user_roles:
         return True
@@ -124,13 +130,8 @@ def has_read_permission(user, record):
         record_collections = set(record['_collections'])
         restricted_coll = all_restricted_collections & record_collections
         if restricted_coll:
-            for collection in restricted_coll:
-                if not DynamicPermission(
-                        ParameterizedActionNeed(
-                            "view-restricted-collection",
-                            collection)
-                ).can():
-                    return False
+            if any(map(_cant_view, restricted_coll)):
+                return False
 
     # By default we allow access
     return True

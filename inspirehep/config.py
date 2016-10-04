@@ -137,11 +137,12 @@ COLLECTIONS_QUERY_WALKERS = [
     'inspirehep.modules.search.walkers.pypeg_to_ast:PypegConverter',
 ]
 """Modules to create the query AST."""
+
 COLLECTIONS_USE_PERCOLATOR = False
 """Define which percolator you want to use.
 
 Default value is `False` to use the internal percolator.
-You can also set True to use elasticsearch to provide percolator resolver.
+You can also set True to use ElasticSearch to provide percolator resolver.
 NOTE that ES percolator uses high memory and there might be some problems
 when creating records.
 """
@@ -704,14 +705,14 @@ RECORDS_UI_ENDPOINTS = dict(
         route='/literature/<pid_value>',
         template='inspirehep_theme/format/record/'
                  'Inspire_Default_HTML_detailed.tpl',
-        record_class='inspirehep.modules.records.wrappers:LiteratureRecord'
+        record_class='inspirehep.modules.records.wrappers:LiteratureRecord',
     ),
     authors=dict(
         pid_type='authors',
         route='/authors/<pid_value>',
         template='inspirehep_theme/format/record/'
                  'authors/Author_HTML_detailed.html',
-        record_class='inspirehep.modules.records.wrappers:AuthorsRecord'
+        record_class='inspirehep.modules.records.wrappers:AuthorsRecord',
     ),
     data=dict(
         pid_type='data',
@@ -722,31 +723,31 @@ RECORDS_UI_ENDPOINTS = dict(
         pid_type='conferences',
         route='/conferences/<pid_value>',
         template='inspirehep_theme/format/record/Conference_HTML_detailed.tpl',
-        record_class='inspirehep.modules.records.wrappers:ConferencesRecord'
+        record_class='inspirehep.modules.records.wrappers:ConferencesRecord',
     ),
     jobs=dict(
         pid_type='jobs',
         route='/jobs/<pid_value>',
         template='inspirehep_theme/format/record/Job_HTML_detailed.tpl',
-        record_class='inspirehep.modules.records.wrappers:JobsRecord'
+        record_class='inspirehep.modules.records.wrappers:JobsRecord',
     ),
     institutions=dict(
         pid_type='institutions',
         route='/institutions/<pid_value>',
         template='inspirehep_theme/format/record/Institution_HTML_detailed.tpl',
-        record_class='inspirehep.modules.records.wrappers:InstitutionsRecord'
+        record_class='inspirehep.modules.records.wrappers:InstitutionsRecord',
     ),
     experiments=dict(
         pid_type='experiments',
         route='/experiments/<pid_value>',
         template='inspirehep_theme/format/record/Experiment_HTML_detailed.tpl',
-        record_class='inspirehep.modules.records.wrappers:ExperimentsRecord'
+        record_class='inspirehep.modules.records.wrappers:ExperimentsRecord',
     ),
     journals=dict(
         pid_type='journals',
         route='/journals/<pid_value>',
         template='inspirehep_theme/format/record/Journal_HTML_detailed.tpl',
-        record_class='inspirehep.modules.records.wrappers:JournalsRecord'
+        record_class='inspirehep.modules.records.wrappers:JournalsRecord',
     )
 )
 

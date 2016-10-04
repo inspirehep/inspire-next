@@ -27,7 +27,6 @@ from flask_security import current_user
 
 from elasticsearch_dsl.query import Q
 
-from invenio_access.models import ActionUsers
 from invenio_search.api import DefaultFilter, RecordsSearch
 from invenio_search import current_search_client
 
