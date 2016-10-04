@@ -1,6 +1,6 @@
 ..
     This file is part of INSPIRE.
-    Copyright (C) 2015, 2016 CERN.
+    Copyright (C) 2016 CERN.
 
     INSPIRE is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,27 +20,26 @@
     or submit itself to any jurisdiction.
 
 
-.. include:: ../README.rst
+HOWTOs
+==========
+
+1. Caching
+----------
 
 
-Contents
-========
+For caching we use Flask-cache_. For example, to set a value in the cache:
 
-.. toctree::
-   :maxdepth: 2
+.. code-block:: python
 
-   installation
-   operations
-   harvesting
-   grobid
-   tools
-   tests
-   howtos
-   building_the_docs
+    from inspirehep.modules.cache import current_cache
+    current_cache.set('test', [1, 2, 3], timeout=60)
 
-*Happy hacking!*
+And to retrieve the value from the cache:
 
-| INSPIRE Development Team
-|   Email: admin@inspirehep.net
-|   Twitter: @inspirehep
-|   URL: http://inspirehep.net
+.. code-block:: python
+
+    from inspirehep.modules.cache import current_cache
+    current_cache.get('test')
+
+
+.. _Flask-cache: https://pythonhosted.org/Flask-Cache/
