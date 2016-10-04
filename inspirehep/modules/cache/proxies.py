@@ -16,19 +16,19 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this license, CERN does not waive the privileges and immunities
+# In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Helpers for handling with http requests and URL handling."""
+"""Cache proxies."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 from flask import current_app
-from redis import StrictRedis
 from werkzeug.local import LocalProxy
 
 
-cache = LocalProxy(
-    lambda: StrictRedis.from_url(current_app.config.get('CACHE_REDIS_URL'))
+current_cache = LocalProxy(
+    lambda: current_app.extensions['inspire-cache'].cache
 )
+"""Helper proxy to access the state object."""
