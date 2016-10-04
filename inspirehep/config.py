@@ -39,7 +39,7 @@ def _(x):
 # Debug
 # =====
 DEBUG_TB_INTERCEPT_REDIRECTS = False
-SERVER_NAME = os.environ.get('SERVER_NAME', 'localhost:5000')
+SERVER_NAME = 'localhost:5000'
 
 # Default language and timezone
 # =============================
@@ -59,19 +59,13 @@ BASE_TEMPLATE = "inspirehep_theme/page.html"
 
 # Database
 # ========
-SQLALCHEMY_DATABASE_URI = os.environ.get(
-    "SQLALCHEMY_DATABASE_URI",
-    "postgresql+psycopg2://inspirehep:dbpass123@localhost:5432/inspirehep")
+SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://inspirehep:dbpass123@localhost:5432/inspirehep"
 SQLALCHEMY_ECHO = False
 
 # Celery
 # ======
-BROKER_URL = os.environ.get(
-    "BROKER_URL",
-    "amqp://guest:guest@localhost:5672//")
-CELERY_RESULT_BACKEND = os.environ.get(
-    "CELERY_RESULT_BACKEND",
-    "amqp://guest:guest@localhost:5672//")
+BROKER_URL = "amqp://guest:guest@localhost:5672//"
+CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']
 CELERY_TIMEZONE = 'Europe/Amsterdam'
 CELERY_DISABLE_RATE_LIMITS = True
@@ -79,13 +73,9 @@ CELERY_DISABLE_RATE_LIMITS = True
 # Cache
 # =====
 CACHE_KEY_PREFIX = "cache::"
-CACHE_REDIS_URL = os.environ.get(
-    "CACHE_REDIS_URL",
-    "redis://localhost:6379/0")
+CACHE_REDIS_URL = "redis://localhost:6379/0"
 CACHE_TYPE = "redis"
-ACCOUNTS_SESSION_REDIS_URL = os.environ.get(
-    "ACCOUNTS_SESSION_REDIS_URL",
-    "redis://localhost:6379/2")
+ACCOUNTS_SESSION_REDIS_URL = "redis://localhost:6379/2"
 
 # Files
 # =====
@@ -151,9 +141,7 @@ SEARCH_TYPEAHEAD_SPIRES_KEYWORD_TO_HINT = {
 SEARCH_TYPEAHEAD_HINT_URL = '/search/suggest?field=%TYPE&query=%QUERY'
 SEARCH_TYPEAHEAD_DEFAULT_SET = 'invenio'
 
-SEARCH_ELASTIC_HOSTS = os.environ.get(
-    'SEARCH_ELASTIC_HOSTS',
-    'localhost').split(';')
+SEARCH_ELASTIC_HOSTS = ['localhost']
 SEARCH_UI_BASE_TEMPLATE = BASE_TEMPLATE
 SEARCH_UI_SEARCH_TEMPLATE = 'search/search.html'
 SEARCH_UI_SEARCH_API = '/api/literature/'
@@ -920,7 +908,7 @@ JSONSCHEMAS_HOST = "localhost:5000"
 INDEXER_DEFAULT_INDEX = "records-hep"
 INDEXER_DEFAULT_DOC_TYPE = "hep"
 INDEXER_REPLACE_REFS = False
-INDEXER_BULK_REQUEST_TIMEOUT = float(os.environ.get('ES_BULK_TIMEOUT', 120))
+INDEXER_BULK_REQUEST_TIMEOUT = float(120)
 
 # OAuthclient
 # ===========
@@ -1081,18 +1069,12 @@ AUTHORS_UPDATE_BASE_URL = "http://inspirehep.net"
 # Crawling
 # ========
 
-CRAWLER_HOST_URL = os.environ.get(
-    "CRAWLER_HOST_URL",
-    "http://localhost:6800")
+CRAWLER_HOST_URL = "http://localhost:6800"
 
 CRAWLER_SETTINGS = {
     # URL to your flower instance
-    "API_PIPELINE_URL": os.environ.get(
-        "CRAWLER_API_PIPELINE_URL",
-        "http://localhost:5555/api/task/async-apply"),
-    "API_PIPELINE_TASK_ENDPOINT_DEFAULT": os.environ.get(
-        "CRAWLER_API_PIPELINE_TASK_ENDPOINT_DEFAULT",
-        "inspire_crawler.tasks.submit_results"),
+    "API_PIPELINE_URL": "http://localhost:5555/api/task/async-apply",
+    "API_PIPELINE_TASK_ENDPOINT_DEFAULT": "inspire_crawler.tasks.submit_results",
 }
 
 # Inspire mappings
