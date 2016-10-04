@@ -20,11 +20,27 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""INSPIREWarnings module."""
+"""Extension that suppresses warnings."""
 
 from __future__ import absolute_import, division, print_function
 
-from .ext import INSPIREWarnings
+import warnings
 
 
-__all__ = ("INSPIREWarnings", )
+class INSPIREWarnings(object):
+
+    """Extension that suppresses warnings."""
+
+    def __init__(self, app=None):
+        """Initialize the extension."""
+        if app:
+            self.init_app(app)
+
+    def init_app(self, app):
+        """Initialize the application."""
+        self.init_config(app)
+
+        app.extensions['inspire-warnings'] = self
+
+    def init_config(self, app):
+        """Initialize the configuration."""
