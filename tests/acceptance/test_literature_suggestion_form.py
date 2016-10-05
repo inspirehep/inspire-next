@@ -26,12 +26,43 @@ import os
 
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import ElementNotVisibleException
 from selenium.common.exceptions import WebDriverException
 
 
+# Components Tests
+def test_format_input_arXiv(selenium, login):
+    """Test the string format for arXiv input"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+
+    try:
+        selenium.find_element_by_id("arxiv_id").send_keys("1001.4538")
+        selenium.find_element_by_id("arxiv_id").send_keys(Keys.TAB)
+        WebDriverWait(selenium, 10).until(EC.presence_of_element_located((By.ID, "state-arxiv_id")))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert "The provided ArXiv ID is invalid - it should look" not in selenium.page_source
+    selenium.find_element_by_id("arxiv_id").clear()
+
+    selenium.find_element_by_id("arxiv_id").send_keys("hep-th.9711200")
+    selenium.find_element_by_id("arxiv_id").send_keys(Keys.TAB)
+    WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, "state-arxiv_id"), "The provided ArXiv ID is invalid - it should look"))
+    assert "The provided ArXiv ID is invalid - it should look" in selenium.page_source
+    selenium.find_element_by_id("arxiv_id").clear()
+
+    try:
+        selenium.find_element_by_id("arxiv_id").send_keys("hep-th/9711200")
+        selenium.find_element_by_id("arxiv_id").send_keys(Keys.TAB)
+        WebDriverWait(selenium, 10).until(EC.presence_of_element_located((By.ID, "state-arxiv_id")))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert "The provided ArXiv ID is invalid - it should look" not in selenium.page_source
+
+
+# Form Tests
 def test_literature_create_article_journal_manually(selenium, login):
     """Submit the form for article creation from scratch"""
     selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')

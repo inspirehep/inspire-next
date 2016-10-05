@@ -30,12 +30,14 @@ from __future__ import absolute_import, division, print_function
 
 import atexit
 import sys
+from flask import (jsonify, request)
+
+from inspirehep.modules.literaturesuggest.views import validate
 
 import coverage
 
 cov = coverage.Coverage(data_suffix=True)
 cov.start()
-
 from .wsgi import application  # noqa
 
 
@@ -44,3 +46,22 @@ def save_coverage():
     cov.save()
 
 atexit.register(save_coverage)
+
+app = getattr(application, 'app', application)
+
+app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_literature_suggest.validate'][0])
+del app.view_functions['inspirehep_literature_suggest.validate']
+del app.url_map._rules_by_endpoint['inspirehep_literature_suggest.validate']
+app.url_map.update()
+
+
+@app.route('/submit/literature/validate', endpoint='inspirehep_literature_suggest.validate', methods=['POST'])
+def mock_literature_validate():
+    """"Mock the arXiv validation"""
+    if 'arxiv_id' in request.json:
+        if request.json['arxiv_id'] in ('1001.4538', 'hep-th/9711200'):
+            return ''
+        if request.json['arxiv_id'] == '-th.9711200':
+            return '{"messages":{"arxiv_id":{"messages":["The provided ArXiv ID is invalid - it should look similar to \'hep-th/9711200\' or \'1207.7235\'."],"state":"error"}}}'
+
+    return validate()
