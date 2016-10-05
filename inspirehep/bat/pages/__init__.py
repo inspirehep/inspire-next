@@ -20,10 +20,6 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-[run]
-omit =
-  inspirehep/bat/*.py
-  inspirehep/celery.py
-  inspirehep/cli.py
-  inspirehep/wsgi.py
-  inspirehep/wsgi_with_coverage.py
+"""BAT framework pages."""
+
+from __future__ import absolute_import, division, print_function

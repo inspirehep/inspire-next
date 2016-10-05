@@ -109,3 +109,89 @@ Via Docker with a graphical instance of Firefox (macOS)
 .. code-block:: bash
 
   $ docker-compose -f docker-compose.test.yml run --rm acceptance
+
+
+How to Write the Selenium Tests
+-------------------------------
+
+Selenium Test Framework
+~~~~~~~~~~~~~~~~~~~~~~~
+
+INSPIRE's Selenium tests are written using an in-house framework called BAT
+(:file:`inspirehep/bat`). The framework is made of four main components:
+
+- `Tests`
+- `Pages`
+- `Arsenic`
+- `ArsenicResponse`
+
+.. figure:: images/BAT_Framework.png
+
+
+Tests
+~~~~~
+
+Tests don't call directly Selenium methods, but call methods on `Pages`, which
+are eventually translated to Selenium calls.
+
+Tests are intended to be imperative descriptions of what the user does and what
+they expect to see. For example
+
+.. code-block:: python
+
+    def test_mail_format(login):
+        create_author.go_to()
+        assert create_author.write_mail('wrong mail').has_error()
+        assert not create_author.write_mail('me@me.com').has_error()
+
+asserts that, when the user visits the "Create Author" page and writes ``wrong
+mail``, they see an error, while when they visit the same page but write a valid
+email, they don't see it.
+
+
+Pages
+~~~~~
+
+Pages are abstractions of web pages served by INSPIRE. Concretely, a page is a
+collection of methods in a module that implement the various action that a user
+can take when interacting with that page. For example the
+
+.. code-block:: python
+
+    def go_to():
+        Arsenic().get(os.environ['SERVER_NAME'] + '/authors/new')
+
+method in :file:`inspirehep/bat/pages/create_author.py` represents the action of
+visiting the "Create Author" page, while
+
+.. code-block:: python
+
+    def write_institution(institution, expected_data):
+        def _write_institution():
+            return expected_data in Arsenic().write_in_autocomplete_field(
+                'institution_history-0-name', institution)
+
+        return ArsenicResponse(_write_institution)
+
+in the same module represents the action of filling the autocomplete field
+of id ``institution_history-0-name`` with the content of the ``institution``
+variable.
+
+Note that the latter method returns a closure over ``expected_data`` and
+``institution`` which is going to be used by an ``has_error`` call to determine
+if the action was successful or not.
+
+
+Arsenic
+~~~~~~~
+
+The ``Arsenic`` class is a proxy to the Selenium object, plus some
+INSPIRE-specific methods added on top.
+
+
+ArsenicResponse
+~~~~~~~~~~~~~~~
+
+As mentioned above, an ``ArsenicResponse`` wraps a closure that is going to be
+used by an ``has_error`` call to determine if the action executed
+successfully.
