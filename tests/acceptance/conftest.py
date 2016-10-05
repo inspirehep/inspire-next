@@ -46,6 +46,7 @@ def app(request):
     with app.app_context():
         # Imports must be local, otherwise tasks default to pickle serializer.
         from inspirehep.modules.migrator.tasks.records import migrate
+        from inspirehep.modules.fixtures.collections import init_collections
         from inspirehep.modules.fixtures.files import init_all_storage_paths
         from inspirehep.modules.fixtures.users import init_users_and_permissions
 
@@ -59,6 +60,7 @@ def app(request):
 
         init_all_storage_paths()
         init_users_and_permissions()
+        init_collections()
 
         migrate('./inspirehep/demosite/data/demo-records.xml.gz',
                 wait_for_results=True)

@@ -39,11 +39,17 @@ from inspirehep.factory import create_app
 def app():
     """Flask application fixture."""
     app = create_app()
-    app.config.update({'DEBUG': True})
+    app.config.update(
+        {
+            'DEBUG': True,
+            'WTF_CSRF_ENABLED': False
+        }
+    )
 
     with app.app_context():
         # Imports must be local, otherwise tasks default to pickle serializer.
         from inspirehep.modules.migrator.tasks.records import add_citation_counts, migrate
+        from inspirehep.modules.fixtures.collections import init_collections
         from inspirehep.modules.fixtures.files import init_all_storage_paths
         from inspirehep.modules.fixtures.users import init_users_and_permissions
 
@@ -57,6 +63,7 @@ def app():
 
         init_all_storage_paths()
         init_users_and_permissions()
+        init_collections()
 
         migrate('./inspirehep/demosite/data/demo-records.xml.gz', wait_for_results=True)
         es.indices.refresh('records-hep')  # Makes sure that all HEP records were migrated.
@@ -76,6 +83,7 @@ def small_app():
     with app.app_context():
         # Imports must be local, otherwise tasks default to pickle serializer.
         from inspirehep.modules.migrator.tasks.records import migrate
+        from inspirehep.modules.fixtures.collections import init_collections
         from inspirehep.modules.fixtures.files import init_all_storage_paths
         from inspirehep.modules.fixtures.users import init_users_and_permissions
 
@@ -89,11 +97,26 @@ def small_app():
 
         init_all_storage_paths()
         init_users_and_permissions()
+        init_collections()
 
         migrate('./inspirehep/demosite/data/demo-records-small.xml', wait_for_results=True)
         es.indices.refresh('records-hep')
 
         yield app
+
+
+
+@pytest.yield_fixture(scope='session')
+def api(app):
+    """Flask application fixture."""
+    yield app.wsgi_app.mounts['/api']
+
+
+@pytest.yield_fixture()
+def api_client(api):
+    """Flask test client for API app."""
+    with api.test_client() as client:
+        yield client
 
 
 @pytest.fixture

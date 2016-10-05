@@ -35,7 +35,14 @@ from invenio_db import db
 def init_users_and_permissions():
     ds = current_app.extensions['invenio-accounts'].datastore
     with db.session.begin_nested():
-        superuser_role = ds.create_role(name='superuser')
+        superuser_role = ds.create_role(
+            name='superuser',
+            description='admin with no restrictions'
+        )
+        cataloger_role = ds.create_role(
+            name='cataloger',
+            description='users with editing capabilities'
+        )
         ds.create_user(
             email='admin@inspirehep.net',
             password=encrypt_password("123456"),
@@ -46,5 +53,13 @@ def init_users_and_permissions():
             action='superuser-access',
             role=superuser_role
         ))
-        db.session.add(ActionRoles(action='admin-access', role=superuser_role))
+        db.session.add(ActionRoles(
+            action='admin-access',
+            role=superuser_role)
+        )
+        db.session.add(ActionRoles(
+            action='workflows-ui-admin-access',
+            role=cataloger_role)
+        )
+
     db.session.commit()

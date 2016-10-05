@@ -20,7 +20,7 @@
             "numeric_detection": false,
             "properties": {
                 "_collections": {
-                    "index": "not_analyzed",
+                    "analyzer": "lowercase_analyzer",
                     "type": "string"
                 },
                 "abstract": {
@@ -461,6 +461,10 @@
                     ],
                     "tokenizer": "keyword",
                     "type": "custom"
+                },
+                "lowercase_analyzer": {
+                    "filter": "lowercase",
+                    "tokenizer": "keyword"
                 }
             },
             "filter": {

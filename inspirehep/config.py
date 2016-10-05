@@ -125,6 +125,115 @@ scripts
 USERPROFILES_EXTEND_SECURITY_FORMS = False
 USERPROFILES_SETTINGS_TEMPLATE = 'inspirehep_theme/accounts/settings/profile.html'
 
+# Collections
+# ===========
+COLLECTIONS_DELETED_RECORDS = '{dbquery} AND NOT deleted:True'
+"""Enhance collection query to exclude deleted records."""
+
+COLLECTIONS_QUERY_PARSER = 'inspirehep.modules.search.parser:Main'
+"""User search query lexical parser."""
+
+COLLECTIONS_QUERY_WALKERS = [
+    'inspirehep.modules.search.walkers.pypeg_to_ast:PypegConverter',
+]
+"""Modules to create the query AST."""
+
+COLLECTIONS_USE_PERCOLATOR = False
+"""Define which percolator you want to use.
+
+Default value is `False` to use the internal percolator.
+You can also set True to use ElasticSearch to provide percolator resolver.
+NOTE that ES percolator uses high memory and there might be some problems
+when creating records.
+"""
+
+INSPIRE_COLLECTIONS_DEFINITION = [
+    {
+        "query": "collections.primary:HEP",
+        "name": "Literature"
+    },
+    {
+        "query": "collections.primary:H1-INTERNAL-NOTE",
+        "name": "H1 Internal Notes"
+    },
+    {
+        "query": "collections.primary:INSTITUTION",
+        "name": "Institutions"
+    },
+    {
+        "query": "collections.primary:HERMES-INTERNAL-NOTE",
+        "name": "HERMES Internal Notes"
+    },
+    {
+        "query": "collections.primary:ZEUS-INTERNAL-NOTE",
+        "name": "ZEUS Internal Notes"
+    },
+    {
+        "query": "collections.primary:JOB",
+        "name": "Jobs"
+    },
+    {
+        "query": "collections.primary:JOBHIDDEN",
+        "name": "Jobs Hidden"
+    },
+    {
+        "query": "collections.primary:CONFERENCES",
+        "name": "Conferences"
+    },
+    {
+        "query": "collections.primary:D0-INTERNAL-NOTE",
+        "name": "D0 Internal Notes"
+    },
+    {
+        "query": "collections.primary:EXPERIMENT",
+        "name": "Experiments"
+    },
+    {
+        "query": "collections.primary:DATA",
+        "name": "Data"
+    },
+    {
+        "query": "collections.primary:ZEUS-PRELIMINARY-NOTE",
+        "name": "ZEUS Preliminary Notes"
+    },
+    {
+        "query": "collections.primary:JOURNALS",
+        "name": "Journals"
+    },
+    {
+        "query": "collections.primary:H1-PRELIMINARY-NOTE",
+        "name": "H1 Preliminary Notes"
+    },
+    {
+        "query": "collections.primary:D0-PRELIMINARY-NOTE",
+        "name": "D0 Preliminary Notes"
+    },
+    {
+        "query": "595__c:CDS collections.primary:HEP",
+        "name": "For CDS"
+    },
+    {
+        "query": "collections.primary:CDF-INTERNAL-NOTE",
+        "name": "CDF Internal Notes"
+    },
+    {
+        "query": "collections.primary:HIDDEN",
+        "name": "HIDDEN"
+    },
+    {
+        "query": "collections.primary:CDF-NOTE",
+        "name": "CDF Notes"
+    },
+    {
+        "query": "collections.primary:HEPNAMES",
+        "name": "Authors"
+    },
+    {
+        "query": "collections.primary:HALhidden",
+        "name": "HAL Hidden"
+    }
+]
+
 # Search
 # ======
 
@@ -307,6 +416,7 @@ RECORDS_REST_ENDPOINTS = dict(
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        read_permission_factory_imp="inspirehep.modules.records.permissions:record_read_permission_factory",
         record_class='inspirehep.modules.records.es_record:ESRecord'
     ),
     literature_db=dict(
@@ -585,6 +695,10 @@ RECORDS_REST_ENDPOINTS = dict(
     ),
 )
 
+
+RECORDS_UI_DEFAULT_PERMISSION_FACTORY = \
+    "inspirehep.modules.records.permissions:record_read_permission_factory"
+
 RECORDS_UI_ENDPOINTS = dict(
     literature=dict(
         pid_type='literature',
@@ -592,7 +706,6 @@ RECORDS_UI_ENDPOINTS = dict(
         template='inspirehep_theme/format/record/'
                  'Inspire_Default_HTML_detailed.tpl',
         record_class='inspirehep.modules.records.wrappers:LiteratureRecord',
-        permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     authors=dict(
         pid_type='authors',
@@ -600,48 +713,41 @@ RECORDS_UI_ENDPOINTS = dict(
         template='inspirehep_theme/format/record/'
                  'authors/Author_HTML_detailed.html',
         record_class='inspirehep.modules.records.wrappers:AuthorsRecord',
-        permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     data=dict(
         pid_type='data',
         route='/data/<pid_value>',
-        template='inspirehep_theme/format/record/Data_HTML_detailed.tpl',
-        permission_factory_imp='invenio_records_rest.utils:allow_all',
+        template='inspirehep_theme/format/record/Data_HTML_detailed.tpl'
     ),
     conferences=dict(
         pid_type='conferences',
         route='/conferences/<pid_value>',
         template='inspirehep_theme/format/record/Conference_HTML_detailed.tpl',
         record_class='inspirehep.modules.records.wrappers:ConferencesRecord',
-        permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     jobs=dict(
         pid_type='jobs',
         route='/jobs/<pid_value>',
         template='inspirehep_theme/format/record/Job_HTML_detailed.tpl',
         record_class='inspirehep.modules.records.wrappers:JobsRecord',
-        permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     institutions=dict(
         pid_type='institutions',
         route='/institutions/<pid_value>',
         template='inspirehep_theme/format/record/Institution_HTML_detailed.tpl',
         record_class='inspirehep.modules.records.wrappers:InstitutionsRecord',
-        permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     experiments=dict(
         pid_type='experiments',
         route='/experiments/<pid_value>',
         template='inspirehep_theme/format/record/Experiment_HTML_detailed.tpl',
         record_class='inspirehep.modules.records.wrappers:ExperimentsRecord',
-        permission_factory_imp='invenio_records_rest.utils:allow_all',
     ),
     journals=dict(
         pid_type='journals',
         route='/journals/<pid_value>',
         template='inspirehep_theme/format/record/Journal_HTML_detailed.tpl',
         record_class='inspirehep.modules.records.wrappers:JournalsRecord',
-        permission_factory_imp='invenio_records_rest.utils:allow_all',
     )
 )
 

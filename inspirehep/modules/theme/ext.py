@@ -28,12 +28,15 @@ from __future__ import absolute_import, print_function
 
 
 from flask_breadcrumbs import Breadcrumbs
+from flask_login import user_logged_in
 from flask_menu import Menu
 
 from .views import blueprint, unauthorized, insufficient_permissions, \
     page_not_found, internal_error
 
 from pkg_resources import resource_filename
+
+from inspirehep.modules.records.permissions import load_user_collections
 
 
 class INSPIRETheme(object):
@@ -69,6 +72,8 @@ class INSPIRETheme(object):
         app.register_error_handler(403, insufficient_permissions)
         app.register_error_handler(404, page_not_found)
         app.register_error_handler(500, internal_error)
+
+        user_logged_in.connect(load_user_collections, app)
 
         # Save reference to self on object
         app.extensions['inspire-theme'] = self

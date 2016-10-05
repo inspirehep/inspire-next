@@ -48,15 +48,12 @@ def inspire_query_factory():
 
     def invenio_query(pattern, search):
 
-        # Enhance query first
-        # for enhancer in query_enhancers():
-        #     enhancer(self, **kwargs)
-
         try:
-            query = pypeg2.parse(pattern, Main, whitespace="")
+            query = pypeg2.parse(pattern, Main, whitespace='')
 
             for walker in walkers:
                 query = query.accept(walker)
+
         except SyntaxError:
             query = MalformedQuery("")
 
@@ -75,7 +72,10 @@ def inspire_query_factory():
             ))
         finally:
             if current_app.debug:
-                current_app.logger.debug(json.dumps(query.to_dict(), indent=4))
+                current_app.logger.debug(
+                    json.dumps(search.to_dict(), indent=4)
+                )
+
             return query
 
     return invenio_query

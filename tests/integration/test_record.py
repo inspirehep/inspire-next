@@ -124,6 +124,7 @@ def test_record_can_be_deleted(app, record_not_yet_deleted):
     with app.test_client() as client:
         assert client.get('/api/literature/333').status_code == 200
 
+    with app.app_context():
         record = get_db_record('literature', 333)
         record['deleted'] = True
         record.commit()
@@ -132,4 +133,5 @@ def test_record_can_be_deleted(app, record_not_yet_deleted):
             ri.index(record)
         db.session.commit()
 
+    with app.test_client() as client:
         assert client.get('/api/literature/333').status_code == 410

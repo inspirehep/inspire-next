@@ -168,13 +168,6 @@ def is_submission(obj, eng):
     return False
 
 
-def emit_record_signals(obj, eng):
-    """Emit record signals to update record metadata."""
-    from invenio_records.signals import before_record_insert
-
-    before_record_insert.send(obj.data)
-
-
 def prepare_update_payload(extra_data_key="update_payload"):
     @wraps(prepare_update_payload)
     def _prepare_update_payload(obj, eng):
