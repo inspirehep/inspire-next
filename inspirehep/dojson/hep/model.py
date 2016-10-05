@@ -53,11 +53,15 @@ def add_book_info(record, blob):
     return record
 
 
-filters = [
+hep_filters = [
     add_schema('hep.json'),
     add_book_info,
     clean_record,
 ]
 
-hep = FilterOverdo(filters=filters)
-hep2marc = Overdo(entry_point_group="inspirehep.dojson.hep2marc")
+hep2marc_filters = [
+    clean_record,
+]
+
+hep = FilterOverdo(filters=hep_filters)
+hep2marc = FilterOverdo(filters=hep2marc_filters)

@@ -20,12 +20,12 @@
             ],
             "numeric_detection": false,
             "properties": {
-                "_extra_data":{
-                  "properties": {
-                    "is-update": {
-                      "type": "boolean"
+                "_extra_data": {
+                    "properties": {
+                        "is-update": {
+                            "type": "boolean"
+                        }
                     }
-                  }
                 },
                 "_workflow": {
                     "properties": {

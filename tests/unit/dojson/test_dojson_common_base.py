@@ -24,8 +24,68 @@ from __future__ import absolute_import, division, print_function
 
 from dojson.contrib.marc21.utils import create_record
 
-from inspirehep.dojson.hep import hep
+from inspirehep.dojson.hep import hep, hep2marc
 from inspirehep.dojson.hepnames import hepnames, hepnames2marc
+
+
+def test_acquisition_source_from__541_a_c():
+    snippet = (
+        '<datafield tag="541" ind1=" " ind2=" ">'
+        '  <subfield code="a">IOP</subfield>'
+        '  <subfield code="c">batchupload</subfield>'
+        '</datafield>'
+    )  # record/1487640/export/xme
+
+    expected = {
+        'source': 'IOP',
+        'method': 'batchupload',
+    }
+    result = hep.do(create_record(snippet))
+
+    assert expected == result['acquisition_source']
+
+
+def test_acquisition_source_from__541_double_a_b_c_e():
+    snippet = (
+        '<datafield tag="541" ind1=" " ind2=" ">'
+        '  <subfield code="a">inspire:uid:52524</subfield>'
+        '  <subfield code="a">orcid:0000-0002-1048-661X</subfield>'
+        '  <subfield code="b">oliver.schlotterer@web.de</subfield>'
+        '  <subfield code="c">submission</subfield>'
+        '  <subfield code="e">504296</subfield>'
+        '</datafield>'
+    )  # record/1416571/export/xme
+
+    expected = {
+        'source': 'orcid:0000-0002-1048-661X',
+        'email': 'oliver.schlotterer@web.de',
+        'method': 'submission',
+        'submission_number': '504296',
+    }
+    result = hep.do(create_record(snippet))
+
+    assert expected == result['acquisition_source']
+
+
+def test_541__a_b_c_e_from_acquisition_source():
+    record = {
+        'acquisition_source': {
+            'source': 'orcid:0000-0002-1048-661X',
+            'email': 'oliver.schlotterer@web.de',
+            'method': 'submission',
+            'submission_number': '504296',
+        },
+    }
+
+    expected = {
+        'a': 'orcid:0000-0002-1048-661X',
+        'b': 'oliver.schlotterer@web.de',
+        'c': 'submission',
+        'e': '504296',
+    }
+    result = hep2marc.do(record)
+
+    assert expected == result['541']
 
 
 def test_field_from_marcxml_650_with_single_a_and_9():

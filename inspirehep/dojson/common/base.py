@@ -38,10 +38,42 @@ from ..jobs.model import jobs
 from ..journals.model import journals
 from ..utils import (
     classify_field,
+    force_force_list,
     force_single_element,
     get_recid_from_ref,
     get_record_ref,
 )
+
+
+@hep.over('acquisition_source', '^541..$')
+@hepnames.over('acquisition_source', '^541..$')
+def acquisition_source(self, key, value):
+    def _get_source(value):
+        sources = force_force_list(value.get('a'))
+        sources_without_inspire_uid = [
+            el for el in sources if not el.startswith('inspire:uid:')]
+
+        return force_single_element(sources_without_inspire_uid)
+
+    return {
+        'date': value.get('d'),
+        'email': value.get('b'),
+        'method': value.get('c'),
+        'source': _get_source(value),
+        'submission_number': value.get('e'),
+    }
+
+
+@hep2marc.over('541', '^acquisition_source$')
+@hepnames2marc.over('541', '^acquisition_source$')
+def acquisition_source2marc(self, key, value):
+    return {
+        'a': value.get('source'),
+        'b': value.get('email'),
+        'c': value.get('method'),
+        'd': value.get('date'),
+        'e': value.get('submission_number'),
+    }
 
 
 def self_url(index):

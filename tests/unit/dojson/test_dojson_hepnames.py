@@ -100,9 +100,7 @@ EXPERIMENTS_DATA = [
         }],
         [{
             '0': 3,
-            'd': None,
             'e': 'SDSS',
-            's': None,
         }],
     ],
     [
@@ -118,9 +116,7 @@ EXPERIMENTS_DATA = [
             'current': False,
         }],
         [{
-            'd': None,
             'e': 'NOTCURATED',
-            's': None,
         }],
     ],
     [
@@ -799,50 +795,3 @@ def test_urls(marcxml_to_json, json_to_marc):
             json_to_marc['8564'][0]['u'])
     assert (marcxml_to_json['urls'][0]['description'] ==
             json_to_marc['8564'][0]['y'])
-
-
-def test_acquisition_source_field():
-    """Test acquisition_source."""
-    snippet = (
-        '<record>'
-        '   <datafield tag="541" ind1=" " ind2=" ">'
-        '       <subfield code="a">inspire:uid:50000</subfield>'
-        '       <subfield code="b">example@gmail.com</subfield>'
-        '       <subfield code="c">submission</subfield>'
-        '       <subfield code="d">2015-12-10</subfield>'
-        '       <subfield code="e">339830</subfield>'
-        '   </datafield>'
-        '</record>'
-    )
-
-    expected = {
-        'source': "inspire:uid:50000",
-        'email': "example@gmail.com",
-        'method': "submission",
-        'date': "2015-12-10",
-        'submission_number': "339830",
-    }
-    result = hepnames.do(create_record(snippet))
-
-    assert expected == result['acquisition_source']
-
-
-def test_acquisition_source_field_marcxml():
-    """Test acquisition_source MARC output."""
-    expected = {
-        'a': 'inspire:uid:50000',
-        'c': 'submission',
-        'b': 'example@gmail.com',
-        'e': '339830',
-        'd': '2015-12-10'
-    }
-
-    record = {"acquisition_source": {
-        'source': "inspire:uid:50000",
-        'email': "example@gmail.com",
-        'method': "submission",
-        'date': "2015-12-10",
-        'submission_number': "339830",
-    }}
-    result = hepnames2marc.do(record)
-    assert expected == result['541']

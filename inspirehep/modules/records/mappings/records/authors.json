@@ -119,6 +119,10 @@
                     "tokenizer": "standard",
                     "type": "custom"
                 },
+                "lowercase_analyzer": {
+                    "filter": "lowercase",
+                    "tokenizer": "keyword"
+                },
                 "natural_text": {
                     "filter": [
                         "asciifold_with_orig",
@@ -127,10 +131,6 @@
                     ],
                     "tokenizer": "standard",
                     "type": "custom"
-                },
-                "lowercase_analyzer": {
-                    "filter": "lowercase",
-                    "tokenizer": "keyword"
                 }
             },
             "filter": {
