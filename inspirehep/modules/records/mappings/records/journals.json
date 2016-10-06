@@ -181,6 +181,17 @@
                         "journalautocomplete"
                     ],
                     "type": "string"
+                },
+                "short_titles": {
+                    "properties": {
+                        "title": {
+                            "copy_to": [
+                                "journalautocomplete"
+                            ],
+                            "type": "string"
+                        }
+                    },
+                    "type": "object"
                 }
             }
         }
