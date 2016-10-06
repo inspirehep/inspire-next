@@ -75,10 +75,13 @@
                 "name": {
                     "properties": {
                         "value": {
-                            "copy_to": [
-                                "authorautocomplete"
-                            ],
-                            "type": "string"
+                          "type": "string",
+                          "analyzer": "authors_full_name_analyzer",
+                          "copy_to": "authorautocomplete"
+                        },
+                        "name_variations": {
+                          "type": "string",
+                          "analyzer": "no_tokenizing_analyzer"
                         }
                     },
                     "type": "object"
@@ -116,7 +119,7 @@
                         "asciifold_with_orig",
                         "lowercase"
                     ],
-                    "tokenizer": "standard",
+                    "tokenizer": "icu_tokenizer",
                     "type": "custom"
                 },
                 "lowercase_analyzer": {
@@ -131,18 +134,55 @@
                     ],
                     "tokenizer": "standard",
                     "type": "custom"
+                },
+                "authors_full_name_analyzer": {
+                    "filter": [
+                        "asciifold_with_orig",
+                        "lowercase",
+                        "apostrophes_remove",
+                        "characters_remove"
+                    ],
+                    "tokenizer": "icu_tokenizer",
+                    "type": "custom"
+                },
+                "no_tokenizing_analyzer": {
+                    "filter": [
+                        "asciifold_with_orig",
+                        "lowercase",
+                        "apostrophes_remove",
+                        "characters_remove",
+                        "whitespace_remove",
+                        "trim"
+                    ],
+                    "tokenizer": "keyword",
+                    "type": "custom"
                 }
             },
             "filter": {
                 "asciifold_with_orig": {
                     "preserve_original": true,
-                    "type": "asciifolding"
+                    "type": "icu_folding"
                 },
                 "synonyms_kbr": {
                     "synonyms": [
                         "production => creation"
                     ],
                     "type": "synonym"
+                },
+                "characters_remove": {
+                    "pattern": ",|'|\\.|-|_",
+                    "replacement": " ",
+                    "type": "pattern_replace"
+                },
+                "apostrophes_remove": {
+                    "pattern": "\u2018|\u2019|\u201c|\u201d|'|'|\"",
+                    "replacement": "'",
+                    "type": "pattern_replace"
+                },
+                "whitespace_remove": {
+                    "pattern": "[ \t]{2,}",
+                    "replacement": " ",
+                    "type": "pattern_replace"
                 }
             }
         },

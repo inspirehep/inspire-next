@@ -28,6 +28,7 @@ import os
 import sys
 
 from invenio_oauthclient.contrib import orcid
+
 from invenio_records_rest.facets import terms_filter
 
 
@@ -1018,7 +1019,8 @@ INDEXER_BULK_REQUEST_TIMEOUT = float(120)
 
 # OAuthclient
 # ===========
-orcid.REMOTE_APP['params']['request_token_params'] = {'scope': '/orcid-profile/read-limited /activities/update /orcid-bio/update'}
+orcid.REMOTE_APP['params']['request_token_params'] = {
+    'scope': '/orcid-profile/read-limited /activities/update /orcid-bio/update'}
 OAUTHCLIENT_REMOTE_APPS = dict(
     orcid=orcid.REMOTE_APP,
 )
@@ -1030,6 +1032,8 @@ OAUTHCLIENT_ORCID_CREDENTIALS = dict(
 OAUTHCLIENT_SETTINGS_TEMPLATE = 'inspirehep_theme/page.html'
 
 ORCID_SYNCHRONIZATION_ENABLED = False
+
+ORCID_PROFILE_MATCHING_ENABLED = False
 
 # Error Pages
 # ========

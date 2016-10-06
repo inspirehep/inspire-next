@@ -25,16 +25,19 @@
 from __future__ import absolute_import, division, print_function
 
 import json
+import requests
 import uuid
 
 from flask import current_app
-import requests
 
 from invenio_indexer.signals import before_record_index
+
 from invenio_records.signals import (
     before_record_insert,
     before_record_update,
 )
+
+from invenio_search.utils import schema_to_index
 
 from .utils import author_tokenize
 
@@ -45,22 +48,27 @@ def _query_beard_api(full_names):
     This method allows for computation of phonetic blocks
     from a given list of strings.
     """
-    headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }
+    base_url = current_app.config.get('BEARD_API_URL')
 
-    text_endpoint = "{base_url}/text/phonetic_blocks".format(
-        base_url=current_app.config.get('BEARD_API_URL')
-    )
+    if base_url:
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
 
-    response = requests.post(
-        url=text_endpoint,
-        headers=headers,
-        data=json.dumps({'full_names': full_names})
-    )
+        text_endpoint = "{base_url}/text/phonetic_blocks".format(
+            base_url=base_url
+        )
 
-    return response.json()['phonetic_blocks']
+        response = requests.post(
+            url=text_endpoint,
+            headers=headers,
+            data=json.dumps({'full_names': full_names})
+        )
+
+        return response.json()['phonetic_blocks']
+    else:
+        return {full_names[i]: '' for i in range(len(full_names))}
 
 
 @before_record_insert.connect
@@ -136,3 +144,9 @@ def generate_name_variations(recid, json, *args, **kwargs):
                     "output": name,
                     "payload": {"bai": bai[0] if bai else None}
                 }})
+    index, doc_type = schema_to_index(json['$schema'])
+    if doc_type == 'authors':
+        authors_name = json.get('name')
+        if authors_name:
+            name_variations = author_tokenize(authors_name['value'])
+            authors_name['name_variations'] = name_variations

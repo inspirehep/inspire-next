@@ -55,6 +55,8 @@ require.config({
     'inspirehep-clipboard': 'js/inspire_clipboard',
     'impact-graphs': 'node_modules/impact-graphs/impact-graph',
     'inspirehep-search': 'node_modules/inspirehep-search-js/dist/inspirehep-search',
+    'inspire-profile-matcher-module': 'js/inspire_profile_matcher/profile_matcher/profilematcher.module',
+    'inspire-profile-matcher-controllers': 'js/inspire_profile_matcher/profile_matcher/profilematcher.controller',
     /* Typeahead JS config */
     'inspirehep-typeahead': 'node_modules/inspirehep-typeahead-search-js/src/typeahead',
     'default_typeahead_configuration': 'node_modules/inspirehep-typeahead-search-js/src/default_typeahead_configuration',
@@ -133,6 +135,12 @@ require.config({
     },
     'inspirehep-search': {
       deps: ['angular', 'angular-sanitize', 'angular-ui-bootstrap', 'ngclipboard']
+    },
+    'inspire-profile-matcher-controllers': {
+      deps: ['angular']
+    },
+    'inspire-profile-matcher-module': {
+      deps: ['angular', 'inspire-profile-matcher-controllers', 'inspirehep-search']
     },
     'invenio-search': {
       deps: ['angular']

@@ -20,10 +20,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function)
+from __future__ import absolute_import, division, print_function
+
+from .views import blueprint
 
 
 class INSPIREOrcid(object):
@@ -37,4 +36,5 @@ class INSPIREOrcid(object):
 
     def init_app(self, app, **kwargs):
         """Initialize application object."""
+        app.register_blueprint(blueprint)
         app.extensions['inspire-orcid'] = self
