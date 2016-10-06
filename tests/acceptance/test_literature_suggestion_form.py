@@ -62,6 +62,34 @@ def test_format_input_arXiv(selenium, login):
     assert "The provided ArXiv ID is invalid - it should look" not in selenium.page_source
 
 
+def test_format_input_DOI(selenium, login):
+    """Test the string format for DOI input"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+
+    try:
+        selenium.find_element_by_id("doi").send_keys("10.1086/305772")
+        selenium.find_element_by_id("doi").send_keys(Keys.TAB)
+        WebDriverWait(selenium, 10).until(EC.presence_of_element_located((By.ID, "state-doi")))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert "The provided DOI is invalid - it should look" not in selenium.page_source
+    selenium.find_element_by_id("doi").clear()
+
+    selenium.find_element_by_id("doi").send_keys("dummy:10.1086/305772")
+    selenium.find_element_by_id("doi").send_keys(Keys.TAB)
+    WebDriverWait(selenium, 20).until(EC.text_to_be_present_in_element((By.ID, "state-doi"), "The provided DOI is invalid - it should look"))
+    assert "The provided DOI is invalid - it should look" in selenium.page_source
+    selenium.find_element_by_id("doi").clear()
+
+    try:
+        selenium.find_element_by_id("doi").send_keys("doi:10.1086/305772")
+        selenium.find_element_by_id("doi").send_keys(Keys.TAB)
+        WebDriverWait(selenium, 10).until(EC.presence_of_element_located((By.ID, "state-doi")))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert "The provided DOI is invalid - it should look" not in selenium.page_source
+
+
 # Form Tests
 def test_literature_create_article_journal_manually(selenium, login):
     """Submit the form for article creation from scratch"""

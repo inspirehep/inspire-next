@@ -57,11 +57,17 @@ app.url_map.update()
 
 @app.route('/submit/literature/validate', endpoint='inspirehep_literature_suggest.validate', methods=['POST'])
 def mock_literature_validate():
-    """"Mock the arXiv validation"""
+    """"Mock the arXiv and DOI validation"""
     if 'arxiv_id' in request.json:
         if request.json['arxiv_id'] in ('1001.4538', 'hep-th/9711200'):
             return ''
         if request.json['arxiv_id'] == '-th.9711200':
             return '{"messages":{"arxiv_id":{"messages":["The provided ArXiv ID is invalid - it should look similar to \'hep-th/9711200\' or \'1207.7235\'."],"state":"error"}}}'
+
+    if 'doi' in request.json:
+        if request.json['doi'] in ('10.1086/305772', 'doi:10.1086/305772'):
+            return ''
+        if request.json['doi'] == 'dummy:10.1086/305772':
+            return '{"messages":{"doi":{"messages":["The provided DOI is invalid - it should look similar to \'10.1086/305772\'."],"state":"error"}}}'
 
     return validate()
