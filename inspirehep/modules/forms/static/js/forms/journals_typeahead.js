@@ -38,18 +38,13 @@ define([
             if (index != 0) {
               pattern = pattern + " AND ";
             }
-            pattern = pattern + "journalautocomplete:" + "/" + this + ".*/";
+            pattern = pattern + "journalautocomplete:" + "/" + encodeURIComponent(this) + ".*/";
           })
 
-          return '/search?cc=Journals&p=' + pattern + '&of=recjson&rg=100';
+          return '/api/journals?q=' + pattern
         },
         filter: function(response) {
-          return response.sort(function(a, b) {
-            if (a.title < b.title) return -1;
-            if (a.title > b.title) return 1;
-            return 0;
-          })
-            return response;
+          return $.map(response.hits.hits, function(el) { return el });
         }
       },
       datumTokenizer: function() {},
@@ -79,13 +74,17 @@ define([
           callback(suggestions);
         }.bind(this));
       }.bind(this),
-      displayKey: 'short_title',
+      displayKey: function(data) {
+        return data.metadata.titles[0].title;
+      },
       templates: {
         empty: function(data) {
           return 'Cannot find this journal in our database.';
         },
         suggestion: function(data) {
-          return suggestionTemplate.render.call(suggestionTemplate, data);
+          data.metadata.title = data.metadata.titles[0].title;
+          data.metadata.short_title = data.metadata.short_titles[0].title;
+          return suggestionTemplate.render.call(suggestionTemplate, data.metadata);
         }.bind(this)
       }
     });
