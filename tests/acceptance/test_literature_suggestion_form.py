@@ -103,6 +103,19 @@ def test_basic_info_autocomplete_affilation(selenium, login):
     assert 'Oxford U.' in field.get_attribute('value')
 
 
+def test_journal_info_autocomplete_title(selenium, login):
+    """Test the autocompletion for the title in the journal info section"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+    selenium.find_element_by_id("skipImportData").click()
+    WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, "form_container"), 'Type of Document'))
+    field = selenium.find_element_by_id('journal_title')
+    field.send_keys("Nuc")
+    WebDriverWait(selenium, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "tt-suggestions")))
+    field.send_keys(Keys.DOWN)
+    field.send_keys(Keys.ENTER)
+    assert 'Nuclear Physics' in field.get_attribute('value')
+
+
 # Form Tests
 def test_literature_create_article_journal_manually(selenium, login):
     """Submit the form for article creation from scratch"""
