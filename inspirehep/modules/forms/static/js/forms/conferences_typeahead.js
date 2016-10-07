@@ -55,18 +55,17 @@ define([
               if (index != 0) {
                 pattern = pattern + " AND ";
               }
-              pattern = pattern + "conferenceautocomplete:" + "/" + this + ".*/";
+              pattern = pattern + "conferenceautocomplete:" + "/" + encodeURIComponent(this) + ".*/";
             })
 
-            return '/search?cc=Conferences&p=' + pattern + '&of=recjson&rg=100'
+             return '/api/conferences?q=' + pattern
           },
           filter: function(response) {
-            response = response.sort(function(a, b) {
-              if (a.title < b.title) return -1;
-              if (a.title > b.title) return 1;
-              return 0;
+            return $.map(response.hits.hits, function(el) {
+              el.metadata.place = el.metadata.address[0].original_address;
+              el.metadata.title = el.metadata.titles[0].title;
+              return el.metadata
             });
-            return response;
           }
         },
         datumTokenizer: function() {},
