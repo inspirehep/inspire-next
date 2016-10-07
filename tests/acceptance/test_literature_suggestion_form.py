@@ -116,6 +116,22 @@ def test_journal_info_autocomplete_title(selenium, login):
     assert 'Nuclear Physics' in field.get_attribute('value')
 
 
+def test_conference_info_autocomplete_title(selenium, login):
+    """Test the autocompletion for the title in the conference info section"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+    hide_title_bar(selenium)
+    selenium.find_element_by_id("skipImportData").click()
+    WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, "form_container"), 'Conference Information'))
+    selenium.find_element_by_link_text("Conference Information").click()
+    field = WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.ID, "conf_name")))
+    field.send_keys("sos")
+    WebDriverWait(selenium, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "tt-suggestions")))
+    field.send_keys(Keys.DOWN)
+    field.send_keys(Keys.ENTER)
+    show_title_bar(selenium)
+    assert 'IN2P3 School of Statistics, 2012-05-28, Autrans, France' in field.get_attribute('value')
+
+
 # Form Tests
 def test_literature_create_article_journal_manually(selenium, login):
     """Submit the form for article creation from scratch"""
