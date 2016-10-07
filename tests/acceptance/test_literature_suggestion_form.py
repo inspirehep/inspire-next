@@ -132,6 +132,20 @@ def test_conference_info_autocomplete_title(selenium, login):
     assert 'IN2P3 School of Statistics, 2012-05-28, Autrans, France' in field.get_attribute('value')
 
 
+def test_thesis_info_autocomplete_institution_supervisor(selenium, login):
+    """Test the autocompletion for the supervisor institution in the thesis section"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+    selenium.find_element_by_id("skipImportData").click()
+    WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, "form_container"), 'Type of Document'))
+    Select(selenium.find_element_by_id('type_of_doc')).select_by_value('thesis')
+    field = selenium.find_element_by_id('authors-0-affiliation')
+    field.send_keys("cer")
+    WebDriverWait(selenium, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "tt-suggestions")))
+    field.send_keys(Keys.DOWN)
+    field.send_keys(Keys.ENTER)
+    assert 'CERN' in field.get_attribute('value')
+
+
 # Form Tests
 def test_literature_create_article_journal_manually(selenium, login):
     """Submit the form for article creation from scratch"""
