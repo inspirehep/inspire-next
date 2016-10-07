@@ -74,7 +74,6 @@ def app(request):
 
 @pytest.fixture
 def selenium(selenium, app):
-    selenium.implicitly_wait(10)
     selenium.maximize_window()
     selenium.get(environ['SERVER_NAME'])
     return selenium
