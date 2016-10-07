@@ -146,6 +146,20 @@ def test_thesis_info_autocomplete_institution_supervisor(selenium, login):
     assert 'CERN' in field.get_attribute('value')
 
 
+def test_thesis_info_autocomplete_institution(selenium, login):
+    """Test the autocompletion for the institution in the thesis section"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+    selenium.find_element_by_id("skipImportData").click()
+    WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, "form_container"), 'Type of Document'))
+    Select(selenium.find_element_by_id('type_of_doc')).select_by_value('thesis')
+    field = WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.ID, "institution")))
+    field.send_keys("cer")
+    WebDriverWait(selenium, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "tt-suggestions")))
+    field.send_keys(Keys.DOWN)
+    field.send_keys(Keys.ENTER)
+    assert 'CERN' in field.get_attribute('value')
+
+
 # Form Tests
 def test_literature_create_article_journal_manually(selenium, login):
     """Submit the form for article creation from scratch"""
