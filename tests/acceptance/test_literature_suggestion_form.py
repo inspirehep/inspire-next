@@ -31,6 +31,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import ElementNotVisibleException
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.common.action_chains import ActionChains
 
 
 # Components Tests
@@ -158,6 +159,95 @@ def test_thesis_info_autocomplete_institution(selenium, login):
     field.send_keys(Keys.DOWN)
     field.send_keys(Keys.ENTER)
     assert 'CERN' in field.get_attribute('value')
+
+
+def test_thesis_info_date_submission(selenium, login):
+    """Test the format for the submission date in the thesis section"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+    hide_title_bar(selenium)
+    selenium.find_element_by_id("skipImportData").click()
+    WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, "form_container"), 'Type of Document'))
+    Select(selenium.find_element_by_id('type_of_doc')).select_by_value('thesis')
+    WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, "form_container"), 'Date of Submission'))
+    field = selenium.find_element_by_id('defense_date')
+    _date_format_controls(field, selenium, 'state-defense_date')
+    show_title_bar(selenium)
+
+
+def test_thesis_info_date_defence(selenium, login):
+    """Test the format for the defense date in the thesis section"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+    hide_title_bar(selenium)
+    selenium.find_element_by_id("skipImportData").click()
+    WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, "form_container"), 'Type of Document'))
+    Select(selenium.find_element_by_id('type_of_doc')).select_by_value('thesis')
+    WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, "form_container"), 'Date of Submission'))
+    field = selenium.find_element_by_id('thesis_date')
+    _date_format_controls(field, selenium, 'state-thesis_date')
+    show_title_bar(selenium)
+
+
+def _date_format_controls(field, selenium, id_message_error):
+    field.send_keys("")
+    _click_outside_the_field(selenium)
+    try:
+        WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, id_message_error), 'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY.'))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert "Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY." not in selenium.page_source
+    field.clear()
+
+    field.send_keys('wrong')
+    _click_outside_the_field(selenium)
+    try:
+        WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, id_message_error), 'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY.'))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert "Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY." in selenium.page_source
+    field.clear()
+
+    field.send_keys("2016-01")
+    _click_outside_the_field(selenium)
+    try:
+        WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, id_message_error), 'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY.'))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert "Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY." not in selenium.page_source
+    field.clear()
+
+    field.send_keys("2016-02-30")
+    _click_outside_the_field(selenium)
+    try:
+        WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, id_message_error), 'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY.'))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert "Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY." in selenium.page_source
+    field.clear()
+
+    field.send_keys("2016")
+    _click_outside_the_field(selenium)
+    try:
+        WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, id_message_error), 'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY.'))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert "Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY." not in selenium.page_source
+
+    field.send_keys("2016-13")
+    _click_outside_the_field(selenium)
+    try:
+        WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, id_message_error), 'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY.'))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert "Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY." in selenium.page_source
+    field.clear()
+
+
+def _click_outside_the_field(selenium):
+    el = selenium.find_element_by_id('state-group-supervisors')
+    action = ActionChains(selenium)
+    action.move_to_element_with_offset(el, 5, 5)
+    action.click()
+    action.perform()
 
 
 # Form Tests
