@@ -85,7 +85,9 @@ install_requires = [
     'html5lib<1.0b9',
     'SQLAlchemy>=1.0.14,<1.1',
     'nameparser>=0.4.0',
-    'iso8601>=0.1.11'
+    'iso8601>=0.1.11',
+    'invenio-trends>=1.0.0a1',
+    'invenio-trends-ui>=1.0.0a1',
 ]
 
 tests_require = [
