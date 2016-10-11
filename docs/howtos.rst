@@ -92,3 +92,28 @@ To understand it, we refer to the `documentation of snakeviz`_.
 
 .. _snakeviz: https://github.com/jiffyclub/snakeviz
 .. _`documentation of snakeviz`: https://jiffyclub.github.io/snakeviz/#interpreting-results
+
+
+2.2 Profiling a Request
+-----------------------
+
+To profile a request we need to add the following variable to our configuration:
+
+.. code-block:: python
+
+    PROFILE = True
+
+Then we need to attach the `WSGI application profiler`_ to our WSGI application.
+To do this, we need to add a few lines at the bottom of ``inspirehep/wsgi.py``:
+
+.. code-block:: python
+
+    import os; os.mkdir('prof')
+    from werkzeug.contrib.profiler import ProfilerMiddleware
+    application = ProfilerMiddleware(application, profile_dir='prof')
+
+Now, after we restart the application, a profile report will be created in the
+``prof`` folder for each request that we make. These binary files can be
+visualized as above with snakeviz_.
+
+.. _`WSGI application profiler`: http://werkzeug.pocoo.org/docs/0.11/contrib/profiler/
