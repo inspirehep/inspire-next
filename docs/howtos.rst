@@ -43,3 +43,52 @@ And to retrieve the value from the cache:
 
 
 .. _Flask-cache: https://pythonhosted.org/Flask-Cache/
+
+
+2. Profiling
+------------
+
+
+2.1 Profiling a Celery Task
+---------------------------
+
+To profile a Celery task we need to make sure that the task is executed by the
+same Python process in which we are collecting the profiling information. That
+is, the configuration must contain
+
+.. code-block:: python
+
+    CELERY_ALWAYS_EAGER = True
+    CELERY_RESULT_BACKEND = 'cache'
+    CELERY_CACHE_BACKEND = 'memory'
+
+Then, in a Flask shell, we do
+
+.. code-block:: python
+
+    >>> import cProfile
+    >>> import pstats
+    >>> from path.to.our.task import task
+    >>> pr = cProfile.Profile()
+    >>> pr.runcall(task, *args, **kwargs)
+
+where ``*args`` and ``*kwargs`` are the arguments and keyword arguments that
+we want to pass to ``task``. Then
+
+.. code-block:: python
+
+    >>> ps = pstats.Stats(pr)
+    >>> ps.dump_stats('task.prof')
+
+will create a binary file containing the desired profiling information. To read
+it we can use snakeviz_, which will create a graph such as
+
+.. figure:: images/snakeviz.png
+  :align: center
+  :alt: An example of a snakeviz graph.
+  :scale: 35%
+
+To understand it, we refer to the `documentation of snakeviz`_.
+
+.. _snakeviz: https://github.com/jiffyclub/snakeviz
+.. _`documentation of snakeviz`: https://jiffyclub.github.io/snakeviz/#interpreting-results
