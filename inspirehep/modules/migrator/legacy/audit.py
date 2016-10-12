@@ -49,7 +49,12 @@ def dump(record, from_date, **kwargs):
     from invenio_workflows.models import BibWorkflowObject
     associated_object = BibWorkflowObject.query.filter_by(id=record.object_id).first()
 
-    if associated_object.name in WORKFLOWS_TO_KEEP:
+    try:
+        name = associated_object.workflow.name
+    except AttributeError:
+        return {}
+
+    if name in WORKFLOWS_TO_KEEP:
         return dict(id=record.id,
                     created=json.dumps(record.created, default=date_handler),
                     user_id=record.user_id,
