@@ -65,7 +65,7 @@ def test_formdata_to_model_populates_schema(u, ui):
 
     obj = StubObj(data, extra_data)
 
-    expected = 'http://localhost:5000/schemas/records/hep.json'
+    expected = 'https://localhost:5000/schemas/records/hep.json'
     result = formdata_to_model(obj, formdata)
 
     assert expected == result['$schema']
