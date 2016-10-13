@@ -66,8 +66,7 @@ def app(request):
         init_users_and_permissions()
         init_collections()
 
-        migrate('./inspirehep/demosite/data/demo-records.xml.gz',
-                wait_for_results=True)
+        migrate('./inspirehep/demosite/data/demo-records-acceptance.xml', wait_for_results=True)
         es.indices.refresh('records-hep')
 
         yield app
