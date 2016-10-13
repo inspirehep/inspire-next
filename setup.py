@@ -198,7 +198,6 @@ setup(
             'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
-            'inspire_warnings = inspirehep.modules.warnings:INSPIREWarnings',
         ],
         'invenio_base.apps': [
             'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
@@ -210,7 +209,6 @@ setup(
             'inspire_literature_suggest = inspirehep.modules.literaturesuggest:INSPIRELiteratureSuggestion',
             'inspire_forms = inspirehep.modules.forms:INSPIREForms',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
-            'inspire_warnings = inspirehep.modules.warnings:INSPIREWarnings',
             'arxiv = inspirehep.modules.arxiv:Arxiv',
             'crossref = inspirehep.modules.crossref:CrossRef',
             'inspire_orcid = inspirehep.modules.orcid:INSPIREOrcid',
