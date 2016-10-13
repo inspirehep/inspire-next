@@ -76,7 +76,7 @@ install_requires = [
     'dojson==1.2.1',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',
-    'Flask-Cache>=0.13.1',
+    'Flask-Caching>=1.0.1',
     'Flask-Script>=2.0.5',
     'flask-shell-ipython>=0.2.2',
     'jsmin',
