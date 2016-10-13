@@ -25,6 +25,7 @@ import six
 from inspirehep.modules.references.processors import (
     _split_refextract_authors_str, ReferenceBuilder)
 
+
 def test_reference_builder_no_uids():
     rb = ReferenceBuilder()
     rb.set_number('oops')
@@ -52,31 +53,65 @@ def test_reference_builder_no_uids():
     rb.add_report_number('NOT ARXIV')
 
     expected = {
-        'number': 1,
-        'texkey': 'book',
-        'titles': [{'title': 'Awesome Paper'}],
-        'raw_reference': [
-            {'value': '[1] Awesome Paper', 'format': 'text',
-             'source': 'arXiv'},
-            {'value': 'BAD PUBNOTE', 'format': 'text',
-             'source': 'reference_builder'}
-        ],
-        'misc': ['misc 0', 'misc 1'],
-        'authors': [{'full_name': 'Cox, Brian'},
-                    {'full_name': 'O Briain, Dara', 'role': 'ed.'}],
-        'publication_info': {
-            'journal_title': 'Nucl.Phys.',
-            'journal_volume': 'B360',
-            'page_start': '362',
-            'artid': '362',
-            'reportnumber': 'NOT ARXIV',
-            'year': 1991
+        "reference": {
+            "texkey": "book",
+            "collaboration": [
+                "ALICE"
+            ],
+            "arxiv_eprints": [
+                "arXiv:hep-th/0603001",
+                "arXiv:hep-th/0603002",
+                "arXiv:0705.0016",
+                "arXiv:0705.0017"
+            ],
+            "misc": [
+                "misc 0",
+                "misc 1"
+            ],
+            "number": 1,
+            "imprint": {
+                "publisher": "Elsevier"
+            },
+            "titles": [
+                {
+                    "title": "Awesome Paper"
+                }
+            ],
+            "urls": [
+                {
+                    "value": "http://example.com"
+                }
+            ],
+            "authors": [
+                {
+                    "full_name": "Cox, Brian"
+                },
+                {
+                    "role": "ed.",
+                    "full_name": "O Briain, Dara"
+                }
+            ],
+            "publication_info": {
+                "journal_title": "Nucl.Phys.",
+                "journal_volume": "B360",
+                "reportnumber": "NOT ARXIV",
+                "artid": "362",
+                "year": 1991,
+                "page_start": "362"
+            }
         },
-        'collaboration': ['ALICE'],
-        'imprint': {'publisher': 'Elsevier'},
-        'arxiv_eprints': ['arXiv:hep-th/0603001', 'arXiv:hep-th/0603002',
-                          'arXiv:0705.0016', 'arXiv:0705.0017'],
-        'urls': [{'value': 'http://example.com'}]
+        "raw_refs": [
+            {
+                "source": "arXiv",
+                "value": "[1] Awesome Paper",
+                "schema": "text"
+            },
+            {
+                "source": "reference_builder",
+                "value": "BAD PUBNOTE",
+                "schema": "text"
+            }
+        ]
     }
 
     assert expected == rb.obj
@@ -113,13 +148,15 @@ def test_reference_builder_add_uid():
     rb.add_uid('hdl:10443/1646')
 
     expected = {
-        'arxiv_eprints': ['arXiv:hep-th/0603001', 'arXiv:0705.0017'],
-        'publication_info': {
-            'isbn': '978-1-4493-4485-6',
-            'cnum': 'C87-11-11',
-        },
-        'dois': ['10.3972/water973.0145.db'],
-        'persistent_identifiers': ['hdl:10443/1646']
+        'reference': {
+            'arxiv_eprints': ['arXiv:hep-th/0603001', 'arXiv:0705.0017'],
+            'publication_info': {
+                'isbn': '978-1-4493-4485-6',
+                'cnum': 'C87-11-11',
+            },
+            'dois': ['10.3972/water973.0145.db'],
+            'persistent_identifiers': ['hdl:10443/1646']
+        }
     }
 
     assert expected == rb.obj
@@ -129,7 +166,7 @@ def test_refextract_authors():
     author_strings = [
         'Butler, D., Demarque, P., & Smith, H. A.',
         'Cenko, S. B., Kasliwal, M. M., Perley, D. A., et al.',
-        'J. Kätlne et al.', # Also test some unicode cases.
+        'J. Kätlne et al.',  # Also test some unicode cases.
         u'J. Kätlne et al.',
         'Hoaglin D. C., Mostellar F., Tukey J. W.',
         'V.M. Zhuravlev, S.V. Chervon, and V.K. Shchigolev',

@@ -72,6 +72,9 @@ class Reference(object):
                 ref_record = recid_to_reference.get(
                     str(reference.get('recid')), {}
                 )
+                if 'reference' in reference:
+                    reference.update(reference['reference'])
+                    del reference['reference']
                 if 'publication_info' in reference:
                     reference['publication_info'] = force_force_list(
                         reference['publication_info']

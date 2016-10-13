@@ -94,33 +94,34 @@ def references(self, key, value):
 @utils.for_each_value
 def references2marc(self, key, value):
     """Produce list of references."""
-    repnos = value.get('arxiv_eprints', [])
+    repnos = value['reference'].get('arxiv_eprints', [])
+    reference = value['reference']
     # If not found it will be filtered anyway.
-    repnos.append(get_value(value, 'publication_info.reportnumber'))
-    journal_title = get_value(value, 'publication_info.journal_title')
-    journal_volume = get_value(value, 'publication_info.journal_volume')
-    journal_pg_start = get_value(value, 'publication_info.page_start')
-    journal_pg_end = get_value(value, 'publication_info.page_end')
-    journal_artid = get_value(value, 'publication_info.artid')
+    repnos.append(get_value(reference, 'publication_info.reportnumber'))
+    journal_title = get_value(reference, 'publication_info.journal_title')
+    journal_volume = get_value(reference, 'publication_info.journal_volume')
+    journal_pg_start = get_value(reference, 'publication_info.page_start')
+    journal_pg_end = get_value(reference, 'publication_info.page_end')
+    journal_artid = get_value(reference, 'publication_info.artid')
     pubnote = build_pubnote(journal_title, journal_volume, journal_pg_start,
                             journal_pg_end, journal_artid)
     return {
         '0': get_recid_from_ref(value.get('record')),
-        '1': get_value(value, 'texkey'),
-        'a': get_value(value, 'dois[0]'),
-        'c': get_value(value, 'collaboration'),
-        'e': [a.get('full_name') for a in value.get('authors', [])
+        '1': get_value(reference, 'texkey'),
+        'a': get_value(reference, 'dois[0]'),
+        'c': get_value(reference, 'collaboration'),
+        'e': [a.get('full_name') for a in reference.get('authors', [])
               if a.get('role') == 'ed.'],
-        'h': [a.get('full_name') for a in value.get('authors', [])
+        'h': [a.get('full_name') for a in reference.get('authors', [])
               if a.get('role') != 'ed.'],
-        'm': get_value(value, 'misc'),
-        'o': get_value(value, 'number'),
-        'i': get_value(value, 'publication_info.isbn'),
-        'p': get_value(value, 'imprint.publisher'),
+        'm': get_value(reference, 'misc'),
+        'o': get_value(reference, 'number'),
+        'i': get_value(reference, 'publication_info.isbn'),
+        'p': get_value(reference, 'imprint.publisher'),
         'r': repnos,
-        't': get_value(value, 'titles[:].title'),
-        'u': get_value(value, 'urls[:].value'),
+        't': get_value(reference, 'titles[:].title'),
+        'u': get_value(reference, 'urls[:].value'),
         's': pubnote,
-        'x': get_value(value, 'raw_reference[:].value'),
-        'y': get_value(value, 'publication_info.year')
+        'x': get_value(value, 'raw_refs[:].value'),
+        'y': get_value(reference, 'publication_info.year')
     }
