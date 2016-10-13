@@ -40,27 +40,36 @@ def date_handler(obj):
 
 def get(*args, **kwargs):
     """Get audits."""
-    q = Audit.query
-    return q.count(), q.all()
+    from sqlalchemy.orm import joinedload
+    from invenio_ext.sqlalchemy import db
+    from invenio_workflows.models import BibWorkflowObject, Workflow
+
+    query = db.session.query(BibWorkflowObject) \
+        .options(joinedload(BibWorkflowObject.workflow)) \
+        .filter(BibWorkflowObject.id_workflow == Workflow.uuid) \
+        .filter(Workflow.name.in_(WORKFLOWS_TO_KEEP)) \
+        .order_by(BibWorkflowObject.id.desc())
+
+
+    valid_objects = []
+    for obj in query.all():
+        valid_objects.append(obj.id)
+
+    q = db.session.query(Audit) \
+        .filter(Audit.object_id.in_(valid_objects))
+
+    return q.count(), q
 
 
 def dump(record, from_date, **kwargs):
     """Dump the audits as a list of dictionaries."""
-    from invenio_workflows.models import BibWorkflowObject
-    associated_object = BibWorkflowObject.query.filter_by(id=record.object_id).first()
 
-    try:
-        name = associated_object.workflow.name
-    except AttributeError:
-        return {}
-
-    if name in WORKFLOWS_TO_KEEP:
-        return dict(id=record.id,
-                    created=json.dumps(record.created, default=date_handler),
-                    user_id=record.user_id,
-                    object_id=record.object_id,
-                    score=record.score,
-                    user_action=record.user_action,
-                    decision=record.decision,
-                    source=record.source,
-                    action=record.action)
+    return dict(id=record.id,
+                created=json.dumps(record.created, default=date_handler),
+                user_id=record.user_id,
+                object_id=record.object_id,
+                score=record.score,
+                user_action=record.user_action,
+                decision=record.decision,
+                source=record.source,
+                action=record.action)
