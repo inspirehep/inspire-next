@@ -27,7 +27,7 @@ HOWTOs
 ----------
 
 
-For caching we use Flask-cache_. For example, to set a value in the cache:
+For caching we use Flask-Caching_. For example, to set a value in the cache:
 
 .. code-block:: python
 
@@ -42,7 +42,7 @@ And to retrieve the value from the cache:
     current_cache.get('test')
 
 
-.. _Flask-cache: https://pythonhosted.org/Flask-Cache/
+.. _Flask-Caching: https://pythonhosted.org/Flask-Caching/
 
 
 2. Profiling
