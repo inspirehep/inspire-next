@@ -145,7 +145,7 @@ services:
       file: services.yml
       service: database
   selenium:
-    image: selenium/standalone-firefox
+    image: selenium/standalone-firefox:2.53.1-beryllium
   static:
     container_name: inspirehep-test-static
     extends:
