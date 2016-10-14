@@ -21,7 +21,8 @@
 
 
 HOWTOs
-==========
+======
+
 
 1. Caching
 ----------
@@ -45,12 +46,77 @@ And to retrieve the value from the cache:
 .. _Flask-Caching: https://pythonhosted.org/Flask-Caching/
 
 
-2. Profiling
+2. Docker
+---------
+
+
+Currently INSPIRE supports two methods of installation :doc:installation_
+
+
+2.1 Docker on Linux
+^^^^^^^^^^^^^^^^^^^
+
+
+TODO
+
+
+2.2 Docker on Mac
+^^^^^^^^^^^^^^^^^
+
+
+We can't recommend using `Docker for Mac`_, because it results in
+hard-to-understand bugs and not-very-good performance.
+
+Instead, we recommend installing VirtualBox_ and Vagrant_ by either following
+those links or running:
+
+.. code-block:: shell-session
+
+    $ brew cask install virtualbox
+    $ brew cask install vagrant
+
+Then, in a folder of your choosing, put the following ``VagrantFile``:
+
+.. code-block:: ruby
+
+    # -*- mode: ruby -*-
+    # vi: set ft=ruby :
+
+    Vagrant.configure(2) do |config|
+      config.vm.box = "williamyeh/ubuntu-trusty64-docker"
+
+      config.vm.network "forwarded_port", guest: 5000, host: 5000
+      config.vm.network "forwarded_port", guest: 5555, host: 5555
+      config.vm.network "forwarded_port", guest: 9200, host: 9200
+
+      config.vm.provider "virtualbox" do |v|
+        v.memory = 4096
+        v.cpus = 2
+      end
+    end
+
+Now you can run
+
+.. code-block:: shell-session
+
+    $ vagrant up
+    $ vagrant ssh
+
+to log in an Ubuntu machine with ``docker`` and ``docker-compose`` already
+installed, and resume the installation from `2.1 Docker on Linux`_.
+
+
+.. _`Docker for Mac`: https://docs.docker.com/engine/installation/mac/#/docker-for-mac
+.. _Vagrant: https://www.vagrantup.com/downloads.html
+.. _VirtualBox: https://www.virtualbox.org/wiki/Downloads
+
+
+3. Profiling
 ------------
 
 
-2.1 Profiling a Celery Task
----------------------------
+3. 1 Profiling a Celery Task
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To profile a Celery task we need to make sure that the task is executed by the
 same Python process in which we are collecting the profiling information. That
@@ -94,8 +160,8 @@ To understand it, we refer to the `documentation of snakeviz`_.
 .. _`documentation of snakeviz`: https://jiffyclub.github.io/snakeviz/#interpreting-results
 
 
-2.2 Profiling a Request
------------------------
+3.2 Profiling a Request
+^^^^^^^^^^^^^^^^^^^^^^^
 
 To profile a request we need to add the following variable to our configuration:
 
