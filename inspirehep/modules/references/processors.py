@@ -122,9 +122,15 @@ class ReferenceBuilder(object):
         if field_name not in self.obj:
             self.obj[field_name] = value
 
+    def _ensure_reference_field(self, field_name, value):
+        if 'reference' not in self.obj:
+            self.obj['reference'] = {}
+        if field_name not in self.obj['reference']:
+            self.obj['reference'][field_name] = value
+
     def set_number(self, number):
         try:
-            self.obj['number'] = int(number)
+            self._ensure_reference_field('number', int(number))
         except (ValueError, TypeError):
             pass
 
@@ -136,23 +142,23 @@ class ReferenceBuilder(object):
         self.obj['curated_relation'] = True
 
     def set_texkey(self, texkey):
-        self.obj['texkey'] = texkey
+        self._ensure_reference_field('texkey', texkey)
 
     def add_title(self, title):
-        self._ensure_field('titles', [])
-        self.obj['titles'].append({'title': title})
+        self._ensure_reference_field('titles', [])
+        self.obj['reference']['titles'].append({'title': title})
 
     def add_misc(self, misc):
-        self._ensure_field('misc', [])
-        self.obj['misc'].append(misc)
+        self._ensure_reference_field('misc', [])
+        self.obj['reference']['misc'].append(misc)
 
     def add_raw_reference(self, raw_reference, source='reference_builder',
                           ref_format='text'):
-        self._ensure_field('raw_reference', [])
-        self.obj['raw_reference'].append({
+        self._ensure_field('raw_refs', [])
+        self.obj['raw_refs'].append({
             'value': raw_reference,
             'source': source,
-            'format': ref_format})
+            'schema': ref_format})
 
     def set_year(self, year):
         try:
@@ -160,12 +166,12 @@ class ReferenceBuilder(object):
         except (ValueError, TypeError):
             return
         if year >= 1000 and year <= 2050:
-            self._ensure_field('publication_info', {})
-            self.obj['publication_info']['year'] = year
+            self._ensure_reference_field('publication_info', {})
+            self.obj['reference']['publication_info']['year'] = year
 
     def add_url(self, url):
-        self._ensure_field('urls', [])
-        self.obj['urls'].append({'value': url})
+        self._ensure_reference_field('urls', [])
+        self.obj['reference']['urls'].append({'value': url})
 
     def add_refextract_authors_str(self, authors_str):
         """Parses individual authors from refextracted authors string.
@@ -178,10 +184,10 @@ class ReferenceBuilder(object):
             self.add_author(author)
 
     def add_author(self, full_name, role=None):
-        self._ensure_field('authors', [])
+        self._ensure_reference_field('authors', [])
         author = {} if not role else {'role': role}
         author['full_name'] = full_name
-        self.obj['authors'].append(author)
+        self.obj['reference']['authors'].append(author)
 
     def set_pubnote(self, pubnote):
         """Parse pubnote and populate correct fields."""
@@ -193,56 +199,56 @@ class ReferenceBuilder(object):
                 'page_start',
                 'page_end',
                 'artid')
-            self._ensure_field('publication_info', {})
+            self._ensure_reference_field('publication_info', {})
             for idx, key in enumerate(keys):
                 if values[idx]:
-                    self.obj['publication_info'][key] = values[idx]
+                    self.obj['reference']['publication_info'][key] = values[idx]
         else:
             self.add_raw_reference(pubnote)
 
     def set_publisher(self, publisher):
-        self._ensure_field('imprint', {})
-        self.obj['imprint']['publisher'] = publisher
+        self._ensure_reference_field('imprint', {})
+        self.obj['reference']['imprint']['publisher'] = publisher
 
     def add_report_number(self, repno):
         # For some reason we get more recall by trying the first part in
         # splitting the report number.
         repno = repno or ''
         if _is_arxiv(repno):
-            self._ensure_field('arxiv_eprints', [])
-            self.obj['arxiv_eprints'].append(_normalize_arxiv(repno))
+            self._ensure_reference_field('arxiv_eprints', [])
+            self.obj['reference']['arxiv_eprints'].append(_normalize_arxiv(repno))
         else:
-            self._ensure_field('publication_info', {})
-            self.obj['publication_info']['reportnumber'] = repno
+            self._ensure_reference_field('publication_info', {})
+            self.obj['reference']['publication_info']['reportnumber'] = repno
 
     def add_uid(self, uid):
         """Add unique identifier in correct field."""
         # We might add None values from wherever. Kill them here.
         uid = uid or ''
         if _is_arxiv(uid):
-            self._ensure_field('arxiv_eprints', [])
-            self.obj['arxiv_eprints'].append(_normalize_arxiv(uid))
+            self._ensure_reference_field('arxiv_eprints', [])
+            self.obj['reference']['arxiv_eprints'].append(_normalize_arxiv(uid))
         elif idutils.is_doi(uid):
-            self._ensure_field('dois', [])
-            self.obj['dois'].append(idutils.normalize_doi(uid))
+            self._ensure_reference_field('dois', [])
+            self.obj['reference']['dois'].append(idutils.normalize_doi(uid))
         elif idutils.is_handle(uid):
-            self._ensure_field('persistent_identifiers', [])
+            self._ensure_reference_field('persistent_identifiers', [])
             value = idutils.normalize_handle(uid)
             if not value.startswith('hdl:'):
                 # Prone to the day in which normalize_handle might prepend
                 # 'hdl:'.
                 value = u'hdl:{}'.format(value)
-            self.obj['persistent_identifiers'].append(value)
+            self.obj['reference']['persistent_identifiers'].append(value)
         elif self.RE_VALID_CNUM.match(uid):
-            self._ensure_field('publication_info', {})
-            self.obj['publication_info']['cnum'] = uid
+            self._ensure_reference_field('publication_info', {})
+            self.obj['reference']['publication_info']['cnum'] = uid
         else:
             # idutils.is_isbn has a different implementation than normalize
             # isbn. Better to do it like this.
             try:
                 isbn = idutils.normalize_isbn(uid)
-                self._ensure_field('publication_info', {})
-                self.obj['publication_info']['isbn'] = isbn
+                self._ensure_reference_field('publication_info', {})
+                self.obj['reference']['publication_info']['isbn'] = isbn
             # See https://github.com/nekobcn/isbnid/issues/2 and
             # https://github.com/nekobcn/isbnid/issues/3 for understanding the
             # long exception list.
@@ -250,5 +256,5 @@ class ReferenceBuilder(object):
                 pass
 
     def add_collaboration(self, collaboration):
-        self._ensure_field('collaboration', [])
-        self.obj['collaboration'].append(collaboration)
+        self._ensure_reference_field('collaboration', [])
+        self.obj['reference']['collaboration'].append(collaboration)

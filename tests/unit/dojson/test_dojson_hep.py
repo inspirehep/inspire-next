@@ -1989,48 +1989,48 @@ def test_references(marcxml_to_json, json_to_marc, marcxml_record):
     for index, json_val in enumerate(marcxml_to_json['references']):
         marc_val = json_to_marc['999C5'][index]
         marc_init = marcxml_record['999C5'][index]
-        json_val_pub = json_val.get('publication_info', {})
+        json_val_pub = json_val['reference'].get('publication_info', {})
         if '0' in marc_init:
             assert 'record' in json_val and '0' in marc_val
             assert get_recid_from_ref(json_val['record']) == marc_val['0']
         if '1' in marc_init:
-            assert 'texkey' in json_val and '1' in marc_val
-            assert json_val['texkey'] == marc_val['1']
+            assert 'texkey' in json_val['reference'] and '1' in marc_val
+            assert json_val['reference']['texkey'] == marc_val['1']
         if 'a' in marc_init:
-            assert 'dois' in json_val and 'a' in marc_val
-            assert json_val['dois'][0] == marc_val['a']
+            assert 'dois' in json_val['reference'] and 'a' in marc_val
+            assert json_val['reference']['dois'][0] == marc_val['a']
         if 'c' in marc_init:
-            assert 'collaboration' in json_val and 'c' in marc_val
-            assert json_val['collaboration'] == marc_val['c']
+            assert 'collaboration' in json_val['reference'] and 'c' in marc_val
+            assert json_val['reference']['collaboration'] == marc_val['c']
         if 'e' in marc_init:
             assert _force_set(marc_val['e']) == _force_set(marc_init['e'])
         if 'h' in marc_init:
-            assert 'authors' in json_val and 'h' in marc_val
+            assert 'authors' in json_val['reference'] and 'h' in marc_val
             json_names = _force_set([a['full_name']
-                                     for a in json_val['authors']])
+                                     for a in json_val['reference']['authors']])
             roundtrip_names = _force_set(marc_val['h'])
             roundtrip_editors = _force_set(marc_val.get('e', []))
             assert json_names and roundtrip_names
             assert json_names.difference(roundtrip_editors) == roundtrip_names
         if 'm' in marc_init:
-            assert 'misc' in json_val and 'm' in marc_val
-            assert _force_set(json_val['misc']) == _force_set(marc_val['m'])
-            assert _force_set(json_val['misc']) == _force_set(marc_init['m'])
+            assert 'misc' in json_val['reference'] and 'm' in marc_val
+            assert _force_set(json_val['reference']['misc']) == _force_set(marc_val['m'])
+            assert _force_set(json_val['reference']['misc']) == _force_set(marc_init['m'])
         if 'o' in marc_init:
-            assert 'number' in json_val and 'o' in marc_val
-            assert json_val['number'] == marc_val['o']
+            assert 'number' in json_val['reference'] and 'o' in marc_val
+            assert json_val['reference']['number'] == marc_val['o']
         if 'i' in marc_init:
             assert 'isbn' in json_val_pub and 'i' in marc_val
             assert json_val_pub['isbn'] == marc_val['i']
         if 'p' in marc_init:
-            assert 'publisher' in json_val.get('imprint', {})
+            assert 'publisher' in json_val['reference'].get('imprint', {})
             assert 'p' in marc_val
             assert marc_init['p'] == marc_val['p']
-            assert json_val['imprint']['publisher'] == marc_val['p']
+            assert json_val['reference']['imprint']['publisher'] == marc_val['p']
         if 'r' in marc_init:
             initial_repnos = _force_set(marc_init['r'])
             json_repnos = _force_set(json_val_pub.get('reportnumber', []))
-            json_repnos.union(_force_set(json_val.get('arxiv_eprints', [])))
+            json_repnos.union(_force_set(json_val['reference'].get('arxiv_eprints', [])))
             roundtrip_repnos = _force_set(marc_val['r'])
             assert roundtrip_repnos  == json_repnos
             # We should have at least one in the end.
@@ -2039,13 +2039,13 @@ def test_references(marcxml_to_json, json_to_marc, marcxml_record):
             assert json_repnos.issubset(initial_repnos)
         if 't' in marc_init:
             initial_titles = _force_set(marc_init['t'])
-            json_titles = _force_set([t['title'] for t in json_val['titles']])
+            json_titles = _force_set([t['title'] for t in json_val['reference']['titles']])
             roundtrip_titles = _force_set(marc_val['t'])
             assert initial_titles == json_titles
             assert initial_titles == roundtrip_titles
         if 'u' in marc_init:
             initial_urls = _force_set(marc_init['u'])
-            json_urls = _force_set([u['value'] for u in json_val['urls']])
+            json_urls = _force_set([u['value'] for u in json_val['reference']['urls']])
             roundtrip_urls = _force_set(marc_val['u'])
             assert initial_urls == json_urls
             assert initial_urls == roundtrip_urls
@@ -2054,7 +2054,7 @@ def test_references(marcxml_to_json, json_to_marc, marcxml_record):
         if 'x' in marc_init:
             initial_raw = _force_set(marc_init['x'])
             json_raw = _force_set([r['value']
-                                   for r in json_val['raw_reference']])
+                                   for r in json_val['raw_refs']])
             roundtrip_raw = _force_set(marc_val['x'])
             assert initial_raw == json_raw
             assert initial_raw == roundtrip_raw
