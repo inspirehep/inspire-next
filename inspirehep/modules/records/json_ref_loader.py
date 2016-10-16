@@ -23,10 +23,13 @@
 """Resource-aware json reference loaders to be used with jsonref."""
 
 import re
+
+from flask import current_app
 from jsonref import JsonLoader, JsonRef
 from werkzeug.urls import url_parse
 
-from flask import current_app
+import jsonresolver
+from jsonresolver.contrib.jsonref import json_loader_factory
 
 from inspirehep.utils import record_getter
 
@@ -84,6 +87,12 @@ class DatabaseJsonLoader(AbstractRecordLoader):
 
 es_record_loader = ESJsonLoader()
 db_record_loader = DatabaseJsonLoader()
+SCHEMA_LOADER_CLS = json_loader_factory(
+    jsonresolver.JSONResolver(
+        plugins=['invenio_jsonschemas.jsonresolver']
+    )
+)
+"""Used in invenio-jsonschemas to resolve relative $ref."""
 
 
 def replace_refs(obj, source='db'):

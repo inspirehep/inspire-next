@@ -45,7 +45,6 @@ install_requires = [
     'langdetect>=1.0.6',
     'librabbitmq>=1.6.1',
     'idutils>=0.2.1',
-    'invenio-jsonschemas>=1.0.0a3',
     'invenio-access>=1.0.0a7',
     'invenio-accounts>=1.0.0a12',
     'invenio-admin>=1.0.0a3',
