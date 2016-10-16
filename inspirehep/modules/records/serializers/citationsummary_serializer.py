@@ -26,13 +26,23 @@ from __future__ import absolute_import, division, print_function
 
 import json
 
-from inspirehep.utils.record import get_title
-from inspirehep.modules.relations.api import LiteratureRelationsSearch
+
+from inspirehep.modules.relations.api import produce_citation_summary
 
 
-class ImpactGraphSerializer(object):
+class CitationSummarySerializer(object):
 
-    """Impact Graph serializer for records."""
+    """Citation summary serializer for records."""
+
+    def __init__(self, index):
+        """
+        Constructs a serializer.
+
+        :param index: index of records for which serializer
+                      generates citation summary
+        """
+
+        self._records_index = index
 
     def serialize(self, pid, record, links_factory=None):
         """
@@ -44,14 +54,7 @@ class ImpactGraphSerializer(object):
                               which are added to the response.
         """
 
-        # Get reference and citation info
-        summary = LiteratureRelationsSearch.get_impact_graph_summary(
-            record['control_number']
-        )
-
-        # Add information about current record
-        summary['inspire_id'] = record['control_number']
-        summary['title'] = get_title(record)
-        summary['year'] = record['earliest_date'].split('-')[0]
+        # Get citation summary from graph db
+        summary = produce_citation_summary(record, self._records_index)
 
         return json.dumps(summary)

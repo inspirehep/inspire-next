@@ -444,6 +444,10 @@ RECORDS_REST_ENDPOINTS = dict(
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
+            'application/x-citation.summary+json': (
+                'inspirehep.modules.records.serializers'
+                ':citationsummaryauthors_v1_response'
+            ),
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
@@ -586,6 +590,10 @@ RECORDS_REST_ENDPOINTS = dict(
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
+            'application/x-citation.summary+json': (
+                'inspirehep.modules.records.serializers'
+                ':citationsummaryconferences_v1_response'
+            ),
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
@@ -632,6 +640,10 @@ RECORDS_REST_ENDPOINTS = dict(
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
+            'application/x-citation.summary+json': (
+                'inspirehep.modules.records.serializers'
+                ':citationsummaryinstitutions_v1_response'
+            ),
         },
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'

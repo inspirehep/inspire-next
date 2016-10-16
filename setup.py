@@ -86,6 +86,8 @@ install_requires = [
     'iso8601>=0.1.11',
     'invenio-trends>=1.0.0a1',
     'invenio-trends-ui>=1.0.0a1',
+    'neo4j-driver',
+    'frozendict',
 ]
 
 tests_require = [
@@ -197,6 +199,7 @@ setup(
             'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
+            'relations = inspirehep.modules.relations:INSPIRERelations'
         ],
         'invenio_base.apps': [
             'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
@@ -212,6 +215,7 @@ setup(
             'crossref = inspirehep.modules.crossref:CrossRef',
             'inspire_orcid = inspirehep.modules.orcid:INSPIREOrcid',
             'inspire_disambiguation = inspirehep.modules.disambiguation:InspireDisambiguation',
+            'relations = inspirehep.modules.relations:INSPIRERelations',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
