@@ -35,6 +35,65 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 
 # Components Tests
+def test_import_from_arXiv(selenium, login):
+    """Test the import from arXiv"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+    selenium.find_element_by_id("arxiv_id").send_keys("hep-th/9711200")
+    selenium.find_element_by_id("importData").click()
+    WebDriverWait(selenium, 20).until(EC.visibility_of_element_located((By.ID, "acceptData"))).click()
+
+    WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.ID, "arxiv_id")))
+    assert '10.1023/A:1026654312961' in selenium.find_element_by_id('doi').get_attribute('value')
+    assert 'The Large N Limit of Superconformal Field Theories and Supergravity' in selenium.find_element_by_id('title').get_attribute('value')
+    assert 'Maldacena, Juan' in selenium.find_element_by_id('authors-0-name').get_attribute('value')
+    assert 'We show that the large $N$ limit of certain conformal field theories in' in selenium.find_element_by_id('abstract').get_attribute('value')
+    assert 'International Journal of Theoretical Physics' in selenium.find_element_by_id('journal_title').get_attribute('value')
+    assert '38' in selenium.find_element_by_id('volume').get_attribute('value')
+    assert '4' in selenium.find_element_by_id('issue').get_attribute('value')
+    assert '1999' in selenium.find_element_by_id('year').get_attribute('value')
+    assert '1113-1133' in selenium.find_element_by_id('page_range_article_id').get_attribute('value')
+
+
+def test_import_from_doi(selenium, login):
+    """Test the import from doi"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+    selenium.find_element_by_id("doi").send_keys("10.1086/305772")
+    selenium.find_element_by_id("importData").click()
+    WebDriverWait(selenium, 20).until(EC.visibility_of_element_located((By.ID, "acceptData"))).click()
+
+    WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.ID, "arxiv_id")))
+    assert 'Maps of Dust Infrared Emission for Use in Estimation of Reddening and Cosmic Microwave Background Radiation Foregrounds' in selenium.find_element_by_id('title').get_attribute('value')
+    assert 'Schlegel, David J.' in selenium.find_element_by_id('authors-0-name').get_attribute('value')
+    assert 'Finkbeiner, Douglas P.' in selenium.find_element_by_id('authors-1-name').get_attribute('value')
+    assert 'Davis, Marc' in selenium.find_element_by_id('authors-2-name').get_attribute('value')
+    assert 'The Astrophysical Journal' in selenium.find_element_by_id('journal_title').get_attribute('value')
+    assert '500' in selenium.find_element_by_id('volume').get_attribute('value')
+    assert '2' in selenium.find_element_by_id('issue').get_attribute('value')
+    assert '1998' in selenium.find_element_by_id('year').get_attribute('value')
+    assert '525-553' in selenium.find_element_by_id('page_range_article_id').get_attribute('value')
+
+
+def test_import_from_doi_arXiv(selenium, login):
+    """Test the import from doi and arXiv"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+    selenium.find_element_by_id("arxiv_id").send_keys("1207.7235")
+    selenium.find_element_by_id("doi").send_keys("10.1086/305772")
+    selenium.find_element_by_id("importData").click()
+    WebDriverWait(selenium, 20).until(EC.visibility_of_element_located((By.ID, "acceptData"))).click()
+
+    WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.ID, "arxiv_id")))
+    assert 'Maps of Dust Infrared Emission for Use in Estimation of Reddening and Cosmic Microwave Background Radiation Foregrounds' in selenium.find_element_by_id('title').get_attribute('value')
+    assert 'Schlegel, David J.' in selenium.find_element_by_id('authors-0-name').get_attribute('value')
+    assert 'Finkbeiner, Douglas P.' in selenium.find_element_by_id('authors-1-name').get_attribute('value')
+    assert 'Davis, Marc' in selenium.find_element_by_id('authors-2-name').get_attribute('value')
+    assert 'Results are presented from searches for the standard model Higgs boson in' in selenium.find_element_by_id('abstract').get_attribute('value')
+    assert 'The Astrophysical Journal' in selenium.find_element_by_id('journal_title').get_attribute('value')
+    assert '500' in selenium.find_element_by_id('volume').get_attribute('value')
+    assert '2' in selenium.find_element_by_id('issue').get_attribute('value')
+    assert '1998' in selenium.find_element_by_id('year').get_attribute('value')
+    assert '525-553' in selenium.find_element_by_id('page_range_article_id').get_attribute('value')
+
+
 def test_format_input_arXiv(selenium, login):
     """Test the string format for arXiv input"""
     selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')
