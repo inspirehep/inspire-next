@@ -114,7 +114,7 @@ We build assets using `npm`. Make sure you have installed it system wide.
 .. code-block:: console
 
     (inspirehep)$ sudo npm update
-    (inspirehep)$ sudo npm install -g node-sass clean-css requirejs uglify-js
+    (inspirehep)$ sudo npm install -g node-sass@3.8.0 clean-css requirejs uglify-js
 
 
 .. note::
