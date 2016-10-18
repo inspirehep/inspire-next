@@ -32,7 +32,8 @@ import atexit
 import sys
 from flask import (jsonify, request)
 
-from inspirehep.modules.literaturesuggest.views import validate
+from inspirehep.modules.literaturesuggest.views import validate as literature_validate
+from inspirehep.modules.authors.views.holdingpen import validate as author_validate
 
 import coverage
 
@@ -50,14 +51,17 @@ atexit.register(save_coverage)
 app = getattr(application, 'app', application)
 
 app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_literature_suggest.validate'][0])
+app.url_map._rules.remove(app.url_map._rules_by_endpoint['inspirehep_authors_holdingpen.validate'][0])
 app.url_map._rules.remove(app.url_map._rules_by_endpoint['_arxiv.search'][0])
 app.url_map._rules.remove(app.url_map._rules_by_endpoint['_doi.search'][0])
 
 del app.url_map._rules_by_endpoint['inspirehep_literature_suggest.validate']
+del app.url_map._rules_by_endpoint['inspirehep_authors_holdingpen.validate']
 del app.url_map._rules_by_endpoint['_arxiv.search']
 del app.url_map._rules_by_endpoint['_doi.search']
 
 del app.view_functions['inspirehep_literature_suggest.validate']
+del app.view_functions['inspirehep_authors_holdingpen.validate']
 del app.view_functions['_arxiv.search']
 del app.view_functions['_doi.search']
 
@@ -85,7 +89,18 @@ def mock_literature_validate():
         if request.json['doi'] == 'dummy:10.1086/305772':
             return '{"messages":{"doi":{"messages":["The provided DOI is invalid - it should look similar to \'10.1086/305772\'."],"state":"error"}}}'
 
-    return validate()
+    return literature_validate()
+
+
+@app.route('/submit/author/validate', endpoint='inspirehep_authors_holdingpen.validate', methods=['POST'])
+def mock_literature_validate():
+    """"Mock the ORCID validation"""
+    if request.json.get('orcid') == 'wrong.ORCID':
+        return '{"messages":{"orcid":{"messages":["A valid ORCID iD consists of 16 digits separated by dashes."],"state":"error"}}}'
+    elif request.json.get('orcid') == '1111-1111-1111-1111':
+        return '{"messages":{"orcid":{}}}'
+
+    return author_validate()
 
 
 @app.route('/doi/search', endpoint='_doi.search', methods=['GET'])
