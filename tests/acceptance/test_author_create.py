@@ -28,6 +28,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import ElementNotVisibleException
+from selenium.common.exceptions import WebDriverException
+
 
 
 def test_institutions_typehead(selenium, login):
@@ -60,4 +63,24 @@ def test_advisors_typehead(selenium, login):
     assert 'Vorobyev, Alexey' in advisor_field.get_attribute('value')
 
 
+def test_mail_format(selenium, login):
+    """Test mail format in Personal Information for an author"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/author/create')
+    mail_field = selenium.find_element_by_id('public_email')
 
+    try:
+        mail_field.send_keys('wrong.mail')
+        mail_field.send_keys(Keys.TAB)
+        WebDriverWait(selenium, 10).until(EC.presence_of_element_located((By.ID, "state-public_email")))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert "Invalid email address." in selenium.page_source
+    mail_field.clear()
+
+    try:
+        mail_field.send_keys('me@me.com')
+        mail_field.send_keys(Keys.TAB)
+        WebDriverWait(selenium, 10).until(EC.presence_of_element_located((By.ID, "state-public_email")))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert "Invalid email address." not in selenium.page_source
