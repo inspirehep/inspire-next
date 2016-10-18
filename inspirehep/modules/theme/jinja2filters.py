@@ -641,3 +641,9 @@ def back_to_search_link(referer, collection):
         text = "Back to search results for \"{}\"".format(url_map['q'])
     url_html = '<a href="{}">{}</a>'.format(url, text)
     return url_html
+
+
+@blueprint.app_template_filter()
+def clean_roles(roles):
+    """Extract names from user roles."""
+    return json.dumps([role.name for role in roles])
