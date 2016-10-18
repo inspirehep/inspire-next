@@ -84,3 +84,26 @@ def test_mail_format(selenium, login):
     except (ElementNotVisibleException, WebDriverException):
         pass
     assert "Invalid email address." not in selenium.page_source
+
+
+def test_ORCID_format(selenium, login):
+    """Test ORCID format in Personal Information for an author"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/author/create')
+    ORCID_field = selenium.find_element_by_id('orcid')
+
+    try:
+        ORCID_field.send_keys('wrong.ORCID')
+        ORCID_field.send_keys(Keys.TAB)
+        WebDriverWait(selenium, 10).until(EC.presence_of_element_located((By.ID, 'state-orcid')))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert 'A valid ORCID iD consists of 16 digits separated by dashes.' in selenium.page_source
+    ORCID_field.clear()
+
+    try:
+        ORCID_field.send_keys('1111-1111-1111-1111')
+        ORCID_field.send_keys(Keys.TAB)
+        WebDriverWait(selenium, 10).until(EC.presence_of_element_located((By.ID, 'state-orcid')))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert 'A valid ORCID iD consists of 16 digits separated by dashes.' not in selenium.page_source
