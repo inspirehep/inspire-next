@@ -161,6 +161,32 @@ def test_thesis_info_autocomplete_institution(selenium, login):
     assert 'CERN' in field.get_attribute('value')
 
 
+def test_pdf_link(selenium, login):
+    """Test the autocompletion for the institution in the thesis section"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+    selenium.find_element_by_id("skipImportData").click()
+    WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, 'form_container'), 'Type of Document'))
+
+    field = WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.ID, 'url')))
+    field.send_keys('pdf_url_correct')
+    field.send_keys(Keys.TAB)
+    try:
+        WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, 'state-url'), 'Please, provide an accessible direct link to a PDF document.'))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert 'Please, provide an accessible direct link to a PDF document.' not in selenium.page_source
+    field.clear()
+
+    field = WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.ID, 'url')))
+    field.send_keys('pdf_url_wrong')
+    field.send_keys(Keys.TAB)
+    try:
+        WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.ID, 'state-url'), 'Please, provide an accessible direct link to a PDF document.'))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert 'Please, provide an accessible direct link to a PDF document.' in selenium.page_source
+
+
 def test_thesis_info_date_submission(selenium, login):
     """Test the format for the submission date in the thesis section"""
     selenium.get(os.environ['SERVER_NAME'] + '/submit/literature/create')
