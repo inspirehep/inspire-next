@@ -349,9 +349,10 @@ def test_literature_create_article_journal_manually(selenium, login):
     _references_population(selenium)
     _comments_population(selenium)
     selenium.find_element_by_xpath("//div[@id='webdeposit_form_accordion']/div[4]/span/button").click()
-    show_title_bar(selenium)
     WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'), 'The INSPIRE staff will review it and your changes will be added to INSPIRE.'))
     assert 'The INSPIRE staff will review it and your changes will be added to INSPIRE.' in selenium.page_source
+    _back_office_article(selenium)
+    show_title_bar(selenium)
 
 
 def test_literature_create_article_proceeding_manually(selenium, login):
@@ -367,10 +368,10 @@ def test_literature_create_article_proceeding_manually(selenium, login):
     _references_population(selenium)
     _comments_population(selenium)
     selenium.find_element_by_xpath("//div[@id='webdeposit_form_accordion']/div[4]/span/button").click()
-    show_title_bar(selenium)
     WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'), 'The INSPIRE staff will review it and your changes will be added to INSPIRE.'))
     assert 'The INSPIRE staff will review it and your changes will be added to INSPIRE.' in selenium.page_source
-
+    _back_office_article(selenium)
+    show_title_bar(selenium)
 
 def test_literature_create_thesis_manually(selenium, login):
     """Submit the form for thesis creation from scratch"""
@@ -385,9 +386,10 @@ def test_literature_create_thesis_manually(selenium, login):
     _references_population(selenium)
     _comments_population(selenium)
     selenium.find_element_by_xpath("//div[@id='webdeposit_form_accordion']/div[4]/span/button").click()
-    show_title_bar(selenium)
     WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'), 'The INSPIRE staff will review it and your changes will be added to INSPIRE.'))
     assert 'The INSPIRE staff will review it and your changes will be added to INSPIRE.' in selenium.page_source
+    _back_office_article(selenium)
+    show_title_bar(selenium)
 
 
 def _links_population(selenium):
@@ -474,3 +476,39 @@ def hide_title_bar(selenium):
 def show_title_bar(selenium):
     selenium.execute_script('document.getElementById("collections-section").style.display = ""')
     selenium.execute_script('document.getElementById("topnav").style.display = ""')
+
+
+def _back_office_article(selenium):
+    # list page
+    record = _load_entries(selenium)
+    assert 'Computing' in record
+    assert 'Accelerators' in record
+    assert 'My Title For Test' in record
+    assert 'admin@inspirehep.net' in record
+    assert 'Mister White; Mister Brown' in record
+    assert 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record
+    assert 'found.' in WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="invenio-search-results"]/ng-pluralize'))).text
+    selenium.find_element_by_xpath('//div[@class="row hp-item ng-scope"][1]/div/div/div[2]/holding-pen-template-handler').click()
+    # back office
+    record = WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="ng-scope"])[2]'))).text
+    assert 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record
+    assert 'Wisconsin U., Madison' in record
+    assert 'My Title For Test' in record
+    assert 'Mister Brown' in record
+    assert 'Mister White' in record
+    assert 'CERN' in record
+    assert 'Submitted by admin@inspirehep.net\non' in WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.XPATH, '//p[@class="text-center ng-scope"]'))).text
+    assert 'Accelerators' in WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[1]'))).text
+    assert 'Computing' in WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[2]'))).text
+    selenium.find_element_by_xpath('//button[@class="btn btn-warning"]').click()
+    assert 'Accepted as Non-CORE' in WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))).text
+
+
+def _load_entries(selenium):
+    try:
+        selenium.get(os.environ['SERVER_NAME'] + '/holdingpen/list/?page=1&size=10&source=submission&workflow_name=HEP&status=HALTED')
+        WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="row hp-item ng-scope"][1]/div/div/div[2]/holding-pen-template-handler/div[3]/a'))).click()
+        record = WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="row hp-item ng-scope"][1]'))).text
+    except (ElementNotVisibleException, WebDriverException):
+        record = _load_entries(selenium)
+    return record
