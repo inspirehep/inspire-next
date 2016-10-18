@@ -57,7 +57,13 @@ app.url_map.update()
 
 @app.route('/submit/literature/validate', endpoint='inspirehep_literature_suggest.validate', methods=['POST'])
 def mock_literature_validate():
-    """"Mock the arXiv and DOI validation"""
+    """"Mock the pdf arXiv and DOI validation"""
+    if 'url' in request.json:
+        if request.json['url'] == 'pdf_url_correct':
+            return '{"messages":{"url":{}}}'
+        if request.json['url'] == 'pdf_url_wrong':
+            return '{"messages":{"url":{"messages":["Please, provide an accessible direct link to a PDF document."],"state":"error"}}}'
+
     if 'arxiv_id' in request.json:
         if request.json['arxiv_id'] in ('1001.4538', 'hep-th/9711200'):
             return ''
