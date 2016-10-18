@@ -32,6 +32,8 @@ from werkzeug.utils import import_string
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records.api import Record
 
+from inspirehep.modules.pidstore.providers import get_pid_type_for, get_endpoint_from_pid_type
+
 
 class RecordGetterError(Exception):
 
@@ -63,7 +65,7 @@ def raise_record_getter_error_and_log(f):
 
 @raise_record_getter_error_and_log
 def get_es_record(record_type, recid, **kwargs):
-    pid = PersistentIdentifier.get(record_type, recid)
+    pid = PersistentIdentifier.get(get_pid_type_for(record_type), recid)
     search_conf = current_app.config['RECORDS_REST_ENDPOINTS'][record_type]
     search_class = import_string(search_conf['search_class'])()
     return search_class.get_source(pid.object_uuid, **kwargs)
@@ -80,7 +82,7 @@ def get_es_records(record_type, recids, **kwargs):
     """
     uuids = PersistentIdentifier.query.filter(
         PersistentIdentifier.pid_value.in_(recids),
-        PersistentIdentifier.pid_type == record_type
+        PersistentIdentifier.pid_type == get_pid_type_for(record_type)
     ).all()
     uuids = [str(uuid.object_uuid) for uuid in uuids]
     search_conf = current_app.config['RECORDS_REST_ENDPOINTS'][record_type]
@@ -91,12 +93,12 @@ def get_es_records(record_type, recids, **kwargs):
 @raise_record_getter_error_and_log
 def get_es_record_by_uuid(uuid):
     pid = PersistentIdentifier.query.filter_by(object_uuid=uuid).one()
-    search_conf = current_app.config['RECORDS_REST_ENDPOINTS'][pid.pid_type]
+    search_conf = current_app.config['RECORDS_REST_ENDPOINTS'][get_endpoint_from_pid_type(pid.pid_type)]
     search_class = import_string(search_conf['search_class'])()
     return search_class.get_source(uuid)
 
 
 @raise_record_getter_error_and_log
 def get_db_record(record_type, recid):
-    pid = PersistentIdentifier.get(record_type, recid)
+    pid = PersistentIdentifier.get(get_pid_type_for(record_type), recid)
     return Record.get_record(pid.object_uuid)

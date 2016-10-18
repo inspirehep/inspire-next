@@ -355,7 +355,8 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
 # =======
 RECORDS_REST_ENDPOINTS = dict(
     literature=dict(
-        pid_type='literature',
+        pid_type='lit',
+        default_endpoint_prefix=True,
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
         search_class='inspirehep.modules.search:LiteratureSearch',
@@ -420,7 +421,7 @@ RECORDS_REST_ENDPOINTS = dict(
         record_class='inspirehep.modules.records.es_record:ESRecord'
     ),
     literature_db=dict(
-        pid_type='literature',
+        pid_type='lit',
         search_class='inspirehep.modules.search:LiteratureSearch',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
@@ -437,7 +438,8 @@ RECORDS_REST_ENDPOINTS = dict(
 
     ),
     authors=dict(
-        pid_type='authors',
+        pid_type='aut',
+        default_endpoint_prefix=True,
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
         search_class='inspirehep.modules.search:AuthorsSearch',
@@ -460,7 +462,7 @@ RECORDS_REST_ENDPOINTS = dict(
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
     authors_citations=dict(
-        pid_type='authors',
+        pid_type='aut',
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
         search_class='inspirehep.modules.search:AuthorsSearch',
@@ -484,7 +486,7 @@ RECORDS_REST_ENDPOINTS = dict(
                             ':inspire_search_factory'),
     ),
     authors_coauthors=dict(
-        pid_type='authors',
+        pid_type='aut',
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
         search_class='inspirehep.modules.search:AuthorsSearch',
@@ -508,7 +510,7 @@ RECORDS_REST_ENDPOINTS = dict(
                             ':inspire_search_factory'),
     ),
     authors_publications=dict(
-        pid_type='authors',
+        pid_type='aut',
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
         search_class='inspirehep.modules.search:AuthorsSearch',
@@ -532,7 +534,7 @@ RECORDS_REST_ENDPOINTS = dict(
                             ':inspire_search_factory'),
     ),
     authors_stats=dict(
-        pid_type='authors',
+        pid_type='aut',
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
         search_class='inspirehep.modules.search:AuthorsSearch',
@@ -556,7 +558,8 @@ RECORDS_REST_ENDPOINTS = dict(
                             ':inspire_search_factory'),
     ),
     data=dict(
-        pid_type='data',
+        pid_type='dat',
+        default_endpoint_prefix=True,
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
         search_class='inspirehep.modules.search:DataSearch',
@@ -579,7 +582,8 @@ RECORDS_REST_ENDPOINTS = dict(
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
     conferences=dict(
-        pid_type='conferences',
+        pid_type='con',
+        default_endpoint_prefix=True,
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
         search_class='inspirehep.modules.search:ConferencesSearch',
@@ -602,7 +606,8 @@ RECORDS_REST_ENDPOINTS = dict(
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
     jobs=dict(
-        pid_type='jobs',
+        pid_type='job',
+        default_endpoint_prefix=True,
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
         search_class='inspirehep.modules.search:JobsSearch',
@@ -625,7 +630,8 @@ RECORDS_REST_ENDPOINTS = dict(
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
     institutions=dict(
-        pid_type='institutions',
+        pid_type='ins',
+        default_endpoint_prefix=True,
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
         search_class='inspirehep.modules.search:InstitutionsSearch',
@@ -648,7 +654,8 @@ RECORDS_REST_ENDPOINTS = dict(
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
     experiments=dict(
-        pid_type='experiments',
+        pid_type='exp',
+        default_endpoint_prefix=True,
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
         search_class='inspirehep.modules.search:ExperimentsSearch',
@@ -671,7 +678,8 @@ RECORDS_REST_ENDPOINTS = dict(
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
     journals=dict(
-        pid_type='journals',
+        pid_type='jou',
+        default_endpoint_prefix=True,
         pid_minter='inspire_recid_minter',
         pid_fetcher='inspire_recid_fetcher',
         search_class='inspirehep.modules.search:JournalsSearch',
@@ -701,50 +709,50 @@ RECORDS_UI_DEFAULT_PERMISSION_FACTORY = \
 
 RECORDS_UI_ENDPOINTS = dict(
     literature=dict(
-        pid_type='literature',
+        pid_type='lit',
         route='/literature/<pid_value>',
         template='inspirehep_theme/format/record/'
                  'Inspire_Default_HTML_detailed.tpl',
         record_class='inspirehep.modules.records.wrappers:LiteratureRecord',
     ),
     authors=dict(
-        pid_type='authors',
+        pid_type='aut',
         route='/authors/<pid_value>',
         template='inspirehep_theme/format/record/'
                  'authors/Author_HTML_detailed.html',
         record_class='inspirehep.modules.records.wrappers:AuthorsRecord',
     ),
     data=dict(
-        pid_type='data',
+        pid_type='dat',
         route='/data/<pid_value>',
         template='inspirehep_theme/format/record/Data_HTML_detailed.tpl'
     ),
     conferences=dict(
-        pid_type='conferences',
+        pid_type='con',
         route='/conferences/<pid_value>',
         template='inspirehep_theme/format/record/Conference_HTML_detailed.tpl',
         record_class='inspirehep.modules.records.wrappers:ConferencesRecord',
     ),
     jobs=dict(
-        pid_type='jobs',
+        pid_type='job',
         route='/jobs/<pid_value>',
         template='inspirehep_theme/format/record/Job_HTML_detailed.tpl',
         record_class='inspirehep.modules.records.wrappers:JobsRecord',
     ),
     institutions=dict(
-        pid_type='institutions',
+        pid_type='ins',
         route='/institutions/<pid_value>',
         template='inspirehep_theme/format/record/Institution_HTML_detailed.tpl',
         record_class='inspirehep.modules.records.wrappers:InstitutionsRecord',
     ),
     experiments=dict(
-        pid_type='experiments',
+        pid_type='exp',
         route='/experiments/<pid_value>',
         template='inspirehep_theme/format/record/Experiment_HTML_detailed.tpl',
         record_class='inspirehep.modules.records.wrappers:ExperimentsRecord',
     ),
     journals=dict(
-        pid_type='journals',
+        pid_type='jou',
         route='/journals/<pid_value>',
         template='inspirehep_theme/format/record/Journal_HTML_detailed.tpl',
         record_class='inspirehep.modules.records.wrappers:JournalsRecord',

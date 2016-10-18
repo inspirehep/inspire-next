@@ -25,9 +25,7 @@
 
 # FIXME temporary branch for testing
 -e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3-inspire#egg=invenio-query-parser==0.6.0
-
-# INSPIRE forks of Invenio packages
--e git+https://github.com/inspirehep/invenio-pidstore.git#egg=invenio-pidstore
+-e git+https://github.com/inveniosoftware/invenio-records-rest.git#egg=invenio-records-rest
 
 # Workflows and Holding Pen related dependencies
 -e git+https://github.com/inveniosoftware/invenio-classifier.git#egg=invenio-classifier

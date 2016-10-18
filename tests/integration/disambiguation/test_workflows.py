@@ -32,6 +32,7 @@ from invenio_pidstore.models import PersistentIdentifier
 from invenio_records.api import Record
 from invenio_search import current_search_client as es
 
+from inspirehep.modules.pidstore.providers import get_pid_type_for
 from inspirehep.utils.record_getter import get_es_record_by_uuid
 
 
@@ -54,7 +55,7 @@ def test_single_signature_with_no_profile(small_app):
         update_authors_recid
     )
 
-    record_id = str(PersistentIdentifier.get("literature", 11883).object_uuid)
+    record_id = str(PersistentIdentifier.get(get_pid_type_for("literature"), 11883).object_uuid)
     record = get_es_record_by_uuid(record_id)
     author_uuid = record['authors'][0]['uuid']
 
@@ -81,7 +82,7 @@ def test_match_signature_with_existing_profile(small_app):
     )
 
     old_record_id = str(PersistentIdentifier.get(
-        "literature", 11883).object_uuid)
+        get_pid_type_for("literature"), 11883).object_uuid)
     old_record = get_es_record_by_uuid(old_record_id)
     old_author_uuid = old_record['authors'][0]['uuid']
 
@@ -92,7 +93,7 @@ def test_match_signature_with_existing_profile(small_app):
     es.indices.refresh('records-hep')
 
     record_id = str(PersistentIdentifier.get(
-        "literature", 1358492).object_uuid)
+        get_pid_type_for("literature"), 1358492).object_uuid)
     record = get_es_record_by_uuid(record_id)
     author_uuid = record['authors'][0]['uuid']
 
@@ -123,7 +124,7 @@ def test_appoint_profile_from_claimed_signature(small_app):
     )
 
     old_record_id = str(PersistentIdentifier.get(
-        "literature", 11883).object_uuid)
+        get_pid_type_for("literature"), 11883).object_uuid)
     old_record = get_es_record_by_uuid(old_record_id)
     old_author_uuid = old_record['authors'][0]['uuid']
 
@@ -135,7 +136,7 @@ def test_appoint_profile_from_claimed_signature(small_app):
     es.indices.refresh('records-hep')
 
     record_id = str(PersistentIdentifier.get(
-        "literature", 1358492).object_uuid)
+        get_pid_type_for("literature"), 1358492).object_uuid)
     record = get_es_record_by_uuid(record_id)
     author_uuid = record['authors'][0]['uuid']
 
@@ -171,7 +172,7 @@ def test_solve_claim_conflicts(small_app):
 
     # Claimed signature #1.
     glashow_record_id_claimed = str(PersistentIdentifier.get(
-        "literature", 4328).object_uuid)
+        get_pid_type_for("literature"), 4328).object_uuid)
     glashow_record_claimed = get_es_record_by_uuid(
         glashow_record_id_claimed)
     glashow_record_uuid_claimed = glashow_record_claimed[
@@ -187,7 +188,7 @@ def test_solve_claim_conflicts(small_app):
 
     # Claimed signature #2.
     higgs_record_id_claimed = str(PersistentIdentifier.get(
-        "literature", 1358492).object_uuid)
+        get_pid_type_for("literature"), 1358492).object_uuid)
     higgs_record_claimed = get_es_record_by_uuid(
         higgs_record_id_claimed)
     higgs_record_uuid_claimed = higgs_record_claimed[
@@ -203,7 +204,7 @@ def test_solve_claim_conflicts(small_app):
 
     # Not claimed signature.
     higgs_record_id_not_claimed = str(PersistentIdentifier.get(
-        "literature", 11883).object_uuid)
+        get_pid_type_for("literature"), 11883).object_uuid)
     higgs_record_not_claimed = get_es_record_by_uuid(
         higgs_record_id_not_claimed)
     higgs_record_uuid_not_claimed = higgs_record_not_claimed[
