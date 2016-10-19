@@ -86,6 +86,7 @@ install_requires = [
     'iso8601>=0.1.11',
     'invenio-trends>=1.0.0a1',
     'invenio-trends-ui>=1.0.0a1',
+    'elasticsearch<3.0.0',
 ]
 
 tests_require = [
