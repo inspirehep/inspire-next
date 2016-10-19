@@ -275,7 +275,7 @@ def pending_in_holding_pen(obj, eng):
 def delete_self_and_stop_processing(obj, eng):
     """Delete both versions of itself and stops the workflow."""
     from invenio_db import db
-    db.session.delete(obj)
+    db.session.delete(obj.model)
     eng.skipToken()
 
 
