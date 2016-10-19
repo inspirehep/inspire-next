@@ -15,15 +15,15 @@
       <div class="row table-row"
            ng-repeat="reference in vm.record.metadata.references">
         <div class="col-md-1 col-sm-1"
-             ng-bind="reference.number"></div>
+             ng-bind="reference.reference.number"></div>
         <div class="col-md-4 col-sm-4"
-             ng-bind="reference.authors"></div>
+             ng-bind="reference.reference.authors"></div>
         <div class="col-md-2 col-sm-3"
-             ng-bind="reference.journal_pubnote"></div>
+             ng-bind="reference.reference.publication_info.artid"></div>
         <div class="col-md-1 col-sm-1"
-             ng-bind="reference.year"></div>
+             ng-bind="reference.reference.publication_info.year"></div>
         <div class="col-md-3 col-sm-2"
-             ng-bind="reference.misc"></div>
+             ng-bind="reference.reference.misc"></div>
       </div>
     </div>
   </div>
