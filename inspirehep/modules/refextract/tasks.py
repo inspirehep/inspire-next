@@ -22,6 +22,8 @@
 
 """Workflow tasks using refextract API."""
 
+import json
+
 from refextract import extract_journal_reference, extract_references_from_file
 
 from inspirehep.utils.record import get_value
@@ -84,31 +86,46 @@ def extract_references(filepath):
     references = extract_references_from_file(
         filepath,
         reference_format="{title},{volume},{page}",
-        # override_kbs_files={
-        #    'journals': get_mappings_from_kbname(['REFEXTRACT_KB_NAME'])
-        # }
     )
     mapped_references = []
     if references.get('references'):
         for ref in references.get('references'):
-            reference = {}
-            reference["journal_pubnote"] = ref.get('journal_reference')
-            reference["year"] = ref.get('year')
-            reference["collaboration"] = ref.get('collaboration')
-            reference["title"] = ref.get('title')
-            reference["misc"] = ref.get('misc')
-            reference["number"] = ref.get('linemarker')
-            reference["authors"] = ref.get('author')
-            reference["isbn"] = ref.get('isbn')
-            reference["doi"] = ref.get('doi')
-            reference["report_number"] = ref.get('reportnumber')
-            reference["publisher"] = ref.get('publisher')
-            reference["recid"] = ref.get('recid')
-
-            for key, value in reference.items():
-                if value and isinstance(value, list):
-                    reference[key] = ",".join(value)
-                elif not value:
-                    del reference[key]
+            reference = {
+                'curated_relation': False,
+                'raw_refs': [
+                    {
+                        'position': '',
+                        'schema': '',
+                        'source': '',
+                        'value': json.dumps(ref),
+                    }
+                ],
+                'record': {
+                    '$ref': ''
+                },
+                'reference': {
+                    'authors': ref.get('author'),
+                    'book_series': ref.get('book_series'),
+                    'collaboration': ref.get('collaboration'),
+                    'dois': ref.get('dois'),
+                    'imprint': ref.get('imprint'),
+                    'misc': ref.get('misc'),
+                    'number': ref.get('linemarker'),
+                    'persisntent_identifiers': ref.get(
+                        'persisntent_identifiers'
+                    ),
+                    'publication_info': {
+                        'year': ref.get('year'),
+                        'journal_title': ref.get('journal_title'),
+                        'journal_volume': ref.get('journal_volume'),
+                        'page_start': ref.get('journal_page'),
+                        'artid': ref.get('journal_reference'),
+                    },
+                    'texkey': ref.get('texkey'),
+                    'titles': ref.get('titles'),
+                    'urls': ref.get('urls'),
+                },
+            }
             mapped_references.append(reference)
+
     return mapped_references
