@@ -117,7 +117,8 @@
                                     "index": "not_analyzed",
                                     "type": "string"
                                 }
-                            }
+                            },
+                            "type": "object"
                         },
                         "name_suggest": {
                             "analyzer": "simple",

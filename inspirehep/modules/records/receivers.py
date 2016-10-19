@@ -28,7 +28,7 @@ import six
 from flask import current_app
 
 from invenio_indexer.signals import before_record_index
-from invenio_records.signals import before_record_insert, before_record_update
+from invenio_records.signals import before_record_insert, before_record_update, after_record_update
 
 from inspirehep.dojson.utils import classify_field, get_recid_from_ref
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
@@ -390,3 +390,21 @@ def populate_experiment_suggest(sender, json, *args, **kwargs):
                 'payload': {'$ref': get_value(json, 'self.$ref')},
             },
         })
+
+
+@after_record_update.connect
+def check_if_record_has_merged(sender, *args, **kwargs):
+    """Checks if the record is merged after update.
+
+        If 'deleted' and 'new_record' field exists and them value is True, after update,
+        then propagate links to involved records.
+    """
+    from inspirehep.modules.records.tasks import replace_old_ref_for_record
+
+    deleted = sender.get('deleted')
+    new_recid = get_recid_from_ref(sender.get('new_record'))
+    if deleted and new_recid:
+        old_record_ref = str(sender.get('self').get('$ref'))
+        new_record_ref = sender.get('new_record').get('$ref')
+
+        replace_old_ref_for_record.delay(old_record_ref=old_record_ref, new_record_ref=new_record_ref)

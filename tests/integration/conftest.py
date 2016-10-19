@@ -38,13 +38,14 @@ from inspirehep.factory import create_app
 @pytest.fixture(scope='session')
 def app():
     """Flask application fixture."""
-    app = create_app()
-    app.config.update(
-        {
-            'DEBUG': True,
-            'WTF_CSRF_ENABLED': False
-        }
-    )
+    app = create_app(DEBUG=True,
+                     WTF_CSRF_ENABLED=False,
+                     TESTING=True,
+                     TEST_RUNNER='celery.contrib.test_runner.CeleryTestSuiteRunner',
+                     CELERY_ALWAYS_EAGER=True,
+                     CELERY_RESULT_BACKEND="cache",
+                     CELERY_CACHE_BACKEND="memory",
+                     CELERY_EAGER_PROPAGATES_EXCEPTIONS=True)
 
     with app.app_context():
         # Imports must be local, otherwise tasks default to pickle serializer.
