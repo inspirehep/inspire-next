@@ -36,6 +36,9 @@ services:
       - APP_ACCOUNTS_SESSION_REDIS_URL=redis://redis:6379/2
       - APP_SEARCH_ELASTIC_HOSTS=indexer
       - APP_ES_BULK_TIMEOUT=240
+      - APP_CRAWLER_HOST_URL=http://scrapyd:6800
+      - APP_CRAWLER_API_PIPELINE_URL=http://flower:5555/api/task/async-apply
+      - APP_OAIHARVESTER_WORKDIR=/virtualenv/oaiharvest_workdir
 
   # Services using the inspirehep code.
   web:
@@ -83,6 +86,12 @@ services:
       service: database
     volumes:
       - "${DOCKER_DATA}/tmp/inspirehep_db/data:/var/lib/postgresql/data/pgdata"
+  scrapyd:
+    extends:
+      service: service_base
+    command: scrapyd
+    volumes_from:
+      - static
 
   # Services useful for monitoring/debugging.
   flower:
