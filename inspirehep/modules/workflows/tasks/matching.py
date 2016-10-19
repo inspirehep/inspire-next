@@ -265,9 +265,12 @@ def pending_in_holding_pen(obj, eng):
             if pending_records:
                 pending_ids = [o[0] for o in pending_records]
                 obj.extra_data['pending_holdingpen_ids'] = pending_ids
-                obj.log.info("Pending records already found in Holding Pen ({0})".format(
-                    pending_ids
-                ))
+                obj.log.info(
+                    "Pending records already found in Holding Pen ({0})"
+                    .format(
+                        pending_ids
+                    )
+                )
                 return True
     return False
 
@@ -276,7 +279,7 @@ def delete_self_and_stop_processing(obj, eng):
     """Delete both versions of itself and stops the workflow."""
     from invenio_db import db
     db.session.delete(obj.model)
-    eng.skipToken()
+    eng.skip_token()
 
 
 def stop_processing(obj, eng):
@@ -284,20 +287,28 @@ def stop_processing(obj, eng):
     eng.stopProcessing()
 
 
-def update_old_object(obj, eng):
+def update_existing_workflow_object(obj, eng):
     """Update the data of the old object with the new data."""
     from invenio_workflows import workflow_object_class
 
     holdingpen_ids = obj.extra_data.get("holdingpen_ids", [])
     for matched_id in holdingpen_ids:
-        other_obj = workflow_object_class.get(matched_id)
-        if obj.data.get('acquisition_source') and other_obj.data.get('acquisition_source'):
-            if obj.data['acquisition_source'].get('method') == other_obj.data['acquisition_source'].get('method'):
+        existing_obj = workflow_object_class.get(matched_id)
+        if (
+                obj.data.get('acquisition_source') and
+                existing_obj.data.get('acquisition_source')
+        ):
+            if (
+                    obj.data['acquisition_source'].get('method') ==
+                    existing_obj.data['acquisition_source'].get('method')
+            ):
                 # Method is the same, update obj
-                other_obj.data.update(obj.data)
-                other_obj.save()
+                existing_obj.data.update(obj.data)
+                existing_obj.save()
                 break
     else:
-        msg = "Cannot update old object, non valid ids: {0}".format(holdingpen_ids)
+        msg = "Cannot update old object, non valid ids: {0}".format(
+            holdingpen_ids
+        )
         obj.log.error(msg)
         raise Exception(msg)
