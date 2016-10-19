@@ -321,3 +321,10 @@ def user_pdf_get(obj, eng):
         else:
             obj.data['fft'] = [fft]
         obj.log.info("PDF file added to FFT.")
+
+
+def remove_references(obj, eng):
+    from celery.contrib import rdb
+    #rdb.set_trace()
+    obj.log.info(obj.data)
+    del obj.data['references']
