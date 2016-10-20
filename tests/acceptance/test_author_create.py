@@ -126,6 +126,28 @@ def test_experiments_years(selenium, login):
     _check_year_format('experiments-0-end_year', 'state-experiments-0-end_year', selenium)
 
 
+def test_mandatory_fields(selenium, login):
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/author/create')
+    selenium.find_element_by_xpath('//button[@class="btn btn-success form-submit"]').click()
+    try:
+        WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.ID, 'state-given_names')))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert 'This field is required.' in selenium.find_element_by_id('state-given_names').text
+
+    try:
+        WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.ID, 'state-display_name')))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert 'This field is required.' in selenium.find_element_by_id('state-display_name').text
+
+    try:
+        WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.ID, 'state-research_field')))
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    assert 'This field is required.' in selenium.find_element_by_id('state-research_field').text
+
+
 def test_author_creation(selenium, login):
     """Submit the form for author creation from scratch"""
     _insert_author(selenium)
