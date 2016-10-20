@@ -112,6 +112,20 @@ def test_ORCID_format(selenium, login):
     assert 'A valid ORCID iD consists of 16 digits separated by dashes.' not in selenium.page_source
 
 
+def test_institutions_years(selenium, login):
+    """Test format in Start Year and End Year for author institutions"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/author/create')
+    _check_year_format('institution_history-0-start_year', 'state-institution_history-0-start_year', selenium)
+    _check_year_format('institution_history-0-end_year', 'state-institution_history-0-end_year', selenium)
+
+
+def test_experiments_years(selenium, login):
+    """Test format in Start Year and End Year for author experiments"""
+    selenium.get(os.environ['SERVER_NAME'] + '/submit/author/create')
+    _check_year_format('experiments-0-start_year', 'state-experiments-0-start_year', selenium)
+    _check_year_format('experiments-0-end_year', 'state-experiments-0-end_year', selenium)
+
+
 def test_author_creation(selenium, login):
     """Submit the form for author creation from scratch"""
     _insert_author(selenium)
@@ -175,9 +189,9 @@ def test_review_submission_author(selenium, login):
     selenium.find_element_by_xpath('//a[@class="btn btn-success form-submit"]').click()
     WebDriverWait(selenium, 10).until(EC.text_to_be_present_in_element((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'), 'The author update has been approved'))
     assert 'The author update has been approved' in selenium.page_source
-    selenium.get(os.environ['SERVER_NAME'] + '/search?page=1&size=25&cc=authors&q=Diego')
+    selenium.get(os.environ['SERVER_NAME'] + '/search?page=1&size=25&cc=authors&q=Alexey')
     author = WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.XPATH, '(//a[@class="title ng-binding ng-scope"])[1]'))).text
-    assert 'Diego' in author
+    assert 'Alexey' in author
     show_title_bar(selenium)
 
 
