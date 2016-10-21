@@ -556,6 +556,28 @@ def register_menu_items():
 
     current_app.before_first_request_funcs.append(menu_fixup)
 
+#
+# Current User
+#
+
+@blueprint.route('/current_user', methods=['GET'])
+def get_current_user():
+    if not current_user.is_active:
+        return jsonify({
+            'status': 'not_found'
+        })
+
+    if current_user.is_authenticated:
+        users_full_name = current_user.remote_accounts[0].extra_data['full_name']
+        users_full_name = 'Gao, Yuanning'
+        orcid_id = current_user.remote_accounts[0].extra_data['orcid']
+
+        return jsonify({
+            'status': 'found',
+            'orcid_id': orcid_id,
+            'full_name': users_full_name
+        })
+
 
 #
 # Redirect /record/N
