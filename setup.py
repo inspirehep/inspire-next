@@ -122,6 +122,10 @@ extras_require = {
     'migration': [
         'invenio-migrator>=1.0.0a6',
     ],
+    'crawler': [
+        'scrapyd',
+        'hepcrawl',
+    ],
     'tests': tests_require,
     'development': [
         'Flask-DebugToolbar>=0.9',
