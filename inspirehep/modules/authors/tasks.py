@@ -86,9 +86,9 @@ def formdata_to_model(obj, formdata):
         user_email = User.query.get(obj.id_user).email
     except AttributeError:
         user_email = ''
-    sources = ["{0}{1}".format('inspire:uid:', obj.id_user)]
+    source = "{0}{1}".format('inspire:uid:', obj.id_user)
     data['acquisition_source'] = dict(
-        source=sources,
+        source=source,
         email=user_email,
         date=date.today().isoformat(),
         method="submission",
