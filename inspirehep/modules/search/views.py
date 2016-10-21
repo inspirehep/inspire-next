@@ -29,8 +29,14 @@ import json
 import six
 from flask import Blueprint, current_app, jsonify, request, render_template
 
-from inspirehep.modules.search import LiteratureSearch
+from elasticsearch_dsl import Q
 
+from invenio_records.api import Record
+
+from inspirehep.modules.records.serializers import json_literature_brief_v1_search
+from inspirehep.modules.search import LiteratureSearch
+from inspirehep.modules.pidstore.fetchers import inspire_recid_fetcher as pid_fetcher
+from inspirehep.utils.record_getter import get_es_record
 
 blueprint = Blueprint(
     'inspirehep_search',
@@ -71,6 +77,117 @@ def search():
     ctx['search_api'] = current_app.config['SEARCH_UI_SEARCH_API']
     return render_template(current_app.config['SEARCH_UI_SEARCH_TEMPLATE'],
                            **ctx)
+
+
+@blueprint.route('/search/claimedRecords', methods=['GET'])
+def get_claimed_records():
+    full_name = request.values.get('full_name')
+    orcid_id = request.values.get('orcid_id')
+
+    return jsonify({
+        'records': [1309999, 1335135]
+    })
+#   results = query_for_records_using_orcid_id(orcid_id)
+#   record_ids = []
+#
+#   for record in results:
+#       record_ids.append(record.get('control_number'))
+#
+#   return jsonify({
+#       'records': record_ids
+#   })
+#
+
+
+@blueprint.route('/search/claimRecord', methods=['POST'])
+def claim_record():
+
+    body = json.loads(request.data)
+    recordId = body.get('recordId')
+    users_orcid = body.get('orcid_id')
+    phonetic_block = body.get('phonetic_block')
+
+    record = get_es_record('literature', recordId)
+    record = Record(record)
+
+    possible_authors = []
+
+    for author in record['authors']:
+        for id in author['ids']:
+            if id['value'] == users_orcid:
+                author['curated_relation'] = True
+                record.commit()
+                return 'Record Claimed'
+        if author.get('signature_block') == phonetic_block:
+            author['curated_relation'] = True
+            possible_authors.append(author)
+
+    if len(possible_authors) is 1:
+        record.commit()
+        return 'Record Claimed'
+
+    return 'Somebody should first check that.'
+
+
+@blueprint.route('/search/claimableRecords', methods=['GET'])
+def get_claimable_records():
+    full_name = request.values.get('full_name')
+    full_name = 'Gao, Yuanning'
+    orcidId = request.values.get('orcid_id')
+
+    records = query_for_records_using_full_name(full_name, orcidId)
+
+    record_ids = []
+    for record in records:
+        record_ids.append(record.control_number)
+
+
+    return jsonify({
+        'records': record_ids
+    })
+
+
+def query_for_records_using_full_name(full_name, orcidId):
+
+    query = Q(
+        'bool',
+        must=Q('bool', should=[
+            Q("match", authors__name_variations=full_name),
+            Q("term", authors__ids__value=orcidId)
+        ]),
+        should=[
+            Q("match", authors__full_name=str())
+        ]
+    )
+
+    results = LiteratureSearch().query(query).execute()
+
+    return results
+
+
+def query_for_records_using_orcid_id(orcid_id):
+
+    es_query = {"term": {
+        "authors.curated_relation": True
+        }
+    }
+
+    es_filter = {"nested": {
+        "path": "authors",
+        "filter": {
+            "term": {
+                "authors.ids.value": {
+                    "value": orcid_id
+                }
+            }
+        },
+        "inner_hits": {}
+    }}
+
+    search = LiteratureSearch().query(es_query).filter(
+        es_filter).execute()
+
+    return search
 
 
 @blueprint.route('/search/suggest', methods=['GET'])

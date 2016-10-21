@@ -45,6 +45,7 @@ from invenio_mail.tasks import send_email
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client
 
+from inspirehep.modules.authors.receivers import _query_beard_api
 from inspirehep.modules.records.conference_series import (
     CONFERENCE_CATEGORIES_TO_SERIES,
 )
@@ -555,6 +556,30 @@ def register_menu_items():
         current_menu.submenu("settings.oauthclient").hide()
 
     current_app.before_first_request_funcs.append(menu_fixup)
+
+#
+# Current User
+#
+
+@blueprint.route('/current_user', methods=['GET'])
+def get_current_user():
+    if not current_user.is_active:
+        return jsonify({
+            'status': 'not_found'
+        })
+
+    if current_user.is_authenticated:
+        users_full_name = current_user.remote_accounts[0].extra_data['full_name']
+        users_full_name = 'Gao, Yuanning'
+        orcid_id = current_user.remote_accounts[0].extra_data['orcid']
+        phonetic_block = _query_beard_api([users_full_name])[users_full_name]
+
+        return jsonify({
+            'status': 'found',
+            'orcid_id': orcid_id,
+            'full_name': users_full_name,
+            'phonetic_block': phonetic_block
+        })
 
 
 #
