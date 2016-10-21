@@ -24,31 +24,65 @@
 
 from __future__ import absolute_import, print_function
 
-from workflow.patterns.controlflow import IF, IF_ELSE
+from workflow.patterns.controlflow import IF, IF_ELSE, IF_NOT
 
 from inspirehep.dojson.hepnames import hepnames2marc
 
 from inspirehep.modules.workflows.tasks.actions import (
-    is_record_accepted,
     halt_record,
+    in_production_mode,
     is_marked,
+    is_record_accepted,
 )
 
 from inspirehep.modules.workflows.tasks.submission import (
+    close_ticket,
     create_ticket,
     reply_ticket,
-    close_ticket,
     send_robotupload
 )
-from inspirehep.modules.workflows.tasks.upload import set_schema
+from inspirehep.modules.workflows.tasks.upload import store_record, set_schema
 
 from inspirehep.modules.authors.tasks import (
-    update_ticket_context,
+    curation_ticket_context,
     curation_ticket_needed,
     new_ticket_context,
     reply_ticket_context,
-    curation_ticket_context,
+    update_ticket_context,
 )
+
+
+SEND_TO_LEGACY = [
+    send_robotupload(
+        marcxml_processor=hepnames2marc,
+        mode="insert"
+    ),
+]
+
+
+NOTIFY_ACCEPTED = [
+    reply_ticket(
+        template="authors/tickets/user_accepted.html",
+        context_factory=reply_ticket_context),
+    close_ticket(ticket_id_key="ticket_id"),
+]
+
+
+CLOSE_TICKET_IF_NEEDED = [
+    IF(curation_ticket_needed, [
+        create_ticket(
+            template="authors/tickets/curation_needed.html",
+            queue="AUTHORS_curation",
+            context_factory=curation_ticket_context,
+            ticket_id_key="curation_ticket_id"
+        ),
+    ]),
+]
+
+
+NOTIFY_NOT_ACCEPTED = [
+    close_ticket(ticket_id_key="ticket_id"),
+]
 
 
 class Author(object):
@@ -79,25 +113,19 @@ class Author(object):
                          keep_new=True),
             halt_record(action="author_approval",
                         message="Accept submission?"),
-            IF_ELSE(is_record_accepted, [
-                send_robotupload(
-                    marcxml_processor=hepnames2marc,
-                    mode="insert"
+            IF_ELSE(
+                is_record_accepted,
+                (
+                    SEND_TO_LEGACY
+                    + NOTIFY_ACCEPTED
+                    + [
+                        # TODO: once legacy is out, this should become
+                        # unconditional, and remove the SEND_TO_LEGACY steps
+                        IF_NOT(in_production_mode, [store_record]),
+                    ]
+                    + CLOSE_TICKET_IF_NEEDED
                 ),
-                reply_ticket(
-                    template="authors/tickets/user_accepted.html",
-                    context_factory=reply_ticket_context),
-                close_ticket(ticket_id_key="ticket_id"),
-                IF(curation_ticket_needed, [
-                    create_ticket(
-                        template="authors/tickets/curation_needed.html",
-                        queue="AUTHORS_curation",
-                        context_factory=curation_ticket_context,
-                        ticket_id_key="curation_ticket_id"
-                    ),
-                ]),
-            ], [
-                close_ticket(ticket_id_key="ticket_id"),
-            ]),
+                NOTIFY_NOT_ACCEPTED
+            ),
         ]),
     ]
