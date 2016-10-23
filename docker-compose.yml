@@ -86,6 +86,7 @@ services:
       service: database
     volumes:
       - "${DOCKER_DATA}/tmp/inspirehep_db/data:/var/lib/postgresql/data/pgdata"
+
   scrapyd:
     extends:
       service: service_base
