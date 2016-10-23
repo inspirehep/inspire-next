@@ -70,13 +70,16 @@ def normalize_field_categories(sender, *args, **kwargs):
 
     We also use the heuristic that the source is 'INSPIRE' if it contains the
     word 'automatically', otherwise we preserve it.
+
+    Note that the valid `scheme`s are hardcoded in the schema, so any
+    non-recognized scheme will fail schema validation.
     """
     def _is_normalized(field):
-        scheme_is_inspire = field.get('scheme') == 'INSPIRE'
-        return scheme_is_inspire or '_scheme' in field or '_term' in field
-
-    def _is_from_inspire(term):
-        return term and term != 'Other'
+        return (
+            field.get('scheme') == 'INSPIRE'
+            or '_scheme' in field
+            or '_term' in field
+        )
 
     for i, field in enumerate(sender.get('field_categories', [])):
         if _is_normalized(field):
@@ -84,7 +87,7 @@ def normalize_field_categories(sender, *args, **kwargs):
 
         original_term = field.get('term')
         normalized_term = classify_field(original_term)
-        scheme = 'INSPIRE' if _is_from_inspire(normalized_term) else None
+        scheme = 'INSPIRE' if normalized_term else None
 
         original_scheme = field.get('scheme')
         if isinstance(original_scheme, (list, tuple)):
