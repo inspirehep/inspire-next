@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, print_function
 
+from pprint import pformat
+
 from flask import url_for
 
 from invenio_db import db
@@ -36,6 +38,8 @@ from inspirehep.modules.pidstore.minters import inspire_recid_minter
 def store_record(obj, *args, **kwargs):
     """Create and index new record in main record space."""
     assert "$schema" in obj.data, "No $schema attribute found!"
+
+    obj.log.debug('Storing record: \n%s', pformat(obj.data))
 
     # Create record
     # FIXME: Do some preprocessing of obj.data before creating a record so that

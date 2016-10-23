@@ -27,6 +27,7 @@ from __future__ import absolute_import, division, print_function
 import os
 import logging
 from functools import wraps
+from pprint import pformat
 
 from flask import current_app, render_template
 from invenio_accounts.models import User
@@ -310,6 +311,32 @@ def filter_keywords(obj, eng):
         keywords = filter(lambda x: x['accept'], keywords)
         obj.extra_data['keywords_prediction']['keywords'] = keywords
 
+        obj.log.debug('Filtered keywords: \n%s', pformat(keywords))
+
+    obj.log.debug('Got no prediction for keywords')
+
+
+def prepare_keywords(obj, eng):
+    """Prepares the keywords in the correct format to be sent"""
+    prediction = obj.extra_data.get('keywords_prediction', {})
+    if not prediction:
+        return
+
+    keywords = obj.data.get('keywords', [])
+    for keyword in prediction.get('keywords', []):
+        # TODO: differentiate between curated and gueesed keywords
+        keywords.append(
+            {
+                'classification_scheme': '',
+                'keyword': keyword['label'],
+                'source': 'curator' if keyword.get('curated') else 'magpie',
+            }
+        )
+
+    obj.data['keywords'] = keywords
+
+    obj.log.debug('Finally got keywords: \n%s', pformat(keywords))
+
 
 def user_pdf_get(obj, eng):
     """Upload user PDF file, if requested."""
@@ -324,7 +351,5 @@ def user_pdf_get(obj, eng):
 
 
 def remove_references(obj, eng):
-    from celery.contrib import rdb
-    #rdb.set_trace()
     obj.log.info(obj.data)
     del obj.data['references']
