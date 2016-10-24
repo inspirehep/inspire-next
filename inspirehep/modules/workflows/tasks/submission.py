@@ -257,12 +257,18 @@ def send_robotupload(url=None,
             # Log what we are sending
             LOGGER.debug(
                 "Going to robotupload %s to %s:\n%s\n",
-                mode=mode,
-                url=url,
-                marcxml=marcxml,
+                mode,
+                url,
+                marcxml,
             )
 
         if not in_production_mode():
+            obj.log.debug(
+                "Going to robotupload %s to %s:\n%s\n",
+                mode,
+                url,
+                marcxml,
+            )
             return
 
         result = make_robotupload_marcxml(
