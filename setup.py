@@ -78,6 +78,7 @@ install_requires = [
     'Flask-Caching>=1.0.1',
     'Flask-Script>=2.0.5',
     'flask-shell-ipython>=0.2.2',
+    'fs<2.0',  # TODO: remove once invenio-files-rest#130 is fixed
     'jsmin',
     'pytest-runner>=2.7.0',
     'workflow>=2.0.0',
