@@ -239,15 +239,15 @@
            ng-if="vm.update_ready || vm.saved">
         <div class="detail-panel">
 
-          <div id="hp-save" ng-if="vm.update_ready && vm._workflow.status === 'HALTED'">
+          <div id="hp-save" ng-if="vm.update_ready">
             <button class="btn btn-success btn-lg"
+                    ng-if="vm.record._workflow.status === 'HALTED'"
                     ng-click="Utils.updateRecord()">
               Save changes
             </button>
-          </div>
-
-          <div id="hp-save" ng-if="vm.update_ready && vm._workflow.status !== 'HALTED'">
-            <button class="btn btn-success btn-lg" disabled>
+            <button class="btn btn-success btn-lg"
+                    ng-if="vm.record._workflow.status !== 'HALTED'"
+                    disabled>
               Can't save until state changes, try refreshing.
             </button>
           </div>
