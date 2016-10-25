@@ -239,6 +239,9 @@ def send_robotupload(url=None,
         from inspirehep.dojson.utils import legacy_export_as_marc
         from inspirehep.utils.robotupload import make_robotupload_marcxml
 
+        from celery.contrib import rdb
+        rdb.set_trace()
+
         combined_callback_url = os.path.join(
             current_app.config["SERVER_NAME"],
             callback_url
@@ -256,7 +259,7 @@ def send_robotupload(url=None,
         if current_app.debug:
             # Log what we are sending
             LOGGER.debug(
-                "Going to robotupload %s to %s:\n%s\n",
+                "Going to robotupload mode:%s to url:%s:\n%s\n",
                 mode,
                 url,
                 marcxml,
@@ -353,7 +356,34 @@ def user_pdf_get(obj, eng):
             obj.data['fft'].append(fft)
         else:
             obj.data['fft'] = [fft]
-        obj.log.info("PDF file added to FFT.")
+        obj.log.info("User PDF file added to FFT.")
+
+
+def prepare_files(obj, eng):
+    """Adds to the fft field (files) the extracted pdfs if any"""
+    if not obj.files:
+        return
+
+    def _get_fft(url, name):
+        return {
+            'url': url,
+            'docfile_type': 'INSPIRE-PUBLIC',
+            'filename': name,
+        }
+
+    pdf_file_objs = [
+        (key, obj.files[key])
+        for key in obj.files.keys
+        if key.endswith('.pdf')
+    ]
+    pdf_paths = [
+        _get_fft(pdf_file_obj.obj.file.uri, name)
+        for name, pdf_file_obj in pdf_file_objs
+    ]
+
+    obj.data['fft'] = obj.data.get('fft', []) + pdf_paths
+    obj.log.info("Non-user PDF files added to FFT.")
+    obj.log.debug("Added PDF files: {}".format(pdf_paths))
 
 
 def remove_references(obj, eng):
