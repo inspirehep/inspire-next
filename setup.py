@@ -124,7 +124,7 @@ extras_require = {
     ],
     'crawler': [
         'scrapyd',
-        'hepcrawl',
+        'hepcrawl>=0.2.42',
     ],
     'tests': tests_require,
     'development': [
