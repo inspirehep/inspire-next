@@ -314,16 +314,23 @@ def newreview():
     objectid = request.values.get('objectid', 0, type=int)
     if not objectid:
         abort(400)
-    workflow_metadata.extra_data['is-update'] = True
+
     workflow_metadata = WorkflowUIRecord.get_record(objectid)['metadata']
+
+    # Initialise extra_data
+    workflow_metadata['extra_data'] = workflow_metadata.get('extra_data', {})
+    workflow_metadata['extra_data']['is-update'] = True
 
     # Converting json to populate form
     convert_for_form(workflow_metadata)
     workflow_metadata['comments'] = workflow_metadata['_private_note']
-    research_fields = workflow_metadata.pop('research_field')
+    research_fields = workflow_metadata.pop('field_categories')
     final_research_fields = []
     for field in research_fields:
-        final_research_fields.append(field['_term'])
+        try:
+            final_research_fields.append(field['term'])
+        except TypeError:
+            pass
     workflow_metadata['research_field'] = final_research_fields
 
     form = AuthorUpdateForm(
