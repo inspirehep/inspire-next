@@ -37,9 +37,10 @@ from inspirehep.modules.pidstore.minters import inspire_recid_minter
 
 def store_record(obj, *args, **kwargs):
     """Create and index new record in main record space."""
+    obj.log.debug('Storing record: \n%s', pformat(obj.data))
+
     assert "$schema" in obj.data, "No $schema attribute found!"
 
-    obj.log.debug('Storing record: \n%s', pformat(obj.data))
 
     # Create record
     # FIXME: Do some preprocessing of obj.data before creating a record so that
@@ -70,9 +71,20 @@ def set_schema(obj, eng):
         obj.data['$schema'] = "{data_type}.json".format(
             data_type=obj.data_type or eng.workflow_definition.data_type
         )
+        obj.log.debug('Schema set to %s', obj.data['$schema'])
+    else:
+        obj.log.debug('Schema already there')
 
     if not obj.data['$schema'].startswith('http'):
+        old_schema = obj.data['$schema']
         obj.data['$schema'] = url_for(
             'invenio_jsonschemas.get_schema',
             schema_path="records/{0}".format(obj.data['$schema'])
         )
+        obj.log.debug(
+            'Schema changed to %s from %s', obj.data['$schema'], old_schema
+        )
+    else:
+        obj.log.debug('Schema already is url')
+
+    obj.log.debug('Final schema %s', obj.data['$schema'])

@@ -85,6 +85,32 @@ NOTIFY_NOT_ACCEPTED = [
 ]
 
 
+SEND_UPDATE_NOTIFICATION = [
+    send_robotupload(
+        marcxml_processor=hepnames2marc,
+        mode="holdingpen"
+    ),
+    create_ticket(
+        template="authors/tickets/curator_update.html",
+        queue="Authors_cor_user",
+        context_factory=update_ticket_context,
+    ),
+]
+
+
+ASK_FOR_REVIEW = [
+    create_ticket(
+        template="authors/tickets/curator_new.html",
+        queue="Authors_add_user",
+        context_factory=new_ticket_context),
+    reply_ticket(template="authors/tickets/user_new.html",
+                context_factory=reply_ticket_context,
+                keep_new=True),
+    halt_record(action="author_approval",
+                message="Accept submission?"),
+]
+
+
 class Author(object):
     """Author ingestion workflow for HEPNames/Authors collection."""
     name = "Author"
@@ -93,39 +119,26 @@ class Author(object):
     workflow = [
         # Make sure schema is set for proper indexing in Holding Pen
         set_schema,
-        IF_ELSE(is_marked('is-update'), [
-            send_robotupload(
-                marcxml_processor=hepnames2marc,
-                mode="holdingpen"
-            ),
-            create_ticket(
-                template="authors/tickets/curator_update.html",
-                queue="Authors_cor_user",
-                context_factory=update_ticket_context,
-            ),
-        ], [
-            create_ticket(
-                template="authors/tickets/curator_new.html",
-                queue="Authors_add_user",
-                context_factory=new_ticket_context),
-            reply_ticket(template="authors/tickets/user_new.html",
-                         context_factory=reply_ticket_context,
-                         keep_new=True),
-            halt_record(action="author_approval",
-                        message="Accept submission?"),
-            IF_ELSE(
-                is_record_accepted,
-                (
-                    SEND_TO_LEGACY
-                    + NOTIFY_ACCEPTED
-                    + [
-                        # TODO: once legacy is out, this should become
-                        # unconditional, and remove the SEND_TO_LEGACY steps
-                        IF_NOT(in_production_mode, [store_record]),
-                    ]
-                    + CLOSE_TICKET_IF_NEEDED
+        IF_ELSE(
+            is_marked('is-update'),
+            SEND_UPDATE_NOTIFICATION,
+            ASK_FOR_REVIEW
+            + [
+                IF_ELSE(
+                    is_record_accepted,
+                    (
+                        SEND_TO_LEGACY
+                        + NOTIFY_ACCEPTED
+                        + [
+                            # TODO: once legacy is out, this should become
+                            # unconditional, and remove the SEND_TO_LEGACY
+                            # steps
+                            IF_NOT(in_production_mode, [store_record]),
+                        ]
+                        + CLOSE_TICKET_IF_NEEDED
+                    ),
+                    NOTIFY_NOT_ACCEPTED
                 ),
-                NOTIFY_NOT_ACCEPTED
-            ),
-        ]),
+            ],
+        ),
     ]

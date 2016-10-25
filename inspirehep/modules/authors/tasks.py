@@ -48,6 +48,9 @@ def formdata_to_model(obj, formdata):
     # ======
     # Schema
     # ======
+    if '$schema' not in data and '$schema' in obj.data:
+        data['$schema'] = obj.data.get('$schema')
+
     if '$schema' in data and not data['$schema'].startswith('http'):
         data['$schema'] = url_for(
             'invenio_jsonschemas.get_schema',

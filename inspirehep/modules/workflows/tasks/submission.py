@@ -239,9 +239,6 @@ def send_robotupload(url=None,
         from inspirehep.dojson.utils import legacy_export_as_marc
         from inspirehep.utils.robotupload import make_robotupload_marcxml
 
-        from celery.contrib import rdb
-        rdb.set_trace()
-
         combined_callback_url = os.path.join(
             current_app.config["SERVER_NAME"],
             callback_url
@@ -272,6 +269,10 @@ def send_robotupload(url=None,
                 url,
                 marcxml,
             )
+            obj.log.debug(
+                "Base object data:\n%s",
+                pformat(data)
+            )
             return
 
         result = make_robotupload_marcxml(
@@ -295,6 +296,7 @@ def send_robotupload(url=None,
             obj.log.info("Robotupload sent!")
             obj.log.info(result.text)
             eng.halt("Waiting for robotupload: {0}".format(result.text))
+
         obj.log.info("end of upload")
 
     return _send_robotupload
