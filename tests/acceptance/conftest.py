@@ -24,21 +24,16 @@
 
 from __future__ import absolute_import, division, print_function
 
-from os import environ
 from time import sleep
 
 import pytest
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
 
 from invenio_db import db
 from invenio_search import current_search_client as es
 
-from inspirehep.config import SERVER_NAME
 from inspirehep.factory import create_app
+from bat_framework.arsenic import Arsenic
+from bat_framework.pages import top_navigation_page
 
 
 @pytest.fixture(scope='session')
@@ -73,23 +68,12 @@ def app(request):
 
 
 @pytest.fixture
-def selenium(selenium, app):
-    selenium.maximize_window()
-    selenium.get(environ['SERVER_NAME'])
-    return selenium
+def arsenic(selenium, app):
+    Arsenic(selenium)
 
 
 @pytest.fixture
-def login(selenium):
-    selenium.find_element_by_link_text('Sign in').click()
-    selenium.get(environ['SERVER_NAME'] + '/login/?local=1')
-    selenium.find_element_by_id('email').send_keys('admin@inspirehep.net')
-    selenium.find_element_by_id('password').send_keys('123456')
-    selenium.find_element_by_xpath("//button[@type='submit']").click()
-
+def login(arsenic):
+    top_navigation_page.log_in('admin@inspirehep.net', '123456')
     yield
-
-    selenium.execute_script('document.getElementById("toast-container").style.display = "none"')
-    WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.ID, 'user-info')))
-    selenium.find_element_by_id("user-info").click()
-    selenium.find_element_by_xpath("(//button[@type='button'])[2]").click()
+    top_navigation_page.log_out()
