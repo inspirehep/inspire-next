@@ -215,6 +215,7 @@ setup(
             'crossref = inspirehep.modules.crossref:CrossRef',
             'inspire_orcid = inspirehep.modules.orcid:INSPIREOrcid',
             'inspire_disambiguation = inspirehep.modules.disambiguation:InspireDisambiguation',
+            'inspire_tools = inspirehep.modules.tools:INSPIRETools',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
@@ -230,6 +231,7 @@ setup(
             'invenio_search_ui_search_js = inspirehep.modules.search.bundles:js',
             'inspirehep_holding_css = inspirehep.modules.theme.bundles:holding_pen_css',
             'inspirehep_holding_js = inspirehep.modules.workflows.bundles:details_js',
+            'inspirehep_tools_authorlist_js = inspirehep.modules.tools.bundles:js'
         ],
         'invenio_jsonschemas.schemas': [
             'inspire_records = inspire_schemas',
