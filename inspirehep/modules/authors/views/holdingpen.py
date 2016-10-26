@@ -323,7 +323,7 @@ def newreview():
 
     # Converting json to populate form
     convert_for_form(workflow_metadata)
-    workflow_metadata['comments'] = workflow_metadata['_private_note']
+    workflow_metadata['comments'] = workflow_metadata.get('_private_note')
     research_fields = workflow_metadata.pop('field_categories')
     final_research_fields = []
     for field in research_fields:
