@@ -31,6 +31,13 @@ from dojson import utils
 from ..model import updateform
 
 
+def _set_int_or_del(mydict, key, myint):
+    try:
+        mydict[key] = int(myint)
+    except ValueError:
+        del mydict[key]
+
+
 @updateform.over('_status', '^status$')
 def status(self, key, value):
     if 'name' in self:
@@ -41,7 +48,7 @@ def status(self, key, value):
 
 @updateform.over('native_name', '^native_name$')
 def native_name(self, key, value):
-    return value
+    return [value]
 
 
 @updateform.over('_display_name', '^display_name$')
@@ -205,6 +212,8 @@ def experiments(self, key, value):
                    reverse=True)
     for experiment in value:
         experiment["status"] = "current" if experiment["status"] else ""
+        _set_int_or_del(experiment, "start_year", experiment["start_year"])
+        _set_int_or_del(experiment, "end_year", experiment["end_year"])
         experiments.append(experiment)
 
     return experiments
