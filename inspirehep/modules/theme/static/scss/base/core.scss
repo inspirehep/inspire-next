@@ -30,7 +30,7 @@ Generic core styles that are included in all INSPIRE pages.
   padding-bottom: 50px;
 
   @media screen and (max-width: $screen-md-min) {
-      margin-top: 0;
+    margin-top: 0;
   }
 }
 
@@ -96,7 +96,7 @@ a[ng-click] {
 /* Utility classes
 ================================================== */
 .hide-element {
-    display: none;
+  display: none;
 }
 
 .chip {
@@ -146,7 +146,6 @@ a[ng-click] {
   }
 }
 
-
 /* Personalize angular-loading-bar
 ================================================== */
 #loading-bar .bar {
@@ -183,29 +182,110 @@ a[ng-click] {
   border-radius: 100%;
 }
 
-
 #loading-bar-spinner .spinner-icon {
   width: 14px;
   height: 14px;
 
-  border:  solid 2px transparent;
-  border-top-color:  white;
+  border: solid 2px transparent;
+  border-top-color: white;
   border-left-color: white;
   border-radius: 50%;
 
   -webkit-animation: loading-bar-spinner 400ms linear infinite;
-  -moz-animation:    loading-bar-spinner 400ms linear infinite;
-  -ms-animation:     loading-bar-spinner 400ms linear infinite;
-  -o-animation:      loading-bar-spinner 400ms linear infinite;
-  animation:         loading-bar-spinner 400ms linear infinite;
+  -moz-animation: loading-bar-spinner 400ms linear infinite;
+  -ms-animation: loading-bar-spinner 400ms linear infinite;
+  -o-animation: loading-bar-spinner 400ms linear infinite;
+  animation: loading-bar-spinner 400ms linear infinite;
 }
 
-
 .modal-body {
-    max-height: calc(100vh - 212px);
-    overflow-y: auto;
+  max-height: calc(100vh - 212px);
+  overflow-y: auto;
 }
 
 .modal-dialog {
   width: 80%;
+}
+
+.cs-header-block {
+  background-color: $blue;
+  min-height: 120px;
+  margin-top: -20px;
+
+  padding: 20px;
+
+  h4 {
+    padding-top:10px;
+    text-transform: capitalize;
+  }
+
+  .cs-back-link {
+    a {
+      color: white;
+    }
+  }
+
+  &.authors {
+    background-color: $authors-collection;
+
+    .cs-back-link {
+      padding-bottom: 15px;
+      border-bottom: 1px solid $pete-river;
+    }
+  }
+
+  &.data {
+    background-color: $data-collection;
+
+    .cs-back-link {
+      padding-bottom: 15px;
+      border-bottom: 1px solid $wisteria;
+    }
+  }
+
+  &.literature {
+    background-color: $literature-collection;
+
+    .cs-back-link {
+      padding-bottom: 15px;
+      border-bottom: 1px solid $orange;
+    }
+  }
+
+  &.experiments {
+    background-color: $experiments-collection;
+
+    .cs-back-link {
+      padding-bottom: 15px;
+      border-bottom: 1px solid $pomegranate;
+    }
+  }
+
+  &.conferences {
+    background-color: $conferences-collection;
+
+    .cs-back-link {
+      padding-bottom: 15px;
+      border-bottom: 1px solid $orange;
+    }
+  }
+
+  &.institutions {
+    background-color: $institutions-collection;
+
+    .cs-back-link {
+      padding-bottom: 15px;
+      border-bottom: 1px solid $turquoise;
+    }
+  }
+
+  &.journals {
+    background-color: $journals-collection;
+
+    .cs-back-link {
+      padding-bottom: 15px;
+      border-bottom: 1px solid $asbestos;
+    }
+  }
+
 }

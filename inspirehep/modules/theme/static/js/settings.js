@@ -35,10 +35,14 @@ require.config({
     'bootstrap-datetimepicker': 'node_modules/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
     'bootstrap-multiselect': 'node_modules/bootstrap-multiselect/dist/js/bootstrap-multiselect',
     'bucketsjs': 'node_modules/buckets-js/dist/buckets',
+    'citesummary': 'node_modules/inspire-citesummary-js/dist/inspire-citesummary-js',
     'clipboard': 'node_modules/clipboard/dist/clipboard',
+    'crossfilter': 'node_modules/crossfilter2/crossfilter.min',
     'd3': 'node_modules/d3/d3',
     'd3-tip': 'node_modules/d3-tip/index',
     'd3wrapper': 'js/d3-wrapper',
+    'dc': 'node_modules/inspire-citesummary-js/src/lib/dc',
+    'dc-legend2': 'node_modules/inspire-citesummary-js/src/lib/dc.legend2',
     'datatables': 'node_modules/datatables.net-bs/js/dataTables.bootstrap',
     'datatables.net': 'node_modules/datatables.net/js/jquery.dataTables',
     'default_typeahead_configuration': 'node_modules/inspirehep-typeahead-search-js/src/default_typeahead_configuration',
@@ -132,10 +136,24 @@ require.config({
       ],
       exports: '$.fn.multiselect',
     },
+    'citesummary': {
+      deps: [
+        'angular',
+        'crossfilter',
+        'd3',
+        'dc',
+        'dc-legend2'
+      ],
+    },
+    'dc-legend2': {
+      deps: [
+        'dc'
+      ]
+    },
     'holding-pen-controllers': {
       deps: [
         'angular',
-     ],
+      ],
     },
     'holding-pen-directives': {
       deps: [

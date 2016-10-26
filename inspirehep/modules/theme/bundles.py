@@ -71,12 +71,6 @@ js = NpmBundle(
     }
 )
 
-detailedjs = NpmBundle(
-    "js/detailed_record_init.js",
-    filters="requirejs",
-    output="gen/detailed_record.%(version)s.js",
-)
-
 css = NpmBundle(
     "scss/inspirehep.scss",
     filters="node-scss, cleancss",
@@ -106,3 +100,23 @@ holding_pen_css = NpmBundle(
     output="gen/inspirehep.holding.%(version)s.css",
     depends="scss/**/*.scss"
 )
+
+citesummary_js = NpmBundle(
+    "js/inspire_citesummary_init.js",
+    filters='requirejs',
+    output="gen/citesummary.%(version)s.js",
+    npm={
+        "inspire-citesummary-js": "~0.0.4"
+    }
+)
+
+citesummary_css = NpmBundle(
+    "node_modules/dc/dc.min.css",
+    "node_modules/inspire-citesummary-js/examples/style.css",
+    filters='cleancss',
+    output="gen/citesummary.%(version)s.css",
+    npm={
+        "dc": "~2.0.0-beta.32"
+    }
+)
+

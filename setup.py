@@ -222,6 +222,8 @@ setup(
             'requirejs = inspirehep.modules.theme.bundles:requirejs',
             'inspirehep_author_profile_js = inspirehep.modules.authors.bundles:js',
             'inspirehep_author_update_css = inspirehep.modules.authors.bundles:update_css',
+            'inspirehep_citesummary_js = inspirehep.modules.theme.bundles:citesummary_js',
+            'inspirehep_citesummary_css = inspirehep.modules.theme.bundles:citesummary_css',
             'inspirehep_forms_css = inspirehep.modules.forms.bundles:css',
             'inspirehep_forms_js = inspirehep.modules.forms.bundles:js',
             'inspirehep_detailed_js = inspirehep.modules.theme.bundles:detailedjs',

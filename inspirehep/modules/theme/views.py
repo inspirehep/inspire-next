@@ -182,6 +182,11 @@ def data():
     )
 
 
+@blueprint.route('/<string:collection>/<int:recid>/citesummary', methods=['GET',])
+def citation_summary(collection, recid):
+    """ View for citation summary for a record """
+    return render_template('inspirehep_theme/citations/citation_summary.html', collection=collection, recid=recid)
+
 #
 # Error handlers
 #
