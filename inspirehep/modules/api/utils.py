@@ -24,8 +24,59 @@
 
 from __future__ import absolute_import, division, print_function
 
+from inspirehep.modules.search import LiteratureSearch
 from inspirehep.utils.helpers import force_force_list
-from inspirehep.utils.record import get_value
+from inspirehep.utils.record import get_title, get_value
+
+
+def build_citesummary(search):
+    citesummary = []
+
+    for i, el in enumerate(search.scan()):
+        result = el.to_dict()
+
+        citesummary.append({
+            'citations': [],
+            'collaboration': is_collaboration(result),
+            'core': is_core(result),
+            'date': get_date(result),
+            'document_type': get_document_type(result),
+            'id': get_id(result),
+            'subject': get_subject(result),
+            'title': get_title(result),
+        })
+
+        search_by_literature = LiteratureSearch().query(
+            'match', references__recid=get_id(result)
+        ).params(
+            _source=[
+                'authors.recid',
+                'collaboration.value',
+                'collections.primary',
+                'control_number',
+                'earliest_date',
+                'facet_inspire_doc_type',
+                'field_categories',
+                'titles.title',
+            ]
+        )
+
+        for el in search_by_literature.scan():
+            literature_result = el.to_dict()
+
+            citesummary[i]['citations'].append({
+                'collaboration': is_collaboration(literature_result),
+                'core': is_core(literature_result),
+                'date': get_date(literature_result),
+                'document_type': get_document_type(literature_result),
+                'id': get_id(literature_result),
+                'selfcite': is_selfcite(
+                    result, literature_result),
+                'subject': get_subject(literature_result),
+                'title': get_title(literature_result),
+            })
+
+    return citesummary
 
 
 def get_date(record):
