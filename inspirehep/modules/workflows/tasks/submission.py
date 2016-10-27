@@ -368,7 +368,7 @@ def prepare_files(obj, eng):
 
     def _get_fft(url, name):
         return {
-            'url': url,
+            'url': os.path.realpath(url),
             'docfile_type': 'INSPIRE-PUBLIC',
             'filename': name,
         }
