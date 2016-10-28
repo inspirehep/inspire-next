@@ -24,16 +24,29 @@ from __future__ import absolute_import, division, print_function
 
 import os
 
-
+from bat_framework.arsenic import Arsenic
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
-from bat_framework.arsenic import Arsenic
 
 
 def go_to():
     Arsenic().get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+
+
+def write_arxiv_id(arxiv_id):
+    Arsenic().find_element_by_id('arxiv_id').clear()
+    Arsenic().find_element_by_id('arxiv_id').send_keys(arxiv_id)
+    Arsenic().find_element_by_id('arxiv_id').send_keys(Keys.TAB)
+    return WebDriverWait(Arsenic(), 10).until(EC.presence_of_element_located((By.ID, 'state-arxiv_id'))).text
+
+
+def write_doi_id(doi):
+    Arsenic().find_element_by_id('doi').clear()
+    Arsenic().find_element_by_id('doi').send_keys(doi)
+    Arsenic().find_element_by_id('doi').send_keys(Keys.TAB)
+    return WebDriverWait(Arsenic(), 10).until(EC.presence_of_element_located((By.ID, 'state-doi'))).text
 
 
 def submit_arxiv_id(arxiv_id):
@@ -72,5 +85,6 @@ def submit_doi_id(doi_id):
         'author-2': Arsenic().find_element_by_id('authors-2-name').get_attribute('value'),
         'page-range': Arsenic().find_element_by_id('page_range_article_id').get_attribute('value')
         }
+
 
 

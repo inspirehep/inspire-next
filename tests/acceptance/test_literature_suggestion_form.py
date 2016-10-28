@@ -63,3 +63,17 @@ def test_import_from_doi(login):
         }
 
     assert imported_data == test_data
+
+
+def test_format_input_arXiv(login):
+    create_literature.go_to()
+    assert 'The provided ArXiv ID is invalid - it should look' not in create_literature.write_arxiv_id('1001.4538')
+    assert 'The provided ArXiv ID is invalid - it should look' in create_literature.write_arxiv_id('hep-th.9711200')
+    assert 'The provided ArXiv ID is invalid - it should look' not in create_literature.write_arxiv_id('hep-th/9711200')
+
+
+def test_format_input_doi(login):
+    create_literature.go_to()
+    assert 'The provided DOI is invalid - it should look' in create_literature.write_doi_id('dummy:10.1086/305772')
+    assert 'The provided DOI is invalid - it should look' not in create_literature.write_doi_id('10.1086/305772')
+    assert 'The provided DOI is invalid - it should look' in create_literature.write_doi_id('state-doi')
