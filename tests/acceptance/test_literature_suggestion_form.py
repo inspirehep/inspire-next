@@ -44,3 +44,22 @@ def test_import_from_arXiv(login):
         }
 
     assert imported_data == test_data
+
+
+def test_import_from_doi(login):
+    create_literature.go_to()
+    imported_data = create_literature.submit_doi_id('10.1086/305772')
+
+    test_data = {
+        'issue': '2',
+        'year': '1998',
+        'volume': '500',
+        'page-range': '525-553',
+        'author': 'Schlegel, David J.',
+        'author-1': 'Finkbeiner, Douglas P.',
+        'author-2': 'Davis, Marc',
+        'journal': 'The Astrophysical Journal',
+        'title': 'Maps of Dust Infrared Emission for Use in Estimation of Reddening and Cosmic Microwave Background Radiation Foregrounds'
+        }
+
+    assert imported_data == test_data

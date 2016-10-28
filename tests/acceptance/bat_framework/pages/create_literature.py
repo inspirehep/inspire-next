@@ -53,3 +53,24 @@ def submit_arxiv_id(arxiv_id):
         'journal': Arsenic().find_element_by_id('journal_title').get_attribute('value'),
         'page-range': Arsenic().find_element_by_id('page_range_article_id').get_attribute('value')
         }
+
+
+def submit_doi_id(doi_id):
+    Arsenic().find_element_by_id('doi').send_keys(doi_id)
+    Arsenic().find_element_by_id('importData').click()
+    WebDriverWait(Arsenic(), 20).until(EC.visibility_of_element_located((By.ID, 'acceptData'))).click()
+    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'doi')))
+
+    return {
+        'year': Arsenic().find_element_by_id('year').get_attribute('value'),
+        'title': Arsenic().find_element_by_id('title').get_attribute('value'),
+        'issue': Arsenic().find_element_by_id('issue').get_attribute('value'),
+        'volume': Arsenic().find_element_by_id('volume').get_attribute('value'),
+        'journal': Arsenic().find_element_by_id('journal_title').get_attribute('value'),
+        'author': Arsenic().find_element_by_id('authors-0-name').get_attribute('value'),
+        'author-1': Arsenic().find_element_by_id('authors-1-name').get_attribute('value'),
+        'author-2': Arsenic().find_element_by_id('authors-2-name').get_attribute('value'),
+        'page-range': Arsenic().find_element_by_id('page_range_article_id').get_attribute('value')
+        }
+
+
