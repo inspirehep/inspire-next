@@ -35,6 +35,11 @@ def go_to():
     Arsenic().get(os.environ['SERVER_NAME'] + '/submit/literature/create')
 
 
+def write_affilation(affilation):
+    _skip_import_data()
+    return Arsenic().write_in_autocomplete_field('authors-0-affiliation', affilation)
+
+
 def write_arxiv_id(arxiv_id):
     Arsenic().find_element_by_id('arxiv_id').clear()
     Arsenic().find_element_by_id('arxiv_id').send_keys(arxiv_id)
@@ -87,4 +92,6 @@ def submit_doi_id(doi_id):
         }
 
 
-
+def _skip_import_data():
+    Arsenic().find_element_by_id("skipImportData").click()
+    WebDriverWait(Arsenic(), 10).until(EC.text_to_be_present_in_element((By.ID, "form_container"), 'Type of Document'))

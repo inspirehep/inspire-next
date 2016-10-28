@@ -26,6 +26,12 @@ from bat_framework.pages import create_literature
 
 
 # Components Tests
+def test_basic_info_autocomplete_affilation(login):
+    """Test the autocompletion for the affilation in the basic info section"""
+    create_literature.go_to()
+    assert 'Oxford U.' in create_literature.write_affilation('oxf')
+
+
 def test_import_from_arXiv(login):
     """Test the import from arXiv"""
     create_literature.go_to()
