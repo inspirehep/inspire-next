@@ -20,24 +20,15 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Integration tests for the TEI exporter."""
-
 from __future__ import absolute_import, division, print_function
 
-import os
-import pkg_resources
-
-import pytest
-
-from inspirehep.modules.hal import tei
-from inspirehep.utils.record_getter import get_db_record
+from invenio_db import db
 
 
-def test_format_tei(app):
-    expected = pkg_resources.resource_string(
-        __name__, os.path.join('fixtures', 'test_tei_record.xml'))
+class InspireHalRecords(db.Model):
+    __tablename__ = 'inspire_hal_records'
 
-    record = get_db_record('literature', 1407506)
-    result = tei.convert_record_to_hal(record)
-
-    assert result == expected
+    inspire_id = db.Column(db.String(160), primary_key=True)
+    hal_id = db.Column(db.String(160), unique=True)
+    version = db.Column(db.Integer)
+    timestamp = db.Column(db.DateTime)

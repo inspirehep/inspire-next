@@ -20,6 +20,7 @@
 
             </titleStmt>
 
+
           <notesStmt>
             <note type="audience" n="1"/>
             <note type="popular" n="0"/>
@@ -53,8 +54,9 @@
             </langUsage>
             <textClass>
               <classCode scheme="halDomain" n="phys.phys.phys-gen-ph"/><!-- FIXME -->
-              <classCode scheme="halTypology" n="NOTE"/>
+              <classCode scheme="halTypology" n="OTHER"/>
             </textClass>
+            <abstract xml:lang="en"></abstract><!-- FIXME: Confirm when this is required for submission -->
           </profileDesc>
         </biblFull>
       </listBibl>

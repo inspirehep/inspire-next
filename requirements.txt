@@ -36,4 +36,7 @@
 -e git+https://github.com/inspirehep/invenio-workflows-ui.git@qa#egg=invenio-workflows-ui==1.0.0a1.dev20160624
 -e git+https://github.com/inspirehep/invenio-workflows-files.git@master#egg=invenio-workflows-files==0.1.0.dev20160000
 
+# INSPIRE fork of Python SWORD2 client
+-e git+https://github.com/inspirehep/python-client-sword2.git#egg=python-client-sword2
+
 -e .[postgresql]

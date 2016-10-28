@@ -25,6 +25,14 @@
             </titleStmt>
           {% endif %}
 
+          {% if has_attachment %}
+          <editionStmt>
+            <edition>
+              <ref type="file" subtype="author" target="doc.pdf" n="1"/>
+            </edition>
+          </editionStmt>
+          {% endif %}
+
           <notesStmt>
             <note type="audience" n="1"/>
             <note type="popular" n="0"/>
@@ -109,6 +117,7 @@
               {% endfor %}#}
               <classCode scheme="halTypology" n="{{ typology }}"/>
             </textClass>
+            <abstract xml:lang="en"></abstract><!-- FIXME: Confirm when this is required for submission -->
           </profileDesc>
         </biblFull>
       </listBibl>

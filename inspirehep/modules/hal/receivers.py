@@ -20,24 +20,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Integration tests for the TEI exporter."""
-
 from __future__ import absolute_import, division, print_function
 
-import os
-import pkg_resources
+from flask import current_app
 
-import pytest
+from inspirehep.modules.records.signals import after_record_enhanced
 
-from inspirehep.modules.hal import tei
-from inspirehep.utils.record_getter import get_db_record
+from .tasks import send_to_hal
 
 
-def test_format_tei(app):
-    expected = pkg_resources.resource_string(
-        __name__, os.path.join('fixtures', 'test_tei_record.xml'))
+@after_record_enhanced.connect
+def send_records_to_hal(sender, *args, **kwargs):
+    """ Schedules a Celery task that sends every new/updated record to hal.
 
-    record = get_db_record('literature', 1407506)
-    result = tei.convert_record_to_hal(record)
-
-    assert result == expected
+        :param sender: The record to be sented to hal (in json format).
+    """
+    if current_app.config.get('HAL_SYNCHRONIZATION_ENABLED'):
+        send_to_hal.delay(sender=sender)
