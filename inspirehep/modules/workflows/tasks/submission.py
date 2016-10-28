@@ -244,7 +244,9 @@ def send_robotupload(url=None,
             callback_url
         )
         if not combined_callback_url.startswith('http'):
-            combined_callback_url = "http://{0}".format(combined_callback_url)
+            combined_callback_url = "https://{0}".format(
+                combined_callback_url
+            )
 
         if extra_data_key is not None:
             data = obj.extra_data.get(extra_data_key) or {}
