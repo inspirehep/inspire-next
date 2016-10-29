@@ -27,13 +27,11 @@
 -e git+https://github.com/inspirehep/invenio-query-parser.git@invenio3-inspire#egg=invenio-query-parser==0.6.0
 
 # INSPIRE forks of Invenio packages
--e git+https://github.com/inspirehep/invenio-pidstore.git#egg=invenio-pidstore
+-e git+https://github.com/inspirehep/invenio-pidstore.git#egg=invenio_pidstore
 
 # Workflows and Holding Pen related dependencies
+-e git+https://github.com/david-caro/workflow.git@minor_fixes_bumped_version#egg=workflow==2.0.1.dev20161019
 -e git+https://github.com/inveniosoftware/invenio-classifier.git#egg=invenio-classifier
 -e git+https://github.com/inspirehep/invenio-matcher.git#egg=invenio-matcher
--e git+https://github.com/inspirehep/invenio-workflows.git@qa#egg=invenio-workflows==1.0.0a1.dev20160624
--e git+https://github.com/inspirehep/invenio-workflows-ui.git@qa#egg=invenio-workflows-ui==1.0.0a1.dev20160624
--e git+https://github.com/inspirehep/invenio-workflows-files.git@master#egg=invenio-workflows-files==0.1.0.dev20160000
 
 -e .[postgresql]

@@ -70,13 +70,16 @@ def normalize_field_categories(sender, *args, **kwargs):
 
     We also use the heuristic that the source is 'INSPIRE' if it contains the
     word 'automatically', otherwise we preserve it.
+
+    Note that the valid `scheme`s are hardcoded in the schema, so any
+    non-recognized scheme will fail schema validation.
     """
     def _is_normalized(field):
-        scheme_is_inspire = field.get('scheme') == 'INSPIRE'
-        return scheme_is_inspire or '_scheme' in field or '_term' in field
-
-    def _is_from_inspire(term):
-        return term and term != 'Other'
+        return (
+            field.get('scheme') == 'INSPIRE'
+            or '_scheme' in field
+            or '_term' in field
+        )
 
     for i, field in enumerate(sender.get('field_categories', [])):
         if _is_normalized(field):
@@ -84,7 +87,7 @@ def normalize_field_categories(sender, *args, **kwargs):
 
         original_term = field.get('term')
         normalized_term = classify_field(original_term)
-        scheme = 'INSPIRE' if _is_from_inspire(normalized_term) else None
+        scheme = 'INSPIRE' if normalized_term else None
 
         original_scheme = field.get('scheme')
         if isinstance(original_scheme, (list, tuple)):
@@ -167,9 +170,14 @@ def populate_inspire_document_type(sender, json, *args, **kwargs):
     """
     def _was_not_published(json):
         def _not_published(publication_info):
-            return 'page_start' not in publication_info and 'artid' not in publication_info
+            return (
+                'page_start' not in publication_info
+                and 'artid' not in publication_info
+            )
 
-        publication_infos = force_force_list(get_value(json, 'publication_info'))
+        publication_infos = force_force_list(
+            get_value(json, 'publication_info')
+        )
         not_published = map(_not_published, publication_infos)
 
         return all(not_published)
@@ -197,7 +205,9 @@ def populate_inspire_document_type(sender, json, *args, **kwargs):
 
     result = []
 
-    primary_collections = force_force_list(get_value(json, 'collections.primary'))
+    primary_collections = force_force_list(
+        get_value(json, 'collections.primary')
+    )
     normalized_collections = map(lambda el: el.lower(), primary_collections)
 
     for collection in normalized_collections:
@@ -350,7 +360,9 @@ def check_if_record_is_going_to_be_deleted(sender, *args, **kwargs):
     then delete all the record's pidstores.
     """
     control_number = int(sender.get('control_number'))
-    collection = InspireRecordIdProvider.schema_to_pid_type(sender.get('$schema'))
+    collection = InspireRecordIdProvider.schema_to_pid_type(
+        sender.get('$schema')
+    )
     record = get_db_record(collection, control_number)
 
     if sender.get('deleted'):

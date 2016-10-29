@@ -434,6 +434,9 @@
                         },
                         "report_numbers": {
                             "properties": {
+                                "source": {
+                                    "type": "string"
+                                },
                                 "value": {
                                     "copy_to": [
                                         "reportnumber"
