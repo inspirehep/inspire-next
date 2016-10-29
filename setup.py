@@ -69,6 +69,9 @@ install_requires = [
     'invenio-userprofiles>=1.0.0a7',
     'invenio-oaiharvester==1.0.0a2',
     'invenio-utils==0.2.0',  # Not fully Invenio 3 ready
+    'invenio-workflows~=6.0.2',
+    'invenio-workflows-files~=0.0.3',
+    'invenio-workflows-ui~=1.0.26',
     'invenio>=3.0.0a1,<3.1.0',
     'inspire-crawler>=0.2.1',
     'inspire-schemas~=0.1',
