@@ -102,12 +102,17 @@ ASK_FOR_REVIEW = [
     create_ticket(
         template="authors/tickets/curator_new.html",
         queue="Authors_add_user",
-        context_factory=new_ticket_context),
-    reply_ticket(template="authors/tickets/user_new.html",
-                context_factory=reply_ticket_context,
-                keep_new=True),
-    halt_record(action="author_approval",
-                message="Accept submission?"),
+        context_factory=new_ticket_context,
+    ),
+    reply_ticket(
+        template="authors/tickets/user_new.html",
+        context_factory=reply_ticket_context,
+        keep_new=True,
+    ),
+    halt_record(
+        action="author_approval",
+        message="Accept submission?",
+    ),
 ]
 
 

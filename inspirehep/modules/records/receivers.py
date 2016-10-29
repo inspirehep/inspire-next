@@ -170,9 +170,14 @@ def populate_inspire_document_type(sender, json, *args, **kwargs):
     """
     def _was_not_published(json):
         def _not_published(publication_info):
-            return 'page_start' not in publication_info and 'artid' not in publication_info
+            return (
+                'page_start' not in publication_info
+                and 'artid' not in publication_info
+            )
 
-        publication_infos = force_force_list(get_value(json, 'publication_info'))
+        publication_infos = force_force_list(
+            get_value(json, 'publication_info')
+        )
         not_published = map(_not_published, publication_infos)
 
         return all(not_published)
@@ -200,7 +205,9 @@ def populate_inspire_document_type(sender, json, *args, **kwargs):
 
     result = []
 
-    primary_collections = force_force_list(get_value(json, 'collections.primary'))
+    primary_collections = force_force_list(
+        get_value(json, 'collections.primary')
+    )
     normalized_collections = map(lambda el: el.lower(), primary_collections)
 
     for collection in normalized_collections:
@@ -353,7 +360,9 @@ def check_if_record_is_going_to_be_deleted(sender, *args, **kwargs):
     then delete all the record's pidstores.
     """
     control_number = int(sender.get('control_number'))
-    collection = InspireRecordIdProvider.schema_to_pid_type(sender.get('$schema'))
+    collection = InspireRecordIdProvider.schema_to_pid_type(
+        sender.get('$schema')
+    )
     record = get_db_record(collection, control_number)
 
     if sender.get('deleted'):

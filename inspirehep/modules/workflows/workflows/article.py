@@ -303,7 +303,7 @@ CHECK_IF_MERGE_AND_STOP_IF_SO = [
                 is_submission,
                 NOTIFY_ALREADY_EXISTING,
                 [
-                    #halt_record(action="merge_approval"),
+                    # halt_record(action="merge_approval"),
                     delete_self_and_stop_processing,
                 ]
             ),
@@ -331,6 +331,7 @@ ADD_MARKS = [
         )
     ),
 ]
+
 
 class Article(object):
     """Article ingestion workflow for Literature collection."""
