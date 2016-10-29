@@ -293,7 +293,7 @@ def test_normalize_field_categories_ignores_unknown_terms_from_unknown_schemes()
     assert json_dict['field_categories'] == [
         {
             '_scheme': 'foo',
-            'scheme': None,
+            'scheme': 'INSPIRE',
             '_term': 'bar',
             'term': 'Other',
         },

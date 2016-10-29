@@ -34,8 +34,9 @@ from ..model import updateform
 def _set_int_or_del(mydict, key, myint):
     try:
         mydict[key] = int(myint)
-    except ValueError:
-        del mydict[key]
+    except (ValueError, TypeError):
+        if key in mydict:
+            del mydict[key]
 
 
 @updateform.over('_status', '^status$')
@@ -212,8 +213,8 @@ def experiments(self, key, value):
                    reverse=True)
     for experiment in value:
         experiment["status"] = "current" if experiment["status"] else ""
-        _set_int_or_del(experiment, "start_year", experiment["start_year"])
-        _set_int_or_del(experiment, "end_year", experiment["end_year"])
+        _set_int_or_del(experiment, "start_year", experiment.get("start_year"))
+        _set_int_or_del(experiment, "end_year", experiment.get("end_year"))
         experiments.append(experiment)
 
     return experiments
