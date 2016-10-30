@@ -35,6 +35,11 @@ def go_to():
     Arsenic().get(os.environ['SERVER_NAME'] + '/submit/literature/create')
 
 
+def write_journal_title(journal_title):
+    _skip_import_data()
+    return Arsenic().write_in_autocomplete_field('journal_title', journal_title)
+
+
 def write_affilation(affilation):
     _skip_import_data()
     return Arsenic().write_in_autocomplete_field('authors-0-affiliation', affilation)
