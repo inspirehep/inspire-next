@@ -32,8 +32,5 @@
 # Workflows and Holding Pen related dependencies
 -e git+https://github.com/inveniosoftware/invenio-classifier.git#egg=invenio-classifier
 -e git+https://github.com/inspirehep/invenio-matcher.git#egg=invenio-matcher
--e git+https://github.com/inspirehep/invenio-workflows.git@qa#egg=invenio-workflows==1.0.0a1.dev20160624
--e git+https://github.com/inspirehep/invenio-workflows-ui.git@qa#egg=invenio-workflows-ui==1.0.0a1.dev20160624
--e git+https://github.com/inspirehep/invenio-workflows-files.git@master#egg=invenio-workflows-files==0.1.0.dev20160000
 
 -e .[postgresql]
