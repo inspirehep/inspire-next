@@ -62,7 +62,7 @@ install_requires = [
     'invenio-records>=1.0.0a16',  # Add [versioning] in the future
     'invenio-rest[cors]>=1.0.0a7',
     'invenio-search>=1.0.0a7',
-    'invenio-records-rest>=1.0.0a15',
+    'invenio-records-rest>=1.0.0a15,<1.0.0a17',
     'invenio-records-ui>=1.0.0a6',
     'invenio-files-rest>=1.0.0a3',
     'invenio-records-files>=1.0.0a5',
@@ -89,6 +89,9 @@ install_requires = [
     'invenio-trends-ui>=1.0.0a1',
     'elasticsearch<3.0.0',
     'Flask-Login<0.4.0',
+    'invenio-workflows~=6.0.2',
+    'invenio-workflows-files~=0.0.4',
+    'invenio-workflows-ui~=1.0.27',
 ]
 
 tests_require = [
