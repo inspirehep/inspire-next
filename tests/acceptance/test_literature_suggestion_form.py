@@ -26,11 +26,16 @@ from bat_framework.pages import create_literature
 
 
 # Components Tests
-
 def test_journal_info_autocomplete_title(login):
     """Test the autocompletion for the title in the journal info section"""
     create_literature.go_to()
     assert 'Nuclear Physics' in create_literature.write_journal_title('Nuc')
+
+
+def test_conference_info_autocomplete_title(login):
+    """Test the autocompletion for the title in the conference info section"""
+    create_literature.go_to()
+    assert 'IN2P3 School of Statistics, 2012-05-28, Autrans, France' in create_literature.write_conference('sos')
 
 
 def test_basic_info_autocomplete_affilation(login):

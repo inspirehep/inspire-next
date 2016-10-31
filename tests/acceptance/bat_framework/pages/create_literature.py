@@ -35,6 +35,11 @@ def go_to():
     Arsenic().get(os.environ['SERVER_NAME'] + '/submit/literature/create')
 
 
+def write_conference(conference_title):
+    _skip_import_data()
+    return Arsenic().write_in_autocomplete_field('conf_name', conference_title)
+
+
 def write_journal_title(journal_title):
     _skip_import_data()
     return Arsenic().write_in_autocomplete_field('journal_title', journal_title)
@@ -98,5 +103,8 @@ def submit_doi_id(doi_id):
 
 
 def _skip_import_data():
+    Arsenic().hide_title_bar()
     Arsenic().find_element_by_id("skipImportData").click()
     WebDriverWait(Arsenic(), 10).until(EC.text_to_be_present_in_element((By.ID, "form_container"), 'Type of Document'))
+    Arsenic().find_element_by_link_text("Conference Information").click()
+    Arsenic().show_title_bar()
