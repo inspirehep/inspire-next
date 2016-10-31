@@ -260,7 +260,7 @@ def positions(self, key, value):
         'curated_relation': curated,
     }
 
-    emails = [el for el in force_force_list(value.get('m'))]
+    emails = [el for el in force_force_list(value.get('m', 'noemail@inspirehep.net'))]
     emails.extend([el for el in force_force_list(value.get('o'))])
 
     _rank = value.get('r')
@@ -288,7 +288,7 @@ def positions2marc(self, key, value):
         'r': value.get('_rank'),
         's': value.get('start_date'),
         't': value.get('end_date'),
-        'm': emails[0] if emails else None,
+        'm': emails[0] if emails and emails[0] != 'noemail@inspirehep.net' else None,
         'o': emails[1:] if emails else None,
         'z': value.get('current'),
     }
