@@ -37,6 +37,25 @@ def go_to():
     Arsenic().get(os.environ['SERVER_NAME'] + '/submit/literature/create')
 
 
+def write_pdf_link(pdf_link):
+    message_err = ''
+    try:
+        WebDriverWait(Arsenic(), 5).until(EC.visibility_of_element_located((By.ID, 'url')))
+    except (ElementNotVisibleException, WebDriverException):
+        _skip_import_data()
+    field = WebDriverWait(Arsenic(), 5).until(EC.visibility_of_element_located((By.ID, 'url')))
+    field.send_keys(pdf_link)
+    Arsenic().hide_title_bar()
+    Arsenic().click_with_coordinates('state-group-url', 5, 5)
+    try:
+        message_err = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'state-url'))).text
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    Arsenic().show_title_bar()
+    field.clear()
+    return message_err
+
+
 def write_date_thesis(date_field, error_message_id, date):
     message_err = ''
     try:

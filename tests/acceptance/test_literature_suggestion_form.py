@@ -26,6 +26,13 @@ from bat_framework.pages import create_literature
 
 
 # Components Tests
+def test_pdf_link(login):
+    """Test the pdf link field"""
+    create_literature.go_to()
+    assert 'Please, provide an accessible direct link to a PDF document.' in create_literature.write_pdf_link('pdf_url_wrong')
+    assert 'Please, provide an accessible direct link to a PDF document.' not in create_literature.write_pdf_link('pdf_url_correct')
+
+
 def test_thesis_info_date(login):
     """Test the format for the submission and defense date in the thesis section"""
     create_literature.go_to()
