@@ -419,6 +419,29 @@ RECORDS_REST_ENDPOINTS = dict(
         read_permission_factory_imp="inspirehep.modules.records.permissions:record_read_permission_factory",
         record_class='inspirehep.modules.records.es_record:ESRecord'
     ),
+    literature_citesummary=dict(
+        default_media_type='application/json',
+        item_route=(
+            '/literature'
+            '/<pid(literature,record_class="inspirehep.modules.records.es_record:ESRecord"):pid_value>'
+            '/citesummary'),
+        list_route='/literature/',
+        max_result_window=10000,
+        pid_fetcher='inspire_recid_fetcher',
+        pid_minter='inspire_recid_minter',
+        pid_type='literature',
+        record_serializers={
+            'application/json': (
+                'inspirehep.modules.api.v1.literature:citesummary_response')
+        },
+        search_class='inspirehep.modules.search:LiteratureSearch',
+        search_factory_imp=(
+            'inspirehep.modules.search.query:inspire_search_factory'),
+        search_serializers={
+            'application/json': (
+                'invenio_records_rest.serializers:json_v1_response')
+        },
+    ),
     literature_db=dict(
         pid_type='literature',
         search_class='inspirehep.modules.search:LiteratureSearch',
@@ -482,6 +505,28 @@ RECORDS_REST_ENDPOINTS = dict(
         max_result_window=10000,
         search_factory_imp=('inspirehep.modules.search.query'
                             ':inspire_search_factory'),
+    ),
+    authors_citesummary=dict(
+        default_media_type='application/json',
+        item_route='/authors/<pidpath(authors):pid_value>/citesummary',
+        list_route='/authors/',
+        max_result_window=10000,
+        pid_fetcher='inspire_recid_fetcher',
+        pid_minter='inspire_recid_minter',
+        pid_type='authors',
+        record_serializers={
+            'application/json': (
+                'inspirehep.modules.api.v1.authors:citesummary_response'),
+        },
+        search_class='inspirehep.modules.search:AuthorsSearch',
+        search_factory_imp=(
+            'inspirehep.modules.search.query:inspire_search_factory'),
+        search_serializers={
+            'application/json': (
+                'invenio_records_rest.serializers:json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'invenio_records_rest.serializers:json_v1_search'),
+        },
     ),
     authors_coauthors=dict(
         pid_type='authors',
@@ -647,6 +692,28 @@ RECORDS_REST_ENDPOINTS = dict(
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
+    institutions_citesummary=dict(
+        default_media_type='application/json',
+        item_route=(
+            '/institutions/<pidpath(institutions):pid_value>/citesummary'),
+        list_route='/institutions/',
+        max_result_window=10000,
+        pid_fetcher='inspire_recid_fetcher',
+        pid_minter='inspire_recid_minter',
+        pid_type='institutions',
+        record_serializers={
+            'application/json': (
+                'inspirehep.modules.api.v1.institutions:citesummary_response'),
+        },
+        search_class='inspirehep.modules.search:InstitutionsSearch',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        search_serializers={
+            'application/json': (
+                'invenio_records_rest.serializers:json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'invenio_records_rest.serializers:json_v1_search'),
+        },
+    ),
     experiments=dict(
         pid_type='experiments',
         pid_minter='inspire_recid_minter',
@@ -670,6 +737,28 @@ RECORDS_REST_ENDPOINTS = dict(
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
     ),
+    experiments_citesummary=dict(
+        default_media_type='application/json',
+        item_route=(
+            '/experiments/<pidpath(experiments):pid_value>/citesummary'),
+        list_route='/experiments/',
+        max_result_window=10000,
+        pid_fetcher='inspire_recid_fetcher',
+        pid_minter='inspire_recid_minter',
+        pid_type='experiments',
+        record_serializers={
+            'application/json': (
+                'inspirehep.modules.api.v1.experiments:citesummary_response'),
+        },
+        search_class='inspirehep.modules.search:ExperimentsSearch',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        search_serializers={
+            'application/json': (
+                'invenio_records_rest.serializers:json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'invenio_records_rest.serializers:json_v1_search'),
+        },
+    ),
     journals=dict(
         pid_type='journals',
         pid_minter='inspire_recid_minter',
@@ -692,6 +781,28 @@ RECORDS_REST_ENDPOINTS = dict(
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+    ),
+    journals_citesummary=dict(
+        default_media_type='application/json',
+        item_route=(
+            '/journals/<pidpath(journals):pid_value>/citesummary'),
+        list_route='/journals/',
+        max_result_window=10000,
+        pid_fetcher='inspire_recid_fetcher',
+        pid_minter='inspire_recid_minter',
+        pid_type='journals',
+        record_serializers={
+            'application/json': (
+                'inspirehep.modules.api.v1.journals:citesummary_response'),
+        },
+        search_class='inspirehep.modules.search:JournalsSearch',
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        search_serializers={
+            'application/json': (
+                'invenio_records_rest.serializers:json_v1_search'),
+            'application/vnd+inspire.brief+json': (
+                'invenio_records_rest.serializers:json_v1_search'),
+        },
     ),
 )
 
