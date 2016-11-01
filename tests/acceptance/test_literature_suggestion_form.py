@@ -26,6 +26,37 @@ from bat_framework.pages import create_literature
 
 
 # Components Tests
+def test_literature_create_article_journal_manually(login):
+    """Submit the form for article creation from scratch"""
+    create_literature.go_to()
+    input_data = {
+        'pdf-1': 'pdf_url_correct',
+        'pdf-2': 'pdf_another_url_correct',
+        'title': 'My Title For Test',
+        'language': 'rus',
+        'title_translation': 'My Title was in Russian',
+        'subject':'Computing',
+        'author-0': 'Mister White',
+        'author-0-affiliation': 'Wisconsin U., Madison',
+        'author-1': 'Mister Brown',
+        'author-1-affiliation': 'CERN',
+        'collaboration': 'This is a collaboration',
+        'exoeriment': 'This is a experiment',
+        'abstract': 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.',
+        'report-number-0': '100',
+        'report-number-1': '101',
+        'journal_title': 'europe',
+        'volume': 'Volume',
+        'issue': 'issue',
+        'year': '2014',
+        'page-range-article': '100-110',
+        'conf-name': 'This Conference',
+        'references': 'references',
+        'extra-comments': 'comments about the document'
+        }
+    assert 'The INSPIRE staff will review it and your changes will be added to INSPIRE.' in create_literature.submit_journal_article(input_data)
+
+
 def test_pdf_link(login):
     """Test the pdf link field"""
     create_literature.go_to()
