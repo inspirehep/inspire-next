@@ -26,6 +26,13 @@ from bat_framework.pages import create_literature
 
 
 # Components Tests
+def test_thesis_info_date(login):
+    """Test the format for the submission and defense date in the thesis section"""
+    create_literature.go_to()
+    _test_date_format('thesis_date', 'state-thesis_date')
+    _test_date_format('thesis_date', 'state-thesis_date')
+
+
 def test_thesis_info_autocomplete_supervisor_institution(login):
     """Test the autocompletion for the supervisor institution in the thesis section"""
     create_literature.go_to()
@@ -101,3 +108,13 @@ def test_format_input_doi(login):
     assert 'The provided DOI is invalid - it should look' in create_literature.write_doi_id('dummy:10.1086/305772')
     assert 'The provided DOI is invalid - it should look' not in create_literature.write_doi_id('10.1086/305772')
     assert 'The provided DOI is invalid - it should look' in create_literature.write_doi_id('state-doi')
+
+
+def _test_date_format(field_id, field_err_id):
+    message_error = 'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY.'
+    assert message_error not in create_literature.write_date_thesis(field_id, field_err_id, '')
+    assert message_error in create_literature.write_date_thesis(field_id, field_err_id, 'wrong')
+    assert message_error not in create_literature.write_date_thesis(field_id, field_err_id, '2016-01')
+    assert message_error in create_literature.write_date_thesis(field_id, field_err_id, '2016-02-30')
+    assert message_error not in create_literature.write_date_thesis(field_id, field_err_id, '2016')
+    assert message_error in create_literature.write_date_thesis(field_id, field_err_id, '2016-13')

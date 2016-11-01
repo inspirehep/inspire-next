@@ -25,6 +25,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 
 
 class Arsenic(object):
@@ -57,6 +58,13 @@ class Arsenic(object):
     def show_title_bar(self):
         self._instance.execute_script('document.getElementById("collections-section").style.display = ""')
         self._instance.execute_script('document.getElementById("topnav").style.display = ""')
+
+    def click_with_coordinates(self, element_id, x, y):
+        el = self._instance.find_element_by_id(element_id)
+        action = ActionChains(self._instance)
+        action.move_to_element_with_offset(el, x, y)
+        action.click()
+        action.perform()
 
     def __getattr__(self, item):
         return getattr(self.selenium, item)

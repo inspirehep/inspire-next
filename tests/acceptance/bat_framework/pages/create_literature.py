@@ -30,10 +30,31 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import ElementNotVisibleException, WebDriverException
 
 
 def go_to():
     Arsenic().get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+
+
+def write_date_thesis(date_field, error_message_id, date):
+    message_err = ''
+    try:
+        WebDriverWait(Arsenic(), 5).until(EC.visibility_of_element_located((By.ID, date_field)))
+    except (ElementNotVisibleException, WebDriverException):
+        _skip_import_data()
+        _select_thesis()
+    field = WebDriverWait(Arsenic(), 5).until(EC.visibility_of_element_located((By.ID, date_field)))
+    field.send_keys(date)
+    Arsenic().hide_title_bar()
+    Arsenic().click_with_coordinates('state-group-supervisors', 5, 5)
+    try:
+        message_err = WebDriverWait(Arsenic(), 5).until(EC.visibility_of_element_located((By.ID, error_message_id))).text
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    Arsenic().show_title_bar()
+    field.clear()
+    return message_err
 
 
 def write_institution_thesis(institution):
