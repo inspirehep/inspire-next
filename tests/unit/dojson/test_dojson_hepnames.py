@@ -675,8 +675,8 @@ def test_positions(marcxml_to_json, json_to_marc):
             json_to_marc['371'][0]['s'])
     assert (marcxml_to_json['positions'][0]['emails'] ==
             json_to_marc['371'][0]['m'])
-    assert (marcxml_to_json['positions'][0]['current'] ==
-            json_to_marc['371'][0]['z'])
+    assert marcxml_to_json['positions'][0]['current'] is True
+    assert json_to_marc['371'][0]['z'] == 'Current'
     assert (marcxml_to_json['positions'][1]['end_date'] ==
             json_to_marc['371'][1]['t'])
 
@@ -720,8 +720,7 @@ def test_old_single_email_from_371__a():
           ],
           "s": "2012",
           "r": "PD",
-          "t": "2013",
-          "z": False
+          "t": "2013"
         }
     ]
 
@@ -782,7 +781,7 @@ def test_positions_from_371__a_double_m_z():
         {
             'a': 'Argonne',
             'm': ['rcyoung@anl.gov', 'rcyoung@hep.anl.gov'],
-            'z': True
+            'z': 'Current'
         }
     ]
 

@@ -37,6 +37,42 @@ def test_convert_for_form_without_name_urls_fc_positions_advisors_and_ids():
     assert Record({}) == without_name_urls_fc_positions_advisors_and_ids
 
 
+def test_convert_for_form_public_emails():
+    current_and_old_emails = {
+        'positions': [
+            {
+                "emails": [
+                    "michael.abbott@uct.ac.za"
+                ]
+            },
+            {
+                "emails": [
+                    "abbott@theory.tifr.res.in"
+                ]
+            },
+            {
+                "old_emails": [
+                    "abbott@het.brown.edu"
+                ]
+            }
+        ]
+    }
+    convert_for_form(current_and_old_emails)
+
+    expected = [
+        {
+          "email": "michael.abbott@uct.ac.za",
+          "original_email": "michael.abbott@uct.ac.za"
+        },
+        {
+          "email": "abbott@theory.tifr.res.in",
+          "original_email": "abbott@theory.tifr.res.in"
+        }
+    ]
+
+    assert expected == current_and_old_emails['public_emails']
+
+
 # TODO: test convert_for_form
 
 

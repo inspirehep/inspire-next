@@ -104,7 +104,7 @@ class InstitutionInlineForm(INSPIREForm):
         ("JUNIOR", _("Junior (leads to Senior)")),
         ("STAFF", _("Staff (non-research)")),
         ("VISITOR", _("Visitor")),
-        ("POSTDOC", _("PostDoc")),
+        ("PD", _("PostDoc")),
         ("PHD", _("PhD")),
         ("MASTER", _("Master")),
         ("UNDERGRADUATE", _("Undergrad")),
@@ -158,9 +158,26 @@ class InstitutionInlineForm(INSPIREForm):
         widget=currentCheckboxWidget
     )
 
-    email = fields.HiddenField()
+    emails = fields.FieldList(
+        fields.HiddenField(label=''),
+        widget_classes='hidden-list'
+    )
 
-    old_email = fields.HiddenField()
+    old_emails = fields.FieldList(
+        fields.HiddenField(label=''),
+        widget_classes='hidden-list'
+    )
+
+
+class EmailInlineForm(INSPIREForm):
+
+    """Public emails inline form."""
+
+    email = fields.StringField(
+        widget_classes="form-control"
+    )
+
+    original_email = fields.HiddenField()
 
 
 class ExperimentsInlineForm(INSPIREForm):
@@ -264,6 +281,23 @@ class DynamicUnsortedWidget(DynamicListWidget):
         super(DynamicUnsortedWidget, self).__init__(**kwargs)
 
 
+class DynamicUnsortedNonRemoveItemWidget(DynamicItemWidget):
+
+    def _sort_button(self):
+        return ""
+
+    def _remove_button(self):
+        return ""
+
+
+class DynamicUnsortedNonRemoveWidget(DynamicListWidget):
+
+    def __init__(self, **kwargs):
+        """Initialize dynamic list widget."""
+        self.item_widget = DynamicUnsortedNonRemoveItemWidget()
+        super(DynamicUnsortedNonRemoveWidget, self).__init__(**kwargs)
+
+
 class AuthorUpdateForm(INSPIREForm):
 
     """Author update form."""
@@ -324,11 +358,21 @@ class AuthorUpdateForm(INSPIREForm):
         widget_classes="form-control"
     )
 
-    public_email = fields.StringField(
-        label=_('Public Email'),
-        description=u"This email will be displayed online in the INSPIRE Author Profile.",
-        widget_classes="form-control",
-        validators=[validators.Optional(), validators.Email()],
+    public_emails = fields.DynamicFieldList(
+        fields.FormField(
+            EmailInlineForm,
+            widget=ExtendedListWidget(
+                item_widget=ItemWidget(),
+                html_tag='div',
+            ),
+            widget_classes="col-xs-10"
+        ),
+        description=u"This emails will be displayed online in the INSPIRE Author Profile.",
+        label='Public emails',
+        add_label='Add another email',
+        min_entries=1,
+        widget=DynamicUnsortedNonRemoveWidget(),
+        widget_classes="ui-disable-sort"
     )
 
     orcid = fields.StringField(
@@ -499,7 +543,7 @@ class AuthorUpdateForm(INSPIREForm):
     groups = [
         ('Personal Information',
             ['given_names', 'family_name', 'display_name', 'native_name', 'email',
-             'public_email', 'status', 'orcid', 'bai', 'inspireid'],
+             'public_emails', 'status', 'orcid', 'bai', 'inspireid'],
             {"icon": "fa fa-user"}
          ),
         ('Personal Websites',

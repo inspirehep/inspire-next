@@ -146,16 +146,22 @@ def inspireid(self, key, value):
         self['ids'] = [inspireid]
 
 
-@updateform.over('_public_email', '^public_email$')
+@updateform.over('_public_email', '^public_emails$')
 def public_email(self, key, value):
-    position = {
-        'email': value,
-        'current': 'Current'
-    }
+    positions = []
+    for email in value:
+        if email['original_email'] != email['email']:
+            positions.append(
+                {
+                    'emails': [email['email']],
+                    'old_emails': [email['original_email']],
+                }
+            )
+
     if 'positions' in self:
-        self['positions'].append(position)
+        self['positions'].extend(positions)
     else:
-        self['positions'] = [position]
+        self['positions'] = positions
 
 
 @updateform.over('field_categories', '^research_field$')
@@ -167,7 +173,7 @@ def field_categories(self, key, value):
     }
 
 
-@updateform.over('positions', '^institution_history$')
+@updateform.over('_positions', '^institution_history$')
 def institution_history(self, key, value):
     positions = []
     value = sorted(value,
@@ -180,15 +186,18 @@ def institution_history(self, key, value):
             continue
         positions.append({
             "institution": {'name': position["name"]},
-            "status": "current" if position["current"] else "",
+            "current": 'Current' if position["current"] else None,
             "start_date": position["start_year"],
             "end_date": position["end_year"],
-            "email": position.get("email", ""),
-            "old_email": position.get("old_email", ""),
-            "rank": position["rank"] if position["rank"] != "rank" else ""
+            "emails": position.get("emails", ""),
+            "old_emails": position.get("old_emails", ""),
+            "_rank": position["rank"] if position["rank"] != "rank" else ""
         })
 
-    return positions
+    if 'positions' in self:
+        self['positions'].extend(positions)
+    else:
+        self['positions'] = positions
 
 
 @updateform.over('advisors', '^advisors$')
@@ -212,7 +221,7 @@ def experiments(self, key, value):
                    key=lambda k: k["start_year"],
                    reverse=True)
     for experiment in value:
-        experiment["status"] = "current" if experiment["status"] else ""
+        experiment["status"] = "Current" if experiment["status"] else ""
         _set_int_or_del(experiment, "start_year", experiment.get("start_year"))
         _set_int_or_del(experiment, "end_year", experiment.get("end_year"))
         experiments.append(experiment)

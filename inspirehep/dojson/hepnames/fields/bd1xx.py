@@ -289,7 +289,7 @@ def positions2marc(self, key, value):
         't': value.get('end_date'),
         'm': value.get('emails'),
         'o': value.get('old_emails'),
-        'z': value.get('current'),
+        'z': 'Current' if value.get('current') else None,
     }
 
 
