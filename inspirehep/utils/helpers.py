@@ -43,7 +43,7 @@ def download_file(url, output_file=None, chunk_size=1024):
 
 
 def download_file_to_record(record, name, url):
-    """Download a file to specified location."""
+    """Download a file to specified record."""
     with closing(requests.get(url=url, stream=True)) as req:
         if req.status_code == 200:
             record.files[name] = req.raw

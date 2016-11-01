@@ -241,8 +241,14 @@
 
           <div id="hp-save" ng-if="vm.update_ready">
             <button class="btn btn-success btn-lg"
+                    ng-if="vm.record._workflow.status === 'HALTED'"
                     ng-click="Utils.updateRecord()">
               Save changes
+            </button>
+            <button class="btn btn-success btn-lg"
+                    ng-if="vm.record._workflow.status !== 'HALTED'"
+                    disabled>
+              Can't save until state changes, try refreshing.
             </button>
           </div>
 

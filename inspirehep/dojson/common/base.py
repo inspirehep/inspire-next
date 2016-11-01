@@ -284,7 +284,7 @@ def deleted_records(self, key, value):
 @journals.over('fft', '^FFT..')
 @utils.for_each_value
 def fft(self, key, value):
-    """Collection this record belongs to."""
+    """Fulltext files attached to the record"""
     return {
         'url': value.get('a'),
         'docfile_type': value.get('t'),
@@ -294,14 +294,10 @@ def fft(self, key, value):
     }
 
 
-@hep.over('FFT', 'fft')
-@conferences.over('FFT', 'fft')
-@institutions.over('FFT', 'fft')
-@experiments.over('FFT', 'fft')
-@journals.over('FFT', 'fft')
+@hep2marc.over('FFT', 'fft')
 @utils.for_each_value
 def fft2marc(self, key, value):
-    """Collection this record belongs to."""
+    """Fulltext files attached to the record"""
     return {
         'a': value.get('url'),
         't': value.get('docfile_type'),
