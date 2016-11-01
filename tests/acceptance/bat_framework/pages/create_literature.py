@@ -37,6 +37,19 @@ def go_to():
     Arsenic().get(os.environ['SERVER_NAME'] + '/submit/literature/create')
 
 
+def submit_journal_article_with_proceeding(input_data):
+    _skip_import_data()
+    Arsenic().hide_title_bar()
+    _links_population(input_data)
+    _basic_info_population(input_data)
+    _proceedings_population(input_data)
+    _journal_conference_population(input_data)
+    _references_comment_population(input_data)
+    Arsenic().find_element_by_xpath('//div[@id="webdeposit_form_accordion"]/div[4]/span/button').click()
+    Arsenic().show_title_bar()
+    return WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'))).text
+
+
 def submit_journal_article(input_data):
     _skip_import_data()
     Arsenic().hide_title_bar()
