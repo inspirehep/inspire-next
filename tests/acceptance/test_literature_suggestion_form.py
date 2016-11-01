@@ -26,6 +26,12 @@ from bat_framework.pages import create_literature
 
 
 # Components Tests
+def test_thesis_info_autocomplete_supervisor_institution(login):
+    """Test the autocompletion for the supervisor institution in the thesis section"""
+    create_literature.go_to()
+    assert 'CERN' in create_literature.write_institution_thesis('CER')
+
+
 def test_journal_info_autocomplete_title(login):
     """Test the autocompletion for the title in the journal info section"""
     create_literature.go_to()

@@ -27,12 +27,20 @@ import os
 from bat_framework.arsenic import Arsenic
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
 def go_to():
     Arsenic().get(os.environ['SERVER_NAME'] + '/submit/literature/create')
+
+
+def write_institution_thesis(institution):
+    _skip_import_data()
+    _select_thesis()
+    WebDriverWait(Arsenic(), 5).until(EC.visibility_of_element_located((By.ID, 'supervisors-0-affiliation')))
+    return Arsenic().write_in_autocomplete_field('supervisors-0-affiliation', institution)
 
 
 def write_conference(conference_title):
@@ -108,3 +116,7 @@ def _skip_import_data():
     WebDriverWait(Arsenic(), 10).until(EC.text_to_be_present_in_element((By.ID, "form_container"), 'Type of Document'))
     Arsenic().find_element_by_link_text("Conference Information").click()
     Arsenic().show_title_bar()
+
+
+def _select_thesis():
+    Select(Arsenic().find_element_by_id('type_of_doc')).select_by_value('thesis')
