@@ -133,8 +133,7 @@ def arxiv_refextract(obj, eng):
     if pdf:
         mapped_references = extract_references(pdf.file.uri)
         if mapped_references:
-            # FIXME For now we do not add these references to the final record.
-            obj.extra_data["references"] = mapped_references
+            obj.data["references"] = mapped_references
             obj.log.info("Extracted {0} references".format(
                 len(mapped_references)
             ))

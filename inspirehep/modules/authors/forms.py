@@ -49,8 +49,8 @@ def currentCheckboxWidget(field, **kwargs):
     """Current institution checkbox widget."""
     field_id = kwargs.pop('id', field.id)
     html = [u'<div class="col-md-10 col-margin-top pull-left">\
-                <input %s %s type="checkbox">\
-                <label for=%s>Current</label></div>'
+            <input %s %s type="checkbox">\
+            <label for=%s>Current</label></div>'
             % (html_params(id=field_id,
                            name=field_id),
                field.data and "checked" or "",
@@ -98,15 +98,18 @@ class InstitutionInlineForm(INSPIREForm):
 
     """Institution inline form."""
 
-    rank_options = [("rank", _("Rank")),
-                    ("SENIOR", _("Senior (permanent)")),
-                    ("JUNIOR", _("Junior (leads to Senior)")),
-                    ("STAFF", _("Staff (non-research)")),
-                    ("VISITOR", _("Visitor")),
-                    ("PD", _("PostDoc")),
-                    ("PHD", _("PhD")),
-                    ("MAS", _("Master")),
-                    ("UG", _("Undergrad"))]
+    rank_options = [
+        ("rank", _("Rank")),
+        ("SENIOR", _("Senior (permanent)")),
+        ("JUNIOR", _("Junior (leads to Senior)")),
+        ("STAFF", _("Staff (non-research)")),
+        ("VISITOR", _("Visitor")),
+        ("POSTDOC", _("PostDoc")),
+        ("PHD", _("PhD")),
+        ("MASTER", _("Master")),
+        ("UNDERGRADUATE", _("Undergrad")),
+        ("OTHER", _("Other")),
+    ]
 
     name = fields.StringField(
         widget_classes='form-control',
@@ -220,28 +223,18 @@ class AdvisorsInlineForm(INSPIREForm):
     degree_type = fields.SelectField(
         label=_('Degree Type'),
         widget_classes="form-control",
-        default="PhD",
+        default="PHD",
         widget=ColumnSelect(class_="col-xs-5", description=u"Degree Type"),
     )
 
     def __init__(self, *args, **kwargs):
         """Constructor."""
         super(AdvisorsInlineForm, self).__init__(*args, **kwargs)
-        # FIXME invenio_knowledge not Invenio 3 ready
-
-        # from invenio_knowledge.api import get_kb_mappings
-        # self.degree_type.choices = [('', '')] + [
-        #     (x['value'], x['value'])
-        #     for x in get_kb_mappings(current_app.config["DEPOSIT_INSPIRE_DEGREE_KB"])
-        # ]
         self.degree_type.choices = [
-            ("Bachelor", "Bachelor"),
-            ("Diploma", "Diploma"),
-            ("Habilitation", "Habilitation"),
-            ("Laurea", "Laurea"),
-            ("Master", "Master"),
-            ("PhD", "PhD"),
-            ("Thesis", "Thesis")
+            ("BACHELOR", _("Bachelor")),
+            ("MASTER", _("Master")),
+            ("PHD", _("PhD")),
+            ("OTHER", _("Other")),
         ]
 
 

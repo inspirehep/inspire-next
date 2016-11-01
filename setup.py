@@ -70,8 +70,8 @@ install_requires = [
     'invenio-oaiharvester==1.0.0a2',
     'invenio-utils==0.2.0',  # Not fully Invenio 3 ready
     'invenio>=3.0.0a1,<3.1.0',
-    'inspire-crawler>=0.2.1',
-    'inspire-schemas~=0.1',
+    'inspire-crawler~=0.2.7',
+    'inspire-schemas~=1.0',
     'dojson==1.2.1',
     'Flask>=0.11.1',
     'Flask-Breadcrumbs>=0.3.0',
@@ -81,7 +81,8 @@ install_requires = [
     'fs<2.0',  # TODO: remove once invenio-files-rest#130 is fixed
     'jsmin',
     'pytest-runner>=2.7.0',
-    'workflow>=2.0.0',
+    # FIXME: Commented for testing, to use a custom fork
+    #'workflow>=2.0.0',
     'SQLAlchemy>=1.0.14,<1.1',
     'nameparser>=0.4.0',
     'iso8601>=0.1.11',
@@ -124,6 +125,10 @@ extras_require = {
     ],
     'migration': [
         'invenio-migrator>=1.0.0a6',
+    ],
+    'crawler': [
+        'scrapyd',
+        'hepcrawl>=0.2.42',
     ],
     'tests': tests_require,
     'development': [

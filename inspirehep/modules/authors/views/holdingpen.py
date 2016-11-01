@@ -66,6 +66,13 @@ blueprint = Blueprint(
 )
 
 
+def set_int_or_skip(mydict, key, myint):
+    try:
+        mydict[key] = int(myint)
+    except ValueError:
+        pass
+
+
 def convert_for_form(data):
     """
     Convert author data model form field names.
@@ -114,9 +121,11 @@ def convert_for_form(data):
                 continue
             pos = {}
             pos["name"] = position.get("institution", {}).get("name")
-            pos["rank"] = position.get("rank", "")
-            pos["start_year"] = position.get("start_date", "")
-            pos["end_year"] = position.get("end_date", "")
+            rank = position.get("rank", "")
+            if rank:
+                pos["rank"] = rank
+            set_int_or_skip(pos, "start_year", position["start_date"])
+            set_int_or_skip(pos, "end_year", position["end_date"])
             pos["current"] = True if position.get("status") else False
             pos["old_email"] = position.get("old_email", "")
             if position.get("email"):

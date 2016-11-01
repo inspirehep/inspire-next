@@ -27,6 +27,7 @@ from __future__ import absolute_import, division, print_function
 import os
 import logging
 from functools import wraps
+from pprint import pformat
 
 from flask import current_app, render_template
 from invenio_accounts.models import User
@@ -243,7 +244,9 @@ def send_robotupload(url=None,
             callback_url
         )
         if not combined_callback_url.startswith('http'):
-            combined_callback_url = "http://{0}".format(combined_callback_url)
+            combined_callback_url = "https://{0}".format(
+                combined_callback_url
+            )
 
         if extra_data_key is not None:
             data = obj.extra_data.get(extra_data_key) or {}
@@ -255,13 +258,23 @@ def send_robotupload(url=None,
         if current_app.debug:
             # Log what we are sending
             LOGGER.debug(
-                "Going to robotupload %s to %s:\n%s\n",
-                mode=mode,
-                url=url,
-                marcxml=marcxml,
+                "Going to robotupload mode:%s to url:%s:\n%s\n",
+                mode,
+                url,
+                marcxml,
             )
 
         if not in_production_mode():
+            obj.log.debug(
+                "Going to robotupload %s to %s:\n%s\n",
+                mode,
+                url,
+                marcxml,
+            )
+            obj.log.debug(
+                "Base object data:\n%s",
+                pformat(data)
+            )
             return
 
         result = make_robotupload_marcxml(
@@ -285,6 +298,7 @@ def send_robotupload(url=None,
             obj.log.info("Robotupload sent!")
             obj.log.info(result.text)
             eng.halt("Waiting for robotupload: {0}".format(result.text))
+
         obj.log.info("end of upload")
 
     return _send_robotupload
@@ -310,6 +324,32 @@ def filter_keywords(obj, eng):
         keywords = filter(lambda x: x['accept'], keywords)
         obj.extra_data['keywords_prediction']['keywords'] = keywords
 
+        obj.log.debug('Filtered keywords: \n%s', pformat(keywords))
+
+    obj.log.debug('Got no prediction for keywords')
+
+
+def prepare_keywords(obj, eng):
+    """Prepares the keywords in the correct format to be sent"""
+    prediction = obj.extra_data.get('keywords_prediction', {})
+    if not prediction:
+        return
+
+    keywords = obj.data.get('keywords', [])
+    for keyword in prediction.get('keywords', []):
+        # TODO: differentiate between curated and gueesed keywords
+        keywords.append(
+            {
+                'classification_scheme': '',
+                'keyword': keyword['label'],
+                'source': 'curator' if keyword.get('curated') else 'magpie',
+            }
+        )
+
+    obj.data['keywords'] = keywords
+
+    obj.log.debug('Finally got keywords: \n%s', pformat(keywords))
+
 
 def user_pdf_get(obj, eng):
     """Upload user PDF file, if requested."""
@@ -320,4 +360,36 @@ def user_pdf_get(obj, eng):
             obj.data['fft'].append(fft)
         else:
             obj.data['fft'] = [fft]
-        obj.log.info("PDF file added to FFT.")
+        obj.log.info("User PDF file added to FFT.")
+
+
+def prepare_files(obj, eng):
+    """Adds to the fft field (files) the extracted pdfs if any"""
+    if not obj.files:
+        return
+
+    def _get_fft(url, name):
+        return {
+            'url': os.path.realpath(url),
+            'docfile_type': 'INSPIRE-PUBLIC',
+            'filename': name,
+        }
+
+    pdf_file_objs = [
+        (key, obj.files[key])
+        for key in obj.files.keys
+        if key.endswith('.pdf')
+    ]
+    pdf_paths = [
+        _get_fft(pdf_file_obj.obj.file.uri, name)
+        for name, pdf_file_obj in pdf_file_objs
+    ]
+
+    obj.data['fft'] = obj.data.get('fft', []) + pdf_paths
+    obj.log.info("Non-user PDF files added to FFT.")
+    obj.log.debug("Added PDF files: {}".format(pdf_paths))
+
+
+def remove_references(obj, eng):
+    obj.log.info(obj.data)
+    del obj.data['references']

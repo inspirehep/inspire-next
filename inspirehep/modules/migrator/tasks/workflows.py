@@ -101,7 +101,6 @@ def import_holdingpen_record(parent_objs, obj, eng):
     from invenio_workflows import (
         Workflow, WorkflowObject, ObjectStatus
     )
-    # from celery.contrib import rdb; rdb.set_trace()
     engine_model = Workflow(
         name=WORKFLOW_NAME_MAP.get(eng['name'], eng['name']),
         created=iso8601.parse_date(eng['created']),
