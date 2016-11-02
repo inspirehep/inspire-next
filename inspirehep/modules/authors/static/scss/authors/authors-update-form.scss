@@ -41,3 +41,9 @@ div[id^="experiments-"] .form-control {
 #field-institution_history .fa-times {
   margin-top: 30%;
 }
+
+.hidden-list {
+    li {
+        list-style-type: none;
+    }
+}

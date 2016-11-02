@@ -261,7 +261,7 @@ def positions(self, key, value):
     }
 
     emails = [el for el in force_force_list(value.get('m'))]
-    emails.extend([el for el in force_force_list(value.get('o'))])
+    old_emails = [el for el in force_force_list(value.get('o'))]
 
     _rank = value.get('r')
     rank = classify_rank(_rank)
@@ -269,6 +269,7 @@ def positions(self, key, value):
     return {
         'institution': institution if institution['name'] else None,
         'emails': emails,
+        'old_emails': old_emails,
         '_rank': _rank,
         'rank': rank,
         'start_date': value.get('s'),
@@ -281,16 +282,14 @@ def positions(self, key, value):
 @utils.for_each_value
 def positions2marc(self, key, value):
     """Positions that an author held during their career."""
-    emails = value.get('emails')
-
     return {
         'a': value.get('institution', {}).get('name'),
         'r': value.get('_rank'),
         's': value.get('start_date'),
         't': value.get('end_date'),
-        'm': emails[0] if emails else None,
-        'o': emails[1:] if emails else None,
-        'z': value.get('current'),
+        'm': value.get('emails'),
+        'o': value.get('old_emails'),
+        'z': 'Current' if value.get('current') else None,
     }
 
 

@@ -323,16 +323,45 @@ def test_ids_from_inspireid_appends():
     assert expected == result['ids']
 
 
-def test_positions_from_public_email():
-    form = GroupableOrderedDict([
-        ('public_email', 'foo'),
-    ])
+def test_positions_from_public_email_unchanged():
+    form = {
+        'public_emails': [{'email': 'foo', 'original_email': 'foo'}]
+    }
+
+    expected = []
+    result = updateform.do(form)
+
+    assert expected == result['positions']
+
+
+def test_positions_from_public_email_changed():
+    form = {
+        'public_emails': [{'email': 'bar', 'original_email': 'foo'}]
+    }
 
     expected = [
         {
-            'current': 'Current',
-            'email': 'foo',
-        },
+            'emails': ['bar'],
+            'old_emails': ['foo'],
+
+        }
+    ]
+    result = updateform.do(form)
+
+    assert expected == result['positions']
+
+
+def test_positions_from_public_email_removed():
+    form = {
+        'public_emails': [{'email': '', 'original_email': 'foo'}]
+    }
+
+    expected = [
+        {
+            'emails': [''],
+            'old_emails': ['foo'],
+
+        }
     ]
     result = updateform.do(form)
 
@@ -340,20 +369,24 @@ def test_positions_from_public_email():
 
 
 def test_positions_from_public_email_appends():
-    form = GroupableOrderedDict([
-        ('public_email', 'foo'),
-        ('public_email', 'bar'),
-    ])
+    form = {
+        'public_emails': [
+            {'email': 'foo1', 'original_email': 'foo'},
+            {'email': 'bar1', 'original_email': 'bar'}
+        ]
+    }
 
     expected = [
         {
-            'current': 'Current',
-            'email': 'foo',
+            'emails': ['foo1'],
+            'old_emails': ['foo'],
+
         },
         {
-            'current': 'Current',
-            'email': 'bar',
-        },
+            'emails': ['bar1'],
+            'old_emails': ['bar'],
+
+        }
     ]
     result = updateform.do(form)
 
@@ -383,8 +416,8 @@ def test_positions_from_institutions_history():
                 'start_year': 2009,
                 'end_year': 2010,
                 'name': 'foo',
-                'email': 'bar',
-                'old_email': 'baz',
+                'emails': ['bar'],
+                'old_emails': ['baz'],
                 'current': 'qux',
                 'rank': 'quux',
             },
@@ -392,8 +425,8 @@ def test_positions_from_institutions_history():
                 'start_year': 2010,
                 'end_year': 2012,
                 'name': 'oof',
-                'email': 'rab',
-                'old_email': 'zab',
+                'emails': ['rab'],
+                'old_emails': ['zab'],
                 'current': '',
                 'rank': 'rank',
             },
@@ -403,21 +436,21 @@ def test_positions_from_institutions_history():
     expected = [
         {
             'institution': {'name': 'oof'},
-            'status': '',
+            'current': None,
             'start_date': 2010,
             'end_date': 2012,
-            'email': 'rab',
-            'old_email': 'zab',
-            'rank': '',
+            'emails': ['rab'],
+            'old_emails': ['zab'],
+            '_rank': '',
         },
         {
             'institution': {'name': 'foo'},
-            'status': 'current',
+            'current': 'Current',
             'start_date': 2009,
             'end_date': 2010,
-            'email': 'bar',
-            'old_email': 'baz',
-            'rank': 'quux',
+            'emails': ['bar'],
+            'old_emails': ['baz'],
+            '_rank': 'quux',
         },
     ]
     result = updateform.do(form)
@@ -471,7 +504,7 @@ def test_experiments_from_experiments():
         },
         {
             'start_year': 2009,
-            'status': 'current',
+            'status': 'Current',
         },
     ]
     result = updateform.do(form)

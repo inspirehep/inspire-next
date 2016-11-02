@@ -47,7 +47,7 @@
           <div class="col-md-2 hidden-xs hidden-sm">
             {% set email = '' %}
             {% if record.positions | length %}
-              {% set email = record['positions'][0].get('email', [''])[0] %}
+              {% set email = record['positions'][0].get('emails', [''])[0] %}
             {% endif %}
             <img class="profile-image img-circle" src="{{ email | gravatar(size=90, default='identicon') }}" data-toggle='tooltip' data-placement='left' title='Your profile picture can be set at gravatar.com' width="100%">
           </div>

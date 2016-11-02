@@ -43,14 +43,12 @@ from flask_babelex import gettext as _
 from flask_breadcrumbs import register_breadcrumb
 from flask_login import login_required, current_user
 from werkzeug.datastructures import MultiDict
-from wtforms.widgets import HiddenInput
 
 from invenio_db import db
 
 from invenio_workflows import workflow_object_class, start, resume
 from invenio_workflows_ui.api import WorkflowUIRecord
 
-from inspirehep.dojson.utils import strip_empty_values
 from inspirehep.modules.forms.form import DataExporter
 
 from ..forms import AuthorUpdateForm
@@ -108,30 +106,41 @@ def convert_for_form(data):
             data["research_field"].append(category.get('_term'))
     if "positions" in data:
         data["institution_history"] = []
+        data["public_emails"] = []
         for position in data["positions"]:
             if not any(
                 [
-                    key in position for key in ('name', 'rank',
+                    key in position for key in ('institution', '_rank',
                                                 'start_year', 'end_year')
                 ]
             ):
                 if 'emails' in position:
-                    # Only email available, take as public_email
-                    data["public_email"] = position.get("emails")[0]
+                    for email in position['emails']:
+                        data["public_emails"].append(
+                            {
+                                'email': email,
+                                'original_email': email
+                            }
+                        )
                 continue
             pos = {}
             pos["name"] = position.get("institution", {}).get("name")
-            rank = position.get("rank", "")
+            rank = position.get("_rank", "")
             if rank:
                 pos["rank"] = rank
-            set_int_or_skip(pos, "start_year", position["start_date"])
-            set_int_or_skip(pos, "end_year", position["end_date"])
-            pos["current"] = True if position.get("status") else False
-            pos["old_email"] = position.get("old_email", "")
-            if position.get("email"):
-                pos["email"] = position.get("email", "")
-                if not data.get("public_email"):
-                    data["public_email"] = position.get("email")
+            set_int_or_skip(pos, "start_year", position.get("start_date", ""))
+            set_int_or_skip(pos, "end_year", position.get("end_date", ""))
+            pos["current"] = True if position.get("current") else False
+            pos["old_emails"] = position.get("old_emails", [])
+            if position.get("emails"):
+                pos["emails"] = position['emails']
+                for email in position['emails']:
+                    data["public_emails"].append(
+                        {
+                            'email': email,
+                            'original_email': email
+                        }
+                    )
             data["institution_history"].append(pos)
         data["institution_history"].reverse()
     if 'advisors' in data:
@@ -237,7 +246,6 @@ def update():
             record_regex = re.compile(
                 r"\<record\>.*\<\/record\>", re.MULTILINE + re.DOTALL)
             xml_content = record_regex.search(xml.content).group()
-
             data = hepnames.do(create_record(xml_content))  # .encode("utf-8")
             convert_for_form(data)
         except requests.exceptions.RequestException:
@@ -269,6 +277,7 @@ def submitupdate():
         id_user=current_user.get_id(),
         data_type="authors"
     )
+
     workflow_object.extra_data['formdata'] = copy.deepcopy(visitor.data)
     workflow_object.extra_data['is-update'] = True
     workflow_object.data = formdata_to_model(workflow_object, visitor.data)

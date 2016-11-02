@@ -673,10 +673,60 @@ def test_positions(marcxml_to_json, json_to_marc):
             json_to_marc['371'][0]['r'])
     assert (marcxml_to_json['positions'][0]['start_date'] ==
             json_to_marc['371'][0]['s'])
-    assert (marcxml_to_json['positions'][0]['current'] ==
-            json_to_marc['371'][0]['z'])
+    assert (marcxml_to_json['positions'][0]['emails'] ==
+            json_to_marc['371'][0]['m'])
+    assert marcxml_to_json['positions'][0]['current'] is True
+    assert json_to_marc['371'][0]['z'] == 'Current'
     assert (marcxml_to_json['positions'][1]['end_date'] ==
             json_to_marc['371'][1]['t'])
+
+
+def test_old_single_email_from_371__a():
+    snippet = (
+        '<datafield tag="371" ind1=" " ind2=" ">'
+        '   <subfield code="a">IMSc, Chennai</subfield>'
+        '   <subfield code="o">test@imsc.res.in</subfield>'
+        '   <subfield code="r">PD</subfield>'
+        '   <subfield code="s">2012</subfield>'
+        '   <subfield code="t">2013</subfield>'
+        '</datafield>'
+    )  # record/1060782
+
+    expected = [
+        {
+          "current": False,
+          "old_emails": [
+            "test@imsc.res.in"
+          ],
+          "end_date": "2013",
+          "rank": "POSTDOC",
+          "institution": {
+            "name": "IMSc, Chennai",
+            "curated_relation": False
+          },
+          "_rank": "PD",
+          "start_date": "2012"
+        }
+    ]
+    result = hepnames.do(create_record(snippet))
+
+    assert expected == result['positions']
+
+    expected = [
+        {
+          "a": "IMSc, Chennai",
+          "o": [
+            "test@imsc.res.in"
+          ],
+          "s": "2012",
+          "r": "PD",
+          "t": "2013"
+        }
+    ]
+
+    marc = hepnames2marc.do(result)
+
+    assert expected == marc['371']
 
 
 def test_positions_from_371__a():
@@ -726,6 +776,19 @@ def test_positions_from_371__a_double_m_z():
     result = hepnames.do(create_record(snippet))
 
     assert expected == result['positions']
+
+    expected = [
+        {
+            'a': 'Argonne',
+            'm': ['rcyoung@anl.gov', 'rcyoung@hep.anl.gov'],
+            'z': 'Current'
+        }
+    ]
+
+    result = hepnames2marc.do(result)
+
+    assert expected == result['371']
+
 
 
 def test_positions_from_371__a_m_r_z():
