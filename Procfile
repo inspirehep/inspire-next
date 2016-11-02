@@ -20,7 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-web: gunicorn inspirehep.wsgi -c gunicorn.cfg
+# web: gunicorn inspirehep.wsgi -c gunicorn.cfg
 cache: redis-server
 worker: celery worker -E -A inspirehep.celery --loglevel=INFO --workdir="${VIRTUAL_ENV}" --autoreload --pidfile="${VIRTUAL_ENV}/worker.pid" --purge
 workermon: celery flower -A inspirehep.celery

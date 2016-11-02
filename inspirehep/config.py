@@ -1132,9 +1132,9 @@ INDEXER_BULK_REQUEST_TIMEOUT = float(120)
 
 # OAuthclient
 # ===========
-orcid.REMOTE_APP['params']['request_token_params'] = {'scope': '/orcid-profile/read-limited /activities/update /orcid-bio/update'}
+orcid.REMOTE_SANDBOX_APP['params']['request_token_params'] = {'scope': '/orcid-profile/read-limited /activities/update /orcid-bio/update'}
 OAUTHCLIENT_REMOTE_APPS = dict(
-    orcid=orcid.REMOTE_APP,
+    orcid=orcid.REMOTE_SANDBOX_APP,
 )
 OAUTHCLIENT_ORCID_CREDENTIALS = dict(
     consumer_key="CHANGE_ME",
@@ -1163,7 +1163,7 @@ LEGACY_ROBOTUPLOAD_URL = None  # Disabled by default
 
 # Web services and APIs
 # =====================
-BEARD_API_URL = None  # e.g. "http://beard.inspirehep.net/api"
+BEARD_API_URL = "http://127.0.0.1:8000/api"  # e.g. "http://beard.inspirehep.net/api"
 MAGPIE_API_URL = "http://magpie.inspirehep.net/api"
 
 # Harvesting and Workflows
