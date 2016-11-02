@@ -77,61 +77,61 @@ def submit_journal_article(input_data):
 
 def _thesis_info_population(input_data):
     WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'supervisors-0-name')))
-    Arsenic().find_element_by_id("supervisors-0-name").send_keys(input_data['supervisor'])
-    Arsenic().find_element_by_id("supervisors-0-affiliation").send_keys(input_data['supervisor-affilation'])
-    Arsenic().find_element_by_id("thesis_date").send_keys(input_data['thesis-date'])
-    Arsenic().find_element_by_id("defense_date").send_keys(input_data['thesis-defense'])
-    Select(Arsenic().find_element_by_id("degree_type")).select_by_value(input_data['degree-type'])
-    Arsenic().find_element_by_id("institution").send_keys(input_data['institution'])
+    Arsenic().find_element_by_id('supervisors-0-name').send_keys(input_data['supervisor'])
+    Arsenic().find_element_by_id('supervisors-0-affiliation').send_keys(input_data['supervisor-affilation'])
+    Arsenic().find_element_by_id('thesis_date').send_keys(input_data['thesis-date'])
+    Arsenic().find_element_by_id('defense_date').send_keys(input_data['thesis-defense'])
+    Select(Arsenic().find_element_by_id('degree_type')).select_by_value(input_data['degree-type'])
+    Arsenic().find_element_by_id('institution').send_keys(input_data['institution'])
 
 
 def _links_population(input_data):
-    Arsenic().find_element_by_id("url").send_keys(input_data['pdf-1'])
-    Arsenic().find_element_by_id("additional_url").send_keys(input_data['pdf-2'])
+    Arsenic().find_element_by_id('url').send_keys(input_data['pdf-1'])
+    Arsenic().find_element_by_id('additional_url').send_keys(input_data['pdf-2'])
 
 
 def _basic_info_population(input_data):
-    Arsenic().find_element_by_id("title").send_keys(input_data['title'])
-    Select(Arsenic().find_element_by_id("language")).select_by_value(input_data['language'])
-    Arsenic().find_element_by_id("title_translation").send_keys(input_data['title_translation'])
-    Arsenic().find_element_by_xpath("(//button[@type='button'])[8]").click()
-    Arsenic().find_element_by_css_selector("input[type=\"checkbox\"]").click()
-    Arsenic().find_element_by_xpath("//input[@value='" + input_data['subject'] + "']").click()
-    Arsenic().find_element_by_xpath("(//button[@type='button'])[8]").click()
-    Arsenic().find_element_by_id("authors-0-name").send_keys(input_data['author-0'])
-    Arsenic().find_element_by_id("authors-0-affiliation").send_keys(input_data['author-0-affiliation'])
-    Arsenic().find_element_by_link_text("Add another author").click()
-    Arsenic().find_element_by_id("authors-1-name").send_keys(input_data['author-1'])
-    Arsenic().find_element_by_id("authors-1-affiliation").send_keys(input_data['author-1-affiliation'])
+    Arsenic().find_element_by_id('title').send_keys(input_data['title'])
+    Select(Arsenic().find_element_by_id('language')).select_by_value(input_data['language'])
+    Arsenic().find_element_by_id('title_translation').send_keys(input_data['title_translation'])
+    Arsenic().find_element_by_xpath('(//button[@type="button"])[8]').click()
+    Arsenic().find_element_by_css_selector('input[type=\"checkbox\"]').click()
+    Arsenic().find_element_by_xpath('//input[@value="' + input_data['subject'] + '"]').click()
+    Arsenic().find_element_by_xpath('(//button[@type="button"])[8]').click()
+    Arsenic().find_element_by_id('authors-0-name').send_keys(input_data['author-0'])
+    Arsenic().find_element_by_id('authors-0-affiliation').send_keys(input_data['author-0-affiliation'])
+    Arsenic().find_element_by_link_text('Add another author').click()
+    Arsenic().find_element_by_id('authors-1-name').send_keys(input_data['author-1'])
+    Arsenic().find_element_by_id('authors-1-affiliation').send_keys(input_data['author-1-affiliation'])
 
     try:
-        Arsenic().find_element_by_id("collaboration").send_keys(input_data['collaboration'])
+        Arsenic().find_element_by_id('collaboration').send_keys(input_data['collaboration'])
     except (ElementNotVisibleException, WebDriverException):
         pass
 
-    Arsenic().find_element_by_id("experiment").send_keys(input_data['exoeriment'])
-    Arsenic().find_element_by_id("abstract").send_keys(input_data['abstract'])
-    Arsenic().find_element_by_id("report_numbers-0-report_number").send_keys(input_data['report-number-0'])
-    Arsenic().find_element_by_link_text("Add another report number").click()
-    Arsenic().find_element_by_id("report_numbers-1-report_number").send_keys(input_data['report-number-1'])
+    Arsenic().find_element_by_id('experiment').send_keys(input_data['exoeriment'])
+    Arsenic().find_element_by_id('abstract').send_keys(input_data['abstract'])
+    Arsenic().find_element_by_id('report_numbers-0-report_number').send_keys(input_data['report-number-0'])
+    Arsenic().find_element_by_link_text('Add another report number').click()
+    Arsenic().find_element_by_id('report_numbers-1-report_number').send_keys(input_data['report-number-1'])
 
 
 def _journal_conference_population(input_data):
-    Arsenic().find_element_by_id("journal_title").send_keys(input_data['journal_title'])
-    Arsenic().find_element_by_id("volume").send_keys(input_data['volume'])
-    Arsenic().find_element_by_id("issue").send_keys(input_data['issue'])
-    Arsenic().find_element_by_id("year").send_keys(input_data['year'])
-    Arsenic().find_element_by_id("page_range_article_id").send_keys(input_data['page-range-article'])
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, "conf_name"))).send_keys(input_data['conf-name'])
+    Arsenic().find_element_by_id('journal_title').send_keys(input_data['journal_title'])
+    Arsenic().find_element_by_id('volume').send_keys(input_data['volume'])
+    Arsenic().find_element_by_id('issue').send_keys(input_data['issue'])
+    Arsenic().find_element_by_id('year').send_keys(input_data['year'])
+    Arsenic().find_element_by_id('page_range_article_id').send_keys(input_data['page-range-article'])
+    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'conf_name'))).send_keys(input_data['conf-name'])
 
 
 def _proceedings_population(input_data):
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, "nonpublic_note"))).send_keys(input_data['non-public-note'])
+    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'nonpublic_note'))).send_keys(input_data['non-public-note'])
 
 
 def _references_comment_population(input_data):
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, "references"))).send_keys(input_data['references'])
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, "extra_comments"))).send_keys(input_data['extra-comments'])
+    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'references'))).send_keys(input_data['references'])
+    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'extra_comments'))).send_keys(input_data['extra-comments'])
 
 
 def write_pdf_link(pdf_link):
@@ -249,9 +249,9 @@ def submit_doi_id(doi_id):
 
 def _skip_import_data():
     Arsenic().hide_title_bar()
-    Arsenic().find_element_by_id("skipImportData").click()
-    WebDriverWait(Arsenic(), 10).until(EC.text_to_be_present_in_element((By.ID, "form_container"), 'Type of Document'))
-    Arsenic().find_element_by_link_text("Conference Information").click()
+    Arsenic().find_element_by_id('skipImportData').click()
+    WebDriverWait(Arsenic(), 10).until(EC.text_to_be_present_in_element((By.ID, 'form_container'), 'Type of Document'))
+    Arsenic().find_element_by_link_text('Conference Information').click()
     Arsenic().execute_script("""document.evaluate("//div[@id='webdeposit_form_accordion']/div[3]/div[7]/div[1]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue.click()""")
     Arsenic().execute_script("""document.evaluate("//div[@id='webdeposit_form_accordion']/div[3]/div[8]/div[1]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue.click()""")
     Arsenic().execute_script("""document.evaluate("//div[@id='webdeposit_form_accordion']/div[3]/div[9]/div[1]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue.click()""")
