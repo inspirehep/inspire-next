@@ -30,7 +30,7 @@ import pytest
 
 @pytest.mark.xfail(reason='wrong output')
 def test_format_cv_latex(app):
-    article = get_db_record('literature', 4328)
+    article = get_db_record('lit', 4328)
     today = date.today().strftime('%d %b %Y')
 
     expected = u'''%\cite{Glashow:1961tr}

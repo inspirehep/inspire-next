@@ -92,7 +92,7 @@ def test_append_new_record_to_queue_method_not_hep_record(small_app):
 
 def test_append_updated_record_to_queue(small_app):
     """Test the receiver responsible for queuing updated HEP records."""
-    pid = PersistentIdentifier.get("literature", 4328)
+    pid = PersistentIdentifier.get('lit', 4328)
     publication_id = str(pid.object_uuid)
     record = Record.get_record(publication_id)
 
@@ -159,7 +159,7 @@ def test_append_updated_record_to_queue_not_hep_record(small_app):
 
 def test_append_updated_record_to_queue_same_data(small_app):
     """Check if for the same record, the receiver will skip the publication."""
-    pid = PersistentIdentifier.get("literature", 11883)
+    pid = PersistentIdentifier.get('lit', 11883)
     publication_id = str(pid.object_uuid)
     record = Record.get_record(publication_id)
 

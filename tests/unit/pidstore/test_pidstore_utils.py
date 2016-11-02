@@ -20,16 +20,38 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Configuration of Disambiguation module."""
-
 from __future__ import absolute_import, division, print_function
 
-# Celery.
-DISAMBIGUATION_QUEUE = "celery"
+from inspirehep.modules.pidstore.utils import (
+    get_endpoint_from_pid_type,
+    get_pid_type_from_endpoint,
+    get_pid_type_from_schema,
+)
 
-# Elasticsearch.
-DISAMBIGUATION_RECORD_INDEX = "records-hep"
-DISAMBIGUATION_RECORD_DOCTYPE = "hep"
 
-# Invenio-Records.
-DISAMBIGUATION_AUTHORS_SCHEMA_PATH = "records/authors.json"
+def test_get_endpoint_from_pid_type():
+    expected = 'literature'
+    result = get_endpoint_from_pid_type('lit')
+
+    assert expected == result
+
+
+def test_get_pid_type_from_endpoint():
+    expected = 'lit'
+    result = get_pid_type_from_endpoint('literature')
+
+    assert expected == result
+
+
+def test_get_pid_type_from_schema():
+    expected = 'lit'
+    result = get_pid_type_from_schema('http://localhost:5000/schemas/record/hep.json')
+
+    assert expected == result
+
+
+def test_get_pid_from_schema_supports_relative_urls():
+    expected = 'aut'
+    result = get_pid_type_from_schema('schemas/record/authors.json')
+
+    assert expected == result

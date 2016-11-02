@@ -48,7 +48,7 @@ def _get_record(record_id, source):
             source = ["collaboration", "author.full_name"]
     """
     elasticsearch_index = current_app.config.get('DISAMBIGUATION_RECORD_INDEX')
-    elasticsearch_type = current_app.config.get('DISAMBIGUATION_RECORD_TYPE')
+    elasticsearch_type = current_app.config.get('DISAMBIGUATION_RECORD_DOCTYPE')
 
     return es.get_source(
         index=elasticsearch_index,
@@ -97,7 +97,7 @@ def _scroll_search(query):
         The Elasticsearch instance response.
     """
     elasticsearch_index = current_app.config.get('DISAMBIGUATION_RECORD_INDEX')
-    elasticsearch_type = current_app.config.get('DISAMBIGUATION_RECORD_TYPE')
+    elasticsearch_type = current_app.config.get('DISAMBIGUATION_RECORD_DOCTYPE')
 
     result = []
 

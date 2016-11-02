@@ -31,7 +31,7 @@ from invenio_indexer.signals import before_record_index
 from invenio_records.signals import before_record_insert, before_record_update
 
 from inspirehep.dojson.utils import classify_field, get_recid_from_ref
-from inspirehep.modules.pidstore.providers import InspireRecordIdProvider
+from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.utils.date import create_valid_date
 from inspirehep.utils.helpers import force_force_list
 from inspirehep.utils.record import (
@@ -360,16 +360,14 @@ def check_if_record_is_going_to_be_deleted(sender, *args, **kwargs):
     then delete all the record's pidstores.
     """
     control_number = int(sender.get('control_number'))
-    collection = InspireRecordIdProvider.schema_to_pid_type(
-        sender.get('$schema')
-    )
-    record = get_db_record(collection, control_number)
+    pid_type = get_pid_type_from_schema(sender.get('$schema'))
+    record = get_db_record(pid_type, control_number)
 
     if sender.get('deleted'):
         new_recid = get_recid_from_ref(sender.get('new_record'))
         if new_recid:
-            merged_record = get_db_record(collection, new_recid)
+            merged_record = get_db_record(pid_type, new_recid)
             merge_pidstores_of_two_merged_records(merged_record.id, record.id)
         else:
-            record = get_db_record(collection, control_number)
+            record = get_db_record(pid_type, control_number)
             soft_delete_pidstore_for_record(record.id)

@@ -81,11 +81,3 @@ class InspireRecordIdProvider(BaseProvider):
             kwargs['status'] = PIDStatus.REGISTERED
         return super(InspireRecordIdProvider, cls).create(
             object_type=object_type, object_uuid=object_uuid, **kwargs)
-
-    @staticmethod
-    def schema_to_pid_type(schema):
-        pid_type = os.path.splitext(os.path.basename(schema))[0]
-        if pid_type == 'hep':
-            # FIXME: temp hack until we rename hep.json to literature.json
-            return 'literature'
-        return pid_type

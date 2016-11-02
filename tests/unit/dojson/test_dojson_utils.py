@@ -158,8 +158,8 @@ def test_get_int_value_returns_none_when_value_is_a_tuple():
 def test_get_record_ref_with_empty_server_name(current_app):
     current_app.config = {}
 
-    expected = 'http://inspirehep.net/api/record_type/123'
-    result = get_record_ref(123, 'record_type')
+    expected = 'http://inspirehep.net/api/endpoint/123'
+    result = get_record_ref(123, 'endpoint')
 
     assert expected == result['$ref']
 
@@ -168,8 +168,8 @@ def test_get_record_ref_with_empty_server_name(current_app):
 def test_get_record_ref_with_server_name_localhost(current_app):
     current_app.config = {'SERVER_NAME': 'localhost:5000'}
 
-    expected = 'http://localhost:5000/api/record_type/123'
-    result = get_record_ref(123, 'record_type')
+    expected = 'http://localhost:5000/api/endpoint/123'
+    result = get_record_ref(123, 'endpoint')
 
     assert expected == result['$ref']
 
@@ -178,8 +178,8 @@ def test_get_record_ref_with_server_name_localhost(current_app):
 def test_get_record_ref_with_http_server_name(current_app):
     current_app.config = {'SERVER_NAME': 'http://example.com'}
 
-    expected = 'http://example.com/api/record_type/123'
-    result = get_record_ref(123, 'record_type')
+    expected = 'http://example.com/api/endpoint/123'
+    result = get_record_ref(123, 'endpoint')
 
     assert expected == result['$ref']
 
@@ -188,18 +188,18 @@ def test_get_record_ref_with_http_server_name(current_app):
 def test_get_record_ref_with_https_server_name(current_app):
     current_app.config = {'SERVER_NAME': 'https://example.com'}
 
-    expected = 'https://example.com/api/record_type/123'
-    result = get_record_ref(123, 'record_type')
+    expected = 'https://example.com/api/endpoint/123'
+    result = get_record_ref(123, 'endpoint')
 
     assert expected == result['$ref']
 
 
 def test_get_record_ref_without_recid_returns_none():
-    assert get_record_ref(None, 'record_type') is None
+    assert get_record_ref(None, 'endpoint') is None
 
 
 @mock.patch('inspirehep.dojson.utils.current_app')
-def test_get_record_ref_without_record_type_defaults_to_record(current_app):
+def test_get_record_ref_without_endpoint_defaults_to_record(current_app):
     current_app.config = {}
 
     expected = 'http://inspirehep.net/api/record/123'

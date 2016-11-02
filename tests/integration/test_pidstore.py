@@ -45,7 +45,7 @@ def test_getting_next_recid_from_legacy(httpretty_mock, app):
             args = dict(
                 object_type="rec",
                 object_uuid="7753a30b-4c4b-469c-8d8d-d5020069b3ab",
-                pid_type="literature"
+                pid_type="lit"
             )
             provider = InspireRecordIdProvider.create(**args)
 

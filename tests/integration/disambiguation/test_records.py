@@ -48,7 +48,7 @@ def test_create_author_method(small_app):
     }
 
     recid = create_author(signature)
-    pid = PersistentIdentifier.get("authors", recid)
+    pid = PersistentIdentifier.get('aut', recid)
     record = Record.get_record(pid.object_uuid)
 
     assert record['collections'] == [{'primary': 'HEPNAMES'}]
@@ -61,7 +61,7 @@ def test_update_authors_recid_method(small_app):
     """Test the method responsible for updating author's recid."""
     from inspirehep.modules.disambiguation.tasks import update_authors_recid
 
-    pid = PersistentIdentifier.get("literature", 4328)
+    pid = PersistentIdentifier.get('lit', 4328)
     publication_id = str(pid.object_uuid)
 
     signature = Record.get_record(publication_id)['authors'][0]['uuid']

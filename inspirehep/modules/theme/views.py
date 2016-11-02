@@ -45,6 +45,10 @@ from invenio_mail.tasks import send_email
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client
 
+from inspirehep.modules.pidstore.utils import (
+    get_endpoint_from_pid_type,
+    get_pid_type_from_endpoint,
+)
 from inspirehep.modules.records.conference_series import (
     CONFERENCE_CATEGORIES_TO_SERIES,
 )
@@ -224,9 +228,10 @@ def ajax_references():
     """Handler for datatables references view"""
 
     recid = request.args.get('recid', '')
-    collection = request.args.get('collection', '')
+    endpoint = request.args.get('endpoint', '')
 
-    pid = PersistentIdentifier.get(collection, recid)
+    pid_type = get_pid_type_from_endpoint(endpoint)
+    pid = PersistentIdentifier.get(pid_type, recid)
 
     record = LiteratureSearch().get_source(pid.object_uuid)
 
@@ -242,9 +247,10 @@ def ajax_citations():
     """Handler for datatables citations view"""
 
     recid = request.args.get('recid', '')
-    collection = request.args.get('collection', '')
+    endpoint = request.args.get('endpoint', '')
 
-    pid = PersistentIdentifier.get(collection, recid)
+    pid_type = get_pid_type_from_endpoint(endpoint)
+    pid = PersistentIdentifier.get(pid_type, recid)
 
     record = LiteratureSearch().get_source(pid.object_uuid)
 
@@ -569,8 +575,9 @@ def record(control_number):
     except NoResultFound:
         abort(404)
 
-    return redirect('/{collection}/{control_number}'.format(
-        collection=pid.pid_type, control_number=control_number)), 301
+    return redirect('/{endpoint}/{control_number}'.format(
+        endpoint=get_endpoint_from_pid_type(pid.pid_type),
+        control_number=control_number)), 301
 
 
 #

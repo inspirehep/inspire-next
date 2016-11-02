@@ -25,7 +25,7 @@ from inspirehep.utils.record_getter import get_es_record
 
 def test_citation_counts_are_correct(app):
     def get_citation_count(recid):
-        record = get_es_record('literature', recid)
+        record = get_es_record('lit', recid)
         citation_count = record['citation_count']
 
         return citation_count

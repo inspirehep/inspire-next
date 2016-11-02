@@ -27,13 +27,13 @@ from inspirehep.utils import record_getter
 
 def test_error_decorator():
     @record_getter.raise_record_getter_error_and_log
-    def goodfn(record_type, recid):
+    def goodfn(pid_type, recid):
         return 42
 
     assert goodfn(None, None) == 42
 
     @record_getter.raise_record_getter_error_and_log
-    def badfn(record_type, recid):
+    def badfn(pid_type, recid):
         raise Exception('message')
 
     with pytest.raises(record_getter.RecordGetterError):

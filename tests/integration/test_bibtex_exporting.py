@@ -25,7 +25,7 @@ from inspirehep.utils.record_getter import get_db_record
 
 
 def test_format_article(app):
-    article = get_db_record('literature', 4328)
+    article = get_db_record('lit', 4328)
 
     expected = u'''@article{Glashow:1961tr,
       author         = "Glashow, S. L.",
@@ -43,7 +43,7 @@ def test_format_article(app):
 
 
 def test_format_inproceeding(app):
-    inproceeding = get_db_record('literature', 524480)
+    inproceeding = get_db_record('lit', 524480)
 
     expected = u'''@inproceedings{Hu:2000az,
       author         = "Hu, Wayne",
@@ -61,7 +61,7 @@ def test_format_inproceeding(app):
 
 
 def test_format_proceeding(app):
-    proceeding = get_db_record('literature', 701585)
+    proceeding = get_db_record('lit', 701585)
 
     expected = u'''@proceedings{Alekhin:2005dx,
       author         = "Alekhin, S. and others",
@@ -80,7 +80,7 @@ def test_format_proceeding(app):
 
 
 def test_format_thesis(app):
-    thesis = get_db_record('literature', 1395663)
+    thesis = get_db_record('lit', 1395663)
 
     expected = u'''@phdthesis{Mankuzhiyil:2010jpa,
       author         = "Mankuzhiyil, Nijil",
@@ -102,7 +102,7 @@ def test_format_thesis(app):
 
 
 def test_format_book(app):
-    book = get_db_record('literature', 736770)
+    book = get_db_record('lit', 736770)
 
     expected = u'''@book{Fecko:2006zy,
       author         = "Fecko, M.",
@@ -118,7 +118,7 @@ def test_format_book(app):
 
 
 def test_format_inbook(app):
-    inbook = get_db_record('literature', 1375491)
+    inbook = get_db_record('lit', 1375491)
 
     expected = u'''@inbook{Bechtle:2015nta,
       author         = "Bechtle, Philip and Plehn, Tilman and Sander, Christian",
