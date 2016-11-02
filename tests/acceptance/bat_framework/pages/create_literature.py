@@ -37,6 +37,19 @@ def go_to():
     Arsenic().get(os.environ['SERVER_NAME'] + '/submit/literature/create')
 
 
+def submit_thesis(input_data):
+    _skip_import_data()
+    Arsenic().hide_title_bar()
+    _select_thesis()
+    _links_population(input_data)
+    _basic_info_population(input_data)
+    _thesis_info_population(input_data)
+    _references_comment_population(input_data)
+    Arsenic().find_element_by_xpath('//div[@id="webdeposit_form_accordion"]/div[4]/span/button').click()
+    Arsenic().show_title_bar()
+    return WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'))).text
+
+
 def submit_journal_article_with_proceeding(input_data):
     _skip_import_data()
     Arsenic().hide_title_bar()
@@ -60,6 +73,16 @@ def submit_journal_article(input_data):
     Arsenic().find_element_by_xpath('//div[@id="webdeposit_form_accordion"]/div[4]/span/button').click()
     Arsenic().show_title_bar()
     return WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'))).text
+
+
+def _thesis_info_population(input_data):
+    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'supervisors-0-name')))
+    Arsenic().find_element_by_id("supervisors-0-name").send_keys(input_data['supervisor'])
+    Arsenic().find_element_by_id("supervisors-0-affiliation").send_keys(input_data['supervisor-affilation'])
+    Arsenic().find_element_by_id("thesis_date").send_keys(input_data['thesis-date'])
+    Arsenic().find_element_by_id("defense_date").send_keys(input_data['thesis-defense'])
+    Select(Arsenic().find_element_by_id("degree_type")).select_by_value(input_data['degree-type'])
+    Arsenic().find_element_by_id("institution").send_keys(input_data['institution'])
 
 
 def _links_population(input_data):
