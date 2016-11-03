@@ -43,3 +43,7 @@ def write_institution(institution):
 
 def write_experiment(experiment):
     return Arsenic().write_in_autocomplete_field('experiments-0-name', experiment)
+
+
+def write_advisor(advisor):
+    return Arsenic().write_in_autocomplete_field('advisors-0-name', advisor)

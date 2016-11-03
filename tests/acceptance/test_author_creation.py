@@ -35,3 +35,6 @@ def test_experiments_typehead(login):
     assert 'ATLAS' in create_author.write_experiment('atl')
 
 
+def test_advisors_typehead(login):
+    create_author.go_to()
+    assert 'Vorobyev, Alexey' in create_author.write_advisor('alexe')
