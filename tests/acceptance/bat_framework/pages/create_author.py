@@ -103,3 +103,34 @@ def submit_empty_form():
     except (ElementNotVisibleException, WebDriverException):
         pass
     return output_data
+
+
+def submit_author(input_data):
+    Arsenic().hide_title_bar()
+    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'given_names'))).send_keys(input_data['given-names'])
+    Arsenic().find_element_by_id('family_name').send_keys(input_data['family-name'])
+    Arsenic().find_element_by_id('display_name').send_keys(input_data['display-name'])
+    Arsenic().find_element_by_id('native_name').send_keys(input_data['native-name'])
+    Arsenic().find_element_by_id('public_emails-0-email').send_keys(input_data['public-email'])
+    Arsenic().find_element_by_id('orcid').send_keys(input_data['orcid'])
+    Arsenic().find_element_by_id('websites-0-webpage').send_keys(input_data['websites-0'])
+    Arsenic().find_element_by_xpath('(//a[@class="add-element"])[2]').click()
+    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'websites-1-webpage'))).send_keys(input_data['websites-1'])
+    Arsenic().find_element_by_id('linkedin_url').send_keys(input_data['linkedin-url'])
+    Arsenic().find_element_by_id('twitter_url').send_keys(input_data['twitter-url'])
+    Arsenic().find_element_by_id('blog_url').send_keys(input_data['blog-url'])
+    Arsenic().find_element_by_id('institution_history-0-name').send_keys(input_data['institution-name'])
+    Arsenic().find_element_by_id('institution_history-0-start_year').send_keys(input_data['institution-start_year'])
+    Arsenic().find_element_by_id('institution_history-0-end_year').send_keys(input_data['institution-end_year'])
+    Select(Arsenic().find_element_by_id('institution_history-0-rank')).select_by_value(input_data['institution-rank'])
+    Arsenic().find_element_by_id('experiments-0-name').send_keys(input_data['experiments-name'])
+    Arsenic().find_element_by_id('experiments-0-start_year').send_keys(input_data['experiments-start_year'])
+    Arsenic().find_element_by_id('experiments-0-end_year').send_keys(input_data['experiments-end_year'])
+    Arsenic().find_element_by_id('advisors-0-name').send_keys(input_data['advisors-name'])
+    Arsenic().find_element_by_id('comments').send_keys(input_data['comments'])
+    Arsenic().find_element_by_xpath('//button[@class="multiselect dropdown-toggle btn btn-default"]').click()
+    Arsenic().find_element_by_xpath('//input[@value="' + input_data['subject-0'] + '"]').click()
+    Arsenic().find_element_by_xpath('//input[@value="' + input_data['subject-1'] + '"]').click()
+    Arsenic().find_element_by_xpath('//button[@class="btn btn-success form-submit"]').click()
+    Arsenic().show_title_bar()
+    return WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'))).text

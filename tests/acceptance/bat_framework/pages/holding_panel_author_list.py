@@ -20,32 +20,32 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
 import os
 
 from bat_framework.arsenic import Arsenic
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import ElementNotVisibleException, WebDriverException
-from bat_framework.pages import holding_panel_list
 
 
 def go_to():
-    holding_panel_list.go_to()
-    holding_panel_list.click_first_record()
+    Arsenic().get(os.environ['SERVER_NAME'] + '/holdingpen/list/?workflow_name=Author&is-update=false&size=10&status=HALTED')
 
-def load_submitted_record(input_data):
+
+def click_first_record():
+    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//a[@class="title ng-binding ng-scope"]'))).click()
+    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="detail-panel"])[1]')))
+
+
+def load_submission_record(input_data):
     try:
-        record = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="ng-scope"])[2]'))).text
-        record += Arsenic().find_element_by_xpath('//p[@class="text-center ng-scope"]').text
-        record += Arsenic().find_element_by_xpath('(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[1]').text
-        record += Arsenic().find_element_by_xpath('(//div[@class="col-md-9 col-sm-9 col-xs-8 ng-binding"])[2]').text
+        record = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="row hp-item ng-scope"][1]'))).text
     except (ElementNotVisibleException, WebDriverException):
         go_to()
-        record = load_submitted_record(input_data)
+        record = load_submission_record(input_data)
     return record
-
-
-def accept_record():
-    Arsenic().find_element_by_xpath('//button[@class="btn btn-warning"]').click()
-    return WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))).text

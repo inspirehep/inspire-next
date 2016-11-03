@@ -23,7 +23,34 @@
 from __future__ import absolute_import, division, print_function
 
 from bat_framework.pages import create_author
+from bat_framework.pages import holding_panel_author_list
+from bat_framework.pages import holding_panel_author_detail
 
+input_author_data = {
+    'given-names': 'Mark',
+    'family-name': 'Twain',
+    'display-name': 'M. Twain',
+    'native-name': 'M. Twain',
+    'public-email': 'mark.twain@history.org',
+    'orcid': '1111-1111-1111-1111',
+    'websites-0': 'http://www.example1.com',
+    'websites-1': 'http://www.example2.com',
+    'linkedin-url': 'http://www.example3.com',
+    'twitter-url': 'http://www.example4.com',
+    'blog-url': 'http://www.example5.com',
+    'institution-name': 'CERN',
+    'institution-start_year': '2000',
+    'institution-end_year': '2001',
+    'institution-rank': 'STAFF',
+    'experiments-name': 'ATLAS',
+    'experiments-start_year': '2002',
+    'experiments-end_year': '2005',
+    'advisors-name': 'Bob White',
+    'advisors-degree_type': 'PhD',
+    'comments': 'Some comments about the author',
+    'subject-0': 'ACC-PHYS',
+    'subject-1': 'ASTRO-PH'
+}
 
 def test_institutions_typehead(login):
     create_author.go_to()
@@ -88,3 +115,86 @@ def test_mandatory_fields(login):
             'reserach-field': 'This field is required.'
             }
     assert expected_data == create_author.submit_empty_form()
+
+
+def test_submit_author(login):
+    """Submit the form for author creation from scratch"""
+    create_author.go_to()
+    assert 'Thank you for adding new profile information!' in create_author.submit_author(input_author_data)
+
+    holding_panel_author_list.go_to()
+    record = holding_panel_author_list.load_submission_record(input_author_data)
+    assert 'CERN' in record
+    assert 'ACC-PHYS' in record
+    assert 'ASTRO-PH' in record
+    assert 'Twain, Mark' in record
+    assert 'inspire:uid:1' in record
+    assert 'admin@inspirehep.net' in record
+
+    holding_panel_author_detail.go_to()
+    record = holding_panel_author_detail.load_submitted_record(input_author_data)
+    assert 'M. Twain' in record
+    assert 'M. Twain' in record
+    assert 'Twain, Mark' in record
+    assert 'mark.twain@history.org' in record
+    assert 'Experiment: ATLAS - From: 2002 To: 2005' in record
+    assert 'Submitted by admin@inspirehep.net\non' in record
+    assert 'Some comments about the author' in record
+    assert 'http://www.example1.com' in record
+    assert 'http://www.example2.com' in record
+    assert 'http://www.example3.com' in record
+    assert 'http://www.example4.com' in record
+    assert 'http://www.example5.com' in record
+    assert 'ACC-PHYS' in record
+    assert 'ASTRO-PH' in record
+    assert 'Bob White' in record
+    assert 'PhD' in record
+    assert 'CERN' in record
+    assert 'STAFF' in record
+    assert '2000' in record
+    assert '2001' in record
+    holding_panel_author_detail.reject_record()
+
+
+def test_accept_author(login):
+    """Accept a submitted author"""
+    create_author.go_to()
+    create_author.submit_author(input_author_data)
+    holding_panel_author_list.go_to()
+    holding_panel_author_list.load_submission_record(input_author_data)
+    holding_panel_author_detail.go_to()
+    holding_panel_author_detail.load_submitted_record(input_author_data)
+    assert 'Accepted as Non-CORE' in holding_panel_author_detail.accept_record()
+
+
+def test_reject_author(login):
+    """Reject a submitted author"""
+    create_author.go_to()
+    create_author.submit_author(input_author_data)
+    holding_panel_author_list.go_to()
+    holding_panel_author_list.load_submission_record(input_author_data)
+    holding_panel_author_detail.go_to()
+    holding_panel_author_detail.load_submitted_record(input_author_data)
+    assert 'Rejected' in holding_panel_author_detail.reject_record()
+
+
+def test_curation_author(login):
+    """Accept with curation a submitted author"""
+    create_author.go_to()
+    create_author.submit_author(input_author_data)
+    holding_panel_author_list.go_to()
+    holding_panel_author_list.load_submission_record(input_author_data)
+    holding_panel_author_detail.go_to()
+    holding_panel_author_detail.load_submitted_record(input_author_data)
+    assert 'Accepted with Curation' in holding_panel_author_detail.curation_record()
+
+
+def test_review_submission_author(login):
+    """Review a submitted author"""
+    create_author.go_to()
+    create_author.submit_author(input_author_data)
+    holding_panel_author_list.go_to()
+    holding_panel_author_list.load_submission_record(input_author_data)
+    holding_panel_author_detail.go_to()
+    holding_panel_author_detail.load_submitted_record(input_author_data)
+    assert holding_panel_author_detail.review_record()

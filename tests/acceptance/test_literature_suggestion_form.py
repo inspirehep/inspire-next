@@ -23,8 +23,8 @@
 from __future__ import absolute_import, division, print_function
 
 from bat_framework.pages import create_literature
-from bat_framework.pages import holding_panel_list
-from bat_framework.pages import holding_panel_detail
+from bat_framework.pages import holding_panel_literature_list
+from bat_framework.pages import holding_panel_literature_detail
 
 
 # Components Tests
@@ -126,16 +126,16 @@ def test_literature_create_article_journal_with_proceeding_manually(login):
 
 
 def _check_back_office(input_data):
-    holding_panel_list.go_to()
-    record = holding_panel_list.load_submission_record(input_data)
+    holding_panel_literature_list.go_to()
+    record = holding_panel_literature_list.load_submission_record(input_data)
     assert 'Computing' in record
     assert 'Accelerators' in record
     assert 'My Title For Test' in record
     assert 'admin@inspirehep.net' in record
     assert 'Mister White; Mister Brown' in record
     assert 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record
-    holding_panel_detail.go_to()
-    record = holding_panel_detail.load_submitted_record(input_data)
+    holding_panel_literature_detail.go_to()
+    record = holding_panel_literature_detail.load_submitted_record(input_data)
     assert 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record
     assert 'Submitted by admin@inspirehep.net\non' in record
     assert 'Wisconsin U., Madison' in record
@@ -146,7 +146,7 @@ def _check_back_office(input_data):
     assert 'Computing' in record
     assert 'CERN' in record
 
-    assert 'Accepted as Non-CORE' in holding_panel_detail.accept_record()
+    assert 'Accepted as Non-CORE' in holding_panel_literature_detail.accept_record()
 
 
 def test_pdf_link(login):
