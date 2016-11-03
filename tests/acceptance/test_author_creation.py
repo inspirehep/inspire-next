@@ -38,3 +38,10 @@ def test_experiments_typehead(login):
 def test_advisors_typehead(login):
     create_author.go_to()
     assert 'Vorobyev, Alexey' in create_author.write_advisor('alexe')
+
+
+def test_mail_format(login):
+    """Test mail format in Personal Information for an author"""
+    create_author.go_to()
+    assert 'Invalid email address.' in create_author.write_mail('wrong.mail')
+    assert 'Invalid email address.' not in create_author.write_mail('me@me.com')

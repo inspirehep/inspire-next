@@ -47,3 +47,16 @@ def write_experiment(experiment):
 
 def write_advisor(advisor):
     return Arsenic().write_in_autocomplete_field('advisors-0-name', advisor)
+
+
+def write_mail(mail):
+    message_err = ''
+    mail_field = Arsenic().find_element_by_id('public_emails-0-email')
+    mail_field.send_keys(mail)
+    try:
+        mail_field.send_keys(Keys.TAB)
+        message_err = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'state-public_emails-0-email'))).text
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    mail_field.clear()
+    return message_err
