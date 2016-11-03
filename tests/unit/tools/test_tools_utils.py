@@ -132,3 +132,20 @@ def test_authorlist_with_invalid_affiliation():
 
     with pytest.raises(ValueError):
         authorlist(text)
+
+
+def test_authorlist_ignores_space_between_authors_and_affiliations():
+    text = (
+        'F. Lastname1, F.M. Otherlastname1,2\n'
+        '\n'
+        '1 CERN\n'
+        '2 Otheraffiliation'
+    )
+
+    expected = (
+        '100__ $$aLastname, F.$$vCERN\n'
+        '700__ $$aOtherlastname, F.M.$$vCERN $$vOtheraffiliation'
+    )
+    result = authorlist(text)
+
+    assert expected == result

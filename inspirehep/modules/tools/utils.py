@@ -117,7 +117,7 @@ def authorlist_with_affiliations(text):
 
         return u'{}__ $$a{}{}\n'.format(marcfield, fullname, affstring)
 
-    lines = text.split('\n')
+    lines = [line for line in text.split('\n') if line]
 
     # Extract authors:
     authors = lines.pop(0)
