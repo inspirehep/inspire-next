@@ -29,7 +29,7 @@ from inspirehep.modules.disambiguation.logic import _create_distance_signature
 
 def test_create_distance_signature_method(small_app):
     """Test the method responsible for creating data in Beard format."""
-    pid = PersistentIdentifier.get("literature", 4328)
+    pid = PersistentIdentifier.get('lit', 4328)
     publication_id = str(pid.object_uuid)
 
     signatures_map = {

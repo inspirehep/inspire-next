@@ -37,7 +37,7 @@ def test_format_tei(app):
     expected = pkg_resources.resource_string(
         __name__, os.path.join('fixtures', 'test_tei_record.xml'))
 
-    record = get_db_record('literature', 1407506)
+    record = get_db_record('lit', 1407506)
     result = tei.tei_response(record)
 
     assert result == expected

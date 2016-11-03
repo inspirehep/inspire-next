@@ -122,7 +122,7 @@ def _parse_structures(record):
                 continue
 
     try:
-        records = get_es_records('institutions', recids)
+        records = get_es_records('ins', recids)
     except RequestError:
         records = []
 

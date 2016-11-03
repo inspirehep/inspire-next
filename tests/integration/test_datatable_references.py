@@ -23,17 +23,17 @@
 def test_references(app):
     """Tests if reference datatables work for records."""
     with app.test_client() as client:
-        response = client.get('/ajax/references?recid=712925&collection=literature')
+        response = client.get('/ajax/references?recid=712925&endpoint=literature')
         assert response.status_code == 200
 
-        response = client.get('/ajax/references?recid=1319638&collection=literature')
+        response = client.get('/ajax/references?recid=1319638&endpoint=literature')
         assert response.status_code == 200
 
-        response = client.get('/ajax/references?recid=452060&collection=literature')
+        response = client.get('/ajax/references?recid=452060&endpoint=literature')
         assert response.status_code == 200
 
-        response = client.get('/ajax/references?recid=921978&collection=literature')
+        response = client.get('/ajax/references?recid=921978&endpoint=literature')
         assert response.status_code == 200
 
-        response = client.get('/ajax/references?recid=1298519&collection=literature')
+        response = client.get('/ajax/references?recid=1298519&endpoint=literature')
         assert response.status_code == 200

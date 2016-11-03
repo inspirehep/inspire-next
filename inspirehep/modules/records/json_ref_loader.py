@@ -31,6 +31,7 @@ from werkzeug.urls import url_parse
 import jsonresolver
 from jsonresolver.contrib.jsonref import json_loader_factory
 
+from inspirehep.modules.pidstore.utils import get_pid_type_from_endpoint
 from inspirehep.utils import record_getter
 
 
@@ -41,7 +42,7 @@ class AbstractRecordLoader(JsonLoader):
     local resources.
     """
 
-    def get_record(self, record_type, recid):
+    def get_record(self, pid_type, recid):
         raise NotImplementedError()
 
     def get_remote_json(self, uri, **kwargs):
@@ -60,27 +61,28 @@ class AbstractRecordLoader(JsonLoader):
             current_app.logger.error('Bad JSONref URI: {0}'.format(uri))
             return None
 
-        record_type = path_parts[-2]
+        endpoint = path_parts[-2]
+        pid_type = get_pid_type_from_endpoint(endpoint)
         recid = path_parts[-1]
-        res = self.get_record(record_type, recid)
+        res = self.get_record(pid_type, recid)
         return res
 
 
 class ESJsonLoader(AbstractRecordLoader):
     """Resolve resources by retrieving them from Elasticsearch."""
 
-    def get_record(self, record_type, recid):
+    def get_record(self, pid_type, recid):
         try:
-            return record_getter.get_es_record(record_type, recid)
+            return record_getter.get_es_record(pid_type, recid)
         except record_getter.RecordGetterError:
             return None
 
 
 class DatabaseJsonLoader(AbstractRecordLoader):
 
-    def get_record(self, record_type, recid):
+    def get_record(self, pid_type, recid):
         try:
-            return record_getter.get_db_record(record_type, recid)
+            return record_getter.get_db_record(pid_type, recid)
         except record_getter.RecordGetterError:
             return None
 

@@ -52,8 +52,8 @@ from invenio_search.utils import schema_to_index
 
 from inspirehep.dojson.processors import overdo_marc_dict
 from inspirehep.dojson.utils import get_recid_from_ref
-from inspirehep.modules.pidstore.providers import InspireRecordIdProvider
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
+from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.utils.dedupers import dedupe_list
 from inspirehep.utils.helpers import force_force_list
 from inspirehep.utils.record import (
@@ -310,7 +310,7 @@ def record_upsert(json):
     control_number = json.get('control_number', json.get('recid'))
     if control_number:
         control_number = int(control_number)
-        pid_type = InspireRecordIdProvider.schema_to_pid_type(json['$schema'])
+        pid_type = get_pid_type_from_schema(json['$schema'])
         try:
             pid = PersistentIdentifier.get(pid_type, control_number)
             record = Record.get_record(pid.object_uuid)

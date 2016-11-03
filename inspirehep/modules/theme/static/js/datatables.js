@@ -33,7 +33,7 @@
 
         this.attributes({
           recid: '',
-          collection: '',
+          endpoint: '',
           citation_count: '',
           seriesname: '',
           cnum: '',
@@ -53,7 +53,7 @@
               "url": "/ajax/references",
               "data": {
                 recid: that.attr.recid,
-                collection: that.attr.collection
+                endpoint: that.attr.endpoint
               },
               "method": "GET"
             },
@@ -79,7 +79,7 @@
               "url": "/ajax/citations",
               "data": {
                 recid: that.attr.recid,
-                collection: that.attr.collection
+                endpoint: that.attr.endpoint
               },
               "method": "GET"
             },

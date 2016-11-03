@@ -133,7 +133,7 @@ class Export(object):
     def _get_citation_number(self):
         """Returns how many times record was cited. If 0, returns nothing"""
         today = time.strftime("%d %b %Y")
-        record = get_es_record('literature', self.record['control_number'])
+        record = get_es_record('lit', self.record['control_number'])
         citations = ''
         try:
             times_cited = record['citation_count']

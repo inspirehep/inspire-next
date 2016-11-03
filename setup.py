@@ -62,7 +62,7 @@ install_requires = [
     'invenio-records>=1.0.0a16',  # Add [versioning] in the future
     'invenio-rest[cors]>=1.0.0a7',
     'invenio-search>=1.0.0a7',
-    'invenio-records-rest>=1.0.0a15,<1.0.0a17',
+    'invenio-records-rest>=1.0.0a17',
     'invenio-records-ui>=1.0.0a6',
     'invenio-files-rest>=1.0.0a3',
     'invenio-records-files>=1.0.0a5',
@@ -224,6 +224,7 @@ setup(
             'inspire_orcid = inspirehep.modules.orcid:INSPIREOrcid',
             'inspire_disambiguation = inspirehep.modules.disambiguation:InspireDisambiguation',
             'inspire_tools = inspirehep.modules.tools:INSPIRETools',
+            'invenio_records_rest = invenio_records_rest:InvenioRecordsREST',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',

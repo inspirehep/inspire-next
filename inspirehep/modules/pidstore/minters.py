@@ -27,6 +27,7 @@
 from __future__ import absolute_import, print_function
 
 from .providers import InspireRecordIdProvider
+from .utils import get_pid_type_from_schema
 
 
 def inspire_recid_minter(record_uuid, data):
@@ -35,7 +36,7 @@ def inspire_recid_minter(record_uuid, data):
     args = dict(
         object_type='rec',
         object_uuid=record_uuid,
-        pid_type=InspireRecordIdProvider.schema_to_pid_type(data['$schema'])
+        pid_type=get_pid_type_from_schema(data['$schema'])
     )
     if 'control_number' in data:
         args['pid_value'] = data['control_number']

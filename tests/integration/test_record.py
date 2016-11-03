@@ -66,7 +66,7 @@ def record_already_deleted_in_marcxml(app):
     yield
 
     with app.app_context():
-        _delete_record_from_everywhere('literature', 222)
+        _delete_record_from_everywhere('lit', 222)
 
 
 @pytest.fixture(scope='function')
@@ -96,7 +96,7 @@ def record_not_yet_deleted(app):
     yield
 
     with app.app_context():
-        _delete_record_from_everywhere('literature', 333)
+        _delete_record_from_everywhere('lit', 333)
 
 
 @pytest.fixture(scope='function')
@@ -174,7 +174,7 @@ def records_already_merged_in_marcxml(app):
     yield
 
     with app.app_context():
-        _delete_merged_records_from_everywhere('literature', 111, 222)
+        _delete_merged_records_from_everywhere('lit', 111, 222)
 
 
 @pytest.fixture(scope='function')
@@ -259,7 +259,7 @@ def records_not_merged_in_marcxml(app):
     yield
 
     with app.app_context():
-        _delete_merged_records_from_everywhere('literature', 111, 222)
+        _delete_merged_records_from_everywhere('lit', 111, 222)
 
 
 def _delete_record_from_everywhere(pid_type, record_control_number):
@@ -312,7 +312,7 @@ def test_record_can_be_deleted(app, record_not_yet_deleted):
     with app.test_client() as client:
         assert client.get('/api/literature/333').status_code == 200
 
-    record = get_db_record('literature', 333)
+    record = get_db_record('lit', 333)
     record['deleted'] = True
     record.commit()
     if record:
@@ -335,7 +335,7 @@ def test_records_can_be_merged(app, records_not_merged_in_marcxml):
         assert client.get('/api/literature/111').status_code == 200
         assert client.get('/api/literature/222').status_code == 200
 
-    record = get_db_record('literature', 222)
+    record = get_db_record('lit', 222)
     record['deleted'] = True
     record['new_record'] = {'$ref': 'http://localhost:5000/api/record/111'}
     record.commit()

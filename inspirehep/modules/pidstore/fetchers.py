@@ -29,6 +29,7 @@ from __future__ import absolute_import, print_function
 from collections import namedtuple
 
 from .providers import InspireRecordIdProvider
+from .utils import get_pid_type_from_schema
 
 FetchedPID = namedtuple('FetchedPID', ['provider', 'pid_type', 'pid_value'])
 
@@ -39,6 +40,6 @@ def inspire_recid_fetcher(record_uuid, data):
     assert "control_number" in data
     return FetchedPID(
         provider=InspireRecordIdProvider,
-        pid_type=InspireRecordIdProvider.schema_to_pid_type(data['$schema']),
+        pid_type=get_pid_type_from_schema(data['$schema']),
         pid_value=str(data['control_number']),
     )

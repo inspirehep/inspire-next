@@ -107,7 +107,7 @@ def get_recid_from_ref(ref_obj):
     return res
 
 
-def get_record_ref(recid, record_type='record'):
+def get_record_ref(recid, endpoint='record'):
     """Create record jsonref reference object from recid.
 
     None recids will return a None object.
@@ -125,7 +125,7 @@ def get_record_ref(recid, record_type='record'):
     # https://inspirehep.net.
     if not re.match('^https?://', server):
         server = 'http://{}'.format(server)
-    return {'$ref': '{}/api/{}/{}'.format(server, record_type, recid)}
+    return {'$ref': '{}/api/{}/{}'.format(server, endpoint, recid)}
 
 
 def legacy_export_as_marc(json, tabsize=4):

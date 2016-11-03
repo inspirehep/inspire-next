@@ -138,7 +138,7 @@ def orcid_test(mock_user, request):
         es.index(index='records-authors',
                  doc_type='authors', id=10, body=record)
         es.indices.refresh('records-authors')
-        record = get_db_record('literature', 782466)
+        record = get_db_record('lit', 782466)
         record['authors'].append({u'affiliations': [{u'value': u'St. Petersburg, INP'}],  u'curated_relation': True,  u'full_name': u'Full, Name',  u'profile': {
                                  u'__url__': u'http://inspirehep.net/record/00000000'},  u'record': {u'$ref': u'http://localhost:5000/api/authors/10'}})
         mock_orcid_api = OrcidApiMock(1)

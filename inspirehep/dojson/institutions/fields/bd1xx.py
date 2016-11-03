@@ -82,7 +82,7 @@ def name(self, key, value):
             related_institutes.append({
                 'curated_relation': True,
                 'name': icn,
-                'record': get_record_ref(recid, record_type='institutions'),
+                'record': get_record_ref(recid, endpoint='institutions'),
                 'relation_type': 'superseded',
             })
     else:
@@ -217,5 +217,5 @@ def related_institutes(self, key, value):
         'curated_relation': bool(value.get('0')),
         'name': value.get('a'),
         'relation_type': _classify_relation_type(value.get('w')),
-        'record': get_record_ref(value.get('0'), record_type='institutions'),
+        'record': get_record_ref(value.get('0'), endpoint='institutions'),
     }

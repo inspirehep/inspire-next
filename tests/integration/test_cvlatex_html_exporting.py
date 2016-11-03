@@ -25,7 +25,7 @@ from inspirehep.utils.record_getter import get_db_record
 
 
 def test_format_cv_latex_html(app):
-    record = get_db_record('literature', 4328)
+    record = get_db_record('lit', 4328)
 
     expected = (
         '<a href="localhost:5000/record/4328">Partial Symmetries of Weak Interactions.'
