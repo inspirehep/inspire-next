@@ -86,3 +86,20 @@ def write_year(input_id, error_message_id, year):
         pass
     year_field.clear()
     return message_err
+
+
+def submit_empty_form():
+    output_data = {}
+    Arsenic().find_element_by_xpath('//button[@class="btn btn-success form-submit"]').click()
+    try:
+        WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'state-given_names')))
+        WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'state-display_name')))
+        WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'state-research_field')))
+        output_data = {
+            'given-name': Arsenic().find_element_by_id('state-given_names').text,
+            'display-name': Arsenic().find_element_by_id('state-display_name').text,
+            'reserach-field': Arsenic().find_element_by_id('state-research_field').text
+            }
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    return output_data

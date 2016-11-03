@@ -78,3 +78,13 @@ def test_experiments_years(login):
     error_mess_id = 'state-experiments-0-end_year'
     assert 'is not a valid year' in create_author.write_year(input_id, error_mess_id, 'wrongyear')
     assert 'is not a valid year' not in create_author.write_year(input_id, error_mess_id, '2016')
+
+
+def test_mandatory_fields(login):
+    create_author.go_to()
+    expected_data = {
+            'given-name': 'This field is required.',
+            'display-name': 'This field is required.',
+            'reserach-field': 'This field is required.'
+            }
+    assert expected_data == create_author.submit_empty_form()
