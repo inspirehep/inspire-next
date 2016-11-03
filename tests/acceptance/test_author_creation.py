@@ -47,6 +47,13 @@ def test_mail_format(login):
     assert 'Invalid email address.' not in create_author.write_mail('me@me.com')
 
 
+def test_ORCID_format(login):
+    """Test ORCID format in Personal Information for an author"""
+    create_author.go_to()
+    assert 'A valid ORCID iD consists of 16 digits separated by dashes.' in create_author.write_orcid('wrong.ORCID')
+    assert 'A valid ORCID iD consists of 16 digits separated by dashes.' not in create_author.write_orcid('1111-1111-1111-1111')
+
+
 def test_institutions_years(login):
     """Test format in Start Year and End Year for author institutions"""
     create_author.go_to()

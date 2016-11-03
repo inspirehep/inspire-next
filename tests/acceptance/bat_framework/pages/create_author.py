@@ -62,6 +62,19 @@ def write_mail(mail):
     return message_err
 
 
+def write_orcid(orcid):
+    message_err = ''
+    ORCID_field = Arsenic().find_element_by_id('orcid')
+    ORCID_field.send_keys(orcid)
+    try:
+        ORCID_field.send_keys(Keys.TAB)
+        message_err = WebDriverWait(Arsenic(), 10).until(EC.presence_of_element_located((By.ID, 'state-orcid'))).text
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    ORCID_field.clear()
+    return message_err
+
+
 def write_year(input_id, error_message_id, year):
     message_err = ''
     year_field = Arsenic().find_element_by_id(input_id)
