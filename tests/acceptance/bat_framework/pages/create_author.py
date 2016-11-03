@@ -39,3 +39,7 @@ def go_to():
 
 def write_institution(institution):
     return Arsenic().write_in_autocomplete_field('institution_history-0-name', institution)
+
+
+def write_experiment(experiment):
+    return Arsenic().write_in_autocomplete_field('experiments-0-name', experiment)

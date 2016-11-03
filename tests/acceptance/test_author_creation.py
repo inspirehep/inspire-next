@@ -28,3 +28,10 @@ from bat_framework.pages import create_author
 def test_institutions_typehead(login):
     create_author.go_to()
     assert 'CERN' in create_author.write_institution('cer')
+
+
+def test_experiments_typehead(login):
+    create_author.go_to()
+    assert 'ATLAS' in create_author.write_experiment('atl')
+
+
