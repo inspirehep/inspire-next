@@ -35,8 +35,9 @@
 
 {% if results %}
 <h4>{{ results_title }}</h4>
-<pre><textarea class="form-control" form="authorlist" id="resultarea">{{ results }}</textarea></pre>
 <button class="btn btn-default" id="copy-button" data-clipboard-target="resultarea">Copy to clipboard</button>
+<pre><textarea class="form-control" form="authorlist" id="resultarea" rows="10">{{ results }}</textarea></pre>
+
 
 {% else %}
 <div>
