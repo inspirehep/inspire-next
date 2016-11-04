@@ -30,13 +30,13 @@
   <dl>
     {{ render_field(form.author_string) }}
   </dl>
-  <p><input class="btn" type="submit" value="Format">
+  <p><input class="btn btn-default" type="submit" value="Format">
 </form>
 
 {% if results %}
 <h4>{{ results_title }}</h4>
 <pre><textarea class="form-control" form="authorlist" id="resultarea">{{ results }}</textarea></pre>
-<button class="btn" id="copy-button" data-clipboard-target="resultarea">Copy to clipboard</button>
+<button class="btn btn-default" id="copy-button" data-clipboard-target="resultarea">Copy to clipboard</button>
 
 {% else %}
 <div>
