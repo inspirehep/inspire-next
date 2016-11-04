@@ -64,6 +64,11 @@ def format_name(author):
     else:
         fname, mname, lname = name.first, name.middle, name.last
 
+    if len(fname) == 1 and '.' not in fname:
+        fname += '.'
+    if len(mname) == 1 and '.' not in mname:
+        mname += '.'
+
     return u'{}{}{}'.format(
         lname,
         ', ' + fname if fname else '',
