@@ -93,6 +93,7 @@ install_requires = [
     'invenio-workflows~=6.0.2',
     'invenio-workflows-files~=0.0.4',
     'invenio-workflows-ui~=1.0.27',
+    'elasticsearch-dsl<2.2.0',
 ]
 
 tests_require = [
