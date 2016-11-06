@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 import os
 
 from bat_framework.arsenic import Arsenic
+from bat_framework.arsenic_response import ArsenicResponse
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
@@ -37,16 +38,16 @@ def go_to():
     Arsenic().get(os.environ['SERVER_NAME'] + '/submit/author/create')
 
 
-def write_institution(institution):
-    return Arsenic().write_in_autocomplete_field('institution_history-0-name', institution)
+def write_institution(institution, expected_data):
+    return ArsenicResponse(lambda: expected_data in Arsenic().write_in_autocomplete_field('institution_history-0-name', institution))
 
 
-def write_experiment(experiment):
-    return Arsenic().write_in_autocomplete_field('experiments-0-name', experiment)
+def write_experiment(experiment, expected_data):
+    return ArsenicResponse(lambda: expected_data in Arsenic().write_in_autocomplete_field('experiments-0-name', experiment))
 
 
-def write_advisor(advisor):
-    return Arsenic().write_in_autocomplete_field('advisors-0-name', advisor)
+def write_advisor(advisor, expected_data):
+    return ArsenicResponse(lambda: expected_data in Arsenic().write_in_autocomplete_field('advisors-0-name', advisor))
 
 
 def write_mail(mail):
@@ -59,7 +60,7 @@ def write_mail(mail):
     except (ElementNotVisibleException, WebDriverException):
         pass
     mail_field.clear()
-    return message_err
+    return ArsenicResponse(lambda: 'Invalid email address.' in message_err)
 
 
 def write_orcid(orcid):
@@ -68,11 +69,11 @@ def write_orcid(orcid):
     ORCID_field.send_keys(orcid)
     try:
         ORCID_field.send_keys(Keys.TAB)
-        message_err = WebDriverWait(Arsenic(), 10).until(EC.presence_of_element_located((By.ID, 'state-orcid'))).text
+        message_err = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'state-orcid'))).text
     except (ElementNotVisibleException, WebDriverException):
         pass
     ORCID_field.clear()
-    return message_err
+    return ArsenicResponse(lambda: 'A valid ORCID iD consists of 16 digits separated by dashes.' in message_err)
 
 
 def write_year(input_id, error_message_id, year):
@@ -85,10 +86,10 @@ def write_year(input_id, error_message_id, year):
     except (ElementNotVisibleException, WebDriverException):
         pass
     year_field.clear()
-    return message_err
+    return ArsenicResponse(lambda: 'is not a valid year' in message_err)
 
 
-def submit_empty_form():
+def submit_empty_form(expected_data):
     output_data = {}
     Arsenic().find_element_by_xpath('//button[@class="btn btn-success form-submit"]').click()
     try:
@@ -102,7 +103,7 @@ def submit_empty_form():
             }
     except (ElementNotVisibleException, WebDriverException):
         pass
-    return output_data
+    return ArsenicResponse(lambda: expected_data == output_data)
 
 
 def submit_author(input_data):
@@ -133,4 +134,4 @@ def submit_author(input_data):
     Arsenic().find_element_by_xpath('//input[@value="' + input_data['subject-1'] + '"]').click()
     Arsenic().find_element_by_xpath('//button[@class="btn btn-success form-submit"]').click()
     Arsenic().show_title_bar()
-    return WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'))).text
+    return ArsenicResponse(lambda: 'Thank you for adding new profile information!' in WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'))).text)

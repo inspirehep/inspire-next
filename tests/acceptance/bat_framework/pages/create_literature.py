@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 import os
 
 from bat_framework.arsenic import Arsenic
+from bat_framework.arsenic_response import ArsenicResponse
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
@@ -47,7 +48,7 @@ def submit_thesis(input_data):
     _references_comment_population(input_data)
     Arsenic().find_element_by_xpath('//div[@id="webdeposit_form_accordion"]/div[4]/span/button').click()
     Arsenic().show_title_bar()
-    return WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'))).text
+    return ArsenicResponse(lambda: 'The INSPIRE staff will review it and your changes will be added to INSPIRE.' in WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'))).text)
 
 
 def submit_journal_article_with_proceeding(input_data):
@@ -60,7 +61,7 @@ def submit_journal_article_with_proceeding(input_data):
     _references_comment_population(input_data)
     Arsenic().find_element_by_xpath('//div[@id="webdeposit_form_accordion"]/div[4]/span/button').click()
     Arsenic().show_title_bar()
-    return WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'))).text
+    return ArsenicResponse(lambda: 'The INSPIRE staff will review it and your changes will be added to INSPIRE.' in WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'))).text)
 
 
 def submit_journal_article(input_data):
@@ -72,7 +73,7 @@ def submit_journal_article(input_data):
     _references_comment_population(input_data)
     Arsenic().find_element_by_xpath('//div[@id="webdeposit_form_accordion"]/div[4]/span/button').click()
     Arsenic().show_title_bar()
-    return WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'))).text
+    return ArsenicResponse(lambda: 'The INSPIRE staff will review it and your changes will be added to INSPIRE.' in WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="alert alert-success alert-form-success"])'))).text)
 
 
 def _thesis_info_population(input_data):
@@ -150,7 +151,7 @@ def write_pdf_link(pdf_link):
         pass
     Arsenic().show_title_bar()
     field.clear()
-    return message_err
+    return ArsenicResponse(lambda: 'Please, provide an accessible direct link to a PDF document.' in message_err)
 
 
 def write_date_thesis(date_field, error_message_id, date):
@@ -170,52 +171,52 @@ def write_date_thesis(date_field, error_message_id, date):
         pass
     Arsenic().show_title_bar()
     field.clear()
-    return message_err
+    return ArsenicResponse(lambda: 'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY.' in message_err)
 
 
-def write_institution_thesis(institution):
+def write_institution_thesis(institution, expected_data):
     _skip_import_data()
     _select_thesis()
     WebDriverWait(Arsenic(), 5).until(EC.visibility_of_element_located((By.ID, 'supervisors-0-affiliation')))
-    return Arsenic().write_in_autocomplete_field('supervisors-0-affiliation', institution)
+    return ArsenicResponse(lambda: expected_data in Arsenic().write_in_autocomplete_field('supervisors-0-affiliation', institution))
 
 
-def write_conference(conference_title):
+def write_conference(conference_title, expected_data):
     _skip_import_data()
-    return Arsenic().write_in_autocomplete_field('conf_name', conference_title)
+    return ArsenicResponse(lambda: expected_data in Arsenic().write_in_autocomplete_field('conf_name', conference_title))
 
 
-def write_journal_title(journal_title):
+def write_journal_title(journal_title, expected_data ):
     _skip_import_data()
-    return Arsenic().write_in_autocomplete_field('journal_title', journal_title)
+    return ArsenicResponse(lambda: expected_data in Arsenic().write_in_autocomplete_field('journal_title', journal_title))
 
 
-def write_affilation(affilation):
+def write_affilation(affilation, expected_data):
     _skip_import_data()
-    return Arsenic().write_in_autocomplete_field('authors-0-affiliation', affilation)
+    return ArsenicResponse(lambda: expected_data in Arsenic().write_in_autocomplete_field('authors-0-affiliation', affilation))
 
 
 def write_arxiv_id(arxiv_id):
     Arsenic().find_element_by_id('arxiv_id').clear()
     Arsenic().find_element_by_id('arxiv_id').send_keys(arxiv_id)
     Arsenic().find_element_by_id('arxiv_id').send_keys(Keys.TAB)
-    return WebDriverWait(Arsenic(), 10).until(EC.presence_of_element_located((By.ID, 'state-arxiv_id'))).text
+    return ArsenicResponse(lambda: 'The provided ArXiv ID is invalid - it should look' in WebDriverWait(Arsenic(), 10).until(EC.presence_of_element_located((By.ID, 'state-arxiv_id'))).text)
 
 
 def write_doi_id(doi):
     Arsenic().find_element_by_id('doi').clear()
     Arsenic().find_element_by_id('doi').send_keys(doi)
     Arsenic().find_element_by_id('doi').send_keys(Keys.TAB)
-    return WebDriverWait(Arsenic(), 10).until(EC.presence_of_element_located((By.ID, 'state-doi'))).text
+    return ArsenicResponse(lambda: 'The provided DOI is invalid - it should look' in WebDriverWait(Arsenic(), 10).until(EC.presence_of_element_located((By.ID, 'state-doi'))).text)
 
 
-def submit_arxiv_id(arxiv_id):
+def submit_arxiv_id(arxiv_id, expected_data):
     Arsenic().find_element_by_id('arxiv_id').send_keys(arxiv_id)
     Arsenic().find_element_by_id('importData').click()
     WebDriverWait(Arsenic(), 20).until(EC.visibility_of_element_located((By.ID, 'acceptData'))).click()
     WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'arxiv_id')))
 
-    return {
+    output_data = {
         'doi': Arsenic().find_element_by_id('doi').get_attribute('value'),
         'year': Arsenic().find_element_by_id('year').get_attribute('value'),
         'issue': Arsenic().find_element_by_id('issue').get_attribute('value'),
@@ -226,15 +227,16 @@ def submit_arxiv_id(arxiv_id):
         'journal': Arsenic().find_element_by_id('journal_title').get_attribute('value'),
         'page-range': Arsenic().find_element_by_id('page_range_article_id').get_attribute('value')
         }
+    return ArsenicResponse(lambda: expected_data == output_data)
 
 
-def submit_doi_id(doi_id):
+def submit_doi_id(doi_id, expected_data):
     Arsenic().find_element_by_id('doi').send_keys(doi_id)
     Arsenic().find_element_by_id('importData').click()
     WebDriverWait(Arsenic(), 20).until(EC.visibility_of_element_located((By.ID, 'acceptData'))).click()
     WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'doi')))
 
-    return {
+    output_data = {
         'year': Arsenic().find_element_by_id('year').get_attribute('value'),
         'title': Arsenic().find_element_by_id('title').get_attribute('value'),
         'issue': Arsenic().find_element_by_id('issue').get_attribute('value'),
@@ -244,7 +246,8 @@ def submit_doi_id(doi_id):
         'author-1': Arsenic().find_element_by_id('authors-1-name').get_attribute('value'),
         'author-2': Arsenic().find_element_by_id('authors-2-name').get_attribute('value'),
         'page-range': Arsenic().find_element_by_id('page_range_article_id').get_attribute('value')
-        }
+    }
+    return ArsenicResponse(lambda: expected_data == output_data)
 
 
 def _skip_import_data():

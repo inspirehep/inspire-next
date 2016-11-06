@@ -23,9 +23,8 @@
 import os
 
 from bat_framework.arsenic import Arsenic
+from bat_framework.arsenic_response import ArsenicResponse
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import ElementNotVisibleException, WebDriverException
@@ -41,10 +40,20 @@ def click_first_record():
 
 
 def load_submission_record(input_data):
+    record = _force_load_record(input_data)
+    return ArsenicResponse(lambda:  'Computing' in record and
+                                    'Accelerators' in record and
+                                    'My Title For Test' in record and
+                                    'admin@inspirehep.net' in record and
+                                    'Mister White; Mister Brown' in record and
+                                    'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record)
+
+
+def _force_load_record(input_data):
     try:
         WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="row hp-item ng-scope"][1]/div/div/div[2]/holding-pen-template-handler/div[3]/a'))).click()
         record = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="row hp-item ng-scope"][1]'))).text
     except (ElementNotVisibleException, WebDriverException):
         go_to()
-        record = load_submission_record(input_data)
+        record = _force_load_record(input_data)
     return record

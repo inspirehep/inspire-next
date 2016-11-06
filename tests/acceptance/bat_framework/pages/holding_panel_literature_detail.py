@@ -23,6 +23,7 @@
 import os
 
 from bat_framework.arsenic import Arsenic
+from bat_framework.arsenic_response import ArsenicResponse
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -34,6 +35,7 @@ def go_to():
     holding_panel_literature_list.go_to()
     holding_panel_literature_list.click_first_record()
 
+
 def load_submitted_record(input_data):
     try:
         record = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="ng-scope"])[2]'))).text
@@ -43,9 +45,17 @@ def load_submitted_record(input_data):
     except (ElementNotVisibleException, WebDriverException):
         go_to()
         record = load_submitted_record(input_data)
-    return record
+    return ArsenicResponse(lambda:  'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record and
+                                    'Submitted by admin@inspirehep.net\non' in record and
+                                    'Wisconsin U., Madison' in record and
+                                    'My Title For Test' in record and
+                                    'Mister Brown' in record and
+                                    'Mister White' in record and
+                                    'Accelerators' in record and
+                                    'Computing' in record and
+                                    'CERN' in record)
 
 
 def accept_record():
     Arsenic().find_element_by_xpath('//button[@class="btn btn-warning"]').click()
-    return WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))).text
+    return ArsenicResponse(lambda:  'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))).text)

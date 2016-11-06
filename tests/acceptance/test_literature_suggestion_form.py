@@ -56,7 +56,7 @@ def test_literature_create_thesis_manually(login):
         'references': 'references',
         'extra-comments': 'comments about the document'
         }
-    assert 'The INSPIRE staff will review it and your changes will be added to INSPIRE.' in create_literature.submit_thesis(input_data)
+    assert create_literature.submit_thesis(input_data).has_error()
     _check_back_office(input_data)
 
 
@@ -88,7 +88,7 @@ def test_literature_create_article_journal_manually(login):
         'references': 'references',
         'extra-comments': 'comments about the document'
         }
-    assert 'The INSPIRE staff will review it and your changes will be added to INSPIRE.' in create_literature.submit_journal_article(input_data)
+    assert create_literature.submit_journal_article(input_data).has_error()
     _check_back_office(input_data)
 
 
@@ -121,39 +121,23 @@ def test_literature_create_article_journal_with_proceeding_manually(login):
         'references': 'references',
         'extra-comments': 'comments about the document'
         }
-    assert 'The INSPIRE staff will review it and your changes will be added to INSPIRE.' in create_literature.submit_journal_article_with_proceeding(input_data)
+    assert create_literature.submit_journal_article_with_proceeding(input_data).has_error()
     _check_back_office(input_data)
 
 
 def _check_back_office(input_data):
     holding_panel_literature_list.go_to()
-    record = holding_panel_literature_list.load_submission_record(input_data)
-    assert 'Computing' in record
-    assert 'Accelerators' in record
-    assert 'My Title For Test' in record
-    assert 'admin@inspirehep.net' in record
-    assert 'Mister White; Mister Brown' in record
-    assert 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record
+    assert holding_panel_literature_list.load_submission_record(input_data).has_error()
     holding_panel_literature_detail.go_to()
-    record = holding_panel_literature_detail.load_submitted_record(input_data)
-    assert 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.' in record
-    assert 'Submitted by admin@inspirehep.net\non' in record
-    assert 'Wisconsin U., Madison' in record
-    assert 'My Title For Test' in record
-    assert 'Mister Brown' in record
-    assert 'Mister White' in record
-    assert 'Accelerators' in record
-    assert 'Computing' in record
-    assert 'CERN' in record
-
-    assert 'Accepted as Non-CORE' in holding_panel_literature_detail.accept_record()
+    assert holding_panel_literature_detail.load_submitted_record(input_data).has_error()
+    assert holding_panel_literature_detail.accept_record().has_error()
 
 
 def test_pdf_link(login):
     """Test the pdf link field"""
     create_literature.go_to()
-    assert 'Please, provide an accessible direct link to a PDF document.' in create_literature.write_pdf_link('pdf_url_wrong')
-    assert 'Please, provide an accessible direct link to a PDF document.' not in create_literature.write_pdf_link('pdf_url_correct')
+    assert create_literature.write_pdf_link('pdf_url_wrong').has_error()
+    assert not create_literature.write_pdf_link('pdf_url_correct').has_error()
 
 
 def test_thesis_info_date(login):
@@ -166,33 +150,31 @@ def test_thesis_info_date(login):
 def test_thesis_info_autocomplete_supervisor_institution(login):
     """Test the autocompletion for the supervisor institution in the thesis section"""
     create_literature.go_to()
-    assert 'CERN' in create_literature.write_institution_thesis('CER')
+    assert create_literature.write_institution_thesis('CER', 'CERN').has_error()
 
 
 def test_journal_info_autocomplete_title(login):
     """Test the autocompletion for the title in the journal info section"""
     create_literature.go_to()
-    assert 'Nuclear Physics' in create_literature.write_journal_title('Nuc')
+    assert create_literature.write_journal_title('Nuc', 'Nuclear Physics').has_error()
 
 
 def test_conference_info_autocomplete_title(login):
     """Test the autocompletion for the title in the conference info section"""
     create_literature.go_to()
-    assert 'IN2P3 School of Statistics, 2012-05-28, Autrans, France' in create_literature.write_conference('sos')
+    assert create_literature.write_conference('sos', 'IN2P3 School of Statistics, 2012-05-28, Autrans, France').has_error()
 
 
 def test_basic_info_autocomplete_affilation(login):
     """Test the autocompletion for the affilation in the basic info section"""
     create_literature.go_to()
-    assert 'Oxford U.' in create_literature.write_affilation('oxf')
+    assert create_literature.write_affilation('oxf', 'Oxford U.').has_error()
 
 
 def test_import_from_arXiv(login):
     """Test the import from arXiv"""
     create_literature.go_to()
-    imported_data = create_literature.submit_arxiv_id('hep-th/9711200')
-
-    test_data = {
+    expected_data = {
         'issue': '4',
         'year': '1999',
         'volume': '38',
@@ -202,16 +184,13 @@ def test_import_from_arXiv(login):
         'journal': 'International Journal of Theoretical Physics',
         'title': 'The Large N Limit of Superconformal Field Theories and Supergravity',
         'abstract': 'We show that the large $N$ limit of certain conformal field theories'
-        }
-
-    assert imported_data == test_data
+    }
+    assert create_literature.submit_arxiv_id('hep-th/9711200', expected_data).has_error()
 
 
 def test_import_from_doi(login):
     create_literature.go_to()
-    imported_data = create_literature.submit_doi_id('10.1086/305772')
-
-    test_data = {
+    expected_data = {
         'issue': '2',
         'year': '1998',
         'volume': '500',
@@ -221,30 +200,28 @@ def test_import_from_doi(login):
         'author-2': 'Davis, Marc',
         'journal': 'The Astrophysical Journal',
         'title': 'Maps of Dust Infrared Emission for Use in Estimation of Reddening and Cosmic Microwave Background Radiation Foregrounds'
-        }
-
-    assert imported_data == test_data
+    }
+    assert create_literature.submit_doi_id('10.1086/305772', expected_data).has_error()
 
 
 def test_format_input_arXiv(login):
     create_literature.go_to()
-    assert 'The provided ArXiv ID is invalid - it should look' not in create_literature.write_arxiv_id('1001.4538')
-    assert 'The provided ArXiv ID is invalid - it should look' in create_literature.write_arxiv_id('hep-th.9711200')
-    assert 'The provided ArXiv ID is invalid - it should look' not in create_literature.write_arxiv_id('hep-th/9711200')
+    assert not create_literature.write_arxiv_id('1001.4538').has_error()
+    assert create_literature.write_arxiv_id('hep-th.9711200').has_error()
+    assert not create_literature.write_arxiv_id('hep-th/9711200').has_error()
 
 
 def test_format_input_doi(login):
     create_literature.go_to()
-    assert 'The provided DOI is invalid - it should look' in create_literature.write_doi_id('dummy:10.1086/305772')
-    assert 'The provided DOI is invalid - it should look' not in create_literature.write_doi_id('10.1086/305772')
-    assert 'The provided DOI is invalid - it should look' in create_literature.write_doi_id('state-doi')
+    assert create_literature.write_doi_id('dummy:10.1086/305772').has_error()
+    assert not create_literature.write_doi_id('10.1086/305772').has_error()
+    assert create_literature.write_doi_id('state-doi').has_error()
 
 
 def _test_date_format(field_id, field_err_id):
-    message_error = 'Please, provide a valid date in the format YYYY-MM-DD, YYYY-MM or YYYY.'
-    assert message_error not in create_literature.write_date_thesis(field_id, field_err_id, '')
-    assert message_error in create_literature.write_date_thesis(field_id, field_err_id, 'wrong')
-    assert message_error not in create_literature.write_date_thesis(field_id, field_err_id, '2016-01')
-    assert message_error in create_literature.write_date_thesis(field_id, field_err_id, '2016-02-30')
-    assert message_error not in create_literature.write_date_thesis(field_id, field_err_id, '2016')
-    assert message_error in create_literature.write_date_thesis(field_id, field_err_id, '2016-13')
+    assert not create_literature.write_date_thesis(field_id, field_err_id, '').has_error()
+    assert create_literature.write_date_thesis(field_id, field_err_id, 'wrong').has_error()
+    assert not create_literature.write_date_thesis(field_id, field_err_id, '2016-01').has_error()
+    assert create_literature.write_date_thesis(field_id, field_err_id, '2016-02-30').has_error()
+    assert not create_literature.write_date_thesis(field_id, field_err_id, '2016').has_error()
+    assert create_literature.write_date_thesis(field_id, field_err_id, '2016-13').has_error()

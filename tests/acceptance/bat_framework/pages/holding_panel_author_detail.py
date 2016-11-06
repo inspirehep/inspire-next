@@ -23,6 +23,7 @@
 import os
 
 from bat_framework.arsenic import Arsenic
+from bat_framework.arsenic_response import ArsenicResponse
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -49,24 +50,38 @@ def load_submitted_record(input_data):
     except (ElementNotVisibleException, WebDriverException):
         go_to()
         record = load_submitted_record(input_data)
-    return record
+    return ArsenicResponse(lambda:  'M. Twain' in record and
+                                    'Twain, Mark' in record and
+                                    'Experiment: ATLAS - From: 2002 To: 2005' in record and
+                                    'Submitted by admin@inspirehep.net\non' in record and
+                                    'Some comments about the author' in record and
+                                    'http://www.example1.com' in record and
+                                    'http://www.example3.com' in record and
+                                    'http://www.example4.com' in record and
+                                    'http://www.example5.com' in record and
+                                    'ACC-PHYS' in record and
+                                    'ASTRO-PH' in record and
+                                    'Bob White' in record and
+                                    'CERN' in record and
+                                    '2000' in record and
+                                    '2001' in record)
 
 
 def accept_record():
     Arsenic().find_element_by_xpath('//button[@class="btn btn-success"]').click()
-    return WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))).text
+    return ArsenicResponse(lambda: 'Accepted as Non-CORE' in WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="alert ng-scope alert-accept"]'))).text)
 
 
 def reject_record():
     Arsenic().find_element_by_xpath('//button[@class="btn btn-danger"]').click()
-    return WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="alert ng-scope alert-reject"]'))).text
+    return ArsenicResponse(lambda: 'Rejected' in WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//div[@class="alert ng-scope alert-reject"]'))).text)
 
 
 def curation_record():
     Arsenic().find_element_by_xpath('//button[@class="btn btn-warning"]').click()
-    return WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//span[@ng-switch-when="accept_curate"]'))).text
+    return ArsenicResponse(lambda: 'Accepted with Curation' in WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.XPATH, '//span[@ng-switch-when="accept_curate"]'))).text)
 
 
 def review_record():
     Arsenic().find_element_by_xpath('(//button[@class="btn btn-info"])[2]').click()
-    return WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'inspireid'))) and WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'bai')))
+    return ArsenicResponse(lambda: WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'inspireid'))) and WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'bai'))))

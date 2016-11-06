@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 import os
 
 from bat_framework.arsenic import Arsenic
+from bat_framework.arsenic_response import ArsenicResponse
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
@@ -48,4 +49,9 @@ def load_submission_record(input_data):
     except (ElementNotVisibleException, WebDriverException):
         go_to()
         record = load_submission_record(input_data)
-    return record
+    return ArsenicResponse(lambda:  'CERN' in record and
+                                    'ACC-PHYS' in record and
+                                    'ASTRO-PH' in record and
+                                    'Twain, Mark' in record and
+                                    'inspire:uid:1' in record and
+                                    'admin@inspirehep.net' in record)
