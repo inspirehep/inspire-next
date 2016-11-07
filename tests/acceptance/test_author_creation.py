@@ -69,21 +69,18 @@ def test_advisors_typehead(login):
 
 
 def test_mail_format(login):
-    """Test mail format in Personal Information for an author"""
     create_author.go_to()
     assert create_author.write_mail('wrong.mail').has_error()
     assert not create_author.write_mail('me@me.com').has_error()
 
 
 def test_ORCID_format(login):
-    """Test ORCID format in Personal Information for an author"""
     create_author.go_to()
     assert create_author.write_orcid('wrong.ORCID').has_error()
     assert not create_author.write_orcid('1111-1111-1111-1111').has_error()
 
 
 def test_institutions_years(login):
-    """Test format in Start Year and End Year for author institutions"""
     create_author.go_to()
     input_id = 'institution_history-0-start_year'
     error_mess_id = 'state-institution_history-0-start_year'
@@ -96,7 +93,6 @@ def test_institutions_years(login):
 
 
 def test_experiments_years(login):
-    """Test format in Start Year and End Year for author experiments"""
     create_author.go_to()
     input_id = 'experiments-0-start_year'
     error_mess_id = 'state-experiments-0-start_year'
@@ -119,7 +115,6 @@ def test_mandatory_fields(login):
 
 
 def test_submit_author(login):
-    """Submit the form for author creation from scratch"""
     create_author.go_to()
     assert create_author.submit_author(input_author_data).has_error()
     holding_panel_author_list.go_to()
@@ -130,7 +125,6 @@ def test_submit_author(login):
 
 
 def test_accept_author(login):
-    """Accept a submitted author"""
     create_author.go_to()
     create_author.submit_author(input_author_data)
     holding_panel_author_list.go_to()
@@ -141,7 +135,6 @@ def test_accept_author(login):
 
 
 def test_reject_author(login):
-    """Reject a submitted author"""
     create_author.go_to()
     create_author.submit_author(input_author_data)
     holding_panel_author_list.go_to()
@@ -152,7 +145,6 @@ def test_reject_author(login):
 
 
 def test_curation_author(login):
-    """Accept with curation a submitted author"""
     create_author.go_to()
     create_author.submit_author(input_author_data)
     holding_panel_author_list.go_to()
@@ -163,7 +155,6 @@ def test_curation_author(login):
 
 
 def test_review_submission_author(login):
-    """Review a submitted author"""
     create_author.go_to()
     create_author.submit_author(input_author_data)
     holding_panel_author_list.go_to()

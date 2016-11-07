@@ -29,7 +29,6 @@ from bat_framework.pages import holding_panel_literature_detail
 
 # Components Tests
 def test_literature_create_thesis_manually(login):
-    """Submit the form for thesis creation from scratch"""
     create_literature.go_to()
     input_data = {
         'pdf-1': 'pdf_url_correct',
@@ -61,7 +60,6 @@ def test_literature_create_thesis_manually(login):
 
 
 def test_literature_create_article_journal_manually(login):
-    """Submit the form for article creation from scratch"""
     create_literature.go_to()
     input_data = {
         'pdf-1': 'pdf_url_correct',
@@ -93,7 +91,6 @@ def test_literature_create_article_journal_manually(login):
 
 
 def test_literature_create_article_journal_with_proceeding_manually(login):
-    """Submit the form for article creation from scratch with proceeding"""
     create_literature.go_to()
     input_data = {
         'pdf-1': 'pdf_url_correct',
@@ -134,45 +131,38 @@ def _check_back_office(input_data):
 
 
 def test_pdf_link(login):
-    """Test the pdf link field"""
     create_literature.go_to()
     assert create_literature.write_pdf_link('pdf_url_wrong').has_error()
     assert not create_literature.write_pdf_link('pdf_url_correct').has_error()
 
 
 def test_thesis_info_date(login):
-    """Test the format for the submission and defense date in the thesis section"""
     create_literature.go_to()
     _test_date_format('thesis_date', 'state-thesis_date')
     _test_date_format('thesis_date', 'state-thesis_date')
 
 
 def test_thesis_info_autocomplete_supervisor_institution(login):
-    """Test the autocompletion for the supervisor institution in the thesis section"""
     create_literature.go_to()
     assert create_literature.write_institution_thesis('CER', 'CERN').has_error()
 
 
 def test_journal_info_autocomplete_title(login):
-    """Test the autocompletion for the title in the journal info section"""
     create_literature.go_to()
     assert create_literature.write_journal_title('Nuc', 'Nuclear Physics').has_error()
 
 
 def test_conference_info_autocomplete_title(login):
-    """Test the autocompletion for the title in the conference info section"""
     create_literature.go_to()
     assert create_literature.write_conference('sos', 'IN2P3 School of Statistics, 2012-05-28, Autrans, France').has_error()
 
 
 def test_basic_info_autocomplete_affilation(login):
-    """Test the autocompletion for the affilation in the basic info section"""
     create_literature.go_to()
     assert create_literature.write_affilation('oxf', 'Oxford U.').has_error()
 
 
 def test_import_from_arXiv(login):
-    """Test the import from arXiv"""
     create_literature.go_to()
     expected_data = {
         'issue': '4',
