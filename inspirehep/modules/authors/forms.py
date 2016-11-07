@@ -174,7 +174,8 @@ class EmailInlineForm(INSPIREForm):
     """Public emails inline form."""
 
     email = fields.StringField(
-        widget_classes="form-control"
+        widget_classes="form-control",
+        validators=[validators.Optional(), validators.Email()],
     )
 
     original_email = fields.HiddenField()
