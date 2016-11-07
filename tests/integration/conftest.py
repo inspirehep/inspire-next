@@ -42,7 +42,7 @@ def app():
     app.config.update(
         {
             'DEBUG': True,
-            'WTF_CSRF_ENABLED': False
+            'WTF_CSRF_ENABLED': False,
         }
     )
 

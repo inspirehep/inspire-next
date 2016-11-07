@@ -24,20 +24,33 @@
 
 from __future__ import absolute_import, division, print_function
 
+import six
+
+from flask import current_app
+
 from six.moves.urllib.parse import urlsplit
 
-from invenio_records_rest import current_records_rest
+
+def _get_pid_type_endpoint_map():
+    pid_type_endpoint_map = {}
+    for key, value in six.iteritems(
+        current_app.config['RECORDS_REST_ENDPOINTS']
+    ):
+        if value.get('default_endpoint_prefix', False):
+            pid_type_endpoint_map[value['pid_type']] = key
+
+    return pid_type_endpoint_map
 
 
 def get_endpoint_from_pid_type(pid_type):
     """Return the endpoint corresponding to a ``pid_type``."""
-    return current_records_rest.default_endpoint_prefixes[pid_type]
+    return _get_pid_type_endpoint_map()[pid_type]
 
 
 def get_pid_type_from_endpoint(endpoint):
     """Return the ``pid_type`` corresponding to an endpoint."""
     ENDPOINT_TO_PID_TYPE = {
-        v: k for k, v in current_records_rest.default_endpoint_prefixes.items()}
+        v: k for k, v in _get_pid_type_endpoint_map().items()}
 
     return ENDPOINT_TO_PID_TYPE[endpoint]
 
