@@ -84,6 +84,7 @@ def sample_record(app):
     db.session.delete(pid)
     record.delete(force=True)
     es.delete(index='records-hep', doc_type='hep', id=pid.object_uuid)
+    es.indices.refresh('records-hep')
     db.session.commit()
 
 
@@ -139,6 +140,7 @@ def restricted_record(app):
         ).one()
         pid = PersistentIdentifier.get('lit', '222')
         es.delete(index='records-hep', doc_type='hep', id=pid.object_uuid)
+        es.indices.refresh('records-hep')
         db.session.delete(collection)
         db.session.delete(another_collection)
         db.session.delete(pid)
