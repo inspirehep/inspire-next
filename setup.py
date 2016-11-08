@@ -128,7 +128,6 @@ extras_require = {
         'invenio-migrator>=1.0.0a6',
     ],
     'crawler': [
-        'scrapyd',
         'hepcrawl>=0.2.42',
     ],
     'tests': tests_require,
