@@ -24,6 +24,7 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
+from flask import current_app
 from flask_security.utils import encrypt_password
 
 from invenio_access.models import ActionUsers
@@ -83,6 +84,7 @@ def sample_record(app):
     pid = PersistentIdentifier.get('lit', '123')
     db.session.delete(pid)
     record.delete(force=True)
+    current_app.extensions['invenio-db'].versioning_manager.transaction_cls.query.delete()
     es.delete(index='records-hep', doc_type='hep', id=pid.object_uuid)
     db.session.commit()
 
@@ -142,6 +144,8 @@ def restricted_record(app):
         db.session.delete(collection)
         db.session.delete(another_collection)
         db.session.delete(pid)
+        record.delete(force=True)
+        current_app.extensions['invenio-db'].versioning_manager.transaction_cls.query.delete()
         db.session.commit()
 
 
@@ -208,7 +212,8 @@ def users(app):
     db.session.commit()
 
 
-def test_all_collections_are_cached(app, users, sample_record):
+@pytest.mark.usefixtures("users", "sample_record")
+def test_all_collections_are_cached(app):
     """Test that collection info gets cached."""
     with app.test_client() as client:
         # Remove collection cache key
@@ -231,7 +236,8 @@ def test_all_collections_are_cached(app, users, sample_record):
     # admin user
     (dict(email='admin@inspirehep.net'), 200),
 ])
-def test_record_public_detailed_read(app, sample_record, users, user_info, status):
+@pytest.mark.usefixtures("users", "sample_record")
+def test_record_public_detailed_read(app, user_info, status):
     """Test that a record can be read by everybody through web interface."""
     with app.test_client() as client:
         if user_info:
@@ -251,7 +257,8 @@ def test_record_public_detailed_read(app, sample_record, users, user_info, statu
     # admin user
     (dict(email='admin@inspirehep.net'), 200),
 ])
-def test_record_public_api_read(app, api_client, sample_record, users, user_info, status):
+@pytest.mark.usefixtures("users", "sample_record")
+def test_record_public_api_read(app, api_client, user_info, status):
     """Test that a record can be read by everybody through the API."""
     if user_info:
         # Login as user
@@ -272,7 +279,8 @@ def test_record_public_api_read(app, api_client, sample_record, users, user_info
     # admin user
     (dict(email='admin@inspirehep.net'), 200),
 ])
-def test_record_restricted_detailed_read(app, restricted_record, users, user_info, status):
+@pytest.mark.usefixtures("users", "restricted_record")
+def test_record_restricted_detailed_read(app, user_info, status):
     """Test permissions of restricted record accessing detailed view."""
 
     with app.test_client() as client:
@@ -295,7 +303,8 @@ def test_record_restricted_detailed_read(app, restricted_record, users, user_inf
     # admin user
     (dict(email='admin@inspirehep.net'), 200),
 ])
-def test_record_restricted_api_read(app, api_client, restricted_record, users, user_info, status):
+@pytest.mark.usefixtures("users", "restricted_record")
+def test_record_restricted_api_read(app, api_client, user_info, status):
     """Test permissions of a restricted record through the API."""
 
     if user_info:
@@ -315,7 +324,8 @@ def test_record_restricted_api_read(app, api_client, restricted_record, users, u
     # admin user
     (dict(email='admin@inspirehep.net', password='123456'), 427, [{'match': {'_collections': 'Literature'}}]),
 ])
-def test_inspire_search_filter(app, restricted_record, users, user_info, total_count, es_filter):
+@pytest.mark.usefixtures("users", "restricted_record")
+def test_inspire_search_filter(app, user_info, total_count, es_filter):
     """Test default inspire search filter."""
 
     with app.test_client() as client:
