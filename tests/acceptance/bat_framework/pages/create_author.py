@@ -60,3 +60,16 @@ def write_mail(mail):
         pass
     mail_field.clear()
     return message_err
+
+
+def write_year(input_id, error_message_id, year):
+    message_err = ''
+    year_field = Arsenic().find_element_by_id(input_id)
+    year_field.send_keys(year)
+    try:
+        year_field.send_keys(Keys.TAB)
+        message_err = WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, error_message_id))).text
+    except (ElementNotVisibleException, WebDriverException):
+        pass
+    year_field.clear()
+    return message_err

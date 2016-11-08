@@ -45,3 +45,29 @@ def test_mail_format(login):
     create_author.go_to()
     assert 'Invalid email address.' in create_author.write_mail('wrong.mail')
     assert 'Invalid email address.' not in create_author.write_mail('me@me.com')
+
+
+def test_institutions_years(login):
+    """Test format in Start Year and End Year for author institutions"""
+    create_author.go_to()
+    input_id = 'institution_history-0-start_year'
+    error_mess_id = 'state-institution_history-0-start_year'
+    assert 'is not a valid year' in create_author.write_year(input_id, error_mess_id, 'wrongyear')
+    assert 'is not a valid year' not in create_author.write_year(input_id, error_mess_id, '2016')
+    input_id = 'institution_history-0-end_year'
+    error_mess_id = 'state-institution_history-0-end_year'
+    assert 'is not a valid year' in create_author.write_year(input_id, error_mess_id, 'wrongyear')
+    assert 'is not a valid year' not in create_author.write_year(input_id, error_mess_id, '2016')
+
+
+def test_experiments_years(login):
+    """Test format in Start Year and End Year for author experiments"""
+    create_author.go_to()
+    input_id = 'experiments-0-start_year'
+    error_mess_id = 'state-experiments-0-start_year'
+    assert 'is not a valid year' in create_author.write_year(input_id, error_mess_id, 'wrongyear')
+    assert 'is not a valid year' not in create_author.write_year(input_id, error_mess_id, '2016')
+    input_id = 'experiments-0-end_year'
+    error_mess_id = 'state-experiments-0-end_year'
+    assert 'is not a valid year' in create_author.write_year(input_id, error_mess_id, 'wrongyear')
+    assert 'is not a valid year' not in create_author.write_year(input_id, error_mess_id, '2016')
