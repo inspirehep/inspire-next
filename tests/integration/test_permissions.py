@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 
 import pytest
 from flask import current_app
+import json
 from flask_security.utils import encrypt_password
 
 from invenio_access.models import ActionUsers
@@ -77,14 +78,16 @@ def sample_record(app):
             }
         ]
     }
-
     record = _create_and_index_record(record)
+
     yield record
 
     pid = PersistentIdentifier.get('lit', '123')
     db.session.delete(pid)
+    record = Record.get_record(record.id)
     record.delete(force=True)
-    current_app.extensions['invenio-db'].versioning_manager.transaction_cls.query.delete()
+    current_app.extensions[
+        'invenio-db'].versioning_manager.transaction_cls.query.delete()
     es.delete(index='records-hep', doc_type='hep', id=pid.object_uuid)
     db.session.commit()
 
@@ -130,23 +133,21 @@ def restricted_record(app):
     record = _create_and_index_record(record)
     yield record
 
-    with app.app_context():
-        # app context needed to avoid API app from being used after using
-        # the api client. Needed for invenio-collections to be available.
-        collection = Collection.query.filter_by(
-            name='Restricted Collection'
-        ).one()
-        another_collection = Collection.query.filter_by(
-            name='Another Restricted Collection'
-        ).one()
-        pid = PersistentIdentifier.get('lit', '222')
-        es.delete(index='records-hep', doc_type='hep', id=pid.object_uuid)
-        db.session.delete(collection)
-        db.session.delete(another_collection)
-        db.session.delete(pid)
-        record.delete(force=True)
-        current_app.extensions['invenio-db'].versioning_manager.transaction_cls.query.delete()
-        db.session.commit()
+    collection = Collection.query.filter_by(
+        name='Restricted Collection'
+    ).one()
+    another_collection = Collection.query.filter_by(
+        name='Another Restricted Collection'
+    ).one()
+    pid = PersistentIdentifier.get('lit', '222')
+    es.delete(index='records-hep', doc_type='hep', id=pid.object_uuid)
+    db.session.delete(collection)
+    db.session.delete(another_collection)
+    db.session.delete(pid)
+    record.delete(force=True)
+    current_app.extensions[
+        'invenio-db'].versioning_manager.transaction_cls.query.delete()
+    db.session.commit()
 
 
 @pytest.fixture(scope='function')
@@ -213,17 +214,17 @@ def users(app):
 
 
 @pytest.mark.usefixtures("users", "sample_record")
-def test_all_collections_are_cached(app):
+def test_all_collections_are_cached(app, app_client):
     """Test that collection info gets cached."""
-    with app.test_client() as client:
-        # Remove collection cache key
-        current_cache.delete('restricted_collections')
 
-        client.get("/literature/123")
+    # Remove collection cache key
+    current_cache.delete('restricted_collections')
 
-        # Check that cache key has been correctly filled
-        assert current_cache.get('restricted_collections') == \
-            set([u'Another Restricted Collection', u'Restricted Collection'])
+    app_client.get("/literature/123")
+
+    # Check that cache key has been correctly filled
+    assert current_cache.get('restricted_collections') == \
+        set([u'Another Restricted Collection', u'Restricted Collection'])
 
 
 @pytest.mark.parametrize('user_info,status', [
@@ -237,14 +238,13 @@ def test_all_collections_are_cached(app):
     (dict(email='admin@inspirehep.net'), 200),
 ])
 @pytest.mark.usefixtures("users", "sample_record")
-def test_record_public_detailed_read(app, user_info, status):
+def test_record_public_detailed_read(app, app_client, user_info, status):
     """Test that a record can be read by everybody through web interface."""
-    with app.test_client() as client:
-        if user_info:
-            # Login as user
-            login_user_via_session(client, email=user_info['email'])
+    if user_info:
+        # Login as user
+        login_user_via_session(app_client, email=user_info['email'])
 
-        assert client.get("/literature/123").status_code == status
+    assert app_client.get("/literature/123").status_code == status
 
 
 @pytest.mark.parametrize('user_info,status', [
@@ -258,13 +258,13 @@ def test_record_public_detailed_read(app, user_info, status):
     (dict(email='admin@inspirehep.net'), 200),
 ])
 @pytest.mark.usefixtures("users", "sample_record")
-def test_record_public_api_read(app, api_client, user_info, status):
+def test_record_public_api_read(app, app_client, user_info, status):
     """Test that a record can be read by everybody through the API."""
     if user_info:
         # Login as user
-        login_user_via_session(api_client, email=user_info['email'])
+        login_user_via_session(app_client, email=user_info['email'])
 
-    assert api_client.get("/literature/123").status_code == status
+    assert app_client.get("/literature/123").status_code == status
 
 
 @pytest.mark.parametrize('user_info,status', [
@@ -280,15 +280,14 @@ def test_record_public_api_read(app, api_client, user_info, status):
     (dict(email='admin@inspirehep.net'), 200),
 ])
 @pytest.mark.usefixtures("users", "restricted_record")
-def test_record_restricted_detailed_read(app, user_info, status):
+def test_record_restricted_detailed_read(app, app_client, user_info, status):
     """Test permissions of restricted record accessing detailed view."""
 
-    with app.test_client() as client:
-        if user_info:
-            # Login as user
-            login_user_via_session(client, email=user_info['email'])
+    if user_info:
+        # Login as user
+        login_user_via_session(app_client, email=user_info['email'])
 
-        assert client.get("/literature/222").status_code == status
+    assert app_client.get("/literature/222").status_code == status
 
 
 @pytest.mark.parametrize('user_info,status', [
@@ -325,15 +324,39 @@ def test_record_restricted_api_read(app, api_client, user_info, status):
     (dict(email='admin@inspirehep.net', password='123456'), 24, [{'match': {'_collections': 'Literature'}}]),
 ])
 @pytest.mark.usefixtures("users", "restricted_record")
-def test_inspire_search_filter(app, user_info, total_count, es_filter):
+def test_inspire_search_filter(app, app_client, user_info, total_count, es_filter):
     """Test default inspire search filter."""
 
-    with app.test_client() as client:
-        if user_info:
-            login_user_via_view(client, email=user_info['email'], password=user_info['password'], login_url='/login/?local=1')
+    if user_info:
+        login_user_via_view(app_client, email=user_info['email'],
+                            password=user_info['password'],
+                            login_url='/login/?local=1')
 
-        # Doing a client request creates a request context that allows the
-        # assert to correctly use the logged in user.
-        client.get('/search')
-        assert LiteratureSearch().to_dict()['query']['bool']['filter'] == es_filter
-        assert LiteratureSearch().count() == total_count
+    # Doing a client request creates a request context that allows the
+    # assert to correctly use the logged in user.
+    app_client.get('/search')
+    assert LiteratureSearch().to_dict()['query']['bool'][
+        'filter'] == es_filter
+    assert LiteratureSearch().count() == total_count
+
+
+@pytest.mark.parametrize('user_info,status', [
+    # anonymous user
+    (None, 401),
+    # Logged in user without permissions assigned
+    (dict(email='user@inspirehep.net'), 403),
+    # admin user
+    (dict(email='admin@inspirehep.net'), 200),
+    # Logged in user with permissions assigned
+    (dict(email='cataloger@inspirehep.net'), 200)
+])
+@pytest.mark.usefixtures("users")
+def test_record_api_update(app, api_client, sample_record, user_info, status):
+    """Test that a record can be updated only from admin
+       and cataloger users through the API."""
+    if user_info:
+        login_user_via_session(api_client, email=user_info['email'])
+    resp = api_client.put("/literature/123/db",
+                          data=json.dumps(sample_record.dumps()),
+                          content_type='application/json')
+    assert resp.status_code == status

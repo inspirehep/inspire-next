@@ -105,6 +105,12 @@ def small_app():
         yield app
 
 
+@pytest.yield_fixture()
+def app_client(app):
+    """Flask test client for APP app."""
+    with app.test_client() as client:
+        yield client
+
 
 @pytest.yield_fixture(scope='session')
 def api(app):

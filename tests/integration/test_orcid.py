@@ -61,11 +61,11 @@ def mock_user(app, request):
 
     def teardown(app):
         with app.app_context():
-            user = User.query.filter_by(id=2).first()
+            user = User.query.filter_by(email='test_orcid_user@inspirehep.net').first()
             token = RemoteToken.query.filter_by(access_token='123').first()
             user_identity = UserIdentity.query.filter_by(
                 id='0000-0001-9412-8627', method='orcid').first()
-            remote_account = RemoteAccount.query.filter_by(user_id=2).first()
+            remote_account = RemoteAccount.query.filter_by(user_id=user.id).first()
             with db.session.begin_nested():
                 db.session.delete(token)
                 db.session.delete(user_identity)
@@ -76,25 +76,27 @@ def mock_user(app, request):
     request.addfinalizer(lambda: teardown(app))
 
     user = User(
-        id=2,
+        email='test_orcid_user@inspirehep.net',
     )
+    db.session.add(user)
+    db.session.commit()
+
     token = RemoteToken(
         id_remote_account=1,
         access_token='123'
     )
     user_identity = UserIdentity(
         id='0000-0001-9412-8627',
-        id_user='2',
+        id_user=str(user.id),
         method='orcid')
     remote_account = RemoteAccount(
         id=1,
-        user_id=2,
+        user_id=user.id,
         extra_data={},
         client_id=1,
         user=user)
     with app.app_context():
         with db.session.begin_nested():
-            db.session.add(user)
             db.session.add(user_identity)
             db.session.add(remote_account)
             db.session.add(token)

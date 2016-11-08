@@ -49,6 +49,12 @@ def init_users_and_permissions():
             active=True,
             roles=[superuser_role]
         )
+        ds.create_user(
+            email='cataloger@inspirehep.net',
+            password=encrypt_password("123456"),
+            active=True,
+            roles=[cataloger_role]
+        )
         db.session.add(ActionRoles(
             action='superuser-access',
             role=superuser_role
