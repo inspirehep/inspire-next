@@ -225,7 +225,6 @@ setup(
             'inspire_orcid = inspirehep.modules.orcid:INSPIREOrcid',
             'inspire_disambiguation = inspirehep.modules.disambiguation:InspireDisambiguation',
             'inspire_tools = inspirehep.modules.tools:INSPIRETools',
-            'invenio_records_rest = invenio_records_rest:InvenioRecordsREST',
         ],
         'invenio_assets.bundles': [
             'inspirehep_theme_css = inspirehep.modules.theme.bundles:css',
