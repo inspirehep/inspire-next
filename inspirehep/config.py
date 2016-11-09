@@ -159,6 +159,8 @@ NOTE that ES percolator uses high memory and there might be some problems
 when creating records.
 """
 
+RECORD_EDITOR_INDEX_TEMPLATE = 'inspirehep_theme/invenio_record_editor/index.html'
+
 INSPIRE_COLLECTIONS_DEFINITION = [
     {
         "query": "collections.primary:HEP",
