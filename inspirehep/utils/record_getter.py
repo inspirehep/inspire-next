@@ -64,17 +64,16 @@ def raise_record_getter_error_and_log(f):
 
 
 @raise_record_getter_error_and_log
-def get_es_record(pid_type, recid, **kwargs):
-    pid = PersistentIdentifier.get(pid_type, recid)
+def get_es_record(endpoint, recid, **kwargs):
+    pid = PersistentIdentifier.get('recid', recid)
 
-    endpoint = get_endpoint_from_pid_type(pid_type)
     search_conf = current_app.config['RECORDS_REST_ENDPOINTS'][endpoint]
     search_class = import_string(search_conf['search_class'])()
 
     return search_class.get_source(pid.object_uuid, **kwargs)
 
 
-def get_es_records(pid_type, recids, **kwargs):
+def get_es_records(endpoint, recids, **kwargs):
     """Get a list of recids from ElasticSearch.
 
     :param pid_type: pid type of recids.
@@ -85,11 +84,10 @@ def get_es_records(pid_type, recids, **kwargs):
     """
     uuids = PersistentIdentifier.query.filter(
         PersistentIdentifier.pid_value.in_(recids),
-        PersistentIdentifier.pid_type == pid_type
+        PersistentIdentifier.pid_type == 'recid'
     ).all()
     uuids = [str(uuid.object_uuid) for uuid in uuids]
 
-    endpoint = get_endpoint_from_pid_type(pid_type)
     search_conf = current_app.config['RECORDS_REST_ENDPOINTS'][endpoint]
     search_class = import_string(search_conf['search_class'])()
 
@@ -97,10 +95,7 @@ def get_es_records(pid_type, recids, **kwargs):
 
 
 @raise_record_getter_error_and_log
-def get_es_record_by_uuid(uuid):
-    pid = PersistentIdentifier.query.filter_by(object_uuid=uuid).one()
-
-    endpoint = get_endpoint_from_pid_type(pid.pid_type)
+def get_es_record_by_uuid(endpoint, uuid):
     search_conf = current_app.config['RECORDS_REST_ENDPOINTS'][endpoint]
     search_class = import_string(search_conf['search_class'])()
 
@@ -108,6 +103,6 @@ def get_es_record_by_uuid(uuid):
 
 
 @raise_record_getter_error_and_log
-def get_db_record(pid_type, recid):
-    pid = PersistentIdentifier.get(pid_type, recid)
+def get_db_record(recid):
+    pid = PersistentIdentifier.get('recid', recid)
     return Record.get_record(pid.object_uuid)

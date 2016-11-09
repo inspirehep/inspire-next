@@ -43,10 +43,10 @@ class ESRecord(Record):
     """Record class that fetches records from ElasticSearch."""
 
     @classmethod
-    def get_record(cls, object_uuid, with_deleted=False):
+    def get_record(cls, object_uuid, with_deleted=False, endpoint='literature'):
         """Get record instance from ElasticSearch."""
         try:
-            return cls(get_es_record_by_uuid(object_uuid))
+            return cls(get_es_record_by_uuid(endpoint, object_uuid))
         except RecordGetterError as e:
             if isinstance(e.cause, NotFoundError):
                 # Raise this error so the interface will render a 404 page

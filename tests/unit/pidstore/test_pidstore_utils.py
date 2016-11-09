@@ -31,27 +31,27 @@ from inspirehep.modules.pidstore.utils import (
 
 def test_get_endpoint_from_pid_type():
     expected = 'literature'
-    result = get_endpoint_from_pid_type('lit')
+    result = get_endpoint_from_pid_type('recid')
 
     assert expected == result
 
 
 def test_get_pid_type_from_endpoint():
-    expected = 'lit'
+    expected = 'recid'
     result = get_pid_type_from_endpoint('literature')
 
     assert expected == result
 
 
 def test_get_pid_type_from_schema():
-    expected = 'lit'
+    expected = 'recid'
     result = get_pid_type_from_schema('http://localhost:5000/schemas/record/hep.json')
 
     assert expected == result
 
 
 def test_get_pid_from_schema_supports_relative_urls():
-    expected = 'aut'
+    expected = 'recid'
     result = get_pid_type_from_schema('schemas/record/authors.json')
 
     assert expected == result

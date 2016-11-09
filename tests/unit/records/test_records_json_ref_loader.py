@@ -115,29 +115,22 @@ def test_abstract_loader_url_fallbacks(get_record, super_get_r_j, g_p_t_f_e, cur
 
 
 @mock.patch('inspirehep.modules.records.json_ref_loader.current_app')
-@mock.patch('inspirehep.modules.records.json_ref_loader.get_pid_type_from_endpoint')
 @mock.patch('inspirehep.modules.records.json_ref_loader.AbstractRecordLoader.get_record')
-def test_abstract_loader_recid_parsing(get_record, g_p_t_f_e, current_app):
+def test_abstract_loader_recid_parsing(get_record, current_app):
     current_app.config = {'SERVER_NAME': 'http://inspirehep.net'}
     with_actual = {'ACTUAL': 'ACTUAL'}
-    g_p_t_f_e.side_effect = ['pt1', 'pt2', 'pt3']
     get_record.return_value = with_actual
 
     expect_actual = JsonRef({'$ref': 'http://inspirehep.net/api/e1/1'},
                             loader=AbstractRecordLoader())
     # Force evaluation of get_record by this assertion.
     assert expect_actual == with_actual
-    get_record.assert_called_with('pt1', '1')
-
     expect_actual = JsonRef({'$ref': '/api/e2/2'},
                             loader=AbstractRecordLoader())
     assert expect_actual == with_actual
-    get_record.assert_called_with('pt2', '2')
-
     expect_actual = JsonRef({'$ref': '/e3/3/'},
                             loader=AbstractRecordLoader())
     assert expect_actual == with_actual
-    get_record.assert_called_with('pt3', '3')
 
 
 @mock.patch('inspirehep.modules.records.json_ref_loader.current_app')

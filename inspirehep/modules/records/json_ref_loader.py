@@ -46,6 +46,7 @@ class AbstractRecordLoader(JsonLoader):
         raise NotImplementedError()
 
     def get_remote_json(self, uri, **kwargs):
+        # import pytest; pytest.set_trace()
         parsed_uri = url_parse(uri)
         # Add http:// protocol so uri.netloc is correctly parsed.
         server_name = current_app.config.get('SERVER_NAME')
@@ -62,27 +63,29 @@ class AbstractRecordLoader(JsonLoader):
             return None
 
         endpoint = path_parts[-2]
-        pid_type = get_pid_type_from_endpoint(endpoint)
+        # pid_type = get_pid_type_from_endpoint(endpoint)
         recid = path_parts[-1]
-        res = self.get_record(pid_type, recid)
+        res = self.get_record(endpoint, recid)
         return res
 
 
 class ESJsonLoader(AbstractRecordLoader):
     """Resolve resources by retrieving them from Elasticsearch."""
 
-    def get_record(self, pid_type, recid):
+    def get_record(self, endpoint, recid):
         try:
-            return record_getter.get_es_record(pid_type, recid)
+            # import pytest; pytest.set_trace()
+            return record_getter.get_es_record(endpoint, recid)
         except record_getter.RecordGetterError:
             return None
 
 
 class DatabaseJsonLoader(AbstractRecordLoader):
 
-    def get_record(self, pid_type, recid):
+    def get_record(self, endpoint, recid):
         try:
-            return record_getter.get_db_record(pid_type, recid)
+            # import pytest; pytest.set_trace()
+            return record_getter.get_db_record(recid)
         except record_getter.RecordGetterError:
             return None
 

@@ -81,7 +81,7 @@ def sample_record(app):
     record = _create_and_index_record(record)
     yield record
 
-    pid = PersistentIdentifier.get('lit', '123')
+    pid = PersistentIdentifier.get('recid', '123')
     db.session.delete(pid)
     record.delete(force=True)
     current_app.extensions['invenio-db'].versioning_manager.transaction_cls.query.delete()
@@ -139,7 +139,7 @@ def restricted_record(app):
         another_collection = Collection.query.filter_by(
             name='Another Restricted Collection'
         ).one()
-        pid = PersistentIdentifier.get('lit', '222')
+        pid = PersistentIdentifier.get('recid', '222')
         es.delete(index='records-hep', doc_type='hep', id=pid.object_uuid)
         db.session.delete(collection)
         db.session.delete(another_collection)

@@ -324,7 +324,7 @@ def record_upsert(json):
         if json.get('deleted'):
             new_recid = get_recid_from_ref(json.get('new_record'))
             if new_recid:
-                merged_record = get_db_record(pid_type, new_recid)
+                merged_record = get_db_record(new_recid)
                 merge_pidstores_of_two_merged_records(merged_record.id, record.id)
             else:
                 soft_delete_pidstore_for_record(record.id)
