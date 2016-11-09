@@ -31,6 +31,13 @@ from inspirehep.modules.search import JobsSearch
 class LiteratureRecord(ESRecord):
     """Record class specialized for literature records."""
 
+    @classmethod
+    def get_record(cls, object_uuid):
+        return super(LiteratureRecord, cls).get_record(
+            object_uuid,
+            endpoint='literature'
+        )
+
     @property
     def title(self):
         """Get preferred title."""
@@ -106,6 +113,13 @@ class LiteratureRecord(ESRecord):
 class AuthorsRecord(ESRecord):
     """Record class specialized for author records."""
 
+    @classmethod
+    def get_record(cls, object_uuid):
+        return super(AuthorsRecord, cls).get_record(
+            object_uuid,
+            endpoint='authors'
+        )
+
     @property
     def title(self):
         """Get preferred title."""
@@ -115,6 +129,13 @@ class AuthorsRecord(ESRecord):
 class ConferencesRecord(ESRecord):
     """Record class specialized for conference records."""
 
+    @classmethod
+    def get_record(cls, object_uuid):
+        return super(ConferencesRecord, cls).get_record(
+            object_uuid,
+            endpoint='conferences'
+        )
+
     @property
     def title(self):
         """Get preferred title."""
@@ -123,6 +144,13 @@ class ConferencesRecord(ESRecord):
 
 class JobsRecord(ESRecord):
     """Record class specialized for job records."""
+
+    @classmethod
+    def get_record(cls, object_uuid):
+        return super(JobsRecord, cls).get_record(
+            object_uuid,
+            endpoint='jobs'
+        )
 
     @property
     def title(self):
@@ -154,6 +182,13 @@ class JobsRecord(ESRecord):
 class InstitutionsRecord(ESRecord):
     """Record class specialized for institution records."""
 
+    @classmethod
+    def get_record(cls, object_uuid):
+        return super(InstitutionsRecord, cls).get_record(
+            object_uuid,
+            endpoint='institutions'
+        )
+
     @property
     def title(self):
         """Get preferred title."""
@@ -165,6 +200,13 @@ class InstitutionsRecord(ESRecord):
 class ExperimentsRecord(ESRecord):
     """Record class specialized for experiment records."""
 
+    @classmethod
+    def get_record(cls, object_uuid):
+        return super(ExperimentsRecord, cls).get_record(
+            object_uuid,
+            endpoint='experiments'
+        )
+
     @property
     def title(self):
         """Get preferred title."""
@@ -175,6 +217,13 @@ class ExperimentsRecord(ESRecord):
 
 class JournalsRecord(ESRecord):
     """Record class specialized for journal records."""
+
+    @classmethod
+    def get_record(cls, object_uuid):
+        return super(JournalsRecord, cls).get_record(
+            object_uuid,
+            endpoint='journals'
+        )
 
     @property
     def title(self):

@@ -38,14 +38,14 @@ def _get_pid_type_endpoint_map():
     return pid_type_endpoint_map
 
 
-def get_endpoint_from_pid_type(pid_type):
+def get_endpoint_from_pid_type(pid_type='recid'):
     """Return the endpoint corresponding to a ``pid_type``."""
     PID_TYPE_TO_ENDPOINT = _get_pid_type_endpoint_map()
 
     return PID_TYPE_TO_ENDPOINT[pid_type]
 
 
-def get_pid_type_from_endpoint(endpoint):
+def get_pid_type_from_endpoint(endpoint='literature'):
     """Return the ``pid_type`` corresponding to an endpoint."""
     ENDPOINT_TO_PID_TYPE = {
         v: k for k, v in iteritems(_get_pid_type_endpoint_map())}
@@ -60,11 +60,12 @@ def get_pid_type_from_schema(schema):
     Literature records. This implementation exploits this by falling back to
     ``get_pid_type_from_endpoint``.
     """
-    def _get_schema_name_from_schema(schema):
-        return urlsplit(schema).path.split('/')[-1].split('.')[0]
+    # def _get_schema_name_from_schema(schema):
+    #     return urlsplit(schema).path.split('/')[-1].split('.')[0]
 
-    schema_name = _get_schema_name_from_schema(schema)
-    if schema_name == 'hep':  # FIXME: remove when hep.json -> literature.json
-        return 'lit'
+    # schema_name = _get_schema_name_from_schema(schema)
+    # if schema_name == 'hep':  # FIXME: remove when hep.json -> literature.json
+    #     return 'recid'
 
-    return get_pid_type_from_endpoint(schema_name)
+    # return get_pid_type_from_endpoint(schema_name)
+    return 'recid'

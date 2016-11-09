@@ -42,8 +42,8 @@ def test_count_phonetic_block_dispatched(small_app):
 
     # Signature #1.
     glashow_record_id = str(PersistentIdentifier.get(
-        "literature", 4328).object_uuid)
-    glashow_record = get_es_record_by_uuid(glashow_record_id)
+        "recid", 4328).object_uuid)
+    glashow_record = get_es_record_by_uuid("literature", glashow_record_id)
 
     # Add phonetic block to the record.
     glashow_record['authors'][0]['signature_block'] = "GLASs"
@@ -53,8 +53,8 @@ def test_count_phonetic_block_dispatched(small_app):
 
     # Signature #2.
     higgs_record_id_first = str(PersistentIdentifier.get(
-        "literature", 1358492).object_uuid)
-    higgs_record_first = get_es_record_by_uuid(higgs_record_id_first)
+        "recid", 1358492).object_uuid)
+    higgs_record_first = get_es_record_by_uuid("literature", higgs_record_id_first)
 
     # Add phonetic block to the record.
     higgs_record_first['authors'][0]['signature_block'] = "HAGp"
@@ -64,8 +64,8 @@ def test_count_phonetic_block_dispatched(small_app):
 
     # Signature #3.
     higgs_record_id_second = str(PersistentIdentifier.get(
-        "literature", 11883).object_uuid)
-    higgs_record_second = get_es_record_by_uuid(higgs_record_id_second)
+        "recid", 11883).object_uuid)
+    higgs_record_second = get_es_record_by_uuid("literature", higgs_record_id_second)
 
     # Add phonetic block to the record.
     higgs_record_second['authors'][0]['signature_block'] = "HAGp"

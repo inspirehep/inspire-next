@@ -49,7 +49,7 @@ class Reference(object):
             ]
 
             resolved_references = get_es_records(
-                'lit',
+                'literature',
                 reference_recids,
                 _source=[
                     'control_number',
