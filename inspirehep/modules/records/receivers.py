@@ -359,7 +359,7 @@ def check_if_record_is_going_to_be_deleted(sender, *args, **kwargs):
     If 'deleted' field exists and its value is True, before update,
     then delete all the record's pidstores.
     """
-    control_number = int(sender.get('control_number'))
+    control_number = sender.get('control_number')
     pid_type = get_pid_type_from_schema(sender.get('$schema'))
     record = get_db_record(pid_type, control_number)
 

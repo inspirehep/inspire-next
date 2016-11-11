@@ -118,7 +118,7 @@ def orcid_test(mock_user, request):
             "value": "Full Name"
         },
         "$schema": "http://localhost:5000/schemas/records/authors.json",
-        "control_number": "10",
+        "control_number": 10,
         "self": {"$ref": "http://localhost:5000/api/authors/10"},
         "ids": [{
             "type": "INSPIRE",

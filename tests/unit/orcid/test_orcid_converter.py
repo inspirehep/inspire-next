@@ -87,7 +87,7 @@ def test_successfull_conversion():
                 "year": 1961
             }
         ],
-        "control_number": "0000000",
+        "control_number": 10,
         "external_system_numbers": [
             {
                 "institute": "INSPIRETeX",
@@ -191,7 +191,7 @@ def test_arxiv_missing_conversion():
                 "primary": "HEP"
             }
         ],
-        "control_number": "0000000",
+        "control_number": 10,
         "external_system_numbers": [
             {
                 "institute": "INSPIRETeX",
@@ -255,7 +255,7 @@ def test_record():
                 "primary": "not_valid"
             }
         ],
-        "control_number": "0000000",
+        "control_number": 10,
         "imprints": [
             {
                 "date": "2008-08-14"
@@ -263,7 +263,7 @@ def test_record():
         ]
     }
 
-    excepted = {'citation': {'citation': u'@article{,\n      key            = "0000000",\n      title          = "{Title}",\n      year           = "1961",\n      doi            = "00.0000/PhysRevD.00.000000",\n      SLACcitation   = "%%CITATION = INSPIRE-0000000;%%"\n}',
+    excepted = {'citation': {'citation': u'@article{,\n      key            = "10",\n      title          = "{Title}",\n      year           = "1961",\n      doi            = "00.0000/PhysRevD.00.000000",\n      SLACcitation   = "%%CITATION = INSPIRE-10;%%"\n}',
                              'citation-type': 'BIBTEX'},
                 'external-identifiers': {'work-external-identifier': [{'external-identifier-id': '00.0000/PhysRevD.00.000000',
                                                                        'external-identifier-type': 'DOI'}]},
@@ -306,7 +306,7 @@ def test_record_with_more_than_20_authors_return_the_first_20_authors():
             "primary": "not_valid"
         }
     ],
-        "control_number": "0000000",
+        "control_number": 10,
         "imprints": [
         {
             "date": "2008-08-14"
@@ -314,7 +314,7 @@ def test_record_with_more_than_20_authors_return_the_first_20_authors():
     ]
     }
 
-    expected = {'citation': {'citation': u'@article{,\n      key            = "0000000",\n      author         = "Name, Full0 and others",\n      title          = "{Title}",\n      year           = "1961",\n      doi            = "00.0000/PhysRevD.00.000000",\n      SLACcitation   = "%%CITATION = INSPIRE-0000000;%%"\n}',
+    expected = {'citation': {'citation': u'@article{,\n      key            = "10",\n      author         = "Name, Full0 and others",\n      title          = "{Title}",\n      year           = "1961",\n      doi            = "00.0000/PhysRevD.00.000000",\n      SLACcitation   = "%%CITATION = INSPIRE-10;%%"\n}',
                              'citation-type': 'BIBTEX'},
                 'contributors': {'contributor': [{'contributor-attributes': {'contributor-role': 'AUTHOR',
                                                                              'contributor-sequence': 'FIRST'},
@@ -424,7 +424,7 @@ def test_record_without_title():
                 "primary": "book"
             }
         ],
-        "control_number": "0000000"
+        "control_number": 0
     }
 
     with pytest.raises(KeyError):
@@ -448,13 +448,13 @@ def test_record_with_invalid_date():
                 "primary": "book"
             }
         ],
-        "control_number": "0000000",
+        "control_number": 10,
         "imprints": [
             {}
         ]
     }
 
-    expected = {'citation': {'citation': u'@book{,\n      key            = "0000000",\n      title          = "{Title}",\n      doi            = "00.0000/PhysRevD.00.000000",\n      SLACcitation   = "%%CITATION = INSPIRE-0000000;%%"\n}',
+    expected = {'citation': {'citation': u'@book{,\n      key            = "10",\n      title          = "{Title}",\n      doi            = "00.0000/PhysRevD.00.000000",\n      SLACcitation   = "%%CITATION = INSPIRE-10;%%"\n}',
                              'citation-type': 'BIBTEX'},
                 'external-identifiers': {'work-external-identifier': [{'external-identifier-id': '00.0000/PhysRevD.00.000000',
                                                                        'external-identifier-type': 'DOI'}]},
@@ -479,14 +479,14 @@ def test_record_without_primary_collection():
                 "not_primary": "not_valid"
             }
         ],
-        "control_number": "0000000",
+        "control_number": 10,
         "dois": [
             {
                 "value": "00.0000/PhysRevD.00.000000"
             }
         ]
     }
-    excepted = {'citation': {'citation': u'@article{,\n      key            = "0000000",\n      title          = "{Title}",\n      doi            = "00.0000/PhysRevD.00.000000",\n      SLACcitation   = "%%CITATION = INSPIRE-0000000;%%"\n}',
+    excepted = {'citation': {'citation': u'@article{,\n      key            = "10",\n      title          = "{Title}",\n      doi            = "00.0000/PhysRevD.00.000000",\n      SLACcitation   = "%%CITATION = INSPIRE-10;%%"\n}',
                              'citation-type': 'BIBTEX'},
                 'external-identifiers': {'work-external-identifier': [{'external-identifier-id': '00.0000/PhysRevD.00.000000',
                                                                        'external-identifier-type': 'DOI'}]},

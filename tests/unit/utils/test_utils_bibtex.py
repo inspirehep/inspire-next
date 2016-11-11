@@ -313,9 +313,9 @@ def test_get_key_empty(_g_c_k):
 def test_get_key_from_control_number(_g_c_k):
     _g_c_k.return_value = False
 
-    with_control_number = Record({'control_number': '1'})
+    with_control_number = Record({'control_number': 1})
 
-    expected = '1'
+    expected = 1
     result = Bibtex(with_control_number)._get_key()
 
     assert expected == result

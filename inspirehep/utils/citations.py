@@ -40,7 +40,7 @@ class Citation(object):
 
         # Get citations
         record_citations = LiteratureSearch().query_from_iq(
-            'refersto:' + self.record['control_number']
+            'refersto:' + str(self.record['control_number'])
         ).params(
             _source=[
                 'control_number',

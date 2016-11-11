@@ -77,7 +77,7 @@ def test_get_document_type_returns_none_when_no_facet_inspire_doc_type():
 
 
 def test_get_id():
-    record = {'control_number': '4328'}
+    record = {'control_number': 4328}
 
     expected = 4328
     result = get_id(record)
@@ -89,13 +89,6 @@ def test_get_id_raises_when_no_control_number():
     record = {}
 
     with pytest.raises(KeyError):
-        assert get_id(record)
-
-
-def test_get_id_raises_when_control_number_is_malformed():
-    record = {'control_number': 'foo'}
-
-    with pytest.raises(ValueError):
         assert get_id(record)
 
 

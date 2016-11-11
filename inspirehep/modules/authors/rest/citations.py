@@ -62,7 +62,7 @@ class AuthorAPICitations(object):
         for result in search.scan():
             result_source = result.to_dict()
 
-            recid = int(result_source['control_number'])
+            recid = result_source['control_number']
             authors = set([i['recid'] for i in result_source['authors']])
             citations[recid] = {}
 
