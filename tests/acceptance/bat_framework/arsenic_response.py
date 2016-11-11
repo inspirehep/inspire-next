@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,13 +19,11 @@
 # In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
-
-from __future__ import absolute_import, division, print_function
-
-from bat_framework.pages import top_navigation_page
+# return Response(message=message_err, has_error=lambda: 'easkljdlajkd' in message_err)
 
 
-def test_login(arsenic):
-    top_navigation_page.log_in('admin@inspirehep.net', '123456')
-    assert top_navigation_page.am_I_logged()
-    top_navigation_page.log_out()
+class ArsenicResponse(object):
+    has_error = None
+
+    def __init__(self, has_error):
+        self.has_error = has_error
