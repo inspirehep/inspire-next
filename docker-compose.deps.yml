@@ -23,6 +23,13 @@
 version: '2'
 
 services:
+  pip_stable:
+    extends:
+      file: services.yml
+      service: base
+    command: bash -c "pip install -r ../deps/deps.txt && pip install --find-links /pip-cache -r requirements.txt --pre -e .[tests] gunicorn --exists-action i"
+    volumes_from:
+      - static 
   pip:
     extends:
       file: services.yml
