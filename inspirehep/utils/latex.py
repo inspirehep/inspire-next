@@ -283,7 +283,7 @@ class Latex(Export):
                     pages = field.get('page_start') or field['artid']
                 try:
                     if journal and (volume != '' or pages != ''):
-                        recid = self.record['control_number', '']
+                        recid = self.record['control_number']
                         record = get_es_record('jou', recid)
                         coden = ','.join(
                             [record['coden'][0], volume, pages])

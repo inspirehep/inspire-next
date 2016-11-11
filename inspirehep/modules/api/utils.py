@@ -88,7 +88,7 @@ def get_document_type(record):
 
 
 def get_id(record):
-    return int(record['control_number'])
+    return record['control_number']
 
 
 def get_subject(record):

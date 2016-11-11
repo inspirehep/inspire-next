@@ -62,7 +62,7 @@ def _create_and_index_record(record):
 def sample_record(app):
     record = {
         "$schema": "http://localhost:5000/schemas/records/hep.json",
-        "control_number": "123",
+        "control_number": 123,
         "titles": [
             {
                 "title": "Supersymmetric gauge field theory and string theory"
@@ -105,7 +105,7 @@ def restricted_record(app):
 
     record = {
         "$schema": "http://localhost:5000/schemas/records/hep.json",
-        "control_number": "222",
+        "control_number": 222,
         "titles": [
             {
                 "title": "Supersymmetric gauge field theory and string theory"

@@ -52,14 +52,14 @@ def test_dates_validator_does_nothing_when_dates_are_valid():
 @mock.patch('inspirehep.modules.records.receivers.current_app.logger.warning')
 def test_dates_validator_warns_when_date_is_invalid(warning):
     json_dict = {
-        'control_number': 'foo',
+        'control_number': 123,
         'opening_date': 'bar',
     }
 
     dates_validator(None, json_dict)
 
     warning.assert_called_once_with(
-        'MALFORMED: %s value in %s: %s', 'opening_date', 'foo', 'bar')
+        'MALFORMED: %s value in %s: %s', 'opening_date', 123, 'bar')
 
 
 def test_match_valid_experiments_adds_facet_experiment():
@@ -719,7 +719,7 @@ def test_references_validator_does_nothing_on_numerical_recids():
 @mock.patch('inspirehep.modules.records.receivers.current_app.logger.warning')
 def test_references_validator_removes_and_warns_on_non_numerical_recids(warning):
     json_dict = {
-        'control_number': '123',
+        'control_number': 123,
         'references': [
             {'recid': 'foo'},
             {'recid': 456},
@@ -729,7 +729,7 @@ def test_references_validator_removes_and_warns_on_non_numerical_recids(warning)
     references_validator(None, json_dict)
 
     warning.assert_called_once_with(
-        'MALFORMED: recid value found in references of %s: %s', '123', 'foo')
+        'MALFORMED: recid value found in references of %s: %s', 123, 'foo')
     assert json_dict['references'] == [
         {},
         {'recid': 456},

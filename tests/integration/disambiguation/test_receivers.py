@@ -63,7 +63,7 @@ def test_append_new_record_to_queue_method(small_app):
             {'primary': 'CORE'},
             {'primary': 'HEP'}
         ],
-        'control_number': '4328',
+        'control_number': 4328,
         'self': {'$ref': 'http://localhost:5000/api/literature/4328'},
         'titles': [{'title': 'Partial Symmetries of Weak Interactions'}]
     })
@@ -79,7 +79,7 @@ def test_append_new_record_to_queue_method_not_hep_record(small_app):
     sample_author_record = _IdDict({
         '$schema': 'http://localhost:5000/schemas/records/authors.json',
         'collections': [{'primary': 'HEPNAMES'}],
-        'control_number': '314159265',
+        'control_number': 314159265,
         'name': {'value': 'Glashow, S.L.'},
         'positions': [{'institution': {'name': 'Copenhagen U.'}}],
         'self': {'$ref': 'http://localhost:5000/api/authors/314159265'}})
@@ -125,7 +125,7 @@ def test_append_updated_record_to_queue_new_record(small_app):
             {'primary': 'CORE'},
             {'primary': 'HEP'}
         ],
-        'control_number': '4328',
+        'control_number': 4328,
         'self': {'$ref': 'http://localhost:5000/api/literature/4328'},
         'titles': [{'title': 'Partial Symmetries of Weak Interactions'}]
     })
@@ -144,7 +144,7 @@ def test_append_updated_record_to_queue_not_hep_record(small_app):
     sample_author_record = _IdDict({
         '$schema': 'http://localhost:5000/schemas/records/authors.json',
         'collections': [{'primary': 'HEPNAMES'}],
-        'control_number': '314159265',
+        'control_number': 314159265,
         'name': {'value': 'Glashow, S.L.'},
         'positions': [{'institution': {'name': 'Copenhagen U.'}}],
         'self': {'$ref': 'http://localhost:5000/api/authors/314159265'}})

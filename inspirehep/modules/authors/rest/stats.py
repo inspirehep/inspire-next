@@ -83,7 +83,7 @@ class AuthorAPIStats(object):
             citation_count = result_source.get('citation_count', 0)
 
             statistics['citations'] += citation_count
-            statistics_citations[int(result_source['control_number'])] = \
+            statistics_citations[result_source['control_number']] = \
                 citation_count
 
             # Count how many times certain type of publication was published.

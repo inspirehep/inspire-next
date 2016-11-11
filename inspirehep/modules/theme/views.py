@@ -365,7 +365,7 @@ def get_institution_people_datatables_rows(recid):
     ).execute()
 
     recid_map = dict(
-        [(int(result.control_number), result.name) for result in results]
+        [(result.control_number, result.name) for result in results]
     )
 
     result = []

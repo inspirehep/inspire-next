@@ -65,12 +65,12 @@ class Reference(object):
 
             # Create mapping to keep reference order
             recid_to_reference = {
-                str(ref['control_number']): ref for ref in resolved_references
+                ref['control_number']: ref for ref in resolved_references
             }
             for reference in references:
                 row = []
                 ref_record = recid_to_reference.get(
-                    str(reference.get('recid')), {}
+                    reference.get('recid'), {}
                 )
                 if 'reference' in reference:
                     reference.update(reference['reference'])

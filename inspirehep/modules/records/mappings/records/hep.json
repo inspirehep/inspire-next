@@ -146,6 +146,9 @@
                 "citation_count": {
                     "type": "integer"
                 },
+                "control_number": {
+                    "type": "integer"
+                },
                 "cnum": {
                     "index": "not_analyzed",
                     "type": "string"

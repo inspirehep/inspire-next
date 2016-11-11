@@ -54,7 +54,7 @@ class ImpactGraphSerializer(object):
         citations = []
 
         record_citations = LiteratureSearch().query_from_iq(
-            'refersto:' + record['control_number']
+            'refersto:' + str(record['control_number'])
         ).params(
             size=9999,
             _source=[

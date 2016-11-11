@@ -309,7 +309,6 @@ def record_upsert(json):
     """Insert or update a record."""
     control_number = json.get('control_number', json.get('recid'))
     if control_number:
-        control_number = int(control_number)
         pid_type = get_pid_type_from_schema(json['$schema'])
         try:
             pid = PersistentIdentifier.get(pid_type, control_number)

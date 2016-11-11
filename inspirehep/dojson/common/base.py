@@ -79,7 +79,7 @@ def acquisition_source2marc(self, key, value):
 def self_url(index):
     def _self_url(self, key, value):
         """Url of the record itself."""
-        self['control_number'] = value
+        self['control_number'] = int(value)
         return get_record_ref(value, index)
     return _self_url
 
