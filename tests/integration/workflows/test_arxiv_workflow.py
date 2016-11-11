@@ -116,26 +116,26 @@ def arxiv_pdf_accept():
     )
 
 
-def fake_download_file(obj, name, url):
+def fake_download_file(record, name, url):
     """Mock download_file func."""
     if url == 'http://arxiv.org/e-print/1407.7587':
-        obj.files[name] = pkg_resources.resource_stream(
+        record.files[name] = pkg_resources.resource_stream(
             __name__,
             os.path.join(
                 'fixtures',
                 '1407.7587v1'
             )
         )
-        return obj.files[name]
+        return record.files[name]
     elif url == 'http://arxiv.org/pdf/1407.7587':
-        obj.files[name] = pkg_resources.resource_stream(
+        record.files[name] = pkg_resources.resource_stream(
             __name__,
             os.path.join(
                 'fixtures',
                 '1407.7587v1.pdf'
             )
         )
-        return obj.files[name]
+        return record.files[name]
     raise Exception("Download file not mocked!")
 
 
@@ -232,7 +232,7 @@ def fake_magpie_api_request(url, data):
         }
 
 
-@mock.patch('inspirehep.utils.helpers.download_file_to_record',
+@mock.patch('inspirehep.modules.workflows.tasks.arxiv.download_file_to_record',
             side_effect=fake_download_file)
 @mock.patch('inspirehep.modules.workflows.tasks.beard.json_api_request',
             side_effect=fake_beard_api_request)
@@ -331,7 +331,7 @@ def test_harvesting_arxiv_workflow_rejected(
 
 
 @pytest.mark.xfail(reason='record updates are busted due to validation issue')
-@mock.patch('inspirehep.utils.arxiv.download_file_to_record',
+@mock.patch('inspirehep.modules.workflows.tasks.arxiv.download_file_to_record',
             side_effect=fake_download_file)
 def test_harvesting_arxiv_workflow_accepted(
     mocked, small_app, record_oai_arxiv_plots):
