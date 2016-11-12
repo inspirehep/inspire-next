@@ -186,7 +186,7 @@ def institution_history(self, key, value):
             continue
         positions.append({
             "institution": {'name': position["name"]},
-            "current": 'Current' if position["current"] else None,
+            "current": True if position.get("current") else False,
             "start_date": position["start_year"],
             "end_date": position["end_year"],
             "emails": position.get("emails", ""),
@@ -208,7 +208,7 @@ def advisors(self, key, value):
             continue
         advisors.append({
             "name": advisor["full_name"],
-            "degree_type": advisor["degree_type"]
+            "_degree_type": advisor["degree_type"]
         })
 
     return advisors
@@ -221,9 +221,10 @@ def experiments(self, key, value):
                    key=lambda k: k["start_year"],
                    reverse=True)
     for experiment in value:
-        experiment["status"] = "Current" if experiment["status"] else ""
+        experiment["current"] = True if experiment["status"] else False
         _set_int_or_del(experiment, "start_year", experiment.get("start_year"))
         _set_int_or_del(experiment, "end_year", experiment.get("end_year"))
+        del experiment["status"]
         experiments.append(experiment)
 
     return experiments

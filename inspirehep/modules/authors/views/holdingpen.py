@@ -149,7 +149,7 @@ def convert_for_form(data):
         for advisor in advisors:
             adv = {}
             adv["name"] = advisor.get("name", "")
-            adv["degree_type"] = advisor.get("degree_type", "")
+            adv["degree_type"] = advisor.get("_degree_type", "")
             data["advisors"].append(adv)
     if "ids" in data:
         for id in data["ids"]:

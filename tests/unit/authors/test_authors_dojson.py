@@ -436,7 +436,7 @@ def test_positions_from_institutions_history():
     expected = [
         {
             'institution': {'name': 'oof'},
-            'current': None,
+            'current': False,
             'start_date': 2010,
             'end_date': 2012,
             'emails': ['rab'],
@@ -445,7 +445,7 @@ def test_positions_from_institutions_history():
         },
         {
             'institution': {'name': 'foo'},
-            'current': 'Current',
+            'current': True,
             'start_date': 2009,
             'end_date': 2010,
             'emails': ['bar'],
@@ -474,7 +474,7 @@ def test_advisors_from_advisors():
 
     expected = [
         {
-            'degree_type': 'PhD',
+            '_degree_type': 'PhD',
             'name': 'foo',
         },
     ]
@@ -500,11 +500,11 @@ def test_experiments_from_experiments():
     expected = [
         {
             'start_year': 2010,
-            'status': ''
+            'current': False
         },
         {
             'start_year': 2009,
-            'status': 'Current',
+            'current': True,
         },
     ]
     result = updateform.do(form)
