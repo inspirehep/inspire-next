@@ -54,6 +54,8 @@ REQUIREJS_CONFIG = 'js/build.js'
 
 # Theme
 # =====
+INSPIRE_FULL_THEME = True
+"""Allows to switch between labs.inspirehep.net view and full version."""
 THEME_SITENAME = _("inspirehep")
 BASE_TEMPLATE = "inspirehep_theme/page.html"
 
