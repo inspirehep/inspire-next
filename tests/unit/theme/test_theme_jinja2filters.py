@@ -1227,3 +1227,29 @@ def test_weblinks_when_description_is_not_in_the_kb():
 
 def test_weblinks_when_description_is_a_falsy_value():
     assert weblinks('') == 'Link to fulltext'
+
+
+def test_is_cataloger():
+    class MockUser(object):
+        def __init__(self, user_roles):
+            self.user_roles = user_roles
+
+        @property
+        def roles(self):
+            class MockRole():
+                def __init__(self, role_name):
+                    self.role_name = role_name
+
+                @property
+                def name(self):
+                    return self.role_name
+
+            return [MockRole(name) for name in self.user_roles]
+
+    superadmin_user = MockUser(user_roles=['superuser'])
+    cataloger_user = MockUser(user_roles=['cataloger'])
+    no_role_user = MockUser(user_roles=[])
+
+    assert is_cataloger(superadmin_user)
+    assert is_cataloger(cataloger_user)
+    assert not is_cataloger(no_role_user)

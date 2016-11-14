@@ -125,7 +125,9 @@
               <li><a href="https://inspirehep.net/textmining/">Reference extractor</a></li>
               <li><a href="https://inspirehep.net/info/hep/tools/bibliography_generate">Bibliography generator</a></li>
               <li><a href="https://inspirehep.net/info/hep/tools/index">User-developed tools</a></li>
-              <li><a href="{{ url_for('inspire_tools.tools_page') }}">Cataloging tools</a></li>
+              {% if current_user|is_cataloger %}
+                <li><a href="{{ url_for('inspire_tools.tools_page') }}">Cataloging tools</a></li>
+              {% endif %}
             </ul>
           </li>
           <li class="dropdown top-header-dropdown">
