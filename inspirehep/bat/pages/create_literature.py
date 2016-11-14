@@ -247,29 +247,43 @@ def write_affiliation(affiliation, expected_data):
 
 def write_arxiv_id(arxiv_id):
     def _write_arxiv_id():
-        return 'The provided ArXiv ID is invalid - it should look' in WebDriverWait(Arsenic(), 10).until(
-            EC.presence_of_element_located((By.ID, 'state-arxiv_id'))).text
+        return 'The provided ArXiv ID is invalid - it should look' in message_err
 
     Arsenic().find_element_by_id('arxiv_id').clear()
     Arsenic().find_element_by_id('arxiv_id').send_keys(arxiv_id)
     Arsenic().find_element_by_id('arxiv_id').send_keys(Keys.TAB)
+    try:
+        message_err = WebDriverWait(Arsenic(), 5).until(EC.visibility_of_element_located((By.ID, 'state-arxiv_id'))).text
+    except (ElementNotVisibleException, WebDriverException):
+        message_err = ''
+
     return ArsenicResponse(_write_arxiv_id)
 
 
 def write_doi_id(doi):
     def _write_doi_id():
-        return 'The provided DOI is invalid - it should look' in WebDriverWait(Arsenic(), 10).until(
-            EC.presence_of_element_located((By.ID, 'state-doi'))).text
+        return 'The provided DOI is invalid - it should look' in message_err
 
     Arsenic().find_element_by_id('doi').clear()
     Arsenic().find_element_by_id('doi').send_keys(doi)
     Arsenic().find_element_by_id('doi').send_keys(Keys.TAB)
+    try:
+        message_err = WebDriverWait(Arsenic(), 5).until(EC.visibility_of_element_located((By.ID, 'state-doi'))).text
+    except (ElementNotVisibleException, WebDriverException):
+        message_err = ''
+
     return ArsenicResponse(_write_doi_id)
 
 
 def submit_arxiv_id(arxiv_id, expected_data):
     def _submit_arxiv_id():
         return expected_data == output_data
+
+    Arsenic().find_element_by_id('arxiv_id').send_keys(arxiv_id)
+    Arsenic().find_element_by_id('importData').click()
+    WebDriverWait(Arsenic(), 20).until(EC.visibility_of_element_located((By.ID, 'acceptData'))).click()
+    WebDriverWait(Arsenic(), 20).until(EC.visibility_of_element_located((By.ID, 'arxiv_id')))
+    _skip_import_data()
 
     output_data = {
         'doi': Arsenic().find_element_by_id('doi').get_attribute('value'),
@@ -283,16 +297,18 @@ def submit_arxiv_id(arxiv_id, expected_data):
         'page-range': Arsenic().find_element_by_id('page_range_article_id').get_attribute('value')
     }
 
-    Arsenic().find_element_by_id('arxiv_id').send_keys(arxiv_id)
-    Arsenic().find_element_by_id('importData').click()
-    WebDriverWait(Arsenic(), 20).until(EC.visibility_of_element_located((By.ID, 'acceptData'))).click()
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'arxiv_id')))
     return ArsenicResponse(_submit_arxiv_id)
 
 
 def submit_doi_id(doi_id, expected_data):
     def _submit_doi_id():
         return expected_data == output_data
+
+    Arsenic().find_element_by_id('doi').send_keys(doi_id)
+    Arsenic().find_element_by_id('importData').click()
+    WebDriverWait(Arsenic(), 20).until(EC.visibility_of_element_located((By.ID, 'acceptData'))).click()
+    WebDriverWait(Arsenic(), 20).until(EC.visibility_of_element_located((By.ID, 'doi')))
+    _skip_import_data()
 
     output_data = {
         'year': Arsenic().find_element_by_id('year').get_attribute('value'),
@@ -306,10 +322,6 @@ def submit_doi_id(doi_id, expected_data):
         'page-range': Arsenic().find_element_by_id('page_range_article_id').get_attribute('value')
     }
 
-    Arsenic().find_element_by_id('doi').send_keys(doi_id)
-    Arsenic().find_element_by_id('importData').click()
-    WebDriverWait(Arsenic(), 20).until(EC.visibility_of_element_located((By.ID, 'acceptData'))).click()
-    WebDriverWait(Arsenic(), 10).until(EC.visibility_of_element_located((By.ID, 'doi')))
     return ArsenicResponse(_submit_doi_id)
 
 
