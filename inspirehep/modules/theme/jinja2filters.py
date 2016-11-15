@@ -647,3 +647,10 @@ def back_to_search_link(referer, collection):
 def clean_roles(roles):
     """Extract names from user roles."""
     return json.dumps([role.name for role in roles])
+
+
+@blueprint.app_template_filter()
+def is_cataloger(user):
+    """Check if user has a cataloger role."""
+    role_names = [role.name for role in user.roles]
+    return any(role in role_names for role in ('cataloger', 'superuser'))
