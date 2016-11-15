@@ -77,7 +77,9 @@ after_script:
 
 after_success:
   - mv .coverage .coverage.tests
+  - ls .coverage*
   - coverage combine
+  - ls .coverage*
   # Coverage report contains Docker paths. We replace them, so that we can run Coveralls.
   - sed -i 's@\"/code/@'"\"$(pwd)/"'@g' .coverage
   - coveralls
