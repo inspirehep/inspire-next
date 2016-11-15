@@ -157,5 +157,26 @@ def import_holdingpen_record(parent_objs, obj, eng):
     object_model.extra_data = obj['extra_data']
     fix_object_model(eng, object_model)
     object_model.save()
+    db.session.commit()
 
+
+@shared_task()
+def import_audit_record(obj):
+    """Import an audit record."""
+    from invenio_db import db
+    from inspirehep.modules.workflows.models import WorkflowsAudit
+
+    audit = WorkflowsAudit(
+        id=obj.get('id'),
+        created=obj.get('created'),
+        user_id=obj.get('user_id'),
+        object_id=obj.get('object_id'),
+        score=obj.get('score'),
+        user_action=obj.get('user_action'),
+        decision=obj.get('decision'),
+        source=obj.get('source'),
+        action=obj.get('action')
+    )
+
+    db.session.add(audit)
     db.session.commit()
