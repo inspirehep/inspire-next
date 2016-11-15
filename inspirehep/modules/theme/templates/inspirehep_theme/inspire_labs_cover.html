@@ -1,0 +1,72 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2016 CERN.
+##
+## INSPIRE is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+##
+## In applying this licence, CERN does not waive the privileges and immunities
+## granted to it by virtue of its status as an Intergovernmental Organization
+## or submit itself to any jurisdiction.
+#}
+
+{%- extends config.BASE_TEMPLATE -%}
+
+{% block body %}
+<section class="container container-intro">
+    <div class="row">
+     <div class="col-xs-12">
+       <div class="text-center">
+         <img class="landing-page-flask" src="{{url_for('static', filename='images/labs-flask-darkbg.svg')}}" alt="">
+         <br>
+         <br>
+         <p class="intro-text">
+           INSPIRE <span class="action-text">Labs</span> provides a sneak preview of new features and designs currently under development.
+         </p>
+         <br>
+         <p class="intro-text">
+            Try it out, and please use the feedback button to let us know what you think!
+         </p>
+       </div>
+     </div>
+   </div>
+</section>
+
+<section class="container container-action">
+   <div class="row">
+     <div class="col-xs-12">
+       <div class="text-center">
+         <br>
+         <p class="intro-text">
+           Is there an article, preprint, conference paper or thesis you'd like to see added to INSPIRE?
+         </p>
+         <br>
+         <a class="btn btn-warning btn-lg" id="submit-btn" href="{{ url_for('inspirehep_literature_suggest.create') }}">{{- _("Send a suggestion!") -}}</a>
+         <br>
+         <br>
+         <p>
+           <span class="action-text intro-text">All accepted suggestions are automatically transferred to INSPIRE</span>
+         </p>
+       </div>
+     </div>
+   </div>
+</section>
+
+{% endblock body %}
+
+{%- block css %}
+  {{ super() }}
+  {% assets "inspirehep_landing_page_css" %}
+  <link href="{{ ASSET_URL }}" rel="stylesheet">
+  {% endassets %}
+{%- endblock css %}

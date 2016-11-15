@@ -93,13 +93,16 @@ blueprint = Blueprint(
 @blueprint.route('/', methods=['GET', ])
 def index():
     """View for literature collection landing page."""
-    number_of_records = LiteratureSearch().count()
+    if current_app.config['INSPIRE_FULL_THEME']:
+        number_of_records = LiteratureSearch().count()
 
-    return render_template(
-        'inspirehep_theme/search/collection_literature.html',
-        collection='hep',
-        number_of_records=number_of_records,
-    )
+        return render_template(
+            'inspirehep_theme/search/collection_literature.html',
+            collection='hep',
+            number_of_records=number_of_records,
+        )
+    else:
+        return render_template('inspirehep_theme/inspire_labs_cover.html')
 
 
 @blueprint.route('/authors', methods=['GET', ])

@@ -88,6 +88,13 @@ css = NpmBundle(
     }
 )
 
+landing_page_css = NpmBundle(
+    "scss/landing_page.scss",
+    filters="node-scss, cleancss",
+    output="gen/inspirehep.landing.%(version)s.css",
+    depends="scss/landing_page.scss"
+)
+
 detailedjs = NpmBundle(
     "js/detailed_record_init.js",
     filters='requirejs',

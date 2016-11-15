@@ -115,6 +115,7 @@
         </div>
 
         <ul class="nav navbar-nav" id="header-links">
+          {% if config['INSPIRE_FULL_THEME'] %}
           <li class="dropdown top-header-dropdown">
             <a href="" id="tools-dropdown" class="dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
               <i class="fa fa-wrench"></i> Tools
@@ -139,6 +140,7 @@
               <li><a href="">External resources</a></li>
             </ul>
           </li>
+          {% endif %}
           <li {% if request.blueprint == blueprint|e %} class="active" {% endif %}>
             <a href="{{ url_for('inspirehep_literature_suggest.create') }}">{{- _('Submit') -}}</a>
           </li>
@@ -198,6 +200,7 @@
   </nav>
 </section>
 
+{% if config['INSPIRE_FULL_THEME'] %}
 <section id="collections-section">
   <nav id="collections-nav">
       <a href="/literature" id="literature-collection" class="{{collection_name | collection_select_current("Literature") }}">
@@ -226,3 +229,4 @@
       </a>
   </nav>
 </section>
+{% endif %}
