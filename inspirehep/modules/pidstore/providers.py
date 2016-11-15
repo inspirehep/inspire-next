@@ -46,7 +46,7 @@ def _get_next_pid_from_legacy():
     url = current_app.config.get('LEGACY_PID_PROVIDER')
     next_pid = requests.get(url, headers=headers).json()
 
-    return str(next_pid)
+    return next_pid
 
 
 class InspireRecordIdProvider(BaseProvider):
@@ -72,7 +72,7 @@ class InspireRecordIdProvider(BaseProvider):
             if current_app.config.get('LEGACY_PID_PROVIDER'):
                 kwargs['pid_value'] = _get_next_pid_from_legacy()
             else:
-                kwargs['pid_value'] = str(RecordIdentifier.next())
+                kwargs['pid_value'] = RecordIdentifier.next()
         kwargs.setdefault('status', cls.default_status)
         if object_type and object_uuid:
             kwargs['status'] = PIDStatus.REGISTERED
