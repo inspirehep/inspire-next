@@ -97,4 +97,4 @@ def test_api_v1_experiments_citesummary(app):
 
         assert validate(response_json, schema) is None
 
-        assert len(response_json) == 59
+        assert len(response_json) == 2

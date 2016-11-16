@@ -41,18 +41,18 @@ def test_experiments_typehead(selenium, login):
     selenium.get(os.environ['SERVER_NAME'] + '/submit/author/create')
 
     experiment_field = selenium.find_element_by_id('experiments-0-name')
-    _force_autocomplete_event(experiment_field, 'ATL')
+    _force_autocomplete_event(experiment_field, 'CM')
 
-    assert 'ATLAS' in experiment_field.get_attribute('value')
+    assert 'CERN-LHC-CMS' in experiment_field.get_attribute('value')
 
 
 def test_advisors_typehead(selenium, login):
     selenium.get(os.environ['SERVER_NAME'] + '/submit/author/create')
 
     advisor_field = selenium.find_element_by_id('advisors-0-name')
-    _force_autocomplete_event(advisor_field, 'alexe')
+    _force_autocomplete_event(advisor_field, 'mart')
 
-    assert 'Vorobyev, Alexey' in advisor_field.get_attribute('value')
+    assert 'Martinelli, Maurizio' in advisor_field.get_attribute('value')
 
 
 def _force_autocomplete_event(field, chunk_text):

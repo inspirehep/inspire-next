@@ -29,11 +29,11 @@ def test_impact_graphs_api(app):
     """Test response of impact graph API."""
     with app.test_client() as client:
         result = client.get(
-            "/api/literature/613135",
+            "/api/literature/712925",
             headers={"Accept": "application/x-impact.graph+json"}
         )
 
         result = json.loads(result.data)
-        assert result['title'] == u'First year Wilkinson Microwave Anisotropy Probe (WMAP) observations: Determination of cosmological parameters'
-        assert result['year'] == u'2003'
-        assert len(result['citations']) == 14
+        assert result['title'] == u'PYTHIA 6.4 Physics and Manual'
+        assert result['year'] == u'2006'
+        assert len(result['citations']) == 2

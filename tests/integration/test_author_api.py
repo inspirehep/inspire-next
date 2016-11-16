@@ -84,14 +84,14 @@ def test_api_authors_citations(app):
     }
 
     with app.test_client() as client:
-        response = client.get('/api/authors/983220/citations')
+        response = client.get('/api/authors/1061000/citations')
 
         assert response.status_code == 200
 
         response_json = json.loads(response.data)
 
         assert validate(response_json, schema) is None
-        assert len(response_json) == 30
+        assert len(response_json) == 2
 
 
 def test_api_authors_coauthors(app):
@@ -112,14 +112,14 @@ def test_api_authors_coauthors(app):
     }
 
     with app.test_client() as client:
-        response = client.get('/api/authors/983220/coauthors')
+        response = client.get('/api/authors/1061000/coauthors')
 
         assert response.status_code == 200
 
         response_json = json.loads(response.data)
 
         assert validate(response_json, schema) is None
-        assert len(response_json) == 100
+        assert len(response_json) == 10
 
 
 def test_api_authors_publications(app):
@@ -156,14 +156,14 @@ def test_api_authors_publications(app):
     }
 
     with app.test_client() as client:
-        response = client.get('/api/authors/983220/publications')
+        response = client.get('/api/authors/1061000/publications')
 
         assert response.status_code == 200
 
         response_json = json.loads(response.data)
 
         assert validate(response_json, schema) is None
-        assert len(response_json) == 30
+        assert len(response_json) == 2
 
 
 def test_api_author_stats(app):
@@ -193,11 +193,11 @@ def test_api_author_stats(app):
     }
 
     with app.test_client() as client:
-        response = client.get('/api/authors/983220/stats')
+        response = client.get('/api/authors/1061000/stats')
 
         assert response.status_code == 200
 
         response_json = json.loads(response.data)
 
         assert validate(response_json, schema) is None
-        assert len(response_json['keywords']) == 25
+        assert len(response_json['keywords']) == 12

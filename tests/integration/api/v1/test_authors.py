@@ -89,7 +89,7 @@ def test_api_v1_authors_citesummary(app):
     }
 
     with app.test_client() as client:
-        response = client.get('/api/authors/983220/citesummary')
+        response = client.get('/api/authors/1061000/citesummary')
 
         assert response.status_code == 200
 
@@ -97,4 +97,4 @@ def test_api_v1_authors_citesummary(app):
 
         assert validate(response_json, schema) is None
 
-        assert len(response_json) == 30
+        assert len(response_json) == 2
