@@ -24,6 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 import httpretty
 import mock
+import pytest
 
 from inspirehep.modules.authors import receivers
 
@@ -66,7 +67,8 @@ def test_name_variations():
             'Richard Ellis'])
 
 
-def test_phonetic_block_generation_ascii(httppretty_mock, app):
+@pytest.mark.httpretty
+def test_phonetic_block_generation_ascii(app):
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
     }
@@ -92,7 +94,8 @@ def test_phonetic_block_generation_ascii(httppretty_mock, app):
             assert json_dict['authors'][0]['signature_block'] == "ELj"
 
 
-def test_phonetic_block_generation_broken(httppretty_mock, app):
+@pytest.mark.httpretty
+def test_phonetic_block_generation_broken(app):
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
     }
@@ -118,7 +121,8 @@ def test_phonetic_block_generation_broken(httppretty_mock, app):
             assert json_dict['authors'][0]['signature_block'] is None
 
 
-def test_phonetic_block_generation_unicode(httppretty_mock, app):
+@pytest.mark.httpretty
+def test_phonetic_block_generation_unicode(app):
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
     }

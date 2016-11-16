@@ -240,10 +240,3 @@ def dummy_empty_response():
             "hits": []
         }
     }
-
-
-@pytest.fixture
-def httppretty_mock():
-    httpretty.enable()
-    yield
-    httpretty.disable()

@@ -24,11 +24,13 @@ from __future__ import absolute_import, division, print_function
 
 import httpretty
 import mock
+import pytest
 
 from inspirehep.modules.pidstore.providers import InspireRecordIdProvider
 
 
-def test_getting_next_recid_from_legacy(httpretty_mock, app):
+@pytest.mark.httpretty
+def test_getting_next_recid_from_legacy(app):
     extra_config = {
         'LEGACY_PID_PROVIDER': 'http://server/batchuploader/allocaterecord',
     }
