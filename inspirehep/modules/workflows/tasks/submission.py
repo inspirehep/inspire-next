@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this license, CERN does not waive the privileges and immunities
+# In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
@@ -30,8 +30,9 @@ from functools import wraps
 from pprint import pformat
 
 from flask import current_app, render_template
-from invenio_accounts.models import User
 from retrying import retry
+
+from invenio_accounts.models import User
 
 from ....utils.tickets import get_instance, retry_if_connection_problems
 from .actions import in_production_mode
