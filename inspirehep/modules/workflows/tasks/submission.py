@@ -306,13 +306,17 @@ def send_robotupload(url=None,
 
 def add_note_entry(obj, eng):
     """Add note entry to metadata on approval."""
+    def _has_note(reference_note, notes):
+        return any(reference_note == note for note in notes)
+
     entry = {'value': '*Temporary entry*'} if obj.extra_data.get("core") \
         else {'value': '*Brief entry*'}
     if obj.data.get('public_notes') is None or \
             not isinstance(obj.data.get("public_notes"), list):
         obj.data['public_notes'] = [entry]
     else:
-        obj.data['public_notes'].append(entry)
+        if not _has_note(entry, obj.data['public_notes']):
+            obj.data['public_notes'].append(entry)
 
 
 def filter_keywords(obj, eng):
