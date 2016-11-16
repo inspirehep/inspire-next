@@ -24,17 +24,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+from .record import get_value
+
 
 def get_clean_arXiv_id(record):
     """Return the arXiv identifier from given record."""
-    arxiv_id = record.get("arxiv_id")
-    if not arxiv_id:
-        arxiv_eprints = record.get('arxiv_eprints', [])
-        for element in arxiv_eprints:
-            if element.get("value", ""):
-                arxiv_id = element.get("value", "")
-
+    arxiv_id = get_value(record, 'arxiv_eprints.value[-1]')
     if arxiv_id:
         return arxiv_id.split(':')[-1]
-    else:
-        return None
