@@ -170,6 +170,7 @@ setup(
             'remoteaccount = inspirehep.modules.migrator.legacy.remoteaccount',
             'holdingpen = inspirehep.modules.migrator.legacy.workflows',
             'audit = inspirehep.modules.migrator.legacy.audit',
+            'user_roles = inspirehep.modules.migrator.legacy.user_roles',
         ],
     },
     test_suite='tests',
