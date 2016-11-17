@@ -22,7 +22,138 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.helpers import force_force_list
+import os
+import pkg_resources
+import tempfile
+
+import httpretty
+import pytest
+
+from inspirehep.utils.helpers import (
+    download_file,
+    download_file_to_record,
+    get_json_for_plots,
+    force_force_list,
+)
+
+
+@pytest.fixture
+def foo_bar_baz():
+    return pkg_resources.resource_string(
+        __name__, os.path.join('fixtures', 'foo-bar-baz'))
+
+
+class StubRecord(object):
+    def __init__(self, files):
+        self.files = files
+
+
+@pytest.mark.httpretty
+def test_download_file(foo_bar_baz):
+    httpretty.register_uri(
+        httpretty.GET, 'http://example.com/foo-bar-baz', body=foo_bar_baz)
+
+    filename = next(tempfile._get_candidate_names())
+
+    expected = filename
+    result = download_file(
+        'http://example.com/foo-bar-baz', output_file=filename)
+
+    assert expected == result
+
+    with open(filename, 'rb') as f:
+        assert 'foo\nbar\nbaz\n' == f.read()
+
+    os.remove(filename)
+
+
+@pytest.mark.httpretty
+def test_download_file_does_not_create_a_file_if_the_request_fails():
+    httpretty.register_uri(
+        httpretty.GET, 'http://example.com/500', body='', status=500)
+
+    filename = next(tempfile._get_candidate_names())
+
+    expected = filename
+    result = download_file(
+        'http://example.com/500', output_file=filename)
+
+    assert expected == result
+
+    with pytest.raises(IOError):
+        open(filename, 'rb')
+
+
+@pytest.mark.httpretty
+def test_download_file_raises_if_called_without_output_file():
+    httpretty.register_uri(
+        httpretty.GET, 'http://example.com/foo-bar-baz', body=foo_bar_baz)
+
+    with pytest.raises(IOError):
+        download_file('http://example.com/foo-bar-baz')
+
+
+@pytest.mark.xfail(reason='socket descriptor is passed already closed')
+@pytest.mark.httpretty
+def test_download_file_to_record(foo_bar_baz):
+    httpretty.register_uri(
+        httpretty.GET, 'http://example.com/foo-bar-baz', body=foo_bar_baz)
+
+    record = StubRecord({})
+
+    result = download_file_to_record(
+        record, 'foo-bar-baz', 'http://example.com/foo-bar-baz')
+
+    assert 'foo-bar-baz' in record.files
+    assert not record.files['foo-bar-baz'].closed
+
+
+def test_get_json_for_plots():
+    plots = [
+        {
+            'captions': [
+                'foo-caption-1',
+                'foo-caption-2',
+            ],
+            'name': 'foo-name',
+            'url': 'http://example.com/foo-url',
+        },
+        {
+            'captions': [
+                'bar-caption-1',
+            ],
+            'name': 'bar-name',
+            'url': 'http://example.com/bar-url',
+        },
+        {
+        },
+    ]
+
+    expected = {
+        'fft': [
+            {
+                'url': 'http://example.com/foo-url',
+                'docfile_type': 'Plot',
+                'description': '00000 foo-caption-1foo-caption-2',
+                'filename': 'foo-name',
+            },
+            {
+                'url': 'http://example.com/bar-url',
+                'docfile_type': 'Plot',
+                'description': '00001 bar-caption-1',
+                'filename': 'bar-name',
+            },
+            {
+                'url': None,
+                'docfile_type': 'Plot',
+                'description': '00002 ',
+                'filename': None,
+            },
+        ],
+    }
+    result = get_json_for_plots(plots)
+
+    assert expected == result
 
 
 def test_force_force_list_returns_empty_list_on_none():
@@ -42,5 +173,12 @@ def test_force_force_list_wraps_strings_in_a_list():
 def test_force_force_list_converts_tuples_to_lists():
     expected = ['foo', 'bar', 'baz']
     result = force_force_list(('foo', 'bar', 'baz'))
+
+    assert expected == result
+
+
+def test_force_force_list_does_not_touch_lists():
+    expected = ['foo', 'bar', 'baz']
+    result = force_force_list(['foo', 'bar', 'baz'])
 
     assert expected == result
