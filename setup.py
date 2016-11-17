@@ -270,6 +270,7 @@ setup(
         ],
         'invenio_migrator.things': [
             'holdingpen = inspirehep.modules.migrator.legacy.workflows',
+            'user_roles = inspirehep.modules.migrator.legacy.user_roles',
         ],
     },
     tests_require=tests_require,
