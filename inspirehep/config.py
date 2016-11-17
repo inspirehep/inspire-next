@@ -738,6 +738,11 @@ RECORDS_REST_ENDPOINTS = dict(
                 ':json_v1_search'
             ),
         },
+        suggesters=dict(
+            experiment=dict(completion=dict(
+                field='experiment_suggest'
+            ))
+        ),
         list_route='/experiments/',
         item_route='/experiments/<pid(exp):pid_value>',
         default_media_type='application/json',

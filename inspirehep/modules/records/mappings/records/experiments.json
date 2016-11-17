@@ -105,6 +105,12 @@
                     },
                     "type": "object"
                 },
+                "experiment_suggest": {
+                    "analyzer": "simple",
+                    "payloads": true,
+                    "search_analyzer": "simple",
+                    "type": "completion"
+                },
                 "experimentautocomplete": {
                     "type": "string"
                 },
