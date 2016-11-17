@@ -29,6 +29,10 @@ from time import sleep
 
 import pytest
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 from invenio_db import db
 from invenio_search import current_search_client as es
@@ -62,8 +66,7 @@ def app(request):
         init_users_and_permissions()
         init_collections()
 
-        migrate('./inspirehep/demosite/data/demo-records.xml.gz',
-                wait_for_results=True)
+        migrate('./inspirehep/demosite/data/demo-records-acceptance.xml', wait_for_results=True)
         es.indices.refresh('records-hep')
 
         yield app
@@ -71,7 +74,6 @@ def app(request):
 
 @pytest.fixture
 def selenium(selenium, app):
-    selenium.implicitly_wait(10)
     selenium.maximize_window()
     selenium.get(environ['SERVER_NAME'])
     return selenium
@@ -87,5 +89,7 @@ def login(selenium):
 
     yield
 
-    selenium.find_element_by_id('user-info').click()
+    selenium.execute_script('document.getElementById("toast-container").style.display = "none"')
+    WebDriverWait(selenium, 10).until(EC.visibility_of_element_located((By.ID, 'user-info')))
+    selenium.find_element_by_id("user-info").click()
     selenium.find_element_by_xpath("(//button[@type='button'])[2]").click()
