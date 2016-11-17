@@ -22,7 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.dojson.utils import force_force_list
+from inspirehep.utils.helpers import force_force_list
 
 
 def test_force_force_list_returns_empty_list_on_none():
