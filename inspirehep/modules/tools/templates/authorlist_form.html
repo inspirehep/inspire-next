@@ -30,13 +30,14 @@
   <dl>
     {{ render_field(form.author_string) }}
   </dl>
-  <p><input class="btn" type="submit" value="Format">
+  <p><input class="btn btn-default" type="submit" value="Format">
 </form>
 
 {% if results %}
 <h4>{{ results_title }}</h4>
-<pre><textarea class="form-control" form="authorlist" id="resultarea">{{ results }}</textarea></pre>
-<button class="btn" id="copy-button" data-clipboard-target="resultarea">Copy to clipboard</button>
+<button class="btn btn-default" id="copy-button" data-clipboard-target="resultarea">Copy to clipboard</button>
+<pre><textarea class="form-control" form="authorlist" id="resultarea" rows="10">{{ results }}</textarea></pre>
+
 
 {% else %}
 <div>
@@ -50,6 +51,8 @@ F. Lastname1, F.M. Otherlastname1,2
 1 CERN
 2 Otheraffiliation
 </pre></p>
+You should make sure there is only one affiliation per line and the affiliation
+IDs in author names are separated with commas.
 </div>
 {% endif %}
 
