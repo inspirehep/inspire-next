@@ -68,7 +68,7 @@ def test_get_clean_arXiv_id_from_arxiv_eprints_with_oai_prefix():
     assert expected == result
 
 
-def test_get_clean_arXiv_id_from_arxiv_eprints_selects_last():
+def test_get_clean_arXiv_id_from_arxiv_eprints_selects_first():
     record = {
         'arxiv_eprints': [
             {'value': 'oai:arXiv.org:0801.4782'},
@@ -76,7 +76,7 @@ def test_get_clean_arXiv_id_from_arxiv_eprints_selects_last():
         ],
     }
 
-    expected = '0805.1410'
+    expected = '0801.4782'
     result = get_clean_arXiv_id(record)
 
     assert expected == result

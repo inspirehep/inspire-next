@@ -29,6 +29,6 @@ from .record import get_value
 
 def get_clean_arXiv_id(record):
     """Return the arXiv identifier from given record."""
-    arxiv_id = get_value(record, 'arxiv_eprints.value[-1]')
+    arxiv_id = get_value(record, 'arxiv_eprints.value[0]')
     if arxiv_id:
         return arxiv_id.split(':')[-1]
