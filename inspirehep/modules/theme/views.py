@@ -647,6 +647,12 @@ def ajax_experiments_people():
     )
 
 
+@blueprint.route('/account/settings/linkedaccounts/', methods=['GET'])
+def linkedaccounts():
+    """."""
+    return redirect('/')
+
+
 #
 # Helpers
 #
