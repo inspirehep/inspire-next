@@ -146,9 +146,6 @@
                 "citation_count": {
                     "type": "integer"
                 },
-                "control_number": {
-                    "type": "integer"
-                },
                 "cnum": {
                     "index": "not_analyzed",
                     "type": "string"
@@ -187,6 +184,9 @@
                         }
                     },
                     "type": "object"
+                },
+                "control_number": {
+                    "type": "integer"
                 },
                 "date": {
                     "format": "yyyy||yyyy-MM||yyyy-MM-dd",
