@@ -3,29 +3,28 @@
 # This file is part of INSPIRE.
 # Copyright (C) 2016 CERN.
 #
-# INSPIRE is free software; you can redistribute it
-# and/or modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of the
-# License, or (at your option) any later version.
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# INSPIRE is distributed in the hope that it will be
-# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with INSPIRE; if not, write to the
-# Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
-# MA 02111-1307, USA.
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this license, CERN does not
-# waive the privileges and immunities granted to it by virtue of its status
-# as an Intergovernmental Organization or submit itself to any jurisdiction.
+# In applying this licence, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 from __future__ import absolute_import, division, print_function
 
-import mock
 import httpretty
+import mock
+import pytest
 
 from inspirehep.modules.authors import receivers
 
@@ -68,7 +67,8 @@ def test_name_variations():
             'Richard Ellis'])
 
 
-def test_phonetic_block_generation_ascii(httppretty_mock, app):
+@pytest.mark.httpretty
+def test_phonetic_block_generation_ascii(app):
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
     }
@@ -94,7 +94,8 @@ def test_phonetic_block_generation_ascii(httppretty_mock, app):
             assert json_dict['authors'][0]['signature_block'] == "ELj"
 
 
-def test_phonetic_block_generation_broken(httppretty_mock, app):
+@pytest.mark.httpretty
+def test_phonetic_block_generation_broken(app):
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
     }
@@ -120,7 +121,8 @@ def test_phonetic_block_generation_broken(httppretty_mock, app):
             assert json_dict['authors'][0]['signature_block'] is None
 
 
-def test_phonetic_block_generation_unicode(httppretty_mock, app):
+@pytest.mark.httpretty
+def test_phonetic_block_generation_unicode(app):
     extra_config = {
         "BEARD_API_URL": "http://example.com/beard",
     }

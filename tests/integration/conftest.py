@@ -117,10 +117,3 @@ def api_client(api):
     """Flask test client for API app."""
     with api.test_client() as client:
         yield client
-
-
-@pytest.fixture
-def httpretty_mock():
-    httpretty.enable()
-    yield
-    httpretty.disable()
