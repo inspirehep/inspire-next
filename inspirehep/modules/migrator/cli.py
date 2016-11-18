@@ -44,6 +44,7 @@ from .tasks.records import (
     migrate_chunk,
     split_blob,
 )
+from .tasks.access import import_userrole
 from .tasks.workflows import import_holdingpen_record
 
 from .tasks.workflows import import_audit_record
@@ -125,6 +126,18 @@ def loadworkflows(source):
             import_holdingpen_record.delay(
                 item['parent_objs'], item['obj'], item['eng']
             )
+
+
+@migrator.command()
+@click.argument('source', type=click.File('r'), default=sys.stdin)
+@with_appcontext
+def loaduserroles(source):
+    click.echo('Loading dump...')
+    data = json.load(source)
+    click.echo('Sending tasks to queue...')
+    with click.progressbar(data) as records:
+        for item in records:
+            import_userrole.delay(item)
 
 
 @migrator.command()
