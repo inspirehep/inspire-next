@@ -54,6 +54,7 @@ def enhance_record(sender, json, *args, **kwargs):
     match_valid_experiments(sender, json, *args, **kwargs)
     dates_validator(sender, json, *args, **kwargs)
     add_recids_and_validate(sender, json, *args, **kwargs)
+    populate_experiment_suggest(sender, json, *args, **kwargs)
     after_record_enhanced.send(json)
 
 
@@ -371,3 +372,19 @@ def check_if_record_is_going_to_be_deleted(sender, *args, **kwargs):
         else:
             record = get_db_record(pid_type, control_number)
             soft_delete_pidstore_for_record(record.id)
+
+
+def populate_experiment_suggest(sender, json, *args, **kwargs):
+    """Populates experiment_suggest field if record is an experiment record"""
+
+    # FIXME: Use a dedicated method when #1355 will be resolved.
+    if "experiments.json" in json.get("$schema"):
+        experiment_names = get_value(json, "experiment_names.title")
+        title_variants = force_force_list(
+            get_value(json, "title_variants.title")
+        )
+        json.update({"experiment_suggest": {
+            "input": experiment_names + title_variants,
+            "output": experiment_names[0],
+            "payload": {"$ref": get_value(json, "self.$ref")},
+        }})
