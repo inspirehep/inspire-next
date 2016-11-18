@@ -24,16 +24,15 @@
 
 from __future__ import absolute_import, division, print_function
 
-from os import environ
 from time import sleep
 
 import pytest
-from selenium import webdriver
 
 from invenio_db import db
 from invenio_search import current_search_client as es
 
-from inspirehep.config import SERVER_NAME
+from inspirehep.bat.arsenic import Arsenic
+from inspirehep.bat.pages import top_navigation_page
 from inspirehep.factory import create_app
 
 
@@ -62,30 +61,19 @@ def app(request):
         init_users_and_permissions()
         init_collections()
 
-        migrate('./inspirehep/demosite/data/demo-records.xml.gz',
-                wait_for_results=True)
+        migrate('./inspirehep/demosite/data/demo-records-acceptance.xml', wait_for_results=True)
         es.indices.refresh('records-hep')
 
         yield app
 
 
 @pytest.fixture
-def selenium(selenium, app):
-    selenium.implicitly_wait(10)
-    selenium.maximize_window()
-    selenium.get(environ['SERVER_NAME'])
-    return selenium
+def arsenic(selenium, app):
+    Arsenic(selenium)
 
 
 @pytest.fixture
-def login(selenium):
-    selenium.find_element_by_link_text('Sign in').click()
-    selenium.get(environ['SERVER_NAME'] + '/login/?local=1')
-    selenium.find_element_by_id('email').send_keys('admin@inspirehep.net')
-    selenium.find_element_by_id('password').send_keys('123456')
-    selenium.find_element_by_xpath("//button[@type='submit']").click()
-
+def login(arsenic):
+    top_navigation_page.log_in('admin@inspirehep.net', '123456')
     yield
-
-    selenium.find_element_by_id('user-info').click()
-    selenium.find_element_by_xpath("(//button[@type='button'])[2]").click()
+    top_navigation_page.log_out()
