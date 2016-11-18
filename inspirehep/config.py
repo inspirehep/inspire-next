@@ -28,7 +28,7 @@ import os
 import sys
 
 from invenio_oauthclient.contrib import orcid
-from invenio_records_rest.facets import terms_filter
+from invenio_records_rest.facets import range_filter, terms_filter
 
 
 def _(x):
@@ -895,6 +895,10 @@ RECORDS_REST_FACETS = {
             "formulas": terms_filter('facet_formulas'),
             "experiment": terms_filter(
                 'accelerator_experiments.facet_experiment'),
+            "earliest_date": range_filter(
+                'earliest_date',
+                format='yyyy',
+                end_date_math='/y')
         },
         "aggs": {
             "subject": {
@@ -931,6 +935,7 @@ RECORDS_REST_FACETS = {
                 "date_histogram": {
                     "field": "earliest_date",
                     "interval": "year",
+                    "format": "yyyy",
                     "min_doc_count": 1,
                     "order": {"_count": "desc"}
                 }

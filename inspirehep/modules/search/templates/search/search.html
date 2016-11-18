@@ -72,6 +72,10 @@
 <div class="row" id="search-results">
   {%- block search_facets %}
   <div class="col-md-3 visible-md visible-lg literature-facet" id="facetparent">
+    <invenio-search-range
+        options='{"histogramId": "#year_hist", "selectionId": "#year_select", "name": "earliest_date", "width": 180}'
+        template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/range.html') }}">
+    </invenio-search-range>
     <div class="facet" id="facet_list" data-clampedwidth="#facetparent">
       <invenio-search-facets
        template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/literature/facets.html') }}">
