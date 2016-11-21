@@ -22,8 +22,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
-
 from inspirehep.modules.refextract.tasks import extract_journal_info
 
 
@@ -36,7 +34,6 @@ class DummyEng(object):
     pass
 
 
-@pytest.mark.xfail(reason='year has the wrong type')
 def test_extract_journal_info():
     obj = StubObj({
         'publication_info': [
