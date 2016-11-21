@@ -40,4 +40,4 @@ def test_format_tei(app):
     record = get_db_record('lit', 1407506)
     result = tei.tei_response(record)
 
-    assert result == expected
+    assert result.strip() == expected.strip()

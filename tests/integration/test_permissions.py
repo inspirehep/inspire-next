@@ -314,15 +314,15 @@ def test_record_restricted_api_read(app, api_client, user_info, status):
 
 @pytest.mark.parametrize('user_info,total_count,es_filter', [
     # anonymous user
-    (None, 426, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}, {'match': {'_collections': u'Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
+    (None, 23, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}, {'match': {'_collections': u'Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
     # Logged in user without permissions assigned
-    (dict(email='user@inspirehep.net', password='123456'), 426, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}, {'match': {'_collections': u'Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
+    (dict(email='user@inspirehep.net', password='123456'), 23, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}, {'match': {'_collections': u'Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
     # Logged in user not allowed in all collections
-    (dict(email='partially_allowed@inspirehep.net', password='123456'), 426, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
+    (dict(email='partially_allowed@inspirehep.net', password='123456'), 23, [{'bool': {'must_not': [{'match': {'_collections': u'Another Restricted Collection'}}], 'must': [{'match': {'_collections': 'Literature'}}]}}]),
     # Logged in user with permissions assigned
-    (dict(email='allowed@inspirehep.net', password='123456'), 427, [{'match': {'_collections': 'Literature'}}]),
+    (dict(email='allowed@inspirehep.net', password='123456'), 24, [{'match': {'_collections': 'Literature'}}]),
     # admin user
-    (dict(email='admin@inspirehep.net', password='123456'), 427, [{'match': {'_collections': 'Literature'}}]),
+    (dict(email='admin@inspirehep.net', password='123456'), 24, [{'match': {'_collections': 'Literature'}}]),
 ])
 @pytest.mark.usefixtures("users", "restricted_record")
 def test_inspire_search_filter(app, user_info, total_count, es_filter):

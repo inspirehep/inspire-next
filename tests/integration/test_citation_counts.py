@@ -31,15 +31,8 @@ def test_citation_counts_are_correct(app):
         return citation_count
 
     with app.app_context():
-        assert get_citation_count(712925) == 97
-        assert get_citation_count(12291) == 18
-        assert get_citation_count(1319638) == 8
-        assert get_citation_count(452060) == 6
-        assert get_citation_count(921978) == 5
-        assert get_citation_count(1298519) == 3
-        assert get_citation_count(1298029) == 3
-        assert get_citation_count(1391029) == 2
-        assert get_citation_count(686477) == 2
-        assert get_citation_count(450836) == 1
-        assert get_citation_count(611633) == 1
-        assert get_citation_count(1345828) == 1
+        assert get_citation_count(712925) == 2
+        assert get_citation_count(451647) == 2
+        assert get_citation_count(1430091) == 1
+        assert get_citation_count(452060) == 1
+        assert get_citation_count(1496635) == 1

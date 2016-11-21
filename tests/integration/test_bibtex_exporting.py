@@ -64,10 +64,14 @@ def test_format_proceeding(app):
     proceeding = get_db_record('lit', 701585)
 
     expected = u'''@proceedings{Alekhin:2005dx,
-      author         = "Alekhin, S. and others",
+      author         = "De Roeck, A. and Jung, H.",
       title          = "{HERA and the LHC: A Workshop on the implications of HERA for LHC physics: Proceedings Part A}",
+      organization   = "CERN",
+      publisher      = "CERN",
+      address        = "Geneva",
       url            = "http://weblib.cern.ch/abstract?CERN-2005-014",
-      year           = "2",
+      year           = "2005",
+      pages          = "pp.1-326",
       eprint         = "hep-ph/0601012",
       archivePrefix  = "arXiv",
       primaryClass   = "hep-ph",

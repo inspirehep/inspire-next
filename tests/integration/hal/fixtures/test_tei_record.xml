@@ -44,7 +44,16 @@
 
               </analytic>
 
+                <monogr>
+                      <title level="j">Adv.Ser.Direct.High Energy Phys.</title>
+                    <imprint>
+                        <biblScope unit="volume">26</biblScope>
+                        <biblScope unit="pp">231-253</biblScope>
+                        <date type="datePub">2016</date>
+                    </imprint>
+                </monogr>
 
+                <idno type="doi">10.1142/9789814733519_0013</idno>
             </biblStruct>
           </sourceDesc>
           <profileDesc>

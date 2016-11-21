@@ -30,7 +30,7 @@ from inspirehep.modules.migrator.models import InspireProdRecords
 def test_all_records_were_loaded(app):
     records = [record.json for record in RecordMetadata.query.all()]
 
-    expected = 576
+    expected = 42
     result = len(records)
 
     assert expected == result

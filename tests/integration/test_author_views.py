@@ -28,15 +28,15 @@ import json
 def test_author_publications_is_there(app):
     with app.test_client() as client:
         assert client.get(
-            '/author/publications?recid=984519').status_code == 200
+            '/author/publications?recid=1061000').status_code == 200
 
 
 def test_author_publications_returns_the_right_data(app):
     with app.test_client() as client:
         response = json.loads(
-            client.get('/author/publications?recid=984519').data)
+            client.get('/author/publications?recid=1061000').data)
 
         # FIXME: Asserts should be more specific.
-        assert len(response['collaborations']) == 4
-        assert len(response['keywords']) == 234
-        assert len(response['publications']) == 30
+        assert len(response['collaborations']) == 0
+        assert len(response['keywords']) == 13
+        assert len(response['publications']) == 2
