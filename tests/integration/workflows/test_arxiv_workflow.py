@@ -369,7 +369,7 @@ def test_harvesting_arxiv_workflow_accepted(
         pub_info = obj.data.get('publication_info')
         assert pub_info
         assert pub_info[0]
-        assert pub_info[0].get('year') == "2014"
+        assert pub_info[0].get('year') == 2014
         assert pub_info[0].get('journal_title') == "J. Math. Phys."
 
         # This record should not have been touched yet

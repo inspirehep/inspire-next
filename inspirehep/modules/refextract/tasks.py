@@ -64,9 +64,9 @@ def extract_journal_info(obj, eng):
                     "title"
                 )
             if "year" in extracted_publication_info:
-                pubnote["year"] = extracted_publication_info.get(
+                pubnote["year"] = int(extracted_publication_info.get(
                     "year"
-                )
+                ))
             if "page" in extracted_publication_info:
                 page_start, page_end, artid = split_page_artid(
                     extracted_publication_info.get("page"))
