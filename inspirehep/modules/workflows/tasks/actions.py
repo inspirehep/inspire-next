@@ -28,6 +28,8 @@ from functools import wraps
 
 from flask import current_app
 
+from inspirehep.modules.workflows.utils import log_workflows_action
+
 from inspirehep.utils.arxiv import get_clean_arXiv_id
 from inspirehep.utils.record import get_value
 
@@ -103,8 +105,6 @@ def reject_record(message):
     """Reject record with message."""
     @wraps(reject_record)
     def _reject_record(obj, *args, **kwargs):
-        from inspirehep.modules.workflows.utils import log_workflows_action
-
         prediction_results = obj.extra_data.get("relevance_prediction")
         log_workflows_action(
             action="reject_record",
