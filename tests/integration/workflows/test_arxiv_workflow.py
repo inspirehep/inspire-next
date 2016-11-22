@@ -287,7 +287,7 @@ def test_harvesting_arxiv_workflow_rejected(
         pub_info = obj.data.get('publication_info')
         assert pub_info
         assert pub_info[0]
-        assert pub_info[0].get('year') == "2014"
+        assert pub_info[0].get('year') == 2014
         assert pub_info[0].get('journal_title') == "J. Math. Phys."
 
         # A prediction should have been made
@@ -330,7 +330,6 @@ def test_harvesting_arxiv_workflow_rejected(
         assert obj.status == ObjectStatus.COMPLETED
 
 
-@pytest.mark.xfail(reason='record updates are busted due to validation issue')
 @mock.patch('inspirehep.modules.workflows.tasks.arxiv.download_file_to_record',
             side_effect=fake_download_file)
 def test_harvesting_arxiv_workflow_accepted(
@@ -369,7 +368,7 @@ def test_harvesting_arxiv_workflow_accepted(
         pub_info = obj.data.get('publication_info')
         assert pub_info
         assert pub_info[0]
-        assert pub_info[0].get('year') == "2014"
+        assert pub_info[0].get('year') == 2014
         assert pub_info[0].get('journal_title') == "J. Math. Phys."
 
         # This record should not have been touched yet
