@@ -648,6 +648,16 @@ def ajax_experiments_people():
 
 
 #
+# Redirect on login with ORCID
+#
+
+@blueprint.route('/account/settings/linkedaccounts/', methods=['GET'])
+def linkedaccounts():
+    """Redirect to the homepage when logging in with ORCID."""
+    return redirect('/')
+
+
+#
 # Helpers
 #
 
