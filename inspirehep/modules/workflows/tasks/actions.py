@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2014, 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,15 +16,19 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this license, CERN does not waive the privileges and immunities
+# In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
 """Tasks related to user actions."""
 
+from __future__ import absolute_import, division, print_function
+
 from functools import wraps
 
 from flask import current_app
+
+from inspirehep.modules.workflows.utils import log_workflows_action
 
 from inspirehep.utils.arxiv import get_clean_arXiv_id
 from inspirehep.utils.record import get_value
@@ -101,8 +105,6 @@ def reject_record(message):
     """Reject record with message."""
     @wraps(reject_record)
     def _reject_record(obj, *args, **kwargs):
-        from inspirehep.modules.workflows.utils import log_workflows_action
-
         prediction_results = obj.extra_data.get("relevance_prediction")
         log_workflows_action(
             action="reject_record",
@@ -118,10 +120,10 @@ def reject_record(message):
     return _reject_record
 
 
-def is_record_relevant(obj, *args, **kwargs):
+def is_record_relevant(obj, eng):
     """Shall we halt this workflow for potential acceptance or just reject?"""
     # We do not auto-reject any user submissions
-    if is_submission(obj, *args, **kwargs):
+    if is_submission(obj, eng):
         return True
 
     prediction_results = obj.extra_data.get("prediction_results")

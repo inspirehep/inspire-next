@@ -16,13 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this license, CERN does not waive the privileges and immunities
+# In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
 """Tasks related to record uploading."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 from pprint import pformat
 
