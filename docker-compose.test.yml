@@ -89,7 +89,7 @@ services:
   acceptance:
     extends:
       service: service_base
-    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance
+    command: bash -c "cp sitecustomize.py /virtualenv/lib/python2.7/site-packages/sitecustomize.py && py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance"
     volumes_from:
       - static
     links:
@@ -116,6 +116,7 @@ services:
       - redis
     environment:
       - APP_SERVER_NAME=web:5000
+      - COVERAGE_PROCESS_START=.coveragerc
   worker:
     container_name: inspirehep-test-worker
     extends:
