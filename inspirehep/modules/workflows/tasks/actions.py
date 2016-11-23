@@ -120,10 +120,10 @@ def reject_record(message):
     return _reject_record
 
 
-def is_record_relevant(obj, *args, **kwargs):
+def is_record_relevant(obj, eng):
     """Shall we halt this workflow for potential acceptance or just reject?"""
     # We do not auto-reject any user submissions
-    if is_submission(obj, *args, **kwargs):
+    if is_submission(obj, eng):
         return True
 
     prediction_results = obj.extra_data.get("prediction_results")
