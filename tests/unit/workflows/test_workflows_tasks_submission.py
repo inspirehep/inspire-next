@@ -22,22 +22,66 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.modules.workflows.tasks.submission import add_note_entry
+from inspirehep.modules.workflows.tasks.submission import (
+    submit_rt_ticket,
+    add_note_entry,
+)
+
+from six import StringIO
+from mock import MagicMock
+import mock
 
 
-class StubObj(object):
-    def __init__(self, data, extra_data):
+class MockObj(object):
+    class MockLog(object):
+        def __init__(self):
+            self._log = StringIO()
+
+        def info(self, *args, **kwargs):
+            self._log.write(args[0])
+
+        def error(self, *args, **kwargs):
+            self.info(args[0])
+
+    log = MockLog()
+
+    def __init__(self, id_, data, extra_data):
+        self.id = id_
         self.data = data
         self.extra_data = extra_data
 
 
-class DummyEng(object):
-    pass
-
-
 def test_add_note_entry_does_not_add_value_that_is_already_present():
-    obj = StubObj({'public_notes': [{'value': '*Temporary entry*'}]}, {'core': 'something'})
-    eng = DummyEng()
+    class MockObj(object):
+        def __init__(self, data, extra_data):
+            self.data = data
+            self.extra_data = extra_data
+
+    obj = MockObj({'public_notes': [{'value': '*Temporary entry*'}]}, {'core': 'something'})
+    eng = {}
 
     assert add_note_entry(obj, eng) is None
     assert {'public_notes': [{'value': '*Temporary entry*'}]} == obj.data
+
+
+@mock.patch('inspirehep.modules.workflows.tasks.submission.get_instance')
+@mock.patch('inspirehep.modules.workflows.tasks.submission.in_production_mode')
+def test_submit_rt_ticket(mock_production_mode, mock_rt_instance):
+    mock_file = MagicMock()
+    mock_file.create_ticket = MagicMock(return_value=1)
+    mock_rt_instance.return_value = mock_file
+    mock_production_mode.return_value = True
+
+    obj = MockObj(1, {}, {'recid': 1})
+
+    assert submit_rt_ticket(obj, '', None, '', 'mail@ma.il', 'ticket_id')
+    assert obj.extra_data['ticket_id'] == 1
+
+    mock_file.create_ticket.assert_called_with(
+        CF_RecordID=1,
+        Queue='',
+        Subject=None,
+        Text='',
+        requestors='mail@ma.il'
+    )
+
