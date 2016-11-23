@@ -469,8 +469,8 @@ RECORDS_REST_ENDPOINTS = dict(
         list_route='/literature/db',
         item_route='/literature/<pid(lit):pid_value>/db',
         default_media_type='application/json',
-        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory'
-
+        search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
+        update_permission_factory_imp="inspirehep.modules.records.permissions:record_update_permission_factory",
     ),
     authors=dict(
         default_endpoint_prefix=True,

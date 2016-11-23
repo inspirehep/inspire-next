@@ -209,6 +209,7 @@ setup(
             'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',
             'inspire_search = inspirehep.modules.search:INSPIRESearch',
             'inspire_workflows = inspirehep.modules.workflows:INSPIREWorkflows',
+            'invenio_collections = invenio_collections:InvenioCollections',
         ],
         'invenio_base.apps': [
             'inspire_cache = inspirehep.modules.cache.ext:INSPIRECache',

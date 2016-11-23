@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 from flask import current_app, session
+from flask_principal import ActionNeed
 from flask_security import current_user
 from werkzeug.local import LocalProxy
 
@@ -86,14 +87,21 @@ def record_read_permission_factory(record=None):
     return RecordPermission.create(record=record, action='read')
 
 
+def record_update_permission_factory(record=None):
+    """Record permission factory."""
+    return RecordPermission.create(record=record, action='update')
+
+
 class RecordPermission(object):
     """Record permission.
 
     - Read access given if collection not restricted.
+    - Update access given to admins and cataloguers.
     - All other actions are denied for the moment.
     """
 
     read_actions = ['read']
+    update_actions = ['update']
 
     def __init__(self, record, func, user):
         """Initialize a file permission object."""
@@ -110,6 +118,8 @@ class RecordPermission(object):
         """Create a record permission."""
         if action in cls.read_actions:
             return cls(record, has_read_permission, user)
+        elif action in cls.update_actions:
+            return cls(record, has_update_permission, user)
         else:
             return cls(record, deny, user)
 
@@ -135,6 +145,23 @@ def has_read_permission(user, record):
 
     # By default we allow access
     return True
+
+
+def has_update_permission(user, record):
+    """Check if user has update access to the record."""
+    user_roles = [r.name for r in user.roles]
+    if 'cataloger' in user_roles:
+        return True
+
+    # Allow administrators
+    return has_admin_permission(user, record)
+
+
+def has_admin_permission(user, record):
+    """Check if user has admin access to record."""
+    # Allow administrators
+    if DynamicPermission(ActionNeed('admin-access')):
+        return True
 
 
 #
