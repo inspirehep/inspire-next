@@ -26,14 +26,13 @@ import pytest
 
 from dojson.contrib.marc21.utils import create_record
 from invenio_db import db
-from invenio_indexer.api import RecordIndexer
 from invenio_pidstore.models import PersistentIdentifier, Redirect
+from invenio_records.api import Record
 from invenio_search import current_search_client as es
-from inspirehep.modules.search.api import LiteratureSearch
 
 from inspirehep.dojson.hep import hep
 from inspirehep.modules.migrator.tasks.records import record_upsert
-from inspirehep.utils.record_getter import get_db_record, get_es_record
+from inspirehep.utils.record_getter import get_db_record
 
 
 @pytest.fixture(scope='function')
@@ -56,10 +55,7 @@ def record_already_deleted_in_marcxml(app):
         json_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
 
         with db.session.begin_nested():
-            record = record_upsert(json_record)
-            if record:
-                r = RecordIndexer()
-                r.index(record)
+            record_upsert(json_record)
 
         db.session.commit()
 
@@ -86,10 +82,7 @@ def record_not_yet_deleted(app):
         json_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
 
         with db.session.begin_nested():
-            record = record_upsert(json_record)
-            if record:
-                ri = RecordIndexer()
-                ri.index(record)
+            record_upsert(json_record)
 
         db.session.commit()
 
@@ -161,20 +154,21 @@ def records_already_merged_in_marcxml(app):
         json_record_deleted['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
 
         with db.session.begin_nested():
-            record_merged = record_upsert(json_record_merged)
-            record_deleted = record_upsert(json_record_deleted)
-            if record_deleted:
-                if record_merged:
-                    r = RecordIndexer()
-                    r.index(record_merged)
-                    r.index(record_deleted)
-                    es.indices.refresh('records-hep')
+            merged_id = record_upsert(json_record_merged).id
+            deleted_id = record_upsert(json_record_deleted).id
+
         db.session.commit()
 
     yield
 
     with app.app_context():
-        _delete_merged_records_from_everywhere('lit', 111, 222)
+        _delete_merged_records_from_everywhere(
+            'lit',
+            111,
+            222,
+            merged_id,
+            deleted_id
+        )
 
 
 @pytest.fixture(scope='function')
@@ -246,27 +240,26 @@ def records_not_merged_in_marcxml(app):
         json_record_deleted['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
 
         with db.session.begin_nested():
-            record_merged = record_upsert(json_record_merged)
-            record_deleted = record_upsert(json_record_deleted)
-            if record_deleted:
-                if record_merged:
-                    r = RecordIndexer()
-                    r.index(record_merged)
-                    r.index(record_deleted)
-                    es.indices.refresh('records-hep')
+            merged_id = record_upsert(json_record_merged).id
+            deleted_id = record_upsert(json_record_deleted).id
+
         db.session.commit()
 
     yield
 
     with app.app_context():
-        _delete_merged_records_from_everywhere('lit', 111, 222)
+        _delete_merged_records_from_everywhere(
+            'lit',
+            111,
+            222,
+            merged_id,
+            deleted_id
+        )
 
 
 def _delete_record_from_everywhere(pid_type, record_control_number):
     record = get_db_record(pid_type, record_control_number)
 
-    ri = RecordIndexer()
-    ri.delete(record)
     record.delete(force=True)
 
     pid = PersistentIdentifier.get(pid_type, record_control_number)
@@ -277,30 +270,22 @@ def _delete_record_from_everywhere(pid_type, record_control_number):
         object_uuid == PersistentIdentifier.object_uuid).delete()
 
     db.session.commit()
+    es.indices.refresh('records-hep')
 
 
-def _delete_merged_records_from_everywhere(pid_type, merged_record_control_number, deleted_record_control_number):
-    def _delete_es_records(index, doc_type, merged_uuid, deleted_uuid):
-        es.delete(index=index, doc_type=doc_type, id=merged_uuid)
-        es.delete(index=index, doc_type=doc_type, id=deleted_uuid)
-
-    control_num_str = 'control_number:{}'.format(deleted_record_control_number)
-    es_deleted_record = LiteratureSearch().query_from_iq(control_num_str).execute()
-    deleted_object_uuid = es_deleted_record[0].meta.id
-
-    deleted = PersistentIdentifier.get(pid_type, deleted_record_control_number)
-    merged = PersistentIdentifier.get(pid_type, merged_record_control_number)
-
-    _delete_es_records('records-hep', 'hep', merged.object_uuid, deleted_object_uuid)
-
-    Redirect.query.filter(Redirect.id == deleted.object_uuid).delete()
-    PersistentIdentifier.delete(merged)
-    PersistentIdentifier.delete(deleted)
-
-    db.session.delete(merged)
-    db.session.delete(deleted)
-
+def _delete_merged_records_from_everywhere(pid_type, merged_record_control_number, deleted_record_control_number, merged_id, deleted_id):
+    Record.get_record(merged_id).delete(force=True)
+    Record.get_record(deleted_id).delete(force=True)
+    merged_pid = PersistentIdentifier.get(pid_type, merged_record_control_number)
+    deleted_pid = PersistentIdentifier.get(
+        pid_type,
+        deleted_record_control_number
+    )
+    Redirect.query.filter(Redirect.id == deleted_pid.object_uuid).delete()
+    db.session.delete(merged_pid)
+    db.session.delete(deleted_pid)
     db.session.commit()
+    es.indices.refresh('records-hep')
 
 
 def test_deleted_record_stays_deleted(app, record_already_deleted_in_marcxml):
@@ -315,9 +300,6 @@ def test_record_can_be_deleted(app, record_not_yet_deleted):
     record = get_db_record('lit', 333)
     record['deleted'] = True
     record.commit()
-    if record:
-        ri = RecordIndexer()
-        ri.index(record)
     db.session.commit()
 
     with app.test_client() as client:
@@ -339,9 +321,6 @@ def test_records_can_be_merged(app, records_not_merged_in_marcxml):
     record['deleted'] = True
     record['new_record'] = {'$ref': 'http://localhost:5000/api/record/111'}
     record.commit()
-    if record:
-        ri = RecordIndexer()
-        ri.index(record)
     db.session.commit()
 
     with app.test_client() as client:

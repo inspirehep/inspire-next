@@ -63,7 +63,7 @@ BASE_TEMPLATE = "inspirehep_theme/page.html"
 # ========
 SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://inspirehep:dbpass123@localhost:5432/inspirehep"
 SQLALCHEMY_ECHO = False
-SQLALCHEMY_TRACK_MODIFICATIONS = False  # We do not use (before_)models_committed anywhere
+SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 # Celery
 # ======
