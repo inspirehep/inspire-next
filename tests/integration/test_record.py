@@ -22,17 +22,24 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
+
 import pytest
 
 from dojson.contrib.marc21.utils import create_record
 from invenio_db import db
 from invenio_indexer.api import RecordIndexer
 from invenio_pidstore.models import PersistentIdentifier, Redirect
+from invenio_records.signals import before_record_update
 from invenio_search import current_search_client as es
-from inspirehep.modules.search.api import LiteratureSearch
 
 from inspirehep.dojson.hep import hep
 from inspirehep.modules.migrator.tasks.records import record_upsert
+from inspirehep.modules.search.api import LiteratureSearch
+from inspirehep.modules.records.receivers import (
+    check_if_record_is_going_to_be_deleted,
+)
+from inspirehep.utils.record import get_value
 from inspirehep.utils.record_getter import get_db_record, get_es_record
 
 
@@ -262,6 +269,51 @@ def records_not_merged_in_marcxml(app):
         _delete_merged_records_from_everywhere('lit', 111, 222)
 
 
+@pytest.fixture(scope='function')
+def records_to_be_merged(app):
+    with app.app_context():
+        record = {
+            '$schema': 'http://localhost:5000/schemas/records/hep.json',
+            'control_number': 111,
+            'accelerator_experiments': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/experiments/333',
+                    },
+                },
+            ],
+        }
+
+        record_to_be_merged = {
+            '$schema': 'http://localhost:5000/schemas/records/hep.json',
+            'control_number': 222,
+            'accelerator_experiments': [
+                {
+                    'record': {
+                        '$ref': 'to-be-changed',
+                    },
+                },
+            ],
+        }
+
+        pointed_record = {
+            '$schema': 'http://localhost:5000/schemas/records/experiments.json',
+            'control_number': 333,
+        }
+
+        with db.session.begin_nested():
+            record_upsert(record)
+            record_upsert(record_to_be_merged)
+            record_upsert(pointed_record)
+        db.session.commit()
+
+    yield
+
+    with app.app_context():
+        _delete_merged_records_from_everywhere('lit', 111, 222)
+        _delete_record_from_everywhere('lit', 333)
+
+
 def _delete_record_from_everywhere(pid_type, record_control_number):
     record = get_db_record(pid_type, record_control_number)
 
@@ -347,3 +399,27 @@ def test_records_can_be_merged(app, records_not_merged_in_marcxml):
     with app.test_client() as client:
         assert client.get('/api/literature/111').status_code == 200
         assert client.get('/api/literature/222').status_code == 301
+
+
+def test_records_propagate_links_when_merged(app, records_to_be_merged):
+    before_record_update.disconnect(check_if_record_is_going_to_be_deleted)
+
+    with app.app_context():
+        with db.session.begin_nested():
+            record_to_be_merged = get_db_record('lit', 222)
+            record_to_be_merged['deleted'] = True
+            record_to_be_merged['new_record'] = {
+                '$ref': 'http://localhost:5000/api/literature/111'}
+            record_to_be_merged.commit()
+        db.session.commit()
+
+    with app.test_client() as client:
+        merged_record = json.loads(client.get('/api/literature/222/db').data)
+
+    expected = 'http://localhost:5000/api/experiments/333'
+    result = get_value(
+        merged_record, 'accelerator_experiments.record.$ref')
+
+    assert expected == result
+
+    before_record_update.connect(check_if_record_is_going_to_be_deleted)
