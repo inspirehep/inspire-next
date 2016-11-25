@@ -45,6 +45,13 @@ def get_endpoint_from_pid_type(pid_type):
     return PID_TYPE_TO_ENDPOINT[pid_type]
 
 
+def get_endpoint_from_schema(schema):
+    pid_type = get_pid_type_from_schema(schema)
+    endpoint = get_endpoint_from_pid_type(pid_type)
+
+    return endpoint
+
+
 def get_pid_type_from_endpoint(endpoint):
     """Return the ``pid_type`` corresponding to an endpoint."""
     ENDPOINT_TO_PID_TYPE = {
