@@ -1603,6 +1603,14 @@ ARXIV_TO_INSPIRE_CATEGORY_MAPPING = {
     "stat.TH": "Other"
 }
 
+# Ignored fields for merging records
+# ===========================
+IGNORE_REFS_IN_FIELDS = ['deleted_recid', 'new_recid']
+
+# Json schemas
+# ===========================
+INSPIRE_JSON_SCHEMAS = ['hep', 'authors', 'conferences', 'experiments', 'institutions', 'jobs', 'journals']
+
 # Import local config file if it is present.
 try:
     from inspirehep.config_local import *

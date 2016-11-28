@@ -29,11 +29,11 @@ from invenio_db import db
 from invenio_indexer.api import RecordIndexer
 from invenio_pidstore.models import PersistentIdentifier, Redirect
 from invenio_search import current_search_client as es
-from inspirehep.modules.search.api import LiteratureSearch
 
 from inspirehep.dojson.hep import hep
+from inspirehep.modules.search.api import LiteratureSearch
 from inspirehep.modules.migrator.tasks.records import record_upsert
-from inspirehep.utils.record_getter import get_db_record, get_es_record
+from inspirehep.utils.record_getter import get_db_record
 
 
 @pytest.fixture(scope='function')
@@ -262,6 +262,130 @@ def records_not_merged_in_marcxml(app):
         _delete_merged_records_from_everywhere('lit', 111, 222)
 
 
+@pytest.fixture(scope='function')
+def records_not_merged_propagated_in_marcxml(app):
+    snippet_merged = (
+        '<record>'
+        '  <controlfield tag="001">111</controlfield>'
+        '  <controlfield tag="005">20160922232729.0</controlfield>'
+        ' <datafield tag="024" ind1="7" ind2=" ">'
+        '   <subfield code="2">DOI</subfield>'
+        '   <subfield code="a">10.11588/heidok.00021652</subfield>'
+        ' </datafield>'
+        ' <datafield tag="100" ind1=" " ind2=" ">'
+        '   <subfield code="a">Humbert, Pascal</subfield>'
+        '   <subfield code="u">Inst. Appl. Math., Heidelberg</subfield>'
+        ' </datafield>'
+        ' <datafield tag="980" ind1=" " ind2=" ">'
+        '   <subfield code="a">HEP</subfield>'
+        ' </datafield>'
+        ' <datafield tag="980" ind1=" " ind2=" ">'
+        '   <subfield code="a">THESIS</subfield>'
+        ' </datafield>'
+        ' <datafield tag="980" ind1=" " ind2=" ">'
+        '   <subfield code="a">CORE</subfield>'
+        ' </datafield>'
+        ' <datafield tag="981" ind1=" " ind2=" ">'
+        '   <subfield code="a">222</subfield>'
+        ' </datafield>'
+        '</record>'
+    )
+
+    snippet_deleted = (
+        '<record>'
+        '  <controlfield tag="001">222</controlfield>'
+        '  <controlfield tag="005">20160922232729.0</controlfield>'
+        ' <datafield tag="024" ind1="7" ind2=" ">'
+        '   <subfield code="2">DOI</subfield>'
+        '   <subfield code="a">10.11588/heidok.00021652</subfield>'
+        ' </datafield>'
+        ' <datafield tag="100" ind1=" " ind2=" ">'
+        '   <subfield code="a">Humbert, Pascal</subfield>'
+        '   <subfield code="u">Inst. Appl. Math., Heidelberg</subfield>'
+        ' </datafield>'
+        ' <datafield tag="701" ind1=" " ind2=" ">'
+        '   <subfield code="a">Lindner, Manfred</subfield>'
+        ' </datafield>'
+        ' <datafield tag="856" ind1="4" ind2=" ">'
+        '   <subfield code="u">http://www.ub.uni-heidelberg.de/archiv/21652</subfield>'
+        '   <subfield code="y">U. Heidelberg</subfield>'
+        ' </datafield>'
+        ' <datafield tag="909" ind1="C" ind2="O">'
+        '   <subfield code="o">oai:inspirehep.net:222</subfield>'
+        '   <subfield code="p">INSPIRE:HEP</subfield>'
+        ' </datafield>'
+        ' <datafield tag="980" ind1=" " ind2=" ">'
+        '   <subfield code="a">HEP</subfield>'
+        ' </datafield>'
+        ' <datafield tag="981" ind1=" " ind2=" ">'
+        '   <subfield code="a">222</subfield>'
+        ' </datafield>'
+        '</record>'
+    )
+
+    snippet_old_link = (
+        '<record>'
+        '  <controlfield tag="001">333</controlfield>'
+        '  <controlfield tag="005">20160922232729.0</controlfield>'
+        ' <datafield tag="773" ind1=" " ind2=" ">'
+        '   <subfield code="p">IAU Symp.</subfield>'
+        '   <subfield code="w">C08-06-09</subfield>'
+        '   <subfield code="v">354</subfield>'
+        '   <subfield code="y">2008</subfield>'
+        '   <subfield code="v">254</subfield>'
+        '   <subfield code="y">2009</subfield>'
+        '   <subfield code="c">45</subfield>'
+        '   <subfield code="0">222</subfield>'
+        ' </datafield>'
+        '</record>'
+    )
+
+    with app.app_context():
+        json_record_merged = hep.do(create_record(snippet_merged))
+        json_record_merged['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
+
+        json_record_deleted = hep.do(create_record(snippet_deleted))
+        json_record_deleted['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
+
+        json_record_old_link = hep.do(create_record(snippet_old_link))
+        json_record_old_link['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
+
+        with db.session.begin_nested():
+            record_merged = record_upsert(json_record_merged)
+            record_deleted = record_upsert(json_record_deleted)
+            record_old_link = record_upsert(json_record_old_link)
+            if record_deleted:
+                if record_merged:
+                    r = RecordIndexer()
+                    r.index(record_merged)
+                    r.index(record_deleted)
+                    r.index(record_old_link)
+                    es.indices.refresh('records-hep')
+        db.session.commit()
+
+        with app.test_client() as client:
+            assert client.get('/api/literature/111').status_code == 200
+            assert client.get('/api/literature/222').status_code == 200
+            assert client.get('/api/literature/333').status_code == 200
+
+        with db.session.begin_nested():
+            deleted_record = get_db_record('lit', 222)
+            deleted_record['deleted'] = True
+            deleted_record['new_record'] = {'$ref': 'http://localhost:5000/api/record/111'}
+            if deleted_record:
+                ri = RecordIndexer()
+                ri.index(deleted_record)
+                es.indices.refresh('records-hep')
+        deleted_record.commit()
+        db.session.commit()
+
+    yield
+
+    with app.app_context():
+        _delete_merged_records_from_everywhere('lit', 111, 222)
+        _delete_record_from_everywhere('lit', 333)
+
+
 def _delete_record_from_everywhere(pid_type, record_control_number):
     record = get_db_record(pid_type, record_control_number)
 
@@ -338,12 +462,26 @@ def test_records_can_be_merged(app, records_not_merged_in_marcxml):
     record = get_db_record('lit', 222)
     record['deleted'] = True
     record['new_record'] = {'$ref': 'http://localhost:5000/api/record/111'}
-    record.commit()
     if record:
         ri = RecordIndexer()
         ri.index(record)
+    record.commit()
     db.session.commit()
 
     with app.test_client() as client:
         assert client.get('/api/literature/111').status_code == 200
         assert client.get('/api/literature/222').status_code == 301
+
+
+def test_merged_records_can_can_propagate_links(app, records_not_merged_propagated_in_marcxml):
+    expected = 'http://localhost:5000/api/record/111'
+
+    pointer_record = get_db_record('lit', 333)
+    changed_field = pointer_record.get('publication_info')[0].get('parent_record').get('$ref')
+
+    assert str(changed_field) == expected
+
+    with app.test_client() as client:
+        assert client.get('/api/literature/111').status_code == 200
+        assert client.get('/api/literature/222').status_code == 301
+        assert client.get('/api/literature/333').status_code == 200

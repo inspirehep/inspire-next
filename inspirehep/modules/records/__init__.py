@@ -27,3 +27,4 @@
 from __future__ import absolute_import, print_function
 
 from .receivers import *
+from .tasks import replace_old_ref_for_record
