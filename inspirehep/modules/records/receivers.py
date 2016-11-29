@@ -28,7 +28,11 @@ import six
 from flask import current_app
 
 from invenio_indexer.signals import before_record_index
-from invenio_records.signals import before_record_insert, before_record_update
+from invenio_records.signals import (
+    after_record_update,
+    before_record_insert,
+    before_record_update,
+)
 
 from inspirehep.dojson.utils import classify_field, get_recid_from_ref
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
@@ -390,3 +394,8 @@ def populate_experiment_suggest(sender, json, *args, **kwargs):
                 'payload': {'$ref': get_value(json, 'self.$ref')},
             },
         })
+
+
+@after_record_update.connect
+def update_outdated_links(sender, *args, **kwargs):
+    """TODO."""
