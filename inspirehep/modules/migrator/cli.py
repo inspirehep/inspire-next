@@ -28,14 +28,16 @@ import json
 import logging
 import os
 import sys
-import json
 
 import click
 import requests
 from flask import current_app
 from flask_cli import with_appcontext
+from flask_sqlalchemy import models_committed
 
 from invenio_db import db
+
+from inspirehep.modules.records.receivers import receive_after_model_commit
 
 from .tasks.records import (
     add_citation_counts,
@@ -54,6 +56,14 @@ from .tasks.workflows import import_audit_record
 def migrator():
     """Command related to migrating INSPIRE data."""
     logging.basicConfig()
+    # Disable auto-indexing receiver in migration tasks
+    models_committed.disconnect(receive_after_model_commit)
+
+
+@migrator.resultcallback()
+def process_result(result, **kwargs):
+    """Callback run after migrator commands."""
+    models_committed.connect(receive_after_model_commit)
 
 
 @migrator.command()

@@ -34,7 +34,6 @@ from invenio_accounts.testutils import login_user_via_session
 from invenio_accounts.testutils import login_user_via_view
 from invenio_collections.models import Collection
 from invenio_db import db
-from invenio_indexer.api import RecordIndexer
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records.api import Record
 from invenio_search import current_search_client as es
@@ -50,10 +49,6 @@ def _create_and_index_record(record):
     # invenio-collections will populate _collections field in record upon
     # commit
     db.session.commit()
-
-    # Record needs to be indexed since views fetch records from ES
-    r = RecordIndexer()
-    r.index(record)
     es.indices.refresh('records-hep')
 
     return record
@@ -79,16 +74,16 @@ def sample_record(app):
         ]
     }
     record = _create_and_index_record(record)
+    record_id = record.id
 
     yield record
 
     pid = PersistentIdentifier.get('lit', '123')
     db.session.delete(pid)
-    record = Record.get_record(record.id)
+    record = Record.get_record(record_id)
     record.delete(force=True)
     current_app.extensions[
         'invenio-db'].versioning_manager.transaction_cls.query.delete()
-    es.delete(index='records-hep', doc_type='hep', id=pid.object_uuid)
     db.session.commit()
 
 
@@ -140,7 +135,6 @@ def restricted_record(app):
         name='Another Restricted Collection'
     ).one()
     pid = PersistentIdentifier.get('lit', '222')
-    es.delete(index='records-hep', doc_type='hep', id=pid.object_uuid)
     db.session.delete(collection)
     db.session.delete(another_collection)
     db.session.delete(pid)

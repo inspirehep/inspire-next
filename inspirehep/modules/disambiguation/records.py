@@ -29,8 +29,6 @@ from flask import current_app, url_for
 
 from invenio_db import db
 
-from invenio_indexer.api import RecordIndexer
-
 from invenio_records import Record
 from invenio_records.signals import after_record_insert
 
@@ -140,10 +138,6 @@ def create_author(profile):
     # Apply the changes.
     record.commit()
     db.session.commit()
-
-    # Add the record to Elasticsearch.
-    indexer = RecordIndexer()
-    indexer.index_by_id(record_pid.object_uuid)
 
     # Reconnect the disconnected signal.
     after_record_insert.connect(append_new_record_to_queue)

@@ -26,8 +26,12 @@ from __future__ import absolute_import, division, print_function
 
 import six
 from flask import current_app
+from flask_sqlalchemy import models_committed
 
+from invenio_indexer.api import RecordIndexer
 from invenio_indexer.signals import before_record_index
+from invenio_records.api import Record
+from invenio_records.models import RecordMetadata
 from invenio_records.signals import before_record_insert, before_record_update
 
 from inspirehep.dojson.utils import classify_field, get_recid_from_ref
@@ -43,6 +47,18 @@ from inspirehep.utils.record_getter import get_db_record
 
 from .experiments import EXPERIMENTS_MAP
 from .signals import after_record_enhanced
+
+
+@models_committed.connect
+def receive_after_model_commit(sender, changes):
+    """Perform actions after models committed to database."""
+    indexer = RecordIndexer()
+    for model_instance, change in changes:
+        if isinstance(model_instance, RecordMetadata):
+            if change in ('insert', 'update'):
+                indexer.index(Record(model_instance.json, model_instance))
+            else:
+                indexer.delete(Record(model_instance.json, model_instance))
 
 
 @before_record_index.connect

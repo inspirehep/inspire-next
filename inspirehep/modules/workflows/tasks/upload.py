@@ -29,7 +29,6 @@ from pprint import pformat
 from flask import url_for
 
 from invenio_db import db
-from invenio_indexer.api import RecordIndexer
 from invenio_records import Record
 
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
@@ -48,7 +47,7 @@ def store_record(obj, *args, **kwargs):
     record = Record.create(obj.data, id_=None)
 
     # Create persistent identifier.
-    pid = inspire_recid_minter(str(record.id), record)
+    inspire_recid_minter(str(record.id), record)
 
     # Commit any changes to record
     record.commit()
@@ -58,10 +57,6 @@ def store_record(obj, *args, **kwargs):
 
     # Commit to DB before indexing
     db.session.commit()
-
-    # Index record
-    indexer = RecordIndexer()
-    indexer.index_by_id(pid.object_uuid)
 
 
 def set_schema(obj, eng):

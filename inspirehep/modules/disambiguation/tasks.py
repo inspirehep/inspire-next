@@ -30,7 +30,6 @@ from sqlalchemy import distinct
 from sqlalchemy.orm.exc import StaleDataError
 
 from invenio_db import db
-from invenio_indexer.api import RecordIndexer
 from invenio_indexer.signals import before_record_index
 from invenio_records import Record
 
@@ -175,10 +174,6 @@ def update_authors_recid(record_id, uuid, profile_recid):
             # Update the record in the database.
             record.commit()
             db.session.commit()
-
-            # Update the record in Elasticsearch.
-            indexer = RecordIndexer()
-            indexer.index_by_id(record.id)
     except StaleDataError as exc:
         raise update_authors_recid.retry(exc=exc)
     finally:
