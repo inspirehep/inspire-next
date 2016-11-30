@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import pytest
+from elasticsearch import RequestError
 
 from dojson.contrib.marc21.utils import create_record
 from invenio_db import db
@@ -32,7 +33,7 @@ from invenio_search import current_search_client as es
 
 from inspirehep.dojson.hep import hep
 from inspirehep.modules.migrator.tasks.records import record_upsert
-from inspirehep.utils.record_getter import get_db_record
+from inspirehep.utils.record_getter import get_db_record, get_es_records
 
 
 @pytest.fixture(scope='function')
@@ -326,3 +327,9 @@ def test_records_can_be_merged(app, records_not_merged_in_marcxml):
     with app.test_client() as client:
         assert client.get('/api/literature/111').status_code == 200
         assert client.get('/api/literature/222').status_code == 301
+
+
+def test_get_es_records_raises_on_empty_list(app):
+    with app.app_context():
+        with pytest.raises(RequestError):
+            get_es_records('lit', [])
