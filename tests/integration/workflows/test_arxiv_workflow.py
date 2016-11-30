@@ -25,11 +25,22 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import pkg_resources
 
 import mock
-
-import pkg_resources
 import pytest
+
+from dojson.contrib.marc21.utils import create_record
+from invenio_db import db
+from invenio_workflows import (
+    ObjectStatus,
+    WorkflowEngine,
+    start,
+    workflow_object_class,
+)
+
+from inspirehep.dojson.hep import hep
+from inspirehep.modules.converter.xslt import convert
 
 
 @pytest.fixture
@@ -245,13 +256,6 @@ def test_harvesting_arxiv_workflow_rejected(
     mocked_api_request_beard, mocked_download,
     small_app, record_oai_arxiv_plots):
     """Test a full harvesting workflow."""
-    from invenio_workflows import (
-        start, WorkflowEngine, ObjectStatus, workflow_object_class
-    )
-    from dojson.contrib.marc21.utils import create_record
-    from invenio_db import db
-    from inspirehep.dojson.hep import hep
-    from inspirehep.modules.converter.xslt import convert
 
     # Convert to MARCXML, then dict, then HEP JSON
     record_oai_arxiv_plots_marcxml = convert(
@@ -335,13 +339,6 @@ def test_harvesting_arxiv_workflow_rejected(
 def test_harvesting_arxiv_workflow_accepted(
     mocked, small_app, record_oai_arxiv_plots):
     """Test a full harvesting workflow."""
-    from invenio_workflows import (
-        start, WorkflowEngine, ObjectStatus, workflow_object_class
-    )
-    from dojson.contrib.marc21.utils import create_record
-    from invenio_db import db
-    from inspirehep.dojson.hep import hep
-    from inspirehep.modules.converter.xslt import convert
 
     # Convert to MARCXML, then dict, then HEP JSON
     record_oai_arxiv_plots_marcxml = convert(
