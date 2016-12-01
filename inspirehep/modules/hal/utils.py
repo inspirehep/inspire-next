@@ -1,0 +1,423 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of INSPIRE.
+# Copyright (C) 2014-2017 CERN.
+#
+# INSPIRE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# INSPIRE is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
+#
+# In applying this license, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
+
+"""HAL Utils."""
+
+from __future__ import absolute_import, division, print_function
+
+from itertools import chain
+
+from elasticsearch import RequestError
+from flask import current_app
+from nameparser import HumanName
+
+from inspire_dojson.utils import get_recid_from_ref
+from inspire_schemas.builders import is_citeable
+from inspirehep.modules.records.json_ref_loader import replace_refs
+from inspirehep.utils.helpers import force_list
+from inspirehep.utils.record import get_value
+from inspirehep.utils.record_getter import get_es_records
+
+
+def get_abstract(record):
+    """Return the first abstract of a record.
+
+    Args:
+        record: a record.
+
+    Returns:
+        string: the first abstract of the record.
+
+    Examples:
+        >>> record = {'abstracts': [{'value': 'Probably not.'}]}
+        >>> get_abstract(record)
+        'Probably not.'
+
+    """
+    return get_value(record, 'abstracts.value[0]', default='')
+
+
+def get_authors(record):
+    """TODO.
+
+    Args:
+        record: a record.
+
+    Returns:
+        TODO
+
+    Examples:
+        TODO
+
+    """
+    hal_id_map = _get_hal_id_map(record)
+
+    result = []
+
+    for author in record.get('authors', []):
+        affiliations = []
+        first_name, last_name = _split_full_name(author['full_name'])
+
+        for affiliation in author.get('affiliations', []):
+            recid = get_recid_from_ref(affiliation.get('record'))
+            if recid in hal_id_map and hal_id_map[recid]:
+                affiliations.append({'hal_id': hal_id_map[recid]})
+
+        result.append({
+            'affiliations': affiliations,
+            'first_name': first_name,
+            'last_name': last_name,
+        })
+
+    return result
+
+
+def get_conference_city(record):
+    """Return the first city of a Conference record.
+
+    Args:
+        record: a Conference record.
+
+    Returns:
+        string: the first city of the Conference record.
+
+    Examples:
+        >>> record = {'address': [{'cities': ['Tokyo']}]}
+        >>> get_conference_city(record)
+        'Tokyo'
+
+    """
+    return get_value(record, 'address[0].cities[0]', default='')
+
+
+def get_conference_country(record):
+    """Return the first country of a Conference record.
+
+    Args:
+        record: a Conference record.
+
+    Returns:
+        string: the first country of the Conference record.
+
+    Examples:
+        >>> record = {'address': [{'country_code': 'JP'}]}
+        >>> get_conference_country(record)
+        'jp'
+
+    """
+    return get_value(record, 'address.country_code[0]', default='').lower()
+
+
+def get_conference_date(record):
+    """Return the opening date of a conference record.
+
+    Args:
+        record: a Conference record.
+
+    Returns:
+        string: the opening date of the Conference record.
+
+    Examples:
+        >>> record = {'opening_date': '1999-11-16'}
+        >>> get_conference_date(record)
+        '1999-11-16'
+
+    """
+    return get_value(record, 'opening_date', default='')
+
+
+def get_conference_record(record):
+    """Return the first Conference record associated with a record.
+
+    Queries the database to fetch the first Conference record referenced
+    in the ``publication_info`` of the record.
+
+    Args:
+        record: a record.
+
+    Returns:
+        record: the first Conference record associated with the record.
+
+    Examples:
+        >>> record = {
+        ...     'publication_info': [
+        ...         {
+        ...             'conference_record': {
+        ...                 '$ref': '/api/conferences/972464',
+        ...             },
+        ...         },
+        ...     ],
+        ... }
+        >>> conference_record = get_conference_record(record)
+        >>> conference_record['control_number']
+        972464
+
+    """
+    return replace_refs(get_value(
+        record, 'publication_info.conference_record[0]', default=None), 'db')
+
+
+def get_conference_title(record):
+    """Return the first title of a Conference record.
+
+    Args:
+        record: a Conference record.
+
+    Returns:
+        string: the first title of the Conference record.
+
+    Examples:
+        >>> record = {'titles': [{'title': 'Workshop on Neutrino Physics'}]}
+        >>> get_conference_title(record)
+        'Workshop on Neutrino Physics'
+
+    """
+    return get_value(record, 'titles.title[0]', default='')
+
+
+def get_divulgation(record):
+    """Return 1 if a record is intended for the general public, 0 otherwise.
+
+    Args:
+        record: a record.
+
+    Returns:
+        int: 1 if the record is intended for the general public, 0 otherwise.
+
+    Examples:
+        >>> get_divulgation({'publication_type': ['introductory']})
+        1
+
+    """
+    return 1 if 'introductory' in get_value(record, 'publication_type', []) else 0
+
+
+def get_document_types(record):
+    """Return all document types of a record.
+
+    Args:
+        record: a record.
+
+    Returns:
+        list: all document types of the record.
+
+    Examples:
+        >>> get_document_types({'document_type': ['article']})
+        ['article']
+
+    """
+    return get_value(record, 'document_type', default=[])
+
+
+def get_doi(record):
+    """Return the first DOI of a record.
+
+    Args:
+        record: a record.
+
+    Returns:
+        string: the first DOI of the record.
+
+    Examples:
+        >>> get_doi({'dois': [{'value': '10.1016/0029-5582(61)90469-2'}]})
+        '10.1016/0029-5582(61)90469-2'
+
+    """
+    return get_value(record, 'dois.value[0]', default='')
+
+
+def get_domain(record):
+    """Return the HAL domain of a record.
+
+    Uses the mapping in the configuration to convert the first INSPIRE
+    category to the corresponding HAL domain.
+
+    Args:
+        record: a record.
+
+    Returns:
+        string: the HAL domain of the record.
+
+    Examples:
+        >>> record = {'inspire_categories': [{'term': 'Experiment-HEP'}]}
+        >>> get_domain(record)
+        'phys.hexp'
+
+    """
+    term = get_value(record, 'inspire_categories.term[0]', default='')
+    mapping = current_app.config['HAL_DOMAIN_MAPPING']
+
+    return mapping[term]
+
+
+def get_inspire_id(record):
+    """Return the INSPIRE id of a record.
+
+    Args:
+        record: a record.
+
+    Returns:
+        int: the INSPIRE id of the record.
+
+    Examples:
+        >>> get_inspire_id({'control_number': 1507156})
+        1507156
+
+    """
+    return record['control_number']
+
+
+def get_journal_title(record):
+    """Return the title of the journal a record was published into.
+
+    Args:
+        record: a record.
+
+    Returns:
+        string: the title of the journal the record was published into.
+
+    Examples:
+        >>> record = {
+        ...     'publication_info': [
+        ...         {'journal_title': 'Phys.Part.Nucl.Lett.'},
+        ...     ],
+        ... }
+        >>> get_journal_title(record)
+        'Phys.Part.Nucl.Lett.'
+
+    """
+    return get_value(record, 'publication_info.journal_title[0]', default='')
+
+
+def get_language(record):
+    """Return the first language of a record.
+
+    If it is not specified in the record we assume that the language
+    is English, so we return ``'en'``.
+
+    Args:
+        record: a record.
+
+    Returns:
+        string: the first language of the record.
+
+    Examples:
+        >>> get_language({'languages': ['it']})
+        'it'
+
+    """
+    languages = get_value(record, 'languages', default=[])
+    if not languages:
+        return 'en'
+
+    return languages[0]
+
+
+def get_peer_reviewed(record):
+    """Return 1 if a record is peer reviewed, 0 otherwise.
+
+    Args:
+        record: a record.
+
+    Returns:
+        int: 1 if the record is peer reviewed, 0 otherwise.
+
+    Examples:
+        >>> get_peer_reviewed({'refereed': True})
+        1
+
+    """
+    return 1 if 'refereed' in record and record['refereed'] else 0
+
+
+def get_publication_date(record):
+    """Return the date in which a record was published.
+
+    Args:
+        record: a record.
+
+    Returns:
+        string: the date in which the record was published.
+
+    Examples:
+        >>> get_publication_date({'publication_info': [{'year': 2017}]})
+        '2017'
+
+    """
+    return str(get_value(record, 'publication_info.year[0]', default=''))
+
+
+def is_published(record):
+    """Return if a record is published.
+
+    We say that a record is published if it is citeable, which means that
+    it has enough information in a ``publication_info``, or if we know its
+    DOI and a ``journal_title``, which means it is in press.
+
+    Args:
+        record: a record.
+
+    Returns:
+        bool: whether the record is published.
+
+    Examples:
+        >>> record = {
+        ...     'dois': [
+        ...         {'value': '10.1016/0029-5582(61)90469-2'},
+        ...     ],
+        ...     'publication_info': [
+        ...         {'journal_title': 'Nucl.Phys.'},
+        ...     ],
+        ... }
+        >>> is_published(record)
+        True
+
+    """
+    citeable = 'publication_info' in record and is_citeable(record['publication_info'])
+    submitted = 'dois' in record and any(
+        'journal_title' in el for el in force_list(record.get('publication_info')))
+
+    return citeable or submitted
+
+
+def _get_hal_id_map(record):
+    affiliation_records = chain.from_iterable(get_value(
+        record, 'authors.affiliations.record', default=[]))
+    affiliation_recids = [get_recid_from_ref(el) for el in affiliation_records]
+
+    try:
+        institutions = get_es_records('ins', affiliation_recids)
+    except RequestError:
+        institutions = []
+
+    return {el['control_number']: _get_hal_id(el) for el in institutions}
+
+
+def _get_hal_id(record):
+    for el in record.get('external_system_identifiers', []):
+        if el.get('schema') == 'HAL':
+            return el['value']
+
+
+def _split_full_name(full_name):
+    name = HumanName(full_name)
+    return name.first, name.last

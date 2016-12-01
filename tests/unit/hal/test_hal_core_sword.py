@@ -22,21 +22,22 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
-import pkg_resources
+from flask import current_app
+from mock import patch
 
-import pytest
-
-from inspirehep.modules.hal import tei
-from inspirehep.utils.record_getter import get_db_record
+from inspirehep.modules.hal.core.sword import _new_connection
 
 
-@pytest.mark.xfail
-def test_format_tei(app):
-    expected = pkg_resources.resource_string(
-        __name__, os.path.join('fixtures', 'test_tei_record.xml'))
+def test_new_connection_is_secure_by_default():
+    connection = _new_connection()
 
-    record = get_db_record('lit', 1407506)
-    result = tei.tei_response(record)
+    assert not connection.h.h.disable_ssl_certificate_validation
 
-    assert result.strip() == expected.strip()
+
+def test_new_connection_can_be_configured_to_be_insecure():
+    config = {'HAL_IGNORE_CERTIFICATES': True}
+
+    with patch.dict(current_app.config, config):
+        connection = _new_connection()
+
+        assert connection.h.h.disable_ssl_certificate_validation

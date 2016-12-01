@@ -1,0 +1,56 @@
+{% extends "hal/base.xml.jinja2" %}
+
+{% block notesStmt %}
+<notesStmt>
+  <note type="audience" n="2"/>
+  <note type="peer" n="{{ peer_reviewed }}"/>
+  <note type="popular" n="{{ divulgation }}"/>
+</notesStmt>
+{% endblock notesStmt %}
+
+{% block sourceDesc %}
+<sourceDesc>
+  <biblStruct>
+    <analytic>
+      <title>{{ title }}</title>
+      {% for author in authors %}
+      <author role="aut">
+        <persName>
+          <forename type="first">{{ author.first_name }}</forename>
+          <surname>{{ author.last_name }}</surname>
+        </persName>
+        {% for affiliation in author.affiliations %}
+        <affiliation ref="#struct-{{ affiliation.hal_id }}"/>
+        {% endfor %}
+      </author>
+      {% endfor %}
+    </analytic>
+    <monogr>
+      <title level="j">{{ journal_title }}</title>
+      <imprint>
+        <date type="datePub">{{ publication_date }}</date>
+      </imprint>
+    </monogr>
+    {% if arxiv_id %}
+    <idno type="arxiv">{{ arxiv_id }}</idno>
+    {% endif %}
+    {% if doi %}
+    <idno type="doi">{{ doi }}</idno>
+    {% endif %}
+    <idno type="inspire">{{ inspire_id }}</idno>
+  </biblStruct>
+</sourceDesc>
+{% endblock sourceDesc %}
+
+{% block profileDesc %}
+<profileDesc>
+  <langUsage>
+    <language ident="{{ language }}"/>
+  </langUsage>
+  <textClass>
+    <classCode scheme="halDomain" n="{{ domain }}"></classCode>
+    <classCode scheme="halTypology" n="ART"></classCode>
+  </textClass>
+  <abstract xml:lang="{{ abstract_language }}">{{ abstract }}</abstract>
+</profileDesc>
+{% endblock profileDesc %}
