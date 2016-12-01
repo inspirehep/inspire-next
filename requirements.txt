@@ -37,4 +37,7 @@
 # Invenio-migrator fork
 -e git+https://github.com/kaplun/invenio-migrator.git#egg=invenio-migrator==1.0.0a8
 
+# SWORD2 client fork
+-e git+https://github.com/inspirehep/python-client-sword2.git#egg=sword2
+
 -e .[postgresql]
