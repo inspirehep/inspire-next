@@ -33,7 +33,7 @@ services:
 env:
   global:
     - DOCKER_DATA="$HOME/docker_data"
-    - DOCKER_VERSION=1.12.0-0~trusty
+    - DOCKER_VERSION=1.12.3-0~trusty
     - DOCKER_COMPOSE_VERSION=1.8.0
   matrix:
     - SUITE=workflows
