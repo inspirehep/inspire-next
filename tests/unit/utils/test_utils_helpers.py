@@ -21,6 +21,7 @@
 # or submit itself to any jurisdiction.
 
 from inspirehep.dojson.utils import force_force_list
+from inspirehep.utils.helpers import get_recid_from_url
 
 
 def test_force_force_list_returns_empty_list_on_none():
@@ -42,3 +43,19 @@ def test_force_force_list_converts_tuples_to_lists():
     result = force_force_list(('foo', 'bar', 'baz'))
 
     assert expected == result
+
+
+def test_get_recid_from_url_returns_false_on_none():
+    assert get_recid_from_url(None) is False
+
+
+def test_get_recid_from_url_returns_false_on_simple_strings():
+    assert get_recid_from_url('a_string') is False
+
+
+def test_get_recid_from_url_returns_false_on_ref_malformed():
+    assert get_recid_from_url('http://bad_url') is False
+
+
+def test_get_recid_from_url():
+    assert get_recid_from_url('http://localhost:5000/api/literature/111') is 111
