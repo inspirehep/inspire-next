@@ -91,15 +91,3 @@ def get_pid_type_from_schema(schema):
         return 'lit'
 
     return get_pid_type_from_endpoint(schema_name)
-
-
-def get_pid_type_from_ref(reference):
-    """Return the ``pid_type`` corresponding to a record URL.
-
-    The reference name corresponds to the ``endpoint`` in all cases.
-    This implementation exploits this by falling back to
-    ``get_pid_type_from_endpoint``.
-    """
-    endpoint = urlsplit(reference).path.split('/')[-2]
-
-    return get_pid_type_from_endpoint(endpoint)

@@ -28,7 +28,6 @@ from inspirehep.modules.pidstore.utils import (
     get_index_from_endpoint,
     get_pid_type_from_endpoint,
     get_pid_type_from_schema,
-    get_pid_type_from_ref,
 )
 
 
@@ -79,11 +78,3 @@ def test_get_pid_from_schema_supports_relative_urls():
     result = get_pid_type_from_schema('schemas/record/authors.json')
 
     assert expected == result
-
-
-def test_get_pid_type_from_ref():
-    expected = 'lit'
-    result = get_pid_type_from_ref('http://localhost:5000/api/literature/111')
-
-    assert expected == result
-
