@@ -1625,6 +1625,48 @@ ARXIV_TO_INSPIRE_CATEGORY_MAPPING = {
     "stat.TH": "Other"
 }
 
+# Configuration for the $ref updater
+# ----------------------------------
+INSPIRE_REF_UPDATER_WHITELIST = {
+    'authors': [
+        'advisors.record',
+        'conferences',
+        'experiments.record',
+        'posititions.institutions.record',
+    ],
+    'conferences': [],
+    'experiments': [
+        'affiliation.record',
+        'related_experiments.record',
+        'spokespersons.record',
+    ],
+    'literature': [
+        'accelerator_experiments.record',
+        'authors.affiliations.record',
+        'authors.record',
+        'collaboration.record',
+        'publication_info.conference_record',
+        'publication_info.journal_record',
+        'publication_info.parent_record',
+        'references.record',
+        'succeding_entry.record',
+        'thesis.institutions.record',
+        'thesis_supervisors.affiliations.record',
+    ],
+    'institutions': [
+        'related_institutes.record',
+    ],
+    'jobs': [
+        'experiments.record',
+        'institutions.record',
+    ],
+    'journals': [
+        'relation.record',
+    ],
+}
+"""Controls which fields are updated when the referred record is updated."""
+
+
 # Import local config file if it is present.
 try:
     from inspirehep.config_local import *

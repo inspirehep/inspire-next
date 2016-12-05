@@ -33,6 +33,7 @@ from invenio_search import current_search_client as es
 from inspirehep.dojson.hep import hep
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.migrator.tasks.records import record_upsert
+from inspirehep.utils.record import get_value
 from inspirehep.utils.record_getter import get_db_record, get_es_records
 
 
@@ -258,6 +259,51 @@ def records_not_merged_in_marcxml(app):
         )
 
 
+@pytest.fixture(scope='function')
+def records_to_be_merged(app):
+    with app.app_context():
+
+        record = {
+            '$schema': 'http://localhost:5000/schemas/records/hep.json',
+            'control_number': 111,
+            'self': {
+                '$ref': 'http://localhost:5000/api/literature/111'
+            },
+        }
+
+        record_to_be_merged = {
+            '$schema': 'http://localhost:5000/schemas/records/hep.json',
+            'control_number': 222,
+            'self': {
+                '$ref': 'http://localhost:5000/api/literature/222'
+            },
+        }
+
+        pointed_record = {
+            '$schema': 'http://localhost:5000/schemas/records/hep.json',
+            'control_number': 333,
+            'accelerator_experiments': [
+                {
+                    'record': {
+                        '$ref': 'http://localhost:5000/api/literature/222',
+                    },
+                },
+            ],
+        }
+
+        with db.session.begin_nested():
+            merged_id = record_upsert(record)
+            deleted_id = record_upsert(record_to_be_merged)
+            record_upsert(pointed_record)
+        db.session.commit()
+
+    yield
+
+    with app.app_context():
+        _delete_merged_records_from_everywhere('lit', 111, 222, merged_id, deleted_id)
+        _delete_record_from_everywhere('lit', 333)
+
+
 def _delete_record_from_everywhere(pid_type, record_control_number):
     record = get_db_record(pid_type, record_control_number)
 
@@ -276,11 +322,20 @@ def _delete_record_from_everywhere(pid_type, record_control_number):
 def _delete_merged_records_from_everywhere(pid_type, merged_record_control_number, deleted_record_control_number, merged_id, deleted_id):
     InspireRecord.get_record(merged_id)._delete(force=True)
     InspireRecord.get_record(deleted_id)._delete(force=True)
+def _delete_merged_records_from_everywhere(pid_type,
+                                           merged_record_control_number,
+                                           deleted_record_control_number,
+                                           merged_id,
+                                           deleted_id):
+    try:
+        merged_id.delete(force=True)
+        deleted_id.delete(force=True)
+    except AttributeError:
+        InspireRecord.get_record(merged_id)
+        InspireRecord.get_record(deleted_id)
+
     merged_pid = PersistentIdentifier.get(pid_type, merged_record_control_number)
-    deleted_pid = PersistentIdentifier.get(
-        pid_type,
-        deleted_record_control_number
-    )
+    deleted_pid = PersistentIdentifier.get(pid_type, deleted_record_control_number)
     Redirect.query.filter(Redirect.id == deleted_pid.object_uuid).delete()
     db.session.delete(merged_pid)
     db.session.delete(deleted_pid)
@@ -296,9 +351,8 @@ def test_record_can_be_deleted(app, record_not_yet_deleted):
     with app.test_client() as client:
         assert client.get('/api/literature/333').status_code == 200
 
-    record = get_db_record('lit', 333)
-    record.delete()
-    db.session.commit()
+    rec = get_db_record('lit', 333)
+    rec.delete()
 
     with app.test_client() as client:
         assert client.get('/api/literature/333').status_code == 410
@@ -315,6 +369,9 @@ def test_records_can_be_merged(app, records_not_merged_in_marcxml):
         assert client.get('/api/literature/111').status_code == 200
         assert client.get('/api/literature/222').status_code == 200
 
+    rec = get_db_record('lit', 222)
+    new = 'http://localhost:5000/api/literature/111'
+    rec.merge(new)
     record = get_db_record('lit', 222)
     other = get_db_record('lit', 111)
     record['deleted'] = True
@@ -325,6 +382,21 @@ def test_records_can_be_merged(app, records_not_merged_in_marcxml):
     with app.test_client() as client:
         assert client.get('/api/literature/111').status_code == 200
         assert client.get('/api/literature/222').status_code == 301
+
+
+def test_records_propagate_links_when_merged(app, records_to_be_merged):
+    with app.app_context():
+        rec_old = get_db_record('lit', 222)
+        new = 'http://localhost:5000/api/literature/111'
+        rec_old.merge(new)
+
+    with app.app_context():
+        rec_new_link = get_db_record('lit', 333)
+
+    expected = 'http://localhost:5000/api/literature/111'
+    result = get_value(rec_new_link, 'accelerator_experiments[0].record.$ref')
+
+    assert expected == result
 
 
 def test_get_es_records_raises_on_empty_list(app):

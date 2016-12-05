@@ -29,6 +29,7 @@ from sqlalchemy import desc
 
 from invenio_pidstore.models import PersistentIdentifier
 
+from inspirehep.modules.records.record import InspireRecord
 from inspirehep.modules.disambiguation.models import DisambiguationRecord
 from inspirehep.modules.disambiguation.receivers import (
     append_new_record_to_queue,

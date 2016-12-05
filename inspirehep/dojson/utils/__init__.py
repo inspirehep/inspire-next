@@ -33,7 +33,7 @@ except ImportError:  # pragma: no cover
     current_app = None
 
 from inspirehep.utils.dedupers import dedupe_list, dedupe_list_of_dicts
-from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.helpers import force_force_list, get_recid_from_url
 
 
 def classify_field(value):
@@ -98,13 +98,10 @@ def get_recid_from_ref(ref_obj):
     If no recid can be parsed, return None.
     """
     if not isinstance(ref_obj, dict):
-        return None
+        return False
     url = ref_obj.get('$ref', '')
-    try:
-        res = int(url.split('/')[-1])
-    except ValueError:
-        res = None
-    return res
+
+    return get_recid_from_url(url)
 
 
 def get_record_ref(recid, endpoint='record'):

@@ -37,6 +37,7 @@ from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_search import current_search_client as es
 
+from inspirehep.modules.records.record import InspireRecord
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.search.api import LiteratureSearch
