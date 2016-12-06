@@ -28,19 +28,16 @@ a WSGI application that reports back information on test coverage.
 
 from __future__ import absolute_import, division, print_function
 
-import atexit
+import signal
 import sys
-
-import coverage
-
-cov = coverage.Coverage(data_suffix=True)
-cov.start()
 
 from .wsgi import application  # noqa
 
 
-def save_coverage():
-    cov.stop()
-    cov.save()
 
-atexit.register(save_coverage)
+def save_coverage_handler(signum, frame):
+    print("Escooooo", file=sys.stderr)
+    sys.exit(0)
+
+
+signal.signal(signal.SIGTERM, save_coverage_handler)

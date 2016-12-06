@@ -21,6 +21,7 @@
 # or submit itself to any jurisdiction.
 
 [run]
+parallel = True
 omit =
   inspirehep/celery.py
   inspirehep/cli.py
