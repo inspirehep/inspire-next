@@ -67,11 +67,8 @@ def test_classify_field_ignores_case():
     assert expected == result
 
 
-def test_classify_field_falls_back_on_other():
-    expected = 'Other'
-    result = classify_field('FOO')
-
-    assert expected == result
+def test_classify_field_returns_none_on_unknown_values():
+    assert classify_field('FOO') is None
 
 
 def test_classify_rank_returns_none_on_falsy_value():

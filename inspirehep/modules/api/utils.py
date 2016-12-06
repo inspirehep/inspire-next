@@ -56,7 +56,7 @@ def build_citesummary(search):
                 'control_number',
                 'earliest_date',
                 'facet_inspire_doc_type',
-                'field_categories',
+                'inspire_categories',
                 'titles.title',
             ]
         )
@@ -92,10 +92,8 @@ def get_id(record):
 
 
 def get_subject(record):
-    field_categories = force_force_list(get_value(record, 'field_categories'))
-    inspire_field_categories = [
-        fc for fc in field_categories if fc.get('scheme') == 'INSPIRE']
-    terms = [fc['term'] for fc in field_categories if fc.get('term')]
+    inspire_categories = force_force_list(get_value(record, 'inspire_categories'))
+    terms = [ic['term'] for ic in inspire_categories if ic.get('term')]
 
     if terms:
         return terms[0]

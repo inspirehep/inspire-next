@@ -29,7 +29,6 @@ from inspirehep.modules.records.receivers import (
     dates_validator,
     earliest_date,
     match_valid_experiments,
-    normalize_field_categories,
     populate_inspire_document_type,
     populate_inspire_subjects,
     populate_recid_from_ref,
@@ -278,146 +277,6 @@ def test_match_valid_experiments_does_nothing_on_empty_list():
     match_valid_experiments(None, json_dict)
 
     assert json_dict['accelerator_experiments'] == []
-
-
-def test_normalize_field_categories_skips_normalized_fields():
-    json_dict = {
-        'field_categories': [
-            {'scheme': 'INSPIRE'},
-            {'_scheme': 'foo'},
-            {'_term': 'bar'},
-        ],
-    }
-
-    normalize_field_categories(json_dict)
-
-    assert json_dict['field_categories'] == [
-        {'scheme': 'INSPIRE'},
-        {'_scheme': 'foo'},
-        {'_term': 'bar'},
-    ]
-
-
-def test_normalize_field_categories_recognizes_known_terms():
-    json_dict = {
-        'field_categories': [
-            {
-                'scheme': 'foo',
-                'term': 'alg-geom',
-            },
-        ],
-    }
-
-    normalize_field_categories(json_dict)
-
-    assert json_dict['field_categories'] == [
-        {
-            '_scheme': 'foo',
-            'scheme': 'INSPIRE',
-            '_term': 'alg-geom',
-            'term': 'Math and Math Physics',
-        },
-    ]
-
-
-def test_normalize_field_categories_ignores_missing_terms():
-    json_dict = {
-        'field_categories': [
-            {'scheme': 'foo'},
-        ],
-    }
-
-    normalize_field_categories(json_dict)
-
-    assert json_dict['field_categories'] == [
-        {
-            '_scheme': 'foo',
-            'scheme': None,
-            '_term': None,
-            'term': None,
-        },
-    ]
-
-
-def test_normalize_field_categories_selects_first_scheme():
-    json_dict = {
-        'field_categories': [
-            {'scheme': ['foo', 'bar']},
-        ],
-    }
-
-    normalize_field_categories(json_dict)
-
-    assert json_dict['field_categories'] == [
-        {
-            '_scheme': 'foo',
-            'scheme': None,
-            '_term': None,
-            'term': None,
-        },
-    ]
-
-
-def test_normalize_field_categories_ignores_unknown_terms_from_unknown_schemes():
-    json_dict = {
-        'field_categories': [
-            {
-                'scheme': 'foo',
-                'term': 'bar',
-            },
-        ],
-    }
-
-    normalize_field_categories(json_dict)
-
-    assert json_dict['field_categories'] == [
-        {
-            '_scheme': 'foo',
-            'scheme': 'INSPIRE',
-            '_term': 'bar',
-            'term': 'Other',
-        },
-    ]
-
-
-def test_normalize_field_categories_retains_source():
-    json_dict = {
-        'field_categories': [
-            {'source': 'foo'},
-        ],
-    }
-
-    normalize_field_categories(json_dict)
-
-    assert json_dict['field_categories'] == [
-        {
-            '_scheme': None,
-            'scheme': None,
-            '_term': None,
-            'term': None,
-            'source': 'foo',
-        },
-    ]
-
-
-def test_normalize_field_categories_changes_source_to_inspire():
-    json_dict = {
-        'field_categories': [
-            {'source': 'automatically'},
-        ],
-    }
-
-    normalize_field_categories(json_dict)
-
-    assert json_dict['field_categories'] == [
-        {
-            '_scheme': None,
-            'scheme': None,
-            '_term': None,
-            'term': None,
-            'source': 'INSPIRE',
-        },
-    ]
 
 
 def test_populate_inspire_document_type_no_doc_type_when_no_collections():
@@ -703,34 +562,17 @@ def test_populate_inspire_document_type_doc_type_from_valid_primary_and_lectures
     ]
 
 
-def test_populate_inspire_subjects_preserves_terms_from_inspire():
+def test_populate_inspire_subjects_preserves_terms():
     json_dict = {
-        'field_categories': [
-            {
-                'scheme': 'INSPIRE',
-                'term': 'foo',
-            },
+        'inspire_categories': [
+            {'term': 'foo'},
+            {'not-term': 'bar'},
         ],
     }
 
     populate_inspire_subjects(None, json_dict)
 
     assert json_dict['facet_inspire_subjects'] == ['foo']
-
-
-def test_populate_inspire_subjects_discards_terms_from_other_schemes():
-    json_dict = {
-        'field_categories': [
-            {
-                'scheme': 'foo',
-                'term': 'bar',
-            },
-        ],
-    }
-
-    populate_inspire_subjects(None, json_dict)
-
-    assert json_dict['facet_inspire_subjects'] == []
 
 
 def test_populate_recid_from_ref_naming():

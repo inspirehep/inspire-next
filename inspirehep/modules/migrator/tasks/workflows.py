@@ -56,8 +56,8 @@ def fix_object_model(eng, obj):
 
     if eng['name'] in ['process_record_arxiv', 'literature']:
         # We need to convert a few things..
-        # subject_terms -> field_categories
-        obj.data['field_categories'] = obj.data.pop('subject_terms', [])
+        # subject_terms -> inspire_categories
+        obj.data['inspire_categories'] = obj.data.pop('subject_terms', [])
 
         # change urls.url to urls.value
         obj.data['urls'] = [
