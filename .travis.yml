@@ -40,7 +40,6 @@ env:
     - SUITE=integration
     - SUITE=disambiguation
     - SUITE=acceptance
-    - SUITE=pep8
     - SUITE=unit
 
 matrix:

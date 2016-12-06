@@ -35,18 +35,12 @@ services:
       - APP_CACHE_REDIS_URL=redis://redis:6379/0
       - APP_ACCOUNTS_SESSION_REDIS_URL=redis://redis:6379/2
       - APP_SEARCH_ELASTIC_HOSTS=indexer
-  pep8:
-    extends:
-      service: service_base
-    volumes_from:
-      - static
-    command: py.test inspirehep
   unit:
     extends:
       service: service_base
     volumes_from:
       - static
-    command: py.test tests/unit
+    command: py.test inspirehep tests/unit
   disambiguation:
     extends:
       service: service_base
