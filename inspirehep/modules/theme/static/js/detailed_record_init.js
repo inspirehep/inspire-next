@@ -25,12 +25,13 @@ require([
   "js/datatables",
   "impact-graphs",
   'angular-loading-bar',
-  'inspirehep'
+  'invenio-search',
+  'inspirehep-search'
 ], function(Plots) {
   angular.element(document).ready(function() {
     angular.bootstrap(
       document.getElementById("record_content"), ['angular-loading-bar',
-                                                  'inspirehep']
+                                                  'inspirehepSearch']
     );
   });
 	console.log('js/detailed_record_init is loaded')

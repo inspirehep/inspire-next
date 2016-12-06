@@ -66,7 +66,6 @@ js = NpmBundle(
         "angular": "~1.4.8",
         "readmore-js": "~2.1.0",
         "impact-graphs": "git+https://git@github.com/inspirehep/impact-graphs.git",
-        "inspirehep-js": "git+https://git@github.com/inspirehep/inspirehep-js.git",
         "inspirehep-typeahead-search-js": "git+https://github.com/inspirehep/inspirehep-typeahead-search-js.git",
     }
 )

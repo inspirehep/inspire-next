@@ -52,8 +52,6 @@ require.config({
     'holding-pen-module': 'js/inspire_workflows_ui/holdingpen/holdingpen.module',
     'holding-pen-services': 'js/inspire_workflows_ui/holdingpen/holdingpen.services',
     'impact-graphs': 'node_modules/impact-graphs/impact-graph',
-    'inspire_results': 'js/search/inspire_results',
-    'inspirehep': 'node_modules/inspirehep-js/dist/inspirehep',
     'inspirehep-clipboard': 'js/inspire_clipboard',
     'inspirehep-search': 'node_modules/inspirehep-search-js/dist/inspirehep-search',
     'inspirehep-typeahead': 'node_modules/inspirehep-typeahead-search-js/src/typeahead',

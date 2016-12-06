@@ -29,10 +29,10 @@ from invenio_assets import NpmBundle
 js = NpmBundle(
     'js/search/app.js',
     filters='requirejs',
-    output='gen/search.%(version)s.js',
+    output='gen/inspirehepsearch.%(version)s.js',
     npm={
         'invenio-search-js': '~0.2.1',
         'angular-loading-bar': '~0.9.0',
-        'inspirehep-search-js': 'git+https://git@github.com/inspirehep/inspirehep-search-js.git'
+        'inspirehep-search-js': '~0.2.0'
     },
 )

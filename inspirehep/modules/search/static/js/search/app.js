@@ -25,9 +25,7 @@ require([
     'd3',
     'angular-loading-bar',
     'invenio-search',
-    'inspirehep-search',
-    'inspirehep',
-    'inspire_results'
+    'inspirehep-search'
   ], function() {
     // Requirements are needed in order to create the search bundle JS
 });
