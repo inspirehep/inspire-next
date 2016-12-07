@@ -28,6 +28,7 @@ from elasticsearch import RequestError
 from dojson.contrib.marc21.utils import create_record
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier, Redirect
+from invenio_search import current_search_client as es
 
 from inspirehep.dojson.hep import hep
 from inspirehep.modules.records.api import InspireRecord
