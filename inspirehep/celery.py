@@ -30,6 +30,3 @@ from .factory import create_app
 
 
 celery = create_celery_app(create_app())
-# Trigger an app log message upon import. Somehow this makes Sentry logging
-# work with `get_task_logger(__name__)`.
-celery.flask_app.logger.info('Created Celery app')
