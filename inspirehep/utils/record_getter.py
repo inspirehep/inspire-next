@@ -30,7 +30,6 @@ from flask import current_app
 from werkzeug.utils import import_string
 
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_records.api import Record
 
 from inspirehep.modules.pidstore.utils import get_endpoint_from_pid_type
 
@@ -109,5 +108,6 @@ def get_es_record_by_uuid(uuid):
 
 @raise_record_getter_error_and_log
 def get_db_record(pid_type, recid):
+    from inspirehep.modules.records.api import InspireRecord
     pid = PersistentIdentifier.get(pid_type, recid)
-    return Record.get_record(pid.object_uuid)
+    return InspireRecord.get_record(pid.object_uuid)

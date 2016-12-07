@@ -23,12 +23,12 @@
 from __future__ import absolute_import, division, print_function
 
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_records.api import Record
 
 from inspirehep.modules.disambiguation.records import (
     _get_author_schema,
     create_author,
 )
+from inspirehep.modules.records.api import InspireRecord
 
 
 def test_get_author_schema_method(small_app):
@@ -49,7 +49,7 @@ def test_create_author_method(small_app):
 
     recid = create_author(signature)
     pid = PersistentIdentifier.get('aut', recid)
-    record = Record.get_record(pid.object_uuid)
+    record = InspireRecord.get_record(pid.object_uuid)
 
     assert record['collections'] == [{'primary': 'HEPNAMES'}]
     assert record['name'] == {'value': 'Glashow, S.L.'}
@@ -64,10 +64,10 @@ def test_update_authors_recid_method(small_app):
     pid = PersistentIdentifier.get('lit', 4328)
     publication_id = str(pid.object_uuid)
 
-    signature = Record.get_record(publication_id)['authors'][0]['uuid']
+    signature = InspireRecord.get_record(publication_id)['authors'][0]['uuid']
     profile_recid = "314159265"
 
     update_authors_recid(publication_id, signature, profile_recid)
 
-    assert Record.get_record(publication_id)['authors'][0]['recid'] == \
+    assert InspireRecord.get_record(publication_id)['authors'][0]['recid'] == \
         profile_recid

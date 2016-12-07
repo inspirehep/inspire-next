@@ -25,8 +25,7 @@ from __future__ import absolute_import, division, print_function
 import mock
 import requests
 
-from invenio_records.api import Record
-
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.tasks.magpie import (
     get_magpie_url,
     prepare_magpie_payload,
@@ -63,7 +62,7 @@ def test_get_magpie_url_returns_none_when_not_in_configuration():
 
 
 def test_prepare_magpie_payload():
-    record = Record({
+    record = InspireRecord({
         'titles': [
             {
                 'title': 'foo',

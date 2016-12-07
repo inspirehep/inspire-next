@@ -432,18 +432,18 @@ RECORDS_REST_ENDPOINTS = dict(
         list_route='/literature/',
         item_route=(
             '/literature'
-            '/<pid(lit,record_class="inspirehep.modules.records.es_record:ESRecord"):pid_value>'),
+            '/<pid(lit,record_class="inspirehep.modules.records.api:ESRecord"):pid_value>'),
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
         read_permission_factory_imp="inspirehep.modules.records.permissions:record_read_permission_factory",
-        record_class='inspirehep.modules.records.es_record:ESRecord'
+        record_class='inspirehep.modules.records.api:ESRecord'
     ),
     literature_citesummary=dict(
         default_media_type='application/json',
         item_route=(
             '/literature'
-            '/<pid(lit,record_class="inspirehep.modules.records.es_record:ESRecord"):pid_value>'
+            '/<pid(lit,record_class="inspirehep.modules.records.api:ESRecord"):pid_value>'
             '/citesummary'),
         list_route='/literature/',
         max_result_window=10000,
@@ -454,6 +454,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': (
                 'inspirehep.modules.api.v1.literature:citesummary_response')
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_class='inspirehep.modules.search:LiteratureSearch',
         search_factory_imp=(
             'inspirehep.modules.search.query:inspire_search_factory'),
@@ -469,12 +470,13 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response')
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search')
         },
         list_route='/literature/db',
-        item_route='/literature/<pid(lit):pid_value>/db',
+        item_route='/literature/<pid(lit,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/db',
         default_media_type='application/json',
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
         update_permission_factory_imp="inspirehep.modules.records.permissions:record_update_permission_factory",
@@ -489,6 +491,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
@@ -498,7 +501,7 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
         },
         list_route='/authors/',
-        item_route='/authors/<pid(aut):pid_value>',
+        item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
@@ -512,6 +515,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('inspirehep.modules.authors.rest'
                                  ':citations_v1_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
@@ -521,7 +525,7 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
         },
         list_route='/authors/',
-        item_route='/authors/<pid(aut):pid_value>/citations',
+        item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citations',
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp=('inspirehep.modules.search.query'
@@ -529,7 +533,7 @@ RECORDS_REST_ENDPOINTS = dict(
     ),
     authors_citesummary=dict(
         default_media_type='application/json',
-        item_route='/authors/<pid(aut):pid_value>/citesummary',
+        item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citesummary',
         list_route='/authors/',
         max_result_window=10000,
         pid_fetcher='inspire_recid_fetcher',
@@ -539,6 +543,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': (
                 'inspirehep.modules.api.v1.authors:citesummary_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_class='inspirehep.modules.search:AuthorsSearch',
         search_factory_imp=(
             'inspirehep.modules.search.query:inspire_search_factory'),
@@ -558,6 +563,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('inspirehep.modules.authors.rest'
                                  ':coauthors_v1_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
@@ -567,7 +573,7 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
         },
         list_route='/authors/',
-        item_route='/authors/<pid(aut):pid_value>/coauthors',
+        item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/coauthors',
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp=('inspirehep.modules.search.query'
@@ -582,6 +588,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('inspirehep.modules.authors.rest'
                                  ':publications_v1_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
@@ -591,7 +598,7 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
         },
         list_route='/authors/',
-        item_route='/authors/<pid(aut):pid_value>/publications',
+        item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/publications',
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp=('inspirehep.modules.search.query'
@@ -606,6 +613,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('inspirehep.modules.authors.rest'
                                  ':stats_v1_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
@@ -615,7 +623,7 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
         },
         list_route='/authors/',
-        item_route='/authors/<pid(aut):pid_value>/stats',
+        item_route='/authors/<pid(aut,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/stats',
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp=('inspirehep.modules.search.query'
@@ -631,6 +639,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
@@ -640,7 +649,7 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
         },
         list_route='/data/',
-        item_route='/data/<pid(dat):pid_value>',
+        item_route='/data/<pid(dat,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
@@ -655,6 +664,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
@@ -664,7 +674,7 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
         },
         list_route='/conferences/',
-        item_route='/conferences/<pid(con):pid_value>',
+        item_route='/conferences/<pid(con,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
@@ -679,6 +689,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
@@ -688,7 +699,7 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
         },
         list_route='/jobs/',
-        item_route='/jobs/<pid(job):pid_value>',
+        item_route='/jobs/<pid(job,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
@@ -703,6 +714,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
@@ -712,7 +724,7 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
         },
         list_route='/institutions/',
-        item_route='/institutions/<pid(ins):pid_value>',
+        item_route='/institutions/<pid(ins,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
@@ -720,7 +732,7 @@ RECORDS_REST_ENDPOINTS = dict(
     institutions_citesummary=dict(
         default_media_type='application/json',
         item_route=(
-            '/institutions/<pid(ins):pid_value>/citesummary'),
+            '/institutions/<pid(ins,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citesummary'),
         list_route='/institutions/',
         max_result_window=10000,
         pid_fetcher='inspire_recid_fetcher',
@@ -730,6 +742,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': (
                 'inspirehep.modules.api.v1.institutions:citesummary_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_class='inspirehep.modules.search:InstitutionsSearch',
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
         search_serializers={
@@ -749,6 +762,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
@@ -763,7 +777,7 @@ RECORDS_REST_ENDPOINTS = dict(
             ))
         ),
         list_route='/experiments/',
-        item_route='/experiments/<pid(exp):pid_value>',
+        item_route='/experiments/<pid(exp,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
@@ -771,7 +785,7 @@ RECORDS_REST_ENDPOINTS = dict(
     experiments_citesummary=dict(
         default_media_type='application/json',
         item_route=(
-            '/experiments/<pid(exp):pid_value>/citesummary'),
+            '/experiments/<pid(exp,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citesummary'),
         list_route='/experiments/',
         max_result_window=10000,
         pid_fetcher='inspire_recid_fetcher',
@@ -781,6 +795,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': (
                 'inspirehep.modules.api.v1.experiments:citesummary_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_class='inspirehep.modules.search:ExperimentsSearch',
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
         search_serializers={
@@ -800,6 +815,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
@@ -809,7 +825,7 @@ RECORDS_REST_ENDPOINTS = dict(
             ),
         },
         list_route='/journals/',
-        item_route='/journals/<pid(jou):pid_value>',
+        item_route='/journals/<pid(jou,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
@@ -817,7 +833,7 @@ RECORDS_REST_ENDPOINTS = dict(
     journals_citesummary=dict(
         default_media_type='application/json',
         item_route=(
-            '/journals/<pid(jou):pid_value>/citesummary'),
+            '/journals/<pid(jou,record_class="inspirehep.modules.records.api:InspireRecord"):pid_value>/citesummary'),
         list_route='/journals/',
         max_result_window=10000,
         pid_fetcher='inspire_recid_fetcher',
@@ -827,6 +843,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': (
                 'inspirehep.modules.api.v1.journals:citesummary_response'),
         },
+        record_class='inspirehep.modules.records.api:InspireRecord',
         search_class='inspirehep.modules.search:JournalsSearch',
         search_factory_imp='inspirehep.modules.search.query:inspire_search_factory',
         search_serializers={

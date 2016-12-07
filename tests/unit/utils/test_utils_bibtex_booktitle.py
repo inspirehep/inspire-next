@@ -24,13 +24,12 @@
 
 import pytest
 
-from invenio_records.api import Record
-
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.bibtex_booktitle import generate_booktitle, traverse
 
 
 def test_generate_booktitle_no_publication_info():
-    no_publication_info = Record({})
+    no_publication_info = InspireRecord({})
 
     expected = ''
     result = generate_booktitle(no_publication_info)
@@ -39,7 +38,7 @@ def test_generate_booktitle_no_publication_info():
 
 
 def test_generate_booktitle_publication_info_an_empty_list():
-    publication_info_an_empty_list = Record({
+    publication_info_an_empty_list = InspireRecord({
         'publication_info': []
     })
 
@@ -50,7 +49,7 @@ def test_generate_booktitle_publication_info_an_empty_list():
 
 
 def test_generate_booktitle_no_reportnumber():
-    no_reportnumber = Record({
+    no_reportnumber = InspireRecord({
         'publication_info': [
             {}
         ]
@@ -63,7 +62,7 @@ def test_generate_booktitle_no_reportnumber():
 
 
 def test_generate_booktitle_empty_reportnumber():
-    empty_reportnumber = Record({
+    empty_reportnumber = InspireRecord({
         'publication_info': [
             {
                 'reportnumber': ''
@@ -79,7 +78,7 @@ def test_generate_booktitle_empty_reportnumber():
 
 @pytest.mark.xfail(reason='KeyError when looking for acronym')
 def test_generate_booktitle_reportnumber_and_conf_acronym():
-    recordnumber_and_conf_acronym = Record({
+    recordnumber_and_conf_acronym = InspireRecord({
         'publication_info': [
             {
                 'reportnumber': 'CERN-Proceedings-2010-001',
@@ -96,7 +95,7 @@ def test_generate_booktitle_reportnumber_and_conf_acronym():
 
 @pytest.mark.xfail(reason='KeyError when looking for acronym')
 def test_generate_booktitle_reportnumber_but_no_conf_acronym():
-    no_conf_acronym = Record({
+    no_conf_acronym = InspireRecord({
         'publication_info': [
             {
                 'reportnumber': 'CERN-Proceedings-2014-001'
@@ -111,7 +110,7 @@ def test_generate_booktitle_reportnumber_but_no_conf_acronym():
 
 
 def test_generate_booktitle_from_one_pubinfo_freetext():
-    one_pubinfo_freetext = Record({
+    one_pubinfo_freetext = InspireRecord({
         'publication_info': [
             {
                 'pubinfo_freetext': 'Adv. Theor. Math. Phys. 2 (1998) 51-59'
@@ -126,7 +125,7 @@ def test_generate_booktitle_from_one_pubinfo_freetext():
 
 
 def test_generate_booktitle_from_two_pubinfo_freetext():
-    two_pubinfo_freetext = Record({
+    two_pubinfo_freetext = InspireRecord({
         'publication_info': [
             {
                 'pubinfo_freetext': 'Prog. Theor. Phys. 49 (1973) 652-657'

@@ -22,19 +22,18 @@
 
 from __future__ import absolute_import, division, print_function
 
-from invenio_records.api import Record
-
 from inspirehep.modules.authors.views.holdingpen import (
     convert_for_form,
     get_inspire_url,
 )
+from inspirehep.modules.records.api import InspireRecord
 
 
 def test_convert_for_form_without_name_urls_fc_positions_advisors_and_ids():
-    without_name_urls_fc_positions_advisors_and_ids = Record({})
+    without_name_urls_fc_positions_advisors_and_ids = InspireRecord({})
     convert_for_form(without_name_urls_fc_positions_advisors_and_ids)
 
-    assert Record({}) == without_name_urls_fc_positions_advisors_and_ids
+    assert InspireRecord({}) == without_name_urls_fc_positions_advisors_and_ids
 
 
 def test_convert_for_form_public_emails():
@@ -77,7 +76,7 @@ def test_convert_for_form_public_emails():
 
 
 def test_get_inspire_url_with_bai():
-    with_bai = Record({'bai': 'TODO'})
+    with_bai = InspireRecord({'bai': 'TODO'})
 
     expected = 'http://inspirehep.net/author/profile/TODO'
     result = get_inspire_url(with_bai)
@@ -86,7 +85,7 @@ def test_get_inspire_url_with_bai():
 
 
 def test_get_inspire_url_with_control_number():
-    with_recid = Record({'control_number': 'TODO'})
+    with_recid = InspireRecord({'control_number': 'TODO'})
 
     expected = 'http://inspirehep.net/record/TODO'
     result = get_inspire_url(with_recid)
@@ -95,7 +94,7 @@ def test_get_inspire_url_with_control_number():
 
 
 def test_get_inspire_url_without_recid_or_bai():
-    without_recid_or_bai = Record({})
+    without_recid_or_bai = InspireRecord({})
 
     expected = 'http://inspirehep.net/hepnames'
     result = get_inspire_url(without_recid_or_bai)

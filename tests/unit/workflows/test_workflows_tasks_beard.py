@@ -25,8 +25,7 @@ from __future__ import absolute_import, division, print_function
 import mock
 import requests
 
-from invenio_records.api import Record
-
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.tasks.beard import (
     get_beard_url,
     prepare_payload,
@@ -62,7 +61,7 @@ def test_get_beard_url_returns_none_when_not_in_configuration():
 
 
 def test_prepare_payload():
-    record = Record({
+    record = InspireRecord({
         'titles': [
             {
                 'title': 'Effects of top compositeness',

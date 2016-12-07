@@ -25,16 +25,15 @@
 import mock
 import pytest
 
-from invenio_records.api import Record
-
 from inspirehep.modules.hal import tei
+from inspirehep.modules.records.api import InspireRecord
 
 
 @mock.patch('inspirehep.modules.hal.tei.get_es_records')
 def test_parse_structures_no_authors(g_e_r):
     g_e_r.return_value = []
 
-    no_authors = Record({})
+    no_authors = InspireRecord({})
 
     expected = []
     result = tei._parse_structures(no_authors)
@@ -46,7 +45,7 @@ def test_parse_structures_no_authors(g_e_r):
 def test_parse_structures_one_author_no_affiliations(g_e_r):
     g_e_r.return_value = []
 
-    one_author_no_affiliations = Record({
+    one_author_no_affiliations = InspireRecord({
         'authors': [{}]
     })
 
@@ -60,7 +59,7 @@ def test_parse_structures_one_author_no_affiliations(g_e_r):
 def test_parse_structures_one_author_invalid_affiliation_record(g_e_r):
     g_e_r.return_value = []
 
-    one_author_invalid_affiliation_record = Record({
+    one_author_invalid_affiliation_record = InspireRecord({
         'authors': [
             {'affiliations':
                 [{'record':
@@ -96,7 +95,7 @@ def test_parse_structures_one_author_one_affiliation_record(g_e_r):
         'self': {'$ref': "http://localhost:5000/api/institutions/902780"},
     }]
 
-    one_author_one_affiliation_record = Record({
+    one_author_one_affiliation_record = InspireRecord({
         'authors': [
             {'affiliations':
                 [
@@ -123,7 +122,7 @@ def test_parse_structures_one_author_one_affiliation_record(g_e_r):
 
 
 def test_parse_pub_info_not_journal_or_conference():
-    not_journal_or_conference = Record({
+    not_journal_or_conference = InspireRecord({
         'publication_info': [None]
     })
 
@@ -133,7 +132,7 @@ def test_parse_pub_info_not_journal_or_conference():
 
 
 def test_parse_pub_info_journal():
-    journal = Record({
+    journal = InspireRecord({
         'publication_info': [
             {'journal_title': "JHEP",
              'journal_volume': "1603",

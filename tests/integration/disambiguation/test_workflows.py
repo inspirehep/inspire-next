@@ -29,9 +29,9 @@ from __future__ import (
 from mock import patch
 
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_records.api import Record
 from invenio_search import current_search_client as es
 
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.record_getter import get_es_record_by_uuid
 
 
@@ -70,7 +70,7 @@ def test_single_signature_with_no_profile(small_app):
                    side_effect=update_authors_recid):
             disambiguation_clustering("HAGp")
 
-    assert Record.get_record(record_id)['authors'][0]['recid'] == "1"
+    assert InspireRecord.get_record(record_id)['authors'][0]['recid'] == "1"
 
 
 def test_match_signature_with_existing_profile(small_app):
@@ -107,8 +107,8 @@ def test_match_signature_with_existing_profile(small_app):
                    side_effect=update_authors_recid):
             disambiguation_clustering("HAGp")
 
-    assert Record.get_record(old_record_id)['authors'][0]['recid'] == "1"
-    assert Record.get_record(record_id)['authors'][0]['recid'] == "1"
+    assert InspireRecord.get_record(old_record_id)['authors'][0]['recid'] == "1"
+    assert InspireRecord.get_record(record_id)['authors'][0]['recid'] == "1"
 
 
 def test_appoint_profile_from_claimed_signature(small_app):
@@ -150,9 +150,9 @@ def test_appoint_profile_from_claimed_signature(small_app):
                    side_effect=update_authors_recid):
             disambiguation_clustering("HAGp")
 
-    assert Record.get_record(old_record_id)['authors'][0]['recid'] == \
+    assert InspireRecord.get_record(old_record_id)['authors'][0]['recid'] == \
         "314159265"
-    assert Record.get_record(record_id)['authors'][0]['recid'] == \
+    assert InspireRecord.get_record(record_id)['authors'][0]['recid'] == \
         "314159265"
 
 
@@ -224,5 +224,5 @@ def test_solve_claim_conflicts(small_app):
             with patch("inspirehep.modules.disambiguation.tasks.update_authors_recid.delay", side_effect=update_authors_recid):
                 disambiguation_clustering("HAGp")
 
-    assert Record.get_record(
+    assert InspireRecord.get_record(
         higgs_record_id_not_claimed)['authors'][0]['recid'] == "4"

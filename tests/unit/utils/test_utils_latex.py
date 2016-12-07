@@ -22,13 +22,12 @@
 import mock
 import pytest
 
-from invenio_records.api import Record
-
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.latex import Latex
 
 
 def test_format_output_row_unknown_field():
-    record = Record({})
+    record = InspireRecord({})
     latex = Latex(record, 'latex_eu')
 
     expected = ''
@@ -38,7 +37,7 @@ def test_format_output_row_unknown_field():
 
 
 def test_format_output_row_one_author():
-    record = Record({})
+    record = InspireRecord({})
     latex = Latex(record, 'latex_eu')
 
     expected = u'  S.~L.~Glashow,\n'
@@ -48,7 +47,7 @@ def test_format_output_row_one_author():
 
 
 def test_format_output_row_between_one_and_eight_authors():
-    record = Record({})
+    record = InspireRecord({})
     latex = Latex(record, 'latex_eu')
 
     expected = u'  F.~Englert and R.~Brout,\n'
@@ -58,7 +57,7 @@ def test_format_output_row_between_one_and_eight_authors():
 
 
 def test_format_output_row_more_than_eight_authors_collaboration():
-    with_collaboration = Record({
+    with_collaboration = InspireRecord({
         'collaboration': [
             {'value': 'Supernova Search Team'}
         ]
@@ -78,7 +77,7 @@ def test_format_output_row_more_than_eight_authors_collaboration():
 
 
 def test_format_output_row_more_than_eight_authors_collaboration_in_collaboration():
-    collaboration_in_collaboration = Record({
+    collaboration_in_collaboration = InspireRecord({
         'collaboration': [
             {'value': 'The ATLAS Collaboration'}
         ]
@@ -95,7 +94,7 @@ def test_format_output_row_more_than_eight_authors_collaboration_in_collaboratio
 
 
 def test_format_output_row_more_than_eight_authors_no_collaboration():
-    without_collaboration = Record({})
+    without_collaboration = InspireRecord({})
     latex = Latex(without_collaboration, 'latex_eu')
 
     expected = u'  L.~Cadamuro {\it et al.},\n'
@@ -109,7 +108,7 @@ def test_format_output_row_more_than_eight_authors_no_collaboration():
 
 @pytest.mark.xfail
 def test_format_output_row_more_than_eight_authors_collaboration_an_empty_list():
-    collaboration_an_empty_list = Record({'collaboration': []})
+    collaboration_an_empty_list = InspireRecord({'collaboration': []})
     latex = Latex(collaboration_an_empty_list, 'latex_eu')
 
     expected = '  0 {\\it et al.}'
@@ -120,7 +119,7 @@ def test_format_output_row_more_than_eight_authors_collaboration_an_empty_list()
 
 @pytest.mark.xfail
 def test_format_output_row_title():
-    record = Record({})
+    record = InspireRecord({})
     latex = Latex(record, 'latex_eu')
 
     expected = u"  %``Partial Symmetries of Weak Interactions,''\n"
@@ -130,7 +129,7 @@ def test_format_output_row_title():
 
 
 def test_format_output_row_publi_info_not_a_list():
-    record = Record({})
+    record = InspireRecord({})
     latex = Latex(record, 'latex_eu')
 
     expected = u'  Phys. Lett. 12 (1964) 132-133.\n'
@@ -141,14 +140,14 @@ def test_format_output_row_publi_info_not_a_list():
 
 @pytest.mark.xfail
 def test_format_output_row_publi_info_an_empty_list():
-    record = Record({})
+    record = InspireRecord({})
     latex = Latex(record, 'latex_eu')
 
     latex._format_output_row('publi_info', [])
 
 
 def test_format_output_row_publi_info_a_list_with_one_element():
-    record = Record({})
+    record = InspireRecord({})
     latex = Latex(record, 'latex_eu')
 
     expected = u'  Phys.\\ Rev.\\ D {\\bf 73} (2006) 014022\n'
@@ -160,7 +159,7 @@ def test_format_output_row_publi_info_a_list_with_one_element():
 
 
 def test_format_output_row_publi_info_a_list_with_two_elelemts():
-    record = Record({})
+    record = InspireRecord({})
     latex = Latex(record, 'latex_eu')
 
     expected = u'''  Int.\\ J.\\ Theor.\\ Phys.\\  {\\bf 38} (1999) 1113
@@ -176,7 +175,7 @@ def test_format_output_row_publi_info_a_list_with_two_elelemts():
 
 
 def test_format_output_row_arxiv_with_publi_info():
-    with_publi_info = Record({
+    with_publi_info = InspireRecord({
         'publication_info': [
             {'journal_title': ''}
         ]
@@ -190,7 +189,7 @@ def test_format_output_row_arxiv_with_publi_info():
 
 
 def test_format_output_row_arxiv_without_publi_info():
-    without_publi_info = Record({})
+    without_publi_info = InspireRecord({})
     latex = Latex(without_publi_info, 'latex_eu')
 
     expected = u'  arXiv:1512.01296 [hep-th].\n'
@@ -200,7 +199,7 @@ def test_format_output_row_arxiv_without_publi_info():
 
 
 def test_format_output_row_report_number():
-    record = Record({})
+    record = InspireRecord({})
     latex = Latex(record, 'latex_eu')
 
     expected = u'  CMS-PAS-TOP-13-007.\n'
@@ -210,7 +209,7 @@ def test_format_output_row_report_number():
 
 
 def test_get_author_from_authors_an_empty_list():
-    authors_an_empty_list = Record({'authors': []})
+    authors_an_empty_list = InspireRecord({'authors': []})
     latex = Latex(authors_an_empty_list, 'latex_eu')
 
     expected = []
@@ -220,7 +219,7 @@ def test_get_author_from_authors_an_empty_list():
 
 
 def test_get_author_from_authors_a_list_with_one_element():
-    authors_a_list_with_one_element = Record({
+    authors_a_list_with_one_element = InspireRecord({
         'authors': [
             {'full_name': 'Glashow, S.L.'}
         ]
@@ -234,7 +233,7 @@ def test_get_author_from_authors_a_list_with_one_element():
 
 
 def test_get_author_from_authors_a_list_with_two_elements():
-    authors_a_list_with_two_elements = Record({
+    authors_a_list_with_two_elements = InspireRecord({
         'authors': [
             {'full_name': 'Englert, F.'},
             {'full_name': 'Brout, R.'}
@@ -249,7 +248,7 @@ def test_get_author_from_authors_a_list_with_two_elements():
 
 
 def test_get_author_from_authors_one_author_with_an_empty_list_of_full_names():
-    one_author_with_an_empty_list_of_full_names = Record({
+    one_author_with_an_empty_list_of_full_names = InspireRecord({
         'authors': [
             {'full_name': []}
         ]
@@ -263,7 +262,7 @@ def test_get_author_from_authors_one_author_with_an_empty_list_of_full_names():
 
 
 def test_get_author_from_authors_one_author_with_a_list_of_one_full_name():
-    one_author_with_a_list_of_one_full_name = Record({
+    one_author_with_a_list_of_one_full_name = InspireRecord({
         'authors': [
             {'full_name': ['Glashow, S.L.']}
         ]
@@ -277,7 +276,7 @@ def test_get_author_from_authors_one_author_with_a_list_of_one_full_name():
 
 
 def test_get_author_from_authors_one_author_with_a_list_of_two_full_names():
-    one_author_with_a_list_of_two_full_names = Record({
+    one_author_with_a_list_of_two_full_names = InspireRecord({
         'authors': [
             {
                 'full_name': [
@@ -296,7 +295,7 @@ def test_get_author_from_authors_one_author_with_a_list_of_two_full_names():
 
 
 def test_get_author_from_corporate_author_an_empty_list():
-    corporate_author_an_empty_list = Record({'corporate_author': []})
+    corporate_author_an_empty_list = InspireRecord({'corporate_author': []})
     latex = Latex(corporate_author_an_empty_list, 'latex_eu')
 
     expected = []
@@ -307,7 +306,7 @@ def test_get_author_from_corporate_author_an_empty_list():
 
 @pytest.mark.xfail
 def test_get_author_from_corporate_author_a_list_with_one_element():
-    corporate_author_a_list_of_one_element = Record({
+    corporate_author_a_list_of_one_element = InspireRecord({
         'corporate_author': [
             'CMS Collaboration'
         ]
@@ -322,7 +321,7 @@ def test_get_author_from_corporate_author_a_list_with_one_element():
 
 @pytest.mark.xfail
 def test_get_author_from_corporate_author_a_list_with_two_elements():
-    corporate_author_a_list_of_two_elements = Record({
+    corporate_author_a_list_of_two_elements = InspireRecord({
         'corporate_author': [
             'CMS Collaboration',
             'The ATLAS Collaboration'
@@ -337,7 +336,7 @@ def test_get_author_from_corporate_author_a_list_with_two_elements():
 
 
 def test_get_title_no_titles():
-    no_titles = Record({})
+    no_titles = InspireRecord({})
     latex = Latex(no_titles, 'latex_eu')
 
     expected = ''
@@ -347,7 +346,7 @@ def test_get_title_no_titles():
 
 
 def test_get_title_from_titles_an_empty_list():
-    titles_an_empty_list = Record({'titles': []})
+    titles_an_empty_list = InspireRecord({'titles': []})
     latex = Latex(titles_an_empty_list, 'latex_eu')
 
     expected = ''
@@ -357,7 +356,7 @@ def test_get_title_from_titles_an_empty_list():
 
 
 def test_get_title_from_titles_a_list_with_one_element():
-    titles_a_list_with_one_element = Record({
+    titles_a_list_with_one_element = InspireRecord({
         'titles': [
             {'title': 'Partial Symmetries of Weak Interactions'}
         ]
@@ -371,7 +370,7 @@ def test_get_title_from_titles_a_list_with_one_element():
 
 
 def test_get_title_from_titles_a_list_with_two_elements():
-    titles_a_list_with_two_elements = Record({
+    titles_a_list_with_two_elements = InspireRecord({
         'titles': [
             {'title': 'Broken Symmetries and the Masses of Gauge Bosons'},
             {'title': 'BROKEN SYMMETRIES AND THE MASSES OF GAUGE BOSONS.'}
@@ -386,7 +385,7 @@ def test_get_title_from_titles_a_list_with_two_elements():
 
 
 def test_get_title_from_titles_not_a_list():
-    titles_not_a_list = Record({
+    titles_not_a_list = InspireRecord({
         'titles': {
             'title': 'Partial Symmetries of Weak Interactions'
         }
@@ -400,14 +399,14 @@ def test_get_title_from_titles_not_a_list():
 
 
 def test_get_publi_info_no_publication_info():
-    no_publication_info = Record({})
+    no_publication_info = InspireRecord({})
     latex = Latex(no_publication_info, 'latex_eu')
 
     assert latex._get_publi_info() is None
 
 
 def test_get_publi_info_from_publication_info_an_empty_list():
-    publication_info_an_empty_list = Record({'publication_info': []})
+    publication_info_an_empty_list = InspireRecord({'publication_info': []})
     latex = Latex(publication_info_an_empty_list, 'latex_eu')
 
     expected = []
@@ -417,7 +416,7 @@ def test_get_publi_info_from_publication_info_an_empty_list():
 
 
 def test_get_publi_info_from_publication_info_with_journal_title_not_a_list():
-    journal_title_not_a_list = Record({
+    journal_title_not_a_list = InspireRecord({
         'publication_info': [
             {'journal_title': 'Nucl.Phys.'}
         ]
@@ -432,7 +431,7 @@ def test_get_publi_info_from_publication_info_with_journal_title_not_a_list():
 
 @pytest.mark.xfail
 def test_get_publi_info_from_publication_info_with_journal_title_an_empty_list():
-    journal_title_an_empty_list = Record({
+    journal_title_an_empty_list = InspireRecord({
         'publication_info': [
             {'journal_title': []}
         ]
@@ -446,7 +445,7 @@ def test_get_publi_info_from_publication_info_with_journal_title_an_empty_list()
 
 
 def test_get_publi_info_from_publication_info_with_journal_title_a_list_of_one_element():
-    journal_title_a_list_of_one_element = Record({
+    journal_title_a_list_of_one_element = InspireRecord({
         'publication_info': [
             {'journal_title': ['foo']}
         ]
@@ -460,7 +459,7 @@ def test_get_publi_info_from_publication_info_with_journal_title_a_list_of_one_e
 
 
 def test_get_publi_info_from_publication_info_with_journal_title_a_list_of_two_elements():
-    journal_title_a_list_of_two_elements = Record({
+    journal_title_a_list_of_two_elements = InspireRecord({
         'publication_info': [
             {'journal_title': ['foo', 'bar']}
         ]
@@ -474,7 +473,7 @@ def test_get_publi_info_from_publication_info_with_journal_title_a_list_of_two_e
 
 
 def test_get_publi_info_from_publication_info_with_journal_volume():
-    journal_volume = Record({
+    journal_volume = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'eConf',
@@ -491,7 +490,7 @@ def test_get_publi_info_from_publication_info_with_journal_volume():
 
 
 def test_get_publi_info_from_publication_info_with_journal_volume_with_letter():
-    journal_volume_with_letter = Record({
+    journal_volume_with_letter = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Eur.Phys.J.',
@@ -508,7 +507,7 @@ def test_get_publi_info_from_publication_info_with_journal_volume_with_letter():
 
 
 def test_get_publi_info_from_publication_info_with_year_not_a_list():
-    year_not_a_list = Record({
+    year_not_a_list = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Phys.Lett.',
@@ -526,7 +525,7 @@ def test_get_publi_info_from_publication_info_with_year_not_a_list():
 
 @pytest.mark.xfail
 def test_get_publi_info_from_publication_info_with_year_an_empty_list():
-    year_an_empty_list = Record({
+    year_an_empty_list = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Phys.Rev.',
@@ -543,7 +542,7 @@ def test_get_publi_info_from_publication_info_with_year_an_empty_list():
 
 
 def test_get_publi_info_from_publication_info_with_year_a_list_of_one_element():
-    year_a_list_of_one_element = Record({
+    year_a_list_of_one_element = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'JHEP',
@@ -560,7 +559,7 @@ def test_get_publi_info_from_publication_info_with_year_a_list_of_one_element():
 
 
 def test_get_publi_info_from_publication_info_with_year_a_list_of_two_elements():
-    year_a_list_of_two_elements = Record({
+    year_a_list_of_two_elements = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Phys.Rev.Lett.',
@@ -577,7 +576,7 @@ def test_get_publi_info_from_publication_info_with_year_a_list_of_two_elements()
 
 
 def test_get_publi_info_from_publication_info_with_journal_issue_latex_eu():
-    journal_issue = Record({
+    journal_issue = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Int.J.Mod.Phys.',
@@ -594,7 +593,7 @@ def test_get_publi_info_from_publication_info_with_journal_issue_latex_eu():
 
 
 def test_get_publi_info_from_publication_info_with_journal_issue_latex_us():
-    journal_issue = Record({
+    journal_issue = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Class.Quant.Grav.',
@@ -611,7 +610,7 @@ def test_get_publi_info_from_publication_info_with_journal_issue_latex_us():
 
 
 def test_get_publi_info_from_publication_info_with_page_start():
-    page_start = Record({
+    page_start = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'JHEP',
@@ -628,7 +627,7 @@ def test_get_publi_info_from_publication_info_with_page_start():
 
 
 def test_get_publi_info_from_pubinfo_freetext():
-    pubinfo_freetext = Record({
+    pubinfo_freetext = InspireRecord({
         'publication_info': [
             {'pubinfo_freetext': 'Phys. Lett. 12 (1964) 132-133'}
         ]
@@ -642,7 +641,7 @@ def test_get_publi_info_from_pubinfo_freetext():
 
 
 def test_get_publi_info_from_publication_info_a_list_of_two_elements():
-    publication_info_a_list_of_two_elements = Record({
+    publication_info_a_list_of_two_elements = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Int.J.Theor.Phys.',
@@ -677,7 +676,7 @@ def test_get_report_number_no_publi_info_yes_arxiv(g_a, g_p_i):
     g_a.return_value = False
     g_p_i.return_value = True
 
-    record = Record({})
+    record = InspireRecord({})
     latex = Latex(record, 'latex_eu')
 
     assert latex._get_report_number() is None
@@ -689,7 +688,7 @@ def test_get_report_number_yes_publi_info_no_arxiv(g_a, g_p_i):
     g_a.return_value = True
     g_p_i.return_value = False
 
-    record = Record({})
+    record = InspireRecord({})
     latex = Latex(record, 'latex_eu')
 
     assert latex._get_report_number() is None
@@ -701,7 +700,7 @@ def test_get_report_number_yes_publi_info_yes_arxiv(g_a, g_p_i):
     g_a.return_value = True
     g_p_i.return_value = True
 
-    record = Record({})
+    record = InspireRecord({})
     latex = Latex(record, 'latex_eu')
 
     assert latex._get_report_number() is None

@@ -16,11 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this licence, CERN does not waive the privileges and immunities
+# In applying this license, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Record subclass to fetch records from ElasticSearch."""
+"""Inspire Records"""
 
 from __future__ import absolute_import, division, print_function
 
@@ -30,7 +30,9 @@ import arrow
 from elasticsearch.exceptions import NotFoundError
 
 from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_pidstore.models import PersistentIdentifier
 from invenio_records.api import Record
+from invenio_db import db
 
 from inspirehep.utils.record_getter import (
     RecordGetterError,
@@ -38,7 +40,39 @@ from inspirehep.utils.record_getter import (
 )
 
 
-class ESRecord(Record):
+class InspireRecord(Record):
+
+    """Record class that fetches records from DataBase."""
+
+    def merge(self, other):
+        """Redirect pidstore of current record to the other InspireRecord.
+
+        :param other: The record that self(record) is going to be redirected.
+        :type other: InspireRecord
+        """
+        pids_deleted = PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == self.id).all()
+        pid_merged = PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == other.id).one()
+        with db.session.begin_nested():
+            for pid in pids_deleted:
+                pid.redirect(pid_merged)
+                db.session.add(pid)
+
+    def delete(self):
+        """Mark as deleted all pidstores for a specific record."""
+        pids = PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == self.id).all()
+        with db.session.begin_nested():
+            for pid in pids:
+                pid.delete()
+                db.session.add(pid)
+
+        self['deleted'] = True
+        self.commit()
+
+    def _delete(self, *args, **kwargs):
+        super(InspireRecord, self).delete(*args, **kwargs)
+
+
+class ESRecord(InspireRecord):
 
     """Record class that fetches records from ElasticSearch."""
 

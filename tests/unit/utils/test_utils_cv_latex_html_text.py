@@ -22,8 +22,7 @@
 
 import pytest
 
-from invenio_records.api import Record
-
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
 
 
@@ -31,7 +30,7 @@ from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
 
 
 def test_get_author_from_authors_a_list_with_one_element():
-    authors_a_list_with_one_element = Record({
+    authors_a_list_with_one_element = InspireRecord({
         'authors': [
             {'full_name': 'Glashow, S.L.'}
         ]
@@ -46,7 +45,7 @@ def test_get_author_from_authors_a_list_with_one_element():
 
 
 def test_get_author_from_authors_a_list_with_two_elements():
-    authors_a_list_with_two_elements = Record({
+    authors_a_list_with_two_elements = InspireRecord({
         'authors': [
             {'full_name': 'Englert, F.'},
             {'full_name': 'Brout, R.'}
@@ -62,7 +61,7 @@ def test_get_author_from_authors_a_list_with_two_elements():
 
 
 def test_get_author_from_authors_one_author_with_an_empty_list_of_full_names():
-    one_author_with_an_empty_list_of_full_names = Record({
+    one_author_with_an_empty_list_of_full_names = InspireRecord({
         'authors': [
             {'full_name': []}
         ]
@@ -77,7 +76,7 @@ def test_get_author_from_authors_one_author_with_an_empty_list_of_full_names():
 
 
 def test_get_author_from_authors_one_author_with_a_list_of_one_full_name():
-    one_author_with_a_list_of_one_full_name = Record({
+    one_author_with_a_list_of_one_full_name = InspireRecord({
         'authors': [
             {'full_name': ['Glashow, S.L.']}
         ]
@@ -92,7 +91,7 @@ def test_get_author_from_authors_one_author_with_a_list_of_one_full_name():
 
 
 def test_get_author_from_authors_one_author_with_a_list_of_two_full_names():
-    one_author_with_a_list_of_two_full_names = Record({
+    one_author_with_a_list_of_two_full_names = InspireRecord({
         'authors': [
             {
                 'full_name': [
@@ -112,7 +111,7 @@ def test_get_author_from_authors_one_author_with_a_list_of_two_full_names():
 
 
 def test_get_author_from_corporate_author_an_empty_list():
-    corporate_author_an_empty_list = Record({'corporate_author': []})
+    corporate_author_an_empty_list = InspireRecord({'corporate_author': []})
     cv_latex_html_text = Cv_latex_html_text(
         corporate_author_an_empty_list, 'cv_latex_html_text', ',')
 
@@ -123,7 +122,7 @@ def test_get_author_from_corporate_author_an_empty_list():
 
 
 def test_get_author_from_corporate_author_a_list_with_one_element():
-    corporate_author_a_list_of_one_element = Record({
+    corporate_author_a_list_of_one_element = InspireRecord({
         'corporate_author': [
             'CMS Collaboration'
         ]
@@ -138,7 +137,7 @@ def test_get_author_from_corporate_author_a_list_with_one_element():
 
 
 def test_get_author_from_corporate_author_a_list_with_two_elements():
-    corporate_author_a_list_of_two_elements = Record({
+    corporate_author_a_list_of_two_elements = InspireRecord({
         'corporate_author': [
             'CMS Collaboration',
             'The ATLAS Collaboration'
@@ -154,7 +153,7 @@ def test_get_author_from_corporate_author_a_list_with_two_elements():
 
 
 def test_get_title_returns_empty_string_when_no_titles():
-    no_titles = Record({})
+    no_titles = InspireRecord({})
     cv_latex_html_text = Cv_latex_html_text(
         no_titles, 'cv_latex_html_text', ',')
 
@@ -165,7 +164,7 @@ def test_get_title_returns_empty_string_when_no_titles():
 
 
 def test_get_title_returns_empty_string_when_titles_is_an_empty_list():
-    titles_an_empty_list = Record({
+    titles_an_empty_list = InspireRecord({
         'titles': []
     })
     cv_latex_html_text = Cv_latex_html_text(
@@ -178,7 +177,7 @@ def test_get_title_returns_empty_string_when_titles_is_an_empty_list():
 
 
 def test_get_title_when_titles_is_a_list_of_one_element_without_subtitles():
-    titles_a_list_of_one_element_without_subtitles = Record({
+    titles_a_list_of_one_element_without_subtitles = InspireRecord({
         'titles': [
             {'title': 'foo'}
         ]
@@ -193,7 +192,7 @@ def test_get_title_when_titles_is_a_list_of_one_element_without_subtitles():
 
 
 def test_get_titles_when_titles_is_a_list_of_two_elements_without_subtitles():
-    titles_a_list_of_two_elements_without_subtitles = Record({
+    titles_a_list_of_two_elements_without_subtitles = InspireRecord({
         'titles': [
             {'title': 'foo'},
             {'title': 'bar'}
@@ -209,7 +208,7 @@ def test_get_titles_when_titles_is_a_list_of_two_elements_without_subtitles():
 
 
 def test_get_title_when_titles_is_a_list_of_one_element_with_subtitle():
-    titles_a_list_of_one_element_with_subtitle = Record({
+    titles_a_list_of_one_element_with_subtitle = InspireRecord({
         'titles': [
             {
                 'title': 'foo',
@@ -227,7 +226,7 @@ def test_get_title_when_titles_is_a_list_of_one_element_with_subtitle():
 
 
 def test_get_title_when_titles_is_a_list_of_two_elements_with_subtitles():
-    titles_a_list_of_two_elements_with_subtitles = Record({
+    titles_a_list_of_two_elements_with_subtitles = InspireRecord({
         'titles': [
             {
                 'title': 'foo',
@@ -249,7 +248,7 @@ def test_get_title_when_titles_is_a_list_of_two_elements_with_subtitles():
 
 
 def test_get_title_when_titles_is_not_a_list_without_subtitles():
-    titles_not_a_list_without_subtitles = Record({
+    titles_not_a_list_without_subtitles = InspireRecord({
         'titles': {
             'title': 'foo'
         }
@@ -264,7 +263,7 @@ def test_get_title_when_titles_is_not_a_list_without_subtitles():
 
 
 def test_get_title_when_titles_is_not_a_list_with_subtitle():
-    titles_not_a_list_with_subtitle = Record({
+    titles_not_a_list_with_subtitle = InspireRecord({
         'titles': {
             'title': 'foo',
             'subtitle': 'bar'
@@ -280,7 +279,7 @@ def test_get_title_when_titles_is_not_a_list_with_subtitle():
 
 
 def test_get_title_capitalizes_when_title_is_uppercase():
-    title_is_uppercase = Record({
+    title_is_uppercase = InspireRecord({
         'titles': [
             {'title': 'FOO'}
         ]
@@ -295,7 +294,7 @@ def test_get_title_capitalizes_when_title_is_uppercase():
 
 
 def test_get_title_capitalizes_when_title_contains_uppercase_the():
-    title_contains_uppercase_the = Record({
+    title_contains_uppercase_the = InspireRecord({
         'titles': [
             {'title': 'foo THE bar'}
         ]
@@ -310,7 +309,7 @@ def test_get_title_capitalizes_when_title_contains_uppercase_the():
 
 
 def test_get_publi_info_no_publication_info():
-    no_publication_info = Record({})
+    no_publication_info = InspireRecord({})
     cv_latex_html_text = Cv_latex_html_text(
         no_publication_info, 'cv_latex_html_text', ',')
 
@@ -318,7 +317,7 @@ def test_get_publi_info_no_publication_info():
 
 
 def test_get_publi_info_from_publication_info_an_empty_list():
-    publication_info_an_empty_list = Record({'publication_info': []})
+    publication_info_an_empty_list = InspireRecord({'publication_info': []})
     cv_latex_html_text = Cv_latex_html_text(
         publication_info_an_empty_list, 'cv_latex_html_text', ',')
 
@@ -329,7 +328,7 @@ def test_get_publi_info_from_publication_info_an_empty_list():
 
 
 def test_get_publi_info_from_publication_info_with_journal_title():
-    journal_title = Record({
+    journal_title = InspireRecord({
         'publication_info': [
             {'journal_title': 'Nucl.Phys.'}
         ]
@@ -344,7 +343,7 @@ def test_get_publi_info_from_publication_info_with_journal_title():
 
 
 def test_get_publi_info_from_publication_info_with_journal_volume():
-    journal_volume = Record({
+    journal_volume = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'eConf',
@@ -362,7 +361,7 @@ def test_get_publi_info_from_publication_info_with_journal_volume():
 
 
 def test_get_publi_info_from_publication_info_with_journal_volume_with_letter():
-    journal_volume_with_letter = Record({
+    journal_volume_with_letter = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Eur.Phys.J.',
@@ -380,7 +379,7 @@ def test_get_publi_info_from_publication_info_with_journal_volume_with_letter():
 
 
 def test_get_publi_info_from_publication_info_with_year():
-    year_not_a_list = Record({
+    year_not_a_list = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Phys.Lett.',
@@ -398,7 +397,7 @@ def test_get_publi_info_from_publication_info_with_year():
 
 
 def test_get_publi_info_from_publication_info_with_journal_issue():
-    journal_issue = Record({
+    journal_issue = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Class.Quant.Grav.',
@@ -416,7 +415,7 @@ def test_get_publi_info_from_publication_info_with_journal_issue():
 
 
 def test_get_publi_info_from_publication_info_with_page_start():
-    page_start = Record({
+    page_start = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'JHEP',
@@ -434,7 +433,7 @@ def test_get_publi_info_from_publication_info_with_page_start():
 
 
 def test_get_publi_info_from_pubinfo_freetext():
-    pubinfo_freetext = Record({
+    pubinfo_freetext = InspireRecord({
         'publication_info': [
             {'pubinfo_freetext': 'Phys. Lett. 12 (1964) 132-133'}
         ]
@@ -449,7 +448,7 @@ def test_get_publi_info_from_pubinfo_freetext():
 
 
 def test_get_publi_info_from_publication_info_a_list_of_two_elements():
-    publication_info_a_list_of_two_elements = Record({
+    publication_info_a_list_of_two_elements = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Int.J.Theor.Phys.',

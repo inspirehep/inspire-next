@@ -29,8 +29,7 @@ import mock
 import pytest
 from elasticsearch_dsl import result
 
-from invenio_records.api import Record
-
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.wrappers import LiteratureRecord
 from inspirehep.modules.theme.jinja2filters import *
 
@@ -285,7 +284,7 @@ def test_email_link_returns_email_link_on_element(app):
 
 
 def test_url_links_returns_url_link_on_list_of_one_element():
-    record_with_urls = Record({'urls': [{'value': 'http://www.example.com'}]})
+    record_with_urls = InspireRecord({'urls': [{'value': 'http://www.example.com'}]})
 
     expected = ['\n\n<a href="http://www.example.com">http://www.example.com</a>']
     result = url_links(record_with_urls)
@@ -294,7 +293,7 @@ def test_url_links_returns_url_link_on_list_of_one_element():
 
 
 def test_institutes_links():
-    record_with_institute = Record({'institute': ['foo']})
+    record_with_institute = InspireRecord({'institute': ['foo']})
 
     expected = ['\n\n<a href="search/?cc=Institutions&p=110_u%3Afoo&of=hd">foo</a>']
     result = institutes_links(record_with_institute)
@@ -303,7 +302,7 @@ def test_institutes_links():
 
 
 def test_author_profile():
-    record_with_profile = Record({'profile': ['foo']})
+    record_with_profile = InspireRecord({'profile': ['foo']})
 
     expected = ['\n\n<a href="/author/search?q=foo">foo</a>']
     result = author_profile(record_with_profile)
@@ -348,7 +347,7 @@ def test_remove_duplicates__from_list_removes_duplicates_from_non_empty_list():
 
 
 def test_conference_date_returns_date_when_record_has_a_date():
-    with_a_date = Record({'date': '26-30 Mar 2012'})
+    with_a_date = InspireRecord({'date': '26-30 Mar 2012'})
 
     expected = '26-30 Mar 2012'
     result = conference_date(with_a_date)
@@ -357,7 +356,7 @@ def test_conference_date_returns_date_when_record_has_a_date():
 
 
 def test_conference_date_returns_empty_string_when_no_opening_date():
-    no_opening_date = Record({'closing_date': '2015-03-21'})
+    no_opening_date = InspireRecord({'closing_date': '2015-03-21'})
 
     expected = ''
     result = conference_date(no_opening_date)
@@ -366,7 +365,7 @@ def test_conference_date_returns_empty_string_when_no_opening_date():
 
 
 def test_conference_date_returns_empty_string_when_no_closing_date():
-    no_closing_date = Record({'opening_date': '2015-03-14'})
+    no_closing_date = InspireRecord({'opening_date': '2015-03-14'})
 
     expected = ''
     result = conference_date(no_closing_date)
@@ -375,7 +374,7 @@ def test_conference_date_returns_empty_string_when_no_closing_date():
 
 
 def test_conference_date_formats_date_when_same_year_same_month():
-    same_year_same_month = Record({
+    same_year_same_month = InspireRecord({
         'opening_date': '2015-03-14',
         'closing_date': '2015-03-21'
     })
@@ -387,7 +386,7 @@ def test_conference_date_formats_date_when_same_year_same_month():
 
 
 def test_conference_date_formats_date_when_same_year_different_month():
-    same_year_different_month = Record({
+    same_year_different_month = InspireRecord({
         'opening_date': '2012-05-28',
         'closing_date': '2012-06-01'
     })
@@ -399,7 +398,7 @@ def test_conference_date_formats_date_when_same_year_different_month():
 
 
 def test_conference_date_formats_date_when_different_year():
-    different_year = Record({
+    different_year = InspireRecord({
         'opening_date': '2012-12-31',
         'closing_date': '2013-01-01'
     })
@@ -435,13 +434,13 @@ def test_search_for_experiments_joins_with_a_comma_and_a_space():
 
 
 def test_experiment_date_returns_none_with_no_dates():
-    with_no_dates = Record({})
+    with_no_dates = InspireRecord({})
 
     assert experiment_date(with_no_dates) is None
 
 
 def test_experiment_date_returns_started_with_date_started():
-    with_date_started = Record({'date_started': '1993'})
+    with_date_started = InspireRecord({'date_started': '1993'})
 
     expected = 'Started: 1993'
     result = experiment_date(with_date_started)
@@ -449,7 +448,7 @@ def test_experiment_date_returns_started_with_date_started():
     assert expected == result
 
 def test_experiment_date_returns_proposed_with_date_started():
-    with_date_started = Record({'date_proposed': '1993'})
+    with_date_started = InspireRecord({'date_proposed': '1993'})
 
     expected = 'Proposed: 1993'
     result = experiment_date(with_date_started)
@@ -457,7 +456,7 @@ def test_experiment_date_returns_proposed_with_date_started():
     assert expected == result
 
 def test_experiment_date_returns_approved_with_date_started():
-    with_date_started = Record({'date_approved': '1993'})
+    with_date_started = InspireRecord({'date_approved': '1993'})
 
     expected = 'Approved: 1993'
     result = experiment_date(with_date_started)
@@ -466,7 +465,7 @@ def test_experiment_date_returns_approved_with_date_started():
 
 
 def test_experiment_date_returns_still_running_with_date_completed_9999():
-    with_date_completed_9999 = Record({'date_completed': '9999'})
+    with_date_completed_9999 = InspireRecord({'date_completed': '9999'})
 
     expected = 'Still Running'
     result = experiment_date(with_date_completed_9999)
@@ -475,7 +474,7 @@ def test_experiment_date_returns_still_running_with_date_completed_9999():
 
 
 def test_experiment_date_returns_completed_with_date_completed():
-    with_date_completed = Record({'date_completed': '1993'})
+    with_date_completed = InspireRecord({'date_completed': '1993'})
 
     expected = 'Completed: 1993'
     result = experiment_date(with_date_completed)
@@ -484,7 +483,7 @@ def test_experiment_date_returns_completed_with_date_completed():
 
 
 def test_proceedings_link_returns_empty_string_without_cnum():
-    without_cnum = Record({})
+    without_cnum = InspireRecord({})
 
     expected = ''
     result = proceedings_link(without_cnum)
@@ -496,7 +495,7 @@ def test_proceedings_link_returns_empty_string_without_cnum():
 def test_proceedings_link_returns_empty_string_with_zero_search_results(c, mock_perform_es_search_empty):
     c.return_value = mock_perform_es_search_empty
 
-    with_cnum = Record({'cnum': 'banana'})
+    with_cnum = InspireRecord({'cnum': 'banana'})
 
     expected = ''
     result = proceedings_link(with_cnum)
@@ -508,7 +507,7 @@ def test_proceedings_link_returns_empty_string_with_zero_search_results(c, mock_
 def test_proceedings_link_returns_a_link_with_one_search_result(c, mock_perform_es_search_onerecord):
     c.return_value = mock_perform_es_search_onerecord
 
-    with_cnum = Record({'cnum': 'banana'})
+    with_cnum = InspireRecord({'cnum': 'banana'})
 
     expected = '<a href="/record/1410174">Proceedings</a>'
     result = proceedings_link(with_cnum)
@@ -520,7 +519,7 @@ def test_proceedings_link_returns_a_link_with_one_search_result(c, mock_perform_
 def test_proceedings_link_joins_with_a_comma_and_a_space(s, mock_perform_es_search_tworecord):
     s.return_value = mock_perform_es_search_tworecord
 
-    with_cnum = Record({'cnum': 'banana'})
+    with_cnum = InspireRecord({'cnum': 'banana'})
 
     expected = ('Proceedings: <a href="/record/1407068">#1</a> (DOI: <a '
                 'href="http://dx.doi.org/10.1016/j.ppnp.2015.10.002">'
@@ -532,7 +531,7 @@ def test_proceedings_link_joins_with_a_comma_and_a_space(s, mock_perform_es_sear
 
 
 def test_experiment_link_returns_empty_list_without_related_experiments():
-    without_related_experiment = Record({})
+    without_related_experiment = InspireRecord({})
 
     expected = []
     result = experiment_link(without_related_experiment)
@@ -541,7 +540,7 @@ def test_experiment_link_returns_empty_list_without_related_experiments():
 
 
 def test_experiment_link_returns_link_for_a_list_of_one_element():
-    related_experiments_a_list_of_one_element = Record({
+    related_experiments_a_list_of_one_element = InspireRecord({
         'related_experiments': [
             {'name': 'foo'}
         ]
@@ -568,7 +567,7 @@ def test_format_cnum_with_hyphons():
 
 
 def test_link_to_hep_affiliation_returns_empty_string_when_record_has_no_ICN():
-    without_ICN = Record({})
+    without_ICN = InspireRecord({})
 
     expected = ''
     result = link_to_hep_affiliation(without_ICN)
@@ -580,7 +579,7 @@ def test_link_to_hep_affiliation_returns_empty_string_when_record_has_no_ICN():
 def test_link_to_hep_affiliation_returns_empty_string_when_empty_results(s, mock_perform_es_search_empty):
     s.return_value = mock_perform_es_search_empty
 
-    with_ICN = Record({'ICN': 'CERN'})
+    with_ICN = InspireRecord({'ICN': 'CERN'})
 
     expected = ''
     result = link_to_hep_affiliation(with_ICN)
@@ -592,7 +591,7 @@ def test_link_to_hep_affiliation_returns_empty_string_when_empty_results(s, mock
 def test_link_to_hep_affiliation_singular_when_one_result(s, mock_perform_es_search_onerecord):
     s.return_value = mock_perform_es_search_onerecord
 
-    with_ICN = Record({'ICN': 'DESY'})
+    with_ICN = InspireRecord({'ICN': 'DESY'})
 
     expected = '1 Paper from DESY'
     result = link_to_hep_affiliation(with_ICN)
@@ -604,7 +603,7 @@ def test_link_to_hep_affiliation_singular_when_one_result(s, mock_perform_es_sea
 def test_link_to_hep_affiliation_plural_when_more_results(s, mock_perform_es_search_tworecord):
     s.return_value = mock_perform_es_search_tworecord
 
-    with_ICN = Record({'ICN': 'Fermilab'})
+    with_ICN = InspireRecord({'ICN': 'Fermilab'})
 
     expected = '2 Papers from Fermilab'
     result = link_to_hep_affiliation(with_ICN)
@@ -719,7 +718,7 @@ def test_author_urls_joins_with_the_separator():
 
 
 def test_ads_links_returns_empty_string_when_record_has_no_name():
-    without_name = Record({})
+    without_name = InspireRecord({})
 
     expected = ''
     result = ads_links(without_name)
@@ -728,7 +727,7 @@ def test_ads_links_returns_empty_string_when_record_has_no_name():
 
 
 def test_ads_links_builds_link_from_full_name():
-    with_full_name = Record({
+    with_full_name = InspireRecord({
         'name': {'value': 'Ellis, John R.'}
     })
 
@@ -739,7 +738,7 @@ def test_ads_links_builds_link_from_full_name():
 
 
 def test_ads_links_uses_preferred_name_when_name_has_no_lastname():
-    without_last_name = Record({
+    without_last_name = InspireRecord({
         'name': {
             'value': ', John R.',
             'preferred_name': 'Ellis, John R.'
@@ -803,7 +802,7 @@ def test_json_dumps():
 
 
 def test_publication_info_returns_empty_dict_when_no_publication_info():
-    without_publication_info = Record({})
+    without_publication_info = InspireRecord({})
 
     expected = {}
     result = publication_info(without_publication_info)

@@ -21,13 +21,12 @@
 
 import mock
 
-from invenio_records.api import Record
-
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.export import Export
 
 
 def test_get_citation_key_no_external_system_numbers():
-    no_external_system_numbers = Record({})
+    no_external_system_numbers = InspireRecord({})
 
     expected = ''
     result = Export(no_external_system_numbers)._get_citation_key()
@@ -36,7 +35,7 @@ def test_get_citation_key_no_external_system_numbers():
 
 
 def test_get_citation_key_with_external_system_numbers_from_value():
-    with_external_system_numbers_from_value = Record({
+    with_external_system_numbers_from_value = InspireRecord({
         'external_system_numbers': [
             {'institute': 'INSPIRETeX', 'value': 'foo'}
         ]
@@ -51,7 +50,7 @@ def test_get_citation_key_with_external_system_numbers_from_value():
 def test_get_citation_key_no_value_no_obsolete():
     from inspirehep.utils.export import Export
 
-    no_value_no_obsolete = Record({
+    no_value_no_obsolete = InspireRecord({
         'external_system_numbers': [
             {'institute': 'INSPIRETeX'}
         ]
@@ -65,7 +64,7 @@ def test_get_citation_key_no_value_no_obsolete():
 
 def test_get_citation_key_last_one_wins():
 
-    last_one_wins = Record({
+    last_one_wins = InspireRecord({
         'external_system_numbers': [
             {'institute': 'INSPIRETeX', 'value': 'foo'},
             {'institute': 'SPIRESTeX', 'value': 'bar'},
@@ -79,7 +78,7 @@ def test_get_citation_key_last_one_wins():
 
 
 def test_get_citation_key_a_list_selects_first():
-    a_list_selects_first = Record({
+    a_list_selects_first = InspireRecord({
         'external_system_numbers': [
             {
                 'institute': 'INSPIRETeX',
@@ -95,7 +94,7 @@ def test_get_citation_key_a_list_selects_first():
 
 
 def test_get_citation_key_trims_spaces():
-    trims_spaces = Record({
+    trims_spaces = InspireRecord({
         'external_system_numbers': [
             {'institute': 'INSPIRETeX', 'value': 'f o o'}
         ]
@@ -108,7 +107,7 @@ def test_get_citation_key_trims_spaces():
 
 
 def test_get_doi_no_dois():
-    no_dois = Record({})
+    no_dois = InspireRecord({})
 
     expected = ''
     result = Export(no_dois)._get_doi()
@@ -117,7 +116,7 @@ def test_get_doi_no_dois():
 
 
 def test_get_doi_single_doi():
-    single_doi = Record({
+    single_doi = InspireRecord({
         'dois': [
             {'value': 'foo'}
         ]
@@ -131,7 +130,7 @@ def test_get_doi_single_doi():
 
 def test_get_doi_multiple_dois():
 
-    multiple_dois = Record({
+    multiple_dois = InspireRecord({
         'dois': [
             {'value': 'foo'},
             {'value': 'bar'}
@@ -146,7 +145,7 @@ def test_get_doi_multiple_dois():
 
 def test_get_doi_removes_duplicates():
 
-    with_duplicates = Record({
+    with_duplicates = InspireRecord({
         'dois': [
             {'value': 'foo'},
             {'value': 'bar'},
@@ -161,7 +160,7 @@ def test_get_doi_removes_duplicates():
 
 
 def test_arxiv_field_no_arxiv_eprints():
-    no_arxiv_eprints = Record({})
+    no_arxiv_eprints = InspireRecord({})
 
     result = Export(no_arxiv_eprints).arxiv_field
 
@@ -169,7 +168,7 @@ def test_arxiv_field_no_arxiv_eprints():
 
 
 def test_arxiv_field_single_arxiv_eprints():
-    single_arxiv_eprints = Record({
+    single_arxiv_eprints = InspireRecord({
         'arxiv_eprints': [
             {'value': 'foo'}
         ]
@@ -182,7 +181,7 @@ def test_arxiv_field_single_arxiv_eprints():
 
 
 def test_arxiv_field_returns_first():
-    returns_first = Record({
+    returns_first = InspireRecord({
         'arxiv_eprints': [
             {'value': 'foo'},
             {'value': 'bar'}
@@ -196,7 +195,7 @@ def test_arxiv_field_returns_first():
 
 
 def test_get_arxiv_no_arxiv_eprints():
-    no_arxiv_eprints = Record({})
+    no_arxiv_eprints = InspireRecord({})
 
     expected = ''
     result = Export(no_arxiv_eprints)._get_arxiv()
@@ -205,7 +204,7 @@ def test_get_arxiv_no_arxiv_eprints():
 
 
 def test_get_arxiv_no_value():
-    no_value = Record({
+    no_value = InspireRecord({
         'arxiv_eprints': [
             {'notvalue': 'foo'}
         ]
@@ -218,7 +217,7 @@ def test_get_arxiv_no_value():
 
 
 def test_get_arxiv_value_no_categories():
-    value_no_categories = Record({
+    value_no_categories = InspireRecord({
         'arxiv_eprints': [
             {'value': 'foo'}
         ]
@@ -232,7 +231,7 @@ def test_get_arxiv_value_no_categories():
 
 def test_get_arxiv_single_category():
 
-    single_category = Record({
+    single_category = InspireRecord({
         'arxiv_eprints': [
             {
                 'value': 'foo',
@@ -249,7 +248,7 @@ def test_get_arxiv_single_category():
 
 def test_get_arxiv_multiple_categories():
 
-    multiple_categories = Record({
+    multiple_categories = InspireRecord({
         'arxiv_eprints': [
             {
                 'value': 'foo',
@@ -269,7 +268,7 @@ def test_get_arxiv_multiple_categories():
 
 def test_get_report_number_no_report_numbers():
 
-    no_report_numbers = Record({})
+    no_report_numbers = InspireRecord({})
 
     expected = []
     result = Export(no_report_numbers)._get_report_number()
@@ -279,7 +278,7 @@ def test_get_report_number_no_report_numbers():
 
 def test_get_report_number_no_value():
 
-    no_value = Record({
+    no_value = InspireRecord({
         'report_numbers': [
             {'notvalue': 'foo'}
         ]
@@ -293,7 +292,7 @@ def test_get_report_number_no_value():
 
 def test_get_report_number_single_value():
 
-    single_value = Record({
+    single_value = InspireRecord({
         'report_numbers': [
             {'value': 'foo'}
         ]
@@ -307,7 +306,7 @@ def test_get_report_number_single_value():
 
 def test_get_report_number_multiple_values():
 
-    multiple_values = Record({
+    multiple_values = InspireRecord({
         'report_numbers': [
             {'value': 'foo'},
             {'value': 'bar'}
@@ -322,7 +321,7 @@ def test_get_report_number_multiple_values():
 
 def test_get_slac_citation_from_arxiv_eprints_no_value():
 
-    from_arxiv_eprints_no_value = Record({
+    from_arxiv_eprints_no_value = InspireRecord({
         'arxiv_eprints': [
             {'notvalue': 'foo'}
         ]
@@ -335,7 +334,7 @@ def test_get_slac_citation_from_arxiv_eprints_no_value():
 
 def test_get_slac_citation_from_arxiv_eprints_with_value():
 
-    from_arxiv_eprints_with_value = Record({
+    from_arxiv_eprints_with_value = InspireRecord({
         'arxiv_eprints': [
             {'value': 'foo'}
         ]
@@ -352,7 +351,7 @@ def test_get_slac_citation_from_pubnote():
     #                 by subclasses of Export.
     Export._get_pubnote = lambda self: 'foo'
 
-    from_pubnote = Record({})
+    from_pubnote = InspireRecord({})
 
     expected = '%%CITATION = foo;%%'
     result = Export(from_pubnote)._get_slac_citation()
@@ -367,7 +366,7 @@ def test_get_slac_citation_from_report_numbers_no_arxiv_eprints():
     #                 by subclasses of Export.
     Export._get_pubnote = lambda self: False
 
-    from_report_numbers_no_arxiv_eprints = Record({
+    from_report_numbers_no_arxiv_eprints = InspireRecord({
         'report_numbers': [
             {'value': 'foo'},
             {'value': 'bar'}
@@ -387,7 +386,7 @@ def test_get_slac_citation_from_control_number():
     #                 by subclasses of Export.
     Export._get_pubnote = lambda self: False
 
-    from_recid = Record({'control_number': 1})
+    from_recid = InspireRecord({'control_number': 1})
 
     expected = '%%CITATION = INSPIRE-1;%%'
     result = Export(from_recid)._get_slac_citation()
@@ -401,7 +400,7 @@ def test_get_slac_citation_from_control_number():
 def test_get_citation_number_no_citations(g_e_r):
     g_e_r.return_value = {'citation_count': 0}
 
-    no_citations = Record({'control_number': 1})
+    no_citations = InspireRecord({'control_number': 1})
 
     expected = ''
     result = Export(no_citations)._get_citation_number()
@@ -415,7 +414,7 @@ def test_get_citation_number_one_citation(g_e_r, strftime):
     strftime.return_value = '02 Feb 1993'
     g_e_r.return_value = {'citation_count': 1}
 
-    one_citation = Record({'control_number': 1})
+    one_citation = InspireRecord({'control_number': 1})
 
     expected = '1 citation counted in INSPIRE as of 02 Feb 1993'
     result = Export(one_citation)._get_citation_number()
@@ -429,7 +428,7 @@ def test_get_citation_number_two_citations(g_e_r, strftime):
     strftime.return_value = '02 Feb 1993'
     g_e_r.return_value = {'citation_count': 2}
 
-    two_citations = Record({'control_number': 1})
+    two_citations = InspireRecord({'control_number': 1})
 
     expected = '2 citations counted in INSPIRE as of 02 Feb 1993'
     result = Export(two_citations)._get_citation_number()
@@ -441,7 +440,7 @@ def test_get_citation_number_two_citations(g_e_r, strftime):
 def test_get_citation_number_no_citation_count(g_e_r):
     g_e_r.return_value = {}
 
-    no_citation_count = Record({'control_number': 1})
+    no_citation_count = InspireRecord({'control_number': 1})
 
     expected = ''
     result = Export(no_citation_count)._get_citation_number()

@@ -23,8 +23,7 @@
 import mock
 import pytest
 
-from invenio_records.api import Record
-
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.cv_latex import Cv_latex
 
 
@@ -32,7 +31,7 @@ from inspirehep.utils.cv_latex import Cv_latex
 
 
 def test_get_author_from_authors_a_list_with_one_element():
-    authors_a_list_with_one_element = Record({
+    authors_a_list_with_one_element = InspireRecord({
         'authors': [
             {'full_name': 'Glashow, S.L.'}
         ]
@@ -45,7 +44,7 @@ def test_get_author_from_authors_a_list_with_one_element():
 
 
 def test_get_author_from_authors_a_list_with_two_elements():
-    authors_a_list_with_two_elements = Record({
+    authors_a_list_with_two_elements = InspireRecord({
         'authors': [
             {'full_name': 'Englert, F.'},
             {'full_name': 'Brout, R.'}
@@ -59,7 +58,7 @@ def test_get_author_from_authors_a_list_with_two_elements():
 
 
 def test_get_author_from_authors_one_author_with_an_empty_list_of_full_names():
-    one_author_with_an_empty_list_of_full_names = Record({
+    one_author_with_an_empty_list_of_full_names = InspireRecord({
         'authors': [
             {'full_name': []}
         ]
@@ -72,7 +71,7 @@ def test_get_author_from_authors_one_author_with_an_empty_list_of_full_names():
 
 
 def test_get_author_from_authors_one_author_with_a_list_of_one_full_name():
-    one_author_with_a_list_of_one_full_name = Record({
+    one_author_with_a_list_of_one_full_name = InspireRecord({
         'authors': [
             {'full_name': ['Glashow, S.L.']}
         ]
@@ -85,7 +84,7 @@ def test_get_author_from_authors_one_author_with_a_list_of_one_full_name():
 
 
 def test_get_author_from_authors_one_author_with_a_list_of_two_full_names():
-    one_author_with_a_list_of_two_full_names = Record({
+    one_author_with_a_list_of_two_full_names = InspireRecord({
         'authors': [
             {
                 'full_name': [
@@ -103,7 +102,7 @@ def test_get_author_from_authors_one_author_with_a_list_of_two_full_names():
 
 
 def test_get_author_from_corporate_author_an_empty_list():
-    corporate_author_an_empty_list = Record({'corporate_author': []})
+    corporate_author_an_empty_list = InspireRecord({'corporate_author': []})
 
     expected = []
     result = Cv_latex(corporate_author_an_empty_list)._get_author()
@@ -113,7 +112,7 @@ def test_get_author_from_corporate_author_an_empty_list():
 
 @pytest.mark.xfail(reason='corporate_author is parsed as a real name')
 def test_get_author_from_corporate_author_a_list_with_one_element():
-    corporate_author_a_list_of_one_element = Record({
+    corporate_author_a_list_of_one_element = InspireRecord({
         'corporate_author': [
             'CMS Collaboration'
         ]
@@ -127,7 +126,7 @@ def test_get_author_from_corporate_author_a_list_with_one_element():
 
 @pytest.mark.xfail(reason='corporate_author is parsed as a real name')
 def test_get_author_from_corporate_author_a_list_with_two_elements():
-    corporate_author_a_list_of_two_elements = Record({
+    corporate_author_a_list_of_two_elements = InspireRecord({
         'corporate_author': [
             'CMS Collaboration',
             'The ATLAS Collaboration'
@@ -141,7 +140,7 @@ def test_get_author_from_corporate_author_a_list_with_two_elements():
 
 
 def test_get_title_returns_empty_string_when_no_titles():
-    without_titles = Record({})
+    without_titles = InspireRecord({})
 
     expected = ''
     result = Cv_latex(without_titles)._get_title()
@@ -150,7 +149,7 @@ def test_get_title_returns_empty_string_when_no_titles():
 
 
 def test_get_title_returns_first_title_found_when_titles_is_a_list():
-    a_list_of_titles = Record({
+    a_list_of_titles = InspireRecord({
         'titles': [
             {'title': ('Effective relational dynamics of a '
                        'nonintegrable cosmological model')},
@@ -170,13 +169,13 @@ def test_get_title_returns_first_title_found_when_titles_is_a_list():
 
 
 def test_get_publi_info_no_publication_info():
-    no_publication_info = Record({})
+    no_publication_info = InspireRecord({})
 
     assert Cv_latex(no_publication_info)._get_publi_info() is None
 
 
 def test_get_publi_info_from_publication_info_an_empty_list():
-    publication_info_an_empty_list = Record({'publication_info': []})
+    publication_info_an_empty_list = InspireRecord({'publication_info': []})
 
     expected = []
     result = Cv_latex(publication_info_an_empty_list)._get_publi_info()
@@ -185,7 +184,7 @@ def test_get_publi_info_from_publication_info_an_empty_list():
 
 
 def test_get_publi_info_from_publication_info_with_journal_title_not_a_list():
-    journal_title_not_a_list = Record({
+    journal_title_not_a_list = InspireRecord({
         'publication_info': [
             {'journal_title': 'Nucl.Phys.'}
         ]
@@ -199,7 +198,7 @@ def test_get_publi_info_from_publication_info_with_journal_title_not_a_list():
 
 @pytest.mark.xfail(reason='IndexError when accessing last element')
 def test_get_publi_info_from_publication_info_with_journal_title_an_empty_list():
-    journal_title_an_empty_list = Record({
+    journal_title_an_empty_list = InspireRecord({
         'publication_info': [
             {'journal_title': []}
         ]
@@ -212,7 +211,7 @@ def test_get_publi_info_from_publication_info_with_journal_title_an_empty_list()
 
 
 def test_get_publi_info_from_publication_info_with_journal_title_a_list_of_one_element():
-    journal_title_a_list_of_one_element = Record({
+    journal_title_a_list_of_one_element = InspireRecord({
         'publication_info': [
             {'journal_title': ['foo']}
         ]
@@ -225,7 +224,7 @@ def test_get_publi_info_from_publication_info_with_journal_title_a_list_of_one_e
 
 
 def test_get_publi_info_from_publication_info_with_journal_title_a_list_of_two_elements():
-    journal_title_a_list_of_two_elements = Record({
+    journal_title_a_list_of_two_elements = InspireRecord({
         'publication_info': [
             {'journal_title': ['foo', 'bar']}
         ]
@@ -238,7 +237,7 @@ def test_get_publi_info_from_publication_info_with_journal_title_a_list_of_two_e
 
 
 def test_get_publi_info_from_publication_info_with_journal_volume():
-    journal_volume = Record({
+    journal_volume = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'eConf',
@@ -254,7 +253,7 @@ def test_get_publi_info_from_publication_info_with_journal_volume():
 
 
 def test_get_publi_info_from_publication_info_with_journal_volume_with_letter():
-    journal_volume_with_letter = Record({
+    journal_volume_with_letter = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Eur.Phys.J.',
@@ -270,7 +269,7 @@ def test_get_publi_info_from_publication_info_with_journal_volume_with_letter():
 
 
 def test_get_publi_info_from_publication_info_with_year_not_a_list():
-    year_not_a_list = Record({
+    year_not_a_list = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Phys.Lett.',
@@ -287,7 +286,7 @@ def test_get_publi_info_from_publication_info_with_year_not_a_list():
 
 @pytest.mark.xfail(reason='IndexError when accessing last element')
 def test_get_publi_info_from_publication_info_with_year_an_empty_list():
-    year_an_empty_list = Record({
+    year_an_empty_list = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Phys.Rev.',
@@ -303,7 +302,7 @@ def test_get_publi_info_from_publication_info_with_year_an_empty_list():
 
 
 def test_get_publi_info_from_publication_info_with_year_a_list_of_one_element():
-    year_a_list_of_one_element = Record({
+    year_a_list_of_one_element = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'JHEP',
@@ -319,7 +318,7 @@ def test_get_publi_info_from_publication_info_with_year_a_list_of_one_element():
 
 
 def test_get_publi_info_from_publication_info_with_year_a_list_of_two_elements():
-    year_a_list_of_two_elements = Record({
+    year_a_list_of_two_elements = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Phys.Rev.Lett.',
@@ -335,7 +334,7 @@ def test_get_publi_info_from_publication_info_with_year_a_list_of_two_elements()
 
 
 def test_get_publi_info_from_publication_info_with_journal_issue():
-    journal_issue = Record({
+    journal_issue = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Class.Quant.Grav.',
@@ -351,7 +350,7 @@ def test_get_publi_info_from_publication_info_with_journal_issue():
 
 
 def test_get_publi_info_from_publication_info_with_page_start():
-    page_start = Record({
+    page_start = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'JHEP',
@@ -367,7 +366,7 @@ def test_get_publi_info_from_publication_info_with_page_start():
 
 
 def test_get_publi_info_from_pubinfo_freetext():
-    pubinfo_freetext = Record({
+    pubinfo_freetext = InspireRecord({
         'publication_info': [
             {'pubinfo_freetext': 'Phys. Lett. 12 (1964) 132-133'}
         ]
@@ -380,7 +379,7 @@ def test_get_publi_info_from_pubinfo_freetext():
 
 
 def test_get_publi_info_from_publication_info_a_list_of_two_elements():
-    publication_info_a_list_of_two_elements = Record({
+    publication_info_a_list_of_two_elements = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Int.J.Theor.Phys.',
@@ -412,7 +411,7 @@ def test_get_publi_info_from_publication_info_a_list_of_two_elements():
     'inspirehep.utils.cv_latex.config',
     mock.Mock(SERVER_NAME='http://localhost:5000'))
 def test_get_url():
-    record = Record({'control_number': 1})
+    record = InspireRecord({'control_number': 1})
 
     expected = 'http://localhost:5000/record/1'
     result = Cv_latex(record)._get_url()
@@ -421,13 +420,13 @@ def test_get_url():
 
 
 def test_get_date_without_any_date_returns_none():
-    without_any_date = Record({})
+    without_any_date = InspireRecord({})
 
     assert Cv_latex(without_any_date)._get_date() is None
 
 
 def test_get_date_from_preprint_date():
-    preprint_date = Record({'preprint_date': '2015-11-25'})
+    preprint_date = InspireRecord({'preprint_date': '2015-11-25'})
 
     expected = 'Nov 25, 2015'
     result = Cv_latex(preprint_date)._get_date()
@@ -437,7 +436,7 @@ def test_get_date_from_preprint_date():
 
 @pytest.mark.xfail(reason='zero is not added to the day')
 def test_get_date_from_preprint_date_adds_zero_to_day():
-    preprint_date = Record({'preprint_date': '2014-10-1'})
+    preprint_date = InspireRecord({'preprint_date': '2014-10-1'})
 
     expected = 'Oct 01, 2014'
     result = Cv_latex(preprint_date)._get_date()
@@ -455,7 +454,7 @@ def test_get_date_from_preprint_date_adds_zero_to_day():
 
 
 def test_get_date_from_publication_info():
-    publication_info = Record({
+    publication_info = InspireRecord({
         'publication_info': [
             {'year': '2011'}
         ]
@@ -468,7 +467,7 @@ def test_get_date_from_publication_info():
 
 
 def test_get_date_from_publication_info_returns_none_when_no_year():
-    publication_info_without_a_year = Record({
+    publication_info_without_a_year = InspireRecord({
         'publication_info': []
     })
 
@@ -476,7 +475,7 @@ def test_get_date_from_publication_info_returns_none_when_no_year():
 
 
 def test_get_date_from_publication_info_uses_first_year_found():
-    publication_info = Record({
+    publication_info = InspireRecord({
         'publication_info': [
             {},
             {'year': '2012'}
@@ -490,7 +489,7 @@ def test_get_date_from_publication_info_uses_first_year_found():
 
 
 def test_get_date_from_creation_modification_date():
-    creation_modification_date = Record({
+    creation_modification_date = InspireRecord({
         'creation_modification_date': [
             {'creation_date': '2012'}
         ]
@@ -503,7 +502,7 @@ def test_get_date_from_creation_modification_date():
 
 
 def test_get_date_from_creation_modification_date_returns_none_when_no_creation_date():
-    creation_modification_date_without_a_creation_date = Record({
+    creation_modification_date_without_a_creation_date = InspireRecord({
         'creation_modification_date': []
     })
 
@@ -512,7 +511,7 @@ def test_get_date_from_creation_modification_date_returns_none_when_no_creation_
 
 @pytest.mark.xfail(reason='creation_date might not be there')
 def test_get_date_from_creation_modification_date_uses_first_creation_date_found():
-    creation_modification_date = Record({
+    creation_modification_date = InspireRecord({
         'creation_modification_date': [
             {},
             {'creation_date': '2014-03-07'}
@@ -526,7 +525,7 @@ def test_get_date_from_creation_modification_date_uses_first_creation_date_found
 
 
 def test_get_date_from_imprints_returns_none_when_no_date():
-    imprints_without_a_date = Record({
+    imprints_without_a_date = InspireRecord({
         'imprints': []
     })
 
@@ -534,7 +533,7 @@ def test_get_date_from_imprints_returns_none_when_no_date():
 
 
 def test_get_date_from_imprints_uses_first_date_found():
-    imprints = Record({
+    imprints = InspireRecord({
         'imprints': [
             {},
             {'date': '2011-03-29'}
@@ -548,7 +547,7 @@ def test_get_date_from_imprints_uses_first_date_found():
 
 
 def test_get_date_from_thesis_returns_none_when_no_date():
-    thesis_without_a_date = Record({
+    thesis_without_a_date = InspireRecord({
         'thesis': {}
     })
 
@@ -556,7 +555,7 @@ def test_get_date_from_thesis_returns_none_when_no_date():
 
 
 def test_get_date_from_thesis_uses_first_date_found():
-    thesis = Record({
+    thesis = InspireRecord({
         'thesis': {'date': '1966'}
     })
 
@@ -567,7 +566,7 @@ def test_get_date_from_thesis_uses_first_date_found():
 
 
 def test_format_date_when_datestruct_has_one_element():
-    record = Record({})
+    record = InspireRecord({})
     cv_latex = Cv_latex(record)
 
     expected = 1993
@@ -577,7 +576,7 @@ def test_format_date_when_datestruct_has_one_element():
 
 
 def test_format_date_when_datestruct_has_two_elements():
-    record = Record({})
+    record = InspireRecord({})
     cv_latex = Cv_latex(record)
 
     expected = 'Feb 1993'
@@ -587,7 +586,7 @@ def test_format_date_when_datestruct_has_two_elements():
 
 
 def test_format_date_when_datestruct_has_three_elements():
-    record = Record({})
+    record = InspireRecord({})
     cv_latex = Cv_latex(record)
 
     expected = 'Feb 2, 1993'
@@ -597,28 +596,28 @@ def test_format_date_when_datestruct_has_three_elements():
 
 
 def test_format_date_returns_none_when_datestruct_has_four_elements():
-    record = Record({})
+    record = InspireRecord({})
     cv_latex = Cv_latex(record)
 
     assert cv_latex._format_date((1993, 2, 2, 1)) is None
 
 
 def test_parse_date_returns_none_when_datetext_is_none():
-    record = Record({})
+    record = InspireRecord({})
     cv_latex = Cv_latex(record)
 
     assert cv_latex.parse_date(None) is None
 
 
 def test_parse_date_returns_none_when_datetext_is_an_empty_string():
-    record = Record({})
+    record = InspireRecord({})
     cv_latex = Cv_latex(record)
 
     assert cv_latex.parse_date('') is None
 
 
 def test_parse_date_returns_none_when_datetext_is_not_of_type_str():
-    record = Record({})
+    record = InspireRecord({})
     cv_latex = Cv_latex(record)
 
     assert cv_latex.parse_date(0) is None
@@ -626,7 +625,7 @@ def test_parse_date_returns_none_when_datetext_is_not_of_type_str():
 
 @pytest.mark.xfail(reason='too strict check against str type')
 def test_parse_date_supports_unicode_strings():
-    record = Record({})
+    record = InspireRecord({})
     cv_latex = Cv_latex(record)
 
     expected = (1993, 2, 2)
@@ -636,7 +635,7 @@ def test_parse_date_supports_unicode_strings():
 
 
 def test_parse_date_partial_spires_format_year_only():
-    record = Record({})
+    record = InspireRecord({})
     cv_latex = Cv_latex(record)
 
     expected = (1993,)
@@ -646,7 +645,7 @@ def test_parse_date_partial_spires_format_year_only():
 
 
 def test_parse_date_partial_spires_format_year_and_month():
-    record = Record({})
+    record = InspireRecord({})
     cv_latex = Cv_latex(record)
 
     expected = (1993, 2)
@@ -656,7 +655,7 @@ def test_parse_date_partial_spires_format_year_and_month():
 
 
 def test_parse_date_full_spires_format():
-    record = Record({})
+    record = InspireRecord({})
     cv_latex = Cv_latex(record)
 
     expected = (1993, 2, 2)
@@ -666,7 +665,7 @@ def test_parse_date_full_spires_format():
 
 
 def test_parse_date_invalid_spires_format():
-    record = Record({})
+    record = InspireRecord({})
     cv_latex = Cv_latex(record)
 
     expected = (1993, 2)
@@ -676,7 +675,7 @@ def test_parse_date_invalid_spires_format():
 
 
 def test_parse_date_full_invenio_format():
-    record = Record({})
+    record = InspireRecord({})
     cv_latex = Cv_latex(record)
 
     expected = (1993, 2, 2)
@@ -686,7 +685,7 @@ def test_parse_date_full_invenio_format():
 
 
 def test_parse_date_invalid_invenio_format():
-    record = Record({})
+    record = InspireRecord({})
     cv_latex = Cv_latex(record)
 
     expected = (1993, 2)
