@@ -63,7 +63,7 @@ def test_render_conferences():
             '<a href="/conferences/1">title</a>',
             'original_address',
             '',
-            u'\n  ',
+            u'  ',
         ],
     ], 1)
     with current_app.test_request_context():
@@ -98,7 +98,7 @@ def test_render_conferences_handles_unicode():
             u'<a href="/conferences/1351301">Théorie de Cordes en France</a>',
             'Paris, France',
             '',
-            u'\n  ',
+            u'  ',
         ],
     ], 1)
     with current_app.test_request_context():
@@ -141,13 +141,13 @@ def test_render_contributions():
     expected = ([
         [
             "<a href='/literature/1'>first-title</a>",
-            u'\n  \n  \n\n\n  \n',
+            u'\n\n',
             'first-journal_title',
             1,
         ],
         [
             "<a href='/literature/2'>second-title</a>",
-            u'\n  \n  \n\n\n  \n',
+            u'\n\n',
             '',
             0,
         ],
@@ -178,7 +178,7 @@ def test_render_contributions_handles_unicode():
     expected = ([
         [
             u"<a href='/literature/1427573'>Storage Ring Based EDM Search — Achievements and Goals</a>",
-            u'\n  \n  \n\n\n  \n',
+            u'\n\n',
             '',
             0,
         ],

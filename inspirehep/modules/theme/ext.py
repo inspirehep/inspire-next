@@ -63,8 +63,10 @@ class INSPIRETheme(object):
 
         app.register_blueprint(blueprint)
 
-        # Add Jinja2 extensions.
+        # Configure Jinja2 environment.
         app.jinja_env.add_extension('jinja2.ext.do')
+        app.jinja_env.lstrip_blocks = True
+        app.jinja_env.trim_blocks = True
 
         # Register errors handlers.
         app.register_error_handler(401, unauthorized)

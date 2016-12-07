@@ -89,13 +89,13 @@ def test_render_contributions():
     expected = ([
         [
             "<a href='/literature/1'>first-title</a>",
-            u'\n  \n  \n\n\n  \n',
+            u'\n\n',
             'first-journal_title',
             1,
         ],
         [
             "<a href='/literature/2'>second-title</a>",
-            u'\n  \n  \n\n\n  \n',
+            u'\n\n',
             '',
             0,
         ],
