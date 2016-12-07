@@ -29,11 +29,11 @@ a WSGI application that reports back information on test coverage.
 from __future__ import absolute_import, division, print_function
 
 import atexit
-import sys
 
 import coverage
 
-cov = coverage.Coverage(data_suffix=True)
+
+cov = coverage.Coverage()
 cov.start()
 
 from .wsgi import application  # noqa
