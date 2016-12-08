@@ -142,6 +142,7 @@ def restricted_record(app):
     current_app.extensions[
         'invenio-db'].versioning_manager.transaction_cls.query.delete()
     db.session.commit()
+    current_cache.delete('restricted_collections')
 
 
 @pytest.fixture(scope='function')
