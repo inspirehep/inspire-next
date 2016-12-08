@@ -25,29 +25,46 @@
 from __future__ import absolute_import, division, print_function
 
 from celery import shared_task
+from celery.utils.log import get_task_logger
 from elasticsearch.helpers import scan
 from flask import current_app
 from six import iteritems
 
 from invenio_db import db
-from invenio_records.api import Record
 from invenio_search import current_search_client as es
 
 from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_schema,
     get_index_from_endpoint,
 )
+from inspirehep.modules.records.api import InspireRecord
+
+logger = get_task_logger(__name__)
 
 
 @shared_task(ignore_result=True)
 def update_refs(old, new):
-    records = get_records_to_update(old)
+    """Run update references as Celery task.
 
-    with db.session.begin_nested():
+    The method collects the records from the database that
+    have old references to other records and update them with
+    the new reference.
+
+    :param old: The reference(URL) of the record that is going to be merged.
+    :type old: string
+    :param new: The reference(URL) of the record that is going to be pointed.
+    :type new: string
+    """
+    records = get_records_to_update(old)
+    try:
         for record in records:
+            logger.info("Updating record: %s with merged record: %s",
+                        record.id, new)
             update_links(record, old, new)
             record.commit()
-    db.session.commit()
+        db.session.commit()
+    finally:
+        db.session.close()
 
 
 def update_links(record, old, new):
@@ -108,7 +125,7 @@ def get_records_to_update(old):
                 yield result['_id']
 
     def _get_records_to_update(uuids):
-        return Record.get_records(uuids)
+        return InspireRecord.get_records(uuids)
 
     uuids = _get_uuids_to_update(old)
     records = _get_records_to_update(uuids)

@@ -24,7 +24,6 @@ from __future__ import absolute_import, division, print_function
 
 from invenio_pidstore.models import PersistentIdentifier
 
-from inspirehep.modules.records.record import InspireRecord
 from inspirehep.modules.disambiguation.records import (
     _get_author_schema,
     create_author,

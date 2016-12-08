@@ -40,8 +40,6 @@ def app():
     """Flask application fixture."""
     app = create_app(DEBUG=True,
                      WTF_CSRF_ENABLED=False,
-                     TESTING=True,
-                     TEST_RUNNER='celery.contrib.test_runner.CeleryTestSuiteRunner',
                      CELERY_ALWAYS_EAGER=True,
                      CELERY_RESULT_BACKEND="cache",
                      CELERY_CACHE_BACKEND="memory",
