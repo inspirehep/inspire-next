@@ -379,8 +379,8 @@ def test_is_experimental_paper():
     assert is_experimental_paper(obj, eng)
 
 
-def test_is_experimental_paper_returns_true_if_field_categories_in_list():
-    obj = StubObj({'field_categories': [{'term': 'Experiment-HEP'}]}, {})
+def test_is_experimental_paper_returns_true_if_inspire_categories_in_list():
+    obj = StubObj({'inspire_categories': [{'term': 'Experiment-HEP'}]}, {})
     eng = DummyEng()
 
     assert is_experimental_paper(obj, eng)
