@@ -623,6 +623,7 @@ def test_public_notes_from_680__a():
     assert expected == result['public_notes']
 
 
+@pytest.mark.xfail(reason='subfield is exploded in single characters')
 def test_historical_data_from_6781_a():
     snippet = (
         '<datafield tag="678" ind1="1" ind2=" ">'
@@ -638,7 +639,7 @@ def test_historical_data_from_6781_a():
     assert expected == result['historical_data']
 
 
-def test_historical_data_from_6781_a():
+def test_historical_data_from_6781_multiple_a():
     snippet = (
         '<datafield tag="678" ind1="1" ind2=" ">'
         '  <subfield code="a">Conseil européen pour la Recherche Nucléaire (1952-1954)</subfield>'
