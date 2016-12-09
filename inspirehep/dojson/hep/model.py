@@ -29,7 +29,11 @@ from dojson import Overdo
 from inspirehep.utils.helpers import force_force_list
 
 from ..model import FilterOverdo, add_schema, clean_record
-from ..utils import force_single_element, get_record_ref
+from ..utils import (
+    force_single_element,
+    get_record_ref,
+    classify_field,
+)
 
 
 def add_book_info(record, blob):
@@ -53,9 +57,26 @@ def add_book_info(record, blob):
     return record
 
 
+def add_inspire_category_from_arxiv_categories(record, blob):
+    if not record.get('arxiv_eprints') or record.get('inspire_categories'):
+        return record
+
+    record.setdefault('inspire_categories', [])
+    for arxiv_category in record.get_value(record, 'arxiv_eprints.categories', default=[]):
+        inspire_category = classify_field(arxiv_category)
+        if inspire_category:
+            record['inspire_categories'].append({
+                'term': inspire_category,
+                'source': 'arxiv'
+            })
+
+    return record
+
+
 hep_filters = [
     add_schema('hep.json'),
     add_book_info,
+    add_inspire_category_from_arxiv_categories,
     clean_record,
 ]
 
