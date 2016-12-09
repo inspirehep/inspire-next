@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import json
+
 from flask import current_app, request
 
 from invenio_records_rest.errors import InvalidQueryRESTError
@@ -51,6 +53,11 @@ def inspire_search_factory(self, search):
                 request.values.get('q', '')),
             exc_info=True)
         raise InvalidQueryRESTError()
+    finally:
+        if current_app.debug:
+                current_app.logger.debug(
+                    json.dumps(search.to_dict(), indent=4)
+                )
 
     search_index = search._index[0]
     search, urlkwargs = default_facets_factory(search, search_index)

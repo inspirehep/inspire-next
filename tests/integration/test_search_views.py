@@ -20,6 +20,9 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+import json
+from mock import patch
+
 
 def test_search_conferences_is_there(app):
     with app.test_client() as client:
@@ -59,3 +62,41 @@ def test_search_jobs_is_there(app):
 def test_search_falls_back_to_hep(app):
     with app.test_client() as client:
         assert client.get('/search').status_code == 200
+
+
+@patch('inspirehep.modules.search.query.current_app')
+def test_search_logs(current_app_mock, app):
+    def _debug(log_output):
+        query = {
+            'query': {
+                'bool': {
+                    'filter': [{
+                        'match': {'_collections': 'Literature'}
+                    }],
+                    'must': [{
+                        'multi_match': {
+                            'query': '',
+                            'fields': [
+                                'title^3',
+                                'title.raw^10',
+                                'abstract^2',
+                                'abstract.raw^4',
+                                'author^10',
+                                'author.raw^15',
+                                'reportnumber^10',
+                                'eprint^10',
+                                'doi^10'
+                            ],
+                            'zero_terms_query': 'all',
+                        }
+                    }]
+                }
+            },
+            'from': 0,
+            'size': 10
+        }
+        assert query == json.loads(log_output)
+
+    current_app_mock.logger.debug.side_effect = _debug
+    with app.test_client() as client:
+        client.get('/api/literature/')

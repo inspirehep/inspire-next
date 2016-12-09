@@ -24,8 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-import json
-
 import pypeg2
 from elasticsearch_dsl import Q
 from flask import current_app
@@ -71,11 +69,6 @@ def inspire_query_factory():
                 )
             ))
         finally:
-            if current_app.debug:
-                current_app.logger.debug(
-                    json.dumps(search.to_dict(), indent=4)
-                )
-
             return query
 
     return invenio_query
