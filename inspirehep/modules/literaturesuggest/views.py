@@ -52,12 +52,12 @@ from .tasks import formdata_to_model
 
 blueprint = Blueprint('inspirehep_literature_suggest',
                       __name__,
-                      url_prefix='/submit/literature',
+                      url_prefix='/literature',
                       template_folder='templates',
                       static_folder='static')
 
 
-@blueprint.route('/create', methods=['GET'])
+@blueprint.route('/new', methods=['GET'])
 @login_required
 def create():
     """View for INSPIRE suggestion create form."""
@@ -75,7 +75,7 @@ def create():
     )
 
 
-@blueprint.route('/create/submit', methods=['POST'])
+@blueprint.route('/new/submit', methods=['POST'])
 def submit():
     """Get form data and start workflow."""
     form = LiteratureForm(formdata=request.form)
@@ -99,13 +99,13 @@ def submit():
     return redirect(url_for('.success'))
 
 
-@blueprint.route('/create/success', methods=['GET'])
+@blueprint.route('/new/success', methods=['GET'])
 def success():
     """Render success template for the user."""
     return render_template('literaturesuggest/forms/suggest_success.html')
 
 
-@blueprint.route('/validate', methods=['POST'])
+@blueprint.route('/new/validate', methods=['POST'])
 def validate():
     """Validate form and return validation errors.
 

@@ -58,7 +58,7 @@ from ..tasks import formdata_to_model
 blueprint = Blueprint(
     'inspirehep_authors_holdingpen',
     __name__,
-    url_prefix='/submit/author',
+    url_prefix='/authors',
     template_folder='../templates',
     static_folder='../static',
 )
@@ -203,7 +203,7 @@ def validate():
     return jsonify(result)
 
 
-@blueprint.route('/create', methods=['GET', 'POST'])
+@blueprint.route('/new', methods=['GET'])
 @register_breadcrumb(blueprint, '.new', _('New author information'))
 @login_required
 def new():
@@ -226,15 +226,13 @@ def new():
     return render_template('authors/forms/new_form.html', form=form, **ctx)
 
 
-@blueprint.route('/update', methods=['GET', 'POST'])
+@blueprint.route('/<int:recid>/update', methods=['GET'])
 @register_breadcrumb(blueprint, '.update', _('Update author information'))
 @login_required
-def update():
+def update(recid):
     """View for INSPIRE author update form."""
     from dojson.contrib.marc21.utils import create_record
     from inspirehep.dojson.hepnames import hepnames
-
-    recid = request.values.get('recid', 0, type=int)
 
     data = {}
     if recid:
@@ -260,11 +258,10 @@ def update():
         "id": "authorUpdateForm",
     }
 
-    # FIXME create template in authors module
     return render_template('authors/forms/update_form.html', form=form, **ctx)
 
 
-@blueprint.route('/submitupdate', methods=['POST'])
+@blueprint.route('/update/submit', methods=['POST'])
 @login_required
 def submitupdate():
     """Form action handler for INSPIRE author update form."""
@@ -294,7 +291,7 @@ def submitupdate():
     return render_template('authors/forms/update_success.html', **ctx)
 
 
-@blueprint.route('/submitnew', methods=['POST'])
+@blueprint.route('/new/submit', methods=['POST'])
 @login_required
 def submitnew():
     """Form action handler for INSPIRE author new form."""
@@ -324,7 +321,7 @@ def submitnew():
     return render_template('authors/forms/new_success.html', **ctx)
 
 
-@blueprint.route('/newreview', methods=['GET', 'POST'])
+@blueprint.route('/new/review', methods=['GET'])
 @login_required
 # @permission_required(viewauthorreview.name)
 def newreview():
@@ -363,7 +360,7 @@ def newreview():
     return render_template('authors/forms/review_form.html', form=form, **ctx)
 
 
-@blueprint.route('/reviewhandler', methods=['POST'])
+@blueprint.route('/new/review/submit', methods=['POST'])
 @login_required
 # @permission_required(viewauthorreview.name)
 def reviewhandler():
