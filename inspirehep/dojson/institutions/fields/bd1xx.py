@@ -192,7 +192,7 @@ def public_notes(self, key, value):
 def historical_data(self, key, value):
     """Historical data."""
     values = self.get('historical_data', [])
-    values.extend(el for el in value.get('a'))
+    values.extend(el for el in force_force_list(value.get('a')))
 
     return values
 
