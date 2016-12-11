@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,41 +20,15 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Filter-aware subclass of DoJSON's Overdo.
-
-Allows for a list of filters to be passed during instantiation,
-which are applied in succession to the result of the DoJSON rules.
-"""
-
 from __future__ import absolute_import, division, print_function
 
-from dojson import Overdo
-
-from .utils import dedupe_all_lists, strip_empty_values
+from inspirehep.dojson.model import FilterOverdo
 
 
-class FilterOverdo(Overdo):
+def test_filteroverdo_works_without_filters():
+    model = FilterOverdo()
 
-    def __init__(self, filters=None, *args, **kwargs):
-        super(FilterOverdo, self).__init__(*args, **kwargs)
-        self.filters = filters or []
+    expected = {}
+    result = model.do({})
 
-    def do(self, blob, **kwargs):
-        result = super(FilterOverdo, self).do(blob, **kwargs)
-
-        for filter_ in self.filters:
-            result = filter_(result, blob)
-
-        return result
-
-
-def add_schema(schema):
-    def _add_schema(record, blob):
-        record['$schema'] = schema
-        return record
-
-    return _add_schema
-
-
-def clean_record(record, blob):
-    return dedupe_all_lists(strip_empty_values(record))
+    assert expected == result
