@@ -52,6 +52,16 @@ def location(self, key, value):
         }
 
 
+@institutions.over('ids', '^035..')
+@utils.for_each_value
+def ids(self, key, value):
+    """All identifiers, both internal and external."""
+    return {
+        'type': force_single_element(value.get('9')),
+        'value': force_single_element(value.get('a')),
+    }
+
+
 @institutions.over('timezone', '^043..')
 @utils.for_each_value
 def timezone(self, key, value):
