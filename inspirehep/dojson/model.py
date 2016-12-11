@@ -37,7 +37,7 @@ class FilterOverdo(Overdo):
 
     def __init__(self, filters=None, *args, **kwargs):
         super(FilterOverdo, self).__init__(*args, **kwargs)
-        self.filters = filters
+        self.filters = filters or []
 
     def do(self, blob, **kwargs):
         result = super(FilterOverdo, self).do(blob, **kwargs)

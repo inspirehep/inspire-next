@@ -22,12 +22,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-import pytest
-
 from inspirehep.dojson.model import FilterOverdo
 
 
-@pytest.mark.xfail(reason='tries to iterate over None')
 def test_filteroverdo_works_without_filters():
     model = FilterOverdo()
 
