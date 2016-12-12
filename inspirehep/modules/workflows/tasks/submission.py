@@ -397,4 +397,5 @@ def prepare_files(obj, eng):
 
 def remove_references(obj, eng):
     obj.log.info(obj.data)
-    del obj.data['references']
+    if 'references' in obj.data:
+        del obj.data['references']
