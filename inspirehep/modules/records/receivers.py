@@ -71,6 +71,7 @@ def enhance_record(sender, json, *args, **kwargs):
     dates_validator(sender, json, *args, **kwargs)
     add_recids_and_validate(sender, json, *args, **kwargs)
     populate_experiment_suggest(sender, json, *args, **kwargs)
+    populate_abstract_source_suggest(sender, json, *args, **kwargs)
     after_record_enhanced.send(json)
 
 
@@ -406,3 +407,18 @@ def populate_experiment_suggest(sender, json, *args, **kwargs):
                 'payload': {'$ref': get_value(json, 'self.$ref')},
             },
         })
+
+
+def populate_abstract_source_suggest(sender, json, *args, **kwargs):
+    """Populates abstract_source_suggest field of records"""
+    if 'hep.json' in json.get('$schema'):
+        abstracts = json.get('abstracts', [])
+        for abstract in abstracts:
+            source = abstract.get('source')
+            if source:
+                abstract.update({
+                    'abstract_source_suggest': {
+                        'input': source,
+                        'output': source,
+                    },
+                })

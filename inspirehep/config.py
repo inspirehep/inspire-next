@@ -424,6 +424,11 @@ RECORDS_REST_ENDPOINTS = dict(
                 'inspirehep.modules.records.serializers'
                 ':cvformattext_v1_search'),
         },
+        suggesters=dict(
+            abstract_source=dict(completion=dict(
+                field='abstracts.abstract_source_suggest'
+            ))
+        ),
         list_route='/literature/',
         item_route=(
             '/literature'
