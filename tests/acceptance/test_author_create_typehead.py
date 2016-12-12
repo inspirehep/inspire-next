@@ -29,7 +29,7 @@ from selenium.webdriver.common.keys import Keys
 
 
 def test_institutions_typehead(selenium, login):
-    selenium.get(os.environ['SERVER_NAME'] + '/submit/author/create')
+    selenium.get(os.environ['SERVER_NAME'] + '/authors/new')
 
     institution_field = selenium.find_element_by_id('institution_history-0-name')
     _force_autocomplete_event(institution_field, 'CER')
@@ -38,7 +38,7 @@ def test_institutions_typehead(selenium, login):
 
 
 def test_experiments_typehead(selenium, login):
-    selenium.get(os.environ['SERVER_NAME'] + '/submit/author/create')
+    selenium.get(os.environ['SERVER_NAME'] + '/authors/new')
 
     experiment_field = selenium.find_element_by_id('experiments-0-name')
     _force_autocomplete_event(experiment_field, 'CM')
@@ -47,7 +47,7 @@ def test_experiments_typehead(selenium, login):
 
 
 def test_advisors_typehead(selenium, login):
-    selenium.get(os.environ['SERVER_NAME'] + '/submit/author/create')
+    selenium.get(os.environ['SERVER_NAME'] + '/authors/new')
 
     advisor_field = selenium.find_element_by_id('advisors-0-name')
     _force_autocomplete_event(advisor_field, 'mart')
