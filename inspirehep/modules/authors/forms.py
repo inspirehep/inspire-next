@@ -328,7 +328,7 @@ class AuthorUpdateForm(INSPIREForm):
     )
 
     # Hidden field to hold record id information
-    recid = fields.IntegerField(
+    control_number = fields.IntegerField(
         widget=HiddenInput(),
         validators=[validators.Optional()],
     )

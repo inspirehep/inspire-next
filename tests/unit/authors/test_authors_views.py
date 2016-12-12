@@ -85,8 +85,8 @@ def test_get_inspire_url_with_bai():
     assert expected == result
 
 
-def test_get_inspire_url_with_recid():
-    with_recid = Record({'recid': 'TODO'})
+def test_get_inspire_url_with_control_number():
+    with_recid = Record({'control_number': 'TODO'})
 
     expected = 'http://inspirehep.net/record/TODO'
     result = get_inspire_url(with_recid)
