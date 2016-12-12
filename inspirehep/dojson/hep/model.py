@@ -27,6 +27,7 @@ from __future__ import absolute_import, division, print_function
 from dojson import Overdo
 
 from inspirehep.utils.helpers import force_force_list
+from inspirehep.utils.record import get_value
 
 from ..model import FilterOverdo, add_schema, clean_record
 from ..utils import (
@@ -62,7 +63,7 @@ def add_inspire_category_from_arxiv_categories(record, blob):
         return record
 
     record.setdefault('inspire_categories', [])
-    for arxiv_category in record.get_value(record, 'arxiv_eprints.categories', default=[]):
+    for arxiv_category in get_value(record, 'arxiv_eprints.categories', default=[]):
         inspire_category = classify_field(arxiv_category)
         if inspire_category:
             record['inspire_categories'].append({
