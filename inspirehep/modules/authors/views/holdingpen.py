@@ -87,6 +87,8 @@ def convert_for_form(data):
         data["family_name"] = data["name"].get("value").split(",")[0].strip()
         data["display_name"] = data["name"].get("preferred_name")
         data["status"] = data["name"].get("status", "").lower()
+    if "native_name" in data:
+        data["native_name"] = data["native_name"][0]
     if "urls" in data:
         data["websites"] = []
         for url in data["urls"]:
