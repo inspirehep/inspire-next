@@ -47,6 +47,10 @@ from inspirehep.utils.record_getter import get_db_record
 
 from .experiments import EXPERIMENTS_MAP
 from .signals import after_record_enhanced
+from .suggester_enhancers import (
+    populate_abstract_suggester,
+    populate_experiment_name_suggester
+)
 
 
 @models_committed.connect
@@ -70,8 +74,7 @@ def enhance_record(sender, json, *args, **kwargs):
     match_valid_experiments(sender, json, *args, **kwargs)
     dates_validator(sender, json, *args, **kwargs)
     add_recids_and_validate(sender, json, *args, **kwargs)
-    populate_experiment_suggest(sender, json, *args, **kwargs)
-    populate_abstract_source_suggest(sender, json, *args, **kwargs)
+    populate_suggesters(sender, json, *args, **kwargs)
     after_record_enhanced.send(json)
 
 
@@ -391,36 +394,8 @@ def check_if_record_is_going_to_be_deleted(sender, *args, **kwargs):
             soft_delete_pidstore_for_record(record.id)
 
 
-def populate_experiment_suggest(sender, json, *args, **kwargs):
-    """Populates experiment_suggest field of experiment records."""
-
-    # FIXME: Use a dedicated method when #1355 will be resolved.
-    if 'experiments.json' in json.get('$schema'):
-        experiment_names = get_value(json, 'experiment_names.title')
-        title_variants = force_force_list(
-            get_value(json, 'title_variants.title'))
-
-        json.update({
-            'experiment_suggest': {
-                'input': experiment_names + title_variants,
-                'output': experiment_names[0],
-                'payload': {'$ref': get_value(json, 'self.$ref')},
-            },
-        })
-
-
-def populate_abstract_source_suggest(sender, json, *args, **kwargs):
-    """Populate abstract_source_suggest field of HEP records."""
-
-    # FIXME: Use a dedicated method when #1355 will be resolved.
+def populate_suggesters(sender, json, *args, **kwargs):
     if 'hep.json' in json.get('$schema'):
-        abstracts = json.get('abstracts', [])
-        for abstract in abstracts:
-            source = abstract.get('source')
-            if source:
-                abstract.update({
-                    'abstract_source_suggest': {
-                        'input': source,
-                        'output': source,
-                    },
-                })
+        populate_abstract_suggester(json)
+    elif 'experiments.json' in json.get('$schema'):
+        populate_experiment_name_suggester(json)
