@@ -2,29 +2,34 @@
   <div class="table-block">
     <h4>References</h4>
 
-    <div class="row table-header">
-      <div class="col-md-1 col-sm-1"></div>
-      <div class="col-md-4 col-sm-4">Authors</div>
-      <div class="col-md-2 col-sm-3">Journal Info</div>
-      <div class="col-md-1 col-sm-1">Year</div>
-      <div class="col-md-3 col-sm-2">Misc</div>
-    </div>
-    <div class="clearfix"></div>
-
-    <div class="table-body references">
-      <div class="row table-row"
-           ng-repeat="reference in vm.record.metadata.references">
-        <div class="col-md-1 col-sm-1"
-             ng-bind="reference.reference.number"></div>
-        <div class="col-md-4 col-sm-4"
-             ng-bind="reference.reference.authors"></div>
-        <div class="col-md-2 col-sm-3"
-             ng-bind="reference.reference.publication_info.artid"></div>
-        <div class="col-md-1 col-sm-1"
-             ng-bind="reference.reference.publication_info.year"></div>
-        <div class="col-md-3 col-sm-2"
-             ng-bind="reference.reference.misc"></div>
+    <div ng-if="vm.record.metadata.references">
+      <div class="row table-header">
+        <div class="col-md-1 col-sm-1"></div>
+        <div class="col-md-4 col-sm-4">Authors</div>
+        <div class="col-md-2 col-sm-3">Journal Info</div>
+        <div class="col-md-1 col-sm-1">Year</div>
+        <div class="col-md-3 col-sm-2">Misc</div>
       </div>
+      <div class="clearfix"></div>
+
+      <div class="table-body references">
+        <div class="row table-row"
+             ng-repeat="reference in vm.record.metadata.references">
+          <div class="col-md-1 col-sm-1"
+               ng-bind="reference.reference.number"></div>
+          <div class="col-md-4 col-sm-4"
+               ng-bind="reference.reference.authors"></div>
+          <div class="col-md-2 col-sm-3"
+               ng-bind="reference.reference.publication_info.artid"></div>
+          <div class="col-md-1 col-sm-1"
+               ng-bind="reference.reference.publication_info.year"></div>
+          <div class="col-md-3 col-sm-2"
+               ng-bind="reference.reference.misc"></div>
+        </div>
+      </div>
+    </div>
+    <div ng-if="vm.record._extra_data.formdata.references">
+      <pre>{{vm.record._extra_data.formdata.references}}</pre>
     </div>
   </div>
 </div>
