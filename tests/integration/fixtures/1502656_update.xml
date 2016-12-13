@@ -1,0 +1,50 @@
+<record>
+  <controlfield tag="001">1502656</controlfield>
+  <controlfield tag="005">20161212102059.0</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">Bozzo:2016cdc</subfield>
+    <subfield code="9">INSPIRETeX</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">HEP</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">Proceedings</subfield>
+  </datafield>
+  <datafield tag="856" ind1="4" ind2=" ">
+    <subfield code="u">http://iopscience.iop.org/issue/1742-6596/770/1</subfield>
+    <subfield code="y">IOP</subfield>
+  </datafield>
+  <datafield tag="909" ind1="C" ind2="O">
+    <subfield code="o">oai:inspirehep.net:1502656</subfield>
+    <subfield code="p">INSPIRE:HEP</subfield>
+  </datafield>
+  <datafield tag="961" ind1=" " ind2=" ">
+    <subfield code="c">2016-12-12</subfield>
+    <subfield code="x">2016-12-12</subfield>
+  </datafield>
+  <datafield tag="773" ind1=" " ind2=" ">
+    <subfield code="p">J.Phys.Conf.Ser.</subfield>
+    <subfield code="v">770</subfield>
+    <subfield code="w">C16-06-12</subfield>
+    <subfield code="y">2016</subfield>
+    <subfield code="1">1212279</subfield>
+    <subfield code="2">1386780</subfield>
+  </datafield>
+  <datafield tag="245" ind1=" " ind2=" ">
+    <subfield code="a">Proceedings, 12th International Conference on Beauty, Charm, and Hyperons in Hadronic Interactions (BEACH 2016)</subfield>
+    <subfield code="b">Fairfax, Virginia, USA, June 12-18, 2016</subfield>
+  </datafield>
+  <datafield tag="100" ind1=" " ind2=" ">
+    <subfield code="a">Bozzo, Marco</subfield>
+    <subfield code="e">ed.</subfield>
+    <subfield code="u">Genoa U.</subfield>
+    <subfield code="u">INFN, Genoa</subfield>
+    <subfield code="v">University of Genoa and INFN Genoa, Italy</subfield>
+    <subfield code="w">M.Bozzo.1</subfield>
+    <subfield code="x">1015511</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">902814</subfield>
+    <subfield code="z">902881</subfield>
+  </datafield>
+</record>
