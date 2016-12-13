@@ -172,8 +172,8 @@ def get_inspire_url(data):
     url = ""
     if "bai" in data and data["bai"]:
         url = "http://inspirehep.net/author/profile/" + data["bai"]
-    elif "recid" in data and data["recid"]:
-        url = "http://inspirehep.net/record/" + str(data["recid"])
+    elif "control_number" in data and data["control_number"]:
+        url = "http://inspirehep.net/record/" + str(data["control_number"])
     else:
         url = "http://inspirehep.net/hepnames"
     return url
@@ -250,7 +250,7 @@ def update(recid):
             convert_for_form(data)
         except requests.exceptions.RequestException:
             pass
-        data["recid"] = recid
+        data["control_number"] = recid
     else:
         return redirect(url_for("inspirehep_authors_holdingpen.new"))
     form = AuthorUpdateForm(data=data, is_update=True)

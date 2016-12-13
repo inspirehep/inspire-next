@@ -228,3 +228,8 @@ def experiments(self, key, value):
         experiments.append(experiment)
 
     return experiments
+
+
+@updateform.over('control_number', '^control_number$')
+def control_number(self, key, value):
+    return value
