@@ -1,0 +1,134 @@
+<record>
+  <controlfield tag="001">1502656</controlfield>
+  <controlfield tag="005">20161212102059.0</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">Bozzo:2016cdc</subfield>
+    <subfield code="9">INSPIRETeX</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">HEP</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">Proceedings</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Armstrong, David S.</subfield>
+    <subfield code="e">ed.</subfield>
+    <subfield code="u">William-Mary Coll.</subfield>
+    <subfield code="v">College of William &amp; Mary, Virginia, USA</subfield>
+    <subfield code="w">D.S.Armstrong.1</subfield>
+    <subfield code="x">1018108</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">903348</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Cenci, Patrizia</subfield>
+    <subfield code="e">ed.</subfield>
+    <subfield code="u">INFN, Perugia</subfield>
+    <subfield code="v">Istituto Nazionale di Fisica Nucleare, Perugia, Italy</subfield>
+    <subfield code="w">P.Cenci.1</subfield>
+    <subfield code="x">1014186</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">904996</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Giovanetti, Kevin</subfield>
+    <subfield code="e">ed.</subfield>
+    <subfield code="u">James Madison U.</subfield>
+    <subfield code="v">James Madison University, Harrisonburg, Virginia, USA</subfield>
+    <subfield code="w">K.Giovanetti.1</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">904302</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Lazzeroni, Cristina</subfield>
+    <subfield code="e">ed.</subfield>
+    <subfield code="u">Birmingham U.</subfield>
+    <subfield code="v">School of Physics and Astronomy, University of Birmingham, UK</subfield>
+    <subfield code="w">Y.Le.Bornec.1</subfield>
+    <subfield code="x">1057844</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">902671</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">McKenna, Janis</subfield>
+    <subfield code="e">ed.</subfield>
+    <subfield code="u">British Columbia U.</subfield>
+    <subfield code="v">University of British Columbia, Vancouver, Canada</subfield>
+    <subfield code="w">J.A.McKenna.1</subfield>
+    <subfield code="x">998031</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">902688</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Rubin, Philip</subfield>
+    <subfield code="e">ed.</subfield>
+    <subfield code="u">George Mason U.</subfield>
+    <subfield code="v">George Mason University, Fairfax, Virginia, USA</subfield>
+    <subfield code="w">P.Rubin.2</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">903492</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Smith, Elton S.</subfield>
+    <subfield code="e">ed.</subfield>
+    <subfield code="u">Jefferson Lab</subfield>
+    <subfield code="v">Jefferson Lab, Virginia, USA</subfield>
+    <subfield code="w">E.S.Smith.1</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">904961</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Solomey, Nick</subfield>
+    <subfield code="e">ed.</subfield>
+    <subfield code="u">Wichita State U.</subfield>
+    <subfield code="v">Wichita University, Kansas, USA</subfield>
+    <subfield code="w">N.Solomey.3</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">905868</subfield>
+  </datafield>
+  <datafield tag="700" ind1=" " ind2=" ">
+    <subfield code="a">Strakowsky, Igor</subfield>
+    <subfield code="e">ed.</subfield>
+    <subfield code="u">George Washington U.</subfield>
+    <subfield code="v">The George Washington University, Washington, DC 20052, USA</subfield>
+    <subfield code="w">I.Strakowsky.1</subfield>
+    <subfield code="y">0</subfield>
+  </datafield>
+  <datafield tag="856" ind1="4" ind2=" ">
+    <subfield code="u">http://iopscience.iop.org/issue/1742-6596/770/1</subfield>
+    <subfield code="y">IOP</subfield>
+  </datafield>
+  <datafield tag="909" ind1="C" ind2="O">
+    <subfield code="o">oai:inspirehep.net:1502656</subfield>
+    <subfield code="p">INSPIRE:HEP</subfield>
+  </datafield>
+  <datafield tag="961" ind1=" " ind2=" ">
+    <subfield code="c">2016-12-12</subfield>
+    <subfield code="x">2016-12-12</subfield>
+  </datafield>
+  <datafield tag="773" ind1=" " ind2=" ">
+    <subfield code="p">J.Phys.Conf.Ser.</subfield>
+    <subfield code="v">770</subfield>
+    <subfield code="w">C16-06-12</subfield>
+    <subfield code="y">2016</subfield>
+    <subfield code="1">1212279</subfield>
+    <subfield code="2">1386780</subfield>
+  </datafield>
+  <datafield tag="245" ind1=" " ind2=" ">
+    <subfield code="a">Proceedings, 12th International Conference on Beauty, Charm, and Hyperons in Hadronic Interactions (BEACH 2016)</subfield>
+    <subfield code="b">Fairfax, Virginia, USA, June 12-18, 2016</subfield>
+  </datafield>
+  <datafield tag="100" ind1=" " ind2=" ">
+    <subfield code="a">Bozzo, Marco</subfield>
+    <subfield code="e">ed.</subfield>
+    <subfield code="u">Genoa U.</subfield>
+    <subfield code="u">INFN, Genoa</subfield>
+    <subfield code="v">University of Genoa and INFN Genoa, Italy</subfield>
+    <subfield code="w">M.Bozzo.1</subfield>
+    <subfield code="x">1015511</subfield>
+    <subfield code="y">0</subfield>
+    <subfield code="z">902814</subfield>
+    <subfield code="z">902881</subfield>
+  </datafield>
+</record>
