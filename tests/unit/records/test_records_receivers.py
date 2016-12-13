@@ -33,6 +33,7 @@ from inspirehep.modules.records.receivers import (
     populate_recid_from_ref,
     references_validator,
     populate_experiment_suggest,
+    populate_abstract_source_suggest,
 )
 
 
@@ -767,3 +768,49 @@ def test_populate_experiment_suggest_does_nothing_if_record_is_not_experiment():
     populate_experiment_suggest(None, json_dict)
 
     assert 'experiment_suggest' not in json_dict
+
+
+def test_populate_abstract_source_suggest():
+    json_dict = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'abstracts': [
+            {'source': 'foo'},
+            {'source': 'bar'},
+        ],
+    }
+
+    populate_abstract_source_suggest(None, json_dict)
+
+    assert json_dict['abstracts'] == [
+        {
+            'abstract_source_suggest': {
+                'input': 'foo',
+                'output': 'foo',
+            },
+            'source': 'foo',
+        },
+        {
+            'abstract_source_suggest': {
+                'input': 'bar',
+                'output': 'bar',
+            },
+            'source': 'bar',
+        },
+    ]
+
+
+def test_populate_abstract_source_suggest_does_nothing_if_record_is_not_hep():
+    json_dict = {
+        '$schema': 'http://localhost:5000/schemas/records/other.json',
+        'abstracts': [
+            {'source': 'foo'},
+            {'source': 'bar'},
+        ],
+    }
+
+    populate_abstract_source_suggest(None, json_dict)
+
+    assert json_dict['abstracts'] == [
+        {'source': 'foo'},
+        {'source': 'bar'},
+    ]

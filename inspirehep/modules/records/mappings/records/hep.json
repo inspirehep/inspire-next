@@ -28,6 +28,11 @@
                 },
                 "abstracts": {
                     "properties": {
+                        "abstract_source_suggest": {
+                            "analyzer": "simple",
+                            "search_analyzer": "simple",
+                            "type": "completion"
+                        },
                         "value": {
                             "copy_to": [
                                 "abstract",
