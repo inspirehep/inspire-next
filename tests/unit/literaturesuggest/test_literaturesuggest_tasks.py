@@ -101,7 +101,7 @@ def test_formdata_to_model_populates_collections_from_type_of_doc_thesis(u, ui):
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_collections_from_field_categories_if_arxiv(u, ui):
+def test_formdata_to_model_populates_collections_from_inspire_categories_if_arxiv(u, ui):
     data = {}
     extra_data = {}
     formdata = {
@@ -109,7 +109,9 @@ def test_formdata_to_model_populates_collections_from_field_categories_if_arxiv(
         'title': [
             'bar',
         ],
-        'categories': 'baz',
+        'arxiv_eprints': {
+            'categories': ['baz']
+        },
     }
 
     obj = StubObj(data, extra_data)
@@ -141,7 +143,9 @@ def test_formdata_to_model_populates_abstracts_from_abstracts_if_arxiv(u, ui):
         'title': [
             'bar',
         ],
-        'categories': 'baz',
+        'arxiv_eprints': {
+            'categories': ['baz']
+        },
         'abstract': ' qux ',
     }
 
