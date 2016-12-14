@@ -312,7 +312,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "037__c": ["arxiv_eprints.categories"],
     "246__a": ["titles.title"],
     "595": ["hidden_notes"],
-    "650__a": ["field_categories.term"],
+    "650__a": ["inspire_categories.term"],
     "695__a": ["keywords.keyword"],
     "695__e": ["energy_ranges"],
     "773__y": ["publication_info.year"],
@@ -346,7 +346,7 @@ SEARCH_ELASTIC_KEYWORD_MAPPING = {
     "reference": ["references.doi", "references.report_number",
                   "references.journal_pubnote"
                   ],
-    "subject": ["field_categories.term"],
+    "subject": ["inspire_categories.term"],
     "texkey": ["external_system_numbers.value",
                "external_system_numbers.obsolete"
                ],
@@ -969,13 +969,13 @@ RECORDS_REST_FACETS = {
     },
     "records-authors": {
         "filters": {
-            "field_categories": terms_filter('field_categories.term'),
+            "inspire_categories": terms_filter('inspire_categories.term'),
             "institution": terms_filter('positions.institution.name')
         },
         "aggs": {
-            "field_categories": {
+            "inspire_categories": {
                 "terms": {
-                    "field": "field_categories.term",
+                    "field": "inspire_categories.term",
                     "size": 20
                 }
             },
@@ -990,7 +990,7 @@ RECORDS_REST_FACETS = {
     "records-conferences": {
         "filters": {
             "series": terms_filter('series'),
-            "field_categories": terms_filter('field_categories.term')
+            "inspire_categories": terms_filter('inspire_categories.term')
         },
         "aggs": {
             "series": {
@@ -999,9 +999,9 @@ RECORDS_REST_FACETS = {
                     "size": 20
                 }
             },
-            "field_categories": {
+            "inspire_categories": {
                 "terms": {
-                    "field": "field_categories.term",
+                    "field": "inspire_categories.term",
                     "size": 20
                 }
             },
@@ -1072,7 +1072,7 @@ RECORDS_REST_FACETS = {
         "filters": {
             "regions": terms_filter('regions'),
             "ranks": terms_filter('ranks'),
-            "field_categories": terms_filter('field_categories.term')
+            "inspire_categories": terms_filter('inspire_categories.term')
         },
         "aggs": {
             "continent": {
@@ -1087,9 +1087,9 @@ RECORDS_REST_FACETS = {
                     "size": 20
                 }
             },
-            "field_categories": {
+            "inspire_categories": {
                 "terms": {
-                    "field": "field_categories.term",
+                    "field": "inspire_categories.term",
                     "size": 20
                 }
             }

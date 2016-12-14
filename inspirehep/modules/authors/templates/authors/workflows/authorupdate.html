@@ -122,8 +122,8 @@
       {% endif %}
     {% endfor %}
   {% endif %}
-  {% if record['field_categories'] %}
-    <label>Field:</label> {{ record['field_categories']|join(", ") }}
+  {% if record['inspire_categories'] %}
+    <label>Field:</label> {{ record['inspire_categories']|join(", ") }}
     <br>
   {% endif %}
   {% if record['experiments'] %}
