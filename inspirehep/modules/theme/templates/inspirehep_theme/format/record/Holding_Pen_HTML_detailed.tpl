@@ -58,14 +58,14 @@
     {% endif %}
 
     <!-- Subjects Row-->
-    {% if record.field_categories %}
+    {% if record.inspire_categories %}
     <div class="row">
       <div class="col-md-12">
         <!-- Edit Button -->
         <a href='#' id='edit-subjects'><i class='fa fa-pencil-square-o'></i></a>
         <!-- Subjects -->
         <span id='editable-subjects'><strong> Subjects:</strong>
-        {% for term in record['field_categories'] %}
+        {% for term in record['inspire_categories'] %}
           <span> {{ term['term'] }}</span>
           {{ add_delimiter(loop, ',') }}
         {% endfor %}
