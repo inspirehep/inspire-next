@@ -119,11 +119,11 @@
                   {{ print_array(record, 'note') }}
                 {% endif %}
 
-                {% if record['field_categories'] %}
+                {% if record['inspire_categories'] %}
                 {% set comma = joiner('&nbsp') %}
                 <div class="detailed-record-field">
                   <label>Fields:</label>
-                  {% for field in record['field_categories'] -%}
+                  {% for field in record['inspire_categories'] -%}
                       {{ comma() }}
                   <span class="chip chip-conferences">
                     <a href="/search?q=&cc=conferences&q={{ field['tern'] }}">{{ field['term'] }}</a>
