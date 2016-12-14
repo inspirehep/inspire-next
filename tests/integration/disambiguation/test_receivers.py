@@ -28,13 +28,13 @@ from uuid import uuid4
 from sqlalchemy import desc
 
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_records.api import Record
 
 from inspirehep.modules.disambiguation.models import DisambiguationRecord
 from inspirehep.modules.disambiguation.receivers import (
     append_new_record_to_queue,
     append_updated_record_to_queue,
 )
+from inspirehep.modules.records.api import InspireRecord
 
 
 class _IdDict(dict):
@@ -94,7 +94,7 @@ def test_append_updated_record_to_queue(small_app):
     """Test the receiver responsible for queuing updated HEP records."""
     pid = PersistentIdentifier.get('lit', 4328)
     publication_id = str(pid.object_uuid)
-    record = Record.get_record(publication_id)
+    record = InspireRecord.get_record(publication_id)
 
     record_to_update = deepcopy(record)
     record_to_update['authors'][0]['full_name'] = "John Smith"
@@ -161,7 +161,7 @@ def test_append_updated_record_to_queue_same_data(small_app):
     """Check if for the same record, the receiver will skip the publication."""
     pid = PersistentIdentifier.get('lit', 11883)
     publication_id = str(pid.object_uuid)
-    record = Record.get_record(publication_id)
+    record = InspireRecord.get_record(publication_id)
 
     append_updated_record_to_queue(None, record, record, "records-hep", "hep")
 

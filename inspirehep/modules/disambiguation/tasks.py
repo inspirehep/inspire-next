@@ -31,7 +31,6 @@ from sqlalchemy.orm.exc import StaleDataError
 
 from invenio_db import db
 from invenio_indexer.signals import before_record_index
-from invenio_records import Record
 
 from inspirehep.modules.disambiguation.beard import make_beard_clusters
 from inspirehep.modules.disambiguation.logic import process_clusters
@@ -45,6 +44,7 @@ from inspirehep.modules.disambiguation.search import (
     get_blocks_from_record,
     get_records_from_block,
 )
+from inspirehep.modules.records.api import InspireRecord
 
 logger = get_task_logger(__name__)
 
@@ -159,7 +159,7 @@ def update_authors_recid(record_id, uuid, profile_recid):
             profile_recid = "1"
     """
     try:
-        record = Record.get_record(record_id)
+        record = InspireRecord.get_record(record_id)
         update_flag = False
 
         for author in record['authors']:

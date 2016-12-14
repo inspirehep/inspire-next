@@ -24,8 +24,6 @@
 
 import re
 
-from invenio_pidstore.models import PersistentIdentifier
-
 
 SPLIT_KEY_PATTERN = re.compile('\.|\[')
 
@@ -137,20 +135,3 @@ def is_submitted_but_not_published(record):
                 if is_complete(publication_info):
                     return False
     return had_at_least_one_journal_title
-
-
-def soft_delete_pidstore_for_record(record_id):
-    """Mark as deleted all pidstores for a specific record."""
-    pids = PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == record_id).all()
-
-    for pid in pids:
-        pid.delete()
-
-
-def merge_pidstores_of_two_merged_records(record_merged_uuid, record_deleted_uuid):
-    """Merge all pidstores of deleted record to the merged record."""
-    pids_deleted = PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == record_deleted_uuid).all()
-    pids_merged = PersistentIdentifier.query.filter(PersistentIdentifier.object_uuid == record_merged_uuid).one()
-
-    for pid in pids_deleted:
-        pid.redirect(pids_merged)

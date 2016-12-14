@@ -25,23 +25,17 @@ import pytest
 
 from elasticsearch import NotFoundError
 
-from invenio_records.api import Record
-from invenio_records.signals import before_record_update
-
-from inspirehep.modules.records.receivers import (
-    check_if_record_is_going_to_be_deleted
-)
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.search import LiteratureSearch
 
 
 def test_receive_after_model_commit(app):
     """Test if records are correctly synced with ElasticSearch."""
-    before_record_update.disconnect(check_if_record_is_going_to_be_deleted)
     json = {
         "$schema": "http://localhost:5000/schemas/records/hep.json",
         "Hello": "World"
     }
-    record = Record.create(json)
+    record = InspireRecord.create(json)
     search = LiteratureSearch()
     es_record = search.get_source(record.id)
     assert es_record["Hello"] == "World"
@@ -51,7 +45,6 @@ def test_receive_after_model_commit(app):
     es_record = search.get_source(record.id)
     assert es_record["Hello"] == "INSPIRE"
 
-    record.delete(force=True)
+    record._delete(force=True)
     with pytest.raises(NotFoundError):
         es_record = search.get_source(record.id)
-    before_record_update.connect(check_if_record_is_going_to_be_deleted)

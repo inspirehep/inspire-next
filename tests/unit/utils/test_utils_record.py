@@ -23,13 +23,13 @@ from __future__ import absolute_import, print_function
 
 from inspirehep.utils.record import get_abstract, get_subtitle, get_title, get_value
 
-from invenio_records.api import Record
-
 import pytest
+
+from inspirehep.modules.records.api import InspireRecord
 
 
 def test_get_title_returns_empty_string_when_no_titles():
-    no_titles = Record({})
+    no_titles = InspireRecord({})
 
     expected = ''
     result = get_title(no_titles)
@@ -38,7 +38,7 @@ def test_get_title_returns_empty_string_when_no_titles():
 
 
 def test_get_subtitle_returns_empty_string_when_no_titles():
-    no_titles = Record({})
+    no_titles = InspireRecord({})
 
     expected = ''
     result = get_subtitle(no_titles)
@@ -47,7 +47,7 @@ def test_get_subtitle_returns_empty_string_when_no_titles():
 
 
 def test_get_abstract_returns_empty_string_when_no_titles():
-    no_abstracts = Record({})
+    no_abstracts = InspireRecord({})
 
     expected = ''
     result = get_abstract(no_abstracts)
@@ -56,7 +56,7 @@ def test_get_abstract_returns_empty_string_when_no_titles():
 
 
 def test_get_abstract_returns_empty_string_when_abstracts_is_empty():
-    empty_abstracts = Record({'abstracts': []})
+    empty_abstracts = InspireRecord({'abstracts': []})
 
     expected = ''
     result = get_abstract(empty_abstracts)
@@ -65,7 +65,7 @@ def test_get_abstract_returns_empty_string_when_abstracts_is_empty():
 
 
 def test_get_title_returns_the_only_title():
-    single_title = Record({
+    single_title = InspireRecord({
         'titles': [
             {
                 'source': "arXiv",
@@ -81,7 +81,7 @@ def test_get_title_returns_the_only_title():
 
 
 def test_get_subtitle_returns_the_only_subtitle():
-    single_subtitle = Record({
+    single_subtitle = InspireRecord({
         'titles': [
             {
                 "source": "arXiv",
@@ -97,7 +97,7 @@ def test_get_subtitle_returns_the_only_subtitle():
 
 
 def test_get_abstract_returns_the_only_abstract():
-    single_abstract = Record({
+    single_abstract = InspireRecord({
         "abstracts": [
             {
                 "source": "arXiv",
@@ -113,7 +113,7 @@ def test_get_abstract_returns_the_only_abstract():
 
 
 def test_get_title_returns_the_non_arxiv_title_with_source():
-    double_title = Record({
+    double_title = InspireRecord({
         "titles": [
             {
                 "source": "other",
@@ -133,7 +133,7 @@ def test_get_title_returns_the_non_arxiv_title_with_source():
 
 
 def test_get_title_returns_the_non_arxiv_title():
-    double_title = Record({
+    double_title = InspireRecord({
         "titles": [
             {
                 "title": "Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia"
@@ -152,7 +152,7 @@ def test_get_title_returns_the_non_arxiv_title():
 
 
 def test_get_subtitle_returns_the_non_arxiv_subtitle_with_source():
-    double_subtitle = Record({
+    double_subtitle = InspireRecord({
         "titles": [
             {
                 "source": "other",
@@ -172,7 +172,7 @@ def test_get_subtitle_returns_the_non_arxiv_subtitle_with_source():
 
 
 def test_get_subtitle_returns_the_non_arxiv_subtitle():
-    double_subtitle = Record({
+    double_subtitle = InspireRecord({
         "titles": [
             {
                 "subtitle": "Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia"
@@ -191,7 +191,7 @@ def test_get_subtitle_returns_the_non_arxiv_subtitle():
 
 
 def test_get_abstract_returns_the_non_arxiv_abstract():
-    double_abstract = Record({
+    double_abstract = InspireRecord({
         "abstracts": [
             {
                 "source": "arXiv",
@@ -210,7 +210,7 @@ def test_get_abstract_returns_the_non_arxiv_abstract():
 
 
 def test_get_abstract_with_multiple_sources_returns_the_non_arxiv_abstract():
-    double_abstract = Record({
+    double_abstract = InspireRecord({
         "abstracts": [
             {
                 "source": "arXiv",
@@ -230,7 +230,7 @@ def test_get_abstract_with_multiple_sources_returns_the_non_arxiv_abstract():
 
 
 def test_get_value_returns_the_two_titles():
-    double_title = Record({
+    double_title = InspireRecord({
         "titles": [
             {
                 "title": "Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia"
@@ -248,7 +248,7 @@ def test_get_value_returns_the_two_titles():
 
 
 def test_get_value_returns_the_selected_title():
-    double_title = Record({
+    double_title = InspireRecord({
         "titles": [
             {
                 "title": "Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia"
@@ -266,7 +266,7 @@ def test_get_value_returns_the_selected_title():
 
 
 def test_get_value_returns_single_title():
-    empty_titles = Record({'titles': []})
+    empty_titles = InspireRecord({'titles': []})
 
     expected = []
     result = get_value(empty_titles, "titles.title")
@@ -276,7 +276,7 @@ def test_get_value_returns_single_title():
 
 @pytest.mark.xfail(reason='Returns None instead of {}.')
 def test_get_value_returns_empty_dic_when_there_are_no_titles():
-    empty_titles = Record({'titles': []})
+    empty_titles = InspireRecord({'titles': []})
 
     expected = {}
     result = get_value(empty_titles, "foo")
@@ -285,7 +285,7 @@ def test_get_value_returns_empty_dic_when_there_are_no_titles():
 
 
 def test_get_value_returns_none_on_index_error():
-    single_title = Record({
+    single_title = InspireRecord({
         'titles': [
             {
                 'title': 'Importance of a consistent choice of alpha(s) in the matching of AlpGen and Pythia',

@@ -22,13 +22,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-from invenio_records.api import Record
-
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.dojson.hep.receivers import earliest_date
 
 
 def test_earliest_date_from_preprint_date():
-    with_preprint_date = Record({'preprint_date': '2014-05-29'})
+    with_preprint_date = InspireRecord({'preprint_date': '2014-05-29'})
     earliest_date(None, with_preprint_date)
 
     expected = '2014-05-29'
@@ -38,7 +37,7 @@ def test_earliest_date_from_preprint_date():
 
 
 def test_earliest_date_from_thesis_date():
-    with_thesis_date = Record({
+    with_thesis_date = InspireRecord({
         'thesis': {'date': '2008'}
     })
     earliest_date(None, with_thesis_date)
@@ -50,7 +49,7 @@ def test_earliest_date_from_thesis_date():
 
 
 def test_earliest_date_from_thesis_defense_date():
-    with_thesis_defense_date = Record({
+    with_thesis_defense_date = InspireRecord({
         'thesis': {'defense_date': '2012-06-01'}
     })
     earliest_date(None, with_thesis_defense_date)
@@ -62,7 +61,7 @@ def test_earliest_date_from_thesis_defense_date():
 
 
 def test_earliest_date_from_publication_info_year():
-    with_publication_info_year = Record({
+    with_publication_info_year = InspireRecord({
         'publication_info': [
             {'year': '2014'}
         ]
@@ -76,7 +75,7 @@ def test_earliest_date_from_publication_info_year():
 
 
 def test_earliest_date_from_creation_modification_date_creation_date():
-    with_creation_modification_date_creation_date = Record({
+    with_creation_modification_date_creation_date = InspireRecord({
         'creation_modification_date': [
             {'creation_date': '2015-11-04'}
         ]
@@ -90,7 +89,7 @@ def test_earliest_date_from_creation_modification_date_creation_date():
 
 
 def test_earliest_date_from_imprints_date():
-    with_imprints_date = Record({
+    with_imprints_date = InspireRecord({
         'imprints': [
             {'date': '2014-09-26'}
         ]

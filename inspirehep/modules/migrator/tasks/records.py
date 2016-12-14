@@ -46,7 +46,6 @@ from invenio_db import db
 from invenio_indexer.api import RecordIndexer, current_record_to_index
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_records import Record
 from invenio_search import current_search_client
 from invenio_search.utils import schema_to_index
 
@@ -54,13 +53,10 @@ from inspirehep.dojson.processors import overdo_marc_dict
 from inspirehep.dojson.utils import get_recid_from_ref
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.dedupers import dedupe_list
 from inspirehep.utils.helpers import force_force_list
-from inspirehep.utils.record import (
-    get_value,
-    merge_pidstores_of_two_merged_records,
-    soft_delete_pidstore_for_record,
-)
+from inspirehep.utils.record import get_value
 from inspirehep.utils.record_getter import get_db_record
 
 from ..models import InspireProdRecords
@@ -312,11 +308,11 @@ def record_upsert(json):
         pid_type = get_pid_type_from_schema(json['$schema'])
         try:
             pid = PersistentIdentifier.get(pid_type, control_number)
-            record = Record.get_record(pid.object_uuid)
+            record = InspireRecord.get_record(pid.object_uuid)
             record.update(json)
             record.commit()
         except PIDDoesNotExistError:
-            record = Record.create(json, id_=None)
+            record = InspireRecord.create(json, id_=None)
             # Create persistent identifier.
             inspire_recid_minter(str(record.id), json)
 
@@ -324,9 +320,9 @@ def record_upsert(json):
             new_recid = get_recid_from_ref(json.get('new_record'))
             if new_recid:
                 merged_record = get_db_record(pid_type, new_recid)
-                merge_pidstores_of_two_merged_records(merged_record.id, record.id)
+                record.merge(merged_record)
             else:
-                soft_delete_pidstore_for_record(record.id)
+                record.delete()
 
         return record
 

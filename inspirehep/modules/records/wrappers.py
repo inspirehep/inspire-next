@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function
 
 from inspirehep.utils.record import get_title
 from inspirehep.modules.records.json_ref_loader import replace_refs
-from inspirehep.modules.records.es_record import ESRecord
+from inspirehep.modules.records.api import ESRecord
 from inspirehep.modules.search import JobsSearch
 
 

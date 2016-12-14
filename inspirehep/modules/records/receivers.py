@@ -30,20 +30,14 @@ from flask_sqlalchemy import models_committed
 
 from invenio_indexer.api import RecordIndexer
 from invenio_indexer.signals import before_record_index
-from invenio_records.api import Record
 from invenio_records.models import RecordMetadata
 from invenio_records.signals import before_record_insert, before_record_update
 
 from inspirehep.dojson.utils import classify_field, get_recid_from_ref
-from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.utils.date import create_valid_date
 from inspirehep.utils.helpers import force_force_list
-from inspirehep.utils.record import (
-    get_value,
-    merge_pidstores_of_two_merged_records,
-    soft_delete_pidstore_for_record,
-)
-from inspirehep.utils.record_getter import get_db_record
+from inspirehep.utils.record import get_value
 
 from .experiments import EXPERIMENTS_MAP
 from .signals import after_record_enhanced
@@ -56,9 +50,9 @@ def receive_after_model_commit(sender, changes):
     for model_instance, change in changes:
         if isinstance(model_instance, RecordMetadata):
             if change in ('insert', 'update'):
-                indexer.index(Record(model_instance.json, model_instance))
+                indexer.index(InspireRecord(model_instance.json, model_instance))
             else:
-                indexer.delete(Record(model_instance.json, model_instance))
+                indexer.delete(InspireRecord(model_instance.json, model_instance))
 
 
 @before_record_index.connect
@@ -368,27 +362,6 @@ def add_recids_and_validate(sender, json, *args, **kwargs):
     """Ensure that recids are generated before being validated."""
     populate_recid_from_ref(sender, json, *args, **kwargs)
     references_validator(sender, json, *args, **kwargs)
-
-
-@before_record_update.connect
-def check_if_record_is_going_to_be_deleted(sender, *args, **kwargs):
-    """Checks if 'deleted' field is set as True before updating.
-
-    If 'deleted' field exists and its value is True, before update,
-    then delete all the record's pidstores.
-    """
-    control_number = sender.get('control_number')
-    pid_type = get_pid_type_from_schema(sender.get('$schema'))
-    record = get_db_record(pid_type, control_number)
-
-    if sender.get('deleted'):
-        new_recid = get_recid_from_ref(sender.get('new_record'))
-        if new_recid:
-            merged_record = get_db_record(pid_type, new_recid)
-            merge_pidstores_of_two_merged_records(merged_record.id, record.id)
-        else:
-            record = get_db_record(pid_type, control_number)
-            soft_delete_pidstore_for_record(record.id)
 
 
 def populate_experiment_suggest(sender, json, *args, **kwargs):

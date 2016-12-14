@@ -35,16 +35,16 @@ from invenio_accounts.testutils import login_user_via_view
 from invenio_collections.models import Collection
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_records.api import Record
 from invenio_search import current_search_client as es
 
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.search.api import LiteratureSearch
 from inspirehep.modules.cache import current_cache
 
 
 def _create_and_index_record(record):
-    record = Record.create(record)
+    record = InspireRecord.create(record)
     inspire_recid_minter(record.id, record)
     # invenio-collections will populate _collections field in record upon
     # commit
@@ -80,8 +80,8 @@ def sample_record(app):
 
     pid = PersistentIdentifier.get('lit', '123')
     db.session.delete(pid)
-    record = Record.get_record(record_id)
-    record.delete(force=True)
+    record = InspireRecord.get_record(record_id)
+    record._delete(force=True)
     current_app.extensions[
         'invenio-db'].versioning_manager.transaction_cls.query.delete()
     db.session.commit()
@@ -138,7 +138,7 @@ def restricted_record(app):
     db.session.delete(collection)
     db.session.delete(another_collection)
     db.session.delete(pid)
-    record.delete(force=True)
+    record._delete(force=True)
     current_app.extensions[
         'invenio-db'].versioning_manager.transaction_cls.query.delete()
     db.session.commit()

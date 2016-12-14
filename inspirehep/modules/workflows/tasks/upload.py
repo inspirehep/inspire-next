@@ -29,9 +29,9 @@ from pprint import pformat
 from flask import url_for
 
 from invenio_db import db
-from invenio_records import Record
 
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
+from inspirehep.modules.records.api import InspireRecord
 
 
 def store_record(obj, *args, **kwargs):
@@ -44,7 +44,7 @@ def store_record(obj, *args, **kwargs):
     # FIXME: Do some preprocessing of obj.data before creating a record so that
     # we're sure that the schema will be validated without touching the full
     # holdingpen stack.
-    record = Record.create(obj.data, id_=None)
+    record = InspireRecord.create(obj.data, id_=None)
 
     # Create persistent identifier.
     inspire_recid_minter(str(record.id), record)

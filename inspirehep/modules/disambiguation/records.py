@@ -29,12 +29,11 @@ from flask import current_app, url_for
 
 from invenio_db import db
 
-from invenio_records import Record
 from invenio_records.signals import after_record_insert
 
 from inspirehep.dojson import utils as inspire_dojson_utils
 from inspirehep.modules.pidstore.minters import inspire_recid_minter
-
+from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.disambiguation.receivers import (
     append_new_record_to_queue,
 )
@@ -125,7 +124,7 @@ def create_author(profile):
     after_record_insert.disconnect(append_new_record_to_queue)
 
     # Create a new author profile.
-    record = Record.create(record, id_=None)
+    record = InspireRecord.create(record, id_=None)
 
     # Create Inspire recid.
     record_pid = inspire_recid_minter(record.id, record)

@@ -23,11 +23,12 @@ import mock
 import pytest
 
 from inspirehep.utils.bibtex import Bibtex
-from invenio_records.api import Record
+
+from inspirehep.modules.records.api import InspireRecord
 
 
 def test_get_entry_type_no_collections_no_pubinfo():
-    no_collections_no_pubinfo = Record({})
+    no_collections_no_pubinfo = InspireRecord({})
 
     expected = ('article', 'article')
     result = Bibtex(no_collections_no_pubinfo)._get_entry_type()
@@ -36,7 +37,7 @@ def test_get_entry_type_no_collections_no_pubinfo():
 
 
 def test_get_entry_type_no_primary_collections_no_pubinfo():
-    no_primary_collections_no_pubinfo = Record({
+    no_primary_collections_no_pubinfo = InspireRecord({
         'collections': [
             {'not-primary': 'foo'}
         ]
@@ -49,7 +50,7 @@ def test_get_entry_type_no_primary_collections_no_pubinfo():
 
 
 def test_get_entry_type_conferencepaper_no_pubinfo():
-    conferencepaper_no_pubinfo = Record({
+    conferencepaper_no_pubinfo = InspireRecord({
         'collections': [
             {'primary': 'conferencepaper'}
         ]
@@ -62,7 +63,7 @@ def test_get_entry_type_conferencepaper_no_pubinfo():
 
 
 def test_get_entry_type_thesis_no_pubinfo():
-    thesis_no_pubinfo = Record({
+    thesis_no_pubinfo = InspireRecord({
         'collections': [
             {'primary': 'thesis'}
         ]
@@ -75,7 +76,7 @@ def test_get_entry_type_thesis_no_pubinfo():
 
 
 def test_get_entry_type_proceedings_no_pubinfo():
-    proceedings_no_pubinfo = Record({
+    proceedings_no_pubinfo = InspireRecord({
         'collections': [
             {'primary': 'proceedings'}
         ]
@@ -88,7 +89,7 @@ def test_get_entry_type_proceedings_no_pubinfo():
 
 
 def test_get_entry_type_book_no_pubinfo():
-    book_no_pubinfo = Record({
+    book_no_pubinfo = InspireRecord({
         'collections': [
             {'primary': 'book'}
         ]
@@ -101,7 +102,7 @@ def test_get_entry_type_book_no_pubinfo():
 
 
 def test_get_entry_type_bookchapter_no_pubinfo():
-    bookchapter_no_pubinfo = Record({
+    bookchapter_no_pubinfo = InspireRecord({
         'collections': [
             {'primary': 'bookchapter'}
         ]
@@ -114,7 +115,7 @@ def test_get_entry_type_bookchapter_no_pubinfo():
 
 
 def test_get_entry_type_arxiv_no_pubinfo():
-    arxiv_no_pubinfo = Record({
+    arxiv_no_pubinfo = InspireRecord({
         'collections': [
             {'primary': 'arxiv'}
         ]
@@ -127,7 +128,7 @@ def test_get_entry_type_arxiv_no_pubinfo():
 
 
 def test_get_entry_type_published_no_pubinfo():
-    published_no_pubinfo = Record({
+    published_no_pubinfo = InspireRecord({
         'collections': [
             {'primary': 'published'}
         ]
@@ -140,7 +141,7 @@ def test_get_entry_type_published_no_pubinfo():
 
 
 def test_get_entry_type_no_collections_one_valid_pubinfo():
-    no_collections_one_valid_pubinfo = Record({
+    no_collections_one_valid_pubinfo = InspireRecord({
         'publication_info': {
             'journal_title': 'foo',
             'journal_volume': 'bar',
@@ -156,7 +157,7 @@ def test_get_entry_type_no_collections_one_valid_pubinfo():
 
 
 def test_get_entry_type_no_collections_one_invalid_pubinfo():
-    no_collections_one_invalid_pubinfo = Record({
+    no_collections_one_invalid_pubinfo = InspireRecord({
         'publication_info': {}
     })
 
@@ -167,7 +168,7 @@ def test_get_entry_type_no_collections_one_invalid_pubinfo():
 
 
 def test_get_entry_type_no_collections_second_pubinfo_valid():
-    no_collections_second_pubinfo_valid = Record({
+    no_collections_second_pubinfo_valid = InspireRecord({
         'publication_info': [
             {},
             {
@@ -186,7 +187,7 @@ def test_get_entry_type_no_collections_second_pubinfo_valid():
 
 
 def test_get_entry_type_one_collection_one_pubinfo():
-    one_collection_one_pubinfo = Record({
+    one_collection_one_pubinfo = InspireRecord({
         'collections': [{'primary': 'conferencepaper'}],
         'publication_info': [
             {
@@ -211,7 +212,7 @@ def test_fetch_fields_missing_required_key(self, _get_key):
 
     from inspirehep.utils.export import MissingRequiredFieldError
 
-    dummy = Record({})
+    dummy = InspireRecord({})
 
     with pytest.raises(MissingRequiredFieldError) as excinfo:
         Bibtex(dummy)._fetch_fields(['key'], [])
@@ -219,7 +220,7 @@ def test_fetch_fields_missing_required_key(self, _get_key):
 
 
 def test_format_output_row_single_author():
-    dummy = Record({})
+    dummy = InspireRecord({})
 
     expected = u'      author         = "0",\n'
     result = Bibtex(dummy)._format_output_row('author', [0])
@@ -228,7 +229,7 @@ def test_format_output_row_single_author():
 
 
 def test_format_output_row_between_one_and_ten_authors():
-    dummy = Record({})
+    dummy = InspireRecord({})
 
     expected = u'      author         = "0 and 1 and 2",\n'
     result = Bibtex(dummy)._format_output_row('author', list(range(3)))
@@ -237,7 +238,7 @@ def test_format_output_row_between_one_and_ten_authors():
 
 
 def test_format_output_row_more_than_ten_authors():
-    dummy = Record({})
+    dummy = InspireRecord({})
 
     expected = u'      author         = "0 and others",\n'
     result = Bibtex(dummy)._format_output_row('author', list(range(11)))
@@ -246,7 +247,7 @@ def test_format_output_row_more_than_ten_authors():
 
 
 def test_format_output_row_title():
-    dummy = Record({})
+    dummy = InspireRecord({})
 
     expected = u'      title          = "{bar}",\n'
     result = Bibtex(dummy)._format_output_row('title', 'bar')
@@ -255,7 +256,7 @@ def test_format_output_row_title():
 
 
 def test_format_output_row_doi():
-    dummy = Record({})
+    dummy = InspireRecord({})
 
     expected = u'      doi            = "bar",\n'
     result = Bibtex(dummy)._format_output_row('doi', 'bar')
@@ -264,7 +265,7 @@ def test_format_output_row_doi():
 
 
 def test_format_output_row_slaccitation():
-    dummy = Record({})
+    dummy = InspireRecord({})
 
     expected = u'      SLACcitation   = "bar"'
     result = Bibtex(dummy)._format_output_row('SLACcitation', 'bar')
@@ -273,7 +274,7 @@ def test_format_output_row_slaccitation():
 
 
 def test_format_output_row_number_value():
-    dummy = Record({})
+    dummy = InspireRecord({})
 
     expected = u'      foo            = "0",\n'
     result = Bibtex(dummy)._format_output_row('foo', 0)
@@ -282,7 +283,7 @@ def test_format_output_row_number_value():
 
 
 def test_format_output_row_not_number_value():
-    dummy = Record({})
+    dummy = InspireRecord({})
 
     expected = u'      foo            = "bar",\n'
     result = Bibtex(dummy)._format_output_row('foo', 'bar')
@@ -291,7 +292,7 @@ def test_format_output_row_not_number_value():
 
 
 def test_is_number():
-    dummy = Record({})
+    dummy = InspireRecord({})
 
     assert Bibtex(dummy)._is_number(0)
     assert not Bibtex(dummy)._is_number('foo')
@@ -301,7 +302,7 @@ def test_is_number():
 def test_get_key_empty(_g_c_k):
     _g_c_k.return_value = True
 
-    dummy = Record({})
+    dummy = InspireRecord({})
 
     expected = ''
     result = Bibtex(dummy)._get_key()
@@ -313,7 +314,7 @@ def test_get_key_empty(_g_c_k):
 def test_get_key_from_control_number(_g_c_k):
     _g_c_k.return_value = False
 
-    with_control_number = Record({'control_number': 1})
+    with_control_number = InspireRecord({'control_number': 1})
 
     expected = 1
     result = Bibtex(with_control_number)._get_key()
@@ -322,7 +323,7 @@ def test_get_key_from_control_number(_g_c_k):
 
 
 def test_get_author_no_authors_no_corporate_author():
-    no_authors_no_corporate_author = Record({})
+    no_authors_no_corporate_author = InspireRecord({})
 
     expected = []
     result = Bibtex(no_authors_no_corporate_author)._get_author()
@@ -331,7 +332,7 @@ def test_get_author_no_authors_no_corporate_author():
 
 
 def test_get_author_one_author_without_full_name():
-    one_author_without_full_name = Record({
+    one_author_without_full_name = InspireRecord({
         'authors': [{}]
     })
 
@@ -342,7 +343,7 @@ def test_get_author_one_author_without_full_name():
 
 
 def test_get_author_one_author_with_one_fullname():
-    one_author_with_one_fullname = Record({
+    one_author_with_one_fullname = InspireRecord({
         'authors': [
             {'full_name': 'Higgs, Peter W.'}
         ]
@@ -355,7 +356,7 @@ def test_get_author_one_author_with_one_fullname():
 
 
 def test_get_author_two_authors_with_fullnames():
-    two_authors_with_fullnames = Record({
+    two_authors_with_fullnames = InspireRecord({
         'authors': [
             {'full_name': 'Englert, F.'},
             {'full_name': 'Brout, R.'}
@@ -369,7 +370,7 @@ def test_get_author_two_authors_with_fullnames():
 
 
 def test_get_author_two_authors_one_a_supervisor():
-    two_authors_one_a_supervisor = Record({
+    two_authors_one_a_supervisor = InspireRecord({
         'authors': [
             {'full_name': 'Mankuzhiyil, Nijil'},
             {
@@ -391,7 +392,7 @@ def test_get_author_two_authors_one_a_supervisor():
 
 
 def test_get_author_corporate_author():
-    corporate_author = Record({
+    corporate_author = InspireRecord({
         'corporate_author': [
             'CMS Collaboration'
         ]
@@ -404,13 +405,13 @@ def test_get_author_corporate_author():
 
 
 def test_get_editor_no_authors():
-    no_authors = Record({})
+    no_authors = InspireRecord({})
 
     assert Bibtex(no_authors)._get_editor() is None
 
 
 def test_get_editor_no_author_has_editor_role():
-    no_author_has_editor_role = Record({
+    no_author_has_editor_role = InspireRecord({
         'authors': [
             {'full_name': 'Englert, F.'},
             {'full_name': 'Brout, R.'}
@@ -421,7 +422,7 @@ def test_get_editor_no_author_has_editor_role():
 
 
 def test_get_editor_first_author_has_editor_role():
-    first_author_has_editor_role = Record({
+    first_author_has_editor_role = InspireRecord({
         'authors': [
             {
                 'full_name': 'Englert, F.',
@@ -438,7 +439,7 @@ def test_get_editor_first_author_has_editor_role():
 
 
 def test_get_editor_non_first_author_has_editor_role():
-    non_first_author_has_editor_role = Record({
+    non_first_author_has_editor_role = InspireRecord({
         'authors': [
             {'full_name': 'Englert, F.'},
             {
@@ -452,7 +453,7 @@ def test_get_editor_non_first_author_has_editor_role():
 
 
 def test_get_title_no_titles():
-    no_titles = Record({})
+    no_titles = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_titles)._get_title()
@@ -461,7 +462,7 @@ def test_get_title_no_titles():
 
 
 def test_get_title_one_title():
-    one_title = Record({
+    one_title = InspireRecord({
         'titles': {
             'title': 'Partial Symmetries of Weak Interactions'
         }
@@ -474,7 +475,7 @@ def test_get_title_one_title():
 
 
 def test_get_title_with_a_list_of_titles_selectes_first():
-    a_list_of_titles = Record({
+    a_list_of_titles = InspireRecord({
         'titles': [
             {'title': 'Broken Symmetries and the Masses of Gauge Bosons'},
             {'title': 'BROKEN SYMMETRIES AND THE MASSES OF GAUGE BOSONS.'}
@@ -488,7 +489,7 @@ def test_get_title_with_a_list_of_titles_selectes_first():
 
 
 def test_get_collaboration_no_collaboration():
-    no_collaboration = Record({})
+    no_collaboration = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_collaboration)._get_collaboration()
@@ -497,7 +498,7 @@ def test_get_collaboration_no_collaboration():
 
 
 def test_get_collaboration_with_a_list_of_collaboration_selects_first():
-    a_list_of_collaboration = Record({
+    a_list_of_collaboration = InspireRecord({
         'collaboration': [
             {'value': 'ATLAS'},
             {'value': 'CMS'}
@@ -511,7 +512,7 @@ def test_get_collaboration_with_a_list_of_collaboration_selects_first():
 
 
 def test_get_collaboration_malformed_collaboration():
-    malformed_collaboration = Record({
+    malformed_collaboration = InspireRecord({
         'collaboration': [
             {'notvalue': 'ATLAS'}
         ]
@@ -524,7 +525,7 @@ def test_get_collaboration_malformed_collaboration():
 
 
 def test_get_organization_no_imprints():
-    no_imprints = Record({})
+    no_imprints = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_imprints)._get_organization()
@@ -533,7 +534,7 @@ def test_get_organization_no_imprints():
 
 
 def test_get_organization_with_a_list_of_imprints_selects_first_with_a_publisher():
-    a_list_of_imprints_with_a_publisher = Record({
+    a_list_of_imprints_with_a_publisher = InspireRecord({
         'imprints': [
             {},
             {'publisher': 'Cambridge University Press'}
@@ -547,7 +548,7 @@ def test_get_organization_with_a_list_of_imprints_selects_first_with_a_publisher
 
 
 def test_get_address_no_imprints():
-    no_imprints = Record({})
+    no_imprints = InspireRecord({})
 
     expected = []
     result = Bibtex(no_imprints)._get_address()
@@ -556,7 +557,7 @@ def test_get_address_no_imprints():
 
 
 def test_get_address_a_list_of_imprints_with_no_places():
-    a_list_of_imprints_with_no_places = Record({
+    a_list_of_imprints_with_no_places = InspireRecord({
         'imprints': [
             {'notplace': 'Piscataway, USA'}
         ]
@@ -566,7 +567,7 @@ def test_get_address_a_list_of_imprints_with_no_places():
 
 
 def test_get_address_a_list_of_imprints_with_one_place_not_a_list():
-    a_list_of_imprints_with_one_place_not_a_list = Record({
+    a_list_of_imprints_with_one_place_not_a_list = InspireRecord({
         'imprints': [
             {'place': 'Piscataway, USA'}
         ]
@@ -579,7 +580,7 @@ def test_get_address_a_list_of_imprints_with_one_place_not_a_list():
 
 
 def test_get_address_a_list_of_imprints_with_one_place_a_list():
-    a_list_of_imprints_with_one_place_a_list = Record({
+    a_list_of_imprints_with_one_place_a_list = InspireRecord({
         'imprints': [
             {
                 'place': [
@@ -597,7 +598,7 @@ def test_get_address_a_list_of_imprints_with_one_place_a_list():
 
 
 def test_get_address_a_list_of_imprints_with_two_places():
-    a_list_of_imprints_with_two_places = Record({
+    a_list_of_imprints_with_two_places = InspireRecord({
         'imprints': [
             {'place': 'Moscow'},
             {'place': 'Russia'}
@@ -611,7 +612,7 @@ def test_get_address_a_list_of_imprints_with_two_places():
 
 
 def test_get_school_no_authors():
-    no_authors = Record({})
+    no_authors = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_authors)._get_school()
@@ -620,7 +621,7 @@ def test_get_school_no_authors():
 
 
 def test_get_school_a_list_of_authors_with_no_affiliations():
-    a_list_of_authors_with_no_affiliations = Record({'authors': []})
+    a_list_of_authors_with_no_affiliations = InspireRecord({'authors': []})
 
     expected = ''
     result = Bibtex(a_list_of_authors_with_no_affiliations)._get_school()
@@ -629,7 +630,7 @@ def test_get_school_a_list_of_authors_with_no_affiliations():
 
 
 def test_get_school_a_list_of_authors_with_one_affiliation_each():
-    a_list_of_authors_with_one_affiliation_each = Record({
+    a_list_of_authors_with_one_affiliation_each = InspireRecord({
         'authors': [
             {
                 'affiliations': [
@@ -651,7 +652,7 @@ def test_get_school_a_list_of_authors_with_one_affiliation_each():
 
 
 def test_get_school_a_list_of_authors_with_more_than_one_affiliation_each():
-    a_list_of_authors_with_more_than_one_affiliation_each = Record({
+    a_list_of_authors_with_more_than_one_affiliation_each = InspireRecord({
         'authors': [
             {
                 'affiliations': [
@@ -675,7 +676,7 @@ def test_get_school_a_list_of_authors_with_more_than_one_affiliation_each():
 
 
 def test_get_booktitle_not_in_proceedings():
-    record = Record({})
+    record = InspireRecord({})
 
     not_in_proceedings = Bibtex(record)
     not_in_proceedings.entry_type = 'not-inproceedings'
@@ -689,7 +690,7 @@ def test_get_booktitle_from_generate_booktitle(g_b):
     # TODO: mock the actual generate_booktitle output.
     g_b.return_value = 'foo bar baz'
 
-    record = Record({})
+    record = InspireRecord({})
 
     in_proceedings = Bibtex(record)
     in_proceedings.entry_type = 'inproceedings'
@@ -701,7 +702,7 @@ def test_get_booktitle_from_generate_booktitle(g_b):
 
 
 def test_get_year_no_publication_info_no_thesis_no_imprints_no_preprint_date():
-    no_publication_info_no_thesis_no_imprints_no_preprint_date = Record({})
+    no_publication_info_no_thesis_no_imprints_no_preprint_date = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_publication_info_no_thesis_no_imprints_no_preprint_date)._get_year()
@@ -710,7 +711,7 @@ def test_get_year_no_publication_info_no_thesis_no_imprints_no_preprint_date():
 
 
 def test_get_year_from_publication_info_an_empty_list():
-    publication_info_an_empty_list = Record({
+    publication_info_an_empty_list = InspireRecord({
         'publication_info': []
     })
 
@@ -721,7 +722,7 @@ def test_get_year_from_publication_info_an_empty_list():
 
 
 def test_get_year_from_publication_info_a_list_one_year():
-    publication_info_a_list_one_year = Record({
+    publication_info_a_list_one_year = InspireRecord({
         'publication_info': [
             {'year': '2015'}
         ]
@@ -734,7 +735,7 @@ def test_get_year_from_publication_info_a_list_one_year():
 
 
 def test_get_year_from_publication_info_a_list_from_imprints():
-    publication_info_a_list_from_imprints = Record({
+    publication_info_a_list_from_imprints = InspireRecord({
         'publication_info': [],
         'imprints': [
             {'date': '2015-12-04'}
@@ -748,7 +749,7 @@ def test_get_year_from_publication_info_a_list_from_imprints():
 
 
 def test_get_year_from_publication_info_a_list_from_preprint_date():
-    publication_info_a_list_from_preprint_date = Record({
+    publication_info_a_list_from_preprint_date = InspireRecord({
         'publication_info': [],
         'preprint_date': [
             '2015-12-04'
@@ -762,7 +763,7 @@ def test_get_year_from_publication_info_a_list_from_preprint_date():
 
 
 def test_get_year_from_thesis_an_empty_obj():
-    record = Record({
+    record = InspireRecord({
         'thesis': {}
     })
 
@@ -776,7 +777,7 @@ def test_get_year_from_thesis_an_empty_obj():
 
 
 def test_get_year_from_thesis_an_empty_obj_but_preprint_date():
-    record = Record({
+    record = InspireRecord({
         'preprint_date': '1998-04-30',
         'thesis': {}
     })
@@ -791,7 +792,7 @@ def test_get_year_from_thesis_an_empty_obj_but_preprint_date():
 
 
 def test_get_year_from_thesis_an_empty_obj_but_imprints():
-    record = Record({
+    record = InspireRecord({
         'imprints': [{'date': '2015-12-04'}],
         'thesis': {}
     })
@@ -806,7 +807,7 @@ def test_get_year_from_thesis_an_empty_obj_but_imprints():
 
 
 def test_get_year_from_thesis_one_date():
-    record = Record({
+    record = InspireRecord({
         'thesis': {'date': '2008'}
     })
 
@@ -820,7 +821,7 @@ def test_get_year_from_thesis_one_date():
 
 
 def test_get_year_from_imprints_an_empty_list():
-    imprints_an_empty_list = Record({
+    imprints_an_empty_list = InspireRecord({
         'imprints': []
     })
 
@@ -831,7 +832,7 @@ def test_get_year_from_imprints_an_empty_list():
 
 
 def test_get_year_from_imprints_one_date():
-    imprints_one_date = Record({
+    imprints_one_date = InspireRecord({
         'imprints': [
             {'date': '1998-04-30'}
         ]
@@ -844,7 +845,7 @@ def test_get_year_from_imprints_one_date():
 
 
 def test_get_year_from_imprints_two_dates():
-    imprints_two_dates = Record({
+    imprints_two_dates = InspireRecord({
         'imprints': [
             {'date': '1998-04-30'},
             {'date': '2015-12-04'}
@@ -858,7 +859,7 @@ def test_get_year_from_imprints_two_dates():
 
 
 def test_get_year_from_preprint_date_an_empty_list():
-    preprint_date_an_empty_list = Record({
+    preprint_date_an_empty_list = InspireRecord({
         'preprint_date': []
     })
 
@@ -869,7 +870,7 @@ def test_get_year_from_preprint_date_an_empty_list():
 
 
 def test_get_year_from_preprint_date_one_date():
-    preprint_date_one_date = Record({
+    preprint_date_one_date = InspireRecord({
         'preprint_date': [
             '2015-12-04'
         ]
@@ -882,7 +883,7 @@ def test_get_year_from_preprint_date_one_date():
 
 
 def test_get_year_from_preprint_date_two_dates():
-    preprint_date_two_dates = Record({
+    preprint_date_two_dates = InspireRecord({
         'preprint_date': [
             '1998-04-30',
             '2015-12-04'
@@ -896,7 +897,7 @@ def test_get_year_from_preprint_date_two_dates():
 
 
 def test_get_journal_no_publication_info():
-    no_publication_info = Record({})
+    no_publication_info = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_publication_info)._get_journal()
@@ -905,7 +906,7 @@ def test_get_journal_no_publication_info():
 
 
 def test_get_journal_publication_info_a_list_no_journal_title():
-    publication_info_a_list_no_journal_title = Record({
+    publication_info_a_list_no_journal_title = InspireRecord({
         'publication_info': []
     })
 
@@ -916,7 +917,7 @@ def test_get_journal_publication_info_a_list_no_journal_title():
 
 
 def test_get_journal_publication_info_a_list_one_journal_title():
-    publication_info_a_list_one_journal_title = Record({
+    publication_info_a_list_one_journal_title = InspireRecord({
         'publication_info': [
             {'journal_title': 'Nucl.Phys.'}
         ]
@@ -929,7 +930,7 @@ def test_get_journal_publication_info_a_list_one_journal_title():
 
 
 def test_get_journal_publication_info_a_list_one_journal_title_a_list():
-    publication_info_a_list_one_journal_title_a_list = Record({
+    publication_info_a_list_one_journal_title_a_list = InspireRecord({
         'publication_info': [
             {
                 'journal_title': [
@@ -947,7 +948,7 @@ def test_get_journal_publication_info_a_list_one_journal_title_a_list():
 
 
 def test_get_volume_no_publication_info_no_book_series():
-    no_publication_info_no_book_series = Record({})
+    no_publication_info_no_book_series = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_publication_info_no_book_series)._get_volume()
@@ -956,7 +957,7 @@ def test_get_volume_no_publication_info_no_book_series():
 
 
 def test_get_volume_from_publication_info_an_empty_list():
-    publication_info_an_empty_list = Record({
+    publication_info_an_empty_list = InspireRecord({
         'publication_info': []
     })
 
@@ -967,7 +968,7 @@ def test_get_volume_from_publication_info_an_empty_list():
 
 
 def test_get_volume_from_publication_info_a_list_one_with_volume():
-    publication_info_a_list_one_with_volume = Record({
+    publication_info_a_list_one_with_volume = InspireRecord({
         'publication_info': [
             {'journal_volume': 'D89'}
         ]
@@ -980,7 +981,7 @@ def test_get_volume_from_publication_info_a_list_one_with_volume():
 
 
 def test_get_volume_from_publication_info_one_with_volume_JHEP():
-    publication_info_a_list_one_with_volume_JHEP = Record({
+    publication_info_a_list_one_with_volume_JHEP = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'JHEP',
@@ -996,7 +997,7 @@ def test_get_volume_from_publication_info_one_with_volume_JHEP():
 
 
 def test_get_volume_from_publication_info_a_list_two_with_volume():
-    publication_info_a_list_two_with_volume = Record({
+    publication_info_a_list_two_with_volume = InspireRecord({
         'publication_info': [
             {'journal_volume': 'D89'},
             {'journal_volume': 'D91'}
@@ -1010,7 +1011,7 @@ def test_get_volume_from_publication_info_a_list_two_with_volume():
 
 
 def test_get_volume_from_publication_info_actually_from_book_series():
-    publication_info_actually_from_book_series = Record({
+    publication_info_actually_from_book_series = InspireRecord({
         'publication_info': [],
         'book_series': [
             {'volume': '11'}
@@ -1024,7 +1025,7 @@ def test_get_volume_from_publication_info_actually_from_book_series():
 
 
 def test_get_volume_from_book_series_an_empty_list():
-    book_series_an_empty_list = Record({
+    book_series_an_empty_list = InspireRecord({
         'book_series': []
     })
 
@@ -1035,7 +1036,7 @@ def test_get_volume_from_book_series_an_empty_list():
 
 
 def test_get_volume_from_book_series_one_volume():
-    book_series_one_volume = Record({
+    book_series_one_volume = InspireRecord({
         'book_series': [
             {'volume': '11'}
         ]
@@ -1048,7 +1049,7 @@ def test_get_volume_from_book_series_one_volume():
 
 
 def test_get_volume_from_book_series_two_volumes():
-    book_series_two_volumes = Record({
+    book_series_two_volumes = InspireRecord({
         'book_series': [
             {'volume': '11'},
             {'volume': '5'}
@@ -1062,7 +1063,7 @@ def test_get_volume_from_book_series_two_volumes():
 
 
 def test_get_number_no_publication_info():
-    no_publication_info = Record({})
+    no_publication_info = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_publication_info)._get_number()
@@ -1071,7 +1072,7 @@ def test_get_number_no_publication_info():
 
 
 def test_get_number_publication_info_an_empty_list():
-    publication_info_an_empty_list = Record({
+    publication_info_an_empty_list = InspireRecord({
         'publication_info': []
     })
 
@@ -1082,7 +1083,7 @@ def test_get_number_publication_info_an_empty_list():
 
 
 def test_get_number_publication_info_a_list_one_issue():
-    publication_info_a_list_one_issue = Record({
+    publication_info_a_list_one_issue = InspireRecord({
         'publication_info': [
             {'journal_issue': '5'}
         ]
@@ -1095,7 +1096,7 @@ def test_get_number_publication_info_a_list_one_issue():
 
 
 def test_get_number_publication_info_a_list_two_issues():
-    publication_info_a_list_two_issues = Record({
+    publication_info_a_list_two_issues = InspireRecord({
         'publication_info': [
             {'journal_issue': '11'},
             {'journal_issue': '5'}
@@ -1109,7 +1110,7 @@ def test_get_number_publication_info_a_list_two_issues():
 
 
 def test_get_pages_no_publication_info():
-    no_publication_info = Record({})
+    no_publication_info = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_publication_info)._get_pages()
@@ -1118,7 +1119,7 @@ def test_get_pages_no_publication_info():
 
 
 def test_get_pages_publication_info_an_empty_list():
-    publication_info_an_empty_list = Record({
+    publication_info_an_empty_list = InspireRecord({
         'publication_info': []
     })
 
@@ -1129,7 +1130,7 @@ def test_get_pages_publication_info_an_empty_list():
 
 
 def test_get_pages_publication_info_one_page():
-    publication_info_one_page = Record({
+    publication_info_one_page = InspireRecord({
         'publication_info': [
             {'page_start': '585',
              'page_end': '587'}
@@ -1143,7 +1144,7 @@ def test_get_pages_publication_info_one_page():
 
 
 def test_get_pages_publication_info_two_pages():
-    publication_info_two_pages = Record({
+    publication_info_two_pages = InspireRecord({
         'publication_info': [
             {'page_start': '585',
              'page_end': '587'},
@@ -1159,7 +1160,7 @@ def test_get_pages_publication_info_two_pages():
 
 
 def test_get_note_not_article_not_in_proceedings():
-    record = Record({})
+    record = InspireRecord({})
 
     not_article_not_in_proceedings = Bibtex(record)
     not_article_not_in_proceedings.entry_type = 'not-article'
@@ -1168,13 +1169,13 @@ def test_get_note_not_article_not_in_proceedings():
 
 
 def test_get_note_no_publication_info():
-    no_publication_info = Record({})
+    no_publication_info = InspireRecord({})
 
     assert Bibtex(no_publication_info)._get_note() is None
 
 
 def test_get_note_publication_info_an_empty_list():
-    publication_info_an_empty_list = Record({
+    publication_info_an_empty_list = InspireRecord({
         'publication_info': []
     })
 
@@ -1185,7 +1186,7 @@ def test_get_note_publication_info_an_empty_list():
 
 
 def test_get_note_publication_info_a_list_one_el():
-    publication_info_a_list_one_el = Record({
+    publication_info_a_list_one_el = InspireRecord({
         'publication_info': [
             {
                 'note': 'Erratum',
@@ -1201,7 +1202,7 @@ def test_get_note_publication_info_a_list_one_el():
 
 
 def test_get_note_publication_info_a_list_two_els():
-    publication_info_a_list_two_els = Record({
+    publication_info_a_list_two_els = InspireRecord({
         'publication_info': [
             {
                 'note': 'Erratum',
@@ -1221,7 +1222,7 @@ def test_get_note_publication_info_a_list_two_els():
 
 
 def test_get_note_publication_info_a_list_not_a_note_with_title():
-    publication_info_a_list_not_a_note_with_title = Record({
+    publication_info_a_list_not_a_note_with_title = InspireRecord({
         'publication_info': [
             {'journal_title': 'Phys.Rev.'},
             {'journal_title': 'Phys.Rev.'}
@@ -1235,7 +1236,7 @@ def test_get_note_publication_info_a_list_not_a_note_with_title():
 
 
 def test_get_note_publication_info_a_list_not_a_note_with_volume():
-    publication_info_a_list_not_a_note_with_volume = Record({
+    publication_info_a_list_not_a_note_with_volume = InspireRecord({
         'publication_info': [
             {'journal_volume': 'D69'},
             {'journal_volume': 'D69'}
@@ -1249,7 +1250,7 @@ def test_get_note_publication_info_a_list_not_a_note_with_volume():
 
 
 def test_get_note_publication_info_a_list_not_a_note_with_volume_JHEP():
-    publication_info_a_list_not_a_note_with_volume_JHEP = Record({
+    publication_info_a_list_not_a_note_with_volume_JHEP = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'JHEP',
@@ -1269,7 +1270,7 @@ def test_get_note_publication_info_a_list_not_a_note_with_volume_JHEP():
 
 
 def test_get_note_publication_info_a_list_not_a_note_with_issue():
-    publication_info_a_list_not_a_note_with_issue = Record({
+    publication_info_a_list_not_a_note_with_issue = InspireRecord({
         'publication_info': [
             {'journal_issue': '11'},
             {'journal_issue': '11'}
@@ -1283,7 +1284,7 @@ def test_get_note_publication_info_a_list_not_a_note_with_issue():
 
 
 def test_get_note_publication_info_a_list_not_a_note_with_pages():
-    publication_info_a_list_not_a_note_with_pages = Record({
+    publication_info_a_list_not_a_note_with_pages = InspireRecord({
         'publication_info': [
             {'page_start': 'pp.2067',
              'page_end': '2414'},
@@ -1299,7 +1300,7 @@ def test_get_note_publication_info_a_list_not_a_note_with_pages():
 
 
 def test_get_note_publication_info_a_list_not_a_note_with_year():
-    publication_info_a_list_not_a_note_with_year = Record({
+    publication_info_a_list_not_a_note_with_year = InspireRecord({
         'publication_info': [
             {'year': '2015'},
             {'year': '2015'}
@@ -1313,7 +1314,7 @@ def test_get_note_publication_info_a_list_not_a_note_with_year():
 
 
 def test_get_note_publication_info_a_list_not_a_note_with_preprint():
-    publication_info_a_list_not_a_note_with_preprint = Record({
+    publication_info_a_list_not_a_note_with_preprint = InspireRecord({
         'preprint_date': '2015-12-04',
         'publication_info': [
             {'journal_title': 'Acta Phys.Polon.'},
@@ -1328,7 +1329,7 @@ def test_get_note_publication_info_a_list_not_a_note_with_preprint():
 
 
 def test_get_note_publication_info_a_list_not_a_note_with_everything():
-    publication_info_a_list_not_a_note_with_everything = Record({
+    publication_info_a_list_not_a_note_with_everything = InspireRecord({
         'doi': 'something',
         'publication_info': [
             {
@@ -1355,7 +1356,7 @@ def test_get_note_publication_info_a_list_not_a_note_with_everything():
 
 
 def test_get_note_publication_info_a_list_a_note_with_title():
-    publication_info_a_list_a_note_with_title = Record({
+    publication_info_a_list_a_note_with_title = InspireRecord({
         'publication_info': [
             {
                 'note': 'Erratum',
@@ -1375,7 +1376,7 @@ def test_get_note_publication_info_a_list_a_note_with_title():
 
 
 def test_get_note_publication_info_a_list_a_note_with_volume():
-    publication_info_a_list_a_note_with_volume = Record({
+    publication_info_a_list_a_note_with_volume = InspireRecord({
         'publication_info': [
             {
                 'note': 'Addendum',
@@ -1395,7 +1396,7 @@ def test_get_note_publication_info_a_list_a_note_with_volume():
 
 
 def test_get_note_publication_info_a_list_a_note_with_volume_JHEP():
-    publication_info_a_list_a_note_with_volume_JHEP = Record({
+    publication_info_a_list_a_note_with_volume_JHEP = InspireRecord({
         'publication_info': [
             {
                 'note': 'Erratum',
@@ -1417,7 +1418,7 @@ def test_get_note_publication_info_a_list_a_note_with_volume_JHEP():
 
 
 def test_get_note_publication_info_a_list_a_note_with_issue():
-    publication_info_a_list_a_note_with_issue = Record({
+    publication_info_a_list_a_note_with_issue = InspireRecord({
         'publication_info': [
             {
                 'note': 'Corrigendum',
@@ -1437,7 +1438,7 @@ def test_get_note_publication_info_a_list_a_note_with_issue():
 
 
 def test_get_note_publication_info_a_list_a_note_with_pages():
-    publication_info_a_list_a_note_with_pages = Record({
+    publication_info_a_list_a_note_with_pages = InspireRecord({
         'publication_info': [
             {
                 'note': 'Reprint',
@@ -1457,7 +1458,7 @@ def test_get_note_publication_info_a_list_a_note_with_pages():
 
 
 def test_get_note_publication_info_a_list_a_note_with_year():
-    publication_info_a_list_a_note_with_year = Record({
+    publication_info_a_list_a_note_with_year = InspireRecord({
         'publication_info': [
             {
                 'note': 'Erratum',
@@ -1477,7 +1478,7 @@ def test_get_note_publication_info_a_list_a_note_with_year():
 
 
 def test_get_url_no_urls():
-    no_urls = Record({})
+    no_urls = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_urls)._get_url()
@@ -1486,7 +1487,7 @@ def test_get_url_no_urls():
 
 
 def test_get_url_empty_urls():
-    empty_urls = Record({
+    empty_urls = InspireRecord({
         'urls': []
     })
 
@@ -1497,7 +1498,7 @@ def test_get_url_empty_urls():
 
 
 def test_get_url_urls_without_value():
-    urls_without_url = Record({
+    urls_without_url = InspireRecord({
         'urls': [
             {'not-value': 'foo'}
         ]
@@ -1510,7 +1511,7 @@ def test_get_url_urls_without_value():
 
 
 def test_get_url_one_url_to_an_image():
-    one_url_to_an_image = Record({
+    one_url_to_an_image = InspireRecord({
         'urls': [
             {'value': 'foo.jpg'}
         ]
@@ -1523,7 +1524,7 @@ def test_get_url_one_url_to_an_image():
 
 
 def test_get_url_one_url_not_to_an_image():
-    one_url_not_to_an_image = Record({
+    one_url_not_to_an_image = InspireRecord({
         'urls': [
             {'value': 'http://link.aps.org/abstract/PRL/V19/P1264'}
         ]
@@ -1536,7 +1537,7 @@ def test_get_url_one_url_not_to_an_image():
 
 
 def test_get_url_more_urls_selects_first():
-    more_urls = Record({
+    more_urls = InspireRecord({
         'urls': [
             {'value': 'http://link.aps.org/abstract/PRL/V19/P1264'},
             {'value': 'http://example.com'}
@@ -1550,7 +1551,7 @@ def test_get_url_more_urls_selects_first():
 
 
 def test_get_eprint_no_arxiv_field():
-    no_arxiv_field = Record({})
+    no_arxiv_field = InspireRecord({})
 
     expected = []
     result = Bibtex(no_arxiv_field)._get_eprint()
@@ -1559,7 +1560,7 @@ def test_get_eprint_no_arxiv_field():
 
 
 def test_get_eprint_arxiv_field_starts_with_arxiv():
-    starts_with_arxiv = Record({
+    starts_with_arxiv = InspireRecord({
         'arxiv_eprints': [
             {'value': 'arXiv:1512.01381'}
         ]
@@ -1572,7 +1573,7 @@ def test_get_eprint_arxiv_field_starts_with_arxiv():
 
 
 def test_get_eprint_arxiv_field_does_not_start_with_arxiv():
-    does_not_start_with_arxiv = Record({
+    does_not_start_with_arxiv = InspireRecord({
         'arxiv_eprints': [
             {'value': '1512.01381'}
         ]
@@ -1585,7 +1586,7 @@ def test_get_eprint_arxiv_field_does_not_start_with_arxiv():
 
 
 def test_get_archive_prefix_no_arxiv_eprints():
-    no_arxiv_eprints = Record({})
+    no_arxiv_eprints = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_arxiv_eprints)._get_archive_prefix()
@@ -1594,7 +1595,7 @@ def test_get_archive_prefix_no_arxiv_eprints():
 
 
 def test_get_archive_prefix_empty_arxiv_eprints():
-    empty_arxiv_eprints = Record({
+    empty_arxiv_eprints = InspireRecord({
         'arxiv_eprints': []
     })
 
@@ -1605,7 +1606,7 @@ def test_get_archive_prefix_empty_arxiv_eprints():
 
 
 def test_get_archive_prefix_some_arxiv_eprints():
-    some_arxiv_eprints = Record({
+    some_arxiv_eprints = InspireRecord({
         'arxiv_eprints': [
             {
                 u'categories': [u'hep-th'],
@@ -1621,7 +1622,7 @@ def test_get_archive_prefix_some_arxiv_eprints():
 
 
 def test_get_primary_class_no_arxiv_eprints():
-    no_arxiv_eprints = Record({})
+    no_arxiv_eprints = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_arxiv_eprints)._get_primary_class()
@@ -1630,7 +1631,7 @@ def test_get_primary_class_no_arxiv_eprints():
 
 
 def test_get_primary_class_empty_arxiv_eprints():
-    empty_arxiv_eprints = Record({
+    empty_arxiv_eprints = InspireRecord({
         'arxiv_eprints': []
     })
 
@@ -1638,7 +1639,7 @@ def test_get_primary_class_empty_arxiv_eprints():
 
 
 def test_get_primary_class_one_arxiv_eprint_one_category():
-    one_arxiv_eprint_one_category = Record({
+    one_arxiv_eprint_one_category = InspireRecord({
         'arxiv_eprints': [
             {'categories': ['hep-th']}
         ]
@@ -1651,7 +1652,7 @@ def test_get_primary_class_one_arxiv_eprint_one_category():
 
 
 def test_get_primary_class_one_arxiv_eprint_more_categories():
-    one_arxiv_eprint_more_categories = Record({
+    one_arxiv_eprint_more_categories = InspireRecord({
         'arxiv_eprints': [
             {'categories': ['hep-th', 'hep-ph']}
         ]
@@ -1664,7 +1665,7 @@ def test_get_primary_class_one_arxiv_eprint_more_categories():
 
 
 def test_get_primary_class_more_arxiv_eprints_more_categories():
-    more_arxiv_eprints_more_categories = Record({
+    more_arxiv_eprints_more_categories = InspireRecord({
         'arxiv_eprints': [
             {'categories': ['hep-th', 'hep-ph']},
             {'categories': ['hep-ex']}
@@ -1678,7 +1679,7 @@ def test_get_primary_class_more_arxiv_eprints_more_categories():
 
 
 def test_get_series_no_book_series():
-    no_book_series = Record({})
+    no_book_series = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_book_series)._get_series()
@@ -1687,7 +1688,7 @@ def test_get_series_no_book_series():
 
 
 def test_get_series_empty_book_series():
-    empty_book_series = Record({
+    empty_book_series = InspireRecord({
         'book_series': []
     })
 
@@ -1698,7 +1699,7 @@ def test_get_series_empty_book_series():
 
 
 def test_get_series_one_book_series():
-    one_book_series = Record({
+    one_book_series = InspireRecord({
         'book_series': [
             {'value': 'Mathematical Physics Studies'}
         ]
@@ -1711,7 +1712,7 @@ def test_get_series_one_book_series():
 
 
 def test_get_series_more_book_series():
-    more_book_series = Record({
+    more_book_series = InspireRecord({
         'book_series': [
             {'value': 'High Energy Physics'},
             {'value': 'Mathematical Physics Studies'}
@@ -1725,7 +1726,7 @@ def test_get_series_more_book_series():
 
 
 def test_get_isbn_no_isbns():
-    no_isbns = Record({})
+    no_isbns = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_isbns)._get_isbn()
@@ -1735,7 +1736,7 @@ def test_get_isbn_no_isbns():
 
 @pytest.mark.xfail
 def test_get_isbn_empty_isbns():
-    empty_isbns = Record({
+    empty_isbns = InspireRecord({
         'isbns': []
     })
 
@@ -1744,7 +1745,7 @@ def test_get_isbn_empty_isbns():
 
 @pytest.mark.xfail
 def test_get_isbn_one_isbn_not_a_list():
-    one_isbn_not_a_list = Record({
+    one_isbn_not_a_list = InspireRecord({
         'isbns': [
             {'value': '978-1-4244-0922-8'}
         ]
@@ -1757,7 +1758,7 @@ def test_get_isbn_one_isbn_not_a_list():
 
 
 def test_get_isbn_two_isbns_not_a_list():
-    two_isbns_not_a_list = Record({
+    two_isbns_not_a_list = InspireRecord({
         'isbns': [
             {'value': '978-3-319-17544-7'},
             {'value': '978-3-319-17545-4'}
@@ -1771,7 +1772,7 @@ def test_get_isbn_two_isbns_not_a_list():
 
 
 def test_get_isbn_two_isbns_one_a_list():
-    two_isbns_one_a_list = Record({
+    two_isbns_one_a_list = InspireRecord({
         'isbns': [
             {'value': ['978-3-319-17544-7', '978-3-319-17545-4']},
             {'value': '978-94-010-2276-7'}
@@ -1785,7 +1786,7 @@ def test_get_isbn_two_isbns_one_a_list():
 
 
 def test_get_pubnote_no_publication_info():
-    no_publication_info = Record({})
+    no_publication_info = InspireRecord({})
 
     expected = ''
     result = Bibtex(no_publication_info)._get_pubnote()
@@ -1794,7 +1795,7 @@ def test_get_pubnote_no_publication_info():
 
 
 def test_get_pubnote_publication_info_an_empty_list():
-    publication_info_an_empty_list = Record({
+    publication_info_an_empty_list = InspireRecord({
         'publication_info': []
     })
 
@@ -1802,7 +1803,7 @@ def test_get_pubnote_publication_info_an_empty_list():
 
 
 def test_get_pubnote_publication_info_a_list_one_with_title():
-    publication_info_a_list_one_with_title = Record({
+    publication_info_a_list_one_with_title = InspireRecord({
         'publication_info': [
             {'journal_title': 'Nucl.Phys.'}
         ]
@@ -1817,7 +1818,7 @@ def test_get_pubnote_publication_info_a_list_one_with_title_and_volume(self, g_k
     # TODO: mock the actual invenio_knowledge API.
     g_k_k.return_value = [['Nucl. Phys.']]
 
-    publication_info_a_list_one_with_title_and_volume = Record({
+    publication_info_a_list_one_with_title_and_volume = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Nucl.Phys.',
@@ -1838,7 +1839,7 @@ def test_get_pubnote_publication_info_a_list_one_with_title_and_pages_not_a_list
     # TODO: mock the actual invenio_knowledge API.
     g_k_k.return_value = [['Nucl. Phys.']]
 
-    publication_info_a_list_one_with_title_and_pages_not_a_list = Record({
+    publication_info_a_list_one_with_title_and_pages_not_a_list = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Nucl.Phys.',
@@ -1860,7 +1861,7 @@ def test_get_pubnote_publication_info_a_list_one_with_everything(self, g_k_k):
     # TODO: mock the actual invenio_knowledge API.
     g_k_k.return_value = [['Nucl. Phys.']]
 
-    publication_info_a_list_one_with_everything = Record({
+    publication_info_a_list_one_with_everything = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Nucl.Phys.',
@@ -1883,7 +1884,7 @@ def test_get_pubnote_publication_info_a_list_get_kbr_keys_raises(self, g_k_k):
     # TODO: mock the actual invenio_knowledge API.
     g_k_k.side_effect = RuntimeError
 
-    publication_info_a_list_one_with_everything = Record({
+    publication_info_a_list_one_with_everything = InspireRecord({
         'publication_info': [
             {
                 'journal_title': 'Nucl.Phys.',
