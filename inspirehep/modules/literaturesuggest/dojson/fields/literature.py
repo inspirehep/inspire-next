@@ -239,8 +239,6 @@ def languages(self, key, value):
 
     if value not in ('en', 'oth'):
         return [unicode(dict(languages).get(value))]
-    else:
-        return []
 
 
 @literature.over('_license_url', '^license_url$')

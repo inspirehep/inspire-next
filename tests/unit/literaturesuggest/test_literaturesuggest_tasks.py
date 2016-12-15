@@ -23,7 +23,6 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
-import pytest
 
 from inspirehep.modules.literaturesuggest.tasks import (
     formdata_to_model,
@@ -172,7 +171,6 @@ def test_formdata_to_model_populates_abstracts_from_abstracts_if_arxiv(u, ui):
     }
 
 
-@pytest.mark.xfail(reason='arxiv_id can never be a key of form_fields')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
 def test_formdata_to_model_populates_external_system_numbers_from_arxiv_id(u, ui):
@@ -184,6 +182,7 @@ def test_formdata_to_model_populates_external_system_numbers_from_arxiv_id(u, ui
             'bar',
         ],
         'arxiv_id': 'baz',
+        'categories': 'foo'
     }
 
     obj = StubObj(data, extra_data)
@@ -203,7 +202,6 @@ def test_formdata_to_model_populates_external_system_numbers_from_arxiv_id(u, ui
     }
 
 
-@pytest.mark.xfail(reason='impossible to have complete publication_info')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
 def test_formdata_to_model_populates_collections_from_complete_publication_info(u, ui):
@@ -217,6 +215,7 @@ def test_formdata_to_model_populates_collections_from_complete_publication_info(
         'issue': 'baz',
         'volume': 'qux',
         'year': 'quux',
+        'page_range_article_id': '25-50'
     }
 
     obj = StubObj(data, extra_data)
@@ -434,10 +433,33 @@ def test_formdata_to_model_no_page_nr_when_invalid_page_range_article_id(u, ui):
     }
 
 
-@pytest.mark.xfail(reason='languages is not populated')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_languages_from_languages_and_other_language(u, ui):
+def test_formdata_to_model_populates_languages_from_languages(u, ui):
+    data = {}
+    extra_data = {}
+    formdata = {
+        'type_of_doc': 'foo',
+        'title': [
+            'bar',
+        ],
+        'language': 'fre'
+    }
+
+    obj = StubObj(data, extra_data)
+
+    expected = [
+        'French',
+    ]
+    result = formdata_to_model(obj, formdata)
+
+    assert expected == result['languages']
+    assert obj.data == {}
+
+
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
+def test_formdata_to_model_populates_languages_from_other_languages(u, ui):
     data = {}
     extra_data = {}
     formdata = {
@@ -446,13 +468,13 @@ def test_formdata_to_model_populates_languages_from_languages_and_other_language
             'bar',
         ],
         'language': 'oth',
-        'other_language': 'baz',
+        'other_language': 'Foo',
     }
 
     obj = StubObj(data, extra_data)
 
     expected = [
-        'baz',
+        'Foo',
     ]
     result = formdata_to_model(obj, formdata)
 

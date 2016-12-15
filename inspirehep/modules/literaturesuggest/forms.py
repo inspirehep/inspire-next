@@ -242,8 +242,7 @@ class LiteratureForm(INSPIREForm):
         validators=[arxiv_syntax_validation, duplicated_arxiv_id_validator],
     )
 
-    categories_arXiv = fields.TextField(
-        export_key='categories',
+    categories = fields.TextField(
         widget=HiddenInput(),
     )
 
@@ -585,9 +584,9 @@ class LiteratureForm(INSPIREForm):
         ('Links',
             ['url', 'additional_url']),
         ('Basic Information',
-            ['title', 'title_arXiv', 'categories_arXiv', 'language',
+            ['title', 'title_arXiv', 'categories', 'language',
              'other_language', 'title_translation', 'subject', 'authors',
-             'collaboration', 'experiment', 'abstract', 'page_nr',
+             'collaboration', 'experiment', 'abstract',
              'report_numbers']),
         ('Thesis Information',
             ['supervisors', 'thesis_date', 'defense_date', 'degree_type',
