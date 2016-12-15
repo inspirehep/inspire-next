@@ -70,9 +70,8 @@ def formdata_to_model(obj, formdata):
         data.get('name', {})['value'] = author_name
 
     # Add comments to extra data
-    if "comments" in form_fields and form_fields["comments"]:
-        obj.extra_data["comments"] = form_fields["comments"]
-        data["_private_note"] = form_fields["comments"]
+    if "extra_comments" in form_fields and form_fields["extra_comments"]:
+        data["_private_note"] = form_fields["extra_comments"]
 
     # Add email to extra data
     if "public_email" in form_fields and form_fields["public_email"]:
@@ -127,7 +126,7 @@ def new_ticket_context(user, obj):
         email=user.email,
         object=obj,
         subject=subject,
-        user_comment=obj.extra_data.get("comments", ""),
+        user_comment=obj.extra_data.get("formdata", {}).get("extra_comments", ""),
     )
 
 
@@ -142,7 +141,7 @@ def update_ticket_context(user, obj):
         email=user.email,
         url=record_url,
         bibedit_url=record_url + "/edit",
-        user_comment=obj.extra_data.get("comments", ""),
+        user_comment=obj.extra_data.get("formdata", {}).get("extra_comments", ""),
     )
 
 
@@ -174,5 +173,5 @@ def curation_ticket_context(user, obj):
         recid=recid,
         subject=subject,
         record_url=record_url,
-        user_comment=obj.extra_data.get("comments", ""),
+        user_comment=obj.extra_data.get("formdata", {}).get("extra_comments", ""),
     )

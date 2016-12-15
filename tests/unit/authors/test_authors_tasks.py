@@ -64,7 +64,9 @@ def data():
 @pytest.fixture()
 def extra_data():
     return {
-        "comments": "Foo bar",
+        "formdata": {
+            "extra_comments": "Foo bar"
+        },
         "reason": "Test reason",
         "url": "http://example.com",
         "recid": 123
