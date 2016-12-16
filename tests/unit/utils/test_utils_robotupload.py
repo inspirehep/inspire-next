@@ -69,7 +69,6 @@ def test_make_robotupload_marcxml_raises_when_url_is_none_and_config_is_empty():
     httpretty.HTTPretty.allow_net_connect = True
 
 
-@pytest.mark.xfail
 @pytest.mark.httpretty
 def test_make_robotupload_marcxml_handles_utf8():
     httpretty.HTTPretty.allow_net_connect = False

@@ -48,7 +48,7 @@ def make_robotupload_marcxml(url, marcxml, mode, **kwargs):
         url = os.path.join(base_url, "batchuploader/robotupload", mode)
         return requests.post(
             url=url,
-            data=str(clean_xml(marcxml)),
+            data=clean_xml(marcxml).encode('utf8'),
             headers=headers,
             params=kwargs,
         )
