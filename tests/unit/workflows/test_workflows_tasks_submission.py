@@ -27,6 +27,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     add_note_entry,
     create_ticket,
     reply_ticket,
+    close_ticket,
 )
 
 from six import StringIO
@@ -136,4 +137,16 @@ def test_reply_ticket_with_template(mock_render_template, mock_user_query, mock_
 
     mock_rt.edit_ticket.assert_called_with(ticket_id=1, Status='new')
     mock_rt.reply.assert_called_with(ticket_id=1, text='Reason\n description')
+
+
+@mock.patch('inspirehep.utils.tickets.get_instance')
+def test_close_ticket(mock_get_instance):
+    mock_rt = MagicMock()
+    mock_get_instance.return_value = mock_rt
+    close_ticket_function = close_ticket(ticket_id_key='ticket_id')
+
+    obj = MockObj(1, {}, {'ticket_id': 1})
+    close_ticket_function(obj, {})
+
+    mock_rt.edit_ticket.assert_called_with(ticket_id=1, Status='resolved')
 
