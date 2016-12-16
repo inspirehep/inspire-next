@@ -26,11 +26,12 @@ from inspirehep.modules.workflows.tasks.submission import (
     submit_rt_ticket,
     add_note_entry,
     create_ticket,
+    reply_ticket,
 )
 
 from six import StringIO
 from mock import MagicMock
-import mock
+import mock, pytest
 
 
 class MockObj(object):
@@ -50,6 +51,10 @@ class MockObj(object):
         self.id_user = id_
         self.data = data
         self.extra_data = extra_data
+
+
+def mock_context_function(user, obj):
+    return {}
 
 
 def test_add_note_entry_does_not_add_value_that_is_already_present():
@@ -86,9 +91,6 @@ def test_submit_rt_ticket(mock_production_mode, mock_rt_instance):
 @mock.patch('inspirehep.modules.workflows.tasks.submission.render_template')
 @mock.patch('inspirehep.modules.workflows.tasks.submission.User')
 def test_create_ticket(mock_user_query, mock_render_template, mock_submit_rt_ticket):
-    def mock_context_function(user, obj):
-        return {}
-
     template = 'literaturesuggest/tickets/curator_submitted.html'
     ticket_id_key = 'ticket_id'
     queue = 'HEP_add_user'
@@ -110,3 +112,28 @@ def test_create_ticket(mock_user_query, mock_render_template, mock_submit_rt_tic
     mock_render_template.assert_called_with(template)
     mock_submit_rt_ticket.assert_called_with(obj, queue, None, '',
                                              mock_user.email, ticket_id_key)
+
+
+@pytest.mark.parametrize('mock_template', [None, MagicMock()])
+@mock.patch('inspirehep.utils.tickets.get_instance')
+@mock.patch('inspirehep.modules.workflows.tasks.submission.User')
+@mock.patch('inspirehep.modules.workflows.tasks.submission.render_template')
+def test_reply_ticket_with_template(mock_render_template, mock_user_query, mock_get_instance, mock_template):
+    mock_rt = MagicMock()
+    mock_get_instance.return_value = mock_rt
+    mock_template = mock_template
+    mock_render_template.return_value = 'Reason\ndescription'
+    mock_user_query.query.get.return_value = MagicMock()
+
+    reply_ticket_function = reply_ticket(
+        template=mock_template,
+        context_factory=mock_context_function,
+        keep_new=True
+    )
+
+    obj = MockObj(1, {}, {'ticket_id': 1, 'reason': 'Reason\ndescription '})
+    reply_ticket_function(obj, {})
+
+    mock_rt.edit_ticket.assert_called_with(ticket_id=1, Status='new')
+    mock_rt.reply.assert_called_with(ticket_id=1, text='Reason\n description')
+
