@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 from inspirehep.modules.workflows.tasks.submission import (
     submit_rt_ticket,
     add_note_entry,
+    create_ticket,
 )
 
 from six import StringIO
@@ -46,18 +47,13 @@ class MockObj(object):
     log = MockLog()
 
     def __init__(self, id_, data, extra_data):
-        self.id = id_
+        self.id_user = id_
         self.data = data
         self.extra_data = extra_data
 
 
 def test_add_note_entry_does_not_add_value_that_is_already_present():
-    class MockObj(object):
-        def __init__(self, data, extra_data):
-            self.data = data
-            self.extra_data = extra_data
-
-    obj = MockObj({'public_notes': [{'value': '*Temporary entry*'}]}, {'core': 'something'})
+    obj = MockObj(1, {'public_notes': [{'value': '*Temporary entry*'}]}, {'core': 'something'})
     eng = {}
 
     assert add_note_entry(obj, eng) is None
@@ -85,3 +81,32 @@ def test_submit_rt_ticket(mock_production_mode, mock_rt_instance):
         requestors='mail@ma.il'
     )
 
+
+@mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket')
+@mock.patch('inspirehep.modules.workflows.tasks.submission.render_template')
+@mock.patch('inspirehep.modules.workflows.tasks.submission.User')
+def test_create_ticket(mock_user_query, mock_render_template, mock_submit_rt_ticket):
+    def mock_context_function(user, obj):
+        return {}
+
+    template = 'literaturesuggest/tickets/curator_submitted.html'
+    ticket_id_key = 'ticket_id'
+    queue = 'HEP_add_user'
+    create_ticket_function = create_ticket(
+        template=template,
+        queue=queue,
+        context_factory=mock_context_function,
+        ticket_id_key=ticket_id_key
+    )
+
+    mock_user = MagicMock()
+    mock_user.email.return_value = ''
+    mock_user_query.query.get.return_value = mock_user
+    mock_render_template.return_value = ''
+
+    obj = MockObj(1, {}, {})
+    create_ticket_function(obj, {})
+
+    mock_render_template.assert_called_with(template)
+    mock_submit_rt_ticket.assert_called_with(obj, queue, None, '',
+                                             mock_user.email, ticket_id_key)
