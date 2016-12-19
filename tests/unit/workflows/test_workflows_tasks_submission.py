@@ -29,6 +29,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     close_ticket,
     send_robotupload,
     add_note_entry,
+    filter_keywords,
 )
 
 from six import StringIO
@@ -46,6 +47,9 @@ class MockObj(object):
 
         def error(self, *args, **kwargs):
             self.info(args[0])
+
+        def debug(self, message, format=None):
+            self.info(message)
 
     log = MockLog()
 
@@ -223,3 +227,22 @@ def test_add_note_entry_empty_notes():
     add_note_entry(obj, {})
 
     assert obj.data['public_notes'] == [{'value': '*Temporary entry*'}]
+
+
+def test_filter_keywords():
+    obj = MockObj(
+        1,
+        {},
+        {
+            'keywords_prediction': {
+                'keywords': [
+                    {'accept': True, 'keyword': 'Physics'},
+                    {'accept': False, 'keyword': 'Biology'}
+                ]
+            }
+        }
+    )
+    filter_keywords(obj, {})
+
+    assert obj.extra_data == {'keywords_prediction': {'keywords': [{'accept': True, 'keyword': 'Physics'}]}}
+
