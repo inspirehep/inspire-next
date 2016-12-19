@@ -30,6 +30,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     send_robotupload,
     add_note_entry,
     filter_keywords,
+    prepare_keywords,
 )
 
 from six import StringIO
@@ -245,4 +246,63 @@ def test_filter_keywords():
     filter_keywords(obj, {})
 
     assert obj.extra_data == {'keywords_prediction': {'keywords': [{'accept': True, 'keyword': 'Physics'}]}}
+
+
+def test_prepare_keywords():
+    obj = MockObj(
+        1,
+        {},
+        {
+            'keywords_prediction': {
+                'keywords': [
+                    {
+                        'accept': True,
+                        'keyword': 'Physics',
+                        'label': 'Physics_mock_label',
+                        'curated': True
+                    }
+                ]
+            }
+        }
+    )
+    prepare_keywords(obj, {})
+    assert obj.data == {
+        'keywords': [
+            {
+                'keyword': 'Physics_mock_label',
+                'classification_scheme': '',
+                'source': 'curator',
+            },
+        ]
+    }
+
+
+def test_prepare_keywords_magpie():
+    obj = MockObj(
+        1,
+        {},
+        {
+            'keywords_prediction': {
+                'keywords': [
+                    {
+                        'accept': True,
+                        'keyword': 'Physics',
+                        'label': 'Physics_mock_label',
+                        'curated': False,
+                    },
+                ]
+            }
+        }
+    )
+    prepare_keywords(obj, {})
+
+    assert obj.data == {
+        'keywords': [
+            {
+                'keyword': 'Physics_mock_label',
+                'classification_scheme': '',
+                'source': 'magpie',
+            },
+        ]
+    }
 
