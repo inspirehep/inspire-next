@@ -67,3 +67,23 @@ def test_make_robotupload_marcxml_raises_when_url_is_none_and_config_is_empty():
     assert 'LEGACY_ROBOTUPLOAD_URL' in str(excinfo.value)
 
     httpretty.HTTPretty.allow_net_connect = True
+
+
+@pytest.mark.xfail
+@pytest.mark.httpretty
+def test_make_robotupload_marcxml_handles_utf8():
+    httpretty.HTTPretty.allow_net_connect = False
+    httpretty.register_uri(
+        httpretty.POST, 'http://localhost:5000/batchuploader/robotupload/insert')
+
+    snippet = (
+        '<record>'
+        '  <datafield tag="700" ind1=" " ind2=" ">'
+        '    <subfield code="a">André, M.</subfield>'
+        '  </datafield>'
+        '</record>'
+    )  # record/1503367
+
+    make_robotupload_marcxml('http://localhost:5000', snippet, 'insert')
+
+    httpretty.HTTPretty.allow_net_connect = True
