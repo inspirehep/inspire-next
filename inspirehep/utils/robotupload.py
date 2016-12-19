@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2014, 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,23 +16,25 @@
 # You should have received a copy of the GNU General Public License
 # along with INSPIRE. If not, see <http://www.gnu.org/licenses/>.
 #
-# In applying this license, CERN does not waive the privileges and immunities
+# In applying this licence, CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Function for sending robotuploads to other Invenio instances."""
+"""Utils for sending robotuploads to other Invenio instances."""
+
+from __future__ import absolute_import, division, print_function
 
 import os
-import requests
 
+import requests
 from flask import current_app
+
+from .url import make_user_agent_string
+from .text import clean_xml
 
 
 def make_robotupload_marcxml(url, marcxml, mode, **kwargs):
     """Make a robotupload request."""
-    from inspirehep.utils.url import make_user_agent_string
-    from inspirehep.utils.text import clean_xml
-
     headers = {
         "User-agent": make_user_agent_string("inspire"),
         "Content-Type": "application/marcxml+xml",
@@ -46,7 +48,7 @@ def make_robotupload_marcxml(url, marcxml, mode, **kwargs):
         url = os.path.join(base_url, "batchuploader/robotupload", mode)
         return requests.post(
             url=url,
-            data=str(clean_xml(marcxml)),
+            data=clean_xml(marcxml).encode('utf8'),
             headers=headers,
             params=kwargs,
         )
