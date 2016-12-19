@@ -28,6 +28,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     create_ticket,
     reply_ticket,
     close_ticket,
+    send_robotupload,
 )
 
 from six import StringIO
@@ -49,6 +50,7 @@ class MockObj(object):
     log = MockLog()
 
     def __init__(self, id_, data, extra_data):
+        self.id = id_
         self.id_user = id_
         self.data = data
         self.extra_data = extra_data
@@ -150,3 +152,41 @@ def test_close_ticket(mock_get_instance):
 
     mock_rt.edit_ticket.assert_called_with(ticket_id=1, Status='resolved')
 
+
+@pytest.mark.parametrize('extra_data_key', [None, 'something'])
+@mock.patch('inspirehep.modules.workflows.tasks.submission.in_production_mode')
+@mock.patch('inspirehep.utils.robotupload.make_robotupload_marcxml')
+@mock.patch('inspirehep.dojson.utils.legacy_export_as_marc')
+def test_send_robotupload(mock_legacy_export_as_marc,
+                          mock_make_robotupload_marcxml,
+                          mock_production_mode,
+                          extra_data_key):
+    marc_xml = '<marc_xml=data>'
+    eng = MagicMock()
+    mock_result = MagicMock()
+    marcxml_processor = MagicMock()
+    obj = MockObj(1, {}, {'ticket_id': 1})
+
+    mock_result.text = '[INFO]'
+    mock_production_mode.return_value = True
+    mock_legacy_export_as_marc.return_value = marc_xml
+    mock_make_robotupload_marcxml.return_value = mock_result
+    marcxml_processor.do.return_value = {'marc_json': 'data'}
+
+    send_robotupload_function = send_robotupload(
+        url=None,
+        marcxml_processor=marcxml_processor,
+        callback_url='callback/workflows/continue',
+        mode='insert',
+        extra_data_key=extra_data_key
+    )
+    send_robotupload_function(obj, eng)
+
+    mock_make_robotupload_marcxml.assert_called_with(
+        url=None,
+        marcxml=marc_xml,
+        callback_url='https://localhost:5000/callback/workflows/continue',
+        mode='insert',
+        nonce=1,
+        priority=5,
+    )
