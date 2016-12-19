@@ -24,11 +24,11 @@ from __future__ import absolute_import, division, print_function
 
 from inspirehep.modules.workflows.tasks.submission import (
     submit_rt_ticket,
-    add_note_entry,
     create_ticket,
     reply_ticket,
     close_ticket,
     send_robotupload,
+    add_note_entry,
 )
 
 from six import StringIO
@@ -58,14 +58,6 @@ class MockObj(object):
 
 def mock_context_function(user, obj):
     return {}
-
-
-def test_add_note_entry_does_not_add_value_that_is_already_present():
-    obj = MockObj(1, {'public_notes': [{'value': '*Temporary entry*'}]}, {'core': 'something'})
-    eng = {}
-
-    assert add_note_entry(obj, eng) is None
-    assert {'public_notes': [{'value': '*Temporary entry*'}]} == obj.data
 
 
 @mock.patch('inspirehep.modules.workflows.tasks.submission.get_instance')
@@ -190,3 +182,44 @@ def test_send_robotupload(mock_legacy_export_as_marc,
         nonce=1,
         priority=5,
     )
+
+
+def test_add_note_entry_temporary_type():
+    obj = MockObj(1, {'public_notes': []}, {'core': True})
+
+    add_note_entry(obj, {})
+
+    assert obj.data['public_notes'] == [{'value': '*Temporary entry*'}]
+
+
+def test_add_note_entry_brief_type():
+    obj = MockObj(1, {'public_notes': []}, {'core': False})
+
+    add_note_entry(obj, {})
+
+    assert obj.data['public_notes'] == [{'value': '*Brief entry*'}]
+
+
+def test_add_note_entry_doubled():
+    obj = MockObj(1, {'public_notes': [{'value': '*Brief entry*'}]}, {'core': False})
+
+    add_note_entry(obj, {})
+
+    assert obj.data['public_notes'] == [{'value': '*Brief entry*'}]
+
+
+def test_add_note_entry_multiple():
+    obj = MockObj(1, {'public_notes': [{'value': '*Something for test*'}]}, {'core': True})
+
+    add_note_entry(obj, {})
+
+    assert obj.data['public_notes'] == [{'value': '*Something for test*'},
+                                        {'value': '*Temporary entry*'}]
+
+
+def test_add_note_entry_empty_notes():
+    obj = MockObj(1, {'public_notes': None}, {'core': True})
+
+    add_note_entry(obj, {})
+
+    assert obj.data['public_notes'] == [{'value': '*Temporary entry*'}]
