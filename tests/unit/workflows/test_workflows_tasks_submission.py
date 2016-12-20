@@ -31,6 +31,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     add_note_entry,
     filter_keywords,
     prepare_keywords,
+    user_pdf_get,
 )
 
 from six import StringIO
@@ -306,3 +307,43 @@ def test_prepare_keywords_magpie():
         ]
     }
 
+
+def test_user_pdf_get_with_file():
+    obj = MockObj(
+        1,
+        {'fft': [{'url': 'pdf_file_0', 'docfile_type': 'INSPIRE-PUBLIC'}]},
+        {
+            'pdf_upload': True,
+            'submission_data': {
+                'pdf': 'pdf_file_1'
+            }
+        }
+    )
+    user_pdf_get(obj, {})
+
+    assert obj.data == {
+        'fft': [
+            {'url': 'pdf_file_0', 'docfile_type': 'INSPIRE-PUBLIC'},
+            {'url': 'pdf_file_1', 'docfile_type': 'INSPIRE-PUBLIC'}
+        ]
+    }
+
+
+def test_user_pdf_get():
+    obj = MockObj(
+        1,
+        {},
+        {
+            'pdf_upload': True,
+            'submission_data': {
+                'pdf': 'pdf_file_0'
+            }
+        }
+    )
+    user_pdf_get(obj, {})
+
+    assert obj.data == {
+        'fft': [
+            {'url': 'pdf_file_0', 'docfile_type': 'INSPIRE-PUBLIC'}
+        ]
+    }
