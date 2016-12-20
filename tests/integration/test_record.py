@@ -293,3 +293,17 @@ def test_get_es_records_raises_on_empty_list(app):
     with app.app_context():
         with pytest.raises(RequestError):
             get_es_records('lit', [])
+
+
+def test_get_es_records_accepts_lists_of_integers(app):
+    with app.app_context():
+        records = get_es_records('lit', [4328])
+
+    assert len(records) == 1
+
+
+def test_get_es_records_accepts_lists_of_strings(app):
+    with app.app_context():
+        records = get_es_records('lit', ['4328'])
+
+    assert len(records) == 1
