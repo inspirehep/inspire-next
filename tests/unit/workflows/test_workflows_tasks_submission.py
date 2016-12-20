@@ -33,6 +33,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     prepare_keywords,
     user_pdf_get,
     prepare_files,
+    remove_references,
 )
 
 from six import StringIO
@@ -390,3 +391,11 @@ def test_prepare_files():
             }
         ]
     }
+
+
+def test_remove_references():
+    obj = MockObj(1, {'references': 'fake value'}, {})
+
+    remove_references(obj, {})
+
+    assert obj.data == {}
