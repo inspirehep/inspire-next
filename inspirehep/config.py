@@ -1403,6 +1403,7 @@ INSPIRE_CATEGORIES = [
     'Accelerators',
     'Astrophysics',
     'Computing',
+    'Data Analysis and Statistics',
     'Experiment-HEP',
     'Experiment-Nucl',
     'General Physics',
