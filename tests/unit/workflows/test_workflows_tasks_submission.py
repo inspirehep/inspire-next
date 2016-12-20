@@ -32,6 +32,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     filter_keywords,
     prepare_keywords,
     user_pdf_get,
+    prepare_files,
 )
 
 from six import StringIO
@@ -55,11 +56,12 @@ class MockObj(object):
 
     log = MockLog()
 
-    def __init__(self, id_, data, extra_data):
+    def __init__(self, id_, data, extra_data, collection_file={}):
         self.id = id_
         self.id_user = id_
         self.data = data
         self.extra_data = extra_data
+        self.files = collection_file
 
 
 def mock_context_function(user, obj):
@@ -345,5 +347,46 @@ def test_user_pdf_get():
     assert obj.data == {
         'fft': [
             {'url': 'pdf_file_0', 'docfile_type': 'INSPIRE-PUBLIC'}
+        ]
+    }
+
+
+def test_prepare_files():
+    class MockFilesCollectionIterator(object):
+
+        def __init__(self, data):
+            self.data = data
+
+        @property
+        def keys(self):
+            return self.data.keys()
+
+        def __getitem__(self, item):
+            return self.data[item]
+
+    mock_file = MagicMock()
+    mock_file.name = MagicMock(return_value='fake_record')
+    mock_file.obj.file.uri = 'fake_uri'
+
+    obj = MockObj(
+        1,
+        {},
+        {},
+        collection_file=MockFilesCollectionIterator({
+            'fake_record.pdf': mock_file,
+            'fake_record.txt': mock_file,
+            'fake_record': mock_file,
+            '': mock_file,
+        })
+    )
+    prepare_files(obj, {})
+
+    assert obj.data == {
+        'fft': [
+            {
+                'url': '/code/fake_uri',
+                'docfile_type': 'INSPIRE-PUBLIC',
+                'filename': 'fake_record.pdf'
+            }
         ]
     }
