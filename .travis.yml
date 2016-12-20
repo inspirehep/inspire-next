@@ -33,7 +33,6 @@ services:
 env:
   global:
     - DOCKER_DATA="$HOME/docker_data"
-    - DOCKER_VERSION=1.12.3-0~trusty
     - DOCKER_COMPOSE_VERSION=1.9.0
   matrix:
     - SUITE=workflows
@@ -50,10 +49,6 @@ python:
 
 before_install:
   - travis_retry pip install coveralls
-  # List available docker versions.
-  - apt-cache madison docker-engine
-  # Update Docker. See: https://graysonkoonce.com/managing-docker-and-docker-compose-versions-on-travis-ci/.
-  - sudo apt-get -o Dpkg::Options::="--force-confnew" install -y docker-engine=${DOCKER_VERSION}
   # Add docker-compose at the version specified in ENV.
   - sudo rm -f /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
