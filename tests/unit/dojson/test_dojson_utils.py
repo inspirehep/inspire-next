@@ -208,30 +208,6 @@ def test_get_record_ref_without_endpoint_defaults_to_record(current_app):
     assert expected == result['$ref']
 
 
-def test_get_recid_from_ref_returns_none_on_none():
-    assert get_recid_from_ref(None) is None
-
-
-def test_get_recid_from_ref_returns_none_on_simple_strings():
-    assert get_recid_from_ref('a_string') is None
-
-
-def test_get_recid_from_ref_returns_none_on_empty_object():
-    assert get_recid_from_ref({}) is None
-
-
-def test_get_recid_from_ref_returns_none_on_object_with_wrong_key():
-    assert get_recid_from_ref({'bad_key': 'some_val'}) is None
-
-
-def test_get_recid_from_ref_returns_none_on_ref_a_simple_string():
-    assert get_recid_from_ref({'$ref': 'a_string'}) is None
-
-
-def test_get_recid_from_ref_returns_none_on_ref_malformed():
-    assert get_recid_from_ref({'$ref': 'http://bad_url'}) is None
-
-
 def test_legacy_export_as_marc_empty_json():
     empty_json = {}
 

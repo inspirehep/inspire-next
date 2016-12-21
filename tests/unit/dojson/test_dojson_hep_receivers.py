@@ -23,7 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.modules.records.api import InspireRecord
-from inspirehep.dojson.hep.receivers import earliest_date
+from inspirehep.modules.records.receivers import earliest_date
 
 
 def test_earliest_date_from_preprint_date():

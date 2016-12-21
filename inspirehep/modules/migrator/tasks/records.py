@@ -320,7 +320,8 @@ def record_upsert(json):
             new_recid = get_recid_from_ref(json.get('new_record'))
             if new_recid:
                 merged_record = get_db_record(pid_type, new_recid)
-                record.merge(merged_record)
+                if merged_record:
+                    record.merge(merged_record)
             else:
                 record.delete()
 
