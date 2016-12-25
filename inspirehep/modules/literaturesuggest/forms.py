@@ -22,6 +22,8 @@
 
 """Contains forms related to INSPIRE Literature suggestion."""
 
+from __future__ import absolute_import, division, print_function
+
 from flask import current_app
 from flask_babelex import gettext as _
 

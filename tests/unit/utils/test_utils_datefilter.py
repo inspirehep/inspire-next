@@ -19,6 +19,8 @@
 
 """Unit tests for the datefilter utility functions."""
 
+from __future__ import absolute_import, division, print_function
+
 from datetime import datetime
 
 from inspirehep.utils.datefilter import date_older_than

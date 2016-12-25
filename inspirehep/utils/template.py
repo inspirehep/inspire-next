@@ -19,6 +19,8 @@
 
 """Utils related to Jinja templates."""
 
+from __future__ import absolute_import, division, print_function
+
 from flask import current_app
 
 

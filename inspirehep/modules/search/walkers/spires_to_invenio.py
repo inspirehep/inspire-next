@@ -23,6 +23,8 @@
 
 """Implement query printer."""
 
+from __future__ import absolute_import, division, print_function
+
 from invenio_query_parser import ast
 from invenio_query_parser.visitor import make_visitor
 

@@ -24,7 +24,7 @@
 
 """CV_format_html serializer for records."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
 

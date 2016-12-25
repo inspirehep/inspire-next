@@ -22,6 +22,8 @@
 
 """Workflow tasks using refextract API."""
 
+from __future__ import absolute_import, division, print_function
+
 import json
 
 from refextract import extract_journal_reference, extract_references_from_file

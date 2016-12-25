@@ -24,8 +24,7 @@
 
 """Invenio standard theme."""
 
-from __future__ import absolute_import, print_function
-
+from __future__ import absolute_import, division, print_function
 
 from flask_breadcrumbs import Breadcrumbs
 from flask_login import user_logged_in

@@ -23,7 +23,7 @@
 
 """INSPIRE fixtures - loading of configs and database content."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 from .ext import INSPIREFixtures
 

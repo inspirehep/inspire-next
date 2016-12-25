@@ -22,7 +22,7 @@
 
 """Workflow for processing single arXiv records harvested."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 from workflow.patterns.controlflow import IF, IF_ELSE, IF_NOT
 

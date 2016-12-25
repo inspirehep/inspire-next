@@ -22,7 +22,7 @@
 
 """Approval action for INSPIRE arXiv harvesting."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 from invenio_db import db
 

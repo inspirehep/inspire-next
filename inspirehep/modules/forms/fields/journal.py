@@ -19,6 +19,8 @@
 
 """Journal field."""
 
+from __future__ import absolute_import, division, print_function
+
 from wtforms import StringField
 
 from ..field_base import INSPIREField

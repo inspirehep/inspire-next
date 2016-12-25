@@ -22,6 +22,8 @@
 
 """Helpers for handling pubnote parsing."""
 
+from __future__ import absolute_import, division, print_function
+
 import re
 
 from inspirehep.utils.helpers import force_force_list

@@ -22,6 +22,8 @@
 
 """Merge action for INSPIRE."""
 
+from __future__ import absolute_import, division, print_function
+
 
 class MergeApproval(object):
     """Class representing the merge action."""

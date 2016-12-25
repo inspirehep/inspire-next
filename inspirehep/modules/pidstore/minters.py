@@ -24,7 +24,7 @@
 
 """Persistent identifier minters."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 from .providers import InspireRecordIdProvider
 from .utils import get_pid_type_from_schema

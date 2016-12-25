@@ -24,7 +24,7 @@
 
 """TEI serializer for records."""
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division, print_function
 
 from inspirehep.modules.converttohal import tei
 

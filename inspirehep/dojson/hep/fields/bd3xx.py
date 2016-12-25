@@ -22,6 +22,8 @@
 
 """MARC 21 model definition."""
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
 
 from ..model import hep, hep2marc

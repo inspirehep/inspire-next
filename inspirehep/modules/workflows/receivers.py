@@ -23,6 +23,8 @@
 
 """Receivers for INSPIRE workflows."""
 
+from __future__ import absolute_import, division, print_function
+
 import six
 
 from dojson.contrib.marc21.utils import create_record

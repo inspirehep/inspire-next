@@ -19,6 +19,8 @@
 
 """Tests for json conversion to orcid form."""
 
+from __future__ import absolute_import, division, print_function
+
 from inspirehep.modules.orcid.utils import convert_to_orcid
 
 import pytest

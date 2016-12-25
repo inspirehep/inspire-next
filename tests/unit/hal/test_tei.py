@@ -22,6 +22,8 @@
 
 """Unit tests for the TEI exporter."""
 
+from __future__ import absolute_import, division, print_function
+
 import mock
 import pytest
 

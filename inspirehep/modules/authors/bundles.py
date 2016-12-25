@@ -22,6 +22,8 @@
 
 """Bundles for author forms."""
 
+from __future__ import absolute_import, division, print_function
+
 from flask_assets import Bundle
 from invenio_assets import NpmBundle
 

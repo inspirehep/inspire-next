@@ -95,6 +95,8 @@ Auto-complete
 
 """
 
+from __future__ import absolute_import, division, print_function
+
 import warnings
 
 from wtforms import Field

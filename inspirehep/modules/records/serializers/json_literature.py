@@ -24,7 +24,7 @@
 
 """Marshmallow based JSON serializer for records."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 from invenio_records_rest.serializers.json import JSONSerializer
 

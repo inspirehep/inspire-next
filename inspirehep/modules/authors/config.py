@@ -22,6 +22,8 @@
 
 """ Configuration of authors module."""
 
+from __future__ import absolute_import, division, print_function
+
 # Record definition variables
 
 AUTHORS_IDENTIFIERS_TYPES = ['authorid', 'orcid', 'arxiv']

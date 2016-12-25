@@ -26,7 +26,7 @@ Converts keys in the user form to the keys needed by the HEP data model
 in order to produce MARCXML.
 """
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 import re
 

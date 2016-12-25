@@ -21,6 +21,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 #
 
+from __future__ import absolute_import, division, print_function
+
 from flask import _request_ctx_stack
 
 

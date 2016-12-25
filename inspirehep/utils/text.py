@@ -22,6 +22,8 @@
 
 """Utilities for text handling."""
 
+from __future__ import absolute_import, division, print_function
+
 from bs4 import BeautifulSoup
 
 

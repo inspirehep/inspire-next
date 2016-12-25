@@ -22,6 +22,8 @@
 
 """Models related to INSPIRE depositions."""
 
+from __future__ import absolute_import, division, print_function
+
 from inspirehep.dojson.model import FilterOverdo, add_schema, clean_record
 
 

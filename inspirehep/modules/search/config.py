@@ -23,6 +23,8 @@
 
 """Default configuration of SPIRES parser."""
 
+from __future__ import absolute_import, division, print_function
+
 SPIRES_KEYWORDS = {
     'earliest_date': 'earliest_date',
     'doc_type': 'doc_type',

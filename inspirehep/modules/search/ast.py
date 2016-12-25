@@ -24,7 +24,7 @@
 
 """INSPIRE search ast custom classes."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 from invenio_query_parser.ast import BinaryOp
 
