@@ -24,6 +24,8 @@ from __future__ import absolute_import, division, print_function
 
 from inspirehep.modules.pidstore.utils import (
     get_endpoint_from_pid_type,
+    get_endpoint_from_schema,
+    get_index_from_endpoint,
     get_pid_type_from_endpoint,
     get_pid_type_from_schema,
 )
@@ -32,6 +34,27 @@ from inspirehep.modules.pidstore.utils import (
 def test_get_endpoint_from_pid_type():
     expected = 'literature'
     result = get_endpoint_from_pid_type('lit')
+
+    assert expected == result
+
+
+def test_get_endpoint_from_schema():
+    expected = 'literature'
+    result = get_endpoint_from_schema('http://localhost:5000/schemas/records/hep.json')
+
+    assert expected == result
+
+
+def test_get_endpoint_from_schema_supports_relative_urls():
+    expected = 'authors'
+    result = get_endpoint_from_schema('schemas/records/authors.json')
+
+    assert expected == result
+
+
+def test_get_index_from_endpoint():
+    expected = 'records-hep'
+    result = get_index_from_endpoint('literature')
 
     assert expected == result
 

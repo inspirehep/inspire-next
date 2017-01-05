@@ -45,6 +45,29 @@ def get_endpoint_from_pid_type(pid_type):
     return PID_TYPE_TO_ENDPOINT[pid_type]
 
 
+def get_endpoint_from_schema(schema):
+    """Return the endpoint corresponding to a schema."""
+    pid_type = get_pid_type_from_schema(schema)
+    endpoint = get_endpoint_from_pid_type(pid_type)
+
+    return endpoint
+
+
+def get_index_from_endpoint(endpoint):
+    """Return the index corresponding to an endpoint."""
+    ENDPOINT_TO_INDEX = {
+        'authors': 'records-authors',
+        'conferences': 'records-conferences',
+        'experiments': 'records-experiments',
+        'institutions': 'records-institutions',
+        'jobs': 'records-jobs',
+        'journals': 'records-journals',
+        'literature': 'records-hep',
+    }
+
+    return ENDPOINT_TO_INDEX[endpoint]
+
+
 def get_pid_type_from_endpoint(endpoint):
     """Return the ``pid_type`` corresponding to an endpoint."""
     ENDPOINT_TO_PID_TYPE = {
