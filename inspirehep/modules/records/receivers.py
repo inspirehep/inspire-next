@@ -24,6 +24,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from itertools import chain
+
 import six
 from flask import current_app
 from flask_sqlalchemy import models_committed
@@ -35,7 +37,7 @@ from invenio_records.signals import before_record_insert, before_record_update
 
 from inspirehep.dojson.utils import classify_field, get_recid_from_ref
 from inspirehep.modules.records.api import InspireRecord
-from inspirehep.utils.date import create_valid_date
+from inspirehep.utils.date import create_earliest_date, create_valid_date
 from inspirehep.utils.helpers import force_force_list
 from inspirehep.utils.record import get_value
 
@@ -397,3 +399,23 @@ def populate_abstract_source_suggest(sender, json, *args, **kwargs):
                         'output': source,
                     },
                 })
+
+
+@before_record_index.connect
+def earliest_date(sender, json, *args, **kwargs):
+    """Find and assign the earliest date to a HEP paper."""
+    date_paths = [
+        'preprint_date',
+        'thesis.date',
+        'thesis.defense_date',
+        'publication_info.year',
+        'creation_modification_date.creation_date',
+        'imprints.date',
+    ]
+
+    dates = list(chain.from_iterable(
+        [force_force_list(get_value(json, path)) for path in date_paths]))
+
+    earliest_date = create_earliest_date(dates)
+    if earliest_date:
+        json['earliest_date'] = earliest_date
