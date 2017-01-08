@@ -94,6 +94,7 @@ install_requires = [
     'invenio-workflows-files~=0.0.4',
     'invenio-workflows-ui~=1.0.27',
     'elasticsearch-dsl<2.2.0',
+    'Jinja2<2.9.0',
 ]
 
 tests_require = [
