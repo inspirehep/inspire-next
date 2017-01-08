@@ -22,56 +22,22 @@
 
 from __future__ import absolute_import, division, print_function
 
-import os
-import shutil
-import tempfile
-
 import pytest
-from flask_celeryext import FlaskCeleryExt
-from six import StringIO
 
-from invenio_mail import InvenioMail
 from inspirehep.factory import create_app
 
 
-@pytest.fixture(scope='session', autouse=True)
-def email_app():
-    """Email-aware Flask application fixture."""
+@pytest.fixture(scope='session')
+def app():
     app = create_app(
-        CFG_SITE_SUPPORT_EMAIL='admin@inspirehep.net',
-        INSPIRELABS_FEEDBACK_EMAIL='labsfeedback@inspirehep.net',
+        DEBUG=True,
+        WTF_CSRF_ENABLED=False,
         CELERY_ALWAYS_EAGER=True,
         CELERY_RESULT_BACKEND='cache',
         CELERY_CACHE_BACKEND='memory',
         CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
-        MAIL_SUPPRESS_SEND=True,
-    )
-    FlaskCeleryExt(app)
-
-    InvenioMail(app, StringIO())
-
-    with app.app_context():
-        yield app
-
-
-@pytest.fixture(scope='session', autouse=True)
-def app():
-    """Flask application fixture."""
-    instance_path = tempfile.mkdtemp()
-
-    os.environ.update(
-        APP_INSTANCE_PATH=os.environ.get(
-            'INSTANCE_PATH', instance_path),
-    )
-
-    app = create_app(
-        DEBUG_TB_ENABLED=False,
-        SQLALCHEMY_DATABASE_URI=os.environ.get(
-            'SQLALCHEMY_DATABASE_URI', 'sqlite:///test.db'),
         TESTING=True,
     )
 
     with app.app_context():
         yield app
-
-    shutil.rmtree(instance_path)

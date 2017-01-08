@@ -44,9 +44,9 @@ user_with_email = MockUser('foo@bar.com')
 user_empty_email = MockUser('')
 
 
-def test_postfeedback_provided_email(email_app):
+def test_postfeedback_provided_email(app):
     """Accepts feedback when providing en email."""
-    with email_app.test_client() as client:
+    with app.test_client() as client:
         response = client.post('/postfeedback', data=dict(
             feedback='foo bar', replytoaddr='foo@bar.com'))
 
@@ -55,9 +55,9 @@ def test_postfeedback_provided_email(email_app):
 
 
 @mock.patch('inspirehep.modules.theme.views.current_user', user_with_email)
-def test_postfeedback_logged_in_user(email_app):
+def test_postfeedback_logged_in_user(app):
     """Falls back to the email of the logged in user."""
-    with email_app.test_client() as client:
+    with app.test_client() as client:
         response = client.post('/postfeedback', data=dict(feedback='foo bar'))
 
         assert response.status_code == 200
@@ -65,27 +65,27 @@ def test_postfeedback_logged_in_user(email_app):
 
 
 @mock.patch('inspirehep.modules.theme.views.current_user', user_empty_email)
-def test_postfeedback_empty_email(email_app):
+def test_postfeedback_empty_email(app):
     """Rejects feedback from user with empty email."""
-    with email_app.test_client() as client:
+    with app.test_client() as client:
         response = client.post('/postfeedback', data=dict(feedback='foo bar'))
 
         assert response.status_code == 403
         assert json.loads(response.data) == {'success': False}
 
 
-def test_postfeedback_anonymous_user(email_app):
+def test_postfeedback_anonymous_user(app):
     """Rejects feedback without an email."""
-    with email_app.test_client() as client:
+    with app.test_client() as client:
         response = client.post('/postfeedback', data=dict(feedback='foo bar'))
 
         assert response.status_code == 403
         assert json.loads(response.data) == {'success': False}
 
 
-def test_postfeedback_empty_feedback(email_app):
+def test_postfeedback_empty_feedback(app):
     """Rejects empty feedback."""
-    with email_app.test_client() as client:
+    with app.test_client() as client:
         response = client.post('/postfeedback', data=dict(feedback=''))
 
         assert response.status_code == 400
@@ -93,7 +93,7 @@ def test_postfeedback_empty_feedback(email_app):
 
 
 @mock.patch('inspirehep.modules.theme.views.send_email.delay')
-def test_postfeedback_send_email_failure(delay, email_app):
+def test_postfeedback_send_email_failure(delay, app):
     """Informs the user when a server error occurred."""
     class FailedResult():
         def failed(self):
@@ -101,7 +101,7 @@ def test_postfeedback_send_email_failure(delay, email_app):
 
     delay.return_value = FailedResult()
 
-    with email_app.test_client() as client:
+    with app.test_client() as client:
         response = client.post('/postfeedback', data=dict(
             feedback='foo bar', replytoaddr='foo@bar.com'))
 
