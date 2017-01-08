@@ -22,6 +22,8 @@
 
 """Bundles for forms used across INSPIRE."""
 
+from __future__ import absolute_import, division, print_function
+
 from invenio_assets import NpmBundle
 from invenio_assets.filters import RequireJSFilter
 

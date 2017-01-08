@@ -19,6 +19,8 @@
 
 """Special fields for JSON-schema based deposits."""
 
+from __future__ import absolute_import, division, print_function
+
 from invenio_ext.template import render_template_to_string
 
 from invenio_jsonschemas.api import validate_json

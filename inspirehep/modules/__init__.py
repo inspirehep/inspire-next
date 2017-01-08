@@ -23,3 +23,5 @@
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
 """INSPIRE modules."""
+
+from __future__ import absolute_import, division, print_function

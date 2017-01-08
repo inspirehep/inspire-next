@@ -19,7 +19,7 @@
 
 """Tests for record-related utilities."""
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 from inspirehep.utils.record import get_abstract, get_subtitle, get_title, get_value
 

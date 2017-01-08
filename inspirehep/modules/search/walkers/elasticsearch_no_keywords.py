@@ -19,6 +19,8 @@
 
 """Implement AST convertor to Elastic Search DSL."""
 
+from __future__ import absolute_import, division, print_function
+
 from invenio_query_parser.ast import (
     AndOp, DoubleQuotedValue, EmptyQuery,
     GreaterEqualOp, GreaterOp, Keyword,

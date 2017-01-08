@@ -25,6 +25,8 @@ See more information on:
 http://wtforms.simplecodes.com/docs/1.0.4/fields.html#wtforms.fields.Field
 """
 
+from __future__ import absolute_import, division, print_function
+
 import six
 
 

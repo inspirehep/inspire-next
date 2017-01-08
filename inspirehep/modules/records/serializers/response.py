@@ -28,7 +28,7 @@
 Responsible for creating a HTTP response given the output of a serializer.
 """
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 from flask import current_app
 

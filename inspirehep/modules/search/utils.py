@@ -24,6 +24,8 @@
 
 """Results class to wrap a query and allow for searching."""
 
+from __future__ import absolute_import, division, print_function
+
 import json
 
 from flask import current_app

@@ -17,6 +17,8 @@
 # along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
+from __future__ import absolute_import, division, print_function
+
 import mock
 
 from inspirehep.utils.url import make_user_agent_string

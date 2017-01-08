@@ -22,6 +22,8 @@
 
 """Unit tests for the bibtex_booktitle helpers."""
 
+from __future__ import absolute_import, division, print_function
+
 import pytest
 
 from inspirehep.modules.records.api import InspireRecord

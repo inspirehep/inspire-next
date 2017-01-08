@@ -19,6 +19,8 @@
 
 """Unit tests for Export, the base class of exporters."""
 
+from __future__ import absolute_import, division, print_function
+
 import mock
 
 from inspirehep.modules.records.api import InspireRecord

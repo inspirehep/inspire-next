@@ -19,6 +19,8 @@
 
 """Models for Migrator."""
 
+from __future__ import absolute_import, division, print_function
+
 from datetime import datetime
 from zlib import compress, decompress, error
 

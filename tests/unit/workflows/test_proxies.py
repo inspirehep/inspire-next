@@ -19,6 +19,8 @@
 
 """Unit tests for the workflows proxies."""
 
+from __future__ import absolute_import, division, print_function
+
 from inspirehep.modules.workflows.proxies import antihep_keywords
 
 

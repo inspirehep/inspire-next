@@ -24,6 +24,8 @@
 
 """UI for Invenio-Search."""
 
+from __future__ import absolute_import, division, print_function
+
 from invenio_assets import NpmBundle
 
 js = NpmBundle(

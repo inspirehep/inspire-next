@@ -19,6 +19,8 @@
 
 """Deprecated."""
 
+from __future__ import absolute_import, division, print_function
+
 from wtforms import StringField, ValidationError
 
 from ..field_base import INSPIREField

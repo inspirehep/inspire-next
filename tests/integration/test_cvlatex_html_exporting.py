@@ -20,6 +20,8 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import, division, print_function
+
 from inspirehep.utils.cv_latex_html_text import Cv_latex_html_text
 from inspirehep.utils.record_getter import get_db_record
 

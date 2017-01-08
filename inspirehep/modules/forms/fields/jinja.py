@@ -19,6 +19,8 @@
 
 """Collection of fields that can be used to render Jinja templates."""
 
+from __future__ import absolute_import, division, print_function
+
 from .. import field_widgets
 from ..field_base import INSPIREField
 

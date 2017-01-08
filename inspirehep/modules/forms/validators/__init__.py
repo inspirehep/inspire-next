@@ -20,5 +20,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from simple_fields import *
-from dynamic_fields import *
+from __future__ import absolute_import, division, print_function
+
+from .simple_fields import *
+from .dynamic_fields import *

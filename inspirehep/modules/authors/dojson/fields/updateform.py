@@ -26,6 +26,8 @@ Converts keys in the user form to the keys needed by the HepNames data model
 in order to produce MARCXML.
 """
 
+from __future__ import absolute_import, division, print_function
+
 from dojson import utils
 
 from ..model import updateform
