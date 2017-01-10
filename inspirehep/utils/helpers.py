@@ -78,3 +78,15 @@ def force_force_list(data):
     elif isinstance(data, (tuple, set)):
         return list(data)
     return data
+
+
+def get_recid_from_url(reference):
+    """Retrieve recid from record URL.
+
+    If no recid can be parsed, return False.
+    """
+    try:
+        res = int(reference.split('/')[-1])
+    except (ValueError, AttributeError):
+        res = False
+    return res
