@@ -70,9 +70,6 @@ def test_formdata_to_model_populates_schema(u, ui):
 
     assert expected == result['$schema']
     assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {},
-    }
 
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
@@ -101,9 +98,6 @@ def test_formdata_to_model_populates_collections_from_type_of_doc_thesis(u, ui):
 
     assert expected == result['collections']
     assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {},
-    }
 
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
@@ -136,9 +130,6 @@ def test_formdata_to_model_populates_collections_from_field_categories_if_arxiv(
 
     assert expected == result['collections']
     assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {},
-    }
 
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
@@ -167,9 +158,6 @@ def test_formdata_to_model_populates_abstracts_from_abstracts_if_arxiv(u, ui):
 
     assert expected == result['abstracts']
     assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {},
-    }
 
 
 @pytest.mark.xfail(reason='arxiv_id can never be a key of form_fields')
@@ -198,9 +186,6 @@ def test_formdata_to_model_populates_external_system_numbers_from_arxiv_id(u, ui
 
     assert expected == result['external_system_numbers']
     assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {},
-    }
 
 
 @pytest.mark.xfail(reason='impossible to have complete publication_info')
@@ -236,9 +221,6 @@ def test_formdata_to_model_populates_collections_from_complete_publication_info(
 
     assert expected == result['collections']
     assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {},
-    }
 
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
@@ -270,9 +252,6 @@ def test_formdata_to_model_populates_titles_from_title_arXiv(u, ui):
 
     assert expected == result['titles']
     assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {},
-    }
 
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
@@ -304,9 +283,6 @@ def test_formdata_to_model_populates_titles_from_title_crossref(u, ui):
 
     assert expected == result['titles']
     assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {},
-    }
 
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
@@ -340,9 +316,6 @@ def test_formdata_to_model_populates_collections_and_hidden_notes_from_conf_name
         },
     ]
     assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {},
-    }
 
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
@@ -380,9 +353,6 @@ def test_formdata_to_model_populates_collections_and_hidden_notes_from_conf_name
         },
     ]
     assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {},
-    }
 
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
@@ -405,9 +375,6 @@ def test_formdata_to_model_populates_page_nr_from_page_range_article_id(u, ui):
 
     assert expected == result['page_nr']
     assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {},
-    }
 
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
@@ -429,9 +396,6 @@ def test_formdata_to_model_no_page_nr_when_invalid_page_range_article_id(u, ui):
 
     assert 'page_nr' not in result
     assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {},
-    }
 
 
 @pytest.mark.xfail(reason='languages is not populated')
@@ -458,38 +422,6 @@ def test_formdata_to_model_populates_languages_from_languages_and_other_language
 
     assert expected == result['languages']
     assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {},
-    }
-
-
-@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
-@mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_submission_data_references(u, ui):
-    data = {}
-    extra_data = {}
-    formdata = {
-        'type_of_doc': 'foo',
-        'title': [
-            'bar',
-        ],
-        'references': [
-            'baz',
-        ],
-    }
-
-    obj = StubObj(data, extra_data)
-
-    result = formdata_to_model(obj, formdata)
-
-    assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {
-            'references': [
-                'baz',
-            ],
-        },
-    }
 
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
@@ -517,42 +449,6 @@ def test_formdata_to_model_populates_hidden_notes_from_extra_comments(u, ui):
 
     assert expected == result['hidden_notes']
     assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {
-            'extra_comments': 'baz',
-        },
-    }
-
-
-@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
-@mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_submission_data_pdf_from_pdf(u, ui):
-    data = {}
-    extra_data = {}
-    formdata = {
-        'type_of_doc': 'foo',
-        'title': [
-            'bar',
-        ],
-        'url': 'baz',
-    }
-
-    obj = StubObj(data, extra_data)
-
-    expected = [
-        {
-            'value': 'baz',
-        },
-    ]
-    result = formdata_to_model(obj, formdata)
-
-    assert expected == result['urls']
-    assert obj.data == {}
-    assert obj.extra_data == {
-        'submission_data': {
-            'pdf': 'baz',
-        },
-    }
 
 
 def test_new_ticket_context():
@@ -569,7 +465,7 @@ def test_new_ticket_context():
         ],
     }
     extra_data = {
-        'submission_data': {
+        'formdata': {
             'extra_comments': [
                 'baz',
             ],
@@ -654,8 +550,8 @@ def test_curation_ticket_context():
     extra_data = {
         'recid': 'baz',
         'url': 'qux',
-        'submission_data': {
-            'pdf': 'quux',
+        'formdata': {
+            'url': 'quux',
             'references': [
                 'plugh',
             ],
