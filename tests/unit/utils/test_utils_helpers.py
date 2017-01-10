@@ -33,6 +33,7 @@ from inspirehep.utils.helpers import (
     download_file,
     download_file_to_record,
     get_json_for_plots,
+    get_pid_type_from_ref,
     get_recid_from_url,
     force_force_list,
 )

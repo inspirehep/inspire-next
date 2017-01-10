@@ -33,7 +33,7 @@ from invenio_search import current_search_client as es
 from inspirehep.dojson.hep import hep
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.records.tasks import update_refs
-from inspirehep.modules.migrator.tasks.records import record_upsert
+from inspirehep.modules.migrator.tasks.records import record_upsert, merge_merged_records
 from inspirehep.utils.record import get_value
 from inspirehep.utils.record_getter import get_db_record, get_es_records
 
@@ -146,6 +146,7 @@ def merged_records(app):
             merged_uuid = record_upsert(merged_record).id
             deleted_uuid = record_upsert(deleted_record).id
         db.session.commit()
+        es.indices.refresh('records-hep')
 
     yield
 
@@ -249,6 +250,8 @@ def test_record_can_be_deleted(app, not_yet_deleted_record):
 
 
 def test_merged_records_stay_merged(app, merged_records):
+    merge_merged_records.delay()
+
     with app.test_client() as client:
         assert client.get('/api/literature/111').status_code == 200
         assert client.get('/api/literature/222').status_code == 301
