@@ -27,6 +27,7 @@ from __future__ import absolute_import, division, print_function
 import json
 
 from inspirehep.utils.record import get_title
+from inspirehep.utils.record_getter import get_es_records
 from inspirehep.modules.search import LiteratureSearch
 
 
@@ -88,16 +89,16 @@ class ImpactGraphSerializer(object):
         ]
 
         if reference_recids:
-            record_references = LiteratureSearch().query_from_iq(
-                ' OR '.join('recid:' + str(ref) for ref in reference_recids)
-            ).params(
+            record_references = get_es_records(
+                'lit',
+                reference_recids,
                 _source=[
                     'control_number',
                     'citation_count',
                     'titles',
                     'earliest_date'
                 ]
-            ).execute().hits
+            )
 
             for reference in record_references:
                 try:
@@ -107,7 +108,7 @@ class ImpactGraphSerializer(object):
                 references.append({
                     "inspire_id": reference['control_number'],
                     "citation_count": citation_count,
-                    "title": get_title(reference.to_dict()),
+                    "title": get_title(reference),
                     "year": reference['earliest_date'].split('-')[0]
                 })
 
