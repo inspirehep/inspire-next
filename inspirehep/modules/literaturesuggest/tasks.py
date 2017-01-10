@@ -46,8 +46,6 @@ def formdata_to_model(obj, formdata):
         form_fields, ['authors', 'supervisors', 'report_numbers']
     )
 
-    obj.extra_data["submission_data"] = {}
-
     data = literature.do(form_fields)
 
     # Add extra fields that need to be computed or depend on other
@@ -192,11 +190,6 @@ def formdata_to_model(obj, formdata):
         submission_number=str(obj.id),
     )
     # ==============
-    # References
-    # ==============
-    if form_fields.get('references'):
-        obj.extra_data["submission_data"]['references'] = form_fields.get('references')
-    # ==============
     # Extra comments
     # ==============
     if form_fields.get('extra_comments'):
@@ -206,7 +199,6 @@ def formdata_to_model(obj, formdata):
                 'source': 'submitter'
             }
         )
-        obj.extra_data["submission_data"]["extra_comments"] = form_fields.get("extra_comments")
     # ======================================
     # Journal name Knowledge Base conversion
     # ======================================
@@ -219,9 +211,6 @@ def formdata_to_model(obj, formdata):
         # TODO convert using journal records
         pass
 
-    if 'pdf' in data:
-        obj.extra_data["submission_data"]["pdf"] = data.pop("pdf")
-
     # Finally, return the converted data
     return data
 
@@ -230,15 +219,14 @@ def new_ticket_context(user, obj):
     """Context for literature new tickets."""
     title = get_title(obj.data)
     subject = "Your suggestion to INSPIRE: {0}".format(title)
-    user_comment = obj.extra_data.get(
-        'submission_data').get('extra_comments')
+    user_comment = obj.extra_data.get("formdata", {}).get("extra_comments", "")
     identifiers = get_value(obj.data, "external_system_numbers.value") or []
     return dict(
         email=user.email,
         title=title,
         identifier=identifiers or "",
         user_comment=user_comment,
-        references=obj.extra_data.get("submission_data", {}).get("references"),
+        references=obj.extra_data.get("formdata", {}).get("references"),
         object=obj,
         subject=subject
     )
@@ -269,15 +257,15 @@ def curation_ticket_context(user, obj):
         "doi:{0}".format(doi)
         for doi in get_value(obj.data, 'dois.value') or []
     ]
-    link_to_pdf = obj.extra_data.get('submission_data').get('pdf')
+    link_to_pdf = obj.extra_data.get('formdata', {}).get('url')
 
     subject = ' '.join(filter(
         lambda x: x is not None,
         arxiv_ids + dois + report_numbers + ['(#{0})'.format(recid)]
     ))
 
-    references = obj.extra_data.get('submission_data').get('references')
-    user_comment = obj.extra_data.get('submission_data').get('extra_comments')
+    references = obj.extra_data.get('formdata').get('references')
+    user_comment = obj.extra_data.get("formdata", {}).get("extra_comments", "")
 
     return dict(
         recid=recid,

@@ -530,7 +530,7 @@ class AuthorUpdateForm(INSPIREForm):
         widget_classes="ui-disable-sort"
     )
 
-    comments = fields.TextAreaField(
+    extra_comments = fields.TextAreaField(
         label=_('Comments'),
         description=u'Send us any comments you might have. They will not be visible.',
         widget_classes="form-control"
@@ -561,7 +561,7 @@ class AuthorUpdateForm(INSPIREForm):
             {"icon": "fa fa-university"}
          ),
         ('Comments',
-            ['comments'],
+            ['extra_comments'],
             {"icon": "fa fa-comments"}
          )
     ]
