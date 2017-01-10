@@ -67,5 +67,9 @@ def init_users_and_permissions():
             action='workflows-ui-admin-access',
             role=cataloger_role)
         )
+        db.session.add(ActionRoles(
+            action='admin-holdingpen-authors',
+            role=cataloger_role)
+        )
 
     db.session.commit()
