@@ -74,14 +74,8 @@ def get_es_record(pid_type, recid, **kwargs):
 
 
 def get_es_records(pid_type, recids, **kwargs):
-    """Get a list of recids from ElasticSearch.
-
-    :param pid_type: pid type of recids.
-    :type pid_type: string.
-    :param recids: list of recids to retrieve.
-    :type recids: list of strings.
-    :returns: list of dictionaries with ES results
-    """
+    """Get a list of recids from ElasticSearch."""
+    recids = [str(recid) for recid in recids]
     uuids = PersistentIdentifier.query.filter(
         PersistentIdentifier.pid_value.in_(recids),
         PersistentIdentifier.pid_type == pid_type
