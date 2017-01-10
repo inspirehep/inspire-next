@@ -199,3 +199,10 @@ def test_get_recid_from_url_returns_false_on_ref_malformed():
 
 def test_get_recid_from_url():
     assert get_recid_from_url('http://localhost:5000/api/literature/111') == 111
+
+
+def test_get_pid_type_from_ref():
+    expected = 'lit'
+    result = get_pid_type_from_ref('http://localhost:5000/api/literature/111')
+
+    assert expected == result
