@@ -79,9 +79,15 @@ def formdata_to_model(obj, formdata):
                     'institute': 'arXiv'
                 }]
     if "publication_info" in data:
-        if all([key in data['publication_info'][0].keys() for key in
-               ('year', 'journal_issue', 'journal_volume', 'page_start',
-                'page_end', 'artid')]):
+        pub_keys = data['publication_info'][0].keys()
+
+        has_pub_info = all([
+            key in pub_keys for key in (
+                'year', 'journal_issue', 'journal_volume')])
+        has_page_or_artid = any([
+            key in pub_keys for key in ('page_start', 'page_end', 'artid')])
+
+        if has_pub_info and has_page_or_artid:
             # NOTE: Only peer reviewed journals should have this collection
             # we are adding it here but ideally should be manually added
             # by a curator.
@@ -162,7 +168,7 @@ def formdata_to_model(obj, formdata):
     # ============================
     # Language
     # ============================
-    if data.get("languages", []) and data["languages"][0] == "oth":
+    if form_fields.get('language') == 'oth':
         if form_fields.get("other_language"):
             data["languages"] = [form_fields["other_language"]]
 
