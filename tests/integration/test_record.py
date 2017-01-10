@@ -28,241 +28,20 @@ from elasticsearch import RequestError
 from dojson.contrib.marc21.utils import create_record
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier, Redirect
+from invenio_search import current_search_client as es
 
 from inspirehep.dojson.hep import hep
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.records.tasks import update_refs
 from inspirehep.modules.migrator.tasks.records import record_upsert
+from inspirehep.utils.record import get_value
 from inspirehep.utils.record_getter import get_db_record, get_es_records
 
 
-@pytest.fixture(scope='function')
-def record_already_deleted_in_marcxml(app):
-    snippet = (
-        '<record>'
-        '  <controlfield tag="001">222</controlfield>'
-        '  <controlfield tag="005">20160913214552.0</controlfield>'
-        '  <datafield tag="980" ind1=" " ind2=" ">'
-        '    <subfield code="c">DELETED</subfield>'
-        '  </datafield>'
-        '  <datafield tag="980" ind1=" " ind2=" ">'
-        '    <subfield code="a">HEP</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
+def _delete_record(pid_type, pid_value):
+    get_db_record(pid_type, pid_value)._delete(force=True)
 
-    with app.app_context():
-        json_record = hep.do(create_record(snippet))
-        json_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
-
-        with db.session.begin_nested():
-            record_upsert(json_record)
-
-        db.session.commit()
-
-    yield
-
-    with app.app_context():
-        _delete_record_from_everywhere('lit', 222)
-
-
-@pytest.fixture(scope='function')
-def record_not_yet_deleted(app):
-    snippet = (
-        '<record>'
-        '  <controlfield tag="001">333</controlfield>'
-        '  <controlfield tag="005">20160913214552.0</controlfield>'
-        '  <datafield tag="980" ind1=" " ind2=" ">'
-        '    <subfield code="a">HEP</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    with app.app_context():
-        json_record = hep.do(create_record(snippet))
-        json_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
-
-        with db.session.begin_nested():
-            record_upsert(json_record)
-
-        db.session.commit()
-
-    yield
-
-    with app.app_context():
-        _delete_record_from_everywhere('lit', 333)
-
-
-@pytest.fixture(scope='function')
-def records_already_merged_in_marcxml(app):
-    snippet_merged = (
-        '<record>'
-        '  <controlfield tag="001">111</controlfield>'
-        '  <controlfield tag="005">20160922232729.0</controlfield>'
-        '  <datafield tag="024" ind1="7" ind2=" ">'
-        '    <subfield code="2">DOI</subfield>'
-        '    <subfield code="a">10.11588/heidok.00021652</subfield>'
-        '  </datafield>'
-        '  <datafield tag="100" ind1=" " ind2=" ">'
-        '    <subfield code="a">Humbert, Pascal</subfield>'
-        '    <subfield code="u">Inst. Appl. Math., Heidelberg</subfield>'
-        '  </datafield>'
-        '  <datafield tag="980" ind1=" " ind2=" ">'
-        '    <subfield code="a">HEP</subfield>'
-        '  </datafield>'
-        '  <datafield tag="980" ind1=" " ind2=" ">'
-        '    <subfield code="a">THESIS</subfield>'
-        '  </datafield>'
-        '  <datafield tag="980" ind1=" " ind2=" ">'
-        '    <subfield code="a">CORE</subfield>'
-        '  </datafield>'
-        '  <datafield tag="981" ind1=" " ind2=" ">'
-        '    <subfield code="a">222</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    snippet_deleted = (
-        '<record>'
-        '  <controlfield tag="001">222</controlfield>'
-        '  <controlfield tag="005">20160914115512.0</controlfield>'
-        '  <datafield tag="100" ind1=" " ind2=" ">'
-        '    <subfield code="a">Humbert, Pascal</subfield>'
-        '  </datafield>'
-        '  <datafield tag="970" ind1=" " ind2=" ">'
-        '    <subfield code="d">111</subfield>'
-        '  </datafield>'
-        '  <datafield tag="980" ind1=" " ind2=" ">'
-        '    <subfield code="a">HEP</subfield>'
-        '  </datafield>'
-        '  <datafield tag="980" ind1=" " ind2=" ">'
-        '    <subfield code="a">THESIS</subfield>'
-        '  </datafield>'
-        '  <datafield tag="980" ind1=" " ind2=" ">'
-        '    <subfield code="a">CORE</subfield>'
-        '  </datafield>'
-        '  <datafield tag="980" ind1=" " ind2=" ">'
-        '    <subfield code="c">DELETED</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    with app.app_context():
-        json_record_merged = hep.do(create_record(snippet_merged))
-        json_record_merged['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
-
-        json_record_deleted = hep.do(create_record(snippet_deleted))
-        json_record_deleted['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
-
-        with db.session.begin_nested():
-            merged_id = record_upsert(json_record_merged).id
-            deleted_id = record_upsert(json_record_deleted).id
-
-        db.session.commit()
-
-    yield
-
-    with app.app_context():
-        _delete_merged_records_from_everywhere(
-            'lit',
-            111,
-            222,
-            merged_id,
-            deleted_id
-        )
-
-
-@pytest.fixture(scope='function')
-def records_not_merged_in_marcxml(app):
-    snippet_merged = (
-        '<record>'
-        '  <controlfield tag="001">111</controlfield>'
-        '  <controlfield tag="005">20160922232729.0</controlfield>'
-        '  <datafield tag="024" ind1="7" ind2=" ">'
-        '    <subfield code="2">DOI</subfield>'
-        '    <subfield code="a">10.11588/heidok.00021652</subfield>'
-        '  </datafield>'
-        '  <datafield tag="100" ind1=" " ind2=" ">'
-        '    <subfield code="a">Humbert, Pascal</subfield>'
-        '    <subfield code="u">Inst. Appl. Math., Heidelberg</subfield>'
-        '  </datafield>'
-        '  <datafield tag="980" ind1=" " ind2=" ">'
-        '    <subfield code="a">HEP</subfield>'
-        '  </datafield>'
-        '  <datafield tag="980" ind1=" " ind2=" ">'
-        '    <subfield code="a">THESIS</subfield>'
-        '  </datafield>'
-        '  <datafield tag="980" ind1=" " ind2=" ">'
-        '    <subfield code="a">CORE</subfield>'
-        '  </datafield>'
-        '  <datafield tag="981" ind1=" " ind2=" ">'
-        '    <subfield code="a">222</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    snippet_deleted = (
-        '<record>'
-        '  <controlfield tag="001">222</controlfield>'
-        '  <controlfield tag="005">20160922232729.0</controlfield>'
-        '  <datafield tag="024" ind1="7" ind2=" ">'
-        '    <subfield code="2">DOI</subfield>'
-        '    <subfield code="a">10.11588/heidok.00021652</subfield>'
-        '  </datafield>'
-        '  <datafield tag="100" ind1=" " ind2=" ">'
-        '    <subfield code="a">Humbert, Pascal</subfield>'
-        '    <subfield code="u">Inst. Appl. Math., Heidelberg</subfield>'
-        '  </datafield>'
-        '  <datafield tag="701" ind1=" " ind2=" ">'
-        '    <subfield code="a">Lindner, Manfred</subfield>'
-        '  </datafield>'
-        '  <datafield tag="856" ind1="4" ind2=" ">'
-        '    <subfield code="u">http://www.ub.uni-heidelberg.de/archiv/21652</subfield>'
-        '    <subfield code="y">U. Heidelberg</subfield>'
-        '  </datafield>'
-        '  <datafield tag="909" ind1="C" ind2="O">'
-        '    <subfield code="o">oai:inspirehep.net:222</subfield>'
-        '    <subfield code="p">INSPIRE:HEP</subfield>'
-        '  </datafield>'
-        '  <datafield tag="980" ind1=" " ind2=" ">'
-        '    <subfield code="a">HEP</subfield>'
-        '  </datafield>'
-        '  <datafield tag="981" ind1=" " ind2=" ">'
-        '    <subfield code="a">222</subfield>'
-        '  </datafield>'
-        '</record>'
-    )
-
-    with app.app_context():
-        json_record_merged = hep.do(create_record(snippet_merged))
-        json_record_merged['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
-
-        json_record_deleted = hep.do(create_record(snippet_deleted))
-        json_record_deleted['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
-
-        with db.session.begin_nested():
-            merged_id = record_upsert(json_record_merged).id
-            deleted_id = record_upsert(json_record_deleted).id
-
-        db.session.commit()
-
-    yield
-
-    with app.app_context():
-        _delete_merged_records_from_everywhere(
-            'lit',
-            111,
-            222,
-            merged_id,
-            deleted_id
-        )
-
-
-def _delete_record_from_everywhere(pid_type, record_control_number):
-    record = get_db_record(pid_type, record_control_number)
-
-    record._delete(force=True)
-
-    pid = PersistentIdentifier.get(pid_type, record_control_number)
+    pid = PersistentIdentifier.get(pid_type, pid_value)
     PersistentIdentifier.delete(pid)
 
     object_uuid = pid.object_uuid
@@ -272,58 +51,242 @@ def _delete_record_from_everywhere(pid_type, record_control_number):
     db.session.commit()
 
 
-def _delete_merged_records_from_everywhere(pid_type, merged_record_control_number, deleted_record_control_number, merged_id, deleted_id):
-    InspireRecord.get_record(merged_id)._delete(force=True)
-    InspireRecord.get_record(deleted_id)._delete(force=True)
-    merged_pid = PersistentIdentifier.get(pid_type, merged_record_control_number)
-    deleted_pid = PersistentIdentifier.get(
-        pid_type,
-        deleted_record_control_number
-    )
+def _delete_merged_records(pid_type, merged_pid_value, deleted_pid_value, merged_uuid, deleted_uuid):
+    InspireRecord.get_record(merged_uuid)._delete(force=True)
+    InspireRecord.get_record(deleted_uuid)._delete(force=True)
+
+    merged_pid = PersistentIdentifier.get(pid_type, merged_pid_value)
+    deleted_pid = PersistentIdentifier.get(pid_type, deleted_pid_value)
+
     Redirect.query.filter(Redirect.id == deleted_pid.object_uuid).delete()
+
     db.session.delete(merged_pid)
     db.session.delete(deleted_pid)
+
     db.session.commit()
 
 
-def test_deleted_record_stays_deleted(app, record_already_deleted_in_marcxml):
+@pytest.fixture(scope='function')
+def deleted_record(app):
+    snippet = (
+        '<record>'
+        '  <controlfield tag="001">111</controlfield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="c">DELETED</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    with app.app_context():
+        record = hep.do(create_record(snippet))
+        record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
+
+        with db.session.begin_nested():
+            record_upsert(record)
+        db.session.commit()
+
+    yield
+
+    with app.app_context():
+        _delete_record('lit', 111)
+
+
+@pytest.fixture(scope='function')
+def not_yet_deleted_record(app):
+    record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 111,
+        'self': {
+            '$ref': 'http://localhost:5000/schemas/records/hep.json',
+        }
+    }
+
+    with app.app_context():
+        with db.session.begin_nested():
+            record_upsert(record)
+        db.session.commit()
+
+    yield
+
+    with app.app_context():
+        _delete_record('lit', 111)
+
+
+@pytest.fixture(scope='function')
+def merged_records(app):
+    merged_snippet = (
+        '<record>'
+        '  <controlfield tag="001">111</controlfield>'
+        '  <datafield tag="981" ind1=" " ind2=" ">'
+        '    <subfield code="a">222</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    deleted_snippet = (
+        '<record>'
+        '  <controlfield tag="001">222</controlfield>'
+        '  <datafield tag="970" ind1=" " ind2=" ">'
+        '    <subfield code="d">111</subfield>'
+        '  </datafield>'
+        '  <datafield tag="980" ind1=" " ind2=" ">'
+        '    <subfield code="c">DELETED</subfield>'
+        '  </datafield>'
+        '</record>'
+    )
+
+    with app.app_context():
+        merged_record = hep.do(create_record(merged_snippet))
+        merged_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
+
+        deleted_record = hep.do(create_record(deleted_snippet))
+        deleted_record['$schema'] = 'http://localhost:5000/schemas/records/hep.json'
+
+        with db.session.begin_nested():
+            merged_uuid = record_upsert(merged_record).id
+            deleted_uuid = record_upsert(deleted_record).id
+        db.session.commit()
+
+    yield
+
+    with app.app_context():
+        _delete_merged_records('lit', 111, 222, merged_uuid, deleted_uuid)
+
+
+@pytest.fixture(scope='function')
+def not_yet_merged_records(app):
+    merged_record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 111,
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/111',
+        },
+    }
+
+    deleted_record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 222,
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/222',
+        },
+    }
+
+    with app.app_context():
+        with db.session.begin_nested():
+            merged_uuid = record_upsert(merged_record).id
+            deleted_uuid = record_upsert(deleted_record).id
+        db.session.commit()
+
+    yield
+
+    with app.app_context():
+        _delete_merged_records('lit', 111, 222, merged_uuid, deleted_uuid)
+
+
+@pytest.fixture(scope='function')
+def records_to_be_merged(app):
+    merged_record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 111,
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/111',
+        },
+    }
+
+    deleted_record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'control_number': 222,
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/222',
+        },
+    }
+
+    pointing_record = {
+        '$schema': 'http://localhost:5000/schemas/records/hep.json',
+        'accelerator_experiments': [
+            {
+                'record': {
+                    '$ref': 'http://localhost:5000/api/literature/222',
+                },
+            },
+        ],
+        'control_number': 333,
+        'self': {
+            '$ref': 'http://localhost:5000/api/literature/333',
+        },
+    }
+
+    with app.app_context():
+        with db.session.begin_nested():
+            merged_uuid = record_upsert(merged_record).id
+            deleted_uuid = record_upsert(deleted_record).id
+            record_upsert(pointing_record)
+        db.session.commit()
+    es.indices.refresh('records-hep')
+
+    yield
+
+    with app.app_context():
+        _delete_merged_records('lit', 111, 222, merged_uuid, deleted_uuid)
+        _delete_record('lit', 333)
+
+
+def test_deleted_record_stays_deleted(app, deleted_record):
     with app.test_client() as client:
-        assert client.get('/api/literature/222').status_code == 410
+        assert client.get('/api/literature/111').status_code == 410
 
 
-def test_record_can_be_deleted(app, record_not_yet_deleted):
+def test_record_can_be_deleted(app, not_yet_deleted_record):
     with app.test_client() as client:
-        assert client.get('/api/literature/333').status_code == 200
+        assert client.get('/api/literature/111').status_code == 200
 
-    record = get_db_record('lit', 333)
+    record = get_db_record('lit', 111)
     record.delete()
     db.session.commit()
 
     with app.test_client() as client:
-        assert client.get('/api/literature/333').status_code == 410
+        assert client.get('/api/literature/111').status_code == 410
 
 
-def test_merged_records_stay_merged(app, records_already_merged_in_marcxml):
+def test_merged_records_stay_merged(app, merged_records):
     with app.test_client() as client:
         assert client.get('/api/literature/111').status_code == 200
         assert client.get('/api/literature/222').status_code == 301
 
 
-def test_records_can_be_merged(app, records_not_merged_in_marcxml):
+def test_records_can_be_merged(app, not_yet_merged_records):
     with app.test_client() as client:
         assert client.get('/api/literature/111').status_code == 200
         assert client.get('/api/literature/222').status_code == 200
 
-    record = get_db_record('lit', 222)
-    other = get_db_record('lit', 111)
-    record['deleted'] = True
-    record['new_record'] = {'$ref': 'http://localhost:5000/api/record/111'}
-    record.merge(other)
+    merged_record = get_db_record('lit', 111)
+    deleted_record = get_db_record('lit', 222)
+    deleted_record['deleted'] = True
+    deleted_record['new_record'] = {'$ref': 'http://localhost:5000/api/record/111'}
+    deleted_record.merge(merged_record)
     db.session.commit()
 
     with app.test_client() as client:
         assert client.get('/api/literature/111').status_code == 200
         assert client.get('/api/literature/222').status_code == 301
+
+
+def test_references_can_be_updated(app, records_to_be_merged):
+    merged_record = get_db_record('lit', 111)
+    deleted_record = get_db_record('lit', 222)
+
+    deleted_record.merge(merged_record)
+    update_refs.delay(
+        'http://localhost:5000/api/literature/222',
+        'http://localhost:5000/api/literature/111')
+
+    pointing_record = get_db_record('lit', 333)
+
+    expected = 'http://localhost:5000/api/literature/111'
+    result = get_value(
+        pointing_record, 'accelerator_experiments[0].record.$ref')
+
+    assert expected == result
 
 
 def test_get_es_records_raises_on_empty_list(app):

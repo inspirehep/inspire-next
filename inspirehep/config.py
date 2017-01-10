@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1626,8 +1626,44 @@ ARXIV_TO_INSPIRE_CATEGORY_MAPPING = {
     "stat.TH": "Other"
 }
 
-# Import local config file if it is present.
-try:
-    from inspirehep.config_local import *
-except ImportError:
-    pass
+
+# Configuration for the $ref updater
+# ==================================
+INSPIRE_REF_UPDATER_WHITELISTS = {
+    'authors': [
+        'advisors.record',
+        'conferences',
+        'experiments.record',
+        'posititions.institutions.record',
+    ],
+    'conferences': [],
+    'experiments': [
+        'affiliation.record',
+        'related_experiments.record',
+        'spokespersons.record',
+    ],
+    'literature': [
+        'accelerator_experiments.record',
+        'authors.affiliations.record',
+        'authors.record',
+        'collaboration.record',
+        'publication_info.conference_record',
+        'publication_info.journal_record',
+        'publication_info.parent_record',
+        'references.record',
+        'succeding_entry.record',
+        'thesis.institutions.record',
+        'thesis_supervisors.affiliations.record',
+    ],
+    'institutions': [
+        'related_institutes.record',
+    ],
+    'jobs': [
+        'experiments.record',
+        'institutions.record',
+    ],
+    'journals': [
+        'relation.record',
+    ],
+}
+"""Controls which fields are updated when the referred record is updated."""
