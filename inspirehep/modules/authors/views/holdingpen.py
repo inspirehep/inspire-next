@@ -52,6 +52,7 @@ from invenio_workflows_ui.api import WorkflowUIRecord
 from inspirehep.modules.forms.form import DataExporter
 
 from ..forms import AuthorUpdateForm
+from ..permissions import holdingpen_author_permission
 from ..tasks import formdata_to_model
 
 
@@ -325,7 +326,7 @@ def submitnew():
 
 @blueprint.route('/new/review', methods=['GET'])
 @login_required
-# @permission_required(viewauthorreview.name)
+@holdingpen_author_permission.require(http_exception=403)
 def newreview():
     """View for INSPIRE author new form review by a cataloger."""
     objectid = request.values.get('objectid', 0, type=int)
@@ -364,7 +365,7 @@ def newreview():
 
 @blueprint.route('/new/review/submit', methods=['POST'])
 @login_required
-# @permission_required(viewauthorreview.name)
+@holdingpen_author_permission.require(http_exception=403)
 def reviewhandler():
     """Form handler when a cataloger accepts an author review."""
     objectid = request.values.get('objectid', 0, type=int)
@@ -391,7 +392,7 @@ def reviewhandler():
 
 @blueprint.route('/holdingpenreview', methods=['GET', 'POST'])
 @login_required
-# @permission_required(viewauthorreview.name)
+@holdingpen_author_permission.require(http_exception=403)
 def holdingpenreview():
     """Handler for approval or rejection of new authors in Holding Pen."""
     objectid = request.values.get('objectid', 0, type=int)
