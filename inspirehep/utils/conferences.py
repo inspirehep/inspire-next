@@ -118,7 +118,7 @@ def render_contributions(hits):
 
     result = []
 
-    title_html = "<a href='/literature/{id}'>{name}</a>"
+    title_html = u"<a href='/literature/{id}'>{name}</a>"
 
     for hit in hits:
         row = []

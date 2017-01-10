@@ -120,3 +120,34 @@ def test_render_contributions():
     result = render_contributions(hits)
 
     assert expected == result
+
+
+def test_render_contributions_handles_unicode():
+    hits = Response({
+        'hits': {
+            'hits': [
+                {
+                    '_type': 'hep',
+                    '_source': {
+                        'control_number': 1427573,
+                        'titles': [
+                            {'title': u'Storage Ring Based EDM Search — Achievements and Goals'},
+                        ],
+                    },
+                },
+            ],
+            'total': 1,
+        },
+    }).hits
+
+    expected = ([
+        [
+            u"<a href='/literature/1427573'>Storage Ring Based EDM Search — Achievements and Goals</a>",
+            u'\n  \n  \n\n\n  \n',
+            '',
+            0,
+        ],
+    ], 1)
+    result = render_contributions(hits)
+
+    assert expected == result
