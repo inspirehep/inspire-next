@@ -98,7 +98,7 @@ def render_conferences(recid, conferences):
             continue
 
         row = []
-        conference_html = '<a href="/conferences/{recid}">{title}</a>'.format(
+        conference_html = u'<a href="/conferences/{recid}">{title}</a>'.format(
             recid=conference.control_number,
             title=conference.titles[0].title
         )
