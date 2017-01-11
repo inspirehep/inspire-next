@@ -72,6 +72,41 @@ def test_render_conferences():
     assert expected == result
 
 
+def test_render_conferences_handles_unicode():
+    hits = Response({
+        'hits': {
+            'hits': [
+                {
+                    '_type': 'conference',
+                    '_source': {
+                        'address': [
+                            {'original_address': 'Paris, France'},
+                        ],
+                        'control_number': 1351301,
+                        'titles': [
+                            {'title': u'Théorie de Cordes en France'},
+                        ],
+                    },
+                },
+            ],
+            'total': 1,
+        },
+    }).hits
+
+    expected = ([
+        [
+            u'<a href="/conferences/1351301">Théorie de Cordes en France</a>',
+            'Paris, France',
+            '',
+            u'\n  ',
+        ],
+    ], 1)
+    with current_app.test_request_context():
+        result = render_conferences(1, hits)
+
+    assert expected == result
+
+
 def test_render_contributions():
     hits = Response({
         'hits': {
@@ -117,6 +152,37 @@ def test_render_contributions():
             0,
         ],
     ], 2)
+    result = render_contributions(hits)
+
+    assert expected == result
+
+
+def test_render_contributions_handles_unicode():
+    hits = Response({
+        'hits': {
+            'hits': [
+                {
+                    '_type': 'hep',
+                    '_source': {
+                        'control_number': 1427573,
+                        'titles': [
+                            {'title': u'Storage Ring Based EDM Search — Achievements and Goals'},
+                        ],
+                    },
+                },
+            ],
+            'total': 1,
+        },
+    }).hits
+
+    expected = ([
+        [
+            u"<a href='/literature/1427573'>Storage Ring Based EDM Search — Achievements and Goals</a>",
+            u'\n  \n  \n\n\n  \n',
+            '',
+            0,
+        ],
+    ], 1)
     result = render_contributions(hits)
 
     assert expected == result
