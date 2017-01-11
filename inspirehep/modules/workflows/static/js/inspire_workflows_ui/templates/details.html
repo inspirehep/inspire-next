@@ -334,10 +334,14 @@
           </div>
 
           <div class="text-center" ng-if="vm.record._workflow.status!=='COMPLETED'">
-
             <button class="btn btn-default"
-                    ng-click="Utils.restartWorkflow()">
-              <i class="fa fa-repeat" aria-hidden="true"></i> Restart
+              ng-click="Utils.restartWorkflow()">
+            <i class="fa fa-repeat" aria-hidden="true"></i> Restart
+            </button>
+            <button class="btn btn-info"
+                    ng-if="vm.record._workflow.status === 'HALTED'"
+                    ng-click="Utils.redirect('/editor/holdingpen/' + vm.record.id)">
+              <i class="fa fa-pencil" aria-hidden="true"></i> Open in Editor
             </button>
             <button class="btn btn-default"
                     ng-if="vm.record._workflow.status !== 'HALTED'"
