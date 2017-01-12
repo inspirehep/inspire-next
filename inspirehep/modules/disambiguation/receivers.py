@@ -24,9 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from invenio_indexer.signals import before_record_index
-from invenio_records.signals import after_record_insert
-
 from inspirehep.modules.disambiguation.models import DisambiguationRecord
 
 

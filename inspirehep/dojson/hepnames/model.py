@@ -24,8 +24,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from dojson import Overdo
-
 from ..model import FilterOverdo, add_schema, clean_record
 
 
