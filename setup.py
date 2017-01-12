@@ -131,6 +131,9 @@ extras_require = {
     'migration': [
         'invenio-migrator>=1.0.0a6',
     ],
+    'web-node': [
+        'gunicorn',
+    ],
     'crawler': [
         'hepcrawl>=0.2.42',
     ],
