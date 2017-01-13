@@ -269,7 +269,7 @@ def test_new_line_after_adds_no_break_after_empty_string():
 
 
 def test_email_links_returns_email_link_on_list_of_one_element():
-    expected = ['\n\n<a href="mailto:foo@example.com">foo@example.com</a>']
+    expected = ['\n<a href="mailto:foo@example.com">foo@example.com</a>']
     result = email_links(['foo@example.com'])
 
     assert expected == result
@@ -277,7 +277,7 @@ def test_email_links_returns_email_link_on_list_of_one_element():
 
 def test_email_link_returns_email_link_on_element(app):
     with app.test_request_context('/'):
-        expected = '\n\n<a href="mailto:foo@example.com">foo@example.com</a>'
+        expected = '\n<a href="mailto:foo@example.com">foo@example.com</a>'
         result = email_link('foo@example.com')
 
         assert expected == result
@@ -286,7 +286,7 @@ def test_email_link_returns_email_link_on_element(app):
 def test_url_links_returns_url_link_on_list_of_one_element():
     record_with_urls = InspireRecord({'urls': [{'value': 'http://www.example.com'}]})
 
-    expected = ['\n\n<a href="http://www.example.com">http://www.example.com</a>']
+    expected = ['\n<a href="http://www.example.com">http://www.example.com</a>']
     result = url_links(record_with_urls)
 
     assert expected == result
@@ -295,7 +295,7 @@ def test_url_links_returns_url_link_on_list_of_one_element():
 def test_institutes_links():
     record_with_institute = InspireRecord({'institute': ['foo']})
 
-    expected = ['\n\n<a href="search/?cc=Institutions&p=110_u%3Afoo&of=hd">foo</a>']
+    expected = ['\n<a href="search/?cc=Institutions&p=110_u%3Afoo&of=hd">foo</a>']
     result = institutes_links(record_with_institute)
 
     assert expected == result
@@ -304,7 +304,7 @@ def test_institutes_links():
 def test_author_profile():
     record_with_profile = InspireRecord({'profile': ['foo']})
 
-    expected = ['\n\n<a href="/author/search?q=foo">foo</a>']
+    expected = ['\n<a href="/author/search?q=foo">foo</a>']
     result = author_profile(record_with_profile)
 
     assert expected == result
