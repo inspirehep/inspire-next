@@ -149,6 +149,7 @@ def migrate(source, wait_for_results=False):
 @shared_task(ignore_result=True)
 def continuous_migration():
     """Task to continuously migrate what is pushed up by Legacy."""
+    import pdb; pdb.set_trace()
     indexer = RecordIndexer()
     redis_url = current_app.config.get('CACHE_REDIS_URL')
     r = StrictRedis.from_url(redis_url)
@@ -162,7 +163,7 @@ def continuous_migration():
                 # continuous_migration task has already consumed the queue.
                 raw_record = zlib.decompress(raw_record)
                 record = marc_create_record(raw_record, keep_singletons=False)
-                recid = int(record['001'][0])
+                recid = int(record['001'])
                 prod_record = InspireProdRecords(recid=recid)
                 prod_record.marcxml = raw_record
                 json_record = create_record(record)
