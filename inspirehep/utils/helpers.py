@@ -42,12 +42,12 @@ def download_file(url, output_file=None, chunk_size=1024):
     return output_file
 
 
-def download_file_to_record(record, name, url):
-    """Download a file to specified record."""
+def download_file_to_workflow(workflow, name, url):
+    """Download a file to specified workflow."""
     with closing(requests.get(url=url, stream=True)) as req:
         if req.status_code == 200:
-            record.files[name] = req.raw
-            return record.files[name]
+            workflow.files[name] = req.raw
+            return workflow.files[name]
 
 
 def get_json_for_plots(plots):
