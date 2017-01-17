@@ -107,10 +107,11 @@ tests_require = [
     'pytest-cache>=1.0',
     'pytest-cov>=1.8.0',
     'pytest-httpretty>=0.2.0',
-    'pytest-pep8>=1.0.6',
+    'pytest-flake8>=0.8.1',
     'pytest-selenium>=1.3.1',
     'pytest>=2.8.0',
     'mock>=1.3.0',
+    'flake8-blind-except>=0.1.1',
 ]
 
 extras_require = {
