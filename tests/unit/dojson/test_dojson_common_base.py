@@ -508,3 +508,57 @@ def test_collections_from_980__double_a_double_b():
     marc_result['980'].sort()
 
     assert expected_marc == marc_result['980']
+
+
+def test_fft_from_FFT_a_d_f_n_o_t():
+    snippet = (
+        '<datafield tag="FFT">'
+        '  <subfield code="a">url</subfield>'
+        '  <subfield code="t">docfile_type</subfield>'
+        '  <subfield code="o">flag</subfield>'
+        '  <subfield code="d">description</subfield>'
+        '  <subfield code="n">filename</subfield>'
+        '  <subfield code="f">filetype</subfield>'
+        '</datafield>'
+    )
+
+    expected = [
+        {
+            'url': 'url',
+            'docfile_type': 'docfile_type',
+            'flag': 'flag',
+            'description': 'description',
+            'filename': 'filename',
+            'filetype': 'filetype',
+        },
+    ]
+    result = hep.do(create_record(snippet))
+
+    assert expected == result['fft']
+
+
+def test_fft_roundtrips():
+    snippet = (
+        '<datafield tag="FFT" >'
+        '  <subfield code="a">url</subfield>'
+        '  <subfield code="t">docfile_type</subfield>'
+        '  <subfield code="o">flag</subfield>'
+        '  <subfield code="d">description</subfield>'
+        '  <subfield code="n">filename</subfield>'
+        '  <subfield code="f">filetype</subfield>'
+        '</datafield>'
+    )
+
+    expected = [
+        {
+            'a': 'url',
+            't': 'docfile_type',
+            'o': 'flag',
+            'd': 'description',
+            'n': 'filename',
+            'f': 'filetype',
+        },
+    ]
+    result = hep2marc.do(hep.do(create_record(snippet)))
+
+    assert expected == result['FFT']
