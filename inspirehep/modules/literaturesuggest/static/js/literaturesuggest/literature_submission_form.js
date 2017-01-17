@@ -122,7 +122,7 @@ define(function(require, exports, module) {
     this.$form = $("#webdeposit_form_accordion");
     this.$formWrapper = $('.form-wrapper');
     this.$inputs = this.$formWrapper.find(':input');
-    this.subject_kb = {};
+    this.subject_kb = options.arxiv_to_inspire_categories || {};
 
     /**
      * Dict with custom setter functions - a workaround for twitter typeahead
@@ -206,11 +206,6 @@ define(function(require, exports, module) {
       });
 
       this.addConferenceInfoField();
-
-      that.getKB(that.options.arxiv_to_inspire_categories_kb)
-        .done(function(response_kb) {
-          that.subject_kb = response_kb;
-        });
 
       if (!this.isFormBlank()) {
         this.showForm();
