@@ -34,6 +34,7 @@ from idutils import is_arxiv_post_2007
 from invenio_accounts.models import User
 from invenio_oauthclient.models import UserIdentity
 from inspirehep.modules.forms.utils import filter_empty_elements
+from inspirehep.modules.search.api import JournalsSearch
 from inspirehep.utils.record import get_title, get_value
 
 from .dojson.model import literature
@@ -127,11 +128,12 @@ def formdata_to_model(obj, formdata):
                 'title': title_crossref,
                 'source': "CrossRef"
             })
-    try:
-        data['titles'][0]['source']
-    except KeyError:
-        # Title has no source, so should be the submitter
-        data['titles'][0]['source'] = "submitter"
+    if 'titles' in data:
+        try:
+            data['titles'][0]['source']
+        except KeyError:
+            # Title has no source, so should be the submitter
+            data['titles'][0]['source'] = "submitter"
 
     # ============================
     # Conference name
@@ -208,14 +210,17 @@ def formdata_to_model(obj, formdata):
     # ======================================
     # Journal name Knowledge Base conversion
     # ======================================
-    if data.get("publication_info", [{}])[0].get("journal_title"):
-        # journals_kb = dict([(x['key'].lower(), x['value'])
-        #                     for x in get_kb_mappings(current_app.config.get("DEPOSIT_INSPIRE_JOURNALS_KB"))])
-
-        # data['publication_info']['journal_title'] = journals_kb.get(data['publication_info']['journal_title'].lower(),
-        #                                                                 data['publication_info']['journal_title'])
-        # TODO convert using journal records
-        pass
+    journal_title = get_value(data, "publication_info[0].journal_title")
+    if journal_title:
+        hits = JournalsSearch().query(
+            'match', title_variants__title__lowercased=journal_title
+        ).execute()
+        if hits:
+            try:
+                data["publication_info"][0]["journal_title"] = \
+                    hits[0].short_titles[0].title
+            except (AttributeError, IndexError):
+                pass
 
     # Finally, return the converted data
     return data

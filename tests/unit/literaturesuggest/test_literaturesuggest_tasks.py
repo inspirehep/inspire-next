@@ -23,6 +23,9 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
+import pytest
+
+from elasticsearch_dsl import result
 
 from inspirehep.modules.literaturesuggest.tasks import (
     formdata_to_model,
@@ -50,9 +53,39 @@ class StubUser(object):
         self.email = email
 
 
+@pytest.fixture
+def mock_perform_es_search_onerecord():
+    return result.Response(
+        {
+            "hits": {
+                "hits": [
+                    {
+                        "_index": "records-hep",
+                        "_type": "hep",
+                        "_id": "42",
+                        "_score": 11.123,
+
+                        "_source": {
+                            "short_titles": [
+                                {
+                                    "title": "ShortTitle"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "max_score": 11.123,
+                "total": 1
+            },
+            "timed_out": False,
+            "took": 123
+        }
+    )
+
+
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_schema(u, ui):
+def test_formdata_to_model_populates_schema(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -73,7 +106,7 @@ def test_formdata_to_model_populates_schema(u, ui):
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_collections_from_type_of_doc_thesis(u, ui):
+def test_formdata_to_model_populates_collections_from_type_of_doc_thesis(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -101,7 +134,7 @@ def test_formdata_to_model_populates_collections_from_type_of_doc_thesis(u, ui):
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_collections_from_field_categories_if_arxiv(u, ui):
+def test_formdata_to_model_populates_collections_from_field_categories_if_arxiv(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -133,7 +166,7 @@ def test_formdata_to_model_populates_collections_from_field_categories_if_arxiv(
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_abstracts_from_abstracts_if_arxiv(u, ui):
+def test_formdata_to_model_populates_abstracts_from_abstracts_if_arxiv(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -161,7 +194,7 @@ def test_formdata_to_model_populates_abstracts_from_abstracts_if_arxiv(u, ui):
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_external_system_numbers_from_arxiv_id(u, ui):
+def test_formdata_to_model_populates_external_system_numbers_from_arxiv_id(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -189,7 +222,7 @@ def test_formdata_to_model_populates_external_system_numbers_from_arxiv_id(u, ui
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_collections_from_complete_publication_info(u, ui):
+def test_formdata_to_model_populates_collections_from_complete_publication_info(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -224,7 +257,7 @@ def test_formdata_to_model_populates_collections_from_complete_publication_info(
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_titles_from_title_arXiv(u, ui):
+def test_formdata_to_model_populates_titles_from_title_arXiv(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -255,7 +288,7 @@ def test_formdata_to_model_populates_titles_from_title_arXiv(u, ui):
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_titles_from_title_crossref(u, ui):
+def test_formdata_to_model_populates_titles_from_title_crossref(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -286,7 +319,7 @@ def test_formdata_to_model_populates_titles_from_title_crossref(u, ui):
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_collections_and_hidden_notes_from_conf_name(u, ui):
+def test_formdata_to_model_populates_collections_and_hidden_notes_from_conf_name(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -319,7 +352,7 @@ def test_formdata_to_model_populates_collections_and_hidden_notes_from_conf_name
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_collections_and_hidden_notes_from_conf_name_and_nonpublic_note(u, ui):
+def test_formdata_to_model_populates_collections_and_hidden_notes_from_conf_name_and_nonpublic_note(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -356,7 +389,7 @@ def test_formdata_to_model_populates_collections_and_hidden_notes_from_conf_name
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_page_nr_from_page_range_article_id(u, ui):
+def test_formdata_to_model_populates_page_nr_from_page_range_article_id(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -378,7 +411,7 @@ def test_formdata_to_model_populates_page_nr_from_page_range_article_id(u, ui):
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_no_page_nr_when_invalid_page_range_article_id(u, ui):
+def test_formdata_to_model_no_page_nr_when_invalid_page_range_article_id(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -399,7 +432,7 @@ def test_formdata_to_model_no_page_nr_when_invalid_page_range_article_id(u, ui):
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_languages_from_languages(u, ui):
+def test_formdata_to_model_populates_languages_from_languages(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -423,7 +456,7 @@ def test_formdata_to_model_populates_languages_from_languages(u, ui):
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_languages_from_other_languages(u, ui):
+def test_formdata_to_model_populates_languages_from_other_languages(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -448,7 +481,7 @@ def test_formdata_to_model_populates_languages_from_other_languages(u, ui):
 
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
 @mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
-def test_formdata_to_model_populates_hidden_notes_from_extra_comments(u, ui):
+def test_formdata_to_model_populates_hidden_notes_from_extra_comments(u, ui, app):
     data = {}
     extra_data = {}
     formdata = {
@@ -471,6 +504,31 @@ def test_formdata_to_model_populates_hidden_notes_from_extra_comments(u, ui):
 
     assert expected == result['hidden_notes']
     assert obj.data == {}
+
+
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.User')
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.UserIdentity')
+@mock.patch('inspirehep.modules.literaturesuggest.tasks.JournalsSearch.execute')
+def test_formdata_to_model_normalizes_journal_title(e, ui, u, app, mock_perform_es_search_onerecord):
+    e.return_value = mock_perform_es_search_onerecord
+
+    data = {}
+    extra_data = {}
+    formdata = {
+        'type_of_doc': 'foo',
+        'journal_title': 'A random journal title'
+    }
+
+    obj = StubObj(data, extra_data)
+
+    expected = [
+        {
+            'journal_title': 'ShortTitle'
+        }
+    ]
+    result = formdata_to_model(obj, formdata)
+
+    assert expected == result['publication_info']
 
 
 def test_new_ticket_context():
