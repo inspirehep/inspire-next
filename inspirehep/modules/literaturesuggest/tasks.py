@@ -34,6 +34,7 @@ from idutils import is_arxiv_post_2007
 from invenio_accounts.models import User
 from invenio_oauthclient.models import UserIdentity
 from inspirehep.modules.forms.utils import filter_empty_elements
+from inspirehep.modules.search.api import JournalsSearch
 from inspirehep.utils.record import get_title, get_value
 
 from .dojson.model import literature
@@ -205,17 +206,20 @@ def formdata_to_model(obj, formdata):
                 'source': 'submitter'
             }
         )
-    # ======================================
-    # Journal name Knowledge Base conversion
-    # ======================================
-    if data.get("publication_info", [{}])[0].get("journal_title"):
-        # journals_kb = dict([(x['key'].lower(), x['value'])
-        #                     for x in get_kb_mappings(current_app.config.get("DEPOSIT_INSPIRE_JOURNALS_KB"))])
+    # ==========================
+    # Journal name normalization
+    # ==========================
+    journal_title = get_value(data, 'publication_info[0].journal_title')
+    if journal_title:
+        hits = JournalsSearch().query(
+            'match', title_variants__title__lowercased=journal_title).execute()
 
-        # data['publication_info']['journal_title'] = journals_kb.get(data['publication_info']['journal_title'].lower(),
-        #                                                                 data['publication_info']['journal_title'])
-        # TODO convert using journal records
-        pass
+        if hits:
+            try:
+                short_title = hits[0].short_titles[0].title
+                data['publication_info'][0]['journal_title'] = short_title
+            except (AttributeError, IndexError):
+                pass
 
     # Finally, return the converted data
     return data

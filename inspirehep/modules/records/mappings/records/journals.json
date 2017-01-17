@@ -192,6 +192,19 @@
                         "journalautocomplete"
                     ],
                     "type": "string"
+                },
+                "title_variants": {
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "fields": {
+                          "lowercased": {
+                            "type": "string",
+                            "analyzer": "lowercase_analyzer"
+                          }
+                        }
+                      }
+                    }
                 }
             }
         }
