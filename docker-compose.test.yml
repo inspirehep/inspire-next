@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of INSPIRE.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2016, 2017 CERN.
 #
 # INSPIRE is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -83,7 +83,9 @@ services:
   acceptance:
     extends:
       service: service_base
-    command: py.test --driver Remote --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance
+    command: py.test --driver Firefox --host selenium --port 4444 --capability browserName firefox --html=selenium-report.html tests/acceptance
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
     volumes_from:
       - static
     links:
@@ -97,6 +99,7 @@ services:
       - worker
     environment:
       - SERVER_NAME=web:5000
+      - DISPLAY=$DISPLAY
   web:
     extends:
       service: service_base
