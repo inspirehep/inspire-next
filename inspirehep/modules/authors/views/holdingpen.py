@@ -30,23 +30,23 @@ import re
 
 import requests
 from flask import (
-    abort,
     Blueprint,
+    abort,
     current_app,
     jsonify,
+    redirect,
     render_template,
     request,
-    url_for,
-    redirect,
+    url_for
 )
 from flask_babelex import gettext as _
 from flask_breadcrumbs import register_breadcrumb
-from flask_login import login_required, current_user
+from flask_login import current_user, login_required
 from werkzeug.datastructures import MultiDict
 
 from invenio_db import db
 
-from invenio_workflows import workflow_object_class, start, resume
+from invenio_workflows import resume, start, workflow_object_class
 from invenio_workflows_ui.api import WorkflowUIRecord
 
 from inspirehep.modules.forms.form import DataExporter

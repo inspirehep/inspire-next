@@ -29,7 +29,7 @@ from inspirehep.utils.helpers import force_force_list
 from inspirehep.utils.record import get_value, is_submitted_but_not_published
 from inspirehep.utils.record_getter import get_es_record
 
-from .export import MissingRequiredFieldError, Export
+from .export import Export, MissingRequiredFieldError
 
 
 class Bibtex(Export):

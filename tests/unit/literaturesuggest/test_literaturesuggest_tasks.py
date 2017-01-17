@@ -25,11 +25,11 @@ from __future__ import absolute_import, division, print_function
 import mock
 
 from inspirehep.modules.literaturesuggest.tasks import (
-    formdata_to_model,
-    new_ticket_context,
-    reply_ticket_context,
     curation_ticket_context,
     curation_ticket_needed,
+    formdata_to_model,
+    new_ticket_context,
+    reply_ticket_context
 )
 
 

@@ -32,8 +32,8 @@ from ..model import hepnames, hepnames2marc
 from ...utils import (
     classify_rank,
     force_single_element,
-    get_record_ref,
-    get_recid_from_ref
+    get_recid_from_ref,
+    get_record_ref
 )
 
 from inspirehep.utils.helpers import force_force_list

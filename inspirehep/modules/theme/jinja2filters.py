@@ -39,8 +39,8 @@ from werkzeug.urls import url_decode
 from inspirehep.modules.records.wrappers import LiteratureRecord
 from inspirehep.modules.search import InstitutionsSearch, LiteratureSearch
 from inspirehep.utils.date import (
-    create_datestruct,
     convert_datestruct_to_dategui,
+    create_datestruct,
 )
 from inspirehep.utils.dedupers import dedupe_list
 from inspirehep.utils.jinja2 import render_template_to_string

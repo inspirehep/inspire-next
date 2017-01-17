@@ -30,8 +30,13 @@ from flask_breadcrumbs import Breadcrumbs
 from flask_login import user_logged_in
 from flask_menu import Menu
 
-from .views import blueprint, unauthorized, insufficient_permissions, \
-    page_not_found, internal_error
+from .views import (
+    blueprint,
+    insufficient_permissions,
+    internal_error,
+    page_not_found,
+    unauthorized
+)
 
 from pkg_resources import resource_filename
 

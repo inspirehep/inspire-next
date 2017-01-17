@@ -30,12 +30,12 @@ from inspirehep.modules.records.receivers import (
     earliest_date,
     match_valid_experiments,
     normalize_field_categories,
+    populate_abstract_source_suggest,
+    populate_experiment_suggest,
     populate_inspire_document_type,
     populate_inspire_subjects,
     populate_recid_from_ref,
-    references_validator,
-    populate_experiment_suggest,
-    populate_abstract_source_suggest,
+    references_validator
 )
 
 

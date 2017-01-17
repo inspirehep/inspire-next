@@ -27,7 +27,7 @@ from urllib import urlencode
 
 from flask import current_app
 from idutils import is_arxiv, is_isbn
-from wtforms.validators import ValidationError, StopValidation
+from wtforms.validators import StopValidation, ValidationError
 
 
 def arxiv_syntax_validation(form, field):

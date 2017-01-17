@@ -25,7 +25,9 @@ from __future__ import absolute_import, division, print_function
 import six
 
 from inspirehep.modules.references.processors import (
-    _split_refextract_authors_str, ReferenceBuilder)
+    ReferenceBuilder,
+    _split_refextract_authors_str
+)
 
 
 def test_reference_builder_no_uids():

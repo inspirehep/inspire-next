@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 import re
 
 from os.path import join
-from flask import Blueprint, jsonify, request, current_app
+from flask import Blueprint, current_app, jsonify, request
 
 from invenio_db import db
 from invenio_workflows import workflow_object_class

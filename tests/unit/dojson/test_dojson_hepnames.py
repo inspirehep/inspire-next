@@ -30,7 +30,7 @@ import pytest
 
 from dojson.contrib.marc21.utils import create_record
 
-from inspirehep.dojson.hepnames import hepnames2marc, hepnames
+from inspirehep.dojson.hepnames import hepnames, hepnames2marc
 from inspirehep.dojson.utils import get_recid_from_ref
 
 

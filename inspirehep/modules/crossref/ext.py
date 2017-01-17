@@ -51,7 +51,7 @@ from __future__ import absolute_import, division, print_function
 import requests
 from urlparse import urljoin
 
-from flask import current_app, request, jsonify
+from flask import current_app, jsonify, request
 from flask_login import login_required
 
 response_code = {'success': 200,

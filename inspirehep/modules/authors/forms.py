@@ -26,18 +26,22 @@ from flask_babelex import gettext as _
 
 from wtforms import validators
 from wtforms.fields import Flags
-from wtforms.widgets import html_params, \
-    HiddenInput, \
-    HTMLString, \
-    Select, \
-    TextInput
+from wtforms.widgets import (
+    HTMLString,
+    HiddenInput,
+    Select,
+    TextInput,
+    html_params
+)
 
-from inspirehep.modules.forms.field_widgets import ColumnInput, \
-    ExtendedListWidget, \
-    ItemWidget, \
-    DynamicListWidget, \
-    DynamicItemWidget, \
+from inspirehep.modules.forms.field_widgets import (
+    ColumnInput,
+    DynamicItemWidget,
+    DynamicListWidget,
+    ExtendedListWidget,
+    ItemWidget,
     WrappedInput
+)
 from inspirehep.modules.forms.form import INSPIREForm
 from inspirehep.modules.forms import fields
 from inspirehep.modules.forms.filter_utils import clean_empty_list

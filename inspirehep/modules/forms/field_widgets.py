@@ -28,8 +28,14 @@ from inspirehep.utils.template import render_macro_from_template
 
 from werkzeug import MultiDict
 
-from wtforms.widgets import HiddenInput, HTMLString, Input, RadioInput, \
-    TextInput, html_params
+from wtforms.widgets import (
+    HTMLString,
+    HiddenInput,
+    Input,
+    RadioInput,
+    TextInput,
+    html_params
+)
 
 
 class ButtonWidget(object):

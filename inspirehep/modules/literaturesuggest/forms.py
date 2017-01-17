@@ -29,25 +29,29 @@ from flask_babelex import gettext as _
 
 from wtforms import validators
 from wtforms.widgets import (
-    html_params,
-    HiddenInput,
     HTMLString,
+    HiddenInput,
+    html_params
 )
 
 from inspirehep.modules.forms.field_widgets import (
     ColumnInput,
-    ExtendedListWidget,
-    ItemWidget,
-    DynamicListWidget,
     DynamicItemWidget,
+    DynamicListWidget,
+    ExtendedListWidget,
+    ItemWidget
 )
 from inspirehep.modules.forms.form import INSPIREForm
 from inspirehep.modules.forms import fields
 from inspirehep.modules.forms.filter_utils import clean_empty_list
 from inspirehep.modules.forms.validation_utils import DOISyntaxValidator
-from inspirehep.modules.forms.validators.simple_fields import duplicated_doi_validator, \
-    duplicated_arxiv_id_validator, arxiv_syntax_validation, \
-    pdf_validator, date_validator
+from inspirehep.modules.forms.validators.simple_fields import (
+    arxiv_syntax_validation,
+    date_validator,
+    duplicated_arxiv_id_validator,
+    duplicated_doi_validator,
+    pdf_validator
+)
 from inspirehep.modules.forms.validators.dynamic_fields import AuthorsValidation
 
 from inspirehep.modules.literaturesuggest.fields.arxiv_id import ArXivField

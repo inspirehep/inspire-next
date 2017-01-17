@@ -25,7 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 from flask import current_app
-from rt import Rt, ConnectionError
+from rt import ConnectionError, Rt
 
 
 def get_instance():
