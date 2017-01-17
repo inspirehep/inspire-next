@@ -143,7 +143,7 @@ def create_beard_record(record_id):
     try:
         earliest_date = response.get("earliest_date")
         year = parse(earliest_date).strftime("%Y")
-    except:
+    except (ValueError, OverflowError):
         year = False
 
     # Since the authors and publication_id are mandatory,

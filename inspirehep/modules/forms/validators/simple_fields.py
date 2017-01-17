@@ -140,7 +140,7 @@ def pdf_validator(form, field):
                 url,
                 allow_redirects=True
             )
-        except:
+        except requests.exceptions.RequestException:
             return
         return response.headers['content-type']
 

@@ -381,7 +381,7 @@ def get_institution_people_datatables_rows(recid):
                     name=recid_map[author['key']].preferred_name
                 )
             )
-        except:
+        except (IndexError, AttributeError):
             # No preferred name, use value
             row.append(
                 author_html_link.format(
