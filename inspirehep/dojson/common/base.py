@@ -291,6 +291,7 @@ def fft(self, key, value):
         'flag': value.get('o'),
         'description': value.get('d'),
         'filename': value.get('n'),
+        'filetype': value.get('f'),
     }
 
 
@@ -304,6 +305,7 @@ def fft2marc(self, key, value):
         'o': value.get('flag'),
         'd': value.get('description'),
         'n': value.get('filename'),
+        'f': value.get('filetype'),
     }
 
 

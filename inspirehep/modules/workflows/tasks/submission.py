@@ -35,7 +35,10 @@ from retrying import retry
 from invenio_accounts.models import User
 
 from ....utils.tickets import get_instance, retry_if_connection_problems
-from .actions import in_production_mode
+from .actions import (
+    in_production_mode,
+    is_arxiv_paper,
+)
 
 
 LOGGER = logging.getLogger(__name__)
@@ -373,21 +376,27 @@ def prepare_files(obj, eng):
     if not obj.files:
         return
 
+    def _define_filename(paper, file_name):
+        if is_arxiv_paper(paper):
+            return 'arxiv:' + file_name
+
+        return file_name
+
     def _get_fft(url, name):
         return {
             'url': os.path.realpath(url),
             'docfile_type': 'INSPIRE-PUBLIC',
-            'filename': name,
+            'filename': _define_filename(obj, os.path.splitext(name)[0]),
+            'filetype': os.path.splitext(name)[1],
         }
 
     pdf_file_objs = [
         (key, obj.files[key])
-        for key in obj.files.keys
-        if key.endswith('.pdf')
+        for key in obj.files.keys if key.endswith('.pdf')
     ]
     pdf_paths = [
         _get_fft(pdf_file_obj.obj.file.uri, name)
-        for name, pdf_file_obj in pdf_file_objs
+        for name, pdf_file_obj in pdf_file_objs if pdf_file_obj
     ]
 
     obj.data['fft'] = obj.data.get('fft', []) + pdf_paths
